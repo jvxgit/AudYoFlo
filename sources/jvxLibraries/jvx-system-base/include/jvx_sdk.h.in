@@ -1,0 +1,8 @@
+#ifndef __JVX_SDK_H__
+#define __JVX_SDK_H__
+
+#define JVX_NUMBER_32BITS_BITFIELD ${JVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD}
+
+#include "jvx.h"
+
+#endif

@@ -1,0 +1,83 @@
+SECTION PROPERTIES
+{
+	define xyz
+	
+	ifdef xyz_
+	asa WE,
+	endif
+	
+	undef xyz
+	
+	OUTPUTFILE_NAME = "genGestureSense_node";
+
+	GROUP mySubGroup1
+	{
+		include "myFile.pcgf";
+	};
+
+	ifdef HAUKES_DEFINE
+	GROUP mySubGroup2
+	{
+		include "myFile.pcgf";
+	};
+	endif
+
+	SECTION C
+	{
+		PREFIX = "Hallo";
+		DESCRIPTION = "Properties for realtime data xchange";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION D
+		{
+			VARIANTS = 12;
+			DESCRIPTION = "Issue text format commands to component # $VARIANT";	  // Defaults to NAME if not present
+			ID = "jvx_command_string";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_GEST_SENSE_COMMAND -- $VARIANT";
+		};
+	};
+	ifdef HAUKES_DEFINE
+	SECTION H
+	{
+		DESCRIPTION = "Properties for realtime data xchange";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION K
+		{
+			DESCRIPTION = "Issue text format commands to component";	  // Defaults to NAME if not present
+			ID = "jvx_command_string";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_GEST_SENSE_COMMAND";
+		};
+	};
+	endif
+	
+	SECTION K
+	{
+		DESCRIPTION = "Properties for realtime data xchange";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		
+		SECTION whatever
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			SELECTION_LIST_NAMES = {"Var 1", "Var 2", "Var 3"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"no", "no", "no"}; 
+			SELECTION_LIST_TRANSLATORS = {"hauke1", "hauke2", "hauke3"};
+			SELECTION_TRANSLATOR_TYPE = "haukesSuperType";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+		};
+	};	
+};

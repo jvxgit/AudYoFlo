@@ -1,0 +1,357 @@
+diff -ur qwt.orig/src/qwt_compass_rose.cpp qwt/src/qwt_compass_rose.cpp
+--- qwt.orig/src/qwt_compass_rose.cpp	2023-01-19 08:55:31.488069500 +0100
++++ qwt/src/qwt_compass_rose.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -11,6 +11,7 @@
+ #include "qwt_point_polar.h"
+ #include "qwt_painter.h"
+ #include <qpainter.h>
++#include <qpainterpath.h>
+ 
+ static QPointF qwtIntersection( 
+     QPointF p11, QPointF p12, QPointF p21, QPointF p22 )
+diff -ur qwt.orig/src/qwt_dial_needle.cpp qwt/src/qwt_dial_needle.cpp
+--- qwt.orig/src/qwt_dial_needle.cpp	2023-01-19 08:55:31.493055700 +0100
++++ qwt/src/qwt_dial_needle.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -13,6 +13,7 @@
+ #include "qwt_painter.h"
+ #include <qapplication.h>
+ #include <qpainter.h>
++#include <qpainterpath.h>
+ 
+ #if QT_VERSION < 0x040601
+ #define qFastSin(x) qSin(x)
+diff -ur qwt.orig/src/qwt_null_paintdevice.cpp qwt/src/qwt_null_paintdevice.cpp
+--- qwt.orig/src/qwt_null_paintdevice.cpp	2023-01-19 08:55:31.501034000 +0100
++++ qwt/src/qwt_null_paintdevice.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -10,6 +10,7 @@
+ #include "qwt_null_paintdevice.h"
+ #include <qpaintengine.h>
+ #include <qpixmap.h>
++#include <qpainterpath.h>
+ 
+ class QwtNullPaintDevice::PrivateData
+ {
+diff -ur qwt.orig/src/qwt_painter.cpp qwt/src/qwt_painter.cpp
+--- qwt.orig/src/qwt_painter.cpp	2023-01-19 08:55:31.501034000 +0100
++++ qwt/src/qwt_painter.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -27,6 +27,7 @@
+ #include <qpaintengine.h>
+ #include <qapplication.h>
+ #include <qdesktopwidget.h>
++#include <qpainterpath.h>
+ 
+ #if QT_VERSION >= 0x050000
+ #include <qwindow.h>
+diff -ur qwt.orig/src/qwt_painter_command.cpp qwt/src/qwt_painter_command.cpp
+--- qwt.orig/src/qwt_painter_command.cpp	2023-01-19 08:55:31.502031600 +0100
++++ qwt/src/qwt_painter_command.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -8,6 +8,7 @@
+  *****************************************************************************/
+ 
+ #include "qwt_painter_command.h"
++#include <QPainterPath>
+ 
+ //! Construct an invalid command
+ QwtPainterCommand::QwtPainterCommand():
+diff -ur qwt.orig/src/qwt_painter_command.h qwt/src/qwt_painter_command.h
+--- qwt.orig/src/qwt_painter_command.h	2023-01-19 08:55:31.503028300 +0100
++++ qwt/src/qwt_painter_command.h	2023-01-18 18:25:59.555427100 +0100
+@@ -15,6 +15,7 @@
+ #include <qpixmap.h>
+ #include <qimage.h>
+ #include <qpolygon.h>
++#include <qpainterpath.h>
+ 
+ class QPainterPath;
+ 
+diff -ur qwt.orig/src/qwt_plot_curve.cpp qwt/src/qwt_plot_curve.cpp
+--- qwt.orig/src/qwt_plot_curve.cpp	2023-01-19 08:55:31.509012400 +0100
++++ qwt/src/qwt_plot_curve.cpp	2023-01-19 08:57:51.332348300 +0100
+@@ -1227,6 +1227,26 @@
+ }
+ 
+ /*!
++  \brief Initialize the data by pointing to memory blocks which
++         are not managed by QwtPlotCurve.
++
++  setRawSamples is provided for efficiency.
++  It is important to keep the pointers
++  during the lifetime of the underlying QwtCPointerData class.
++
++  \param xData pointer to x data
++  \param yData pointer to y data
++  \param size size of x and y
++
++  \sa QwtCPointerData
++*/
++void QwtPlotCurve::setRawSamples(
++    const float* xData, const float* yData, int size)
++{
++    setData(new QwtCPointerData(xData, yData, size));
++}
++
++/*!
+   Set data by copying x- and y-values from specified memory blocks.
+   Contrary to setRawSamples(), this function makes a 'deep copy' of
+   the data.
+@@ -1244,6 +1264,23 @@
+ }
+ 
+ /*!
++  Set data by copying x- and y-values from specified memory blocks.
++  Contrary to setRawSamples(), this function makes a 'deep copy' of
++  the data.
++
++  \param xData pointer to x values
++  \param yData pointer to y values
++  \param size size of xData and yData
++
++  \sa QwtPointArrayData
++*/
++void QwtPlotCurve::setSamples(
++    const float* xData, const float* yData, int size)
++{
++    setData(new QwtPointArrayData(xData, yData, size));
++}
++
++/*!
+   \brief Initialize data with x- and y-arrays (explicitly shared)
+ 
+   \param xData x data
+@@ -1257,5 +1294,19 @@
+     setData( new QwtPointArrayData( xData, yData ) );
+ }
+ 
++/*!
++  \brief Initialize data with x- and y-arrays (explicitly shared)
++
++  \param xData x data
++  \param yData y data
++
++  \sa QwtPointArrayData
++*/
++void QwtPlotCurve::setSamples(const QVector<float>& xData,
++    const QVector<float>& yData)
++{
++    setData(new QwtPointArrayData(xData, yData));
++}
++
+ #endif // !QWT_NO_COMPAT
+ 
+diff -ur qwt.orig/src/qwt_plot_curve.h qwt/src/qwt_plot_curve.h
+--- qwt.orig/src/qwt_plot_curve.h	2023-01-19 08:55:31.509012400 +0100
++++ qwt/src/qwt_plot_curve.h	2023-01-19 08:56:40.209720300 +0100
+@@ -251,6 +251,11 @@
+     void setRawSamples( const double *xData, const double *yData, int size );
+     void setSamples( const double *xData, const double *yData, int size );
+     void setSamples( const QVector<double> &xData, const QVector<double> &yData );
++
++    void setRawSamples(const float* xData, const float* yData, int size);
++    void setSamples(const float* xData, const float* yData, int size);
++    void setSamples(const QVector<float>& xData, const QVector<float>& yData);
++
+ #endif
+     void setSamples( const QVector<QPointF> & );
+     void setSamples( QwtSeriesData<QPointF> * );
+diff -ur qwt.orig/src/qwt_plot_panner.cpp qwt/src/qwt_plot_panner.cpp
+--- qwt.orig/src/qwt_plot_panner.cpp	2023-01-19 08:55:31.516991800 +0100
++++ qwt/src/qwt_plot_panner.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -14,6 +14,7 @@
+ #include <qbitmap.h>
+ #include <qstyle.h>
+ #include <qstyleoption.h>
++#include <qpainterpath.h>
+ 
+ static QBitmap qwtBorderMask( const QWidget *canvas, const QSize &size )
+ {
+diff -ur qwt.orig/src/qwt_plot_renderer.cpp qwt/src/qwt_plot_renderer.cpp
+--- qwt.orig/src/qwt_plot_renderer.cpp	2023-01-19 08:55:31.518985800 +0100
++++ qwt/src/qwt_plot_renderer.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -27,6 +27,7 @@
+ #include <qstyle.h>
+ #include <qstyleoption.h>
+ #include <qimagewriter.h>
++#include <qpainterpath.h>
+ 
+ #ifndef QWT_NO_SVG
+ #ifdef QT_SVG_LIB
+diff -ur qwt.orig/src/qwt_point_data.cpp qwt/src/qwt_point_data.cpp
+--- qwt.orig/src/qwt_point_data.cpp	2023-01-19 08:55:31.526965400 +0100
++++ qwt/src/qwt_point_data.cpp	2023-01-19 09:13:31.464545000 +0100
+@@ -31,6 +31,30 @@
+ 
+   \param x Array of x values
+   \param y Array of y values
++
++  \sa QwtPlotCurve::setData(), QwtPlotCurve::setSamples()
++*/
++QwtPointArrayData::QwtPointArrayData(
++    const QVector<float>& x, const QVector<float>& y) 
++{
++    size_t i;
++    d_x.resize(x.size());
++    for (i = 0; i < x.size(); i++)
++    {
++        d_x[i] = x[i];
++    }
++    d_y.resize(y.size());
++    for (i = 0; i < y.size(); i++)
++    {
++        d_y[i] = y[i];
++    }
++}
++
++/*!
++  Constructor
++
++  \param x Array of x values
++  \param y Array of y values
+   \param size Size of the x and y arrays
+   \sa QwtPlotCurve::setData(), QwtPlotCurve::setSamples()
+ */
+@@ -45,6 +69,27 @@
+ }
+ 
+ /*!
++  Constructor
++
++  \param x Array of x values
++  \param y Array of y values
++  \param size Size of the x and y arrays
++  \sa QwtPlotCurve::setData(), QwtPlotCurve::setSamples()
++*/
++QwtPointArrayData::QwtPointArrayData(const float* x,
++    const float* y, size_t size)
++{
++    size_t i;
++    d_x.resize(size);
++    d_y.resize(size);
++    for (i = 0; i < size; i++)
++    {
++        d_x[i] = x[i];
++        d_y[i] = y[i];
++    }
++}
++
++/*!
+   \brief Calculate the bounding rectangle
+ 
+   The bounding rectangle is calculated once by iterating over all
+@@ -111,6 +156,27 @@
+ }
+ 
+ /*!
++  Constructor
++
++  \param x Array of x values
++  \param y Array of y values
++  \param size Size of the x and y arrays
++
++  \warning The programmer must assure that the memory blocks referenced
++           by the pointers remain valid during the lifetime of the
++           QwtPlotCPointer object.
++
++  \sa QwtPlotCurve::setData(), QwtPlotCurve::setRawSamples()
++*/
++QwtCPointerData::QwtCPointerData(
++    const float* x, const float* y, size_t size) :
++    f_x(x),
++    f_y(y),
++    d_size(size)
++{
++}
++
++/*!
+   \brief Calculate the bounding rectangle
+ 
+   The bounding rectangle is calculated once by iterating over all
+@@ -140,21 +206,40 @@
+ */
+ QPointF QwtCPointerData::sample( size_t index ) const
+ {
++    if (f_x)
++    {
++        return QPointF(f_x[int(index)], f_y[int(index)]);
++    }
+     return QPointF( d_x[int( index )], d_y[int( index )] );
+ }
+ 
+ //! \return Array of the x-values
+ const double *QwtCPointerData::xData() const
+ {
++    assert(d_x);
+     return d_x;
+ }
+ 
+ //! \return Array of the y-values
+ const double *QwtCPointerData::yData() const
+ {
++    assert(d_y);
+     return d_y;
+ }
+ 
++//! \return Array of the x-values
++const float* QwtCPointerData::xDataf() const
++{
++    assert(f_x);
++    return f_x;
++}
++
++//! \return Array of the y-values
++const float* QwtCPointerData::yDataf() const
++{
++    assert(f_y);
++    return f_y;
++}
+ /*!
+    Constructor
+ 
+diff -ur qwt.orig/src/qwt_point_data.h qwt/src/qwt_point_data.h
+--- qwt.orig/src/qwt_point_data.h	2023-01-19 08:55:31.527962300 +0100
++++ qwt/src/qwt_point_data.h	2023-01-19 09:11:57.994319000 +0100
+@@ -22,6 +22,9 @@
+     QwtPointArrayData( const QVector<double> &x, const QVector<double> &y );
+     QwtPointArrayData( const double *x, const double *y, size_t size );
+ 
++    QwtPointArrayData(const QVector<float>& x, const QVector<float>& y);
++    QwtPointArrayData(const float* x, const float* y, size_t size);
++
+     virtual QRectF boundingRect() const;
+ 
+     virtual size_t size() const;
+@@ -42,6 +45,7 @@
+ {
+ public:
+     QwtCPointerData( const double *x, const double *y, size_t size );
++    QwtCPointerData(const float* x, const float* y, size_t size);
+ 
+     virtual QRectF boundingRect() const;
+     virtual size_t size() const;
+@@ -50,9 +54,14 @@
+     const double *xData() const;
+     const double *yData() const;
+ 
++    const float* xDataf() const;
++    const float* yDataf() const;
++
+ private:
+-    const double *d_x;
+-    const double *d_y;
++    const double *d_x = nullptr;
++    const double *d_y = nullptr;
++    const float* f_x = nullptr;
++    const float* f_y = nullptr;
+     size_t d_size;
+ };
+ 
+diff -ur qwt.orig/src/qwt_widget_overlay.cpp qwt/src/qwt_widget_overlay.cpp
+--- qwt.orig/src/qwt_widget_overlay.cpp	2023-01-19 08:55:31.546915100 +0100
++++ qwt/src/qwt_widget_overlay.cpp	2023-01-18 18:25:59.555427100 +0100
+@@ -13,6 +13,7 @@
+ #include <qpaintengine.h>
+ #include <qimage.h>
+ #include <qevent.h>
++#include <qpainterpath.h>
+ 
+ static QImage::Format qwtMaskImageFormat()
+ {

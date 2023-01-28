@@ -1,0 +1,21 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genAuNSubChainFlex";
+	SECTION flexible_chain
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"trigger_chain"};
+		CALLBACK_SET_POSTHOOK = "trigger_chain";
+		SECTION engage_chain
+		{
+			INIT_SET = 0;
+			TYPE = "JVX_DATAFORMAT_BOOL";
+		};
+
+		SECTION disengage_chain
+		{
+			INIT_SET = 0;
+			TYPE = "JVX_DATAFORMAT_BOOL";
+		};		
+	};
+};

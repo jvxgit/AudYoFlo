@@ -1,0 +1,70 @@
+SECTION node
+	{
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+		SECTION buffersize
+		{
+			DESCRIPTION = "Buffersize";	  // Defaults to NAME if not present
+			INIT_SET = 1024; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_framesize_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			DESCRIPTOR = "JVX_AUDIONODE_BUFFERSIZE";
+		};
+		SECTION samplerate
+		{
+			DESCRIPTION = "Rate";	  // Defaults to NAME if not present
+			INIT_SET = 48000; 
+			ID = "jvx_rate_int32"; 		
+			DESCRIPTOR = "JVX_AUDIONODE_SAMPLERATE";
+		};
+		SECTION format 
+		{
+			DESCRIPTION = "Format";	  // Defaults to NAME if not present
+			INIT_SET = 1; 
+			ID = "jvx_processing_format_int16"; 
+			DESCRIPTOR = "JVX_AUDIONODE_FORMAT";
+		};
+		SECTION numberinputchannels
+		{
+			DESCRIPTION = "Number of input channels";	  // Defaults to NAME if not present
+			INIT_SET = 0; 
+			ID = "jvx_num_input_channels_int32"; 
+			GENERATE_ENTRY_CONFIG_FILE = "no";		
+			DESCRIPTOR = "JVX_AUDIONODE_INPUT_CHANNELS";
+		};
+		SECTION numberoutputchannels
+		{
+			DESCRIPTION = "Number of output channels";	  // Defaults to NAME if not present
+			INIT_SET = 0; 
+			ID = "jvx_num_output_channels_int32"; 		
+			GENERATE_ENTRY_CONFIG_FILE = "no";		
+			DESCRIPTOR = "JVX_AUDIONODE_OUTPUT_CHANNELS";
+		}; 
+		SECTION segmentsize_x
+		{
+			DESCRIPTION = "Segmentation X";	  // Defaults to NAME if not present
+			INIT_SET = 1024; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_segmentsize_x_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+
+		SECTION segmentsize_y
+		{
+			DESCRIPTION = "Segmentation Y";	  // Defaults to NAME if not present
+			INIT_SET = 1; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_segmentsize_y_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+		
+		SECTION subformat
+		{
+			DESCRIPTION = "Processing Subformat";	  // Defaults to NAME if not present
+			INIT_SET = 1; // <- start with datasubformat "JVX_DATASUBFORMAT_AUDIO_PCM"
+			ID = "jvx_processing_subformat_int16"; 
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		};
+	};

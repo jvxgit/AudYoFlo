@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>919</width>
+    <height>411</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Call Protocol</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QTreeWidget" name="treeWidget_result">
+        <column>
+         <property name="text">
+          <string>Entry</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Component Identification</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Component Description</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Connector</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Connection Context</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Comment</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Origin</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Function Return</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Error Description</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Error Location</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>Store File</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_fname"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_2">
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Entries Filter</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLineEdit" name="lineEdit_filterEntries"/>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_filterEntries">
+              <property name="text">
+               <string>Active</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_3">
+           <property name="text">
+            <string>Full Size</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>print_file()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>225</x>
+     <y>-7</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>toggle_full()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>896</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>647</x>
+     <y>-9</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>set_filename()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>503</x>
+     <y>-13</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_filterEntries</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>set_filterEntries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>-20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_filterEntries</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>toggle_activeFilterEntries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>639</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>726</x>
+     <y>-14</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>print_file()</slot>
+  <slot>toggle_full()</slot>
+  <slot>set_filename()</slot>
+  <slot>set_filterEntries()</slot>
+  <slot>toggle_activeFilterEntries()</slot>
+ </slots>
+</ui>

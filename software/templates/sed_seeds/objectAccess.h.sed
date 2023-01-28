@@ -1,0 +1,12 @@
+#ifndef JVX_PREPROCESSOR_TOKEN
+#define JVX_PREPROCESSOR_TOKEN
+
+extern "C"
+{
+	jvxErrorType JVX_CALLINGCONVENTION JVX_OBJECT_INIT_FUNCTION(IjvxObject** retObject);
+
+	jvxErrorType JVX_CALLINGCONVENTION JVX_OBJECT_TERMINATE_FUNCTION(IjvxObject* cls);
+};
+
+#endif
+

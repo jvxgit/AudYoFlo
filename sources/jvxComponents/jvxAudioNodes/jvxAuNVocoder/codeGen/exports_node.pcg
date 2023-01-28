@@ -1,0 +1,187 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genVocoder_node";
+
+
+	SECTION properties_vocoder
+	{
+		NAME = "properties_vocoder";
+		DESCRIPTION = "Properties to control vocoder";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties for vocoder ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION MixingCrit
+		{
+			DESCRIPTION = "Excitation Mixing Criterion";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_MIXINGCRIT";
+			TYPE = "JVX_DATAFORMAT_DATA";
+			INIT_SET = 0.0;
+			// READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			// void getExcitationMixingCrit(double& val);
+			// void setExcitationMixingCrit(double val);
+		};
+
+		SECTION pitchFrequency
+		{
+			DESCRIPTION = "Pitch Frequency";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_PITCHFREQUENCY";
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			INIT_SET = 100;
+			// READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			// void getCurrentPitchFrequency(int& val);
+			// void setCurrentPitchFrequency(int val);
+		};
+
+		SECTION pitchFrequencyMin
+		{
+			DESCRIPTION = "Pitch Frequency Min";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_PITCHFREQUENCYMIN";
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			INIT_SET = 100;
+
+			// void getCurrentPitchFrequencyMin(int& val);
+		};
+
+		SECTION pitchFrequencyMax
+		{
+			DESCRIPTION = "Pitch Frequency Max";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_PITCHFREQUENCYMAX";
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			INIT_SET = 100;
+
+			// void getCurrentPitchFrequencyMax(int& val);
+		};
+
+		SECTION outputSelect
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+
+			DESCRIPTION = "Output Selection";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_OUTPUTSELECT";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			SELECTION_LIST_NAMES = {"OUT_1", "OUT_2", "OUT_3", "OUT_4", "OUT_5"};
+			SELECTION_LIST_SELECTED = {"no" , "no" ,"no" ,"no" ,"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes"};
+			// void setOutputRoute(routingOut out);
+		    // void getOutputRoute(routingOut& out);
+		};
+
+		SECTION inputSelect
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+
+			DESCRIPTION = "Input Selection";	  // Defaults to NAME if not present
+
+			DESCRIPTOR = "JVX_VOCODER_INPUTSELECT";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			SELECTION_LIST_NAMES = {"IN_1", "IN_2"};
+			SELECTION_LIST_SELECTED = {"yes" , "no" };
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			// void setInputRoute(routingIn out);
+			// void getInputRoute(routingIn& out);
+		};
+
+		SECTION hardVuVDecision
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+
+			DESCRIPTION = "Vuv Control";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_HARDVUVDECISION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			SELECTION_LIST_NAMES = {"Hard Decision", "Soft Decision"};
+			SELECTION_LIST_SELECTED = {"no" , "yes" };
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			// void setVUVHardDecisision(bool val){hardDecisionVUV = val;};
+			// void getVUVHardDecisision(bool& val){val = hardDecisionVUV;};
+		};
+
+		SECTION autoModeVuv
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+
+			DESCRIPTION = "Vuv Auto";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_AUTOMODEVUV";
+
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			SELECTION_LIST_NAMES = {"Enabled", "Disabled"};
+			SELECTION_LIST_SELECTED = {"yes" , "no" };
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			// 	void setAutoModeVUV(operationMode mode);
+			// void getAutoModeVUV(operationMode& mode);
+		};
+
+		SECTION autoModePitch
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			DESCRIPTOR = "JVX_VOCODER_AUTOMODEPITCH";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+
+			DESCRIPTION = "Pitch Auto";	  // Defaults to NAME if not present
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			SELECTION_LIST_NAMES = {"Enabled", "Disabled"};
+			SELECTION_LIST_SELECTED = {"yes" , "no" };
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			// 	void setAutoModePitch(operationMode mode);
+			// void getAutoModePitch(operationMode& mode);
+		};
+
+		SECTION lpcOrder
+		{
+			DESCRIPTION = "LPC Order";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_LPCORDER";
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";
+
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+
+			VALUE_IN_RANGE_MIN_VALUE = 2;
+			VALUE_IN_RANGE_MAX_VALUE = 19;
+			VALUE_IN_RANGE_VALUE = 19;
+
+			// 	void setUsedLpcOrder(int orderLpcUsed);
+			// void getUsedLpcOrder(int& orderLpcUsed);
+		};
+
+
+		SECTION volume
+		{
+			DESCRIPTION = "Volume for all channels";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_VOLUME";
+			TYPE = "JVX_DATAFORMAT_DATA";
+			INIT_SET = 1.0;
+
+			// void setVolume(double val);
+			// void getVolume(double& val);
+		};
+
+		SECTION pitchScale
+		{
+			DESCRIPTION = "Pitch Scale Factor";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_PITCH_SCALE";
+			TYPE = "JVX_DATAFORMAT_DATA";
+			INIT_SET = 1.0;
+
+		};
+
+		SECTION formantWarp
+		{
+			DESCRIPTION = "Format Warp Coeff";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_VOCODER_FORMAT_WARP";
+			TYPE = "JVX_DATAFORMAT_DATA";
+			INIT_SET = 0.0;
+
+		};
+
+	};
+};

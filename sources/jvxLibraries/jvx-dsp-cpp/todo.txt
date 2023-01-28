@@ -1,0 +1,11 @@
+How we may improve the Voice transformer":
+
+1) For low pitch frequencies, the energy is very much focused onto rare pulses. This leads to
+high peak values in the output signal which may therefore saturate.
+The solution would be
+a) to add an allpass filter to destroy the peakness of the peaks.
+b) to use other than pulse excitations for very low pitch frequencies. E.g., we may use a square function to replace the pulses.
+2) The noise excitation may well be pitch filtered
+3) The pitch may be fractional (at the moment it is integer).
+
+HK, 29.10.2015

@@ -1,0 +1,53 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genEncoderDecoder_node";
+
+	SECTION general
+	{
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+		SECTION select_codec_lane
+		{
+			DESCRIPTION = "Select Current Codec Lane";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+			SELECTION_LIST_NAMES = {"Codec Lane 0", "Codec Lane 1"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			SHOW_CONTENT_HINTS = "REPORT=JVX_WW_REPORT_GLOBAL";
+		};  
+		SECTION codec_in_selected_lane
+		{
+			DESCRIPTION = "Codec Lane";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+			SELECTION_LIST_NAMES = {"Invalid"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes"};
+			SHOW_CONTENT_HINTS = "REPORT=JVX_WW_REPORT_GLOBAL";
+		};
+		SECTION select_codec_lane_out
+		{
+			DESCRIPTION = "Select Current Codec Lane to output";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+			SELECTION_LIST_NAMES = {"Codec Lane 0", "Codec Lane 1"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+		};  
+
+		SECTION lane0_encoder_suppress_processing
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;		
+		};
+
+		SECTION lane1_encoder_suppress_processing
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;		
+		};
+
+	};
+};

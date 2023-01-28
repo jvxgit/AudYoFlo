@@ -1,0 +1,30 @@
+--- vst3sdk.orig/pluginterfaces/CMakeLists.txt	2023-01-24 15:34:53.045850900 +0100
++++ vst3sdk/pluginterfaces/CMakeLists.txt	2022-10-29 09:57:43.165166300 +0200
+@@ -38,15 +38,21 @@
+ )
+ 
+ # check for C11 atomic header
+-include(CheckIncludeFileCXX)
+-CHECK_INCLUDE_FILE_CXX("stdatomic.h" SMTG_USE_STDATOMIC_H)
++if(DEFINED MSVC_VERSION AND MSVC_VERSION GREATER_EQUAL 1930)
++	set(SMTG_USE_STDATOMIC_H FALSE)
++else()
++	include(CheckIncludeFileCXX)
++	CHECK_INCLUDE_FILE_CXX("stdatomic.h" SMTG_USE_STDATOMIC_H)
++endif()
++
+ if(SMTG_USE_STDATOMIC_H)
+-    target_compile_definitions(pluginterfaces
+-        PRIVATE
+-            "SMTG_USE_STDATOMIC_H=${SMTG_USE_STDATOMIC_H}"
+-    )
++	target_compile_definitions(pluginterfaces
++		PRIVATE
++			"SMTG_USE_STDATOMIC_H=${SMTG_USE_STDATOMIC_H}"
++	)
+ endif(SMTG_USE_STDATOMIC_H)
+ 
++
+ # vst3 interfaces
+ if (VST_SDK)
+     target_sources(pluginterfaces

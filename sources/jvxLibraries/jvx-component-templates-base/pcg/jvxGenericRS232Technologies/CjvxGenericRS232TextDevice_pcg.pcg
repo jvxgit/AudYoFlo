@@ -1,0 +1,82 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxGenericRs232TextDevice_pcg";
+	CLASSNAME = "CjvxGenericRs232TextDevice_pcg";
+
+	SECTION rs232_sep_token
+	{
+		DESCRIPTION = "Define message sep tokens";  // Defaults to NAME if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION send
+		{
+			DESCRIPTION = "Token for <send>";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";		
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"CR", "LF", "CR-LF", "CR-CR-LF", "CR-LF-FF", "None"};
+			SELECTION_LIST_SELECTED = {"no", "no", "yes", "no", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes", "yes"}; 
+		}; 
+		
+		SECTION receiver
+		{
+			DESCRIPTION = "Token for <receive>";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"CR", "LF", "CR-LF", "CR-CR-LF", "CR-LF-FF", "None"};
+			SELECTION_LIST_SELECTED = {"no", "no", "yes", "no", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes", "yes"}; 
+		}; 
+	};	
+
+	SECTION rs232_log
+	{
+		DESCRIPTION = "Property to view rs-232 messages";  // Defaults to NAME if not present
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"rs232_local_text_log_set"};
+
+		SECTION text_log_collect
+		{
+			DESCRIPTION = "Text Log Collect";	
+			TYPE = "JVX_DATAFORMAT_INTERFACE";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG";
+		};
+
+		
+		SECTION text_log_clear
+		{
+			DESCRIPTION = "Text Log Clear";	
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "rs232_local_text_log_set"; 
+		};
+
+		SECTION text_log_active
+		{
+			DESCRIPTION = "Text Log Active";	
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+		};
+	};	
+
+	SECTION rs232_transfer
+	{
+		DESCRIPTION = "Properties in state active for SLD via RS232";  // Defaults to NAME if not present
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"rs232_generic_message_set"};
+
+		SECTION genmessage
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			DESCRIPTION = "Send a generic RS-232 Message";	  
+			INIT_SET = "";
+			CALLBACK_SET_POSTHOOK = "rs232_generic_message_set"; 
+		};
+	};	
+};

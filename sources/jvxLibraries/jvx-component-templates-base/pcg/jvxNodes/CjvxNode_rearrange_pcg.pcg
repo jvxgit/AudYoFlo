@@ -1,0 +1,58 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxNode_rearrange_genpcg";
+
+	SECTION node_output
+	{
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "node_output";
+		
+		SECTION buffersize
+		{
+			DESCRIPTION = "Buffersize";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 1024; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+		SECTION samplerate
+		{
+			DESCRIPTION = "Rate";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 48000; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+		SECTION format 
+		{
+			DESCRIPTION = "Format";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_FORMAT_IDX";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+		SECTION segmentsize_x
+		{
+			DESCRIPTION = "Segmentation X";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+
+		SECTION segmentsize_y
+		{
+			DESCRIPTION = "Segmentation Y";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+		
+		SECTION subformat
+		{
+			DESCRIPTION = "Processing Subformat";	  // Defaults to NAME if not present
+			INIT_SET = 1; // <- start with datasubformat "JVX_DATASUBFORMAT_AUDIO_PCM"
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_FORMAT_IDX";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+	};
+};

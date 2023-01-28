@@ -1,0 +1,142 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genMexCall_node";
+
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION subFolderName
+		{
+			DESCRIPTION = "Subfolder Name";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			DESCRIPTOR = "JVX_AUN_OFFLINE_SUBFOLDER";
+			INIT_SET = "";
+		};
+
+		SECTION startScriptName
+		{
+			DESCRIPTION = "Name of Start Function";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			DESCRIPTOR = "JVX_AUN_OFFLINE_START_FCT";
+			INIT_SET = "jvxStartOffline";
+		};
+		SECTION stopScriptName
+		{
+			DESCRIPTION = "Name of Stop Function";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_AUN_OFFLINE_STOP_FCT";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "jvxStopOffline";
+		};
+		SECTION processScriptName
+		{
+			DESCRIPTION = "Name of Process Function";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_AUN_OFFLINE_PROCESS_FCT";
+
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "jvxProcessOffline";
+		};
+
+
+		SECTION beforeProcessScriptName
+		{
+			DESCRIPTION = "Name of Function right before processing";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_AUN_OFFLINE_B4_PROCESS_FCT";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "jvxBeforeProcessOffline";
+		};
+
+		SECTION operationMode
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			DESCRIPTION = "Operation Mode";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_AUN_OFFLINE_OPERATION_MODE";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			SELECTION_LIST_NAMES = {"Offline", "Hookup"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+		};
+		SECTION hookupStackDepth
+		{
+			DESCRIPTION = "Hookup Buffer Stack Depth";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_HOOKUP_NUM_BUFFERS";
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			INIT_SET = 2;
+		};
+		SECTION hookupTimeoutMs
+		{
+			DESCRIPTION = "Hookup Timeout [msec]";	  // Defaults to NAME if not present
+			//DESCRIPTOR = "JVX_AUN_OFFLINE_STOP_FCT";
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			INIT_SET = 1000;
+		};
+
+		SECTION hookupTriggerFunction
+		{
+			DESCRIPTION = "Hookup Trigger Function";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			DESCRIPTOR = "JVX_AUN_HOOKUP_TRIGGER";
+			INIT_SET = "";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+		};
+
+		SECTION engageMatlabProcessing
+		{
+			DESCRIPTION = "Flag to engage Matlab processing";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			DESCRIPTOR = "JVX_AUN_ENGAGE_MATLAB";
+			INIT_SET = 1;
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+		};
+
+		SECTION hookupNtimeRT
+		{
+			DESCRIPTION = "Hookup multiples of real-time";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			DESCRIPTOR = "JVX_AUN_HOOKUP_LOAD";
+			INIT_SET = 1;
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+		};
+	};
+	SECTION properties_active_higher
+	{
+		NAME = "properties_active_higher";
+		DESCRIPTION = "Properties in state active and higher";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active & higher---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION hookupLostFrames
+		{
+			DESCRIPTION = "Number Lost Frames";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_HOOKUP_LOST_FRAMES";
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			INIT_SET = 0;
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+		};
+	};
+
+	SECTION properties_common_object_name
+	{
+		DESCRIPTION = "Properties to find object name for externa, Matlab calls";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active & higher---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION object_name
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";
+			DESCRIPTOR = "JVX_AUN_REGISTERED_OBJECT_NAME";
+			INIT_SET = "not set";
+		};
+	};
+};

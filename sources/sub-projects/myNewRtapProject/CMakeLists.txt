@@ -1,0 +1,73 @@
+set(JVX_SUBPRODUCT_MYNEWRTAPPROJECT_LIBS_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/jvxLibraries")
+set(JVX_SUBPRODUCT_MYNEWRTAPPROJECT_LIBS_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/jvxLibraries")
+set(JVX_SUBPRODUCT_MYNEWRTAPPROJECT_LIBS_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+set(JVX_SUBPRODUCT_MYNEWRTAPPROJECT_LOCAL_LIBS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapLibrary/include")
+
+set(JVX_DEPLOY_LIBRARY_DSP_MYNEWRTAPPROJECT_MATLAB TRUE)
+
+message("Generator token: ${JVX_GENERATOR_TOKEN}")
+
+if(${JVX_GENERATOR_TOKEN} MATCHES "Visual Studio 11 2012")
+	message("+++++ Project <myNewRtapProject> contains C++11 elements (deactivated all C++11 in code +++++")
+	# Visual Studio 2012 does not support C++11 features!
+
+else()
+	set(LOCAL_COMPILE_DEFINITIONS "JVX_CC11_ENABLED")
+endif()
+
+
+	###
+	# Installation of Matlab libraries
+	###
+	if(NOT JVX_RELEASE_SDK)
+		if(JVX_DEPLOY_LIBRARY_DSP_MYNEWRTAPPROJECT_MATLAB)
+			set(JVX_MYNEWRTAPPROJECT_MATLAB_LIBS "" )
+			if(JVX_USE_PART_MATLAB)
+				set(JVX_MYNEWRTAPPROJECT_MATLAB_LIBS ${JVX_MYNEWRTAPPROJECT_MATLAB_LIBS}
+					${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapLibrary-matlab/cmake/matlab
+					)
+			endif(JVX_USE_PART_MATLAB)
+			if(JVX_USE_PART_OCTAVE)
+				set(JVX_MYNEWRTAPPROJECT_MATLAB_LIBS ${JVX_MYNEWRTAPPROJECT_MATLAB_LIBS}
+					${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapLibrary-matlab/cmake/octave
+					)
+			endif(JVX_USE_PART_OCTAVE)
+			jvx_addSubdirs("Installation for all Matlab/Octave library files" "${JVX_MYNEWRTAPPROJECT_MATLAB_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/myNewRtapProject")		
+		endif()
+	endif()
+
+	set(JVX_MYNEWRTAPPROJECT_STATIC_LIBS
+		${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapLibrary
+		)
+	jvx_addSubdirs("Configuring static library for myNewProject core functionality" "${JVX_MYNEWRTAPPROJECT_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/myNewRtapProject")
+
+	set(JVX_MYNEWRTAPPROJECT_AUDIONODE
+		${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapAudioNode
+		)
+	jvx_addSubdirs("Configuring shared library for myNewProject audio node" "${JVX_MYNEWRTAPPROJECT_AUDIONODE}" "${JVX_FOLDER_HIERARCHIE_BASE}/myNewRtapProject")
+
+	if(NOT JVX_RELEASE_SDK)
+		set(JVX_MYNEWRTAPPROJECT_APPLICATION "")
+		
+		if(JVX_USE_PART_WEBSERVER)
+			# if WEB SERVER
+			set(JVX_MYNEWRTAPPROJECT_APPLICATION ${JVX_MYNEWRTAPPROJECT_APPLICATION}
+					${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapWebHost
+					)
+		endif()
+		
+		if(JVX_USE_QT)
+			set(JVX_MYNEWRTAPPROJECT_APPLICATION ${JVX_MYNEWRTAPPROJECT_APPLICATION}
+				${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapApplication
+				)
+
+			if(JVX_USE_PART_WEBSERVER)
+				# if WEB SERVER
+				set(JVX_MYNEWRTAPPROJECT_APPLICATION ${JVX_MYNEWRTAPPROJECT_APPLICATION}
+					${CMAKE_CURRENT_SOURCE_DIR}/myNewRtapRemoteControl)
+			endif()
+		endif()
+		jvx_addSubdirs("Configuring application myNewProject " "${JVX_MYNEWRTAPPROJECT_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/myNewRtapProject")
+	endif()
+
+

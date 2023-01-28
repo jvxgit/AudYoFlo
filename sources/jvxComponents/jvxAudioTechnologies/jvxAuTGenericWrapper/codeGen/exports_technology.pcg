@@ -1,0 +1,313 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genGenericWrapper_technology";
+
+	SECTION properties_selected
+	{
+		NAME = "properties_selected";
+		DESCRIPTION = "Properties in state selected";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state selected ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE"};
+					
+		SECTION technologies
+		{
+			NAME = "technologies";
+			DESCRIPTION = "Available technologies";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			DESCRIPTOR = "JVX_GENW_TECHNOLOGIES";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			// ONLY_CONTENT_TO_CONFIG = "yes";
+		}; 
+	};
+
+	SECTION select_files
+	{
+		DESCRIPTION = "Select current input and output file";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		PREFIX = "select_files";
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		SECTION input_file
+		{
+			DESCRIPTION = "Available input files";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+		};
+		SECTION output_file
+		{
+			DESCRIPTION = "Available output files";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+		};
+	};
+
+	SECTION properties_selected_input_file
+	{
+		DESCRIPTION = "Property for the curently selected input file";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		PREFIX = "properties_selected_input_file";
+		CALLBACKS = {"prop_selected_input_file_set", "prop_selected_input_file_set_pre", "prop_selected_input_file_get"};
+
+		SECTION num_channels
+		{
+			DESCRIPTION = "Number input channels";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			INIT_SET = 0;
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};
+		SECTION friendly_name
+		{
+			DESCRIPTION = "Friendly file name";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			INIT_SET = 0;
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};
+		SECTION samplerate
+		{
+			DESCRIPTION = "Samplerate";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 0;
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};
+		SECTION mode
+		{
+			DESCRIPTION = "Current File Mode";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";			
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			SELECTION_LIST_NAMES = {"PCM-16BIT", "PCM-24BIT", "PCM-32BIT", "PCM-32BIT-float", "PCM-16BIT-RF64", "PCM-24BIT-RF64", "PCM-32BIT-RF64", "PCM-32BIT-float-RF64"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes"}; 
+
+		};
+		SECTION file_length
+		{
+			DESCRIPTION = "Length of file in samples";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+		};	
+
+		// Properties that may be modified
+		SECTION lookahead
+		{
+			DESCRIPTION = "File lookahead";
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+		SECTION boost_prio
+		{
+			DESCRIPTION = "Boost priority when reading";
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+		SECTION loop
+		{
+			DESCRIPTION = "Loop input";
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 1;
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+		SECTION pause_on_start
+		{
+			DESCRIPTION = "Pause on start";
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+
+		// While in operation...
+		SECTION triggerFwd
+		{
+			DESCRIPTION = "Trigger Forward";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+		};		
+		SECTION triggerBwd
+		{
+			DESCRIPTION = "Trigger Backward";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+		};		
+		SECTION triggerPause
+		{
+			DESCRIPTION = "Trigger Pause";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+		};		
+		SECTION triggerPlay
+		{
+			DESCRIPTION = "Trigger Play";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+		};		
+		
+		SECTION triggerRestart
+		{
+			DESCRIPTION = "Trigger Restart";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CALLBACK_SET_PREHOOK = "prop_selected_input_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_input_file_set";
+		};		
+
+		SECTION progress
+		{
+			DESCRIPTION = "Progress during playback";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CALLBACK_GET_PREHOOK = "prop_selected_input_file_get";
+		};			
+	};		
+
+	SECTION properties_selected_output_file
+	{
+		DESCRIPTION = "Property for the curently selected input file";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		PREFIX = "properties_selected_output_file";
+		CALLBACKS = {"prop_selected_output_file_set", "prop_selected_output_file_set_pre", "prop_selected_output_file_get"};
+
+		SECTION num_channels
+		{
+			DESCRIPTION = "Number channels";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			INIT_SET = 0;
+			CALLBACK_SET_PREHOOK = "prop_selected_output_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_output_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_output_file_get";
+		};
+		SECTION samplerate
+		{
+			DESCRIPTION = "Samplerate";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 0;
+			CALLBACK_SET_PREHOOK = "prop_selected_output_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_output_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_output_file_get";
+		};
+		SECTION mode
+		{
+			DESCRIPTION = "Current File Mode";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";		
+			CALLBACK_SET_PREHOOK = "prop_selected_output_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_output_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_output_file_get";
+			SELECTION_LIST_NAMES = {"PCM-16BIT", "PCM-24BIT", "PCM-32BIT", "PCM-32BIT-float", "PCM-16BIT-RF64", "PCM-24BIT-RF64", "PCM-32BIT-RF64", "PCM-32BIT-float-RF64"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes"}; 
+
+		};
+		// Properties that may be modified
+		SECTION lookahead
+		{
+			DESCRIPTION = "File lookahead";
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";
+			CALLBACK_SET_PREHOOK = "prop_selected_output_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_output_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_output_file_get";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};		
+		SECTION boost_prio
+		{
+			DESCRIPTION = "Boost priority when reading";
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+			CALLBACK_SET_PREHOOK = "prop_selected_output_file_set_pre";
+			CALLBACK_SET_POSTHOOK = "prop_selected_output_file_set";
+			CALLBACK_GET_PREHOOK = "prop_selected_output_file_get";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+	};
+
+	SECTION properties_selected_higher
+	{
+		NAME = "properties_selected_active";
+		DESCRIPTION = "Properties in state selected and active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state selected and higher ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE"};
+				
+		SECTION specifyCommand
+		{
+			DESCRIPTION = "Issue text format commands to component";	  // Defaults to NAME if not present
+			ID = "jvx_command_string";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_GENW_COMMAND";
+		};		
+
+		SECTION defaultPathAudioFiles
+		{	 
+			DESCRIPTION = "Default path where to look for wav audio files";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "./wavs";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_GENW_DEFAULT_PATH_WAVS";
+		};		
+
+		SECTION numberInDummies
+		{
+			DESCRIPTION = "Number of dummy channels";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_GENW_NUM_INPUT_DUMMIES";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			INIT_SET = 0;
+		};		
+		
+		SECTION numberOutDummies
+		{
+			DESCRIPTION = "Number of dummy out channels";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_GENW_NUM_OUTPUT_DUMMIES";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			INIT_SET = 0;
+		};			
+		
+	};
+		
+	
+};

@@ -1,0 +1,39 @@
+	
+	SECTION dev_caps
+	{
+		ID = "jvx_dev_caps_sellist";
+		// TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		// CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		
+		SELECTION_LIST_VAR_NAME = "jvxDeviceCapabilities_str";
+		SELECTION_LIST_VAR_NUM_PREFIX = "jvxDeviceCapabilities::";
+		SELECTION_LIST_VAR_POSTFIX = ".friendly";
+		SELECTION_LIST_VAR_NUM_MAX = "JVX_DEVICE_LIMIT";
+
+		SELECTION_LIST_SELECTED = {"yes"};
+		SELECTION_LIST_EXCLUSIVE = {"yes",
+			"yes", "yes", "yes",
+			"yes", "yes", "yes",
+			"yes", "yes", "yes"}; 
+			
+		SELECTION_TRANSLATOR_TYPE = "jvxDeviceCapabilities";
+		CALLBACK_GET_PREHOOK = "get_device_cap";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		DESCRIPTION = "Device Capabilities [jvxDeviceCapabilities]"; 
+	}; 
+
+	SECTION dev_avail
+	{
+		ID = "jvx_dev_avail_int16";
+		INIT = 1; // Device is typically available on init
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		CALLBACK_GET_PREHOOK = "get_device_avail";
+	};
+
+	SECTION dev_sslot
+	{
+		ID = "jvx_dev_sslot_size";
+		INIT = -1; // Device is typically available on init
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		CALLBACK_GET_PREHOOK = "get_device_sslot";
+	};

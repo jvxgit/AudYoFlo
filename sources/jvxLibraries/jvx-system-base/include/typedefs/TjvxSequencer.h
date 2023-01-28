@@ -1,0 +1,269 @@
+#ifndef __TJVXSEQUENCER_H__
+#define __TJVXSEQUENCER_H__
+
+typedef enum
+{
+	JVX_SEQUENCER_TYPE_COMMAND_NONE = 0,
+
+	// A standard command to address to one of the components to initiate state change commands
+	JVX_SEQUENCER_TYPE_COMMAND_COMPONENT_ACTIVATE,
+	JVX_SEQUENCER_TYPE_COMMAND_COMPONENT_PREPARE,
+	JVX_SEQUENCER_TYPE_COMMAND_COMPONENT_START,
+	JVX_SEQUENCER_TYPE_COMMAND_COMPONENT_STOP,
+	JVX_SEQUENCER_TYPE_COMMAND_COMPONENT_POSTPROCESS,
+	JVX_SEQUENCER_TYPE_COMMAND_COMPONENT_DEACTIVATE,
+
+	// Wait condition command
+	JVX_SEQUENCER_TYPE_CONDITION_WAIT,
+
+	// Conditional jump
+	JVX_SEQUENCER_TYPE_CONDITION_JUMP,
+
+	// Unconditional jump
+	JVX_SEQUENCER_TYPE_JUMP,
+
+	// Component specific command addressed by function_id
+	JVX_SEQUENCER_TYPE_COMMAND_SPECIFIC,
+
+	// Wait until someone pushes "stop"
+	JVX_SEQUENCER_TYPE_WAIT_FOREVER,
+
+	// Conditional relative jump
+	JVX_SEQUENCER_TYPE_WAIT_CONDITION_RELATIVE_JUMP,
+
+	// Break current loop step processing call
+	JVX_SEQUENCER_TYPE_BREAK,
+
+	JVX_SEQUENCER_TYPE_REQUEST_UPDATE_VIEWER,
+	
+	JVX_SEQUENCER_TYPE_REQUEST_START_IN_PROCESSING_LOOP,
+
+	JVX_SEQUENCER_TYPE_REQUEST_STOP_IN_PROCESSING_LOOP,
+
+	JVX_SEQUENCER_TYPE_CALLBACK,
+
+	// Commands to address the connection processes
+	JVX_SEQUENCER_TYPE_COMMAND_PROCESS_PREPARE,
+	JVX_SEQUENCER_TYPE_COMMAND_PROCESS_START,
+	JVX_SEQUENCER_TYPE_COMMAND_PROCESS_STOP,
+	JVX_SEQUENCER_TYPE_COMMAND_PROCESS_POSTPROCESS,
+	
+	JVX_SEQUENCER_TYPE_COMMAND_OUTPUT_TEXT,
+
+	JVX_SEQUENCER_TYPE_COMMAND_CALL_SEQUENCE,
+
+	JVX_SEQUENCER_TYPE_COMMAND_SWITCH_STATE,
+	JVX_SEQUENCER_TYPE_COMMAND_RESET_STATE,
+
+	JVX_SEQUENCER_TYPE_COMMAND_PROCESS_TEST,
+
+	JVX_SEQUENCER_TYPE_COMMAND_INTERCEPT,
+	JVX_SEQUENCER_TYPE_COMMAND_NOP,
+
+	JVX_SEQUENCER_TYPE_COMMAND_SET_PROPERTY,
+	JVX_SEQUENCER_TYPE_COMMAND_INVOKE_ERROR,
+	JVX_SEQUENCER_TYPE_COMMAND_INVOKE_FATAL_ERROR,
+
+	JVX_SEQUENCER_TYPE_UNCONDITION_WAIT,
+
+	JVX_SEQUENCER_TYPE_WAIT_AND_RUN_TASKS,
+
+	JVX_SEQUENCER_TYPE_COMMAND_LIMIT
+
+} jvxSequencerElementType;
+
+#define JVXSEQUENCEREVENT_NUM 15
+typedef enum
+{
+	JVX_SEQUENCER_EVENT_NONE = 0,
+	JVX_SEQUENCER_EVENT_PROCESS_STARTUP_COMPLETE = 0x1,
+	JVX_SEQUENCER_EVENT_SEQUENCE_STARTUP_COMPLETE = 0x2,
+	JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP = 0x4,
+	JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR = 0x8,
+	JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_SEQUENCE = 0x10,
+	JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_SEQUENCE_ERROR = 0x20,
+	JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_SEQUENCE_ABORT = 0x40,
+	JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_PROCESS = 0x80,
+	JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ERROR = 0x100,
+	JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ABORT = 0x200,
+	JVX_SEQUENCER_EVENT_PROCESS_TERMINATED = 0x400,
+	JVX_SEQUENCER_EVENT_INFO_TEXT = 0x800,
+	JVX_SEQUENCER_EVENT_DEBUG_MESSAGE = 0x1000,
+	JVX_SEQUENCER_EVENT_REPORT_OPERATION_STATE = 0x2000,
+	JVX_SEQUENCER_EVENT_REPORT_ENTERED_STEP_BREAK = 0x4000,
+	JVX_SEQUENCER_EVENT_REPORT_SKIPPED_STEP = 0x8000,
+	JVX_SEQUENCER_EVENT_REPORT_ALL = 
+		(JVX_SEQUENCER_EVENT_PROCESS_STARTUP_COMPLETE | JVX_SEQUENCER_EVENT_SEQUENCE_STARTUP_COMPLETE | JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP |
+		JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR | JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_SEQUENCE | 
+		JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_SEQUENCE_ERROR | JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_SEQUENCE_ABORT |
+		JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_PROCESS | JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ERROR |
+		JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ABORT  | JVX_SEQUENCER_EVENT_PROCESS_TERMINATED |
+		JVX_SEQUENCER_EVENT_INFO_TEXT | JVX_SEQUENCER_EVENT_DEBUG_MESSAGE | JVX_SEQUENCER_EVENT_REPORT_OPERATION_STATE |
+		JVX_SEQUENCER_EVENT_REPORT_ENTERED_STEP_BREAK | JVX_SEQUENCER_EVENT_REPORT_SKIPPED_STEP)
+} jvxSequencerEvent;
+
+typedef enum
+{
+	JVX_SEQUENCER_STATUS_NONE = 0,
+	JVX_SEQUENCER_STATUS_STARTUP,
+	JVX_SEQUENCER_STATUS_IN_OPERATION,
+	JVX_SEQUENCER_STATUS_WAITING,
+	JVX_SEQUENCER_STATUS_WANTS_TO_STOP_PROCESS,
+	JVX_SEQUENCER_STATUS_WANTS_TO_STOP_SEQUENCE,
+	JVX_SEQUENCER_STATUS_SHUTDOWN_IN_PROGRESS,
+	JVX_SEQUENCER_STATUS_ERROR,
+	JVX_SEQUENCER_STATUS_SHUTDOWN_COMPLETE,
+	JVX_SEQUENCER_STATUS_LIMIT
+} jvxSequencerStatus;
+
+typedef enum
+{
+	JVX_SEQUENCE_STATE_NONE = 0,
+	JVX_SEQUENCE_STATE_IN_PROCESSING,
+} jvxProcessState;
+
+typedef enum
+{
+	JVX_SEQUENCER_QUEUE_TYPE_NONE = 0,
+	JVX_SEQUENCER_QUEUE_TYPE_RUN,
+	JVX_SEQUENCER_QUEUE_TYPE_LEAVE,
+	JVX_SEQUENCER_QUEUE_TYPE_LIMIT
+} jvxSequencerQueueType;
+
+typedef enum
+{
+	JVX_SEQUENCER_STEP_STATE_NONE,
+	JVX_SEQUENCER_STEP_STATE_ENTERED,
+	JVX_SEQUENCER_STEP_STATE_RELEASED
+} jvxSequencerStepState;
+
+typedef enum
+{
+	JVX_SEQUENCER_EDIT_STEP_DESCRIPTION = 0x1,
+	JVX_SEQUENCER_EDIT_STEP_LABEL_FALSE = 0x2,
+	JVX_SEQUENCER_EDIT_STEP_LABEL_TRUE = 0x4,
+	JVX_SEQUENCER_EDIT_STEP_FID = 0x8,
+	JVX_SEQUENCER_EDIT_STEP_LABEL = 0x10,
+	JVX_SEQUENCER_EDIT_STEP_TARGET = 0x20,
+	JVX_SEQUENCER_EDIT_STEP_TIMEOUT = 0x40,
+	JVX_SEQUENCER_EDIT_STEP_TYPE = 0x80,
+	JVX_SEQUENCER_EDIT_STEP_BREAK_STEP = 0x100,
+	JVX_SEQUENCER_EDIT_STEP_ASSOC_MODE = 0x200
+} jvxSequencerEditTargetEnum;
+
+class jvxOneSequencerStepDefinition
+{
+public:
+	jvxSequencerQueueType seqType;
+	jvxSequencerElementType tpElm;
+	jvxComponentType tpComp;
+	jvxSize slotid;
+	jvxSize slotsubid;
+	std::string descr;
+	std::string label_step;
+
+	jvxSize funcId;
+	jvxInt64 timeout;
+	std::string label_cond1;
+	std::string label_cond2;
+
+	jvxBool break_action;
+	jvxCBitField mode_association;
+	jvxOneSequencerStepDefinition(
+		jvxSequencerQueueType seqTypeArg,
+		jvxSequencerElementType tpElmArg,
+		jvxComponentType tpCompArg,
+		jvxSize slotidArg,
+		jvxSize slotsubidArg,
+		std::string descrArg,
+		std::string label_stepArg,
+		jvxSize funcIdArg = JVX_SIZE_UNSELECTED,
+		jvxInt64 timeoutArg = -1,
+		std::string label_cond1Arg = "no label",
+		std::string label_cond2Arg = "no label",
+		jvxBool break_actionArg = false,
+		jvxCBitField mode_associationArg = (jvxUInt64)-1)
+	{
+		seqType = seqTypeArg;
+		tpElm = tpElmArg;
+		tpComp = tpCompArg;
+		slotid = slotidArg;
+		slotsubid = slotsubidArg;
+		descr = descrArg;
+		label_step = label_stepArg;
+		funcId = funcIdArg;
+		timeout = timeoutArg;
+		label_cond1 = label_cond1Arg;
+		label_cond2 = label_cond2Arg;
+		break_action = break_actionArg;
+		mode_association = mode_associationArg;
+	};
+};
+
+typedef struct
+{
+	jvxCBitField event_mask;
+	const char* description;
+	jvxSize sequenceId;
+	jvxSize stepId;
+	jvxSequencerQueueType qtp;
+	jvxSequencerElementType etp;
+	jvxSize fId;
+	jvxSize oState;
+}jvxSpecialEventType_seq;
+
+// =============================================================
+enum class jvxSequencerTaskState
+{
+	JVX_STATE_SEQUENCER_TASK_INVALID,
+	JVX_STATE_SEQUENCER_TASK_WAITING,
+	JVX_STATE_SEQUENCER_TASK_RUN_ACTIVATED,
+	JVX_STATE_SEQUENCER_TASK_RUN_COMPLETE,
+	JVX_STATE_SEQUENCER_TASK_LEAVE_ACTIVATED,
+	JVX_STATE_SEQUENCER_TASK_LEAVE_COMPLETE
+};
+
+class jvxSequencerTaskStatus
+{
+public:
+	jvxSequencerTaskState stat = jvxSequencerTaskState::JVX_STATE_SEQUENCER_TASK_INVALID;
+	jvxSequencerQueueType qTp = JVX_SEQUENCER_QUEUE_TYPE_NONE;
+	jvxBool is_active = false;
+};
+
+class jvxSequencerOneStepReturn
+{
+public:
+
+	jvxApiString* out_description = nullptr;
+	jvxSequencerElementType* out_elementType = nullptr;
+	jvxComponentIdentification* out_targetComponentType = nullptr;
+	jvxSize* out_functionId = nullptr;
+	jvxInt64* out_timeout_ms = nullptr;
+	jvxApiString* out_label_name = nullptr;
+	jvxApiString* out_cond_label_true = nullptr;
+	jvxApiString* out_cond_label_false = nullptr;
+	jvxBool* out_break_condition = nullptr;
+	jvxCBitField* out_assoc_mode = nullptr;
+	jvxBool* out_allow_fail = nullptr;
+};
+
+#define JVX_SEQUENCER_MODE_ERROR 0x1
+#define JVX_SEQUENCER_NUMBER_MODES 4
+#define JVX_SEQUENCER_MODE_ALL 0xF
+
+class TjvxSequencerEvent
+{
+public:
+	jvxCBitField event_mask = 0;
+	jvxApiString description;
+	jvxSize sequenceId = JVX_SIZE_UNSELECTED;
+	jvxSize stepId = JVX_SIZE_UNSELECTED;
+	jvxSequencerQueueType tp = JVX_SEQUENCER_QUEUE_TYPE_NONE;
+	jvxSequencerElementType stp = JVX_SEQUENCER_TYPE_COMMAND_NONE;
+	jvxSize fId = JVX_SIZE_UNSELECTED;
+	jvxSize current_state = JVX_SEQUENCER_STATUS_NONE;
+	jvxBool indicateFirstError = false;
+};
+
+#endif

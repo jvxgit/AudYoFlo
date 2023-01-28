@@ -1,0 +1,121 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "CjvxDataConnectionGroup_genpcg";
+	SECTION properties
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"get_data_prehook"};
+			
+		SECTION select_task
+		{
+			DESCRIPTION = "Selection of tasks";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"NO OPTION"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+		};
+
+		SECTION select_chain
+		{
+			DESCRIPTION = "Selection of chain entry";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"NO OPTION"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			ONLY_CONTENT_TO_CONFIG = "yes";
+		};
+
+		SECTION max_wait_timeout
+		{
+			DESCRIPTION = "Maximum wait period on processing";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 1000;
+		};
+
+		// Show only
+		SECTION avrg_duration_task
+		{
+			DESCRIPTION = "Average duration of the task";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			INIT_SET = 0;
+			CALLBACK_GET_PREHOOK = "get_data_prehook"; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};
+
+		SECTION max_duration_task
+		{
+			DESCRIPTION = "Maximum duration of the task";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			INIT_SET = 0;
+			CALLBACK_GET_PREHOOK = "get_data_prehook"; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};
+
+		SECTION num_fails
+		{
+			DESCRIPTION = "Number of processing fails due to processing overload";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 0;
+			CALLBACK_GET_PREHOOK = "get_data_prehook"; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};	
+
+		SECTION num_extra_buffers
+		{
+			DESCRIPTION = "Number extra buffers";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			CALLBACK_SET_POSTHOOK = "set_chain_posthook";
+			CALLBACK_GET_PREHOOK = "get_chain_prehook";
+		};
+	};
+
+	SECTION properties_chain
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"get_chain_prehook", "set_chain_posthook"};
+		
+		SECTION processing_strategy
+		{
+			DESCRIPTION = "Processing Strategy";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"Wait", "Reject"};
+			SELECTION_LIST_TRANSLATORS = {"JVX_PROCESSING_STRATEGY_WAIT", "JVX_PROCESSING_STRATEGY_REJECT"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			SELECTION_TRANSLATOR_TYPE = "jvxThreadProcessingStrategy";
+			CALLBACK_SET_POSTHOOK = "set_chain_posthook";
+			CALLBACK_GET_PREHOOK = "get_chain_prehook";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+
+		SECTION thread_model
+		{
+			DESCRIPTION = "Thread Model";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"SEQ_CHAIN_THREADS", "PARALLEL_CHAIN_THREADS"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_TRANSLATOR_TYPE = "jvxProcessingGroupThreadMode";
+			SELECTION_LIST_TRANSLATORS = {"JVX_THREAD_PROC_GROUP_MODE_SEQ_CHAIN_THREADS", "JVX_THREAD_PROC_GROUP_MODE_FULL_THREADS_COUPLED"};
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			CALLBACK_SET_POSTHOOK = "set_chain_posthook";
+			CALLBACK_GET_PREHOOK = "get_chain_prehook";
+		};
+	};
+};

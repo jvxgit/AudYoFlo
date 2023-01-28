@@ -1,0 +1,37 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genWindows_technology";
+
+	SECTION properties_selected
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+
+		SECTION device_mode_input
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			SELECTION_LIST_NAMES = {"exclusive", "shared"};
+			SELECTION_LIST_SELECTED = {"no", "yes"};
+			SELECTION_LIST_TRANSLATORS = {
+				"AUDCLNT_SHAREMODE_EXCLUSIVE", 
+				"AUDCLNT_SHAREMODE_SHARED"};
+			SELECTION_TRANSLATOR_TYPE = "AUDCLNT_SHAREMODE";
+		};		
+		SECTION device_mode_output
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			SELECTION_LIST_NAMES = {"exclusive", "shared"};
+			SELECTION_LIST_SELECTED = {"no", "yes"};
+			SELECTION_LIST_TRANSLATORS = {
+				"AUDCLNT_SHAREMODE_EXCLUSIVE", 
+				"AUDCLNT_SHAREMODE_SHARED"};
+			SELECTION_TRANSLATOR_TYPE = "AUDCLNT_SHAREMODE";		
+		};		
+	};
+};

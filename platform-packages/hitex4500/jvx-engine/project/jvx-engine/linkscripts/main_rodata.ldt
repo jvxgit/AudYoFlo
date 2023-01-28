@@ -1,0 +1,5 @@
+	*(EXCLUDE_FILE(*libjvx-dsp.a:) .rodata)
+	*(EXCLUDE_FILE(*libjvx-dsp.a:) .rodata.*)
+	*(EXCLUDE_FILE(*libjvx-dsp.a:) .constdata)
+	*(EXCLUDE_FILE(*libjvx-dsp.a:) .constdata.*)
+	. = ALIGN(${text_align});

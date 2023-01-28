@@ -1,0 +1,51 @@
+SECTION properties_logtofile
+{
+	DESCRIPTION = "Properties specific for audio log file storage";
+	GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+	GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+	COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+	ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+	SECTION groupTitle
+	{
+		TYPE = "JVX_DATAFORMAT_STRING";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		INIT_SET = "Log Audio Signal";    
+	};
+
+	SECTION logFilePrefix
+	{
+		TYPE = "JVX_DATAFORMAT_STRING";
+		DESCRIPTION = "Specify text prefix for logfile writing";	  // Defaults to NAME if not present
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		INIT_SET = "jvxSignalLog";    
+	};
+
+	SECTION logFileFolder
+	{
+		TYPE = "JVX_DATAFORMAT_STRING";
+		DESCRIPTION = "Specify directory to store logfile";	  // Defaults to NAME if not present
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		INIT_SET = "./";    
+	};
+
+	SECTION activateLogToFile
+	{
+		DESCRIPTION = "Activate log file writer";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SIMPLE_ONOFF";
+		INIT_SET = 0;
+	};
+
+	SECTION fillHeightBuffer
+	{
+		TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";
+		DESCRIPTION = "Fill height of buffer while saving log file data";	  // Defaults to NAME if not present
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		VALUE_IN_RANGE_MIN_VALUE = 0;
+		VALUE_IN_RANGE_MAX_VALUE = 100;
+		VALUE_IN_RANGE_VALUE = 0;
+		GENERATE_ENTRY_CONFIG_FILE = "no";        // Defaults to "no" if not present
+	};
+};

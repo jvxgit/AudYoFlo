@@ -1,0 +1,9 @@
+#ifndef __JVXQTAUDIOHOST_COMMON_H__
+#define __JVXQTAUDIOHOST_COMMON_H__
+
+#include "jvx-qt-helpers.h"
+
+#define NUMBER_LETTERS_FILENAMES 40
+#define NUMBER_LETTERS_CHANNELNAMES 40
+
+#endif

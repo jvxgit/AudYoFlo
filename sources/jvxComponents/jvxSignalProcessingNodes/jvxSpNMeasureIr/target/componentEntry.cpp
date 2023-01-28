@@ -1,0 +1,12 @@
+#include "CjvxSpNMeasureIr.h"
+
+#define COMPONENT_DESCRIPTION "JVX Measure Ir"
+#define COMPONENT_TYPE CjvxSpNMeasureIr
+#define _JVX_ALLOW_MULTIPLE_INSTANCES
+#define COMPONENT_TYPE_SPECIALIZATION JVX_COMPONENT_SIGNAL_PROCESSING_NODE
+#define COMPONENT_DESCR_SPECIALIZATION "signalprocessing_node/jvx-measure-ir"
+
+#define JVX_NODE_TYPE_SPECIFIER_TYPE 
+#define JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR "signal_processing_node"
+
+#include "templates/targets/factory_IjvxObject.cpp"

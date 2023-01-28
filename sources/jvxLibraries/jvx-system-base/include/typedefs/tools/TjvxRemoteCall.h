@@ -1,0 +1,35 @@
+#ifndef __TJVXREMOTECALL_H__
+#define __TJVXREMOTECALL_H__
+
+typedef enum
+{
+	JVX_RC_OPERATE_NONE = 0,
+	JVX_RC_OPERATE_MASTER = 1,
+	JVX_RC_OPERATE_SLAVE = 2
+} jvxRCOperationMode;
+
+typedef enum
+{
+	JVX_RC_CONNECTION_EVENT_NONE = 0,
+	JVX_RC_CONNECTION_EVENT_ESTABLISHED = 1,
+	JVX_RC_CONNECTION_EVENT_CLOSED = 2
+} jvxRCEventType;
+
+typedef enum
+{
+	JVX_RC_CONNECTION_STATE_NONE = 0,
+	JVX_RC_CONNECTION_STATE_CONNECTED = 1,
+	JVX_RC_CONNECTION_STATE_INCOMING_REQUEST_PENDING = 2,
+	JVX_RC_CONNECTION_STATE_CONNECTED_REQUEST_PENDING = 3,
+	JVX_RC_CONNECTION_STATE_DISCONNECTED_REQUEST_PENDING = 4,
+	JVX_RC_CONNECTION_STATE_READY_TO_ACCEPT_INCOMING = 5
+} jvxRCConnectionState;
+
+// One transmitted parameter description + content
+typedef struct
+{
+	jvxHandle** content;
+	jvxRcProtocol_parameter_description description;
+} jvxRCOneParameter;
+
+#endif

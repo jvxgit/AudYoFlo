@@ -1,0 +1,118 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxAudioDevice_genpcg";
+
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION buffersize
+		{
+			DESCRIPTION = "Audio buffersize";	  // Defaults to NAME if not present
+			INIT_SET = 1024; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_framesize_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+
+		};
+		SECTION samplerate
+		{
+			DESCRIPTION = "Sample rate Audio device";	  // Defaults to NAME if not present
+			INIT_SET = 48000; 
+			ID = "jvx_rate_int32"; 	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	
+		};
+		SECTION format
+		{
+			DESCRIPTION = "Processing format";	  // Defaults to NAME if not present
+			INIT_SET = 1; // <- start with dataformat "DATA"
+			ID = "jvx_processing_format_int16"; 
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		};
+		SECTION numberinputchannels
+		{
+			DESCRIPTION = "Number of input channels";	  // Defaults to NAME if not present
+			INIT_SET = 0; 
+			ID = "jvx_num_input_channels_int32"; 
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		};
+		SECTION numberoutputchannels
+		{
+			DESCRIPTION = "Number of output channels";	  // Defaults to NAME if not present
+			INIT_SET = 0; 
+			ID = "jvx_num_output_channels_int32"; 		
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		}; 
+				
+		SECTION inputchannelselection
+		{
+			DESCRIPTION = "Selection of input channels";	  // Defaults to NAME if not present
+			ID = "jvx_selection_input_channels_sellist"; 		
+			ONLY_CONTENT_TO_CONFIG = "yes"; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";			
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};  
+		SECTION outputchannelselection
+		{
+			DESCRIPTION = "Selection of output channels";	  // Defaults to NAME if not present
+			ID = "jvx_selection_output_channels_sellist"; 		
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+
+		SECTION formatselection
+		{
+			DESCRIPTION = "Selection of processing formats";	  // Defaults to NAME if not present
+			ID = "jvx_selection_formats_sellist"; 		
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			IGNORE_CONFIG_PROBLEMS = "no";
+		};
+
+		SECTION lostBuffers
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			DESCRIPTION = "Number of lost buffers during processing";	  // Defaults to NAME if not present
+			ID = "jvx_number_lost_buffer_int32"; 	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		};
+		SECTION activateSilenceStop
+		{
+			DESCRIPTION = "Activate to fillup silence on stop";	  // Defaults to NAME if not present
+			INIT_SET = 0;
+			ID = "jvx_activate_fillup_silence_on_stop_bool"; 	
+		};		
+		SECTION periodSilenceStop
+		{
+			DESCRIPTION = "Time period in secs to fillup silence on stop";	  // Defaults to NAME if not present
+			INIT_SET = 0.5;
+			ID = "jvx_period_fillup_silence_on_stop_data"; 	
+		};		
+		SECTION sourceName
+		{
+			DESCRIPTION = "Name of the data source";	  // Defaults to NAME if not present
+			INIT_SET = "Input";
+			ID = "jvx_src_name_str"; 	
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};		
+		SECTION sinkName
+		{
+			DESCRIPTION = "Name of the data sink";	  // Defaults to NAME if not present
+			INIT_SET = "Output";
+			ID = "jvx_snk_name_str"; 	
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};		
+	}; 
+};

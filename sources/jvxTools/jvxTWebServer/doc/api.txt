@@ -1,0 +1,207 @@
+# Handle listings of components
+
+======================================================
+POST:
+A) 
+URL: /jvx/host/general/
+
+FUNKTION/INPUT/OUTPUT:
+
+Funktion, um den Zustand des Hosts auszugeben.
+-1I- "purpose":"state"
+-1O- {"result": "ok","err": "--","status":<STATE>} 
+
+Funktion, um den Zustand des Hosts auszugeben.
+-2I- "purpose":"safe_config"
+-2O- {"result": "ok","err": "--"}
+
+======================================================
+POST:
+B) 
+URL: /jvx/host/components/
+
+FUNKTION/INPUT/OUTPUT:
+
+Funktion, um alle Instanzen eines Komponenten-Typs auszugeben.
+-1I- "purpose":"description"	, "component_target":<COMP_TP>
+-1O- {"result": "ok","err": "--","component_target":<COMP_TP>,"components": [<DESCRIPTION>, <DESCRIPTION>, <DESCRIPTION>]}
+
+Funktion, um den Zustand einer ausgewählten Komponente auszugeben. Es ist von jedem Typ immer genau 0 oder 1 Komponente zulässig.
+-2I- "purpose":"state"		, "component_target":<COMP_TP>
+-2O- {"result": "ok","err": "--","component_target":<COMP_TP>,"state":<STATE>"}
+
+Funktion, um den Zustand einer Komponente zu wechseln. Der zusätzliche Index ist nur bei select wichtig,
+da dort eine der Komponenten, die mit 2-1 gelistet wurden, ausgewählt wird.
+-3I- "purpose":"switch_state", "component_target":<COMP_TP>,"operation":<STATE_SWITCH>[,"idx":<INTEGER>] -> (default idx: -1)
+-3O- {"result": "ok","err": "--","component_target":<COMP_TP>}
+
+======================================================
+POST:
+C)
+URL: /jvx/host/sequencer/
+
+FUNKTION/INPUT/OUTPUT:
+
+Funktion, um den Zustand des Sequenzers zu erhalten
+-1I- "purpose":"state"
+-1O- {"result": "ok","err": "--","status":<STATUS_SEQUENCER>,"seq_id":<INTEGER>,"queue_tp":<QUEUE_TYPE>,"step_id":<INTEGER>}
+
+Funktion, um den Sequenzer zu starten.
+-2I- "purpose":"start"
+-2O- {"result": "ok","err": "--"}
+
+Funktion, um den Sequenzer zu stoppen.
+-3I- "purpose":"stop"
+-3O- {"result": "ok","err": "--"}
+
+======================================================
+
+POST:
+D) URL: /jvx/host/properties/
+
+FUNKTION/INPUT/OUTPUT:
+Funktion, um alle Properties der ausgewählten Komponente zu listen. 
+-1I- "purpose":"description", "component_target":<COMP_TP>
+-1O- {"result": "ok","err": "--", "properties": [PROPERTY_DESCRIPTION1,PROPERTY_DESCRIPTION2,...]}
+
+Function to return the property content. <DESCRIPTOR> is the descriptor field as returned by D)-1, 
+<CONTENT> depends on the property characteristics.
+-2I- "purpose":"get-content", "component_target":<COMP_TP>,"property_descriptor":<DESCRIPTOR>[, "content_only":<CONTENT_ONLY>]  -> (default "no")
+-2O- {"result": "ok","err": "--","component_target":<COMP_TP>,"property_descriptor":<DESCRIPTOR>,"content":<CONTENT>}
+
+Function to return the property content. <DESCRIPTOR> is the descriptor field as returned by D)-1, 
+<CONTENT> depends on the property characteristics.
+-3I- "purpose":"set-content", "component_target":<COMP_TP>,"property_descriptor":<DESCRIPTOR>[, "content_only":<CONTENT_ONLY>], "content":<CONTENT> -> (default "no")
+-3O- {"result": "ok","err": "--"}
+
+======================================================================================================
+
+INPUT STRING-PARAMETER
+#########################################
+STATE =
+"none",
+"init",
+"selected",
+"active",
+"prepared",
+"processing",
+"complete"
+
+STATUS_SEQUENCER =
+"none",
+"startup",
+"in operation",
+"waiting",
+"wants to shutdown",
+"shutdown",
+"error",
+"shutdown complete"
+
+STATE_SWITCH =
+"none",
+"initialize",
+"select",
+"activate",
+"prepare",
+"start",
+"stop",
+"postprocess",
+"deactivate",
+"unselect",
+"terminate"
+
+COMP_TP =
+"unknown",
+"scanner technology",
+"scanner device",
+"spectrum processor technology",
+"spectrum processor device",
+"lamp technology",
+"lamp device",
+"camera technology",
+"camera device",
+"ascan node",
+"audio technology",
+"audio device",
+"audio node",
+"application controller technology",
+"application controller device",
+"host",
+"data logger",
+"data log reader",
+"rs232",
+"config processor",
+"external call",
+"thread controller",
+"encryption/decryption",
+"web server"
+
+CONTENT_ONLY =
+"yes",
+"no"
+
+QUEUE_TYPE =
+"queue type none",
+"queue_type_run",
+"queue_type_leave"
+
+INTEGER =
+- dient der Spezifikation einer Index. -1 ergibt Default-Index. Wenn das Feld fehlt, wird -1 angenommen.
+
+VALUE =
+- Zahlenwerte
+	- Integer in 8,16,24,32,64 Bit
+	- Float in 32 Bit (BDX spezifisch)
+	- 1 Wert 
+	- Arrays, alle Werte in JSON Array [...]
+- Selection-Liste
+	- Eine Liste von Strings zur Darstellung der Optionen
+	- Ein Bit-Feld zur Auswahl einer oder mehrerer Optionen
+	- Liste mit Optionen wird nur bei "content_only":"yes" geliefert.
+- String
+- Stringliste
+- "Value In Range" (typischerweise für einen Slider)
+	- minVal
+	- maxVal
+	- val
+
+OUTPUT FELDER
+#########################################
+PROPERTY_DESCRIPTION=
+{"name":<STRING>,"description":<STRING>,"descriptor":<STRING>,"format":<FORMAT>,"number":<INTEGER>,"isvalid":<ISVALID>,"decoder_type":<DECODER_TYPE>}
+
+FORMAT =
+"none",
+"jvxData(float)",
+"16 Bit le",
+"24 Bit le",
+"32 Bit le",
+"64 Bit le",
+"8 Bit",
+"string",
+"string list",
+"selection list",
+"value in range",
+"void"
+
+ISVALID = 
+"yes",
+"no"
+
+DECODER_TYPE = 
+"none",
+"file name (open)",
+"directory (select)",
+"file name (save)",
+"ip address",
+"plot array",
+"bit field",
+"single selection",
+"multi selection",
+"format (index)",
+"progress bar",
+"input file list",
+"output file list",
+"multi selection change order",
+"multi channel circ buffer",
+"command"

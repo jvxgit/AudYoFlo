@@ -1,0 +1,11 @@
+#ifndef __TPJVXCONFIGTOKENS_H__
+#define __TPJVXCONFIGTOKENS_H__
+
+#define JVX_HOST_CONFIG_DEFINE_SECTION_INIT "jvxHost_config_section_init"
+#define JVX_HOST_CONFIG_DEFINE_SECTION_SELECTED "jvxHost_config_section_selected"
+#define JVX_HOST_CONFIG_DEFINE_SECTION_ACTIVE "jvxHost_config_section_active"
+#define JVX_HOST_CONFIG_DEFINE_SECTION_PREPARED "jvxHost_config_section_prepared"
+#define JVX_HOST_CONFIG_DEFINE_SECTION_PROCESSING "jvxHost_config_section_processing"
+
+#endif
+

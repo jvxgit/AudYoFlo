@@ -1,0 +1,4 @@
+	message("--> Converting all *.m files into *.p files.")
+	install(CODE "execute_process(COMMAND cmd /c myScript ${CMAKE_INSTALL_PREFIX} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE ttout )
+						message(\"Output: ${ttout}\")
+						")

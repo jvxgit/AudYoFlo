@@ -1,0 +1,265 @@
+header_message("Mingw specific configuration")
+
+# platform specific configuration options
+set(SED "sed" CACHE PATH "Path to stream editor (sed) TO BE REMOVED")
+set(MATLAB_PATH_64 $ENV{MATLAB_PATH_64} CACHE PATH "Path to Matlab installation (64bit)")
+set(MATLAB_PATH_32 $ENV{MATLAB_PATH_32} CACHE PATH "Path to Matlab installation (32bit)")
+set(OCTAVE_PATH_64 $ENV{OCTAVE_PATH_64} CACHE PATH "Path to Octave installation (64bit)")
+set(OCTAVE_PATH_32 $ENV{OCTAVE_PATH_32} CACHE PATH "Path to Octave installation (32bit)")
+set(QT_PATH_64 $ENV{QT_PATH_64} CACHE PATH "Path to QT installation (64bit)")
+set(QT_PATH_32 $ENV{QT_PATH_32} CACHE PATH "Path to QT installation (32bit)")
+
+# deactivate unsupported stuff
+if (JVX_USE_PART_ALSA)
+  message("XX> deactivating ALSA support (not supported on Windows)")
+  set(JVX_USE_PART_ALSA OFF)
+endif()
+if (JVX_USE_PART_COREAUDIO)
+  message("XX> deactivating core audio support (not supported on Windows)")
+  set(JVX_USE_PART_COREAUDIO OFF)
+endif()
+if (JVX_USE_PART_RS232)
+  message("XX> deactivating RS232 support (not supported on Linux)")
+  set(JVX_USE_PART_RS232 OFF)
+endif()
+if (JVX_USE_PART_CORECONTROL)
+  message("XX> deactivating corecontrol support (not supported on Linux)")
+  set(JVX_USE_PART_CORECONTROL OFF)
+endif()
+
+# pre-/suffixes
+set(JVX_SHARED_EXTENSION so)
+set(JVX_STATIC_EXTENSION a)
+set(JVX_SCRIPT_EXTENSION ".bat")
+set(JVX_EXECUTABLE_EXTENSION ".exe")
+
+# Gloab disable for shared libs (in case shared libs are not supported)
+set(JVX_DISABLE_ALL_SHARED FALSE)
+
+# Configure Qt
+if(JVX_PLATFORM MATCHES "32bit")
+  set(QT_PATH ${QT_PATH_32})
+else()
+  set(QT_PATH ${QT_PATH_64})
+endif()
+set(CMAKE_PREFIX_PATH ${QT_PATH}/lib/cmake)
+# FIXME: needed under win? set(JVX_QT_RPATH -Wl,-rpath-link,${QT_PATH}/lib)
+
+# Flags for shared libraries
+set(JVX_CMAKE_C_FLAGS_SHARED "--std=gnu99 -fPIC -pthread")
+set(JVX_CMAKE_CXX_FLAGS_SHARED "--std=c++0x -fPIC -pthread")
+set(JVX_CMAKE_LINKER_FLAGS_SHARED "-Wl,--no-undefined -shared")
+
+# Flags for shared objects with export file list
+set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_COMPONENTS "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,--retain-symbols-file=${JVX_BASE_ROOT}/software/exports/components/linux/exports.def")
+set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_LOCAL "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,--retain-symbols-file=${JVX_BASE_ROOT}/software/exports/components/linux/exports.def")
+
+# Flags for static libraries
+set(JVX_CMAKE_C_FLAGS_STATIC "--std=gnu99 -pthread")
+set(JVX_CMAKE_CXX_FLAGS_STATIC "--std=c++0x -pthread")
+set(JVX_CMAKE_C_FLAGS_STATIC_PIC "${JVX_CMAKE_C_FLAGS_STATIC} -fPIC")
+set(JVX_CMAKE_CXX_FLAGS_STATIC_PIC "${JVX_CMAKE_CXX_FLAGS_STATIC} -fPIC")
+set(JVX_CMAKE_LINKER_FLAGS_STATIC "")
+set(JVX_CMAKE_LINKER_FLAGS_STATIC_PIC "")
+
+# Flags for executables
+set(JVX_CMAKE_C_FLAGS_EXEC "--std=gnu99 -fPIC")
+set(JVX_CMAKE_CXX_FLAGS_EXEC "--std=c++0x")
+set(JVX_CMAKE_LINKER_FLAGS_EXEC "")
+
+set(JVX_SYSTEM_LIBRARIES "")
+set(JVX_SOCKET_LIBRARIES "ws2_32;wsock32")
+
+###
+# macros
+###
+
+# configure FFT library
+# configure FFT library
+macro (find_fft)
+  set(FFTW_VERSION "3.3")
+  set(FFTW_VERSION_LIB "3-3")
+  set(FFTWF_VERSION_LIB "3f-3")
+  if(JVX_PLATFORM MATCHES "32bit")
+	set(FFTW_INCLUDE_PATH_OSGUESS_PREFIX third_party/fftw-${FFTW_VERSION}-win/Win32)
+    set(FFTW_INCLUDE_PATH_OSGUESS ${JVX_BASE_LIBS_INCLUDE_PATH}/${FFTW_INCLUDE_PATH_OSGUESS_PREFIX})
+    set(FFTW_LIB_PATH_OSGUESS ${JVX_BASE_LIBS_LIB_PATH}/${FFTW_INCLUDE_PATH_OSGUESS_PREFIX})
+  else()
+	set(FFTW_INCLUDE_PATH_OSGUESS_PREFIX third_party/fftw-${FFTW_VERSION}-win/x64)
+    set(FFTW_INCLUDE_PATH_OSGUESS ${JVX_BASE_LIBS_INCLUDE_PATH}/${FFTW_INCLUDE_PATH_OSGUESS_PREFIX})
+    set(FFTW_LIB_PATH_OSGUESS ${JVX_BASE_LIBS_LIB_PATH}/${FFTW_INCLUDE_PATH_OSGUESS_PREFIX})
+  endif()
+  #set(FFTW_INCLUDE_PATH_OSGUESS "O:/jvx/base/sources/jvxLibraries/third_party/fftw-3.3-win/x64")
+  #message("    XXX: ${FFTW_INCLUDE_PATH_OSGUESS}")
+  #message(" ${CMAKE_PREFIX_PATH}")
+  #message(" ${CMAKE_FRAMEWORK_PATH}")	
+  set(FFTW_LIBNAME_OS libfftw${FFTW_VERSION_LIB}.lib)
+  set(FFTWF_LIBNAME_OS libfftw${FFTWF_VERSION_LIB}.lib)
+  message("--> Looking for fftw library")
+  
+  # Hint here: cmake in the latest version searches the environment varable entries and replaces <path>/bin by <path>/include to find headers, HK, 06042017
+  # find_path (FFT_INCLUDEDIR fftw3.h PATHS "${FFTW_INCLUDE_PATH_OSGUESS}" NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH)
+  find_path (FFT_INCLUDEDIR fftw3.h PATHS "${FFTW_INCLUDE_PATH_OSGUESS}" NO_SYSTEM_ENVIRONMENT_PATH)
+  if(FFT_INCLUDEDIR)
+    if(JVX_SYSTEM_USE_DATA_FORMAT_FLOAT)
+      find_library (FFT_LIBRARIES libfftw${FFTWF_VERSION_LIB}.lib PATHS "${FFTW_LIB_PATH_OSGUESS}")
+    else()
+      find_library (FFT_LIBRARIES libfftw${FFTW_VERSION_LIB}.lib PATHS "${FFTW_LIB_PATH_OSGUESS}")
+    endif()
+    set(FFT_COMPILE_DEFINITIONS "")	
+    message("    include path: ${FFT_INCLUDEDIR}")
+    message("    compile definitions: ${FFT_COMPILE_DEFINITIONS}")
+    message("    lib: ${FFT_LIBRARIES}")
+  else()
+    message(FATAL_ERROR "could not find fftw library")
+  endif()
+endmacro (find_fft)
+
+# Matlab path specifications
+macro (find_matlab)
+  if(JVX_PLATFORM MATCHES "32bit")
+    set(MATLAB_PATH ${MATLAB_PATH_32})
+  else()
+    set(MATLAB_PATH ${MATLAB_PATH_64})
+  endif()
+  if(IS_DIRECTORY "${MATLAB_PATH}")
+    message("--> Matlab: ${MATLAB_PATH}")
+    if(JVX_PLATFORM MATCHES "32bit")
+      set(MATLAB_LIB_SUBDIR "win32")
+      set(MATLAB_MEX_SUFFIX ".mexw32")
+      set(MATLAB_MEX_SUBDIR "win32")
+    else()
+      set(MATLAB_LIB_SUBDIR "win64")
+      set(MATLAB_MEX_SUFFIX ".mexw64")
+      set(MATLAB_MEX_SUBDIR "win64")
+    endif()
+    set(Matlab_INCLUDE_DIRS ${MATLAB_PATH}/extern/include)
+    set(MATLAB_PATH_LIB ${MATLAB_PATH}/extern/lib/${MATLAB_MEX_SUBDIR}/microsoft)
+    set(JVX_SYSTEM_MATLAB_MEX_LIBRARIES libmx libmat libmex)
+    set(JVX_CMAKE_LINKER_FLAGS_MEX "/DEF:${JVX_BASE_ROOT}/software/exports/components/windows/exports-mex.def")
+	set(Matlab_MAIN_PROGRAM "${MATLAB_PATH}/bin/matlab.exe") 
+  else(IS_DIRECTORY "${MATLAB_PATH}")
+    message(FATAL_ERROR "XX> could not find Matlab, option must be deactivated manually to procede.")
+    set(JVX_USE_PART_MATLAB OFF)
+  endif(IS_DIRECTORY "${MATLAB_PATH}")
+endmacro (find_matlab)
+
+# Octave path specifications
+macro (find_octave)
+  if(JVX_PLATFORM MATCHES "32bit")
+    set(OCTAVE_PATH ${OCTAVE_PATH_32})
+  else()
+    set(OCTAVE_PATH ${OCTAVE_PATH_64})
+  endif()
+  exec_program("${OCTAVE_PATH}/bin/octave-config" ARGS "-v" OUTPUT_VARIABLE OCTAVE_VERSION)
+  exec_program("${OCTAVE_PATH}/bin/octave-config" ARGS "-p  BINDIR" OUTPUT_VARIABLE OCTAVE_BIN_PATH)
+  if(IS_DIRECTORY "${OCTAVE_BIN_PATH}")
+    message("--> found octave-${OCTAVE_VERSION}")
+    exec_program("${OCTAVE_PATH}/bin/octave-config" ARGS "-p OCTINCLUDEDIR" OUTPUT_VARIABLE OCTAVE_INCLUDE_PATH)
+    exec_program("${OCTAVE_PATH}/bin/octave-config" ARGS "-p OCTLIBDIR" OUTPUT_VARIABLE OCTAVE_PATH_LIB)
+    if(EXISTS ${OCTAVE_PATH}/bin/octave-cli.exe)
+      set(OCTAVE ${OCTAVE_PATH}/bin/octave-cli.exe)
+    else()
+      set(OCTAVE ${OCTAVE_PATH}/bin/octave.exe)
+    endif()
+    set(OCTAVE_MEX_SUFFIX ".mex")
+    set(JVX_SYSTEM_OCTAVE_MEX_LIBRARIES octinterp octave)
+    set(JVX_CMAKE_LINKER_FLAGS_OCTAVE "/DEF:${JVX_BASE_ROOT}/software/exports/components/windows/exports-mex.def")
+
+    # workaround for octave 4
+    if(OCTAVE_VERSION VERSION_GREATER "3.9.9")
+      message("--> Copying octave libs to build tree (workaround for Octave 4.0.0)")
+      exec_program(${CMAKE_COMMAND} ARGS "-E copy ${OCTAVE_PATH_LIB}/liboctinterp.dll.a ${CMAKE_CURRENT_BINARY_DIR}/octinterp.lib")
+      exec_program(${CMAKE_COMMAND} ARGS "-E copy ${OCTAVE_PATH_LIB}/liboctave.dll.a ${CMAKE_CURRENT_BINARY_DIR}/octave.lib")
+      set(OCTAVE_PATH_LIB ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+  else(IS_DIRECTORY "${OCTAVE_BIN_PATH}")
+    message(FATAL_ERROR "XX> could not find Octave, option must be deactivated manually to procede.")
+    set(JVX_USE_PART_OCTAVE OFF)
+  endif(IS_DIRECTORY "${OCTAVE_BIN_PATH}")
+endmacro (find_octave)
+
+# Configure PCAP Library
+
+macro(find_pcap)
+  message("--> Looking for libpcap")
+  set(PCAP_LIBRARY_PATH $ENV{PCAP_LIBRARY_PATH})
+  if(JVX_PLATFORM MATCHES "32bit")
+    set(PCAP_INCLUDEDIR_OSGUESS ${PCAP_LIBRARY_PATH}/Include)
+    set(PCAP_LIB_PATH_OSGUESS ${PCAP_LIBRARY_PATH}/Lib)
+  else()
+    set(PCAP_INCLUDEDIR_OSGUESS ${PCAP_LIBRARY_PATH}/Include)
+    set(PCAP_LIB_PATH_OSGUESS ${PCAP_LIBRARY_PATH}/Lib/x64)
+  endif()
+  set(PCAP_LIBNAME_OS "wpcap")
+  set(PCAPPA_LIBNAME_OS "packet")
+  find_path (PCAP_INCLUDEDIR pcap.h PATHS "${PCAP_INCLUDEDIR_OSGUESS}")
+  
+  if(PCAP_INCLUDEDIR)
+    set(PCAP_FOUND TRUE)
+    find_library (PCAP_LIBRARIES NAMES ${PCAP_LIBNAME_OS} PATHS "${PCAP_LIB_PATH_OSGUESS}")
+    find_library (PCAPPA_LIBRARIES NAMES ${PCAPPA_LIBNAME_OS} PATHS "${PCAP_LIB_PATH_OSGUESS}")
+    message("    include path: ${PCAP_INCLUDEDIR}")
+    message("    lib: ${PCAP_LIBRARIES}")
+    message("    lib: ${PCAPPA_LIBRARIES}")
+    add_library(${PCAP_LIBNAME_OS} SHARED IMPORTED)
+    add_library(${PCAPPA_LIBNAME_OS} SHARED IMPORTED)
+  else()
+    set(PCAP_FOUND FALSE)
+    message(FATAL_ERROR "    lib pcap not available")
+  endif()
+endmacro (find_pcap)
+
+# This macro lets you find executable programs on the host system
+# -- identical to find_package for native windows builds
+macro (find_host_package)
+  find_package(${ARGN})
+endmacro (find_host_package)
+
+macro (find_ccs)
+	
+	if(NOT DEFINED JVX_CCS_INSTALL_FOLDER)
+		set(JVX_CCS_INSTALL_FOLDER "C:/develop/ti/ccsv6")
+	endif()
+	
+	if(DEFINED ENV{CCS_INSTALL_PATH})
+		set(JVX_CCS_INSTALL_FOLDER $ENV{CCS_INSTALL_PATH})
+	endif()
+	
+	find_program(CCS_ECLIPSE eclipsec PATHS ${JVX_CCS_INSTALL_FOLDER}/eclipse NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_ENVIRONMENT_PATH)
+	
+	if(CCS_ECLIPSE)
+		set(CCS_FOUND TRUE)
+		get_filename_component(var1 ${CCS_ECLIPSE} DIRECTORY)
+		get_filename_component(JVX_CCS_INSTALL_FOLDER "${var1}" DIRECTORY)
+	else()
+		set(CCS_FOUND FALSE)
+		message(FATAL_ERROR "    TI ccs not found")
+	endif()
+	
+	message("--> CCS Installation folder: ${JVX_CCS_INSTALL_FOLDER}")
+endmacro (find_ccs)
+
+macro (find_mcuxpresso)
+
+	if(NOT DEFINED JVX_MCUXPRESSO_INSTALL_FOLDER)
+		set(JVX_MCUXPRESSO_INSTALL_FOLDER "C:/nxp/MCUXpressoIDE_10.0.0_344")
+	endif()
+	
+	if(DEFINED ENV{MCUXPRESSO_INSTALL_PATH})
+		set(JVX_CCS_INSTALL_FOLDER $ENV{CCS_INSTALL_PATH})
+	endif()
+	
+  find_program(MCUXPRESSO mcuxpressoide PATHS ${JVX_MCUXPRESSO_INSTALL_FOLDER}/ide NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_ENVIRONMENT_PATH)
+    
+  if(MCUXPRESSO)
+    set(MCUXPRESSO_FOUND TRUE)
+    get_filename_component(var1 ${MCUXPRESSO} DIRECTORY)
+    get_filename_component(JVX_MCUXPRESSO_INSTALL_FOLDER "${var1}" DIRECTORY)
+  else()
+    set(MCUXPRESSO_FOUND FALSE)
+    message(FATAL_ERROR "    NXP MCUXPRESSO not found")
+  endif()
+  
+  message("--> MCUXPRESSO Installation folder: ${JVX_MCUXPRESSO_INSTALL_FOLDER}")
+endmacro (find_mcuxpresso)

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form_realtimeViewerPlots</class>
+ <widget class="QWidget" name="Form_realtimeViewerPlots">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>241</width>
+    <height>392</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="10,1">
+   <item>
+    <widget class="QTabWidget" name="tabWidget_plots"/>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>120</red>
+           <green>120</green>
+           <blue>120</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>120</red>
+           <green>120</green>
+           <blue>120</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>120</red>
+           <green>120</green>
+           <blue>120</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>120</red>
+           <green>120</green>
+           <blue>120</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButton_linear">
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Linear</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_circ">
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Single SPlot</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_remove">
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Remove</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_name">
+        <property name="minimumSize">
+         <size>
+          <width>70</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton_linear</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_realtimeViewerPlots</receiver>
+   <slot>buttonPushed_add_lin_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>667</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>587</x>
+     <y>410</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_remove</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_realtimeViewerPlots</receiver>
+   <slot>buttonPushed_rem_current()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>667</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>589</x>
+     <y>457</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_circ</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_realtimeViewerPlots</receiver>
+   <slot>buttonPushed_add_circ_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>667</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>493</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_name</sender>
+   <signal>returnPressed()</signal>
+   <receiver>Form_realtimeViewerPlots</receiver>
+   <slot>newText_description()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>651</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>560</x>
+     <y>-8</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tabWidget_plots</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>Form_realtimeViewerPlots</receiver>
+   <slot>newSelection_tab(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>-10</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>newText_description()</slot>
+  <slot>buttonPushed_add_lin_plot()</slot>
+  <slot>buttonPushed_add_pol_plot()</slot>
+  <slot>buttonPushed_rem_current()</slot>
+  <slot>buttonPushed_add_circ_plot()</slot>
+  <slot>newSelection_tab(int)</slot>
+ </slots>
+</ui>

@@ -1,0 +1,19 @@
+SECTION MATLAB_EXPORTS
+{	
+	//USE_MATLAB_CALL_AS_LIBRARY = "YES";
+	REFERENCE_CLASS = "CjvxOfflineAudioDevice";
+	OUTPUTFILE_NAME = "CjvxOfflineDevice_external";
+	SECTION processOneBatch
+	{
+		DESCRIPTION = "Process one frame of double samples"; 
+		ACCEPT_INPUT_TYPES = { "JVX_DATAFORMAT_MXARRAY"};
+		DESCRIPTION_INPUT_PARAMETERS = { "One matrix of input samples"};
+		ACCEPT_INPUT_NUMBER_MIN = 1;
+		ACCEPT_INPUT_NUMBER_MAX = 1;
+		PRODUCE_OUTPUT_TYPES = {"JVX_DATAFORMAT_MXARRAY"};
+		DESCRIPTION_OUTPUT_PARAMETERS = { "One matrix of output samples"};
+		ACCEPT_OUTPUT_NUMBER_MIN = 1; 
+		ACCEPT_OUTPUT_NUMBER_MAX = 1;
+	};		
+	
+};

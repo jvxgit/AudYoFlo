@@ -1,0 +1,59 @@
+SECTION MATLAB_EXPORTS
+{
+	//USE_MATLAB_CALL_AS_LIBRARY = "YES";
+	REFERENCE_CLASS = "CjvxAuNNtaskm";
+	OUTPUTFILE_NAME = "CjvxAuNNtaskm_external";
+
+	SECTION start_audiosample_dispenser
+	{
+		DESCRIPTION = "Create a sample handling unit"; 
+		ACCEPT_INPUT_TYPES = {"JVX_DATAFORMAT_SIZE", "JVX_DATAFORMAT_SIZE", "JVX_DATAFORMAT_SIZE", "JVX_DATAFORMAT_SIZE"};
+		DIMENSION_INPUT_FIELD = {"0D", "0D", "0D", "0D"};
+		DESCRIPTION_INPUT_PARAMETERS = { "Buffersize primary side", "Samplerate", "Size of Store Buffer", "Start Threshold"};
+		ACCEPT_INPUT_NUMBER_MIN = 4;
+		ACCEPT_INPUT_NUMBER_MAX = 4;
+	};
+
+	SECTION stop_audiosample_dispenser
+	{
+		DESCRIPTION = "Create a sample handling unit"; 
+	};
+
+	SECTION process_audiosample_dispenser_pri
+	{
+		DESCRIPTION = "Create a sample handling unit"; 
+		ACCEPT_INPUT_TYPES = {"JVX_DATAFORMAT_DATA", "JVX_DATAFORMAT_DATA", "JVX_DATAFORMAT_64BIT_LE"};
+		DIMENSION_INPUT_FIELD = {"1D", "1D", "0D"};
+		DESCRIPTION_INPUT_PARAMETERS = { "Input buffer primary side", "Timestamps buffer pri", "Timestamp"};
+		ACCEPT_INPUT_NUMBER_MIN = 3;
+		ACCEPT_INPUT_NUMBER_MAX = 3;
+		PRODUCE_OUTPUT_TYPES = {"JVX_DATAFORMAT_DATA", "JVX_DATAFORMAT_DATA", "JVX_DATAFORMAT_SIZE", 
+			"JVX_DATAFORMAT_SIZE", "JVX_DATAFORMAT_SIZE", 
+			"JVX_DATAFORMAT_SIZE","JVX_DATAFORMAT_DATA",
+			"JVX_DATAFORMAT_SIZE"};
+		DIMENSION_OUTPUT_FIELD = {"1D", "1D", "0D", "0D", "0D", "0D", "0D", "0D"};
+		DESCRIPTION_OUTPUT_PARAMETERS = { "Output buffer pri side", "Output timestamps pri", 
+			"FHeight on enter", "FHeight on leave", "State on enter", 
+			"State on leave", "Average fheight", "Fail reason"};
+		ACCEPT_OUTPUT_NUMBER_MIN = 8; 
+		ACCEPT_OUTPUT_NUMBER_MAX = 8;
+		INPUT_OUTPUT_CROSS_REFERENCE_X = {0, 0};
+	};
+	SECTION process_audiosample_dispenser_sec
+	{
+		DESCRIPTION = "Create a sample handling unit"; 
+		ACCEPT_INPUT_TYPES = {"JVX_DATAFORMAT_DATA","JVX_DATAFORMAT_DATA", "JVX_DATAFORMAT_64BIT_LE"};
+		DIMENSION_INPUT_FIELD = {"1D", "1D", "0D"};
+		DESCRIPTION_INPUT_PARAMETERS = { "Input buffer sec side", "Timestamps buffer sec", "Timestamp"};
+		ACCEPT_INPUT_NUMBER_MIN = 3;
+		ACCEPT_INPUT_NUMBER_MAX = 3;
+		PRODUCE_OUTPUT_TYPES = {"JVX_DATAFORMAT_DATA","JVX_DATAFORMAT_DATA", "JVX_DATAFORMAT_SIZE", "JVX_DATAFORMAT_SIZE", 
+			"JVX_DATAFORMAT_SIZE", "JVX_DATAFORMAT_SIZE","JVX_DATAFORMAT_DATA","JVX_DATAFORMAT_SIZE"};
+		DIMENSION_OUTPUT_FIELD = {"1D", "1D", "0D", "0D", "0D", "0D", "0D", "0D"};
+		DESCRIPTION_OUTPUT_PARAMETERS = { "Output buffer sec side", "Output timestamps sec", 
+		"FHeight on enter", "FHeight on leave", "State on enter", 
+			"State on leave", "Average fheight", "Fail reason"};
+		ACCEPT_OUTPUT_NUMBER_MIN = 8; 
+		ACCEPT_OUTPUT_NUMBER_MAX = 8; 
+	};
+};

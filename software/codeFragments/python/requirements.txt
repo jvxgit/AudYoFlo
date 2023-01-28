@@ -1,0 +1,6 @@
+numpy
+pybind11
+websockets
+matplotlib
+scipy
+audiofile

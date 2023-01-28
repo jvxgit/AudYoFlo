@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>582</width>
+    <height>809</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="20">
+   <item>
+    <widget class="QFrame" name="frame_plot">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Content</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEdit_radius_max">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLineEdit" name="lineEdit_radius_min">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="1" colspan="6">
+          <widget class="QwtPolarPlot" name="qwtPolarPlot"/>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="label_2">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="label_3">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Registered Plots</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="4">
+          <widget class="QPushButton" name="pushButton_remove_plot">
+           <property name="text">
+            <string>Remove</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QPushButton" name="pushButton_add_plot">
+           <property name="text">
+            <string>Add</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QComboBox" name="comboBox_reg_plots"/>
+         </item>
+         <item row="0" column="3">
+          <widget class="QPushButton" name="pushButton_edit_plot">
+           <property name="text">
+            <string>Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="checkBox_show">
+           <property name="text">
+            <string>Show</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QCheckBox" name="checkBox_autoscale">
+           <property name="text">
+            <string>Autoscale</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Edit Plot Line</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0">
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Y-Axis</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QComboBox" name="comboBox_x_components"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QComboBox" name="comboBox_y_components"/>
+         </item>
+         <item row="2" column="4">
+          <widget class="QComboBox" name="comboBox_color"/>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>X-Axis</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Plot Setup</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QComboBox" name="comboBox_y_properties"/>
+         </item>
+         <item row="3" column="2">
+          <widget class="QComboBox" name="comboBox_x_properties"/>
+         </item>
+         <item row="1" column="1" rowspan="3">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="4">
+          <widget class="QComboBox" name="comboBox_style"/>
+         </item>
+         <item row="1" column="3" rowspan="3">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" colspan="3">
+          <widget class="QLineEdit" name="lineEdit"/>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Description</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QwtPolarPlot</class>
+   <extends>QFrame</extends>
+   <header>qwt_polar_plot.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>comboBox_reg_plots</sender>
+   <signal>activated(int)</signal>
+   <receiver>Form</receiver>
+   <slot>newSelection_reg_plots(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>635</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>605</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_show</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Form</receiver>
+   <slot>checkedBox_show_plot(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>126</x>
+     <y>633</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-4</x>
+     <y>558</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_add_plot</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Form</receiver>
+   <slot>buttonPushed_add_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>232</x>
+     <y>638</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>600</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_edit_plot</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Form</receiver>
+   <slot>buttonPushed_edit_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>353</x>
+     <y>640</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>542</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_remove_plot</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Form</receiver>
+   <slot>buttonPushed_remove_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>636</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>576</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_autoscale</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Form</receiver>
+   <slot>checkedBox_autoscale_plot(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>478</x>
+     <y>638</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>639</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>Form</receiver>
+   <slot>newText_description_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>319</x>
+     <y>700</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>584</x>
+     <y>688</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_y_components</sender>
+   <signal>activated(int)</signal>
+   <receiver>Form</receiver>
+   <slot>newSelection_radius_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>74</x>
+     <y>739</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-4</x>
+     <y>723</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_y_properties</sender>
+   <signal>activated(int)</signal>
+   <receiver>Form</receiver>
+   <slot>newSelection_radius_property(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>765</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-3</x>
+     <y>765</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_x_components</sender>
+   <signal>activated(int)</signal>
+   <receiver>Form</receiver>
+   <slot>newSelection_angle_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>737</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>727</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_x_properties</sender>
+   <signal>activated(int)</signal>
+   <receiver>Form</receiver>
+   <slot>newSelection_angle_property(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>274</x>
+     <y>766</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>587</x>
+     <y>764</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_color</sender>
+   <signal>activated(int)</signal>
+   <receiver>Form</receiver>
+   <slot>newSelection_plot_color(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>744</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>719</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_style</sender>
+   <signal>activated(int)</signal>
+   <receiver>Form</receiver>
+   <slot>newSelection_plot_linestyle(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>481</x>
+     <y>770</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>791</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_radius_max</sender>
+   <signal>returnPressed()</signal>
+   <receiver>Form</receiver>
+   <slot>newText_radius_max()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>48</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>24</x>
+     <y>-2</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>newSelection_reg_plots(int)</slot>
+  <slot>buttonPushed_add_plot()</slot>
+  <slot>buttonPushed_edit_plot()</slot>
+  <slot>buttonPushed_remove_plot()</slot>
+  <slot>checkedBox_show_plot(bool)</slot>
+  <slot>checkedBox_autoscale_plot(bool)</slot>
+  <slot>newText_description_plot()</slot>
+  <slot>newSelection_radius_component(int)</slot>
+  <slot>newSelection_radius_property(int)</slot>
+  <slot>newSelection_angle_component(int)</slot>
+  <slot>newSelection_angle_property(int)</slot>
+  <slot>newSelection_plot_color(int)</slot>
+  <slot>newSelection_plot_linestyle(int)</slot>
+  <slot>newText_radius_max()</slot>
+ </slots>
+</ui>

@@ -1,0 +1,135 @@
+Common subdirectories: qcustomplot.orig/documentation and qcustomplot/documentation
+Common subdirectories: qcustomplot.orig/examples and qcustomplot/examples
+diff -u qcustomplot.orig/qcustomplot.cpp qcustomplot/qcustomplot.cpp
+--- qcustomplot.orig/qcustomplot.cpp	2021-03-30 13:48:47.000000000 +0200
++++ qcustomplot/qcustomplot.cpp	2023-01-19 07:20:50.851942200 +0100
+@@ -785,6 +785,13 @@
+     qDebug() << Q_FUNC_INFO << "OpenGL pbuffer isn't valid, reallocateBuffer was not called?";
+     return;
+   }
++
++  /* BUGFIX TAKEN FROM http://www.qcustomplot.com/index.php/support/forum/1529 */
++  if (QOpenGLContext::currentContext() != mGlContext.data())
++  {
++      mGlContext.data()->makeCurrent(mGlContext.data()->surface());
++  }
++
+   painter->drawImage(0, 0, mGlPBuffer->toImage());
+ }
+ 
+@@ -908,6 +915,13 @@
+     qDebug() << Q_FUNC_INFO << "OpenGL frame buffer object doesn't exist, reallocateBuffer was not called?";
+     return;
+   }
++
++  /* BUGFIX TAKEN FROM http://www.qcustomplot.com/index.php/support/forum/1529 */
++  if (QOpenGLContext::currentContext() != mGlContext.data())
++  {
++      mGlContext.data()->makeCurrent(mGlContext.data()->surface());
++  }
++
+   painter->drawImage(0, 0, mGlFrameBuffer->toImage());
+ }
+ 
+@@ -20916,6 +20930,23 @@
+   addData(keys, values, alreadySorted);
+ }
+ 
++/*! \overload
++
++  Replaces the current data with the provided points in \a keys and \a values. The provided
++  vectors should have equal length. Else, the number of added points will be the size of the
++  smallest vector.
++
++  If you can guarantee that the passed data points are sorted by \a keys in ascending order, you
++  can set \a alreadySorted to true, to improve performance by saving a sorting run.
++
++  \see addData
++*/
++void QCPGraph::setData(const QVector<float>& keys, const QVector<float>& values, bool alreadySorted)
++{
++    mDataContainer->clear();
++    addData(keys, values, alreadySorted);
++}
++
+ /*!
+   Sets how the single data points are connected in the plot. For scatter-only plots, set \a ls to
+   \ref lsNone and \ref setScatterStyle to the desired scatter style.
+@@ -21051,6 +21082,37 @@
+ }
+ 
+ /*! \overload
++
++  Adds the provided points in \a keys and \a values to the current data. The provided vectors
++  should have equal length. Else, the number of added points will be the size of the smallest
++  vector.
++
++  If you can guarantee that the passed data points are sorted by \a keys in ascending order, you
++  can set \a alreadySorted to true, to improve performance by saving a sorting run.
++
++  Alternatively, you can also access and modify the data directly via the \ref data method, which
++  returns a pointer to the internal data container.
++*/
++void QCPGraph::addData(const QVector<float>& keys, const QVector<float>& values, bool alreadySorted)
++{
++    if (keys.size() != values.size())
++        qDebug() << Q_FUNC_INFO << "keys and values have different sizes:" << keys.size() << values.size();
++    const int n = qMin(keys.size(), values.size());
++    QVector<QCPGraphData> tempData(n);
++    QVector<QCPGraphData>::iterator it = tempData.begin();
++    const QVector<QCPGraphData>::iterator itEnd = tempData.end();
++    int i = 0;
++    while (it != itEnd)
++    {
++        it->key = (double)keys[i];
++        it->value = (double)values[i];
++        ++it;
++        ++i;
++    }
++    mDataContainer->add(tempData, alreadySorted); // don't modify tempData beyond this to prevent copy on write
++}
++
++/*! \overload
+   
+   Adds the provided data point as \a key and \a value to the current data.
+   
+@@ -21062,6 +21124,17 @@
+   mDataContainer->add(QCPGraphData(key, value));
+ }
+ 
++/*! \overload
++
++  Adds the provided data point as \a key and \a value to the current data.
++
++  Alternatively, you can also access and modify the data directly via the \ref data method, which
++  returns a pointer to the internal data container.
++*/
++void QCPGraph::addData(float key, float value)
++{
++    mDataContainer->add(QCPGraphData((double)key, (double)value));
++}
+ /*!
+   Implements a selectTest specific to this plottable's point geometry.
+ 
+diff -u qcustomplot.orig/qcustomplot.h qcustomplot/qcustomplot.h
+--- qcustomplot.orig/qcustomplot.h	2021-03-30 13:48:46.000000000 +0200
++++ qcustomplot/qcustomplot.h	2023-01-19 07:13:55.587455000 +0100
+@@ -5494,6 +5494,7 @@
+   // setters:
+   void setData(QSharedPointer<QCPGraphDataContainer> data);
+   void setData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted=false);
++  void setData(const QVector<float>& keys, const QVector<float>& values, bool alreadySorted = false);
+   void setLineStyle(LineStyle ls);
+   void setScatterStyle(const QCPScatterStyle &style);
+   void setScatterSkip(int skip);
+@@ -5503,7 +5504,9 @@
+   // non-property methods:
+   void addData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted=false);
+   void addData(double key, double value);
+-  
++  void addData(const QVector<float>& keys, const QVector<float>& values, bool alreadySorted = false);
++  void addData(float key, float value);
++
+   // reimplemented virtual methods:
+   virtual double selectTest(const QPointF &pos, bool onlySelectable, QVariant *details=nullptr) const Q_DECL_OVERRIDE;
+   virtual QCPRange getKeyRange(bool &foundRange, QCP::SignDomain inSignDomain=QCP::sdBoth) const Q_DECL_OVERRIDE;

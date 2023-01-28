@@ -1,0 +1,45 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "CjvxDataConnectionProcess_genpcg";
+	SECTION properties
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION interceptor_list
+		{
+			DESCRIPTION = "Interceptors for selection";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {};
+			SELECTION_LIST_SELECTED = {};
+			ONLY_CONTENT_TO_CONFIG = "yes";
+		};
+
+		SECTION log_active
+		{
+			DESCRIPTION = "Logfile for timing active";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			INIT_SET = 0;
+		};
+
+		SECTION log_fileprefix
+		{
+			DESCRIPTION = "Logfile prefix";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			INIT_SET = "log_timing_process";
+		};
+
+		SECTION duration_msec
+		{
+			DESCRIPTION = "Duration of block in msecs";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			INIT_SET = 0;
+		};
+	};
+};

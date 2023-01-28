@@ -1,0 +1,2 @@
+#!/bin/sh
+octave --eval "jvx = start_inmat('jvxComponents','octave','@JVX_TARGET_NAME@')" --persist

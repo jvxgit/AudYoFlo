@@ -1,0 +1,84 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genCaptureFile_node";
+
+	SECTION capture
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_processing_prop"};
+
+		SECTION prefix
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = "SPEAKER_CAPTURE";
+			GENERATE_ENTRY_CONFIG_FILE = "no";     
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+			CALLBACK_SET_POSTHOOK = "set_processing_prop"; 
+		};
+		SECTION toggle
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+			CALLBACK_SET_POSTHOOK = "set_processing_prop"; 
+		};
+		
+		SECTION wav_file_type
+		{
+			// JVX_WAV_64_SONY,
+			// JVX_WAV_64,
+			// JVX_WAV_32
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			SELECTION_LIST_NAMES = {"Wav 64 Sony", "Wav 64", "Wav 32"};
+			SELECTION_LIST_SELECTED = {"no", "no", "yes"};
+			SELECTION_LIST_EXCLUSIVE = {"no", "no", "no"}; 
+			SELECTION_LIST_TRANSLATORS = {"JVX_WAV_64_SONY", "JVX_WAV_64", "JVX_WAV_32"};
+			SELECTION_TRANSLATOR_TYPE = "jvxSize";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+			CALLBACK_SET_POSTHOOK = "set_processing_prop"; 
+		};
+
+		SECTION wav_file_resolution
+		{
+			// 16 Bit 
+			// 24 Bit
+			// 32 Bit
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			SELECTION_LIST_NAMES = {"16 Bit", "24 Bit", "32 Bit"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"no", "no", "no"}; 
+			SELECTION_LIST_TRANSLATORS = {"16", "24", "32"};
+			SELECTION_TRANSLATOR_TYPE = "jvxSize";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+			CALLBACK_SET_POSTHOOK = "set_processing_prop"; 
+		};
+
+		SECTION num_buffers
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 10;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+			CALLBACK_SET_POSTHOOK = "set_processing_prop"; 
+		};
+	};
+
+	SECTION monitor
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"get_processing_monitor"};
+		CALLBACK_GET_PREHOOK = "get_processing_monitor"; 
+
+		SECTION buffer_drops
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+		};
+	};
+};

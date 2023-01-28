@@ -1,0 +1,18 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxSignalProcessingDeviceDeploy_genpcg";
+
+	SECTION proc_params
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"get_interface_ptr"};
+
+		SECTION ext_access
+		{
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			CALLBACK_GET_PREHOOK = "get_interface_ptr";
+			TYPE ="JVX_DATAFORMAT_HANDLE";
+		};
+	}; 
+};

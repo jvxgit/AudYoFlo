@@ -1,0 +1,14 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "CjvxRichAudioNodeProps";
+
+        GROUP spectrumEstimation
+        {
+                include "jvx_spectrumEstimation.pcgf";
+        };
+
+        GROUP beampatternSimulator
+        {
+                include "jvx_beampattern.pcgf";
+        };
+};

@@ -1,0 +1,23 @@
+cmake_minimum_required (VERSION 2.8.11)
+
+PROJECT(mbc)
+
+# If working with automatic relative to absolute path generation,
+# replace 
+file(TO_CMAKE_PATH ${JVX_SDK_RUNTIME_PATH} JVX_SDK_RUNTIME_PATH)
+file(TO_CMAKE_PATH ${JVX_SDK_PATH} JVX_SDK_PATH)
+
+set(JVX_SUBPRODUCT_mbc_LIBS_INCLUDE_PATH "${JVX_SDK_PATH}/include")
+set(JVX_SUBPRODUCT_mbc_LIBS_LIB_PATH "${JVX_SDK_PATH}/lib")
+set(JVX_SUBPRODUCT_mbc_LIBS_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/jvx-mbc")
+set(JVX_SUBPRODUCT_mbc_LOCAL_LIBS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/jvx-mbc/sources/jvxLibraries/jvx-mbc/include")
+
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/jvx-mbc/sources/jvxLibraries/jvx-mbc)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/jvx-mbc/sources/jvxLibraries/jvx-mbc-matlab/cmake/matlab)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/jvx-mbc/sources/jvxLibraries/jvx-mbc-matlab/cmake/octave)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/jvx-mbc/sources/jvxComponents/jvxAudioNodes/jvxAuNmbc)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/jvx-mbc/sources/jvxApplications/jvxmbc)
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT jvxmbc)
+

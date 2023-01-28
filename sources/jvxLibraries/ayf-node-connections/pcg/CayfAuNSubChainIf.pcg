@@ -1,0 +1,14 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genAuNSubChainIf";
+	SECTION ext_chain_control
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED"};
+		PREFIX = "iface";			
+		SECTION ex_interface
+		{
+			DESCRIPTION = "Extender Interface";
+			TYPE = "JVX_DATAFORMAT_PROPERTY_EXTENDER_INTERFACE";	
+		};  
+	};
+};

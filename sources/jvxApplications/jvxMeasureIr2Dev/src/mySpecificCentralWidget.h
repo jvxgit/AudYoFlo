@@ -1,0 +1,5 @@
+/*
+class mySpecificCentralWidget : public myCentralWidget
+{
+};
+*/

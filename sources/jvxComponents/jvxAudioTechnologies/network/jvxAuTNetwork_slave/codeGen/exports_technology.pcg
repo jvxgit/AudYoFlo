@@ -1,0 +1,9 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genNetworkMaster_technology";
+
+	GROUP integrateiplink
+	{
+		include "exports_integrateiplink_tech.pcgf"; 
+	};
+};

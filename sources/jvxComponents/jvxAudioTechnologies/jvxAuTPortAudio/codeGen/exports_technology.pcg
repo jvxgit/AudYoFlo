@@ -1,0 +1,24 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genPortAudio_technology";
+
+	SECTION properties_active
+	{
+		NAME = "properties_selected";
+		DESCRIPTION = "Properties in state selected";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state selected ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED"};
+		 
+		SECTION platformFilters
+		{
+			DESCRIPTION = "Selection of Platforms";	  // Defaults to NAME if not present
+			ID = 0; 	
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION"; 
+		};  
+	};
+};

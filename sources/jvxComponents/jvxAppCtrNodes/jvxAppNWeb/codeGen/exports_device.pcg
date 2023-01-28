@@ -1,0 +1,28 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genAppCtrWeb_device";
+
+	SECTION werbserver_config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 	
+		SECTION www_directory
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "./www";
+		};
+		SECTION www_port
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 8000;
+		};
+		SECTION www_numthreads
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 8;
+		};
+	};
+};

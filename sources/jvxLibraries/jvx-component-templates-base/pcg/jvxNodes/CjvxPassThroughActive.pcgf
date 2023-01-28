@@ -1,0 +1,15 @@
+SECTION passthrough
+{
+	GENERATE_ENTRIES_CONFIG_FILE = "yes"; 
+	PREFIX = "passthrough";
+	ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+	CALLBACKS = {"set_passthrough"};		
+		
+	SECTION active
+	{
+		DESCRIPTION = "Passthrough Active";
+		TYPE = "JVX_DATAFORMAT_BOOL";	
+		CALLBACK_SET_POSTHOOK = "set_passthrough";
+		INIT_SET = 0;
+	};
+};

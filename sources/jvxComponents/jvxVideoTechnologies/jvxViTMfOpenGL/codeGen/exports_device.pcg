@@ -1,0 +1,87 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genMf_device";
+
+	SECTION systemex 
+	{
+		PREFIX = "systemex";
+		DESCRIPTION = "Specific Mf camera properties";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		
+		SECTION number_buffers
+		{
+			DESCRIPTION = "Number of buffers while operating";	  // Defaults to NAME if not present
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2;
+		};
+	};
+		
+	SECTION configuration_mf 
+	{
+		DESCRIPTION = "Specific Mf camera properties";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+
+		SECTION rates_min
+		{
+			DESCRIPTION = "Minimum framrate in current mode";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+		SECTION rates_max
+		{
+			DESCRIPTION = "Maximum framrate in current mode";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+	
+		SECTION mode_selection
+		{
+			DESCRIPTION = "Selection of camera mode";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			UPDATE_CONTEXT_TOKEN = "mf_device:mode_selection";
+		};
+			
+		ifdef JVX_USE_OPENGL_X11
+		SECTION rendering_mode
+		{
+			DESCRIPTION = "Activate rendering on output side";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"No Rendering", "External Rendering", "Native Rendering"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes"}; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION"; 
+		};
+		else
+
+		SECTION rendering_mode
+		{
+			DESCRIPTION = "Activate rendering on output side";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"No Rendering", "External Rendering"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION"; 
+		};
+		endif
+	};
+
+		
+	GROUP expose_visual_if
+	{
+		include "visual-data-video.pcgf";
+	};
+};

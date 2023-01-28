@@ -1,0 +1,12 @@
+import sys
+import os
+
+# Add path where to look for the pybind library
+sys.path.append('@JVX_PYTHON_PATH_RELEASE_LIB@')
+# sys.path.append('../library')
+
+# Add path where to look for additional libraries - note: the typical approach (PATH, local folder)
+# seems not to work in Python!
+# -> https://stackoverflow.com/questions/39734176/load-a-dll-with-dependencies-in-python
+os.add_dll_directory('@JVX_PYTHON_PATH_RELEASE_DLL@')
+#os.add_dll_directory('../../bin')

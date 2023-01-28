@@ -1,0 +1,20 @@
+--- portaudio/CMakeLists.txt	2023-01-26 13:44:53.758599000 +0100
++++ portaudio.orig/CMakeLists.txt	2023-01-26 14:27:19.136687100 +0100
+@@ -140,7 +140,7 @@
+ 
+   target_compile_definitions(PortAudio PRIVATE _CRT_SECURE_NO_WARNINGS)
+ 
+-  option(PA_USE_ASIO "Enable support for ASIO" ON)
++  option(PA_USE_ASIO "Enable support for ASIO" OFF)
+   if(PA_USE_ASIO)
+     find_package(ASIO)
+     # Automatically download the ASIO SDK ZIP if it is not found. The ASIO SDK license
+@@ -377,7 +377,7 @@
+       "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+       "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+       IMMEDIATE @ONLY)
+-    add_custom_target(uninstall_paudio
++    add_custom_target(uninstall
+       COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+   endif()
+ endif()

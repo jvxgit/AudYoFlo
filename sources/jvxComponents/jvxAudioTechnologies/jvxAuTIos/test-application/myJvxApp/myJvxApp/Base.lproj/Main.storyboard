@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="RTPROC TEST HOST, SIMPLE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AUx-tj-pB8">
+                                <rect key="frame" x="47" y="39" width="499" height="47"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6D3-Ht-ShQ">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <state key="normal" title="Start Processing"/>
+                                <connections>
+                                    <action selector="onStartPushed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fGj-gV-pVD"/>
+                                </connections>
+                            </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="JUb-PD-mpl">
+                                <rect key="frame" x="-60" y="-14" width="121" height="29"/>
+                                <segments>
+                                    <segment title="Speaker Off"/>
+                                    <segment title="Speaker On"/>
+                                </segments>
+                                <variation key="widthClass=compact" misplaced="YES">
+                                    <rect key="frame" x="239" y="552" width="121" height="29"/>
+                                </variation>
+                                <connections>
+                                    <action selector="speakerOnOff_valueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="8lU-YI-Rek"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="AUx-tj-pB8" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="8tm-TH-dmo"/>
+                            <constraint firstItem="AUx-tj-pB8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XPR-gI-exR"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="6D3-Ht-ShQ" secondAttribute="bottom" constant="20" id="dDS-aa-16c"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="JUb-PD-mpl" secondAttribute="trailing" constant="20" id="kzL-Bt-HrK"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="JUb-PD-mpl" secondAttribute="bottom" constant="23" id="o49-fw-zTK"/>
+                            <constraint firstItem="6D3-Ht-ShQ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="qRd-TK-9Xn"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="6D3-Ht-ShQ"/>
+                                <exclude reference="JUb-PD-mpl"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="dDS-aa-16c"/>
+                                <exclude reference="o49-fw-zTK"/>
+                                <exclude reference="qRd-TK-9Xn"/>
+                                <exclude reference="kzL-Bt-HrK"/>
+                                <exclude reference="8tm-TH-dmo"/>
+                                <exclude reference="XPR-gI-exR"/>
+                            </mask>
+                        </variation>
+                        <variation key="widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="6D3-Ht-ShQ"/>
+                                <include reference="JUb-PD-mpl"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="dDS-aa-16c"/>
+                                <include reference="o49-fw-zTK"/>
+                                <include reference="qRd-TK-9Xn"/>
+                                <include reference="kzL-Bt-HrK"/>
+                                <include reference="8tm-TH-dmo"/>
+                                <include reference="XPR-gI-exR"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="speakerOnOff" destination="JUb-PD-mpl" id="z1h-Fm-v2h"/>
+                        <outlet property="startStopButton" destination="6D3-Ht-ShQ" id="P2B-4a-z5G"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="852" y="571"/>
+        </scene>
+    </scenes>
+</document>

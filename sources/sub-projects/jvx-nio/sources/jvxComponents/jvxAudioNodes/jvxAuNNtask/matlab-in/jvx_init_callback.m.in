@@ -1,0 +1,19 @@
+function [hdl] = jvx_init_callback(hObject_parent, handle_parent)
+
+if(nargin == 2)
+    hdl.parent_object = hObject_parent;
+    hdl.parent_handle = handle_parent;
+else
+    hdl = [];
+end
+
+% Add local processing path
+addpath @JVX_LOC_MAT_PATH_PROJECT@;
+
+disp('<jvx_init_callback>: Setting path to use local matlab function in project stored at @JVX_LOC_MAT_PATH_PROJECT@');
+
+% Produce input signal
+disp('Producing random input signal');
+rng('default')
+global in_hoa; in_hoa = randn(32, 10000);
+in_hoa = in_hoa / max(max(abs(in_hoa))) * 0.95;

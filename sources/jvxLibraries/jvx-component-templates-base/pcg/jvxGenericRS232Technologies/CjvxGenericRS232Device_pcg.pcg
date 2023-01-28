@@ -1,0 +1,82 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxGenericRs232Device_pcg";
+	CLASSNAME = "CjvxGenericRs232Device_pcg";
+
+	SECTION rs232_runtime
+	{
+		DESCRIPTION = "Properties in state active for generic rs232 device";  // Defaults to NAME if not present
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION timeoutobserver_msec
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Specify observer timeout";	  
+			INIT_SET = 500;
+		};
+
+		SECTION timeoutmqueue_msec
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Specify observer timeout";	  
+			INIT_SET = 1000;
+		};
+
+		SECTION timeoutresponse_msec
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Specify device response timeout";	  
+			INIT_SET = 10000;
+		};
+
+		SECTION number_entries_mqueue
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Specify number of elements in message queue";	  
+			INIT_SET = 10;
+		};
+
+		SECTION size_bytes_inbuf
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Specify number of bytes for input buffer";	  
+			INIT_SET = 128;
+		};
+	};	
+
+	SECTION rs232_settings
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION baudrate
+		{
+			DESCRIPTION = "Baudrate";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+
+		SECTION stopbits
+		{
+			DESCRIPTION = "Stopbits";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+
+		SECTION parity
+		{
+			DESCRIPTION = "Parity";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+		SECTION bits4Bytes
+		{
+			DESCRIPTION = "Bits for bytes";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+	};	
+};

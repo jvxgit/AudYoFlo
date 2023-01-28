@@ -1,0 +1,11 @@
+#ifndef __TJVXMANIPULATE_H__
+#define __TJVXMANIPULATE_H__
+
+typedef enum
+{
+	JVX_MANIPULATE_NONE = 0,
+	JVX_MANIPULATE_DESCRIPTION,
+	JVX_MANIPULATE_DESCRIPTOR
+} TjvxManipulateEnum;
+
+#endif

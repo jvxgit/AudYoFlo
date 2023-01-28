@@ -1,0 +1,17 @@
+# Additional information:
+# https://pybind11.readthedocs.io/en/stable/cmake/index.html
+
+include(${JVX_CMAKE_DIR}/common_local_python_head.cmake)
+
+include_directories(${WP_COMMON_INCLUDES})
+set(LOCAL_COMPILE_DEFINITIONS ${WP_COMMON_DEFINITIONS})
+set(LOCAL_SOURCES ${WP_COMMON_SOURCES})
+set(LOCAL_LIBS ${WP_COMMON_LIBS})
+
+#set(LOCAL_LIBS 
+#  jvx-dsp-cpp_static)
+
+set(JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/python/runtime/local.py")
+set(LOCAL_PYTHON_SCRIPT "python/runtime/test-simple-kernel-python.py")
+
+include(${JVX_CMAKE_DIR}/common_local_python_foot.cmake)

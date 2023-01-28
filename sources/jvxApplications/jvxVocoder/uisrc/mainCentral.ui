@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form_mainCentral</class>
+ <widget class="QWidget" name="Form_mainCentral">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1053</width>
+    <height>794</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1053</width>
+    <height>794</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1053</width>
+    <height>794</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>13</x>
+     <y>13</y>
+     <width>1024</width>
+     <height>768</height>
+    </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>1024</width>
+     <height>768</height>
+    </size>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="jvxVocoder.qrc">:/images/images/schematic_vocoder.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QSlider" name="verticalSlider_vuv">
+   <property name="geometry">
+    <rect>
+     <x>386</x>
+     <y>470</y>
+     <width>22</width>
+     <height>137</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>100</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="invertedAppearance">
+    <bool>true</bool>
+   </property>
+   <property name="invertedControls">
+    <bool>false</bool>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBelow</enum>
+   </property>
+  </widget>
+  <widget class="QSlider" name="verticalSlider_in">
+   <property name="geometry">
+    <rect>
+     <x>554</x>
+     <y>514</y>
+     <width>22</width>
+     <height>65</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>1</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBelow</enum>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_out1">
+   <property name="geometry">
+    <rect>
+     <x>228</x>
+     <y>30</y>
+     <width>112</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="palette">
+    <palette>
+     <active>
+      <colorrole role="ButtonText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </active>
+     <inactive>
+      <colorrole role="ButtonText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </inactive>
+     <disabled>
+      <colorrole role="ButtonText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>120</red>
+         <green>120</green>
+         <blue>120</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </disabled>
+    </palette>
+   </property>
+   <property name="text">
+    <string>Listen</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_out2">
+   <property name="geometry">
+    <rect>
+     <x>538</x>
+     <y>30</y>
+     <width>112</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Listen</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_out3">
+   <property name="geometry">
+    <rect>
+     <x>502</x>
+     <y>730</y>
+     <width>112</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Listen</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_out4">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>450</y>
+     <width>112</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Listen</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_out5">
+   <property name="geometry">
+    <rect>
+     <x>918</x>
+     <y>452</y>
+     <width>112</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Listen</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_autovuv">
+   <property name="geometry">
+    <rect>
+     <x>438</x>
+     <y>298</y>
+     <width>65</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>auto</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_autopitch">
+   <property name="geometry">
+    <rect>
+     <x>32</x>
+     <y>632</y>
+     <width>65</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>auto</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_pitchmin">
+   <property name="geometry">
+    <rect>
+     <x>144</x>
+     <y>654</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_pitchmax">
+   <property name="geometry">
+    <rect>
+     <x>252</x>
+     <y>652</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_pitch">
+   <property name="geometry">
+    <rect>
+     <x>46</x>
+     <y>354</y>
+     <width>67</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horizontalSlider_lporder">
+   <property name="geometry">
+    <rect>
+     <x>827</x>
+     <y>682</y>
+     <width>147</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>3</number>
+   </property>
+   <property name="maximum">
+    <number>19</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksAbove</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>732</x>
+     <y>680</y>
+     <width>89</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>LP order</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>422</x>
+     <y>598</y>
+     <width>35</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
+   <property name="text">
+    <string>voiced </string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>416</x>
+     <y>468</y>
+     <width>45</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
+   <property name="text">
+    <string>unvoiced </string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>856</x>
+     <y>156</y>
+     <width>175</width>
+     <height>125</height>
+    </rect>
+   </property>
+   <property name="palette">
+    <palette>
+     <active>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </active>
+     <inactive>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </inactive>
+     <disabled>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </disabled>
+    </palette>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="title">
+    <string>Modification</string>
+   </property>
+   <widget class="QSlider" name="horizontalSlider_pitch_scale">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>38</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksAbove</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>54</x>
+      <y>16</y>
+      <width>67</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Pitch Scaling</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>142</x>
+      <y>42</y>
+      <width>29</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>higher</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>40</y>
+      <width>29</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>lower</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>2</x>
+      <y>66</y>
+      <width>169</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>46</x>
+      <y>82</y>
+      <width>83</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Format Warping</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider_formant_warp">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>100</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksAbove</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>144</x>
+      <y>102</y>
+      <width>29</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>male</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>102</y>
+      <width>33</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>female</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="jvxVocoder.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>pushButton_out1</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>button_out1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>284</x>
+     <y>-14</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_out2</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>button_out2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>600</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>-19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_out3</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>button_out3()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>566</x>
+     <y>743</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1054</x>
+     <y>723</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_out4</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>button_out4()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>737</x>
+     <y>471</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1058</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_out5</sender>
+   <signal>clicked()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>button_out5()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>949</x>
+     <y>461</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1054</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_autopitch</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>toggle_pitch(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>646</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>605</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_autovuv</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>toggle_autovuv(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>452</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>-5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider_in</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>select_in(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>564</x>
+     <y>538</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1056</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider_vuv</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>changed_mix(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>397</x>
+     <y>586</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>506</x>
+     <y>-4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_pitch_scale</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>changed_pitch_scale(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>942</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>10</x>
+     <y>432</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_pitchmax</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>newValue_pitch_max()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>663</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-4</x>
+     <y>676</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_pitchmin</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>newValue_pitch_min()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>177</x>
+     <y>661</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-3</x>
+     <y>715</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_lporder</sender>
+   <signal>sliderReleased()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>newValue_lpc_order()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>863</x>
+     <y>691</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1057</x>
+     <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_formant_warp</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>newValue_form_warp(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>922</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>955</x>
+     <y>2</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_pitch</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Form_mainCentral</receiver>
+   <slot>newValue_pitch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>365</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-4</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>button_out1()</slot>
+  <slot>button_out2()</slot>
+  <slot>button_out3()</slot>
+  <slot>button_out4()</slot>
+  <slot>button_out5()</slot>
+  <slot>select_in(int)</slot>
+  <slot>changed_mix(int)</slot>
+  <slot>toggle_autovuv(bool)</slot>
+  <slot>toggle_pitch(bool)</slot>
+  <slot>select_vuv_hardsoft(int)</slot>
+  <slot>changed_pitch_scale(int)</slot>
+  <slot>newValue_pitch_max()</slot>
+  <slot>newValue_pitch_min()</slot>
+  <slot>newValue_lpc_order()</slot>
+  <slot>newValue_form_warp(int)</slot>
+  <slot>newValue_pitch()</slot>
+ </slots>
+</ui>

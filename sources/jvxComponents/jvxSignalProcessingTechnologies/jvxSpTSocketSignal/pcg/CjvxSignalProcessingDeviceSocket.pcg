@@ -1,0 +1,109 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxSignalProcessingDeviceSocket_genpcg";
+
+	GROUP sync
+	{
+		SECTION parameter
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+			SECTION number_buffers
+			{
+				DESCRIPTION = "Number Buffers";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 4;
+			};  
+			SECTION log_timing
+			{
+				DESCRIPTION = "Log timing data for profiling";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0;
+			};  
+		};
+
+		SECTION derived
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+			SECTION jitter_buffer_size
+			{
+				DESCRIPTION = "Jitter Buffer size";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0;
+			};
+		};
+
+		SECTION monitor
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			SHOW_CONTENT_HINTS = "RTUPDATE=yes";
+
+			SECTION number_overflows
+			{
+				DESCRIPTION = "Number of overflows";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0;
+				
+			}; 
+			SECTION number_underflows
+			{
+				DESCRIPTION = "Number of overflows";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0; 
+			}; 
+			SECTION number_aborts
+			{
+				DESCRIPTION = "Number of aborts";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0;
+			}; 
+
+			SECTION fillheight_avrg
+			{
+				DESCRIPTION = "Current fill height";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0;
+			}; 
+			SECTION fillheight_min
+			{
+				DESCRIPTION = "Current min fill height";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0;
+			}; 
+			SECTION fillheight_max
+			{
+				DESCRIPTION = "Current max fill height";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				ASSOCIATE_EXTERNAL = "yes";
+				INIT_SET = 0;
+			}; 
+			SECTION input_rate
+			{
+				DESCRIPTION = "Samplerate input data";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				INIT_SET = 0;
+			}; 
+			SECTION output_rate
+			{
+				DESCRIPTION = "Samplerate input data";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				INIT_SET = 0;
+			}; 
+		};
+	};
+};

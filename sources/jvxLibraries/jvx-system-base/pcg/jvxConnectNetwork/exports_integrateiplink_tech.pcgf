@@ -1,0 +1,27 @@
+SECTION properties_sockets
+{
+	NAME = "properties_sockets";
+	DESCRIPTION = "Properties in state selected and active";
+	GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+	GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+	COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+	ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE"};
+
+	SECTION specifyCommand
+	{
+		DESCRIPTION = "Issue text format commands to component";	  // Defaults to NAME if not present
+		ID = "jvx_command_string";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		DESCRIPTOR = "JVX_SOCKET_COMMAND";
+	};		
+		
+	SECTION socketTypeSelection
+	{
+		DESCRIPTION = "Possible socket types";	  // Defaults to NAME if not present
+		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+		ONLY_CONTENT_TO_CONFIG = "yes";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		DESCRIPTOR = "JVX_SOCKET_SOCK_TYPES";
+	}; 
+};

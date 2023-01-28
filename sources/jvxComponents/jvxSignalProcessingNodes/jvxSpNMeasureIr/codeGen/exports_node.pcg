@@ -1,0 +1,509 @@
+SECTION PROPERTIES 
+{	
+	OUTPUTFILE_NAME = "genMeasureIr_node";
+
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"set_config_posthook"};
+		CALLBACK_SET_POSTHOOK = "set_config_posthook";
+		
+		/*
+		SECTION number_output_channels_max
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";			
+			INIT_SET = 2;
+			READ_WRITE_ACCESS ="JVX_PROPERTY_ACCESS_READ_ONLY"; 
+		};  
+
+		SECTION number_input_channels_max
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";			
+			INIT_SET = 2;
+			READ_WRITE_ACCESS ="JVX_PROPERTY_ACCESS_READ_ONLY"; 
+		};
+		*/
+		SECTION apply_to_all
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+		};  
+
+		SECTION autostart_measure
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 1;
+		};
+
+		SECTION countdown_start
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 0;
+		};  
+
+		SECTION single_measurement
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+		};  
+	};
+
+	
+	SECTION control
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"trigger_start"};
+
+		// ==========================================================================
+
+		SECTION trigger_start
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			DESCRIPTION = "Trigger Start";	  // Defaults to NAME if not present
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "trigger_start";
+		};
+	};
+
+	SECTION generator
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};			
+		CALLBACKS = {"set_generator_posthook"};
+		CALLBACK_SET_POSTHOOK = "set_generator_posthook";
+
+		SECTION type_excitation
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Generator Type";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"noise", "psweep", "logsweep", "linsweep"};
+			SELECTION_LIST_SELECTED = {"no", "yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes"}; 			
+			SELECTION_TRANSLATOR_TYPE = "jvxGeneratorWaveType";
+			SELECTION_LIST_TRANSLATORS = {"JVX_GENERATOR_WAVE_NOISE_UNBUFFERED",
+				"JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED",
+				"JVX_GENERATOR_WAVE_LOGSWEEP",
+				"JVX_GENERATOR_WAVE_LINEARSWEEP"};
+		};	
+		
+		SECTION amplitude_excitation
+		{
+			DESCRIPTION = "Generator amplitude";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0.95;
+		}; 
+		
+		SECTION frequency_low_excitation
+		{
+			DESCRIPTION = "Frequency (low, in case periodic signals)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0.0;
+		};  
+
+		SECTION frequency_up_excitation
+		{
+			DESCRIPTION = "Frequency (low, in case periodic signals)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 100000.0;
+		};  
+
+		SECTION seed_excitation
+		{
+			DESCRIPTION = "Noise generator seed";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0;
+		};  
+
+		SECTION silence_start_excitation
+		{
+			DESCRIPTION = "Silence before processing [msec}";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 1000;
+
+		};  
+			
+		SECTION length_excitation
+		{
+			DESCRIPTION = "Length signal period [msec]";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 5000;
+		};  
+
+		SECTION silence_stop_excitation
+		{
+			DESCRIPTION = "Silence after processing [msec}";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 1000;
+		};  
+
+		SECTION number_periods_excitation
+		{
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+			DESCRIPTION = "Number Periods";	
+			INIT_SET = 1;
+		};
+		SECTION noise_type_excitation
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Noise Type";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"Uniform", "Normal"};
+			SELECTION_LIST_SELECTED = {"no", "yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			SELECTION_TRANSLATOR_TYPE = "jvxGeneratorWaveNoiseType";
+			SELECTION_LIST_TRANSLATORS = {"JVX_GENERATOR_NOISE_UNIFORM", "JVX_GENERATOR_NOISE_NORMAL"};
+		};
+	};
+
+	SECTION measurements
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};			
+		CALLBACKS = {"set_measurement_posthook", "get_measurement_prehook", "add_entry", "remove_entry", "set_all_channels_posthook"};		
+
+		SECTION all_measurements
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Measurement";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"REPLACEME"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes"}; 	
+			CALLBACK_SET_POSTHOOK = "set_measurement_posthook";
+		};
+
+		SECTION measurement_out_channels
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Output Channels";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"REPLACEME"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes"}; 
+			CALLBACK_SET_POSTHOOK = "set_measurement_posthook";
+			CALLBACK_GET_PREHOOK = "get_measurement_prehook";
+		};
+
+		SECTION measurement_all_out_channels_on
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_all_channels_posthook";
+		};
+
+		SECTION measurement_all_out_channels_off
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_all_channels_posthook";
+		};
+
+		SECTION measurement_in_channels
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Input Channels";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"REPLACEME"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes"}; 	
+			CALLBACK_SET_POSTHOOK = "set_measurement_posthook";
+			CALLBACK_GET_PREHOOK = "get_measurement_prehook";
+		};
+
+		SECTION measurement_all_in_channels_on
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_all_channels_posthook";
+		};
+
+		SECTION measurement_all_in_channels_off
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_all_channels_posthook";
+		};
+
+		SECTION measurement_description
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			DESCRIPTION = "Description of Measurement";	  // Defaults to NAME if not present
+			INIT_SET = "--";
+			CALLBACK_SET_POSTHOOK = "set_measurement_posthook";
+			CALLBACK_GET_PREHOOK = "get_measurement_prehook";
+		};
+
+		SECTION measurement_clear_after
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			DESCRIPTION = "Clear the measurement buffers from memory after storage";	  // Defaults to NAME if not present
+			INIT_SET = 0;
+		};
+
+		// ==========================================================================
+
+		SECTION measurement_add_entry
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			DESCRIPTION = "Trigger Add";	  // Defaults to NAME if not present
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "add_entry";
+		};
+		SECTION measurement_rem_entry
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			DESCRIPTION = "Trigger Remove";	  // Defaults to NAME if not present
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "remove_entry";
+		};
+	};
+
+	SECTION monitor
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no"; 
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"get_monitor_prehook"};
+		CALLBACK_GET_PREHOOK = "get_monitor_prehook";
+		SECTION progress_measures
+		{
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";			
+			VALUE_IN_RANGE_MIN_VALUE = 0;
+			VALUE_IN_RANGE_MAX_VALUE = 100;
+			INIT_SET = 0;
+			READ_WRITE_ACCESS ="JVX_PROPERTY_ACCESS_READ_ONLY"; 
+		};
+
+		SECTION progress_loops
+		{
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";			
+			VALUE_IN_RANGE_MIN_VALUE = 0;
+			VALUE_IN_RANGE_MAX_VALUE = 100;
+			INIT_SET = 0;
+			READ_WRITE_ACCESS ="JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+
+		SECTION progress_one_period
+		{
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";			
+			VALUE_IN_RANGE_MIN_VALUE = 0;
+			VALUE_IN_RANGE_MAX_VALUE = 100;
+			READ_WRITE_ACCESS ="JVX_PROPERTY_ACCESS_READ_ONLY";
+			INIT_SET = 0;
+		};
+
+		SECTION countdown_togo
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 0;
+		};
+
+		SECTION local_text_log
+		{
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG";
+		};
+
+		SECTION display_text_state
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";
+		};
+
+		SECTION glitches_all
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";			
+			INIT_SET = 0;
+		};
+
+		SECTION glitches_during_measurement
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+		};
+	};
+	
+	SECTION evaluation
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no"; 
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_evaluation_posthook"};
+		CALLBACK_SET_POSTHOOK = "set_evaluation_posthook";
+	
+		SECTION evaluate_ir
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 1;
+		};
+
+		SECTION skip_periods
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";			
+			INIT_SET = 0;
+		};
+
+		SECTION store_data
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 1;
+		};
+	};
+
+	SECTION results
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no"; 
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_result_posthook", 
+			"get_measurement_data_prehook", 
+			"set_result_import_measurement",
+			"set_config_measurement_posthook",
+			"get_config_measurement_prehook"};		
+
+		SECTION stored_measurements
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+			CALLBACK_SET_POSTHOOK = "set_result_posthook";
+		};
+		
+		SECTION stored_measurement_channels
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+			CALLBACK_SET_POSTHOOK = "set_result_posthook";
+		};
+
+		SECTION trigger_erase_channel
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_result_posthook";
+		};
+
+		SECTION trigger_erase_measurement
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_result_posthook";
+		};
+		SECTION import_measurement
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";			
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_result_import_measurement";
+		};
+
+		SECTION result_measurements_data
+		{
+			TYPE = "JVX_DATAFORMAT_HANDLE";	
+			IS_VALID_ON_INIT = "yes";
+			CALLBACK_GET_PREHOOK = "get_measurement_data_prehook";
+		};
+
+		SECTION store_measurement_config
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			CALLBACK_SET_POSTHOOK = "set_config_measurement_posthook";
+			CALLBACK_GET_PREHOOK = "get_config_measurement_prehook";
+		};
+	};
+
+	SECTION callbacks
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no"; 
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION report_evaluate
+		{
+			TYPE = "JVX_DATAFORMAT_CALLBACK";			
+			INIT_SET = 0;
+		};
+	};
+
+	/*
+	GROUP playback
+	{
+		SECTION control_status
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"set_processing_prop"};
+
+			SECTION trigger_start
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";			
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "no";
+			};  
+			SECTION current_status
+			{
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+				SELECTION_LIST_NAMES = {"Off", "Waiting for Start", "Playing", "Waiting for Stop"};
+				SELECTION_LIST_SELECTED = {"yes", "no", "no", "no"};
+				SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes"}; 
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "no";
+			};  
+
+			SECTION current_channel_number
+			{
+				TYPE = "JVX_DATAFORMAT_SIZE";			
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "no";
+			};  
+
+			SECTION pre_text_announce
+			{
+				TYPE = "JVX_DATAFORMAT_STRING";	
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+				INIT_SET = "Lautsprecher Nummer";
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "yes";
+			};  
+
+			SECTION channel_number_start_offset
+			{
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+				INIT_SET = 1;
+				GENERATE_ENTRY_CONFIG_FILE = "yes";
+			};  
+
+			SECTION output_volume
+			{
+				VALUE_IN_RANGE_MIN_VALUE = 0.01;		
+				VALUE_IN_RANGE_MAX_VALUE = 100.0;
+				VALUE_IN_RANGE_VALUE = 1.0;
+				TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+				GENERATE_ENTRY_CONFIG_FILE = "yes";
+			};  
+		};
+	};
+	*/
+};

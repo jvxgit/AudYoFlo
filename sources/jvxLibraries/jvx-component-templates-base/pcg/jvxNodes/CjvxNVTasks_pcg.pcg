@@ -1,0 +1,63 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxNVTasks_pcg";
+
+	GROUP selected_vtask_properties
+	{
+		JVX_DUPLICATE_SYSTEM_PROPERTIES="yes";
+		include "node-properties.pcgf";
+	
+		SECTION variable_tasks
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"select_task"};
+			CALLBACK_SET_POSTHOOK = "select_task";
+
+			SECTION select
+			{
+				DESCRIPTION = "Selected Variable Task";
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";					
+				SELECTION_LIST_NAMES = {"INVALID"};
+				SELECTION_LIST_SELECTED = {"no"};
+				SELECTION_LIST_EXCLUSIVE = {"no"}; 
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				
+			};
+		};
+	};
+
+	SECTION monitor
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		SHOW_CONTENT_HINTS = "RTUPDATE=yes";
+
+		SECTION rate
+		{
+			DESCRIPTION = "Samplerate input data";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 0;
+		};
+	};
+
+	
+	SECTION configuration
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		SHOW_CONTENT_HINTS = "RTUPDATE=yes";
+
+		SECTION align_buffersize_0Vtask
+		{
+			DESCRIPTION = "Flag to align buffersizes between the two tasks";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 1;
+		};
+	};
+};

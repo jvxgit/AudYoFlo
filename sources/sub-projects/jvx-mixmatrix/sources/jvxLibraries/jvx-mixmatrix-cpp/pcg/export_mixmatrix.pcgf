@@ -1,0 +1,120 @@
+	SECTION general
+	{
+		DESCRIPTION = "general settings";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+		SECTION zero_threshold
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			DESCRIPTION = "Value that determines 'do nothing' gain factor";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+		SECTION config_data_available
+		{
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SIMPLE_ONOFF";
+			DESCRIPTION = "Is there any data that must be fetched before data shall be pulled";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+		SECTION main_out
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			DESCRIPTION = "Main output level";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			INIT_SET = 1.0;
+		};		
+	};
+
+	SECTION select_intersection
+	{
+		DESCRIPTION = "Select current intersection indices";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+		SECTION number_inputs
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Provide number of inputs (only for control)";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+		SECTION idx_input
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Select specific inputchannel intersect index";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+		
+		SECTION number_outputs
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Provide number of outputs (only for control)";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+		SECTION idx_output
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			DESCRIPTION = "Select specific outputchannel intersect index";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+	};
+		
+	SECTION properties_selected_intersect
+	{
+		DESCRIPTION = "Properties of current intersection";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+		SECTION intersect_gain
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			DESCRIPTION = "Gain on this intersect";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+		
+		SECTION intersect_mute
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			DESCRIPTION = "Mute on this intersect";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+
+		SECTION intersect_callback
+		{
+			TYPE = "JVX_DATAFORMAT_HANDLE";	
+			DESCRIPTION = "Function pointer to realize intersect callback";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+		SECTION level_out
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			DESCRIPTION = "Level on out channel of this intersect";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+		SECTION level_in
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			DESCRIPTION = "Level on out channel of this intersect";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+		SECTION level_out_max
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			DESCRIPTION = "Max Level on out channel of this intersect";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+
+	};
+
+		 
+		

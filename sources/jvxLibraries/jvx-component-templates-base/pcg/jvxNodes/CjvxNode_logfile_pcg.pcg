@@ -1,0 +1,9 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxNode_logfile_genpcg";
+	
+	GROUP logtofile
+	{
+		include "exports_logtofile.pcgf";
+	};
+};

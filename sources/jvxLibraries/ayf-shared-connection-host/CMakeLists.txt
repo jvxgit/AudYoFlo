@@ -1,0 +1,32 @@
+cmake_minimum_required (VERSION 2.8.11)
+
+set(PROJECT_NAME ayf-shared-connection-host)
+include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/os-${JVX_OS}
+  ${CMAKE_CURRENT_BINARY_DIR}
+
+  ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-host-json/include
+  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHCon/
+
+  ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor
+  )
+
+set(LOCAL_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/ayf-connection-host.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfGlobalHostClass.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfGlobalHostClass.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfConnectionHostDll.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-connect-host.def)
+
+set(BUILD_SHARED TRUE)
+set(JVX_FORCE_RUNTIME_IMPORTLIB TRUE)
+
+set(LOCAL_LIBS 
+    jvxHCon_static
+    jvxTconfigProcessor_static
+    jvx-host-json_static)
+
+include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

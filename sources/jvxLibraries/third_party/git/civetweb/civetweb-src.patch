@@ -1,0 +1,29 @@
+--- civetweb.orig/src/civetweb.c	2023-01-26 22:54:03.121509200 +0100
++++ civetweb/src/civetweb.c	2023-01-26 22:47:18.898920000 +0100
+@@ -11967,7 +11967,7 @@
+ 			    get_rel_url_at_current_server(destination_hdr, conn);
+ 			if (h) {
+ 				int len = (int)strlen(h);
+-				local_dest = mg_malloc_ctx(len + 1, conn->phys_ctx);
++				local_dest = (char*)mg_malloc_ctx(len + 1, conn->phys_ctx);
+ 				mg_url_decode(h, len, local_dest, len + 1, 0);
+ 			}
+ 		}
+@@ -12611,7 +12611,7 @@
+ 	}
+ 
+ 	link_concat_len = strlen(uri) + strlen(name) + 1;
+-	link_concat = mg_malloc_ctx(link_concat_len, conn->phys_ctx);
++	link_concat = (char*)mg_malloc_ctx(link_concat_len, conn->phys_ctx);
+ 	if (!link_concat) {
+ 		return 0;
+ 	}
+@@ -22353,7 +22353,7 @@
+ 				len += 2;
+ 			}
+ 		}
+-		all_methods = mg_malloc(len);
++		all_methods = (char*)mg_malloc(len);
+ 		if (!all_methods) {
+ 			/* Must never happen */
+ 			mg_global_unlock();

@@ -1,0 +1,55 @@
+http://aprs.gids.nl/nmea/
+
+
+$GPVTG,1,2,3,4,5,6,7,8,9
+
+1=""
+2=""
+3=""
+4=""
+5=""
+6=""
+7=""
+8=""
+9="N*30"
+
+$GPVTG
+
+Track Made Good and Ground Speed.
+
+eg1. $GPVTG,360.0,T,348.7,M,000.0,N,000.0,K*43
+eg2. $GPVTG,054.7,T,034.4,M,005.5,N,010.2,K
+
+
+           054.7,T      True track made good
+           034.4,M      Magnetic track made good
+           005.5,N      Ground speed, knots
+           010.2,K      Ground speed, Kilometers per hour
+
+
+eg3. $GPVTG,t,T,,,s.ss,N,s.ss,K*hh
+1    = Track made good
+2    = Fixed text 'T' indicates that track made good is relative to true north
+3    = not used
+4    = not used
+5    = Speed over ground in knots
+6    = Fixed text 'N' indicates that speed over ground in in knots
+7    = Speed over ground in kilometers/hour
+8    = Fixed text 'K' indicates that speed over ground is in kilometers/hour
+9    = Checksum
+
+The actual track made good and speed relative to the ground.
+
+$--VTG,x.x,T,x.x,M,x.x,N,x.x,K
+x.x,T = Track, degrees True
+x.x,M = Track, degrees Magnetic
+x.x,N = Speed, knots
+x.x,K = Speed, Km/hr 
+
+
+
+
+$GPGGA,,,,,,0,00,99.99,,,,,,*48
+$GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99*30
+$GPGLL,,,,,,V,N*64
+$GPRMC,,V,,,,,,,,,,N*53>.

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>jvx-dsp</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
+			<triggers>full,incremental,</triggers>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.ti.ccstudio.core.ccsNature</nature>
+		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>src/jvx_cic.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/sources/jvxLibraries/jvx-dsp/src/jvx_pdm/jvx_cic.c</locationURI>
+		</link>
+		<link>
+			<name>src/jvx_fir_lut.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/sources/jvxLibraries/jvx-dsp/src/jvx_pdm/jvx_fir_lut.c</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>RTPROC_DIR</name>
+			<value>file:/C:/develop/jvx</value>
+		</variable>
+	</variableList>
+</projectDescription>

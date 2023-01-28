@@ -1,0 +1,7 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genGpsRs232_device";
+	CLASSNAME = "genGpsRs232_device";
+
+	include "remote_device.pcgf";
+};

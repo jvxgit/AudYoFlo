@@ -1,0 +1,115 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genOfflineAudio_device";
+	
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+		
+		SECTION numinchannelsmat
+		{
+			DESCRIPTION = "Number in channels Matlab";	  // Defaults to NAME if not present
+			INIT_SET = 0; 
+			DESCRIPTOR = "JVX_IN_CHANNELS_MATLAB";	  // Defaults to NAME if not present
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";		
+		};
+		SECTION numoutchannelsmat
+		{
+			DESCRIPTION = "Number out channels Matlab";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_OUT_CHANNELS_MATLAB";	  // Defaults to NAME if not present
+			INIT_SET = 0; 
+			GENERATE_ENTRY_CONFIG_FILE = "yes";		// <- need to store this as it can not be obtained in Matlab
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";		
+		};
+
+		SECTION inputchannelselection_shadow
+		{
+			DESCRIPTION = "Shadow track keeper of channel selection in matlab, input";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		};  
+		SECTION outputchannelselection_shadow
+		{
+			DESCRIPTION = "Shadow track keeper of channel selection in matlab, output";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		};
+
+		SECTION inputTextMat
+		{
+			DESCRIPTION = "Text in Input Field";	  // Defaults to NAME if not present
+			INIT_SET = "";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			DESCRIPTOR = "JVX_MAT_IN_TEXT";
+			TYPE = "JVX_DATAFORMAT_STRING";	
+		};   
+
+		SECTION inputIsFileMat
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Input in Matlab is File";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_MAT_IN_IS_FILE";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"yes"};
+			SELECTION_LIST_SELECTED = {"no"};
+		}; 
+		
+		SECTION inputRateMat
+		{
+			DESCRIPTION = "Rate of Workspace Field";	  // Defaults to NAME if not present
+			INIT_SET = 48000;
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			DESCRIPTOR = "JVX_MAT_IN_RATE";
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+		};   
+
+		 
+		SECTION outputTextMat
+		{
+			DESCRIPTION = "Text in Output Field";	  // Defaults to NAME if not present
+			INIT_SET = "";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			DESCRIPTOR = "JVX_MAT_OUT_TEXT";
+			TYPE = "JVX_DATAFORMAT_STRING";	
+		};   
+
+		SECTION outputIsFileMat
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Output in Matlab is File";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_MAT_OUT_IS_FILE";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"yes"};
+			SELECTION_LIST_SELECTED = {"no"};
+		}; 
+
+		SECTION exportTextMat
+		{
+			DESCRIPTION = "Export Name Field";	  // Defaults to NAME if not present
+			INIT_SET = "jvx_export";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			DESCRIPTOR = "JVX_MAT_EXPORT_TEXT";
+			TYPE = "JVX_DATAFORMAT_STRING";	
+		};   
+
+		SECTION stereoPlayMat
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Playback Buffers in Stereo";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_MAT_PLAY_STEREO";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"yes"};
+			SELECTION_LIST_SELECTED = {"no"};
+		};   
+	
+	};
+};

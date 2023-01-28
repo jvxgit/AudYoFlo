@@ -1,0 +1,58 @@
+utils.loadPlatform("ti.platforms.evmDA830");
+
+/* The following DSP/BIOS Features are enabled.  */
+bios.enableRealTimeAnalysis(prog);
+bios.enableRtdx(prog);
+bios.enableTskManager(prog);
+
+bios.LOG.create("trace");
+bios.LOG.instance("trace").bufLen = 128;
+bios.HWI.instance("HWI_INT8").fxn = prog.extern("serveEdmaMcasp1_transmit");
+bios.HWI.instance("HWI_INT8").useDispatcher = 1;
+bios.SWI.create("swiNewFrameReady");
+bios.SWI.instance("swiNewFrameReady").order = 4;
+bios.SWI.instance("swiNewFrameReady").fxn = prog.extern("serveFrameCallback");
+bios.HWI.instance("HWI_INT8").monitor = "Data Value";
+bios.CLK.RESETTIMER = 1;
+bios.STS.create("framePeriodMeasure");
+bios.STS.create("userLoadStat");
+bios.HWI.instance("HWI_INT10").fxn = prog.extern("serveUart2Isr");
+bios.HWI.instance("HWI_INT10").interruptSelectNumber = 69;
+bios.HWI.instance("HWI_INT10").useDispatcher = 1;
+bios.SWI.create("swiUartTransmitComplete");
+bios.SWI.instance("swiUartTransmitComplete").order = 5;
+bios.SWI.instance("swiNewFrameReady").order = 1;
+bios.SWI.instance("PRD_swi").order = 2;
+bios.SWI.instance("KNL_swi").order = 3;
+bios.SWI.instance("swiUartTransmitComplete").order = 4;
+bios.SWI.instance("PRD_swi").order = 1;
+bios.SWI.instance("KNL_swi").order = 2;
+bios.SWI.instance("swiNewFrameReady").order = 3;
+bios.SWI.instance("swiUartTransmitComplete").fxn = prog.extern("uartSendComplete", "asm");
+bios.SWI.instance("swiUartTransmitComplete").fxn = prog.extern("uartSendComplete");
+bios.MEM.STACKSIZE = 0x0800;
+bios.SWI.instance("swiNewFrameReady").order = 1;
+bios.SWI.instance("PRD_swi").order = 2;
+bios.SWI.instance("KNL_swi").order = 3;
+bios.SWI.instance("swiNewFrameReady").priority = 2;
+bios.SWI.create("swiUartReceiveComplete");
+bios.SWI.instance("swiUartReceiveComplete").order = 5;
+bios.SWI.instance("swiUartReceiveComplete").priority = 2;
+bios.SWI.instance("swiUartReceiveComplete").fxn = prog.extern("uartReceiveComplete");
+bios.SWI.instance("swiUartReceiveComplete").priority = 1;
+bios.SWI.instance("swiUartReceiveComplete").fxn = prog.extern("uart_receiveComplete");
+bios.SWI.instance("swiUartTransmitComplete").fxn = prog.extern("uart_sendComplete");
+bios.HWI.instance("HWI_INT10").fxn = prog.extern("uart_serveInterrupt");
+bios.HST.HOSTLINKTYPE = "NONE";
+bios.RTDX.ENABLERTDX = 0;
+bios.MEM.CINITSEG = prog.get("SDRAM");
+bios.MEM.CONSTSEG = prog.get("SDRAM");
+bios.MEM.FARSEG = prog.get("SDRAM");
+bios.MEM.CINITSEG = prog.get("IRAM");
+bios.MEM.CONSTSEG = prog.get("IRAM");
+bios.MEM.FARSEG = prog.get("IRAM");
+bios.MEM.FARSEG = prog.get("SDRAM");
+// !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
+
+prog.gen();
+

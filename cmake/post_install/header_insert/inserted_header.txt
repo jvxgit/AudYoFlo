@@ -1,0 +1,27 @@
+/*J*															  		*X*
+ *J*  ***********************************************************		*X*
+ *J*  ***********************************************************		*X*
+ *J*  																	*X*
+ *J*  Filename: JVX_FILENAME *X*
+ *J*  																	*X*
+ *J*  ***********************************************************		*X*
+ *J*  																	*X*
+ *J*  Copyright (C) Javox Solutions GmbH - All Rights Reserved			*X*
+ *J*  Unauthorized copying of this file, via any medium is				*X* 
+ *J*  strictly prohibited. 												*X*
+ *J*  																	*X*
+ *J*  Proprietary and confidential										*X*
+ *J*  																	*X*
+ *J*  ***********************************************************		*X*
+ *J*  																	*X*
+ *J*  Written by Hauke Krüger <hk@javox-solutions.com>, 2012-2020		*X*
+ *J*  																	*X*
+ *J*  ***********************************************************		*X*
+ *J*  																	*X*
+ *J*  Javox Solutions GmbH, Gallierstr. 33, 52074 Aachen				*X*
+ *J*  																	*X*
+ *J*  ***********************************************************		*X*
+ *J*  																	*X*
+ *J*  Contact: info@javox-solutions.com, www.javox-solutions.com		*X*
+ *J*  																	*X*
+ *J*  ********************************************************   		*X*/

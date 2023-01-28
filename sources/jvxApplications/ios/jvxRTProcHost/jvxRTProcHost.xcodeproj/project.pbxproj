@@ -1,0 +1,568 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		122E64441C3D32E5006DA356 /* ViewController_project.m in Sources */ = {isa = PBXBuildFile; fileRef = 122E64431C3D32E5006DA356 /* ViewController_project.m */; };
+		122E644B1C3D32F8006DA356 /* tabBarController_rtproc.m in Sources */ = {isa = PBXBuildFile; fileRef = 122E64461C3D32F8006DA356 /* tabBarController_rtproc.m */; };
+		122E644C1C3D32F8006DA356 /* ViewController_extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 122E64481C3D32F8006DA356 /* ViewController_extensions.m */; };
+		122E644D1C3D32F8006DA356 /* ViewController_rtproc.m in Sources */ = {isa = PBXBuildFile; fileRef = 122E644A1C3D32F8006DA356 /* ViewController_rtproc.m */; };
+		12423AAB1C3969B900038159 /* jvxCppHost_specific.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12423AA61C3969B900038159 /* jvxCppHost_specific.cpp */; };
+		12423AAC1C3969B900038159 /* jvxIosCppHost_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12423AA71C3969B900038159 /* jvxIosCppHost_config.cpp */; };
+		12423AAD1C3969B900038159 /* jvxIosCppHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12423AA81C3969B900038159 /* jvxIosCppHost.cpp */; };
+		12423AB71C39937500038159 /* jvxOnePropertyInstance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 12423AB61C39937500038159 /* jvxOnePropertyInstance.mm */; };
+		1250AA871C554CCF009A8EBF /* libjvx-dsp_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1250AA861C554CCF009A8EBF /* libjvx-dsp_static.a */; };
+		1250AA891C554CEA009A8EBF /* libjvx-dsp-base_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1250AA881C554CEA009A8EBF /* libjvx-dsp-base_static.a */; };
+		1250AA8C1C554E1F009A8EBF /* libjvxTrtAudioFileReader_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1250AA8A1C554E1F009A8EBF /* libjvxTrtAudioFileReader_static.a */; };
+		1250AA8D1C554E1F009A8EBF /* libjvxTrtAudioFileWriter_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1250AA8B1C554E1F009A8EBF /* libjvxTrtAudioFileWriter_static.a */; };
+		1250AA8F1C554E36009A8EBF /* libjvxLFileIO_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1250AA8E1C554E36009A8EBF /* libjvxLFileIO_static.a */; };
+		12774E0E1C40DCCA00D2A0B4 /* libjvxTSimpleDotfuscation_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12774E0D1C40DCCA00D2A0B4 /* libjvxTSimpleDotfuscation_static.a */; };
+		127F04E01C6A02A200ACE2AE /* jvxIosLocalMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 127F04DF1C6A02A200ACE2AE /* jvxIosLocalMedia.mm */; };
+		127F04E41C6A038F00ACE2AE /* jvxIosLocalMediaItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 127F04E31C6A038F00ACE2AE /* jvxIosLocalMediaItem.mm */; };
+		12915C6D1C40239700102136 /* ViewController_messages.m in Sources */ = {isa = PBXBuildFile; fileRef = 12915C6C1C40239700102136 /* ViewController_messages.m */; };
+		12A38BF91C44C21100F96BB7 /* jvxCppHost_run.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A38BF71C44C21100F96BB7 /* jvxCppHost_run.cpp */; };
+		12C611F91C302CD500BCB7A8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C611F81C302CD500BCB7A8 /* main.m */; };
+		12C611FC1C302CD500BCB7A8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C611FB1C302CD500BCB7A8 /* AppDelegate.m */; };
+		12C612021C302CD500BCB7A8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12C612001C302CD500BCB7A8 /* Main.storyboard */; };
+		12C612041C302CD500BCB7A8 /* View.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 12C612031C302CD500BCB7A8 /* View.xcassets */; };
+		12C612071C302CD500BCB7A8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12C612051C302CD500BCB7A8 /* LaunchScreen.storyboard */; };
+		12E6D1AB1C330D590020B271 /* libjvxHJvx_static_nd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12A76A9B1C319B27001064A9 /* libjvxHJvx_static_nd.a */; };
+		12E6D1AC1C330D630020B271 /* libjvxLthreads_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12DD5E841C32A28500B45DB4 /* libjvxLthreads_static.a */; };
+		12E6D1AE1C330E1A0020B271 /* libjvxAuTGenericWrapper_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1AD1C330E1A0020B271 /* libjvxAuTGenericWrapper_static.a */; };
+		12E6D1B01C330E230020B271 /* libjvxTconfigProcessor_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1AF1C330E230020B271 /* libjvxTconfigProcessor_static.a */; };
+		12E6D1B21C330E530020B271 /* libjvxTResampler_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1B11C330E530020B271 /* libjvxTResampler_static.a */; };
+		12E6D1B41C330E5D0020B271 /* libjvxAuTIos_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1B31C330E5D0020B271 /* libjvxAuTIos_static.a */; };
+		12E6D1B61C330E890020B271 /* libjvxTDataConverter_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1B51C330E890020B271 /* libjvxTDataConverter_static.a */; };
+		12E6D1B81C330E940020B271 /* libjvxTDataLogger_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1B71C330E940020B271 /* libjvxTDataLogger_static.a */; };
+		12E6D1BA1C330ECC0020B271 /* libjvxAuNVocoder_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1B91C330ECC0020B271 /* libjvxAuNVocoder_static.a */; };
+		12E6D1BC1C330EF50020B271 /* libjvx-dsp-cpp_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E6D1BB1C330EF50020B271 /* libjvx-dsp-cpp_static.a */; };
+		12E83C141C4A9FB900C5A60C /* jvxIosAudioMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 12E83C131C4A9FB900C5A60C /* jvxIosAudioMedia.m */; };
+		12E83C171C4AA20700C5A60C /* jvxIosAudioMediaItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 12E83C161C4AA20700C5A60C /* jvxIosAudioMediaItem.m */; };
+		12F891B61C33BAF5000EAB49 /* realtimeViewer_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12F891B51C33BAF5000EAB49 /* realtimeViewer_helpers.cpp */; };
+		12F8E0BA1C3932DC008BCC88 /* jvxIosHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = 12F8E0B61C3932DC008BCC88 /* jvxIosHost.mm */; };
+		12F8E0BF1C393428008BCC88 /* libjvxAuNSimple_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12F8E0BE1C393428008BCC88 /* libjvxAuNSimple_static.a */; };
+		12FED9B81C3AFA8B007A9222 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FED9B61C3AFA8B007A9222 /* AVFoundation.framework */; };
+		12FED9BA1C3AFC3A007A9222 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FED9B91C3AFC3A007A9222 /* AudioToolbox.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		122E64421C3D32E5006DA356 /* ViewController_project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewController_project.h; path = src/ViewController_project.h; sourceTree = SOURCE_ROOT; };
+		122E64431C3D32E5006DA356 /* ViewController_project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewController_project.m; path = src/ViewController_project.m; sourceTree = SOURCE_ROOT; };
+		122E64451C3D32F8006DA356 /* tabBarController_rtproc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tabBarController_rtproc.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/tabBarController_rtproc.h"; sourceTree = "<group>"; };
+		122E64461C3D32F8006DA356 /* tabBarController_rtproc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = tabBarController_rtproc.m; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/tabBarController_rtproc.m"; sourceTree = "<group>"; };
+		122E64471C3D32F8006DA356 /* ViewController_extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewController_extensions.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/ViewController_extensions.h"; sourceTree = "<group>"; };
+		122E64481C3D32F8006DA356 /* ViewController_extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewController_extensions.m; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/ViewController_extensions.m"; sourceTree = "<group>"; };
+		122E64491C3D32F8006DA356 /* ViewController_rtproc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewController_rtproc.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/ViewController_rtproc.h"; sourceTree = "<group>"; };
+		122E644A1C3D32F8006DA356 /* ViewController_rtproc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewController_rtproc.m; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/ViewController_rtproc.m"; sourceTree = "<group>"; };
+		12423AA61C3969B900038159 /* jvxCppHost_specific.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jvxCppHost_specific.cpp; path = "../../../../../software/codeFragments/jvxHosts/emb-audio-host/jvxCppHost_specific.cpp"; sourceTree = "<group>"; };
+		12423AA71C3969B900038159 /* jvxIosCppHost_config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jvxIosCppHost_config.cpp; path = "../../../../../software/codeFragments/jvxHosts/emb-audio-host/jvxIosCppHost_config.cpp"; sourceTree = "<group>"; };
+		12423AA81C3969B900038159 /* jvxIosCppHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jvxIosCppHost.cpp; path = "../../../../../software/codeFragments/jvxHosts/emb-audio-host/jvxIosCppHost.cpp"; sourceTree = "<group>"; };
+		12423AA91C3969B900038159 /* jvxIosCppHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosCppHost.h; path = "../../../../../software/codeFragments/jvxHosts/emb-audio-host/jvxIosCppHost.h"; sourceTree = "<group>"; };
+		12423AAA1C3969B900038159 /* jvxIosHost_typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosHost_typedefs.h; path = "../../../../../software/codeFragments/jvxHosts/emb-audio-host/jvxIosHost_typedefs.h"; sourceTree = "<group>"; };
+		12423AB51C39907900038159 /* jvxOnePropertyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxOnePropertyInstance.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxOnePropertyInstance.h"; sourceTree = "<group>"; };
+		12423AB61C39937500038159 /* jvxOnePropertyInstance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = jvxOnePropertyInstance.mm; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxOnePropertyInstance.mm"; sourceTree = "<group>"; };
+		1250AA861C554CCF009A8EBF /* libjvx-dsp_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libjvx-dsp_static.a"; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvx-dsp_static.a"; sourceTree = "<group>"; };
+		1250AA881C554CEA009A8EBF /* libjvx-dsp-base_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libjvx-dsp-base_static.a"; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvx-dsp-base_static.a"; sourceTree = "<group>"; };
+		1250AA8A1C554E1F009A8EBF /* libjvxTrtAudioFileReader_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxTrtAudioFileReader_static.a; path = "../../../../../build/ios-make/audio/sources/jvxTools/jvxTrtAudioFileReader/Debug-iphoneos/libjvxTrtAudioFileReader_static.a"; sourceTree = "<group>"; };
+		1250AA8B1C554E1F009A8EBF /* libjvxTrtAudioFileWriter_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxTrtAudioFileWriter_static.a; path = "../../../../../build/ios-make/audio/sources/jvxTools/jvxTrtAudioFileWriter/Debug-iphoneos/libjvxTrtAudioFileWriter_static.a"; sourceTree = "<group>"; };
+		1250AA8E1C554E36009A8EBF /* libjvxLFileIO_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxLFileIO_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxLFileIO_static.a"; sourceTree = "<group>"; };
+		12774E0D1C40DCCA00D2A0B4 /* libjvxTSimpleDotfuscation_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxTSimpleDotfuscation_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxTSimpleDotfuscation_static.a"; sourceTree = "<group>"; };
+		127F04DF1C6A02A200ACE2AE /* jvxIosLocalMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = jvxIosLocalMedia.mm; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosLocalMedia.mm"; sourceTree = "<group>"; };
+		127F04E11C6A02E200ACE2AE /* jvxIosLocalMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosLocalMedia.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosLocalMedia.h"; sourceTree = "<group>"; };
+		127F04E21C6A038F00ACE2AE /* jvxIosLocalMediaItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosLocalMediaItem.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosLocalMediaItem.h"; sourceTree = "<group>"; };
+		127F04E31C6A038F00ACE2AE /* jvxIosLocalMediaItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = jvxIosLocalMediaItem.mm; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosLocalMediaItem.mm"; sourceTree = "<group>"; };
+		12915C6B1C40239700102136 /* ViewController_messages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewController_messages.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/ViewController_messages.h"; sourceTree = "<group>"; };
+		12915C6C1C40239700102136 /* ViewController_messages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewController_messages.m; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/ViewController_messages.m"; sourceTree = "<group>"; };
+		12A38BF71C44C21100F96BB7 /* jvxCppHost_run.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jvxCppHost_run.cpp; path = "../../../../../software/codeFragments/jvxHosts/emb-audio-host/jvxCppHost_run.cpp"; sourceTree = "<group>"; };
+		12A76A9B1C319B27001064A9 /* libjvxHJvx_static_nd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxHJvx_static_nd.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxHJvx_static_nd.a"; sourceTree = "<group>"; };
+		12C611F41C302CD500BCB7A8 /* jvxRTProcHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jvxRTProcHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		12C611F81C302CD500BCB7A8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		12C611FA1C302CD500BCB7A8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		12C611FB1C302CD500BCB7A8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		12C612011C302CD500BCB7A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		12C612031C302CD500BCB7A8 /* View.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = View.xcassets; sourceTree = "<group>"; };
+		12C612061C302CD500BCB7A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		12C612081C302CD500BCB7A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		12DD5E841C32A28500B45DB4 /* libjvxLthreads_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxLthreads_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxLthreads_static.a"; sourceTree = "<group>"; };
+		12E6D1AD1C330E1A0020B271 /* libjvxAuTGenericWrapper_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxAuTGenericWrapper_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxAuTGenericWrapper_static.a"; sourceTree = "<group>"; };
+		12E6D1AF1C330E230020B271 /* libjvxTconfigProcessor_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxTconfigProcessor_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxTconfigProcessor_static.a"; sourceTree = "<group>"; };
+		12E6D1B11C330E530020B271 /* libjvxTResampler_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxTResampler_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxTResampler_static.a"; sourceTree = "<group>"; };
+		12E6D1B31C330E5D0020B271 /* libjvxAuTIos_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxAuTIos_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxAuTIos_static.a"; sourceTree = "<group>"; };
+		12E6D1B51C330E890020B271 /* libjvxTDataConverter_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxTDataConverter_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxTDataConverter_static.a"; sourceTree = "<group>"; };
+		12E6D1B71C330E940020B271 /* libjvxTDataLogger_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxTDataLogger_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxTDataLogger_static.a"; sourceTree = "<group>"; };
+		12E6D1B91C330ECC0020B271 /* libjvxAuNVocoder_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxAuNVocoder_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxAuNVocoder_static.a"; sourceTree = "<group>"; };
+		12E6D1BB1C330EF50020B271 /* libjvx-dsp-cpp_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libjvx-dsp-cpp_static.a"; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvx-dsp-cpp_static.a"; sourceTree = "<group>"; };
+		12E83C121C4A9FB900C5A60C /* jvxIosAudioMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosAudioMedia.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosAudioMedia.h"; sourceTree = "<group>"; };
+		12E83C131C4A9FB900C5A60C /* jvxIosAudioMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = jvxIosAudioMedia.m; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosAudioMedia.m"; sourceTree = "<group>"; };
+		12E83C151C4AA20700C5A60C /* jvxIosAudioMediaItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosAudioMediaItem.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosAudioMediaItem.h"; sourceTree = "<group>"; };
+		12E83C161C4AA20700C5A60C /* jvxIosAudioMediaItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = jvxIosAudioMediaItem.m; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosAudioMediaItem.m"; sourceTree = "<group>"; };
+		12F891B51C33BAF5000EAB49 /* realtimeViewer_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewer_helpers.cpp; path = ../../../../../../base/software/codeFragments/jvxHosts/common/realtimeViewer_helpers.cpp; sourceTree = "<group>"; };
+		12F8E0B51C3932DC008BCC88 /* jvxIosHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosHost.h; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosHost.h"; sourceTree = "<group>"; };
+		12F8E0B61C3932DC008BCC88 /* jvxIosHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = jvxIosHost.mm; path = "../../../../../software/codeFragments/jvxHosts/ios-audio-host/jvxIosHost.mm"; sourceTree = "<group>"; };
+		12F8E0BD1C39339A008BCC88 /* jvxRtprocHost_configureAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxRtprocHost_configureAlgorithm.h; path = src/jvxRtprocHost_configureAlgorithm.h; sourceTree = SOURCE_ROOT; };
+		12F8E0BE1C393428008BCC88 /* libjvxAuNSimple_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjvxAuNSimple_static.a; path = "../../../../../../../../Users/hauke/Library/Developer/Xcode/DerivedData/jvxIos-fnxbqjwqxpjmqxetysrnjajkiobc/Build/Products/Debug-iphoneos/libjvxAuNSimple_static.a"; sourceTree = "<group>"; };
+		12FED9B61C3AFA8B007A9222 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		12FED9B91C3AFC3A007A9222 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		20EEAEA222B6976D0079EE52 /* jvxIosHost_fineTuning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jvxIosHost_fineTuning.h; path = src/jvxIosHost_fineTuning.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		12C611F11C302CD500BCB7A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12FED9BA1C3AFC3A007A9222 /* AudioToolbox.framework in Frameworks */,
+				12FED9B81C3AFA8B007A9222 /* AVFoundation.framework in Frameworks */,
+				1250AA8C1C554E1F009A8EBF /* libjvxTrtAudioFileReader_static.a in Frameworks */,
+				1250AA8D1C554E1F009A8EBF /* libjvxTrtAudioFileWriter_static.a in Frameworks */,
+				12774E0E1C40DCCA00D2A0B4 /* libjvxTSimpleDotfuscation_static.a in Frameworks */,
+				12F8E0BF1C393428008BCC88 /* libjvxAuNSimple_static.a in Frameworks */,
+				12E6D1BA1C330ECC0020B271 /* libjvxAuNVocoder_static.a in Frameworks */,
+				12E6D1B81C330E940020B271 /* libjvxTDataLogger_static.a in Frameworks */,
+				12E6D1B61C330E890020B271 /* libjvxTDataConverter_static.a in Frameworks */,
+				12E6D1B41C330E5D0020B271 /* libjvxAuTIos_static.a in Frameworks */,
+				12E6D1B21C330E530020B271 /* libjvxTResampler_static.a in Frameworks */,
+				12E6D1B01C330E230020B271 /* libjvxTconfigProcessor_static.a in Frameworks */,
+				12E6D1AE1C330E1A0020B271 /* libjvxAuTGenericWrapper_static.a in Frameworks */,
+				12E6D1AC1C330D630020B271 /* libjvxLthreads_static.a in Frameworks */,
+				12E6D1AB1C330D590020B271 /* libjvxHJvx_static_nd.a in Frameworks */,
+				1250AA8F1C554E36009A8EBF /* libjvxLFileIO_static.a in Frameworks */,
+				1250AA871C554CCF009A8EBF /* libjvx-dsp_static.a in Frameworks */,
+				12E6D1BC1C330EF50020B271 /* libjvx-dsp-cpp_static.a in Frameworks */,
+				1250AA891C554CEA009A8EBF /* libjvx-dsp-base_static.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		12423AA41C39699A00038159 /* objc */ = {
+			isa = PBXGroup;
+			children = (
+				127F04E21C6A038F00ACE2AE /* jvxIosLocalMediaItem.h */,
+				127F04E31C6A038F00ACE2AE /* jvxIosLocalMediaItem.mm */,
+				127F04E11C6A02E200ACE2AE /* jvxIosLocalMedia.h */,
+				127F04DF1C6A02A200ACE2AE /* jvxIosLocalMedia.mm */,
+				12E83C151C4AA20700C5A60C /* jvxIosAudioMediaItem.h */,
+				12E83C161C4AA20700C5A60C /* jvxIosAudioMediaItem.m */,
+				12E83C121C4A9FB900C5A60C /* jvxIosAudioMedia.h */,
+				12E83C131C4A9FB900C5A60C /* jvxIosAudioMedia.m */,
+				12423AB61C39937500038159 /* jvxOnePropertyInstance.mm */,
+				12F8E0B61C3932DC008BCC88 /* jvxIosHost.mm */,
+			);
+			name = objc;
+			sourceTree = "<group>";
+		};
+		12423AA51C3969A500038159 /* cpp */ = {
+			isa = PBXGroup;
+			children = (
+				12423AA61C3969B900038159 /* jvxCppHost_specific.cpp */,
+				12423AA71C3969B900038159 /* jvxIosCppHost_config.cpp */,
+				12423AA81C3969B900038159 /* jvxIosCppHost.cpp */,
+				12F891B51C33BAF5000EAB49 /* realtimeViewer_helpers.cpp */,
+				12A38BF71C44C21100F96BB7 /* jvxCppHost_run.cpp */,
+			);
+			name = cpp;
+			sourceTree = "<group>";
+		};
+		12423AB21C396FCE00038159 /* project */ = {
+			isa = PBXGroup;
+			children = (
+				122E64421C3D32E5006DA356 /* ViewController_project.h */,
+				122E64431C3D32E5006DA356 /* ViewController_project.m */,
+				12F8E0BD1C39339A008BCC88 /* jvxRtprocHost_configureAlgorithm.h */,
+			);
+			name = project;
+			sourceTree = "<group>";
+		};
+		12C611EB1C302CD500BCB7A8 = {
+			isa = PBXGroup;
+			children = (
+				1250AA8E1C554E36009A8EBF /* libjvxLFileIO_static.a */,
+				1250AA8A1C554E1F009A8EBF /* libjvxTrtAudioFileReader_static.a */,
+				1250AA8B1C554E1F009A8EBF /* libjvxTrtAudioFileWriter_static.a */,
+				1250AA881C554CEA009A8EBF /* libjvx-dsp-base_static.a */,
+				1250AA861C554CCF009A8EBF /* libjvx-dsp_static.a */,
+				12774E0D1C40DCCA00D2A0B4 /* libjvxTSimpleDotfuscation_static.a */,
+				12FED9B91C3AFC3A007A9222 /* AudioToolbox.framework */,
+				12FED9B61C3AFA8B007A9222 /* AVFoundation.framework */,
+				12F8E0BE1C393428008BCC88 /* libjvxAuNSimple_static.a */,
+				12E6D1BB1C330EF50020B271 /* libjvx-dsp-cpp_static.a */,
+				12E6D1B91C330ECC0020B271 /* libjvxAuNVocoder_static.a */,
+				12E6D1B71C330E940020B271 /* libjvxTDataLogger_static.a */,
+				12E6D1B51C330E890020B271 /* libjvxTDataConverter_static.a */,
+				12E6D1B31C330E5D0020B271 /* libjvxAuTIos_static.a */,
+				12E6D1B11C330E530020B271 /* libjvxTResampler_static.a */,
+				12E6D1AF1C330E230020B271 /* libjvxTconfigProcessor_static.a */,
+				12E6D1AD1C330E1A0020B271 /* libjvxAuTGenericWrapper_static.a */,
+				12DD5E841C32A28500B45DB4 /* libjvxLthreads_static.a */,
+				12A76A9B1C319B27001064A9 /* libjvxHJvx_static_nd.a */,
+				12C611F61C302CD500BCB7A8 /* jvxRTProcHost */,
+				12C611F51C302CD500BCB7A8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		12C611F51C302CD500BCB7A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				12C611F41C302CD500BCB7A8 /* jvxRTProcHost.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		12C611F61C302CD500BCB7A8 /* jvxRTProcHost */ = {
+			isa = PBXGroup;
+			children = (
+				12423AB21C396FCE00038159 /* project */,
+				12C612101C303F9F00BCB7A8 /* rtproc */,
+				12C6120F1C303E9F00BCB7A8 /* ui */,
+				12C611FA1C302CD500BCB7A8 /* AppDelegate.h */,
+				12C611FB1C302CD500BCB7A8 /* AppDelegate.m */,
+				12C612001C302CD500BCB7A8 /* Main.storyboard */,
+				12C612031C302CD500BCB7A8 /* View.xcassets */,
+				12C612051C302CD500BCB7A8 /* LaunchScreen.storyboard */,
+				12C612081C302CD500BCB7A8 /* Info.plist */,
+				12C611F71C302CD500BCB7A8 /* Supporting Files */,
+			);
+			path = jvxRTProcHost;
+			sourceTree = "<group>";
+		};
+		12C611F71C302CD500BCB7A8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				12C611F81C302CD500BCB7A8 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		12C6120F1C303E9F00BCB7A8 /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				20EEAEA222B6976D0079EE52 /* jvxIosHost_fineTuning.h */,
+				12915C6B1C40239700102136 /* ViewController_messages.h */,
+				12915C6C1C40239700102136 /* ViewController_messages.m */,
+				122E64451C3D32F8006DA356 /* tabBarController_rtproc.h */,
+				122E64461C3D32F8006DA356 /* tabBarController_rtproc.m */,
+				122E64471C3D32F8006DA356 /* ViewController_extensions.h */,
+				122E64481C3D32F8006DA356 /* ViewController_extensions.m */,
+				122E64491C3D32F8006DA356 /* ViewController_rtproc.h */,
+				122E644A1C3D32F8006DA356 /* ViewController_rtproc.m */,
+			);
+			name = ui;
+			sourceTree = "<group>";
+		};
+		12C612101C303F9F00BCB7A8 /* rtproc */ = {
+			isa = PBXGroup;
+			children = (
+				12F8E0BC1C393350008BCC88 /* sources */,
+				12F8E0BB1C393341008BCC88 /* header */,
+			);
+			name = rtproc;
+			sourceTree = "<group>";
+		};
+		12F8E0BB1C393341008BCC88 /* header */ = {
+			isa = PBXGroup;
+			children = (
+				12423AB51C39907900038159 /* jvxOnePropertyInstance.h */,
+				12423AA91C3969B900038159 /* jvxIosCppHost.h */,
+				12423AAA1C3969B900038159 /* jvxIosHost_typedefs.h */,
+				12F8E0B51C3932DC008BCC88 /* jvxIosHost.h */,
+			);
+			name = header;
+			sourceTree = "<group>";
+		};
+		12F8E0BC1C393350008BCC88 /* sources */ = {
+			isa = PBXGroup;
+			children = (
+				12423AA51C3969A500038159 /* cpp */,
+				12423AA41C39699A00038159 /* objc */,
+			);
+			name = sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		12C611F31C302CD500BCB7A8 /* jvxRTProcHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12C6120B1C302CD500BCB7A8 /* Build configuration list for PBXNativeTarget "jvxRTProcHost" */;
+			buildPhases = (
+				12C611F01C302CD500BCB7A8 /* Sources */,
+				12C611F11C302CD500BCB7A8 /* Frameworks */,
+				12C611F21C302CD500BCB7A8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = jvxRTProcHost;
+			productName = jvxRTProcHost;
+			productReference = 12C611F41C302CD500BCB7A8 /* jvxRTProcHost.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		12C611EC1C302CD500BCB7A8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = "Javox Solutions";
+				TargetAttributes = {
+					12C611F31C302CD500BCB7A8 = {
+						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = 2T244T8Q23;
+					};
+				};
+			};
+			buildConfigurationList = 12C611EF1C302CD500BCB7A8 /* Build configuration list for PBXProject "jvxRTProcHost" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+				Base,
+			);
+			mainGroup = 12C611EB1C302CD500BCB7A8;
+			productRefGroup = 12C611F51C302CD500BCB7A8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				12C611F31C302CD500BCB7A8 /* jvxRTProcHost */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		12C611F21C302CD500BCB7A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12C612071C302CD500BCB7A8 /* LaunchScreen.storyboard in Resources */,
+				12C612041C302CD500BCB7A8 /* View.xcassets in Resources */,
+				12C612021C302CD500BCB7A8 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		12C611F01C302CD500BCB7A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12423AAD1C3969B900038159 /* jvxIosCppHost.cpp in Sources */,
+				12915C6D1C40239700102136 /* ViewController_messages.m in Sources */,
+				12F891B61C33BAF5000EAB49 /* realtimeViewer_helpers.cpp in Sources */,
+				12423AAB1C3969B900038159 /* jvxCppHost_specific.cpp in Sources */,
+				12C611FC1C302CD500BCB7A8 /* AppDelegate.m in Sources */,
+				12E83C171C4AA20700C5A60C /* jvxIosAudioMediaItem.m in Sources */,
+				12423AAC1C3969B900038159 /* jvxIosCppHost_config.cpp in Sources */,
+				12C611F91C302CD500BCB7A8 /* main.m in Sources */,
+				122E644D1C3D32F8006DA356 /* ViewController_rtproc.m in Sources */,
+				12F8E0BA1C3932DC008BCC88 /* jvxIosHost.mm in Sources */,
+				127F04E41C6A038F00ACE2AE /* jvxIosLocalMediaItem.mm in Sources */,
+				127F04E01C6A02A200ACE2AE /* jvxIosLocalMedia.mm in Sources */,
+				122E644C1C3D32F8006DA356 /* ViewController_extensions.m in Sources */,
+				12E83C141C4A9FB900C5A60C /* jvxIosAudioMedia.m in Sources */,
+				122E644B1C3D32F8006DA356 /* tabBarController_rtproc.m in Sources */,
+				12423AB71C39937500038159 /* jvxOnePropertyInstance.mm in Sources */,
+				12A38BF91C44C21100F96BB7 /* jvxCppHost_run.cpp in Sources */,
+				122E64441C3D32E5006DA356 /* ViewController_project.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		12C612001C302CD500BCB7A8 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				12C612011C302CD500BCB7A8 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		12C612051C302CD500BCB7A8 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				12C612061C302CD500BCB7A8 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		12C612091C302CD500BCB7A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				JVX_SDK_ROOT = "/Users/haukekruger/develop/build/ios-xcode/release/sdk";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(JVX_SDK_PATH)/software $(JVX_SDK_PATH)/include/jvx-system-base/include $(JVX_SDK_PATH)/include/jvx-callprot/include $(JVX_SDK_PATH)/include/jvx-system-base/include/platform/ios $(JVX_SDK_PATH)/include/jvx-helpers/include $(JVX_SDK_PATH)/include/jvx-component-templates-min/include $(JVX_SDK_PATH)/include/jvx-dsp-base/include/os-ios $(JVX_SDK_PATH)/include/jvx-json/include $(JVX_SDK_PATH)/include/jvx-system-product/include $(JVX_SDK_PATH)/include/jvx-system-product/include $(JVX_SDK_PATH)/include/jvx-helpers-product/include $(JVX_SDK_PATH)/include/jvx-component-templates-base $(JVX_SDK_PATH)/include/jvx-component-templates-base/include $(JVX_SDK_PATH)/include/jvx-component-templates-base/generated $(JVX_SDK_PATH)/include/jvxComponents_static $(JVX_SDK_PATH)/include/jvx-dsp-base/include $(JVX_SDK_PATH)/include/jvx-app-host/include";
+			};
+			name = Debug;
+		};
+		12C6120A1C302CD500BCB7A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				JVX_SDK_ROOT = "/Users/haukekruger/develop/build/ios-xcode/release/sdk";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(JVX_SDK_PATH)/software $(JVX_SDK_PATH)/include/jvx-system-base/include $(JVX_SDK_PATH)/include/jvx-callprot/include $(JVX_SDK_PATH)/include/jvx-system-base/include/platform/ios $(JVX_SDK_PATH)/include/jvx-helpers/include $(JVX_SDK_PATH)/include/jvx-component-templates-min/include $(JVX_SDK_PATH)/include/jvx-dsp-base/include/os-ios $(JVX_SDK_PATH)/include/jvx-json/include $(JVX_SDK_PATH)/include/jvx-system-product/include $(JVX_SDK_PATH)/include/jvx-system-product/include $(JVX_SDK_PATH)/include/jvx-helpers-product/include $(JVX_SDK_PATH)/include/jvx-component-templates-base $(JVX_SDK_PATH)/include/jvx-component-templates-base/include $(JVX_SDK_PATH)/include/jvx-component-templates-base/generated $(JVX_SDK_PATH)/include/jvxComponents_static $(JVX_SDK_PATH)/include/jvx-dsp-base/include $(JVX_SDK_PATH)/include/jvx-app-host/include";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		12C6120C1C302CD500BCB7A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = jvxRTProcHost/Info.plist;
+				JVX_LIB_INSTALL_PATH = "$(JVX_SDK_PATH)";
+				JVX_ROOT_PATH = "/Volumes/haukekruger/develop/build/ios-xcode";
+				JVX_SDK_PATH = "/Users/haukekruger/develop/build/ios-xcode/release/sdk";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.javox-solutions.jvxRTProcHost";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(JVX_SDK_PATH)/software $(JVX_SDK_PATH)/include/jvx-system-base/include $(JVX_SDK_PATH)/include/jvx-system-base/include/platform/ios $(JVX_SDK_PATH)/include/jvx-callprot/include $(JVX_SDK_PATH)/include/jvx-dsp-base/include $(JVX_SDK_PATH)/include/jvx-component-templates-min/include $(JVX_SDK_PATH)/include/jvx-helpers/include $(JVX_SDK_PATH)/include/jvx-dsp-base/include/os-ios $(JVX_SDK_PATH)/include/jvx-json/include $(JVX_SDK_PATH)/include/jvx-system-product/include $(JVX_SDK_PATH)/include/jvx-helpers-product/include $(JVX_SDK_PATH)/include/jvx-component-templates-base/generated $(JVX_SDK_PATH)/include/jvx-component-templates-base $(JVX_SDK_PATH)/include/jvx-component-templates-base/include $(JVX_SDK_PATH)/include/jvxComponents_static";
+			};
+			name = Debug;
+		};
+		12C6120D1C302CD500BCB7A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = jvxRTProcHost/Info.plist;
+				JVX_LIB_INSTALL_PATH = "$(JVX_SDK_PATH)";
+				JVX_ROOT_PATH = "/Volumes/haukekruger/develop/build/ios-xcode";
+				JVX_SDK_PATH = "/Users/haukekruger/develop/build/ios-xcode/release/sdk";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.javox-solutions.jvxRTProcHost";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(JVX_SDK_PATH)/software $(JVX_SDK_PATH)/include/jvx-system-base/include $(JVX_SDK_PATH)/include/jvx-system-base/include/platform/ios $(JVX_SDK_PATH)/include/jvx-callprot/include $(JVX_SDK_PATH)/include/jvx-dsp-base/include $(JVX_SDK_PATH)/include/jvx-component-templates-min/include $(JVX_SDK_PATH)/include/jvx-helpers/include $(JVX_SDK_PATH)/include/jvx-dsp-base/include/os-ios $(JVX_SDK_PATH)/include/jvx-json/include $(JVX_SDK_PATH)/include/jvx-system-product/include $(JVX_SDK_PATH)/include/jvx-helpers-product/include $(JVX_SDK_PATH)/include/jvx-component-templates-base/generated $(JVX_SDK_PATH)/include/jvx-component-templates-base $(JVX_SDK_PATH)/include/jvx-component-templates-base/include $(JVX_SDK_PATH)/include/jvxComponents_static";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		12C611EF1C302CD500BCB7A8 /* Build configuration list for PBXProject "jvxRTProcHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12C612091C302CD500BCB7A8 /* Debug */,
+				12C6120A1C302CD500BCB7A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12C6120B1C302CD500BCB7A8 /* Build configuration list for PBXNativeTarget "jvxRTProcHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12C6120C1C302CD500BCB7A8 /* Debug */,
+				12C6120D1C302CD500BCB7A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 12C611EC1C302CD500BCB7A8 /* Project object */;
+}

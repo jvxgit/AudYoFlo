@@ -1,0 +1,19 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genSimpleZeroCopy_node";	
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"set_bypass_mode"};
+
+		SECTION bypass
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "set_bypass_mode";
+		};
+	};
+};

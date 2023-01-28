@@ -1,0 +1,120 @@
+#!/bin/sh
+
+# In case we want to compile GST projects, let us define which location
+# to link with
+# export JVX_GST_INSTALL_PREFIX="/opt/install-local2"
+
+# !!!!! THE FOLLOWING LINE TO BE ADAPTED ACCORDING TO BUILD SYSTEM !!!!!
+JVX_SRC_PATH=/media/hauke/yocto-build/hk_data/jvx
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+TOKEN_SDK=-DJVX_RELEASE_SDK=FALSE
+TOKEN_BTOOLS=-DJVX_COMPILE_BUILDTOOLS=FALSE
+ADDITIONAL_FEATURE_TOKENS="-DJVX_GENERATE_HEADER_ON_BUILD=FALSE -DJVX_USE_PART_WEBSERVER=TRUE -DJVX_USE_VIDEO=TRUE -DJVX_DARWIN_DRIVER_FOLDER=\"/media/hauke/yocto-build/hk_data/arrian10-dev/kernel_mods/code/driver-darwin_v2\""
+# JVX_GENERATOR_TOKEN="\"Unix Makefiles\""
+JVX_GENERATOR_TOKEN_BT="\"Ninja\""
+JVX_GENERATOR_TOKEN="\"Eclipse CDT4 - Ninja\""
+
+if [ "$1" = "rt" ];
+then
+    run="cmake"
+
+elif [ "$1" = "sdk" ];
+then
+    TOKEN_SDK="-DJVX_RELEASE_SDK=TRUE"
+    run="cmake"
+
+elif [ "$1" = "sdk-bt" ];
+then
+    TOKEN_SDK="-DJVX_RELEASE_SDK=TRUE"
+    TOKEN_BTOOLS="-DJVX_COMPILE_BUILDTOOLS=TRUE"
+	JVX_GENERATOR_TOKEN=${JVX_GENERATOR_TOKEN_BT}
+    run="cmake"
+
+elif [ "$1" = "rt-bt" ];
+then
+    TOKEN_BTOOLS="-DJVX_COMPILE_BUILDTOOLS=TRUE"
+    JVX_GENERATOR_TOKEN=${JVX_GENERATOR_TOKEN_BT}
+    run="cmake"
+
+elif [ "$1" = "clean" ];
+then
+    run="clean"
+
+elif [ "$1" = "cc" ];
+then
+    run="cc"
+
+elif [ "$1" = "distclean" ];
+then
+    run="distclean"
+
+else
+    run="nothing"
+    echo "Usage: compile < rt-bt | rt | sdk-bt | sdk | clean | distclean >"
+fi
+
+
+if [ ${run} = "cmake" ];
+then
+
+    # For cmake build...
+
+ OPTIONS="-DCMAKE_INSTALL_PREFIX=release\
+ -G ${JVX_GENERATOR_TOKEN} -DCMAKE_BUILD_TYPE=Debug\
+ -DJVX_PRODUCT=industrial\
+ -DJVX_DSP_BASE_USE_DATA_FORMAT_FLOAT=TRUE\
+ -DJVX_USE_PART_OCTAVE=FALSE\
+ -DJVX_USE_PART_MATLAB=FALSE\
+ -DJVX_USE_PART_ALSA=TRUE\
+ -DJVX_USE_PART_PAUDIO=TRUE\
+ -DJVX_USE_PART_CMINPACK=FALSE\
+ -DJVX_USE_QT=TRUE\
+ -DJVX_USE_QWT=TRUE\
+ -DJVX_USE_QWT_POLAR=TRUE\
+ -DJVX_DEPLOY_LIBRARY_DSP_MATLAB=FALSE\
+ -DJVX_USE_PCAP=FALSE\
+ ${TOKEN_SDK}\
+ -DJVX_MATLAB_PROPERTY_GENERATOR=TRUE\
+ -DJVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD=16 \
+ ${TOKEN_BTOOLS}\
+ -DJVX_DEPLOY_UNSTABLE=TRUE\
+ ${ADDITIONAL_FEATURE_TOKENS}\
+ -Wno-dev \
+ -DJVX_AUDIO_WITH_GST=FALSE"
+
+    # # -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake
+    # # for compilation @ IND add
+    # # -DCMAKE_PREFIX_PATH=/share/packages64/qt-5.5.1/5.5/gcc_64/lib/cmake
+    # # -DCMAKE_BUILD_TYPE can be Debug, Release, UnstableDebug, UnstableRelease
+    # # -DJVX_PRODUCT can be bdx or audio
+
+	echo eval cmake  ${JVX_SRC_PATH} ${OPTIONS}
+	eval cmake  ${JVX_SRC_PATH} ${OPTIONS}
+
+	if [ "${JVX_GENERATOR_TOKEN}" = "\"Unix Makefiles\"" ] || [ "${JVX_GENERATOR_TOKEN}" = "\"Eclipse CDT4 - Unix Makefiles\"" ];
+	then
+		#compile
+    	make -j9 install
+	fi
+	if [ "${JVX_GENERATOR_TOKEN}" = "\"Ninja\"" ] || [ "${JVX_GENERATOR_TOKEN}" = "\"Eclipse CDT4 - Ninja\"" ];
+	then
+		#compile
+   	ninja install
+	fi
+
+elif [ ${run} = "clean" ] || [ ${run} = "distclean" ];
+then
+    # Remove all generated files except for release folder
+    rm -rf audio/  base/  CMakeCache.txt  CMakeFiles/  cmake_install.cmake  install_manifest.txt  jvx_dsp_base.h  Makefile
+    if [ ${run} = "distclean" ];
+    then
+        # Remove release dir
+        rm -rf release
+    fi
+elif [ ${run} = "cc" ];
+then
+    rm CMakeCache.txt
+    rm -rf CMakeFiles
+fi
+

@@ -1,0 +1,7 @@
+setenv jvx_root_server 192.168.178.58; run iltprepare; run iltstart; run iltrun
+./jvx_inject_olay.sh dtree_olay_inspire.dtbo
+bin/jvxWebControlApp --jvxdir jvxComponents --config cfgInspire.jvx --textlog --verbose_dll --textloglev 10
+
+sudo cp -r release/runtime/ /export/rootfs/home/root/
+sudo cp ./jvx_darwin.ko  /export/rootfs/lib/modules/4.9.76-rt61-ltsi-altera/kernel/drivers/misc/
+

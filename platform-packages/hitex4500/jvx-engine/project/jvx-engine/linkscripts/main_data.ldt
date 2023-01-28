@@ -1,0 +1,4 @@
+	*libjvx-dsp.a:(.text*) 
+	*libjvx-dsp.a:(.rodata .rodata.* .constdata .constdata.*) 
+	. = ALIGN(${text_align}); 
+	*(.data*)

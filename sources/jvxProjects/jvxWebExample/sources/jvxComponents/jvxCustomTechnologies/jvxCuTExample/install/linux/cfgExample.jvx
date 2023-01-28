@@ -1,0 +1,62 @@
+SECTION jvxQtHost1_main
+{
+		SECTION jvxQtHost1_components
+		{
+				SECTION host_allSubSections
+				{
+						host_name_technology_custom = "JVX Inspire Technology";
+						host_state_technology_custom = 3<s>;
+						host_name_device_custom = "Inspire Device";
+						host_state_device_custom = 3<s>;
+						SECTION host_subsection_device_custom
+						{
+								/system/command_string = "";
+								/ascan_cfg/read_trigger = 0<i16>;
+						};
+						SECTION JVX_CONSOLE_BE_SECTION
+						{
+								JVX_CONSOLE_BE_SILENT_MODE = 1<i16>;
+								JVX_CONSOLE_BE_NUM_DIGITS = 4<s>;
+								JVX_CONSOLE_BE_TIMEOUT_SEQ = 500<s>;
+						};
+						SECTION JVX_WEBCONTROL_CONSOLE_SECTION
+						{
+								JVX_WEBCONTROL_CONSOLE_SILENT_MODE = 1<i16>;
+						};
+				};
+				SECTION sequencer_section
+				{
+						SECTION sequencer_subsection_0
+						{
+								sequencer_sequence_names = "Default Sequence";
+								sequencer_marked_for_process = 1<i16>;
+								SECTION sequencer_sequence_steps_run_0
+								{
+										sequencer_sequence_step_descriptions = { "Prepare Lamp Device", "Prepare Camera Device", "Prepare Ascan Node", "Prepare SpecProc Device", "Prepare Scanner Device", "Callback after all prepared", "Start Lamp Device", "Start Camera Device", "Start Ascan Node", "Start SpecProc Device", "Start Scanner Device", "Callback after all started", "Callback start in loop", "Wait until Stop"};
+										sequencer_sequence_step_label = { "PrepANode", "PrepCameraDevice", "PrepAscanNode", "PrepSpecProcDevice", "PrepScannerDevice", "AfterAllPrep", "StartANode", "StartCameraDevice", "StartAscanNode", "StartSpecProcDevice", "StartScannerDevice", "AfterAllStarted", "StartInLoop", "WaitStop"};
+										sequencer_sequence_step_label_true = { "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_label_false = { "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_components = { "lamp device", "camera device", "ascan node", "spectrum processor device", "framegrabber device", "unknown", "lamp device", "camera device", "ascan node", "spectrum processor device", "framegrabber device", "unknown", "unknown", "unknown"};
+										sequencer_sequence_step_component_slotids = [ [0<s>, 0<s>, 0<s>, 0<s>, 0<s>, -1<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, -1<s>, -1<s>, -1<s>]];
+										sequencer_sequence_step_component_slotsubids = [ [0<s>, 0<s>, 0<s>, 0<s>, 0<s>, -1<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, -1<s>, -1<s>, -1<s>]];
+										sequencer_sequence_step_types = [ [2<i16>, 2<i16>, 2<i16>, 2<i16>, 2<i16>, 17<i16>, 3<i16>, 3<i16>, 3<i16>, 3<i16>, 3<i16>, 17<i16>, 15<i16>, 11<i16>]];
+										sequencer_sequence_step_command_ids = [ [0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 1<s>, 1<s>, 0<s>]];
+										sequencer_sequence_step_timeouts = [ [1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, -1<i64>]];
+								};
+								SECTION sequencer_sequence_steps_leave_0
+								{
+										sequencer_sequence_step_descriptions = { "Callback stop in loop", "Callback before all stopped", "Stop Scanner Device", "Stop SpecProc Device", "Stop Ascan Node", "Stop Camera Device", "Stop Lamp Device", "Callback before all postprocessed", "PostProcess Scanner Device", "PostProcess SpecProc Device", "PostProcess Ascan Node", "PostProcess Camera Device", "PostProcess Lamp Device"};
+										sequencer_sequence_step_label = { "StopInLoop", "BeforeAllStopped", "StopScannerDevice", "StopSpecProcDevice", "StopAscanNode", "StopCameraDevice", "StopANode", "BeforeAllPostProcessed", "PostProcessScannerDevice", "PostProcessSpecProcDevice", "PostProcessAscanNode", "PostProcessCameraDevice", "PostProcessANode"};
+										sequencer_sequence_step_label_true = { "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_label_false = { "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_components = { "unknown", "unknown", "framegrabber device", "spectrum processor device", "ascan node", "camera device", "lamp device", "unknown", "framegrabber device", "spectrum processor device", "ascan node", "camera device", "lamp device"};
+										sequencer_sequence_step_component_slotids = [ [-1<s>, -1<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, -1<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>]];
+										sequencer_sequence_step_component_slotsubids = [ [-1<s>, -1<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, -1<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>]];
+										sequencer_sequence_step_types = [ [16<i16>, 17<i16>, 4<i16>, 4<i16>, 4<i16>, 4<i16>, 4<i16>, 17<i16>, 5<i16>, 5<i16>, 5<i16>, 5<i16>, 5<i16>]];
+										sequencer_sequence_step_command_ids = [ [1<s>, 16<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>, 17<s>, 0<s>, 0<s>, 0<s>, 0<s>, 0<s>]];
+										sequencer_sequence_step_timeouts = [ [1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>, 1000<i64>]];
+								};
+						};
+				};
+		};
+};

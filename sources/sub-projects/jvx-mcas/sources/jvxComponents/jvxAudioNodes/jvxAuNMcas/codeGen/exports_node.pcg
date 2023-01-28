@@ -1,0 +1,62 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genSimple_node";
+
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+//	    CALLBACKS = {"set_properties_callback_pre", "set_properties_callback_post"};
+		 
+
+
+		SECTION volume
+		{
+				DESCRIPTION = "Volume of Test Item 0 for all channels";
+				TYPE = "JVX_DATAFORMAT_DATA";			
+				// ASSOCIATE_EXTERNAL = "yes";
+				// CALLBACK_SET_PREHOOK = "set_properties_callback_pre";
+				ASSOCIATE_EXTERNAL = "yes";
+		};
+
+		SECTION num_channels
+		{
+				DESCRIPTION = "Number of channels";
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				// CALLBACK_SET_PREHOOK = "set_properties_callback_pre";
+				ASSOCIATE_EXTERNAL = "yes";
+		};
+
+		SECTION input_channel_offset
+		{
+			DESCRIPTION = "input channel index in process function";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+			
+		SECTION	mono_to_stereo_playback
+		{
+			DESCRIPTION = "if true, mono input is played on 2 channels";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+
+		SECTION play_props_dirty
+		{
+			DESCRIPTION = "indicate properties as dirty";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+
+		SECTION clipping_detected 
+		{
+			DESCRIPTION = "indicate clipping has occured in algorithm";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+	};
+};

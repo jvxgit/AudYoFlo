@@ -1,0 +1,35 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxVideoDevice_genpcg";
+
+	include "video-properties.pcgf";
+
+	SECTION rt_info_vd
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION number_lost_frames
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			DESCRIPTION = "Number of lost buffers during processing";	  // Defaults to NAME if not present
+			ID = "jvx_number_lost_buffer_int32"; 	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";			
+		};		
+		SECTION detected_rate
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			DESCRIPTION = "Measure framerate";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";			
+		};	
+		SECTION delta_t_copy
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			DESCRIPTION = "Delta t for capture copy";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";			
+		};		
+	}; 
+};

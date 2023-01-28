@@ -1,0 +1,67 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genViewer_node";
+
+	SECTION properties_active_higher
+	{
+		NAME = "properties_active_higher";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_buffer_post", "set_buffer_pre"}; 
+
+		SECTION volume
+		{
+			DESCRIPTION = "Volume for all channels";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			INIT_SET = 1.0;
+		};
+		SECTION numberdummyloop
+		{
+			DESCRIPTION = "Number dummy operations in loop per frame";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			INIT_SET = 0;
+		};
+
+		SECTION inputStreamPlot
+		{
+			DESCRIPTION = "Input channels plot circ buffer reference";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			ASSOCIATE_EXTERNAL = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER";
+			CALLBACK_SET_POSTHOOK = "set_buffer_post";
+			CALLBACK_SET_PREHOOK = "set_buffer_pre";
+		};
+		SECTION outputStreamPlot
+		{
+			DESCRIPTION = "Output channels plot circ buffer reference";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			ASSOCIATE_EXTERNAL = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER";
+			CALLBACK_SET_POSTHOOK = "set_buffer_post";
+			CALLBACK_SET_PREHOOK = "set_buffer_pre";
+		};
+
+		SECTION resamplingFactor
+		{
+			DESCRIPTION = "Param: Plot Window length";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {	"1 sec",	"2 secs",	"5 secs",	"10 secs",	"20 secs",	"50 secs",	"100 secs",		"200 secs",	"500 secs"};
+			SELECTION_LIST_SELECTED = {	"no",	"no",	"no",	"no",	"no",	"no",	"yes",		"no",	"no"};
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+		};
+
+		SECTION inputChannelSelection
+		{
+			DESCRIPTION = "Input channels selection for circ buffer plot";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			ONLY_CONTENT_TO_CONFIG = "no";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+		};
+	};
+};

@@ -1,0 +1,76 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "gen2AudioMixer_node";
+
+	SECTION properties_interfacing
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "ifx";
+		CALLBACKS = {"set_extend_ifx_reference"};
+
+		SECTION interf_mixer
+		{
+			DESCRIPTION = "Extender Interface Mixer";
+			TYPE = "JVX_DATAFORMAT_PROPERTY_EXTENDER_INTERFACE";	
+			CALLBACK_SET_POSTHOOK = "set_extend_ifx_reference";
+		};  
+	};
+
+	// Pull in all mixer properties
+	GROUP mixer_input
+	{
+		define def_multichannelmixer_callbacks
+		define def_input_channels
+		include "jvx-multichannel-mixer.pcgf";
+		undef def_input_channels
+	};
+
+	GROUP mixer_output
+	{
+		define def_multichannelmixer_callbacks
+		// define def_input_channels
+		include "jvx-multichannel-mixer.pcgf"; 
+	};
+
+	SECTION properties_storage
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"clear_storage"};
+		SECTION clear_storage
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			CALLBACK_SET_POSTHOOK = "clear_storage";			
+		};
+	};
+
+	SECTION profiles
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"address_profiles"};
+		SECTION profile_list
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			DESCRIPTION = "Select one among the stored profiles.";
+			// SELECTION_LIST_NAMES = {"PCM @ 16 bit", "PCM @ 8 bit"}; empty on start
+			// SELECTION_LIST_SELECTED = {"yes", "no"}; empty on start
+			// SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; empty on start
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			CALLBACK_SET_POSTHOOK = "address_profiles";			
+		};
+		SECTION profile_add
+		{
+			DESCRIPTION = "Add a new profile with the given name.";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT = "";
+			CALLBACK_SET_POSTHOOK = "address_profiles";			
+		};
+		SECTION clear_profile
+		{
+			DESCRIPTION = "Clear the selected profile.";
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			CALLBACK_SET_POSTHOOK = "address_profiles";			
+		};
+
+	};
+};

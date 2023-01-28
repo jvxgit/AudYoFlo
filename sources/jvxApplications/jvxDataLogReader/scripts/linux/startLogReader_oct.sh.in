@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# One very important hint: If there is a problem with the std lib when starting mex files,
+# it is very likely that this is due to the linked version in /usr/local/MATLAB/R2016a/sys/os/glnxa64/
+# In order to fix this problem, I personally did link the link in that folder to point to the system standard lib, e.g.,
+# "sudo ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.20 /usr/local/MATLAB/R2016a/sys/os/glnxa64/libstdc++.so.6"
+# Other options are described, e.g., in
+# https://stackoverflow.com/questions/9959306/how-to-tell-mex-to-link-with-the-libstdc-so-6-in-usr-lib-instead-of-the-one-i
+# which did not work out for me though
+
+SYSTEM_JVX_MEX_PATH="'$(pwd)/octave/'"
+SYSTEM_JVX_MATLAB_PATH="{'$(pwd)/octave/m-files'}"
+SYSTEM_JVX_MATLAB_DEMO="{'[content] = jvxDataLogReader.jvx_read_file('''');figure; plot(content{1}.data{1}.data(1,:));'; '[content] = jvxDataLogReader.jvx_read_file(''''); sig = reshape(content{1}.data{1}.data'', [1, prod(size(content{1}.data{1}.data))]);figure; plot(sig);'; 'jvxDataLogReader.jvx_read_file('''', ''-help'');'}"
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:./lib:
+
+if [ $# -eq 0 ]; then
+  echo "1"
+  JVX_MATLAB_START_MATPATH=""
+  JVX_MATLAB_START_COMMAND="jvx_start_rtproc"
+else
+
+  echo "2"
+  JVX_MATLAB_START_MATPATH="addpath $1;"
+
+  if [ $# -eq 1 ]; then
+    echo "3"
+    JVX_MATLAB_START_COMMAND="jvx_start_rtproc"
+  else
+
+    echo "4"
+    JVX_MATLAB_START_COMMAND=$2
+  fi
+fi
+
+octave --eval "${JVX_MATLAB_START_MATPATH} jvx=$JVX_MATLAB_START_COMMAND($SYSTEM_JVX_MEX_PATH,$SYSTEM_JVX_MATLAB_PATH,$SYSTEM_JVX_MATLAB_DEMO);" --persist

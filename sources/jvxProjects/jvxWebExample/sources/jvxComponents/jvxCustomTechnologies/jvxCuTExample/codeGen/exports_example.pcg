@@ -1,0 +1,62 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genExample";
+	CLASSNAME = "genExample";
+
+	SECTION general
+	{
+		PREFIX="general";
+		DESCRIPTION = "General properties";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		
+		SECTION selection_lane
+		{
+			DESCRIPTION = "Selection of currently addressed lane";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"Lane #0", "Lane #1", "Lane #2", "Lane #3"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes"};
+		};
+
+		SECTION activate_something
+		{
+			DESCRIPTION = "Selection of something";	
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 1;
+		};
+
+		SECTION my_value
+		{
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+			DESCRIPTION = "My value parameter";	  
+			// ASSOCIATE_EXTERNAL = "yes";
+			// CALLBACK_SET_POSTHOOK = "darwin_delay_set"; 
+			// CALLBACK_GET_PREHOOK = "darwin_delay_get"; 
+		};
+
+		SECTION my_value_in_range
+		{
+			DESCRIPTION = "Test value in range";	
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			VALUE_IN_RANGE_MIN_VALUE = 0;
+			VALUE_IN_RANGE_MAX_VALUE = 100;
+			VALUE_IN_RANGE_VALUE = 10;
+		};
+
+		SECTION my_onoff
+		{
+			DESCRIPTION = "Test simple on off";	
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+		};
+	};
+
+	include "export_example_pramirq0.pcgf";
+	include "export_example_rawram.pcgf";
+};

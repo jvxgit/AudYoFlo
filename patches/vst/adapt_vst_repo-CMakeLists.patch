@@ -1,0 +1,19 @@
+--- vst3sdk.orig/CMakeLists.txt	2023-01-24 15:24:55.496629600 +0100
++++ vst3sdk/CMakeLists.txt	2022-02-09 13:10:46.830696200 +0100
+@@ -36,7 +36,7 @@
+ message(STATUS "[SMTG] CMAKE_SOURCE_DIR is set to: ${CMAKE_SOURCE_DIR}")
+ message(STATUS "[SMTG] CMAKE_CURRENT_LIST_DIR is set to: ${CMAKE_CURRENT_LIST_DIR}")
+ 
+-if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_LIST_DIR})
++if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_LIST_DIR} AND NOT VST_FORCE_PLUGINS_EXAMPLES)
+     message(STATUS "[SMTG] Disable all VST3 samples")
+     set(SMTG_ADD_VST3_PLUGINS_SAMPLES OFF)
+     set(SMTG_ADD_VST3_HOSTING_SAMPLES OFF)
+@@ -44,6 +44,7 @@
+ else()
+     set(SMTG_ADD_MYPLUGINS_SRC_PATH ON)
+ endif()
++message(STATUS "Option for soft link creation: ${SMTG_CREATE_PLUGIN_LINK}")
+ 
+ # Here you can define where the VSTGUI is located
+ if(SMTG_ADD_VSTGUI)

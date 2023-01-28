@@ -1,0 +1,26 @@
+SECTION MATLAB_EXPORTS
+{
+	//USE_MATLAB_CALL_AS_LIBRARY = "YES";
+	REFERENCE_CLASS = "CjvxMexCalls_prv";
+	OUTPUTFILE_NAME = "CjvxMexCalls_external";
+	SECTION triggerNextBatch
+	{
+		DESCRIPTION = "Exchange one frame processing while in hookup-mode";
+		ACCEPT_INPUT_NUMBER_MIN = 0;
+		ACCEPT_INPUT_NUMBER_MAX = 0;
+		ACCEPT_OUTPUT_NUMBER_MIN = 0;
+		ACCEPT_OUTPUT_NUMBER_MAX = 0;
+	};
+	
+	SECTION askForNextBatch
+	{
+		DESCRIPTION = "Poll host to find out if new frame is pending";
+		ACCEPT_INPUT_NUMBER_MIN = 0;
+		ACCEPT_INPUT_NUMBER_MAX = 0;
+		ACCEPT_OUTPUT_NUMBER_MIN = 1;
+		ACCEPT_OUTPUT_NUMBER_MAX = 1;
+		PRODUCE_OUTPUT_TYPES = {"JVX_DATAFORMAT_16BIT_LE"};
+		DIMENSION_OUTPUT_FIELD = {"0D"};
+		DESCRIPTION_OUTPUT_PARAMETERS = { "If return value is 1, new frame is ready"};
+	};
+};

@@ -1,0 +1,4 @@
+Current version of jvx-rt release: ${myversion}
+Current version of jvx-rt sub-product release: ${myproductversion}
+Release date: ${myreleasedate}
+

@@ -1,0 +1,17 @@
+SECTION field2
+{
+	PREFIX="field2";
+	DESCRIPTION = "Properties related to field2";
+	GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+	GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+	COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+	ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+	CALLBACKS = {"example_field2_read_memory_get_pre"};
+	SECTION memory
+	{
+		TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+		DESCRIPTION = "field2 memory";	  
+		ASSOCIATE_EXTERNAL = "yes";
+		CALLBACK_GET_PREHOOK = "example_field2_read_memory_get_pre";
+	};
+};

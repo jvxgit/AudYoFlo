@@ -1,0 +1,105 @@
+// PCGF file "jvx-audio-mixer.pcgf" to define parameters for multichannel
+// input mixers
+SECTION mixer_control
+{
+ifdef def_multichannelmixer_storeconfig
+	GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+endif
+	
+	ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+	
+ifdef def_multichannelmixer_callbacks
+	CALLBACKS = {"update_level_get", "update_level_set"};
+endif
+	
+	SECTION enable
+	{
+	ifdef def_input_channels
+		DESCRIPTION = "Enable input channel mixer";
+	else
+		DESCRIPTION = "Enable output channel mixer";
+	endif
+		TYPE = "JVX_DATAFORMAT_BOOL";	
+		INIT_SET = 1;
+	}; 
+
+	SECTION channels
+	{
+		// Store only the selection - that is: the name of the file as selected
+		ifdef def_input_channels
+			DESCRIPTION = "Input channel names";
+		else
+			DESCRIPTION = "Output channel names";
+		endif
+		TYPE = "JVX_DATAFORMAT_STRING_LIST";					
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";			
+	};	
+
+	SECTION level_gain
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Gain factor [linear] for each input channel";			
+		else
+			DESCRIPTION = "Gain factor [linear] for each output channel";			
+		endif
+		TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";	
+		VALUE_IN_RANGE_MIN_VALUE = 0;
+		VALUE_IN_RANGE_MAX_VALUE = 10;
+		CALLBACK_SET_POSTHOOK = "update_level_set";
+		ASSOCIATE_EXTERNAL = "yes";
+	}; 
+
+	SECTION level_mute
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Mute flag for each input channel";
+		else
+			DESCRIPTION = "Mute flag for each output channel";
+		endif
+		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		CALLBACK_SET_POSTHOOK = "update_level_set";
+		SELECTION_LIST_NAMES = {"Off", "On"};
+		SELECTION_LIST_SELECTED = {"yes", "no"};
+		SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+		ASSOCIATE_EXTERNAL = "yes"; 
+	}; 
+
+	SECTION level_clip
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Clip flag for each input channel";
+		else
+			DESCRIPTION = "Clip flag for each output channel";
+		endif
+
+		TYPE = "JVX_DATAFORMAT_BOOL";	
+		CALLBACK_GET_PREHOOK = "update_level_get";
+		CALLBACK_SET_POSTHOOK = "update_level_set";
+		ASSOCIATE_EXTERNAL = "yes";
+	}; 
+
+	SECTION level_avrg
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Current level average input channel";
+		else
+			DESCRIPTION = "Current level average output channel";
+		endif
+		TYPE = "JVX_DATAFORMAT_DATA";	
+		CALLBACK_GET_PREHOOK = "update_level_get";
+		ASSOCIATE_EXTERNAL = "yes";
+	}; 
+
+	SECTION level_max
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Current level max input channel";
+		else
+			DESCRIPTION = "Current level max output channel";
+		endif
+		TYPE = "JVX_DATAFORMAT_DATA";	
+		CALLBACK_GET_PREHOOK = "update_level_get";
+		ASSOCIATE_EXTERNAL = "yes";
+	}; 
+};

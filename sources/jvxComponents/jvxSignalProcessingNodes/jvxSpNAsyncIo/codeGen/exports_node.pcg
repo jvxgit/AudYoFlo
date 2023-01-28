@@ -1,0 +1,141 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genSPAsyncio_node";
+
+	GROUP secondary_async
+	{
+		JVX_DUPLICATE_SYSTEM_PROPERTIES="yes";
+		include "node-properties.pcgf";
+	};
+
+	GROUP control
+	{
+		SECTION flows
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			SHOW_CONTENT_HINTS = "RTUPDATE=yes";
+			CALLBACKS = {"set_control_flow_param"};
+
+			SECTION control_channels_pri_input
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";	
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "set_control_flow_param"; 
+			};
+
+			SECTION control_channels_pri_output
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";	
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "set_control_flow_param"; 
+			};
+
+ifdef dontuse
+
+			SECTION update_bsize
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";	
+				INIT_SET = 1;
+			};
+			SECTION update_rate
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";	
+				INIT_SET = 1;
+			};
+			SECTION update_format
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";	
+				INIT_SET = 1;
+			};
+			SECTION update_subformat
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";	
+				INIT_SET = 1;
+			};
+
+endif
+
+		};
+	};
+
+	GROUP rt_info
+	{
+		SECTION output
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			SHOW_CONTENT_HINTS = "RTUPDATE=yes";
+
+			SECTION number_overflows
+			{
+				DESCRIPTION = "Number of overflows";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				INIT_SET = 0;
+				
+			}; 
+			SECTION number_underflows
+			{
+				DESCRIPTION = "Number of overflows";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				INIT_SET = 0; 
+			}; 
+			SECTION number_aborts
+			{
+				DESCRIPTION = "Number of aborts";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				INIT_SET = 0;
+			}; 
+
+			SECTION fillheight_avrg
+			{
+				DESCRIPTION = "Current fill height";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				INIT_SET = 0;
+			}; 
+			SECTION fillheight_min
+			{
+				DESCRIPTION = "Current min fill height";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				INIT_SET = 0;
+			}; 
+			SECTION fillheight_max
+			{
+				DESCRIPTION = "Current max fill height";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";	
+				INIT_SET = 0;
+			}; 
+		};
+	};
+
+	GROUP general
+	{
+		SECTION cross_threads
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+			SECTION number_buffers
+			{
+				DESCRIPTION = "Number Buffers";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";			
+				INIT_SET = 4;
+			};  
+			SECTION jitter_buffer_size
+			{
+				DESCRIPTION = "Jitter Buffer size";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_SIZE";			
+				INIT_SET = 0;
+			};  
+			SECTION log_timing
+			{
+				DESCRIPTION = "Log timing data for profiling";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_BOOL";			
+				INIT_SET = 0;
+			};  
+		};
+	};
+};

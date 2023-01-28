@@ -1,0 +1,305 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genGenericWrapper_device";
+
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};		 			
+		
+		SECTION nonBlockingAsync
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Blocking or non-blocking in async mode";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"Blocking", "Non Blocking"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+		};  
+		SECTION setupAsync
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Current Setup Async Processing";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"async", "sync"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_GENW_DEV_REBUFFER";
+		};  
+		SECTION setupResampler
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Current Setup Resampler";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"resampler", "no resampler"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_GENW_DEV_RESAMPLER";
+
+		};  
+
+		SECTION qualityResamplerIn
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Current Setup Resampler";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"32 taps", "64 taps", "128 taps"};
+			SELECTION_LIST_SELECTED = {"no", "yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes>"}; 			
+			DESCRIPTOR = "JVX_GENW_DEV_QRESAMPLER_IN";
+
+		};  
+
+		SECTION qualityResamplerOut
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Current Setup Resampler";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"32 taps", "64 taps", "128 taps"};
+			SELECTION_LIST_SELECTED = {"no", "yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes>"}; 			
+			DESCRIPTOR = "JVX_GENW_DEV_QRESAMPLER_OUT";
+
+		};  
+		SECTION controlThreads
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Option to activate core isolation";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"inactive", "active"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};  
+
+		SECTION autoUseHwParams
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Auto use of HW paraneter values";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"yes", "no"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			DESCRIPTOR = "JVX_GENW_DEV_AUTOHW";
+		};  
+
+		SECTION auto_stop
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			DESCRIPTION = "Auto stop on input problems";	  // Defaults to NAME if not present
+			INIT_SET = 1;
+		};  
+		
+		SECTION autoOff
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Deactivate Auto Mode for Audio Properties";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_GENW_AUTO_OFF";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"Auto On", "Auto Off"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+		};  
+
+		SECTION command
+		{
+			ID = "jvx_command_string";
+		};
+
+		SECTION fill_channels_from_last_in
+		{
+			DESCRIPTION = "Fill channels from last - input";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+		};
+		SECTION fill_channels_from_last_out
+		{
+			DESCRIPTION = "Fill channels from last - output";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+		};
+	};
+	
+	SECTION properties_active_higher
+	{
+		NAME = "properties_active_higher";
+		DESCRIPTION = "Properties in state active and higher [%]";
+		COMMENT = " ---- Properties in state active and higher---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_channel_gain", "set_channel_index", "get_channel_gain"};
+
+		SECTION loadpercent
+		{
+			DESCRIPTION = "Current load during processing";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_PROGRESSBAR";
+			DESCRIPTOR = "JVX_GENW_DEV_LOAD";
+		};  
+
+		SECTION current_rate_hw
+		{
+			DESCRIPTION = "Current rate hw (measured)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};  
+
+		SECTION current_rate_sw
+		{
+			DESCRIPTION = "Current rate sw (measured)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};  
+
+		SECTION estimateLoad
+		{
+			DESCRIPTION = "Estimate of Load";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			VALUE_IN_RANGE_MIN_VALUE = 0;
+			VALUE_IN_RANGE_MAX_VALUE = 100;
+			VALUE_IN_RANGE_VALUE = 100;
+			ONLY_CONTENT_TO_CONFIG = "yes";
+		};  
+
+		SECTION estimateSCQuality
+		{
+			DESCRIPTION = "Estimate of SC quality";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			VALUE_IN_RANGE_MIN_VALUE = 1;
+			VALUE_IN_RANGE_MAX_VALUE = 10;
+			VALUE_IN_RANGE_VALUE = 1;
+			ONLY_CONTENT_TO_CONFIG = "yes";
+		};
+
+		SECTION inputlevels_avrg
+		{
+			DESCRIPTION = "Input Levels Avrg";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			ASSOCIATE_EXTERNAL = "yes";
+			DESCRIPTOR = "JVX_GENW_DEV_ILEVEL";
+		};  
+
+		SECTION outputlevels_avrg
+		{
+			DESCRIPTION = "Output Levels Avrg";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			ASSOCIATE_EXTERNAL = "yes";
+			DESCRIPTOR = "JVX_GENW_DEV_OLEVEL";
+		};  
+
+		SECTION inputlevels_max
+		{
+			DESCRIPTION = "Input Levels Max";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			ASSOCIATE_EXTERNAL = "yes";
+			DESCRIPTOR = "JVX_GENW_DEV_ILEVEL_MAX";
+		};  
+
+		SECTION outputlevels_max
+		{
+			DESCRIPTION = "Output Levels Max";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			ASSOCIATE_EXTERNAL = "yes";
+			DESCRIPTOR = "JVX_GENW_DEV_OLEVEL_MAX";
+		};  
+
+		/*
+		SECTION inputGain
+		{
+			DESCRIPTION = "Input Gain";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "yes";
+			DESCRIPTOR = "JVX_GENW_DEV_IGAIN";
+		};  
+		*/
+
+		SECTION inputChannelGain
+		{
+			DESCRIPTION = "Input Channel Gain";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			CALLBACK_SET_POSTHOOK = "set_channel_gain";
+			CALLBACK_SET_PREHOOK = "set_channel_index";
+			CALLBACK_GET_PREHOOK = "get_channel_gain";
+		};  
+
+		/*
+		SECTION outputGain
+		{
+			DESCRIPTION = "Output Gain";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "yes";
+			DESCRIPTOR = "JVX_GENW_DEV_OGAIN";
+		};  
+		*/
+
+		SECTION outputChannelGain
+		{
+			DESCRIPTION = "Output Channel Gain";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			CALLBACK_SET_POSTHOOK = "set_channel_gain";
+			CALLBACK_SET_PREHOOK = "set_channel_index";
+			CALLBACK_GET_PREHOOK = "get_channel_gain";
+		};  
+
+		SECTION directIn
+		{
+			DESCRIPTION = "Direct In";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 		
+			DESCRIPTOR = "JVX_GENW_DEV_IDIRECT";
+			CALLBACK_SET_POSTHOOK = "set_channel_gain";
+			CALLBACK_SET_PREHOOK = "set_channel_index";
+			CALLBACK_GET_PREHOOK = "get_channel_gain";
+		};  
+
+		SECTION levelHandlingInput
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Level Update Input";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"On", "Off"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			DESCRIPTOR = "JVX_GENW_ACT_ILEVEL";
+		};  
+
+		SECTION levelHandlingOutput
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Level Update Output";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"On", "Off"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			DESCRIPTOR = "JVX_GENW_ACT_OLEVEL";
+		};  
+	};
+};

@@ -1,0 +1,37 @@
+The resamplers in this directory are suitable to compensate drifts
+caused by connected soundcards:
+
+Given that a buffersize of N samples is received, the resamplers output 
+N + EPS samples. EPS may in this case be positive and negative and arbitrary.
+
+Also, the value of EPS may change from one frame to the next.
+
+How does it work? The following is done
+
+1) Upsampling by a specific factor (e.g. Nup = 8)
+2) Interpolation: We may use FIR and IIR interpolation. If FIR is used, we exploit 
+a polyphase implementation to reduce complexity. If IIR is used, a polyphase realization seemed to
+be too complex in terms of development effort and - if once designed - not flexible enough.
+3) Lagrange interpolation
+
+
+====================================================================================
+
+In this directory, three variants of resamplers are available:
+
+Variant I:
+FIR filter in polyphase structure I. We generate a buffer of audio samples in the upsampled domain
+and afterwards do the Lagrange interpolation.
+
+Variant II:
+FIR Filter in polyphase structure II. We do everything in parallel: Produce the output samples from the
+interpolation filter only at time indices we really need for Lagrange interpolation.
+
+Variant III:
+IIR filter. We generate a buffer of audio samples in the upsampled domain and afterwards do the Lagrange 
+interpolation (same as variant I but with IIR filter which is not polyphase).
+
+====================================================================================
+
+Hauke, 9.9.2011
+

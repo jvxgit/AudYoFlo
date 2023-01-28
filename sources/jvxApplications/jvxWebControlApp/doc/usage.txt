@@ -1,0 +1,12 @@
+Commands in jvxConsole Host
+==================================
+1) show(components)
+	-> List all components and states
+2) show(<component type>)
+	-> Show all components of a specific type. The selected one is highlighted
+3) act(<component type>, <state switch>, <descriptor component>)
+	-> Switch the state of a specific component. <state switch> is the state switch type, e.g. select or activate
+4) help
+	-> Print help message
+5) quit
+	-> leave program

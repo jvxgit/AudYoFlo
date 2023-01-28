@@ -1,0 +1,34 @@
+//====================================
+// AVAILABLE TYPES:
+// JVX_DATAFORMAT_DOUBLE
+// JVX_DATAFORMAT_FLOAT
+// JVX_DATAFORMAT_32BIT_LE
+// JVX_DATAFORMAT_16BIT_LE
+// JVX_DATAFORMAT_STRING
+// JVX_DATAFORMAT_INHERIT
+
+SECTION MATLAB_EXPORTS
+{	
+	REFERENCE_CLASS = "startWithMatlab";
+	
+	SECTION function_example1
+	{
+		NAME = "function_example1"; // Optional, otherwise SECTION name	
+		DESCRIPTION = "Example function to demonstrate functionality of the RTProc Matlab interface. Return what was passed as input."; // Optional
+		REFERENCE_FUNCTION_CLASS = "functionExample1";
+		ACCEPT_INPUT_TYPES = {"BDX_DATAFORMAT_DOUBLE", "BDX_DATAFORMAT_16BIT_LE", "BDX_DATAFORMAT_STRING"};
+		DIMENSION_INPUT_FIELD = { "0D", "2D", "2D"};
+		ACCEPT_INPUT_DIM_X = {-1, -1, -1}; // Optional and default
+		ACCEPT_INPUT_DIM_Y = {-1, -1, -1}; // Optional and default
+		ACCEPT_INPUT_NUMBER_MIN = 3; // Optional and default
+		ACCEPT_INPUT_NUMBER_MAX = 3; // Optional and default
+		PRODUCE_OUTPUT_TYPES = {"BDX_DATAFORMAT_INHERIT", "BDX_DATAFORMAT_16BIT_LE", "BDX_DATAFORMAT_STRING"};
+		ACCEPT_OUTPUT_NUMBER_MIN = 3; // Optional and default
+		ACCEPT_OUTPUT_NUMBER_MAX = 3; // Optional and default
+		ACCEPT_OUTPUT_DIM_X = {-1, -1, -1}; // Optional and default
+		ACCEPT_OUTPUT_DIM_Y = {2, -1, -1}; // Optional and default
+		INPUT_OUTPUT_CROSS_REFERENCE_TYPE = {2,1,0}; // Input to output dimension mapping, specify id starting from 0
+		INPUT_OUTPUT_CROSS_REFERENCE_X = {2,1,0}; // Input to output dimension mapping, specify id starting from 0
+		INPUT_OUTPUT_CROSS_REFERENCE_Y = {0,1,2}; // Input to output dimension mapping, specify id starting from 0
+	};
+};

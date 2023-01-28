@@ -1,0 +1,6 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxVideoNode_genpcg";
+
+	include "video-properties.pcgf";
+};

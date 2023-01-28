@@ -1,0 +1,17 @@
+@ECHO OFF
+REM ================================================================
+REM Start host...
+REM One optional parameter: A config file may be specified directly, e.g.,
+REM "@JVX_TARGET_NAME@ configfile.jvx"
+REM ================================================================
+set PATH=.\bin\;%PATH%
+set QT_PLUGIN_PATH=.\bin\plugins
+IF "%~1"=="" GOTO startnormal
+GOTO startspecific
+:startnormal
+bin\@JVX_TARGET_NAME@.exe  --jvxdir jvxComponents --config @JVX_TARGET_NAME@.jvx --textlog --verbose_dll --textloglev 10
+goto endscript
+:startspecific
+bin\@JVX_TARGET_NAME@.exe
+:endscript
+REM ENDSCRIPT

@@ -1,0 +1,2876 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConnectionsForm</class>
+ <widget class="QWidget" name="ConnectionsForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>784</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Data Connections</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" rowstretch="10,1,1">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Connection Rules</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,4,1,1,10,5,1">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLineEdit" name="lineEdit_ruleName"/>
+      </item>
+      <item row="3" column="4">
+       <widget class="QPushButton" name="pushButton_addRuleBridge">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5" rowspan="4" colspan="2">
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="title">
+         <string>Rule Configuration</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5" columnstretch="10,10,10,10,1,1,0">
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <item row="2" column="2">
+          <widget class="QComboBox" name="comboBox_fromBridge"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Component Type</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QLineEdit" name="lineEdit_ruleMaster"/>
+         </item>
+         <item row="1" column="5">
+          <widget class="QLineEdit" name="lineEdit_mastersid"/>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>Slot Sub ID</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Slot ID</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QLineEdit" name="lineEdit_ruleMasterNameWC"/>
+         </item>
+         <item row="3" column="2">
+          <widget class="QComboBox" name="comboBox_toBridge"/>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>Master/Connector Wildcard</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QLineEdit" name="lineEdit_fromBridgeWC"/>
+         </item>
+         <item row="2" column="4">
+          <widget class="QLineEdit" name="lineEdit_fromBridgeWCC"/>
+         </item>
+         <item row="2" column="5">
+          <widget class="QLineEdit" name="lineEdit_fromBridgesid"/>
+         </item>
+         <item row="2" column="6">
+          <widget class="QLineEdit" name="lineEdit_fromBridgessid"/>
+         </item>
+         <item row="3" column="3">
+          <widget class="QLineEdit" name="lineEdit_toBridgeWC"/>
+         </item>
+         <item row="1" column="2">
+          <widget class="QComboBox" name="comboBox_ruleMasterTp"/>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Component Wildcard</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="6">
+          <widget class="QLineEdit" name="lineEdit_masterssid"/>
+         </item>
+         <item row="3" column="4">
+          <widget class="QLineEdit" name="lineEdit_toBridgeWCC"/>
+         </item>
+         <item row="3" column="5">
+          <widget class="QLineEdit" name="lineEdit_toBridgesid"/>
+         </item>
+         <item row="3" column="6">
+          <widget class="QLineEdit" name="lineEdit_toBridgessid"/>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="pushButton_copy">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>/</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="pushButton">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>\</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Master</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>From Bridge</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>To Bridge</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QPushButton" name="pushButton_remRule">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>-</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QPushButton" name="pushButton_addRule">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Bridges</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="QPushButton" name="pushButton_remRuleBridge">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>-</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Rule Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="checkBox_rdz_ic">
+        <property name="text">
+         <string>ic</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>ess</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="3">
+       <widget class="QComboBox" name="comboBox_rulename"/>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QComboBox" name="comboBox_ruleBridges"/>
+      </item>
+      <item row="3" column="0" colspan="4">
+       <widget class="QLineEdit" name="lineEdit_ruleBridgename"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QListWidget" name="listWidget_connections"/>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Connection Status</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7" rowstretch="1,1" columnstretch="10,10">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item row="0" column="0" colspan="2">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="title">
+         <string>Connections</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item row="3" column="5">
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="5">
+          <widget class="QPushButton" name="pushButton_procdisc">
+           <property name="maximumSize">
+            <size>
+             <width>120</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Disconnect</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" rowspan="4" colspan="5">
+          <widget class="QTreeWidget" name="treeWidget_connections">
+           <property name="columnCount">
+            <number>6</number>
+           </property>
+           <attribute name="headerVisible">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="headerMinimumSectionSize">
+            <number>20</number>
+           </attribute>
+           <attribute name="headerHighlightSections">
+            <bool>false</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>##</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Data Connecction Process/Group</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Misc</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>uId</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>catId</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>depId</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QPushButton" name="pushButton_3">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>x</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="5" colspan="2">
+          <widget class="QPushButton" name="pushButton_procremove">
+           <property name="text">
+            <string>Remove</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="5" colspan="2">
+          <widget class="QPushButton" name="pushButton_2">
+           <property name="text">
+            <string>Show Result</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="title">
+         <string>Connection Dropzone</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_8" rowstretch="1,0,0,0,0,0,0,0,0,0">
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <property name="horizontalSpacing">
+          <number>4</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>2</number>
+         </property>
+         <item row="8" column="0" colspan="6">
+          <widget class="QFrame" name="frame_5">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,10,1,1,1,0,0,0,0,0">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Bridges</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_bridgename"/>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_dz_create_bridge">
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_dz_clear_bridge">
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_bridge_thread">
+              <property name="text">
+               <string>Thread</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_bridge_boost">
+              <property name="text">
+               <string>Boost</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_bridge_entry">
+              <property name="text">
+               <string>Entry</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_bridge_exit">
+              <property name="text">
+               <string>Exit</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QComboBox" name="comboBox_proc_grp_mode">
+           <item>
+            <property name="text">
+             <string>Process</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Group</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="6">
+          <widget class="QFrame" name="frame_4">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Output Connectors</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_dz_clear_ocon">
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="6">
+          <widget class="QFrame" name="frame_2">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_dz_master">
+              <property name="text">
+               <string>Master</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>508</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_dz_clear_master">
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="pushButton_dz_create_proc">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Create</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="6">
+          <widget class="QListWidget" name="listWidget_dz_outcon"/>
+         </item>
+         <item row="7" column="0" colspan="6">
+          <widget class="QListWidget" name="listWidget_dz_icon"/>
+         </item>
+         <item row="1" column="5">
+          <widget class="QFrame" name="frame">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QCheckBox" name="checkBox_dz_ic">
+              <property name="text">
+               <string>ic</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_dz_ess">
+              <property name="text">
+               <string>ess</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="pushButton_clear_dz">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="6">
+          <widget class="QListWidget" name="listWidget_dz_bridges"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="pushButton_connect_proc">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Connect</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="6">
+          <widget class="QListWidget" name="listWidget_dz_master"/>
+         </item>
+         <item row="6" column="0" colspan="6">
+          <widget class="QFrame" name="frame_3">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Input Connectors</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_dz_clear_icon">
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="6">
+          <widget class="QFrame" name="frame_10">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Name</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_dz_procname"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>Descriptor</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_dz_procdescr"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="title">
+         <string>Factories</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,10,10,1,10,10">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item row="1" column="0" rowspan="2">
+          <widget class="QTreeWidget" name="treeWidget_masterfactories">
+           <attribute name="headerMinimumSectionSize">
+            <number>100</number>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>##</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Component Id</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Component Description</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item row="4" column="0" rowspan="2">
+          <widget class="QTreeWidget" name="treeWidget_connectorfactories">
+           <column>
+            <property name="text">
+             <string notr="true">##</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Component Id</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Component Description</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item row="1" column="1" rowspan="2">
+          <widget class="QFrame" name="frame_7">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QPushButton" name="pushButton_setmaster">
+              <property name="text">
+               <string>-&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_add_allmasters">
+              <property name="text">
+               <string>=&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="4" column="1" rowspan="2">
+          <widget class="QFrame" name="frame_6">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QPushButton" name="pushButton_addconnector">
+              <property name="text">
+               <string>-&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_add_allconnectors">
+              <property name="text">
+               <string>=&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QFrame" name="frame_8">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>12</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>12</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Connector Factories</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QFrame" name="frame_9">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>12</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>12</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Master Factories</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>treeWidget_connections</sender>
+   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>process_item_clicked(QTreeWidgetItem*,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>108</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>85</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_procdisc</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>process_disconnect()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>769</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_procremove</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>process_remove()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>525</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_dz_procname</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_process_name_edited()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>584</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>186</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_dz_master</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_master_clicked(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>789</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_dz_icon</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_icon_clicked(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>789</x>
+     <y>467</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_dz_outcon</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_ocon_clicked(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>789</x>
+     <y>372</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_dz_bridges</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_bridge_clicked(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>789</x>
+     <y>562</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>465</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dz_create_bridge</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_create_bridge()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>537</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>431</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dz_create_proc</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_create_proc()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>478</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>505</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_connect_proc</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_connect_proc()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>552</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>564</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_clear_dz</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>627</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>494</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_setmaster</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>add_master_dz()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>590</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_addconnector</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>add_connector_dz()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>733</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>treeWidget_masterfactories</sender>
+   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>master_factory_item_clicked(QTreeWidgetItem*,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>256</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>treeWidget_connectorfactories</sender>
+   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>connector_factory_item_clicked(QTreeWidgetItem*,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>564</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>660</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dz_clear_master</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_clear_master()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>788</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dz_clear_icon</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_clear_icon()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>788</x>
+     <y>398</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>450</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dz_clear_ocon</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_clear_ocon()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>788</x>
+     <y>303</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>592</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_dz_clear_bridge</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_remove_bridge()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>577</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>659</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_add_allmasters</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>add_masters_dz()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>403</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_add_allconnectors</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>add_connectors_dz()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>453</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>580</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_rulename</sender>
+   <signal>activated(int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>select_connection_rule(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>687</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_ruleBridges</sender>
+   <signal>activated(int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>select_connection_rule_bridge(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>745</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_remRule</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>remove_connection_rule()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>689</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_ruleMasterTp</sender>
+   <signal>activated(int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_select_master_type(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_fromBridge</sender>
+   <signal>activated(int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_select_from_bridge_type(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>749</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_toBridge</sender>
+   <signal>activated(int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_select_to_bridge_type(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>773</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_ruleMasterNameWC</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_master_fac_wildcard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>536</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_ruleMaster</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_master_wildcard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>671</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_mastersid</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_master_sid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>729</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_masterssid</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_master_ssid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>787</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_fromBridgeWC</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_from_fac_wildcard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>536</x>
+     <y>749</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_fromBridgeWCC</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_from_wildcard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>671</x>
+     <y>749</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_fromBridgesid</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_from_sid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>729</x>
+     <y>749</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_fromBridgessid</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_from_ssid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>787</x>
+     <y>749</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_toBridgeWC</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_to_fac_wildcard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>536</x>
+     <y>773</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_toBridgeWCC</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_to_wildcard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>671</x>
+     <y>773</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_toBridgesid</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_to_sid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>729</x>
+     <y>773</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_toBridgessid</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_to_ssid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>787</x>
+     <y>773</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_ruleName</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_rulename()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>128</x>
+     <y>717</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_ruleBridgename</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_edit_rulebridgename()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>94</x>
+     <y>774</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_addRule</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_add_rule()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>718</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_addRuleBridge</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_add_bridgerule()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>775</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_remRuleBridge</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_rem_bridgerule()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>746</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>776</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_copy</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_copy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>701</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>533</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>342</x>
+     <y>701</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>737</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>modal_showresult()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_proc_grp_mode</sender>
+   <signal>activated(int)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_switch_process_group(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>694</x>
+     <y>180</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_bridge_thread</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_bridge_ded_thread()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>648</x>
+     <y>490</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>528</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_bridge_boost</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_bridge_boost_thread()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>698</x>
+     <y>490</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>769</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_bridge_entry</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_bridge_entry()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>747</x>
+     <y>490</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>747</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_bridge_exit</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_bridge_exit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>788</x>
+     <y>490</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>731</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>local_close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>780</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>708</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_dz_ic</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_clicked_interceptors(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>747</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>143</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_rdz_ic</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_clicked_interceptors(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>715</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>492</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_dz_ess</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_clicked_essential(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>788</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>799</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>rdz_clicked_essentials(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>715</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_dz_procdescr</sender>
+   <signal>editingFinished()</signal>
+   <receiver>ConnectionsForm</receiver>
+   <slot>dz_process_descr_edited()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>686</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>804</x>
+     <y>93</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>process_item_clicked(QTreeWidgetItem*,int)</slot>
+  <slot>process_remove()</slot>
+  <slot>process_disconnect()</slot>
+  <slot>dz_process_name_edited()</slot>
+  <slot>dz_master_clicked(QListWidgetItem*)</slot>
+  <slot>dz_icon_clicked(QListWidgetItem*)</slot>
+  <slot>dz_ocon_clicked(QListWidgetItem*)</slot>
+  <slot>dz_bridge_clicked(QListWidgetItem*)</slot>
+  <slot>dz_create_bridge()</slot>
+  <slot>dz_remove_bridge()</slot>
+  <slot>dz_create_proc()</slot>
+  <slot>dz_connect_proc()</slot>
+  <slot>dz_clear()</slot>
+  <slot>add_master_dz()</slot>
+  <slot>add_connector_dz()</slot>
+  <slot>master_factory_item_clicked(QTreeWidgetItem*,int)</slot>
+  <slot>connector_factory_item_clicked(QTreeWidgetItem*,int)</slot>
+  <slot>dz_clear_master()</slot>
+  <slot>dz_clear_icon()</slot>
+  <slot>dz_clear_ocon()</slot>
+  <slot>dz_clear_bridges()</slot>
+  <slot>add_connectors_dz()</slot>
+  <slot>add_masters_dz()</slot>
+  <slot>select_connection_rule(int)</slot>
+  <slot>select_connection_rule_bridge(int)</slot>
+  <slot>remove_connection_rule()</slot>
+  <slot>rdz_select_master_type(int)</slot>
+  <slot>rdz_select_from_bridge_type(int)</slot>
+  <slot>rdz_select_to_bridge_type(int)</slot>
+  <slot>rdz_edit_master_fac_wildcard()</slot>
+  <slot>rdz_edit_master_wildcard()</slot>
+  <slot>rdz_edit_from_fac_wildcard()</slot>
+  <slot>rdz_edit_from_wildcard()</slot>
+  <slot>rdz_edit_to_fac_wildcard()</slot>
+  <slot>rdz_edit_to_wildcard()</slot>
+  <slot>rdz_edit_from_sid()</slot>
+  <slot>rdz_edit_from_ssid()</slot>
+  <slot>rdz_edit_to_sid()</slot>
+  <slot>rdz_edit_to_ssid()</slot>
+  <slot>rdz_edit_master_sid()</slot>
+  <slot>rdz_edit_master_ssid()</slot>
+  <slot>rdz_edit_rulename()</slot>
+  <slot>rdz_edit_rulebridgename()</slot>
+  <slot>rdz_add_bridgerule()</slot>
+  <slot>rdz_add_rule()</slot>
+  <slot>rdz_rem_bridgerule()</slot>
+  <slot>rdz_copy()</slot>
+  <slot>rdz_clear()</slot>
+  <slot>modal_showresult()</slot>
+  <slot>dz_switch_process_group(int)</slot>
+  <slot>dz_bridge_ded_thread()</slot>
+  <slot>dz_bridge_boost_thread()</slot>
+  <slot>dz_bridge_entry()</slot>
+  <slot>dz_bridge_exit()</slot>
+  <slot>local_close()</slot>
+  <slot>dz_clicked_interceptors(bool)</slot>
+  <slot>rdz_clicked_interceptors(bool)</slot>
+  <slot>dz_clicked_essential(bool)</slot>
+  <slot>rdz_clicked_essentials(bool)</slot>
+  <slot>dz_process_descr_edited()</slot>
+ </slots>
+</ui>

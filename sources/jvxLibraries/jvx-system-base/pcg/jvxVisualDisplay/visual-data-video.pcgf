@@ -1,0 +1,28 @@
+	SECTION visual_data_video 
+	{
+		DESCRIPTION = "Specific Mf camera properties";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
+		
+		include "visual-data-common.pcgf";
+
+		SECTION operation_mode
+		{
+			DESCRIPTION = "Video - interaction with display buffer";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"Triggered Multi Buffer", "Timeout Single Buffer"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		};
+
+		SECTION number_buffers
+		{
+			DESCRIPTION = "Video number of buffers";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2;
+		};
+	};

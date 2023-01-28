@@ -1,0 +1,6 @@
+#ifndef __JVXL_DSP_H__
+#define __JVXL_DSP_H__
+
+#define JVX_PRODUCT_VERSION_STRING "@myproductversion@"
+
+#endif

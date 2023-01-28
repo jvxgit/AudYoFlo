@@ -1,0 +1,52 @@
+SECTION params
+{
+        DESCRIPTION = "FFT framework properties";
+        GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+        ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+	SECTION fftLengthLog2
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "log2 of FFT length";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION numFFT
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "number of used FFTs";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION numIFFT
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "number of used IFFTs";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION type
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "FFT frameworkType";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+};
+
+SECTION readOnly
+{
+        DESCRIPTION = "fftFramework read only properties";
+        ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+        SECTION algorithmVersion
+        {
+                TYPE = "JVX_DATAFORMAT_STRING";
+                DESCRIPTION = "algorithm version";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                // not associated, constant property
+        };
+        SECTION algorithmDescription
+        {
+                TYPE = "JVX_DATAFORMAT_STRING";
+                DESCRIPTION = "algorithm description";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                // not associated, constant property
+        };
+};

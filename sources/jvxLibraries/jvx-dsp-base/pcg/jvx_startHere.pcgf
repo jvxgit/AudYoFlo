@@ -1,0 +1,13 @@
+SECTION params
+{
+        DESCRIPTION = "example project";
+        GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+        ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+	SECTION aParameters
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "example parameter";
+                //                ASSOCIATE_EXTERNAL = "yes";
+        };
+};

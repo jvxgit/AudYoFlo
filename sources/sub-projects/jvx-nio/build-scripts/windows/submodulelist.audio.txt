@@ -1,0 +1,6 @@
+# submodulelist.txt: Specify list of submodules to include
+set(myaudiosubmodules
+	"jvx-signals;myNewRtapProject;jvx-nr;jvx-aec;jvx-mbc;jvx-opengl;jvx-nio"
+	#"jvx-upmix;myNewRtapProject;jvx-sspot;jvx-nr;jvx-aec;jvx-signals"
+	#"jvx-signals;myNewRtapProject;jvx-nr;jvx-aec;jvx-mbc;jvx-opengl;jvx-whistle"
+	)

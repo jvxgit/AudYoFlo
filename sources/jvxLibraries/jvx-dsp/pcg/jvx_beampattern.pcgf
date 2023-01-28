@@ -1,0 +1,88 @@
+SECTION params
+{
+        DESCRIPTION = "instrumentation properties for beampatterns";
+        GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+        ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+        SECTION enabled
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "beampattern enabled (bool)";
+                CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+                // not associated, only to be used in audioNode
+        };
+        SECTION samplerate
+        {
+                TYPE = "JVX_DATAFORMAT_32BIT_LE";
+                DESCRIPTION = "beampattern samplerate";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION spectrumSize
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "beampattern spectrum size";
+                GENERATE_ENTRY_CONFIG_FILE = "no";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                     ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION numAngles
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "number of angles evaluated in beampattern";
+                     ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION azimuthMin
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "minimum azimuth angle in beampattern";
+                     ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION azimuthMax
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "maximum azimuth angle in beampattern";
+                     ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION fftLengthLog2
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "log2 of fft length / beampatter simulator";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION fracDelayFilterDelay
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "Filter delay of fractional delay filter in samples / beampatter simulator";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION syncNotify
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                GENERATE_ENTRY_CONFIG_FILE = "no"; // automatically set, do not store
+                DESCRIPTION = "beampattern sync parameters modified (bool)";
+               CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+                // not associated, only used in audioNode itself
+        };
+        SECTION logFrequency
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "logarithmic frequency flag (bool) / beampatter";
+               CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+                // not associated, only used for storing the setting within jvxQtBeampatternViewer in config file
+        };
+ };
+
+SECTION data
+ {
+         DESCRIPTION = "data properties for beampatterns";
+         ALLOWED_STATE_MASK = {"JVX_STATE_PROCESSING"};
+
+         SECTION data
+         {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "beampattern";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                ASSOCIATE_EXTERNAL = "yes";
+         };
+};

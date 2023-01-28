@@ -1,0 +1,212 @@
+SECTION jvxQtHost1_main
+{
+		SECTION jvxQtHost1_components
+		{
+				SECTION host_allSubSections
+				{
+						host_name_technology_video = "JVX Microsoft Foundation/OGL Video Technology";
+						host_state_technology_video = 3<s>;
+						host_name_device_video = "*";
+						host_state_device_video = 3<s>;
+						SECTION host_subsection_device_video
+						{
+								/system/framesize = 921600<i32>;
+								/system/segmentsizex = 1280<i32>;
+								/system/segmentsizey = 720<i32>;
+								/system/rate = 30<i32>;
+								/systemex/number_buffers = 2<s>;
+								/rates_min = 30<i32>;
+								/rates_max = 30<i32>;
+								SECTION /mode_selection
+								{
+										jvxSelection_listEntries_selected = { "Mode #0: 1280x720, RGB24"};
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /rendering_mode
+								{
+										jvxSelection_listEntries_selected = { "External Rendering"};
+										jvxSelection_value = 0x00000002;
+								};
+						};
+						SECTION host_allExternalEntries
+						{
+								jvxQtHost1_updaterate_plots_ms = 500<i32>;
+								jvxQtHost1_updaterate_props_ms = 500<i32>;
+								jvxQtHost1_updaterate_central_ms = 500<i32>;
+						};
+				};
+				SECTION sequencer_section
+				{
+						// Default sequence with name <default sequencer spec>
+				};
+				SECTION process_connect_rule_section
+				{
+						// Default connection rule with name <The Default Video Connection Rule>
+				};
+				SECTION process_connect_section
+				{
+						// Auto connected connection process with name <The Default Video Connection Rule>
+				};
+		};
+		SECTION rtv_section_main_name_props
+		{
+				SECTION rtv_sub_section_0
+				{
+						rtv_sub_section_name = "";
+						rtv_sub_section_viewtype = 1<i16>;
+						SECTION rtv_sub_group_0
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [1<i16>, 1<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Video Framesize (Res X * Res Y)", "Video Resolution X"};
+								rtv_item_prop_descriptors = { "/system/framesize", "/system/segmentsizex"};
+						};
+						SECTION rtv_sub_group_1
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [1<i16>, 1<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Video Resolution Y", "Video Frame Rate [fps]"};
+								rtv_item_prop_descriptors = { "/system/segmentsizey", "/system/rate"};
+						};
+						SECTION rtv_sub_group_2
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [1<i16>, 1<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Processing Format", "Processing Subformat"};
+								rtv_item_prop_descriptors = { "/system/dataformat", "/system/datasubformat"};
+						};
+						SECTION rtv_sub_group_3
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [1<i16>, 2<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Number of lost buffers during processing", "Measure framerate"};
+								rtv_item_prop_descriptors = { "/system/number_lost_buffer", "/detected_rate"};
+						};
+						SECTION rtv_sub_group_4
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [2<i16>, 2<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Delta t for capture copy", "Number of buffers while operating"};
+								rtv_item_prop_descriptors = { "/delta_t_copy", "/systemex/number_buffers"};
+						};
+						SECTION rtv_sub_group_5
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [2<i16>, 2<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Minimum framrate in current mode", "Maximum framrate in current mode"};
+								rtv_item_prop_descriptors = { "/rates_min", "/rates_max"};
+						};
+						SECTION rtv_sub_group_6
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [2<i16>, 2<i16>]];
+								rtv_item_updates = [ [1<i16>, 0<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Selection of camera mode", "Activate rendering on output side"};
+								rtv_item_prop_descriptors = { "/mode_selection", "/rendering_mode"};
+						};
+						SECTION rtv_sub_group_7
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [2<i16>, 2<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "VI: Resolution X", "Video Resolution Y"};
+								rtv_item_prop_descriptors = { "/expose_visual_if/segmentsize_x", "/expose_visual_if/segmentsize_y"};
+						};
+						SECTION rtv_sub_group_8
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [2<i16>, 2<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "Processing Format", "Processing Subformat"};
+								rtv_item_prop_descriptors = { "/expose_visual_if/format", "/expose_visual_if/subformat"};
+						};
+						SECTION rtv_sub_group_9
+						{
+								rtv_sub_section_grouptype = 1<i16>;
+								rtv_sub_section_group_description = "property-group";
+								rtv_sub_section_group_data_decode_id = 0<i16>;
+								rtv_item_component_types = { "video device", "video device"};
+								rtv_item_comp_slotid = [ [0<s>, 0<s>]];
+								rtv_item_comp_slotsubid = [ [0<s>, 0<s>]];
+								rtv_item_categories = [ [2<i16>, 2<i16>]];
+								rtv_item_updates = [ [1<i16>, 1<i16>]];
+								rtv_item_decode_ids = [ [4<i16>, 4<i16>]];
+								rtv_item_item_description = { "", ""};
+								rtv_item_prop_description = { "VI: Way of interaction with visual display data buffer", "VI: Number of buffers while operating"};
+								rtv_item_prop_descriptors = { "/expose_visual_if/operation_mode", "/expose_visual_if/number_buffers"};
+						};
+				};
+		};
+		SECTION rtv_section_main_name_plots
+		{
+		};
+};

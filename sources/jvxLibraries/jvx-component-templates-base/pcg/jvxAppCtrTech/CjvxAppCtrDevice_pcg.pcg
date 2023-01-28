@@ -1,0 +1,16 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxApplicationControllerDevice_genpcg";
+
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+		 
+		  
+	}; 
+};

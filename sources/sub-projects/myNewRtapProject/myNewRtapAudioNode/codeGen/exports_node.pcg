@@ -1,0 +1,37 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genSimple_node";
+
+	CALLBACKS = {"my_properties_callback_xy"};
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"my_properties_callback_set"};
+		SECTION volume
+		{
+			DESCRIPTION = "Volume for all channels";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			ASSOCIATE_EXTERNAL = "yes";
+			CALLBACK_SET_POSTHOOK = "my_properties_callback_set";
+		};  
+		SECTION output_gain
+		{
+			VALUE_IN_RANGE_MIN_VALUE = 0.01;		
+			VALUE_IN_RANGE_MAX_VALUE = 10.0;
+			VALUE_IN_RANGE_VALUE = 1.0;
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+		};
+		SECTION output_mute
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+		};
+	};
+};

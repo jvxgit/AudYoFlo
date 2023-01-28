@@ -1,0 +1,59 @@
+	SECTION video
+	{
+		// Properties to address a video camera
+		
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+		SECTION framesize
+		{
+			DESCRIPTION = "Video Framesize (Res X * Res Y)";	  // Defaults to NAME if not present
+			INIT_SET = 307200; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_framesize_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+
+		};
+
+		SECTION segmentsize_x
+		{
+			DESCRIPTION = "Video Resolution X";	  // Defaults to NAME if not present
+			INIT_SET = 480; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_segmentsize_x_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+
+		SECTION segmentsize_y
+		{
+			DESCRIPTION = "Video Resolution Y";	  // Defaults to NAME if not present
+			INIT_SET = 480; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_segmentsize_y_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+		};
+
+		SECTION framerate
+		{
+			DESCRIPTION = "Video Frame Rate [fps]";	  // Defaults to NAME if not present
+			INIT_SET = 30; 
+			ID = "jvx_rate_int32"; 	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	
+		};
+		SECTION format
+		{
+			DESCRIPTION = "Processing Format";	  // Defaults to NAME if not present
+			INIT_SET = 1; // <- start with dataformat "DATA"
+			ID = "jvx_processing_format_int16"; 
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		};
+
+		SECTION subformat
+		{
+			DESCRIPTION = "Processing Subformat";	  // Defaults to NAME if not present
+			INIT_SET = 1; // <- start with dataformat "DATA"
+			ID = "jvx_processing_subformat_int16"; 
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		};
+	};

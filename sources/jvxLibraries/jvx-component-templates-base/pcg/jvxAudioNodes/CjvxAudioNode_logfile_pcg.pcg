@@ -1,0 +1,9 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxAudioNode_logfile_genpcg";
+	
+	GROUP audiologtofile
+	{
+		include "exports_logtofile.pcgf";
+	};
+};

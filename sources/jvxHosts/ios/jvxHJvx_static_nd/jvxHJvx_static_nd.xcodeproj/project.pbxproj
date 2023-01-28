@@ -1,0 +1,346 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12A76A5D1C3196FE001064A9 /* CjvxHostJvx_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A76A5B1C3196FE001064A9 /* CjvxHostJvx_config.cpp */; };
+		12A76A5E1C3196FE001064A9 /* CjvxHostJvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A76A5C1C3196FE001064A9 /* CjvxHostJvx.cpp */; };
+		12A76A631C319733001064A9 /* CjvxHost_components.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A76A601C319733001064A9 /* CjvxHost_components.cpp */; };
+		12A76A641C319733001064A9 /* CjvxHost_sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A76A611C319733001064A9 /* CjvxHost_sequencer.cpp */; };
+		12A76A651C319733001064A9 /* CjvxHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A76A621C319733001064A9 /* CjvxHost.cpp */; };
+		12A76A6C1C3197AD001064A9 /* CjvxHost_pcg.pcg in Sources */ = {isa = PBXBuildFile; fileRef = 12A76A661C319761001064A9 /* CjvxHost_pcg.pcg */; };
+		12A76A6E1C3197C8001064A9 /* componentEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A76A6D1C3197C8001064A9 /* componentEntry.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		12A76A5A1C319676001064A9 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.pcg";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"$(DERIVED_FILES_DIR)/pcg_${INPUT_FILE_BASE}.h",
+			);
+			script = "echo \"PCG File Generator\"\n/Volumes/untitled/jvx/build/macos64-rtproc/release/bin/jvxExPropC ${INPUT_FILE_PATH} -o ${DERIVED_FILES_DIR}/pcg_${INPUT_FILE_BASE}.h";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		12A76A4C1C319630001064A9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		12A76A4E1C319630001064A9 /* libjvxHJvx_static_nd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjvxHJvx_static_nd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		12A76A5B1C3196FE001064A9 /* CjvxHostJvx_config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CjvxHostJvx_config.cpp; path = ../../../jvxHJvx/src/CjvxHostJvx_config.cpp; sourceTree = "<group>"; };
+		12A76A5C1C3196FE001064A9 /* CjvxHostJvx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CjvxHostJvx.cpp; path = ../../../jvxHJvx/src/CjvxHostJvx.cpp; sourceTree = "<group>"; };
+		12A76A601C319733001064A9 /* CjvxHost_components.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CjvxHost_components.cpp; path = ../../../../../software/templates/jvxHosts/CjvxHost_components.cpp; sourceTree = "<group>"; };
+		12A76A611C319733001064A9 /* CjvxHost_sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CjvxHost_sequencer.cpp; path = ../../../../../software/templates/jvxHosts/CjvxHost_sequencer.cpp; sourceTree = "<group>"; };
+		12A76A621C319733001064A9 /* CjvxHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CjvxHost.cpp; path = ../../../../../software/templates/jvxHosts/CjvxHost.cpp; sourceTree = "<group>"; };
+		12A76A661C319761001064A9 /* CjvxHost_pcg.pcg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CjvxHost_pcg.pcg; path = ../../../../../software/templates/jvxHosts/CjvxHost_pcg.pcg; sourceTree = "<group>"; };
+		12A76A671C319761001064A9 /* CjvxHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CjvxHost.h; path = ../../../../../software/templates/jvxHosts/CjvxHost.h; sourceTree = "<group>"; };
+		12A76A691C319784001064A9 /* CjvxHostJvx_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CjvxHostJvx_config.h; path = ../../../jvxHJvx/src/CjvxHostJvx_config.h; sourceTree = "<group>"; };
+		12A76A6A1C319784001064A9 /* CjvxHostJvx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CjvxHostJvx.h; path = ../../../jvxHJvx/src/CjvxHostJvx.h; sourceTree = "<group>"; };
+		12A76A6D1C3197C8001064A9 /* componentEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = componentEntry.cpp; path = ../../../jvxHJvx/target/componentEntry.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		12A76A4B1C319630001064A9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		12A76A451C319630001064A9 = {
+			isa = PBXGroup;
+			children = (
+				12A76A501C319630001064A9 /* jvxHJvx_static_nd */,
+				12A76A4F1C319630001064A9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		12A76A4F1C319630001064A9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				12A76A4E1C319630001064A9 /* libjvxHJvx_static_nd.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		12A76A501C319630001064A9 /* jvxHJvx_static_nd */ = {
+			isa = PBXGroup;
+			children = (
+				12A76A6B1C319793001064A9 /* pcg */,
+				12A76A681C319766001064A9 /* header */,
+				12A76A5F1C319702001064A9 /* sources */,
+			);
+			path = jvxHJvx_static_nd;
+			sourceTree = "<group>";
+		};
+		12A76A5F1C319702001064A9 /* sources */ = {
+			isa = PBXGroup;
+			children = (
+				12A76A6D1C3197C8001064A9 /* componentEntry.cpp */,
+				12A76A601C319733001064A9 /* CjvxHost_components.cpp */,
+				12A76A611C319733001064A9 /* CjvxHost_sequencer.cpp */,
+				12A76A621C319733001064A9 /* CjvxHost.cpp */,
+				12A76A5C1C3196FE001064A9 /* CjvxHostJvx.cpp */,
+				12A76A5B1C3196FE001064A9 /* CjvxHostJvx_config.cpp */,
+			);
+			name = sources;
+			sourceTree = "<group>";
+		};
+		12A76A681C319766001064A9 /* header */ = {
+			isa = PBXGroup;
+			children = (
+				12A76A6A1C319784001064A9 /* CjvxHostJvx.h */,
+				12A76A691C319784001064A9 /* CjvxHostJvx_config.h */,
+				12A76A671C319761001064A9 /* CjvxHost.h */,
+			);
+			name = header;
+			sourceTree = "<group>";
+		};
+		12A76A6B1C319793001064A9 /* pcg */ = {
+			isa = PBXGroup;
+			children = (
+				12A76A661C319761001064A9 /* CjvxHost_pcg.pcg */,
+			);
+			name = pcg;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		12A76A4D1C319630001064A9 /* jvxHJvx_static_nd */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12A76A571C319630001064A9 /* Build configuration list for PBXNativeTarget "jvxHJvx_static_nd" */;
+			buildPhases = (
+				12A76A4A1C319630001064A9 /* Sources */,
+				12A76A4B1C319630001064A9 /* Frameworks */,
+				12A76A4C1C319630001064A9 /* CopyFiles */,
+			);
+			buildRules = (
+				12A76A5A1C319676001064A9 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = jvxHJvx_static_nd;
+			productName = jvxHJvx_static_nd;
+			productReference = 12A76A4E1C319630001064A9 /* libjvxHJvx_static_nd.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		12A76A461C319630001064A9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Javox Solutions";
+				TargetAttributes = {
+					12A76A4D1C319630001064A9 = {
+						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = 2T244T8Q23;
+					};
+				};
+			};
+			buildConfigurationList = 12A76A491C319630001064A9 /* Build configuration list for PBXProject "jvxHJvx_static_nd" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 12A76A451C319630001064A9;
+			productRefGroup = 12A76A4F1C319630001064A9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				12A76A4D1C319630001064A9 /* jvxHJvx_static_nd */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		12A76A4A1C319630001064A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12A76A6C1C3197AD001064A9 /* CjvxHost_pcg.pcg in Sources */,
+				12A76A651C319733001064A9 /* CjvxHost.cpp in Sources */,
+				12A76A5D1C3196FE001064A9 /* CjvxHostJvx_config.cpp in Sources */,
+				12A76A631C319733001064A9 /* CjvxHost_components.cpp in Sources */,
+				12A76A641C319733001064A9 /* CjvxHost_sequencer.cpp in Sources */,
+				12A76A5E1C3196FE001064A9 /* CjvxHostJvx.cpp in Sources */,
+				12A76A6E1C3197C8001064A9 /* componentEntry.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		12A76A551C319630001064A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		12A76A561C319630001064A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		12A76A581C319630001064A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"JVX_OBJECT_INIT_FUNCTION=jvxHJvx_nd_init",
+					"JVX_OBJECT_TERMINATE_FUNCTION=jvxHJvx_nd_terminate",
+					JVX_HOST_USE_ONLY_STATIC_OBJECTS,
+					"COMPONENT_DESCRIPTOR_NAME=CJVXHOST-LIB-NODLL",
+				);
+				HEADER_SEARCH_PATHS = (
+					"${JVX_ROOT_PATH}/base/software/platform/ios",
+					"${JVX_ROOT_PATH}/base/sources/jvxLibraries/jvx-dsp-base/include",
+					"${JVX_ROOT_PATH}/base/software",
+					"${JVX_ROOT_PATH}/base/sources/jvxLibraries/jvx-dsp-base/include/os-ios",
+					"${JVX_ROOT_PATH}/audio/software",
+					"${JVX_ROOT_PATH}/base/sources/jvxLibraries/jvxLthreads/include",
+				);
+				JVX_ROOT_PATH = /Volumes/untitled/jvx;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		12A76A591C319630001064A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"${JVX_ROOT_PATH}/base/software/platform/ios",
+					"${JVX_ROOT_PATH}/base/sources/jvxLibraries/jvx-dsp-base/include",
+					"${JVX_ROOT_PATH}/base/software",
+					"${JVX_ROOT_PATH}/base/sources/jvxLibraries/jvx-dsp-base/include/os-ios",
+					"${JVX_ROOT_PATH}/audio/software",
+					"${JVX_ROOT_PATH}/base/sources/jvxLibraries/jvxLthreads/include",
+				);
+				JVX_ROOT_PATH = /Volumes/untitled/jvx;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		12A76A491C319630001064A9 /* Build configuration list for PBXProject "jvxHJvx_static_nd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12A76A551C319630001064A9 /* Debug */,
+				12A76A561C319630001064A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12A76A571C319630001064A9 /* Build configuration list for PBXNativeTarget "jvxHJvx_static_nd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12A76A581C319630001064A9 /* Debug */,
+				12A76A591C319630001064A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 12A76A461C319630001064A9 /* Project object */;
+}

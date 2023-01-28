@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="images">
+    <file>images/splash.png</file>
+    <file>images/icon_start.png</file>
+    <file>images/icon_stop.png</file>
+    <file>images/icon_break_on.png</file>
+    <file>images/icon_break_off.png</file>
+    <file>images/icon_ws_off.png</file>
+	<file>images/icon_ws_on.png</file>
+	<file>images/alive_0.png</file>
+	<file>images/alive_1.png</file>
+	<file>images/not_alive.png</file>
+  </qresource>
+</RCC>

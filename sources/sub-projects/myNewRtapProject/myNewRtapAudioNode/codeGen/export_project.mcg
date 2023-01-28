@@ -1,0 +1,14 @@
+SECTION MATLAB_EXPORTS
+{
+	//USE_MATLAB_CALL_AS_LIBRARY = "YES";
+	REFERENCE_CLASS = "CjvxAuNmyNewProject";
+	OUTPUTFILE_NAME = "CjvxAuNmyNewProject_external";
+	SECTION myFirstMatlabEntry
+	{
+		DESCRIPTION = "Exchange one frame processing while in hookup-mode";
+		ACCEPT_INPUT_NUMBER_MIN = 0;
+		ACCEPT_INPUT_NUMBER_MAX = 0;
+		ACCEPT_OUTPUT_NUMBER_MIN = 0;
+		ACCEPT_OUTPUT_NUMBER_MAX = 0;
+	};
+};

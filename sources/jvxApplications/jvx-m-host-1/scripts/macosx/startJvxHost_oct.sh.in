@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Alternative 1: Set the path variable to where Matlab binary is located and
+# afterwards call "matlab"
+# Alternative 2: Use the Mac OS open command to run the app directly,
+# open /Applications/MATLAB_R2014a.app --args "-desktop -r 'a=b'"
+# I think I prefer A1 since we may rely on a path setting in /etc/paths
+# on each of the target systems..
+
+SYSTEM_JVX_MEX_PATH="'./matlab/'"
+SYSTEM_JVX_MATLAB_PATH="{'./matlab/m-files' './matlab/m-files/subprojects-audionode', './matlab/m-files/audioProperties'}"
+SYSTEM_JVX_MATLAB_DEMO="{'Realtime Processing: jvxHost(''rt-audio'', ''--config'', ''config.jvx'', ''--jvxdir'', ''jvxComponents'');';'Offline Processing: jvxHost(''off-audio'', ''--config'', ''config.jvx'', ''--jvxdir'', ''jvxComponents'');'}"
+
+
+if [ $# -eq 0 ]; then
+  echo "1"
+  JVX_MATLAB_START_MATPATH=""
+  JVX_MATLAB_START_COMMAND="jvx_start_rtproc"
+else
+
+  echo "2"
+  JVX_MATLAB_START_MATPATH="addpath $1;"
+
+  if [ $# -eq 1 ]; then
+    echo "3"
+    JVX_MATLAB_START_COMMAND="jvx_start_rtproc"
+  else
+
+    echo "4"
+    JVX_MATLAB_START_COMMAND=$2
+  fi
+fi
+
+JVX_MATLAB_START_ARGUMENT="$JVX_MATLAB_START_MATPATH \"cd $PWD; jvx = $JVX_MATLAB_START_COMMAND ( $SYSTEM_JVX_MEX_PATH , $SYSTEM_JVX_MATLAB_PATH , $SYSTEM_JVX_MATLAB_DEMO );\" "
+JVX_MATLAB_START_NAME=octave
+
+# ================================================================
+# Start Matlab
+# ================================================================
+echo "eval open $JVX_MATLAB_START_NAME --args \"-desktop -r $JVX_MATLAB_START_ARGUMENT\""
+eval open $JVX_MATLAB_START_NAME --args "-desktop -r $JVX_MATLAB_START_ARGUMENT"

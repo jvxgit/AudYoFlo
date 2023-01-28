@@ -1,0 +1,44 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genFileReader_technology";
+
+	SECTION file_selection
+	{
+		DESCRIPTION = "All about files";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"modify_fileio"};
+
+		SECTION open_filename
+		{
+			DESCRIPTION = "Insert String to open file";
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = "NOT SET";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CALLBACK_SET_POSTHOOK = "modify_fileio";
+		};		
+
+		SECTION file_lists
+		{
+			DESCRIPTION = "List all open files";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";					
+			SELECTION_LIST_NAMES = {"INVALID"};
+			SELECTION_LIST_SELECTED = {"no"};
+			SELECTION_LIST_EXCLUSIVE = {"no"}; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		};
+
+		SECTION close_file
+		{
+			DESCRIPTION = "Trigger to close the currently selected file";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "modify_fileio";
+		};		
+	};
+	
+	include "wav_properties.pcgf";
+};

@@ -1,0 +1,5 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "CjvxFactoryHost_genpcg";
+	include "CjvxHost_pcg.pcgf";
+};

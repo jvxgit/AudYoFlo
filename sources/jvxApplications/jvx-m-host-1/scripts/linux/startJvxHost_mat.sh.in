@@ -1,0 +1,26 @@
+#!/bin/sh
+
+SYSTEM_JVX_MEX_PATH="'$(pwd)/matlab/'"
+SYSTEM_JVX_MATLAB_PATH="{'$(pwd)/matlab/m-files','$(pwd)/matlab/m-files/subprojects-audionode','$(pwd)/matlab/m-files/audioProperties'}"
+SYSTEM_JVX_MATLAB_DEMO="{'Realtime Processing: jvxHost(''rt-audio'', ''--config'', ''$(pwd)/config.jvx'', ''--jvxdir'', ''$(pwd)/jvxComponents'');';'Offline Processing: jvxHost(''off-audio'', ''--config'', ''$(pwd)/config.jvx'', ''--jvxdir'', ''$(pwd)/jvxComponents'');'}"
+export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
+if [ $# -eq 0 ]; then
+  echo "1"
+  JVX_MATLAB_START_MATPATH=""
+  JVX_MATLAB_START_COMMAND="jvx_start_rtproc"
+else
+
+  echo "2"
+  JVX_MATLAB_START_MATPATH="addpath $1;"
+
+  if [ $# -eq 1 ]; then
+    echo "3"
+    JVX_MATLAB_START_COMMAND="jvx_start_rtproc"
+  else
+
+    echo "4"
+    JVX_MATLAB_START_COMMAND=$2
+  fi
+fi
+
+matlab -desktop -r "${JVX_MATLAB_START_MATPATH} jvx=$JVX_MATLAB_START_COMMAND($SYSTEM_JVX_MEX_PATH,$SYSTEM_JVX_MATLAB_PATH,$SYSTEM_JVX_MATLAB_DEMO);"

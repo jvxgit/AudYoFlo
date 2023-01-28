@@ -1,0 +1,149 @@
+SECTION signal
+{
+	DESCRIPTION = "Properties to configure noise reduction C library";
+	GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+	GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+	COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+	ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+	PREFIX = "signal";
+	CALLBACKS = {"noisereduction_signal_init_set","noisereduction_signal_async_set","noisereduction_signal_sync_set_pre","noisereduction_signal_sync_set_post"};	
+
+	SECTION presets
+	{
+		DESCRIPTION = "FFT Framework presets";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ONLY_CONTENT_TO_CONFIG = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes";		
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		SELECTION_LIST_NAMES = {"FFT1024 - 512 - 256", "FFT512 - 320 - 160"};
+		SELECTION_LIST_SELECTED = {"yes", "no"};
+		SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_init_set"; 
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	};
+
+	SECTION selectFftFramework
+	{
+		DESCRIPTION = "Select Used FFT Framework";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ONLY_CONTENT_TO_CONFIG = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes";		
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		SELECTION_LIST_NAMES = {"SW-OLA", "DW-OLA", "OLA-CF", "OLS", "OLS-CF", "OLS-IFCF"};
+		SELECTION_LIST_SELECTED = {"no", "no", "no", "no", "yes", "no"};
+		SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes", "yes"};
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_init_set"; 
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	};
+
+	SECTION ifcf_length_max
+	{
+		TYPE = "JVX_DATAFORMAT_SIZE";	
+		DESCRIPTION = "In-frame crossfading length max value";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ASSOCIATE_EXTERNAL = "yes";
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_init_set";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	};
+
+	SECTION ir_length_max
+	{
+		TYPE = "JVX_DATAFORMAT_SIZE";	
+		DESCRIPTION = "Limit of the length of the used Ir";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ASSOCIATE_EXTERNAL = "yes";
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_init_set";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	};
+
+	// =================================================================================
+	
+	SECTION ifcf_length
+	{
+		TYPE = "JVX_DATAFORMAT_SIZE";	
+		DESCRIPTION = "In-frame crossfading length current value";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ASSOCIATE_EXTERNAL = "yes";
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_async_set"; 
+	};
+
+	SECTION antialias
+	{
+		TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SIMPLE_ONOFF";
+		DESCRIPTION = "Activate Anti-alias";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ASSOCIATE_EXTERNAL = "yes";
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_async_set"; 
+	};
+
+	SECTION auto_anti_aliasing
+	{
+		TYPE = "JVX_DATAFORMAT_16BIT_LE";	
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SIMPLE_ONOFF";
+		DESCRIPTION = "Activate Auto-anti-alias";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ASSOCIATE_EXTERNAL = "yes";
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_async_set"; 
+	};
+
+	// ================================================================================
+	
+	SECTION percentAnalysisWinFftSize
+	{
+		TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+		DESCRIPTION = "Setting of Secondary FFT Window Length (% of FFT Size)";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		CALLBACK_SET_PREHOOK = "noisereduction_signal_sync_set_pre"; 
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_sync_set_post";  
+		ASSOCIATE_EXTERNAL = "yes";
+	};
+	
+	SECTION wintype
+	{
+		DESCRIPTION = "Secondary FFT Window Type";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ONLY_SELECTION_TO_CONFIG = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes";		
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		SELECTION_LIST_NAMES = {"rect", "hamming", "blackman", "flattop-hann", "sqrt-flattop-hann", "hann"};
+		SELECTION_LIST_SELECTED = {"yes", "no", "no", "no", "no", "no"};
+		SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+		CALLBACK_SET_PREHOOK = "noisereduction_signal_sync_set_pre"; 
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_sync_set_post"; 
+	};
+
+	SECTION num_buf_loops_max
+	{
+		INIT_SET = 4;
+		TYPE = "JVX_DATAFORMAT_SIZE";	
+		DESCRIPTION = "Number of NR buffers per buffer";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	};
+};
+
+SECTION signal_control
+{
+	DESCRIPTION = "Properties to configure noise reduction C library";
+	GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+	GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+	COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+	ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+	PREFIX = "signal_control";
+	CALLBACKS = {"noisereduction_signal_control_async_set"};	
+
+	SECTION second_fft_analysis
+	{
+		TYPE = "JVX_DATAFORMAT_BOOL";	
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SIMPLE_ONOFF";
+		DESCRIPTION = "Activate Secondary FFT";	  // Defaults to NAME if not present
+		CONTEXT = "JVX_PROPERTY_CONTEXT_PARAMETER";
+		ASSOCIATE_EXTERNAL = "yes";
+		CALLBACK_SET_POSTHOOK = "noisereduction_signal_control_async_set"; 
+	}; 
+
+};

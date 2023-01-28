@@ -1,0 +1,39 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genBinauralRender_node";
+
+	GROUP global
+	{
+		SECTION if_ext
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED"};
+			CALLBACKS = {"set_extend_ifx_reference"};
+
+			SECTION interf_hrtf_data
+			{
+				DESCRIPTION = "Extender Interface SOFA";
+				TYPE = "JVX_DATAFORMAT_PROPERTY_EXTENDER_INTERFACE";	
+				CALLBACK_SET_POSTHOOK = "set_extend_ifx_reference";
+			};  
+		};
+	};
+
+	GROUP local
+	{
+		SECTION source_direction
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"update_source_direction"};
+
+			SECTION angles
+			{
+				DESCRIPTION = "Callback, which is triggered, when source input_source_direction_angles_deg of BinauralAudioRender is changed.";
+				TYPE = "JVX_DATAFORMAT_DATA";
+				CALLBACK_SET_POSTHOOK = "update_source_direction";
+				ASSOCIATE_EXTERNAL = "yes";
+			};  
+		};
+	};
+};

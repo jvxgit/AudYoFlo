@@ -1,0 +1,12 @@
+cmake_minimum_required (VERSION 2.8)
+
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/jsmn)
+	message("jsmn sub project not available. Starting script to download it.") 
+	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
+	message("jsmn installation complete.")
+endif()
+
+if(JVX_RELEASE_SDK)
+	install(TARGETS ${JVX_TARGET_NAME} ARCHIVE DESTINATION ${INSTALL_PATH_LIB_STATIC} RUNTIME DESTINATION ${INSTALL_PATH_LIB_SHARED} COMPONENT "release")
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jsmn/jsmn.h DESTINATION ${INSTALL_PATH_INCLUDE_STATIC}/third_party/git/jsmn/jsmn)
+endif()

@@ -1,0 +1,54 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genLevelMeter_node";
+
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};			
+
+		SECTION smoothing_alpha
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 0.995;
+		};
+
+		SECTION bypass
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+		};
+
+	};
+
+	SECTION monitor
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+
+		SECTION level_linear_squared
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+	};
+	SECTION control
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+
+		SECTION mute_channel
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+		SECTION gain_channel
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+	};
+};

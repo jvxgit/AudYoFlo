@@ -1,0 +1,47 @@
+SECTION params
+{
+        DESCRIPTION = "Power alignment properties";
+        GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+        ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+        SECTION ar
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "power alignment: recursive power smoothing constant";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION as
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "power alignment: recursive power smoothing constant";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION mode
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "Power alignment method";
+                ASSOCIATE_EXTERNAL = "yes";
+                // valid choices given by enum in jvx_powerAlignment.h
+        };
+};
+
+SECTION readOnly
+{
+        DESCRIPTION = "powerAlignment read only properties";
+        ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+        SECTION algorithmVersion
+        {
+                TYPE = "JVX_DATAFORMAT_STRING";
+                DESCRIPTION = "algorithm version";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                // not associated, constant property
+        };
+        SECTION algorithmDescription
+        {
+                TYPE = "JVX_DATAFORMAT_STRING";
+                DESCRIPTION = "algorithm description";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                // not associated, constant property
+        };
+ };

@@ -1,0 +1,16 @@
+function [hdl] = jvx_init_callback(hObject_parent, handle_parent)
+hdl.parent_object = hObject_parent;
+hdl.parent_handle = handle_parent;
+
+% Add local processing path
+local_path = '@JVX_LOC_MAT_PATH_PROJECT@';
+addpath(local_path);
+hdl.local_path = local_path;
+
+% local_lib_path = '@JVX_LOC_MAT_PATH_PROJECT@/../../../../jvxLibraries/ayf-headrest-matlab';
+% addpath(local_lib_path);
+% hdl.local_lib_path = local_lib_path;
+
+disp('<jvx_init_callback>: Setting path to use local matlab function in project stored at @JVX_LOC_MAT_PATH_PROJECT@');
+
+jvxInitCallback;

@@ -1,0 +1,51 @@
+MASTER												    			SLAVE
+===========================================================================================================================
+JVX_RC_STATE_NONE													JVX_RC_STATE_NONE						
+
+"jvx_remote_call_init_transfer"		
+					-------- jvxRcProtocol_start_message----------->					
+JVX_RC_STATE_STARTED												"jvx_remote_call_incoming"
+					<------- jvxRcProtocol_response_message --------
+																	JVX_RC_STATE_SENDING_PARAMETERS_IN_PRE					
+"jvx_remote_call_incoming"
+"jvx_remote_call_master_switch_state"
+					-- jvxRcProtocol_data_description_message ----->
+																	"jvx_remote_call_incoming"
+JVX_RC_STATE_SENDING_PARAMETERS_IN
+					<------- jvxRcProtocol_response_message --------				
+																	JVX_RC_STATE_SENDING_PARAMETERS_IN
+"jvx_remote_call_incoming"											
+"jvx_remote_call_master_switch_state"
+					----- jvxRcProtocol_data_message + load ------->
+JVX_RC_STATE_SENDING_PARAMETERS_OUT_PRE								
+																	"jvx_remote_call_incoming"										
+					<------- jvxRcProtocol_response_message --------
+																	JVX_RC_STATE_SENDING_PARAMETERS_OUT_PRE																
+"jvx_remote_call_incoming"
+"jvx_remote_call_master_switch_state"
+					-- jvxRcProtocol_data_description_message ----->
+JVX_RC_STATE_TRIGGER_ACTION					
+																	"jvx_remote_call_incoming"
+					<------- jvxRcProtocol_response_message --------
+																	JVX_RC_STATE_TRIGGER_ACTION
+"jvx_remote_call_incoming"			
+					-------- jvxRcProtocol_simple_message----------->					
+JVX_RC_STATE_RESPONDING_PARAMETERS_OUT					
+																	"jvx_remote_call_incoming"
+					<------- jvxRcProtocol_response_message --------
+																	JVX_RC_STATE_RESPONDING_PARAMETERS_OUT
+"jvx_remote_call_incoming"
+					----------- jvxRcProtocol_data_message -------->
+JVX_RC_STATE_TERMINATING_ACTION
+																	"jvx_remote_call_incoming"
+					<----- jvxRcProtocol_data_message + load -------
+																	JVX_RC_STATE_TERMINATING_ACTION
+"jvx_remote_call_incoming"
+					-------- jvxRcProtocol_simple_message----------->					
+JVX_RC_STATE_WAIT_TO_COMPLETE 
+																	"jvx_remote_call_incoming"
+					<------- jvxRcProtocol_response_message --------
+																	JVX_RC_STATE_NONE	
+"jvx_remote_call_incoming"
+JVX_RC_STATE_NONE
+

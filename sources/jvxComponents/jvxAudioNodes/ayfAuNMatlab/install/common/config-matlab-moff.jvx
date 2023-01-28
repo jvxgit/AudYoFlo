@@ -1,0 +1,130 @@
+SECTION jvxQtHost1_main
+{
+		SECTION jvxQtHost1_components
+		{
+				SECTION host_allSubSections
+				{
+						//==========================================================
+						host_name_technology_audio = "JVX offline audio technology";
+						host_state_technology_audio = 3<s>;
+						//==========================================================
+						host_name_device_audio = "The Offline Device";
+						host_state_device_audio = 3<s>;
+						SECTION host_subsection_device_audio
+						{
+								/system/framesize = 1024<i32>;
+								/system/rate = 48000<i32>;
+								SECTION /system/sel_input_channels
+								{
+										jvxSelection_listEntries_selected = { "input#0", "input#1"};
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /system/sel_output_channels
+								{
+										jvxSelection_listEntries_selected = { "output#0", "output#1"};
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /system/sel_dataformat
+								{
+										jvxSelection_listEntries_selected = { "jvxData(double)"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/act_fillup_silence_stop = 0<i16>;
+								/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+								/JVX_OUT_CHANNELS_MATLAB = 2<i32>;
+								SECTION /inputchannelselection_shadow
+								{
+										jvxSelection_listEntries = { "input#0", "input#1"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /outputchannelselection_shadow
+								{
+										jvxSelection_listEntries = { "output#0", "output#1"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000003;
+								};
+								/JVX_MAT_IN_TEXT = ".\\wavs/music_stereo_48000Hz.wav";
+								SECTION /JVX_MAT_IN_IS_FILE
+								{
+										jvxSelection_listEntries_selected = { "yes"};
+										jvxSelection_value = 0x00000001;
+								};
+								/JVX_MAT_IN_RATE = 48000<i32>;
+								/JVX_MAT_OUT_TEXT = "";
+								SECTION /JVX_MAT_OUT_IS_FILE
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries_selected, removed by configProcessor.
+										jvxSelection_value = 0x00000000;
+								};
+								/JVX_MAT_EXPORT_TEXT = "jvx_export";
+								SECTION /JVX_MAT_PLAY_STEREO
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries_selected, removed by configProcessor.
+										jvxSelection_value = 0x00000000;
+								};
+						};
+						//==========================================================
+						host_name_endpoint_audio_node = "Matlab Example Project - matlab";
+						host_state_endpoint_audio_node = 3<s>;
+						SECTION host_subsection_endpoint_audio_node
+						{
+								/JVX_AUDIONODE_BUFFERSIZE = 1024<i32>;
+								/JVX_AUDIONODE_SAMPLERATE = 48000<i32>;
+								/JVX_AUDIONODE_FORMAT = 1<i16>;
+								/system/segmentsizex = 1024<i32>;
+								/system/segmentsizey = 1<i32>;
+								SECTION /system/sel_engage
+								{
+										jvxSelection_listEntries_selected = { "Engage"};
+										jvxSelection_value = 0x00000001;
+								};
+								/JVX_AUN_OFFLINE_SUBFOLDER = "ayfAuNMatlab";
+								/JVX_AUN_OFFLINE_START_FCT = "jvxStartOffline";
+								/JVX_AUN_OFFLINE_STOP_FCT = "jvxStopOffline";
+								/JVX_AUN_OFFLINE_PROCESS_FCT = "jvxProcessOffline";
+								/JVX_AUN_OFFLINE_B4_PROCESS_FCT = "jvxBeforeProcessOffline";
+								/JVX_HOOKUP_NUM_BUFFERS = 2<i32>;
+								/hookupTimeoutMs = 1000<i32>;
+								/JVX_AUN_ENGAGE_MATLAB = 1<i16>;
+								/JVX_AUN_OFFLINE_SUBFOLDER = "ayfAuNMatlab";
+								/JVX_AUN_OFFLINE_START_FCT = "jvxStartOffline";
+								/JVX_AUN_OFFLINE_STOP_FCT = "jvxStopOffline";
+								/JVX_AUN_OFFLINE_PROCESS_FCT = "jvxProcessOffline";
+								/JVX_AUN_OFFLINE_B4_PROCESS_FCT = "jvxBeforeProcessOffline";
+								/JVX_HOOKUP_NUM_BUFFERS = 2<i32>;
+								/hookupTimeoutMs = 1000<i32>;
+								/JVX_AUN_ENGAGE_MATLAB = 1<i16>;
+						};
+				};
+				SECTION sequencer_section
+				{
+						sequencer_version = "sequencer_version_2.0";
+						// Default sequence with name <default sequencer spec>
+						SECTION sequencer_subsection_0
+						{
+								sequencer_is_default = 1<i16>;
+								sequencer_is_engaged = 1<i16>;
+								sequencer_sequence_names = "default sequencer spec";
+						};
+				};
+				SECTION process_connect_rule_section
+				{
+						// Default connection rule with name <The Default Audio Connection Rule>
+						// Default connection rule with name <The Default Video Connection Rule>
+				};
+				SECTION group_connect_section
+				{
+				};
+				SECTION process_connect_section
+				{
+						// Auto connected connection process with name <The Default Audio Connection Rule> and rule Id <1.
+				};
+		};
+		SECTION rtv_section_main_name_plots
+		{
+		};
+		SECTION rtv_section_main_name_props
+		{
+		};
+};

@@ -1,0 +1,9 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "MixMatrix";
+
+	GROUP mixmatrix
+	{
+		include "export_mixmatrix.pcgf";
+	};
+};

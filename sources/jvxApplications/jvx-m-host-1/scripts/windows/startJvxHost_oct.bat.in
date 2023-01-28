@@ -1,0 +1,38 @@
+@ECHO OFF
+
+start "Jvx" "%OCTAVE_PATH_32%/bin/octave-gui" --traditional --persist --eval "jvx=start_inmat('./octave', {'./octave/m-files'}, 'jvxHostRt');"
+
+REM ================================================================
+REM ================================================================
+REM set SYSTEM_JVX_MEX_PATH='./matlab/jvxJvxHost'
+REM set SYSTEM_JVX_MATLAB_PATH='./matlab/jvxJvxHost/m-files'
+REM set SYSTEM_JVX_MATLAB_DEMO='jvxHost(<selection of mode>);'
+
+REM IF "%~1"=="" GOTO no_extra_matpath
+REM GOTO extra_precommand
+REM :no_extra_matpath
+REM set JVX_MATLAB_START_MATPATH=
+REM set JVX_MATLAB_START_COMMAND=jvx_start_jvx
+REM GOTO cont_extra_precommand
+REM :extra_precommand
+REM set JVX_MATLAB_START_MATPATH=addpath %~1;
+
+REM IF "%~2"=="" GOTO no_extra_startcommand
+REM GOTO extra_startcommand
+REM :no_extra_startcommand
+REM set JVX_MATLAB_START_COMMAND=start_inmat
+REM GOTO cont_extra_startcommand
+REM :extra_startcommand
+REM set JVX_MATLAB_START_COMMAND=%~2
+REM :cont_extra_startcommand
+
+REM :cont_extra_precommand
+
+
+REM set JVX_MATLAB_START_ARGUMENT="%JVX_MATLAB_START_MATPATH% jvx = %JVX_MATLAB_START_COMMAND%(%SYSTEM_JVX_MEX_PATH%, %SYSTEM_JVX_MATLAB_PATH%, %SYSTEM_JVX_MATLAB_DEMO%);"
+
+REM ================================================================
+REM Start Matlab
+REM ================================================================
+REM echo start "Jvx" "%OCTAVE_PATH_CONFIG%/bin/octave-gui" --traditional --persist --eval  %JVX_MATLAB_START_ARGUMENT%
+REM start "Jvx" "%OCTAVE_PATH_CONFIG%/bin/octave-gui" --traditional --persist --eval  %JVX_MATLAB_START_ARGUMENT%

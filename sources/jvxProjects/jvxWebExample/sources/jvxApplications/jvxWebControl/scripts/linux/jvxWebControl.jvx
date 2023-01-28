@@ -1,0 +1,18 @@
+SECTION jvxQtHost1_main
+{
+		SECTION jvxQtHost1_components
+		{
+				SECTION factoryhost_allSubSections
+				{
+						SECTION INSPIRE_MAIN
+						{
+						};
+						SECTION DARWIN_WEBCONTROL
+						{
+								JVX_WEBCONTROL_URI_TARGET = "localhost";
+								JVX_WEBCONTROL_URI_PORT = 8000<i32>;
+								JVX_WEBCONTROL_URI_TIMEOUT = 1.000000000000000000000000000000e+01;
+						};
+				};
+		};
+};

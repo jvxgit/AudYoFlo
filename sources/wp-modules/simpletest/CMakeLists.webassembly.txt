@@ -1,0 +1,11 @@
+include(${JVX_CMAKE_DIR}/common_local_wasm_head.cmake)
+
+# Specify the compilation flags for this module
+set(JVX_EMSCRIPTEN_OUTPUT_MODE_DEBUG FALSE)
+
+include_directories(${WP_COMMON_INCLUDES})
+set(LOCAL_COMPILE_DEFINITIONS ${WP_COMMON_DEFINITIONS})
+set(LOCAL_SOURCES ${WP_COMMON_SOURCES})
+set(LOCAL_LIBS ${WP_COMMON_LIBS})
+
+include(${JVX_CMAKE_DIR}/common_local_wasm_foot.cmake)

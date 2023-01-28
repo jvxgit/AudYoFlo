@@ -1,0 +1,21 @@
+<RCC>
+  <qresource prefix="images">
+    <file>images/splash.png</file>
+    <file>images/icon_start.png</file>
+    <file>images/icon_stop.png</file>
+    <file>images/icon_audiodev.png</file>
+    <file>images/icon_algorithm.png</file>
+    <file>images/icon_sequencer.png</file>
+    <file>images/icon_ready.png</file>
+    <file>images/icon_notready.png</file>
+    <file>images/icon_audiodev-small.png</file>
+    <file>images/icon_algorithm-small.png</file>
+    <file>images/icon_sequencer-small.png</file>
+    <file>images/icon_ready-small.png</file>
+    <file>images/icon_notready-small.png</file>
+    <file>images/icon_proc.png</file>
+    <file>images/icon_start_notready.png</file>
+    <file>images/iks-logo-de.svg</file>
+  </qresource>
+  <qresource prefix="newPrefix"/>
+</RCC>

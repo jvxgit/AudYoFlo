@@ -1,0 +1,206 @@
+SECTION jvxQtHost1_main
+{
+		jvxQtHost1_exttrigger = 0<i16>;
+		SECTION jvxQtHost1_components
+		{
+				SECTION host_allSubSections
+				{
+						host_name_technology_audio = "JVX Generic Wrapper Technology";
+						host_state_technology_audio = 3<s>;
+						SECTION host_subsection_technology_audio
+						{
+								SECTION /JVX_GENW_TECHNOLOGIES
+								{
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /select_files/input_file
+								{
+										jvxSelection_listEntries = { "wavs/music_stereo_48000Hz.wav"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /select_files/output_file
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION JVX_SECTION_ONE_INPUT_FILE_0
+								{
+										/properties_selected_input_file/lookahead = 5<i16>;
+										/properties_selected_input_file/boost_prio = 0<i16>;
+										/properties_selected_input_file/loop = 1<i16>;
+										JVX_SECTION_ONE_INPUT_FILE_NAME = "wavs/music_stereo_48000Hz.wav";
+								};
+								/JVX_GENW_COMMAND = "addInputFile(wavs/music_stereo_48000Hz.wav);";
+								/JVX_GENW_DEFAULT_PATH_WAVS = "./wavs";
+								/JVX_GENW_NUM_INPUT_DUMMIES = 0<s>;
+								/JVX_GENW_NUM_OUTPUT_DUMMIES = 0<s>;
+						};
+						host_name_device_audio = "<default>";
+						host_state_device_audio = 3<s>;
+						SECTION host_subsection_device_audio
+						{
+								/JVX_AUDEV_BSIZE = 1024<i32>;
+								/JVX_AUDEV_SRATE = 48000<i32>;
+								SECTION /JVX_AUDEV_INPUT_CHANNELS
+								{
+										jvxSelection_listEntries = { "hw::0::In #0:default", "hw::1::In #1:default", "hw::2::In #2:default", "hw::3::In #3:default", "hw::4::In #4:default", "hw::5::In #5:default", "hw::6::In #6:default", "hw::7::In #7:default", "hw::8::In #8:default", "hw::9::In #9:default", "hw::10::In #10:default", "hw::11::In #11:default", "hw::12::In #12:default", "hw::13::In #13:default", "hw::14::In #14:default", "hw::15::In #15:default", "hw::16::In #16:default", "hw::17::In #17:default", "hw::18::In #18:default", "hw::19::In #19:default", "hw::20::In #20:default", "hw::21::In #21:default", "hw::22::In #22:default", "hw::23::In #23:default", "hw::24::In #24:default", "hw::25::In #25:default", "hw::26::In #26:default", "hw::27::In #27:default", "hw::28::In #28:default", "hw::29::In #29:default", "hw::30::In #30:default", "hw::31::In #31:default", "f::0::<TAGS>IART:10:The WeekndINAM:30:I Feel It Coming ft. Daft Punk", "f::1::<TAGS>IART:10:The WeekndINAM:30:I Feel It Coming ft. Daft Punk"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x0000000300000000;
+								};
+								SECTION /JVX_AUDEV_OUTPUT_CHANNELS
+								{
+										jvxSelection_listEntries = { "hw::0::Out #0:default", "hw::1::Out #1:default", "hw::2::Out #2:default", "hw::3::Out #3:default", "hw::4::Out #4:default", "hw::5::Out #5:default", "hw::6::Out #6:default", "hw::7::Out #7:default", "hw::8::Out #8:default", "hw::9::Out #9:default", "hw::10::Out #10:default", "hw::11::Out #11:default", "hw::12::Out #12:default", "hw::13::Out #13:default", "hw::14::Out #14:default", "hw::15::Out #15:default", "hw::16::Out #16:default", "hw::17::Out #17:default", "hw::18::Out #18:default", "hw::19::Out #19:default", "hw::20::Out #20:default", "hw::21::Out #21:default", "hw::22::Out #22:default", "hw::23::Out #23:default", "hw::24::Out #24:default", "hw::25::Out #25:default", "hw::26::Out #26:default", "hw::27::Out #27:default", "hw::28::Out #28:default", "hw::29::Out #29:default", "hw::30::Out #30:default", "hw::31::Out #31:default"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /JVX_AUDEV_FORMATS
+								{
+										jvxSelection_value = 0x00000001;
+								};
+								/system/audio/act_fillup_silence_stop = 0<i16>;
+								/system/audio/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+								SECTION /estimateLoad
+								{
+										jvxValueInRange_value = 1.000000000000000000000000000000e+02;
+								};
+								SECTION /nonBlockingAsync
+								{
+										jvxSelection_listEntries = { "Blocking", "Non Blocking"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_REBUFFER
+								{
+										jvxSelection_listEntries = { "async", "sync"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_RESAMPLER
+								{
+										jvxSelection_listEntries = { "resampler", "no resampler"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_IN
+								{
+										jvxSelection_listEntries = { "32 taps", "64 taps", "128 taps"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_OUT
+								{
+										jvxSelection_listEntries = { "32 taps", "64 taps", "128 taps"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /controlThreads
+								{
+										jvxSelection_listEntries = { "inactive", "active"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_AUTOHW
+								{
+										jvxSelection_listEntries = { "yes", "no"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_AUTO_OFF
+								{
+										jvxSelection_listEntries = { "Auto On", "Auto Off"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION jvxGenericWrapper_subsectionDevice
+								{
+										/JVX_AUDEV_BSIZE = 1024<i32>;
+										/JVX_AUDEV_SRATE = 48000<i32>;
+										SECTION /JVX_AUDEV_INPUT_CHANNELS
+										{
+												jvxSelection_value = 0x00000000;
+										};
+										SECTION /JVX_AUDEV_OUTPUT_CHANNELS
+										{
+												jvxSelection_value = 0x00000003;
+										};
+										SECTION /JVX_AUDEV_FORMATS
+										{
+												jvxSelection_value = 0x00000001;
+										};
+										/system/audio/act_fillup_silence_stop = 0<i16>;
+										/system/audio/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+										SECTION /JVX_AUDEV_RATES
+										{
+												jvxSelection_value = 0x00000040;
+										};
+										SECTION /JVX_AUDEV_BSIZES
+										{
+												jvxSelection_value = 0x00040000;
+										};
+										SECTION /JVX_ALSA_ACCESSTYPE
+										{
+												jvxSelection_listEntries = { "SND_PCM_ACCESS_RW_INTERLEAVED"};
+												jvxSelection_exclusive = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+												jvxSelection_value = 0x00000001;
+										};
+										SECTION /JVX_ALSA_DATATYPE
+										{
+												jvxSelection_listEntries = { "SND_PCM_FORMAT_U8", "SND_PCM_FORMAT_S16_LE", "SND_PCM_FORMAT_S16_BE", "SND_PCM_FORMAT_S24_LE", "SND_PCM_FORMAT_S24_BE", "SND_PCM_FORMAT_S32_LE", "SND_PCM_FORMAT_S32_BE", "SND_PCM_FORMAT_FLOAT_LE", "SND_PCM_FORMAT_FLOAT_BE", "SND_PCM_FORMAT_MU_LAW", "SND_PCM_FORMAT_A_LAW", "SND_PCM_FORMAT_S24_3LE", "SND_PCM_FORMAT_S24_3BE", "SND_PCM_FORMAT_S16_LE", "SND_PCM_FORMAT_S24_LE", "SND_PCM_FORMAT_S32_LE", "SND_PCM_FORMAT_FLOAT_LE"};
+												jvxSelection_exclusive = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+												jvxSelection_value = 0x00000020;
+										};
+										SECTION /JVX_ALSA_PERIODS_IN
+										{
+												jvxValueInRange_min = 3.000000000000000000000000000000e+00;
+												jvxValueInRange_max = 1.024000000000000000000000000000e+03;
+												jvxValueInRange_value = 3.000000000000000000000000000000e+00;
+										};
+										SECTION /JVX_ALSA_PERIODS_OUT
+										{
+												jvxValueInRange_min = 3.000000000000000000000000000000e+00;
+												jvxValueInRange_max = 1.024000000000000000000000000000e+03;
+												jvxValueInRange_value = 3.000000000000000000000000000000e+00;
+										};
+										SECTION /controlThreads
+										{
+												jvxSelection_listEntries = { "inactive", "active"};
+												jvxSelection_exclusive = 0x00000000;
+												jvxSelection_value = 0x00000001;
+										};
+								};
+						};
+						host_name_endpoint_audio_node = "Mix Matrix Audio Node";
+						host_state_endpoint_audio_node = 3<s>;
+						SECTION host_subsection_endpoint_audio_node
+						{
+								/JVX_AUDIONODE_BUFFERSIZE = 1024<i32>;
+								/JVX_AUDIONODE_SAMPLERATE = 48000<i32>;
+								/JVX_AUDIONODE_FORMAT = 1<i16>;
+								SECTION /system/sel_engage
+								{
+										jvxSelection_listEntries = { "Engage", "Do not engage"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000001;
+								};
+								JVX_MIXMATRIX_INTERSECTION_GAINS = [ [1.000000000000000000000000000000e+00, 0.000000000000000000000000000000e+00, 0.000000000000000000000000000000e+00, 1.000000000000000000000000000000e+00]];
+								JVX_MIXMATRIX_INTERSECTION_MUTE = [ [1<i32>, 1<i32>, 1<i32>, 1<i32>]];
+						};
+						SECTION host_allExternalEntries
+						{
+								/AUDIO_HOST/autoStart = 0<i16>;
+						};
+				};
+				SECTION sequencer_section
+				{
+						
+				};
+		};
+		SECTION rtv_section_main_name_props
+		{
+		};
+		SECTION rtv_section_main_name_plots
+		{
+		};
+};

@@ -1,0 +1,253 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		1277E23C1C186DBF00B43734 /* uMainWindow_specific.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_specific.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/algorithm_static/uMainWindow_specific.cpp"; sourceTree = "<group>"; };
+		340AE6D11BA37057005C79F0 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/target/main.cpp"; sourceTree = "<group>"; };
+		340EDE391BA315C500B59CD2 /* mainCentral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mainCentral.h; path = ../../src/mainCentral.h; sourceTree = "<group>"; };
+		340EDE3A1BA315DB00B59CD2 /* additionalArgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = additionalArgs.h; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/additionalArgs.h"; sourceTree = "<group>"; };
+		340EDE3B1BA315DB00B59CD2 /* configureAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = configureAudio.h; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/configureAudio.h"; sourceTree = "<group>"; };
+		340EDE3C1BA315DB00B59CD2 /* rtprocAudioHost_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rtprocAudioHost_common.h; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/rtprocAudioHost_common.h"; sourceTree = "<group>"; };
+		340EDE3D1BA315DB00B59CD2 /* uMainWindow_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uMainWindow_config.h; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_config.h"; sourceTree = "<group>"; };
+		340EDE3E1BA315DB00B59CD2 /* uMainWindow_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uMainWindow_defines.h; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_defines.h"; sourceTree = "<group>"; };
+		340EDE3F1BA315DB00B59CD2 /* uMainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uMainWindow.h; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow.h"; sourceTree = "<group>"; };
+		340EDE421BA3160700B59CD2 /* additionalArgs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = additionalArgs.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/additionalArgs.cpp"; sourceTree = "<group>"; };
+		340EDE431BA3160700B59CD2 /* configureAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = configureAudio.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/configureAudio.cpp"; sourceTree = "<group>"; };
+		340EDE441BA3160700B59CD2 /* uMainWindow_bootup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_bootup.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_bootup.cpp"; sourceTree = "<group>"; };
+		340EDE451BA3160700B59CD2 /* uMainWindow_config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_config.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_config.cpp"; sourceTree = "<group>"; };
+		340EDE461BA3160700B59CD2 /* uMainWindow_run.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_run.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_run.cpp"; sourceTree = "<group>"; };
+		340EDE471BA3160700B59CD2 /* uMainWindow_sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_sequencer.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_sequencer.cpp"; sourceTree = "<group>"; };
+		340EDE481BA3160700B59CD2 /* uMainWindow_shutdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_shutdown.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_shutdown.cpp"; sourceTree = "<group>"; };
+		340EDE491BA3160700B59CD2 /* uMainWindow_ui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_ui.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow_ui.cpp"; sourceTree = "<group>"; };
+		340EDE4A1BA3160700B59CD2 /* uMainWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow.cpp; path = "../../../../../software/codeFragments/jvxHosts/qt-audio-host/src/uMainWindow.cpp"; sourceTree = "<group>"; };
+		340EDE4C1BA316DD00B59CD2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
+		340EDE4E1BA31E0500B59CD2 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		340EDE231BA315A100B59CD2 = {
+			isa = PBXGroup;
+			children = (
+				340EDE4E1BA31E0500B59CD2 /* Icons.xcassets */,
+				340EDE4C1BA316DD00B59CD2 /* Info.plist */,
+				340EDE351BA315B700B59CD2 /* header */,
+				340EDE341BA315B100B59CD2 /* src */,
+				340EDE331BA315A900B59CD2 /* resources */,
+			);
+			sourceTree = "<group>";
+		};
+		340EDE331BA315A900B59CD2 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = resources;
+			sourceTree = "<group>";
+		};
+		340EDE341BA315B100B59CD2 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				1277E23C1C186DBF00B43734 /* uMainWindow_specific.cpp */,
+				340AE6D11BA37057005C79F0 /* main.cpp */,
+				340EDE421BA3160700B59CD2 /* additionalArgs.cpp */,
+				340EDE431BA3160700B59CD2 /* configureAudio.cpp */,
+				340EDE441BA3160700B59CD2 /* uMainWindow_bootup.cpp */,
+				340EDE451BA3160700B59CD2 /* uMainWindow_config.cpp */,
+				340EDE461BA3160700B59CD2 /* uMainWindow_run.cpp */,
+				340EDE471BA3160700B59CD2 /* uMainWindow_sequencer.cpp */,
+				340EDE481BA3160700B59CD2 /* uMainWindow_shutdown.cpp */,
+				340EDE491BA3160700B59CD2 /* uMainWindow_ui.cpp */,
+				340EDE4A1BA3160700B59CD2 /* uMainWindow.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		340EDE351BA315B700B59CD2 /* header */ = {
+			isa = PBXGroup;
+			children = (
+				340EDE3A1BA315DB00B59CD2 /* additionalArgs.h */,
+				340EDE3B1BA315DB00B59CD2 /* configureAudio.h */,
+				340EDE3C1BA315DB00B59CD2 /* rtprocAudioHost_common.h */,
+				340EDE3D1BA315DB00B59CD2 /* uMainWindow_config.h */,
+				340EDE3E1BA315DB00B59CD2 /* uMainWindow_defines.h */,
+				340EDE3F1BA315DB00B59CD2 /* uMainWindow.h */,
+				340EDE391BA315C500B59CD2 /* mainCentral.h */,
+			);
+			name = header;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		340EDE281BA315A100B59CD2 /* jvxRtprocHost-1 */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "jvxRtprocHost-1";
+			buildConfigurationList = 340EDE2B1BA315A100B59CD2 /* Build configuration list for PBXLegacyTarget "jvxRtprocHost-1" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "$JVX_PATH/jvx/build/macos64-rtproc";
+			dependencies = (
+			);
+			name = "jvxRtprocHost-1";
+			passBuildSettingsInEnvironment = 1;
+			productName = "jvxRtprocHost-1";
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		340EDE241BA315A100B59CD2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = "Javox Solutions GmbH";
+				TargetAttributes = {
+					340EDE281BA315A100B59CD2 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = 340EDE271BA315A100B59CD2 /* Build configuration list for PBXProject "jvxRtprocHost-1" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 340EDE231BA315A100B59CD2;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				340EDE281BA315A100B59CD2 /* jvxRtprocHost-1 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		340EDE291BA315A100B59CD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		340EDE2A1BA315A100B59CD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		340EDE2C1BA315A100B59CD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		340EDE2D1BA315A100B59CD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		340EDE271BA315A100B59CD2 /* Build configuration list for PBXProject "jvxRtprocHost-1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				340EDE291BA315A100B59CD2 /* Debug */,
+				340EDE2A1BA315A100B59CD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		340EDE2B1BA315A100B59CD2 /* Build configuration list for PBXLegacyTarget "jvxRtprocHost-1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				340EDE2C1BA315A100B59CD2 /* Debug */,
+				340EDE2D1BA315A100B59CD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 340EDE241BA315A100B59CD2 /* Project object */;
+}

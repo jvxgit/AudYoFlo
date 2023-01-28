@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>jvx_property_tree</class>
+ <widget class="QWidget" name="jvx_property_tree">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>691</width>
+    <height>494</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1,1,1,1">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Select Property</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QLabel" name="label_component_id">
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="comboBox_component_ref"/>
+   </item>
+   <item row="0" column="4">
+    <widget class="QCheckBox" name="checkBox_actlatest">
+     <property name="text">
+      <string>Activate Latest</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QLineEdit" name="lineEdit_search"/>
+   </item>
+   <item row="1" column="0" colspan="6">
+    <widget class="QTreeWidget" name="treeWidget_props">
+     <property name="accessibleDescription">
+      <string>jvx_properties</string>
+     </property>
+     <attribute name="headerMinimumSectionSize">
+      <number>200</number>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Property</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Current Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>RT Update</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Property Group ID</string>
+      </property>
+     </column>
+     <item>
+      <property name="text">
+       <string>PLACEHOLDER_PROP_NAME</string>
+      </property>
+      <property name="text">
+       <string>PLACEHOLDER_PROP_TAG:/*:VERBOSE=no</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>comboBox_component_ref</sender>
+   <signal>activated(int)</signal>
+   <receiver>jvx_property_tree</receiver>
+   <slot>changed_selection_propref(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>368</x>
+     <y>-8</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_actlatest</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>jvx_property_tree</receiver>
+   <slot>changed_activate_latest(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>568</x>
+     <y>26</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>697</x>
+     <y>33</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_search</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>jvx_property_tree</receiver>
+   <slot>new_token_search(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>617</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>605</x>
+     <y>-13</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changed_selection_propref(int)</slot>
+  <slot>changed_activate_latest(bool)</slot>
+  <slot>new_token_search(QString)</slot>
+ </slots>
+</ui>

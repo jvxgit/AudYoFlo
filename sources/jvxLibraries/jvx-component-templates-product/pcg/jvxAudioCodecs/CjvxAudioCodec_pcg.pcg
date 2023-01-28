@@ -1,0 +1,63 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxAudioCodec_genpcg";
+
+	SECTION general
+	{
+		NAME = "general";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+		SECTION mode
+		{
+			DESCRIPTION = "Codec Mode";	  // Defaults to NAME if not present
+			ID = "jvx_codec_modes_sellist"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+			SELECTION_LIST_NAMES = {"PCM @ 16 bit", "PCM @ 8 bit"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			SHOW_CONTENT_HINTS = "REPORT=JVX_WW_REPORT_GLOBAL";
+		};
+
+		SECTION buffersize
+		{
+			DESCRIPTION = "Audio buffersize";	  // Defaults to NAME if not present
+			INIT_SET = -1; // would overwrite STATIC_VARIABLE and SIZE if mismatch
+			ID = "jvx_framesize_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
+		};
+		SECTION samplerate
+		{
+			DESCRIPTION = "Sample rate Audio device";	  // Defaults to NAME if not present
+			INIT_SET = -1; 
+			ID = "jvx_rate_int32"; 		
+		};
+
+		SECTION audio_format 
+		{
+			DESCRIPTION = "Processing format";	  // Defaults to NAME if not present
+			INIT_SET = 1; 
+			ID = "jvx_processing_format_int16"; 
+		};
+		SECTION num_audio_channels
+		{
+			DESCRIPTION = "Number of channels";	  // Defaults to NAME if not present
+			INIT_SET = -1; 
+			ID = "jvx_num_input_channels_int32"; 
+		};
+		SECTION max_number_bytes
+		{
+			DESCRIPTION = "Maximum number bytes per frame";	  // Defaults to NAME if not present
+			INIT_SET = -1; 
+			ID = "jvx_max_num_bytes_frame_int32"; 
+		};
+
+		SECTION bit_rate 
+		{
+			DESCRIPTION = "Current bit rate";	  // Defaults to NAME if not present
+			INIT_SET = -1; 
+			ID = "jvx_bit_rate_int32"; 
+		};
+	};
+};

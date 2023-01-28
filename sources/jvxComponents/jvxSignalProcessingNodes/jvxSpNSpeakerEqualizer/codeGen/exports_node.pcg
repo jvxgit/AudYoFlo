@@ -1,0 +1,115 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genSpeakerEqualizer_node";
+
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"set_channel_posthook", "select_eq_file_posthook"};
+
+		SECTION select_channel
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Measurement";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"REPLACEME"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes"}; 	
+			CALLBACK_SET_POSTHOOK = "set_channel_posthook";
+		};
+
+		SECTION bypass
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+		};
+
+		SECTION eq_definition_file
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_FILENAME_OPEN";
+			CALLBACK_SET_POSTHOOK = "select_eq_file_posthook";
+		};
+		SECTION clear_definition_file
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			CALLBACK_SET_POSTHOOK = "select_eq_file_posthook";
+		};
+	};
+
+	SECTION mode
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		
+		SECTION slave_mode
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			// READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY"; <- this we set on activate to allow both modes controlled by mainCentral widget
+		};
+
+		SECTION involved
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 1;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY"; 
+		};
+
+		SECTION function
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			SELECTION_LIST_NAMES = {"DELAY", "GAIN", "FIREQ"};
+			SELECTION_LIST_SELECTED = {"yes", "yes", "yes"};
+			SELECTION_LIST_EXCLUSIVE = {"no", "no", "no"}; 
+			READ_WRITE_ACCESS ="JVX_PROPERTY_ACCESS_READ_ONLY"; 
+		};
+	};
+
+	SECTION parameter
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"set_parameter_channel_posthook", "get_parameter_channel_prehook"};
+		CALLBACK_SET_POSTHOOK = "set_parameter_channel_posthook";
+		CALLBACK_GET_PREHOOK = "get_parameter_channel_prehook";
+
+		SECTION delay
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 0;
+		};
+		SECTION gain
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 0;
+			SHOW_CONTENT_HINTS = "MINVAL=-30,MAXVAL=30,LABELTRANSFORM=JVX_WW_SHOW_DB20";
+		};
+		SECTION fir_eq
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = "[]";
+		};
+	};
+	SECTION monitor
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+
+		SECTION last_error
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";	
+		};
+	};
+};

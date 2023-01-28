@@ -1,0 +1,3 @@
+#pragma once
+
+#cmakedefine JVX_CONFIGURE_HOST_STATIC_NODE

@@ -1,0 +1,168 @@
+What I had to fix in civetWeb code:
+
+1) civetweb.c, line 7902: partial match was originally broken:
+
+>>		for (tmp_rh = conn->ctx->request_handlers; tmp_rh != NULL;
+>>		     tmp_rh = tmp_rh->next) {
+>>			if (tmp_rh->is_websocket_handler == is_websocket_request) {
+>!!>				if ((tmp_rh->uri_len < urilen) && (uri[tmp_rh->uri_len] == '/') && (memcmp(tmp_rh->uri, uri, tmp_rh->uri_len) == 0)) {
+>>					if (is_websocket_request) {
+>>						*connect_handler = tmp_rh->connect_handler;
+>>						*ready_handler = tmp_rh->ready_handler;
+>>						*data_handler = tmp_rh->data_handler;
+>>						*close_handler = tmp_rh->close_handler;
+>>					} else {
+>>						*handler = tmp_rh->handler;
+>>					}
+>>					*cbdata = tmp_rh->cbdata;
+>>					mg_unlock_context(conn->ctx);
+>>					return 1;
+>>				}
+>>			}
+>>		}
+
+transformed into
+
+>>		for (tmp_rh = conn->ctx->request_handlers; tmp_rh != NULL;
+>>		     tmp_rh = tmp_rh->next) {
+>>			if (tmp_rh->is_websocket_handler == is_websocket_request) {
+>!!>				if ((tmp_rh->uri_len < urilen) && (uri[tmp_rh->uri_len-1] == '/') && (memcmp(tmp_rh->uri, uri, tmp_rh->uri_len) == 0)) 
+>>				{
+>>					if (is_websocket_request) 
+>>					{
+>>						*connect_handler = tmp_rh->connect_handler;
+>>						*ready_handler = tmp_rh->ready_handler;
+>>						*data_handler = tmp_rh->data_handler;
+>>						*close_handler = tmp_rh->close_handler;
+>>					} else 
+>>					{
+>>						*handler = tmp_rh->handler;
+>>					}
+>>					*cbdata = tmp_rh->cbdata;
+>>					mg_unlock_context(conn->ctx);
+>>					return 1;
+>>				}
+>>			}
+
+2) Changed priority: First match pattern and if not successful, follow partial match approch
+
+3) civetweb.c, approx. line 5465: Return string to avoid file caching in browser:
+
+Trasnformed 
+> (void)mg_printf(conn,
+> 	                "HTTP/1.1 %d %s\r\n"
+> 	                "%s%s%s"
+> 	                "Date: %s\r\n"
+>	                "Last-Modified: %s\r\n"
+>	                "Etag: %s\r\n"
+>	                "Content-Type: %.*s\r\n"
+>	                "Content-Length: %" INT64_FMT "\r\n"
+>	                "Connection: %s\r\n"
+>	                "Accept-Ranges: bytes\r\n"
+>	                "%s%s\r\n",
+>	                conn->status_code,
+>	                msg,
+>	                cors1,
+>	                cors2,
+>	                cors3,
+>	                date,
+>	                lm,
+>	                etag,
+>	                (int)mime_vec.len,
+>	                mime_vec.ptr,
+>	                cl,
+>	                suggest_connection_header(conn),
+>	                range,
+>	                encoding);
+
+into 
+
+> (void)mg_printf(conn,
+>	                "HTTP/1.1 %d %s\r\n"
+>	                "%s%s%s"
+>	                "Date: %s\r\n"
+>	                "Last-Modified: %s\r\n"
+>	                "Etag: %s\r\n"
+>	                "Content-Type: %.*s\r\n"
+>	                "Content-Length: %" INT64_FMT "\r\n"
+>	                "Connection: %s\r\n"
+>	                "Accept-Ranges: bytes\r\n"
+>					"Cache-Control: no-cache\r\n" // <-----------------
+>	                "%s%s\r\n",
+>	                conn->status_code,
+>	                msg,
+>	                cors1,
+>	                cors2,
+>	                cors3,
+>	                date,
+>	                lm,
+>	                etag,
+>	                (int)mime_vec.len,
+>	                mime_vec.ptr,
+>	                cl,
+>	                suggest_connection_header(conn),
+>	                range,
+>	                encoding);
+
+4) civetweb.c, approx. line 10140: split up mg_stop into a trigger_stop and a wait_stop.
+This modification will allow to wait for all sockets WITHOUT blocking the main thread.
+This way of shutting down is required e.g. for QT synchronization.
+
+> void mg_trigger_stop(struct mg_context *ctx)
+> {
+> 	if (!ctx) {
+>		return;
+>	}
+>	ctx->stop_flag = 1;
+>}
+
+> bool mg_wait_stop(struct mg_context *ctx)
+> {
+>	/* Wait until mg_fini() stops */
+>	if(ctx->stop_flag == 2) 
+>	{
+>		mg_join_thread(ctx->masterthreadid);
+>		free_context(ctx);
+
+#if defined(_WIN32) && !defined(__SYMBIAN32__)
+>		(void)WSACleanup();
+#endif /* _WIN32 && !__SYMBIAN32__ */
+>		return(true);
+>	}
+>	return(false);
+> }
+
+5) civetweb.c: Added a new function mg_trigger_close_connection(struct mg_connection *conn);
+This function closes the socket but keeps the connection struct alive. As a result, the recv 
+in the read thread will react and allow quick shutdown from server side.
+This function must be called after mg_trigger_stop. If the server should be able to shutdown a single
+socket, this would require more modifications.
+
+6) civetweb.c, approx line 7254: Why would we close the websocket if there is no data being sent from
+browser to server. I fixed this by 
+
+transforming
+
+>			if ((n = pull(NULL,
+>			              conn,
+>			              conn->buf + conn->data_len,
+>			              conn->buf_size - conn->data_len,
+>			              timeout)) <= 0) {
+>				/* Error, no bytes read */
+>				break
+>			}
+>			conn->data_len += n;
+
+into
+
+>			if ((n = pull(NULL,
+>			              conn,
+>			              conn->buf + conn->data_len,
+>			              conn->buf_size - conn->data_len,
+>			              timeout)) <= 0) {
+>				/* Error, no bytes read */
+>				n = 0;
+>			}
+>			conn->data_len += n;
+
+In this case, however, we definitely need 5)

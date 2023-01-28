@@ -1,0 +1,111 @@
+SECTION params
+{
+        DESCRIPTION = "instrumentation properties for spectrum estimation";
+        GENERATE_ENTRIES_CONFIG_FILE = "yes"; // Defaults to "no" if not present
+        ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+        SECTION enabled
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "spectrum estimation enabled (bool)";
+                CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+                // not associated, only used in audio node
+        };
+        SECTION method
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "method of spectrum estimation";
+                ASSOCIATE_EXTERNAL = "yes";
+                // valid choices given by enum in jvx_spectrumEstimation.h
+        };
+        SECTION logarithmic
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "logarithmic flag (bool) / spectrum estimation";
+                CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION logFrequency
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "logarithmic frequency flag (bool) / spectrum estimation";
+                CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+                // not associated, only used for storing the setting within jvxQtSpectrumViewer in config file
+        };
+        SECTION alpha
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "alpha (recursive welch method) / spectrum estimation";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION fftLengthLog2
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "log2 of fft length / spectrum estimation";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION window
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                DESCRIPTION = "spectrum estimation window";
+                ASSOCIATE_EXTERNAL = "yes";
+                // valid choices given by enum in jvx_windows.h
+        };
+        SECTION winArgA
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "first additional window argument / spectrum estimation";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION winArgB
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "second additional window argument / spectrum estimation";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION spectrumSize
+        {
+                TYPE = "JVX_DATAFORMAT_SIZE";
+                GENERATE_ENTRY_CONFIG_FILE = "no"; // derived property, do not store
+                DESCRIPTION = "spectrum estimation spectrum size";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION samplerate
+        {
+                TYPE = "JVX_DATAFORMAT_32BIT_LE";
+                DESCRIPTION = "spectrum estimation samplerate";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION numberChannels
+        {
+                TYPE = "JVX_DATAFORMAT_32BIT_LE";
+                GENERATE_ENTRY_CONFIG_FILE = "no"; // automatically set, do not store
+                DESCRIPTION = "spectrum estimation number channels";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+        SECTION syncNotify
+        {
+                TYPE = "JVX_DATAFORMAT_16BIT_LE";
+                GENERATE_ENTRY_CONFIG_FILE = "no"; // automatically set, do not store
+                DESCRIPTION = "spectrum estimation sync parameters modified (bool)";
+                CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+                // not associated, only used in audioNode itself
+        };
+};
+
+SECTION data
+{
+        DESCRIPTION = "data properties for spectrum estimation";
+        ALLOWED_STATE_MASK = {"JVX_STATE_PROCESSING"};
+
+        SECTION data
+        {
+                TYPE = "JVX_DATAFORMAT_DATA";
+                DESCRIPTION = "spectrum estimation spectrum data";
+                READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+                ASSOCIATE_EXTERNAL = "yes";
+        };
+};

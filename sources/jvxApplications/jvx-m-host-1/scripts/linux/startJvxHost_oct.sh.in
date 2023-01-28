@@ -1,0 +1,2 @@
+#!/bin/sh
+octave --eval "start_inmat('jvxComponents','octave','jvxHostRt')" --persist

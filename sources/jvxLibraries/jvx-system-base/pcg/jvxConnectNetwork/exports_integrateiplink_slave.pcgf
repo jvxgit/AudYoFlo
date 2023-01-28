@@ -1,0 +1,230 @@
+	SECTION properties_running
+	{
+		NAME = "properties_running";
+		DESCRIPTION = "Properties in state while processing";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state prepared and higher ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION specifyCommand
+		{
+			DESCRIPTION = "Issue text format commands to component";	  // Defaults to NAME if not present
+			ID = "jvx_command_string";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_SOCKET_COMMAND";
+		};		
+
+		SECTION autoConnect
+		{
+			DESCRIPTION = "On load from config, automatically connect";	  // Defaults to NAME if not present
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SIMPLE_ONOFF";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			INIT_SET = 0; 
+			DESCRIPTOR = "JVX_SOCKET_AUTO_CONNECT";
+		};		
+
+		SECTION autoStart
+		{
+			DESCRIPTION = "Start if connection is established";	  // Defaults to NAME if not present
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SIMPLE_ONOFF";
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			INIT_SET = 0;
+			DESCRIPTOR = "JVX_SOCKET_AUTO_START";
+		};		
+
+		SECTION ipAddressServer
+		{
+			DESCRIPTION = "Specification of partner ip address to connect to";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			DESCRIPTOR = "JVX_SOCKET_HOSTNAME";
+		}; 
+
+		SECTION pcapConnectTout_msec
+		{
+			DESCRIPTION = "Specification of delay when reporting connected pcap socket";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			DESCRIPTOR = "JVX_SOCKET_PCAP_CONNECT_REPORT_DELAY";
+			INIT_SET = 500;
+		}; 
+
+		SECTION portServer
+		{
+			DESCRIPTION = "Specification of partner port to connect to";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			DESCRIPTOR = "JVX_SOCKET_HOSTPORT";
+		}; 
+
+		SECTION connectionType
+		{
+			DESCRIPTION = "Connection type options";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_SOCKET_CONNECTION_TYPE";
+		}; 
+
+		SECTION connectionStatus
+		{
+			DESCRIPTION = "Specification of partner port to connect to";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			DESCRIPTOR = "JVX_SOCKET_CONN_STATE";
+			SELECTION_LIST_NAMES = {"NONE", "SOCKET_TYPE_SET", "SOCKET_CLIENT_STARTED", "SOCKET_CLIENT_WAIT", "SOCKET_CLIENT_CONNECTED", "SOCKET_CLIENT_RUNNING", "SOCKET_CLIENT_SHUTDOWN"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no", "no", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes", "yes"}; 	
+		}; 
+
+		// =====================================================================
+
+		SECTION numberLostFrames
+		{
+			DESCRIPTION = "Number of frames lost due to slow processing";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";			
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_NET_AUDEV_LOSTFRAMES";
+		};
+
+		SECTION numberLostFramesRemote
+		{
+			DESCRIPTION = "Number of frames lost on the DSP side";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";			
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_NET_AUDEV_LOSTFRAMES_REMOTE";
+		};
+
+		SECTION numberUnsentFrames
+		{
+			DESCRIPTION = "Number of frames which were not sent due to a blocked channel";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";			
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_NET_AUDEV_UNSENTFRAMES";
+		};
+		
+		SECTION selectionHardwareModeActive
+		{
+			DESCRIPTION = "which modes will be checked with HW";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION"; 
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"PDM IN PCM OUT", "PCM IN PCM OUT"};
+			SELECTION_LIST_SELECTED = {"yes", "yes"};
+			SELECTION_LIST_EXCLUSIVE = {"no", "no"};
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_NET_AUDEV_HW_MODES";		
+		};
+		
+		SECTION profile_load_convert
+		{
+			DESCRIPTION = "Percent of load for PDM 2 PCM Conversion";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_NET_AUDEV_LOAD_CONVERT";
+		};
+		SECTION profile_load_process
+		{
+			DESCRIPTION = "Percent of load for processing";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			DESCRIPTOR = "JVX_NET_AUDEV_LOAD_PROCESS";
+		};
+		
+		SECTION logToFile
+		{
+			DESCRIPTION = "Option to activate writing of log files";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_NET_AUDEV_LOG_TO_FILE";
+		};
+	};
+
+	SECTION local_audio_config
+	{
+		PREFIX = "audioconfig";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION samplerate
+		{
+			DESCRIPTION = "Single samplerate";	 
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 48000;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+		SECTION buffersize
+		{
+			DESCRIPTION = "Single buffersize";	 
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 512;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+		SECTION numberinputchannels
+		{
+			DESCRIPTION = "Number input channels";	 
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+		SECTION numberoutputchannels
+		{
+			DESCRIPTION = "Number output channels";	 
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};	
+		SECTION audioformat
+		{
+			DESCRIPTION = "Audio processing format";	 
+			INIT_SET = 1; // DATA
+			TYPE = "JVX_DATAFORMAT_16BIT_LE";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_FORMAT_IDX";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+		SECTION automode
+		{
+			DESCRIPTION = "Automatic setup from context";	 
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0; // false
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};	
+	};
+		
+	SECTION local_audio_state
+	{
+		PREFIX = "audiostate";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION setupfixed
+		{
+			DESCRIPTION = "Setup is fixed";	 
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+	};

@@ -1,0 +1,7 @@
+SECTION MATLAB_EXPORTS
+{
+
+	//USE_MATLAB_CALL_AS_LIBRARY = "YES";
+	REFERENCE_CLASS = "CayfAuNHeadRest";
+	OUTPUTFILE_NAME = "CayfAuNHeadRest_external";	
+};

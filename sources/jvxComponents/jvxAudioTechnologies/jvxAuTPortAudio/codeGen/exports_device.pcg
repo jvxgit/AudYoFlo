@@ -1,0 +1,70 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genPortAudio_device";
+
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		
+		SECTION ratesselection
+		{
+			DESCRIPTION = "Selection of sample rates";	  // Defaults to NAME if not present
+			ID = "jvx_selection_rate_sellist";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		};
+		SECTION sizesselection
+		{
+			DESCRIPTION = "Selection of buffersizes";	  // Defaults to NAME if not present
+			ID = "jvx_selection_framesize_sellist";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		};
+
+		SECTION preselectlatency
+		{
+			DESCRIPTION = "Selection of latency target value";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			VALUE_IN_RANGE_MIN_VALUE = 0.0;
+			VALUE_IN_RANGE_MAX_VALUE = 1.0;
+			VALUE_IN_RANGE_VALUE = 0.5;
+		};
+
+		SECTION controlThreads
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			DESCRIPTION = "Option to activate core isolation";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"inactive", "active"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+	};
+
+	SECTION properties_active_higher
+	{
+		NAME = "properties_active_higher";
+		DESCRIPTION = "Properties in state active and higher [%]";
+		COMMENT = " ---- Properties in state active and higher---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION loadpercent
+		{
+			DESCRIPTION = "Current load during processing";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_PROGRESSBAR";
+		};
+
+	};
+};

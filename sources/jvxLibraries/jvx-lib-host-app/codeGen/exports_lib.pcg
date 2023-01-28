@@ -1,0 +1,20 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genLibHost";
+	CALLBACKS = {"set_options"};
+	SECTION libhost
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+
+		SECTION autostart
+		{
+			CALLBACK_SET_POSTHOOK = "set_options";
+			DESCRIPTION = "Autostart option";
+			INIT_SET = 0; 		
+			TYPE = "JVX_DATAFORMAT_BOOL";
+		};
+	};
+};

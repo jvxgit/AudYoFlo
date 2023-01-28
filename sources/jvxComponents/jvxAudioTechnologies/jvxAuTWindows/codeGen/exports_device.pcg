@@ -1,0 +1,72 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genWindows_device";
+
+	SECTION properties_selected
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION device_mode
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			SELECTION_LIST_NAMES = {"exclusive", "shared"};
+			SELECTION_LIST_SELECTED = {"no", "yes"};
+			SELECTION_LIST_TRANSLATORS = {
+				"AUDCLNT_SHAREMODE_EXCLUSIVE", 
+				"AUDCLNT_SHAREMODE_SHARED"};
+			SELECTION_TRANSLATOR_TYPE = "AUDCLNT_SHAREMODE";		
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};		
+	};
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_new_rate"};
+
+		SECTION ratesselection
+		{
+			DESCRIPTION = "Selection of sample rates";	  // Defaults to NAME if not present
+			ID = "jvx_selection_rate_sellist";
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			//DESCRIPTOR = "JVX_AUDEV_RATES";
+			CALLBACK_SET_POSTHOOK = "set_new_rate";
+		};	
+		
+		SECTION numBuffersFlushShared
+		{
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2; // is more safe to flush 3 buffers
+		};		
+	};
+
+	SECTION properties_active_higher
+	{
+		NAME = "properties_active_higher";
+		DESCRIPTION = "Properties in state active and higher [%]";
+		COMMENT = " ---- Properties in state active and higher---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION loadpercent
+		{
+			DESCRIPTION = "Current load during processing";	  // Defaults to NAME if not present
+			ID = 5;
+			TYPE = "JVX_DATAFORMAT_DATA";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_PROGRESSBAR";
+		};
+	};
+};

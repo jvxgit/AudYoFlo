@@ -1,0 +1,221 @@
+SECTION properties_selected
+	{
+		NAME = "properties_selected"; 
+		DESCRIPTION = "Properties in state selected";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE"};
+
+		SECTION component_path
+		{
+			NAME = "component_path";
+			ID = "jvx_component_path_str_list";						  // Defaults to section name if not present
+			DESCRIPTION = "List of paths to be searched for shared libraries";	  // Defaults to NAME if not present
+			CATEGORY = "JVX_PROPERTY_CATEGORY_PREDEFINED";
+			TYPE = "JVX_DATAFORMAT_STRING_LIST";
+		};
+
+		SECTION config_path
+		{
+			NAME = "config_path";
+			ID = "jvx_config_path_str_list";						  // Defaults to section name if not present
+			DESCRIPTION = "List of paths to be searched for config files";	  // Defaults to NAME if not present
+			CATEGORY = "JVX_PROPERTY_CATEGORY_PREDEFINED";
+			TYPE = "JVX_DATAFORMAT_STRING_LIST";
+		};
+
+		SECTION system_path
+		{
+			NAME = "system_path";
+			ID = "jvx_system_path_str";						  // Defaults to section name if not present
+			DESCRIPTION = "Path to search for system files";	  // Defaults to NAME if not present
+			CATEGORY = "JVX_PROPERTY_CATEGORY_PREDEFINED";
+			TYPE = "JVX_DATAFORMAT_STRING_LIST";
+		};
+
+		SECTION user_path
+		{
+			NAME = "user_path";
+			ID = "jvx_user_path_str";						  // Defaults to section name if not present
+			DESCRIPTION = "Paths to search for user files";	  // Defaults to NAME if not present
+			CATEGORY = "JVX_PROPERTY_CATEGORY_PREDEFINED";
+			TYPE = "JVX_DATAFORMAT_STRING_LIST";
+		};
+
+		SECTION do_unload_dlls
+		{
+			NAME = "do_unload_dlls";
+			ID = "jvx_load_dlls_sellist";						  // Defaults to section name if not present
+			DESCRIPTION = "Property to allow dll load";	  // Defaults to NAME if not present
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			SELECTION_LIST_NAMES = {"allow"};
+			SELECTION_LIST_SELECTED = {"yes"};
+		};
+
+		SECTION configure_parts
+		{
+			DESCRIPTION = "Activate/Deactivate load of dedicated part of the configuration";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			SELECTION_LIST_NAMES = {"Configure Technologies", "Configure Nodes"};
+			SELECTION_LIST_SELECTED = {"yes", "yes"};
+		};
+
+		SECTION host_output_cout
+		{
+			DESCRIPTION = "Output all status messages via cout";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 1;
+		};
+		SECTION host_verbose_dll
+		{
+			DESCRIPTION = "Output status messages on dll load";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+		};
+
+		// ====================================================================
+
+		SECTION textLog_filename
+		{
+			DESCRIPTION = "Name of text logfile";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = ".tlog";
+		};
+		SECTION textLog_sizeInternBufferFile
+		{
+			DESCRIPTION = "Internal buffersize text log";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 8192;
+		};
+		SECTION textLog_sizeTransferFile
+		{
+			DESCRIPTION = "Internal transfer text log";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 1024;
+		};
+		SECTION textLog_sizeInternBufferRW
+		{
+			DESCRIPTION = "Circbuffer size text log";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 8192;
+		};
+		SECTION textLog_dbglevel
+		{
+			DESCRIPTION = "Debug level";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 0; // No debugging
+		};
+		SECTION textLog_expressions
+		{
+			DESCRIPTION = "Text log component selection string";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING_LIST";
+			INIT_SET = ""; // Debug all levels
+		};
+		SECTION textLog_activate
+		{
+			DESCRIPTION = "Start text log at all";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+		};
+	};
+	
+	GROUP ext_interfaces
+	{
+		SECTION properties_active
+		{
+			NAME = "properties_active"; 
+			DESCRIPTION = "Properties in state selected";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+			CALLBACKS = {"command_post_set", "command_pre_get"};
+		
+			SECTION trigger_save_config
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;	
+				CALLBACK_SET_POSTHOOK = "command_post_set";
+				CALLBACK_GET_PREHOOK = "command_pre_get";
+			};
+
+			SECTION trigger_shutdown
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;	
+				CALLBACK_SET_POSTHOOK = "command_post_set";
+				CALLBACK_GET_PREHOOK = "command_pre_get";
+			};
+
+			SECTION trigger_restart
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;	
+				CALLBACK_SET_POSTHOOK = "command_post_set";
+				CALLBACK_GET_PREHOOK = "command_pre_get";
+			};
+
+			SECTION last_error
+			{
+				TYPE = "JVX_DATAFORMAT_STRING";
+			};
+
+			SECTION application_property_autostart
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;	
+				CALLBACK_SET_POSTHOOK = "command_post_set";
+				CALLBACK_GET_PREHOOK = "command_pre_get";
+			};
+			
+			SECTION application_property_autostop
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;	
+				CALLBACK_SET_POSTHOOK = "command_post_set";
+				CALLBACK_GET_PREHOOK = "command_pre_get";
+			};
+		};
+	};
+
+	GROUP ext_callbacks
+	{
+		SECTION properties_callbacks
+		{
+			NAME = "properties_callbacks"; 
+			DESCRIPTION = "External Callback References";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present	
+			ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED"};
+			//CALLBACKS = {"cb_post_set"};
+
+			SECTION cb_save_config
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_CALLBACK";
+			};
+
+			SECTION cb_xchg_property
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_CALLBACK";
+			};
+
+			SECTION cb_shutdown
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_CALLBACK";
+				//CALLBACK_SET_POSTHOOK = "cb_post_set";
+			};
+
+			SECTION cb_restart
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_CALLBACK";
+				//CALLBACK_SET_POSTHOOK = "cb_post_set";
+			};
+		};
+	};
+	

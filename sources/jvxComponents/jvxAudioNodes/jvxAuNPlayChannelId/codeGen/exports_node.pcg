@@ -1,0 +1,68 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genChannelPlayback_node";
+
+	GROUP playback
+	{
+		SECTION control_status
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"set_processing_prop"};
+
+			SECTION trigger_start
+			{
+				TYPE = "JVX_DATAFORMAT_BOOL";			
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "no";
+			};  
+			SECTION current_status
+			{
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+				SELECTION_LIST_NAMES = {"Off", "Waiting for Start", "Playing", "Waiting for Stop"};
+				SELECTION_LIST_SELECTED = {"yes", "no", "no", "no"};
+				SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes"}; 
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "no";
+			};  
+
+			SECTION current_channel_number
+			{
+				TYPE = "JVX_DATAFORMAT_SIZE";			
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "no";
+			};  
+
+			SECTION pre_text_announce
+			{
+				TYPE = "JVX_DATAFORMAT_STRING";	
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+				INIT_SET = "Lautsprecher Nummer";
+				CALLBACK_SET_POSTHOOK = "set_processing_prop";
+				GENERATE_ENTRY_CONFIG_FILE = "yes";
+			};  
+
+			SECTION channel_number_start_offset
+			{
+				TYPE = "JVX_DATAFORMAT_SIZE";	
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+				INIT_SET = 1;
+				GENERATE_ENTRY_CONFIG_FILE = "yes";
+			};  
+
+			SECTION output_volume
+			{
+				VALUE_IN_RANGE_MIN_VALUE = 0.01;		
+				VALUE_IN_RANGE_MAX_VALUE = 100.0;
+				VALUE_IN_RANGE_VALUE = 1.0;
+				TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+				GENERATE_ENTRY_CONFIG_FILE = "yes";
+			};  
+		};
+	};
+};

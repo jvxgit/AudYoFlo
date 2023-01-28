@@ -1,0 +1,313 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		128237C91C03785800D4356D /* baseUiProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = baseUiProperties.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/baseUiProperties.h"; sourceTree = "<group>"; };
+		128237CA1C03785800D4356D /* floatProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = floatProperties.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/floatProperties.cpp"; sourceTree = "<group>"; };
+		128237CB1C03785800D4356D /* floatProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = floatProperties.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/floatProperties.h"; sourceTree = "<group>"; };
+		128237CC1C03785800D4356D /* integerProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = integerProperties.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/integerProperties.cpp"; sourceTree = "<group>"; };
+		128237CD1C03785800D4356D /* integerProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = integerProperties.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/integerProperties.h"; sourceTree = "<group>"; };
+		128237CE1C03785800D4356D /* mainCentral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mainCentral.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/mainCentral.cpp"; sourceTree = "<group>"; };
+		128237CF1C03785800D4356D /* mainCentral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mainCentral.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/mainCentral.h"; sourceTree = "<group>"; };
+		128237D01C03785800D4356D /* messagesMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messagesMain.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/messagesMain.h"; sourceTree = "<group>"; };
+		128237D11C03785800D4356D /* messagesOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = messagesOutput.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/messagesOutput.cpp"; sourceTree = "<group>"; };
+		128237D21C03785800D4356D /* messagesOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messagesOutput.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/messagesOutput.h"; sourceTree = "<group>"; };
+		128237D31C03785800D4356D /* realtimeViewer_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewer_base.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewer_base.h"; sourceTree = "<group>"; };
+		128237D41C03785800D4356D /* realtimeViewer_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewer_widgets.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewer_widgets.cpp"; sourceTree = "<group>"; };
+		128237D51C03785800D4356D /* realtimeViewer_widgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewer_widgets.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewer_widgets.h"; sourceTree = "<group>"; };
+		128237D61C03785800D4356D /* realtimeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewer.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewer.cpp"; sourceTree = "<group>"; };
+		128237D71C03785800D4356D /* realtimeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewer.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewer.h"; sourceTree = "<group>"; };
+		128237D81C03785800D4356D /* realtimeViewerOneLinearPlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewerOneLinearPlot.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerOneLinearPlot.cpp"; sourceTree = "<group>"; };
+		128237D91C03785800D4356D /* realtimeViewerOneLinearPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewerOneLinearPlot.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerOneLinearPlot.h"; sourceTree = "<group>"; };
+		128237DA1C03785800D4356D /* realtimeViewerOneProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewerOneProperty.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerOneProperty.cpp"; sourceTree = "<group>"; };
+		128237DB1C03785800D4356D /* realtimeViewerOneProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewerOneProperty.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerOneProperty.h"; sourceTree = "<group>"; };
+		128237DC1C03785800D4356D /* realtimeViewerPlots.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewerPlots.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerPlots.cpp"; sourceTree = "<group>"; };
+		128237DD1C03785800D4356D /* realtimeViewerPlots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewerPlots.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerPlots.h"; sourceTree = "<group>"; };
+		128237DE1C03785800D4356D /* realtimeViewerProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewerProperties.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerProperties.cpp"; sourceTree = "<group>"; };
+		128237DF1C03785800D4356D /* realtimeViewerProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewerProperties.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerProperties.h"; sourceTree = "<group>"; };
+		128237E01C03785800D4356D /* realtimeViewerTDSPlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realtimeViewerTDSPlot.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerTDSPlot.cpp"; sourceTree = "<group>"; };
+		128237E11C03785800D4356D /* realtimeViewerTDSPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realtimeViewerTDSPlot.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/realtimeViewerTDSPlot.h"; sourceTree = "<group>"; };
+		128237E21C03785800D4356D /* sequenceEditor_update.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sequenceEditor_update.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/sequenceEditor_update.cpp"; sourceTree = "<group>"; };
+		128237E31C03785800D4356D /* sequenceEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sequenceEditor.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/sequenceEditor.cpp"; sourceTree = "<group>"; };
+		128237E41C03785800D4356D /* sequenceEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sequenceEditor.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/sequenceEditor.h"; sourceTree = "<group>"; };
+		128237E51C03785800D4356D /* showInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = showInformation.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/showInformation.cpp"; sourceTree = "<group>"; };
+		128237E61C03785800D4356D /* showInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = showInformation.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/showInformation.h"; sourceTree = "<group>"; };
+		128237E71C03785800D4356D /* stringAssignmentProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stringAssignmentProperties.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/stringAssignmentProperties.cpp"; sourceTree = "<group>"; };
+		128237E81C03785800D4356D /* stringAssignmentProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stringAssignmentProperties.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/stringAssignmentProperties.h"; sourceTree = "<group>"; };
+		128237E91C03785800D4356D /* stringFilenameProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stringFilenameProperties.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/stringFilenameProperties.cpp"; sourceTree = "<group>"; };
+		128237EA1C03785800D4356D /* stringFilenameProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stringFilenameProperties.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/stringFilenameProperties.h"; sourceTree = "<group>"; };
+		128237EB1C03785800D4356D /* uDialogNewValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uDialogNewValue.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uDialogNewValue.cpp"; sourceTree = "<group>"; };
+		128237EC1C03785800D4356D /* uDialogNewValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uDialogNewValue.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uDialogNewValue.h"; sourceTree = "<group>"; };
+		128237ED1C03785800D4356D /* uMainWindow_bootup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_bootup.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_bootup.cpp"; sourceTree = "<group>"; };
+		128237EE1C03785800D4356D /* uMainWindow_config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_config.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_config.cpp"; sourceTree = "<group>"; };
+		128237EF1C03785800D4356D /* uMainWindow_control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_control.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_control.cpp"; sourceTree = "<group>"; };
+		128237F01C03785800D4356D /* uMainWindow_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uMainWindow_defines.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_defines.h"; sourceTree = "<group>"; };
+		128237F11C03785800D4356D /* uMainWindow_menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_menu.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_menu.cpp"; sourceTree = "<group>"; };
+		128237F21C03785800D4356D /* uMainWindow_shutdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_shutdown.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_shutdown.cpp"; sourceTree = "<group>"; };
+		128237F31C03785800D4356D /* uMainWindow_ui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_ui.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_ui.cpp"; sourceTree = "<group>"; };
+		128237F41C03785800D4356D /* uMainWindow_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow_widgets.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_widgets.cpp"; sourceTree = "<group>"; };
+		128237F51C03785800D4356D /* uMainWindow_widgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uMainWindow_widgets.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow_widgets.h"; sourceTree = "<group>"; };
+		128237F61C03785800D4356D /* uMainWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uMainWindow.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow.cpp"; sourceTree = "<group>"; };
+		128237F71C03785800D4356D /* uMainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uMainWindow.h; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/src/uMainWindow.h"; sourceTree = "<group>"; };
+		128237F81C0378A300D4356D /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = "../../../../../../base/software/codeFragments/jvxHosts/qt-develop/target/main.cpp"; sourceTree = "<group>"; };
+		340EDE4C1BA316DD00B59CD2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
+		340EDE4E1BA31E0500B59CD2 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		340EDE231BA315A100B59CD2 = {
+			isa = PBXGroup;
+			children = (
+				340EDE4E1BA31E0500B59CD2 /* Icons.xcassets */,
+				340EDE4C1BA316DD00B59CD2 /* Info.plist */,
+				340EDE351BA315B700B59CD2 /* header */,
+				340EDE341BA315B100B59CD2 /* src */,
+				340EDE331BA315A900B59CD2 /* resources */,
+			);
+			sourceTree = "<group>";
+		};
+		340EDE331BA315A900B59CD2 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = resources;
+			sourceTree = "<group>";
+		};
+		340EDE341BA315B100B59CD2 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				128237F81C0378A300D4356D /* main.cpp */,
+				128237CA1C03785800D4356D /* floatProperties.cpp */,
+				128237CC1C03785800D4356D /* integerProperties.cpp */,
+				128237CE1C03785800D4356D /* mainCentral.cpp */,
+				128237D11C03785800D4356D /* messagesOutput.cpp */,
+				128237D41C03785800D4356D /* realtimeViewer_widgets.cpp */,
+				128237D61C03785800D4356D /* realtimeViewer.cpp */,
+				128237D81C03785800D4356D /* realtimeViewerOneLinearPlot.cpp */,
+				128237DA1C03785800D4356D /* realtimeViewerOneProperty.cpp */,
+				128237DC1C03785800D4356D /* realtimeViewerPlots.cpp */,
+				128237DE1C03785800D4356D /* realtimeViewerProperties.cpp */,
+				128237E01C03785800D4356D /* realtimeViewerTDSPlot.cpp */,
+				128237E21C03785800D4356D /* sequenceEditor_update.cpp */,
+				128237E31C03785800D4356D /* sequenceEditor.cpp */,
+				128237E51C03785800D4356D /* showInformation.cpp */,
+				128237E71C03785800D4356D /* stringAssignmentProperties.cpp */,
+				128237E91C03785800D4356D /* stringFilenameProperties.cpp */,
+				128237EB1C03785800D4356D /* uDialogNewValue.cpp */,
+				128237ED1C03785800D4356D /* uMainWindow_bootup.cpp */,
+				128237EE1C03785800D4356D /* uMainWindow_config.cpp */,
+				128237EF1C03785800D4356D /* uMainWindow_control.cpp */,
+				128237F11C03785800D4356D /* uMainWindow_menu.cpp */,
+				128237F21C03785800D4356D /* uMainWindow_shutdown.cpp */,
+				128237F31C03785800D4356D /* uMainWindow_ui.cpp */,
+				128237F41C03785800D4356D /* uMainWindow_widgets.cpp */,
+				128237F51C03785800D4356D /* uMainWindow_widgets.h */,
+				128237F61C03785800D4356D /* uMainWindow.cpp */,
+				128237F71C03785800D4356D /* uMainWindow.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		340EDE351BA315B700B59CD2 /* header */ = {
+			isa = PBXGroup;
+			children = (
+				128237C91C03785800D4356D /* baseUiProperties.h */,
+				128237CB1C03785800D4356D /* floatProperties.h */,
+				128237CD1C03785800D4356D /* integerProperties.h */,
+				128237CF1C03785800D4356D /* mainCentral.h */,
+				128237D01C03785800D4356D /* messagesMain.h */,
+				128237D21C03785800D4356D /* messagesOutput.h */,
+				128237D31C03785800D4356D /* realtimeViewer_base.h */,
+				128237D51C03785800D4356D /* realtimeViewer_widgets.h */,
+				128237D71C03785800D4356D /* realtimeViewer.h */,
+				128237D91C03785800D4356D /* realtimeViewerOneLinearPlot.h */,
+				128237DB1C03785800D4356D /* realtimeViewerOneProperty.h */,
+				128237DD1C03785800D4356D /* realtimeViewerPlots.h */,
+				128237DF1C03785800D4356D /* realtimeViewerProperties.h */,
+				128237E11C03785800D4356D /* realtimeViewerTDSPlot.h */,
+				128237E41C03785800D4356D /* sequenceEditor.h */,
+				128237E61C03785800D4356D /* showInformation.h */,
+				128237E81C03785800D4356D /* stringAssignmentProperties.h */,
+				128237EA1C03785800D4356D /* stringFilenameProperties.h */,
+				128237EC1C03785800D4356D /* uDialogNewValue.h */,
+				128237F01C03785800D4356D /* uMainWindow_defines.h */,
+			);
+			name = header;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		340EDE281BA315A100B59CD2 /* jvxRtprocHost-1 */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "jvx-qt-host-1";
+			buildConfigurationList = 340EDE2B1BA315A100B59CD2 /* Build configuration list for PBXLegacyTarget "jvxRtprocHost-1" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/Volumes/untitled/jvx/build/macos64-rtproc";
+			dependencies = (
+			);
+			name = "jvxRtprocHost-1";
+			passBuildSettingsInEnvironment = 1;
+			productName = "jvxRtprocHost-1";
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		340EDE241BA315A100B59CD2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = "Javox Solutions GmbH";
+				TargetAttributes = {
+					340EDE281BA315A100B59CD2 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = 340EDE271BA315A100B59CD2 /* Build configuration list for PBXProject "jvx-qt-host-1" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 340EDE231BA315A100B59CD2;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				340EDE281BA315A100B59CD2 /* jvxRtprocHost-1 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		340EDE291BA315A100B59CD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		340EDE2A1BA315A100B59CD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		340EDE2C1BA315A100B59CD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		340EDE2D1BA315A100B59CD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		340EDE271BA315A100B59CD2 /* Build configuration list for PBXProject "jvx-qt-host-1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				340EDE291BA315A100B59CD2 /* Debug */,
+				340EDE2A1BA315A100B59CD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		340EDE2B1BA315A100B59CD2 /* Build configuration list for PBXLegacyTarget "jvxRtprocHost-1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				340EDE2C1BA315A100B59CD2 /* Debug */,
+				340EDE2D1BA315A100B59CD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 340EDE241BA315A100B59CD2 /* Project object */;
+}

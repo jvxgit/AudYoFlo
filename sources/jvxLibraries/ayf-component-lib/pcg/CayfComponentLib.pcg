@@ -1,0 +1,25 @@
+// CayfComponentLib.pcg
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genComponentLib";
+
+	SECTION status
+	{
+		DESCRIPTION = "Some feedback info";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"}; 		
+
+		SECTION errorcode_test
+		{
+			DESCRIPTION = "Latest error code on test";
+			TYPE = "JVX_DATAFORMAT_STRING";			
+			INIT_SET = "JVX_NO_ERROR";
+		};  
+		SECTION errordescription_test
+		{
+			DESCRIPTION = "Latest message if error on test";
+			TYPE = "JVX_DATAFORMAT_STRING";			
+			INIT_SET = "";
+		};  
+	};
+};

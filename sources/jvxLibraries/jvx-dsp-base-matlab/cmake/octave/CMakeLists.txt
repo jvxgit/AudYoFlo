@@ -1,0 +1,4 @@
+if(NOT JVX_RELEASE_SDK)
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../+jvx_dsp_base DESTINATION ${INSTALL_PATH_OCTAVE}/m-files COMPONENT "release")
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../+examples DESTINATION ${INSTALL_PATH_OCTAVE}/m-files COMPONENT "release")
+endif()

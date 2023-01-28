@@ -1,0 +1,414 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genFlia";
+	CLASSNAME = "genFlia";
+
+	GROUP flia_ereignis
+	{
+		SECTION flia_config
+		{
+			DESCRIPTION = "All properties related to the flia ereignis part";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"flia_ereignis_set", "flia_ereignis_get"};
+		
+			SECTION ereignis_dauer
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_U32BIT_LE";
+				INIT_SET = 0;
+				ASSOCIATE_EXTERNAL = "yes";
+				CALLBACK_SET_POSTHOOK = "flia_ereignis_set"; 
+				CALLBACK_GET_PREHOOK = "flia_ereignis_get"; 
+			};
+
+			SECTION ereignis_schwelle
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_U32BIT_LE";
+				ASSOCIATE_EXTERNAL = "yes";
+				CALLBACK_SET_POSTHOOK = "flia_ereignis_set"; 
+				CALLBACK_GET_PREHOOK = "flia_ereignis_get"; 
+			};
+		};
+		
+		SECTION flia_oszi
+		{
+			DESCRIPTION = "All properties related to the flia ereignis oszi";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"flia_oszi_trigger"};
+			
+			SECTION trigger
+			{
+				DESCRIPTION = "Property to trigger the FLIA Ereignis";	
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				CALLBACK_SET_POSTHOOK = "flia_oszi_trigger"; 
+			};
+		};
+	};
+
+
+	GROUP flia_config
+	{
+		SECTION flia_adc
+		{
+			DESCRIPTION = "Properties to address ADC";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"flia_adc_set"};
+		
+			SECTION delay_us
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_adc_set"; 
+			};
+		};
+
+		SECTION flia_pmt
+		{
+			DESCRIPTION = "Properties PMT";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"flia_pmt_set"};
+		
+			SECTION amplify_pmt1_prct
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_pmt_set"; 
+			};
+			SECTION amplify_pmt2_prct
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_pmt_set"; 
+			};
+			SECTION amplify_pmt3_prct
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_pmt_set"; 
+			};
+			SECTION amplify_pmt4_prct
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_pmt_set"; 
+			};
+		};
+
+		SECTION flia_multiplex
+		{
+			DESCRIPTION = "Properties Multiplex";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"flia_mltplx_set"};
+		
+			SECTION multiplex_period_usec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_mltplx_set"; 
+			};
+
+			SECTION multiplex_winL1_start_usec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_mltplx_set"; 
+			};
+			SECTION multiplex_winL1_stop_usec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_mltplx_set"; 
+			};
+
+			SECTION multiplex_winL2_start_usec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_mltplx_set"; 
+			};
+			SECTION multiplex_winL2_stop_usec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_mltplx_set"; 
+			};
+						
+			SECTION multiplex_winL3_start_usec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_mltplx_set"; 
+			};
+			SECTION multiplex_winL3_stop_usec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_BOOL";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_mltplx_set"; 
+			};
+		};
+
+		SECTION flia_flussparam
+		{
+			DESCRIPTION = "Properties PMT";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"flia_flussparam_set"};
+		
+			SECTION flussparam_idle_env_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_idle_waste_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+
+			SECTION flussparam_pullprobe_env_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_pullprobe_waste_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_pullprobe_duration_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+
+			SECTION flussparam_measure_env_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_measure_waste_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_measure_duration_sec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_measure_minpop_def
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+
+			SECTION flussparam_flush_env_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_flush_waste_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_flush_duration_sec
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+
+			SECTION flussparam_fill_env_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_fill_waste_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+
+			SECTION flussparam_empty_env_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_empty_waste_ulmin
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+			SECTION flussparam_empty_clean_ul
+			{
+				DESCRIPTION = "";	
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_flussparam_set"; 
+			};
+		};
+
+		SECTION flia_calibration
+		{
+			DESCRIPTION = "Properties calibration";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active and higher ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"flia_calibration_set", "flia_calibration_get"};
+		
+			SECTION calibration_selection_integrator
+			{
+				DESCRIPTION = "";	
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+				SELECTION_LIST_NAMES = {"Integrator A", "Integrator B"};
+				SELECTION_LIST_SELECTED = {"yes", "no"};
+				SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			};
+			SECTION calibration_offset_chan0
+			{
+				DESCRIPTION = "Offset channel #0";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_scale_chan0
+			{
+				DESCRIPTION = "Scalefactor channel #0";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 1;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_offset_chan1
+			{
+				DESCRIPTION = "Offset channel #1";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_scale_chan1
+			{
+				DESCRIPTION = "Scalefactor channel #1";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 1;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_offset_chan2
+			{
+				DESCRIPTION = "Offset channel #2";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_scale_chan2
+			{
+				DESCRIPTION = "Scalefactor channel #2";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 1;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_offset_chan3
+			{
+				DESCRIPTION = "Offset channel #3";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_scale_chan3
+			{
+				DESCRIPTION = "Scalefactor channel #3";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 1;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_offset_chan4
+			{
+				DESCRIPTION = "Offset channel #4";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 0;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+			SECTION calibration_scale_chan4
+			{
+				DESCRIPTION = "Scalefactor channel #4";	
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 1;
+				CALLBACK_SET_POSTHOOK = "flia_calibration_set"; 
+				CALLBACK_GET_PREHOOK = "flia_calibration_get"; 
+			};
+		};
+	};
+};
+
