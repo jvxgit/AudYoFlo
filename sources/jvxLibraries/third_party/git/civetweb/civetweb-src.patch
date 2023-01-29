@@ -1,5 +1,24 @@
---- civetweb.orig/src/civetweb.c	2023-01-26 22:54:03.121509200 +0100
-+++ civetweb/src/civetweb.c	2023-01-26 22:47:18.898920000 +0100
+diff -ur civetweb.orig/src/civetweb.c civetweb/src/civetweb.c
+--- civetweb.orig/src/civetweb.c	2023-01-29 13:00:05.381473100 +0100
++++ civetweb/src/civetweb.c	2023-01-29 12:57:22.147221400 +0100
+@@ -1123,7 +1123,7 @@
+ #if defined(_WIN64) && !defined(NO_ATOMICS)
+ 	ret = InterlockedIncrement64(addr);
+ #elif defined(_WIN32) && !defined(NO_ATOMICS)
+-	ret = InterlockedIncrement(addr);
++	ret = InterlockedIncrement((LONG*)addr);
+ #elif defined(__GNUC__)                                                        \
+     && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ > 0)))           \
+     && !defined(NO_ATOMICS)
+@@ -1146,7 +1146,7 @@
+ #if defined(_WIN64) && !defined(NO_ATOMICS)
+ 	ret = InterlockedDecrement64(addr);
+ #elif defined(_WIN32) && !defined(NO_ATOMICS)
+-	ret = InterlockedDecrement(addr);
++	ret = InterlockedDecrement((LONG*)addr);
+ #elif defined(__GNUC__)                                                        \
+     && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ > 0)))           \
+     && !defined(NO_ATOMICS)
 @@ -11967,7 +11967,7 @@
  			    get_rel_url_at_current_server(destination_hdr, conn);
  			if (h) {
