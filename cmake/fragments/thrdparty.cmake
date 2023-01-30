@@ -86,8 +86,8 @@ if (JVX_USE_LIBMYSOFA)
 	# OPTIONAL: -DBUILD_SHARED_LIBS=FALSE
 	# The author has added the dllexport specification in the function definition.
 	# This is not allowed in Visual Studio
-	set(LIBMYSOFA_BUILD_TESTS FALSE)
-	set(LIBMYSOFA_BUILD_SHARED_LIBS FALSE)
+	option(LIBMYSOFA_BUILD_TESTS "Build test programs" OFF)
+	option(LIBMYSOFA_BUILD_SHARED_LIBS "Build shared library" OFF)
 	set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/mysofa)
 endif()
