@@ -75,7 +75,7 @@ typedef jvxUInt16 jvxCBool;
 #define JVX_CBOOL_IS_UINT16
 #define c_true 1
 #define c_false 0
-#define JVX_DATAFORMAT_BOOL JVX_DATAFORMAT_16BIT_LE 
+#define JVX_DATAFORMAT_BOOL JVX_DATAFORMAT_U16BIT_LE 
 #else
 typedef jvxUInt16 jvxCBool;
 #define JVX_CBOOL_IS_UINT16
