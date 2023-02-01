@@ -3,13 +3,14 @@ cmake_minimum_required (VERSION 2.8)
 message("--> configuring PortAudio")
 
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/portaudio)
+
 	message("portaudio sub project not available. Starting script to download it.") 
 	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
 	message("portaudio installation complete.")
 endif()
 
 
-set(JVX_TARGET_NAME "portAudio")
+set(JVX_TARGET_NAME "portaudio")
 project (${JVX_TARGET_NAME})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/portaudio/src)

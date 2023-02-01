@@ -620,7 +620,7 @@ additionalArgsWidget::updateWindow()
 						token = "/JVX_GENW/activateAllChannelsInput";
 						ident.reset(token.c_str());
 						trans.reset(true);
-						res = myParent->subWidgets.theAudioDialog->currentPropsDev->get_property(callGate, jPRbIO(valB), ident, trans);
+						res = myParent->subWidgets.theAudioDialog->currentPropsDev->get_property(callGate, jPRIO<jvxCBool>(valB), ident, trans);
 						if (JVX_CHECK_PROPERTY_ACCESS_OK(res,callGate.access_protocol, token, myParent->subWidgets.theAudioDialog->currentPropsDev))
 						{
 							checkBox_alsa_allchannelsi->setChecked(valB == c_true);
@@ -634,7 +634,7 @@ additionalArgsWidget::updateWindow()
 						token = "/JVX_GENW/activateAllChannelsOutput";
 						ident.reset(token.c_str());
 						trans.reset(true);
-						res = myParent->subWidgets.theAudioDialog->currentPropsDev->get_property(callGate, jPRBIO(valB), ident, trans);
+						res = myParent->subWidgets.theAudioDialog->currentPropsDev->get_property(callGate, jPRIO<jvxCBool>(valB), ident, trans);
 						if (JVX_CHECK_PROPERTY_ACCESS_OK(res,callGate.access_protocol, token, myParent->subWidgets.theAudioDialog->currentPropsDev))
 						{
 							checkBox_alsa_allchannelso->setChecked(valB == c_true);

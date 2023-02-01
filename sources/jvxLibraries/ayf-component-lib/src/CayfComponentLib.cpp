@@ -92,10 +92,10 @@ CayfComponentLib::activate()
 				if (props)
 				{
 					IjvxPropertyExtender* pExt = nullptr;
+					jvxCallManagerProperties callMan;
 					jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<IjvxPropertyExtender> rPtr(&pExt);
 					// rPtr.atype(jvx::propertyRawPointerType::apiType::JVX_RAW_POINTER_API_TYPE_DLL);
-					jvxErrorType resL = props->get_property(jvxCallManagerProperties(),
-						rPtr, jPAD("/iface/ex_interface"), jPD(true));
+					jvxErrorType resL = props->get_property(callMan, rPtr, jPAD("/iface/ex_interface"), jPD(true));
 					if (pExt)
 					{
 						IjvxPropertyExtenderChainControl* propExtSpec = castPropIfExtender< IjvxPropertyExtenderChainControl>(pExt);
@@ -282,9 +282,10 @@ CayfComponentLib::deactivate()
 		if (props)
 		{
 			IjvxPropertyExtender* pExt = nullptr;
+			jvxCallManagerProperties callMan;
 			jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<IjvxPropertyExtender> rPtr(&pExt);
 			// rPtr.atype(jvx::propertyRawPointerType::apiType::JVX_RAW_POINTER_API_TYPE_DLL);
-			jvxErrorType resL = props->get_property(jvxCallManagerProperties(),
+			jvxErrorType resL = props->get_property(callMan,
 				rPtr, jPAD("/iface/ex_interface"), jPD(true));
 			if (pExt)
 			{

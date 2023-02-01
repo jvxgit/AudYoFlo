@@ -118,7 +118,7 @@ CjvxSaWrapperElementSlider::initializeUiElement(jvxPropertyCallContext ccontext)
 		case JVX_DATAFORMAT_8BIT:
 			tp = JVX_WW_SLIDER_VALUE;
 			break;
-		case JVX_DATAFORMAT_BOOL:
+		case JVX_DATAFORMAT_U16BIT_LE:
 			if (thePropDescriptor.decTp == JVX_PROPERTY_DECODER_SIMPLE_ONOFF)
 			{
 				tp = JVX_WW_SLIDER_SWITCH;
