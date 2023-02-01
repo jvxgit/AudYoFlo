@@ -152,7 +152,7 @@ namespace AyfConnection
 					assert(0);
 				}
 			}
-			return fwd_process_buffers_icon(mt_mask, idx_stage);
+			return CayfAuNConnection<S>::fwd_process_buffers_icon(mt_mask, idx_stage);
 		}		
 
 		virtual jvxErrorType startup_and_test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
@@ -161,7 +161,7 @@ namespace AyfConnection
 			// Let us directly forward the call to the connection
 
 			// The flexible connection can not be connected if there is no active connection yet!!
-			if (_common_set_ldslave.theData_in == nullptr)
+			if (CayfAuNConnection<S>::_common_set_ldslave.theData_in == nullptr)
 			{
 				return JVX_ERROR_NOT_READY;
 			}
@@ -172,7 +172,7 @@ namespace AyfConnection
 			{
 				// We need to postpone the automatic connection until after full boot to prevent deactivation of components on config
 				jvxBool allowConnect = true;
-				IjvxHost* theHost = reqInterface<IjvxHost>(_common_set_min.theHostRef);
+				IjvxHost* theHost = reqInterface<IjvxHost>(CayfAuNConnection<S>::_common_set_min.theHostRef);
 				if (theHost)
 				{
 					theHost->boot_complete(&allowConnect);
@@ -183,8 +183,8 @@ namespace AyfConnection
 					jvx_initDataLinkDescriptor(&descr_in);
 					jvx_initDataLinkDescriptor(&descr_out);
 
-					res = theConnection.startup(AyfConnection::CayfConnectionConfig(
-						_common_set_min.theHostRef, this, CayfAuNConnection<S>::lstMods,
+					res = CayfAuNConnection<S>::theConnection.startup(AyfConnection::CayfConnectionConfig(
+						CayfAuNConnection<S>::_common_set_min.theHostRef, this, CayfAuNConnection<S>::lstMods,
 						&descr_in,
 						&descr_out,
 						ayfConnectionOperationMode::AYF_CONNECTION_FLEXIBLE,
@@ -206,7 +206,7 @@ namespace AyfConnection
 
 			res = JVX_ERROR_NOT_READY;
 			stat = JVX_STATE_NONE;
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if (stat == JVX_STATE_ACTIVE)
 			{
 				res = JVX_NO_ERROR;

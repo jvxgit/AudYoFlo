@@ -28,9 +28,9 @@ namespace AyfConnection
 		{
 			// Do not connect any chains in this module before we have fully booted	
 			// Invoke a "test" run on system startup
-			if (_common_set_ldslave.theData_in)
+			if (CayfAuNConnection<S>::_common_set_ldslave.theData_in)
 			{
-				this->_request_test_chain_master(_common_set_ldslave.theData_in->con_link.uIdConn);
+				this->_request_test_chain_master(CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.uIdConn);
 			}
 			return JVX_NO_ERROR;
 		};
@@ -38,10 +38,10 @@ namespace AyfConnection
 		// ===================================================================================
 		virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
-			JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(_common_set_ldslave.object),
-				_common_set_ldslave.descriptor.c_str(), "Entering input connector <CayfAuNFixedConnection>");
+			JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(CayfAuNConnection<S>::_common_set_ldslave.object),
+				CayfAuNConnection<S>::_common_set_ldslave.descriptor.c_str(), "Entering input connector <CayfAuNFixedConnection>");
 
-			JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, (_common_set_ldslave.theData_in));
+			JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, (CayfAuNConnection<S>::_common_set_ldslave.theData_in));
 
 			jvxErrorType res = startup_and_test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			return res;
@@ -50,12 +50,12 @@ namespace AyfConnection
 		virtual jvxErrorType JVX_CALLINGCONVENTION disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override
 		{
 			jvxState stat = JVX_STATE_NONE;
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if (stat == JVX_STATE_ACTIVE)
 			{
-				shutdown_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+				CayfAuNConnection<S>::shutdown_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			}
-			return CayfAuNConnection::disconnect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			return CayfAuNConnection<S>::disconnect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		};
 
 		virtual void test_set_output_parameters() override
@@ -65,10 +65,10 @@ namespace AyfConnection
 
 		jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override
 		{
-			jvxErrorType res = theConnection.transfer_forward_connection(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			jvxErrorType res = CayfAuNConnection<S>::theConnection.transfer_forward_connection(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			if (res == JVX_NO_ERROR)
 			{
-				res = _transfer_forward_icon(true, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				res = CayfAuNConnection<S>::_transfer_forward_icon(true, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
 			return res;
 		};
@@ -80,8 +80,8 @@ namespace AyfConnection
 			jvxErrorType res = JVX_NO_ERROR;
 
 			// This includes forwarding towards the next elements
-			prepare_autostart();
-			res = theConnection.prepare_connection();
+			CayfAuNConnection<S>::prepare_autostart();
+			res = CayfAuNConnection<S>::theConnection.prepare_connection();
 			return res;
 
 		};
@@ -90,22 +90,22 @@ namespace AyfConnection
 		{
 			jvxErrorType res = JVX_NO_ERROR;
 
-			res = theConnection.postprocess_connection();
-			postprocess_autostart();
+			res = CayfAuNConnection<S>::theConnection.postprocess_connection();
+			CayfAuNConnection<S>::postprocess_autostart();
 
 			return res;
 		};
 
 		virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
-			start_autostart();
-			return theConnection.start_connection();
+			CayfAuNConnection<S>::start_autostart();
+			return CayfAuNConnection<S>::theConnection.start_connection();
 		};
 
 		virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
-			jvxErrorType res = theConnection.stop_connection();
-			stop_autostart();
+			jvxErrorType res = CayfAuNConnection<S>::theConnection.stop_connection();
+			CayfAuNConnection<S>::stop_autostart();
 			return res;
 		};
 
@@ -118,7 +118,7 @@ namespace AyfConnection
 			callback_process_start_in_lock clbk,
 			jvxHandle* priv_ptr) override
 		{
-			return theConnection.prepare_process_connection(nullptr,
+			return CayfAuNConnection<S>::theConnection.prepare_process_connection(nullptr,
 				pipeline_offset,
 				idx_stage,
 				tobeAccessedByStage,
@@ -133,7 +133,7 @@ namespace AyfConnection
 				callback_process_stop_in_lock cb,
 				jvxHandle* priv_ptr) override
 		{
-			return theConnection.postprocess_process_connection(
+			return CayfAuNConnection<S>::theConnection.postprocess_process_connection(
 				idx_stage,
 				operate_first_call,
 				tobeAccessedByStage,
@@ -149,7 +149,7 @@ namespace AyfConnection
 			jvxErrorType res = JVX_NO_ERROR;
 
 			// Run the decode microconnection
-			return theConnection.process_connection(nullptr);
+			return CayfAuNConnection<S>::theConnection.process_connection(nullptr);
 		};
 
 		jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override
@@ -160,11 +160,12 @@ namespace AyfConnection
 			case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
 				// To do at this position
-				res = theConnection.negotiate_connection(tp, data, _common_set_ldslave.theData_out.con_params JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				res = CayfAuNConnection<S>::theConnection.negotiate_connection(tp, data,
+											       CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				break;
 
 			default:
-				res = CayfAuNConnection::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			  res = CayfAuNConnection<S>::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
 			return res;
 		};
@@ -178,9 +179,9 @@ namespace AyfConnection
 		{
 			// If the micro chain start settings do not match, we need to forward then towards the previous linked object
 			jvxErrorType res = JVX_ERROR_INVALID_SETTING;
-			if (_common_set_ldslave.theData_in)
+			if (CayfAuNConnection<S>::_common_set_ldslave.theData_in)
 			{
-				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+				res = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
 					JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 					proposed JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
@@ -199,7 +200,7 @@ namespace AyfConnection
 		virtual jvxErrorType hook_test_update(jvxLinkDataDescriptor* dataIn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override
 		{
 			// Copy output settings in case the negoatiate from behind the next element has made modifications
-			_common_set_ldslave.theData_out.con_params = dataIn->con_params;
+			CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params = dataIn->con_params;
 
 			return JVX_NO_ERROR;
 		};
@@ -223,27 +224,27 @@ namespace AyfConnection
 		virtual jvxErrorType hook_prepare(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
 			// Durectly forward the call
-			return _prepare_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			return CayfAuNConnection<S>::_prepare_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 
 		;
 		virtual jvxErrorType hook_postprocess(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
-			return _postprocess_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			return CayfAuNConnection<S>::_postprocess_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 
 		;
 		virtual jvxErrorType hook_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
 			jvxSize idRuntime = JVX_SIZE_UNSELECTED;
-			_common_set.theUniqueId->obtain_unique_id(&idRuntime, _common_set.theDescriptor.c_str());
-			return _start_connect_icon(true, idRuntime JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			CayfAuNConnection<S>::_common_set.theUniqueId->obtain_unique_id(&idRuntime, CayfAuNConnection<S>::_common_set.theDescriptor.c_str());
+			return CayfAuNConnection<S>::_start_connect_icon(true, idRuntime JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 
 		;
 		virtual jvxErrorType hook_stop(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
-			return _stop_connect_icon(true, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			return CayfAuNConnection<S>::_stop_connect_icon(true, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 
 		virtual jvxErrorType hook_process_start(
@@ -254,11 +255,11 @@ namespace AyfConnection
 				jvxHandle* priv_ptr) override
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			if (_common_set_ldslave.ocon)
+			if (CayfAuNConnection<S>::_common_set_ldslave.ocon)
 			{
 				// Input / output connector implementations are never zerocopy
 				// We start a regular output connector here
-				res = _common_set_ldslave.ocon->process_start_ocon(
+				res = CayfAuNConnection<S>::_common_set_ldslave.ocon->process_start_ocon(
 					pipeline_offset,
 					idx_stage,
 					tobeAccessedByStage,
@@ -271,9 +272,9 @@ namespace AyfConnection
 		virtual jvxErrorType hook_process(jvxSize mt_mask, jvxSize idx_stage) override
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			if (_common_set_ldslave.ocon)
+			if (CayfAuNConnection<S>::_common_set_ldslave.ocon)
 			{
-				return _common_set_ldslave.ocon->process_buffers_ocon(mt_mask, idx_stage);
+				return CayfAuNConnection<S>::_common_set_ldslave.ocon->process_buffers_ocon(mt_mask, idx_stage);
 			}
 			return res;
 		}
@@ -286,11 +287,11 @@ namespace AyfConnection
 				jvxHandle* priv_ptr) override
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			if (_common_set_ldslave.ocon)
+			if (CayfAuNConnection<S>::_common_set_ldslave.ocon)
 			{
 				// Input / output connector implementations are never zerocopy
 				// We start a regular output connector here
-				res = _common_set_ldslave.ocon->process_stop_ocon(
+				res = CayfAuNConnection<S>::_common_set_ldslave.ocon->process_stop_ocon(
 					idx_stage,
 					shift_fwd,
 					tobeAccessedByStage,
@@ -305,13 +306,13 @@ namespace AyfConnection
 			jvxErrorType res = JVX_NO_ERROR;
 			// Let us directly forward the call to the connection
 			jvxState stat = JVX_STATE_NONE;
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if (stat == JVX_STATE_NONE)
 			{
 				// If we have a booting host, we need to wait until system has been bootet since 
 				// components may be deactivated during boot process
 				jvxBool allowConnect = true;
-				IjvxHost* theHost = reqInterface<IjvxHost>(_common_set_min.theHostRef);
+				IjvxHost* theHost = reqInterface<IjvxHost>(CayfAuNConnection<S>::_common_set_min.theHostRef);
 				if (theHost)
 				{
 					theHost->boot_complete(&allowConnect);
@@ -320,16 +321,19 @@ namespace AyfConnection
 				if (allowConnect)
 				{
 					jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
-					if (_common_set_ldslave.theData_in)
+					if (CayfAuNConnection<S>::_common_set_ldslave.theData_in)
 					{
-						idProcDepends = _common_set_ldslave.theData_in->con_link.uIdConn;
+						idProcDepends = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.uIdConn;
 					}
-					res = theConnection.startup(AyfConnection::CayfConnectionConfig(
-						_common_set_min.theHostRef, this, lstMods,
-						_common_set_ldslave.theData_in,
-						&_common_set_ldslave.theData_out,
+					res = CayfAuNConnection<S>::theConnection.startup(AyfConnection::CayfConnectionConfig(
+						CayfAuNConnection<S>::_common_set_min.theHostRef, this,
+						CayfAuNConnection<S>::lstMods,
+						CayfAuNConnection<S>::_common_set_ldslave.theData_in,
+						&CayfAuNConnection<S>::_common_set_ldslave.theData_out,
 						ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT,
-						this, this, false, numBuffers, nmProcess, descrProcess, descrorProcess), stateSwitchHandler,
+						this, this, false, CayfAuNConnection<S>::numBuffers,
+						CayfAuNConnection<S>::nmProcess, CayfAuNConnection<S>::descrProcess,
+						CayfAuNConnection<S>::descrorProcess), CayfAuNConnection<S>::stateSwitchHandler,
 						idProcDepends, true);
 					if (res != JVX_NO_ERROR)
 					{
@@ -345,18 +349,18 @@ namespace AyfConnection
 			// ================================================================================
 
 			res = JVX_ERROR_NOT_READY;
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if (stat == JVX_STATE_ACTIVE)
 			{
 				// Now, the connection should be available.
 				// This call propagates through the micro connection and stops at the input from this
 				// component as the micro connection endpoint. For elements following the micro connection
 				// we need to forward this test call towards the next element outside the micro chain!!
-				res = theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+				res = CayfAuNConnection<S>::theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 				if (res == JVX_NO_ERROR)
 				{
 					// From here we approach everything following the micro chain!!
-					res = _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+					res = CayfAuNConnection<S>::_test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 				}
 			}
 			else

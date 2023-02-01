@@ -59,7 +59,7 @@ public:
 			jvxErrorType res = R::activate();
 			if (res == JVX_NO_ERROR)
 			{
-				if (isFlexibleConnection)
+			  if (R::isFlexibleConnection)
 				{
 					genAuNSubChainFlex::init_all();
 					genAuNSubChainFlex::allocate_all();
@@ -76,7 +76,7 @@ public:
 			if (res == JVX_NO_ERROR)
 			{
 				
-				if (isFlexibleConnection)
+			  if (R::isFlexibleConnection)
 				{
 					genAuNSubChainFlex::unregister_callbacks(this, nullptr);
 					genAuNSubChainFlex::unregister_all(this);
@@ -91,7 +91,7 @@ public:
 
 		JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL_H(CayfAuNSubChain, trigger_chain)
 		{
-			if (isFlexibleConnection)
+		  if (R::isFlexibleConnection)
 			{
 				if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genAuNSubChainFlex::flexible_chain.engage_chain))
 				{

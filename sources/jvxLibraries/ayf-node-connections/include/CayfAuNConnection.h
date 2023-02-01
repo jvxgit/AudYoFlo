@@ -23,9 +23,9 @@ namespace AyfConnection
 		CayfAuNConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 			T(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 		{
-			_common_set.theComponentType.unselected(JVX_COMPONENT_AUDIO_NODE);
-			_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
-			_common_set.thisisme = static_cast<IjvxObject*>(this);
+		  T::_common_set.theComponentType.unselected(JVX_COMPONENT_AUDIO_NODE);
+		  T::_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
+		  T::_common_set.thisisme = static_cast<IjvxObject*>(this);
 		};
 
 		virtual jvxErrorType shutdown_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
