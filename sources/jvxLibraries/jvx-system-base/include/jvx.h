@@ -29,6 +29,8 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "typedefs/TjvxLinkDataDescriptor.h"
 #include "typedefs/TjvxConnector.h"
 
+#include "helpers/HjvxCastMin.h"
+
 // Some typedefs
 #include "typedefs/TjvxConfigTokens.h"
 
@@ -88,6 +90,8 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "typedefs/TjvxTypes_str.h"
 
 #include "typedefs/TjvxManipulate.h"
+
+#include "helpers/HjvxCastMin.h"
 
 // =============================================================
 // INTERFACES INTERFACES INTERFACES INTERFACES INTERFACES INTERFACES
@@ -196,6 +200,11 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "typedefs/TjvxAccess.h"
 
 // =============================================================
+// Cast functions
+// =============================================================
+#include "helpers/HjvxCast.h"
+
+// =============================================================
 // HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS HELPERS
 // =============================================================
 
@@ -204,8 +213,5 @@ JVX_INTERFACE IjvxGlobalInstance;
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 #include "jvx_product.h"
 #endif
-
-// This must follow the "product" since it may involve some data types
-#include "helpers/HjvxCast.h"
 
 #endif
