@@ -28,9 +28,9 @@ namespace AyfConnection
 	public:
 	
 		CayfAuNFlexibleConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-			CayfAuNConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+			CayfAuNConnection<S>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 		{
-			isFlexibleConnection = true;
+			CayfAuNConnection<S>::isFlexibleConnection = true;
 			JVX_INITIALIZE_MUTEX(safeAccessConnectionState);
 		};
 
@@ -41,19 +41,19 @@ namespace AyfConnection
 
 		jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var)) override
 		{
-			jvxErrorType res = CayfAuNConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(var));
+			jvxErrorType res = CayfAuNConnection<S>::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(var));
 			if (res == JVX_NO_ERROR)
 			{
 				// If there is a valid connection, run the test function
 				jvxState stat = JVX_STATE_NONE;
-				theConnection.state(&stat);
+				CayfAuNConnection<S>::theConnection.state(&stat);
 				if(stat == JVX_STATE_ACTIVE) 
 				{	
 					// On prepared the test function should never be run!!
 					assert(statFlexProc == JVX_STATE_ACTIVE);
 
 					lastTestOk = false;
-					jvxErrorType resL = theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(var));
+					jvxErrorType resL = CayfAuNConnection<S>::theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(var));
 					if (resL == JVX_NO_ERROR)
 					{
 						lastTestOk = true;
@@ -135,10 +135,10 @@ namespace AyfConnection
 				{
 				case ayfFlexibleConnectionUnconnectedMode::AYF_FLEXIBLE_CONNECTION_UNCONNECT_SILENT:
 					bufsOutput = jvx_process_icon_extract_output_buffers<jvxHandle>(
-						&_common_set_ldslave.theData_out);
-					nChans = _common_set_ldslave.theData_out.con_params.number_channels;
-					szBytes = jvxDataFormat_getsize(_common_set_ldslave.theData_out.con_params.format) *
-						_common_set_ldslave.theData_out.con_params.buffersize;
+						&CayfAuNConnection<S>::_common_set_ldslave.theData_out);
+					nChans = CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params.number_channels;
+					szBytes = jvxDataFormat_getsize(CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params.format) *
+						CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params.buffersize;
 					for (i = 0; i < nChans; i++)
 					{
 						memset(bufsOutput[i], 0, szBytes);
@@ -167,7 +167,7 @@ namespace AyfConnection
 			}
 
 			jvxState stat = JVX_STATE_NONE;
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if (stat == JVX_STATE_NONE)
 			{
 				// We need to postpone the automatic connection until after full boot to prevent deactivation of components on config
@@ -184,11 +184,14 @@ namespace AyfConnection
 					jvx_initDataLinkDescriptor(&descr_out);
 
 					res = theConnection.startup(AyfConnection::CayfConnectionConfig(
-						_common_set_min.theHostRef, this, lstMods,
+						_common_set_min.theHostRef, this, CayfAuNConnection<S>::lstMods,
 						&descr_in,
 						&descr_out,
 						ayfConnectionOperationMode::AYF_CONNECTION_FLEXIBLE,
-						nullptr, nullptr, false, numBuffers, nmProcess, descrProcess, descrorProcess), stateSwitchHandler);
+						nullptr, nullptr, false, 
+						CayfAuNConnection<S>::numBuffers, CayfAuNConnection<S>::nmProcess, 
+						CayfAuNConnection<S>::descrProcess, CayfAuNConnection<S>::descrorProcess), 
+						CayfAuNConnection<S>::stateSwitchHandler);
 					if (res != JVX_NO_ERROR)
 					{
 						std::cout << "Failed to start connection, try it next time!" << std::endl;
@@ -207,13 +210,13 @@ namespace AyfConnection
 			if (stat == JVX_STATE_ACTIVE)
 			{
 				res = JVX_NO_ERROR;
-				descr_in.con_params = _common_set_ldslave.theData_in->con_params;
-				descr_out.con_params = _common_set_ldslave.theData_out.con_params;
+				descr_in.con_params = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_params;
+				descr_out.con_params = CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params;
 
 				lastTestOk = false;
 
 				// Now, the connection should be available
-				jvxErrorType resL = theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+				jvxErrorType resL = CayfAuNConnection<S>::theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 				if (resL == JVX_NO_ERROR)
 				{
 					lastTestOk = true;
@@ -232,7 +235,7 @@ namespace AyfConnection
 		virtual jvxErrorType shutdown_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
 			try_disengage_connection(JVX_STATE_ACTIVE JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-			CayfAuNConnection::shutdown_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			CayfAuNConnection<S>::shutdown_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			lastTestOk = false;
 			return JVX_NO_ERROR;
 		}
@@ -242,13 +245,13 @@ namespace AyfConnection
 		{
 			jvxErrorType res = JVX_NO_ERROR;
 			jvxState stat = JVX_STATE_NONE;	
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if ((stat == JVX_STATE_ACTIVE) && 
 				(statFlexProc >= JVX_STATE_PREPARED)) // Target state of the COMPONENT: if the component is in PREPARED or PROCESSING STATE
 			{
 				if (!lastTestOk)
 				{
-					res = theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+					res = CayfAuNConnection<S>::theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 					if (res == JVX_NO_ERROR)
 					{
 						lastTestOk = true;
@@ -259,7 +262,7 @@ namespace AyfConnection
 
 			if (res == JVX_NO_ERROR)
 			{
-				theConnection.state(&stat);
+				CayfAuNConnection<S>::theConnection.state(&stat);
 				if ((stat == JVX_STATE_PREPARED) && 
 					(statFlexProc == JVX_STATE_PROCESSING)) // Target state of the COMPONENT : if the component is in PROCESSING STATE
 				{
@@ -276,7 +279,7 @@ namespace AyfConnection
 		{
 			jvxErrorType res = JVX_NO_ERROR;
 			jvxState stat = JVX_STATE_NONE;
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if ((stat == JVX_STATE_PROCESSING) && 
 				(targetState < stat)) // Target state of the COMPONENT : If component state is lower than processing
 			{
@@ -285,7 +288,7 @@ namespace AyfConnection
 				JVX_UNLOCK_MUTEX(safeAccessConnectionState);
 			}
 
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if ((stat == JVX_STATE_PREPARED) && 
 				(targetState < stat)) // Target state of the COMPONENT : If component state is lower than prepared
 			{
@@ -301,12 +304,12 @@ namespace AyfConnection
 			jvxErrorType res = JVX_ERROR_NOT_READY;
 			JVX_LOCK_MUTEX(safeAccessConnectionState);
 			jvxState stat = JVX_STATE_NONE;
-			theConnection.state(&stat);
+			CayfAuNConnection<S>::theConnection.state(&stat);
 			if (stat == JVX_STATE_PROCESSING)
 			{
-				res = theConnection.process_connection(
-					_common_set_ldslave.theData_in, mt_mask, idx_stage,
-					&_common_set_ldslave.theData_out);
+				res = CayfAuNConnection<S>::theConnection.process_connection(
+					CayfAuNConnection<S>::_common_set_ldslave.theData_in, mt_mask, idx_stage,
+					&CayfAuNConnection<S>::_common_set_ldslave.theData_out);
 			}
 			JVX_UNLOCK_MUTEX(safeAccessConnectionState);
 			return res;
@@ -315,28 +318,28 @@ namespace AyfConnection
 		virtual jvxErrorType prepare_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			res = theConnection.prepare_connection();
+			res = CayfAuNConnection<S>::theConnection.prepare_connection();
 			return res;
 		}
 
 		virtual jvxErrorType postprocess_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			res = theConnection.postprocess_connection();
+			res = CayfAuNConnection<S>::theConnection.postprocess_connection();
 			return res;
 		}
 
 		virtual jvxErrorType start_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			res = theConnection.start_connection();
+			res = CayfAuNConnection<S>::theConnection.start_connection();
 			return res;
 		}
 
 		virtual jvxErrorType stop_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			res = theConnection.stop_connection();
+			res = CayfAuNConnection<S>::theConnection.stop_connection();
 			return res;
 		}
 	};
