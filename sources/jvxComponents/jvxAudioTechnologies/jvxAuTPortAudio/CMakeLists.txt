@@ -29,7 +29,7 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxPortAudioDevice.h
   )
 
-set(LOCAL_LIBS portAudio)
+set(LOCAL_LIBS portaudio)
 
 set(LOCAL_LIBS ${LOCAL_LIBS}
   jvx-component-templates-base_static

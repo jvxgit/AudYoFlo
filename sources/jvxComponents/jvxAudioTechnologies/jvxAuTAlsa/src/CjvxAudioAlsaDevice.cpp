@@ -458,7 +458,7 @@ CjvxAudioAlsaDevice::put_configuration(jvxCallManagerConfiguration* callConf, Ij
 	if (this->_common_set_min.theState == JVX_STATE_ACTIVE)
 	{
 		// Read all parameters from this class
-	  genAlsa_device::put_configuration__properties_active(callConf, processor, sectionToContainAllSubsectionsForMe, warnings);
+	  genAlsa_device::put_configuration__properties_active(callConf, processor, sectionToContainAllSubsectionsForMe, &warnings);
 		if (!warnings.empty())
 		{
 			jvxSize i;

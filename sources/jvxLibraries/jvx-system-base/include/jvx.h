@@ -214,4 +214,6 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "jvx_product.h"
 #endif
 
+#include "helpers/HjvxCastProduct.h"
+
 #endif

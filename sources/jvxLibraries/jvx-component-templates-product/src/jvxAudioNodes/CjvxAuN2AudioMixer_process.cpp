@@ -64,7 +64,7 @@ CjvxAuN2AudioMixer::postprocess_connect_icon_ntask(jvxLinkDataDescriptor* theDat
 					elm.second.ready = false;
 					for (i = 0; i < elm.second.numChannels; i++)
 					{
-						JVX_DSP_SAFE_DELETE_FIELD(elm.second.mixBuffer[i]);
+					  JVX_DSP_SAFE_DELETE_FIELD_TYPE(elm.second.mixBuffer[i], jvxByte);
 					}
 					JVX_DSP_SAFE_DELETE_FIELD(elm.second.mixBuffer);
 					elm.second.bufSize = 0;
