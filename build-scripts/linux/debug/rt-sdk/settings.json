@@ -1,0 +1,38 @@
+{
+    "C_Cpp.updateChannel": "Insiders",
+    "cmake.buildDirectory": "${workspaceFolder}/../build",
+    "cmake.buildArgs": [
+    ],
+    "cmake.configureArgs": [
+        "-Wno-dev"
+    ],
+    "cmake.configureSettings": {
+        "JVX_PRODUCT":"audio",
+        "JVX_RELEASE_SDK": false,
+        "JVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD":16,
+        "JVX_COMPILE_BUILDTOOLS":false,
+        "JVX_DEPLOY_UNSTABLE":true,
+        "JVX_USE_PART_ALSA": true,
+        "JVX_USE_PART_PAUDIO": true,
+        "JVX_USE_PART_RS232": true,
+        "JVX_USE_QT":true,
+        "JVX_USE_QWT":true,
+        "JVX_USE_PART_CORECONTROL":true,
+        "JVX_USE_CONSOLE_APPS":true,
+        "JVX_USE_PART_MATLAB": true,
+        "JVX_COMPILE_GOD_HOST": true,
+        "JVX_MATLAB_PROPERTY_GENERATOR":true,
+        "JVX_USE_PART_WEBSERVER":true,
+        "JVX_DEPLOY_EXAMPLES": true,
+        "JVX_USE_BOOST":true,
+        "JVX_USE_EIGEN":true,
+        "JVX_DEPLOY_LIBRARY_DSP_MATLAB":true,
+         "JVX_INCLUDE_EBUR128": true,
+         "JVX_USE_VST":true, 
+         "SMTG_CREATE_PLUGIN_LINK": false, 
+         "JVX_USE_LIBMYSOFA": true, 
+         "LIBMYSOFA_BUILD_TESTS": false,
+         "JVX_USE_HOA_CIRC_ARRAY": false,
+         "QT_INSTALL_PATH": "/home/hauke/develop/install/Qt5.13.2/5.13.2/gcc_64" 
+    }
+}
