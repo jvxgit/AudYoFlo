@@ -18,7 +18,7 @@ run_pull()
 			##	git checkout master
 			## fi
 		fi
-		echo "eval $2 git pull --rebase"
+		echo "$2 git pull --rebase"
 		eval "$2 git pull --rebase"
 		if ! [ $? -eq 0 ]; then
 			RED='\033[0;31m'
@@ -46,9 +46,19 @@ fi
 
 iniDir=`pwd`
 
+PREFIX=
+if [ $# -ge 1 ]; then
+	if [ -n "$1" ]; then
+		Q='"'
+		PREFIX="GIT_SSH_COMMAND=$Q ssh -i $1 $Q"
+		echo $PREFIX
+	fi
+fi
+
 ## =========================================================================
 
-cd AudYoFlo/sources/sub-projects
+run_pull AudYoFlo "$PREFIX" $PROJECT_BRANCH
+cd AudYoFlo/sources/sub-projects	
 
 ## ================================================
 
@@ -56,23 +66,23 @@ for d in ./*; do
   if [ -d "$d" ]; then
 	if [ -f $d/.jvxprj ]; then
 		#echo "Valid folder $d"
-		run_pull $d "$1" $PROJECT_BRANCH
+		run_pull $d "$PREFIX" $PROJECT_BRANCH
 	fi
 	if [ -f $d/.jvxprj.dep ]; then
 		#echo "Valid folder $d"
-		run_pull $d "$1" $PROJECT_BRANCH
+		run_pull $d "$PREFIX" $PROJECT_BRANCH
 	fi
 	if [ -f $d/.jvxprj.base ]; then
 		#echo "Valid folder $d"
-		run_pull $d "$1" $PROJECT_BRANCH
+		run_pull $d "$PREFIX" $PROJECT_BRANCH
 	fi
 	if [ -f $d/.jvxprj.audio ]; then
 		#echo "Valid folder $d"
-		run_pull $d "$1" $PROJECT_BRANCH
+		run_pull $d "$PREFIX" $PROJECT_BRANCH
 	fi
 	if [ -f $d/.jvxprj.audio.dep ]; then
 		#echo "Valid folder $d"
-		run_pull $d "$1" $PROJECT_BRANCH
+		run_pull $d "$PREFIX" $PROJECT_BRANCH
 	fi
   fi
 done

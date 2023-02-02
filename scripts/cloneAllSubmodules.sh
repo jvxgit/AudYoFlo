@@ -1,32 +1,25 @@
 #!/bin/bash 
 
+#
+# When using an alternative ssh key, run the script as
+# ./cloneAllSubmodules /path/to/.ssh/id_rsa_key <optional: branch-expression>
+# It will run then
+# GIT_SSH_COMMAND="ssh -i /path/to/.ssh/id_rsa_key" git clone <optional: branch-expression> https://github.com/jvxgit/AudYoFlo.git
+#
+
 echo "Running on OS $OS"
 
 iniDir=`pwd`
 
+PREFIX=
+if [ $# -ge 1 ]; then
+	Q='"'
+	PREFIX="GIT_SSH_COMMAND=$Q ssh -i $1 $Q"
+	echo $PREFIX
+fi
+
 if [ ! -d "AudYoFlo" ]; then
-	git clone $1 $2 https://github.com/jvxgit/AudYoFlo.git
+	eval $PREFIX git clone $1 $2 https://github.com/jvxgit/AudYoFlo.git
 fi
 
-cd AudYoFlo/sources/sub-projects
-
-if [ ! -d "jvx-nr" ]; then
-	git clone $1 $2  git@git.binauricsaudio.com:jvxrt/audio/jvx-nr.git
-fi
-
-if [ ! -d "jvx-aec" ]; then
-	git clone $1 $2 git@git.binauricsaudio.com:jvxrt/audio/jvx-aec.git
-fi
-
-if [ ! -d "jvx-diffarray" ]; then
-	git clone $1 $2  git@git.binauricsaudio.com:jvxrt/audio/jvx-diffarray.git
-fi
-
-if [ ! -d "ayf-headrest" ]; then
-	git clone $1 $2  git@git.binauricsaudio.com:jvxrt/audio/ayf-headrest.git
-fi
-
-if [ ! -d "ayfpae" ]; then
-	git clone $1 $2  git@git.binauricsaudio.com:jvxrt/audio/ayfpae.git
-fi
 
