@@ -259,17 +259,17 @@ public:
 
     virtual jvxErrorType JVX_CALLINGCONVENTION unselect()override;
 
-    virtual jvxErrorType JVX_CALLINGCONVENTION set_property(jvxCallManagerProperties* callGate,
-		jvxHandle* fld, jvxSize numElements, jvxDataFormat format, jvxSize propId, jvxPropertyCategoryType category, 
-							    jvxSize offsetStart, jvxBool contentOnly)override;
-
+	virtual jvxErrorType JVX_CALLINGCONVENTION set_property(jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
+		const jvx::propertyAddress::IjvxPropertyAddress& ident,
+		const jvx::propertyDetail::CjvxTranferDetail& trans) override;
   
     // Interface IjvxConfiguration
 
     	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callConf, 
 			IjvxConfigProcessor* processor, jvxHandle* sectionToContainAllSubsectionsForMe, 
 			const char* filename = "", jvxInt32 lineno = -1)override;
-			
+						
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callConf, 
 		IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections)override;
 

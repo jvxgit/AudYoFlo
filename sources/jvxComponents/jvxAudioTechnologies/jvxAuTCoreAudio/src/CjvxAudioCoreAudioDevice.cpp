@@ -394,23 +394,31 @@ CjvxAudioCoreAudioDevice::deactivate()
 // ===============================================================================
 // ===============================================================================
 
+/*
 jvxErrorType
 CjvxAudioCoreAudioDevice::set_property(jvxCallManagerProperties* callGate,
 		jvxHandle* fld, jvxSize numElements, jvxDataFormat format, 
 		jvxSize propId, jvxPropertyCategoryType category, 
 		jvxSize offsetStart, jvxBool contentOnly)
+*/
+		
+jvxErrorType 
+CjvxAudioCoreAudioDevice::set_property(jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
+		const jvx::propertyAddress::IjvxPropertyAddress& ident,
+		const jvx::propertyDetail::CjvxTranferDetail& trans) 
 {
 	jvxSize i;
 	jvxBool report_update = false;
     Boolean locRes = false;
 	jvxErrorType res = CjvxAudioDevice::set_property(callGate, 
-							 fld, numElements, format, propId, 
-							 category, offsetStart, contentOnly);
+							 rawPtr, ident, trans);
 
     jvxErrorType resLocal = JVX_NO_ERROR;
 
 	if (res == JVX_NO_ERROR)
 	{
+		JVX_TRANSLATE_PROP_ADDRESS_IDX_CAT(ident, propId, category);
         if(
            (category == genCoreAudio_device::properties_active.ratesselection.cat)&&
            (propId == genCoreAudio_device::properties_active.ratesselection.id))

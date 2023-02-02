@@ -6,6 +6,4 @@ else()
 	message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/cminpack> already there.")
 endif()
 
-message(FATAL_ERROR "Hier")
-
 add_subdirectory(./cminpack)
