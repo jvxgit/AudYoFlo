@@ -178,7 +178,14 @@ template <class T> T** jvx_process_icon_extract_output_buffers(
 	return bufsOut;
 }
 
-template<class T> T& accept_noreturn(T&& t)
+// Function lval = accept-no-return or "convert rvalue to lvalue"
+// See this unmove operator as taken from here:
+// https://stackoverflow.com/questions/44677825/rvalue-to-lvalue-conversion
+// There is an important hint:
+// "So it is safe to use unmove() within a single full expression, but after 
+// the expression has been fully evaluated, the temporaries go away."
+//
+template<class T> T& lval(T&& t)
 { 
 	return t; 
 }
