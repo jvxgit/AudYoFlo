@@ -1373,10 +1373,10 @@ CjvxAudioCoreAudioDevice::evaluateProperties()
 	UInt32 outChans = 0;
 
     CjvxAudioDevice::properties_active.inputchannelselection.value.entries.clear();
-    CjvxAudioDevice::properties_active.inputchannelselection.value.selection = 0;
+    CjvxAudioDevice::properties_active.inputchannelselection.value.selection() = 0;
 
     CjvxAudioDevice::properties_active.outputchannelselection.value.entries.clear();
-    CjvxAudioDevice::properties_active.outputchannelselection.value.selection = 0;
+    CjvxAudioDevice::properties_active.outputchannelselection.value.selection() = 0;
 
     int idChannels = 0;
 
@@ -1412,7 +1412,7 @@ CjvxAudioCoreAudioDevice::evaluateProperties()
             {
                 CjvxAudioDevice::properties_active.inputchannelselection.value.entries.push_back(nm.c_str());
             }
-            CjvxAudioDevice::properties_active.inputchannelselection.value.selection |= ((jvxUInt64) 1 << idChannels);
+            CjvxAudioDevice::properties_active.inputchannelselection.value.selection() |= ((jvxUInt64) 1 << idChannels);
             idChannels++;
         }
 	}
@@ -1452,13 +1452,13 @@ CjvxAudioCoreAudioDevice::evaluateProperties()
                 CjvxAudioDevice::properties_active.outputchannelselection.value.entries.push_back(nm.c_str());
 
             }
-            CjvxAudioDevice::properties_active.outputchannelselection.value.selection |= ((jvxUInt64) 1 << idChannels);
+            CjvxAudioDevice::properties_active.outputchannelselection.value.selection() |= ((jvxUInt64) 1 << idChannels);
             idChannels++;
 		}
 	}
 
     genCoreAudio_device::properties_active.ratesselection.value.entries.clear();
-    genCoreAudio_device::properties_active.ratesselection.value.selection = 0;
+    genCoreAudio_device::properties_active.ratesselection.value.selection() = 0;
     
 #ifdef VERBOSE_MODE
 	std::cout << "Number samplerates: " << configurationStruct.numSamplerates << std::endl;
@@ -1473,7 +1473,7 @@ CjvxAudioCoreAudioDevice::evaluateProperties()
         
         if(configurationStruct.samplerates[i].mMinimum == configurationStruct.nominalSamplerate)
         {
-            genCoreAudio_device::properties_active.ratesselection.value.selection = ((jvxBitField)1 << i);
+	  genCoreAudio_device::properties_active.ratesselection.value.selection() = ((jvxBitField)1 << i);
         }
     }
 #ifdef VERBOSE_MODE
@@ -1484,7 +1484,7 @@ CjvxAudioCoreAudioDevice::evaluateProperties()
     jvxInt32 lastValid = -1;
     runtime.sizesBuffers.clear();
     genCoreAudio_device::properties_active.sizesselection.value.entries.clear();
-    genCoreAudio_device::properties_active.sizesselection.value.selection = 0;
+    genCoreAudio_device::properties_active.sizesselection.value.selection() = 0;
     
     for (i = 0; i < runtime.usefulBSizes.size(); i++)
     {
@@ -1500,7 +1500,7 @@ CjvxAudioCoreAudioDevice::evaluateProperties()
     
     assert(lastValid >= 0);
     this->setDeviceFramesize(lastValid);
-    genCoreAudio_device::properties_active.sizesselection.value.selection = (jvxBitField)1 << (runtime.sizesBuffers.size() -1);
+    genCoreAudio_device::properties_active.sizesselection.value.selection() = (jvxBitField)1 << (runtime.sizesBuffers.size() -1);
     
 
 #ifdef VERBOSE_MODE
@@ -1681,7 +1681,7 @@ CjvxAudioCoreAudioDevice::prepareCoreAudio()
         runtime.references.chan_map_input.clear();
         for(i = 0; i < CjvxAudioDevice::properties_active.inputchannelselection.value.entries.size(); i++)
         {
-	  if(jvx_bitTest(CjvxAudioDevice::properties_active.inputchannelselection.value.selection, i))
+	  if(jvx_bitTest(CjvxAudioDevice::properties_active.inputchannelselection.value.selection(), i))
             {
                 runtime.references.chan_map_input.push_back(cnt);
                 cnt++;
@@ -1697,7 +1697,7 @@ CjvxAudioCoreAudioDevice::prepareCoreAudio()
         runtime.references.chan_map_output.clear();
         for(i = 0; i < CjvxAudioDevice::properties_active.outputchannelselection.value.entries.size(); i++)
         {
-	  if(jvx_bitTest(CjvxAudioDevice::properties_active.outputchannelselection.value.selection, i))
+	  if(jvx_bitTest(CjvxAudioDevice::properties_active.outputchannelselection.value.selection(), i))
             {
                 runtime.references.chan_map_output.push_back(cnt);
                 cnt++;

@@ -109,7 +109,7 @@ CjvxAudioCoreAudioDevice::activate()
 		genCoreAudio_device::init__properties_active_higher();
 		genCoreAudio_device::allocate__properties_active_higher();
 		genCoreAudio_device::register__properties_active_higher(static_cast<CjvxProperties*>(this));
-		genCoreAudio_device::properties_active_higher.loadpercent.valid = false;
+		genCoreAudio_device::properties_active_higher.loadpercent.isValid = false;
 
 		res = activateCoreAudioProperties();
 
@@ -147,9 +147,15 @@ CjvxAudioCoreAudioDevice::prepare()
 	{
 		CjvxProperties::_lock_properties_local();
 
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genCoreAudio_device::properties_active.ratesselection.cat, genCoreAudio_device::properties_active.ratesselection.id);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genCoreAudio_device::properties_active.sizesselection.cat, genCoreAudio_device::properties_active.sizesselection.id);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genCoreAudio_device::properties_active.controlThreads.cat, genCoreAudio_device::properties_active.controlThreads.id);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
+							     genCoreAudio_device::properties_active.ratesselection.category,
+							     genCoreAudio_device::properties_active.ratesselection.globalIdx);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
+							     genCoreAudio_device::properties_active.sizesselection.category,
+							     genCoreAudio_device::properties_active.sizesselection.globalIdx);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
+							     genCoreAudio_device::properties_active.controlThreads.category,
+							     genCoreAudio_device::properties_active.controlThreads.globalIdx);
 
 		CjvxProperties::_unlock_properties_local();
 
@@ -174,9 +180,12 @@ CjvxAudioCoreAudioDevice::postprocess()
 	
         CjvxProperties::_lock_properties_local();
 
-		CjvxProperties::_undo_update_property_access_type(genCoreAudio_device::properties_active.ratesselection.cat, genCoreAudio_device::properties_active.ratesselection.id);
-		CjvxProperties::_undo_update_property_access_type(genCoreAudio_device::properties_active.sizesselection.cat, genCoreAudio_device::properties_active.sizesselection.id);
-		CjvxProperties::_undo_update_property_access_type(genCoreAudio_device::properties_active.controlThreads.cat, genCoreAudio_device::properties_active.controlThreads.id);
+		CjvxProperties::_undo_update_property_access_type(genCoreAudio_device::properties_active.ratesselection.category,
+								  genCoreAudio_device::properties_active.ratesselection.globalIdx);
+		CjvxProperties::_undo_update_property_access_type(genCoreAudio_device::properties_active.sizesselection.category,
+								  genCoreAudio_device::properties_active.sizesselection.globalIdx);
+		CjvxProperties::_undo_update_property_access_type(genCoreAudio_device::properties_active.controlThreads.category,
+								  genCoreAudio_device::properties_active.controlThreads.globalIdx);
 
 		CjvxProperties::_unlock_properties_local();
 	}
@@ -256,7 +265,7 @@ CjvxAudioCoreAudioDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	}
 	
 	genCoreAudio_device::properties_active_higher.loadpercent.value = 0;
-	genCoreAudio_device::properties_active_higher.loadpercent.valid = true;
+	genCoreAudio_device::properties_active_higher.loadpercent.isValid = true;
 
 	res = res = startCoreAudio();
 	if (res != JVX_NO_ERROR)
@@ -265,7 +274,7 @@ CjvxAudioCoreAudioDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	    goto leave_error;
 	}
 	genCoreAudio_device::properties_active_higher.loadpercent.value = 0;
-	genCoreAudio_device::properties_active_higher.loadpercent.valid = true;
+	genCoreAudio_device::properties_active_higher.loadpercent.isValid = true;
 
 	return res;
 leave_error:
@@ -279,7 +288,7 @@ CjvxAudioCoreAudioDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	res = stopCoreAudio();
 	genCoreAudio_device::properties_active_higher.loadpercent.value = 0;
-	genCoreAudio_device::properties_active_higher.loadpercent.valid = false;
+	genCoreAudio_device::properties_active_higher.loadpercent.isValid = false;
 
 	res = _stop_chain_master(NULL);
 	assert(res == JVX_NO_ERROR);
@@ -359,7 +368,10 @@ CjvxAudioCoreAudioDevice::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd
 jvxErrorType 
 CjvxAudioCoreAudioDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	return CjvxAudioDevice::ext_transfer_backward_ocon(tp, data, &genCoreAudio_device::properties_active.ratesselection, &genCoreAudio_device::properties_active.sizesselection JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	return CjvxAudioDevice::transfer_backward_ocon_match_setting(tp, data,
+								     &genCoreAudio_device::properties_active.ratesselection,
+								     &genCoreAudio_device::properties_active.sizesselection
+								     JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
 
@@ -420,13 +432,13 @@ CjvxAudioCoreAudioDevice::set_property(jvxCallManagerProperties& callGate,
 	{
 		JVX_TRANSLATE_PROP_ADDRESS_IDX_CAT(ident, propId, category);
         if(
-           (category == genCoreAudio_device::properties_active.ratesselection.cat)&&
-           (propId == genCoreAudio_device::properties_active.ratesselection.id))
+           (category == genCoreAudio_device::properties_active.ratesselection.category)&&
+           (propId == genCoreAudio_device::properties_active.ratesselection.globalIdx))
         {
             UInt32 newVal = -1;
             for(i = 0; i < genCoreAudio_device::properties_active.ratesselection.value.entries.size(); i++)
             {
-	      if(jvx_bitTest(genCoreAudio_device::properties_active.ratesselection.value.selection, i))
+	      if(jvx_bitTest(genCoreAudio_device::properties_active.ratesselection.value.selection(), i))
                 {
                     newVal = this->runtime.samplerates[i];
                     break;
@@ -446,7 +458,7 @@ CjvxAudioCoreAudioDevice::set_property(jvxCallManagerProperties& callGate,
             UInt32 newVal = -1;
             for(i = 0; i < genCoreAudio_device::properties_active.sizesselection.value.entries.size(); i++)
             {
-	      if(jvx_bitTest(genCoreAudio_device::properties_active.sizesselection.value.selection, i))
+	      if(jvx_bitTest(genCoreAudio_device::properties_active.sizesselection.value.selection(), i))
                 {
                     newVal = this->runtime.sizesBuffers[i];
                     break;
@@ -528,11 +540,11 @@ CjvxAudioCoreAudioDevice::updateDependentVariables(jvxSize propId, jvxPropertyCa
 
 	if (category == JVX_PROPERTY_CATEGORY_PREDEFINED)
 	{
-		if ((propId == genCoreAudio_device::properties_active.ratesselection.id) || (propId == CjvxAudioDevice::properties_active.samplerate.id) || updateAll)
+		if ((propId == genCoreAudio_device::properties_active.ratesselection.id) || (propId == CjvxAudioDevice::properties_active.samplerate.globalIdx) || updateAll)
 		{
 			for (i = 0; i < (int) genCoreAudio_device::properties_active.ratesselection.value.entries.size(); i++)
 			{
-			  if (jvx_bitTest(genCoreAudio_device::properties_active.ratesselection.value.selection, i))
+			  if (jvx_bitTest(genCoreAudio_device::properties_active.ratesselection.value.selection(), i))
 				{
 					newValue = runtime.samplerates[i];
 					break;
@@ -540,9 +552,11 @@ CjvxAudioCoreAudioDevice::updateDependentVariables(jvxSize propId, jvxPropertyCa
 			}
 			CjvxAudioDevice::properties_active.samplerate.value = newValue;
 
-			_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.samplerate.id, true,0,1,
+			_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED,
+						     CjvxAudioDevice::properties_active.samplerate.globalIdx, true,0,1,
 				JVX_COMPONENT_UNKNOWN, callPurp);
-			_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED, genCoreAudio_device::properties_active.ratesselection.id, true, 0,1,
+			_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED,
+						     genCoreAudio_device::properties_active.ratesselection.globalIdx, true, 0,1,
 				JVX_COMPONENT_UNKNOWN, callPurp);
 		}
 
@@ -551,7 +565,7 @@ CjvxAudioCoreAudioDevice::updateDependentVariables(jvxSize propId, jvxPropertyCa
 		{
 			for (i = 0; i < (int) genCoreAudio_device::properties_active.sizesselection.value.entries.size(); i++)
 			{
-			  if (jvx_bitTest(genCoreAudio_device::properties_active.sizesselection.value.selection, i))
+			  if (jvx_bitTest(genCoreAudio_device::properties_active.sizesselection.value.selection(), i))
 				{
 					newValue = runtime.sizesBuffers[i];
 					break;
@@ -559,9 +573,11 @@ CjvxAudioCoreAudioDevice::updateDependentVariables(jvxSize propId, jvxPropertyCa
 			}
 			CjvxAudioDevice::properties_active.buffersize.value = newValue;
 
-			this->_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED, genCoreAudio_device::properties_active.sizesselection.id, true, 0, 1,
+			this->_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED,
+							   genCoreAudio_device::properties_active.sizesselection.globalIdx, true, 0, 1,
 				JVX_COMPONENT_UNKNOWN, callPurp);
-			_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.buffersize.id, true, 0, 1,
+			_report_property_has_changed(JVX_PROPERTY_CATEGORY_PREDEFINED,
+						     CjvxAudioDevice::properties_active.buffersize.globalIdx, true, 0, 1,
 				JVX_COMPONENT_UNKNOWN, callPurp);
 
 		}

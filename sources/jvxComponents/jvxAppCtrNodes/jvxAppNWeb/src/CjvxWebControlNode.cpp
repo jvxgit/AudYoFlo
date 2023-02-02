@@ -355,8 +355,7 @@ CjvxWebControlNode::schedule_main_loop(jvxSize rescheduleId, jvxHandle* user_dat
 					}
 				}
 			}
-			if (
-				(wsEvent == CjvxWebControlNodeWsEventType::AYF_EVENT_DIRECT_EMIT))
+			if (wsEvent == CjvxWebControlNodeWsEventType::AYF_EVENT_DIRECT_EMIT)
 			{
 				transToken = token;
 			}

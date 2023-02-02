@@ -71,7 +71,7 @@ public:
 
 	// ====================================================================================
 
-	void right_before_start();
+	void right_before_start()override;
 
 	virtual jvxErrorType synchronizeWebServerCoEvents(jvxHandle* context_server, jvxHandle* context_conn,
 		jvxWebServerHandlerPurpose purp, jvxSize uniqueId,

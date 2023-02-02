@@ -110,17 +110,17 @@ public:
 		jvxBool operate_first_call,
 		jvxSize tobeAccessedByStage,
 		callback_process_stop_in_lock cb,
-		jvxHandle* priv_ptr);
-	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage);
+		jvxHandle* priv_ptr)override;
+	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	jvxErrorType put_configuration(jvxCallManagerConfiguration* callMan,
 			IjvxConfigProcessor* processor,
 			jvxHandle* sectionToContainAllSubsectionsForMe,
 			const char* filename,
-			jvxInt32 lineno);	
+			jvxInt32 lineno)override;	
 	jvxErrorType get_configuration(jvxCallManagerConfiguration* callMan,
 			IjvxConfigProcessor* processor,
-			jvxHandle* sectionWhereToAddAllSubsections);
+			jvxHandle* sectionWhereToAddAllSubsections)override;
 
 	// ==========================================================================================
 	// Interface HjvxMicroConnection_hooks_simple
