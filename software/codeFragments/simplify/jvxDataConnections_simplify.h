@@ -226,7 +226,7 @@
 		return _ready_for_start(reason_if_not);
 	}
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION ready_for_start(jvxSize uid, jvxApiString* reason_if_not)
+	virtual jvxErrorType JVX_CALLINGCONVENTION ready_for_start(jvxSize uid, jvxApiString* reason_if_not)override
 	{
 		return _ready_for_start(uid, reason_if_not);
 	}

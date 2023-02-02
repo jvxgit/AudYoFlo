@@ -138,7 +138,7 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 
 					jvxErrorType resL = datIn->con_link.connect_from->transfer_backward_ocon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES,
 						reinterpret_cast<jvxHandle*>(&cptTrans) JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
-					if ((resL == JVX_NO_ERROR))
+					if (resL == JVX_NO_ERROR)
 					{
 						if ((cptElmSrc.resCall == JVX_NO_ERROR) && (callManSrc.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
 						{

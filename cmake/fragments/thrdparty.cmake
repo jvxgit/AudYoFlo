@@ -61,7 +61,7 @@
   endif()
   
   if(JVX_USE_PART_PAUDIO)
-  	if(${JVX_OS} MATCHES "windows")
+  	if(${JVX_OS} MATCHES "windows" OR ${JVX_OS} MATCHES "macosx")
 	
 		# Portaudio is available in the linux system by apt-get
 		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}

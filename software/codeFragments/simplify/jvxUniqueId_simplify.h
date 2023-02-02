@@ -8,7 +8,7 @@ virtual jvxErrorType JVX_CALLINGCONVENTION release_unique_id(jvxSize idOnReturn)
 	return _release_unique_id(idOnReturn);
 }
 
-virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_unique_id(jvxSize idOnReturn, jvxApiString* onRet) 
+virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_unique_id(jvxSize idOnReturn, jvxApiString* onRet) override
 {
 	return _descriptor_unique_id(idOnReturn, onRet);
 }

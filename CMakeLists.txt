@@ -488,12 +488,11 @@ endif()
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-lib-host-app
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers
-	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-hrtf-dispenser
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-node-connections
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-shared-connection-host
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-component-lib
     )
-
+	
   if(JVX_USE_PART_WEBSERVER)
     set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
       ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLWebConsoleTools)
@@ -528,6 +527,12 @@ endif()
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-qt-measure-ir)
 
   endif()
+
+	if (JVX_USE_LIBMYSOFA)
+		set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-hrtf-dispenser)
+	endif()
+
 
 	include(${JVX_CMAKE_DIR}/fragments/thrdparty.cmake)
 

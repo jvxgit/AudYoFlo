@@ -678,7 +678,7 @@ CjvxSaWrapperElementSlider::setPropertiesUiElement(jvxCBitField whattoset, jvxPr
 			valB = uiRefTp->value();
 			ptrFld = &valB;
 			res = propRef->set_property(callGate,
-				jPRIO(valB),
+						    jPRIO<jvxCBool>(valB),
 				ident, trans, jPSCH(&procId));
 			break;
 		case JVX_DATAFORMAT_SELECTION_LIST:

@@ -24,7 +24,7 @@ public:
 			const oneDrivehostCommand& dh_command, const std::vector<std::string>& args,
 			const std::string& addArg, jvxSize off, CjvxJsonElementList& jsec, jvxBool* systemUpdate) override;
 
-	jvxErrorType act_edit_config(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, jvxSize off, CjvxJsonElementList& jsec);
+	jvxErrorType act_edit_config(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, jvxSize off, CjvxJsonElementList& jsec) override;
 
 	jvxErrorType act_edit_sequencer(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, jvxSize off, CjvxJsonElementList& jelmret);
 

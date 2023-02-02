@@ -70,7 +70,7 @@ public:
           this->numY = numY;
      }
 
-     virtual double value( double x, double y ) const
+     virtual double value( double x, double y ) const override
      {
           if(!data || !numX || !numY)
                return -40;

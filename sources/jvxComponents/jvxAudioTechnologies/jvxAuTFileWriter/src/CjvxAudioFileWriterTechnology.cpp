@@ -4,6 +4,7 @@ struct oneEntryFileSubtypeWav
 {
 	const char* descr = nullptr;
 	jvxEndpointSubType_wav tp = JVX_WAV_32;
+  oneEntryFileSubtypeWav(const char* descrArg, jvxEndpointSubType_wav tpArg): descr(descrArg), tp(tpArg) {};
 };
 #define JVX_WAV_DIFFERENT_TYPES 3
 oneEntryFileSubtypeWav jvxWavDifferentSubTypes[JVX_WAV_DIFFERENT_TYPES] =
