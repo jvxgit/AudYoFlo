@@ -2,7 +2,7 @@
 
 CjvxPropertiesTypeConvert::CjvxPropertiesTypeConvert()
 {
-	memset(&v, sizeof(v), 0);
+  memset(&v, 0, sizeof(v));
 };
 
 void 

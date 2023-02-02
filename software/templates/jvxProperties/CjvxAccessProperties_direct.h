@@ -162,7 +162,7 @@ public:
 		const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
 		const jvx::propertyAddress::IjvxPropertyAddress& ident,
 		const jvx::propertyDetail::CjvxTranferDetail& trans,
-		const jvx::propertySpecifics::IjvxConnectionType& spec = jvx::propertySpecifics::CjvxConnectionTypeDefault())
+		const jvx::propertySpecifics::IjvxConnectionType& spec = jvx::propertySpecifics::CjvxConnectionTypeDefault()) override
 	{
 		jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 		assert(theTripleRef);
@@ -449,7 +449,7 @@ public:
 	};
 
 	virtual jvxErrorType translate_group_id(
-		jvxCallManagerProperties& callGate, jvxSize gId, jvxApiString& astr)
+		jvxCallManagerProperties& callGate, jvxSize gId, jvxApiString& astr)override
 	{
 		jvxErrorType res = JVX_ERROR_INVALID_SETTING;
 

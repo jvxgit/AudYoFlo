@@ -15,7 +15,9 @@ public:
 
 	virtual jvxErrorType get_tag_text(jvxAudioFileTagType tp, std::string& theTag) = 0;
 	
-	virtual jvxErrorType get_file_properties(jvxSize* channels, jvxSize* length_samples, jvxInt32* srate, jvxFileFormat* fformat, jvxBool* littleEndian, jvxSize* numberBitsSample, jvxSize* endpointSubType) = 0;
+	virtual jvxErrorType get_file_properties(jvxSize* channels, jvxSize* length_samples,
+						 jvxInt32* srate, jvxFileFormat* fformat, jvxBool* littleEndian,
+						 jvxSize* numberBitsSample, jvxSize* endpointSubType) = 0;
 
 	virtual jvxErrorType unselect() = 0;
 	

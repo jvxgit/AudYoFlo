@@ -1,0 +1,15 @@
+EXPORTS 
+
+		ayf_register_module_host
+		ayf_unregister_module_host
+
+		ayf_load_config_content
+		ayf_release_config_content
+
+		ayf_attach_component_module
+		ayf_detach_component_module
+
+		ayf_forward_text_command
+		
+		
+		

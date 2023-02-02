@@ -16,49 +16,47 @@ public:
 	jvxWavReader();
 	virtual ~jvxWavReader();
 	
-	jvxErrorType select(const std::string& fName) override;
+	virtual jvxErrorType select(const std::string& fName) override;
 
-	jvxErrorType get_tag_text(jvxAudioFileTagType tp, std::string& theTag);
+	virtual jvxErrorType get_tag_text(jvxAudioFileTagType tp, std::string& theTag)override;
 	
-	jvxErrorType add_tag_text(jvxAudioFileTagType tp, std::string theTag) ;
+	virtual jvxErrorType get_file_properties(jvxSize* channels, jvxSize* length_samples,
+					 jvxInt32* srate, jvxFileFormat* fformat, jvxBool* littleEndian,
+					 jvxSize* numberBitsSample, jvxSize* subtype) override;
 
-	jvxErrorType get_file_properties(jvxSize* channels, jvxSize* length_samples, jvxInt32* srate, jvxFileFormat* fformat, jvxBool* littleEndian, jvxSize* numberBitsSample, jvxSize* subtype);
-
-	jvxErrorType set_file_properties(jvxSize* channels, jvxSize* length_samples, jvxInt32* srate, jvxFileFormat* fformat, jvxBool* littleEndian, jvxSize* numberBitsSample, jvxSize* subtype);
-
-	jvxErrorType unselect() override;
+	virtual jvxErrorType unselect() override;
 	
-	jvxErrorType prepare(jvxSize preferredSizeRead) override;
+	virtual jvxErrorType prepare(jvxSize preferredSizeRead) override;
 	
-	jvxErrorType start() override;
+	virtual jvxErrorType start() override;
 
-	jvxErrorType stop() override;
+	virtual jvxErrorType stop() override;
 	
-	jvxErrorType postprocess()override;
+	virtual jvxErrorType postprocess()override;
 
-	jvxErrorType status(jvxState* stat)override;
+	virtual jvxErrorType status(jvxState* stat)override;
 
 	// =====================================================================
 
-	jvxErrorType activate(int& errCode)override;
+	virtual jvxErrorType activate(int& errCode)override;
 
-	jvxErrorType deactivate()override;
+	virtual jvxErrorType deactivate()override;
 
-	jvxErrorType set_loop(jvxBool)override;
+	virtual jvxErrorType set_loop(jvxBool)override;
 
-	jvxErrorType get_loop(jvxBool* loop)override;
+	virtual jvxErrorType get_loop(jvxBool* loop)override;
 
-	jvxErrorType read_one_buf(jvxHandle** fld_out, jvxSize num_chans_read, jvxSize buffersize, jvxDataFormat format)override;
+	virtual jvxErrorType read_one_buf(jvxHandle** fld_out, jvxSize num_chans_read, jvxSize buffersize, jvxDataFormat format)override;
 
-	jvxErrorType read_one_buf_raw(jvxByte* fld_out, jvxSize num_bytes_to_read, jvxSize* num_bytes_at_read);
+	virtual jvxErrorType read_one_buf_raw(jvxByte* fld_out, jvxSize num_bytes_to_read, jvxSize* num_bytes_at_read) override;
 
-	jvxErrorType rewind()override;
+	virtual jvxErrorType rewind()override;
 
-	jvxErrorType current_progress(jvxSize* progress)override;
+	virtual jvxErrorType current_progress(jvxSize* progress)override;
 
-	jvxErrorType wind_bwd(jvxSize deltaT)override;
+	virtual jvxErrorType wind_bwd(jvxSize deltaT)override;
 
-	jvxErrorType wind_fwd(jvxSize deltaT)override;
+	virtual jvxErrorType wind_fwd(jvxSize deltaT)override;
 
 private:
 	void reset();

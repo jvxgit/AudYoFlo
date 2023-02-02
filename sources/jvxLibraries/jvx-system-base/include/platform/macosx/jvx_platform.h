@@ -35,6 +35,7 @@
 #include <dlfcn.h>
 #include <pthread.h>
 #include <vector>
+#include <list>
 #include <stdlib.h> // for getenv() under linux
 #include <limits.h>
 #include <float.h>
