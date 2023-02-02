@@ -253,6 +253,13 @@ namespace jvx
 				s_push();
 			};
 
+			/*
+			~manager()
+			{
+				std::cout << "Destructor" << std::endl;
+			}
+			*/
+
 			void reset()
 			{
 				jvx::callManager::reset();

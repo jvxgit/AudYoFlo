@@ -178,4 +178,15 @@ template <class T> T** jvx_process_icon_extract_output_buffers(
 	return bufsOut;
 }
 
+template<class T> T& accept_noreturn(T&& t)
+{ 
+	return t; 
+}
+/*
+template<class T> T accept_noreturn()
+{
+	T t;
+	return t;
+}
+*/
 #endif
