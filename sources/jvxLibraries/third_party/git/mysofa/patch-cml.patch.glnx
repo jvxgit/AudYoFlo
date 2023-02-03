@@ -1,0 +1,59 @@
+--- libmysofa.orig/CMakeLists.txt	2023-02-03 11:03:54.961007070 +0100
++++ libmysofa/CMakeLists.txt	2023-02-01 14:20:31.902431210 +0100
+@@ -5,9 +5,9 @@
+ include(GenerateExportHeader)
+ include(GNUInstallDirs)
+ 
+-option(BUILD_TESTS "Build test programs" ON)
+-option(BUILD_SHARED_LIBS "Build shared library" ON)
+-option(BUILD_STATIC_LIBS "Build static library" ON)
++option(LIBMYSOFA_BUILD_TESTS "Build test programs" ON)
++option(LIBMYSOFA_BUILD_SHARED_LIBS "Build shared library" ON)
++option(LIBMYSOFA_BUILD_STATIC_LIBS "Build static library" ON)
+ option(CODE_COVERAGE "Enable coverage reporting" OFF)
+ option(ADDRESS_SANITIZE "Enable address sanitizer" OFF)
+ 
+@@ -19,8 +19,8 @@
+ set(CPACK_GENERATOR "DEB")
+ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "IOhannes m zmölnig")
+ set(CPACK_PACKAGE_VERSION_MAJOR "1")
+-set(CPACK_PACKAGE_VERSION_MINOR "3")
+-set(CPACK_PACKAGE_VERSION_PATCH "0")
++set(CPACK_PACKAGE_VERSION_MINOR "2")
++set(CPACK_PACKAGE_VERSION_PATCH "2")
+ set(CPACK_DEBIAN_PACKAGE_DEPENDS "zlib1g")
+ 
+ set(PKG_CONFIG_PRIVATELIBS "")
+@@ -28,10 +28,10 @@
+ set(PROJECT_VERSION
+     "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
+ 
+-check_c_compiler_flag(-Wall C_HAS_WALL)
+-if(C_HAS_WALL)
+-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+-endif(C_HAS_WALL)
++#check_c_compiler_flag(-Wall C_HAS_WALL)
++#if(C_HAS_WALL)
++#  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
++#endif(C_HAS_WALL)
+ 
+ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG -DVDEBUG")
+ 
+@@ -43,7 +43,7 @@
+ install(FILES share/MIT_KEMAR_normal_pinna.sofa
+         DESTINATION ${CMAKE_INSTALL_DATADIR}/libmysofa)
+ 
+-if(BUILD_TESTS)
++if(LIBMYSOFA_BUILD_TESTS)
+ 
+   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+   include(FindCUnit)
+@@ -53,8 +53,6 @@
+ 
+   enable_testing()
+ 
+-  add_test(Mesh2HRTF src/mysofa2json -c
+-           ${PROJECT_SOURCE_DIR}/tests/Mesh2HRTF.sofa)
+   add_test(D1_48K_24bit_0.3s_FIR_SOFA src/mysofa2json
+            ${PROJECT_SOURCE_DIR}/tests/D1_48K_24bit_0.3s_FIR_SOFA.sofa)
+   add_test(H20_44K_16bit_256tap_FIR_SOFA ${PROJECT_SOURCE_DIR}/tests/compareIgnoreNew.sh

@@ -67,6 +67,8 @@
 		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/portaudio
 			)
+	else()
+		find_package(portaudio)
 	endif()
   endif(JVX_USE_PART_PAUDIO)
 
