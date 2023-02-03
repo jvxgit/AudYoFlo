@@ -96,5 +96,12 @@ if (JVX_USE_LIBMYSOFA)
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/mysofa)
 endif()
 
+if(JVX_USE_BOOST)
+	if(${JVX_OS} MATCHES "windows") # OR ${JVX_OS} MATCHES "macosx")
+		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/boost)
+	endif()
+endif()
+
 	# =============================================================================
 	# =============================================================================

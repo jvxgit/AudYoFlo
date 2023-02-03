@@ -513,7 +513,9 @@ endmacro(find_all_opengl_x11)
 
 macro(find_boost)
   message("--> Looking for boost")
-  set(BOOST_LIBRARY_PATH $ENV{BOOST_LIBRARY_PATH})
+	if(NOT BOOST_LIBRARY_PATH)
+		set(BOOST_LIBRARY_PATH $ENV{BOOST_LIBRARY_PATH})
+	endif()
   set(BOOST_INCLUDEDIR_OSGUESS ${BOOST_LIBRARY_PATH}/boost)
   find_path (BOOST_INCLUDEDIR config.hpp PATHS "${BOOST_INCLUDEDIR_OSGUESS}")
 
