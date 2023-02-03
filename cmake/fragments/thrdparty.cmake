@@ -99,11 +99,23 @@ if (JVX_USE_LIBMYSOFA)
 endif()
 
 if(JVX_USE_BOOST)
-	if(${JVX_OS} MATCHES "windows") # OR ${JVX_OS} MATCHES "macosx")
-		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
-				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/boost)
+	if(JVX_DOWNLOAD_BOOST)
+		# This part here only when downloading BOOST - find_boost will run in main CMakeLists file
+		if(${JVX_OS} MATCHES "windows") # OR ${JVX_OS} MATCHES "macosx")
+			set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
+					${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/boost)
+		endif()
 	endif()
 endif()
 
+if(JVX_USE_EIGEN)
+	if(JVX_DOWNLOAD_EIGEN)
+		# This part here only when downloading BOOST - find_boost will run in main CMakeLists file
+		if(${JVX_OS} MATCHES "windows") # OR ${JVX_OS} MATCHES "macosx")
+			set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eigen)
+		endif()
+	endif()
+endif()
 	# =============================================================================
 	# =============================================================================

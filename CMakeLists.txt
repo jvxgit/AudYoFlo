@@ -384,12 +384,8 @@ if(JVX_USE_OPENCV)
 	find_opencv()
 endif()
 
-if(JVX_USE_EIGEN)
-
-	# Library from here: http://eigen.tuxfamily.org/index.php?title=Main_Page
-	find_eigen()
-endif()
-  
+	# BOOST and EIGEN to be handled lateron
+	
   # include platform specific stuff
   include(${JVX_SUBPRODUCT_ROOT}/cmake/${JVX_OS}.audio.cmake)
 
@@ -962,11 +958,17 @@ endif()
 	# ===========================================================================
 	# ===========================================================================
 	# ===========================================================================
-  jvx_addSubdirs("Configuring all 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty")
+	jvx_addSubdirs("Configuring all 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty")
   
   # Check and configure some of the linked libs
   if(JVX_USE_BOOST)
 	find_boost()	
+  endif()
+  
+  if(JVX_USE_EIGEN)
+
+	# Library from here: http://eigen.tuxfamily.org/index.php?title=Main_Page
+	find_eigen()
   endif()
 
   jvx_addSubdirs("Configuring all static libraries" "${JVX_BASE_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
