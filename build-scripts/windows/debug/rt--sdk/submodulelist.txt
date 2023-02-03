@@ -1,0 +1,8 @@
+# submodulelist.txt: Specify list of submodules to include
+set(mysubmodules
+	""
+	)
+	
+set(ignsubmodules
+	""
+	)

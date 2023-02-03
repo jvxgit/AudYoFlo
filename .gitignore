@@ -7,8 +7,10 @@ sources/jvxLibraries/third_party/git/portaudio/portaudio
 sources/jvxLibraries/third_party/git/portaudio/asiosdk_2.3.3_2019-06-14.zip
 sources/jvxLibraries/third_party/git/qwt/qwt
 sources/jvxLibraries/third_party/git/speex-dsp/speexdsp
+sources/jvxLibraries/third_party/git/eigen/eigen
 sources/jvxLibraries/third_party/web/qcustomplot/qcustomplot.tar.gz
 sources/jvxLibraries/third_party/web/qcustomplot/qcustomplot
+sources/jvxLibraries/third_party/web/boost/boost
 
 sources/sub-projects/vst3sdk
 
