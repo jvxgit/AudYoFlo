@@ -290,6 +290,7 @@ std::string JVX_GET_USER_DESKTOP_PATH();
 std::string JVX_GET_USER_APPDATA_PATH();
 std::string JVX_DISPLAY_LAST_ERROR_LOAD(std::string fName);
 
+#define JVX_THREADID_SIZE(threadId) (jvxSize)threadId
 /*
 #define JVX_GET_FUNCTION_RETURN_ADDRESS __builtin_extract_return_addr(__builtin_return_address(0))
 JVX_GET_CURRENT_MODULE_PATH 

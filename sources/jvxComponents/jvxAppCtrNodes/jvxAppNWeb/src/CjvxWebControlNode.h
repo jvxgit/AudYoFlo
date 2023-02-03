@@ -42,7 +42,7 @@ class CjvxWebControlNode: public CjvxApplicationControllerNode,
 
 	jvxBool acceptNewEvents = false;
 	JVX_RW_MUTEX_HANDLE safeAccessWebConnection;
-	std::map<JVX_THREAD_ID, oneThreadWorker*> workerHdls;
+	std::map<jvxSize, oneThreadWorker*> workerHdls;
 	std::map<jvxHandle*, CjvxWebControlNodeWsHandle*> wsConnections;
 
 public:

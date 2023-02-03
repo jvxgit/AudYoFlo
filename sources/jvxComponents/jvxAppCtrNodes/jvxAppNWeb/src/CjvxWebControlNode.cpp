@@ -207,19 +207,21 @@ CjvxWebControlNode::synchronizeWebServerCoEvents(
 	{
 		// After execution of reaction in other thread..
 		// Process the response
-		JVX_THREAD_ID threadId = JVX_GET_CURRENT_THREAD_ID();
+		JVX_THREAD_ID threadIdd = JVX_GET_CURRENT_THREAD_ID();
 
+		// To support all platforms, convert threadId to jvxSize
+		jvxSize threadIdSz = JVX_THREADID_SIZE(threadIdd); 
 		oneThreadWorker* threadObj = nullptr;
 		if (acceptNewEvents)
 		{
 			JVX_LOCK_RW_MUTEX_EXCLUSIVE(safeAccessWebConnection);
-			auto hdl = workerHdls.find(threadId);
+			auto hdl = workerHdls.find(threadIdSz);
 			if (hdl == workerHdls.end())
 			{
 				JVX_DSP_SAFE_ALLOCATE_OBJECT(threadObj, oneThreadWorker);
 				JVX_INITIALIZE_NOTIFICATION(threadObj->waitHdl);
 
-				workerHdls[threadId] = threadObj;
+				workerHdls[threadIdSz] = threadObj;
 				threadObj->stat = JVX_STATE_INIT;
 			}
 			else
@@ -242,7 +244,8 @@ CjvxWebControlNode::synchronizeWebServerCoEvents(
 
 		JVX_WAIT_FOR_NOTIFICATION_I(threadObj->waitHdl);
 
-		CjvxReportCommandRequest_rm mess(_common_set.theComponentType, threadId);
+		// The thread id should come back in <schedule_main_loop>
+		CjvxReportCommandRequest_rm mess(_common_set.theComponentType, threadIdSz);
 		_common_set.theReport->request_command(mess);
 		JVX_WAIT_RESULT resW = JVX_WAIT_FOR_NOTIFICATION_II_S(threadObj->waitHdl, 500);
 		if (resW == JVX_WAIT_SUCCESS)

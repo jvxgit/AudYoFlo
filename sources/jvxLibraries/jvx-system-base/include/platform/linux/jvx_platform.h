@@ -416,6 +416,8 @@ JVX_DISPLAY_LAST_ERROR_LOAD(std::string fName)
 	return errMess;
 }
 
+#define JVX_THREADID_SIZE(threadId) (jvxSize)threadId
+
 #define JVX_DLL_EXTENSION ".so"
 
 #define JVX_MEX_EXTENSION ".mexmaci64"
