@@ -405,6 +405,8 @@ public:
 			//std::cout << "Offset x: " << g_resources.offset_x << std::endl;
 			glUniform1f(g_resources.uniforms.offset_x, g_resources.offset_x);
 			break;
+		default:
+		  break;
 		}
 
 		glActiveTexture(GL_TEXTURE0);
@@ -736,6 +738,8 @@ private:
 				g_resources.uniforms.offset_x
 					= glGetUniformLocation(g_resources.program, "offset_x");
 				break;
+			default:
+			  break;
 			}
 			g_resources.uniforms.texture
 				= glGetUniformLocation(g_resources.program, "texture");

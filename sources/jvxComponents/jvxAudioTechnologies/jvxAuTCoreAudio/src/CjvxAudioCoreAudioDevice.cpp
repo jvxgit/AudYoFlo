@@ -452,8 +452,8 @@ CjvxAudioCoreAudioDevice::set_property(jvxCallManagerProperties& callGate,
 
 
         if(
-           (category == genCoreAudio_device::properties_active.sizesselection.cat)&&
-           (propId == genCoreAudio_device::properties_active.sizesselection.id))
+           (category == genCoreAudio_device::properties_active.sizesselection.category)&&
+           (propId == genCoreAudio_device::properties_active.sizesselection.globalIdx))
         {
             UInt32 newVal = -1;
             for(i = 0; i < genCoreAudio_device::properties_active.sizesselection.value.entries.size(); i++)
@@ -469,7 +469,7 @@ CjvxAudioCoreAudioDevice::set_property(jvxCallManagerProperties& callGate,
             assert(resLocal == JVX_NO_ERROR);
         }
 
-		updateDependentVariables(propId, category, false, callGate->call_purpose);
+		updateDependentVariables(propId, category, false, callGate.call_purpose);
 	}
 	return (res);
 }
@@ -488,7 +488,7 @@ CjvxAudioCoreAudioDevice::put_configuration(jvxCallManagerConfiguration* callCon
 	if (this->_common_set_min.theState == JVX_STATE_ACTIVE)
 	{
 		// Read all parameters from this class
-		genCoreAudio_device::put_configuration__properties_active(callConf, processor, sectionToContainAllSubsectionsForMe, warnings);
+		genCoreAudio_device::put_configuration__properties_active(callConf, processor, sectionToContainAllSubsectionsForMe, &warnings);
 		if (!warnings.empty())
 		{
 			jvxSize i;
@@ -540,7 +540,8 @@ CjvxAudioCoreAudioDevice::updateDependentVariables(jvxSize propId, jvxPropertyCa
 
 	if (category == JVX_PROPERTY_CATEGORY_PREDEFINED)
 	{
-		if ((propId == genCoreAudio_device::properties_active.ratesselection.id) || (propId == CjvxAudioDevice::properties_active.samplerate.globalIdx) || updateAll)
+		if ((propId == genCoreAudio_device::properties_active.ratesselection.globalIdx) ||
+		    (propId == CjvxAudioDevice::properties_active.samplerate.globalIdx) || updateAll)
 		{
 			for (i = 0; i < (int) genCoreAudio_device::properties_active.ratesselection.value.entries.size(); i++)
 			{
@@ -561,7 +562,8 @@ CjvxAudioCoreAudioDevice::updateDependentVariables(jvxSize propId, jvxPropertyCa
 		}
 
 		// =================================================================================================
-		if ((propId == genCoreAudio_device::properties_active.sizesselection.id) || (propId == CjvxAudioDevice::properties_active.buffersize.id) || updateAll)
+		if ((propId == genCoreAudio_device::properties_active.sizesselection.globalIdx) ||
+		    (propId == CjvxAudioDevice::properties_active.buffersize.globalIdx) || updateAll)
 		{
 			for (i = 0; i < (int) genCoreAudio_device::properties_active.sizesselection.value.entries.size(); i++)
 			{

@@ -68,7 +68,7 @@ public:
 	jvxErrorType disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
 	// ===================================================================================
-	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
+	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
 	// ===================================================================================
 
@@ -80,13 +80,13 @@ public:
 			jvxSize* idx_stage,
 			jvxSize tobeAccessedByStage,
 			callback_process_start_in_lock clbk,
-			jvxHandle* priv_ptr);
+			jvxHandle* priv_ptr) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_stop_icon(
 			jvxSize idx_stage,
 			jvxBool operate_first_call,
 			jvxSize tobeAccessedByStage,
 			callback_process_stop_in_lock cb,
-			jvxHandle* priv_ptr);
+			jvxHandle* priv_ptr)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;

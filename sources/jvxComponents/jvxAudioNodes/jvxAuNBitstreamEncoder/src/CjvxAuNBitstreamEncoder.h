@@ -65,7 +65,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
 
 	// ===================================================================================
-	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
+	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
 	// ===================================================================================
 
@@ -77,19 +77,19 @@ public:
 			jvxSize* idx_stage,
 			jvxSize tobeAccessedByStage,
 			callback_process_start_in_lock clbk,
-			jvxHandle* priv_ptr);
+			jvxHandle* priv_ptr)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_stop_icon(
 			jvxSize idx_stage,
 			jvxBool operate_first_call,
 			jvxSize tobeAccessedByStage,
 			callback_process_stop_in_lock cb,
-			jvxHandle* priv_ptr);
+			jvxHandle* priv_ptr)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
-	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_processing_monitor);
 

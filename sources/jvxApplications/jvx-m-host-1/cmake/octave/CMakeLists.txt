@@ -10,16 +10,16 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../common
   ${OCTAVE_INCLUDE_PATH}
-  ${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHJvx/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHJvx/
   ${JVX_BASE_ROOT}/software/typedefs/tools/
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src
   ${JVX_BASE_ROOT}/software/codeFragments/matlab_c
-  ${JVX_BINARY_DIR}/base/sources/jvxTools/jvxTExternalCall/cmake/octave/
-  ${JVX_BINARY_DIR}/base/sources/jvxComponents/jvxAudioTechnologies/jvxAuTOfflineAudio/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTExternalCall/cmake/octave/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTOfflineAudio/
   ${JVX_SUBPRODUCT_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_DSP_BASE_INCLUDE_PATH}
-  ${JVX_BINARY_DIR}/base/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAsio/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAsio/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTCoreAudio/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPortAudio/

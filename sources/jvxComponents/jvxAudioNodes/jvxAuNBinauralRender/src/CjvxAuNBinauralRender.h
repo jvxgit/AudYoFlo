@@ -76,8 +76,8 @@ public:
 
 	// =========================================================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION activate();
-	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate();
+	virtual jvxErrorType JVX_CALLINGCONVENTION activate() override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate() override;
 
 	// =========================================================================================================
 
