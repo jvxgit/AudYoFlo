@@ -1049,7 +1049,7 @@ endif()
 
 	if(JVX_COLLECT_MAC_BUNDLES)
 		message("All handled bundles: ${JVX_COLLECT_MAC_BUNDLES}")
-		configure_file(${JVX_BASE_ROOT}/../cmake-sdk/standalone-cfg-macosx.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg-macosx.cmake)
+		configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg-macosx.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg-macosx.cmake)
     		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg-macosx.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
 	endif()
 
