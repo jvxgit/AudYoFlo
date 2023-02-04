@@ -79,27 +79,69 @@ set(JVX_EXECUTABLE_EXTENSION "")
 # Global disable for shared libs (in case shared libs are not supported)
 set(JVX_DISABLE_ALL_SHARED FALSE)
 
-# Flags for shared libraries
-set(JVX_CMAKE_C_FLAGS_SHARED "--std=gnu99 -fPIC -pthread -Wno-switch -Wno-deprecated-register -Wno-comment")
-set(JVX_CMAKE_CXX_FLAGS_SHARED "--std=c++0x -fPIC -pthread -Wno-switch -Wno-deprecated-register -Wno-comment")
+# Do not print out warnings related to unmatched cases in switch: -Wno-switch
+set(JVX_COMPILE_FLAGS_GENERAL "-Wno-switch")
+
+set(JVX_CMAKE_C_FLAGS_SHARED "${JVX_COMPILE_FLAGS_GENERAL}")
+set(JVX_CMAKE_CXX_FLAGS_SHARED "${JVX_COMPILE_FLAGS_GENERAL}")
 set(JVX_CMAKE_LINKER_FLAGS_SHARED "-Wl,-undefined,error")
 
 # Flags for shared objects with export file list
 set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_COMPONENTS "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,-exported_symbols_list,${JVX_BASE_ROOT}/software/exports/components/macosx/exports.def")
 set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_LOCAL "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,-exported_symbols_list,${JVX_BASE_ROOT}/software/exports/components/macosx/exports.def")
 
-# Flags for static libraries
-set(JVX_CMAKE_C_FLAGS_STATIC "--std=gnu99 -Wno-switch -Wno-deprecated-register -Wno-comment")
-set(JVX_CMAKE_CXX_FLAGS_STATIC "--std=c++0x -Wno-switch -Wno-deprecated-register -Wno-comment")
-set(JVX_CMAKE_C_FLAGS_STATIC_PIC "${JVX_CMAKE_C_FLAGS_STATIC} -fPIC")
-set(JVX_CMAKE_CXX_FLAGS_STATIC_PIC "${JVX_CMAKE_CXX_FLAGS_STATIC} -fPIC")
+set(JVX_CMAKE_C_FLAGS_STATIC "${JVX_COMPILE_FLAGS_GENERAL}")
+set(JVX_CMAKE_CXX_FLAGS_STATIC "${JVX_COMPILE_FLAGS_GENERAL}")
+set(JVX_CMAKE_C_FLAGS_STATIC_PIC "${JVX_CMAKE_C_FLAGS_STATIC}")
+set(JVX_CMAKE_CXX_FLAGS_STATIC_PIC "${JVX_CMAKE_CXX_FLAGS_STATIC}")
 set(JVX_CMAKE_LINKER_FLAGS_STATIC "")
 set(JVX_CMAKE_LINKER_FLAGS_STATIC_PIC "")
 
 # Flags for executables
-set(JVX_CMAKE_C_FLAGS_EXEC "--std=gnu99 -fPIC -Wno-switch -Wno-deprecated-register -Wno-comment")
-set(JVX_CMAKE_CXX_FLAGS_EXEC "--std=c++0x -Wno-switch -Wno-deprecated-register -Wno-comment")
+set(JVX_CMAKE_C_FLAGS_EXEC "-fPIC -pthread ${JVX_COMPILE_FLAGS_GENERAL}")
+set(JVX_CMAKE_CXX_FLAGS_EXEC "-pthread ${JVX_COMPILE_FLAGS_GENERAL}")
 set(JVX_CMAKE_LINKER_FLAGS_EXEC "")
+
+if(JVX_FORCE_CPP_14)
+  message("--> Forcing build to involve C++14")
+	set(CMAKE_CXX_STANDARD 14)
+else()
+  message("--> Default build involving C++17")
+	set(CMAKE_CXX_STANDARD 17)
+endif()
+#set(CMAKE_CXX_STANDARD 14)
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+
+
+
+
+
+
+
+
+
+
+# Flags for shared libraries
+##set(JVX_CMAKE_C_FLAGS_SHARED "--std=gnu99 -fPIC -pthread -Wno-switch -Wno-deprecated-register -Wno-comment")
+##set(JVX_CMAKE_CXX_FLAGS_SHARED "--std=c++17 -fPIC -pthread -Wno-switch -Wno-deprecated-register -Wno-comment")
+
+
+# Flags for static libraries
+##set(JVX_CMAKE_C_FLAGS_STATIC "--std=gnu99 -Wno-switch -Wno-deprecated-register -Wno-comment")
+##set(JVX_CMAKE_CXX_FLAGS_STATIC "--std=c++17 -Wno-switch -Wno-deprecated-register -Wno-comment")
+##set(JVX_CMAKE_C_FLAGS_STATIC_PIC "${JVX_CMAKE_C_FLAGS_STATIC} -fPIC")
+##set(JVX_CMAKE_CXX_FLAGS_STATIC_PIC "${JVX_CMAKE_CXX_FLAGS_STATIC} -fPIC")
+##set(JVX_CMAKE_LINKER_FLAGS_STATIC "")
+##set(JVX_CMAKE_LINKER_FLAGS_STATIC_PIC "")
+
+# Flags for executables
+##set(JVX_CMAKE_C_FLAGS_EXEC "--std=gnu99 -fPIC -Wno-switch -Wno-deprecated-register -Wno-comment")
+##set(JVX_CMAKE_CXX_FLAGS_EXEC "--std=c++17 -Wno-switch -Wno-deprecated-register -Wno-comment")
+##set(JVX_CMAKE_LINKER_FLAGS_EXEC "")
 
 set(JVX_SYSTEM_LIBRARIES dl pthread)
 

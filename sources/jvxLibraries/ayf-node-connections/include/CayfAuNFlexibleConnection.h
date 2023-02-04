@@ -155,7 +155,7 @@ namespace AyfConnection
 			return CayfAuNConnection<S>::fwd_process_buffers_icon(mt_mask, idx_stage);
 		}		
 
-		virtual jvxErrorType startup_and_test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+		virtual jvxErrorType startup_and_test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override
 		{
 			jvxErrorType res = JVX_NO_ERROR;
 			// Let us directly forward the call to the connection
