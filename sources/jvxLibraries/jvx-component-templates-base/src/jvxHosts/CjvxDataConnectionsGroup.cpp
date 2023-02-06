@@ -1024,7 +1024,7 @@ CjvxDataConnectionsGroup::stop_thread_pipeline(CjvxDataChainInterceptorGroup* en
 			elm->second.num_buffer = 0;
 		}
 
-		/*
+		/ *
 		
 		/ * This is only a "get", we need not run it here * /
 
