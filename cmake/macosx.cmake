@@ -398,6 +398,9 @@ endmacro(find_all_opengl_x11)
 #   find_package(${ARGN})
 # endmacro (find_host_package)
 
+# Specify qt plugin subfolders
+set(JVX_QT_PLUGINS_DIR_COPY "platforms;styles;imageformats")
+
 # Collect all components for a possible app bundle Mac OS
 set(JVX_COLLECT_COMPONENTS_MAC_BUNDLE "" CACHE INTERNAL "all components")
 set(JVX_COLLECT_MISC_LIBS_MAC_BUNDLE  "" CACHE INTERNAL "all misc libs")

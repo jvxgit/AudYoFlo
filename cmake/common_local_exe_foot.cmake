@@ -169,12 +169,19 @@ if(JVX_OS MATCHES "macosx" AND JVX_MAC_OS_CREATE_BUNDLE)
     # Collect all Qt plugins, seems that all plugins are associated with QtGui
     ## ========================================================
      if(JVX_ENABLE_QT)
-		jvx_install_qt_plugins(${QT_INSTALL_PATH} ${JVX_OSX_BUNDLE_HELPER_PATH_APPS}${JVX_TARGET_NAME}.app/Contents/PlugIns)
-		file(GLOB_RECURSE AAA RELATIVE ${QT_INSTALL_PATH}/plugins ${QT_INSTALL_PATH}/plugins/*.${JVX_SHARED_EXTENSION})
-		foreach(a ${AAA})
-			list(APPEND allInstalledQtPluginsBundle "${JVX_OSX_BUNDLE_HELPER_PATH_APPS}${JVX_TARGET_NAME}.app/Contents/Plugins/${a}")
+		
+		## Install the plugins to the bundle
+		jvx_install_qt_plugins(${QT_INSTALL_PATH} ${JVX_OSX_BUNDLE_HELPER_PATH_APPS}${JVX_TARGET_NAME}.app/Contents/PlugIns "JVX_QT_PLUGINS_DIR_COPY")
+
+		## Collect the plugin libs to run fixup bundle later
+		FOREACH(plugindir ${JVX_QT_PLUGINS_DIR_COPY})
+				file(GLOB_RECURSE AAA RELATIVE ${QT_INSTALL_PATH}/plugins ${QT_INSTALL_PATH}/plugins/${plugindir}/*.${JVX_SHARED_EXTENSION})
+				foreach(a ${AAA})
+					  message("Append: ${a}")
+					  list(APPEND allInstalledQtPluginsBundle "${JVX_OSX_BUNDLE_HELPER_PATH_APPS}${JVX_TARGET_NAME}.app/Contents/Plugins/${a}")
+				endforeach()
 		endforeach()
-		## message(FATAL_ERROR "${allInstalledQtPluginsBundle}") 
+		## message(FATAL_ERROR "HHH ${allInstalledQtPluginsBundle}") 
 
         #message("    > Collect QT Plugins for Mac OS X Bundle: ${Qt5Gui_PLUGINS}")
 		#foreach(plugin ${Qt5Gui_PLUGINS})
