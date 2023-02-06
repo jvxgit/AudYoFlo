@@ -420,17 +420,6 @@ endif()
 	message(FATAL_ERROR "Unable to locate mcg tools ${JVX_MCG}, run command to build those tools first")
   endif()
 
-  # Obtain submodule list
-  set(JVX_SUBMODULE_LIST "" CACHE STRING "Defined submodule list")
-  # If provided, load submodule list
-  message("------> ${JVX_BINARY_DIR}/submodulelist.txt")
-  if(EXISTS ${JVX_BINARY_DIR}/submodulelist.txt)
-	include(${JVX_BINARY_DIR}/submodulelist.txt)
-	message("##> Submodule list: ${mysubmodules}")
-  else()
-	set(mysubmodules ${JVX_SUBMODULE_LIST})
-  endif()
-
   if (JVX_USE_PART_RS232)
     set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_RS232_ACTIVE")
   endif()

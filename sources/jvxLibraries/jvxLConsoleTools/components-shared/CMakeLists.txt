@@ -1,3 +1,5 @@
+jvx_exclude_platform("Emscripten")
+
 set(PROJECT_NAME jvxLConsoleTools-shared)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 

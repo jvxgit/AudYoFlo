@@ -276,7 +276,7 @@ void browseLayout(QLayout* theLayout)
 		QHBoxLayout* me = qobject_cast<QHBoxLayout*>(theLayout);
 		assert(me);
 		QLayout* theSubLayout = me->layout();
-		/*
+		/ *
 		if(theSubLayout)
 		{
 			browseLayout(theSubLayout);
@@ -307,7 +307,7 @@ void browseLayout(QLayout* theLayout)
 		QVBoxLayout* me = qobject_cast<QVBoxLayout*>(theLayout);
 		assert(me);
 		QLayout* theSubLayout = me->layout();
-		/*
+		/ *
 		if(theSubLayout)
 		{
 			browseLayout(theSubLayout);
@@ -338,7 +338,7 @@ void browseLayout(QLayout* theLayout)
 		QGridLayout* me = qobject_cast<QGridLayout*>(theLayout);
 		assert(me);
 		QLayout* theSubLayout = me->layout();
-		/*
+		/ *
 		if(theSubLayout)
 		{
 			browseLayout(theSubLayout);
