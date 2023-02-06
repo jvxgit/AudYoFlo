@@ -149,52 +149,6 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle*)theCfgAtt);
 		theCfgAtt = nullptr;
 	}
-
-	/*
-	res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
-	if (theProps)
-	{
-		jPAD address("/ext_callbacks/cb_save_config");
-		theCallback_saveconfig.cb = cb_save_config;
-		theCallback_saveconfig.cb_priv = reinterpret_cast<jvxHandle*>(this);
-		jvxErrorType resL = theProps->install_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_saveconfig),address);
-
-		address.reset("/ext_callbacks/cb_xchg_property");
-		theCallback_exchg_property.cb = cb_xchg_property;
-		theCallback_exchg_property.cb_priv = reinterpret_cast<jvxHandle*>(this);
-		//jvx_set_property(theProps, &theCallback_exchg_property, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_xchg_property", callGate);
-		resL = theProps->install_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_exchg_property), address);
-
-		address.reset("/ext_callbacks/cb_shutdown");
-		theCallback_shutdown.cb = cb_shutdown;
-		theCallback_shutdown.cb_priv = reinterpret_cast<jvxHandle*>(this);
-		//jvx_set_property(theProps, &theCallback_shutdown, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_shutdown", callGate);
-		resL = theProps->install_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_shutdown), address);
-
-		address.reset("/ext_callbacks/cb_restart");
-		theCallback_restart.cb = cb_restart;
-		theCallback_restart.cb_priv = reinterpret_cast<jvxHandle*>(this);
-		//jvx_set_property(theProps, &theCallback_restart, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_restart", callGate);
-		resL = theProps->install_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_restart), address);
-
-		/*
-		supports_shutdown = false;
-		linkedPriFrontend.fe->request_property(JVX_FRONTEND_SUPPORTS_SHUTDOWN, &supports_shutdown);
-		if (supports_shutdown)
-		{
-			theCallback_shutdown.cb = cb_shutdown;
-			theCallback_shutdown.cb_priv = reinterpret_cast<jvxHandle*>(this);
-			jvx_set_property(theProps, &theCallback_shutdown, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_shutdown", callGate);
-
-			theCallback_restart.cb = cb_restart;
-			theCallback_restart.cb_priv = reinterpret_cast<jvxHandle*>(this);
-			jvx_set_property(theProps, &theCallback_restart, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_restart", callGate);
-		}
-		* ** /
-		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, theProps);
-	}
-	theProps = NULL;
-	*/
 	
 	/*
 	 *============================================================================================================== =
@@ -465,56 +419,6 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 
 	shutdown_terminate_base();
 	
-	// Uninstall the callbacks
-	/*
-	IjvxProperties* theProps = NULL;
-	jvxCallManagerProperties callGate;
-	jvxErrorType res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
-	if (theProps)
-	{
-		jPAD address("/ext_callbacks/cb_save_config");
-		jvxErrorType resL = theProps->uninstall_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_saveconfig), address);
-		//jvx_set_property(theProps, nullptr, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_save_config", callGate);
-		theCallback_saveconfig.cb = nullptr;
-		theCallback_saveconfig.cb_priv = nullptr;
-
-		//jvx_set_property(theProps, nullptr, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_xchg_property", callGate);
-		address.reset("/ext_callbacks/cb_xchg_property");
-		resL = theProps->uninstall_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_exchg_property), address);
-		theCallback_exchg_property.cb = nullptr;
-		theCallback_exchg_property.cb_priv = nullptr;
-
-		//jvx_set_property(theProps, nullptr, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_shutdown", callGate);
-		address.reset("/ext_callbacks/cb_shutdown");
-		resL = theProps->uninstall_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_shutdown), address);
-		theCallback_shutdown.cb = nullptr;
-		theCallback_shutdown.cb_priv = nullptr;
-
-		//jvx_set_property(theProps, nullptr, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_restart", callGate);
-		address.reset("/ext_callbacks/cb_restart");
-		resL = theProps->uninstall_property_reference(callGate, jvx::propertyRawPointerType::CjvxRawPointerTypeCallback(&theCallback_restart), address);
-		theCallback_restart.cb = nullptr;
-		theCallback_restart.cb_priv = nullptr;
-
-		/*
-		supports_shutdown = false;
-		linkedPriFrontend.fe->request_property(JVX_FRONTEND_SUPPORTS_SHUTDOWN, &supports_shutdown);
-		if (supports_shutdown)
-		{
-			theCallback_shutdown.cb = cb_shutdown;
-			theCallback_shutdown.cb_priv = reinterpret_cast<jvxHandle*>(this);
-			jvx_set_property(theProps, &theCallback_shutdown, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_shutdown", callGate);
-
-			theCallback_restart.cb = cb_restart;
-			theCallback_restart.cb_priv = reinterpret_cast<jvxHandle*>(this);
-			jvx_set_property(theProps, &theCallback_restart, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_restart", callGate);
-		}
-		* ** /
-		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, theProps);
-	}
-	theProps = NULL;
-	*/
-
 	IjvxConfigurationAttach* theCfgAtt = nullptr;
 	jvxErrorType resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle**)&theCfgAtt);
 	if (theCfgAtt)

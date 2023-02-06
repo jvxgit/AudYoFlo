@@ -444,13 +444,31 @@ macro(jvx_install_dedicated_file jvx_install_file_from  jvx_install_file_to)
 	endif()
 endmacro(jvx_install_dedicated_file)
 
-macro(jvx_install_qt_plugins src_folder dest_folder)
+macro(jvx_install_qt_plugins src_folder dest_folder copy_dir_list)
 
-	install(DIRECTORY
-		${src_folder}/plugins/ DESTINATION ${dest_folder}				
-		CONFIGURATIONS Debug Release UnstableDebug UnstableRelease
-		COMPONENT qtplugins
-		FILES_MATCHING PATTERN "*.${JVX_SHARED_EXTENSION}")
+	if("${copy_dir_list}")
+	
+		#FOREACH(pluginprefix ${${copy_file_list}})
+			# MESSAGE("Copy plugin dll ${src_folder}/plugins/${pluginprefix}.${JVX_SHARED_EXTENSION}")
+			
+		#	install(FILES "${src_folder}/plugins/${pluginprefix}.${JVX_SHARED_EXTENSION}" DESTINATION ${dest_folder}				
+		#		CONFIGURATIONS Debug Release UnstableDebug UnstableRelease COMPONENT qtplugins)
+		#ENDFOREACH()
+		
+		FOREACH(plugindir ${${copy_dir_list}})
+			MESSAGE("Copy plugin folder ${src_folder}/plugins/${plugindir}")
+			
+			install(DIRECTORY "${src_folder}/plugins/${plugindir}" DESTINATION ${dest_folder}				
+				CONFIGURATIONS Debug Release UnstableDebug UnstableRelease COMPONENT qtplugins)
+		ENDFOREACH()
+
+	else()
+		install(DIRECTORY
+			${src_folder}/plugins/ DESTINATION ${dest_folder}				
+			CONFIGURATIONS Debug Release UnstableDebug UnstableRelease
+			COMPONENT qtplugins
+			FILES_MATCHING PATTERN "*.${JVX_SHARED_EXTENSION}")
+	endif()
 		
 endmacro(jvx_install_qt_plugins)
 

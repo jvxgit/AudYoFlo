@@ -1,4 +1,15 @@
-	message("<< Checking for submodule settings in folder <${JVXRT_SUBMODULE_PATH}> >>")
+	# Obtain submodule list
+  set(JVX_SUBMODULE_LIST "" CACHE STRING "Defined submodule list")
+  # If provided, load submodule list
+  message("------> ${JVX_BINARY_DIR}/submodulelist.txt")
+  if(EXISTS ${JVX_BINARY_DIR}/submodulelist.txt)
+	include(${JVX_BINARY_DIR}/submodulelist.txt)
+	message("##> Submodule list: ${mysubmodules}")
+  else()
+	set(mysubmodules ${JVX_SUBMODULE_LIST})
+  endif()
+  
+  message("<< Checking for submodule settings in folder <${JVXRT_SUBMODULE_PATH}> >>")
 	if(mysubmodules)
 		message("<< Selected submodules: <${mysubmodules}> >>")
 	endif()
@@ -6,6 +17,8 @@
 		message("<< Ignored submodules: <${ignsubmodules}> >>")
 	endif()
   	
+	# message(FATAL_ERROR "Hier")
+		
 	set(JVX_CONFIGURED_SUBMODULES_PRE "")
 	SUBDIRLIST(SUBDIRS ${JVXRT_SUBMODULE_PATH})
 

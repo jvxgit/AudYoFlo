@@ -1296,7 +1296,7 @@ JVX_ASYNCIO_CLASSNAME::constraint_parameters_primary_chain(const jvxLinkDataDesc
 
 	if (requiresupdate)
 	{
-		/*
+		/ *
 		 Constrain the primary chain parameters
 		 * /
 		neg_primary._set_parameters_fixed_simple(

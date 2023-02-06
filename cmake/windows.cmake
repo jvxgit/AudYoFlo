@@ -212,8 +212,9 @@ if(JVX_USE_QT)
 			#	DESTINATION ${INSTALL_PATH_BIN}/platforms
 			#	CONFIGURATIONS Release UnstableRelease)
 				
-			jvx_install_qt_plugins(${QT_INSTALL_PATH} ${INSTALL_PATH_BIN}/plugins)
-
+			#
+			set(JVX_QT_PLUGINS_DIR_COPY "platforms;styles;imageformats")
+			jvx_install_qt_plugins(${QT_INSTALL_PATH} ${INSTALL_PATH_BIN}/plugins "JVX_QT_PLUGINS_DIR_COPY")			
 		endif()
 	endif()
 endif()
