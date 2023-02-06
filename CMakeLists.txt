@@ -958,7 +958,7 @@ endif()
   if(JVX_USE_BOOST)
 	find_boost()	
   endif()
-  
+
   if(JVX_USE_EIGEN)
 
 	# Library from here: http://eigen.tuxfamily.org/index.php?title=Main_Page
