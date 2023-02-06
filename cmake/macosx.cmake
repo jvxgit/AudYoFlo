@@ -149,6 +149,8 @@ set(JVX_SYSTEM_LIBRARIES dl pthread)
 # macros
 ###
 
+include(${JVX_CMAKE_DIR}/install-libs.cmake)
+
 # configure FFT library
 macro (find_fft)
   if(JVX_MACOSX_RFFTW)
@@ -352,34 +354,34 @@ macro(find_all_opengl_x11)
 
 endmacro(find_all_opengl_x11)
 
-macro(find_boost)
-  message("--> Boost is one the standard system path and consists of headers only")
-  set(BOOST_LIBRARY_PATH "/usr/local/include")
-  set(BOOST_INCLUDEDIR_OSGUESS ${BOOST_LIBRARY_PATH}/boost)
-  find_path (BOOST_INCLUDEDIR config.hpp PATHS "${BOOST_INCLUDEDIR_OSGUESS}")
+#macro(find_boost)
+#  message("--> Boost is one the standard system path and consists of headers only")
+#  set(BOOST_LIBRARY_PATH "/usr/local/include")
+#  set(BOOST_INCLUDEDIR_OSGUESS ${BOOST_LIBRARY_PATH}/boost)
+#  find_path (BOOST_INCLUDEDIR config.hpp PATHS "${BOOST_INCLUDEDIR_OSGUESS}")
 
-  if(BOOST_INCLUDEDIR)
-    set(BOOST_FOUND TRUE)
-	set(BOOST_INCLUDEDIR "${BOOST_INCLUDEDIR}/..")
-    message("    include path: ${BOOST_INCLUDEDIR}")
-  else()
-    set(BOOST_FOUND FALSE)
-    message(FATAL_ERROR "    lib boost not available, you need to specify the location in environment variable BOOST_LIBRARY_PATH.")
-  endif()
-endmacro (find_boost)
+ # if(BOOST_INCLUDEDIR)
+#    set(BOOST_FOUND TRUE)
+#	set(BOOST_INCLUDEDIR "${BOOST_INCLUDEDIR}/..")
+#    message("    include path: ${BOOST_INCLUDEDIR}")
+ # else()
+#    set(BOOST_FOUND FALSE)
+#    message(FATAL_ERROR "    lib boost not available, you need to specify the location in environment variable BOOST_LIBRARY_PATH.")
+#  endif()
+#endmacro (find_boost)
 
-macro(find_eigen)
+#macro(find_eigen)
 
-  message("--> Looking for Eigen")
-    find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-    set(EIGEN_INCLUDEDIR ${EIGEN3_INCLUDE_DIR})
+#  message("--> Looking for Eigen")
+ #   find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+ #   set(EIGEN_INCLUDEDIR ${EIGEN3_INCLUDE_DIR})
 
-  message("    include path: ${EIGEN_INCLUDEDIR}")
+#  message("    include path: ${EIGEN_INCLUDEDIR}")
   #message("    libdirs: ${EIGEN_LIBRARY_DIRS}")
   #message("    libdir: ${EIGEN_LIBDIR}")
   #message("    lib: ${EIGEN_LIBRARIES}")
 
-  endmacro (find_eigen)
+#  endmacro (find_eigen)
 
 
 
