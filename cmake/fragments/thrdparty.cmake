@@ -1,13 +1,6 @@
 	# =============================================================================
 	# Third party libraries
 	# =============================================================================
-		
-	if(JVX_USE_EAQUAL)
-		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eaqual
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eaqual/eaqual/src/libEAQUAL
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eaqual/eaqual/src/libSndFile)
-	endif()
 	
   if(${JVX_OS} MATCHES "windows")
 	###
@@ -99,22 +92,20 @@ if (JVX_USE_LIBMYSOFA)
 endif()
 
 if(JVX_USE_BOOST)
-	if(JVX_DOWNLOAD_BOOST)
+	if(JVX_INSTALL_EXTERNAL_LIBS)
 		# This part here only when downloading BOOST - find_boost will run in main CMakeLists file
-		if(${JVX_OS} MATCHES "windows") # OR ${JVX_OS} MATCHES "macosx")
-			set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
-					${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/boost)
-		endif()
+		# This option is true if the instal-libs.cmake file is invluded in the platform cmake file
+		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/boost)
 	endif()
 endif()
 
 if(JVX_USE_EIGEN)
-	if(JVX_DOWNLOAD_EIGEN)
-		# This part here only when downloading BOOST - find_boost will run in main CMakeLists file
-		if(${JVX_OS} MATCHES "windows") # OR ${JVX_OS} MATCHES "macosx")
-			set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
-				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eigen)
-		endif()
+	if(JVX_INSTALL_EXTERNAL_LIBS)
+		# This part here only when downloading EIGEN - find_boost will run in main CMakeLists file
+		# This option is true if the instal-libs.cmake file is invluded in the platform cmake file
+		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eigen)
 	endif()
 endif()
 	# =============================================================================

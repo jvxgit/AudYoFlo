@@ -77,12 +77,3 @@ option(JVX_USE_PART_MPG123 "Find mpg123 mp3 decoder library" OFF)
 option(JVX_FLUTTER_UI "Compile flutter ffi lib" OFF)
 option(JVX_LIBHOST_WITH_JSON_SHOW "Enable json show extensions in lib host" OFF)
 option(JVX_USE_LIBMYSOFA "Compile with libmysofa support" OFF)
-option(JVX_USE_EAQUAL "Add peaq evaluation tools" OFF)
-
-if(JVX_DOWNLOAD_BOOST)
-	set(JVX_USE_BOOST TRUE)
-endif()
-
-if(JVX_DOWNLOAD_EIGEN)
-	set(JVX_USE_EIGEN TRUE)
-endif()

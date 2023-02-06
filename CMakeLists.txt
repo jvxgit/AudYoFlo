@@ -800,12 +800,6 @@ endif()
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxSocketTestClient			
 			)
 			
-		if(JVX_USE_EAQUAL)
-			set(JVX_BASE_APPS ${JVX_BASE_APPS}
-				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eaqual/eaqual/src/EAQUALFrontEnd
-				)
-		endif()
-
 		if(JVX_USE_OPENGL_X11)
 			if(${JVX_OS} MATCHES "windows")
 			  set(JVX_BASE_APPS ${JVX_BASE_APPS}
