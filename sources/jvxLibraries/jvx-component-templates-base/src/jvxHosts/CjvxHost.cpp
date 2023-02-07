@@ -1461,7 +1461,8 @@ jvxErrorType
 CjvxHost::reference_tool(const jvxComponentIdentification& tp,
 	IjvxObject** theObject, jvxSize filter_id,
 	const char* filter_descriptor,
-	jvxBitField filter_stateMask)
+	jvxBitField filter_stateMask,
+	IjvxReferenceSelector* decider)
 {
 	jvxSize i = 0;
 	jvxSize cnt = 0;
@@ -1725,12 +1726,12 @@ CjvxHost::reference_tool(const jvxComponentIdentification& tp,
 
 	// New template based implementation
 	res = t_reference_tool<IjvxNode>(_common_set_types.registeredNodeTypes,
-		tp, theObject, filter_id, filter_descriptor, filter_stateMask);
+		tp, theObject, filter_id, filter_descriptor, filter_stateMask, decider);
 
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 	{
 		res = t_reference_tool<IjvxSimpleComponent>(_common_set_types.registeredSimpleTypes,
-			tp, theObject, filter_id, filter_descriptor, filter_stateMask);
+			tp, theObject, filter_id, filter_descriptor, filter_stateMask, decider);
 	}
 
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)

@@ -1,6 +1,17 @@
 #ifndef __IJVXTOOLSHOST_H__
 #define __IJVXTOOLSHOST_H__
 
+JVX_INTERFACE IjvxReferenceSelector
+{
+public:
+	virtual JVX_CALLINGCONVENTION ~IjvxReferenceSelector() {};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION testThisInstance(IjvxObject* testMe, 
+		jvxSize filter_id,
+		const char* filter_token, 
+		jvxBitField filter_stateMask) = 0;
+};
+
 JVX_INTERFACE IjvxToolsHost: public IjvxInterfaceReference
 {
 public:
@@ -10,7 +21,9 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION identification_tool(const jvxComponentIdentification&, jvxSize idx, jvxApiString* description, jvxApiString* descriptor, jvxBool* multipleInstances) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_tool(const jvxComponentIdentification&, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_tool(const jvxComponentIdentification&, IjvxObject** theObject, 
+		jvxSize filter_id, const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE,
+		IjvxReferenceSelector* decider = nullptr) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_tool(const jvxComponentIdentification&, IjvxObject* theObject) = 0;
 

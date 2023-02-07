@@ -35,12 +35,16 @@ public:
 	virtual ~IjvxPropertyExtenderChainControl() {};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION set_stateswitch_node_handler(IayfConnectionStateSwitchNode* ssCb) = 0;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION attach_component_chain(
 		const char* str, jvxComponentType tp = JVX_COMPONENT_AUDIO_NODE, 
-		jvxBool activateBeforeAttach = false, jvxSize* uniqueId = nullptr) = 0;
+		jvxBool activateBeforeAttach = false, jvxSize* uniqueId = nullptr,
+		IjvxReferenceSelector* deciderArg = nullptr) = 0;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION attach_component_chain(
 		const char* str, IjvxObject* theObj,  
 		jvxSize* uniqueId = nullptr) = 0;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION detach_component_chain(
 		const char* str, jvxSize uniqueId = JVX_SIZE_UNSELECTED) = 0;
 };

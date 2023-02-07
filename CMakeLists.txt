@@ -290,14 +290,14 @@ set(JVX_BASE_SYSTEM_STATIC_LIBS
 	  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/jsmn
   )
 
-jvx_addSubdirs("Configuring static system libraries" "${JVX_BASE_SYSTEM_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-system-libs")
+jvx_addSubdirs("Configuring static system libraries" "${JVX_BASE_SYSTEM_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
 
 if(JVX_SUBPRODUCT_HELPER_PATH)
 	if(EXISTS ${JVX_SUBPRODUCT_HELPER_PATH}${JVX_SUBPRODUCT_HELPER_LIB})		
 		jvx_addExtSubdir("Configuring product static system library" 
 			"${JVX_SUBPRODUCT_HELPER_PATH}${JVX_SUBPRODUCT_HELPER_LIB}" 
 			"${JVX_SUBPRODUCT_HELPER_PATH_MAP}${JVX_SUBPRODUCT_HELPER_LIB}" 
-			"${JVX_FOLDER_HIERARCHIE_BASE}/product-static-system-libs")
+			"${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
 	endif()
 endif()
 
@@ -980,7 +980,7 @@ endif()
   
   jvx_addSubdirs("Configuring all extender libraries" "${JVX_SDK_EXTENDER_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/plugins/plugins-extender")
   jvx_addSubdirs("Configuring all VST extender libraries" "${JVX_VST_SDK_EXTENDER_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/plugins/plugins-extender")
-  jvx_addSubdirs("Configuring all VST widget libraries" "${JVX_VST_SDK_WIDGET_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/pluginsplugins-widgets")
+  jvx_addSubdirs("Configuring all VST widget libraries" "${JVX_VST_SDK_WIDGET_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/plugins/plugins-widgets")
 
   jvx_addSubdirs("Configuring all platform packages" "${JVX_BASE_PLATFORM_PACKAGES}" "${JVX_FOLDER_HIERARCHIE_BASE}/platform-packages")
   

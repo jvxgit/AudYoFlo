@@ -451,7 +451,9 @@ CjvxToolsInterfaceFactory::identification_tool(const jvxComponentIdentification&
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor, jvxBitField filter_stateMask)
+CjvxToolsInterfaceFactory::reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, 
+	jvxSize filter_id, const char* filter_descriptor, jvxBitField filter_stateMask,
+	IjvxReferenceSelector* decider)
 {
 	jvxSize i = 0;
 	jvxSize cnt = 0;
