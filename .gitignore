@@ -11,6 +11,7 @@ sources/jvxLibraries/third_party/git/eigen/eigen
 sources/jvxLibraries/third_party/web/qcustomplot/qcustomplot.tar.gz
 sources/jvxLibraries/third_party/web/qcustomplot/qcustomplot
 sources/jvxLibraries/third_party/web/boost/boost
+sources/jvxLibraries/third_party/web/npcap/npcap-sdk
 
 sources/sub-projects/vst3sdk
 

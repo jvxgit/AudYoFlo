@@ -11,6 +11,11 @@
 
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/speex-dsp/
 	)		
+	if(JVX_USE_PCAP)
+		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
+			${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/npcap)
+	endif()
+
   endif()
 	   
    if(JVX_USE_PART_WEBSERVER)
