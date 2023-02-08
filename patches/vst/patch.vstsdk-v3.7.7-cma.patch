@@ -1,0 +1,12 @@
+diff -ur vst3sdk/cmake/modules/SMTG_AddSMTGLibrary.cmake vst3sdk.server/cmake/modules/SMTG_AddSMTGLibrary.cmake
+--- vst3sdk/cmake/modules/SMTG_AddSMTGLibrary.cmake	2023-02-08 12:45:38.302837200 +0100
++++ vst3sdk.server/cmake/modules/SMTG_AddSMTGLibrary.cmake	2023-02-08 12:58:21.435951400 +0100
+@@ -452,7 +452,7 @@
+                 ${input_file}
+         )
+ 
+-        if(MSVC_IDE)
++        if(MSVC)
+             # Hacky workaround: replace all SMTG_PLUGIN_PACKAGE_NAME (e.g. again.vst3) 
+             # occurences by a MSVS macro $(TargetFileName). Using the cmake only approach does not work.
+             get_target_property(PLUGIN_PACKAGE_NAME ${target} SMTG_PLUGIN_PACKAGE_NAME)

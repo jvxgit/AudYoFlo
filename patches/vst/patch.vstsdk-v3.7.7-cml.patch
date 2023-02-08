@@ -1,0 +1,25 @@
+--- vst3sdk/CMakeLists.txt	2023-02-07 22:11:32.489272600 +0100
++++ vst3sdk.server/CMakeLists.txt	2023-02-08 12:57:52.395709700 +0100
+@@ -32,7 +32,6 @@
+     DESCRIPTION "Steinberg VST 3 Software Development Kit"
+     HOMEPAGE_URL "https://www.steinberg.net"
+ )
+-set_property(GLOBAL PROPERTY VSTSDK_VERSION_COLLECT_PROPERTY "${vstsdk_VERSION}")
+ 
+ smtg_setup_platform_toolset()
+ 
+@@ -47,12 +46,10 @@
+ message(STATUS "[SMTG] CMAKE_SOURCE_DIR is set to: ${CMAKE_SOURCE_DIR}")
+ message(STATUS "[SMTG] CMAKE_CURRENT_LIST_DIR is set to: ${CMAKE_CURRENT_LIST_DIR}")
+ 
+-# message(FATAL_ERROR "if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_LIST_DIR})")
+-
+ if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_LIST_DIR})
+     message(STATUS "[SMTG] Disable all VST 3 samples")
+-    #set(SMTG_ADD_VST3_PLUGINS_SAMPLES OFF)
+-    #set(SMTG_ADD_VST3_HOSTING_SAMPLES OFF)
++    set(SMTG_ADD_VST3_PLUGINS_SAMPLES OFF)
++    set(SMTG_ADD_VST3_HOSTING_SAMPLES OFF)
+     set(SMTG_ADD_MYPLUGINS_SRC_PATH OFF)
+ else()
+     set(SMTG_ADD_MYPLUGINS_SRC_PATH ON)

@@ -926,6 +926,9 @@ endif()
   endif()
   
 	if(JVX_USE_VST )
+	
+		# set(VSTSDK_VERSION_COLLECT "unknown" CACHE INTERNAL "VST3 SDK Version")
+		
 		if(NOT EXISTS ${JVXRT_SUBMODULE_PATH}/vst3sdk)	
 			message("vst sub project not available. Starting script to download it.") 
 			execute_process(COMMAND ${mysh} -c "cd ${JVXRT_SUBMODULE_PATH}; pwd ; ../../patches/vst/prepareModules.sh; exit")
@@ -947,6 +950,9 @@ endif()
 	
 		set(JVX_VST_SDK_WIDGET_LIBS 
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugin-widgets/jvx-vst-widgets)
+			
+		get_property(VSTSDK_VERSION_COLLECT GLOBAL PROPERTY VSTSDK_VERSION_COLLECT_PROPERTY)
+		# message(FATAL_ERROR "-> ${VSTSDK_VERSION_COLLECT}")
 	endif()
 
 	# ===========================================================================
