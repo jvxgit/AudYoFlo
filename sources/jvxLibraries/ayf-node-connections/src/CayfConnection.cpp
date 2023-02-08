@@ -117,7 +117,7 @@ namespace AyfConnection
 
 	// =================================================================
 	jvxErrorType
-		CayfConnection::register_node(const std::string& modName, jvxComponentType tp, jvxBool activateNode, jvxSize uid)
+		CayfConnection::register_node(const std::string& modName, jvxComponentType tp, jvxBool activateNode, jvxSize uid, IjvxReferenceSelector* decider)
 	{
 		jvxErrorType res = JVX_ERROR_WRONG_STATE;
 		if (_common_set_min.theState == JVX_STATE_INIT)
@@ -166,7 +166,7 @@ namespace AyfConnection
 					if (res == JVX_NO_ERROR)
 					{
 						res = JVX_ERROR_ELEMENT_NOT_FOUND;
-						refComp<IjvxNode> ptrStrNode = reqRefTool<IjvxNode>(theToolsHost, cpTp, 0, modName.c_str(), JVX_STATE_ACTIVE);
+						refComp<IjvxNode> ptrStrNode = reqRefTool<IjvxNode>(theToolsHost, cpTp, 0, modName.c_str(), JVX_STATE_ACTIVE, decider);
 						if (ptrStrNode.objPtr)
 						{
 							res = register_node(modName, ptrStrNode.objPtr, activatedInSystem, nullptr, nullptr, uid);
@@ -262,7 +262,7 @@ namespace AyfConnection
 			{
 				if (!elm.tryActivateComponent)
 				{
-					res = register_node(elm.modName, elm.tp, elm.tryActivateComponent, elm.uId); // cfg.activateNode);
+					res = register_node(elm.modName, elm.tp, elm.tryActivateComponent, elm.uId, elm.decider); // cfg.activateNode);
 					if (res != JVX_NO_ERROR)
 					{
 						std::cout

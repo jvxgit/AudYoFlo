@@ -15,7 +15,8 @@ CjvxHost::t_reference_tool(std::vector<oneObjType<T>>& registeredTypes,
 	const jvxComponentIdentification& tp,
 	IjvxObject** theObject, jvxSize filter_id,
 	const char* filter_token,
-	jvxBitField filter_stateMask)
+	jvxBitField filter_stateMask,
+	IjvxReferenceSelector* decider)
 {
 	jvxSize i = 0, cnt = 0;
 	jvxApiString fldStr;
@@ -118,33 +119,44 @@ CjvxHost::t_reference_tool(std::vector<oneObjType<T>>& registeredTypes,
 			{
 				if (elmIt_ob->instances.theHandle_shortcut[i].obj)
 				{
-					jvxState stat = JVX_STATE_NONE;
-					elmIt_ob->instances.theHandle_shortcut[i].obj->state(&stat);
-					if (JVX_EVALUATE_BITFIELD(stat & filter_stateMask))
+					if (decider)
 					{
-						if (filter_token)
+						if (decider->testThisInstance(elmIt_ob->instances.theHandle_shortcut[i].obj, filter_id, filter_token, filter_stateMask) == JVX_NO_ERROR)
 						{
-							txt = "Unknown";
-							switch (filter_id)
+							cnt = i;
+							break;
+						}
+					}
+					else
+					{
+						jvxState stat = JVX_STATE_NONE;
+						elmIt_ob->instances.theHandle_shortcut[i].obj->state(&stat);
+						if (JVX_EVALUATE_BITFIELD(stat & filter_stateMask))
+						{
+							if (filter_token)
 							{
-							case 0:
-								elmIt_ob->instances.theHandle_shortcut[i].obj->description(&fldStr);
-								txt = fldStr.std_str();
-								break;
-							case 1:
-								elmIt_ob->instances.theHandle_shortcut[i].obj->descriptor(&fldStr);
-								txt = fldStr.std_str();
-								break;
-							default:
-								elmIt_ob->instances.theHandle_shortcut[i].obj->module_reference(&fldStr, nullptr);
-								txt = fldStr.std_str();
-								break;
-							}
+								txt = "Unknown";
+								switch (filter_id)
+								{
+								case 0:
+									elmIt_ob->instances.theHandle_shortcut[i].obj->description(&fldStr);
+									txt = fldStr.std_str();
+									break;
+								case 1:
+									elmIt_ob->instances.theHandle_shortcut[i].obj->descriptor(&fldStr);
+									txt = fldStr.std_str();
+									break;
+								default:
+									elmIt_ob->instances.theHandle_shortcut[i].obj->module_reference(&fldStr, nullptr);
+									txt = fldStr.std_str();
+									break;
+								}
 
-							if (jvx_compareStringsWildcard(filter_token, txt))
-							{
-								cnt = i;
-								break;
+								if (jvx_compareStringsWildcard(filter_token, txt))
+								{
+									cnt = i;
+									break;
+								}
 							}
 						}
 					}

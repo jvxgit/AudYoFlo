@@ -40,16 +40,21 @@ namespace AyfConnection
 	{
 	public:
 		CayfConnectionComponent() {};
-		CayfConnectionComponent(const std::string& modNameArg, jvxComponentType tpArg, jvxBool tryActivateArg = false, jvxSize uIdArg = JVX_SIZE_UNSELECTED) :
-			modName(modNameArg), tp(tpArg), tryActivateComponent(tryActivateArg), uId(uIdArg) {};
-		CayfConnectionComponent(const std::string& modNameArg, IjvxObject* theObjArg, jvxBool tryActivateArg = false, jvxSize uIdArg = JVX_SIZE_UNSELECTED) :
-			modName(modNameArg), theObj(theObjArg), tryActivateComponent(tryActivateArg), uId(uIdArg) {};
+		CayfConnectionComponent(const std::string& modNameArg, jvxComponentType tpArg, 
+			jvxBool tryActivateArg = false, 
+			jvxSize uIdArg = JVX_SIZE_UNSELECTED,
+			IjvxReferenceSelector* deciderArg = nullptr) :
+			modName(modNameArg), tp(tpArg), tryActivateComponent(tryActivateArg), uId(uIdArg), decider(deciderArg) {};
+		CayfConnectionComponent(const std::string& modNameArg, IjvxObject* theObjArg, jvxBool tryActivateArg = false, jvxSize uIdArg = JVX_SIZE_UNSELECTED,
+			IjvxReferenceSelector* deciderArg = nullptr) :
+			modName(modNameArg), theObj(theObjArg), tryActivateComponent(tryActivateArg), uId(uIdArg), decider(deciderArg) {};
 
 		jvxSize uId = JVX_SIZE_UNSELECTED;
 		std::string modName;
 		jvxBool tryActivateComponent = false;
 		jvxComponentType tp = JVX_COMPONENT_UNKNOWN;
 		IjvxObject* theObj = nullptr;
+		IjvxReferenceSelector* decider = nullptr;
 	};
 
 	class CayfConnectionConfig
@@ -185,7 +190,7 @@ namespace AyfConnection
 			IjvxConfigProcessor* confProc = nullptr, jvxConfigData* secConfig = nullptr, jvxSize uid = JVX_SIZE_UNSELECTED);
 		jvxErrorType unregister_node(IjvxObject* theObj);
 
-		jvxErrorType register_node(const std::string& modName, jvxComponentType tp, jvxBool activateNode = true, jvxSize uid = JVX_SIZE_UNSELECTED);
+		jvxErrorType register_node(const std::string& modName, jvxComponentType tp, jvxBool activateNode = true, jvxSize uid = JVX_SIZE_UNSELECTED, IjvxReferenceSelector* decider = nullptr);
 		jvxErrorType unregister_nodes(const std::string& modName);
 
 		// Interface "IjvxCoreStateMachine"

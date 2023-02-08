@@ -290,14 +290,14 @@ set(JVX_BASE_SYSTEM_STATIC_LIBS
 	  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/jsmn
   )
 
-jvx_addSubdirs("Configuring static system libraries" "${JVX_BASE_SYSTEM_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-system-libs")
+jvx_addSubdirs("Configuring static system libraries" "${JVX_BASE_SYSTEM_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
 
 if(JVX_SUBPRODUCT_HELPER_PATH)
 	if(EXISTS ${JVX_SUBPRODUCT_HELPER_PATH}${JVX_SUBPRODUCT_HELPER_LIB})		
 		jvx_addExtSubdir("Configuring product static system library" 
 			"${JVX_SUBPRODUCT_HELPER_PATH}${JVX_SUBPRODUCT_HELPER_LIB}" 
 			"${JVX_SUBPRODUCT_HELPER_PATH_MAP}${JVX_SUBPRODUCT_HELPER_LIB}" 
-			"${JVX_FOLDER_HIERARCHIE_BASE}/product-static-system-libs")
+			"${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
 	endif()
 endif()
 
@@ -350,11 +350,6 @@ else()
 
 	# Deactivate the depending QT libraries
 	set(JVX_USE_QWT FALSE)
-endif()
-
-# configure pcap
-if(JVX_USE_PCAP)
-	find_pcap("FATAL")
 endif()
 
 if(JVX_USE_PART_CUDA)
@@ -418,17 +413,6 @@ endif()
   endif()
   if(NOT EXISTS "${JVX_MCG}")
 	message(FATAL_ERROR "Unable to locate mcg tools ${JVX_MCG}, run command to build those tools first")
-  endif()
-
-  # Obtain submodule list
-  set(JVX_SUBMODULE_LIST "" CACHE STRING "Defined submodule list")
-  # If provided, load submodule list
-  message("------> ${JVX_BINARY_DIR}/submodulelist.txt")
-  if(EXISTS ${JVX_BINARY_DIR}/submodulelist.txt)
-	include(${JVX_BINARY_DIR}/submodulelist.txt)
-	message("##> Submodule list: ${mysubmodules}")
-  else()
-	set(mysubmodules ${JVX_SUBMODULE_LIST})
   endif()
 
   if (JVX_USE_PART_RS232)
@@ -956,20 +940,26 @@ endif()
 	endif()
 
 	# ===========================================================================
-	# ===========================================================================
-	# ===========================================================================
 	jvx_addSubdirs("Configuring all 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty")
   
-  # Check and configure some of the linked libs
-  if(JVX_USE_BOOST)
-	find_boost()	
-  endif()
-  
-  if(JVX_USE_EIGEN)
+	# ===========================================================================
+	# Check and configure some of the linked 3rd party libs
+	if(JVX_USE_BOOST)
+		find_boost()	
+	endif()
 
-	# Library from here: http://eigen.tuxfamily.org/index.php?title=Main_Page
-	find_eigen()
-  endif()
+	if(JVX_USE_EIGEN)
+
+		# Library from here: http://eigen.tuxfamily.org/index.php?title=Main_Page
+		find_eigen()
+	endif()
+  
+	# configure pcap
+	if(JVX_USE_PCAP)
+		find_pcap("FATAL")
+	endif()
+
+	# ===========================================================================
 
   jvx_addSubdirs("Configuring all static libraries" "${JVX_BASE_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
   jvx_addSubdirs("Configuring all static QT libraries" "${JVX_BASE_STATIC_QT_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/qt")
@@ -996,7 +986,7 @@ endif()
   
   jvx_addSubdirs("Configuring all extender libraries" "${JVX_SDK_EXTENDER_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/plugins/plugins-extender")
   jvx_addSubdirs("Configuring all VST extender libraries" "${JVX_VST_SDK_EXTENDER_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/plugins/plugins-extender")
-  jvx_addSubdirs("Configuring all VST widget libraries" "${JVX_VST_SDK_WIDGET_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/pluginsplugins-widgets")
+  jvx_addSubdirs("Configuring all VST widget libraries" "${JVX_VST_SDK_WIDGET_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/plugins/plugins-widgets")
 
   jvx_addSubdirs("Configuring all platform packages" "${JVX_BASE_PLATFORM_PACKAGES}" "${JVX_FOLDER_HIERARCHIE_BASE}/platform-packages")
   

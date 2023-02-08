@@ -69,10 +69,10 @@ namespace AyfConnection
 
 		virtual jvxErrorType JVX_CALLINGCONVENTION attach_component_chain(
 			const char* str, jvxComponentType tp, jvxBool activateBeforeAttach,
-			jvxSize* uniqueId = nullptr) override
+			jvxSize* uniqueId = nullptr, IjvxReferenceSelector* deciderArg = nullptr) override
 		{
 			jvxSize uIdLoc = uid++;
-			lstMods.push_back(AyfConnection::CayfConnectionComponent(str, tp, false, uIdLoc));
+			lstMods.push_back(AyfConnection::CayfConnectionComponent(str, tp, false, uIdLoc, deciderArg));
 			if (uniqueId)
 				*uniqueId = uIdLoc;
 			return JVX_NO_ERROR;

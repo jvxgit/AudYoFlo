@@ -196,14 +196,16 @@ struct refComp
 };
 
 template <typename T>
-refComp<T> reqRefTool(IjvxToolsHost* tHost, const jvxComponentIdentification& tp, jvxSize fId = 0, const char* fTag = nullptr, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE)
+refComp<T> reqRefTool(IjvxToolsHost* tHost, const jvxComponentIdentification& tp, jvxSize fId = 0, const char* fTag = nullptr, 
+	jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE, 
+	IjvxReferenceSelector* decider = nullptr)
 {
 	refComp<T> inst;
 	if (tHost)
 	{
 		if (checkComponentType<T>(tp.tp))
 		{
-			tHost->reference_tool(tp, &inst.objPtr, fId, fTag, filter_stateMask);
+			tHost->reference_tool(tp, &inst.objPtr, fId, fTag, filter_stateMask, decider);
 			if (inst.objPtr)
 			{
 				inst.objPtr->request_specialization(reinterpret_cast<jvxHandle**>(&inst.cpPtr), nullptr, nullptr);

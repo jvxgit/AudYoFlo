@@ -16,24 +16,37 @@ ADDITIONAL_FEATURE_TOKENS="\
 	-DJVX_MATLAB_PROPERTY_GENERATOR=TRUE\
 	-DJVX_INCLUDE_EBUR128=TRUE\
 	-DJVX_USE_VST=FALSE\
+	-DSMTG_CREATE_PLUGIN_LINK=FALSE\
 	-DJVX_FLUTTER_UI=FALSE\
 	-DJVX_USE_PYTHON=FALSE\
 	-DJVX_LIBHOST_WITH_JSON_SHOW=TRUE\
 	-DJVX_USE_PART_COREAUDIO=TRUE\
 	-DJVX_USE_LIBMYSOFA=TRUE\
+	-DJVX_USE_EAQUAL=FALSE\
 	-DJVX_COMPILE_GOD_HOST=TRUE\
 	-DJVX_USE_VIDEO=TRUE\
+	-DJVX_DEPLOY_UNSTABLE=TRUE\
+ 	-DJVX_USE_PART_COREAUDIO=TRUE\
+ 	-DJVX_USE_PART_PAUDIO=TRUE\
+ 	-DJVX_USE_PART_RS232=FALSE \
+ 	-DJVX_USE_QT=TRUE \
+	-DJVX_USE_QWT=TRUE \
+ 	-DJVX_USE_PART_CORECONTROL=FALSE \
 	-DJVX_MACOSX_RFFTW=TRUE\
+        -DJVX_USE_HOA_CIRC_ARRAY=FALSE\
  	-DQT_INSTALL_PATH=/Volumes/MacOS-HK/develop/qt/qt-everywhere-src-5.15.2/qtbase"
-
 
 TOKEN_SDK=-DJVX_RELEASE_SDK=FALSE
 TOKEN_BTOOLS=-DJVX_COMPILE_BUILDTOOLS=FALSE
 
-#JVX_GENERATOR_TOKEN_BT="\"Unix Makefiles\""
-#JVX_GENERATOR_TOKEN="\"Unix Makefiles\""
-JVX_GENERATOR_TOKEN_BT="\"Ninja\""
-JVX_GENERATOR_TOKEN="\"Ninja\""
+JVX_GENERATOR_TOKEN_BT="\"Unix Makefiles\""
+JVX_GENERATOR_TYPE_TOKEN_BT=""
+
+JVX_GENERATOR_TOKEN="\"Xcode\""
+JVX_GENERATOR_TYPE_TOKEN="-T buildsystem=1"
+
+# JVX_GENERATOR_TOKEN="\"Eclipse CDT4 - Unix Makefiles\""
+MACOSX_FRAMEWORK=macosx12.1
 
 if [ "$1" = "rt" ];
 then
@@ -48,13 +61,15 @@ elif [ "$1" = "sdk-bt" ];
 then
     TOKEN_SDK="-DJVX_RELEASE_SDK=TRUE"
     TOKEN_BTOOLS="-DJVX_COMPILE_BUILDTOOLS=TRUE"
-	JVX_GENERATOR_TOKEN=${JVX_GENERATOR_TOKEN_BT}
+    JVX_GENERATOR_TOKEN=${JVX_GENERATOR_TOKEN_BT}
+    JVX_GENERATOR_TYPE_TOKEN=${JVX_GENERATOR_TYPE_TOKEN_BT}
     run="cmake"
 
 elif [ "$1" = "rt-bt" ];
 then
     TOKEN_BTOOLS="-DJVX_COMPILE_BUILDTOOLS=TRUE"
     JVX_GENERATOR_TOKEN=${JVX_GENERATOR_TOKEN_BT}
+    JVX_GENERATOR_TYPE_TOKEN=${JVX_GENERATOR_TYPE_TOKEN_BT}
     run="cmake"
 
 elif [ "$1" = "clean" ];
@@ -74,20 +89,16 @@ else
     echo "Usage: compile < rt-bt | rt | sdk-bt | sdk | clean | distclean >"
 fi
 
+
+
+    # For cmake build...
+
  OPTIONS="-DCMAKE_INSTALL_PREFIX=release\
  -G ${JVX_GENERATOR_TOKEN} -DCMAKE_BUILD_TYPE=${JVX_RELEASE_TYPE}\
- -DJVX_PRODUCT=audio\
+ ${JVX_GENERATOR_TYPE_TOKEN} -DJVX_PRODUCT=audio\
  ${TOKEN_SDK}\
  -DJVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD=16 \
  ${TOKEN_BTOOLS}\
- -DJVX_DEPLOY_UNSTABLE=TRUE\
- -DJVX_USE_PART_COREAUDIO=TRUE\
- -DJVX_USE_PART_PAUDIO=TRUE\
- -DJVX_USE_PART_RS232=FALSE \
- -DJVX_USE_QT=TRUE \
- -DJVX_USE_QWT=TRUE \
- -DJVX_USE_QWT_POLAR=TRUE \
- -DJVX_USE_PART_CORECONTROL=TRUE \
  ${ADDITIONAL_FEATURE_TOKENS}\
  -Wno-dev"
 
@@ -98,19 +109,29 @@ then
 
 elif [ ${run} = "cmake" ];
 then
+
+
 	echo eval cmake  ${JVX_SOURCE_ROOT} ${OPTIONS}
 	eval cmake  ${JVX_SOURCE_ROOT} ${OPTIONS}
 
 	if [ "${JVX_GENERATOR_TOKEN}" = "\"Unix Makefiles\"" ] || [ "${JVX_GENERATOR_TOKEN}" = "\"Eclipse CDT4 - Unix Makefiles\"" ] ;
 	then
 		#compile
-    	make -j9 install
+    	    make -j9 install
 	fi
 	if [ "${JVX_GENERATOR_TOKEN}" = "\"Ninja\"" ] || [ "${JVX_GENERATOR_TOKEN}" = "\"Eclipse CDT4 - Ninja\"" ];
 	then
 		#compile
-    	ninja install
+    	    ninja install
 	fi
+	if [ "${JVX_GENERATOR_TOKEN}" = "\"Xcode\"" ];
+	then
+	    if [ "$1" = "rt" ];
+	    then
+		echo xcodebuild -configuration ${JVX_RELEASE_TYPE} -target install -sdk ${MACOSX_FRAMEWORK}
+		xcodebuild -configuration ${JVX_RELEASE_TYPE} -target install -sdk ${MACOSX_FRAMEWORK}
+	    fi
+	fi  
 
 elif [ ${run} = "clean" ] || [ ${run} = "distclean" ];
 then

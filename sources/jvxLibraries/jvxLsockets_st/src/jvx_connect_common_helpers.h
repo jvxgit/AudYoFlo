@@ -821,9 +821,17 @@ static ULONG NameToBthAddr(_In_ const LPSTR pszRemoteName, _Out_ PSOCKADDR_BTH p
 
 #ifdef JVX_WITH_PCAP
 #define HAVE_REMOTE
+
+// For the latest version of NPCAP SDK, we need to define 
+// PCAP_DONT_INCLUDE_PCAP_BPF_H and exclude Win32-Extensions.h
+//
+// https://stackoverflow.com/questions/30583626/pcap-program-error-when-compiling
+// 
+
+#define PCAP_DONT_INCLUDE_PCAP_BPF_H
 #include <pcap.h>
 #ifdef JVX_OS_WINDOWS
-#include <Win32-Extensions.h>
+// #include <Win32-Extensions.h> <- no longer required in current version of npcap
 #endif
 #define PCAP_READ_TIMEOUT 0
 #define PCAP_SNAP_LEN 65536

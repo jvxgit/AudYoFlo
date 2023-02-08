@@ -1,3 +1,5 @@
+jvx_exclude_platform("Emscripten")
+
 set(PROJECT_NAME jvxConsoleApp)
 include(${JVX_CMAKE_DIR}/common_local_exe_head.cmake)
 

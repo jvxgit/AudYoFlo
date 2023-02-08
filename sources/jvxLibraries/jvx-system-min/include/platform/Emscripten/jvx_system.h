@@ -17,8 +17,11 @@
 #include <pthread.h>
 #include <errno.h>
 #include <sys/un.h>
+/*
+ * These headers are no longer supported in Emscripten.
 #include <sys/eventfd.h>
 #include <sys/epoll.h>
+ */
 
 // Define the operating system
 #ifndef JVX_OS_EMSCRIPTEN

@@ -212,8 +212,9 @@ if(JVX_USE_QT)
 			#	DESTINATION ${INSTALL_PATH_BIN}/platforms
 			#	CONFIGURATIONS Release UnstableRelease)
 				
-			jvx_install_qt_plugins(${QT_INSTALL_PATH} ${INSTALL_PATH_BIN}/plugins)
-
+			#
+			set(JVX_QT_PLUGINS_DIR_COPY "platforms;styles;imageformats")
+			jvx_install_qt_plugins(${QT_INSTALL_PATH} ${INSTALL_PATH_BIN}/plugins "JVX_QT_PLUGINS_DIR_COPY")			
 		endif()
 	endif()
 endif()
@@ -350,7 +351,9 @@ endmacro (find_octave)
 
 macro(find_pcap arg1)
   message("--> Looking for libpcap")
-  set(PCAP_LIBRARY_PATH $ENV{PCAP_LIBRARY_PATH})
+  if(NOT PCAP_LIBRARY_PATH)
+	set(PCAP_LIBRARY_PATH $ENV{PCAP_LIBRARY_PATH})
+  endif()
   if(JVX_PLATFORM MATCHES "32bit")
     set(PCAP_INCLUDEDIR_OSGUESS ${PCAP_LIBRARY_PATH}/Include)
     set(PCAP_LIB_PATH_OSGUESS ${PCAP_LIBRARY_PATH}/Lib)

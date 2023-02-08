@@ -47,7 +47,7 @@ public:
 		return(true);
     }
 
-    virtual bool handlePost(CivetServer *server, struct mg_connection *conn) 
+    virtual bool handlePost(CivetServer *server, struct mg_connection *conn) override
     {
 #ifdef JVX_WEBSERVER_VERBOSE_MODE
 			std::cout << "--> POST REQUEST: " << std::endl;
@@ -61,7 +61,7 @@ public:
 		return(true);
 	};
 
-	virtual bool handlePut(CivetServer *server, struct mg_connection *conn)
+	virtual bool handlePut(CivetServer *server, struct mg_connection *conn) override
 	{
 #ifdef JVX_WEBSERVER_VERBOSE_MODE
 		std::cout << "--> PUT REQUEST: " << std::endl;

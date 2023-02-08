@@ -1,0 +1,9 @@
+# submodulelist.txt: Specify list of submodules to include
+set(mysubmodules
+	";"
+	# "fernlive;jvx-hoa;ayfbinrender;jvx-mbc;jvx-signals;jvx-mixmatrix"
+	#"jvx-nele;jvx-whistle;jvx-signals;jvx-nr"
+	#"fernlive;jvx-hoa"
+	# "jvx-mixmatrix;myNewRtapProject;jvx-signals;jvx-hoa;jvx-mbc;jvx-nr;fernlive"
+	# ;amrwb
+	)

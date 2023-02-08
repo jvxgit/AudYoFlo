@@ -100,7 +100,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION identification_tool(const jvxComponentIdentification&, jvxSize idx, jvxApiString* description,
 		jvxApiString* descriptor, jvxBool* multipleInstances) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_tool(const jvxComponentIdentification&, IjvxObject** theObject, jvxSize filter_id,
-		const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE) override;
+		const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE,
+		IjvxReferenceSelector* decider = nullptr) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_tool(const jvxComponentIdentification&, IjvxObject* theObject) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION instance_tool(jvxComponentType, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor) override;
@@ -170,7 +171,8 @@ private:
 		const jvxComponentIdentification& tp,
 		IjvxObject** theObject, jvxSize filter_id,
 		const char* filter_descriptor,
-		jvxBitField filter_stateMask);
+		jvxBitField filter_stateMask,
+		IjvxReferenceSelector* decider = nullptr);
 
 	template <class T> jvxErrorType t_return_reference_tool(
 		std::vector<oneObjType<T>>& registeredTypes,

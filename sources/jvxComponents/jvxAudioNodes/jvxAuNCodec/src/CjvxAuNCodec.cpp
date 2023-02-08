@@ -14,7 +14,7 @@ CjvxAuNCodec::CjvxAuNCodec(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	{
 		selIdLane[i] = JVX_SIZE_UNSELECTED;
 	}
-	mainModuleConnected = NULL;
+	mainModuleConnected = c_false;
 }
 
 CjvxAuNCodec::~CjvxAuNCodec()
