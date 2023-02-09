@@ -612,24 +612,45 @@ HjvxMicroConnection::connect_connection(
 	HjvxMicroConnection_hooks_simple* refSimple, 
 	HjvxMicroConnection_hooks_fwd* refExt,
 	jvxBool test_on_connect,
-	jvxBool copy_parameters_on_leave )
+	jvxBool copy_parameters_on_leave,
+	jvxConnectionType connTypeArg, 
+	jvxLinkDataDescriptor* theData_propArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
 	IjvxDataConnectionProcess* theProc = NULL;
 	if (theConnections)
 	{
+		typeConnection = connTypeArg;
 		theData_inlnk = theData_in;
 		theData_outlnk = theData_out;
+
+		theData_proposeInput = theData_propArg;
 
 		refHandleSimple = refSimple;
 		refHandleFwd = refExt;
 
+		switch (typeConnection)
+		{
+		case jvxConnectionType::JVX_MICROCONNECTION_ENGAGE:
+			
+			// This is for a kind of validation
+			assert(refHandleSimple);
+			assert(refHandleFwd);
+			assert(test_on_connect == false);
+			break;
+		case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_ADAPT:
+		case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED:
+			assert(refHandleSimple == nullptr);
+			assert(refHandleFwd == nullptr);
+			break;
+		default: 
+			break;
+		}
 		res = theConnections->reference_connection_process_uid(uId_process, &theProc);
 		assert(res == JVX_NO_ERROR);
 
 		_common_set_ldslave.theData_out.con_params = theData_inlnk->con_params;
-
 		theProc->set_test_on_connect(test_on_connect, &_common_set_ldslave.theData_out.con_params);
 
 		res = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -784,76 +805,90 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	}
 	else
 	{
-		ld_con.con_params.buffersize = theData_outlnk->con_params.buffersize;
-		ld_con.con_params.rate = theData_outlnk->con_params.rate;
-		ld_con.con_params.format = theData_outlnk->con_params.format;
-		ld_con.con_params.number_channels = theData_outlnk->con_params.number_channels;
-
-		jvx_bitFClear(ld_con.con_params.hints);
-		ld_con.con_params.segmentation_x = theData_outlnk->con_params.buffersize;
-		ld_con.con_params.segmentation_y = 1;
-		ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
-
-		if (
-			(_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
-			(_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
-			(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format) ||
-			(_common_set_ldslave.theData_in->con_params.number_channels != theData_outlnk->con_params.number_channels) ||
-
-			(_common_set_ldslave.theData_in->con_params.segmentation_x != theData_outlnk->con_params.segmentation_x) ||
-			(_common_set_ldslave.theData_in->con_params.segmentation_y != theData_outlnk->con_params.segmentation_y) ||
-			(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group))
+		switch (typeConnection)
 		{
-			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
-				&ld_con JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		}
+		case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED:
+			ld_con.con_params.buffersize = theData_outlnk->con_params.buffersize;
+			ld_con.con_params.rate = theData_outlnk->con_params.rate;
+			ld_con.con_params.format = theData_outlnk->con_params.format;
+			ld_con.con_params.number_channels = theData_outlnk->con_params.number_channels;
 
-		switch (res)
-		{
-		case JVX_NO_ERROR:
-			res = _test_connect_icon(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-			break;
+			jvx_bitFClear(ld_con.con_params.hints);
+			ld_con.con_params.segmentation_x = theData_outlnk->con_params.buffersize;
+			ld_con.con_params.segmentation_y = 1;
+			ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
-		case JVX_ERROR_COMPROMISE:
 			if (
 				(_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
 				(_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
+				(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format) ||
+				(_common_set_ldslave.theData_in->con_params.number_channels != theData_outlnk->con_params.number_channels) ||
+
 				(_common_set_ldslave.theData_in->con_params.segmentation_x != theData_outlnk->con_params.segmentation_x) ||
 				(_common_set_ldslave.theData_in->con_params.segmentation_y != theData_outlnk->con_params.segmentation_y) ||
-				(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group) ||
-				(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format))
+				(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group))
 			{
-				std::string err = "";
-				if (_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize)
-				{
-					err = "Buffersize: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.buffersize) + " vs " +
-						jvx_size2String(theData_outlnk->con_params.buffersize);
-				}
-				if (_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate)
-				{
-					err = "Samplerate: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.rate) + " vs " +
-						jvx_size2String(theData_outlnk->con_params.rate);
-				}
-				if (_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format)
-				{
-					err = "Format: ";
-					err += jvxDataFormat_txt(_common_set_ldslave.theData_in->con_params.format);
-					err += " vs ";
-					err += jvxDataFormat_txt(theData_outlnk->con_params.format);
-				}
-				JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, ("Could not find compromise with previous audio node: " + err).c_str(), JVX_ERROR_INVALID_SETTING);
-				res = JVX_ERROR_INVALID_SETTING;
+				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+					&ld_con JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
-			else
+
+			switch (res)
 			{
-				// There might be a chance to create a mapping but at the moment, it is not supported
-				assert(0);
+			case JVX_NO_ERROR:
+				res = _test_connect_icon(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				break;
+
+			case JVX_ERROR_COMPROMISE:
+				if (
+					(_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
+					(_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
+					(_common_set_ldslave.theData_in->con_params.segmentation_x != theData_outlnk->con_params.segmentation_x) ||
+					(_common_set_ldslave.theData_in->con_params.segmentation_y != theData_outlnk->con_params.segmentation_y) ||
+					(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group) ||
+					(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format))
+				{
+					std::string err = "";
+					if (_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize)
+					{
+						err = "Buffersize: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.buffersize) + " vs " +
+							jvx_size2String(theData_outlnk->con_params.buffersize);
+					}
+					if (_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate)
+					{
+						err = "Samplerate: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.rate) + " vs " +
+							jvx_size2String(theData_outlnk->con_params.rate);
+					}
+					if (_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format)
+					{
+						err = "Format: ";
+						err += jvxDataFormat_txt(_common_set_ldslave.theData_in->con_params.format);
+						err += " vs ";
+						err += jvxDataFormat_txt(theData_outlnk->con_params.format);
+					}
+					JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, ("Could not find compromise with previous audio node: " + err).c_str(), JVX_ERROR_INVALID_SETTING);
+					res = JVX_ERROR_INVALID_SETTING;
+				}
+				else
+				{
+					// There might be a chance to create a mapping but at the moment, it is not supported
+					assert(0);
+				}
+				break;
+			default:
+				JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb,
+					"Unable to find a compromise, reason: ", JVX_ERROR_INVALID_SETTING);
+				res = JVX_ERROR_INVALID_SETTING;
+				break;
 			}
 			break;
+		case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_ADAPT:
+
+			// The output parameters are modified
+			theData_outlnk->con_params = _common_set_ldslave.theData_in->con_params;
+			break;
 		default:
-			JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb,
-				"Unable to find a compromise, reason: ", JVX_ERROR_INVALID_SETTING);
-			res = JVX_ERROR_INVALID_SETTING;
+			// What are we going to do here?
+			assert(0);
 			break;
 		}
 	}
@@ -1325,8 +1360,26 @@ HjvxMicroConnection::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandl
 		else
 		{
 			jvxLinkDataDescriptor* proposed = (jvxLinkDataDescriptor*)data;
-			_common_set_ldslave.theData_out.con_params = proposed->con_params;
-			theData_outlnk->con_params = proposed->con_params;
+			if (theData_proposeInput)
+			{
+				theData_proposeInput->con_params = proposed->con_params;
+			}
+
+			switch (typeConnection)
+			{
+			case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED:
+			case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_ADAPT:
+				res = JVX_ERROR_UNSUPPORTED;
+				break;
+			default:
+				assert(0);
+			}
+			
+			//
+			// This old code does not make any sense to me
+			// 
+			// _common_set_ldslave.theData_out.con_params = proposed->con_params;
+			// theData_outlnk->con_params = proposed->con_params;			
 		}
 		break;
 	default:

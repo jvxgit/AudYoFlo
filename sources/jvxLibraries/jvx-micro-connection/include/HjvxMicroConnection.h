@@ -143,44 +143,81 @@ class HjvxMicroConnection :
 	public IjvxConnectionMaster, protected CjvxConnectionMaster,
 	public IjvxConnectionMasterFactory, protected CjvxConnectionMasterFactory
 {
+public:
+
+	enum class jvxConnectionType
+	{
+		JVX_MICROCONNECTION_UNCONTROLLED = 0,
+
+		//! This option is used whenever the microchain becomes part of an outside chain. The linkage is fixed such that it can not 
+		//! be unlinked when in operation
+		JVX_MICROCONNECTION_ENGAGE = 1,
+
+		//! This option is used whenever a connection shall be flexible such that it can be linked and unlinked during outside operation. 
+		//! Input and output parameters of the micro chain are fixed
+		JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED = 2,
+
+		//! This option is used whenever a connection shall be flexible such that it can be linked and unlinked during outside operation. 
+		//! Input and output parameters of the micro chain are not fixed. If the test fails, the parameter theData_proposeInput contains 
+		//! information about the desired parameters
+		JVX_MICROCONNECTION_FLEXIBLE_INOUT_ADAPT = 3
+	};
+
 private:
 
 	struct oneInvolvedObject
 	{
-		IjvxHiddenInterface* theTarget;
-		IjvxInputConnector* iconr;
-		IjvxOutputConnector* oconr;
-		IjvxConnectorFactory* theConFac;
+		IjvxHiddenInterface* theTarget = nullptr;
+		IjvxInputConnector* iconr = nullptr;
+		IjvxOutputConnector* oconr = nullptr;
+		IjvxConnectorFactory* theConFac = nullptr;
 
-		jvxSize uId_bridge_node_node;
+		jvxSize uId_bridge_node_node = JVX_SIZE_UNSELECTED;
 		oneInvolvedObject()
 		{
-			theTarget = NULL;
-			iconr = NULL;
-			oconr = NULL;
+			theTarget = nullptr;
+			iconr = nullptr;
+			oconr = nullptr;
+			theConFac = nullptr;
 			uId_bridge_node_node = JVX_SIZE_UNSELECTED;
 		};
 	};
-	IjvxDataConnections* theConnections;
+	IjvxDataConnections* theConnections = nullptr;
 	std::vector<oneInvolvedObject> involvedObjects;
 
-	IjvxOutputConnector* mocon;
-	IjvxInputConnector* micon;
-	IjvxConnectionMaster* master;
+	IjvxOutputConnector* mocon = nullptr;
+	IjvxInputConnector* micon = nullptr;
+	IjvxConnectionMaster* master = nullptr;
 
-	HjvxMicroConnection_hooks_simple* refHandleSimple;
-	HjvxMicroConnection_hooks_fwd* refHandleFwd;
+	HjvxMicroConnection_hooks_simple* refHandleSimple = nullptr;
+	HjvxMicroConnection_hooks_fwd* refHandleFwd = nullptr;
 
-	jvxSize uId_process;
-	jvxSize uId_bridge_dev_node;
-	jvxSize uId_bridge_node_dev;
-	jvxLinkDataDescriptor* theData_outlnk;
-	jvxLinkDataDescriptor* theData_inlnk;
-	jvxBool useBuffersInPlaceInput;
-	jvxBool useBuffersInPlaceOutput;
+	jvxSize uId_process = JVX_SIZE_UNSELECTED;
+	jvxSize uId_bridge_dev_node = JVX_SIZE_UNSELECTED;
+	jvxSize uId_bridge_node_dev = JVX_SIZE_UNSELECTED;
+	jvxLinkDataDescriptor* theData_outlnk = nullptr;
+	jvxLinkDataDescriptor* theData_inlnk = nullptr;
+	jvxLinkDataDescriptor* theData_proposeInput = nullptr;
+
+	/** 
+	 * If this option is true, the input buffers will be used in place - that is, the input buffers will be used on the output side of the microconnection.
+	 * This option can only be used if the first element in micro chain accpets buffers with the JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT flag set.
+	 * If the option is not set, the field theData_inlnk will contain the buffers which are in use in the micro chain to allow access to the micro chain.
+	 */
+	jvxBool useBuffersInPlaceInput = false;
+
+	/**
+	 * If this option is true, the output buffers of the end of the micro chain will be those as passed in theData_outlnk - directly.
+	 * In this case, running the micro chain will end up with filling in the data that can be directly forwarded to the next element 
+	 * outside the micro chain. If the option is not set, dedicated buffers are allocated which are returned in the variable theData_outlnk.
+	 */
+	jvxBool useBuffersInPlaceOutput = false;
+
 	std::string dbg_hint;
-
 	std::string last_error = "";
+
+	jvxConnectionType typeConnection = jvxConnectionType::JVX_MICROCONNECTION_ENGAGE;
+
 public:
 	HjvxMicroConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~HjvxMicroConnection();
@@ -244,7 +281,9 @@ public:
 		HjvxMicroConnection_hooks_simple* refSimple = NULL,
 		HjvxMicroConnection_hooks_fwd* refFull = NULL,
 		jvxBool test_on_connect = true,
-		jvxBool copy_parameters_on_leave = false);
+		jvxBool copy_parameters_on_leave = false,
+		jvxConnectionType connTypeArg = jvxConnectionType::JVX_MICROCONNECTION_UNCONTROLLED,
+		jvxLinkDataDescriptor* proposedParametersInput = nullptr);
 
 	jvxErrorType disconnect_connection();
 	jvxErrorType test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb));

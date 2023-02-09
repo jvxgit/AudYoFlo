@@ -27,6 +27,7 @@ CjvxAuNBinauralRender::CjvxAuNBinauralRender(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DEC
 		JVX_DATAFORMAT_DATA, /* data format */
 		JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED); /* data format group */
 
+	outputArgsFromOutputParams = true;
 }
 
 CjvxAuNBinauralRender::~CjvxAuNBinauralRender()
@@ -102,6 +103,18 @@ CjvxAuNBinauralRender::deactivate()
 	return res;
 }
 
+void
+CjvxAuNBinauralRender::from_input_to_output()
+{
+	// Copy output properties from input properties
+	update_output_params_from_input_params();
+
+	// Copy output params (properties) to dataOut field - channels excluded
+	update_ldesc_from_output_params_on_test();
+
+	// Apply the neg_output constraints
+	constrain_ldesc_from_neg_output_params();
+}
 // ===================================================================
 
 jvxErrorType

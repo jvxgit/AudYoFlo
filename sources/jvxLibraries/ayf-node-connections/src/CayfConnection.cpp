@@ -848,15 +848,20 @@ CayfConnection::create_micro_connection()
 	// Connect
 	if (res == JVX_NO_ERROR)
 	{
+		auto microConType = (cfg.connectionMode == ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT ? HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_ENGAGE : HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED);
 		switch (cfg.connectionMode)
 		{
 		case ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT:
 			// Important: do not run the initial test! If doing so, default values will be used and test may fail!
-			res = locMicroConnection->connect_connection(cfg.anchorIn, cfg.anchorOut, cfg.bwdRefSpl, cfg.bwdRefFwd, false);
+			res = locMicroConnection->connect_connection(
+				cfg.anchorIn, cfg.anchorOut, 
+				cfg.bwdRefSpl, cfg.bwdRefFwd, false, false, 
+				microConType);
 			break;
 		case ayfConnectionOperationMode::AYF_CONNECTION_FLEXIBLE:
 
-			res = locMicroConnection->connect_connection(cfg.anchorIn, cfg.anchorOut, nullptr, nullptr, false);
+			res = locMicroConnection->connect_connection(cfg.anchorIn, cfg.anchorOut, nullptr, nullptr, 
+				false, false, microConType);
 			break;
 		default:
 			assert(0);

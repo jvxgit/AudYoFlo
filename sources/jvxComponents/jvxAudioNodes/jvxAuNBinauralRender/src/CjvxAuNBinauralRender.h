@@ -79,6 +79,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate() override;
 
+	void from_input_to_output() override;
+
 	// =========================================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
