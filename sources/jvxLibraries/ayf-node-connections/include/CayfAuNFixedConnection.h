@@ -325,15 +325,15 @@ namespace AyfConnection
 					{
 						idProcDepends = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.uIdConn;
 					}
-					res = CayfAuNConnection<S>::theConnection.startup(AyfConnection::CayfConnectionConfig(
+					res = CayfAuNConnection<S>::theConnection.init_connect(AyfConnection::CayfConnectionConfig(
 						CayfAuNConnection<S>::_common_set_min.theHostRef, this,
 						CayfAuNConnection<S>::lstMods,
 						CayfAuNConnection<S>::_common_set_ldslave.theData_in,
 						&CayfAuNConnection<S>::_common_set_ldslave.theData_out,
 						ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT,
-						this, this, false, CayfAuNConnection<S>::numBuffers,
 						CayfAuNConnection<S>::nmProcess, CayfAuNConnection<S>::descrProcess,
-						CayfAuNConnection<S>::descrorProcess), CayfAuNConnection<S>::stateSwitchHandler,
+						CayfAuNConnection<S>::descrorProcess, this, this, false, CayfAuNConnection<S>::numBuffers), 
+						CayfAuNConnection<S>::stateSwitchHandler,
 						idProcDepends, true);
 					if (res != JVX_NO_ERROR)
 					{

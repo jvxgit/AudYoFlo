@@ -428,9 +428,9 @@ CjvxAuNBitstreamDecoder::activate_decoder_connection(jvxSize idProc)
 
 	res = theMicroConnection->connect_connection(_common_set_ldslave.theData_in,
 		&_common_set_ldslave.theData_out,
+		HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_ENGAGE,
 		static_cast<HjvxMicroConnection_hooks_simple*>(this),
-		static_cast<HjvxMicroConnection_hooks_fwd*>(this),
-		false);
+		static_cast<HjvxMicroConnection_hooks_fwd*>(this));
 	assert(res == JVX_NO_ERROR);
 
 	return res;

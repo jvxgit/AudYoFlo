@@ -221,9 +221,7 @@ CjvxPluginProcessor::initialize_connection(jvxSize numPluginInChannels, jvxSize 
 				// Connect the connection
 				theMicroConnection->connect_connection(
 					&descr_conn_in,
-					&descr_conn_out,
-					nullptr, nullptr,
-					false, false);
+					&descr_conn_out);
 
 				// We keep the format open. Output plugin is input micro connection
 				neg_input._set_parameters_fixed(numPluginOutChannels, 512, 48000,

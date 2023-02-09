@@ -30,7 +30,7 @@ namespace AyfConnection
 
 		virtual jvxErrorType shutdown_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
-			theConnection.shutdown();
+			theConnection.disconnect_terminate();
 			return JVX_NO_ERROR;
 		};
 

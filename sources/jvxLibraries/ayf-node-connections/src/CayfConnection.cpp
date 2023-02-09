@@ -31,7 +31,6 @@ namespace AyfConnection
 
 	jvxErrorType
 		CayfConnection::provide_constraints(
-			IjvxObject* theOwner,
 			const std::string& nameProcessRef,
 			const std::string& descriptionConnectionRef,
 			const std::string& descriptorConnectionRef)
@@ -233,7 +232,7 @@ namespace AyfConnection
 	// ========================================================================
 
 	jvxErrorType
-		CayfConnection::startup(const CayfConnectionConfig& cfgArg, 
+		CayfConnection::init_connect(const CayfConnectionConfig& cfgArg,
 			IayfConnectionStateSwitchNode* cbSs , jvxSize idConnDependsOn, jvxBool fwdTestChain)
 	{
 		cfg = cfgArg;
@@ -248,7 +247,7 @@ namespace AyfConnection
 			goto exit_fail;
 		}
 
-		res = provide_constraints(cfg.owner, cfgArg.nmProcess, cfgArg.descrProcess, cfgArg.descrorProcess);
+		res = provide_constraints(cfgArg.nmProcess, cfgArg.descrProcess, cfgArg.descrorProcess);
 		if (res != JVX_NO_ERROR)
 		{
 			goto exit_fail;
@@ -318,13 +317,13 @@ namespace AyfConnection
 		return res;
 
 	exit_fail:
-		shutdown();
+		disconnect_terminate();
 		return res;
 	}
 
 
 	jvxErrorType
-		CayfConnection::shutdown()
+		CayfConnection::disconnect_terminate()
 	{
 		jvxErrorType res = deactivate();
 
@@ -395,6 +394,28 @@ namespace AyfConnection
 		if (microConn)
 		{
 			res = microConn->transfer_forward_connection(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		return res;
+	}
+
+	jvxErrorType 
+		CayfConnection::prepare_start()
+	{
+		jvxErrorType res = prepare_connection();
+		if (res == JVX_NO_ERROR)
+		{
+			res = start_connection();
+		}
+		return res;
+	}
+
+	jvxErrorType 
+		CayfConnection::stop_postprocess()
+	{
+		jvxErrorType res = stop_connection();
+		if (res == JVX_NO_ERROR)
+		{
+			res = postprocess_connection();
 		}
 		return res;
 	}
@@ -682,7 +703,30 @@ namespace AyfConnection
 		jvxErrorType res = CjvxObjectMin::_activate();
 		if (res == JVX_NO_ERROR)
 		{
-			res = create_micro_connection();
+			for (auto elm : registeredNodes)
+			{
+				if (elm.statOnInit < JVX_STATE_ACTIVE)
+				{
+					res = JVX_ERROR_UNSUPPORTED;
+					if (ssCb)
+					{
+						res = ssCb->runStateSwitch(JVX_STATE_SWITCH_ACTIVATE, elm.theNode, elm.modName.c_str());
+					}
+					if (res == JVX_ERROR_UNSUPPORTED)
+					{
+						res = elm.theNode->activate();
+					}
+				}
+				if (res != JVX_NO_ERROR)
+				{
+					break;
+				}
+			}
+
+			if (res == JVX_NO_ERROR)
+			{
+				res = create_micro_connection();
+			}
 		}
 
 		if (res != JVX_NO_ERROR)
@@ -701,6 +745,23 @@ namespace AyfConnection
 		{
 			res = destroy_micro_connection();
 			res = JVX_NO_ERROR;
+
+			for (auto elm : registeredNodes)
+			{
+				if (elm.statOnInit < JVX_STATE_ACTIVE)
+				{
+					jvxErrorType resL = JVX_ERROR_UNSUPPORTED;
+					if (ssCb)
+					{
+						resL = ssCb->runStateSwitch(JVX_STATE_SWITCH_DEACTIVATE, elm.theNode, elm.modName.c_str());
+					}
+					if (resL == JVX_ERROR_UNSUPPORTED)
+					{
+						resL = elm.theNode->deactivate();
+					}
+				}
+			}
+			
 			CjvxObjectMin::_deactivate();
 		}
 		return res;
@@ -713,28 +774,7 @@ CayfConnection::create_micro_connection()
 {
 	HjvxMicroConnection* locMicroConnection = nullptr;
 	jvxErrorType res = JVX_NO_ERROR;
-	for (auto elm : registeredNodes)
-	{
-		if (elm.statOnInit < JVX_STATE_ACTIVE)
-		{
-			res = JVX_ERROR_UNSUPPORTED;
-			if (ssCb)
-			{
-				res = ssCb->runStateSwitch(JVX_STATE_SWITCH_ACTIVATE, elm.theNode, elm.modName.c_str());
-			}
-			if (res == JVX_ERROR_UNSUPPORTED)
-			{				
-				res = elm.theNode->activate();
-			}
-		}
-		if (res != JVX_NO_ERROR)
-		{
-			break;
-		}
-	}	
-
-	if (res == JVX_NO_ERROR)
-	{
+	
 
 		// Allocate micro connection
 		JVX_DSP_SAFE_ALLOCATE_OBJECT(
@@ -843,25 +883,25 @@ CayfConnection::create_micro_connection()
 		JVX_DSP_SAFE_DELETE_FIELD(ptrIStr);
 		JVX_DSP_SAFE_DELETE_FIELD(ptrOcon);
 		JVX_DSP_SAFE_DELETE_FIELD(ptrOStr);
-	}
+	
 
 	// Connect
 	if (res == JVX_NO_ERROR)
 	{
-		auto microConType = (cfg.connectionMode == ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT ? HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_ENGAGE : HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED);
+		auto microConType = (cfg.connectionMode == ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT ? HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_ENGAGE : 
+			HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED);
 		switch (cfg.connectionMode)
 		{
 		case ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT:
 			// Important: do not run the initial test! If doing so, default values will be used and test may fail!
 			res = locMicroConnection->connect_connection(
 				cfg.anchorIn, cfg.anchorOut, 
-				cfg.bwdRefSpl, cfg.bwdRefFwd, false, false, 
-				microConType);
+				microConType,
+				cfg.bwdRefSpl, cfg.bwdRefFwd);
 			break;
 		case ayfConnectionOperationMode::AYF_CONNECTION_FLEXIBLE:
 
-			res = locMicroConnection->connect_connection(cfg.anchorIn, cfg.anchorOut, nullptr, nullptr, 
-				false, false, microConType);
+			res = locMicroConnection->connect_connection(cfg.anchorIn, cfg.anchorOut, microConType);
 			break;
 		default:
 			assert(0);
@@ -887,21 +927,6 @@ CayfConnection::destroy_micro_connection()
 		locMicroConnection->disconnect_connection();
 		locMicroConnection->deactivate_connection();
 		JVX_DSP_SAFE_DELETE_OBJECT(microConn);
-	}
-	for (auto elm : registeredNodes)
-	{
-		if (elm.statOnInit < JVX_STATE_ACTIVE)
-		{
-			jvxErrorType resL = JVX_ERROR_UNSUPPORTED;
-			if (ssCb)
-			{
-				resL = ssCb->runStateSwitch(JVX_STATE_SWITCH_DEACTIVATE, elm.theNode, elm.modName.c_str());
-			}
-			if(resL == JVX_ERROR_UNSUPPORTED)
-			{
-				resL = elm.theNode->deactivate();
-			}
-		}
 	}
 	return JVX_NO_ERROR;
 }

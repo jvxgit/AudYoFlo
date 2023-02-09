@@ -14,9 +14,7 @@ CjvxAuNCodec::connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION
 		{
 			resL = connection_lane[0].micro_connection->connect_connection(
 				&connection_lane[0].descr_encoder_in,
-				&connection_lane[0].descr_decoder_out,
-				nullptr, nullptr, 
-				false, false);
+				&connection_lane[0].descr_decoder_out);
 			assert(resL == JVX_NO_ERROR);
 			connection_lane[0].stat = JVX_STATE_ACTIVE;
 		}
@@ -25,9 +23,7 @@ CjvxAuNCodec::connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION
 		{
 			resL = connection_lane[1].micro_connection->connect_connection(
 				&connection_lane[1].descr_encoder_in,
-				&connection_lane[1].descr_decoder_out,
-				nullptr, nullptr,
-				false, false);
+				&connection_lane[1].descr_decoder_out);
 			assert(resL == JVX_NO_ERROR);
 			connection_lane[1].stat = JVX_STATE_ACTIVE;
 		}

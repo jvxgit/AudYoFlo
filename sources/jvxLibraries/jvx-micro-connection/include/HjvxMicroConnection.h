@@ -278,11 +278,9 @@ public:
 	 */
 	jvxErrorType connect_connection(jvxLinkDataDescriptor* theData_in, 
 		jvxLinkDataDescriptor* theData_out, 
+		jvxConnectionType connTypeArg = jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED,
 		HjvxMicroConnection_hooks_simple* refSimple = NULL,
 		HjvxMicroConnection_hooks_fwd* refFull = NULL,
-		jvxBool test_on_connect = true,
-		jvxBool copy_parameters_on_leave = false,
-		jvxConnectionType connTypeArg = jvxConnectionType::JVX_MICROCONNECTION_UNCONTROLLED,
 		jvxLinkDataDescriptor* proposedParametersInput = nullptr);
 
 	jvxErrorType disconnect_connection();

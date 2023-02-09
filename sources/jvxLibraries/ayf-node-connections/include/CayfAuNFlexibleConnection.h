@@ -183,14 +183,15 @@ namespace AyfConnection
 					jvx_initDataLinkDescriptor(&descr_in);
 					jvx_initDataLinkDescriptor(&descr_out);
 
-					res = CayfAuNConnection<S>::theConnection.startup(AyfConnection::CayfConnectionConfig(
+					res = CayfAuNConnection<S>::theConnection.init_connect(AyfConnection::CayfConnectionConfig(
 						CayfAuNConnection<S>::_common_set_min.theHostRef, this, CayfAuNConnection<S>::lstMods,
 						&descr_in,
 						&descr_out,
 						ayfConnectionOperationMode::AYF_CONNECTION_FLEXIBLE,
+						CayfAuNConnection<S>::nmProcess,
+						CayfAuNConnection<S>::descrProcess, CayfAuNConnection<S>::descrorProcess,
 						nullptr, nullptr, false, 
-						CayfAuNConnection<S>::numBuffers, CayfAuNConnection<S>::nmProcess, 
-						CayfAuNConnection<S>::descrProcess, CayfAuNConnection<S>::descrorProcess), 
+						CayfAuNConnection<S>::numBuffers), 
 						CayfAuNConnection<S>::stateSwitchHandler);
 					if (res != JVX_NO_ERROR)
 					{

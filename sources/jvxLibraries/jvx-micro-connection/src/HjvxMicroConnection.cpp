@@ -609,11 +609,9 @@ exit_error:
 jvxErrorType
 HjvxMicroConnection::connect_connection(
 	jvxLinkDataDescriptor* theData_in, jvxLinkDataDescriptor* theData_out,
-	HjvxMicroConnection_hooks_simple* refSimple, 
-	HjvxMicroConnection_hooks_fwd* refExt,
-	jvxBool test_on_connect,
-	jvxBool copy_parameters_on_leave,
-	jvxConnectionType connTypeArg, 
+	jvxConnectionType connTypeArg,
+	HjvxMicroConnection_hooks_simple* refSimple,
+	HjvxMicroConnection_hooks_fwd* refExt,	
 	jvxLinkDataDescriptor* theData_propArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
@@ -637,7 +635,6 @@ HjvxMicroConnection::connect_connection(
 			// This is for a kind of validation
 			assert(refHandleSimple);
 			assert(refHandleFwd);
-			assert(test_on_connect == false);
 			break;
 		case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_ADAPT:
 		case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_FIXED:
@@ -651,7 +648,7 @@ HjvxMicroConnection::connect_connection(
 		assert(res == JVX_NO_ERROR);
 
 		_common_set_ldslave.theData_out.con_params = theData_inlnk->con_params;
-		theProc->set_test_on_connect(test_on_connect, &_common_set_ldslave.theData_out.con_params);
+		theProc->set_test_on_connect(false, &_common_set_ldslave.theData_out.con_params);
 
 		res = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res != JVX_NO_ERROR)
@@ -661,12 +658,7 @@ HjvxMicroConnection::connect_connection(
 
 		theConnections->return_reference_connection_process(theProc);
 		theProc = NULL;
-
-		if (copy_parameters_on_leave)
-		{
-			theData_inlnk->con_params = _common_set_ldslave.theData_out.con_params;
-		}
-
+		
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_WRONG_STATE;

@@ -67,13 +67,13 @@ namespace AyfConnection
 			jvxLinkDataDescriptor* anchorInArg,
 			jvxLinkDataDescriptor* anchorOutArg,
 			ayfConnectionOperationMode connectionModeArg = ayfConnectionOperationMode::AYF_CONNECTION_FLEXIBLE,
+			const std::string nmProcessArg = "simple-connection-chain",
+			const std::string& descrProcessArg = "Simple Connection",
+			const std::string& descrorProcessArg = "simpleConnection",
 			HjvxMicroConnection_hooks_simple* bwdRefSplArg = nullptr,
 			HjvxMicroConnection_hooks_fwd* bwdRefFwdArg = nullptr,
 			jvxBool activateNodeArg = true,
-			jvxSize numBuffersArg = 1,
-			const std::string nmProcessArg = "simple-connection-chain",
-			const std::string& descrProcessArg = "Simple Connection",
-			const std::string& descrorProcessArg = "simpleConnection"):
+			jvxSize numBuffersArg = 1):
 			hostRef(hostRefArg),
 			owner(ownerArg),
 			modSpecLinear(modSpecLinearArg),
@@ -124,19 +124,32 @@ namespace AyfConnection
 		CayfConnection();
 		~CayfConnection();
 
-		// =====================================================================
-		jvxErrorType provide_constraints(IjvxObject* theOwner, 
-			const std::string& nameProcess = "simple-connection-chain",
-			const std::string& descriptionConnection = "Simple Connection",
-			const std::string& descriptorConnection = "simpleConnection");
-		jvxErrorType reset_constraints();
-		// =====================================================================
+	public:
 
-		jvxErrorType startup(const CayfConnectionConfig& cfg,
+		// ===========================================================================================
+		// The simple interface
+		// ===========================================================================================
+
+		/*
+		 * Main startup function : This call establishes and tests the micro connection.
+		 */
+		jvxErrorType init_connect(const CayfConnectionConfig& cfg,
 			IayfConnectionStateSwitchNode* cbSs = nullptr,
 			jvxSize idConnDependsOn = JVX_SIZE_UNSELECTED, 
 			jvxBool fwdTestChain = false);
-		jvxErrorType shutdown();
+
+		//! Function to prepare and start the involved subchain. This calls prepare_connection and start_connection.
+		jvxErrorType prepare_start();
+
+		//! Function to stop and postprocess the involved subchain. This calls stop_connection and postprocess_connection.
+		jvxErrorType stop_postprocess();
+
+		/*
+		 * Main shutdown function : This call shuts down the micro connection.
+		 */
+		jvxErrorType disconnect_terminate();
+
+		// ===========================================================================================
 
 		jvxErrorType state(jvxState* stat);
 
@@ -148,10 +161,16 @@ namespace AyfConnection
 		jvxErrorType transfer_forward_connection(jvxLinkDataTransferType tp, jvxHandle* data 
 			JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
+		/*
+		 * This call triggers the reservation of the buffers right before processing. Note that always,
+		 * the option NOT to reuse buffers in place is active.
+		 */
 		jvxErrorType prepare_connection();
 		jvxErrorType postprocess_connection();
 		jvxErrorType start_connection();
 		jvxErrorType stop_connection();
+
+
 		jvxErrorType prepare_process_connection(
 			jvxLinkDataDescriptor** lkDataOnReturn,
 			jvxSize pipeline_offset = 0,
@@ -182,10 +201,15 @@ namespace AyfConnection
 		jvxSize numRegisteredObjects();
 		IjvxObject* objectAtPosition(jvxSize idx);
 
-		void test_run_complete(jvxErrorType lastResult);
-
 	private:
 
+		jvxErrorType provide_constraints(
+			const std::string& nameProcess = "simple-connection-chain",
+			const std::string& descriptionConnection = "Simple Connection",
+			const std::string& descriptorConnection = "simpleConnection");
+		jvxErrorType reset_constraints();
+
+		void test_run_complete(jvxErrorType lastResult);
 		jvxErrorType register_node(const std::string& modName, IjvxObject* theObj, jvxBool activatedInSystem = false,
 			IjvxConfigProcessor* confProc = nullptr, jvxConfigData* secConfig = nullptr, jvxSize uid = JVX_SIZE_UNSELECTED);
 		jvxErrorType unregister_node(IjvxObject* theObj);

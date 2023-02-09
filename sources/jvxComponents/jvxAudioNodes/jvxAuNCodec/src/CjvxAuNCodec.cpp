@@ -157,9 +157,7 @@ CjvxAuNCodec::createMicroConnections(jvxSize id_lane)
 		{
 			jvxErrorType resL = connection_lane[id_lane].micro_connection->connect_connection(
 				&connection_lane[id_lane].descr_encoder_in,
-				&connection_lane[id_lane].descr_decoder_out,
-				nullptr, nullptr,
-				false, false);
+				&connection_lane[id_lane].descr_decoder_out);
 			assert(resL == JVX_NO_ERROR);
 			connection_lane[id_lane].stat = JVX_STATE_ACTIVE;
 		}
