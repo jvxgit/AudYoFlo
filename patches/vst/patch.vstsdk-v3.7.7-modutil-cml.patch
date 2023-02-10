@@ -1,0 +1,15 @@
+--- vst3sdk/public.sdk/samples/vst-utilities/moduleinfotool/CMakeLists.txt	2023-02-10 15:29:35.749737200 +0100
++++ vst3sdk.orig/public.sdk/samples/vst-utilities/moduleinfotool/CMakeLists.txt	2023-02-10 15:24:04.931387300 +0100
+@@ -58,11 +58,3 @@
+             ${COCOA_FRAMEWORK}
+     )
+ endif(APPLE AND NOT XCODE)
+-
+-get_target_property(rt_output ${target} RUNTIME_OUTPUT_DIRECTORY)
+-if(GENERATOR_IS_MULTI_CONFIG)
+-    set_property(GLOBAL PROPERTY JVX_COLLECT_MODULEINFO_RELEASE_FOLDER "${rt_output}/$<CONFIG>")
+- else()
+-   set_property(GLOBAL PROPERTY JVX_COLLECT_MODULEINFO_RELEASE_FOLDER "${rt_output}")
+- endif()
+- 
+\ No newline at end of file
