@@ -316,6 +316,7 @@ tresult PLUGIN_API jvxvstp::setupProcessing (ProcessSetup& newSetup)
 	// here we keep a trace of the processing mode (offline,...) for example.
 	currentProcessMode = newSetup.processMode;
 	
+	// IMPORTANT: VARIABLE BUFFERFSIZES MAY OCCUR!!! I HAVE SEEN THOSE WITH AUDACITY
 	update_plugin_parameters(newSetup.maxSamplesPerBlock, newSetup.sampleRate);
 	
 	return AudioEffect::setupProcessing (newSetup);
