@@ -17,6 +17,8 @@ include_directories(
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
 
+   ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-node-connections/include
+
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
 
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor/
@@ -52,6 +54,7 @@ set(LOCAL_LIBS
 	jvxTrtAudioFileReader_static
 	jvxTrtAudioFileWriter_static
     jvx-micro-connection_static
+	ayf-node-connections_static
     jvx-helpers_static)
 	
 set(BUILD_STATIC TRUE)

@@ -11,7 +11,9 @@
 #include "TjvxPluginCommon.h"
 #include "IjvxPluginCommon.h"
 
-class CjvxPluginProcessor: public HjvxMicroConnection_hooks_simple, public IjvxAudioPluginRuntime
+#include "CayfConnection.h"
+
+class CjvxPluginProcessor: public IjvxAudioPluginRuntime
 {
 protected:
 	class oneComponentDescriptor
@@ -22,11 +24,18 @@ protected:
 		jvxTerminateObject_tp funcTerm = nullptr;
 		IjvxObject* objNode = nullptr; 
 		IjvxNode* theNode = nullptr;
+		jvxSize uIdComp = JVX_SIZE_UNSELECTED;
 	};
 
 	jvxSize refCountHost = 0;
 	IjvxDataConnections* intfCons = nullptr;
-	HjvxMicroConnection* theMicroConnection = nullptr;
+
+	// List of components to be chained
+	std::list<AyfConnection::CayfConnectionComponent> lstChainedComponents;
+
+	// This object holds the chain
+	AyfConnection::CayfConnection theConnection;
+
 	CjvxNegotiate_input neg_input;
 	CjvxNegotiate_output neg_output;
 	jvxLinkDataDescriptor descr_conn_in;
@@ -34,11 +43,6 @@ protected:
 	std::list< oneComponentDescriptor> registeredComponents;
 
 	IjvxPropertyExtenderStreamAudioPlugin* theExtender = nullptr;
-
-	IjvxHiddenInterface** lstNodes = nullptr;
-	jvxSize numNodes = 0;
-	jvx_constCharStringLst icons;
-	jvx_constCharStringLst ocons;
 
 	struct
 	{
@@ -68,17 +72,6 @@ protected:
 	jvxBool connection_started = false;
 
 public:
-
-	virtual jvxErrorType hook_test_negotiate(jvxLinkDataDescriptor* proposed JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	
-	virtual jvxErrorType hook_test_accept(jvxLinkDataDescriptor* dataIn  
-		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-
-	virtual jvxErrorType hook_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-
-	virtual jvxErrorType hook_test_update(jvxLinkDataDescriptor* dataIn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	
-	virtual jvxErrorType hook_check_is_ready(jvxBool* is_ready, jvxApiString* astr) override;
 
 	// =====================================================================
 

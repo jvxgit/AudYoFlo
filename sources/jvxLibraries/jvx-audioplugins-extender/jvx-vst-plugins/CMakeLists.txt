@@ -23,6 +23,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_VST_SDK_ROOT}
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugins-extender/jvx-plugin-connector/include
+  ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-node-connections/include
   )
 
 set(LOCAL_SOURCES

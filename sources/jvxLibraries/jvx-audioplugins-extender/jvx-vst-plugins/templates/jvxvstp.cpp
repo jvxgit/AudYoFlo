@@ -152,7 +152,7 @@ tresult PLUGIN_API jvxvstp::process (ProcessData& data)
 			// void** out = getChannelBuffersPointer(processSetup, data.outputs[0]);
 
 			jvxLinkDataDescriptor* datIO = NULL;
-			jvxErrorType resL = theMicroConnection->prepare_process_connection(&datIO);
+			jvxErrorType resL = theConnection.prepare_process_connection(&datIO);
 			if (resL == JVX_NO_ERROR)
 			{
 				jvxSize i;
@@ -175,7 +175,9 @@ tresult PLUGIN_API jvxvstp::process (ProcessData& data)
 					}
 				}
 
-				resL = theMicroConnection->process_connection(&datIO);
+				// Actually process the data into the output buffers. Output buffers available on return
+				theConnection.process_connection(&datIO);
+
 				jvxData** bufsInJvxRt = jvx_process_icon_extract_output_buffers<jvxData>(datIO);
 				jvxSize numChannelsOutMin = JVX_MIN(data.outputs[0].numChannels, (int)datIO->con_params.number_channels);
 				if (processSetup.symbolicSampleSize == kSample32)
@@ -195,7 +197,7 @@ tresult PLUGIN_API jvxvstp::process (ProcessData& data)
 					}
 				}
 
-				resL = theMicroConnection->postprocess_process_connection();
+				theConnection.postprocess_process_connection();
 			}
 		}
 		// output_params:

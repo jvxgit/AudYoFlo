@@ -175,7 +175,15 @@ CjvxPluginProcessor::initialize_connection(jvxSize numPluginInChannels, jvxSize 
 					// Give each implementation a number
 					resL = descr.theNode->set_location_info(jvxComponentIdentification(refCountHost, 0));
 				}
-				if (resL != JVX_NO_ERROR)
+
+				if (resL == JVX_NO_ERROR)
+				{
+					lstChainedComponents.push_back(AyfConnection::CayfConnectionComponent(
+						descr.name,
+						descr.theNode, false, 
+						descr.uIdComp));
+				}
+				else
 				{
 					allComponentsOk = false;
 					break;
@@ -186,6 +194,29 @@ CjvxPluginProcessor::initialize_connection(jvxSize numPluginInChannels, jvxSize 
 
 	if (allComponentsOk)
 	{
+		std::string postfix = jvx_size2String(refCountHost);
+		resL = theConnection.init_connect(
+			AyfConnection::CayfConnectionConfig(
+			facHost,
+			nullptr, /* no owner */
+			lstChainedComponents, &descr_conn_in,
+			&descr_conn_out,
+			AyfConnection::ayfConnectionOperationMode::AYF_CONNECTION_FLEXIBLE,
+			("local-vst-connection#" + postfix), 
+			("Micro Connection VST #" + postfix), 
+			("microConnectionVST" + postfix)
+			)
+		);
+		assert(resL == JVX_NO_ERROR);
+
+		// We keep the format open. Output plugin is input micro connection
+		neg_input._set_parameters_fixed(numPluginOutChannels, 512, 48000,
+			JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+
+		neg_output._set_parameters_fixed(numPluginInChannels, 512, 48000,
+			JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+
+		/*
 		numNodes = registeredComponents.size();
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(lstNodes, IjvxHiddenInterface*, numNodes);
 
@@ -231,7 +262,7 @@ CjvxPluginProcessor::initialize_connection(jvxSize numPluginInChannels, jvxSize 
 					JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
 				return res;
 			}
-		}
+		} */
 	}
 	return res;
 }
@@ -239,6 +270,12 @@ CjvxPluginProcessor::initialize_connection(jvxSize numPluginInChannels, jvxSize 
 jvxErrorType
 CjvxPluginProcessor::terminate_connection()
 {
+	jvxErrorType res = theConnection.disconnect_terminate();
+	assert(res == JVX_NO_ERROR);
+
+	lstChainedComponents.clear();
+
+	/*
 	if (theMicroConnection)
 	{
 		theMicroConnection->disconnect_connection();
@@ -247,11 +284,12 @@ CjvxPluginProcessor::terminate_connection()
 		delete(theMicroConnection);
 		theMicroConnection = nullptr;
 	}
-
+	
 	icons.clear();
 	ocons.clear();
 	JVX_DSP_SAFE_DELETE_FIELD(lstNodes);
 	lstNodes = nullptr;
+	*/
 
 	for (CjvxPluginProcessor::oneComponentDescriptor& descr : registeredComponents)
 	{
@@ -320,6 +358,15 @@ CjvxPluginProcessor::start_connection()
 		neg_input.derive(&descr_conn_in.con_params);
 
 		JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(var);
+		
+		res = theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(var));
+		assert(res == JVX_NO_ERROR);
+
+		res = theConnection.prepare_start();
+		assert(res == JVX_NO_ERROR);
+
+
+		/*
 		res = theMicroConnection->test_connection(JVX_CONNECTION_FEEDBACK_CALL(var));
 		if (res == JVX_NO_ERROR)
 		{
@@ -330,6 +377,7 @@ CjvxPluginProcessor::start_connection()
 		{
 			res = theMicroConnection->start_connection();
 		}
+		*/
 		connection_started = true;
 	}
 	return res;
@@ -341,8 +389,12 @@ CjvxPluginProcessor::stop_connection()
 	jvxErrorType res = JVX_NO_ERROR;
 	if (connection_started)
 	{
+		res = theConnection.stop_postprocess();
+		assert(res == JVX_NO_ERROR);
+		/*
 		res = theMicroConnection->stop_connection();
 		res = theMicroConnection->postprocess_connection();
+		*/
 		connection_started = false;
 	}
 	else
@@ -393,36 +445,6 @@ CjvxPluginProcessor::return_property_reference(IjvxProperties* theProp, const st
 }
 
 // ==========================================================================
-
-jvxErrorType
-CjvxPluginProcessor::hook_test_negotiate(jvxLinkDataDescriptor* proposed JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CjvxPluginProcessor::hook_test_accept(jvxLinkDataDescriptor* dataIn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CjvxPluginProcessor::hook_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CjvxPluginProcessor::hook_test_update(jvxLinkDataDescriptor* dataIn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CjvxPluginProcessor::hook_check_is_ready(jvxBool* is_ready, jvxApiString* astr)
-{
-	return JVX_NO_ERROR;
-}
 
 
 // ============================================================================

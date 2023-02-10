@@ -23,10 +23,16 @@ namespace AyfConnection
 		IjvxNode* theNode = nullptr;
 		jvxBool activatedInSystem = false;
 		std::string modName = "not-set";
-		jvxState statOnInit = JVX_STATE_NONE;	
+		std::string inputConnectorName = "default";
+		std::string outputConnectorName = "default";
+		jvxState statOnInit = JVX_STATE_NONE;
 		jvxSize uId = JVX_SIZE_UNSELECTED;
 		CayfOneNode();
-		CayfOneNode(IjvxObject* theObjArg):theObj(theObjArg)
+		CayfOneNode(IjvxObject* theObjArg, 
+			const std::string& inConnName = "default", 
+			const std::string& outConnName = "default") :theObj(theObjArg),
+			inputConnectorName(outConnName),
+			outputConnectorName(outConnName)
 		{ 
 		};
 		~CayfOneNode();		
@@ -43,11 +49,17 @@ namespace AyfConnection
 		CayfConnectionComponent(const std::string& modNameArg, jvxComponentType tpArg, 
 			jvxBool tryActivateArg = false, 
 			jvxSize uIdArg = JVX_SIZE_UNSELECTED,
-			IjvxReferenceSelector* deciderArg = nullptr) :
-			modName(modNameArg), tp(tpArg), tryActivateComponent(tryActivateArg), uId(uIdArg), decider(deciderArg) {};
+			IjvxReferenceSelector* deciderArg = nullptr,
+			const std::string& outputConnectorNameArg = "default") :
+			modName(modNameArg), tp(tpArg), tryActivateComponent(tryActivateArg), 
+			uId(uIdArg), decider(deciderArg),
+			outputConnectorName(outputConnectorNameArg) {};
 		CayfConnectionComponent(const std::string& modNameArg, IjvxObject* theObjArg, jvxBool tryActivateArg = false, jvxSize uIdArg = JVX_SIZE_UNSELECTED,
-			IjvxReferenceSelector* deciderArg = nullptr) :
-			modName(modNameArg), theObj(theObjArg), tryActivateComponent(tryActivateArg), uId(uIdArg), decider(deciderArg) {};
+			IjvxReferenceSelector* deciderArg = nullptr,
+			const std::string& outputConnectorNameArg = "default") :
+			modName(modNameArg), theObj(theObjArg), tryActivateComponent(tryActivateArg), uId(uIdArg),
+			decider(deciderArg),
+			outputConnectorName (outputConnectorNameArg) {};
 
 		jvxSize uId = JVX_SIZE_UNSELECTED;
 		std::string modName;
@@ -55,6 +67,7 @@ namespace AyfConnection
 		jvxComponentType tp = JVX_COMPONENT_UNKNOWN;
 		IjvxObject* theObj = nullptr;
 		IjvxReferenceSelector* decider = nullptr;
+		std::string outputConnectorName = "default";
 	};
 
 	class CayfConnectionConfig
@@ -132,6 +145,11 @@ namespace AyfConnection
 
 		/*
 		 * Main startup function : This call establishes and tests the micro connection.
+		 * The argument cbSs allows to track the state changes of the component, 
+		 * the argument idConnDependsOn allows to specify a uId to identify a component
+		 * if the same type is used more than once.
+		 * The argument fwdTestChain allows to forward requests to test a chain to the 
+		 * outside chain. This typically is desired on EFFICIENT connections.
 		 */
 		jvxErrorType init_connect(const CayfConnectionConfig& cfg,
 			IayfConnectionStateSwitchNode* cbSs = nullptr,
@@ -211,10 +229,12 @@ namespace AyfConnection
 
 		void test_run_complete(jvxErrorType lastResult);
 		jvxErrorType register_node(const std::string& modName, IjvxObject* theObj, jvxBool activatedInSystem = false,
-			IjvxConfigProcessor* confProc = nullptr, jvxConfigData* secConfig = nullptr, jvxSize uid = JVX_SIZE_UNSELECTED);
+			IjvxConfigProcessor* confProc = nullptr, jvxConfigData* secConfig = nullptr, jvxSize uid = JVX_SIZE_UNSELECTED,
+			const std::string& inConnName = "default", const std::string& outConnName = "default");
 		jvxErrorType unregister_node(IjvxObject* theObj);
 
-		jvxErrorType register_node(const std::string& modName, jvxComponentType tp, jvxBool activateNode = true, jvxSize uid = JVX_SIZE_UNSELECTED, IjvxReferenceSelector* decider = nullptr);
+		jvxErrorType register_node(const std::string& modName, jvxComponentType tp, jvxBool activateNode = true, jvxSize uid = JVX_SIZE_UNSELECTED, 
+			IjvxReferenceSelector* decider = nullptr, const std::string& inConnName = "default", const std::string& outConnName = "default");
 		jvxErrorType unregister_nodes(const std::string& modName);
 
 		// Interface "IjvxCoreStateMachine"

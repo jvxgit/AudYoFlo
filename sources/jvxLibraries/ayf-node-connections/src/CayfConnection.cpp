@@ -64,7 +64,8 @@ namespace AyfConnection
 		CayfConnection::register_node(
 			const std::string& modName, 
 			IjvxObject* theObj, jvxBool activatedInSystem, 
-			IjvxConfigProcessor* confProc, jvxConfigData* secConfig, jvxSize uid)
+			IjvxConfigProcessor* confProc, jvxConfigData* secConfig, jvxSize uid,
+			const std::string& inConnName, const std::string& outConnName)
 	{
 		jvxErrorType res = JVX_ERROR_WRONG_STATE;
 		if (_common_set_min.theState == JVX_STATE_INIT)
@@ -116,7 +117,9 @@ namespace AyfConnection
 
 	// =================================================================
 	jvxErrorType
-		CayfConnection::register_node(const std::string& modName, jvxComponentType tp, jvxBool activateNode, jvxSize uid, IjvxReferenceSelector* decider)
+		CayfConnection::register_node(const std::string& modName, jvxComponentType tp,
+			jvxBool activateNode, jvxSize uid, IjvxReferenceSelector* decider,
+			const std::string& inConnName, const std::string& outConnName )
 	{
 		jvxErrorType res = JVX_ERROR_WRONG_STATE;
 		if (_common_set_min.theState == JVX_STATE_INIT)
@@ -793,17 +796,13 @@ CayfConnection::create_micro_connection()
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(ptrIf, IjvxHiddenInterface*, registeredNodes.size());
 
 		const char** ptrIcon = nullptr;
-		std::string* ptrIStr = nullptr;
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(ptrIcon, const char*, registeredNodes.size());
-		JVX_DSP_SAFE_ALLOCATE_FIELD(ptrIStr, std::string, registeredNodes.size());
 
 		const char** ptrOcon = nullptr;
-		std::string* ptrOStr = nullptr;
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(ptrOcon, const char*, registeredNodes.size());
-		JVX_DSP_SAFE_ALLOCATE_FIELD(ptrOStr, std::string, registeredNodes.size());
 
 		jvxSize cnt = 0;
-		for (auto elm : registeredNodes)
+		for (auto& elm : registeredNodes)
 		{
 			res = JVX_ERROR_NOT_READY;
 			if (elm.statOnInit < JVX_STATE_ACTIVE)
@@ -824,10 +823,8 @@ CayfConnection::create_micro_connection()
 				// node is ready
 				ptrIf[cnt] = elm.theNode;
 
-				ptrIStr[cnt] = "default";
-				ptrIcon[cnt] = ptrIStr[cnt].c_str();
-				ptrOStr[cnt] = "default";
-				ptrOcon[cnt] = ptrOStr[cnt].c_str();
+				ptrIcon[cnt] = elm.inputConnectorName.c_str();
+				ptrOcon[cnt] = elm.outputConnectorName.c_str();
 				cnt++;
 			}
 			else
@@ -880,9 +877,7 @@ CayfConnection::create_micro_connection()
 
 		JVX_DSP_SAFE_DELETE_FIELD(ptrIf);
 		JVX_DSP_SAFE_DELETE_FIELD(ptrIcon);
-		JVX_DSP_SAFE_DELETE_FIELD(ptrIStr);
 		JVX_DSP_SAFE_DELETE_FIELD(ptrOcon);
-		JVX_DSP_SAFE_DELETE_FIELD(ptrOStr);
 	
 
 	// Connect
