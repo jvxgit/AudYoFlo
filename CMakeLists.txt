@@ -451,7 +451,7 @@ endif()
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-audio-sockets-sm
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-buffer-sync
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection
-	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-subqueue
+	# ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-subqueue
 	
 	# The audio libs
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-system-product
@@ -839,7 +839,7 @@ endif()
 	endif()
 
 	# ===========================================================================
-	# Add plugin extender lib - e.g., for VST
+	# Add plugin extender lib - e.g., for VSTe
 	# ===========================================================================
 	set(JVX_SDK_EXTENDER_LIBS ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugins-extender/jvx-plugin-connector)
 	
@@ -911,32 +911,58 @@ endif()
   
 	if(JVX_USE_VST )
 	
-		# set(VSTSDK_VERSION_COLLECT "unknown" CACHE INTERNAL "VST3 SDK Version")
+		option(JVX_USE_VST_3_7_2 "Vst Version is 3.7.2" OFF)
 		
-		if(NOT EXISTS ${JVXRT_SUBMODULE_PATH}/vst3sdk)	
-			message("vst sub project not available. Starting script to download it.") 
-			execute_process(COMMAND ${mysh} -c "cd ${JVXRT_SUBMODULE_PATH}; pwd ; ../../patches/vst/prepareModules.sh; exit")
-			message("qwt installation complete.")		
-		endif()
+		if(JVX_USE_VST_3_7_2)
+			if(NOT EXISTS ${JVXRT_SUBMODULE_PATH}/vst3sdk)	
+				message("vst sub project not available. Starting script to download it.") 
+				execute_process(COMMAND ${mysh} -c "cd ${JVXRT_SUBMODULE_PATH}; pwd ; ../../patches/vst/prepareModules-3.7.2.sh; exit")
+				message("vst installation complete.")		
+			endif()
 		
-		set(SMTG_CREATE_PLUGIN_LINK FALSE)
-		set(SMTG_PLUGIN_TARGET_PATH "${JVX_SUBPRODUCT_BINARY_DIR}")
-		set(VST_FORCE_PLUGINS_EXAMPLES TRUE)
-		set(JVX_VST_SDK_EXAMPLES ${JVXRT_SUBMODULE_PATH}/vst3sdk)
-		set(JVX_VST_SDK_EXAMPLES_MAP ${JVXRT_SUBMODULE_PATH}/vst3sdk)
+			set(SMTG_CREATE_PLUGIN_LINK FALSE)
+			set(SMTG_PLUGIN_TARGET_PATH "${JVX_SUBPRODUCT_BINARY_DIR}")
+			set(VST_FORCE_PLUGINS_EXAMPLES TRUE)
+			set(JVX_VST_SDK_EXAMPLES ${JVXRT_SUBMODULE_PATH}/vst3sdk)
+			set(JVX_VST_SDK_EXAMPLES_MAP ${JVXRT_SUBMODULE_PATH}/vst3sdk)
 		
-		set(JVX_VST_SDK_ROOT "${JVX_VST_SDK_EXAMPLES}")
-		set(JVX_VSTGUI_SDK_ROOT "${JVX_VST_SDK_ROOT}/vstgui4")
-		jvx_addExtSubdir("Configuring all VST examples" "${JVX_VST_SDK_EXAMPLES}" "${JVX_VST_SDK_EXAMPLES_MAP}" "${JVX_FOLDER_HIERARCHIE_BASE}/vst-sdk3")
+			set(JVX_VST_SDK_ROOT "${JVX_VST_SDK_EXAMPLES}")
+			set(JVX_VSTGUI_SDK_ROOT "${JVX_VST_SDK_ROOT}/vstgui4")
+			jvx_addExtSubdir("Configuring all VST examples" "${JVX_VST_SDK_EXAMPLES}" "${JVX_VST_SDK_EXAMPLES_MAP}" "${JVX_FOLDER_HIERARCHIE_BASE}/vst-sdk3")
 	
-		set(JVX_VST_SDK_EXTENDER_LIBS 
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugins-extender/jvx-vst-plugins)
+			set(JVX_VST_SDK_EXTENDER_LIBS 
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugins-extender/jvx-vst-plugins)
 	
-		set(JVX_VST_SDK_WIDGET_LIBS 
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugin-widgets/jvx-vst-widgets)
+			set(JVX_VST_SDK_WIDGET_LIBS 
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugin-widgets/jvx-vst-widgets)
+		else()
+			# set(VSTSDK_VERSION_COLLECT "unknown" CACHE INTERNAL "VST3 SDK Version")
+		
+			if(NOT EXISTS ${JVXRT_SUBMODULE_PATH}/vst3sdk)	
+				message("vst sub project not available. Starting script to download it.") 
+				execute_process(COMMAND ${mysh} -c "cd ${JVXRT_SUBMODULE_PATH}; pwd ; ../../patches/vst/prepareModules-3.7.7.sh; exit")
+				message("qwt installation complete.")		
+			endif()
+		
+			set(SMTG_CREATE_PLUGIN_LINK FALSE)
+			set(SMTG_PLUGIN_TARGET_PATH "${JVX_SUBPRODUCT_BINARY_DIR}")
+			set(VST_FORCE_PLUGINS_EXAMPLES TRUE)
+			set(JVX_VST_SDK_EXAMPLES ${JVXRT_SUBMODULE_PATH}/vst3sdk)
+			set(JVX_VST_SDK_EXAMPLES_MAP ${JVXRT_SUBMODULE_PATH}/vst3sdk)
 			
-		get_property(VSTSDK_VERSION_COLLECT GLOBAL PROPERTY VSTSDK_VERSION_COLLECT_PROPERTY)
-		# message(FATAL_ERROR "-> ${VSTSDK_VERSION_COLLECT}")
+			set(JVX_VST_SDK_ROOT "${JVX_VST_SDK_EXAMPLES}")
+			set(JVX_VSTGUI_SDK_ROOT "${JVX_VST_SDK_ROOT}/vstgui4")
+			jvx_addExtSubdir("Configuring all VST examples" "${JVX_VST_SDK_EXAMPLES}" "${JVX_VST_SDK_EXAMPLES_MAP}" "${JVX_FOLDER_HIERARCHIE_BASE}/vst-sdk3")
+		
+			set(JVX_VST_SDK_EXTENDER_LIBS 
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugins-extender/jvx-vst-plugins)
+		
+			set(JVX_VST_SDK_WIDGET_LIBS 
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugin-widgets/jvx-vst-widgets)
+				
+			get_property(VSTSDK_VERSION_COLLECT GLOBAL PROPERTY VSTSDK_VERSION_COLLECT_PROPERTY)
+			# message(FATAL_ERROR "-> ${VSTSDK_VERSION_COLLECT}")
+		endif()
 	endif()
 
 	# ===========================================================================
@@ -957,6 +983,7 @@ endif()
 	# configure pcap
 	if(JVX_USE_PCAP)
 		find_pcap("FATAL")
+		# message(FATAL_ERROR "Error")
 	endif()
 
 	# ===========================================================================

@@ -49,6 +49,7 @@ CjvxToolsInterfaceFactory::select(IjvxObject* theOwner)
 	jvxErrorType res = _select(theOwner);
 	if(res == JVX_NO_ERROR)
 	{
+		this->init__properties_selected();
 		this->allocate__properties_selected();
 		this->register__properties_selected(static_cast<CjvxProperties*>(this));
 	}
