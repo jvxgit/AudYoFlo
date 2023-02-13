@@ -3,6 +3,10 @@
 
 #include "pcg_CjvxNodeAss_pcg.h"
 
+/**
+ * This class combines exposed properties and internal property values. In addition, it
+ * associates the property containers directly to the actual values.
+ */
 class CjvxSimplePropsPars : public CjvxNodeAss_genpcg
 {
 protected:
