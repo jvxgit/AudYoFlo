@@ -17,11 +17,11 @@
 // #define JVX_ZEROCOPY_BASE_CLASS
 
 #ifdef JVX_ZEROCOPY_BASE_CLASS
-#include "jvxNodes/CjvxBareNode1io_zerocopy.h"
-#define JVX_LOCAL_BASE_CLASS CjvxBareNode1io_zerocopy
+#include "jvxNodes/CjvxBareNode1io.h"
+#define JVX_LOCAL_BASE_CLASS CjvxBareNode1io
 #else
-#include "jvxNodes/CjvxBareNode1io_rearrange.h"
-#define JVX_LOCAL_BASE_CLASS CjvxBareNode1io_rearrange
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
+#define JVX_LOCAL_BASE_CLASS CjvxBareNode1ioRearrange
 #endif
 // #include "jvxAudioNodes/CjvxAudioNode.h"
 

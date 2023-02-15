@@ -1,15 +1,13 @@
 #include "CjvxAuNCaptureFile.h"
 
 CjvxAuNCaptureFile::CjvxAuNCaptureFile(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_zerocopy(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_NODE_TYPE_SPECIFIER_TYPE);
 	_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
 		
 	neg_input._update_parameters_fixed(JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED,
 		JVX_SIZE_UNSELECTED, JVX_DATAFORMAT_DATA, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
-
-	newParamProps = true;
 }
 
 CjvxAuNCaptureFile::~CjvxAuNCaptureFile()
@@ -22,7 +20,7 @@ CjvxAuNCaptureFile::~CjvxAuNCaptureFile()
 jvxErrorType 
 CjvxAuNCaptureFile::select(IjvxObject* owner)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::select(owner);
+	jvxErrorType res = CjvxBareNode1io::select(owner);
 	if (res == JVX_NO_ERROR)
 	{
 		// Need to allocate properties on selected to allow modification of prefix
@@ -39,7 +37,7 @@ CjvxAuNCaptureFile::select(IjvxObject* owner)
 jvxErrorType 
 CjvxAuNCaptureFile::unselect()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::unselect();
+	jvxErrorType res = CjvxBareNode1io::unselect();
 	if (res == JVX_NO_ERROR)
 	{
 		genCaptureFile_node::unregister_callbacks(static_cast<CjvxProperties*>(this), NULL);
@@ -54,7 +52,7 @@ CjvxAuNCaptureFile::unselect()
 jvxErrorType
 CjvxAuNCaptureFile::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::activate();
+	jvxErrorType res = CjvxBareNode1io::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		wavFileResolution = genCaptureFile_node::translate__capture__wav_file_resolution_from();
@@ -70,7 +68,7 @@ CjvxAuNCaptureFile::activate()
 jvxErrorType
 CjvxAuNCaptureFile::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::deactivate();
+	jvxErrorType res = CjvxBareNode1io::deactivate();
 	if (res == JVX_NO_ERROR)
 	{
 		capture_output.terminate();
@@ -83,7 +81,7 @@ CjvxAuNCaptureFile::deactivate()
 jvxErrorType
 CjvxAuNCaptureFile::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1io::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	return res;
 }
 
@@ -156,7 +154,7 @@ CjvxAuNCaptureFile::put_configuration(jvxCallManagerConfiguration* callMan,
 {
 	jvxSize i;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_zerocopy::put_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1io::put_configuration(callMan,
 		processor, sectionToContainAllSubsectionsForMe,
 		filename, lineno);
 	if (res == JVX_NO_ERROR)
@@ -181,7 +179,7 @@ CjvxAuNCaptureFile::get_configuration(jvxCallManagerConfiguration* callMan,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_zerocopy::get_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1io::get_configuration(callMan,
 		processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{

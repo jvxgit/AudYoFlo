@@ -11,14 +11,8 @@ protected:
 		//! Setup if prepare is invoked automatically on prepare_chain_icon
 		jvxBool prepareOnChainPrepare = true;
 
-		//! State variable to hold the status if prepare was called automatically
-		jvxBool impPrepareOnChainPrepare = false;
-
 		//! Setup if start is invoked automatically on start_chain_icon
-		jvxBool startOnChainStart = true;
-		
-		//! State variable to hold the status if start was called automatically
-		jvxBool impStartOnChainStart = false;
+		jvxBool startOnChainStart = true;		
 	};
 	
 	/**
@@ -27,10 +21,19 @@ protected:
 	_common_set_node_base_1io_t _common_set_node_base_1io;
 
 	/**
-	 * Variable to activate to check if input and output parmaters are mostly identical. 
-	 * If so, the processor is switched into a zero_copy mode.
+	 * Variable to activate to check if input and output parameters are mostly identical. 
+	 * Mostly identical means that all parameters are identical except for the number of channels
+	 * on the input and output side.
 	 */
 	jvxBool checkInputOutputMostlyIdentical = true;
+
+private:
+
+	//! State variable to hold the status if prepare was called automatically
+	jvxBool impPrepareOnChainPrepare = false;
+
+	//! State variable to hold the status if start was called automatically
+	jvxBool impStartOnChainStart = false;
 
 public:
 
@@ -73,6 +76,7 @@ public:
 #define JVX_INPUT_OUTPUT_SUPPRESS_PREPARE_POSTPROCESS_TO
 #define JVX_INPUT_OUTPUT_SUPPRESS_START_STOP_TO
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
+#define JVX_CONNECTION_MASTER_SKIP_DISCONNECT_CONNECT_ICON
 //#define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_OCON
 #define JVX_INPUT_OUTPUT_CONNECTOR_SET_OUTPUT_PARAMETERS
 #define JVX_CONNECTION_MASTER_SKIP_TRANSFER_BACKWARD_OCON
@@ -86,7 +90,10 @@ public:
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SET_OUTPUT_PARAMETERS
 #undef JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
 #undef JVX_INPUT_OUTPUT_SUPPRESS_PREPARE_POSTPROCESS_TO
+#undef JVX_CONNECTION_MASTER_SKIP_DISCONNECT_CONNECT_ICON
 #undef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP_TO
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
 #define JVX_INTERFACE_SUPPORT_DATAPROCESSOR_CONNECT
 #define JVX_INTERFACE_SUPPORT_DATAPROCESSOR

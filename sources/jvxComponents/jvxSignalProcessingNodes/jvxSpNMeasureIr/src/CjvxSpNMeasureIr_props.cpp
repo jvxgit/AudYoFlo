@@ -58,10 +58,13 @@ CjvxSpNMeasureIr::reconstruct_properties(jvxSize selMeasuresNew, jvxBool trigger
 	genMeasureIr_node::measurements.measurement_in_channels.value.entries.clear();
 	if (JVX_CHECK_SIZE_SELECTED(selMeasures))
 	{
-		for (i = 0; i < CjvxNode_genpcg::node.numberinputchannels.value; i++)
+		if (JVX_CHECK_SIZE_SELECTED(node_inout._common_set_node_params_a_1io.number_channels))
 		{
-			std::string txt = "Capture Channel #" + jvx_size2String(i);
-			genMeasureIr_node::measurements.measurement_in_channels.value.entries.push_back(txt);
+			for (i = 0; i < node_inout._common_set_node_params_a_1io.number_channels; i++)
+			{
+				std::string txt = "Capture Channel #" + jvx_size2String(i);
+				genMeasureIr_node::measurements.measurement_in_channels.value.entries.push_back(txt);
+			}
 		}
 	}
 
@@ -70,10 +73,13 @@ CjvxSpNMeasureIr::reconstruct_properties(jvxSize selMeasuresNew, jvxBool trigger
 	genMeasureIr_node::measurements.measurement_out_channels.value.entries.clear();
 	if (JVX_CHECK_SIZE_SELECTED(selMeasures))
 	{
-		for (i = 0; i < CjvxNode_genpcg::node.numberoutputchannels.value; i++)
+		if (JVX_CHECK_SIZE_SELECTED(node_inout._common_set_node_params_a_1io.number_channels))
 		{
-			std::string txt = "Rendering Channel #" + jvx_size2String(i);
-			genMeasureIr_node::measurements.measurement_out_channels.value.entries.push_back(txt);
+			for (i = 0; i < node_inout._common_set_node_params_a_1io.number_channels; i++)
+			{
+				std::string txt = "Rendering Channel #" + jvx_size2String(i);
+				genMeasureIr_node::measurements.measurement_out_channels.value.entries.push_back(txt);
+			}
 		}
 	}
 
@@ -187,7 +193,7 @@ CjvxSpNMeasureIr::channels_to_properties()
 		for (; elmCI != (*elmI)->inputs.end(); elmCI++)
 		{
 			// There might be more entries in the list than in properties which resulted from previous setups
-			if (elmCI->first < CjvxNode_genpcg::node.numberinputchannels.value)
+			if (elmCI->first < node_inout._common_set_node_params_a_1io.number_channels)
 			{
 				jvx_bitSet(genMeasureIr_node::measurements.measurement_in_channels.value.selection(), elmCI->first);
 			}
@@ -200,7 +206,7 @@ CjvxSpNMeasureIr::channels_to_properties()
 		for (; elmCO != (*elmI)->outputs.end(); elmCO++)
 		{
 			// There might be more entries in the list than in properties which resulted from previous setups
-			if (elmCO->first < CjvxNode_genpcg::node.numberoutputchannels.value)
+			if (elmCO->first < node_output._common_set_node_params_a_1io.number_channels)
 			{
 				jvx_bitSet(genMeasureIr_node::measurements.measurement_out_channels.value.selection(), elmCO->first);
 			}
@@ -314,7 +320,7 @@ CjvxSpNMeasureIr::allInPutOnOff(CjvxSpNMeasureIr_oneMeasurement* elm, jvxBool al
 		elm->inputs.clear();
 		if (allInOn)
 		{
-			for (i = 0; i < CjvxNode_genpcg::node.numberinputchannels.value; i++)
+			for (i = 0; i < node_inout._common_set_node_params_a_1io.number_channels; i++)
 			{
 				oneInput newIn;
 				newIn.active = true;
@@ -328,7 +334,7 @@ CjvxSpNMeasureIr::allInPutOnOff(CjvxSpNMeasureIr_oneMeasurement* elm, jvxBool al
 		elm->outputs.clear();
 		if (allOutOn)
 		{
-			for (i = 0; i < CjvxNode_genpcg::node.numberoutputchannels.value; i++)
+			for (i = 0; i < node_output._common_set_node_params_a_1io.number_channels; i++)
 			{
 				oneOutput newOut;
 				newOut.active = true;

@@ -2,7 +2,7 @@
 #include "CjvxBareNode1ioMex.h"
 
 CjvxBareNode1ioMex::CjvxBareNode1ioMex(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE): 
-	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_COMPONENT_AUDIO_NODE);
 	_common_set.theComponentSubTypeDescriptor = "signal_processing_node/audio_node";
@@ -62,19 +62,19 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		// Do the processing checks and allocate buffers etc
 		// Setup has been verified in the test chain functions before - this is only for simpler access during processing
-		_common_set_node_params_1io.processing.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
-		_common_set_node_params_1io.processing.number_input_channels = _common_set_ldslave.theData_in->con_params.number_channels;
-		_common_set_node_params_1io.processing.number_output_channels = _common_set_ldslave.theData_out.con_params.number_channels;
-		_common_set_node_params_1io.processing.samplerate = _common_set_ldslave.theData_in->con_params.rate;
-		_common_set_node_params_1io.processing.format = _common_set_ldslave.theData_in->con_params.format;
+		node_inout._common_set_node_params_a_1io.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
+		node_inout._common_set_node_params_a_1io.number_channels = _common_set_ldslave.theData_in->con_params.number_channels;
+		node_output._common_set_node_params_a_1io.number_channels = _common_set_ldslave.theData_out.con_params.number_channels;
+		node_inout._common_set_node_params_a_1io.samplerate = _common_set_ldslave.theData_in->con_params.rate;
+		node_inout._common_set_node_params_a_1io.format = _common_set_ldslave.theData_in->con_params.format;
 
 		// Prepare next processing stage processing
 		// The only deviation from the input side may be the number of output channels - which is taken from the node parameter set
-		assert(_common_set_ldslave.theData_out.con_params.buffersize == _common_set_node_params_1io.processing.buffersize);
-		assert(_common_set_ldslave.theData_out.con_params.format == _common_set_node_params_1io.processing.format);
+		//assert(_common_set_ldslave.theData_out.con_params.buffersize == _common_set_node_params_1io.processing.buffersize);
+		//assert(_common_set_ldslave.theData_out.con_params.format == _common_set_node_params_1io.processing.format);
 		assert(_common_set_ldslave.theData_out.con_data.buffers == NULL);
-		assert(_common_set_ldslave.theData_out.con_params.number_channels == _common_set_node_params_1io.processing.number_output_channels);
-		assert(_common_set_ldslave.theData_out.con_params.rate == _common_set_node_params_1io.processing.samplerate);
+		//assert(_common_set_ldslave.theData_out.con_params.number_channels == _common_set_node_params_1io.processing.number_output_channels);
+		//assert(_common_set_ldslave.theData_out.con_params.rate == _common_set_node_params_1io.processing.samplerate);
 #if 1
 		zeroCopyBuffering_rt = _common_set_ldslave.zeroCopyBuffering_cfg;
 		if (
@@ -271,12 +271,6 @@ CjvxBareNode1ioMex::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		_common_set_ldslave.theData_in->con_data.number_buffers = 0;
 		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
-
-		_common_set_node_params_1io.processing.buffersize = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.number_input_channels = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.number_output_channels = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.samplerate = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.format = JVX_DATAFORMAT_NONE;
 
 		zeroCopyBuffering_rt = false;
 	}

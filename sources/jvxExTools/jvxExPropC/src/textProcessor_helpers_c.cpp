@@ -1512,20 +1512,7 @@ textProcessor_core::produceOutput_c_deallocate(std::ostream& out, onePropertyDef
 
 void
 textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& out_inner, bool& isFirstAssociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName)
-{
-	std::string catTypeName;
-	switch(elm.category)
-	{
-	case JVX_PROPERTY_CATEGORY_PREDEFINED:
-		catTypeName =  "JVX_PROPERTY_CATEGORY_PREDEFINED";
-		break;
-	case JVX_PROPERTY_CATEGORY_UNSPECIFIC:
-		catTypeName =  "JVX_PROPERTY_CATEGORY_UNSPECIFIC";
-		break;
-	default:
-		assert(0);
-	}
-
+{	
 	if(
 		!(
 			(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER)||
@@ -1580,8 +1567,9 @@ textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& o
 				if (elm.updateOnAssociate)
 				{
 					out_inner << "\t\ttheProps->_update_property_size(" << propertySectionName << "." <<
-						elm.name << ".num , " << catTypeName << ", " <<
-						propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+						elm.name << ".num, " 
+						<< propertySectionName << "." << elm.name << ".category, " 
+						<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
 				}
 				break;
 			default:
@@ -1589,8 +1577,9 @@ textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& o
 				if (elm.updateOnAssociate)
 				{
 					out_inner << "\t\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-						elm.name << ".num , " << catTypeName << ", " <<
-						propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+						elm.name << ".num , " 
+						<< propertySectionName << "." << elm.name << ".category, "
+						<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
 				}
 			}
 
@@ -1609,19 +1598,6 @@ textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& o
 void
 textProcessor_core::produceOutput_c_deassociate(std::ostream& out, std::ostream& out_inner, bool& isFirstDeassociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName)
 {
-	std::string catTypeName;
-	switch(elm.category)
-	{
-	case JVX_PROPERTY_CATEGORY_PREDEFINED:
-		catTypeName =  "JVX_PROPERTY_CATEGORY_PREDEFINED";
-		break;
-	case JVX_PROPERTY_CATEGORY_UNSPECIFIC:
-		catTypeName =  "JVX_PROPERTY_CATEGORY_UNSPECIFIC";
-		break;
-	default:
-		assert(0);
-	}
-
 	if(
 		!(
 			(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER)||
@@ -1647,7 +1623,7 @@ textProcessor_core::produceOutput_c_deassociate(std::ostream& out, std::ostream&
 				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".value.assign(nullptr, 0); " << std::endl;
 				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 0;" << std::endl;
 				out_inner << "\t\ttheProps->_update_property_size(" << propertySectionName << "." <<
-					elm.name << ".num , " << catTypeName << ", " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					elm.name << ".num, " << propertySectionName << "." << elm.name << ".category, " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
 				break;
 
 			default:
@@ -1655,7 +1631,7 @@ textProcessor_core::produceOutput_c_deassociate(std::ostream& out, std::ostream&
 				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".ptr = NULL;" << std::endl;
 
 				out_inner << "\t\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-					elm.name << ".num , " << catTypeName << ", " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					elm.name << ".num, " << propertySectionName << "." << elm.name << ".category, " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
 			}
 		}
 	}
@@ -1971,6 +1947,11 @@ textProcessor_core::produceOutput_c_register(std::ostream& out, onePropertyDefin
 	out << "\n\t\t//==========================================================" << std::endl;
 	out << "\t\t" << propertySectionName << "." << elm.name << ".globalIdx = " << jvx_size2String(elm.id, true) << ";" << std::endl;
 	out << "\t\t" << propertySectionName  << "." << elm.name << ".category = " << jvxPropertyCategoryType_str[elm.category].full << ";" << std::endl;
+	out << "\t\tif(force_unspecific)" << std::endl;
+	out << "\t\t{" << std::endl;
+	out << "\t\t\t" << propertySectionName << "." << elm.name << ".globalIdx = JVX_SIZE_UNSELECTED;" << std::endl;
+	out << "\t\t\t" << propertySectionName  << "." << elm.name << ".category = JVX_PROPERTY_CATEGORY_UNSPECIFIC;" << std::endl;
+	out << "\t\t}" << std::endl;
 	out << "\t\t" << propertySectionName << "." << elm.name << ".format = " << elm.tokenTypeName << ";" << std::endl << std::endl;
 	out << "\t\t" << propertySectionName << "." << elm.name << ".allowedStateMask = " << "0x" << std::uppercase << std::hex 
 		<< elm.allowStateMask << ";" << std::dec << std::endl;
@@ -3449,6 +3430,15 @@ textProcessor_core::produceOutput_c_writeconfig(std::ostream& out, onePropertyDe
 }
 
 void
+textProcessor_core::produceOutput_c_updateTag(std::ostream& out, onePropertyDefinition& elm, std::string& propertySectionName)
+{
+	out << "\t\tif(jvx_compareStringsWildcard(wildcardstr, " << propertySectionName << "." << elm.name << ".descriptor.std_str()))" << std::endl;
+	out << "\t\t{" << std::endl;
+	out << "\t\t\t" << propertySectionName << "." << elm.name << ".pTag = newTag;" << std::endl;
+	out << "\t\t}" << std::endl;
+}
+
+void
 textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			std::ostream& streamVariables,
 			std::ostream& streamInit,
@@ -3461,6 +3451,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			std::ostream& streamAssociateFunctions,
 			std::ostream& streamDeassociateFunctions,
 			std::ostream& streamTranslations,
+			std::ostream& streamTagUpdate,
 			int tabOffset,
 			std::string structToken,
 			std::string funcToken,
@@ -3472,6 +3463,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			std::vector<std::string>& lstUnregisterFunctions,
 			std::vector<std::string>& lstPutConfigFunctions,
 			std::vector<std::string>& lstGetConfigFunctions,
+			std::vector<std::string>& lstupdTagFunctions,
 	std::map<jvxInt32, oneAudioPluginEntry>& collectAudioPluginsIds,
 	std::list<oneAudioPluginEntry>& collectInvalidAudioPluginsIds)
 {
@@ -3499,6 +3491,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 				streamAssociateFunctions,
 				streamDeassociateFunctions,
 				streamTranslations,
+				streamTagUpdate,
 				tabOffset + 1,
 				structToken,
 				funcToken,
@@ -3510,6 +3503,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 				lstUnregisterFunctions,
 				lstPutConfigFunctions,
 				lstGetConfigFunctions,
+				lstupdTagFunctions,
 				collectAudioPluginsIds,
 				collectInvalidAudioPluginsIds);
 		}
@@ -3557,7 +3551,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 
 		// Register properties
 		streamRegister << "\t// Comment: " << theElm.thePropertySection.comment << std::endl;
-		streamRegister << "\tinline void register__" << funcSectionName << "(CjvxProperties* theProps, const std::string reg_prefix = \"\", jvxBool v_register = false)" << std::endl;
+		streamRegister << "\tinline void register__" << funcSectionName << "(CjvxProperties* theProps, const std::string reg_prefix = \"\", jvxBool force_unspecific = false, jvxBool v_register = false)" << std::endl;
 		streamRegister << "\t{" << std::endl;
 		streamRegister << "\t\t// Register properties with property management system." << std::endl;
 		streamRegister << "\t\tjvxErrorType resL = JVX_NO_ERROR;" << std::endl;
@@ -3592,6 +3586,13 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 		streamWriteConfig << "\t\tstd::string token;" << std::endl;
 		lstGetConfigFunctions.push_back("get_configuration__" + funcSectionName);
 
+		// Udpate Tag
+		streamTagUpdate << "\t// Comment: " << theElm.thePropertySection.comment << std::endl;
+		streamTagUpdate << "\tinline void updtag__" << funcSectionName << "(const std::string& newTag = \"\", const std::string& wildcardstr = \"*\")" << std::endl;
+		streamTagUpdate << "\t{" << std::endl;
+		streamTagUpdate << "\t\t// Update the variable tag." << std::endl;
+		lstupdTagFunctions.push_back("updtag__" + funcSectionName);
+			
 		std::ostringstream streamAssociateFunctions_inner; // seems that a clear is not sufficient here.. Bug?
 		std::ostringstream streamDeassociateFunctions_inner; // seems that a clear is not sufficient here.. Bug?
 		bool isFirstAssociate = true;
@@ -3639,6 +3640,8 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			// produce the variable write-to-config-function
 			produceOutput_c_writeconfig(streamWriteConfig, elm, propertySectionName);
 
+			produceOutput_c_updateTag(streamTagUpdate, elm, propertySectionName);
+			
 		} // for(j = 0; j < intermediateStruct.thePropertySections[i].properties.size(); j++)
 
 		streamInit << "\t};" << std::endl << std::endl;
@@ -3652,6 +3655,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 		streamUnregister << "\t};" << std::endl << std::endl;
 		streamReadConfig << "\t};" << std::endl << std::endl;
 		streamWriteConfig << "\t};" << std::endl << std::endl;
+		streamTagUpdate << "\t};" << std::endl << std::endl;
 
 		if(!isFirstAssociate)
 		{
@@ -4243,9 +4247,12 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 	std::ostringstream streamReadConfig;
 	std::ostringstream streamWriteConfig;
 	std::ostringstream streamTranslations;
+	std::ostringstream streamTagUpdate;
+	
 	std::ostringstream streamPluginsCalls;
 	std::ostringstream streamPluginsParameters_declare;
 	std::ostringstream streamPluginsParameters_code;
+	
 
 	std::vector<std::string> lstInitFunctions;
 	std::vector<std::string> lstAllocateFunctions;
@@ -4254,6 +4261,7 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 	std::vector<std::string> lstUnregisterFunctions;
 	std::vector<std::string> lstPutConfigFunctions;
 	std::vector<std::string> lstGetConfigFunctions;
+	std::vector<std::string> lstTagUpdateFunctions;
 
 	// Start generating code
 	streamStartArea << "#ifndef _" << jvx_toUpper(intermediateStruct.fileOutputMiddle) << "_H__" << std::endl;
@@ -4284,9 +4292,9 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 		generateCode_oneElement_c(intermediateStruct.thePropertyElements[l],
 			streamVariables, streamInit, streamAllocate, streamDeallocate, streamRegister, streamUnregister, 
 			streamReadConfig, streamWriteConfig,
-			streamAssociateFunctions, streamDeassociateFunctions, streamTranslations, 0, "", "", "",
+			streamAssociateFunctions, streamDeassociateFunctions, streamTranslations, streamTagUpdate, 0, "", "", "",
 			lstInitFunctions, lstAllocateFunctions, lstDeallocateFunctions, lstRegisterFunctions, 
-			lstUnregisterFunctions, lstPutConfigFunctions, lstGetConfigFunctions,
+			lstUnregisterFunctions, lstPutConfigFunctions, lstGetConfigFunctions, lstTagUpdateFunctions,
 			audioPluginsIds,
 			collectInvalidAudioPluginsIds);
 	}
@@ -4366,6 +4374,11 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 	osOutFileH << "\t// Translations Variables" << std::endl;
 	osOutFileH << "\t//=================================================" << std::endl << std::endl;
 	osOutFileH << (std::string)streamTranslations.str() << std::flush;
+	osOutFileH << "\t//=================================================" << std::endl;
+	osOutFileH << "\t// Tag Update Functions" << std::endl;
+	osOutFileH << "\t//=================================================" << std::endl << std::endl;
+	osOutFileH << (std::string)streamTagUpdate.str() << std::flush;
+
 	if (audioPluginsIds.size() + collectInvalidAudioPluginsIds.size())
 	{
 		osOutFileH << "\t//=================================================" << std::endl;
@@ -4474,11 +4487,11 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 
 	// Register properties
 	osOutFileH << "\t// All functions called at once." << std::endl;
-	osOutFileH << "\tinline void register_all(CjvxProperties* theProps, const std::string reg_prefix = \"\", jvxBool v_register = false)" << std::endl;
+	osOutFileH << "\tinline void register_all(CjvxProperties* theProps, const std::string reg_prefix = \"\", jvxBool force_unspecific = false, jvxBool v_register = false)" << std::endl;
 	osOutFileH << "\t{" << std::endl;
 	for(i = 0; i < lstRegisterFunctions.size(); i++)
 	{
-		osOutFileH << "\t\t" << lstRegisterFunctions[i] << "(theProps, reg_prefix,v_register);" << std::endl;
+		osOutFileH << "\t\t" << lstRegisterFunctions[i] << "(theProps, reg_prefix, force_unspecific, v_register);" << std::endl;
 	}
 	osOutFileH << "\t};" << std::endl;
 
@@ -4512,6 +4525,17 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 	}
 	osOutFileH << "\t};" << std::endl;
 
+	// Update Tags
+	osOutFileH << "\t// All functions called at once." << std::endl;
+	osOutFileH << "\tinline void updtag_all(const std::string& newTag = \"\", const std::string& wildcardstr = \"*\")" << std::endl;
+	osOutFileH << "\t{" << std::endl;
+	for(i = 0; i < lstTagUpdateFunctions.size(); i++)
+	{
+		osOutFileH << "\t\t" << lstTagUpdateFunctions[i] << "(newTag, wildcardstr);" << std::endl;
+	}
+	osOutFileH << "\t};" << std::endl;
+	
+	
 	osOutFileH << (std::string)streamStopArea.str() << std::flush;
 	osOutFileH.close();
 

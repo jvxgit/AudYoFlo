@@ -2,10 +2,10 @@
 #define __CJVXBARENODE1IOMEX_H__
 
 #include "jvx.h"
-#include "jvxNodes/CjvxBareNode1io.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "CjvxMexCalls.h"
 
-class CjvxBareNode1ioMex: public CjvxBareNode1io, public CjvxMexCalls
+class CjvxBareNode1ioMex: public CjvxBareNode1ioRearrange, public CjvxMexCalls
 {
 protected:
 

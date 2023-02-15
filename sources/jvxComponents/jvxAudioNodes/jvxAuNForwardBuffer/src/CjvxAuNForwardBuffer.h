@@ -2,7 +2,7 @@
 #define JVX_NODE_TYPE_SPECIFIER_TYPE JVX_COMPONENT_AUDIO_NODE
 #define JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR "audio_node"
 
-#include "jvxNodes/CjvxBareNode1io_rearrange.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 
 enum class jvxOperationMode
 {
@@ -54,7 +54,7 @@ public:
 
 // =====================================================================
 
-class CjvxAuNForwardBuffer: public CjvxBareNode1io_rearrange, 
+class CjvxAuNForwardBuffer: public CjvxBareNode1ioRearrange, 
 	public IjvxThreads_report, public CjvxAudioStackBuffer,
 	public IjvxManipulate, public genForwardBuffer_node
 {

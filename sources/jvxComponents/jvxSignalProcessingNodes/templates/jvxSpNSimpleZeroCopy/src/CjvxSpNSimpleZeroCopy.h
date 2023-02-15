@@ -1,8 +1,8 @@
 
-#include "jvxNodes/CjvxBareNode1io_zerocopy.h"
+#include "jvxNodes/CjvxBareNode1io.h"
 #include "pcg_exports_node.h"
 
-class CjvxSpNSimpleZeroCopy : public CjvxBareNode1io_zerocopy, public genSimpleZeroCopy_node
+class CjvxSpNSimpleZeroCopy : public CjvxBareNode1io, public genSimpleZeroCopy_node
 {
 	 
 private:

@@ -2,10 +2,10 @@
 #include "jvx-helpers-cpp.h"
 
 CjvxSpNSpeakerEqualizer::CjvxSpNSpeakerEqualizer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_zerocopy(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	idSelectChannel = JVX_SIZE_UNSELECTED;
-	_common_set_1io_zerocopy.forward_complain = true;
+	forward_complain = true;
 }
 
 CjvxSpNSpeakerEqualizer::~CjvxSpNSpeakerEqualizer()
@@ -16,7 +16,7 @@ CjvxSpNSpeakerEqualizer::~CjvxSpNSpeakerEqualizer()
 jvxErrorType
 CjvxSpNSpeakerEqualizer::select(IjvxObject* owner)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::select(owner);
+	jvxErrorType res = CjvxBareNode1io::select(owner);
 	if (res == JVX_NO_ERROR)
 	{
 		genSpeakerEqualizer_node::init_all();
@@ -35,7 +35,7 @@ CjvxSpNSpeakerEqualizer::select(IjvxObject* owner)
 jvxErrorType
 CjvxSpNSpeakerEqualizer::unselect()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::unselect();
+	jvxErrorType res = CjvxBareNode1io::unselect();
 	if (res == JVX_NO_ERROR)
 	{
 		genSpeakerEqualizer_node::unregister_all(static_cast<CjvxProperties*>(this));
@@ -48,7 +48,7 @@ CjvxSpNSpeakerEqualizer::unselect()
 jvxErrorType
 CjvxSpNSpeakerEqualizer::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::activate();
+	jvxErrorType res = CjvxBareNode1io::activate();
 	if (res == JVX_NO_ERROR)
 	{	
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
@@ -66,14 +66,14 @@ CjvxSpNSpeakerEqualizer::activate()
 jvxErrorType
 CjvxSpNSpeakerEqualizer::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1io::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
 		_undo_update_property_access_type(
 			genSpeakerEqualizer_node::mode.slave_mode.category,
 			genSpeakerEqualizer_node::mode.slave_mode.globalIdx);
 
-		CjvxBareNode1io_zerocopy::deactivate();
+		CjvxBareNode1io::deactivate();
 	}
 	return res;
 }
@@ -92,7 +92,7 @@ CjvxSpNSpeakerEqualizer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		neg_input._update_parameters_fixed(_common_set_ldslave.theData_in->con_params.number_channels);
 	}
 	*/
-	res = CjvxBareNode1io_zerocopy::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	res = CjvxBareNode1io::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		/*
@@ -109,18 +109,20 @@ CjvxSpNSpeakerEqualizer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	return res;
 }
 
+/*
 void
 CjvxSpNSpeakerEqualizer::test_set_output_parameters()
 {
 	// Leave number channels open
 	neg_output._update_parameters_fixed(
-		CjvxNode_genpcg::node.numberoutputchannels.value,
-		CjvxNode_genpcg::node.buffersize.value,
-		CjvxNode_genpcg::node.samplerate.value,
-		(jvxDataFormat)CjvxNode_genpcg::node.format.value,
-		(jvxDataFormatGroup)CjvxNode_genpcg::node.subformat.value,
+		node_inout._common_set_node_params_a_1io.number_channels,
+		node_inout._common_set_node_params_a_1io.buffersize,
+		node_inout._common_set_node_params_a_1io.samplerate,
+		(jvxDataFormat)node_inout._common_set_node_params_a_1io.format,
+		(jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat,
 		&_common_set_ldslave.theData_out);
 }
+*/
 
 jvxErrorType 
 CjvxSpNSpeakerEqualizer::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
@@ -155,7 +157,7 @@ CjvxSpNSpeakerEqualizer::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHa
 		}
 		break;
 	}
-	return CjvxBareNode1io_zerocopy::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	return CjvxBareNode1io::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
 jvxErrorType 
@@ -177,7 +179,7 @@ CjvxSpNSpeakerEqualizer::read_eq_settings(const std::string& token,
 			{
 				clear_config();
 				neg_input._clear_parameters_fixed(true);
-				_common_set_1io_zerocopy.forward_complain = true;
+				forward_complain = true;
 				jvx_bitFClear(genSpeakerEqualizer_node::mode.function.value.selection());
 				genSpeakerEqualizer_node::monitor.last_error.value.clear();
 
@@ -202,7 +204,7 @@ CjvxSpNSpeakerEqualizer::read_eq_settings(const std::string& token,
 							if (res == JVX_NO_ERROR)
 							{
 								std::cout << __FUNCTION__ << ": Configuration successfully processed." << std::endl;
-								_common_set_1io_zerocopy.forward_complain = false;
+								forward_complain = false;
 								if (proc_data.delayEng)
 								{
 									jvx_bitSet(genSpeakerEqualizer_node::mode.function.value.selection(), 0);
@@ -271,7 +273,7 @@ CjvxSpNSpeakerEqualizer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 		return res;
 		break;
 	}*/
-	res = CjvxBareNode1io_zerocopy::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	res = CjvxBareNode1io::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	return res;
 }
 
@@ -280,7 +282,7 @@ CjvxSpNSpeakerEqualizer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 jvxErrorType
 CjvxSpNSpeakerEqualizer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		proc_eq_involved = false;
@@ -299,7 +301,7 @@ jvxErrorType
 CjvxSpNSpeakerEqualizer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxSize i;
-	jvxErrorType res = CjvxBareNode1io_zerocopy::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1io::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		if (proc_eq_involved)
@@ -340,7 +342,7 @@ CjvxSpNSpeakerEqualizer::put_configuration(jvxCallManagerConfiguration* callMan,
 	const char* filename,
 	jvxInt32 lineno)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::put_configuration(
+	jvxErrorType res = CjvxBareNode1io::put_configuration(
 		callMan,
 		processor,
 		sectionToContainAllSubsectionsForMe,
@@ -376,7 +378,7 @@ CjvxSpNSpeakerEqualizer::get_configuration(jvxCallManagerConfiguration* callMan,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::get_configuration(
+	jvxErrorType res = CjvxBareNode1io::get_configuration(
 		callMan,
 		processor,
 		sectionWhereToAddAllSubsections);
@@ -612,7 +614,7 @@ CjvxSpNSpeakerEqualizer::try_read_eq_file(const std::string& fName)
 		{
 			clear_config();
 			neg_input._clear_parameters_fixed(true);
-			_common_set_1io_zerocopy.forward_complain = true;
+			forward_complain = true;
 			jvx_bitFClear(genSpeakerEqualizer_node::mode.function.value.selection());
 			genSpeakerEqualizer_node::monitor.last_error.value.clear();
 			update_properties();

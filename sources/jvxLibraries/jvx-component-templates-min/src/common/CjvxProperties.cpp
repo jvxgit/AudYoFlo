@@ -256,6 +256,7 @@ CjvxProperties::_description_property(
 				descrs.dFull->name.assign(selection->propDescriptor->name);
 				descrs.dFull->description.assign(selection->propDescriptor->description);
 				descrs.dFull->descriptor.assign(selection->propDescriptor->descriptor);
+				descrs.dFull->pTag.assign(selection->propDescriptor->pTag);
 			}
 
 			if (descrs.dFullPlus)

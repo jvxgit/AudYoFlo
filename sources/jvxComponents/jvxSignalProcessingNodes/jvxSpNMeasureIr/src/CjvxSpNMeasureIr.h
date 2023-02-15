@@ -1,11 +1,11 @@
 
-#include "jvxNodes/CjvxBareNode1io_rearrange.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "CjvxSpNMeasureIr_oneMeasurement.h"
 #include "pcg_exports_node.h"
 
 #define JVX_COMPOSE_MEASUREMENT(cnt) ("Measurement_" + jvx_size2String(cnt))
 
-class CjvxSpNMeasureIr : public CjvxBareNode1io_rearrange, public IjvxSpNMeasureIr_oneMeasurement_report, public genMeasureIr_node
+class CjvxSpNMeasureIr : public CjvxBareNode1ioRearrange, public IjvxSpNMeasureIr_oneMeasurement_report, public genMeasureIr_node
 {
 
 private:

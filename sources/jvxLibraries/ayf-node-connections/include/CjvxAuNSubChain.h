@@ -3,7 +3,7 @@
 
 #include "jvx.h"
 
-#include "jvxNodes/CjvxBareNode1io_rearrange.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 
 #include "CayfAuNFlexibleConnection.h"
 #include "CayfAuNFixedConnection.h"

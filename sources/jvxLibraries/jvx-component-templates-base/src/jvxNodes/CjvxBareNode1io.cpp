@@ -20,8 +20,8 @@ CjvxBareNode1io::CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 
 	_common_set_node_base_1io.prepareOnChainPrepare = true;
 	_common_set_node_base_1io.startOnChainStart = true;
-	_common_set_node_base_1io.impPrepareOnChainPrepare = false;
-	_common_set_node_base_1io.impStartOnChainStart = false;
+	impPrepareOnChainPrepare = false;
+	impStartOnChainStart = false;
 
 	checkInputOutputMostlyIdentical = true;
 }
@@ -47,28 +47,26 @@ CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			_common_set_ldslave.theData_in->con_data.number_buffers,
 			1 + _common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages);
 
-		// We might specify another additional lower limit for the buffers
+		// We might specify another additional lower limit for the buffersHallo Frau 
 		_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
 			_common_set_ldslave.theData_in->con_data.number_buffers,
 			_common_set_ldslave.num_min_buffers_in);
 
 		// Do the processing checks and allocate buffers etc
 		// Setup has been verified in the test chain functions before - this is only for simpler access during processing
-		_common_set_node_params_1io.processing.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
-		_common_set_node_params_1io.processing.number_input_channels = _common_set_ldslave.theData_in->con_params.number_channels;
-		_common_set_node_params_1io.processing.number_output_channels = _common_set_ldslave.theData_out.con_params.number_channels;
-		_common_set_node_params_1io.processing.samplerate = _common_set_ldslave.theData_in->con_params.rate;
-		_common_set_node_params_1io.processing.format = _common_set_ldslave.theData_in->con_params.format;
+		assert(node_inout._common_set_node_params_a_1io.buffersize == _common_set_ldslave.theData_in->con_params.buffersize);
+		assert(node_inout._common_set_node_params_a_1io.number_channels == _common_set_ldslave.theData_in->con_params.number_channels);
+		assert(node_inout._common_set_node_params_a_1io.samplerate == _common_set_ldslave.theData_in->con_params.rate);
+		assert(node_inout._common_set_node_params_a_1io.format == _common_set_ldslave.theData_in->con_params.format);
 
 		// Prepare next processing stage processing
 		// The only deviation from the input side may be the number of output channels - which is taken from the node parameter set
 		if (checkInputOutputMostlyIdentical)
 		{
-			assert(_common_set_ldslave.theData_out.con_params.buffersize == _common_set_node_params_1io.processing.buffersize);
-			assert(_common_set_ldslave.theData_out.con_params.format == _common_set_node_params_1io.processing.format);
+			assert(_common_set_ldslave.theData_out.con_params.buffersize == node_inout._common_set_node_params_a_1io.buffersize);
+			assert(_common_set_ldslave.theData_out.con_params.format == node_inout._common_set_node_params_a_1io.format);
 			assert(_common_set_ldslave.theData_out.con_data.buffers == NULL);
-			assert(_common_set_ldslave.theData_out.con_params.number_channels == _common_set_node_params_1io.processing.number_output_channels);
-			assert(_common_set_ldslave.theData_out.con_params.rate == _common_set_node_params_1io.processing.samplerate);
+			assert(_common_set_ldslave.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate);
 			zeroCopyBuffering_rt = _common_set_ldslave.zeroCopyBuffering_cfg;
 		}
 		else
@@ -159,7 +157,7 @@ CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	
 	return res;
 exit_error:
-	if (_common_set_node_base_1io.impPrepareOnChainPrepare)
+	if (impPrepareOnChainPrepare)
 	{
 		if (_common_set_min.theState == JVX_STATE_PREPARED)
 		{
@@ -167,7 +165,7 @@ exit_error:
 			this->_postprocess();
 		}
 	}
-	_common_set_node_base_1io.impPrepareOnChainPrepare = false;
+	impPrepareOnChainPrepare = false;
 	return res;
 
 };
@@ -184,14 +182,14 @@ CjvxBareNode1io::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	res = _start_connect_icon(true, idRuntime JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res != JVX_NO_ERROR)
 	{
-		if (_common_set_node_base_1io.impStartOnChainStart)
+		if (impStartOnChainStart)
 		{
 			if (_common_set_min.theState == JVX_STATE_PROCESSING)
 			{
 				this->_stop();
 			}
 		}
-		_common_set_node_base_1io.impStartOnChainStart = false;
+		impStartOnChainStart = false;
 	}
 	
 	return res;
@@ -241,12 +239,6 @@ CjvxBareNode1io::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		_common_set_ldslave.theData_in->con_data.number_buffers = 0;
 		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
-
-		_common_set_node_params_1io.processing.buffersize = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.number_input_channels = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.number_output_channels = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.samplerate = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.format = JVX_DATAFORMAT_NONE;
 
 		zeroCopyBuffering_rt = false;
 
@@ -391,14 +383,14 @@ CjvxBareNode1io::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 void 
 CjvxBareNode1io::prepare_autostart()
 {
-	_common_set_node_base_1io.impPrepareOnChainPrepare = false;
+	impPrepareOnChainPrepare = false;
 	if (_common_set_node_base_1io.prepareOnChainPrepare)
 	{
 		if (_common_set_min.theState == JVX_STATE_ACTIVE)
 		{
 			// Call of implicit prepare
 			this->prepare();
-			_common_set_node_base_1io.impPrepareOnChainPrepare = true;
+			impPrepareOnChainPrepare = true;
 		}
 	}
 }
@@ -406,7 +398,7 @@ CjvxBareNode1io::prepare_autostart()
 void
 CjvxBareNode1io::postprocess_autostart()
 {
-	if (_common_set_node_base_1io.impPrepareOnChainPrepare)
+	if (impPrepareOnChainPrepare)
 	{
 		if (_common_set_min.theState == JVX_STATE_PREPARED)
 		{
@@ -414,20 +406,20 @@ CjvxBareNode1io::postprocess_autostart()
 			this->postprocess();
 		}
 	}
-	_common_set_node_base_1io.impPrepareOnChainPrepare = false;
+	impPrepareOnChainPrepare = false;
 }
 
 void
 CjvxBareNode1io::start_autostart()
 {
-	_common_set_node_base_1io.impStartOnChainStart = false;
+	impStartOnChainStart = false;
 	if (_common_set_node_base_1io.startOnChainStart)
 	{
 		if (_common_set_min.theState == JVX_STATE_PREPARED)
 		{
 			// Call of implicit prepare
 			this->start();
-			_common_set_node_base_1io.impStartOnChainStart = true;
+			impStartOnChainStart = true;
 		}
 	}
 }
@@ -435,12 +427,23 @@ CjvxBareNode1io::start_autostart()
 void
 CjvxBareNode1io::stop_autostart()
 {
-	if (_common_set_node_base_1io.impStartOnChainStart)
+	if (impStartOnChainStart)
 	{
 		if (_common_set_min.theState == JVX_STATE_PROCESSING)
 		{
 			this->stop();
 		}
 	}
-	_common_set_node_base_1io.impStartOnChainStart = false;
+	impStartOnChainStart = false;
 }
+
+jvxErrorType 
+CjvxBareNode1io::disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) 
+{
+	jvxErrorType res = _disconnect_connect_icon(theData, true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	if (res == JVX_NO_ERROR)
+	{
+		node_inout.reset();
+	}
+	return res;
+};

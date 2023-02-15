@@ -2,7 +2,7 @@
 #include "jvx-helpers-cpp.h"
 
 CjvxAuNChannelRearrange::CjvxAuNChannelRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_rearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_NODE_TYPE_SPECIFIER_TYPE);
 	_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
@@ -17,7 +17,7 @@ CjvxAuNChannelRearrange::~CjvxAuNChannelRearrange()
 jvxErrorType
 CjvxAuNChannelRearrange::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::activate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		genChannelRearrange_node::init_all();
@@ -32,11 +32,11 @@ CjvxAuNChannelRearrange::activate()
 jvxErrorType
 CjvxAuNChannelRearrange::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{		
 		
-		CjvxBareNode1io_rearrange::deactivate();
+		CjvxBareNode1ioRearrange::deactivate();
 	}
 	return res;
 }
@@ -45,7 +45,7 @@ CjvxAuNChannelRearrange::deactivate()
 jvxErrorType
 CjvxAuNChannelRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if(res == JVX_NO_ERROR)
 	{
 	}
@@ -57,13 +57,13 @@ CjvxAuNChannelRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 jvxErrorType
 CjvxAuNChannelRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	return CjvxBareNode1io_rearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	return CjvxBareNode1ioRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
 
 jvxErrorType
 CjvxAuNChannelRearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	return CjvxBareNode1io_rearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	return CjvxBareNode1ioRearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
 
 // ===========================================================================
@@ -131,11 +131,11 @@ CjvxAuNChannelRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
 		// Forward call to base class
-		return CjvxBareNode1io_rearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		return CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		break;
 
 	default:
-		res = CjvxBareNode1io_rearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	return res;
 }
@@ -152,7 +152,7 @@ CjvxAuNChannelRearrange::put_configuration(jvxCallManagerConfiguration* callMan,
 {
 	jvxSize i;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_rearrange::put_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1ioRearrange::put_configuration(callMan,
 		processor, sectionToContainAllSubsectionsForMe,
 		filename, lineno);
 	if (res == JVX_NO_ERROR)
@@ -171,7 +171,7 @@ CjvxAuNChannelRearrange::get_configuration(jvxCallManagerConfiguration* callMan,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_rearrange::get_configuration(callMan, processor, sectionWhereToAddAllSubsections);;
+	jvxErrorType res = CjvxBareNode1ioRearrange::get_configuration(callMan, processor, sectionWhereToAddAllSubsections);;
 	if (res == JVX_NO_ERROR)
 	{
 		genChannelRearrange_node::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);

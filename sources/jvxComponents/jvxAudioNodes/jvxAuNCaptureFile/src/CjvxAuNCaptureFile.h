@@ -2,10 +2,10 @@
 #define JVX_NODE_TYPE_SPECIFIER_TYPE JVX_COMPONENT_AUDIO_NODE
 #define JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR "audio_node"
 
-#include "jvxNodes/CjvxBareNode1io_zerocopy.h"
+#include "jvxNodes/CjvxBareNode1io.h"
 #include "pcg_exports_node.h"
 
-class CjvxAuNCaptureFile : public CjvxBareNode1io_zerocopy, public genCaptureFile_node
+class CjvxAuNCaptureFile : public CjvxBareNode1io, public genCaptureFile_node
 {
 private:
 	CjvxRtOutputWriter capture_output;

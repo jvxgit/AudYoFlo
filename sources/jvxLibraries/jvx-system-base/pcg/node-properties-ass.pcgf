@@ -34,9 +34,9 @@ SECTION node
 			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
-		SECTION numberinputchannels
+		SECTION numberchannels
 		{
-			DESCRIPTION = "Number of input channels";	  // Defaults to NAME if not present
+			DESCRIPTION = "Number Channels";	  // Defaults to NAME if not present
 			INIT_SET = 0; 
 			ID = "jvx_num_input_channels_int32"; 
 			GENERATE_ENTRY_CONFIG_FILE = "no";		
@@ -44,19 +44,7 @@ SECTION node
 			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
-		/*
-		* This struct should not define any output channels
-		SECTION numberoutputchannels
-		{
-			DESCRIPTION = "Number of output channels";	  // Defaults to NAME if not present
-			INIT_SET = 0; 
-			ID = "jvx_num_output_channels_int32"; 		
-			GENERATE_ENTRY_CONFIG_FILE = "no";		
-			DESCRIPTOR = "JVX_AUDIONODE_OUTPUT_CHANNELS";
-			ASSOCIATE_EXTERNAL = "yes";
-			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
-		};
-		*/
+		
 		SECTION segmentsize_x
 		{
 			DESCRIPTION = "Segmentation X";	  // Defaults to NAME if not present

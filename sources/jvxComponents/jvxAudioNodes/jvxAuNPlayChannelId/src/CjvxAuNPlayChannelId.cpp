@@ -1,17 +1,17 @@
 #include "CjvxAuNPlayChannelId.h"
 
 CjvxAuNPlayChannelId::CjvxAuNPlayChannelId(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_zerocopy(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	// Following already set in componentEntry
 	//_common_set.theComponentType.tp = JVX_NODE_TYPE_SPECIFIER_TYPE;
 	//_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
 	
-	_common_set_1io_zerocopy.num_iochans = JVX_SIZE_UNSELECTED;
-	_common_set_1io_zerocopy.bsize_io = JVX_SIZE_UNSELECTED;
-	_common_set_1io_zerocopy.rate_io = JVX_SIZE_UNSELECTED;
-	_common_set_1io_zerocopy.form_io = JVX_DATAFORMAT_DATA;
-	_common_set_1io_zerocopy.subform_io = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	neg_input._set_parameters_fixed(JVX_SIZE_UNSELECTED,
+		JVX_SIZE_UNSELECTED,
+		JVX_SIZE_UNSELECTED,
+		JVX_DATAFORMAT_DATA,
+		JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
 
 	// Get the additional tools
 	theText2Speech_obj = NULL;
@@ -31,7 +31,7 @@ CjvxAuNPlayChannelId::~CjvxAuNPlayChannelId()
 jvxErrorType
 CjvxAuNPlayChannelId::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::activate();
+	jvxErrorType res = CjvxBareNode1io::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		genChannelPlayback_node::init_all();
@@ -51,7 +51,7 @@ CjvxAuNPlayChannelId::activate()
 jvxErrorType
 CjvxAuNPlayChannelId::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::deactivate();
+	jvxErrorType res = CjvxBareNode1io::deactivate();
 	if (res == JVX_NO_ERROR)
 	{
 		genChannelPlayback_node::unregister_all(static_cast<CjvxProperties*>(this));
@@ -227,7 +227,7 @@ CjvxAuNPlayChannelId::put_configuration(jvxCallManagerConfiguration* callMan,
 {
 	jvxSize i;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_zerocopy::put_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1io::put_configuration(callMan,
 		processor, sectionToContainAllSubsectionsForMe,
 		filename, lineno);
 	if (res == JVX_NO_ERROR)
@@ -252,7 +252,7 @@ CjvxAuNPlayChannelId::get_configuration(jvxCallManagerConfiguration* callMan,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_zerocopy::get_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1io::get_configuration(callMan,
 		processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{
@@ -268,6 +268,6 @@ CjvxAuNPlayChannelId::get_property(
 	const jvx::propertyAddress::IjvxPropertyAddress& ident,
 	const jvx::propertyDetail::CjvxTranferDetail& trans)
 {
-	return CjvxBareNode1io_zerocopy::get_property(callGate,
+	return CjvxBareNode1io::get_property(callGate,
 		rawPtr, ident, trans);
 }

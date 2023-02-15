@@ -2,7 +2,7 @@
 #include "jvx-helpers-cpp.h"
 
 CjvxAuNForwardBuffer::CjvxAuNForwardBuffer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_rearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_NODE_TYPE_SPECIFIER_TYPE);
 	_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
@@ -22,7 +22,7 @@ CjvxAuNForwardBuffer::~CjvxAuNForwardBuffer()
 jvxErrorType 
 CjvxAuNForwardBuffer::select(IjvxObject* owner)
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::select(owner);
+	jvxErrorType res = CjvxBareNode1ioRearrange::select(owner);
 	if (res == JVX_NO_ERROR)
 	{
 		genForwardBuffer_node::init__config_select();
@@ -35,7 +35,7 @@ CjvxAuNForwardBuffer::select(IjvxObject* owner)
 jvxErrorType 
 CjvxAuNForwardBuffer::unselect()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::unselect();
+	jvxErrorType res = CjvxBareNode1ioRearrange::unselect();
 	if (res == JVX_NO_ERROR)
 	{
 		genForwardBuffer_node::unregister__config_select(static_cast<CjvxProperties*>(this));
@@ -50,7 +50,7 @@ CjvxAuNForwardBuffer::unselect()
 jvxErrorType
 CjvxAuNForwardBuffer::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::activate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	if (res == JVX_NO_ERROR)
 	{		
 		genForwardBuffer_node::init_all();
@@ -69,7 +69,7 @@ CjvxAuNForwardBuffer::activate()
 jvxErrorType
 CjvxAuNForwardBuffer::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{	
 		retInstTool<IjvxThreads>(
@@ -80,7 +80,7 @@ CjvxAuNForwardBuffer::deactivate()
 		genForwardBuffer_node::deallocate_all();
 		genForwardBuffer_node::unregister_all(static_cast<CjvxProperties*>(this));
 
-		CjvxBareNode1io_rearrange::deactivate();
+		CjvxBareNode1ioRearrange::deactivate();
 	}
 	return res;
 }
@@ -93,13 +93,13 @@ CjvxAuNForwardBuffer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	std::string token;
 	std::string tokenDecoder;
 	jvxErrorType res = JVX_NO_ERROR;
-	res = CjvxBareNode1io_rearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if(res == JVX_NO_ERROR)
 	{
-		output.buffersize = CjvxNode_rearrange_genpcg::node_output.buffersize.value;
-		output.samplerate= CjvxNode_rearrange_genpcg::node_output.samplerate.value;
-		output.number_channels = CjvxNode_genpcg::node.numberoutputchannels.value;
-		output.format = (jvxDataFormat)CjvxNode_genpcg::node.format.value;
+		output.buffersize = node_output._common_set_node_params_a_1io.buffersize;
+		output.samplerate= node_output._common_set_node_params_a_1io.samplerate;
+		output.number_channels = node_output._common_set_node_params_a_1io.number_channels;
+		output.format = (jvxDataFormat)node_output._common_set_node_params_a_1io.format;
 	}
 	return res;
 }
@@ -108,10 +108,7 @@ void
 CjvxAuNForwardBuffer::test_set_output_parameters()
 {
 	// Create the link between input and output channel number
-	CjvxNode_genpcg::node.numberoutputchannels.value = CjvxNode_genpcg::node.numberinputchannels.value;
-
-	// Derive these parameters from current settings
-	update_ldesc_from_output_params_on_test();
+	node_output._common_set_node_params_a_1io.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
 }
 // ===================================================================
 
@@ -147,7 +144,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		// Bypass buffer in bypass-buffer-mode
 		_common_set_ldslave.zeroCopyBuffering_cfg = true;
-		res = CjvxBareNode1io_rearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = CjvxBareNode1ioRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	}
 	else
 	{
@@ -260,7 +257,7 @@ CjvxAuNForwardBuffer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	jvxErrorType resL = JVX_NO_ERROR;
 	if (bypass_buffer_mode)
 	{
-		res = CjvxBareNode1io_rearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = CjvxBareNode1ioRearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	}
 	else
 	{
@@ -308,11 +305,11 @@ CjvxAuNForwardBuffer::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType resL = JVX_NO_ERROR;
 	if (bypass_buffer_mode)
 	{
-		res = CjvxBareNode1io_rearrange::start_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = CjvxBareNode1ioRearrange::start_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	}
 	else
 	{
-		res = CjvxBareNode1io_rearrange::start_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = CjvxBareNode1ioRearrange::start_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res == JVX_NO_ERROR)
 		{
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
@@ -342,7 +339,7 @@ CjvxAuNForwardBuffer::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType resL = JVX_NO_ERROR;
 	if (bypass_buffer_mode)
 	{
-		res = CjvxBareNode1io_rearrange::stop_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = CjvxBareNode1ioRearrange::stop_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	}
 	else
 	{
@@ -361,7 +358,7 @@ CjvxAuNForwardBuffer::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			resL = refThreads.cpPtr->stop(5000);
 			assert(resL == JVX_NO_ERROR);
 		}
-		res = CjvxBareNode1io_rearrange::stop_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = CjvxBareNode1ioRearrange::stop_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	}
 	return res;
 }
@@ -379,7 +376,7 @@ CjvxAuNForwardBuffer::process_start_icon(
 	jvxErrorType res = JVX_NO_ERROR;
 	if (bypass_buffer_mode)
 	{
-		res = CjvxBareNode1io_rearrange::process_start_icon(
+		res = CjvxBareNode1ioRearrange::process_start_icon(
 			pipeline_offset,
 			idx_stage,
 			tobeAccessedByStage,
@@ -404,7 +401,7 @@ CjvxAuNForwardBuffer::process_stop_icon(
 	jvxErrorType res = JVX_NO_ERROR;
 	if (bypass_buffer_mode)
 	{
-		res = CjvxBareNode1io_rearrange::process_stop_icon(
+		res = CjvxBareNode1ioRearrange::process_stop_icon(
 			idx_stage,
 			operate_first_call,
 			tobeAccessedByStage,
@@ -430,7 +427,7 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxErrorType res = JVX_NO_ERROR;
 	if (bypass_buffer_mode)
 	{
-		res = CjvxBareNode1io_rearrange::process_buffers_icon(mt_mask, idx_stage);
+		res = CjvxBareNode1ioRearrange::process_buffers_icon(mt_mask, idx_stage);
 	}
 	else
 	{
@@ -475,7 +472,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 		else
 		{
 			// To do at this position
-			res = CjvxBareNode1io_rearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 		return res;
 		break;
@@ -485,7 +482,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 		{
 			if (_common_set_ldslave.theData_in->con_link.connect_from)
 			{
-				return CjvxBareNode1io_rearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				return CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
 		}
 		else
@@ -536,7 +533,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 		}
 		break;
 	default:
-		res = CjvxBareNode1io_rearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	return res;
 }
@@ -619,7 +616,7 @@ CjvxAuNForwardBuffer::request_hidden_interface(jvxInterfaceType tp, jvxHandle** 
 		*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxManipulate*>(this));
 		break;
 	default:
-		res = CjvxBareNode1io_rearrange::request_hidden_interface(tp, hdl);
+		res = CjvxBareNode1ioRearrange::request_hidden_interface(tp, hdl);
 	}
 	return res;
 }
@@ -642,7 +639,7 @@ CjvxAuNForwardBuffer::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hd
 		}
 		break;
 	default:
-		res = CjvxBareNode1io_rearrange::return_hidden_interface(tp, hdl);
+		res = CjvxBareNode1ioRearrange::return_hidden_interface(tp, hdl);
 	}
 	return res;
 }

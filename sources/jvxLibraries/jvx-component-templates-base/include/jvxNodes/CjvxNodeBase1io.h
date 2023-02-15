@@ -15,21 +15,23 @@
 
 class CjvxNodeBase1io : public IjvxNode, public CjvxObject,
 	public IjvxProperties, public CjvxProperties,
-	//public CjvxProperties,
 	public IjvxSequencerControl, public CjvxSequencerControl,
 	public IjvxConnectorFactory, public CjvxConnectorFactory,
 	public IjvxInputConnector, public IjvxOutputConnector, public CjvxInputOutputConnector,
-	public IjvxConfiguration, 
-	public CjvxNode_genpcg, public CjvxSimplePropsPars
+	public IjvxConfiguration
 {
 protected:
 
-	jvxCommonSetNodeParams _common_set_node_params_1io;
+	CjvxSimplePropsPars node_inout;
+
+	// jvxCommonSetNodeParams _common_set_node_params_1io;
 	jvxBool zeroCopyBuffering_rt;
-	jvxBool newParamProps = false;
 
 	CjvxNegotiate_input neg_input;
-	CjvxNegotiate_output neg_output;
+
+	// Forward a complaint towards previous component
+	jvxBool forward_complain;
+
 
 public:
 	JVX_CALLINGCONVENTION CjvxNodeBase1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -77,14 +79,15 @@ public:
 	virtual jvxErrorType accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
 	virtual jvxErrorType accept_input_parameters_stop(jvxErrorType resTest);
 
-	virtual void from_input_to_output() = 0;
+	virtual void from_input_to_output();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual jvxErrorType accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
-	jvxErrorType reportPreferredParameters(jvxPropertyCategoryType cat, jvxSize propId);
+	// jvxErrorType reportPreferredParameters(jvxPropertyCategoryType cat, jvxSize propId);
 	jvxErrorType reportRequestTestChainMaster();
 
+	void update_ldesc_from_input_params_on_test();
 	// This function is called from local test_connect_ocon function and shall be re-defined in derived class
 	virtual void test_set_output_parameters();
 
@@ -93,10 +96,10 @@ public:
 	// Some helpers
 
 	// Update the input parameter properties from latest successful negotiations
-	void update_input_params_from_neg_on_test();
+	void update_simple_params_from_neg_on_test();
 	void update_simple_params_from_ldesc(); // **
 
-	void constrain_ldesc_from_neg_output_params();
+	void constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg);
 };
 
 #define JVX_OS_REACT_INTERFACE_PARAMETERS_DECLARE \

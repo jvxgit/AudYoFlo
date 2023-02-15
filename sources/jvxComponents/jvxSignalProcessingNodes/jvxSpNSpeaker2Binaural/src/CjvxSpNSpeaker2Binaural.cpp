@@ -1,7 +1,7 @@
 #include "CjvxSpNSpeaker2Binaural.h"
 
 CjvxSpNSpeaker2Binaural::CjvxSpNSpeaker2Binaural(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_zerocopy(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	/*
 	 * Configurations:
@@ -25,6 +25,10 @@ CjvxSpNSpeaker2Binaural::CjvxSpNSpeaker2Binaural(JVX_CONSTRUCTOR_ARGUMENTS_MACRO
 	 * Complaints about data prameters are directly forwarded
 	forward_complain = true;
 	 */
+	if (force2OutputChannels)
+	{
+		neg_output._update_parameters_fixed(2);
+	}
 }
 
 CjvxSpNSpeaker2Binaural::~CjvxSpNSpeaker2Binaural()
@@ -34,7 +38,7 @@ CjvxSpNSpeaker2Binaural::~CjvxSpNSpeaker2Binaural()
 jvxErrorType
 CjvxSpNSpeaker2Binaural::select(IjvxObject* owner)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::select(owner);
+	jvxErrorType res = CjvxBareNode1ioRearrange::select(owner);
 	if (res == JVX_NO_ERROR)
 	{
 		/*
@@ -59,7 +63,7 @@ CjvxSpNSpeaker2Binaural::select(IjvxObject* owner)
 jvxErrorType
 CjvxSpNSpeaker2Binaural::unselect()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::unselect();
+	jvxErrorType res = CjvxBareNode1ioRearrange::unselect();
 	if (res == JVX_NO_ERROR)
 	{
 		genSpeaker2Binaural_node::unregister_callbacks(static_cast<CjvxProperties*>(this), NULL);
@@ -73,7 +77,7 @@ CjvxSpNSpeaker2Binaural::unselect()
 jvxErrorType
 CjvxSpNSpeaker2Binaural::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::activate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
@@ -88,14 +92,14 @@ CjvxSpNSpeaker2Binaural::activate()
 jvxErrorType
 CjvxSpNSpeaker2Binaural::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
 		_undo_update_property_access_type(
 			genSpeaker2Binaural_node::mode.slave_mode.category,
 			genSpeaker2Binaural_node::mode.slave_mode.globalIdx);
 
-		CjvxBareNode1io_zerocopy::deactivate();
+		CjvxBareNode1ioRearrange::deactivate();
 	}
 	return res;
 }
@@ -144,7 +148,7 @@ CjvxSpNSpeaker2Binaural::put_configuration(jvxCallManagerConfiguration* callMan,
 	const char* filename,
 	jvxInt32 lineno)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::put_configuration(
+	jvxErrorType res = CjvxBareNode1ioRearrange::put_configuration(
 		callMan,
 		processor,
 		sectionToContainAllSubsectionsForMe,
@@ -173,7 +177,7 @@ CjvxSpNSpeaker2Binaural::get_configuration(jvxCallManagerConfiguration* callMan,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::get_configuration(
+	jvxErrorType res = CjvxBareNode1ioRearrange::get_configuration(
 		callMan,
 		processor,
 		sectionWhereToAddAllSubsections);
@@ -192,21 +196,73 @@ CjvxSpNSpeaker2Binaural::get_configuration(jvxCallManagerConfiguration* callMan,
 jvxErrorType
 CjvxSpNSpeaker2Binaural::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	return CjvxBareNode1io_zerocopy::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	return CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
 
-void 
-CjvxSpNSpeaker2Binaural::test_set_output_parameters()
+jvxErrorType
+CjvxSpNSpeaker2Binaural::accept_input_parameters_stop(jvxErrorType resTest)
 {
-	CjvxBareNode1io_zerocopy::test_set_output_parameters();
-
 	if (force2OutputChannels)
 	{
-		neg_output._update_parameters_fixed(2, JVX_SIZE_UNSELECTED,
-			JVX_SIZE_UNSELECTED, JVX_DATAFORMAT_NONE,
-			JVX_DATAFORMAT_GROUP_NONE,
-			&_common_set_ldslave.theData_out);
+		return CjvxBareNode1ioRearrange::accept_input_parameters_stop(resTest);
 	}
+	return CjvxBareNode1io::accept_input_parameters_stop(resTest);
+}
+
+void
+CjvxSpNSpeaker2Binaural::from_input_to_output()
+{
+	if (force2OutputChannels)
+	{
+		return CjvxBareNode1ioRearrange::from_input_to_output();
+	}
+	return CjvxBareNode1io::from_input_to_output();
+}
+
+jvxErrorType
+CjvxSpNSpeaker2Binaural::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	if (force2OutputChannels)
+	{
+		return CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
+	return CjvxBareNode1io::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+}
+
+void
+CjvxSpNSpeaker2Binaural::test_set_output_parameters()
+{
+	if (force2OutputChannels)
+	{
+		return CjvxBareNode1ioRearrange::test_set_output_parameters();
+	}
+	return CjvxBareNode1io::test_set_output_parameters();
+}
+
+// =====================================================================================
+
+jvxErrorType
+CjvxSpNSpeaker2Binaural::prepare()
+{
+	jvxErrorType res = CjvxBareNode1ioRearrange::prepare();
+	if (res == JVX_NO_ERROR)
+	{
+		// Lock the bypass property
+		CjvxProperties::_update_properties_on_start();
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxSpNSpeaker2Binaural::postprocess()
+{
+	jvxErrorType res = CjvxBareNode1ioRearrange::postprocess();
+	if (res == JVX_NO_ERROR)
+	{
+		// Unlock the bypass property
+		CjvxProperties::_update_properties_on_stop();
+	}
+	return res;
 }
 
 // =====================================================================================
@@ -214,7 +270,7 @@ CjvxSpNSpeaker2Binaural::test_set_output_parameters()
 jvxErrorType 
 CjvxSpNSpeaker2Binaural::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1ioRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		engageRendererProc = false;
@@ -235,7 +291,7 @@ CjvxSpNSpeaker2Binaural::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 jvxErrorType 
 CjvxSpNSpeaker2Binaural::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1ioRearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		if (engageRendererProc)
@@ -281,5 +337,5 @@ CjvxSpNSpeaker2Binaural::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHa
 		}
 		break;
 	}
-	return CjvxBareNode1io_zerocopy::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	return CjvxBareNode1ioRearrange::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }

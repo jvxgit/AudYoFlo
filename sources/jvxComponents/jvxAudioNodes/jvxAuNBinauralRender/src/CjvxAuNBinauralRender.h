@@ -1,13 +1,13 @@
 #ifndef __CJVX_AUN_BINAURAL_RENDER__
 #define __CJVX_AUN_BINAURAL_RENDER__
 
-#include "jvxNodes/CjvxBareNode1io_rearrange.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "jvxText2Speech/CjvxTxt2Speech_mix.h"
 #include "jvx_circbuffer/jvx_circbuffer.h"
 #include "jvxFastConvolution/CjvxFastConvolution.h"
 #include "pcg_exports_node.h"
 
-class CjvxAuNBinauralRender : public CjvxBareNode1io_rearrange, public IjvxPropertyExtenderHrtfDispenser_report,
+class CjvxAuNBinauralRender : public CjvxBareNode1ioRearrange, public IjvxPropertyExtenderHrtfDispenser_report,
 	public genBinauralRender_node
 {
 private:
@@ -79,7 +79,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate() override;
 
-	void from_input_to_output() override;
+	// void from_input_to_output() override;
 
 	// =========================================================================================================
 

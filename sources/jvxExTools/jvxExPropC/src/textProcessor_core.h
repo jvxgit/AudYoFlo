@@ -359,6 +359,7 @@ public:
 			std::ostream& streamAssociateFunctions,
 			std::ostream& streamDeassociateFunctions,
 			std::ostream& streamTranslations,
+			std::ostream& streamTagUpdate,
 			int tabOffset,
 			std::string structToken,
 			std::string funcToken,
@@ -370,6 +371,7 @@ public:
 			std::vector<std::string>& lstUnregisterFunctions,
 			std::vector<std::string>& lstPutConfigFunctions,
 			std::vector<std::string>& lstGetConfigFunctions,
+			std::vector<std::string>& lstTagUpdateFunctions,
 		std::map<jvxInt32, oneAudioPluginEntry>& collectAudioPluginsIds,
 		std::list<oneAudioPluginEntry>& collectInvaidAudioPluginsIds);
 
@@ -406,6 +408,8 @@ public:
 
 	void produceOutput_c_writeconfig(std::ostream& out, onePropertyDefinition& elm, std::string& propertySectionName);
 
+	void produceOutput_c_updateTag(std::ostream& out, onePropertyDefinition& elm, std::string& propertySectionName);
+	
 	void produceOutput_c_AudioPluginIds(std::ostream& out, std::map<jvxInt32, oneAudioPluginEntry>& audioPluginsIds,
 		std::list<oneAudioPluginEntry> collectInvaidAudioPluginsIds, const std::string& register_tag, jvxBool generateLineReferences);
 

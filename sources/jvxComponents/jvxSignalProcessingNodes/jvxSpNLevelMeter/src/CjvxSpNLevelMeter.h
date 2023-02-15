@@ -1,8 +1,8 @@
 
-#include "jvxNodes/CjvxBareNode1io_zerocopy.h"
+#include "jvxNodes/CjvxBareNode1io.h"
 #include "pcg_exports_node.h"
 
-class CjvxSpNLevelMeter : public CjvxBareNode1io_zerocopy, public genLevelMeter_node
+class CjvxSpNLevelMeter : public CjvxBareNode1io, public genLevelMeter_node
 {
 
 private:

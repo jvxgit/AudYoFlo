@@ -7,7 +7,7 @@ CjvxAuNBinauralRender::get_property(
 	const jvx::propertyAddress::IjvxPropertyAddress& ident,
 	const jvx::propertyDetail::CjvxTranferDetail& trans)
 {
-	return CjvxBareNode1io_rearrange::get_property(callGate,
+	return CjvxBareNode1ioRearrange::get_property(callGate,
 		rawPtr, ident, trans);
 }
 

@@ -1,7 +1,7 @@
 #include "CjvxSpNSimpleZeroCopy.h"
 
 CjvxSpNSimpleZeroCopy::CjvxSpNSimpleZeroCopy(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_zerocopy(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	/*
 	 * Configurations:
@@ -34,7 +34,7 @@ CjvxSpNSimpleZeroCopy::~CjvxSpNSimpleZeroCopy()
 jvxErrorType
 CjvxSpNSimpleZeroCopy::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::activate();
+	jvxErrorType res = CjvxBareNode1io::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		/*
@@ -56,7 +56,7 @@ CjvxSpNSimpleZeroCopy::deactivate()
 		/*
 		 * Deactivate all properties
 		 */
-		res = CjvxBareNode1io_zerocopy::deactivate();
+		res = CjvxBareNode1io::deactivate();
 	}
 	return res;
 }
@@ -91,7 +91,7 @@ CjvxSpNSimpleZeroCopy::put_configuration(jvxCallManagerConfiguration* callMan,
 	const char* filename,
 	jvxInt32 lineno)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::put_configuration(
+	jvxErrorType res = CjvxBareNode1io::put_configuration(
 		callMan,
 		processor,
 		sectionToContainAllSubsectionsForMe,
@@ -118,7 +118,7 @@ CjvxSpNSimpleZeroCopy::get_configuration(jvxCallManagerConfiguration* callMan,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::get_configuration(
+	jvxErrorType res = CjvxBareNode1io::get_configuration(
 		callMan,
 		processor,
 		sectionWhereToAddAllSubsections);

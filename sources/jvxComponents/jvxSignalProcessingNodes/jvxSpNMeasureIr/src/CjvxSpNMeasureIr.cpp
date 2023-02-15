@@ -1,7 +1,7 @@
 #include "CjvxSpNMeasureIr.h"
 
 CjvxSpNMeasureIr::CjvxSpNMeasureIr(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_rearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	selMeasures = JVX_SIZE_UNSELECTED;
 
@@ -23,7 +23,7 @@ CjvxSpNMeasureIr::~CjvxSpNMeasureIr()
 jvxErrorType
 CjvxSpNMeasureIr::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::activate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	jvxDspBaseErrorType resDsp = JVX_DSP_NO_ERROR;
 
 	if (res == JVX_NO_ERROR)
@@ -48,7 +48,7 @@ CjvxSpNMeasureIr::activate()
 			get_config_measurement_prehook,
 			reinterpret_cast<jvxHandle*>(this), NULL);
 
-		neg_input._update_parameters_fixed(CjvxNode_genpcg::node.numberinputchannels.value);
+		neg_input._update_parameters_fixed(node_inout._common_set_node_params_a_1io.number_channels);
 
 		reconstruct_properties(JVX_SIZE_UNSELECTED, false);
 
@@ -98,7 +98,7 @@ CjvxSpNMeasureIr::activate()
 jvxErrorType
 CjvxSpNMeasureIr::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
 		if (localTextLog.use)
@@ -130,7 +130,7 @@ CjvxSpNMeasureIr::deactivate()
 		clear_all_results();
 		
 
-		CjvxBareNode1io_rearrange::deactivate();
+		CjvxBareNode1ioRearrange::deactivate();
 	}
 	return res;
 }
@@ -142,18 +142,18 @@ CjvxSpNMeasureIr::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	if (_common_set_ldslave.theData_in->con_params.number_channels != CjvxNode_genpcg::node.numberinputchannels.value)
+	if (_common_set_ldslave.theData_in->con_params.number_channels != node_inout._common_set_node_params_a_1io.number_channels)
 	{
 		// genMeasureIr_node::config.number_input_channels_max.value = _common_set_ldslave.theData_in->con_params.number_channels;
 		neg_input._update_parameters_fixed(_common_set_ldslave.theData_in->con_params.number_channels);
 	}
-	res = CjvxBareNode1io_rearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		CjvxNode_genpcg::node.numberoutputchannels.value = (jvxInt32)_common_set_ldslave.theData_out.con_params.number_channels;
+		node_output._common_set_node_params_a_1io.number_channels = (jvxInt32)_common_set_ldslave.theData_out.con_params.number_channels;
 		if (
-			(genMeasureIr_node::measurements.measurement_out_channels.value.entries.size() != CjvxNode_genpcg::node.numberoutputchannels.value) ||
-			(genMeasureIr_node::measurements.measurement_in_channels.value.entries.size() != CjvxNode_genpcg::node.numberinputchannels.value))
+			(genMeasureIr_node::measurements.measurement_out_channels.value.entries.size() != node_output._common_set_node_params_a_1io.number_channels) ||
+			(genMeasureIr_node::measurements.measurement_in_channels.value.entries.size() != node_output._common_set_node_params_a_1io.number_channels))
 		{
 			reconstruct_properties(selMeasures, false);
 		}
@@ -167,11 +167,11 @@ CjvxSpNMeasureIr::test_set_output_parameters()
 {
 	// Leave number channels open
 	neg_output._update_parameters_fixed(
-		CjvxNode_genpcg::node.numberoutputchannels.value,
-		CjvxNode_genpcg::node.buffersize.value,
-		CjvxNode_genpcg::node.samplerate.value,
-		(jvxDataFormat)CjvxNode_genpcg::node.format.value,
-		(jvxDataFormatGroup)CjvxNode_genpcg::node.subformat.value,
+		node_output._common_set_node_params_a_1io.number_channels,
+		node_output._common_set_node_params_a_1io.buffersize,
+		node_output._common_set_node_params_a_1io.samplerate,
+		(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
+		(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
 		&_common_set_ldslave.theData_out);
 }
 
@@ -185,12 +185,12 @@ CjvxSpNMeasureIr::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 	switch (tp)
 	{
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
-		CjvxNode_genpcg::node.numberoutputchannels.value =
+		node_output._common_set_node_params_a_1io.number_channels =
 			(jvxInt32)ld->con_params.number_channels;
-		neg_output._update_parameters_fixed(CjvxNode_genpcg::node.numberoutputchannels.value);
+		neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels);
 		break;
 	}
-	res = CjvxBareNode1io_rearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	return res;
 }
 
@@ -199,7 +199,7 @@ CjvxSpNMeasureIr::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 jvxErrorType
 CjvxSpNMeasureIr::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1ioRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	jvxDspBaseErrorType resDsp = JVX_DSP_NO_ERROR;
 
 	if (res == JVX_NO_ERROR)

@@ -2,12 +2,12 @@
 #define JVX_NODE_TYPE_SPECIFIER_TYPE JVX_COMPONENT_AUDIO_NODE
 #define JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR "audio_node"
 
-#include "jvxNodes/CjvxBareNode1io_rearrange.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "pcg_exports_node.h"
 
 #include "HjvxMicroConnection.h"
 
-class CjvxAuNBitstreamEncoder: public CjvxBareNode1io_rearrange, 
+class CjvxAuNBitstreamEncoder: public CjvxBareNode1ioRearrange, 
 	public HjvxMicroConnection_hooks_simple,
 	public HjvxMicroConnection_hooks_fwd,
 	public genBitstreamDecoder_node

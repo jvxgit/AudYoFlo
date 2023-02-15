@@ -150,6 +150,7 @@ namespace jvx
 			jvxApiString name;
 			jvxApiString description;
 			jvxApiString descriptor;
+			jvxApiString pTag;
 
 			CjvxPropertyDescriptorFull()
 			{

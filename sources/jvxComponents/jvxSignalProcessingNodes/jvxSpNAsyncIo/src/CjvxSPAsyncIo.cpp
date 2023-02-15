@@ -620,7 +620,7 @@ JVX_ASYNCIO_CLASSNAME::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_ou
 			theData_out->con_params.format_group = (jvxDataFormatGroup)genSPAsyncio_node::secondary_async.node.subformat.value;
 			
 			// Push all old values
-			neg_secondary_input._push_constraints();
+			// neg_secondary_input._push_constraints();
 
 			// Set the parameter constraints for the input side!
 			neg_secondary_input._update_parameters_fixed(

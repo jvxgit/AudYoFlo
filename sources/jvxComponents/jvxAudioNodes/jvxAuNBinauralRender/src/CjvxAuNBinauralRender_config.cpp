@@ -9,7 +9,7 @@ CjvxAuNBinauralRender::put_configuration(jvxCallManagerConfiguration* callMan,
 {
 	jvxSize i;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_rearrange::put_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1ioRearrange::put_configuration(callMan,
 		processor, sectionToContainAllSubsectionsForMe,
 		filename, lineno);
 	if (res == JVX_NO_ERROR)
@@ -25,7 +25,7 @@ CjvxAuNBinauralRender::get_configuration(jvxCallManagerConfiguration* callMan,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_rearrange::get_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1ioRearrange::get_configuration(callMan,
 		processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{

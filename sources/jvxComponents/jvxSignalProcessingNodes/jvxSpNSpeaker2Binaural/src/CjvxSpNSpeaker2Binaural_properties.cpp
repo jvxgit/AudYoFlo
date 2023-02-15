@@ -125,13 +125,22 @@ CjvxSpNSpeaker2Binaural::update_bypass_mode(jvxBool updateChain)
 	{
 		force2OutputChannels = false;
 		_common_set_ldslave.zeroCopyBuffering_cfg = true;
-		_common_set_1io_zerocopy.forward_complain = true;
+		forward_complain = true;
 	}
 	else
 	{
 		force2OutputChannels = true;
 		_common_set_ldslave.zeroCopyBuffering_cfg = false;
-		_common_set_1io_zerocopy.forward_complain = false;
+		forward_complain = false;
+	}
+
+	if (force2OutputChannels)
+	{
+		neg_output._update_parameters_fixed(2);
+	}
+	else
+	{
+		neg_output._clear_parameters_fixed(true);
 	}
 
 	if (updateChain)
@@ -206,6 +215,7 @@ CjvxSpNSpeaker2Binaural::update_properties(jvxBool mayActRendering)
 			genSpeaker2Binaural_node::parameter.fir_hrtf_right.isValid = false;
 		}
 
+		/*
 		_undo_update_property_access_type(
 			genSpeaker2Binaural_node::config.bypass.category,
 			genSpeaker2Binaural_node::config.bypass.globalIdx);
@@ -214,6 +224,7 @@ CjvxSpNSpeaker2Binaural::update_properties(jvxBool mayActRendering)
 			JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE,
 			genSpeaker2Binaural_node::config.bypass.category,
 			genSpeaker2Binaural_node::config.bypass.globalIdx);
+		*/
 		jvx_bitZSet(genSpeaker2Binaural_node::mode.function.value.selection(), 0);
 	}
 	else
@@ -226,6 +237,7 @@ CjvxSpNSpeaker2Binaural::update_properties(jvxBool mayActRendering)
 		genSpeaker2Binaural_node::parameter.fir_hrtf_left.isValid = false;
 		genSpeaker2Binaural_node::parameter.fir_hrtf_right.isValid = false;
 
+		/*
 		_undo_update_property_access_type(
 			genSpeaker2Binaural_node::config.bypass.category,
 			genSpeaker2Binaural_node::config.bypass.globalIdx);
@@ -233,7 +245,7 @@ CjvxSpNSpeaker2Binaural::update_properties(jvxBool mayActRendering)
 			JVX_PROPERTY_ACCESS_READ_ONLY,
 			genSpeaker2Binaural_node::config.bypass.category,
 			genSpeaker2Binaural_node::config.bypass.globalIdx);
-
+		*/
 		jvx_bitFClear(genSpeaker2Binaural_node::mode.function.value.selection());
 	}
 

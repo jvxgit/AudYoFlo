@@ -1,9 +1,9 @@
 
-#include "jvxNodes/CjvxBareNode1io_zerocopy.h"
+#include "jvxNodes/CjvxBareNode1io.h"
 #include "pcg_exports_node.h"
 #include "jvxAudioFftEqualizer/CjvxAudioFftEqualizer.h"
 
-class CjvxSpNSpeakerEqualizer : public CjvxBareNode1io_zerocopy, public CjvxAudioFftEqualizer, public genSpeakerEqualizer_node
+class CjvxSpNSpeakerEqualizer : public CjvxBareNode1io, public CjvxAudioFftEqualizer, public genSpeakerEqualizer_node
 {
 
 private:
@@ -21,7 +21,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	void JVX_CALLINGCONVENTION test_set_output_parameters() override;
+	//void JVX_CALLINGCONVENTION test_set_output_parameters() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 

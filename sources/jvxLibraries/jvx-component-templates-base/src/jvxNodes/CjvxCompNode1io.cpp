@@ -30,11 +30,6 @@ CjvxCompNode1io::prepare()
 	jvxErrorType res = _prepare();
 	if(res == JVX_NO_ERROR)
 	{
-		_common_set_node_params_1io.processing.buffersize =  CjvxNode_genpcg::node.buffersize.value;
-		_common_set_node_params_1io.processing.samplerate = CjvxNode_genpcg::node.samplerate.value;
-		_common_set_node_params_1io.processing.number_input_channels = CjvxNode_genpcg::node.numberinputchannels.value;
-		_common_set_node_params_1io.processing.number_output_channels = CjvxNode_genpcg::node.numberoutputchannels.value;
-		_common_set_node_params_1io.processing.format = (jvxDataFormat)CjvxNode_genpcg::node.format.value;
 
 	}
 	return(res);
@@ -46,11 +41,6 @@ CjvxCompNode1io::prepare_lock()
 	jvxErrorType res = _prepare_lock( );
 	if(res == JVX_NO_ERROR)
 	{
-		_common_set_node_params_1io.processing.buffersize = CjvxNode_genpcg::node.buffersize.value;
-		_common_set_node_params_1io.processing.samplerate = CjvxNode_genpcg::node.samplerate.value;
-		_common_set_node_params_1io.processing.number_input_channels = CjvxNode_genpcg::node.numberinputchannels.value;
-		_common_set_node_params_1io.processing.number_output_channels = CjvxNode_genpcg::node.numberoutputchannels.value;
-		_common_set_node_params_1io.processing.format = (jvxDataFormat)CjvxNode_genpcg::node.format.value;
 	}
 	return(res);
 }
@@ -61,11 +51,6 @@ CjvxCompNode1io::postprocess()
 	jvxErrorType res = _postprocess();
 	if (res == JVX_NO_ERROR)
 	{
-		_common_set_node_params_1io.processing.buffersize = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.number_input_channels = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.number_output_channels = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.samplerate = JVX_SIZE_UNSELECTED;
-		_common_set_node_params_1io.processing.format = JVX_DATAFORMAT_NONE;
 
 	}
 	return(res);
@@ -95,7 +80,9 @@ CjvxCompNode1io::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
 	{
-		if(_common_set_node_params_1io.acceptOnlyExactMatchLinkDataInput)
+		assert(0);
+		/*
+		if (_common_set_node_params_1io.acceptOnlyExactMatchLinkDataInput)
 		{
 			// Setup has been set in the properties - let us make sure that it really matches
 			if(
@@ -115,8 +102,9 @@ CjvxCompNode1io::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
 		}
 		else
 		{
+		*/
 			res = allocate_pipeline_and_buffers_prepare_to();
-		}
+		// }
 	}
 	return(res);
 };
@@ -127,7 +115,9 @@ CjvxCompNode1io::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theD
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
 	{
-		if(_common_set_node_params_1io.acceptOnlyExactMatchLinkDataOutput)
+		assert(0);
+		/*
+		if (_common_set_node_params_1io.acceptOnlyExactMatchLinkDataOutput)
 		{
 			if(
 				!(
@@ -147,6 +137,7 @@ CjvxCompNode1io::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theD
 		{
 			res = JVX_NO_ERROR;
 		}
+		*/
 	}
 	else
 	{
@@ -194,11 +185,6 @@ CjvxCompNode1io::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
 	{
 		res = deallocate_pipeline_and_buffers_postprocess_to();
-
-		_common_set_node_params_1io.processing.format = JVX_DATAFORMAT_NONE;
-		_common_set_node_params_1io.processing.number_input_channels = -1;
-		_common_set_node_params_1io.processing.buffersize = -1;
-		_common_set_node_params_1io.processing.samplerate = -1;
 	}
 	return(res);
 };
@@ -209,13 +195,6 @@ CjvxCompNode1io::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* th
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
 	{
-		/*
-		_common_set_node_params_1io.processing.format = theData->con_compat.format;
-		_common_set_node_params_1io.processing.number_output_channels = theData->con_compat.number_channels;
-		_common_set_node_params_1io.processing.buffersize = theData->con_compat.buffersize;
-		_common_set_node_params_1io.processing.samplerate = theData->con_compat.rate;
-		*/
-		_common_set_node_params_1io.processing.number_output_channels = -1;
 	}
 	else
 	{

@@ -12,7 +12,7 @@ CjvxSpNMeasureIr::put_configuration(jvxCallManagerConfiguration* callMan,
 {
 	jvxSize selNew = JVX_SIZE_UNSELECTED;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1io_rearrange::put_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1ioRearrange::put_configuration(callMan,
 		processor, sectionToContainAllSubsectionsForMe,
 		filename, lineno);
 	if (res == JVX_NO_ERROR)
@@ -75,7 +75,7 @@ CjvxSpNMeasureIr::get_configuration(jvxCallManagerConfiguration* callMan,
 	jvxSize cnt = 0;
 	jvxConfigData* secWrite = NULL;
 	jvxConfigData* subSecWrite = NULL;
-	jvxErrorType res = CjvxBareNode1io_rearrange::get_configuration(callMan,
+	jvxErrorType res = CjvxBareNode1ioRearrange::get_configuration(callMan,
 		processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{

@@ -2,7 +2,7 @@
 #include "jvxNodes/CjvxBareNode1io_logtofile.h"
 
 CjvxBareNode1io_logfile::CjvxBareNode1io_logfile(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
-	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set_audio_log_to_file.numFramesLog = 100;
 	_common_set_audio_log_to_file.timeoutMsec = 5000;
@@ -92,10 +92,11 @@ CjvxBareNode1io_logfile::log_prepare_all_channels()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	theMainLogFile.lfc_prepare_one_channel(_common_set_node_params_1io.processing.number_input_channels,
-		_common_set_node_params_1io.processing.buffersize,
-		_common_set_node_params_1io.processing.samplerate,
-		_common_set_node_params_1io.processing.format,
+	theMainLogFile.lfc_prepare_one_channel(
+		node_inout._common_set_node_params_a_1io.number_channels,
+		node_inout._common_set_node_params_a_1io.buffersize,
+		node_inout._common_set_node_params_a_1io.samplerate,
+		(jvxDataFormat)node_inout._common_set_node_params_a_1io.format,
 		"audio/in/channel", idInChannels);
 
 	if (res != JVX_NO_ERROR)
@@ -103,10 +104,11 @@ CjvxBareNode1io_logfile::log_prepare_all_channels()
 		return res;
 	}
 	
-	theMainLogFile.lfc_prepare_one_channel(_common_set_node_params_1io.processing.number_output_channels,
-		_common_set_node_params_1io.processing.buffersize,
-		_common_set_node_params_1io.processing.samplerate,
-		_common_set_node_params_1io.processing.format,
+	theMainLogFile.lfc_prepare_one_channel(
+		node_output._common_set_node_params_a_1io.number_channels,
+		node_output._common_set_node_params_a_1io.buffersize,
+		node_output._common_set_node_params_a_1io.samplerate,
+		(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
 		"audio/out/channel", idOutChannels);
 
 	return res;

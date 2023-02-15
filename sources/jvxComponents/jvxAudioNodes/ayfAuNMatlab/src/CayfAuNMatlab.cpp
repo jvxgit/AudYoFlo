@@ -54,10 +54,10 @@ CayfAuNMatlab::~CayfAuNMatlab()
 }
 
 #ifdef JVX_EXTERNAL_CALL_ENABLED
-JVX_MEXCALL_SELECT_REGISTER(CayfAuNMatlab, CjvxBareNode1io_rearrange, _theExtCallObjectName)
-JVX_MEXCALL_UNSELECT_UNREGISTER(CayfAuNMatlab, CjvxBareNode1io_rearrange, _theExtCallObjectName)
-JVX_MEXCALL_PREPARE(CayfAuNMatlab, CjvxBareNode1io_rearrange)
-JVX_MEXCALL_POSTPROCESS(CayfAuNMatlab, CjvxBareNode1io_rearrange)
+JVX_MEXCALL_SELECT_REGISTER(CayfAuNMatlab, CjvxBareNode1ioRearrange, _theExtCallObjectName)
+JVX_MEXCALL_UNSELECT_UNREGISTER(CayfAuNMatlab, CjvxBareNode1ioRearrange, _theExtCallObjectName)
+JVX_MEXCALL_PREPARE(CayfAuNMatlab, CjvxBareNode1ioRearrange)
+JVX_MEXCALL_POSTPROCESS(CayfAuNMatlab, CjvxBareNode1ioRearrange)
 #endif
 
 jvxErrorType

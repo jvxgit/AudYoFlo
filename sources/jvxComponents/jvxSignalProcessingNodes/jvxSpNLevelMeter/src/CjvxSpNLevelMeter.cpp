@@ -2,9 +2,9 @@
 #include "jvx-helpers-cpp.h"
 
 CjvxSpNLevelMeter::CjvxSpNLevelMeter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_zerocopy(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
-	_common_set_1io_zerocopy.forward_complain = true;
+	forward_complain = true;
 }
 
 CjvxSpNLevelMeter::~CjvxSpNLevelMeter()
@@ -14,7 +14,7 @@ CjvxSpNLevelMeter::~CjvxSpNLevelMeter()
 jvxErrorType
 CjvxSpNLevelMeter::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::activate();
+	jvxErrorType res = CjvxBareNode1io::activate();
 	if (res == JVX_NO_ERROR)
 	{					
 		genLevelMeter_node::init_all();
@@ -27,13 +27,13 @@ CjvxSpNLevelMeter::activate()
 jvxErrorType
 CjvxSpNLevelMeter::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1io::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
 		genLevelMeter_node::unregister_all(static_cast<CjvxProperties*>(this));
 		genLevelMeter_node::deallocate_all();
 
-		CjvxBareNode1io_zerocopy::deactivate();
+		CjvxBareNode1io::deactivate();
 	}
 	return res;
 }
@@ -45,7 +45,7 @@ jvxErrorType
 CjvxSpNLevelMeter::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxSize i;
-	jvxErrorType res = CjvxBareNode1io_zerocopy::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		// Attach the level meter buffer
@@ -78,7 +78,7 @@ jvxErrorType
 CjvxSpNLevelMeter::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxSize i;
-	jvxErrorType res = CjvxBareNode1io_zerocopy::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = CjvxBareNode1io::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		// Detach the level meter
@@ -134,7 +134,7 @@ CjvxSpNLevelMeter::put_configuration(jvxCallManagerConfiguration* callMan,
 	const char* filename,
 	jvxInt32 lineno)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::put_configuration(
+	jvxErrorType res = CjvxBareNode1io::put_configuration(
 		callMan,
 		processor,
 		sectionToContainAllSubsectionsForMe,
@@ -161,7 +161,7 @@ CjvxSpNLevelMeter::get_configuration(jvxCallManagerConfiguration* callMan,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
-	jvxErrorType res = CjvxBareNode1io_zerocopy::get_configuration(
+	jvxErrorType res = CjvxBareNode1io::get_configuration(
 		callMan,
 		processor,
 		sectionWhereToAddAllSubsections);

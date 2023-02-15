@@ -283,6 +283,10 @@ CjvxMaWrapperElementTreeWidget::processLeefs(QTreeWidgetItem *theItem, int cnt, 
 									{
 										newDescription = "<" + newDescriptor + ">";
 									}
+									if (!theDescr.pTag.empty())
+									{
+										newDescription = theDescr.pTag.std_str() + ": " + newDescription;
+									}
 									newItem->setText(0, newDescription.c_str());
 
 									newDescription.clear();

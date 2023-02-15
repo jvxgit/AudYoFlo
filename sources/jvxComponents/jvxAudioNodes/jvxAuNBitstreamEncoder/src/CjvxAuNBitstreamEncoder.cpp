@@ -2,7 +2,7 @@
 #include "jvx-helpers-cpp.h"
 
 CjvxAuNBitstreamEncoder::CjvxAuNBitstreamEncoder(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_rearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_NODE_TYPE_SPECIFIER_TYPE);
 	_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
@@ -28,7 +28,7 @@ CjvxAuNBitstreamEncoder::~CjvxAuNBitstreamEncoder()
 jvxErrorType 
 CjvxAuNBitstreamEncoder::select(IjvxObject* owner)
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::select(owner);
+	jvxErrorType res = CjvxBareNode1ioRearrange::select(owner);
 	if (res == JVX_NO_ERROR)
 	{
 		/*
@@ -47,7 +47,7 @@ CjvxAuNBitstreamEncoder::select(IjvxObject* owner)
 jvxErrorType 
 CjvxAuNBitstreamEncoder::unselect()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::unselect();
+	jvxErrorType res = CjvxBareNode1ioRearrange::unselect();
 	if (res == JVX_NO_ERROR)
 	{
 		/*
@@ -65,7 +65,7 @@ CjvxAuNBitstreamEncoder::unselect()
 jvxErrorType
 CjvxAuNBitstreamEncoder::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::activate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		jvxSize num = 0;
@@ -96,7 +96,7 @@ CjvxAuNBitstreamEncoder::activate()
 jvxErrorType
 CjvxAuNBitstreamEncoder::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{		
 		// Close any existing connection
@@ -112,7 +112,7 @@ CjvxAuNBitstreamEncoder::deactivate()
 			retInstTool<IjvxAudioCodec>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, elm.second, elm.first);
 		}
 		lstCodecInstances.clear();
-		CjvxBareNode1io_rearrange::deactivate();
+		CjvxBareNode1ioRearrange::deactivate();
 	}
 	return res;
 }
@@ -151,12 +151,12 @@ CjvxAuNBitstreamEncoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	res = theMicroConnection->test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));			
 	if (res == JVX_NO_ERROR)
 	{
-		// Since we run this outside of the normal flow from CjvxBareNode1io_rearrange we need to
+		// Since we run this outside of the normal flow from CjvxBareNode1ioRearrange we need to
 		// realize a dedicated functionality
-		// CjvxBareNode1io_rearrange::update_input_params_on_test();
+		// CjvxBareNode1ioRearrange::update_input_params_on_test();
 
 
-		// CjvxBareNode1io_rearrange::update_output_params_on_test();
+		// CjvxBareNode1ioRearrange::update_output_params_on_test();
 		CjvxNodeBase1io::update_simple_params_from_ldesc();		
 	}
 	return res;
@@ -256,7 +256,7 @@ CjvxAuNBitstreamEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 		}
 		break;
 	default:
-		res = CjvxBareNode1io_rearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	return res;
 }
@@ -329,7 +329,7 @@ jvxErrorType
 CjvxAuNBitstreamEncoder::hook_test_accept(jvxLinkDataDescriptor* dataIn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = hook_test_update(dataIn  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	res = CjvxBareNode1io_rearrange::test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	res = CjvxBareNode1ioRearrange::test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	return res;
 }
 
@@ -440,7 +440,7 @@ CjvxAuNBitstreamEncoder::hook_process_stop(
 jvxErrorType
 CjvxAuNBitstreamEncoder::hook_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	return CjvxBareNode1io_rearrange::_transfer_forward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	return CjvxBareNode1ioRearrange::_transfer_forward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
 // ==================================================================

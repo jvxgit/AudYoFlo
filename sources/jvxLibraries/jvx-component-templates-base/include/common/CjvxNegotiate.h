@@ -148,6 +148,21 @@ public:
 	jvxErrorType _push_constraints();
 	jvxErrorType _pop_constraints();
 	jvxBool _stack_pushed();
+	
+	/**
+	 * This function takes in the propsed values from the successor and compares it
+	 * with the currently allowed settings. If the requested setup does not match, the values in
+	 * ld will be modified such that it matches the allowed parameters. Then, the content in dataOut will
+	 * be adapted accordingly and finally, the value of JVX_ERROR_COMPROMISE is returned. This lets
+	 * the caller know that parameter modification was performed. The successor may accept the modified
+	 * parameter values OR it may return the error code to the previous output connector if a match can not be found!
+	 */
+	jvxErrorType _negotiate_transfer_backward_ocon(
+		jvxLinkDataDescriptor* ld,
+		jvxLinkDataDescriptor* dataOut,
+		IjvxObject* this_pointer,
+		jvxCBitField* modFlags
+		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 };
 	
 class CjvxNegotiate_input : public CjvxNegotiate_common
@@ -166,22 +181,7 @@ public:
 class CjvxNegotiate_output : public CjvxNegotiate_common
 {
 public:
-	CjvxNegotiate_output();
-
-	/**
-	 * This function takes in the propsed values from the successor and compares it 
-	 * with the currently allowed settings. If the requested setup does not match, the values in
-	 * ld will be modified such that it matches the allowed parameters. Then, the content in dataOut will
-	 * be adapted accordingly and finally, the value of JVX_ERROR_COMPROMISE is returned. This lets
-	 * the caller know that parameter modification was performed. The successor may accept the modified 
-	 * parameter values OR it may return the error code to the previous output connector if a match can not be found!
-	 */
-	jvxErrorType _negotiate_transfer_backward_ocon(
-		jvxLinkDataDescriptor* ld,
-		jvxLinkDataDescriptor* dataOut,
-		IjvxObject* this_pointer,
-		jvxCBitField* modFlags
-		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	CjvxNegotiate_output();	
 };
 
 #endif

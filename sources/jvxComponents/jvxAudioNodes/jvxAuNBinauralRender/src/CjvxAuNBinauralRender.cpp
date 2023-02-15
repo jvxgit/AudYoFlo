@@ -3,7 +3,7 @@
 #include "jvx_fft_tools/jvx_firfft.h"
 
 CjvxAuNBinauralRender::CjvxAuNBinauralRender(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1io_rearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	// Following already set in componentEntry
 	//_common_set.theComponentType.tp = JVX_NODE_TYPE_SPECIFIER_TYPE;
@@ -39,7 +39,7 @@ CjvxAuNBinauralRender::~CjvxAuNBinauralRender()
 jvxErrorType
 CjvxAuNBinauralRender::select(IjvxObject* owner)
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::select(owner);
+	jvxErrorType res = CjvxBareNode1ioRearrange::select(owner);
 	if (res == JVX_NO_ERROR)
 	{
 		genBinauralRender_node::init__global__if_ext();
@@ -56,14 +56,14 @@ CjvxAuNBinauralRender::select(IjvxObject* owner)
 jvxErrorType
 CjvxAuNBinauralRender::unselect()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::_pre_check_unselect();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_unselect();
 	if (res == JVX_NO_ERROR)
 	{
 		genBinauralRender_node::unregister_callbacks(static_cast<CjvxProperties*>(this), nullptr);
 		genBinauralRender_node::unregister_all(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::deallocate_all();
 
-		res = CjvxBareNode1io_rearrange::unselect();
+		res = CjvxBareNode1ioRearrange::unselect();
 	}
 	return res;
 }
@@ -73,7 +73,7 @@ CjvxAuNBinauralRender::unselect()
 jvxErrorType
 CjvxAuNBinauralRender::activate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::activate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		genBinauralRender_node::init__local__source_direction();
@@ -91,21 +91,22 @@ CjvxAuNBinauralRender::activate()
 jvxErrorType
 CjvxAuNBinauralRender::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1io_rearrange::_pre_check_deactivate();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
 		genBinauralRender_node::deassociate__local__source_direction(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::unregister__local__source_direction(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::deallocate__local__source_direction();
 
-		res = CjvxBareNode1io_rearrange::deactivate();
+		res = CjvxBareNode1ioRearrange::deactivate();
 	}
 	return res;
 }
 
+/*
 void
 CjvxAuNBinauralRender::from_input_to_output()
-{
+{	
 	// Copy output properties from input properties
 	update_output_params_from_input_params();
 
@@ -113,8 +114,9 @@ CjvxAuNBinauralRender::from_input_to_output()
 	update_ldesc_from_output_params_on_test();
 
 	// Apply the neg_output constraints
-	constrain_ldesc_from_neg_output_params();
+	constrain_ldesc_from_neg_params(neg_output);
 }
+*/
 // ===================================================================
 
 jvxErrorType

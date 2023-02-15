@@ -1,13 +1,13 @@
 #ifndef __CJVXBARENODE1IONODELOG_H__
 #define __CJVXBARENODE1IONODELOG_H__
 
-#include "jvxNodes/CjvxBareNode1io.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 
 #include "compatibility/IjvxDataProcessor.h"
 #include "compatibility/CjvxDataProcessor.h"
 #include "jvxNodes/Cjvx_logfile_core.h"
 
-class CjvxBareNode1io_logfile: public CjvxBareNode1io
+class CjvxBareNode1io_logfile: public CjvxBareNode1ioRearrange
 {
 protected:
 	struct

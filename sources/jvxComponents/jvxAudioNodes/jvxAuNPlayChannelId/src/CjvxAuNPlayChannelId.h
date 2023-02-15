@@ -1,9 +1,9 @@
-#include "jvxNodes/CjvxBareNode1io_zerocopy.h"
+#include "jvxNodes/CjvxBareNode1io.h"
 #include "jvxText2Speech/CjvxTxt2Speech_mix.h"
 #include "jvx_circbuffer/jvx_circbuffer.h"
 #include "pcg_exports_node.h"
 
-class CjvxAuNPlayChannelId : public CjvxBareNode1io_zerocopy, public genChannelPlayback_node
+class CjvxAuNPlayChannelId : public CjvxBareNode1io, public genChannelPlayback_node
 {
 private:
 

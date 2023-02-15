@@ -154,14 +154,28 @@ jvxApiString::assign(const std::string& str)
 void 
 jvxApiString::assign(const char* str)
 {
-	std::string txt = str;
-	this->assign(txt);
+	if (str)
+	{
+		std::string txt = str;
+		this->assign(txt);
+	}
+	else
+	{
+		clear();
+	}
 }
 
 void
 jvxApiString::assign(const jvxApiString& str)
 {
-	this->assign(str.std_str());
+	if (str.bString)
+	{
+		this->assign(str.std_str());
+	}
+	else
+	{
+		clear();
+	}
 }
 
 #endif

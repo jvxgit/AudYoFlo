@@ -1,10 +1,10 @@
 
-#include "jvxNodes/CjvxBareNode1io_zerocopy.h"
+#include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "pcg_exports_node.h"
 
 #include "jvxAudioFixedFftN1Filter/CjvxAudioFixedFftN1Filter.h"
 
-class CjvxSpNSpeaker2Binaural : public CjvxBareNode1io_zerocopy, public genSpeaker2Binaural_node
+class CjvxSpNSpeaker2Binaural : public CjvxBareNode1ioRearrange, public genSpeaker2Binaural_node
 {
 
 private:
@@ -27,6 +27,11 @@ public:
 
 	// ===============================================================
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION prepare() override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess()override;
+
+	// ===============================================================
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	// ===============================================================
@@ -45,7 +50,6 @@ public:
 
 	// Test function
 	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	void test_set_output_parameters()override;
 
 	// ===============================================================
 
@@ -58,6 +62,13 @@ public:
 
 	// ===============================================================
 		
+	virtual void from_input_to_output() override;
+	jvxErrorType accept_input_parameters_stop(jvxErrorType resTest) override;
+	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+	void test_set_output_parameters()override;
+
+	// ===============================================================
+
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_bypass_mode);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(select_hrtf_file);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_speaker_posthook);

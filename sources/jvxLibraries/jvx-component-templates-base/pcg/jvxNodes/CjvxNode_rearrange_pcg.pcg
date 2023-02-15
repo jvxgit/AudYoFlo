@@ -39,6 +39,13 @@ SECTION PROPERTIES
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
 
+		SECTION number_channels
+		{
+			DESCRIPTION = "Number Channels";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		}; 
+
 		SECTION segmentsize_y
 		{
 			DESCRIPTION = "Segmentation Y";	  // Defaults to NAME if not present
