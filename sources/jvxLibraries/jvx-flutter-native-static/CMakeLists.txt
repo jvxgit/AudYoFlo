@@ -3,7 +3,7 @@ if(DEFINED JVX_SDK_PATH)
 	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
 endif(DEFINED JVX_SDK_PATH)
 
-set(PROJECT_NAME jvx-flutter-native)
+set(PROJECT_NAME jvx-flutter-native-static)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
@@ -29,10 +29,11 @@ include_directories(
   # Add local sources (header files only for project workspace generation!) 
 set(LOCAL_SOURCES 
 	
-	${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports-flutter-native.def
+	${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports-flutter-native.def 
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_local.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_api.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_host_config.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_api_alloc.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_api_helpers.h
@@ -98,7 +99,8 @@ endif()
 ## ======================================================================
 
 set(BUILD_STATIC TRUE)
-	
+set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
+
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
 
 

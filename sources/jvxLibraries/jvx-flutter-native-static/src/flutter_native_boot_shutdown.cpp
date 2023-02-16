@@ -8,7 +8,19 @@
 
 #include <thread>
 
+// ===================================================================================
+// All extern variables declared in flutter_native_alloc.cpp
+// ===================================================================================
+
 extern std::map<void*, jvxLibHost*> lst_active_referenes;
+
+extern std::string dllConfigSystem;
+extern JVX_HMODULE dllHandleConfig;
+extern flutter_config_open_ptr fptr;
+extern native_host_configure_func_pointers func_pointer_object;
+
+// ===================================================================================
+// ===================================================================================
 
 // Define the DART API functions for backward callbacks
 #define DART_API_DL_DEFINITIONS(name, R, A) name##_Type name##_DL = NULL;
@@ -191,6 +203,7 @@ int ffi_host_initialize(void* opaque_hdl, const char** argv, int argc, func_poin
 		ptrs = *funcs;
 	}
 	naport = dart_port;
+	// ======================================================================
 	// ======================================================================
 
 	if (ll)

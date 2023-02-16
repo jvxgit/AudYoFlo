@@ -4,8 +4,17 @@
 jvxLibHost myLibHost;
 #endif
 
+// ===================================================================================
+// Some global variables lingering around
+// ===================================================================================
+
 std::map<void*, jvxLibHost*> lst_active_referenes;
 
+std::string dllConfigSystem = "";
+native_host_configure_func_pointers func_pointer_object;
+native_host_configure_func_pointers* func_pointer_reference = &func_pointer_object;
+JVX_HMODULE dllHandleConfig = JVX_HMODULE_INVALID; 
+flutter_config_open_ptr fptrConfig = nullptr;
 
 // ========================================================================
 // ========================================================================
@@ -104,6 +113,13 @@ int ffi_deallocate_backend_handle(void* opaque_hdl)
 			lst_active_referenes.erase(elm);
 			res = JVX_NO_ERROR;
 		}
+	}
+	if (dllHandleConfig != JVX_HMODULE_INVALID)
+	{
+		fptrConfig = nullptr;
+		JVX_UNLOADLIBRARY(dllHandleConfig);
+		dllHandleConfig = JVX_HMODULE_INVALID;
+		dllConfigSystem.clear();
 	}
 	return res;
 }
@@ -387,5 +403,59 @@ void ffi_host_allocate_ss_list(
 	}
 }
 		
+extern "C"
+{
+	void jvx_command_line_specify(IjvxCommandLine* cmdLine)
+	{
+		if (cmdLine)
+		{
+			cmdLine->register_option("--natconf", "", "Specifc the configuration lib to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
+		}
+	}
+
+	void jvx_command_line_read(IjvxCommandLine* cmdLine)
+	{
+		jvxApiString entry;
+		if (cmdLine->content_entry_option("--natconf", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+		{
+			dllConfigSystem = entry.std_str();
+			if (!dllConfigSystem.empty())
+			{
+				std::cout << "Opening runtime library <" << dllConfigSystem  << "> for host configuration." << std::endl;
+				dllHandleConfig = JVX_LOADLIBRARY(dllConfigSystem.c_str());
+				if (dllHandleConfig != JVX_HMODULE_INVALID)
+				{
+					fptrConfig = (flutter_config_open_ptr)JVX_GETPROCADDRESS(dllHandleConfig, FLUTTER_CONFIG_OPEN_FUNCTION_NAME);
+					if (fptrConfig)
+					{
+						if (fptrConfig(&func_pointer_object) != JVX_NO_ERROR)
+						{
+							std::cout << "Error during access to runtime library <" << dllConfigSystem 
+								<< ">: Could not find library entry point <" 
+								<< FLUTTER_CONFIG_OPEN_FUNCTION_NAME  << ">." << std::endl;
+
+							func_pointer_object.access_link_objects = nullptr;
+							func_pointer_object.configure_factoryhost_features = nullptr;
+							func_pointer_object.default_connection_rules_add = nullptr;
+							func_pointer_object.default_sequence_add = nullptr;
+							func_pointer_object.invalidate_factoryhost_features = nullptr;
+							fptrConfig = nullptr;
+						}
+					}
+					if (fptrConfig == nullptr)
+					{
+						JVX_UNLOADLIBRARY(dllHandleConfig);
+						dllHandleConfig = JVX_HMODULE_INVALID;
+					}
+				}
+				else
+				{
+					std::cout << "Error during access to runtime library <" << dllConfigSystem
+						<< ">: Could not open module." << std::endl;
+				}
+			}
+		}
+	}
+}
 
 

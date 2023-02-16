@@ -6,4 +6,5 @@ else()
 	message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/cminpack> already there.")
 endif()
 
+option (BUILD_EXAMPLES "Build the examples and tests." OFF)
 add_subdirectory(./cminpack)

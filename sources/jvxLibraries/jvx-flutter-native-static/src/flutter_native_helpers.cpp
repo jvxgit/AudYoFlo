@@ -114,3 +114,15 @@ int ffi_last_error()
 {
 	return __last_error;
 }
+
+int ffi_preload_dll(void** dllhandle, const char* dllPath)
+{
+	JVX_HMODULE mod = JVX_LOADLIBRARY(dllPath);
+	if (dllhandle)
+	{
+		*dllhandle = (void*)mod;
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_INVALID_SETTING;
+
+}

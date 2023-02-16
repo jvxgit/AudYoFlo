@@ -3,5 +3,6 @@
 
 int ffi_translate_enum_string(void* opaque_hdl, const char* typeName, const char* typeSelect);
 int ffi_lookup_component_class(void* opaque_hdl, int cpType);
+int ffi_preload_dll(void** dllhandle, const char* dllPath);
 
 #endif

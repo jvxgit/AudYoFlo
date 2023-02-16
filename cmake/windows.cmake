@@ -517,9 +517,13 @@ macro(find_all_opengl_x11)
 endmacro(find_all_opengl_x11)
 
 macro(find_pybind)
+
+	
 	message("--> Looking for Python/pybind11. You may use the environment variable PYBIND_PATH to link, e.g., PYBIND_PATH=C:\\python-packages\\site-packages\\pybind11\\share\\cmake\\pybind11")
-	set(PYBIND_PATH "C:\\python-packages\\site-packages\\pybind11\\share\\cmake\\pybind11")
-	set(PYBIND_PATH $ENV{PYBIND_PATH})
+	set(PYBIND_PATH "" CACHE STRING "Pybind find path")
+	if(NOT EXISTS ${PYBIND_PATH})
+		set(PYBIND_PATH $ENV{PYBIND_PATH})
+	endif()
 	message("--> Using variable PYBIND_PATH=${PYBIND_PATH}")
 	set(pybind11_DIR ${PYBIND_PATH})
 	find_package(pybind11 CONFIG REQUIRED)

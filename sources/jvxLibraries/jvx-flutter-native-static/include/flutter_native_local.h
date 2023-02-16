@@ -2,6 +2,7 @@
 #define __FLUTTER_NATIVE_LOCAL_H__
 
 #include "jvxLibHost.h"
+#include "flutter_native_host_config.h"
 
 extern "C"
 {

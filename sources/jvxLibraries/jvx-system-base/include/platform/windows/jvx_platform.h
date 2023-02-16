@@ -91,6 +91,8 @@
 
 #define JVX_HMODULE HMODULE
 
+#define JVX_HMODULE_INVALID nullptr
+
 #define JVX_INVALID_HANDLE_VALUE INVALID_HANDLE_VALUE
 
 #define JVX_LOADLIBRARYA(a) LoadLibraryA(a)
@@ -122,9 +124,9 @@ static JVX_HMODULE JVX_LOADLIBRARY_PATH(std::string fName, std::string dir)
 }
 //#define JVX_LOADLIBRARY_PATH(a,b) LoadLibraryA(((std::string)b+ JVX_SEPARATOR_DIR + a).c_str())
 
-#define JVX_GETPROCADDRESS(a,b) GetProcAddress(a, b)
+#define JVX_GETPROCADDRESS(hMod,nm) GetProcAddress(hMod, nm)
 
-#define JVX_UNLOADLIBRARY(a) FreeLibrary(a)
+#define JVX_UNLOADLIBRARY(hMod) FreeLibrary(hMod)
 
 //===============================================
 // Everything for network stuff

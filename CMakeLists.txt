@@ -106,6 +106,7 @@ set(INSTALL_PATH_BIN "${INSTALL_PATH_RELEASE_ROOT}/bin")
 set(INSTALL_PATH_DOC "${INSTALL_PATH_RELEASE_ROOT}/doc")
 set(INSTALL_PATH_IMAGES "${INSTALL_PATH_RELEASE_ROOT}/images")
 set(INSTALL_PATH_LIB_STATIC "${INSTALL_PATH_RELEASE_ROOT}/lib")
+set(INSTALL_PATH_LIB_IMPORT "${INSTALL_PATH_RELEASE_ROOT}/lib")
 set(INSTALL_PATH_INCLUDE_STATIC "${INSTALL_PATH_RELEASE_ROOT}/include")
 set(INSTALL_PATH_COMPONENTS_STATIC "${INSTALL_PATH_RELEASE_ROOT}/lib/jvxComponents-static")
 set(INSTALL_PATH_INCLUDE_COMPONENTS_STATIC "${INSTALL_PATH_RELEASE_ROOT}/include/jvxComponents-static")
@@ -388,10 +389,20 @@ endif()
   find_platform_specific()
 
   if(JVX_FLUTTER_UI)
-	if(DEFINED ENV{FLUTTER_SDK_PATH})
-		set(FLUTTER_SDK_PATH $ENV{FLUTTER_SDK_PATH} CACHE PATH "Path to flutter installation")
-	else()
-		message(FATAL_ERROR "The environment variable <FLUTTER_SDK_PATH> must be set if compiling Flutter support.")
+	set(FLUTTER_SDK_PATH "" CACHE STRING "Flutter sdk find path")
+	
+	# message("-1-> ${FLUTTER_SDK_PATH}")
+	if(NOT EXISTS ${FLUTTER_SDK_PATH} OR ${FLUTTER_SDK_PATH} STREQUAL "" )
+		message("FLUTTER_SDK_PATH argument not set, trying to evaluate from environment variable")
+		if(DEFINED ENV{FLUTTER_SDK_PATH})
+			message("Overriding FLUTTER_SDK_PATH option to ${FLUTTER_SDK_PATH}.")
+			set(FLUTTER_SDK_PATH $ENV{FLUTTER_SDK_PATH} CACHE STRING "Flutter sdk find path" FORCE)
+		endif()
+	endif()
+	# message(FATAL_ERROR "-2-> ${FLUTTER_SDK_PATH}")
+			
+	if(NOT EXISTS ${FLUTTER_SDK_PATH})
+		message(FATAL_ERROR "The environment variable <FLUTTER_SDK_PATH> must be set if compiling Flutter support - it is <${FLUTTER_SDK_PATH}>.")
 	endif()
   endif()
 
@@ -835,7 +846,9 @@ endif()
 		##
 		# build flutter native bindings
 		##
-		set(JVX_BASE_SHARED_LIBS ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native)
+		set(JVX_BASE_SHARED_LIBS 
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-shared)
 	endif()
 
 	# ===========================================================================
@@ -1024,6 +1037,10 @@ endif()
 	endif()
 	
   jvx_addSubdirs("Configuring all python projects" "${JVX_BASE_PYTHON_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/python-projects")
+
+#set(AYF_FLUTTER_ENVIRONMENT TRUE)
+#set(JVX_FLUTTER_PLUGINS ${JVX_FLUTTER_PLUGINS} sources/sub-projects/flutter/ayf-plugins/ayf_host/windows)
+#jvx_addSubdirs("Configuring all flutter plugins" "${JVX_FLUTTER_PLUGINS}" "${JVX_FOLDER_HIERARCHIE_BASE}/flutter-plugins")
 
   ###
   # installation stuff
