@@ -119,7 +119,7 @@ public:
 		assert(JVX_NUMBER_32BITS_BITFIELD > 1);
 
 		memset(listFieldsBits, 0, sizeof(jvxUInt32)*JVX_NUMBER_32BITS_BITFIELD);
-		if (sizeof(jvxCBitField) == sizeof(jvxUInt64))
+		if constexpr(sizeof(jvxCBitField) == sizeof(jvxUInt64))
 		{
 			listFieldsBits[JVX_NUMBER_32BITS_BITFIELD - 1] = initVal & 0xFFFFFFFF;
 			listFieldsBits[JVX_NUMBER_32BITS_BITFIELD - 2] = (initVal >> 32) & 0xFFFFFFFF;

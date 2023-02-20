@@ -1,0 +1,16 @@
+list(APPEND AYF_MINIMAL_SDK_HEADER_INCLUDE_LIST
+	"${AYF_SDK_PATH}/include/include"
+	"${AYF_SDK_PATH}/include/jvx-system-min/include"
+	"${AYF_SDK_PATH}/include/ayfbinrender-native-config/include"
+	"${AYF_SDK_PATH}/include/jvx-system-min/include/platform/windows"
+	"${AYF_SDK_PATH}/include/jvx-system-base/include"
+	"${AYF_SDK_PATH}/include/jvx-system-base/include/platform/windows"
+	"${AYF_SDK_PATH}/include/jvx-system-product/include"
+	"${AYF_SDK_PATH}/include/jvx-callprot/include"
+	"${AYF_SDK_PATH}/software"
+	"${AYF_SDK_PATH}/include/jvx-dsp-base/include"
+	"${AYF_SDK_PATH}/include/jvx-helpers/include"
+	"${AYF_SDK_PATH}/include/jvx-helpers-product/include"
+	"${AYF_SDK_PATH}/include/jvx-flutter-native-static/include")
+
+set_property(GLOBAL PROPERTY AYF_MINIMAL_SDK_HEADER_INCLUDES ${AYF_MINIMAL_SDK_HEADER_INCLUDE_LIST})

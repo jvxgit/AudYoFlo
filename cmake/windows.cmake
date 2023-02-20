@@ -37,6 +37,7 @@ set(JVX_SHARED_EXTENSION dll)
 set(JVX_STATIC_EXTENSION lib)
 set(JVX_SCRIPT_EXTENSION ".bat")
 set(JVX_EXECUTABLE_EXTENSION ".exe")
+set(JVX_EXPORT_EXTENSION ".def")
 
 # Global disable for shared libs (in case shared libs are not supported)
 set(JVX_DISABLE_ALL_SHARED FALSE)
