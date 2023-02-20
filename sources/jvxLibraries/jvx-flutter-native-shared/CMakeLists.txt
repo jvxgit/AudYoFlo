@@ -14,7 +14,6 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 
-	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native/include
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-lib-host-app/include
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-app-host/include
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include
@@ -23,8 +22,6 @@ include_directories(
 	${JVX_SUBPRODUCT_ROOT}/software/codeFragments/jvxHosts/common
 
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/include
-	# ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-automate/include
-	# ${FLUTTER_SDK_PATH}/bin/cache/dart-sdk/include
   )
 
 

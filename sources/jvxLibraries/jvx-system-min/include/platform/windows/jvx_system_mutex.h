@@ -85,132 +85,22 @@ typedef struct
 } JVX_RW_MUTEX_HANDLE;
 
 #define JVX_INITIALIZE_RW_MUTEX(a) jvx_initialize_rw_mutex_l(&a)
-static void jvx_initialize_rw_mutex_l(JVX_RW_MUTEX_HANDLE* a)
-{
-    InitializeCriticalSection(&(a->readerCountLock));
-    InitializeCriticalSection(&(a->writerLock));
-
-    /*
-     * We use a manual-reset event as poor man condition variable that
-     * can only do broadcast.  Actually, only one thread will be waiting
-     * on this at any time, because the wait is done while holding the
-     * writerLock.
-     */
-    a->noReaders = CreateEvent (NULL, TRUE, TRUE, NULL);
-	a->readerCount = 0;
-}
 
 #define JVX_TERMINATE_RW_MUTEX(a) jvx_terminate_rw_mutex_l(&a)
-static void jvx_terminate_rw_mutex_l(JVX_RW_MUTEX_HANDLE* a)
-{
-    DeleteCriticalSection(&(a->readerCountLock));
-    DeleteCriticalSection(&(a->writerLock));
-
-    CloseHandle(a->noReaders);
-	a->readerCount = 0;
-}
 
 #define JVX_LOCK_RW_MUTEX_EXCLUSIVE(a) jvx_lock_rw_mutex_exclusive_l(&a)
-static void jvx_lock_rw_mutex_exclusive_l(JVX_RW_MUTEX_HANDLE* a)
-{
-	EnterCriticalSection(&(a->writerLock));
-    if (a->readerCount > 0)
-	{
-        WaitForSingleObject(a->noReaders, INFINITE);
-    }
-
-    /* writerLock remains locked.  */
-}
 
 #define JVX_LOCK_RW_MUTEX_SHARED(a) jvx_lock_rw_mutex_shared_l(&a)
-static void jvx_lock_rw_mutex_shared_l(JVX_RW_MUTEX_HANDLE* a)
-{
-	/*
-     * We need to lock the writerLock too, otherwise a writer could
-     * do the whole of rwlock_wrlock after the readerCount changed
-     * from 0 to 1, but before the event was reset.
-     */
-    EnterCriticalSection(&a->writerLock);
-    EnterCriticalSection(&a->readerCountLock);
-    if (++ (a->readerCount) == 1)
-	{
-        ResetEvent(a->noReaders);
-    }
-    LeaveCriticalSection(&a->readerCountLock);
-	LeaveCriticalSection(&a->writerLock);
-}
 
 #define JVX_UNLOCK_RW_MUTEX_EXCLUSIVE( a) jvx_unlock_rw_mutex_exclusive_l(&a)
-static void jvx_unlock_rw_mutex_exclusive_l(JVX_RW_MUTEX_HANDLE* a)
-{
-	LeaveCriticalSection(&(a->writerLock));
-}
-
 
 #define JVX_UNLOCK_RW_MUTEX_SHARED(a) jvx_unlock_rw_mutex_shared_l(&a)
-static void jvx_unlock_rw_mutex_shared_l(JVX_RW_MUTEX_HANDLE* a)
-{
-	EnterCriticalSection(&(a->readerCountLock));
-    assert (a->readerCount > 0);
-    if (--(a->readerCount) == 0)
-	{
-        SetEvent(a->noReaders);
-    }
-    LeaveCriticalSection((&a->readerCountLock));
-}
 
 #define JVX_TRY_LOCK_RW_MUTEX_EXCLUSIVE( res,  hdl) res = jvx_try_lock_rw_mutex_exclusive_l(&hdl)
-static JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE jvx_try_lock_rw_mutex_exclusive_l(JVX_RW_MUTEX_HANDLE* b)
-{
-	JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE res = c_false;
-	if(TryEnterCriticalSection(&(b->writerLock)) == TRUE)
-	{
-		if (b->readerCount == 0)
-		{
-			res = c_true;
-		}
-		else
-		{
-			LeaveCriticalSection(&(b->writerLock));
-			res = c_false;
-		}
-    }
-	else
-	{
-		// Lock has not been acquired
-		res = c_false;
-	}
-	return res;
-}
+
 
 #define JVX_TRY_LOCK_RW_MUTEX_SHARED(a, b) a = jvx_try_lock_rw_mutex_shared_l(&b)
-static JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE jvx_try_lock_rw_mutex_shared_l(JVX_RW_MUTEX_HANDLE* b)
-{
-	JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE res = c_false;
-	if(TryEnterCriticalSection(&(b->writerLock)))
-	{
-	    if(TryEnterCriticalSection(&(b->readerCountLock)))
-		{
-			if (++(b->readerCount) == 1)
-			{
-				ResetEvent(b->noReaders);
-			}
-			LeaveCriticalSection(&(b->readerCountLock));
-			LeaveCriticalSection(&(b->writerLock));
-			res = true;
-		}
-		else
-		{
-			LeaveCriticalSection(&(b->writerLock));
-			res = false;
-		}
-	}
-	else
-	{
-		res = false;
-	}
-	return res;
-}
+
 
 #endif
 
@@ -251,5 +141,18 @@ static JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE jvx_try_lock_rw_mutex_shared_l(JVX_RW_M
 
 #define JVX_INTERLOCKED_EXCHANGE_ADD_64(target, value) InterlockedExchangeAdd64(target, value) 
 // ==============================================================
+
+JVX_SYSTEM_LIB_BEGIN
+
+void jvx_initialize_rw_mutex_l(JVX_RW_MUTEX_HANDLE* a);
+void jvx_terminate_rw_mutex_l(JVX_RW_MUTEX_HANDLE* a);
+JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE jvx_try_lock_rw_mutex_shared_l(JVX_RW_MUTEX_HANDLE* b);
+void jvx_lock_rw_mutex_exclusive_l(JVX_RW_MUTEX_HANDLE* a);
+void jvx_lock_rw_mutex_shared_l(JVX_RW_MUTEX_HANDLE* a);
+void jvx_unlock_rw_mutex_exclusive_l(JVX_RW_MUTEX_HANDLE* a);
+void jvx_unlock_rw_mutex_shared_l(JVX_RW_MUTEX_HANDLE* a);
+JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE jvx_try_lock_rw_mutex_exclusive_l(JVX_RW_MUTEX_HANDLE* b);
+
+JVX_SYSTEM_LIB_END
 
 #endif

@@ -101,27 +101,9 @@
 
 #define JVX_LOADLIBRARY(a) LoadLibrary(a)
 
-static JVX_HMODULE JVX_LOADLIBRARY_PATHVEC(std::string fName, std::vector<std::string> PathVec)
-{
-	for (size_t i = 0; i < PathVec.size(); i++) {
-		if( PathVec[i] != "" )
-		{
-			JVX_HMODULE dll_loaded = LoadLibraryA((std::string(PathVec[i]+ JVX_SEPARATOR_DIR +fName).c_str()));
-			if ( dll_loaded ) return( dll_loaded );
-		}
-	}
-	return( LoadLibraryA(fName.c_str()) );
-}
+JVX_HMODULE JVX_LOADLIBRARY_PATHVEC(std::string fName, std::vector<std::string> PathVec);
 
-static JVX_HMODULE JVX_LOADLIBRARY_PATH(std::string fName, std::string dir)
-{
-	if (dir != "")
-	{
-		return LoadLibraryA(((std::string)dir + JVX_SEPARATOR_DIR + fName).c_str());
-	} else {
-		return( LoadLibraryA(fName.c_str()) );
-	}
-}
+JVX_HMODULE JVX_LOADLIBRARY_PATH(std::string fName, std::string dir);
 //#define JVX_LOADLIBRARY_PATH(a,b) LoadLibraryA(((std::string)b+ JVX_SEPARATOR_DIR + a).c_str())
 
 #define JVX_GETPROCADDRESS(hMod,nm) GetProcAddress(hMod, nm)
@@ -222,25 +204,8 @@ static JVX_HMODULE JVX_LOADLIBRARY_PATH(std::string fName, std::string dir)
 
 #define JVX_LOAD_DLL_DIR ((std::string)JVX_SEPARATOR_DIR "loadDLLs")
 
-static std::string JVX_TIME()
-{
-	char ret[256];
-	memset(ret, 0, sizeof(char)*256);
-	_strtime_s(ret, 256);
-	std::string strDate = ret;
-	
-	return(strDate);
-}
-
-static std::string JVX_DATE()
-{
-	char ret[256];
-	memset(ret, 0, sizeof(char)*256);
-	_strdate_s(ret, 256);
-	std::string strDate = ret;
-
-	return(strDate);
-}
+std::string JVX_TIME();
+std::string JVX_DATE();
 
 // Expression for "INFINITE" in maths
 #define JVX_MATH_INFINITE std::numeric_limits<jvxData>::infinity()

@@ -90,6 +90,17 @@ public:
 
 	~jvxLibHost();
 
+	// =====================================================================================
+#ifdef JVX_BINARY_API
+	static void verify_binary_build() { std::cout << "jvxLibHost with binary api" << std::endl; };
+#elif JVX_PLUGIN_API
+	static void verify_plugin_build() { std::cout << "jvxLibHost with binary api" << std::endl; };
+#else
+#error Libhost App without API specification is not allowed!!
+#endif
+	// =====================================================================================
+
+
 	jvxErrorType initSystem(const char* [], int, callbacks_capi* cbks = nullptr, bool executableInBinFolder = true);
 	jvxErrorType terminateSystem();
 

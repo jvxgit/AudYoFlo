@@ -14,7 +14,7 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/target
 
-	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-lib-host-app/include
+	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-lib-host-app/include/binary-api
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-app-host/include
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include
   
@@ -69,7 +69,7 @@ set(LOCAL_SOURCES
 set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_HOST_USE_ONLY_STATIC_OBJECTS;JVX_LIB_SINGLETON")
 
 set(LOCAL_LIBS 
-	jvx-lib-host-app-static_static)
+	jvx-lib-host-app-binary-static_static)
 
 include_directories(
 	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPortAudio/

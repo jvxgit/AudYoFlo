@@ -152,7 +152,11 @@ set(LOCAL_SOURCES
   )
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${JVX_CMAKE_C_FLAGS_EXEC} ${JVX_PLATFORM_FLAGS}")
-
+if(${JVX_OS} MATCHES "windows")
+	set(LOCAL_SOURCES ${LOCAL_SOURCES}
+	${CMAKE_CURRENT_SOURCE_DIR}/include/platform/windows/jvx_platform.h
+	)
+endif()
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include
   )

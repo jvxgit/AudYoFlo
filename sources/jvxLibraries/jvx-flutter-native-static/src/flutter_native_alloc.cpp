@@ -81,6 +81,8 @@ struct retOpaqueHandle ffi_allocate_backend_handle()
 	retVal.err_code = JVX_ERROR_INVALID_ARGUMENT;
 	retVal.opaque_hdl = nullptr;
 
+	jvxLibHost::verify_binary_build();
+
 #ifdef JVX_LIB_SINGLETON
 	newLib = &myLibHost;
 #else
