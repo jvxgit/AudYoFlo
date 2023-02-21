@@ -347,7 +347,7 @@ macro(force_console_app)
 endmacro(force_console_app)
 
 macro(jvx_install_project_folders collect_install_subproject)
-	if(NOT JVX_RELEASE_SDK)
+	if(NOT JVX_RELEASE_SDK OR JVX_FORCE_INSTALL_PROJECT_SDK)
 		
 		## message("collect_subproject = ${collect_subproject}")
 		set(LOCAL_COLLECT_LIST ${JVX_SUB_PROJECT_INSTALLS})

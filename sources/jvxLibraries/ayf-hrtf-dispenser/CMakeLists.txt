@@ -44,4 +44,8 @@ if(${JVX_OS} MATCHES "windows")
 	endif()
 endif()
 
+# Install sofa source files since they are in install subfolder. This option installs also in
+# SDK build mode.
+set(JVX_FORCE_INSTALL_PROJECT_SDK TRUE)
+
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

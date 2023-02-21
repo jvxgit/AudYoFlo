@@ -411,23 +411,30 @@ extern "C"
 	{
 		if (cmdLine)
 		{
-			cmdLine->register_option("--natconf", "", "Specifc the configuration lib to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
+			cmdLine->register_option("--natconfm", "", "Specifc the configuration lib to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
+			cmdLine->register_option("--natconfs", "", "Specifc the symbol to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
 		}
 	}
 
 	void jvx_command_line_read(IjvxCommandLine* cmdLine)
 	{
 		jvxApiString entry;
-		if (cmdLine->content_entry_option("--natconf", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+		if (cmdLine->content_entry_option("--natconfm", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
 		{
 			dllConfigSystem = entry.std_str();
+			std::string symbConfigSystemName = FLUTTER_CONFIG_OPEN_FUNCTION_NAME;
+			if (cmdLine->content_entry_option("--natconfs", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+			{
+				symbConfigSystemName = entry.std_str();
+			}
+
 			if (!dllConfigSystem.empty())
 			{
 				std::cout << "Opening runtime library <" << dllConfigSystem  << "> for host configuration." << std::endl;
 				dllHandleConfig = JVX_LOADLIBRARY(dllConfigSystem.c_str());
 				if (dllHandleConfig != JVX_HMODULE_INVALID)
 				{
-					fptrConfig = (flutter_config_open_ptr)JVX_GETPROCADDRESS(dllHandleConfig, FLUTTER_CONFIG_OPEN_FUNCTION_NAME);
+					fptrConfig = (flutter_config_open_ptr)JVX_GETPROCADDRESS(dllHandleConfig, symbConfigSystemName.c_str());
 					if (fptrConfig)
 					{
 						if (fptrConfig(&func_pointer_object) != JVX_NO_ERROR)
