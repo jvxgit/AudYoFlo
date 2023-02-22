@@ -55,6 +55,7 @@ option(JVX_USE_FFTW "Build with fftw" ON)
 option(JVX_CIVETWEB_INCLUDED_AS_SOURCE "Integrate civetweb source code in web server." ON)
 
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
+set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")
 
 set(JVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD 16 CACHE STRING "Number of 32 bit tokens in bitfields")
 set(JVX_DEFAULT_NUMBER_OF_POSTPONE_ATTEMPTS_TEST 10 CACHE STRING "Number of reattempts if chain element returns a POSTPONE")

@@ -150,7 +150,6 @@ endif()
 # include macros used in build system
 include(${JVX_CMAKE_DIR}/macros.cmake)
 
-
 # Just a macro for consistence
 set(JVX_BASE_CMAKE_DIR ${JVX_CMAKE_DIR})
 
@@ -168,6 +167,7 @@ set(JVX_SUBPRODUCT_BINARY_DIR ${JVX_BINARY_DIR})
 
 # Map all external sub projects for base folder into the binary folder
 set(JVXRT_SUBPROJECTS_PATH_MAP ${JVX_BASE_BINARY_DIR}/sub-projects)
+set(JVXRT_SUBPROJECTS_FLUTTER_PATH_MAP ${JVX_BASE_BINARY_DIR}/flutter)
 
 # Map all product specific sub-projects here
 set(JVXRT_SUBPRODUCT_SUBPROJECTS_BINARY_DIR "${JVX_SUBPRODUCT_BINARY_DIR}/sub-projects")
@@ -1067,8 +1067,9 @@ endif()
   endif(JVX_DEPLOY_LIBRARY_DSP_MATLAB)
 
 	include(${JVX_CMAKE_DIR}/fragments/submodules.cmake)
+	jvx_submodules("${JVXRT_SUBMODULE_PATH}" "${JVXRT_SUBPROJECTS_PATH_MAP}") # Path is set in the options file
+	jvx_submodules("${JVXRT_SUBMODULE_FLUTTER_PATH}" "${JVXRT_SUBPROJECTS_FLUTTER_PATH_MAP}") # Path is set in the options file
 	
-  
   if(JVX_GENERATE_DEPEND_GRAPH)
 	add_custom_target(graphviz ALL
 		COMMAND ${CMAKE_COMMAND} "--graphviz=${JVX_PRODUCT}.dot" .

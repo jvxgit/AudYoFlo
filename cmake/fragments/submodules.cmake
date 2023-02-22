@@ -1,3 +1,4 @@
+macro(jvx_submodules submodule_path subproject_pathmap)
 	# Obtain submodule list
   set(JVX_SUBMODULE_LIST "" CACHE STRING "Defined submodule list")
   # If provided, load submodule list
@@ -9,7 +10,7 @@
 	set(mysubmodules ${JVX_SUBMODULE_LIST})
   endif()
   
-  message("<< Checking for submodule settings in folder <${JVXRT_SUBMODULE_PATH}> >>")
+  message("<< Checking for submodule settings in folder <${submodule_path}> >>")
 	if(mysubmodules)
 		message("<< Selected submodules: <${mysubmodules}> >>")
 	endif()
@@ -20,7 +21,9 @@
 	# message(FATAL_ERROR "Hier")
 		
 	set(JVX_CONFIGURED_SUBMODULES_PRE "")
-	SUBDIRLIST(SUBDIRS ${JVXRT_SUBMODULE_PATH})
+	# SUBDIRLIST(SUBDIRS ${JVXRT_SUBMODULE_PATH})
+	
+	SUBDIRLIST(SUBDIRS ${submodule_path})
 
 	message ("--> Sub directories to be evaluated: ${SUBDIRS}")
 	
@@ -30,19 +33,35 @@
 			message("++> Look for ${subdir} in list of allowed submodules: \"${mysubmodules}\"")
 			list(FIND mysubmodules ${subdir} ifoundit)
 			if(${ifoundit} GREATER -1)
-				if(EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj.base OR EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj.audio OR EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj)
-					set(JVX_CONFIGURED_SUBMODULES_PRE "${JVX_CONFIGURED_SUBMODULES_PRE};${subdir}")
+				if(
+					EXISTS ${submodule_path}/${subdir}/.jvxprj.base OR 
+					EXISTS ${submodule_path}/${subdir}/.jvxprj.audio OR
+					EXISTS ${submodule_path}/${subdir}/.jvxprj.flutter OR
+					EXISTS ${submodule_path}/${subdir}/.jvxprj)
+					if(EXISTS ${submodule_path}/${subdir}/CMakeLists.txt)
+						set(JVX_CONFIGURED_SUBMODULES_PRE "${JVX_CONFIGURED_SUBMODULES_PRE};${subdir}")
+					else()
+						message("There is no CMakeLists.txt in ${submodule_path}/${subdir}, ignoring folder for build process.")
+					endif()
 				else()
-					message("|--> .jvxprj.base|.jvxprj.audio|.jvxprj not found in ${JVXRT_SUBMODULE_PATH}/${subdir}, NOT Building folder.")
+					message("|--> .jvxprj.base|.jvxprj.audio|.jvxprj.flutter|.jvxprj not found in ${submodule_path}/${subdir}, NOT Building folder.")
 				endif()
 			else()
-				message("|--> Project ${JVXRT_SUBMODULE_PATH}/${subdir} is not in list for allowed submodules.")
+				message("|--> Project ${submodule_path}/${subdir} is not in list for allowed submodules.")
 			endif()
 		else()
-			if(EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj.base OR EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj.audio OR EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj)
-				set(JVX_CONFIGURED_SUBMODULES_PRE "${JVX_CONFIGURED_SUBMODULES_PRE};${subdir}")
+			if(
+				EXISTS ${submodule_path}/${subdir}/.jvxprj.base OR 
+				EXISTS ${submodule_path}/${subdir}/.jvxprj.audio OR 
+				EXISTS ${submodule_path}/${subdir}/.jvxprj.flutter OR 
+				EXISTS ${submodule_path}/${subdir}/.jvxprj)
+				if(EXISTS ${submodule_path}/${subdir}/CMakeLists.txt)
+					set(JVX_CONFIGURED_SUBMODULES_PRE "${JVX_CONFIGURED_SUBMODULES_PRE};${subdir}")
+				else()
+					message("There is no CMakeLists.txt in ${submodule_path}/${subdir}, ignoring folder for build process.")
+				endif()
 			else()
-				message("|--> .jvxprj.base|.jvxprj.audio|.jvxprj not found in ${JVXRT_SUBMODULE_PATH}/${subdir}, NOT Building folder.")
+				message("|--> .jvxprj.base|.jvxprj.audio|.jvxprj.flutter|.jvxprj not found in ${submodule_path}/${subdir}, NOT Building folder.")
 			endif()
 		endif()
 	ENDFOREACH()
@@ -55,7 +74,7 @@
 			list(FIND ignsubmodules ${entry} ifoundit)
 			if(${ifoundit} GREATER -1)
 				# Nothing, ignoring
-				message("|--> Project ${JVXRT_SUBMODULE_PATH}/${entry} is in list for ignored submodules - not building it.")
+				message("|--> Project ${submodule_path}/${entry} is in list for ignored submodules - not building it.")
 			else()				
 				set(JVX_CONFIGURED_SUBMODULES "${JVX_CONFIGURED_SUBMODULES};${entry}")
 			endif()
@@ -68,10 +87,11 @@
 	set(JVX_CONFIGURED_AUDIO_SUBMODULES ${JVX_CONFIGURED_SUBMODULES})
 
 	FOREACH(subdir ${JVX_CONFIGURED_SUBMODULES})
-		message("XX> Building sub project in folder ${JVXRT_SUBMODULE_PATH}/${subdir}")
+		message("XX> Building sub project in folder ${submodule_path}/${subdir}")
 		set(JVX_FOLDER_HIERARCHIE_BASE_OLD ${JVX_FOLDER_HIERARCHIE_BASE})
 		set(JVX_FOLDER_HIERARCHIE_BASE "${JVX_FOLDER_HIERARCHIE_BASE}/sub-projects/${subdir}")		
-		add_subdirectory(${JVXRT_SUBMODULE_PATH}/${subdir} ${JVXRT_SUBPROJECTS_PATH_MAP}/${subdir})
+		add_subdirectory(${submodule_path}/${subdir} ${subproject_pathmap}/${subdir})
 		set(JVX_FOLDER_HIERARCHIE_BASE ${JVX_FOLDER_HIERARCHIE_BASE_OLD})
 	ENDFOREACH()
 	
+endmacro(jvx_submodules)
