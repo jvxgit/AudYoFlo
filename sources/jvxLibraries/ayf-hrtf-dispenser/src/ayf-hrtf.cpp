@@ -147,6 +147,7 @@ ayfHrtfDispenser::get_closest_direction(jvxData& azimuth_deg, jvxData& inclinati
 jvxErrorType 
 ayfHrtfDispenser::start(const std::string& directory)
 {
+	char bufRet[MAX_PATH] = { 0 };
 	if (started == false)
 	{
 		int sofa_major_version = 0;
@@ -155,6 +156,8 @@ ayfHrtfDispenser::start(const std::string& directory)
 
 		mysofa_getversion(&sofa_major_version, &sofa_minor_version, &sofpat);
 
+		JVX_GETCURRENTDIRECTORY(bufRet, MAX_PATH);
+		curWorkingDir = bufRet;
 		pathName = directory;
 		// Check folder to collect all files
 		JVX_HANDLE_DIR searchHandle;
@@ -418,7 +421,7 @@ ayfHrtfDispenser::is_ready(jvxBool* isReady, jvxApiString* reason)
 		}
 		if (reason)
 		{
-			*reason = "No active HRTF database.";
+			*reason = "No active HRTF database in folder <" + curWorkingDir + ">.";
 		}
 	}
 	return JVX_NO_ERROR;

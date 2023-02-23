@@ -42,6 +42,7 @@ private:
 	jvxBool is_initialized = false;
 	jvxBool started = false;
 
+	std::string curWorkingDir;
 	std::string pathName = "./";
 	std::list<oneSofaDataBase*> sofaDataBases;
 	
