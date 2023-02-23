@@ -220,44 +220,7 @@ else(NOT JVX_RELEASE_SDK)
 endif(NOT JVX_RELEASE_SDK)
 
 # if(NOT JVX_RELEASE_SDK) # fixme: this should be handled via install components
-	set(JVX_CONFIGURED_AUDIO_SUBMODULES "")
 	
-	SUBDIRLIST(SUBDIRS ${JVXRT_SUBMODULE_PATH})
-	message ("--> ${SUBDIRS}")
-	# LABEL ADD SUB_PROJECTS HERE!
-	FOREACH(subdir ${SUBDIRS})
-		if(myaudiosubmodules)
-			message("Look for ${subdir} in list of allowed submodules: \"${myaudiosubmodules}\"")
-			list(FIND myaudiosubmodules ${subdir} ifoundit)
-			if(${ifoundit} GREATER -1)
-				if(EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj.audio)
-					set(JVX_CONFIGURED_AUDIO_SUBMODULES "${JVX_CONFIGURED_AUDIO_SUBMODULES};${subdir}")
-				else()
-					message("XX> NOT Building project in folder ${JVX_SUBPRODUCT_ROOT}/sub-projects/${subdir} since ${JVX_SUBPRODUCT_ROOT}/sub-projects/${subdir}/.jvxprj does not exist.")
-				endif()
-			else()
-				message("xx> Project ${subdir} is not in list for allowed submodules.")
-			endif()
-		else()
-			if(EXISTS ${JVXRT_SUBMODULE_PATH}/${subdir}/.jvxprj.audio)
-				set(JVX_CONFIGURED_AUDIO_SUBMODULES "${JVX_CONFIGURED_AUDIO_SUBMODULES};${subdir}")
-			else()
-				message("XX> .jvxprj not found, therefore NOT Building project in folder ${JVX_SUBPRODUCT_ROOT}/sub-projects/${subdir}")
-			endif()
-		endif()	
-	ENDFOREACH()
-	
-	#message("Valid submodules : ${JVX_CONFIGURED_AUDIO_SUBMODULES}")
-	FOREACH(subdir ${JVX_CONFIGURED_AUDIO_SUBMODULES})
-		message("XX> Building sub project in folder ${JVX_SUBPRODUCT_ROOT}/sub-projects/${subdir}")
-		set(JVX_FOLDER_HIERARCHIE_BASE_OLD ${JVX_FOLDER_HIERARCHIE_BASE})
-		# set(JVX_FOLDER_HIERARCHIE_BASE "${JVX_SUBPROJECTS_SUBPRODUCT_ROOT_MAP}/${subdir}")	
-		set(JVX_FOLDER_HIERARCHIE_BASE "${JVX_FOLDER_HIERARCHIE_BASE}/sub-projects/${subdir}")	
-
-		# Target binary directory from base CMakeLists.txt
-		add_subdirectory(${JVXRT_SUBMODULE_PATH}/${subdir} ${JVXRT_SUBPRODUCT_SUBPROJECTS_BINARY_DIR}/${subdir})		
-		set(JVX_FOLDER_HIERARCHIE_BASE ${JVX_FOLDER_HIERARCHIE_BASE_OLD})
-	ENDFOREACH()
 	
 # endif()
 

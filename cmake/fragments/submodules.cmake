@@ -1,6 +1,8 @@
 macro(jvx_submodules submodule_path subproject_pathmap)
-	# Obtain submodule list
+	# Obtain submodule list. If we do not find it in the submodulelist.txt
+	# we can also specify as an option.
   set(JVX_SUBMODULE_LIST "" CACHE STRING "Defined submodule list")
+  
   # If provided, load submodule list
   message("------> ${JVX_BINARY_DIR}/submodulelist.txt")
   if(EXISTS ${JVX_BINARY_DIR}/submodulelist.txt)
@@ -18,8 +20,9 @@ macro(jvx_submodules submodule_path subproject_pathmap)
 		message("<< Ignored submodules: <${ignsubmodules}> >>")
 	endif()
   	
-	# message(FATAL_ERROR "Hier")
-		
+	# Since this function is a macro we need to reset local variables in case we use this macro a second time
+	set(JVX_CONFIGURED_SUBMODULES "")
+
 	set(JVX_CONFIGURED_SUBMODULES_PRE "")
 	# SUBDIRLIST(SUBDIRS ${JVXRT_SUBMODULE_PATH})
 	
@@ -86,6 +89,8 @@ macro(jvx_submodules submodule_path subproject_pathmap)
 	# The second variable may still be in use somewhere!
 	set(JVX_CONFIGURED_AUDIO_SUBMODULES ${JVX_CONFIGURED_SUBMODULES})
 
+	message("==> ${JVX_CONFIGURED_SUBMODULES}")
+	
 	FOREACH(subdir ${JVX_CONFIGURED_SUBMODULES})
 		message("XX> Building sub project in folder ${submodule_path}/${subdir}")
 		set(JVX_FOLDER_HIERARCHIE_BASE_OLD ${JVX_FOLDER_HIERARCHIE_BASE})

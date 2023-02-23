@@ -1069,6 +1069,7 @@ endif()
 	include(${JVX_CMAKE_DIR}/fragments/submodules.cmake)
 	jvx_submodules("${JVXRT_SUBMODULE_PATH}" "${JVXRT_SUBPROJECTS_PATH_MAP}") # Path is set in the options file
 	jvx_submodules("${JVXRT_SUBMODULE_FLUTTER_PATH}" "${JVXRT_SUBPROJECTS_FLUTTER_PATH_MAP}") # Path is set in the options file
+	# message(FATAL_ERROR "Stop")
 	
   if(JVX_GENERATE_DEPEND_GRAPH)
 	add_custom_target(graphviz ALL
