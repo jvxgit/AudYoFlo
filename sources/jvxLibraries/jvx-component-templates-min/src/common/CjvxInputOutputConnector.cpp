@@ -26,8 +26,8 @@ CjvxInputOutputConnector::CjvxInputOutputConnector()
 
 		_common_set_ldslave.detectLoop = false;
 
-		_common_set_ldslave.format_group_in = JVX_DATAFORMAT_GROUP_NONE;
-		_common_set_ldslave.format_group_out = JVX_DATAFORMAT_GROUP_NONE;
+		// _common_set_ldslave.caps_in with default settings
+		// _common_set_ldslave.caps_out with default settings
 
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
 		_common_set_ldslave.dbg_hint = NULL;
@@ -109,7 +109,8 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		return res;
 	}
 
-	jvxErrorType 
+	/*
+	jvxErrorType
 		CjvxInputOutputConnector::_outputs_data_format_group(jvxDataFormatGroup grp)
 	{
 		if (grp == _common_set_ldslave.format_group_out)
@@ -118,15 +119,45 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		}
 		return JVX_ERROR_UNSUPPORTED;
 	}
+	*/
 
 	jvxErrorType 
-		CjvxInputOutputConnector::_accepts_data_format_group(jvxDataFormatGroup grp)
-	{
-		if (grp == _common_set_ldslave.format_group_in)
+		CjvxInputOutputConnector::_supports_connector_class_ocon(const jvxDataflowCapabilities& caps)
+	{		
+		if (_common_set_ldslave.caps_out.format_group != JVX_DATAFORMAT_GROUP_NONE)
 		{
-			return JVX_NO_ERROR;
+			if (_common_set_ldslave.caps_out.format_group != caps.format_group)
+			{
+				return JVX_ERROR_UNSUPPORTED;
+			}
 		}
-		return JVX_ERROR_UNSUPPORTED;
+		if (_common_set_ldslave.caps_out.data_flow!= JVX_DATAFLOW_NONE)
+		{
+			if (_common_set_ldslave.caps_out.data_flow != caps.data_flow)
+			{
+				return JVX_ERROR_UNSUPPORTED;
+			}
+		}
+		return JVX_NO_ERROR;
+	}
+	jvxErrorType 
+		CjvxInputOutputConnector::_supports_connector_class_icon(const jvxDataflowCapabilities& caps)
+	{
+		if (_common_set_ldslave.caps_in.format_group != JVX_DATAFORMAT_GROUP_NONE)
+		{
+			if (_common_set_ldslave.caps_in.format_group != caps.format_group)
+			{
+				return JVX_ERROR_UNSUPPORTED;
+			}
+		}
+		if (_common_set_ldslave.caps_in.data_flow != JVX_DATAFLOW_NONE)
+		{
+			if (_common_set_ldslave.caps_in.data_flow != caps.data_flow)
+			{
+				return JVX_ERROR_UNSUPPORTED;
+			}
+		}
+		return JVX_NO_ERROR;
 	}
 
 	jvxErrorType 

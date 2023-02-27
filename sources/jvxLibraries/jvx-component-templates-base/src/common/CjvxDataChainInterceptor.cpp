@@ -34,13 +34,13 @@ CjvxDataChainInterceptor::~CjvxDataChainInterceptor()
 }
 
 jvxErrorType
-CjvxDataChainInterceptor::outputs_data_format_group(jvxDataFormatGroup grp)
+CjvxDataChainInterceptor::supports_connector_class_icon(const jvxDataflowCapabilities& caps)
 {
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CjvxDataChainInterceptor::accepts_data_format_group(jvxDataFormatGroup grp)
+CjvxDataChainInterceptor::supports_connector_class_ocon(const jvxDataflowCapabilities& caps)
 {
 	return JVX_NO_ERROR;
 }

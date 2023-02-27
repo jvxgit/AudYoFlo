@@ -337,7 +337,51 @@ static inline jvxSize jvxDataFormatGroup_getsize(jvxSize idx)
 	return(jvxDataFormatGroup_size[idx]);
 }
 // ====================================================================		
-		
+
+typedef enum
+{
+	JVX_DATAFLOW_NONE,
+	JVX_DATAFLOW_PUSH_ACTIVE, // Devices and nodes push data forward by calling process function of subsequent linked component
+	JVX_DATAFLOW_PUSH_ON_PULL, // Devices and nodes are triggered from subsequent element and call process function within this "pull"
+	JVX_DATAFLOW_LIMIT
+} jvxDataflow;
+
+static jvxTextHelpers jvxDataFlow_str[JVX_DATAFLOW_LIMIT] =
+{
+	{"none", "JVX_DATAFLOW_NONE"},
+
+	{"push", "JVX_DATAFLOW_PUSH_ACTIVE" },
+	{"pull", "JVX_DATAFLOW_PUSH_ON_PULL"}
+};
+
+static inline const char* jvxDataFlow_txt(jvxSize id)
+{
+	assert(id < JVX_DATAFLOW_LIMIT);
+	return jvxDataFlow_str[id].friendly;
+}
+
+static inline jvxDataflow jvxDataFlow_decode(const char* token)
+{
+	jvxSize i;
+	jvxDataflow res = JVX_DATAFLOW_NONE;
+	for (i = 0; i < JVX_DATAFORMAT_GROUP_LIMIT; i++)
+	{
+		if (!strcmp(jvxDataFlow_str[i].friendly, token))
+		{
+			res = (jvxDataflow)i;
+			break;
+		}
+		if (!strcmp(jvxDataFlow_str[i].full, token))
+		{
+			res = (jvxDataflow)i;
+			break;
+		}
+	}
+	return(res);
+}
+
+// ====================================================================		
+
 typedef int (*the_jvx_printf_ext) (jvxHandle* priv, const char * txt);
 typedef int (*the_jvx_printf) (const char * format, ... );
 

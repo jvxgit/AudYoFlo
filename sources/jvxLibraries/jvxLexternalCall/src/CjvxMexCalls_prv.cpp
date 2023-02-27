@@ -272,7 +272,7 @@ CjvxMexCalls_prv::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* the
 	runtime.descrInUse.con_compat.ext.segmentation_y =
 		runtime.descrOutUse.con_params.segmentation_y;
 	runtime.descrInUse.con_compat.ext.subformat =
-		runtime.descrOutUse.con_params.format_group;
+		runtime.descrOutUse.con_params.caps.format_group;
 	runtime.descrInUse.con_compat.ext.hints =
 		runtime.descrOutUse.con_params.hints;
 	// END

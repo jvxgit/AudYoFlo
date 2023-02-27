@@ -135,7 +135,7 @@ CjvxNVTasks::process_buffers_icon_vtask_attached(
 	minChans = JVX_MIN(data_in_att->con_params.number_channels, data_out_master->con_params.number_channels);
 
 	// This default function does not tolerate a lot of unexpected settings
-	if (data_in_att->con_params.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
+	if (data_in_att->con_params.caps.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
 	{
 		assert(data_in_att->con_params.format == data_out_master->con_params.format);
 		assert(data_in_att->con_params.buffersize == data_out_master->con_params.buffersize);

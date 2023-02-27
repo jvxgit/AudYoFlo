@@ -18,6 +18,7 @@
 class CjvxInputOutputConnector
 {
 protected:
+
 	struct
 	{
 		IjvxDataProcessor* data_processor;
@@ -54,9 +55,8 @@ protected:
 		// Copy the input timestamp to the output timestamp
 		jvxBool copy_timestamp_inout;
 
-		jvxDataFormatGroup format_group_in;
-		
-		jvxDataFormatGroup format_group_out;
+		jvxDataflowCapabilities caps_in;
+		jvxDataflowCapabilities caps_out;
 
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
 		const char* dbg_hint;
@@ -90,8 +90,8 @@ protected:
 
 	 jvxErrorType _parent_factory(IjvxConnectorFactory** my_parent);
 
-	 jvxErrorType _outputs_data_format_group(jvxDataFormatGroup grp);
-	 jvxErrorType _accepts_data_format_group(jvxDataFormatGroup grp);
+	 jvxErrorType _supports_connector_class_ocon(const jvxDataflowCapabilities& caps);
+	 jvxErrorType _supports_connector_class_icon(const jvxDataflowCapabilities& caps);
 
 	// ==============================================================
 	// SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT

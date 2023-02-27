@@ -175,7 +175,7 @@ jvx_check_match_params(jvxLinkDataDescriptor_con_params& one,
 
 	if (jvx_bitTest(what, JVX_MATCH_DATA_DESCRIPTOR_SUBFORMAT_SHIFT))
 	{
-		if (one.format_group != theother.format_group)
+		if (one.caps.format_group != theother.caps.format_group)
 		{
 			return false;
 		}
@@ -339,7 +339,7 @@ CjvxAuNMeasureIr2Dev::prepare()
 		inProcessing.bsize = params_receive.buffersize;
 		inProcessing.srate = params_receive.rate;
 		inProcessing.form = params_receive.format;
-		inProcessing.format_group = params_receive.format_group;
+		inProcessing.format_group = params_receive.caps.format_group;
 
 		inProcessing.bufs_received_fld = NULL;
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(

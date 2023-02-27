@@ -138,6 +138,18 @@ struct jvxLinkDataCombinedInformation
 	jvxUInt32 offsetNext = 0;
 };
 
+class jvxDataflowCapabilities
+{
+public:
+	
+	// More accurate specifiaction of data format
+	jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+	jvxDataflow data_flow = JVX_DATAFLOW_NONE;
+
+	jvxDataflowCapabilities(jvxDataFormatGroup format_group_arg = JVX_DATAFORMAT_GROUP_NONE,
+		jvxDataflow data_flow_arg = JVX_DATAFLOW_NONE) : format_group(format_group_arg), data_flow(data_flow_arg) {};
+};
+
 // ==================================================================
 // ==================================================================
 
@@ -261,8 +273,8 @@ struct jvxLinkDataDescriptor_con_params
 	// Data format to describe each sample
 	jvxDataFormat format = JVX_DATAFORMAT_NONE;
 
-	// More accurate specifiaction of data format
-	jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+	// Dataflow capabilities, that is format group and data flow type
+	jvxDataflowCapabilities caps;
 
 	// A buffer of size buffersize is segmented into x and y according to:
 	// -------- segmentation_x -------->

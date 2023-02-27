@@ -1307,7 +1307,7 @@ public:
 					(node_params->allowedSetup[i].samplerate == theData_in->con_params.rate) &&
 					(node_params->allowedSetup[i].format == theData_in->con_params.format) &&
 					(node_params->allowedSetup[i].number_input_channels == theData_in->con_params.number_channels) &&
-					(node_params->allowedSetup[i].subformat == theData_in->con_params.format_group) &&
+					(node_params->allowedSetup[i].subformat == theData_in->con_params.caps.format_group) &&
 					(node_params->allowedSetup[i].dimX == theData_in->con_params.segmentation_x) &&
 					(node_params->allowedSetup[i].dimY == theData_in->con_params.segmentation_y))
 				{
@@ -1324,7 +1324,7 @@ public:
 				ld_cp.con_params.number_channels = node_params->allowedSetup[i].number_input_channels;
 				ld_cp.con_params.segmentation_x = node_params->allowedSetup[i].dimX;
 				ld_cp.con_params.segmentation_y = node_params->allowedSetup[i].dimY;
-				ld_cp.con_params.format_group = node_params->allowedSetup[i].subformat;
+				ld_cp.con_params.caps.format_group = node_params->allowedSetup[i].subformat;
 				resComplain = theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_cp 
 					JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
@@ -1338,7 +1338,7 @@ public:
 
 			ld_cp.con_params.segmentation_x = theData_in->con_params.segmentation_x;
 			ld_cp.con_params.segmentation_y = theData_in->con_params.segmentation_y;
-			ld_cp.con_params.format_group = theData_in->con_params.format_group;
+			ld_cp.con_params.caps.format_group = theData_in->con_params.caps.format_group;
 			ld_cp.con_params.hints = theData_in->con_params.hints;
 
 			if (JVX_CHECK_SIZE_SELECTED(node_params->preferred.buffersize.min))
@@ -1445,18 +1445,18 @@ public:
 
 			if (node_params->preferred.subformat.min != JVX_DATAFORMAT_GROUP_NONE)
 			{
-				if (theData_in->con_params.format_group < node_params->preferred.subformat.min)
+				if (theData_in->con_params.caps.format_group < node_params->preferred.subformat.min)
 				{
 					thereismismatch = true;
-					ld_cp.con_params.format_group = node_params->preferred.subformat.min;
+					ld_cp.con_params.caps.format_group = node_params->preferred.subformat.min;
 				}
 			}
 			if (node_params->preferred.subformat.max != JVX_DATAFORMAT_GROUP_NONE)
 			{
-				if (theData_in->con_params.format_group > node_params->preferred.subformat.max)
+				if (theData_in->con_params.caps.format_group > node_params->preferred.subformat.max)
 				{
 					thereismismatch = true;
-					ld_cp.con_params.format_group = node_params->preferred.subformat.max;
+					ld_cp.con_params.caps.format_group = node_params->preferred.subformat.max;
 				}
 			}
 			if (thereismismatch)
@@ -1477,7 +1477,7 @@ public:
 			set->format = theData_in->con_params.format;
 			set->segmentsize_x = (theData_in->con_params.segmentation_x);
 			set->segmentsize_y = (theData_in->con_params.segmentation_y);
-			set->subformat = theData_in->con_params.format_group;
+			set->subformat = theData_in->con_params.caps.format_group;
 			if(refto)
 				return refto->test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			return JVX_NO_ERROR;

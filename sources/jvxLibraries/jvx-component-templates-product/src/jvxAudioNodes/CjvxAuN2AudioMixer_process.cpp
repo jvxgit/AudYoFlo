@@ -87,7 +87,7 @@ CjvxAuN2AudioMixer::process_buffers_icon_vtask(
 	jvxLinkDataDescriptor* theData_in = theGlobalIterator->second.icon->con->_common_set_icon_nvtask.theData_in;
 	assert(theGlobalIterator != _common_set_nv_proc.lst_in_proc_tasks.end());
 
-	if (theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
+	if (theData_in->con_params.caps.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
 	{		
 		// COMMENT #1: We do not need a lock here since this call is always triggeredfrom
 		// within the ntask call with id = 0 - hence the master. All other

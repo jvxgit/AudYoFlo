@@ -617,7 +617,7 @@ JVX_ASYNCIO_CLASSNAME::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_ou
 			theData_out->con_params.number_channels = genSPAsyncio_node::secondary_async.node.numberoutputchannels.value;
 			theData_out->con_params.segmentation_x = genSPAsyncio_node::secondary_async.node.segmentsize_x.value;
 			theData_out->con_params.segmentation_y = genSPAsyncio_node::secondary_async.node.segmentsize_y.value;
-			theData_out->con_params.format_group = (jvxDataFormatGroup)genSPAsyncio_node::secondary_async.node.subformat.value;
+			theData_out->con_params.caps.format_group = (jvxDataFormatGroup)genSPAsyncio_node::secondary_async.node.subformat.value;
 			
 			// Push all old values
 			// neg_secondary_input._push_constraints();
@@ -628,7 +628,7 @@ JVX_ASYNCIO_CLASSNAME::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_ou
 				theData_out->con_params.buffersize,
 				theData_out->con_params.rate,
 				theData_out->con_params.format,
-				theData_out->con_params.format_group);
+				theData_out->con_params.caps.format_group);
 
 			// Here, forward to next object
 			res = refto->test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -639,7 +639,7 @@ JVX_ASYNCIO_CLASSNAME::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_ou
 				genSPAsyncio_node::secondary_async.node.buffersize.value = theData_out->con_params.buffersize;
 				genSPAsyncio_node::secondary_async.node.samplerate.value = theData_out->con_params.rate;
 				genSPAsyncio_node::secondary_async.node.format.value = (jvxInt16)theData_out->con_params.format;
-				genSPAsyncio_node::secondary_async.node.subformat.value = (jvxInt16)theData_out->con_params.format_group;
+				genSPAsyncio_node::secondary_async.node.subformat.value = (jvxInt16)theData_out->con_params.caps.format_group;
 				genSPAsyncio_node::secondary_async.node.segmentsize_x.value = theData_out->con_params.segmentation_x;
 				genSPAsyncio_node::secondary_async.node.segmentsize_y.value = theData_out->con_params.segmentation_y;
 
@@ -796,7 +796,7 @@ JVX_ASYNCIO_CLASSNAME::transfer_backward_ocon_ntask(jvxLinkDataTransferType tp, 
 					theData_out->con_params.buffersize,
 					theData_out->con_params.rate,
 					theData_out->con_params.format,
-					theData_out->con_params.format_group);
+					theData_out->con_params.caps.format_group);
 
 				/*
 				Principally: Constrain the secondary input channel number to follow the primary output channel number.

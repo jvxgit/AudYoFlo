@@ -61,7 +61,7 @@ CjvxFullMasterDevice::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		CjvxFullMasterDevice_genpcg::proc_params.bsize.value = neg_output._latest_results.buffersize;
 		CjvxFullMasterDevice_genpcg::proc_params.srate.value = neg_output._latest_results.rate;
 		CjvxFullMasterDevice_genpcg::proc_params.format.value = neg_output._latest_results.format;
-		CjvxFullMasterDevice_genpcg::proc_params.subformat.value = neg_input._latest_results.format_group;
+		CjvxFullMasterDevice_genpcg::proc_params.subformat.value = neg_input._latest_results.caps.format_group;
 		CjvxFullMasterDevice_genpcg::proc_params.seg_x.value = neg_output._latest_results.segmentation_x;
 		CjvxFullMasterDevice_genpcg::proc_params.seg_y.value = neg_output._latest_results.segmentation_y;
 	}
@@ -108,7 +108,7 @@ CjvxFullMasterDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 			outputParams.buffersize = neg_output._latest_results.buffersize;
 			outputParams.rate = neg_output._latest_results.rate;
 			outputParams.format = neg_output._latest_results.format;
-			outputParams.format_group = neg_output._latest_results.format_group;
+			outputParams.caps.format_group = neg_output._latest_results.caps.format_group;
 
 			accept_output_parameters_start(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
@@ -129,7 +129,7 @@ CjvxFullMasterDevice::accept_output_parameters_start(JVX_CONNECTION_FEEDBACK_TYP
 		outputParams.buffersize,
 		outputParams.rate,
 		outputParams.format,
-		outputParams.format_group,
+		outputParams.caps.format_group,
 		&_common_set_ldslave.theData_out);
 	neg_input._push_constraints();
 
@@ -138,7 +138,7 @@ CjvxFullMasterDevice::accept_output_parameters_start(JVX_CONNECTION_FEEDBACK_TYP
 		inputParams.buffersize,
 		inputParams.rate,
 		inputParams.format,
-		inputParams.format_group);
+		inputParams.caps.format_group);
 
 	return JVX_NO_ERROR;
 }

@@ -46,8 +46,8 @@ public:
 
 	jvxErrorType transfer_backward_x(jvxLinkDataDescriptor* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
-	virtual jvxErrorType outputs_data_format_group(jvxDataFormatGroup grp)override;
-	virtual jvxErrorType accepts_data_format_group(jvxDataFormatGroup grp)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(const jvxDataflowCapabilities& caps)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(const jvxDataflowCapabilities& caps)override;
 
 	jvxErrorType activate();
 	jvxErrorType deactivate();

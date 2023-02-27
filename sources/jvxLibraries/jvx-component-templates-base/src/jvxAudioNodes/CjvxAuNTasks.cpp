@@ -127,7 +127,7 @@ CjvxAuNTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLink
 			CjvxAuNTasks_pcg::secondary_async.node.samplerate.value = JVX_SIZE_INT32(neg_secondary_input._latest_results.rate);
 			CjvxAuNTasks_pcg::secondary_async.node.format.value = (jvxInt16)neg_secondary_input._latest_results.format;
 			CjvxAuNTasks_pcg::secondary_async.node.numberinputchannels.value = JVX_SIZE_INT32(neg_secondary_input._latest_results.number_channels);
-			CjvxAuNTasks_pcg::secondary_async.node.subformat.value = (jvxInt16)neg_secondary_input._latest_results.format_group;
+			CjvxAuNTasks_pcg::secondary_async.node.subformat.value = (jvxInt16)neg_secondary_input._latest_results.caps.format_group;
 			CjvxAuNTasks_pcg::secondary_async.node.segmentsize_x.value = JVX_SIZE_INT32(neg_secondary_input._latest_results.segmentation_x);
 			CjvxAuNTasks_pcg::secondary_async.node.segmentsize_y.value = JVX_SIZE_INT32(neg_secondary_input._latest_results.segmentation_y);
 
@@ -156,7 +156,7 @@ CjvxAuNTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLink
 					assert(CjvxAuNTasks_pcg::secondary_async.node.buffersize.value == JVX_SIZE_INT32(theData_out->con_params.buffersize));
 					assert(CjvxAuNTasks_pcg::secondary_async.node.samplerate.value = JVX_SIZE_INT32(theData_out->con_params.rate));
 					assert(CjvxAuNTasks_pcg::secondary_async.node.format.value == (jvxInt16)theData_out->con_params.format);
-					assert(CjvxAuNTasks_pcg::secondary_async.node.subformat.value == (jvxInt16)theData_out->con_params.format_group);
+					assert(CjvxAuNTasks_pcg::secondary_async.node.subformat.value == (jvxInt16)theData_out->con_params.caps.format_group);
 					assert(CjvxAuNTasks_pcg::secondary_async.node.segmentsize_x.value == JVX_SIZE_INT32(theData_out->con_params.segmentation_x));
 					assert(CjvxAuNTasks_pcg::secondary_async.node.segmentsize_y.value == JVX_SIZE_INT32(theData_out->con_params.segmentation_y));
 

@@ -69,13 +69,23 @@ CjvxInputConnectorNVtask::CjvxInputConnectorNVtask()
 }
 
 jvxErrorType
-CjvxInputConnectorNVtask::accepts_data_format_group(jvxDataFormatGroup grp)
+CjvxInputConnectorNVtask::supports_connector_class_icon(const jvxDataflowCapabilities& caps)
 {
-	if (grp == _common_set_icon_nvtask.format_group_in == grp)
+	if (_common_set_icon_nvtask.caps_in.format_group != JVX_DATAFORMAT_GROUP_NONE)
 	{
-		return JVX_NO_ERROR;
+		if (_common_set_icon_nvtask.caps_in.format_group != caps.format_group)
+		{
+			return JVX_ERROR_UNSUPPORTED;
+		}
 	}
-	return JVX_ERROR_UNSUPPORTED;
+	if (_common_set_icon_nvtask.caps_in.data_flow != JVX_DATAFLOW_NONE)
+	{
+		if (_common_set_icon_nvtask.caps_in.data_flow != caps.data_flow)
+		{
+			return JVX_ERROR_UNSUPPORTED;
+		}
+	}
+	return JVX_NO_ERROR;
 }
 
 // ==========================================================
@@ -86,13 +96,23 @@ CjvxOutputConnectorNVtask::CjvxOutputConnectorNVtask()
 }
 
 jvxErrorType 
-CjvxOutputConnectorNVtask::outputs_data_format_group(jvxDataFormatGroup grp)
+CjvxOutputConnectorNVtask::supports_connector_class_ocon(const jvxDataflowCapabilities& caps)
 {
-	if (grp == _common_set_ocon_nvtask.format_group_out == grp)
+	if (_common_set_ocon_nvtask.caps_out.format_group != JVX_DATAFORMAT_GROUP_NONE)
 	{
-		return JVX_NO_ERROR;
+		if (_common_set_ocon_nvtask.caps_out.format_group != caps.format_group)
+		{
+			return JVX_ERROR_UNSUPPORTED;
+		}
 	}
-	return JVX_ERROR_UNSUPPORTED;
+	if (_common_set_ocon_nvtask.caps_out.data_flow != JVX_DATAFLOW_NONE)
+	{
+		if (_common_set_ocon_nvtask.caps_out.data_flow != caps.data_flow)
+		{
+			return JVX_ERROR_UNSUPPORTED;
+		}
+	}
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType 

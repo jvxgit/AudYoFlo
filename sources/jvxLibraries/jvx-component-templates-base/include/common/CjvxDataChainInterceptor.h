@@ -65,8 +65,8 @@ public:
 
 	~CjvxDataChainInterceptor();
 
-	jvxErrorType outputs_data_format_group(jvxDataFormatGroup grp)override;
-	jvxErrorType accepts_data_format_group(jvxDataFormatGroup grp)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(const jvxDataflowCapabilities& caps) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(const jvxDataflowCapabilities& caps) override;
 
 	jvxErrorType check_master_common();
 	jvxErrorType description_interceptor(jvxApiString* str);

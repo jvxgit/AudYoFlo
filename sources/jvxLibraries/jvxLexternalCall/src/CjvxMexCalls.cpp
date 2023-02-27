@@ -124,7 +124,7 @@ CjvxMexCalls::process_buffers_icon(jvxLinkDataDescriptor* theData_in, jvxLinkDat
 
 	theData_in->con_compat.ext.segmentation_x = theData_out->con_params.segmentation_x;
 	theData_in->con_compat.ext.segmentation_y = theData_out->con_params.segmentation_y;
-	theData_in->con_compat.ext.subformat = theData_out->con_params.format_group;
+	theData_in->con_compat.ext.subformat = theData_out->con_params.caps.format_group;
 	theData_in->con_compat.ext.hints = theData_out->con_params.hints;
 
 	res = prv->process_st(theData_in, *theData_in->con_pipeline.idx_stage_ptr, *theData_out->con_pipeline.idx_stage_ptr, theData_out);
