@@ -13,7 +13,7 @@ sources/jvxLibraries/third_party/web/qcustomplot/qcustomplot.tar.gz
 sources/jvxLibraries/third_party/web/qcustomplot/qcustomplot
 sources/jvxLibraries/third_party/web/boost/boost
 sources/jvxLibraries/third_party/web/npcap/npcap-sdk
-
+sources/jvxLibraries/third_party/web/libsdl/libsdl
 sources/sub-projects/vst3sdk
 
 sources/python/jvx-dsp-python/python/runtime/local.py
