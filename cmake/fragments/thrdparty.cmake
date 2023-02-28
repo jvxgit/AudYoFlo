@@ -113,5 +113,14 @@ if(JVX_USE_EIGEN)
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eigen)
 	endif()
 endif()
+
+if(JVX_USE_FFMPEG)
+	if(JVX_INSTALL_EXTERNAL_LIBS)
+	
+		message(FATAL ERROR "Hier 1")
+		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/ffmpeg)
+	endif()
+endif()
 	# =============================================================================
 	# =============================================================================

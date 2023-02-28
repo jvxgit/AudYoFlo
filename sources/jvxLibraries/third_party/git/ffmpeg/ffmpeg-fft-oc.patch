@@ -1,0 +1,12 @@
+--- ffmpeg/fftools/opt_common.c	2023-02-28 11:15:36.975838600 +0100
++++ ffmpeg.orig/fftools/opt_common.c	2023-02-28 11:17:53.158003500 +0100
+@@ -191,9 +191,7 @@
+     PRINT_LIB_INFO(avfilter,   AVFILTER,   flags, level);
+     PRINT_LIB_INFO(swscale,    SWSCALE,    flags, level);
+     PRINT_LIB_INFO(swresample, SWRESAMPLE, flags, level);
+-#if CONFIG_POSTPROC
+     PRINT_LIB_INFO(postproc,   POSTPROC,   flags, level);
+-#endif
+ }
+ 
+ static void print_program_info(int flags, int level)
