@@ -148,7 +148,7 @@ JVX_HMODULE JVX_LOADLIBRARY_PATH(std::string fName, std::string dir);
 // Everything for directory/file access
 //===============================================
 
-#define JVX_GETCURRENTDIRECTORY(a, b) _getcwd(a, b)/*GetCurrentDirectory(b, a)*/
+#define JVX_GETCURRENTDIRECTORY(destBuf, szBytes) _getcwd(destBuf, szBytes)/*GetCurrentDirectory(b, a)*/
 
 #define JVX_HANDLE_DIR HANDLE
 
