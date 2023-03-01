@@ -1,0 +1,79 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genFileReader_device";
+	CALLBACKS = {"set_config", "trigger_command"};
+
+	SECTION exteded_properties
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		
+		SECTION preuse_bsize_msecs
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 200; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};	
+
+		SECTION threaded_read
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};	
+	};
+
+	SECTION monitor
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		
+		SECTION progress_percent
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 0; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};	
+
+		SECTION num_lost
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 0; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};	
+	};
+
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		
+		SECTION loop
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 1; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			CALLBACK_SET_POSTHOOK = "set_config";
+		};	
+	};
+
+	SECTION command
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		
+		SECTION restart
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			CALLBACK_SET_POSTHOOK = "trigger_command";
+		};	
+	};
+
+	include "wav_properties.pcgf";
+};

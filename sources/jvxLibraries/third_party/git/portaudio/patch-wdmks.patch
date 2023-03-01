@@ -1,0 +1,18 @@
+--- portaudio/src/hostapi/wdmks/pa_win_wdmks.c	2023-03-01 18:22:54.018706800 +0100
++++ portaudio.orig/src/hostapi/wdmks/pa_win_wdmks.c	2023-03-01 18:39:06.191520600 +0100
+@@ -176,12 +176,9 @@
+ 
+ #include <setupapi.h>
+ 
+-// I had to add this here to prevent multiply defined symbols.
+-// A hint was found here
+-// https://portaudio.music.columbia.narkive.com/foj8xLp9/wdmks-redefines-symbols-in-strmiids-lib
+-// but that did not work out for me. I looked inside the header ksmedia.h to find this define here
+-
+-#define __ENCODER_API_GUIDS__
++#ifndef EXTERN_C
++#define EXTERN_C extern
++#endif
+ 
+ #if defined(__GNUC__)
+ 

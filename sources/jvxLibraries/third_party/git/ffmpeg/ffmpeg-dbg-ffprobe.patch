@@ -1,0 +1,11 @@
+--- ffmpeg/fftools/ffprobe.c	2023-03-01 16:33:36.095002000 +0100
++++ ffmpeg.orig/fftools/ffprobe.c	2023-03-01 19:01:46.832879400 +0100
+@@ -3566,7 +3566,7 @@
+     SHOW_LIB_VERSION(avfilter,   AVFILTER);
+     SHOW_LIB_VERSION(swscale,    SWSCALE);
+     SHOW_LIB_VERSION(swresample, SWRESAMPLE);
+-    // SHOW_LIB_VERSION(postproc,   POSTPROC);
++    SHOW_LIB_VERSION(postproc,   POSTPROC);
+     writer_print_section_footer(w);
+ }
+ 

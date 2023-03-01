@@ -1,0 +1,92 @@
+--- ffmpeg/libavformat/rtmpproto.c	2023-03-01 16:21:14.110560300 +0100
++++ ffmpeg.orig/libavformat/rtmpproto.c	2023-03-01 19:01:47.692516500 +0100
+@@ -1234,10 +1234,8 @@
+ 
+         /* Initialize the Diffie-Hellmann context and generate the public key
+          * to send to the server. */
+-		 assert(0);
+-		 
+-        //if ((ret = ff_rtmpe_gen_pub_key(rt->stream, tosend + 1)) < 0)
+-        //    return ret;
++        if ((ret = ff_rtmpe_gen_pub_key(rt->stream, tosend + 1)) < 0)
++            return ret;
+     }
+ 
+     client_pos = rtmp_handshake_imprint_with_digest(tosend + 1, rt->encrypted);
+@@ -1305,13 +1303,12 @@
+         if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+             /* Compute the shared secret key sent by the server and initialize
+              * the RC4 encryption. */
+-            assert(0);
+-			//if ((ret = ff_rtmpe_compute_secret_key(rt->stream, serverdata + 1,
+-            //                                       tosend + 1, type)) < 0)
+-            //    return ret;
++            if ((ret = ff_rtmpe_compute_secret_key(rt->stream, serverdata + 1,
++                                                   tosend + 1, type)) < 0)
++                return ret;
+ 
+             /* Encrypt the signature received by the server. */
+-            // ff_rtmpe_encrypt_sig(rt->stream, signature, digest, serverdata[0]);
++            ff_rtmpe_encrypt_sig(rt->stream, signature, digest, serverdata[0]);
+         }
+ 
+         if (memcmp(signature, clientdata + RTMP_HANDSHAKE_PACKET_SIZE - 32, 32)) {
+@@ -1335,10 +1332,9 @@
+ 
+         if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+             /* Encrypt the signature to be send to the server. */
+-            assert(0);
+-			//ff_rtmpe_encrypt_sig(rt->stream, tosend +
+-            //                     RTMP_HANDSHAKE_PACKET_SIZE - 32, digest,
+-            //                     serverdata[0]);
++            ff_rtmpe_encrypt_sig(rt->stream, tosend +
++                                 RTMP_HANDSHAKE_PACKET_SIZE - 32, digest,
++                                 serverdata[0]);
+         }
+ 
+         // write reply back to the server
+@@ -1348,23 +1344,22 @@
+ 
+         if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+             /* Set RC4 keys for encryption and update the keystreams. */
+-            //if ((ret = ff_rtmpe_update_keystream(rt->stream)) < 0)
+-            //    return ret;
++            if ((ret = ff_rtmpe_update_keystream(rt->stream)) < 0)
++                return ret;
+         }
+     } else {
+         if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+             /* Compute the shared secret key sent by the server and initialize
+              * the RC4 encryption. */
+-            assert(0);
+-			//if ((ret = ff_rtmpe_compute_secret_key(rt->stream, serverdata + 1,
+-            //                tosend + 1, 1)) < 0)
+-            //    return ret;
++            if ((ret = ff_rtmpe_compute_secret_key(rt->stream, serverdata + 1,
++                            tosend + 1, 1)) < 0)
++                return ret;
+ 
+-            //if (serverdata[0] == 9) {
++            if (serverdata[0] == 9) {
+                 /* Encrypt the signature received by the server. */
+-            //    ff_rtmpe_encrypt_sig(rt->stream, signature, digest,
+-            //                         serverdata[0]);
+-            //}
++                ff_rtmpe_encrypt_sig(rt->stream, signature, digest,
++                                     serverdata[0]);
++            }
+         }
+ 
+         if ((ret = ffurl_write(rt->stream, serverdata + 1,
+@@ -1373,9 +1368,8 @@
+ 
+         if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+             /* Set RC4 keys for encryption and update the keystreams. */
+-            assert(0);
+-			//if ((ret = ff_rtmpe_update_keystream(rt->stream)) < 0)
+-            //    return ret;
++            if ((ret = ff_rtmpe_update_keystream(rt->stream)) < 0)
++                return ret;
+         }
+     }
+ 

@@ -47,11 +47,7 @@ set(LOCAL_LIBS ${JVX_FFMPEG_LIB_AVCODEC}
 		${JVX_FFMPEG_LIB_SWRESAMPLE}
 		${JVX_FFMPEG_LIB_SWSCALE}
 		${JVX_SOCKET_LIBRARIES}
-		psapi.lib strmiids.lib 
-		uuid.lib shlwapi.lib 
-		vfw32.lib  secur32.lib 
-		mfuuid.lib strmiids.lib bcrypt.lib  
-		# ole32.lib shell32.lib user32.lib gdi32.lib oleaut32.lib 
+		${JVX_FFMPEG_SYS_LIBS}
 		)
 
 force_console_app()

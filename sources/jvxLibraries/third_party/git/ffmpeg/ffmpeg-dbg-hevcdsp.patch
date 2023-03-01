@@ -1,0 +1,30 @@
+--- ffmpeg/libavcodec/x86/hevcdsp_init.c	2023-03-01 16:30:36.509535700 +0100
++++ ffmpeg.orig/libavcodec/x86/hevcdsp_init.c	2023-03-01 19:01:47.370313700 +0100
+@@ -19,7 +19,6 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+  */
+ 
+-#include <assert.h>
+ #include "config.h"
+ 
+ #include "libavutil/cpu.h"
+@@ -870,13 +869,12 @@
+             c->add_residual[3] = ff_hevc_add_residual_32_8_avx2;
+         }
+         if (EXTERNAL_AVX512ICL(cpu_flags) && ARCH_X86_64) {
+-			assert(0);
+-            //c->put_hevc_qpel[1][0][1] = ff_hevc_put_hevc_qpel_h4_8_avx512icl;
+-            //c->put_hevc_qpel[3][0][1] = ff_hevc_put_hevc_qpel_h8_8_avx512icl;
+-            //c->put_hevc_qpel[5][0][1] = ff_hevc_put_hevc_qpel_h16_8_avx512icl;
+-            //c->put_hevc_qpel[7][0][1] = ff_hevc_put_hevc_qpel_h32_8_avx512icl;
+-            //c->put_hevc_qpel[9][0][1] = ff_hevc_put_hevc_qpel_h64_8_avx512icl;
+-            //c->put_hevc_qpel[3][1][1] = ff_hevc_put_hevc_qpel_hv8_8_avx512icl;
++            c->put_hevc_qpel[1][0][1] = ff_hevc_put_hevc_qpel_h4_8_avx512icl;
++            c->put_hevc_qpel[3][0][1] = ff_hevc_put_hevc_qpel_h8_8_avx512icl;
++            c->put_hevc_qpel[5][0][1] = ff_hevc_put_hevc_qpel_h16_8_avx512icl;
++            c->put_hevc_qpel[7][0][1] = ff_hevc_put_hevc_qpel_h32_8_avx512icl;
++            c->put_hevc_qpel[9][0][1] = ff_hevc_put_hevc_qpel_h64_8_avx512icl;
++            c->put_hevc_qpel[3][1][1] = ff_hevc_put_hevc_qpel_hv8_8_avx512icl;
+         }
+     } else if (bit_depth == 10) {
+         if (EXTERNAL_MMXEXT(cpu_flags)) {

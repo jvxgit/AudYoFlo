@@ -1,0 +1,21 @@
+--- ffmpeg/libavcodec/x86/fdctdsp_init.c	2023-03-01 16:29:19.334830400 +0100
++++ ffmpeg.orig/libavcodec/x86/fdctdsp_init.c	2023-03-01 19:01:47.361318100 +0100
+@@ -16,8 +16,6 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+  */
+ 
+-#include <assert.h>
+-
+ #include "libavutil/attributes.h"
+ #include "libavutil/cpu.h"
+ #include "libavutil/x86/cpu.h"
+@@ -34,8 +32,7 @@
+     if (!high_bit_depth) {
+         if ((dct_algo == FF_DCT_AUTO || dct_algo == FF_DCT_MMX)) {
+             if (INLINE_SSE2(cpu_flags))
+-				assert(0);
+-                //c->fdct = ff_fdct_sse2;
++                c->fdct = ff_fdct_sse2;
+         }
+     }
+ }

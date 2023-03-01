@@ -70,3 +70,9 @@ endif()
 force_console_app()
 include(${JVX_CMAKE_DIR}/common_local_exe_foot.cmake)
 
+# Run in Visual Studio
+
+# Command: $(TargetPath)
+# Command Argument: "E:\jvxrt\audio\release\runtime\wavs\music_stereo_48000Hz.wav"
+# Working Directory: ""..\..\..\..\..\..\release\runtime\bin""
+

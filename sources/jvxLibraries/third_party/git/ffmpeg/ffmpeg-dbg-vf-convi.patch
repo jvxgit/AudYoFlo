@@ -1,0 +1,14 @@
+--- ffmpeg/libavfilter/x86/vf_convolution_init.c	2023-03-01 16:22:05.533629900 +0100
++++ ffmpeg.orig/libavfilter/x86/vf_convolution_init.c	2023-03-01 19:01:47.574379800 +0100
+@@ -57,10 +57,7 @@
+     for (int i = 0; i < nb_planes; i++) {
+         if (depth == 8) {
+             if (EXTERNAL_AVX512ICL(cpu_flags))
+-			{
+-				assert(0);
+-                // s->filter[i] = ff_filter_sobel_avx512icl;
+-			}
++                s->filter[i] = ff_filter_sobel_avx512icl;
+         }
+     }
+ #endif

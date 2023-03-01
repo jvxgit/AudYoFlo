@@ -1,0 +1,35 @@
+--- ffmpeg/libavcodec/x86/v210enc_init.c	2023-03-01 16:23:37.006111700 +0100
++++ ffmpeg.orig/libavcodec/x86/v210enc_init.c	2023-03-01 19:01:47.385426800 +0100
+@@ -16,8 +16,6 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+  */
+ 
+-#include <assert.h>
+-
+ #include "libavutil/attributes.h"
+ #include "libavutil/x86/cpu.h"
+ #include "libavcodec/v210enc.h"
+@@ -67,19 +65,17 @@
+ 
+     if (EXTERNAL_AVX512(cpu_flags)) {
+         s->sample_factor_8  = 2;
+-        assert(0);
+-		// s->pack_line_8      = ff_v210_planar_pack_8_avx512;
++        s->pack_line_8      = ff_v210_planar_pack_8_avx512;
+ #if ARCH_X86_64
+         s->sample_factor_10  = 2;
+-        // s->pack_line_10      = ff_v210_planar_pack_10_avx512;
++        s->pack_line_10      = ff_v210_planar_pack_10_avx512;
+ #endif
+     }
+ 
+     if (EXTERNAL_AVX512ICL(cpu_flags)) {
+         s->sample_factor_8  = 4;
+-        assert(0);
+-		// s->pack_line_8      = ff_v210_planar_pack_8_avx512icl;
++        s->pack_line_8      = ff_v210_planar_pack_8_avx512icl;
+         s->sample_factor_10 = 4;
+-        // s->pack_line_10     = ff_v210_planar_pack_10_avx512icl;
++        s->pack_line_10     = ff_v210_planar_pack_10_avx512icl;
+     }
+ }

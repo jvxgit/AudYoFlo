@@ -1,0 +1,30 @@
+--- ffmpeg/libavcodec/x86/vc1dsp_init.c	2023-03-01 16:32:12.814927000 +0100
++++ ffmpeg.orig/libavcodec/x86/vc1dsp_init.c	2023-03-01 19:01:47.386424100 +0100
+@@ -24,7 +24,6 @@
+  * OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+-#include <assert.h>
+ #include "libavutil/attributes.h"
+ #include "libavutil/cpu.h"
+ #include "libavutil/x86/cpu.h"
+@@ -105,17 +104,11 @@
+ 
+     if (HAVE_6REGS && INLINE_MMX(cpu_flags))
+         if (EXTERNAL_MMX(cpu_flags))
+-		{
+-			assert(0);
+-			//ff_vc1dsp_init_mmx(dsp);
+-		}
++        ff_vc1dsp_init_mmx(dsp);
+ 
+     if (HAVE_6REGS && INLINE_MMXEXT(cpu_flags))
+         if (EXTERNAL_MMXEXT(cpu_flags))
+-        {
+-			assert(0);
+-			//ff_vc1dsp_init_mmxext(dsp);
+-		}
++        ff_vc1dsp_init_mmxext(dsp);
+ 
+ #define ASSIGN_LF4(EXT) \
+         dsp->vc1_v_loop_filter4  = ff_vc1_v_loop_filter4_ ## EXT; \
