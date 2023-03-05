@@ -327,331 +327,237 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool thereismismatch = false;
 
-#if 0
-	if (_negotiate_accept_input_only && (!master_mode))
+	// ================================================================================
+	// Number output channels
+	// ================================================================================
+	if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.min))
 	{
-		if (
-			(ld->con_params.rate != _params_input_on_connect_icon.rate) ||
-			(ld->con_params.buffersize != _params_input_on_connect_icon.buffersize) ||
-			(ld->con_params.format != _params_input_on_connect_icon.format) ||
-			(ld->con_params.caps.format_group != _params_input_on_connect_icon.subformat) ||
-			(ld->con_params.segmentation_x != _params_input_on_connect_icon.segmentation_x) ||
-			(ld->con_params.segmentation_y != _params_input_on_connect_icon.segmentation_y))
+		if (ld->con_params.number_channels < preferred.number_channels.min)
 		{
-			txt = __FUNCTION__;
-			txt += ": ";
-			jvxBool thereisone = false;
-			if (ld->con_params.rate != _params_input_on_connect_icon.rate)
+			thereismismatch = true;
+			ld->con_params.number_channels = preferred.number_channels.min;
+		}
+	}
+	if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.max))
+	{
+		if (ld->con_params.number_channels > preferred.number_channels.max)
+		{
+			thereismismatch = true;
+			ld->con_params.number_channels = preferred.number_channels.max;
+		}
+	}
+
+	// ================================================================================
+	// Buffersize
+	// ================================================================================
+
+	if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.min))
+	{
+		if (ld->con_params.buffersize < preferred.buffersize.min)
+		{
+			thereismismatch = true;
+			ld->con_params.buffersize = preferred.buffersize.min;
+		}
+	}
+	if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.max))
+	{
+		if (ld->con_params.buffersize > preferred.buffersize.max)
+		{
+			thereismismatch = true;
+			ld->con_params.buffersize = preferred.buffersize.max;
+		}
+	}
+
+	// ================================================================================
+	// Samplerate
+	// ================================================================================
+	if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.min))
+	{
+		if (ld->con_params.rate < preferred.samplerate.min)
+		{
+			thereismismatch = true;
+			ld->con_params.rate = preferred.samplerate.min;
+		}
+	}
+	if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.max))
+	{
+		if (ld->con_params.rate > preferred.samplerate.max)
+		{
+			thereismismatch = true;
+			ld->con_params.rate = preferred.samplerate.max;
+		}
+	}
+
+	// ================================================================================
+	// Format
+	// ================================================================================
+	if (preferred.format.min != JVX_DATAFORMAT_NONE)
+	{
+		if (ld->con_params.format < preferred.format.min)
+		{
+			thereismismatch = true;
+			ld->con_params.format = preferred.format.min;
+		}
+	}
+	if (preferred.format.max != JVX_DATAFORMAT_NONE)
+	{
+		if (ld->con_params.format > preferred.format.max)
+		{
+			thereismismatch = true;
+			ld->con_params.format = preferred.format.max;
+		}
+	}
+
+	// ================================================================================
+	// Subformat
+	// ================================================================================
+
+	if (preferred.subformat.min != JVX_DATAFORMAT_GROUP_NONE)
+	{
+		if (ld->con_params.caps.format_group < preferred.subformat.min)
+		{
+			thereismismatch = true;
+			ld->con_params.caps.format_group = preferred.subformat.min;
+		}
+	}
+	if (preferred.subformat.max != JVX_DATAFORMAT_GROUP_NONE)
+	{
+		if (ld->con_params.caps.format_group > preferred.subformat.max)
+		{
+			thereismismatch = true;
+			ld->con_params.caps.format_group = preferred.subformat.max;
+		}
+	}
+
+	// ================================================================================
+	// DimX
+	// ================================================================================
+	if (JVX_CHECK_SIZE_UNSELECTED(ld->con_params.segmentation_x))
+	{
+		if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.min))
+		{
+			if (ld->con_params.segmentation_x < preferred.dimX.min)
 			{
-				txt += "Input and output rate do not match: ";
-				txt += jvx_size2String(_params_input_on_connect_icon.rate);
-				txt += " on input side whereas ";
-				txt += jvx_size2String(ld->con_params.rate);
-				txt += " on output side";
-				thereisone = true;
+				thereismismatch = true;
+				ld->con_params.segmentation_x = preferred.dimX.min;
 			}
-			if (ld->con_params.buffersize != _params_input_on_connect_icon.buffersize)
+		}
+		if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.max))
+		{
+			if (ld->con_params.segmentation_x > preferred.dimX.max)
 			{
-				if (thereisone)
-				{
-					txt += ", ";
-				}
-				txt += ": Input and output buffersize do not match: ";
-				txt += jvx_size2String(_params_input_on_connect_icon.buffersize);
-				txt += " on input side whereas ";
-				txt += jvx_size2String(ld->con_params.buffersize);
-				txt += " on output side.";
-				thereisone = true;
+				thereismismatch = true;
+				ld->con_params.segmentation_x = preferred.dimX.max;
 			}
-			if (ld->con_params.format != _params_input_on_connect_icon.format)
+		}
+	}
+
+	// ================================================================================
+	// DimY
+	// ================================================================================
+	if (JVX_CHECK_SIZE_UNSELECTED(ld->con_params.segmentation_y))
+	{
+		if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.min))
+		{
+			if (ld->con_params.segmentation_y < preferred.dimY.min)
 			{
-				if (thereisone)
-				{
-					txt += ", ";
-				}
-				txt += ": Input and output format do not match: ";
-				txt += jvxDataFormat_txt(_params_input_on_connect_icon.format);
-				txt += " on input side whereas ";
-				txt += jvxDataFormat_txt(ld->con_params.format);
-				txt += " on output side";
+				thereismismatch = true;
+				ld->con_params.segmentation_y = preferred.dimY.min;
 			}
-			if (ld->con_params.caps.format_group != _params_input_on_connect_icon.subformat)
+		}
+		if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.max))
+		{
+			if (ld->con_params.segmentation_y > preferred.dimY.max)
 			{
-				if (thereisone)
-				{
-					txt += ", ";
-				}
-				txt += ": Input and output format do not match: ";
-				txt += jvxDataFormatGroup_txt(_params_input_on_connect_icon.subformat);
-				txt += " on input side whereas ";
-				txt += jvxDataFormatGroup_txt(ld->con_params.caps.format_group);
-				txt += " on output side";
+				thereismismatch = true;
+				ld->con_params.segmentation_y = preferred.dimY.max;
 			}
-			if (ld->con_params.segmentation_x != _params_input_on_connect_icon.segmentation_x)
-			{
-				if (thereisone)
-				{
-					txt += ", ";
-				}
-				txt += ": Input and output segmentation_x do not match: ";
-				txt += jvx_size2String(_params_input_on_connect_icon.segmentation_x);
-				txt += " on input side whereas ";
-				txt += jvx_size2String(ld->con_params.segmentation_x);
-				txt += " on output side.";
-				thereisone = true;
-			}
-			if (ld->con_params.segmentation_y != _params_input_on_connect_icon.segmentation_y)
-			{
-				if (thereisone)
-				{
-					txt += ", ";
-				}
-				txt += ": Input and output segmentation_y do not match: ";
-				txt += jvx_size2String(_params_input_on_connect_icon.segmentation_y);
-				txt += " on input side whereas ";
-				txt += jvx_size2String(ld->con_params.segmentation_y);
-				txt += " on output side.";
-				thereisone = true;
-			}
-			txt += ".";
-			JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, txt.c_str(), JVX_ERROR_INVALID_SETTING);
-			res = JVX_ERROR_UNSUPPORTED;
+		}
+	}
+
+	if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
+	{
+		if ((ld->con_params.segmentation_y != 1) ||
+			(ld->con_params.segmentation_x != ld->con_params.buffersize))
+		{
+			std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
+			std::cout << " Seg X: " << ld->con_params.segmentation_x << " vs " << ld->con_params.buffersize << "." << std::endl;
+			std::cout << " Seg Y: " << ld->con_params.segmentation_y << " vs 1." << std::endl;
 		}
 	}
 	else
 	{
-#endif
-		// ================================================================================
-		// Number output channels
-		// ================================================================================
-		if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.min))
+		if ((ld->con_params.segmentation_y * ld->con_params.segmentation_x) != ld->con_params.buffersize)
 		{
-			if (ld->con_params.number_channels < preferred.number_channels.min)
-			{
-				thereismismatch = true;
-				ld->con_params.number_channels = preferred.number_channels.min;
-			}
-		}
-		if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.max))
-		{
-			if (ld->con_params.number_channels > preferred.number_channels.max)
-			{
-				thereismismatch = true;
-				ld->con_params.number_channels = preferred.number_channels.max;
-			}
+			std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
+			std::cout << " Seg X x Seg Y = " << ld->con_params.segmentation_x << " X " <<
+				ld->con_params.segmentation_x << " = " << ld->con_params.buffersize << "." << std::endl;
 		}
 
-		// ================================================================================
-		// Buffersize
-		// ================================================================================
-
-		if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.min))
-		{
-			if (ld->con_params.buffersize < preferred.buffersize.min)
-			{
-				thereismismatch = true;
-				ld->con_params.buffersize = preferred.buffersize.min;
-			}
-		}
-		if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.max))
-		{
-			if (ld->con_params.buffersize > preferred.buffersize.max)
-			{
-				thereismismatch = true;
-				ld->con_params.buffersize = preferred.buffersize.max;
-			}
-		}
-
-		// ================================================================================
-		// Samplerate
-		// ================================================================================
-		if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.min))
-		{
-			if (ld->con_params.rate < preferred.samplerate.min)
-			{
-				thereismismatch = true;
-				ld->con_params.rate = preferred.samplerate.min;
-			}
-		}
-		if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.max))
-		{
-			if (ld->con_params.rate > preferred.samplerate.max)
-			{
-				thereismismatch = true;
-				ld->con_params.rate = preferred.samplerate.max;
-			}
-		}
-
-		// ================================================================================
-		// Format
-		// ================================================================================
-		if (preferred.format.min != JVX_DATAFORMAT_NONE)
-		{
-			if (ld->con_params.format < preferred.format.min)
-			{
-				thereismismatch = true;
-				ld->con_params.format = preferred.format.min;
-			}
-		}
-		if (preferred.format.max != JVX_DATAFORMAT_NONE)
-		{
-			if (ld->con_params.format > preferred.format.max)
-			{
-				thereismismatch = true;
-				ld->con_params.format = preferred.format.max;
-			}
-		}
-
-		// ================================================================================
-		// Subformat
-		// ================================================================================
-
-		if (preferred.subformat.min != JVX_DATAFORMAT_GROUP_NONE)
-		{
-			if (ld->con_params.caps.format_group < preferred.subformat.min)
-			{
-				thereismismatch = true;
-				ld->con_params.caps.format_group = preferred.subformat.min;
-			}
-		}
-		if (preferred.subformat.max != JVX_DATAFORMAT_GROUP_NONE)
-		{
-			if (ld->con_params.caps.format_group > preferred.subformat.max)
-			{
-				thereismismatch = true;
-				ld->con_params.caps.format_group = preferred.subformat.max;
-			}
-		}
-
-		// ================================================================================
-		// DimX
-		// ================================================================================
-		if (JVX_CHECK_SIZE_UNSELECTED(ld->con_params.segmentation_x))
-		{
-			if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.min))
-			{
-				if (ld->con_params.segmentation_x < preferred.dimX.min)
-				{
-					thereismismatch = true;
-					ld->con_params.segmentation_x = preferred.dimX.min;
-				}
-			}
-			if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.max))
-			{
-				if (ld->con_params.segmentation_x > preferred.dimX.max)
-				{
-					thereismismatch = true;
-					ld->con_params.segmentation_x = preferred.dimX.max;
-				}
-			}
-		}
-
-		// ================================================================================
-		// DimY
-		// ================================================================================
-		if (JVX_CHECK_SIZE_UNSELECTED(ld->con_params.segmentation_y))
-		{
-			if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.min))
-			{
-				if (ld->con_params.segmentation_y < preferred.dimY.min)
-				{
-					thereismismatch = true;
-					ld->con_params.segmentation_y = preferred.dimY.min;
-				}
-			}
-			if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.max))
-			{
-				if (ld->con_params.segmentation_y > preferred.dimY.max)
-				{
-					thereismismatch = true;
-					ld->con_params.segmentation_y = preferred.dimY.max;
-				}
-			}
-		}
-
-		if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
-		{
-			if ((ld->con_params.segmentation_y != 1) ||
-				(ld->con_params.segmentation_x != ld->con_params.buffersize))
-			{
-				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
-				std::cout << " Seg X: " << ld->con_params.segmentation_x << " vs " << ld->con_params.buffersize << "." << std::endl;
-				std::cout << " Seg Y: " << ld->con_params.segmentation_y << " vs 1." << std::endl;
-			}
-		}
-		else
-		{
-			if ((ld->con_params.segmentation_y * ld->con_params.segmentation_x) != ld->con_params.buffersize)
-			{
-				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
-				std::cout << " Seg X x Seg Y = " << ld->con_params.segmentation_x << " X " <<
-					ld->con_params.segmentation_x << " = " << ld->con_params.buffersize << "." << std::endl;
-			}
-
-		}
-
-		// ===================================================================================
-		if (thereismismatch)
-		{
-			res = JVX_ERROR_COMPROMISE;
-		}
-		else
-		{
-			res = JVX_NO_ERROR;
-		}
-
-		if (modFlags)
-		{
-			*modFlags = 0;
-			if (ld->con_params.buffersize != dataOut->con_params.buffersize)
-			{
-				jvx_bitSet(*modFlags, JVX_MODIFICATION_BUFFERSIZE_SHIFT);
-			}
-			if (ld->con_params.rate != dataOut->con_params.rate)
-			{
-				jvx_bitSet(*modFlags, JVX_MODIFICATION_SAMPLERATE_SHIFT);
-			}
-			if (ld->con_params.number_channels != dataOut->con_params.number_channels)
-			{
-				jvx_bitSet(*modFlags, JVX_MODIFICATION_NUM_CHANNELS_SHIFT);
-			}
-			if (ld->con_params.format != dataOut->con_params.format)
-			{
-				jvx_bitSet(*modFlags, JVX_MODIFICATION_FORMAT_SHIFT);
-			}
-			if (ld->con_params.caps.format_group != dataOut->con_params.caps.format_group)
-			{
-				jvx_bitSet(*modFlags, JVX_MODIFICATION_SUBFORMAT_SHIFT);
-			}
-			if (ld->con_params.segmentation_x != dataOut->con_params.segmentation_x)
-			{
-				jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGX_SHIFT);
-			}
-			if (ld->con_params.segmentation_y != dataOut->con_params.segmentation_y)
-			{
-				jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGY_SHIFT);
-			}
-		}
-
-		switch (res)
-		{
-		case JVX_ERROR_UNSUPPORTED:
-			// No chance
-			break;
-		case JVX_NO_ERROR:			// Modifications in propsal have not been made. This may also be a modification in dataOut
-		case JVX_ERROR_COMPROMISE:	// Modifications in propsal has been made. This will also be a modification in dataOut
-			// No modification needed to be done, just use the propsed settings
-			if (modFlags == NULL)
-			{
-				dataOut->con_params = ld->con_params;
-			}
-			break;
-		}
-
-		_latest_results = dataOut->con_params;
-
-		return res;
 	}
+
+	// ===================================================================================
+	if (thereismismatch)
+	{
+		res = JVX_ERROR_COMPROMISE;
+	}
+	else
+	{
+		res = JVX_NO_ERROR;
+	}
+
+	if (modFlags)
+	{
+		*modFlags = 0;
+		if (ld->con_params.buffersize != dataOut->con_params.buffersize)
+		{
+			jvx_bitSet(*modFlags, JVX_MODIFICATION_BUFFERSIZE_SHIFT);
+		}
+		if (ld->con_params.rate != dataOut->con_params.rate)
+		{
+			jvx_bitSet(*modFlags, JVX_MODIFICATION_SAMPLERATE_SHIFT);
+		}
+		if (ld->con_params.number_channels != dataOut->con_params.number_channels)
+		{
+			jvx_bitSet(*modFlags, JVX_MODIFICATION_NUM_CHANNELS_SHIFT);
+		}
+		if (ld->con_params.format != dataOut->con_params.format)
+		{
+			jvx_bitSet(*modFlags, JVX_MODIFICATION_FORMAT_SHIFT);
+		}
+		if (ld->con_params.caps.format_group != dataOut->con_params.caps.format_group)
+		{
+			jvx_bitSet(*modFlags, JVX_MODIFICATION_SUBFORMAT_SHIFT);
+		}
+		if (ld->con_params.segmentation_x != dataOut->con_params.segmentation_x)
+		{
+			jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGX_SHIFT);
+		}
+		if (ld->con_params.segmentation_y != dataOut->con_params.segmentation_y)
+		{
+			jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGY_SHIFT);
+		}
+	}
+
+	switch (res)
+	{
+	case JVX_ERROR_UNSUPPORTED:
+		// No chance
+		break;
+	case JVX_NO_ERROR:			// Modifications in propsal have not been made. This may also be a modification in dataOut
+	case JVX_ERROR_COMPROMISE:	// Modifications in propsal has been made. This will also be a modification in dataOut
+		// No modification needed to be done, just use the propsed settings
+		if (modFlags == NULL)
+		{
+			dataOut->con_params = ld->con_params;
+		}
+		break;
+	}
+
+	_latest_results = dataOut->con_params;
+
+	return res;
+}
 
 // ====================================================================================
 
@@ -929,15 +835,15 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 			else if (ld_cp.con_params.format != theData_in->con_params.format)
 			{
 				reason = "A format of <";
-				reason += jvxDataFormatGroup_txt(ld_cp.con_params.format);
+				reason += jvxDataFormat_txt(ld_cp.con_params.format);
 				reason += "> was desired but the input connector only delivers <";
-				reason += jvxDataFormatGroup_txt(theData_in->con_params.format);
+				reason += jvxDataFormat_txt(theData_in->con_params.format);
 				reason += ">.";
 				resComplain = JVX_ERROR_COMPROMISE;
 			}
 			else if (ld_cp.con_params.caps.format_group != theData_in->con_params.caps.format_group)
 			{
-				reason = "A subformat of <";
+				reason = "A format group of <";
 				reason += jvxDataFormatGroup_txt(ld_cp.con_params.caps.format_group);
 				reason += "> was desired but the input connector only delivers <";
 				reason += jvxDataFormatGroup_txt(theData_in->con_params.caps.format_group);
