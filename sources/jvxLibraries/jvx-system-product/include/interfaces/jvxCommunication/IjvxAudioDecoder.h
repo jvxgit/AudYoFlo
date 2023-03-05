@@ -1,7 +1,7 @@
 #ifndef _IJVXAUDIODECODER_H__
 #define _IJVXAUDIODECODER_H__
 
-JVX_INTERFACE IjvxAudioDecoder: public IjvxInterfaceFactory, public IjvxStateMachine
+JVX_INTERFACE IjvxAudioDecoder: public IjvxSimpleNode
 {
 public:	
 

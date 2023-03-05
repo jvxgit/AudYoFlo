@@ -91,6 +91,7 @@ public:
 	virtual jvxErrorType test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	void test_set_output_parameters() override; 
+	virtual void updateChainOutputParameter() override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_chain_master(
 		JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
@@ -133,6 +134,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stopped(jvxInt64 timestamp_us) override;
 	void read_samples_to_buffer();
+	void reconfigure_bsize(jvxSize bsize);
 
 	// ===================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);

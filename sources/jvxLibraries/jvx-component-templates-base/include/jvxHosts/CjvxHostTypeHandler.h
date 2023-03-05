@@ -108,6 +108,7 @@ protected:
 		technologiesT technologyInstances;
 		jvxComponentType selector[2];
 		jvxComponentTypeClass classType;
+		jvxComponentTypeClass childClassType;
 		std::string description;
 		std::string tokenInConfigFile;
 	} oneTechnologyType;
@@ -137,8 +138,8 @@ public:
 
 	jvxErrorType _component_class(jvxComponentType tp, jvxComponentTypeClass& tpCls);
 	jvxErrorType _add_type_host(IjvxObject* theObj, jvxComponentType* tp, jvxSize numtp, const char* description, 
-		const char* tokenConfig, jvxComponentTypeClass classType, jvxSize numSlotsMax = 1, 
-		jvxSize numSubSlotsMax = 1);
+		const char* tokenConfig, jvxComponentTypeClass classType, jvxSize numSlotsMax,
+		jvxSize numSubSlotsMax, jvxComponentTypeClass childClassType);
 
 	jvxErrorType _number_types_host(jvxSize* num, jvxComponentTypeClass classType);
 

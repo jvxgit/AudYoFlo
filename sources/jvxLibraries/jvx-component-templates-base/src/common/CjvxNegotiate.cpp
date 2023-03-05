@@ -13,20 +13,6 @@
 		str.dimX.max = bsize; \
 	}
 
-#define SET_CHANNELNUM_DIMY(res, str, numchans) \
-	if ( \
-		(str.number_channels.min != numchans) || \
-		(str.number_channels.max != numchans) || \
-		(str.dimY.min != numchans) || \
-		(str.dimY.max != numchans)) \
-	{ \
-		res = JVX_NEGOTIATE_CONSTRAINT_CHANGE; \
-		str.number_channels.min = numchans; \
-		str.number_channels.max = numchans; \
-		str.dimY.min = numchans; \
-		str.dimY.max = numchans; \
-	}
-
 #define SET_OTHER(res, str, param, val) \
 	if ( \
 		(str.param.min != val) || \
@@ -101,7 +87,7 @@ CjvxNegotiate_common::_set_parameters_fixed(
 	jvxSize segment_y)
 {
 	jvxConstraintSetResult res = JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE;
-	if (coupleBsizeDimX)
+	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
 		SET_BUFFERSIZE_DIMX(res, preferred, bsize);
 	}
@@ -110,9 +96,10 @@ CjvxNegotiate_common::_set_parameters_fixed(
 		SET_OTHER(res, preferred, buffersize, bsize);
 		SET_OTHER(res, preferred, dimX, segment_x);
 	}
-	if (coupleChannelsDimY)
+	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
-		SET_CHANNELNUM_DIMY(res, preferred, num_channels);
+		SET_OTHER(res, preferred, number_channels, num_channels);
+		SET_OTHER(res, preferred, dimY, 1);
 	}
 	else
 	{
@@ -137,7 +124,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 	jvxSize segment_y)
 {
 	jvxConstraintSetResult res = JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE;
-	if (coupleBsizeDimX)
+	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
 		if (JVX_CHECK_SIZE_SELECTED(bsize))
 		{
@@ -169,28 +156,20 @@ CjvxNegotiate_common::_update_parameters_fixed(
 		}
 	}
 
-	if (coupleChannelsDimY)
+	if (JVX_CHECK_SIZE_SELECTED(num_channels))
 	{
-		if (JVX_CHECK_SIZE_SELECTED(num_channels))
+		SET_OTHER(res, preferred, number_channels, num_channels);
+		if (datOut)
 		{
-			SET_CHANNELNUM_DIMY(res, preferred, num_channels);
-			if (datOut)
-			{
-				datOut->con_params.number_channels = num_channels;
-				datOut->con_params.segmentation_y = num_channels;
-			}
+			datOut->con_params.number_channels = num_channels;
 		}
+	}
+	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
+	{
+		SET_OTHER(res, preferred, dimY, 1);
 	}
 	else
 	{
-		if (JVX_CHECK_SIZE_SELECTED(num_channels))
-		{
-			SET_OTHER(res, preferred, number_channels, num_channels);
-			if (datOut)
-			{
-				datOut->con_params.number_channels = num_channels;
-			}
-		}
 		if (JVX_CHECK_SIZE_SELECTED(segment_y))
 		{
 			SET_OTHER(res, preferred, dimY, segment_y);
@@ -237,7 +216,7 @@ CjvxNegotiate_common::_clear_parameters_fixed(
 	jvxConstraintSetResult res = JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE;
 	if (bsizeset)
 	{
-		if (coupleBsizeDimX)
+		if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 		{
 			SET_BUFFERSIZE_DIMX(res, preferred,  JVX_SIZE_UNSELECTED);
 		}
@@ -251,21 +230,25 @@ CjvxNegotiate_common::_clear_parameters_fixed(
 		}
 	}
 	
-	if (numberchannelsset)
+	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
-		if (coupleChannelsDimY)
-		{
-			SET_CHANNELNUM_DIMY(res, preferred, JVX_SIZE_UNSELECTED);
-		}
-		else
+		if (numberchannelsset)
 		{
 			SET_OTHER(res, preferred, number_channels, JVX_SIZE_UNSELECTED);
-			if (segsizey)
-			{
-				SET_OTHER(res, preferred, dimY, JVX_SIZE_UNSELECTED);
-			}
 		}
 	}
+	else
+	{
+		if (numberchannelsset)
+		{
+			SET_OTHER(res, preferred, number_channels, JVX_SIZE_UNSELECTED);
+		}
+
+		if (segsizey)
+		{
+			SET_OTHER(res, preferred, dimY, JVX_SIZE_UNSELECTED);
+		}
+	}		
 	if (srateset)
 	{
 		SET_OTHER(res, preferred, samplerate, JVX_SIZE_UNSELECTED);
@@ -586,6 +569,27 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 			}
 		}
 
+		if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
+		{
+			if ((ld->con_params.segmentation_y != 1) ||
+				(ld->con_params.segmentation_x != ld->con_params.buffersize))
+			{
+				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
+				std::cout << " Seg X: " << ld->con_params.segmentation_x << " vs " << ld->con_params.buffersize << "." << std::endl;
+				std::cout << " Seg Y: " << ld->con_params.segmentation_y << " vs 1." << std::endl;
+			}
+		}
+		else
+		{
+			if ((ld->con_params.segmentation_y * ld->con_params.segmentation_x) != ld->con_params.buffersize)
+			{
+				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
+				std::cout << " Seg X x Seg Y = " << ld->con_params.segmentation_x << " X " <<
+					ld->con_params.segmentation_x << " = " << ld->con_params.buffersize << "." << std::endl;
+			}
+
+		}
+
 		// ===================================================================================
 		if (thereismismatch)
 		{
@@ -867,6 +871,27 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 				ld_cp.con_params.segmentation_y = preferred.dimY.max;
 			}
 		}
+		
+		if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
+		{
+			if ((ld_cp.con_params.segmentation_y != 1) ||
+				(ld_cp.con_params.segmentation_x != ld_cp.con_params.buffersize))
+			{
+				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
+				std::cout << " Seg X: " << ld_cp.con_params.segmentation_x << " vs " << ld_cp.con_params.buffersize << "." << std::endl;
+				std::cout << " Seg Y: " << ld_cp.con_params.segmentation_y << " vs 1." << std::endl;
+			}
+		}
+		else
+		{
+			if ((ld_cp.con_params.segmentation_y * ld_cp.con_params.segmentation_x) != ld_cp.con_params.buffersize)
+			{
+				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
+				std::cout << " Seg X x Seg Y = " << ld_cp.con_params.segmentation_x << " X " << 
+					ld_cp.con_params.segmentation_x << " = " << ld_cp.con_params.buffersize << "." << std::endl;
+			}
+		}
+
 
 		// ===================================================================================
 		if (thereismismatch)

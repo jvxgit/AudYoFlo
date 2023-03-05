@@ -364,6 +364,14 @@ CjvxAudioFileReaderDevice::get_configuration(jvxCallManagerConfiguration* callCo
 	return (JVX_NO_ERROR);
 }
 
+void
+CjvxAudioFileReaderDevice::updateChainOutputParameter()
+{	
+	CjvxAudioDevice::updateChainOutputParameter();
+
+	reconfigure_bsize(_common_set_ldslave.theData_out.con_params.buffersize);
+}
+
 jvxErrorType 
 CjvxAudioFileReaderDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
@@ -656,8 +664,7 @@ CjvxAudioFileReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 		CjvxAudioDevice_genpcg::properties_active.buffersize.value = 
 			jvx_wav_compute_bsize_audio(&file_params, ld_cp->con_params.buffersize);
 
-		file_params.bsize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
-		file_params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&file_params, file_params.bsize);
+		reconfigure_bsize(CjvxAudioDevice_genpcg::properties_active.buffersize.value);
 
 		_common_set_ldslave.theData_out.con_params.buffersize = file_params.fsizemax;
 		_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
@@ -909,6 +916,13 @@ CjvxAudioFileReaderDevice::read_samples_to_buffer()
 	jvxSize progress = 0;
 	wavFileReader.current_progress(&progress);
 	genFileReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)l_samples * 100.0);
+}
+
+void
+CjvxAudioFileReaderDevice::reconfigure_bsize(jvxSize bsize)
+{
+	file_params.bsize = bsize;
+	file_params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&file_params, file_params.bsize);
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFileReaderDevice, set_config)

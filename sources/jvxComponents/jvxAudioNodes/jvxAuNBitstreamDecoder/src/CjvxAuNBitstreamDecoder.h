@@ -7,9 +7,17 @@
 
 #include "HjvxMicroConnection.h"
 
-class CjvxAuNBitstreamDecoder: public CjvxBareNode1ioRearrange, 
+#include "CayfAuNFixedConnection.h"
+#define JVX_LOCAL_BASE_CLASS AyfConnection::CayfAuNFixedConnection<CjvxBareNode1ioRearrange>
+
+class CjvxAuNBitstreamDecoder: 
+	public JVX_LOCAL_BASE_CLASS,
+	public IayfConnectionStateSwitchNode,
+	/*
+	public CjvxBareNode1ioRearrange,
 	public HjvxMicroConnection_hooks_simple,
 	public HjvxMicroConnection_hooks_fwd,
+	*/
 	public genBitstreamDecoder_node
 {
 private:
@@ -41,7 +49,7 @@ private:
 	jvxSize id_selected = JVX_SIZE_UNSELECTED;
 
 	std::string config_token;
-	HjvxMicroConnection* theMicroConnection = nullptr;
+
 	IjvxAudioCodec* ptrCodec = nullptr;
 	IjvxAudioDecoder* theDecoder = nullptr;
 	IjvxProperties* theDecoderProps = nullptr;
@@ -72,29 +80,6 @@ public:
 
 	// ===================================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_start_icon(
-			jvxSize pipeline_offset,
-			jvxSize* idx_stage,
-			jvxSize tobeAccessedByStage,
-			callback_process_start_in_lock clbk,
-			jvxHandle* priv_ptr) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_stop_icon(
-			jvxSize idx_stage,
-			jvxBool operate_first_call,
-			jvxSize tobeAccessedByStage,
-			callback_process_stop_in_lock cb,
-			jvxHandle* priv_ptr)override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_processing_monitor);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
@@ -107,47 +92,13 @@ public:
 		IjvxConfigProcessor* processor,
 		jvxHandle* sectionWhereToAddAllSubsections)override;
 
-	// ========================================================================
-	// Interface HjvxMicroConnection_hooks_simple
-	// ========================================================================
-
-	virtual jvxErrorType hook_test_negotiate(jvxLinkDataDescriptor* proposed JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	virtual jvxErrorType hook_test_accept(jvxLinkDataDescriptor* dataIn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	virtual jvxErrorType hook_test_update(jvxLinkDataDescriptor* dataIn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	virtual jvxErrorType hook_check_is_ready(jvxBool* is_ready, jvxApiString* astr) override;
-	virtual jvxErrorType hook_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
-
-	// ========================================================================
-	// Interface HjvxMicroConnection_hooks_ext
-	// ========================================================================
-
-	virtual jvxErrorType hook_prepare(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-	virtual jvxErrorType hook_postprocess(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-
-	virtual jvxErrorType hook_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-	virtual jvxErrorType hook_stop(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-
-	virtual jvxErrorType hook_process_start(
-		jvxSize pipeline_offset,
-		jvxSize* idx_stage,
-		jvxSize tobeAccessedByStage,
-		callback_process_start_in_lock clbk,
-		jvxHandle* priv_ptr)override;
-	virtual jvxErrorType hook_process(
-		jvxSize mt_mask, jvxSize idx_stage) override;
-	virtual jvxErrorType hook_process_stop(
-		jvxSize idx_stage,
-		jvxBool shift_fwd,
-		jvxSize tobeAccessedByStage,
-		callback_process_stop_in_lock clbk,
-		jvxHandle* priv_ptr) override;
-
 	// ==============================================================================
-
-	jvxErrorType init_microconnection();
 	
-	jvxErrorType activate_decoder_connection(jvxSize idProc);
-	jvxErrorType release_decoder_connection();
+	jvxErrorType activate_decoder();
+	jvxErrorType deactivate_decoder();
 
+	virtual jvxErrorType runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node, const char* moduleName, IjvxObject* theOwner = nullptr) override;
+	virtual jvxErrorType componentsAboutToConnect() override;
+	virtual jvxErrorType runTestChainComplete(jvxErrorType lastResult, IjvxSimpleNode* node, const char* moduleName, jvxSize uniqueId) override;
 
 };

@@ -21,7 +21,7 @@ jvxErrorType
 CjvxAuNBitstreamDecoder::hook_test_accept(jvxLinkDataDescriptor* dataIn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = hook_test_update(dataIn  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	res = CjvxBareNode1ioRearrange::test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	res = JVX_LOCAL_BASE_CLASS::test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	return res;
 }
 
@@ -37,7 +37,7 @@ CjvxAuNBitstreamDecoder::hook_test_update(jvxLinkDataDescriptor* dataIn  JVX_CON
 jvxErrorType
 CjvxAuNBitstreamDecoder::hook_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	return CjvxBareNode1ioRearrange::_transfer_forward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	return JVX_LOCAL_BASE_CLASS::_transfer_forward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
 jvxErrorType

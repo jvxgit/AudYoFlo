@@ -683,9 +683,127 @@ CjvxHost::feature_class_component_system(const jvxComponentIdentification& tp, j
 	return(res);
 }
 
+jvxErrorType
+CjvxHost::role_component_system(jvxComponentType tp,
+	jvxComponentType* parentTp, jvxComponentType* childTp, 
+	jvxComponentTypeClass* classTp)
+{
+	std::string theDescr;
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	jvxSize num = 0;
+	jvxState stat = JVX_STATE_NONE;
+	IjvxDevice* dev = NULL;
+
+	if (parentTp)
+	{
+		*parentTp = JVX_COMPONENT_UNKNOWN;
+	}
+
+	if (childTp)
+	{
+		*childTp = JVX_COMPONENT_UNKNOWN;
+	}
+	if (classTp)
+	{
+		*classTp = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE;
+	}
+
+	std::vector<oneTechnologyType>::iterator elmIt_tech;
+	elmIt_tech = jvx_findItemSelectorInList_one<oneTechnologyType, jvxComponentType>(_common_set_types.registeredTechnologyTypes, tp, 0);
+	if (elmIt_tech != _common_set_types.registeredTechnologyTypes.end())
+	{
+		res = JVX_NO_ERROR;
+		if (childTp)
+		{
+			*childTp = elmIt_tech->selector[1];
+		}
+		if (classTp)
+		{
+			*classTp = elmIt_tech->classType;
+		}
+	}
+	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
+	{
+		std::vector<oneTechnologyType>::iterator elmIt_dev;
+		elmIt_dev = jvx_findItemSelectorInList_one<oneTechnologyType, jvxComponentType>(_common_set_types.registeredTechnologyTypes, tp, 1);
+		if (elmIt_dev != _common_set_types.registeredTechnologyTypes.end())
+		{
+			res = JVX_NO_ERROR;
+			if (parentTp)
+			{
+				*parentTp = elmIt_dev->selector[0];
+			}
+
+			if (classTp)
+			{
+				*classTp = elmIt_dev->childClassType;
+			}
+		}
+	}
+	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
+	{
+		std::vector<oneObjType<IjvxNode>>::iterator elmIt_ep;
+		elmIt_ep = jvx_findItemSelectorInList_one<oneObjType<IjvxNode>, jvxComponentType>(_common_set_types.registeredNodeTypes, tp, 0);
+
+		if (elmIt_ep != _common_set_types.registeredNodeTypes.end())
+		{
+			res = JVX_NO_ERROR;			
+			if (classTp)
+			{
+				*classTp = elmIt_ep->classType;
+			}
+		}
+	}
+	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
+	{
+		std::vector<oneObjType<IjvxSimpleComponent>>::iterator elmIt_si;
+		elmIt_si = jvx_findItemSelectorInList_one<oneObjType<IjvxSimpleComponent>, jvxComponentType>(_common_set_types.registeredSimpleTypes, tp, 0);
+
+		if (elmIt_si != _common_set_types.registeredSimpleTypes.end())
+		{
+			res = JVX_NO_ERROR;			
+			if (classTp)
+			{
+				*classTp = elmIt_si->classType;
+			}
+		}
+	}
+
+	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
+	{
+		if (tp == JVX_COMPONENT_HOST)
+		{
+			res = JVX_NO_ERROR;
+			if (classTp)
+			{
+				*classTp = jvxComponentTypeClass::JVX_COMPONENT_TYPE_HOST;
+			}
+		}
+		else if (tp == JVX_COMPONENT_PROCESSING_PROCESS)
+		{
+			res = JVX_NO_ERROR;
+			
+			if (classTp)
+			{
+				*classTp = jvxComponentTypeClass::JVX_COMPONENT_TYPE_PROCESS;
+			}
+		}
+		else if (tp == JVX_COMPONENT_PROCESSING_GROUP)
+		{
+			res = JVX_NO_ERROR;			
+			if (classTp)
+			{
+				*classTp = jvxComponentTypeClass::JVX_COMPONENT_TYPE_PROCESS;
+			}
+		}
+	}
+
+	return(res);
+}
+
 jvxErrorType 
-CjvxHost::number_slots_component_system(const jvxComponentIdentification& tp, jvxSize* szSlots_current, jvxSize* szSubSlots_current, 
-	jvxComponentType* parentTp, jvxComponentType* childTp, jvxSize* szSlots_max, jvxSize* szSubSlots_max)
+CjvxHost::number_slots_component_system(const jvxComponentIdentification& tp, jvxSize* szSlots_current,
+	jvxSize* szSubSlots_current, jvxSize* szSlots_max, jvxSize* szSubSlots_max)
 {
 	std::string theDescr;
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -702,15 +820,6 @@ CjvxHost::number_slots_component_system(const jvxComponentIdentification& tp, jv
 	{
 		*szSubSlots_current = 0;
 	}
-	if (parentTp)
-	{
-		*parentTp = JVX_COMPONENT_UNKNOWN;
-	}
-
-	if (childTp)
-	{
-		*childTp = JVX_COMPONENT_UNKNOWN;
-	}
 	if (szSlots_max)
 	{
 		*szSlots_max = 0;
@@ -719,17 +828,14 @@ CjvxHost::number_slots_component_system(const jvxComponentIdentification& tp, jv
 	if (szSubSlots_max)
 	{
 		*szSubSlots_max = 0;
-	}
+	}	
 
 	std::vector<oneTechnologyType>::iterator elmIt_tech;
 	elmIt_tech = jvx_findItemSelectorInList_one<oneTechnologyType, jvxComponentType>(_common_set_types.registeredTechnologyTypes, tp.tp, 0);
 	if (elmIt_tech != _common_set_types.registeredTechnologyTypes.end())
 	{
 		res = JVX_NO_ERROR;
-		if (childTp)
-		{
-			*childTp = elmIt_tech->selector[1];
-		}
+		
 		if (szSlots_current)
 		{
 			*szSlots_current = elmIt_tech->technologyInstances.selTech.size();
@@ -754,11 +860,6 @@ CjvxHost::number_slots_component_system(const jvxComponentIdentification& tp, jv
 		if (elmIt_dev != _common_set_types.registeredTechnologyTypes.end())
 		{
 			res = JVX_NO_ERROR;
-			if (parentTp)
-			{
-				*parentTp = elmIt_dev->selector[0];
-			}
-
 			if (szSlots_current)
 			{
 				*szSlots_current = elmIt_dev->technologyInstances.selTech.size();

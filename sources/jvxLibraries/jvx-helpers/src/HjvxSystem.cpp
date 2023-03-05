@@ -112,7 +112,8 @@ static jvxTextHelpers jvxComponentTypeClass_str_[(int)jvxComponentTypeClass::JVX
 	{ "codecs", "JVX_COMPONENT_TYPE_CODEC"},
 	{ "tools", "JVX_COMPONENT_TYPE_TOOL" },
 	{ "simple", "JVX_COMPONENT_TYPE_SIMPLE"},
-	{ "device", "JVX_COMPONENT_TYPE_DEVICE"}
+	{ "device", "JVX_COMPONENT_TYPE_DEVICE"},
+	{ "process", "JVX_COMPONENT_TYPE_PROCESS"}
 };
 
 jvxTextHelpers* jvxComponentTypeClass_str()

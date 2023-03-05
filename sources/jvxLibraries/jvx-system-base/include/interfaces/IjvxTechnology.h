@@ -1,7 +1,7 @@
 #ifndef __IJVXTECHNOLOGY_H__
 #define __IJVXTECHNOLOGY_H__
 
-JVX_INTERFACE IjvxTechnology: public IjvxMainComponent
+JVX_INTERFACE IjvxTechnology: public IjvxNode
 {
 public:
 

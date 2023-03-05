@@ -263,6 +263,7 @@ CjvxAudioEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 	jvxLinkDataDescriptor* ld_cp = nullptr;
 	jvxLinkDataDescriptor forward;
+	jvxApiString famToken;
 	switch (tp)
 	{
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
@@ -274,7 +275,8 @@ CjvxAudioEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 			{
 				wav_params params_check;
 				std::string config_token_complain = ld_cp->con_params.format_spec->std_str();
-				jvxErrorType resL = jvx_wav_configtoken_2_values(config_token_complain.c_str(), &params_check);
+				jvxErrorType resL = jvx_wav_configtoken_2_values(config_token_complain.c_str(), &params_check,
+					&famToken);
 				if (resL != JVX_NO_ERROR)
 				{
 					forwardRequest = true;
@@ -695,8 +697,9 @@ CjvxAudioEncoder::update_configure_token(const char* token)
 	jvxErrorType res = JVX_ERROR_INVALID_FORMAT;
 	if (token)
 	{
+		jvxApiString famToken;
 		wav_params params_new;
-		res = jvx_wav_configtoken_2_values( token,  & params_new);
+		res = jvx_wav_configtoken_2_values( token,  & params_new, &famToken);
 
 		// When do we accept new settings? We might restrict it to lower bit resolutions if
 		// processing is already on

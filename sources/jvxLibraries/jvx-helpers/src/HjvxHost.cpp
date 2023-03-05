@@ -46,7 +46,8 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 			jvxSize cntCorrect = 0;
 
 			jvxComponentIdentification tpIdN((jvxComponentType)i);
-			hHost->number_slots_component_system(tpIdN, &szSlots, &szSubSlots, &tpP, &tpC, &numSlotsMax, &numSubSlotsMax);
+			hHost->role_component_system(tpIdN.tp, &tpP, &tpC, nullptr);
+			hHost->number_slots_component_system(tpIdN, &szSlots, &szSubSlots, &numSlotsMax, &numSubSlotsMax);
 			if (tpP == JVX_COMPONENT_UNKNOWN)
 			{
 				// Primary component
@@ -298,7 +299,8 @@ void deactivate_default_components_host(const char** lst_ModulesOnStart[JVX_COMP
 			jvxSize cntCorrect = 0;
 
 			jvxComponentIdentification tpIdN((jvxComponentType)i);
-			hHost->number_slots_component_system(tpIdN, &szSlots, &szSubSlots, &tpP, &tpC, &numSlotsMax, &numSubSlotsMax);
+			hHost->role_component_system(tpIdN.tp, &tpP, &tpC, nullptr);
+			hHost->number_slots_component_system(tpIdN, &szSlots, &szSubSlots, &numSlotsMax, &numSubSlotsMax);
 			if (tpP == JVX_COMPONENT_UNKNOWN)
 			{
 				for (j = 0; j < szSlots; j++)

@@ -99,14 +99,18 @@ class CjvxNegotiate_common
 	} ;
 public:
 
+	enum class negBehaviorType
+	{
+		JVX_BEHAVIOR_AUDIO,
+		JVX_BEHAVIOR_VIDEO
+	};
 	std::vector<dedicatedSetup> allowedSetup;
 	jvxNegotiateParamsRange preferred;
 	jvxNegotiateParamsRange stack_preferred;
 	jvxBool stack_pushed;
 	jvxLinkDataDescriptor_con_params _latest_results;
-	jvxBool coupleBsizeDimX = true;
-	jvxBool coupleChannelsDimY = true;
-
+	negBehaviorType negBehavior = negBehaviorType::JVX_BEHAVIOR_AUDIO;
+	
 public:
 
 	CjvxNegotiate_common();

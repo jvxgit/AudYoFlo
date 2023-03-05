@@ -61,8 +61,9 @@ CjvxHostTypeHandler::_component_class(jvxComponentType tp, jvxComponentTypeClass
 
 jvxErrorType
 CjvxHostTypeHandler::_add_type_host(IjvxObject* theObj, jvxComponentType* tp, jvxSize numtp, const char* description,
-	const char* tokenConfig, jvxComponentTypeClass classType, jvxSize numSlotsMax,
-	jvxSize numSubSlotsMax)
+	const char* tokenConfig, 
+	jvxComponentTypeClass classType, jvxSize numSlotsMax,
+	jvxSize numSubSlotsMax, jvxComponentTypeClass childClassType)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxState theState = JVX_STATE_NONE;
@@ -93,6 +94,7 @@ CjvxHostTypeHandler::_add_type_host(IjvxObject* theObj, jvxComponentType* tp, jv
 					if (numtp >= 2)
 					{
 						newElm_tech.classType = classType;
+						newElm_tech.childClassType = childClassType;
 						newElm_tech.description = description;
 						newElm_tech.tokenInConfigFile = tokenConfig;
 						newElm_tech.selector[0] = tp[0];
@@ -125,7 +127,7 @@ CjvxHostTypeHandler::_add_type_host(IjvxObject* theObj, jvxComponentType* tp, jv
 
 				case jvxComponentTypeClass::JVX_COMPONENT_TYPE_SIMPLE:
 
-					newElm_simple.classType = classType;
+					newElm_simple.classType = classType;					
 					newElm_simple.description = description;
 					newElm_simple.tokenInConfigFile = tokenConfig;
 					newElm_simple.selector[0] = tp[0];

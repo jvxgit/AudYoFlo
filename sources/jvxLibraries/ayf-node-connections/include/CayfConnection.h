@@ -20,7 +20,7 @@ namespace AyfConnection
 	public:		
 		jvxComponentIdentification cpTp = JVX_COMPONENT_UNKNOWN;
 		IjvxObject* theObj = nullptr;
-		IjvxNode* theNode = nullptr;
+		IjvxSimpleNode* theNode = nullptr;
 		jvxBool activatedInSystem = false;
 		std::string modName = "not-set";
 		std::string inputConnectorName = "default";

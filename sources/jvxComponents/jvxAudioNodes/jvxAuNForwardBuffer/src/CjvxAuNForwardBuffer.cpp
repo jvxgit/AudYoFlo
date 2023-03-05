@@ -107,8 +107,14 @@ CjvxAuNForwardBuffer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 void
 CjvxAuNForwardBuffer::test_set_output_parameters()
 {
+	neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels,
+		JVX_SIZE_UNSELECTED, // Leave the buffersize open and accept next component proposal
+		node_output._common_set_node_params_a_1io.samplerate,
+		(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
+		(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat);
+	CjvxBareNode1ioRearrange::test_set_output_parameters();
 	// Create the link between input and output channel number
-	node_output._common_set_node_params_a_1io.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
+	// node_output._common_set_node_params_a_1io.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
 }
 // ===================================================================
 

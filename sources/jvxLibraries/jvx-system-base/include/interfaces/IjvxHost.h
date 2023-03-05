@@ -22,12 +22,18 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION module_reference_component_system( const jvxComponentIdentification&, jvxSize idx, jvxApiString*, jvxComponentAccessType* acTp) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION feature_class_component_system( const jvxComponentIdentification&, jvxSize idx, jvxBitField*) = 0;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION role_component_system(
+		jvxComponentType tp,
+		jvxComponentType* parentTp = NULL,
+		jvxComponentType* childTp = NULL,
+		jvxComponentTypeClass* classTp = NULL) = 0;
+
 	// List the slots and the subslots and access components in slots
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_slots_component_system( 
 		const jvxComponentIdentification&, jvxSize* szSlots, 
-		jvxSize* szSubPlots, jvxComponentType* parentTp = NULL,
-		jvxComponentType* childTp = NULL, jvxSize* szSlots_max = NULL, 
-		jvxSize* szSubSlots_max = NULL) = 0;
+		jvxSize* szSubPlots, 
+		jvxSize* szSlots_max, 
+		jvxSize* szSubSlots_max) = 0;
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION set_number_subslots_system(
 		const jvxComponentIdentification&, jvxSize newVal) = 0;

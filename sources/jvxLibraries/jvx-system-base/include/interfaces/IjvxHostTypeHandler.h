@@ -9,8 +9,10 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION component_class(jvxComponentType tp, jvxComponentTypeClass& tpCls) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION add_type_host(jvxComponentType* tp, jvxSize numtp, const char* description, const char* tokenConfig, 
-		jvxComponentTypeClass classType, jvxSize numSlotsMax = 1, jvxSize numSubSlotsMax = 1) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION add_type_host(jvxComponentType* tp, 
+		jvxSize numtp, const char* description, const char* tokenConfig, 
+		jvxComponentTypeClass classType, jvxSize numSlotsMax = 1, jvxSize numSubSlotsMax = 1, 
+		jvxComponentTypeClass childClassType = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_types_host(jvxSize* num, jvxComponentTypeClass classType) = 0;
 

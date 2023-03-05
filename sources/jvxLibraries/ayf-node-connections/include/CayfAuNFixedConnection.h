@@ -359,8 +359,11 @@ namespace AyfConnection
 				res = CayfAuNConnection<S>::theConnection.test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 				if (res == JVX_NO_ERROR)
 				{
+					// Found in class CjvxBareNode1io
+					update_simple_params_from_ldesc();
+
 					// From here we approach everything following the micro chain!!
-					res = CayfAuNConnection<S>::_test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+					res = CayfAuNConnection<S>::_test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));					
 				}
 			}
 			else

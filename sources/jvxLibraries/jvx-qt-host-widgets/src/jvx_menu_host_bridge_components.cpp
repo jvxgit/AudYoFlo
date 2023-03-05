@@ -54,7 +54,9 @@ jvx_menu_host_bridge_components::createMenues(configureHost_features* host_featu
 				assert(theClassAssociation[i].comp_sec_type != JVX_COMPONENT_UNKNOWN);
 				theItems.reset();
 
-				hHost_ref->number_slots_component_system(cpId, NULL, NULL, NULL, &childTp, &numSlotsMax, &numSubSlotsMax);
+				hHost_ref->role_component_system(cpId.tp, NULL, &childTp, nullptr);
+				hHost_ref->number_slots_component_system(cpId, NULL, NULL, &numSlotsMax, &numSubSlotsMax);
+
 				//cpId.slotid = tpAll[i].slotid;
 				//involvedHost.hHost->number_slots_component(cpId, NULL, &numSubSlots);
 
@@ -165,7 +167,7 @@ jvx_menu_host_bridge_components::createMenues(configureHost_features* host_featu
 				assert(theClassAssociation[i].comp_sec_type == JVX_COMPONENT_UNKNOWN);
 				theItems.reset();
 
-				hHost_ref->number_slots_component_system(cpId, NULL, NULL, NULL, NULL, &numSlotsMax, &numSubSlotsMax);
+				hHost_ref->number_slots_component_system(cpId, NULL, NULL, &numSlotsMax, &numSubSlotsMax);
 				cpId.slotid = tpAll_ref[i].slotid;
 				//involvedHost.hHost->number_slots_component(cpId, NULL, &numSubSlots);
 
@@ -333,7 +335,7 @@ jvx_menu_host_bridge_components::menuUpdate_oneComponentType(
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType res2 = JVX_NO_ERROR;
 
-	hHost_ref->number_slots_component_system(tp, &numSlots, &numSubSlots, NULL, NULL, &numSlotsMax, &numSubSlotsMax);
+	hHost_ref->number_slots_component_system(tp, &numSlots, &numSubSlots, &numSlotsMax, &numSubSlotsMax);
 	if (isPriComp)
 	{
 		//std::cout << jvxComponentIdentification_txt(tp) << ": slots=" << numSlots << "; slotsmax=" << numSlotsMax << std::endl;
@@ -1243,7 +1245,7 @@ jvx_menu_host_bridge_components::action_int_selection_slot()
 							tpAll_ref[id].slotsubid = id_ssid;
 						}
 
-						hHost_ref->number_slots_component_system((jvxComponentType)id, NULL, NULL, NULL, &childTp);
+						hHost_ref->role_component_system((jvxComponentType)id, NULL, &childTp, nullptr);
 						if (childTp != JVX_COMPONENT_UNKNOWN)
 						{
 							tpAll_ref[childTp].slotid = tpAll_ref[id].slotid;
@@ -1276,7 +1278,7 @@ jvx_menu_host_bridge_components::action_int_selection_slot()
 								tpAll_ref[id] = tpAllNext[id];
 							}
 						}
-						hHost_ref->number_slots_component_system((jvxComponentType)id, NULL, NULL, NULL, &childTp);
+						hHost_ref->role_component_system((jvxComponentType)id, NULL, &childTp, nullptr);						
 						if (childTp != JVX_COMPONENT_UNKNOWN)
 						{
 							tpAll_ref[childTp].slotid = tpAll_ref[id].slotid;

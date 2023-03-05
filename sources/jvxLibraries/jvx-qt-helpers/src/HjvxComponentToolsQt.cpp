@@ -42,7 +42,8 @@ void jvx_qt_listComponentsInComboBox_(bool addressesStandardComponents, QComboBo
 		}
 		cnt++;
 
-		hostRef->number_slots_component_system(cpTp, &szSlots, NULL, &parTp);
+		hostRef->role_component_system(cpTp.tp, &parTp, nullptr, nullptr);
+		hostRef->number_slots_component_system(cpTp, &szSlots, NULL, nullptr, nullptr);
 
 		if (parTp == JVX_COMPONENT_UNKNOWN)
 		{
@@ -88,7 +89,8 @@ void jvx_qt_listComponentsInComboBox_(bool addressesStandardComponents, QComboBo
 			for (j = 0; j < szSlots; j++)
 			{
 				cpTp.slotid = j;
-				hostRef->number_slots_component_system(cpTp, NULL, &szSubSlotId, &parTp);
+				hostRef->role_component_system(cpTp.tp, &parTp, nullptr, nullptr),
+				hostRef->number_slots_component_system(cpTp, NULL, &szSubSlotId, nullptr, nullptr);
 				for (k = 0; k < szSlots; k++)
 				{
 					cpTp.slotid = j;

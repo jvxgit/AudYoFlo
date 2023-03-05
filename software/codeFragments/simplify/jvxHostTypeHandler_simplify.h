@@ -3,9 +3,12 @@
 		return(_component_class(tp, tpCls));
 	};
 
-	jvxErrorType add_type_host(jvxComponentType* tp, jvxSize numtp, const char* description, const char* tokenConfig, jvxComponentTypeClass classType, jvxSize numSlotsMax, jvxSize numSubslotsMax) override
+	jvxErrorType add_type_host(jvxComponentType* tp, jvxSize numtp, const char* description, const char* tokenConfig, 
+		jvxComponentTypeClass classType, 
+		jvxSize numSlotsMax, jvxSize numSubslotsMax, jvxComponentTypeClass childClassType) override
 	{
-		return(_add_type_host(static_cast<IjvxObject*>(this), tp, numtp, description, tokenConfig, classType, numSlotsMax, numSubslotsMax));
+		return(_add_type_host(static_cast<IjvxObject*>(this), tp, numtp, description, tokenConfig, 
+			classType, numSlotsMax, numSubslotsMax, childClassType));
 	};
 
 	jvxErrorType number_types_host(jvxSize* num, jvxComponentTypeClass classType)override

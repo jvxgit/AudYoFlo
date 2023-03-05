@@ -37,7 +37,11 @@ CjvxNVTasks::accept_input_settings_vtask_stop(
 	auto elm = ocon.begin();
 	for (; elm != ocon.end(); elm++)
 	{
-		(*elm)->neg._pop_constraints();
+		// Push only happened if there is a following connection
+		if ((*elm)->con)
+		{
+			(*elm)->neg._pop_constraints();
+		}
 	}
 }
 

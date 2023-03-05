@@ -63,11 +63,15 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*, jvxApiString*) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION module_reference_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*, jvxComponentAccessType* acTp) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION feature_class_component_system(const jvxComponentIdentification&, jvxSize idx, jvxBitField*) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION role_component_system(
+		jvxComponentType tp,
+		jvxComponentType* parentTp, 
+		jvxComponentType* childTp, 
+		jvxComponentTypeClass* classTp) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_slots_component_system(
 		const jvxComponentIdentification&, jvxSize* szSlots, 
-		jvxSize* szSubPlots, jvxComponentType* parentTp, 
-		jvxComponentType* childTp, jvxSize* szSlots_max, 
-		jvxSize* szSubSlots_max ) override;
+		jvxSize* szSubPlots, jvxSize* szSlots_max, 
+		jvxSize* szSubSlots_max) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION set_number_subslots_system(
 		const jvxComponentIdentification&, jvxSize newVal) override;
 

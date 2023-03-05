@@ -14,7 +14,6 @@ CjvxAudioDecoder::CjvxAudioDecoder(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
 	_common_set.theInterfaceFactory = static_cast<IjvxInterfaceFactory*>(this);
 	myParent = NULL;
-	neg_input.coupleChannelsDimY = false;
 }
 
 CjvxAudioDecoder::~CjvxAudioDecoder()
@@ -76,8 +75,8 @@ jvxErrorType
 CjvxAudioDecoder::set_configure_token(const char* tokenArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	
-	jvx_wav_configtoken_2_values(tokenArg, &params);
+	jvxApiString famToken;
+	jvx_wav_configtoken_2_values(tokenArg, &params, &famToken);
 
 	CjvxAudioCodec_genpcg::general.max_number_bytes.value = params.fsizemax;
 	CjvxAudioCodec_genpcg::general.samplerate.value = params.srate;
@@ -224,6 +223,7 @@ CjvxAudioDecoder::test_set_output_parameters()
 		}
 	}
 	*/
+	// The output side is "audio"
 	_common_set_ldslave.theData_out.con_params.rate = CjvxAudioCodec_genpcg::general.samplerate.value;
 	_common_set_ldslave.theData_out.con_params.number_channels = CjvxAudioCodec_genpcg::general.num_audio_channels.value;
 	_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)CjvxAudioCodec_genpcg::general.audio_format.value;

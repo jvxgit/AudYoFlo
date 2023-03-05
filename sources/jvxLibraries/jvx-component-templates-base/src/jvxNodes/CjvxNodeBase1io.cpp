@@ -347,8 +347,13 @@ CjvxNodeBase1io::constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg
 	JVX_MIN_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ldslave.theData_out.con_params.number_channels);
 	// ===================================================================
 
-	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = _common_set_ldslave.theData_out.con_params.number_channels;
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation_x);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation_x);
+
+	// ===================================================================
+
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation_y);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation_y);
 
 	// ===================================================================
 	// Prefer min format

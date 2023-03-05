@@ -147,7 +147,7 @@ public:
 	virtual jvxErrorType deactivate_lock();
 
 	jvxErrorType currentSetupAudioParams(jvxAudioParams& params);
-	void updateChainOutputParameter();
+	virtual void updateChainOutputParameter();
 
 	// Special function to react on complain function during test: it should find a good match 
 	// for rate and size. Only to be used in case tp == JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS

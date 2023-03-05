@@ -43,6 +43,7 @@ jvxBool checkComponentType(jvxComponentType tp)
 	case JVX_COMPONENT_AUDIO_NODE:
 	case JVX_COMPONENT_VIDEO_NODE:
 	case JVX_COMPONENT_CUSTOM_NODE:
+	case JVX_COMPONENT_APPLICATION_CONTROLLER_NODE:
 
 #ifdef JVX_COMPONENT_CASE_NODE
 	JVX_COMPONENT_CASE_NODE
@@ -53,6 +54,15 @@ jvxBool checkComponentType(jvxComponentType tp)
 			result = true;
 		}
 		break;
+
+	case JVX_COMPONENT_AUDIO_DECODER:
+	case JVX_COMPONENT_AUDIO_ENCODER:
+		if (std::is_same<T, IjvxSimpleNode>::value)
+		{
+			result = true;
+		}
+		break;
+
 	case JVX_COMPONENT_MIN_HOST:
 		if (std::is_same<T, IjvxMinHost>::value)
 		{

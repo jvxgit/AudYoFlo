@@ -1367,7 +1367,8 @@ jvx_match_slots(IjvxHost* theHost, jvxComponentIdentification& tpThis, const jvx
 		(tpThis.slotsubid == JVX_SIZE_SLOT_RETAIN))
 	{
 		tmp.tp = tpToThis.tp;
-		theHost->number_slots_component_system(tmp, &szSlots, NULL, &parTp);
+		theHost->role_component_system(tmp.tp, & parTp, nullptr, nullptr);
+		theHost->number_slots_component_system(tmp, &szSlots, NULL,  nullptr, nullptr);
 		if (parTp == JVX_COMPONENT_UNKNOWN)
 		{
 			if (JVX_CHECK_SIZE_UNSELECTED(tpToThis.slotid))
@@ -1389,7 +1390,8 @@ jvx_match_slots(IjvxHost* theHost, jvxComponentIdentification& tpThis, const jvx
 				for (i = 0; i < tpToThis.slotid; i++)
 				{
 					tmp.slotid = i;
-					theHost->number_slots_component_system(tmp, &szSlots, &szSubSlots, &parTp);
+					theHost->role_component_system(tmp.tp, &parTp, nullptr, nullptr);
+					theHost->number_slots_component_system(tmp, &szSlots, &szSubSlots, nullptr, nullptr);
 					linslotidTo += szSubSlots;
 				}
 				linslotidTo += tpToThis.slotsubid;
@@ -1398,7 +1400,8 @@ jvx_match_slots(IjvxHost* theHost, jvxComponentIdentification& tpThis, const jvx
 
 		tmp.tp = tpThis.tp;
 		slotsNotFound = true;
-		theHost->number_slots_component_system(tmp, &szSlots, NULL, &parTp);
+		theHost->role_component_system(tmp.tp, &parTp, nullptr, nullptr);
+		theHost->number_slots_component_system(tmp, &szSlots, NULL, nullptr, nullptr);
 		if (parTp == JVX_COMPONENT_UNKNOWN)
 		{
 			slotsNotFound = false;
@@ -1416,7 +1419,7 @@ jvx_match_slots(IjvxHost* theHost, jvxComponentIdentification& tpThis, const jvx
 			for (i = 0; i < szSlots; i++)
 			{
 				tmp.slotid = i;
-				theHost->number_slots_component_system(tmp, NULL, &szSubSlots, NULL);
+				theHost->number_slots_component_system(tmp, NULL, &szSubSlots, nullptr, nullptr);
 				if (linslotidTo < szSubSlots)
 				{
 					slotsNotFound = false;

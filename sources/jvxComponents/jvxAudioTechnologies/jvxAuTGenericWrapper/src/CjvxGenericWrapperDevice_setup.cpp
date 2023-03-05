@@ -605,7 +605,7 @@ CjvxGenericWrapperDevice::updateSWSamplerateAndBuffersize_nolock(jvxLinkDataDesc
 
 		jvx_bitFClear(toDevice->con_params.hints);
 		toDevice->con_params.segmentation_x = toDevice->con_params.buffersize;
-		toDevice->con_params.segmentation_y = toDevice->con_params.number_channels;
+		toDevice->con_params.segmentation_y = 1;
 		toDevice->con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 		// release_countchannels_datatype(params); <- not require since local variable

@@ -133,6 +133,7 @@ CjvxBareNode1ioRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 	}
 	return res;
 }
+
 void
 CjvxBareNode1ioRearrange::update_output_params_from_input_params()
 {

@@ -15,11 +15,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
 
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection/include
+
+  ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-node-connections/include
+  ${JVX_SUBPRODUCT_BINARY_INCLUDE_PATH}/ayf-node-connections/generated
   )
 
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAuNBitstreamDecoder.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAuNBitstreamDecoder_hooks.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAuNBitstreamDecoder.h
   )
 
@@ -29,6 +31,7 @@ set(LOCAL_PCG_FILES
 
 set(LOCAL_LIBS 
   jvx-component-templates-base_static
+  ayf-node-connections_static
   jvx-micro-connection_static
   jvx-dsp-cpp_static
   )

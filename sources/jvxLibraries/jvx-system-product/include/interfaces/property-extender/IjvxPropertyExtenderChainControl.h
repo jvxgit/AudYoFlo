@@ -14,7 +14,7 @@ public:
 	 * must be selected. The caller of the callback does NOT run the select itself unless the function
 	 * returns error code <JVX_ERROR_UNSUPPORTED>.
 	 *///====================================================================================================================
-	virtual jvxErrorType runStateSwitch(jvxStateSwitch ss, IjvxNode* node, const char* moduleName, IjvxObject* theOwner = nullptr) = 0;
+	virtual jvxErrorType runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node, const char* moduleName, IjvxObject* theOwner = nullptr) = 0;
 
 	/**
 	 * This function is called right before the chain is setup by connecting the components. At this moment, all 
@@ -26,7 +26,7 @@ public:
 	 * This function is called on every test run of the micro connection. With every test run the processing parameters may have changed
 	 * and may yield a specific action for automation. The test should never be run if the components are in state PROCESSING.
 	 *///====================================================================================================================
-	virtual jvxErrorType runTestChainComplete(jvxErrorType lastResult, IjvxNode* node, const char* moduleName, jvxSize uniqueId) = 0;
+	virtual jvxErrorType runTestChainComplete(jvxErrorType lastResult, IjvxSimpleNode* node, const char* moduleName, jvxSize uniqueId) = 0;
 };
 
 JVX_INTERFACE IjvxPropertyExtenderChainControl

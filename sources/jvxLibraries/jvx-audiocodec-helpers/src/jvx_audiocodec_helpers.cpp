@@ -79,9 +79,9 @@ jvx_acodec_values_2_configtoken(
 // ========================================================================================
 
 jvxErrorType
-jvx_wav_configtoken_2_values(
+jvx_codec_configtoken_2_fam(
 	const char* tokenArg,
-	wav_params* params)
+	jvxApiString& astrFam)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool err = false;
@@ -109,28 +109,90 @@ jvx_wav_configtoken_2_values(
 			jvxBool err = false;
 			token1 = token.substr(0, posi);
 			token2 = token.substr(posi + 1, std::string::npos);
-			if (token1 == "tp")
+			if (token1 == "fam")
 			{
-				res = JVX_NO_ERROR;
-				if (token2 == "wav64sony")
+				astrFam = token2;
+				return JVX_NO_ERROR;				
+			}
+		}
+	}
+	return res;
+}
+
+jvxErrorType
+jvx_wav_configtoken_2_values(
+	const char* tokenArg,
+	wav_params* params,
+	jvxApiString* astrFam)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxBool err = false;
+	jvxSize i;
+	std::string token1;
+	std::string token2;
+
+	// Decompose into tokens
+	std::vector<std::string> expr = jvx_parseCsvStringExpression(tokenArg, err);
+	if (err)
+	{
+		return JVX_ERROR_PARSE_ERROR;
+	}
+
+	res = JVX_ERROR_INVALID_FORMAT;
+
+	// Find the type
+	for (i = 0; i < expr.size(); i++)
+	{
+		std::string token = expr[i];
+		size_t posi = std::string::npos;
+		posi = token.find("=");
+		if (posi != std::string::npos)
+		{
+			jvxBool err = false;
+			token1 = token.substr(0, posi);
+			token2 = token.substr(posi + 1, std::string::npos);
+			if (astrFam)
+			{
+				if (token1 == "fam")
 				{
-					params->sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64_SONY;
+					if (astrFam)
+					{
+						*astrFam = token2;
+					}
 				}
-				else if (token2 == "wav64")
+			}
+			if (params)
+			{
+				if (token1 == "tp")
 				{
-					params->sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64;
-				}
-				else if(token2 == "wav32")
-				{
-					params->sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_32;
-				}
-				else
-				{
-					res = JVX_ERROR_INVALID_FORMAT;
+					res = JVX_NO_ERROR;
+					if (token2 == "wav64sony")
+					{
+						params->sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64_SONY;
+					}
+					else if (token2 == "wav64")
+					{
+						params->sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64;
+					}
+					else if (token2 == "wav32")
+					{
+						params->sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_32;
+					}
+					else
+					{
+						res = JVX_ERROR_INVALID_FORMAT;
+					}
 				}
 			}
 		}
 	}
+
+	// If we do not need any wav params, return here!
+	if (!params)
+	{
+		return res;
+	}
+
 	// If type was correct, scan for paramters
 	if (res == JVX_NO_ERROR)
 	{
@@ -198,7 +260,8 @@ jvx_wav_values_2_configtoken(
 	jvxBool err = false;
 	jvxSize i;
 	
-	tokenRet = "tp=";
+	tokenRet = "fam=jvx;";
+	tokenRet += "tp=";
 	switch (paramsArg->sub_type)
 	{
 	case audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64_SONY:

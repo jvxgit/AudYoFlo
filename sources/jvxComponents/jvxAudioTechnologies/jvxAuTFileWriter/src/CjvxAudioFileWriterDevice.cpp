@@ -263,6 +263,7 @@ CjvxAudioFileWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 	std::string config_token;
 	wav_params passed_props;
+	jvxApiString famToken;
 	jvxSize i;
 	// Here we detect the provided parameters. We may setup another setup
 	if (_common_set_ldslave.theData_in->con_params.format_spec)
@@ -272,7 +273,8 @@ CjvxAudioFileWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		jvxErrorType resL = jvx_wav_configtoken_2_values(
 			config_token.c_str(),
-			&passed_props);
+			&passed_props,
+			&famToken);
 
 		file_params.bsize = passed_props.bsize;
 		file_params.srate = passed_props.srate;

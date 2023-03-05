@@ -81,7 +81,14 @@ namespace AyfConnection
 				newNode.uId = uid;
 				theObj->request_specialization(nullptr, &newNode.cpTp, nullptr);
 				theObj->state(&newNode.statOnInit);
+
+				// Can be IjvxSimpleNode OR IjvxNode
 				newNode.theNode = castFromObject<IjvxNode>(theObj);
+				if (!newNode.theNode)
+				{
+					// Try the simple node - required for audio encoder and decoder
+					newNode.theNode = castFromObject<IjvxSimpleNode>(theObj);
+				}
 				newNode.activatedInSystem = activatedInSystem;
 				if (newNode.theNode)
 				{

@@ -1,7 +1,7 @@
 #ifndef __IJVXDEVICE_H__
 #define __IJVXDEVICE_H__
 
-JVX_INTERFACE IjvxDevice: public IjvxMainComponent
+JVX_INTERFACE IjvxDevice: public IjvxNode
 {
 	
 public:

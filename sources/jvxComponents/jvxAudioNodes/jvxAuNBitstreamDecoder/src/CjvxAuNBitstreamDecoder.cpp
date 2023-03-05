@@ -2,7 +2,7 @@
 #include "jvx-helpers-cpp.h"
 
 CjvxAuNBitstreamDecoder::CjvxAuNBitstreamDecoder(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	JVX_LOCAL_BASE_CLASS(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_NODE_TYPE_SPECIFIER_TYPE);
 	_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
@@ -28,7 +28,7 @@ CjvxAuNBitstreamDecoder::~CjvxAuNBitstreamDecoder()
 jvxErrorType 
 CjvxAuNBitstreamDecoder::select(IjvxObject* owner)
 {
-	jvxErrorType res = CjvxBareNode1ioRearrange::select(owner);
+	jvxErrorType res = JVX_LOCAL_BASE_CLASS::select(owner);
 	if (res == JVX_NO_ERROR)
 	{
 		/*
@@ -47,7 +47,7 @@ CjvxAuNBitstreamDecoder::select(IjvxObject* owner)
 jvxErrorType 
 CjvxAuNBitstreamDecoder::unselect()
 {
-	jvxErrorType res = CjvxBareNode1ioRearrange::unselect();
+	jvxErrorType res = JVX_LOCAL_BASE_CLASS::unselect();
 	if (res == JVX_NO_ERROR)
 	{
 		/*
@@ -65,7 +65,7 @@ CjvxAuNBitstreamDecoder::unselect()
 jvxErrorType
 CjvxAuNBitstreamDecoder::activate()
 {
-	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
+	jvxErrorType res = JVX_LOCAL_BASE_CLASS::activate();
 	if (res == JVX_NO_ERROR)
 	{
 		jvxSize num = 0;
@@ -80,15 +80,6 @@ CjvxAuNBitstreamDecoder::activate()
 				lstCodecInstances[i] = retI;
 			}
 		}
-
-		theMicroConnection = new HjvxMicroConnection(
-			"Micro Connection Decoder",
-			false,
-			"Micro Connection Decoder",
-			0, "local-temp-lane",
-			JVX_COMPONENT_ACCESS_SUB_COMPONENT,
-			JVX_COMPONENT_CUSTOM_DEVICE, "", NULL);
-		theMicroConnection->set_location_info(jvxComponentIdentification(JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_UNSELECTED));
 	}
 	return res;
 }
@@ -96,12 +87,10 @@ CjvxAuNBitstreamDecoder::activate()
 jvxErrorType
 CjvxAuNBitstreamDecoder::deactivate()
 {
-	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
+	jvxErrorType res = JVX_LOCAL_BASE_CLASS::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{		
 		// Delete the microconnection
-		delete theMicroConnection;
-		theMicroConnection = nullptr;
 
 		// Release all codecs
 		for(std::pair<jvxSize, refComp<IjvxAudioCodec>> elm: lstCodecInstances)
@@ -109,7 +98,7 @@ CjvxAuNBitstreamDecoder::deactivate()
 			retInstTool<IjvxAudioCodec>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, elm.second, elm.first);
 		}
 		lstCodecInstances.clear();
-		CjvxBareNode1ioRearrange::deactivate();
+		JVX_LOCAL_BASE_CLASS::deactivate();
 	}
 	return res;
 }
@@ -118,11 +107,11 @@ CjvxAuNBitstreamDecoder::deactivate()
 jvxErrorType 
 CjvxAuNBitstreamDecoder::disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	jvxErrorType res = CjvxBareNode1ioRearrange::disconnect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	jvxErrorType res = JVX_LOCAL_BASE_CLASS::disconnect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		// Close any existing connection
-		release_decoder_connection();
+		deactivate_decoder();
 	}
 	return res;
 }
@@ -158,19 +147,9 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				}
 
 				if (JVX_CHECK_SIZE_SELECTED(id_selected))
-				{			
-					IjvxDataConnectionProcess* theProc = nullptr;
-					jvxSize uId = JVX_SIZE_UNSELECTED;
-					if (_common_set_ldslave.theData_in->con_link.master)
-					{
-						_common_set_ldslave.theData_in->con_link.master->associated_process(&theProc);
-						if (theProc)
-						{
-							theProc->unique_id_connections(&uId);
-						}
-					}
-					res = activate_decoder_connection(uId);
-
+				{		
+					activate_decoder();
+					assert(theDecoder);
 					runloop = false;
 
 				}
@@ -186,7 +165,9 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				jvxErrorType resCompat = lstCodecInstances[id_selected].cpPtr->accept_for_decoding(config_token.c_str(), &compr, &astr);
 				if (resCompat != JVX_NO_ERROR)
 				{
-					release_decoder_connection();
+					// This will disenage the "local" connection 
+					shutdown_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+					deactivate_decoder();
 				}
 				else
 				{
@@ -203,18 +184,13 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			// Test the connection. This will forward the request to the next element in the chain 
 			// via the test_accept callback
-			res = theMicroConnection->test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));			
+			res = JVX_LOCAL_BASE_CLASS::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));			
 		}
 
 		if (res == JVX_NO_ERROR)
 		{
-			// Since we run this outside of the normal flow from CjvxBareNode1ioRearrange we need to
-			// realize a dedicated functionality
-			// CjvxBareNode1ioRearrange::update_input_params_on_test();
-			
-
-			// CjvxBareNode1ioRearrange::update_output_params_on_test();
-			CjvxNodeBase1io::update_simple_params_from_ldesc();
+			// Update the parameters if test was successful			
+			output_params_from_ldesc_on_test();
 		}
 		return res;
 	}
@@ -222,110 +198,6 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 // ===================================================================
-
-jvxErrorType
-CjvxAuNBitstreamDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
-{
-	prepare_autostart();
-	return theMicroConnection->prepare_connection(false, true);
-}
-
-jvxErrorType
-CjvxAuNBitstreamDecoder::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
-{
-	jvxErrorType res = theMicroConnection->postprocess_connection();
-	postprocess_autostart();
-	return res;
-}
-
-jvxErrorType
-CjvxAuNBitstreamDecoder::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
-{
-	start_autostart();
-	return theMicroConnection->start_connection();
-}
-
-jvxErrorType
-CjvxAuNBitstreamDecoder::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
-{
-	jvxErrorType res = theMicroConnection->stop_connection();
-	stop_autostart();
-	return res;
-}
-
-// ===========================================================================
-
-jvxErrorType 
-CjvxAuNBitstreamDecoder::process_start_icon(
-	jvxSize pipeline_offset,
-	jvxSize* idx_stage,
-	jvxSize tobeAccessedByStage,
-	callback_process_start_in_lock clbk,
-	jvxHandle* priv_ptr)
-{
-	return theMicroConnection->prepare_process_connection(nullptr,
-		pipeline_offset,
-		idx_stage,
-		tobeAccessedByStage,
-		clbk,
-		priv_ptr);
-}
-
-jvxErrorType
-CjvxAuNBitstreamDecoder::process_stop_icon(
-	jvxSize idx_stage,
-	jvxBool operate_first_call,
-	jvxSize tobeAccessedByStage,
-	callback_process_stop_in_lock cb,
-	jvxHandle* priv_ptr)
-{
-	return theMicroConnection->postprocess_process_connection(
-		idx_stage,
-		operate_first_call,
-		tobeAccessedByStage,
-		cb,
-		priv_ptr);
-}
-
-jvxErrorType
-CjvxAuNBitstreamDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
-{
-	// Run the decode microconnection
-	return theMicroConnection->process_connection(nullptr);
-}
-
-jvxErrorType 
-CjvxAuNBitstreamDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
-	switch (tp)
-	{
-	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
-
-		// To do at this position
-		return theMicroConnection->transfer_backward_connection(tp, data
-			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		break;
-
-	case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
-		if (_common_set_ldslave.theData_in->con_link.connect_from)
-		{
-			res = _common_set_ldslave.theData_in->con_link.connect_from->
-				transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		}
-		break;
-	default:
-		res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	}
-	return res;
-}
-
-jvxErrorType 
-CjvxAuNBitstreamDecoder::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	return theMicroConnection->transfer_forward_connection(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-}
-
 // ===================================================================
 // ===================================================================
 
@@ -354,18 +226,6 @@ CjvxAuNBitstreamDecoder::get_configuration(jvxCallManagerConfiguration* callMan,
 	return res;
 }
 
-jvxErrorType
-CjvxAuNBitstreamDecoder::init_microconnection()
-{
-	jvxErrorType res = JVX_NO_ERROR;
-	
-
-	
-
-	res = theMicroConnection->test_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
-	return res;
-}
-
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBitstreamDecoder, get_processing_monitor)
 {
 	return JVX_NO_ERROR;
@@ -379,7 +239,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBitstreamDecoder, get_proc
 // ==================================================================
 
 jvxErrorType
-CjvxAuNBitstreamDecoder::activate_decoder_connection(jvxSize idProc)
+CjvxAuNBitstreamDecoder::activate_decoder()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	ptrCodec = lstCodecInstances[id_selected].cpPtr;
@@ -417,34 +277,20 @@ CjvxAuNBitstreamDecoder::activate_decoder_connection(jvxSize idProc)
 		_common_set_properties.propSetRevision++;
 	}
 
-	_common_set.theUniqueId->obtain_unique_id(&uIdl, "Another bitstream decoder");
-
-	theMicroConnection->activate_connection(
-		_common_set_min.theHostRef,
-		theDecoder,
-		"default", "default", "default", "default",
-		"jvxAuNBitstreamDecoder#" + jvx_size2String(uIdl),
-		false, nullptr, idProc);
-
-	res = theMicroConnection->connect_connection(_common_set_ldslave.theData_in,
-		&_common_set_ldslave.theData_out,
-		HjvxMicroConnection::jvxConnectionType::JVX_MICROCONNECTION_ENGAGE,
-		static_cast<HjvxMicroConnection_hooks_simple*>(this),
-		static_cast<HjvxMicroConnection_hooks_fwd*>(this));
-	assert(res == JVX_NO_ERROR);
+	attach_component_chain("Decoder", theDecoder, nullptr);
 
 	return res;
 }
 
 jvxErrorType 
-CjvxAuNBitstreamDecoder::release_decoder_connection()
+CjvxAuNBitstreamDecoder::deactivate_decoder()
 {
+	jvxErrorType res = JVX_NO_ERROR;
+
 	// =================================================================
 	if (theDecoder && ptrCodec)
 	{
-		jvxErrorType res = theMicroConnection->disconnect_connection();
-		res = theMicroConnection->deactivate_connection();
-		res = _common_set.theUniqueId->release_unique_id(uIdl);
+		detach_component_chain("Decoder");
 
 		if (theDecoderProps)
 		{
@@ -465,5 +311,26 @@ CjvxAuNBitstreamDecoder::release_decoder_connection()
 
 		ptrCodec = nullptr;
 	}
+	return JVX_NO_ERROR;
+}
+
+// ===================================================================================================
+
+jvxErrorType 
+CjvxAuNBitstreamDecoder::runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node, 
+	const char* moduleName, IjvxObject* theOwner)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType 
+CjvxAuNBitstreamDecoder::componentsAboutToConnect()
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType 
+CjvxAuNBitstreamDecoder::runTestChainComplete(jvxErrorType lastResult, IjvxSimpleNode* node, const char* moduleName, jvxSize uniqueId)
+{
 	return JVX_NO_ERROR;
 }

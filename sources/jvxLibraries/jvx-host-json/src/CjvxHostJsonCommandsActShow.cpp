@@ -2512,7 +2512,7 @@ CjvxHostJsonCommandsActShow::act_state_switch_component(const oneDrivehostComman
 			res = hHost->unselect_selected_component(tp);
 			if (res == JVX_NO_ERROR)
 			{
-				hHost->number_slots_component_system(tp, &szSlotid, NULL);
+				hHost->number_slots_component_system(tp, &szSlotid, nullptr, nullptr, nullptr);
 				if (szSlotid == 0)
 				{
 					tp.slotid = 0;
@@ -2524,7 +2524,7 @@ CjvxHostJsonCommandsActShow::act_state_switch_component(const oneDrivehostComman
 						tp.slotid = szSlotid - 1;
 					}
 				}
-				hHost->number_slots_component_system(tp, NULL,  &szSlotSubid);
+				hHost->number_slots_component_system(tp, nullptr,  &szSlotSubid, nullptr, nullptr);
 				if (szSlotSubid == 0)
 				{
 					tp.slotsubid = 0;

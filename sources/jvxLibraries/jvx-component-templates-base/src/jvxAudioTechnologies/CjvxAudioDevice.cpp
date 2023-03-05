@@ -563,8 +563,10 @@ CjvxAudioDevice::updateChainOutputParameter()
 	_common_set_ldslave.theData_out.con_params.rate = params.samplerate;
 	_common_set_ldslave.theData_out.con_params.format = params.format;
 	_common_set_ldslave.theData_out.con_params.number_channels = params.numInputs;
+
+	// Default setting for 
 	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = _common_set_ldslave.theData_out.con_params.number_channels;
+	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
 	_common_set_ldslave.theData_out.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 	jvx_bitFClear(_common_set_ldslave.theData_out.con_params.hints);
 }

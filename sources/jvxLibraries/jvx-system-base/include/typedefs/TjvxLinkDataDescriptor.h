@@ -307,10 +307,10 @@ struct jvxLinkDataDescriptor_con_params
 	// The buffersize is always the MAXIMUM of elements. By specifying segmentation_x and segmentatiion_y 
 	// the content may be grouped and furthermore refined.
 
-	// More accurate specification of audio buffers, may also be used for variable size fields
+	// More accurate specification of data buffers. For audio, this should be identical to buffersize
 	jvxSize segmentation_x = 0;
 
-	// More accurate specification of audio buffers, may also be used for variable size fields
+	// More accurate specification of data buffers. For audio, this is always 1
 	jvxSize segmentation_y = 0;
 
 	// Current fheight in buffer x direction

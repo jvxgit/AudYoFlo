@@ -169,6 +169,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "interfaces/IjvxHttpApi.h"
 
 // Main Component types
+#include "interfaces/IjvxSimpleNode.h"
 #include "interfaces/IjvxMainComponent.h"
 #include "interfaces/IjvxNode.h"
 #include "interfaces/IjvxDevice.h"

@@ -38,7 +38,8 @@ CjvxHostJsonCommandsShow::produce_component_core(CjvxJsonElementList& jsec)
 		JVX_CREATE_COMPONENT_TYPE(jelml, jvxComponentType_txt(tp.tp));
 		jelmlstl.addConsumeElement(jelml);
 
-		resL = hHost->number_slots_component_system(tp, &numSlots, NULL, &parentTp.tp);
+		hHost->role_component_system(tp.tp, &parentTp.tp, nullptr, nullptr);
+		resL = hHost->number_slots_component_system(tp, &numSlots, NULL, nullptr, nullptr);
 		if (resL == JVX_ERROR_ELEMENT_NOT_FOUND)
 		{
 			JVX_CREATE_SLOT_STATE(jelml, "not registered");
@@ -72,7 +73,7 @@ CjvxHostJsonCommandsShow::produce_component_core(CjvxJsonElementList& jsec)
 
 						tp.slotid = j;
 
-						resL = hHost->number_slots_component_system(tp, NULL, &numSubSlots, NULL);
+						resL = hHost->number_slots_component_system(tp, NULL, &numSubSlots, NULL, nullptr);
 						JVX_CREATE_NUMBER_SUB_SLOTS(jelmll, JVX_SIZE_INT(numSubSlots));
 						jlstll.addConsumeElement(jelmll);
 					}
@@ -134,7 +135,8 @@ CjvxHostJsonCommandsShow::create_active_component_one_type(jvxComponentType tpel
 	jvxComponentIdentification tp(tpelm);
 	anyElementAdded = false;
 
-	hHost->number_slots_component_system(tp, &szSlots, &szSubSlots, &parentTp, &childTp);
+	hHost->role_component_system(tp.tp, &parentTp, &childTp, nullptr);
+	hHost->number_slots_component_system(tp, &szSlots, &szSubSlots, nullptr, nullptr);
 	if (parentTp == JVX_COMPONENT_UNKNOWN)
 	{
 		for (j = 0; j < szSlots; j++)
@@ -173,7 +175,7 @@ CjvxHostJsonCommandsShow::create_active_component_one_type(jvxComponentType tpel
 				jvxComponentIdentification tpC = tp;
 				tpC.tp = childTp;
 				tpC.slotid = j;
-				resL = hHost->number_slots_component_system(tpC, NULL, &szSubSlots);
+				resL = hHost->number_slots_component_system(tpC, NULL, &szSubSlots, nullptr, nullptr);
 				if (resL == JVX_NO_ERROR)
 				{
 					CjvxJsonArrayElement jarr_dev_elm;
@@ -1621,7 +1623,8 @@ CjvxHostJsonCommandsShow::show_single_component(
 						jvxSize szSS = 0;
 						jvxComponentType cTp = JVX_COMPONENT_UNKNOWN;
 						jvxComponentType pTp = JVX_COMPONENT_UNKNOWN;
-						hHost->number_slots_component_system(tp, &szS, &szSS, &pTp, &cTp);
+						hHost->role_component_system(tp.tp, &pTp, &cTp, nullptr);
+						hHost->number_slots_component_system(tp, &szS, &szSS, nullptr, nullptr);
 						if (pTp != JVX_COMPONENT_UNKNOWN)
 						{
 							CjvxJsonArray jelmarr;
@@ -1906,7 +1909,8 @@ CjvxHostJsonCommandsShow::show_single_component(
 								jvxSize szS = 0;
 								jvxSize szSS = 0;
 								jvxComponentType pTp = JVX_COMPONENT_UNKNOWN;
-								hHost->number_slots_component_system(tp, &szS, &szSS, &pTp);
+								hHost->role_component_system(tp.tp, &pTp, nullptr, nullptr);
+								hHost->number_slots_component_system(tp, &szS, &szSS, nullptr, nullptr);
 								if(pTp == JVX_COMPONENT_UNKNOWN)
 								{
 									jvxComponentIdentification tpGet;

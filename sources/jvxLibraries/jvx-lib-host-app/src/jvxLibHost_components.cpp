@@ -176,7 +176,7 @@ jvxLibHost::number_slots_component_system(const jvxComponentIdentification& cpTp
 	if (involvedHost.hHost)
 	{
 		IjvxObject* theObj = nullptr;
-		res = involvedHost.hHost->number_slots_component_system(cpTp, szSlots, szSubslots);
+		res = involvedHost.hHost->number_slots_component_system(cpTp, szSlots, szSubslots, nullptr, nullptr);
 	}
 	return res;
 }

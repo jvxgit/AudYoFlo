@@ -231,7 +231,8 @@ CjvxPropertyPool::_report_property_changed(
 				auto eelm = elm->second.pool.begin();
 				for (; eelm != elm->second.pool.end(); eelm++)
 				{
-					host->number_slots_component_system(eelm->tp, NULL, NULL, &parentTp, &childTp);
+					host->role_component_system(eelm->tp.tp, &parentTp, &childTp, nullptr);
+					// host->number_slots_component_system(eelm->tp, NULL, NULL, nullptr, nullptr);
 					jvxBool matches = jvx_componentMatch(tpOrigin, eelm->tp, (parentTp != JVX_COMPONENT_UNKNOWN));
 					if (matches)
 					{
@@ -289,7 +290,8 @@ CjvxPropertyPool::_report_property_changed(
 									jvxSize numSlots = 0;
 									jvxSize numSubSlots = 0;
 
-									host->number_slots_component_system(eelmc->tp, &numSlots, NULL, &parentTp, &childTp);
+									host->role_component_system(eelmc->tp.tp, &parentTp, &childTp, nullptr);
+									host->number_slots_component_system(eelmc->tp, &numSlots, nullptr, nullptr, nullptr);
 
 									for (j = 0; j < numSlots; j++)
 									{
@@ -303,7 +305,7 @@ CjvxPropertyPool::_report_property_changed(
 										}
 										else
 										{
-											host->number_slots_component_system(tpCheck, NULL, &numSubSlots, NULL, NULL);
+											host->number_slots_component_system(tpCheck, NULL, &numSubSlots, nullptr, nullptr);
 										}
 
 										for (k = 0; k < numSubSlots; k++)

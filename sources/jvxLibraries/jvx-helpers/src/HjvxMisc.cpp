@@ -1247,7 +1247,8 @@ void jvx_select_next_avail_slot(IjvxHost* host, jvxComponentType tp, jvxComponen
 	jvxState stat;
 	jvxErrorType res = JVX_NO_ERROR;
 
-	host->number_slots_component_system(tp, &numSlots, &numSubSlots, &parentTp, &childTp, &numSlotsMax, &numSubSlotsMax);
+	host->role_component_system(tp, &parentTp, &childTp, nullptr);
+	host->number_slots_component_system(tp, &numSlots, &numSubSlots, &numSlotsMax, &numSubSlotsMax);
 	if (parentTp == JVX_COMPONENT_UNKNOWN)
 	{
 		jvxComponentIdentification tpCheck(tp);
@@ -1299,7 +1300,7 @@ jvx_activateComponentAsOwnerDevice(
 	jvxSize num = 0;
 	jvxSize szSlots = 0;
 	jvxComponentIdentification cpTp = tpTech;
-	theHostHdl->number_slots_component_system(cpTp, &szSlots, NULL);
+	theHostHdl->number_slots_component_system(cpTp, &szSlots, nullptr, nullptr, nullptr);
 	jvxSize i;
 	for (i = 0; i < szSlots; i++)
 	{
@@ -3991,26 +3992,33 @@ jvx_runAllActiveMainComponents(IjvxHost* hostRef, std::function<void(IjvxObject*
 	for (i = JVX_COMPONENT_UNKNOWN + 1; i < JVX_MAIN_COMPONENT_LIMIT; i++)
 	{
 		jvxSize j, k;
-		IjvxMainComponent* mComp = nullptr;
+		// IjvxNode* mComp = nullptr;
 		jvxBool runSlots = false;
 		jvxBool runSublots = false;
 		jvxComponentIdentification tpL;
 		tpL.tp = (jvxComponentType)i;
-		switch (tpL.tp)
+
+		jvxComponentTypeClass clsTp = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE;
+		hostRef->role_component_system(tpL.tp, nullptr, nullptr, &clsTp);
+		hostRef->number_slots_component_system(tpL, nullptr, nullptr, nullptr, nullptr);
+		std::string txtCt = jvxComponentTypeClass_txt(clsTp);
+		switch (clsTp)
 		{
-#include "codeFragments/components/Hjvx_caseStatement_technologies.h"
+		case jvxComponentTypeClass::JVX_COMPONENT_TYPE_TECHNOLOGY:
 			runSlots = true;
 			runSublots = true;
 			break;
-#include "codeFragments/components/Hjvx_caseStatement_nodes.h"
+		case jvxComponentTypeClass::JVX_COMPONENT_TYPE_NODE:
 			runSlots = true;
 			break;
+		default:
+			break;
 		}
-
+		
 		if (runSlots)
 		{
 			jvxSize szSlots = 0;
-			hostRef->number_slots_component_system(tpL, &szSlots, nullptr, nullptr, nullptr, nullptr, nullptr);
+			hostRef->number_slots_component_system(tpL, &szSlots, nullptr, nullptr, nullptr);
 			for (j = 0; j < szSlots; j++)
 			{
 				IjvxObject* obj = nullptr;
@@ -4023,7 +4031,21 @@ jvx_runAllActiveMainComponents(IjvxHost* hostRef, std::function<void(IjvxObject*
 				if (obj)
 				{
 					IjvxObject* theOwner = nullptr;
+					IjvxNode* theNode = castFromObject<IjvxNode>(obj);
+					IjvxTechnology* theTechnology = castFromObject<IjvxTechnology>(obj);
+	
+					if (theNode)
+					{
+						iface = static_cast<IjvxHiddenInterface*>(theNode);
+						theNode->owner(&theOwner);
+					}
+					if (theTechnology)
+					{
+						iface = static_cast<IjvxHiddenInterface*>(theTechnology);
+						theTechnology->owner(&theOwner);
+					}
 
+					/*
 					obj->request_specialization(&theHdl, nullptr, nullptr);
 					switch (tpL.tp)
 					{
@@ -4037,6 +4059,7 @@ jvx_runAllActiveMainComponents(IjvxHost* hostRef, std::function<void(IjvxObject*
 						((IjvxNode*)theHdl)->owner(&theOwner);
 						break;
 					}
+					*/
 					func(theOwner, iface);
 					hostRef->return_object_selected_component(tpL, obj);
 				}
@@ -4048,7 +4071,7 @@ jvx_runAllActiveMainComponents(IjvxHost* hostRef, std::function<void(IjvxObject*
 					jvxSize szSubSlots = 0;
 					tpLL.slotid = tpL.slotid;
 
-					hostRef->number_slots_component_system(tpLL, nullptr, &szSubSlots, nullptr, nullptr, nullptr, nullptr);
+					hostRef->number_slots_component_system(tpLL, nullptr, &szSubSlots, nullptr, nullptr);
 					for (k = 0; k < szSubSlots; k++)
 					{
 						tpLL.slotsubid = k;

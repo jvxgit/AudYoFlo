@@ -178,9 +178,9 @@ public:
 	jvxErrorType attach_component_module(const std::string& nm, IjvxObject* priObj, IjvxObject* attachMe);
 	jvxErrorType detach_component_module(const std::string& nm, IjvxObject* priObj);
 
-	virtual jvxErrorType runStateSwitch(jvxStateSwitch ss, IjvxNode* node, const char* moduleName, IjvxObject* theOwner) override;
+	virtual jvxErrorType runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node, const char* moduleName, IjvxObject* theOwner) override;
 	virtual jvxErrorType componentsAboutToConnect() override;
 
-	jvxErrorType passConfigSection(IjvxNode* node, const std::string& moduleName);
+	jvxErrorType passConfigSection(IjvxSimpleNode* node, const std::string& moduleName);
 
 };

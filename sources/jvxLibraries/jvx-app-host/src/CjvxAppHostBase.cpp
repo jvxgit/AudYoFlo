@@ -188,12 +188,12 @@ JVX_APPHOST_CLASSNAME::shutdownHostFactory(jvxApiString* errorMessage, jvxHandle
 		jvxState stat = JVX_STATE_NONE;
 		jvxComponentIdentification tpLoc((jvxComponentType)i, 0, 0);
 
-		this->involvedHost.hHost->number_slots_component_system(tpLoc, &szSlots, NULL, NULL);
+		this->involvedHost.hHost->number_slots_component_system(tpLoc, &szSlots, NULL, nullptr, nullptr);
 		for (j = 0; j < szSlots; j++)
 		{
 			jvxSize szSubSlots = 0;
 			tpLoc.slotid = j;
-			this->involvedHost.hHost->number_slots_component_system(tpLoc, NULL, &szSubSlots, NULL);
+			this->involvedHost.hHost->number_slots_component_system(tpLoc, NULL, &szSubSlots, nullptr, nullptr);
 			for (k = 0; k < szSubSlots; k++)
 			{
 				tpLoc.slotsubid = k;
@@ -266,7 +266,8 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 	//=================================================================
 
 	IjvxHostTypeHandler* theTypeHandler = NULL;
-	res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_HOSTTYPEHANDLER, reinterpret_cast<jvxHandle**>(&theTypeHandler));
+	res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_HOSTTYPEHANDLER, 
+		reinterpret_cast<jvxHandle**>(&theTypeHandler));
 	if ((res == JVX_NO_ERROR) && theTypeHandler)
 	{
 		for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
@@ -304,7 +305,9 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 						}
 					}
 					res = theTypeHandler->add_type_host(tp, 2, theClassAssociation[i].description, theClassAssociation[i].config_token,
-						theClassAssociation[i].comp_class, numSlots[i], numSlots[theClassAssociation[i].comp_sec_type]);
+						theClassAssociation[i].comp_class,
+						numSlots[theClassAssociation[i].comp_sec_type], 1, 
+						theClassAssociation[i].comp_child_class);
 					assert(res == JVX_NO_ERROR);
 				}
 				break;
@@ -331,7 +334,7 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 						}
 					}
 					res = theTypeHandler->add_type_host(tp, 1, theClassAssociation[i].description, theClassAssociation[i].config_token,
-						theClassAssociation[i].comp_class, numSlots[i], 0);
+						theClassAssociation[i].comp_class, numSlots[i], 0, theClassAssociation[i].comp_child_class);
 					assert(res == JVX_NO_ERROR);
 				}
 				break;
@@ -359,7 +362,8 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 						}
 					}
 					res = theTypeHandler->add_type_host(tp, 1, theClassAssociation[i].description, theClassAssociation[i].config_token,
-						theClassAssociation[i].comp_class, numSlots[i], 0);
+						theClassAssociation[i].comp_class,
+						numSlots[i], 0, theClassAssociation[i].comp_child_class);
 					assert(res == JVX_NO_ERROR);
 				}
 				break;

@@ -403,7 +403,7 @@ CayfComponentLib::detach_component_module(const std::string& nm, IjvxObject* pri
 }
 
 jvxErrorType
-CayfComponentLib::runStateSwitch(jvxStateSwitch ss, IjvxNode* node, const char* moduleName, IjvxObject* theOwner)
+CayfComponentLib::runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node, const char* moduleName, IjvxObject* theOwner)
 {
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 	switch (ss)
@@ -435,7 +435,7 @@ CayfComponentLib::componentsAboutToConnect()
 }
 
 jvxErrorType
-CayfComponentLib::passConfigSection(IjvxNode* node, const std::string& moduleName)
+CayfComponentLib::passConfigSection(IjvxSimpleNode* node, const std::string& moduleName)
 {
 	jvxConfigData* datSec = nullptr;
 	if (confProcHdl && cfgDataInit)

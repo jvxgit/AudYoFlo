@@ -68,6 +68,9 @@ enum class jvxComponentTypeClass
 	JVX_COMPONENT_TYPE_SIMPLE,
 
 	JVX_COMPONENT_TYPE_DEVICE,
+	
+	JVX_COMPONENT_TYPE_PROCESS,
+
 	JVX_COMPONENT_TYPE_LIMIT
 };
 
@@ -132,15 +135,15 @@ typedef enum
 // Set the split point between the normal and system components
 #define JVX_MAIN_COMPONENT_LIMIT JVX_COMPONENT_SYSTEM_AUTOMATION
 
-typedef struct
+struct jvxComponentClassAssociation
 {
-	jvxComponentTypeClass comp_class;
-	jvxComponentType comp_sec_type;
-	const char* description;
-	const char* config_token;
-	const char* description_sec;
-}
-jvxComponentClassAssociation;
+	jvxComponentTypeClass comp_class = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE;
+	jvxComponentType comp_sec_type = JVX_COMPONENT_UNKNOWN;
+	const char* description = nullptr;
+	const char* config_token = nullptr;
+	const char* description_sec = nullptr;
+	jvxComponentTypeClass comp_child_class = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE;
+};
 
 extern jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT];
 

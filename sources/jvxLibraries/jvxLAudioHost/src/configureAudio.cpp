@@ -135,7 +135,7 @@ configureAudio::acceptSlotConfiguration()
 	jvxSize szSlots = 0, szSubSlots = 0;
 	jvxSize szSlotsMax = 0, szSubSlotsMax = 0;
 
-	myParent->involvedHost.hHost->number_slots_component_system(JVX_COMPONENT_AUDIO_TECHNOLOGY, &szSlots, &szSubSlots, NULL, NULL, &szSlotsMax, &szSubSlotsMax);
+	myParent->involvedHost.hHost->number_slots_component_system(JVX_COMPONENT_AUDIO_TECHNOLOGY, &szSlots, &szSubSlots, &szSlotsMax, &szSubSlotsMax);
 	runtime.id_technology.resize(szSlotsMax);
 	for (i = 0; i < runtime.id_technology.size(); i++)
 	{
