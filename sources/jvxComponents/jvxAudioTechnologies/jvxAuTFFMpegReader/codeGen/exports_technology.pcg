@@ -39,6 +39,4 @@ SECTION PROPERTIES
 			CALLBACK_SET_POSTHOOK = "modify_fileio";
 		};		
 	};
-	
-	include "wav_properties.pcgf";
 };

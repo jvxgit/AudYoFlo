@@ -3,11 +3,7 @@
 
 #include "jvxAudioTechnologies/CjvxAudioDevice.h"
 #include "jvx_audiocodec_helpers.h"
-
-extern "C"
-{
-#include "libavformat/avformat.h"
-}
+#include "ffmpeg-helpers.h"
 
 // Must follow jvx_audiocodec_helpers.h
 #include "pcg_exports_device.h"
@@ -17,7 +13,7 @@ class CjvxAudioFFMpegReaderTechnology;
 class CjvxAudioFFMpegReaderDevice :
 	public CjvxAudioDevice,
 	public IjvxThreads_report,
-    public genFileReader_device
+    public genFFMpegReader_device
 {
 	friend class CjvxAudioFFMpegReaderTechnology;
 
@@ -32,10 +28,10 @@ class CjvxAudioFFMpegReaderDevice :
 private:
 	
 	CjvxAudioFFMpegReaderTechnology* parentTech = nullptr;
-	std::string fname;
+
 	std::string last_error;
 	jvxApiString format_descriptor;
-	jvxSize l_samples = 0;
+
 
 	jvxBool involve_read_thread = false;
 	jvxByte* preuse_buffer_ptr = nullptr;
@@ -48,10 +44,61 @@ private:
 	refComp<IjvxThreads> refThreads;
 	JVX_MUTEX_HANDLE safeAccessRead;
 	
-	AVFormatContext* ic = nullptr;
-	AVPacket* pkt = nullptr;
-	AVInputFormat* iformat = nullptr;
-	int st_index[AVMEDIA_TYPE_NB] = { 0 };
+	struct _parameter_t
+	{
+		std::string fName;
+		
+		AVStream* st = nullptr;
+		const AVCodec* codec = nullptr;
+		AVCodecContext* cc = nullptr;
+		AVFormatContext* ic = nullptr;
+		AVPacket* pkt = nullptr;
+		AVInputFormat* iformat = nullptr;
+
+		jvxSize nChans = 0;
+		jvxSize sRate = 0;
+		jvxSize lengthSamples = 0;
+		jvxData lengthSecs = 0;
+		jvxSize numFrames = 0;
+		jvxSize frameSize = 0;
+		jvxSize bitRate = 0;
+		jvxSize bitsPerRaw = 0;
+		jvxSize bitsPerCoded = 0;
+
+		std::string sFormat;
+		std::string chanLayoutTag;
+		std::string fFormatTag;
+		std::string codecIdTag;
+		std::string codecTypeTag;	
+
+		void reset()
+		{
+			st = nullptr;
+			codec = nullptr;
+			cc = nullptr;
+			ic = nullptr;
+			pkt = nullptr;
+			iformat = nullptr;
+
+			nChans = 0;
+			sRate = 0;
+			lengthSamples = 0;
+			lengthSecs = 0;
+			numFrames = 0;
+			frameSize = 0;
+			bitRate = 0;
+			bitsPerRaw = 0;
+			bitsPerCoded = 0;
+
+			sFormat.clear();
+			chanLayoutTag.clear();
+			fFormatTag.clear();
+			codecIdTag.clear();
+			codecTypeTag.clear();
+		};
+	};
+
+	_parameter_t fParams;
 
 public:
 	JVX_CALLINGCONVENTION CjvxAudioFFMpegReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -62,7 +109,6 @@ public:
 	jvxErrorType init_from_filename(const std::string& fname, CjvxAudioFFMpegReaderTechnology* par);
 	jvxErrorType term_file();
 
-	void reset_props();
 	std::string get_last_error();
 	// =================================================================
 

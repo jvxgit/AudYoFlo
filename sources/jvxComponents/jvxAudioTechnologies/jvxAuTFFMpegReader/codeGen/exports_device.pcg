@@ -1,6 +1,6 @@
 SECTION PROPERTIES
 {
-	OUTPUTFILE_NAME = "genFileReader_device";
+	OUTPUTFILE_NAME = "genFFMpegReader_device";
 	CALLBACKS = {"set_config", "trigger_command"};
 
 	SECTION exteded_properties
@@ -75,5 +75,17 @@ SECTION PROPERTIES
 		};	
 	};
 
-	include "wav_properties.pcgf";
+	SECTION file
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION length_sec
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 0; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};	
+	};
 };

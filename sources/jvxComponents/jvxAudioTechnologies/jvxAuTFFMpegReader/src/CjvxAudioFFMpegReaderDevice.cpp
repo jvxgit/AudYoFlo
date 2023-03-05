@@ -1,12 +1,7 @@
 #include "CjvxAudioFFMpegReaderDevice.h"
 #include "CjvxAudioFFMpegReaderTechnology.h"
 #include "jvx-helpers-cpp.h"
-
-extern "C"
-{
-#include "libavutil/opt.h"
-#include "libavcodec/avcodec.h"
-}
+#include "ffmpeg-helpers.h"
 
 CjvxAudioFFMpegReaderDevice::CjvxAudioFFMpegReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 		CjvxAudioDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
@@ -20,7 +15,7 @@ CjvxAudioFFMpegReaderDevice::CjvxAudioFFMpegReaderDevice(JVX_CONSTRUCTOR_ARGUMEN
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
 	JVX_INITIALIZE_MUTEX(safeAccessBuffer);
 	JVX_INITIALIZE_MUTEX(safeAccessRead);
-	reset_props();
+	fParams.reset();
 }
 
 
@@ -33,277 +28,24 @@ CjvxAudioFFMpegReaderDevice::~CjvxAudioFFMpegReaderDevice()
 // =============================================================================
 
 
-void
-CjvxAudioFFMpegReaderDevice::reset_props()
-{
-	/*
-	fileprops_wav.nchans = 0;
-	fileprops_wav.l_samples = 0;
-	fileprops_wav.rate = 0;
-	fileprops_wav.fformat = JVX_FILEFORMAT_NONE;
-	fileprops_wav.lendian = true;
-	fileprops_wav.bitssample = 16;
-	fileprops_wav.subtype = 0;
-	*/
-}
-
-static int check_stream_specifier(AVFormatContext* s, AVStream* st, const char* spec)
-{
-	int ret = avformat_match_stream_specifier(s, st, spec);
-	if (ret < 0)
-		av_log(s, AV_LOG_ERROR, "Invalid stream specifier: %s.\n", spec);
-	return ret;
-};
-
-static AVDictionary* filter_codec_opts(AVDictionary* opts, enum AVCodecID codec_id,
-	AVFormatContext* s, AVStream* st, const AVCodec* codec)
-{
-	AVDictionary* ret = NULL;
-	const AVDictionaryEntry* t = NULL;
-	int            flags = s->oformat ? AV_OPT_FLAG_ENCODING_PARAM
-		: AV_OPT_FLAG_DECODING_PARAM;
-	char          prefix = 0;
-	const AVClass* cc = avcodec_get_class();
-
-	if (!codec)
-		codec = s->oformat ? avcodec_find_encoder(codec_id)
-		: avcodec_find_decoder(codec_id);
-
-	switch (st->codecpar->codec_type) {
-	case AVMEDIA_TYPE_VIDEO:
-		prefix = 'v';
-		flags |= AV_OPT_FLAG_VIDEO_PARAM;
-		break;
-	case AVMEDIA_TYPE_AUDIO:
-		prefix = 'a';
-		flags |= AV_OPT_FLAG_AUDIO_PARAM;
-		break;
-	case AVMEDIA_TYPE_SUBTITLE:
-		prefix = 's';
-		flags |= AV_OPT_FLAG_SUBTITLE_PARAM;
-		break;
-	}
-
-	while (t = av_dict_iterate(opts, t)) {
-		const AVClass* priv_class;
-		char* p = strchr(t->key, ':');
-
-		/* check stream specification in opt name */
-		if (p)
-			switch (check_stream_specifier(s, st, p + 1)) {
-			case  1: *p = 0; break;
-			case  0:         continue;
-			default:         assert(0);
-			}
-
-		if (av_opt_find(&cc, t->key, NULL, flags, AV_OPT_SEARCH_FAKE_OBJ) ||
-			!codec ||
-			((priv_class = codec->priv_class) &&
-				av_opt_find(&priv_class, t->key, NULL, flags,
-					AV_OPT_SEARCH_FAKE_OBJ)))
-			av_dict_set(&ret, t->key, t->value, 0);
-		else if (t->key[0] == prefix &&
-			av_opt_find(&cc, t->key + 1, NULL, flags,
-				AV_OPT_SEARCH_FAKE_OBJ))
-			av_dict_set(&ret, t->key + 1, t->value, 0);
-
-		if (p)
-			*p = ':';
-	}
-	return ret;
-}
-
-static AVDictionary** setup_find_stream_info_opts(AVFormatContext* s,
-	AVDictionary* codec_opts)
-{
-	int i;
-	AVDictionary** opts = nullptr;
-
-	if (!s->nb_streams)
-		return NULL;
-	opts = (AVDictionary**)av_calloc(s->nb_streams, sizeof(*opts));
-	for (i = 0; i < s->nb_streams; i++)
-		opts[i] = filter_codec_opts(codec_opts, s->streams[i]->codecpar->codec_id,
-			s, s->streams[i], NULL);
-	return opts;
-}
-
-#if 0
-static int stream_component_open(VideoState* is, int stream_index)
-{
-
-	AVFormatContext* ic = is->ic;
-	AVCodecContext* avctx;
-	const AVCodec* codec;
-	const char* forced_codec_name = NULL;
-	AVDictionary* opts = NULL;
-	const AVDictionaryEntry* t = NULL;
-	int sample_rate;
-	AVChannelLayout ch_layout = { 0 };
-	int ret = 0;
-	int stream_lowres = lowres;
-
-	if (stream_index < 0 || stream_index >= ic->nb_streams)
-		return -1;
-
-	avctx = avcodec_alloc_context3(NULL);
-	if (!avctx)
-		return AVERROR(ENOMEM);
-
-	ret = avcodec_parameters_to_context(avctx, ic->streams[stream_index]->codecpar);
-	if (ret < 0)
-		goto fail;
-	avctx->pkt_timebase = ic->streams[stream_index]->time_base;
-
-	codec = avcodec_find_decoder(avctx->codec_id);
-
-	switch (avctx->codec_type) {
-	case AVMEDIA_TYPE_AUDIO: is->last_audio_stream = stream_index; forced_codec_name = audio_codec_name; break;
-	case AVMEDIA_TYPE_SUBTITLE: is->last_subtitle_stream = stream_index; forced_codec_name = subtitle_codec_name; break;
-	case AVMEDIA_TYPE_VIDEO: is->last_video_stream = stream_index; forced_codec_name = video_codec_name; break;
-	}
-	if (forced_codec_name)
-		codec = avcodec_find_decoder_by_name(forced_codec_name);
-	if (!codec) {
-		if (forced_codec_name) av_log(NULL, AV_LOG_WARNING,
-			"No codec could be found with name '%s'\n", forced_codec_name);
-		else                   av_log(NULL, AV_LOG_WARNING,
-			"No decoder could be found for codec %s\n", avcodec_get_name(avctx->codec_id));
-		ret = AVERROR(EINVAL);
-		goto fail;
-	}
-
-	avctx->codec_id = codec->id;
-	if (stream_lowres > codec->max_lowres) {
-		av_log(avctx, AV_LOG_WARNING, "The maximum value for lowres supported by the decoder is %d\n",
-			codec->max_lowres);
-		stream_lowres = codec->max_lowres;
-	}
-	avctx->lowres = stream_lowres;
-
-	if (fast)
-		avctx->flags2 |= AV_CODEC_FLAG2_FAST;
-
-	opts = filter_codec_opts(codec_opts, avctx->codec_id, ic, ic->streams[stream_index], codec);
-	if (!av_dict_get(opts, "threads", NULL, 0))
-		av_dict_set(&opts, "threads", "auto", 0);
-	if (stream_lowres)
-		av_dict_set_int(&opts, "lowres", stream_lowres, 0);
-	if ((ret = avcodec_open2(avctx, codec, &opts)) < 0) {
-		goto fail;
-	}
-	if ((t = av_dict_get(opts, "", NULL, AV_DICT_IGNORE_SUFFIX))) {
-		av_log(NULL, AV_LOG_ERROR, "Option %s not found.\n", t->key);
-		ret = AVERROR_OPTION_NOT_FOUND;
-		goto fail;
-	}
-
-	is->eof = 0;
-	ic->streams[stream_index]->discard = AVDISCARD_DEFAULT;
-	switch (avctx->codec_type) {
-	case AVMEDIA_TYPE_AUDIO:
-#if CONFIG_AVFILTER
-	{
-		AVFilterContext* sink;
-
-		is->audio_filter_src.freq = avctx->sample_rate;
-		ret = av_channel_layout_copy(&is->audio_filter_src.ch_layout, &avctx->ch_layout);
-		if (ret < 0)
-			goto fail;
-		is->audio_filter_src.fmt = avctx->sample_fmt;
-		if ((ret = configure_audio_filters(is, afilters, 0)) < 0)
-			goto fail;
-		sink = is->out_audio_filter;
-		sample_rate = av_buffersink_get_sample_rate(sink);
-		ret = av_buffersink_get_ch_layout(sink, &ch_layout);
-		if (ret < 0)
-			goto fail;
-	}
-#else
-		sample_rate = avctx->sample_rate;
-		ret = av_channel_layout_copy(&ch_layout, &avctx->ch_layout);
-		if (ret < 0)
-			goto fail;
-#endif
-
-		/* prepare audio output */
-		if ((ret = audio_open(is, &ch_layout, sample_rate, &is->audio_tgt)) < 0)
-			goto fail;
-		is->audio_hw_buf_size = ret;
-		is->audio_src = is->audio_tgt;
-		is->audio_buf_size = 0;
-		is->audio_buf_index = 0;
-
-		/* init averaging filter */
-		is->audio_diff_avg_coef = exp(log(0.01) / AUDIO_DIFF_AVG_NB);
-		is->audio_diff_avg_count = 0;
-		/* since we do not have a precise anough audio FIFO fullness,
-		   we correct audio sync only if larger than this threshold */
-		is->audio_diff_threshold = (double)(is->audio_hw_buf_size) / is->audio_tgt.bytes_per_sec;
-
-		is->audio_stream = stream_index;
-		is->audio_st = ic->streams[stream_index];
-
-		if ((ret = decoder_init(&is->auddec, avctx, &is->audioq, is->continue_read_thread)) < 0)
-			goto fail;
-		if ((is->ic->iformat->flags & (AVFMT_NOBINSEARCH | AVFMT_NOGENSEARCH | AVFMT_NO_BYTE_SEEK)) && !is->ic->iformat->read_seek) {
-			is->auddec.start_pts = is->audio_st->start_time;
-			is->auddec.start_pts_tb = is->audio_st->time_base;
-		}
-		if ((ret = decoder_start(&is->auddec, audio_thread, "audio_decoder", is)) < 0)
-			goto out;
-		SDL_PauseAudioDevice(audio_dev, 0);
-		break;
-	case AVMEDIA_TYPE_VIDEO:
-		is->video_stream = stream_index;
-		is->video_st = ic->streams[stream_index];
-
-		if ((ret = decoder_init(&is->viddec, avctx, &is->videoq, is->continue_read_thread)) < 0)
-			goto fail;
-		if ((ret = decoder_start(&is->viddec, video_thread, "video_decoder", is)) < 0)
-			goto out;
-		is->queue_attachments_req = 1;
-		break;
-	case AVMEDIA_TYPE_SUBTITLE:
-		is->subtitle_stream = stream_index;
-		is->subtitle_st = ic->streams[stream_index];
-
-		if ((ret = decoder_init(&is->subdec, avctx, &is->subtitleq, is->continue_read_thread)) < 0)
-			goto fail;
-		if ((ret = decoder_start(&is->subdec, subtitle_thread, "subtitle_decoder", is)) < 0)
-			goto out;
-		break;
-	default:
-		break;
-	}
-	goto out;
-
-fail:
-	avcodec_free_context(&avctx);
-out:
-	av_channel_layout_uninit(&ch_layout);
-	av_dict_free(&opts);
-
-	return ret;
-}
-#endif
-
+/** 
+ * This function is called before all other member calls. Hence, the associated file is open unless the device is removed.
+ */
 jvxErrorType
 CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, CjvxAudioFFMpegReaderTechnology* par)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
-	AVDictionary* format_opts = nullptr, * codec_opts = nullptr;
-	parentTech = par;
-	fname = fnameArg;
+	AVDictionary* format_opts = nullptr, * codec_opts = nullptr, *filtered_opts = nullptr;
+	parentTech = par;	
 
 	// This code prepares the input from a file. The code has been copied in parts from ffplay app code in ffplay.c
 
 	// Step I: Allocate the packet container
-	pkt = av_packet_alloc();
+	fParams.pkt = av_packet_alloc();
 
 	// Step II: Allocate the context
-	ic = avformat_alloc_context();
+	fParams.ic = avformat_alloc_context();
 
 	// I think that this is not required
 	/*
@@ -316,20 +58,22 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 
 	// We try to open the file here. If an error occurs, the context ic is freed in the called function
 	// and the pointer is set to nullptr
-	int err = avformat_open_input(&ic, fnameArg.c_str(), iformat, &format_opts);
+	int err = avformat_open_input(&fParams.ic, fnameArg.c_str(), fParams.iformat, &format_opts);
 	if (err < 0)
 	{
+		res = JVX_ERROR_ELEMENT_NOT_FOUND;
 		goto failed;
 	}
+
 	// Generate all pointers
-	ic->flags |= AVFMT_FLAG_GENPTS;
+	// fParams.ic->flags |= AVFMT_FLAG_GENPTS;
 
 	// ============================================================
 	// This code returns the codec options for the detected type
-	AVDictionary** opts = setup_find_stream_info_opts(ic, codec_opts);
-	int orig_nb_streams = ic->nb_streams;
+	AVDictionary** opts = setup_find_stream_info_opts(fParams.ic, codec_opts);
+	int orig_nb_streams = fParams.ic->nb_streams;
 
-	err = avformat_find_stream_info(ic, opts);
+	err = avformat_find_stream_info(fParams.ic, opts);
 
 	for (i = 0; i < orig_nb_streams; i++)
 		av_dict_free(&opts[i]);
@@ -337,194 +81,130 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 	// ============================================================
 
 	// Seems to be a required hack
-	if (ic->pb)
-		ic->pb->eof_reached = 0;
-
-	// This code output the information about the input file to console
-	av_dump_format(ic, 0, fnameArg.c_str(), 0);
-
-	for (i = 0; i < ic->nb_streams; i++)
+	if (fParams.ic->pb)
 	{
-		AVStream* st = ic->streams[i];
-		enum AVMediaType type = st->codecpar->codec_type;
-		st->discard = AVDISCARD_ALL;
-		/*
-		* I do not know what this is all good for - AVDISCARD_ALL seems to be not corrct though
-		if (type >= 0 && wanted_stream_spec[type] && st_index[type] == -1)
-			if (avformat_match_stream_specifier(ic, st, wanted_stream_spec[type]) > 0)
-				st_index[type] = i;
-		*/
+		fParams.ic->pb->eof_reached = 0;
 	}
 
-	/*
-	 *
-	 for (i = 0; i < AVMEDIA_TYPE_NB; i++) {
-		if (wanted_stream_spec[i] && st_index[i] == -1) {
-			av_log(NULL, AV_LOG_ERROR, "Stream specifier %s does not match any %s stream\n", wanted_stream_spec[i], av_get_media_type_string(i));
-			st_index[i] = INT_MAX;
-		}
-	}
-	 */
-
-	 // Find the best stream in terms of quality. There is only one here!!
-	st_index[AVMEDIA_TYPE_AUDIO] =
-		av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO,
-			st_index[AVMEDIA_TYPE_AUDIO],
-			st_index[AVMEDIA_TYPE_VIDEO],
-			NULL, 0);
-
-	// Open the stream
-	if (st_index[AVMEDIA_TYPE_AUDIO] >= 0) {
-		// stream_component_open(is, st_index[AVMEDIA_TYPE_AUDIO]);
-	}
-
-	// In loop:
-	int ret = av_read_frame(ic, pkt);
-	
-
-#if 0
-	res = wavFileReader.select(fname);
-	if (res == JVX_NO_ERROR)
+	for (i = 0; i < fParams.ic->nb_streams; i++)
 	{
-		int errCode = 0;
-		res = wavFileReader.activate(errCode);
+		AVStream* st = fParams.ic->streams[i];
 
-		if (res == JVX_NO_ERROR)
+		if (st->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
 		{
-			jvxSize nchans = 0;
-			jvxInt32 rate = 0;
-			jvxFileFormat fformat = JVX_FILEFORMAT_NONE;
-			jvxBool lendian = true;
-			jvxSize bitssample = 16;
-			jvxSize subtype = 0;
-			l_samples = 0;
+			fParams.fName = fnameArg;
 
-			wavFileReader.get_file_properties(
-				&nchans,
-				&l_samples,
-				&rate,
-				&fformat,
-				&lendian,
-				&bitssample,
-				&subtype);
+			// Get the file properties from open structure
+			char strBuf[512] = { 0 };
+			av_channel_layout_describe(&st->codecpar->ch_layout, strBuf, sizeof(strBuf));
 
-			file_params.srate = rate;
-			//bsize = JVX_SIZE_UNSELECTED;
-			// file_params.fsizemax
-			file_params.nchans = nchans;
-			if (lendian)
+			fParams.nChans = st->codecpar->ch_layout.nb_channels; // st->codecpar->channels;
+
+			// Note: ic->duration / (jvxData)AV_TIME_BASE is another way to obtain duration
+			fParams.lengthSamples = (jvxData)st->duration;
+			fParams.lengthSecs = fParams.lengthSamples * (jvxData)st->time_base.num / (jvxData)st->time_base.den;
+			fParams.numFrames = (jvxData)st->nb_frames;
+			fParams.sRate = st->codecpar->sample_rate;
+			fParams.frameSize = st->codecpar->frame_size;
+			fParams.bitRate = st->codecpar->bit_rate;
+
+			// AVSampleFormat format = (AVSampleFormat)st->codecpar->format;
+			fParams.chanLayoutTag = strBuf;
+
+			// Should be there always
+			fParams.fFormatTag = fParams.ic->iformat->name;
+
+			// Get codec id name
+			const char* cbuf = avcodec_get_name(st->codecpar->codec_id);
+			if (cbuf)
 			{
-				file_params.endian = audio_codec_wav_endian::AUDIO_CODEC_WAV_LITTLE_ENDIAN;
-			}
-			else
-			{
-				file_params.endian = audio_codec_wav_endian::AUDIO_CODEC_WAV_BIG_ENDIAN;
-			}
-			switch (bitssample)
-			{
-			case 16:
-				file_params.resolution = audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_16BIT;
-				break;
-			case 24:
-				file_params.resolution = audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_24BIT;
-				break;
-			case 32:
-				file_params.resolution = audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_32BIT;
-				break;
-			case 64:
-				file_params.resolution = audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_64BIT;
-				break;
-			default:
-				assert(0);
+				fParams.codecIdTag = cbuf;
 			}
 
-			switch (fformat)
+
+			cbuf = av_get_media_type_string(st->codecpar->codec_type);
+			if (cbuf)
 			{
-			case JVX_FILEFORMAT_PCM_FIXED:
-				file_params.sample_type = audio_codec_wav_sample_type::AUDIO_CODEC_WAV_FIXED_POINT;
-				break;
-
-			case JVX_FILEFORMAT_IEEE_FLOAT:
-				file_params.sample_type = audio_codec_wav_sample_type::AUDIO_CODEC_WAV_FLOATING_POINT;
-				break;
-
-			default:
-				assert(0);
+				fParams.codecTypeTag = cbuf;
 			}
 
-			switch (subtype)
+			if (st->codecpar->format != AV_SAMPLE_FMT_NONE)
 			{
-			case JVX_WAV_64_SONY:
-
-				file_params.sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64_SONY;
-				break;
-			case JVX_WAV_64:
-
-				file_params.sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64;
-				break;
-			case JVX_WAV_32:
-
-				file_params.sub_type = audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_32;
-				break;
-			default: 
-				assert(0);
-			}
-
-			/*
-			 * Test the wav file reader here
-			wavFileReader.prepare(256);
-			wavFileReader.start();
-			jvxByte buf[1024];
-			while (1)
-			{
-				jvxErrorType res = wavFileReader.read_one_buf_raw(buf, 1024);
-				if (res != JVX_NO_ERROR)
+				cbuf = av_get_sample_fmt_name((AVSampleFormat)st->codecpar->format);
+				if (cbuf)
 				{
-					break;
+					fParams.sFormat = cbuf;
 				}
 			}
-			*/
-		}
-		else
-		{
-			wavFileReader.unselect();
-		}
-	}
-	else
-	{
-		std::cout << "Failed to open file <" << fnameArg << ">, reason: " << std::endl;
-		// wavFileReader.
-	}
-#endif
+			fParams.bitsPerRaw = st->codecpar->bits_per_raw_sample;
+			fParams.bitsPerCoded = st->codecpar->bits_per_coded_sample;
 
-	return res;
+			std::cout << "Filename <" << fParams.fName << ">: " << std::endl;
+			std::cout << " -> Codec <" << fParams.codecIdTag << ">: " << std::endl;
+			std::cout << " -> File format <" << fParams.fFormatTag<< ">: " << std::endl;
+			std::cout << " -> Bit rate <" << fParams.bitRate << ">: " << std::endl;
+			std::cout << " -> Sample format <" << fParams.sFormat << ">: " << std::endl;
+			std::cout << " -> Sample rate <" << fParams.sRate<< ">: " << std::endl;
+			std::cout << " -> Frame size <" << fParams.frameSize << ">: " << std::endl;
+			std::cout << " -> Number channels <" << fParams.nChans << ">: " << std::endl;
+			std::cout << " -> Length [samples] <" << fParams.lengthSamples << ">: " << std::endl;
+			std::cout << " -> Length [secs] <" << fParams.lengthSecs << ">: " << std::endl;
+			std::cout << " -> Number frames <" << fParams.numFrames << ">: " << std::endl;
+
+			// I think this is to ignore all incoming packets when not yet setup propperly
+			st->discard = AVDISCARD_ALL;
+			/*
+			* I do not know what this is all good for - AVDISCARD_ALL seems to be not corrct though
+			if (type >= 0 && wanted_stream_spec[type] && st_index[type] == -1)
+				if (avformat_match_stream_specifier(ic, st, wanted_stream_spec[type]) > 0)
+					st_index[type] = i;
+			*/
+			fParams.st = st;
+			break;
+		}
+
+		if (fParams.st == nullptr)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+			goto failed;
+		}
+
+		
+
+#if 0
+		// Open the stream
+		if (st_index[AVMEDIA_TYPE_AUDIO] >= 0) {
+			// stream_component_open(is, st_index[AVMEDIA_TYPE_AUDIO]);
+		}
+
+		// In loop:
+		int ret = av_read_frame(ic, pkt);
+#endif
+	}
+
+	return JVX_NO_ERROR;
 
 failed:
-	if (ic)
-	{
-		avformat_free_context(ic);
-		ic = nullptr;
-	}
-	if (pkt)
-	{
-		av_packet_free(&pkt);
-	}
-	
+	term_file();
+	return res;
 }
 
 jvxErrorType
 CjvxAudioFFMpegReaderDevice::term_file()
 {
 	jvxErrorType res = JVX_NO_ERROR;
-#if 0
-	jvxErrorType res = wavFileReader.deactivate();
-	assert(res == JVX_NO_ERROR);
 
-	res = wavFileReader.unselect();
-	assert(res == JVX_NO_ERROR);
+	if (fParams.ic)
+	{
+		avformat_free_context(fParams.ic);
+		fParams.ic = nullptr;
+	}
+	if (fParams.pkt)
+	{
+		av_packet_free(&fParams.pkt);
+	}
 
-	reset_props();
-#endif
+	fParams.reset();
 	return res;
 }
 
@@ -566,10 +246,10 @@ CjvxAudioFFMpegReaderDevice::activate()
 	jvxErrorType res = CjvxAudioDevice::activate();
 	if (res == JVX_NO_ERROR)
 	{
-		genFileReader_device::init_all();
-		genFileReader_device::allocate_all();
-		genFileReader_device::register_all(static_cast<CjvxProperties*>(this));
-		genFileReader_device::register_callbacks(
+		genFFMpegReader_device::init_all();
+		genFFMpegReader_device::allocate_all();
+		genFFMpegReader_device::register_all(static_cast<CjvxProperties*>(this));
+		genFFMpegReader_device::register_callbacks(
 			static_cast<CjvxProperties*>(this),
 			set_config, 
 			trigger_command,
@@ -586,21 +266,25 @@ CjvxAudioFFMpegReaderDevice::activate()
 		// 
 		CjvxAudioDevice::properties_active.inputchannelselection.value.entries.clear();
 		jvx_bitFClear(CjvxAudioDevice::properties_active.inputchannelselection.value.selection());
-#if 0
-		for (i = 0; i < file_params.nchans; i++)
+		for (i = 0; i < fParams.nChans; i++)
 		{
 			CjvxAudioDevice::properties_active.inputchannelselection.value.entries.push_back("In #" + jvx_size2String(i));
 			jvx_bitSet(CjvxAudioDevice::properties_active.inputchannelselection.value.selection(), i);
 		}
-		CjvxAudioDevice::properties_active.samplerate.value = file_params.srate;
-#endif
+		CjvxAudioDevice::properties_active.samplerate.value = fParams.sRate;
 
 		CjvxAudioDevice::properties_active.outputchannelselection.value.entries.clear();
 		jvx_bitFClear(CjvxAudioDevice::properties_active.outputchannelselection.value.selection());
 
+		if (fParams.frameSize != 0)
+		{
+			CjvxAudioDevice::properties_active.buffersize.value = fParams.frameSize;
+			UPDATE_PROPERTY_ACCESS_TYPE(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.buffersize);
+		}
+
 		this->updateDependentVariables_lock(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
 
-		genFileReader_device::wav_properties.file_length.value = l_samples;
+		genFFMpegReader_device::file.length_sec.value = fParams.lengthSecs;
 
 #if 0
 		genFileReader_device::translate__wav_properties__sample_type_to(file_params.sample_type);
@@ -617,7 +301,9 @@ CjvxAudioFFMpegReaderDevice::activate()
 		UPDATE_PROPERTY_ACCESS_TYPE(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.inputchannelselection);
 		UPDATE_PROPERTY_ACCESS_TYPE(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.samplerate);
 
-		CjvxAudioDevice::properties_active.sourceName.value = jvx_shortenStringName(32, fname);
+		CjvxAudioDevice::properties_active.sourceName.value = jvx_shortenStringName(32, fParams.fName);
+		CjvxAudioDevice::properties_active.sinkName.value = "not-connected";
+
 		// ==============================================================================
 		// 
 		// Obtain the thread handle here
@@ -648,11 +334,16 @@ CjvxAudioFFMpegReaderDevice::deactivate()
 		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.inputchannelselection);
 		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.samplerate);
 
-		genFileReader_device::unregister_callbacks(
+		if (fParams.frameSize != 0)
+		{
+			UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.buffersize);
+		}
+
+		genFFMpegReader_device::unregister_callbacks(
 			static_cast<CjvxProperties*>(this),
 			nullptr);
-		genFileReader_device::unregister_all(static_cast<CjvxProperties*>(this));
-		genFileReader_device::deallocate_all();
+		genFFMpegReader_device::unregister_all(static_cast<CjvxProperties*>(this));
+		genFFMpegReader_device::deallocate_all();
 		res = CjvxAudioDevice::deactivate();
 
 
@@ -769,6 +460,61 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 {
     jvxErrorType res = JVX_NO_ERROR;
 
+
+
+
+	AVDictionary* format_opts = nullptr, * codec_opts = nullptr, * filtered_opts = nullptr;
+	if (fParams.frameSize == 0)
+	{
+		/*
+		const AVOption* opt = av_opt_find(ic,
+			"max_size",
+			NULL, AV_OPT_FLAG_DECODING_PARAM,
+			AV_OPT_SEARCH_CHILDREN);
+		*/
+		jvxUByte* max_size_ptr = NULL;
+		int ret = av_opt_set(fParams.ic, "max_size", "2048", AV_OPT_SEARCH_CHILDREN);
+		ret = av_opt_get(fParams.ic, "max_size", AV_OPT_SEARCH_CHILDREN, &max_size_ptr);
+		if (max_size_ptr)
+		{
+			av_free(max_size_ptr);
+			max_size_ptr = NULL;
+		}
+	}
+	fParams.cc = avcodec_alloc_context3(NULL);
+
+	int ret = avcodec_parameters_to_context(fParams.cc, fParams.st->codecpar);
+	assert(ret == 0);
+	fParams.cc->pkt_timebase = fParams.st->time_base;
+
+	fParams.codec = avcodec_find_decoder(fParams.st->codecpar->codec_id);
+	// Alternative call here if we knwo the name
+	// avcodec_find_decoder_by_name(forced_codec_name);
+	assert(fParams.codec);
+
+	// Make sure..
+	fParams.cc->codec_id = fParams.codec->id;
+
+	filtered_opts = filter_codec_opts(codec_opts, fParams.st->codecpar->codec_id, fParams.ic, fParams.st, fParams.codec);
+	if (!av_dict_get(filtered_opts, "threads", NULL, 0))
+		av_dict_set(&filtered_opts, "threads", "auto", 0);
+
+	ret = avcodec_open2(fParams.cc, fParams.codec, &filtered_opts);
+	assert(ret == 0);
+
+	// Set not eof
+	// fParams.st->eof = 0;
+
+	// Here we allow input packets
+	fParams.st->discard = AVDISCARD_DEFAULT;
+
+	ret = av_read_frame(fParams.ic, fParams.pkt);
+
+
+
+
+
+
     // Auto-run the prepare function
 	res = prepare_chain_master_autostate(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	assert(res == JVX_NO_ERROR);
@@ -783,7 +529,7 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 	if (res == JVX_NO_ERROR)
 	{
 		involve_read_thread = false;
-		if (genFileReader_device::exteded_properties.threaded_read.value == c_true)
+		if (genFFMpegReader_device::exteded_properties.threaded_read.value == c_true)
 		{
 #if 0
 			jvxSize bitssample = jvx_wav_get_bits_sample(&file_params);
@@ -807,8 +553,8 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 		_common_set_ldslave.theData_out.con_data.number_buffers = 1;
 
 		// Monitoring feedback
-		genFileReader_device::monitor.progress_percent.value = 0;
-		genFileReader_device::monitor.num_lost.value = 0;
+		genFFMpegReader_device::monitor.progress_percent.value = 0;
+		genFFMpegReader_device::monitor.num_lost.value = 0;
 
 		// Start the reader
 #if 0
@@ -1131,7 +877,7 @@ CjvxAudioFFMpegReaderDevice::send_buffer_thread()
 					JVX_LOCK_MUTEX(safeAccessBuffer);
 					if (bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_OPERATION)
 					{
-						genFileReader_device::monitor.num_lost.value++;
+						genFFMpegReader_device::monitor.num_lost.value++;
 						bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_CHARGING;
 					}
 					JVX_UNLOCK_MUTEX(safeAccessBuffer);
@@ -1145,7 +891,7 @@ CjvxAudioFFMpegReaderDevice::send_buffer_thread()
 			else
 			{
 				// e.g. if bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE
-				genFileReader_device::monitor.num_lost.value++;
+				genFFMpegReader_device::monitor.num_lost.value++;
 				_common_set_ldslave.theData_out.con_params.fHeight_x = 0;
 			}
 			JVX_UNLOCK_MUTEX(safeAccessRead);
@@ -1179,7 +925,7 @@ CjvxAudioFFMpegReaderDevice::send_buffer_direct()
 		
 		wavFileReader.current_progress(&progress);
 #endif
-		genFileReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)l_samples * 100.0);
+		genFFMpegReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)fParams.lengthSecs * 100.0);
 	}
 }
 
@@ -1279,12 +1025,12 @@ CjvxAudioFFMpegReaderDevice::read_samples_to_buffer()
 #if 0
 	wavFileReader.current_progress(&progress);
 #endif
-	genFileReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)l_samples * 100.0);
+	genFFMpegReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)fParams.lengthSecs * 100.0);
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, set_config)
 {
-	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFileReader_device::command.restart))
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFFMpegReader_device::command.restart))
 	{
 #if 0
 		wavFileReader.set_loop(genFileReader_device::config.loop.value == c_true);
@@ -1295,11 +1041,11 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, set_
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, trigger_command)
 {
-	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFileReader_device::command.restart))
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFFMpegReader_device::command.restart))
 	{
 		// Designed for application during application.
 		// Most of the functions should silently failed if uused when not online
-		if (genFileReader_device::command.restart.value)
+		if (genFFMpegReader_device::command.restart.value)
 		{
 			JVX_LOCK_MUTEX(safeAccessRead);
 #if 0
@@ -1311,7 +1057,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, trig
 			JVX_UNLOCK_MUTEX(safeAccessRead);
 			refThreads.cpPtr->trigger_wakeup();
 		}
-		genFileReader_device::command.restart.value = false;
+		genFFMpegReader_device::command.restart.value = false;
 	}
 	return JVX_NO_ERROR;
 }

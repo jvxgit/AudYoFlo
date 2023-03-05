@@ -146,8 +146,8 @@ CjvxAudioFFMpegReaderTechnology::update_local_properties(jvxBool trig_host, jvxS
 	genFileReader_technology::file_selection.file_lists.value.entries.clear();
 	for (std::pair<IjvxDevice*, CjvxAudioFFMpegReaderDevice*> elm : lstDevType)
 	{
-		genFileReader_technology::file_selection.file_lists.value.entries.push_back(elm.second->fname);
-		if (elm.second->fname == old_sel)
+		genFileReader_technology::file_selection.file_lists.value.entries.push_back(elm.second->fParams.fName);
+		if (elm.second->fParams.fName == old_sel)
 		{
 			idSel = cnt;
 		}
@@ -283,7 +283,7 @@ CjvxAudioFFMpegReaderTechnology::activateOneFile(
 	// Avoid file opened multiple times
 	for (std::pair<IjvxDevice*, CjvxAudioFFMpegReaderDevice*> elm : lstDevType)
 	{
-		if (elm.second->fname == filename_to_be_opened)
+		if (elm.second->fParams.fName == filename_to_be_opened)
 		{
 			errTxt = "File <";
 			errTxt += filename_to_be_opened;

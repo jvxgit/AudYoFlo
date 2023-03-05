@@ -34,6 +34,9 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegReaderTechnology.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegReaderDevice.h
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ffmpeg-helpers.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ffmpeg-helpers.cpp
+
   )
 
 set(LOCAL_LIBS
