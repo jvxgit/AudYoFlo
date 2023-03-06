@@ -60,7 +60,7 @@ public:
 	static bool hasValidTags(QTreeWidget* theTree, const std::string &tag);
 	static bool hasValidTags(QTreeWidgetItem *theItem, const std::string& tag, int cnt, const std::string& prefix);
 
-	static jvxBool getAllTagInformation(QTreeWidgetItem* theItem, std::string& compTag, std::string& propName, std::vector<std::string>& lst, jvxPropertyDescriptor& propD, basePropInfos& myBasePropIs);
+	static jvxBool getAllTagInformation(QTreeWidgetItem* theItem, std::string& compTag, std::string& propName, std::vector<std::string>& lst, jvxPropertyDescriptor& propD, basePropInfos& myBasePropIs, jvxSize& idArray);
 	void removeCurrentWidget(CjvxQtSaWidgetWrapper_elementbase* w, bool forceImmediateDelete = false);
 
 	virtual void editingCompleted(CjvxQtSaWidgetWrapper_elementbase* theWidgetToClose);

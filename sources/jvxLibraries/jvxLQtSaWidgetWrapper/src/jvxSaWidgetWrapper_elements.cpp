@@ -5,7 +5,8 @@
 CjvxQtSaWidgetWrapper_elementbase::CjvxQtSaWidgetWrapper_elementbase(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, jvxBool allowReadArg, jvxBool allowWriteArg) :
 	cbk(cb), it(assoc), theWidget(NULL)
 {
-	jvxBool res = CjvxMaWrapperElementTreeWidget::getAllTagInformation(it, myTag, propName, paramlst, connectedProp, myBasePropIs);
+	jvxSize idxArray = 0;
+	jvxBool res = CjvxMaWrapperElementTreeWidget::getAllTagInformation(it, myTag, propName, paramlst, connectedProp, myBasePropIs, idxArray);
 	myBackwardRef = cbk->getBackwardReference();
 	allowRead = allowReadArg;
 	allowWrite = allowWriteArg;

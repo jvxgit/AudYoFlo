@@ -81,9 +81,22 @@ protected:
 	proc_params output;
 
 	refComp<IjvxThreads> refThreads;
+
+	// This variable checks the type of trigger the source requires. If the type is 
+	// JVX_MASTER_SOURCE_INTERNAL_TRIGGER, the source will push the data. If 
+	// the type is JVX_MASTER_SOURCE_EXTERNAL_TRIGGER, the source must be triggered 
+	// via the chain.
 	jvxMasterSourceType trigTp = jvxMasterSourceType::JVX_MASTER_SOURCE_INTERNAL_TRIGGER;
 
+	// The forward buffer can be configured for input as well as for output functionality
 	jvxOperationMode buffermode = jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT;
+
+	jvxBitField* selChannels = nullptr;
+	jvxSize numChannels = 0;
+
+	jvxData** bufReroute = nullptr;
+	jvxData* zbuf = nullptr;
+
 public:
 
 	JVX_CALLINGCONVENTION CjvxAuNForwardBuffer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -126,6 +139,7 @@ public:
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_processing_monitor);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_bypass_buffer);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor,
@@ -150,6 +164,8 @@ public:
 	void write_samples_to_buffer();
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)override;
+
+	void from_input_to_output() override;
 
 
 };

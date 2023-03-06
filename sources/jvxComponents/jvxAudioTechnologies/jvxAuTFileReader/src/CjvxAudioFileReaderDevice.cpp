@@ -257,7 +257,7 @@ CjvxAudioFileReaderDevice::activate()
 		genFileReader_device::translate__wav_properties__endian_to(file_params.endian);
 		genFileReader_device::translate__wav_properties__sub_type_to(file_params.sub_type);
 		file_params.bsize = CjvxAudioDevice::properties_active.buffersize.value;
-		file_params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&file_params, file_params.bsize);
+		file_params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&file_params, JVX_SIZE_UNSELECTED);
 
 		// ==============================================================================
 
@@ -404,7 +404,7 @@ CjvxAudioFileReaderDevice::test_set_output_parameters()
 	// The buffersize as it is derived from the buffersize as set by the audio framing definition
 	// You can specify the buffersize by setting the standard parameter for the device buffersize
 	_common_set_ldslave.theData_out.con_params.buffersize =
-		jvx_wav_compute_bsize_bytes_pcm(&file_params, _common_set_ldslave.theData_out.con_params.buffersize);
+		jvx_wav_compute_bsize_bytes_pcm(&file_params, JVX_SIZE_UNSELECTED);
 	
 	// Type is modified as the data is coded
 	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
@@ -922,7 +922,7 @@ void
 CjvxAudioFileReaderDevice::reconfigure_bsize(jvxSize bsize)
 {
 	file_params.bsize = bsize;
-	file_params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&file_params, file_params.bsize);
+	file_params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&file_params, JVX_SIZE_UNSELECTED);
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFileReaderDevice, set_config)

@@ -13,6 +13,7 @@
 #define JVX_USER_ROLE_TREEWIDGET_PROPERTY_DESCR (Qt::UserRole + 5)
 #define JVX_USER_ROLE_TREEWIDGET_PROPERTY_PARAM_BASE (Qt::UserRole + 6)
 #define JVX_USER_ROLE_TREEWIDGET_PROPERTY_ADDED_ON_ASSOCIATE (Qt::UserRole + 7)
+#define JVX_USER_ROLE_TREEWIDGET_PROPERTY_ID_ARRAY (Qt::UserRole + 8)
 #define JVX_USER_ROLE_TREEWIDGET_SUBWIDGET 1
 
 Q_DECLARE_METATYPE(jvxPropertyDescriptor);
@@ -278,6 +279,7 @@ CjvxMaWrapperElementTreeWidget::processLeefs(QTreeWidgetItem *theItem, int cnt, 
 									newItem = NULL;
 									newItem = new QTreeWidgetItem(theItem);
 									newItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_ADDED_ON_ASSOCIATE, QVariant(true));
+									newItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_ID_ARRAY, QVariant(0));
 									newDescription = theDescr.description.std_str();
 									if (newDescription.empty())
 									{
@@ -494,7 +496,8 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(jvxPropertyCallContext cco
 }
 
 jvxBool
-CjvxMaWrapperElementTreeWidget::getAllTagInformation(QTreeWidgetItem* theItem, std::string& compTag, std::string& propName, std::vector<std::string>& lst, jvxPropertyDescriptor& propD, basePropInfos& myBasePropIs)
+CjvxMaWrapperElementTreeWidget::getAllTagInformation(QTreeWidgetItem* theItem, std::string& compTag, std::string& propName, 
+	std::vector<std::string>& lst, jvxPropertyDescriptor& propD, basePropInfos& myBasePropIs, jvxSize& idxArray)
 {
 	jvxSize i;
 	bool everythingOK = true;
@@ -552,6 +555,16 @@ CjvxMaWrapperElementTreeWidget::getAllTagInformation(QTreeWidgetItem* theItem, s
 	if (var.isValid())
 	{
 		myBasePropIs = var.value<basePropInfos>();
+	}
+	else
+	{
+		everythingOK = false;
+	}
+
+	var = theItem->data(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_ID_ARRAY);
+	if (var.isValid())
+	{
+		idxArray = var.value<int>();
 	}
 	else
 	{
@@ -622,8 +635,9 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 			basePropInfos myBasePropIs;
 			jvxBool typeNothandled = false;
 			jvxBool showThis = true;
+			jvxSize idxArray = 0;
 
-			everythingOk = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs);
+			everythingOk = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs, idxArray);
 
 			theItem->setHidden(false);
 			if (!token_search.empty())
@@ -678,6 +692,9 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 
 						if (!getSetTag.empty())
 						{
+							jvxBool entryOk = true;
+							jvxSize offsetStart = 0;
+
 							if (propD.num == 1)
 							{
 								// Currently, only single elements are supported
@@ -737,11 +754,73 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 								default:
 									assert(0);
 								}
+							}
+							else if (propD.num > 1)
+							{
+								// Currently, only single elements are supported
+								switch (propD.format)
+								{
+								case JVX_DATAFORMAT_SELECTION_LIST:
+									ptrVal = &selLst;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_SIZE:
+									ptrVal = &valS;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_DATA:
+									ptrVal = &valD;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_16BIT_LE:
+									ptrVal = &valI16;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_8BIT:
+									ptrVal = &valI8;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_32BIT_LE:
+									ptrVal = &valI32;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_64BIT_LE:
+									ptrVal = &valI64;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_U16BIT_LE:
+									ptrVal = &valUI16;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_U8BIT:
+									ptrVal = &valUI8;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_U32BIT_LE:
+									ptrVal = &valUI32;
+									offsetStart = idxArray;
+									break;
+								case JVX_DATAFORMAT_U64BIT_LE:
+									ptrVal = &valUI64;
+									offsetStart = idxArray;
+									break;
+								default:
+									typeNothandled = true;
+									entryOk = false;
+								}
+							}
+							else
+							{
+								entryOk = false;
+							}
+						
 
+							if(entryOk)
+							{
 								if (!typeNothandled)
 								{
 									ident.reset(getSetTag.c_str());
-									trans.reset(false, 0, JVX_PROPERTY_DECODER_NONE);
+									trans.reset(false, offsetStart, JVX_PROPERTY_DECODER_NONE);
 									resP = propRef->get_property(callGate, jPRG( ptrVal, 1, propD.format), ident, trans );
 
 									if (resP == JVX_NO_ERROR)
@@ -1187,10 +1266,11 @@ CjvxMaWrapperElementTreeWidget::treeWidgetContextMenuRequest(const QPoint& pos)
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxPropertyDescriptor propD;
 	basePropInfos myBasePropIs;
+	jvxSize idx = 0;
 	QTreeWidgetItem* nd = uiRefTp->itemAt(pos);
 	if(nd)
 	{
-		bool everythingOK = getAllTagInformation(nd, compTag, propName, lst, propD, myBasePropIs);
+		bool everythingOK = getAllTagInformation(nd, compTag, propName, lst, propD, myBasePropIs, idx);
 		if (everythingOK)
 		{
 			QClipboard* clipboard = QApplication::clipboard();
@@ -1220,11 +1300,12 @@ CjvxMaWrapperElementTreeWidget::treeWidgetItemDblClicked(QTreeWidgetItem* theIte
 	basePropInfos myBasePropIs;
 	jvxCallManagerProperties callGate;
 	jvxBool is_valid = true;
+	jvxSize idxArray = 0;
 	jvxPropertyAccessType accTp = JVX_PROPERTY_ACCESS_NONE;
 	jvxBool allowRead = false;
 	jvxBool allowWrite = false;
 
-	bool everythingOK = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs);
+	bool everythingOK = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs, idxArray);
 	if (everythingOk)
 	{
 		jvxBool addressRtUpdate = false;
@@ -1694,8 +1775,9 @@ CjvxMaWrapperElementTreeWidget::matchesWildcardCore(QTreeWidgetItem *theItem, co
 	jvxPropertyDescriptor propD;
 	bool everythingOk = true;
 	basePropInfos myBasePropIs;
+	jvxSize idx = 0;
 
-	bool everythingOK = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs);
+	bool everythingOK = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs, idx);
 	if (everythingOk)
 	{
 		jvxBool doesMatch1 = true;

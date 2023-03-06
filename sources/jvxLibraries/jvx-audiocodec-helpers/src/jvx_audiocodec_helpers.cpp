@@ -313,7 +313,13 @@ jvx_wav_compute_bsize_bytes_pcm(wav_params* file_params, jvxSize bsize)
 {
 	jvxSize nchans = file_params->nchans;
 	jvxSize bitssample = jvx_wav_get_bits_sample(file_params);
-	return (nchans * bitssample * file_params->bsize / 8);
+	jvxSize bytesFrame = (nchans * bitssample * file_params->bsize / 8);
+	if (JVX_CHECK_SIZE_SELECTED(bsize))
+	{
+		// Override
+		bytesFrame = (nchans * bitssample * bsize / 8);
+	}
+	return bytesFrame;
 }
 
 jvxSize
