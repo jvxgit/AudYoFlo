@@ -63,14 +63,20 @@ public:
 	struct
 	{
 		jvxLinkDataDescriptor* theData_in;
-		jvxDataflowCapabilities caps_in;
+		struct 
+		{
+			jvxDataFormatGroup format_group;
+			jvxDataflow data_flow;
+		} caps_in;
 	} _common_set_icon_nvtask;
 
 	CjvxCommonNVtask* _common_nvtask;
 
 	CjvxInputConnectorNVtask();
 
-	jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(const jvxDataflowCapabilities& caps)override;
+	jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
+		jvxDataFormatGroup format_group,
+		jvxDataflow data_flow)override;
 	
 	// jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 };
@@ -83,14 +89,19 @@ public:
 	struct
 	{
 		jvxLinkDataDescriptor theData_out;
-		jvxDataflowCapabilities caps_out;
+		struct {
+			jvxDataFormatGroup format_group;
+			jvxDataflow data_flow;
+		}caps_out;
 	} _common_set_ocon_nvtask;
 
 	CjvxCommonNVtask* _common_nvtask;
 
 	CjvxOutputConnectorNVtask();
 
-	jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(const jvxDataflowCapabilities& caps)override;
+	jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(
+		jvxDataFormatGroup format_group,
+		jvxDataflow data_flow)override;
 
 	// jvxErrorType outputs_data_format_group(jvxDataFormatGroup grp) override;
 	jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override;

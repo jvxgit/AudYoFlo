@@ -1,27 +1,5 @@
 SECTION PROPERTIES
 {	
 	OUTPUTFILE_NAME = "CjvxNodeAss_genpcg";
-
 	include "node-properties-ass.pcgf";
-
-	SECTION operate
-	{
-		NAME = "properties_active_higher";
-		DESCRIPTION = "Properties in state active and higher";
-		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
-		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
-		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
-		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
-
-		SECTION engage
-		{
-			DESCRIPTION = "Engage Algorithm";	  // Defaults to NAME if not present
-			ID = "jvx_engage_sellist"; 		
-			ONLY_SELECTION_TO_CONFIG = "yes";
-			GENERATE_ENTRY_CONFIG_FILE = "yes";		
-			SELECTION_LIST_NAMES = {"Engage", "Do not engage"};
-			SELECTION_LIST_SELECTED = {"yes", "no"};
-			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
-		}; 
-	}; 
-};
+}; 

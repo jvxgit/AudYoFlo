@@ -11,7 +11,6 @@ SECTION node
 			DESCRIPTION = "Buffersize";	  // Defaults to NAME if not present
 			INIT_SET = 1024; // would overwrite STATIC_VARIABLE and SIZE if mismatch
 			ID = "jvx_framesize_int32"; 	
-			DESCRIPTOR = "JVX_AUDIONODE_BUFFERSIZE";
 			ASSOCIATE_EXTERNAL = "yes";
 			TYPE = "JVX_DATAFORMAT_32BIT_LE";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
@@ -21,7 +20,6 @@ SECTION node
 			DESCRIPTION = "Rate";	  // Defaults to NAME if not present
 			INIT_SET = 48000; 
 			ID = "jvx_rate_int32"; 		
-			DESCRIPTOR = "JVX_AUDIONODE_SAMPLERATE";
 			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
@@ -30,9 +28,9 @@ SECTION node
 			DESCRIPTION = "Format";	  // Defaults to NAME if not present
 			INIT_SET = 1; 
 			ID = "jvx_processing_format_int16"; 
-			DESCRIPTOR = "JVX_AUDIONODE_FORMAT";
 			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_FORMAT_IDX";
 		};
 		SECTION numberchannels
 		{
@@ -40,7 +38,6 @@ SECTION node
 			INIT_SET = 0; 
 			ID = "jvx_num_input_channels_int32"; 
 			GENERATE_ENTRY_CONFIG_FILE = "no";		
-			DESCRIPTOR = "JVX_AUDIONODE_INPUT_CHANNELS";
 			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
@@ -50,7 +47,6 @@ SECTION node
 			DESCRIPTION = "Segmentation X";	  // Defaults to NAME if not present
 			INIT_SET = 1024; // would overwrite STATIC_VARIABLE and SIZE if mismatch
 			ID = "jvx_segmentsize_x_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
-			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
 			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
@@ -60,10 +56,9 @@ SECTION node
 			DESCRIPTION = "Segmentation Y";	  // Defaults to NAME if not present
 			INIT_SET = 1; // would overwrite STATIC_VARIABLE and SIZE if mismatch
 			ID = "jvx_segmentsize_y_int32"; 			  // Overwrite CATEGORY, TYPE, SIZE, STATIC_VARIABLE if text assignment is given
-			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
-			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
-	};
+			ASSOCIATE_EXTERNAL = "yes";
+		};
 		
 		SECTION subformat
 		{
@@ -71,8 +66,28 @@ SECTION node
 			INIT_SET = 1; // <- start with datasubformat "JVX_DATASUBFORMAT_AUDIO_PCM"
 			ID = "jvx_processing_subformat_int16"; 
 			GENERATE_ENTRY_CONFIG_FILE = "no";	
-			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";			
+			ASSOCIATE_EXTERNAL = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SUBFORMAT_IDX";
+		};
+
+		SECTION dataflow 
+		{
+			DESCRIPTION = "Dataflow";	  // Defaults to NAME if not present
+			INIT_SET = 1; 
+			ID = "jvx_processing_dataflow_int16"; 
 			ASSOCIATE_EXTERNAL = "yes";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_DATAFLOW_IDX";
+		};
+
+		SECTION formatspec
+		{
+			DESCRIPTION = "FormatSpec";	  // Defaults to NAME if not present
+			INIT_SET = ""; 
+			ID = "jvx_processing_formatspec_string"; 
+			ASSOCIATE_EXTERNAL = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_DATAFLOW_IDX";
 		};
 	};

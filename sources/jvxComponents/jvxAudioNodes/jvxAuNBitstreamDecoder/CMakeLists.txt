@@ -32,7 +32,6 @@ set(LOCAL_PCG_FILES
 set(LOCAL_LIBS 
   jvx-component-templates-base_static
   ayf-node-connections_static
-  jvx-micro-connection_static
   jvx-dsp-cpp_static
   )
 

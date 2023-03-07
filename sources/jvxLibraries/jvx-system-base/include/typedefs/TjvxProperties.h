@@ -53,6 +53,7 @@ typedef enum
 	JVX_PROPERTY_DECODER_SIMPLE_ONOFF,
 	JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE,
 	JVX_PROPERTY_DECODER_SUBFORMAT_IDX,
+	JVX_PROPERTY_DECODER_DATAFLOW_IDX,
 
 	JVX_PROPERTY_DECODER_ENUM_TYPE,
 	JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE,
@@ -332,11 +333,12 @@ static oneEntryProperties jvxProperties[] =
 	{	"jvx_engage_sellist"					,	JVX_PROPERTIES_OFFSET_SYSTEM + 24				,	JVX_DATAFORMAT_SELECTION_LIST	,	1	, JVX_PROPERTY_DECODER_SINGLE_SELECTION		,"system/sel_engage"},
 	{	"jvx_number_lost_buffer_int32"			,	JVX_PROPERTIES_OFFSET_SYSTEM + 25				,	JVX_DATAFORMAT_32BIT_LE			,	1	, JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE	,"system/number_lost_buffer"},
 	{	"jvx_exactrate_int32"					,	JVX_PROPERTIES_OFFSET_SYSTEM + 26				,	JVX_DATAFORMAT_DATA				,	1	, JVX_PROPERTY_DECODER_NONE					,"system/exactrate" },
-	{	"jvx_activate_fillup_silence_on_stop_bool"	,	JVX_PROPERTIES_OFFSET_SYSTEM + 27				,	JVX_DATAFORMAT_BOOL		,	1	, JVX_PROPERTY_DECODER_SIMPLE_ONOFF					,"system/act_fillup_silence_stop"},
-	{	"jvx_period_fillup_silence_on_stop_data"	,	JVX_PROPERTIES_OFFSET_SYSTEM + 28				,	JVX_DATAFORMAT_DATA			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/per_fillup_silence_stop"},
-	{	"jvx_src_name_str"					,	JVX_PROPERTIES_OFFSET_SYSTEM + 29				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/src_name"},
-	{	"jvx_snk_name_str"					,	JVX_PROPERTIES_OFFSET_SYSTEM + 30				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/snk_name"},
-
+	{	"jvx_activate_fillup_silence_on_stop_bool"	,	JVX_PROPERTIES_OFFSET_SYSTEM + 27			,	JVX_DATAFORMAT_BOOL				,	1	, JVX_PROPERTY_DECODER_SIMPLE_ONOFF			,"system/act_fillup_silence_stop"},
+	{	"jvx_period_fillup_silence_on_stop_data"	,	JVX_PROPERTIES_OFFSET_SYSTEM + 28			,	JVX_DATAFORMAT_DATA				,	1	, JVX_PROPERTY_DECODER_NONE					,"system/per_fillup_silence_stop"},
+	{	"jvx_src_name_str"						,	JVX_PROPERTIES_OFFSET_SYSTEM + 29				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/src_name"},
+	{	"jvx_snk_name_str"						,	JVX_PROPERTIES_OFFSET_SYSTEM + 30				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/snk_name"},
+	{   "jvx_processing_dataflow_int16"			,	JVX_PROPERTIES_OFFSET_SYSTEM + 31				,	JVX_DATAFORMAT_16BIT_LE			,	1	, JVX_PROPERTY_DECODER_DATAFLOW_IDX			,"system/dataflow" },
+	{   "jvx_processing_formatspec_string"		,	JVX_PROPERTIES_OFFSET_SYSTEM + 32				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/formatspec" },
 #ifndef JVX_NO_SYSTEM_EXTENSIONS	
 #include "typedefs/TpjvxProperties_entries.h"
 #endif

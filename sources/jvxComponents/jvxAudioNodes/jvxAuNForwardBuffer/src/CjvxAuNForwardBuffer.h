@@ -82,12 +82,6 @@ protected:
 
 	refComp<IjvxThreads> refThreads;
 
-	// This variable checks the type of trigger the source requires. If the type is 
-	// JVX_MASTER_SOURCE_INTERNAL_TRIGGER, the source will push the data. If 
-	// the type is JVX_MASTER_SOURCE_EXTERNAL_TRIGGER, the source must be triggered 
-	// via the chain.
-	jvxMasterSourceType trigTp = jvxMasterSourceType::JVX_MASTER_SOURCE_INTERNAL_TRIGGER;
-
 	// The forward buffer can be configured for input as well as for output functionality
 	jvxOperationMode buffermode = jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT;
 

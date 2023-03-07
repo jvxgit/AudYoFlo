@@ -237,7 +237,7 @@ virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_F
 			_common_set_ldslave.theData_in->con_compat.ext.segmentation_y =
 				_common_set_ldslave.theData_out.con_params.segmentation_y;
 			_common_set_ldslave.theData_in->con_compat.ext.subformat =
-				_common_set_ldslave.theData_out.con_params.caps.format_group;
+				_common_set_ldslave.theData_out.con_params.format_group;
 			_common_set_ldslave.theData_in->con_compat.ext.hints =
 				_common_set_ldslave.theData_out.con_params.hints;
 
@@ -635,14 +635,18 @@ virtual jvxErrorType associated_common_ocon(IjvxDataConnectionCommon** ref) over
 
 // ==============================================================================
 
-virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(const jvxDataflowCapabilities& caps)override
+virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
+	jvxDataFormatGroup format_group,
+	jvxDataflow data_flow)override
 {
-	return _supports_connector_class_icon(caps);
+	return _supports_connector_class_icon(format_group, data_flow);
 }
 
-virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(const jvxDataflowCapabilities& caps)override
+virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(
+	jvxDataFormatGroup format_group,
+	jvxDataflow data_flow)override
 {
-	return _supports_connector_class_ocon(caps);
+	return _supports_connector_class_ocon(format_group, data_flow);
 }
 
 // ==============================================================================

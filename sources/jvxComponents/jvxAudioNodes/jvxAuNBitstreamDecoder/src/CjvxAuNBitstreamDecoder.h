@@ -13,11 +13,6 @@
 class CjvxAuNBitstreamDecoder: 
 	public JVX_LOCAL_BASE_CLASS,
 	public IayfConnectionStateSwitchNode,
-	/*
-	public CjvxBareNode1ioRearrange,
-	public HjvxMicroConnection_hooks_simple,
-	public HjvxMicroConnection_hooks_fwd,
-	*/
 	public genBitstreamDecoder_node
 {
 private:

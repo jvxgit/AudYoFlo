@@ -294,7 +294,7 @@ CjvxAudioFileWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			ld_params.con_params.buffersize = file_params.fsizemax;
 			ld_params.con_params.number_channels = 1;
 			ld_params.con_params.format = JVX_DATAFORMAT_BYTE;
-			ld_params.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
+			ld_params.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
 			ld_params.con_params.segmentation_x = ld_params.con_params.buffersize;
 			ld_params.con_params.segmentation_y = 1;
 			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
@@ -354,7 +354,7 @@ CjvxAudioFileWriterDevice::test_set_output_parameters()
 	_common_set_ldslave.theData_out.con_params.segmentation_y = 0;
 
 	// The only purpose is to trigger the output side
-	_common_set_ldslave.theData_out.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_TRIGGER_ONLY;
+	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_TRIGGER_ONLY;
 }
 
 /*

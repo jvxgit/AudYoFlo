@@ -1167,7 +1167,7 @@ CjvxGenericWrapperDevice::test_connect_icon_core(JVX_CONNECTION_FEEDBACK_TYPE(fd
 		ld_loc.con_params.buffersize = params.buffersize;
 		ld_loc.con_params.rate = params.samplerate;
 		ld_loc.con_params.format = params.format;
-		ld_loc.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+		ld_loc.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 		ld_loc.con_params.segmentation_x = ld_loc.con_params.buffersize;
 		ld_loc.con_params.segmentation_y = 1;
 		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,

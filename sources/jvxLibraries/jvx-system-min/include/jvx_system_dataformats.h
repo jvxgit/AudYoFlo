@@ -350,7 +350,7 @@ typedef enum
 	JVX_DATAFLOW_LIMIT
 } jvxDataflow;
 
-static jvxTextHelpers jvxDataFlow_str[JVX_DATAFLOW_LIMIT] =
+static jvxTextHelpers jvxDataflow_str[JVX_DATAFLOW_LIMIT] =
 {
 	{"none", "JVX_DATAFLOW_NONE"},
 
@@ -358,24 +358,24 @@ static jvxTextHelpers jvxDataFlow_str[JVX_DATAFLOW_LIMIT] =
 	{"pull", "JVX_DATAFLOW_PUSH_ON_PULL"}
 };
 
-static inline const char* jvxDataFlow_txt(jvxSize id)
+static inline const char* jvxDataflow_txt(jvxSize id)
 {
 	assert(id < JVX_DATAFLOW_LIMIT);
-	return jvxDataFlow_str[id].friendly;
+	return jvxDataflow_str[id].friendly;
 }
 
-static inline jvxDataflow jvxDataFlow_decode(const char* token)
+static inline jvxDataflow jvxDataflow_decode(const char* token)
 {
 	jvxSize i;
 	jvxDataflow res = JVX_DATAFLOW_NONE;
 	for (i = 0; i < JVX_DATAFORMAT_GROUP_LIMIT; i++)
 	{
-		if (!strcmp(jvxDataFlow_str[i].friendly, token))
+		if (!strcmp(jvxDataflow_str[i].friendly, token))
 		{
 			res = (jvxDataflow)i;
 			break;
 		}
-		if (!strcmp(jvxDataFlow_str[i].full, token))
+		if (!strcmp(jvxDataflow_str[i].full, token))
 		{
 			res = (jvxDataflow)i;
 			break;

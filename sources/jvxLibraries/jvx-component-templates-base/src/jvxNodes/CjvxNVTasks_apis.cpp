@@ -23,7 +23,8 @@ CjvxNVTasks::accept_input_settings_vtask_start(jvxLinkDataDescriptor* datIn,
 				datIn->con_params.buffersize,
 				datIn->con_params.rate,
 				datIn->con_params.format,
-				datIn->con_params.caps.format_group,
+				datIn->con_params.format_group,
+				datIn->con_params.data_flow,
 				datOut);
 		}
 	}
@@ -133,7 +134,7 @@ CjvxNVTasks::show_properties_io_task_vtask(const jvxOneConnectorTaskRuntime& tas
 	CjvxNVTasks_pcg::selected_vtask_properties.node.buffersize.value = (jvxInt32)elmi->params.buffersize;
 	CjvxNVTasks_pcg::selected_vtask_properties.node.samplerate.value = (jvxInt32)elmi->params.rate;
 	CjvxNVTasks_pcg::selected_vtask_properties.node.format.value = elmi->params.format;
-	CjvxNVTasks_pcg::selected_vtask_properties.node.subformat.value = elmi->params.caps.format_group;
+	CjvxNVTasks_pcg::selected_vtask_properties.node.subformat.value = elmi->params.format_group;
 	CjvxNVTasks_pcg::selected_vtask_properties.node.segmentsize_x.value = elmi->params.segmentation_x;
 	CjvxNVTasks_pcg::selected_vtask_properties.node.segmentsize_y.value = (jvxInt32)elmi->params.segmentation_y;
 	CjvxNVTasks_pcg::selected_vtask_properties.node.numberoutputchannels.value = (jvxInt32)elmo->params.number_channels;

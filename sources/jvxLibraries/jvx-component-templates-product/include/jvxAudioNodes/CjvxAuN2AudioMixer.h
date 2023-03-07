@@ -193,6 +193,8 @@ public:
 		jvxSize subIdTask
 		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
+	virtual void test_set_output_parameters(jvxSize ctxtId, jvxSize ctxtSubId, jvxLinkDataDescriptor* theDataOut) override;
+
 	// =============================================================================
 
 	//jvxErrorType attach_input_channel_stage(const jvxLinkDataDescriptor& dat);

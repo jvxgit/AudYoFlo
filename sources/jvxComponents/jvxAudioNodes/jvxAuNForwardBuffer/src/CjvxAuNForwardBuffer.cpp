@@ -175,14 +175,23 @@ CjvxAuNForwardBuffer::from_input_to_output()
 	node_output._common_set_node_params_a_1io.samplerate = node_inout._common_set_node_params_a_1io.samplerate;
 	node_output._common_set_node_params_a_1io.format = node_inout._common_set_node_params_a_1io.format;
 	node_output._common_set_node_params_a_1io.subformat = node_inout._common_set_node_params_a_1io.subformat;
-	node_output._common_set_node_params_a_1io.dimY = node_inout._common_set_node_params_a_1io.dimY;
 	node_output._common_set_node_params_a_1io.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
+	node_output._common_set_node_params_a_1io.segmentation.y = node_inout._common_set_node_params_a_1io.segmentation.y;
 
 	if (genForwardBuffer_node::config_select.bypass_buffer.value)
 	{
-		// Output identical to input only for bypass-buffer-mode
+		// Input buffer: Output identical to input only for bypass-buffer-mode
+
+		// We may also see buffers with zero buffersize here. The output is set from the end
 		node_output._common_set_node_params_a_1io.buffersize = node_inout._common_set_node_params_a_1io.buffersize;
-		node_output._common_set_node_params_a_1io.dimX = node_inout._common_set_node_params_a_1io.dimX;
+		node_output._common_set_node_params_a_1io.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
+	}
+
+	// A buffersize of UNSELECTED is always a bad idea - better adapt input buffersize
+	if (JVX_CHECK_SIZE_UNSELECTED(node_output._common_set_node_params_a_1io.buffersize))
+	{
+		node_output._common_set_node_params_a_1io.buffersize = node_inout._common_set_node_params_a_1io.buffersize;
+		node_output._common_set_node_params_a_1io.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
 	}
 
 	output.buffersize = node_output._common_set_node_params_a_1io.buffersize;
@@ -202,7 +211,8 @@ CjvxAuNForwardBuffer::test_set_output_parameters()
 	neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels,
 		bsize, node_output._common_set_node_params_a_1io.samplerate,
 		(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
-		(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat);
+		(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
+		(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
 
 	// Use the default implementation
 	CjvxBareNode1ioRearrange::test_set_output_parameters();
@@ -297,25 +307,10 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 			}
 
-			trigTp = jvxMasterSourceType::JVX_MASTER_SOURCE_INTERNAL_TRIGGER;
 			jvxBool withStartThreshold = false;
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				
-				this->transfer_backward_icon(JVX_LINKDATA_TRANSFER_REQUEST_TRIGGER_TYPE,
-					&trigTp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-
-				withStartThreshold = true;
-				/*
-				resL = jvx_estimate_buffer_fillheight_init(
-					&inProcessing.fHeight.fHeightEstimator,
-					JVX_SIZE_INT32(inProcessing.fHeight.numberEventsConsidered_perMinMaxSection),
-					JVX_SIZE_INT32(inProcessing.fHeight.num_MinMaxSections),
-					inProcessing.fHeight.recSmoothFactor,
-					JVX_SIZE_INT32(inProcessing.fHeight.numOperations));
-
-				jvx_estimate_buffer_fillheight_restart(inProcessing.fHeight.fHeightEstimator);
-				*/
+				withStartThreshold = true;				
 			}
 			jvxSize bs = output.samplerate * genForwardBuffer_node::config.buffersize_msecs.value * 0.001;
 			bs = JVX_MAX(JVX_MAX(input.buffersize, output.buffersize) * 4, bs);
@@ -333,7 +328,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				if (trigTp == jvxMasterSourceType::JVX_MASTER_SOURCE_EXTERNAL_TRIGGER)
+				if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 				{
 					// Start the secondary thread
 					resL = refThreads.cpPtr->initialize(
@@ -370,7 +365,7 @@ CjvxAuNForwardBuffer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	{
 		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 		{
-			if (trigTp == jvxMasterSourceType::JVX_MASTER_SOURCE_EXTERNAL_TRIGGER)
+			if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 			{
 				refThreads.cpPtr->terminate();
 				assert(resL == JVX_NO_ERROR);
@@ -429,7 +424,7 @@ CjvxAuNForwardBuffer::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				if (trigTp == jvxMasterSourceType::JVX_MASTER_SOURCE_EXTERNAL_TRIGGER)
+				if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 				{
 					// Start the secondary thread
 					resL = refThreads.cpPtr->start();
@@ -460,7 +455,7 @@ CjvxAuNForwardBuffer::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 		{
-			if (trigTp == jvxMasterSourceType::JVX_MASTER_SOURCE_EXTERNAL_TRIGGER)
+			if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 			{
 				// Start the secondary thread
 				resL = refThreads.cpPtr->stop(5000);

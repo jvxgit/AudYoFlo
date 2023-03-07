@@ -294,6 +294,7 @@ CjvxNVTasks::connect_connect_icon_vtask(
 						master.rate,
 						master.format,
 						master.format_group,
+						master.data_flow,
 						nullptr);
 				elmR->second.ocons[subIdTask].neg._update_parameters_fixed(
 					JVX_SIZE_UNSELECTED, // No channel specification
@@ -301,6 +302,7 @@ CjvxNVTasks::connect_connect_icon_vtask(
 					master.rate,
 					master.format,
 					master.format_group,
+					master.data_flow,
 					nullptr);
 
 				if (icon)
@@ -397,7 +399,7 @@ CjvxNVTasks::test_connect_icon_vtask(
 	if (res == JVX_NO_ERROR)
 	{
 		jvxLinkDataDescriptor* datIn = icon->con->_common_set_icon_nvtask.theData_in;		
-		if(datIn->con_params.caps.format_group == JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
+		if(datIn->con_params.format_group == JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
 		{ 
 			// Trigger only mode means that no input data is expected, only the chain is 
 			// requested to trigger the output processing
@@ -416,11 +418,13 @@ CjvxNVTasks::test_connect_icon_vtask(
 					datOut->con_params.segmentation_x = (*elm)->neg.preferred.dimX.min;
 					datOut->con_params.segmentation_y = (*elm)->neg.preferred.dimY.min;
 					datOut->con_params.format = (*elm)->neg.preferred.format.min;
-					datOut->con_params.caps.format_group = (*elm)->neg.preferred.subformat.min;
+					datOut->con_params.format_group = (*elm)->neg.preferred.subformat.min;
 
 					// Taking the number of output channels from the master chain (copy)
 					// We may setup a different number of channels afterwards
 					datOut->con_params.number_channels = CjvxNode_genpcg::node.numberoutputchannels.value;
+
+					this->test_set_output_parameters(ctxtId, ctxtSubId, datOut);
 
 					res = (*elm)->con->test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 					if (res != JVX_NO_ERROR)
@@ -472,6 +476,11 @@ CjvxNVTasks::test_connect_ocon_vtask(
 	}
 
 	return res;
+}
+
+void 
+CjvxNVTasks::test_set_output_parameters(jvxSize ctxtId, jvxSize ctxtSubId, jvxLinkDataDescriptor* theDataOut)
+{
 }
 
 // ===========================================================================================
@@ -771,7 +780,7 @@ CjvxNVTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLinkD
 			}
 			master.rate = theData_out->con_params.rate;
 			master.format = theData_out->con_params.format;
-			master.format_group = theData_out->con_params.caps.format_group;
+			master.format_group = theData_out->con_params.format_group;
 		}
 		// Dependend settings: if on primary channel the parameters were changed we will need the same 
 		// settings on all secondary channels
@@ -792,6 +801,7 @@ CjvxNVTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLinkD
 						master.rate,
 						master.format,
 						master.format_group,
+						master.data_flow,
 						nullptr);
 				}
 
@@ -804,6 +814,7 @@ CjvxNVTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLinkD
 						master.rate,
 						master.format,
 						master.format_group,
+						master.data_flow,
 						nullptr);
 				}
 

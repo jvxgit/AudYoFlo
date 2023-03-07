@@ -122,18 +122,20 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 	*/
 
 	jvxErrorType 
-		CjvxInputOutputConnector::_supports_connector_class_ocon(const jvxDataflowCapabilities& caps)
+		CjvxInputOutputConnector::_supports_connector_class_ocon(
+			jvxDataFormatGroup format_group,
+			jvxDataflow data_flow)
 	{		
 		if (_common_set_ldslave.caps_out.format_group != JVX_DATAFORMAT_GROUP_NONE)
 		{
-			if (_common_set_ldslave.caps_out.format_group != caps.format_group)
+			if (_common_set_ldslave.caps_out.format_group != format_group)
 			{
 				return JVX_ERROR_UNSUPPORTED;
 			}
 		}
 		if (_common_set_ldslave.caps_out.data_flow!= JVX_DATAFLOW_NONE)
 		{
-			if (_common_set_ldslave.caps_out.data_flow != caps.data_flow)
+			if (_common_set_ldslave.caps_out.data_flow != data_flow)
 			{
 				return JVX_ERROR_UNSUPPORTED;
 			}
@@ -141,18 +143,20 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		return JVX_NO_ERROR;
 	}
 	jvxErrorType 
-		CjvxInputOutputConnector::_supports_connector_class_icon(const jvxDataflowCapabilities& caps)
+		CjvxInputOutputConnector::_supports_connector_class_icon(
+			jvxDataFormatGroup format_group,
+			jvxDataflow data_flow)
 	{
 		if (_common_set_ldslave.caps_in.format_group != JVX_DATAFORMAT_GROUP_NONE)
 		{
-			if (_common_set_ldslave.caps_in.format_group != caps.format_group)
+			if (_common_set_ldslave.caps_in.format_group != format_group)
 			{
 				return JVX_ERROR_UNSUPPORTED;
 			}
 		}
 		if (_common_set_ldslave.caps_in.data_flow != JVX_DATAFLOW_NONE)
 		{
-			if (_common_set_ldslave.caps_in.data_flow != caps.data_flow)
+			if (_common_set_ldslave.caps_in.data_flow != data_flow)
 			{
 				return JVX_ERROR_UNSUPPORTED;
 			}

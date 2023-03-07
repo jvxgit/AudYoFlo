@@ -14,6 +14,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/jvx-dsp-cpp/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
 
+  ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-node-connections/include
+  ${JVX_SUBPRODUCT_BINARY_INCLUDE_PATH}/ayf-node-connections/generated
+
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection/include
   )
 
@@ -28,7 +31,7 @@ set(LOCAL_PCG_FILES
 
 set(LOCAL_LIBS 
   jvx-component-templates-base_static
-  jvx-micro-connection_static
+  ayf-node-connections_static
   jvx-dsp-cpp_static
   )
 

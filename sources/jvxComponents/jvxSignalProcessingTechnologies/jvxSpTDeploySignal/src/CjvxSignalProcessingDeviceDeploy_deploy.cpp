@@ -104,7 +104,7 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 			JVX_ASSERT(data->bsize == _common_set_ldslave.theData_out.con_params.buffersize);
 			JVX_ASSERT(data->srate == _common_set_ldslave.theData_out.con_params.rate);
 			JVX_ASSERT(data->form == _common_set_ldslave.theData_out.con_params.format);
-			JVX_ASSERT(data->format_group == _common_set_ldslave.theData_out.con_params.caps.format_group);
+			JVX_ASSERT(data->format_group == _common_set_ldslave.theData_out.con_params.format_group);
 
 			jvxSize numBytes = sizeof(jvxByte) * jvxDataFormat_getsize(data->form) * data->bsize;
 

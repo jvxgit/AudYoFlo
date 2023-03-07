@@ -40,9 +40,11 @@ CjvxGenericWrapperDevice_hostRelocator::reference_component(
 }
 
 jvxErrorType 
-CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_ocon(const jvxDataflowCapabilities& caps)
+CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_ocon(
+	jvxDataFormatGroup format_group,
+	jvxDataflow data_flow)
 {
-	if (caps.format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED)
+	if (format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED)
 	{
 		return JVX_NO_ERROR;
 	}
@@ -50,9 +52,11 @@ CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_ocon(const jvxD
 }
 
 jvxErrorType 
-CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_icon(const jvxDataflowCapabilities& caps)
+CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_icon(
+	jvxDataFormatGroup format_group,
+	jvxDataflow data_flow)
 {
-	if (caps.format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED)
+	if (format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED)
 	{
 		return JVX_NO_ERROR;
 	}
@@ -733,14 +737,14 @@ CjvxGenericWrapperDevice_hostRelocator::transfer_backward_ocon(jvxLinkDataTransf
 			errorDetected = true;
 		}
 
-		if ((_common_set_ldslave.theData_out.con_params.caps.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
+		if ((_common_set_ldslave.theData_out.con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Datasubformat in device is ";
-			txt += jvxDataFormatGroup_txt(_common_set_ldslave.theData_out.con_params.caps.format_group);
+			txt += jvxDataFormatGroup_txt(_common_set_ldslave.theData_out.con_params.format_group);
 			txt += " whereas the hardware datasubformat in generic wrapper is ";
 			txt += jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
 			errorDetected = true;
@@ -965,7 +969,7 @@ CjvxGenericWrapperDevice_hostRelocator::test_connect_icon_x(JVX_CONNECTION_FEEDB
 
 	_common_set_ldslave.theData_out.con_params.segmentation_x = runtime.refDevice->processingControl.computedParameters.bSize_hw;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
-	_common_set_ldslave.theData_out.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 	// runtime.refDevice->release_countchannels_datatype(params); <- not required since local variable
 

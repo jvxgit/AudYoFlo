@@ -567,7 +567,7 @@ CjvxAudioDevice::updateChainOutputParameter()
 	// Default setting for 
 	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
-	_common_set_ldslave.theData_out.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 	jvx_bitFClear(_common_set_ldslave.theData_out.con_params.hints);
 }
 
@@ -605,7 +605,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvx_bitFClear(ld_con.con_params.hints);
 	ld_con.con_params.segmentation_x = params.buffersize;
 	ld_con.con_params.segmentation_y = 1;
-	ld_con.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 	if (
 		(_common_set_ldslave.theData_in->con_params.buffersize != params.buffersize) ||
@@ -615,7 +615,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		(_common_set_ldslave.theData_in->con_params.segmentation_x != params.buffersize) ||
 		(_common_set_ldslave.theData_in->con_params.segmentation_y != 1) ||
-		(_common_set_ldslave.theData_in->con_params.caps.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
+		(_common_set_ldslave.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
 	{
 		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 			&ld_con JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -633,7 +633,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			(_common_set_ldslave.theData_in->con_params.rate != params.samplerate) ||
 			(_common_set_ldslave.theData_in->con_params.segmentation_x != params.buffersize) ||
 			(_common_set_ldslave.theData_in->con_params.segmentation_y != 1) ||
-			(_common_set_ldslave.theData_in->con_params.caps.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED) ||
+			(_common_set_ldslave.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED) ||
 			(_common_set_ldslave.theData_in->con_params.format != params.format))
 		{
 			std::string err = "";

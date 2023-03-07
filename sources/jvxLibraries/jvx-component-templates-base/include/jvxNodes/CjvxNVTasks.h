@@ -126,6 +126,9 @@ public:
 		jvxLinkDataDescriptor* theDataOut
 		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
+	//! This callback is used to run a final correction when outputting parameters to the connected secondary chain
+	virtual void test_set_output_parameters(jvxSize ctxtId, jvxSize ctxtSubId, jvxLinkDataDescriptor* theDataOut);
+
 	// This callback is called BEFORE the link is followed towards the chain. The refto arg must be used in callback to move chain forward
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon_vtask(
 		jvxSize idTask,

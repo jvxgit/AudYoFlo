@@ -55,8 +55,17 @@ protected:
 		// Copy the input timestamp to the output timestamp
 		jvxBool copy_timestamp_inout;
 
-		jvxDataflowCapabilities caps_in;
-		jvxDataflowCapabilities caps_out;
+		struct
+		{
+			jvxDataFormatGroup format_group;
+			jvxDataflow data_flow;
+		} caps_in;
+
+		struct
+		{
+			jvxDataFormatGroup format_group;
+			jvxDataflow data_flow;
+		} caps_out;
 
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
 		const char* dbg_hint;
@@ -90,8 +99,12 @@ protected:
 
 	 jvxErrorType _parent_factory(IjvxConnectorFactory** my_parent);
 
-	 jvxErrorType _supports_connector_class_ocon(const jvxDataflowCapabilities& caps);
-	 jvxErrorType _supports_connector_class_icon(const jvxDataflowCapabilities& caps);
+	 jvxErrorType _supports_connector_class_ocon(
+		 jvxDataFormatGroup format_group,
+		jvxDataflow data_flow);
+	 jvxErrorType _supports_connector_class_icon(
+		 jvxDataFormatGroup format_group,
+		jvxDataflow data_flow);
 
 	// ==============================================================
 	// SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT

@@ -67,4 +67,12 @@ SECTION node
 			GENERATE_ENTRY_CONFIG_FILE = "no";	
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
 		};
+		SECTION dataflow
+		{
+			DESCRIPTION = "Dataflow";	  // Defaults to NAME if not present
+			INIT_SET = 0; // <- start with dataflow NONE
+			ID = "jvx_processing_dataflow_int16"; 
+			GENERATE_ENTRY_CONFIG_FILE = "no";	
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";			
+		};
 	};

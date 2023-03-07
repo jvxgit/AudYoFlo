@@ -2050,6 +2050,10 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 					{
 						newProp.decoderType = JVX_PROPERTY_DECODER_SUBFORMAT_IDX;
 					}
+					else if(oneentry == "JVX_PROPERTY_DECODER_DATAFLOW_IDX")
+					{
+						newProp.decoderType = JVX_PROPERTY_DECODER_DATAFLOW_IDX;
+					}
 					else if(oneentry == "JVX_PROPERTY_DECODER_NONE")
 					{
 						newProp.decoderType = JVX_PROPERTY_DECODER_NONE;
@@ -2142,6 +2146,14 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 						else if(oneentry == "JVX_PROPERTY_DECODER_FORMAT_IDX")
 						{
 							newProp.decoderType = JVX_PROPERTY_DECODER_FORMAT_IDX;
+						}
+						else if(oneentry == "JVX_PROPERTY_DECODER_SUBFORMAT_IDX")
+						{
+							newProp.decoderType = JVX_PROPERTY_DECODER_SUBFORMAT_IDX;
+						}
+						else if(oneentry == "JVX_PROPERTY_DECODER_DATAFLOW_IDX")
+						{
+							newProp.decoderType = JVX_PROPERTY_DECODER_DATAFLOW_IDX;
 						}
 						else if(oneentry == "JVX_PROPERTY_DECODER_NONE")
 						{

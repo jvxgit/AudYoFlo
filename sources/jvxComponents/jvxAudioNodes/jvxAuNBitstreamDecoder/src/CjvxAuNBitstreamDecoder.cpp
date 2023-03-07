@@ -150,6 +150,11 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				{		
 					activate_decoder();
 					assert(theDecoder);
+
+					// Specify a useful name 
+					nmProcess = _common_set.theName + " MC";
+					descrProcess = _common_set.theDescriptor + "_MC";
+					descrorProcess= _common_set.theDescriptor + " MC";
 					runloop = false;
 
 				}

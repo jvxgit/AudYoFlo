@@ -172,6 +172,7 @@ CjvxSpNMeasureIr::test_set_output_parameters()
 		node_output._common_set_node_params_a_1io.samplerate,
 		(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
 		(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
+		(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow,
 		&_common_set_ldslave.theData_out);
 }
 

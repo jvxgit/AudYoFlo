@@ -61,6 +61,13 @@ CjvxAuN2AudioMixer::test_connect_icon_vtask(
 	return res;
 }
 
+void 
+CjvxAuN2AudioMixer::test_set_output_parameters(jvxSize ctxtId, jvxSize ctxtSubId, jvxLinkDataDescriptor* theDataOut)
+{
+	auto elm = mixBuffers.begin();
+	theDataOut->con_params.number_channels = elm->second.numChannels_fixed;
+}
+
 void
 CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, const jvxLinkDataDescriptor* datOut)
 {

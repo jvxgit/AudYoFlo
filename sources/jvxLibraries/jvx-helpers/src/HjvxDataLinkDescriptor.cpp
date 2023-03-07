@@ -492,7 +492,7 @@ jvx_ccopyDataLinkDescriptor(jvxLinkDataDescriptor* copyTo, jvxLinkDataDescriptor
 
 	copyTo->con_compat.ext.segmentation_x = copyFrom->con_params.segmentation_x;
 	copyTo->con_compat.ext.segmentation_y = copyFrom->con_params.segmentation_y;
-	copyTo->con_compat.ext.subformat = copyFrom->con_params.caps.format_group;
+	copyTo->con_compat.ext.subformat = copyFrom->con_params.format_group;
 	copyTo->con_compat.ext.hints = copyFrom->con_params.hints;
 
 	copyTo->con_compat.bExt.align = copyFrom->con_data.bExt.align;
@@ -543,7 +543,7 @@ jvx_neutralDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool sender)
 		theData->con_params.hints = 0;
 		theData->con_params.segmentation_x = 0;
 		theData->con_params.segmentation_y = 0;
-		theData->con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+		theData->con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 		theData->con_data.alloc_flags = 
 			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NONE;
 
@@ -674,7 +674,7 @@ jvx_check_in_out_params_match_test(jvxLinkDataDescriptor* cp_this, jvxLinkDataDe
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SUBFORMAT_SHIFT))
 	{
-		retVal = retVal && (cp_this->con_params.caps.format_group == cp_that->con_params.caps.format_group);
+		retVal = retVal && (cp_this->con_params.format_group == cp_that->con_params.format_group);
 	}
 	return retVal;
 }
@@ -766,16 +766,16 @@ jvxBool jvx_check_in_out_params_match_test_err(jvxLinkDataDescriptor* cp_this, j
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SUBFORMAT_SHIFT))
 	{
-		if (cp_this->con_params.caps.format_group != cp_that->con_params.caps.format_group)
+		if (cp_this->con_params.format_group != cp_that->con_params.format_group)
 		{
 			if (!errStr.empty())
 			{
 				errStr += "; ";
 			}
 			errStr += "Format mismatch: Parameter value <";
-			errStr += jvxDataFormatGroup_txt(cp_this->con_params.caps.format_group);
+			errStr += jvxDataFormatGroup_txt(cp_this->con_params.format_group);
 			errStr += " vs ";
-			errStr += jvxDataFormatGroup_txt(cp_that->con_params.caps.format_group);
+			errStr += jvxDataFormatGroup_txt(cp_that->con_params.format_group);
 			retVal = false;
 		}
 	}

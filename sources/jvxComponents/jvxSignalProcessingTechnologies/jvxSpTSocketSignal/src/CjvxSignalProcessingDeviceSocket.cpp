@@ -210,7 +210,7 @@ CjvxSignalProcessingDeviceSocket::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE
 	outputParams.buffersize = JVX_SIZE_UNSELECTED; // Any buffersize
 	outputParams.number_channels = JVX_SIZE_UNSELECTED; // Any number of channels
 	outputParams.format = JVX_DATAFORMAT_NONE; // Any 
-	outputParams.caps.format_group = JVX_DATAFORMAT_GROUP_NONE; // Any subformat
+	outputParams.format_group = JVX_DATAFORMAT_GROUP_NONE; // Any subformat
 	outputParams.segmentation_x = outputParams.buffersize;
 
 	outputParams.rate =
@@ -219,7 +219,7 @@ CjvxSignalProcessingDeviceSocket::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE
 	inputParams.buffersize = JVX_SIZE_UNSELECTED; // Any buffersize
 	inputParams.number_channels = 0; // Any number of channels
 	inputParams.format = JVX_DATAFORMAT_NONE; // Any 
-	inputParams.caps.format_group = JVX_DATAFORMAT_GROUP_NONE; // Any subformat
+	inputParams.format_group = JVX_DATAFORMAT_GROUP_NONE; // Any subformat
 	inputParams.segmentation_x = inputParams.buffersize;
 	inputParams.rate = outputParams.rate;
 

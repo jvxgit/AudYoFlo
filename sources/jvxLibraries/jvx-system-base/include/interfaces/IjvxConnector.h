@@ -37,7 +37,9 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon** ref) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(const jvxDataflowCapabilities& caps) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
+		jvxDataFormatGroup format_group,
+		jvxDataflow data_flow) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_icon(
 		IjvxConnectorBridge* obj,
@@ -85,7 +87,9 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION  associated_common_ocon(IjvxDataConnectionCommon** ref) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(const jvxDataflowCapabilities& caps) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(
+		jvxDataFormatGroup format_group,
+		jvxDataflow data_flow) = 0;
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_ocon(IjvxConnectorBridge* obj, 
 		IjvxConnectionMaster* master, 

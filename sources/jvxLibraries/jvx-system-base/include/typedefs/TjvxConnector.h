@@ -13,6 +13,7 @@
 		jvxSize samplerate;
 		jvxDataFormat format;
 		jvxDataFormatGroup subformat;
+		jvxDataflow dataflow;
 	} dedicatedSetup;
 
 	typedef struct
@@ -76,6 +77,7 @@
 		jvxSize samplerate;
 		jvxDataFormat format;
 		jvxDataFormatGroup subformat;
+		jvxDataflow dataflow;
 	} jvxNodeProcessingParams;
 	
 class jvxCommonSetNodeParams

@@ -45,7 +45,7 @@
 	theData_out->con_params.number_channels = prop_sec.numberinputchannels.value; \
 	theData_out->con_params.segmentation_x = prop_sec.segmentsize_x.value; \
 	theData_out->con_params.segmentation_y = prop_sec.segmentsize_y.value; \
-	theData_out->con_params.caps.format_group = (jvxDataFormatGroup)prop_sec.subformat.value;
+	theData_out->con_params.format_group = (jvxDataFormatGroup)prop_sec.subformat.value;
 
 #define JVX_TEST_SETTING_PROP_CPUT(theData_out, prop_sec) \
 	theData_out->con_params.buffersize = prop_sec.buffersize.value; \

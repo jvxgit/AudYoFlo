@@ -873,6 +873,10 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											{
 												txtShow = jvxDataFormatGroup_txt(valI16);
 											}
+											else if (propD.decTp == JVX_PROPERTY_DECODER_DATAFLOW_IDX)
+											{
+												txtShow = jvxDataflow_txt(valI16);
+											}
 											else if (propD.decTp == JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE)
 											{
 												if (valI16 < 0)

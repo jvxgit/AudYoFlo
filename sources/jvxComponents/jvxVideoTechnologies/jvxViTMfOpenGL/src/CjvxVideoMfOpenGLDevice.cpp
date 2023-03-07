@@ -251,13 +251,13 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	_common_set_ldslave.theData_out.con_params.rate = CjvxVideoDevice_genpcg::video.framerate.value;
 	_common_set_ldslave.theData_out.con_data.buffers = NULL;
 	_common_set_ldslave.theData_out.con_user.chain_spec_user_hints = NULL;
-	_common_set_ldslave.theData_out.con_params.caps.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
+	_common_set_ldslave.theData_out.con_params.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
 	_common_set_ldslave.theData_out.con_params.segmentation_x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
 	_common_set_ldslave.theData_out.con_params.hints = 0;
 
 	runtime.szElement = jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format] *
-		jvxDataFormatGroup_size[_common_set_ldslave.theData_out.con_params.caps.format_group];
+		jvxDataFormatGroup_size[_common_set_ldslave.theData_out.con_params.format_group];
 	runtime.szLine = _common_set_ldslave.theData_out.con_params.segmentation_x * runtime.szElement;
 	runtime.szRaw = _common_set_ldslave.theData_out.con_params.segmentation_y * runtime.szLine;
 	_common_set_ldslave.theData_out.con_params.buffersize = runtime.szRaw;
@@ -555,7 +555,7 @@ CjvxVideoMfOpenGLDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)CjvxVideoDevice_genpcg::video.format.value;
 	_common_set_ldslave.theData_out.con_params.number_channels = 1;
 	_common_set_ldslave.theData_out.con_params.rate = CjvxVideoDevice_genpcg::video.framerate.value;
-	_common_set_ldslave.theData_out.con_params.caps.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
+	_common_set_ldslave.theData_out.con_params.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
 	_common_set_ldslave.theData_out.con_params.segmentation_x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
 
@@ -586,7 +586,7 @@ CjvxVideoMfOpenGLDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
 		if (
-			(ld_con->con_params.caps.format_group != lstModes[idSel].subform) ||
+			(ld_con->con_params.format_group != lstModes[idSel].subform) ||
 			(ld_con->con_params.rate != (jvxInt32)lstModes[idSel].fps) ||
 			(ld_con->con_params.format != lstModes[idSel].form))
 		{

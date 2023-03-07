@@ -15,7 +15,8 @@ typedef enum
 	JVX_MODIFICATION_FORMAT_SHIFT = 3,
 	JVX_MODIFICATION_SUBFORMAT_SHIFT = 4,
 	JVX_MODIFICATION_SEGX_SHIFT = 5,
-	JVX_MODIFICATION_SEGY_SHIFT = 6
+	JVX_MODIFICATION_SEGY_SHIFT = 6,
+	JVX_MODIFICATION_DATAFLOW_SHIFT = 7
 } jvxNegotiateModificationSuggested;
 
 class CjvxNegotiate_common
@@ -65,6 +66,12 @@ class CjvxNegotiate_common
 			jvxDataFormatGroup max;
 		} subformat;
 
+		struct
+		{
+			jvxDataflow min;
+			jvxDataflow max;
+		} data_flow;
+
 		/**
 		 * The range values are initialized to accept every setting - all entries are dont-care values.
 		 * The component should set the preferred values by using one of the functions _set_parameters_fixed
@@ -95,6 +102,9 @@ class CjvxNegotiate_common
 
 			dimY.min = JVX_SIZE_UNSELECTED;
 			dimY.max = JVX_SIZE_UNSELECTED;
+
+			data_flow.min = jvxDataflow::JVX_DATAFLOW_NONE;
+			data_flow.max = jvxDataflow::JVX_DATAFLOW_NONE;
 		};
 	} ;
 public:
@@ -125,6 +135,7 @@ public:
 		jvxSize srate = 48000,
 		jvxDataFormat format = JVX_DATAFORMAT_DATA,
 		jvxDataFormatGroup sub_format = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED,
+		jvxDataflow datflow = jvxDataflow::JVX_DATAFLOW_NONE,
 		jvxSize segment_x = JVX_SIZE_UNSELECTED,
 		jvxSize segment_y = JVX_SIZE_UNSELECTED);
 
@@ -134,6 +145,7 @@ public:
 		jvxSize srate = JVX_SIZE_UNSELECTED,
 		jvxDataFormat format = JVX_DATAFORMAT_NONE,
 		jvxDataFormatGroup sub_format = JVX_DATAFORMAT_GROUP_NONE,
+		jvxDataflow dflow = jvxDataflow::JVX_DATAFLOW_NONE,
 		jvxLinkDataDescriptor* datOut = NULL,
 		jvxSize segment_x = JVX_SIZE_UNSELECTED,
 		jvxSize segment_y = JVX_SIZE_UNSELECTED);
@@ -144,6 +156,7 @@ public:
 		jvxBool srate = false,
 		jvxBool format = false,
 		jvxBool sub_format = false,
+		jvxBool datflow = false,
 		jvxBool segsizex = true,
 		jvxBool segsizey = true);
 
@@ -153,6 +166,7 @@ public:
 	jvxErrorType _pop_constraints();
 	jvxBool _stack_pushed();
 	
+	void compare_core(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDescriptor* ld_fix, jvxBool& thereismismatch);
 	/**
 	 * This function takes in the propsed values from the successor and compares it
 	 * with the currently allowed settings. If the requested setup does not match, the values in

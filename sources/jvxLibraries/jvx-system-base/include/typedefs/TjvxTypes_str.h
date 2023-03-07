@@ -454,6 +454,7 @@ static jvxTextHelpers jvxPropertyDecoderHintType_str[JVX_PROPERTY_DECODER_LIMIT]
 	{"simple onoff", "JVX_PROPERTY_DECODER_SIMPLE_ONOFF"},
 	{"value or dont care", "JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE"},
 	{"subformat (index)", "JVX_PROPERTY_DECODER_SUBFORMAT_IDX"},
+	{"dataflow (index)", "JVX_PROPERTY_DECODER_DATAFLOW_IDX"},
 	
 	{"enum type", "JVX_PROPERTY_DECODER_ENUM_TYPE"},
 	{"property extender", "JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE"},

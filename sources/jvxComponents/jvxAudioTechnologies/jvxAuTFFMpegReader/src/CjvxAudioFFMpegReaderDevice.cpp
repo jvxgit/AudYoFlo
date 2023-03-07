@@ -446,7 +446,7 @@ CjvxAudioFFMpegReaderDevice::test_set_output_parameters()
 
 	// Type is modified as the data is coded
 	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
-	_common_set_ldslave.theData_out.con_params.caps.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
+	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
 	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
 

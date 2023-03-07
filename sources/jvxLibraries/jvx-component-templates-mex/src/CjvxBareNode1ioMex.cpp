@@ -164,7 +164,7 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			_common_set_ldslave.theData_in->con_compat.ext.segmentation_y =
 				_common_set_ldslave.theData_out.con_params.segmentation_y;
 			_common_set_ldslave.theData_in->con_compat.ext.subformat =
-				_common_set_ldslave.theData_out.con_params.caps.format_group;
+				_common_set_ldslave.theData_out.con_params.format_group;
 			_common_set_ldslave.theData_in->con_compat.ext.hints =
 				_common_set_ldslave.theData_out.con_params.hints;
 
