@@ -186,6 +186,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION stopped(jvxInt64 timestamp_us) override;
 	void read_samples_to_buffer();
 
+	std::string jvx_ffmpeg_produce_codec_token(_parameter_t& params, jvxSize bSize);
+
 	// ===================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(trigger_command);

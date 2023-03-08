@@ -123,83 +123,79 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	std::string token;
 	std::string tokenDecoder;
 	jvxErrorType res = JVX_NO_ERROR;
-	if (_common_set_ldslave.theData_in->con_params.format_spec)
+	jvxBool err = false;
+	jvxBool runloop = true;
+	config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
+
+	while (runloop)
 	{
-		jvxBool err = false;
-		jvxBool runloop = true;
-		config_token = _common_set_ldslave.theData_in->con_params.format_spec->std_str();
-
-		while (runloop)
+		if (theDecoder == nullptr)
 		{
-			if (theDecoder == nullptr)
-			{
-				id_selected = JVX_SIZE_UNSELECTED;
-				for (std::pair<jvxSize, refComp<IjvxAudioCodec> > elm : lstCodecInstances)
-				{
-					jvxApiString astr;
-					jvxBool compr = false;
-					jvxErrorType resCompat = elm.second.cpPtr->accept_for_decoding(config_token.c_str(), &compr, &astr);
-					if (resCompat == JVX_NO_ERROR)
-					{
-						id_selected = elm.first;
-						break;
-					}
-				}
-
-				if (JVX_CHECK_SIZE_SELECTED(id_selected))
-				{		
-					activate_decoder();
-					assert(theDecoder);
-
-					// Specify a useful name 
-					nmProcess = _common_set.theName + " MC";
-					descrProcess = _common_set.theDescriptor + "_MC";
-					descrorProcess= _common_set.theDescriptor + " MC";
-					runloop = false;
-
-				}
-				else
-				{
-					res = JVX_ERROR_ELEMENT_NOT_FOUND;
-				}
-			}
-			else
+			id_selected = JVX_SIZE_UNSELECTED;
+			for (std::pair<jvxSize, refComp<IjvxAudioCodec> > elm : lstCodecInstances)
 			{
 				jvxApiString astr;
 				jvxBool compr = false;
-				jvxErrorType resCompat = lstCodecInstances[id_selected].cpPtr->accept_for_decoding(config_token.c_str(), &compr, &astr);
-				if (resCompat != JVX_NO_ERROR)
+				jvxErrorType resCompat = elm.second.cpPtr->accept_for_decoding(config_token.c_str(), &compr, &astr);
+				if (resCompat == JVX_NO_ERROR)
 				{
-					// This will disenage the "local" connection 
-					shutdown_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-					deactivate_decoder();
-				}
-				else
-				{
-					runloop = false;
+					id_selected = elm.first;
+					break;
 				}
 			}
-		}
 
-		if (res == JVX_NO_ERROR)
+			if (JVX_CHECK_SIZE_SELECTED(id_selected))
+			{
+				activate_decoder();
+				assert(theDecoder);
+
+				// Specify a useful name 
+				nmProcess = _common_set.theName + " MC";
+				descrProcess = _common_set.theDescriptor + "_MC";
+				descrorProcess = _common_set.theDescriptor + " MC";
+				runloop = false;
+
+			}
+			else
+			{
+				res = JVX_ERROR_ELEMENT_NOT_FOUND;
+			}
+		}
+		else
 		{
-			// Configure the decoder
-			res = theDecoder->set_configure_token(config_token.c_str());
-			assert(res == JVX_NO_ERROR);
-
-			// Test the connection. This will forward the request to the next element in the chain 
-			// via the test_accept callback
-			res = JVX_LOCAL_BASE_CLASS::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));			
+			jvxApiString astr;
+			jvxBool compr = false;
+			jvxErrorType resCompat = lstCodecInstances[id_selected].cpPtr->accept_for_decoding(config_token.c_str(), &compr, &astr);
+			if (resCompat != JVX_NO_ERROR)
+			{
+				// This will disenage the "local" connection 
+				shutdown_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+				deactivate_decoder();
+			}
+			else
+			{
+				runloop = false;
+			}
 		}
-
-		if (res == JVX_NO_ERROR)
-		{
-			// Update the parameters if test was successful			
-			output_params_from_ldesc_on_test();
-		}
-		return res;
 	}
-	return JVX_ERROR_INVALID_FORMAT;
+
+	if (res == JVX_NO_ERROR)
+	{
+		// Configure the decoder
+		res = theDecoder->set_configure_token(config_token.c_str());
+		assert(res == JVX_NO_ERROR);
+
+		// Test the connection. This will forward the request to the next element in the chain 
+		// via the test_accept callback
+		res = JVX_LOCAL_BASE_CLASS::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	}
+
+	if (res == JVX_NO_ERROR)
+	{
+		// Update the parameters if test was successful			
+		output_params_from_ldesc_on_test();
+	}
+	return res;
 }
 
 // ===================================================================

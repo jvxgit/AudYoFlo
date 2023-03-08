@@ -296,7 +296,6 @@ CjvxAudioFFMpegReaderTechnology::activateOneFile(
 
 	devSpec = deviceNamePrefix;
 	devSpec += "#" + jvx_size2String(uId);
-	uId++;
 
 	newDevice = new CjvxAudioFFMpegReaderDevice(
 		devSpec.c_str(), false,
@@ -319,6 +318,7 @@ CjvxAudioFFMpegReaderTechnology::activateOneFile(
 		goto error_file_failed_delete;
 	}
 
+	uId++;
 	lstDevType[newDevicePtr] = newDevice;
 
 	// Store it in the original list as well	

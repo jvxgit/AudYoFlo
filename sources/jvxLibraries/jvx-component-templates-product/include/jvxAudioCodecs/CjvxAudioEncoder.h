@@ -39,7 +39,6 @@ namespace JVX_PROJECT_NAMESPACE {
 		std::string my_config_token;
 
 		wav_params params;
-		jvxApiString formatSpec;
 	public:
 
 		// ===================================================================================================

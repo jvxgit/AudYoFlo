@@ -265,13 +265,13 @@ jvx_wav_values_2_configtoken(
 	switch (paramsArg->sub_type)
 	{
 	case audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64_SONY:
-		tokenRet += "wav64sony;";
+		tokenRet += "wav64sony";
 		break;
 	case audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_64:
-		tokenRet += "wav64;";
+		tokenRet += "wav64";
 		break;
 	case audio_codec_wav_sub_type::AUDIO_CODEC_WAV_SUBTYPE_WAV_32:
-		tokenRet += "wav32;";
+		tokenRet += "wav32";
 		break;
 	default:
 		assert(0);

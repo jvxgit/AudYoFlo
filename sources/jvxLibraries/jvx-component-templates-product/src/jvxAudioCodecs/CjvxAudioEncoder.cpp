@@ -238,10 +238,7 @@ CjvxAudioEncoder::test_set_output_parameters()
 	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
 
-	accept_output_parameters();
-
-	// Pass forward content descriptor
-	_common_set_ldslave.theData_out.con_params.format_spec = &formatSpec;
+	accept_output_parameters();	
 }
 
 void
@@ -249,11 +246,13 @@ CjvxAudioEncoder::accept_output_parameters()
 {
 	std::string propstring;
 	propstring = jvx_wav_produce_codec_token(&params);
-	formatSpec.assign(propstring);
-
 	params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&params, params.bsize);
+
 	_common_set_ldslave.theData_out.con_params.buffersize = params.fsizemax;
+	_common_set_ldslave.theData_out.con_params.format_spec = propstring;
+
 	CjvxAudioCodec_genpcg::general.buffersize.value = _common_set_ldslave.theData_out.con_params.buffersize;
+
 }
 
 // ===================================================================
@@ -271,59 +270,58 @@ CjvxAudioEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 		if (ld_cp)
 		{
 			jvxBool forwardRequest = false;
-			if (ld_cp->con_params.format_spec)
+
+			wav_params params_check;
+			std::string config_token_complain = ld_cp->con_params.format_spec.std_str();
+			jvxErrorType resL = jvx_wav_configtoken_2_values(config_token_complain.c_str(), &params_check,
+				&famToken);
+			if (resL != JVX_NO_ERROR)
 			{
-				wav_params params_check;
-				std::string config_token_complain = ld_cp->con_params.format_spec->std_str();
-				jvxErrorType resL = jvx_wav_configtoken_2_values(config_token_complain.c_str(), &params_check,
-					&famToken);
-				if (resL != JVX_NO_ERROR)
+				forwardRequest = true;
+			}
+			else
+			{
+				if (
+					(params.bsize == params_check.bsize) &&
+					(params.srate == params_check.srate)
+					)
 				{
-					forwardRequest = true;
+					// Accept the new parameters and report positive to caller
+					params = params_check;
+					accept_output_parameters();
+					res = JVX_NO_ERROR;
 				}
 				else
 				{
-					if (
-						(params.bsize == params_check.bsize) &&
-						(params.srate == params_check.srate)
-						)
-					{
-						// Accept the new parameters and report positive to caller
-						params = params_check;
-						accept_output_parameters();
-						res = JVX_NO_ERROR;
-					}
-					else
-					{
-						// Derive the parameters from input side for  the next forward step
-						forward.con_params = _common_set_ldslave.theData_in->con_params;
+					// Derive the parameters from input side for  the next forward step
+					forward.con_params = _common_set_ldslave.theData_in->con_params;
 
-						// This is the next level of modification: requires new buffersize and/or samplerate from previous module
-						forward.con_params.buffersize = params_check.bsize;
-						forward.con_params.rate = params_check.srate;
-						forward.con_params.number_channels = params_check.nchans;
-						forwardRequest = true;
-					}
-				}
-
-				if (forwardRequest)
-				{
-					res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
-						tp, &forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-					if (res == JVX_NO_ERROR)
-					{
-						// Here, we need to refresh all connection parameters.
-						// We do take a shortcut here and do not run the negotiation
-
-						CjvxAudioCodec_genpcg::general.buffersize.value = _common_set_ldslave.theData_in->con_params.buffersize;
-						CjvxAudioCodec_genpcg::general.samplerate.value = _common_set_ldslave.theData_in->con_params.rate;
-						CjvxAudioCodec_genpcg::general.num_audio_channels.value = _common_set_ldslave.theData_in->con_params.number_channels;
-
-						derive_input_file_arguments();												
-						test_set_output_parameters();
-					}
+					// This is the next level of modification: requires new buffersize and/or samplerate from previous module
+					forward.con_params.buffersize = params_check.bsize;
+					forward.con_params.rate = params_check.srate;
+					forward.con_params.number_channels = params_check.nchans;
+					forwardRequest = true;
 				}
 			}
+
+			if (forwardRequest)
+			{
+				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+					tp, &forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				if (res == JVX_NO_ERROR)
+				{
+					// Here, we need to refresh all connection parameters.
+					// We do take a shortcut here and do not run the negotiation
+
+					CjvxAudioCodec_genpcg::general.buffersize.value = _common_set_ldslave.theData_in->con_params.buffersize;
+					CjvxAudioCodec_genpcg::general.samplerate.value = _common_set_ldslave.theData_in->con_params.rate;
+					CjvxAudioCodec_genpcg::general.num_audio_channels.value = _common_set_ldslave.theData_in->con_params.number_channels;
+
+					derive_input_file_arguments();
+					test_set_output_parameters();
+				}
+			}
+
 		}
 		break;
 	default:

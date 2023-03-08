@@ -311,7 +311,7 @@ struct jvxLinkDataDescriptor_con_params
 	jvxSize fHeight_y = JVX_SIZE_UNSELECTED;
 
 	// Free parameter to specify properties of the data. in particular, used on "coded" bitstreams
-	jvxApiString* format_spec = nullptr;
+	jvxApiString format_spec;
 
 	// It seems that this field is not used at the moment
 	jvxCBitField hints = 0;

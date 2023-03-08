@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QClipboard>
 #include <QApplication>
+#include <QHeaderView>
 
 #define JVX_USER_ROLE_TREEWIDGET_HOOK (Qt::UserRole + 1)
 #define JVX_USER_ROLE_TREEWIDGET_PROPERTY_COMPONENT_TAG (Qt::UserRole + 2)
@@ -1271,17 +1272,27 @@ CjvxMaWrapperElementTreeWidget::treeWidgetContextMenuRequest(const QPoint& pos)
 	jvxPropertyDescriptor propD;
 	basePropInfos myBasePropIs;
 	jvxSize idx = 0;
+	std::string txtClip;
 	QTreeWidgetItem* nd = uiRefTp->itemAt(pos);
 	if(nd)
 	{
-		bool everythingOK = getAllTagInformation(nd, compTag, propName, lst, propD, myBasePropIs, idx);
-		if (everythingOK)
+		jvxSize column = uiRefTp->currentColumn();
+		if (column == 1)
 		{
-			QClipboard* clipboard = QApplication::clipboard();
-			if (propD.descriptor.std_str().size())
+			txtClip = nd->text(column).toLatin1().constData();
+		}
+		else
+		{
+			bool everythingOK = getAllTagInformation(nd, compTag, propName, lst, propD, myBasePropIs, idx);
+			if (everythingOK)
 			{
-				clipboard->setText(propD.descriptor.c_str());
+				txtClip = propD.descriptor.std_str();
 			}
+		}
+		if(txtClip.size())
+		{ 
+			QClipboard* clipboard = QApplication::clipboard();
+			clipboard->setText(txtClip.c_str());			
 		}
 	}
 }

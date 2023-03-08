@@ -393,14 +393,6 @@ CjvxAudioFileReaderDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 void
 CjvxAudioFileReaderDevice::test_set_output_parameters()
 {
-	// _common_set
-	
-	// We need to make some specific adaptations here which can not be 
-	// made in the standard implementation
-
-	// The format text specification to configure the decoder
-	_common_set_ldslave.theData_out.con_params.format_spec = &format_descriptor;
-
 	// The buffersize as it is derived from the buffersize as set by the audio framing definition
 	// You can specify the buffersize by setting the standard parameter for the device buffersize
 	_common_set_ldslave.theData_out.con_params.buffersize =
@@ -411,10 +403,8 @@ CjvxAudioFileReaderDevice::test_set_output_parameters()
 	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
 	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
-
 	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
-
-	format_descriptor.assign(jvx_wav_produce_codec_token(&file_params));
+	_common_set_ldslave.theData_out.con_params.format_spec = jvx_wav_produce_codec_token(&file_params);
 }
 
 jvxErrorType

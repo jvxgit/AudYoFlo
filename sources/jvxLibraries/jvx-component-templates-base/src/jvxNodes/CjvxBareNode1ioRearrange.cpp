@@ -176,11 +176,7 @@ CjvxBareNode1ioRearrange::output_params_from_ldesc_on_test()
 	node_output._common_set_node_params_a_1io.subformat = JVX_SIZE_INT16(_common_set_ldslave.theData_out.con_params.format_group);
 	node_output._common_set_node_params_a_1io.segmentation.x = JVX_SIZE_INT32(_common_set_ldslave.theData_out.con_params.segmentation_x);
 	node_output._common_set_node_params_a_1io.segmentation.y = JVX_SIZE_INT32(_common_set_ldslave.theData_out.con_params.segmentation_y);
-	node_output._common_set_node_params_a_1io.format_spec.clear();
-	if (_common_set_ldslave.theData_out.con_params.format_spec)
-	{
-		node_output._common_set_node_params_a_1io.format_spec = _common_set_ldslave.theData_out.con_params.format_spec->c_str();
-	}
+	node_output._common_set_node_params_a_1io.format_spec = _common_set_ldslave.theData_out.con_params.format_spec.std_str();
 }
 
 void

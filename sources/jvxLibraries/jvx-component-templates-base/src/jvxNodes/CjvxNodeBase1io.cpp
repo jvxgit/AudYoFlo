@@ -329,11 +329,7 @@ CjvxNodeBase1io::update_simple_params_from_ldesc()
 	node_inout._common_set_node_params_a_1io.segmentation.x = _common_set_ldslave.theData_in->con_params.segmentation_x;
 	node_inout._common_set_node_params_a_1io.segmentation.y = _common_set_ldslave.theData_in->con_params.segmentation_y;
 	node_inout._common_set_node_params_a_1io.data_flow = _common_set_ldslave.theData_in->con_params.data_flow;
-	if (_common_set_ldslave.theData_in->con_params.format_spec)
-	{
-		node_inout._common_set_node_params_a_1io.format_spec = _common_set_ldslave.theData_in->con_params.format_spec->std_str();
-	}
-
+	node_inout._common_set_node_params_a_1io.format_spec = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
 }
 
 void

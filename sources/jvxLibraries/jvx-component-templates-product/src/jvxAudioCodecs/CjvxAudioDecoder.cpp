@@ -604,11 +604,7 @@ CjvxAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 					res = _transfer_backward_ocon(true, tp, &forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 					if (res == JVX_NO_ERROR)
 					{
-						if (forward.con_params.format_spec)
-						{
-							set_configure_token(forward.con_params.format_spec->c_str());
-						}
-
+						set_configure_token(forward.con_params.format_spec.c_str());
 
 						// 
 						_common_set_ldslave.theData_out.con_params.buffersize = params.bsize;

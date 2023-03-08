@@ -268,120 +268,115 @@ CjvxAudioFileWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxApiString famToken;
 	jvxSize i;
 	// Here we detect the provided parameters. We may setup another setup
-	if (_common_set_ldslave.theData_in->con_params.format_spec)
+
+	res = JVX_NO_ERROR;
+	config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
+
+	jvxErrorType resL = jvx_wav_configtoken_2_values(
+		config_token.c_str(),
+		&passed_props,
+		&famToken);
+
+	jvxBool fixedValuesFFilled = true;
+	jvxLinkDataDescriptor ld;
+	wav_params modified_props = passed_props;
+	ld.con_params = _common_set_ldslave.theData_in->con_params;
+	ld.con_params.format_spec = nullptr;
+
+	if (JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.bsize.value))
 	{
-		res = JVX_NO_ERROR;
-		config_token = _common_set_ldslave.theData_in->con_params.format_spec->std_str();
-
-		jvxErrorType resL = jvx_wav_configtoken_2_values(
-			config_token.c_str(),
-			&passed_props,
-			&famToken);
-
-		jvxBool fixedValuesFFilled = true;
-		jvxLinkDataDescriptor ld;
-		jvxApiString configToken;
-		wav_params modified_props = passed_props;
-		ld.con_params = _common_set_ldslave.theData_in->con_params;
-		ld.con_params.format_spec = nullptr;
-
-		if (JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.bsize.value))
+		if (ld.con_params.buffersize != genFileWriter_device::fixed.bsize.value)
 		{
-			if (ld.con_params.buffersize != genFileWriter_device::fixed.bsize.value)
-			{
-				modified_props.bsize = genFileWriter_device::fixed.bsize.value;
-				fixedValuesFFilled = false;
-			}
+			modified_props.bsize = genFileWriter_device::fixed.bsize.value;
+			fixedValuesFFilled = false;
 		}
-		
-		if (JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.srate.value))
-		{
-			if (ld.con_params.rate != genFileWriter_device::fixed.srate.value)
-			{
-				modified_props.srate = genFileWriter_device::fixed.srate.value;
-				fixedValuesFFilled = false;
-			}
-		}
-			
-		if(JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.nchans.value))
-		{
-			if (ld.con_params.number_channels != genFileWriter_device::fixed.nchans.value)
-			{
-				modified_props.nchans = genFileWriter_device::fixed.nchans.value;
-				fixedValuesFFilled = false;
-			}
-		}
+	}
 
-		if (!fixedValuesFFilled)
+	if (JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.srate.value))
+	{
+		if (ld.con_params.rate != genFileWriter_device::fixed.srate.value)
 		{
-			modified_props.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&modified_props, JVX_SIZE_UNSELECTED);
-			ld.con_params.buffersize = modified_props.fsizemax;
-			ld.con_params.rate = modified_props.srate;
-			std::string cfg;
-			jvx_wav_values_2_configtoken( cfg, & modified_props);
-			configToken = cfg;
-			ld.con_params.format_spec = &configToken;
-
-			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
-				&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-			if (res == JVX_NO_ERROR)
-			{
-				// Update the config token
-				config_token = _common_set_ldslave.theData_in->con_params.format_spec->std_str();
-				jvx_wav_configtoken_2_values(config_token.c_str(), &passed_props, &famToken);
-			}
-			else
-			{
-				return res;
-			}
+			modified_props.srate = genFileWriter_device::fixed.srate.value;
+			fixedValuesFFilled = false;
 		}
-		
-		file_params.bsize = passed_props.bsize;
-		file_params.srate = passed_props.srate;
-		file_params.nchans = passed_props.nchans;
+	}
 
-		if (
-			(file_params.endian != passed_props.endian) ||
-			(file_params.resolution != passed_props.resolution) ||
-			(file_params.sample_type != passed_props.sample_type) ||
-			(file_params.sub_type != passed_props.sub_type))
+	if (JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.nchans.value))
+	{
+		if (ld.con_params.number_channels != genFileWriter_device::fixed.nchans.value)
 		{
-			std::string propstring = jvx_wav_produce_codec_token(&file_params);
-			jvxApiString astr;
-			astr.assign(propstring);
-			jvxLinkDataDescriptor ld_params;
-			ld_params.con_params.format_spec = &astr;
-			ld_params.con_params.buffersize = file_params.fsizemax;
-			ld_params.con_params.number_channels = 1;
-			ld_params.con_params.format = JVX_DATAFORMAT_BYTE;
-			ld_params.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
-			ld_params.con_params.segmentation_x = ld_params.con_params.buffersize;
-			ld_params.con_params.segmentation_y = 1;
-			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
-				JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
-				&ld_params
-				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			modified_props.nchans = genFileWriter_device::fixed.nchans.value;
+			fixedValuesFFilled = false;
 		}
+	}
+
+	if (!fixedValuesFFilled)
+	{
+		modified_props.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&modified_props, JVX_SIZE_UNSELECTED);
+		ld.con_params.buffersize = modified_props.fsizemax;
+		ld.con_params.rate = modified_props.srate;
+		std::string cfg;
+		jvx_wav_values_2_configtoken(cfg, &modified_props);
+		ld.con_params.format_spec = cfg;
+
+		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+			&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		if (res == JVX_NO_ERROR)
 		{
-			CjvxAudioDevice_genpcg::properties_active.buffersize.value = file_params.bsize;
-			CjvxAudioDevice_genpcg::properties_active.samplerate.value = file_params.srate;
-			CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.clear();
-			CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.clear();
-			jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection());
-			for (i = 0; i < file_params.nchans; i++)
-			{
-				CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(
-					"Channel #" + jvx_size2String(i));
-				jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), i);
-			}
-
-			updateDependentVariables_lock(-1,
-				JVX_PROPERTY_CATEGORY_PREDEFINED, true,
-				JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC,
-				true);
-
+			// Update the config token
+			config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
+			jvx_wav_configtoken_2_values(config_token.c_str(), &passed_props, &famToken);
 		}
+		else
+		{
+			return res;
+		}
+	}
+
+	file_params.bsize = passed_props.bsize;
+	file_params.srate = passed_props.srate;
+	file_params.nchans = passed_props.nchans;
+
+	if (
+		(file_params.endian != passed_props.endian) ||
+		(file_params.resolution != passed_props.resolution) ||
+		(file_params.sample_type != passed_props.sample_type) ||
+		(file_params.sub_type != passed_props.sub_type))
+	{
+		jvxLinkDataDescriptor ld_params;
+		std::string propstring = jvx_wav_produce_codec_token(&file_params);
+		ld_params.con_params.format_spec = propstring;
+		ld_params.con_params.buffersize = file_params.fsizemax;
+		ld_params.con_params.number_channels = 1;
+		ld_params.con_params.format = JVX_DATAFORMAT_BYTE;
+		ld_params.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
+		ld_params.con_params.segmentation_x = ld_params.con_params.buffersize;
+		ld_params.con_params.segmentation_y = 1;
+		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+			JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+			&ld_params
+			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
+	if (res == JVX_NO_ERROR)
+	{
+		CjvxAudioDevice_genpcg::properties_active.buffersize.value = file_params.bsize;
+		CjvxAudioDevice_genpcg::properties_active.samplerate.value = file_params.srate;
+		CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.clear();
+		CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.clear();
+		jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection());
+		for (i = 0; i < file_params.nchans; i++)
+		{
+			CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(
+				"Channel #" + jvx_size2String(i));
+			jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), i);
+		}
+
+		updateDependentVariables_lock(-1,
+			JVX_PROPERTY_CATEGORY_PREDEFINED, true,
+			JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC,
+			true);
+
+
 	}
 	return res;
 }
