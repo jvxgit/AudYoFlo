@@ -44,7 +44,6 @@ private:
 	jvxSize id_selected = JVX_SIZE_UNSELECTED;
 
 	std::string config_token;
-	HjvxMicroConnection* theMicroConnection = nullptr;
 	IjvxAudioCodec* ptrCodec = nullptr;
 	IjvxAudioEncoder* theEncoder = nullptr;
 	IjvxProperties* theEncoderProps = nullptr;
@@ -74,8 +73,6 @@ public:
 	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
 	// ===================================================================================	
-
-	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_processing_monitor);
 

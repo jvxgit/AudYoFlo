@@ -118,14 +118,20 @@ CjvxBareNode1ioRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 	{
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
+		// The local function at this place does nothing - forward is not foreseen in the default implementation
 		res = accept_negotiate_output(tp, ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 		if (res == JVX_NO_ERROR)
 		{
 			// There is only room to negotiate 
 			res = neg_output._negotiate_transfer_backward_ocon(ld,
-				&_common_set_ldslave.theData_out, static_cast<IjvxObject*>(this), NULL
+				&_common_set_ldslave.theData_out, static_cast<IjvxObject*>(this), nullptr
 				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_NO_ERROR)
+			{
+				// Derive the output parameters from the "modified" data params
+				output_params_from_ldesc_on_test();
+			}
 		}
 		break;
 	default:

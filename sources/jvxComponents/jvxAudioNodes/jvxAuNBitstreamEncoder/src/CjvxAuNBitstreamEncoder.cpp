@@ -56,10 +56,6 @@ CjvxAuNBitstreamEncoder::deactivate()
 		// Close any existing connection
 		deactivate_encoder();
 
-		// Delete the microconnection
-		delete theMicroConnection;
-		theMicroConnection = nullptr;
-
 		// Release all codecs
 		for(std::pair<jvxSize, refComp<IjvxAudioCodec>> elm: lstCodecInstances)
 		{
@@ -119,33 +115,6 @@ CjvxAuNBitstreamEncoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 // ===================================================================
-
-jvxErrorType 
-CjvxAuNBitstreamEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
-	switch (tp)
-	{
-	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
-
-		// To do at this position
-		return theMicroConnection->transfer_backward_connection(tp, data
-			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		break;
-
-	case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
-		if (_common_set_ldslave.theData_in->con_link.connect_from)
-		{
-			res = _common_set_ldslave.theData_in->con_link.connect_from->
-				transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		}
-		break;
-	default:
-		res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	}
-	return res;
-}
-
 // ===================================================================
 // ===================================================================
 

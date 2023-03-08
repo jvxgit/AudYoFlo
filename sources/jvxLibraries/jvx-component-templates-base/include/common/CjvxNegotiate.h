@@ -167,6 +167,7 @@ public:
 	jvxBool _stack_pushed();
 	
 	void compare_core(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDescriptor* ld_fix, jvxBool& thereismismatch);
+
 	/**
 	 * This function takes in the propsed values from the successor and compares it
 	 * with the currently allowed settings. If the requested setup does not match, the values in
@@ -174,6 +175,8 @@ public:
 	 * be adapted accordingly and finally, the value of JVX_ERROR_COMPROMISE is returned. This lets
 	 * the caller know that parameter modification was performed. The successor may accept the modified
 	 * parameter values OR it may return the error code to the previous output connector if a match can not be found!
+	 * If modFlags are a nullptr reference, the modified values will be copied to the dataOut struct.
+	 * Otherwisem the caller can evaluate the modFlags to act as desired.
 	 */
 	jvxErrorType _negotiate_transfer_backward_ocon(
 		jvxLinkDataDescriptor* ld,

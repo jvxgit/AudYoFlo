@@ -749,7 +749,6 @@ CjvxAudioFFMpegReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, 
 {
 	jvxLinkDataDescriptor* ld_cp = nullptr;
 	jvxErrorType res = JVX_NO_ERROR;
-	jvxMasterSourceType* trigTp = nullptr;	
 
 	switch (tp)
 	{
@@ -774,15 +773,6 @@ CjvxAudioFFMpegReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, 
 		format_descriptor.assign(jvx_wav_produce_codec_token(&file_params));
 #endif
 		return JVX_NO_ERROR;
-	case JVX_LINKDATA_TRANSFER_REQUEST_TRIGGER_TYPE:
-
-		// Indicate that master requires a "trigger" to output data
-		trigTp = (jvxMasterSourceType*)data;
-		if (trigTp)
-		{
-			*trigTp = jvxMasterSourceType::JVX_MASTER_SOURCE_EXTERNAL_TRIGGER;
-		}
-		res = JVX_NO_ERROR;
 	default:
 		CjvxAudioDevice::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}

@@ -4,4 +4,53 @@ SECTION PROPERTIES
 
 	define JVX_WAV_PROPERTIES_CALLBACK
 	include "wav_properties.pcgf";
+
+	CALLBACKS = {"set_fixed"};
+
+	SECTION fixed
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		
+		SECTION bsize
+		{
+			DESCRIPTION = "Fixed setting for buffersize.";
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = -1; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			CALLBACK_SET_POSTHOOK = "set_fixed";
+		};	
+		SECTION srate
+		{
+			DESCRIPTION = "Fixed setting for samplerate.";
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = -1; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			CALLBACK_SET_POSTHOOK = "set_fixed";
+		};	
+		SECTION nchans
+		{
+			DESCRIPTION = "Fixed setting for number of channels.";
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = -1; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			CALLBACK_SET_POSTHOOK = "set_fixed";
+		};
+	};
+
+	SECTION file
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		
+		SECTION name
+		{
+			DESCRIPTION = "Output filename as specified in technology.";
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = ""; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};	
+	};
 };

@@ -21,12 +21,6 @@ typedef enum
 	JVX_THREAD_PROC_GROUP_MODE_FULL_THREADS_COUPLED // This runs the stages in different threads, waiting for completion after each step
 } jvxProcessingGroupThreadMode;
 
-enum class jvxMasterSourceType
-{
-	JVX_MASTER_SOURCE_INTERNAL_TRIGGER, /* <- this is the default case -*/
-	JVX_MASTER_SOURCE_EXTERNAL_TRIGGER
-};
-
 typedef enum
 {
 	JVX_LINKDATA_TRANSFER_NONE = 0,
@@ -51,7 +45,6 @@ typedef enum
 	JVX_LINKDATA_TRANSFER_TRIGGER_REPORT_MISSED_FRAMES, /* jvxSize* to hold number frames missed since last successful */
 	JVX_LINKDATA_TRANSFER_TRIGGER_REPORT_SINGLE_MISSED_FRAME, /* No argument, always one missed frame reported at the moment of the arrival! */
 	JVX_LINKDATA_TRANSFER_CONFIG_TOKEN, /* jvxDataConnectionsTransferConfigToken* */
-	JVX_LINKDATA_TRANSFER_REQUEST_TRIGGER_TYPE, /* jvxMasterSourceType* */
 	JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES, /* jvx::propertyCallCompactList* */
 	JVX_LINKDATA_TRANSFER_LIMIT
 } jvxLinkDataTransferType;

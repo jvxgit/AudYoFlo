@@ -435,24 +435,6 @@ CjvxAudioFileReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
     res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		involve_read_thread = false;
-		if (genFileReader_device::exteded_properties.threaded_read.value == c_true)
-		{
-			jvxSize bitssample = jvx_wav_get_bits_sample(&file_params);
-			jvxSize bytesonesample = file_params.nchans * bitssample / 8;
-			jvxData numsamples = genFileReader_device::exteded_properties.preuse_bsize_msecs.value * 0.001 * file_params.srate;
-			jvxSize numbytes = (jvxSize)numsamples * bytesonesample;
-			jvxSize numbuffers = ceil((jvxData)numbytes / (jvxData)_common_set_ldslave.theData_out.con_params.buffersize);
-
-			preuse_buffer_sz = JVX_MAX(1, numbuffers) * _common_set_ldslave.theData_out.con_params.buffersize;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(preuse_buffer_ptr, jvxByte, preuse_buffer_sz);
-			readposi = 0;
-			fHeight = 0;
-			readsize = _common_set_ldslave.theData_out.con_params.buffersize;
-			bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE;
-
-			involve_read_thread = true;
-		}
 
 		// All parameters were set before, only very few need update
 		_common_set_ldslave.theData_out.con_data.number_buffers = 1;
@@ -464,14 +446,6 @@ CjvxAudioFileReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 		// Start the reader
 		wavFileReader.prepare(JVX_SIZE_UNSELECTED); // No read limit in module
 		wavFileReader.start();
-
-		if (involve_read_thread)
-		{
-			// Start the secondary thread
-			jvxErrorType resL = refThreads.cpPtr->initialize(
-				static_cast<IjvxThreads_report*>(this));
-			assert(resL == JVX_NO_ERROR);
-		}
 	}
 	else
 	{
@@ -652,11 +626,12 @@ CjvxAudioFileReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 {
 	jvxLinkDataDescriptor* ld_cp = nullptr;
 	jvxErrorType res = JVX_NO_ERROR;
-	jvxMasterSourceType* trigTp = nullptr;	
 
 	switch (tp)
 	{
 	case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
+
+		// Here is our entry to provide new audio data!
 		send_one_buffer();		
 		break;
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
@@ -673,15 +648,6 @@ CjvxAudioFileReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 		
 		format_descriptor.assign(jvx_wav_produce_codec_token(&file_params));
 		return JVX_NO_ERROR;
-	case JVX_LINKDATA_TRANSFER_REQUEST_TRIGGER_TYPE:
-
-		// Indicate that master requires a "trigger" to output data
-		trigTp = (jvxMasterSourceType*)data;
-		if (trigTp)
-		{
-			*trigTp = jvxMasterSourceType::JVX_MASTER_SOURCE_EXTERNAL_TRIGGER;
-		}
-		res = JVX_NO_ERROR;
 	default:
 		CjvxAudioDevice::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
@@ -823,32 +789,6 @@ CjvxAudioFileReaderDevice::send_buffer_direct()
 		wavFileReader.current_progress(&progress);
 		genFileReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)l_samples * 100.0);
 	}
-}
-
-jvxErrorType 
-CjvxAudioFileReaderDevice::startup(jvxInt64 timestamp_us)
-{
-	read_samples_to_buffer();
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CjvxAudioFileReaderDevice::expired(jvxInt64 timestamp_us, jvxSize* delta_ms)
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CjvxAudioFileReaderDevice::wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms)
-{
-	read_samples_to_buffer();
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CjvxAudioFileReaderDevice::stopped(jvxInt64 timestamp_us)
-{
-	return JVX_NO_ERROR;
 }
 
 void

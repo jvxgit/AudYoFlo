@@ -13,13 +13,13 @@ CjvxAuNForwardBuffer::CjvxAuNForwardBuffer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLA
 
 CjvxAuNForwardBuffer::~CjvxAuNForwardBuffer()
 {
-	
+
 }
 
 // ===================================================================
 
 /*
-jvxErrorType 
+jvxErrorType
 CjvxAuNForwardBuffer::select(IjvxObject* owner)
 {
 	jvxErrorType res = CjvxBareNode1ioRearrange::select(owner);
@@ -32,7 +32,7 @@ CjvxAuNForwardBuffer::select(IjvxObject* owner)
 	return res;
 }
 
-jvxErrorType 
+jvxErrorType
 CjvxAuNForwardBuffer::unselect()
 {
 	jvxErrorType res = CjvxBareNode1ioRearrange::unselect();
@@ -52,19 +52,19 @@ CjvxAuNForwardBuffer::activate()
 {
 	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	if (res == JVX_NO_ERROR)
-	{		
+	{
 		genForwardBuffer_node::init_all();
 		genForwardBuffer_node::allocate_all();
 		genForwardBuffer_node::register_all(static_cast<CjvxProperties*>(this));
 
-		genForwardBuffer_node::register_callbacks(static_cast<CjvxProperties*>(this), 
+		genForwardBuffer_node::register_callbacks(static_cast<CjvxProperties*>(this),
 			set_bypass_buffer, get_processing_monitor, this, nullptr);
 		// Obtain the thread handle here
 		refThreads = reqInstTool<IjvxThreads>(
 			_common_set.theToolsHost,
 			JVX_COMPONENT_THREADS);
 		assert(refThreads.cpPtr);
-			}
+	}
 	return res;
 }
 
@@ -73,14 +73,14 @@ CjvxAuNForwardBuffer::deactivate()
 {
 	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
-	{	
+	{
 		// There may be some allocated parameters allocated on "test_connect_icon" that need to be removed
-		if (numChannels)
+		if (reRouting.numChannels)
 		{
 			genForwardBuffer_node::deassociate__convert(static_cast<CjvxProperties*>(this));
-			JVX_DSP_SAFE_DELETE_FIELD(selChannels);
-			selChannels = nullptr;
-			numChannels = 0;
+			JVX_DSP_SAFE_DELETE_FIELD(reRouting.selChannels);
+			reRouting.selChannels = nullptr;
+			reRouting.numChannels = 0;
 		}
 
 		retInstTool<IjvxThreads>(
@@ -104,32 +104,34 @@ CjvxAuNForwardBuffer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	std::string token;
 	std::string tokenDecoder;
 	jvxErrorType res = JVX_NO_ERROR;
-	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));	
+	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		if (output.number_channels != numChannels)
+		if (
+			node_output._common_set_node_params_a_1io.number_channels
+			!= reRouting.numChannels)
 		{
 			jvxSize newNumChannels = 0;
 			jvxBitField* newSelChannels = nullptr;
-						
-			if (output.number_channels)
+
+			if (node_output._common_set_node_params_a_1io.number_channels)
 			{
-				newNumChannels = output.number_channels;
-				JVX_DSP_SAFE_ALLOCATE_FIELD(newSelChannels, jvxBitField, output.number_channels);
+				newNumChannels = node_output._common_set_node_params_a_1io.number_channels;
+				JVX_DSP_SAFE_ALLOCATE_FIELD(newSelChannels, jvxBitField, node_output._common_set_node_params_a_1io.number_channels);
 			}
 
 			// We have N channels but allow an extraposition to allow all input channels and "silence"
-			for (i = 0; i < output.number_channels; i++)
+			for (i = 0; i < node_output._common_set_node_params_a_1io.number_channels; i++)
 			{
 				// Circular routing of input to output
-				jvxSize idxIn = i % input.number_channels;
+				jvxSize idxIn = i % node_inout._common_set_node_params_a_1io.number_channels;
 				jvx_bitZSet(newSelChannels[i], idxIn);
 
 				// Here we try to copy the previous channel idx
-				if (i < numChannels)
+				if (i < reRouting.numChannels)
 				{
-					jvxSize idSel = jvx_bitfieldSelection2Id(selChannels[i], numChannels + 1);
-					if(idSel < input.number_channels)
+					jvxSize idSel = jvx_bitfieldSelection2Id(reRouting.selChannels[i], reRouting.numChannels + 1);
+					if (idSel < node_inout._common_set_node_params_a_1io.number_channels)
 					{
 						// Select previous channel selection
 						jvx_bitZSet(newSelChannels[i], idSel);
@@ -137,31 +139,31 @@ CjvxAuNForwardBuffer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					else
 					{
 						// Select silence also
-						jvx_bitZSet(newSelChannels[i], input.number_channels);
+						jvx_bitZSet(newSelChannels[i], node_inout._common_set_node_params_a_1io.number_channels);
 					}
 				}
 			}
 
 			genForwardBuffer_node::convert.channel_selection.value.entries.clear();
-			for (i = 0; i < output.number_channels; i++)
+			for (i = 0; i < node_output._common_set_node_params_a_1io.number_channels; i++)
 			{
 				genForwardBuffer_node::convert.channel_selection.value.entries.push_back("Channel #" + jvx_size2String(i));
 			}
 			genForwardBuffer_node::convert.channel_selection.value.entries.push_back("No Channel");
 
-			if (numChannels)
-			{				
+			if (reRouting.numChannels)
+			{
 				genForwardBuffer_node::deassociate__convert(static_cast<CjvxProperties*>(this));
-				JVX_DSP_SAFE_DELETE_FIELD(selChannels);
-				selChannels = nullptr;
-				numChannels = 0;
+				JVX_DSP_SAFE_DELETE_FIELD(reRouting.selChannels);
+				reRouting.selChannels = nullptr;
+				reRouting.numChannels = 0;
 			}
 
 			if (newNumChannels)
 			{
-				numChannels = newNumChannels;
-				selChannels = newSelChannels;
-				genForwardBuffer_node::associate__convert(static_cast<CjvxProperties*>(this), selChannels, numChannels);
+				reRouting.numChannels = newNumChannels;
+				reRouting.selChannels = newSelChannels;
+				genForwardBuffer_node::associate__convert(static_cast<CjvxProperties*>(this), reRouting.selChannels, reRouting.numChannels);
 			}
 		}
 	}
@@ -170,7 +172,7 @@ CjvxAuNForwardBuffer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 void
 CjvxAuNForwardBuffer::from_input_to_output()
-{	
+{
 	// Copy all output parameters from input parameters -except for the buffersize
 	node_output._common_set_node_params_a_1io.samplerate = node_inout._common_set_node_params_a_1io.samplerate;
 	node_output._common_set_node_params_a_1io.format = node_inout._common_set_node_params_a_1io.format;
@@ -187,17 +189,17 @@ CjvxAuNForwardBuffer::from_input_to_output()
 		node_output._common_set_node_params_a_1io.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
 	}
 
-	// A buffersize of UNSELECTED is always a bad idea - better adapt input buffersize
-	if (JVX_CHECK_SIZE_UNSELECTED(node_output._common_set_node_params_a_1io.buffersize))
+	/*
+	 * Here is a little bit the trick of the module: we pass the new params only towards the output if a fundamental change happened.
+	 * With this we make sure that the output has control of the buffersize unless input has changed.
+	 */
+	if (newParamsOnTestInput)
 	{
 		node_output._common_set_node_params_a_1io.buffersize = node_inout._common_set_node_params_a_1io.buffersize;
 		node_output._common_set_node_params_a_1io.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
 	}
 
-	output.buffersize = node_output._common_set_node_params_a_1io.buffersize;
-	output.samplerate = node_output._common_set_node_params_a_1io.samplerate;
-	output.number_channels = node_output._common_set_node_params_a_1io.number_channels;
-	output.format = (jvxDataFormat)node_output._common_set_node_params_a_1io.format;
+	update_output_params();
 }
 
 void
@@ -216,7 +218,7 @@ CjvxAuNForwardBuffer::test_set_output_parameters()
 
 	// Use the default implementation
 	CjvxBareNode1ioRearrange::test_set_output_parameters();
-	
+
 	// Create the link between input and output channel number
 	// node_output._common_set_node_params_a_1io.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
 }
@@ -245,7 +247,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		checkInputOutputMostlyIdentical = false; // This prevents also the zerocopy mode
 	}
-	
+
 	// ================================================================
 
 	buffermode = genForwardBuffer_node::translate__config__buffer_location_from();
@@ -296,11 +298,12 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			{
 				// Do the processing checks and allocate buffers etc
 			// Setup has been verified in the test chain functions before - this is only for simpler access during processing
+				/*
 				input.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
 				input.number_channels = _common_set_ldslave.theData_in->con_params.number_channels;
 				input.samplerate = _common_set_ldslave.theData_in->con_params.rate;
 				input.format = _common_set_ldslave.theData_in->con_params.format;
-
+				*/
 				res = allocate_pipeline_and_buffers_prepare_to();
 				assert(res == JVX_NO_ERROR);
 				jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags,
@@ -310,20 +313,25 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			jvxBool withStartThreshold = false;
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				withStartThreshold = true;				
+				withStartThreshold = true;
 			}
-			jvxSize bs = output.samplerate * genForwardBuffer_node::config.buffersize_msecs.value * 0.001;
-			bs = JVX_MAX(JVX_MAX(input.buffersize, output.buffersize) * 4, bs);
+
+			jvxSize bs = node_output._common_set_node_params_a_1io.samplerate * genForwardBuffer_node::config.buffersize_msecs.value * 0.001;
+			bs = JVX_MAX(
+				JVX_MAX(node_inout._common_set_node_params_a_1io.buffersize, node_output._common_set_node_params_a_1io.buffersize) * 4, bs);
 			start_audiostack(
 				bs,
-				input.number_channels,
-				input.format,
+				node_output._common_set_node_params_a_1io.number_channels,
+				(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
 				false, withStartThreshold);
+
+			assert(node_inout._common_set_node_params_a_1io.buffersize == _common_set_ldslave.theData_in->con_params.buffersize);
+			assert(node_output._common_set_node_params_a_1io.buffersize == _common_set_ldslave.theData_out.con_params.buffersize);
 
 			// ========================================================================================================
 			// Allocate pre-sorting channel buffer and zero input buffer
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(bufReroute, jvxData*, output.number_channels);
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(zbuf, jvxData, _common_set_ldslave.theData_in->con_params.buffersize);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(reRouting.bufReroute, jvxData*, node_output._common_set_node_params_a_1io.number_channels);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(reRouting.zbuf, jvxData, node_inout._common_set_node_params_a_1io.buffersize);
 			// ========================================================================================================
 
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
@@ -372,17 +380,17 @@ CjvxAuNForwardBuffer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 			}
 		}
 		else
-		{ 
+		{
 			refThreads.cpPtr->terminate();
 			assert(resL == JVX_NO_ERROR);
 		}
 
 		// ========================================================================================================
 		// Deallocate pre-sorting channel buffer and zero input buffer
-		JVX_DSP_SAFE_DELETE_FIELD(bufReroute);
-		bufReroute = nullptr;
-		JVX_DSP_SAFE_DELETE_FIELD(zbuf);
-		zbuf = nullptr;
+		JVX_DSP_SAFE_DELETE_FIELD(reRouting.bufReroute);
+		reRouting.bufReroute = nullptr;
+		JVX_DSP_SAFE_DELETE_FIELD(reRouting.zbuf);
+		reRouting.zbuf = nullptr;
 		// ========================================================================================================
 
 		stop_audiostack();
@@ -475,7 +483,7 @@ CjvxAuNForwardBuffer::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 // ===========================================================================
 
-jvxErrorType 
+jvxErrorType
 CjvxAuNForwardBuffer::process_start_icon(
 	jvxSize pipeline_offset,
 	jvxSize* idx_stage,
@@ -542,21 +550,22 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	else
 	{
 		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
-	
+
 		// ========================================================================================================
 		// Filter out the right amount of channels and run the channel selection. We sort the input buffers in a
 		// different order in a dedicated buffer prior to passing them to the audio sync buffer.
 		// ========================================================================================================
-		for (int i = 0; i < output.number_channels; i++)
+		for (int i = 0; i < node_output._common_set_node_params_a_1io.number_channels; i++)
 		{
-			jvxSize idx = jvx_bitfieldSelection2Id(selChannels[i], input.number_channels);
-			if (idx < input.number_channels)
+			jvxSize idx = jvx_bitfieldSelection2Id(reRouting.selChannels[i], 
+				node_output._common_set_node_params_a_1io.number_channels);
+			if (idx < node_output._common_set_node_params_a_1io.number_channels)
 			{
-				bufReroute[i] = bufsIn[idx];
+				reRouting.bufReroute[i] = bufsIn[idx];
 			}
 			else
 			{
-				bufReroute[i] = zbuf;
+				reRouting.bufReroute[i] = reRouting.zbuf;
 			}
 		}
 
@@ -566,8 +575,8 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		res = jvx_audio_stack_sample_dispenser_cont_external_copy(
 			&myAudioDispenser,
 			//(jvxHandle**)bufsIn, 0,
-			(jvxHandle**)bufReroute, 0,
-			nullptr, 0, input.buffersize,
+			(jvxHandle**)reRouting.bufReroute, 0,
+			nullptr, 0, node_inout._common_set_node_params_a_1io.buffersize,
 			0, nullptr, nullptr,
 			nullptr, nullptr);
 
@@ -622,6 +631,11 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 		{
 			// To do at this position
 			res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_NO_ERROR)
+			{
+				// If new parameters were set, forward those to the current status variable for output
+				update_output_params();
+			}
 		}
 		return res;
 		break;
@@ -643,13 +657,18 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 					res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
 					if (res == JVX_NO_ERROR)
 					{
+						assert(node_output._common_set_node_params_a_1io.number_channels == 
+							_common_set_ldslave.theData_out.con_params.number_channels);
+						assert(node_output._common_set_node_params_a_1io.buffersize ==
+							_common_set_ldslave.theData_out.con_params.buffersize);
+
 						// Get new audio data here
 						jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
 						jvxSize fHeight = 0;
 						jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
 							&myAudioDispenser,
 							(jvxHandle**)bufsOut, 0,
-							nullptr, 0, output.buffersize, 0, nullptr, NULL, NULL, NULL);
+							nullptr, 0, _common_set_ldslave.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
 
 						switch (resL)
 						{
@@ -802,7 +821,7 @@ CjvxAuNForwardBuffer::read_samples_to_buffer()
 		jvx_audio_stack_sample_dispenser_buffer_status(&myAudioDispenser,
 			nullptr,
 			&space);
-		if (space >= input.buffersize)
+		if (space >= node_output._common_set_node_params_a_1io.buffersize)
 		{
 			_common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
 				JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
@@ -833,10 +852,13 @@ CjvxAuNForwardBuffer::write_samples_to_buffer()
 					// Get new audio data here
 					jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
 
+					assert(node_output._common_set_node_params_a_1io.buffersize == 
+						_common_set_ldslave.theData_out.con_params.buffersize);
+
 					jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
 						&myAudioDispenser,
 						(jvxHandle**)bufsOut, 0,
-						nullptr, 0, output.buffersize, 0, nullptr, NULL, NULL, NULL);
+						nullptr, 0, _common_set_ldslave.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
 					assert(resL == JVX_NO_ERROR);
 
 					_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
@@ -935,6 +957,17 @@ CjvxAuNForwardBuffer::get_manipulate_value(jvxSize id, jvxVariant* varray)
 		res = JVX_ERROR_UNSUPPORTED;
 	}
 	return res;
+}
+
+void 
+CjvxAuNForwardBuffer::update_output_params()
+{
+	/*
+	output.buffersize = node_output._common_set_node_params_a_1io.buffersize;
+	output.samplerate = node_output._common_set_node_params_a_1io.samplerate;
+	output.number_channels = node_output._common_set_node_params_a_1io.number_channels;
+	output.format = (jvxDataFormat)node_output._common_set_node_params_a_1io.format;
+	*/
 }
 
 // =================================================================================

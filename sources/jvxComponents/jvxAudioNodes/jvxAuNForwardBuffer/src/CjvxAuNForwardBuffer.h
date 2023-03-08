@@ -77,30 +77,31 @@ protected:
 		jvxDataFormat format = JVX_DATAFORMAT_NONE;
 	};
 
-	proc_params input;
-	proc_params output;
-
 	refComp<IjvxThreads> refThreads;
 
 	// The forward buffer can be configured for input as well as for output functionality
 	jvxOperationMode buffermode = jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT;
 
-	jvxBitField* selChannels = nullptr;
-	jvxSize numChannels = 0;
+	// The following struct is used for a simple input channel mapping. The number of channels in the buffer always
+	// follows the output connection. The input can then be routed as desired.
+	struct
+	{
+		// Field to expose the selection towards UI. Buffer and number of entries.
+		jvxBitField* selChannels = nullptr;
+		jvxSize numChannels = 0;
 
-	jvxData** bufReroute = nullptr;
-	jvxData* zbuf = nullptr;
+		//! Container to hold the buffers while operating
+		jvxData** bufReroute = nullptr;
+
+		//! Zero input buffer for muting of a special channel
+		jvxData* zbuf = nullptr;
+	} reRouting;
 
 public:
 
 	JVX_CALLINGCONVENTION CjvxAuNForwardBuffer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~CjvxAuNForwardBuffer();
 	
-	/*
-	virtual jvxErrorType JVX_CALLINGCONVENTION select(IjvxObject* owner)override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION unselect()override;
-	*/
-
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
 
@@ -159,7 +160,6 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)override;
 
-	void from_input_to_output() override;
-
-
+	virtual void from_input_to_output() override;
+	void update_output_params();
 };

@@ -119,10 +119,12 @@ CjvxAudioFileWriterDevice::activate()
 		genFileWriter_device::register_all(static_cast<CjvxProperties*>(this));
 		genFileWriter_device::register_callbacks(
 			static_cast<CjvxProperties*>(this),
-			set_wav_parameters,
-			reinterpret_cast<jvxHandle*>(this),
+			set_fixed, set_wav_parameters,
+			reinterpret_cast<jvxHandle*>(this),			
 			nullptr);
 
+		std::string iFile = foldername + JVX_SEPARATOR_DIR + fileprefix;
+		genFileWriter_device::file.name.value = iFile;
 		if (!config_compact.empty())
 		{
 			jvxComponentIdentification tp = JVX_COMPONENT_CONFIG_PROCESSOR;
@@ -276,6 +278,64 @@ CjvxAudioFileWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			&passed_props,
 			&famToken);
 
+		jvxBool fixedValuesFFilled = true;
+		jvxLinkDataDescriptor ld;
+		jvxApiString configToken;
+		wav_params modified_props = passed_props;
+		ld.con_params = _common_set_ldslave.theData_in->con_params;
+		ld.con_params.format_spec = nullptr;
+
+		if (JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.bsize.value))
+		{
+			if (ld.con_params.buffersize != genFileWriter_device::fixed.bsize.value)
+			{
+				modified_props.bsize = genFileWriter_device::fixed.bsize.value;
+				fixedValuesFFilled = false;
+			}
+		}
+		
+		if (JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.srate.value))
+		{
+			if (ld.con_params.rate != genFileWriter_device::fixed.srate.value)
+			{
+				modified_props.srate = genFileWriter_device::fixed.srate.value;
+				fixedValuesFFilled = false;
+			}
+		}
+			
+		if(JVX_CHECK_SIZE_SELECTED(genFileWriter_device::fixed.nchans.value))
+		{
+			if (ld.con_params.number_channels != genFileWriter_device::fixed.nchans.value)
+			{
+				modified_props.nchans = genFileWriter_device::fixed.nchans.value;
+				fixedValuesFFilled = false;
+			}
+		}
+
+		if (!fixedValuesFFilled)
+		{
+			modified_props.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&modified_props, JVX_SIZE_UNSELECTED);
+			ld.con_params.buffersize = modified_props.fsizemax;
+			ld.con_params.rate = modified_props.srate;
+			std::string cfg;
+			jvx_wav_values_2_configtoken( cfg, & modified_props);
+			configToken = cfg;
+			ld.con_params.format_spec = &configToken;
+
+			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+				&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_NO_ERROR)
+			{
+				// Update the config token
+				config_token = _common_set_ldslave.theData_in->con_params.format_spec->std_str();
+				jvx_wav_configtoken_2_values(config_token.c_str(), &passed_props, &famToken);
+			}
+			else
+			{
+				return res;
+			}
+		}
+		
 		file_params.bsize = passed_props.bsize;
 		file_params.srate = passed_props.srate;
 		file_params.nchans = passed_props.nchans;
@@ -599,7 +659,6 @@ CjvxAudioFileWriterDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 {
 	jvxLinkDataDescriptor* ld_cp = nullptr;
 	jvxErrorType res = JVX_NO_ERROR;
-	jvxMasterSourceType* trigTp = nullptr;
 
 	switch (tp)
 	{
@@ -617,15 +676,6 @@ CjvxAudioFileWriterDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 		_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
 		// format_descriptor.assign(produce_decoder_token());
 		return JVX_NO_ERROR;
-	case JVX_LINKDATA_TRANSFER_REQUEST_TRIGGER_TYPE:
-
-		// Indicate that master requires a "trigger" to output data
-		trigTp = (jvxMasterSourceType*)data;
-		if (trigTp)
-		{
-			*trigTp = jvxMasterSourceType::JVX_MASTER_SOURCE_EXTERNAL_TRIGGER;
-		}
-		res = JVX_NO_ERROR;
 	}
 	return res;
 }
@@ -637,7 +687,7 @@ CjvxAudioFileWriterDevice::set_property(jvxCallManagerProperties& callGate,
 	const jvx::propertyDetail::CjvxTranferDetail& trans)
 {
 	return CjvxAudioDevice::set_property(callGate,
-		rawPtr, ident, trans);
+		rawPtr, ident, trans);	
 }
 
 void
@@ -992,3 +1042,10 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFileWriterDevice, set_wa
 	}
 	return JVX_NO_ERROR;
 }
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFileWriterDevice, set_fixed)
+{
+	this->request_test_chain(_common_set.theReport);
+	return JVX_NO_ERROR;
+}
+

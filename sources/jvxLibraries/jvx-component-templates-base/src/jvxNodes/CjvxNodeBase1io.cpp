@@ -293,14 +293,29 @@ CjvxNodeBase1io::inform_chain_test(jvxBool oldMethod)
 void
 CjvxNodeBase1io::update_simple_params_from_neg_on_test()
 {
-	node_inout._common_set_node_params_a_1io.number_channels = JVX_SIZE_INT32(neg_input._latest_results.number_channels);
-	node_inout._common_set_node_params_a_1io.buffersize = JVX_SIZE_INT32(neg_input._latest_results.buffersize);
-	node_inout._common_set_node_params_a_1io.samplerate = JVX_SIZE_INT32(neg_input._latest_results.rate);
-	node_inout._common_set_node_params_a_1io.format = JVX_SIZE_INT32(neg_input._latest_results.format);
-	node_inout._common_set_node_params_a_1io.subformat = JVX_SIZE_INT32(neg_input._latest_results.format_group);
-	node_inout._common_set_node_params_a_1io.segmentation.x = JVX_SIZE_INT32(neg_input._latest_results.segmentation_x);
-	node_inout._common_set_node_params_a_1io.segmentation.y = JVX_SIZE_INT32(neg_input._latest_results.segmentation_y);
-	node_inout._common_set_node_params_a_1io.data_flow = JVX_SIZE_INT32(neg_input._latest_results.data_flow);
+	newParamsOnTestInput = false;
+	if (
+		(node_inout._common_set_node_params_a_1io.number_channels != JVX_SIZE_INT32(neg_input._latest_results.number_channels)) ||
+		(node_inout._common_set_node_params_a_1io.buffersize != JVX_SIZE_INT32(neg_input._latest_results.buffersize)) ||
+		(node_inout._common_set_node_params_a_1io.samplerate != JVX_SIZE_INT32(neg_input._latest_results.rate)) ||
+		(node_inout._common_set_node_params_a_1io.format != JVX_SIZE_INT32(neg_input._latest_results.format)) ||
+		(node_inout._common_set_node_params_a_1io.subformat != JVX_SIZE_INT32(neg_input._latest_results.format_group)) ||
+		(node_inout._common_set_node_params_a_1io.segmentation.x != JVX_SIZE_INT32(neg_input._latest_results.segmentation_x)) ||
+		(node_inout._common_set_node_params_a_1io.segmentation.y != JVX_SIZE_INT32(neg_input._latest_results.segmentation_y)) ||
+		(node_inout._common_set_node_params_a_1io.data_flow != JVX_SIZE_INT32(neg_input._latest_results.data_flow)))
+	{
+		newParamsOnTestInput = true;
+
+		// Copy the values
+		node_inout._common_set_node_params_a_1io.number_channels = JVX_SIZE_INT32(neg_input._latest_results.number_channels);
+		node_inout._common_set_node_params_a_1io.buffersize = JVX_SIZE_INT32(neg_input._latest_results.buffersize);
+		node_inout._common_set_node_params_a_1io.samplerate = JVX_SIZE_INT32(neg_input._latest_results.rate);
+		node_inout._common_set_node_params_a_1io.format = JVX_SIZE_INT32(neg_input._latest_results.format);
+		node_inout._common_set_node_params_a_1io.subformat = JVX_SIZE_INT32(neg_input._latest_results.format_group);
+		node_inout._common_set_node_params_a_1io.segmentation.x = JVX_SIZE_INT32(neg_input._latest_results.segmentation_x);
+		node_inout._common_set_node_params_a_1io.segmentation.y = JVX_SIZE_INT32(neg_input._latest_results.segmentation_y);
+		node_inout._common_set_node_params_a_1io.data_flow = JVX_SIZE_INT32(neg_input._latest_results.data_flow);
+	}
 }
 
 void

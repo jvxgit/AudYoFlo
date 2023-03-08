@@ -149,6 +149,7 @@ namespace JVX_PROJECT_NAMESPACE {
 		void set_parent(CjvxAudioCodec* parent){myParent = parent;};
 
 		void accept_output_parameters();
+		void derive_input_file_arguments();
 	};
 
 #ifdef JVX_PROJECT_NAMESPACE

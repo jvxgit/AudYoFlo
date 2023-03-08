@@ -295,14 +295,33 @@ CjvxAudioEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 					}
 					else
 					{
+						// Derive the parameters from input side for  the next forward step
+						forward.con_params = _common_set_ldslave.theData_in->con_params;
+
+						// This is the next level of modification: requires new buffersize and/or samplerate from previous module
+						forward.con_params.buffersize = params_check.bsize;
+						forward.con_params.rate = params_check.srate;
+						forward.con_params.number_channels = params_check.nchans;
 						forwardRequest = true;
 					}
 				}
 
 				if (forwardRequest)
 				{
-					return _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
-						tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+					res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+						tp, &forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+					if (res == JVX_NO_ERROR)
+					{
+						// Here, we need to refresh all connection parameters.
+						// We do take a shortcut here and do not run the negotiation
+
+						CjvxAudioCodec_genpcg::general.buffersize.value = _common_set_ldslave.theData_in->con_params.buffersize;
+						CjvxAudioCodec_genpcg::general.samplerate.value = _common_set_ldslave.theData_in->con_params.rate;
+						CjvxAudioCodec_genpcg::general.num_audio_channels.value = _common_set_ldslave.theData_in->con_params.number_channels;
+
+						derive_input_file_arguments();												
+						test_set_output_parameters();
+					}
 				}
 			}
 		}
@@ -705,6 +724,15 @@ CjvxAudioEncoder::update_configure_token(const char* token)
 		// processing is already on
 	}
 	return JVX_ERROR_UNSUPPORTED;
+}
+
+void
+CjvxAudioEncoder::derive_input_file_arguments()
+{
+	params.bsize = CjvxAudioCodec_genpcg::general.buffersize.value;
+	params.srate = CjvxAudioCodec_genpcg::general.samplerate.value;
+	params.nchans = CjvxAudioCodec_genpcg::general.num_audio_channels.value;
+	params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&params, params.bsize);
 }
 
 #ifdef JVX_PROJECT_NAMESPACE

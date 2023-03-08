@@ -31,7 +31,10 @@ protected:
 
 	// Forward a complaint towards previous component
 	jvxBool forward_complain;
-
+	
+	// This variable checks on the INPUT side if new parametzer settings were detected.
+	// If so we try to change
+	jvxBool newParamsOnTestInput = false;
 
 public:
 	JVX_CALLINGCONVENTION CjvxNodeBase1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -82,6 +85,11 @@ public:
 	virtual void from_input_to_output();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+
+	/** 
+	 * This function runs before the actual local negotiations of the local component. We may forward a
+	 * negotiation towards the successor!
+	 */ //==============================================================================================
 	virtual jvxErrorType accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
 	// jvxErrorType reportPreferredParameters(jvxPropertyCategoryType cat, jvxSize propId);
@@ -96,10 +104,10 @@ public:
 	// Some helpers
 
 	// Update the input parameter properties from latest successful negotiations
-	void update_simple_params_from_neg_on_test();
-	void update_simple_params_from_ldesc(); // **
+	virtual void update_simple_params_from_neg_on_test();
+	virtual void update_simple_params_from_ldesc(); // **
 
-	void constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg);
+	virtual void constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg);
 };
 
 #define JVX_OS_REACT_INTERFACE_PARAMETERS_DECLARE \

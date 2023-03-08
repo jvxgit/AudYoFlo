@@ -11,9 +11,7 @@
 class CjvxAudioFileReaderTechnology;
 
 class CjvxAudioFileReaderDevice :
-	public CjvxAudioDevice,
-	public IjvxThreads_report,
-    public genFileReader_device
+	public CjvxAudioDevice, public genFileReader_device
 {
 	friend class CjvxAudioFileReaderTechnology;
 
@@ -128,11 +126,7 @@ public:
 	void send_buffer_direct();
 
 	// ===================================================================================
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION startup(jvxInt64 timestamp_us) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION expired(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION stopped(jvxInt64 timestamp_us) override;
+	
 	void read_samples_to_buffer();
 	void reconfigure_bsize(jvxSize bsize);
 

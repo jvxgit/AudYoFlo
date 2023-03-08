@@ -184,6 +184,10 @@ namespace AyfConnection
 				res = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
 					JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 					proposed JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				if (res == JVX_NO_ERROR)
+				{
+					refresh_test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+				}
 			}
 			return res;
 		};
@@ -373,8 +377,14 @@ namespace AyfConnection
 			}
 			return res;
 		}
-
+	
+		virtual void refresh_test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) //override
+		{
+			// Found in class CjvxBareNode1io
+			update_simple_params_from_ldesc();
+		}
 	};
+
 }
 
 

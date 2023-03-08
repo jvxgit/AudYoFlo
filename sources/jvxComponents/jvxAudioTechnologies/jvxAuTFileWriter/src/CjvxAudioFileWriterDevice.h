@@ -129,6 +129,7 @@ public:
 
 	// ===================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_wav_parameters);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_fixed);
 
 	void trigger_one_buffer();
 	jvxErrorType open_wav_file_for_writing();
