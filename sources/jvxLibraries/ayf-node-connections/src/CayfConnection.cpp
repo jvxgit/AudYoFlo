@@ -442,7 +442,7 @@ namespace AyfConnection
 				{
 					cfg.anchorIn->con_data.number_buffers = cfg.numBuffers;
 				}
-				res = microConn->prepare_connection(false, false);
+				res = microConn->prepare_connection(false, false, cfg.copyAttachedData);
 				if (res == JVX_NO_ERROR)
 				{
 					_common_set_min.theState = JVX_STATE_PREPARED;

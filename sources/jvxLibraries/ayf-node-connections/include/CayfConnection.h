@@ -67,7 +67,7 @@ namespace AyfConnection
 		jvxComponentType tp = JVX_COMPONENT_UNKNOWN;
 		IjvxObject* theObj = nullptr;
 		IjvxReferenceSelector* decider = nullptr;
-		std::string outputConnectorName = "default";
+		std::string outputConnectorName = "default";		
 	};
 
 	class CayfConnectionConfig
@@ -86,7 +86,8 @@ namespace AyfConnection
 			HjvxMicroConnection_hooks_simple* bwdRefSplArg = nullptr,
 			HjvxMicroConnection_hooks_fwd* bwdRefFwdArg = nullptr,
 			jvxBool activateNodeArg = true,
-			jvxSize numBuffersArg = 1):
+			jvxSize numBuffersArg = 1,
+			jvxBool copyAttachedDataArg = false):
 			hostRef(hostRefArg),
 			owner(ownerArg),
 			modSpecLinear(modSpecLinearArg),
@@ -99,7 +100,8 @@ namespace AyfConnection
 			numBuffers(numBuffersArg),
 			nmProcess(nmProcessArg),
 			descrProcess(descrProcessArg),
-			descrorProcess(descrorProcessArg) {};
+			descrorProcess(descrorProcessArg),
+			copyAttachedData(copyAttachedDataArg) {};
 
 		IjvxHiddenInterface* hostRef = nullptr;
 		IjvxObject* owner = nullptr;
@@ -114,6 +116,7 @@ namespace AyfConnection
 		std::string nmProcess;
 		std::string descrProcess;
 		std::string descrorProcess;
+		jvxBool copyAttachedData = false;
 	};
 
 	class CayfConnection: 
@@ -131,7 +134,7 @@ namespace AyfConnection
 		HjvxMicroConnection* microConn = nullptr;
 		IayfConnectionStateSwitchNode* ssCb = nullptr;
 		jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
-		jvxBool fwdTestToDepend = false;
+		jvxBool fwdTestToDepend = false;	
 
 	public:
 		CayfConnection();

@@ -17,7 +17,6 @@ namespace AyfConnection
 		JVX_CALLINGCONVENTION CayfAuNFixedConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 			CayfAuNConnection<S>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 		{
-
 		};
 
 		~CayfAuNFixedConnection()
@@ -336,7 +335,7 @@ namespace AyfConnection
 						&CayfAuNConnection<S>::_common_set_ldslave.theData_out,
 						ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT,
 						CayfAuNConnection<S>::nmProcess, CayfAuNConnection<S>::descrProcess,
-						CayfAuNConnection<S>::descrorProcess, this, this, false, CayfAuNConnection<S>::numBuffers), 
+						CayfAuNConnection<S>::descrorProcess, this, this, false, CayfAuNConnection<S>::numBuffers, true), 
 						CayfAuNConnection<S>::stateSwitchHandler,
 						idProcDepends, true);
 					if (res != JVX_NO_ERROR)

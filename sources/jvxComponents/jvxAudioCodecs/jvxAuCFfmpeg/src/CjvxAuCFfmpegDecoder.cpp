@@ -45,31 +45,77 @@ CjvxAuCFfmpegAudioDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	{
 		AVDictionary* format_opts = nullptr, * codec_opts = nullptr, * filtered_opts = nullptr;
 		AVStream* st = nullptr;
-		cParams.cc = avcodec_alloc_context3(NULL);
-		int ret = avcodec_parameters_to_context(cParams.cc, st->codecpar);
-		assert(ret == 0);
-		cParams.cc->pkt_timebase = st->time_base;
 
-		cParams.codec = avcodec_find_decoder(st->codecpar->codec_id);
-		// Alternative call here if we knwo the name
-		// avcodec_find_decoder_by_name(forced_codec_name);
-		assert(cParams.codec);
+		jvxLinkDataAttachedChain* ptrStream = _common_set_ldslave.theData_in->con_link.attached_chain_single_pass;
+		while (ptrStream)
+		{
+			jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>* ptr_stream_txt = reinterpret_cast<jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>*>(ptrStream->if_specific(JVX_LINKDATA_ATTACHED_STRING_DETECT));
+			if (ptr_stream_txt->descr)
+			{
+				if ((std::string)ptr_stream_txt->descr == "/ffmpeg/audiostream/avstream")
+				{
+					st = (AVStream*)ptr_stream_txt->data;
+					break;
+				}
+			}
+			ptrStream = ptrStream->next;
+		}
 
-		// Make sure..
-		cParams.cc->codec_id = cParams.codec->id;
+		if (st)
+		{
+			cParams.cc = avcodec_alloc_context3(NULL);
+			int ret = avcodec_parameters_to_context(cParams.cc, st->codecpar);
+			assert(ret == 0);
+			cParams.cc->pkt_timebase = st->time_base;
 
-		/*
-		filtered_opts = filter_codec_opts(codec_opts, st->codecpar->codec_id, cParams.ic, st, cParams.codec);
-		if (!av_dict_get(filtered_opts, "threads", NULL, 0))
-		av_dict_set(&filtered_opts, "threads", "auto", 0);
-		*/
+			cParams.codec = avcodec_find_decoder(st->codecpar->codec_id);
+			// Alternative call here if we knwo the name
+			// avcodec_find_decoder_by_name(forced_codec_name);
+			assert(cParams.codec);
 
-		ret = avcodec_open2(cParams.cc, cParams.codec, &filtered_opts);
-		assert(ret == 0);
+			// Make sure..
+			cParams.cc->codec_id = cParams.codec->id;
+
+			/*
+			filtered_opts = filter_codec_opts(codec_opts, st->codecpar->codec_id, cParams.ic, st, cParams.codec);
+			if (!av_dict_get(filtered_opts, "threads", NULL, 0))
+			av_dict_set(&filtered_opts, "threads", "auto", 0);
+			*/
+
+			ret = avcodec_open2(cParams.cc, cParams.codec, &filtered_opts);
+			assert(ret == 0);
+		}
+		else
+		{
+			std::cout << __FUNCTION__ << ": Failed to reconstruct ffmpeg stream reference." << std::endl;
+		}
 	}
 	return res;
 }
 
+jvxErrorType
+CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
+{
+	jvxSize i;
+	jvxData** bufsOutData = nullptr;
+
+	jvxSize idx_stage_local = idx_stage;
+	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
+	{
+		idx_stage_local = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+	}
+
+	AVPacket* pkt = (AVPacket*)_common_set_ldslave.theData_in->con_data.buffers[idx_stage_local];
+
+	// Decode the input packet here!!
+
+	bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+	for (i = 0; i < cParams.nChans; i++)
+	{
+		memset(bufsOutData[i], 0, _common_set_ldslave.theData_out.con_params.buffersize *jvxDataFormatGroup_getsize(_common_set_ldslave.theData_out.con_params.format));
+	}
+	return fwd_process_buffers_icon(mt_mask, idx_stage);
+}
 
 jvxErrorType
 CjvxAuCFfmpegAudioDecoder::configure_decoder(const char* tokenArg)

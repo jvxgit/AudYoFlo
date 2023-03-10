@@ -163,7 +163,10 @@ class jvxLinkDataAttachedStringDetect : public T
 {
 public:
 
-	jvxLinkDataAttachedStringDetect() : jvxLinkDataAttachedBuffer(JVX_LINKDATA_ATTACHED_STRING_DETECT){};
+	jvxLinkDataAttachedStringDetect(const char* descrArg, jvxHandle* dataArg) : 
+		T(JVX_LINKDATA_ATTACHED_STRING_DETECT),
+		descr(descrArg), data(dataArg)
+	{};
 
 	jvxHandle* data = nullptr;
 	const char* descr = nullptr;

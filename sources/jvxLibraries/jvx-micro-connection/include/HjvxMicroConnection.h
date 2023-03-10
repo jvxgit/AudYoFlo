@@ -216,7 +216,7 @@ private:
 	std::string dbg_hint;
 	std::string last_error = "";
 
-	jvxConnectionType typeConnection = jvxConnectionType::JVX_MICROCONNECTION_ENGAGE;
+	jvxConnectionType typeConnection = jvxConnectionType::JVX_MICROCONNECTION_ENGAGE;	
 
 public:
 	HjvxMicroConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -285,7 +285,7 @@ public:
 
 	jvxErrorType disconnect_connection();
 	jvxErrorType test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
-	jvxErrorType prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffersInPlaceOut);
+	jvxErrorType prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffersInPlaceOut, jvxBool copyAttachedData = false);
 	jvxErrorType postprocess_connection();
 	jvxErrorType start_connection();
 	jvxErrorType stop_connection();

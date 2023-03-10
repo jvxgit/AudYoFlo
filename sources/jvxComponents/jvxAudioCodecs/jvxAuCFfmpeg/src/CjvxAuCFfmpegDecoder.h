@@ -29,6 +29,8 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage) override;
+
 	jvxErrorType set_configure_token(const char* tokenArg);
 	virtual jvxErrorType configure_decoder(const char* tokenArg) override;
 

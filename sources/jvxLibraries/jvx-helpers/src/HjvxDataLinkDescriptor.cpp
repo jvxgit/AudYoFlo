@@ -322,47 +322,58 @@ jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateF
 			theData->con_data.attached_buffer_persist[i] = NULL;
 			theData->con_data.buffers[i] = NULL;
 			theData->con_data.bExt.raw[i] = NULL;
-			if (theData->con_params.number_channels)
+
+			switch (theData->con_params.format_group)
 			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.buffers[i], jvxHandle*, theData->con_params.number_channels);
-				assert(theData->con_data.buffers[i]);
-				JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.bExt.raw[i], jvxHandle*, theData->con_params.number_channels);
-				assert(theData->con_data.bExt.raw[i]);
-				JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.bExt.offset[i], jvxSize, theData->con_params.number_channels);
-				assert(theData->con_data.bExt.offset[i]);
-				for (j = 0; j < (jvxSize)theData->con_params.number_channels; j++)
+			case JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD:
+
+				// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
+				// Do not allocate anything here!
+				break;
+			default:
+				if (theData->con_params.number_channels)
 				{
-					theData->con_data.bExt.raw[i][j] = NULL;
-					theData->con_data.buffers[i][j] = NULL;
-					theData->con_data.bExt.offset[i][j] = 0;
-					theData->con_data.bExt.sz = 0;
-					if (allocateFields)
+					JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.buffers[i], jvxHandle*, theData->con_params.number_channels);
+					assert(theData->con_data.buffers[i]);
+					JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.bExt.raw[i], jvxHandle*, theData->con_params.number_channels);
+					assert(theData->con_data.bExt.raw[i]);
+					JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.bExt.offset[i], jvxSize, theData->con_params.number_channels);
+					assert(theData->con_data.bExt.offset[i]);
+					for (j = 0; j < (jvxSize)theData->con_params.number_channels; j++)
 					{
-						jvxSize szElm = jvxDataFormat_size[theData->con_params.format];
-						assert(szElm);
-						jvx_allocateField_c_a(&theData->con_data.bExt.raw[i][j], theData->con_params.buffersize,
-							szElm, (theData->con_data.bExt.prepend + theData->con_data.bExt.append + theData->con_data.bExt.align),
-							&theData->con_data.bExt.sz, theData->con_data.bExt.f_alloc, theData->con_data.bExt.f_priv);
-
-						assert(theData->con_data.bExt.raw[i][j]);
-						jvxSize ptrI = (jvxSize)((jvxByte*)theData->con_data.bExt.raw[i][j]);
-						jvxSize dec = 0;
-						jvxSize inc = theData->con_data.bExt.prepend;
-						if (theData->con_data.bExt.align)
+						theData->con_data.bExt.raw[i][j] = NULL;
+						theData->con_data.buffers[i][j] = NULL;
+						theData->con_data.bExt.offset[i][j] = 0;
+						theData->con_data.bExt.sz = 0;
+						if (allocateFields)
 						{
-							// 0x12345 align 4: 0x12345 + 4 - 1
-							inc += (theData->con_data.bExt.align - 1);
+							jvxSize szElm = jvxDataFormat_size[theData->con_params.format];
+							assert(szElm);
+							jvx_allocateField_c_a(&theData->con_data.bExt.raw[i][j], theData->con_params.buffersize,
+								szElm, (theData->con_data.bExt.prepend + theData->con_data.bExt.append + theData->con_data.bExt.align),
+								&theData->con_data.bExt.sz, theData->con_data.bExt.f_alloc, theData->con_data.bExt.f_priv);
 
-							// Here is my attempt: 
-							// convert pointer to int, do the align and compute the pointer decrement
-							// and finally apply the decrement
-							dec = (ptrI + inc) % theData->con_data.bExt.align;
+							assert(theData->con_data.bExt.raw[i][j]);
+							jvxSize ptrI = (jvxSize)((jvxByte*)theData->con_data.bExt.raw[i][j]);
+							jvxSize dec = 0;
+							jvxSize inc = theData->con_data.bExt.prepend;
+							if (theData->con_data.bExt.align)
+							{
+								// 0x12345 align 4: 0x12345 + 4 - 1
+								inc += (theData->con_data.bExt.align - 1);
+
+								// Here is my attempt: 
+								// convert pointer to int, do the align and compute the pointer decrement
+								// and finally apply the decrement
+								dec = (ptrI + inc) % theData->con_data.bExt.align;
+							}
+							theData->con_data.bExt.offset[i][j] = inc - dec;
+							theData->con_data.buffers[i][j] =
+								((jvxByte*)theData->con_data.bExt.raw[i][j] + theData->con_data.bExt.offset[i][j]);
 						}
-						theData->con_data.bExt.offset[i][j] = inc - dec;
-						theData->con_data.buffers[i][j] =
-							((jvxByte*)theData->con_data.bExt.raw[i][j] + theData->con_data.bExt.offset[i][j]);
 					}
 				}
+				break;
 			}
 		}
 	}
@@ -396,25 +407,35 @@ jvx_deallocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool dealloc
 	{
 		for (i = 0; i < theData->con_data.number_buffers; i++)
 		{
-			if (theData->con_params.number_channels)
+			// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
+			switch (theData->con_params.format_group)
 			{
-				for (j = 0; j < (jvxSize)theData->con_params.number_channels; j++)
+			case JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD:
+
+				// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
+				// Do not allocate anything here!
+				break;
+			default:
+				if (theData->con_params.number_channels)
 				{
-					if (deallocateFields)
+					for (j = 0; j < (jvxSize)theData->con_params.number_channels; j++)
 					{
-						jvx_deallocateField_c_a(&theData->con_data.bExt.raw[i][j], 
-							theData->con_data.bExt.f_dealloc, theData->con_data.bExt.f_priv);
-						theData->con_data.buffers[i][j] = NULL;
-						theData->con_data.bExt.offset[i][j] = 0;
+						if (deallocateFields)
+						{
+							jvx_deallocateField_c_a(&theData->con_data.bExt.raw[i][j],
+								theData->con_data.bExt.f_dealloc, theData->con_data.bExt.f_priv);
+							theData->con_data.buffers[i][j] = NULL;
+							theData->con_data.bExt.offset[i][j] = 0;
+						}
+						else
+						{
+							assert(theData->con_data.buffers[i][j] == NULL);
+						}
 					}
-					else
-					{
-						assert(theData->con_data.buffers[i][j] == NULL);
-					}
+					JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.buffers[i], jvxHandle*);
+					JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.raw[i], jvxHandle*);
+					JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.offset[i], jvxSize);
 				}
-				JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.buffers[i], jvxHandle*);
-				JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.raw[i], jvxHandle*);
-				JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.offset[i], jvxSize);
 			}
 		}
 

@@ -453,6 +453,11 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 	jvxUByte* max_size_ptr = NULL;
 	int ret = 0;
 	AVDictionary* format_opts = nullptr, * codec_opts = nullptr, * filtered_opts = nullptr;
+
+	// Auto-run the prepare function
+	res = prepare_chain_master_autostate(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	assert(res == JVX_NO_ERROR);
+
 	switch(fParams.idCodec)
 	{
 	case AV_CODEC_ID_PCM_S16LE:
@@ -483,29 +488,11 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 		assert(0);
 	}
 	
+	// Get the codec parameters
 	AVStream* codecParamPointer = fParams.st;
+	jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain> attachObject("/ffmpeg/audiostream/avstream", fParams.st);
 
-	// _common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_push_front(_common_set_ldslave.theData_out.con_data.attached_buffer_single,
-	//	)
-	//_
-	
-
-	// Set not eof
-	// fParams.st->eof = 0;
-
-	// Here we allow input packets
-	fParams.st->discard = AVDISCARD_DEFAULT;
-
-	// ret = av_read_frame(fParams.ic, fParams.pkt);
-
-
-
-
-
-
-    // Auto-run the prepare function
-	res = prepare_chain_master_autostate(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-	assert(res == JVX_NO_ERROR);
+	_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_push_front(_common_set_ldslave.theData_out.con_link.attached_chain_single_pass, &attachObject);
 
 	// Prepare processing parameters
 	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
@@ -514,48 +501,20 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 
 	// New type of connection by propagating through linked elements
     res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	
+	jvxLinkDataAttachedChain* ptrHere = nullptr;
+	_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_pop_front(_common_set_ldslave.theData_out.con_link.attached_chain_single_pass, &ptrHere);
+	assert(ptrHere == &attachObject);
+
 	if (res == JVX_NO_ERROR)
 	{
-		involve_read_thread = false;
-		if (genFFMpegReader_device::exteded_properties.threaded_read.value == c_true)
-		{
-#if 0
-			jvxSize bitssample = jvx_wav_get_bits_sample(&file_params);
-			jvxSize bytesonesample = file_params.nchans * bitssample / 8;
-			jvxData numsamples = genFileReader_device::exteded_properties.preuse_bsize_msecs.value * 0.001 * file_params.srate;
-			jvxSize numbytes = (jvxSize)numsamples * bytesonesample;
-			jvxSize numbuffers = ceil((jvxData)numbytes / (jvxData)_common_set_ldslave.theData_out.con_params.buffersize);
-
-			preuse_buffer_sz = JVX_MAX(1, numbuffers) * _common_set_ldslave.theData_out.con_params.buffersize;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(preuse_buffer_ptr, jvxByte, preuse_buffer_sz);
-			readposi = 0;
-			fHeight = 0;
-			readsize = _common_set_ldslave.theData_out.con_params.buffersize;
-			bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE;
-
-			involve_read_thread = true;
-#endif
-		}
-
-		// All parameters were set before, only very few need update
-		_common_set_ldslave.theData_out.con_data.number_buffers = 1;
-
 		// Monitoring feedback
 		genFFMpegReader_device::monitor.progress_percent.value = 0;
 		genFFMpegReader_device::monitor.num_lost.value = 0;
 
 		// Start the reader
-#if 0
-		wavFileReader.prepare(JVX_SIZE_UNSELECTED); // No read limit in module
-		wavFileReader.start();
-#endif
-		if (involve_read_thread)
-		{
-			// Start the secondary thread
-			jvxErrorType resL = refThreads.cpPtr->initialize(
-				static_cast<IjvxThreads_report*>(this));
-			assert(resL == JVX_NO_ERROR);
-		}
+		// Here we allow input packets
+		fParams.st->discard = AVDISCARD_DEFAULT;
 	}
 	else
 	{
@@ -887,20 +846,20 @@ CjvxAudioFFMpegReaderDevice::send_buffer_direct()
 {
 	jvxSize bufIdx = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
 	jvxBool requires_new_data = false;
-	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(
-		&_common_set_ldslave.theData_out);
-	if (bufsOut)
+	jvxData progress = 0;
+
+	int ret = av_read_frame(fParams.ic, fParams.pkt);
+
+	if(ret == 0)
 	{
-		jvxSize copymax = _common_set_ldslave.theData_out.con_params.buffersize;
-		jvxByte* ptr_to = (jvxByte*)bufsOut[0];
-		jvxSize numcopy = copymax;
-		jvxSize num_copied = 0;
-		jvxSize progress = 0;
+		// Write the buffer pointer to the buffer field entry
+		_common_set_ldslave.theData_out.con_data.buffers[bufIdx] = (jvxHandle**)fParams.pkt;
+
 #if 0
 		jvxErrorType resRead = wavFileReader.read_one_buf_raw(ptr_to, numcopy, &num_copied);
 		_common_set_ldslave.theData_out.con_params.fHeight_x = num_copied;
 
-		
+
 		wavFileReader.current_progress(&progress);
 #endif
 		genFFMpegReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)fParams.lengthSecs * 100.0);
