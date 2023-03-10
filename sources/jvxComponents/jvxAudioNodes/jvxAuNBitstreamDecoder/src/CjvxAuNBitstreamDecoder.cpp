@@ -159,6 +159,7 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			else
 			{
 				res = JVX_ERROR_ELEMENT_NOT_FOUND;
+				runloop = false;
 			}
 		}
 		else

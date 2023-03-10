@@ -272,7 +272,7 @@ CjvxAuNMeasureIr2Dev::process_io(
 	jvxSize cnt = 0;
 	jvxByte** buf = NULL;
 	jvxLinkDataAttachedLostFrames lostFrames;
-	jvxLinkDataAttached* ptr = NULL;
+	jvxLinkDataAttachedChain* ptr = NULL;
 
 	jvxSize idx_stage_pri_out = *pri_out->con_pipeline.idx_stage_ptr;
 	jvxSize idx_stage_sec_out = *sec_out->con_pipeline.idx_stage_ptr;
@@ -317,11 +317,13 @@ CjvxAuNMeasureIr2Dev::process_io(
 
 	if (in_proc.numGlitchesProcessing > numGlitchesReported)
 	{
-		lostFrames.hdr.tp = JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES;
+		// lostFrames.tp = JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES; <- type is set on constructor already
 		numGlitchesReported = in_proc.numGlitchesProcessing;
 		lostFrames.numLost = numGlitchesReported;
-		ptr = (jvxLinkDataAttached * )&lostFrames;
+		ptr = &lostFrames;
 	}
+
+	// We pass the second argument to the deploy function. In that deploy function, the content is copied
 	theObjDeployIf->exchangeData(&inProcessing, ptr);
 
 	return JVX_NO_ERROR;

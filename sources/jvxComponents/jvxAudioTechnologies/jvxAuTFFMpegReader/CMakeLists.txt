@@ -21,7 +21,7 @@ include_directories(
   # cpp helper functions
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
 
-  ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers/include
+  ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-ffmpeg-helpers/include
 
   ${JVX_FFMPEG_INCLUDE_DIR}
   )
@@ -33,10 +33,6 @@ set(LOCAL_SOURCES
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegReaderTechnology.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegReaderDevice.h
-
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ffmpeg-helpers.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ffmpeg-helpers.cpp
-
   )
 
 set(LOCAL_LIBS
@@ -45,7 +41,7 @@ set(LOCAL_LIBS
 	# Helpers to provide some wav string conversions
 	jvx-helpers-product_static
 
-	jvx-audiocodec-helpers_static
+	jvx-ffmpeg-helpers_static
   )
 
   set(LOCAL_LIBS_STATIC 

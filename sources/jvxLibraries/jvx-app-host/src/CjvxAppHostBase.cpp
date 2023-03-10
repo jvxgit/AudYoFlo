@@ -306,7 +306,8 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 					}
 					res = theTypeHandler->add_type_host(tp, 2, theClassAssociation[i].description, theClassAssociation[i].config_token,
 						theClassAssociation[i].comp_class,
-						numSlots[theClassAssociation[i].comp_sec_type], 1, 
+						numSlots[i],
+						numSlots[theClassAssociation[i].comp_sec_type], 
 						theClassAssociation[i].comp_child_class);
 					assert(res == JVX_NO_ERROR);
 				}

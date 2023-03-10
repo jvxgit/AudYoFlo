@@ -2,8 +2,7 @@
 #define __JVXAUTFILEREADER_DEVICE_H__
 
 #include "jvxAudioTechnologies/CjvxAudioDevice.h"
-#include "jvx_audiocodec_helpers.h"
-#include "ffmpeg-helpers.h"
+#include "jvx-ffmpeg-helpers.h"
 
 // Must follow jvx_audiocodec_helpers.h
 #include "pcg_exports_device.h"
@@ -44,61 +43,27 @@ private:
 	refComp<IjvxThreads> refThreads;
 	JVX_MUTEX_HANDLE safeAccessRead;
 	
-	struct _parameter_t
+	struct jvxFfmpegFileParameter: public jvxFfmpegParameter
 	{
 		std::string fName;
 		
 		AVStream* st = nullptr;
-		const AVCodec* codec = nullptr;
-		AVCodecContext* cc = nullptr;
 		AVFormatContext* ic = nullptr;
 		AVPacket* pkt = nullptr;
 		AVInputFormat* iformat = nullptr;
 
-		jvxSize nChans = 0;
-		jvxSize sRate = 0;
-		jvxSize lengthSamples = 0;
-		jvxData lengthSecs = 0;
-		jvxSize numFrames = 0;
-		jvxSize frameSize = 0;
-		jvxSize bitRate = 0;
-		jvxSize bitsPerRaw = 0;
-		jvxSize bitsPerCoded = 0;
-
-		std::string sFormat;
-		std::string chanLayoutTag;
-		std::string fFormatTag;
-		std::string codecIdTag;
-		std::string codecTypeTag;	
 
 		void reset()
 		{
-			st = nullptr;
-			codec = nullptr;
-			cc = nullptr;
+			jvxFfmpegParameter::reset();
+			st = nullptr;			
 			ic = nullptr;
 			pkt = nullptr;
-			iformat = nullptr;
-
-			nChans = 0;
-			sRate = 0;
-			lengthSamples = 0;
-			lengthSecs = 0;
-			numFrames = 0;
-			frameSize = 0;
-			bitRate = 0;
-			bitsPerRaw = 0;
-			bitsPerCoded = 0;
-
-			sFormat.clear();
-			chanLayoutTag.clear();
-			fFormatTag.clear();
-			codecIdTag.clear();
-			codecTypeTag.clear();
+			iformat = nullptr;			
 		};
 	};
 
-	_parameter_t fParams;
+	jvxFfmpegFileParameter fParams;
 
 public:
 	JVX_CALLINGCONVENTION CjvxAudioFFMpegReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -185,8 +150,6 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stopped(jvxInt64 timestamp_us) override;
 	void read_samples_to_buffer();
-
-	std::string jvx_ffmpeg_produce_codec_token(_parameter_t& params, jvxSize bSize);
 
 	// ===================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);

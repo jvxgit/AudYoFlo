@@ -43,7 +43,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION setOutputParameters(jvxLinkDataDescriptor_con_params* params) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION setInputParameters(jvxLinkDataDescriptor_con_params* params) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION triggerTest() = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION exchangeData(IjvxSignalProcessingDeploy_data* data, jvxLinkDataAttached* ptr = NULL) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION exchangeData(IjvxSignalProcessingDeploy_data* data, jvxLinkDataAttachedChain* ptr = NULL) = 0;
 	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION triggerPrepare() = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION triggerStart() = 0;

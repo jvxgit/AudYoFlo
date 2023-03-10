@@ -28,15 +28,20 @@ namespace JVX_PROJECT_NAMESPACE {
 		//public IjvxDataProcessor, public CjvxDataProcessor,
 		public CjvxAudioCodec_genpcg
 	{
+	private:
+		wav_params params;
+
 	protected:
 
 		CjvxNegotiate_input neg_input;
 		CjvxNegotiate_output neg_output;
 
-		std::string encode_hint_transferred;
+		// std::string encode_hint_transferred;
 		CjvxAudioCodec* myParent;
-		wav_params params;
 		jvxBool lendian = false;
+		
+		jvxDataFormat codecFormat = JVX_DATAFORMAT_BYTE;
+		jvxDataFormatGroup codecFormatGroup = JVX_DATAFORMAT_GROUP_NONE;
 	public:
 
 		// ===================================================================================================
@@ -125,6 +130,9 @@ namespace JVX_PROJECT_NAMESPACE {
 	// ==================================================
 	virtual jvxErrorType activate_decoder();
 	virtual jvxErrorType deactivate_decoder();
+	// ==================================================
+
+	virtual jvxErrorType configure_decoder(const char* tokenArg);
 	// ==================================================
 
 	void set_parent(CjvxAudioCodec* parent){myParent = parent;};

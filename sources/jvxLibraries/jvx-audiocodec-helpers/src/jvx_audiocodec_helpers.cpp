@@ -79,16 +79,15 @@ jvx_acodec_values_2_configtoken(
 // ========================================================================================
 
 jvxErrorType
-jvx_codec_configtoken_2_fam(
-	const char* tokenArg,
-	jvxApiString& astrFam)
+jvx_codec_configtoken_2_fam_tp(
+	const char* tokenArg, jvxApiString& astrFam, jvxApiString& astrTp)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool err = false;
 	jvxSize i;
 	std::string token1;
 	std::string token2;
-
+	jvxCBitField foundFlags = 0;
 	// Decompose into tokens
 	std::vector<std::string> expr = jvx_parseCsvStringExpression(tokenArg, err);
 	if (err)
@@ -112,9 +111,18 @@ jvx_codec_configtoken_2_fam(
 			if (token1 == "fam")
 			{
 				astrFam = token2;
-				return JVX_NO_ERROR;				
+				jvx_bitSet(foundFlags, 0);
+			}
+			if (token1 == "tp")
+			{
+				astrTp = token2;
+				jvx_bitSet(foundFlags, 1);
 			}
 		}
+	}
+	if (foundFlags == 0x3)
+	{
+		res = JVX_NO_ERROR;
 	}
 	return res;
 }

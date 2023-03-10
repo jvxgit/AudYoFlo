@@ -150,7 +150,7 @@ CjvxAuNTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLink
 				{
 					// Output arguments
 					CjvxAuNTasks_pcg::secondary_async.node.numberoutputchannels.value = JVX_SIZE_INT32(theData_out->con_params.number_channels);
-					CjvxAuNTasks_pcg::secondary_async.node.segmentsize_y.value = JVX_SIZE_INT32(theData_out->con_params.number_channels);
+					CjvxAuNTasks_pcg::secondary_async.node.segmentsize_y.value = 1;
 
 					// Check that constraining did work out
 					assert(CjvxAuNTasks_pcg::secondary_async.node.buffersize.value == JVX_SIZE_INT32(theData_out->con_params.buffersize));
@@ -360,14 +360,14 @@ CjvxAuNTasks::process_buffers_icon_ntask_attached(
 
 	if (theData_in->con_data.attached_buffer_single[idx_stage_in])
 	{
-		jvxLinkDataAttached* ptr = theData_in->con_data.attached_buffer_single[idx_stage_in];
+		jvxLinkDataAttachedChain* ptr = theData_in->con_data.attached_buffer_single[idx_stage_in];
 		while (1)
 		{
 			if (ptr)
 			{
-				if (ptr->tp == JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES)
+				jvxLinkDataAttachedLostFrames* ptrL = reinterpret_cast<jvxLinkDataAttachedLostFrames*>(ptr->if_specific(JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES));
+				if(ptrL)
 				{
-					jvxLinkDataAttachedLostFrames* ptrL = (jvxLinkDataAttachedLostFrames*)ptr;
 					in_proc.numGlitchesProcessing = JVX_MAX(in_proc.numGlitchesProcessing,
 						ptrL->numLost);
 				}

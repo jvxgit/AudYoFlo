@@ -51,9 +51,8 @@ struct wav_params : public audio_codec_params_common
 // =================================================================
 
 jvxErrorType
-jvx_codec_configtoken_2_fam(
-	const char* tokenArg,
-	jvxApiString* astrFam);
+jvx_codec_configtoken_2_fam_tp(
+	const char* tokenArg, jvxApiString& astrFam, jvxApiString& astrTp);
 
 jvxErrorType jvx_wav_configtoken_2_values(
 	const char* tokenArg,

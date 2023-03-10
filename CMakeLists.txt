@@ -480,6 +480,11 @@ endif()
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-component-lib
     )
 	
+  if(JVX_USE_FFMPEG)
+    set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-ffmpeg-helpers)
+  endif()
+  
   if(JVX_USE_PART_WEBSERVER)
     set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
       ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLWebConsoleTools)
@@ -694,6 +699,10 @@ endif()
   ##
   set(JVX_BASE_AUDIOCODEC_COMPONENTS ${JVX_BASE_AUDIOCODEC_COMPONENTS}
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioCodecs/jvxAuCPcm)
+  if(JVX_USE_FFMPEG)
+		set(JVX_BASE_AUDIOCODEC_COMPONENTS ${JVX_BASE_AUDIOCODEC_COMPONENTS}
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioCodecs/jvxAuCFfmpeg)
+  endif()
 
   ###
   # build other components

@@ -44,7 +44,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION setOutputParameters(jvxLinkDataDescriptor_con_params* params) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION setInputParameters(jvxLinkDataDescriptor_con_params* params) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION triggerTest() override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION exchangeData(IjvxSignalProcessingDeploy_data* data, jvxLinkDataAttached* single_data_copy) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION exchangeData(IjvxSignalProcessingDeploy_data* data, jvxLinkDataAttachedChain* single_data_copy) override;
 	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION triggerPrepare() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION triggerStart() override;

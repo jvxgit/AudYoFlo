@@ -138,6 +138,7 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 			}
 			fParams.bitsPerRaw = st->codecpar->bits_per_raw_sample;
 			fParams.bitsPerCoded = st->codecpar->bits_per_coded_sample;
+			fParams.idCodec = st->codecpar->codec_id;
 
 			std::cout << "Filename <" << fParams.fName << ">: " << std::endl;
 			std::cout << " -> Codec <" << fParams.codecIdTag << ">: " << std::endl;
@@ -426,220 +427,68 @@ CjvxAudioFFMpegReaderDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	return JVX_ERROR_UNSUPPORTED;
 }
 
-std::string 
-CjvxAudioFFMpegReaderDevice::jvx_ffmpeg_produce_codec_token(_parameter_t& params, jvxSize bSize)
-{
-	std::string strText;
-
-	strText = "fam=ffmpeg";
-
-	strText += ";tp=" + fParams.codecTypeTag + ":" + fParams.fFormatTag + fParams.codecIdTag;
-	strText += ";cid=" + jvx_size2String((jvxSize)fParams.st->codecpar->codec_id);
-	if (fParams.fFormatTag == "wav")
-	{
-		switch (fParams.st->codecpar->codec_id)
-		{
-		case AV_CODEC_ID_PCM_S16LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S16LE";
-			break;
-		case AV_CODEC_ID_PCM_S16BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S16BE";
-			break;
-		case AV_CODEC_ID_PCM_U16LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_U16LE";
-			break;
-		case AV_CODEC_ID_PCM_U16BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_U16BE";
-			break;
-		case AV_CODEC_ID_PCM_S8:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S8";
-			break;
-		case AV_CODEC_ID_PCM_U8:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_U8";
-			break;
-		case AV_CODEC_ID_PCM_MULAW:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_MULAW";
-			break;
-		case AV_CODEC_ID_PCM_ALAW:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_ALAW";
-			break;
-		case AV_CODEC_ID_PCM_S32LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S32LE";
-			break;
-		case AV_CODEC_ID_PCM_S32BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S32BE";
-			break;
-		case AV_CODEC_ID_PCM_U32LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_U32LE";
-			break;
-		case AV_CODEC_ID_PCM_U32BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_U32BE";
-			break;
-		case AV_CODEC_ID_PCM_S24LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S24LE";
-			break;
-		case AV_CODEC_ID_PCM_S24BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S24BE";
-			break;
-		case AV_CODEC_ID_PCM_U24LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_U24LE";
-			break;
-		case AV_CODEC_ID_PCM_U24BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_U24BE";
-			break;
-		case AV_CODEC_ID_PCM_S24DAUD:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S24DAUD";
-			break;
-		case AV_CODEC_ID_PCM_ZORK:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_ZORK";
-			break;
-		case AV_CODEC_ID_PCM_S16LE_PLANAR:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S16LE_PLANAR";
-			break;
-		case AV_CODEC_ID_PCM_DVD:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_DVD";
-			break;
-		case AV_CODEC_ID_PCM_F32BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_F32BE";
-			break;
-		case AV_CODEC_ID_PCM_F32LE:
-			strText += ";cidn=" "";
-			break;
-		case AV_CODEC_ID_PCM_F64BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_F64BE";
-			break;
-		case AV_CODEC_ID_PCM_F64LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_F64LE";
-			break;
-		case AV_CODEC_ID_PCM_BLURAY:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_BLURAY";
-			break;
-		case AV_CODEC_ID_PCM_LXF:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_LXF";
-			break;
-		case AV_CODEC_ID_S302M:
-			strText += ";cidn=" "AV_CODEC_ID_S302M";
-			break;
-		case AV_CODEC_ID_PCM_S8_PLANAR:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S8_PLANAR";
-			break;
-		case AV_CODEC_ID_PCM_S24LE_PLANAR:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S24LE_PLANAR";
-			break;
-		case AV_CODEC_ID_PCM_S32LE_PLANAR:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S32LE_PLANAR";
-			break;
-		case AV_CODEC_ID_PCM_S16BE_PLANAR:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S16BE_PLANAR";
-			break;
-		case AV_CODEC_ID_PCM_S64LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S64LE";
-			break;
-		case AV_CODEC_ID_PCM_S64BE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_S64BE";
-			break;
-		case AV_CODEC_ID_PCM_F16LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_F16LE";
-			break;
-		case AV_CODEC_ID_PCM_F24LE:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_F24LE";
-			break;
-		case AV_CODEC_ID_PCM_VIDC:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_VIDC";
-			break;
-		case AV_CODEC_ID_PCM_SGA:
-			strText += ";cidn=" "AV_CODEC_ID_PCM_SGA";
-			break;
-		default:
-			break;
-		}
-	}
-
-	strText += ";ch=" + jvx_size2String(fParams.nChans);
-	strText += ";chl=" + fParams.chanLayoutTag;
-	strText += ";sr=" + jvx_size2String(fParams.sRate);
-	if(fParams.frameSize == 0)
-	{
-		strText += ";bs=" + jvx_size2String(bSize);
-	}
-	else
-	{
-		strText += ";bs=" + jvx_size2String(fParams.frameSize);
-	}
-	strText += ";fsm=" + jvx_size2String(123);
-	return strText;
-}
-
 void
 CjvxAudioFFMpegReaderDevice::test_set_output_parameters()
 {
 	// The buffersize as it is derived from the buffersize as set by the audio framing definition
 // You can specify the buffersize by setting the standard parameter for the device buffersize
-	if (fParams.frameSize == 0)
-	{
-		_common_set_ldslave.theData_out.con_params.buffersize = (CjvxAudioDevice::properties_active.buffersize.value * fParams.bitsPerCoded * fParams.nChans) / 8;
-	}
-	else
-	{
-		_common_set_ldslave.theData_out.con_params.buffersize = JVX_SIZE_UNSELECTED;
-	}
-
+	_common_set_ldslave.theData_out.con_params.number_channels = 1; // Byte field is always 1 channel
+	_common_set_ldslave.theData_out.con_params.rate = JVX_SIZE_DONTCARE; // This indicates that the rate is in the format_spec
+	_common_set_ldslave.theData_out.con_params.buffersize = JVX_SIZE_DONTCARE;
+	
 	// Type is modified as the data is coded
-	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
+	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_POINTER;
 	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD;
 	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
 	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
 	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
-	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_produce_codec_token(fParams, CjvxAudioDevice::properties_active.buffersize.value);
-
+	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams, CjvxAudioDevice::properties_active.buffersize.value);	
 }
 
 jvxErrorType
 CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
     jvxErrorType res = JVX_NO_ERROR;
-
-
-
-
+	std::string bsizeAdapted;
+	jvxUByte* max_size_ptr = NULL;
+	int ret = 0;
 	AVDictionary* format_opts = nullptr, * codec_opts = nullptr, * filtered_opts = nullptr;
-	if (fParams.frameSize == 0)
+	switch(fParams.idCodec)
 	{
+	case AV_CODEC_ID_PCM_S16LE:
+
+		// For all WAV formats, set the desired buffersize. I have no idea if this is in samples or bytes though
+		
+		bsizeAdapted = jvx_size2String(CjvxAudioDevice_genpcg::properties_active.buffersize.value);
+		
 		/*
 		const AVOption* opt = av_opt_find(ic,
 			"max_size",
 			NULL, AV_OPT_FLAG_DECODING_PARAM,
 			AV_OPT_SEARCH_CHILDREN);
 		*/
-		jvxUByte* max_size_ptr = NULL;
-		int ret = av_opt_set(fParams.ic, "max_size", "2048", AV_OPT_SEARCH_CHILDREN);
+
+		ret = av_opt_set(fParams.ic, "max_size", bsizeAdapted.c_str(), AV_OPT_SEARCH_CHILDREN);
 		ret = av_opt_get(fParams.ic, "max_size", AV_OPT_SEARCH_CHILDREN, &max_size_ptr);
 		if (max_size_ptr)
 		{
+			jvxBool err = false;
+			bsizeAdapted = (const char*)max_size_ptr;
+			jvxSize newVal = jvx_string2Size(bsizeAdapted, err);
 			av_free(max_size_ptr);
 			max_size_ptr = NULL;
 		}
+		break;
+	default:
+		assert(0);
 	}
-	fParams.cc = avcodec_alloc_context3(NULL);
+	
+	AVStream* codecParamPointer = fParams.st;
 
-	int ret = avcodec_parameters_to_context(fParams.cc, fParams.st->codecpar);
-	assert(ret == 0);
-	fParams.cc->pkt_timebase = fParams.st->time_base;
-
-	fParams.codec = avcodec_find_decoder(fParams.st->codecpar->codec_id);
-	// Alternative call here if we knwo the name
-	// avcodec_find_decoder_by_name(forced_codec_name);
-	assert(fParams.codec);
-
-	// Make sure..
-	fParams.cc->codec_id = fParams.codec->id;
-
-	filtered_opts = filter_codec_opts(codec_opts, fParams.st->codecpar->codec_id, fParams.ic, fParams.st, fParams.codec);
-	if (!av_dict_get(filtered_opts, "threads", NULL, 0))
-		av_dict_set(&filtered_opts, "threads", "auto", 0);
-
-	ret = avcodec_open2(fParams.cc, fParams.codec, &filtered_opts);
-	assert(ret == 0);
+	// _common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_push_front(_common_set_ldslave.theData_out.con_data.attached_buffer_single,
+	//	)
+	//_
+	
 
 	// Set not eof
 	// fParams.st->eof = 0;
@@ -647,7 +496,7 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 	// Here we allow input packets
 	fParams.st->discard = AVDISCARD_DEFAULT;
 
-	ret = av_read_frame(fParams.ic, fParams.pkt);
+	// ret = av_read_frame(fParams.ic, fParams.pkt);
 
 
 

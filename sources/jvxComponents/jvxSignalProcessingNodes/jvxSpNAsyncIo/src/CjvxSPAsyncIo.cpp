@@ -823,7 +823,7 @@ JVX_ASYNCIO_CLASSNAME::transfer_backward_ocon_ntask(jvxLinkDataTransferType tp, 
 						+ genSPAsyncio_node::rt_info.output.number_underflows.value;
 					if (numLostNow != inProcessing.cntLost)
 					{
-						jvxLinkDataAttached* newPtr = NULL;
+						jvxLinkDataAttachedLostFrames* newPtr = NULL;
 						if(jvxLinkDataAttachedLostFrames_updatePrepare(
 							inProcessing.attachedData,
 							numLostNow,
@@ -993,9 +993,8 @@ JVX_ASYNCIO_CLASSNAME::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 JVX_ATTACHED_LINK_DATA_RELEASE_CALLBACK_DEFINE(JVX_ASYNCIO_CLASSNAME, release_attached)
 {
-	jvxLinkDataAttachedLostFrames_updateComplete(
-		inProcessing.attachedData,
-		elm);
+	jvxLinkDataAttachedLostFrames* bufPtr = reinterpret_cast<jvxLinkDataAttachedLostFrames*>(elm->if_specific(JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES));
+	jvxLinkDataAttachedLostFrames_updateComplete(inProcessing.attachedData, bufPtr);
 	return JVX_NO_ERROR;
 }
 
@@ -1223,9 +1222,13 @@ JVX_ASYNCIO_CLASSNAME::process_buffers_icon_ntask(jvxLinkDataDescriptor* theData
 		}
 		if (theData_in->con_data.attached_buffer_single[idx_stage_in])
 		{
-			jvxLinkDataAttached* ptr = theData_in->con_data.attached_buffer_single[idx_stage_in];
+			jvxLinkDataAttachedChain* ptr = theData_in->con_data.attached_buffer_single[idx_stage_in];
+			jvxLinkDataAttachedBuffer* ptrBuf = ptr->if_buffer();
 			theData_in->con_data.attached_buffer_single[idx_stage_in] = NULL;
-			ptr->cb_release(ptr->priv, ptr);
+			if (ptrBuf)
+			{
+				ptrBuf->cb_release(ptrBuf->priv, ptrBuf);
+			}
 		}
 	}
 	return JVX_NO_ERROR;

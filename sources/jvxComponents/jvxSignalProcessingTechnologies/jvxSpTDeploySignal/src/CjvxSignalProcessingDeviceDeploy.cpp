@@ -113,9 +113,12 @@ CjvxSignalProcessingDeviceDeploy::process_buffers_icon(jvxSize mt_mask, jvxSize 
 
 		if (_common_set_ldslave.theData_in->con_data.attached_buffer_single[idx_stage_in])
 		{
-			jvxLinkDataAttached* ptr = _common_set_ldslave.theData_in->con_data.attached_buffer_single[idx_stage_in];
-			ptr->cb_release(ptr->priv,
-				ptr);
+			jvxLinkDataAttachedChain* ptr = _common_set_ldslave.theData_in->con_data.attached_buffer_single[idx_stage_in];
+			jvxLinkDataAttachedBuffer* ptrBuf = ptr->if_buffer();
+			if (ptrBuf)
+			{
+				ptrBuf->cb_release(ptrBuf->priv, ptrBuf);
+			}
 			_common_set_ldslave.theData_in->con_data.attached_buffer_single[idx_stage_in] = NULL;
 		}
 	}
@@ -135,8 +138,8 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSignalProcessingDeviceDeploy,
 
 JVX_ATTACHED_LINK_DATA_RELEASE_CALLBACK_DEFINE(CjvxSignalProcessingDeviceDeploy, release_lost_frames)
 {
-	jvxLinkDataAttachedLostFrames_updateComplete(
-		lst_lost,
-		elm);
+	jvxLinkDataAttachedLostFrames* bufLost = reinterpret_cast<jvxLinkDataAttachedLostFrames*>(elm->if_specific(JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES));
+	assert(bufLost);
+	jvxLinkDataAttachedLostFrames_updateComplete(lst_lost, bufLost);
 	return JVX_NO_ERROR;
 }

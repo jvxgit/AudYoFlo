@@ -23,7 +23,20 @@ CjvxAudioCodec::~CjvxAudioCodec()
 jvxErrorType 
 CjvxAudioCodec::accept_for_decoding(const char* format_token, jvxBool* compr, jvxApiString* astr)
 {
-	return JVX_NO_ERROR;
+	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+	jvxApiString astrFam;
+	jvxApiString astrTp;
+	if (jvx_codec_configtoken_2_fam_tp(format_token, astrFam, astrTp) == JVX_NO_ERROR)
+	{
+		if(astrFam.std_str() == myFamily)
+		{
+			if (jvx_compareStringsWildcard(myTypeWc, astrTp.std_str()))
+			{
+				res = JVX_NO_ERROR;
+			}
+		}
+	}
+	return res;
 }
 
 jvxErrorType 
@@ -32,26 +45,14 @@ CjvxAudioCodec::provide_for_encoding(const char* format_token_preferred, jvxBool
 	return JVX_NO_ERROR;
 }
 
-
-jvxErrorType
-CjvxAudioCodec::number_supported_format_groups(jvxSize* num)
-{
-	if (num)
-		*num = 1;
-	return JVX_NO_ERROR;
-}
 jvxErrorType 
-CjvxAudioCodec::supports_format_group(jvxSize idx, jvxDataFormatGroup* supported_format)
+CjvxAudioCodec::supports_format_group(jvxDataFormatGroup query_format)
 {
-	if (idx == 0)
+	if (query_format == JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED)
 	{
-		if (supported_format)
-		{
-			*supported_format = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
-		}
 		return JVX_NO_ERROR;
 	}
-	return JVX_ERROR_ID_OUT_OF_BOUNDS;
+	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType 

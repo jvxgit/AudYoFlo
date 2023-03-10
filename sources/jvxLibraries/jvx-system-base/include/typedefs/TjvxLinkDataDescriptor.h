@@ -96,29 +96,86 @@ struct jvxLinkDataDescriptor;
 // JVXLINKDATAATTACHED JVXLINKDATAATTACHED JVXLINKDATAATTACHED JVXLINKDATAATTACHED
 // ==================================================================
 
-struct jvxLinkDataAttached;
-typedef jvxErrorType(*jvx_release_attached)(jvxHandle* priv, jvxLinkDataAttached* elm);
+class jvxLinkDataAttachedBuffer;
+
+typedef jvxErrorType(*jvx_release_attached)(jvxHandle* priv, jvxLinkDataAttachedBuffer* elm);
 typedef enum
 {
 	JVX_LINKDATA_ATTACHED_NONE,
-	JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES
+	JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES, // Number of lost frames
+	JVX_LINKDATA_ATTACHED_STRING_DETECT // Check string and try to detect
 } jvxLinkDataAttachedType;
 
-struct jvxLinkDataAttached
+class jvxLinkDataAttachedChain
 {
-	jvx_release_attached cb_release = nullptr;
-	jvxHandle* priv = nullptr;
-	jvxLinkDataAttached* next = nullptr;
-	//IjvxObject* sender = nullptr;
-	//jvxSize sz = 0;
+protected: 
 	jvxLinkDataAttachedType tp = JVX_LINKDATA_ATTACHED_NONE;
-	//jvxCBool new_content = c_false;
+public:
+	
+	jvxLinkDataAttachedChain(jvxLinkDataAttachedType tpArg = JVX_LINKDATA_ATTACHED_NONE) : tp(tpArg)
+	{};
+	jvxLinkDataAttachedChain* next = nullptr;
+	
+	virtual jvxLinkDataAttachedBuffer* if_buffer() 
+	{ 
+		return nullptr; 
+	};
+
+	virtual jvxHandle* if_specific(jvxLinkDataAttachedType tpArg) 
+	{ 
+		return nullptr; 
+	};
 };
 
-struct jvxLinkDataAttachedLostFrames
+class jvxLinkDataAttachedBuffer: public jvxLinkDataAttachedChain
 {
-	jvxLinkDataAttached hdr;
+public:
+	jvxLinkDataAttachedBuffer(jvxLinkDataAttachedType tpArg = JVX_LINKDATA_ATTACHED_NONE) : jvxLinkDataAttachedChain(tpArg) {};
+	jvx_release_attached cb_release = nullptr;
+	jvxHandle* priv = nullptr;
+
+	virtual jvxLinkDataAttachedBuffer* if_buffer() override { return this; };
+};
+
+// T can be either jvxLinkDataAttachedChain or jvxLinkDataAttachedBuffer
+// Type JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES
+class jvxLinkDataAttachedLostFrames: public jvxLinkDataAttachedBuffer
+{
+public:
+	jvxLinkDataAttachedLostFrames() :jvxLinkDataAttachedBuffer(JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES)
+	{
+	};
+
 	jvxSize numLost = 0;
+	virtual jvxHandle* if_specific(jvxLinkDataAttachedType tpArg) 
+	{ 
+		if(tpArg == JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES)
+		{
+			return this;
+		}
+		return nullptr; 
+	};
+};
+
+// Type JVX_LINKDATA_ATTACHED_STRING_DETECT
+template <class T>
+class jvxLinkDataAttachedStringDetect : public T
+{
+public:
+
+	jvxLinkDataAttachedStringDetect() : jvxLinkDataAttachedBuffer(JVX_LINKDATA_ATTACHED_STRING_DETECT){};
+
+	jvxHandle* data = nullptr;
+	const char* descr = nullptr;
+
+	virtual jvxHandle* if_specific(jvxLinkDataAttachedType tpArg)
+	{
+		if (tpArg == JVX_LINKDATA_ATTACHED_STRING_DETECT)
+		{
+			return this;
+		}
+		return nullptr;
+	};
 };
 
 // ==================================================================
@@ -150,8 +207,8 @@ struct jvxLinkDataDescriptor_con_link
 	jvxComponentIdentification tp_master = JVX_COMPONENT_UNKNOWN;
 	//jvxDataLinkDescriptorAddressFlags address_flags;
 	jvxBool allows_mt = false;
-	jvxLinkDataAttached** attached_chain_single = nullptr; // We may attach information to the chain. This info will not be associated to a buffer but to a chain and will be reported as processed once completed
-	jvxLinkDataCombinedInformation** attached_chain_persist = nullptr;
+	jvxLinkDataAttachedChain* attached_chain_single_pass = nullptr; // We may attach information to the chain. This info will not be associated to a buffer but to a chain and will be reported as processed once completed
+	//jvxLinkDataCombinedInformation** attached_chain_persist = nullptr;
 };
 
 struct jvxLinkDataDescriptor_ext
@@ -195,7 +252,7 @@ struct jvxLinkDataDescriptor_con_data
 	jvxCBitField alloc_flags = 0;
 
 	//! Attach information. Attached element will be reported as processed once no longer in use
-	jvxLinkDataAttached** attached_buffer_single = nullptr; 
+	jvxLinkDataAttachedChain** attached_buffer_single = nullptr; 
 
 	//! Buffer to hold one or more infos which persist - that is, they will be valid as long as processing is active
 	jvxLinkDataCombinedInformation** attached_buffer_persist = nullptr; 

@@ -27,6 +27,10 @@ protected:
 
 	jvxInt32 uniqueId;
 
+	// Default implementation
+	std::string myFamily = "jvx";
+	std::string myTypeWc = "wav*";
+
 #ifdef JVX_OS_WINDOWS
 #pragma pack(push, 1)
 #else
@@ -60,9 +64,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION provide_for_encoding(const char* format_token_preferred, jvxBool* compr, jvxApiString* astr) override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION number_supported_format_groups(jvxSize* num) override;
-	
-	virtual jvxErrorType JVX_CALLINGCONVENTION supports_format_group(jvxSize idx, jvxDataFormatGroup* supported_format)	override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_format_group(jvxDataFormatGroup query_format)	override;
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_encoder(IjvxAudioEncoder** encoder_on_return)override;
 

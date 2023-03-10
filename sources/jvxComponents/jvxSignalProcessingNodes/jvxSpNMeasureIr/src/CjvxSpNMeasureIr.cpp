@@ -535,12 +535,12 @@ CjvxSpNMeasureIr::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 	if (_common_set_ldslave.theData_in->con_data.attached_buffer_single[idxStageIn])
 	{
-		jvxLinkDataAttached* ptr = _common_set_ldslave.theData_in->con_data.attached_buffer_single[idxStageIn];
+		jvxLinkDataAttachedChain* ptr = _common_set_ldslave.theData_in->con_data.attached_buffer_single[idxStageIn];
 		while (ptr)
 		{
-			if (ptr->tp == JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES)
+			jvxLinkDataAttachedLostFrames* ptrL = reinterpret_cast<jvxLinkDataAttachedLostFrames*>(ptr->if_specific(JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES));
+			if(ptrL)
 			{
-				jvxLinkDataAttachedLostFrames* ptrL = (jvxLinkDataAttachedLostFrames*)ptr;
 				newValueGlitches = ptrL->numLost;
 				genMeasureIr_node::monitor.glitches_all.value = newValueGlitches;
 				break;

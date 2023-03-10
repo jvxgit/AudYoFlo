@@ -395,6 +395,8 @@ CjvxAudioFileReaderDevice::test_set_output_parameters()
 {
 	// The buffersize as it is derived from the buffersize as set by the audio framing definition
 	// You can specify the buffersize by setting the standard parameter for the device buffersize
+	_common_set_ldslave.theData_out.con_params.number_channels = 1; // Byte field is always 1 channel
+	_common_set_ldslave.theData_out.con_params.rate = JVX_SIZE_DONTCARE; // This indicates that the rate is in the format_spec
 	_common_set_ldslave.theData_out.con_params.buffersize =
 		jvx_wav_compute_bsize_bytes_pcm(&file_params, JVX_SIZE_UNSELECTED);
 	

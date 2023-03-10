@@ -283,7 +283,7 @@ jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateF
 	{
 		assert(theData->con_data.attached_buffer_single == NULL);
 		JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.attached_buffer_single,
-			jvxLinkDataAttached*,
+			jvxLinkDataAttachedChain*,
 			theData->con_data.number_buffers);
 
 		assert(theData->con_data.attached_buffer_persist == NULL);
@@ -421,7 +421,7 @@ jvx_deallocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool dealloc
 		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.buffers, jvxHandle**);
 		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.raw, jvxHandle**);
 		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.offset, jvxSize*);
-		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.attached_buffer_single, jvxLinkDataAttached*);
+		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.attached_buffer_single, jvxLinkDataAttachedChain*);
 		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.attached_buffer_persist, jvxLinkDataCombinedInformation*);
 
 	}
@@ -778,6 +778,397 @@ jvxBool jvx_check_in_out_params_match_test_err(jvxLinkDataDescriptor* cp_this, j
 			errStr += jvxDataFormatGroup_txt(cp_that->con_params.format_group);
 			retVal = false;
 		}
+	}
+	return retVal;
+}
+
+//! Allocate a list of "lost buffer" objects to be forwarded through the processing chain
+void
+jvxLinkDataAttachedLostFrames_allocateRuntime(
+	std::list<jvxLinkDataAttached_oneFrameLostElement>& lst_cds,
+	jvxHandle* prv_ptr,
+	jvx_release_attached cb)
+{
+	jvxLinkDataAttached_oneFrameLostElement theElm;
+	theElm.ptr = NULL;
+	JVX_DSP_SAFE_ALLOCATE_OBJECT(theElm.ptr, jvxLinkDataAttachedLostFrames);
+	theElm.ptr->priv = prv_ptr;
+	theElm.ptr->cb_release = cb;
+	theElm.inUse = false;
+	theElm.ptr->numLost = 0;
+	lst_cds.push_back(theElm);
+}
+
+//! Deallocate a list of "lost buffer" objects to be forwarded through the processing chain
+void
+jvxLinkDataAttachedLostFrames_deallocateRuntime(
+	std::list<jvxLinkDataAttached_oneFrameLostElement>& lst_cds)
+{
+	auto elml = lst_cds.begin();
+	for (; elml != lst_cds.end(); elml++)
+	{
+		JVX_DSP_SAFE_DELETE_OBJECT(elml->ptr);
+	}
+	lst_cds.clear();
+}
+
+//! Browse through the list of objects and return the first one that is available
+jvxBool
+jvxLinkDataAttachedLostFrames_updatePrepare(
+	std::list<jvxLinkDataAttached_oneFrameLostElement>& lst_cds,
+	jvxSize newCnt,
+	jvxLinkDataAttachedLostFrames*& ptrOut)
+{
+	jvxBool elmentAvail = false;
+	ptrOut = NULL;
+	auto elm = lst_cds.begin();
+	for (; elm != lst_cds.end(); elm++)
+	{
+		if (elm->inUse == false)
+		{
+			elm->inUse = true;
+			elm->ptr->numLost = newCnt;
+			ptrOut = elm->ptr;
+			elmentAvail = true;
+			break;
+		}
+	}
+	return elmentAvail;
+}
+
+//! Browse through the list and release the provided element
+jvxBool
+jvxLinkDataAttachedLostFrames_updateComplete(
+	std::list<jvxLinkDataAttached_oneFrameLostElement>& lst_cds,
+	jvxLinkDataAttachedLostFrames* elm)
+{
+	jvxBool elmentExists = false;
+	auto elml = lst_cds.begin();
+	for (; elml != lst_cds.end(); elml++)
+	{
+		if (elm == (jvxLinkDataAttachedLostFrames*)elml->ptr)
+		{
+			elml->inUse = false;
+			elmentExists = true;
+			break;
+		}
+	}
+	assert(elmentExists);
+	return elmentExists;
+}
+
+// =================================================================================================
+
+jvxErrorType 
+jvx_shift_buffer_pipeline_idx_on_start(
+	jvxLinkDataDescriptor* theData, jvxSize runtmeId,
+	jvxSize pipeline_offset, jvxSize* idx_stage,
+	jvxSize tobeAccessedByStage ,
+	callback_process_start_in_lock clbk,
+	jvxHandle* priv_ptr )
+{
+	jvxErrorType res = JVX_ERROR_NOT_READY;
+	jvxSize pipe_stage_in_use = 0;
+
+#ifndef JVX_COMPILE_SMALL
+	if (theData->con_pipeline.lock_hdl && theData->con_pipeline.do_unlock)
+	{
+		theData->con_pipeline.do_lock(theData->con_pipeline.lock_hdl);
+
+		if (clbk)
+		{
+			res = clbk(&pipe_stage_in_use, priv_ptr);
+			if (res == JVX_NO_ERROR)
+			{
+				if (JVX_CHECK_SIZE_UNSELECTED(theData->con_pipeline.reserve_buffer_pipeline_stage[
+					pipe_stage_in_use].idProcess))
+				{
+#ifdef JVX_RESERVE_PIPELINE_VERBOSE
+					std::cout << "<<< " << __FUNCTION__ << ": Reserving pipeline index " << pipe_stage_in_use << std::flush;
+					if (theData->con_pipeline.debug_ptr)
+					{
+						std::cout << ", hint = " << theData->con_pipeline.debug_ptr << std::flush;
+					}
+					std::cout << std::endl;
+#endif
+					theData->con_pipeline.reserve_buffer_pipeline_stage[pipe_stage_in_use].idProcess = runtmeId;
+					// assert(theData->con_pipeline.reserve_buffer_pipeline_stage[pipe_stage_in_use].idStage_processed_in_stage == tobeAccessedByStage);
+					res = JVX_NO_ERROR;
+				}
+				else
+				{
+#ifdef JVX_RESERVE_PIPELINE_VERBOSE
+					std::cout << "<<< " << __FUNCTION__ << ": Pipeline index " << pipe_stage_in_use << " is already in use." << std::endl;
+					if (theData->con_pipeline.debug_ptr)
+					{
+						std::cout << ", hint = " << theData->con_pipeline.debug_ptr << std::endl;
+					}
+					std::cout << std::endl;
+#endif
+					res = JVX_ERROR_ALREADY_IN_USE;
+				}
+			}
+		}
+		else
+		{
+			if (
+				(idx_stage) && (JVX_CHECK_SIZE_SELECTED(*idx_stage)))
+			{
+				pipe_stage_in_use = *idx_stage;
+			}
+			else
+			{
+				pipe_stage_in_use = (*theData->con_pipeline.idx_stage_ptr +
+					(theData->con_data.number_buffers - pipeline_offset) %
+					(theData->con_data.number_buffers));
+			}
+
+			if (JVX_CHECK_SIZE_UNSELECTED(theData->con_pipeline.reserve_buffer_pipeline_stage[
+				pipe_stage_in_use].idProcess))
+			{
+#ifdef JVX_RESERVE_PIPELINE_VERBOSE
+				std::cout << "<<< " << __FUNCTION__ << ": Reserving pipeline index " << pipe_stage_in_use << std::flush;
+				if (theData->con_pipeline.debug_ptr)
+				{
+					std::cout << ", hint = " << theData->con_pipeline.debug_ptr << std::flush;
+				}
+				std::cout << std::endl;
+
+#endif
+				theData->con_pipeline.reserve_buffer_pipeline_stage[pipe_stage_in_use].idProcess = runtmeId;
+				// assert(theData->con_pipeline.reserve_buffer_pipeline_stage[pipe_stage_in_use].idStage_processed_in_stage == tobeAccessedByStage);
+				res = JVX_NO_ERROR;
+			}
+			else
+			{
+#ifdef JVX_RESERVE_PIPELINE_VERBOSE
+				std::cout << "<<< " << __FUNCTION__ << ": Pipeline index " << pipe_stage_in_use << " is already in use" << std::flush;
+				if (theData->con_pipeline.debug_ptr)
+				{
+					std::cout << ", hint = " << theData->con_pipeline.debug_ptr << std::flush;
+				}
+				std::cout << std::endl;
+#endif
+				res = JVX_ERROR_ALREADY_IN_USE;
+			}
+		}
+		theData->con_pipeline.do_unlock(theData->con_pipeline.lock_hdl);
+
+		if (idx_stage)
+		{
+			*idx_stage = pipe_stage_in_use;
+		}
+	}
+#endif
+	return res;
+};
+
+jvxErrorType 
+jvx_shift_buffer_pipeline_idx_on_stop(jvxLinkDataDescriptor* theData,
+	jvxSize idx_stage, jvxBool shift_fwd, jvxSize tobeAccessedByStage,
+	callback_process_stop_in_lock clbk, jvxHandle* priv_ptr)
+{
+	jvxErrorType res = JVX_ERROR_NOT_READY;
+	jvxErrorType resL = JVX_NO_ERROR;
+	jvxSize report_idx = JVX_SIZE_UNSELECTED;
+#ifndef JVX_COMPILE_SMALL
+
+	if (theData->con_pipeline.lock_hdl && theData->con_pipeline.do_unlock)
+	{
+		theData->con_pipeline.do_lock(theData->con_pipeline.lock_hdl);
+
+		if (JVX_CHECK_SIZE_SELECTED(idx_stage))
+		{
+#ifdef JVX_RESERVE_PIPELINE_VERBOSE
+			std::cout << "<<< " << __FUNCTION__ << ": Releasing pipeline index " << idx_stage << std::flush;
+			if (theData->con_pipeline.debug_ptr)
+			{
+				std::cout << ", hint = " << theData->con_pipeline.debug_ptr << std::flush;
+			}
+			std::cout << std::endl;
+#endif
+			report_idx = idx_stage;
+			theData->con_pipeline.reserve_buffer_pipeline_stage[idx_stage].idProcess = JVX_SIZE_UNSELECTED;
+
+			// Only used if pipeline is addressed directly
+
+		}
+		else
+		{
+			report_idx = *theData->con_pipeline.idx_stage_ptr;
+#ifdef JVX_RESERVE_PIPELINE_VERBOSE
+			std::cout << "<<< " << __FUNCTION__ << ": Releasing pipeline index " << report_idx << std::flush;
+			if (theData->con_pipeline.debug_ptr)
+			{
+				std::cout << ", hint = " << theData->con_pipeline.debug_ptr << std::flush;
+			}
+			std::cout << std::endl;
+#endif
+			theData->con_pipeline.reserve_buffer_pipeline_stage[
+				*theData->con_pipeline.idx_stage_ptr].idProcess = JVX_SIZE_UNSELECTED;
+			theData->con_pipeline.reserve_buffer_pipeline_stage[
+				*theData->con_pipeline.idx_stage_ptr].idStage_to_be_processed_by_stage = tobeAccessedByStage;
+
+			// Pipeline progress only for main access (current time)
+			if (shift_fwd)
+			{
+				*theData->con_pipeline.idx_stage_ptr =
+					(*theData->con_pipeline.idx_stage_ptr + 1) %
+					theData->con_data.number_buffers;
+			}
+		}
+
+		// Report the stage idx which has just been released
+		if (clbk)
+		{
+			resL = clbk(report_idx, priv_ptr);
+			assert(resL == JVX_NO_ERROR);
+		}
+
+		theData->con_pipeline.do_unlock(theData->con_pipeline.lock_hdl);
+		return JVX_NO_ERROR;
+	}
+#else
+	theData->con_pipeline.idx_stage =
+		(theData->con_pipeline.idx_stage + 1) %
+		theData->con_data.number_buffers;
+	res = JVX_NO_ERROR;
+#endif
+	return res;
+};
+
+// =================================================================================================
+
+jvxErrorType  
+jvx_allocate_pipeline_and_buffers_prepare_to(jvxLinkDataDescriptor* theData
+#ifdef JVX_GLOBAL_BUFFERING_VERBOSE
+	, const char* pipe_ref
+#endif
+)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	res = jvx_allocateDataLinkDescriptor(theData, true);
+	assert(res == JVX_NO_ERROR);
+
+#ifndef JVX_COMPILE_SMALL
+#ifdef JVX_GLOBAL_BUFFERING_VERBOSE
+	res = jvx_allocateDataLinkPipelineControl(theData, pipe_ref);
+#else
+	res = jvx_allocateDataLinkPipelineControl(theData);
+#endif
+	assert(res == JVX_NO_ERROR);
+#endif
+	JVX_DSP_SAFE_ALLOCATE_OBJECT(theData->con_pipeline.idx_stage_ptr, jvxSize);
+	*theData->con_pipeline.idx_stage_ptr = 0;
+
+	res = jvx_allocateDataLinkSync(theData);
+	assert(res == JVX_NO_ERROR);
+
+	return res;
+};
+
+jvxErrorType 
+JVX_CALLINGCONVENTION jvx_allocate_pipeline_and_buffers_prepare_to_zerocopy(jvxLinkDataDescriptor* theData_in, jvxLinkDataDescriptor* theData_out)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxSize i, j;
+
+	assert(theData_out->con_data.number_buffers >= theData_in->con_data.number_buffers);
+	assert(theData_out->con_params.number_channels >= theData_in->con_params.number_channels);
+	assert(theData_out->con_params.buffersize >= theData_in->con_params.buffersize);
+	assert(theData_out->con_params.format >= theData_in->con_params.format);
+
+	theData_in->con_data.number_buffers = theData_out->con_data.number_buffers;
+
+	res = jvx_allocateDataLinkDescriptor(theData_in, false);
+	assert(res == JVX_NO_ERROR);
+
+	// If there are output buffers, set shortcut references
+	if (theData_out->con_data.buffers)
+	{
+		for (i = 0; i < theData_in->con_data.number_buffers; i++)
+		{
+			for (j = 0; j < theData_in->con_params.number_channels; j++)
+			{
+				theData_in->con_data.buffers[i][j] =
+					theData_out->con_data.buffers[i][j];
+			}
+		}
+	}
+	theData_in->con_pipeline = theData_out->con_pipeline;
+
+	theData_in->con_sync = theData_out->con_sync;
+
+	return res;
+};
+
+jvxErrorType 
+jvx_deallocate_pipeline_and_buffers_postprocess_to(jvxLinkDataDescriptor* theData)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	res = jvx_deallocateDataLinkSync(theData);
+	assert(res == JVX_NO_ERROR);
+
+	JVX_DSP_SAFE_DELETE_OBJECT(theData->con_pipeline.idx_stage_ptr);
+
+#ifndef JVX_COMPILE_SMALL
+	res = jvx_deallocateDataLinkPipelineControl(theData);
+	assert(res == JVX_NO_ERROR);
+#endif
+	res = jvx_deallocateDataLinkDescriptor(theData, true);
+	assert(res == JVX_NO_ERROR);
+
+	return res;
+};
+
+jvxErrorType 
+jvx_deallocate_pipeline_and_buffers_postprocess_to_zerocopy(jvxLinkDataDescriptor* theData)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxSize i, j;
+
+	theData->con_sync.reserve_timestamp = NULL;
+	theData->con_sync.type_timestamp = 0;
+
+#ifndef JVX_COMPILE_SMALL
+	theData->con_pipeline.do_lock = NULL;
+	theData->con_pipeline.do_unlock = NULL;
+	theData->con_pipeline.do_try_lock = NULL;
+	theData->con_pipeline.lock_hdl = NULL;
+	theData->con_pipeline.reserve_buffer_pipeline_stage = NULL;
+#endif
+	theData->con_pipeline.num_additional_pipleline_stages = 0;
+
+	for (i = 0; i < theData->con_data.number_buffers; i++)
+	{
+		for (j = 0; j < theData->con_params.number_channels; j++)
+		{
+			theData->con_data.buffers[i][j] = NULL;
+		}
+	}
+	res = jvx_deallocateDataLinkDescriptor(theData, false);
+	assert(res == JVX_NO_ERROR);
+
+	return res;
+};
+
+jvxLinkDataAttachedChain*
+jvx_attached_push_front(jvxLinkDataAttachedChain* old_first, jvxLinkDataAttachedChain* new_first)
+{
+	jvxLinkDataAttachedChain* retVal = new_first;
+	new_first->next = old_first;
+	return retVal;
+}
+
+jvxLinkDataAttachedChain*
+jvx_attached_pop_front(jvxLinkDataAttachedChain* old_first, jvxLinkDataAttachedChain** removed_first)
+{
+	jvxLinkDataAttachedChain* retVal = old_first->next;
+	old_first->next = NULL;
+	if (removed_first)
+	{
+		*removed_first = old_first;
 	}
 	return retVal;
 }

@@ -62,7 +62,7 @@ CjvxSignalProcessingDeviceDeploy::triggerTest()
 
 jvxErrorType
 CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* data,
-	jvxLinkDataAttached* single_arg)
+	jvxLinkDataAttachedChain* single_arg)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -72,12 +72,12 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 	{
 		if (_common_set_ld_master.state == JVX_STATE_PROCESSING)
 		{
-			jvxLinkDataAttached* ptr = NULL;
+			jvxLinkDataAttachedChain* ptr = NULL;
 			if (single_arg)
 			{
-				if (single_arg->tp == JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES)
+				jvxLinkDataAttachedLostFrames* ptrLost = reinterpret_cast<jvxLinkDataAttachedLostFrames*>(single_arg->if_specific(JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES));
+				if (ptrLost)
 				{
-					jvxLinkDataAttachedLostFrames* ptrLost = (jvxLinkDataAttachedLostFrames*) single_arg;
 					lost_cnt_new = ptrLost->numLost;
 				}
 			}
@@ -89,7 +89,7 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 			// Forward number of lost buffers
 			if (lost_cnt_new != lost_cnt_reported)
 			{
-				jvxLinkDataAttached* newPtr = NULL;
+				jvxLinkDataAttachedLostFrames* newPtr = NULL;
 				if (jvxLinkDataAttachedLostFrames_updatePrepare(
 					lst_lost,
 					lost_cnt_new,

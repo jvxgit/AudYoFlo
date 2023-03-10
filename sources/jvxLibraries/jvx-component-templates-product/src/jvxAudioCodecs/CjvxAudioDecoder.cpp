@@ -48,10 +48,10 @@ CjvxAudioDecoder::activate()
 		this->activate_decoder();
 
 		// Set the codec parameters based on the properties
-		neg_input._set_parameters_fixed(1,
-			CjvxAudioCodec_genpcg::general.max_number_bytes.value,
-			CjvxAudioCodec_genpcg::general.samplerate.value,
-			(jvxDataFormat)JVX_DATAFORMAT_BYTE,
+		neg_input._set_parameters_fixed(
+			1, JVX_SIZE_DONTCARE,
+			JVX_SIZE_DONTCARE,
+			JVX_DATAFORMAT_BYTE,
 			JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC,
 			JVX_DATAFLOW_NONE,
 			JVX_SIZE_UNSELECTED, 1); // <- number_channels and segment are different arguments here
@@ -76,34 +76,28 @@ jvxErrorType
 CjvxAudioDecoder::set_configure_token(const char* tokenArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	jvxApiString famToken;
-	jvx_wav_configtoken_2_values(tokenArg, &params, &famToken);
 
-	CjvxAudioCodec_genpcg::general.max_number_bytes.value = params.fsizemax;
-	CjvxAudioCodec_genpcg::general.samplerate.value = params.srate;
+	res = configure_decoder(tokenArg);
+	if (res == JVX_NO_ERROR)
+	{
+		neg_input._set_parameters_fixed(
+			1, CjvxAudioCodec_genpcg::general.max_number_bytes.value,
+			JVX_SIZE_DONTCARE,
+			JVX_DATAFORMAT_BYTE,
+			JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC,
+			JVX_DATAFLOW_NONE,
+			JVX_SIZE_UNSELECTED, 1); // <- number_channels and segment are different arguments here
 
-	CjvxAudioCodec_genpcg::general.num_audio_channels.value = params.nchans;
-	CjvxAudioCodec_genpcg::general.buffersize.value = params.bsize;
-	CjvxAudioCodec_genpcg::general.audio_format.value = JVX_DATAFORMAT_DATA;
-
-	neg_input._set_parameters_fixed(
-		CjvxAudioCodec_genpcg::general.num_audio_channels.value,
-		CjvxAudioCodec_genpcg::general.max_number_bytes.value,
-		CjvxAudioCodec_genpcg::general.samplerate.value,
-		(jvxDataFormat)JVX_DATAFORMAT_BYTE,
-		JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC,
-		JVX_DATAFLOW_NONE,
-		JVX_SIZE_UNSELECTED, 1); // <- number_channels and segment are different arguments here
-
-	neg_output._set_parameters_fixed(
-		CjvxAudioCodec_genpcg::general.num_audio_channels.value,
-		CjvxAudioCodec_genpcg::general.buffersize.value,
-		CjvxAudioCodec_genpcg::general.samplerate.value,
-		(jvxDataFormat)CjvxAudioCodec_genpcg::general.audio_format.value,
-		JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
-
-	return JVX_NO_ERROR;
+		neg_output._set_parameters_fixed(
+			CjvxAudioCodec_genpcg::general.num_audio_channels.value,
+			CjvxAudioCodec_genpcg::general.buffersize.value,
+			CjvxAudioCodec_genpcg::general.samplerate.value,
+			(jvxDataFormat)CjvxAudioCodec_genpcg::general.audio_format.value,
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+	}
+	return res;
 }
+
 // ============================================================================================
 
 jvxErrorType
@@ -628,6 +622,25 @@ CjvxAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 	}
 	return res;
 	
+}
+
+jvxErrorType
+CjvxAudioDecoder::configure_decoder(const char* tokenArg)
+{
+	jvxApiString famToken;
+	jvxErrorType res = jvx_wav_configtoken_2_values(tokenArg, &params, &famToken);
+	if (res == JVX_NO_ERROR)
+	{
+		// This should have been clarified before!
+		assert(famToken.std_str() == "jvx");
+
+		CjvxAudioCodec_genpcg::general.max_number_bytes.value = JVX_SIZE_INT32(params.fsizemax);
+		CjvxAudioCodec_genpcg::general.samplerate.value = JVX_SIZE_INT32(params.srate);
+		CjvxAudioCodec_genpcg::general.num_audio_channels.value = params.nchans;
+		CjvxAudioCodec_genpcg::general.buffersize.value = params.bsize;
+		CjvxAudioCodec_genpcg::general.audio_format.value = JVX_DATAFORMAT_DATA;
+	}
+	return res;
 }
 
 #ifdef JVX_PROJECT_NAMESPACE
