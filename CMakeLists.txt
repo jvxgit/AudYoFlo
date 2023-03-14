@@ -738,20 +738,7 @@ endif()
     set(JVX_BASE_OTHER_COMPONENTS ${JVX_BASE_OTHER_COMPONENTS} ${JVX_BASE_ROOT}/sources/jvxTools/jvxTExternalCall/cmake/octave)
   endif(JVX_USE_PART_OCTAVE)
 
-  ## ==============================================================================================	
-  if(JVX_USE_FFMPEG)
-  
-    set(JVX_FFMPEG_PACKAGE ${JVX_FFMPEG_PACKAGE}
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxLibraries/jvx-ffmpeg-helpers
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxAudioTechnologies/jvxAuTFFMpegReader
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxPackages/jvxPaFfmpeg
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxAudioCodecs/jvxAuCFfmpeg
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxApplications/ffmpeg-app
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxApplications/ffplay-app)
- 
-  endif()
-
-	## In case of SDK build and if buildng for iOS do not compile any applications
+  	## In case of SDK build and if buildng for iOS do not compile any applications
   if(NOT JVX_RELEASE_SDK AND NOT IOS)
 	###
 	# build applications (tools)
@@ -1043,7 +1030,6 @@ endif()
 
   jvx_addSubdirs("Configuring all platform packages" "${JVX_BASE_PLATFORM_PACKAGES}" "${JVX_FOLDER_HIERARCHIE_BASE}/platform-packages")
   
-  jvx_addSubdirs("Configuring ffmpeg package" "${JVX_FFMPEG_PACKAGE}" "${JVX_FOLDER_HIERARCHIE_BASE}/ffmpeg")
   
   if(${JVX_OS} MATCHES "Emscripten")
 		jvx_addSubdirs("Configuring all audio codec components" "${JVX_BASE_WPMODULES_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/webassembly")	
@@ -1053,6 +1039,13 @@ endif()
 	
   jvx_addSubdirs("Configuring all python projects" "${JVX_BASE_PYTHON_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/python-projects")
 
+	## ==============================================================================================	
+	## ==============================================================================================	
+	if(JVX_USE_FFMPEG)
+		add_subdirectory(sources/jvxPackages/ffmpeg)
+	endif()
+	## ==============================================================================================	
+  
 #set(AYF_FLUTTER_ENVIRONMENT TRUE)
 #set(JVX_FLUTTER_PLUGINS ${JVX_FLUTTER_PLUGINS} sources/sub-projects/flutter/ayf-plugins/ayf_host/windows)
 #jvx_addSubdirs("Configuring all flutter plugins" "${JVX_FLUTTER_PLUGINS}" "${JVX_FOLDER_HIERARCHIE_BASE}/flutter-plugins")

@@ -114,14 +114,4 @@ if(JVX_USE_EIGEN)
 	endif()
 endif()
 
-if(JVX_USE_FFMPEG)
-	if(JVX_INSTALL_EXTERNAL_LIBS)
-			
-		# set(SDL_LIBRARY_PATH  "<no-sdl>/libsdl/SDL2-2.26.3" CACHE INTERNAL "libsdl lib path (windows)")
-		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/libsdl
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/ffmpeg)
-	endif()
-endif()
-	# =============================================================================
-	# =============================================================================
+

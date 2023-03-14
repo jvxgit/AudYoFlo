@@ -15,7 +15,7 @@ include_directories(
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
 
   # ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-ffmpeg-helpers/include
-  ../../jvxLibraries/jvx-ffmpeg-helpers/include
+  ${JVX_FFMPEG_ROOT_PATH}/jvxLibraries/jvx-ffmpeg-helpers/include
 
     ${JVX_FFMPEG_INCLUDE_DIR}
   )
