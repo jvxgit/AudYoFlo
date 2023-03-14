@@ -7,7 +7,6 @@
 #include "jvxFHDefault.h"
 #endif
 
-
 extern "C"
 {
 
@@ -52,6 +51,77 @@ extern "C"
   #undef FUNC_CORE_PROT_DECLARE_LOCAL
   #undef FUNC_CORE_PROT_ARGS
   #undef FUNC_CORE_PROT_RETURNVAL
+
+// =======================================================================
+// HOST FEATURE WEAK SYMBOL IMPLEMENTATIONS
+// =======================================================================
+#if 0
+#define FUNC_CORE_PROT_DECLARE jvx_configure_factoryhost_features
+#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_configure_host_features_local
+#define FUNC_CORE_PROT_ARGS configureHost_features* theFeaturesA
+#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
+
+#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
+#pragma comment(linker, "/alternatename:jvx_configure_factoryhost_features=jvx_configure_factoryhost_features_local")
+#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
+#pragma comment(linker, "/alternatename:_jvx_configure_factoryhost_features=_jvx_configure_factoryhost_features_local")
+#endif
+
+#include "platform/jvx_platform_weak_defines.h"
+		{
+			std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+			// Default implementation does just nothing
+			return(JVX_NO_ERROR);
+		}
+
+#undef FUNC_CORE_PROT_DECLARE
+#undef FUNC_CORE_PROT_DECLARE_LOCAL
+#undef FUNC_CORE_PROT_ARGS
+#undef FUNC_CORE_PROT_RETURNVAL
+
+
+#define FUNC_CORE_PROT_DECLARE jvx_invalidate_factoryhost_features
+#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_invalidate_factoryhost_features_local
+#define FUNC_CORE_PROT_ARGS configureHost_features* theFeaturesA
+#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
+
+#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
+#pragma comment(linker, "/alternatename:jvx_invalidate_factoryhost_features=jvx_invalidate_factoryhost_features_local")
+#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
+#pragma comment(linker, "/alternatename:_jvx_invalidate_factoryhost_features=_jvx_invalidate_factoryhost_features_local")
+#endif
+
+#include "platform/jvx_platform_weak_defines.h"
+		{
+			std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+			// Default implementation does just nothing
+			return(JVX_NO_ERROR);
+		}
+
+#undef FUNC_CORE_PROT_DECLARE
+#undef FUNC_CORE_PROT_DECLARE_LOCAL
+#undef FUNC_CORE_PROT_ARGS
+#undef FUNC_CORE_PROT_RETURNVAL
+#endif
+
+
+#define FUNC_CORE_PROT_DECLARE jvx_access_link_objects
+#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_access_link_objects_local
+#define FUNC_CORE_PROT_ARGS jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm, jvxApiString* description, jvxComponentType tp, jvxSize id
+#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
+
+#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
+#pragma comment(linker, "/alternatename:jvx_access_link_objects=jvx_access_link_objects_local")
+#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
+#pragma comment(linker, "/alternatename:_jvx_access_link_objects=_jvx_access_link_objects_local")
+#endif
+
+#include "platform/jvx_platform_weak_defines.h"
+		{
+			std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+			// Default implementation does just nothing
+			return(JVX_ERROR_ELEMENT_NOT_FOUND);
+		}
 
 }
 
@@ -1105,4 +1175,108 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare_host_stop()
 void 
 JVX_APP_FACTORY_HOST_CLASSNAME::shutdown_postprocess_host()
 {
+}
+
+void
+JVX_APP_FACTORY_HOST_CLASSNAME::static_load_loop()
+{
+	oneAddedStaticComponent comp;
+	jvxApiString descriptionComponent;
+	jvxSize i, cnt;
+	jvxErrorType resL = JVX_NO_ERROR;
+	for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
+	{
+		cnt = 0;
+		while (1)
+		{
+			//memset(descriptionComponent, 0, JVX_MAXSTRING);
+			comp.reset();
+			resL = jvx_access_link_objects(&comp.funcInit,
+				&comp.funcTerm, &descriptionComponent,
+				(jvxComponentType)i, cnt);
+			if (resL == JVX_NO_ERROR)
+			{
+				jvxComponentIdentification cpTpId;
+				comp.theStaticObject = NULL;
+				resL = comp.funcInit(&comp.theStaticObject, &comp.theStaticGlobal, NULL);
+				assert(resL == JVX_NO_ERROR);
+				assert(comp.theStaticObject);
+
+				comp.theStaticObject->request_specialization(nullptr, &cpTpId, nullptr);
+				if (cpTpId.tp == JVX_COMPONENT_PACKAGE)
+				{
+					oneAddedStaticComponent compFromPackage;
+					jvxApiString descriptionComponentPackage;
+					IjvxPackage* thePack = reqInterfaceObj<IjvxPackage>(comp.theStaticObject);
+					if (thePack)
+					{
+						jvxSize numCompsPackage = 0;
+						thePack->number_components(&numCompsPackage);
+						for (jvxSize cpi = 0; cpi < numCompsPackage; cpi++)
+						{
+							resL = thePack->request_entries_component(cpi, &descriptionComponentPackage,
+								&compFromPackage.funcInit, &compFromPackage.funcTerm);
+							if (resL == JVX_NO_ERROR)
+							{
+								compFromPackage.theStaticObject = NULL;
+								compFromPackage.packageRef = comp.theStaticObject;
+
+								resL = compFromPackage.funcInit(&compFromPackage.theStaticObject, &compFromPackage.theStaticGlobal, NULL);
+								assert(resL == JVX_NO_ERROR);
+								assert(compFromPackage.theStaticObject);
+
+								resL = involvedComponents.theHost.hFHost->add_external_component(
+									compFromPackage.theStaticObject, compFromPackage.theStaticGlobal,
+									descriptionComponentPackage.c_str(), true, compFromPackage.funcInit, compFromPackage.funcTerm);
+								if (resL == JVX_NO_ERROR)
+								{
+									involvedComponents.addedStaticObjects.push_back(compFromPackage);
+								}
+								else
+								{
+									compFromPackage.funcTerm(compFromPackage.theStaticObject);
+								}
+							}
+						}
+					}
+				}
+
+				resL = involvedComponents.theHost.hFHost->add_external_component(comp.theStaticObject, comp.theStaticGlobal,
+					descriptionComponent.c_str(), true, comp.funcInit, comp.funcTerm);
+				if (resL == JVX_NO_ERROR)
+				{
+					involvedComponents.addedStaticObjects.push_back(comp);
+				}
+				else
+				{
+					comp.funcTerm(comp.theStaticObject);
+				}
+			}
+			else
+			{
+				break;
+			}
+			cnt++;
+		}
+	}
+}
+
+void
+JVX_APP_FACTORY_HOST_CLASSNAME::static_unload_loop()
+{
+	jvxSize i;
+	// Remove all library objects
+	for (i = 0; i < involvedComponents.addedStaticObjects.size(); i++)
+	{
+		if (involvedComponents.addedStaticObjects[i].packageRef == nullptr)
+		{
+			UNLOAD_ONE_MODULE_LIB_FULL(involvedComponents.addedStaticObjects[i], involvedComponents.theHost.hFHost);
+		}
+		else
+		{
+			// This is an object which comes from a package. At the moment, we do the same action, however.
+			UNLOAD_ONE_MODULE_LIB_FULL(involvedComponents.addedStaticObjects[i], involvedComponents.theHost.hFHost);
+		}
+	}
+	involvedComponents.addedStaticObjects.clear();
 }

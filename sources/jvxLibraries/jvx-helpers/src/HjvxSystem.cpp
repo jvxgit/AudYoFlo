@@ -22,6 +22,7 @@ static jvxTextHelpers jvxComponentType_str_[JVX_COMPONENT_ALL_LIMIT] =
 	{"custom technology", "JVX_COMPONENT_CUSTOM_TECHNOLOGY" },
 	{"custom device", "JVX_COMPONENT_CUSTOM_DEVICE" },
 	{"custom node", "JVX_COMPONENT_CUSTOM_NODE" },
+	{"package", "JVX_COMPONENT_PACKAGE" },
 	{"min host", "JVX_COMPONENT_MIN_HOST"},
 	{"factory host", "JVX_COMPONENT_FACTORY_HOST" },
 	{"host", "JVX_COMPONENT_HOST" },

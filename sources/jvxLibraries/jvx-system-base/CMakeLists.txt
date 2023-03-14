@@ -51,6 +51,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxSimpleComponent.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxBootSteps.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxCommandInterpreter.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxPackage.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/console/IjvxEventLoop_backend_ctrl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/console/IjvxEventLoop_frontend_ctrl.h

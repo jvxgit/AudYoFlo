@@ -21,7 +21,7 @@ include_directories(
   # cpp helper functions
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
 
-  ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-ffmpeg-helpers/include
+  ../../jvxLibraries/jvx-ffmpeg-helpers/include
 
   ${JVX_FFMPEG_INCLUDE_DIR}
   )
@@ -59,6 +59,7 @@ set(LOCAL_PCG_FILE_OPTIONS
 	-I ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers/pcg)
 
 set(IS_JVX_COMPONENT TRUE)
+set(JVX_COMPONENT_ONLY_STATIC TRUE)
 
 ## message(FATAL_ERROR "->   ${JVX_FFMPEG_INCLUDE_DIR}")
 

@@ -99,6 +99,8 @@ protected:
 
 	jvxErrorType loadAllComponents(jvxBool do_unload_dlls, std::vector<std::string>& component_path, jvxBool info_cout, jvxBool verbose_out);
 
+	// This is a pre-run to the unload function. We need to release all package additional components here
+	jvxErrorType pre_unloadAllComponents();
 	jvxErrorType unloadAllComponents();
 
 	//virtual jvxErrorType removeAllRemainingComponents();
@@ -122,6 +124,7 @@ private:
 	template <class T> void t_remove_external_component(IjvxObject* theObj, 
 		std::vector<oneObjType<T>>& registeredObj);
 
+	template <class T> void t_pre_unload_dlls(std::vector<oneObjType<T>>& registeredObj);
 	template <class T> void t_unload_dlls(std::vector<oneObjType<T>>& registeredObj);
 };
 

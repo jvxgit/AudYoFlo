@@ -10,6 +10,8 @@ typedef jvxErrorType JVX_CALLINGCONVENTION (*jvxDllProperties_tp)(jvxBitField*);
 #define JVX_CLOSE_OBJECT_DLL "jvxTerminateObject"
 #define JVX_PROPERTIES_DLL "jvxDllProperties"
 
+JVX_INTERFACE IjvxPackage;
+
 struct jvxOneComponentModuleWrap
 {
 	jvxSize id;
@@ -31,6 +33,8 @@ struct jvxOneComponentModuleWrap
 	{
 		JVX_HMODULE sharedObjectEntry;
 		std::string dllPath;
+		IjvxPackage* packPtr = nullptr;
+		jvxSize packIdx = JVX_SIZE_UNSELECTED;
 		jvxInitObject_tp funcInit;
 		jvxTerminateObject_tp funcTerm;
 	} linkage;

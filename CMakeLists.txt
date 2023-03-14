@@ -479,12 +479,7 @@ endif()
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-shared-connection-host
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-component-lib
     )
-	
-  if(JVX_USE_FFMPEG)
-    set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-ffmpeg-helpers)
-  endif()
-  
+	  
   if(JVX_USE_PART_WEBSERVER)
     set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
       ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLWebConsoleTools)
@@ -569,11 +564,6 @@ endif()
 	set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES} 
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTIos)
   endif(JVX_USE_PART_IOSAUDIO)
-
-  if(JVX_USE_FFMPEG)
-	set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES} 
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegReader)
-  endif()
 
   ###
   # build video technology components
@@ -699,11 +689,8 @@ endif()
   ##
   set(JVX_BASE_AUDIOCODEC_COMPONENTS ${JVX_BASE_AUDIOCODEC_COMPONENTS}
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioCodecs/jvxAuCPcm)
-  if(JVX_USE_FFMPEG)
-		set(JVX_BASE_AUDIOCODEC_COMPONENTS ${JVX_BASE_AUDIOCODEC_COMPONENTS}
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioCodecs/jvxAuCFfmpeg)
-  endif()
-
+  
+  
   ###
   # build other components
   ###
@@ -751,7 +738,19 @@ endif()
     set(JVX_BASE_OTHER_COMPONENTS ${JVX_BASE_OTHER_COMPONENTS} ${JVX_BASE_ROOT}/sources/jvxTools/jvxTExternalCall/cmake/octave)
   endif(JVX_USE_PART_OCTAVE)
 
-	
+  ## ==============================================================================================	
+  if(JVX_USE_FFMPEG)
+  
+    set(JVX_FFMPEG_PACKAGE ${JVX_FFMPEG_PACKAGE}
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxLibraries/jvx-ffmpeg-helpers
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxAudioTechnologies/jvxAuTFFMpegReader
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxPackages/jvxPaFfmpeg
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxAudioCodecs/jvxAuCFfmpeg
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxApplications/ffmpeg-app
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxPackages/ffmpeg/jvxApplications/ffplay-app)
+ 
+  endif()
+
 	## In case of SDK build and if buildng for iOS do not compile any applications
   if(NOT JVX_RELEASE_SDK AND NOT IOS)
 	###
@@ -1043,6 +1042,8 @@ endif()
   jvx_addSubdirs("Configuring all VST widget libraries" "${JVX_VST_SDK_WIDGET_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/plugins/plugins-widgets")
 
   jvx_addSubdirs("Configuring all platform packages" "${JVX_BASE_PLATFORM_PACKAGES}" "${JVX_FOLDER_HIERARCHIE_BASE}/platform-packages")
+  
+  jvx_addSubdirs("Configuring ffmpeg package" "${JVX_FFMPEG_PACKAGE}" "${JVX_FOLDER_HIERARCHIE_BASE}/ffmpeg")
   
   if(${JVX_OS} MATCHES "Emscripten")
 		jvx_addSubdirs("Configuring all audio codec components" "${JVX_BASE_WPMODULES_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/webassembly")	

@@ -4,11 +4,12 @@
 class oneAddedStaticComponent
 {
 public:
-	IjvxObject* theStaticObject;
-	IjvxGlobalInstance* theStaticGlobal;
-	jvxInitObject_tp funcInit;
-	jvxTerminateObject_tp funcTerm;
+	IjvxObject* theStaticObject = nullptr;
+	IjvxGlobalInstance* theStaticGlobal = nullptr;
+	jvxInitObject_tp funcInit = nullptr;
+	jvxTerminateObject_tp funcTerm = nullptr;
 	jvxBool run_init;
+	IjvxObject* packageRef = nullptr;
 	oneAddedStaticComponent()
 	{
 		reset();

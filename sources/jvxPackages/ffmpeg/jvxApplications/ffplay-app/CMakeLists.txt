@@ -13,19 +13,9 @@ set(LOCAL_C_STANDARD 99)
 set(LOCAL_SOURCES
 
 	
-	${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/ffplay.c
-	# ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/ffmpeg_demux.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/ffmpeg_filter.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/ffmpeg_hw.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/ffmpeg_mux.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/ffmpeg_mux_init.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/ffmpeg_opt.c
-	${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/cmdutils.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/objpool.c
-	${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/opt_common.c
-	# ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/sync_queue.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools/thread_queue.c
-	# ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/fftools/fftoolsres.rc
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffplay.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/cmdutils.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/opt_common.c
  )
 
 # set_source_files_properties(${LOCAL_SOURCES} PROPERTIES LANGUAGE CXX )
@@ -42,20 +32,11 @@ else(JVX_OS MATCHES "macosx")
   set(CONFIGURE_LOCAL_START_SCRIPT TRUE)
 endif(JVX_OS MATCHES "macosx")
 
-set(LOCAL_LIBS ${JVX_FFMPEG_LIB_AVCODEC}
-		${JVX_FFMPEG_LIB_AVDEVICE}
-		${JVX_FFMPEG_LIB_AVFILTER}
-		${JVX_FFMPEG_LIB_AVFORMAT}
-		${JVX_FFMPEG_LIB_AVUTIL}
-		${JVX_FFMPEG_LIB_SWRESAMPLE}
-		${JVX_FFMPEG_LIB_SWSCALE}
+set(LOCAL_LIBS 
+		${JVX_FFMPEG_LIBS}
 		${JVX_SOCKET_LIBRARIES}
-		${SDL_LIBRARY}
-		psapi.lib strmiids.lib 
-		uuid.lib shlwapi.lib 
-		vfw32.lib  secur32.lib 
-		mfuuid.lib strmiids.lib bcrypt.lib  
-		# ole32.lib shell32.lib user32.lib gdi32.lib oleaut32.lib 
+		${JVX_FFMPEG_SYS_LIBS}
+		${SDL_LIBRARY}		
 		)
 
 if(${JVX_OS} MATCHES "windows")

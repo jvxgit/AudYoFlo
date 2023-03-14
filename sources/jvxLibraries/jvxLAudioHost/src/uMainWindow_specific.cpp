@@ -158,6 +158,10 @@ uMainWindow_specific::bootup_negotiate_specific()
 		parentRef->involvedComponents.theHost.hFHost);
 
 	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_HOST);
+	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_MIN_HOST);
+	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_OFF_HOST);
+	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_FACTORY_HOST);
+
 	/*
 	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_CONFIG_PROCESSOR);
 	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_SYSTEM_TEXT_LOG);
@@ -178,41 +182,8 @@ uMainWindow_specific::bootup_negotiate_specific()
 	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_RT_AUDIO_FILE_READER);
 	parentRef->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_RT_AUDIO_FILE_WRITER);
 	*/
-
-	for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
-	{
-		cnt = 0;
-		while (1)
-		{
-			//memset(descriptionComponent, 0, JVX_MAXSTRING);
-			comp.reset();
-			resL = jvx_access_link_objects(&comp.funcInit, 
-				&comp.funcTerm, &descriptionComponent, 
-				(jvxComponentType)i, cnt);
-			if (resL == JVX_NO_ERROR)
-			{
-				comp.theStaticObject = NULL;
-				resL = comp.funcInit(&comp.theStaticObject, &comp.theStaticGlobal, NULL);
-				assert(resL == JVX_NO_ERROR);
-				assert(comp.theStaticObject);
-				resL = parentRef->involvedComponents.theHost.hFHost->add_external_component(comp.theStaticObject, comp.theStaticGlobal,
-					descriptionComponent.c_str(), true, comp.funcInit, comp.funcTerm);
-				if (resL == JVX_NO_ERROR)
-				{
-					parentRef->involvedComponents.addedStaticObjects.push_back(comp);
-				}
-				else
-				{
-					comp.funcTerm(comp.theStaticObject);
-				}
-			}
-			else
-			{
-				break;
-			}
-			cnt++;
-		}
-	}
+	
+	parentRef->static_load_loop();
 
 	// =====================================================================================================
 
@@ -324,13 +295,11 @@ uMainWindow_specific::shutdown_specific()
 
 	// Do not allow that host components are loaded via DLL
 	parentRef->involvedComponents.theHost.hFHost->remove_component_load_blacklist(JVX_COMPONENT_HOST);
+	parentRef->involvedComponents.theHost.hFHost->remove_component_load_blacklist(JVX_COMPONENT_MIN_HOST);
+	parentRef->involvedComponents.theHost.hFHost->remove_component_load_blacklist(JVX_COMPONENT_OFF_HOST);
+	parentRef->involvedComponents.theHost.hFHost->remove_component_load_blacklist(JVX_COMPONENT_FACTORY_HOST);
 
-	// Remove all library objects
-	for(i = 0; i < parentRef->involvedComponents.addedStaticObjects.size(); i++)
-	{
-		UNLOAD_ONE_MODULE_LIB_FULL(parentRef->involvedComponents.addedStaticObjects[i], parentRef->involvedComponents.theHost.hFHost);
-	}
-	parentRef->involvedComponents.addedStaticObjects.clear();
+	parentRef->static_unload_loop();
 
 	parentRef->shutdown_terminate_base();
 

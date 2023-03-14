@@ -313,14 +313,22 @@ void deactivate_default_components_host(const char** lst_ModulesOnStart[JVX_COMP
 					else
 					{
 						res = hHost->module_reference_selected_component(tpIdN, &astr, NULL);
-						if (astr.std_str() == ptrComp[j])
+						if (res == JVX_NO_ERROR)
 						{
-							res = hHost->unselect_selected_component(tpIdN);
-							assert(res == JVX_NO_ERROR);
+							if (astr.std_str() == ptrComp[j])
+							{
+								res = hHost->unselect_selected_component(tpIdN);
+								assert(res == JVX_NO_ERROR);
+							}
+							else
+							{
+								std::cout << __FUNCTION__ << ": Error: Failed to unselect component with module name <" << ptrComp[j] << ">." << std::endl;
+								assert(0);
+							}
 						}
 						else
 						{
-							assert(0);
+							std::cout << __FUNCTION__ << ": Warning: Failed to get module reference, error code: <" << jvxErrorType_descr(res) << ">." << std::endl;						
 						}
 					}
 				} // for (j = 0; j < szSlots; j++)

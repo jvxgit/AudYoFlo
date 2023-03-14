@@ -123,6 +123,9 @@ public:
 	virtual void register_command_line_parameters(IjvxCommandLine* commLine);
 	virtual void read_command_line_parameters(IjvxCommandLine* commLine);
 
+	virtual void static_load_loop();
+	virtual void static_unload_loop();
+
 protected:
 
 	jvxErrorType configureFromFile(jvxCallManagerConfiguration* callConf, 

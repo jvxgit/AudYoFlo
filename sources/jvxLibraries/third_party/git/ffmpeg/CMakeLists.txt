@@ -22,6 +22,8 @@ if(${JVX_OS} MATCHES "windows")
 	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libswresample.a")
 	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libswscale.a")
 
+	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg" CACHE INTERNAL "ffmpeg source code path (windows)")
+	
 	set(JVX_FFMPEG_INCLUDE_DIR 
 		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg"	
 		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/include"
@@ -53,9 +55,3 @@ if(${JVX_OS} MATCHES "windows")
 		
 endif()
 
-set(JVX_FFMPEG_TEST_APPS
-	${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-app
-	${CMAKE_CURRENT_SOURCE_DIR}/ffplay-app
-  )
-
-jvx_addSubdirs("Configuring ffmpeg test apps" "${JVX_FFMPEG_TEST_APPS}" "${JVX_FOLDER_HIERARCHIE_BASE}/ffmpeg")

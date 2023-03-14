@@ -15,76 +15,6 @@
 extern "C"
 {
 	// These symbols may be weakly linked (optional) or required (mandatory)
-#ifdef LINK_COMPONENTS_WEAK_SYMBOL
-
-#define FUNC_CORE_PROT_DECLARE jvx_configure_factoryhost_features
-#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_configure_host_features_local
-#define FUNC_CORE_PROT_ARGS configureHost_features* theFeaturesA
-#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
-
-#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
-#pragma comment(linker, "/alternatename:jvx_configure_factoryhost_features=jvx_configure_factoryhost_features_local")
-#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
-#pragma comment(linker, "/alternatename:_jvx_configure_factoryhost_features=_jvx_configure_factoryhost_features_local")
-#endif
-
-#include "platform/jvx_platform_weak_defines.h"
-	{
-		std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
-		// Default implementation does just nothing
-		return(JVX_NO_ERROR);
-	}
-
-#undef FUNC_CORE_PROT_DECLARE
-#undef FUNC_CORE_PROT_DECLARE_LOCAL
-#undef FUNC_CORE_PROT_ARGS
-#undef FUNC_CORE_PROT_RETURNVAL
-
-
-#define FUNC_CORE_PROT_DECLARE jvx_invalidate_factoryhost_features
-#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_invalidate_factoryhost_features_local
-#define FUNC_CORE_PROT_ARGS configureHost_features* theFeaturesA
-#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
-
-#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
-#pragma comment(linker, "/alternatename:jvx_invalidate_factoryhost_features=jvx_invalidate_factoryhost_features_local")
-#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
-#pragma comment(linker, "/alternatename:_jvx_invalidate_factoryhost_features=_jvx_invalidate_factoryhost_features_local")
-#endif
-
-#include "platform/jvx_platform_weak_defines.h"
-	{
-		std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
-		// Default implementation does just nothing
-		return(JVX_NO_ERROR);
-	}
-
-#undef FUNC_CORE_PROT_DECLARE
-#undef FUNC_CORE_PROT_DECLARE_LOCAL
-#undef FUNC_CORE_PROT_ARGS
-#undef FUNC_CORE_PROT_RETURNVAL
-
-
-#define FUNC_CORE_PROT_DECLARE jvx_access_link_objects
-#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_access_link_objects_local
-#define FUNC_CORE_PROT_ARGS jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm, jvxApiString* description, jvxComponentType tp, jvxSize id, jvxCBitField* stateMachineHintFlags
-#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
-
-#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
-#pragma comment(linker, "/alternatename:jvx_access_link_objects=jvx_access_link_objects_local")
-#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
-#pragma comment(linker, "/alternatename:_jvx_access_link_objects=_jvx_access_link_objects_local")
-#endif
-
-#include "platform/jvx_platform_weak_defines.h"
-	{
-		std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
-		// Default implementation does just nothing
-		return(JVX_ERROR_ELEMENT_NOT_FOUND);
-	}
-
-#else
-
 	extern jvxErrorType jvx_configure_factoryhost_features(
 		configureFactoryHost_features* theFeaturesA);
 		
@@ -93,7 +23,6 @@ extern "C"
 		jvxTerminateObject_tp* funcTerm, 
 		jvxApiString* description, 
 		jvxComponentType tp, jvxSize id);
-#endif
 }
 
 
@@ -241,6 +170,8 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	 *STEP VI : Request the application specific component library in this callback
 	 * ==============================================================================================================
 	 */
+	 static_load_loop();
+	/*
 	for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
 	{
 		cnt = 0;
@@ -273,6 +204,7 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 			cnt++;
 		}
 	}
+	*/
 
 	/*
 	 *============================================================================================================== =
@@ -409,13 +341,7 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 	// Do not allow that host components are loaded via DLL
 	involvedComponents.theHost.hFHost->remove_component_load_blacklist(JVX_COMPONENT_HOST);
 
-	// Remove all library objects
-	for (i = 0; i < involvedComponents.addedStaticObjects.size(); i++)
-	{
-		UNLOAD_ONE_MODULE_LIB_FULL(involvedComponents.addedStaticObjects[i], 
-			involvedComponents.theHost.hFHost);
-	}
-	involvedComponents.addedStaticObjects.clear();
+	static_unload_loop();
 
 	shutdown_terminate_base();
 	

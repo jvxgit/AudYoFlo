@@ -23,6 +23,7 @@ CjvxHost_dll::load_dynamic_objects()
 void 
 CjvxHost_dll::unload_dynamic_objects()
 {
+	pre_unloadAllComponents();
 	this->unloadAllComponents();
 }
 

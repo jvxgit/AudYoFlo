@@ -618,21 +618,21 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 					// Open the DLL
 					if (dllHandle)
 					{
-						IjvxObject* newObj = NULL;
-						IjvxGlobalInstance* newGlobInst = NULL;
-						jvxInitObject_tp funcInit = NULL;
-						jvxTerminateObject_tp funcTerm = NULL;
+						IjvxObject* newObjEnter = NULL;
+						IjvxGlobalInstance* newGlobInstEnter = NULL;
+						jvxInitObject_tp funcInitEnter = NULL;
+						jvxTerminateObject_tp funcTermEnter = NULL;
 						jvxDllProperties_tp funcDllsProps = NULL;
-						jvxComponentIdentification tp = JVX_COMPONENT_UNKNOWN;
-						jvxBool allowMultipleObjects = false;
-						jvxHandle* specComp = NULL;
+						jvxComponentIdentification tpEnter = JVX_COMPONENT_UNKNOWN;
+						jvxBool allowMultipleObjectsEnter = false;
+						jvxHandle* specCompEnter = NULL;
 						jvxBitField dllProps = 0;
 
-						funcInit = (jvxInitObject_tp)JVX_GETPROCADDRESS(dllHandle, JVX_OPEN_OBJECT_DLL);
-						funcTerm = (jvxTerminateObject_tp)JVX_GETPROCADDRESS(dllHandle, JVX_CLOSE_OBJECT_DLL);
+						funcInitEnter = (jvxInitObject_tp)JVX_GETPROCADDRESS(dllHandle, JVX_OPEN_OBJECT_DLL);
+						funcTermEnter = (jvxTerminateObject_tp)JVX_GETPROCADDRESS(dllHandle, JVX_CLOSE_OBJECT_DLL);
 						funcDllsProps = (jvxDllProperties_tp)JVX_GETPROCADDRESS(dllHandle, JVX_PROPERTIES_DLL);
 
-						if (funcInit && funcTerm)
+						if (funcInitEnter && funcTermEnter)
 						{
 							if (verbose_out)
 							{
@@ -645,106 +645,38 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 								{
 									if (_common_set_host.reportUnit)
 									{
-										_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
+										_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), 
+											JVX_REPORT_PRIORITY_INFO);
 									}
 								}
 							}
 
-							funcInit(&newObj, &newGlobInst, NULL);
-							if (newObj)
+							funcInitEnter(&newObjEnter, &newGlobInstEnter, NULL);
+							if (newObjEnter)
 							{
 								funcDllsProps(&dllProps);
-								newObj->request_specialization(&specComp, &tp, &allowMultipleObjects);
+								newObjEnter->request_specialization(&specCompEnter, &tpEnter, &allowMultipleObjectsEnter);
 
-								//if (tp != JVX_COMPONENT_UNKNOWN)
-								//{
-									if (verbose_out)
-									{
-										if (info_cout)
-										{
-											std::cout << "  - component type is <" << jvxComponentType_txt(tp.tp) << ">" << std::endl;
-										}
-										else
-										{
-											outTxt = "  - component type is <";
-											outTxt += jvxComponentType_txt(tp.tp);
-											outTxt += ">";
-
-											if (_common_set_host.reportUnit)
-											{
-												_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
-											}
-										}
-									}
-								//}
-
-								// ================================================================================
-								// Load Filter check
-								// ================================================================================
-								bool isOnBlacklist = false;
-								for (ii = 0; ii < _common_set_host.blacklist_load_use.size(); ii++)
+								if (verbose_out)
 								{
-									if (tp == _common_set_host.blacklist_load_use[ii].selector[0])
+									if (info_cout)
 									{
-										isOnBlacklist = true;
-										break;
+										std::cout << "  - component type is <" << jvxComponentType_txt(tpEnter.tp) << ">" << std::endl;
+									}
+									else
+									{
+										outTxt = "  - component type is <";
+										outTxt += jvxComponentType_txt(tpEnter.tp);
+										outTxt += ">";
+
+										if (_common_set_host.reportUnit)
+										{
+											_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(),
+												JVX_REPORT_PRIORITY_INFO);
+										}
 									}
 								}
-
-								if (isOnBlacklist)
-								{
-									if (verbose_out)
-									{
-										if (info_cout)
-										{
-											std::cout << "  - blacklisted lib " << fileName << ", library unloaded." << std::endl;
-										}
-										else
-										{
-											outTxt = "  - blacklisted lib " + fileName + ", library unloaded.";
-											if (_common_set_host.reportUnit)
-											{
-												_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
-											}
-										}
-									}
-									// Do not store this component type
-									funcTerm(newObj);
-									JVX_UNLOADLIBRARY(dllHandle);
-									continue;
-								}
-
-								// ================================================================================
-								// Load Filter check
-								// ================================================================================
-								if (_common_set_host.loadFilter.theCallback)
-								{
-									jvxBool doNotLoad = false;
-									_common_set_host.loadFilter.theCallback(&doNotLoad, fileName.c_str(), tp.tp, _common_set_host.loadFilter.theCallback_priv);
-									if (doNotLoad)
-									{
-										if (verbose_out)
-										{
-											if (info_cout)
-											{
-												std::cout << "  - load filter excluded lib " << fileName << ", library unloaded." << std::endl;
-											}
-											else
-											{
-												outTxt = "  - load filter excluded lib " + fileName + ", library unloaded.";
-												if (_common_set_host.reportUnit)
-												{
-													_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
-												}
-											}
-										}
-										// Do not store this component type
-										funcTerm(newObj);
-										JVX_UNLOADLIBRARY(dllHandle);
-										continue;
-									}
-								}
-
+																
 								// ==========================================================================
 								// Check already added modules
 								// ===========================================================================
@@ -752,7 +684,8 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 								jvxApiString astr;
 								jvxComponentAccessType acTp;
 
-								newObj->module_reference(&astr, &acTp);
+								// We check the module name of the 
+								newObjEnter->module_reference(&astr, &acTp);
 								auto elm = this->staticModules.begin();
 								for (; elm != this->staticModules.end(); elm++)
 								{
@@ -768,11 +701,11 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 									{
 										if (info_cout)
 										{
-											std::cout << "  - component has already been added as static library, library unloaded." << std::endl;
+											std::cout << "  - component has already been added as static library." << std::endl;
 										}
 										else
 										{
-											outTxt = "  - component has already been added as static library, library unloaded.";
+											outTxt = "  - component has already been added as static library.";
 											if (_common_set_host.reportUnit)
 											{
 												_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
@@ -780,168 +713,378 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 										}
 									}
 									// Do not store this component type
-									funcTerm(newObj);
+									funcTermEnter(newObjEnter);
 									JVX_UNLOADLIBRARY(dllHandle);
-									continue;
-								}
-
-								/*
-								for (ii = 0; ii < _common_set_host..size(); ii++)
-								{
-									// if(_common_set_host.externalInterfaces[i].selector == tp.tp)
-								}
-								*/
-								if (specComp)
-								{
-									if (config.minHostFunctionality)
+									if (info_cout)
 									{
-										jvxOneComponentModule elm;
-
-										elm.common.isExternalComponent = false;
-										elm.common.id = (jvxSize)_common_set_host.otherComponents.availableOtherComponents.size();
-										elm.common.tp = tp.tp;
-										elm.common.allowsMultiObjects = allowMultipleObjects;
-										elm.common.hObject = newObj;
-										elm.common.hGlobInst = newGlobInst;
-
-										elm.common.linkage.dllPath = fileName;
-										elm.common.linkage.funcInit = funcInit;
-										elm.common.linkage.funcTerm = funcTerm;
-										elm.common.linkage.sharedObjectEntry = dllHandle;
-
-										elm.common.externalLink.description = "NONE";
-										elm.common.dllProps = dllProps;
-										elm.theObj_single = newObj;
-										elm.theGlob_single = newGlobInst;
-										
-										_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
+										std::cout << "  - Library <" << fileName << "> unloaded." << std::endl;
 									}
 									else
 									{
-										std::vector<oneTechnologyType>::iterator elmIt_tech;
-										elmIt_tech = jvx_findItemSelectorInList_one<oneTechnologyType, jvxComponentType>(_common_set_types.registeredTechnologyTypes, tp.tp, 0);
-
-										if (elmIt_tech != _common_set_types.registeredTechnologyTypes.end())
+										outTxt = "  - Library <" + fileName + "> unloaded.";
+										if (_common_set_host.reportUnit)
 										{
-											oneTechnology elm;
+											_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
+										}
+									}
+									continue;
+								}
 
-											elm.theHandle_single = NULL;
-											elm.theHandle_single = reinterpret_cast<IjvxTechnology*>(specComp);
-											elm.common.isExternalComponent = false;
-											elm.common.id = (jvxSize)elmIt_tech->technologyInstances.availableTechnologies.size();
-											elm.common.tp = tp.tp;
-											elm.common.allowsMultiObjects = allowMultipleObjects;
-											elm.common.hObject = newObj;
-											elm.common.hGlobInst = newGlobInst;
+								// From here on we switch from module centric to component centric 
+								jvxSize numTryAdd = 1;
+								jvxSize numAdded = 0;
 
-											elm.common.linkage.dllPath = fileName;
-											elm.common.linkage.funcInit = funcInit;
-											elm.common.linkage.funcTerm = funcTerm;
-											elm.common.linkage.sharedObjectEntry = dllHandle;
+								IjvxPackage* thePack = nullptr;
+								jvxComponentIdentification tpCheck = tpEnter;
+								jvxBool isPackageMainComponent = true;
+								IjvxObject* newObjAdd = newObjEnter;
+								jvxInitObject_tp funcInitAdd = funcInitEnter;
+								jvxTerminateObject_tp funcTermAdd = funcTermEnter;
+								jvxHandle* specCompAdd = specCompEnter;
+								IjvxGlobalInstance* newGlobInstAdd = newGlobInstEnter;
+								jvxBool allowMultipleObjectsAdd = allowMultipleObjectsEnter;
 
-											elm.common.externalLink.description = "NONE";
-											elm.common.dllProps = dllProps;
+								jvxApiString descriptionComponentPackage;
+								thePack = reqInterfaceObj<IjvxPackage>(newObjEnter);
+								if (thePack)
+								{
+									jvxSize numCompsPackage = 0;
+									thePack->number_components(&numCompsPackage);
+									numTryAdd = numCompsPackage + 1;										
+								}
 
-											elmIt_tech->technologyInstances.availableTechnologies.push_back(elm);
+								for (int tlp = 0; tlp < numTryAdd; tlp++)
+								{
+									jvxSize thePackIdx = JVX_SIZE_UNSELECTED;
+									isPackageMainComponent = (tlp == (numTryAdd - 1));
+
+									if (thePack)
+									{
+										if (!isPackageMainComponent)
+										{
+											jvxApiString descrComp;
+											newObjAdd = nullptr;
+											funcInitAdd = nullptr;
+											funcTermAdd = nullptr;
+											specCompAdd = nullptr;
+											jvxErrorType resL = thePack->request_entries_component(tlp, &descrComp,
+												&funcInitAdd, &funcTermAdd);
+											thePackIdx = tlp;
+											if (resL == JVX_NO_ERROR)
+											{
+												funcInitAdd(&newObjAdd, &newGlobInstAdd, nullptr);
+												if (newObjAdd)
+												{
+													newObjAdd->request_specialization(&specCompAdd, &tpCheck, &allowMultipleObjectsAdd);
+													if (verbose_out)
+													{
+														if (info_cout)
+														{
+															std::cout << "  - opening object <" << descrComp.std_str() <<
+																" from package <" << astr.std_str() << ">." << std::endl;
+														}
+														else
+														{
+															outTxt = "  - opening object <" + descrComp.std_str() +
+																" from package <" + astr.std_str() + ">.";
+															if (_common_set_host.reportUnit)
+															{
+																_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
+															}
+														}
+													}
+												}
+											}
 										}
 										else
 										{
-											std::vector<oneObjType<IjvxNode>>::iterator elmIt_ep;
-											elmIt_ep = jvx_findItemSelectorInList_one<oneObjType<IjvxNode>, jvxComponentType>(_common_set_types.registeredNodeTypes, tp.tp, 0);
+											tpCheck = tpEnter;
+											isPackageMainComponent = true;
+											newObjAdd = newObjEnter;
+											funcInitAdd = funcInitEnter;
+											funcTermAdd = funcTermEnter;
+											specCompAdd = specCompEnter;
+											newGlobInstAdd = newGlobInstEnter;
+											allowMultipleObjectsAdd = allowMultipleObjectsEnter;
+											thePack = nullptr;
+											thePackIdx = JVX_SIZE_UNSELECTED;
+										}
+									}
 
-											if (elmIt_ep != _common_set_types.registeredNodeTypes.end())
+									jvxBool componentQualified = true;
+									// jvxSize numberMayUnload = 0;
+
+									// ================================================================================
+									// Load Filter check
+									// ================================================================================
+									bool isOnBlacklist = false;
+									for (ii = 0; ii < _common_set_host.blacklist_load_use.size(); ii++)
+									{
+										if (tpCheck == _common_set_host.blacklist_load_use[ii].selector[0])
+										{
+											isOnBlacklist = true;
+											break;
+										}
+									}
+
+									if (isOnBlacklist)
+									{
+										if (verbose_out)
+										{
+											if (info_cout)
 											{
-												oneObj<IjvxNode> elm;
-												elm.theHandle_single = NULL;
-												elm.theHandle_single = reinterpret_cast<IjvxNode*>(specComp);
-												elm.common.isExternalComponent = false;
-												elm.common.id = (jvxSize)elmIt_ep->instances.availableEndpoints.size();
-												elm.common.tp = tp.tp;
-												elm.common.allowsMultiObjects = allowMultipleObjects;
-												elm.common.hObject = newObj;
-												elm.common.hGlobInst = newGlobInst;
-
-												elm.common.linkage.dllPath = fileName;
-												elm.common.linkage.funcInit = funcInit;
-												elm.common.linkage.funcTerm = funcTerm;
-												elm.common.linkage.sharedObjectEntry = dllHandle;
-
-												elm.common.externalLink.description = "NONE";
-												elm.common.dllProps = dllProps;
-												elmIt_ep->instances.availableEndpoints.push_back(elm);
+												std::cout << "  - blacklisted lib " << fileName << "." << std::endl;
 											}
 											else
 											{
-												std::vector<oneObjType<IjvxSimpleComponent>>::iterator elmIt_si;
-												elmIt_si = jvx_findItemSelectorInList_one<oneObjType<IjvxSimpleComponent>, jvxComponentType>(_common_set_types.registeredSimpleTypes, tp.tp, 0);
-
-												if (elmIt_si != _common_set_types.registeredSimpleTypes.end())
+												outTxt = "  - blacklisted lib " + fileName + ".";
+												if (_common_set_host.reportUnit)
 												{
-													oneObj<IjvxSimpleComponent> elm;
+													_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
+												}
+											}
+										}
+
+										// This component is not in use
+										componentQualified = false;
+									}
+
+									if (componentQualified)
+									{
+										// ================================================================================
+										// Load Filter check
+										// ================================================================================
+										if (_common_set_host.loadFilter.theCallback)
+										{
+											jvxBool doNotLoad = false;
+											_common_set_host.loadFilter.theCallback(&doNotLoad, fileName.c_str(), tpCheck.tp, _common_set_host.loadFilter.theCallback_priv);
+											if (doNotLoad)
+											{
+												if (verbose_out)
+												{
+													if (info_cout)
+													{
+														std::cout << "  - load filter excluded lib " << fileName << "." << std::endl;
+													}
+													else
+													{
+														outTxt = "  - load filter excluded lib " + fileName + ".";
+														if (_common_set_host.reportUnit)
+														{
+															_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
+														}
+													}
+												}
+												componentQualified = false;
+											}
+										}
+									}
+
+									// Now, add the component
+									if (componentQualified)
+									{
+										if (specCompAdd)
+										{
+											if (config.minHostFunctionality)
+											{
+												jvxOneComponentModule elm;
+
+												elm.common.isExternalComponent = false;
+												elm.common.id = (jvxSize)_common_set_host.otherComponents.availableOtherComponents.size();
+												elm.common.tp = tpCheck.tp;
+												elm.common.allowsMultiObjects = allowMultipleObjectsAdd;
+												elm.common.hObject = newObjAdd;
+												elm.common.hGlobInst = newGlobInstAdd;
+
+												elm.common.linkage.dllPath = fileName;
+												elm.common.linkage.funcInit = funcInitAdd;
+												elm.common.linkage.funcTerm = funcTermAdd;
+												elm.common.linkage.sharedObjectEntry = dllHandle;
+												elm.common.linkage.packPtr = thePack;
+												elm.common.linkage.packIdx = thePackIdx;
+
+												elm.common.externalLink.description = "NONE";
+												elm.common.dllProps = dllProps;
+												elm.theObj_single = newObjAdd;
+												elm.theGlob_single = newGlobInstAdd;
+
+												_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
+												numAdded++;
+											}
+											else
+											{
+												std::vector<oneTechnologyType>::iterator elmIt_tech;
+												elmIt_tech = jvx_findItemSelectorInList_one<oneTechnologyType,
+													jvxComponentType>(_common_set_types.registeredTechnologyTypes, tpCheck.tp, 0);
+
+												if (elmIt_tech != _common_set_types.registeredTechnologyTypes.end())
+												{
+													oneTechnology elm;
+
 													elm.theHandle_single = NULL;
-													elm.theHandle_single = reinterpret_cast<IjvxSimpleComponent*>(specComp);
+													elm.theHandle_single = reinterpret_cast<IjvxTechnology*>(specCompAdd);
 													elm.common.isExternalComponent = false;
-													elm.common.id = (jvxSize)elmIt_si->instances.availableEndpoints.size();
-													elm.common.tp = tp.tp;
-													elm.common.allowsMultiObjects = allowMultipleObjects;
-													elm.common.hObject = newObj;
-													elm.common.hGlobInst = newGlobInst;
+													elm.common.id = (jvxSize)elmIt_tech->technologyInstances.availableTechnologies.size();
+													elm.common.tp = tpCheck.tp;
+													elm.common.allowsMultiObjects = allowMultipleObjectsAdd;
+													elm.common.hObject = newObjAdd;
+													elm.common.hGlobInst = newGlobInstAdd;
+													elm.common.linkage.packPtr = thePack;
+													elm.common.linkage.packIdx = thePackIdx;
 
 													elm.common.linkage.dllPath = fileName;
-													elm.common.linkage.funcInit = funcInit;
-													elm.common.linkage.funcTerm = funcTerm;
+													elm.common.linkage.funcInit = funcInitAdd;
+													elm.common.linkage.funcTerm = funcTermAdd;
 													elm.common.linkage.sharedObjectEntry = dllHandle;
 
 													elm.common.externalLink.description = "NONE";
 													elm.common.dllProps = dllProps;
-													elmIt_si->instances.availableEndpoints.push_back(elm);
+
+													elmIt_tech->technologyInstances.availableTechnologies.push_back(elm);
+													numAdded++;
 												}
 												else
 												{
-													jvxOneComponentModule elm;
+													std::vector<oneObjType<IjvxNode>>::iterator elmIt_ep;
+													elmIt_ep = jvx_findItemSelectorInList_one<oneObjType<IjvxNode>,
+														jvxComponentType>(_common_set_types.registeredNodeTypes, tpCheck.tp, 0);
 
-													elm.theObj_single = NULL;
-													elm.theObj_single = newObj;
-													elm.theGlob_single = newGlobInst;
-													elm.common.isExternalComponent = false;
-													elm.common.id = (jvxSize)_common_set_host.otherComponents.availableOtherComponents.size();
-													elm.common.tp = tp.tp;
-													elm.common.allowsMultiObjects = allowMultipleObjects;
-													elm.common.hObject = newObj;
-													elm.common.hGlobInst = newGlobInst;
+													if (elmIt_ep != _common_set_types.registeredNodeTypes.end())
+													{
+														oneObj<IjvxNode> elm;
+														elm.theHandle_single = NULL;
+														elm.theHandle_single = reinterpret_cast<IjvxNode*>(specCompAdd);
+														elm.common.isExternalComponent = false;
+														elm.common.id = (jvxSize)elmIt_ep->instances.availableEndpoints.size();
+														elm.common.tp = tpCheck.tp;
+														elm.common.allowsMultiObjects = allowMultipleObjectsAdd;
+														elm.common.hObject = newObjAdd;
+														elm.common.hGlobInst = newGlobInstAdd;
+														elm.common.linkage.packPtr = thePack;
+														elm.common.linkage.packIdx = thePackIdx;
 
-													elm.common.linkage.dllPath = fileName;
-													elm.common.linkage.funcInit = funcInit;
-													elm.common.linkage.funcTerm = funcTerm;
-													elm.common.linkage.sharedObjectEntry = dllHandle;
+														elm.common.linkage.dllPath = fileName;
+														elm.common.linkage.funcInit = funcInitAdd;
+														elm.common.linkage.funcTerm = funcTermAdd;
+														elm.common.linkage.sharedObjectEntry = dllHandle;
 
-													elm.common.externalLink.description = "NONE";
-													elm.common.dllProps = dllProps;
+														elm.common.externalLink.description = "NONE";
+														elm.common.dllProps = dllProps;
 
+														elmIt_ep->instances.availableEndpoints.push_back(elm);
+														numAdded++;
+													}
+													else
+													{
+														std::vector<oneObjType<IjvxSimpleComponent>>::iterator elmIt_si;
+														elmIt_si = jvx_findItemSelectorInList_one<oneObjType<IjvxSimpleComponent>,
+															jvxComponentType>(_common_set_types.registeredSimpleTypes, tpCheck.tp, 0);
 
-													_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
+														if (elmIt_si != _common_set_types.registeredSimpleTypes.end())
+														{
+															oneObj<IjvxSimpleComponent> elm;
+															elm.theHandle_single = NULL;
+															elm.theHandle_single = reinterpret_cast<IjvxSimpleComponent*>(specCompAdd);
+															elm.common.isExternalComponent = false;
+															elm.common.id = (jvxSize)elmIt_si->instances.availableEndpoints.size();
+															elm.common.tp = tpCheck.tp;
+															elm.common.allowsMultiObjects = allowMultipleObjectsAdd;
+															elm.common.hObject = newObjAdd;
+															elm.common.hGlobInst = newGlobInstAdd;
+
+															elm.common.linkage.dllPath = fileName;
+															elm.common.linkage.funcInit = funcInitAdd;
+															elm.common.linkage.funcTerm = funcTermAdd;
+															elm.common.linkage.sharedObjectEntry = dllHandle;
+
+															elm.common.externalLink.description = "NONE";
+															elm.common.dllProps = dllProps;
+
+															elm.common.linkage.packPtr = thePack;
+															elm.common.linkage.packIdx = thePackIdx;
+															elmIt_si->instances.availableEndpoints.push_back(elm);
+															numAdded++;
+														}
+														else
+														{
+															jvxOneComponentModule elm;
+
+															elm.theObj_single = NULL;
+															elm.theObj_single = newObjAdd;
+															elm.theGlob_single = newGlobInstAdd;
+															elm.common.isExternalComponent = false;
+															elm.common.id = (jvxSize)_common_set_host.otherComponents.availableOtherComponents.size();
+															elm.common.tp = tpCheck.tp;
+															elm.common.allowsMultiObjects = allowMultipleObjectsAdd;
+															elm.common.hObject = newObjAdd;
+															elm.common.hGlobInst = newGlobInstAdd;
+
+															elm.common.linkage.dllPath = fileName;
+															elm.common.linkage.funcInit = funcInitAdd;
+															elm.common.linkage.funcTerm = funcTermAdd;
+															elm.common.linkage.sharedObjectEntry = dllHandle;
+
+															elm.common.externalLink.description = "NONE";
+															elm.common.dllProps = dllProps;
+
+															elm.common.linkage.packPtr = thePack;
+															elm.common.linkage.packIdx = thePackIdx;
+															_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
+															numAdded++;
+														}
+													}
+												}
+											}
+											if (isPackageMainComponent)
+											{
+												if (verbose_out)
+												{
+													if (info_cout)
+													{
+														std::cout << "  - added lib " << fileName << std::endl;;
+													}
+													else
+													{
+														outTxt = "  - added lib " + fileName;
+														if (_common_set_host.reportUnit)
+														{
+															_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
+														}
+													}
+												}
+											}
+										}//if(specComp)
+									}
+									if (isPackageMainComponent)
+									{
+										if (numAdded == 0)
+										{
+											// No component added, unload the DLL
+											funcTermEnter(newObjEnter);
+											JVX_UNLOADLIBRARY(dllHandle);
+
+											if (info_cout)
+											{
+												std::cout << "  - Library <" << fileName << "> unloaded." << std::endl;
+											}
+											else
+											{
+												outTxt = "  - Library <" + fileName + "> unloaded.";
+												if (_common_set_host.reportUnit)
+												{
+													_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
 												}
 											}
 										}
 									}
-									if (verbose_out)
-									{
-										if (info_cout)
-										{
-											std::cout << "  - added lib " << fileName << std::endl;;
-										}
-										else
-										{
-											outTxt = "  - added lib " + fileName;
-											if (_common_set_host.reportUnit)
-											{
-												_common_set_host.reportUnit->report_simple_text_message(outTxt.c_str(), JVX_REPORT_PRIORITY_INFO);
-											}
-										}
-									}
-								}//if(specComp)
-
-							}//if(newObj)
+									
+									// if (componentQualified)
+								} // for (int tlp = 0; tlp < numTryAdd; tlp++)
+							}//if (newObjEnter)
+							else
+							{
+								// No object returned
+							}
 						}//if(funcInit && funcTerm)
 						else
 						{
@@ -987,20 +1130,73 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 	}
 	else
 	{
-		assert(0);
+	assert(0);
 	}
 	return(JVX_NO_ERROR);
+}
+
+jvxErrorType
+CjvxHostInteraction::pre_unloadAllComponents()
+{
+	jvxSize i;
+	std::list<JVX_HMODULE> unloadLibs;
+
+	if (!config.minHostFunctionality)
+	{
+		jvxSize j;
+
+		for (i = 0; i < _common_set_types.registeredTechnologyTypes.size(); i++)
+		{
+			std::vector<oneTechnology> remainListT;
+			for (j = 0; j < _common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies.size(); j++)
+			{
+				if (_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.packPtr)
+				{
+					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.funcTerm(
+						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.hObject);
+					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.hObject = NULL;
+					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].theHandle_single = NULL;
+
+					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.packPtr->release_entries_component(
+						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.packIdx);
+					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.packPtr = nullptr;
+					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.packIdx = JVX_SIZE_UNSELECTED;
+					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.sharedObjectEntry = JVX_HMODULE_INVALID;
+				}
+			}
+		}
+
+		t_pre_unload_dlls<IjvxNode>(_common_set_types.registeredNodeTypes);
+		t_pre_unload_dlls<IjvxSimpleComponent>(_common_set_types.registeredSimpleTypes);
+	}
+
+	std::vector<jvxOneComponentModule> remainListO;
+	for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
+	{
+		if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.packPtr)
+		{
+			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.funcTerm(
+				this->_common_set_host.otherComponents.availableOtherComponents[i].common.hObject);
+			this->_common_set_host.otherComponents.availableOtherComponents[i].common.hObject = NULL;
+			this->_common_set_host.otherComponents.availableOtherComponents[i].theObj_single = NULL;
+			this->_common_set_host.otherComponents.availableOtherComponents[i].theGlob_single = NULL;
+			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.packPtr->release_entries_component(
+				this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.packIdx);
+			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.packPtr = nullptr;
+			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.packIdx = JVX_SIZE_UNSELECTED;
+			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.sharedObjectEntry = JVX_HMODULE_INVALID;
+		}
+	}
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType
 CjvxHostInteraction::unloadAllComponents()
 {
 	jvxSize i;
-
 	if (!config.minHostFunctionality)
 	{
 		jvxSize j;
-
 		for (i = 0; i < _common_set_types.registeredTechnologyTypes.size(); i++)
 		{
 			std::vector<oneTechnology> remainListT;
@@ -1013,16 +1209,19 @@ CjvxHostInteraction::unloadAllComponents()
 				}
 				else
 				{
-					// In all other cases, unload library and delete object
-					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.funcTerm(
-						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.hObject);
-					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.hObject = NULL;
-					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].theHandle_single = NULL;
-					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.funcInit = NULL;
-					_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.funcTerm = NULL;
-					if (!(JVX_EVALUATE_BITFIELD(_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.dllProps & JVX_BITFIELD_DLL_PROPERTY_DO_NOT_UNLOAD)))
+					if (_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.hObject)
 					{
-						JVX_UNLOADLIBRARY(_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.sharedObjectEntry);
+						// In all other cases, unload library and delete object
+						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.funcTerm(
+							_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.hObject);
+						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.hObject = NULL;
+						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].theHandle_single = NULL;
+						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.funcInit = NULL;
+						_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.funcTerm = NULL;
+						if (!(JVX_EVALUATE_BITFIELD(_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.dllProps & JVX_BITFIELD_DLL_PROPERTY_DO_NOT_UNLOAD)))
+						{
+							JVX_UNLOADLIBRARY(_common_set_types.registeredTechnologyTypes[i].technologyInstances.availableTechnologies[j].common.linkage.sharedObjectEntry);
+						}
 					}
 				}
 			}
@@ -1043,22 +1242,26 @@ CjvxHostInteraction::unloadAllComponents()
 		}
 		else
 		{
-			// In all other cases, unload library and delete object
-			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.funcTerm(
-				this->_common_set_host.otherComponents.availableOtherComponents[i].common.hObject);
-			this->_common_set_host.otherComponents.availableOtherComponents[i].common.hObject = NULL;
-			this->_common_set_host.otherComponents.availableOtherComponents[i].theObj_single = NULL;
-			this->_common_set_host.otherComponents.availableOtherComponents[i].theGlob_single = NULL;
-			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.funcInit = NULL;
-			this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.funcTerm = NULL;
-			if (!(JVX_EVALUATE_BITFIELD(this->_common_set_host.otherComponents.availableOtherComponents[i].common.dllProps & JVX_BITFIELD_DLL_PROPERTY_DO_NOT_UNLOAD)))
+			if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.hObject)
 			{
-				JVX_UNLOADLIBRARY(this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.sharedObjectEntry);
+				// In all other cases, unload library and delete object
+				this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.funcTerm(
+					this->_common_set_host.otherComponents.availableOtherComponents[i].common.hObject);
+				this->_common_set_host.otherComponents.availableOtherComponents[i].common.hObject = NULL;
+				this->_common_set_host.otherComponents.availableOtherComponents[i].theObj_single = NULL;
+				this->_common_set_host.otherComponents.availableOtherComponents[i].theGlob_single = NULL;
+				this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.funcInit = NULL;
+				this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.funcTerm = NULL;
+				if (!(JVX_EVALUATE_BITFIELD(this->_common_set_host.otherComponents.availableOtherComponents[i].common.dllProps & JVX_BITFIELD_DLL_PROPERTY_DO_NOT_UNLOAD)))
+				{
+					JVX_UNLOADLIBRARY(this->_common_set_host.otherComponents.availableOtherComponents[i].common.linkage.sharedObjectEntry);
+				}
 			}
 		}
 	}
 	this->_common_set_host.otherComponents.availableOtherComponents.clear();
 	this->_common_set_host.otherComponents.availableOtherComponents = remainListO;
+
 
 	_common_set_host.blacklist_load_use.clear();
 	return(JVX_NO_ERROR);
@@ -1224,7 +1427,7 @@ CjvxHostInteraction::_request_id_main_thread(JVX_THREAD_ID* thread_id)
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType 
+jvxErrorType
 CjvxHostInteraction::_report_boot_complete(jvxBool isComplete)
 {
 	_common_set_host.bootComplete = isComplete;

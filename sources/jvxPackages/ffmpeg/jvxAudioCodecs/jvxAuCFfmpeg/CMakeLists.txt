@@ -13,7 +13,9 @@ include_directories(
 
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
-  ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-ffmpeg-helpers/include
+
+  # ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-ffmpeg-helpers/include
+  ../../jvxLibraries/jvx-ffmpeg-helpers/include
 
     ${JVX_FFMPEG_INCLUDE_DIR}
   )
@@ -39,5 +41,6 @@ set(LOCAL_LIBS
 	jvx-ffmpeg-helpers_static)
 
 set(IS_JVX_COMPONENT TRUE)
+set(JVX_COMPONENT_ONLY_STATIC TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

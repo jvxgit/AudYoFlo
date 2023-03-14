@@ -88,6 +88,32 @@ CjvxHostInteraction::t_add_external_component(IjvxObject* theObj,
 }
 
 template <class T> void
+CjvxHostInteraction::t_pre_unload_dlls(std::vector<oneObjType<T>>& registeredObj)
+{
+	jvxSize i, j;
+	for (i = 0; i < registeredObj.size(); i++)
+	{
+		std::vector<oneObj<T>> remainListN;
+		for (j = 0; j < registeredObj[i].instances.availableEndpoints.size(); j++)
+		{
+			if (registeredObj[i].instances.availableEndpoints[j].common.linkage.packPtr)
+			{
+				registeredObj[i].instances.availableEndpoints[j].common.linkage.funcTerm(
+					registeredObj[i].instances.availableEndpoints[j].common.hObject);
+				registeredObj[i].instances.availableEndpoints[j].common.hObject = NULL;
+				registeredObj[i].instances.availableEndpoints[j].theHandle_single = NULL;
+
+				registeredObj[i].instances.availableEndpoints[j].common.linkage.packPtr->release_entries_component(
+					registeredObj[i].instances.availableEndpoints[j].common.linkage.packIdx);
+				registeredObj[i].instances.availableEndpoints[j].common.linkage.packPtr = nullptr;
+				registeredObj[i].instances.availableEndpoints[j].common.linkage.packIdx = JVX_SIZE_UNSELECTED;
+				registeredObj[i].instances.availableEndpoints[j].common.linkage.sharedObjectEntry = JVX_HMODULE_INVALID;
+			}
+		}
+	}
+}
+
+template <class T> void
 CjvxHostInteraction::t_unload_dlls(std::vector<oneObjType<T>>& registeredObj)
 {
 	jvxSize i,j;
@@ -103,16 +129,19 @@ CjvxHostInteraction::t_unload_dlls(std::vector<oneObjType<T>>& registeredObj)
 			}
 			else
 			{
-				// In all other cases, unload library and delete object
-				registeredObj[i].instances.availableEndpoints[j].common.linkage.funcTerm(
-					registeredObj[i].instances.availableEndpoints[j].common.hObject);
-				registeredObj[i].instances.availableEndpoints[j].common.hObject = NULL;
-				registeredObj[i].instances.availableEndpoints[j].theHandle_single = NULL;
-				registeredObj[i].instances.availableEndpoints[j].common.linkage.funcInit = NULL;
-				registeredObj[i].instances.availableEndpoints[j].common.linkage.funcTerm = NULL;
-				if (!(JVX_EVALUATE_BITFIELD(registeredObj[i].instances.availableEndpoints[j].common.dllProps & JVX_BITFIELD_DLL_PROPERTY_DO_NOT_UNLOAD)))
+				if (registeredObj[i].instances.availableEndpoints[j].common.hObject)
 				{
-					JVX_UNLOADLIBRARY(registeredObj[i].instances.availableEndpoints[j].common.linkage.sharedObjectEntry);
+					// In all other cases, unload library and delete object
+					registeredObj[i].instances.availableEndpoints[j].common.linkage.funcTerm(
+						registeredObj[i].instances.availableEndpoints[j].common.hObject);
+					registeredObj[i].instances.availableEndpoints[j].common.hObject = NULL;
+					registeredObj[i].instances.availableEndpoints[j].theHandle_single = NULL;
+					registeredObj[i].instances.availableEndpoints[j].common.linkage.funcInit = NULL;
+					registeredObj[i].instances.availableEndpoints[j].common.linkage.funcTerm = NULL;
+					if (!(JVX_EVALUATE_BITFIELD(registeredObj[i].instances.availableEndpoints[j].common.dllProps & JVX_BITFIELD_DLL_PROPERTY_DO_NOT_UNLOAD)))
+					{
+						JVX_UNLOADLIBRARY(registeredObj[i].instances.availableEndpoints[j].common.linkage.sharedObjectEntry);
+					}
 				}
 			}
 		}

@@ -112,6 +112,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "interfaces/IjvxGlobalInstance.h"
 #include "interfaces/IjvxSchedule.h"
 #include "interfaces/IjvxUniqueId.h"
+#include "interfaces/IjvxPackage.h"
 
 // Tool Interfaces
 #include "interfaces/tools/IjvxDataLogger.h"
