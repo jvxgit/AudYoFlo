@@ -44,7 +44,7 @@ CjvxAuCFfmpegAudioDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	
 	// Generate a fHeight entry in the data buffers
 	jvx_bitSet(_common_set_ldslave.theData_out.con_data.alloc_flags,
-		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO);
+		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 
 	CjvxAudioDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
@@ -136,7 +136,7 @@ CjvxAuCFfmpegAudioDecoder::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 	{
 		// Clear the buffer for fHeight information
 		jvx_bitClear(_common_set_ldslave.theData_out.con_data.alloc_flags,
-			(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO);
+			(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 	}
 	return res;
 }

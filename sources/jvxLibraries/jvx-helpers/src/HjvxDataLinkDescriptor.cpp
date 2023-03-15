@@ -315,7 +315,7 @@ jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateF
 		assert(theData->con_data.buffers);
 
 		if (jvx_bitTest(theData->con_data.alloc_flags,
-			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO))
+			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT))
 		{
 			assert(theData->con_data.fHeights == NULL);
 			JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.fHeights,

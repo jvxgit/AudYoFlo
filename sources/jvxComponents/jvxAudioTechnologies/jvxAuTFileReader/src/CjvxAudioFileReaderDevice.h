@@ -15,14 +15,6 @@ class CjvxAudioFileReaderDevice :
 {
 	friend class CjvxAudioFileReaderTechnology;
 
-	enum class jvxAudioFileReaderBufferStatus
-	{
-		JVX_BUFFER_STATUS_NONE,
-		JVX_BUFFER_STATUS_CHARGING,
-		JVX_BUFFER_STATUS_OPERATION,
-		JVX_BUFFER_STATUS_COMPLETE
-	};
-
 private:
 	
 	CjvxAudioFileReaderTechnology* parentTech = nullptr;
@@ -34,17 +26,8 @@ private:
 	jvxWavReader wavFileReader;
 	wav_params file_params;
 
-	jvxBool involve_read_thread = false;
-	jvxByte* preuse_buffer_ptr = nullptr;
-	jvxSize preuse_buffer_sz = 0;
-	jvxSize readposi = 0;
-	jvxSize fHeight = 0;
-	jvxSize readsize = 0;
-	jvxAudioFileReaderBufferStatus bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE;
-	JVX_MUTEX_HANDLE safeAccessBuffer;
-	refComp<IjvxThreads> refThreads;
 	JVX_MUTEX_HANDLE safeAccessRead;
-	
+
 public:
 	JVX_CALLINGCONVENTION CjvxAudioFileReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxAudioFileReaderDevice();
@@ -122,12 +105,10 @@ public:
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 	
 	void send_one_buffer();
-	void send_buffer_thread();
 	void send_buffer_direct();
 
 	// ===================================================================================
 	
-	void read_samples_to_buffer();
 	void reconfigure_bsize(jvxSize bsize);
 
 	// ===================================================================================

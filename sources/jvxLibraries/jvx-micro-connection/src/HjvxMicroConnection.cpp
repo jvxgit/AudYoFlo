@@ -941,6 +941,7 @@ HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffer
 	{
 		theData_inlnk->con_pipeline = _common_set_ldslave.theData_out.con_pipeline;
 		theData_inlnk->con_data.buffers = _common_set_ldslave.theData_out.con_data.buffers;
+		theData_inlnk->con_data.fHeights = _common_set_ldslave.theData_out.con_data.fHeights;
 	}
 
 	return res;

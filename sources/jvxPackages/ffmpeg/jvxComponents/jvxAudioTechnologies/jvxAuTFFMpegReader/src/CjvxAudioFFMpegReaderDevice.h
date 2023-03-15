@@ -25,27 +25,12 @@ class CjvxAudioFFMpegReaderDevice :
 {
 	friend class CjvxAudioFFMpegReaderTechnology;
 
-	enum class jvxAudioFileReaderBufferStatus
-	{
-		JVX_BUFFER_STATUS_NONE,
-		JVX_BUFFER_STATUS_CHARGING,
-		JVX_BUFFER_STATUS_OPERATION,
-		JVX_BUFFER_STATUS_COMPLETE
-	};
-
 private:
 	
 	CjvxAudioFFMpegReaderTechnology* parentTech = nullptr;
 
 	std::string last_error;
 	jvxApiString format_descriptor;
-
-	jvxByte* preuse_buffer_ptr = nullptr;
-	jvxSize preuse_buffer_sz = 0;
-	jvxSize readposi = 0;
-	jvxSize fHeight = 0;
-	jvxSize readsize = 0;
-	jvxAudioFileReaderBufferStatus bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE;
 	
 	processingState statusOutput = processingState::JVX_STATUS_READY;
 	struct jvxFfmpegFileParameter: public jvxFfmpegParameter

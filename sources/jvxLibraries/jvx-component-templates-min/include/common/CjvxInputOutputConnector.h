@@ -21,54 +21,55 @@ protected:
 
 	struct
 	{
-		IjvxDataProcessor* data_processor;
-		IjvxObject* object;
-		IjvxInputConnector* icon;
-		IjvxOutputConnector* ocon;
+		IjvxDataProcessor* data_processor = nullptr;
+		IjvxObject* object = nullptr;
+		IjvxInputConnector* icon = nullptr;
+		IjvxOutputConnector* ocon = nullptr;
 		std::string descriptor;
 
-		IjvxConnectorBridge* conn_in;
-		IjvxConnectorBridge* conn_out;
+		IjvxConnectorBridge* conn_in = nullptr;
+		IjvxConnectorBridge* conn_out = nullptr;
 
-		IjvxConnectorFactory* myParent;
+		IjvxConnectorFactory* myParent = nullptr;
 
 		jvxLinkDataDescriptor theData_out;
-		jvxLinkDataDescriptor* theData_in;
+		jvxLinkDataDescriptor* theData_in = nullptr;
 
-		IjvxConnectionMaster* theMaster;
+		IjvxConnectionMaster* theMaster = nullptr;
 
-		IjvxDataConnectionCommon* theCommon_to;
-		IjvxDataConnectionCommon* theCommon_from;
+		IjvxDataConnectionCommon* theCommon_to = nullptr;
+		IjvxDataConnectionCommon* theCommon_from = nullptr;
 
-		jvxBool detectLoop;
+		jvxBool detectLoop = false;
 
-		jvxSize num_min_buffers_in;
-		jvxSize num_min_buffers_out;
-		jvxSize num_additional_pipleline_stages;
-		jvxBool zeroCopyBuffering_cfg;
+		jvxSize num_min_buffers_in = 0;
+		jvxSize num_min_buffers_out = 0;
+		jvxSize num_additional_pipleline_stages = 0;
+		jvxBool zeroCopyBuffering_cfg = false;
+		jvxCBitField fwd_alloc_flags = JVX_LINKDATA_ALLOCATION_MASK_FORWARD_ELEMENT_TO_ELEMENT;
 
-		jvxSize myRuntimeId;
+		jvxSize myRuntimeId = JVX_SIZE_UNSELECTED;
 
-		jvxBool allows_termination;
-		jvxBool setup_for_termination;
+		jvxBool allows_termination = false;
+		jvxBool setup_for_termination = false;
 
 		// Copy the input timestamp to the output timestamp
-		jvxBool copy_timestamp_inout;
+		jvxBool copy_timestamp_inout = false;
 
 		struct
 		{
-			jvxDataFormatGroup format_group;
-			jvxDataflow data_flow;
+			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
 		} caps_in;
 
 		struct
 		{
-			jvxDataFormatGroup format_group;
-			jvxDataflow data_flow;
+			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
 		} caps_out;
 
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
-		const char* dbg_hint;
+		const char* dbg_hint = nullptr;
 #endif
 	} _common_set_ldslave;
 

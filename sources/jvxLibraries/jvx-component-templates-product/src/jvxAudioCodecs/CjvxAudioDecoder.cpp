@@ -284,6 +284,14 @@ CjvxAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxSize i;
 	jvxByte** bufsIn = jvx_process_icon_extract_input_buffers<jvxByte>(_common_set_ldslave.theData_in, idx_stage);
 	jvxData** bufsOutData = nullptr;
+	jvxSize idxBuf = JVX_CHECK_SIZE_UNSELECTED(idx_stage) ? *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr : idx_stage;
+	
+	jvxSize bSizeIn = _common_set_ldslave.theData_in->con_params.buffersize;
+	jvxSize bSizeOut = 0;
+	if (_common_set_ldslave.theData_in->con_data.fHeights)
+	{
+		bSizeIn = JVX_MIN(bSizeIn, _common_set_ldslave.theData_in->con_data.fHeights[idxBuf].x);
+	}
 
 	switch (_common_set_ldslave.theData_out.con_params.format)
 	{
@@ -296,28 +304,32 @@ CjvxAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				switch (params.resolution)
 				{
 				case audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_16BIT:
+					bSizeOut = bSizeIn / params.nchans / sizeof(jvxInt16);
+
 					jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, jvxData>(
 						(jvxInt16*)bufsIn[0],
 						(jvxData*)bufsOutData[i],
-						_common_set_ldslave.theData_out.con_params.buffersize,
+						bSizeOut,
 						JVX_MAX_INT_16_DIV,
 						i, params.nchans,
 						0, 1);
 					break;
 				case audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_24BIT:
+					bSizeOut = bSizeIn / params.nchans / (sizeof(jvxInt8)*3);
 					jvx_convertSamples_from_bytes_shift_norm_to_flp<jvxInt32, jvxData>(
 						(jvxByte*)bufsIn[0],
 						(jvxData*)bufsOutData[i],
-						_common_set_ldslave.theData_out.con_params.buffersize, 8,
+						bSizeOut, 8,
 						JVX_MAX_INT_32_DIV, 3,
 						i, params.nchans,
 						0, 1);
 					break;
 				case audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_32BIT:
+					bSizeOut = bSizeIn / params.nchans / sizeof(jvxInt32);
 					jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
 						(jvxInt32*)bufsIn[0],
 						(jvxData*)bufsOutData[i],
-						_common_set_ldslave.theData_out.con_params.buffersize,
+						bSizeOut,
 						JVX_MAX_INT_32_DIV,
 						i, params.nchans,
 						0, 1);
@@ -331,6 +343,7 @@ CjvxAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				switch (params.resolution)
 				{
 				case audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_32BIT:
+					bSizeOut = bSizeIn / params.nchans / sizeof(float);
 					jvx_convertSamples_from_float_to_data<float>(
 						(float*)bufsIn[0],
 						(jvxData*)bufsOutData[i],
@@ -339,6 +352,7 @@ CjvxAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 						0, 1);
 					break;
 				case audio_codec_wav_resolution::AUDIO_CODEC_WAV_RESOLUTION_64BIT:
+					bSizeOut = bSizeIn / params.nchans / sizeof(double);
 					jvx_convertSamples_from_to<jvxData>(
 						(jvxData*)bufsIn[0],
 						(jvxData*)bufsOutData[i],
@@ -568,6 +582,12 @@ CjvxAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	default:
 		assert(0);
 	} // switch (_common_set_ldslave.theData_out.con_params.format)
+
+	// Pass forward variable buffersize - een if it is constant
+	if (_common_set_ldslave.theData_out.con_data.fHeights)
+	{
+		_common_set_ldslave.theData_out.con_data.fHeights[*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr].x = bSizeOut;
+	}
 
 	return _process_buffers_icon(mt_mask, idx_stage);
 }

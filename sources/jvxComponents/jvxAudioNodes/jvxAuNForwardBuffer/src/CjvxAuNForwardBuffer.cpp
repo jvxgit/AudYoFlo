@@ -297,7 +297,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			// Output format
 			// Variable segment sizes do end here!!
 			jvx_bitClear(_common_set_ldslave.theData_out.con_data.alloc_flags,
-				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO);
+				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 			_common_set_ldslave.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
 
 			// Have to review this lateron, currently: no timestamp

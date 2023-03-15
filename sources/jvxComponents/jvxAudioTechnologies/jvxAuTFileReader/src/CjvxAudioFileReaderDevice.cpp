@@ -13,7 +13,6 @@ CjvxAudioFileReaderDevice::CjvxAudioFileReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_M
 	//_config.reportMissedCallbacks = false;
 
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
-	JVX_INITIALIZE_MUTEX(safeAccessBuffer);
 	JVX_INITIALIZE_MUTEX(safeAccessRead);
 	reset_props();
 }
@@ -21,7 +20,6 @@ CjvxAudioFileReaderDevice::CjvxAudioFileReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_M
 
 CjvxAudioFileReaderDevice::~CjvxAudioFileReaderDevice()
 {
-	JVX_TERMINATE_MUTEX(safeAccessBuffer);
 	JVX_TERMINATE_MUTEX(safeAccessRead);
 }
 
@@ -268,12 +266,6 @@ CjvxAudioFileReaderDevice::activate()
 		CjvxAudioDevice::properties_active.sourceName.value = jvx_shortenStringName(32, fname);
 		// ==============================================================================
 		// 
-		// Obtain the thread handle here
-		refThreads = reqInstTool<IjvxThreads>(
-			_common_set.theToolsHost,
-			JVX_COMPONENT_THREADS);
-		assert(refThreads.cpPtr);
-
 		wavFileReader.set_loop(genFileReader_device::config.loop.value == c_true);
 
     }
@@ -286,11 +278,6 @@ CjvxAudioFileReaderDevice::deactivate()
 	jvxErrorType res = _pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
-		retInstTool<IjvxThreads>(
-			_common_set.theToolsHost,
-			JVX_COMPONENT_THREADS,
-			refThreads);
-
 		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.outputchannelselection);
 		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.inputchannelselection);
 		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.samplerate);
@@ -423,6 +410,9 @@ CjvxAudioFileReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	jvx_bitZSet(_common_set_ldslave.theData_out.con_data.alloc_flags, 
 		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 
+	jvx_bitSet(_common_set_ldslave.theData_out.con_data.alloc_flags,
+		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
+
 	// New type of connection by propagating through linked elements
     res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
@@ -457,24 +447,10 @@ CjvxAudioFileReaderDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resL;
 
-	if (involve_read_thread)
-	{
-
-		resL = refThreads.cpPtr->terminate();
-		assert(resL == JVX_NO_ERROR);
-	}
 
 	// Stop the reader
 	wavFileReader.stop();
 	wavFileReader.postprocess();
-
-	if (involve_read_thread)
-	{
-		JVX_DSP_SAFE_DELETE_FIELD(preuse_buffer_ptr);
-		preuse_buffer_sz = 0;
-		readposi = 0;
-		fHeight = 0;
-	}
 
 	_postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	assert(res == JVX_NO_ERROR);
@@ -504,12 +480,6 @@ CjvxAudioFileReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	// Start core function
 
-	if (involve_read_thread)
-	{
-		resL = refThreads.cpPtr->start();
-		assert(resL == JVX_NO_ERROR);
-	}
-
 	if (res != JVX_NO_ERROR)
 	{
 	    _stop_chain_master(NULL);
@@ -526,13 +496,6 @@ CjvxAudioFileReaderDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resL;
-
-	// Core stop function here
-	if (involve_read_thread)
-	{
-		resL = refThreads.cpPtr->stop(1000);
-		assert(resL == JVX_NO_ERROR);
-	}
 
 	res = _stop_chain_master(NULL);
 	assert(res == JVX_NO_ERROR);
@@ -665,14 +628,7 @@ CjvxAudioFileReaderDevice::send_one_buffer()
 		res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
 		if (res == JVX_NO_ERROR)
 		{
-			if (involve_read_thread)
-			{
-				send_buffer_thread();
-			}
-			else
-			{
-				send_buffer_direct();
-			}
+			send_buffer_direct();
 
 			_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
 			_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
@@ -687,85 +643,6 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioWindowsDevice, set_new_r
 */
 
 void
-CjvxAudioFileReaderDevice::send_buffer_thread()
-{
-	// Copy the content into the buffers
-	jvxSize bufIdx = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-	jvxBool requires_new_data = false;
-	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(
-		&_common_set_ldslave.theData_out);
-	if (bufsOut)
-	{
-		JVX_TRY_LOCK_MUTEX_RESULT_TYPE resLock = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
-		JVX_TRY_LOCK_MUTEX(resLock, safeAccessRead);
-		if (resLock == JVX_TRY_LOCK_MUTEX_SUCCESS)
-		{
-			if (
-				(bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_OPERATION) ||
-				(bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_COMPLETE))
-			{
-				jvxSize copymax = _common_set_ldslave.theData_out.con_params.buffersize;
-				jvxByte* ptr_to = (jvxByte*)bufsOut[0];
-
-				// Here it is only a read to the fHeight, therefore no lock
-				while (copymax && fHeight)
-				{
-					jvxSize l1 = JVX_MIN(copymax, (preuse_buffer_sz - readposi));
-					l1 = JVX_MIN(l1, fHeight);
-					jvxByte* ptr_from = preuse_buffer_ptr + readposi; // <- read only access, readposi only in use by this function, not in parallel thread
-					memcpy(ptr_to, ptr_from, l1);
-					ptr_to += l1;
-					copymax -= l1;
-
-					// readposi and fHeight must be consistent, therefore we must lock
-					JVX_LOCK_MUTEX(safeAccessBuffer);
-					readposi = (readposi + l1) % preuse_buffer_sz;
-					fHeight -= l1;
-					JVX_UNLOCK_MUTEX(safeAccessBuffer);
-					requires_new_data = true;
-				}
-				assert(0);
-				/*
-				_common_set_ldslave.theData_out.con_params.fHeight_x =
-					_common_set_ldslave.theData_out.con_params.buffersize - copymax;
-					*/
-				if (fHeight == 0)
-				{
-					// From operation we may either switch to CHARGING or to COMPLETE in different threads
-					// Therefore a lock is required
-					JVX_LOCK_MUTEX(safeAccessBuffer);
-					if (bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_OPERATION)
-					{
-						genFileReader_device::monitor.num_lost.value++;
-						bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_CHARGING;
-					}
-					JVX_UNLOCK_MUTEX(safeAccessBuffer);
-				}
-
-				if (requires_new_data)
-				{
-					refThreads.cpPtr->trigger_wakeup();
-				}
-			}
-			else
-			{
-				// e.g. if bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE
-				genFileReader_device::monitor.num_lost.value++;
-				assert(0);
-				//_common_set_ldslave.theData_out.con_params.fHeight_x = 0;
-			}
-			JVX_UNLOCK_MUTEX(safeAccessRead);
-		}
-		else
-		{
-			// If we could not acquire the look, send zero data
-			assert(0);
-			//_common_set_ldslave.theData_out.con_params.fHeight_x = 0;
-		}
-	}
-}
-
-void
 CjvxAudioFileReaderDevice::send_buffer_direct()
 {
 	jvxSize bufIdx = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
@@ -778,84 +655,21 @@ CjvxAudioFileReaderDevice::send_buffer_direct()
 		jvxByte* ptr_to = (jvxByte*)bufsOut[0];
 		jvxSize numcopy = copymax;
 		jvxSize num_copied = 0;
-		jvxErrorType resRead = wavFileReader.read_one_buf_raw(ptr_to, numcopy, &num_copied);
-		assert(0);
-		// _common_set_ldslave.theData_out.con_params.fHeight_x = num_copied;
 
+		// We should prevent to rewind while we are reading!
+		JVX_LOCK_MUTEX(safeAccessRead);
+		jvxErrorType resRead = wavFileReader.read_one_buf_raw(ptr_to, numcopy, &num_copied);
+		JVX_UNLOCK_MUTEX(safeAccessRead);
+		assert(_common_set_ldslave.theData_out.con_data.fHeights);
+		_common_set_ldslave.theData_out.con_data.fHeights[bufIdx].x = num_copied;
+		
 		jvxSize progress = 0;
 		wavFileReader.current_progress(&progress);
 		genFileReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)l_samples * 100.0);
 	}
 }
 
-void
-CjvxAudioFileReaderDevice::read_samples_to_buffer()
-{
-	jvxSize readposil = 0;
-	jvxSize fheightl = 0;
-	jvxBool stayInLoop = true;
 
-	while (stayInLoop)
-	{
-		if (bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_COMPLETE)
-		{
-			break;
-		}
-
-		// This must be put into a lock in case we trigger a rewind
-		JVX_LOCK_MUTEX(safeAccessRead);
-
-		// Get a buffer status update
-		JVX_LOCK_MUTEX(safeAccessBuffer);
-		readposil = readposi;
-		fheightl = fHeight;
-		JVX_UNLOCK_MUTEX(safeAccessBuffer);
-
-		jvxSize szbuffer = preuse_buffer_sz - fheightl;
-		if (szbuffer == 0)
-		{
-			stayInLoop = false;
-		}
-		else
-		{
-			jvxSize writeposi = (readposil + fHeight) % preuse_buffer_sz;
-			jvxSize sztoend = preuse_buffer_sz - writeposi;
-			jvxSize numcopy = JVX_MIN(sztoend, szbuffer);
-			jvxSize num_copied = 0;
-			numcopy = JVX_MIN(numcopy, readsize);
-			jvxByte* ptrread = preuse_buffer_ptr + writeposi;
-
-			jvxErrorType resRead = wavFileReader.read_one_buf_raw(ptrread, numcopy, &num_copied);
-
-			JVX_LOCK_MUTEX(safeAccessBuffer);
-			fHeight += num_copied;
-			switch (bufstatus)
-			{
-			case jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE:
-				bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_CHARGING;
-				// No break here to fall through
-
-			case jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_CHARGING:
-
-				if (fHeight > preuse_buffer_sz / 2)
-				{
-					bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_OPERATION;
-				}
-				break;
-			}
-			if (resRead != JVX_NO_ERROR)
-			{
-				bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_COMPLETE;
-			}
-			JVX_UNLOCK_MUTEX(safeAccessBuffer);
-		}
-		JVX_UNLOCK_MUTEX(safeAccessRead);
-
-	}
-	jvxSize progress = 0;
-	wavFileReader.current_progress(&progress);
-	genFileReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)l_samples * 100.0);
-}
 
 void
 CjvxAudioFileReaderDevice::reconfigure_bsize(jvxSize bsize)
@@ -882,12 +696,8 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFileReaderDevice, trigge
 		if (genFileReader_device::command.restart.value)
 		{
 			JVX_LOCK_MUTEX(safeAccessRead);
-			wavFileReader.rewind();
-			readposi = 0;
-			fHeight = 0;
-			bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE;
+			wavFileReader.rewind();			
 			JVX_UNLOCK_MUTEX(safeAccessRead);
-			refThreads.cpPtr->trigger_wakeup();
 		}
 		genFileReader_device::command.restart.value = false;
 	}

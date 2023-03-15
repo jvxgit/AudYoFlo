@@ -208,6 +208,11 @@ virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_F
 		_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
 		_common_set_ldslave.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
 		_common_set_ldslave.theData_out.con_sync.type_timestamp = _common_set_ldslave.theData_in->con_sync.type_timestamp;
+
+		// Forward the "forward allocation flags" - JVX_LINKDATA_ALLOCATION_MASK_FORWARD_ELEMENT_TO_ELEMENT is declared in TjvxDataLinkDescriptor.h
+		// We can input additional flags by setting _common_set_ldslave.theData_out.con_data.alloc_flags in advance
+		_common_set_ldslave.theData_out.con_data.alloc_flags |= (_common_set_ldslave.theData_in->con_data.alloc_flags & _common_set_ldslave.fwd_alloc_flags);
+
 		res = _prepare_connect_icon(forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 // ################################################################
