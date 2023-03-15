@@ -615,8 +615,8 @@ JVX_ASYNCIO_CLASSNAME::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_ou
 			theData_out->con_params.rate = genSPAsyncio_node::secondary_async.node.samplerate.value;
 			theData_out->con_params.format = (jvxDataFormat)genSPAsyncio_node::secondary_async.node.format.value;
 			theData_out->con_params.number_channels = genSPAsyncio_node::secondary_async.node.numberoutputchannels.value;
-			theData_out->con_params.segmentation_x = genSPAsyncio_node::secondary_async.node.segmentsize_x.value;
-			theData_out->con_params.segmentation_y = genSPAsyncio_node::secondary_async.node.segmentsize_y.value;
+			theData_out->con_params.segmentation.x = genSPAsyncio_node::secondary_async.node.segmentsize_x.value;
+			theData_out->con_params.segmentation.y = genSPAsyncio_node::secondary_async.node.segmentsize_y.value;
 			theData_out->con_params.format_group = (jvxDataFormatGroup)genSPAsyncio_node::secondary_async.node.subformat.value;
 			
 			// Push all old values
@@ -640,8 +640,8 @@ JVX_ASYNCIO_CLASSNAME::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_ou
 				genSPAsyncio_node::secondary_async.node.samplerate.value = theData_out->con_params.rate;
 				genSPAsyncio_node::secondary_async.node.format.value = (jvxInt16)theData_out->con_params.format;
 				genSPAsyncio_node::secondary_async.node.subformat.value = (jvxInt16)theData_out->con_params.format_group;
-				genSPAsyncio_node::secondary_async.node.segmentsize_x.value = theData_out->con_params.segmentation_x;
-				genSPAsyncio_node::secondary_async.node.segmentsize_y.value = theData_out->con_params.segmentation_y;
+				genSPAsyncio_node::secondary_async.node.segmentsize_x.value = theData_out->con_params.segmentation.x;
+				genSPAsyncio_node::secondary_async.node.segmentsize_y.value = theData_out->con_params.segmentation.y;
 
 				// Now, update current constraints
 				switch (auto_mode)

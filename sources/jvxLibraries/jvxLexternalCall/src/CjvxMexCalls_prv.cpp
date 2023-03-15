@@ -268,9 +268,9 @@ CjvxMexCalls_prv::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* the
 	runtime.descrInUse.con_compat.rate =
 		runtime.descrOutUse.con_params.rate;
 	runtime.descrInUse.con_compat.ext.segmentation_x =
-		runtime.descrOutUse.con_params.segmentation_x;
+		runtime.descrOutUse.con_params.segmentation.x;
 	runtime.descrInUse.con_compat.ext.segmentation_y =
-		runtime.descrOutUse.con_params.segmentation_y;
+		runtime.descrOutUse.con_params.segmentation.y;
 	runtime.descrInUse.con_compat.ext.subformat =
 		runtime.descrOutUse.con_params.format_group;
 	runtime.descrInUse.con_compat.ext.hints =

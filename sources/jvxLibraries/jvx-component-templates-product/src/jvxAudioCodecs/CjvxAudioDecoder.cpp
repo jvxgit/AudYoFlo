@@ -226,8 +226,8 @@ CjvxAudioDecoder::test_set_output_parameters()
 	_common_set_ldslave.theData_out.con_params.buffersize = CjvxAudioCodec_genpcg::general.buffersize.value;
 	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 	_common_set_ldslave.theData_out.con_params.data_flow = _common_set_ldslave.theData_in->con_params.data_flow;
-	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
+	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
+	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
 }
 
 /*
@@ -602,7 +602,7 @@ CjvxAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 
 						// 
 						_common_set_ldslave.theData_out.con_params.buffersize = params.bsize;
-						_common_set_ldslave.theData_out.con_params.segmentation_x = params.bsize;
+						_common_set_ldslave.theData_out.con_params.segmentation.x = params.bsize;
 						CjvxAudioCodec_genpcg::general.buffersize.value = params.bsize;
 					}
 				}

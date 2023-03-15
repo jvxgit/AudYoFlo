@@ -300,8 +300,8 @@ CjvxNodeBase1io::update_simple_params_from_neg_on_test()
 		(node_inout._common_set_node_params_a_1io.samplerate != JVX_SIZE_INT32(neg_input._latest_results.rate)) ||
 		(node_inout._common_set_node_params_a_1io.format != JVX_SIZE_INT32(neg_input._latest_results.format)) ||
 		(node_inout._common_set_node_params_a_1io.subformat != JVX_SIZE_INT32(neg_input._latest_results.format_group)) ||
-		(node_inout._common_set_node_params_a_1io.segmentation.x != JVX_SIZE_INT32(neg_input._latest_results.segmentation_x)) ||
-		(node_inout._common_set_node_params_a_1io.segmentation.y != JVX_SIZE_INT32(neg_input._latest_results.segmentation_y)) ||
+		(node_inout._common_set_node_params_a_1io.segmentation.x != JVX_SIZE_INT32(neg_input._latest_results.segmentation.x)) ||
+		(node_inout._common_set_node_params_a_1io.segmentation.y != JVX_SIZE_INT32(neg_input._latest_results.segmentation.y)) ||
 		(node_inout._common_set_node_params_a_1io.data_flow != JVX_SIZE_INT32(neg_input._latest_results.data_flow)))
 	{
 		newParamsOnTestInput = true;
@@ -312,8 +312,8 @@ CjvxNodeBase1io::update_simple_params_from_neg_on_test()
 		node_inout._common_set_node_params_a_1io.samplerate = JVX_SIZE_INT32(neg_input._latest_results.rate);
 		node_inout._common_set_node_params_a_1io.format = JVX_SIZE_INT32(neg_input._latest_results.format);
 		node_inout._common_set_node_params_a_1io.subformat = JVX_SIZE_INT32(neg_input._latest_results.format_group);
-		node_inout._common_set_node_params_a_1io.segmentation.x = JVX_SIZE_INT32(neg_input._latest_results.segmentation_x);
-		node_inout._common_set_node_params_a_1io.segmentation.y = JVX_SIZE_INT32(neg_input._latest_results.segmentation_y);
+		node_inout._common_set_node_params_a_1io.segmentation.x = JVX_SIZE_INT32(neg_input._latest_results.segmentation.x);
+		node_inout._common_set_node_params_a_1io.segmentation.y = JVX_SIZE_INT32(neg_input._latest_results.segmentation.y);
 		node_inout._common_set_node_params_a_1io.data_flow = JVX_SIZE_INT32(neg_input._latest_results.data_flow);
 	}
 }
@@ -326,8 +326,8 @@ CjvxNodeBase1io::update_simple_params_from_ldesc()
 	node_inout._common_set_node_params_a_1io.number_channels = _common_set_ldslave.theData_in->con_params.number_channels;
 	node_inout._common_set_node_params_a_1io.format = _common_set_ldslave.theData_in->con_params.format;
 	node_inout._common_set_node_params_a_1io.subformat = _common_set_ldslave.theData_in->con_params.format_group;
-	node_inout._common_set_node_params_a_1io.segmentation.x = _common_set_ldslave.theData_in->con_params.segmentation_x;
-	node_inout._common_set_node_params_a_1io.segmentation.y = _common_set_ldslave.theData_in->con_params.segmentation_y;
+	node_inout._common_set_node_params_a_1io.segmentation.x = _common_set_ldslave.theData_in->con_params.segmentation.x;
+	node_inout._common_set_node_params_a_1io.segmentation.y = _common_set_ldslave.theData_in->con_params.segmentation.y;
 	node_inout._common_set_node_params_a_1io.data_flow = _common_set_ldslave.theData_in->con_params.data_flow;
 	node_inout._common_set_node_params_a_1io.format_spec = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
 }
@@ -340,8 +340,8 @@ CjvxNodeBase1io::update_ldesc_from_input_params_on_test()
 	_common_set_ldslave.theData_out.con_params.rate = node_inout._common_set_node_params_a_1io.samplerate;
 	_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)node_inout._common_set_node_params_a_1io.format;
 	_common_set_ldslave.theData_out.con_params.format_group = (jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat;
-	_common_set_ldslave.theData_out.con_params.segmentation_x = node_inout._common_set_node_params_a_1io.segmentation.x;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = node_inout._common_set_node_params_a_1io.segmentation.y;
+	_common_set_ldslave.theData_out.con_params.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
+	_common_set_ldslave.theData_out.con_params.segmentation.y = node_inout._common_set_node_params_a_1io.segmentation.y;
 	_common_set_ldslave.theData_out.con_params.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
 	_common_set_ldslave.theData_out.con_params.data_flow = (jvxDataflow)node_inout._common_set_node_params_a_1io.data_flow;
 }
@@ -367,13 +367,13 @@ CjvxNodeBase1io::constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg
 	JVX_MIN_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ldslave.theData_out.con_params.number_channels);
 	// ===================================================================
 
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation_x);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation_x);
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation.x);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation.x);
 
 	// ===================================================================
 
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation_y);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation_y);
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation.y);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation.y);
 
 	// ===================================================================
 	// Prefer min format

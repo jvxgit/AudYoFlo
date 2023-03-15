@@ -211,7 +211,7 @@ CjvxSignalProcessingDeviceSocket::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE
 	outputParams.number_channels = JVX_SIZE_UNSELECTED; // Any number of channels
 	outputParams.format = JVX_DATAFORMAT_NONE; // Any 
 	outputParams.format_group = JVX_DATAFORMAT_GROUP_NONE; // Any subformat
-	outputParams.segmentation_x = outputParams.buffersize;
+	outputParams.segmentation.x = outputParams.buffersize;
 
 	outputParams.rate =
 		CjvxFullMasterDevice::CjvxFullMasterDevice_genpcg::proc_params.srate.value; // Should be of the same rate
@@ -220,7 +220,7 @@ CjvxSignalProcessingDeviceSocket::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE
 	inputParams.number_channels = 0; // Any number of channels
 	inputParams.format = JVX_DATAFORMAT_NONE; // Any 
 	inputParams.format_group = JVX_DATAFORMAT_GROUP_NONE; // Any subformat
-	inputParams.segmentation_x = inputParams.buffersize;
+	inputParams.segmentation.x = inputParams.buffersize;
 	inputParams.rate = outputParams.rate;
 
 	res = CjvxFullMasterDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));

@@ -187,8 +187,8 @@ CjvxBareNtask::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_out,
 			theData_out->con_params.rate = CjvxNode_genpcg::node.samplerate.value;
 			theData_out->con_params.format = (jvxDataFormat)CjvxNode_genpcg::node.format.value;
 			theData_out->con_params.number_channels = CjvxNode_genpcg::node.numberoutputchannels.value;
-			theData_out->con_params.segmentation_x = CjvxNode_genpcg::node.segmentsize_x.value;
-			theData_out->con_params.segmentation_y = CjvxNode_genpcg::node.segmentsize_y.value;
+			theData_out->con_params.segmentation.x = CjvxNode_genpcg::node.segmentsize_x.value;
+			theData_out->con_params.segmentation.y = CjvxNode_genpcg::node.segmentsize_y.value;
 			theData_out->con_params.format_group = (jvxDataFormatGroup)CjvxNode_genpcg::node.subformat.value;
 			res = refto->test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			if (res == JVX_NO_ERROR)
@@ -197,8 +197,8 @@ CjvxBareNtask::test_connect_ocon_ntask(jvxLinkDataDescriptor* theData_out,
 				CjvxNode_genpcg::node.samplerate.value = theData_out->con_params.rate;
 				CjvxNode_genpcg::node.format.value = (jvxInt16)theData_out->con_params.format;
 				CjvxNode_genpcg::node.numberoutputchannels.value = theData_out->con_params.number_channels;
-				CjvxNode_genpcg::node.segmentsize_x.value = theData_out->con_params.segmentation_x;
-				CjvxNode_genpcg::node.segmentsize_y.value = theData_out->con_params.segmentation_y;
+				CjvxNode_genpcg::node.segmentsize_x.value = theData_out->con_params.segmentation.x;
+				CjvxNode_genpcg::node.segmentsize_y.value = theData_out->con_params.segmentation.y;
 				CjvxNode_genpcg::node.subformat.value = theData_out->con_params.format_group;
 			}
 		}
@@ -230,8 +230,8 @@ CjvxBareNtask::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLin
 			CjvxNode_genpcg::node.format.value = neg_primary_input._latest_results.format;
 			CjvxNode_genpcg::node.numberinputchannels.value = neg_primary_input._latest_results.number_channels;
 			CjvxNode_genpcg::node.subformat.value = neg_primary_input._latest_results.format_group;
-			CjvxNode_genpcg::node.segmentsize_x.value = neg_primary_input._latest_results.segmentation_x;
-			CjvxNode_genpcg::node.segmentsize_y.value = neg_primary_input._latest_results.segmentation_y;
+			CjvxNode_genpcg::node.segmentsize_x.value = neg_primary_input._latest_results.segmentation.x;
+			CjvxNode_genpcg::node.segmentsize_y.value = neg_primary_input._latest_results.segmentation.y;
 
 			if (refto)
 			{
@@ -260,8 +260,8 @@ CjvxBareNtask::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLin
 					assert(CjvxNode_genpcg::node.samplerate.value == JVX_SIZE_INT32(theData_out->con_params.rate));
 					assert(CjvxNode_genpcg::node.format.value == JVX_SIZE_INT16(theData_out->con_params.format));
 					assert(CjvxNode_genpcg::node.subformat.value == JVX_SIZE_INT16(theData_out->con_params.format_group));
-					assert(CjvxNode_genpcg::node.segmentsize_x.value == JVX_SIZE_INT32(theData_out->con_params.segmentation_x));
-					assert(CjvxNode_genpcg::node.segmentsize_y.value == JVX_SIZE_INT32(theData_out->con_params.segmentation_y));
+					assert(CjvxNode_genpcg::node.segmentsize_x.value == JVX_SIZE_INT32(theData_out->con_params.segmentation.x));
+					assert(CjvxNode_genpcg::node.segmentsize_y.value == JVX_SIZE_INT32(theData_out->con_params.segmentation.y));
 				}
 			}
 		}

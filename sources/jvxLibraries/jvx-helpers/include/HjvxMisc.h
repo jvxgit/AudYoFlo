@@ -1310,8 +1310,8 @@ public:
 					(node_params->allowedSetup[i].number_input_channels == theData_in->con_params.number_channels) &&
 					(node_params->allowedSetup[i].subformat == theData_in->con_params.format_group) &&
 					(node_params->allowedSetup[i].dataflow == theData_in->con_params.data_flow) &&
-					(node_params->allowedSetup[i].dimX == theData_in->con_params.segmentation_x) &&
-					(node_params->allowedSetup[i].dimY == theData_in->con_params.segmentation_y))
+					(node_params->allowedSetup[i].dimX == theData_in->con_params.segmentation.x) &&
+					(node_params->allowedSetup[i].dimY == theData_in->con_params.segmentation.y))
 				{
 					thereismismatch = false;
 					set->numberoutputchannels = node_params->allowedSetup[i].number_output_channels;
@@ -1324,8 +1324,8 @@ public:
 				ld_cp.con_params.rate = node_params->allowedSetup[i].samplerate;
 				ld_cp.con_params.format = node_params->allowedSetup[i].format;
 				ld_cp.con_params.number_channels = node_params->allowedSetup[i].number_input_channels;
-				ld_cp.con_params.segmentation_x = node_params->allowedSetup[i].dimX;
-				ld_cp.con_params.segmentation_y = node_params->allowedSetup[i].dimY;
+				ld_cp.con_params.segmentation.x = node_params->allowedSetup[i].dimX;
+				ld_cp.con_params.segmentation.y = node_params->allowedSetup[i].dimY;
 				ld_cp.con_params.format_group = node_params->allowedSetup[i].subformat;
 				ld_cp.con_params.data_flow = node_params->allowedSetup[i].dataflow;
 				resComplain = theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_cp 
@@ -1339,8 +1339,8 @@ public:
 			ld_cp.con_params.format = theData_in->con_params.format;
 			ld_cp.con_params.number_channels = theData_in->con_params.number_channels;
 
-			ld_cp.con_params.segmentation_x = theData_in->con_params.segmentation_x;
-			ld_cp.con_params.segmentation_y = theData_in->con_params.segmentation_y;
+			ld_cp.con_params.segmentation.x = theData_in->con_params.segmentation.x;
+			ld_cp.con_params.segmentation.y = theData_in->con_params.segmentation.y;
 			ld_cp.con_params.format_group = theData_in->con_params.format_group;
 			ld_cp.con_params.data_flow = theData_in->con_params.data_flow;
 			ld_cp.con_params.hints = theData_in->con_params.hints;
@@ -1415,35 +1415,35 @@ public:
 
 			if (JVX_CHECK_SIZE_SELECTED(node_params->preferred.dimX.min))
 			{
-				if (theData_in->con_params.segmentation_x < node_params->preferred.dimX.min)
+				if (theData_in->con_params.segmentation.x < node_params->preferred.dimX.min)
 				{
 					thereismismatch = true;
-					ld_cp.con_params.segmentation_x = node_params->preferred.dimX.min;
+					ld_cp.con_params.segmentation.x = node_params->preferred.dimX.min;
 				}
 			}
 			if (JVX_CHECK_SIZE_SELECTED(node_params->preferred.dimX.max))
 			{
-				if (theData_in->con_params.segmentation_x > node_params->preferred.dimX.max)
+				if (theData_in->con_params.segmentation.x > node_params->preferred.dimX.max)
 				{
 					thereismismatch = true;
-					ld_cp.con_params.segmentation_x = node_params->preferred.dimX.max;
+					ld_cp.con_params.segmentation.x = node_params->preferred.dimX.max;
 				}
 			}
 
 			if (JVX_CHECK_SIZE_SELECTED(node_params->preferred.dimY.min))
 			{
-				if (theData_in->con_params.segmentation_y < node_params->preferred.dimY.min)
+				if (theData_in->con_params.segmentation.y < node_params->preferred.dimY.min)
 				{
 					thereismismatch = true;
-					ld_cp.con_params.segmentation_y = node_params->preferred.dimY.min;
+					ld_cp.con_params.segmentation.y = node_params->preferred.dimY.min;
 				}
 			}
 			if (JVX_CHECK_SIZE_SELECTED(node_params->preferred.dimY.max))
 			{
-				if (theData_in->con_params.segmentation_y > node_params->preferred.dimY.max)
+				if (theData_in->con_params.segmentation.y > node_params->preferred.dimY.max)
 				{
 					thereismismatch = true;
-					ld_cp.con_params.segmentation_y = node_params->preferred.dimY.max;
+					ld_cp.con_params.segmentation.y = node_params->preferred.dimY.max;
 				}
 			}
 
@@ -1479,8 +1479,8 @@ public:
 			set->samplerate = (theData_in->con_params.rate);
 			set->numberinputchannels = (theData_in->con_params.number_channels);
 			set->format = theData_in->con_params.format;
-			set->segmentsize_x = (theData_in->con_params.segmentation_x);
-			set->segmentsize_y = (theData_in->con_params.segmentation_y);
+			set->segmentsize_x = (theData_in->con_params.segmentation.x);
+			set->segmentsize_y = (theData_in->con_params.segmentation.y);
 			set->subformat = theData_in->con_params.format_group;
 			set->data_flow = theData_in->con_params.data_flow;
 			if(refto)

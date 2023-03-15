@@ -135,7 +135,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 			if (datOut)
 			{
 				datOut->con_params.buffersize = bsize;
-				datOut->con_params.segmentation_x = bsize;
+				datOut->con_params.segmentation.x = bsize;
 			}
 		}
 	}
@@ -154,7 +154,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 			SET_OTHER(res, preferred, dimX, segment_x);
 			if (datOut)
 			{
-				datOut->con_params.segmentation_x = segment_x;
+				datOut->con_params.segmentation.x = segment_x;
 			}
 		}
 	}
@@ -178,7 +178,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 			SET_OTHER(res, preferred, dimY, segment_y);
 			if (datOut)
 			{
-				datOut->con_params.segmentation_y = segment_y;
+				datOut->con_params.segmentation.y = segment_y;
 			}
 		}
 	}
@@ -287,8 +287,8 @@ jvxErrorType
 CjvxNegotiate_common::derive(jvxLinkDataDescriptor_con_params* params)
 {
 	SET_DEFAULT_PARAM_SIZE(params, preferred, buffersize, buffersize, 1024);
-	params->segmentation_x = params->buffersize;
-	params->segmentation_y = 1;
+	params->segmentation.x = params->buffersize;
+	params->segmentation.y = 1;
 	
 	SET_DEFAULT_PARAM_SIZE(params, preferred, rate, samplerate, 48000);
 	SET_DEFAULT_PARAM_SIZE(params, preferred, number_channels, number_channels, 1);
@@ -349,21 +349,21 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 
 	if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
-		if ((ld->con_params.segmentation_y != 1) ||
-			(ld->con_params.segmentation_x != ld->con_params.buffersize))
+		if ((ld->con_params.segmentation.y != 1) ||
+			(ld->con_params.segmentation.x != ld->con_params.buffersize))
 		{
 			std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
-			std::cout << " Seg X: " << ld->con_params.segmentation_x << " vs " << ld->con_params.buffersize << "." << std::endl;
-			std::cout << " Seg Y: " << ld->con_params.segmentation_y << " vs 1." << std::endl;
+			std::cout << " Seg X: " << ld->con_params.segmentation.x << " vs " << ld->con_params.buffersize << "." << std::endl;
+			std::cout << " Seg Y: " << ld->con_params.segmentation.y << " vs 1." << std::endl;
 		}
 	}
 	else
 	{
-		if ((ld->con_params.segmentation_y * ld->con_params.segmentation_x) != ld->con_params.buffersize)
+		if ((ld->con_params.segmentation.y * ld->con_params.segmentation.x) != ld->con_params.buffersize)
 		{
 			std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
-			std::cout << " Seg X x Seg Y = " << ld->con_params.segmentation_x << " X " <<
-				ld->con_params.segmentation_x << " = " << ld->con_params.buffersize << "." << std::endl;
+			std::cout << " Seg X x Seg Y = " << ld->con_params.segmentation.x << " X " <<
+				ld->con_params.segmentation.x << " = " << ld->con_params.buffersize << "." << std::endl;
 		}
 
 	}
@@ -401,11 +401,11 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 		{
 			jvx_bitSet(*modFlags, JVX_MODIFICATION_SUBFORMAT_SHIFT);
 		}
-		if (ld->con_params.segmentation_x != dataOut->con_params.segmentation_x)
+		if (ld->con_params.segmentation.x != dataOut->con_params.segmentation.x)
 		{
 			jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGX_SHIFT);
 		}
-		if (ld->con_params.segmentation_y != dataOut->con_params.segmentation_y)
+		if (ld->con_params.segmentation.y != dataOut->con_params.segmentation.y)
 		{
 			jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGY_SHIFT);
 		}
@@ -602,27 +602,27 @@ CjvxNegotiate_common::compare_core(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDesc
 	// ================================================================================
 	// DimX
 	// ================================================================================
-	if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation_x))
+	if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation.x))
 	{
 		if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.min))
 		{
-			if (ld_cp->con_params.segmentation_x < preferred.dimX.min)
+			if (ld_cp->con_params.segmentation.x < preferred.dimX.min)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation_x = preferred.dimX.min;
+					ld_fix->con_params.segmentation.x = preferred.dimX.min;
 				}
 			}
 		}
 		if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.max))
 		{
-			if (ld_cp->con_params.segmentation_x > preferred.dimX.max)
+			if (ld_cp->con_params.segmentation.x > preferred.dimX.max)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation_x = preferred.dimX.max;
+					ld_fix->con_params.segmentation.x = preferred.dimX.max;
 				}
 			}
 		}
@@ -631,27 +631,27 @@ CjvxNegotiate_common::compare_core(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDesc
 	// ================================================================================
 	// DimY
 	// ================================================================================
-	if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation_y))
+	if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation.y))
 	{
 		if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.min))
 		{
-			if (ld_cp->con_params.segmentation_y < preferred.dimY.min)
+			if (ld_cp->con_params.segmentation.y < preferred.dimY.min)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation_y = preferred.dimY.min;
+					ld_fix->con_params.segmentation.y = preferred.dimY.min;
 				}
 			}
 		}
 		if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.max))
 		{
-			if (ld_cp->con_params.segmentation_y > preferred.dimY.max)
+			if (ld_cp->con_params.segmentation.y > preferred.dimY.max)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation_y = preferred.dimY.max;
+					ld_fix->con_params.segmentation.y = preferred.dimY.max;
 				}
 			}
 		}
@@ -692,8 +692,8 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 				(allowedSetup[i].samplerate == theData_in->con_params.rate) &&
 				(allowedSetup[i].format == theData_in->con_params.format) &&
 				(allowedSetup[i].subformat == theData_in->con_params.format_group) &&
-				(allowedSetup[i].dimX == theData_in->con_params.segmentation_x) &&
-				(allowedSetup[i].dimY == theData_in->con_params.segmentation_y) &&
+				(allowedSetup[i].dimX == theData_in->con_params.segmentation.x) &&
+				(allowedSetup[i].dimY == theData_in->con_params.segmentation.y) &&
 				(allowedSetup[i].number_input_channels == theData_in->con_params.number_channels))
 			{
 				thereismismatch = false;
@@ -708,8 +708,8 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 			ld_cp.con_params.number_channels = allowedSetup[i].number_input_channels;
 			ld_cp.con_params.format_group = allowedSetup[i].subformat;
 			ld_cp.con_params.data_flow = allowedSetup[i].dataflow;
-			ld_cp.con_params.segmentation_x = allowedSetup[i].dimX;
-			ld_cp.con_params.segmentation_y = allowedSetup[i].dimY;
+			ld_cp.con_params.segmentation.x = allowedSetup[i].dimX;
+			ld_cp.con_params.segmentation.y = allowedSetup[i].dimY;
 
 			resComplain = theData_in->con_link.connect_from->transfer_backward_ocon(
 				JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_cp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -722,29 +722,29 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 		ld_cp.con_params.format = theData_in->con_params.format;
 		ld_cp.con_params.number_channels = theData_in->con_params.number_channels;
 		ld_cp.con_params.format_group = theData_in->con_params.format_group;
-		ld_cp.con_params.segmentation_x = theData_in->con_params.segmentation_x;
-		ld_cp.con_params.segmentation_y = theData_in->con_params.segmentation_y;		
+		ld_cp.con_params.segmentation.x = theData_in->con_params.segmentation.x;
+		ld_cp.con_params.segmentation.y = theData_in->con_params.segmentation.y;		
 		ld_cp.con_params.data_flow = theData_in->con_params.data_flow;
 
 		compare_core(theData_in, &ld_cp, thereismismatch);
 
 		if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 		{
-			if ((ld_cp.con_params.segmentation_y != 1) ||
-				(ld_cp.con_params.segmentation_x != ld_cp.con_params.buffersize))
+			if ((ld_cp.con_params.segmentation.y != 1) ||
+				(ld_cp.con_params.segmentation.x != ld_cp.con_params.buffersize))
 			{
 				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
-				std::cout << " Seg X: " << ld_cp.con_params.segmentation_x << " vs " << ld_cp.con_params.buffersize << "." << std::endl;
-				std::cout << " Seg Y: " << ld_cp.con_params.segmentation_y << " vs 1." << std::endl;
+				std::cout << " Seg X: " << ld_cp.con_params.segmentation.x << " vs " << ld_cp.con_params.buffersize << "." << std::endl;
+				std::cout << " Seg Y: " << ld_cp.con_params.segmentation.y << " vs 1." << std::endl;
 			}
 		}
 		else
 		{
-			if ((ld_cp.con_params.segmentation_y * ld_cp.con_params.segmentation_x) != ld_cp.con_params.buffersize)
+			if ((ld_cp.con_params.segmentation.y * ld_cp.con_params.segmentation.x) != ld_cp.con_params.buffersize)
 			{
 				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
-				std::cout << " Seg X x Seg Y = " << ld_cp.con_params.segmentation_x << " X " << 
-					ld_cp.con_params.segmentation_x << " = " << ld_cp.con_params.buffersize << "." << std::endl;
+				std::cout << " Seg X x Seg Y = " << ld_cp.con_params.segmentation.x << " X " << 
+					ld_cp.con_params.segmentation.x << " = " << ld_cp.con_params.buffersize << "." << std::endl;
 			}
 		}
 
@@ -809,21 +809,21 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 				reason += ">.";
 				resComplain = JVX_ERROR_COMPROMISE;
 			}
-			else if (ld_cp.con_params.segmentation_x != theData_in->con_params.segmentation_x)
+			else if (ld_cp.con_params.segmentation.x != theData_in->con_params.segmentation.x)
 			{
 				reason = "A segmentation_x of <";
-				reason += jvx_size2String(ld_cp.con_params.segmentation_x);
+				reason += jvx_size2String(ld_cp.con_params.segmentation.x);
 				reason += "> was desired but the input connector only delivers <";
-				reason += jvx_size2String(theData_in->con_params.segmentation_x);
+				reason += jvx_size2String(theData_in->con_params.segmentation.x);
 				reason += ">.";
 				resComplain = JVX_ERROR_COMPROMISE;
 			}
-			else if (ld_cp.con_params.segmentation_y != theData_in->con_params.segmentation_y)
+			else if (ld_cp.con_params.segmentation.y != theData_in->con_params.segmentation.y)
 			{
 				reason = "A segmentation_y of <";
-				reason += jvx_size2String(ld_cp.con_params.segmentation_y);
+				reason += jvx_size2String(ld_cp.con_params.segmentation.y);
 				reason += "> was desired but the input connector only delivers <";
-				reason += jvx_size2String(theData_in->con_params.segmentation_y);
+				reason += jvx_size2String(theData_in->con_params.segmentation.y);
 				reason += ">.";
 				resComplain = JVX_ERROR_COMPROMISE;
 			}

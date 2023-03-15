@@ -210,6 +210,11 @@ CjvxAuNForwardBuffer::test_set_output_parameters()
 	{
 		bsize = node_output._common_set_node_params_a_1io.buffersize; // Here, we need to set the proper buffersize
 	}
+	else
+	{
+		neg_output._clear_parameters_fixed(false, true);
+	}
+
 	neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels,
 		bsize, node_output._common_set_node_params_a_1io.samplerate,
 		(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
@@ -283,10 +288,16 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			// Set the number of buffers as desired
 			_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
 			_common_set_ldslave.theData_out.con_data.alloc_flags = _common_set_ldslave.theData_in->con_data.alloc_flags;
+
 			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags,
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT);
 			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags,
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
+
+			// Output format
+			// Variable segment sizes do end here!!
+			jvx_bitClear(_common_set_ldslave.theData_out.con_data.alloc_flags,
+				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO);
 			_common_set_ldslave.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
 
 			// Have to review this lateron, currently: no timestamp
@@ -447,6 +458,8 @@ CjvxAuNForwardBuffer::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			}
 		}
 	}
+
+	genForwardBuffer_node::monitor.buffer_drops.value = 0;
 	return res;
 }
 
@@ -550,7 +563,17 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	else
 	{
 		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
-
+		jvxSize numCopy = _common_set_ldslave.theData_in->con_params.buffersize;
+		if (_common_set_ldslave.theData_in->con_data.fHeights)
+		{
+			jvxSize idxStage = idx_stage;
+			if (JVX_CHECK_SIZE_UNSELECTED(idxStage))
+			{
+				idxStage = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+			}
+			numCopy = JVX_MIN(numCopy, _common_set_ldslave.theData_in->con_data.fHeights[idxStage].x);
+		}
+		
 		// ========================================================================================================
 		// Filter out the right amount of channels and run the channel selection. We sort the input buffers in a
 		// different order in a dedicated buffer prior to passing them to the audio sync buffer.
@@ -576,7 +599,7 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			&myAudioDispenser,
 			//(jvxHandle**)bufsIn, 0,
 			(jvxHandle**)reRouting.bufReroute, 0,
-			nullptr, 0, node_inout._common_set_node_params_a_1io.buffersize,
+			nullptr, 0, numCopy,
 			0, nullptr, nullptr,
 			nullptr, nullptr);
 
@@ -597,6 +620,7 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 jvxErrorType 
 CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
+	jvxSize i;
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 	switch (tp)
 	{
@@ -670,6 +694,10 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 							(jvxHandle**)bufsOut, 0,
 							nullptr, 0, _common_set_ldslave.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
 
+						// This call returns:
+						// 1) JVX_DSP_ERROR_ABORT if the buffer was not yet accessed on the input side
+						// 2) JVX_DSP_ERROR_BUFFER_OVERFLOW if the buffer has been accessed on the input side but there are not enough samples in the buffer
+						// 3) JVX_DSP_NO_ERROR if samples were read from the buffer
 						switch (resL)
 						{
 						case JVX_DSP_NO_ERROR:
@@ -683,12 +711,26 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 
 							res = JVX_NO_ERROR;
 							break;
+						case JVX_DSP_ERROR_BUFFER_OVERFLOW:		
+							// Count the underflow events - even if the chan -- but not if not yet ready.
+							genForwardBuffer_node::monitor.buffer_drops.value++;
+
+							[[fallthrough]];
+
 						case JVX_DSP_ERROR_ABORT:
+
+
+							// No output from buffer, copy silence
+							for (i = 0; i < _common_set_ldslave.theData_out.con_params.number_channels; i++)
+							{
+								memset(bufsOut[i], 0, (_common_set_ldslave.theData_out.con_params.buffersize * jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format]));
+							}
+							
+							// If the sample buffer does not deliver we need to wakeup the thread!!
+							refThreads.cpPtr->trigger_wakeup();
 							res = JVX_NO_ERROR;
 							break;
-						case JVX_DSP_ERROR_BUFFER_OVERFLOW:
-							res = JVX_NO_ERROR;
-							break;
+
 						default:
 							break;
 						}
@@ -823,8 +865,13 @@ CjvxAuNForwardBuffer::read_samples_to_buffer()
 			&space);
 		if (space >= node_output._common_set_node_params_a_1io.buffersize)
 		{
-			_common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+			// Try to get data from chain. 
+			jvxErrorType res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
 				JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+			if (res != JVX_NO_ERROR)
+			{
+				break;
+			}
 		}
 		else
 		{

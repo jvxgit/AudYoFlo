@@ -252,14 +252,14 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	_common_set_ldslave.theData_out.con_data.buffers = NULL;
 	_common_set_ldslave.theData_out.con_user.chain_spec_user_hints = NULL;
 	_common_set_ldslave.theData_out.con_params.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
-	_common_set_ldslave.theData_out.con_params.segmentation_x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
+	_common_set_ldslave.theData_out.con_params.segmentation.x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
+	_common_set_ldslave.theData_out.con_params.segmentation.y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
 	_common_set_ldslave.theData_out.con_params.hints = 0;
 
 	runtime.szElement = jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format] *
 		jvxDataFormatGroup_size[_common_set_ldslave.theData_out.con_params.format_group];
-	runtime.szLine = _common_set_ldslave.theData_out.con_params.segmentation_x * runtime.szElement;
-	runtime.szRaw = _common_set_ldslave.theData_out.con_params.segmentation_y * runtime.szLine;
+	runtime.szLine = _common_set_ldslave.theData_out.con_params.segmentation.x * runtime.szElement;
+	runtime.szRaw = _common_set_ldslave.theData_out.con_params.segmentation.y * runtime.szLine;
 	_common_set_ldslave.theData_out.con_params.buffersize = runtime.szRaw;
 
 	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -273,7 +273,7 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	runtime.stride = 0;
 
 	LONG stride = 0;
-	hr = MFGetStrideForBitmapInfoHeader(nativeSubGuid.Data1, (DWORD)_common_set_ldslave.theData_out.con_params.segmentation_x, &stride);
+	hr = MFGetStrideForBitmapInfoHeader(nativeSubGuid.Data1, (DWORD)_common_set_ldslave.theData_out.con_params.segmentation.x, &stride);
 	JVX_ASSERT_X("MFGetStrideForBitmapInfoHeader failed", 0, (hr == S_OK));
 	runtime.stride = stride;
 
@@ -556,8 +556,8 @@ CjvxVideoMfOpenGLDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	_common_set_ldslave.theData_out.con_params.number_channels = 1;
 	_common_set_ldslave.theData_out.con_params.rate = CjvxVideoDevice_genpcg::video.framerate.value;
 	_common_set_ldslave.theData_out.con_params.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
-	_common_set_ldslave.theData_out.con_params.segmentation_x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
+	_common_set_ldslave.theData_out.con_params.segmentation.x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
+	_common_set_ldslave.theData_out.con_params.segmentation.y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
 
 	return CjvxVideoDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
@@ -593,15 +593,15 @@ CjvxVideoMfOpenGLDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 			return JVX_ERROR_INVALID_SETTING;
 		}
 		if (
-			(ld_con->con_params.segmentation_x != (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value) ||
-			(ld_con->con_params.segmentation_y != (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value)
+			(ld_con->con_params.segmentation.x != (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value) ||
+			(ld_con->con_params.segmentation.y != (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value)
 			)
 		{
 			for (i = 0; i < lstModes.size(); i++)
 			{
-				diff = (ld_con->con_params.segmentation_x - lstModes[i].width);
+				diff = (ld_con->con_params.segmentation.x - lstModes[i].width);
 				weight = diff * diff;
-				diff = (ld_con->con_params.segmentation_y - lstModes[i].height);
+				diff = (ld_con->con_params.segmentation.y - lstModes[i].height);
 				weight += diff * diff;
 				if (weight < weightmin)
 				{
@@ -614,8 +614,8 @@ CjvxVideoMfOpenGLDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 				return JVX_ERROR_INVALID_SETTING;
 			}
 
-			_common_set_ldslave.theData_out.con_params.segmentation_x = lstModes[idxmin].width;
-			_common_set_ldslave.theData_out.con_params.segmentation_y = lstModes[idxmin].height;
+			_common_set_ldslave.theData_out.con_params.segmentation.x = lstModes[idxmin].width;
+			_common_set_ldslave.theData_out.con_params.segmentation.y = lstModes[idxmin].height;
 			jvx_bitZSet(genMf_device::configuration_mf.mode_selection.value.selection(), idxmin);
 			return JVX_ERROR_COMPROMISE;
 		}

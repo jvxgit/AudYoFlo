@@ -62,8 +62,8 @@ CjvxFullMasterDevice::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		CjvxFullMasterDevice_genpcg::proc_params.srate.value = neg_output._latest_results.rate;
 		CjvxFullMasterDevice_genpcg::proc_params.format.value = neg_output._latest_results.format;
 		CjvxFullMasterDevice_genpcg::proc_params.subformat.value = neg_input._latest_results.format_group;
-		CjvxFullMasterDevice_genpcg::proc_params.seg_x.value = neg_output._latest_results.segmentation_x;
-		CjvxFullMasterDevice_genpcg::proc_params.seg_y.value = neg_output._latest_results.segmentation_y;
+		CjvxFullMasterDevice_genpcg::proc_params.seg_x.value = neg_output._latest_results.segmentation.x;
+		CjvxFullMasterDevice_genpcg::proc_params.seg_y.value = neg_output._latest_results.segmentation.y;
 	}
 	accept_output_parameters_stop(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	return res;

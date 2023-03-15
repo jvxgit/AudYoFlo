@@ -56,9 +56,12 @@ if [ -d "ffmpeg" ]; then
 	
 		#
 		# Options other than the standard (as delivered with ffmpeg) are not really supported in Windows. If you 
-		# want to build the lib in another way, you can modify ffbuild/config.mk between configure and make.
+		# want to build the lib in another way, you can modify ffbuild/config.mak between configure and make.
 		# For example, if you want to generate debug information and disable optimization, you can set the entry
+		#
 		# CFLAGS= -nologo -Zi -MDd -W3 -wd4018 -wd4146 -wd4244 -wd4305 -wd4554 -utf-8
+		#
+		# and remove the -02 flag!!
 		#
 		# Also, I need to introduce some dirty hacks to compile in Windows to prevent undefined references which are 
 		# not reported in Release mode

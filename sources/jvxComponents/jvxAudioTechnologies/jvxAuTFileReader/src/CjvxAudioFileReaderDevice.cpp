@@ -403,8 +403,8 @@ CjvxAudioFileReaderDevice::test_set_output_parameters()
 	// Type is modified as the data is coded
 	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
 	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
-	_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
+	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
+	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
 	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
 	_common_set_ldslave.theData_out.con_params.format_spec = jvx_wav_produce_codec_token(&file_params);
 }
@@ -636,7 +636,7 @@ CjvxAudioFileReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 		reconfigure_bsize(CjvxAudioDevice_genpcg::properties_active.buffersize.value);
 
 		_common_set_ldslave.theData_out.con_params.buffersize = file_params.fsizemax;
-		_common_set_ldslave.theData_out.con_params.segmentation_x = _common_set_ldslave.theData_out.con_params.buffersize;
+		_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
 		
 		format_descriptor.assign(jvx_wav_produce_codec_token(&file_params));
 		return JVX_NO_ERROR;
@@ -724,9 +724,11 @@ CjvxAudioFileReaderDevice::send_buffer_thread()
 					JVX_UNLOCK_MUTEX(safeAccessBuffer);
 					requires_new_data = true;
 				}
+				assert(0);
+				/*
 				_common_set_ldslave.theData_out.con_params.fHeight_x =
 					_common_set_ldslave.theData_out.con_params.buffersize - copymax;
-
+					*/
 				if (fHeight == 0)
 				{
 					// From operation we may either switch to CHARGING or to COMPLETE in different threads
@@ -749,14 +751,16 @@ CjvxAudioFileReaderDevice::send_buffer_thread()
 			{
 				// e.g. if bufstatus == jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE
 				genFileReader_device::monitor.num_lost.value++;
-				_common_set_ldslave.theData_out.con_params.fHeight_x = 0;
+				assert(0);
+				//_common_set_ldslave.theData_out.con_params.fHeight_x = 0;
 			}
 			JVX_UNLOCK_MUTEX(safeAccessRead);
 		}
 		else
 		{
 			// If we could not acquire the look, send zero data
-			_common_set_ldslave.theData_out.con_params.fHeight_x = 0;
+			assert(0);
+			//_common_set_ldslave.theData_out.con_params.fHeight_x = 0;
 		}
 	}
 }
@@ -775,7 +779,8 @@ CjvxAudioFileReaderDevice::send_buffer_direct()
 		jvxSize numcopy = copymax;
 		jvxSize num_copied = 0;
 		jvxErrorType resRead = wavFileReader.read_one_buf_raw(ptr_to, numcopy, &num_copied);
-		_common_set_ldslave.theData_out.con_params.fHeight_x = num_copied;
+		assert(0);
+		// _common_set_ldslave.theData_out.con_params.fHeight_x = num_copied;
 
 		jvxSize progress = 0;
 		wavFileReader.current_progress(&progress);

@@ -415,8 +415,8 @@ CjvxNVTasks::test_connect_icon_vtask(
 					// All processing parameters are taken from primary chain
 					datOut->con_params.buffersize = (*elm)->neg.preferred.buffersize.min;
 					datOut->con_params.rate = (*elm)->neg.preferred.samplerate.min;
-					datOut->con_params.segmentation_x = (*elm)->neg.preferred.dimX.min;
-					datOut->con_params.segmentation_y = (*elm)->neg.preferred.dimY.min;
+					datOut->con_params.segmentation.x = (*elm)->neg.preferred.dimX.min;
+					datOut->con_params.segmentation.y = (*elm)->neg.preferred.dimY.min;
 					datOut->con_params.format = (*elm)->neg.preferred.format.min;
 					datOut->con_params.format_group = (*elm)->neg.preferred.subformat.min;
 

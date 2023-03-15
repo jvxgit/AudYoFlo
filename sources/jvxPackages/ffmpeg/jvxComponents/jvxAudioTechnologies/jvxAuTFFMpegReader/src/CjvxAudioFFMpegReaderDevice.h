@@ -4,6 +4,16 @@
 #include "jvxAudioTechnologies/CjvxAudioDevice.h"
 #include "jvx-ffmpeg-helpers.h"
 
+// Definition must be BEFORE the include of the generated header to run the translation functions.
+enum class processingState
+{
+	JVX_STATUS_READY,
+	JVX_STATUS_RUNNING,
+	JVX_STATUS_PAUSED,
+	JVX_STATUS_DONE,
+	JVX_STATUS_ERROR
+};
+
 // Must follow jvx_audiocodec_helpers.h
 #include "pcg_exports_device.h"
 
@@ -11,7 +21,6 @@ class CjvxAudioFFMpegReaderTechnology;
 
 class CjvxAudioFFMpegReaderDevice :
 	public CjvxAudioDevice,
-	public IjvxThreads_report,
     public genFFMpegReader_device
 {
 	friend class CjvxAudioFFMpegReaderTechnology;
@@ -31,39 +40,40 @@ private:
 	std::string last_error;
 	jvxApiString format_descriptor;
 
-
-	jvxBool involve_read_thread = false;
 	jvxByte* preuse_buffer_ptr = nullptr;
 	jvxSize preuse_buffer_sz = 0;
 	jvxSize readposi = 0;
 	jvxSize fHeight = 0;
 	jvxSize readsize = 0;
 	jvxAudioFileReaderBufferStatus bufstatus = jvxAudioFileReaderBufferStatus::JVX_BUFFER_STATUS_NONE;
-	JVX_MUTEX_HANDLE safeAccessBuffer;
-	refComp<IjvxThreads> refThreads;
-	JVX_MUTEX_HANDLE safeAccessRead;
 	
+	processingState statusOutput = processingState::JVX_STATUS_READY;
 	struct jvxFfmpegFileParameter: public jvxFfmpegParameter
 	{
 		std::string fName;
 		
 		AVStream* st = nullptr;
 		AVFormatContext* ic = nullptr;
-		AVPacket* pkt = nullptr;
+		// AVPacket* pkt = nullptr;
 		AVInputFormat* iformat = nullptr;
-
-
+		AVSampleFormat sFormatId = AV_SAMPLE_FMT_NONE;
+		jvxSize bSizeMax = 0;
+		jvxSize sizePerSample = 0;
 		void reset()
 		{
 			jvxFfmpegParameter::reset();
 			st = nullptr;			
 			ic = nullptr;
-			pkt = nullptr;
-			iformat = nullptr;			
+			// pkt = nullptr;
+			iformat = nullptr;		
+			sFormatId = AV_SAMPLE_FMT_NONE;
+			bSizeMax = 0;
+			sizePerSample = 0;
 		};
 	};
 
 	jvxFfmpegFileParameter fParams;
+	jvxBool triggeredRestart = false;
 
 public:
 	JVX_CALLINGCONVENTION CjvxAudioFFMpegReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -140,16 +150,11 @@ public:
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 	
 	void send_one_buffer();
-	void send_buffer_thread();
 	void send_buffer_direct();
 
 	// ===================================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION startup(jvxInt64 timestamp_us) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION expired(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION stopped(jvxInt64 timestamp_us) override;
-	void read_samples_to_buffer();
+	void restart_stream();
 
 	// ===================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);

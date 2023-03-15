@@ -183,7 +183,7 @@ jvx_check_match_params(jvxLinkDataDescriptor_con_params& one,
 
 	if (jvx_bitTest(what, JVX_MATCH_DATA_DESCRIPTOR_SEGX_SHIFT))
 	{
-		if (one.segmentation_x != theother.segmentation_x)
+		if (one.segmentation.x != theother.segmentation.x)
 		{
 			return false;
 		}
@@ -191,7 +191,7 @@ jvx_check_match_params(jvxLinkDataDescriptor_con_params& one,
 
 	if (jvx_bitTest(what, JVX_MATCH_DATA_DESCRIPTOR_SEGY_SHIFT))
 	{
-		if (one.segmentation_y != theother.segmentation_y)
+		if (one.segmentation.y != theother.segmentation.y)
 		{
 			return false;
 		}

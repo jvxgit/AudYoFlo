@@ -229,13 +229,14 @@ jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegParameter& params, jvxSize bSi
 	return strText;
 }
 
-jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegParameter& params)
+jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegParameter& params, jvxSize& bsize)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool err = false;
 	jvxSize i;
 	std::string token1;
 	std::string token2;
+	jvxBool fsIsZero = false;
 
 	// Decompose into tokens
 	std::vector<std::string> expr = jvx_parseCsvStringExpression(tokenArg, err);
@@ -516,8 +517,21 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegP
 				}
 			}
 
+			if (token1 == "bps")
+			{
+				fsIsZero = true;
+				jvxBool err = false;
+				params.bitsPerCoded = jvx_string2Size(token2, err);
+				if (err)
+				{
+					res = JVX_ERROR_INVALID_FORMAT;
+					break;
+				}
+			}
+
 			if (token1 == "fsm")
 			{
+				fsIsZero = true;
 				jvxBool err = false;
 				params.frameSizeMax = jvx_string2Size(token2, err);
 				if (err)
@@ -527,6 +541,12 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegP
 				}
 			}
 		}
+	}
+
+	if (fsIsZero)
+	{
+		bsize = params.frameSize;
+		params.frameSize = 0;
 	}
 
 	return res;

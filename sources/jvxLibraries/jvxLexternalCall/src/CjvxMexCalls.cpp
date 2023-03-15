@@ -122,8 +122,8 @@ CjvxMexCalls::process_buffers_icon(jvxLinkDataDescriptor* theData_in, jvxLinkDat
 	theData_in->con_compat.number_channels = theData_out->con_params.number_channels;
 	theData_in->con_compat.rate = theData_out->con_params.rate;
 
-	theData_in->con_compat.ext.segmentation_x = theData_out->con_params.segmentation_x;
-	theData_in->con_compat.ext.segmentation_y = theData_out->con_params.segmentation_y;
+	theData_in->con_compat.ext.segmentation_x = theData_out->con_params.segmentation.x;
+	theData_in->con_compat.ext.segmentation_y = theData_out->con_params.segmentation.y;
 	theData_in->con_compat.ext.subformat = theData_out->con_params.format_group;
 	theData_in->con_compat.ext.hints = theData_out->con_params.hints;
 

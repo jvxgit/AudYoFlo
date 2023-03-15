@@ -806,8 +806,8 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			ld_con.con_params.number_channels = theData_outlnk->con_params.number_channels;
 
 			jvx_bitFClear(ld_con.con_params.hints);
-			ld_con.con_params.segmentation_x = theData_outlnk->con_params.buffersize;
-			ld_con.con_params.segmentation_y = 1;
+			ld_con.con_params.segmentation.x = theData_outlnk->con_params.buffersize;
+			ld_con.con_params.segmentation.y = 1;
 			ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 			if (
@@ -816,8 +816,8 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format) ||
 				(_common_set_ldslave.theData_in->con_params.number_channels != theData_outlnk->con_params.number_channels) ||
 
-				(_common_set_ldslave.theData_in->con_params.segmentation_x != theData_outlnk->con_params.segmentation_x) ||
-				(_common_set_ldslave.theData_in->con_params.segmentation_y != theData_outlnk->con_params.segmentation_y) ||
+				(_common_set_ldslave.theData_in->con_params.segmentation.x != theData_outlnk->con_params.segmentation.x) ||
+				(_common_set_ldslave.theData_in->con_params.segmentation.y != theData_outlnk->con_params.segmentation.y) ||
 				(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group))
 			{
 				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
@@ -834,8 +834,8 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				if (
 					(_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
 					(_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
-					(_common_set_ldslave.theData_in->con_params.segmentation_x != theData_outlnk->con_params.segmentation_x) ||
-					(_common_set_ldslave.theData_in->con_params.segmentation_y != theData_outlnk->con_params.segmentation_y) ||
+					(_common_set_ldslave.theData_in->con_params.segmentation.x != theData_outlnk->con_params.segmentation.x) ||
+					(_common_set_ldslave.theData_in->con_params.segmentation.y != theData_outlnk->con_params.segmentation.y) ||
 					(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group) ||
 					(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format))
 				{

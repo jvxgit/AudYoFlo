@@ -59,6 +59,6 @@ struct jvxFfmpegParameter
 };
 
 std::string jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegParameter& params, jvxSize bSize);
-jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegParameter& params);
+jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegParameter& params, jvxSize& bsize);
 
 #endif

@@ -26,9 +26,9 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 		procParams.formGroup = formGroup;
 
 		_common_set_ldslave.theData_out.con_params.buffersize = procParams.bSize;
-		_common_set_ldslave.theData_out.con_params.segmentation_x = procParams.bSize;
+		_common_set_ldslave.theData_out.con_params.segmentation.x = procParams.bSize;
 		_common_set_ldslave.theData_out.con_params.number_channels = procParams.numInChans;
-		_common_set_ldslave.theData_out.con_params.segmentation_y = procParams.numInChans;
+		_common_set_ldslave.theData_out.con_params.segmentation.y = procParams.numInChans;
 		_common_set_ldslave.theData_out.con_params.rate = procParams.sRate;
 		_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
 		_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;

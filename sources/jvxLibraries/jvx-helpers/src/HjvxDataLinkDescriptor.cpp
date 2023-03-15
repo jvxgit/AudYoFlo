@@ -291,6 +291,7 @@ jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateF
 			jvxLinkDataCombinedInformation*,
 			theData->con_data.number_buffers);
 
+		
 		assert(theData->con_data.buffers == NULL);
 		JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.buffers,
 			jvxHandle**,
@@ -312,6 +313,16 @@ jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateF
 			jvxSize*,
 			theData->con_data.number_buffers);
 		assert(theData->con_data.buffers);
+
+		if (jvx_bitTest(theData->con_data.alloc_flags,
+			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO))
+		{
+			assert(theData->con_data.fHeights == NULL);
+			JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.fHeights,
+				jvxLinkDataDescriptor_segmentation,
+				theData->con_data.number_buffers);
+			assert(theData->con_data.fHeights);
+		}
 
 		// =============================================================================================
 		// =============================================================================================
@@ -439,6 +450,7 @@ jvx_deallocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool dealloc
 			}
 		}
 
+		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.fHeights, jvxLinkDataDescriptor_segmentation);			
 		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.buffers, jvxHandle**);
 		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.raw, jvxHandle**);
 		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.bExt.offset, jvxSize*);
@@ -511,8 +523,8 @@ jvx_ccopyDataLinkDescriptor(jvxLinkDataDescriptor* copyTo, jvxLinkDataDescriptor
 	copyTo->con_compat.number_channels = copyFrom->con_params.number_channels;
 	copyTo->con_compat.rate = copyFrom->con_params.rate;
 
-	copyTo->con_compat.ext.segmentation_x = copyFrom->con_params.segmentation_x;
-	copyTo->con_compat.ext.segmentation_y = copyFrom->con_params.segmentation_y;
+	copyTo->con_compat.ext.segmentation_x = copyFrom->con_params.segmentation.x;
+	copyTo->con_compat.ext.segmentation_y = copyFrom->con_params.segmentation.y;
 	copyTo->con_compat.ext.subformat = copyFrom->con_params.format_group;
 	copyTo->con_compat.ext.hints = copyFrom->con_params.hints;
 
@@ -562,8 +574,8 @@ jvx_neutralDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool sender)
 		theData->con_params.number_channels = 0;
 		theData->con_params.rate = 0;
 		theData->con_params.hints = 0;
-		theData->con_params.segmentation_x = 0;
-		theData->con_params.segmentation_y = 0;
+		theData->con_params.segmentation.x = 0;
+		theData->con_params.segmentation.y = 0;
 		theData->con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 		theData->con_data.alloc_flags = 
 			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NONE;
@@ -687,11 +699,11 @@ jvx_check_in_out_params_match_test(jvxLinkDataDescriptor* cp_this, jvxLinkDataDe
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SEGMENTATION_X_SHIFT))
 	{
-		retVal = retVal && (cp_this->con_params.segmentation_x == cp_that->con_params.segmentation_x);
+		retVal = retVal && (cp_this->con_params.segmentation.x == cp_that->con_params.segmentation.x);
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SEGMENTATION_Y_SHIFT))
 	{
-		retVal = retVal && (cp_this->con_params.segmentation_y == cp_that->con_params.segmentation_y);
+		retVal = retVal && (cp_this->con_params.segmentation.y == cp_that->con_params.segmentation.y);
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SUBFORMAT_SHIFT))
 	{
@@ -761,27 +773,27 @@ jvxBool jvx_check_in_out_params_match_test_err(jvxLinkDataDescriptor* cp_this, j
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SEGMENTATION_X_SHIFT))
 	{
-		if (cp_this->con_params.segmentation_x != cp_that->con_params.segmentation_x)
+		if (cp_this->con_params.segmentation.x != cp_that->con_params.segmentation.x)
 		{
 			if (!errStr.empty())
 			{
 				errStr += "; ";
 			}
-			errStr += "Segmentation X mismatch: Parameter value <" + jvx_size2String(cp_this->con_params.segmentation_x) + " vs " +
-				jvx_size2String(cp_that->con_params.segmentation_x);
+			errStr += "Segmentation X mismatch: Parameter value <" + jvx_size2String(cp_this->con_params.segmentation.x) + " vs " +
+				jvx_size2String(cp_that->con_params.segmentation.x);
 			retVal = false;
 		}
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SEGMENTATION_Y_SHIFT))
 	{
-		if (cp_this->con_params.segmentation_y != cp_that->con_params.segmentation_y)
+		if (cp_this->con_params.segmentation.y != cp_that->con_params.segmentation.y)
 		{
 			if (!errStr.empty())
 			{
 				errStr += "; ";
 			}
-			errStr += "Segmentation Y mismatch: Parameter value <" + jvx_size2String(cp_this->con_params.segmentation_y) + " vs " +
-				jvx_size2String(cp_that->con_params.segmentation_y);
+			errStr += "Segmentation Y mismatch: Parameter value <" + jvx_size2String(cp_this->con_params.segmentation.y) + " vs " +
+				jvx_size2String(cp_that->con_params.segmentation.y);
 			retVal = false;
 		}
 	}

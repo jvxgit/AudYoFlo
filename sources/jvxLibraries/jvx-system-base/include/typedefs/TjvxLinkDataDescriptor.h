@@ -15,7 +15,8 @@ enum class jvxDataLinkDescriptorAllocFlags
 	// from end to start: Set this flag if we have detected a zerocopy chain. If the current input connector has allocated 
 	// its own buffer/pipeline, it is not a zero copy shift pipeline. If the input connector only uses the buffer/pipeline from the
 	// next chain element it is a zerocopy pipeline, Typically, each chain starts as a ZEROCOPY pipeline and ends as a non-zerocopy chain.
-	JVX_LINKDATA_ALLOCATION_FLAGS_SPACE_USER_HINTS_SHIFT = 4 // If we set this, the receiver needs to allocated space for a concatenation of user hints - one per pipeline stage
+	JVX_LINKDATA_ALLOCATION_FLAGS_SPACE_USER_HINTS_SHIFT = 4, // If we set this, the receiver needs to allocated space for a concatenation of user hints - one per pipeline stage
+	JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO = 5 // If we set this flag, the receiver must foresee fHeight buffers since the buffersize may be variable
 } ;
 
 // The sender may have changed the buffer index and should inform the slave
@@ -237,6 +238,21 @@ struct jvxLinkDataDescriptor_buf
 	jvxHandle* f_priv = nullptr;
 };
 	
+/**
+ * This struct defines how the linear fields are arranged logically. A field of length (640 * 480) x 1 can be interpreted 
+ * as a 2D pixelmap by x = 640 and y = 480. If the segmentation is a fheight, only part of the field is populated.
+ * We find the valid pixels by first applying the segmentation followed by the fillheight constraint.
+ */ //=======================================================================================================
+struct jvxLinkDataDescriptor_segmentation
+{
+	// Segmentation: A value of UNSELECTED means that there is no segmentation, hence, x = buffersize
+	jvxSize x = JVX_SIZE_UNSELECTED;
+	
+	// Segmentation: A value of UNSELECTED means that there is no segmentation, hence, y = 1
+	jvxSize y = JVX_SIZE_UNSELECTED;
+};
+
+// Current fheight in buffer y direction
 struct jvxLinkDataDescriptor_con_data
 {
 	//! Number of buffers to allocate. For buffer pipelining, we need more than 1 buffer!
@@ -259,6 +275,9 @@ struct jvxLinkDataDescriptor_con_data
 
 	//! Buffer to hold one or more infos which persist - that is, they will be valid as long as processing is active
 	jvxLinkDataCombinedInformation** attached_buffer_persist = nullptr; 
+
+	// Current fheight in buffer x direction
+	jvxLinkDataDescriptor_segmentation* fHeights = nullptr;
 };
 
 struct jvxLinkDataDescriptor_con_user
@@ -359,16 +378,7 @@ struct jvxLinkDataDescriptor_con_params
 	// the content may be grouped and furthermore refined.
 
 	// More accurate specification of data buffers. For audio, this should be identical to buffersize
-	jvxSize segmentation_x = 0;
-
-	// More accurate specification of data buffers. For audio, this is always 1
-	jvxSize segmentation_y = 0;
-
-	// Current fheight in buffer x direction
-	jvxSize fHeight_x = JVX_SIZE_UNSELECTED;
-	
-	// Current fheight in buffer y direction
-	jvxSize fHeight_y = JVX_SIZE_UNSELECTED;
+	jvxLinkDataDescriptor_segmentation segmentation;
 
 	// Free parameter to specify properties of the data. in particular, used on "coded" bitstreams
 	jvxApiString format_spec;

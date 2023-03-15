@@ -120,13 +120,13 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 						// texture target buffer
 						if (stride < 0)
 						{
-							dest += (_common_set_ldslave.theData_out.con_params.segmentation_y - 1)* runtime.szLine;
+							dest += (_common_set_ldslave.theData_out.con_params.segmentation.y - 1)* runtime.szLine;
 						}
 
 						// This copies the lines in target buffer: from 
 						// - .. higher lines to lower lines in target buffer
 						// - .. from end to beginning in src buffer
-						for (i = 0; i < _common_set_ldslave.theData_out.con_params.segmentation_y; i++)
+						for (i = 0; i < _common_set_ldslave.theData_out.con_params.segmentation.y; i++)
 						{
 							memcpy(dest, src, runtime.szLine);
 							src += stride;
@@ -154,7 +154,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 						jvxByte* dest = (jvxByte*)_common_set_ldslave.theData_out.con_data.buffers[
 							*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][0];
 						jvxSize i;
-						for (i = 0; i < _common_set_ldslave.theData_out.con_params.segmentation_y; i++)
+						for (i = 0; i < _common_set_ldslave.theData_out.con_params.segmentation.y; i++)
 						{
 							memcpy(dest, src, runtime.szLine);
 							src += runtime.szLine;

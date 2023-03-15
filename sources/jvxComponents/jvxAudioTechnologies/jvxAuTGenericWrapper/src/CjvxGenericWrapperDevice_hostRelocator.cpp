@@ -711,27 +711,27 @@ CjvxGenericWrapperDevice_hostRelocator::transfer_backward_ocon(jvxLinkDataTransf
 			errorDetected = true;
 		}
 
-		if ((_common_set_ldslave.theData_out.con_params.segmentation_x != runtime.refDevice->processingControl.computedParameters.bSize_hw))
+		if ((_common_set_ldslave.theData_out.con_params.segmentation.x != runtime.refDevice->processingControl.computedParameters.bSize_hw))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Segmentation x in device is ";
-			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.segmentation_x);
+			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.segmentation.x);
 			txt += " whereas the hardware buffersize in generic wrapper is ";
 			txt += jvx_size2String(runtime.refDevice->processingControl.computedParameters.bSize_hw);
 			errorDetected = true;
 		}
 
-		if ((_common_set_ldslave.theData_out.con_params.segmentation_y != 1))
+		if ((_common_set_ldslave.theData_out.con_params.segmentation.y != 1))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Segmentation y in device is ";
-			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.segmentation_x);
+			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.segmentation.x);
 			txt += " whereas the value in generic wrapper is ";
 			txt += jvx_size2String(1);
 			errorDetected = true;
@@ -967,8 +967,8 @@ CjvxGenericWrapperDevice_hostRelocator::test_connect_icon_x(JVX_CONNECTION_FEEDB
 	_common_set_ldslave.theData_out.con_params.format = runtime.refDevice->processingControl.computedParameters.form_hw;
 	_common_set_ldslave.theData_out.con_params.number_channels = params.chanshw_out;
 
-	_common_set_ldslave.theData_out.con_params.segmentation_x = runtime.refDevice->processingControl.computedParameters.bSize_hw;
-	_common_set_ldslave.theData_out.con_params.segmentation_y = 1;
+	_common_set_ldslave.theData_out.con_params.segmentation.x = runtime.refDevice->processingControl.computedParameters.bSize_hw;
+	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
 	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 	// runtime.refDevice->release_countchannels_datatype(params); <- not required since local variable

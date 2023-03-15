@@ -5511,8 +5511,8 @@ jvx_linkDataParams2String(jvxLinkDataDescriptor* lData)
 	txt += ";c=" + jvx_size2String(lData->con_params.number_channels);
 	txt += ";f=";
 	txt += jvxDataFormat_txt(lData->con_params.format);
-	txt += ";sx=" + jvx_size2String(lData->con_params.segmentation_x);
-	txt += ";sy=" + jvx_size2String(lData->con_params.segmentation_y);
+	txt += ";sx=" + jvx_size2String(lData->con_params.segmentation.x);
+	txt += ";sy=" + jvx_size2String(lData->con_params.segmentation.y);
 	txt += ";sf=";
 	txt += jvxDataFormatGroup_txt(lData->con_params.format_group);
 	return txt;

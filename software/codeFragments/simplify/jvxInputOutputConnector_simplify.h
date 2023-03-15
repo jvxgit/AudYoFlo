@@ -233,9 +233,9 @@ virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_F
 				_common_set_ldslave.theData_out.con_params.rate;
 			
 			_common_set_ldslave.theData_in->con_compat.ext.segmentation_x =
-				_common_set_ldslave.theData_out.con_params.segmentation_x;
+				_common_set_ldslave.theData_out.con_params.segmentation.x;
 			_common_set_ldslave.theData_in->con_compat.ext.segmentation_y =
-				_common_set_ldslave.theData_out.con_params.segmentation_y;
+				_common_set_ldslave.theData_out.con_params.segmentation.y;
 			_common_set_ldslave.theData_in->con_compat.ext.subformat =
 				_common_set_ldslave.theData_out.con_params.format_group;
 			_common_set_ldslave.theData_in->con_compat.ext.hints =
