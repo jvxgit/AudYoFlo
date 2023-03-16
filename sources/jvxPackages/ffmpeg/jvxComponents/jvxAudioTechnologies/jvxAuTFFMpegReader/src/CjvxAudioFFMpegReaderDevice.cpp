@@ -593,8 +593,7 @@ CjvxAudioFFMpegReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	    _stop_chain_master(NULL);
 	    goto leave_error;
 	}
-
-	statusOutput = processingState::JVX_STATUS_RUNNING;
+	
 	triggeredRestart = true;
 	genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 
@@ -700,19 +699,7 @@ CjvxAudioFFMpegReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, 
 	switch (tp)
 	{
 	case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
-
-		if (statusOutput == processingState::JVX_STATUS_RUNNING)
-		{
-			send_one_buffer();
-		}
-		else
-		{
-			if (triggeredRestart)
-			{
-				this->restart_stream();
-			}
-			res = JVX_ERROR_WRONG_STATE;
-		}
+		res = send_one_buffer();		
 		break;
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
@@ -742,43 +729,67 @@ CjvxAudioFFMpegReaderDevice::set_property(jvxCallManagerProperties& callGate,
 		rawPtr, ident, trans);
 }
 
-void
+jvxErrorType
 CjvxAudioFFMpegReaderDevice::send_one_buffer()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (_common_set_ldslave.theData_out.con_link.connect_to)
 	{
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
-		if (res == JVX_NO_ERROR)
+		if (statusOutput == processingState::JVX_STATUS_RUNNING)
 		{
-			send_buffer_direct();
-			_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
-			_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+			if (res == JVX_NO_ERROR)
+			{
+				res = send_buffer_direct();
+				_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+				_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			}
+		}
+		else
+		{
+			res = JVX_ERROR_WRONG_STATE;
 		}
 	}
+	return res;
 }
 
-void
+jvxErrorType
 CjvxAudioFFMpegReaderDevice::send_buffer_direct()
 {
 	jvxSize bufIdx = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
 	jvxBool requires_new_data = false;
 	jvxData progress = 0;
+	jvxErrorType res = JVX_NO_ERROR;;
+
 	// static int fCnt = 0;
 	AVPacket* thePacket = (AVPacket*)_common_set_ldslave.theData_out.con_data.buffers[bufIdx];
 
 	if (triggeredRestart)
 	{
-		restart_stream();
+		restart_stream();		
 		triggeredRestart = false;
 		// fCnt = 0;
 	}
 
-	int ret = av_read_frame(fParams.ic, thePacket);
+	if (fwd10triggered)
+	{
+		skip_stream(10 * fParams.st->time_base.den, latest_pts);
+		fwd10triggered = false;
+	}
 
+	if (bwd10triggered)
+	{
+		skip_stream(-10 * fParams.st->time_base.den, latest_pts);
+		bwd10triggered = false;
+	}
+	// If not in state RUNNING, we 
+	assert(statusOutput == processingState::JVX_STATUS_RUNNING);
+	int ret = av_read_frame(fParams.ic, thePacket);
 	if (ret == 0)
 	{
+		latest_pts = thePacket->pts;
 		genFFMpegReader_device::monitor.progress_percent.value = 100.0 * (jvxData)thePacket->pts / (jvxData)fParams.st->duration;
+
 		// genFFMpegReader_device::monitor.progress_percent.value = ((jvxData)progress / (jvxData)fParams.lengthSecs * 100.0);
 	}
 	else
@@ -796,12 +807,13 @@ CjvxAudioFFMpegReaderDevice::send_buffer_direct()
 				genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 			}
 			break;
-		default: 
+		default:
 			statusOutput = processingState::JVX_STATUS_ERROR;
 			genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 			break;
 		}
 	}
+	return res;
 	// fCnt++;
 }
 
@@ -810,13 +822,6 @@ CjvxAudioFFMpegReaderDevice::restart_stream()
 {
 	int ret = -1;
 	int64_t startTime = 0;
-
-	// Set it back to RUNNING if DONE
-	if (statusOutput == processingState::JVX_STATUS_DONE)
-	{
-		statusOutput = processingState::JVX_STATUS_RUNNING;
-		genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
-	}
 
 	if (fParams.st->start_time != AV_NOPTS_VALUE)
 	{
@@ -834,6 +839,22 @@ CjvxAudioFFMpegReaderDevice::restart_stream()
 	//      of the seek_pos/seek_rel variables
 
 	ret = avformat_seek_file(fParams.ic, 0, seek_min, seek_target, seek_max, seek_flags);
+	if (ret == 0)
+	{
+		statusOutput = processingState::JVX_STATUS_RUNNING;
+		genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
+	}
+}
+
+void
+CjvxAudioFFMpegReaderDevice::skip_stream(jvxData skipPos, uint64_t curPos)
+{
+	int64_t seek_min = INT64_MIN;
+	int64_t seek_max = INT64_MAX;
+	int64_t seek_target = curPos + skipPos;
+	int64_t seek_flags = 0;
+	avformat_seek_file(fParams.ic, 0, seek_min, seek_target, seek_max, seek_flags);
+	
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, set_config)
@@ -850,9 +871,41 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, trig
 		if (genFFMpegReader_device::command.restart.value)
 		{
 			triggeredRestart = true;
+			statusOutput = processingState::JVX_STATUS_RUNNING;
+			genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 		}
 		genFFMpegReader_device::command.restart.value = false;
 	}
+
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFFMpegReader_device::command.fwd10))
+	{
+		fwd10triggered = true;
+		genFFMpegReader_device::command.fwd10.value = false;
+	}
+
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFFMpegReader_device::command.bwd10))
+	{
+		bwd10triggered = true;
+		genFFMpegReader_device::command.bwd10.value = false;
+	}
+
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFFMpegReader_device::command.togpause))
+	{
+		if (statusOutput == processingState::JVX_STATUS_RUNNING)
+		{
+			statusOutput = processingState::JVX_STATUS_PAUSED;
+		}
+		else
+		{
+			if (statusOutput == processingState::JVX_STATUS_PAUSED)
+			{
+				statusOutput = processingState::JVX_STATUS_RUNNING;
+			}
+		}
+		genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
+		genFFMpegReader_device::command.togpause.value = false;
+	}
+
 	return JVX_NO_ERROR;
 }
 

@@ -59,6 +59,9 @@ private:
 
 	jvxFfmpegFileParameter fParams;
 	jvxBool triggeredRestart = false;
+	jvxBool fwd10triggered = false;
+	jvxBool bwd10triggered = false;
+	uint64_t latest_pts = 0;
 
 public:
 	JVX_CALLINGCONVENTION CjvxAudioFFMpegReaderDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -134,12 +137,13 @@ public:
 
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 	
-	void send_one_buffer();
-	void send_buffer_direct();
+	jvxErrorType send_one_buffer();
+	jvxErrorType send_buffer_direct();
 
 	// ===================================================================================
 
 	void restart_stream();
+	void skip_stream(jvxData skipPos, uint64_t curPos);
 
 	// ===================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
