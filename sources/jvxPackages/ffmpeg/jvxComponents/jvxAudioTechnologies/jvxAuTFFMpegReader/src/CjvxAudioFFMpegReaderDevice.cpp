@@ -31,6 +31,7 @@ jvxErrorType
 CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, CjvxAudioFFMpegReaderTechnology* par)
 {
 	jvxSize i;
+	int ret = 0;
 	jvxErrorType res = JVX_NO_ERROR;
 	AVDictionary* format_opts = nullptr, * codec_opts = nullptr, *filtered_opts = nullptr;
 	parentTech = par;	
@@ -130,13 +131,14 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 			if (cbuf)
 			{
 				fParams.codecIdTag = cbuf;
+				// av_free((void*)cbuf); <- the get function returned a static string!!
 			}
-
 
 			cbuf = av_get_media_type_string(st->codecpar->codec_type);
 			if (cbuf)
 			{
 				fParams.codecTypeTag = cbuf;
+				// av_free((void*)cbuf); <- the get functions return a static string
 			}
 
 			fParams.sFormatId = (AVSampleFormat)st->codecpar->format;
@@ -146,6 +148,7 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 				if (cbuf)
 				{
 					fParams.sFormat = cbuf;
+					// av_free((void*)cbuf); <- the get returns a static string
 				}
 			}
 			fParams.bitsPerRaw = st->codecpar->bits_per_raw_sample;
@@ -153,11 +156,16 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 			fParams.idCodec = st->codecpar->codec_id;
 			fParams.bSizeMax = JVX_SIZE_UNSELECTED;
 
+			
 			switch (fParams.idCodec)
 			{
+				// Here, list up all PCM/WAV formats
 			case AV_CODEC_ID_PCM_S16LE:
+			case AV_CODEC_ID_PCM_S24LE:
 			case AV_CODEC_ID_PCM_S32LE:
 			case AV_CODEC_ID_PCM_S64LE:
+			case AV_CODEC_ID_PCM_F64LE:
+			case AV_CODEC_ID_PCM_F32LE:
 
 				// We try to find an estimate for the maximum number of samples passed via buffer
 				// FFMPEG pre-reads the buffers and stores them in memory. Therefore, it could happen
@@ -167,15 +175,20 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 				case AV_CODEC_ID_PCM_S16LE:
 					fParams.sizePerSample= 2;
 					break;
+				case AV_CODEC_ID_PCM_S24LE:
+					fParams.sizePerSample = 3; 
+					break;
 				case AV_CODEC_ID_PCM_S32LE:
+				case AV_CODEC_ID_PCM_F32LE:
 					fParams.sizePerSample = 4;
 					break;
 				case AV_CODEC_ID_PCM_S64LE:
+				case AV_CODEC_ID_PCM_F64LE:
 					fParams.sizePerSample = 8;
 					break;
 				}
 
-				int ret = av_opt_get(fParams.ic, "max_size", AV_OPT_SEARCH_CHILDREN, &max_size_ptr);
+				ret = av_opt_get(fParams.ic, "max_size", AV_OPT_SEARCH_CHILDREN, &max_size_ptr);
 				if (max_size_ptr)
 				{
 					jvxBool err = false;
@@ -183,7 +196,17 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 					newVal = jvx_string2Size(bsizeAdapted, err);
 					av_free(max_size_ptr);
 					fParams.bSizeMax = ceil((jvxData)newVal / (jvxData)(fParams.nChans * fParams.sizePerSample));
-				}				
+				}
+				break;
+			case AV_CODEC_ID_MP3:
+				break;
+			case AV_CODEC_ID_AAC:
+				break;
+			default:
+
+				std::cout << "Unable to open file type <" << fParams.codecIdTag << "[" << fParams.fFormatTag << "]>." << std::endl;
+				res = JVX_ERROR_UNSUPPORTED;
+				goto failed;
 			}
 
 			std::cout << "Filename <" << fParams.fName << ">: " << std::endl;
@@ -572,6 +595,7 @@ CjvxAudioFFMpegReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	}
 
 	statusOutput = processingState::JVX_STATUS_RUNNING;
+	triggeredRestart = true;
 	genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 
 	return res;
@@ -740,14 +764,14 @@ CjvxAudioFFMpegReaderDevice::send_buffer_direct()
 	jvxSize bufIdx = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
 	jvxBool requires_new_data = false;
 	jvxData progress = 0;
-	static int fCnt = 0;
+	// static int fCnt = 0;
 	AVPacket* thePacket = (AVPacket*)_common_set_ldslave.theData_out.con_data.buffers[bufIdx];
 
 	if (triggeredRestart)
 	{
 		restart_stream();
 		triggeredRestart = false;
-		fCnt = 0;
+		// fCnt = 0;
 	}
 
 	int ret = av_read_frame(fParams.ic, thePacket);
@@ -778,7 +802,7 @@ CjvxAudioFFMpegReaderDevice::send_buffer_direct()
 			break;
 		}
 	}
-	fCnt++;
+	// fCnt++;
 }
 
 void

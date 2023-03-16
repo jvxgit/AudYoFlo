@@ -147,7 +147,7 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 {
 	jvxSize i;
 	jvxData** bufsOutData = nullptr;
-
+	const char* cbuf = nullptr;
 	jvxSize idx_stage_local = idx_stage;
 	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
 	{
@@ -174,32 +174,39 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		int requiredSize = av_samples_get_buffer_size(nullptr, cParams.frame->ch_layout.nb_channels,
 			cParams.frame->nb_samples, (AVSampleFormat)cParams.frame->format, 1);
 
-		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
-		_common_set_ldslave.theData_out.con_data.fHeights[*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr].x = cParams.frame->duration;
+		// This must be the right size
+		assert(cParams.frame->nb_samples <= _common_set_ldslave.theData_out.con_params.buffersize);
 
-		assert(cParams.frame->duration <= _common_set_ldslave.theData_out.con_params.buffersize);
+		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+		_common_set_ldslave.theData_out.con_data.fHeights[*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr].x = cParams.frame->nb_samples;
+
 
 		switch (cParams.frame->format)
 		{
+			// ===============================================================
+			// Single buffer, interleaved
+			// ===============================================================
+
 		case AV_SAMPLE_FMT_S16:
 			for (i = 0; i < cParams.nChans; i++)
 			{
 				jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, jvxData>(
 					(jvxInt16*)cParams.frame->data[0],
 					(jvxData*)bufsOutData[i],
-					cParams.frame->duration,
+					cParams.frame->nb_samples,
 					JVX_MAX_INT_16_DIV,
 					i, cParams.nChans,
 					0, 1);
 			}
 			break;
+
 		case AV_SAMPLE_FMT_S32:
 			for (i = 0; i < cParams.nChans; i++)
 			{
 				jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
 					(jvxInt32*)cParams.frame->data[0],
 					(jvxData*)bufsOutData[i],
-					cParams.frame->duration,
+					cParams.frame->nb_samples,
 					JVX_MAX_INT_32_DIV,
 					i, cParams.nChans,
 					0, 1);
@@ -211,17 +218,78 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 				jvx_convertSamples_from_fxp_norm_to_flp<jvxInt64, jvxData>(
 					(jvxInt64*)cParams.frame->data[0],
 					(jvxData*)bufsOutData[i],
-					cParams.frame->duration,
+					cParams.frame->nb_samples,
 					JVX_MAX_INT_64_DIV,
 					i, cParams.nChans,
 					0, 1);
 			}
 			break;
+		case AV_SAMPLE_FMT_FLT:
+			for (i = 0; i < cParams.nChans; i++)
+			{
+				jvx_convertSamples_from_float_to_data<float>(
+					(float*)cParams.frame->data[0],
+					(jvxData*)bufsOutData[i],
+					cParams.frame->nb_samples,
+					i, cParams.nChans,
+					0, 1);
+			}
+			break;
+
+		case AV_SAMPLE_FMT_DBL:
+			for (i = 0; i < cParams.nChans; i++)
+			{
+				jvx_convertSamples_from_float_to_data<double>(
+					(double*)cParams.frame->data[0],
+					(jvxData*)bufsOutData[i],
+					cParams.frame->nb_samples,
+					i, cParams.nChans,
+					0, 1);
+			}
+			break;
+
+			// ===============================================================
+			// Planar, hence, non-interleaved
+			// ===============================================================
+
+		case AV_SAMPLE_FMT_FLTP:
+
+			// Planar data format
+			for (i = 0; i < cParams.nChans; i++)
+			{
+#ifdef JVX_DSP_DATA_FORMAT_DOUBLE
+				jvx_convertSamples_from_float_to_data<float>(
+					(float*)cParams.frame->data[i],
+					(jvxData*)bufsOutData[i],
+					cParams.frame->nb_samples,
+					0, 1, 0, 1);
+#else
+				jvx_convertSamples_memcpy(cParams.frame->data[i], bufsOutData[i], sizeof(float), cParams.frame->duration);
+#endif
+			}
+			break;
+		case AV_SAMPLE_FMT_DBLP:
+			for (i = 0; i < cParams.nChans; i++)
+			{
+#ifdef JVX_DSP_DATA_FORMAT_DOUBLE
+				jvx_convertSamples_memcpy(cParams.frame->data[i], bufsOutData[i], sizeof(double), cParams.frame->duration);
+#else
+				jvx_convertSamples_from_float_to_data<double>(
+					(double*)cParams.frame->data[0],
+					(jvxData*)bufsOutData[i],
+					cParams.frame->nb_samples,
+					0, 1, 0, 1);
+#endif
+			}
+			break;
 		default:
 
-			// AV_SAMPLE_FMT_S32,         ///< signed 32 bits
-			// AV_SAMPLE_FMT_FLT,         ///< float
-			// AV_SAMPLE_FMT_DBL
+			cbuf = av_get_sample_fmt_name((AVSampleFormat)cParams.frame->format);
+			if (cbuf)
+			{
+				std::cout << __FUNCTION__ << "Warning: Unsupported data format <" << cbuf << ">, introducing silence!" << std::endl;
+				// av_free((void*)cbuf); <- the get function returns a static string
+			}
 			for (i = 0; i < cParams.nChans; i++)
 			{
 				memset(bufsOutData[i], 0, cParams.frame->duration * jvxDataFormatGroup_getsize(_common_set_ldslave.theData_out.con_params.format));
