@@ -595,6 +595,7 @@ CjvxAudioFFMpegReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	}
 	
 	triggeredRestart = true;
+	statusOutput = processingState::JVX_STATUS_RUNNING;
 	genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 
 	return res;

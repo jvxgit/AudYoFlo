@@ -7,8 +7,10 @@ set(JVX_FFMPEG_PACKAGE ${JVX_FFMPEG_PACKAGE}
 	jvxLibraries/third_party/git/ffmpeg
 	jvxLibraries/jvx-ffmpeg-helpers
 	jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegReader
+	jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegWriter
 	jvxComponents/jvxAudioCodecs/jvxAuCFfmpeg
 	jvxComponents/jvxPackages/jvxPaFfmpeg
+	jvxApplications/ffoutput
 	jvxApplications/ffmpeg-app
 	jvxApplications/ffplay-app)
 
