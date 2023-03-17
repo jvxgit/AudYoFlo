@@ -6,7 +6,7 @@
 
 class CjvxAuCFfmpegAudioDecoder : public CjvxAudioDecoder
 {
-	struct jvxFfmpegCodecParameter : public jvxFfmpegParameter
+	struct jvxFfmpegCodecAudioParameter : public jvxFfmpegAudioParameter
 	{
 		std::string codecName;
 		AVCodecContext* cc = nullptr;
@@ -14,7 +14,7 @@ class CjvxAuCFfmpegAudioDecoder : public CjvxAudioDecoder
 		AVFrame* frame = nullptr;
 		void reset()
 		{
-			jvxFfmpegParameter::reset();
+			jvxFfmpegAudioParameter::reset();
 			codecName.clear();
 			cc = nullptr;
 			codec = nullptr;
@@ -22,7 +22,7 @@ class CjvxAuCFfmpegAudioDecoder : public CjvxAudioDecoder
 		}
 	};
 	
-	jvxFfmpegCodecParameter cParams;
+	jvxFfmpegCodecAudioParameter cParams;
 
 private:
 

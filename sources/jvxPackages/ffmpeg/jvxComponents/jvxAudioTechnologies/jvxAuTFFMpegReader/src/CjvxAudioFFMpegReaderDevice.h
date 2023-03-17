@@ -33,31 +33,9 @@ private:
 	jvxApiString format_descriptor;
 	
 	processingState statusOutput = processingState::JVX_STATUS_READY;
-	struct jvxFfmpegFileParameter: public jvxFfmpegParameter
-	{
-		std::string fName;
-		
-		AVStream* st = nullptr;
-		AVFormatContext* ic = nullptr;
-		// AVPacket* pkt = nullptr;
-		AVInputFormat* iformat = nullptr;
-		AVSampleFormat sFormatId = AV_SAMPLE_FMT_NONE;
-		jvxSize bSizeMax = 0;
-		jvxSize sizePerSample = 0;
-		void reset()
-		{
-			jvxFfmpegParameter::reset();
-			st = nullptr;			
-			ic = nullptr;
-			// pkt = nullptr;
-			iformat = nullptr;		
-			sFormatId = AV_SAMPLE_FMT_NONE;
-			bSizeMax = 0;
-			sizePerSample = 0;
-		};
-	};
-
-	jvxFfmpegFileParameter fParams;
+	
+	
+	jvxFfmpegInputFileAudioParameter fParams;
 	jvxBool triggeredRestart = false;
 	jvxBool fwd10triggered = false;
 	jvxBool bwd10triggered = false;

@@ -58,24 +58,9 @@ namespace JVX_PROJECT_NAMESPACE {
 		virtual jvxErrorType JVX_CALLINGCONVENTION postprocess()override;
 
 		// ==================================================
-
-		/*
-		virtual jvxErrorType JVX_CALLINGCONVENTION reference_object(IjvxObject** refObject)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION supports_multithreading(jvxBool* supports)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION process_mt(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver, jvxSize idx_receiver_to_sender, jvxSize* channelSelect, jvxSize numEntriesChannels, jvxInt32 offset_input, jvxInt32 offset_output, jvxInt32 numEntries)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION reconfigured_receiver_to_sender(jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION process_st(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver, jvxSize idx_receiver_to_sender)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION last_error_process(char* fld_text, jvxSize fldSize, jvxErrorType* err, jvxInt32* id_error, jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)override;		
-		virtual jvxErrorType JVX_CALLINGCONVENTION before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData)override;
-		*/
-
 		// ==================================================
 
 #include "codeFragments/simplify/jvxStateMachine_simplify.h"
-
 #include "codeFragments/simplify/jvxObjects_simplify.h"
 
 // Interfaces and default implementations for connections
@@ -147,7 +132,7 @@ namespace JVX_PROJECT_NAMESPACE {
 
 		void set_parent(CjvxAudioCodec* parent){myParent = parent;};
 
-		void accept_output_parameters();
+		virtual void accept_output_parameters();
 		void derive_input_file_arguments();
 	};
 

@@ -107,9 +107,8 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 			fParams.fName = fnameArg;
 
 			// Get the file properties from open structure
-			char strBuf[512] = { 0 };
-			av_channel_layout_describe(&st->codecpar->ch_layout, strBuf, sizeof(strBuf));
-
+			fParams.chanLayout = st->codecpar->ch_layout;
+			
 			fParams.nChans = st->codecpar->ch_layout.nb_channels; // st->codecpar->channels;
 
 			// Note: ic->duration / (jvxData)AV_TIME_BASE is another way to obtain duration
@@ -121,41 +120,15 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 			fParams.bitRate = st->codecpar->bit_rate;
 
 			// AVSampleFormat format = (AVSampleFormat)st->codecpar->format;
-			fParams.chanLayoutTag = strBuf;
-
+			
 			// Should be there always
 			fParams.fFormatTag = fParams.ic->iformat->name;
-
-			// Get codec id name
-			const char* cbuf = avcodec_get_name(st->codecpar->codec_id);
-			if (cbuf)
-			{
-				fParams.codecIdTag = cbuf;
-				// av_free((void*)cbuf); <- the get function returned a static string!!
-			}
-
-			cbuf = av_get_media_type_string(st->codecpar->codec_type);
-			if (cbuf)
-			{
-				fParams.codecTypeTag = cbuf;
-				// av_free((void*)cbuf); <- the get functions return a static string
-			}
-
+			fParams.tpCodec = st->codecpar->codec_type;
 			fParams.sFormatId = (AVSampleFormat)st->codecpar->format;
-			if (st->codecpar->format != AV_SAMPLE_FMT_NONE)
-			{
-				cbuf = av_get_sample_fmt_name((AVSampleFormat)st->codecpar->format);
-				if (cbuf)
-				{
-					fParams.sFormat = cbuf;
-					// av_free((void*)cbuf); <- the get returns a static string
-				}
-			}
 			fParams.bitsPerRaw = st->codecpar->bits_per_raw_sample;
 			fParams.bitsPerCoded = st->codecpar->bits_per_coded_sample;
 			fParams.idCodec = st->codecpar->codec_id;
-			fParams.bSizeMax = JVX_SIZE_UNSELECTED;
-
+			fParams.bSizeAudio = JVX_SIZE_UNSELECTED;
 			
 			switch (fParams.idCodec)
 			{
@@ -167,24 +140,31 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 			case AV_CODEC_ID_PCM_F64LE:
 			case AV_CODEC_ID_PCM_F32LE:
 
+				// The number of bits should be in this field
+				assert(fParams.bitsPerCoded);
+
 				// We try to find an estimate for the maximum number of samples passed via buffer
 				// FFMPEG pre-reads the buffers and stores them in memory. Therefore, it could happen
 				// that the buffersize changes during runtime. 
 				switch (fParams.idCodec)
 				{
 				case AV_CODEC_ID_PCM_S16LE:
-					fParams.sizePerSample= 2;
+					fParams.isFloat = false;
 					break;
 				case AV_CODEC_ID_PCM_S24LE:
-					fParams.sizePerSample = 3; 
+					fParams.isFloat = false;
 					break;
 				case AV_CODEC_ID_PCM_S32LE:
+					fParams.isFloat = false;
+					break;
 				case AV_CODEC_ID_PCM_F32LE:
-					fParams.sizePerSample = 4;
+					fParams.isFloat = true;
 					break;
 				case AV_CODEC_ID_PCM_S64LE:
+					fParams.isFloat = false;
+					break;
 				case AV_CODEC_ID_PCM_F64LE:
-					fParams.sizePerSample = 8;
+					fParams.isFloat = true;
 					break;
 				}
 
@@ -195,7 +175,7 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 					std::string bsizeAdapted = (const char*)max_size_ptr;
 					newVal = jvx_string2Size(bsizeAdapted, err);
 					av_free(max_size_ptr);
-					fParams.bSizeMax = ceil((jvxData)newVal / (jvxData)(fParams.nChans * fParams.sizePerSample));
+					fParams.bSizeAudio = ceil((jvxData)newVal / (jvxData)(fParams.nChans * fParams.bitsPerCoded / 8));
 				}
 				break;
 			case AV_CODEC_ID_MP3:
@@ -204,22 +184,12 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 				break;
 			default:
 
-				std::cout << "Unable to open file type <" << fParams.codecIdTag << "[" << fParams.fFormatTag << "]>." << std::endl;
+				std::cout << "Unable to open file type <" << fParams.fFormatTag << "[" << fParams.fFormatTag << "]>." << std::endl;
 				res = JVX_ERROR_UNSUPPORTED;
 				goto failed;
 			}
 
-			std::cout << "Filename <" << fParams.fName << ">: " << std::endl;
-			std::cout << " -> Codec <" << fParams.codecIdTag << ">: " << std::endl;
-			std::cout << " -> File format <" << fParams.fFormatTag<< ">: " << std::endl;
-			std::cout << " -> Bit rate <" << fParams.bitRate << ">: " << std::endl;
-			std::cout << " -> Sample format <" << fParams.sFormat << ">: " << std::endl;
-			std::cout << " -> Sample rate <" << fParams.sRate<< ">: " << std::endl;
-			std::cout << " -> Frame size <" << fParams.frameSize << ">: " << std::endl;
-			std::cout << " -> Number channels <" << fParams.nChans << ">: " << std::endl;
-			std::cout << " -> Length [samples] <" << fParams.lengthSamples << ">: " << std::endl;
-			std::cout << " -> Length [secs] <" << fParams.lengthSecs << ">: " << std::endl;
-			std::cout << " -> Number frames <" << fParams.numFrames << ">: " << std::endl;
+			jvx_ffmpeg_printout_file_params(fParams);
 
 			// I think this is to ignore all incoming packets when not yet setup propperly
 			st->discard = AVDISCARD_ALL;
@@ -344,7 +314,7 @@ CjvxAudioFFMpegReaderDevice::activate()
 
 		if (fParams.frameSize == 0)
 		{
-			CjvxAudioDevice::properties_active.buffersize.value = fParams.bSizeMax;
+			CjvxAudioDevice::properties_active.buffersize.value = fParams.bSizeAudio;
 		}
 		else
 		{
@@ -497,7 +467,8 @@ CjvxAudioFFMpegReaderDevice::test_set_output_parameters()
 	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
 	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
 
-	fParams.frameSizeMax = fParams.bSizeMax * fParams.nChans * fParams.sizePerSample;
+	// This field is only used for wav pcm
+	fParams.frameSizeMax = fParams.bSizeAudio * fParams.nChans * fParams.bitsPerCoded / 8;
 	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams, CjvxAudioDevice::properties_active.buffersize.value);	
 }
 

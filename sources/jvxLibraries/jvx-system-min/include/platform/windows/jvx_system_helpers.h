@@ -27,7 +27,7 @@
 
 #define JVX_MAKE_DIRECTORY_RETVAL int
 #define JVX_MAKE_DIRECTORY_POS 0
-#define JVX_MAKE_DIRECTORY(DIRNAME, ACCESS_RIGHTS) _mkdir(DIRNAME)
+#define JVX_MAKE_DIRECTORY(DIRNAME) _mkdir(DIRNAME)
 
 // Fopen must be an fopen_s in Windows!
 #define JVX_FOPEN(fHdl, fName, howtoopen) fopen_s(&fHdl, fName, howtoopen)

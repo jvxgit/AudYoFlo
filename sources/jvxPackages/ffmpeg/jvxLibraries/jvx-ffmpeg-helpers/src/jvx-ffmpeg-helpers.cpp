@@ -83,14 +83,47 @@ AVDictionary** setup_find_stream_info_opts(AVFormatContext* s,
 	return opts;
 }
 
-std::string 
-jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegParameter& params, jvxSize bSize)
+void 
+jvx_ffmpeg_update_derived(const jvxFfmpegAudioParameter& params, jvxFfmpegAudioParameterDerived& derived)
 {
-	std::string strText;
+	char strBuf[512] = { 0 };
+	av_channel_layout_describe(&params.chanLayout, strBuf, sizeof(strBuf));
+	derived.chanLayoutTag = strBuf;
 
+	// Get codec id name
+	const char* cbuf = avcodec_get_name(params.idCodec);
+	if (cbuf)
+	{
+		derived.codecIdTag = cbuf;
+		// av_free((void*)cbuf); <- the get function returned a static string!!
+	}
+
+	cbuf = av_get_media_type_string(params.tpCodec);
+	if (cbuf)
+	{
+		derived.codecTypeTag = cbuf;
+		// av_free((void*)cbuf); <- the get functions return a static string
+	}
+
+	cbuf = av_get_sample_fmt_name(params.sFormatId);
+	if (cbuf)
+	{
+		derived.sFormat = cbuf;
+		// av_free((void*)cbuf); <- the get returns a static string		
+	}
+}
+
+std::string 
+jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params, jvxSize bSize)
+{
+	jvxFfmpegAudioParameterDerived derived;
+
+	std::string strText;
 	strText = "fam=ffmpeg";
 
-	strText += ";tp=" + params.codecTypeTag + ":" + params.fFormatTag + ":" + params.codecIdTag;
+	jvx_ffmpeg_update_derived(params, derived);
+
+	strText += ";tp=" + derived.codecTypeTag + ":" + params.fFormatTag + ":" + derived.codecIdTag;
 	strText += ";cid=" + jvx_size2String((jvxSize)params.idCodec);
 	switch (params.idCodec)
 	{
@@ -213,13 +246,22 @@ jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegParameter& params, jvxSize bSi
 	}
 
 	strText += ";ch=" + jvx_size2String(params.nChans);
-	strText += ";chl=" + params.chanLayoutTag;
+	strText += ";chl=" + derived.chanLayoutTag;
 	strText += ";sr=" + jvx_size2String(params.sRate);
+	strText += ";br=" + jvx_size2String(params.bitRate);
 	if (params.frameSize == 0)
 	{
 		strText += ";bs=" + jvx_size2String(bSize);
 		strText += ";bps=" + jvx_size2String(params.bitsPerCoded);		
 		strText += ";fsm=" + jvx_size2String(params.frameSizeMax);
+		if (params.isFloat)
+		{
+			strText += ";flt=1";
+		}
+		else
+		{ 
+			strText += ";flt=0";
+		}
 	}
 	else
 	{
@@ -229,7 +271,7 @@ jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegParameter& params, jvxSize bSi
 	return strText;
 }
 
-jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegParameter& params, jvxSize& bsize)
+jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegAudioParameter& params, jvxSize& bsize)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool err = false;
@@ -244,6 +286,9 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegP
 	{
 		return JVX_ERROR_PARSE_ERROR;
 	}
+
+	jvxFfmpegAudioParameterDerived derived;
+	jvx_ffmpeg_update_derived(params, derived);
 
 	res = JVX_ERROR_INVALID_FORMAT;
 
@@ -274,9 +319,9 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegP
 				jvx_parseStringListIntoTokens(token2, args, ':');
 				if (args.size() == 3)
 				{
-					params.codecTypeTag = args[0];
+					derived.codecTypeTag = args[0];
 					params.fFormatTag = args[1];
-					params.codecIdTag = args[2];
+					derived.codecIdTag = args[2];
 				}
 				else
 				{
@@ -492,13 +537,24 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegP
 			if (token1 == "chl")
 			{
 				jvxBool err = false;
-				params.chanLayoutTag = token2;
+				derived.chanLayoutTag = token2;
 			}
 
 			if (token1 == "sr")
 			{
 				jvxBool err = false;
 				params.sRate = jvx_string2Size(token2, err);
+				if (err)
+				{
+					res = JVX_ERROR_INVALID_FORMAT;
+					break;
+				}
+			}
+
+			if (token1 == "br")
+			{
+				jvxBool err = false;
+				params.bitRate = jvx_string2Size(token2, err);
 				if (err)
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
@@ -540,6 +596,17 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegP
 					break;
 				}
 			}
+			if (token1 == "flt")
+			{
+				fsIsZero = true;
+				jvxBool err = false;
+				params.isFloat = (jvx_string2Size(token2, err) != 0);
+				if (err)
+				{
+					res = JVX_ERROR_INVALID_FORMAT;
+					break;
+				}
+			}
 		}
 	}
 
@@ -551,3 +618,36 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegP
 
 	return res;
 }
+
+void jvx_ffmpeg_printout_params(jvxFfmpegAudioParameter& params)
+{
+	jvxFfmpegAudioParameterDerived derived;
+	jvx_ffmpeg_update_derived(params, derived);
+
+	std::cout << " -> Codec <" << derived.codecIdTag << ">: " << std::endl;
+	std::cout << " -> File format <" << params.fFormatTag << ">: " << std::endl;
+	std::cout << " -> Bit rate <" << params.bitRate << ">: " << std::endl;
+	std::cout << " -> Sample format <" << derived.sFormat << ">: " << std::endl;
+	std::cout << " -> Sample rate <" << params.sRate << ">: " << std::endl;
+	std::cout << " -> Frame size <" << params.frameSize << ">: " << std::endl;
+	std::cout << " -> Number channels <" << params.nChans << ">: " << std::endl;
+}
+
+
+void jvx_ffmpeg_printout_file_params(jvxFfmpegFileAudioParameter& params)
+{
+	jvxFfmpegAudioParameterDerived derived;
+	jvx_ffmpeg_update_derived(params, derived);
+
+	std::cout << "Filename <" << params.fName << ">: " << std::endl;
+	jvx_ffmpeg_printout_params( params);
+}
+
+void jvx_ffmpeg_printout_input_file_params(jvxFfmpegInputFileAudioParameter& params)
+{
+	jvx_ffmpeg_printout_file_params(params);
+	std::cout << " ii --> Length [samples] <" << params.lengthSamples << ">: " << std::endl;
+	std::cout << " ii --> Length [secs] <" << params.lengthSecs << ">: " << std::endl;
+	std::cout << " ii --> Number frames <" << params.numFrames << ">: " << std::endl;
+}
+

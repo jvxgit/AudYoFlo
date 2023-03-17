@@ -3,6 +3,178 @@
 #include "jvx-helpers-cpp.h"
 #include "jvx_audiocodec_helpers.h"
 
+/* Add an output stream.*/
+#define STREAM_FRAME_RATE 25 /* 25 images/s */
+#define STREAM_PIX_FMT    AV_PIX_FMT_YUV420P /* default pix_fmt */
+
+AVCodecContext* enc;
+static void add_stream(AVFormatContext* oc, 	
+	enum AVCodecID codec_id,
+	jvxFfmpegOutputFileParameter& fParams)
+{
+	AVChannelLayout layout;
+
+	int i;
+
+	AVRational newrat;
+
+	if (fParams.bitsPerCoded)
+	{
+		// This is the linear case - specify the exact codec description		
+		jvxSize bRate = fParams.sRate * fParams.nChans;
+		switch (fParams.bitsPerCoded)
+		{
+		case 16:
+			codec_id = AV_CODEC_ID_PCM_S16LE;			
+			bRate *= 2;
+			break;
+		case 24:
+			codec_id = AV_CODEC_ID_PCM_S24LE;
+			break;
+		case 32:
+			if (fParams.isFloat)
+			{
+				codec_id = AV_CODEC_ID_PCM_F32LE;
+			}
+			else
+			{
+				codec_id = AV_CODEC_ID_PCM_S32LE;
+			}
+			break;
+		case 64:
+			if (fParams.isFloat)
+			{
+				codec_id = AV_CODEC_ID_PCM_F64LE;
+			}
+			else
+			{
+				codec_id = AV_CODEC_ID_PCM_S64LE;
+			}
+			break;
+		}
+	}
+
+	/* find the encoder */
+	fParams.cod = avcodec_find_encoder(codec_id);
+	assert(fParams.cod);
+
+	/*
+	ost->tmp_pkt = av_packet_alloc();
+	if (!ost->tmp_pkt) {
+		fprintf(stderr, "Could not allocate AVPacket\n");
+		exit(1);
+	}
+	*/
+
+	fParams.st = avformat_new_stream(oc, NULL);
+	assert(fParams.st);
+
+	// ost->st->id = oc->nb_streams - 1;
+	fParams.cctx = avcodec_alloc_context3(fParams.cod);
+	assert(fParams.cctx);
+
+	switch (fParams.cod->type)
+	{
+	case AVMEDIA_TYPE_AUDIO:
+
+		// Setup samplerate
+		fParams.cctx->sample_rate = fParams.sRate;
+
+		// Setup channel settings
+		// We come from here in C:
+		// av_channel_layout_copy(&c->ch_layout, &(AVChannelLayout)AV_CHANNEL_LAYOUT_STEREO)
+		// which does not work in c++
+		layout.order = AV_CHANNEL_ORDER_NATIVE;
+		layout.nb_channels = fParams.nChans;
+		layout.u.mask = (1 << fParams.nChans) -1;
+		av_channel_layout_copy(&fParams.cctx->ch_layout, &layout);
+
+		if (fParams.bitsPerCoded)
+		{
+			// This is the wav case
+			fParams.cctx->bits_per_coded_sample = fParams.bitsPerCoded;
+
+			//(*codec)->sample_fmts ?
+			//(*codec)->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
+
+			jvxSize bRate = fParams.sRate * fParams.nChans;
+			switch (fParams.bitsPerCoded)
+			{
+			case 16:
+				fParams.cctx->sample_fmt = AV_SAMPLE_FMT_S16;
+				bRate *= 2;
+				break;		
+			case 24:
+				fParams.cctx->sample_fmt = AV_SAMPLE_FMT_S32;
+				bRate *= 3;
+				break;
+			case 32:
+				fParams.cctx->sample_fmt = AV_SAMPLE_FMT_S32;
+				bRate *= 4;
+				break;
+			}
+			fParams.cctx->bit_rate = bRate * 8; // in bits
+		}
+
+		/*
+		if ((*codec)->supported_samplerates)
+		{
+			c->sample_rate = (*codec)->supported_samplerates[0];
+			for (i = 0; (*codec)->supported_samplerates[i]; i++)
+			{
+				if ((*codec)->supported_samplerates[i] == 44100)
+					c->sample_rate = 44100;
+			}
+		}
+		*/
+
+		// Setup relation of timebase
+		newrat.num = 1;
+		newrat.den = fParams.cctx->sample_rate;
+		fParams.st->time_base = newrat;
+		break;
+	default:
+		assert(0);
+	#if 0
+	case AVMEDIA_TYPE_VIDEO:
+		c->codec_id = codec_id;
+
+		c->bit_rate = 400000;
+		/* Resolution must be a multiple of two. */
+		c->width = 352;
+		c->height = 288;
+		/* timebase: This is the fundamental unit of time (in seconds) in terms
+		 * of which frame timestamps are represented. For fixed-fps content,
+		 * timebase should be 1/framerate and timestamp increments should be
+		 * identical to 1. */
+		AVRational newrat = { 1, STREAM_FRAME_RATE };
+		stNew->time_base = newrat;
+		c->time_base = stNew->time_base;
+
+		c->gop_size = 12; /* emit one intra frame every twelve frames at most */
+		c->pix_fmt = STREAM_PIX_FMT;
+		if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO) {
+			/* just for testing, we also add B-frames */
+			c->max_b_frames = 2;
+		}
+		if (c->codec_id == AV_CODEC_ID_MPEG1VIDEO) {
+			/* Needed to avoid using macroblocks in which some coeffs overflow.
+			 * This does not happen with normal video, it just happens here as
+			 * the motion of the chroma plane does not match the luma plane. */
+			c->mb_decision = 2;
+		}
+		break;
+
+	default:
+		break;
+#endif
+	}
+
+	/* Some formats want stream headers to be separate. */
+	if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+		fParams.cctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+}
+
 
 CjvxAudioFFMpegWriterDevice::CjvxAudioFFMpegWriterDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 		CjvxAudioDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
@@ -23,6 +195,12 @@ CjvxAudioFFMpegWriterDevice::~CjvxAudioFFMpegWriterDevice()
 
 // =============================================================================
 
+const char* fileFormatPostfixTranslator[(int)jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_LIMIT] =
+{
+	"wav", 
+	"mp3",
+	"aac"
+};
 
 jvxErrorType
 CjvxAudioFFMpegWriterDevice::init_parameters(
@@ -34,16 +212,93 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 	const std::string& cfg_compact,
 	CjvxAudioFFMpegWriterTechnology* par)
 {
+	std::string filesuffix = "mp3";
 	jvxErrorType res = JVX_NO_ERROR;
+	JVX_MAKE_DIRECTORY_RETVAL retVal = JVX_MAKE_DIRECTORY_POS;
+	if (JVX_DIRECTORY_EXISTS(folder.c_str()) == c_false)
+	{
+		retVal = JVX_MAKE_DIRECTORY(folder.c_str());
+	}
 	
-	if (JVX_DIRECTORY_EXISTS(folder.c_str()) == c_true)
+	if(retVal == JVX_MAKE_DIRECTORY_POS)
 	{
 		foldername = folder;
 		fileprefix = prefix;
+		if (fType < jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_LIMIT)
+		{
+			filesuffix = fileFormatPostfixTranslator[(int)fType];
+		}
 	}
 	else
 	{
 		res = JVX_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (res == JVX_NO_ERROR)
+	{
+		fParams.fName = foldername + JVX_SEPARATOR_DIR_CHAR + prefix + "." + filesuffix;
+
+		/* allocate the output media context */
+		avformat_alloc_output_context2(&fParams.oc, NULL, NULL, fParams.fName.c_str());
+		if (!fParams.oc)
+		{
+			printf("Could not deduce output format from file extension: using MPEG.\n");
+			avformat_alloc_output_context2(&fParams.oc, NULL, "mpeg", fParams.fName.c_str());
+		}
+
+		if (!fParams.oc)
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+	}
+
+	if (res == JVX_NO_ERROR)
+	{
+		fParams.fmt = fParams.oc->oformat;
+
+		// ==============================================
+		fParams.fFormatTag = fParams.fmt->name;
+
+		fParams.idCodec = fParams.fmt->audio_codec;
+		
+		if (fParams.fmt->name == (std::string)"wav")
+		{
+			// Setup some default settings
+			fParams.sRate = 48000;
+			fParams.nChans = 2;
+			fParams.chanLayout.nb_channels = 2;
+			fParams.chanLayout.order = AV_CHANNEL_ORDER_UNSPEC;
+			fParams.chanLayout.u.mask = 0;
+			fParams.tpCodec = AVMEDIA_TYPE_AUDIO;
+
+			// We only are allowed to input 16 bit audio
+			fParams.bitsPerCoded = 16;
+			fParams.idCodec = AV_CODEC_ID_PCM_S16LE;
+			fParams.sFormatId = AV_SAMPLE_FMT_S16;
+			fParams.isFloat = false;
+			fParams.frameSize = 0;
+			fParams.frameSizeMax = 4096; // Start with a 1024 buffersize
+			fParams.bSizeAudio = fParams.frameSizeMax / fParams.nChans / (fParams.bitsPerCoded/8);
+			fParams.bitRate = fParams.sRate * fParams.nChans * fParams.bitsPerCoded;
+			fParams.bitsPerRaw = 0;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		jvx_ffmpeg_printout_file_params(fParams);
+
+
+		/*
+		assert(fParams.fmt->audio_codec != AV_CODEC_ID_NONE);
+		const AVCodec* acodec = nullptr;
+		add_stream( fParams.oc, fParams.fmt->audio_codec, fParams);
+
+		// Later to be moved over to the encoder
+		int ret = avcodec_open2(fParams.cctx, fParams.cod, nullptr);
+		assert(ret == 0);
+		*/
 	}
 
 	if (res == JVX_NO_ERROR)
@@ -122,6 +377,8 @@ CjvxAudioFFMpegWriterDevice::activate()
 			set_fixed, set_wav_parameters,
 			reinterpret_cast<jvxHandle*>(this),			
 			nullptr);
+
+		file_props_2_ayf_props();
 
 		std::string iFile = foldername + JVX_SEPARATOR_DIR + fileprefix;
 		genFFMpegWriter_device::file.name.value = iFile;
@@ -267,118 +524,127 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	wav_params passed_props;
 	jvxApiString famToken;
 	jvxSize i;
+	jvxSize bSize = 0;
+	jvxFfmpegAudioParameter nParams;
+	jvxLinkDataDescriptor ld;
+
 	// Here we detect the provided parameters. We may setup another setup
 
 	res = JVX_NO_ERROR;
-	config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
-
-	jvxErrorType resL = jvx_wav_configtoken_2_values(
-		config_token.c_str(),
-		&passed_props,
-		&famToken);
-
-	jvxBool fixedValuesFFilled = true;
-	jvxLinkDataDescriptor ld;
-	wav_params modified_props = passed_props;
 	ld.con_params = _common_set_ldslave.theData_in->con_params;
-	ld.con_params.format_spec = nullptr;
 
-	if (JVX_CHECK_SIZE_SELECTED(genFFMpegWriter_device::fixed.bsize.value))
+	if (
+		(ld.con_params.buffersize != JVX_SIZE_DONTCARE) ||
+		(ld.con_params.rate != JVX_SIZE_DONTCARE) ||
+		(ld.con_params.number_channels != 1) ||
+		(ld.con_params.format != JVX_DATAFORMAT_POINTER) ||
+		(ld.con_params.format_group != JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD))
 	{
-		if (ld.con_params.buffersize != genFFMpegWriter_device::fixed.bsize.value)
-		{
-			modified_props.bsize = genFFMpegWriter_device::fixed.bsize.value;
-			fixedValuesFFilled = false;
-		}
-	}
-
-	if (JVX_CHECK_SIZE_SELECTED(genFFMpegWriter_device::fixed.srate.value))
-	{
-		if (ld.con_params.rate != genFFMpegWriter_device::fixed.srate.value)
-		{
-			modified_props.srate = genFFMpegWriter_device::fixed.srate.value;
-			fixedValuesFFilled = false;
-		}
-	}
-
-	if (JVX_CHECK_SIZE_SELECTED(genFFMpegWriter_device::fixed.nchans.value))
-	{
-		if (ld.con_params.number_channels != genFFMpegWriter_device::fixed.nchans.value)
-		{
-			modified_props.nchans = genFFMpegWriter_device::fixed.nchans.value;
-			fixedValuesFFilled = false;
-		}
-	}
-
-	if (!fixedValuesFFilled)
-	{
-		modified_props.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&modified_props, JVX_SIZE_UNSELECTED);
-		ld.con_params.buffersize = modified_props.fsizemax;
-		ld.con_params.rate = modified_props.srate;
-		std::string cfg;
-		jvx_wav_values_2_configtoken(cfg, &modified_props);
-		ld.con_params.format_spec = cfg;
-
 		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 			&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		if (res == JVX_NO_ERROR)
+	}
+
+	if (res == JVX_NO_ERROR)
+	{
+		config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
+		res = jvx_ffmpeg_codec_token_2_parameter(config_token.c_str(), nParams, bSize);
+	}
+
+	if (res == JVX_NO_ERROR)
+	{
+		jvxBool requiresUpdatePrior = false;
+
+		if (
+			(nParams.nChans != fParams.nChans) ||
+			(nParams.sRate != fParams.sRate))
 		{
-			// Update the config token
-			config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
-			jvx_wav_configtoken_2_values(config_token.c_str(), &passed_props, &famToken);
+			fParams.nChans = nParams.nChans;
+			fParams.sRate = nParams.sRate;
+		}
+		if (nParams.frameSize == 0)
+		{
+			if (nParams.frameSizeMax != fParams.frameSizeMax)
+			{
+				fParams.frameSizeMax = nParams.frameSizeMax;
+			}
+		} 
+		
+		// =====================================================
+
+		if (fParams.frameSize)
+		{
+			if (
+				(nParams.fFormatTag != fParams.fFormatTag) ||
+				(nParams.frameSize != fParams.frameSize) ||
+				(nParams.frameSizeMax != fParams.frameSizeMax) ||
+				(nParams.bitsPerCoded != fParams.bitsPerCoded) ||
+				(nParams.isFloat != fParams.isFloat))
+			{
+				requiresUpdatePrior = true;
+			}
 		}
 		else
 		{
-			return res;
+			if (
+				(nParams.fFormatTag != fParams.fFormatTag) ||
+				(nParams.frameSizeMax != fParams.frameSizeMax) ||
+				(nParams.bitsPerCoded != fParams.bitsPerCoded) ||
+				(nParams.isFloat != fParams.isFloat))
+			{
+				requiresUpdatePrior = true;
+			}
 		}
-	}
+		if (requiresUpdatePrior)
+		{
+			ld.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(nParams, fParams.frameSize);
+			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+				&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_NO_ERROR)
+			{
+				// We want to check that this really is ok?
+				std::string cfg_token_local = jvx_ffmpeg_parameter_2_codec_token(fParams, fParams.frameSize);
+				std::string cfg_token_prev = _common_set_ldslave.theData_in->con_params.format_spec.std_str().c_str();
+			}
+		}
+	} // if (res == JVX_NO_ERROR)
 
-	file_params.bsize = passed_props.bsize;
-	file_params.srate = passed_props.srate;
-	file_params.nchans = passed_props.nchans;
-
-	if (
-		(file_params.endian != passed_props.endian) ||
-		(file_params.resolution != passed_props.resolution) ||
-		(file_params.sample_type != passed_props.sample_type) ||
-		(file_params.sub_type != passed_props.sub_type))
-	{
-		jvxLinkDataDescriptor ld_params;
-		std::string propstring = jvx_wav_produce_codec_token(&file_params);
-		ld_params.con_params.format_spec = propstring;
-		ld_params.con_params.buffersize = file_params.fsizemax;
-		ld_params.con_params.number_channels = 1;
-		ld_params.con_params.format = JVX_DATAFORMAT_BYTE;
-		ld_params.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
-		ld_params.con_params.segmentation.x = ld_params.con_params.buffersize;
-		ld_params.con_params.segmentation.y = 1;
-		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
-			JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
-			&ld_params
-			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	}
 	if (res == JVX_NO_ERROR)
 	{
-		CjvxAudioDevice_genpcg::properties_active.buffersize.value = file_params.bsize;
-		CjvxAudioDevice_genpcg::properties_active.samplerate.value = file_params.srate;
-		CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.clear();
-		CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.clear();
-		jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection());
-		for (i = 0; i < file_params.nchans; i++)
-		{
-			CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(
-				"Channel #" + jvx_size2String(i));
-			jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), i);
-		}
+		file_props_2_ayf_props();
 
 		updateDependentVariables_lock(-1,
 			JVX_PROPERTY_CATEGORY_PREDEFINED, true,
 			JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC,
 			true);
-
-
 	}
 	return res;
+}
+
+void
+CjvxAudioFFMpegWriterDevice::file_props_2_ayf_props()
+{
+	jvxSize i;
+	if (fParams.fFormatTag == "wav")
+	{
+		assert(fParams.frameSize == 0);
+		CjvxAudioDevice_genpcg::properties_active.buffersize.value = fParams.frameSizeMax / fParams.nChans / (fParams.bitsPerCoded / 8);
+	}
+	else
+	{
+		CjvxAudioDevice_genpcg::properties_active.buffersize.value = fParams.frameSize;
+	}
+
+	CjvxAudioDevice_genpcg::properties_active.samplerate.value = fParams.sRate;
+	CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.clear();
+	CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.clear();
+	jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection());
+	for (i = 0; i < fParams.nChans; i++)
+	{
+		CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(
+			"Channel #" + jvx_size2String(i));
+		jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), i);
+	}
+	CjvxAudioDevice_genpcg::properties_active.format.value = JVX_DATAFORMAT_BYTE;
 }
 
 /*

@@ -44,17 +44,12 @@ set(LOCAL_LIBS
 	jvx-ffmpeg-helpers_static
   )
 
-  set(LOCAL_LIBS_STATIC 
+  set(LOCAL_LIBS
   		${JVX_FFMPEG_LIBS}
 		${JVX_SOCKET_LIBRARIES}
 		${JVX_FFMPEG_SYS_LIBS}
 	)
 
-  set(LOCAL_LIBS_SHARED 
-	${JVX_FFMPEG_LIBS}
-	${JVX_SOCKET_LIBRARIES}
-	${JVX_FFMPEG_SYS_LIBS}
-  )
 set(LOCAL_PCG_FILE_OPTIONS 
 	-I ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers/pcg)
 

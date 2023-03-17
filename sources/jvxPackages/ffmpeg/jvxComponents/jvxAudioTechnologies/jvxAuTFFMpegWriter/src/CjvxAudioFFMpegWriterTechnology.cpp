@@ -154,7 +154,7 @@ CjvxAudioFFMpegWriterTechnology::update_local_properties(jvxBool trig_host, jvxS
 	jvxAudioFFMpegWriteFiletype fileTp = genFFMpegWriter_technology::translate__file_params__file_type_from();
 	switch (fileTp)
 	{
-	case jvxAudioFFMpegWriteFiletype::JVX_FILEWRITER_WAV:
+	case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV:
 		for (i = 0; i < JVX_WAV_DIFFERENT_TYPES; i++)
 		{
 			std::string txt = jvxWavDifferentSubTypes[i].descr;
@@ -270,21 +270,17 @@ CjvxAudioFFMpegWriterTechnology::activateOneFile(
 		"", NULL);
 	newDevicePtr = static_cast<IjvxDevice*>(newDevice);
 
-	jvxAudioFFMpegWriteFiletype fType = jvxAudioFFMpegWriteFiletype::JVX_FILEWRITER_WAV;
+	jvxAudioFFMpegWriteFiletype fType = jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV;
 	jvxSize selFSType = 0;
 	jvxSize fSType = 0;
 	jvxErrorType resL = JVX_NO_ERROR;
 		
 	if(jvx_bitTest(genFFMpegWriter_technology::file_params.file_type.value.selection(), 0))
 	{
-		fType = jvxAudioFFMpegWriteFiletype::JVX_FILEWRITER_WAV;
+		fType = jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV;
 	}
 
-	selFSType = JVX_BITFIELD_SELECTION_ID(
-		genFFMpegWriter_technology::file_params.file_sub_type);
-	assert(JVX_CHECK_SIZE_SELECTED(selFSType));
-
-	if(fType == jvxAudioFFMpegWriteFiletype::JVX_FILEWRITER_WAV)
+	if(fType == jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV)
 	{ 
 		fSType = jvxWavDifferentSubTypes[selFSType].tp;
 	}

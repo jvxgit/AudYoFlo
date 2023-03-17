@@ -24,6 +24,10 @@ include_directories(
   # WAV File reader
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvxLFileIO/include
 
+  ${JVX_FFMPEG_ROOT_PATH}/jvxLibraries/jvx-ffmpeg-helpers/include
+
+  ${JVX_FFMPEG_INCLUDE_DIR}
+
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers/include
   )
 
@@ -41,6 +45,10 @@ set(LOCAL_SOURCES
   )
 
 set(LOCAL_LIBS
+	${JVX_FFMPEG_LIBS}
+	${JVX_SOCKET_LIBRARIES}
+	${JVX_FFMPEG_SYS_LIBS}
+	
 	jvx-component-templates-base_static
 	
 	# Helpers to provide some wav string conversions

@@ -6,11 +6,48 @@
 #include "jvx_audiocodec_helpers.h"
 #include "jvxWavWriter.h"
 
+#include "jvx-ffmpeg-helpers.h"
+
 #include "pcg_exports_device.h"
 
 enum class jvxAudioFFMpegWriteFiletype
 {
-	JVX_FILEWRITER_WAV = 0
+	// WAV File
+	JVX_FFMPEG_FILEWRITER_WAV, 
+	
+	// MP3 File
+	JVX_FFMPEG_FILEWRITER_MP3,
+	
+	// AAC File
+	JVX_FFMPEG_FILEWRITER_M4A,
+	
+	JVX_FFMPEG_FILEWRITER_LIMIT
+};
+
+struct jvxFfmpegOutputFileParameter : public jvxFfmpegFileAudioParameter
+{
+	const AVOutputFormat* fmt = nullptr;
+	AVFormatContext* oc = nullptr;
+
+	AVCodecContext* cctx = nullptr;
+	const AVCodec* cod = nullptr;
+
+	// AVFormatContext* ic = nullptr;
+	// AVPacket* pkt = nullptr;
+	// AVInputFormat* iformat = nullptr;
+	// AVSampleFormat sFormatId = AV_SAMPLE_FMT_NONE;
+	// jvxSize bSizeMax = 0;
+	// jvxSize sizePerSample = 0;
+	void reset()
+	{
+		jvxFfmpegFileAudioParameter::reset();
+		// ic = nullptr;
+		// pkt = nullptr;
+		// iformat = nullptr;
+		// sFormatId = AV_SAMPLE_FMT_NONE;
+		// bSizeMax = 0;
+		// sizePerSample = 0;
+	};
 };
 
 class CjvxAudioFFMpegWriterTechnology;
@@ -44,6 +81,10 @@ private:
 
 	jvxWavWriter wavFileWriter;
 	// fileprops_wav_base wav_props_init;
+
+	
+
+	jvxFfmpegOutputFileParameter fParams;
 
 public:
 	JVX_CALLINGCONVENTION CjvxAudioFFMpegWriterDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -134,6 +175,8 @@ public:
 	void trigger_one_buffer();
 	jvxErrorType open_wav_file_for_writing();
 	jvxErrorType close_wav_file_for_writing();
+
+	void file_props_2_ayf_props();
 
 };
 
