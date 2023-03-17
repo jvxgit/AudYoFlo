@@ -57,5 +57,6 @@ set(LOCAL_LIBS
 	-D JVX_WAV_PROPERTIES_EDITABLE)
 
 set(IS_JVX_COMPONENT TRUE)
+set(JVX_COMPONENT_ONLY_STATIC TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

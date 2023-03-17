@@ -19,8 +19,9 @@ include_directories(
 
     ${JVX_FFMPEG_INCLUDE_DIR}
 
-	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegReader
-		${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioCodecs/jvxAuCFfmpeg
+	#${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegReader
+	#${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegWriter
+	#${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioCodecs/jvxAuCFfmpeg
 ) 
 
 set(LOCAL_SOURCES 
@@ -33,6 +34,7 @@ set(LOCAL_SOURCES
 
 set(LOCAL_LIBS 
 	jvxAuTFFMpegReader_static 
+	jvxAuTFFMpegWriter_static
 	jvxAuCFfmpeg_static
 	${JVX_FFMPEG_SYS_LIB_SMIIDS}
 

@@ -13,6 +13,11 @@ extern "C"
 	jvxErrorType JVX_COMPONENT_ACCESS_CALLING_CONVENTION jvxAuTFFMpegReader_init(IjvxObject** retObject,
 		IjvxGlobalInstance** ret_glob, IjvxObject* templ);
 	jvxErrorType JVX_COMPONENT_ACCESS_CALLING_CONVENTION jvxAuTFFMpegReader_terminate(IjvxObject* cls);
+
+	jvxErrorType JVX_COMPONENT_ACCESS_CALLING_CONVENTION jvxAuTFFMpegWriter_init(IjvxObject** retObject,
+		IjvxGlobalInstance** ret_glob, IjvxObject* templ);
+	jvxErrorType JVX_COMPONENT_ACCESS_CALLING_CONVENTION jvxAuTFFMpegWriter_terminate(IjvxObject* cls);
+
 }
 
 CjvxPaFfmpeg::CjvxPaFfmpeg(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
@@ -76,7 +81,7 @@ CjvxPaFfmpeg::number_components(jvxSize* numOnReturn)
 {
 	if (numOnReturn)
 	{
-		*numOnReturn = 2;
+		*numOnReturn = 3;
 	}
 	return JVX_NO_ERROR;
 }
@@ -100,6 +105,15 @@ CjvxPaFfmpeg::request_entries_component(jvxSize idx,
 	case 1:
 		if (funcInit && funcTerm && description)
 		{
+			description->assign("FFMpeg Audio File Output");
+			*funcInit = jvxAuTFFMpegWriter_init;
+			*funcTerm = jvxAuTFFMpegWriter_terminate;
+			res = JVX_NO_ERROR;
+		}
+		break;
+	case 2:
+		if (funcInit && funcTerm && description)
+		{
 			description->assign("Ffmpeg Audio Codec");
 			*funcInit = jvxAuCFfmpeg_init;
 			*funcTerm = jvxAuCFfmpeg_terminate;
@@ -120,6 +134,7 @@ CjvxPaFfmpeg::release_entries_component(jvxSize idx)
 	{
 	case 0:
 	case 1:
+	case 2:
 		res = JVX_NO_ERROR;
 		break;
 	default:
