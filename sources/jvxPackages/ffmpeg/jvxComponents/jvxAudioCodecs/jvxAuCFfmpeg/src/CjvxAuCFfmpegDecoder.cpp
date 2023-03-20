@@ -23,7 +23,7 @@ CjvxAuCFfmpegAudioDecoder::set_configure_token(const char* tokenArg)
 			1, JVX_SIZE_DONTCARE,
 			JVX_SIZE_DONTCARE,
 			JVX_DATAFORMAT_POINTER,
-			JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD,
+			JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
 			JVX_DATAFLOW_NONE,
 			JVX_SIZE_UNSELECTED, 1); // <- number_channels and segment are different arguments here
 
@@ -264,7 +264,7 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 					cParams.frame->nb_samples,
 					0, 1, 0, 1);
 #else
-				jvx_convertSamples_memcpy(cParams.frame->data[i], bufsOutData[i], sizeof(float), cParams.frame->duration);
+				jvx_convertSamples_memcpy(cParams.frame->data[i], bufsOutData[i], sizeof(float), cParams.frame->nb_samples);
 #endif
 			}
 			break;
@@ -272,7 +272,7 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 			for (i = 0; i < cParams.nChans; i++)
 			{
 #ifdef JVX_DSP_DATA_FORMAT_DOUBLE
-				jvx_convertSamples_memcpy(cParams.frame->data[i], bufsOutData[i], sizeof(double), cParams.frame->duration);
+				jvx_convertSamples_memcpy(cParams.frame->data[i], bufsOutData[i], sizeof(double), cParams.frame->nb_samples);
 #else
 				jvx_convertSamples_from_float_to_data<double>(
 					(double*)cParams.frame->data[0],
@@ -292,7 +292,7 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 			}
 			for (i = 0; i < cParams.nChans; i++)
 			{
-				memset(bufsOutData[i], 0, cParams.frame->duration * jvxDataFormatGroup_getsize(_common_set_ldslave.theData_out.con_params.format));
+				memset(bufsOutData[i], 0, cParams.frame->nb_samples* jvxDataFormatGroup_getsize(_common_set_ldslave.theData_out.con_params.format));
 			}
 			break;
 
@@ -328,9 +328,8 @@ CjvxAuCFfmpegAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 				{
 					forward = *_common_set_ldslave.theData_in;
 
-					cParams.frameSizeMax = ld_cp->con_params.buffersize * cParams.nChans * cParams.bitsPerCoded; // cParams.sizePerSample;
-					cParams.frameSizeMax /= 8;
-					forward.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(cParams, ld_cp->con_params.buffersize);
+					jvx_ffmpeg_wav_params(cParams, ld_cp->con_params.buffersize);
+					forward.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(cParams);
 					res = _transfer_backward_ocon(true, tp, &forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 					if (res == JVX_NO_ERROR)
 					{
@@ -364,21 +363,13 @@ CjvxAuCFfmpegAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 jvxErrorType
 CjvxAuCFfmpegAudioDecoder::configure_decoder(const char* tokenArg)
 {
-	jvxSize bsize = 0;
-	jvxErrorType res = jvx_ffmpeg_codec_token_2_parameter(tokenArg, cParams, bsize);
+	jvxErrorType res = jvx_ffmpeg_codec_token_2_parameter(tokenArg, cParams);
 	if (res == JVX_NO_ERROR)
 	{
 		CjvxAudioCodec_genpcg::general.max_number_bytes.value = JVX_SIZE_INT32(cParams.frameSizeMax);
 		CjvxAudioCodec_genpcg::general.samplerate.value = JVX_SIZE_INT32(cParams.sRate);
 		CjvxAudioCodec_genpcg::general.num_audio_channels.value = cParams.nChans;
-		if (cParams.frameSize)
-		{
-			CjvxAudioCodec_genpcg::general.buffersize.value = cParams.frameSize;
-		}
-		else
-		{
-			CjvxAudioCodec_genpcg::general.buffersize.value = bsize;
-		}
+		CjvxAudioCodec_genpcg::general.buffersize.value = cParams.bSizeAudio;
 		CjvxAudioCodec_genpcg::general.audio_format.value = JVX_DATAFORMAT_DATA;
 	}
 	return res;

@@ -156,6 +156,13 @@ mainCentral_hostfactory::inform_update_properties(jvxComponentIdentification& tp
 {
 }
 
+jvxErrorType
+mainCentral_hostfactory::report_command_request(const CjvxReportCommandRequest& req)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+
 /*
  * Callback to indicate that booting has been completed
  *///=====================================================================

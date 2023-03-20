@@ -73,7 +73,7 @@ public:
 
 	// ===============================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(control_fileio);
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(modify_wav_file_params);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_file_type);
 
 	// ===============================================================
 
@@ -87,7 +87,6 @@ public:
 		const std::string& cfg_compact = "" );
 	void update_local_properties(jvxBool trig_host, jvxSize idSelectNew);
 	void trigger_close_file_core(std::pair<IjvxDevice*, CjvxAudioFFMpegWriterDevice*> elm);
-	void update_wav_params_from_props();
 };
 
 #endif

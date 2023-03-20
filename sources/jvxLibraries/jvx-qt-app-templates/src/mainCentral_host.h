@@ -42,7 +42,6 @@ public:
 
 	virtual void return_widget(QWidget** refWidget) override;
 
-
 	virtual void inform_bootup_complete(jvxBool* wantsToAdjustSize) override;
 
 	virtual void inform_about_to_shutdown()override;
@@ -84,6 +83,8 @@ public:
 	virtual void inform_update_window(jvxCBitField prio)override;
 
 	virtual void inform_update_properties(jvxComponentIdentification& tp) override;
+
+	virtual jvxErrorType report_command_request(const CjvxReportCommandRequest& req) override;
 
 	virtual void inform_sequencer_error(const char* err, const char* ferr)override;
 

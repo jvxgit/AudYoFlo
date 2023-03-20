@@ -1,11 +1,7 @@
 SECTION PROPERTIES
 {
 	OUTPUTFILE_NAME = "genFFMpegWriter_device";
-
-	define JVX_WAV_PROPERTIES_CALLBACK
-	include "wav_properties.pcgf";
-
-	CALLBACKS = {"set_fixed"};
+	CALLBACKS = {"set_fixed", "set_file_type"};
 
 	SECTION fixed
 	{
@@ -52,5 +48,17 @@ SECTION PROPERTIES
 			INIT_SET = ""; 
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};	
+
+		SECTION file_sub_type
+		{
+			DESCRIPTION = "File Subtype";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";					
+			SELECTION_LIST_NAMES = {"NOTVALID"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"no"}; 
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			CALLBACK_SET_POSTHOOK = "set_file_type";
+		};
 	};
 };

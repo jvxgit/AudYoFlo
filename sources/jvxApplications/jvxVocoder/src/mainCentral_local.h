@@ -86,6 +86,11 @@ public:
 
 	virtual void inform_update_properties(jvxComponentIdentification& tp) override {};
 
+	jvxErrorType report_command_request(const CjvxReportCommandRequest& req) override
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
+
 	void inform_internals_have_changed(const jvxComponentIdentification& tp, IjvxObject* theObj, jvxPropertyCategoryType cat, jvxSize propId, bool onlyContent, 
 		const jvxComponentIdentification& tpTo, jvxPropertyCallPurpose purpose)override;
 

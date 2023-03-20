@@ -336,7 +336,8 @@ jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateF
 
 			switch (theData->con_params.format_group)
 			{
-			case JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD:
+			case JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD:
+			case JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD:
 
 				// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
 				// Do not allocate anything here!
@@ -421,7 +422,8 @@ jvx_deallocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool dealloc
 			// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
 			switch (theData->con_params.format_group)
 			{
-			case JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD:
+			case JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD:
+			case JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD:
 
 				// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
 				// Do not allocate anything here!

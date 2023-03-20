@@ -33,6 +33,10 @@ include_directories(
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegWriterCommon.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegWriterCommon.cpp
+
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegWriterTechnology.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegWriterTechnology_properties.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioFFMpegWriterTechnology_configuration.cpp

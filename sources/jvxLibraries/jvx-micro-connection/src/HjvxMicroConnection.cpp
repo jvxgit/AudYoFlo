@@ -891,7 +891,7 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
  * On prepare, we copy the parameters as specified in the linked data container
  */
 jvxErrorType 
-HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffersInPlaceOut, jvxBool copyAttachedData)
+HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffersInPlaceOut, jvxBool copyAttachedDataArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
@@ -911,6 +911,8 @@ HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffer
 	// Copy the processing parameters in passed container
 	_common_set_ldslave.theData_out.con_params = theData_inlnk->con_params; // Inportant: do not touch "link" subfield, otherwise, linkage will be destroyed
 	_common_set_ldslave.theData_out.con_data = theData_inlnk->con_data; // Copy the number of buffers and the allocation flags
+
+	copyAttachedData = copyAttachedDataArg;
 
 	// Forwarding the attached data does not make sense in a flexible connection but makes sense in a fixed connection
 	if (copyAttachedData)
@@ -1178,6 +1180,11 @@ HjvxMicroConnection::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		// Copy input parameters number of buffers and allocation type
 		theData_outlnk->con_data = _common_set_ldslave.theData_in->con_data;
 		theData_outlnk->con_pipeline = _common_set_ldslave.theData_in->con_pipeline;
+
+		if (copyAttachedData)
+		{
+			theData_outlnk->con_link.attached_chain_single_pass = _common_set_ldslave.theData_in->con_link.attached_chain_single_pass;
+		}
 
 		res = refHandleFwd->hook_prepare(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 

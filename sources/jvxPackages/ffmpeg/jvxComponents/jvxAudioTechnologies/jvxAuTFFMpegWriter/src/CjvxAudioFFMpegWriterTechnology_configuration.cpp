@@ -171,7 +171,7 @@ CjvxAudioFFMpegWriterTechnology::done_configuration()
 	jvxSize cnt = 0;
 	jvxSize idSelect = JVX_SIZE_UNSELECTED;
 
-	update_wav_params_from_props();
+	// update_wav_params_from_props();
 
 	for (auto elm : devsOnConfig)
 	{

@@ -128,6 +128,9 @@ public:
 
 	virtual void inform_update_properties(jvxComponentIdentification& tp) = 0;
 
+	// virtual void inform_update_properties_ident(jvxComponentIdentification& tp, const char* ident) = 0;
+	virtual jvxErrorType report_command_request(const CjvxReportCommandRequest& req) = 0;
+
 	virtual void inform_internals_have_changed(const jvxComponentIdentification& tp,
 		IjvxObject* theObj,
 		jvxPropertyCategoryType cat,

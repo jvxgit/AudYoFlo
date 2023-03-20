@@ -3367,6 +3367,13 @@ CjvxProperties::_stop_property_report_collect(jvxCallManagerProperties& callGate
 	return JVX_ERROR_UNSUPPORTED;
 }
 
+std::string&
+CjvxProperties::property_changed_descriptor_tag_add(std::string& descriptor)
+{
+	descriptor += "+";
+	return descriptor;
+}
+
 jvxErrorType
 CjvxProperties::add_property_report_collect(const std::string& propDescr, jvxBool reportDescriptorChanged)
 {
@@ -3375,7 +3382,7 @@ CjvxProperties::add_property_report_collect(const std::string& propDescr, jvxBoo
 	std::string propPrefixContent = propPrefix;
 	if (reportDescriptorChanged)
 	{
-		propPrefix += "+";
+		propPrefix = CjvxProperties::property_changed_descriptor_tag_add(propPrefix);
 	}
 	_lock_properties_local();
 	if (_common_set_property_report.startCntStack > 0)

@@ -377,6 +377,9 @@ std::string jvx_data2String_highPrecision(jvxData convert, jvxSize digits);
 
 std::string jvx_produceFilenameDateClock(const std::string& prefix);
 
+#define JVX_PROP_BIT_2_SEL_ID(prop) \
+	jvx_bitfieldSelection2Id(prop.value.selection(0), prop.value.entries.size())
+
 // ==============================================================================
 jvxSize
 jvx_bitfieldSelection2Id(jvxBitField sel, jvxSize numSel);

@@ -418,6 +418,8 @@ public:
 
 	 jvxErrorType add_property_report_collect(const std::string& propDescr, jvxBool reportDescriptorChanged = false);
 
+	 static std::string& property_changed_descriptor_tag_add(std::string& descriptor);
+
 	 // =========================================================================================
 	 std::list<CjvxProperties::oneProperty>::iterator findInPropertyList(std::list<CjvxProperties::oneProperty>& lst, jvxSize propId, jvxPropertyCategoryType cat);
 

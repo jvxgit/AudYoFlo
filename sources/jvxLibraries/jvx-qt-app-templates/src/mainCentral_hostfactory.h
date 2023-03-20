@@ -77,6 +77,8 @@ public:
 
 	virtual void inform_update_properties(jvxComponentIdentification& tp) override;
 
+	virtual jvxErrorType report_command_request(const CjvxReportCommandRequest& req) override;
+
 	virtual void inform_config_read_complete(const char* fName)override;
 
 	virtual jvxErrorType inform_close_triggered()override;

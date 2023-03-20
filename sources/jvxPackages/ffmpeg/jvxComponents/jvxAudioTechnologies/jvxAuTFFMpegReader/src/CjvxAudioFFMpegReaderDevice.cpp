@@ -462,14 +462,15 @@ CjvxAudioFFMpegReaderDevice::test_set_output_parameters()
 	
 	// Type is modified as the data is coded
 	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_POINTER;
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD;
+	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD;
 	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
 	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
 	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
 
 	// This field is only used for wav pcm
-	fParams.frameSizeMax = fParams.bSizeAudio * fParams.nChans * fParams.bitsPerCoded / 8;
-	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams, CjvxAudioDevice::properties_active.buffersize.value);	
+	jvx_ffmpeg_wav_params(fParams, CjvxAudioDevice::properties_active.buffersize.value);
+	
+	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams);	
 }
 
 jvxErrorType

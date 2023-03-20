@@ -172,6 +172,7 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 {
 	jvxReportCommandDataType tp = request->datatype();
 	const CjvxReportCommandRequest_rm* iface_rm = NULL;
+	const CjvxReportCommandRequest_id* iface_id = NULL;
 	jvxReportCommandRequest req = request->request();
 	jvxComponentIdentification cp;
 	jvxCBitField prio = 0;
@@ -180,6 +181,13 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 	jvxComponentIdentification cpId = request->origin();
 	jvxSize schedId = JVX_SIZE_UNSELECTED;
 	jvxErrorType resL = JVX_NO_ERROR;
+
+	// Pass this to the main widget
+	if (request && subWidgets.main.theWidget)
+	{
+		resL = subWidgets.main.theWidget->report_command_request(*request);
+	}
+
 	switch (tp)
 	{
 	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_BASE:
@@ -230,6 +238,7 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 			}
 		}
 		break;
+	
 	default:
 		break;
 	}

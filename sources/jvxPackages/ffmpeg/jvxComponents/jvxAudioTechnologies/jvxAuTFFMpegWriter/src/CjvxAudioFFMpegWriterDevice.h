@@ -29,24 +29,21 @@ struct jvxFfmpegOutputFileParameter : public jvxFfmpegFileAudioParameter
 	const AVOutputFormat* fmt = nullptr;
 	AVFormatContext* oc = nullptr;
 
-	AVCodecContext* cctx = nullptr;
-	const AVCodec* cod = nullptr;
+	// const AVCodec* cod = nullptr;
 
-	// AVFormatContext* ic = nullptr;
-	// AVPacket* pkt = nullptr;
-	// AVInputFormat* iformat = nullptr;
-	// AVSampleFormat sFormatId = AV_SAMPLE_FMT_NONE;
-	// jvxSize bSizeMax = 0;
-	// jvxSize sizePerSample = 0;
+	AVCodecContext* enc_ctx = nullptr;
+	AVStream* st = nullptr;
+
+	std::string subTypeSpec;
+	jvxSize idSub = JVX_SIZE_UNSELECTED;
+	jvxAudioFFMpegWriteFiletype tpOut = jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_LIMIT;
+
 	void reset()
 	{
 		jvxFfmpegFileAudioParameter::reset();
-		// ic = nullptr;
-		// pkt = nullptr;
-		// iformat = nullptr;
-		// sFormatId = AV_SAMPLE_FMT_NONE;
-		// bSizeMax = 0;
-		// sizePerSample = 0;
+		idSub = JVX_SIZE_UNSELECTED;
+		st = nullptr;
+		enc_ctx = nullptr;
 	};
 };
 
@@ -82,8 +79,6 @@ private:
 	jvxWavWriter wavFileWriter;
 	// fileprops_wav_base wav_props_init;
 
-	
-
 	jvxFfmpegOutputFileParameter fParams;
 
 public:
@@ -95,8 +90,8 @@ public:
 	jvxErrorType init_parameters(
 		const std::string& filename_folder,
 		const std::string& filename_prefix,
-		jvxAudioFFMpegWriteFiletype fType,
-		jvxSize fSType,
+		const std::string& fType,
+		const std::string& fSubType,
 		wav_params* wav_init_params,
 		const std::string& cfg_compact,
 		CjvxAudioFFMpegWriterTechnology* par);
@@ -104,6 +99,7 @@ public:
 	jvxErrorType term_file();
 
 	std::string get_last_error();
+	jvxErrorType reallocate_output_context();
 	// =================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
@@ -168,15 +164,16 @@ public:
 
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
-	// ===================================================================================
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_wav_parameters);
+	// ==================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_fixed);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_file_type);
 
 	void trigger_one_buffer();
 	jvxErrorType open_wav_file_for_writing();
 	jvxErrorType close_wav_file_for_writing();
-
+	void verify_codec_settings();
 	void file_props_2_ayf_props();
+	void update_format_settings_wav();
 
 };
 

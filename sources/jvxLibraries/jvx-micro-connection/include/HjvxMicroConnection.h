@@ -217,6 +217,7 @@ private:
 	std::string last_error = "";
 
 	jvxConnectionType typeConnection = jvxConnectionType::JVX_MICROCONNECTION_ENGAGE;	
+	jvxBool copyAttachedData = false;
 
 public:
 	HjvxMicroConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

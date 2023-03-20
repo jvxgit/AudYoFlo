@@ -2,178 +2,7 @@
 #include "CjvxAudioFFMpegWriterTechnology.h"
 #include "jvx-helpers-cpp.h"
 #include "jvx_audiocodec_helpers.h"
-
-/* Add an output stream.*/
-#define STREAM_FRAME_RATE 25 /* 25 images/s */
-#define STREAM_PIX_FMT    AV_PIX_FMT_YUV420P /* default pix_fmt */
-
-AVCodecContext* enc;
-static void add_stream(AVFormatContext* oc, 	
-	enum AVCodecID codec_id,
-	jvxFfmpegOutputFileParameter& fParams)
-{
-	AVChannelLayout layout;
-
-	int i;
-
-	AVRational newrat;
-
-	if (fParams.bitsPerCoded)
-	{
-		// This is the linear case - specify the exact codec description		
-		jvxSize bRate = fParams.sRate * fParams.nChans;
-		switch (fParams.bitsPerCoded)
-		{
-		case 16:
-			codec_id = AV_CODEC_ID_PCM_S16LE;			
-			bRate *= 2;
-			break;
-		case 24:
-			codec_id = AV_CODEC_ID_PCM_S24LE;
-			break;
-		case 32:
-			if (fParams.isFloat)
-			{
-				codec_id = AV_CODEC_ID_PCM_F32LE;
-			}
-			else
-			{
-				codec_id = AV_CODEC_ID_PCM_S32LE;
-			}
-			break;
-		case 64:
-			if (fParams.isFloat)
-			{
-				codec_id = AV_CODEC_ID_PCM_F64LE;
-			}
-			else
-			{
-				codec_id = AV_CODEC_ID_PCM_S64LE;
-			}
-			break;
-		}
-	}
-
-	/* find the encoder */
-	fParams.cod = avcodec_find_encoder(codec_id);
-	assert(fParams.cod);
-
-	/*
-	ost->tmp_pkt = av_packet_alloc();
-	if (!ost->tmp_pkt) {
-		fprintf(stderr, "Could not allocate AVPacket\n");
-		exit(1);
-	}
-	*/
-
-	fParams.st = avformat_new_stream(oc, NULL);
-	assert(fParams.st);
-
-	// ost->st->id = oc->nb_streams - 1;
-	fParams.cctx = avcodec_alloc_context3(fParams.cod);
-	assert(fParams.cctx);
-
-	switch (fParams.cod->type)
-	{
-	case AVMEDIA_TYPE_AUDIO:
-
-		// Setup samplerate
-		fParams.cctx->sample_rate = fParams.sRate;
-
-		// Setup channel settings
-		// We come from here in C:
-		// av_channel_layout_copy(&c->ch_layout, &(AVChannelLayout)AV_CHANNEL_LAYOUT_STEREO)
-		// which does not work in c++
-		layout.order = AV_CHANNEL_ORDER_NATIVE;
-		layout.nb_channels = fParams.nChans;
-		layout.u.mask = (1 << fParams.nChans) -1;
-		av_channel_layout_copy(&fParams.cctx->ch_layout, &layout);
-
-		if (fParams.bitsPerCoded)
-		{
-			// This is the wav case
-			fParams.cctx->bits_per_coded_sample = fParams.bitsPerCoded;
-
-			//(*codec)->sample_fmts ?
-			//(*codec)->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
-
-			jvxSize bRate = fParams.sRate * fParams.nChans;
-			switch (fParams.bitsPerCoded)
-			{
-			case 16:
-				fParams.cctx->sample_fmt = AV_SAMPLE_FMT_S16;
-				bRate *= 2;
-				break;		
-			case 24:
-				fParams.cctx->sample_fmt = AV_SAMPLE_FMT_S32;
-				bRate *= 3;
-				break;
-			case 32:
-				fParams.cctx->sample_fmt = AV_SAMPLE_FMT_S32;
-				bRate *= 4;
-				break;
-			}
-			fParams.cctx->bit_rate = bRate * 8; // in bits
-		}
-
-		/*
-		if ((*codec)->supported_samplerates)
-		{
-			c->sample_rate = (*codec)->supported_samplerates[0];
-			for (i = 0; (*codec)->supported_samplerates[i]; i++)
-			{
-				if ((*codec)->supported_samplerates[i] == 44100)
-					c->sample_rate = 44100;
-			}
-		}
-		*/
-
-		// Setup relation of timebase
-		newrat.num = 1;
-		newrat.den = fParams.cctx->sample_rate;
-		fParams.st->time_base = newrat;
-		break;
-	default:
-		assert(0);
-	#if 0
-	case AVMEDIA_TYPE_VIDEO:
-		c->codec_id = codec_id;
-
-		c->bit_rate = 400000;
-		/* Resolution must be a multiple of two. */
-		c->width = 352;
-		c->height = 288;
-		/* timebase: This is the fundamental unit of time (in seconds) in terms
-		 * of which frame timestamps are represented. For fixed-fps content,
-		 * timebase should be 1/framerate and timestamp increments should be
-		 * identical to 1. */
-		AVRational newrat = { 1, STREAM_FRAME_RATE };
-		stNew->time_base = newrat;
-		c->time_base = stNew->time_base;
-
-		c->gop_size = 12; /* emit one intra frame every twelve frames at most */
-		c->pix_fmt = STREAM_PIX_FMT;
-		if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO) {
-			/* just for testing, we also add B-frames */
-			c->max_b_frames = 2;
-		}
-		if (c->codec_id == AV_CODEC_ID_MPEG1VIDEO) {
-			/* Needed to avoid using macroblocks in which some coeffs overflow.
-			 * This does not happen with normal video, it just happens here as
-			 * the motion of the chroma plane does not match the luma plane. */
-			c->mb_decision = 2;
-		}
-		break;
-
-	default:
-		break;
-#endif
-	}
-
-	/* Some formats want stream headers to be separate. */
-	if (oc->oformat->flags & AVFMT_GLOBALHEADER)
-		fParams.cctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-}
+#include "CjvxAudioFFMpegWriterCommon.h"
 
 
 CjvxAudioFFMpegWriterDevice::CjvxAudioFFMpegWriterDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
@@ -195,24 +24,16 @@ CjvxAudioFFMpegWriterDevice::~CjvxAudioFFMpegWriterDevice()
 
 // =============================================================================
 
-const char* fileFormatPostfixTranslator[(int)jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_LIMIT] =
-{
-	"wav", 
-	"mp3",
-	"aac"
-};
-
 jvxErrorType
 CjvxAudioFFMpegWriterDevice::init_parameters(
 	const std::string& folder,
 	const std::string& prefix,
-	jvxAudioFFMpegWriteFiletype fType,
-	jvxSize fSType,
+	const std::string& filesuffix,
+	const std::string& fSType,
 	wav_params* wav_init_params_arg,
 	const std::string& cfg_compact,
 	CjvxAudioFFMpegWriterTechnology* par)
 {
-	std::string filesuffix = "mp3";
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_MAKE_DIRECTORY_RETVAL retVal = JVX_MAKE_DIRECTORY_POS;
 	if (JVX_DIRECTORY_EXISTS(folder.c_str()) == c_false)
@@ -224,10 +45,6 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 	{
 		foldername = folder;
 		fileprefix = prefix;
-		if (fType < jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_LIMIT)
-		{
-			filesuffix = fileFormatPostfixTranslator[(int)fType];
-		}
 	}
 	else
 	{
@@ -237,32 +54,42 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 	if (res == JVX_NO_ERROR)
 	{
 		fParams.fName = foldername + JVX_SEPARATOR_DIR_CHAR + prefix + "." + filesuffix;
-
+		fParams.subTypeSpec = fSType;
 		/* allocate the output media context */
-		avformat_alloc_output_context2(&fParams.oc, NULL, NULL, fParams.fName.c_str());
-		if (!fParams.oc)
-		{
-			printf("Could not deduce output format from file extension: using MPEG.\n");
-			avformat_alloc_output_context2(&fParams.oc, NULL, "mpeg", fParams.fName.c_str());
-		}
 
-		if (!fParams.oc)
-		{
-			res = JVX_ERROR_INVALID_SETTING;
-		}
+		res = reallocate_output_context();
 	}
 
 	if (res == JVX_NO_ERROR)
-	{
-		fParams.fmt = fParams.oc->oformat;
+	{		
 
 		// ==============================================
 		fParams.fFormatTag = fParams.fmt->name;
-
 		fParams.idCodec = fParams.fmt->audio_codec;
-		
+
 		if (fParams.fmt->name == (std::string)"wav")
 		{
+			fParams.tpOut = jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV;
+			fParams.idSub = 0;
+			while (1)
+			{
+				if (optionsWav[fParams.idSub] == nullptr)
+				{
+					break;
+				}
+				else
+				{
+					if (optionsWav[fParams.idSub] == fParams.subTypeSpec)
+					{
+						break;
+					}
+					else
+					{
+						fParams.idSub++;
+					}
+				}
+			}
+
 			// Setup some default settings
 			fParams.sRate = 48000;
 			fParams.nChans = 2;
@@ -271,21 +98,14 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 			fParams.chanLayout.u.mask = 0;
 			fParams.tpCodec = AVMEDIA_TYPE_AUDIO;
 
-			// We only are allowed to input 16 bit audio
-			fParams.bitsPerCoded = 16;
-			fParams.idCodec = AV_CODEC_ID_PCM_S16LE;
-			fParams.sFormatId = AV_SAMPLE_FMT_S16;
-			fParams.isFloat = false;
-			fParams.frameSize = 0;
-			fParams.frameSizeMax = 4096; // Start with a 1024 buffersize
-			fParams.bSizeAudio = fParams.frameSizeMax / fParams.nChans / (fParams.bitsPerCoded/8);
-			fParams.bitRate = fParams.sRate * fParams.nChans * fParams.bitsPerCoded;
-			fParams.bitsPerRaw = 0;
+			update_format_settings_wav();
 		}
 		else
 		{
 			assert(0);
 		}
+
+		verify_codec_settings();
 
 		jvx_ffmpeg_printout_file_params(fParams);
 
@@ -309,16 +129,105 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 		{
 			wav_params* params_prop_wav = (wav_params*)wav_init_params_arg;
 			file_params = *params_prop_wav;
-
-			genFFMpegWriter_device::translate__wav_properties__sample_type_to(file_params.sample_type);
-			genFFMpegWriter_device::translate__wav_properties__sample_resolution_to(file_params.resolution);
-			genFFMpegWriter_device::translate__wav_properties__endian_to(file_params.endian);
-			genFFMpegWriter_device::translate__wav_properties__sub_type_to(file_params.sub_type);
 		}
 	}
 
 	_common_set_min.theOwner = static_cast<IjvxObject*>(parentTech);
 	return res;
+}
+
+jvxErrorType 
+CjvxAudioFFMpegWriterDevice::reallocate_output_context()
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	if (fParams.oc)
+		return JVX_ERROR_WRONG_STATE;
+
+	avformat_alloc_output_context2(&fParams.oc, NULL, NULL, fParams.fName.c_str());
+	if (!fParams.oc)
+	{
+		avformat_alloc_output_context2(&fParams.oc, NULL, "mpeg", fParams.fName.c_str());
+	}
+
+	if (!fParams.oc)
+	{
+		res = JVX_ERROR_INVALID_SETTING;
+	}
+	if (res == JVX_NO_ERROR)
+	{
+		fParams.fmt = fParams.oc->oformat;
+	}
+	return res;
+}
+
+void 
+CjvxAudioFFMpegWriterDevice::verify_codec_settings()
+{
+	const AVCodec* cod = avcodec_find_encoder(fParams.idCodec);
+	assert(cod);
+
+	fParams.tpCodec = cod->type;
+
+	jvxSize rateMatch = fParams.sRate;
+	if (cod->supported_samplerates)
+	{
+		int cnt = 0;
+		jvxSize delta = JVX_MAX_INT_64_DATA;
+		while (1)
+		{
+			if (cod->supported_samplerates[cnt] >= 0)
+			{
+				jvxSize dd = JVX_ABS(cod->supported_samplerates[cnt] - rateMatch);
+				if (dd < delta)
+				{
+					delta = dd;
+					rateMatch = cod->supported_samplerates[cnt];
+
+				}
+				cnt++;
+			}
+			else
+			{
+				break;
+			}
+			cnt++;
+		}
+	}
+	fParams.sRate = rateMatch;
+
+	int format = -1;
+	if (cod->sample_fmts)
+	{
+		int cnt = 0;
+		while (1)
+		{
+			if (cod->sample_fmts[cnt] >= 0)
+			{
+				if (cod->sample_fmts[cnt] == fParams.sFormatId)
+				{
+					format = fParams.sFormatId;
+					break;
+				}
+				else
+				{
+					if (format == -1)
+					{
+						format = fParams.sFormatId;
+					}
+				}
+				cnt++;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	if (format >= 0)
+	{
+		fParams.sFormatId = (AVSampleFormat)format;
+	}	
 }
 
 jvxErrorType
@@ -366,6 +275,7 @@ CjvxAudioFFMpegWriterDevice::unselect()
 jvxErrorType
 CjvxAudioFFMpegWriterDevice::activate()
 {
+	jvxSize cnt = 0;
 	jvxErrorType res = CjvxAudioDevice::activate();
 	if (res == JVX_NO_ERROR)
 	{
@@ -374,10 +284,35 @@ CjvxAudioFFMpegWriterDevice::activate()
 		genFFMpegWriter_device::register_all(static_cast<CjvxProperties*>(this));
 		genFFMpegWriter_device::register_callbacks(
 			static_cast<CjvxProperties*>(this),
-			set_fixed, set_wav_parameters,
+			set_fixed, set_file_type,
 			reinterpret_cast<jvxHandle*>(this),			
 			nullptr);
 
+		switch (fParams.tpOut)
+		{
+		case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV:
+
+			genFFMpegWriter_device::file.file_sub_type.value.entries.clear();
+			while (optionsWav[cnt])
+			{
+				genFFMpegWriter_device::file.file_sub_type.value.entries.push_back(optionsWav[cnt]);
+				cnt++;
+			}
+			jvx_bitZSet(genFFMpegWriter_device::file.file_sub_type.value.selection(0), fParams.idSub);
+			break;
+		case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_MP3:
+		case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_M4A:
+			genFFMpegWriter_device::file.file_sub_type.value.entries.clear();
+			while (optionsMp3M4a[cnt])
+			{
+				genFFMpegWriter_device::file.file_sub_type.value.entries.push_back(optionsMp3M4a[cnt]);
+				cnt++;
+			}
+			jvx_bitZSet(genFFMpegWriter_device::file.file_sub_type.value.selection(0), fParams.idSub);
+			break;
+		default: 
+			assert(0);
+		}
 		file_props_2_ayf_props();
 
 		std::string iFile = foldername + JVX_SEPARATOR_DIR + fileprefix;
@@ -538,7 +473,7 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 		(ld.con_params.rate != JVX_SIZE_DONTCARE) ||
 		(ld.con_params.number_channels != 1) ||
 		(ld.con_params.format != JVX_DATAFORMAT_POINTER) ||
-		(ld.con_params.format_group != JVX_DATAFORMAT_GROUP_FFMPEG_BUFFER_FWD))
+		(ld.con_params.format_group != JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD))
 	{
 		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 			&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -547,7 +482,7 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	if (res == JVX_NO_ERROR)
 	{
 		config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
-		res = jvx_ffmpeg_codec_token_2_parameter(config_token.c_str(), nParams, bSize);
+		res = jvx_ffmpeg_codec_token_2_parameter(config_token.c_str(), nParams);
 	}
 
 	if (res == JVX_NO_ERROR)
@@ -556,18 +491,13 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 
 		if (
 			(nParams.nChans != fParams.nChans) ||
+			(nParams.bSizeAudio != fParams.bSizeAudio) ||
 			(nParams.sRate != fParams.sRate))
 		{
 			fParams.nChans = nParams.nChans;
 			fParams.sRate = nParams.sRate;
+			fParams.bSizeAudio = nParams.bSizeAudio;
 		}
-		if (nParams.frameSize == 0)
-		{
-			if (nParams.frameSizeMax != fParams.frameSizeMax)
-			{
-				fParams.frameSizeMax = nParams.frameSizeMax;
-			}
-		} 
 		
 		// =====================================================
 
@@ -589,6 +519,7 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 				(nParams.fFormatTag != fParams.fFormatTag) ||
 				(nParams.frameSizeMax != fParams.frameSizeMax) ||
 				(nParams.bitsPerCoded != fParams.bitsPerCoded) ||
+				(nParams.frameSizeMax != fParams.frameSizeMax) ||
 				(nParams.isFloat != fParams.isFloat))
 			{
 				requiresUpdatePrior = true;
@@ -596,13 +527,15 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 		}
 		if (requiresUpdatePrior)
 		{
-			ld.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(nParams, fParams.frameSize);
+			jvx_ffmpeg_wav_params(fParams, fParams.bSizeAudio);
+			ld.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams);
+
 			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 				&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			if (res == JVX_NO_ERROR)
 			{
 				// We want to check that this really is ok?
-				std::string cfg_token_local = jvx_ffmpeg_parameter_2_codec_token(fParams, fParams.frameSize);
+				std::string cfg_token_local = jvx_ffmpeg_parameter_2_codec_token(fParams);
 				std::string cfg_token_prev = _common_set_ldslave.theData_in->con_params.format_spec.std_str().c_str();
 			}
 		}
@@ -850,6 +783,7 @@ CjvxAudioFFMpegWriterDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 jvxErrorType
 CjvxAudioFFMpegWriterDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
+	int ret = 0;
 	jvxErrorType res = JVX_NO_ERROR;
 	// This is the return from the link list
 
@@ -860,7 +794,58 @@ CjvxAudioFFMpegWriterDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
 	// _common_set_ldslave.theData_in->pipeline.idx_stage = 0;
 
-	open_wav_file_for_writing();
+	fParams.st = avformat_new_stream(fParams.oc, NULL);
+
+	// Extract the connection parameters for decoding
+	jvxLinkDataAttachedChain* ptrEncCtx = _common_set_ldslave.theData_in->con_link.attached_chain_single_pass;
+	while (ptrEncCtx)
+	{
+		jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>* ptr_stream_txt = reinterpret_cast<jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>*>(ptrEncCtx->if_specific(JVX_LINKDATA_ATTACHED_STRING_DETECT));
+		if (ptr_stream_txt->descr)
+		{
+			if ((std::string)ptr_stream_txt->descr == "/ffmpeg/audiostream/codecctx")
+			{
+				fParams.enc_ctx = (AVCodecContext*)ptr_stream_txt->data;
+				break;
+			}
+		}
+		ptrEncCtx = ptrEncCtx->next;
+	}
+
+	ret = avcodec_parameters_from_context(fParams.st->codecpar, fParams.enc_ctx);
+	assert(ret == 0);
+	
+	av_dump_format(fParams.oc, 0, fParams.fName.c_str(), 1);
+
+	jvxSize cnt = 1;
+	std::string fnameUsed = fParams.fName;
+	while(1)
+	{
+		int ret = -1;
+		if (!JVX_FILE_EXISTS(fnameUsed.c_str()))
+		{
+			ret = avio_open(&fParams.oc->pb, fnameUsed.c_str(), AVIO_FLAG_WRITE);
+		}
+		if (ret < 0) 
+		{
+			fnameUsed = fParams.fName + "(" + jvx_size2String(cnt) + ")";	
+			cnt++;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	// Attach the packet containers
+	for (jvxSize i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	{
+		_common_set_ldslave.theData_in->con_data.buffers[i] = reinterpret_cast<jvxHandle**>(av_packet_alloc());
+	}
+
+	ret = avformat_write_header(fParams.oc, nullptr);
+	assert(ret == 0);
+
 	return res;
 }
 
@@ -869,7 +854,26 @@ CjvxAudioFFMpegWriterDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TY
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	close_wav_file_for_writing();
+	av_write_trailer(fParams.oc);
+
+	// Attach the packet containers
+	for (jvxSize i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	{
+		AVPacket* pkt = reinterpret_cast<AVPacket*>(_common_set_ldslave.theData_in->con_data.buffers[i]);
+		_common_set_ldslave.theData_in->con_data.buffers[i] = nullptr;	
+		av_packet_free(&pkt);
+	}
+
+	avio_close(fParams.oc->pb);
+
+	avformat_free_context(fParams.oc);
+	fParams.oc = nullptr;
+
+	res = reallocate_output_context();
+	assert(res == JVX_NO_ERROR);
+
+	fParams.enc_ctx = nullptr;
+	fParams.st = nullptr;
 
 	res = deallocate_pipeline_and_buffers_postprocess_to();
 
@@ -880,10 +884,22 @@ jvxErrorType
 CjvxAudioFFMpegWriterDevice::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	jvxSize num_written = 0;
-	// This is the return from the link list
-	jvxByte** bufsByte = jvx_process_icon_extract_input_buffers<jvxByte>(_common_set_ldslave.theData_in, idx_stage);
-	wavFileWriter.write_one_buf_raw(bufsByte[0], _common_set_ldslave.theData_in->con_params.buffersize, &num_written);
+	AVPacket* pkt = nullptr;
+	jvxSize idx_stage_local = idx_stage;
+
+	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
+	{
+		idx_stage_local = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+	}
+
+	pkt = (AVPacket*)_common_set_ldslave.theData_in->con_data.buffers[idx_stage_local];
+
+	// av_interleaved_write_frame(fmt_ctx, pkt);
+	if (pkt->size)
+	{
+		av_write_frame(fParams.oc, pkt);
+		av_packet_unref(pkt);
+	}
 	return res;
 }
 
@@ -1281,31 +1297,70 @@ CjvxAudioFFMpegWriterDevice::close_wav_file_for_writing()
 	return res;
 }
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegWriterDevice, set_wav_parameters)
+void
+CjvxAudioFFMpegWriterDevice::update_format_settings_wav()
 {
-	if (
-		JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genFFMpegWriter_device::wav_properties.endian) ||
-		JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genFFMpegWriter_device::wav_properties.sample_type) ||
-		JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genFFMpegWriter_device::wav_properties.sample_resolution) ||
-		JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genFFMpegWriter_device::wav_properties.sub_type))
-	{
-		file_params.endian = genFFMpegWriter_device::translate__wav_properties__endian_from();
-		file_params.sample_type = genFFMpegWriter_device::translate__wav_properties__sample_type_from();
-		file_params.resolution = genFFMpegWriter_device::translate__wav_properties__sample_resolution_from();
-		file_params.sub_type = genFFMpegWriter_device::translate__wav_properties__sub_type_from();
+	// 
+				// Default settings
+	fParams.bitsPerCoded = 16;
+	fParams.idCodec = AV_CODEC_ID_PCM_S16LE;
+	fParams.sFormatId = AV_SAMPLE_FMT_S16;
+	fParams.isFloat = false;
 
-		if (_common_set_ld_master.refProc)
-		{
-			jvxSize uId = JVX_SIZE_UNSELECTED;
-			_common_set_ld_master.refProc->unique_id_connections(&uId);
-			this->_request_test_chain_master(uId);
-		}
+	switch (fParams.idSub)
+	{
+	case 0:
+		fParams.bitsPerCoded = 16;
+		fParams.idCodec = AV_CODEC_ID_PCM_S16LE;
+		fParams.sFormatId = AV_SAMPLE_FMT_S16;
+		fParams.isFloat = false;
+		break;
+	case 1:
+		fParams.bitsPerCoded = 32;
+		fParams.idCodec = AV_CODEC_ID_PCM_S32LE;
+		fParams.sFormatId = AV_SAMPLE_FMT_S32;
+		fParams.isFloat = false;
+		break;
+	case 2:
+		fParams.bitsPerCoded = 32;
+		fParams.idCodec = AV_CODEC_ID_PCM_F32LE;
+		fParams.sFormatId = AV_SAMPLE_FMT_FLT;
+		fParams.isFloat = true;
+		break;
+	case 3:
+		fParams.bitsPerCoded = 64;
+		fParams.idCodec = AV_CODEC_ID_PCM_S64LE;
+		fParams.sFormatId = AV_SAMPLE_FMT_S64;
+		fParams.isFloat = false;
+		break;
+	case 4:
+		fParams.bitsPerCoded = 64;
+		fParams.idCodec = AV_CODEC_ID_PCM_F64LE;
+		fParams.sFormatId = AV_SAMPLE_FMT_DBL;
+		fParams.isFloat = true;
+		break;
 	}
-	return JVX_NO_ERROR;
+
+	fParams.frameSize = 0;
+	fParams.frameSizeMax = 4096; // Start with a 1024 buffersize
+	fParams.bSizeAudio = fParams.frameSizeMax / fParams.nChans / (fParams.bitsPerCoded / 8);
+	fParams.bitRate = fParams.sRate * fParams.nChans * fParams.bitsPerCoded;
+	fParams.bitsPerRaw = 0;
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegWriterDevice, set_fixed)
 {
+	this->request_test_chain(_common_set.theReport);
+	return JVX_NO_ERROR;
+}
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegWriterDevice, set_file_type)
+{
+	fParams.idSub = JVX_PROP_BIT_2_SEL_ID(genFFMpegWriter_device::file.file_sub_type);
+	if (fParams.fFormatTag == "wav")
+	{
+		update_format_settings_wav();
+	}
 	this->request_test_chain(_common_set.theReport);
 	return JVX_NO_ERROR;
 }

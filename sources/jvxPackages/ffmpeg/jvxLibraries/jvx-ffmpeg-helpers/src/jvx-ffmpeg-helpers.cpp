@@ -114,7 +114,7 @@ jvx_ffmpeg_update_derived(const jvxFfmpegAudioParameter& params, jvxFfmpegAudioP
 }
 
 std::string 
-jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params, jvxSize bSize)
+jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params)
 {
 	jvxFfmpegAudioParameterDerived derived;
 
@@ -194,7 +194,7 @@ jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params, jvxSiz
 		strText += ";cidn=" "AV_CODEC_ID_PCM_F32BE";
 		break;
 	case AV_CODEC_ID_PCM_F32LE:
-		strText += ";cidn=" "";
+		strText += ";cidn=" "AV_CODEC_ID_PCM_F32LE";
 		break;
 	case AV_CODEC_ID_PCM_F64BE:
 		strText += ";cidn=" "AV_CODEC_ID_PCM_F64BE";
@@ -249,9 +249,10 @@ jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params, jvxSiz
 	strText += ";chl=" + derived.chanLayoutTag;
 	strText += ";sr=" + jvx_size2String(params.sRate);
 	strText += ";br=" + jvx_size2String(params.bitRate);
+	strText += ";bs=" + jvx_size2String(params.bSizeAudio);
+
 	if (params.frameSize == 0)
 	{
-		strText += ";bs=" + jvx_size2String(bSize);
 		strText += ";bps=" + jvx_size2String(params.bitsPerCoded);		
 		strText += ";fsm=" + jvx_size2String(params.frameSizeMax);
 		if (params.isFloat)
@@ -262,16 +263,11 @@ jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params, jvxSiz
 		{ 
 			strText += ";flt=0";
 		}
-	}
-	else
-	{
-		strText += ";bs=" + jvx_size2String(params.frameSize);
-	}
-
+	}	
 	return strText;
 }
 
-jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegAudioParameter& params, jvxSize& bsize)
+jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegAudioParameter& params)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool err = false;
@@ -279,6 +275,7 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 	std::string token1;
 	std::string token2;
 	jvxBool fsIsZero = false;
+	jvxCBitField foundVals = 0;
 
 	// Decompose into tokens
 	std::vector<std::string> expr = jvx_parseCsvStringExpression(tokenArg, err);
@@ -305,7 +302,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 			token2 = token.substr(posi + 1, std::string::npos);
 			if (token1 == "fam")
 			{
-				if (token2 != "ffmpeg")
+				if (token2 == "ffmpeg")
+				{
+					foundVals |= 1;
+				}
+				else
 				{
 					res = JVX_ERROR_UNSUPPORTED;
 					break;
@@ -322,6 +323,7 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 					derived.codecTypeTag = args[0];
 					params.fFormatTag = args[1];
 					derived.codecIdTag = args[2];
+					foundVals |= 2;
 				}
 				else
 				{
@@ -334,7 +336,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 			{
 				jvxBool err = false;
 				params.idCodec = (AVCodecID)jvx_string2Size(token2, err); // token2
-				if (err == true)
+				if (err != true)
+				{
+					foundVals |= 4;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -346,175 +352,213 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 				if (token2 == "AV_CODEC_ID_MP3")
 				{
 					params.idCodec = AV_CODEC_ID_MP3;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_S16LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S16LE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_S16BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S16BE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_U16LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_U16LE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_U16BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_U16BE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_S8")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S8;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_U8")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_U8;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_MULAW")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_MULAW;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_ALAW")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_ALAW;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_S32LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S32LE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_S32BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S32BE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_U32LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_U32LE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_U32BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_U32BE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_S24LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S24LE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_S24BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S24BE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_U24LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_U24LE;
+					foundVals |= 8;
 				}
 				else if (token2 == "AV_CODEC_ID_PCM_U24BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_U24BE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S24DAUD")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S24DAUD;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_ZORK")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_ZORK;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S16LE_PLANAR")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S16LE_PLANAR;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_DVD")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_DVD;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_F32BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_F32BE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_F32LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_F32LE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_F64BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_F64BE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_F64LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_F64LE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_BLURAY")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_BLURAY;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_LXF")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_LXF;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_S302M")
 				{
 					params.idCodec = AV_CODEC_ID_S302M;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S8_PLANAR")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S8_PLANAR;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S24LE_PLANAR")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S24LE_PLANAR;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S32LE_PLANAR")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S32LE_PLANAR;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S16BE_PLANAR")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S16BE_PLANAR;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S64LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S64LE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_S64BE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_S64BE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_F16LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_F16LE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_F24LE")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_F24LE;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_VIDC")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_VIDC;
+					foundVals |= 8;
 				}
 
 				else if (token2 == "AV_CODEC_ID_PCM_SGA")
 				{
 					params.idCodec = AV_CODEC_ID_PCM_SGA;
+					foundVals |= 8;
 				}
 
 				else
@@ -527,7 +571,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 			{
 				jvxBool err = false;
 				params.nChans = jvx_string2Size(token2, err);
-				if (err)
+				if (!err)
+				{
+					foundVals |= 0x10;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -537,6 +585,7 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 			if (token1 == "chl")
 			{
 				jvxBool err = false;
+				foundVals |= 0x20;
 				derived.chanLayoutTag = token2;
 			}
 
@@ -544,7 +593,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 			{
 				jvxBool err = false;
 				params.sRate = jvx_string2Size(token2, err);
-				if (err)
+				if (!err)
+				{
+					foundVals |= 0x40;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -555,7 +608,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 			{
 				jvxBool err = false;
 				params.bitRate = jvx_string2Size(token2, err);
-				if (err)
+				if (!err)
+				{
+					foundVals |= 0x80;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -565,8 +622,12 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 			if (token1 == "bs")
 			{
 				jvxBool err = false;
-				params.frameSize = jvx_string2Size(token2, err);
-				if (err)
+				params.bSizeAudio = jvx_string2Size(token2, err);
+				if (!err)
+				{
+					foundVals |= 0x80;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -578,7 +639,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 				fsIsZero = true;
 				jvxBool err = false;
 				params.bitsPerCoded = jvx_string2Size(token2, err);
-				if (err)
+				if (!err)
+				{
+					foundVals |= 0x80;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -590,7 +655,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 				fsIsZero = true;
 				jvxBool err = false;
 				params.frameSizeMax = jvx_string2Size(token2, err);
-				if (err)
+				if (!err)
+				{
+					foundVals |= 0x100;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -601,7 +670,11 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 				fsIsZero = true;
 				jvxBool err = false;
 				params.isFloat = (jvx_string2Size(token2, err) != 0);
-				if (err)
+				if (!err)
+				{
+					foundVals |= 0x200;
+				}
+				else
 				{
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
@@ -612,11 +685,22 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 
 	if (fsIsZero)
 	{
-		bsize = params.frameSize;
 		params.frameSize = 0;
 	}
 
+	if (foundVals == 0x3FF)
+	{
+		res = JVX_NO_ERROR;
+	}
+
 	return res;
+}
+
+void jvx_ffmpeg_wav_params(jvxFfmpegAudioParameter& params, jvxSize bsizeAudio)
+{
+	params.bSizeAudio = bsizeAudio;
+	params.frameSizeMax = params.bSizeAudio * params.nChans * params.bitsPerCoded;
+	params.frameSizeMax = params.frameSizeMax >> 3; // bits to bytes
 }
 
 void jvx_ffmpeg_printout_params(jvxFfmpegAudioParameter& params)

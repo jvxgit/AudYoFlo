@@ -197,6 +197,12 @@ mainCentral_host::inform_update_properties(jvxComponentIdentification& tp)
 {
 }
 
+jvxErrorType
+mainCentral_host::report_command_request(const CjvxReportCommandRequest& req)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
 /*
  * Callback to make periodic updates of the window (in case it is running)
  *///=====================================================================
