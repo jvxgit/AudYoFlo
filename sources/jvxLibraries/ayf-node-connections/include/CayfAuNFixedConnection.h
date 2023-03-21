@@ -217,6 +217,7 @@ namespace AyfConnection
 		virtual jvxErrorType hook_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override
 		{
 			// In this callback we may accept forwarded messages
+			// return CayfAuNConnection<S>::_trans_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			return JVX_NO_ERROR;
 		};
 

@@ -87,6 +87,7 @@ extern "C"
 {
 	void jvx_init_before_start()
 	{
+		// auto hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 		QSurfaceFormat surfme;
 
 		surfme = QSurfaceFormat::defaultFormat();

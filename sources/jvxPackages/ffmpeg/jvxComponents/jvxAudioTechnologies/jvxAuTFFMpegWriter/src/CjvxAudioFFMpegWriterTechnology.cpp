@@ -175,10 +175,8 @@ CjvxAudioFFMpegWriterTechnology::activateOneFile(
 	jvxErrorType resL = JVX_NO_ERROR;
 	std::string subType = "";
 
-	if(jvx_bitTest(genFFMpegWriter_technology::file_params.file_type.value.selection(), 0))
-	{
-		fType = jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV;
-	}
+	// Derive file type
+	fType = genFFMpegWriter_technology::translate__file_params__file_type_from();
 	
 	fSType = jvx_bitfieldSelection2Id(genFFMpegWriter_technology::file_params.file_sub_type.value.selection(0),
 		genFFMpegWriter_technology::file_params.file_sub_type.value.entries.size());

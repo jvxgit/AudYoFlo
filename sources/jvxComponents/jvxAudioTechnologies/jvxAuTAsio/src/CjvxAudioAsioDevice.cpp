@@ -397,7 +397,8 @@ CjvxAudioAsioDevice::activateAsioProperties()
 
 	genAsio_device::properties_active.supportstimeinfo.value.selection() = ((jvxBitField)1<<1); // Expect no timeInfo support
 
-	if(CoCreateInstance(this->my_props.clsid, 0, CLSCTX_INPROC_SERVER, this->my_props.clsid, (LPVOID*)&runtime.ptrToDriver) != S_OK)
+	auto hr = CoCreateInstance(this->my_props.clsid, 0, CLSCTX_INPROC_SERVER, this->my_props.clsid, (LPVOID*)&runtime.ptrToDriver);
+	if(hr != S_OK)
 	{
 
 		_common_set.theErrordescr = "Failed in CoCreateInstance, <CjvxAudioAsioDevice::activateAsioProperties>";

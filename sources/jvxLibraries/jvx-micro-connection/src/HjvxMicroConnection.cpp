@@ -944,6 +944,10 @@ HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffer
 		theData_inlnk->con_pipeline = _common_set_ldslave.theData_out.con_pipeline;
 		theData_inlnk->con_data.buffers = _common_set_ldslave.theData_out.con_data.buffers;
 		theData_inlnk->con_data.fHeights = _common_set_ldslave.theData_out.con_data.fHeights;
+		if (jvx_bitTest(_common_set_ldslave.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
+		{
+			jvx_bitSet(theData_inlnk->con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
+		}
 	}
 
 	return res;

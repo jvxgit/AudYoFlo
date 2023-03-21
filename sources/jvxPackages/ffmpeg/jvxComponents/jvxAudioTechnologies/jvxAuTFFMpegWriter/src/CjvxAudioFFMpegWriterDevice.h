@@ -58,6 +58,8 @@ private:
 
 	jvxFfmpegOutputFileParameter fParams;
 
+	jvxBool inThreadInit = false;
+
 public:
 	JVX_CALLINGCONVENTION CjvxAudioFFMpegWriterDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxAudioFFMpegWriterDevice();
@@ -140,17 +142,17 @@ public:
 	    jvxHandle* priv_ptr)override;
 
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
+	jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
 	// ==================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_fixed);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_file_type);
 
 	void trigger_one_buffer();
-	jvxErrorType open_wav_file_for_writing();
-	jvxErrorType close_wav_file_for_writing();
 	void file_props_2_ayf_props();
-	void update_format_settings_wav();
 
+	void writer_allocate_core();
+	void writer_deallocate_core();
 };
 
 #endif

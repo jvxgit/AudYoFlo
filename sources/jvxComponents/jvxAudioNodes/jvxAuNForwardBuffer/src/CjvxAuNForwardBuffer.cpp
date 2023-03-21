@@ -303,10 +303,17 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			// Have to review this lateron, currently: no timestamp
 			_common_set_ldslave.theData_out.con_sync.type_timestamp = 0;
 
+			runInitInThread = false;
+
 			res = _prepare_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 			if (res == JVX_NO_ERROR)
 			{
+				if (jvx_bitTest(_common_set_ldslave.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
+				{					
+					runInitInThread = true;
+				}
+
 				// Do the processing checks and allocate buffers etc
 			// Setup has been verified in the test chain functions before - this is only for simpler access during processing
 				/*
@@ -319,6 +326,8 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				assert(res == JVX_NO_ERROR);
 				jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags,
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
+
+
 			}
 
 			jvxBool withStartThreshold = false;
@@ -781,6 +790,13 @@ CjvxAuNForwardBuffer::get_configuration(jvxCallManagerConfiguration* callMan,
 jvxErrorType
 CjvxAuNForwardBuffer::startup(jvxInt64 timestamp_us)
 {
+	if (runInitInThread)
+	{
+		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		{
+			_common_set_ldslave.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN, nullptr, 0);
+		}
+	}
 	if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 	{
 		read_samples_to_buffer();
@@ -812,6 +828,13 @@ CjvxAuNForwardBuffer::wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms)
 jvxErrorType
 CjvxAuNForwardBuffer::stopped(jvxInt64 timestamp_us) 
 {
+	if (runInitInThread)
+	{
+		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		{
+			_common_set_ldslave.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_POSTRUN, nullptr, 0);
+		}
+	}
 	return JVX_NO_ERROR;
 }
 

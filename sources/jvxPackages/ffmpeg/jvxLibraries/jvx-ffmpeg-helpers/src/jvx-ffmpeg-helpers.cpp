@@ -2,6 +2,48 @@
 #include "jvx-ffmpeg-helpers.h"
 #include <cassert>
 
+const char* fileFormatPostfixTranslator[] =
+{
+	"wav",
+	"mp3",
+	"m4a",
+	nullptr
+};
+
+const char* optionsWav[] =
+{
+	"16Bit,signed",
+	"32Bit,signed",
+	"32Bit,float",
+	"64Bit,signed",
+	"64Bit,float",
+	nullptr
+};
+
+const char* optionsMp3M4a[] =
+{
+	"32kbps",
+	"48kbps",
+	"64kbps",
+	"128kbps",
+	"192kbps",
+	"256kbps",
+	"320kbps",
+	nullptr
+};
+
+jvxSize ratesMp3M4a[] =
+{
+	32000,
+	48000,
+	64000,
+	128000,
+	192000,
+	256000,
+	320000,
+	JVX_SIZE_UNSELECTED
+};
+
 int check_stream_specifier(AVFormatContext* s, AVStream* st, const char* spec)
 {
 	int ret = avformat_match_stream_specifier(s, st, spec);
@@ -245,6 +287,10 @@ jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params)
 		break;
 	}
 
+	if (!params.codec_selection.empty())
+	{
+		strText += ";cii=" + params.codec_selection;
+	}
 	strText += ";ch=" + jvx_size2String(params.nChans);
 	strText += ";chl=" + derived.chanLayoutTag;
 	strText += ";sr=" + jvx_size2String(params.sRate);
@@ -345,6 +391,12 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 					res = JVX_ERROR_INVALID_FORMAT;
 					break;
 				}
+			}
+
+			if (token1 == "cii")
+			{
+				jvxBool err = false;
+				params.codec_selection = token2;
 			}
 
 			if (token1 == "cidn")
@@ -697,9 +749,84 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 }
 
 void
+jvx_ffmpeg_update_format_settings_wav(jvxFfmpegAudioParameter& params, jvxSize idSubType)
+{
+	// 
+	// Default settings
+	params.bitsPerCoded = 16;
+	params.idCodec = AV_CODEC_ID_PCM_S16LE;
+	params.sFormatId = AV_SAMPLE_FMT_S16;
+	params.isFloat = false;
+
+	switch (idSubType)
+	{
+	case 0:
+		params.bitsPerCoded = 16;
+		params.idCodec = AV_CODEC_ID_PCM_S16LE;
+		params.sFormatId = AV_SAMPLE_FMT_S16;
+		params.isFloat = false;
+		break;
+	case 1:
+		params.bitsPerCoded = 32;
+		params.idCodec = AV_CODEC_ID_PCM_S32LE;
+		params.sFormatId = AV_SAMPLE_FMT_S32;
+		params.isFloat = false;
+		break;
+	case 2:
+		params.bitsPerCoded = 32;
+		params.idCodec = AV_CODEC_ID_PCM_F32LE;
+		params.sFormatId = AV_SAMPLE_FMT_FLT;
+		params.isFloat = true;
+		break;
+	case 3:
+		params.bitsPerCoded = 64;
+		params.idCodec = AV_CODEC_ID_PCM_S64LE;
+		params.sFormatId = AV_SAMPLE_FMT_S64;
+		params.isFloat = false;
+		break;
+	case 4:
+		params.bitsPerCoded = 64;
+		params.idCodec = AV_CODEC_ID_PCM_F64LE;
+		params.sFormatId = AV_SAMPLE_FMT_DBL;
+		params.isFloat = true;
+		break;
+	}
+
+	params.frameSize = 0;
+	params.frameSizeMax = 4096; // Start with a 1024 buffersize
+	params.bSizeAudio = params.frameSizeMax / params.nChans / (params.bitsPerCoded / 8);
+	params.bitRate = params.sRate * params.nChans * params.bitsPerCoded;
+	params.bitsPerRaw = 0;
+}
+
+void
+jvx_ffmpeg_update_format_settings_mp3(jvxFfmpegAudioParameter& params, jvxSize idSubType)
+{
+	// Some parameters will be fixed by the verification
+	// params.sFormatId = cod->sample_fmts;
+	params.isFloat = false;
+
+	assert(JVX_CHECK_SIZE_SELECTED(ratesMp3M4a[idSubType]));
+
+	params.bitRate = ratesMp3M4a[idSubType];
+
+	params.frameSize = 0;
+	params.frameSizeMax = 0; 
+	params.bitsPerRaw = 0;
+}
+
+void
 jvx_ffmpeg_verify_correct_codec_settings(jvxFfmpegAudioParameter& params)
 {
-	const AVCodec* cod = avcodec_find_encoder(params.idCodec);
+	const AVCodec* cod = nullptr;
+	if (params.codec_selection.empty())
+	{
+		cod = avcodec_find_encoder(params.idCodec);
+	}
+	else
+	{
+		cod = avcodec_find_encoder_by_name(params.codec_selection.c_str());
+	}
 	assert(cod);
 
 	params.tpCodec = cod->type;

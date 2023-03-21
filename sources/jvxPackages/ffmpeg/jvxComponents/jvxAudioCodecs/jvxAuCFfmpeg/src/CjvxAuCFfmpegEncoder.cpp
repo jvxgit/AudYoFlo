@@ -205,8 +205,18 @@ CjvxAuCFfmpegAudioEncoder::accept_output_parameters()
 jvxErrorType 
 CjvxAuCFfmpegAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
+	int ret = 0;
+	jvxCBitField flags = 0;
+
 	// Lookup the codec and start it
-	cParams.enc = avcodec_find_encoder(cParams.idCodec);
+	if (cParams.codec_selection.empty())
+	{
+		cParams.enc = avcodec_find_encoder(cParams.idCodec);
+	}
+	else
+	{ 
+		cParams.enc = avcodec_find_encoder_by_name(cParams.codec_selection.c_str());
+	}
 	assert(cParams.enc);
 	// avcodec_get_name(cParams.idCodec);
 
@@ -218,46 +228,72 @@ CjvxAuCFfmpegAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	cParams.enc_ctx->sample_rate = cParams.sRate;
 	av_channel_layout_copy(&cParams.enc_ctx->ch_layout, &cParams.chanLayout);
 
-	int ret = avcodec_open2(cParams.enc_ctx, cParams.enc, nullptr);
-	assert(ret == 0);
-
-	if (cParams.enc_ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
-	{
-	}
-	else
-	{
-	}
-
 	// Forward the codec pointer to the following output instance
 	jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain> attachObject("/ffmpeg/audiostream/codecctx", cParams.enc_ctx);
 	_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_push_front(_common_set_ldslave.theData_out.con_link.attached_chain_single_pass, &attachObject);
 
 	// Prepare processing parameters
 	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
-	jvx_bitZSet(_common_set_ldslave.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
+
+	inThreadInit = false;
+	if ((cParams.idCodec == AV_CODEC_ID_MP3) || 
+		(cParams.idCodec == AV_CODEC_ID_AAC))
+	{
+		inThreadInit = true;
+		jvx_bitZSet(_common_set_ldslave.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
+	}
+	else
+	{
+		codec_allocate_core();
+	}
 
 	jvxErrorType res = CjvxAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
+		jvxLinkDataAttachedChain* ptrHere = nullptr;
+		_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_pop_front(_common_set_ldslave.theData_out.con_link.attached_chain_single_pass, &ptrHere);
+		assert(ptrHere == &attachObject);
 
+		cParams.frame = av_frame_alloc();
+
+		cParams.frame->format = cParams.sFormatId;
+
+		av_channel_layout_copy(&cParams.frame->ch_layout, &cParams.chanLayout);
+		cParams.frame->sample_rate = cParams.sRate;
+		cParams.frame->nb_samples = cParams.bSizeAudio;
+
+		/* allocate the buffers for the frame data */
+		ret = av_frame_get_buffer(cParams.frame, 0);
+		assert(ret == 0);
+
+		// Move thos flag towards the caller - to request an init call!!
+		if (inThreadInit)
+		{
+			jvx_bitSet(_common_set_ldslave.theData_in->con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
+		}
 	}
+	return res;
+}
 
-	jvxLinkDataAttachedChain* ptrHere = nullptr;
-	_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_pop_front(_common_set_ldslave.theData_out.con_link.attached_chain_single_pass, &ptrHere);
-	assert(ptrHere == &attachObject);
+jvxErrorType 
+CjvxAuCFfmpegAudioEncoder::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	if (tp == JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN)
+	{
+		assert(inThreadInit);
+		codec_allocate_core();
+	}
+	res = CjvxAudioEncoder::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
-	cParams.frame = av_frame_alloc();
-
-	cParams.frame->format = cParams.sFormatId;
-
-	av_channel_layout_copy(&cParams.frame->ch_layout, &cParams.chanLayout);
-	cParams.frame->sample_rate = cParams.sRate;
-	cParams.frame->nb_samples = cParams.bSizeAudio;
-
-	/* allocate the buffers for the frame data */
-	ret = av_frame_get_buffer(cParams.frame, 0);
-	assert(ret == 0);
-
+	if (res == JVX_NO_ERROR)
+	{
+		if (tp == JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_POSTRUN)
+		{
+			assert(inThreadInit);
+			codec_deallocate_core();
+		}
+	}
 	return res;
 }
 
@@ -270,8 +306,8 @@ CjvxAuCFfmpegAudioEncoder::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 		av_frame_free(&cParams.frame);
 
 		jvx_bitFClear(_common_set_ldslave.theData_out.con_data.alloc_flags);
-		avcodec_free_context(&cParams.enc_ctx);
-		cParams.enc = nullptr;
+		
+		codec_deallocate_core();
 	}
 	return res;
 }
@@ -413,8 +449,30 @@ CjvxAuCFfmpegAudioEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 
 	// obtain the package and forward it to the next stage
 	ret = avcodec_receive_packet(cParams.enc_ctx, pkt);
-	assert(ret == 0);
+	
+	// ret may be empty if the codec collects data!
 
 	// Forward the buffer
 	return _process_buffers_icon(mt_mask, JVX_SIZE_UNSELECTED);
+}
+
+void
+CjvxAuCFfmpegAudioEncoder::codec_allocate_core()
+{
+	int ret = avcodec_open2(cParams.enc_ctx, cParams.enc, nullptr);
+	assert(ret == 0);
+
+	if (cParams.enc_ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
+	{
+	}
+	else
+	{
+	}
+}
+
+void
+CjvxAuCFfmpegAudioEncoder::codec_deallocate_core()
+{
+	avcodec_free_context(&cParams.enc_ctx);
+	cParams.enc = nullptr;
 }

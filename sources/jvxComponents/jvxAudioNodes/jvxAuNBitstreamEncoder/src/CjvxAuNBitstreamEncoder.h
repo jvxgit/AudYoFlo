@@ -12,34 +12,10 @@
 
 class CjvxAuNBitstreamEncoder: 
 	public JVX_LOCAL_BASE_CLASS,
-	public IayfConnectionStateSwitchNode,
-	public genBitstreamDecoder_node
+	public IayfConnectionStateSwitchNode	
 {
 private:
-	class audio_params
-	{
-	public:
-		jvxSize rate = 0;
-		jvxSize bsize = 0;
-		jvxSize num_channels = 0;
-	};
 	
-	struct audio_params_wav: public audio_params
-	{
-		jvxSize bitspersample = 16;
-		jvxBool fixedpt = true;
-		jvxBool lendian = true;
-	};
-
-	enum class jvxBiStreamClass
-	{
-		JVX_AUDIO_BITSTREAM_NONE,
-		JVX_AUDIO_BITSTREAM_WAV
-	};
-
-	jvxBiStreamClass theBstreamClass = jvxBiStreamClass::JVX_AUDIO_BITSTREAM_NONE;
-	audio_params_wav params_wav;
-
 	std::map<jvxSize, refComp<IjvxAudioCodec> > lstCodecInstances;
 	jvxSize id_selected = JVX_SIZE_UNSELECTED;
 

@@ -97,6 +97,8 @@ protected:
 		jvxData* zbuf = nullptr;
 	} reRouting;
 
+	jvxBool runInitInThread = false;
+
 public:
 
 	JVX_CALLINGCONVENTION CjvxAuNForwardBuffer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

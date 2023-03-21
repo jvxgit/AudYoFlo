@@ -10,6 +10,11 @@ extern "C"
 #include "libavcodec/avcodec.h"
 }
 
+extern const char* optionsWav[];
+extern const char* optionsMp3M4a[];
+extern const char* fileFormatPostfixTranslator[];
+
+
 int check_stream_specifier(AVFormatContext* s, AVStream* st, const char* spec);
 
 AVDictionary* filter_codec_opts(AVDictionary* opts, enum AVCodecID codec_id,
@@ -35,6 +40,7 @@ struct jvxFfmpegAudioParameter
 	AVMediaType tpCodec = AVMEDIA_TYPE_AUDIO;
 	AVChannelLayout chanLayout;
 	AVSampleFormat sFormatId = AV_SAMPLE_FMT_NONE;
+	std::string codec_selection ;
 
 	void reset()
 	{
@@ -53,6 +59,8 @@ struct jvxFfmpegAudioParameter
 		chanLayout.u.mask = 0;
 		tpCodec = AVMEDIA_TYPE_UNKNOWN;
 		sFormatId = AV_SAMPLE_FMT_NONE;
+
+		codec_selection.clear();
 	};
 };
 
@@ -159,6 +167,9 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 void jvx_ffmpeg_verify_correct_codec_settings(jvxFfmpegAudioParameter& params);
 void jvx_ffmpeg_update_derived(const jvxFfmpegAudioParameter& params, jvxFfmpegAudioParameterDerived& derived);
 void jvx_ffmpeg_wav_params(jvxFfmpegAudioParameter& params, jvxSize bSizeAudio);
+
+void jvx_ffmpeg_update_format_settings_wav(jvxFfmpegAudioParameter& params, jvxSize idSubType);
+void jvx_ffmpeg_update_format_settings_mp3(jvxFfmpegAudioParameter& params, jvxSize idSubType);
 
 void jvx_ffmpeg_printout_params(jvxFfmpegAudioParameter& params);
 void jvx_ffmpeg_printout_file_params(jvxFfmpegFileAudioParameter& params);
