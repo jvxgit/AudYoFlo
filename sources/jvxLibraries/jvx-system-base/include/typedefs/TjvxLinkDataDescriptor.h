@@ -17,7 +17,7 @@ enum class jvxDataLinkDescriptorAllocFlags
 	// next chain element it is a zerocopy pipeline, Typically, each chain starts as a ZEROCOPY pipeline and ends as a non-zerocopy chain.
 	JVX_LINKDATA_ALLOCATION_FLAGS_SPACE_USER_HINTS_SHIFT = 4, // If we set this, the receiver needs to allocated space for a concatenation of user hints - one per pipeline stage
 	JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT = 5, // If we set this flag, the receiver must foresee fHeight buffers since the buffersize may be variable
-	JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN = 6
+	JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN = 6 // this flag indicates that the component requires a run of a transfer call prior to any processing IN the processing loop
 } ;
 
 #define JVX_LINKDATA_ALLOCATION_MASK_FORWARD_ELEMENT_TO_ELEMENT ((1 << (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT))

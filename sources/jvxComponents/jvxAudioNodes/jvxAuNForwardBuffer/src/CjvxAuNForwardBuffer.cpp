@@ -832,7 +832,7 @@ CjvxAuNForwardBuffer::stopped(jvxInt64 timestamp_us)
 	{
 		if (_common_set_ldslave.theData_out.con_link.connect_to)
 		{
-			_common_set_ldslave.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_POSTRUN, nullptr, 0);
+			_common_set_ldslave.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN, nullptr, 0);
 		}
 	}
 	return JVX_NO_ERROR;

@@ -922,7 +922,7 @@ CjvxAudioFFMpegWriterDevice::transfer_forward_icon(jvxLinkDataTransferType tp, j
 	res = CjvxAudioDevice::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		if (tp == JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_POSTRUN)
+		if (tp == JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN)
 		{
 			assert(inThreadInit);
 			writer_deallocate_core();

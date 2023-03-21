@@ -46,8 +46,13 @@ typedef enum
 	JVX_LINKDATA_TRANSFER_TRIGGER_REPORT_SINGLE_MISSED_FRAME, /* No argument, always one missed frame reported at the moment of the arrival! */
 	JVX_LINKDATA_TRANSFER_CONFIG_TOKEN, /* jvxDataConnectionsTransferConfigToken* */
 	JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES, /* jvx::propertyCallCompactList* */
+
+	/**
+	 * The INIT_PRERUN and the TERM_POSTRUN runs must be within the processing loop BUT BEFORE and after all buffers to be processed.
+	 * The reason is that some functions need to be allocated in the same thread as the processing itself to work (windows MF),
+	 *///=====================================================================================================================
 	JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN, /* No parameter, indicates that we may init parts in the processing loop */
-	JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_POSTRUN, /* No parameter, indicates that we may term parts in the processing loop */
+	JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN, /* No parameter, indicates that we may term parts in the processing loop */
 	JVX_LINKDATA_TRANSFER_LIMIT
 } jvxLinkDataTransferType;
 

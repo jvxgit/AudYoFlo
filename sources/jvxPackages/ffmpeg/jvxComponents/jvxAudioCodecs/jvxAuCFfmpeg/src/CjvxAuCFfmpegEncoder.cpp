@@ -288,7 +288,7 @@ CjvxAuCFfmpegAudioEncoder::transfer_forward_icon(jvxLinkDataTransferType tp, jvx
 
 	if (res == JVX_NO_ERROR)
 	{
-		if (tp == JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_POSTRUN)
+		if (tp == JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN)
 		{
 			assert(inThreadInit);
 			codec_deallocate_core();
