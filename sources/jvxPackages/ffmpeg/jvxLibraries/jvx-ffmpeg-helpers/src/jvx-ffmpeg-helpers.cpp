@@ -696,6 +696,80 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 	return res;
 }
 
+void
+jvx_ffmpeg_verify_correct_codec_settings(jvxFfmpegAudioParameter& params)
+{
+	const AVCodec* cod = avcodec_find_encoder(params.idCodec);
+	assert(cod);
+
+	params.tpCodec = cod->type;
+
+	jvxSize rateMatch = params.sRate;
+	if (cod->supported_samplerates)
+	{
+		int cnt = 0;
+		jvxSize delta = JVX_MAX_INT_64_DATA;
+		while (1)
+		{
+			if (cod->supported_samplerates[cnt] >= 0)
+			{
+				jvxSize dd = JVX_ABS(cod->supported_samplerates[cnt] - rateMatch);
+				if (dd < delta)
+				{
+					delta = dd;
+					rateMatch = cod->supported_samplerates[cnt];
+
+				}
+				cnt++;
+			}
+			else
+			{
+				break;
+			}
+			cnt++;
+		}
+	}
+	params.sRate = rateMatch;
+
+	int format = AV_SAMPLE_FMT_NONE;
+	if (cod->sample_fmts)
+	{
+		int cnt = 0;
+		while (1)
+		{
+			if (cod->sample_fmts[cnt] >= 0)
+			{
+				if (cnt == 0)
+				{
+					// Default case: use the first valid format
+					format = cod->sample_fmts[cnt];
+				}
+
+				// Override case: use the format that matches (if multi apply)
+				if (cod->sample_fmts[cnt] == params.sFormatId) 
+				{
+					format = params.sFormatId;
+					break;
+				}
+				cnt++;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	if (format >= 0)
+	{
+		params.sFormatId = (AVSampleFormat)format;
+	}
+
+	// Setup the default channel map
+	params.chanLayout.nb_channels = params.nChans;
+	params.chanLayout.order = AV_CHANNEL_ORDER_UNSPEC;
+	params.chanLayout.u.mask = 0;
+}
+
 void jvx_ffmpeg_wav_params(jvxFfmpegAudioParameter& params, jvxSize bsizeAudio)
 {
 	params.bSizeAudio = bsizeAudio;

@@ -733,7 +733,7 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 			if ((ld_cp.con_params.segmentation.y != 1) ||
 				(ld_cp.con_params.segmentation.x != ld_cp.con_params.buffersize))
 			{
-				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
+				std::cout << __FUNCTION__ << ": " << __LINE__ << ": Warning: Setup of the segmentation is untypical for audio. Expected would be:" << std::endl;
 				std::cout << " Seg X: " << ld_cp.con_params.segmentation.x << " vs " << ld_cp.con_params.buffersize << "." << std::endl;
 				std::cout << " Seg Y: " << ld_cp.con_params.segmentation.y << " vs 1." << std::endl;
 			}
@@ -742,7 +742,7 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 		{
 			if ((ld_cp.con_params.segmentation.y * ld_cp.con_params.segmentation.x) != ld_cp.con_params.buffersize)
 			{
-				std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
+				std::cout << __FUNCTION__ << ": " << __LINE__ << ": Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
 				std::cout << " Seg X x Seg Y = " << ld_cp.con_params.segmentation.x << " X " << 
 					ld_cp.con_params.segmentation.x << " = " << ld_cp.con_params.buffersize << "." << std::endl;
 			}

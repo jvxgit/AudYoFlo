@@ -108,6 +108,32 @@ struct jvxFfmpegInputFileAudioParameter : public jvxFfmpegFileAudioParameter
 	};
 };
 
+struct jvxFfmpegOutputFileParameter : public jvxFfmpegFileAudioParameter
+{
+	const AVOutputFormat* fmt = nullptr;
+	AVFormatContext* oc = nullptr;
+	AVCodecContext* enc_ctx = nullptr;
+	AVStream* st = nullptr;
+	std::string subTypeSpec;
+	jvxSize idSub = JVX_SIZE_UNSELECTED;
+	std::string fPrefix;
+	std::string fSuffix;
+
+	void reset()
+	{
+		jvxFfmpegFileAudioParameter::reset();
+		idSub = JVX_SIZE_UNSELECTED;
+		st = nullptr;
+		enc_ctx = nullptr;
+		fmt = nullptr;
+		oc = nullptr;
+		st = nullptr;
+		subTypeSpec.clear();
+		idSub = JVX_SIZE_UNSELECTED;
+		fPrefix.clear();
+		fSuffix.clear();
+	};
+};
 
 struct jvxFfmpegAudioParameterDerived
 {
@@ -129,6 +155,8 @@ struct jvxFfmpegAudioParameterDerived
 
 std::string jvx_ffmpeg_parameter_2_codec_token(const jvxFfmpegAudioParameter& params);
 jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegAudioParameter& params);
+
+void jvx_ffmpeg_verify_correct_codec_settings(jvxFfmpegAudioParameter& params);
 void jvx_ffmpeg_update_derived(const jvxFfmpegAudioParameter& params, jvxFfmpegAudioParameterDerived& derived);
 void jvx_ffmpeg_wav_params(jvxFfmpegAudioParameter& params, jvxSize bSizeAudio);
 

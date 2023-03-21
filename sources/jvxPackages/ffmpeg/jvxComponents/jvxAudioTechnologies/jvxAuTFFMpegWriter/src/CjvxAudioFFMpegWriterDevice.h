@@ -24,29 +24,6 @@ enum class jvxAudioFFMpegWriteFiletype
 	JVX_FFMPEG_FILEWRITER_LIMIT
 };
 
-struct jvxFfmpegOutputFileParameter : public jvxFfmpegFileAudioParameter
-{
-	const AVOutputFormat* fmt = nullptr;
-	AVFormatContext* oc = nullptr;
-
-	// const AVCodec* cod = nullptr;
-
-	AVCodecContext* enc_ctx = nullptr;
-	AVStream* st = nullptr;
-
-	std::string subTypeSpec;
-	jvxSize idSub = JVX_SIZE_UNSELECTED;
-	jvxAudioFFMpegWriteFiletype tpOut = jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_LIMIT;
-
-	void reset()
-	{
-		jvxFfmpegFileAudioParameter::reset();
-		idSub = JVX_SIZE_UNSELECTED;
-		st = nullptr;
-		enc_ctx = nullptr;
-	};
-};
-
 class CjvxAudioFFMpegWriterTechnology;
 
 class CjvxAudioFFMpegWriterDevice :
@@ -171,7 +148,6 @@ public:
 	void trigger_one_buffer();
 	jvxErrorType open_wav_file_for_writing();
 	jvxErrorType close_wav_file_for_writing();
-	void verify_codec_settings();
 	void file_props_2_ayf_props();
 	void update_format_settings_wav();
 

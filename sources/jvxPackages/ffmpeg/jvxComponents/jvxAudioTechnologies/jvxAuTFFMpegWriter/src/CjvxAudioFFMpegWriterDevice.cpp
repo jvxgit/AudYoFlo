@@ -54,6 +54,8 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 	if (res == JVX_NO_ERROR)
 	{
 		fParams.fName = foldername + JVX_SEPARATOR_DIR_CHAR + prefix + "." + filesuffix;
+		fParams.fPrefix = foldername + JVX_SEPARATOR_DIR_CHAR + prefix;
+		fParams.fSuffix = filesuffix;
 		fParams.subTypeSpec = fSType;
 		/* allocate the output media context */
 
@@ -69,7 +71,6 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 
 		if (fParams.fmt->name == (std::string)"wav")
 		{
-			fParams.tpOut = jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV;
 			fParams.idSub = 0;
 			while (1)
 			{
@@ -100,25 +101,40 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 
 			update_format_settings_wav();
 		}
-		else
-		{
+		else if (fParams.fmt->name == (std::string)"mp3")
+		{	
+			fParams.idSub = 0;
+			while (1)
+			{
+				if (optionsWav[fParams.idSub] == nullptr)
+				{
+					break;
+				}
+				else
+				{
+					if (optionsWav[fParams.idSub] == fParams.subTypeSpec)
+					{
+						break;
+					}
+					else
+					{
+						fParams.idSub++;
+					}
+				}
+			}
+
+			// Setup some default settings
+			fParams.sRate = 48000;
+			fParams.nChans = 2;
+			fParams.chanLayout.nb_channels = 2;
+			fParams.chanLayout.order = AV_CHANNEL_ORDER_UNSPEC;
+			fParams.chanLayout.u.mask = 0;
+			fParams.tpCodec = AVMEDIA_TYPE_AUDIO;
 			assert(0);
 		}
 
-		verify_codec_settings();
-
+		jvx_ffmpeg_verify_correct_codec_settings(fParams);
 		jvx_ffmpeg_printout_file_params(fParams);
-
-
-		/*
-		assert(fParams.fmt->audio_codec != AV_CODEC_ID_NONE);
-		const AVCodec* acodec = nullptr;
-		add_stream( fParams.oc, fParams.fmt->audio_codec, fParams);
-
-		// Later to be moved over to the encoder
-		int ret = avcodec_open2(fParams.cctx, fParams.cod, nullptr);
-		assert(ret == 0);
-		*/
 	}
 
 	if (res == JVX_NO_ERROR)
@@ -159,75 +175,6 @@ CjvxAudioFFMpegWriterDevice::reallocate_output_context()
 		fParams.fmt = fParams.oc->oformat;
 	}
 	return res;
-}
-
-void 
-CjvxAudioFFMpegWriterDevice::verify_codec_settings()
-{
-	const AVCodec* cod = avcodec_find_encoder(fParams.idCodec);
-	assert(cod);
-
-	fParams.tpCodec = cod->type;
-
-	jvxSize rateMatch = fParams.sRate;
-	if (cod->supported_samplerates)
-	{
-		int cnt = 0;
-		jvxSize delta = JVX_MAX_INT_64_DATA;
-		while (1)
-		{
-			if (cod->supported_samplerates[cnt] >= 0)
-			{
-				jvxSize dd = JVX_ABS(cod->supported_samplerates[cnt] - rateMatch);
-				if (dd < delta)
-				{
-					delta = dd;
-					rateMatch = cod->supported_samplerates[cnt];
-
-				}
-				cnt++;
-			}
-			else
-			{
-				break;
-			}
-			cnt++;
-		}
-	}
-	fParams.sRate = rateMatch;
-
-	int format = -1;
-	if (cod->sample_fmts)
-	{
-		int cnt = 0;
-		while (1)
-		{
-			if (cod->sample_fmts[cnt] >= 0)
-			{
-				if (cod->sample_fmts[cnt] == fParams.sFormatId)
-				{
-					format = fParams.sFormatId;
-					break;
-				}
-				else
-				{
-					if (format == -1)
-					{
-						format = fParams.sFormatId;
-					}
-				}
-				cnt++;
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-	if (format >= 0)
-	{
-		fParams.sFormatId = (AVSampleFormat)format;
-	}	
 }
 
 jvxErrorType
@@ -285,13 +232,11 @@ CjvxAudioFFMpegWriterDevice::activate()
 		genFFMpegWriter_device::register_callbacks(
 			static_cast<CjvxProperties*>(this),
 			set_fixed, set_file_type,
-			reinterpret_cast<jvxHandle*>(this),			
+			reinterpret_cast<jvxHandle*>(this),
 			nullptr);
 
-		switch (fParams.tpOut)
+		if (fParams.fmt->name == (std::string)"wav")
 		{
-		case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV:
-
 			genFFMpegWriter_device::file.file_sub_type.value.entries.clear();
 			while (optionsWav[cnt])
 			{
@@ -299,9 +244,11 @@ CjvxAudioFFMpegWriterDevice::activate()
 				cnt++;
 			}
 			jvx_bitZSet(genFFMpegWriter_device::file.file_sub_type.value.selection(0), fParams.idSub);
-			break;
-		case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_MP3:
-		case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_M4A:
+		}
+		else if (
+			(fParams.fmt->name == (std::string)"mp3") ||
+			(fParams.fmt->name == (std::string)"m4a"))
+		{
 			genFFMpegWriter_device::file.file_sub_type.value.entries.clear();
 			while (optionsMp3M4a[cnt])
 			{
@@ -309,10 +256,12 @@ CjvxAudioFFMpegWriterDevice::activate()
 				cnt++;
 			}
 			jvx_bitZSet(genFFMpegWriter_device::file.file_sub_type.value.selection(0), fParams.idSub);
-			break;
-		default: 
+		}
+		else
+		{
 			assert(0);
 		}
+
 		file_props_2_ayf_props();
 
 		std::string iFile = foldername + JVX_SEPARATOR_DIR + fileprefix;
@@ -343,7 +292,7 @@ CjvxAudioFFMpegWriterDevice::activate()
 				retRefTool<IjvxConfigProcessor>(_common_set.theToolsHost, JVX_COMPONENT_CONFIG_PROCESSOR, cfg);
 			}
 		}
-    }
+	}
 	return (res);
 }
 
@@ -815,20 +764,20 @@ CjvxAudioFFMpegWriterDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 	ret = avcodec_parameters_from_context(fParams.st->codecpar, fParams.enc_ctx);
 	assert(ret == 0);
 	
-	av_dump_format(fParams.oc, 0, fParams.fName.c_str(), 1);
 
 	jvxSize cnt = 1;
-	std::string fnameUsed = fParams.fName;
+	std::string fnameUsed = fParams.fPrefix + "." +fParams.fSuffix;
 	while(1)
 	{
 		int ret = -1;
 		if (!JVX_FILE_EXISTS(fnameUsed.c_str()))
 		{
-			ret = avio_open(&fParams.oc->pb, fnameUsed.c_str(), AVIO_FLAG_WRITE);
+			av_dump_format(fParams.oc, 0, fnameUsed.c_str(), 1);
+			ret = avio_open(&fParams.oc->pb, fnameUsed.c_str(), AVIO_FLAG_WRITE);			
 		}
 		if (ret < 0) 
 		{
-			fnameUsed = fParams.fName + "(" + jvx_size2String(cnt) + ")";	
+			fnameUsed = fParams.fPrefix + "(" + jvx_size2String(cnt) + ")." + fParams.fSuffix;	
 			cnt++;
 		}
 		else

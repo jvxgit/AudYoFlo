@@ -128,7 +128,7 @@ CjvxAuCFfmpegAudioEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 					)
 				{
 					// Accept the new parameters and report positive to caller
-					(jvxFfmpegAudioParameter)cParams = cParams_check;
+					*((jvxFfmpegAudioParameter*)&cParams) = cParams_check; // Downcast the target variable
 					accept_output_parameters();
 					res = JVX_NO_ERROR;
 				}
@@ -194,6 +194,9 @@ CjvxAuCFfmpegAudioEncoder::accept_output_parameters()
 	// Derive the pcm related part
 	jvx_ffmpeg_wav_params(cParams, CjvxAudioCodec_genpcg::general.buffersize.value);
 
+	// Verify and correct remaining parameters
+	jvx_ffmpeg_verify_correct_codec_settings(cParams);
+
 	// Derive the token
 	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(cParams);
 }
@@ -216,6 +219,7 @@ CjvxAuCFfmpegAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	av_channel_layout_copy(&cParams.enc_ctx->ch_layout, &cParams.chanLayout);
 
 	int ret = avcodec_open2(cParams.enc_ctx, cParams.enc, nullptr);
+	assert(ret == 0);
 
 	if (cParams.enc_ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
 	{
@@ -394,6 +398,10 @@ CjvxAuCFfmpegAudioEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		break;
 	}
 
+	// Update the pts with a sample counter actually
+	cParams.frame->pts = cParams.pts_current;
+	cParams.pts_current += cParams.frame->nb_samples;
+
 	// Next, convert frame to packet
 	pkt = (AVPacket*)_common_set_ldslave.theData_out.con_data.buffers[idx_stage_out];
 
@@ -406,10 +414,6 @@ CjvxAuCFfmpegAudioEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 	// obtain the package and forward it to the next stage
 	ret = avcodec_receive_packet(cParams.enc_ctx, pkt);
 	assert(ret == 0);
-
-	// Update the pts with a sample counter actually
-	pkt->pts = cParams.pts_current;
-	cParams.pts_current += cParams.frame->nb_samples;
 
 	// Forward the buffer
 	return _process_buffers_icon(mt_mask, JVX_SIZE_UNSELECTED);
