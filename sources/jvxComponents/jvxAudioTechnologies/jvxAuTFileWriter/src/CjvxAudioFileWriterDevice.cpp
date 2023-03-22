@@ -314,7 +314,7 @@ CjvxAudioFileWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		modified_props.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&modified_props, JVX_SIZE_UNSELECTED);
 		ld.con_params.buffersize = modified_props.fsizemax;
-		ld.con_params.rate = modified_props.srate;
+		ld.con_params.rate = modified_props.srate / modified_props.bsize;
 		std::string cfg;
 		jvx_wav_values_2_configtoken(cfg, &modified_props);
 		ld.con_params.format_spec = cfg;

@@ -467,8 +467,9 @@ CjvxAudioFFMpegReaderDevice::test_set_output_parameters()
 	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
 	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
 
+	fParams.bSizeAudio = CjvxAudioDevice::properties_active.buffersize.value;
 	// This field is only used for wav pcm
-	jvx_ffmpeg_wav_params(fParams, CjvxAudioDevice::properties_active.buffersize.value);
+	jvx_ffmpeg_wav_params(fParams);
 	
 	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams);	
 }

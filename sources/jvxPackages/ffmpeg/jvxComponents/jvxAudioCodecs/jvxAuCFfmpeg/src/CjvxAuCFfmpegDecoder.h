@@ -31,13 +31,14 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage) override;
 
-	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-
 	jvxErrorType set_configure_token(const char* tokenArg);
-	virtual jvxErrorType configure_decoder(const char* tokenArg) override;
+	virtual jvxErrorType configure_decoder(const char* tokenArg);
+
+	virtual void accept_input_parameters()override;
+	virtual void test_set_output_parameters() override;
+	jvxErrorType updated_backward_format_spec(jvxLinkDataDescriptor& forward, jvxLinkDataDescriptor* ld_cp);
 
 };
 

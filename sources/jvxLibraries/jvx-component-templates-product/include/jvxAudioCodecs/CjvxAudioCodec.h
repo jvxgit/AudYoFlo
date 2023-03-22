@@ -61,17 +61,10 @@ public:
 	virtual JVX_CALLINGCONVENTION ~CjvxAudioCodec();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION accept_for_decoding(const char* format_token, jvxBool* compr, jvxApiString* astr) override;
-
 	virtual jvxErrorType JVX_CALLINGCONVENTION provide_for_encoding(const char* format_token_preferred, jvxBool* compr, jvxApiString* astr) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION supports_format_group(jvxDataFormatGroup query_format)	override;
-	
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_encoder(IjvxAudioEncoder** encoder_on_return)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_format_group(jvxDataFormatGroup query_format)	override;	
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_encoder(IjvxAudioEncoder* encoder_on_return)override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_decoder(IjvxAudioDecoder** decoder_on_return)override;
-
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_decoder(IjvxAudioDecoder* decoder_on_return)override;
 
 #include "codeFragments/simplify/jvxStateMachineFull_simplify.h"
@@ -79,8 +72,6 @@ public:
 #include "codeFragments/simplify/jvxObjects_simplify.h"
 
 // #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"	
-
-	virtual void computeRateAndOutBuffersize(CjvxAudioCodec_genpcg* myCfgStrict);
 };
 
 #ifdef JVX_PROJECT_NAMESPACE

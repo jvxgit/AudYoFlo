@@ -601,7 +601,7 @@ CjvxAudioFileReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 		_common_set_ldslave.theData_out.con_params.buffersize = file_params.fsizemax;
 		_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
 		
-		format_descriptor.assign(jvx_wav_produce_codec_token(&file_params));
+		_common_set_ldslave.theData_out.con_params.format_spec = jvx_wav_produce_codec_token(&file_params);
 		return JVX_NO_ERROR;
 	default:
 		CjvxAudioDevice::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));

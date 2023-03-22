@@ -12,7 +12,6 @@
 #include "compatibility/IjvxDataProcessor.h"
 #include "compatibility/CjvxDataProcessor.h"
 
-#include "pcg_CjvxAudioCodec_pcg.h"
 #include "CjvxAudioCodec.h"
 
 #include "jvx_audiocodec_helpers.h"
@@ -24,11 +23,9 @@ namespace JVX_PROJECT_NAMESPACE {
 	class CjvxAudioDecoder : public IjvxAudioDecoder, public CjvxObject, 
 		public IjvxProperties, public CjvxProperties,
 		public IjvxConnectorFactory, public CjvxConnectorFactory,
-		public IjvxInputConnector, public IjvxOutputConnector, public CjvxInputOutputConnector,
-		//public IjvxDataProcessor, public CjvxDataProcessor,
-		public CjvxAudioCodec_genpcg
+		public IjvxInputConnector, public IjvxOutputConnector, public CjvxInputOutputConnector
 	{
-	private:
+	protected:
 		wav_params params;
 
 	protected:
@@ -37,7 +34,6 @@ namespace JVX_PROJECT_NAMESPACE {
 		CjvxNegotiate_output neg_output;
 
 		// std::string encode_hint_transferred;
-		CjvxAudioCodec* myParent;
 		jvxBool lendian = false;
 		
 		jvxDataFormat codecFormat = JVX_DATAFORMAT_BYTE;
@@ -60,25 +56,8 @@ namespace JVX_PROJECT_NAMESPACE {
 		virtual jvxErrorType JVX_CALLINGCONVENTION stop()override;
 		virtual jvxErrorType JVX_CALLINGCONVENTION postprocess()override;
 
+		// ===================================================================================================		
 		// ===================================================================================================
-
-		virtual jvxErrorType JVX_CALLINGCONVENTION set_configure_token(const char* token) override;
-		
-		// ===================================================================================================
-
-		/*
-		virtual jvxErrorType JVX_CALLINGCONVENTION reference_object(IjvxObject** refObject)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION supports_multithreading(jvxBool* supports)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION process_mt(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver, jvxSize idx_receiver_to_sender, jvxSize* channelSelect, jvxSize numEntriesChannels, jvxInt32 offset_input, jvxInt32 offset_output, jvxInt32 numEntries)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION reconfigured_receiver_to_sender(jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION process_st(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver, jvxSize idx_receiver_to_sender)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION last_error_process(char* fld_text, jvxSize fldSize, jvxErrorType* err, jvxInt32* id_error, jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData)override;
-		*/
-
 		// ===================================================================================================
 
 #include "codeFragments/simplify/jvxStateMachine_simplify.h"
@@ -119,24 +98,10 @@ namespace JVX_PROJECT_NAMESPACE {
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
-	// Need to define this function since option JVX_INPUT_OUTPUT_CONNECTOR_SET_OUTPUT_PARAMETERS is set!
-	virtual void test_set_output_parameters();
-	// ==================================================
-
-	// ==================================================
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
-	// ==================================================
-
-	// ==================================================
-	virtual jvxErrorType activate_decoder();
-	virtual jvxErrorType deactivate_decoder();
-	// ==================================================
-
-	virtual jvxErrorType configure_decoder(const char* tokenArg);
-	// ==================================================
-
-	void set_parent(CjvxAudioCodec* parent){myParent = parent;};
-	};
+	virtual void accept_input_parameters() = 0;
+	virtual void test_set_output_parameters() = 0;
+	virtual jvxErrorType updated_backward_format_spec(jvxLinkDataDescriptor& forward, jvxLinkDataDescriptor* ld_cp) = 0;
+};
 
 #ifdef JVX_PROJECT_NAMESPACE
 }

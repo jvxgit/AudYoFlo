@@ -20,7 +20,6 @@ private:
 	CjvxAudioFileReaderTechnology* parentTech = nullptr;
 	std::string fname;
 	std::string last_error;
-	jvxApiString format_descriptor;
 	jvxSize l_samples = 0;
 
 	jvxWavReader wavFileReader;

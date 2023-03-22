@@ -21,35 +21,8 @@ CjvxAuCFfmpegAudioEncoder::CjvxAuCFfmpegAudioEncoder(JVX_CONSTRUCTOR_ARGUMENTS_M
 	cParams.frameSizeMax = 0;
 	cParams.bitRate = cParams.sRate * cParams.nChans * cParams.bitsPerCoded;
 	cParams.bitsPerRaw = 0;
-}
+	cParams.bSizeAudio = 1024;
 
-jvxErrorType
-CjvxAuCFfmpegAudioEncoder::activate_encoder()
-{
-	CjvxAudioCodec_genpcg::general.num_audio_channels.value = cParams.nChans;
-	CjvxAudioCodec_genpcg::general.samplerate.value = cParams.sRate;
-	if (cParams.frameSize != 0)
-	{
-		CjvxAudioCodec_genpcg::general.buffersize.value = cParams.frameSize;
-	}
-
-	CjvxAudioCodec_genpcg::general.max_number_bytes.value = 123;
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CjvxAuCFfmpegAudioEncoder::activate()
-{
-	jvxErrorType res = CjvxAudioEncoder::activate();
-	if (res == JVX_NO_ERROR)
-	{
-		if (cParams.frameSize == 0)
-		{
-			// This is PCM
-			neg_input._clear_parameters_fixed(false, true);
-		}
-	}
-	return res;
 }
 
 // ====================================================================================
@@ -70,104 +43,49 @@ CjvxAuCFfmpegAudioEncoder::update_configure_token(const char* token)
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType
-CjvxAuCFfmpegAudioEncoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+void 
+CjvxAuCFfmpegAudioEncoder::accept_input_parameters()
 {
-	jvxErrorType res = JVX_NO_ERROR;
-
-	res = neg_input._negotiate_connect_icon(_common_set_ldslave.theData_in,
-		static_cast<IjvxObject*>(this),
-		_common_set_ldslave.descriptor.c_str()
-		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	if (res == JVX_NO_ERROR)
-	{
-		CjvxAudioCodec_genpcg::general.buffersize.value = neg_input._latest_results.buffersize;
-		CjvxAudioCodec_genpcg::general.samplerate.value = neg_input._latest_results.rate;
-		CjvxAudioCodec_genpcg::general.num_audio_channels.value = neg_input._latest_results.number_channels;
-
-		// Accept these parameters from forward negotiations
-		cParams.sRate = CjvxAudioCodec_genpcg::general.samplerate.value;
-		cParams.nChans = CjvxAudioCodec_genpcg::general.num_audio_channels.value = neg_input._latest_results.number_channels;
-		cParams.bSizeAudio = CjvxAudioCodec_genpcg::general.buffersize.value;
-
-		res = _test_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
-		if (res == JVX_NO_ERROR)
-		{
-		}
-	}
-	return res;
+	// Accept these parameters from forward negotiations
+	cParams.sRate = neg_input._latest_results.rate;
+	cParams.nChans = neg_input._latest_results.number_channels;
+	cParams.bSizeAudio = neg_input._latest_results.buffersize;
 }
 
 jvxErrorType
-CjvxAuCFfmpegAudioEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+CjvxAuCFfmpegAudioEncoder::check_backward_parameters(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDescriptor& forward, jvxBool& forwardRequest)
 {
-	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
-	jvxLinkDataDescriptor* ld_cp = nullptr;
-	jvxLinkDataDescriptor forward;
-	jvxApiString famToken;
-	switch (tp)
+	forwardRequest = false;
+	jvxFfmpegAudioParameter cParams_check;
+	std::string config_token_complain = ld_cp->con_params.format_spec.std_str();
+	jvxErrorType res = jvx_ffmpeg_codec_token_2_parameter(config_token_complain.c_str(), cParams_check);
+	if (res != JVX_NO_ERROR)
 	{
-	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
-		ld_cp = (jvxLinkDataDescriptor*)data;
-		if (ld_cp)
-		{
-			jvxBool forwardRequest = false;
-
-			jvxFfmpegAudioParameter cParams_check;
-			std::string config_token_complain = ld_cp->con_params.format_spec.std_str();
-			jvxErrorType resL = jvx_ffmpeg_codec_token_2_parameter(config_token_complain.c_str(), cParams_check);
-			if (resL != JVX_NO_ERROR)
-			{
-				forwardRequest = true;
-			}
-			else
-			{
-				if (
-					(cParams_check.bSizeAudio == cParams.bSizeAudio) &&
-					(cParams.sRate == cParams.sRate)
-					)
-				{
-					// Accept the new parameters and report positive to caller
-					*((jvxFfmpegAudioParameter*)&cParams) = cParams_check; // Downcast the target variable
-					accept_output_parameters();
-					res = JVX_NO_ERROR;
-				}
-				else
-				{
-					// Derive the parameters from input side for  the next forward step
-					forward.con_params = _common_set_ldslave.theData_in->con_params;
-
-					// This is the next level of modification: requires new buffersize and/or samplerate from previous module
-					forward.con_params.buffersize = cParams_check.bSizeAudio;
-					forward.con_params.rate = cParams_check.sRate;
-					forward.con_params.number_channels = cParams_check.nChans;
-					forwardRequest = true;
-				}
-			}
-
-			if (forwardRequest)
-			{
-				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
-					tp, &forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-				if (res == JVX_NO_ERROR)
-				{
-					// Here, we need to refresh all connection parameters.
-					// We do take a shortcut here and do not run the negotiation
-
-					CjvxAudioCodec_genpcg::general.buffersize.value = _common_set_ldslave.theData_in->con_params.buffersize;
-					CjvxAudioCodec_genpcg::general.samplerate.value = _common_set_ldslave.theData_in->con_params.rate;
-					CjvxAudioCodec_genpcg::general.num_audio_channels.value = _common_set_ldslave.theData_in->con_params.number_channels;
-
-					derive_input_file_arguments();
-					test_set_output_parameters();
-				}
-			}
-
-		}
-		break;
-	default:
-		res = _transfer_backward_ocon(true, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		forwardRequest = true;
 	}
+	else
+	{
+		if (
+			(cParams_check.bSizeAudio == cParams.bSizeAudio) &&
+			(cParams.sRate == cParams.sRate)
+			)
+		{
+			// Accept the new parameters and report positive to caller
+			*((jvxFfmpegAudioParameter*)&cParams) = cParams_check; // Downcast the target variable
+		}
+		else
+		{
+			// Derive the parameters from input side for  the next forward step
+			forward.con_params = _common_set_ldslave.theData_in->con_params;
+
+			// This is the next level of modification: requires new buffersize and/or samplerate from previous module
+			forward.con_params.buffersize = cParams_check.bSizeAudio;
+			forward.con_params.rate = cParams_check.sRate;
+			forward.con_params.number_channels = cParams_check.nChans;
+			forwardRequest = true;
+		}
+	}
+
 	return res;
 }
 
@@ -185,14 +103,8 @@ CjvxAuCFfmpegAudioEncoder::test_set_output_parameters()
 	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
 	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
 
-	accept_output_parameters();
-}
-
-void
-CjvxAuCFfmpegAudioEncoder::accept_output_parameters()
-{
-	// Derive the pcm related part
-	jvx_ffmpeg_wav_params(cParams, CjvxAudioCodec_genpcg::general.buffersize.value);
+	// Derive the pcm related parts
+	jvx_ffmpeg_wav_params(cParams);
 
 	// Verify and correct remaining parameters
 	jvx_ffmpeg_verify_correct_codec_settings(cParams);
@@ -200,7 +112,6 @@ CjvxAuCFfmpegAudioEncoder::accept_output_parameters()
 	// Derive the token
 	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(cParams);
 }
-
 
 jvxErrorType 
 CjvxAuCFfmpegAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))

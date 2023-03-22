@@ -897,11 +897,17 @@ jvx_ffmpeg_verify_correct_codec_settings(jvxFfmpegAudioParameter& params)
 	params.chanLayout.u.mask = 0;
 }
 
-void jvx_ffmpeg_wav_params(jvxFfmpegAudioParameter& params, jvxSize bsizeAudio)
+void jvx_ffmpeg_wav_params(jvxFfmpegAudioParameter& params)
 {
-	params.bSizeAudio = bsizeAudio;
-	params.frameSizeMax = params.bSizeAudio * params.nChans * params.bitsPerCoded;
-	params.frameSizeMax = params.frameSizeMax >> 3; // bits to bytes
+	if (params.fFormatTag == "wav")
+	{
+		params.frameSizeMax = params.bSizeAudio * params.nChans * params.bitsPerCoded;
+		params.frameSizeMax = params.frameSizeMax >> 3; // bits to bytes
+	}
+	else
+	{
+		params.frameSizeMax = 0;
+	}
 }
 
 void jvx_ffmpeg_printout_params(jvxFfmpegAudioParameter& params)

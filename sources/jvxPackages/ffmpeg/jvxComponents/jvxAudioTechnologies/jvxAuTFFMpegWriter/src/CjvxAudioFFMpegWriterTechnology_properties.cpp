@@ -185,7 +185,19 @@ CjvxAudioFFMpegWriterTechnology::update_local_properties(jvxBool trig_host, jvxS
 	{
 		if (genFFMpegWriter_technology::file_params.file_sub_type.value.entries.size())
 		{
-			id = 0;
+			switch (fileTp)
+			{
+			case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_WAV:
+				id = JVX_OPTION_INIT_WAV;
+				break;
+			case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_MP3:
+			case jvxAudioFFMpegWriteFiletype::JVX_FFMPEG_FILEWRITER_M4A:
+				id = JVX_OPTION_INIT_MP3M4A;
+				break;
+			default:
+				id = 0;
+			}
+
 		}
 	}
 	if (JVX_CHECK_SIZE_SELECTED(id))

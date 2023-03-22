@@ -55,27 +55,6 @@ CjvxAudioCodec::supports_format_group(jvxDataFormatGroup query_format)
 	return JVX_ERROR_UNSUPPORTED;
 }
 
-jvxErrorType 
-CjvxAudioCodec::request_encoder(IjvxAudioEncoder** encoder_on_return)
-{
-	if (encoder_on_return)
-	{
-		if (_common_set_min.theState >= JVX_STATE_ACTIVE)
-		{
-			CjvxAudioEncoder* newEncoder = NULL;
-			newEncoder = new CjvxAudioEncoder("PCM Audio Encoder", false, "pcm_audio_encoder", 0, "sub_module", JVX_COMPONENT_ACCESS_SUB_COMPONENT, 
-				JVX_COMPONENT_AUDIO_ENCODER, "audio_encoder", NULL);
-			newEncoder->set_parent(this);
-			uniqueId++;
-			_common_set_codec.requestedEncoder.push_back(newEncoder);
-			*encoder_on_return = newEncoder;
-			return(JVX_NO_ERROR);
-		}
-		return(JVX_ERROR_WRONG_STATE);
-	}
-	return JVX_ERROR_INVALID_ARGUMENT;
-}
-
 jvxErrorType
 CjvxAudioCodec::return_encoder(IjvxAudioEncoder* encoder_on_return)
 {
@@ -96,28 +75,6 @@ CjvxAudioCodec::return_encoder(IjvxAudioEncoder* encoder_on_return)
 }
 
 jvxErrorType 
-CjvxAudioCodec::request_decoder(IjvxAudioDecoder** decoder_on_return)
-{
-	if (decoder_on_return)
-	{
-		if (_common_set_min.theState >= JVX_STATE_ACTIVE)
-		{
-			CjvxAudioDecoder* newDecoder = NULL;
-			newDecoder = new CjvxAudioDecoder(("PCM Audio Decoder (" + jvx_int2String(uniqueId) + ")").c_str(), false, 
-				"pcm_audio_decoder", 0, "sub_module", JVX_COMPONENT_ACCESS_SUB_COMPONENT, JVX_COMPONENT_AUDIO_DECODER, "audio_decoder",
-				NULL);
-			newDecoder->set_parent(this);
-			uniqueId++;
-			_common_set_codec.requestedDecoder.push_back(newDecoder);
-			*decoder_on_return = newDecoder;
-			return(JVX_NO_ERROR);
-		}
-		return(JVX_ERROR_WRONG_STATE);
-	}
-	return JVX_ERROR_INVALID_ARGUMENT;
-}
-
-jvxErrorType 
 CjvxAudioCodec::return_decoder(IjvxAudioDecoder* decoder_on_return)
 {
 	std::vector<IjvxAudioDecoder*>::iterator elm = _common_set_codec.requestedDecoder.begin();
@@ -134,28 +91,6 @@ CjvxAudioCodec::return_decoder(IjvxAudioDecoder* decoder_on_return)
 	}
 	_common_set_codec.requestedDecoder.erase(elm);
 	return(JVX_NO_ERROR);
-}
-
-void
-CjvxAudioCodec::computeRateAndOutBuffersize(CjvxAudioCodec_genpcg* myCfgStrict)
-{
-	jvxSize fldOutMax = myCfgStrict->general.buffersize.value *  myCfgStrict->general.num_audio_channels.value * sizeof(jvxInt16);
-	fldOutMax += sizeof(CjvxAudioCodec::pcm_fld_header);
-
-	myCfgStrict->general.max_number_bytes.value = JVX_SIZE_INT32(fldOutMax);
-
-	jvxSize selId = jvx_bitfieldSelection2Id(myCfgStrict->general.mode.value.selection(), myCfgStrict->general.mode.value.entries.size());
-	switch (selId)
-	{
-	case 0:
-		fldOutMax = myCfgStrict->general.buffersize.value * myCfgStrict->general.num_audio_channels.value * sizeof(jvxInt16);
-		break;
-	case 1:
-		fldOutMax = myCfgStrict->general.buffersize.value * myCfgStrict->general.num_audio_channels.value * sizeof(jvxInt8);
-		break;
-	}
-	fldOutMax += sizeof(CjvxAudioCodec::pcm_fld_header);
-	myCfgStrict->general.bit_rate.value = JVX_DATA2INT32((fldOutMax * myCfgStrict->general.samplerate.value) / (jvxData)myCfgStrict->general.buffersize.value);
 }
 
 #ifdef JVX_PROJECT_NAMESPACE

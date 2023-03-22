@@ -327,6 +327,7 @@ jvx_wav_compute_bsize_bytes_pcm(wav_params* file_params, jvxSize bsize)
 		// Override
 		bytesFrame = (nchans * bitssample * bsize / 8);
 	}
+	file_params->fsizemax = bytesFrame;
 	return bytesFrame;
 }
 

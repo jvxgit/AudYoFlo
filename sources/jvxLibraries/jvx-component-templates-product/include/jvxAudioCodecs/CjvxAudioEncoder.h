@@ -12,7 +12,6 @@
 #include "compatibility/IjvxDataProcessor.h"
 #include "compatibility/CjvxDataProcessor.h"
 
-#include "pcg_CjvxAudioCodec_pcg.h"
 #include "CjvxAudioCodec.h"
 #include "jvx_audiocodec_helpers.h"
 
@@ -23,22 +22,14 @@ namespace JVX_PROJECT_NAMESPACE {
 	class CjvxAudioEncoder : public IjvxAudioEncoder, public CjvxObject, 
 		public IjvxProperties, public CjvxProperties,
 		public IjvxConnectorFactory, public CjvxConnectorFactory,
-		public IjvxInputConnector, public IjvxOutputConnector, public CjvxInputOutputConnector,
-		//public IjvxDataProcessor, public CjvxDataProcessor, 
-		public CjvxAudioCodec_genpcg
+		public IjvxInputConnector, public IjvxOutputConnector, public CjvxInputOutputConnector
 	{
 	protected:
 
 		CjvxNegotiate_input neg_input;
 		CjvxNegotiate_output neg_output;
-
-		CjvxAudioCodec::pcm_fld_header myCurrentConfig;
-		CjvxAudioCodec* myParent;
-
-		jvxSize id_config;
 		std::string my_config_token;
 
-		wav_params params;
 	public:
 
 		// ===================================================================================================
@@ -65,15 +56,7 @@ namespace JVX_PROJECT_NAMESPACE {
 
 // Interfaces and default implementations for connections
 #include "codeFragments/simplify/jvxConnectorFactory_simplify.h"
-
-#define JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
-		virtual jvxErrorType JVX_CALLINGCONVENTION set_property(
-			jvxCallManagerProperties& callGate,
-			const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
-			const jvx::propertyAddress::IjvxPropertyAddress& ident,
-			const jvx::propertyDetail::CjvxTranferDetail& trans)override;
 #include "codeFragments/simplify/jvxProperties_simplify.h"
-#undef JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
 
 // ===============================================================================
 
@@ -107,34 +90,21 @@ namespace JVX_PROJECT_NAMESPACE {
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	
 	// Need to define this function since option JVX_INPUT_OUTPUT_CONNECTOR_SET_OUTPUT_PARAMETERS is set!
-	virtual void test_set_output_parameters();
+	virtual void test_set_output_parameters() = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
-	//virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-	//virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-	// ==================================================
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_configure_token(jvxApiString* astr) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION update_configure_token(const char* token) override;
-
-	// ==================================================
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
-	// ==================================================
-	// 
-	// 
 	// ==================================================
 	virtual jvxErrorType activate_encoder();
 	virtual jvxErrorType deactivate_encoder();
 	// ==================================================
 
+	virtual void accept_input_parameters() = 0;
+	// virtual void accept_output_parameters() = 0;
+	virtual jvxErrorType check_backward_parameters(jvxLinkDataDescriptor* lp_cp, jvxLinkDataDescriptor& forward, jvxBool& forwardRequest) = 0;
+
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
-
-		void set_parent(CjvxAudioCodec* parent){myParent = parent;};
-
-		virtual void accept_output_parameters();
-		void derive_input_file_arguments();
-	};
+};
 
 #ifdef JVX_PROJECT_NAMESPACE
 }

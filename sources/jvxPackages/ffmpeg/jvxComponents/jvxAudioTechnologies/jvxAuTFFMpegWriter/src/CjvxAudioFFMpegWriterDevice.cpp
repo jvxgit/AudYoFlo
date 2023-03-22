@@ -526,7 +526,7 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 		}
 		if (requiresUpdatePrior)
 		{
-			jvx_ffmpeg_wav_params(fParams, fParams.bSizeAudio);
+			jvx_ffmpeg_wav_params(fParams);
 			ld.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams);
 
 			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
