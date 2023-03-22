@@ -1,5 +1,4 @@
 #include "CjvxAudioFFMpegWriterTechnology.h"
-#include "CjvxAudioFFMpegCommon.h"
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegWriterTechnology, control_fileio)
 {
