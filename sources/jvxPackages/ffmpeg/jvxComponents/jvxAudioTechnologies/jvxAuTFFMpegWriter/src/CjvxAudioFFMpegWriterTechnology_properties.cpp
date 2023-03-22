@@ -208,7 +208,7 @@ CjvxAudioFFMpegWriterTechnology::update_local_properties(jvxBool trig_host, jvxS
 	if (trig_host)
 	{
 		this->_request_command(CjvxReportCommandRequest_id(
-			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY_CONTENT,
+			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY,
 			_common_set.theComponentType,
 			CjvxProperties::property_changed_descriptor_tag_add( genFFMpegWriter_technology::file_params.file_sub_type.descriptor.std_str()).c_str()));
 

@@ -909,7 +909,7 @@ jvxErrorType
 CjvxGenericWrapperDevice_hostRelocator::request_command(const CjvxReportCommandRequest& request)
 {
 	jvxReportCommandRequest req = request.request();
-	if (req == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_PROPERTY_REPORT_SET)
+	if (req == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY)
 	{
 		// If we are here, the report_set comes from the submodule
 		const CjvxReportCommandRequest_id* reqPtr = castCommandRequest<CjvxReportCommandRequest_id>(request);

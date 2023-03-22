@@ -200,7 +200,7 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 				subWidgets.bridgeMenuComponents->updateWindowSingle(cpId);
 			}
 			break;
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTIES:
+		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
 			cp = request->origin();
 			subWidgets.main.theWidget->inform_update_properties(cp);
 			break;

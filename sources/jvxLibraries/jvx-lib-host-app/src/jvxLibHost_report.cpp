@@ -77,7 +77,7 @@ jvxLibHost::report_command_request(jvxCBitField request,
 	if (jvx_bitTest(request, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT))
 	{
 		CjvxReportCommandRequest new_command(
-			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTIES,
+			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES,
 			JVX_COMPONENT_UNKNOWN);
 		res = this->request_command(new_command);
 		jvx_bitClear(request, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT);

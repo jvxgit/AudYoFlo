@@ -273,11 +273,13 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 	}
 	if (!props.empty())
 	{
+		CjvxProperties::property_changed_descriptor_tag_add(props);
 		props = "[" + props + "]";
 
+		// Report all properties to have a new desciptor also
 		// _report_command_request()
 		CjvxReportCommandRequest_id theRequest(
-			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY_DESCRIPTOR_CONTENT,
+			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY,
 			_common_set.theComponentType,
 			props.c_str());
 		_request_command(theRequest);

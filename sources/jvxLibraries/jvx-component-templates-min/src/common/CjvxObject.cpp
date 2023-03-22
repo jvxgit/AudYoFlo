@@ -1010,7 +1010,7 @@ CjvxObject::report_properties_modified(const char* props_set)
 	// Report property
 	if (_common_set.theReport)
 	{
-		CjvxReportCommandRequest_id newRequest(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_PROPERTY_REPORT_SET,
+		CjvxReportCommandRequest_id newRequest(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY,
 			_common_set.theComponentType, props_set);
 		// 
 		_common_set.theReport->request_command(newRequest);
