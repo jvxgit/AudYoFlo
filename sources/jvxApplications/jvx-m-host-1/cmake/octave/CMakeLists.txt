@@ -56,7 +56,6 @@ set(LOCAL_LIBS
    jvx-app-host-shared_static
   jvxHJvx_static
   jvxLthreads_static
-  ${SNDFILE_LIBRARIES}
   )
 
 if(JVX_USE_PART_PAUDIO)

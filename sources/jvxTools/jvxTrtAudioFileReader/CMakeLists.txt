@@ -18,7 +18,7 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxRtAudioFileReader.cpp
   )
 
-set(LOCAL_LIBS jvxLFileIO_static ${SNDFILE_LIBRARIES}) # FLAC vorbis ogg vorbisenc vorbisfile
+set(LOCAL_LIBS jvxLFileIO_static) # FLAC vorbis ogg vorbisenc vorbisfile
 
  link_directories(${SNDFILE_LIBDIR})
 

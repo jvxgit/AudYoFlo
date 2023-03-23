@@ -62,7 +62,6 @@ set(LOCAL_LIBS
   jvxAuNNoiseReductionMc_static
   jvxAuTGenericWrapper_static
   jvxLFileIO_static
-  ${SNDFILE_LIBRARIES}
   qwt-${JVX_QWT_VERSION}
 )
 
