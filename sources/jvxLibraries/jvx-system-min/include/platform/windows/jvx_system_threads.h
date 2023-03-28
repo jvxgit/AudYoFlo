@@ -6,6 +6,7 @@
 #define JVX_THREAD_ID DWORD
 #define JVX_THREAD_EXIT_CODE DWORD
 #define JVX_THREAD_EXIT_NORMAL 0
+#define JVX_THREAD_EXIT_ERROR 1
 #define JVX_STILL_ACTIVE STILL_ACTIVE
 #define JVX_RETURN_THREAD(a) return(a)
 #define JVX_GET_CURRENT_THREAD_ID GetCurrentThreadId
@@ -31,7 +32,7 @@
 #define JVX_SET_NOTIFICATION(a) SetEvent(a)
 #define JVX_RESET_NOTIFICATION(a) ResetEvent(a)
 #define JVX_THREAD_PRIORITY DWORD
-#define JVX_SET_THREAD_PRIORITY(a,b) SetThreadPriority(a,b)
+#define JVX_SET_THREAD_PRIORITY(hdl,prioVal) SetThreadPriority(hdl,prioVal)
 #define JVX_GET_THREAD_PRIORITY(a) GetThreadPriority(a)
 #define JVX_THREAD_PRIORITY_REALTIME THREAD_PRIORITY_TIME_CRITICAL
 #define JVX_THREAD_BACKGROUND_BEGIN(tHdl) SetThreadPriority(tHdl, THREAD_MODE_BACKGROUND_BEGIN)
