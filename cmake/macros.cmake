@@ -303,6 +303,21 @@ function(JVX_CHECK_DEPENDENCIES JVX_DEPENDENCY_MODULES JVX_CONFIGURED_SUBMODULES
 	ENDFOREACH()
 endfunction(JVX_CHECK_DEPENDENCIES)
 
+macro(JVX_CHECK_MODULE JVX_DEPENDENCY_MODULES JVX_CONFIGURED_SUBMODULES PROJECT_NAME JVX_CHECK_MODULE_RESULT)
+	set(${JVX_CHECK_MODULE_RESULT} FALSE)
+	
+	message("--> Checking module dependencies for project ${PROJECT_NAME}: Look for ${JVX_DEPENDENCY_MODULES} in ${JVX_CONFIGURED_SUBMODULES}")
+	FOREACH(lookfor ${JVX_DEPENDENCY_MODULES})
+		list(FIND JVX_CONFIGURED_SUBMODULES ${lookfor} ifoundit)
+		if(${ifoundit} GREATER -1)
+			message("    > Found ${lookfor} in current configuration")
+			set(${JVX_CHECK_MODULE_RESULT} TRUE)			
+		else()
+			message("!!! For module ${PROJECT_NAME}, you need to activate module ${lookfor} !!!")
+		endif()
+	ENDFOREACH()
+endmacro(JVX_CHECK_MODULE)
+
 macro(JVX_ACTIVATE_VERSION_MATLAB project_name local_project_options)
         if(NOT JVX_USE_PART_MATLAB)
                message(FATAL_ERROR "Matlab support requested, but it is disabled")
