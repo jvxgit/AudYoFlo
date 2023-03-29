@@ -1074,9 +1074,12 @@ endif()
     jvx_addSubdirs("Installation for all Matlab/Octave library files" "${JVX_MATLAB_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/matlab-octave")
   endif(JVX_DEPLOY_LIBRARY_DSP_MATLAB)
 
-	include(${JVX_CMAKE_DIR}/fragments/submodules.cmake)
-	jvx_submodules("${JVXRT_SUBMODULE_PATH}" "${JVXRT_SUBPROJECTS_PATH_MAP}") # Path is set in the options file
-	jvx_submodules("${JVXRT_SUBMODULE_FLUTTER_PATH}" "${JVXRT_SUBPROJECTS_FLUTTER_PATH_MAP}") # Path is set in the options file
+	include(${JVX_CMAKE_DIR}/fragments/submodules.cmake)	
+	foreach(expr IN LISTS JVX_SUBMODULE_PASS_EXPRS)
+		message("Running sub-module pass <${expr}>")
+		jvx_submodules("${JVXRT_SUBMODULE_PATH}" "${JVXRT_SUBPROJECTS_PATH_MAP}" "${expr}") # Path is set in the options file
+		jvx_submodules("${JVXRT_SUBMODULE_FLUTTER_PATH}" "${JVXRT_SUBPROJECTS_FLUTTER_PATH_MAP}" "${expr}") # Path is set in the options file
+	endforeach()
 	# message(FATAL_ERROR "Stop")
 	
   if(JVX_GENERATE_DEPEND_GRAPH)
