@@ -232,6 +232,12 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 							theSchedule->schedule_main_loop(schedId, userData);
 							theFac->return_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle*>(theSchedule));
 						}
+						else
+						{
+							jvxApiString astr;
+							theObj->description(&astr);
+							std::cout << __FUNCTION__ << " : Request to re-schedule in main thread failed for object <" << astr.std_str() << ">, reason: JVX_INTERFACE_SCHEDULE not supported." << std::endl;
+						}
 					}
 					involvedHost.hHost->return_object_selected_component(cpId, theObj);
 				}
