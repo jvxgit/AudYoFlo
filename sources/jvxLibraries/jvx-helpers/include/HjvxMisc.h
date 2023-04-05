@@ -383,6 +383,10 @@ std::string jvx_produceFilenameDateClock(const std::string& prefix);
 // ==============================================================================
 jvxSize
 jvx_bitfieldSelection2Id(jvxBitField sel, jvxSize numSel);
+
+jvxSize
+jvx_bitfieldSelection2Id(jvxPropertyContainerSingle<jvxSelectionList_cpp> elm, jvxSize entrySel = 0);
+
 #define JVX_BITFIELD_SELECTION_ID(prop) jvx_bitfieldSelection2Id(prop.value.selection(), prop.value.entries.size())
 
 

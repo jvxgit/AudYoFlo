@@ -19,7 +19,9 @@
 class CjvxObjectCore : public CjvxObjectMin
 {
 public:
-	CjvxObjectCore(const std::string& descr) : CjvxObjectMin(descr) {};
+	CjvxObjectCore(const std::string& descr) : CjvxObjectMin(descr) 
+	{
+	};
 
 	jvxErrorType _prepare();
 	jvxErrorType _start();
