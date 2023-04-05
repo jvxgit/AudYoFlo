@@ -9,9 +9,14 @@ set(JVX_FFMPEG_PACKAGE ${JVX_FFMPEG_PACKAGE}
 	jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegReader
 	jvxComponents/jvxAudioTechnologies/jvxAuTFFMpegWriter
 	jvxComponents/jvxAudioCodecs/jvxAuCFfmpeg
-	jvxComponents/jvxPackages/jvxPaFfmpeg
-	jvxApplications/ffoutput
-	jvxApplications/ffmpeg-app
-	jvxApplications/ffplay-app)
+	jvxComponents/jvxPackages/jvxPaFfmpeg)
+	
+if(NOT JVX_RELEASE_SDK)
+	
+	set(JVX_FFMPEG_PACKAGE ${JVX_FFMPEG_PACKAGE}
+		jvxApplications/ffoutput
+		jvxApplications/ffmpeg-app
+		jvxApplications/ffplay-app)
+endif()
 
 jvx_addSubdirs("Configuring ffmpeg package" "${JVX_FFMPEG_PACKAGE}" "${JVX_FOLDER_HIERARCHIE_BASE}/ffmpeg")
