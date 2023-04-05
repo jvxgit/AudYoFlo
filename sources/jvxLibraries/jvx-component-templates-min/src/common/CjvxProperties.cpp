@@ -3370,18 +3370,18 @@ CjvxProperties::_stop_property_report_collect(jvxCallManagerProperties& callGate
 std::string&
 CjvxProperties::property_changed_descriptor_tag_add(std::string& descriptor)
 {
-	std::string out;
 	std::vector<std::string> lst;
 	jvx_parseStringListIntoTokens(descriptor, lst);
+	descriptor.clear();
 	for (auto& elm : lst)
 	{
-		if (!out.empty())
+		if (!descriptor.empty())
 		{
-			out += ", ";
+			descriptor += ", ";
 		}
-		out += elm + "+";		
+		descriptor += elm + "+";
 	}
-	return out;
+	return descriptor;
 }
 
 jvxErrorType

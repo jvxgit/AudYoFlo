@@ -5,7 +5,7 @@
 
 //#define JVX_AUTOMATION_VERBOSE
 
-class CjvxAutomation: public IjvxReportSystem
+class CjvxAutomationReport: public IjvxReportSystem
 {
 public:
 	class oneHandledComponent
@@ -48,8 +48,8 @@ protected:
 
 public:
 
-	CjvxAutomation();
-	~CjvxAutomation();
+	CjvxAutomationReport();
+	~CjvxAutomationReport();
 
 	void set_system_references(IjvxReportSystem* reportArg, IjvxHost* refHostRefArg);
 
@@ -61,7 +61,7 @@ public:
 		jvxReportCommandRequest req, 
 		jvxComponentIdentification tp, 
 		const std::string& ident,
-		CjvxAutomation::callSpecificParameters* params);
+		CjvxAutomationReport::callSpecificParameters* params);
 
 	//! Report unique id to show that new data connection process has been established
 	virtual jvxErrorType handle_report_uid(
@@ -76,7 +76,8 @@ public:
 		jvxStateSwitch ss,
 		callSpecificParameters* params);
 
-	void complete_dead_device_sequencer_immediate(std::map<jvxSize, CjvxAutomation::oneHandledComponent::oneProcessComponent>::iterator& elm);
+	void complete_dead_device_sequencer_immediate(std::map<jvxSize, 
+		CjvxAutomationReport::oneHandledComponent::oneProcessComponent>::iterator& elm);
 
 	bool shall_be_handled(jvxComponentType tp);
 };

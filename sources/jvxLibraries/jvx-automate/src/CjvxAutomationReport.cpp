@@ -1,27 +1,27 @@
-#include "CjvxAutomation.h"
+#include "CjvxAutomationReport.h"
 
 // Macro for activation of the 
 #define JVX_SCHEDULER_POSTPONED_BY_DEFAULT
 
-CjvxAutomation::CjvxAutomation()
+CjvxAutomationReport::CjvxAutomationReport()
 {
 	tp_rep_activate_filter.push_back(JVX_COMPONENT_SIGNAL_PROCESSING_TECHNOLOGY);
 }
 
-CjvxAutomation::~CjvxAutomation()
+CjvxAutomationReport::~CjvxAutomationReport()
 {
 	tp_rep_activate_filter.clear();
 }
 
 void
-CjvxAutomation::set_system_references(IjvxReportSystem* reportArg, IjvxHost* refHostRefArg)
+CjvxAutomationReport::set_system_references(IjvxReportSystem* reportArg, IjvxHost* refHostRefArg)
 {
 	refSystemReport = reportArg;
 	refHostRef = refHostRefArg;	
 }
 
 jvxErrorType
-CjvxAutomation::request_command(const CjvxReportCommandRequest& request)
+CjvxAutomationReport::request_command(const CjvxReportCommandRequest& request)
 {
 
 	jvxApiString ident;
@@ -32,7 +32,7 @@ CjvxAutomation::request_command(const CjvxReportCommandRequest& request)
 	const CjvxReportCommandRequest_uid* uidIf = NULL;
 	const CjvxReportCommandRequest_ss* ssIf = NULL;
 	jvxComponentIdentification tp = request.origin();
-	CjvxAutomation::callSpecificParameters params;
+	CjvxAutomationReport::callSpecificParameters params;
 
 	jvxReportCommandRequest req = request.request();
 	//jvxReportCommandDataType dtp = request->datatype();
@@ -60,7 +60,7 @@ CjvxAutomation::request_command(const CjvxReportCommandRequest& request)
 }
 
 bool
-CjvxAutomation::shall_be_handled(jvxComponentType tp)
+CjvxAutomationReport::shall_be_handled(jvxComponentType tp)
 {
 	auto elm = tp_rep_activate_filter.begin();
 	for (; elm != tp_rep_activate_filter.end(); elm++)
@@ -75,11 +75,11 @@ CjvxAutomation::shall_be_handled(jvxComponentType tp)
 }
 
 jvxErrorType
-CjvxAutomation::handle_report_ident(
+CjvxAutomationReport::handle_report_ident(
 	jvxReportCommandRequest req,
 	jvxComponentIdentification tp,
 	const std::string& ident,
-	CjvxAutomation::callSpecificParameters* params)
+	CjvxAutomationReport::callSpecificParameters* params)
 {
 	jvxSize num = 0;
 	jvxSize i;
@@ -222,8 +222,8 @@ CjvxAutomation::handle_report_ident(
 }
 
 jvxErrorType
-CjvxAutomation::handle_report_uid(jvxReportCommandRequest req, jvxComponentIdentification tp, jvxSize uid, 
-	CjvxAutomation::callSpecificParameters* params)
+CjvxAutomationReport::handle_report_uid(jvxReportCommandRequest req, jvxComponentIdentification tp, jvxSize uid,
+	CjvxAutomationReport::callSpecificParameters* params)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	IjvxDataConnections* conn = nullptr;
@@ -414,19 +414,19 @@ CjvxAutomation::handle_report_uid(jvxReportCommandRequest req, jvxComponentIdent
 }
 
 jvxErrorType 
-CjvxAutomation::handle_report_ss(
+CjvxAutomationReport::handle_report_ss(
 	jvxReportCommandRequest req,
 	jvxComponentIdentification tp,
 	jvxStateSwitch ss,
-	callSpecificParameters* params)
+	CjvxAutomationReport::callSpecificParameters* params)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	return res;
 }
 
 void
-CjvxAutomation::complete_dead_device_sequencer_immediate(
-	std::map<jvxSize, CjvxAutomation::oneHandledComponent::oneProcessComponent>::iterator& elm)
+CjvxAutomationReport::complete_dead_device_sequencer_immediate(
+	std::map<jvxSize, CjvxAutomationReport::oneHandledComponent::oneProcessComponent>::iterator& elm)
 {
 
 	jvxErrorType resL = JVX_NO_ERROR;
