@@ -644,6 +644,7 @@ endif()
   ###
   set(JVX_BASE_SIGNAL_PROCESSING_NODES
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNDefault
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNMixChainEnterLeave
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNmexCall
 	${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNBareNNodeExample
 	${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNAsyncIo
