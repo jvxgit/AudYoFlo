@@ -246,8 +246,20 @@ jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 		if (elm->second.propRef == propRefSelect)
 		{
 			jvxApiString astr;
+			jvxApiString tstr;
 			selCnt = cnt;
-			propRefSelect->description_object(&astr);
+			jvxCallManagerProperties callGate;
+			jvxErrorType res = propRefSelect->get_property(callGate, jPRIO<jvxApiString>(astr), jPAD("/system/nickname"));
+			if (res == JVX_NO_ERROR)
+			{
+				txt = astr.std_str();
+			}
+			
+			if ((res != JVX_NO_ERROR) || (txt.empty()))
+			{
+				propRefSelect->description_object(&astr);
+			}
+
 			txt = astr.std_str();
 		}
 		cnt++;

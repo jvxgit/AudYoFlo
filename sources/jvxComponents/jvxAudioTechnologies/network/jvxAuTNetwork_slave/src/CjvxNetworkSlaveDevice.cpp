@@ -1126,24 +1126,19 @@ CjvxNetworkSlaveDevice::procedeStateMachine(jvxProtocolHeader* hdr, jvxHandle* p
 
 				CjvxProperties::_update_property_access_type(
 					JVX_PROPERTY_ACCESS_READ_ONLY, 
-					genNetworkSlave_device::integrateiplink.local_audio_config.buffersize.category,
-					genNetworkSlave_device::integrateiplink.local_audio_config.buffersize.globalIdx);
+					genNetworkSlave_device::integrateiplink.local_audio_config.buffersize);
 				CjvxProperties::_update_property_access_type(
 					JVX_PROPERTY_ACCESS_READ_ONLY,
-					genNetworkSlave_device::integrateiplink.local_audio_config.samplerate.category,
-					genNetworkSlave_device::integrateiplink.local_audio_config.samplerate.globalIdx);
+					genNetworkSlave_device::integrateiplink.local_audio_config.samplerate);
 				CjvxProperties::_update_property_access_type(
 					JVX_PROPERTY_ACCESS_READ_ONLY,
-					genNetworkSlave_device::integrateiplink.local_audio_config.numberinputchannels.category,
-					genNetworkSlave_device::integrateiplink.local_audio_config.numberinputchannels.globalIdx);
+					genNetworkSlave_device::integrateiplink.local_audio_config.numberinputchannels);
 				CjvxProperties::_update_property_access_type(
 					JVX_PROPERTY_ACCESS_READ_ONLY,
-					genNetworkSlave_device::integrateiplink.local_audio_config.numberoutputchannels.category,
-					genNetworkSlave_device::integrateiplink.local_audio_config.numberoutputchannels.globalIdx);
+					genNetworkSlave_device::integrateiplink.local_audio_config.numberoutputchannels);
 				CjvxProperties::_update_property_access_type(
 					JVX_PROPERTY_ACCESS_READ_ONLY,
-					genNetworkSlave_device::integrateiplink.local_audio_config.audioformat.category,
-					genNetworkSlave_device::integrateiplink.local_audio_config.audioformat.globalIdx);
+					genNetworkSlave_device::integrateiplink.local_audio_config.audioformat);
 
 				/*
 				* States:

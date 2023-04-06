@@ -52,8 +52,7 @@ CjvxSpNSpeakerEqualizer::activate()
 	if (res == JVX_NO_ERROR)
 	{	
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genSpeakerEqualizer_node::mode.slave_mode.category,
-			genSpeakerEqualizer_node::mode.slave_mode.globalIdx);
+			genSpeakerEqualizer_node::mode.slave_mode);
 
 		update_properties();
 		
@@ -70,8 +69,7 @@ CjvxSpNSpeakerEqualizer::deactivate()
 	if (res == JVX_NO_ERROR)
 	{
 		_undo_update_property_access_type(
-			genSpeakerEqualizer_node::mode.slave_mode.category,
-			genSpeakerEqualizer_node::mode.slave_mode.globalIdx);
+			genSpeakerEqualizer_node::mode.slave_mode);
 
 		CjvxBareNode1io::deactivate();
 	}

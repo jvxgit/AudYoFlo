@@ -364,15 +364,15 @@ public:
 
 	 jvxErrorType _update_property(jvxHandle* fld, jvxSize numberElements, jvxPropertyCategoryType cat, jvxSize idProp, jvxBool lockOnChange);
 
-	 jvxErrorType _update_property_access_type(jvxPropertyAccessType accessType, jvxPropertyCategoryType cat, jvxSize idProp);
+	 jvxErrorType _update_property_access_type(jvxPropertyAccessType accessType, const jvxPropertyContainer& pc);
 
 	 jvxErrorType _update_property_access_type_all(jvxPropertyAccessType accessType);
 
-	 jvxErrorType _undo_update_property_access_type(jvxPropertyCategoryType cat, jvxSize idProp);
+	 jvxErrorType _undo_update_property_access_type(const jvxPropertyContainer& pc);
 
 	 jvxErrorType _undo_update_property_access_type_all();
 
-	 jvxErrorType _update_property_decoder_type(jvxPropertyDecoderHintType decTp, jvxPropertyCategoryType cat, jvxSize idProp);
+	 jvxErrorType _update_property_decoder_type(jvxPropertyDecoderHintType decTp, const jvxPropertyContainer& pc);
 
 	 jvxErrorType _unregister_property(jvxPropertyCategoryType cat, jvxSize idProp);
 
@@ -564,10 +564,6 @@ protected:
 // Makro to ignore a property set with no impact but return positive result anyway
 #define JVX_PROPERTY_CHECK_RESULT(res, callGate) \
 	if((res == JVX_NO_ERROR) && (callGate.on_set.modification_impact == true))
-
-
-#define UPDATE_PROPERTY_ACCESS_TYPE(accTp, prop) CjvxProperties::_update_property_access_type(accTp, prop.category, prop.globalIdx)
-#define UNDO_UPDATE_PROPERTY_ACCESS_TYPE(prop) CjvxProperties::_undo_update_property_access_type(prop.category, prop.globalIdx)
 
 #define JVX_TRANSLATE_PROP_ADDRESS_IDX_CAT(ident, propId, category) \
 	jvxSize propId = JVX_SIZE_UNSELECTED; \

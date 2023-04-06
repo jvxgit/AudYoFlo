@@ -321,7 +321,7 @@ CjvxAudioFFMpegReaderDevice::activate()
 			CjvxAudioDevice::properties_active.buffersize.value = fParams.frameSize;
 		}
 
-		UPDATE_PROPERTY_ACCESS_TYPE(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.buffersize);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.buffersize);
 
 		this->updateDependentVariables_lock(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
 
@@ -338,9 +338,9 @@ CjvxAudioFFMpegReaderDevice::activate()
 
 		// ==============================================================================
 
-		UPDATE_PROPERTY_ACCESS_TYPE(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.outputchannelselection);
-		UPDATE_PROPERTY_ACCESS_TYPE(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.inputchannelselection);
-		UPDATE_PROPERTY_ACCESS_TYPE(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.samplerate);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.outputchannelselection);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.inputchannelselection);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.samplerate);
 
 		CjvxAudioDevice::properties_active.sourceName.value = jvx_shortenStringName(32, fParams.fName);
 		CjvxAudioDevice::properties_active.sinkName.value = "not-connected";
@@ -355,13 +355,13 @@ CjvxAudioFFMpegReaderDevice::deactivate()
 	jvxErrorType res = _pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
-		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.outputchannelselection);
-		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.inputchannelselection);
-		UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.samplerate);
+		_undo_update_property_access_type(CjvxAudioDevice::properties_active.outputchannelselection);
+		_undo_update_property_access_type(CjvxAudioDevice::properties_active.inputchannelselection);
+		_undo_update_property_access_type(CjvxAudioDevice::properties_active.samplerate);
 
 		if (fParams.frameSize != 0)
 		{
-			UNDO_UPDATE_PROPERTY_ACCESS_TYPE(CjvxAudioDevice::properties_active.buffersize);
+			_undo_update_property_access_type(CjvxAudioDevice::properties_active.buffersize);
 		}
 
 		genFFMpegReader_device::unregister_callbacks(

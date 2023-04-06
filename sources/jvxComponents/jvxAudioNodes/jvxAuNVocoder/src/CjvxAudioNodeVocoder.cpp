@@ -437,8 +437,7 @@ CjvxAudioNodeVocoder::prepare()
 		{
 			_update_property_access_type(
 				JVX_PROPERTY_ACCESS_READ_ONLY,
-				genVocoder_node::properties_vocoder.inputSelect.category,
-				genVocoder_node::properties_vocoder.inputSelect.globalIdx);
+				genVocoder_node::properties_vocoder.inputSelect);
 
 			this->_lock_properties_local();
 			genVocoder_node::properties_vocoder.inputSelect.value.selection() = 0x1;
@@ -457,8 +456,7 @@ CjvxAudioNodeVocoder::postprocess()
 		if(_common_set_node_params_1io.processing.number_input_channels == 1)
 		{
 			_undo_update_property_access_type(
-				genVocoder_node::properties_vocoder.inputSelect.category,
-				genVocoder_node::properties_vocoder.inputSelect.globalIdx);
+				genVocoder_node::properties_vocoder.inputSelect);
 		}
 	}
 	return(res);

@@ -11,6 +11,9 @@ class CjvxAutomationReportConnect :
 protected:
 	IjvxReport* reportRef = nullptr;
 	std::string nmComponent = "CjvxAutomationSimple";
+	
+	jvxCallManagerProperties callGate;
+	jPAD ident;
 
 public:
 	CjvxAutomationReportConnect(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

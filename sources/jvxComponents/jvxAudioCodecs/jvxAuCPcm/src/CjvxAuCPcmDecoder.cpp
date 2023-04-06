@@ -20,8 +20,7 @@ CjvxAuCPcmDecoder::activate()
 		// Decoder is in slave mode for encoder!!
 		_update_property_access_type_all(JVX_PROPERTY_ACCESS_READ_ONLY);
 		_undo_update_property_access_type(
-			CjvxAudioCodec_genpcg::general.audio_format.category,
-			CjvxAudioCodec_genpcg::general.audio_format.globalIdx);
+			CjvxAudioCodec_genpcg::general.audio_format);
 		//CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, )
 	}
 	return res;

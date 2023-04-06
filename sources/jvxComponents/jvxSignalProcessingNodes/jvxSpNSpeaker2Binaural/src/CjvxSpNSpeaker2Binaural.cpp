@@ -81,8 +81,7 @@ CjvxSpNSpeaker2Binaural::activate()
 	if (res == JVX_NO_ERROR)
 	{
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genSpeaker2Binaural_node::mode.slave_mode.category,
-			genSpeaker2Binaural_node::mode.slave_mode.globalIdx);
+			genSpeaker2Binaural_node::mode.slave_mode);
 
 		update_properties(false);
 	}
@@ -96,8 +95,7 @@ CjvxSpNSpeaker2Binaural::deactivate()
 	if (res == JVX_NO_ERROR)
 	{
 		_undo_update_property_access_type(
-			genSpeaker2Binaural_node::mode.slave_mode.category,
-			genSpeaker2Binaural_node::mode.slave_mode.globalIdx);
+			genSpeaker2Binaural_node::mode.slave_mode);
 
 		CjvxBareNode1ioRearrange::deactivate();
 	}

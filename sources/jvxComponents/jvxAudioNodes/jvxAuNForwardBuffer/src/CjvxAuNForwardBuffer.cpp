@@ -246,8 +246,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	bypass_buffer_mode = genForwardBuffer_node::config_select.bypass_buffer.value;
 	CjvxProperties::_update_property_access_type(
 		JVX_PROPERTY_ACCESS_READ_ONLY,
-		genForwardBuffer_node::config_select.bypass_buffer.category,
-		genForwardBuffer_node::config_select.bypass_buffer.globalIdx);
+		genForwardBuffer_node::config_select.bypass_buffer);
 	if (!bypass_buffer_mode)
 	{
 		checkInputOutputMostlyIdentical = false; // This prevents also the zerocopy mode
@@ -430,8 +429,7 @@ CjvxAuNForwardBuffer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	}
 
 	CjvxProperties::_undo_update_property_access_type(
-		genForwardBuffer_node::config_select.bypass_buffer.category,
-		genForwardBuffer_node::config_select.bypass_buffer.globalIdx);
+		genForwardBuffer_node::config_select.bypass_buffer);
 
 	return res;
 }

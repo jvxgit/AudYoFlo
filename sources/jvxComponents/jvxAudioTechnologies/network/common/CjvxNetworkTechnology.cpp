@@ -145,8 +145,7 @@ CjvxNetworkTechnology::informDeviceSelected()
 	if (numReqDevices == 0)
 	{
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genNetworkMaster_technology::integrateiplink.properties_sockets.socketTypeSelection.category,
-			genNetworkMaster_technology::integrateiplink.properties_sockets.socketTypeSelection.globalIdx);
+			genNetworkMaster_technology::integrateiplink.properties_sockets.socketTypeSelection);
 	}
 	numReqDevices++;
 }
@@ -159,8 +158,7 @@ CjvxNetworkTechnology::informDeviceUnselected()
 	if (numReqDevices == 0)
 	{
 		CjvxProperties::_undo_update_property_access_type(
-			genNetworkMaster_technology::integrateiplink.properties_sockets.socketTypeSelection.category,
-			genNetworkMaster_technology::integrateiplink.properties_sockets.socketTypeSelection.globalIdx);
+			genNetworkMaster_technology::integrateiplink.properties_sockets.socketTypeSelection);
 	}
 }
 

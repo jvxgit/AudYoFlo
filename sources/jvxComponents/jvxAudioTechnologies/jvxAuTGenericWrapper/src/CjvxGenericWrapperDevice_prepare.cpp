@@ -18,32 +18,25 @@ CjvxGenericWrapperDevice::prepare()
 		CjvxProperties::_lock_properties_local();
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genGenericWrapper_device::properties_active.nonBlockingAsync.category,
-			genGenericWrapper_device::properties_active.nonBlockingAsync.globalIdx);
+			genGenericWrapper_device::properties_active.nonBlockingAsync);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genGenericWrapper_device::properties_active.setupAsync.category,
-			genGenericWrapper_device::properties_active.setupAsync.globalIdx);
+			genGenericWrapper_device::properties_active.setupAsync);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genGenericWrapper_device::properties_active.setupResampler.category,
-			genGenericWrapper_device::properties_active.setupResampler.globalIdx);
+			genGenericWrapper_device::properties_active.setupResampler);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genGenericWrapper_device::properties_active.qualityResamplerIn.category,
-			genGenericWrapper_device::properties_active.qualityResamplerIn.globalIdx);
+			genGenericWrapper_device::properties_active.qualityResamplerIn);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genGenericWrapper_device::properties_active.qualityResamplerOut.category,
-			genGenericWrapper_device::properties_active.qualityResamplerOut.globalIdx);
+			genGenericWrapper_device::properties_active.qualityResamplerOut);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genGenericWrapper_device::properties_active.controlThreads.category,
-			genGenericWrapper_device::properties_active.controlThreads.globalIdx);
+			genGenericWrapper_device::properties_active.controlThreads);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genGenericWrapper_device::properties_active.autoUseHwParams.category,
-			genGenericWrapper_device::properties_active.autoUseHwParams.globalIdx);
+			genGenericWrapper_device::properties_active.autoUseHwParams);
 
 		CjvxProperties::_unlock_properties_local();
 
@@ -307,32 +300,25 @@ CjvxGenericWrapperDevice::postprocess()
 		CjvxProperties::_lock_properties_local();
 
 		CjvxProperties::_undo_update_property_access_type(
-			genGenericWrapper_device::properties_active.nonBlockingAsync.category,
-			genGenericWrapper_device::properties_active.nonBlockingAsync.globalIdx);
+			genGenericWrapper_device::properties_active.nonBlockingAsync);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genGenericWrapper_device::properties_active.setupAsync.category,
-			genGenericWrapper_device::properties_active.setupAsync.globalIdx);
+			genGenericWrapper_device::properties_active.setupAsync);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genGenericWrapper_device::properties_active.setupResampler.category,
-			genGenericWrapper_device::properties_active.setupResampler.globalIdx);
+			genGenericWrapper_device::properties_active.setupResampler);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genGenericWrapper_device::properties_active.qualityResamplerIn.category,
-			genGenericWrapper_device::properties_active.qualityResamplerIn.globalIdx);
+			genGenericWrapper_device::properties_active.qualityResamplerIn);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genGenericWrapper_device::properties_active.qualityResamplerOut.category,
-			genGenericWrapper_device::properties_active.qualityResamplerOut.globalIdx);
+			genGenericWrapper_device::properties_active.qualityResamplerOut);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genGenericWrapper_device::properties_active.controlThreads.category,
-			genGenericWrapper_device::properties_active.controlThreads.globalIdx);
+			genGenericWrapper_device::properties_active.controlThreads);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genGenericWrapper_device::properties_active.autoUseHwParams.category,
-			genGenericWrapper_device::properties_active.autoUseHwParams.globalIdx);
+			genGenericWrapper_device::properties_active.autoUseHwParams);
 
 
 		CjvxProperties::_unlock_properties_local();

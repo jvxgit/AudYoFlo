@@ -449,8 +449,7 @@ CjvxNetworkSlaveDevice::ic_callback_report_disconnect_incoming(jvxSize channelId
 {
 	// If we were connected before, we are no longer
 	_lock_properties_local();
-	CjvxProperties::_undo_update_property_access_type(genNetworkSlave_device::integrateiplink.properties_running.selectionHardwareModeActive.category,
-		genNetworkSlave_device::integrateiplink.properties_running.selectionHardwareModeActive.globalIdx);
+	CjvxProperties::_undo_update_property_access_type(genNetworkSlave_device::integrateiplink.properties_running.selectionHardwareModeActive);
 	_unlock_properties_local();
 
 	return(JVX_NO_ERROR);

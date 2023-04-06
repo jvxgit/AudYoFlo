@@ -1,0 +1,45 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genMixChain";
+
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};			
+		CALLBACKS = {"set_on_config"};
+
+		SECTION nickname
+		{
+			ID = "jvx_component_nickname";
+			INIT_SET = "";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+
+		SECTION number_channels_side
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 1;
+			CALLBACK_SET_POSTHOOK = "set_on_config";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+		SECTION operation_mode
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			SELECTION_LIST_NAMES = {"INPUT", "OUTPUT", "TALKTHROUGH"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes"}; 	
+			CALLBACK_SET_POSTHOOK = "set_on_config";
+			SELECTION_LIST_TRANSLATORS = {
+				"jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT", 
+				"jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT",
+				"jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_TALKTHROUGH"};
+			SELECTION_TRANSLATOR_TYPE = "jvxOperationModeMixChain";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};
+	};
+};

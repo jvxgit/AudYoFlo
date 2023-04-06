@@ -88,30 +88,18 @@ CjvxToolsInterfaceFactory::activate()
 	if(res == JVX_NO_ERROR)
 	{
 		_lock_properties_local();
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.component_path.category, 
-			CjvxFactoryHost_genpcg::properties_selected.component_path.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.configure_parts.category, 
-			CjvxFactoryHost_genpcg::properties_selected.configure_parts.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.do_unload_dlls.category, 
-			CjvxFactoryHost_genpcg::properties_selected.do_unload_dlls.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.host_output_cout.category,
-			CjvxFactoryHost_genpcg::properties_selected.host_output_cout.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.host_verbose_dll.category,
-			CjvxFactoryHost_genpcg::properties_selected.host_verbose_dll.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_activate.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_activate.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_dbglevel.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_dbglevel.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_expressions.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_expressions.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_filename.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_filename.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferFile.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferFile.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferRW.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferRW.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_sizeTransferFile.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_sizeTransferFile.globalIdx);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.component_path);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.configure_parts);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.do_unload_dlls);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.host_output_cout);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.host_verbose_dll);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_activate);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_dbglevel);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_expressions);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_filename);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferFile);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferRW);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxFactoryHost_genpcg::properties_selected.textLog_sizeTransferFile);
 		_unlock_properties_local();
 
 		if (!config_dll.use_only_static_objects)
@@ -192,30 +180,18 @@ CjvxToolsInterfaceFactory::deactivate()
 		}
 
 		_lock_properties_local();
-		_undo_update_property_access_type( CjvxFactoryHost_genpcg::properties_selected.component_path.category,
-			CjvxFactoryHost_genpcg::properties_selected.component_path.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.configure_parts.category,
-			CjvxFactoryHost_genpcg::properties_selected.configure_parts.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.do_unload_dlls.category,
-			CjvxFactoryHost_genpcg::properties_selected.do_unload_dlls.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.host_output_cout.category,
-			CjvxFactoryHost_genpcg::properties_selected.host_output_cout.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.host_verbose_dll.category,
-			CjvxFactoryHost_genpcg::properties_selected.host_verbose_dll.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_activate.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_activate.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_dbglevel.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_dbglevel.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_expressions.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_expressions.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_filename.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_filename.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferFile.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferFile.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferRW.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferRW.globalIdx);
-		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_sizeTransferFile.category,
-			CjvxFactoryHost_genpcg::properties_selected.textLog_sizeTransferFile.globalIdx);
+		_undo_update_property_access_type( CjvxFactoryHost_genpcg::properties_selected.component_path);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.configure_parts);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.do_unload_dlls);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.host_output_cout);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.host_verbose_dll);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_activate);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_dbglevel);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_expressions);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_filename);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferFile);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_sizeInternBufferRW);
+		_undo_update_property_access_type(CjvxFactoryHost_genpcg::properties_selected.textLog_sizeTransferFile);
 		_unlock_properties_local();
 
 		res = _deactivate_no_text_log();

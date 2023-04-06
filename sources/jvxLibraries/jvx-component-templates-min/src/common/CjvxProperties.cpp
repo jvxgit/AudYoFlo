@@ -2792,13 +2792,13 @@ CjvxProperties::_update_property(jvxHandle * fld, jvxSize numberElements, jvxPro
 }
 
 jvxErrorType
-CjvxProperties::_update_property_access_type(jvxPropertyAccessType accessType, jvxPropertyCategoryType cat, jvxSize idProp)
+CjvxProperties::_update_property_access_type(jvxPropertyAccessType accessType, const jvxPropertyContainer& pc)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	std::list<oneProperty>::iterator selection;
 
 	_lock_properties_local();
-	selection = findInPropertyList(_common_set_properties.registeredProperties, idProp, cat);
+	selection = findInPropertyList(_common_set_properties.registeredProperties, pc.globalIdx, pc.category);
 	if (selection != _common_set_properties.registeredProperties.end())
 	{
 		if (accessType != selection->propDescriptor->accessType)
@@ -2848,14 +2848,14 @@ CjvxProperties::_update_property_access_type_all(jvxPropertyAccessType accessTyp
 }
 
 jvxErrorType
-CjvxProperties::_undo_update_property_access_type(jvxPropertyCategoryType cat, jvxSize idProp)
+CjvxProperties::_undo_update_property_access_type( const jvxPropertyContainer& pc)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	std::list<oneProperty>::iterator selection;
 
 	_lock_properties_local();
 
-	selection = findInPropertyList(_common_set_properties.registeredProperties, idProp, cat);
+	selection = findInPropertyList(_common_set_properties.registeredProperties, pc.globalIdx, pc.category);
 	if (selection != _common_set_properties.registeredProperties.end())
 	{
 		if (selection->shadow.accessType != JVX_PROPERTY_ACCESS_NONE)
@@ -2897,13 +2897,13 @@ CjvxProperties::_undo_update_property_access_type_all()
 }
 
 jvxErrorType
-CjvxProperties::_update_property_decoder_type(jvxPropertyDecoderHintType decTp, jvxPropertyCategoryType cat, jvxSize idProp)
+CjvxProperties::_update_property_decoder_type(jvxPropertyDecoderHintType decTp, const jvxPropertyContainer& pc)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	std::list<oneProperty>::iterator selection;
 
 	_lock_properties_local();
-	selection = findInPropertyList(_common_set_properties.registeredProperties, idProp, cat);
+	selection = findInPropertyList(_common_set_properties.registeredProperties, pc.globalIdx, pc.category);
 	if (selection != _common_set_properties.registeredProperties.end())
 	{
 		selection->propDescriptor->decTp = decTp;

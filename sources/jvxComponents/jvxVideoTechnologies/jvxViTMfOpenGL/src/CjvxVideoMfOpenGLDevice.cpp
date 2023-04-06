@@ -83,28 +83,23 @@ CjvxVideoMfOpenGLDevice::activate()
 		// The properties in the base class from here on are only for reading, not for editiing
 		_update_property_access_type(
 			JVX_PROPERTY_ACCESS_READ_ONLY,
-			CjvxVideoDevice_genpcg::video.format.category,
-			CjvxVideoDevice_genpcg::video.format.globalIdx);
+			CjvxVideoDevice_genpcg::video.format);
 
 		_update_property_access_type(
 			JVX_PROPERTY_ACCESS_READ_ONLY,
-			CjvxVideoDevice_genpcg::video.framesize.category,
-			CjvxVideoDevice_genpcg::video.framesize.globalIdx);
+			CjvxVideoDevice_genpcg::video.framesize);
 
 		_update_property_access_type(
 			JVX_PROPERTY_ACCESS_READ_ONLY,
-			CjvxVideoDevice_genpcg::video.segmentsize_x.category,
-			CjvxVideoDevice_genpcg::video.segmentsize_x.globalIdx);
+			CjvxVideoDevice_genpcg::video.segmentsize_x);
 
 		_update_property_access_type(
 			JVX_PROPERTY_ACCESS_READ_ONLY,
-			CjvxVideoDevice_genpcg::video.segmentsize_y.category,
-			CjvxVideoDevice_genpcg::video.segmentsize_y.globalIdx);
+			CjvxVideoDevice_genpcg::video.segmentsize_y);
 
 		_update_property_access_type(
 			JVX_PROPERTY_ACCESS_READ_ONLY,
-			CjvxVideoDevice_genpcg::video.subformat.category,
-			CjvxVideoDevice_genpcg::video.subformat.globalIdx);
+			CjvxVideoDevice_genpcg::video.subformat);
 
 
 		jvxSize idSel = jvx_bitfieldSelection2Id(genMf_device::configuration_mf.mode_selection.value.selection(), genMf_device::configuration_mf.mode_selection.value.entries.size());
@@ -141,24 +136,19 @@ CjvxVideoMfOpenGLDevice::deactivate()
 
 		// The properties in the base class from here on are only for reading, not for editiing
 		_undo_update_property_access_type(
-			CjvxVideoDevice_genpcg::video.format.category,
-			CjvxVideoDevice_genpcg::video.format.globalIdx);
+			CjvxVideoDevice_genpcg::video.format);
 
 		_undo_update_property_access_type(
-			CjvxVideoDevice_genpcg::video.framesize.category,
-			CjvxVideoDevice_genpcg::video.framesize.globalIdx);
+			CjvxVideoDevice_genpcg::video.framesize);
 
 		_undo_update_property_access_type(
-			CjvxVideoDevice_genpcg::video.segmentsize_x.category,
-			CjvxVideoDevice_genpcg::video.segmentsize_x.globalIdx);
+			CjvxVideoDevice_genpcg::video.segmentsize_x);
 
 		_undo_update_property_access_type(
-			CjvxVideoDevice_genpcg::video.segmentsize_y.category,
-			CjvxVideoDevice_genpcg::video.segmentsize_y.globalIdx);
+			CjvxVideoDevice_genpcg::video.segmentsize_y);
 
 		_undo_update_property_access_type(
-			CjvxVideoDevice_genpcg::video.subformat.category,
-			CjvxVideoDevice_genpcg::video.subformat.globalIdx);
+			CjvxVideoDevice_genpcg::video.subformat);
 
 		lstModes.clear();
 

@@ -125,7 +125,12 @@ CjvxAutomationReportConnect::handle_report_ss(
 	CjvxAutomationReport::callSpecificParameters* params)
 {
 	jvxApiString astr;
-	jvxErrorType res = JVX_NO_ERROR;	
+	jvxErrorType res = JVX_NO_ERROR;
+
+	JVX_START_LOCK_LOG(3);
+	log << __FUNCTION__ << " - Report state switch component <" << jvxComponentIdentification_txt(tp) << ">, state switch <" << jvxStateSwitch_txt(ss) << ">." << std::endl;
+	JVX_STOP_LOCK_LOG;
+
 	return res;
 }
 

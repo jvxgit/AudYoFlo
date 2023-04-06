@@ -119,8 +119,7 @@ CjvxAudioWindowsDevice::prepare()
 
 	if (res == JVX_NO_ERROR)
 	{        
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genWindows_device::properties_active.ratesselection.category, 
-			genWindows_device::properties_active.ratesselection.globalIdx);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genWindows_device::properties_active.ratesselection);
 
 		//CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.accessType.cat, genAlsa_device::properties_active.accessType.id);
 		//CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.formatType.cat, genAlsa_device::properties_active.accessType.id);
@@ -140,8 +139,7 @@ CjvxAudioWindowsDevice::postprocess()
 	jvxErrorType resL;
 	if (res == JVX_NO_ERROR)
 	{
-		CjvxProperties::_undo_update_property_access_type(genWindows_device::properties_active.ratesselection.category, 
-			genWindows_device::properties_active.ratesselection.globalIdx);
+		CjvxProperties::_undo_update_property_access_type(genWindows_device::properties_active.ratesselection);
 		/*
 		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.sizesselection.cat, genAlsa_device::properties_active.sizesselection.id);
 		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.accessType.cat, genAlsa_device::properties_active.accessType.id);

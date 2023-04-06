@@ -22,6 +22,11 @@ set(LOCAL_LIBS
   jvx-component-templates-base_static
   )
 
+  
+set(LOCAL_PCG_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_node.pcg
+	)
+
 set(IS_JVX_COMPONENT TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

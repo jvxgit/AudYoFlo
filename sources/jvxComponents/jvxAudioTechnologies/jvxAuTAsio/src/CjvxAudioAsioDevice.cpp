@@ -245,36 +245,28 @@ CjvxAudioAsioDevice::prepare()
 		CjvxProperties::_lock_properties_local();
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.ratesselection.category,
-			genAsio_device::properties_active.ratesselection.globalIdx);
+			genAsio_device::properties_active.ratesselection);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.sizesselection.category,
-			genAsio_device::properties_active.sizesselection.globalIdx);
+			genAsio_device::properties_active.sizesselection);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.openasiocontrolpanel.category,
-			genAsio_device::properties_active.openasiocontrolpanel.globalIdx);
+			genAsio_device::properties_active.openasiocontrolpanel);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.clocksourceselection.category,
-			genAsio_device::properties_active.clocksourceselection.globalIdx);
+			genAsio_device::properties_active.clocksourceselection);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.latencyin.category,
-			genAsio_device::properties_active.latencyin.globalIdx);
+			genAsio_device::properties_active.latencyin);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.latencyout.category,
-			genAsio_device::properties_active.latencyout.globalIdx);
+			genAsio_device::properties_active.latencyout);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.supportstimeinfo.category,
-			genAsio_device::properties_active.supportstimeinfo.globalIdx);
+			genAsio_device::properties_active.supportstimeinfo);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genAsio_device::properties_active.controlThreads.category,
-			genAsio_device::properties_active.controlThreads.globalIdx);
+			genAsio_device::properties_active.controlThreads);
 
 		CjvxProperties::_unlock_properties_local();
 
@@ -291,36 +283,28 @@ CjvxAudioAsioDevice::postprocess()
 		CjvxProperties::_lock_properties_local();
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.ratesselection.category,
-			genAsio_device::properties_active.ratesselection.globalIdx);
+			genAsio_device::properties_active.ratesselection);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.sizesselection.category,
-			genAsio_device::properties_active.sizesselection.globalIdx);
+			genAsio_device::properties_active.sizesselection);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.openasiocontrolpanel.category,
-			genAsio_device::properties_active.openasiocontrolpanel.globalIdx);
+			genAsio_device::properties_active.openasiocontrolpanel);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.clocksourceselection.category,
-			genAsio_device::properties_active.clocksourceselection.globalIdx);
+			genAsio_device::properties_active.clocksourceselection);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.latencyin.category,
-			genAsio_device::properties_active.latencyin.globalIdx);
+			genAsio_device::properties_active.latencyin);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.latencyout.category,
-			genAsio_device::properties_active.latencyout.globalIdx);
+			genAsio_device::properties_active.latencyout);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.supportstimeinfo.category,
-			genAsio_device::properties_active.supportstimeinfo.globalIdx);
+			genAsio_device::properties_active.supportstimeinfo);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genAsio_device::properties_active.controlThreads.category,
-			genAsio_device::properties_active.controlThreads.globalIdx);
+			genAsio_device::properties_active.controlThreads);
 
 		CjvxProperties::_unlock_properties_local();
 	}
@@ -639,7 +623,7 @@ CjvxAudioAsioDevice::activateAsioProperties()
 
 				genAsio_device::properties_active.sizesselection.value.selection() = (jvxBitField)1 << idxDeltaMin;
 			}
-			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.buffersize.globalIdx);
+			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.buffersize);
 		}
 		else
 		{
@@ -673,7 +657,7 @@ CjvxAudioAsioDevice::activateAsioProperties()
 		{
 			CjvxAudioDevice::properties_active.samplerate.value = runtime.samplerates[0];
 			genAsio_device::properties_active.ratesselection.value.selection() = (1 << 0);
-			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.samplerate.globalIdx);
+			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,  CjvxAudioDevice::properties_active.samplerate);
 		}
 		else
 		{
@@ -842,8 +826,8 @@ CjvxAudioAsioDevice::prepareAsio()
 	if (res == JVX_NO_ERROR)
 	{
 		_lock_properties_local();
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.inputchannelselection.globalIdx);
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.outputchannelselection.globalIdx);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,  CjvxAudioDevice::properties_active.inputchannelselection);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,  CjvxAudioDevice::properties_active.outputchannelselection);
 		_unlock_properties_local();
 
 
@@ -990,8 +974,8 @@ CjvxAudioAsioDevice::postProcessAsio()
 	this->inProcessing.output.numberChannelsUsed = 0;
 
 	_lock_properties_local();
-	_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.inputchannelselection.globalIdx);
-	_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.outputchannelselection.globalIdx);
+	_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT,  CjvxAudioDevice::properties_active.inputchannelselection);
+	_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT,  CjvxAudioDevice::properties_active.outputchannelselection);
 	_unlock_properties_local();
 	return(JVX_NO_ERROR); // <- what would we do in case of an error?
 }

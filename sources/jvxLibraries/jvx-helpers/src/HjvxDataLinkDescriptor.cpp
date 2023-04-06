@@ -256,6 +256,133 @@ jvx_deallocateDataLinkSync(jvxLinkDataDescriptor* theData)
 }
 
 jvxErrorType
+jvx_allocateDataLinkDescriptorRouteChannels(
+		jvxLinkDataDescriptor* theDataTo, jvxLinkDataDescriptor* theDataFrom, 
+	jvxSize numChannelsCopy, jvxHandle**** bufToStore)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxSize i, j;
+
+	assert(theDataTo);
+
+	// If the caller requests to use the specified buffers, do so!
+	if (jvx_bitTest(theDataTo->con_data.alloc_flags,
+		(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT))
+	{
+		return res;
+	}
+
+#ifdef JVX_COMPILE_SMALL
+
+	// On very small devices, linked fields must use static buffers
+	//return JVX_ERROR_UNSUPPORTED;
+	assert(allocateFields == false);
+#endif
+
+	assert(theDataTo->con_data.number_buffers == theDataFrom->con_data.number_buffers);
+	assert(numChannelsCopy <= theDataTo->con_params.number_channels );
+	assert(numChannelsCopy <= theDataFrom->con_params.number_channels );
+
+	// =============================================================================================
+	// =============================================================================================
+	if (theDataTo->con_data.number_buffers)
+	{
+		if (bufToStore) *bufToStore = theDataTo->con_data.buffers;
+		JVX_DSP_SAFE_ALLOCATE_FIELD(theDataTo->con_data.buffers,
+			jvxHandle**,
+			theDataTo->con_data.number_buffers);
+		assert(theDataTo->con_data.buffers);
+
+		// =============================================================================================
+		// =============================================================================================
+
+		for (i = 0; i < theDataTo->con_data.number_buffers; i++)
+		{
+			theDataTo->con_data.buffers[i] = NULL;
+
+			switch (theDataTo->con_params.format_group)
+			{
+			case JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD:
+			case JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD:
+
+				// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
+				// Do not allocate anything here!
+				break;
+			default:
+				if (theDataTo->con_params.number_channels)
+				{
+					JVX_DSP_SAFE_ALLOCATE_FIELD(theDataTo->con_data.buffers[i], jvxHandle*, theDataTo->con_params.number_channels);
+					assert(theDataTo->con_data.buffers[i]);
+					for (j = 0; j < (jvxSize)theDataTo->con_params.number_channels; j++)
+					{
+						theDataTo->con_data.buffers[i][j] = NULL;
+						if (j < numChannelsCopy)
+						{
+							theDataTo->con_data.buffers[i][j] = theDataFrom->con_data.buffers[i][j];
+						}
+					}
+				}
+			}
+		}
+	}
+	return res;
+}
+
+jvxErrorType
+jvx_deallocateDataLinkDescriptorRouteChannels(jvxLinkDataDescriptor* theData, jvxHandle*** bufFromStorage)
+{
+	jvxSize i, j;
+	jvxErrorType res = JVX_NO_ERROR;
+
+	assert(theData);
+
+	// If the caller requests to use the specified buffers, do not deallocate buffers!
+	if (jvx_bitTest(theData->con_data.alloc_flags,
+		(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT))
+	{
+		return res;
+	}
+
+#ifdef JVX_COMPILE_SMALL
+
+	// On very small devices, linked fields must use static buffers
+	//return JVX_ERROR_UNSUPPORTED;
+	assert(deallocateFields == false);
+#endif
+
+	// !! Here, we do not check that the local dataprocessing environment is in right state !!
+	if (theData->con_data.number_buffers)
+	{
+		for (i = 0; i < theData->con_data.number_buffers; i++)
+		{
+			// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
+			switch (theData->con_params.format_group)
+			{
+			case JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD:
+			case JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD:
+
+				// The buffers are copied "forward", that is the pointer will be forwarded from component to component in theData->con_data.buffers[i]
+				// Do not allocate anything here!
+				break;
+			default:
+				if (theData->con_params.number_channels)
+				{
+					for (j = 0; j < (jvxSize)theData->con_params.number_channels; j++)
+					{
+						theData->con_data.buffers[i][j] = nullptr;
+					}
+					JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.buffers[i], jvxHandle*);
+				}
+			}
+		}
+
+		JVX_DSP_SAFE_DELETE_FIELD_TYPE(theData->con_data.buffers, jvxHandle**);
+	}
+	theData->con_data.buffers = bufFromStorage;
+	return res;
+}
+
+jvxErrorType
 jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateFields)
 {
 
@@ -613,13 +740,20 @@ jvx_neutralDataLinkDescriptor_data(jvxLinkDataDescriptor_con_data* con_data)
 	con_data->bExt.prepend = 0;
 	con_data->bExt.append = 0;
 	con_data->bExt.flags = 0;
-	con_data->bExt.offset = NULL;
-	con_data->bExt.raw = NULL;
+	con_data->bExt.offset = nullptr;
+	con_data->bExt.raw = nullptr;
 	con_data->bExt.sz = 0;
-	con_data->bExt.f_alloc = NULL;
-	con_data->bExt.f_dealloc = NULL;
-	con_data->bExt.f_priv = NULL;
-	con_data->buffers = NULL;
+	con_data->bExt.f_alloc = nullptr;
+	con_data->bExt.f_dealloc = nullptr;
+	con_data->bExt.f_priv = nullptr;
+	con_data->buffers = nullptr;
+	con_data->attached_buffer_single = nullptr;
+	con_data->attached_buffer_persist = nullptr;
+	con_data->fHeights = nullptr;
+
+	con_data->alloc_flags = 0;
+	con_data->number_buffers = 0;
+	con_data->user_hints = nullptr;
 }
 
 void

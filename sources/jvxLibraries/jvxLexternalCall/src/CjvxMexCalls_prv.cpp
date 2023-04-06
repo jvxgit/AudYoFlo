@@ -213,8 +213,7 @@ CjvxMexCalls_prv::prepare()
 		}
 
 		thePropsRef->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genMexCall_node::properties_active.operationMode.category,
-			genMexCall_node::properties_active.operationMode.globalIdx);
+			genMexCall_node::properties_active.operationMode);
 
 	}
 	return res;
@@ -676,8 +675,7 @@ CjvxMexCalls_prv::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* t
 #endif // JVX_EXTERNAL_CALL_ENABLED
 
 	thePropsRef->_undo_update_property_access_type(
-		genMexCall_node::properties_active.operationMode.category,
-		genMexCall_node::properties_active.operationMode.globalIdx);
+		genMexCall_node::properties_active.operationMode);
 
 	if (runtime.theMode == JVX_OPERATION_HOOKUP)
 	{
@@ -770,8 +768,7 @@ jvxErrorType CjvxMexCalls_prv::postprocess()
 {
 	// Switch operation mode back to not read-only
 	thePropsRef->_undo_update_property_access_type(
-		genMexCall_node::properties_active.operationMode.category,
-		genMexCall_node::properties_active.operationMode.globalIdx);
+		genMexCall_node::properties_active.operationMode);
 
 	return JVX_NO_ERROR;
 }

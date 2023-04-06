@@ -418,11 +418,9 @@ CjvxGenericWrapperDevice::activate()
 
 			// Modify decoder type such that reordering is going to be allowed
 			this->_update_property_decoder_type(JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER,
-				CjvxAudioDevice_genpcg::properties_active.inputchannelselection.category,
-				CjvxAudioDevice_genpcg::properties_active.inputchannelselection.globalIdx);
+				CjvxAudioDevice_genpcg::properties_active.inputchannelselection);
 			this->_update_property_decoder_type(JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER,
-				CjvxAudioDevice_genpcg::properties_active.outputchannelselection.category,
-				CjvxAudioDevice_genpcg::properties_active.outputchannelselection.globalIdx);
+				CjvxAudioDevice_genpcg::properties_active.outputchannelselection);
 			_unlock_properties_local();
 
 

@@ -1038,8 +1038,7 @@ CjvxNetworkMasterDevice::procedeStateMachine(jvxProtocolHeader* hdr)
 
 					_lock_properties_local();
 					CjvxProperties::_update_property_access_type(
-						JVX_PROPERTY_ACCESS_READ_ONLY, genNetworkMaster_device::integrateiplink.properties_running.selectionHardwareModeActive.category,
-						genNetworkMaster_device::integrateiplink.properties_running.selectionHardwareModeActive.globalIdx);
+						JVX_PROPERTY_ACCESS_READ_ONLY, genNetworkMaster_device::integrateiplink.properties_running.selectionHardwareModeActive);
 					_unlock_properties_local();
 				}
 				else

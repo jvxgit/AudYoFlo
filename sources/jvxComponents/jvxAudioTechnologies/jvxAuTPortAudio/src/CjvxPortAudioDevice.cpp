@@ -164,7 +164,7 @@ CjvxPortAudioDevice::activate()
 		CjvxAudioDevice_genpcg::properties_active.buffersize.value = 1024;
 
 		runtime.sizesBuffers.clear();
-		this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.buffersize.globalIdx);
+		this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, CjvxAudioDevice::properties_active.buffersize);
 
 #ifdef JVX_OS_WINDOWS
 
@@ -235,7 +235,7 @@ CjvxPortAudioDevice::activate()
 				genPortAudio_device::properties_active.sizesselection.value.selection() = (jvxBitField)1 << idxDeltaMin;
 				CjvxAudioDevice_genpcg::properties_active.buffersize.value = runtime.sizesBuffers[idxDeltaMin];
 			}
-			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.buffersize.globalIdx);
+			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,  CjvxAudioDevice::properties_active.buffersize);
 		}
 		else
 		{
@@ -352,7 +352,7 @@ CjvxPortAudioDevice::activate()
 		{
 			CjvxAudioDevice::properties_active.samplerate.value = runtime.samplerates[0];
 			genPortAudio_device::properties_active.ratesselection.value.selection() = (1 << 0);
-			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.samplerate.globalIdx);
+			this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxAudioDevice::properties_active.samplerate);
 		}
 		else
 		{
@@ -375,7 +375,7 @@ CjvxPortAudioDevice::deactivate()
 		/* Clear all structures */
 		runtime.samplerates.clear();
 		genPortAudio_device::properties_active.ratesselection.value.selection() = 0;
-		this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.samplerate.globalIdx);
+		this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, CjvxAudioDevice::properties_active.samplerate);
 
 		CjvxAudioDevice_genpcg::properties_active.formatselection.value.entries.clear();
 		CjvxAudioDevice_genpcg::properties_active.formatselection.value.selection() = 0;
@@ -385,7 +385,7 @@ CjvxPortAudioDevice::deactivate()
 		genPortAudio_device::properties_active.sizesselection.value.selection() = 0;
 		genPortAudio_device::properties_active.sizesselection.value.entries.clear();
 		CjvxAudioDevice_genpcg::properties_active.buffersize.value = 0;
-		this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioDevice::properties_active.buffersize.globalIdx);
+		this->_update_property_access_type(JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT, CjvxAudioDevice::properties_active.buffersize);
 
 		genPortAudio_device::unregister__properties_active_higher(static_cast<CjvxProperties*>(this));
 		genPortAudio_device::deallocate__properties_active_higher();
@@ -408,16 +408,13 @@ CjvxPortAudioDevice::prepare()
 		CjvxProperties::_lock_properties_local();
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genPortAudio_device::properties_active.ratesselection.category,
-			genPortAudio_device::properties_active.ratesselection.globalIdx);
+			genPortAudio_device::properties_active.ratesselection);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genPortAudio_device::properties_active.sizesselection.category,
-			genPortAudio_device::properties_active.sizesselection.globalIdx);
+			genPortAudio_device::properties_active.sizesselection);
 
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY,
-			genPortAudio_device::properties_active.controlThreads.category,
-			genPortAudio_device::properties_active.controlThreads.globalIdx);
+			genPortAudio_device::properties_active.controlThreads);
 
 		CjvxProperties::_unlock_properties_local();
 
@@ -462,16 +459,13 @@ CjvxPortAudioDevice::postprocess()
 		CjvxProperties::_lock_properties_local();
 
 		CjvxProperties::_undo_update_property_access_type(
-			genPortAudio_device::properties_active.ratesselection.category,
-			genPortAudio_device::properties_active.ratesselection.globalIdx);
+			genPortAudio_device::properties_active.ratesselection);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genPortAudio_device::properties_active.sizesselection.category,
-			genPortAudio_device::properties_active.sizesselection.globalIdx);
+			genPortAudio_device::properties_active.sizesselection);
 
 		CjvxProperties::_undo_update_property_access_type(
-			genPortAudio_device::properties_active.controlThreads.category,
-			genPortAudio_device::properties_active.controlThreads.globalIdx);
+			genPortAudio_device::properties_active.controlThreads);
 
 		CjvxProperties::_unlock_properties_local();
 
