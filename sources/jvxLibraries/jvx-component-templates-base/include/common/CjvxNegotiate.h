@@ -1,6 +1,8 @@
 #ifndef __CJVXNEGOTIATE_H__
 #define __CJVXNEGOTIATE_H__
 
+class CjvxObjectLog;
+
 typedef enum
 {
 	JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE,
@@ -121,6 +123,8 @@ public:
 	jvxLinkDataDescriptor_con_params _latest_results;
 	negBehaviorType negBehavior = negBehaviorType::JVX_BEHAVIOR_AUDIO;
 	
+	CjvxObjectLog* logObj = nullptr;
+
 public:
 
 	CjvxNegotiate_common();

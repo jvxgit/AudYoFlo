@@ -1275,6 +1275,15 @@ void jvx_unlock_text_log(jvxrtst_backup& bkp);
 		jvx_unlock_text_log(jvxrtst_bkp); \
 	}
 
+#define JVX_START_LOCK_LOG_REF(ptr, LEVEL) \
+	if (ptr && ptr->jvxrtst_bkp.dbgModule && ptr->jvxrtst_bkp.dbgLevel > LEVEL) \
+	{ \
+		std::ostream& log = ptr->jvxrtst; \
+		jvx_lock_text_log(ptr->jvxrtst_bkp);
+
+#define JVX_STOP_LOCK_LOG_REF(ptr) \
+		jvx_unlock_text_log(ptr->jvxrtst_bkp); \
+	}
 
 #endif // #idef _CPLUSPLUS
 

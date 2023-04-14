@@ -23,6 +23,7 @@ CjvxBareNode1ioRearrange::CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MAC
 		JVX_DATAFORMAT_GROUP_NONE);
 	
 	forward_complain = false;
+	neg_output.logObj = this;
 }
 
 jvxErrorType 

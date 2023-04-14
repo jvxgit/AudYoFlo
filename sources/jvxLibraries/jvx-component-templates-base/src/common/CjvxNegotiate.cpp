@@ -1,5 +1,6 @@
 #include "jvx.h"
 #include "common/CjvxNegotiate.h"
+#include "common/CjvxObjectLog.h"
 
 #define SET_BUFFERSIZE_DIMX(res, str, bsize) \
 	if ( \
@@ -310,7 +311,17 @@ CjvxNegotiate_common::_push_constraints()
 		stack_pushed = true;
 		return JVX_NO_ERROR;
 	}
-	assert(0);
+
+	// I changed this condition from fatal to non-fatal: under special conditions, a push an another push may occur.
+	// It happens if the test run returns "success" but there is a request to change from the end of the chain lateron.
+	// This is possible if the component is part of a fixed-connection: Then, the fixed-connection is tested clear but
+	// a request is generated from towards the end after the fixed-connection. It is not too bad to accept this condition I think but
+	// a warning should be generated in the verbose output. This kind of warning should not happen at every test but at the first test where 
+	// a modification request is accepted.
+	JVX_START_LOCK_LOG_REF(logObj, 3)
+	log << __FUNCTION__ << "Warning: stack has already been pushed but not popped afterwards." << std::endl;
+	JVX_STOP_LOCK_LOG_REF(logObj)
+
 	return JVX_ERROR_WRONG_STATE;
 }
 
@@ -323,7 +334,17 @@ CjvxNegotiate_common::_pop_constraints()
 		stack_pushed = false;
 		return JVX_NO_ERROR;
 	}
-	assert(0);
+
+	// I changed this condition from fatal to non-fatal: under special conditions, a push an another push may occur.
+	// It happens if the test run returns "success" but there is a request to change from the end of the chain lateron.
+	// This is possible if the component is part of a fixed-connection: Then, the fixed-connection is tested clear but
+	// a request is generated from towards the end after the fixed-connection. It is not too bad to accept this condition I think but
+	// a warning should be generated in the verbose output. This kind of warning should not happen at every test but at the first test where 
+	// a modification request is accepted.
+	JVX_START_LOCK_LOG_REF(logObj, 3)
+	log << __FUNCTION__ << "Warning: stack has not been pushed before pop." << std::endl;
+	JVX_STOP_LOCK_LOG_REF(logObj)
+
 	return JVX_ERROR_WRONG_STATE;
 }
 

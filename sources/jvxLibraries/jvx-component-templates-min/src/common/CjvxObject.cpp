@@ -50,7 +50,7 @@ CjvxObjectCore::_postprocess()
 
 // ========================================================================
 
-CjvxObject::CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : CjvxObjectCore(description), JVX_INIT_RT_ST_INSTANCES
+CjvxObject::CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : CjvxObjectCore(description)
 {
 	std::string dComp;
 

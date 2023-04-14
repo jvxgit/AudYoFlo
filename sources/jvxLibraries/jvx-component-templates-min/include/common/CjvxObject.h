@@ -5,6 +5,7 @@
 #include "jvx-helpers.h"
 #include <map>
 #include "common/CjvxObjectMin.h"
+#include "common/CjvxObjectLog.h"
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 #ifndef JVX_COBJECT_OS_BUF_SIZE 
@@ -31,6 +32,9 @@ public:
 };
 
 class CjvxObject: public CjvxObjectCore
+#ifdef JVX_OBJECTS_WITH_TEXTLOG
+	, public CjvxObjectLog
+#endif
 {
 protected:
 
@@ -85,11 +89,6 @@ protected:
 	commonSetType _common_set;
 	jvxSize refCnt = 0;
 
-#ifdef JVX_OBJECTS_WITH_TEXTLOG
-
-	JVX_DEFINE_RT_ST_INSTANCES
-
-#endif
 	/*
 	struct
 	{

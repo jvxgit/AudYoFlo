@@ -34,6 +34,8 @@ CjvxNodeBase1io::CjvxNodeBase1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	forward_complain = true;
 	_common_set_ldslave.zeroCopyBuffering_cfg = true;
 	// jvx_test_settings::init_connect_icon_flex(&_common_set_node_params_1io);
+	
+	neg_input.logObj = this;
 }; 
 
 jvxErrorType
@@ -184,8 +186,7 @@ CjvxNodeBase1io::accept_input_parameters_stop(jvxErrorType resTest)
 	{
 		// We might try to negotiate to the successor!
 	}
-	neg_input._pop_constraints();
-	return resTest;
+	return neg_input._pop_constraints();
 }
 
 void
@@ -237,19 +238,36 @@ CjvxNodeBase1io::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* d
 jvxErrorType
 CjvxNodeBase1io::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
+	jvxErrorType res = JVX_NO_ERROR;
 	if (forward_complain)
 	{
 		jvxLinkDataDescriptor ld_loc = *preferredByOutput;
-		jvxErrorType resL = transfer_backward_icon(tp, &ld_loc  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		res = transfer_backward_icon(tp, &ld_loc  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		if (
-			(resL == JVX_NO_ERROR) ||
-			(resL == JVX_ERROR_COMPROMISE))
-		{
-			accept_input_parameters_stop(resL);
+			(res == JVX_NO_ERROR) ||
+			(res == JVX_ERROR_COMPROMISE))
+		{			
+			// This function may also return an error - if the stack is in a "wrong" state. We may reach
+			// this wrong state if we try to change the parameters from the "wrong end" - after parameters were
+			// accepted in a forward test run but are requested to be changed on the backward complain. The 
+			// problem occurs in the case of a fixed connection test. 
+			jvxErrorType resL = accept_input_parameters_stop(res);
+			
+			// If this happens, however, at the moment I would propose to
+			// accept this condition - just do not pop the stack as it is empty.
+			/*
+			if (resL != JVX_NO_ERROR)
+			{
+				return resL;
+			}
+			*/
+
+			// Here is the place where we can reject the backwrd settings if it does not fit!!
 			accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
+
 	}
-	return JVX_NO_ERROR;
+	return res;
 }
 
 void
