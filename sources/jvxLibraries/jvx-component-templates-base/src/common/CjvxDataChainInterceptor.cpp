@@ -631,6 +631,23 @@ CjvxDataChainInterceptor::connected_icon(IjvxInputConnector** icon)
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CjvxDataChainInterceptor::connected_ocon(IjvxOutputConnector** ocon)
+{
+	if (ocon)
+	{
+		*ocon = nullptr;
+		if (theData_in)
+		{
+			if (theData_in->con_link.connect_to)
+			{
+				*ocon = theData_in->con_link.connect_from;
+			}
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
 jvxErrorType 
 CjvxDataChainInterceptor::reference_component(
 	jvxComponentIdentification* cpTp, 

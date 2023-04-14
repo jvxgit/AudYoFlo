@@ -374,19 +374,48 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 	theDataConnections->number_connection_master_factories(&numMF);
 	for (i = 0; i < numMF; i++)
 	{
+		IjvxObject* obj = nullptr;
 		IjvxConnectionMasterFactory* theFac = NULL;
 		theDataConnections->reference_connection_master_factory(i, &theFac, &uId);
-		jvx_request_interfaceToObject(theFac, NULL, &tpId, &strMF, &strMFd);
+		jvx_request_interfaceToObject(theFac, &obj, &tpId, &strMF, &strMFd);
 
 		QTreeWidgetItem* newItem = new QTreeWidgetItem(treeWidget_masterfactories);
 		txt = "Factory #" + jvx_size2String(i);
 		newItem->setText(0, txt.c_str());
-		txt = jvxComponentIdentification_txt(tpId);
-		newItem->setText(1, txt.c_str());
-		txt = strMFd.std_str();
-		newItem->setText(2, txt.c_str());
+		
 		txt = strMF.std_str();
-		newItem->setToolTip(2, txt.c_str());
+		newItem->setText(1, txt.c_str());
+
+		// ================================================================================
+		// Trying to use "Nickname" instead of descriptor
+		// ================================================================================
+		IjvxProperties* props = reqInterfaceObj<IjvxProperties>(obj);
+		if (props)
+		{
+			jvxApiString astr;
+			jvxCallManagerProperties callgate;
+			jPAD ident("/system/nickname");
+
+			if (props->get_property(callgate, jPRIO<jvxApiString>(astr), ident) == JVX_NO_ERROR)
+			{
+				if (!astr.std_str().empty())
+				{
+					txt = astr.std_str();
+					auto ft = newItem->font(1);
+					ft.setItalic(true);
+					newItem->setFont(1, ft);
+					newItem->setText(1, txt.c_str());
+				}
+			}
+			retInterfaceObj<IjvxProperties>(obj, props);
+		}
+
+		txt = strMFd.std_str();
+		newItem->setToolTip(1, txt.c_str());
+
+		txt = jvxComponentIdentification_txt(tpId);
+		newItem->setText(2, txt.c_str());
+
 		newItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_MF_UID, QVariant(JVX_SIZE_INT(uId)));
 		newItem->setExpanded(true);
 
@@ -439,19 +468,51 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 	theDataConnections->number_connection_factories(&numCF);
 	for (i = 0; i < numCF; i++)
 	{
+		IjvxObject* obj = nullptr;
 		IjvxConnectorFactory* theFac = NULL;
 		theDataConnections->reference_connection_factory(i, &theFac, &uId);
-		jvx_request_interfaceToObject(theFac, NULL, &tpId, &strMF, &strMFd);
+		jvx_request_interfaceToObject(theFac, &obj, &tpId, &strMF, &strMFd);
 
 		QTreeWidgetItem* newItem = new QTreeWidgetItem(treeWidget_connectorfactories);
 		txt = "Factory #" + jvx_size2String(i);
 		newItem->setText(0, txt.c_str());
-		txt = jvxComponentIdentification_txt(tpId);
-		newItem->setText(1, txt.c_str());
-		txt = strMFd.std_str();
-		newItem->setText(2, txt.c_str());
+
+		// Position "1": Descriptor/module name
 		txt = strMF.std_str();
-		newItem->setToolTip(2, txt.c_str());
+		newItem->setText(1, txt.c_str());
+
+		// ================================================================================
+		// Trying to use "Nickname" instead of descriptor
+		// ================================================================================
+		IjvxProperties* props = reqInterfaceObj<IjvxProperties>(obj);
+		if (props)
+		{
+			jvxApiString astr;
+			jvxCallManagerProperties callgate;
+			jPAD ident("/system/nickname");
+
+			if (props->get_property(callgate, jPRIO<jvxApiString>(astr), ident) == JVX_NO_ERROR)
+			{
+				if (!astr.std_str().empty())
+				{
+					txt = astr.std_str();
+					auto ft = newItem->font(1);
+					ft.setItalic(true);
+					newItem->setFont(1, ft);
+					newItem->setText(1, txt.c_str());
+				}
+			}
+			retInterfaceObj<IjvxProperties>(obj, props);
+		}
+
+		// Add the description as tooltip
+		txt = strMFd.std_str();
+		newItem->setToolTip(1, txt.c_str());
+
+		// Position "2"
+		txt = jvxComponentIdentification_txt(tpId);
+		newItem->setText(2, txt.c_str());
+
 		newItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CF_UID, QVariant(JVX_SIZE_INT(uId)));
 		newItem->setExpanded(true);
 
@@ -459,6 +520,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 		for (j = 0; j < numIC; j++)
 		{
 			IjvxInputConnector* ic = NULL;
+			IjvxOutputConnector* oc = NULL;
 			IjvxDataConnectionCommon* assComm = NULL;
 			jvxApiString masdescr;
 			jvxBool isAvail = false;
@@ -469,9 +531,23 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_IC_ID, QVariant(JVX_SIZE_INT(j)));
 
 			ic->associated_common_icon(&assComm);
+			ic->connected_ocon(&oc);
 
 			txt = "Input Connector #" + jvx_size2String(j);
 			newSubItem->setText(0, txt.c_str());
+
+			// ================================================================================
+			// Show connection counterpart in tooltip
+			// ================================================================================
+
+			if (oc)
+			{
+				jvxApiString astr;
+				oc->descriptor_connector(&astr);
+				jvx_commonConnectorToObjectDescription(oc, txt, astr.std_str());
+				newSubItem->setToolTip(1, txt.c_str());
+			}
+
 			txt = condescr.std_str();
 			newSubItem->setText(1, txt.c_str());
 			if (assComm == NULL)
@@ -498,6 +574,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 		for (j = 0; j < numOC; j++)
 		{
 			IjvxOutputConnector* oc = NULL;
+			IjvxInputConnector* ic = NULL;
 			IjvxDataConnectionCommon* assComm = NULL;
 			jvxApiString masdescr;
 			jvxBool isAvail = false;
@@ -508,6 +585,18 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_OC_ID, QVariant(JVX_SIZE_INT(j)));
 
 			oc->associated_common_ocon(&assComm);
+			oc->connected_icon(&ic);
+						
+			// ================================================================================
+			// Show connection counterpart in tooltip
+			// ================================================================================
+			if (ic)
+			{
+				jvxApiString astr;
+				oc->descriptor_connector(&astr);
+				jvx_commonConnectorToObjectDescription(ic, txt, astr.std_str());
+				newSubItem->setToolTip(1, txt.c_str());
+			}
 
 			txt = "Output Connector #" + jvx_size2String(j);
 			newSubItem->setText(0, txt.c_str());

@@ -228,6 +228,11 @@ public:
 		return _connected_icon(icon);
 	}
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) override
+	{
+		return _connected_ocon(ocon);
+	}
+
 	// =========================================================
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType, jvxHandle**)override;
 

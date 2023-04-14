@@ -77,7 +77,8 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
 		jvxDataFormatGroup format_group,
 		jvxDataflow data_flow)override;
-	
+	jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** icon) override;
+
 	// jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 };
 

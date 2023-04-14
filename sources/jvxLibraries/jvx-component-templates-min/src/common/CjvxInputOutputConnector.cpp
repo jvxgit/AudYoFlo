@@ -64,7 +64,32 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		return JVX_NO_ERROR;
 	}
 
-	jvxErrorType 
+	jvxErrorType
+		CjvxInputOutputConnector::_connected_ocon(IjvxOutputConnector** ocon)
+	{
+		if (ocon)
+		{
+			*ocon = nullptr;
+			if (_common_set_ldslave.theData_in)
+			{
+				*ocon = _common_set_ldslave.theData_in->con_link.connect_from;
+			}
+		}
+		return JVX_NO_ERROR;
+	}
+
+	jvxErrorType
+		CjvxInputOutputConnector::_connected_icon(IjvxInputConnector** ocon)
+	{
+		if (ocon)
+		{
+			*ocon = nullptr;
+			*ocon = _common_set_ldslave.theData_out.con_link.connect_to;
+		}
+		return JVX_NO_ERROR;
+	}
+	
+	jvxErrorType
 		CjvxInputOutputConnector::_associated_common_ocon(IjvxDataConnectionCommon** ref)
 	{
 		if (ref)
@@ -1256,13 +1281,7 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		}
 		return JVX_NO_ERROR;
 	}
-	jvxErrorType
-		CjvxInputOutputConnector::_connected_icon(IjvxInputConnector** icon)
-	{
-		if (icon)
-			*icon = _common_set_ldslave.theData_out.con_link.connect_to;
-		return JVX_NO_ERROR;
-	}
+	
 
 	// ==============================================================
 	// HELPER FUNCTIONS

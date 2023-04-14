@@ -84,6 +84,9 @@ protected:
 
 	jvxErrorType _associated_common_ocon(IjvxDataConnectionCommon** ref);
 
+	jvxErrorType _connected_ocon(IjvxOutputConnector** ocon);
+	jvxErrorType _connected_icon(IjvxInputConnector** icon);
+
 	 jvxErrorType _descriptor_connector(jvxApiString* str);
 
 	 jvxErrorType lds_activate(IjvxDataProcessor* theDataProc, IjvxObject* theObjRef,
@@ -257,8 +260,6 @@ protected:
 		 jvxComponentIdentification* cpTp, 
 		 jvxApiString* modName,
 		 jvxApiString* lContext);
-
-	 virtual jvxErrorType JVX_CALLINGCONVENTION _connected_icon(IjvxInputConnector** icon);
 
 	 // ==============================================================
 

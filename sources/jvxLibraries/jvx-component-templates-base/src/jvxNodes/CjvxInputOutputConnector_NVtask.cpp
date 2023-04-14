@@ -90,6 +90,20 @@ CjvxInputConnectorNVtask::supports_connector_class_icon(
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType 
+CjvxInputConnectorNVtask::connected_ocon(IjvxOutputConnector** ocon)
+{
+	if (ocon)
+	{
+		*ocon = nullptr;
+		if (_common_set_icon_nvtask.theData_in)
+		{
+			*ocon = _common_set_icon_nvtask.theData_in->con_link.connect_from;
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
 // ==========================================================
 
 CjvxOutputConnectorNVtask::CjvxOutputConnectorNVtask()

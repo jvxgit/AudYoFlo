@@ -186,7 +186,7 @@ CjvxObject::_descriptor(jvxApiString* str, jvxApiString* subComponentDescriptor)
 				adds += "<" + jvx_size2String(_common_set.theComponentType.slotid) + ">";
 			}
 		}
-		descr_slot_subslot += adds;
+		// descr_slot_subslot += adds;
 		str->assign(descr_slot_subslot);
 	}
 	if (subComponentDescriptor)

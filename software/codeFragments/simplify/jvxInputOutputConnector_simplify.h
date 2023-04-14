@@ -633,6 +633,11 @@ virtual jvxErrorType associated_common_icon(IjvxDataConnectionCommon** ref) over
 	return _associated_common_icon(ref);
 }
 
+virtual jvxErrorType connected_ocon(IjvxOutputConnector** ocon) override
+{
+	return _connected_ocon(ocon);
+}
+
 virtual jvxErrorType associated_common_ocon(IjvxDataConnectionCommon** ref) override
 {
 	return _associated_common_ocon(ref);

@@ -188,6 +188,7 @@ public:
 		jvxApiString* lContext) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) override;
 
 	virtual jvxErrorType try_run_processing(IjvxConnectionMaster* master_ref);
 };

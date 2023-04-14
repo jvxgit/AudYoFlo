@@ -1547,12 +1547,12 @@
            </column>
            <column>
             <property name="text">
-             <string>Component Id</string>
+             <string>Module Name</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Component Description</string>
+             <string>Identification</string>
             </property>
            </column>
           </widget>
@@ -1566,12 +1566,12 @@
            </column>
            <column>
             <property name="text">
-             <string>Component Id</string>
+             <string>Module Name</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Component Description</string>
+             <string>Identification</string>
             </property>
            </column>
           </widget>
