@@ -19,26 +19,45 @@ class CjvxInputOutputConnector
 {
 protected:
 
-	struct
+	class common_set_icon_t
 	{
+	public:
+		IjvxConnectorBridge* conn_in = nullptr;
+		jvxLinkDataDescriptor* theData_in = nullptr;
+		IjvxDataConnectionCommon* theCommon_to = nullptr;
+
+		struct
+		{
+			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
+		} caps_in;
+	};
+
+	class common_set_ocon_t
+	{
+	public:
+		IjvxConnectorBridge* conn_out = nullptr;
+		jvxLinkDataDescriptor theData_out;
+		IjvxDataConnectionCommon* theCommon_from = nullptr;
+
+		struct
+		{
+			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
+		} caps_out;
+	};
+
+	class common_set_ldslave_t: public common_set_icon_t, public common_set_ocon_t
+	{
+	public:
 		IjvxDataProcessor* data_processor = nullptr;
 		IjvxObject* object = nullptr;
 		IjvxInputConnector* icon = nullptr;
 		IjvxOutputConnector* ocon = nullptr;
 		std::string descriptor;
 
-		IjvxConnectorBridge* conn_in = nullptr;
-		IjvxConnectorBridge* conn_out = nullptr;
-
 		IjvxConnectorFactory* myParent = nullptr;
-
-		jvxLinkDataDescriptor theData_out;
-		jvxLinkDataDescriptor* theData_in = nullptr;
-
 		IjvxConnectionMaster* theMaster = nullptr;
-
-		IjvxDataConnectionCommon* theCommon_to = nullptr;
-		IjvxDataConnectionCommon* theCommon_from = nullptr;
 
 		jvxBool detectLoop = false;
 
@@ -56,26 +75,15 @@ protected:
 		// Copy the input timestamp to the output timestamp
 		jvxBool copy_timestamp_inout = false;
 
-		struct
-		{
-			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
-			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
-		} caps_in;
-
-		struct
-		{
-			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
-			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
-		} caps_out;
-
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
 		const char* dbg_hint = nullptr;
 #endif
-	} _common_set_ldslave;
+	};
+
+	common_set_ldslave_t _common_set_ldslave;
 
 
 	CjvxInputOutputConnector();
-
 	~CjvxInputOutputConnector();
 
 	jvxErrorType _available_connector(jvxBool* isAvail);
@@ -139,7 +147,7 @@ protected:
 	// CONNECT CONNECT CONNECT CONNECT CONNECT CONNECT CONNECT CONNECT
 	// ==============================================================
 
- jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb), jvxBool forward);
+	jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb), jvxBool forward);
 
 	 jvxErrorType _connect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb), jvxDataProcessorHintDescriptor* add_me = NULL);
 
