@@ -260,14 +260,14 @@ CjvxAudioWindowsDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	assert(resL == JVX_NO_ERROR);
 
     // Prepare link data datatype
-    _common_set_ldslave.theData_out.con_compat.buffersize = _inproc.buffersize;
-    _common_set_ldslave.theData_out.con_params.buffersize = _inproc.buffersize;
-    _common_set_ldslave.theData_out.con_params.format = _inproc.format;
-    _common_set_ldslave.theData_out.con_data.buffers = NULL;
-    _common_set_ldslave.theData_out.con_data.number_buffers = 1;
-    _common_set_ldslave.theData_out.con_params.number_channels = _inproc.numInputs;
-    _common_set_ldslave.theData_out.con_params.rate = CjvxAudioDevice::properties_active.samplerate.value;
-    //_common_set_ldslave.theData_out.pipeline.idx_stage = 0;
+    _common_set_ocon.theData_out.con_compat.buffersize = _inproc.buffersize;
+    _common_set_ocon.theData_out.con_params.buffersize = _inproc.buffersize;
+    _common_set_ocon.theData_out.con_params.format = _inproc.format;
+    _common_set_ocon.theData_out.con_data.buffers = NULL;
+    _common_set_ocon.theData_out.con_data.number_buffers = 1;
+    _common_set_ocon.theData_out.con_params.number_channels = _inproc.numInputs;
+    _common_set_ocon.theData_out.con_params.rate = CjvxAudioDevice::properties_active.samplerate.value;
+    //_common_set_ocon.theData_out.pipeline.idx_stage = 0;
 
     // New type of connection by propagating through linked elements
     res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -289,8 +289,8 @@ CjvxAudioWindowsDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
     /*JVX_GET_TICKCOUNT_US_SETREF(&inProcessing.theTimestamp);
     inProcessing.timestamp_previous = -1;
-    inProcessing.deltaT_theory_us = (jvxData) _common_set_ldslave.theData_out.con_params.buffersize /
-	(jvxData) _common_set_ldslave.theData_out.con_params.rate * 1000.0 * 1000.0;
+    inProcessing.deltaT_theory_us = (jvxData) _common_set_ocon.theData_out.con_params.buffersize /
+	(jvxData) _common_set_ocon.theData_out.con_params.rate * 1000.0 * 1000.0;
     inProcessing.deltaT_average_us = 0;
 	*/
     return(res);
@@ -387,19 +387,19 @@ CjvxAudioWindowsDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	// This is the return from the link list
 
-	_common_set_ldslave.theData_in->con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = _inproc.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(_common_set_ldslave.theData_in->con_data.number_buffers, 1);
-	_common_set_ldslave.theData_in->con_params.number_channels = _inproc.numOutputs;
-	_common_set_ldslave.theData_in->con_params.rate = _inproc.samplerate;
+	_common_set_icon.theData_in->con_params.buffersize = _inproc.buffersize;
+	_common_set_icon.theData_in->con_params.format = _inproc.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(_common_set_icon.theData_in->con_data.number_buffers, 1);
+	_common_set_icon.theData_in->con_params.number_channels = _inproc.numOutputs;
+	_common_set_icon.theData_in->con_params.rate = _inproc.samplerate;
 
 	// Connect the output side and start this link
 	res = allocate_pipeline_and_buffers_prepare_to();
 
 	// Do not attach any user hint into backward direction
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
-	// _common_set_ldslave.theData_in->pipeline.idx_stage = 0;
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
+	// _common_set_icon.theData_in->pipeline.idx_stage = 0;
 
 	return res;
 }

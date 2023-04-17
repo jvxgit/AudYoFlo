@@ -128,11 +128,11 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	// From this point the processing parameters are fixed. You need to allocate all buffers
 	// for your algorithm now. The processing parameters can be found here:
-	// _common_set_ldslave.theData_in->con_params
+	// _common_set_icon.theData_in->con_params
 
 	JVX_INITIALIZE_MUTEX(this->mutex_convolutions);
 
-	jvxSize samplerate = _common_set_ldslave.theData_in->con_params.rate;
+	jvxSize samplerate = _common_set_icon.theData_in->con_params.rate;
 	theHrtfDispenser->init(samplerate); // TODO: is called per input channel
 	
 	res = theHrtfDispenser->get_length_hrir(this->length_buffer_hrir);
@@ -141,7 +141,7 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	this->allocate_hrir_buffers(this->length_buffer_hrir);
 
 	// init convolution modules
-	this->frame_advance = _common_set_ldslave.theData_in->con_params.buffersize;
+	this->frame_advance = _common_set_icon.theData_in->con_params.buffersize;
 	
 	this->convolutions.reserve(2);
 	this->convolutions.push_back(ConvolutionsHrirCurrentNext());
@@ -151,7 +151,7 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	this->update_hrirs(this->idx_conv_sofa_current, this->source_direction_angles_deg[0], this->source_direction_angles_deg[1]);
 
-	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(this->buffer_out_temp, jvxData, _common_set_ldslave.theData_in->con_params.buffersize);
+	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(this->buffer_out_temp, jvxData, _common_set_icon.theData_in->con_params.buffersize);
 
 	return res;
 }
@@ -179,7 +179,7 @@ CjvxAuNBinauralRender::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 
 	// At this point the processing is completely done. You need to deallocate all buffers
 	// for your algorithm now. The processing parameters can be found here:
-	// _common_set_ldslave.theData_in->con_params
+	// _common_set_icon.theData_in->con_params
 
 	this->delete_hrir_buffers();
 
@@ -196,18 +196,18 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxErrorType res = JVX_NO_ERROR;
 
 	// Extract the input buffers. You will find all processing parameters at
-	// _common_set_ldslave.theData_in->con_params
-	jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
+	// _common_set_icon.theData_in->con_params
+	jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 	jvxData* in = buffers_in[0];
 
 	// Extract the output buffers. You will find the processing parameters at
-	// _common_set_ldslave.theData_out.con_params
-	jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+	// _common_set_ocon.theData_out.con_params
+	jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
 	jvxData* out_left = buffers_out[0];
 	jvxData* out_right = buffers_out[1];
 
-	const jvxSize num_channels_in = _common_set_ldslave.theData_in->con_params.number_channels;
-	const jvxSize num_channels_out = _common_set_ldslave.theData_out.con_params.number_channels;
+	const jvxSize num_channels_in = _common_set_icon.theData_in->con_params.number_channels;
+	const jvxSize num_channels_out = _common_set_ocon.theData_out.con_params.number_channels;
 
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE lock_result = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(lock_result, this->mutex_convolutions);
@@ -240,7 +240,7 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		auto& convolution_left_next = this->convolutions.at(this->idx_conv_sofa_current).at(idx_conv_hrir_next).at(0);
 		auto& convolution_right_next = this->convolutions.at(this->idx_conv_sofa_current).at(idx_conv_hrir_next).at(1);
 
-		const jvxSize num_samples = _common_set_ldslave.theData_in->con_params.buffersize;
+		const jvxSize num_samples = _common_set_icon.theData_in->con_params.buffersize;
 		jvxData const delta_interpolation_weight = 1.0 / ((jvxData)(num_samples + 1));
 
 		// Input to left output channel using old HRIR and linear falling weighting function.

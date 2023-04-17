@@ -107,7 +107,7 @@ CjvxAudioDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	res = neg_input._negotiate_connect_icon(_common_set_ldslave.theData_in,
+	res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 		static_cast<IjvxObject*>(this),
 		_common_set_ldslave.descriptor.c_str()
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -136,15 +136,15 @@ CjvxAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 		if (ld_cp)
 		{
 			if (
-				(ld_cp->con_params.rate == _common_set_ldslave.theData_out.con_params.rate) &&
-				(ld_cp->con_params.number_channels == _common_set_ldslave.theData_out.con_params.number_channels) &&
-				(ld_cp->con_params.format == _common_set_ldslave.theData_out.con_params.format) &&
-				(ld_cp->con_params.format_group == _common_set_ldslave.theData_out.con_params.format_group))
+				(ld_cp->con_params.rate == _common_set_ocon.theData_out.con_params.rate) &&
+				(ld_cp->con_params.number_channels == _common_set_ocon.theData_out.con_params.number_channels) &&
+				(ld_cp->con_params.format == _common_set_ocon.theData_out.con_params.format) &&
+				(ld_cp->con_params.format_group == _common_set_ocon.theData_out.con_params.format_group))
 			{
 				if (
-					(ld_cp->con_params.buffersize != _common_set_ldslave.theData_out.con_params.buffersize))
+					(ld_cp->con_params.buffersize != _common_set_ocon.theData_out.con_params.buffersize))
 				{
-					forward = *_common_set_ldslave.theData_in;
+					forward = *_common_set_icon.theData_in;
 
 					res = updated_backward_format_spec(forward, ld_cp);
 					if (res == JVX_NO_ERROR)
@@ -153,13 +153,13 @@ CjvxAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 						if (res == JVX_NO_ERROR)
 						{
 							// This accepts the new input arguments
-							set_configure_token(_common_set_ldslave.theData_in->con_params.format_spec.c_str());
+							set_configure_token(_common_set_icon.theData_in->con_params.format_spec.c_str());
 
 							// This does nothing in most cases
 							accept_input_parameters();
 
 							res = neg_input._negotiate_connect_icon(
-								_common_set_ldslave.theData_in, 
+								_common_set_icon.theData_in, 
 								static_cast<IjvxObject*>(this),
 								_common_set_ldslave.descriptor.c_str()
 								JVX_CONNECTION_FEEDBACK_CALL_A(fdb));

@@ -209,13 +209,13 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
     jvxSize i;
     
     // I am the master. I will start the chain here!
-    if (_common_set_ldslave.theData_out.con_link.connect_to)
+    if (_common_set_ocon.theData_out.con_link.connect_to)
     {
-        _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+        _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
     }
 
-    jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-    jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+    jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+    jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 
     if(isInput)
     {
@@ -233,7 +233,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
 				switch (_inproc.format)
 				{
 				case JVX_DATAFORMAT_DATA:
-					ptrDestFlt = (jvxData*)_common_set_ldslave.theData_out.con_data.buffers[idxToProc][chanCnt];
+					ptrDestFlt = (jvxData*)_common_set_ocon.theData_out.con_data.buffers[idxToProc][chanCnt];
 					switch (waveFormatStrProcessing.Format.wBitsPerSample)
 					{
 					case 32:
@@ -266,7 +266,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
 					break;
 				/*
                 case JVX_DATAFORMAT_64BIT_LE:
-					ptrSrcI64 = (jvxInt64*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][chanCnt];
+					ptrSrcI64 = (jvxInt64*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][chanCnt];
 					switch (waveFormatStrProcessing.Format.wBitsPerSample)
 					{
 					case 32:
@@ -291,7 +291,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
 					break;
 
 				case JVX_DATAFORMAT_32BIT_LE:
-					ptrSrcI32 = (jvxInt32*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][chanCnt];
+					ptrSrcI32 = (jvxInt32*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][chanCnt];
 					switch (waveFormatStrProcessing.Format.wBitsPerSample)
 					{
 					case 32:
@@ -317,7 +317,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
 					break;
 
 				case JVX_DATAFORMAT_16BIT_LE:
-					ptrSrcI16 = (jvxInt16*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][chanCnt];
+					ptrSrcI16 = (jvxInt16*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][chanCnt];
 					switch (waveFormatStrProcessing.Format.wBitsPerSample)
 					{
 					case 32:
@@ -352,9 +352,9 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
 	}
 
     // I am the master. I will start the chain here!
-    if (_common_set_ldslave.theData_out.con_link.connect_to)
+    if (_common_set_ocon.theData_out.con_link.connect_to)
     {
-        _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+        _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
     }
 
     if (!isInput)
@@ -375,7 +375,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
                 switch (_inproc.format)
 				{
 				case JVX_DATAFORMAT_DATA:
-					ptrSrcFlt = (jvxData*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][chanCnt];
+					ptrSrcFlt = (jvxData*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][chanCnt];
                     switch (waveFormatStrProcessing.Format.wBitsPerSample)
                     {
                     case 32:
@@ -403,7 +403,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
                     }
                     break;
 				case JVX_DATAFORMAT_64BIT_LE:
-                    ptrSrcI64 = (jvxInt64*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][chanCnt];
+                    ptrSrcI64 = (jvxInt64*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][chanCnt];
                     switch (waveFormatStrProcessing.Format.wBitsPerSample)
                     {
                     case 32:
@@ -428,7 +428,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
                     break;
 
 				case JVX_DATAFORMAT_32BIT_LE:
-                    ptrSrcI32 = (jvxInt32*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][chanCnt];
+                    ptrSrcI32 = (jvxInt32*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][chanCnt];
                     switch (waveFormatStrProcessing.Format.wBitsPerSample)
                     {
                     case 32:
@@ -454,7 +454,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
                     break;
 
 				case JVX_DATAFORMAT_16BIT_LE:
-                    ptrSrcI16 = (jvxInt16*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][chanCnt];
+                    ptrSrcI16 = (jvxInt16*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][chanCnt];
                     switch (waveFormatStrProcessing.Format.wBitsPerSample)
                     {
                     case 32:
@@ -487,9 +487,9 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
         *ptrFromTo += numBytesSampleAllChans * numSamples;
 	} //if (!isInput)
 	
-    if (_common_set_ldslave.theData_out.con_link.connect_to)
+    if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+		_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 	}
 	return JVX_NO_ERROR;
 }

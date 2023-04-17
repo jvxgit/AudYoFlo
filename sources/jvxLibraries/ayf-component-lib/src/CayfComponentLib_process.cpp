@@ -25,13 +25,13 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 		procParams.format = format;
 		procParams.formGroup = formGroup;
 
-		_common_set_ldslave.theData_out.con_params.buffersize = procParams.bSize;
-		_common_set_ldslave.theData_out.con_params.segmentation.x = procParams.bSize;
-		_common_set_ldslave.theData_out.con_params.number_channels = procParams.numInChans;
-		_common_set_ldslave.theData_out.con_params.segmentation.y = procParams.numInChans;
-		_common_set_ldslave.theData_out.con_params.rate = procParams.sRate;
-		_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
-		_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+		_common_set_ocon.theData_out.con_params.buffersize = procParams.bSize;
+		_common_set_ocon.theData_out.con_params.segmentation.x = procParams.bSize;
+		_common_set_ocon.theData_out.con_params.number_channels = procParams.numInChans;
+		_common_set_ocon.theData_out.con_params.segmentation.y = procParams.numInChans;
+		_common_set_ocon.theData_out.con_params.rate = procParams.sRate;
+		_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
+		_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 		neg_input._set_parameters_fixed(procParams.numOutChans, procParams.bSize, procParams.sRate, JVX_DATAFORMAT_DATA,
 			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
@@ -101,13 +101,13 @@ CayfComponentLib::process_one_buffer_interleaved(
 		return JVX_ERROR_NOT_READY;
 	}
 
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		if (res == JVX_NO_ERROR)
 		{
-			jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-			jvxData** bufsToNode = (jvxData**)_common_set_ldslave.theData_out.con_data.buffers[idxToProc];
+			jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+			jvxData** bufsToNode = (jvxData**)_common_set_ocon.theData_out.con_data.buffers[idxToProc];
 
 			// Interleaved to non-interleaved
 			for (i = 0; i < numChannelsIn; i++)
@@ -116,17 +116,17 @@ CayfComponentLib::process_one_buffer_interleaved(
 			}
 
 			/*============ PASS SAMPLES TO PROCESSING UNIT ==================*/
-			res = _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 			assert(res == JVX_NO_ERROR);
 
-			jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
-			jvxData** bufsFromNode = (jvxData**)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc];
+			jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+			jvxData** bufsFromNode = (jvxData**)_common_set_icon.theData_in->con_data.buffers[idxFromProc];
 			// Non-interleaved to interleaved
 			for (i = 0; i < numChannelsOut; i++)
 			{
 				jvx_convertSamples_from_to<jvxData>(bufsFromNode[i], outInterleaved, procParams.bSize, 0, 1, i, numChannelsOut);
 			}
-			res = _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 		}
 	}
 	assert(res == JVX_NO_ERROR);

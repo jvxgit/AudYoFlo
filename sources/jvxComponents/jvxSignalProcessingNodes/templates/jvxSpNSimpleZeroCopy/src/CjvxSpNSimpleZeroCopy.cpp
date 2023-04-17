@@ -71,7 +71,7 @@ CjvxSpNSimpleZeroCopy::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 	if (!genSimpleZeroCopy_node::config.bypass.value)
 	{
-		jvxData** bufsInOut = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
+		jvxData** bufsInOut = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 
 		// In-place processing
 	}

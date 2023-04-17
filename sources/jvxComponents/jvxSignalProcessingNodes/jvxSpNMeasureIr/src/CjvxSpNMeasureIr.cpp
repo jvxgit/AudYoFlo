@@ -142,15 +142,15 @@ CjvxSpNMeasureIr::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	if (_common_set_ldslave.theData_in->con_params.number_channels != node_inout._common_set_node_params_a_1io.number_channels)
+	if (_common_set_icon.theData_in->con_params.number_channels != node_inout._common_set_node_params_a_1io.number_channels)
 	{
-		// genMeasureIr_node::config.number_input_channels_max.value = _common_set_ldslave.theData_in->con_params.number_channels;
-		neg_input._update_parameters_fixed(_common_set_ldslave.theData_in->con_params.number_channels);
+		// genMeasureIr_node::config.number_input_channels_max.value = _common_set_icon.theData_in->con_params.number_channels;
+		neg_input._update_parameters_fixed(_common_set_icon.theData_in->con_params.number_channels);
 	}
 	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		node_output._common_set_node_params_a_1io.number_channels = (jvxInt32)_common_set_ldslave.theData_out.con_params.number_channels;
+		node_output._common_set_node_params_a_1io.number_channels = (jvxInt32)_common_set_ocon.theData_out.con_params.number_channels;
 		if (
 			(genMeasureIr_node::measurements.measurement_out_channels.value.entries.size() != node_output._common_set_node_params_a_1io.number_channels) ||
 			(genMeasureIr_node::measurements.measurement_in_channels.value.entries.size() != node_output._common_set_node_params_a_1io.number_channels))
@@ -173,7 +173,7 @@ CjvxSpNMeasureIr::test_set_output_parameters()
 		(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
 		(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
 		(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow,
-		&_common_set_ldslave.theData_out);
+		&_common_set_ocon.theData_out);
 }
 
 jvxErrorType
@@ -223,7 +223,7 @@ CjvxSpNMeasureIr::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				std::advance(elm, selMeasures);
 
 				jvxSize numResultsLocal = 0;
-				(*elm)->allocate_one_measurement(_common_set_ldslave.theData_out.con_params.rate,
+				(*elm)->allocate_one_measurement(_common_set_ocon.theData_out.con_params.rate,
 					1024,
 					&numResultsLocal);
 				numResultsAll += numResultsLocal;
@@ -239,7 +239,7 @@ CjvxSpNMeasureIr::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			for (; elm != measurements.end(); elm++)
 			{
 				jvxSize numResultsLocal = 0;
-				(*elm)->allocate_one_measurement(_common_set_ldslave.theData_out.con_params.rate,
+				(*elm)->allocate_one_measurement(_common_set_ocon.theData_out.con_params.rate,
 					1024,
 					&numResultsLocal);
 				numResultsAll += numResultsLocal;
@@ -259,7 +259,7 @@ CjvxSpNMeasureIr::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		inProcessing.completed = false;
 		inProcessing.completeReported = false;
 		inProcessing.do_start = false;
-		inProcessing.cntDownStart = (jvxInt32) (genMeasureIr_node::config.countdown_start.value * _common_set_ldslave.theData_out.con_params.rate);
+		inProcessing.cntDownStart = (jvxInt32) (genMeasureIr_node::config.countdown_start.value * _common_set_ocon.theData_out.con_params.rate);
 		if(genMeasureIr_node::config.autostart_measure.value == c_true)
 		{
 			inProcessing.do_start = true;
@@ -370,7 +370,7 @@ CjvxSpNMeasureIr::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 				oneResult.nameMeasure = inProcessing.activeMeasures[i]->description;
 				oneResult.tokenMeasure = token;
-				oneResult.rate = _common_set_ldslave.theData_in->con_params.rate;
+				oneResult.rate = _common_set_icon.theData_in->con_params.rate;
 				oneResult.pathStoreFolder = inProcessing.activeMeasures[i]->pathStoreFolder;
 				oneResult.storeConfig = true;
 				if (oneResult.resultsChannel.size())
@@ -522,20 +522,20 @@ CjvxSpNMeasureIr::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxData progress_loop = 0;
 	jvxData progress_in_period = 0;
 	jvxSize sampleCount = 0;
-	jvxSize sampleCountMax = _common_set_ldslave.theData_out.con_params.buffersize;
-	jvxSize chanCntMax = _common_set_ldslave.theData_out.con_params.number_channels;
+	jvxSize sampleCountMax = _common_set_ocon.theData_out.con_params.buffersize;
+	jvxSize chanCntMax = _common_set_ocon.theData_out.con_params.number_channels;
 	jvxSize idxStageIn = idx_stage;
 	jvxSize idxStageOut = JVX_SIZE_UNSELECTED;
 	jvxSize newValueGlitches = JVX_SIZE_UNSELECTED;
 	if (JVX_CHECK_SIZE_UNSELECTED(idxStageIn))
 	{
-		idxStageIn = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+		idxStageIn = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 	}
-	idxStageOut = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+	idxStageOut = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 
-	if (_common_set_ldslave.theData_in->con_data.attached_buffer_single[idxStageIn])
+	if (_common_set_icon.theData_in->con_data.attached_buffer_single[idxStageIn])
 	{
-		jvxLinkDataAttachedChain* ptr = _common_set_ldslave.theData_in->con_data.attached_buffer_single[idxStageIn];
+		jvxLinkDataAttachedChain* ptr = _common_set_icon.theData_in->con_data.attached_buffer_single[idxStageIn];
 		while (ptr)
 		{
 			jvxLinkDataAttachedLostFrames* ptrL = reinterpret_cast<jvxLinkDataAttachedLostFrames*>(ptr->if_specific(JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES));
@@ -548,11 +548,11 @@ CjvxSpNMeasureIr::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			ptr = ptr->next;
 		}
 	}
-	JVX_ATTACHED_LINK_DATA_FORWARD_SINGLE(_common_set_ldslave.theData_in, idxStageIn,
-		(&_common_set_ldslave.theData_out), idxStageOut);
+	JVX_ATTACHED_LINK_DATA_FORWARD_SINGLE(_common_set_icon.theData_in, idxStageIn,
+		(&_common_set_ocon.theData_out), idxStageOut);
 
-	jvxData** bufsIn = (jvxData**)_common_set_ldslave.theData_in->con_data.buffers[idxStageIn];
-	jvxData** bufsOut = (jvxData**)_common_set_ldslave.theData_out.con_data.buffers[idxStageOut];
+	jvxData** bufsIn = (jvxData**)_common_set_icon.theData_in->con_data.buffers[idxStageIn];
+	jvxData** bufsOut = (jvxData**)_common_set_ocon.theData_out.con_data.buffers[idxStageOut];
 
 	// Pre-populate buffers with zeros
 	for (i = 0; i < chanCntMax; i++)
@@ -564,9 +564,9 @@ CjvxSpNMeasureIr::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	{
 		if (inProcessing.cntDownStart > 0)
 		{
-			inProcessing.cntDownStart -= (jvxInt32)_common_set_ldslave.theData_in->con_params.buffersize;
+			inProcessing.cntDownStart -= (jvxInt32)_common_set_icon.theData_in->con_params.buffersize;
 			inProcessing.cntDownStart = JVX_MAX(inProcessing.cntDownStart, 0);
-			genMeasureIr_node::monitor.countdown_togo.value = (jvxData) inProcessing.cntDownStart / (jvxData)_common_set_ldslave.theData_in->con_params.rate;			
+			genMeasureIr_node::monitor.countdown_togo.value = (jvxData) inProcessing.cntDownStart / (jvxData)_common_set_icon.theData_in->con_params.rate;			
 		}
 		else
 		{
@@ -581,11 +581,11 @@ CjvxSpNMeasureIr::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					}
 					jvxBool src_complete = false;
 					inProcessing.currentMeasure->addData(bufsOut, 
-						_common_set_ldslave.theData_out.con_params.number_channels,
+						_common_set_ocon.theData_out.con_params.number_channels,
 						bufsIn, 
-						_common_set_ldslave.theData_in->con_params.number_channels,
+						_common_set_icon.theData_in->con_params.number_channels,
 						sampleCount, &numW,
-						_common_set_ldslave.theData_out.con_params.buffersize,
+						_common_set_ocon.theData_out.con_params.buffersize,
 						src_complete,
 						&progress_loop,
 						&progress_in_period);

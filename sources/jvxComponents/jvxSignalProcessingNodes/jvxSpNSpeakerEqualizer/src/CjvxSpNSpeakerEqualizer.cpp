@@ -84,17 +84,17 @@ CjvxSpNSpeakerEqualizer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 
 	/*
-	if (_common_set_ldslave.theData_in->con_params.number_channels != CjvxNode_genpcg::node.numberinputchannels.value)
+	if (_common_set_icon.theData_in->con_params.number_channels != CjvxNode_genpcg::node.numberinputchannels.value)
 	{
-		// genMeasureIr_node::config.number_input_channels_max.value = _common_set_ldslave.theData_in->con_params.number_channels;
-		neg_input._update_parameters_fixed(_common_set_ldslave.theData_in->con_params.number_channels);
+		// genMeasureIr_node::config.number_input_channels_max.value = _common_set_icon.theData_in->con_params.number_channels;
+		neg_input._update_parameters_fixed(_common_set_icon.theData_in->con_params.number_channels);
 	}
 	*/
 	res = CjvxBareNode1io::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
 		/*
-		CjvxNode_genpcg::node.numberoutputchannels.value = (jvxInt32)_common_set_ldslave.theData_out.con_params.number_channels;
+		CjvxNode_genpcg::node.numberoutputchannels.value = (jvxInt32)_common_set_ocon.theData_out.con_params.number_channels;
 		if (
 			(genMeasureIr_node::measurements.measurement_out_channels.value.entries.size() != CjvxNode_genpcg::node.numberoutputchannels.value) ||
 			(genMeasureIr_node::measurements.measurement_in_channels.value.entries.size() != CjvxNode_genpcg::node.numberinputchannels.value))
@@ -118,7 +118,7 @@ CjvxSpNSpeakerEqualizer::test_set_output_parameters()
 		node_inout._common_set_node_params_a_1io.samplerate,
 		(jvxDataFormat)node_inout._common_set_node_params_a_1io.format,
 		(jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat,
-		&_common_set_ldslave.theData_out);
+		&_common_set_ocon.theData_out);
 }
 */
 
@@ -258,7 +258,7 @@ CjvxSpNSpeakerEqualizer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 	{
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 		res = neg_output._negotiate_transfer_backward_ocon(
-			ld, &_common_set_ldslave.theData_out,
+			ld, &_common_set_ocon.theData_out,
 			this, NULL JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		if (res == JVX_NO_ERROR)
 		{
@@ -266,7 +266,7 @@ CjvxSpNSpeakerEqualizer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 			neg_output._update_parameters_fixed(CjvxNode_genpcg::node.numberoutputchannels.value,
 				JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED,
 				JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_NONE,
-				&_common_set_ldslave.theData_out);
+				&_common_set_ocon.theData_out);
 		}
 		return res;
 		break;
@@ -286,7 +286,7 @@ CjvxSpNSpeakerEqualizer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		proc_eq_involved = false;
 		if (JVX_CHECK_SIZE_SELECTED(numChannels))
 		{
-			prepare_eq(_common_set_ldslave.theData_in->con_params.buffersize);
+			prepare_eq(_common_set_icon.theData_in->con_params.buffersize);
 			proc_eq_involved = true;
 		}
 	}
@@ -319,10 +319,10 @@ CjvxSpNSpeakerEqualizer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 	{
 		if (!genSpeakerEqualizer_node::config.bypass.value)
 		{
-			jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
-			jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+			jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+			jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
 
-			process_eq_iplace(bufsIn, _common_set_ldslave.theData_out.con_params.number_channels, _common_set_ldslave.theData_out.con_params.buffersize);
+			process_eq_iplace(bufsIn, _common_set_ocon.theData_out.con_params.number_channels, _common_set_ocon.theData_out.con_params.buffersize);
 		}
 	}
 

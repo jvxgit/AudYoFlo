@@ -86,7 +86,7 @@ CjvxAuCPcmEncoder::check_backward_parameters(jvxLinkDataDescriptor* ld_cp, jvxLi
 		else
 		{
 			// Derive the parameters from input side for  the next forward step
-			forward.con_params = _common_set_ldslave.theData_in->con_params;
+			forward.con_params = _common_set_icon.theData_in->con_params;
 
 			// This is the next level of modification: requires new buffersize and/or samplerate from previous module
 			forward.con_params.buffersize = params_check.bsize;
@@ -115,35 +115,35 @@ CjvxAuCPcmEncoder::test_set_output_parameters()
 {
 	std::string propstring;
 
-	_common_set_ldslave.theData_out.con_params.rate = params.srate / params.bsize;
-	_common_set_ldslave.theData_out.con_params.number_channels = 1;
-	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
-	_common_set_ldslave.theData_out.con_params.buffersize = params.fsizemax;
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
-	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
+	_common_set_ocon.theData_out.con_params.rate = params.srate / params.bsize;
+	_common_set_ocon.theData_out.con_params.number_channels = 1;
+	_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
+	_common_set_ocon.theData_out.con_params.buffersize = params.fsizemax;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
+	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
+	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
 
 	propstring = jvx_wav_produce_codec_token(&params);
 	params.fsizemax = jvx_wav_compute_bsize_bytes_pcm(&params, params.bsize);
 
-	_common_set_ldslave.theData_out.con_params.buffersize = params.fsizemax;
-	_common_set_ldslave.theData_out.con_params.format_spec = propstring;
+	_common_set_ocon.theData_out.con_params.buffersize = params.fsizemax;
+	_common_set_ocon.theData_out.con_params.format_spec = propstring;
 }
 
 jvxErrorType
 CjvxAuCPcmEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
 	jvxSize i;
-	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(&_common_set_ldslave.theData_out);
+	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(&_common_set_ocon.theData_out);
 	jvxData** bufsInData = nullptr;
 
-	assert(params.nchans == _common_set_ldslave.theData_in->con_params.number_channels);
-	assert(params.bsize == _common_set_ldslave.theData_in->con_params.buffersize);
+	assert(params.nchans == _common_set_icon.theData_in->con_params.number_channels);
+	assert(params.bsize == _common_set_icon.theData_in->con_params.buffersize);
 
-	switch (_common_set_ldslave.theData_in->con_params.format)
+	switch (_common_set_icon.theData_in->con_params.format)
 	{
 	case JVX_DATAFORMAT_DATA:
-		bufsInData = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
+		bufsInData = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 
 		switch (params.sample_type)
 		{
@@ -156,7 +156,7 @@ CjvxAuCPcmEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt16>(
 						(jvxData*)bufsInData[i],
 						(jvxInt16*)bufsOut[0],
-						_common_set_ldslave.theData_in->con_params.buffersize,
+						_common_set_icon.theData_in->con_params.buffersize,
 						JVX_MAX_INT_16_DATA,
 						0, 1,
 						i, params.nchans);
@@ -168,7 +168,7 @@ CjvxAuCPcmEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					jvx_convertSamples_from_flp_norm_to_bytes<jvxData, jvxInt32>(
 						(jvxData*)bufsInData[i],
 						(jvxByte*)bufsOut[0],
-						_common_set_ldslave.theData_in->con_params.buffersize,
+						_common_set_icon.theData_in->con_params.buffersize,
 						JVX_MAX_INT_24_DATA, 3,
 						0, 1,
 						i, params.nchans);
@@ -180,7 +180,7 @@ CjvxAuCPcmEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt32>(
 						(jvxData*)bufsInData[i],
 						(jvxInt32*)bufsOut[0],
-						_common_set_ldslave.theData_in->con_params.buffersize,
+						_common_set_icon.theData_in->con_params.buffersize,
 						JVX_MAX_INT_32_DATA,
 						0, 1,
 						i, params.nchans);
@@ -199,7 +199,7 @@ CjvxAuCPcmEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					jvx_convertSamples_from_data_to_float<float>(
 						(jvxData*)bufsInData[i],
 						(float*)bufsOut[0],
-						_common_set_ldslave.theData_in->con_params.buffersize,
+						_common_set_icon.theData_in->con_params.buffersize,
 						0, 1,
 						i, params.nchans);
 				}
@@ -210,7 +210,7 @@ CjvxAuCPcmEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					jvx_convertSamples_from_data_to_float<double>(
 						(jvxData*)bufsInData[i],
 						(double*)bufsOut[0],
-						_common_set_ldslave.theData_in->con_params.buffersize,
+						_common_set_icon.theData_in->con_params.buffersize,
 						0, 1,
 						i, params.nchans);
 				}

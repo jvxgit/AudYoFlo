@@ -559,16 +559,16 @@ CjvxAudioDevice::updateChainOutputParameter()
 	currentSetupAudioParams(params);
 
 	// Do some local stuff, fill output struct
-	_common_set_ldslave.theData_out.con_params.buffersize = params.buffersize;
-	_common_set_ldslave.theData_out.con_params.rate = params.samplerate;
-	_common_set_ldslave.theData_out.con_params.format = params.format;
-	_common_set_ldslave.theData_out.con_params.number_channels = params.numInputs;
+	_common_set_ocon.theData_out.con_params.buffersize = params.buffersize;
+	_common_set_ocon.theData_out.con_params.rate = params.samplerate;
+	_common_set_ocon.theData_out.con_params.format = params.format;
+	_common_set_ocon.theData_out.con_params.number_channels = params.numInputs;
 
 	// Default setting for 
-	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
-	jvx_bitFClear(_common_set_ldslave.theData_out.con_params.hints);
+	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
+	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	jvx_bitFClear(_common_set_ocon.theData_out.con_params.hints);
 }
 
 jvxErrorType
@@ -608,16 +608,16 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 	if (
-		(_common_set_ldslave.theData_in->con_params.buffersize != params.buffersize) ||
-		(_common_set_ldslave.theData_in->con_params.rate != params.samplerate) ||
-		(_common_set_ldslave.theData_in->con_params.format != params.format) ||
-		(_common_set_ldslave.theData_in->con_params.number_channels != params.numOutputs) ||
+		(_common_set_icon.theData_in->con_params.buffersize != params.buffersize) ||
+		(_common_set_icon.theData_in->con_params.rate != params.samplerate) ||
+		(_common_set_icon.theData_in->con_params.format != params.format) ||
+		(_common_set_icon.theData_in->con_params.number_channels != params.numOutputs) ||
 
-		(_common_set_ldslave.theData_in->con_params.segmentation.x != params.buffersize) ||
-		(_common_set_ldslave.theData_in->con_params.segmentation.y != 1) ||
-		(_common_set_ldslave.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
+		(_common_set_icon.theData_in->con_params.segmentation.x != params.buffersize) ||
+		(_common_set_icon.theData_in->con_params.segmentation.y != 1) ||
+		(_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
 	{
-		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+		res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 			&ld_con JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 
@@ -629,28 +629,28 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	case JVX_ERROR_COMPROMISE:
 		if (
-			(_common_set_ldslave.theData_in->con_params.buffersize != params.buffersize) ||
-			(_common_set_ldslave.theData_in->con_params.rate != params.samplerate) ||
-			(_common_set_ldslave.theData_in->con_params.segmentation.x != params.buffersize) ||
-			(_common_set_ldslave.theData_in->con_params.segmentation.y != 1) ||
-			(_common_set_ldslave.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED) ||
-			(_common_set_ldslave.theData_in->con_params.format != params.format))
+			(_common_set_icon.theData_in->con_params.buffersize != params.buffersize) ||
+			(_common_set_icon.theData_in->con_params.rate != params.samplerate) ||
+			(_common_set_icon.theData_in->con_params.segmentation.x != params.buffersize) ||
+			(_common_set_icon.theData_in->con_params.segmentation.y != 1) ||
+			(_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED) ||
+			(_common_set_icon.theData_in->con_params.format != params.format))
 		{
 			std::string err = "";
-			if (_common_set_ldslave.theData_in->con_params.buffersize != params.buffersize)
+			if (_common_set_icon.theData_in->con_params.buffersize != params.buffersize)
 			{
-				err = "Buffersize: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.buffersize) + " vs " +
+				err = "Buffersize: " + jvx_size2String(_common_set_icon.theData_in->con_params.buffersize) + " vs " +
 					jvx_size2String(params.buffersize);
 			}
-			if (_common_set_ldslave.theData_in->con_params.rate != params.samplerate)
+			if (_common_set_icon.theData_in->con_params.rate != params.samplerate)
 			{
-				err = "Samplerate: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.rate) + " vs " +
+				err = "Samplerate: " + jvx_size2String(_common_set_icon.theData_in->con_params.rate) + " vs " +
 					jvx_size2String(params.samplerate);
 			}
-			if (_common_set_ldslave.theData_in->con_params.format != params.format)
+			if (_common_set_icon.theData_in->con_params.format != params.format)
 			{
 				err = "Format: ";
-				err += jvxDataFormat_txt(_common_set_ldslave.theData_in->con_params.format);
+				err += jvxDataFormat_txt(_common_set_icon.theData_in->con_params.format);
 				err += " vs ";
 				err += jvxDataFormat_txt(params.format);
 			}
@@ -871,9 +871,9 @@ CjvxAudioDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferType tp
 			CjvxAudioDevice_genpcg::properties_active.buffersize.value = JVX_SIZE_INT32(jvx_string2Size(sizeselection->value.entries[idxB], err));
 		}
 
-		_common_set_ldslave.theData_out.con_params.buffersize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
-		_common_set_ldslave.theData_out.con_params.rate = CjvxAudioDevice_genpcg::properties_active.samplerate.value;
-		_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)CjvxAudioDevice_genpcg::properties_active.format.value;
+		_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
+		_common_set_ocon.theData_out.con_params.rate = CjvxAudioDevice_genpcg::properties_active.samplerate.value;
+		_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxAudioDevice_genpcg::properties_active.format.value;
 
 	}
 	else

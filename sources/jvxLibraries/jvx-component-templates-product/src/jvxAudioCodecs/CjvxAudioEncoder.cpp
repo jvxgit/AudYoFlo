@@ -120,7 +120,7 @@ jvxErrorType
 CjvxAudioEncoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	res = neg_input._negotiate_connect_icon(_common_set_ldslave.theData_in,
+	res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 		static_cast<IjvxObject*>(this),
 		_common_set_ldslave.descriptor.c_str()
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -156,13 +156,13 @@ CjvxAudioEncoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 
 			if (forwardRequest)
 			{
-				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 					tp, &forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				if (res == JVX_NO_ERROR)
 				{
 					// Here, we need to refresh all connection parameters.
 					// We do take a shortcut here and do not run the negotiation					
-					res = neg_input._negotiate_connect_icon(_common_set_ldslave.theData_in,
+					res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 						static_cast<IjvxObject*>(this),
 						_common_set_ldslave.descriptor.c_str()
 						JVX_CONNECTION_FEEDBACK_CALL_A(fdb));

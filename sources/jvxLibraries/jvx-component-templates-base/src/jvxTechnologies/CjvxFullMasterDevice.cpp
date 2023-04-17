@@ -72,7 +72,7 @@ CjvxFullMasterDevice::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 jvxErrorType
 CjvxFullMasterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = neg_input._negotiate_connect_icon(_common_set_ldslave.theData_in,
+	jvxErrorType res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 		static_cast<IjvxObject*>(this),
 		_common_set_ldslave.descriptor.c_str()
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -99,7 +99,7 @@ CjvxFullMasterDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 
 		// There is only room to negotiate 
 		res = neg_output._negotiate_transfer_backward_ocon(ld,
-			&_common_set_ldslave.theData_out, static_cast<IjvxObject*>(this), NULL
+			&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), NULL
 			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		if (res == JVX_NO_ERROR)
 		{
@@ -131,7 +131,7 @@ CjvxFullMasterDevice::accept_output_parameters_start(JVX_CONNECTION_FEEDBACK_TYP
 		outputParams.format,
 		outputParams.format_group,
 		outputParams.data_flow,
-		&_common_set_ldslave.theData_out);
+		&_common_set_ocon.theData_out);
 	neg_input._push_constraints();
 
 	neg_input._update_parameters_fixed(

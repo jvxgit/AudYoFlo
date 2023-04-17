@@ -246,16 +246,16 @@ jvxErrorType
 CjvxOfflineAudioDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;
-	_common_set_ldslave.theData_out.con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_out.con_params.format = _inproc.format;
-	_common_set_ldslave.theData_out.con_data.buffers = NULL;
-	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
-	_common_set_ldslave.theData_out.con_params.number_channels = _inproc.numInputs;
-	_common_set_ldslave.theData_out.con_params.rate = _inproc.samplerate;
+	_common_set_ocon.theData_out.con_params.buffersize = _inproc.buffersize;
+	_common_set_ocon.theData_out.con_params.format = _inproc.format;
+	_common_set_ocon.theData_out.con_data.buffers = NULL;
+	_common_set_ocon.theData_out.con_data.number_buffers = 1;
+	_common_set_ocon.theData_out.con_params.number_channels = _inproc.numInputs;
+	_common_set_ocon.theData_out.con_params.rate = _inproc.samplerate;
 	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res != JVX_NO_ERROR)
 	{
-		jvx_neutralDataLinkDescriptor(&_common_set_ldslave.theData_out, false);
+		jvx_neutralDataLinkDescriptor(&_common_set_ocon.theData_out, false);
 		goto leave_error;
 	}
 	return(res);
@@ -272,12 +272,12 @@ CjvxOfflineAudioDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	// This is the return from the link list
 
-	_common_set_ldslave.theData_in->con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = _inproc.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(1, _common_set_ldslave.theData_in->con_data.number_buffers);
-	_common_set_ldslave.theData_in->con_params.number_channels = _inproc.numOutputs;
-	_common_set_ldslave.theData_in->con_params.rate = _inproc.samplerate;
+	_common_set_icon.theData_in->con_params.buffersize = _inproc.buffersize;
+	_common_set_icon.theData_in->con_params.format = _inproc.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(1, _common_set_icon.theData_in->con_data.number_buffers);
+	_common_set_icon.theData_in->con_params.number_channels = _inproc.numOutputs;
+	_common_set_icon.theData_in->con_params.rate = _inproc.samplerate;
 
 	res = allocate_pipeline_and_buffers_prepare_to();
 
@@ -364,29 +364,29 @@ CjvxOfflineAudioDevice::processOneBatch( /* One matrix of input samples->*/ cons
 		(dimYIn == _inproc.numInputs) &&
 		(dimXIn == _inproc.buffersize))
 	{
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		assert(res == JVX_NO_ERROR);
 
-		_theExtCallHandler->convertExternalToC(_common_set_ldslave.theData_out.con_data.buffers[
-			*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr], dimYIn, dimXIn, formatIn, paramIn0, "input #0");
+		_theExtCallHandler->convertExternalToC(_common_set_ocon.theData_out.con_data.buffers[
+			*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr], dimYIn, dimXIn, formatIn, paramIn0, "input #0");
 
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 		if (res != JVX_NO_ERROR)
 		{
-			jvx_fields_clear(_common_set_ldslave.theData_in->con_data.buffers
-				[*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr],
-				jvxDataFormat_size[_common_set_ldslave.theData_in->con_params.format],
-				_common_set_ldslave.theData_in->con_params.buffersize,
-				_common_set_ldslave.theData_in->con_params.number_channels);
+			jvx_fields_clear(_common_set_icon.theData_in->con_data.buffers
+				[*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr],
+				jvxDataFormat_size[_common_set_icon.theData_in->con_params.format],
+				_common_set_icon.theData_in->con_params.buffersize,
+				_common_set_icon.theData_in->con_params.number_channels);
 		}
 
 		_theExtCallHandler->convertCToExternal(paramOut0,
-			(const jvxHandle**)_common_set_ldslave.theData_in->con_data.buffers
-				[*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr],
+			(const jvxHandle**)_common_set_icon.theData_in->con_data.buffers
+				[*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr],
 			_inproc.numOutputs, _inproc.buffersize, _inproc.format);
 	
 
-		resL = _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+		resL = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 		assert(resL == JVX_NO_ERROR);
 
 	}

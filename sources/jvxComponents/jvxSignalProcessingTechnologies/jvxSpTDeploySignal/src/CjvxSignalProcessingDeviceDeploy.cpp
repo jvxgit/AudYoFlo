@@ -109,17 +109,17 @@ CjvxSignalProcessingDeviceDeploy::process_buffers_icon(jvxSize mt_mask, jvxSize 
 	jvxErrorType res = CjvxFullMasterDevice::process_buffers_icon(mt_mask, idx_stage);
 	if (res == JVX_NO_ERROR)
 	{
-		JVX_PROCESS_BUFFERS_EXTRACT_IDX_INPUT(idx_stage_in, idx_stage, _common_set_ldslave.theData_in);
+		JVX_PROCESS_BUFFERS_EXTRACT_IDX_INPUT(idx_stage_in, idx_stage, _common_set_icon.theData_in);
 
-		if (_common_set_ldslave.theData_in->con_data.attached_buffer_single[idx_stage_in])
+		if (_common_set_icon.theData_in->con_data.attached_buffer_single[idx_stage_in])
 		{
-			jvxLinkDataAttachedChain* ptr = _common_set_ldslave.theData_in->con_data.attached_buffer_single[idx_stage_in];
+			jvxLinkDataAttachedChain* ptr = _common_set_icon.theData_in->con_data.attached_buffer_single[idx_stage_in];
 			jvxLinkDataAttachedBuffer* ptrBuf = ptr->if_buffer();
 			if (ptrBuf)
 			{
 				ptrBuf->cb_release(ptrBuf->priv, ptrBuf);
 			}
-			_common_set_ldslave.theData_in->con_data.attached_buffer_single[idx_stage_in] = NULL;
+			_common_set_icon.theData_in->con_data.attached_buffer_single[idx_stage_in] = NULL;
 		}
 	}
 	return res;

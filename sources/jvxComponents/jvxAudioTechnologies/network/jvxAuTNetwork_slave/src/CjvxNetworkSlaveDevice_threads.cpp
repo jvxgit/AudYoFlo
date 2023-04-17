@@ -78,9 +78,9 @@ CjvxNetworkSlaveDevice::ic_callback_thread_wokeup(jvxInt64 timestamp_us)
 	while(inProcessing.fillHeight > 0)	
 	{
 
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			_common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		}		
 
 
@@ -99,10 +99,10 @@ CjvxNetworkSlaveDevice::ic_callback_thread_wokeup(jvxInt64 timestamp_us)
 					{
 						std::string errD;
 						memcpy(dataLogging.fldWrite_rawaudio[i],
-							 _common_set_ldslave.theData_out.con_data.buffers[
-								 *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][i],
-							_common_set_ldslave.theData_out.con_params.buffersize *
-							jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format]);
+							 _common_set_ocon.theData_out.con_data.buffers[
+								 *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][i],
+							_common_set_ocon.theData_out.con_params.buffersize *
+							jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format]);
 						HjvxDataLogger::_add_data_reference(0, 0, (jvxInt32)dataLogging.idxWrite_rawaudio[i], errD, false);
 					}
 					HjvxDataLogger::_fill_height(tmp);
@@ -123,24 +123,24 @@ CjvxNetworkSlaveDevice::ic_callback_thread_wokeup(jvxInt64 timestamp_us)
 		jvxTick t0 = JVX_GET_TICKCOUNT_US_GET_CURRENT(&converters.tStamp);
 		if (inConnection.toConnectedPartner.subformat_in.use == JVX_DATAFORMAT_GROUP_AUDIO_PDM)
 		{
-			for (i = 0; i < _common_set_ldslave.theData_out.con_params.number_channels; i++)
+			for (i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
 			{
 				jvx_pdm_fir_lut_process_ip(&converters.pdm2PcmConverter[i],
-					(jvxInt16*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][i],
-							_common_set_ldslave.theData_out.con_params.buffersize);
+					(jvxInt16*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][i],
+							_common_set_ocon.theData_out.con_params.buffersize);
 			}
 		}
 		jvxTick t1 = JVX_GET_TICKCOUNT_US_GET_CURRENT(&converters.tStamp);
 
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 		}
 
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 		}
 
 		// ==============================================================

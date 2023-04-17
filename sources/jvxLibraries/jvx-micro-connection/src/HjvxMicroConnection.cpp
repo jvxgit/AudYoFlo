@@ -647,8 +647,8 @@ HjvxMicroConnection::connect_connection(
 		res = theConnections->reference_connection_process_uid(uId_process, &theProc);
 		assert(res == JVX_NO_ERROR);
 
-		_common_set_ldslave.theData_out.con_params = theData_inlnk->con_params;
-		theProc->set_test_on_connect(false, &_common_set_ldslave.theData_out.con_params);
+		_common_set_ocon.theData_out.con_params = theData_inlnk->con_params;
+		theProc->set_test_on_connect(false, &_common_set_ocon.theData_out.con_params);
 
 		res = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res != JVX_NO_ERROR)
@@ -740,13 +740,13 @@ HjvxMicroConnection::test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		"Starting part of micro connection subbranch.");
 	if (theConnections)
 	{
-		_common_set_ldslave.theData_out.con_params = theData_inlnk->con_params; 	
+		_common_set_ocon.theData_out.con_params = theData_inlnk->con_params; 	
 
 		res = theConnections->reference_connection_process_uid(uId_process, &theProc);
 		assert(res == JVX_NO_ERROR);
 
 		// Store info related to micro connection output parameters
-		JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O_TAG(fdb, (&_common_set_ldslave.theData_out), "micro-connection-param-out");
+		JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O_TAG(fdb, (&_common_set_ocon.theData_out), "micro-connection-param-out");
 
 		res = theProc->test_chain(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		if (res != JVX_NO_ERROR)
@@ -774,7 +774,7 @@ HjvxMicroConnection::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = _test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		theData_inlnk->con_params = _common_set_ldslave.theData_out.con_params;
+		theData_inlnk->con_params = _common_set_ocon.theData_out.con_params;
 	}
 	return res;
 }
@@ -792,7 +792,7 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	if (refHandleSimple)
 	{
-		res = refHandleSimple->hook_test_accept(_common_set_ldslave.theData_in 
+		res = refHandleSimple->hook_test_accept(_common_set_icon.theData_in 
 			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	else
@@ -811,16 +811,16 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 			if (
-				(_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
-				(_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
-				(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format) ||
-				(_common_set_ldslave.theData_in->con_params.number_channels != theData_outlnk->con_params.number_channels) ||
+				(_common_set_icon.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
+				(_common_set_icon.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
+				(_common_set_icon.theData_in->con_params.format != theData_outlnk->con_params.format) ||
+				(_common_set_icon.theData_in->con_params.number_channels != theData_outlnk->con_params.number_channels) ||
 
-				(_common_set_ldslave.theData_in->con_params.segmentation.x != theData_outlnk->con_params.segmentation.x) ||
-				(_common_set_ldslave.theData_in->con_params.segmentation.y != theData_outlnk->con_params.segmentation.y) ||
-				(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group))
+				(_common_set_icon.theData_in->con_params.segmentation.x != theData_outlnk->con_params.segmentation.x) ||
+				(_common_set_icon.theData_in->con_params.segmentation.y != theData_outlnk->con_params.segmentation.y) ||
+				(_common_set_icon.theData_in->con_params.format_group != theData_outlnk->con_params.format_group))
 			{
-				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 					&ld_con JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
 
@@ -832,28 +832,28 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			case JVX_ERROR_COMPROMISE:
 				if (
-					(_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
-					(_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
-					(_common_set_ldslave.theData_in->con_params.segmentation.x != theData_outlnk->con_params.segmentation.x) ||
-					(_common_set_ldslave.theData_in->con_params.segmentation.y != theData_outlnk->con_params.segmentation.y) ||
-					(_common_set_ldslave.theData_in->con_params.format_group != theData_outlnk->con_params.format_group) ||
-					(_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format))
+					(_common_set_icon.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize) ||
+					(_common_set_icon.theData_in->con_params.rate != theData_outlnk->con_params.rate) ||
+					(_common_set_icon.theData_in->con_params.segmentation.x != theData_outlnk->con_params.segmentation.x) ||
+					(_common_set_icon.theData_in->con_params.segmentation.y != theData_outlnk->con_params.segmentation.y) ||
+					(_common_set_icon.theData_in->con_params.format_group != theData_outlnk->con_params.format_group) ||
+					(_common_set_icon.theData_in->con_params.format != theData_outlnk->con_params.format))
 				{
 					std::string err = "";
-					if (_common_set_ldslave.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize)
+					if (_common_set_icon.theData_in->con_params.buffersize != theData_outlnk->con_params.buffersize)
 					{
-						err = "Buffersize: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.buffersize) + " vs " +
+						err = "Buffersize: " + jvx_size2String(_common_set_icon.theData_in->con_params.buffersize) + " vs " +
 							jvx_size2String(theData_outlnk->con_params.buffersize);
 					}
-					if (_common_set_ldslave.theData_in->con_params.rate != theData_outlnk->con_params.rate)
+					if (_common_set_icon.theData_in->con_params.rate != theData_outlnk->con_params.rate)
 					{
-						err = "Samplerate: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.rate) + " vs " +
+						err = "Samplerate: " + jvx_size2String(_common_set_icon.theData_in->con_params.rate) + " vs " +
 							jvx_size2String(theData_outlnk->con_params.rate);
 					}
-					if (_common_set_ldslave.theData_in->con_params.format != theData_outlnk->con_params.format)
+					if (_common_set_icon.theData_in->con_params.format != theData_outlnk->con_params.format)
 					{
 						err = "Format: ";
-						err += jvxDataFormat_txt(_common_set_ldslave.theData_in->con_params.format);
+						err += jvxDataFormat_txt(_common_set_icon.theData_in->con_params.format);
 						err += " vs ";
 						err += jvxDataFormat_txt(theData_outlnk->con_params.format);
 					}
@@ -876,7 +876,7 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		case jvxConnectionType::JVX_MICROCONNECTION_FLEXIBLE_INOUT_ADAPT:
 
 			// The output parameters are modified
-			theData_outlnk->con_params = _common_set_ldslave.theData_in->con_params;
+			theData_outlnk->con_params = _common_set_icon.theData_in->con_params;
 			break;
 		default:
 			// What are we going to do here?
@@ -909,22 +909,22 @@ HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffer
 	useBuffersInPlaceOutput = buffersInPlaceOut;
 
 	// Copy the processing parameters in passed container
-	_common_set_ldslave.theData_out.con_params = theData_inlnk->con_params; // Inportant: do not touch "link" subfield, otherwise, linkage will be destroyed
-	_common_set_ldslave.theData_out.con_data = theData_inlnk->con_data; // Copy the number of buffers and the allocation flags
+	_common_set_ocon.theData_out.con_params = theData_inlnk->con_params; // Inportant: do not touch "link" subfield, otherwise, linkage will be destroyed
+	_common_set_ocon.theData_out.con_data = theData_inlnk->con_data; // Copy the number of buffers and the allocation flags
 
 	copyAttachedData = copyAttachedDataArg;
 
 	// Forwarding the attached data does not make sense in a flexible connection but makes sense in a fixed connection
 	if (copyAttachedData)
 	{
-		_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = theData_inlnk->con_link.attached_chain_single_pass;
+		_common_set_ocon.theData_out.con_link.attached_chain_single_pass = theData_inlnk->con_link.attached_chain_single_pass;
 	}
 
 	if (useBuffersInPlaceInput)
 	{
-		_common_set_ldslave.theData_out.con_pipeline = theData_inlnk->con_pipeline;
-		_common_set_ldslave.theData_out.con_data = theData_inlnk->con_data;
-		jvx_bitZSet(_common_set_ldslave.theData_out.con_data.alloc_flags, 
+		_common_set_ocon.theData_out.con_pipeline = theData_inlnk->con_pipeline;
+		_common_set_ocon.theData_out.con_data = theData_inlnk->con_data;
+		jvx_bitZSet(_common_set_ocon.theData_out.con_data.alloc_flags, 
 			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT); // Use the field which was passed in the struct
 	}
 
@@ -941,10 +941,10 @@ HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffer
 
 	if (!useBuffersInPlaceInput)
 	{
-		theData_inlnk->con_pipeline = _common_set_ldslave.theData_out.con_pipeline;
-		theData_inlnk->con_data.buffers = _common_set_ldslave.theData_out.con_data.buffers;
-		theData_inlnk->con_data.fHeights = _common_set_ldslave.theData_out.con_data.fHeights;
-		if (jvx_bitTest(_common_set_ldslave.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
+		theData_inlnk->con_pipeline = _common_set_ocon.theData_out.con_pipeline;
+		theData_inlnk->con_data.buffers = _common_set_ocon.theData_out.con_data.buffers;
+		theData_inlnk->con_data.fHeights = _common_set_ocon.theData_out.con_data.fHeights;
+		if (jvx_bitTest(_common_set_ocon.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
 		{
 			jvx_bitSet(theData_inlnk->con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
 		}
@@ -955,7 +955,7 @@ HjvxMicroConnection::prepare_connection(jvxBool buffersInPlaceIn, jvxBool buffer
 exit_error:
 
 	theProc->postprocess_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-	jvx_neutralDataLinkDescriptor(&_common_set_ldslave.theData_out, true);
+	jvx_neutralDataLinkDescriptor(&_common_set_ocon.theData_out, true);
 	if (theProc)
 	{
 		theConnections->return_reference_connection_process(theProc);
@@ -1029,7 +1029,7 @@ HjvxMicroConnection::postprocess_connection()
 	if (!useBuffersInPlaceInput)
 	{
 		//theData_inlnk->pipeline. = NULL;
-		theData_inlnk->con_data = _common_set_ldslave.theData_out.con_data;
+		theData_inlnk->con_data = _common_set_ocon.theData_out.con_data;
 	}
 
 	return JVX_NO_ERROR;
@@ -1161,14 +1161,14 @@ HjvxMicroConnection::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle
 jvxErrorType 
 HjvxMicroConnection::transfer_backward_connection(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	jvxErrorType res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if ((res == JVX_NO_ERROR) || (res == JVX_ERROR_COMPROMISE))
 	{
 		// The update of the output may be required for both conditions since the setting may have changed even in case of the COMPROMISE
 		if (refHandleSimple)
 		{
 			// Another return value here which should always be NO_ERROR - but we must return the original version of res!!
-			jvxErrorType resL = refHandleSimple->hook_test_update(_common_set_ldslave.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			jvxErrorType resL = refHandleSimple->hook_test_update(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 	}
 	return res;
@@ -1182,18 +1182,18 @@ HjvxMicroConnection::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	if (refHandleFwd)
 	{
 		// Copy input parameters number of buffers and allocation type
-		theData_outlnk->con_data = _common_set_ldslave.theData_in->con_data;
-		theData_outlnk->con_pipeline = _common_set_ldslave.theData_in->con_pipeline;
+		theData_outlnk->con_data = _common_set_icon.theData_in->con_data;
+		theData_outlnk->con_pipeline = _common_set_icon.theData_in->con_pipeline;
 
 		if (copyAttachedData)
 		{
-			theData_outlnk->con_link.attached_chain_single_pass = _common_set_ldslave.theData_in->con_link.attached_chain_single_pass;
+			theData_outlnk->con_link.attached_chain_single_pass = _common_set_icon.theData_in->con_link.attached_chain_single_pass;
 		}
 
 		res = refHandleFwd->hook_prepare(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
-		_common_set_ldslave.theData_in->con_data = theData_outlnk->con_data;
-		_common_set_ldslave.theData_in->con_pipeline = theData_outlnk->con_pipeline;
+		_common_set_icon.theData_in->con_data = theData_outlnk->con_data;
+		_common_set_icon.theData_in->con_pipeline = theData_outlnk->con_pipeline;
 
 	}
 	else
@@ -1201,8 +1201,8 @@ HjvxMicroConnection::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		// Link
 		if (useBuffersInPlaceOutput)
 		{
-			_common_set_ldslave.theData_in->con_data = theData_outlnk->con_data;
-			_common_set_ldslave.theData_in->con_pipeline = theData_outlnk->con_pipeline;
+			_common_set_icon.theData_in->con_data = theData_outlnk->con_data;
+			_common_set_icon.theData_in->con_pipeline = theData_outlnk->con_pipeline;
 			res = JVX_NO_ERROR;
 		}
 		else
@@ -1211,12 +1211,12 @@ HjvxMicroConnection::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			res = allocate_pipeline_and_buffers_prepare_to();
 
 			// Do not attach any user hint into backward direction
-			_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
-			*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 0;
+			_common_set_icon.theData_in->con_compat.user_hints = NULL;
+			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
 
 			theData_outlnk->con_data.buffers =
-				_common_set_ldslave.theData_in->con_data.buffers;
-			theData_outlnk->con_pipeline = _common_set_ldslave.theData_in->con_pipeline;
+				_common_set_icon.theData_in->con_data.buffers;
+			theData_outlnk->con_pipeline = _common_set_icon.theData_in->con_pipeline;
 
 		}
 	}
@@ -1234,15 +1234,15 @@ HjvxMicroConnection::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		res = refHandleFwd->hook_postprocess(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
 		// Reset this to null
-		_common_set_ldslave.theData_in->con_data = theData_outlnk->con_data;
-		_common_set_ldslave.theData_in->con_pipeline = theData_outlnk->con_pipeline;
+		_common_set_icon.theData_in->con_data = theData_outlnk->con_data;
+		_common_set_icon.theData_in->con_pipeline = theData_outlnk->con_pipeline;
 	}
 	else
 	{
 
 		if (useBuffersInPlaceOutput)
 		{
-			jvx_neutralDataLinkDescriptor_mem(_common_set_ldslave.theData_in, true);
+			jvx_neutralDataLinkDescriptor_mem(_common_set_icon.theData_in, true);
 		}
 		else
 		{
@@ -1297,8 +1297,8 @@ HjvxMicroConnection::prepare_process_connection(jvxLinkDataDescriptor** lkDataOn
 	if (!useBuffersInPlaceInput)
 	{
 		if (lkDataOnReturn)
-			*lkDataOnReturn = &_common_set_ldslave.theData_out;
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon(
+			*lkDataOnReturn = &_common_set_ocon.theData_out;
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon(
 			pipeline_offset,
 			idx_stage,
 			tobeAccessedByStage,
@@ -1322,7 +1322,7 @@ HjvxMicroConnection::postprocess_process_connection(
 	jvxErrorType res = JVX_NO_ERROR;
 	if (!useBuffersInPlaceInput)
 	{
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon(
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon(
 			idx_stage,
 			operate_first_call,
 			tobeAccessedByStage,
@@ -1340,12 +1340,12 @@ HjvxMicroConnection::process_connection(jvxLinkDataDescriptor** lkDataOnReturn)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	res = _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+	res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 	assert(res == JVX_NO_ERROR);
 
 	if (lkDataOnReturn)
 	{
-		*lkDataOnReturn = _common_set_ldslave.theData_in;
+		*lkDataOnReturn = _common_set_icon.theData_in;
 	}
 
 	return res;
@@ -1364,7 +1364,7 @@ HjvxMicroConnection::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandl
 			res = refHandleSimple->hook_test_negotiate((jvxLinkDataDescriptor*)data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			if (res == JVX_NO_ERROR)
 			{
-				_common_set_ldslave.theData_out.con_params = theData_inlnk->con_params;
+				_common_set_ocon.theData_out.con_params = theData_inlnk->con_params;
 			}
 		}
 		else
@@ -1388,7 +1388,7 @@ HjvxMicroConnection::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandl
 			//
 			// This old code does not make any sense to me
 			// 
-			// _common_set_ldslave.theData_out.con_params = proposed->con_params;
+			// _common_set_ocon.theData_out.con_params = proposed->con_params;
 			// theData_outlnk->con_params = proposed->con_params;			
 		}
 		break;
@@ -1504,7 +1504,7 @@ HjvxMicroConnection::connect_chain_master(const jvxChainConnectArguments& args,
 	// Prepare a following test
 	if (init_params)
 	{
-		_common_set_ldslave.theData_out.con_params = *init_params;
+		_common_set_ocon.theData_out.con_params = *init_params;
 	}
 	return res;
 }

@@ -356,7 +356,7 @@ CjvxAudioFileReaderDevice::updateChainOutputParameter()
 {	
 	CjvxAudioDevice::updateChainOutputParameter();
 
-	reconfigure_bsize(_common_set_ldslave.theData_out.con_params.buffersize);
+	reconfigure_bsize(_common_set_ocon.theData_out.con_params.buffersize);
 }
 
 jvxErrorType 
@@ -382,18 +382,18 @@ CjvxAudioFileReaderDevice::test_set_output_parameters()
 {
 	// The buffersize as it is derived from the buffersize as set by the audio framing definition
 	// You can specify the buffersize by setting the standard parameter for the device buffersize
-	_common_set_ldslave.theData_out.con_params.number_channels = 1; // Byte field is always 1 channel
-	_common_set_ldslave.theData_out.con_params.rate = JVX_SIZE_DONTCARE; // This indicates that the rate is in the format_spec
-	_common_set_ldslave.theData_out.con_params.buffersize =
+	_common_set_ocon.theData_out.con_params.number_channels = 1; // Byte field is always 1 channel
+	_common_set_ocon.theData_out.con_params.rate = JVX_SIZE_DONTCARE; // This indicates that the rate is in the format_spec
+	_common_set_ocon.theData_out.con_params.buffersize =
 		jvx_wav_compute_bsize_bytes_pcm(&file_params, JVX_SIZE_UNSELECTED);
 	
 	// Type is modified as the data is coded
-	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
-	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
-	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
-	_common_set_ldslave.theData_out.con_params.format_spec = jvx_wav_produce_codec_token(&file_params);
+	_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_BYTE;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC;
+	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
+	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
+	_common_set_ocon.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
+	_common_set_ocon.theData_out.con_params.format_spec = jvx_wav_produce_codec_token(&file_params);
 }
 
 jvxErrorType
@@ -406,11 +406,11 @@ CjvxAudioFileReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	assert(res == JVX_NO_ERROR);
 
 	// Prepare processing parameters
-	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
-	jvx_bitZSet(_common_set_ldslave.theData_out.con_data.alloc_flags, 
+	_common_set_ocon.theData_out.con_data.number_buffers = 1;
+	jvx_bitZSet(_common_set_ocon.theData_out.con_data.alloc_flags, 
 		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 
-	jvx_bitSet(_common_set_ldslave.theData_out.con_data.alloc_flags,
+	jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
 		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 
 	// New type of connection by propagating through linked elements
@@ -419,7 +419,7 @@ CjvxAudioFileReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	{
 
 		// All parameters were set before, only very few need update
-		_common_set_ldslave.theData_out.con_data.number_buffers = 1;
+		_common_set_ocon.theData_out.con_data.number_buffers = 1;
 
 		// Monitoring feedback
 		genFileReader_device::monitor.progress_percent.value = 0;
@@ -513,19 +513,19 @@ CjvxAudioFileReaderDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	jvxErrorType res = JVX_NO_ERROR;
 	// This is the return from the link list
 
-	_common_set_ldslave.theData_in->con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = _inproc.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(_common_set_ldslave.theData_in->con_data.number_buffers, 1);
-	_common_set_ldslave.theData_in->con_params.number_channels = _inproc.numOutputs;
-	_common_set_ldslave.theData_in->con_params.rate = _inproc.samplerate;
+	_common_set_icon.theData_in->con_params.buffersize = _inproc.buffersize;
+	_common_set_icon.theData_in->con_params.format = _inproc.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(_common_set_icon.theData_in->con_data.number_buffers, 1);
+	_common_set_icon.theData_in->con_params.number_channels = _inproc.numOutputs;
+	_common_set_icon.theData_in->con_params.rate = _inproc.samplerate;
 
 	// Connect the output side and start this link
 	res = allocate_pipeline_and_buffers_prepare_to();
 
 	// Do not attach any user hint into backward direction
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
-	// _common_set_ldslave.theData_in->pipeline.idx_stage = 0;
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
+	// _common_set_icon.theData_in->pipeline.idx_stage = 0;
 
 	return res;
 }
@@ -598,10 +598,10 @@ CjvxAudioFileReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 
 		reconfigure_bsize(CjvxAudioDevice_genpcg::properties_active.buffersize.value);
 
-		_common_set_ldslave.theData_out.con_params.buffersize = file_params.fsizemax;
-		_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
+		_common_set_ocon.theData_out.con_params.buffersize = file_params.fsizemax;
+		_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
 		
-		_common_set_ldslave.theData_out.con_params.format_spec = jvx_wav_produce_codec_token(&file_params);
+		_common_set_ocon.theData_out.con_params.format_spec = jvx_wav_produce_codec_token(&file_params);
 		return JVX_NO_ERROR;
 	default:
 		CjvxAudioDevice::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -623,15 +623,15 @@ void
 CjvxAudioFileReaderDevice::send_one_buffer()
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		if (res == JVX_NO_ERROR)
 		{
 			send_buffer_direct();
 
-			_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
-			_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 		}
 	}
 }
@@ -645,13 +645,13 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioWindowsDevice, set_new_r
 void
 CjvxAudioFileReaderDevice::send_buffer_direct()
 {
-	jvxSize bufIdx = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+	jvxSize bufIdx = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 	jvxBool requires_new_data = false;
 	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(
-		&_common_set_ldslave.theData_out);
+		&_common_set_ocon.theData_out);
 	if (bufsOut)
 	{
-		jvxSize copymax = _common_set_ldslave.theData_out.con_params.buffersize;
+		jvxSize copymax = _common_set_ocon.theData_out.con_params.buffersize;
 		jvxByte* ptr_to = (jvxByte*)bufsOut[0];
 		jvxSize numcopy = copymax;
 		jvxSize num_copied = 0;
@@ -660,8 +660,8 @@ CjvxAudioFileReaderDevice::send_buffer_direct()
 		JVX_LOCK_MUTEX(safeAccessRead);
 		jvxErrorType resRead = wavFileReader.read_one_buf_raw(ptr_to, numcopy, &num_copied);
 		JVX_UNLOCK_MUTEX(safeAccessRead);
-		assert(_common_set_ldslave.theData_out.con_data.fHeights);
-		_common_set_ldslave.theData_out.con_data.fHeights[bufIdx].x = num_copied;
+		assert(_common_set_ocon.theData_out.con_data.fHeights);
+		_common_set_ocon.theData_out.con_data.fHeights[bufIdx].x = num_copied;
 		
 		jvxSize progress = 0;
 		wavFileReader.current_progress(&progress);

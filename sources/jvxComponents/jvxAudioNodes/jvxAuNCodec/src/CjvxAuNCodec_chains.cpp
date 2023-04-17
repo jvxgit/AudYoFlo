@@ -73,13 +73,13 @@ CjvxAuNCodec::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))
 		JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS(fdbLoc0);
 		JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS_INIT(fdbLoc0);
 
-		connection_lane[0].descr_encoder_in.con_params = _common_set_ldslave.theData_in->con_params;
+		connection_lane[0].descr_encoder_in.con_params = _common_set_icon.theData_in->con_params;
 		jvxErrorType resL0 = connection_lane[0].micro_connection->test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdbLoc0));
 
 		JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS(fdbLoc1);
 		JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS_INIT(fdbLoc1);
 
-		connection_lane[1].descr_encoder_in.con_params = _common_set_ldslave.theData_in->con_params;
+		connection_lane[1].descr_encoder_in.con_params = _common_set_icon.theData_in->con_params;
 		jvxErrorType resL1 = connection_lane[1].micro_connection->test_connection(JVX_CONNECTION_FEEDBACK_CALL(var));
 
 		if (
@@ -88,7 +88,7 @@ CjvxAuNCodec::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))
 		{
 			jvxLinkDataDescriptor lp;
 			lp.con_params = connection_lane[0].descr_encoder_in.con_params;
-			jvxErrorType resL01 = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+			jvxErrorType resL01 = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 				JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, reinterpret_cast<jvxHandle*>(&lp)
 				JVX_CONNECTION_FEEDBACK_CALL_A(var));
 			if (resL01 != JVX_NO_ERROR)
@@ -120,10 +120,10 @@ CjvxAuNCodec::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))
 	// This function negotiates the input settings and the output settings (number channels)
 	res = CjvxAudioNode::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(var));
 
-	CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value = _common_set_ldslave.theData_out.con_params.number_channels;
-	CjvxAudioNode_genpcg::properties_parameters.buffersize.value = _common_set_ldslave.theData_in->con_params.buffersize;
-	CjvxAudioNode_genpcg::properties_parameters.samplerate.value = _common_set_ldslave.theData_in->con_params.rate;
-	CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_ldslave.theData_in->con_params.format;
+	CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value = _common_set_ocon.theData_out.con_params.number_channels;
+	CjvxAudioNode_genpcg::properties_parameters.buffersize.value = _common_set_icon.theData_in->con_params.buffersize;
+	CjvxAudioNode_genpcg::properties_parameters.samplerate.value = _common_set_icon.theData_in->con_params.rate;
+	CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_icon.theData_in->con_params.format;
 
 	/*
 	CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value = 2;
@@ -140,8 +140,8 @@ jvxErrorType
 CjvxAuNCodec::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(var))
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	_common_set_ldslave.theData_out.sender_to_receiver = connection_lane[0].descr_decoder_out.sender_to_receiver;
-	_common_set_ldslave.theData_out.con_params.number_channels = 2;
+	_common_set_ocon.theData_out.sender_to_receiver = connection_lane[0].descr_decoder_out.sender_to_receiver;
+	_common_set_ocon.theData_out.con_params.number_channels = 2;
 	res = CjvxAudioNode::test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(var));
 	return res;
 }

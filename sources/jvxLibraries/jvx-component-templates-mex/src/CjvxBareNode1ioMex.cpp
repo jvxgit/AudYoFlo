@@ -55,32 +55,32 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	if (_common_set_min.theState == JVX_STATE_PREPARED)
 	{
 		// Accepts and modify some parameters
-		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = _common_set_ldslave.num_additional_pipleline_stages;
-		_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
-			_common_set_ldslave.theData_in->con_data.number_buffers + _common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages,
+		_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages = _common_set_ldslave.num_additional_pipleline_stages;
+		_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
+			_common_set_icon.theData_in->con_data.number_buffers + _common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages,
 			_common_set_ldslave.num_min_buffers_in);
 
 		// Do the processing checks and allocate buffers etc
 		// Setup has been verified in the test chain functions before - this is only for simpler access during processing
-		node_inout._common_set_node_params_a_1io.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
-		node_inout._common_set_node_params_a_1io.number_channels = _common_set_ldslave.theData_in->con_params.number_channels;
-		node_output._common_set_node_params_a_1io.number_channels = _common_set_ldslave.theData_out.con_params.number_channels;
-		node_inout._common_set_node_params_a_1io.samplerate = _common_set_ldslave.theData_in->con_params.rate;
-		node_inout._common_set_node_params_a_1io.format = _common_set_ldslave.theData_in->con_params.format;
+		node_inout._common_set_node_params_a_1io.buffersize = _common_set_icon.theData_in->con_params.buffersize;
+		node_inout._common_set_node_params_a_1io.number_channels = _common_set_icon.theData_in->con_params.number_channels;
+		node_output._common_set_node_params_a_1io.number_channels = _common_set_ocon.theData_out.con_params.number_channels;
+		node_inout._common_set_node_params_a_1io.samplerate = _common_set_icon.theData_in->con_params.rate;
+		node_inout._common_set_node_params_a_1io.format = _common_set_icon.theData_in->con_params.format;
 
 		// Prepare next processing stage processing
 		// The only deviation from the input side may be the number of output channels - which is taken from the node parameter set
-		//assert(_common_set_ldslave.theData_out.con_params.buffersize == _common_set_node_params_1io.processing.buffersize);
-		//assert(_common_set_ldslave.theData_out.con_params.format == _common_set_node_params_1io.processing.format);
-		assert(_common_set_ldslave.theData_out.con_data.buffers == NULL);
-		//assert(_common_set_ldslave.theData_out.con_params.number_channels == _common_set_node_params_1io.processing.number_output_channels);
-		//assert(_common_set_ldslave.theData_out.con_params.rate == _common_set_node_params_1io.processing.samplerate);
+		//assert(_common_set_ocon.theData_out.con_params.buffersize == _common_set_node_params_1io.processing.buffersize);
+		//assert(_common_set_ocon.theData_out.con_params.format == _common_set_node_params_1io.processing.format);
+		assert(_common_set_ocon.theData_out.con_data.buffers == NULL);
+		//assert(_common_set_ocon.theData_out.con_params.number_channels == _common_set_node_params_1io.processing.number_output_channels);
+		//assert(_common_set_ocon.theData_out.con_params.rate == _common_set_node_params_1io.processing.samplerate);
 #if 1
 		zeroCopyBuffering_rt = _common_set_ldslave.zeroCopyBuffering_cfg;
 		if (
-			(jvx_bitTest(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			(jvx_bitTest(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT)) ||
-			(jvx_bitTest(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			(jvx_bitTest(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT)))
 		{
 			zeroCopyBuffering_rt = false;
@@ -89,10 +89,10 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		// Constraints fulfilled for zerocopy?
 		if (!
 			(
-			(_common_set_ldslave.theData_out.con_params.number_channels == _common_set_ldslave.theData_in->con_params.number_channels) &&
-			(_common_set_ldslave.theData_out.con_params.rate == _common_set_ldslave.theData_in->con_params.rate) &&
-			(_common_set_ldslave.theData_out.con_params.buffersize == _common_set_ldslave.theData_in->con_params.buffersize) &&
-			(_common_set_ldslave.theData_out.con_params.format == _common_set_ldslave.theData_in->con_params.format)))
+			(_common_set_ocon.theData_out.con_params.number_channels == _common_set_icon.theData_in->con_params.number_channels) &&
+			(_common_set_ocon.theData_out.con_params.rate == _common_set_icon.theData_in->con_params.rate) &&
+			(_common_set_ocon.theData_out.con_params.buffersize == _common_set_icon.theData_in->con_params.buffersize) &&
+			(_common_set_ocon.theData_out.con_params.format == _common_set_icon.theData_in->con_params.format)))
 		{
 			zeroCopyBuffering_rt = false;
 		}
@@ -100,26 +100,26 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		if (zeroCopyBuffering_rt)
 		{
 			// Set the number of buffers on the output identical to the input side
-			_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.theData_in->con_data.number_buffers;
-			_common_set_ldslave.theData_out.con_data.alloc_flags = _common_set_ldslave.theData_in->con_data.alloc_flags;
-			///jvx_bitClear(_common_set_ldslave.theData_out.con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT)
+			_common_set_ocon.theData_out.con_data.number_buffers = _common_set_icon.theData_in->con_data.number_buffers;
+			_common_set_ocon.theData_out.con_data.alloc_flags = _common_set_icon.theData_in->con_data.alloc_flags;
+			///jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT)
 		}
 		else
 		{
 			// Set the number of buffers as desired
-			_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
-			_common_set_ldslave.theData_out.con_data.alloc_flags = _common_set_ldslave.theData_in->con_data.alloc_flags;
-			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			_common_set_ocon.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
+			_common_set_ocon.theData_out.con_data.alloc_flags = _common_set_icon.theData_in->con_data.alloc_flags;
+			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT);
-			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
 		}
 
 		// Only little to do: Attach a user hint here
-		jvxErrorType resL = CjvxMexCalls::prepare_sender_to_receiver(_common_set_ldslave.theData_in);
+		jvxErrorType resL = CjvxMexCalls::prepare_sender_to_receiver(_common_set_icon.theData_in);
 
 		// We might attach user hints here!!!
-		// _common_set_ldslave.theData_out.con_data.user_hints = _common_set_ldslave.theData_in->con_data.user_hints;
+		// _common_set_ocon.theData_out.con_data.user_hints = _common_set_icon.theData_in->con_data.user_hints;
 
 		res = _prepare_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
@@ -130,10 +130,10 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				// Link the buffers directly to output
 				res = allocate_pipeline_and_buffers_prepare_to_zerocopy();
 				assert(res == JVX_NO_ERROR);
-				if (jvx_bitTest(_common_set_ldslave.theData_out.con_data.alloc_flags, 
+				if (jvx_bitTest(_common_set_ocon.theData_out.con_data.alloc_flags, 
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT))
 				{
-					jvx_bitSet(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+					jvx_bitSet(_common_set_icon.theData_in->con_data.alloc_flags, 
 						(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 				}
 			}
@@ -141,55 +141,55 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			{
 				res = allocate_pipeline_and_buffers_prepare_to();
 				assert(res == JVX_NO_ERROR);
-				jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+				jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, 
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 			}
 
 			// This is for convenience for the MeX interface: support old type of processing principle
-			_common_set_ldslave.theData_in->con_compat.buffersize =
-				_common_set_ldslave.theData_out.con_params.buffersize;
-			_common_set_ldslave.theData_in->con_compat.format =
-				_common_set_ldslave.theData_out.con_params.format;
-			_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
-				_common_set_ldslave.theData_out.con_data.buffers;
-			_common_set_ldslave.theData_in->con_compat.number_buffers =
-				_common_set_ldslave.theData_out.con_data.number_buffers;
-			_common_set_ldslave.theData_in->con_compat.number_channels =
-				_common_set_ldslave.theData_out.con_params.number_channels;
-			_common_set_ldslave.theData_in->con_compat.rate =
-				_common_set_ldslave.theData_out.con_params.rate;
+			_common_set_icon.theData_in->con_compat.buffersize =
+				_common_set_ocon.theData_out.con_params.buffersize;
+			_common_set_icon.theData_in->con_compat.format =
+				_common_set_ocon.theData_out.con_params.format;
+			_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
+				_common_set_ocon.theData_out.con_data.buffers;
+			_common_set_icon.theData_in->con_compat.number_buffers =
+				_common_set_ocon.theData_out.con_data.number_buffers;
+			_common_set_icon.theData_in->con_compat.number_channels =
+				_common_set_ocon.theData_out.con_params.number_channels;
+			_common_set_icon.theData_in->con_compat.rate =
+				_common_set_ocon.theData_out.con_params.rate;
 
-			_common_set_ldslave.theData_in->con_compat.ext.segmentation_x =
-				_common_set_ldslave.theData_out.con_params.segmentation.x;
-			_common_set_ldslave.theData_in->con_compat.ext.segmentation_y =
-				_common_set_ldslave.theData_out.con_params.segmentation.y;
-			_common_set_ldslave.theData_in->con_compat.ext.subformat =
-				_common_set_ldslave.theData_out.con_params.format_group;
-			_common_set_ldslave.theData_in->con_compat.ext.hints =
-				_common_set_ldslave.theData_out.con_params.hints;
+			_common_set_icon.theData_in->con_compat.ext.segmentation_x =
+				_common_set_ocon.theData_out.con_params.segmentation.x;
+			_common_set_icon.theData_in->con_compat.ext.segmentation_y =
+				_common_set_ocon.theData_out.con_params.segmentation.y;
+			_common_set_icon.theData_in->con_compat.ext.subformat =
+				_common_set_ocon.theData_out.con_params.format_group;
+			_common_set_icon.theData_in->con_compat.ext.hints =
+				_common_set_ocon.theData_out.con_params.hints;
 
 			// Link the fully allocated buffers
-			resL = CjvxMexCalls::prepare_complete_receiver_to_sender(_common_set_ldslave.theData_in, &_common_set_ldslave.theData_out);
+			resL = CjvxMexCalls::prepare_complete_receiver_to_sender(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
 		}
 		else
 		{
-			resL = CjvxMexCalls::postprocess_sender_to_receiver(_common_set_ldslave.theData_in);
+			resL = CjvxMexCalls::postprocess_sender_to_receiver(_common_set_icon.theData_in);
 		}
 
 #else
 		// !!! No zero copy allowed !!!
 			
 		// Set the number of buffers as desired
-		_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
-		_common_set_ldslave.theData_out.con_data.alloc_flags = _common_set_ldslave.theData_in->con_data.alloc_flags;
-		jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT);
-		jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
+		_common_set_ocon.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
+		_common_set_ocon.theData_out.con_data.alloc_flags = _common_set_icon.theData_in->con_data.alloc_flags;
+		jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT);
+		jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
 
 		// Only little to do: Attach a user hint here
-		jvxErrorType resL = CjvxMexCalls::prepare_sender_to_receiver(_common_set_ldslave.theData_in);
+		jvxErrorType resL = CjvxMexCalls::prepare_sender_to_receiver(_common_set_icon.theData_in);
 
 		// We might attach user hints here!!!
-		_common_set_ldslave.theData_out.con_data.user_hints = _common_set_ldslave.theData_in->con_data.user_hints;
+		_common_set_ocon.theData_out.con_data.user_hints = _common_set_icon.theData_in->con_data.user_hints;
 
 		res = _prepare_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
@@ -197,30 +197,30 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			res = allocate_pipeline_and_buffers_prepare_to();
 			assert(res == JVX_NO_ERROR);
-			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
+			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 
 			// This is for convenience for the MeX interface: support old type of processing principle
-			_common_set_ldslave.theData_in->con_compat.buffersize =
-				_common_set_ldslave.theData_out.con_params.buffersize;
-			_common_set_ldslave.theData_in->con_compat.format =
-				_common_set_ldslave.theData_out.con_params.format;
-			_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
-				_common_set_ldslave.theData_out.con_data.buffers;
-			_common_set_ldslave.theData_in->con_compat.number_buffers =
-				_common_set_ldslave.theData_out.con_data.number_buffers;
-			_common_set_ldslave.theData_in->con_compat.number_channels =
-				_common_set_ldslave.theData_out.con_params.number_channels;
-			_common_set_ldslave.theData_in->con_compat.rate =
-				_common_set_ldslave.theData_out.con_params.rate;
-			_common_set_ldslave.theData_in->con_compat.ext =
-				_common_set_ldslave.theData_out.con_data.ext;
+			_common_set_icon.theData_in->con_compat.buffersize =
+				_common_set_ocon.theData_out.con_params.buffersize;
+			_common_set_icon.theData_in->con_compat.format =
+				_common_set_ocon.theData_out.con_params.format;
+			_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
+				_common_set_ocon.theData_out.con_data.buffers;
+			_common_set_icon.theData_in->con_compat.number_buffers =
+				_common_set_ocon.theData_out.con_data.number_buffers;
+			_common_set_icon.theData_in->con_compat.number_channels =
+				_common_set_ocon.theData_out.con_params.number_channels;
+			_common_set_icon.theData_in->con_compat.rate =
+				_common_set_ocon.theData_out.con_params.rate;
+			_common_set_icon.theData_in->con_compat.ext =
+				_common_set_ocon.theData_out.con_data.ext;
 
 			// Linke the fully allocated buffers
-			resL = CjvxMexCalls::prepare_complete_receiver_to_sender(_common_set_ldslave.theData_in, &_common_set_ldslave.theData_out);
+			resL = CjvxMexCalls::prepare_complete_receiver_to_sender(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
 		}
 		else
 		{
-			resL = CjvxMexCalls::pos(_common_set_ldslave.theData_in, &_common_set_ldslave.theData_out);
+			resL = CjvxMexCalls::pos(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
 		}
 
 
@@ -238,27 +238,27 @@ CjvxBareNode1ioMex::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxBool forward = true;
 	if (_common_set_min.theState == JVX_STATE_PREPARED)
 	{
-		jvxErrorType resL = CjvxMexCalls::before_postprocess_receiver_to_sender(_common_set_ldslave.theData_in);
+		jvxErrorType resL = CjvxMexCalls::before_postprocess_receiver_to_sender(_common_set_icon.theData_in);
 
 		// Remove all simplifying shortcuts
-		_common_set_ldslave.theData_in->con_compat.buffersize = 0;
-		_common_set_ldslave.theData_in->con_compat.format = JVX_DATAFORMAT_NONE;
-		_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
-		_common_set_ldslave.theData_in->con_compat.number_buffers = 0;
-		_common_set_ldslave.theData_in->con_compat.number_channels = 0;
-		_common_set_ldslave.theData_in->con_compat.rate = 0;
-		_common_set_ldslave.theData_in->con_compat.ext.hints = 0;
-		_common_set_ldslave.theData_in->con_compat.ext.segmentation_x = 0;
-		_common_set_ldslave.theData_in->con_compat.ext.segmentation_y = 0;
-		_common_set_ldslave.theData_in->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;
+		_common_set_icon.theData_in->con_compat.buffersize = 0;
+		_common_set_icon.theData_in->con_compat.format = JVX_DATAFORMAT_NONE;
+		_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
+		_common_set_icon.theData_in->con_compat.number_buffers = 0;
+		_common_set_icon.theData_in->con_compat.number_channels = 0;
+		_common_set_icon.theData_in->con_compat.rate = 0;
+		_common_set_icon.theData_in->con_compat.ext.hints = 0;
+		_common_set_icon.theData_in->con_compat.ext.segmentation_x = 0;
+		_common_set_icon.theData_in->con_compat.ext.segmentation_y = 0;
+		_common_set_icon.theData_in->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;
 
 		res = _postprocess_connect_icon(forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 		// Remove the user hints
-		resL = CjvxMexCalls::postprocess_sender_to_receiver(_common_set_ldslave.theData_in);
+		resL = CjvxMexCalls::postprocess_sender_to_receiver(_common_set_icon.theData_in);
 
 		// The only deviation may be the number of output channels - which is taken from the node parameter set
-		_common_set_ldslave.theData_out.con_data.number_buffers = 0;
+		_common_set_ocon.theData_out.con_data.number_buffers = 0;
 
 		if (zeroCopyBuffering_rt)
 		{
@@ -269,8 +269,8 @@ CjvxBareNode1ioMex::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			res = deallocate_pipeline_and_buffers_postprocess_to();
 		}
 
-		_common_set_ldslave.theData_in->con_data.number_buffers = 0;
-		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
+		_common_set_icon.theData_in->con_data.number_buffers = 0;
+		_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
 
 		zeroCopyBuffering_rt = false;
 	}
@@ -296,19 +296,19 @@ CjvxBareNode1ioMex::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	if (matlabEngaged)
 	{
 		// Pass control to Matlab processing
-		res = CjvxMexCalls::process_st(_common_set_ldslave.theData_in, 
-			*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr, 
-			*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr);
+		res = CjvxMexCalls::process_st(_common_set_icon.theData_in, 
+			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr, 
+			*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr);
 	}
 	else
 	{
 		if (!zeroCopyBuffering_rt)
 		{
-			res = process_oplace(_common_set_ldslave.theData_in, &_common_set_ldslave.theData_out);
+			res = process_oplace(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
 		}
 		else
 		{
-			res = process_iplace(&_common_set_ldslave.theData_out);
+			res = process_iplace(&_common_set_ocon.theData_out);
 		}
 
 		if (res != JVX_NO_ERROR)

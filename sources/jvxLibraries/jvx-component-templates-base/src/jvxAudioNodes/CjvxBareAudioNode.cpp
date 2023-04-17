@@ -29,32 +29,32 @@ CjvxBareAudioNode::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	if (_common_set_min.theState == JVX_STATE_PREPARED)
 	{
 		// Accepts and modify some parameters
-		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = _common_set_ldslave.num_additional_pipleline_stages;
-		_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
-			_common_set_ldslave.theData_in->con_data.number_buffers + _common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages,
+		_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages = _common_set_ldslave.num_additional_pipleline_stages;
+		_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
+			_common_set_icon.theData_in->con_data.number_buffers + _common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages,
 			_common_set_ldslave.num_min_buffers_in);
 
 		// Do the processing checks and allocate buffers etc
 		// Setup has been verified in the test chain functions before - this is only for simpler access during processing
-		_common_set_node_params_1io.processing.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
-		_common_set_node_params_1io.processing.number_input_channels = _common_set_ldslave.theData_in->con_params.number_channels;
-		_common_set_node_params_1io.processing.number_output_channels = _common_set_ldslave.theData_out.con_params.number_channels;
-		_common_set_node_params_1io.processing.samplerate = _common_set_ldslave.theData_in->con_params.rate;
-		_common_set_node_params_1io.processing.format = _common_set_ldslave.theData_in->con_params.format;
+		_common_set_node_params_1io.processing.buffersize = _common_set_icon.theData_in->con_params.buffersize;
+		_common_set_node_params_1io.processing.number_input_channels = _common_set_icon.theData_in->con_params.number_channels;
+		_common_set_node_params_1io.processing.number_output_channels = _common_set_ocon.theData_out.con_params.number_channels;
+		_common_set_node_params_1io.processing.samplerate = _common_set_icon.theData_in->con_params.rate;
+		_common_set_node_params_1io.processing.format = _common_set_icon.theData_in->con_params.format;
 
 		// Prepare next processing stage processing
 		// The only deviation from the input side may be the number of output channels - which is taken from the node parameter set
-		assert(_common_set_ldslave.theData_out.con_params.buffersize == _common_set_node_params_1io.processing.buffersize);
-		assert(_common_set_ldslave.theData_out.con_params.format == _common_set_node_params_1io.processing.format);
-		assert(_common_set_ldslave.theData_out.con_data.buffers == NULL);
-		assert(_common_set_ldslave.theData_out.con_params.number_channels == _common_set_node_params_1io.processing.number_output_channels);
-		assert(_common_set_ldslave.theData_out.con_params.rate == _common_set_node_params_1io.processing.samplerate);
+		assert(_common_set_ocon.theData_out.con_params.buffersize == _common_set_node_params_1io.processing.buffersize);
+		assert(_common_set_ocon.theData_out.con_params.format == _common_set_node_params_1io.processing.format);
+		assert(_common_set_ocon.theData_out.con_data.buffers == NULL);
+		assert(_common_set_ocon.theData_out.con_params.number_channels == _common_set_node_params_1io.processing.number_output_channels);
+		assert(_common_set_ocon.theData_out.con_params.rate == _common_set_node_params_1io.processing.samplerate);
 
 		zeroCopyBuffering_rt = _common_set_ldslave.zeroCopyBuffering_cfg;
 		if (
-			(jvx_bitTest(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			(jvx_bitTest(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT) )||
-			(jvx_bitTest(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			(jvx_bitTest(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT)))
 		{
 			zeroCopyBuffering_rt = false;
@@ -62,10 +62,10 @@ CjvxBareAudioNode::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		if (!
 			(
-			(_common_set_ldslave.theData_out.con_params.number_channels == _common_set_ldslave.theData_in->con_params.number_channels) &&
-				(_common_set_ldslave.theData_out.con_params.rate == _common_set_ldslave.theData_in->con_params.rate) &&
-				(_common_set_ldslave.theData_out.con_params.buffersize == _common_set_ldslave.theData_in->con_params.buffersize) &&
-				(_common_set_ldslave.theData_out.con_params.format == _common_set_ldslave.theData_in->con_params.format)))
+			(_common_set_ocon.theData_out.con_params.number_channels == _common_set_icon.theData_in->con_params.number_channels) &&
+				(_common_set_ocon.theData_out.con_params.rate == _common_set_icon.theData_in->con_params.rate) &&
+				(_common_set_ocon.theData_out.con_params.buffersize == _common_set_icon.theData_in->con_params.buffersize) &&
+				(_common_set_ocon.theData_out.con_params.format == _common_set_icon.theData_in->con_params.format)))
 		{
 			zeroCopyBuffering_rt = false;
 		}
@@ -73,23 +73,23 @@ CjvxBareAudioNode::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		if (zeroCopyBuffering_rt)
 		{
 			// Set the number of buffers on the output identical to the input side
-			_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.theData_in->con_data.number_buffers;
-			_common_set_ldslave.theData_out.con_data.alloc_flags = _common_set_ldslave.theData_in->con_data.alloc_flags;
-			///jvx_bitClear(_common_set_ldslave.theData_out.con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT)
+			_common_set_ocon.theData_out.con_data.number_buffers = _common_set_icon.theData_in->con_data.number_buffers;
+			_common_set_ocon.theData_out.con_data.alloc_flags = _common_set_icon.theData_in->con_data.alloc_flags;
+			///jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags, JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT)
 		}
 		else
 		{
 			// Set the number of buffers as desired
-			_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
-			_common_set_ldslave.theData_out.con_data.alloc_flags = _common_set_ldslave.theData_in->con_data.alloc_flags;
-			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			_common_set_ocon.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
+			_common_set_ocon.theData_out.con_data.alloc_flags = _common_set_icon.theData_in->con_data.alloc_flags;
+			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT);
-			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, 
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
 		}
 
 		// We might attach user hints here!!!
-		//_common_set_ldslave.theData_out.con_data.user_hints = _common_set_ldslave.theData_in->con_data.user_hints;
+		//_common_set_ocon.theData_out.con_data.user_hints = _common_set_icon.theData_in->con_data.user_hints;
 
 		res = _prepare_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		
@@ -100,10 +100,10 @@ CjvxBareAudioNode::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				// Link the buffers directly to output
 				res = allocate_pipeline_and_buffers_prepare_to_zerocopy();
 				assert(res == JVX_NO_ERROR);
-				if (jvx_bitTest(_common_set_ldslave.theData_out.con_data.alloc_flags, 
+				if (jvx_bitTest(_common_set_ocon.theData_out.con_data.alloc_flags, 
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT))
 				{
-					jvx_bitSet(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+					jvx_bitSet(_common_set_icon.theData_in->con_data.alloc_flags, 
 						(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 				}
 			}
@@ -111,7 +111,7 @@ CjvxBareAudioNode::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			{
 				res = allocate_pipeline_and_buffers_prepare_to();
 				assert(res == JVX_NO_ERROR);
-				jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+				jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags, 
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 			}
 		}
@@ -130,10 +130,10 @@ CjvxBareAudioNode::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		res = _postprocess_connect_icon(forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 		// We might remove user hints here!!!
-		//_common_set_ldslave.theData_out.con_data.user_hints = NULL;
+		//_common_set_ocon.theData_out.con_data.user_hints = NULL;
 
 		// The only deviation may be the number of output channels - which is taken from the node parameter set
-		_common_set_ldslave.theData_out.con_data.number_buffers = 0;
+		_common_set_ocon.theData_out.con_data.number_buffers = 0;
 
 		if (zeroCopyBuffering_rt)
 		{
@@ -144,8 +144,8 @@ CjvxBareAudioNode::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			res = deallocate_pipeline_and_buffers_postprocess_to();
 		}
 
-		_common_set_ldslave.theData_in->con_data.number_buffers = 0;
-		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
+		_common_set_icon.theData_in->con_data.number_buffers = 0;
+		_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
 
 		_common_set_node_params_1io.processing.buffersize = JVX_SIZE_UNSELECTED;
 		_common_set_node_params_1io.processing.number_input_channels = JVX_SIZE_UNSELECTED;
@@ -208,14 +208,14 @@ CjvxBareAudioNode::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxSize i;
 	jvxApiString str;
 	jvxSize cs = JVX_SIZE_UNSELECTED;
-	std::cout << "Node input <-> output, bidx = " << _common_set_ldslave.theData_in->pipeline.idx_stage << "/"
-		<< _common_set_ldslave.theData_in->con_data.number_buffers
-		<< "<->" << _common_set_ldslave.theData_out.pipeline.idx_stage << "/"
-		<< _common_set_ldslave.theData_out.con_data.number_buffers << std::endl;
+	std::cout << "Node input <-> output, bidx = " << _common_set_icon.theData_in->pipeline.idx_stage << "/"
+		<< _common_set_icon.theData_in->con_data.number_buffers
+		<< "<->" << _common_set_ocon.theData_out.pipeline.idx_stage << "/"
+		<< _common_set_ocon.theData_out.con_data.number_buffers << std::endl;
 	std::cout << "Input pipeline:" << std::endl;
-	for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 	{
-		cs = _common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[i];
+		cs = _common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[i];
 		if (JVX_CHECK_SIZE_SELECTED(cs))
 		{
 			_common_set.theToolsHost->descriptor_unique_id(cs, &str);
@@ -228,9 +228,9 @@ CjvxBareAudioNode::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	}
 	std::cout << std::endl;
 	std::cout << "Output pipeline:" << std::endl;
-	for (i = 0; i < _common_set_ldslave.theData_out.con_data.number_buffers; i++)
+	for (i = 0; i < _common_set_ocon.theData_out.con_data.number_buffers; i++)
 	{
-		cs = _common_set_ldslave.theData_out.con_pipeline.reserve_buffer_pipeline_stage[i];
+		cs = _common_set_ocon.theData_out.con_pipeline.reserve_buffer_pipeline_stage[i];
 		if (JVX_CHECK_SIZE_SELECTED(cs))
 		{
 			_common_set.theToolsHost->descriptor_unique_id(cs, &str);
@@ -249,28 +249,28 @@ CjvxBareAudioNode::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 		// Talkthrough
 		jvxSize ii;
-		jvxSize maxChans = JVX_MAX(_common_set_ldslave.theData_in->con_params.number_channels, _common_set_ldslave.theData_out.con_params.number_channels);
-		jvxSize minChans = JVX_MIN(_common_set_ldslave.theData_in->con_params.number_channels, _common_set_ldslave.theData_out.con_params.number_channels);
+		jvxSize maxChans = JVX_MAX(_common_set_icon.theData_in->con_params.number_channels, _common_set_ocon.theData_out.con_params.number_channels);
+		jvxSize minChans = JVX_MIN(_common_set_icon.theData_in->con_params.number_channels, _common_set_ocon.theData_out.con_params.number_channels);
 
 		// This default function does not tolerate a lot of unexpected settings
-		assert(_common_set_ldslave.theData_in->con_params.format == _common_set_ldslave.theData_out.con_params.format);
-		assert(_common_set_ldslave.theData_in->con_params.buffersize == _common_set_ldslave.theData_out.con_params.buffersize);
+		assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
+		assert(_common_set_icon.theData_in->con_params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
 
 		if (minChans)
 		{
 			for (ii = 0; ii < maxChans; ii++)
 			{
-				jvxSize idxIn = ii % _common_set_ldslave.theData_in->con_params.number_channels;
-				jvxSize idxOut = ii % _common_set_ldslave.theData_out.con_params.number_channels;
+				jvxSize idxIn = ii % _common_set_icon.theData_in->con_params.number_channels;
+				jvxSize idxOut = ii % _common_set_ocon.theData_out.con_params.number_channels;
 
-				assert(_common_set_ldslave.theData_in->con_params.format == _common_set_ldslave.theData_out.con_params.format);
+				assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
 				jvx_convertSamples_memcpy(
-					_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][idxIn],
-					_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][idxOut],
-					jvxDataFormat_size[_common_set_ldslave.theData_in->con_params.format],
-					_common_set_ldslave.theData_in->con_params.buffersize);
+					_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][idxIn],
+					_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][idxOut],
+					jvxDataFormat_size[_common_set_icon.theData_in->con_params.format],
+					_common_set_icon.theData_in->con_params.buffersize);
 			}
 		}
 

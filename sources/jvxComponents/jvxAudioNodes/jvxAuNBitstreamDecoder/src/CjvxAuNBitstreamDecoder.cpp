@@ -125,7 +125,7 @@ CjvxAuNBitstreamDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool err = false;
 	jvxBool runloop = true;
-	config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
+	config_token = _common_set_icon.theData_in->con_params.format_spec.std_str();
 
 	while (runloop)
 	{

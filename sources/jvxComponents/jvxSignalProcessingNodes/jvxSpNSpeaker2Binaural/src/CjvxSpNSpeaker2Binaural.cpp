@@ -114,16 +114,16 @@ CjvxSpNSpeaker2Binaural::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 	if (!genSpeaker2Binaural_node::config.bypass.value)
 	{
 		assert(zeroCopyBuffering_rt == false);
-		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
-		jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+		jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
 
 		// Copy input to output. We need two buffers since we do not apply zero copy processing!
 		if (engageRendererProc)
 		{
-			filtLeft.process_N1Filter(bufsIn, bufsOut[0], _common_set_ldslave.theData_in->con_params.number_channels,
-				_common_set_ldslave.theData_in->con_params.buffersize);
-			filtRight.process_N1Filter(bufsIn, bufsOut[1], _common_set_ldslave.theData_in->con_params.number_channels,
-				_common_set_ldslave.theData_in->con_params.buffersize);
+			filtLeft.process_N1Filter(bufsIn, bufsOut[0], _common_set_icon.theData_in->con_params.number_channels,
+				_common_set_icon.theData_in->con_params.buffersize);
+			filtRight.process_N1Filter(bufsIn, bufsOut[1], _common_set_icon.theData_in->con_params.number_channels,
+				_common_set_icon.theData_in->con_params.buffersize);
 		}
 	}
 	else
@@ -279,8 +279,8 @@ CjvxSpNSpeaker2Binaural::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		if (engageRendererProc)
 		{
-			filtLeft.prepare_N1Filter(_common_set_ldslave.theData_in->con_params.buffersize);
-			filtRight.prepare_N1Filter(_common_set_ldslave.theData_in->con_params.buffersize);
+			filtLeft.prepare_N1Filter(_common_set_icon.theData_in->con_params.buffersize);
+			filtRight.prepare_N1Filter(_common_set_icon.theData_in->con_params.buffersize);
 		}
 	}
 	return res;

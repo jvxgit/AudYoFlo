@@ -404,16 +404,16 @@ CjvxGenericWrapperDevice_hostRelocator::prepare_connect_icon_x(jvxLinkDataDescri
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	// _common_set_ldslave.theData_out.con_params.number_channels = ? ;
+	// _common_set_ocon.theData_out.con_params.number_channels = ? ;
 	res = CjvxInputOutputConnector::_prepare_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
-	jvx_ccopyDataLinkDescriptor(_common_set_ldslave.theData_in, &_common_set_ldslave.theData_out);
-	_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
-		_common_set_ldslave.theData_out.con_data.buffers;
+	jvx_ccopyDataLinkDescriptor(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+	_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
+		_common_set_ocon.theData_out.con_data.buffers;
 	
 	// This user hint link is the short version within the HW loop
-	//_common_set_ldslave.theData_in->con_compat.user_hints =
-	//	_common_set_ldslave.theData_out.con_data.user_hints;
+	//_common_set_icon.theData_in->con_compat.user_hints =
+	//	_common_set_ocon.theData_out.con_data.user_hints;
 
 	return res;
 }
@@ -424,16 +424,16 @@ CjvxGenericWrapperDevice_hostRelocator::postprocess_connect_icon_x(jvxLinkDataDe
 	jvxErrorType res = JVX_NO_ERROR;
 
 	// What to do here??
-	// _common_set_ldslave.theData_out.con_params.number_channels = ? ;
+	// _common_set_ocon.theData_out.con_params.number_channels = ? ;
 	res = CjvxInputOutputConnector::_postprocess_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
 
-	_common_set_ldslave.theData_in->con_compat.buffersize = 0;
-	_common_set_ldslave.theData_in->con_compat.format = JVX_DATAFORMAT_NONE;
-	_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
-	_common_set_ldslave.theData_in->con_compat.number_buffers = 0;
-	_common_set_ldslave.theData_in->con_compat.rate = 0;
+	_common_set_icon.theData_in->con_compat.buffersize = 0;
+	_common_set_icon.theData_in->con_compat.format = JVX_DATAFORMAT_NONE;
+	_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
+	_common_set_icon.theData_in->con_compat.number_buffers = 0;
+	_common_set_icon.theData_in->con_compat.rate = 0;
 
 	return res;
 }
@@ -450,8 +450,8 @@ CjvxGenericWrapperDevice_hostRelocator::start_connect_icon(JVX_CONNECTION_FEEDBA
 	CjvxInputOutputConnector::_start_connect_icon(false, idRuntime JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	// Initialize output processing index
-	*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr = 0;
-	_common_set_ldslave.theData_out.con_compat.idx_receiver_to_sender = 0;
+	*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr = 0;
+	_common_set_ocon.theData_out.con_compat.idx_receiver_to_sender = 0;
 
 	return runtime.refDevice->start_connect_icon_x(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 };
@@ -504,10 +504,10 @@ CjvxGenericWrapperDevice_hostRelocator::process_start_icon(jvxSize pipeline_offs
 			// we may need to take over a modified output index if direct buffer processing
 			// The pipeline lock mechanism works on the right lock and buffer anyway.
 			/*
-			_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
-			_common_set_ldslave.theData_in->pipeline.idx_stage =
-				runtime.refDevice->_common_set_ldslave.theData_out.pipeline.idx_stage;
-			_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+			_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
+			_common_set_icon.theData_in->pipeline.idx_stage =
+				runtime.refDevice->_common_set_ocon.theData_out.pipeline.idx_stage;
+			_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 			*/
 		}
 		else
@@ -580,10 +580,10 @@ CjvxGenericWrapperDevice_hostRelocator::process_stop_icon(jvxSize idx_stage, jvx
 		if (runtime.refDevice->proc_fields.seq_operation_in == CjvxGenericWrapperDevice::PROC)
 		{
 			// Copy the index from following object to this object
-			_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl); 
-			*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr =
-				*runtime.refDevice->_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-			_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl); 
+			_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl); 
+			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr =
+				*runtime.refDevice->_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+			_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl); 
 		}
 		else
 		{
@@ -605,10 +605,10 @@ CjvxGenericWrapperDevice_hostRelocator::test_connect_icon(JVX_CONNECTION_FEEDBAC
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, static_cast<IjvxObject*>(runtime.refDevice));
 	CjvxInputOutputConnector::_test_connect_icon(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
-	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, _common_set_ldslave.theData_in);
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, _common_set_icon.theData_in);
 
 	// Setup the parameters
-	runtime.refDevice->updateSWSamplerateAndBuffersize_nolock(_common_set_ldslave.theData_in, &runtime.refDevice->_common_set_ldslave.theData_out JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	runtime.refDevice->updateSWSamplerateAndBuffersize_nolock(_common_set_icon.theData_in, &runtime.refDevice->_common_set_ocon.theData_out JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	return runtime.refDevice->test_connect_icon_x(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	
 }
@@ -659,92 +659,92 @@ CjvxGenericWrapperDevice_hostRelocator::transfer_backward_ocon(jvxLinkDataTransf
 		runtime.refDevice->populate_countchannels_datatype(params);
 		txt = "Unexpected transfer backward from device output to generic wrapper input. This should not happen. Reason: "; 
 		if (
-			(_common_set_ldslave.theData_out.con_params.number_channels != params.chanshw_out))
+			(_common_set_ocon.theData_out.con_params.number_channels != params.chanshw_out))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Number of output channels in device is ";
-			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.number_channels);
+			txt += jvx_size2String(_common_set_ocon.theData_out.con_params.number_channels);
 			txt += " whereas the number of active hardware channels in generic wrapper is ";
 			txt += jvx_size2String(params.chanshw_out);
 			errorDetected = true;
 		}
 			
-		if ((_common_set_ldslave.theData_out.con_params.buffersize != runtime.refDevice->processingControl.computedParameters.bSize_hw))
+		if ((_common_set_ocon.theData_out.con_params.buffersize != runtime.refDevice->processingControl.computedParameters.bSize_hw))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Buffersize in device is ";
-			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.buffersize);
+			txt += jvx_size2String(_common_set_ocon.theData_out.con_params.buffersize);
 			txt += " whereas the hardware buffersize in generic wrapper is ";
 			txt += jvx_size2String(runtime.refDevice->processingControl.computedParameters.bSize_hw);
 			errorDetected = true;
 		}
 			
-		if ((_common_set_ldslave.theData_out.con_params.rate != runtime.refDevice->processingControl.computedParameters.sRate_hw))
+		if ((_common_set_ocon.theData_out.con_params.rate != runtime.refDevice->processingControl.computedParameters.sRate_hw))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Samplerate in device is ";
-			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.rate);
+			txt += jvx_size2String(_common_set_ocon.theData_out.con_params.rate);
 			txt += " whereas the hardware samplerate in generic wrapper is ";
 			txt += jvx_size2String(runtime.refDevice->processingControl.computedParameters.sRate_hw);
 			errorDetected = true;
 		}
 		
-		if ((_common_set_ldslave.theData_out.con_params.format != runtime.refDevice->processingControl.computedParameters.form_hw))
+		if ((_common_set_ocon.theData_out.con_params.format != runtime.refDevice->processingControl.computedParameters.form_hw))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Dataformat in device is ";
-			txt += jvxDataFormat_txt(_common_set_ldslave.theData_out.con_params.format);
+			txt += jvxDataFormat_txt(_common_set_ocon.theData_out.con_params.format);
 			txt += " whereas the hardware dataformat in generic wrapper is ";
 			txt += jvxDataFormat_txt(runtime.refDevice->processingControl.computedParameters.form_hw);
 			errorDetected = true;
 		}
 
-		if ((_common_set_ldslave.theData_out.con_params.segmentation.x != runtime.refDevice->processingControl.computedParameters.bSize_hw))
+		if ((_common_set_ocon.theData_out.con_params.segmentation.x != runtime.refDevice->processingControl.computedParameters.bSize_hw))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Segmentation x in device is ";
-			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.segmentation.x);
+			txt += jvx_size2String(_common_set_ocon.theData_out.con_params.segmentation.x);
 			txt += " whereas the hardware buffersize in generic wrapper is ";
 			txt += jvx_size2String(runtime.refDevice->processingControl.computedParameters.bSize_hw);
 			errorDetected = true;
 		}
 
-		if ((_common_set_ldslave.theData_out.con_params.segmentation.y != 1))
+		if ((_common_set_ocon.theData_out.con_params.segmentation.y != 1))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Segmentation y in device is ";
-			txt += jvx_size2String(_common_set_ldslave.theData_out.con_params.segmentation.x);
+			txt += jvx_size2String(_common_set_ocon.theData_out.con_params.segmentation.x);
 			txt += " whereas the value in generic wrapper is ";
 			txt += jvx_size2String(1);
 			errorDetected = true;
 		}
 
-		if ((_common_set_ldslave.theData_out.con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
+		if ((_common_set_ocon.theData_out.con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
 		{
 			if (errorDetected)
 			{
 				txt += ", ";
 			}
 			txt += "Datasubformat in device is ";
-			txt += jvxDataFormatGroup_txt(_common_set_ldslave.theData_out.con_params.format_group);
+			txt += jvxDataFormatGroup_txt(_common_set_ocon.theData_out.con_params.format_group);
 			txt += " whereas the hardware datasubformat in generic wrapper is ";
 			txt += jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
 			errorDetected = true;
@@ -957,19 +957,19 @@ CjvxGenericWrapperDevice_hostRelocator::test_connect_icon_x(JVX_CONNECTION_FEEDB
 
 	runtime.refDevice->populate_countchannels_datatype(params);
 	/*
-	_common_set_ldslave.theData_out.con_params.buffersize = runtime.refDevice->processingControl.inProc.params.buffersize;
-	_common_set_ldslave.theData_out.con_params.rate = runtime.refDevice->processingControl.inProc.params.samplerate;
-	_common_set_ldslave.theData_out.con_params.format = runtime.refDevice->processingControl.inProc.params.format;
-	_common_set_ldslave.theData_out.con_data.number_buffers = runtime.refDevice->processingControl.inProc.params.chans_out;
+	_common_set_ocon.theData_out.con_params.buffersize = runtime.refDevice->processingControl.inProc.params.buffersize;
+	_common_set_ocon.theData_out.con_params.rate = runtime.refDevice->processingControl.inProc.params.samplerate;
+	_common_set_ocon.theData_out.con_params.format = runtime.refDevice->processingControl.inProc.params.format;
+	_common_set_ocon.theData_out.con_data.number_buffers = runtime.refDevice->processingControl.inProc.params.chans_out;
 	*/
-	_common_set_ldslave.theData_out.con_params.buffersize = runtime.refDevice->processingControl.computedParameters.bSize_hw;
-	_common_set_ldslave.theData_out.con_params.rate = runtime.refDevice->processingControl.computedParameters.sRate_hw;
-	_common_set_ldslave.theData_out.con_params.format = runtime.refDevice->processingControl.computedParameters.form_hw;
-	_common_set_ldslave.theData_out.con_params.number_channels = params.chanshw_out;
+	_common_set_ocon.theData_out.con_params.buffersize = runtime.refDevice->processingControl.computedParameters.bSize_hw;
+	_common_set_ocon.theData_out.con_params.rate = runtime.refDevice->processingControl.computedParameters.sRate_hw;
+	_common_set_ocon.theData_out.con_params.format = runtime.refDevice->processingControl.computedParameters.form_hw;
+	_common_set_ocon.theData_out.con_params.number_channels = params.chanshw_out;
 
-	_common_set_ldslave.theData_out.con_params.segmentation.x = runtime.refDevice->processingControl.computedParameters.bSize_hw;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ocon.theData_out.con_params.segmentation.x = runtime.refDevice->processingControl.computedParameters.bSize_hw;
+	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
 	// runtime.refDevice->release_countchannels_datatype(params); <- not required since local variable
 
@@ -981,13 +981,13 @@ jvxErrorType
 CjvxGenericWrapperDevice_hostRelocator::transfer_backward_x(jvxLinkDataDescriptor* descr JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 
-	runtime.refDevice->updateSWSamplerateAndBuffersize_nolock(_common_set_ldslave.theData_in, &runtime.refDevice->_common_set_ldslave.theData_out 
+	runtime.refDevice->updateSWSamplerateAndBuffersize_nolock(_common_set_icon.theData_in, &runtime.refDevice->_common_set_ocon.theData_out 
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	if (
-		(descr->con_params.format != runtime.refDevice->_common_set_ldslave.theData_out.con_params.format) ||
-		(descr->con_params.buffersize != runtime.refDevice->_common_set_ldslave.theData_out.con_params.buffersize) ||
-		(descr->con_params.rate != runtime.refDevice->_common_set_ldslave.theData_out.con_params.rate))
+		(descr->con_params.format != runtime.refDevice->_common_set_ocon.theData_out.con_params.format) ||
+		(descr->con_params.buffersize != runtime.refDevice->_common_set_ocon.theData_out.con_params.buffersize) ||
+		(descr->con_params.rate != runtime.refDevice->_common_set_ocon.theData_out.con_params.rate))
 	{
 		return JVX_ERROR_UNSUPPORTED;
 	}

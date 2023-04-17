@@ -116,7 +116,7 @@ CjvxAudioNode_mexCall::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData
 }
 */
 
-JVX_MEXCALL_PREPARE_COMPLETE_RECEIVER_TO_SENDER(CjvxAudioNode_mexCall, CjvxAudioNode, &_common_set_ldslave.theData_out)
+JVX_MEXCALL_PREPARE_COMPLETE_RECEIVER_TO_SENDER(CjvxAudioNode_mexCall, CjvxAudioNode, &_common_set_ocon.theData_out)
 /*
 jvxErrorType
 CjvxAudioNode_mexCall::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)

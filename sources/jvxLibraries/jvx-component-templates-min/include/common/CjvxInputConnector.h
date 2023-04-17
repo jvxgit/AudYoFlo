@@ -1,9 +1,30 @@
 #ifndef _CJVXINPUTCONNECTOR_H__
 #define _CJVXINPUTCONNECTOR_H__
 
-class CjvxInputConnector: public IjvxInputConnector
+#include "jvx.h"
+
+class CjvxInputConnectorCore
 {
 public:
+
+	class common_set_icon_t
+	{
+	public:
+		IjvxConnectorBridge* conn_in = nullptr;
+		jvxLinkDataDescriptor* theData_in = nullptr;
+		IjvxDataConnectionCommon* theCommon_to = nullptr;
+
+		struct
+		{
+			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
+		} caps_in;
+	};
+
+	common_set_icon_t _common_set_icon;
+public:
+	CjvxInputConnectorCore();
+	/*
 	virtual JVX_CALLINGCONVENTION ~CjvxInputConnector(){};
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon** ref) override;
@@ -48,7 +69,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
-
+	*/
 };
 
 #endif

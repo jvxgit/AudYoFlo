@@ -93,11 +93,11 @@ CjvxAudioNodeBase::reportPreferredParameters(jvxPropertyCategoryType cat, jvxSiz
 	jvxSize uId = JVX_SIZE_UNSELECTED;
 	jvxErrorType res = JVX_ERROR_NOT_READY;
 
-	if (_common_set_ldslave.theData_in)
+	if (_common_set_icon.theData_in)
 	{
-		if (_common_set_ldslave.theData_in->con_link.master)
+		if (_common_set_icon.theData_in->con_link.master)
 		{
-			_common_set_ldslave.theData_in->con_link.master->associated_process(&theProc);
+			_common_set_icon.theData_in->con_link.master->associated_process(&theProc);
 			if (theProc)
 			{
 				theProc->unique_id_connections(&uId);
@@ -375,10 +375,10 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		for (i = 0; i < num; i++)
 		{
 			if (
-				(_common_set_node_params_1io.allowedSetup[i].buffersize == _common_set_ldslave.theData_in->con_params.buffersize) &&
-				(_common_set_node_params_1io.allowedSetup[i].samplerate == _common_set_ldslave.theData_in->con_params.rate) &&
-				(_common_set_node_params_1io.allowedSetup[i].format == _common_set_ldslave.theData_in->con_params.format) &&
-				(_common_set_node_params_1io.allowedSetup[i].number_input_channels == _common_set_ldslave.theData_in->con_params.number_channels))
+				(_common_set_node_params_1io.allowedSetup[i].buffersize == _common_set_icon.theData_in->con_params.buffersize) &&
+				(_common_set_node_params_1io.allowedSetup[i].samplerate == _common_set_icon.theData_in->con_params.rate) &&
+				(_common_set_node_params_1io.allowedSetup[i].format == _common_set_icon.theData_in->con_params.format) &&
+				(_common_set_node_params_1io.allowedSetup[i].number_input_channels == _common_set_icon.theData_in->con_params.number_channels))
 			{
 				thereismismatch = false;
 				CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value = JVX_SIZE_INT32(_common_set_node_params_1io.allowedSetup[i].number_output_channels);
@@ -392,20 +392,20 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			ld_cp.con_params.format = _common_set_node_params_1io.allowedSetup[i].format;
 			ld_cp.con_params.number_channels = _common_set_node_params_1io.allowedSetup[i].number_input_channels;
 
-			resComplain = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+			resComplain = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 				JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_cp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 	}
 	else
 	{
-		ld_cp.con_params.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
-		ld_cp.con_params.rate = _common_set_ldslave.theData_in->con_params.rate;
-		ld_cp.con_params.format = _common_set_ldslave.theData_in->con_params.format;
-		ld_cp.con_params.number_channels = _common_set_ldslave.theData_in->con_params.number_channels;
+		ld_cp.con_params.buffersize = _common_set_icon.theData_in->con_params.buffersize;
+		ld_cp.con_params.rate = _common_set_icon.theData_in->con_params.rate;
+		ld_cp.con_params.format = _common_set_icon.theData_in->con_params.format;
+		ld_cp.con_params.number_channels = _common_set_icon.theData_in->con_params.number_channels;
 
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.min))
 		{
-			if (_common_set_ldslave.theData_in->con_params.buffersize < _common_set_node_params_1io.preferred.buffersize.min)
+			if (_common_set_icon.theData_in->con_params.buffersize < _common_set_node_params_1io.preferred.buffersize.min)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.buffersize = _common_set_node_params_1io.preferred.buffersize.min;
@@ -413,7 +413,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.max))
 		{
-			if (_common_set_ldslave.theData_in->con_params.buffersize > _common_set_node_params_1io.preferred.buffersize.max)
+			if (_common_set_icon.theData_in->con_params.buffersize > _common_set_node_params_1io.preferred.buffersize.max)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.buffersize = _common_set_node_params_1io.preferred.buffersize.max;
@@ -422,7 +422,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.samplerate.min))
 		{
-			if (_common_set_ldslave.theData_in->con_params.rate < _common_set_node_params_1io.preferred.samplerate.min)
+			if (_common_set_icon.theData_in->con_params.rate < _common_set_node_params_1io.preferred.samplerate.min)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.rate = _common_set_node_params_1io.preferred.samplerate.min;
@@ -430,7 +430,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.samplerate.max))
 		{
-			if (_common_set_ldslave.theData_in->con_params.rate > _common_set_node_params_1io.preferred.samplerate.max)
+			if (_common_set_icon.theData_in->con_params.rate > _common_set_node_params_1io.preferred.samplerate.max)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.rate = _common_set_node_params_1io.preferred.samplerate.max;
@@ -439,7 +439,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_input_channels.min))
 		{
-			if (_common_set_ldslave.theData_in->con_params.number_channels < _common_set_node_params_1io.preferred.number_input_channels.min)
+			if (_common_set_icon.theData_in->con_params.number_channels < _common_set_node_params_1io.preferred.number_input_channels.min)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.number_channels = _common_set_node_params_1io.preferred.number_input_channels.min;
@@ -447,7 +447,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_input_channels.max))
 		{
-			if (_common_set_ldslave.theData_in->con_params.number_channels > _common_set_node_params_1io.preferred.number_input_channels.max)
+			if (_common_set_icon.theData_in->con_params.number_channels > _common_set_node_params_1io.preferred.number_input_channels.max)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.number_channels = _common_set_node_params_1io.preferred.number_input_channels.max;
@@ -456,7 +456,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		if (_common_set_node_params_1io.preferred.format.min != JVX_DATAFORMAT_NONE)
 		{
-			if (_common_set_ldslave.theData_in->con_params.format < _common_set_node_params_1io.preferred.format.min)
+			if (_common_set_icon.theData_in->con_params.format < _common_set_node_params_1io.preferred.format.min)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.format = _common_set_node_params_1io.preferred.format.min;
@@ -464,7 +464,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 		if (_common_set_node_params_1io.preferred.format.max != JVX_DATAFORMAT_NONE)
 		{
-			if (_common_set_ldslave.theData_in->con_params.format > _common_set_node_params_1io.preferred.format.max)
+			if (_common_set_icon.theData_in->con_params.format > _common_set_node_params_1io.preferred.format.max)
 			{
 				thereismismatch = true;
 				ld_cp.con_params.format = _common_set_node_params_1io.preferred.format.max;
@@ -472,7 +472,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 		if (thereismismatch)
 		{
-			resComplain = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, 
+			resComplain = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, 
 				&ld_cp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 	}
@@ -482,19 +482,19 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	case JVX_NO_ERROR:
 
 		// Accept the new settings
-		CjvxAudioNode_genpcg::properties_parameters.buffersize.value = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.buffersize);
-		CjvxAudioNode_genpcg::properties_parameters.samplerate.value = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.rate);
-		CjvxAudioNode_genpcg::properties_parameters.numberinputchannels.value = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.number_channels);
-		CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_ldslave.theData_in->con_params.format;
+		CjvxAudioNode_genpcg::properties_parameters.buffersize.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.buffersize);
+		CjvxAudioNode_genpcg::properties_parameters.samplerate.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.rate);
+		CjvxAudioNode_genpcg::properties_parameters.numberinputchannels.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.number_channels);
+		CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_icon.theData_in->con_params.format;
 		return _test_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	case JVX_ERROR_COMPROMISE:
 
 		/*
 		// We might accept a compromies
-		CjvxAudioNode_genpcg::properties_parameters.buffersize.value = _common_set_ldslave.theData_in->con_params.buffersize;
-		CjvxAudioNode_genpcg::properties_parameters.samplerate.value = _common_set_ldslave.theData_in->con_params.rate;
-		CjvxAudioNode_genpcg::properties_parameters.numberinputchannels.value = _common_set_ldslave.theData_in->con_params.number_channels;
-		CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_ldslave.theData_in->con_params.format;
+		CjvxAudioNode_genpcg::properties_parameters.buffersize.value = _common_set_icon.theData_in->con_params.buffersize;
+		CjvxAudioNode_genpcg::properties_parameters.samplerate.value = _common_set_icon.theData_in->con_params.rate;
+		CjvxAudioNode_genpcg::properties_parameters.numberinputchannels.value = _common_set_icon.theData_in->con_params.number_channels;
+		CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_icon.theData_in->con_params.format;
 
 		return JVX_NO_ERROR;*/
 		break;
@@ -513,10 +513,10 @@ jvxErrorType
 CjvxAudioNodeBase::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, static_cast<IjvxObject*>(this));
-	_common_set_ldslave.theData_out.con_params.number_channels = CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value;
-	_common_set_ldslave.theData_out.con_params.buffersize = CjvxAudioNode_genpcg::properties_parameters.buffersize.value;
-	_common_set_ldslave.theData_out.con_params.rate = CjvxAudioNode_genpcg::properties_parameters.samplerate.value;
-	_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)CjvxAudioNode_genpcg::properties_parameters.format.value;
+	_common_set_ocon.theData_out.con_params.number_channels = CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value;
+	_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioNode_genpcg::properties_parameters.buffersize.value;
+	_common_set_ocon.theData_out.con_params.rate = CjvxAudioNode_genpcg::properties_parameters.samplerate.value;
+	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxAudioNode_genpcg::properties_parameters.format.value;
 
 	return _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
@@ -604,7 +604,7 @@ CjvxAudioNodeBase::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*
 			}
 
 			// Allow overwrite of output channels
-			_common_set_ldslave.theData_out.con_params.number_channels = CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value;
+			_common_set_ocon.theData_out.con_params.number_channels = CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value;
 
 			if (thereismismatch)
 			{

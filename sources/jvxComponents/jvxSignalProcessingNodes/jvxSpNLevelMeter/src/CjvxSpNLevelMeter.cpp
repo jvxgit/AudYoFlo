@@ -49,7 +49,7 @@ CjvxSpNLevelMeter::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	if (res == JVX_NO_ERROR)
 	{
 		// Attach the level meter buffer
-		numChannels = _common_set_ldslave.theData_in->con_params.number_channels;
+		numChannels = _common_set_icon.theData_in->con_params.number_channels;
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(ptrLevel, jvxData, numChannels);
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(ptrMute, jvxCBool, numChannels);
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(ptrGain, jvxData, numChannels);
@@ -101,15 +101,15 @@ CjvxSpNLevelMeter::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		jvxSize i, j;
 		jvxData alpha = genLevelMeter_node::config.smoothing_alpha.value;
 		jvxData m1alpha = 1.0 - alpha;
-		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
+		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 		for (i = 0; i < numChannels; i++)
 		{
 			jvxData gain = ptrGain[i];
 			if (ptrMute[i])
 			{
-				memset(bufsIn[i], 0, sizeof(jvxData) * _common_set_ldslave.theData_in->con_params.buffersize);
+				memset(bufsIn[i], 0, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
 			}
-			for (j = 0; j < _common_set_ldslave.theData_in->con_params.buffersize; j++)
+			for (j = 0; j < _common_set_icon.theData_in->con_params.buffersize; j++)
 			{
 				jvxData tmp = 0;
 				bufsIn[i][j] *= gain;

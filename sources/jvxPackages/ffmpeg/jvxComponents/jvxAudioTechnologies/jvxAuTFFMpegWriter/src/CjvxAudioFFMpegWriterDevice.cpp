@@ -465,7 +465,7 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	// Here we detect the provided parameters. We may setup another setup
 
 	res = JVX_NO_ERROR;
-	ld.con_params = _common_set_ldslave.theData_in->con_params;
+	ld.con_params = _common_set_icon.theData_in->con_params;
 
 	if (
 		(ld.con_params.buffersize != JVX_SIZE_DONTCARE) ||
@@ -474,13 +474,13 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 		(ld.con_params.format != JVX_DATAFORMAT_POINTER) ||
 		(ld.con_params.format_group != JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD))
 	{
-		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+		res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 			&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 
 	if (res == JVX_NO_ERROR)
 	{
-		config_token = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
+		config_token = _common_set_icon.theData_in->con_params.format_spec.std_str();
 		res = jvx_ffmpeg_codec_token_2_parameter(config_token.c_str(), nParams);
 	}
 
@@ -529,13 +529,13 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 			jvx_ffmpeg_wav_params(fParams);
 			ld.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(fParams);
 
-			res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+			res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 				&ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			if (res == JVX_NO_ERROR)
 			{
 				// We want to check that this really is ok?
 				std::string cfg_token_local = jvx_ffmpeg_parameter_2_codec_token(fParams);
-				std::string cfg_token_prev = _common_set_ldslave.theData_in->con_params.format_spec.std_str().c_str();
+				std::string cfg_token_prev = _common_set_icon.theData_in->con_params.format_spec.std_str().c_str();
 			}
 		}
 	} // if (res == JVX_NO_ERROR)
@@ -599,15 +599,15 @@ CjvxAudioFFMpegWriterDevice::test_set_output_parameters()
 	// The format text specification to configure the decoder
 	// The buffersize as it is derived from the buffersize as set by the audio framing definition
 	// You can specify the buffersize by setting the standard parameter for the device buffersize
-	_common_set_ldslave.theData_out.con_params.buffersize = 0;
-	_common_set_ldslave.theData_out.con_params.rate = 0;
-	_common_set_ldslave.theData_out.con_params.number_channels = 0;
-	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_NONE;
-	_common_set_ldslave.theData_out.con_params.segmentation.x = 0;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = 0;
+	_common_set_ocon.theData_out.con_params.buffersize = 0;
+	_common_set_ocon.theData_out.con_params.rate = 0;
+	_common_set_ocon.theData_out.con_params.number_channels = 0;
+	_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_NONE;
+	_common_set_ocon.theData_out.con_params.segmentation.x = 0;
+	_common_set_ocon.theData_out.con_params.segmentation.y = 0;
 
 	// The only purpose is to trigger the output side
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_TRIGGER_ONLY;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_TRIGGER_ONLY;
 }
 
 /*
@@ -625,7 +625,7 @@ CjvxAudioFFMpegWriterDevice::produce_decoder_token()
 	else
 		params.fixedpt = false;
 	params.lendian = fileprops_wav.lendian;
-	params.fsizemax = _common_set_ldslave.theData_out.con_params.buffersize;
+	params.fsizemax = _common_set_ocon.theData_out.con_params.buffersize;
 	params.nchans = fileprops_wav.nchans;
 	params.srate = fileprops_wav.rate;
 
@@ -664,8 +664,8 @@ CjvxAudioFFMpegWriterDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 	assert(res == JVX_NO_ERROR);
 
 	// Prepare processing parameters
-	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
-	jvx_bitZSet(_common_set_ldslave.theData_out.con_data.alloc_flags, 
+	_common_set_ocon.theData_out.con_data.number_buffers = 1;
+	jvx_bitZSet(_common_set_ocon.theData_out.con_data.alloc_flags, 
 		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 
 	// New type of connection by propagating through linked elements
@@ -679,13 +679,13 @@ CjvxAudioFFMpegWriterDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 			jvxSize bytesonesample = fileprops_wav.nchans * fileprops_wav.bitssample / 8;
 			jvxData numsamples = genFFMpegWriter_device::exteded_properties.preuse_bsize_msecs.value * 0.001 * fileprops_wav.rate;
 			jvxSize numbytes = (jvxSize)numsamples * bytesonesample;
-			jvxSize numbuffers = ceil((jvxData)numbytes / (jvxData)_common_set_ldslave.theData_out.con_params.buffersize);
+			jvxSize numbuffers = ceil((jvxData)numbytes / (jvxData)_common_set_ocon.theData_out.con_params.buffersize);
 
-			preuse_buffer_sz = JVX_MAX(1, numbuffers) * _common_set_ldslave.theData_out.con_params.buffersize;
+			preuse_buffer_sz = JVX_MAX(1, numbuffers) * _common_set_ocon.theData_out.con_params.buffersize;
 			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(preuse_buffer_ptr, jvxByte, preuse_buffer_sz);
 			readposi = 0;
 			fHeight = 0;
-			readsize = _common_set_ldslave.theData_out.con_params.buffersize;
+			readsize = _common_set_ocon.theData_out.con_params.buffersize;
 			bufstatus = jvxAudioFileWriterBufferStatus::JVX_BUFFER_STATUS_NONE;
 
 			involve_read_thread = true;
@@ -693,7 +693,7 @@ CjvxAudioFFMpegWriterDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 		*/
 
 		// All parameters were set before, only very few need update
-		_common_set_ldslave.theData_out.con_data.number_buffers = 1;
+		_common_set_ocon.theData_out.con_data.number_buffers = 1;
 
 		// Start the reader
 		//wavFileReader.prepare(JVX_SIZE_UNSELECTED); // No read limit in module
@@ -790,13 +790,13 @@ CjvxAudioFFMpegWriterDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 	res = allocate_pipeline_and_buffers_prepare_to();
 
 	// Do not attach any user hint into backward direction
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
-	// _common_set_ldslave.theData_in->pipeline.idx_stage = 0;
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
+	// _common_set_icon.theData_in->pipeline.idx_stage = 0;
 
 	fParams.st = avformat_new_stream(fParams.oc, NULL);
 
 	// Extract the connection parameters for decoding
-	jvxLinkDataAttachedChain* ptrEncCtx = _common_set_ldslave.theData_in->con_link.attached_chain_single_pass;
+	jvxLinkDataAttachedChain* ptrEncCtx = _common_set_icon.theData_in->con_link.attached_chain_single_pass;
 	while (ptrEncCtx)
 	{
 		jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>* ptr_stream_txt = reinterpret_cast<jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>*>(ptrEncCtx->if_specific(JVX_LINKDATA_ATTACHED_STRING_DETECT));
@@ -812,13 +812,13 @@ CjvxAudioFFMpegWriterDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 	}
 
 	// Attach the packet containers
-	for (jvxSize i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	for (jvxSize i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 	{
-		_common_set_ldslave.theData_in->con_data.buffers[i] = reinterpret_cast<jvxHandle**>(av_packet_alloc());
+		_common_set_icon.theData_in->con_data.buffers[i] = reinterpret_cast<jvxHandle**>(av_packet_alloc());
 	}
 
 	inThreadInit = false;
-	if (jvx_bitTest(_common_set_ldslave.theData_in->con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
+	if (jvx_bitTest(_common_set_icon.theData_in->con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
 	{
 		inThreadInit = true;
 	}
@@ -838,10 +838,10 @@ CjvxAudioFFMpegWriterDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TY
 	writer_deallocate_core();
 
 	// Attach the packet containers
-	for (jvxSize i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	for (jvxSize i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 	{
-		AVPacket* pkt = reinterpret_cast<AVPacket*>(_common_set_ldslave.theData_in->con_data.buffers[i]);
-		_common_set_ldslave.theData_in->con_data.buffers[i] = nullptr;	
+		AVPacket* pkt = reinterpret_cast<AVPacket*>(_common_set_icon.theData_in->con_data.buffers[i]);
+		_common_set_icon.theData_in->con_data.buffers[i] = nullptr;	
 		av_packet_free(&pkt);
 	}
 
@@ -868,10 +868,10 @@ CjvxAudioFFMpegWriterDevice::process_buffers_icon(jvxSize mt_mask, jvxSize idx_s
 
 	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
 	{
-		idx_stage_local = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+		idx_stage_local = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 	}
 
-	pkt = (AVPacket*)_common_set_ldslave.theData_in->con_data.buffers[idx_stage_local];
+	pkt = (AVPacket*)_common_set_icon.theData_in->con_data.buffers[idx_stage_local];
 
 	// av_interleaved_write_frame(fmt_ctx, pkt);
 	if (pkt->size)
@@ -947,10 +947,10 @@ CjvxAudioFFMpegWriterDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, 
 		ld_cp = (jvxLinkDataDescriptor*)data;
 		// Do something to select another codec setting
 		CjvxAudioDevice_genpcg::properties_active.buffersize.value = 1024; // ld_cp->con_params.buffersize / (fileprops_wav.bitssample * fileprops_wav.nchans / 8);
-		_common_set_ldslave.theData_out.con_params.buffersize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
-		_common_set_ldslave.theData_out.con_params.buffersize = 1024;
-			//compute_bsize_pcm(fileprops_wav.nchans, fileprops_wav.bitssample, _common_set_ldslave.theData_out.con_params.buffersize);
-		_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
+		_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
+		_common_set_ocon.theData_out.con_params.buffersize = 1024;
+			//compute_bsize_pcm(fileprops_wav.nchans, fileprops_wav.bitssample, _common_set_ocon.theData_out.con_params.buffersize);
+		_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
 		// format_descriptor.assign(produce_decoder_token());
 		return JVX_NO_ERROR;
 	}
@@ -971,15 +971,15 @@ void
 CjvxAudioFFMpegWriterDevice::trigger_one_buffer()
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		if (res == JVX_NO_ERROR)
 		{
 			// Prepare one frame here!
 
-			_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
-			_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 		}
 	}
 }

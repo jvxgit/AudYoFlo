@@ -1010,16 +1010,16 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 	}
 
 	// In this function, we get the desired buffer target index
-	res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+	res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 	assert(res == JVX_NO_ERROR);
 
 	// At this point, we might overwrite the output buffer index in the range of valid buffer indices - but we do not do so
-	//_common_set_ldslave.theData_out.con_link.address_flags = JVX_LINKDATA_ADDRESS_FLAGS_NONE;
+	//_common_set_ocon.theData_out.con_link.address_flags = JVX_LINKDATA_ADDRESS_FLAGS_NONE;
 	
 	// =====================================================================================================
 	// From input
 	// =====================================================================================================
-	switch(_common_set_ldslave.theData_out.con_params.format)
+	switch(_common_set_ocon.theData_out.con_params.format)
 	{
 		case JVX_DATAFORMAT_DATA:
 			switch(runtime.typeSamples)
@@ -1029,9 +1029,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 					{
 						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, jvxData>(
 							(jvxInt16*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-							(jvxData*)_common_set_ldslave.theData_out.con_data.buffers[
-								*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-							_common_set_ldslave.theData_out.con_params.buffersize,
+							(jvxData*)_common_set_ocon.theData_out.con_data.buffers[
+								*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+							_common_set_ocon.theData_out.con_params.buffersize,
 							JVX_MAX_INT_16_DIV);
 					}
 					break;
@@ -1040,9 +1040,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 					{
 						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
 							(jvxInt32*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-							(jvxData*)_common_set_ldslave.theData_out.con_data.buffers[
-								*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-							_common_set_ldslave.theData_out.con_params.buffersize,
+							(jvxData*)_common_set_ocon.theData_out.con_data.buffers[
+								*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+							_common_set_ocon.theData_out.con_params.buffersize,
 							JVX_MAX_INT_32_DIV);
 					}
 					break;
@@ -1054,9 +1054,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 					{
 						jvx_convertSamples_from_bytes_shift_norm_to_flp<jvxInt32, jvxData>(
 							(char*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-							(jvxData*)_common_set_ldslave.theData_out.con_data.buffers[
-								*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-							_common_set_ldslave.theData_out.con_params.buffersize,
+							(jvxData*)_common_set_ocon.theData_out.con_data.buffers[
+								*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+							_common_set_ocon.theData_out.con_params.buffersize,
 							8, JVX_MAX_INT_32_DIV, 3);
 					}
 					break;
@@ -1073,10 +1073,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 				{
 					jvx_convertSamples_memcpy(
 						inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-						_common_set_ldslave.theData_out.con_data.buffers[
-							*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
+						_common_set_ocon.theData_out.con_data.buffers[
+							*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
 						jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value],
-						_common_set_ldslave.theData_out.con_params.buffersize);
+						_common_set_ocon.theData_out.con_params.buffersize);
 				}
 				break;
 			case ASIOSTInt24LSB:
@@ -1085,9 +1085,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 				{
 					jvx_convertSamples_from_bytes_shiftright_to_fxp<jvxInt16, jvxInt32>(
 						(char*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-						(jvxInt16*)_common_set_ldslave.theData_out.con_data.buffers[
-							*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-						3, _common_set_ldslave.theData_out.con_params.buffersize, 8);
+						(jvxInt16*)_common_set_ocon.theData_out.con_data.buffers[
+							*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+						3, _common_set_ocon.theData_out.con_params.buffersize, 8);
 				}
 				break;
 
@@ -1097,9 +1097,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt32, jvxInt16, jvxInt32>(
 					(jvxInt32*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-					(jvxInt16*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-					_common_set_ldslave.theData_out.con_params.buffersize, 16);
+					(jvxInt16*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+					_common_set_ocon.theData_out.con_params.buffersize, 16);
 			}
 			break;
 
@@ -1113,9 +1113,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt16, jvxInt32, jvxInt32>(
 					(jvxInt16*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-					(jvxInt32*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-					_common_set_ldslave.theData_out.con_params.buffersize, 16);
+					(jvxInt32*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+					_common_set_ocon.theData_out.con_params.buffersize, 16);
 			}
 			break;
 		case ASIOSTInt24LSB:
@@ -1123,9 +1123,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				jvx_convertSamples_from_bytes_shiftleft_to_fxp<jvxInt32, jvxInt32>(
 					(char*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-					(jvxInt32*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-					_common_set_ldslave.theData_out.con_params.buffersize, 3, 8);
+					(jvxInt32*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+					_common_set_ocon.theData_out.con_params.buffersize, 3, 8);
 			}
 			break;
 		case ASIOSTInt32LSB:
@@ -1133,9 +1133,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				jvx_convertSamples_memcpy(
 					(jvxInt8*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-					(jvxInt8*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-					jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_ldslave.theData_out.con_params.buffersize);
+					(jvxInt8*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+					jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_ocon.theData_out.con_params.buffersize);
 			}
 			break;
 		}
@@ -1148,9 +1148,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt16, jvxInt64, jvxInt64>(
 					(jvxInt16*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-					(jvxInt64*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-					_common_set_ldslave.theData_out.con_params.buffersize, 48);
+					(jvxInt64*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+					_common_set_ocon.theData_out.con_params.buffersize, 48);
 			}
 			break;
 		case ASIOSTInt24LSB:
@@ -1158,9 +1158,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				jvx_convertSamples_from_bytes_shiftleft_to_fxp<jvxInt64, jvxInt64>(
 					(char*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-					(jvxInt64*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-					_common_set_ldslave.theData_out.con_params.buffersize, 3, 40);
+					(jvxInt64*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+					_common_set_ocon.theData_out.con_params.buffersize, 3, 40);
 			}
 			break;
 		case ASIOSTInt32LSB:
@@ -1168,9 +1168,9 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt32, jvxInt64, jvxInt64>(
 					(jvxInt32*)inProcessing.asioBufferField[ii].buffers[doubleBufferIndex],
-					(jvxInt64*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][ii],
-					_common_set_ldslave.theData_out.con_params.buffersize, 32);
+					(jvxInt64*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+					_common_set_ocon.theData_out.con_params.buffersize, 32);
 			}
 			break;
 		}
@@ -1179,10 +1179,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 	// =====================================================================================================
 	// CORE PROCESSING
 	// =====================================================================================================
-	_common_set_ldslave.theData_out.admin.tStamp_us = tStamp_start;
+	_common_set_ocon.theData_out.admin.tStamp_us = tStamp_start;
 
 	// No info about prpeviously lost buffers in ASIO 
-	_common_set_ldslave.theData_out.admin.frames_lost_since_last_time = 0;
+	_common_set_ocon.theData_out.admin.frames_lost_since_last_time = 0;
 
 	if (inProcessing.ssilence.active)
 	{
@@ -1192,16 +1192,16 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			{
 				for (ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 				{
-					jvx_samples_clear(_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
-							jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_ldslave.theData_in->con_params.buffersize);
+					jvx_samples_clear(_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
+							jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_icon.theData_in->con_params.buffersize);
 				}
 			}
 
 			if (inProcessing.ssilence.stateEnd == JVX_STATE_PROCESSING)
 			{
-				inProcessing.ssilence.countEnd += _common_set_ldslave.theData_in->con_params.buffersize;
-				if (inProcessing.ssilence.countEnd >= JVX_DATA2SIZE(_common_set_ldslave.theData_in->con_params.rate * inProcessing.ssilence.period))
+				inProcessing.ssilence.countEnd += _common_set_icon.theData_in->con_params.buffersize;
+				if (inProcessing.ssilence.countEnd >= JVX_DATA2SIZE(_common_set_icon.theData_in->con_params.rate * inProcessing.ssilence.period))
 				{
 					inProcessing.ssilence.stateEnd = JVX_STATE_COMPLETE;
 				}
@@ -1209,7 +1209,7 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 		}
 		else
 		{
-			res = _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 			assert(res == JVX_NO_ERROR);
 		}
 	}
@@ -1217,15 +1217,15 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 	{
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "===========================" << std::endl;
-		std::cout << "ASIO input, bidx = " << _common_set_ldslave.theData_out.pipeline.idx_stage << "/" 
-			<< _common_set_ldslave.theData_out.con_data.number_buffers << std::endl;
+		std::cout << "ASIO input, bidx = " << _common_set_ocon.theData_out.pipeline.idx_stage << "/" 
+			<< _common_set_ocon.theData_out.con_data.number_buffers << std::endl;
 #endif
 
-		res = _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 
 #ifdef VERBOSE_BUFFERING_REPORT
-		std::cout << "ASIO output, bidx = " << _common_set_ldslave.theData_in->pipeline.idx_stage << "/" 
-			<< _common_set_ldslave.theData_in->con_data.number_buffers << std::endl;
+		std::cout << "ASIO output, bidx = " << _common_set_icon.theData_in->pipeline.idx_stage << "/" 
+			<< _common_set_icon.theData_in->con_data.number_buffers << std::endl;
 		std::cout << "===========================" << std::endl;
 #endif
 
@@ -1235,7 +1235,7 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 	// =====================================================================================================
 	// To output
 	// =====================================================================================================
-	switch(_common_set_ldslave.theData_out.con_params.format)
+	switch(_common_set_ocon.theData_out.con_params.format)
 	{
 		case JVX_DATAFORMAT_DATA:
 			switch(runtime.typeSamples)
@@ -1244,10 +1244,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 					for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 					{
 						jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt16>(
-							(jvxData*)_common_set_ldslave.theData_in->con_data.buffers[
-								*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+							(jvxData*)_common_set_icon.theData_in->con_data.buffers[
+								*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 							(jvxInt16*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-							_common_set_ldslave.theData_in->con_params.buffersize,
+							_common_set_icon.theData_in->con_params.buffersize,
 							JVX_MAX_INT_16_DATA);
 					}
 					break;
@@ -1255,10 +1255,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 					for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 					{
 						jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt32>(
-							(jvxData*)_common_set_ldslave.theData_in->con_data.buffers[
-								*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+							(jvxData*)_common_set_icon.theData_in->con_data.buffers[
+								*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 							(jvxInt32*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-									_common_set_ldslave.theData_in->con_params.buffersize,
+									_common_set_icon.theData_in->con_params.buffersize,
 							JVX_MAX_INT_32_DATA);
 					}
 					break;
@@ -1269,10 +1269,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 					for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 					{
 						jvx_convertSamples_from_flp_norm_to_bytes<jvxData, jvxInt32>(
-							(jvxData*)_common_set_ldslave.theData_in->con_data.buffers[
-								*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+							(jvxData*)_common_set_icon.theData_in->con_data.buffers[
+								*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 							(char*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-									_common_set_ldslave.theData_in->con_params.buffersize,
+									_common_set_icon.theData_in->con_params.buffersize,
 							JVX_MAX_INT_24_DATA, 3);
 					}
 					break;
@@ -1288,10 +1288,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 				for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 				{
 					jvx_convertSamples_memcpy(
-						_common_set_ldslave.theData_in->con_data.buffers[
-							*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+						_common_set_icon.theData_in->con_data.buffers[
+							*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 						inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-						jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_ldslave.theData_in->con_params.buffersize);
+						jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_icon.theData_in->con_params.buffersize);
 				}
 				break;
 			case ASIOSTInt24LSB:
@@ -1299,10 +1299,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 				for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 				{
 					jvx_convertSamples_from_fxp_shiftleft_to_bytes<jvxInt16, jvxInt32>(
-						(jvxInt16*)_common_set_ldslave.theData_in->con_data.buffers[
-							*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+						(jvxInt16*)_common_set_icon.theData_in->con_data.buffers[
+							*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 						(char*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-						3, _common_set_ldslave.theData_in->con_params.buffersize, 8);
+						3, _common_set_icon.theData_in->con_params.buffersize, 8);
 				}
 				break;
 
@@ -1311,10 +1311,10 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 			{
 				jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt16, jvxInt32, jvxInt32>(
-					(jvxInt16*)_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+					(jvxInt16*)_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 					(jvxInt32*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-							_common_set_ldslave.theData_in->con_params.buffersize, 16);
+							_common_set_icon.theData_in->con_params.buffersize, 16);
 			}
 			break;
 
@@ -1327,30 +1327,30 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 			{
 				jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt32, jvxInt16, jvxInt32>(
-					(jvxInt32*)_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+					(jvxInt32*)_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 					(jvxInt16*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-							_common_set_ldslave.theData_in->con_params.buffersize, 16);
+							_common_set_icon.theData_in->con_params.buffersize, 16);
 			}
 			break;
 		case ASIOSTInt24LSB:
 			for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 			{
 				jvx_convertSamples_from_fxp_shiftright_to_bytes<jvxInt32, jvxInt32>(
-					(jvxInt32*)_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+					(jvxInt32*)_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 					(char*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-					3, _common_set_ldslave.theData_in->con_params.buffersize, 8);
+					3, _common_set_icon.theData_in->con_params.buffersize, 8);
 			}
 			break;
 		case ASIOSTInt32LSB:
 			for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 			{
 				jvx_convertSamples_memcpy(
-					(jvxInt32*)_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+					(jvxInt32*)_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 					(jvxInt32*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-					jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_ldslave.theData_in->con_params.buffersize);
+					jvxDataFormat_size[CjvxAudioDevice::properties_active.format.value], _common_set_icon.theData_in->con_params.buffersize);
 			}
 			break;
 
@@ -1363,30 +1363,30 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 			for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 			{
 				jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt64, jvxInt16, jvxInt64>(
-					(jvxInt64*)_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+					(jvxInt64*)_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 					(jvxInt16*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-							_common_set_ldslave.theData_in->con_params.buffersize, 48);
+							_common_set_icon.theData_in->con_params.buffersize, 48);
 			}
 			break;
 		case ASIOSTInt24LSB:
 			for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 			{
 				jvx_convertSamples_from_fxp_shiftright_to_bytes<jvxInt32, jvxInt32>(
-					(jvxInt32*)_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+					(jvxInt32*)_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 					(char*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-					3, _common_set_ldslave.theData_in->con_params.buffersize, 40);
+					3, _common_set_icon.theData_in->con_params.buffersize, 40);
 			}
 			break;
 		case ASIOSTInt32LSB:
 			for(ii = 0; ii < inProcessing.output.numberChannelsUsed; ii++)
 			{
 				jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt64, jvxInt32, jvxInt64>(
-					(jvxInt64*)_common_set_ldslave.theData_in->con_data.buffers
-							[*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][ii],
+					(jvxInt64*)_common_set_icon.theData_in->con_data.buffers
+							[*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][ii],
 					(jvxInt32*)inProcessing.asioBufferField[ii + inProcessing.input.numberChannelsUsed].buffers[doubleBufferIndex],
-					_common_set_ldslave.theData_in->con_params.buffersize, 32);
+					_common_set_icon.theData_in->con_params.buffersize, 32);
 			}
 			break;
 		}
@@ -1399,7 +1399,7 @@ CjvxAudioAsioDevice::bufferSwitch(long doubleBufferIndex, ASIOBool directProcess
 	// ==============================================================================================
 	// Browse through chain to terminate this buffer processing
 	// ==============================================================================================
-	res = _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+	res = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 	assert(res == JVX_NO_ERROR);
 
 
@@ -1656,18 +1656,18 @@ CjvxAudioAsioDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	assert(resL == JVX_NO_ERROR);
 
 	// Start to set all parameters for chaining at first
-	_common_set_ldslave.theData_out.con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_out.con_params.format = _inproc.format;
-	_common_set_ldslave.theData_out.con_data.buffers = NULL;
+	_common_set_ocon.theData_out.con_params.buffersize = _inproc.buffersize;
+	_common_set_ocon.theData_out.con_params.format = _inproc.format;
+	_common_set_ocon.theData_out.con_data.buffers = NULL;
 #if defined(DOUBLE_BUFFERING_PIPELINE_INPUT)
-	_common_set_ldslave.theData_out.con_data.number_buffers = DOUBLE_BUFFERING_PIPELINE_INPUT;
+	_common_set_ocon.theData_out.con_data.number_buffers = DOUBLE_BUFFERING_PIPELINE_INPUT;
 #else
-	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
+	_common_set_ocon.theData_out.con_data.number_buffers = 1;
 #endif
-	_common_set_ldslave.theData_out.con_params.number_channels = _inproc.numInputs;
-	_common_set_ldslave.theData_out.con_params.rate = _inproc.samplerate;
-	_common_set_ldslave.theData_out.con_user.chain_spec_user_hints = NULL;
-	_common_set_ldslave.theData_out.con_data.alloc_flags = 
+	_common_set_ocon.theData_out.con_params.number_channels = _inproc.numInputs;
+	_common_set_ocon.theData_out.con_params.rate = _inproc.samplerate;
+	_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
+	_common_set_ocon.theData_out.con_data.alloc_flags = 
 		(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NONE;
 	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res != JVX_NO_ERROR)
@@ -1738,8 +1738,8 @@ CjvxAudioAsioDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	JVX_GET_TICKCOUNT_US_SETREF(&inProcessing.theTimestamp);
 	inProcessing.timestamp_previous = -1;
-	inProcessing.deltaT_theory_us = (jvxData)_common_set_ldslave.theData_out.con_params.buffersize /
-		(jvxData)_common_set_ldslave.theData_out.con_params.rate * 1000.0 * 1000.0;
+	inProcessing.deltaT_theory_us = (jvxData)_common_set_ocon.theData_out.con_params.buffersize /
+		(jvxData)_common_set_ocon.theData_out.con_params.rate * 1000.0 * 1000.0;
 	inProcessing.deltaT_average_us = 0;
 
 	return res;
@@ -1861,20 +1861,20 @@ CjvxAudioAsioDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	// This is the return from the link list
 
-	_common_set_ldslave.theData_in->con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = _inproc.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_params.buffersize = _inproc.buffersize;
+	_common_set_icon.theData_in->con_params.format = _inproc.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
 #if defined(DOUBLE_BUFFERING_PIPELINE_OUTPUT)
-	_common_set_ldslave.theData_in->con_data.number_buffers = 
-		JVX_MAX(_common_set_ldslave.theData_in->con_data.number_buffers, DOUBLE_BUFFERING_PIPELINE_OUTPUT);
+	_common_set_icon.theData_in->con_data.number_buffers = 
+		JVX_MAX(_common_set_icon.theData_in->con_data.number_buffers, DOUBLE_BUFFERING_PIPELINE_OUTPUT);
 #else
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
-		_common_set_ldslave.theData_in->con_data.number_buffers, 1);
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
+		_common_set_icon.theData_in->con_data.number_buffers, 1);
 #endif
-	_common_set_ldslave.theData_in->con_params.number_channels = _inproc.numOutputs;
-	_common_set_ldslave.theData_in->con_params.rate = _inproc.samplerate;
+	_common_set_icon.theData_in->con_params.number_channels = _inproc.numOutputs;
+	_common_set_icon.theData_in->con_params.rate = _inproc.samplerate;
 
-	jvx_bitSet(_common_set_ldslave.theData_in->con_data.alloc_flags, 
+	jvx_bitSet(_common_set_icon.theData_in->con_data.alloc_flags, 
 		(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 
 	// Connect the output side and start this link

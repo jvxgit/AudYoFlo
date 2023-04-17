@@ -72,7 +72,7 @@ virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_ocon(JVX_CONNECTION_FEED
 	this->test_set_output_parameters();
 #endif
 
-	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O(fdb, (&_common_set_ldslave.theData_out));
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O(fdb, (&_common_set_ocon.theData_out));
 	return _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 };
 
@@ -172,27 +172,27 @@ virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_F
 		return JVX_ERROR_WRONG_STATE;
 	}
 
-	_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = JVX_MAX(
-		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages,
+	_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages = JVX_MAX(
+		_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages,
 		_common_set_ldslave.num_additional_pipleline_stages);
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
-		_common_set_ldslave.theData_in->con_data.number_buffers,
-		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages + 1);
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
-		_common_set_ldslave.theData_in->con_data.number_buffers,
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
+		_common_set_icon.theData_in->con_data.number_buffers,
+		_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages + 1);
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
+		_common_set_icon.theData_in->con_data.number_buffers,
 		_common_set_ldslave.num_min_buffers_in);
 
 // ################################################################
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_BACKWARD_API
 
 #ifdef JVX_INPUTOUTPUTCONNECTOR_VERBOSE
-	std::cout << __FUNCTION__ << "::" << __FILE__ << ": " << __LINE__ << ": Input Number buffers = " << _common_set_ldslave.theData_in->con_data.number_buffers << std::endl;
+	std::cout << __FUNCTION__ << "::" << __FILE__ << ": " << __LINE__ << ": Input Number buffers = " << _common_set_icon.theData_in->con_data.number_buffers << std::endl;
 #endif
 
-	res = _common_set_ldslave.data_processor->prepare_sender_to_receiver(_common_set_ldslave.theData_in);
+	res = _common_set_ldslave.data_processor->prepare_sender_to_receiver(_common_set_icon.theData_in);
 #else
 
-	res = jvx_allocate_pipeline_and_buffers_prepare_to(_common_set_ldslave.theData_in
+	res = jvx_allocate_pipeline_and_buffers_prepare_to(_common_set_icon.theData_in
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
 		, _common_set_ldslave.descriptor.c_str()
 #endif
@@ -205,13 +205,13 @@ virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_F
 	{
 
 		// The only deviation may be the number of output channels - which is taken from the node parameter set
-		_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
-		_common_set_ldslave.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
-		_common_set_ldslave.theData_out.con_sync.type_timestamp = _common_set_ldslave.theData_in->con_sync.type_timestamp;
+		_common_set_ocon.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
+		_common_set_ocon.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
+		_common_set_ocon.theData_out.con_sync.type_timestamp = _common_set_icon.theData_in->con_sync.type_timestamp;
 
 		// Forward the "forward allocation flags" - JVX_LINKDATA_ALLOCATION_MASK_FORWARD_ELEMENT_TO_ELEMENT is declared in TjvxDataLinkDescriptor.h
-		// We can input additional flags by setting _common_set_ldslave.theData_out.con_data.alloc_flags in advance
-		_common_set_ldslave.theData_out.con_data.alloc_flags |= (_common_set_ldslave.theData_in->con_data.alloc_flags & _common_set_ldslave.fwd_alloc_flags);
+		// We can input additional flags by setting _common_set_ocon.theData_out.con_data.alloc_flags in advance
+		_common_set_ocon.theData_out.con_data.alloc_flags |= (_common_set_icon.theData_in->con_data.alloc_flags & _common_set_ldslave.fwd_alloc_flags);
 
 		res = _prepare_connect_icon(forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
@@ -220,38 +220,38 @@ virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_F
 		if (res == JVX_NO_ERROR)
 		{
 #ifdef JVX_INPUTOUTPUTCONNECTOR_VERBOSE
-			std::cout << __FUNCTION__ << "::" << __FILE__ << ": " << __LINE__ << ": Output Number buffers = " << _common_set_ldslave.theData_out.con_data.number_buffers << std::endl;
+			std::cout << __FUNCTION__ << "::" << __FILE__ << ": " << __LINE__ << ": Output Number buffers = " << _common_set_ocon.theData_out.con_data.number_buffers << std::endl;
 #endif
 
 			// This is for convenience: support old type of processing principle
-			_common_set_ldslave.theData_in->con_compat.buffersize =
-				_common_set_ldslave.theData_out.con_params.buffersize;
-			_common_set_ldslave.theData_in->con_compat.format =
-				_common_set_ldslave.theData_out.con_params.format;
-			_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
-				_common_set_ldslave.theData_out.con_data.buffers;
-			_common_set_ldslave.theData_in->con_compat.number_buffers =
-				_common_set_ldslave.theData_out.con_data.number_buffers;
-			_common_set_ldslave.theData_in->con_compat.number_channels =
-				_common_set_ldslave.theData_out.con_params.number_channels;
-			_common_set_ldslave.theData_in->con_compat.rate =
-				_common_set_ldslave.theData_out.con_params.rate;
+			_common_set_icon.theData_in->con_compat.buffersize =
+				_common_set_ocon.theData_out.con_params.buffersize;
+			_common_set_icon.theData_in->con_compat.format =
+				_common_set_ocon.theData_out.con_params.format;
+			_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender =
+				_common_set_ocon.theData_out.con_data.buffers;
+			_common_set_icon.theData_in->con_compat.number_buffers =
+				_common_set_ocon.theData_out.con_data.number_buffers;
+			_common_set_icon.theData_in->con_compat.number_channels =
+				_common_set_ocon.theData_out.con_params.number_channels;
+			_common_set_icon.theData_in->con_compat.rate =
+				_common_set_ocon.theData_out.con_params.rate;
 			
-			_common_set_ldslave.theData_in->con_compat.ext.segmentation_x =
-				_common_set_ldslave.theData_out.con_params.segmentation.x;
-			_common_set_ldslave.theData_in->con_compat.ext.segmentation_y =
-				_common_set_ldslave.theData_out.con_params.segmentation.y;
-			_common_set_ldslave.theData_in->con_compat.ext.subformat =
-				_common_set_ldslave.theData_out.con_params.format_group;
-			_common_set_ldslave.theData_in->con_compat.ext.hints =
-				_common_set_ldslave.theData_out.con_params.hints;
+			_common_set_icon.theData_in->con_compat.ext.segmentation_x =
+				_common_set_ocon.theData_out.con_params.segmentation.x;
+			_common_set_icon.theData_in->con_compat.ext.segmentation_y =
+				_common_set_ocon.theData_out.con_params.segmentation.y;
+			_common_set_icon.theData_in->con_compat.ext.subformat =
+				_common_set_ocon.theData_out.con_params.format_group;
+			_common_set_icon.theData_in->con_compat.ext.hints =
+				_common_set_ocon.theData_out.con_params.hints;
 
 			// Here would be the right placce to enque a backward user hint
 
 			// Now, create forwarding of backward oriented user hints
-			_common_set_ldslave.theData_in->con_compat.user_hints = _common_set_ldslave.theData_out.con_compat.user_hints;
+			_common_set_icon.theData_in->con_compat.user_hints = _common_set_ocon.theData_out.con_compat.user_hints;
 
-			res = _common_set_ldslave.data_processor->prepare_complete_receiver_to_sender(_common_set_ldslave.theData_in);
+			res = _common_set_ldslave.data_processor->prepare_complete_receiver_to_sender(_common_set_icon.theData_in);
 			if (res != JVX_NO_ERROR)
 			{
 				goto exit_error_1;
@@ -275,12 +275,12 @@ virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_F
 exit_error_1:
 
 	resF = _postprocess_connect_icon(forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb_loc));
-	jvx_neutralDataLinkDescriptor(_common_set_ldslave.theData_in, false);
+	jvx_neutralDataLinkDescriptor(_common_set_icon.theData_in, false);
 
 exit_error_0:
 
-	resF = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_ldslave.theData_in);
-	jvx_neutralDataLinkDescriptor(&_common_set_ldslave.theData_out, true);
+	resF = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_icon.theData_in);
+	jvx_neutralDataLinkDescriptor(&_common_set_ocon.theData_out, true);
 
 #endif
 	// ################################################################
@@ -307,21 +307,21 @@ virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTI
 	assert(_common_set_min.theState >= JVX_STATE_PREPARED);
 
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_BACKWARD_API
-	res = _common_set_ldslave.data_processor->before_postprocess_receiver_to_sender(_common_set_ldslave.theData_in);
+	res = _common_set_ldslave.data_processor->before_postprocess_receiver_to_sender(_common_set_icon.theData_in);
 	assert(res == JVX_NO_ERROR);
 
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
 
-	_common_set_ldslave.theData_in->con_compat.buffersize = 0;
-	_common_set_ldslave.theData_in->con_compat.format = JVX_DATAFORMAT_NONE;
-	_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
-	_common_set_ldslave.theData_in->con_compat.number_buffers = 0;
-	_common_set_ldslave.theData_in->con_compat.number_channels = 0;
-	_common_set_ldslave.theData_in->con_compat.rate = 0;
-	_common_set_ldslave.theData_in->con_compat.ext.hints = 0;
-	_common_set_ldslave.theData_in->con_compat.ext.segmentation_x = 0;
-	_common_set_ldslave.theData_in->con_compat.ext.segmentation_y = 0;
-	_common_set_ldslave.theData_in->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;
+	_common_set_icon.theData_in->con_compat.buffersize = 0;
+	_common_set_icon.theData_in->con_compat.format = JVX_DATAFORMAT_NONE;
+	_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
+	_common_set_icon.theData_in->con_compat.number_buffers = 0;
+	_common_set_icon.theData_in->con_compat.number_channels = 0;
+	_common_set_icon.theData_in->con_compat.rate = 0;
+	_common_set_icon.theData_in->con_compat.ext.hints = 0;
+	_common_set_icon.theData_in->con_compat.ext.segmentation_x = 0;
+	_common_set_icon.theData_in->con_compat.ext.segmentation_y = 0;
+	_common_set_icon.theData_in->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;
 
 #endif
 
@@ -331,11 +331,11 @@ virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTI
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_BACKWARD_API
 	
 	// Deallocate buffers in theData_in
-	res = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_ldslave.theData_in);
+	res = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_icon.theData_in);
 
 #else
 
-	res = jvx_deallocate_pipeline_and_buffers_postprocess_to(_common_set_ldslave.theData_in);
+	res = jvx_deallocate_pipeline_and_buffers_postprocess_to(_common_set_icon.theData_in);
 #endif
 	assert(res == JVX_NO_ERROR);
 
@@ -462,32 +462,32 @@ virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask,
 	jvxErrorType res = JVX_NO_ERROR;
 	 
 #ifdef JVX_INPUTOUTPUTCONNECTOR_VERBOSE
-	std::cout << __FUNCTION__ << "::" << __FILE__ << ": " << __LINE__ << ": Input IDX=" << _common_set_ldslave.theData_in->con_pipeline.idx_stage << "; Output IDX=" << _common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender << std::endl;
+	std::cout << __FUNCTION__ << "::" << __FILE__ << ": " << __LINE__ << ": Input IDX=" << _common_set_icon.theData_in->con_pipeline.idx_stage << "; Output IDX=" << _common_set_icon.theData_in->con_compat.idx_receiver_to_sender << std::endl;
 #endif
 	// Connect output buffer index to buffer index in processing function
 	// This is always the primary stage, therefore, we just copy the index
-	if (_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr)
+	if (_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr)
 	{
-		_common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+		_common_set_icon.theData_in->con_compat.idx_receiver_to_sender = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 	}
 	else
 	{
 		// Option with no output
-		_common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender = JVX_SIZE_UNSELECTED;
+		_common_set_icon.theData_in->con_compat.idx_receiver_to_sender = JVX_SIZE_UNSELECTED;
 	}
 
 #ifdef VERBOSE_BUFFERING_REPORT
 	jvxSize i;
 	jvxApiString str;
 	jvxSize cs = JVX_SIZE_UNSELECTED;
-	std::cout << "Node input <-> output, bidx = " << _common_set_ldslave.theData_in->con_pipeline.idx_stage << "/"
-		<< _common_set_ldslave.theData_in->con_data.number_buffers 
-		<< "<->" << _common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender <<  "/"
-		<< _common_set_ldslave.theData_in->con_compat.number_buffers << std::endl;
+	std::cout << "Node input <-> output, bidx = " << _common_set_icon.theData_in->con_pipeline.idx_stage << "/"
+		<< _common_set_icon.theData_in->con_data.number_buffers 
+		<< "<->" << _common_set_icon.theData_in->con_compat.idx_receiver_to_sender <<  "/"
+		<< _common_set_icon.theData_in->con_compat.number_buffers << std::endl;
 	std::cout << "Input pipeline:" << std::endl;
-	for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 	{
-		cs = _common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[i];
+		cs = _common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[i];
 		if (JVX_CHECK_SIZE_SELECTED(cs))
 		{
 			_common_set.theToolsHost->descriptor_unique_id(cs, &str);
@@ -500,9 +500,9 @@ virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask,
 	}
 	std::cout << std::endl;
 	std::cout << "Output pipeline:" << std::endl;
-	for (i = 0; i < _common_set_ldslave.theData_out.con_data.number_buffers; i++)
+	for (i = 0; i < _common_set_ocon.theData_out.con_data.number_buffers; i++)
 	{
-		cs = _common_set_ldslave.theData_out.con_pipeline.reserve_buffer_pipeline_stage[i];
+		cs = _common_set_ocon.theData_out.con_pipeline.reserve_buffer_pipeline_stage[i];
 		if (JVX_CHECK_SIZE_SELECTED(cs))
 		{
 			_common_set.theToolsHost->descriptor_unique_id(cs, &str);
@@ -517,14 +517,14 @@ virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask,
 #endif
 
 	// Override pipeline stage if specified
-	jvxSize run_idx_stage = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+	jvxSize run_idx_stage = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 	if (JVX_CHECK_SIZE_SELECTED(idx_stage))
 	{
 		run_idx_stage = idx_stage;
 	}
-	res = _common_set_ldslave.data_processor->process_st(_common_set_ldslave.theData_in,
+	res = _common_set_ldslave.data_processor->process_st(_common_set_icon.theData_in,
 		run_idx_stage,
-		_common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender);
+		_common_set_icon.theData_in->con_compat.idx_receiver_to_sender);
 
 	if (res != JVX_NO_ERROR)
 	{
@@ -533,8 +533,8 @@ virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask,
 
 	if (_common_set_ldslave.copy_timestamp_inout)
 	{
-		res = jvx_copyDataLinkDescriptorSync(_common_set_ldslave.theData_in, run_idx_stage,
-			&_common_set_ldslave.theData_out, _common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender);
+		res = jvx_copyDataLinkDescriptorSync(_common_set_icon.theData_in, run_idx_stage,
+			&_common_set_ocon.theData_out, _common_set_icon.theData_in->con_compat.idx_receiver_to_sender);
 		assert(res == JVX_NO_ERROR);
 	}
 

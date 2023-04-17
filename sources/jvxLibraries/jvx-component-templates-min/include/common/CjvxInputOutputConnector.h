@@ -4,6 +4,8 @@
 // #define JVX_VERBOSE_CJVXINPUTCONNECTOR_H
 #include "CjvxJson.h"
 #include "HjvxMisc.h"
+#include "common/CjvxInputConnector.h"
+#include "common/CjvxOutputConnector.h"
 
 #define JVX_TRIGGER_TEST_CHAIN_1IO_CONNECTOR() \
 	{ \
@@ -15,39 +17,11 @@
 		} \
 	}
 
-class CjvxInputOutputConnector
+class CjvxInputOutputConnector: public CjvxInputConnectorCore, public CjvxOutputConnectorCore
 {
 protected:
 
-	class common_set_icon_t
-	{
-	public:
-		IjvxConnectorBridge* conn_in = nullptr;
-		jvxLinkDataDescriptor* theData_in = nullptr;
-		IjvxDataConnectionCommon* theCommon_to = nullptr;
-
-		struct
-		{
-			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
-			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
-		} caps_in;
-	};
-
-	class common_set_ocon_t
-	{
-	public:
-		IjvxConnectorBridge* conn_out = nullptr;
-		jvxLinkDataDescriptor theData_out;
-		IjvxDataConnectionCommon* theCommon_from = nullptr;
-
-		struct
-		{
-			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
-			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
-		} caps_out;
-	};
-
-	class common_set_ldslave_t: public common_set_icon_t, public common_set_ocon_t
+	class common_set_ldslave_t
 	{
 	public:
 		IjvxDataProcessor* data_processor = nullptr;
@@ -82,13 +56,12 @@ protected:
 
 	common_set_ldslave_t _common_set_ldslave;
 
-
 	CjvxInputOutputConnector();
 	~CjvxInputOutputConnector();
 
 	jvxErrorType _available_connector(jvxBool* isAvail);
 
- jvxErrorType _associated_common_icon(IjvxDataConnectionCommon** ref);
+	jvxErrorType _associated_common_icon(IjvxDataConnectionCommon** ref);
 
 	jvxErrorType _associated_common_ocon(IjvxDataConnectionCommon** ref);
 

@@ -96,10 +96,10 @@ CjvxAuNCaptureFile::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		genCaptureFile_node::monitor.buffer_drops.value = 0;
 		capture_output.set_parameters(
-			_common_set_ldslave.theData_in->con_params.buffersize,
-			_common_set_ldslave.theData_in->con_params.rate,
-			_common_set_ldslave.theData_in->con_params.number_channels,
-			_common_set_ldslave.theData_in->con_params.format);
+			_common_set_icon.theData_in->con_params.buffersize,
+			_common_set_icon.theData_in->con_params.rate,
+			_common_set_icon.theData_in->con_params.number_channels,
+			_common_set_icon.theData_in->con_params.format);
 	}
 	return res;
 }
@@ -124,8 +124,8 @@ CjvxAuNCaptureFile::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxHandle** in_bufs = NULL;
 	jvxSize idx_stage_local = idx_stage;
 	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
-		idx_stage_local = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
-	in_bufs = _common_set_ldslave.theData_in->con_data.buffers[idx_stage_local];
+		idx_stage_local = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+	in_bufs = _common_set_icon.theData_in->con_data.buffers[idx_stage_local];
 
 	res = capture_output.write_data(in_bufs);
 	if (res != JVX_NO_ERROR)

@@ -170,16 +170,16 @@ CjvxNetworkMasterDevice::ic_callback_link_provide_data_and_length(jvxSize chan, 
 					JVX_LOCK_MUTEX(_common_set._safeAccessStateBound.the_lock);
 					if(_common_set_min.theState == JVX_STATE_PROCESSING)
 					{
-						if (*szBestFit != (jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format] *
-							_common_set_ldslave.theData_out.con_params.buffersize))
+						if (*szBestFit != (jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] *
+							_common_set_ocon.theData_out.con_params.buffersize))
 						{
-							std::cout << "Warning, found " << *szBestFit << " bytes, expected " << (jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format] *
-								_common_set_ldslave.theData_out.con_params.buffersize) << " bytes." << std::endl;
+							std::cout << "Warning, found " << *szBestFit << " bytes, expected " << (jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] *
+								_common_set_ocon.theData_out.con_params.buffersize) << " bytes." << std::endl;
 						}
 						// Routing of input cannel
-						*szBestFit = JVX_MIN(*szBestFit, (jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format] * 
-							_common_set_ldslave.theData_out.con_params.buffersize));
-						*fldUse = (char*)_common_set_ldslave.theData_out.con_data.buffers[inProcessing.idSendIn][inConnection.oneChannelInOut.idxChannel];
+						*szBestFit = JVX_MIN(*szBestFit, (jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] * 
+							_common_set_ocon.theData_out.con_params.buffersize));
+						*fldUse = (char*)_common_set_ocon.theData_out.con_data.buffers[inProcessing.idSendIn][inConnection.oneChannelInOut.idxChannel];
 					}
 					else
 					{
@@ -306,7 +306,7 @@ CjvxNetworkMasterDevice::ic_callback_link_report_data_and_read(jvxSize, char*, j
 							if (resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
 							{
 								inConnection.channel.inUse = true;
-								for (j = 0; j < _common_set_ldslave.theData_in->con_params.number_channels; j++)
+								for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 								{
 									jvxAdvProtocolDataP* hdr = (jvxAdvProtocolDataP*)(inProcessing.tx_fields[inProcessing.idSendOut][j] + inConnection.fldPrepend);
 									/*
@@ -380,11 +380,11 @@ CjvxNetworkMasterDevice::ic_callback_link_report_data_and_read(jvxSize, char*, j
 							
 							if(inProcessing.fillHeight < inProcessing.numberBuffersMax -1)
 							{
-								_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+								_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 								inProcessing.fillHeight++;
-								inProcessing.idSendIn = (inProcessing.idSendIn + 1) % _common_set_ldslave.theData_out.con_data.number_buffers;
-								inProcessing.idSendOut = (inProcessing.idSendOut + 1) % _common_set_ldslave.theData_in->con_data.number_buffers;
-								_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+								inProcessing.idSendIn = (inProcessing.idSendIn + 1) % _common_set_ocon.theData_out.con_data.number_buffers;
+								inProcessing.idSendOut = (inProcessing.idSendOut + 1) % _common_set_icon.theData_in->con_data.number_buffers;
+								_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 								jvx_thread_wakeup(theThread.theThreadHandle);
 							}
 							else

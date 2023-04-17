@@ -57,15 +57,15 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 	//jvxSize idx_receiver_to_sender_local = 0;
 
 	//jvxLinkDataDescriptor* theData, 
-	jvxSize idx_device2genwrapper = *theRelocator._common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
-	jvxSize idx_genwrapper2queue = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+	jvxSize idx_device2genwrapper = *theRelocator._common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+	jvxSize idx_genwrapper2queue = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 
-	jvxSize idx_queue2genwrapper = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
-	jvxSize idx_genwrapper2device = *theRelocator._common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+	jvxSize idx_queue2genwrapper = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+	jvxSize idx_genwrapper2device = *theRelocator._common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 
 	// The following is due to the direct linkage:
-	//assert(_common_set_ldslave.theData_out.pipeline.idx_stage == idx_sender_to_receiver);
-	//assert(_common_set_ldslave.theData_in->pipeline.idx_stage == idx_receiver_to_sender);
+	//assert(_common_set_ocon.theData_out.pipeline.idx_stage == idx_sender_to_receiver);
+	//assert(_common_set_icon.theData_in->pipeline.idx_stage == idx_receiver_to_sender);
 
 	if (processingControl.inProc.timeStamp_prev_hw > 0)
 	{
@@ -88,13 +88,13 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 	if (proc_fields.seq_operation_in == PROC) 
 	{
 		// Align buffer indices to hardware
-		idx_sender_to_receiver_local = theRelocator._common_set_ldslave.theData_in->pipeline.idx_stage;
+		idx_sender_to_receiver_local = theRelocator._common_set_icon.theData_in->pipeline.idx_stage;
 	}
 
 	if (proc_fields.seq_operation_out == PROC)
 	{
 		// Align buffer indices to hardware
-		idx_receiver_to_sender_local = theRelocator._common_set_ldslave.theData_out.pipeline.idx_stage;
+		idx_receiver_to_sender_local = theRelocator._common_set_ocon.theData_out.pipeline.idx_stage;
 	}
 	*/
 	// =============================================================================================================
@@ -371,9 +371,9 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "input side conversion: Map idx " << idx_device2genwrapper << "/"
-			<< theRelocator._common_set_ldslave.theData_in->con_data.number_buffers
+			<< theRelocator._common_set_icon.theData_in->con_data.number_buffers
 			<< " to " << idx_genwrapper2queue << "/"
-			<< _common_set_ldslave.theData_out.con_data.number_buffers
+			<< _common_set_ocon.theData_out.con_data.number_buffers
 			<< std::endl;
 #endif
 
@@ -383,7 +383,7 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 			jvxSize idxIn = runtime.channelMappings.inputChannelMapper_hwrev[i];
 			proc_fields.resamplersIn_hdl[i]->process(
 				proc_fields.ptrA_in_net[idx_device2genwrapper][i], 
-				_common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2queue][idxIn]);
+				_common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2queue][idxIn]);
 		}
 		break;
 
@@ -391,9 +391,9 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "input side conversion: Map idx " << idx_device2genwrapper << "/"
-			<< theRelocator._common_set_ldslave.theData_in->con_data.number_buffers
+			<< theRelocator._common_set_icon.theData_in->con_data.number_buffers
 			<< " to " << idx_genwrapper2queue << "/"
-			<< _common_set_ldslave.theData_out.con_data.number_buffers
+			<< _common_set_ocon.theData_out.con_data.number_buffers
 			<< std::endl;
 #endif
 
@@ -404,7 +404,7 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 			jvxSize idxIn = runtime.channelMappings.inputChannelMapper_hwrev[i];
 			proc_fields.convertersIn_hdl[i]->process(
 				proc_fields.ptrA_in_net[idx_device2genwrapper][i], 
-				_common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2queue][idxIn],
+				_common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2queue][idxIn],
 				processingControl.computedParameters.bSize_sw);
 		}
 		break;
@@ -412,9 +412,9 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "input side conversion: Map idx " << idx_device2genwrapper << "/" 
-			<< theRelocator._common_set_ldslave.theData_in->con_data.number_buffers 
+			<< theRelocator._common_set_icon.theData_in->con_data.number_buffers 
 			<< " to " << idx_genwrapper2queue << "/" 
-			<< _common_set_ldslave.theData_out.con_data.number_buffers 
+			<< _common_set_ocon.theData_out.con_data.number_buffers 
 			<< std::endl;
 #endif
 
@@ -426,7 +426,7 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 				proc_fields.ptrA_in_net[idx_device2genwrapper][i], proc_fields.ptrB_in[i]);
 			proc_fields.convertersIn_hdl[i]->process(
 				proc_fields.ptrB_in[i],
-				_common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2queue][idxIn],
+				_common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2queue][idxIn],
 				processingControl.computedParameters.bSize_sw);
 		}
 		break;
@@ -439,12 +439,12 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 	if (jvx_bitTest(properties_active_higher.levelHandlingInput.value.selection(), 0))
 	{		
-		assert(processingControl.inProc.params_fixed_runtime.chans_in == _common_set_ldslave.theData_out.con_params.number_channels);
+		assert(processingControl.inProc.params_fixed_runtime.chans_in == _common_set_ocon.theData_out.con_params.number_channels);
 		jvx_fieldLevelGainClip(
-			_common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2queue],
-			_common_set_ldslave.theData_out.con_params.number_channels,
-			_common_set_ldslave.theData_out.con_params.buffersize,
-			_common_set_ldslave.theData_out.con_params.format,
+			_common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2queue],
+			_common_set_ocon.theData_out.con_params.number_channels,
+			_common_set_ocon.theData_out.con_params.buffersize,
+			_common_set_ocon.theData_out.con_params.format,
 			processingControl.levels.input_avrg,
 			processingControl.levels.input_max,
 			processingControl.levels.input_gain,
@@ -456,18 +456,18 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 	// =======================================================================
 	// Forward data to next connected object
 	// =======================================================================
-	_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+	_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 
-	for(i = 0; i < _common_set_ldslave.theData_out.con_params.number_channels; i++)
+	for(i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
 	{
 		jvxSize mapi = processingControl.levels.input_channel_map[i];
 		if(processingControl.levels.direct[mapi] == 1)
 		{
 			for(k = 0; k < processingControl.levels.num_entries_output; k++)
 			{
-				jvx_fieldMix(_common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2queue][i],
-					_common_set_ldslave.theData_in->con_data.buffers[idx_queue2genwrapper][k],
-					_common_set_ldslave.theData_in->con_params.buffersize, _common_set_ldslave.theData_in->con_params.format);
+				jvx_fieldMix(_common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2queue][i],
+					_common_set_icon.theData_in->con_data.buffers[idx_queue2genwrapper][k],
+					_common_set_icon.theData_in->con_params.buffersize, _common_set_icon.theData_in->con_params.format);
 			}
 		}
 	}
@@ -475,12 +475,12 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 	if(jvx_bitTest(properties_active_higher.levelHandlingOutput.value.selection(),0))
 	{
-		assert(processingControl.inProc.params_fixed_runtime.chans_out == _common_set_ldslave.theData_in->con_params.number_channels);
+		assert(processingControl.inProc.params_fixed_runtime.chans_out == _common_set_icon.theData_in->con_params.number_channels);
 		jvx_fieldLevelGainClip(
-			_common_set_ldslave.theData_in->con_data.buffers[idx_queue2genwrapper],
-			_common_set_ldslave.theData_in->con_params.number_channels,
-			_common_set_ldslave.theData_in->con_params.buffersize,
-			_common_set_ldslave.theData_in->con_params.format,
+			_common_set_icon.theData_in->con_data.buffers[idx_queue2genwrapper],
+			_common_set_icon.theData_in->con_params.number_channels,
+			_common_set_icon.theData_in->con_params.buffersize,
+			_common_set_icon.theData_in->con_params.format,
 			processingControl.levels.output_avrg,
 			processingControl.levels.output_max,
 			processingControl.levels.output_gain,
@@ -502,9 +502,9 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "output side conversion: Map idx " << idx_queue2genwrapper << "/"
-			<< _common_set_ldslave.theData_in->con_data.number_buffers
+			<< _common_set_icon.theData_in->con_data.number_buffers
 			<< " to " << idx_genwrapper2device << "/"
-			<< theRelocator._common_set_ldslave.theData_out.con_data.number_buffers
+			<< theRelocator._common_set_ocon.theData_out.con_data.number_buffers
 			<< std::endl;
 #endif
 
@@ -513,7 +513,7 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 			jvxSize idxOut = i; // runtime.channelMappings.outputChannelMapper_hwrev[i];
 			proc_fields.resamplersOut_hdl[i]->process(
 				proc_fields.ptrA_out_net[idx_queue2genwrapper][i],
-				theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2device][idxOut]);
+				theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2device][idxOut]);
 		}
 		break;
 
@@ -521,9 +521,9 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "output side conversion: Map idx " << idx_queue2genwrapper << "/"
-			<< _common_set_ldslave.theData_in->con_data.number_buffers
+			<< _common_set_icon.theData_in->con_data.number_buffers
 			<< " to " << idx_genwrapper2device << "/"
-			<< theRelocator._common_set_ldslave.theData_out.con_data.number_buffers
+			<< theRelocator._common_set_ocon.theData_out.con_data.number_buffers
 			<< std::endl;
 #endif
 
@@ -531,8 +531,8 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 		{
 			jvxSize idxOut = i; // runtime.channelMappings.outputChannelMapper_hwrev[i];
 			proc_fields.convertersOut_hdl[i]->process(
-				proc_fields.ptrA_out_net[*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][i],
-				theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2device][idxOut],
+				proc_fields.ptrA_out_net[*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][i],
+				theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2device][idxOut],
 				processingControl.computedParameters.bSize_sw);
 		}
 		break;
@@ -540,9 +540,9 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "output side conversion: Map idx " << idx_queue2genwrapper << "/"
-			<< _common_set_ldslave.theData_in->con_data.number_buffers
+			<< _common_set_icon.theData_in->con_data.number_buffers
 			<< " to " << idx_genwrapper2device << "/"
-			<< theRelocator._common_set_ldslave.theData_out.con_data.number_buffers
+			<< theRelocator._common_set_ocon.theData_out.con_data.number_buffers
 			<< std::endl;
 #endif
 
@@ -550,12 +550,12 @@ CjvxGenericWrapperDevice::process_sync(jvxSize mt_mask, jvxSize idx_stage)
 		{
 			jvxSize idxOut = i; // runtime.channelMappings.outputChannelMapper_hwrev[i];
 			proc_fields.convertersOut_hdl[i]->process(
-				proc_fields.ptrA_out_net[*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][i],
+				proc_fields.ptrA_out_net[*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][i],
 				proc_fields.ptrB_out[i],
 				processingControl.computedParameters.bSize_sw);
 			proc_fields.resamplersOut_hdl[i]->process(
 				proc_fields.ptrB_out[i], 
-				theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_genwrapper2device][idxOut]);
+				theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_genwrapper2device][idxOut]);
 		}
 		break;
 	default:
@@ -767,7 +767,7 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 	jvxSize idx_receiver_to_sender*/
 	jvxSize mt_mask, jvxSize idx_stage)
 {
-	// _common_set_ldslave.theData_in, _common_set_ldslave.theData_in->pipeline.idx_stage, _common_set_ldslave.theData_out.pipeline.idx_stage
+	// _common_set_icon.theData_in, _common_set_icon.theData_in->pipeline.idx_stage, _common_set_ocon.theData_out.pipeline.idx_stage
 	jvxSize i;
 	jvxErrorType resL = JVX_NO_ERROR;
 	jvxTick timeStart = JVX_GET_TICKCOUNT_US_GET_CURRENT(&processingControl.inProc.tStampRef);
@@ -775,8 +775,8 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 	jvxInt32 numIn = processingControl.computedParameters.bSize_hw_ds;
 	jvxInt32 spaceOut = processingControl.computedParameters.bSize_hw_ds;
 
-	jvxSize idx_sender_to_receiver = *theRelocator._common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
-	jvxSize idx_receiver_to_sender = *theRelocator._common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+	jvxSize idx_sender_to_receiver = *theRelocator._common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+	jvxSize idx_receiver_to_sender = *theRelocator._common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 
 #if defined( JVX_ASYNC_BUFFER_DEBUG_CNT)
 	jvxTick tt = 0;
@@ -793,10 +793,10 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 
 #ifdef VERBOSE_BUFFERING_REPORT
 	std::cout << "async input side, map bidx " << idx_sender_to_receiver << "/"
-		<< theRelocator._common_set_ldslave.theData_in->con_data.number_buffers 
+		<< theRelocator._common_set_icon.theData_in->con_data.number_buffers 
 		<< " to synchronizer" << std::endl;
 	std::cout << "async input side, map synchronizer to bidx " << idx_receiver_to_sender << "/"
-		<< theRelocator._common_set_ldslave.theData_out.con_data.number_buffers << std::endl;
+		<< theRelocator._common_set_ocon.theData_out.con_data.number_buffers << std::endl;
 #endif
 
 	if(processingControl.inProc.timeStamp_prev_hw > 0)
@@ -865,7 +865,7 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 		// Output 0 values instead
 		for(i = 0; i < (jvxSize)processingControl.inProc.params_fixed_runtime.chanshw_out; i++)
 		{
-			memset(theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][i], 0, jvxDataFormat_size[processingControl.computedParameters.form_hw]);
+			memset(theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][i], 0, jvxDataFormat_size[processingControl.computedParameters.form_hw]);
 		}
 		//this->processingControl.performance.numAudioThreadFailed++; // <-report number of lost frames
 		CjvxAudioDevice_genpcg::properties_active.lostBuffers.value++;
@@ -946,7 +946,7 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 			for(i = 0; i < (jvxSize)processingControl.inProc.params_fixed_runtime.chanshw_out; i++)
 			{
 				resL = proc_fields.circularBuffersOut[i]->read((jvxByte*)
-					theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][i], processingControl.computedParameters.bSize_hw);
+					theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][i], processingControl.computedParameters.bSize_hw);
 				if(resL != JVX_NO_ERROR)
 				{
 					_report_text_message("Circular buffer read failed in collecting thread.", JVX_REPORT_PRIORITY_WARNING);
@@ -964,7 +964,7 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 					_report_text_message("Circular buffer read failed in collecting thread.", JVX_REPORT_PRIORITY_WARNING);
 				}
 				proc_fields.resamplersOut_hdl[i]->process(
-					proc_fields.ptrB_out[i], theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][i]);
+					proc_fields.ptrB_out[i], theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][i]);
 			}
 			break;
 
@@ -977,7 +977,7 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 					_report_text_message("Circular buffer read failed in collecting thread.", JVX_REPORT_PRIORITY_WARNING);
 				}
 				proc_fields.convertersOut_hdl[i]->process(
-					proc_fields.ptrB_out[i], theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][i],
+					proc_fields.ptrB_out[i], theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][i],
 					processingControl.computedParameters.bSize_hw_ds);
 			}
 			break;
@@ -995,7 +995,7 @@ CjvxGenericWrapperDevice::process_async(/*jvxLinkDataDescriptor* theData, jvxSiz
 					proc_fields.ptrC_out[i],
 					processingControl.computedParameters.bSize_hw_ds);
 				proc_fields.resamplersOut_hdl[i]->process(
-					proc_fields.ptrC_out[i], theRelocator._common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][i]);
+					proc_fields.ptrC_out[i], theRelocator._common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][i]);
 			}
 			break;
 		default:
@@ -1113,14 +1113,14 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 		}
 
 
-		jvxSize idxBufferIn = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-		jvxSize idxBufferOut = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+		jvxSize idxBufferIn = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+		jvxSize idxBufferOut = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 
 #ifdef VERBOSE_BUFFERING_REPORT
 		std::cout << "async processing side to queue, map synchronizer to bidx " << idxBufferIn << "/"
-			<< _common_set_ldslave.theData_out.con_data.number_buffers << std::endl;
+			<< _common_set_ocon.theData_out.con_data.number_buffers << std::endl;
 		std::cout << "async processing side to queue, map bidx  " << idxBufferOut << "/"
-			<< _common_set_ldslave.theData_in->con_data.number_buffers << " to synchronizer" << std::endl;
+			<< _common_set_icon.theData_in->con_data.number_buffers << " to synchronizer" << std::endl;
 #endif
 		if(processingControl.inProc.timeStamp_prev_sw > 0)
 		{
@@ -1272,7 +1272,7 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 					for(j = 0; j < (jvxSize)onInit.theFilesRef->theInputFiles[i].common.number_channels; j++)
 					{
 						memset(onInit.theFilesRef->theInputFiles[i].common.processing.fieldSamplesSW[
-							*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][j], 0, proc_fields.szElementSW * processingControl.computedParameters.bSize_sw);
+							*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][j], 0, proc_fields.szElementSW * processingControl.computedParameters.bSize_sw);
 					}
 					break;
 				}
@@ -1362,7 +1362,7 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 		{
 			if (onInit.theDummyRef->outputs[i].wasStarted)
 			{
-				memset(onInit.theDummyRef->outputs[i].buf[_common_set_ldslave.theData_out.pipeline.idx_stage], 0, proc_fields.szElementSW * processingControl.computedParameters.bSize_sw);
+				memset(onInit.theDummyRef->outputs[i].buf[_common_set_ocon.theData_out.pipeline.idx_stage], 0, proc_fields.szElementSW * processingControl.computedParameters.bSize_sw);
 			}
 		}
 		*/
@@ -1389,7 +1389,7 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 				//idxOut = proc_fields.mapToOutput_in[i];
 				jvxSize idxIn = runtime.channelMappings.inputChannelMapper_hwrev[i];
 				resL = proc_fields.circularBuffersIn[i]->read(reinterpret_cast<jvxByte*>(
-					_common_set_ldslave.theData_out.con_data.buffers[idxBufferIn][idxIn]),
+					_common_set_ocon.theData_out.con_data.buffers[idxBufferIn][idxIn]),
 					processingControl.computedParameters.bSize_sw);
 				if(resL != JVX_NO_ERROR)
 				{
@@ -1419,12 +1419,12 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 		{
 			if(JVX_EVALUATE_BITFIELD(properties_active_higher.levelHandlingInput.value.selection() & 0x1))
 			{
-				assert(processingControl.inProc.params_fixed_runtime.chans_in == _common_set_ldslave.theData_out.con_params.number_channels);
+				assert(processingControl.inProc.params_fixed_runtime.chans_in == _common_set_ocon.theData_out.con_params.number_channels);
 				jvx_fieldLevelGainClip(
-					_common_set_ldslave.theData_out.con_data.buffers[idxBufferIn],
-					_common_set_ldslave.theData_out.con_params.number_channels,
-					_common_set_ldslave.theData_out.con_params.buffersize,
-					_common_set_ldslave.theData_out.con_params.format,
+					_common_set_ocon.theData_out.con_data.buffers[idxBufferIn],
+					_common_set_ocon.theData_out.con_params.number_channels,
+					_common_set_ocon.theData_out.con_params.buffersize,
+					_common_set_ocon.theData_out.con_params.format,
 					processingControl.levels.input_avrg,
 					processingControl.levels.input_max,
 					processingControl.levels.input_gain,
@@ -1437,8 +1437,8 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 			// =======================================================================
 
 			// We will be able to do this in a better way...
-			_common_set_ldslave.theData_out.admin.tStamp_us = 0;
-			_common_set_ldslave.theData_out.admin.frames_lost_since_last_time = 0;
+			_common_set_ocon.theData_out.admin.tStamp_us = 0;
+			_common_set_ocon.theData_out.admin.frames_lost_since_last_time = 0;
 			
 			// =============================================================================
 			// Main processing
@@ -1458,27 +1458,27 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 			modFHeight = JVX_MAX(-processingControl.computedParameters.bSize_sw, modFHeight);
 
 			// Mix in input signal for direct listening
-			for(i = 0; i < _common_set_ldslave.theData_out.con_params.number_channels; i++)
+			for(i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
 			{
 				if(processingControl.levels.direct[i] == 1)
 				{
 					for(k = 0; k < processingControl.levels.num_entries_output; k++)
 					{
-						jvx_fieldMix(_common_set_ldslave.theData_out.con_data.buffers[idxBufferIn][i],
-							_common_set_ldslave.theData_in->con_data.buffers[idxBufferOut][k],
-							_common_set_ldslave.theData_in->con_params.buffersize, _common_set_ldslave.theData_in->con_params.format);
+						jvx_fieldMix(_common_set_ocon.theData_out.con_data.buffers[idxBufferIn][i],
+							_common_set_icon.theData_in->con_data.buffers[idxBufferOut][k],
+							_common_set_icon.theData_in->con_params.buffersize, _common_set_icon.theData_in->con_params.format);
 					}
 				}
 			}
 
 			if(JVX_EVALUATE_BITFIELD(properties_active_higher.levelHandlingOutput.value.selection() & 0x1))
 			{
-				assert(processingControl.inProc.params_fixed_runtime.chans_out == _common_set_ldslave.theData_in->con_params.number_channels);
+				assert(processingControl.inProc.params_fixed_runtime.chans_out == _common_set_icon.theData_in->con_params.number_channels);
 				jvx_fieldLevelGainClip(
-					_common_set_ldslave.theData_in->con_data.buffers[idxBufferOut],
-					_common_set_ldslave.theData_in->con_params.number_channels,
-					_common_set_ldslave.theData_in->con_params.buffersize,
-					_common_set_ldslave.theData_in->con_params.format,
+					_common_set_icon.theData_in->con_data.buffers[idxBufferOut],
+					_common_set_icon.theData_in->con_params.number_channels,
+					_common_set_icon.theData_in->con_params.buffersize,
+					_common_set_icon.theData_in->con_params.format,
 					processingControl.levels.output_avrg,
 					processingControl.levels.output_max,
 					processingControl.levels.output_gain,
@@ -1503,8 +1503,8 @@ CjvxGenericWrapperDevice::iclass_process_async(jvxInt64 timestamp_us)
 					jvxSize idxOut = runtime.channelMappings.outputChannelMapper_hwrev[i];
 					assert(JVX_CHECK_SIZE_SELECTED(idxOut));
 					resL = proc_fields.circularBuffersOut[i]->write(
-						(const char*)_common_set_ldslave.theData_in->con_data.buffers[idxBufferOut][idxOut],
-						//proc_fields.ptrA_out_net[_common_set_ldslave.theData_in->pipeline.idx_stage][i], 
+						(const char*)_common_set_icon.theData_in->con_data.buffers[idxBufferOut][idxOut],
+						//proc_fields.ptrA_out_net[_common_set_icon.theData_in->pipeline.idx_stage][i], 
 						processingControl.computedParameters.bSize_sw, modFHeight);
 					if(resL != JVX_NO_ERROR)
 					{
@@ -1770,13 +1770,13 @@ CjvxGenericWrapperDevice::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 	}
 	return res;
 #if 0
-	res = this->process_st(_common_set_ldslave.theData_in, 
-		_common_set_ldslave.theData_in->pipeline.idx_stage, 
-		_common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender);
+	res = this->process_st(_common_set_icon.theData_in, 
+		_common_set_icon.theData_in->pipeline.idx_stage, 
+		_common_set_icon.theData_in->con_compat.idx_receiver_to_sender);
 
 	// Take over the buffer index
 	/*
-		theRelocator._common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender =
+		theRelocator._common_set_icon.theData_in->con_compat.idx_receiver_to_sender =
 		processingControl.inProc.theData_out_to_device.pipeline.idx_stage;
 		*/
 
@@ -1784,12 +1784,12 @@ CjvxGenericWrapperDevice::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 	assert(0);
 #endif
 #if 0
-	if (theData == theRelocator._common_set_ldslave.theData_in)
+	if (theData == theRelocator._common_set_icon.theData_in)
 	{
 		res = this->process_st(theData, theData->pipeline.idx_stage, theData->con_compat.idx_receiver_to_sender);
 
 		// Take over the buffer index
-		theRelocator._common_set_ldslave.theData_in->con_compat.idx_receiver_to_sender =
+		theRelocator._common_set_icon.theData_in->con_compat.idx_receiver_to_sender =
 			processingControl.inProc.theData_out_to_device.pipeline.idx_stage;
 	}
 	else
@@ -1799,11 +1799,11 @@ CjvxGenericWrapperDevice::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 			// Only if we are in sync mode we will pass the processed data to the device.
 			// In async mode, we have to stop before since the other thread will reconnect to 
 			// device (other case up)
-			if (theRelocator._common_set_ldslave.theData_in->link.next)
+			if (theRelocator._common_set_icon.theData_in->link.next)
 			{
 				// Output to the initial device
 				processingControl.inProc.theData_out_to_device.admin = theData->admin;
-				res = theRelocator._common_set_ldslave.theData_in->link.next->process_buffers_icon(
+				res = theRelocator._common_set_icon.theData_in->link.next->process_buffers_icon(
 					&processingControl.inProc.theData_out_to_device);
 			}
 		}
@@ -1841,10 +1841,10 @@ CjvxGenericWrapperDevice::process_start_icon(
 			{
 				// The right position in the pipeline reservation buffer is alreadey set anyway
 				/*
-				_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl); 
-				_common_set_ldslave.theData_in->pipeline.idx_stage =
-					theRelocator._common_set_ldslave.theData_out.pipeline.idx_stage;
-				_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+				_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl); 
+				_common_set_icon.theData_in->pipeline.idx_stage =
+					theRelocator._common_set_ocon.theData_out.pipeline.idx_stage;
+				_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 				*/
 			}
 			else
@@ -1872,28 +1872,28 @@ CjvxGenericWrapperDevice::process_start_icon(
 #if 0
 	// This is a shortcut: go to the device directly. All 
 	// subnodes will be triggered from within the internal process function
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		_common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+		_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		// This gives us the output buffer index in the device in _common_set_ldslave.theData_Out
 		// NO LONGER NEEDED: if (proc_fields.seq_operation_out == PROC)
 		// NO LONGER NEEDED: {
-		// NO LONGER NEEDED: _common_set_ldslave.theData_in->pipeline.idx_stage = theRelocator._common_set_ldslave.theData_out.pipeline.idx_stage;
+		// NO LONGER NEEDED: _common_set_icon.theData_in->pipeline.idx_stage = theRelocator._common_set_ocon.theData_out.pipeline.idx_stage;
 		// NO LONGER NEEDED: }
 		// NO LONGER NEEDED: else
 		// NO LONGER NEEDED: {
 		// NO LONGER NEEDED: // In all other cases, the output is only a single buffer
-		// NO LONGER NEEDED: _common_set_ldslave.theData_in->pipeline.idx_stage = 0;
+		// NO LONGER NEEDED: _common_set_icon.theData_in->pipeline.idx_stage = 0;
 		// NO LONGER NEEDED: }
 	}
 #endif
 
 #if 0
 	// If there is no terminal data, then there is no device involved
-	if (theData == theRelocator._common_set_ldslave.theData_in)
+	if (theData == theRelocator._common_set_icon.theData_in)
 	{
 		// Contact through to queue
-		_common_set_audio_device.link_audio_node->process_start_icon(&_common_set_ldslave.theData_out);
+		_common_set_audio_device.link_audio_node->process_start_icon(&_common_set_ocon.theData_out);
 
 		// When returning from queue, prepare the buffer processing index
 		// This is for the device if using the old style processing method
@@ -1901,10 +1901,10 @@ CjvxGenericWrapperDevice::process_start_icon(
 	}
 	else
 	{
-		if (theRelocator._common_set_ldslave.theData_in->link.next)
+		if (theRelocator._common_set_icon.theData_in->link.next)
 		{
 			// Output to the initial device
-			res = theRelocator._common_set_ldslave.theData_in->link.next->process_start_icon(&processingControl.inProc.theData_out_to_device);
+			res = theRelocator._common_set_icon.theData_in->link.next->process_start_icon(&processingControl.inProc.theData_out_to_device);
 
 			if (proc_fields.seq_operation_out == PROC)
 			{
@@ -1957,10 +1957,10 @@ CjvxGenericWrapperDevice::process_stop_icon(
 			if (proc_fields.seq_operation_out == PROC)
 			{
 				// Let us copy the output index from the folowing object to the local object			
-				_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
-				*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr =
-					*theRelocator._common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-				_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+				_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
+				*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr =
+					*theRelocator._common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+				_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 			}
 			else
 			{
@@ -1992,9 +1992,9 @@ CjvxGenericWrapperDevice::process_stop_icon(
 #if 0
 	// This is a shortcut: go to the device directly. All 
 	// subnodes will be triggered from within the internal process function
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+		_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 	}
 #endif
 	return res;

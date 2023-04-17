@@ -135,10 +135,10 @@ namespace AyfConnection
 				{
 				case ayfFlexibleConnectionUnconnectedMode::AYF_FLEXIBLE_CONNECTION_UNCONNECT_SILENT:
 					bufsOutput = jvx_process_icon_extract_output_buffers<jvxHandle>(
-						&CayfAuNConnection<S>::_common_set_ldslave.theData_out);
-					nChans = CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params.number_channels;
-					szBytes = jvxDataFormat_getsize(CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params.format) *
-						CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params.buffersize;
+						&CayfAuNConnection<S>::_common_set_ocon.theData_out);
+					nChans = CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params.number_channels;
+					szBytes = jvxDataFormat_getsize(CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params.format) *
+						CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params.buffersize;
 					for (i = 0; i < nChans; i++)
 					{
 						memset(bufsOutput[i], 0, szBytes);
@@ -161,7 +161,7 @@ namespace AyfConnection
 			// Let us directly forward the call to the connection
 
 			// The flexible connection can not be connected if there is no active connection yet!!
-			if (CayfAuNConnection<S>::_common_set_ldslave.theData_in == nullptr)
+			if (CayfAuNConnection<S>::_common_set_icon.theData_in == nullptr)
 			{
 				return JVX_ERROR_NOT_READY;
 			}
@@ -211,8 +211,8 @@ namespace AyfConnection
 			if (stat == JVX_STATE_ACTIVE)
 			{
 				res = JVX_NO_ERROR;
-				descr_in.con_params = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_params;
-				descr_out.con_params = CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params;
+				descr_in.con_params = CayfAuNConnection<S>::_common_set_icon.theData_in->con_params;
+				descr_out.con_params = CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params;
 
 				lastTestOk = false;
 
@@ -309,8 +309,8 @@ namespace AyfConnection
 			if (stat == JVX_STATE_PROCESSING)
 			{
 				res = CayfAuNConnection<S>::theConnection.process_connection(
-					CayfAuNConnection<S>::_common_set_ldslave.theData_in, mt_mask, idx_stage,
-					&CayfAuNConnection<S>::_common_set_ldslave.theData_out);
+					CayfAuNConnection<S>::_common_set_icon.theData_in, mt_mask, idx_stage,
+					&CayfAuNConnection<S>::_common_set_ocon.theData_out);
 			}
 			JVX_UNLOCK_MUTEX(safeAccessConnectionState);
 			return res;

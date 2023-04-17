@@ -494,13 +494,13 @@ CjvxPortAudioDevice::processBuffer_callback( const void *inputBuffer, void *outp
 	}
 
 	// I am the master. I will start the chain here!
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		_common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+		_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 	}
 
-	jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-	jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+	jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+	jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 
 	switch (_inproc.format)
 	{
@@ -508,10 +508,10 @@ CjvxPortAudioDevice::processBuffer_callback( const void *inputBuffer, void *outp
 		/* Convert float to jvxData */
 		for (i = 0; i < inProcessing.inputMapper.size(); i++)
 		{
-			jvxData* ptrDest = (jvxData*)_common_set_ldslave.theData_out.con_data.buffers[idxToProc][i];
+			jvxData* ptrDest = (jvxData*)_common_set_ocon.theData_out.con_data.buffers[idxToProc][i];
 			float* ptrSrc = (float*)iBuf[inProcessing.inputMapper[i]];
 
-			for (ii = 0; ii < _common_set_ldslave.theData_out.con_params.buffersize; ii++)
+			for (ii = 0; ii < _common_set_ocon.theData_out.con_params.buffersize; ii++)
 			{
 				*ptrDest++ = (jvxData)*ptrSrc++;
 			}
@@ -520,44 +520,44 @@ CjvxPortAudioDevice::processBuffer_callback( const void *inputBuffer, void *outp
 	case JVX_DATAFORMAT_64BIT_LE:
 		for (i = 0; i < inProcessing.inputMapper.size(); i++)
 		{
-			jvxInt64* ptrDest = (jvxInt64*)_common_set_ldslave.theData_out.con_data.buffers[idxToProc][i];
+			jvxInt64* ptrDest = (jvxInt64*)_common_set_ocon.theData_out.con_data.buffers[idxToProc][i];
 			jvxInt32* ptrSrc = (jvxInt32*)iBuf[inProcessing.inputMapper[i]];
 			jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt32, jvxInt64, jvxInt64>(ptrSrc, ptrDest, 
-				_common_set_ldslave.theData_out.con_params.buffersize, 32);
+				_common_set_ocon.theData_out.con_params.buffersize, 32);
 		}
 		break;
 	case JVX_DATAFORMAT_32BIT_LE:
 		for (i = 0; i < inProcessing.inputMapper.size(); i++)
 		{
-			jvxInt32* ptrDest = (jvxInt32*)_common_set_ldslave.theData_out.con_data.buffers[idxToProc][i];
+			jvxInt32* ptrDest = (jvxInt32*)_common_set_ocon.theData_out.con_data.buffers[idxToProc][i];
 			jvxInt32* ptrSrc = (jvxInt32*)iBuf[inProcessing.inputMapper[i]];
 			jvx_convertSamples_memcpy(ptrSrc, ptrDest, jvxDataFormat_size[_inproc.format], 
-				_common_set_ldslave.theData_out.con_params.buffersize);
+				_common_set_ocon.theData_out.con_params.buffersize);
 		}
 		break;
 	case JVX_DATAFORMAT_16BIT_LE:
 		for (i = 0; i < inProcessing.inputMapper.size(); i++)
 		{
-			jvxInt16* ptrDest = (jvxInt16*)_common_set_ldslave.theData_out.con_data.buffers[idxToProc][i];
+			jvxInt16* ptrDest = (jvxInt16*)_common_set_ocon.theData_out.con_data.buffers[idxToProc][i];
 			jvxInt16* ptrSrc = (jvxInt16*)iBuf[inProcessing.inputMapper[i]];
-			jvx_convertSamples_memcpy(ptrSrc, ptrDest, jvxDataFormat_size[_inproc.format], _common_set_ldslave.theData_out.con_params.buffersize);
+			jvx_convertSamples_memcpy(ptrSrc, ptrDest, jvxDataFormat_size[_inproc.format], _common_set_ocon.theData_out.con_params.buffersize);
 		}
 		break;
 	case JVX_DATAFORMAT_8BIT:
 		for (i = 0; i < inProcessing.inputMapper.size(); i++)
 		{
-			jvxInt8* ptrDest = (jvxInt8*)_common_set_ldslave.theData_out.con_data.buffers[idxToProc][i];
+			jvxInt8* ptrDest = (jvxInt8*)_common_set_ocon.theData_out.con_data.buffers[idxToProc][i];
 			jvxInt16* ptrSrc = (jvxInt16*)iBuf[inProcessing.inputMapper[i]];
 			jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt16, jvxInt8, jvxInt16>(ptrSrc, ptrDest,
-				_common_set_ldslave.theData_out.con_params.buffersize, 8);
+				_common_set_ocon.theData_out.con_params.buffersize, 8);
 		}
 		break;
 	}
 
 	// I am the master. I will start the chain here!
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+		_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 	}
 	
 	switch (_inproc.format)
@@ -567,9 +567,9 @@ CjvxPortAudioDevice::processBuffer_callback( const void *inputBuffer, void *outp
 		for (i = 0; i < inProcessing.outputMapper.size(); i++)
 		{
 			float* ptrDest = (float*)oBuf[inProcessing.outputMapper[i]];
-			jvxData* ptrSrc = (jvxData*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][i];
+			jvxData* ptrSrc = (jvxData*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][i];
 
-			for (ii = 0; ii < _common_set_ldslave.theData_out.con_params.buffersize; ii++)
+			for (ii = 0; ii < _common_set_ocon.theData_out.con_params.buffersize; ii++)
 			{
 				*ptrDest++ = (jvxData)*ptrSrc++;
 			}
@@ -580,9 +580,9 @@ CjvxPortAudioDevice::processBuffer_callback( const void *inputBuffer, void *outp
 		for (i = 0; i < inProcessing.outputMapper.size(); i++)
 		{
 			jvxInt32* ptrDest = (jvxInt32*)oBuf[inProcessing.outputMapper[i]];
-			jvxInt64* ptrSrc = (jvxInt64*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][i];
+			jvxInt64* ptrSrc = (jvxInt64*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][i];
 
-			jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt64, jvxInt32, jvxInt64>(ptrSrc, ptrDest, _common_set_ldslave.theData_out.con_params.buffersize, 32);
+			jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt64, jvxInt32, jvxInt64>(ptrSrc, ptrDest, _common_set_ocon.theData_out.con_params.buffersize, 32);
 		}
 		break;
 
@@ -590,35 +590,35 @@ CjvxPortAudioDevice::processBuffer_callback( const void *inputBuffer, void *outp
 		for (i = 0; i < inProcessing.outputMapper.size(); i++)
 		{
 			jvxInt32* ptrDest = (jvxInt32*)oBuf[inProcessing.outputMapper[i]];
-			jvxInt32* ptrSrc = (jvxInt32*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][i];
+			jvxInt32* ptrSrc = (jvxInt32*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][i];
 
-			jvx_convertSamples_memcpy(ptrSrc, ptrDest, jvxDataFormat_size[_inproc.format], _common_set_ldslave.theData_in->con_params.buffersize);
+			jvx_convertSamples_memcpy(ptrSrc, ptrDest, jvxDataFormat_size[_inproc.format], _common_set_icon.theData_in->con_params.buffersize);
 		}
 		break;
 	case JVX_DATAFORMAT_16BIT_LE:
 		for (i = 0; i < inProcessing.outputMapper.size(); i++)
 		{
 			jvxInt16* ptrDest = (jvxInt16*)oBuf[inProcessing.outputMapper[i]];
-			jvxInt16* ptrSrc = (jvxInt16*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][i];
+			jvxInt16* ptrSrc = (jvxInt16*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][i];
 
-			jvx_convertSamples_memcpy(ptrSrc, ptrDest, jvxDataFormat_size[_inproc.format], _common_set_ldslave.theData_in->con_params.buffersize);
+			jvx_convertSamples_memcpy(ptrSrc, ptrDest, jvxDataFormat_size[_inproc.format], _common_set_icon.theData_in->con_params.buffersize);
 		}
 		break;
 	case JVX_DATAFORMAT_8BIT:
 		for (i = 0; i < inProcessing.outputMapper.size(); i++)
 		{
 			jvxInt16* ptrDest = (jvxInt16*)oBuf[inProcessing.outputMapper[i]];
-			jvxInt8* ptrSrc = (jvxInt8*)_common_set_ldslave.theData_in->con_data.buffers[idxFromProc][i];
+			jvxInt8* ptrSrc = (jvxInt8*)_common_set_icon.theData_in->con_data.buffers[idxFromProc][i];
 
 			jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt8, jvxInt16, jvxInt16>(ptrSrc, ptrDest,
-				_common_set_ldslave.theData_out.con_params.buffersize, 8);
+				_common_set_ocon.theData_out.con_params.buffersize, 8);
 		}
 		break;
 	}
 
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+		_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 	}
 
 	jvxTick tStamp_stop = JVX_GET_TICKCOUNT_US_GET_CURRENT(&inProcessing.theTimestamp);
@@ -837,13 +837,13 @@ CjvxPortAudioDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	assert(resL == JVX_NO_ERROR);
 
 	// Start to set all parameters at first
-	_common_set_ldslave.theData_out.con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_out.con_params.format = _inproc.format;
-	_common_set_ldslave.theData_out.con_data.buffers = NULL;
-	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
-	_common_set_ldslave.theData_out.con_params.number_channels = _inproc.numInputs;
-	_common_set_ldslave.theData_out.con_params.rate = _inproc.samplerate;
-	_common_set_ldslave.theData_out.con_user.chain_spec_user_hints = NULL;
+	_common_set_ocon.theData_out.con_params.buffersize = _inproc.buffersize;
+	_common_set_ocon.theData_out.con_params.format = _inproc.format;
+	_common_set_ocon.theData_out.con_data.buffers = NULL;
+	_common_set_ocon.theData_out.con_data.number_buffers = 1;
+	_common_set_ocon.theData_out.con_params.number_channels = _inproc.numInputs;
+	_common_set_ocon.theData_out.con_params.rate = _inproc.samplerate;
+	_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
 	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res != JVX_NO_ERROR)
 	{
@@ -948,8 +948,8 @@ CjvxPortAudioDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	JVX_GET_TICKCOUNT_US_SETREF(&inProcessing.theTimestamp);
 	inProcessing.timestamp_previous = -1;
-	inProcessing.deltaT_theory_us = (jvxData)_common_set_ldslave.theData_out.con_params.buffersize /
-		(jvxData)_common_set_ldslave.theData_out.con_params.rate * 1000.0 * 1000.0;
+	inProcessing.deltaT_theory_us = (jvxData)_common_set_ocon.theData_out.con_params.buffersize /
+		(jvxData)_common_set_ocon.theData_out.con_params.rate * 1000.0 * 1000.0;
 	inProcessing.deltaT_average_us = 0;
 
 	// Now start the PA stream
@@ -1101,7 +1101,7 @@ CjvxPortAudioDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	genPortAudio_device::properties_active_higher.loadpercent.value = 0;
 	genPortAudio_device::properties_active_higher.loadpercent.isValid = true;
 	
-	*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr = 0;
+	*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr = 0;
 
 	err = Pa_StartStream(inProcessing.theStream);
 	if (err != paNoError)
@@ -1145,19 +1145,19 @@ CjvxPortAudioDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// This is the return from the link list
 
 	// Overwrite the specified settings and start reverse connect
-	_common_set_ldslave.theData_in->con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = _inproc.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(1, _common_set_ldslave.theData_in->con_data.number_buffers);
-	_common_set_ldslave.theData_in->con_params.number_channels = _inproc.numOutputs;
-	_common_set_ldslave.theData_in->con_params.rate = _inproc.samplerate;
+	_common_set_icon.theData_in->con_params.buffersize = _inproc.buffersize;
+	_common_set_icon.theData_in->con_params.format = _inproc.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(1, _common_set_icon.theData_in->con_data.number_buffers);
+	_common_set_icon.theData_in->con_params.number_channels = _inproc.numOutputs;
+	_common_set_icon.theData_in->con_params.rate = _inproc.samplerate;
 
 	// Connect the output side and start this link
 	res = allocate_pipeline_and_buffers_prepare_to();
 
 	// Do not attach any user hint into backward direction
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
-	*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 0;
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
+	*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
 
 	return res;
 }

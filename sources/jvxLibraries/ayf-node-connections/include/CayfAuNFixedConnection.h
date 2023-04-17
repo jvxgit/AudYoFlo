@@ -27,9 +27,9 @@ namespace AyfConnection
 		{
 			// Do not connect any chains in this module before we have fully booted	
 			// Invoke a "test" run on system startup
-			if (CayfAuNConnection<S>::_common_set_ldslave.theData_in)
+			if (CayfAuNConnection<S>::_common_set_icon.theData_in)
 			{
-				this->_request_test_chain_master(CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.uIdConn);
+				this->_request_test_chain_master(CayfAuNConnection<S>::_common_set_icon.theData_in->con_link.uIdConn);
 			}
 			return JVX_NO_ERROR;
 		};
@@ -40,7 +40,7 @@ namespace AyfConnection
 			JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(CayfAuNConnection<S>::_common_set_ldslave.object),
 				CayfAuNConnection<S>::_common_set_ldslave.descriptor.c_str(), "Entering input connector <CayfAuNFixedConnection>");
 
-			JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, (CayfAuNConnection<S>::_common_set_ldslave.theData_in));
+			JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, (CayfAuNConnection<S>::_common_set_icon.theData_in));
 
 			jvxErrorType res = startup_and_test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			return res;
@@ -160,7 +160,7 @@ namespace AyfConnection
 
 				// To do at this position
 				res = CayfAuNConnection<S>::theConnection.negotiate_connection(tp, data,
-											       CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+											       CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				break;
 
 			default:
@@ -178,9 +178,9 @@ namespace AyfConnection
 		{
 			// If the micro chain start settings do not match, we need to forward then towards the previous linked object
 			jvxErrorType res = JVX_ERROR_INVALID_SETTING;
-			if (CayfAuNConnection<S>::_common_set_ldslave.theData_in)
+			if (CayfAuNConnection<S>::_common_set_icon.theData_in)
 			{
-				res = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+				res = CayfAuNConnection<S>::_common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 					JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 					proposed JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				if (res == JVX_NO_ERROR)
@@ -203,7 +203,7 @@ namespace AyfConnection
 		virtual jvxErrorType hook_test_update(jvxLinkDataDescriptor* dataIn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override
 		{
 			// Copy output settings in case the negoatiate from behind the next element has made modifications
-			CayfAuNConnection<S>::_common_set_ldslave.theData_out.con_params = dataIn->con_params;
+			CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params = dataIn->con_params;
 
 			return JVX_NO_ERROR;
 		};
@@ -325,15 +325,15 @@ namespace AyfConnection
 				if (allowConnect)
 				{
 					jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
-					if (CayfAuNConnection<S>::_common_set_ldslave.theData_in)
+					if (CayfAuNConnection<S>::_common_set_icon.theData_in)
 					{
-						idProcDepends = CayfAuNConnection<S>::_common_set_ldslave.theData_in->con_link.uIdConn;
+						idProcDepends = CayfAuNConnection<S>::_common_set_icon.theData_in->con_link.uIdConn;
 					}
 					res = CayfAuNConnection<S>::theConnection.init_connect(AyfConnection::CayfConnectionConfig(
 						CayfAuNConnection<S>::_common_set_min.theHostRef, this,
 						CayfAuNConnection<S>::lstMods,
-						CayfAuNConnection<S>::_common_set_ldslave.theData_in,
-						&CayfAuNConnection<S>::_common_set_ldslave.theData_out,
+						CayfAuNConnection<S>::_common_set_icon.theData_in,
+						&CayfAuNConnection<S>::_common_set_ocon.theData_out,
 						ayfConnectionOperationMode::AYF_CONNECTION_EFFICIENT,
 						CayfAuNConnection<S>::nmProcess, CayfAuNConnection<S>::descrProcess,
 						CayfAuNConnection<S>::descrorProcess, this, this, false, CayfAuNConnection<S>::numBuffers, true), 

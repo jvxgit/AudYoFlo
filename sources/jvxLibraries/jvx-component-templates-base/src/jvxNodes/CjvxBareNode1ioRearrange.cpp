@@ -126,7 +126,7 @@ CjvxBareNode1ioRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 		{
 			// There is only room to negotiate 
 			res = neg_output._negotiate_transfer_backward_ocon(ld,
-				&_common_set_ldslave.theData_out, static_cast<IjvxObject*>(this), nullptr
+				&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), nullptr
 				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			if (res == JVX_NO_ERROR)
 			{
@@ -157,27 +157,27 @@ CjvxBareNode1ioRearrange::update_output_params_from_input_params()
 void
 CjvxBareNode1ioRearrange::update_ldesc_from_output_params_on_test()
 {
-	_common_set_ldslave.theData_out.con_params.number_channels = node_output._common_set_node_params_a_1io.number_channels;
-	_common_set_ldslave.theData_out.con_params.buffersize = node_output._common_set_node_params_a_1io.buffersize;
-	_common_set_ldslave.theData_out.con_params.rate = node_output._common_set_node_params_a_1io.samplerate;
-	_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)node_output._common_set_node_params_a_1io.format;
-	_common_set_ldslave.theData_out.con_params.format_group = (jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat;
-	_common_set_ldslave.theData_out.con_params.segmentation.x = node_output._common_set_node_params_a_1io.segmentation.x;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = node_output._common_set_node_params_a_1io.segmentation.y;
-	_common_set_ldslave.theData_out.con_params.number_channels = node_output._common_set_node_params_a_1io.number_channels;
+	_common_set_ocon.theData_out.con_params.number_channels = node_output._common_set_node_params_a_1io.number_channels;
+	_common_set_ocon.theData_out.con_params.buffersize = node_output._common_set_node_params_a_1io.buffersize;
+	_common_set_ocon.theData_out.con_params.rate = node_output._common_set_node_params_a_1io.samplerate;
+	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)node_output._common_set_node_params_a_1io.format;
+	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat;
+	_common_set_ocon.theData_out.con_params.segmentation.x = node_output._common_set_node_params_a_1io.segmentation.x;
+	_common_set_ocon.theData_out.con_params.segmentation.y = node_output._common_set_node_params_a_1io.segmentation.y;
+	_common_set_ocon.theData_out.con_params.number_channels = node_output._common_set_node_params_a_1io.number_channels;
 }
 
 void
 CjvxBareNode1ioRearrange::output_params_from_ldesc_on_test()
 {
-	node_output._common_set_node_params_a_1io.number_channels = JVX_SIZE_INT32(_common_set_ldslave.theData_out.con_params.number_channels);
-	node_output._common_set_node_params_a_1io.buffersize = JVX_SIZE_INT32(_common_set_ldslave.theData_out.con_params.buffersize);
-	node_output._common_set_node_params_a_1io.samplerate = JVX_SIZE_INT32(_common_set_ldslave.theData_out.con_params.rate);
-	node_output._common_set_node_params_a_1io.format = JVX_SIZE_INT16(_common_set_ldslave.theData_out.con_params.format);
-	node_output._common_set_node_params_a_1io.subformat = JVX_SIZE_INT16(_common_set_ldslave.theData_out.con_params.format_group);
-	node_output._common_set_node_params_a_1io.segmentation.x = JVX_SIZE_INT32(_common_set_ldslave.theData_out.con_params.segmentation.x);
-	node_output._common_set_node_params_a_1io.segmentation.y = JVX_SIZE_INT32(_common_set_ldslave.theData_out.con_params.segmentation.y);
-	node_output._common_set_node_params_a_1io.format_spec = _common_set_ldslave.theData_out.con_params.format_spec.std_str();
+	node_output._common_set_node_params_a_1io.number_channels = JVX_SIZE_INT32(_common_set_ocon.theData_out.con_params.number_channels);
+	node_output._common_set_node_params_a_1io.buffersize = JVX_SIZE_INT32(_common_set_ocon.theData_out.con_params.buffersize);
+	node_output._common_set_node_params_a_1io.samplerate = JVX_SIZE_INT32(_common_set_ocon.theData_out.con_params.rate);
+	node_output._common_set_node_params_a_1io.format = JVX_SIZE_INT16(_common_set_ocon.theData_out.con_params.format);
+	node_output._common_set_node_params_a_1io.subformat = JVX_SIZE_INT16(_common_set_ocon.theData_out.con_params.format_group);
+	node_output._common_set_node_params_a_1io.segmentation.x = JVX_SIZE_INT32(_common_set_ocon.theData_out.con_params.segmentation.x);
+	node_output._common_set_node_params_a_1io.segmentation.y = JVX_SIZE_INT32(_common_set_ocon.theData_out.con_params.segmentation.y);
+	node_output._common_set_node_params_a_1io.format_spec = _common_set_ocon.theData_out.con_params.format_spec.std_str();
 }
 
 void

@@ -570,15 +570,15 @@ CjvxAuNCodec::process_st(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_r
 			assert(chan_out >= 0);
 
 			memcpy(connection_lane[i].descr_encoder_in.con_data.buffers[idxIn][0],
-				_common_set_ldslave.theData_in->con_data.buffers[idx_sender_to_receiver][0],
-				_common_set_ldslave.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_ldslave.theData_in->con_params.format));
+				_common_set_icon.theData_in->con_data.buffers[idx_sender_to_receiver][0],
+				_common_set_icon.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format));
 
 			connection_lane[i].micro_connection->process_connection(NULL);
 
 			memcpy(
-				_common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][chan_out],
+				_common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][chan_out],
 				connection_lane[i].descr_decoder_out.con_data.buffers[idxOut][0],
-				_common_set_ldslave.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_ldslave.theData_in->con_params.format));
+				_common_set_icon.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format));
 
 			connection_lane[i].micro_connection->postprocess_process_connection();
 		}
@@ -592,9 +592,9 @@ CjvxAuNCodec::process_st(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_r
 		for (ic = 0; ic < theData->con_compat.number_channels - 2; ic++)
 		{
 			memcpy(
-				_common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][ic],
-				_common_set_ldslave.theData_out.con_data.buffers[idx_receiver_to_sender][chan_copy],
-				_common_set_ldslave.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_ldslave.theData_in->con_params.format));
+				_common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][ic],
+				_common_set_ocon.theData_out.con_data.buffers[idx_receiver_to_sender][chan_copy],
+				_common_set_icon.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format));
 		}
 	}
 

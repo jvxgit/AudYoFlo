@@ -74,13 +74,13 @@ CjvxAuNChannelRearrange::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 
 	if (!_common_set_ldslave.setup_for_termination)
 	{
-		jvxData** fieldInput = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
-		jvxData** fieldOutput = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+		jvxData** fieldInput = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+		jvxData** fieldOutput = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
 		jvxBool passThrough = (genChannelRearrange_node::passthrough.active.value == c_true);
 		// Talkthrough
 		jvxSize ii;
-		jvxSize inChans = _common_set_ldslave.theData_in->con_params.number_channels;
-		jvxSize outChans = _common_set_ldslave.theData_out.con_params.number_channels;
+		jvxSize inChans = _common_set_icon.theData_in->con_params.number_channels;
+		jvxSize outChans = _common_set_ocon.theData_out.con_params.number_channels;
 		if (passThrough)
 		{
 			inChans = JVX_MAX((int)inChans - 1, 0);
@@ -90,8 +90,8 @@ CjvxAuNChannelRearrange::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 		jvxSize minChans = JVX_MIN(inChans, outChans);
 
 		// This default function does not tolerate a lot of unexpected settings
-		assert(_common_set_ldslave.theData_in->con_params.format == _common_set_ldslave.theData_out.con_params.format);
-		assert(_common_set_ldslave.theData_in->con_params.buffersize == _common_set_ldslave.theData_out.con_params.buffersize);
+		assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
+		assert(_common_set_icon.theData_in->con_params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
 
 		if (minChans)
 		{
@@ -100,21 +100,21 @@ CjvxAuNChannelRearrange::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 				jvxSize idxIn = ii % inChans;
 				jvxSize idxOut = ii % outChans;
 
-				assert(_common_set_ldslave.theData_in->con_params.format == _common_set_ldslave.theData_out.con_params.format);
+				assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
 				jvx_convertSamples_memcpy(
-					_common_set_ldslave.theData_in->con_data.buffers[
-						*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr][idxIn],
-							_common_set_ldslave.theData_out.con_data.buffers[
-								*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][idxOut],
-									jvxDataFormat_size[_common_set_ldslave.theData_in->con_params.format],
-									_common_set_ldslave.theData_in->con_params.buffersize);
+					_common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][idxIn],
+							_common_set_ocon.theData_out.con_data.buffers[
+								*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][idxOut],
+									jvxDataFormat_size[_common_set_icon.theData_in->con_params.format],
+									_common_set_icon.theData_in->con_params.buffersize);
 			}
 		}
 		if (passThrough)
 		{
 			if ((inChans > 0) && (outChans > 0))
 			{
-				memcpy(fieldOutput[outChans], fieldInput[inChans], jvxDataFormat_getsize(_common_set_ldslave.theData_in->con_params.format) * _common_set_ldslave.theData_in->con_params.buffersize);
+				memcpy(fieldOutput[outChans], fieldInput[inChans], jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format) * _common_set_icon.theData_in->con_params.buffersize);
 			}
 		}
 		return fwd_process_buffers_icon(mt_mask, idx_stage);

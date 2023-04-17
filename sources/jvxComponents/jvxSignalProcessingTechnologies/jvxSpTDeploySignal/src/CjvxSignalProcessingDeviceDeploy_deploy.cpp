@@ -30,7 +30,7 @@ CjvxSignalProcessingDeviceDeploy::setOutputParameters(jvxLinkDataDescriptor_con_
 jvxErrorType
 CjvxSignalProcessingDeviceDeploy::setInputParameters(jvxLinkDataDescriptor_con_params* params) 
 {
-	// = _common_set_ldslave.theData_in->con_params;
+	// = _common_set_icon.theData_in->con_params;
 
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize processId = JVX_SIZE_UNSELECTED;
@@ -82,9 +82,9 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 				}
 			}
 
-			res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
-			jvxSize idxBuf = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-			jvxByte** bufs = (jvxByte**)_common_set_ldslave.theData_out.con_data.buffers[idxBuf];
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
+			jvxSize idxBuf = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+			jvxByte** bufs = (jvxByte**)_common_set_ocon.theData_out.con_data.buffers[idxBuf];
 
 			// Forward number of lost buffers
 			if (lost_cnt_new != lost_cnt_reported)
@@ -95,20 +95,20 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 					lost_cnt_new,
 					newPtr))
 				{
-					_common_set_ldslave.theData_out.con_data.attached_buffer_single[idxBuf] = newPtr;
+					_common_set_ocon.theData_out.con_data.attached_buffer_single[idxBuf] = newPtr;
 					lost_cnt_reported = lost_cnt_new;
 				}
 			}
 
 
-			JVX_ASSERT(data->bsize == _common_set_ldslave.theData_out.con_params.buffersize);
-			JVX_ASSERT(data->srate == _common_set_ldslave.theData_out.con_params.rate);
-			JVX_ASSERT(data->form == _common_set_ldslave.theData_out.con_params.format);
-			JVX_ASSERT(data->format_group == _common_set_ldslave.theData_out.con_params.format_group);
+			JVX_ASSERT(data->bsize == _common_set_ocon.theData_out.con_params.buffersize);
+			JVX_ASSERT(data->srate == _common_set_ocon.theData_out.con_params.rate);
+			JVX_ASSERT(data->form == _common_set_ocon.theData_out.con_params.format);
+			JVX_ASSERT(data->format_group == _common_set_ocon.theData_out.con_params.format_group);
 
 			jvxSize numBytes = sizeof(jvxByte) * jvxDataFormat_getsize(data->form) * data->bsize;
 
-			for (i = 0; i < _common_set_ldslave.theData_out.con_params.number_channels; i++)
+			for (i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
 			{
 				if (i < data->bufs_received_num)
 				{
@@ -116,11 +116,11 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 				}
 			}
 
-			res = _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 
-			idxBuf = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
-			bufs = (jvxByte**)_common_set_ldslave.theData_in->con_data.buffers[idxBuf];
-			for (i = 0; i < _common_set_ldslave.theData_in->con_params.number_channels; i++)
+			idxBuf = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+			bufs = (jvxByte**)_common_set_icon.theData_in->con_data.buffers[idxBuf];
+			for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
 			{
 				if (i < data->bufs_to_emit_num)
 				{
@@ -128,7 +128,7 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 				}
 			}
 
-			res = _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 		}
 		JVX_UNLOCK_MUTEX(safeAccessChain);
 	}

@@ -320,7 +320,7 @@ CayfComponentLib::deactivate()
 jvxErrorType 
 CayfComponentLib::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = neg_input._negotiate_connect_icon(_common_set_ldslave.theData_in,
+	jvxErrorType res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 		static_cast<IjvxObject*>(this),
 		_common_set_ldslave.descriptor.c_str()
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));

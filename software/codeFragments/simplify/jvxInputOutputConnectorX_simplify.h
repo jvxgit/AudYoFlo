@@ -1,9 +1,9 @@
 	jvxErrorType connect_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 #ifdef JVX_CONNECT_X_FORWARD_MASTER
-		assert(_common_set_ldslave.theData_in);
+		assert(_common_set_icon.theData_in);
 		return CjvxInputOutputConnector::_connect_connect_ocon(
-			jvxChainConnectArguments(_common_set_ldslave.theData_in->con_link.uIdConn, _common_set_ldslave.theData_in->con_link.master)
+			jvxChainConnectArguments(_common_set_icon.theData_in->con_link.uIdConn, _common_set_icon.theData_in->con_link.master)
 			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 #else
 		return CjvxInputOutputConnector::_connect_connect_ocon(
@@ -15,13 +15,13 @@
 	jvxErrorType disconnect_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 #ifdef JVX_CONNECT_X_FORWARD_MASTER
-		assert(_common_set_ldslave.theData_in);
+		assert(_common_set_icon.theData_in);
 		return CjvxInputOutputConnector::_disconnect_connect_ocon(
-			jvxChainConnectArguments(_common_set_ldslave.theData_in->con_link.uIdConn, _common_set_ldslave.theData_in->con_link.master)
+			jvxChainConnectArguments(_common_set_icon.theData_in->con_link.uIdConn, _common_set_icon.theData_in->con_link.master)
 			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 #else
 		return CjvxInputOutputConnector::_disconnect_connect_ocon(
-			jvxChainConnectArguments(_common_set_ldslave.theData_out.con_link.uIdConn, static_cast<IjvxConnectionMaster*>(this))
+			jvxChainConnectArguments(_common_set_ocon.theData_out.con_link.uIdConn, static_cast<IjvxConnectionMaster*>(this))
 			JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 #endif
 	};
@@ -87,8 +87,8 @@
 
 	jvxErrorType start_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
-		*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr = 0;
-		_common_set_ldslave.theData_out.con_compat.idx_receiver_to_sender = 0;
+		*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr = 0;
+		_common_set_ocon.theData_out.con_compat.idx_receiver_to_sender = 0;
 		return CjvxInputOutputConnector::_start_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	};
 

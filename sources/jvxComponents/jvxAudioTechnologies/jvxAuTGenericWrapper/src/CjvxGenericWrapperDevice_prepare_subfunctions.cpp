@@ -29,7 +29,7 @@ CjvxGenericWrapperDevice::allocateBufferA()
 
 			// *  * *  * *  * *  * *  * *  * *  * *  * *  * *  * *  * *  *
 			// Start the buffer A
-			jvx_allocateDataLinkDescriptor_oneExtBuffer(&theRelocator._common_set_ldslave.theData_in->con_data.bExt,
+			jvx_allocateDataLinkDescriptor_oneExtBuffer(&theRelocator._common_set_icon.theData_in->con_data.bExt,
 				m, i, processingControl.computedParameters.bSize_hw, proc_fields.szElementHW,
 				proc_fields.ptrA_in_raw, proc_fields.ptrA_in_net, proc_fields.ptrA_in_off, &szL);
 			if (
@@ -1124,23 +1124,23 @@ CjvxGenericWrapperDevice::prepare_linkdata(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// =========================================================================
 	if(res == JVX_NO_ERROR)
 	{
-		_common_set_ldslave.theData_out.con_params.buffersize = processingControl.computedParameters.bSize_sw;
-		_common_set_ldslave.theData_out.con_params.format = processingControl.computedParameters.form_sw;
-		_common_set_ldslave.theData_out.con_data.buffers = NULL;
-		_common_set_ldslave.theData_out.con_data.number_buffers = processingControl.numBuffers_sender_to_receiver_sw;
-		_common_set_ldslave.theData_out.con_params.number_channels = processingControl.inProc.params_fixed_runtime.chans_in;
-		_common_set_ldslave.theData_out.con_params.rate = processingControl.computedParameters.sRate_sw;
+		_common_set_ocon.theData_out.con_params.buffersize = processingControl.computedParameters.bSize_sw;
+		_common_set_ocon.theData_out.con_params.format = processingControl.computedParameters.form_sw;
+		_common_set_ocon.theData_out.con_data.buffers = NULL;
+		_common_set_ocon.theData_out.con_data.number_buffers = processingControl.numBuffers_sender_to_receiver_sw;
+		_common_set_ocon.theData_out.con_params.number_channels = processingControl.inProc.params_fixed_runtime.chans_in;
+		_common_set_ocon.theData_out.con_params.rate = processingControl.computedParameters.sRate_sw;
 
-		// OLD: _common_set_ldslave.theData_out.con_data.user_hints = theRelocator._common_set_ldslave.theData_in->con_data.user_hints;
+		// OLD: _common_set_ocon.theData_out.con_data.user_hints = theRelocator._common_set_icon.theData_in->con_data.user_hints;
 		// But we do not want to see the hardware hints in the software chain
-		_common_set_ldslave.theData_out.con_user.chain_spec_user_hints = NULL;
+		_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
 
 		// If we forward the input buffers, make sure, we have alignement and headers
 		if (proc_fields.seq_operation_in == PROC)
 		{
-			_common_set_ldslave.theData_out.con_data.bExt.align = theRelocator._common_set_ldslave.theData_in->con_data.bExt.align;
-			_common_set_ldslave.theData_out.con_data.bExt.append = theRelocator._common_set_ldslave.theData_in->con_data.bExt.append;
-			_common_set_ldslave.theData_out.con_data.bExt.prepend = theRelocator._common_set_ldslave.theData_in->con_data.bExt.prepend;
+			_common_set_ocon.theData_out.con_data.bExt.align = theRelocator._common_set_icon.theData_in->con_data.bExt.align;
+			_common_set_ocon.theData_out.con_data.bExt.append = theRelocator._common_set_icon.theData_in->con_data.bExt.append;
+			_common_set_ocon.theData_out.con_data.bExt.prepend = theRelocator._common_set_icon.theData_in->con_data.bExt.prepend;
 		}
 
 		// Attach a user hint argument to concatenated list
@@ -1151,55 +1151,55 @@ CjvxGenericWrapperDevice::prepare_linkdata(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 
 		// Start the userHint for sw chain
-		_common_set_ldslave.theData_out.con_user.chain_spec_user_hints =
+		_common_set_ocon.theData_out.con_user.chain_spec_user_hints =
 			jvx_hintDesriptor_push_front(&processingControl.inProc.procFlags, JVX_DATAPROCESSOR_HINT_DESCRIPTOR_PROCESSING_TYPE_CBITFIELD, 
-				_common_set.theComponentType, _common_set_ldslave.theData_out.con_user.chain_spec_user_hints);
+				_common_set.theComponentType, _common_set_ocon.theData_out.con_user.chain_spec_user_hints);
 		
 		// Start a new master concatenation
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			res = _common_set_ldslave.theData_out.con_link.connect_to->prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			res = _common_set_ocon.theData_out.con_link.connect_to->prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
 			// New: if the processing is straight through, adapt the number of buffers of input
 			/*
 			if ((proc_fields.seq_operation_in == PROC) || (proc_fields.seq_operation_out == PROC))
 			{
-				if (_common_set_ldslave.theData_out.con_data.number_buffers > processingControl.numBuffers_sender_to_receiver_hw)
+				if (_common_set_ocon.theData_out.con_data.number_buffers > processingControl.numBuffers_sender_to_receiver_hw)
 				{
-					processingControl.numBuffers_sender_to_receiver_hw = _common_set_ldslave.theData_out.con_data.number_buffers;
-					theRelocator._common_set_ldslave.theData_in->con_data.number_buffers = processingControl.numBuffers_sender_to_receiver_hw;
+					processingControl.numBuffers_sender_to_receiver_hw = _common_set_ocon.theData_out.con_data.number_buffers;
+					theRelocator._common_set_icon.theData_in->con_data.number_buffers = processingControl.numBuffers_sender_to_receiver_hw;
 					processingControl.numBuffers_sender_to_receiver_sw = processingControl.numBuffers_sender_to_receiver_hw;
 				}
 			}
 			*/
 			if (proc_fields.seq_operation_in == PROC)
 			{
-				if (_common_set_ldslave.theData_out.con_data.number_buffers > processingControl.numBuffers_sender_to_receiver_hw)
+				if (_common_set_ocon.theData_out.con_data.number_buffers > processingControl.numBuffers_sender_to_receiver_hw)
 				{
-					processingControl.numBuffers_sender_to_receiver_hw = _common_set_ldslave.theData_out.con_data.number_buffers;
-					theRelocator._common_set_ldslave.theData_in->con_data.number_buffers = processingControl.numBuffers_sender_to_receiver_hw;
+					processingControl.numBuffers_sender_to_receiver_hw = _common_set_ocon.theData_out.con_data.number_buffers;
+					theRelocator._common_set_icon.theData_in->con_data.number_buffers = processingControl.numBuffers_sender_to_receiver_hw;
 				}
 			}
-			if(_common_set_ldslave.theData_out.con_data.number_buffers > processingControl.numBuffers_sender_to_receiver_sw)
+			if(_common_set_ocon.theData_out.con_data.number_buffers > processingControl.numBuffers_sender_to_receiver_sw)
 			{
-				processingControl.numBuffers_sender_to_receiver_sw = _common_set_ldslave.theData_out.con_data.number_buffers;
+				processingControl.numBuffers_sender_to_receiver_sw = _common_set_ocon.theData_out.con_data.number_buffers;
 			}
 
-			if (theRelocator._common_set_ldslave.theData_in)
+			if (theRelocator._common_set_icon.theData_in)
 			{
 				// Create container in which to place buffer references lateron
-				res = jvx_allocateDataLinkDescriptor(theRelocator._common_set_ldslave.theData_in, false);
+				res = jvx_allocateDataLinkDescriptor(theRelocator._common_set_icon.theData_in, false);
 				assert(res == JVX_NO_ERROR);
 
 				if (proc_fields.seq_operation_in == PROC)
 				{
 					// Adopt next stage pipeline control
-					theRelocator._common_set_ldslave.theData_in->con_pipeline = _common_set_ldslave.theData_out.con_pipeline;
+					theRelocator._common_set_icon.theData_in->con_pipeline = _common_set_ocon.theData_out.con_pipeline;
 				}
 				else
 				{
-					res = jvx_allocateDataLinkPipelineControl(theRelocator._common_set_ldslave.theData_in);
-					*theRelocator._common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 0;					
+					res = jvx_allocateDataLinkPipelineControl(theRelocator._common_set_icon.theData_in);
+					*theRelocator._common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;					
 				}
 			}
 		}
@@ -1222,45 +1222,45 @@ CjvxGenericWrapperDevice::postprocess_linkdata(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	if (res == JVX_NO_ERROR)
 	{
 		// Start a new master concatenation
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
 			// Create container in which to place buffer references lateron
-			if (theRelocator._common_set_ldslave.theData_in)
+			if (theRelocator._common_set_icon.theData_in)
 			{
 				if (proc_fields.seq_operation_in != PROC)
 				{
-					jvx_deallocateDataLinkPipelineControl(theRelocator._common_set_ldslave.theData_in);
+					jvx_deallocateDataLinkPipelineControl(theRelocator._common_set_icon.theData_in);
 				}
-				jvx_neutralDataLinkDescriptor_pipeline(&theRelocator._common_set_ldslave.theData_in->con_pipeline);
+				jvx_neutralDataLinkDescriptor_pipeline(&theRelocator._common_set_icon.theData_in->con_pipeline);
 
-				res = jvx_deallocateDataLinkDescriptor(theRelocator._common_set_ldslave.theData_in, false);
+				res = jvx_deallocateDataLinkDescriptor(theRelocator._common_set_icon.theData_in, false);
 				assert(res == JVX_NO_ERROR);
 			}
 
-			_common_set_ldslave.theData_out.con_link.connect_to->postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			_common_set_ocon.theData_out.con_link.connect_to->postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
 
-		_common_set_ldslave.theData_out.con_params.buffersize = 0;
-		_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_NONE;
-		_common_set_ldslave.theData_out.con_data.buffers = NULL;
-		_common_set_ldslave.theData_out.con_data.number_buffers = 0;
-		_common_set_ldslave.theData_out.con_params.number_channels = 0;
-		_common_set_ldslave.theData_out.con_params.rate = 0;
-		_common_set_ldslave.theData_out.con_data.bExt.align = 0;
-		_common_set_ldslave.theData_out.con_data.bExt.append = 0;
-		_common_set_ldslave.theData_out.con_data.bExt.prepend = 0;
-		_common_set_ldslave.theData_out.con_data.bExt.f_alloc = NULL;
-		_common_set_ldslave.theData_out.con_data.bExt.f_dealloc = NULL;
-		_common_set_ldslave.theData_out.con_data.bExt.f_priv = NULL;	
+		_common_set_ocon.theData_out.con_params.buffersize = 0;
+		_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_NONE;
+		_common_set_ocon.theData_out.con_data.buffers = NULL;
+		_common_set_ocon.theData_out.con_data.number_buffers = 0;
+		_common_set_ocon.theData_out.con_params.number_channels = 0;
+		_common_set_ocon.theData_out.con_params.rate = 0;
+		_common_set_ocon.theData_out.con_data.bExt.align = 0;
+		_common_set_ocon.theData_out.con_data.bExt.append = 0;
+		_common_set_ocon.theData_out.con_data.bExt.prepend = 0;
+		_common_set_ocon.theData_out.con_data.bExt.f_alloc = NULL;
+		_common_set_ocon.theData_out.con_data.bExt.f_dealloc = NULL;
+		_common_set_ocon.theData_out.con_data.bExt.f_priv = NULL;	
 
-		_common_set_ldslave.theData_out.con_user.chain_spec_user_hints =
-			jvx_hintDesriptor_pop_front(_common_set_ldslave.theData_out.con_user.chain_spec_user_hints,
+		_common_set_ocon.theData_out.con_user.chain_spec_user_hints =
+			jvx_hintDesriptor_pop_front(_common_set_ocon.theData_out.con_user.chain_spec_user_hints,
 				&ptrPop, &flgPop, &tpPop);
 
 		assert(ptrPop == &processingControl.inProc.procFlags);
 		assert(flgPop == JVX_DATAPROCESSOR_HINT_DESCRIPTOR_PROCESSING_TYPE_CBITFIELD);
 
-		_common_set_ldslave.theData_out.con_user.chain_spec_user_hints = NULL;
+		_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
 	}
 	return(res);
 }

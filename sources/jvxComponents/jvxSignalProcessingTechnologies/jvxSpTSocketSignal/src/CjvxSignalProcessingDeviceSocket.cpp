@@ -160,9 +160,9 @@ CjvxSignalProcessingDeviceSocket::prepare()
 	// Otherwise, be careful!
 	if (res == JVX_NO_ERROR)
 	{
-		jvxSize bsize_used = _common_set_ldslave.theData_out.con_params.buffersize;
+		jvxSize bsize_used = _common_set_ocon.theData_out.con_params.buffersize;
 		bsize_used = JVX_MAX(bsize_used, theSMachine.params.bsize);
-		jvxSize srate_used = _common_set_ldslave.theData_out.con_params.rate;
+		jvxSize srate_used = _common_set_ocon.theData_out.con_params.rate;
 
 		config_sync.reset();
 		runtime_sync.reset();
@@ -171,9 +171,9 @@ CjvxSignalProcessingDeviceSocket::prepare()
 		syncio.startSync(
 			bsize_used,
 			srate_used,
-			_common_set_ldslave.theData_out.con_params.format,
-			_common_set_ldslave.theData_out.con_params.number_channels,
-			_common_set_ldslave.theData_in->con_params.number_channels,
+			_common_set_ocon.theData_out.con_params.format,
+			_common_set_ocon.theData_out.con_params.number_channels,
+			_common_set_icon.theData_in->con_params.number_channels,
 			&config_sync,
 			&runtime_sync,
 			&fheight_sync);
@@ -262,8 +262,8 @@ CjvxSignalProcessingDeviceSocket::transfer_backward_ocon(jvxLinkDataTransferType
 	{
 	case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
 
-		theData_out = &_common_set_ldslave.theData_out;
-		theData_in = _common_set_ldslave.theData_in;
+		theData_out = &_common_set_ocon.theData_out;
+		theData_in = _common_set_icon.theData_in;
 
 		jvxTick tt = JVX_GET_TICKCOUNT_US_GET_CURRENT(&tStampRates_local);
 		if (JVX_CHECK_SIZE_SELECTED(tStampRates_last_out_local))
@@ -287,7 +287,7 @@ CjvxSignalProcessingDeviceSocket::transfer_backward_ocon(jvxLinkDataTransferType
 		// Make sure the access to the secondary link is fully setup before actually using it
 		if (theData_out->con_link.connect_to)
 		{
-			_common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 
 
 			/*
@@ -310,11 +310,11 @@ CjvxSignalProcessingDeviceSocket::transfer_backward_ocon(jvxLinkDataTransferType
 			}
 			*/
 
-			_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 
 			jvxHandle** buf_to_software = NULL;
 			jvxHandle** buf_from_software = NULL;
-			if (_common_set_ldslave.theData_out.con_data.buffers)
+			if (_common_set_ocon.theData_out.con_data.buffers)
 			{
 				buf_to_software = theData_out->con_data.buffers[*theData_out->con_pipeline.idx_stage_ptr];
 			}

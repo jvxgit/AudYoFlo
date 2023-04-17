@@ -1340,14 +1340,14 @@ CjvxNetworkMasterDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxSize cnt = 0;
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;
 
-	_common_set_ldslave.theData_out.con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_out.con_params.format = _inproc.format;
-	_common_set_ldslave.theData_out.con_data.buffers = NULL;
-	_common_set_ldslave.theData_out.con_data.number_buffers = genNetworkMaster_device::properties_active.numberBuffersDataXChange.value;
-	_common_set_ldslave.theData_out.con_params.number_channels = _inproc.numInputs;
-	_common_set_ldslave.theData_out.con_params.rate = _inproc.samplerate;
-	//_common_set_ldslave.theData_out.sender.source = reinterpret_cast<IjvxObject*>(this);
-	//_common_set_ldslave.theData_out.sender.tp = _common_set.theComponentType;
+	_common_set_ocon.theData_out.con_params.buffersize = _inproc.buffersize;
+	_common_set_ocon.theData_out.con_params.format = _inproc.format;
+	_common_set_ocon.theData_out.con_data.buffers = NULL;
+	_common_set_ocon.theData_out.con_data.number_buffers = genNetworkMaster_device::properties_active.numberBuffersDataXChange.value;
+	_common_set_ocon.theData_out.con_params.number_channels = _inproc.numInputs;
+	_common_set_ocon.theData_out.con_params.rate = _inproc.samplerate;
+	//_common_set_ocon.theData_out.sender.source = reinterpret_cast<IjvxObject*>(this);
+	//_common_set_ocon.theData_out.sender.tp = _common_set.theComponentType;
 	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res != JVX_NO_ERROR)
 	{
@@ -1406,7 +1406,7 @@ CjvxNetworkMasterDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		jvxSize qSize = inProcessing.tx_size;
 #ifndef JVX_PCAP_DIRECT_SEND			
-		res = jvx_connect_client_start_queue_st(this->socketClientIf, qSize, _common_set_ldslave.theData_in->con_params.number_channels);
+		res = jvx_connect_client_start_queue_st(this->socketClientIf, qSize, _common_set_icon.theData_in->con_params.number_channels);
 		assert(res == JVX_NO_ERROR);
 #endif
 	}
@@ -1480,10 +1480,10 @@ CjvxNetworkMasterDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	inProcessing.idSendOut = 0;
 	inProcessing.fillHeight = 0;
 	inProcessing.numberBuffersMax = JVX_MIN(
-		_common_set_ldslave.theData_in->con_data.number_buffers - _common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages,
-		_common_set_ldslave.theData_out.con_data.number_buffers - _common_set_ldslave.theData_out.con_pipeline.num_additional_pipleline_stages);
-		*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 0;
-	*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr = 0;
+		_common_set_icon.theData_in->con_data.number_buffers - _common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages,
+		_common_set_ocon.theData_out.con_data.number_buffers - _common_set_ocon.theData_out.con_pipeline.num_additional_pipleline_stages);
+		*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
+	*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr = 0;
 
 	if (JVX_EVALUATE_BITFIELD(genNetworkMaster_device::properties_active.selectionRunNonBlocking.value.selection() & 0x1))
 	{
@@ -1512,7 +1512,7 @@ CjvxNetworkMasterDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		JVX_GET_TICKCOUNT_US_SETREF(&inProcessing.theTimestamp);
 		inProcessing.timestamp_previous = -1;
-		inProcessing.deltaT_theory_us = (jvxData)_common_set_ldslave.theData_out.con_params.buffersize / (jvxData)_common_set_ldslave.theData_out.con_params.rate * 1000.0 * 1000.0;
+		inProcessing.deltaT_theory_us = (jvxData)_common_set_ocon.theData_out.con_params.buffersize / (jvxData)_common_set_ocon.theData_out.con_params.rate * 1000.0 * 1000.0;
 		inProcessing.deltaT_average_us = 0;
 	}
 
@@ -1628,29 +1628,29 @@ CjvxNetworkMasterDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// This is the return from the link list
 
 	
-	_common_set_ldslave.theData_in->con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = _inproc.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
+	_common_set_icon.theData_in->con_params.buffersize = _inproc.buffersize;
+	_common_set_icon.theData_in->con_params.format = _inproc.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
 		genNetworkMaster_device::properties_active.numberBuffersDataXChange.value,
-		_common_set_ldslave.theData_in->con_data.number_buffers);
-	_common_set_ldslave.theData_in->con_params.number_channels = _inproc.numOutputs;
-	_common_set_ldslave.theData_in->con_params.rate = _inproc.samplerate;
+		_common_set_icon.theData_in->con_data.number_buffers);
+	_common_set_icon.theData_in->con_params.number_channels = _inproc.numOutputs;
+	_common_set_icon.theData_in->con_params.rate = _inproc.samplerate;
 
 	// now, the receiver to sender side
-	res = jvx_allocateDataLinkDescriptor(_common_set_ldslave.theData_in, false);
+	res = jvx_allocateDataLinkDescriptor(_common_set_icon.theData_in, false);
 	inProcessing.tx_fields = NULL;
 
-	inProcessing.tx_size = jvxDataFormat_size[_common_set_ldslave.theData_in->con_params.format] *
-		_common_set_ldslave.theData_in->con_params.buffersize;
+	inProcessing.tx_size = jvxDataFormat_size[_common_set_icon.theData_in->con_params.format] *
+		_common_set_icon.theData_in->con_params.buffersize;
 	inProcessing.tx_size += sizeof(jvxProtocolHeader) + sizeof(jvxAdvProtocolDataChunkHeader) + inConnection.fldPrepend;
 
-	JVX_SAFE_NEW_FLD(inProcessing.tx_fields, jvxByte**, _common_set_ldslave.theData_in->con_data.number_buffers);
+	JVX_SAFE_NEW_FLD(inProcessing.tx_fields, jvxByte**, _common_set_icon.theData_in->con_data.number_buffers);
 
-	for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 	{
-		JVX_SAFE_NEW_FLD(inProcessing.tx_fields[i], jvxByte*, _common_set_ldslave.theData_in->con_params.number_channels);
-		for (j = 0; j < _common_set_ldslave.theData_in->con_params.number_channels; j++)
+		JVX_SAFE_NEW_FLD(inProcessing.tx_fields[i], jvxByte*, _common_set_icon.theData_in->con_params.number_channels);
+		for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 		{
 			inProcessing.tx_fields[i][j] = NULL;
 			JVX_SAFE_NEW_FLD(inProcessing.tx_fields[i][j], jvxByte, inProcessing.tx_size);
@@ -1661,13 +1661,13 @@ CjvxNetworkMasterDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			hdr->dheader.header.purpose = JVX_PROTOCOL_ADVLINK_MESSAGE_PURPOSE_REQUEST | JVX_PROTOCOL_ADVLINK_SEND_DATA;
 			hdr->dheader.adv_data_header.channel_mask = ((jvxUInt64)1 << j);
 			hdr->dheader.adv_data_header.sequence_id = 0;
-			_common_set_ldslave.theData_in->con_data.buffers[i][j] =
+			_common_set_icon.theData_in->con_data.buffers[i][j] =
 				inProcessing.tx_fields[i][j] + sizeof(jvxProtocolHeader) + sizeof(jvxAdvProtocolDataChunkHeader) + inConnection.fldPrepend;
 		}
 	}
 
-	res = jvx_allocateDataLinkPipelineControl(_common_set_ldslave.theData_in); 
-	*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 0;
+	res = jvx_allocateDataLinkPipelineControl(_common_set_icon.theData_in); 
+	*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
 
 	return res;
 }
@@ -1681,11 +1681,11 @@ CjvxNetworkMasterDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 	// res = _data_link_stop();
 	assert(res == JVX_NO_ERROR);
 
-	for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 	{
-		for (j = 0; j < _common_set_ldslave.theData_in->con_params.number_channels; j++)
+		for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 		{
-			_common_set_ldslave.theData_in->con_data.buffers[i][j] = NULL;
+			_common_set_icon.theData_in->con_data.buffers[i][j] = NULL;
 			JVX_SAFE_DELETE_FLD(inProcessing.tx_fields[i][j], jvxByte);
 			inProcessing.tx_fields[i][j] = NULL;
 		}
@@ -1696,8 +1696,8 @@ CjvxNetworkMasterDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 	inProcessing.tx_size = 0;
 	// now, the receiver to sender side
 
-	res = jvx_deallocateDataLinkPipelineControl(_common_set_ldslave.theData_in); 
-	res = jvx_deallocateDataLinkDescriptor(_common_set_ldslave.theData_in, false);
+	res = jvx_deallocateDataLinkPipelineControl(_common_set_icon.theData_in); 
+	res = jvx_deallocateDataLinkDescriptor(_common_set_icon.theData_in, false);
 
 	return res;
 }
@@ -1735,14 +1735,14 @@ CjvxNetworkMasterDevice::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
 	jvxErrorType res = JVX_NO_ERROR;
 	// This is the return from the link list
 
-	_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
-	_common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-		*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr].idProcess = JVX_SIZE_UNSELECTED;
+	_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
+	_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
+		*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess = JVX_SIZE_UNSELECTED;
 	inProcessing.fillHeight--;
-	*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr =
-		(*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr + 1) %
-		_common_set_ldslave.theData_in->con_data.number_buffers;
-	_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+	*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr =
+		(*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr + 1) %
+		_common_set_icon.theData_in->con_data.number_buffers;
+	_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 
 	return res;
 }

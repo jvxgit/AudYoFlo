@@ -87,7 +87,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 			CjvxVideoDevice_genpcg::rt_info_vd.detected_rate.value = 1000000.0 / runtime.avrgT;
 
 			// In this function, we get the desired buffer target index
-			res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 			assert(res == JVX_NO_ERROR);
 
 			IMF2DBuffer     *m2DBuffer = NULL;
@@ -112,21 +112,21 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 					BYTE* src = NULL;
 					LONG stride = 0;
 					//std::cout << "Start capture buffer " << theData.pipeline.idx_stage << std::endl;
-					jvxByte* dest = (jvxByte*)_common_set_ldslave.theData_out.con_data.buffers[
-						*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][0];
+					jvxByte* dest = (jvxByte*)_common_set_ocon.theData_out.con_data.buffers[
+						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][0];
 						m2DBuffer->Lock2D(&src, &stride);
 
 						// If source is browsed from toe to the head, we do the same for the
 						// texture target buffer
 						if (stride < 0)
 						{
-							dest += (_common_set_ldslave.theData_out.con_params.segmentation.y - 1)* runtime.szLine;
+							dest += (_common_set_ocon.theData_out.con_params.segmentation.y - 1)* runtime.szLine;
 						}
 
 						// This copies the lines in target buffer: from 
 						// - .. higher lines to lower lines in target buffer
 						// - .. from end to beginning in src buffer
-						for (i = 0; i < _common_set_ldslave.theData_out.con_params.segmentation.y; i++)
+						for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
 						{
 							memcpy(dest, src, runtime.szLine);
 							src += stride;
@@ -151,10 +151,10 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 
 					if (src)
 					{
-						jvxByte* dest = (jvxByte*)_common_set_ldslave.theData_out.con_data.buffers[
-							*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr][0];
+						jvxByte* dest = (jvxByte*)_common_set_ocon.theData_out.con_data.buffers[
+							*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][0];
 						jvxSize i;
-						for (i = 0; i < _common_set_ldslave.theData_out.con_params.segmentation.y; i++)
+						for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
 						{
 							memcpy(dest, src, runtime.szLine);
 							src += runtime.szLine;
@@ -170,11 +170,11 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 				mediabuffer->Release();
 
 				// Process buffer
-				res = _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+				res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 				assert(res == JVX_NO_ERROR);
 
 				// Processing complete
-				res = _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+				res = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 				assert(res == JVX_NO_ERROR);
 			}
 			else

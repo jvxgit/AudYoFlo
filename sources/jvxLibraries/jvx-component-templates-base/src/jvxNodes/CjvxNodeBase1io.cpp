@@ -160,7 +160,7 @@ CjvxNodeBase1io::accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	res = neg_input._negotiate_connect_icon(_common_set_ldslave.theData_in,
+	res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 		static_cast<IjvxObject*>(this),
 		_common_set_ldslave.descriptor.c_str()
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -204,7 +204,7 @@ CjvxNodeBase1io::from_input_to_output()
 		(jvxDataFormat)node_inout._common_set_node_params_a_1io.format,
 		(jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat,
 		(jvxDataflow)node_inout._common_set_node_params_a_1io.data_flow,
-		&_common_set_ldslave.theData_out);
+		&_common_set_ocon.theData_out);
 }
 
 jvxErrorType
@@ -225,7 +225,7 @@ CjvxNodeBase1io::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* d
 		{
 			// There is only room to negotiate 
 			res = neg_input._negotiate_transfer_backward_ocon(ld,
-				&_common_set_ldslave.theData_out, static_cast<IjvxObject*>(this), NULL
+				&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), NULL
 				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 		break;
@@ -339,29 +339,29 @@ CjvxNodeBase1io::update_simple_params_from_neg_on_test()
 void
 CjvxNodeBase1io::update_simple_params_from_ldesc()
 {
-	node_inout._common_set_node_params_a_1io.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
-	node_inout._common_set_node_params_a_1io.samplerate = _common_set_ldslave.theData_in->con_params.rate;
-	node_inout._common_set_node_params_a_1io.number_channels = _common_set_ldslave.theData_in->con_params.number_channels;
-	node_inout._common_set_node_params_a_1io.format = _common_set_ldslave.theData_in->con_params.format;
-	node_inout._common_set_node_params_a_1io.subformat = _common_set_ldslave.theData_in->con_params.format_group;
-	node_inout._common_set_node_params_a_1io.segmentation.x = _common_set_ldslave.theData_in->con_params.segmentation.x;
-	node_inout._common_set_node_params_a_1io.segmentation.y = _common_set_ldslave.theData_in->con_params.segmentation.y;
-	node_inout._common_set_node_params_a_1io.data_flow = _common_set_ldslave.theData_in->con_params.data_flow;
-	node_inout._common_set_node_params_a_1io.format_spec = _common_set_ldslave.theData_in->con_params.format_spec.std_str();
+	node_inout._common_set_node_params_a_1io.buffersize = _common_set_icon.theData_in->con_params.buffersize;
+	node_inout._common_set_node_params_a_1io.samplerate = _common_set_icon.theData_in->con_params.rate;
+	node_inout._common_set_node_params_a_1io.number_channels = _common_set_icon.theData_in->con_params.number_channels;
+	node_inout._common_set_node_params_a_1io.format = _common_set_icon.theData_in->con_params.format;
+	node_inout._common_set_node_params_a_1io.subformat = _common_set_icon.theData_in->con_params.format_group;
+	node_inout._common_set_node_params_a_1io.segmentation.x = _common_set_icon.theData_in->con_params.segmentation.x;
+	node_inout._common_set_node_params_a_1io.segmentation.y = _common_set_icon.theData_in->con_params.segmentation.y;
+	node_inout._common_set_node_params_a_1io.data_flow = _common_set_icon.theData_in->con_params.data_flow;
+	node_inout._common_set_node_params_a_1io.format_spec = _common_set_icon.theData_in->con_params.format_spec.std_str();
 }
 
 void
 CjvxNodeBase1io::update_ldesc_from_input_params_on_test()
 {
-	_common_set_ldslave.theData_out.con_params.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
-	_common_set_ldslave.theData_out.con_params.buffersize = node_inout._common_set_node_params_a_1io.buffersize;
-	_common_set_ldslave.theData_out.con_params.rate = node_inout._common_set_node_params_a_1io.samplerate;
-	_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)node_inout._common_set_node_params_a_1io.format;
-	_common_set_ldslave.theData_out.con_params.format_group = (jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat;
-	_common_set_ldslave.theData_out.con_params.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = node_inout._common_set_node_params_a_1io.segmentation.y;
-	_common_set_ldslave.theData_out.con_params.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
-	_common_set_ldslave.theData_out.con_params.data_flow = (jvxDataflow)node_inout._common_set_node_params_a_1io.data_flow;
+	_common_set_ocon.theData_out.con_params.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
+	_common_set_ocon.theData_out.con_params.buffersize = node_inout._common_set_node_params_a_1io.buffersize;
+	_common_set_ocon.theData_out.con_params.rate = node_inout._common_set_node_params_a_1io.samplerate;
+	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)node_inout._common_set_node_params_a_1io.format;
+	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat;
+	_common_set_ocon.theData_out.con_params.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
+	_common_set_ocon.theData_out.con_params.segmentation.y = node_inout._common_set_node_params_a_1io.segmentation.y;
+	_common_set_ocon.theData_out.con_params.number_channels = node_inout._common_set_node_params_a_1io.number_channels;
+	_common_set_ocon.theData_out.con_params.data_flow = (jvxDataflow)node_inout._common_set_node_params_a_1io.data_flow;
 }
 
 void
@@ -369,45 +369,45 @@ CjvxNodeBase1io::constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg
 {
 	// ===================================================================
 	// Prefer max buffersize 
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ldslave.theData_out.con_params.buffersize);
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ldslave.theData_out.con_params.buffersize);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ocon.theData_out.con_params.buffersize);
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ocon.theData_out.con_params.buffersize);
 	// ===================================================================
 
 	// ===================================================================
 	// Prefer min samplerate
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.samplerate, _common_set_ldslave.theData_out.con_params.rate);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ldslave.theData_out.con_params.rate);
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.samplerate, _common_set_ocon.theData_out.con_params.rate);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ocon.theData_out.con_params.rate);
 	// ===================================================================
 
 	// ===================================================================
 	// Prefer min number channels
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ldslave.theData_out.con_params.number_channels);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ldslave.theData_out.con_params.number_channels);
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ocon.theData_out.con_params.number_channels);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ocon.theData_out.con_params.number_channels);
 	// ===================================================================
 
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation.x);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ldslave.theData_out.con_params.segmentation.x);
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ocon.theData_out.con_params.segmentation.x);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ocon.theData_out.con_params.segmentation.x);
 
 	// ===================================================================
 
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation.y);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ldslave.theData_out.con_params.segmentation.y);
-
-	// ===================================================================
-	// Prefer min format
-	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.format, _common_set_ldslave.theData_out.con_params.format, JVX_DATAFORMAT_NONE);
-	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.format, _common_set_ldslave.theData_out.con_params.format, JVX_DATAFORMAT_NONE);
-	// ===================================================================
+	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ocon.theData_out.con_params.segmentation.y);
+	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ocon.theData_out.con_params.segmentation.y);
 
 	// ===================================================================
 	// Prefer min format
-	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.subformat, _common_set_ldslave.theData_out.con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
-	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.subformat, _common_set_ldslave.theData_out.con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
+	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.format, _common_set_ocon.theData_out.con_params.format, JVX_DATAFORMAT_NONE);
+	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.format, _common_set_ocon.theData_out.con_params.format, JVX_DATAFORMAT_NONE);
 	// ===================================================================
 
 	// ===================================================================
 	// Prefer min format
-	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.data_flow, _common_set_ldslave.theData_out.con_params.data_flow, JVX_DATAFLOW_NONE);
-	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.data_flow, _common_set_ldslave.theData_out.con_params.data_flow, JVX_DATAFLOW_NONE);
+	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.subformat, _common_set_ocon.theData_out.con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
+	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.subformat, _common_set_ocon.theData_out.con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
+	// ===================================================================
+
+	// ===================================================================
+	// Prefer min format
+	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.data_flow, _common_set_ocon.theData_out.con_params.data_flow, JVX_DATAFLOW_NONE);
+	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.data_flow, _common_set_ocon.theData_out.con_params.data_flow, JVX_DATAFLOW_NONE);
 	// ===================================================================
 }

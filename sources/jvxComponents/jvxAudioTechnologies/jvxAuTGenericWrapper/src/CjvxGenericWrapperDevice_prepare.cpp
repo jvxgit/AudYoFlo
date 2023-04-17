@@ -395,7 +395,7 @@ CjvxGenericWrapperDevice::prepare_sender_to_receiver(jvxLinkDataDescriptor* theD
 		processingControl.stateInPreparation |= (jvxUInt32)jvxStatePrepapration::JVX_GENERIC_WRAPPER_LINK_DATA_SENDER_TO_RECEIVER_ALLOCATED_BF;
 	}
 
-	res = prepare_preplinkmapper_input(&_common_set_ldslave.theData_out);
+	res = prepare_preplinkmapper_input(&_common_set_ocon.theData_out);
 	if (res == JVX_NO_ERROR)
 	{
 		processingControl.stateInPreparation |= (jvxUInt32)jvxStatePrepapration::JVX_GENERIC_WRAPPER_SHORTCUTS_LINKMAPPER_INPUT_COMPLETE_BF;
@@ -467,19 +467,19 @@ CjvxGenericWrapperDevice::prepare_sender_to_receiver(jvxLinkDataDescriptor* theD
 
 					// The number of software buffers is identical to the number of input hardware buffers in this case
 					// We therefore forward the buffer pointer
-					assert(processingControl.numBuffers_sender_to_receiver_sw == theRelocator._common_set_ldslave.theData_in->con_data.number_buffers);
-					assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ldslave.theData_out.con_data.number_buffers);
+					assert(processingControl.numBuffers_sender_to_receiver_sw == theRelocator._common_set_icon.theData_in->con_data.number_buffers);
+					assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ocon.theData_out.con_data.number_buffers);
 
 					for(k = 0; k < processingControl.numBuffers_sender_to_receiver_sw; k++)
 					{
-						theRelocator._common_set_ldslave.theData_in->con_data.bExt.raw[k][idxToHwFile] =
-							_common_set_ldslave.theData_out.con_data.bExt.raw[k][idxToSw];
-						theRelocator._common_set_ldslave.theData_in->con_data.bExt.offset[k][idxToHwFile] =
-							_common_set_ldslave.theData_out.con_data.bExt.offset[k][idxToSw];
-						theRelocator._common_set_ldslave.theData_in->con_data.buffers[k][idxToHwFile] =
-							_common_set_ldslave.theData_out.con_data.buffers[k][idxToSw];
-						theRelocator._common_set_ldslave.theData_in->con_data.bExt.sz = 
-							_common_set_ldslave.theData_out.con_data.bExt.sz;
+						theRelocator._common_set_icon.theData_in->con_data.bExt.raw[k][idxToHwFile] =
+							_common_set_ocon.theData_out.con_data.bExt.raw[k][idxToSw];
+						theRelocator._common_set_icon.theData_in->con_data.bExt.offset[k][idxToHwFile] =
+							_common_set_ocon.theData_out.con_data.bExt.offset[k][idxToSw];
+						theRelocator._common_set_icon.theData_in->con_data.buffers[k][idxToHwFile] =
+							_common_set_ocon.theData_out.con_data.buffers[k][idxToSw];
+						theRelocator._common_set_icon.theData_in->con_data.bExt.sz = 
+							_common_set_ocon.theData_out.con_data.bExt.sz;
 					}
 					break;
 
@@ -494,17 +494,17 @@ CjvxGenericWrapperDevice::prepare_sender_to_receiver(jvxLinkDataDescriptor* theD
 					idxToHwFile = runtime.channelMappings.inputChannelMapper[i].toHwFile.pointsToIdSelectionThisDevice;
 
 					// We must have as many input fields (ptrA_in) as we have hardware input buffers
-					assert(processingControl.numBuffers_sender_to_receiver_hw == theRelocator._common_set_ldslave.theData_in->con_data.number_buffers);
+					assert(processingControl.numBuffers_sender_to_receiver_hw == theRelocator._common_set_icon.theData_in->con_data.number_buffers);
 
-					for(k = 0; k < theRelocator._common_set_ldslave.theData_in->con_data.number_buffers; k++)
+					for(k = 0; k < theRelocator._common_set_icon.theData_in->con_data.number_buffers; k++)
 					{
-						theRelocator._common_set_ldslave.theData_in->con_data.buffers[k][idxToHwFile] = 
+						theRelocator._common_set_icon.theData_in->con_data.buffers[k][idxToHwFile] = 
 							proc_fields.ptrA_in_net[k][idxToHwFile];
-						theRelocator._common_set_ldslave.theData_in->con_data.bExt.raw[k][idxToHwFile] =
+						theRelocator._common_set_icon.theData_in->con_data.bExt.raw[k][idxToHwFile] =
 							proc_fields.ptrA_in_raw[k][idxToHwFile];
-						theRelocator._common_set_ldslave.theData_in->con_data.bExt.offset[k][idxToHwFile] =
+						theRelocator._common_set_icon.theData_in->con_data.bExt.offset[k][idxToHwFile] =
 							proc_fields.ptrA_in_off[k][idxToHwFile];
-						theRelocator._common_set_ldslave.theData_in->con_data.bExt.sz = proc_fields.ptrA_in_sz;
+						theRelocator._common_set_icon.theData_in->con_data.bExt.sz = proc_fields.ptrA_in_sz;
 					}
 					break;
 
@@ -524,12 +524,12 @@ CjvxGenericWrapperDevice::prepare_sender_to_receiver(jvxLinkDataDescriptor* theD
 					{
 						// There should be as many input buffers as there are software buffers since the following object 
 						// knows nothing about the type of the channel
-						assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ldslave.theData_out.con_data.number_buffers);
+						assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ocon.theData_out.con_data.number_buffers);
 
 						for(k = 0; k < processingControl.numBuffers_sender_to_receiver_sw; k++)
 						{
 							onInit.theFilesRef->theInputFiles[j].common.processing.fieldSamplesSW[k][idxToHwFile] =
-								reinterpret_cast<jvxByte*>(_common_set_ldslave.theData_out.con_data.buffers[k][idxToSw]);
+								reinterpret_cast<jvxByte*>(_common_set_ocon.theData_out.con_data.buffers[k][idxToSw]);
 						}
 					}
 				}
@@ -547,12 +547,12 @@ CjvxGenericWrapperDevice::prepare_sender_to_receiver(jvxLinkDataDescriptor* theD
 					{
 						// There should be as many input buffers as there are software buffers since the following object 
 						// knows nothing about the type of the channel
-						assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ldslave.theData_out.con_data.number_buffers);
+						assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ocon.theData_out.con_data.number_buffers);
 
 						for(k = 0; k < processingControl.numBuffers_sender_to_receiver_sw; k++)
 						{
 							onInit.theExtRef->theInputReferences[j].processing.fieldSamplesSW[k][idxToHwFile] =
-								reinterpret_cast<jvxByte*>(_common_set_ldslave.theData_out.con_data.buffers[k][idxToSw]);
+								reinterpret_cast<jvxByte*>(_common_set_ocon.theData_out.con_data.buffers[k][idxToSw]);
 						}
 					}
 				}
@@ -570,12 +570,12 @@ CjvxGenericWrapperDevice::prepare_sender_to_receiver(jvxLinkDataDescriptor* theD
 						
 						// There should be as many input buffers as there are software buffers since the following object 
 						// knows nothing about the type of the channel
-						assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ldslave.theData_out.con_data.number_buffers);
+						assert(processingControl.numBuffers_sender_to_receiver_sw == _common_set_ocon.theData_out.con_data.number_buffers);
 
 						for (k = 0; k < processingControl.numBuffers_sender_to_receiver_sw; k++)
 						{
 							onInit.theDummyRef->inputs[j].buf[k] =
-								reinterpret_cast<jvxByte*>(_common_set_ldslave.theData_out.con_data.buffers[k][idxToSw]);
+								reinterpret_cast<jvxByte*>(_common_set_ocon.theData_out.con_data.buffers[k][idxToSw]);
 						}
 						break;
 					}
@@ -666,9 +666,9 @@ CjvxGenericWrapperDevice::prepare_complete_receiver_to_sender(jvxLinkDataDescrip
 	// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	// Prepare all buffers and components on the output side
 	// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	res = prepare_outputprocessing(_common_set_ldslave.theData_in->con_data.bExt.prepend,
-		_common_set_ldslave.theData_in->con_data.bExt.append,
-		_common_set_ldslave.theData_in->con_data.bExt.align);
+	res = prepare_outputprocessing(_common_set_icon.theData_in->con_data.bExt.prepend,
+		_common_set_icon.theData_in->con_data.bExt.append,
+		_common_set_icon.theData_in->con_data.bExt.align);
 
 	if(res == JVX_NO_ERROR)
 	{
@@ -703,12 +703,12 @@ CjvxGenericWrapperDevice::prepare_complete_receiver_to_sender(jvxLinkDataDescrip
 
 					// We must have as many hw output buffers as there are hardware buffers in the device
 					//assert(processingControl.numBuffers_receiver_to_sender_sw == theData->con_data.number_buffers);
-					assert(processingControl.numBuffers_receiver_to_sender_sw == theRelocator._common_set_ldslave.theData_out.con_data.number_buffers);
+					assert(processingControl.numBuffers_receiver_to_sender_sw == theRelocator._common_set_ocon.theData_out.con_data.number_buffers);
 
 					for(k = 0; k < processingControl.numBuffers_receiver_to_sender_sw; k++)
 					{
 						theData->con_data.buffers[k][idxToSw] =
-							theRelocator._common_set_ldslave.theData_out.con_data.buffers[k][idxToHwFile];
+							theRelocator._common_set_ocon.theData_out.con_data.buffers[k][idxToHwFile];
 					}
 					break;
 
@@ -1262,13 +1262,13 @@ CjvxGenericWrapperDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	else
 	{
 		/*
-		_common_set_ldslave.theData_out.con_params.buffersize = processingControl.computedParameters.bSize_hw;
-		_common_set_ldslave.theData_out.con_params.format = processingControl.computedParameters.form_hw;
-		_common_set_ldslave.theData_out.con_data.buffers = NULL;
-		_common_set_ldslave.theData_out.con_data.number_buffers = 1;
-		_common_set_ldslave.theData_out.con_params.number_channels = 0;
-		_common_set_ldslave.theData_out.con_params.rate = processingControl.computedParameters.sRate_hw;
-		_common_set_ldslave.theData_out.link.descriptor_out_linked->con_data.user_hints = NULL;
+		_common_set_ocon.theData_out.con_params.buffersize = processingControl.computedParameters.bSize_hw;
+		_common_set_ocon.theData_out.con_params.format = processingControl.computedParameters.form_hw;
+		_common_set_ocon.theData_out.con_data.buffers = NULL;
+		_common_set_ocon.theData_out.con_data.number_buffers = 1;
+		_common_set_ocon.theData_out.con_params.number_channels = 0;
+		_common_set_ocon.theData_out.con_params.rate = processingControl.computedParameters.sRate_hw;
+		_common_set_ocon.theData_out.link.descriptor_out_linked->con_data.user_hints = NULL;
 		*/
 		res = this->prepare_sender_to_receiver(NULL JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		assert(res == JVX_NO_ERROR);
@@ -1416,7 +1416,7 @@ CjvxGenericWrapperDevice::prepare_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fd
 	//assert(res == JVX_NO_ERROR);
 
 	// Prepare sender to receiver will use a different linkData container
-	res = this->prepare_sender_to_receiver(theRelocator._common_set_ldslave.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	res = this->prepare_sender_to_receiver(theRelocator._common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	assert(res == JVX_NO_ERROR);
 
 	// Check this here
@@ -1436,93 +1436,93 @@ CjvxGenericWrapperDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 
 	// Correct the given parameters. The algorithm chain should reach over the same values as it would correct
 	/*
-	_common_set_ldslave.theData_in->con_params.buffersize = processingControl.inProc.params.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = processingControl.inProc.params.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = 1;// Assume 1 buffer on output side.
-	_common_set_ldslave.theData_in->con_params.number_channels = processingControl.inProc.params.chans_out;
-	_common_set_ldslave.theData_in->con_params.rate = processingControl.inProc.params.samplerate;
+	_common_set_icon.theData_in->con_params.buffersize = processingControl.inProc.params.buffersize;
+	_common_set_icon.theData_in->con_params.format = processingControl.inProc.params.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = 1;// Assume 1 buffer on output side.
+	_common_set_icon.theData_in->con_params.number_channels = processingControl.inProc.params.chans_out;
+	_common_set_icon.theData_in->con_params.rate = processingControl.inProc.params.samplerate;
 	*/
-	_common_set_ldslave.theData_in->con_params.buffersize = processingControl.computedParameters.bSize_sw;
-	_common_set_ldslave.theData_in->con_params.format = processingControl.computedParameters.form_sw;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(1, _common_set_ldslave.theData_in->con_data.number_buffers);// Thre might be more than one buffer on the input side
-	_common_set_ldslave.theData_in->con_params.number_channels = processingControl.inProc.params_fixed_runtime.chans_out;
-	_common_set_ldslave.theData_in->con_params.rate = processingControl.computedParameters.sRate_sw;
+	_common_set_icon.theData_in->con_params.buffersize = processingControl.computedParameters.bSize_sw;
+	_common_set_icon.theData_in->con_params.format = processingControl.computedParameters.form_sw;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(1, _common_set_icon.theData_in->con_data.number_buffers);// Thre might be more than one buffer on the input side
+	_common_set_icon.theData_in->con_params.number_channels = processingControl.inProc.params_fixed_runtime.chans_out;
+	_common_set_icon.theData_in->con_params.rate = processingControl.computedParameters.sRate_sw;
 
 	// If a device is involved, pass chaining frowad to involved hardware device
 	if (onInit.connectedDevice)
 	{
 		// Change over to host relocator
-		theRelocator._common_set_ldslave.theData_out.con_params.buffersize = processingControl.computedParameters.bSize_hw;
-		theRelocator._common_set_ldslave.theData_out.con_params.format = processingControl.computedParameters.form_hw;
-		theRelocator._common_set_ldslave.theData_out.con_data.buffers = NULL;
-		theRelocator._common_set_ldslave.theData_out.con_data.number_buffers = 1;
+		theRelocator._common_set_ocon.theData_out.con_params.buffersize = processingControl.computedParameters.bSize_hw;
+		theRelocator._common_set_ocon.theData_out.con_params.format = processingControl.computedParameters.form_hw;
+		theRelocator._common_set_ocon.theData_out.con_data.buffers = NULL;
+		theRelocator._common_set_ocon.theData_out.con_data.number_buffers = 1;
 
 		if (proc_fields.seq_operation_out == PROC)
 		{
-			theRelocator._common_set_ldslave.theData_out.con_data.number_buffers = JVX_MAX(1, _common_set_ldslave.theData_in->con_data.number_buffers);
+			theRelocator._common_set_ocon.theData_out.con_data.number_buffers = JVX_MAX(1, _common_set_icon.theData_in->con_data.number_buffers);
 		}
-		theRelocator._common_set_ldslave.theData_out.con_params.number_channels = processingControl.inProc.params_fixed_runtime.chanshw_out;
-		theRelocator._common_set_ldslave.theData_out.con_params.rate = processingControl.computedParameters.sRate_hw;
+		theRelocator._common_set_ocon.theData_out.con_params.number_channels = processingControl.inProc.params_fixed_runtime.chanshw_out;
+		theRelocator._common_set_ocon.theData_out.con_params.rate = processingControl.computedParameters.sRate_hw;
 		
 		// Forward user hints from the hw to relocator link (not the user hints from the sw connection!)
-		//theRelocator._common_set_ldslave.theData_out.con_data.user_hints =
-		//	theRelocator._common_set_ldslave.theData_in->con_data.user_hints;
+		//theRelocator._common_set_ocon.theData_out.con_data.user_hints =
+		//	theRelocator._common_set_icon.theData_in->con_data.user_hints;
 
 		// Move over to relocator (HW) side 
-		res = theRelocator.prepare_connect_icon_x(_common_set_ldslave.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		res = theRelocator.prepare_connect_icon_x(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 		// Store number of buffers used by hardware output
 		if (res == JVX_NO_ERROR)
 		{
-			processingControl.numBuffers_receiver_to_sender_hw = theRelocator._common_set_ldslave.theData_out.con_data.number_buffers;
+			processingControl.numBuffers_receiver_to_sender_hw = theRelocator._common_set_ocon.theData_out.con_data.number_buffers;
 		}
 	}
 
 	// If we have an intermediate buffer, we need to allocate only one channelset,
 	// otherwise, we should allocate as many as the hardware desires
-	processingControl.numBuffers_receiver_to_sender_sw = _common_set_ldslave.theData_in->con_data.number_buffers;
+	processingControl.numBuffers_receiver_to_sender_sw = _common_set_icon.theData_in->con_data.number_buffers;
 	if (proc_fields.seq_operation_out == PROC)
 	{
 		processingControl.numBuffers_receiver_to_sender_sw = JVX_MAX(processingControl.numBuffers_receiver_to_sender_hw, processingControl.numBuffers_receiver_to_sender_sw);
 	}
 
 	// Override the specification from the audio node output side
-	_common_set_ldslave.theData_in->con_data.number_buffers = processingControl.numBuffers_receiver_to_sender_sw;
+	_common_set_icon.theData_in->con_data.number_buffers = processingControl.numBuffers_receiver_to_sender_sw;
 
 	// Correct what was passed by algorithm chain in case we have multiple buffers in pipeline
 	// TODO!!! Use different number of buffers for input as well as output side
-	//_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(processingControl.numBuffers_receiver_to_sender_sw,
-	//	_common_set_ldslave.theData_in->con_data.number_buffers);
+	//_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(processingControl.numBuffers_receiver_to_sender_sw,
+	//	_common_set_icon.theData_in->con_data.number_buffers);
 
 	// Create empty link descriptor - to be filled lateron
-	jvx_allocateDataLinkDescriptor(_common_set_ldslave.theData_in, false);
+	jvx_allocateDataLinkDescriptor(_common_set_icon.theData_in, false);
 	assert(res == JVX_NO_ERROR);
 
 	if (proc_fields.seq_operation_out == PROC)
 	{
-		_common_set_ldslave.theData_in->con_pipeline = theRelocator._common_set_ldslave.theData_out.con_pipeline;
+		_common_set_icon.theData_in->con_pipeline = theRelocator._common_set_ocon.theData_out.con_pipeline;
 	}
 	else
 	{
-		jvx_allocateDataLinkPipelineControl(_common_set_ldslave.theData_in);
+		jvx_allocateDataLinkPipelineControl(_common_set_icon.theData_in);
 		
 		// Prepopulate pipeline buffer
-		*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 0;
-		_common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-			*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr].idProcess =
+		*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
+		_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
+			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
 			_common_set_ldslave.myRuntimeId;
 	}
 
 	// Cross link the output buffers and complete output side
-	this->prepare_complete_receiver_to_sender(_common_set_ldslave.theData_in);
+	this->prepare_complete_receiver_to_sender(_common_set_icon.theData_in);
 	assert(res == JVX_NO_ERROR);
 
 	// Cross copy to receiver_to_sender side
-	jvx_ccopyDataLinkDescriptor(_common_set_ldslave.theData_in, &_common_set_ldslave.theData_out);
-	_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = _common_set_ldslave.theData_out.con_data.buffers;
-	_common_set_ldslave.theData_in->con_compat.user_hints = _common_set_ldslave.theData_out.con_compat.user_hints;
+	jvx_ccopyDataLinkDescriptor(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+	_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = _common_set_ocon.theData_out.con_data.buffers;
+	_common_set_icon.theData_in->con_compat.user_hints = _common_set_ocon.theData_out.con_compat.user_hints;
 
 	return res;
 };
@@ -1534,7 +1534,7 @@ CjvxGenericWrapperDevice::postprocess_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYP
 	jvxErrorType res = JVX_NO_ERROR;
 
 	// This will propagate forward
-	res = this->before_postprocess_receiver_to_sender(theRelocator._common_set_ldslave.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	res = this->before_postprocess_receiver_to_sender(theRelocator._common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	assert(res == JVX_NO_ERROR);
 
 	return res;
@@ -1545,22 +1545,22 @@ CjvxGenericWrapperDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
-	_common_set_ldslave.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
-	jvx_cinitDataLinkDescriptor(_common_set_ldslave.theData_in);
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
+	_common_set_icon.theData_in->con_compat.from_receiver_buffer_allocated_by_sender = NULL;
+	jvx_cinitDataLinkDescriptor(_common_set_icon.theData_in);
 
 	// This function will forward the postprocess.. call to the concatenated blocks 
-	res = this->postprocess_sender_to_receiver(_common_set_ldslave.theData_in);
+	res = this->postprocess_sender_to_receiver(_common_set_icon.theData_in);
 	assert(res == JVX_NO_ERROR);
 
 	// Handle pipeline control struct
 	if (proc_fields.seq_operation_out != PROC)
 	{
-		jvx_deallocateDataLinkPipelineControl(_common_set_ldslave.theData_in);
+		jvx_deallocateDataLinkPipelineControl(_common_set_icon.theData_in);
 	}
-	jvx_neutralDataLinkDescriptor_pipeline(&_common_set_ldslave.theData_in->con_pipeline);
+	jvx_neutralDataLinkDescriptor_pipeline(&_common_set_icon.theData_in->con_pipeline);
 
-	res = jvx_deallocateDataLinkDescriptor(_common_set_ldslave.theData_in, false);
+	res = jvx_deallocateDataLinkDescriptor(_common_set_icon.theData_in, false);
 	assert(res == JVX_NO_ERROR);
 
 	// Rest number of buffer
@@ -1569,16 +1569,16 @@ CjvxGenericWrapperDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 	// If we are here, this is the connect homing to be forwarded to the "real" device
 	if (onInit.connectedDevice)
 	{
-		res = theRelocator.postprocess_connect_icon_x(_common_set_ldslave.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		res = theRelocator.postprocess_connect_icon_x(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		assert(res == JVX_NO_ERROR);
 
 		// Change over to host relocator
-		theRelocator._common_set_ldslave.theData_out.con_params.buffersize = 0;
-		theRelocator._common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_NONE;
-		theRelocator._common_set_ldslave.theData_out.con_data.buffers = NULL;
-		theRelocator._common_set_ldslave.theData_out.con_data.number_buffers = 0; 
-		theRelocator._common_set_ldslave.theData_out.con_params.number_channels = 0;
-		theRelocator._common_set_ldslave.theData_out.con_params.rate = 0;
+		theRelocator._common_set_ocon.theData_out.con_params.buffersize = 0;
+		theRelocator._common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_NONE;
+		theRelocator._common_set_ocon.theData_out.con_data.buffers = NULL;
+		theRelocator._common_set_ocon.theData_out.con_data.number_buffers = 0; 
+		theRelocator._common_set_ocon.theData_out.con_params.number_channels = 0;
+		theRelocator._common_set_ocon.theData_out.con_params.rate = 0;
 	}
 	_postprocess_connect_icon(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	return res;

@@ -47,7 +47,7 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	nativeGl.bufs = NULL;
 	nativeGl.szFld = 0;
-	if (_common_set_ldslave.theData_in->con_params.number_channels >= 1)
+	if (_common_set_icon.theData_in->con_params.number_channels >= 1)
 	{
 		if (jvx_bitTest(genMf_device::configuration_mf.rendering_mode.value.selection(), 0))
 		{
@@ -82,12 +82,12 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		case JVX_GL_RENDER_NATIVE:
 			nativeGl.threadIsInitialized = false;
 
-			nativeGl.form = _common_set_ldslave.theData_in->con_params.format;
-			nativeGl.subform = _common_set_ldslave.theData_in->con_params.format_group;
-			nativeGl.height = _common_set_ldslave.theData_in->con_params.segmentation_y;
-			nativeGl.width = _common_set_ldslave.theData_in->con_params.segmentation_x;
-			nativeGl.numBufs = _common_set_ldslave.theData_in->con_data.number_buffers;
-			nativeGl.numChannels = _common_set_ldslave.theData_in->con_params.number_channels;
+			nativeGl.form = _common_set_icon.theData_in->con_params.format;
+			nativeGl.subform = _common_set_icon.theData_in->con_params.format_group;
+			nativeGl.height = _common_set_icon.theData_in->con_params.segmentation_y;
+			nativeGl.width = _common_set_icon.theData_in->con_params.segmentation_x;
+			nativeGl.numBufs = _common_set_icon.theData_in->con_data.number_buffers;
+			nativeGl.numChannels = _common_set_icon.theData_in->con_params.number_channels;
 			nativeGl.hdlThread = JVX_INVALID_HANDLE_VALUE;
 			nativeGl.requestStop = false;
 
@@ -100,53 +100,53 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			}
 
 			assert(nativeGl.bufs);
-			assert(nativeGl.szFld == _common_set_ldslave.theData_in->con_params.buffersize);
+			assert(nativeGl.szFld == _common_set_icon.theData_in->con_params.buffersize);
 
-			_common_set_ldslave.theData_in->con_data.buffers = nativeGl.bufs;
+			_common_set_icon.theData_in->con_data.buffers = nativeGl.bufs;
 			break;
 #endif
 		case JVX_GL_RENDER_EXTERNAL:
 			ptrExt = genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr;
 			ptr = ptrExt->ptrFld;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_ldslave.theData_in->con_data.buffers, 
-				jvxHandle**, _common_set_ldslave.theData_in->con_data.number_buffers);
-			for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers, 
+				jvxHandle**, _common_set_icon.theData_in->con_data.number_buffers);
+			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_ldslave.theData_in->con_data.buffers[i], 
-					jvxHandle*, _common_set_ldslave.theData_in->con_params.number_channels);
-				for (j = 0; j < _common_set_ldslave.theData_in->con_params.number_channels; j++)
+				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers[i], 
+					jvxHandle*, _common_set_icon.theData_in->con_params.number_channels);
+				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 				{
-					_common_set_ldslave.theData_in->con_data.buffers[i][j] = ptr;
+					_common_set_icon.theData_in->con_data.buffers[i][j] = ptr;
 					ptr += (ptrExt->numElmFldOneChanOneBuf * ptrExt->szElmFld);
 				}
 			}
 			break;
 		default:
 			// No render but allocate buffers for data flow
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_ldslave.theData_in->con_data.buffers, jvxHandle**, 
-				_common_set_ldslave.theData_in->con_data.number_buffers);
-			for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers, jvxHandle**, 
+				_common_set_icon.theData_in->con_data.number_buffers);
+			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_ldslave.theData_in->con_data.buffers[i], jvxHandle*, 
-					_common_set_ldslave.theData_in->con_params.number_channels);
-				for (j = 0; j < _common_set_ldslave.theData_in->con_params.number_channels; j++)
+				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers[i], jvxHandle*, 
+					_common_set_icon.theData_in->con_params.number_channels);
+				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 				{
 
-					JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_ldslave.theData_in->con_data.buffers[i][j], jvxByte, 
-						_common_set_ldslave.theData_in->con_params.buffersize);
+					JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers[i][j], jvxByte, 
+						_common_set_icon.theData_in->con_params.buffersize);
 				}
 			}
 			break;
 		}
 
-		jvx_allocateDataLinkPipelineControl(_common_set_ldslave.theData_in
+		jvx_allocateDataLinkPipelineControl(_common_set_icon.theData_in
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
 			, _common_set.theModuleName.c_str()
 #endif
 		);
-		*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 0;
-		_common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-			*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr].idProcess =
+		*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
+		_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
+			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
 			_common_set_ldslave.myRuntimeId;
 	}
 
@@ -159,9 +159,9 @@ CjvxVideoMfOpenGLDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 	jvxSize i, j;
 	jvxErrorType res = JVX_NO_ERROR;
 
-	if (_common_set_ldslave.theData_in->con_params.number_channels >= 1)
+	if (_common_set_icon.theData_in->con_params.number_channels >= 1)
 	{
-		jvx_deallocateDataLinkPipelineControl(_common_set_ldslave.theData_in);
+		jvx_deallocateDataLinkPipelineControl(_common_set_icon.theData_in);
 
 		switch (nativeGl.renderingTarget)
 		{
@@ -171,30 +171,30 @@ CjvxVideoMfOpenGLDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 			break;
 #endif
 		case JVX_GL_RENDER_EXTERNAL:
-			for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 			{
-				for (j = 0; j < _common_set_ldslave.theData_in->con_params.number_channels; j++)
+				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 				{
-					_common_set_ldslave.theData_in->con_data.buffers[i][j] = NULL;
+					_common_set_icon.theData_in->con_data.buffers[i][j] = NULL;
 				}
-				JVX_DSP_SAFE_DELETE_FIELD(_common_set_ldslave.theData_in->con_data.buffers[i]);
+				JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers[i]);
 			}
-			JVX_DSP_SAFE_DELETE_FIELD(_common_set_ldslave.theData_in->con_data.buffers);
+			JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers);
 
 			break;
 		case JVX_GL_DO_NOT_RENDER:
-			for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 			{
-				for (j = 0; j < _common_set_ldslave.theData_in->con_params.number_channels; j++)
+				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 				{
-					JVX_DSP_SAFE_DELETE_FIELD(_common_set_ldslave.theData_in->con_data.buffers[i][j]);
+					JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers[i][j]);
 				}
-				JVX_DSP_SAFE_DELETE_FIELD(_common_set_ldslave.theData_in->con_data.buffers[i]);
+				JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers[i]);
 			}
-			JVX_DSP_SAFE_DELETE_FIELD(_common_set_ldslave.theData_in->con_data.buffers);
+			JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers);
 			break;
 		}
-		_common_set_ldslave.theData_in->con_data.buffers = NULL;
+		_common_set_icon.theData_in->con_data.buffers = NULL;
 	}
 	return res;
 }
@@ -228,22 +228,22 @@ CjvxVideoMfOpenGLDevice::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool lostBuffer = false;
 
-	if (_common_set_ldslave.theData_in->con_params.number_channels >= 1)
+	if (_common_set_icon.theData_in->con_params.number_channels >= 1)
 	{
 		// Input an incoming buffer into the buffer pipeline.
 		switch (nativeGl.renderingTarget)
 		{
 		case JVX_GL_RENDER_EXTERNAL:
 			
-			// Hint: _common_set_ldslave.theData_in->con_data.number_buffers and 
+			// Hint: _common_set_icon.theData_in->con_data.number_buffers and 
 			// genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->numElmFld /
 			//	genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->numElmFldOneBuf
 			// should match!
 			
 			// Not in protected area since we only read
 			if (genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->fill_height <
-				_common_set_ldslave.theData_in->con_data.number_buffers -
-				(_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages + 1))
+				_common_set_icon.theData_in->con_data.number_buffers -
+				(_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages + 1))
 			{
 				// Ok, there is some space within the output buffer!
 
@@ -252,25 +252,25 @@ CjvxVideoMfOpenGLDevice::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
 					genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->safe_access.priv);
 
 				// Lock the pipeline access buffer
-				_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
-				_common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-					*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr].idProcess =
+				_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
+				_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
+					*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
 					JVX_SIZE_UNSELECTED;
 
 				// Shift the buffer forward
-				*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr =
-					(*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr + 1) %
-					_common_set_ldslave.theData_in->con_data.number_buffers;
+				*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr =
+					(*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr + 1) %
+					_common_set_icon.theData_in->con_data.number_buffers;
 
-				_common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-					*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr].idProcess =
+				_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
+					*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
 					_common_set_ldslave.myRuntimeId;
 
 				// Indicate new buffer available
 				genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->fill_height++;
 
 				// Unlock both
-				_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+				_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 				genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->safe_access.unlockf(
 					genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->safe_access.priv);
 
@@ -290,18 +290,18 @@ CjvxVideoMfOpenGLDevice::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
 			if (nativeGl.idxBuf_Fheight < nativeGl.numBufs - 1)
 			{
 				JVX_LOCK_MUTEX(nativeGl.safeAccessBuffer);
-				_common_set_ldslave.theData_in->con_pipeline.do_lock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl); 
+				_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl); 
 
-				_common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-					*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr].idProcess = JVX_SIZE_UNSELECTED; 
-				*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr = 
-					(*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr + 1) % 
-					_common_set_ldslave.theData_in->con_data.number_buffers; 
-				_common_set_ldslave.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-					*_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr].idProcess =
+				_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
+					*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess = JVX_SIZE_UNSELECTED; 
+				*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 
+					(*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr + 1) % 
+					_common_set_icon.theData_in->con_data.number_buffers; 
+				_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
+					*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
 					_common_set_ldslave.myRuntimeId;
 				nativeGl.idxBuf_Fheight++;
-				_common_set_ldslave.theData_in->con_pipeline.do_unlock(_common_set_ldslave.theData_in->con_pipeline.lock_hdl);
+				_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 				JVX_UNLOCK_MUTEX(nativeGl.safeAccessBuffer);
 			}
 			else
@@ -366,7 +366,7 @@ CjvxVideoMfOpenGLDevice::do_rendering_gl()
 {
 	if (nativeGl.idxBuf_Fheight > 0)
 	{
-		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)_common_set_ldslave.theData_in->con_data.buffers[nativeGl.idxBuf_Read]);
+		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)_common_set_icon.theData_in->con_data.buffers[nativeGl.idxBuf_Read]);
 		JVX_LOCK_MUTEX(nativeGl.safeAccessBuffer);
 		nativeGl.idxBuf_Read = (nativeGl.idxBuf_Read + 1) % nativeGl.numBufs;
 		nativeGl.idxBuf_Fheight--;

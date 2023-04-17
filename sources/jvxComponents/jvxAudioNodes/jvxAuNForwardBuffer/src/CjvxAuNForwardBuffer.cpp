@@ -270,37 +270,37 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		if (_common_set_min.theState == JVX_STATE_PREPARED)
 		{
 			// The number of pipeline stages may be increased from element to element
-			_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = JVX_MAX(
-				_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages,
+			_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages = JVX_MAX(
+				_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages,
 				_common_set_ldslave.num_additional_pipleline_stages);
 
 			// The number of buffers is always lower bounded by the add pipeline stages
-			_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
-				_common_set_ldslave.theData_in->con_data.number_buffers,
-				1 + _common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages);
+			_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
+				_common_set_icon.theData_in->con_data.number_buffers,
+				1 + _common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages);
 
 			// We might specify another additional lower limit for the buffers
-			_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(
-				_common_set_ldslave.theData_in->con_data.number_buffers,
+			_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(
+				_common_set_icon.theData_in->con_data.number_buffers,
 				_common_set_ldslave.num_min_buffers_in);
 
 			// Set the number of buffers as desired
-			_common_set_ldslave.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
-			_common_set_ldslave.theData_out.con_data.alloc_flags = _common_set_ldslave.theData_in->con_data.alloc_flags;
+			_common_set_ocon.theData_out.con_data.number_buffers = _common_set_ldslave.num_min_buffers_out;
+			_common_set_ocon.theData_out.con_data.alloc_flags = _common_set_icon.theData_in->con_data.alloc_flags;
 
-			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags,
+			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags,
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT);
-			jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags,
+			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags,
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
 
 			// Output format
 			// Variable segment sizes do end here!!
-			jvx_bitClear(_common_set_ldslave.theData_out.con_data.alloc_flags,
+			jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
-			_common_set_ldslave.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
+			_common_set_ocon.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
 
 			// Have to review this lateron, currently: no timestamp
-			_common_set_ldslave.theData_out.con_sync.type_timestamp = 0;
+			_common_set_ocon.theData_out.con_sync.type_timestamp = 0;
 
 			runInitInThread = false;
 
@@ -308,7 +308,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			if (res == JVX_NO_ERROR)
 			{
-				if (jvx_bitTest(_common_set_ldslave.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
+				if (jvx_bitTest(_common_set_ocon.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN))
 				{					
 					runInitInThread = true;
 				}
@@ -316,14 +316,14 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				// Do the processing checks and allocate buffers etc
 			// Setup has been verified in the test chain functions before - this is only for simpler access during processing
 				/*
-				input.buffersize = _common_set_ldslave.theData_in->con_params.buffersize;
-				input.number_channels = _common_set_ldslave.theData_in->con_params.number_channels;
-				input.samplerate = _common_set_ldslave.theData_in->con_params.rate;
-				input.format = _common_set_ldslave.theData_in->con_params.format;
+				input.buffersize = _common_set_icon.theData_in->con_params.buffersize;
+				input.number_channels = _common_set_icon.theData_in->con_params.number_channels;
+				input.samplerate = _common_set_icon.theData_in->con_params.rate;
+				input.format = _common_set_icon.theData_in->con_params.format;
 				*/
 				res = allocate_pipeline_and_buffers_prepare_to();
 				assert(res == JVX_NO_ERROR);
-				jvx_bitClear(_common_set_ldslave.theData_in->con_data.alloc_flags,
+				jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags,
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 
 
@@ -344,8 +344,8 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
 				false, withStartThreshold);
 
-			assert(node_inout._common_set_node_params_a_1io.buffersize == _common_set_ldslave.theData_in->con_params.buffersize);
-			assert(node_output._common_set_node_params_a_1io.buffersize == _common_set_ldslave.theData_out.con_params.buffersize);
+			assert(node_inout._common_set_node_params_a_1io.buffersize == _common_set_icon.theData_in->con_params.buffersize);
+			assert(node_output._common_set_node_params_a_1io.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
 
 			// ========================================================================================================
 			// Allocate pre-sorting channel buffer and zero input buffer
@@ -355,7 +355,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
+				if (_common_set_icon.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 				{
 					// Start the secondary thread
 					resL = refThreads.cpPtr->initialize(
@@ -392,7 +392,7 @@ CjvxAuNForwardBuffer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	{
 		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 		{
-			if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
+			if (_common_set_icon.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 			{
 				refThreads.cpPtr->terminate();
 				assert(resL == JVX_NO_ERROR);
@@ -417,12 +417,12 @@ CjvxAuNForwardBuffer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 		res = _postprocess_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 		// The only deviation may be the number of output channels - which is taken from the node parameter set
-		_common_set_ldslave.theData_out.con_data.number_buffers = 0;
+		_common_set_ocon.theData_out.con_data.number_buffers = 0;
 
 		res = deallocate_pipeline_and_buffers_postprocess_to();
 
-		_common_set_ldslave.theData_in->con_data.number_buffers = 0;
-		_common_set_ldslave.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
+		_common_set_icon.theData_in->con_data.number_buffers = 0;
+		_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages = 0;
 
 		postprocess_autostart();
 
@@ -450,7 +450,7 @@ CjvxAuNForwardBuffer::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
+				if (_common_set_icon.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 				{
 					// Start the secondary thread
 					resL = refThreads.cpPtr->start();
@@ -483,7 +483,7 @@ CjvxAuNForwardBuffer::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 		{
-			if (_common_set_ldslave.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
+			if (_common_set_icon.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 			{
 				// Start the secondary thread
 				resL = refThreads.cpPtr->stop(5000);
@@ -569,16 +569,16 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	}
 	else
 	{
-		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
-		jvxSize numCopy = _common_set_ldslave.theData_in->con_params.buffersize;
-		if (_common_set_ldslave.theData_in->con_data.fHeights)
+		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+		jvxSize numCopy = _common_set_icon.theData_in->con_params.buffersize;
+		if (_common_set_icon.theData_in->con_data.fHeights)
 		{
 			jvxSize idxStage = idx_stage;
 			if (JVX_CHECK_SIZE_UNSELECTED(idxStage))
 			{
-				idxStage = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+				idxStage = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 			}
-			numCopy = JVX_MIN(numCopy, _common_set_ldslave.theData_in->con_data.fHeights[idxStage].x);
+			numCopy = JVX_MIN(numCopy, _common_set_icon.theData_in->con_data.fHeights[idxStage].x);
 		}
 		
 		// ========================================================================================================
@@ -636,9 +636,9 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 		if (genForwardBuffer_node::config_select.bypass_buffer.value)
 		{
 			accept_input_parameters_stop(JVX_ERROR_UNSUPPORTED);
-			if(_common_set_ldslave.theData_in->con_link.connect_from)
+			if(_common_set_icon.theData_in->con_link.connect_from)
 			{ 
-				res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 					tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				if (res == JVX_NO_ERROR)
 				{
@@ -650,7 +650,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 					{
 						// There is only room to negotiate 
 						res = neg_output._negotiate_transfer_backward_ocon(ld,
-							&_common_set_ldslave.theData_out, static_cast<IjvxObject*>(this), NULL
+							&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), NULL
 							JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 					}
 					*/
@@ -674,7 +674,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 	case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
 		if (genForwardBuffer_node::config_select.bypass_buffer.value)
 		{
-			if (_common_set_ldslave.theData_in->con_link.connect_from)
+			if (_common_set_icon.theData_in->con_link.connect_from)
 			{
 				return CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			}
@@ -683,23 +683,23 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 		{
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				if (_common_set_ldslave.theData_out.con_link.connect_to)
+				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-					res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+					res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 					if (res == JVX_NO_ERROR)
 					{
 						assert(node_output._common_set_node_params_a_1io.number_channels == 
-							_common_set_ldslave.theData_out.con_params.number_channels);
+							_common_set_ocon.theData_out.con_params.number_channels);
 						assert(node_output._common_set_node_params_a_1io.buffersize ==
-							_common_set_ldslave.theData_out.con_params.buffersize);
+							_common_set_ocon.theData_out.con_params.buffersize);
 
 						// Get new audio data here
-						jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+						jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
 						jvxSize fHeight = 0;
 						jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
 							&myAudioDispenser,
 							(jvxHandle**)bufsOut, 0,
-							nullptr, 0, _common_set_ldslave.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
+							nullptr, 0, _common_set_ocon.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
 
 						// This call returns:
 						// 1) JVX_DSP_ERROR_ABORT if the buffer was not yet accessed on the input side
@@ -728,9 +728,9 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 
 
 							// No output from buffer, copy silence
-							for (i = 0; i < _common_set_ldslave.theData_out.con_params.number_channels; i++)
+							for (i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
 							{
-								memset(bufsOut[i], 0, (_common_set_ldslave.theData_out.con_params.buffersize * jvxDataFormat_size[_common_set_ldslave.theData_out.con_params.format]));
+								memset(bufsOut[i], 0, (_common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format]));
 							}
 							
 							// If the sample buffer does not deliver we need to wakeup the thread!!
@@ -742,8 +742,8 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 							break;
 						}
 
-						_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
-						_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+						_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+						_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 					}
 				}
 			}
@@ -790,9 +790,9 @@ CjvxAuNForwardBuffer::startup(jvxInt64 timestamp_us)
 {
 	if (runInitInThread)
 	{
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			_common_set_ldslave.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN, nullptr, 0);
+			_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN, nullptr, 0);
 		}
 	}
 	if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
@@ -828,9 +828,9 @@ CjvxAuNForwardBuffer::stopped(jvxInt64 timestamp_us)
 {
 	if (runInitInThread)
 	{
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			_common_set_ldslave.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN, nullptr, 0);
+			_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN, nullptr, 0);
 		}
 	}
 	return JVX_NO_ERROR;
@@ -887,7 +887,7 @@ CjvxAuNForwardBuffer::read_samples_to_buffer()
 		if (space >= node_output._common_set_node_params_a_1io.buffersize)
 		{
 			// Try to get data from chain. 
-			jvxErrorType res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(
+			jvxErrorType res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 				JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 			if (res != JVX_NO_ERROR)
 			{
@@ -904,7 +904,7 @@ CjvxAuNForwardBuffer::read_samples_to_buffer()
 void
 CjvxAuNForwardBuffer::write_samples_to_buffer()
 {
-	if (_common_set_ldslave.theData_out.con_link.connect_to)
+	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
 		while(1)
 		{
@@ -912,25 +912,25 @@ CjvxAuNForwardBuffer::write_samples_to_buffer()
 			jvx_audio_stack_sample_dispenser_buffer_status(
 				&myAudioDispenser,
 				&fHeight, nullptr);
-			if (fHeight >= _common_set_ldslave.theData_out.con_params.buffersize)
+			if (fHeight >= _common_set_ocon.theData_out.con_params.buffersize)
 			{
-				jvxErrorType res = _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+				jvxErrorType res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 				if (res == JVX_NO_ERROR)
 				{
 					// Get new audio data here
-					jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
+					jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
 
 					assert(node_output._common_set_node_params_a_1io.buffersize == 
-						_common_set_ldslave.theData_out.con_params.buffersize);
+						_common_set_ocon.theData_out.con_params.buffersize);
 
 					jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
 						&myAudioDispenser,
 						(jvxHandle**)bufsOut, 0,
-						nullptr, 0, _common_set_ldslave.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
+						nullptr, 0, _common_set_ocon.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
 					assert(resL == JVX_NO_ERROR);
 
-					_common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
-					_common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+					_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+					_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 				}
 				else
 				{

@@ -138,18 +138,18 @@ CjvxSpNMixChainEnterLeave::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 		if (operationMode != jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_TALKTHROUGH)
 		{
 			// Here, we have seen the following copy before:
-			// _common_set_ldslave.theData_in->con_data = _common_set_ldslave.theData_out.con_data;
+			// _common_set_icon.theData_in->con_data = _common_set_ocon.theData_out.con_data;
 			// We need to create out own container here, however, with non filled buffers
 			// We need to override the buffer values which are currently there since the allocator checks
 			// for nullptr
 			jvxSize numChansCopy = JVX_MIN(
-				_common_set_ldslave.theData_in->con_params.number_channels,
-				_common_set_ldslave.theData_out.con_params.number_channels);
+				_common_set_icon.theData_in->con_params.number_channels,
+				_common_set_ocon.theData_out.con_params.number_channels);
 
 			// Reallocate all buffers taken from the output side
 			jvx_allocateDataLinkDescriptorRouteChannels(
-				_common_set_ldslave.theData_in,
-				&_common_set_ldslave.theData_out,
+				_common_set_icon.theData_in,
+				&_common_set_ocon.theData_out,
 				numChansCopy,
 				&bufsToStore);
 
@@ -157,49 +157,49 @@ CjvxSpNMixChainEnterLeave::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 			{
 			case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
 
-				assert(_common_set_ldslave.theData_in->con_params.number_channels <= _common_set_ldslave.theData_out.con_params.number_channels);
+				assert(_common_set_icon.theData_in->con_params.number_channels <= _common_set_ocon.theData_out.con_params.number_channels);
 
-				szExtraBuffersChannels = _common_set_ldslave.theData_out.con_params.number_channels - _common_set_ldslave.theData_in->con_params.number_channels;
-				if (_common_set_ldslave.theData_in->con_data.number_buffers)
+				szExtraBuffersChannels = _common_set_ocon.theData_out.con_params.number_channels - _common_set_icon.theData_in->con_params.number_channels;
+				if (_common_set_icon.theData_in->con_data.number_buffers)
 				{
-					JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel, jvxHandle**, _common_set_ldslave.theData_in->con_data.number_buffers);
+					JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel, jvxHandle**, _common_set_icon.theData_in->con_data.number_buffers);
 				}
 
 				// Check the other parameters if you want to..
 
 				// Now, we have to copy the channel buffers
-				for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+				for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 				{
 					JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel[i], jvxHandle*, szExtraBuffersChannels);
 					assert(bufsSideChannel[i]);
 					for (j = 0; j < szExtraBuffersChannels; j++)
 					{
-						bufsSideChannel[i][j] = _common_set_ldslave.theData_out.con_data.buffers[i][j + _common_set_ldslave.theData_in->con_params.number_channels];
+						bufsSideChannel[i][j] = _common_set_ocon.theData_out.con_data.buffers[i][j + _common_set_icon.theData_in->con_params.number_channels];
 					}
 				}
 				break;
 
 			case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
 
-				assert(_common_set_ldslave.theData_in->con_params.number_channels >= _common_set_ldslave.theData_out.con_params.number_channels);
+				assert(_common_set_icon.theData_in->con_params.number_channels >= _common_set_ocon.theData_out.con_params.number_channels);
 
-				szExtraBuffersChannels = _common_set_ldslave.theData_in->con_params.number_channels - _common_set_ldslave.theData_out.con_params.number_channels;
-				if (_common_set_ldslave.theData_in->con_data.number_buffers)
+				szExtraBuffersChannels = _common_set_icon.theData_in->con_params.number_channels - _common_set_ocon.theData_out.con_params.number_channels;
+				if (_common_set_icon.theData_in->con_data.number_buffers)
 				{
-					JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel, jvxHandle**, _common_set_ldslave.theData_in->con_data.number_buffers);
+					JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel, jvxHandle**, _common_set_icon.theData_in->con_data.number_buffers);
 				}
 
 				// Check the other parameters if you want to..
 
 				// Now, we have to copy the channel buffers to be available in the previous component
-				for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+				for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 				{
 					JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel[i], jvxHandle*, szExtraBuffersChannels);
 					assert(bufsSideChannel[i]);
 					for (j = 0; j < szExtraBuffersChannels; j++)
 					{
-						JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel[i][j], jvxByte, jvxDataFormat_getsize(_common_set_ldslave.theData_in->con_params.format) * _common_set_ldslave.theData_in->con_params.buffersize);
-						_common_set_ldslave.theData_in->con_data.buffers[i][j + _common_set_ldslave.theData_out.con_params.number_channels] = bufsSideChannel[i][j];
+						JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel[i][j], jvxByte, jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format) * _common_set_icon.theData_in->con_params.buffersize);
+						_common_set_icon.theData_in->con_data.buffers[i][j + _common_set_ocon.theData_out.con_params.number_channels] = bufsSideChannel[i][j];
 					}
 				}
 				break;
@@ -222,7 +222,7 @@ CjvxSpNMixChainEnterLeave::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
 
 			// Now, we have to copy the channel buffers
-			for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 			{
 				for (j = 0; j < szExtraBuffersChannels; j++)
 				{
@@ -231,7 +231,7 @@ CjvxSpNMixChainEnterLeave::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 				JVX_DSP_SAFE_DELETE_FIELD(bufsSideChannel[i]);
 			}
 
-			if (_common_set_ldslave.theData_in->con_data.number_buffers)
+			if (_common_set_icon.theData_in->con_data.number_buffers)
 			{
 				JVX_DSP_SAFE_DELETE_FIELD(bufsSideChannel);
 			}
@@ -242,17 +242,17 @@ CjvxSpNMixChainEnterLeave::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
 
 			// Now, we have to copy the channel buffers
-			for (i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 			{
 				for (j = 0; j < szExtraBuffersChannels; j++)
 				{
-					_common_set_ldslave.theData_in->con_data.buffers[i][j + _common_set_ldslave.theData_out.con_params.number_channels] = nullptr;
+					_common_set_icon.theData_in->con_data.buffers[i][j + _common_set_ocon.theData_out.con_params.number_channels] = nullptr;
 					JVX_DSP_SAFE_DELETE_FIELD(bufsSideChannel[i][j]);					
 				}
 				JVX_DSP_SAFE_DELETE_FIELD(bufsSideChannel[i]);
 			}
 
-			if (_common_set_ldslave.theData_in->con_data.number_buffers)
+			if (_common_set_icon.theData_in->con_data.number_buffers)
 			{
 				JVX_DSP_SAFE_DELETE_FIELD(bufsSideChannel);
 			}
@@ -262,7 +262,7 @@ CjvxSpNMixChainEnterLeave::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 		}
 
 		// Delete the buffers
-		jvx_deallocateDataLinkDescriptorRouteChannels(_common_set_ldslave.theData_in, bufsToStore);
+		jvx_deallocateDataLinkDescriptorRouteChannels(_common_set_icon.theData_in, bufsToStore);
 	}
 
 	// Unlock some of the properties

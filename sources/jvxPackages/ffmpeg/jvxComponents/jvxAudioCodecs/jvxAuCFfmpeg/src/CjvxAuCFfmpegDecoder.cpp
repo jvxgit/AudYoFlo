@@ -38,7 +38,7 @@ CjvxAuCFfmpegAudioDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	jvxErrorType res = JVX_NO_ERROR;
 	
 	// Generate a fHeight entry in the data buffers
-	jvx_bitSet(_common_set_ldslave.theData_out.con_data.alloc_flags,
+	jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
 		(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 
 	CjvxAudioDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -48,7 +48,7 @@ CjvxAuCFfmpegAudioDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 		AVStream* st = nullptr;
 
 		// Extract the connection parameters for decoding
-		jvxLinkDataAttachedChain* ptrStream = _common_set_ldslave.theData_in->con_link.attached_chain_single_pass;
+		jvxLinkDataAttachedChain* ptrStream = _common_set_icon.theData_in->con_link.attached_chain_single_pass;
 		while (ptrStream)
 		{
 			jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>* ptr_stream_txt = reinterpret_cast<jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain>*>(ptrStream->if_specific(JVX_LINKDATA_ATTACHED_STRING_DETECT));
@@ -96,9 +96,9 @@ CjvxAuCFfmpegAudioDecoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 		}
 
 		// Allocate space for the data buffers
-		for (jvxSize i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+		for (jvxSize i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 		{
-			_common_set_ldslave.theData_in->con_data.buffers[i] = reinterpret_cast<jvxHandle**>(av_packet_alloc());
+			_common_set_icon.theData_in->con_data.buffers[i] = reinterpret_cast<jvxHandle**>(av_packet_alloc());
 		}
 	}
 	return res;
@@ -110,9 +110,9 @@ CjvxAuCFfmpegAudioDecoder::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 	jvxErrorType res = JVX_NO_ERROR;
 
 	// We need to remove the buffers first
-	for (jvxSize i = 0; i < _common_set_ldslave.theData_in->con_data.number_buffers; i++)
+	for (jvxSize i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
 	{
-		AVPacket* oneBuf = reinterpret_cast<AVPacket*>(_common_set_ldslave.theData_in->con_data.buffers[i]);
+		AVPacket* oneBuf = reinterpret_cast<AVPacket*>(_common_set_icon.theData_in->con_data.buffers[i]);
 		av_packet_free(&oneBuf);
 	}
 
@@ -130,7 +130,7 @@ CjvxAuCFfmpegAudioDecoder::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 	if (res == JVX_NO_ERROR)
 	{
 		// Clear the buffer for fHeight information
-		jvx_bitClear(_common_set_ldslave.theData_out.con_data.alloc_flags,
+		jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
 			(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 	}
 	return res;
@@ -146,18 +146,18 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 	jvxSize idx_stage_local = idx_stage;
 	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
 	{
-		idx_stage_local = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+		idx_stage_local = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 	}
 
 	// Decode the input packet here!!
 	int num = 0;
-	AVPacket* pkt = (AVPacket*)_common_set_ldslave.theData_in->con_data.buffers[idx_stage_local];
+	AVPacket* pkt = (AVPacket*)_common_set_icon.theData_in->con_data.buffers[idx_stage_local];
 
 	// If we see a packet without reference, we must prevent the decoder to run. Otherwise it will stop due to end of file
 	if (!pkt->size)
 	{
 		// Do not forward anything here!!
-		_common_set_ldslave.theData_out.con_data.fHeights[*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr].x = 0;
+		_common_set_ocon.theData_out.con_data.fHeights[*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr].x = 0;
 	}
 	else
 	{
@@ -170,10 +170,10 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 			cParams.frame->nb_samples, (AVSampleFormat)cParams.frame->format, 1);
 
 		// This must be the right size
-		assert(cParams.frame->nb_samples <= _common_set_ldslave.theData_out.con_params.buffersize);
+		assert(cParams.frame->nb_samples <= _common_set_ocon.theData_out.con_params.buffersize);
 
-		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ldslave.theData_out);
-		_common_set_ldslave.theData_out.con_data.fHeights[*_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr].x = cParams.frame->nb_samples;
+		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+		_common_set_ocon.theData_out.con_data.fHeights[*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr].x = cParams.frame->nb_samples;
 
 
 		switch (cParams.frame->format)
@@ -287,13 +287,13 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 			}
 			for (i = 0; i < cParams.nChans; i++)
 			{
-				memset(bufsOutData[i], 0, cParams.frame->nb_samples* jvxDataFormatGroup_getsize(_common_set_ldslave.theData_out.con_params.format));
+				memset(bufsOutData[i], 0, cParams.frame->nb_samples* jvxDataFormatGroup_getsize(_common_set_ocon.theData_out.con_params.format));
 			}
 			break;
 
 		}
 
-		//_common_set_ldslave.theData_out.con_params.fHeight_x
+		//_common_set_ocon.theData_out.con_params.fHeight_x
 		av_frame_unref(cParams.frame);
 	}
 		
@@ -328,13 +328,13 @@ void
 CjvxAuCFfmpegAudioDecoder::test_set_output_parameters()
 {
 	// The output side is "audio"
-	_common_set_ldslave.theData_out.con_params.rate = cParams.sRate;
-	_common_set_ldslave.theData_out.con_params.number_channels = cParams.nChans;
-	_common_set_ldslave.theData_out.con_params.buffersize = cParams.bSizeAudio;
+	_common_set_ocon.theData_out.con_params.rate = cParams.sRate;
+	_common_set_ocon.theData_out.con_params.number_channels = cParams.nChans;
+	_common_set_ocon.theData_out.con_params.buffersize = cParams.bSizeAudio;
 
-	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
-	_common_set_ldslave.theData_out.con_params.data_flow = _common_set_ldslave.theData_in->con_params.data_flow;
-	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
+	_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ocon.theData_out.con_params.data_flow = _common_set_icon.theData_in->con_params.data_flow;
+	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
+	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
 }

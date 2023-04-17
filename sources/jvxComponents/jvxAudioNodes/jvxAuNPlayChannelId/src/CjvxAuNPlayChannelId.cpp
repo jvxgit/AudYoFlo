@@ -97,9 +97,9 @@ CjvxAuNPlayChannelId::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			mixT2S.prepare(
 				theText2Speech_hdl,
 				genChannelPlayback_node::playback.control_status.pre_text_announce.value,
-				_common_set_ldslave.theData_in->con_params.rate,
-				_common_set_ldslave.theData_in->con_params.buffersize,
-				_common_set_ldslave.theData_in->con_params.number_channels,
+				_common_set_icon.theData_in->con_params.rate,
+				_common_set_icon.theData_in->con_params.buffersize,
+				_common_set_icon.theData_in->con_params.number_channels,
 				genChannelPlayback_node::playback.control_status.channel_number_start_offset.value);
 
 			playback_status = JVX_CHANNEL_OUTPUT_STATE_READY;
@@ -161,9 +161,9 @@ CjvxAuNPlayChannelId::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		jvxSize idx = idx_stage;
 		if (JVX_CHECK_SIZE_UNSELECTED(idx))
 		{
-			idx = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+			idx = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 		}
-		mixT2S.process((jvxData**)_common_set_ldslave.theData_out.con_data.buffers[idx],
+		mixT2S.process((jvxData**)_common_set_ocon.theData_out.con_data.buffers[idx],
 			genChannelPlayback_node::playback.control_status.output_volume.value.val(),
 			true, &idx_play);
 		if (JVX_CHECK_SIZE_UNSELECTED(idx_play))

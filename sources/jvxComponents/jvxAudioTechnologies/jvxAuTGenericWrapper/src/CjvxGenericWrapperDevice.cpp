@@ -1155,10 +1155,10 @@ CjvxGenericWrapperDevice::test_connect_icon_core(JVX_CONNECTION_FEEDBACK_TYPE(fd
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, static_cast<IjvxObject*>(this));
 	populate_countchannels_datatype(params);
 	if (
-		(_common_set_ldslave.theData_in->con_params.buffersize != params.buffersize) ||
-		(_common_set_ldslave.theData_in->con_params.rate != params.samplerate) ||
-		(_common_set_ldslave.theData_in->con_params.format != params.format) ||
-		(_common_set_ldslave.theData_in->con_params.number_channels != params.chans_out))
+		(_common_set_icon.theData_in->con_params.buffersize != params.buffersize) ||
+		(_common_set_icon.theData_in->con_params.rate != params.samplerate) ||
+		(_common_set_icon.theData_in->con_params.format != params.format) ||
+		(_common_set_icon.theData_in->con_params.number_channels != params.chans_out))
 	{
 		jvxLinkDataDescriptor ld_loc;
 		ld_loc.con_params.number_channels = params.chans_out;
@@ -1168,7 +1168,7 @@ CjvxGenericWrapperDevice::test_connect_icon_core(JVX_CONNECTION_FEEDBACK_TYPE(fd
 		ld_loc.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 		ld_loc.con_params.segmentation.x = ld_loc.con_params.buffersize;
 		ld_loc.con_params.segmentation.y = 1;
-		res = _common_set_ldslave.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
+		res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 			&ld_loc JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 		switch (res)
@@ -1181,25 +1181,25 @@ CjvxGenericWrapperDevice::test_connect_icon_core(JVX_CONNECTION_FEEDBACK_TYPE(fd
 			populate_countchannels_datatype(params);
 
 			if (
-				(_common_set_ldslave.theData_in->con_params.buffersize != params.buffersize) ||
-				(_common_set_ldslave.theData_in->con_params.rate != params.samplerate) ||
-				(_common_set_ldslave.theData_in->con_params.format != params.format))
+				(_common_set_icon.theData_in->con_params.buffersize != params.buffersize) ||
+				(_common_set_icon.theData_in->con_params.rate != params.samplerate) ||
+				(_common_set_icon.theData_in->con_params.format != params.format))
 			{
 				std::string err = "";
-				if (_common_set_ldslave.theData_in->con_params.buffersize != params.buffersize)
+				if (_common_set_icon.theData_in->con_params.buffersize != params.buffersize)
 				{
-					err = "Buffersize: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.buffersize) + " vs " +
+					err = "Buffersize: " + jvx_size2String(_common_set_icon.theData_in->con_params.buffersize) + " vs " +
 						jvx_size2String(params.buffersize);
 				}
-				if (_common_set_ldslave.theData_in->con_params.rate != params.samplerate)
+				if (_common_set_icon.theData_in->con_params.rate != params.samplerate)
 				{
-					err = "Samplerate: " + jvx_size2String(_common_set_ldslave.theData_in->con_params.rate) + " vs " +
+					err = "Samplerate: " + jvx_size2String(_common_set_icon.theData_in->con_params.rate) + " vs " +
 						jvx_size2String(params.samplerate);
 				}
-				if (_common_set_ldslave.theData_in->con_params.format != params.format)
+				if (_common_set_icon.theData_in->con_params.format != params.format)
 				{
 					err = "Format: ";
-					err += jvxDataFormat_txt(_common_set_ldslave.theData_in->con_params.format);
+					err += jvxDataFormat_txt(_common_set_icon.theData_in->con_params.format);
 					err += " vs ";
 					err += jvxDataFormat_txt(params.format);
 				}
@@ -1210,9 +1210,9 @@ CjvxGenericWrapperDevice::test_connect_icon_core(JVX_CONNECTION_FEEDBACK_TYPE(fd
 			}
 			else
 			{
-			  if (_common_set_ldslave.theData_in->con_params.number_channels <= JVX_SIZE_INT32(runtime.channelMappings.outputChannelMapper.size()))
+			  if (_common_set_icon.theData_in->con_params.number_channels <= JVX_SIZE_INT32(runtime.channelMappings.outputChannelMapper.size()))
 				{
-				  int delta = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.number_channels) - JVX_SIZE_INT32(params.chans_out);
+				  int delta = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.number_channels) - JVX_SIZE_INT32(params.chans_out);
 					
 					while(delta > 0)
 					{
@@ -1374,7 +1374,7 @@ CjvxGenericWrapperDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(this),
 		_common_set_ldslave.descriptor.c_str(), 
 		"Entering CjvxGenericWrapperDevice default input connector");
-	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, _common_set_ldslave.theData_in);
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, _common_set_icon.theData_in);
 
 	res = test_connect_icon_core(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
@@ -1638,21 +1638,21 @@ CjvxGenericWrapperDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 		//updateSWSamplerateAndBuffersize_nolock();
 		// release_countchannels_datatype(params); <- not required since local variable
 		
-		_common_set_ldslave.theData_out.con_params.buffersize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
-		_common_set_ldslave.theData_out.con_params.rate = CjvxAudioDevice_genpcg::properties_active.samplerate.value;
-		_common_set_ldslave.theData_out.con_params.format = (jvxDataFormat)CjvxAudioDevice_genpcg::properties_active.format.value;
-		_common_set_ldslave.theData_out.con_params.number_channels = CjvxAudioDevice_genpcg::properties_active.numberinputchannels.value;
+		_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
+		_common_set_ocon.theData_out.con_params.rate = CjvxAudioDevice_genpcg::properties_active.samplerate.value;
+		_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxAudioDevice_genpcg::properties_active.format.value;
+		_common_set_ocon.theData_out.con_params.number_channels = CjvxAudioDevice_genpcg::properties_active.numberinputchannels.value;
 
 		res = JVX_NO_ERROR;
 		break;
 
 	case JVX_LINKDATA_TRANSFER_REQUEST_CHAIN_SPECIFIC_DATA_HINT:
-		if (_common_set_ldslave.theData_out.con_user.chain_spec_user_hints)
+		if (_common_set_ocon.theData_out.con_user.chain_spec_user_hints)
 		{
 			jvxDataProcessorHintDescriptorSearch* ptr = (jvxDataProcessorHintDescriptorSearch*)data;
 			if (data)
 			{
-				jvxErrorType res = jvx_hintDesriptor_find(_common_set_ldslave.theData_out.con_user.chain_spec_user_hints,
+				jvxErrorType res = jvx_hintDesriptor_find(_common_set_ocon.theData_out.con_user.chain_spec_user_hints,
 					&ptr->reference, ptr->hintDescriptorId, ptr->assocHint);
 				if (res == JVX_NO_ERROR)
 				{

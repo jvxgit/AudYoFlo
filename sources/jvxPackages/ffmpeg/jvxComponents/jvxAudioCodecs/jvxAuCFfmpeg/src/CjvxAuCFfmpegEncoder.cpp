@@ -76,7 +76,7 @@ CjvxAuCFfmpegAudioEncoder::check_backward_parameters(jvxLinkDataDescriptor* ld_c
 		else
 		{
 			// Derive the parameters from input side for  the next forward step
-			forward.con_params = _common_set_ldslave.theData_in->con_params;
+			forward.con_params = _common_set_icon.theData_in->con_params;
 
 			// This is the next level of modification: requires new buffersize and/or samplerate from previous module
 			forward.con_params.buffersize = cParams_check.bSizeAudio;
@@ -92,16 +92,16 @@ CjvxAuCFfmpegAudioEncoder::check_backward_parameters(jvxLinkDataDescriptor* ld_c
 void
 CjvxAuCFfmpegAudioEncoder::test_set_output_parameters()
 {
-	_common_set_ldslave.theData_out.con_params.number_channels = 1; // Byte field is always 1 channel
-	_common_set_ldslave.theData_out.con_params.rate = JVX_SIZE_DONTCARE; // This indicates that the rate is in the format_spec
-	_common_set_ldslave.theData_out.con_params.buffersize = JVX_SIZE_DONTCARE;
+	_common_set_ocon.theData_out.con_params.number_channels = 1; // Byte field is always 1 channel
+	_common_set_ocon.theData_out.con_params.rate = JVX_SIZE_DONTCARE; // This indicates that the rate is in the format_spec
+	_common_set_ocon.theData_out.con_params.buffersize = JVX_SIZE_DONTCARE;
 
 	// Type is modified as the data is coded
-	_common_set_ldslave.theData_out.con_params.format = JVX_DATAFORMAT_POINTER;
-	_common_set_ldslave.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD;
-	_common_set_ldslave.theData_out.con_params.segmentation.x = _common_set_ldslave.theData_out.con_params.buffersize;
-	_common_set_ldslave.theData_out.con_params.segmentation.y = 1;
-	_common_set_ldslave.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
+	_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_POINTER;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD;
+	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
+	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
+	_common_set_ocon.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
 
 	// Derive the pcm related parts
 	jvx_ffmpeg_wav_params(cParams);
@@ -110,7 +110,7 @@ CjvxAuCFfmpegAudioEncoder::test_set_output_parameters()
 	jvx_ffmpeg_verify_correct_codec_settings(cParams);
 
 	// Derive the token
-	_common_set_ldslave.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(cParams);
+	_common_set_ocon.theData_out.con_params.format_spec = jvx_ffmpeg_parameter_2_codec_token(cParams);
 }
 
 jvxErrorType 
@@ -141,17 +141,17 @@ CjvxAuCFfmpegAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 
 	// Forward the codec pointer to the following output instance
 	jvxLinkDataAttachedStringDetect<jvxLinkDataAttachedChain> attachObject("/ffmpeg/audiostream/codecctx", cParams.enc_ctx);
-	_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_push_front(_common_set_ldslave.theData_out.con_link.attached_chain_single_pass, &attachObject);
+	_common_set_ocon.theData_out.con_link.attached_chain_single_pass = jvx_attached_push_front(_common_set_ocon.theData_out.con_link.attached_chain_single_pass, &attachObject);
 
 	// Prepare processing parameters
-	_common_set_ldslave.theData_out.con_data.number_buffers = 1;
+	_common_set_ocon.theData_out.con_data.number_buffers = 1;
 
 	inThreadInit = false;
 	if ((cParams.idCodec == AV_CODEC_ID_MP3) || 
 		(cParams.idCodec == AV_CODEC_ID_AAC))
 	{
 		inThreadInit = true;
-		jvx_bitZSet(_common_set_ldslave.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
+		jvx_bitZSet(_common_set_ocon.theData_out.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
 	}
 	else
 	{
@@ -162,7 +162,7 @@ CjvxAuCFfmpegAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	if (res == JVX_NO_ERROR)
 	{
 		jvxLinkDataAttachedChain* ptrHere = nullptr;
-		_common_set_ldslave.theData_out.con_link.attached_chain_single_pass = jvx_attached_pop_front(_common_set_ldslave.theData_out.con_link.attached_chain_single_pass, &ptrHere);
+		_common_set_ocon.theData_out.con_link.attached_chain_single_pass = jvx_attached_pop_front(_common_set_ocon.theData_out.con_link.attached_chain_single_pass, &ptrHere);
 		assert(ptrHere == &attachObject);
 
 		cParams.frame = av_frame_alloc();
@@ -180,7 +180,7 @@ CjvxAuCFfmpegAudioEncoder::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 		// Move thos flag towards the caller - to request an init call!!
 		if (inThreadInit)
 		{
-			jvx_bitSet(_common_set_ldslave.theData_in->con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
+			jvx_bitSet(_common_set_icon.theData_in->con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN);
 		}
 	}
 	return res;
@@ -216,7 +216,7 @@ CjvxAuCFfmpegAudioEncoder::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 	{
 		av_frame_free(&cParams.frame);
 
-		jvx_bitFClear(_common_set_ldslave.theData_out.con_data.alloc_flags);
+		jvx_bitFClear(_common_set_ocon.theData_out.con_data.alloc_flags);
 		
 		codec_deallocate_core();
 	}
@@ -230,8 +230,8 @@ CjvxAuCFfmpegAudioEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 	int ret = 0;
 	AVPacket* pkt = nullptr;
 	const char* cbuf = nullptr;
-	jvxData** bufsInData = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_ldslave.theData_in, idx_stage);
-	jvxSize idx_stage_out = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+	jvxData** bufsInData = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+	jvxSize idx_stage_out = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 
 	switch (cParams.sFormatId)
 	{
@@ -350,7 +350,7 @@ CjvxAuCFfmpegAudioEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 	cParams.pts_current += cParams.frame->nb_samples;
 
 	// Next, convert frame to packet
-	pkt = (AVPacket*)_common_set_ldslave.theData_out.con_data.buffers[idx_stage_out];
+	pkt = (AVPacket*)_common_set_ocon.theData_out.con_data.buffers[idx_stage_out];
 
 	// Encode the input frame into a packet here!!
 
