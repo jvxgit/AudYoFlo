@@ -164,8 +164,8 @@ CjvxConnectionDescription::create_process_group_from_description(
 
 		jvxSize numConFac = 0;
 		IjvxConnectorFactory* theConFac = NULL;
-		IjvxOutputConnectorSelect* ocon = NULL;
-		IjvxInputConnectorSelect* icon = NULL;
+		IjvxOutputConnectorSelect* ocons = NULL;
+		IjvxInputConnectorSelect* icons = NULL;
 		jvxSize numOc = 0;
 		jvxSize numIc = 0;
 
@@ -202,12 +202,16 @@ CjvxConnectionDescription::create_process_group_from_description(
 			theConFac->number_output_connectors(&numOc);
 			for (i = 0; i < numOc; i++)
 			{
-				theConFac->reference_output_connector(i, &ocon);
-				ocon->descriptor_connector(&ttmp);
+				theConFac->reference_output_connector(i, &ocons);
+				ocons->descriptor_connector(&ttmp);
 				if (ttmp.std_str() == elm->from.connector_name)
 				{
-					IjvxDataConnectionCommon* refC = NULL;
-					ocon->associated_common_ocon(&refC);
+					IjvxDataConnectionCommon* refC = NULL;	
+					IjvxOutputConnector* ocon = ocons->reference_ocon();
+					if (ocon)
+					{
+						ocon->associated_common_ocon(&refC);
+					}
 					if (refC == NULL)
 					{
 						out_ocon_id = i;
@@ -218,19 +222,19 @@ CjvxConnectionDescription::create_process_group_from_description(
 						foundbutbusy = true;
 					}
 				}
-				theConFac->return_reference_output_connector(ocon);
-				ocon = NULL;
+				theConFac->return_reference_output_connector(ocons);
+				ocons = NULL;
 			}
 
-			if (ocon)
+			if (ocons)
 			{
-				theConFac->return_reference_output_connector(ocon);
+				theConFac->return_reference_output_connector(ocons);
 			}
 			if (theConFac)
 			{
 				allConnections->return_reference_connection_factory(theConFac);
 			}
-			ocon = NULL;
+			ocons = NULL;
 			theConFac = NULL;
 
 			if (JVX_CHECK_SIZE_UNSELECTED(out_ocon_id))
@@ -264,8 +268,8 @@ CjvxConnectionDescription::create_process_group_from_description(
 
 		numConFac = 0;
 		theConFac = NULL;
-		ocon = NULL;
-		icon = NULL;
+		ocons = NULL;
+		icons = NULL;
 		numOc = 0;
 		numIc = 0;
 		if (!JVX_CHECK_SIZE_UNSELECTED(elm->to.uid))
@@ -299,12 +303,16 @@ CjvxConnectionDescription::create_process_group_from_description(
 			theConFac->number_input_connectors(&numIc);
 			for (i = 0; i < numIc; i++)
 			{
-				theConFac->reference_input_connector(i, &icon);
-				icon->descriptor_connector(&ttmp);
+				theConFac->reference_input_connector(i, &icons);
+				icons->descriptor_connector(&ttmp);
 				if (ttmp.std_str() == elm->to.connector_name)
 				{
 					IjvxDataConnectionCommon* refC = NULL;
-					icon->associated_common_icon(&refC);
+					IjvxInputConnector* icon = icons->reference_icon();
+					if (icon)
+					{
+						icon->associated_common_icon(&refC);
+					}
 					if (refC == NULL)
 					{
 						in_icon_id = i;
@@ -315,19 +323,19 @@ CjvxConnectionDescription::create_process_group_from_description(
 						foundbutbusy = true;
 					}
 				}
-				theConFac->return_reference_input_connector(icon);
-				icon = NULL;
+				theConFac->return_reference_input_connector(icons);
+				icons = NULL;
 			}
 
-			if (icon)
+			if (icons)
 			{
-				theConFac->return_reference_input_connector(icon);
+				theConFac->return_reference_input_connector(icons);
 			}
 			if (theConFac)
 			{
 				allConnections->return_reference_connection_factory(theConFac);
 			}
-			icon = NULL;
+			icons = NULL;
 			theConFac = NULL;
 
 			if (JVX_CHECK_SIZE_UNSELECTED(in_icon_id))

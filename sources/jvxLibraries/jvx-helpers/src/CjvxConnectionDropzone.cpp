@@ -323,7 +323,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 		for (; elmIc != lst_inputs.end(); elmIc++)
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxInputConnectorSelect* icon = NULL;
+			IjvxInputConnectorSelect* icons = NULL;
 			IjvxDataConnectionCommon* com = NULL;
 			allConnections->reference_connection_factory_uid(elmIc->identify.fac_uid, &theConFac);
 			if (theConFac == NULL)
@@ -331,22 +331,26 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 				someWorkDone = true;
 				break;
 			}
-			theConFac->reference_input_connector(elmIc->identify.icon_id, &icon);
-			if (icon == NULL)
+			theConFac->reference_input_connector(elmIc->identify.icon_id, &icons);
+			if (icons == NULL)
 			{
 				someWorkDone = true;
 				allConnections->return_reference_connection_factory(theConFac);
 				break;
 			}
-			icon->associated_common_icon(&com);
+			IjvxInputConnector* iconc = icons->reference_icon();
+			if (iconc)
+			{
+				iconc->associated_common_icon(&com);
+			}
 			if (com)
 			{
 				someWorkDone = true;
-				theConFac->return_reference_input_connector(icon);
+				theConFac->return_reference_input_connector(icons);
 				allConnections->return_reference_connection_factory(theConFac);
 				break;
 			}
-			theConFac->return_reference_input_connector(icon);
+			theConFac->return_reference_input_connector(icons);
 			allConnections->return_reference_connection_factory(theConFac);
 		}
 		if (someWorkDone)
@@ -363,7 +367,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 		for (; elmOc != lst_outputs.end(); elmOc++)
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxOutputConnectorSelect* ocon = NULL;
+			IjvxOutputConnectorSelect* ocons = NULL;
 			IjvxDataConnectionCommon* com = NULL;
 			allConnections->reference_connection_factory_uid(elmOc->identify.fac_uid, &theConFac);
 			if (theConFac == NULL)
@@ -371,22 +375,26 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 				someWorkDone = true;
 				break;
 			}
-			theConFac->reference_output_connector(elmOc->identify.ocon_id, &ocon);
-			if (ocon == NULL)
+			theConFac->reference_output_connector(elmOc->identify.ocon_id, &ocons);
+			if (ocons == NULL)
 			{
 				someWorkDone = true;
 				allConnections->return_reference_connection_factory(theConFac);
 				break;
 			}
-			ocon->associated_common_ocon(&com);
+			IjvxOutputConnector* oconc = ocons->reference_ocon();
+			if (oconc)
+			{
+				oconc->associated_common_ocon(&com);
+			}
 			if (com)
 			{
 				someWorkDone = true;
-				theConFac->return_reference_output_connector(ocon);
+				theConFac->return_reference_output_connector(ocons);
 				allConnections->return_reference_connection_factory(theConFac);
 				break;
 			}
-			theConFac->return_reference_output_connector(ocon);
+			theConFac->return_reference_output_connector(ocons);
 			allConnections->return_reference_connection_factory(theConFac);
 		}
 		if (someWorkDone)

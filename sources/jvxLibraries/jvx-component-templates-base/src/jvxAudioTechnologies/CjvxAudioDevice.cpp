@@ -593,7 +593,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxLinkDataDescriptor ld_con;
 	std::list<std::string> modProps;
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(this),
-		_common_set_ldslave.descriptor.c_str(), "Entering CjvxAudioDevice default input connector");
+		_common_set_io_common.descriptor.c_str(), "Entering CjvxAudioDevice default input connector");
 
 	currentSetupAudioParams(params);
 

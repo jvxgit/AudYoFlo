@@ -520,6 +520,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 		for (j = 0; j < numIC; j++)
 		{
 			IjvxInputConnectorSelect* icS = NULL;
+			IjvxInputConnector* ic = NULL;
 			IjvxOutputConnector* oc = NULL;
 			IjvxDataConnectionCommon* assComm = NULL;
 			jvxApiString masdescr;
@@ -530,8 +531,13 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CF_UID, QVariant(JVX_SIZE_INT(uId)));
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_IC_ID, QVariant(JVX_SIZE_INT(j)));
 
-			icS->associated_common_icon(&assComm);
-			icS->connected_ocon(&oc);
+			// Check if a (possible) select connector also is a full connector and work with it
+			ic = icS->reference_icon();
+			if (ic)
+			{
+				ic->associated_common_icon(&assComm);
+				ic->connected_ocon(&oc);
+			}
 
 			txt = "Input Connector #" + jvx_size2String(j);
 			newSubItem->setText(0, txt.c_str());
@@ -574,6 +580,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 		for (j = 0; j < numOC; j++)
 		{
 			IjvxOutputConnectorSelect* ocS = NULL;
+			IjvxOutputConnector* oc = NULL;
 			IjvxInputConnector* ic = NULL;
 			IjvxDataConnectionCommon* assComm = NULL;
 			jvxApiString masdescr;
@@ -584,8 +591,13 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CF_UID, QVariant(JVX_SIZE_INT(uId)));
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_OC_ID, QVariant(JVX_SIZE_INT(j)));
 
-			ocS->associated_common_ocon(&assComm);
-			ocS->connected_icon(&ic);
+			// Check if a (possible) select connector also is a full connector and work with it
+			oc = ocS->reference_ocon();
+			if (oc)
+			{
+				oc->associated_common_ocon(&assComm);
+				oc->connected_icon(&ic);
+			}
 						
 			// ================================================================================
 			// Show connection counterpart in tooltip
@@ -1497,17 +1509,20 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 		if (JVX_CHECK_SIZE_SELECTED(id_selected_connector.id_select_icon))
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxInputConnectorSelect* theIcon = NULL;
+			IjvxInputConnectorSelect* theIcons = NULL;
 			IjvxDataConnectionCommon* theCom = NULL;
 			theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 			if (theConFac)
 			{
-				theConFac->reference_input_connector(id_selected_connector.id_select_icon, &theIcon);
-				if (theIcon)
+				theConFac->reference_input_connector(id_selected_connector.id_select_icon, &theIcons);
+				if (theIcons)
 				{
 					jvxBool isAvail = false;
-
-					theIcon->associated_common_icon(&theCom);
+					IjvxInputConnector* iconc = theIcons->reference_icon();
+					if (iconc)
+					{
+						iconc->associated_common_icon(&theCom);
+					}
 					if (theCom == NULL)
 					{
 
@@ -1516,7 +1531,7 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 					{
 						pushButton_addconnector->setEnabled(false);
 					}
-					theConFac->return_reference_input_connector(theIcon);
+					theConFac->return_reference_input_connector(theIcons);
 				}
 				else
 				{
@@ -1532,17 +1547,20 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 		else if (JVX_CHECK_SIZE_SELECTED(id_selected_connector.id_select_ocon))
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxOutputConnectorSelect* theOcon = NULL;
+			IjvxOutputConnectorSelect* theOcons = NULL;
 			IjvxDataConnectionCommon* theCom = NULL;
 			theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 			if (theConFac)
 			{
-				theConFac->reference_output_connector(id_selected_connector.id_select_ocon, &theOcon);
-				if (theOcon)
+				theConFac->reference_output_connector(id_selected_connector.id_select_ocon, &theOcons);
+				if (theOcons)
 				{
 					jvxBool isAvail = false;
-
-					theOcon->associated_common_ocon(&theCom);
+					IjvxOutputConnector* oconc = theOcons->reference_ocon();
+					if (oconc)
+					{
+						oconc->associated_common_ocon(&theCom);
+					}
 					if (theCom == NULL)
 					{
 
@@ -1551,7 +1569,7 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 					{
 						pushButton_addconnector->setEnabled(false);
 					}
-					theConFac->return_reference_output_connector(theOcon);
+					theConFac->return_reference_output_connector(theOcons);
 				}
 				else
 				{

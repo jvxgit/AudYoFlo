@@ -37,10 +37,6 @@ JVX_INTERFACE IjvxInputConnectorSelect : public IjvxCommonConnector, public Ijvx
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxInputConnectorSelect() {};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) = 0;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon** ref) = 0;
-
 	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
 		jvxDataFormatGroup format_group,
 		jvxDataflow data_flow) = 0;
@@ -61,6 +57,10 @@ JVX_INTERFACE IjvxInputConnector : public IjvxInputConnectorSelect
 {
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxInputConnector() {};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon** ref) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;
@@ -99,8 +99,6 @@ JVX_INTERFACE IjvxOutputConnectorSelect : public IjvxCommonConnector
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxOutputConnectorSelect() {};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_ocon(IjvxDataConnectionCommon** ref) = 0;
-
 	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_ocon(
 		jvxDataFormatGroup format_group,
 		jvxDataflow data_flow) = 0;
@@ -114,8 +112,6 @@ public:
 		IjvxConnectorBridge* obj,
 		IjvxOutputConnector* replace_connector = NULL) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) = 0;
-
 	virtual IjvxOutputConnector* reference_ocon() = 0;
 };
 
@@ -123,6 +119,10 @@ JVX_INTERFACE IjvxOutputConnector: public IjvxOutputConnectorSelect
 {
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxOutputConnector() {};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_ocon(IjvxDataConnectionCommon** ref) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION connect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION disconnect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;

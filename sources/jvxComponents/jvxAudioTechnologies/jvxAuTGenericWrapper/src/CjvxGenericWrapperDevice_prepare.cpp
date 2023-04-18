@@ -1512,7 +1512,7 @@ CjvxGenericWrapperDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 		*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
 		_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
 			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
-			_common_set_ldslave.myRuntimeId;
+			_common_set_io_common.myRuntimeId;
 	}
 
 	// Cross link the output buffers and complete output side

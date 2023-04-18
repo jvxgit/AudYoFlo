@@ -109,7 +109,7 @@ CjvxAudioDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 		static_cast<IjvxObject*>(this),
-		_common_set_ldslave.descriptor.c_str()
+		_common_set_io_common.descriptor.c_str()
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res == JVX_NO_ERROR)
 	{
@@ -161,7 +161,7 @@ CjvxAudioDecoder::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
 							res = neg_input._negotiate_connect_icon(
 								_common_set_icon.theData_in, 
 								static_cast<IjvxObject*>(this),
-								_common_set_ldslave.descriptor.c_str()
+								_common_set_io_common.descriptor.c_str()
 								JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 							if (res == JVX_NO_ERROR)
 							{

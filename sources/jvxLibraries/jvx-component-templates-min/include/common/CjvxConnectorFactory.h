@@ -119,7 +119,6 @@ protected:
 		CjvxConnectorFactory::_deactivate_factory(); \
 		_common_set_conn_factory.input_connectors.clear(); \
 		_common_set_conn_factory.output_connectors.clear(); \
-		_common_set_ldslave.myParent = NULL; \
 		CjvxInputOutputConnector::lds_deactivate(); \
 }
 

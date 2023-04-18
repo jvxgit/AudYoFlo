@@ -736,7 +736,7 @@ HjvxMicroConnection::test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	IjvxDataConnectionProcess* theProc = NULL;
 
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(this),
-		_common_set_ldslave.descriptor.c_str(),
+		_common_set_io_common.descriptor.c_str(),
 		"Starting part of micro connection subbranch.");
 	if (theConnections)
 	{
@@ -787,7 +787,7 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxLinkDataDescriptor ld_con;
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(this),
-		_common_set_ldslave.descriptor.c_str(),
+		_common_set_io_common.descriptor.c_str(),
 		"Stopping part of micro connection subbranch.");
 
 	if (refHandleSimple)
@@ -1491,13 +1491,13 @@ HjvxMicroConnection::connect_chain_master(const jvxChainConnectArguments& args,
 	const jvxLinkDataDescriptor_con_params* init_params JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	res = _activate_master(_common_set_ldslave.ocon, static_cast<IjvxConnectionMaster*>(this));
+	res = _activate_master(_common_set_ocon.ocon, static_cast<IjvxConnectionMaster*>(this));
 	assert(res == JVX_NO_ERROR);
 
 	res = _connect_chain_master(args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res != JVX_NO_ERROR)
 	{
-		jvxErrorType resL = _deactivate_master(_common_set_ldslave.ocon, static_cast<IjvxConnectionMaster*>(this));
+		jvxErrorType resL = _deactivate_master(_common_set_ocon.ocon, static_cast<IjvxConnectionMaster*>(this));
 		assert(resL == JVX_NO_ERROR);
 	}
 

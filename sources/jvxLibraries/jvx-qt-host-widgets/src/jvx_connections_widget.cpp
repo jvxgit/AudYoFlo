@@ -867,18 +867,22 @@ jvx_connections_widget::add_connector_dz()
 	{
 
 		IjvxConnectorFactory* theConFac = NULL;
-		IjvxInputConnectorSelect* theI = NULL;
-		IjvxOutputConnectorSelect* theO = NULL;
+		IjvxInputConnectorSelect* theIs = NULL;
+		IjvxOutputConnectorSelect* theOs = NULL;
 		theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 		if (theConFac)
 		{
 			if (JVX_CHECK_SIZE_SELECTED(id_selected_connector.id_select_icon))
 			{
-				theConFac->reference_input_connector(id_selected_connector.id_select_icon, &theI);
-				if (theI)
+				theConFac->reference_input_connector(id_selected_connector.id_select_icon, &theIs);
+				if (theIs)
 				{
 					IjvxDataConnectionCommon* ref = NULL;
-					theI->associated_common_icon(&ref);
+					IjvxInputConnector* theI = theIs->reference_icon();
+					if (theI)
+					{
+						theI->associated_common_icon(&ref);
+					}
 					if (ref == NULL)
 					{
 						jvxBool alreadythere = false;
@@ -905,17 +909,21 @@ jvx_connections_widget::add_connector_dz()
 						}
 					}
 
-					theConFac->return_reference_input_connector(theI);
+					theConFac->return_reference_input_connector(theIs);
 				}
 
 			}
 			if (JVX_CHECK_SIZE_SELECTED(id_selected_connector.id_select_ocon))
 			{
-				theConFac->reference_output_connector(id_selected_connector.id_select_ocon, &theO);
-				if (theO)
+				theConFac->reference_output_connector(id_selected_connector.id_select_ocon, &theOs);
+				if (theOs)
 				{
 					IjvxDataConnectionCommon* ref = NULL;
-					theO->associated_common_ocon(&ref);
+					IjvxOutputConnector* theO = theOs->reference_ocon();
+					if (theO)
+					{
+						theO->associated_common_ocon(&ref);
+					}
 					if (ref == NULL)
 					{
 						jvxBool alreadythere = false;
@@ -942,7 +950,7 @@ jvx_connections_widget::add_connector_dz()
 						}
 					}
 
-					theConFac->return_reference_output_connector(theO);
+					theConFac->return_reference_output_connector(theOs);
 				}
 			}
 
@@ -1117,11 +1125,15 @@ jvx_connections_widget::add_connectors_dz()
 		theCoFac->number_input_connectors(&numIc);
 		for (j = 0; j < numIc; j++)
 		{
-			IjvxInputConnectorSelect* theIc = NULL;
+			IjvxInputConnectorSelect* theIcs = NULL;
 			IjvxDataConnectionCommon* com = NULL;
-			theCoFac->reference_input_connector(j, &theIc);
-			assert(theIc);
-			theIc->associated_common_icon(&com);
+			theCoFac->reference_input_connector(j, &theIcs);
+			assert(theIcs);
+			IjvxInputConnector* theIcc = theIcs->reference_icon();
+			if (theIcc)
+			{
+				theIcc->associated_common_icon(&com);
+			}
 			if (!com)
 			{
 				lst_elm_icons newElm;
@@ -1144,17 +1156,21 @@ jvx_connections_widget::add_connectors_dz()
 					lst_inputs.push_back(newElm);
 				}
 			}
-			theCoFac->return_reference_input_connector(theIc);
+			theCoFac->return_reference_input_connector(theIcs);
 		}
 
 		theCoFac->number_output_connectors(&numOc);
 		for (j = 0; j < numOc; j++)
 		{
-			IjvxOutputConnectorSelect* theOc = NULL;
+			IjvxOutputConnectorSelect* theOcs = NULL;
 			IjvxDataConnectionCommon* com = NULL;
-			theCoFac->reference_output_connector(j, &theOc);
-			assert(theOc);
-			theOc->associated_common_ocon(&com);
+			theCoFac->reference_output_connector(j, &theOcs);
+			assert(theOcs);
+			IjvxOutputConnector* theOcc = theOcs->reference_ocon();
+			if (theOcc)
+			{
+				theOcc->associated_common_ocon(&com);
+			}
 			if (!com)
 			{
 				lst_elm_ocons newElm;
@@ -1177,7 +1193,7 @@ jvx_connections_widget::add_connectors_dz()
 					lst_outputs.push_back(newElm);
 				}
 			}
-			theCoFac->return_reference_output_connector(theOc);
+			theCoFac->return_reference_output_connector(theOcs);
 		}
 		theDataConnections->return_reference_connection_factory(theCoFac);
 	}

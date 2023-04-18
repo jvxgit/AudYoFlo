@@ -169,9 +169,9 @@ CjvxBareAudioNode::process_start_icon(
 {
 	if (zeroCopyBuffering_rt)
 	{
-		if (_common_set_ldslave.ocon)
+		if (_common_set_ocon.ocon)
 		{
-			return _common_set_ldslave.ocon->process_start_ocon(pipeline_offset,  idx_stage, tobeAccessedByStage, clbk, 
+			return _common_set_ocon.ocon->process_start_ocon(pipeline_offset,  idx_stage, tobeAccessedByStage, clbk,
 				priv_ptr);
 		}
 		return JVX_ERROR_NOT_READY;
@@ -188,9 +188,9 @@ CjvxBareAudioNode::process_stop_icon(jvxSize idx_stage,
 {
 	if (zeroCopyBuffering_rt)
 	{
-		if (_common_set_ldslave.ocon)
+		if (_common_set_ocon.ocon)
 		{
-			return _common_set_ldslave.ocon->process_stop_ocon(
+			return _common_set_ocon.ocon->process_stop_ocon(
 				idx_stage, shift_fwd, 
 				tobeAccessedByStage, clbk, priv_ptr);
 		}

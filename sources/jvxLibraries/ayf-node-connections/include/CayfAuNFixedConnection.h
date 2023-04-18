@@ -37,8 +37,8 @@ namespace AyfConnection
 		// ===================================================================================
 		virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
-			JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(CayfAuNConnection<S>::_common_set_ldslave.object),
-				CayfAuNConnection<S>::_common_set_ldslave.descriptor.c_str(), "Entering input connector <CayfAuNFixedConnection>");
+			JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(CayfAuNConnection<S>::_common_set_io_common.object),
+				CayfAuNConnection<S>::_common_set_io_common.descriptor.c_str(), "Entering input connector <CayfAuNFixedConnection>");
 
 			JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, (CayfAuNConnection<S>::_common_set_icon.theData_in));
 
@@ -259,11 +259,11 @@ namespace AyfConnection
 				jvxHandle* priv_ptr) override
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			if (CayfAuNConnection<S>::_common_set_ldslave.ocon)
+			if (CayfAuNConnection<S>::_common_set_ocon.ocon)
 			{
 				// Input / output connector implementations are never zerocopy
 				// We start a regular output connector here
-				res = CayfAuNConnection<S>::_common_set_ldslave.ocon->process_start_ocon(
+				res = CayfAuNConnection<S>::_common_set_ocon.ocon->process_start_ocon(
 					pipeline_offset,
 					idx_stage,
 					tobeAccessedByStage,
@@ -276,9 +276,9 @@ namespace AyfConnection
 		virtual jvxErrorType hook_process(jvxSize mt_mask, jvxSize idx_stage) override
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			if (CayfAuNConnection<S>::_common_set_ldslave.ocon)
+			if (CayfAuNConnection<S>::_common_set_ocon.ocon)
 			{
-				return CayfAuNConnection<S>::_common_set_ldslave.ocon->process_buffers_ocon(mt_mask, idx_stage);
+				return CayfAuNConnection<S>::_common_set_ocon.ocon->process_buffers_ocon(mt_mask, idx_stage);
 			}
 			return res;
 		}
@@ -291,11 +291,11 @@ namespace AyfConnection
 				jvxHandle* priv_ptr) override
 		{
 			jvxErrorType res = JVX_NO_ERROR;
-			if (CayfAuNConnection<S>::_common_set_ldslave.ocon)
+			if (CayfAuNConnection<S>::_common_set_ocon.ocon)
 			{
 				// Input / output connector implementations are never zerocopy
 				// We start a regular output connector here
-				res = CayfAuNConnection<S>::_common_set_ldslave.ocon->process_stop_ocon(
+				res = CayfAuNConnection<S>::_common_set_ocon.ocon->process_stop_ocon(
 					idx_stage,
 					shift_fwd,
 					tobeAccessedByStage,

@@ -68,9 +68,9 @@ CayfComponentLib::activate()
 		JVX_PROPERTIES_ALL_START(genComponentLib);
 
 		// Need this link
-		_common_set_ldslave.ocon = static_cast<IjvxOutputConnector*>(this);
-		_common_set_ldslave.icon = static_cast<IjvxInputConnector*>(this);
-		_common_set_ldslave.theMaster = static_cast<IjvxConnectionMaster*>(this);
+		_common_set_ocon.ocon = static_cast<IjvxOutputConnector*>(this);
+		_common_set_icon.icon = static_cast<IjvxInputConnector*>(this);
+		_common_set_io_common.theMaster = static_cast<IjvxConnectionMaster*>(this);
 
 		resC = allocateMainNode(); 
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
@@ -322,7 +322,7 @@ CayfComponentLib::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in,
 		static_cast<IjvxObject*>(this),
-		_common_set_ldslave.descriptor.c_str()
+		_common_set_io_common.descriptor.c_str()
 		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res == JVX_NO_ERROR)
 	{

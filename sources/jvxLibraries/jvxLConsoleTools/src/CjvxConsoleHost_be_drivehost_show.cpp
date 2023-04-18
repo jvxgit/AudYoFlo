@@ -405,7 +405,11 @@ CjvxConsoleHost_be_drivehost::show_dropzone(const oneDrivehostCommand& dh_comman
 						JVX_CREATE_CONNECTION_DROPZONE_ICON_NAME(jelmarrelml, fldStr.std_str());
 						jelmarrelmll.addConsumeElement(jelmarrelml);
 
-						icon->associated_common_icon(&proc);
+						IjvxInputConnector* iconc = icon->reference_icon();
+						if (iconc)
+						{
+							iconc->associated_common_icon(&proc);
+						}
 						if (proc == NULL)
 						{
 							JVX_CREATE_CONNECTION_DROPZONE_ICON_AVAIL(jelmarrelml, JVX_INDICATE_TRUE_SHORT);
@@ -464,8 +468,11 @@ CjvxConsoleHost_be_drivehost::show_dropzone(const oneDrivehostCommand& dh_comman
 						ocon->descriptor_connector(&fldStr);
 						JVX_CREATE_CONNECTION_DROPZONE_OCON_NAME(jelmarrelml, fldStr.std_str());
 						jelmarrelmll.addConsumeElement(jelmarrelml);
-
-						ocon->associated_common_ocon(&proc);
+						IjvxOutputConnector* oconc = ocon->reference_ocon();
+						if (oconc)
+						{
+							oconc->associated_common_ocon(&proc);
+						}
 						if (proc == NULL)
 						{
 							JVX_CREATE_CONNECTION_DROPZONE_OCON_AVAIL(jelmarrelml, JVX_INDICATE_TRUE_SHORT);

@@ -147,7 +147,7 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
 		_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
 			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
-			_common_set_ldslave.myRuntimeId;
+			_common_set_io_common.myRuntimeId;
 	}
 
 	return res;
@@ -264,7 +264,7 @@ CjvxVideoMfOpenGLDevice::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
 
 				_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
 					*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
-					_common_set_ldslave.myRuntimeId;
+					_common_set_io_common.myRuntimeId;
 
 				// Indicate new buffer available
 				genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->fill_height++;
@@ -299,7 +299,7 @@ CjvxVideoMfOpenGLDevice::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
 					_common_set_icon.theData_in->con_data.number_buffers; 
 				_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
 					*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
-					_common_set_ldslave.myRuntimeId;
+					_common_set_io_common.myRuntimeId;
 				nativeGl.idxBuf_Fheight++;
 				_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
 				JVX_UNLOCK_MUTEX(nativeGl.safeAccessBuffer);

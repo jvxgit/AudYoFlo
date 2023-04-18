@@ -86,7 +86,7 @@ CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		if (zeroCopyBuffering_rt)
 		{
 			// If we have a termination here we need to allocate buffers
-			if (_common_set_ldslave.setup_for_termination)
+			if (_common_set_ocon.setup_for_termination)
 			{
 				zeroCopyBuffering_rt = false;
 			}
@@ -258,9 +258,9 @@ CjvxBareNode1io::process_start_icon(jvxSize pipeline_offset, jvxSize* idx_stage,
 	jvxErrorType res = JVX_NO_ERROR;
 	if (zeroCopyBuffering_rt)
 	{
-		if (_common_set_ldslave.ocon)
+		if (_common_set_ocon.ocon)
 		{
-			res = _common_set_ldslave.ocon->process_start_ocon(pipeline_offset, idx_stage, tobeAccessedByStage, clbk, priv_ptr);
+			res = _common_set_ocon.ocon->process_start_ocon(pipeline_offset, idx_stage, tobeAccessedByStage, clbk, priv_ptr);
 			return res;
 		}
 		return JVX_ERROR_NOT_READY;
@@ -279,9 +279,9 @@ CjvxBareNode1io::process_stop_icon(
 	jvxErrorType res = JVX_NO_ERROR;
 	if (zeroCopyBuffering_rt)
 	{
-		if (_common_set_ldslave.ocon)
+		if (_common_set_ocon.ocon)
 		{
-			res = _common_set_ldslave.ocon->process_stop_ocon(idx_stage, operate_first_call, tobeAccessedByStage,
+			res = _common_set_ocon.ocon->process_stop_ocon(idx_stage, operate_first_call, tobeAccessedByStage,
 				clbk, priv_ptr);
 			return res;
 		}
@@ -337,7 +337,7 @@ CjvxBareNode1io::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 	if (!zeroCopyBuffering_rt)
 	{
-		if (!_common_set_ldslave.setup_for_termination)
+		if (!_common_set_ocon.setup_for_termination)
 		{
 			// Talkthrough
 			jvxSize ii;

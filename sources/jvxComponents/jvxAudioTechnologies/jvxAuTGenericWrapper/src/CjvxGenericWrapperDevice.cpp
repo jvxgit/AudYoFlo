@@ -1372,7 +1372,7 @@ CjvxGenericWrapperDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(this),
-		_common_set_ldslave.descriptor.c_str(), 
+		_common_set_io_common.descriptor.c_str(),
 		"Entering CjvxGenericWrapperDevice default input connector");
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, _common_set_icon.theData_in);
 

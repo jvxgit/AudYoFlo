@@ -20,11 +20,14 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxConnectorMasterFactory.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxConnectorMasterFactory.cpp
 
-	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxInputConnector.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxInputConnector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxInputConnectorCore.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxInputConnectorCore.cpp
 
-	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxOutputConnector.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxOutputConnector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxOutputConnectorCore.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxOutputConnectorCore.cpp
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxInputOutputConnectorCore.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxInputOutputConnectorCore.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxInputOutputConnector.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxInputOutputConnector.cpp

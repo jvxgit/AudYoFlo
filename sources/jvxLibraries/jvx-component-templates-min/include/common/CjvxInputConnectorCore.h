@@ -14,6 +14,9 @@ public:
 		jvxLinkDataDescriptor* theData_in = nullptr;
 		IjvxDataConnectionCommon* theCommon_to = nullptr;
 
+		// "Outside" representation of this input connector
+		IjvxInputConnector* icon = nullptr;
+
 		struct
 		{
 			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
@@ -25,17 +28,49 @@ public:
 public:
 	CjvxInputConnectorCore();
 
+	jvxErrorType activate(IjvxInputConnector* icon);
+	jvxErrorType deactivate();
+
 	jvxErrorType _associated_common_icon(IjvxDataConnectionCommon** ref);
 
 	jvxErrorType _supports_connector_class_icon(
 		jvxDataFormatGroup format_group,
 		jvxDataflow data_flow);
 
+	// ===============================================================================
+
 	jvxErrorType _select_connect_icon(IjvxConnectorBridge* bri, IjvxConnectionMaster* master,
 			IjvxDataConnectionCommon* ass_connection_common,
 			IjvxInputConnector** replace_connector);
 
 	jvxErrorType _unselect_connect_icon(IjvxConnectorBridge* bri, IjvxInputConnector* replace_connector);
+
+	// ===============================================================================
+
+	jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb), jvxBool forward);
+	virtual jvxErrorType _connect_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+
+	jvxErrorType _disconnect_connect_icon(jvxLinkDataDescriptor* theData, jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	virtual jvxErrorType _disconnect_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+
+	// ===============================================================================
+
+	jvxErrorType _prepare_connect_icon(jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	virtual jvxErrorType _prepare_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+
+	jvxErrorType _postprocess_connect_icon(jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	virtual jvxErrorType _postprocess_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+
+	// ===============================================================================
+
+	jvxErrorType _start_connect_icon(jvxBool forward, jvxSize myUniquePipelineId JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	virtual jvxErrorType _start_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+	virtual void _start_connect_common(jvxSize myUniquePipelineId) = 0;
+
+	jvxErrorType _stop_connect_icon(jvxBool forward, jvxSize* uId JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	virtual jvxErrorType _stop_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+	virtual void _stop_connect_common(jvxSize* myUniquePipelineId) = 0;
+	// ===============================================================================
 
 	jvxErrorType _connected_ocon(IjvxOutputConnector** ocon);
 

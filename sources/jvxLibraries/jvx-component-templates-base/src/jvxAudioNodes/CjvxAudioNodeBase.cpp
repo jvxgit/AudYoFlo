@@ -367,7 +367,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType resComplain = JVX_NO_ERROR;
 	std::string txt;
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(this), 
-		CjvxInputOutputConnector::_common_set_ldslave.descriptor.c_str(),
+		CjvxInputOutputConnector::_common_set_io_common.descriptor.c_str(),
 		"Entering CjvxAudioNodeBase default input connector");
 	if (num)
 	{

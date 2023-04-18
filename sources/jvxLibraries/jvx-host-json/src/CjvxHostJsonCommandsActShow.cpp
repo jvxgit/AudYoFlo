@@ -1762,7 +1762,7 @@ CjvxHostJsonCommandsActShow::act_add_ocon_dz(const std::string& arg2, const std:
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	IjvxConnectorFactory* conFac = NULL;
-	IjvxInputConnectorSelect* icon = NULL;
+	IjvxInputConnectorSelect* icons = NULL;
 	jvxComponentIdentification tpId;
 	jvxComponentIdentification tpIdL;
 	IjvxDataConnectionCommon* proc = NULL;
@@ -1818,13 +1818,17 @@ CjvxHostJsonCommandsActShow::act_add_ocon_dz(const std::string& arg2, const std:
 				conFac->number_input_connectors(&numcons);
 				for (j = 0; j < numcons; j++)
 				{
-					conFac->reference_input_connector(j, &icon);
-					if (icon)
+					conFac->reference_input_connector(j, &icons);
+					if (icons)
 					{
-						icon->descriptor_connector(&fldStr);
-						icon->associated_common_icon(&proc);
-						conFac->return_reference_input_connector(icon);
-						icon = NULL;
+						icons->descriptor_connector(&fldStr);
+						IjvxInputConnector* iconc = icons->reference_icon();
+						if (iconc)
+						{
+							iconc->associated_common_icon(&proc);
+						}
+						conFac->return_reference_input_connector(icons);
+						icons = NULL;
 
 						if (fldStr.std_str() == arg3)
 						{
@@ -2193,7 +2197,7 @@ CjvxHostJsonCommandsActShow::act_add_icon_dz(const std::string& arg2, const std:
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	IjvxConnectorFactory* conFac = NULL;
-	IjvxOutputConnectorSelect* ocon = NULL;
+	IjvxOutputConnectorSelect* ocons = NULL;
 	jvxComponentIdentification tpId;
 	jvxComponentIdentification tpIdL;
 	IjvxDataConnectionCommon* proc = NULL;
@@ -2249,13 +2253,17 @@ CjvxHostJsonCommandsActShow::act_add_icon_dz(const std::string& arg2, const std:
 				conFac->number_input_connectors(&numcons);
 				for (j = 0; j < numcons; j++)
 				{
-					conFac->reference_output_connector(j, &ocon);
-					if (ocon)
+					conFac->reference_output_connector(j, &ocons);
+					if (ocons)
 					{
-						ocon->descriptor_connector(&fldStr);
-						ocon->associated_common_ocon(&proc);
-						conFac->return_reference_output_connector(ocon);
-						ocon = NULL;
+						ocons->descriptor_connector(&fldStr);
+						IjvxOutputConnector* oconc = ocons->reference_ocon();
+						if (oconc)
+						{
+							oconc->associated_common_ocon(&proc);
+						}
+						conFac->return_reference_output_connector(ocons);
+						ocons = NULL;
 
 						if (fldStr.std_str() == arg3)
 						{

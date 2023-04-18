@@ -716,7 +716,11 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part(IjvxDataConnections* allCo
 									if (jvx_compareStringsWildcard(elmB->conn_from.sel_expression_macon, strOc_F.std_str()))
 									{
 										IjvxDataConnectionCommon* ref = NULL;
-										theOcon_F->associated_common_ocon(&ref);
+										IjvxOutputConnector* ocon = theOcon_F->reference_ocon();
+										if (ocon)
+										{
+											ocon->associated_common_ocon(&ref);
+										}
 										if (ref == NULL)
 										{
 											theBridge.from.connector_name = strOc_F.std_str();
@@ -951,7 +955,11 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part_finalize(IjvxDataConnectio
 								strIc_T.std_str()))
 							{
 								IjvxDataConnectionCommon* ref = NULL;
-								theIcon_T->associated_common_icon(&ref);
+								IjvxInputConnector* icon = theIcon_T->reference_icon();
+								if (icon)
+								{
+									icon->associated_common_icon(&ref);
+								}
 								if (ref == NULL)
 								{
 									theBridge.to.connector_name = strIc_T.std_str();
