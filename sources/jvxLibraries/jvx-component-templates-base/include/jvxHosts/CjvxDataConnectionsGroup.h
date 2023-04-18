@@ -128,7 +128,8 @@ public:
 #include "codeFragments/simplify/jvxProperties_simplify.h"
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnector* conn_from, IjvxInputConnector* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnectorSelect* conn_from, 
+		IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION connect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION disconnect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 

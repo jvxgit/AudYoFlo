@@ -134,7 +134,7 @@ jvxErrorType
 CjvxAuCPcmEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
 	jvxSize i;
-	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(&_common_set_ocon.theData_out);
+	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(_common_set_ocon.theData_out);
 	jvxData** bufsInData = nullptr;
 
 	assert(params.nchans == _common_set_icon.theData_in->con_params.number_channels);

@@ -1762,7 +1762,7 @@ CjvxHostJsonCommandsActShow::act_add_ocon_dz(const std::string& arg2, const std:
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	IjvxConnectorFactory* conFac = NULL;
-	IjvxInputConnector* icon = NULL;
+	IjvxInputConnectorSelect* icon = NULL;
 	jvxComponentIdentification tpId;
 	jvxComponentIdentification tpIdL;
 	IjvxDataConnectionCommon* proc = NULL;
@@ -2193,7 +2193,7 @@ CjvxHostJsonCommandsActShow::act_add_icon_dz(const std::string& arg2, const std:
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	IjvxConnectorFactory* conFac = NULL;
-	IjvxOutputConnector* ocon = NULL;
+	IjvxOutputConnectorSelect* ocon = NULL;
 	jvxComponentIdentification tpId;
 	jvxComponentIdentification tpIdL;
 	IjvxDataConnectionCommon* proc = NULL;

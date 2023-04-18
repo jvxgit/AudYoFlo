@@ -406,7 +406,7 @@ CjvxBareNtask::process_buffers_icon_ntask(jvxLinkDataDescriptor* theData_in, jvx
 		{
 			_common_set_nvtask_proc.idx_stage_in_master = *theData_in->con_pipeline.idx_stage_ptr;
 		}
-		_common_set_nvtask_proc.idx_stage_out_master = *theData_out->con_pipeline.idx_stage_ptr;
+		_common_set_nvtask_proc.idx_stage_out_master = *(theData_out->con_pipeline.idx_stage_ptr);
 
 		// Store the data sets for input and output in master thread
 		_common_set_nvtask_proc.theData_out_master = theData_out;

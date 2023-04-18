@@ -75,7 +75,7 @@ CjvxAuNChannelRearrange::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 	if (!_common_set_ldslave.setup_for_termination)
 	{
 		jvxData** fieldInput = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-		jvxData** fieldOutput = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+		jvxData** fieldOutput = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 		jvxBool passThrough = (genChannelRearrange_node::passthrough.active.value == c_true);
 		// Talkthrough
 		jvxSize ii;

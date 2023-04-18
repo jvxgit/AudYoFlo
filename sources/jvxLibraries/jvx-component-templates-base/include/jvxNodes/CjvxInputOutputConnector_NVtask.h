@@ -79,6 +79,7 @@ public:
 		jvxDataflow data_flow)override;
 	jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** icon) override;
 
+	IjvxInputConnector* JVX_CALLINGCONVENTION reference_icon() override;
 	// jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 };
 
@@ -106,6 +107,7 @@ public:
 
 	// jvxErrorType outputs_data_format_group(jvxDataFormatGroup grp) override;
 	jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override;
+	IjvxOutputConnector* JVX_CALLINGCONVENTION reference_ocon() override;
 
 	jvxErrorType _connect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 	jvxErrorType _disconnect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));

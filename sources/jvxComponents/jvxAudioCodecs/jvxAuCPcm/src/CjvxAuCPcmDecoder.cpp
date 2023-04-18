@@ -59,7 +59,7 @@ CjvxAuCPcmDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	switch (_common_set_ocon.theData_out.con_params.format)
 	{
 	case JVX_DATAFORMAT_DATA:
-		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 		for (i = 0; i < params.nchans; i++)
 		{
 			if (params.sample_type == audio_codec_wav_sample_type::AUDIO_CODEC_WAV_FIXED_POINT)

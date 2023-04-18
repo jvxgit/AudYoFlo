@@ -77,6 +77,16 @@ public:
 
 	void updateName(const char*  newNm);
 
+	virtual IjvxInputConnector* reference_icon() override
+	{
+		return this;
+	}
+
+	virtual IjvxOutputConnector* reference_ocon() override
+	{
+		return this;
+	}
+
 	// =========================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_connector(jvxApiString* str) override;

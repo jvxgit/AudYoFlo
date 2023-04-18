@@ -228,7 +228,7 @@ CjvxDataConnectionsProcess::associate_master(IjvxConnectionMaster* theMaster, Ij
 }
 
 jvxErrorType
-CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnector* conn_from, IjvxInputConnector* conn_to, const char* nm, 
+CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnectorSelect* conn_from, IjvxInputConnectorSelect* conn_to, const char* nm, 
 	jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)
 {
 	jvxErrorType res = JVX_NO_ERROR;

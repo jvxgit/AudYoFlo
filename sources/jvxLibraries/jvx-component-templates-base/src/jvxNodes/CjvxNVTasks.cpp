@@ -133,8 +133,21 @@ CjvxNVTasks::activate()
 	
 	if (res == JVX_NO_ERROR)
 	{
-		sec_input = connector_input_name("async-secondary-v");
-		pri_input = connector_input_name("default");
+		sec_input = nullptr;
+		IjvxInputConnectorSelect* sec_input_sel = connector_input_name("async-secondary-v");
+		if (sec_input_sel)
+		{
+			sec_input = sec_input_sel->reference_icon();
+		}
+		assert(sec_input);
+
+		pri_input = nullptr;
+		IjvxInputConnectorSelect* pri_input_sel = connector_input_name("default");
+		if (pri_input_sel)
+		{
+			pri_input = pri_input_sel->reference_icon();
+		}
+		assert(pri_input);
 
 		CjvxNVTasks_pcg::init_all();
 		CjvxNVTasks_pcg::allocate_all();

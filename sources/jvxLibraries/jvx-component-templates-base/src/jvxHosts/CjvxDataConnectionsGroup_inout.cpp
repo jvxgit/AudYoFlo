@@ -107,7 +107,7 @@ CjvxDataConnectionsGroup_external::number_input_connectors(jvxSize* num_in_conne
 }
 
 jvxErrorType 
-CjvxDataConnectionsGroup_external::reference_input_connector(jvxSize idx, IjvxInputConnector** ref)
+CjvxDataConnectionsGroup_external::reference_input_connector(jvxSize idx, IjvxInputConnectorSelect** ref)
 {
 	if (idx < input_connectors.size())
 	{
@@ -124,7 +124,7 @@ CjvxDataConnectionsGroup_external::reference_input_connector(jvxSize idx, IjvxIn
 }
 
 jvxErrorType 
-CjvxDataConnectionsGroup_external::return_reference_input_connector(IjvxInputConnector* ref)
+CjvxDataConnectionsGroup_external::return_reference_input_connector(IjvxInputConnectorSelect* ref)
 {
 	auto elm = input_connectors.begin();
 	elm = input_connectors.find(ref);
@@ -146,7 +146,7 @@ jvxErrorType CjvxDataConnectionsGroup_external::number_output_connectors(jvxSize
 }
 
 jvxErrorType 
-CjvxDataConnectionsGroup_external::reference_output_connector(jvxSize idx, IjvxOutputConnector** ref)
+CjvxDataConnectionsGroup_external::reference_output_connector(jvxSize idx, IjvxOutputConnectorSelect** ref)
 {
 	if (idx < output_connectors.size())
 	{
@@ -163,7 +163,7 @@ CjvxDataConnectionsGroup_external::reference_output_connector(jvxSize idx, IjvxO
 }
 
 jvxErrorType 
-CjvxDataConnectionsGroup_external::return_reference_output_connector(IjvxOutputConnector* ref)
+CjvxDataConnectionsGroup_external::return_reference_output_connector(IjvxOutputConnectorSelect* ref)
 {
 	auto elm = output_connectors.begin();
 	elm = output_connectors.find(ref);

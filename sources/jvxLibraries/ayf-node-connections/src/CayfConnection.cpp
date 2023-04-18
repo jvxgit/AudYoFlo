@@ -572,7 +572,9 @@ namespace AyfConnection
 		// Actually process the data into the output buffers. Output buffers available on return
 		microConn->process_connection(&ptr);
 
-		jvxHandle** bufsOutput = jvx_process_icon_extract_output_buffers<jvxHandle>(lkDataOut);
+		assert(lkDataOut);
+
+		jvxHandle** bufsOutput = jvx_process_icon_extract_output_buffers<jvxHandle>(*lkDataOut);
 		nChans = lkDataOut->con_params.number_channels;
 		szBytes = jvxDataFormat_getsize(lkDataOut->con_params.format) * lkDataOut->con_params.buffersize;
 

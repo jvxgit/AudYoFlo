@@ -13,7 +13,8 @@
 
 class CjvxDataConnectionsGroup;
 
-class CjvxDataChainInterceptorGroup: public CjvxDataChainInterceptor, public IjvxThreads_report, public IjvxDataConnectionShortcut
+class CjvxDataChainInterceptorGroup: public CjvxDataChainInterceptor, 
+	public IjvxThreads_report, public IjvxDataConnectionShortcut
 {
 private:
 	
@@ -148,6 +149,16 @@ public:
 
 	// Forward test parameters
 	void set_output_connector(IjvxInputConnector* icon);
+
+	virtual IjvxInputConnector* reference_icon() override
+	{
+		return this;
+	}
+
+	virtual IjvxOutputConnector* reference_ocon() override
+	{
+		return this;
+	}
 
 	// ===========================================================================
 

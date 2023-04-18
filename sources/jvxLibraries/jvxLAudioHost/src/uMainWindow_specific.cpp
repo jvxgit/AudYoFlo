@@ -559,8 +559,8 @@ uMainWindow_specific::display_data_connections(IjvxDataConnections* connections)
 	IjvxInputConnector* theInCon = NULL;
 	IjvxObject* theObj = NULL;
 	jvxComponentIdentification tp;
-	IjvxInputConnector* inCon = NULL;
-	IjvxOutputConnector* outCon = NULL;
+	IjvxInputConnectorSelect* inCon = NULL;
+	IjvxOutputConnectorSelect* outCon = NULL;
 
 	std::cout << "Running auto connect" << std::endl;
 	connections->number_connection_factories(&num);

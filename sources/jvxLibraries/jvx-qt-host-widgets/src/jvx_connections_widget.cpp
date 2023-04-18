@@ -867,8 +867,8 @@ jvx_connections_widget::add_connector_dz()
 	{
 
 		IjvxConnectorFactory* theConFac = NULL;
-		IjvxInputConnector* theI = NULL;
-		IjvxOutputConnector* theO = NULL;
+		IjvxInputConnectorSelect* theI = NULL;
+		IjvxOutputConnectorSelect* theO = NULL;
 		theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 		if (theConFac)
 		{
@@ -1117,7 +1117,7 @@ jvx_connections_widget::add_connectors_dz()
 		theCoFac->number_input_connectors(&numIc);
 		for (j = 0; j < numIc; j++)
 		{
-			IjvxInputConnector* theIc = NULL;
+			IjvxInputConnectorSelect* theIc = NULL;
 			IjvxDataConnectionCommon* com = NULL;
 			theCoFac->reference_input_connector(j, &theIc);
 			assert(theIc);
@@ -1150,7 +1150,7 @@ jvx_connections_widget::add_connectors_dz()
 		theCoFac->number_output_connectors(&numOc);
 		for (j = 0; j < numOc; j++)
 		{
-			IjvxOutputConnector* theOc = NULL;
+			IjvxOutputConnectorSelect* theOc = NULL;
 			IjvxDataConnectionCommon* com = NULL;
 			theCoFac->reference_output_connector(j, &theOc);
 			assert(theOc);

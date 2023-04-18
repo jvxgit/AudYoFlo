@@ -164,8 +164,8 @@ CjvxConnectionDescription::create_process_group_from_description(
 
 		jvxSize numConFac = 0;
 		IjvxConnectorFactory* theConFac = NULL;
-		IjvxOutputConnector* ocon = NULL;
-		IjvxInputConnector* icon = NULL;
+		IjvxOutputConnectorSelect* ocon = NULL;
+		IjvxInputConnectorSelect* icon = NULL;
 		jvxSize numOc = 0;
 		jvxSize numIc = 0;
 

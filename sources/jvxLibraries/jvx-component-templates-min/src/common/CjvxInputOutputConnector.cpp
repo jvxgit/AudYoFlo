@@ -41,59 +41,14 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 			*isAvail = false;
 			if (
 				(_common_set_icon.conn_in == NULL) &&
-				(_common_set_icon.conn_in == NULL)) // <-
+				(_common_set_ocon.conn_out == NULL)) // <-
 			{
 				*isAvail = true;
 			}
 		}
 		return JVX_NO_ERROR;
 	}
-
-	jvxErrorType 
-		CjvxInputOutputConnector::_associated_common_icon(IjvxDataConnectionCommon** ref)
-	{
-		if (ref)
-		{
-			*ref = _common_set_icon.theCommon_to;
-		}
-		return JVX_NO_ERROR;
-	}
-
-	jvxErrorType
-		CjvxInputOutputConnector::_connected_ocon(IjvxOutputConnector** ocon)
-	{
-		if (ocon)
-		{
-			*ocon = nullptr;
-			if (_common_set_icon.theData_in)
-			{
-				*ocon = _common_set_icon.theData_in->con_link.connect_from;
-			}
-		}
-		return JVX_NO_ERROR;
-	}
-
-	jvxErrorType
-		CjvxInputOutputConnector::_connected_icon(IjvxInputConnector** ocon)
-	{
-		if (ocon)
-		{
-			*ocon = nullptr;
-			*ocon = _common_set_ocon.theData_out.con_link.connect_to;
-		}
-		return JVX_NO_ERROR;
-	}
 	
-	jvxErrorType
-		CjvxInputOutputConnector::_associated_common_ocon(IjvxDataConnectionCommon** ref)
-	{
-		if (ref)
-		{
-			*ref = _common_set_ocon.theCommon_from;
-		}
-		return JVX_NO_ERROR;
-	}
-
 	jvxErrorType 
 		CjvxInputOutputConnector::_descriptor_connector(jvxApiString* str)
 	{
@@ -142,49 +97,6 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 	*/
 
 	jvxErrorType 
-		CjvxInputOutputConnector::_supports_connector_class_ocon(
-			jvxDataFormatGroup format_group,
-			jvxDataflow data_flow)
-	{		
-		if (_common_set_ocon.caps_out.format_group != JVX_DATAFORMAT_GROUP_NONE)
-		{
-			if (_common_set_ocon.caps_out.format_group != format_group)
-			{
-				return JVX_ERROR_UNSUPPORTED;
-			}
-		}
-		if (_common_set_ocon.caps_out.data_flow!= JVX_DATAFLOW_NONE)
-		{
-			if (_common_set_ocon.caps_out.data_flow != data_flow)
-			{
-				return JVX_ERROR_UNSUPPORTED;
-			}
-		}
-		return JVX_NO_ERROR;
-	}
-	jvxErrorType 
-		CjvxInputOutputConnector::_supports_connector_class_icon(
-			jvxDataFormatGroup format_group,
-			jvxDataflow data_flow)
-	{
-		if (_common_set_icon.caps_in.format_group != JVX_DATAFORMAT_GROUP_NONE)
-		{
-			if (_common_set_icon.caps_in.format_group != format_group)
-			{
-				return JVX_ERROR_UNSUPPORTED;
-			}
-		}
-		if (_common_set_icon.caps_in.data_flow != JVX_DATAFLOW_NONE)
-		{
-			if (_common_set_icon.caps_in.data_flow != data_flow)
-			{
-				return JVX_ERROR_UNSUPPORTED;
-			}
-		}
-		return JVX_NO_ERROR;
-	}
-
-	jvxErrorType 
 		CjvxInputOutputConnector::lds_deactivate()
 	{
 		jvxErrorType res = JVX_NO_ERROR;
@@ -213,20 +125,13 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 	}
 
 	// ==============================================================
-	// SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT
-	// ==============================================================
+	// SELECT CHECK SELECT CHECK SELECT CHECK SELECT CHECK SELECT CHECK
+	// ==============================================================	
 
 	jvxErrorType 
-		CjvxInputOutputConnector::_select_connect_icon(IjvxConnectorBridge* bri, IjvxConnectionMaster* master, 
-			IjvxDataConnectionCommon* ass_connection_common,
-			IjvxInputConnector** replace_connector)
+		CjvxInputOutputConnector::_check_common_icon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master)
 	{
-		// To and from conector must be associated in the same process/group
-		if (_common_set_icon.theCommon_to != NULL)
-		{
-			return JVX_ERROR_ALREADY_IN_USE;
-		}
-
+		// Cross check
 		if (_common_set_ocon.theCommon_from != NULL)
 		{
 			if (ass_connection_common != _common_set_ocon.theCommon_from)
@@ -235,35 +140,12 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 			}
 		}
 
-		// If we are linked with a master since we are a master with connectors, passed master must match
-		if (master && _common_set_ldslave.theMaster)
-		{
-			if (master != _common_set_ldslave.theMaster)
-			{
-				return JVX_ERROR_INVALID_ARGUMENT;
-			}
-		}
-		if (_common_set_icon.conn_in == NULL)
-		{
-			_common_set_icon.conn_in = bri;
-			_common_set_icon.theCommon_to = ass_connection_common;
-
-			// What else to do here?
-			return JVX_NO_ERROR;
-		}
-		return JVX_ERROR_COMPONENT_BUSY;
+		return _check_common(ass_connection_common, master);
 	}
 
-	jvxErrorType 
-		CjvxInputOutputConnector::_select_connect_ocon(IjvxConnectorBridge* bri, IjvxConnectionMaster* master, 
-			IjvxDataConnectionCommon* ass_connection_common, IjvxOutputConnector** replace_connector)
+	jvxErrorType
+		CjvxInputOutputConnector::_check_common_ocon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master)
 	{
-		// To and from conector must be associated in the same process/group
-		if (_common_set_ocon.theCommon_from != NULL)
-		{
-			return JVX_ERROR_ALREADY_IN_USE;
-		}
-
 		if (_common_set_icon.theCommon_to != NULL)
 		{
 			if (ass_connection_common != _common_set_icon.theCommon_to)
@@ -271,7 +153,13 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 				return JVX_ERROR_INVALID_SETTING;
 			}
 		}
-
+		
+		return _check_common(ass_connection_common, master);
+	}
+	
+	jvxErrorType
+		CjvxInputOutputConnector::_check_common(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master)
+	{
 		// If we are linked with a master since we are a master with connectors, passed master must match
 		if (master && _common_set_ldslave.theMaster)
 		{
@@ -281,35 +169,12 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 			}
 		}
 
-		// If no bridge was set before
-		if (_common_set_ocon.conn_out == NULL)
-		{
-			_common_set_ocon.conn_out = bri;
-			_common_set_ocon.theCommon_from = ass_connection_common;
-
-			// What else to do here?
-			return JVX_NO_ERROR;
-		}
-		return JVX_ERROR_COMPONENT_BUSY;
+		return JVX_NO_ERROR;
 	}
 
 	// ==============================================================
 	// UNSELECT UNSELECT UNSELECT UNSELECT UNSELECT UNSELECT UNSELECT
 	// ==============================================================
-
-	jvxErrorType 
-		CjvxInputOutputConnector::_unselect_connect_icon(IjvxConnectorBridge* bri, IjvxInputConnector* replace_connector)
-	{
-		if (_common_set_icon.conn_in == bri)
-		{
-			_common_set_icon.conn_in = NULL;
-			_common_set_icon.theCommon_to = NULL;
-
-			// What else to do here?
-			return JVX_NO_ERROR;
-		}
-		return JVX_ERROR_INVALID_ARGUMENT;
-	}
 
 	jvxErrorType 
 		CjvxInputOutputConnector::_unselect_connect_ocon(IjvxConnectorBridge* bri, IjvxOutputConnector* replace_connector)

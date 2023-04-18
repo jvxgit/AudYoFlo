@@ -645,6 +645,18 @@ virtual jvxErrorType associated_common_ocon(IjvxDataConnectionCommon** ref) over
 
 // ==============================================================================
 
+virtual IjvxInputConnector* reference_icon() override
+{
+	return this;
+}
+
+virtual IjvxOutputConnector* reference_ocon() override
+{
+	return this;
+}
+
+// ==============================================================================
+
 virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
 	jvxDataFormatGroup format_group,
 	jvxDataflow data_flow)override

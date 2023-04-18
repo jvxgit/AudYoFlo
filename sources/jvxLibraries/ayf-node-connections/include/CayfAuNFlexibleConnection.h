@@ -135,7 +135,7 @@ namespace AyfConnection
 				{
 				case ayfFlexibleConnectionUnconnectedMode::AYF_FLEXIBLE_CONNECTION_UNCONNECT_SILENT:
 					bufsOutput = jvx_process_icon_extract_output_buffers<jvxHandle>(
-						&CayfAuNConnection<S>::_common_set_ocon.theData_out);
+						CayfAuNConnection<S>::_common_set_ocon.theData_out);
 					nChans = CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params.number_channels;
 					szBytes = jvxDataFormat_getsize(CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params.format) *
 						CayfAuNConnection<S>::_common_set_ocon.theData_out.con_params.buffersize;

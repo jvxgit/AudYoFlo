@@ -202,7 +202,7 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 	// Extract the output buffers. You will find the processing parameters at
 	// _common_set_ocon.theData_out.con_params
-	jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+	jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 	jvxData* out_left = buffers_out[0];
 	jvxData* out_right = buffers_out[1];
 

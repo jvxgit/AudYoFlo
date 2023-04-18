@@ -519,19 +519,19 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 		theFac->number_input_connectors(&numIC);
 		for (j = 0; j < numIC; j++)
 		{
-			IjvxInputConnector* ic = NULL;
+			IjvxInputConnectorSelect* icS = NULL;
 			IjvxOutputConnector* oc = NULL;
 			IjvxDataConnectionCommon* assComm = NULL;
 			jvxApiString masdescr;
 			jvxBool isAvail = false;
-			theFac->reference_input_connector(j, &ic);
-			ic->descriptor_connector(&condescr);
+			theFac->reference_input_connector(j, &icS);
+			icS->descriptor_connector(&condescr);
 			QTreeWidgetItem* newSubItem = new QTreeWidgetItem(newItem);
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CF_UID, QVariant(JVX_SIZE_INT(uId)));
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_IC_ID, QVariant(JVX_SIZE_INT(j)));
 
-			ic->associated_common_icon(&assComm);
-			ic->connected_ocon(&oc);
+			icS->associated_common_icon(&assComm);
+			icS->connected_ocon(&oc);
 
 			txt = "Input Connector #" + jvx_size2String(j);
 			newSubItem->setText(0, txt.c_str());
@@ -567,25 +567,25 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 
 				newSubItem->setBackground(1, QBrush(Qt::red));
 			}
-			theFac->return_reference_input_connector(ic);
+			theFac->return_reference_input_connector(icS);
 		}
 
 		theFac->number_output_connectors(&numOC);
 		for (j = 0; j < numOC; j++)
 		{
-			IjvxOutputConnector* oc = NULL;
+			IjvxOutputConnectorSelect* ocS = NULL;
 			IjvxInputConnector* ic = NULL;
 			IjvxDataConnectionCommon* assComm = NULL;
 			jvxApiString masdescr;
 			jvxBool isAvail = false;
-			theFac->reference_output_connector(j, &oc);
-			oc->descriptor_connector(&condescr);
+			theFac->reference_output_connector(j, &ocS);
+			ocS->descriptor_connector(&condescr);
 			QTreeWidgetItem* newSubItem = new QTreeWidgetItem(newItem);
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CF_UID, QVariant(JVX_SIZE_INT(uId)));
 			newSubItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_OC_ID, QVariant(JVX_SIZE_INT(j)));
 
-			oc->associated_common_ocon(&assComm);
-			oc->connected_icon(&ic);
+			ocS->associated_common_ocon(&assComm);
+			ocS->connected_icon(&ic);
 						
 			// ================================================================================
 			// Show connection counterpart in tooltip
@@ -593,7 +593,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 			if (ic)
 			{
 				jvxApiString astr;
-				oc->descriptor_connector(&astr);
+				ic->descriptor_connector(&astr);
 				jvx_commonConnectorToObjectDescription(ic, txt, astr.std_str());
 				newSubItem->setToolTip(1, txt.c_str());
 			}
@@ -619,7 +619,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 
 				newSubItem->setBackground(1, QBrush(Qt::red));
 			}
-			theFac->return_reference_output_connector(oc);
+			theFac->return_reference_output_connector(ocS);
 		}
 		theDataConnections->return_reference_connection_factory(theFac);
 	}//for (i = 0; i < numCF; i++)
@@ -932,8 +932,8 @@ jvx_connections_widget::ui_redraw_dropzone(IjvxDataConnectionProcess* theProcess
 	for (; elmB != lst_bridges.end(); elmB++)
 	{
 		IjvxConnectorFactory* theFac = NULL;
-		IjvxOutputConnector* ocon = NULL;
-		IjvxInputConnector* icon = NULL;
+		IjvxOutputConnectorSelect* ocon = NULL;
+		IjvxInputConnectorSelect* icon = NULL;
 		std::string bn = elmB->bridge_name;
 		std::string ext;
 
@@ -1028,7 +1028,7 @@ jvx_connections_widget::ui_redraw_dropzone(IjvxDataConnectionProcess* theProcess
 	for (; elmIC != lst_inputs.end(); elmIC++)
 	{
 		IjvxConnectorFactory* theFac = NULL;
-		IjvxInputConnector* icon = NULL;
+		IjvxInputConnectorSelect* icon = NULL;
 
 		QListWidgetItem* newItem = new QListWidgetItem(listWidget_dz_icon);
 		newItem->setData(JVX_USER_ROLE_LISTWIDGET_ID_ICON_ID, QVariant(JVX_SIZE_INT(cnt)));
@@ -1053,7 +1053,7 @@ jvx_connections_widget::ui_redraw_dropzone(IjvxDataConnectionProcess* theProcess
 	for (; elmOC != lst_outputs.end(); elmOC++)
 	{
 		IjvxConnectorFactory* theFac = NULL;
-		IjvxOutputConnector* ocon = NULL;
+		IjvxOutputConnectorSelect* ocon = NULL;
 
 		QListWidgetItem* newItem = new QListWidgetItem(listWidget_dz_outcon);
 		newItem->setData(JVX_USER_ROLE_LISTWIDGET_ID_OCON_ID, QVariant(JVX_SIZE_INT(cnt)));
@@ -1497,7 +1497,7 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 		if (JVX_CHECK_SIZE_SELECTED(id_selected_connector.id_select_icon))
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxInputConnector* theIcon = NULL;
+			IjvxInputConnectorSelect* theIcon = NULL;
 			IjvxDataConnectionCommon* theCom = NULL;
 			theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 			if (theConFac)
@@ -1532,7 +1532,7 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 		else if (JVX_CHECK_SIZE_SELECTED(id_selected_connector.id_select_ocon))
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxOutputConnector* theOcon = NULL;
+			IjvxOutputConnectorSelect* theOcon = NULL;
 			IjvxDataConnectionCommon* theCom = NULL;
 			theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 			if (theConFac)

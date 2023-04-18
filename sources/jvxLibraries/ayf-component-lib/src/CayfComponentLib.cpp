@@ -129,8 +129,8 @@ CayfComponentLib::activate()
 					jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
 					jvxBool preventStore = true;
 					IjvxConnectorFactory* iFac = nullptr;
-					IjvxInputConnector* icon = nullptr;
-					IjvxOutputConnector* ocon = nullptr;
+					IjvxInputConnectorSelect* icon = nullptr;
+					IjvxOutputConnectorSelect* ocon = nullptr;
 					jvxSize uId_bridge_dev_node = JVX_SIZE_UNSELECTED;
 					jvxSize uId_bridge_node_dev = JVX_SIZE_UNSELECTED;
 					iFac = reqInterfaceObj< IjvxConnectorFactory>(this->mainNode);

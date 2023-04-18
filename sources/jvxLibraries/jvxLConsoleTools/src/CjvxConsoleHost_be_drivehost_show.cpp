@@ -116,9 +116,9 @@ CjvxConsoleHost_be_drivehost::show_dropzone(const oneDrivehostCommand& dh_comman
 	IjvxConnectionMasterFactory* masFac = NULL;
 	IjvxConnectionMaster* mas = NULL;
 	IjvxConnectorFactory* iconFac = NULL;
-	IjvxInputConnector* icon = NULL;
+	IjvxInputConnectorSelect* icon = NULL;
 	IjvxConnectorFactory* oconFac = NULL;
-	IjvxOutputConnector* ocon = NULL;
+	IjvxOutputConnectorSelect* ocon = NULL;
 	IjvxConnectorFactory* conFac = NULL;
 	std::string commandExt;
 	std::string filterExp;

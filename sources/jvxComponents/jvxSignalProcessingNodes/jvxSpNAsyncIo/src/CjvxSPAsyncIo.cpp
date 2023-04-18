@@ -101,19 +101,19 @@ JVX_ASYNCIO_CLASSNAME::activate()
 			_report_text_message("Failed to activate timing logfile writer!", JVX_REPORT_PRIORITY_WARNING);
 		}
 #endif
-		std::map<IjvxOutputConnector*, oneOutputConnectorElement>::iterator elm = _common_set_conn_factory.output_connectors.begin();
-		std::map<IjvxInputConnector*, oneInputConnectorElement>::iterator elm_in = _common_set_conn_factory.input_connectors.begin();
+		std::map<IjvxOutputConnectorSelect*, oneOutputConnectorElement>::iterator elm = _common_set_conn_factory.output_connectors.begin();
+		std::map<IjvxInputConnectorSelect*, oneInputConnectorElement>::iterator elm_in = _common_set_conn_factory.input_connectors.begin();
 
 		for (;elm != _common_set_conn_factory.output_connectors.end(); elm++)
 		{
 			elm->second.theConnector->descriptor_connector(&str);
 			if (str.std_str() == "default")
 			{
-				pri_output = elm->second.theConnector;
+				pri_output = elm->second.theConnector->reference_ocon();
 			}
 			if (str.std_str() == "async-secondary")
 			{
-				sec_output = elm->second.theConnector;
+				sec_output = elm->second.theConnector->reference_ocon();
 			}
 		}
 
@@ -123,11 +123,11 @@ JVX_ASYNCIO_CLASSNAME::activate()
 			
 			if (str.std_str() == "default")
 			{
-				pri_input = elm_in->second.theConnector;
+				pri_input = elm_in->second.theConnector->reference_icon();
 			}
 			if (str.std_str() == "async-secondary")
 			{
-				sec_input = elm_in->second.theConnector;
+				sec_input = elm_in->second.theConnector->reference_icon();
 			}
 		}
 		assert(sec_input);

@@ -24,6 +24,23 @@ public:
 	common_set_icon_t _common_set_icon;
 public:
 	CjvxInputConnectorCore();
+
+	jvxErrorType _associated_common_icon(IjvxDataConnectionCommon** ref);
+
+	jvxErrorType _supports_connector_class_icon(
+		jvxDataFormatGroup format_group,
+		jvxDataflow data_flow);
+
+	jvxErrorType _select_connect_icon(IjvxConnectorBridge* bri, IjvxConnectionMaster* master,
+			IjvxDataConnectionCommon* ass_connection_common,
+			IjvxInputConnector** replace_connector);
+
+	jvxErrorType _unselect_connect_icon(IjvxConnectorBridge* bri, IjvxInputConnector* replace_connector);
+
+	jvxErrorType _connected_ocon(IjvxOutputConnector** ocon);
+
+	virtual jvxErrorType _check_common_icon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) = 0;
+
 	/*
 	virtual JVX_CALLINGCONVENTION ~CjvxInputConnector(){};
 	

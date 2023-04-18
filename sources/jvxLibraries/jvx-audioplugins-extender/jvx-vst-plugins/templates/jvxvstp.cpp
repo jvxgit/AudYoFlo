@@ -157,7 +157,7 @@ tresult PLUGIN_API jvxvstp::process (ProcessData& data)
 			{
 				jvxSize i;
 				jvxSize numChannelsInMin = JVX_MIN(data.inputs[0].numChannels, (int)datIO->con_params.number_channels);
-				jvxData** bufsOutJvxRt = jvx_process_icon_extract_output_buffers<jvxData>(datIO);
+				jvxData** bufsOutJvxRt = jvx_process_icon_extract_output_buffers<jvxData>(*datIO);
 				if (processSetup.symbolicSampleSize == kSample32)
 				{
 					float** bufsInVst = data.inputs[0].channelBuffers32;
@@ -178,7 +178,7 @@ tresult PLUGIN_API jvxvstp::process (ProcessData& data)
 				// Actually process the data into the output buffers. Output buffers available on return
 				theConnection.process_connection(&datIO);
 
-				jvxData** bufsInJvxRt = jvx_process_icon_extract_output_buffers<jvxData>(datIO);
+				jvxData** bufsInJvxRt = jvx_process_icon_extract_output_buffers<jvxData>(*datIO);
 				jvxSize numChannelsOutMin = JVX_MIN(data.outputs[0].numChannels, (int)datIO->con_params.number_channels);
 				if (processSetup.symbolicSampleSize == kSample32)
 				{

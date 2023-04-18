@@ -72,7 +72,8 @@ CjvxDataConnectionsGroup::set_name_unique_descriptor(IjvxCallProt* fdb)
 }
 
 jvxErrorType
-CjvxDataConnectionsGroup::create_bridge(IjvxOutputConnector* conn_from, IjvxInputConnector* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)
+CjvxDataConnectionsGroup::create_bridge(IjvxOutputConnectorSelect* conn_from, 
+	IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resf = JVX_NO_ERROR;

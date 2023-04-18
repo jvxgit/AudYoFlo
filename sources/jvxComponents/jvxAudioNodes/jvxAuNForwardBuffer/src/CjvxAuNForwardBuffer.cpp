@@ -694,7 +694,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 							_common_set_ocon.theData_out.con_params.buffersize);
 
 						// Get new audio data here
-						jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+						jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 						jvxSize fHeight = 0;
 						jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
 							&myAudioDispenser,
@@ -918,7 +918,7 @@ CjvxAuNForwardBuffer::write_samples_to_buffer()
 				if (res == JVX_NO_ERROR)
 				{
 					// Get new audio data here
-					jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+					jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 
 					assert(node_output._common_set_node_params_a_1io.buffersize == 
 						_common_set_ocon.theData_out.con_params.buffersize);

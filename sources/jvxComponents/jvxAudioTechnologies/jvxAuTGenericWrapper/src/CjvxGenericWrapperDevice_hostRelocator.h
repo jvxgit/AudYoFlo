@@ -28,11 +28,11 @@ private:
 	IjvxConnectorFactory* theConnFac_dev;
 	IjvxConnectionMasterFactory* theMasterFac_dev;
 	IjvxConnectorFactory* theConnFac_me;
-	IjvxInputConnector* icon_dev;
-	IjvxInputConnector* icon_me;
+	IjvxInputConnectorSelect* icon_dev;
+	IjvxInputConnectorSelect* icon_me;
 	IjvxConnectionMaster* mas_dev;
-	IjvxOutputConnector* ocon_dev;
-	IjvxOutputConnector* ocon_me;
+	IjvxOutputConnectorSelect* ocon_dev;
+	IjvxOutputConnectorSelect* ocon_me;
 	jvxSize id_connection_process;
 	IjvxDataConnectionProcess* hdl_connection_process;
 	jvxSize id_device2me;
@@ -231,6 +231,16 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) override
 	{
 		return _connected_ocon(ocon);
+	}
+
+	virtual IjvxInputConnector* reference_icon() override
+	{
+		return this;
+	}
+
+	virtual IjvxOutputConnector* reference_ocon() override
+	{
+		return this;
 	}
 
 	// =========================================================

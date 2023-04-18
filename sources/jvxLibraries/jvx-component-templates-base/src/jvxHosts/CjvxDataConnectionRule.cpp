@@ -544,7 +544,7 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part(IjvxDataConnections* allCo
 	IjvxConnectorFactory* theCF_F = NULL;
 
 	jvxSize numOC_F = 0;
-	IjvxOutputConnector* theOcon_F = NULL;
+	IjvxOutputConnectorSelect* theOcon_F = NULL;
 	jvxApiString strOc_F;
 
 	jvxComponentIdentification ptTp_F;
@@ -859,7 +859,7 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part_finalize(IjvxDataConnectio
 	IjvxConnectorFactory* theCF_T = NULL;
 
 	jvxSize numIC_T = 0;
-	IjvxInputConnector* theIcon_T = NULL;
+	IjvxInputConnectorSelect* theIcon_T = NULL;
 	jvxApiString strIc_T;
 	jvxComponentIdentification ptTp_T;
 	jvxComponentIdentification tpCompare;

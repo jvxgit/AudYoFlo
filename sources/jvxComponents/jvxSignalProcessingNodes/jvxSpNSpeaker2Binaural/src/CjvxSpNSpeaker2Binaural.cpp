@@ -115,7 +115,7 @@ CjvxSpNSpeaker2Binaural::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 	{
 		assert(zeroCopyBuffering_rt == false);
 		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-		jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+		jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 
 		// Copy input to output. We need two buffers since we do not apply zero copy processing!
 		if (engageRendererProc)

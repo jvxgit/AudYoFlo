@@ -320,7 +320,7 @@ CjvxSpNSpeakerEqualizer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 		if (!genSpeakerEqualizer_node::config.bypass.value)
 		{
 			jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-			jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+			jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 
 			process_eq_iplace(bufsIn, _common_set_ocon.theData_out.con_params.number_channels, _common_set_ocon.theData_out.con_params.buffersize);
 		}

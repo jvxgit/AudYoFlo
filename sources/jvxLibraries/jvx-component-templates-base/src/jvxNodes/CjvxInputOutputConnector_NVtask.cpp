@@ -104,6 +104,12 @@ CjvxInputConnectorNVtask::connected_ocon(IjvxOutputConnector** ocon)
 	return JVX_NO_ERROR;
 }
 
+IjvxInputConnector* 
+CjvxInputConnectorNVtask::reference_icon()
+{
+	return this;
+}
+
 // ==========================================================
 
 CjvxOutputConnectorNVtask::CjvxOutputConnectorNVtask()
@@ -141,6 +147,12 @@ CjvxOutputConnectorNVtask::connected_icon(IjvxInputConnector** icon)
 		*icon = _common_set_ocon_nvtask.theData_out.con_link.connect_to;
 	}
 	return JVX_NO_ERROR;
+}
+
+IjvxOutputConnector* 
+CjvxOutputConnectorNVtask::reference_ocon()
+{
+	return this;
 }
 
 jvxErrorType

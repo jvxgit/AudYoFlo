@@ -49,12 +49,12 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_object(IjvxObject* obj) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_input_connectors(jvxSize* num_in_connectors) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_input_connector(jvxSize idx, IjvxInputConnector** ref)override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_input_connector(IjvxInputConnector* ref) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_input_connector(jvxSize idx, IjvxInputConnectorSelect** ref)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_input_connector(IjvxInputConnectorSelect* ref) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_output_connectors(jvxSize* num_out_connectors) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_output_connector(jvxSize idx, IjvxOutputConnector** ref) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_output_connector(IjvxOutputConnector* ref) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_output_connector(jvxSize idx, IjvxOutputConnectorSelect** ref) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_output_connector(IjvxOutputConnectorSelect* ref) override;
 };
 
 #endif

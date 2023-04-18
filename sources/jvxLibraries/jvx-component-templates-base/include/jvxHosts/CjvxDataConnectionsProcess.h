@@ -79,7 +79,8 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION depends_on_process(jvxSize* uIdProcess) override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnector* conn_from, IjvxInputConnector* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnectorSelect* conn_from, 
+		IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION connection_master_factory_is_involved(IjvxConnectionMasterFactory* and_this)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION associated_master(IjvxConnectionMaster** theMasterPtr) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION associate_master(IjvxConnectionMaster* theMaster, IjvxObject* theOwner) override;

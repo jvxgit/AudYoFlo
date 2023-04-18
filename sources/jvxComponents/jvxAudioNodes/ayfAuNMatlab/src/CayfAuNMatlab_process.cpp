@@ -81,7 +81,7 @@ CayfAuNMatlab::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 
 		// Get the output buffers
-		jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+		jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 
 #ifdef JVX_EXTERNAL_CALL_ENABLED
 	}

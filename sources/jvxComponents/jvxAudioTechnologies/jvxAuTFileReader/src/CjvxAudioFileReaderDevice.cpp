@@ -648,7 +648,7 @@ CjvxAudioFileReaderDevice::send_buffer_direct()
 	jvxSize bufIdx = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 	jvxBool requires_new_data = false;
 	jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(
-		&_common_set_ocon.theData_out);
+		_common_set_ocon.theData_out);
 	if (bufsOut)
 	{
 		jvxSize copymax = _common_set_ocon.theData_out.con_params.buffersize;

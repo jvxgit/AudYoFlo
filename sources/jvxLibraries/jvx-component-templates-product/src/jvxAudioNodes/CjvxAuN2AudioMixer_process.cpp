@@ -185,7 +185,7 @@ void
 CjvxAuN2AudioMixer::copy_data_from_mix_buffers(jvxSize uidconn, const oneBufferDefinition& oneBuffer, jvxLinkDataDescriptor* data_out)
 {
 	jvxSize i;
-	jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(data_out);
+	jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(*data_out);
 	jvxSize numChans = data_out->con_params.number_channels;
 
 	jvxSize mixBufferChannels = oneBuffer.numChannels;

@@ -8,16 +8,16 @@ protected:
 	class oneBridgeElement
 	{
 	public:
-		IjvxOutputConnector* from;
-		IjvxInputConnector* to;
-		IjvxOutputConnector* from_origin;
-		IjvxInputConnector* to_origin;
+		IjvxOutputConnector* from_conn = nullptr;
+		IjvxInputConnector* to_conn = nullptr;
+		IjvxOutputConnectorSelect* from_select = nullptr;
+		IjvxInputConnectorSelect* to_select = nullptr;
 		oneBridgeElement()
 		{
-			from = NULL;
-			to = NULL;
-			from_origin = NULL;
-			to_origin = NULL;
+			from_conn = NULL;
+			to_conn = NULL;
+			from_select = NULL;
+			to_select = NULL;
 		};
 	} ;
 	
@@ -51,15 +51,17 @@ protected:
 	oneBridgeDefinition _common_set_conn_bridge;
 
 public:
-	CjvxConnectorBridge(IjvxOutputConnector* from, 
-		IjvxInputConnector* to, T* parent, 
+	CjvxConnectorBridge(IjvxOutputConnectorSelect* from, 
+		IjvxInputConnectorSelect* to, T* parent, 
 		const std::string& nm, 
 		jvxBool dedThread, jvxBool 
 		boostThread, 
 		jvxBool interceptorBridge)
 	{
-		_common_set_conn_bridge.theLink.from = from;
-		_common_set_conn_bridge.theLink.to = to;
+		_common_set_conn_bridge.theLink.from_conn = nullptr;
+		_common_set_conn_bridge.theLink.to_conn = nullptr;
+		_common_set_conn_bridge.theLink.from_select = from;
+		_common_set_conn_bridge.theLink.to_select = to;
 		_common_set_conn_bridge.parent = parent;
 		_common_set_conn_bridge.name = nm;
 		_common_set_conn_bridge.refCnt_from = 0;
@@ -87,21 +89,21 @@ public:
 		_common_set_conn_bridge.uId_to = uid_to;
 	};
 
-	jvxBool check_exist(IjvxOutputConnector* from, IjvxInputConnector* to)
+	jvxBool check_exist(IjvxOutputConnectorSelect* from, IjvxInputConnectorSelect* to)
 	{
 		if ((from != NULL) && (from != NULL))
 		{
 			return(
-				(from == _common_set_conn_bridge.theLink.from) &&
-				(to == _common_set_conn_bridge.theLink.to));
+				(from == _common_set_conn_bridge.theLink.from_conn) &&
+				(to == _common_set_conn_bridge.theLink.to_conn));
 		}
 		if (from != NULL)
 		{
-			return(from == _common_set_conn_bridge.theLink.from);
+			return(from == _common_set_conn_bridge.theLink.from_conn);
 		}
 		if (to != NULL)
 		{
-			return(to == _common_set_conn_bridge.theLink.to);
+			return(to == _common_set_conn_bridge.theLink.to_conn);
 		}
 		return false;
 	}
@@ -117,11 +119,12 @@ public:
 		std::cout << JVX_DISPLAY_CONNECTOR(static_cast<IjvxCommonConnector*>(_common_set_conn_bridge.theLink.from)) << std::endl;
 #endif
 
-		_common_set_conn_bridge.theLink.from_origin = _common_set_conn_bridge.theLink.from;
-		_common_set_conn_bridge.theLink.to_origin = _common_set_conn_bridge.theLink.to;
+		// Default case: just use the connector as it is
+		_common_set_conn_bridge.theLink.from_conn = _common_set_conn_bridge.theLink.from_select->reference_ocon();
 
-		res = _common_set_conn_bridge.theLink.from_origin->select_connect_ocon(static_cast<IjvxConnectorBridge*>(this), master, ass_connection_common,
-			&_common_set_conn_bridge.theLink.from);
+		// The pointer may be overridden
+		res = _common_set_conn_bridge.theLink.from_select->select_connect_ocon(static_cast<IjvxConnectorBridge*>(this), master, ass_connection_common,
+			&_common_set_conn_bridge.theLink.from_conn);
 		if(res != JVX_NO_ERROR)
 		{
 			return res;
@@ -131,10 +134,13 @@ public:
 		std::cout << "++ to " << std::flush;
 		std::cout << JVX_DISPLAY_CONNECTOR(static_cast<IjvxCommonConnector*>(_common_set_conn_bridge.theLink.to)) << std::endl;
 		std::cout << "+++++++++++++++++++++++++++++ " << std::endl;
-#endif
+#endif	
+		// Default case: just use the connector as it is
+		_common_set_conn_bridge.theLink.to_conn = _common_set_conn_bridge.theLink.to_select->reference_icon();
 
-		_common_set_conn_bridge.theLink.to_origin->select_connect_icon(static_cast<IjvxConnectorBridge*>(this), master, ass_connection_common,
-			&_common_set_conn_bridge.theLink.to);
+		// The pointer may be overridden
+		_common_set_conn_bridge.theLink.to_select->select_connect_icon(static_cast<IjvxConnectorBridge*>(this), master, ass_connection_common,
+			&_common_set_conn_bridge.theLink.to_conn);
 		if(res == JVX_NO_ERROR)
 		{
 			_common_set_conn_bridge.refCnt_from = 0;
@@ -156,8 +162,8 @@ public:
 		assert(_common_set_conn_bridge.refCnt_from == 0);
 		assert(_common_set_conn_bridge.refCnt_to == 0);
 
-		res = _common_set_conn_bridge.theLink.from_origin->unselect_connect_ocon(static_cast<IjvxConnectorBridge*>(this),
-			_common_set_conn_bridge.theLink.from);
+		res = _common_set_conn_bridge.theLink.from_select->unselect_connect_ocon(static_cast<IjvxConnectorBridge*>(this),
+			_common_set_conn_bridge.theLink.from_conn);
 		if(res != JVX_NO_ERROR)
 		{
 			// It may be such that a select had failed. In that case, we need to 
@@ -172,8 +178,8 @@ public:
 		std::cout << "+++++++++++++++++++++++++++++ " << std::endl;
 #endif
 		// WARNING: _common_set_conn_bridge.theLink.to_origin may be NULL if from connector select failed
-		res = _common_set_conn_bridge.theLink.to_origin->unselect_connect_icon(static_cast<IjvxConnectorBridge*>(this),
-			_common_set_conn_bridge.theLink.to);
+		res = _common_set_conn_bridge.theLink.to_select->unselect_connect_icon(static_cast<IjvxConnectorBridge*>(this),
+			_common_set_conn_bridge.theLink.to_conn);
 		if (res != JVX_NO_ERROR)
 		{
 			// It may be such that a select had failed. In that case, we need to 
@@ -207,11 +213,11 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_connect_to(IjvxInputConnector** theToRef)override
 	{
-		if(_common_set_conn_bridge.theLink.to)
+		if(_common_set_conn_bridge.theLink.to_conn)
 		{
 			if(theToRef)
 			{
-				*theToRef = _common_set_conn_bridge.theLink.to;
+				*theToRef = _common_set_conn_bridge.theLink.to_conn;
 				_common_set_conn_bridge.refCnt_to ++;
 			}
 			return JVX_NO_ERROR;
@@ -220,7 +226,7 @@ public:
 	};
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_connect_to(IjvxInputConnector* theToRef)override
 	{
-		if(_common_set_conn_bridge.theLink.to == theToRef)
+		if(_common_set_conn_bridge.theLink.to_conn == theToRef)
 		{
 			assert(_common_set_conn_bridge.refCnt_to > 0);
 			_common_set_conn_bridge.refCnt_to--;
@@ -231,11 +237,11 @@ public:
 		
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_connect_from(IjvxOutputConnector** theFromRef)override
 	{
-		if(_common_set_conn_bridge.theLink.from)
+		if(_common_set_conn_bridge.theLink.from_conn)
 		{
 			if(theFromRef)
 			{
-				*theFromRef = _common_set_conn_bridge.theLink.from;
+				*theFromRef = _common_set_conn_bridge.theLink.from_conn;
 				_common_set_conn_bridge.refCnt_from ++;
 			}
 			return JVX_NO_ERROR;
@@ -245,7 +251,7 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_connect_from(IjvxOutputConnector* theFromRef)override
 	{
-		if(_common_set_conn_bridge.theLink.from == theFromRef)
+		if(_common_set_conn_bridge.theLink.from_conn == theFromRef)
 		{
 			assert(_common_set_conn_bridge.refCnt_from > 0);
 			_common_set_conn_bridge.refCnt_from--;
@@ -276,10 +282,10 @@ public:
 		theWriter->addSubsectionToSection(add_to_this_section, datTmp);
 		datTmp = NULL;
 
-		if (_common_set_conn_bridge.theLink.from != NULL)
+		if (_common_set_conn_bridge.theLink.from_conn != NULL)
 		{
 			theWriter->createEmptySection(&datTmp, "JVX_CONNECTOR_BRIDGE_REF_FROM");
-			_common_set_conn_bridge.theLink.from->parent_factory(&conFac);
+			_common_set_conn_bridge.theLink.from_conn->parent_factory(&conFac);
 			if (conFac)
 			{
 				jvx_request_interfaceToObject(conFac, NULL, &tpId, &strMF);
@@ -302,7 +308,7 @@ public:
 				theWriter->addSubsectionToSection(datTmp, datSubTmp);
 				datSubTmp = NULL;
 
-				_common_set_conn_bridge.theLink.from->descriptor_connector(&strCo);
+				_common_set_conn_bridge.theLink.from_conn->descriptor_connector(&strCo);
 				theWriter->createAssignmentString(&datSubTmp, "CONNECTOR_NAME", strCo.std_str().c_str());
 				theWriter->addSubsectionToSection(datTmp, datSubTmp);
 				datSubTmp = NULL;
@@ -324,10 +330,10 @@ public:
 
 		// ===================================================================
 
-		if (_common_set_conn_bridge.theLink.to)
+		if (_common_set_conn_bridge.theLink.to_conn)
 		{
 			theWriter->createEmptySection(&datTmp, "JVX_CONNECTOR_BRIDGE_REF_TO");
-			_common_set_conn_bridge.theLink.to->parent_factory(&conFac);
+			_common_set_conn_bridge.theLink.to_conn->parent_factory(&conFac);
 			if (conFac)
 			{
 
@@ -351,7 +357,7 @@ public:
 				theWriter->addSubsectionToSection(datTmp, datSubTmp);
 				datSubTmp = NULL;
 
-				_common_set_conn_bridge.theLink.to->descriptor_connector(&strCo);
+				_common_set_conn_bridge.theLink.to_conn->descriptor_connector(&strCo);
 				theWriter->createAssignmentString(&datSubTmp, "CONNECTOR_NAME", strCo.std_str().c_str());
 				theWriter->addSubsectionToSection(datTmp, datSubTmp);
 				datSubTmp = NULL;

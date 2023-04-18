@@ -60,14 +60,6 @@ protected:
 	~CjvxInputOutputConnector();
 
 	jvxErrorType _available_connector(jvxBool* isAvail);
-
-	jvxErrorType _associated_common_icon(IjvxDataConnectionCommon** ref);
-
-	jvxErrorType _associated_common_ocon(IjvxDataConnectionCommon** ref);
-
-	jvxErrorType _connected_ocon(IjvxOutputConnector** ocon);
-	jvxErrorType _connected_icon(IjvxInputConnector** icon);
-
 	 jvxErrorType _descriptor_connector(jvxApiString* str);
 
 	 jvxErrorType lds_activate(IjvxDataProcessor* theDataProc, IjvxObject* theObjRef,
@@ -84,34 +76,9 @@ protected:
 
 	 jvxErrorType _parent_factory(IjvxConnectorFactory** my_parent);
 
-	 jvxErrorType _supports_connector_class_ocon(
-		 jvxDataFormatGroup format_group,
-		jvxDataflow data_flow);
-	 jvxErrorType _supports_connector_class_icon(
-		 jvxDataFormatGroup format_group,
-		jvxDataflow data_flow);
-
-	// ==============================================================
-	// SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT SELECT
-	// ==============================================================
-
-	 jvxErrorType _select_connect_icon(IjvxConnectorBridge* bri, 
-		 IjvxConnectionMaster* master,
-		 IjvxDataConnectionCommon* ass_connection_common,
-		 IjvxInputConnector** replace_connector);
-
-	 jvxErrorType _select_connect_ocon(IjvxConnectorBridge* bri, 
-		 IjvxConnectionMaster* master, 
-		 IjvxDataConnectionCommon* ass_connection_common,
-		 IjvxOutputConnector** replace_connector);
-
 	// ==============================================================
 	// UNSELECT UNSELECT UNSELECT UNSELECT UNSELECT UNSELECT UNSELECT
 	// ==============================================================
-
-	 jvxErrorType _unselect_connect_icon(
-		 IjvxConnectorBridge* bri,
-		 IjvxInputConnector* replace_connector);
 
 	jvxErrorType _unselect_connect_ocon(IjvxConnectorBridge* bri,
 		IjvxOutputConnector* replace_connector);
@@ -270,6 +237,9 @@ protected:
 	 void request_test_chain(IjvxReport* theRep);
 	 jvxErrorType request_process_id_chain(jvxSize* procId);
 
+	 jvxErrorType _check_common_icon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) override;
+	 jvxErrorType _check_common_ocon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) override;
+	 jvxErrorType _check_common(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master);
 };
 
 #endif

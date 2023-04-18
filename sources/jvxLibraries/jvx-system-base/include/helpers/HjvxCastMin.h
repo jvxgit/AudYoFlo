@@ -165,15 +165,15 @@ template <class T> T** jvx_process_icon_extract_input_buffers(
 };
 
 template <class T> T** jvx_process_icon_extract_output_buffers(
-	jvxLinkDataDescriptor* theData)
+	jvxLinkDataDescriptor& theData)
 {
 	jvxDataFormat form = template_get_type_enum<T>();
 
-	jvxSize idx_stage_local = *theData->con_pipeline.idx_stage_ptr;
-	T** bufsOut = (T**)theData->con_data.buffers[idx_stage_local];
+	jvxSize idx_stage_local = *theData.con_pipeline.idx_stage_ptr;
+	T** bufsOut = (T**)theData.con_data.buffers[idx_stage_local];
 	if (!std::is_same<T, jvxHandle>::value)
 	{
-		assert(theData->con_params.format == form);
+		assert(theData.con_params.format == form);
 	}
 	return bufsOut;
 }

@@ -60,8 +60,8 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 	{
 		IjvxConnectorFactory* theConFacO = NULL;
 		IjvxConnectorFactory* theConFacI = NULL;
-		IjvxInputConnector* icon = NULL;
-		IjvxOutputConnector* ocon = NULL;
+		IjvxInputConnectorSelect* icon = NULL;
+		IjvxOutputConnectorSelect* ocon = NULL;
 		jvxSize uIdB = JVX_SIZE_UNSELECTED;
 
 		res = allConnections->reference_connection_factory_uid(elmB->identify_out.fac_uid, &theConFacO);
@@ -194,8 +194,8 @@ CjvxConnectionDropzone::connect_group_from_dropzone(IjvxDataConnections* allConn
 	{
 		IjvxConnectorFactory* theConFacO = NULL;
 		IjvxConnectorFactory* theConFacI = NULL;
-		IjvxInputConnector* icon = NULL;
-		IjvxOutputConnector* ocon = NULL;
+		IjvxInputConnectorSelect* icon = NULL;
+		IjvxOutputConnectorSelect* ocon = NULL;
 		jvxSize uIdB = JVX_SIZE_UNSELECTED;
 
 		if (JVX_CHECK_SIZE_SELECTED(elmB->identify_out.fac_uid))
@@ -323,7 +323,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 		for (; elmIc != lst_inputs.end(); elmIc++)
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxInputConnector* icon = NULL;
+			IjvxInputConnectorSelect* icon = NULL;
 			IjvxDataConnectionCommon* com = NULL;
 			allConnections->reference_connection_factory_uid(elmIc->identify.fac_uid, &theConFac);
 			if (theConFac == NULL)
@@ -363,7 +363,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 		for (; elmOc != lst_outputs.end(); elmOc++)
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxOutputConnector* ocon = NULL;
+			IjvxOutputConnectorSelect* ocon = NULL;
 			IjvxDataConnectionCommon* com = NULL;
 			allConnections->reference_connection_factory_uid(elmOc->identify.fac_uid, &theConFac);
 			if (theConFac == NULL)

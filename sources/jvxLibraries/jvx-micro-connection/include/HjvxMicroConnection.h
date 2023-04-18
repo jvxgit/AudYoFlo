@@ -168,8 +168,8 @@ private:
 	struct oneInvolvedObject
 	{
 		IjvxHiddenInterface* theTarget = nullptr;
-		IjvxInputConnector* iconr = nullptr;
-		IjvxOutputConnector* oconr = nullptr;
+		IjvxInputConnectorSelect* iconr = nullptr;
+		IjvxOutputConnectorSelect* oconr = nullptr;
 		IjvxConnectorFactory* theConFac = nullptr;
 
 		jvxSize uId_bridge_node_node = JVX_SIZE_UNSELECTED;
@@ -185,8 +185,8 @@ private:
 	IjvxDataConnections* theConnections = nullptr;
 	std::vector<oneInvolvedObject> involvedObjects;
 
-	IjvxOutputConnector* mocon = nullptr;
-	IjvxInputConnector* micon = nullptr;
+	IjvxOutputConnectorSelect* mocon = nullptr;
+	IjvxInputConnectorSelect* micon = nullptr;
 	IjvxConnectionMaster* master = nullptr;
 
 	HjvxMicroConnection_hooks_simple* refHandleSimple = nullptr;

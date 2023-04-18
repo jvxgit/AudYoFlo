@@ -17,7 +17,7 @@ private:
 protected:
 	struct oneInputConnectorElement
 	{
-		IjvxInputConnector* theConnector;
+		IjvxInputConnectorSelect* theConnector;
 		//jvxSize uId;
 		jvxSize refCnt;
 		CjvxConnectorFactory_report* report;
@@ -34,7 +34,7 @@ protected:
 	
 	struct oneOutputConnectorElement
 	{
-		IjvxOutputConnector* theConnector;
+		IjvxOutputConnectorSelect* theConnector;
 		jvxSize refCnt;
 		CjvxConnectorFactory_report* report;
 		//std::vector<IjvxOutputConnector*> connectsto;
@@ -49,8 +49,8 @@ protected:
 
 	struct
 	{
-		std::map<IjvxInputConnector*, oneInputConnectorElement> input_connectors;
-		std::map<IjvxOutputConnector*, oneOutputConnectorElement> output_connectors;
+		std::map<IjvxInputConnectorSelect*, oneInputConnectorElement> input_connectors;
+		std::map<IjvxOutputConnectorSelect*, oneOutputConnectorElement> output_connectors;
 		jvxState theStatus;
 	} _common_set_conn_factory;
 
@@ -66,16 +66,16 @@ protected:
 
 	jvxErrorType _number_output_connectors(jvxSize* num_out_connectors);
 
-	jvxErrorType _reference_input_connector(jvxSize idx, IjvxInputConnector** ref);
+	jvxErrorType _reference_input_connector(jvxSize idx, IjvxInputConnectorSelect** ref);
 
-	jvxErrorType _return_reference_input_connector(IjvxInputConnector* ref) ;
+	jvxErrorType _return_reference_input_connector(IjvxInputConnectorSelect* ref) ;
 
-	jvxErrorType  _reference_output_connector(jvxSize idx, IjvxOutputConnector** ref );
+	jvxErrorType  _reference_output_connector(jvxSize idx, IjvxOutputConnectorSelect** ref );
 
-	jvxErrorType _return_reference_output_connector(IjvxOutputConnector* ref);
+	jvxErrorType _return_reference_output_connector(IjvxOutputConnectorSelect* ref);
 
-	IjvxInputConnector* connector_input_name(const std::string& token);
-	IjvxOutputConnector* connector_output_name(const std::string& token);
+	IjvxInputConnectorSelect* connector_input_name(const std::string& token);
+	IjvxOutputConnectorSelect* connector_output_name(const std::string& token);
 };
 
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
@@ -98,16 +98,17 @@ protected:
 #define JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(dataProc, obj, name, master_ptr, dbg_hint) \
 	{ \
 		oneInputConnectorElement newElmIn; \
-		newElmIn.theConnector = static_cast<IjvxInputConnector*>(this); \
+		newElmIn.theConnector = static_cast<IjvxInputConnectorSelect*>(this); \
 		newElmIn.report = NULL; \
 		oneOutputConnectorElement newElmOut; \
-		newElmOut.theConnector = static_cast<IjvxOutputConnector*>(this); \
+		newElmOut.theConnector = static_cast<IjvxOutputConnectorSelect*>(this); \
 		newElmOut.report = NULL; \
 		_common_set_conn_factory.input_connectors[newElmIn.theConnector] = newElmIn; \
 		_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut; \
 		CjvxInputOutputConnector::lds_activate(dataProc, obj, \
 			static_cast<IjvxConnectorFactory*>(this), master_ptr, \
-			name, newElmIn.theConnector, newElmOut.theConnector); \
+			name, static_cast<IjvxInputConnector*>(this), \
+			static_cast<IjvxOutputConnector*>(this)); \
 		CjvxConnectorFactory::_activate_factory(obj); \
 	}
 #endif

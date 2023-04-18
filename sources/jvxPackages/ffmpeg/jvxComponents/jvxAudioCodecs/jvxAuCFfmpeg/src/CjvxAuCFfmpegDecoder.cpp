@@ -172,7 +172,7 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		// This must be the right size
 		assert(cParams.frame->nb_samples <= _common_set_ocon.theData_out.con_params.buffersize);
 
-		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(&_common_set_ocon.theData_out);
+		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 		_common_set_ocon.theData_out.con_data.fHeights[*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr].x = cParams.frame->nb_samples;
 
 

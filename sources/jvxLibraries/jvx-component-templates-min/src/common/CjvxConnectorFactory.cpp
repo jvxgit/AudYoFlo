@@ -52,9 +52,9 @@ CjvxConnectorFactory::~CjvxConnectorFactory()
 	}
 
 	jvxErrorType
-		CjvxConnectorFactory::_reference_input_connector(jvxSize idx, IjvxInputConnector** ref)
+		CjvxConnectorFactory::_reference_input_connector(jvxSize idx, IjvxInputConnectorSelect** ref)
 	{
-		std::map<IjvxInputConnector*, oneInputConnectorElement>::iterator elm = _common_set_conn_factory.input_connectors.begin();
+		std::map<IjvxInputConnectorSelect*, oneInputConnectorElement>::iterator elm = _common_set_conn_factory.input_connectors.begin();
 		std::advance(elm, idx);
 		if (elm != _common_set_conn_factory.input_connectors.end())
 		{
@@ -69,9 +69,9 @@ CjvxConnectorFactory::~CjvxConnectorFactory()
 	}
 
 	jvxErrorType
-		CjvxConnectorFactory::_return_reference_input_connector(IjvxInputConnector* ref)
+		CjvxConnectorFactory::_return_reference_input_connector(IjvxInputConnectorSelect* ref)
 	{
-		std::map<IjvxInputConnector*, oneInputConnectorElement>::iterator elm = _common_set_conn_factory.input_connectors.find(ref);
+		std::map<IjvxInputConnectorSelect*, oneInputConnectorElement>::iterator elm = _common_set_conn_factory.input_connectors.find(ref);
 		if (elm != _common_set_conn_factory.input_connectors.end())
 		{
 			assert(elm->second.refCnt > 0);
@@ -82,9 +82,9 @@ CjvxConnectorFactory::~CjvxConnectorFactory()
 	}
 
 	jvxErrorType
-		CjvxConnectorFactory::_reference_output_connector(jvxSize idx, IjvxOutputConnector** ref )
+		CjvxConnectorFactory::_reference_output_connector(jvxSize idx, IjvxOutputConnectorSelect** ref )
 	{
-		std::map<IjvxOutputConnector*, oneOutputConnectorElement>::iterator elm = _common_set_conn_factory.output_connectors.begin();
+		std::map<IjvxOutputConnectorSelect*, oneOutputConnectorElement>::iterator elm = _common_set_conn_factory.output_connectors.begin();
 		std::advance(elm, idx);
 		if (elm != _common_set_conn_factory.output_connectors.end())
 		{
@@ -99,9 +99,9 @@ CjvxConnectorFactory::~CjvxConnectorFactory()
 	}
 
 	jvxErrorType
-		CjvxConnectorFactory::_return_reference_output_connector(IjvxOutputConnector* ref)
+		CjvxConnectorFactory::_return_reference_output_connector(IjvxOutputConnectorSelect* ref)
 	{
-		std::map<IjvxOutputConnector*, oneOutputConnectorElement>::iterator elm = _common_set_conn_factory.output_connectors.find(ref);
+		std::map<IjvxOutputConnectorSelect*, oneOutputConnectorElement>::iterator elm = _common_set_conn_factory.output_connectors.find(ref);
 		if (elm != _common_set_conn_factory.output_connectors.end())
 		{
 			assert(elm->second.refCnt > 0);
@@ -111,11 +111,11 @@ CjvxConnectorFactory::~CjvxConnectorFactory()
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	}
 
-	IjvxInputConnector* 
+	IjvxInputConnectorSelect* 
 		CjvxConnectorFactory::connector_input_name(const std::string& token)
 	{
 		jvxApiString aStr;
-		std::map<IjvxInputConnector*, oneInputConnectorElement>::iterator elm_in = _common_set_conn_factory.input_connectors.begin();
+		std::map<IjvxInputConnectorSelect*, oneInputConnectorElement>::iterator elm_in = _common_set_conn_factory.input_connectors.begin();
 		for (; elm_in != _common_set_conn_factory.input_connectors.end(); elm_in++)
 		{
 			elm_in->second.theConnector->descriptor_connector(&aStr);
@@ -127,11 +127,11 @@ CjvxConnectorFactory::~CjvxConnectorFactory()
 		return NULL;
 	}
 
-	IjvxOutputConnector* 
+	IjvxOutputConnectorSelect* 
 		CjvxConnectorFactory::connector_output_name(const std::string& token)
 	{
 		jvxApiString aStr;
-		std::map<IjvxOutputConnector*, oneOutputConnectorElement>::iterator elm_out = _common_set_conn_factory.output_connectors.begin();
+		std::map<IjvxOutputConnectorSelect*, oneOutputConnectorElement>::iterator elm_out = _common_set_conn_factory.output_connectors.begin();
 		for (; elm_out != _common_set_conn_factory.output_connectors.end(); elm_out++)
 		{
 			elm_out->second.theConnector->descriptor_connector(&aStr);
