@@ -1,4 +1,7 @@
 #include "common/CjvxInputConnectorCore.h"
+#include "CjvxJson.h"
+#include "HjvxMisc.h"
+#include "common/CjvxInputOutputConnectorCore.h"
 
 CjvxInputConnectorCore::CjvxInputConnectorCore()
 {
@@ -10,8 +13,9 @@ CjvxInputConnectorCore::CjvxInputConnectorCore()
 }
 
 jvxErrorType 
-CjvxInputConnectorCore::activate(IjvxInputConnector* icon)
+CjvxInputConnectorCore::activate(CjvxInputOutputConnectorCore* commRef, IjvxInputConnector* icon)
 {
+	_common_set_io_common_ptr = commRef;
 	_common_set_icon.icon = icon;
 	return JVX_NO_ERROR;
 }
@@ -144,6 +148,23 @@ CjvxInputConnectorCore::_disconnect_connect_icon(jvxLinkDataDescriptor* theData,
 // ===================================================================================
 
 jvxErrorType
+CjvxInputConnectorCore::_test_connect_icon(jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(_common_set_io_common_ptr->_common_set_io_common.object),
+		_common_set_io_common_ptr->_common_set_io_common.descriptor.c_str(), "Entering single default CjvxInputOutputConnector input connector");
+
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, _common_set_icon.theData_in);
+	if (forward)
+	{
+		res = _test_connect_forward(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	}
+	return res;
+}
+
+// ===================================================================================
+
+jvxErrorType
 CjvxInputConnectorCore::_prepare_connect_icon(jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
@@ -249,6 +270,135 @@ CjvxInputConnectorCore::_stop_connect_icon(jvxBool forward, jvxSize* uId JVX_CON
 	return res;
 }
 
+// ===========================================================================
+
+jvxErrorType
+CjvxInputConnectorCore::JVX_CALLINGCONVENTION _transfer_forward_icon(jvxBool forward, jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	std::string locTxt;
+	jvxApiString* str = (jvxApiString*)data;
+	CjvxJsonElementList* jsonLst = (CjvxJsonElementList*)data;
+	CjvxJsonElement jsonElm;
+
+	switch (tp)
+	{
+	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_STRING:
+
+		locTxt = str->std_str();
+		if (_common_set_icon.icon)
+		{
+			locTxt += "object input connector " + JVX_DISPLAY_CONNECTOR(_common_set_icon.icon);
+		}
+		if (forward)
+		{
+			res = _transfer_forward_forward(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		else
+		{
+			locTxt += "<end>";
+		}
+		str->assign(locTxt);
+		break;
+
+	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON:
+
+		if (_common_set_icon.icon)
+		{
+			jsonElm.makeAssignmentString("icon", JVX_DISPLAY_CONNECTOR(_common_set_icon.icon));
+			jsonLst->addConsumeElement(jsonElm);
+		}
+		if (forward)
+		{
+			res = _transfer_forward_forward(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));			
+		}
+		else
+		{
+			CjvxJsonElementList jsonLstRet;
+			jsonElm.makeAssignmentString("connects_end", "here");
+			jsonLst->addConsumeElement(jsonElm);
+		}
+		break;
+
+	case JVX_LINKDATA_TRANSFER_ASK_COMPONENTS_READY:
+
+		// This is supported
+		if (forward)
+		{
+			res = _transfer_forward_forward(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		break;
+
+	default:
+		if (forward)
+		{
+			res = _transfer_forward_forward(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));			
+		}
+		break;
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxInputConnectorCore::JVX_CALLINGCONVENTION _transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, _common_set_io_common_ptr->_common_set_io_common.object,
+		_common_set_io_common_ptr->_common_set_io_common.descriptor.c_str(), "Entering transfer_backward on input onnector");
+	if (_common_set_icon.theData_in->con_link.connect_from)
+	{
+		return _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+// =============================================================================
+
+jvxErrorType
+CjvxInputConnectorCore::_process_start_icon(jvxSize pipeline_offset, jvxSize* idx_stage, jvxSize tobeAccessedByStage,
+	callback_process_start_in_lock clbk, jvxHandle* priv_ptr)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	// Propagate to next object
+	res = _process_start_forward();
+
+	if (res == JVX_NO_ERROR)
+	{
+		return  jvx_shift_buffer_pipeline_idx_on_start(_common_set_icon.theData_in, 
+			_common_set_io_common_ptr->_common_set_io_common.myRuntimeId,
+			pipeline_offset, idx_stage, tobeAccessedByStage, clbk, priv_ptr);
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxInputConnectorCore::_process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
+	jvxSize tobeAccessedByStage,
+	callback_process_stop_in_lock clbk,
+	jvxHandle* priv_ptr)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	res = _process_stop_forward(JVX_SIZE_UNSELECTED, true, tobeAccessedByStage, clbk, priv_ptr);
+
+	if (res == JVX_NO_ERROR)
+	{
+		res = jvx_shift_buffer_pipeline_idx_on_stop(_common_set_icon.theData_in, idx_stage, shift_fwd, tobeAccessedByStage, clbk, priv_ptr);
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxInputConnectorCore::_process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	res = _process_buffers_forward(mt_mask, idx_stage);
+	return res;
+}
+
+// =============================================================================
+
 jvxErrorType
 CjvxInputConnectorCore::_connected_ocon(IjvxOutputConnector** ocon)
 {
@@ -261,4 +411,48 @@ CjvxInputConnectorCore::_connected_ocon(IjvxOutputConnector** ocon)
 		}
 	}
 	return JVX_NO_ERROR;
+}
+
+
+jvxErrorType
+CjvxInputConnectorCore::shift_buffer_pipeline_idx_on_start(jvxSize pipeline_offset,
+	jvxSize* idx_stage,	jvxSize tobeAccessedByStage,
+	callback_process_start_in_lock clbk, jvxHandle* priv_ptr)
+{
+	return  jvx_shift_buffer_pipeline_idx_on_start(_common_set_icon.theData_in, _common_set_io_common_ptr->_common_set_io_common.myRuntimeId,
+		pipeline_offset, idx_stage, tobeAccessedByStage, clbk, priv_ptr);
+}
+
+jvxErrorType 
+CjvxInputConnectorCore::shift_buffer_pipeline_idx_on_stop(jvxSize idx_stage,
+	jvxBool shift_fwd, jvxSize tobeAccessed,
+	callback_process_stop_in_lock clbk, jvxHandle* priv_ptr)
+{
+	return jvx_shift_buffer_pipeline_idx_on_stop(
+		_common_set_icon.theData_in, idx_stage,
+		shift_fwd, tobeAccessed,
+		clbk, priv_ptr);
+}
+
+jvxErrorType 
+CjvxInputConnectorCore::allocate_pipeline_and_buffers_prepare_to()
+{
+
+	return jvx_allocate_pipeline_and_buffers_prepare_to(_common_set_icon.theData_in
+#ifdef JVX_GLOBAL_BUFFERING_VERBOSE
+		, _common_set_ldslave.dbg_hint
+#endif
+	);
+};
+
+jvxErrorType
+CjvxInputConnectorCore::deallocate_pipeline_and_buffers_postprocess_to()
+{
+	return jvx_deallocate_pipeline_and_buffers_postprocess_to(_common_set_icon.theData_in);
+}
+
+jvxErrorType
+CjvxInputConnectorCore::deallocate_pipeline_and_buffers_postprocess_to_zerocopy()
+{
+	return jvx_deallocate_pipeline_and_buffers_postprocess_to_zerocopy(_common_set_icon.theData_in);
 }

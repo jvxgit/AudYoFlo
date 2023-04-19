@@ -162,7 +162,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/jvxCommonTypedefs.h
 
-		${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxDataChainInterceptor.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleInputConnector.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxSingleInputConnector.cpp
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleOutputConnector.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxSingleOutputConnector.cpp
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxDataChainInterceptor.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxDataChainInterceptor.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxDataChainInterceptorGroup.h

@@ -1,4 +1,5 @@
 #include "CjvxWebControlNode.h"
+#include "CjvxJson.h"
 
 #define JVX_TYPE_HTTP 0x1234
 #define JVX_TYPE_WS 0x4321

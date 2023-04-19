@@ -57,7 +57,10 @@ CjvxSpNMixChainEnterLeave::activate()
 		switch (operationMode)
 		{
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
-			// JVX_SAFE_ALLOCATE_OBJECT(extra_icon_gen, CjvxOneInputConnector);
+			JVX_SAFE_ALLOCATE_OBJECT(extra_icon_gen, CjvxSingleInputConnector);
+			break;
+		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+			JVX_SAFE_ALLOCATE_OBJECT(extra_ocon_gen, CjvxSingleOutputConnector);
 			break;
 		}
 	}

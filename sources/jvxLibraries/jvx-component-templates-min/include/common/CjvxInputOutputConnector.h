@@ -2,8 +2,6 @@
 #define __CJVXINPUTOUTPUTCONNECTOR_H__
 
 // #define JVX_VERBOSE_CJVXINPUTCONNECTOR_H
-#include "CjvxJson.h"
-#include "HjvxMisc.h"
 #include "common/CjvxInputConnectorCore.h"
 #include "common/CjvxOutputConnectorCore.h"
 #include "common/CjvxInputOutputConnectorCore.h"
@@ -90,70 +88,26 @@ protected:
 	 virtual jvxErrorType _stop_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	 virtual void _stop_connect_common(jvxSize* myUniquePipelineId) override;
 
-	// =========================================================================
-	// =========================================================================
-	// =========================================================================
-	// =========================================================================
-
 	// ==============================================================
-	// PROCESSSTART PROCESSSTART PROCESSSTART PROCESSSTART PROCESSSTART
+	// PROCESSSTART PROCESSSTOP PROCESSBUFFER PROCESSSTART PROCESSSTOP PROCESSBUFFER
 	// ==============================================================
-	 jvxErrorType _process_start_icon(jvxSize pipeline_offset, jvxSize* idx_stage, jvxSize tobeAccessedByStage = 0,
-		 callback_process_start_in_lock clbk = NULL,
-		 jvxHandle* priv_ptr = NULL);
-
-
-	 jvxErrorType _process_start_ocon(jvxSize pipeline_offset, 
-		 jvxSize* idx_stage, jvxSize tobeAccessedByStage = 0,
-		 callback_process_start_in_lock clbk = NULL,
-		 jvxHandle* priv_ptr = NULL);
-
-	// ==============================================================
-	// PROCESSBUFFER PROCESSBUFFER PROCESSBUFFER PROCESSBUFFER PROCESSBUFFER
-	// ==============================================================
-	 jvxErrorType _process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage);
-
-	 jvxErrorType _process_buffers_ocon(jvxSize mt_mask, jvxSize idx_stage );
-
-	 // Declare a macro to make behavior more clear
-#define fwd_process_buffers_icon _process_buffers_icon
-
-	// ==============================================================
-	// PROCESSSTOP PROCESSSTOP PROCESSSTOP PROCESSSTOP PROCESSSTOP PROCESSSTOP
-	// ==============================================================
-	 jvxErrorType _process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd, jvxSize tobeAccessed = 0,
-		 callback_process_stop_in_lock clbk = NULL, jvxHandle* priv_ptr = NULL);
-
-	 jvxErrorType _process_stop_ocon(jvxSize idx_stage, jvxBool shift_fwd, jvxSize tobeAccessed = 0,
-		 callback_process_stop_in_lock clbk = NULL, jvxHandle* priv_ptr = NULL);
-
-	// ============================================================================
-	// ============================================================================
-	// ============================================================================
-	// ============================================================================
-
+	 jvxErrorType _process_start_forward() override;
+	 jvxErrorType _process_buffers_forward(jvxSize mt_mask, jvxSize idx_stage) override;
+	 jvxErrorType _process_stop_forward(jvxSize idx_stage, jvxBool shift_fwd,
+		 jvxSize tobeAccessedByStage, callback_process_stop_in_lock clbk,
+		 jvxHandle* priv_ptr) override;
+	
 	// ==============================================================
 	// TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
 	// ==============================================================
+	 virtual jvxErrorType _test_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
-	 jvxErrorType _test_connect_icon(jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-	 jvxErrorType _test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
+	 // ==============================================================
+	 // TRANSFER FORWARD
+	 // ==============================================================
 
-	// ==============================================================
-	// TRANSFER FORWARD
-	// ==============================================================
-
-	 jvxErrorType JVX_CALLINGCONVENTION _transfer_forward_icon(jvxBool forward, jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-
-	 jvxErrorType JVX_CALLINGCONVENTION _transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-
-	// ==============================================================
-	// TRANSFER FORWARD
-	// ==============================================================
-
-	 jvxErrorType JVX_CALLINGCONVENTION _transfer_backward_ocon(jvxBool forward, jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-
-	 jvxErrorType JVX_CALLINGCONVENTION _transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	 jvxErrorType JVX_CALLINGCONVENTION _transfer_forward_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+	 jvxErrorType JVX_CALLINGCONVENTION _transfer_backward_backward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
 	 // ==============================================================
 
@@ -171,22 +125,9 @@ protected:
 	// ==============================================================
 	// HELPER FUNCTIONS
 	// ==============================================================
-	 jvxErrorType JVX_CALLINGCONVENTION shift_buffer_pipeline_idx_on_start(
-		 jvxSize pipeline_offset , jvxSize* idx_stage,
-		 jvxSize tobeAccessedByStage, callback_process_start_in_lock clbk,
-		 jvxHandle* priv_ptr);
 
-	 jvxErrorType JVX_CALLINGCONVENTION shift_buffer_pipeline_idx_on_stop(jvxSize idx_stage, 
-		 jvxBool shift_fwd,
-		 jvxSize tobeAccessedByStage,
-		 callback_process_stop_in_lock clbk,
-		 jvxHandle* priv_ptr);
-
-	 jvxErrorType JVX_CALLINGCONVENTION allocate_pipeline_and_buffers_prepare_to();
-	 jvxErrorType JVX_CALLINGCONVENTION allocate_pipeline_and_buffers_prepare_to_zerocopy();
-
-	 jvxErrorType JVX_CALLINGCONVENTION deallocate_pipeline_and_buffers_postprocess_to();
-	 jvxErrorType JVX_CALLINGCONVENTION deallocate_pipeline_and_buffers_postprocess_to_zerocopy();
+	 // Helper for derived classes
+	 jvxErrorType allocate_pipeline_and_buffers_prepare_to_zerocopy();
 
 	 //! (Simplifying) function to request to run the test function on the chain which is locally connected
 	 void request_test_chain(IjvxReport* theRep);
@@ -196,5 +137,8 @@ protected:
 	 jvxErrorType _check_common_ocon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) override;
 	 jvxErrorType _check_common(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master);
 };
+
+// Declare a macro to make behavior more clear
+#define fwd_process_buffers_icon _process_buffers_icon
 
 #endif

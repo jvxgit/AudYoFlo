@@ -1,4 +1,6 @@
 #include "common/CjvxOutputConnectorCore.h"
+#include "CjvxJson.h"
+#include "common/CjvxInputOutputConnectorCore.h"
 
 CjvxOutputConnectorCore::CjvxOutputConnectorCore()
 {
@@ -12,8 +14,9 @@ CjvxOutputConnectorCore::CjvxOutputConnectorCore()
 }
 
 jvxErrorType 
-CjvxOutputConnectorCore::activate(IjvxOutputConnector* ocon)
+CjvxOutputConnectorCore::activate(CjvxInputOutputConnectorCore* commRef, IjvxOutputConnector* ocon)
 {
+	_common_set_io_common_ptr = commRef;
 	_common_set_ocon.ocon = ocon;
 	return JVX_NO_ERROR;
 }
@@ -180,6 +183,152 @@ CjvxOutputConnectorCore::_disconnect_connect_ocon(const jvxChainConnectArguments
 // ===============================================================================
 
 jvxErrorType
+CjvxOutputConnectorCore::_test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(_common_set_io_common_ptr->_common_set_io_common.object),
+		_common_set_io_common_ptr->_common_set_io_common.descriptor.c_str(), "Leaving single default CjvxInputOutputConnector output connector");
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O(fdb, (&_common_set_ocon.theData_out));
+
+	if (_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		_common_set_ocon.setup_for_termination = false;
+		return _common_set_ocon.theData_out.con_link.connect_to->test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	}
+
+	if (_common_set_ocon.allows_termination)
+	{
+		JVX_CONNECTION_FEEDBACK_SET_COMMENT_STRING(fdb, "Input / output connector with allowed termination.");
+		_common_set_ocon.setup_for_termination = true;
+		return JVX_NO_ERROR;
+	}
+
+	JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, "No output connection.", JVX_ERROR_NOT_READY);
+	return JVX_ERROR_NOT_READY;
+}
+
+// ===============================================================================
+
+jvxErrorType
+CjvxOutputConnectorCore::_transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+
+	jvxErrorType res = JVX_NO_ERROR;
+	std::string locTxt;
+	jvxApiString* str = (jvxApiString*)data;
+	CjvxJsonElementList* jsonLst = (CjvxJsonElementList*)data;
+	CjvxJsonElement jsonElm;
+
+	switch (tp)
+	{
+	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_STRING:
+
+		if (!str)
+		{
+			return JVX_ERROR_INVALID_ARGUMENT;
+		}
+		locTxt = str->std_str();
+		if (_common_set_ocon.ocon)
+		{
+			locTxt += "object output connector " + JVX_DISPLAY_CONNECTOR(_common_set_ocon.ocon);
+		}
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			locTxt += JVX_TEXT_NEW_SEGMENT_CHAR_START;
+			locTxt += "-<ext>->";
+			locTxt += JVX_TEXT_NEW_SEGMENT_CHAR_START;
+			str->assign(locTxt);
+			res = _common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(tp, str JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			locTxt = str->std_str();
+			locTxt += JVX_TEXT_NEW_SEGMENT_CHAR_STOP;
+			locTxt += "<-<txe>-";
+			locTxt += JVX_TEXT_NEW_SEGMENT_CHAR_STOP;
+			str->assign(locTxt);
+			return res;
+		}
+		locTxt += "-<not_connected>";
+		str->assign(locTxt);
+		return JVX_NO_ERROR;
+		break;
+	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON:
+
+		if (!jsonLst)
+		{
+			return JVX_ERROR_INVALID_ARGUMENT;
+		}
+		if (_common_set_ocon.ocon)
+		{
+			jsonElm.makeAssignmentString("ocon", JVX_DISPLAY_CONNECTOR(_common_set_ocon.ocon));
+			jsonLst->addConsumeElement(jsonElm);
+			if (_common_set_ocon.theData_out.con_link.connect_to)
+			{
+				CjvxJsonElementList jsonLstRet;
+				res = _common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(tp, &jsonLstRet JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				if (res == JVX_NO_ERROR)
+				{
+					jsonElm.makeSection("connects_to", jsonLstRet);
+				}
+				else
+				{
+					jsonElm.makeAssignmentString("connects_error", jvxErrorType_txt(res));
+				}
+				jsonLst->addConsumeElement(jsonElm);
+			}
+		}
+		return JVX_NO_ERROR;
+		break;
+	default:
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			return _common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType
+CjvxOutputConnectorCore::JVX_CALLINGCONVENTION _transfer_backward_ocon(jvxBool forward, jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, _common_set_io_common_ptr->_common_set_io_common.object,
+		_common_set_io_common_ptr->_common_set_io_common.descriptor.c_str(), "Entering transfer_backward on output onnector");
+
+	// Check if the requested operation can be fulfilled
+	if (tp == JVX_LINKDATA_TRANSFER_REQUEST_CHAIN_SPECIFIC_DATA_HINT)
+	{
+		if (_common_set_ocon.theData_out.con_user.chain_spec_user_hints)
+		{
+			jvxDataProcessorHintDescriptorSearch* ptr = (jvxDataProcessorHintDescriptorSearch*)data;
+			if (data)
+			{
+				res = jvx_hintDesriptor_find(_common_set_ocon.theData_out.con_user.chain_spec_user_hints,
+					&ptr->reference, ptr->hintDescriptorId, ptr->assocHint);
+				if (res == JVX_NO_ERROR)
+				{
+					return res;
+				}
+			}
+		}
+	}
+
+	// If it can not be fulfilled, we try it towards previous element
+	if (forward)
+	{
+		// We return immediately
+		res = _transfer_backward_backward(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		return res;
+	}
+
+	// Only if there was no previous element and we could not find the requested transfer we return an error
+	if (tp == JVX_LINKDATA_TRANSFER_REQUEST_CHAIN_SPECIFIC_DATA_HINT)
+	{
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+	return res;
+}
+
+
+jvxErrorType
 CjvxOutputConnectorCore::_prepare_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	// Content of link descriptor has been set before...
@@ -314,6 +463,93 @@ CjvxOutputConnectorCore::_stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	return res;
 }
+
+// ===============================================================================
+
+jvxErrorType
+CjvxOutputConnectorCore::_process_start_ocon(jvxSize pipeline_offset, jvxSize* idx_stage, jvxSize tobeAccessedByStage,
+	callback_process_start_in_lock clbk,
+	jvxHandle* priv_ptr)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	// Propagate to next object
+	if (_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon(pipeline_offset, idx_stage, tobeAccessedByStage,
+			clbk, priv_ptr);
+	}
+	else
+	{
+		if (_common_set_ocon.allows_termination)
+		{
+			// JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, "Input / output connector with allowed termination.", JVX_ERROR_NOT_READY);
+			// Accepted as chain terminator
+		}
+		else
+		{
+			std::cout << "This output connector is not connected to any bridge." << std::endl;
+			res = JVX_ERROR_UNEXPECTED;
+		}
+	}
+
+	return res;
+}
+
+jvxErrorType
+CjvxOutputConnectorCore::_process_buffers_ocon(jvxSize mt_mask, jvxSize idx_stage)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	if (_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon(mt_mask, idx_stage);
+	}
+	else
+	{
+		if (_common_set_ocon.allows_termination)
+		{
+			// JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, "Input / output connector with allowed termination.", JVX_ERROR_NOT_READY);
+			// Accepted as chain terminator
+		}
+		else
+		{
+			std::cout << "This output connector is not connected to any bridge." << std::endl;
+			res = JVX_ERROR_UNEXPECTED;
+		}
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxOutputConnectorCore::_process_stop_ocon(jvxSize idx_stage, jvxBool shift_fwd,
+	jvxSize tobeAccessedByStage,
+	callback_process_stop_in_lock clbk,
+	jvxHandle* priv_ptr)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	if (_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon(
+			idx_stage, shift_fwd,
+			tobeAccessedByStage,
+			clbk, priv_ptr);
+	}
+	else
+	{
+		if (_common_set_ocon.allows_termination)
+		{
+			// JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, "Input / output connector with allowed termination.", JVX_ERROR_NOT_READY);
+			// Accepted as chain terminator
+		}
+		else
+		{
+			std::cout << "This output connector is not connected to any bridge." << std::endl;
+			res = JVX_ERROR_UNEXPECTED;
+		}
+	}
+	return res;
+}
+
 // ===============================================================================
 
 jvxErrorType

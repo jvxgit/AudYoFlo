@@ -3,6 +3,8 @@
 
 #include "jvx.h"
 
+class CjvxInputOutputConnectorCore;
+
 class CjvxInputConnectorCore
 {
 public:
@@ -25,10 +27,13 @@ public:
 	};
 
 	common_set_icon_t _common_set_icon;
+
+	CjvxInputOutputConnectorCore* _common_set_io_common_ptr = nullptr;
+
 public:
 	CjvxInputConnectorCore();
 
-	jvxErrorType activate(IjvxInputConnector* icon);
+	jvxErrorType activate(CjvxInputOutputConnectorCore* commRef, IjvxInputConnector* icon);
 	jvxErrorType deactivate();
 
 	jvxErrorType _associated_common_icon(IjvxDataConnectionCommon** ref);
@@ -72,56 +77,61 @@ public:
 	virtual void _stop_connect_common(jvxSize* myUniquePipelineId) = 0;
 	// ===============================================================================
 
+	jvxErrorType _test_connect_icon(jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	virtual jvxErrorType _test_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+
+	// ===============================================================================
+	
+	jvxErrorType JVX_CALLINGCONVENTION _transfer_forward_icon(jvxBool forward, jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	virtual jvxErrorType JVX_CALLINGCONVENTION _transfer_forward_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;
+		jvxErrorType JVX_CALLINGCONVENTION _transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+
+	// ===============================================================================
+
+		jvxErrorType _process_start_icon(jvxSize pipeline_offset, jvxSize* idx_stage, jvxSize tobeAccessedByStage = 0,
+			callback_process_start_in_lock clbk = NULL,
+			jvxHandle* priv_ptr = NULL);
+		virtual jvxErrorType _process_start_forward() = 0;
+
+	// ===============================================================================
+	
+
+	jvxErrorType _process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd, jvxSize tobeAccessed = 0,
+			callback_process_stop_in_lock clbk = NULL, jvxHandle* priv_ptr = NULL);
+	virtual jvxErrorType _process_stop_forward(jvxSize idx_stage, jvxBool shift_fwd,
+		jvxSize tobeAccessedByStage, callback_process_stop_in_lock clbk, jvxHandle* priv_ptr) = 0;
+
+		// ===============================================================================
+
+	jvxErrorType _process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage);
+	virtual jvxErrorType _process_buffers_forward(jvxSize mt_mask, jvxSize idx_stage) = 0;
+
+	// ===============================================================================
+	
 	jvxErrorType _connected_ocon(IjvxOutputConnector** ocon);
 
-	virtual jvxErrorType _check_common_icon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) = 0;
+	// ===============================================================================
 
-	/*
-	virtual JVX_CALLINGCONVENTION ~CjvxInputConnector(){};
+		// ===============================================================================
+		virtual jvxErrorType _check_common_icon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) = 0;
+
+	// ===============================================================================
+
+		jvxErrorType
+			shift_buffer_pipeline_idx_on_start(jvxSize pipeline_offset,
+				jvxSize* idx_stage,
+				jvxSize tobeAccessedByStage,
+				callback_process_start_in_lock clbk = NULL,
+				jvxHandle* priv_ptr = NULL);
+		jvxErrorType shift_buffer_pipeline_idx_on_stop(jvxSize idx_stage,
+			jvxBool shift_fwd, jvxSize tobeAccessed,
+			callback_process_stop_in_lock clbk, jvxHandle* priv_ptr);
+
+		jvxErrorType allocate_pipeline_and_buffers_prepare_to();
+		jvxErrorType deallocate_pipeline_and_buffers_postprocess_to();
+		jvxErrorType deallocate_pipeline_and_buffers_postprocess_to_zerocopy();
+
 	
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon** ref) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
-		jvxDataFormatGroup format_group,
-		jvxDataflow data_flow) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_icon(
-		IjvxConnectorBridge* obj,
-		IjvxConnectionMaster* master, 
-		IjvxDataConnectionCommon* ass_connection_common,
-		IjvxInputConnector** replace_connector = NULL) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION unselect_connect_icon(
-		IjvxConnectorBridge* obj,
-		IjvxInputConnector* replace_connector = NULL) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
-	
-	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_start_icon(
-		jvxSize pipeline_offset = 0,
-		jvxSize* idx_stage = NULL, 
-		jvxSize tobeAccessedByStage = 0,
-		callback_process_start_in_lock = NULL, 
-		jvxHandle* priv_ptr = NULL) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask = JVX_SIZE_UNSELECTED, jvxSize idx_stage = JVX_SIZE_UNSELECTED) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_stop_icon(jvxSize idx_stage = JVX_SIZE_UNSELECTED, 
-		jvxBool operate_first_call = true, 
-		jvxSize tobeAccessedByStage = 0,
-		callback_process_stop_in_lock = NULL, 
-		jvxHandle* priv_ptr = NULL) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
-	*/
 };
 
 #endif

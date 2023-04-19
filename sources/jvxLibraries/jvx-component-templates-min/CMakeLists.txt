@@ -35,6 +35,9 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxInputConnectorLink.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxInputConnectorLink.cpp
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxOutputConnectorLink.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxOutputConnectorLink.cpp
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxObjectLog.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxObjectMin.h
