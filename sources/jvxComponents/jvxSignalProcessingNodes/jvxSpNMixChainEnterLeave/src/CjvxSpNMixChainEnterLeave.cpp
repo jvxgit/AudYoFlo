@@ -53,6 +53,13 @@ CjvxSpNMixChainEnterLeave::activate()
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.nickname);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.number_channels_side);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.operation_mode);
+
+		switch (operationMode)
+		{
+		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
+			// JVX_SAFE_ALLOCATE_OBJECT(extra_icon_gen, CjvxOneInputConnector);
+			break;
+		}
 	}
 	return res;
 }

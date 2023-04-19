@@ -1,5 +1,5 @@
-#ifndef __CJVXINPUTCONNECTOR_H__
-#define __CJVXINPUTCONNECTOR_H__
+#ifndef __CJVXINPUTOUTPUTCONNECTOR_H__
+#define __CJVXINPUTOUTPUTCONNECTOR_H__
 
 // #define JVX_VERBOSE_CJVXINPUTCONNECTOR_H
 #include "CjvxJson.h"
@@ -183,11 +183,9 @@ protected:
 		 jvxHandle* priv_ptr);
 
 	 jvxErrorType JVX_CALLINGCONVENTION allocate_pipeline_and_buffers_prepare_to();
-
 	 jvxErrorType JVX_CALLINGCONVENTION allocate_pipeline_and_buffers_prepare_to_zerocopy();
 
 	 jvxErrorType JVX_CALLINGCONVENTION deallocate_pipeline_and_buffers_postprocess_to();
-
 	 jvxErrorType JVX_CALLINGCONVENTION deallocate_pipeline_and_buffers_postprocess_to_zerocopy();
 
 	 //! (Simplifying) function to request to run the test function on the chain which is locally connected
