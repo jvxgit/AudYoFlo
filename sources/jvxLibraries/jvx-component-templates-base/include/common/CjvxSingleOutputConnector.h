@@ -9,6 +9,8 @@ class CjvxSingleOutputConnector: public IjvxOutputConnector, public CjvxOutputCo
 public:
 	CjvxSingleOutputConnector();
 
+	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm);
+	jvxErrorType deactivate();
 	// =======================================================================================
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART

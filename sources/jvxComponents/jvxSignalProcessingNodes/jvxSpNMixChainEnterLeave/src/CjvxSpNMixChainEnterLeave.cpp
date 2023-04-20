@@ -50,6 +50,9 @@ CjvxSpNMixChainEnterLeave::activate()
 	jvxErrorType res = CjvxBareNode1ioRearrange::activate();
 	if (res == JVX_NO_ERROR)
 	{
+		CjvxConnectorFactory::oneInputConnectorElement elmIn;
+		CjvxConnectorFactory::oneOutputConnectorElement elmOut;
+
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.nickname);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.number_channels_side);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.operation_mode);
@@ -58,9 +61,18 @@ CjvxSpNMixChainEnterLeave::activate()
 		{
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
 			JVX_SAFE_ALLOCATE_OBJECT(extra_icon_gen, CjvxSingleInputConnector);
+			extra_icon_gen->activate(this, this, "mix-in");
+			elmIn.theConnector = extra_icon_gen;
+
+			// Functional part "CjvxConnectorFactory"
+			_common_set_conn_factory.input_connectors[extra_icon_gen] = elmIn;
 			break;
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
 			JVX_SAFE_ALLOCATE_OBJECT(extra_ocon_gen, CjvxSingleOutputConnector);
+			extra_ocon_gen->activate(this, this, "mix-out");
+			elmOut.theConnector = extra_ocon_gen;
+			// Functional part "CjvxConnectorFactory"
+			_common_set_conn_factory.output_connectors[extra_ocon_gen] = elmOut;
 			break;
 		}
 	}
@@ -70,9 +82,39 @@ CjvxSpNMixChainEnterLeave::activate()
 jvxErrorType
 CjvxSpNMixChainEnterLeave::deactivate()
 {
+	std::map<IjvxInputConnectorSelect*, oneInputConnectorElement>::iterator elmI;
+	std::map<IjvxOutputConnectorSelect*, oneOutputConnectorElement>::iterator elmO;
 	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
+		switch (operationMode)
+		{
+		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
+			
+			// Functional part "CjvxConnectorFactory"
+			elmI = _common_set_conn_factory.input_connectors.find(extra_icon_gen);
+			if (elmI != _common_set_conn_factory.input_connectors.end())
+			{
+				_common_set_conn_factory.input_connectors.erase(elmI);
+			}
+
+			extra_icon_gen->deactivate();
+			JVX_SAFE_DELETE_OBJECT(extra_icon_gen); 
+			break;
+
+		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+			
+			// Functional part "CjvxConnectorFactory"
+			elmO = _common_set_conn_factory.output_connectors.find(extra_ocon_gen);
+			if (elmO != _common_set_conn_factory.output_connectors.end())
+			{
+				_common_set_conn_factory.output_connectors.erase(elmO);
+			}
+
+			extra_ocon_gen->deactivate();
+			JVX_SAFE_DELETE_OBJECT(extra_ocon_gen);
+			break;
+		}
 		_undo_update_property_access_type(genMixChain::config.nickname);
 		_undo_update_property_access_type(genMixChain::config.number_channels_side);
 		_undo_update_property_access_type(genMixChain::config.operation_mode);

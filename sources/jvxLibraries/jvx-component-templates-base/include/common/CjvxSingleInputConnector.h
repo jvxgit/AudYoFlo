@@ -9,6 +9,9 @@ class CjvxSingleInputConnector: public IjvxInputConnector, public CjvxInputConne
 public:
 	CjvxSingleInputConnector();
 
+	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm);
+	jvxErrorType deactivate();
+
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType number_next(jvxSize*) override;

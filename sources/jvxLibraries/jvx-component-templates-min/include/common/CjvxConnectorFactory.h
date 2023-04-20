@@ -4,11 +4,13 @@
 #include "jvx.h"
 #include <map>
 
+/*
 JVX_INTERFACE CjvxConnectorFactory_report
 {
 public:
-	virtual jvxErrorType JVX_CALLINGCONVENTION report_selected_connector(const char* description, jvxBool isInput) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION report_selected_connector_(const char* description, jvxBool isInput) = 0;
 };
+*/
 
 class CjvxConnectorFactory
 {
@@ -17,10 +19,10 @@ private:
 protected:
 	struct oneInputConnectorElement
 	{
-		IjvxInputConnectorSelect* theConnector;
+		IjvxInputConnectorSelect* theConnector = nullptr;
 		//jvxSize uId;
-		jvxSize refCnt;
-		CjvxConnectorFactory_report* report;
+		jvxSize refCnt = 0;
+		// CjvxConnectorFactory_report* report = nullptr;
 		//std::vector<IjvxOutputConnector*> connectsto;
 	public:
 		oneInputConnectorElement()
@@ -28,7 +30,7 @@ protected:
 			//uId = 0;
 			refCnt = 0;
 			theConnector = NULL;
-			report = NULL;
+			// report = NULL;
 		};
 	} ;
 	
@@ -36,14 +38,14 @@ protected:
 	{
 		IjvxOutputConnectorSelect* theConnector;
 		jvxSize refCnt;
-		CjvxConnectorFactory_report* report;
+		// CjvxConnectorFactory_report* report;
 		//std::vector<IjvxOutputConnector*> connectsto;
 	public:
 		oneOutputConnectorElement()
 		{
 			refCnt = 0;
 			theConnector = NULL;
-			report = NULL;
+			// report = NULL;
 		};
 	} ;
 
@@ -83,10 +85,10 @@ protected:
 	{ \
 		oneInputConnectorElement newElmIn; \
 		newElmIn.theConnector = static_cast<IjvxInputConnector*>(this); \
-		newElmIn.report = NULL; \
+		/* newElmIn.report = NULL;*/ \
 		oneOutputConnectorElement newElmOut; \
 		newElmOut.theConnector = static_cast<IjvxOutputConnector*>(this); \
-		newElmOut.report = NULL; \
+		/* newElmOut.report = NULL;*/ \
 		_common_set_conn_factory.input_connectors[newElmIn.theConnector] = newElmIn; \
 		_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut; \
 		CjvxInputOutputConnector::lds_activate(dataProc, obj, \
@@ -99,10 +101,10 @@ protected:
 	{ \
 		oneInputConnectorElement newElmIn; \
 		newElmIn.theConnector = static_cast<IjvxInputConnectorSelect*>(this); \
-		newElmIn.report = NULL; \
+		/* newElmIn.report = NULL;*/ \
 		oneOutputConnectorElement newElmOut; \
 		newElmOut.theConnector = static_cast<IjvxOutputConnectorSelect*>(this); \
-		newElmOut.report = NULL; \
+		/* newElmOut.report = NULL; */ \
 		_common_set_conn_factory.input_connectors[newElmIn.theConnector] = newElmIn; \
 		_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut; \
 		CjvxInputOutputConnector::lds_activate(dataProc, obj, \

@@ -5,6 +5,31 @@ CjvxSingleInputConnector::CjvxSingleInputConnector()
 }
 
 jvxErrorType 
+CjvxSingleInputConnector::activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	res = CjvxInputOutputConnectorCore::activate(theObj, conFac, nullptr, nm);
+	assert(res == JVX_NO_ERROR);
+
+	res = CjvxInputConnectorCore::activate(this, this);
+	assert(res == JVX_NO_ERROR);
+
+	return res;
+}
+
+jvxErrorType
+CjvxSingleInputConnector::deactivate()
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	res = CjvxInputOutputConnectorCore::deactivate();
+	assert(res == JVX_NO_ERROR);
+
+	res = CjvxInputConnectorCore::deactivate();
+	assert(res == JVX_NO_ERROR);
+
+	return res;
+}
+jvxErrorType 
 CjvxSingleInputConnector::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	return JVX_NO_ERROR;
