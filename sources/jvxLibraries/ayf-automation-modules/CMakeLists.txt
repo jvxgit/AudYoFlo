@@ -17,7 +17,12 @@ include_directories(
 set(LOCAL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModules.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModules.cpp  
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSrc2Snk.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSrc2Snk.cpp  
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSrc2SnkTrigger.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSrc2SnkTrigger.cpp  
 )
 
 set(BUILD_STATIC TRUE)
