@@ -179,7 +179,10 @@ JVX_APPHOST_CLASSNAME::shutdownHostFactory(jvxApiString* errorMessage, jvxHandle
 	// allow text log in deactivate callbacks
 	this->involvedHost.hHost->system_about_to_shutdown();
 
-	for (i = JVX_COMPONENT_UNKNOWN + 1; i < JVX_COMPONENT_ALL_LIMIT; i++)
+	// HINT HK 21.04.2023: Changed this part: it browsed through all components previously but
+	// it is better to handle the automation components after all the others!!!
+	
+	for (i = JVX_COMPONENT_UNKNOWN + 1; i < JVX_MAIN_COMPONENT_LIMIT; i++)
 	{
 		jvxSize j, k;
 		jvxSize szSlots = 0;
@@ -211,6 +214,95 @@ JVX_APPHOST_CLASSNAME::shutdownHostFactory(jvxApiString* errorMessage, jvxHandle
 				}
 			}
 		}
+	}
+
+	// HINT HK 21.04.2023: Moved this part here from 
+	// member function on_components_stop AA
+	// Here we disconnect automation
+	if (confHostFeatures)
+	{
+		if (confHostFeatures->automation.if_autoconnect)
+		{
+			involvedComponents.theHost.hFHost->remove_external_interface(confHostFeatures->automation.if_autoconnect, JVX_INTERFACE_AUTO_DATA_CONNECT);
+		}
+
+		// If we have received the pointers from the component, release it.
+		if (if_report_automate_ || if_autoconnect_)
+		{
+			IjvxToolsHost* tools = nullptr;
+			involvedHost.hHost->request_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle**>(&tools));
+			if (tools)
+			{
+				IjvxSimpleComponent* automation = nullptr;
+				jvxComponentIdentification tp = JVX_COMPONENT_SYSTEM_AUTOMATION;
+				tp.slotid = JVX_SIZE_UNSELECTED;
+				refComp< IjvxSimpleComponent> elmRet = reqRefTool<IjvxSimpleComponent>(tools, tp, JVX_SIZE_UNSELECTED, confHostFeatures->automation.mod_selection);
+				automation = elmRet.cpPtr;
+				involvedHost.hHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, tools);
+				if (automation)
+				{
+					IjvxReportSystem* rep = nullptr;
+					IjvxAutoDataConnect* dcon = nullptr;
+					if (if_report_automate_)
+					{
+						automation->return_hidden_interface(JVX_INTERFACE_REPORT_SYSTEM, reinterpret_cast<jvxHandle*>(if_report_automate_));
+						if_report_automate_ = nullptr;
+						confHostFeatures->automation.if_report_automate = nullptr;
+					}
+					if (if_autoconnect_)
+					{
+						automation->return_hidden_interface(JVX_INTERFACE_AUTO_DATA_CONNECT, reinterpret_cast<jvxHandle*>(if_autoconnect_));
+						if_autoconnect_ = nullptr;
+						confHostFeatures->automation.if_autoconnect = nullptr;
+					}
+				}
+			}
+		}
+		// else: if we got the two automation pointers from the confHostFeatures struct, we should not touch them
+		deactivate_default_components_host(confHostFeatures->lst_ModulesOnStart, involvedHost.hHost, true);
+	}
+
+	// Here the system components as last
+	for (i = JVX_MAIN_COMPONENT_LIMIT; i < JVX_COMPONENT_ALL_LIMIT ; i++)
+	{
+		jvxSize j, k;
+		jvxSize szSlots = 0;
+		jvxSize szSubSlots = 0;
+		jvxComponentType tpParent = JVX_COMPONENT_UNKNOWN;
+		jvxState stat = JVX_STATE_NONE;
+		jvxComponentIdentification tpLoc((jvxComponentType)i, 0, 0);
+
+		this->involvedHost.hHost->number_slots_component_system(tpLoc, &szSlots, NULL, nullptr, nullptr);
+		for (j = 0; j < szSlots; j++)
+		{
+			jvxSize szSubSlots = 0;
+			tpLoc.slotid = j;
+			this->involvedHost.hHost->number_slots_component_system(tpLoc, NULL, &szSubSlots, nullptr, nullptr);
+			for (k = 0; k < szSubSlots; k++)
+			{
+				tpLoc.slotsubid = k;
+				this->involvedHost.hHost->state_selected_component(tpLoc, &stat);
+				if (stat == JVX_STATE_ACTIVE)
+				{
+					this->involvedHost.hHost->deactivate_selected_component(tpLoc);
+					//subWidgets.main.theWidget->inform_inactive(tpLoc);
+				}
+
+				this->involvedHost.hHost->state_selected_component(tpLoc, &stat);
+				if (stat == JVX_STATE_SELECTED)
+				{
+					this->involvedHost.hHost->unselect_selected_component(tpLoc);
+				}
+			}
+		}
+	}
+	// HINT HK STOP
+	if (confHostFeatures)
+	{
+		// We have to reset the host features since there is no real term function 
+		confHostFeatures->automation.if_report_automate = nullptr;
+		confHostFeatures->automation.if_autoconnect = nullptr;
+		confHostFeatures->automation.mod_selection = nullptr;
 	}
 	return JVX_NO_ERROR;
 }
@@ -455,11 +547,15 @@ JVX_APPHOST_CLASSNAME::on_components_before_configure()
 				{
 					IjvxReportSystem* rep = nullptr;
 					IjvxAutoDataConnect* dcon = nullptr;
+
+					// If the external pointer is unset we use the one from the automation component
 					if (!confHostFeatures->automation.if_report_automate)
 					{
 						automation->request_hidden_interface(JVX_INTERFACE_REPORT_SYSTEM, reinterpret_cast<jvxHandle**>(&if_report_automate_));
 						confHostFeatures->automation.if_report_automate = if_report_automate_;
 					}
+
+					// If the external pointer is unset we use the one from the automation component
 					if (!confHostFeatures->automation.if_autoconnect)
 					{
 						automation->request_hidden_interface(JVX_INTERFACE_AUTO_DATA_CONNECT, reinterpret_cast<jvxHandle**>(&if_autoconnect_));
@@ -654,46 +750,10 @@ JVX_APPHOST_CLASSNAME::on_components_stop()
 	// ====================================================================================================
 
 	// Second part
-	onComponentsBeforeConfig = false;
-	if (confHostFeatures)
-	{
-		if (confHostFeatures->automation.if_autoconnect)
-		{
-			involvedComponents.theHost.hFHost->remove_external_interface(confHostFeatures->automation.if_autoconnect, JVX_INTERFACE_AUTO_DATA_CONNECT);
-		}
+	onComponentsBeforeConfig = false;	
 
-		if (if_report_automate_ || if_autoconnect_)
-		{
-			involvedHost.hHost->request_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle**>(&tools));
-			if (tools)
-			{
-				IjvxSimpleComponent* automation = nullptr;
-				jvxComponentIdentification tp = JVX_COMPONENT_SYSTEM_AUTOMATION;
-				tp.slotid = JVX_SIZE_UNSELECTED;
-				refComp< IjvxSimpleComponent> elmRet = reqRefTool<IjvxSimpleComponent>(tools, tp, JVX_SIZE_UNSELECTED, confHostFeatures->automation.mod_selection);
-				automation = elmRet.cpPtr;
-				involvedHost.hHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, tools);
-				if (automation)
-				{
-					IjvxReportSystem* rep = nullptr;
-					IjvxAutoDataConnect* dcon = nullptr;
-					if (if_report_automate_)
-					{
-						automation->return_hidden_interface(JVX_INTERFACE_REPORT_SYSTEM, reinterpret_cast<jvxHandle*>(if_report_automate_));
-						if_report_automate_ = nullptr;
-						confHostFeatures->automation.if_report_automate = nullptr;
-					}
-					if (if_autoconnect_)
-					{
-						automation->return_hidden_interface(JVX_INTERFACE_AUTO_DATA_CONNECT, reinterpret_cast<jvxHandle*>(if_autoconnect_));
-						if_autoconnect_ = nullptr;
-						confHostFeatures->automation.if_autoconnect = nullptr;
-					}
-				}
-			}
-		}
-		deactivate_default_components_host(confHostFeatures->lst_ModulesOnStart, involvedHost.hHost, true);
-	}
+	// HK HINT: AA
+
 	return res;
 }
 

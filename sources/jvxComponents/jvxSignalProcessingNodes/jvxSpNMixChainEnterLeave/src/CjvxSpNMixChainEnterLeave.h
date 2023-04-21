@@ -14,7 +14,10 @@ enum class jvxOperationModeMixChain
 
 #include "pcg_exports_node.h"
 
-class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, public genMixChain
+class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, 
+	public CjvxSingleInputConnector_report,
+	public CjvxSingleOutputConnector_report,
+	public genMixChain
 {
 	jvxOperationModeMixChain operationMode = jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT;
 	
@@ -46,6 +49,12 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_on_config);
+
+	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn);
+	jvxErrorType report_unselected_connector(CjvxSingleInputConnector* iconn);
+
+	jvxErrorType report_selected_connector(CjvxSingleOutputConnector* iconn);
+	jvxErrorType report_unselected_connector(CjvxSingleOutputConnector* iconn);
 };
 
 #endif

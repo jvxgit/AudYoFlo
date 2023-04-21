@@ -4,12 +4,27 @@
 #include "jvx.h"
 #include "common/CjvxInputConnectorLink.h"
 
+class CjvxSingleInputConnector;
+
+JVX_INTERFACE CjvxSingleInputConnector_report
+{
+public:
+	virtual ~CjvxSingleInputConnector_report() {};
+
+	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn);
+	jvxErrorType report_unselected_connector(CjvxSingleInputConnector* iconn);
+};
+
 class CjvxSingleInputConnector: public IjvxInputConnector, public CjvxInputConnectorLink
 {
+protected:
+
+	CjvxSingleInputConnector_report* report = nullptr;
+
 public:
 	CjvxSingleInputConnector();
 
-	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm);
+	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleInputConnector_report* reportArg);
 	jvxErrorType deactivate();
 
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;

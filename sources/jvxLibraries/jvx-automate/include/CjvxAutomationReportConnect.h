@@ -9,6 +9,7 @@ class CjvxAutomationReportConnect :
 	public IjvxSimpleComponent, public CjvxObject
 {
 protected:
+
 	IjvxReport* reportRef = nullptr;
 	std::string nmComponent = "CjvxAutomationSimple";
 	

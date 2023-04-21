@@ -2713,11 +2713,12 @@ CjvxHost::deactivate_selected_component(const jvxComponentIdentification& tp)
 								{
 									if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].dev)
 									{
-										resL = this->state_selected_component(jvxComponentIdentification(elmIt_tech->selector[1], tp.slotid, k), &stat);
+										jvxComponentIdentification tpIdDev = jvxComponentIdentification(elmIt_tech->selector[1], tp.slotid, k);
+										resL = this->state_selected_component(tpIdDev, &stat);
 										if (stat >= JVX_STATE_ACTIVE)
 										{
 											res = this->connection_factory_to_be_removed(
-												tp,
+												tpIdDev,
 												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac,
 												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac);
 
@@ -2736,13 +2737,11 @@ CjvxHost::deactivate_selected_component(const jvxComponentIdentification& tp)
 												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac = NULL;
 											}
 
-											resL = this->deactivate_selected_component(
-												jvxComponentIdentification(elmIt_tech->selector[1], tp.slotid, k));
+											resL = this->deactivate_selected_component(tpIdDev);
 											assert(resL == JVX_NO_ERROR);
 										}
 
-										jvxComponentIdentification tpUs = jvxComponentIdentification(elmIt_tech->selector[1], tp.slotid, k);
-										resL = this->unselect_selected_component(tpUs);
+										resL = this->unselect_selected_component(tpIdDev);
 										assert(resL == JVX_NO_ERROR);
 										break;
 									}

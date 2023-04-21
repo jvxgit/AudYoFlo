@@ -5,7 +5,7 @@ CjvxSingleOutputConnector::CjvxSingleOutputConnector()
 }
 
 jvxErrorType 
-CjvxSingleOutputConnector::activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm)
+CjvxSingleOutputConnector::activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleOutputConnector_report* reportArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxInputOutputConnectorCore::activate(theObj, conFac, nullptr, nm);
@@ -14,6 +14,7 @@ CjvxSingleOutputConnector::activate(IjvxObject* theObj, IjvxConnectorFactory* co
 	res = CjvxOutputConnectorCore::activate(this, this);
 	assert(res == JVX_NO_ERROR);
 
+	report = reportArg;
 	return res;
 }
 

@@ -887,8 +887,8 @@ uMainWindow::shutdown_terminate_specific(jvxApiString* errloc)
 
 	// ====================================================================
 	// Stop main central widget
-	theHostFeatures.automation.if_autoconnect = NULL;
-	theHostFeatures.automation.if_report_automate = NULL;
+	//theHostFeatures.automation.if_autoconnect = NULL;
+	//theHostFeatures.automation.if_report_automate = NULL;
 	theHostFeatures.if_report = NULL;
 	theHostFeatures.prv_features = NULL;
 

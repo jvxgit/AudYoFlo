@@ -34,6 +34,12 @@ public:
 	IjvxFactoryHost* fHost = nullptr;
 	struct
 	{
+		// Automation can be used as follows:
+		// 1) <RECOMMENDED> Provide a module for an object of type IjvxAutomation. This object will be requested to 
+		// receive pointers for if_report_automate and if_autoconnect. The name of the automation modules must be set
+		// in <mod_selection> 
+		// 2) Provide the pointers to if_report_automate and if_autoconnect directly. This is not recommended but used in some
+		// older projects
 		const char* mod_selection = nullptr;
 		IjvxReportSystem* if_report_automate = nullptr;
 		IjvxAutoDataConnect* if_autoconnect = nullptr;

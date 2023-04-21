@@ -4,12 +4,27 @@
 #include "jvx.h"
 #include "common/CjvxOutputConnectorLink.h"
 
+class CjvxSingleOutputConnector;
+
+JVX_INTERFACE CjvxSingleOutputConnector_report
+{
+public:
+	virtual ~CjvxSingleOutputConnector_report() {};
+
+	jvxErrorType report_selected_connector(CjvxSingleOutputConnector* oconn);
+	jvxErrorType report_unselected_connector(CjvxSingleOutputConnector* oconn);
+};
+
 class CjvxSingleOutputConnector: public IjvxOutputConnector, public CjvxOutputConnectorLink
 {
+protected:
+
+	CjvxSingleOutputConnector_report* report = nullptr;
+
 public:
 	CjvxSingleOutputConnector();
 
-	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm);
+	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleOutputConnector_report* reportArg);
 	jvxErrorType deactivate();
 	// =======================================================================================
 
