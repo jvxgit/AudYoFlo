@@ -487,8 +487,10 @@ CjvxAudioFFMpegReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 	res = prepare_chain_master_autostate(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	assert(res == JVX_NO_ERROR);
 
+	// HK, 21042023: I have moved the restart to the postprocess_chain_master call. Also,
+	// I have really restarted the input file there since the very first fragment otherwise is audible
 	// Restart the stream - it is not reset automatically once we stop!
-	this->restart_stream();
+	// this->restart_stream();
 
 	// Get the codec parameters
 	AVStream* codecParamPointer = fParams.st;
@@ -534,6 +536,14 @@ CjvxAudioFFMpegReaderDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TY
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resL;
+
+	// Set the stream to the end when shutting down
+	std::string fName = fParams.fName;
+
+	// This is a really hard restart - the "soft" version does not remove the very first samples
+	// this->restart_stream();	
+	term_file();
+	init_from_filename(fName, parentTech);
 
 	_postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	assert(res == JVX_NO_ERROR);
