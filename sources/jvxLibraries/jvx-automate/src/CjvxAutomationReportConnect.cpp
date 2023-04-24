@@ -99,13 +99,85 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 
 		JVX_START_LOCK_LOG(3);
 		log << __FUNCTION__ << " - Report process connect for Uid <" << uid << ">." << std::endl;
-		JVX_STOP_LOCK_LOG;		
+		JVX_STOP_LOCK_LOG;	
+
+		con = reqInterface<IjvxDataConnections>(refHostRef);
+		if (con)
+		{
+			jvxSize i;
+			IjvxDataConnectionProcess* proc = nullptr;
+			con->reference_connection_process_uid(uid, &proc);
+			if (proc)
+			{
+				jvxApiString dstr;
+				jvxApiString modName;
+				jvxApiString lCtxt;
+				jvxComponentIdentification tpCp;
+				proc->description(&dstr);
+
+#ifdef JVX_AUTOMATION_VERBOSE
+				std::cout << "==> Process <" << dstr.std_str() << std::endl;
+#endif
+				CayfAutomationModules::CayfAutomationModuleHandler::try_associate_process(uid, dstr.std_str());
+
+				IjvxConnectionIterator* it = nullptr;
+				proc->iterator_chain(&it);
+				while (1)
+				{
+					if (it == nullptr)
+					{
+						break;
+					}
+					else
+					{
+						it->reference_component(&tpCp, &modName, &lCtxt);
+
+#ifdef JVX_AUTOMATION_VERBOSE
+						std::cout << " - Component " << jvxComponentIdentification_txt(tpCp) << " -- " << modName.std_str() << " -- " << lCtxt.std_str() << std::endl;
+#endif
+
+						CayfAutomationModules::CayfAutomationModuleHandler::try_adapt_submodules(uid, modName.std_str(), tpCp);
+
+						jvxSize nn = 0;
+						it->number_next(&nn);
+						if (nn == 0)
+						{
+							// Last element in chain
+							it = nullptr;
+						}
+						else if (nn == 1)
+						{
+							it->reference_next(0, &it);
+						}
+						else
+						{
+							for (i = 0; i < nn; i++)
+							{
+								IjvxConnectionIterator* itn = nullptr;
+								it->reference_next(i, &itn);
+							}
+						}
+					}
+				}
+
+				// Test this connection
+				jvxErrorType resTest = proc->test_chain(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+
+				// Indicate that the "test" has been done and is not required anymore
+				proc->set_test_on_connect(false);
+
+				con->return_reference_connection_process(proc);
+			}
+		}
 		break;
 	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED:
 
 		JVX_START_LOCK_LOG(3);
 		log << __FUNCTION__ << " - Report process to be disconnected Uid <" << uid << ">." << std::endl;
 		JVX_STOP_LOCK_LOG;
+
+		CayfAutomationModules::CayfAutomationModuleHandler::try_deassociate_process(uid);
+
 		break;
 	default:
 
@@ -180,14 +252,22 @@ CjvxAutomationReportConnect::report_connection_factory_to_be_added(
 	IjvxConnectorFactory* toadd
 )
 {
+	CayfAutomationModules::CayfAutomationModuleHandler::try_activate_submodules(tp_activated);
+	// Activate the required sub modules. If the type is not matched, function return JVX_ERROR_INVALID_SETTING
+	// This function decides internally if the submodule is activated, therefore function fail is very common
+
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType 
 CjvxAutomationReportConnect::report_connection_factory_removed(
-	jvxComponentIdentification tp_activated,
+	jvxComponentIdentification tp_deactivated,
 	IjvxConnectorFactory* toremove) 
 {
+	CayfAutomationModules::CayfAutomationModuleHandler::try_deactivate_submodules(tp_deactivated);
+	// Deactivate the required sub modules. If the type is not matched, function return JVX_ERROR_INVALID_SETTING
+	// This function decides internally if the submodule is activated, therefore function fail is very common
+
 	return JVX_NO_ERROR;
 }
 

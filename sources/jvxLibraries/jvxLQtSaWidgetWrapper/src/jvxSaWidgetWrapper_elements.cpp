@@ -505,7 +505,6 @@ QLineEdit_fdb::update_window()
 	return true;
 }
 
-
 void 
 QLineEdit_fdb::focusInEvent(QFocusEvent* e)
 {

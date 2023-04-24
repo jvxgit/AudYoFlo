@@ -3,19 +3,46 @@
 
 #include "jvx.h"
 #include "CayfAutomationModules.h"
+#include "CayfAutomationModuleHandler.h"
 
 class CjvxObjectLog;
 
 namespace CayfAutomationModules
 {
-	class ayfEstablishedOneChain
+	class ayfOneModuleChainDefinition
 	{
 	public:
-		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;
+		ayfOneModuleChainDefinition(const jvxComponentIdentification& cpIdArg): 
+			cpId(cpIdArg)
+		{
+
+		}
+		jvxComponentIdentification cpId;
+		bool operator < (const ayfOneModuleChainDefinition& elm) const
+		{
+			if (cpId < elm.cpId)
+			{
+				return true;
+			}			
+			return false;
+		}
+	};
+
+	class ayfOneConnectedProcess
+	{
+	public:
+		jvxSize processUid = JVX_SIZE_UNSELECTED;
 		std::string chainName;
 	};
 
-	class CayfAutomationModulesSrc2Snk
+	class ayfEstablishedProcesses
+	{
+	public:
+		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;
+		std::list<ayfOneConnectedProcess> connectedProcesses;
+	};
+
+	class CayfAutomationModulesSrc2Snk: public CayfAutomationModuleHandlerIf
 	{
 	
 	public:
@@ -30,7 +57,7 @@ namespace CayfAutomationModules
 
 
 		// For each master, store the connected modules
-		std::map<jvxComponentIdentification, ayfEstablishedOneChain> ids_sub_components_file_in;
+		std::map<ayfOneModuleChainDefinition, ayfEstablishedProcesses> module_connections;
 		IjvxReport* reportRefPtr = nullptr;
 		IjvxHost* refHostRefPtr = nullptr;
 		CjvxObjectLog* objLogRefPtr = nullptr;
@@ -50,49 +77,21 @@ namespace CayfAutomationModules
 			jvxSize purpId,
 			const ayfConnectConfig& cfg,
 			ayfTriggerComponent trigCompTypeArg = ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SOURCE,
-			CjvxObjectLog* ptrLog = nullptr)
-		{
-			reportRefPtr = report;
-			refHostRefPtr = host;
-			cbPtr = cb;
-			purposeId = purpId;
-			config = cfg;
-			trigCompType = trigCompTypeArg;
-			objLogRefPtr = ptrLog;
-			return JVX_NO_ERROR;
-		}
-
-		jvxErrorType deactivate()
-		{
-			assert(ids_sub_components_file_in.size() == 0);
-			// If we end the program, we may reach here without explicitely deactivatin a single chain.
-			// The reason is that we disconnect automation before deactivating non-default components
-			/*
-			for (auto& elm : ids_sub_components_file_in)
-			{
-				deactivate_all_submodule_audio_input(elm.first);
-			}
-			*/
-
-			reportRefPtr = nullptr;
-			refHostRefPtr = nullptr;
-			cbPtr = nullptr;
-			purposeId = JVX_SIZE_UNSELECTED;
-			config.chainNamePrefix.clear();
-			config.connectedNodes.clear();
-			objLogRefPtr = nullptr;
-			trigCompType = ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SOURCE;
-			return JVX_NO_ERROR;
-		}
+			CjvxObjectLog* ptrLog = nullptr);
+		jvxErrorType deactivate();
 
 		void try_connect(
 			jvxComponentIdentification tp_ident,
 			jvxComponentIdentification tp_src,
 			jvxComponentIdentification tp_sink);
 
-		jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated);
-		jvxErrorType deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated);
-		jvxErrorType adapt_all_submodules(const std::string& modName, jvxComponentIdentification tpCp, const std::string& chainName);
+		jvxErrorType associate_process(jvxSize uIdProcess,
+			const std::string& nmChain) override;
+		jvxErrorType deassociate_process(jvxSize uIdProcess) override;
+		jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated) override;
+		jvxErrorType deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated) override;
+		jvxErrorType adapt_all_submodules(jvxSize uIdProc, const std::string& modName,
+			const jvxComponentIdentification& tp_activated) override;
 
 		virtual jvxComponentIdentification& preset_master();
 

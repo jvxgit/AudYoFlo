@@ -82,6 +82,8 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderTechnology, 
 		std::string devSpec;
 		std::string filename_to_be_opened = genFileReader_technology::file_selection.open_filename.value;
 
+		jvx_tokenRemoveCharLeftRight(filename_to_be_opened, '"');
+		
 		res = activateOneFile(filename_to_be_opened,
 			devSpec,
 			idSelectNew);

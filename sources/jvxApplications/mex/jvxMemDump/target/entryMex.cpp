@@ -213,8 +213,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 					varName = one_expression.substr(0, posi);
 					fldType = one_expression.substr(posi + 1, std::string::npos);
 				}
-				jvx_TokenRemoveWSpaceLeftright(varName);
-				jvx_TokenRemoveWSpaceLeftright(fldType);
+				jvx_tokenRemoveCharLeftRight(varName);
+				jvx_tokenRemoveCharLeftRight(fldType);
 
 				oneFieldStruct s;
 				s.name = varName;

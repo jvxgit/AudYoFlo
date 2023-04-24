@@ -542,7 +542,11 @@ jvxErrorType
 jvx_parseStringListIntoTokens(std::string expr, std::vector<std::string>& args, char sep_token = ',');
 
 void
-jvx_TokenRemoveWSpaceLeftright(std::string& oneToken);
+jvx_tokenRemoveCharLeftRight(
+	std::string& oneToken,
+	char removeit = ' ',
+	jvxBool removeLeft = true,
+	jvxBool removeRight = true);
 
 std::string 
 jvx_constructPropertyLinkDescriptor(std::string tag, std::string propname, std::vector<std::string> paramlst);

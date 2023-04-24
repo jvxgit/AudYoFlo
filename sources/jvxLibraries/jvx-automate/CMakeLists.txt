@@ -24,10 +24,22 @@ include_directories(
   )
 
 set(LOCAL_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModules.h
+
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAutomationReport.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxAutomationReport.h
+
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAutomationReportConnect.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxAutomationReportConnect.h
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSrc2Snk.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSrc2Snk.cpp  
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSrc2SnkTrigger.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSrc2SnkTrigger.cpp  
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModuleHandler.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModuleHandler.cpp
   )
 
 set(BUILD_STATIC TRUE)

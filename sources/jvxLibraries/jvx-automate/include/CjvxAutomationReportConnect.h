@@ -3,9 +3,11 @@
 
 #include "CjvxAutomationReport.h"
 #include "common/CjvxObject.h"
+#include "CayfAutomationModuleHandler.h"
 
 class CjvxAutomationReportConnect :
 	public CjvxAutomationReport, public IjvxAutoDataConnect,
+	public CayfAutomationModules::CayfAutomationModuleHandler,
 	public IjvxSimpleComponent, public CjvxObject
 {
 protected:

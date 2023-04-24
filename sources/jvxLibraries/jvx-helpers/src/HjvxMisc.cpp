@@ -2888,39 +2888,49 @@ jvxErrorType jvx_parseStringListIntoTokens(std::string expr, std::vector<std::st
 }
 
 
-void jvx_TokenRemoveWSpaceLeftright(std::string& oneToken)
+void jvx_tokenRemoveCharLeftRight(
+	std::string& oneToken, 
+	char removeit, 
+	jvxBool removeLeft, 
+	jvxBool removeRight)
 {
 	int cnt = 0;
 	jvxSize posi2 = 0;
 
-	// Remove from left side
-	for(; cnt < oneToken.size(); cnt++)
+	if (removeLeft)
 	{
-		if (oneToken[cnt] == ' ')
+		// Remove from left side
+		for (; cnt < oneToken.size(); cnt++)
 		{
-			posi2++;
+			if (oneToken[cnt] == removeit)
+			{
+				posi2++;
+			}
+			else
+			{
+				break;
+			}
 		}
-		else
-		{
-			break;
-		}
+		oneToken = oneToken.substr(posi2, std::string::npos);
 	}
-	oneToken = oneToken.substr(posi2, std::string::npos);
 
-	// Remove from right side
-	jvxSize sz2 = oneToken.size();
-	for (cnt = oneToken.size()-1; cnt >= 0; cnt--)
+	if (removeRight)
 	{
-		if (oneToken[cnt] == ' ')
+		// Remove from right side
+		jvxSize sz2 = oneToken.size();
+		for (cnt = oneToken.size() - 1; cnt >= 0; cnt--)
 		{
-			sz2--;
+			if (oneToken[cnt] == removeit)
+			{
+				sz2--;
+			}
+			else
+			{
+				break;
+			}
 		}
-		else
-		{
-			break;
-		}
-	}	
-	oneToken = oneToken.substr(0, sz2);
+		oneToken = oneToken.substr(0, sz2);
+	}
 }
 
 std::string jvx_constructPropertyLinkDescriptor(std::string tag, std::string propname, std::vector<std::string> paramlst)
@@ -3026,7 +3036,7 @@ jvxErrorType	jvx_parsePropertyStringToKeylist(std::string propTargetNameStr, std
 				propTargetNameStr = "";
 			}
 		}
-		jvx_TokenRemoveWSpaceLeftright(oneToken);
+		jvx_tokenRemoveCharLeftRight(oneToken);
 		if (oneToken.size())
 		{
 			paramlst.push_back(oneToken);
@@ -5372,7 +5382,7 @@ jvx_commonConnectorToObjectDescription(IjvxCommonConnector* in_con, std::string&
 	}
 	jvx_return_interfaceToObject(static_cast<IjvxInterfaceReference*>(theParentFac), theObj);
 }
-
+	
 void 
 jvx_connectionmasterToObjectDescription(IjvxConnectionMaster* mas, std::string& txt, const std::string& str)
 {

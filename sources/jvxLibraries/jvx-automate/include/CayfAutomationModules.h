@@ -11,6 +11,7 @@ namespace CayfAutomationModules
 		virtual ~ayfAutoConnect_callbacks() {};
 		virtual jvxErrorType adapt_single_property_on_connect(
 			jvxSize purposeId, 
+			const std::string& nmChain,
 			const std::string& modName, 
 			IjvxProperties* props) = 0;
 		virtual jvxErrorType allow_master_connect(
@@ -79,6 +80,6 @@ namespace CayfAutomationModules
 		jvxComponentIdentification cpId = JVX_COMPONENT_UNKNOWN;
 		ayfConnectConfigCpEntryRuntime(const ayfConnectConfigCpEntry& cp) :
 			ayfConnectConfigCpEntry(cp), cpId(JVX_COMPONENT_UNKNOWN){};
-	};
+	};	
 };
 #endif

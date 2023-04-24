@@ -471,7 +471,7 @@ endif()
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-audio-sockets-sm
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-buffer-sync
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection
-	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-automation-modules
+# 	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-automation-modules
 	# ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-subqueue
 	
 	# The audio libs

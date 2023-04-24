@@ -3,7 +3,48 @@
 
 namespace CayfAutomationModules
 {
+	jvxErrorType 
+		CayfAutomationModulesSrc2Snk::activate(IjvxReport* report,
+		IjvxHost* host,
+		ayfAutoConnect_callbacks* cb,
+		jvxSize purpId,
+		const ayfConnectConfig& cfg,
+		ayfTriggerComponent trigCompTypeArg,
+		CjvxObjectLog* ptrLog)
+	{
+		reportRefPtr = report;
+		refHostRefPtr = host;
+		cbPtr = cb;
+		purposeId = purpId;
+		config = cfg;
+		trigCompType = trigCompTypeArg;
+		objLogRefPtr = ptrLog;
+		return JVX_NO_ERROR;
+	}
 
+	jvxErrorType 
+		CayfAutomationModulesSrc2Snk::deactivate()
+	{
+		assert(module_connections.size() == 0);
+		// If we end the program, we may reach here without explicitely deactivatin a single chain.
+		// The reason is that we disconnect automation before deactivating non-default components
+		/*
+		for (auto& elm : ids_sub_components_file_in)
+		{
+			deactivate_all_submodule_audio_input(elm.first);
+		}
+		*/
+
+		reportRefPtr = nullptr;
+		refHostRefPtr = nullptr;
+		cbPtr = nullptr;
+		purposeId = JVX_SIZE_UNSELECTED;
+		config.chainNamePrefix.clear();
+		config.connectedNodes.clear();
+		objLogRefPtr = nullptr;
+		trigCompType = ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SOURCE;
+		return JVX_NO_ERROR;
+	}
 	void
 		CayfAutomationModulesSrc2Snk::try_connect(jvxComponentIdentification tp_reg, jvxComponentIdentification tp_src, jvxComponentIdentification tp_sink)
 	{
@@ -24,8 +65,8 @@ namespace CayfAutomationModules
 		if (con)
 		{
 			// Get the creation rule!
-			auto& elm = ids_sub_components_file_in.find(tp_reg);
-			assert(elm != ids_sub_components_file_in.end());
+			auto& elm = module_connections.find(tp_reg);
+			assert(elm != module_connections.end());
 
 			jvxDataConnectionRuleParameters params(false, false, true, false, true);
 			std::string chainName = config.chainNamePrefix + jvx_size2String(tp_src.slotsubid);
@@ -35,8 +76,8 @@ namespace CayfAutomationModules
 				&theDataConnectionDefRule_id, &params, config.connectionCategory);
 			if (res == JVX_NO_ERROR)
 			{
+				ayfOneConnectedProcess newProcess;
 				// We store this as the target chain name that will be used for verification during connect
-				elm->second.chainName = chainName;
 
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
 				log << "Created rule for chain <" << chainName << ">." << std::endl;
@@ -45,7 +86,11 @@ namespace CayfAutomationModules
 				IjvxDataConnectionRule* theDataConnectionDefRuleHdl = NULL;
 				res = con->reference_connection_rule_uid(theDataConnectionDefRule_id, &theDataConnectionDefRuleHdl);
 				if ((res == JVX_NO_ERROR) && (theDataConnectionDefRuleHdl))
-				{					
+				{	
+					newProcess.chainName = chainName;
+					newProcess.processUid = JVX_SIZE_UNSELECTED; // process not connected!
+					elm->second.connectedProcesses.push_back(newProcess);
+
 					jvxComponentIdentification tp_master = preset_master();
 
 					// Connection: 
@@ -78,6 +123,16 @@ namespace CayfAutomationModules
 					}
 					else
 					{
+						// Remove the previously added process
+						for (auto elmP = elm->second.connectedProcesses.begin(); elmP != elm->second.connectedProcesses.end(); elmP++)
+						{
+							if (elmP->chainName == chainName)
+							{
+								elm->second.connectedProcesses.erase(elmP);
+								break;
+							}
+						}
+
 						JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
 						log << "Failed to connect chain <" << chainName << ">, reason: " << jvxErrorType_descr(res) << "." << std::endl;
 						JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
@@ -172,6 +227,7 @@ namespace CayfAutomationModules
 				assert(0);
 			}
 
+			// We decide if this rule applies in this function
 			jvxErrorType res = cbPtr->allow_master_connect(purposeId, tp_activated,
 				config.tpSrc, config.tpSink, config.oconNmSource, config.iconNmSink);
 			if (res != JVX_NO_ERROR)
@@ -190,8 +246,8 @@ namespace CayfAutomationModules
 			}
 		}
 
-		auto elm = ids_sub_components_file_in.find(tp_activated);
-		if (elm != ids_sub_components_file_in.end())
+		auto elm = module_connections.find(tp_activated);
+		if (elm != module_connections.end())
 		{
 			return JVX_ERROR_ALREADY_IN_USE;
 		}
@@ -203,7 +259,7 @@ namespace CayfAutomationModules
 		refHostRefPtr->request_object_selected_component(tp_activated, &obj_dev);
 
 		jvxErrorType res = JVX_NO_ERROR;
-		ayfEstablishedOneChain realizeChain;
+		ayfEstablishedProcesses realizeChain;
 		for (auto& elmM : config.connectedNodes)
 		{
 			ayfConnectConfigCpEntryRuntime cpElm(elmM);
@@ -227,7 +283,7 @@ namespace CayfAutomationModules
 
 		if (res == JVX_NO_ERROR)
 		{
-			ids_sub_components_file_in[tp_activated] = realizeChain;
+			module_connections[tp_activated] = realizeChain;
 			try_connect(tp_activated, config.tpSrc, config.tpSink);
 		}
 
@@ -237,55 +293,101 @@ namespace CayfAutomationModules
 	jvxErrorType
 		CayfAutomationModulesSrc2Snk::deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated)
 	{
-		auto elm = ids_sub_components_file_in.find(tp_deactivated);
-		assert(elm != ids_sub_components_file_in.end());
-		for (auto elmI : elm->second.lstEntries)
+		auto elm = module_connections.find(tp_deactivated);
+		if (elm != module_connections.end())
 		{
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
-			log << "Deactivating  module <" << elmI.modName << "> with suffix <" << elmI.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
-			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+			for (auto elmI : elm->second.lstEntries)
+			{
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
+				log << "Deactivating  module <" << elmI.modName << "> with suffix <" << elmI.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
-			jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, elmI.cpId);
-			assert(res == JVX_NO_ERROR);
+				jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, elmI.cpId);
+				assert(res == JVX_NO_ERROR);
+			}
+			module_connections.erase(elm);
+			return JVX_NO_ERROR;
 		}
-		ids_sub_components_file_in.erase(elm);
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+
+	jvxErrorType 
+		CayfAutomationModulesSrc2Snk::associate_process(jvxSize uIdProcess,
+			const std::string& nmChain)
+	{
+		for (auto& elm : module_connections)
+		{
+			for (auto& elmP : elm.second.connectedProcesses)
+			{
+				if (nmChain == elmP.chainName)
+				{
+					elmP.processUid = uIdProcess;
+					return JVX_NO_ERROR;
+				}
+			}
+		}
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+
+	jvxErrorType 
+		CayfAutomationModulesSrc2Snk::deassociate_process(jvxSize uIdProcess)
+	{
 		return JVX_NO_ERROR;
 	}
 
 	jvxErrorType
-		CayfAutomationModulesSrc2Snk::adapt_all_submodules(const std::string& modName, jvxComponentIdentification tpCp, const std::string& chainName)
+		CayfAutomationModulesSrc2Snk::adapt_all_submodules(jvxSize uIdProc,
+			const std::string& modName,
+			const jvxComponentIdentification& tpCp)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 
-		auto elm = ids_sub_components_file_in.find(tpCp);
-		if (elm == ids_sub_components_file_in.end())
+		// Find the element which fits the processId
+		auto elm = module_connections.begin();
+		ayfOneConnectedProcess theProc;
+		for (; elm != module_connections.end(); elm++)
 		{
-			return JVX_ERROR_ELEMENT_NOT_FOUND;
-		}
-
-		// This MUST always match
-		assert(chainName == elm->second.chainName);
-
-		IjvxObject* obj = nullptr;
-		refHostRefPtr->request_object_selected_component(tpCp, &obj);
-		if (obj)
-		{
-			IjvxInterfaceFactory* ifFac = nullptr;
-			obj->interface_factory(&ifFac);
-			if (ifFac)
+			auto elmP = elm->second.connectedProcesses.begin();
+			for (; elmP != elm->second.connectedProcesses.end(); elmP++)
 			{
-				IjvxProperties* props = reqInterface<IjvxProperties>(ifFac);
-				if (props)
+				if (elmP->processUid == uIdProc)
 				{
-					if (cbPtr)
-					{
-						cbPtr->adapt_single_property_on_connect(purposeId, modName, props);
-					}
-					retInterface<IjvxProperties>(ifFac, props);
+					theProc = *elmP;
+					break;
 				}
 			}
-			refHostRefPtr->return_object_selected_component(tpCp, obj);
+
+			if (JVX_CHECK_SIZE_SELECTED(theProc.processUid))
+			{
+				break;
+			}
 		}
-		return JVX_NO_ERROR;
+
+		if (JVX_CHECK_SIZE_SELECTED(theProc.processUid))
+		{
+			IjvxObject* obj = nullptr;
+			refHostRefPtr->request_object_selected_component(tpCp, &obj);
+			if (obj)
+			{
+				IjvxInterfaceFactory* ifFac = nullptr;
+				obj->interface_factory(&ifFac);
+				if (ifFac)
+				{
+					IjvxProperties* props = reqInterface<IjvxProperties>(ifFac);
+					if (props)
+					{
+						if (cbPtr)
+						{
+							cbPtr->adapt_single_property_on_connect(purposeId, theProc.chainName, modName, props);
+						}
+						retInterface<IjvxProperties>(ifFac, props);
+					}
+				}
+				refHostRefPtr->return_object_selected_component(tpCp, obj);
+			}
+			return JVX_NO_ERROR;
+
+		}
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	}
 }
