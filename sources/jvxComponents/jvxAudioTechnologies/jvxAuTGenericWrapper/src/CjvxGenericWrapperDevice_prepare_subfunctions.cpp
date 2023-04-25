@@ -1240,12 +1240,15 @@ CjvxGenericWrapperDevice::postprocess_linkdata(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 			_common_set_ocon.theData_out.con_link.connect_to->postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
 
+		/*
+		* Parameters must be preseved and NOT rest
 		_common_set_ocon.theData_out.con_params.buffersize = 0;
 		_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_NONE;
-		_common_set_ocon.theData_out.con_data.buffers = NULL;
-		_common_set_ocon.theData_out.con_data.number_buffers = 0;
 		_common_set_ocon.theData_out.con_params.number_channels = 0;
 		_common_set_ocon.theData_out.con_params.rate = 0;
+		*/
+		_common_set_ocon.theData_out.con_data.buffers = NULL;
+		_common_set_ocon.theData_out.con_data.number_buffers = 0;
 		_common_set_ocon.theData_out.con_data.bExt.align = 0;
 		_common_set_ocon.theData_out.con_data.bExt.append = 0;
 		_common_set_ocon.theData_out.con_data.bExt.prepend = 0;

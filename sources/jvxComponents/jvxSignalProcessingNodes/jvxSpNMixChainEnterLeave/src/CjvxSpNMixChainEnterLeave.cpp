@@ -5,10 +5,17 @@ CjvxSpNMixChainEnterLeave::CjvxSpNMixChainEnterLeave(JVX_CONSTRUCTOR_ARGUMENTS_M
 {
 	forward_complain = true;
 	_common_set_ldslave.zeroCopyBuffering_cfg = true;
+
+	JVX_INITIALIZE_MUTEX(safeAccessInputsOutputs);
 }
 
 CjvxSpNMixChainEnterLeave::~CjvxSpNMixChainEnterLeave()
 {
+	JVX_TERMINATE_MUTEX(safeAccessInputsOutputs);
+
+	assert(inputConnectors.selectedInputConnectors.size() == 0);
+	assert(inputConnectors.processingInputConnectors.size() == 0);
+	assert(inputConnectors.extra_icon_gen == nullptr);
 }
 
 jvxErrorType 
@@ -60,16 +67,18 @@ CjvxSpNMixChainEnterLeave::activate()
 		switch (operationMode)
 		{
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
-			JVX_SAFE_ALLOCATE_OBJECT(extra_icon_gen, CjvxSingleInputConnector);
-			extra_icon_gen->activate(this, this, "mix-in", this);
-			elmIn.theConnector = extra_icon_gen;
+			inputConnectors.inConName = "mix-in";
+			JVX_SAFE_ALLOCATE_OBJECT(inputConnectors.extra_icon_gen, CjvxSingleInputConnectorMulti);
+			inputConnectors.extra_icon_gen->activate(this, this, inputConnectors.inConName, this);
+			elmIn.theConnector = inputConnectors.extra_icon_gen;
 
 			// Functional part "CjvxConnectorFactory"
-			_common_set_conn_factory.input_connectors[extra_icon_gen] = elmIn;
+			_common_set_conn_factory.input_connectors[inputConnectors.extra_icon_gen] = elmIn;
 			break;
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+			outConName = "mix-out";
 			JVX_SAFE_ALLOCATE_OBJECT(extra_ocon_gen, CjvxSingleOutputConnector);
-			extra_ocon_gen->activate(this, this, "mix-out", this);
+			extra_ocon_gen->activate(this, this, outConName, this);
 			elmOut.theConnector = extra_ocon_gen;
 			// Functional part "CjvxConnectorFactory"
 			_common_set_conn_factory.output_connectors[extra_ocon_gen] = elmOut;
@@ -92,14 +101,14 @@ CjvxSpNMixChainEnterLeave::deactivate()
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
 			
 			// Functional part "CjvxConnectorFactory"
-			elmI = _common_set_conn_factory.input_connectors.find(extra_icon_gen);
+			elmI = _common_set_conn_factory.input_connectors.find(inputConnectors.extra_icon_gen);
 			if (elmI != _common_set_conn_factory.input_connectors.end())
 			{
 				_common_set_conn_factory.input_connectors.erase(elmI);
 			}
 
-			extra_icon_gen->deactivate();
-			JVX_SAFE_DELETE_OBJECT(extra_icon_gen); 
+			inputConnectors.extra_icon_gen->deactivate();
+			JVX_SAFE_DELETE_OBJECT(inputConnectors.extra_icon_gen);
 			break;
 
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
@@ -327,32 +336,34 @@ CjvxSpNMixChainEnterLeave::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 jvxErrorType 
 CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
+	jvxSize i;
+	jvxHandle** bufsOut = nullptr;
+	// Browse through the list of the active streams and request data
+	switch (operationMode)
+	{
+	case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
+
+		// Prepare buffer on output side. Set overall values to 0!!
+		idxBufferProcess = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+		bufsOut = bufsSideChannel[idxBufferProcess];
+		for (i = 0; i < szExtraBuffersChannels; i++)
+		{
+			memset(bufsOut[i], 0, jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format) * _common_set_ocon.theData_out.con_params.buffersize);
+		}
+
+		JVX_LOCK_MUTEX(safeAccessInputsOutputs);
+		for (auto& elm : inputConnectors.processingInputConnectors)
+		{
+			elm.second.iconn->trigger_get_data();
+		}
+		JVX_UNLOCK_MUTEX(safeAccessInputsOutputs);
+		break;
+	case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+		break;
+	}
+
 	auto res = CjvxBareNode1ioRearrange::process_buffers_icon(mt_mask, idx_stage);
 	return res;
-}
-
-jvxErrorType 
-CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleInputConnector* iconn)
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CjvxSpNMixChainEnterLeave::report_unselected_connector(CjvxSingleInputConnector* iconn)
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleOutputConnector* oconn)
-{
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CjvxSpNMixChainEnterLeave::report_unselected_connector(CjvxSingleOutputConnector* oconn)
-{
-	return JVX_NO_ERROR;
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, set_on_config)
