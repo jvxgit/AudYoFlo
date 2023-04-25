@@ -46,9 +46,8 @@ namespace CayfAutomationModules
 		return JVX_NO_ERROR;
 	}
 	void
-		CayfAutomationModulesSrc2Snk::try_connect(jvxComponentIdentification tp_reg, jvxComponentIdentification tp_src, jvxComponentIdentification tp_sink)
+		CayfAutomationModulesSrc2Snk::try_connect(jvxComponentIdentification tp_reg, jvxComponentIdentification tp_src, jvxComponentIdentification tp_sink, jvxBool& established, jvxBool dbgConnect)
 	{
-		jvxBool established = false;
 		jvxSize proc_id = JVX_SIZE_UNSELECTED;
 		jvxBool rep_global = false;
 		jvxSize bridgeId = 0;
@@ -68,7 +67,7 @@ namespace CayfAutomationModules
 			auto& elm = module_connections.find(tp_reg);
 			assert(elm != module_connections.end());
 
-			jvxDataConnectionRuleParameters params(false, false, true, false, true);
+			jvxDataConnectionRuleParameters params(false, false, true, dbgConnect, true);
 			std::string chainName = config.chainNamePrefix + jvx_size2String(tp_src.slotsubid);
 
 
@@ -115,7 +114,10 @@ namespace CayfAutomationModules
 						&proc_id,
 						&rep_global);
 				
-					if (resC == JVX_NO_ERROR)
+					// If we manage to connect the chain, the bool "established" is true.
+					// resC only observes general functionality. It should always be JVX_NO_ERROR!
+					assert(resC == JVX_NO_ERROR);
+					if (established)
 					{
 						JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
 						log << "Successfully connected chain <" << chainName << ">" << std::endl;
@@ -267,27 +269,50 @@ namespace CayfAutomationModules
 			cpElm.cpId = cpElm.cpTp;
 			res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.modName, obj_dev, true, cpElm.manSuffix);
 
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
-			log << "Activated module <" << cpElm.modName << "> with suffix <" << cpElm.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
-			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
-
-			if (res == JVX_NO_ERROR)
+			if(res == JVX_NO_ERROR)
 			{
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
+				log << "Activated module <" << cpElm.modName << "> with suffix <" << cpElm.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 				realizeChain.lstEntries.push_back(cpElm);
 			}
 			else
 			{
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
+				log << "Failed to activate module <" << cpElm.modName << "> with suffix <" << cpElm.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 				break;
 			}
 		}
 
 		if (res == JVX_NO_ERROR)
 		{
+			jvxBool established = false;
 			module_connections[tp_activated] = realizeChain;
-			try_connect(tp_activated, config.tpSrc, config.tpSink);
+			try_connect(tp_activated, config.tpSrc, config.tpSink, established, config.dbgOut);
+
+			if(!established)
+			{
+				// If we do not establish the connection we can deactivate the added objects
+				module_connections.erase(tp_activated);
+				res = JVX_ERROR_INVALID_SETTING;
+			}
 		}
 
-		return JVX_NO_ERROR;
+		if (res != JVX_NO_ERROR)
+		{
+			// Here we end up in error case!
+			for (auto elmI : realizeChain.lstEntries)
+			{
+				// On this list, we only see the active nodes!
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
+				log << "On error, deactivating  module <" << elmI.modName << "> with suffix <" << elmI.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+
+				jvxErrorType resL = jvx_deactivateObjectInModule(refHostRefPtr, elmI.cpId);
+			}
+		}
+		return res;
 	}
 
 	jvxErrorType

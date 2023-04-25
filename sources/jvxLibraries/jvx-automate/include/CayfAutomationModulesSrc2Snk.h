@@ -83,7 +83,9 @@ namespace CayfAutomationModules
 		void try_connect(
 			jvxComponentIdentification tp_ident,
 			jvxComponentIdentification tp_src,
-			jvxComponentIdentification tp_sink);
+			jvxComponentIdentification tp_sink,
+			jvxBool& established,
+			jvxBool dbgConnect);
 
 		jvxErrorType associate_process(jvxSize uIdProcess,
 			const std::string& nmChain) override;

@@ -58,6 +58,7 @@ namespace CayfAutomationModules
 		jvxSize connectionCategory = JVX_SIZE_UNSELECTED;
 		jvxComponentIdentification tpSrc = JVX_COMPONENT_UNKNOWN;
 		jvxComponentIdentification tpSink = JVX_COMPONENT_UNKNOWN;
+		jvxBool dbgOut = false;
 
 		ayfConnectConfig() {};
 		ayfConnectConfig(const std::string& chainName,
@@ -67,10 +68,11 @@ namespace CayfAutomationModules
 			const std::string& iconNmSinkArg = "",
 			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED, 
 			jvxComponentIdentification tpSrcArg = JVX_COMPONENT_UNKNOWN,
-			jvxComponentIdentification tpSinkArg = JVX_COMPONENT_UNKNOWN) :
+			jvxComponentIdentification tpSinkArg = JVX_COMPONENT_UNKNOWN,
+			jvxBool dbgOutArg = false) :
 			chainNamePrefix(chainName), connectedNodes(connectedNodesArg),
 			nmMaster(nmMasterArg), oconNmSource(oconNmSourceArg), iconNmSink(iconNmSinkArg),
-			connectionCategory(connectionCategoryArg), tpSrc(tpSrcArg), tpSink(tpSinkArg)
+			connectionCategory(connectionCategoryArg), tpSrc(tpSrcArg), tpSink(tpSinkArg), dbgOut(dbgOutArg)
 		{};
 	};
 

@@ -4173,6 +4173,10 @@ jvx_activateObjectInModule(
 			}
 		}	
 	}
+	else
+	{
+		res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
 	return res;
 }
 
@@ -4184,7 +4188,7 @@ jvx_deactivateObjectInModule(IjvxHost* hHostRef, jvxComponentIdentification& tp)
 	// Component may have been deactivated before..
 	res = hHostRef->deactivate_selected_component(tp);
 	res = hHostRef->unselect_selected_component(tp);
-	res = JVX_NO_ERROR;
+	res = JVX_NO_ERROR; // always return success!
 	return res;
 }
 
