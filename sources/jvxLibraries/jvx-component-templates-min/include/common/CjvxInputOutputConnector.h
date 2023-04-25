@@ -49,7 +49,7 @@ protected:
 	CjvxInputOutputConnector();
 	~CjvxInputOutputConnector();
 
-	jvxErrorType _available_connector(jvxBool* isAvail);
+	// jvxErrorType _available_connector(jvxBool* isAvail);
 
 	 jvxErrorType lds_activate(IjvxDataProcessor* theDataProc, IjvxObject* theObjRef,
 		IjvxConnectorFactory* myPar, IjvxConnectionMaster* master, std::string descror,

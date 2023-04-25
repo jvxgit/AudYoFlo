@@ -25,7 +25,8 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 	{
 	}
 
-	jvxErrorType 
+	/*
+	jvxErrorType
 		CjvxInputOutputConnector::CjvxInputOutputConnector::_available_connector(jvxBool* isAvail)
 	{
 		if (isAvail)
@@ -40,7 +41,7 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		}
 		return JVX_NO_ERROR;
 	}
-	
+	*/
 	
 
 	jvxErrorType 
