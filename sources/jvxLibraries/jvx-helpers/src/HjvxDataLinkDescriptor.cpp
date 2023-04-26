@@ -258,7 +258,8 @@ jvx_deallocateDataLinkSync(jvxLinkDataDescriptor* theData)
 jvxErrorType
 jvx_allocateDataLinkDescriptorRouteChannels(
 		jvxLinkDataDescriptor* theDataTo, jvxLinkDataDescriptor* theDataFrom, 
-	jvxSize numChannelsCopy, jvxHandle**** bufToStore)
+	jvxSize numChannelsCopy, jvxHandle**** bufToStore, 
+	jvxSize* ptrEntriesRoutes, jvxSize numEntriesRoutes, jvxBool routeOutputToInput)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize i, j;
@@ -313,12 +314,36 @@ jvx_allocateDataLinkDescriptorRouteChannels(
 				{
 					JVX_DSP_SAFE_ALLOCATE_FIELD(theDataTo->con_data.buffers[i], jvxHandle*, theDataTo->con_params.number_channels);
 					assert(theDataTo->con_data.buffers[i]);
+
 					for (j = 0; j < (jvxSize)theDataTo->con_params.number_channels; j++)
 					{
 						theDataTo->con_data.buffers[i][j] = NULL;
+					}
+
+					// Here we actually copy the channels
+					for (j = 0; j < (jvxSize)theDataTo->con_params.number_channels; j++)
+					{
 						if (j < numChannelsCopy)
 						{
-							theDataTo->con_data.buffers[i][j] = theDataFrom->con_data.buffers[i][j];
+							jvxSize writeTo = j;
+							jvxSize writeFrom = j;
+
+							if (j < numEntriesRoutes)
+							{
+								if (routeOutputToInput)
+								{
+									writeTo = ptrEntriesRoutes[j];
+								}
+								else
+								{
+									writeFrom = ptrEntriesRoutes[j];
+								}
+							}
+
+							writeTo = JVX_MIN(writeTo, theDataTo->con_params.number_channels - 1);
+							writeFrom = JVX_MIN(writeFrom, theDataFrom->con_params.number_channels - 1);
+
+							theDataTo->con_data.buffers[i][writeTo] = theDataFrom->con_data.buffers[i][writeFrom];
 						}
 					}
 				}

@@ -339,7 +339,10 @@ static oneEntryProperties jvxProperties[] =
 	{	"jvx_snk_name_str"						,	JVX_PROPERTIES_OFFSET_SYSTEM + 30				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/snk_name"},
 	{   "jvx_processing_dataflow_int16"			,	JVX_PROPERTIES_OFFSET_SYSTEM + 31				,	JVX_DATAFORMAT_16BIT_LE			,	1	, JVX_PROPERTY_DECODER_DATAFLOW_IDX			,"system/dataflow" },
 	{   "jvx_processing_formatspec_string"		,	JVX_PROPERTIES_OFFSET_SYSTEM + 32				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/formatspec" },
-	{   "jvx_component_nickname"				,	JVX_PROPERTIES_OFFSET_SYSTEM + 33				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/nickname" },
+	/*
+	* No longer in use. Use the interface IjvxManipulate to change the name of a component!!
+	{"jvx_component_nickname"				,	JVX_PROPERTIES_OFFSET_SYSTEM + 33				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/nickname"},
+	*/
 #ifndef JVX_NO_SYSTEM_EXTENSIONS	
 #include "typedefs/TpjvxProperties_entries.h"
 #endif

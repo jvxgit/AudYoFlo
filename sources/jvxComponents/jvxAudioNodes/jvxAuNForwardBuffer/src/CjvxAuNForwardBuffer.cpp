@@ -466,7 +466,8 @@ CjvxAuNForwardBuffer::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 	}
 
-	genForwardBuffer_node::monitor.buffer_drops.value = 0;
+	genForwardBuffer_node::monitor.buffer_underflow.value = 0;
+	genForwardBuffer_node::monitor.buffer_overflow.value = 0;
 	return res;
 }
 
@@ -610,9 +611,16 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			0, nullptr, nullptr,
 			nullptr, nullptr);
 
+		if (res != JVX_NO_ERROR)
+		{
+			genForwardBuffer_node::monitor.buffer_overflow.value++;
+		}
+
 		// ========================================================================================================
 
-		// If we are in OUTPUT_BUFFER MODE we will trigger the output thread
+		// If we are in OUTPUT_BUFFER MODE we will trigger the output thread. The clock in this case is on the
+		// input side. When the thread is awake it check if it can deliver enough audio samples and acts only if so.
+		// Check function <write_samples_from_buffer>
 		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT)
 		{
 			if (res == JVX_NO_ERROR)
@@ -620,6 +628,12 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				refThreads.cpPtr->trigger_wakeup();
 			}
 		}
+
+		// If we are in JVX_FORWARDBUFFER_BUFFER_INPUT mode, the input thread is triggered if the
+		// output side has read data such that the buffer is below the start threshold. This, however, happens 
+		// in the transfer_backward_ocon function since the clock source comes from the output side.
+		// The collecting thread only requests new data if it sure that it can hold the number of samples as
+		// expected. The input is in function <read_samples_to_buffer>
 	}
 	return res;
 }
@@ -720,7 +734,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 							break;
 						case JVX_DSP_ERROR_BUFFER_OVERFLOW:		
 							// Count the underflow events - even if the chan -- but not if not yet ready.
-							genForwardBuffer_node::monitor.buffer_drops.value++;
+							genForwardBuffer_node::monitor.buffer_underflow.value++;
 
 							[[fallthrough]];
 
@@ -818,7 +832,7 @@ CjvxAuNForwardBuffer::wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms)
 	}
 	else
 	{
-		write_samples_to_buffer();
+		write_samples_to_output();
 	}
 	return JVX_NO_ERROR;
 }
@@ -884,9 +898,10 @@ CjvxAuNForwardBuffer::read_samples_to_buffer()
 		jvx_audio_stack_sample_dispenser_buffer_status(&myAudioDispenser,
 			nullptr,
 			&space);
-		if (space >= node_output._common_set_node_params_a_1io.buffersize)
+
+		if (space >= node_inout._common_set_node_params_a_1io.buffersize)
 		{
-			// Try to get data from chain. 
+			// Try to get data from chain ONLY if there is enough space in buffer
 			jvxErrorType res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 				JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 			if (res != JVX_NO_ERROR)
@@ -902,7 +917,7 @@ CjvxAuNForwardBuffer::read_samples_to_buffer()
 }
 
 void
-CjvxAuNForwardBuffer::write_samples_to_buffer()
+CjvxAuNForwardBuffer::write_samples_to_output()
 {
 	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{

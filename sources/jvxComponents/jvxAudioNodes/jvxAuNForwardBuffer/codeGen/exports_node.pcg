@@ -53,8 +53,16 @@ SECTION PROPERTIES
 		CALLBACKS = {"get_processing_monitor"};
 		CALLBACK_GET_PREHOOK = "get_processing_monitor"; 
 
-		SECTION buffer_drops
+		SECTION buffer_underflow
 		{
+			// On the output side, the module can not deliver audio samples on request!!
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+		};
+		SECTION buffer_overflow
+		{
+			// On the input side, the module can not store incoming data
 			TYPE = "JVX_DATAFORMAT_SIZE";	
 			INIT_SET = 0;
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	

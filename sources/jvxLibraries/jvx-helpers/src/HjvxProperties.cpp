@@ -1658,11 +1658,15 @@ namespace jvx {
 							numBytes = jvxDataFormat_size[theDescr.format] * theDescr.num;
 							ptrVal = new jvxByte[numBytes];
 							memset(ptrVal, 0, numBytes);
+
+							// Is this required? We will do this in the dfollowing call to "fromString"
+							/*
 							res = jvx_binString2ValueList(loadTarget, loadTargetPP, ptrVal, theDescr.format, theDescr.num, &numBytes, &numValuesPassed);
 							if (res != JVX_NO_ERROR)
 							{
 								res = jvx_string2ValueList(loadTarget, ptrVal, theDescr.format, theDescr.num, &numValuesPassed);
 							}
+							*/
 							break;
 
 						case JVX_DATAFORMAT_SELECTION_LIST:

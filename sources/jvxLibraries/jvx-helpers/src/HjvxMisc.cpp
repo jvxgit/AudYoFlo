@@ -1346,6 +1346,7 @@ jvx_string2ValueList(const std::string& input, jvxHandle* ptrVal, jvxDataFormat 
 	jvxInt32* ptrI32 = NULL;
 	jvxInt16* ptrI16 = NULL;
 	jvxInt8* ptrI8 = NULL;
+	jvxUInt64* ptrSize = NULL;
 	jvxUInt64* ptrUI64 = NULL;
 	jvxUInt32* ptrUI32 = NULL;
 	jvxUInt16* ptrUI16 = NULL;
@@ -1402,6 +1403,7 @@ jvx_string2ValueList(const std::string& input, jvxHandle* ptrVal, jvxDataFormat 
 		}
 		break;
 
+	case JVX_DATAFORMAT_SIZE:
 	case JVX_DATAFORMAT_U64BIT_LE:
 	case JVX_DATAFORMAT_U32BIT_LE:
 	case JVX_DATAFORMAT_U16BIT_LE:
@@ -1469,6 +1471,14 @@ jvx_string2ValueList(const std::string& input, jvxHandle* ptrVal, jvxDataFormat 
 		}
 		break;
 
+	case JVX_DATAFORMAT_SIZE:
+		ptrSize = (jvxSize*)ptrVal;
+		for (i = 0; i < numCopy; i++)
+		{
+			jvx_check_value(lstUI64[0][i], format);
+			ptrSize[i] = lstUI64[0][i];
+		}
+		break;
 	case JVX_DATAFORMAT_U64BIT_LE:
 		ptrUI64 = (jvxUInt64*)ptrVal;
 		for (i = 0; i < numCopy; i++)

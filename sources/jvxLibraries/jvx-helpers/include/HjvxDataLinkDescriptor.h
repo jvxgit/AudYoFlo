@@ -11,7 +11,8 @@ jvxErrorType  jvx_initDataLinkDescriptor(jvxLinkDataDescriptor* theData);
 jvxErrorType jvx_terminateDataLinkDescriptor(jvxLinkDataDescriptor* theData);
 
 jvxErrorType jvx_allocateDataLinkDescriptorRouteChannels(jvxLinkDataDescriptor* theDataTo, 
-	jvxLinkDataDescriptor* theDataFrom, jvxSize numChannelsCopy, jvxHandle**** bufToStore);
+	jvxLinkDataDescriptor* theDataFrom, jvxSize numChannelsCopy, jvxHandle**** bufToStore,
+	jvxSize* ptrEntriesRoutes = nullptr, jvxSize numEntriesRoutes = 0, jvxBool routeOutputToInput = true);
 jvxErrorType jvx_deallocateDataLinkDescriptorRouteChannels(jvxLinkDataDescriptor* theData, jvxHandle*** bufFromStorage);
 
 jvxErrorType jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateFields);

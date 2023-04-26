@@ -4,6 +4,7 @@
 #include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "common/CjvxSingleInputConnector.h"
 #include "common/CjvxSingleOutputConnector.h"
+#include "CjvxSpNMixChainEnterLeave_common.h"
 
 enum class jvxOperationModeMixChain
 {
@@ -14,20 +15,13 @@ enum class jvxOperationModeMixChain
 
 #include "pcg_exports_node.h"
 
-class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, 
-	public CjvxSingleConnector_report<CjvxSingleInputConnector>,
-	public CjvxSingleConnector_report<CjvxSingleOutputConnector>,
-	public genMixChain
+
+class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, public IjvxManipulate,
+	public CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>,
+	public CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>,
+	public CjvxSpNMixChainEnterLeaveCommon, public genMixChain
 {
 	jvxSize uIdGen = 1;
-
-	template <class T> class oneConnectorPlusName
-	{
-	public:
-		T* ioconn = nullptr;
-		std::string nmUnique;
-		jvxBool inProcessing = false;
-	};
 
 	jvxOperationModeMixChain operationMode = jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT;
 	
@@ -37,16 +31,10 @@ class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange,
 
 	jvxHandle*** bufsToStore;
 
-	JVX_MUTEX_HANDLE safeAccessInputsOutputs;
+	jvxSize* ptrChannelRoutes = nullptr;
+	jvxSize szChannelRoutes = 0;
 
-	struct
-	{
-		CjvxSingleInputConnectorMulti* extra_icon_gen = nullptr;
-		std::string inConName;
-		std::map<CjvxSingleInputConnector*, oneConnectorPlusName<CjvxSingleInputConnector> > selectedInputConnectors;
-		std::map<CjvxSingleInputConnector*, oneConnectorPlusName<CjvxSingleInputConnector> > processingInputConnectors;
-	} inputConnectors;
-
+	/*
 	struct
 	{
 		std::string outConName;
@@ -54,6 +42,7 @@ class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange,
 		std::map<CjvxSingleOutputConnector*, oneConnectorPlusName<CjvxSingleOutputConnector> > selectedOutputConnectors;
 		std::map<CjvxSingleOutputConnector*, oneConnectorPlusName<CjvxSingleOutputConnector> > processingOutputConnectors;
 	} outputConnectors;
+	*/
 
 public:
 	JVX_CALLINGCONVENTION CjvxSpNMixChainEnterLeave(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -66,6 +55,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
 
 	// Negotiations
+	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual void from_input_to_output() override;
 	jvxErrorType accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
@@ -74,29 +64,30 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
+	jvxErrorType set_manipulate_value(jvxSize id, jvxVariant* varray) override;
+	jvxErrorType get_manipulate_value(jvxSize id, jvxVariant* varray) override;
+
+	jvxErrorType request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl) override;
+	jvxErrorType return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl) override;
+
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_on_config);
 
 	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn) override;
 	void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) override;
-	jvxErrorType report_started_connector(CjvxSingleInputConnector* iconn) override;
-
-	jvxErrorType report_stopped_connector(CjvxSingleInputConnector* iconn) override;
 	void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) override;
-	jvxErrorType report_unselected_connector(CjvxSingleInputConnector* iconn) override;
-
-	virtual void report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
+	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
 
 	// =============================================================================
 
 	jvxErrorType report_selected_connector(CjvxSingleOutputConnector* iconn) override;
 	void request_unique_id_start(CjvxSingleOutputConnector* iconn, jvxSize* uId) override;
-	jvxErrorType report_started_connector(CjvxSingleOutputConnector* iconn) override;
-
-	jvxErrorType report_stopped_connector(CjvxSingleOutputConnector* iconn) override;
 	void release_unique_id_stop(CjvxSingleOutputConnector* iconn, jvxSize uId) override;
-	jvxErrorType report_unselected_connector(CjvxSingleOutputConnector* iconn) override;
+	virtual void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
 
-	virtual void report_process_buffers(CjvxSingleOutputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
 };
+
+	// ============================================================================
+
+	
 
 #endif

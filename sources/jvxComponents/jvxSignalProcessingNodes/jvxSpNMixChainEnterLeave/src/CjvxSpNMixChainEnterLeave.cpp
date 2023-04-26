@@ -6,16 +6,16 @@ CjvxSpNMixChainEnterLeave::CjvxSpNMixChainEnterLeave(JVX_CONSTRUCTOR_ARGUMENTS_M
 	forward_complain = true;
 	_common_set_ldslave.zeroCopyBuffering_cfg = true;
 
-	JVX_INITIALIZE_MUTEX(safeAccessInputsOutputs);
+	CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::cbRef = this;
 }
 
 CjvxSpNMixChainEnterLeave::~CjvxSpNMixChainEnterLeave()
 {
-	JVX_TERMINATE_MUTEX(safeAccessInputsOutputs);
+	
 
-	assert(inputConnectors.selectedInputConnectors.size() == 0);
-	assert(inputConnectors.processingInputConnectors.size() == 0);
-	assert(inputConnectors.extra_icon_gen == nullptr);
+	assert((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors).size() == 0);
+	assert((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::processingConnectors).size() == 0);
+	assert((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen) == nullptr);
 }
 
 jvxErrorType 
@@ -60,28 +60,29 @@ CjvxSpNMixChainEnterLeave::activate()
 		CjvxConnectorFactory::oneInputConnectorElement elmIn;
 		CjvxConnectorFactory::oneOutputConnectorElement elmOut;
 
-		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.nickname);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.number_channels_side);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.operation_mode);
 
 		switch (operationMode)
 		{
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
-			inputConnectors.inConName = "mix-in";
-			JVX_SAFE_ALLOCATE_OBJECT(inputConnectors.extra_icon_gen, CjvxSingleInputConnectorMulti);
-			inputConnectors.extra_icon_gen->activate(this, this, inputConnectors.inConName, this);
-			elmIn.theConnector = inputConnectors.extra_icon_gen;
+			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName = "mix-in";
+			JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen), 
+				CjvxSingleInputConnectorMulti);
+			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen->activate(this, this, 
+				CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName, this);
+			elmIn.theConnector = CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen;
 
 			// Functional part "CjvxConnectorFactory"
-			_common_set_conn_factory.input_connectors[inputConnectors.extra_icon_gen] = elmIn;
+			_common_set_conn_factory.input_connectors[CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen] = elmIn;
 			break;
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
-			outputConnectors.outConName = "mix-out";
-			JVX_SAFE_ALLOCATE_OBJECT(outputConnectors.extra_ocon_gen, CjvxSingleOutputConnector);
-			outputConnectors.extra_ocon_gen->activate(this, this, outputConnectors.outConName, this);
-			elmOut.theConnector = outputConnectors.extra_ocon_gen;
+			CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::conName = "mix-out";
+			JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen), CjvxSingleOutputConnectorMulti);
+			CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen->activate(this, this, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::conName, this);
+			elmOut.theConnector = CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen;
 			// Functional part "CjvxConnectorFactory"
-			_common_set_conn_factory.output_connectors[outputConnectors.extra_ocon_gen] = elmOut;
+			_common_set_conn_factory.output_connectors[CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen] = elmOut;
 			break;
 		}
 	}
@@ -101,33 +102,77 @@ CjvxSpNMixChainEnterLeave::deactivate()
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
 			
 			// Functional part "CjvxConnectorFactory"
-			elmI = _common_set_conn_factory.input_connectors.find(inputConnectors.extra_icon_gen);
+			elmI = _common_set_conn_factory.input_connectors.find(CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen);
 			if (elmI != _common_set_conn_factory.input_connectors.end())
 			{
 				_common_set_conn_factory.input_connectors.erase(elmI);
 			}
 
-			inputConnectors.extra_icon_gen->deactivate();
-			JVX_SAFE_DELETE_OBJECT(inputConnectors.extra_icon_gen);
+			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen->deactivate();
+			JVX_SAFE_DELETE_OBJECT((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen));
 			break;
 
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
 			
 			// Functional part "CjvxConnectorFactory"
-			elmO = _common_set_conn_factory.output_connectors.find(outputConnectors.extra_ocon_gen);
+			elmO = _common_set_conn_factory.output_connectors.find(CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen);
 			if (elmO != _common_set_conn_factory.output_connectors.end())
 			{
 				_common_set_conn_factory.output_connectors.erase(elmO);
 			}
 
-			outputConnectors.extra_ocon_gen->deactivate();
-			JVX_SAFE_DELETE_OBJECT(outputConnectors.extra_ocon_gen);
+			CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen->deactivate();
+			JVX_SAFE_DELETE_OBJECT((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen));
 			break;
 		}
-		_undo_update_property_access_type(genMixChain::config.nickname);
 		_undo_update_property_access_type(genMixChain::config.number_channels_side);
 		_undo_update_property_access_type(genMixChain::config.operation_mode);
 		res = CjvxBareNode1ioRearrange::deactivate();
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	jvxErrorType res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	if (res == JVX_NO_ERROR)
+	{
+		jvxSize numChansMax = JVX_MAX(
+			node_output._common_set_node_params_a_1io.number_channels,
+			node_inout._common_set_node_params_a_1io.number_channels);
+		if (numChansMax != szChannelRoutes)
+		{
+			jvxSize i;
+			jvxSize* fldNew = nullptr;
+			jvxSize fldNewSz = numChansMax;
+
+			if (szChannelRoutes)
+			{
+				genMixChain::deassociate__config(this);
+			}
+			if (fldNewSz)
+			{
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(fldNew, jvxSize, fldNewSz);
+				for (i = 0; i < fldNewSz; i++)
+				{
+					fldNew[i] = i;
+					if (i < szChannelRoutes)
+					{
+						fldNew[i] = ptrChannelRoutes[i];
+					}
+				}
+			}
+			if (szChannelRoutes)
+			{
+				JVX_SAFE_DELETE_FIELD(ptrChannelRoutes);
+				szChannelRoutes = 0;
+			}
+			szChannelRoutes = fldNewSz;
+			ptrChannelRoutes = fldNew;
+			genMixChain::associate__config(this, ptrChannelRoutes, szChannelRoutes);
+		}
+
 	}
 	return res;
 }
@@ -140,10 +185,10 @@ CjvxSpNMixChainEnterLeave::from_input_to_output()
 	switch (operationMode)
 	{
 	case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
-		node_output._common_set_node_params_a_1io.number_channels += genMixChain::config.number_channels_side.value;
+		node_output._common_set_node_params_a_1io.number_channels += (jvxInt32)genMixChain::config.number_channels_side.value;
 		break;
 	case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
-		node_output._common_set_node_params_a_1io.number_channels -= genMixChain::config.number_channels_side.value;
+		node_output._common_set_node_params_a_1io.number_channels -= (jvxInt32)genMixChain::config.number_channels_side.value;
 		break;
 	default:
 
@@ -207,12 +252,24 @@ CjvxSpNMixChainEnterLeave::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 				_common_set_icon.theData_in->con_params.number_channels,
 				_common_set_ocon.theData_out.con_params.number_channels);
 
+			jvxBool routeOutputToInput = true;
+
+			switch (operationMode)
+			{
+			case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
+				routeOutputToInput = false;
+				break;
+			case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+				routeOutputToInput = true;
+				break;
+			}
+
 			// Reallocate all buffers taken from the output side
 			jvx_allocateDataLinkDescriptorRouteChannels(
 				_common_set_icon.theData_in,
 				&_common_set_ocon.theData_out,
 				numChansCopy,
-				&bufsToStore);
+				&bufsToStore, ptrChannelRoutes, szChannelRoutes, routeOutputToInput);
 
 			switch (operationMode)
 			{
@@ -235,7 +292,13 @@ CjvxSpNMixChainEnterLeave::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 					assert(bufsSideChannel[i]);
 					for (j = 0; j < szExtraBuffersChannels; j++)
 					{
-						bufsSideChannel[i][j] = _common_set_ocon.theData_out.con_data.buffers[i][j + _common_set_icon.theData_in->con_params.number_channels];
+						jvxSize writeFrom = j + _common_set_icon.theData_in->con_params.number_channels;
+						if (writeFrom < szChannelRoutes)
+						{
+							writeFrom = ptrChannelRoutes[writeFrom];
+						}
+						writeFrom = JVX_MIN(writeFrom, _common_set_ocon.theData_out.con_params.number_channels - 1);
+						bufsSideChannel[i][j] = _common_set_ocon.theData_out.con_data.buffers[i][writeFrom];
 					}
 				}
 				break;
@@ -260,7 +323,13 @@ CjvxSpNMixChainEnterLeave::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 					for (j = 0; j < szExtraBuffersChannels; j++)
 					{
 						JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel[i][j], jvxByte, jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format) * _common_set_icon.theData_in->con_params.buffersize);
-						_common_set_icon.theData_in->con_data.buffers[i][j + _common_set_ocon.theData_out.con_params.number_channels] = bufsSideChannel[i][j];
+						jvxSize writeTo = j + _common_set_ocon.theData_out.con_params.number_channels;						
+						if (writeTo < szChannelRoutes)
+						{
+							writeTo = ptrChannelRoutes[writeTo];
+						}
+						writeTo = JVX_MIN(writeTo, _common_set_icon.theData_in->con_params.number_channels - 1);
+						_common_set_icon.theData_in->con_data.buffers[i][writeTo] = bufsSideChannel[i][j];
 					}
 				}
 				break;
@@ -351,12 +420,12 @@ CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 			memset(bufsOut[i], 0, jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format) * _common_set_ocon.theData_out.con_params.buffersize);
 		}
 
-		JVX_LOCK_MUTEX(safeAccessInputsOutputs);
-		for (auto& elm : inputConnectors.processingInputConnectors)
+		lock();		
+		for (auto& elm : CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::processingConnectors)
 		{
 			elm.second.ioconn->trigger_get_data();
 		}
-		JVX_UNLOCK_MUTEX(safeAccessInputsOutputs);
+		unlock();
 		break;
 	case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
 		break;
@@ -388,3 +457,115 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, set_on
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CjvxSpNMixChainEnterLeave::set_manipulate_value(jvxSize id, jvxVariant* varray)
+{
+	jvxApiString* ptrString = NULL;
+	jvxErrorType res = JVX_NO_ERROR;
+
+	if (!varray)
+	{
+		return JVX_ERROR_INVALID_ARGUMENT;
+	}
+
+	switch (id)
+	{
+	case JVX_MANIPULATE_DESCRIPTION:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			_common_set_min.theDescription = ptrString->std_str();
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	case JVX_MANIPULATE_DESCRIPTOR:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			_common_set_min.theDescription = ptrString->std_str();
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	default:
+		res = JVX_ERROR_UNSUPPORTED;
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxSpNMixChainEnterLeave::get_manipulate_value(jvxSize id, jvxVariant* varray)
+{
+	jvxApiString* ptrString = NULL;
+	jvxErrorType res = JVX_NO_ERROR;
+
+	if (!varray)
+	{
+		return JVX_ERROR_INVALID_ARGUMENT;
+	}
+
+	switch (id)
+	{
+	case JVX_MANIPULATE_DESCRIPTION:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			ptrString->assign(_common_set_min.theDescription);
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	case JVX_MANIPULATE_DESCRIPTOR:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			ptrString->assign(_common_set_min.theDescription);
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	default:
+		res = JVX_ERROR_UNSUPPORTED;
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxSpNMixChainEnterLeave::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
+{
+	switch (tp)
+	{
+	case JVX_INTERFACE_MANIPULATE:
+		if (hdl) *hdl = static_cast<IjvxManipulate*>(this);
+		return JVX_NO_ERROR;
+	default:
+		break;
+	}
+	return CjvxBareNode1ioRearrange::request_hidden_interface(tp, hdl);
+}
+
+jvxErrorType 
+CjvxSpNMixChainEnterLeave::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
+{
+	switch (tp)
+	{
+	case JVX_INTERFACE_MANIPULATE:
+		if (hdl == static_cast<IjvxManipulate*>(this))
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_INVALID_ARGUMENT;
+	default:
+		break;
+	}
+	return CjvxBareNode1ioRearrange::return_hidden_interface(tp, hdl);
+}

@@ -13,11 +13,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
   )
 
 set(LOCAL_SOURCES 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterleave.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterleave_common.h
+
 	${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterleave.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterleave_input.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterleave_output.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterleave.h
    )
 
 set(LOCAL_LIBS 

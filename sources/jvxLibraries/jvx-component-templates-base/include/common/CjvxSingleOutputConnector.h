@@ -34,4 +34,22 @@ public:
 
 };
 
+class CjvxSingleOutputConnectorMulti : public CjvxSingleOutputConnector
+{
+public:
+	jvxSize acceptNumberConnectors = 1;
+	jvxSize numConnectorsInUse = 0;
+
+	std::map<IjvxOutputConnector*, CjvxSingleOutputConnector*> allocatedConnectors;
+
+	CjvxSingleOutputConnectorMulti();
+	~CjvxSingleOutputConnectorMulti();
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_ocon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
+		IjvxDataConnectionCommon* ass_connection_common, IjvxOutputConnector** replace_connector) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION unselect_connect_ocon(IjvxConnectorBridge* obj,
+		IjvxOutputConnector* replace_connector) override;
+};
+
+
 #endif

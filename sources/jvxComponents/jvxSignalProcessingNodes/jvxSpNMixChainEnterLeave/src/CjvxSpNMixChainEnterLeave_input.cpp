@@ -5,9 +5,10 @@ CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleInputConnector* i
 {
 	oneConnectorPlusName<CjvxSingleInputConnector> addme;
 	addme.ioconn = iconn;
-	addme.nmUnique = _common_set_min.theDescription + "-" + inputConnectors.inConName + "_" + jvx_size2String(uIdGen++);
+	addme.nmUnique = _common_set_min.theDescription + "-" + 
+		CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName + "_" + jvx_size2String(uIdGen++);
 
-	inputConnectors.selectedInputConnectors[iconn] = addme;
+	CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors[iconn] = addme;
 	if (_common_set_icon.theData_in)
 	{
 		// All parameters as desired
@@ -26,8 +27,8 @@ CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleInputConnector* i
 void
 CjvxSpNMixChainEnterLeave::request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId)
 {
-	auto elm = inputConnectors.selectedInputConnectors.find(iconn);
-	if (elm != inputConnectors.selectedInputConnectors.end())
+	auto elm = CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.find(iconn);
+	if (elm != CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.end())
 	{
 		if (_common_set.theUniqueId)
 		{
@@ -36,63 +37,17 @@ CjvxSpNMixChainEnterLeave::request_unique_id_start(CjvxSingleInputConnector* ico
 	}
 }
 
-jvxErrorType
-CjvxSpNMixChainEnterLeave::report_started_connector(CjvxSingleInputConnector* iconn)
-{
-	auto elm = inputConnectors.selectedInputConnectors.find(iconn);
-	assert(elm != inputConnectors.selectedInputConnectors.end());
-	elm->second.inProcessing = true;
-
-	// The list of processing connectors is to be protected as this list is operated in different threads
-	JVX_LOCK_MUTEX(safeAccessInputsOutputs);
-	// Copy to the list of active connections
-	inputConnectors.processingInputConnectors[iconn] = elm->second;
-	JVX_UNLOCK_MUTEX(safeAccessInputsOutputs);
-
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CjvxSpNMixChainEnterLeave::report_stopped_connector(CjvxSingleInputConnector* iconn)
-{
-	// This list must be protected
-	JVX_LOCK_MUTEX(safeAccessInputsOutputs);
-	auto elm = inputConnectors.processingInputConnectors.find(iconn);
-	assert(elm != inputConnectors.processingInputConnectors.end());
-	inputConnectors.processingInputConnectors.erase(elm);
-	JVX_UNLOCK_MUTEX(safeAccessInputsOutputs);
-
-	auto elmS = inputConnectors.selectedInputConnectors.find(iconn);
-	assert(elmS != inputConnectors.selectedInputConnectors.end());
-	elmS->second.inProcessing = false;
-
-	return JVX_NO_ERROR;
-}
-
 void
 CjvxSpNMixChainEnterLeave::release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId)
 {
-	auto elm = inputConnectors.selectedInputConnectors.find(iconn);
-	if (elm != inputConnectors.selectedInputConnectors.end())
+	auto elm = CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.find(iconn);
+	if (elm != CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.end())
 	{
 		if (_common_set.theUniqueId)
 		{
 			_common_set.theUniqueId->release_unique_id(uId);
 		}
 	}
-}
-
-
-jvxErrorType
-CjvxSpNMixChainEnterLeave::report_unselected_connector(CjvxSingleInputConnector* iconn)
-{
-	auto elm = inputConnectors.selectedInputConnectors.find(iconn);
-	if (elm != inputConnectors.selectedInputConnectors.end())
-	{
-		inputConnectors.selectedInputConnectors.erase(elm);
-		return JVX_NO_ERROR;
-	}
-	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
 
 // This function is called for each single connection. We may search for the entry in the map
