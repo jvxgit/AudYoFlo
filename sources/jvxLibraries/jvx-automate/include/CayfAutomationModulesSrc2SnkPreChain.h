@@ -33,7 +33,7 @@ namespace CayfAutomationModules
 
 	};
 
-	class CayfAutomationModulesSrc2SnkTrigger : public CayfAutomationModulesSrc2Snk
+	class CayfAutomationModulesSrc2SnkPreChain : public CayfAutomationModulesSrc2Snk
 	{
 
 	protected:
@@ -41,7 +41,7 @@ namespace CayfAutomationModules
 		std::string iconNmEnterPreChain = "default";
 		jvxComponentIdentification tpEnter = JVX_COMPONENT_UNKNOWN;
 	public:
-		CayfAutomationModulesSrc2SnkTrigger();
+		CayfAutomationModulesSrc2SnkPreChain();
 
 		jvxErrorType activate(IjvxReport* report,
 			IjvxHost* host,

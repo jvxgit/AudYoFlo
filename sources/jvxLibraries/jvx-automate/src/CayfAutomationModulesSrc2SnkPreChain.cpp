@@ -1,16 +1,16 @@
-#include "CayfAutomationModulesSrc2SnkTrigger.h"
+#include "CayfAutomationModulesSrc2SnkPreChain.h"
 #include "common/CjvxObjectLog.h"
 
 namespace CayfAutomationModules
 {
 
-	CayfAutomationModulesSrc2SnkTrigger::CayfAutomationModulesSrc2SnkTrigger(): CayfAutomationModulesSrc2Snk()
+	CayfAutomationModulesSrc2SnkPreChain::CayfAutomationModulesSrc2SnkPreChain(): CayfAutomationModulesSrc2Snk()
 	{
 
 	}
 
 	jvxErrorType 
-		CayfAutomationModulesSrc2SnkTrigger::activate(IjvxReport* report,
+		CayfAutomationModulesSrc2SnkPreChain::activate(IjvxReport* report,
 		IjvxHost* host,
 		ayfAutoConnect_callbacks* cb,
 		jvxSize purpId,
@@ -37,7 +37,7 @@ namespace CayfAutomationModules
 	}
 
 	void
-		CayfAutomationModulesSrc2SnkTrigger::deriveArguments(
+		CayfAutomationModulesSrc2SnkPreChain::deriveArguments(
 			ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated)
 	{
 		derivedArgs.tpSink = tp_activated;
@@ -46,7 +46,7 @@ namespace CayfAutomationModules
 	}
 	
 	void 
-		CayfAutomationModulesSrc2SnkTrigger::create_bridges(
+		CayfAutomationModulesSrc2SnkPreChain::create_bridges(
 			IjvxDataConnectionRule* theDataConnectionDefRuleHdl,
 			jvxComponentIdentification tp_src,
 			jvxComponentIdentification tp_sink,
