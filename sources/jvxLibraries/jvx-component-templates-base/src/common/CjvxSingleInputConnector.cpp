@@ -14,7 +14,7 @@ CjvxSingleInputConnector::~CjvxSingleInputConnector()
 jvxErrorType 
 CjvxSingleInputConnector::activate(IjvxObject* theObj, 
 	IjvxConnectorFactory* conFac, const std::string& nm,
-	CjvxSingleInputConnector_report* reportArg)
+	CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxInputOutputConnectorCore::activate(theObj, conFac, nullptr, nm);

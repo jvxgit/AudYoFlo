@@ -3,38 +3,21 @@
 
 #include "jvx.h"
 #include "common/CjvxInputConnectorLink.h"
+#include "common/CjvxSingleConnectorReport.h"
 #include "common/CjvxNegotiate.h"
-
-class CjvxSingleInputConnector;
-
-JVX_INTERFACE CjvxSingleInputConnector_report
-{
-public:
-	virtual ~CjvxSingleInputConnector_report() {};
-
-	virtual jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn) = 0;
-	virtual void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) = 0;
-	virtual jvxErrorType report_started_connector(CjvxSingleInputConnector* iconn) = 0;
-
-	virtual jvxErrorType report_stopped_connector(CjvxSingleInputConnector* iconn) = 0;
-	virtual void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) = 0;
-	virtual jvxErrorType report_unselected_connector(CjvxSingleInputConnector* iconn) = 0;
-
-	virtual void report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) = 0;
-};
 
 class CjvxSingleInputConnector: public IjvxInputConnector, public CjvxInputConnectorLink
 {
 protected:
 
-	CjvxSingleInputConnector_report* report = nullptr;
+	CjvxSingleConnector_report<CjvxSingleInputConnector>* report = nullptr;
 	CjvxNegotiate_input neg_input;
 
 public:
 	CjvxSingleInputConnector();
 	~CjvxSingleInputConnector();
 
-	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleInputConnector_report* reportArg);
+	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg);
 	jvxErrorType deactivate();
 
 	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;

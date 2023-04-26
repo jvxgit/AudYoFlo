@@ -3,30 +3,23 @@
 
 #include "jvx.h"
 #include "common/CjvxOutputConnectorLink.h"
-
-class CjvxSingleOutputConnector;
-
-JVX_INTERFACE CjvxSingleOutputConnector_report
-{
-public:
-	virtual ~CjvxSingleOutputConnector_report() {};
-
-	jvxErrorType report_selected_connector(CjvxSingleOutputConnector* oconn);
-	jvxErrorType report_unselected_connector(CjvxSingleOutputConnector* oconn);
-};
+#include "common/CjvxSingleConnectorReport.h"
+#include "common/CjvxNegotiate.h"
 
 class CjvxSingleOutputConnector: public IjvxOutputConnector, public CjvxOutputConnectorLink
 {
 protected:
 
-	CjvxSingleOutputConnector_report* report = nullptr;
-
+	CjvxSingleConnector_report< CjvxSingleOutputConnector>* report = nullptr;
+	CjvxNegotiate_output neg_output;
 public:
 	CjvxSingleOutputConnector();
 
-	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleOutputConnector_report* reportArg);
+	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleConnector_report<CjvxSingleOutputConnector>* reportArg);
 	jvxErrorType deactivate();
 	// =======================================================================================
+
+	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requestTestChain);
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT

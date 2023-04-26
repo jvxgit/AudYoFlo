@@ -8,8 +8,7 @@ namespace CayfAutomationModules
 		IjvxHost* host,
 		ayfAutoConnect_callbacks* cb,
 		jvxSize purpId,
-		const ayfConnectConfig& cfg,
-		ayfTriggerComponent trigCompTypeArg,
+		const ayfConnectConfigSrc2Snk& cfg,
 		CjvxObjectLog* ptrLog)
 	{
 		reportRefPtr = report;
@@ -17,7 +16,6 @@ namespace CayfAutomationModules
 		cbPtr = cb;
 		purposeId = purpId;
 		config = cfg;
-		trigCompType = trigCompTypeArg;
 		objLogRefPtr = ptrLog;
 		return JVX_NO_ERROR;
 	}
@@ -42,11 +40,12 @@ namespace CayfAutomationModules
 		config.chainNamePrefix.clear();
 		config.connectedNodes.clear();
 		objLogRefPtr = nullptr;
-		trigCompType = ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SOURCE;
 		return JVX_NO_ERROR;
 	}
 	void
-		CayfAutomationModulesSrc2Snk::try_connect(jvxComponentIdentification tp_reg, jvxComponentIdentification tp_src, jvxComponentIdentification tp_sink, jvxBool& established, jvxBool dbgConnect)
+		CayfAutomationModulesSrc2Snk::try_connect(
+			jvxComponentIdentification tp_reg, 
+			jvxBool& established)
 	{
 		jvxSize proc_id = JVX_SIZE_UNSELECTED;
 		jvxBool rep_global = false;
@@ -67,8 +66,8 @@ namespace CayfAutomationModules
 			auto& elm = module_connections.find(tp_reg);
 			assert(elm != module_connections.end());
 
-			jvxDataConnectionRuleParameters params(false, false, true, dbgConnect, true);
-			std::string chainName = config.chainNamePrefix + jvx_size2String(tp_src.slotsubid);
+			jvxDataConnectionRuleParameters params(false, false, true, config.dbgOut, true);
+			std::string chainName = config.chainNamePrefix + jvx_size2String(derived.tpSrc.slotsubid);
 
 
 			res = con->create_connection_rule(chainName.c_str(),
@@ -88,24 +87,24 @@ namespace CayfAutomationModules
 				{	
 					newProcess.chainName = chainName;
 					newProcess.processUid = JVX_SIZE_UNSELECTED; // process not connected!
-					elm->second.connectedProcesses.push_back(newProcess);
-
-					jvxComponentIdentification tp_master = preset_master();
+					elm->second.connectedProcesses.push_back(newProcess);					
 
 					// Connection: 
 					// <NEW COMPONENT MASTER SOURCE> -> MODULES -> <SINK>
 
 					JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
-					log << "Specifying master component <" << jvxComponentIdentification_txt(tp_master) <<
+					log << "Specifying master component <" << jvxComponentIdentification_txt(derived.tpMaster) <<
 						">, master <" << config.nmMaster << ">." << std::endl;
 					JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
 					res = theDataConnectionDefRuleHdl->specify_master(
-						tp_master,
+						derived.tpMaster,
 						"*", config.nmMaster.c_str());
 					assert(res == JVX_NO_ERROR);
 
-					this->create_bridges(theDataConnectionDefRuleHdl, tp_src, tp_sink, elm->second.lstEntries, bridgeId);
+					this->create_bridges(theDataConnectionDefRuleHdl, derived.tpSrc,
+						derived.tpSink, elm->second.lstEntries, 
+						config.oconNmSource, config.iconNmSink, bridgeId);
 
 					resC = theDataConnectionDefRuleHdl->try_connect_direct(
 						con, refHostRefPtr,
@@ -145,65 +144,68 @@ namespace CayfAutomationModules
 		}
 	}
 
-	jvxComponentIdentification&
-		CayfAutomationModulesSrc2Snk::preset_master()
-	{
-		return config.tpSrc;
-	}
-
 	void
 		CayfAutomationModulesSrc2Snk::create_bridges(
 			IjvxDataConnectionRule* theDataConnectionDefRuleHdl,
 			jvxComponentIdentification tp_src,
 			jvxComponentIdentification tp_sink,
 			std::list<ayfConnectConfigCpEntryRuntime>& lst, 
-			jvxSize& bridgeId)
+			const std::string& oconNameSrc,
+			const std::string& iconNameSink,
+			jvxSize& bridgeId,
+			jvxSize segId)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		
-		std::string oconName = config.oconNmSource;
+		std::string oconName = oconNameSrc;
+		// std::string oconNameSrc = config.oconNmSource;
+		// std::string oconNameSink = config.iconNmSink;
 		jvxComponentIdentification tpOld = tp_src;
 		
 		for (auto& elmC : lst)
 		{
-			// ==================================================================================
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
-			log << "Connect from <" << jvxComponentIdentification_txt(tpOld) <<
-				"> , connector <" << oconName << "> to <" << jvxComponentIdentification_txt(elmC.cpId) <<
-				"> , connector <" << elmC.iconNm << ">." << std::endl;
-			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+			if (elmC.assSegmentId == segId)
+			{
+				// ==================================================================================
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
+				log << "Connect from <" << jvxComponentIdentification_txt(tpOld) <<
+					"> , connector <" << oconName << "> to <" << jvxComponentIdentification_txt(elmC.cpId) <<
+					"> , connector <" << elmC.iconNm << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
-			res = theDataConnectionDefRuleHdl->add_bridge_specification(
-				tpOld,
-				"*", oconName.c_str(),
-				elmC.cpId,
-				"*", elmC.iconNm.c_str(),
-				("Bridge_" + jvx_size2String(bridgeId)).c_str());
-			assert(res == JVX_NO_ERROR);
-			// ==================================================================================
+				res = theDataConnectionDefRuleHdl->add_bridge_specification(
+					tpOld,
+					"*", oconName.c_str(),
+					elmC.cpId,
+					"*", elmC.iconNm.c_str(),
+					("Bridge_" + jvx_size2String(bridgeId)).c_str());
+				assert(res == JVX_NO_ERROR);
+				// ==================================================================================
 
-			tpOld = elmC.cpId;
-			oconName = elmC.oconNm;
-			bridgeId++;
+				tpOld = elmC.cpId;
+				oconName = elmC.oconNm;
+				bridgeId++;
+			}
 		}
 
 		// ==================================================================================
 		JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
 		log << "Connect from <" << jvxComponentIdentification_txt(tpOld) <<
-			"> , connector <" << oconName << "> to <" << jvxComponentIdentification_txt(config.tpSink) <<
-			"> , connector <" << config.iconNmSink << ">." << std::endl;
+			"> , connector <" << oconName << "> to <" << jvxComponentIdentification_txt(tp_sink) <<
+			"> , connector <" << iconNameSink << ">." << std::endl;
 		JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
 		res = theDataConnectionDefRuleHdl->add_bridge_specification(
 			tpOld,
 			"*", oconName.c_str(),
 			tp_sink,
-			"*", config.iconNmSink.c_str(),
+			"*", iconNameSink.c_str(),
 			("Bridge_" + jvx_size2String(bridgeId)).c_str());
+		bridgeId++;
 		assert(res == JVX_NO_ERROR);	
 		// ==================================================================================
 	}
-
+		
 	jvxErrorType
 		CayfAutomationModulesSrc2Snk::activate_all_submodules(const jvxComponentIdentification& tp_activated)
 	{
@@ -212,42 +214,36 @@ namespace CayfAutomationModules
 		// list. 
 
 		// Check if the type is to be handled by this module instance
-		if (cbPtr)
+		if (!cbPtr)
 		{
-			jvxComponentIdentification cpCopy;
-			switch (trigCompType)
-			{
-			case ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SOURCE:
-				cpCopy = config.tpSrc;
-				config.tpSrc = tp_activated;
-				break;
-			case ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SINK:
-				cpCopy = config.tpSink;
-				config.tpSink = tp_activated;
-				break;
-			default: 
-				assert(0);
-			}
-
-			// We decide if this rule applies in this function
-			jvxErrorType res = cbPtr->allow_master_connect(purposeId, tp_activated,
-				config.tpSrc, config.tpSink, config.oconNmSource, config.iconNmSink);
-			if (res != JVX_NO_ERROR)
-			{
-				// Nothing to do here!
-				switch (trigCompType)
-				{
-				case ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SOURCE:
-					config.tpSrc = cpCopy;
-					break;
-				case ayfTriggerComponent::AYF_TRIGGER_COMPONENT_IS_SINK:
-					config.tpSink = cpCopy;
-					break;
-				}
-				return res;
-			}
+			return JVX_ERROR_INVALID_SETTING;
 		}
 
+		// In the remainder of the function, other components will pop up. Then, the 
+		// function must be blocked in this class instance
+		if (lockOperation)
+		{
+			return JVX_ERROR_COMPONENT_BUSY;
+		}
+		
+		// Use tempory derivative
+		ayfConnectDerivedSrc2Snk derivedArgs;
+		deriveArguments(derivedArgs, tp_activated);
+
+		// We decide if this rule applies in this function
+		jvxErrorType res = cbPtr->allow_master_connect(purposeId, tp_activated,
+			derivedArgs.tpSrc, derivedArgs.tpSink, config.oconNmSource, config.iconNmSink);
+		if (res == JVX_NO_ERROR)
+		{
+			// Here we copy the args
+			derived = derivedArgs;
+			lockOperation = true;
+		}
+		else
+		{
+			return res;
+		}
+		
 		auto elm = module_connections.find(tp_activated);
 		if (elm != module_connections.end())
 		{
@@ -259,8 +255,7 @@ namespace CayfAutomationModules
 		//jvxComponentIdentification tp_fwdbuf = JVX_COMPONENT_AUDIO_NODE;
 		IjvxObject* obj_dev = nullptr;
 		refHostRefPtr->request_object_selected_component(tp_activated, &obj_dev);
-
-		jvxErrorType res = JVX_NO_ERROR;
+		
 		ayfEstablishedProcesses realizeChain;
 		for (auto& elmM : config.connectedNodes)
 		{
@@ -289,7 +284,7 @@ namespace CayfAutomationModules
 		{
 			jvxBool established = false;
 			module_connections[tp_activated] = realizeChain;
-			try_connect(tp_activated, config.tpSrc, config.tpSink, established, config.dbgOut);
+			try_connect(tp_activated, established);
 
 			if(!established)
 			{
@@ -312,6 +307,7 @@ namespace CayfAutomationModules
 				jvxErrorType resL = jvx_deactivateObjectInModule(refHostRefPtr, elmI.cpId);
 			}
 		}
+		lockOperation = false; 
 		return res;
 	}
 
@@ -415,4 +411,13 @@ namespace CayfAutomationModules
 		}
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	}
+
+	void
+		CayfAutomationModulesSrc2Snk::deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated)
+	{
+		derivedArgs.tpSrc = tp_activated;
+		derivedArgs.tpSink = config.tpInvolved;
+		derivedArgs.tpMaster = tp_activated;
+	}
+
 }

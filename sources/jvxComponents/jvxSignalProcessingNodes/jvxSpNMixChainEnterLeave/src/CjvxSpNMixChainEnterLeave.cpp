@@ -76,12 +76,12 @@ CjvxSpNMixChainEnterLeave::activate()
 			_common_set_conn_factory.input_connectors[inputConnectors.extra_icon_gen] = elmIn;
 			break;
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
-			outConName = "mix-out";
-			JVX_SAFE_ALLOCATE_OBJECT(extra_ocon_gen, CjvxSingleOutputConnector);
-			extra_ocon_gen->activate(this, this, outConName, this);
-			elmOut.theConnector = extra_ocon_gen;
+			outputConnectors.outConName = "mix-out";
+			JVX_SAFE_ALLOCATE_OBJECT(outputConnectors.extra_ocon_gen, CjvxSingleOutputConnector);
+			outputConnectors.extra_ocon_gen->activate(this, this, outputConnectors.outConName, this);
+			elmOut.theConnector = outputConnectors.extra_ocon_gen;
 			// Functional part "CjvxConnectorFactory"
-			_common_set_conn_factory.output_connectors[extra_ocon_gen] = elmOut;
+			_common_set_conn_factory.output_connectors[outputConnectors.extra_ocon_gen] = elmOut;
 			break;
 		}
 	}
@@ -114,14 +114,14 @@ CjvxSpNMixChainEnterLeave::deactivate()
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
 			
 			// Functional part "CjvxConnectorFactory"
-			elmO = _common_set_conn_factory.output_connectors.find(extra_ocon_gen);
+			elmO = _common_set_conn_factory.output_connectors.find(outputConnectors.extra_ocon_gen);
 			if (elmO != _common_set_conn_factory.output_connectors.end())
 			{
 				_common_set_conn_factory.output_connectors.erase(elmO);
 			}
 
-			extra_ocon_gen->deactivate();
-			JVX_SAFE_DELETE_OBJECT(extra_ocon_gen);
+			outputConnectors.extra_ocon_gen->deactivate();
+			JVX_SAFE_DELETE_OBJECT(outputConnectors.extra_ocon_gen);
 			break;
 		}
 		_undo_update_property_access_type(genMixChain::config.nickname);
@@ -354,7 +354,7 @@ CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		JVX_LOCK_MUTEX(safeAccessInputsOutputs);
 		for (auto& elm : inputConnectors.processingInputConnectors)
 		{
-			elm.second.iconn->trigger_get_data();
+			elm.second.ioconn->trigger_get_data();
 		}
 		JVX_UNLOCK_MUTEX(safeAccessInputsOutputs);
 		break;

@@ -193,6 +193,14 @@ public:
 		uId = JVX_UNIQUE_ID_UNSPECIFIED;
 	};
 
+	jvxComponentIdentification(const jvxComponentIdentification& elm)
+	{
+		tp = elm.tp;
+		slotid = elm.slotid;
+		slotsubid = elm.slotsubid;
+		uId = elm.uId;
+	};
+
 	void unselected(jvxComponentType tpI)
 	{
 		tp = tpI;

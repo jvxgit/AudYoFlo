@@ -3,8 +3,8 @@
 jvxErrorType
 CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleInputConnector* iconn)
 {
-	oneInputConnectorPlusName< CjvxSingleInputConnector> addme;
-	addme.iconn = iconn;
+	oneConnectorPlusName<CjvxSingleInputConnector> addme;
+	addme.ioconn = iconn;
 	addme.nmUnique = _common_set_min.theDescription + "-" + inputConnectors.inConName + "_" + jvx_size2String(uIdGen++);
 
 	inputConnectors.selectedInputConnectors[iconn] = addme;
