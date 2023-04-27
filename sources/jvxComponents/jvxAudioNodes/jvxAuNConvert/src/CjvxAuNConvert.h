@@ -3,6 +3,15 @@
 #define JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR "audio_node"
 
 #include "jvxNodes/CjvxBareNode1ioRearrange.h"
+
+#include "jvx_resampler/jvx_fixed_resampler.h"
+
+enum class jvxRateLocationMode
+{
+	JVX_FIXED_RATE_LOCATION_INPUT,
+	JVX_FIXED_RATE_LOCATION_OUTPUT
+};
+
 #include "pcg_exports_node.h"
 
 class CjvxAuNConvert: public CjvxBareNode1ioRearrange, 
@@ -12,24 +21,50 @@ class CjvxAuNConvert: public CjvxBareNode1ioRearrange,
 private:
 
 
+	struct
+	{
+		jvxSize num = 1;
+		jvxSize den = 1;
+		jvxBool active = false;
+		jvx_fixed_resampler* fldResampler = nullptr;
+		jvxSize numResampler = 0;
+		jvxSize loopNum = 1;
+	} resampling;
+
+	struct
+	{
+		jvxSize numIn = JVX_SIZE_UNSELECTED;
+		jvxSize numOut = JVX_SIZE_UNSELECTED;
+	} reChannel;
+
+	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
+
 public:
 
 	JVX_CALLINGCONVENTION CjvxAuNConvert(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~CjvxAuNConvert();
 
 	// ===================================================================================
-	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual void from_input_to_output() override;
+	jvxErrorType activate()override;
+	jvxErrorType deactivate()override;
+
 	// ===================================================================================
-	/*
-	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
-
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-		virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
+	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
+
+	jvxErrorType accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+	void from_input_to_output() override;
+
+	// ===================================================================================
+	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
+
+	void adapt_output_parameters();
+	jvxErrorType computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
+		jvxSize bSizeIn, jvxSize bSizeOut, jvxSize runCnt, jvxLinkDataDescriptor& tryThis
+		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	/*
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor,

@@ -110,6 +110,69 @@ fail:
 	return JVX_ERROR_INVALID_ARGUMENT;
 }
 
+jvxErrorType 
+CjvxNegotiate_common::_check_equal(jvxLinkDataDescriptor_con_params& params_one, jvxLinkDataDescriptor_con_params& params_other, jvxCBitField checkThis)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_BUFFERSIZE_SHIFT))
+	{
+		if (params_one.buffersize != params_other.buffersize)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_DATAFLOW_SHIFT))
+	{
+		if (params_one.data_flow != params_other.data_flow)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_FORMAT_SHIFT))
+	{
+		if (params_one.format != params_other.format)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_NUM_CHANNELS_SHIFT))
+	{
+		if (params_one.number_channels != params_other.number_channels)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SAMPLERATE_SHIFT))
+	{
+		if (params_one.rate != params_other.rate)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGX_SHIFT))
+	{
+		if (params_one.segmentation.x != params_other.segmentation.x)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGY_SHIFT))
+	{
+		if (params_one.segmentation.y != params_other.segmentation.y)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SUBFORMAT_SHIFT))
+	{
+		if (params_one.format_group != params_other.format_group)
+		{
+			res = JVX_ERROR_INVALID_FORMAT;
+		}
+	}
+	return res;
+}
+
 void
 CjvxNegotiate_common::_set_parameters_fixed(
 	jvxSize num_channels,
@@ -407,7 +470,8 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 		return res;
 	}
 
-	compare_core(ld, ld, thereismismatch);
+	// compare_core(ld, ld, thereismismatch);
+	compare_core(ld, nullptr, thereismismatch); // Test this: the passed struct should NOT be modified
 
 	if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
@@ -445,35 +509,35 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 		*modFlags = 0;
 		if (ld->con_params.buffersize != dataOut->con_params.buffersize)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_BUFFERSIZE_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_BUFFERSIZE_SHIFT);
 		}
 		if (ld->con_params.rate != dataOut->con_params.rate)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_SAMPLERATE_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SAMPLERATE_SHIFT);
 		}
 		if (ld->con_params.number_channels != dataOut->con_params.number_channels)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_NUM_CHANNELS_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_NUM_CHANNELS_SHIFT);
 		}
 		if (ld->con_params.format != dataOut->con_params.format)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_FORMAT_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_FORMAT_SHIFT);
 		}
 		if (ld->con_params.format_group != dataOut->con_params.format_group)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_SUBFORMAT_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SUBFORMAT_SHIFT);
 		}
 		if (ld->con_params.segmentation.x != dataOut->con_params.segmentation.x)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGX_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGX_SHIFT);
 		}
 		if (ld->con_params.segmentation.y != dataOut->con_params.segmentation.y)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_SEGY_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGY_SHIFT);
 		}
 		if (ld->con_params.data_flow != dataOut->con_params.data_flow)
 		{
-			jvx_bitSet(*modFlags, JVX_MODIFICATION_DATAFLOW_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_DATAFLOW_SHIFT);
 		}
 	}
 

@@ -16,6 +16,11 @@ jvxBool jvx_bitTest(jvxBitField entry, jvxSize position)
 	return(entry.bit_test(position));
 }
 
+void jvx_bitInvert(jvxBitField& entry)
+{
+	entry.bit_invert();
+}
+
 jvxSize jvx_bitCountFilled(jvxBitField entry)
 {
 	return entry.bit_count_filled();
@@ -164,6 +169,11 @@ jvxBool jvx_bitTest(jvxCBitField entry, jvxSize position)
 {
 	assert(JVX_CHECK_SIZE_SELECTED(position));
 	return((entry & ((jvxCBitField)1<<position)) != 0);
+}
+
+void jvx_bitInvert(jvxCBitField& entry)
+{
+	entry = ~entry;
 }
 
 void jvx_bitSet(jvxCBitField& entry, jvxSize position)

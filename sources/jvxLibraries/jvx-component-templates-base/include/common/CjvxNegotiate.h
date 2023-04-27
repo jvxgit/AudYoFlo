@@ -9,7 +9,7 @@ typedef enum
 	JVX_NEGOTIATE_CONSTRAINT_CHANGE
 } jvxConstraintSetResult;
 
-typedef enum
+enum class jvxNegotiateModificationSuggested
 {
 	JVX_MODIFICATION_BUFFERSIZE_SHIFT = 0,
 	JVX_MODIFICATION_SAMPLERATE_SHIFT = 1,
@@ -19,7 +19,7 @@ typedef enum
 	JVX_MODIFICATION_SEGX_SHIFT = 5,
 	JVX_MODIFICATION_SEGY_SHIFT = 6,
 	JVX_MODIFICATION_DATAFLOW_SHIFT = 7
-} jvxNegotiateModificationSuggested;
+} ;
 
 class CjvxNegotiate_common
 {
@@ -130,6 +130,7 @@ public:
 	CjvxNegotiate_common();
 
 	static jvxErrorType _check_valid(jvxLinkDataDescriptor_con_params& params, std::string& reason);
+	static jvxErrorType _check_equal(jvxLinkDataDescriptor_con_params& params_one, jvxLinkDataDescriptor_con_params& params_other, jvxCBitField checkThis);
 
 	/**
 	 * This function allows to specify a FIXED setting. Note that the default arguments are set to valid values - no dont-cares.

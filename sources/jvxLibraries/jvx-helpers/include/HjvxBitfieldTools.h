@@ -35,6 +35,7 @@ int jvx_maxNumberSelections();
 // ==========================================================
 
 jvxBool jvx_bitTest(jvxCBitField entry, jvxSize position);
+void jvx_bitInvert(jvxCBitField& entry);
 void jvx_bitSet(jvxCBitField& entry, jvxSize position);
 void jvx_bitZSet(jvxCBitField& entry, jvxSize position);
 void jvx_bitClear(jvxCBitField& entry, jvxSize position);

@@ -242,6 +242,16 @@ public:
 		return(retVal);
 	};
 
+	void bit_invert()
+	{
+		jvxSize i;
+		for (i = 0; i < JVX_NUMBER_32BITS_BITFIELD; i++)
+		{
+			// Rest all bits
+			listFieldsBits[i] = ~listFieldsBits[i];
+		}
+	}
+
 	static jvxSize numberBits()
 	{
 		return(8*sizeof(jvxUInt32)*JVX_NUMBER_32BITS_BITFIELD);

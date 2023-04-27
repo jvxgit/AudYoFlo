@@ -769,6 +769,54 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 	return res;
 }
 
+jvxErrorType
+CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	if (
+		(node_output._common_set_node_params_a_1io.samplerate != preferredByOutput->con_params.rate) ||
+		(node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels))
+	{
+		
+		jvxCBitField checkFlags = 0;
+		jvx_bitSet(checkFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SAMPLERATE_SHIFT);
+		jvx_bitInvert(checkFlags);
+		if (CjvxNegotiate_common::_check_equal(_common_set_icon.theData_in->con_params, preferredByOutput->con_params, checkFlags))
+		{
+			jvxLinkDataDescriptor ld_try;
+			ld_try.con_params = _common_set_icon.theData_in->con_params;
+			ld_try.con_params.rate = preferredByOutput->con_params.rate;
+			ld_try.con_params.number_channels = preferredByOutput->con_params.number_channels;
+
+			res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_try JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_ERROR_COMPROMISE)
+			{
+				// If we have found a compromise we need to check in detail that only the buffersize has changed - which we accept
+				res = JVX_ERROR_UNSUPPORTED;
+				checkFlags = 0;
+				jvx_bitSet(checkFlags, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_BUFFERSIZE_SHIFT);
+				jvx_bitSet(checkFlags, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGX_SHIFT);
+				jvx_bitSet(checkFlags, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_NUM_CHANNELS_SHIFT);
+				jvx_bitInvert(checkFlags);
+				if (CjvxNegotiate_common::_check_equal(_common_set_icon.theData_in->con_params, ld_try.con_params, checkFlags) == JVX_NO_ERROR)
+				{
+					res = JVX_NO_ERROR;
+
+					// We can work with this - let us update the output parameters
+					node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
+					node_output._common_set_node_params_a_1io.samplerate = preferredByOutput->con_params.rate;
+					neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels, 
+						JVX_SIZE_UNSELECTED,
+						node_output._common_set_node_params_a_1io.samplerate);
+					_common_set_ocon.theData_out.con_params.number_channels = node_output._common_set_node_params_a_1io.number_channels;
+					_common_set_ocon.theData_out.con_params.rate = node_output._common_set_node_params_a_1io.samplerate;
+				}
+			}
+		}
+	}
+	return res;
+}
+
 // ===================================================================
 // ===================================================================
 

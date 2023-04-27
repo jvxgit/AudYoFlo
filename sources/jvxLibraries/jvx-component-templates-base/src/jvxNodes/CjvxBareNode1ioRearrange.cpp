@@ -113,6 +113,7 @@ CjvxBareNode1ioRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 	jvxLinkDataDescriptor* ld = (jvxLinkDataDescriptor*)data;
 	jvxBool thereismismatch = false;
 	jvxErrorType res = JVX_NO_ERROR;
+	jvxErrorType resCheck = JVX_NO_ERROR;
 	std::string txt;
 
 	switch (tp)
@@ -122,8 +123,10 @@ CjvxBareNode1ioRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 		// The local function at this place does nothing - forward is not foreseen in the default implementation
 		res = accept_negotiate_output(tp, ld JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
-		if (res == JVX_NO_ERROR)
+		switch(res)
 		{
+		case JVX_NO_ERROR:
+
 			// There is only room to negotiate 
 			res = neg_output._negotiate_transfer_backward_ocon(ld,
 				&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), nullptr
@@ -133,6 +136,26 @@ CjvxBareNode1ioRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 				// Derive the output parameters from the "modified" data params
 				output_params_from_ldesc_on_test();
 			}
+			break;
+		case JVX_ERROR_COMPROMISE:
+
+			// If we have setup a compromise, the check is obsolete and would undo the found compromise
+			/*
+			res = neg_output._negotiate_transfer_backward_ocon(ld,
+				&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), nullptr
+				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_NO_ERROR)
+			{
+				// Derive the output parameters from the "modified" data params
+				output_params_from_ldesc_on_test();
+			
+				// Reset the result to COMPROMISE as this is a stronger requirement
+				res = JVX_ERROR_COMPROMISE;
+			}
+			*/
+			break;
+		default:
+			break;
 		}
 		break;
 	default:
@@ -165,6 +188,7 @@ CjvxBareNode1ioRearrange::update_ldesc_from_output_params_on_test()
 	_common_set_ocon.theData_out.con_params.segmentation.x = node_output._common_set_node_params_a_1io.segmentation.x;
 	_common_set_ocon.theData_out.con_params.segmentation.y = node_output._common_set_node_params_a_1io.segmentation.y;
 	_common_set_ocon.theData_out.con_params.number_channels = node_output._common_set_node_params_a_1io.number_channels;
+	_common_set_ocon.theData_out.con_params.data_flow = (jvxDataflow)node_output._common_set_node_params_a_1io.data_flow;
 }
 
 void

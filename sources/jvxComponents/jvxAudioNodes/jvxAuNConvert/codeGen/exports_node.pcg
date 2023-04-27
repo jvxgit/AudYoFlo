@@ -2,26 +2,65 @@ SECTION PROPERTIES
 {	
 	OUTPUTFILE_NAME = "genConvert_node";
 
-	SECTION level
+	SECTION config
 	{
 		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
 		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION fixed_rate_location_mode
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";				
+			SELECTION_LIST_NAMES = {"INPUT", "OUTPUT"};
+			SELECTION_LIST_SELECTED = {"no", "yes"};
+			SELECTION_LIST_EXCLUSIVE = {"no", "no"}; 
+			SELECTION_TRANSLATOR_TYPE = "jvxRateLocationMode";
+			SELECTION_LIST_TRANSLATORS = {"JVX_FIXED_RATE_LOCATION_INPUT", "JVX_FIXED_RATE_LOCATION_OUTPUT"};
+			SELECTION_TRANSLATOR_ENUM_CLASS = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";	
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		};
+	};
+
+	SECTION resampling
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		/*
 		CALLBACKS = {"get_current_level_pre", "get_current_level_post"};
 		CALLBACK_GET_PREHOOK = "get_current_level_pre"; 
 		CALLBACK_GET_POSTHOOK = "get_current_level_post"; 
+		*/
 
-		SECTION resamplingFactorNum
+		SECTION factor_num
 		{
 			TYPE = "JVX_DATAFORMAT_SIZE";	
-			INIT_SET = 0;
-			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
+			INIT_SET = 1;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			ASSOCIATE_EXTERNAL = "yes";
 		};
-		SECTION resamplingFactorDen
+		SECTION factor_den
 		{
 			TYPE = "JVX_DATAFORMAT_SIZE";	
-			INIT_SET = 0;
+			INIT_SET = 1;
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
+			ASSOCIATE_EXTERNAL = "yes";
+		};
+
+		SECTION real_rate
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 1;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";				
+		};
+
+		SECTION num_loop
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 1;
+			ASSOCIATE_EXTERNAL = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";				
 		};
 	};
 };

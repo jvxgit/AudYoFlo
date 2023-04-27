@@ -108,8 +108,10 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
 
 	// ===================================================================================
+	
 	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual void test_set_output_parameters() override;
+	jvxErrorType accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
 	// ===================================================================================
 

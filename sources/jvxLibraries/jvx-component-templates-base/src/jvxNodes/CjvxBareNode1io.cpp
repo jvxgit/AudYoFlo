@@ -58,16 +58,23 @@ CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		assert(node_inout._common_set_node_params_a_1io.number_channels == _common_set_icon.theData_in->con_params.number_channels);
 		assert(node_inout._common_set_node_params_a_1io.samplerate == _common_set_icon.theData_in->con_params.rate);
 		assert(node_inout._common_set_node_params_a_1io.format == _common_set_icon.theData_in->con_params.format);
+		assert(_common_set_ocon.theData_out.con_data.buffers == NULL);
 
 		// Prepare next processing stage processing
 		// The only deviation from the input side may be the number of output channels - which is taken from the node parameter set
 		if (checkInputOutputMostlyIdentical)
 		{
-			assert(_common_set_ocon.theData_out.con_params.buffersize == node_inout._common_set_node_params_a_1io.buffersize);
-			assert(_common_set_ocon.theData_out.con_params.format == node_inout._common_set_node_params_a_1io.format);
-			assert(_common_set_ocon.theData_out.con_data.buffers == NULL);
-			assert(_common_set_ocon.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate);
-			zeroCopyBuffering_rt = _common_set_ldslave.zeroCopyBuffering_cfg;
+			if (
+				(_common_set_ocon.theData_out.con_params.buffersize == node_inout._common_set_node_params_a_1io.buffersize) &&
+				(_common_set_ocon.theData_out.con_params.format == node_inout._common_set_node_params_a_1io.format) &&
+				(_common_set_ocon.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate))
+			{
+				zeroCopyBuffering_rt = _common_set_ldslave.zeroCopyBuffering_cfg;
+			}
+			else
+			{
+				zeroCopyBuffering_rt = false;
+			}
 		}
 		else
 		{
