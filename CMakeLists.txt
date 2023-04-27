@@ -638,6 +638,7 @@ endif()
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNForwardBuffer
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNMeasureIr2Dev
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNChannelRearrange
+    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNConvert
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/ayfAuNMatlab
   )
   

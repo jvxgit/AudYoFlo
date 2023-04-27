@@ -129,6 +129,8 @@ public:
 
 	CjvxNegotiate_common();
 
+	static jvxErrorType _check_valid(jvxLinkDataDescriptor_con_params& params, std::string& reason);
+
 	/**
 	 * This function allows to specify a FIXED setting. Note that the default arguments are set to valid values - no dont-cares.
 	 * 

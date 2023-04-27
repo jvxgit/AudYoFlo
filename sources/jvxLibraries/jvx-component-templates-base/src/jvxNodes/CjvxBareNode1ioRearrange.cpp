@@ -33,7 +33,7 @@ CjvxBareNode1ioRearrange::activate()
 	if (res == JVX_NO_ERROR)
 	{
 		node_output.initialize(this, "output", true);
-		outputArgsFromInputOnInit_set = false;
+		//outputArgsFromInputOnInit_set = false;
 
 		node_inout.updtag_all("Input");
 		node_output.updtag_all("Output");

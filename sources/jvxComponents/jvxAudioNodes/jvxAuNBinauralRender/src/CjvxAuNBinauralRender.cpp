@@ -27,7 +27,7 @@ CjvxAuNBinauralRender::CjvxAuNBinauralRender(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DEC
 		JVX_DATAFORMAT_DATA, /* data format */
 		JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED); /* data format group */
 
-	outputArgsFromOutputParams = true;
+	//outputArgsFromOutputParams = true;
 }
 
 CjvxAuNBinauralRender::~CjvxAuNBinauralRender()

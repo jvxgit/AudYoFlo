@@ -55,7 +55,7 @@ CjvxAuN2AudioMixer::test_connect_icon_vtask(
 					datOut = &(*oconElm)->con->_common_set_ocon_nvtask.theData_out;
 				}
 			}
-			update_channels_on_test(datIn, datOut);
+			res = update_channels_on_test(datIn, datOut);
 		}
 	}
 	return res;
@@ -68,12 +68,12 @@ CjvxAuN2AudioMixer::test_set_output_parameters(jvxSize ctxtId, jvxSize ctxtSubId
 	theDataOut->con_params.number_channels = elm->second.numChannels_fixed;
 }
 
-void
+jvxErrorType
 CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, const jvxLinkDataDescriptor* datOut)
 {
 	jvxSize i = 0;
 	jvxSize cnt = 0;
-
+	jvxErrorType res = JVX_NO_ERROR;
 	if (datIn)
 	{
 		if (datIn->con_link.connect_from)
@@ -171,7 +171,11 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 								}
 							}
 
-							assert(datIn->con_params.number_channels == itElm->second.channels.size());
+							if (datIn->con_params.number_channels != itElm->second.channels.size())
+							{
+								res = JVX_ERROR_INVALID_FORMAT;
+								goto exit_fail;
+							}
 							channelsFound = true;
 						}
 					}
@@ -316,4 +320,7 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 			}
 		}
 	}
+
+exit_fail:
+	return res;
 }

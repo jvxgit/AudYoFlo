@@ -200,7 +200,7 @@ public:
 	//jvxErrorType attach_input_channel_stage(const jvxLinkDataDescriptor& dat);
 	//jvxErrorType detach_input_channel_stage(const jvxLinkDataDescriptor& dat);
 
-	void update_channels_on_test(const jvxLinkDataDescriptor* datIn, const jvxLinkDataDescriptor* datOut);
+	jvxErrorType update_channels_on_test(const jvxLinkDataDescriptor* datIn, const jvxLinkDataDescriptor* datOut);
 	void new_setup_to_properties(jvxBool inputSide, jvxBool outputSide);
 
 	void updateChannelFromStorage(std::map<std::string, std::list<oneEntryChannel>>& channelsInStorage, oneEntryChannel& newEntry, std::string masName, jvxBool isInput);

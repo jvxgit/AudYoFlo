@@ -12,9 +12,6 @@ protected:
 	//! Negotiation struct - we need output since the input may accept variable settings but the output side is not
 	CjvxNegotiate_output neg_output;
 
-	jvxBool outputArgsFromInputOnInit = true;
-	jvxBool outputArgsFromInputOnInit_set = false;
-	jvxBool outputArgsFromOutputParams = false;
 public:
 
 	JVX_CALLINGCONVENTION CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

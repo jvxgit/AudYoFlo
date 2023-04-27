@@ -77,6 +77,39 @@ CjvxNegotiate_common::CjvxNegotiate_common()
 	// This variable has its own constructor -> _latest_results
 }
 
+jvxErrorType 
+CjvxNegotiate_common::_check_valid(jvxLinkDataDescriptor_con_params& params, std::string& errReason)
+{
+	errReason.clear();
+	if (JVX_CHECK_SIZE_UNSELECTED(params.buffersize))
+	{
+		errReason = "Invalid buffersize specified.";
+		goto fail;
+	}
+	if (JVX_CHECK_SIZE_UNSELECTED(params.rate))
+	{
+		errReason = "Invalid samplerate specified.";
+		goto fail;
+	}
+	if (JVX_CHECK_SIZE_UNSELECTED(params.number_channels))
+	{
+		goto fail;
+	}
+	if (params.format == JVX_DATAFORMAT_NONE)
+	{
+		errReason = "Invalid format specified.";
+		goto fail;
+	}
+	if (params.format_group == JVX_DATAFORMAT_GROUP_NONE)
+	{
+		errReason = "Invalid format group specified.";
+		goto fail;
+	}
+	return JVX_NO_ERROR;
+fail:
+	return JVX_ERROR_INVALID_ARGUMENT;
+}
+
 void
 CjvxNegotiate_common::_set_parameters_fixed(
 	jvxSize num_channels,
@@ -365,6 +398,14 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 	std::string txt;
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool thereismismatch = false;
+
+	res = _check_valid(ld->con_params, txt);
+	if (res != JVX_NO_ERROR)
+	{
+		JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, res,
+			("Invalid connector parameter on backward complain, reason in detail: " + txt).c_str());
+		return res;
+	}
 
 	compare_core(ld, ld, thereismismatch);
 
@@ -700,6 +741,14 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, this_pointer,
 		descror,
 		"Entering CjvxNegotiate default input connector");
+
+	resComplain = _check_valid(theData_in->con_params, reason);
+	if (resComplain != JVX_NO_ERROR)
+	{
+		JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, resComplain,
+			("Invalid connector parameter on forward negotiation, reason in detail: " + reason).c_str());
+		return resComplain;
+	}
 
 	_latest_results = theData_in->con_params;
 

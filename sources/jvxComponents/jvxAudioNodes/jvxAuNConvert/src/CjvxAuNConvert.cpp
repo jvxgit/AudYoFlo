@@ -1,19 +1,32 @@
-#include "CjvxAuNChannelRearrange.h"
+#include "CjvxAuNConvert.h"
 #include "jvx-helpers-cpp.h"
 
-CjvxAuNChannelRearrange::CjvxAuNChannelRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+CjvxAuNConvert::CjvxAuNConvert(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_NODE_TYPE_SPECIFIER_TYPE);
 	_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
-	//outputArgsFromOutputParams = true;
+	// outputArgsFromOutputParams = true;
 }
 
-CjvxAuNChannelRearrange::~CjvxAuNChannelRearrange()
+CjvxAuNConvert::~CjvxAuNConvert()
 {
 	
 }
 
+jvxErrorType 
+CjvxAuNConvert::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	return CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+}
+
+void
+CjvxAuNConvert::from_input_to_output()
+{
+	std::cout << "Hier" << std::endl;
+}
+
+/*
 jvxErrorType
 CjvxAuNChannelRearrange::activate()
 {
@@ -197,3 +210,4 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNChannelRearrange, set_pass
 	}
 	return JVX_NO_ERROR;
 }
+*/
