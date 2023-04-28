@@ -24,7 +24,7 @@ CjvxAuNConvert::activate()
 		genConvert_node::init_all();
 		genConvert_node::allocate_all();
 		genConvert_node::register_all(this);
-		genConvert_node::associate__resampling(this, &resampling.cc.oversamplingFactor, 1, &resampling.cc.downsamplingFactor, 1, &resampling.loopNum, 1);
+		genConvert_node::associate__resampling(this, &resampling.cc.oversamplingFactor, 1, &resampling.cc.downsamplingFactor, 1);
 
 		// genChannelRearrange_node::register_callbacks(this, get_level_pre, get_level_post, set_passthru, this);
 		resampling.cc.downsamplingFactor = 1;
@@ -75,41 +75,6 @@ CjvxAuNConvert::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}		
 	}
 	return res;
-}
-
-static jvxSize commonSamplerates[] =
-{
-	8000,
-	11025,
-	16000,
-	22050,
-	32000,
-	44100,
-	48000,
-	0
-};
-
-jvxSize jvx_roundSamplerate(jvxData srateFracIn)
-{
-	jvxSize retVal = JVX_SIZE_UNSELECTED;
-	int cnt = 0;
-	jvxData ddelta = JVX_DATA_MAX_POS;
-	while (1)
-	{
-		if (commonSamplerates[cnt] == 0)
-		{
-			break;
-		}
-
-		jvxData diff = JVX_ABS(srateFracIn - commonSamplerates[cnt]);
-		if (diff < ddelta)
-		{
-			retVal = commonSamplerates[cnt];
-			ddelta = diff;
-		}
-		cnt++;
-	}
-	return retVal;
 }
 
 void
@@ -238,6 +203,7 @@ CjvxAuNConvert::computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
 		break;
 	case 1:
 
+		/*
 		resampling.loopNum = 1;
 		bsizeOutFrac = (jvxData)bSizeIn * (jvxData)resampling.loopNum * resamplingFacInOut;
 		while (bsizeOutFrac - floor(bsizeOutFrac) != 0.0)
@@ -246,6 +212,7 @@ CjvxAuNConvert::computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
 			bsizeOutFrac = (jvxData)bSizeIn * (jvxData)resampling.loopNum * resamplingFacInOut;
 		}
 		bSizeOutFwd = JVX_DATA2SIZE(bsizeOutFrac);		
+		*/
 		jvx_fixed_resampler_init_conversion(&resampling.cc, sRateIn, sRateOut);
 
 		resampling.granularityIn = resampling.cc.downsamplingFactor;
@@ -256,8 +223,8 @@ CjvxAuNConvert::computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
 		test_set_output_parameters();
 
 		// Keep input as it is and adapt the output arguments
-		startRequestSuccessorWiththis.con_params.buffersize = bSizeOutFwd;
-		startRequestSuccessorWiththis.con_params.segmentation.x = startRequestSuccessorWiththis.con_params.buffersize;
+		//startRequestSuccessorWiththis.con_params.buffersize = bSizeOutFwd;
+		//startRequestSuccessorWiththis.con_params.segmentation.x = startRequestSuccessorWiththis.con_params.buffersize;
 		res = JVX_ERROR_COMPROMISE;
 		break;
 	}
@@ -277,57 +244,57 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxSize i;
 	// Configure this module to be zerocopy
 	_common_set_ldslave.zeroCopyBuffering_cfg = true;
-	resampling.active = false;
-	reChannel.active = false;
-	output.requiresRebuffering = false;
-	output.requiresInputGranularityHeadroom = false;
-	output.lFieldRebuffer = 0;
+	runtime.active_resampling = false;
+	runtime.active_rechannel = false;
+	runtime.requiresRebuffering = false;
+	runtime.requiresRebufferHeadroom= false;
+	runtime.lFieldRebuffer = 0;
 
 	if ((resampling.cc.oversamplingFactor != 1) || (resampling.cc.downsamplingFactor != 1))
 	{
-		resampling.active = true;
+		runtime.active_resampling = true;
 	}
 	if (reChannel.numIn != reChannel.numOut)
 	{
-		reChannel.active = true;
+		runtime.active_rechannel = true;
 	}
 	if (node_inout._common_set_node_params_a_1io.format != node_output._common_set_node_params_a_1io.format)
 	{
-		reType.active = true;
+		runtime.active_retype = true;
 	}
 
-	if(resampling.active || reChannel.active || reType.active)
+	if(runtime.active_resampling || runtime.active_rechannel || runtime.active_retype)
 	{
 		_common_set_ldslave.zeroCopyBuffering_cfg = false;
 
-		output.requiresRebuffering = jvx_bitTest(_common_set_ocon.theData_out.con_data.alloc_flags,
+		runtime.requiresRebuffering = jvx_bitTest(_common_set_icon.theData_in->con_data.alloc_flags,
 			(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 		
-		if (output.requiresRebuffering)
+		if (runtime.requiresRebuffering)
 		{
 			// In case of variable input size, add headroom space on input side
-			output.requiresInputGranularityHeadroom = true;
+			runtime.requiresRebufferHeadroom = true;
 		}
 		else
 		{
 			// If we have a fixed input / output relation, check if we need a variable framesize
 			if (node_output._common_set_node_params_a_1io.buffersize % resampling.cc.oversamplingFactor)
 			{
-				output.requiresInputGranularityHeadroom = true;
-				output.requiresRebuffering = true;
+				runtime.requiresRebufferHeadroom= true;
+				runtime.requiresRebuffering = true;
 			}
 			if (node_inout._common_set_node_params_a_1io.buffersize % resampling.cc.downsamplingFactor)
 			{
-				output.requiresInputGranularityHeadroom = true;
-				output.requiresRebuffering = true;
+				runtime.requiresRebufferHeadroom= true;
+				runtime.requiresRebuffering = true;
 			}
 		}
-		if (reChannel.active || reType.active)
+		if (runtime.active_rechannel || runtime.active_retype)
 		{
-			output.requiresRebuffering = true;
+			runtime.requiresRebuffering = true;
 		}
 
-		if (output.requiresInputGranularityHeadroom)
+		if (runtime.requiresRebufferHeadroom)
 		{
 			// This module may produce 
 			jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
@@ -338,43 +305,43 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	res = CjvxBareNode1ioRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		if (resampling.active)
+		if (runtime.active_resampling)
 		{
 			jvxDataFormat formOut = (jvxDataFormat)node_inout._common_set_node_params_a_1io.format;
-			resampling.numResampler = node_output._common_set_node_params_a_1io.number_channels;
+			runtime.numResampler = node_output._common_set_node_params_a_1io.number_channels;
 
-			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(resampling.fldResampler, jvx_fixed_resampler, resampling.numResampler);
-			for (i = 0; i < resampling.numResampler; i++)
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.fldResampler, jvx_fixed_resampler, runtime.numResampler);
+			for (i = 0; i < runtime.numResampler; i++)
 			{
-				jvx_fixed_resampler_initConfig(&resampling.fldResampler[i]);
-				resampling.fldResampler[i].prmInit.buffersizeIn = node_inout._common_set_node_params_a_1io.buffersize;
-				resampling.fldResampler[i].prmInit.buffersizeOut = node_output._common_set_node_params_a_1io.buffersize;
-				resampling.fldResampler[i].prmInit.format = formOut;
-				resampling.fldResampler[i].prmInit.lFilter = 32;
-				resampling.fldResampler[i].prmInit.optPtrConversion = &resampling.cc; // Provide the resampling exact config
-				jvx_fixed_resampler_prepare(&resampling.fldResampler[i]);
+				jvx_fixed_resampler_initConfig(&runtime.fldResampler[i]);
+				runtime.fldResampler[i].prmInit.buffersizeIn = node_inout._common_set_node_params_a_1io.buffersize;
+				runtime.fldResampler[i].prmInit.buffersizeOut = node_output._common_set_node_params_a_1io.buffersize;
+				runtime.fldResampler[i].prmInit.format = formOut;
+				runtime.fldResampler[i].prmInit.lFilter = 32;
+				runtime.fldResampler[i].prmInit.optPtrConversion = &resampling.cc; // Provide the resampling exact config
+				jvx_fixed_resampler_prepare(&runtime.fldResampler[i]);
 			}
 		}
 
-		if (output.requiresRebuffering)
+		if (runtime.requiresRebuffering)
 		{
-			if (output.requiresInputGranularityHeadroom)
+			if (runtime.requiresRebufferHeadroom)
 			{
-				output.lFieldRebuffer = node_inout._common_set_node_params_a_1io.buffersize + resampling.granularityIn;
+				runtime.lFieldRebuffer = node_inout._common_set_node_params_a_1io.buffersize + resampling.granularityIn;
 			}
 			else
 			{
-				output.lFieldRebuffer = node_inout._common_set_node_params_a_1io.buffersize;
+				runtime.lFieldRebuffer = node_inout._common_set_node_params_a_1io.buffersize;
 			}
 
-			output.fFieldRebuffer = 0;
-			output.nCFieldRebuffer = node_output._common_set_node_params_a_1io.number_channels;
-			output.ptrFieldBuffer = nullptr;
-			output.lFieldRebufferChannel = output.lFieldRebuffer * jvxDataFormat_getsize(node_output._common_set_node_params_a_1io.format);
-			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(output.ptrFieldBuffer, jvxHandle*, output.nCFieldRebuffer);
-			for (i = 0; i < output.nCFieldRebuffer; i++)
+			runtime.fFieldRebuffer = 0;
+			runtime.nCFieldRebuffer = node_output._common_set_node_params_a_1io.number_channels;
+			runtime.ptrFieldBuffer = nullptr;
+			runtime.lFieldRebufferChannel = runtime.lFieldRebuffer * jvxDataFormat_getsize(node_output._common_set_node_params_a_1io.format);
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.ptrFieldBuffer, jvxHandle*, runtime.nCFieldRebuffer);
+			for (i = 0; i < runtime.nCFieldRebuffer; i++)
 			{
-				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(output.ptrFieldBuffer[i], jvxByte, output.lFieldRebufferChannel);
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.ptrFieldBuffer[i], jvxByte, runtime.lFieldRebufferChannel);
 			}
 		}
 	}
@@ -387,38 +354,38 @@ CjvxAuNConvert::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxSize i;
 	jvxErrorType res = CjvxBareNode1ioRearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
-	if (resampling.active)
+	if (runtime.active_resampling)
 	{
-		for (i = 0; i < resampling.numResampler; i++)
+		for (i = 0; i < runtime.numResampler; i++)
 		{
-			jvx_fixed_resampler_postprocess(&resampling.fldResampler[i]);
+			jvx_fixed_resampler_postprocess(&runtime.fldResampler[i]);
 		}
-		JVX_SAFE_DELETE_FIELD(resampling.fldResampler);
-		resampling.numResampler = 0;
+		JVX_SAFE_DELETE_FIELD(runtime.fldResampler);
+		runtime.numResampler = 0;
 	}
 
-	if (output.requiresRebuffering)
+	if (runtime.requiresRebuffering)
 	{
-		for (i = 0; i < output.nCFieldRebuffer; i++)
+		for (i = 0; i < runtime.nCFieldRebuffer; i++)
 		{
-			JVX_SAFE_DELETE_FIELD(output.ptrFieldBuffer[i]);
+			JVX_SAFE_DELETE_FIELD(runtime.ptrFieldBuffer[i]);
 		}
-		JVX_SAFE_DELETE_FIELD(output.ptrFieldBuffer);
+		JVX_SAFE_DELETE_FIELD(runtime.ptrFieldBuffer);
 
-		output.fFieldRebuffer = 0;
-		output.nCFieldRebuffer = 0;
-		output.ptrFieldBuffer = nullptr;
-		output.lFieldRebufferChannel = 0;
-		output.lFieldRebuffer = 0;
+		runtime.fFieldRebuffer = 0;
+		runtime.nCFieldRebuffer = 0;
+		runtime.ptrFieldBuffer = nullptr;
+		runtime.lFieldRebufferChannel = 0;
+		runtime.lFieldRebuffer = 0;
 
 	}
 
-	output.requiresRebuffering = false;
-	output.requiresInputGranularityHeadroom = false;
+	runtime.requiresRebuffering = false;
+	runtime.requiresRebufferHeadroom = false;
 	
-	resampling.active = false;
-	reType.active = false;
-	reChannel.active = false;
+	runtime.active_resampling = false;
+	runtime.active_retype = false;
+	runtime.active_rechannel = false;
 
 	return JVX_NO_ERROR;
 }
@@ -445,69 +412,67 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		numInputSamples = _common_set_icon.theData_in->con_data.fHeights[idx_stage_local].x;
 	}
 	
-	if (output.requiresRebuffering)
+	if (runtime.requiresRebuffering)
 	{
 		jvxSize cnt = 0;
 		jvxSize splCnt = 0;
-		if (reChannel.active || reType.active)
+
+		jvxSize loopNum = JVX_MAX(runtime.nCFieldRebuffer,
+			_common_set_icon.theData_in->con_params.number_channels);
+
+		// Set the output to 0 first
+		for (cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
 		{
-			jvxSize loopNum = JVX_MAX(output.nCFieldRebuffer,
-				_common_set_icon.theData_in->con_params.number_channels);
+			jvxData* targetIn = (jvxData*)runtime.ptrFieldBuffer[cnt];
+			targetIn += runtime.fFieldRebuffer;
 
-			// Set the output to 0 first
-			for (cnt = 0; cnt < output.nCFieldRebuffer; cnt++)
+			jvxSize splCnt = 0;
+			for (; splCnt < numInputSamples; splCnt++)
 			{
-				jvxData* targetIn = (jvxData*)output.ptrFieldBuffer[cnt];
-				targetIn += output.fFieldRebuffer;
-
-				jvxSize splCnt = 0;
-				for (; splCnt < numInputSamples; splCnt++)
-				{
-					targetIn[splCnt] = 0;
-				}
-			}
-
-			for (cnt = 0; cnt < loopNum; cnt++)
-			{
-				jvxSize inCnt = cnt % _common_set_icon.theData_in->con_params.number_channels;
-				jvxSize outCnt = cnt % output.nCFieldRebuffer;
-
-				jvxData* sourceIn = (jvxData*)bufsIn[inCnt];
-
-				jvxData* targetIn = (jvxData*)output.ptrFieldBuffer[outCnt];
-				targetIn += output.fFieldRebuffer;
-
-				
-				for (splCnt = 0; splCnt < numInputSamples; splCnt++)
-				{
-					jvxData sampleIn = sourceIn[splCnt];
-					targetIn[splCnt] += sampleIn;
-				}
+				targetIn[splCnt] = 0;
 			}
 		}
-		output.fFieldRebuffer += numInputSamples;
 
-		jvxSize numResamplerIn = output.fFieldRebuffer / resampling.cc.downsamplingFactor * resampling.cc.downsamplingFactor; // Find multiples of input granularity
+		for (cnt = 0; cnt < loopNum; cnt++)
+		{
+			jvxSize inCnt = cnt % _common_set_icon.theData_in->con_params.number_channels;
+			jvxSize outCnt = cnt % runtime.nCFieldRebuffer;
+
+			jvxData* sourceIn = (jvxData*)bufsIn[inCnt];
+
+			jvxData* targetIn = (jvxData*)runtime.ptrFieldBuffer[outCnt];
+			targetIn += runtime.fFieldRebuffer;
+
+
+			for (splCnt = 0; splCnt < numInputSamples; splCnt++)
+			{
+				jvxData sampleIn = sourceIn[splCnt];
+				targetIn[splCnt] += sampleIn;
+			}
+		}
+		runtime.fFieldRebuffer += numInputSamples;
+
+		jvxSize numResamplerIn = runtime.fFieldRebuffer / resampling.cc.downsamplingFactor * resampling.cc.downsamplingFactor; // Find multiples of input granularity
 		jvxSize numResamplerOut = numResamplerIn * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
 		assert(numResamplerOut <= _common_set_ocon.theData_out.con_params.buffersize);
 
-		for (i = 0; i < resampling.numResampler; i++)
+		for (i = 0; i < runtime.numResampler; i++)
 		{
 			fixed_resample_variable_out varOut;
 			varOut.bsizeIn = numResamplerIn;
 			varOut.numOut = numResamplerOut;
 
 			// Important: use the "new" input buffer
-			jvx_fixed_resampler_process(&resampling.fldResampler[i], output.ptrFieldBuffer[i], bufsOut[i], &varOut); // Full size resampling
+			jvx_fixed_resampler_process(&runtime.fldResampler[i], runtime.ptrFieldBuffer[i], bufsOut[i], &varOut); // Full size resampling
 		}
 		idx_stage_local = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 
 		_common_set_ocon.theData_out.con_data.fHeights[idx_stage_local].x = numResamplerOut;
 
-		jvxSize numCopyNextFrame = output.fFieldRebuffer - numResamplerIn;
-		for (cnt = 0; cnt < output.nCFieldRebuffer; cnt++)
+		jvxSize numCopyNextFrame = runtime.fFieldRebuffer - numResamplerIn;
+		for (cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
 		{
-			jvxData* cpyTo = (jvxData*)output.ptrFieldBuffer[cnt];
+			jvxData* cpyTo = (jvxData*)runtime.ptrFieldBuffer[cnt];
 			jvxData* cpyFrom = cpyTo + numResamplerIn;
 
 			for (splCnt = 0; splCnt < numCopyNextFrame; splCnt++)
@@ -517,14 +482,14 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				cpyFrom++;
 			}
 		}
-		output.fFieldRebuffer -= numResamplerIn;
+		runtime.fFieldRebuffer -= numResamplerIn;
 	}
 	else
 	{
 		// Simple case: just resample straight away
-		for (i = 0; i < resampling.numResampler; i++)
+		for (i = 0; i < runtime.numResampler; i++)
 		{
-			jvx_fixed_resampler_process(&resampling.fldResampler[i], bufsIn[i], bufsOut[i], nullptr); // Full size resampling
+			jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsIn[i], bufsOut[i], nullptr); // Full size resampling
 		}
 	}
 	return fwd_process_buffers_icon(mt_mask, idx_stage);

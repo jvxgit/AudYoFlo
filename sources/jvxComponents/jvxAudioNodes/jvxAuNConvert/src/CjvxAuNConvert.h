@@ -12,6 +12,12 @@ enum class jvxRateLocationMode
 	JVX_FIXED_RATE_LOCATION_OUTPUT
 };
 
+enum class jvxBufferingMode
+{
+	JVX_BUFFERING_VARIABLE,
+	JVX_BUFFERING_FIXED
+};
+
 #include "pcg_exports_node.h"
 
 class CjvxAuNConvert: public CjvxBareNode1ioRearrange, 
@@ -23,11 +29,6 @@ private:
 
 	struct
 	{
-		jvxBool active = false;
-		jvxBool requiresHeadroom = false;
-		jvx_fixed_resampler* fldResampler = nullptr;
-		jvxSize numResampler = 0;
-		jvxSize loopNum = 1;
 		jvxSize granularityIn = 1;
 		jvxSize granularityOut = 1;
 		jvx_fixed_resampler_conversion cc;
@@ -35,28 +36,32 @@ private:
 
 	struct
 	{
-		jvxBool active = false;
 		jvxSize numIn = JVX_SIZE_UNSELECTED;
 		jvxSize numOut = JVX_SIZE_UNSELECTED;
 	} reChannel;
 
 	struct
 	{
-		jvxBool active = false;
 		jvxDataFormat formIn = JVX_DATAFORMAT_NONE;
 		jvxDataFormat formOut = JVX_DATAFORMAT_NONE;
 	} reType;
 
 	struct
 	{
+		jvxBool active_resampling = false;
+		jvxBool active_rechannel = false;
+		jvxBool active_retype = false;
 		jvxBool requiresRebuffering = false;
-		jvxBool requiresInputGranularityHeadroom = false;
+		jvxBool requiresRebufferHeadroom = false;
 		jvxSize lFieldRebuffer = 0;
 		jvxSize fFieldRebuffer = 0;
 		jvxSize nCFieldRebuffer = 0;
 		jvxSize lFieldRebufferChannel = 0;
 		jvxHandle** ptrFieldBuffer = nullptr;
-	} output;
+		jvxBool requiresHeadroom = false;
+		jvx_fixed_resampler* fldResampler = nullptr;
+		jvxSize numResampler = 0;
+	} runtime;
 
 	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
 
