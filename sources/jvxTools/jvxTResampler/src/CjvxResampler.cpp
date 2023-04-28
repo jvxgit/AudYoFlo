@@ -507,7 +507,7 @@ CjvxResampler::process(jvxHandle* input,
 	{
 #ifdef JVX_RESAMPLER_DSP_LIB
 		jvxDspBaseErrorType resD = JVX_DSP_NO_ERROR;
-		resD = jvx_fixed_resampler_process(&resLib, input, output);
+		resD = jvx_fixed_resampler_process(&resLib, input, output, nullptr); // Full size resampling
 		if (resD != JVX_DSP_NO_ERROR)
 		{
 			res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;

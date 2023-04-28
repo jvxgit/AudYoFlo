@@ -143,18 +143,33 @@ template <typename T> jvxDataFormat template_get_type_enum()
 	return form;
 };
 
+jvxSize JVX_STATIC_INLINE jvx_process_icon_extract_stage(
+	jvxLinkDataDescriptor* theData,
+	jvxSize idx_stage)
+{
+	jvxSize idx_stage_local = idx_stage;
+	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
+	{
+		idx_stage_local = *theData->con_pipeline.idx_stage_ptr;
+	}
+	return idx_stage_local;
+}
+
 // Some template helper functions
 template <class T> T** jvx_process_icon_extract_input_buffers(
 	jvxLinkDataDescriptor* theData,
 	jvxSize idx_stage)
 {
 	jvxDataFormat form = template_get_type_enum<T>();
+	
+	jvxSize idx_stage_local = jvx_process_icon_extract_stage(theData, idx_stage);
+	/*
 	jvxSize idx_stage_local = idx_stage;
 	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
 	{
 		idx_stage_local = *theData->con_pipeline.idx_stage_ptr;
 	}
-
+	*/
 	// Check type if it is not a jvxHandle type
 	if (!std::is_same<T, jvxHandle>::value)
 	{

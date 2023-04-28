@@ -6,6 +6,13 @@
 
 JVX_DSP_LIB_BEGIN
 
+typedef struct
+{
+	jvxSize gcd;
+	jvxSize oversamplingFactor;
+	jvxSize downsamplingFactor;
+} jvx_fixed_resampler_conversion;
+
 typedef struct 
 {
 	jvxSize lFilter;
@@ -14,10 +21,12 @@ typedef struct
 	jvxDataFormat format;
 	jvxData stopbandAtten_dB;
 	jvxData socketVal;
+	jvx_fixed_resampler_conversion* optPtrConversion;
 } jvx_fixed_resampler_prmInit;
 
 typedef struct 
 {
+	jvx_fixed_resampler_conversion conversion;
 	jvxData delay;
 } jvx_fixed_resampler_prmDerived;
 
@@ -29,23 +38,31 @@ typedef struct
 	jvxHandle* prv;
 } jvx_fixed_resampler;
 
+typedef struct
+{
+	jvxSize numOut;
+	jvxSize bsizeIn;
+} fixed_resample_variable_out;
+
+void jvx_fixed_resampler_init_conversion(jvx_fixed_resampler_conversion* conversion, jvxSize inSize, jvxSize outSize);
+
 jvxDspBaseErrorType jvx_fixed_resampler_initConfig(jvx_fixed_resampler* theField);
 jvxDspBaseErrorType jvx_fixed_resampler_prepare(jvx_fixed_resampler* H);
 jvxDspBaseErrorType jvx_fixed_resampler_postprocess(jvx_fixed_resampler* H);
-jvxDspBaseErrorType jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out);
+jvxDspBaseErrorType jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out, fixed_resample_variable_out* varOut);
 
 /*
  * Special implementation which takes int16 input values and converts into float output.
  * The conversion is done as part of the resampler for higher efficiency
  */
-jvxDspBaseErrorType jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out);
+jvxDspBaseErrorType jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out, fixed_resample_variable_out* varOut);
 
 /*
  * Special implementation which takes int16 input values and converts into float output.
  * This implementation requires that only a downsampling is performed, hence upsampling factor isThe conversion is done as part of the resampler for higher efficiency
  * "1". It is not checked, hence, a crash is likely to happen if used in a wrong way.
  */
-jvxDspBaseErrorType jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out);
+jvxDspBaseErrorType jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out, fixed_resample_variable_out* varOut);
 
 /*
  * Special implementation which takes int16 input values and converts into float output.
@@ -53,7 +70,7 @@ jvxDspBaseErrorType jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resam
  * states buffer is a power of 2 (e.g. 64) as the modulo operation is realized by means of
  * an "AND".
  */
-jvxDspBaseErrorType jvx_fixed_resampler_process_convert_downonly_modand(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out);
+jvxDspBaseErrorType jvx_fixed_resampler_process_convert_downonly_modand(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out, fixed_resample_variable_out* varOut);
 
 jvxDspBaseErrorType jvx_fixed_resampler_prepare_direct(jvx_fixed_resampler* H,
 	jvxSize lFilter,jvxSize bsizein, jvxSize bsizeout, jvxDataFormat form,

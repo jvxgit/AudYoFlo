@@ -31,9 +31,7 @@ typedef struct
 
 	struct
 	{
-		jvxSize oversamplingFactor;
-		jvxSize downsamplingFactor;
-		jvxSize buffersizeUpsampled;
+		jvxSize buffersizeUpsampled_;
 		jvxSize lFilterUpsampled;
 		jvxSize midPosition;
 		jvxData alpha;
@@ -41,6 +39,8 @@ typedef struct
 		jvxData group_delay;
 		jvxSize lStates;
 	} constants;
+
+	jvx_fixed_resampler_conversion conversion;
 
 	struct
 	{
@@ -85,6 +85,7 @@ jvxDspBaseErrorType jvx_fixed_resampler_initConfig(jvx_fixed_resampler* H)
 	H->prmInit.lFilter = 32;
 	H->prmInit.socketVal = 0.0;
 	H->prmInit.stopbandAtten_dB = 60;
+	H->prmInit.optPtrConversion = NULL;
 
 	H->prmDerived.delay = 0;
 
@@ -112,8 +113,8 @@ jvx_fixed_resampler_prepare_direct(jvx_fixed_resampler* H,
 	h->init.buffersizeIn = bsizein;
 	h->init.buffersizeOut = bsizeout;
 
-	h->constants.oversamplingFactor = osampling;
-	h->constants.downsamplingFactor = downsampling;
+	h->conversion.oversamplingFactor = osampling;
+	h->conversion.downsamplingFactor = downsampling;
 
 	h->init.lFilter = lFilter;
 	h->init.format = form;
@@ -122,12 +123,12 @@ jvx_fixed_resampler_prepare_direct(jvx_fixed_resampler* H,
 	assert(0);
 	h->ram.states = state;
 #else
-	h->constants.lFilterUpsampled = (h->init.lFilter - 1) * h->constants.oversamplingFactor + 1;
+	h->constants.lFilterUpsampled = (h->init.lFilter - 1) * h->conversion.oversamplingFactor + 1;
 	h->lowmemram.impResp = impResp;
 	h->lowmemram.impResp_vlength = (h->constants.lFilterUpsampled - 1) / 2 + 1;
-	h->lowmemram.impResp_length = (h->lowmemram.impResp_vlength + (h->constants.oversamplingFactor - 1));
+	h->lowmemram.impResp_length = (h->lowmemram.impResp_vlength + (h->conversion.oversamplingFactor - 1));
 	h->lowmemram.inFrameOffset = 0;
-	h->lowmemram.impResp_ptr = h->lowmemram.impResp + (h->constants.oversamplingFactor - 1);
+	h->lowmemram.impResp_ptr = h->lowmemram.impResp + (h->conversion.oversamplingFactor - 1);
 
 	h->lowmemram.states = state;
 #endif
@@ -148,6 +149,14 @@ jvx_fixed_resampler_postprocess_direct(jvx_fixed_resampler* H)
 
 // Iam not sure why but this function - even if not used - pulls in too much code on DSPs
 #ifndef JVX_DSP_BASE_COMPILE_MINIMAL_SIZE
+
+void
+jvx_fixed_resampler_init_conversion(jvx_fixed_resampler_conversion* conversion, jvxSize inSize, jvxSize outSize)
+{
+	conversion->gcd = (jvxSize)jvx_gcd((jvxInt32)inSize, (jvxInt32)outSize);
+	conversion->downsamplingFactor = inSize / conversion->gcd;
+	conversion->oversamplingFactor = outSize / conversion->gcd;
+}
 
 /**
  * Initialize fixed resampler, variant FIR.
@@ -183,10 +192,22 @@ jvx_fixed_resampler_prepare(jvx_fixed_resampler* H)
 	handle->init = H->prmInit;
 
 	// Some common parameters
-	tmp = (jvxSize)jvx_gcd((jvxInt32)handle->init.buffersizeIn, (jvxInt32)handle->init.buffersizeOut);
-	handle->constants.downsamplingFactor = handle->init.buffersizeIn / tmp;
-	handle->constants.oversamplingFactor = handle->init.buffersizeOut / tmp;
-	handle->constants.buffersizeUpsampled = handle->init.buffersizeIn * handle->constants.oversamplingFactor;
+
+	if (H->prmInit.optPtrConversion == NULL)
+	{
+		jvx_fixed_resampler_init_conversion(&handle->conversion, handle->init.buffersizeIn, handle->init.buffersizeOut);
+	}
+	else
+	{
+		handle->conversion = *H->prmInit.optPtrConversion;
+	}
+
+	/*
+	handle->conversion.gcd = (jvxSize)jvx_gcd((jvxInt32)handle->init.buffersizeIn, (jvxInt32)handle->init.buffersizeOut);
+	handle->conversion.downsamplingFactor = handle->init.buffersizeIn / handle->conversion.gcd;
+	handle->conversion.oversamplingFactor = handle->init.buffersizeOut / handle->conversion.gcd;
+	*/
+	// handle->constants.buffersizeUpsampled = handle->init.buffersizeIn * handle->conversion.oversamplingFactor;
 
 	// If we want to have a clear algorithmic delay only allow for odd
 	// filter length
@@ -199,8 +220,8 @@ jvx_fixed_resampler_prepare(jvx_fixed_resampler* H)
 	// Low pass design Low pass design Low pass design Low pass design
 	// ====================================================================
 	// Setup some parameters
-	handle->constants.lFilterUpsampled = (handle->init.lFilter - 1) * handle->constants.oversamplingFactor + 1;
-	handle->constants.midPosition = (handle->init.lFilter - 1) / 2 * handle->constants.oversamplingFactor;
+	handle->constants.lFilterUpsampled = (handle->init.lFilter - 1) * handle->conversion.oversamplingFactor + 1;
+	handle->constants.midPosition = (handle->init.lFilter - 1) / 2 * handle->conversion.oversamplingFactor;
 	handle->constants.alpha = 0;
 
 	// From the stopband attenuation, derive the factor alpha for Kaiser
@@ -218,8 +239,8 @@ jvx_fixed_resampler_prepare(jvx_fixed_resampler* H)
 	}
 
 	// Allocate impulse response followed by some sapece for zeros
-	JVX_DSP_SAFE_ALLOCATE_FIELD_Z(handle->ram.impResp, jvxData, (handle->constants.lFilterUpsampled + handle->constants.oversamplingFactor));
-	memset(handle->ram.impResp, 0, sizeof(jvxData) * (handle->constants.lFilterUpsampled + handle->constants.oversamplingFactor));
+	JVX_DSP_SAFE_ALLOCATE_FIELD_Z(handle->ram.impResp, jvxData, (handle->constants.lFilterUpsampled + handle->conversion.oversamplingFactor));
+	memset(handle->ram.impResp, 0, sizeof(jvxData) * (handle->constants.lFilterUpsampled + handle->conversion.oversamplingFactor));
 
 	jvx_compute_window(handle->ram.impResp, (jvxInt32)handle->constants.lFilterUpsampled, handle->constants.alpha, 0,
 		JVX_WINDOW_KAISER, NULL);
@@ -236,7 +257,7 @@ jvx_fixed_resampler_prepare(jvx_fixed_resampler* H)
 		handle->constants.delta_f = (0.9222) / (handle->constants.lFilterUpsampled - 1);
 	}
 
-	fgOmega = JVX_MIN(1.0 / (jvxData)handle->constants.oversamplingFactor, 1.0 / (jvxData)handle->constants.downsamplingFactor);
+	fgOmega = JVX_MIN(1.0 / (jvxData)handle->conversion.oversamplingFactor, 1.0 / (jvxData)handle->conversion.downsamplingFactor);
 	Omega_g = (fgOmega - handle->constants.delta_f);
 	m_pi_omega_g = M_PI * Omega_g;
 
@@ -258,11 +279,11 @@ jvx_fixed_resampler_prepare(jvx_fixed_resampler* H)
 #else
 	jvx_circbuffer_allocate(&handle->lowmemram.states, handle->init.lFilter - 1, 1, 1);
 	handle->lowmemram.impResp_vlength = (handle->constants.lFilterUpsampled - 1) / 2 + 1;
-	handle->lowmemram.impResp_length = (handle->lowmemram.impResp_vlength + (handle->constants.oversamplingFactor - 1));
+	handle->lowmemram.impResp_length = (handle->lowmemram.impResp_vlength + (handle->conversion.oversamplingFactor - 1));
 	JVX_DSP_SAFE_ALLOCATE_FIELD_Z(handle->lowmemram.impResp, jvxData, handle->lowmemram.impResp_length);
 	memset(handle->lowmemram.impResp, 0, sizeof(jvxData)* handle->lowmemram.impResp_length);
 	handle->lowmemram.inFrameOffset = 0;
-	handle->lowmemram.impResp_ptr = handle->lowmemram.impResp + (handle->constants.oversamplingFactor - 1);
+	handle->lowmemram.impResp_ptr = handle->lowmemram.impResp + (handle->conversion.oversamplingFactor - 1);
 	for (i = 0; i < handle->lowmemram.impResp_vlength; i++)
 	{
 		handle->lowmemram.impResp_ptr[i] = handle->ram.impResp[i];
@@ -275,9 +296,10 @@ jvx_fixed_resampler_prepare(jvx_fixed_resampler* H)
 	//% Compute the group delay
 	//%[handle.fir.groupDelay, x] = grpdelay(handle.fir.impResp,1); <-
 	//version computed from impulse response
-	handle->constants.group_delay = (handle->constants.midPosition) / (jvxData)handle->constants.oversamplingFactor;
+	handle->constants.group_delay = (handle->constants.midPosition) / (jvxData)handle->conversion.oversamplingFactor;
 
 	H->prmDerived.delay = handle->constants.group_delay;
+	H->prmDerived.conversion = handle->conversion;
 
 	// Return reference to handle
 	H->prv = handle;
@@ -291,8 +313,8 @@ jvx_fixed_resampler_prepare(jvx_fixed_resampler* H)
 		handle->init.buffersizeIn,
 		handle->init.buffersizeOut,
 		handle->init.format,
-		handle->constants.oversamplingFactor,
-		handle->constants.downsamplingFactor,
+		handle->conversion.oversamplingFactor,
+		handle->conversion.downsamplingFactor,
 		handle->lowmemram.states,
 		handle->lowmemram.impResp);
 #endif
@@ -625,7 +647,7 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 
 #else
 jvxDspBaseErrorType
-jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
+jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out, fixed_resample_variable_out* varOut)
 {
 	int i, j;
 
@@ -642,7 +664,7 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 #ifdef JVX_RUN_DIRECT_IMPLEMENTATION
 	if (handle->dirInst.prv)
 	{
-		jvx_fixed_resampler_process(&handle->dirInst, in, out);
+		jvx_fixed_resampler_process(&handle->dirInst, in, out, varOut);
 	}
 	else
 	{
@@ -682,12 +704,35 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 		jvxSize cntBwd = 0;
 		jvxSize cntFwd = 0;
 
+		jvxSize itOutLoop = handle->init.buffersizeOut;
+		if (varOut)
+		{
+			if (varOut->numOut > 0)
+			{
+				itOutLoop = JVX_MIN(itOutLoop, varOut->numOut);
+				jvxData bufSzInFlt = (jvxData)itOutLoop * (jvxData)handle->conversion.downsamplingFactor / (jvxData)handle->conversion.oversamplingFactor;
+				jvxSize bufSzInSz = floor(bufSzInFlt);
+				bufSzInSz = JVX_MIN(bufSzInSz, varOut->bsizeIn);
+				itOutLoop = bufSzInSz * handle->conversion.oversamplingFactor / handle->conversion.downsamplingFactor;
+				varOut->numOut = itOutLoop;
+			}
+		}
+
+		jvxData bufSzInFlt = (jvxData)itOutLoop * (jvxData)handle->conversion.downsamplingFactor / (jvxData)handle->conversion.oversamplingFactor;
+		jvxSize bufSzInSz = itOutLoop * handle->conversion.downsamplingFactor / handle->conversion.oversamplingFactor;
+		if ((jvxData)bufSzInSz != bufSzInFlt)
+		{
+			// This is for the new feature to support variable buffersizes
+			printf("Output buffersize does not match the minimum granularity constraint!");
+			assert(0);
+		}
+
 		inFrameOffset = handle->lowmemram.inFrameOffset;
 
 		switch (handle->init.format)
 		{
 		case JVX_DATAFORMAT_DATA:
-			for (i = 0; i < handle->init.buffersizeOut; i++)
+			for (i = 0; i < itOutLoop; i++)
 			{
 				accu = 0.0;
 				inData = *inDbl;
@@ -709,18 +754,18 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				myPtrBwd = stfws + cntBwd;
 				for (j = 0; j < ll1; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
 				myPtrBwd = stfws;
 				for (j = 0; j < ll2; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
-				fwd += handle->constants.oversamplingFactor;
+				fwd += handle->conversion.oversamplingFactor;
 
 				ll2 = handle->init.lFilter / 2 - 1;
 				ll1 = cntFwd + 1;
@@ -731,21 +776,21 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				{
 					accu += *fwd * *myPtrFwd;
 					myPtrFwd--;
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 				myPtrFwd = stfws + handle->lowmemram.states->length;
 				for (j = 0; j < ll2; j++)
 				{
 					myPtrFwd--;
 					accu += *fwd * *myPtrFwd;// stfws[cntFwd];
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 
-				accuOut = accu * (jvxData)handle->constants.oversamplingFactor;
+				accuOut = accu * (jvxData)handle->conversion.oversamplingFactor;
 				*outDbl++ = JVX_DATA_2_DATA(accuOut);
-				tmp = inFrameOffset + handle->constants.downsamplingFactor;
-				inFrameOffset = tmp % handle->constants.oversamplingFactor;
-				tmp = tmp / handle->constants.oversamplingFactor;
+				tmp = inFrameOffset + handle->conversion.downsamplingFactor;
+				inFrameOffset = tmp % handle->conversion.oversamplingFactor;
+				tmp = tmp / handle->conversion.oversamplingFactor;
 				stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 
 				ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
@@ -769,7 +814,7 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 			break;
 
 		case JVX_DATAFORMAT_16BIT_LE:
-			for (i = 0; i < handle->init.buffersizeOut; i++)
+			for (i = 0; i < itOutLoop; i++)
 			{
 				accu = 0.0;
 				inData = JVX_INT16_2_DATA(*inInt16);
@@ -791,18 +836,18 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				myPtrBwd = stfws + cntBwd;
 				for (j = 0; j < ll1; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
 				myPtrBwd = stfws;
 				for (j = 0; j < ll2; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
-				fwd += handle->constants.oversamplingFactor;
+				fwd += handle->conversion.oversamplingFactor;
 
 				ll2 = handle->init.lFilter / 2 - 1;
 				ll1 = cntFwd + 1;
@@ -813,21 +858,21 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				{
 					accu += *fwd * *myPtrFwd;
 					myPtrFwd--;
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 				myPtrFwd = stfws + handle->lowmemram.states->length;
 				for (j = 0; j < ll2; j++)
 				{
 					myPtrFwd--;
 					accu += *fwd * *myPtrFwd;// stfws[cntFwd];
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 
-				accuOut = accu * (jvxData)handle->constants.oversamplingFactor;
+				accuOut = accu * (jvxData)handle->conversion.oversamplingFactor;
 				*outInt16++ = JVX_DATA_2_INT16(accuOut);
-				tmp = inFrameOffset + handle->constants.downsamplingFactor;
-				inFrameOffset = tmp % handle->constants.oversamplingFactor;
-				tmp = tmp / handle->constants.oversamplingFactor;
+				tmp = inFrameOffset + handle->conversion.downsamplingFactor;
+				inFrameOffset = tmp % handle->conversion.oversamplingFactor;
+				tmp = tmp / handle->conversion.oversamplingFactor;
 				stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 
 				ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
@@ -853,7 +898,7 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 			break;
 
 		case JVX_DATAFORMAT_32BIT_LE:
-			for (i = 0; i < handle->init.buffersizeOut; i++)
+			for (i = 0; i < itOutLoop; i++)
 			{
 				accu = 0.0;
 				inData = JVX_INT32_2_DATA(*inInt32);
@@ -875,18 +920,18 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				myPtrBwd = stfws + cntBwd;
 				for (j = 0; j < ll1; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
 				myPtrBwd = stfws;
 				for (j = 0; j < ll2; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
-				fwd += handle->constants.oversamplingFactor;
+				fwd += handle->conversion.oversamplingFactor;
 
 				ll2 = handle->init.lFilter / 2 - 1;
 				ll1 = cntFwd + 1;
@@ -897,21 +942,21 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				{
 					accu += *fwd * *myPtrFwd;
 					myPtrFwd--;
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 				myPtrFwd = stfws + handle->lowmemram.states->length;
 				for (j = 0; j < ll2; j++)
 				{
 					myPtrFwd--;
 					accu += *fwd * *myPtrFwd;// stfws[cntFwd];
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 
-				accuOut = accu * (jvxData)handle->constants.oversamplingFactor;
+				accuOut = accu * (jvxData)handle->conversion.oversamplingFactor;
 				*outInt32++ = JVX_DATA_2_INT32(accuOut);
-				tmp = inFrameOffset + handle->constants.downsamplingFactor;
-				inFrameOffset = tmp % handle->constants.oversamplingFactor;
-				tmp = tmp / handle->constants.oversamplingFactor;
+				tmp = inFrameOffset + handle->conversion.downsamplingFactor;
+				inFrameOffset = tmp % handle->conversion.oversamplingFactor;
+				tmp = tmp / handle->conversion.oversamplingFactor;
 				stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 
 				ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
@@ -936,7 +981,7 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 			handle->lowmemram.inFrameOffset = inFrameOffset;
 			break;
 		case JVX_DATAFORMAT_64BIT_LE:
-			for (i = 0; i < handle->init.buffersizeOut; i++)
+			for (i = 0; i < itOutLoop; i++)
 			{
 				accu = 0.0;
 				inData = JVX_INT64_2_DATA(*inInt64);
@@ -958,18 +1003,18 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				myPtrBwd = stfws + cntBwd;
 				for (j = 0; j < ll1; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
 				myPtrBwd = stfws;
 				for (j = 0; j < ll2; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
-				fwd += handle->constants.oversamplingFactor;
+				fwd += handle->conversion.oversamplingFactor;
 
 				ll2 = handle->init.lFilter / 2 - 1;
 				ll1 = cntFwd + 1;
@@ -980,21 +1025,21 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				{
 					accu += *fwd * *myPtrFwd;
 					myPtrFwd--;
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 				myPtrFwd = stfws + handle->lowmemram.states->length;
 				for (j = 0; j < ll2; j++)
 				{
 					myPtrFwd--;
 					accu += *fwd * *myPtrFwd;// stfws[cntFwd];
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 
-				accuOut = accu * (jvxData)handle->constants.oversamplingFactor;
+				accuOut = accu * (jvxData)handle->conversion.oversamplingFactor;
 				*outInt64++ = JVX_DATA_2_INT64(accuOut);
-				tmp = inFrameOffset + handle->constants.downsamplingFactor;
-				inFrameOffset = tmp % handle->constants.oversamplingFactor;
-				tmp = tmp / handle->constants.oversamplingFactor;
+				tmp = inFrameOffset + handle->conversion.downsamplingFactor;
+				inFrameOffset = tmp % handle->conversion.oversamplingFactor;
+				tmp = tmp / handle->conversion.oversamplingFactor;
 				stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 
 				ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
@@ -1020,7 +1065,7 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 			break;
 
 		case JVX_DATAFORMAT_8BIT:
-			for (i = 0; i < handle->init.buffersizeOut; i++)
+			for (i = 0; i < itOutLoop; i++)
 			{
 				accu = 0.0;
 				inData = JVX_INT8_2_DATA(*inInt8);
@@ -1042,18 +1087,18 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				myPtrBwd = stfws + cntBwd;
 				for (j = 0; j < ll1; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
 				myPtrBwd = stfws;
 				for (j = 0; j < ll2; j++)
 				{
-					bwd += handle->constants.oversamplingFactor;
+					bwd += handle->conversion.oversamplingFactor;
 					accu += *bwd * *myPtrBwd;
 					myPtrBwd++;
 				}
-				fwd += handle->constants.oversamplingFactor;
+				fwd += handle->conversion.oversamplingFactor;
 
 				ll2 = handle->init.lFilter / 2 - 1;
 				ll1 = cntFwd + 1;
@@ -1064,21 +1109,21 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 				{
 					accu += *fwd * *myPtrFwd;
 					myPtrFwd--;
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 				myPtrFwd = stfws + handle->lowmemram.states->length;
 				for (j = 0; j < ll2; j++)
 				{
 					myPtrFwd--;
 					accu += *fwd * *myPtrFwd;// stfws[cntFwd];
-					fwd += handle->constants.oversamplingFactor;
+					fwd += handle->conversion.oversamplingFactor;
 				}
 
-				accuOut = accu * (jvxData)handle->constants.oversamplingFactor;
+				accuOut = accu * (jvxData)handle->conversion.oversamplingFactor;
 				*outInt8++ = JVX_DATA_2_INT8(accuOut);
-				tmp = inFrameOffset + handle->constants.downsamplingFactor;
-				inFrameOffset = tmp % handle->constants.oversamplingFactor;
-				tmp = tmp / handle->constants.oversamplingFactor;
+				tmp = inFrameOffset + handle->conversion.downsamplingFactor;
+				inFrameOffset = tmp % handle->conversion.oversamplingFactor;
+				tmp = tmp / handle->conversion.oversamplingFactor;
 				stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 
 				ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
@@ -1125,7 +1170,7 @@ jvx_fixed_resampler_process(jvx_fixed_resampler* H, void* in, void* out)
 #endif
 
 jvxDspBaseErrorType
-jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out)
+jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out, fixed_resample_variable_out* varOut)
 {
 	int i, j;
 
@@ -1166,9 +1211,23 @@ jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxDat
 	jvxSize cntFwd = 0;
 	jvxData tmpID;
 	jvxInt16 tmpI16;
+	jvxSize itOutLoop = handle->init.buffersizeOut;
+	if (varOut)
+	{
+		if (varOut->numOut > 0)
+		{
+			itOutLoop = JVX_MIN(itOutLoop, varOut->numOut);
+			jvxData bufSzInFlt = (jvxData)itOutLoop * (jvxData)handle->conversion.downsamplingFactor / (jvxData)handle->conversion.oversamplingFactor;
+			jvxSize bufSzInSz = floor(bufSzInFlt);
+			bufSzInSz = JVX_MIN(bufSzInSz, varOut->bsizeIn);
+			itOutLoop = bufSzInSz * handle->conversion.oversamplingFactor / handle->conversion.downsamplingFactor;
+			varOut->numOut = itOutLoop;
+		}
+	}
+
 	inFrameOffset = handle->lowmemram.inFrameOffset;
 
-	for (i = 0; i < handle->init.buffersizeOut; i++)
+	for (i = 0; i < itOutLoop; i++)
 	{
 		accu = 0.0;
 		//inData = *inDbl;
@@ -1193,18 +1252,18 @@ jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxDat
 		myPtrBwd = stfws + cntBwd;
 		for (j = 0; j < ll1; j++)
 		{
-			bwd += handle->constants.oversamplingFactor;
+			bwd += handle->conversion.oversamplingFactor;
 			accu += *bwd * *myPtrBwd;
 			myPtrBwd++;
 		}
 		myPtrBwd = stfws;
 		for (j = 0; j < ll2; j++)
 		{
-			bwd += handle->constants.oversamplingFactor;
+			bwd += handle->conversion.oversamplingFactor;
 			accu += *bwd * *myPtrBwd;
 			myPtrBwd++;
 		}
-		fwd += handle->constants.oversamplingFactor;
+		fwd += handle->conversion.oversamplingFactor;
 
 		ll2 = handle->init.lFilter / 2 - 1;
 		ll1 = cntFwd + 1;
@@ -1215,21 +1274,21 @@ jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxDat
 		{
 			accu += *fwd * *myPtrFwd;
 			myPtrFwd--;
-			fwd += handle->constants.oversamplingFactor;
+			fwd += handle->conversion.oversamplingFactor;
 		}
 		myPtrFwd = stfws + handle->lowmemram.states->length;
 		for (j = 0; j < ll2; j++)
 		{
 			myPtrFwd--;
 			accu += *fwd * *myPtrFwd;// stfws[cntFwd];
-			fwd += handle->constants.oversamplingFactor;
+			fwd += handle->conversion.oversamplingFactor;
 		}
 
-		accuOut = accu * (jvxData)handle->constants.oversamplingFactor;
+		accuOut = accu * (jvxData)handle->conversion.oversamplingFactor;
 		*outDbl++ = JVX_DATA_2_DATA(accuOut);
-		tmp = inFrameOffset + handle->constants.downsamplingFactor;
-		inFrameOffset = tmp % handle->constants.oversamplingFactor;
-		tmp = tmp / handle->constants.oversamplingFactor;
+		tmp = inFrameOffset + handle->conversion.downsamplingFactor;
+		inFrameOffset = tmp % handle->conversion.oversamplingFactor;
+		tmp = tmp / handle->conversion.oversamplingFactor;
 		stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 		
 		ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
@@ -1262,7 +1321,7 @@ jvx_fixed_resampler_process_convert(jvx_fixed_resampler* H, jvxInt16* in, jvxDat
 
 
 jvxDspBaseErrorType
-jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out)
+jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out, fixed_resample_variable_out* varOut)
 {
     int i, j;
 
@@ -1301,9 +1360,24 @@ jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* i
     jvxSize cntFwd = 0;
     jvxData tmpID;
     jvxInt16 tmpI16;
+	jvxSize itOutLoop = handle->init.buffersizeOut;
+	if (varOut)
+	{
+		if (varOut->numOut > 0)
+		{
+			itOutLoop = JVX_MIN(itOutLoop, varOut->numOut);
+			jvxData bufSzInFlt = (jvxData)itOutLoop * (jvxData)handle->conversion.downsamplingFactor / (jvxData)handle->conversion.oversamplingFactor;
+			jvxSize bufSzInSz = floor(bufSzInFlt);
+			bufSzInSz = JVX_MIN(bufSzInSz, varOut->bsizeIn);
+			itOutLoop = bufSzInSz * handle->conversion.oversamplingFactor / handle->conversion.downsamplingFactor;
+			varOut->numOut = itOutLoop;
+		}
+	}
+
+
     stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 
-    for (i = 0; i < handle->init.buffersizeOut; i++)
+    for (i = 0; i < itOutLoop; i++)
     {
         accu = 0.0;
         //inData = *inDbl;
@@ -1334,7 +1408,7 @@ jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* i
         {
             accu += *++bwd * *myPtrBwd++;
         }
-        fwd += handle->constants.oversamplingFactor;
+        fwd += handle->conversion.oversamplingFactor;
 
         ll2 = handle->init.lFilter / 2 - 1;
         ll1 = cntFwd + 1;
@@ -1353,8 +1427,8 @@ jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* i
 
         *outDbl++ = accu;
         ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
-        ll1 = JVX_MIN(ll1, handle->constants.downsamplingFactor);
-        ll2 = handle->constants.downsamplingFactor - ll1;
+        ll1 = JVX_MIN(ll1, handle->conversion.downsamplingFactor);
+        ll2 = handle->conversion.downsamplingFactor - ll1;
 
         myPtrFwd = stfws + handle->lowmemram.states->idxRead;
 
@@ -1373,14 +1447,14 @@ jvx_fixed_resampler_process_convert_downonly(jvx_fixed_resampler* H, jvxInt16* i
             JVX_INT16_DATA_NORM(tmpI16, tmpID);
             *myPtrFwd++ = tmpID;
         }
-        handle->lowmemram.states->idxRead = (handle->lowmemram.states->idxRead + handle->constants.downsamplingFactor) % handle->lowmemram.states->length;
+        handle->lowmemram.states->idxRead = (handle->lowmemram.states->idxRead + handle->conversion.downsamplingFactor) % handle->lowmemram.states->length;
     }
 
     return(JVX_DSP_NO_ERROR);
 }
 
 jvxDspBaseErrorType
-jvx_fixed_resampler_process_convert_downonly_modand(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out)
+jvx_fixed_resampler_process_convert_downonly_modand(jvx_fixed_resampler* H, jvxInt16* in, jvxData* out, fixed_resample_variable_out* varOut)
 {
     int i, j;
 
@@ -1420,9 +1494,24 @@ jvx_fixed_resampler_process_convert_downonly_modand(jvx_fixed_resampler* H, jvxI
     jvxData tmpID;
     jvxInt16 tmpI16;
     jvxSize lm1 = handle->lowmemram.states->length - 1;
+	jvxSize itOutLoop = handle->init.buffersizeOut;
+	if (varOut)
+	{
+		if (varOut->numOut > 0)
+		{
+			itOutLoop = JVX_MIN(itOutLoop, varOut->numOut);
+			jvxData bufSzInFlt = (jvxData)itOutLoop * (jvxData)handle->conversion.downsamplingFactor / (jvxData)handle->conversion.oversamplingFactor;
+			jvxSize bufSzInSz = floor(bufSzInFlt);
+			bufSzInSz = JVX_MIN(bufSzInSz, varOut->bsizeIn);
+			itOutLoop = bufSzInSz * handle->conversion.oversamplingFactor / handle->conversion.downsamplingFactor;
+			varOut->numOut = itOutLoop;
+		}
+	}
+
+
     stfws = (jvxData*)handle->lowmemram.states->ram.field[0];
 
-    for (i = 0; i < handle->init.buffersizeOut; i++)
+    for (i = 0; i < itOutLoop; i++)
     {
         accu = 0.0;
         //inData = *inDbl;
@@ -1474,8 +1563,8 @@ jvx_fixed_resampler_process_convert_downonly_modand(jvx_fixed_resampler* H, jvxI
 
         *outDbl++ = accu;
         ll1 = handle->lowmemram.states->length - handle->lowmemram.states->idxRead;
-        ll1 = JVX_MIN(ll1, handle->constants.downsamplingFactor);
-        ll2 = handle->constants.downsamplingFactor - ll1;
+        ll1 = JVX_MIN(ll1, handle->conversion.downsamplingFactor);
+        ll2 = handle->conversion.downsamplingFactor - ll1;
 
         myPtrFwd = stfws + handle->lowmemram.states->idxRead;
 
@@ -1494,7 +1583,7 @@ jvx_fixed_resampler_process_convert_downonly_modand(jvx_fixed_resampler* H, jvxI
             JVX_INT16_DATA_NORM(tmpI16, tmpID);
             *myPtrFwd++ = tmpID;
         }
-        handle->lowmemram.states->idxRead = (handle->lowmemram.states->idxRead + handle->constants.downsamplingFactor);
+        handle->lowmemram.states->idxRead = (handle->lowmemram.states->idxRead + handle->conversion.downsamplingFactor);
         handle->lowmemram.states->idxRead &= lm1;
     }
 

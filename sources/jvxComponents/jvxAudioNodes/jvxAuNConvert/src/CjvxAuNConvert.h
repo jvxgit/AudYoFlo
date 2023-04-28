@@ -23,19 +23,40 @@ private:
 
 	struct
 	{
-		jvxSize num = 1;
-		jvxSize den = 1;
 		jvxBool active = false;
+		jvxBool requiresHeadroom = false;
 		jvx_fixed_resampler* fldResampler = nullptr;
 		jvxSize numResampler = 0;
 		jvxSize loopNum = 1;
+		jvxSize granularityIn = 1;
+		jvxSize granularityOut = 1;
+		jvx_fixed_resampler_conversion cc;
 	} resampling;
 
 	struct
 	{
+		jvxBool active = false;
 		jvxSize numIn = JVX_SIZE_UNSELECTED;
 		jvxSize numOut = JVX_SIZE_UNSELECTED;
 	} reChannel;
+
+	struct
+	{
+		jvxBool active = false;
+		jvxDataFormat formIn = JVX_DATAFORMAT_NONE;
+		jvxDataFormat formOut = JVX_DATAFORMAT_NONE;
+	} reType;
+
+	struct
+	{
+		jvxBool requiresRebuffering = false;
+		jvxBool requiresInputGranularityHeadroom = false;
+		jvxSize lFieldRebuffer = 0;
+		jvxSize fFieldRebuffer = 0;
+		jvxSize nCFieldRebuffer = 0;
+		jvxSize lFieldRebufferChannel = 0;
+		jvxHandle** ptrFieldBuffer = nullptr;
+	} output;
 
 	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
 
