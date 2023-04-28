@@ -17,6 +17,7 @@ protected:
 	
 	jvxCallManagerProperties callGate;
 	jPAD ident;
+	jPD trans;
 
 public:
 	CjvxAutomationReportConnect(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

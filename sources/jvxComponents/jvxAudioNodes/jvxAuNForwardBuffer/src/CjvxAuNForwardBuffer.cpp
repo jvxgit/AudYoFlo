@@ -702,6 +702,14 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 					res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 					if (res == JVX_NO_ERROR)
 					{
+						// We may limit the number of samples to a lower value
+						jvxSize numSamplesRequest = _common_set_ocon.theData_out.con_params.buffersize;
+						if (data != nullptr)
+						{
+							jvxSize* overrideNum = (jvxSize*)data;
+							numSamplesRequest = JVX_MIN(numSamplesRequest, *overrideNum);
+						}
+
 						assert(node_output._common_set_node_params_a_1io.number_channels == 
 							_common_set_ocon.theData_out.con_params.number_channels);
 						assert(node_output._common_set_node_params_a_1io.buffersize ==
@@ -713,7 +721,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 						jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
 							&myAudioDispenser,
 							(jvxHandle**)bufsOut, 0,
-							nullptr, 0, _common_set_ocon.theData_out.con_params.buffersize, 0, nullptr, NULL, NULL, NULL);
+							nullptr, 0, numSamplesRequest, 0, nullptr, NULL, NULL, NULL);
 
 						// This call returns:
 						// 1) JVX_DSP_ERROR_ABORT if the buffer was not yet accessed on the input side
@@ -777,7 +785,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 		(node_output._common_set_node_params_a_1io.samplerate != preferredByOutput->con_params.rate) ||
 		(node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels))
 	{
-		
+		res = JVX_ERROR_UNSUPPORTED;
 		jvxCBitField checkFlags = 0;
 		jvx_bitSet(checkFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SAMPLERATE_SHIFT);
 		jvx_bitInvert(checkFlags);

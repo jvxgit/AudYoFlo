@@ -498,6 +498,23 @@ CjvxAudioFFMpegWriterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 			fParams.bSizeAudio = nParams.bSizeAudio;
 		}
 		
+		if (JVX_CHECK_SIZE_SELECTED(genFFMpegWriter_device::fixed.srate.value))
+		{
+			if(fParams.sRate != genFFMpegWriter_device::fixed.srate.value)
+			{ 
+				fParams.sRate = genFFMpegWriter_device::fixed.srate.value;
+				requiresUpdatePrior = true;
+			}
+		}
+
+		if (JVX_CHECK_SIZE_SELECTED(genFFMpegWriter_device::fixed.nchans.value))
+		{
+			if (fParams.nChans != genFFMpegWriter_device::fixed.nchans.value)
+			{
+				fParams.nChans = genFFMpegWriter_device::fixed.nchans.value;
+				requiresUpdatePrior = true;
+			}
+		}
 		// =====================================================
 
 		if (fParams.frameSize)

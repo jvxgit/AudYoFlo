@@ -90,6 +90,8 @@ public:
 	jvxErrorType computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
 		jvxSize bSizeIn, jvxSize bSizeOut, jvxSize runCnt, jvxLinkDataDescriptor& tryThis
 		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
 	/*
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,

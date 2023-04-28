@@ -25,6 +25,10 @@ CjvxAuNConvert::activate()
 		genConvert_node::allocate_all();
 		genConvert_node::register_all(this);
 		genConvert_node::associate__resampling(this, &resampling.cc.oversamplingFactor, 1, &resampling.cc.downsamplingFactor, 1);
+		genConvert_node::register_callbacks(this, set_config, this);
+
+		// Initial read of functionality
+		fixedLocationMode = genConvert_node::translate__config__fixed_rate_location_mode_from(0);
 
 		// genChannelRearrange_node::register_callbacks(this, get_level_pre, get_level_post, set_passthru, this);
 		resampling.cc.downsamplingFactor = 1;
@@ -61,8 +65,8 @@ CjvxAuNConvert::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
-		auto mode = genConvert_node::translate__config__fixed_rate_location_mode_from();
-		switch (mode)
+		// auto mode = genConvert_node::translate__config__fixed_rate_location_mode_from();
+		switch (fixedLocationMode)
 		{
 		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
 			genConvert_node::resampling.real_rate.value = (jvxData)node_output._common_set_node_params_a_1io.samplerate * (jvxData)resampling.cc.downsamplingFactor / (jvxData)resampling.cc.oversamplingFactor;
@@ -114,7 +118,9 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 	// First, try to activate the setting as is:
 	jvxLinkDataDescriptor tryThis = *_common_set_icon.theData_in;
 
+	// ===========================================================================================
 	// Try to align number channels
+	// ===========================================================================================
 	reChannel.numIn = tryThis.con_params.number_channels;
 	reChannel.numOut = preferredByOutput->con_params.number_channels;
 
@@ -128,40 +134,95 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 		}
 	}
 
+	// ===========================================================================================
 	// Next we deal with buffersize/samperates
+	// ===========================================================================================
 
 	// First, try to just activate the output desire - which typically does not really work
 	tryThis = *preferredByOutput;
 	res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-
-	jvxSize cnt = 0;
-	jvxBool runLoop = true;
-	while(runLoop)
+	if (res != JVX_NO_ERROR)
 	{
-		switch (res)
-		{
-		case JVX_NO_ERROR:
-			runLoop = false;
-			break;
-		case JVX_ERROR_COMPROMISE:
-			// What can we do here?
-			assert(0);
-			runLoop = false;
-			break;
-		default:
 
-			// Plan A did fail, now let us try plan B
-			tryThis.con_params = _common_set_icon.theData_in->con_params;
-			res = computeResamplerOperation(
+		switch (fixedLocationMode)
+		{
+		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
+		{
+			// Final attempt without any other components involved: convert resampling options
+			jvx_fixed_resampler_init_conversion(
+				&resampling.cc,
 				node_inout._common_set_node_params_a_1io.samplerate,
-				preferredByOutput->con_params.rate,
-				node_inout._common_set_node_params_a_1io.buffersize,
-				preferredByOutput->con_params.buffersize, cnt++, tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				preferredByOutput->con_params.rate);
+
+			resampling.granularityIn = resampling.cc.downsamplingFactor;
+			resampling.granularityOut = resampling.cc.oversamplingFactor;
+
+			// Update the output side
+			adapt_output_parameters();
+			test_set_output_parameters();
+
+			res = JVX_ERROR_COMPROMISE;
+
+			/*
+			jvxSize cnt = 0;
+			jvxBool runLoop = true;
+			while (runLoop)
+			{
+				switch (res)
+				{
+				case JVX_NO_ERROR:
+					runLoop = false;
+					break;
+				case JVX_ERROR_COMPROMISE:
+					// What can we do here?
+					assert(0);
+					runLoop = false;
+					break;
+				default:
+
+					// Plan A did fail, now let us try plan B
+					tryThis.con_params = _common_set_icon.theData_in->con_params;
+					res = computeResamplerOperation(
+						node_inout._common_set_node_params_a_1io.samplerate,
+						preferredByOutput->con_params.rate,
+						node_inout._common_set_node_params_a_1io.buffersize,
+						preferredByOutput->con_params.buffersize, cnt++, tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+					break;
+				}
+
+				if (cnt == 2)
+				{
+					break;
+				}
+			}
+			*/
 			break;
 		}
+		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
 
-		if (cnt == 2)
-		{
+			// Final attempt without any other components involved: convert resampling options
+			tryThis = *_common_set_icon.theData_in;
+			jvx_fixed_resampler_init_conversion(&resampling.cc, node_inout._common_set_node_params_a_1io.samplerate,
+				preferredByOutput->con_params.rate);
+			tryThis.con_params.buffersize = ceil((jvxData)preferredByOutput->con_params.buffersize * (jvxData)resampling.cc.downsamplingFactor / (jvxData)resampling.cc.oversamplingFactor);
+
+			// Here, we must rely on a buffersize update in the previous component - this is the degree of freedom that we have
+			res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_NO_ERROR)
+			{
+				// Recompute the input parameters
+				update_simple_params_from_ldesc();
+				
+				// Only the output samplerate should have changed!
+				node_output._common_set_node_params_a_1io.samplerate = node_inout._common_set_node_params_a_1io.samplerate * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
+
+				neg_output._update_parameters_fixed(
+					JVX_SIZE_UNSELECTED,
+					JVX_SIZE_UNSELECTED,
+					node_output._common_set_node_params_a_1io.samplerate);
+
+				test_set_output_parameters();
+			}
 			break;
 		}
 	}
@@ -494,6 +555,15 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	}
 	return fwd_process_buffers_icon(mt_mask, idx_stage);
 	
+}
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNConvert, set_config)
+{
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genConvert_node::config.fixed_rate_location_mode))
+	{
+		fixedLocationMode = genConvert_node::translate__config__fixed_rate_location_mode_from(0);
+	}
+	return JVX_NO_ERROR;
 }
 
 /*

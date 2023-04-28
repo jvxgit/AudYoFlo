@@ -21,7 +21,6 @@ namespace CayfAutomationModules
 
 		ayfConnectConfigSrc2SnkPreChain(
 			const ayfConnectConfigSrc2Snk& cfg,
-			const std::list<ayfConnectConfigCpEntry>& connectedNodesPreChainArg,
 
 			// Name of the output 
 			const std::string& oconNmSrcPreChainArg = "default",
@@ -40,6 +39,7 @@ namespace CayfAutomationModules
 		std::string oconNmSrcPreChain = "default";
 		std::string iconNmEnterPreChain = "default";
 		jvxComponentIdentification tpEnter = JVX_COMPONENT_UNKNOWN;
+		
 	public:
 		CayfAutomationModulesSrc2SnkPreChain();
 

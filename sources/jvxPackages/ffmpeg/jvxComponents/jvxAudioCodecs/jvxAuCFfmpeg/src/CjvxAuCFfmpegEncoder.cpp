@@ -67,7 +67,8 @@ CjvxAuCFfmpegAudioEncoder::check_backward_parameters(jvxLinkDataDescriptor* ld_c
 	{
 		if (
 			(cParams_check.bSizeAudio == cParams.bSizeAudio) &&
-			(cParams.sRate == cParams.sRate)
+			(cParams_check.sRate == cParams.sRate) &&
+			(cParams_check.nChans == cParams.nChans)
 			)
 		{
 			// Accept the new parameters and report positive to caller

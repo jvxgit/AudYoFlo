@@ -903,6 +903,7 @@ void jvx_ffmpeg_wav_params(jvxFfmpegAudioParameter& params)
 	{
 		params.frameSizeMax = params.bSizeAudio * params.nChans * params.bitsPerCoded;
 		params.frameSizeMax = params.frameSizeMax >> 3; // bits to bytes
+		params.bitRate = params.sRate * params.nChans * params.bitsPerCoded;
 	}
 	else
 	{
