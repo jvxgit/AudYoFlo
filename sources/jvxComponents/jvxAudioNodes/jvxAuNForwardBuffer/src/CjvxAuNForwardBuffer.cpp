@@ -58,7 +58,7 @@ CjvxAuNForwardBuffer::activate()
 		genForwardBuffer_node::register_all(static_cast<CjvxProperties*>(this));
 
 		genForwardBuffer_node::register_callbacks(static_cast<CjvxProperties*>(this),
-			set_bypass_buffer, get_processing_monitor, this, nullptr);
+			set_bypass_buffer, set_buffer_mode, get_processing_monitor, this, nullptr);
 		// Obtain the thread handle here
 		refThreads = reqInstTool<IjvxThreads>(
 			_common_set.theToolsHost,
@@ -253,8 +253,6 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	}
 
 	// ================================================================
-
-	buffermode = genForwardBuffer_node::translate__config__buffer_location_from();
 	// ================================================================
 
 	if (bypass_buffer_mode)
@@ -293,10 +291,21 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags,
 				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
 
-			// Output format
-			// Variable segment sizes do end here!!
-			jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
-				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
+			switch (buffermode)
+			{
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT:
+				// Output format
+				// Variable segment sizes do end here!!
+				jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
+					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
+				break;
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+				// Output format
+				// Variable segment sizes are possible
+				jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
+					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_ALLOW_FHEIGHT_INFO_SHIFT);
+				break;
+			}
 			_common_set_ocon.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
 
 			// Have to review this lateron, currently: no timestamp
@@ -323,10 +332,20 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				*/
 				res = allocate_pipeline_and_buffers_prepare_to();
 				assert(res == JVX_NO_ERROR);
+
 				jvx_bitClear(_common_set_icon.theData_in->con_data.alloc_flags,
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
 
+			}
 
+			switch (buffermode)
+			{
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+
+				// Clear this bit
+				jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
+					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_ALLOW_FHEIGHT_INFO_SHIFT);
+				break;
 			}
 
 			jvxBool withStartThreshold = false;
@@ -780,47 +799,93 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 jvxErrorType
 CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	jvxErrorType res = JVX_NO_ERROR;
-	if (
-		(node_output._common_set_node_params_a_1io.samplerate != preferredByOutput->con_params.rate) ||
-		(node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels))
+	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+
+	switch(buffermode)
 	{
-		res = JVX_ERROR_UNSUPPORTED;
-		jvxCBitField checkFlags = 0;
-		jvx_bitSet(checkFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SAMPLERATE_SHIFT);
-		jvx_bitInvert(checkFlags);
-		if (CjvxNegotiate_common::_check_equal(_common_set_icon.theData_in->con_params, preferredByOutput->con_params, checkFlags))
+	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT:
+		
+		// TODO: accept a new buffersize on the output side - which we can do easily!
+		
+		// In input mode, the samplerate and the number of channels can only be accepted if the previous components
+		// acts appropriately
+
+		if (
+			(node_output._common_set_node_params_a_1io.samplerate != preferredByOutput->con_params.rate) ||
+			(node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels))
 		{
-			jvxLinkDataDescriptor ld_try;
-			ld_try.con_params = _common_set_icon.theData_in->con_params;
-			ld_try.con_params.rate = preferredByOutput->con_params.rate;
-			ld_try.con_params.number_channels = preferredByOutput->con_params.number_channels;
+			res = JVX_ERROR_UNSUPPORTED;
+			jvxCBitField checkFlags = 0;
+			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT);
+			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
+			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT); // This may change here
+			jvx_bitInvert(checkFlags);
 
-			res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_try JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-			if (res == JVX_ERROR_COMPROMISE)
+			// Check if from the previous component only the samplerate or the number of channels deviate
+			if (!jvx_evalBool(jvx_check_differences(_common_set_icon.theData_in->con_params,
+				preferredByOutput->con_params, checkFlags)))
 			{
-				// If we have found a compromise we need to check in detail that only the buffersize has changed - which we accept
-				res = JVX_ERROR_UNSUPPORTED;
-				checkFlags = 0;
-				jvx_bitSet(checkFlags, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_BUFFERSIZE_SHIFT);
-				jvx_bitSet(checkFlags, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGX_SHIFT);
-				jvx_bitSet(checkFlags, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_NUM_CHANNELS_SHIFT);
-				jvx_bitInvert(checkFlags);
-				if (CjvxNegotiate_common::_check_equal(_common_set_icon.theData_in->con_params, ld_try.con_params, checkFlags) == JVX_NO_ERROR)
-				{
-					res = JVX_NO_ERROR;
+				// Prepare a test with only modified samplerate and number of channels
+				jvxLinkDataDescriptor ld_try;
+				ld_try.con_params = _common_set_icon.theData_in->con_params;
+				ld_try.con_params.rate = preferredByOutput->con_params.rate;
+				ld_try.con_params.number_channels = preferredByOutput->con_params.number_channels;
 
-					// We can work with this - let us update the output parameters
-					node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
-					node_output._common_set_node_params_a_1io.samplerate = preferredByOutput->con_params.rate;
-					neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels, 
-						JVX_SIZE_UNSELECTED,
-						node_output._common_set_node_params_a_1io.samplerate);
-					_common_set_ocon.theData_out.con_params.number_channels = node_output._common_set_node_params_a_1io.number_channels;
-					_common_set_ocon.theData_out.con_params.rate = node_output._common_set_node_params_a_1io.samplerate;
+				// We do expect a compromise since a new samplerate will require a new buffersize
+				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
+					JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_try JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				if (res == JVX_ERROR_COMPROMISE)
+				{
+					// If we have found a compromise we need to check in detail that only the buffersize has changed - which we accept
+					res = JVX_ERROR_UNSUPPORTED;
+					checkFlags = 0;
+					jvx_bitSet(checkFlags, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+					jvx_bitSet(checkFlags, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
+					jvx_bitInvert(checkFlags);
+					if (!jvx_evalBool(jvx_check_differences(
+						_common_set_icon.theData_in->con_params, ld_try.con_params, checkFlags)))
+					{
+						res = JVX_NO_ERROR;
+
+						// Update all input parameters
+						update_simple_params_from_ldesc();
+
+						// We can work with this - let us update the output parameters to the values as requested by the successor
+						node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
+						node_output._common_set_node_params_a_1io.samplerate = preferredByOutput->con_params.rate;
+
+						// Prepare parameters for the following components
+						// test_set_output_parameters(); <- this will be called in the calling function
+
+						// Need to update the output parameter num channels and rate!
+						neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels,
+							JVX_SIZE_UNSELECTED,
+							node_output._common_set_node_params_a_1io.samplerate);
+					}
 				}
 			}
 		}
+		break;
+	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+		if (node_output._common_set_node_params_a_1io.buffersize != preferredByOutput->con_params.buffersize)
+		{
+			res = JVX_ERROR_UNSUPPORTED;
+
+			// Only option to negotiate: buffersize
+			jvxCBitField checkFlags = 0;
+			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+			jvx_bitInvert(checkFlags);
+
+			// Check if from the previous component only the samplerate or the number of channels deviate
+			if (!jvx_evalBool(jvx_check_differences(_common_set_icon.theData_in->con_params,
+				preferredByOutput->con_params, checkFlags)))
+			{
+				node_output._common_set_node_params_a_1io.buffersize = preferredByOutput->con_params.buffersize;
+				test_set_output_parameters();
+				res = JVX_NO_ERROR;
+			}
+		}
+		break;
 	}
 	return res;
 }
@@ -1121,6 +1186,15 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNForwardBuffer, set_bypass_
 	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genForwardBuffer_node::config_select.bypass_buffer))
 	{
 		inform_chain_test(false);
+	}
+	return JVX_NO_ERROR;
+}
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNForwardBuffer, set_buffer_mode)
+{
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genForwardBuffer_node::config.buffer_location))
+	{
+		buffermode = genForwardBuffer_node::translate__config__buffer_location_from();
 	}
 	return JVX_NO_ERROR;
 }

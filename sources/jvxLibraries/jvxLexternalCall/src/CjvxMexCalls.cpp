@@ -125,7 +125,7 @@ CjvxMexCalls::process_buffers_icon(jvxLinkDataDescriptor* theData_in, jvxLinkDat
 	theData_in->con_compat.ext.segmentation_x = theData_out->con_params.segmentation.x;
 	theData_in->con_compat.ext.segmentation_y = theData_out->con_params.segmentation.y;
 	theData_in->con_compat.ext.subformat = theData_out->con_params.format_group;
-	theData_in->con_compat.ext.hints = theData_out->con_params.hints;
+	theData_in->con_compat.ext.additional_flags = theData_out->con_params.additional_flags;
 
 	res = prv->process_st(theData_in, *theData_in->con_pipeline.idx_stage_ptr, *theData_out->con_pipeline.idx_stage_ptr, theData_out);
 
@@ -136,7 +136,7 @@ CjvxMexCalls::process_buffers_icon(jvxLinkDataDescriptor* theData_in, jvxLinkDat
 	theData_in->con_compat.number_buffers = 0;
 	theData_in->con_compat.number_channels = 0;
 	theData_in->con_compat.rate = 0;
-	theData_in->con_compat.ext.hints = 0;
+	theData_in->con_compat.ext.additional_flags = 0;
 	theData_in->con_compat.ext.segmentation_x = 0;
 	theData_in->con_compat.ext.segmentation_y = 0;
 	theData_in->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;

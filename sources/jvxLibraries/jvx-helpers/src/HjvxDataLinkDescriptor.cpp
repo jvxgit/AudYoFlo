@@ -466,8 +466,11 @@ jvx_allocateDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool allocateF
 			theData->con_data.number_buffers);
 		assert(theData->con_data.buffers);
 
-		if (jvx_bitTest(theData->con_data.alloc_flags,
-			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT))
+		if (
+			(jvx_bitTest(theData->con_data.alloc_flags,
+			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT)) || 
+			(jvx_bitTest(theData->con_data.alloc_flags,
+				(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_ALLOW_FHEIGHT_INFO_SHIFT)))
 		{
 			assert(theData->con_data.fHeights == NULL);
 			JVX_DSP_SAFE_ALLOCATE_FIELD(theData->con_data.fHeights,
@@ -680,7 +683,7 @@ jvx_ccopyDataLinkDescriptor(jvxLinkDataDescriptor* copyTo, jvxLinkDataDescriptor
 	copyTo->con_compat.ext.segmentation_x = copyFrom->con_params.segmentation.x;
 	copyTo->con_compat.ext.segmentation_y = copyFrom->con_params.segmentation.y;
 	copyTo->con_compat.ext.subformat = copyFrom->con_params.format_group;
-	copyTo->con_compat.ext.hints = copyFrom->con_params.hints;
+	copyTo->con_compat.ext.additional_flags = copyFrom->con_params.additional_flags;
 
 	copyTo->con_compat.bExt.align = copyFrom->con_data.bExt.align;
 	copyTo->con_compat.bExt.append = copyFrom->con_data.bExt.append;
@@ -698,7 +701,7 @@ jvx_cinitDataLinkDescriptor(jvxLinkDataDescriptor* descr)
 	descr->con_compat.number_channels = 0;
 	descr->con_compat.rate = 0;
 
-	descr->con_compat.ext.hints = 0;
+	descr->con_compat.ext.additional_flags = 0;
 	//descr->con_compat.ext.segmentation_x = 0;
 	//descr->con_compat.ext.segmentation_y = 0;
 	//descr->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;
@@ -727,7 +730,7 @@ jvx_neutralDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool sender)
 		theData->con_data.number_buffers = 0;
 		theData->con_params.number_channels = 0;
 		theData->con_params.rate = 0;
-		theData->con_params.hints = 0;
+		theData->con_params.additional_flags = 0;
 		theData->con_params.segmentation.x = 0;
 		theData->con_params.segmentation.y = 0;
 		theData->con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
@@ -744,7 +747,7 @@ jvx_neutralDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool sender)
 		theData->con_compat.number_buffers = 0;
 		theData->con_compat.number_channels = 0;
 		theData->con_compat.rate = 0;
-		theData->con_compat.ext.hints = 0;
+		theData->con_compat.ext.additional_flags = 0;
 		//theData->con_compat.ext.segmentation_x = 0;
 		//theData->con_compat.ext.segmentation_y = 0;
 		//theData->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_AUDIO_PCM;
@@ -1365,4 +1368,105 @@ jvx_attached_pop_front(jvxLinkDataAttachedChain* old_first, jvxLinkDataAttachedC
 		*removed_first = old_first;
 	}
 	return retVal;
+}
+
+jvxErrorType jvx_check_valid(jvxLinkDataDescriptor_con_params& params, std::string& errReason)
+{
+	errReason.clear();
+	if (JVX_CHECK_SIZE_UNSELECTED(params.buffersize))
+	{
+		errReason = "Invalid buffersize specified.";
+		goto fail;
+	}
+	if (JVX_CHECK_SIZE_UNSELECTED(params.rate))
+	{
+		errReason = "Invalid samplerate specified.";
+		goto fail;
+	}
+	if (JVX_CHECK_SIZE_UNSELECTED(params.number_channels))
+	{
+		goto fail;
+	}
+	if (params.format == JVX_DATAFORMAT_NONE)
+	{
+		errReason = "Invalid format specified.";
+		goto fail;
+	}
+	if (params.format_group == JVX_DATAFORMAT_GROUP_NONE)
+	{
+		errReason = "Invalid format group specified.";
+		goto fail;
+	}
+	return JVX_NO_ERROR;
+fail:
+	return JVX_ERROR_INVALID_ARGUMENT;
+}
+
+jvxCBitField jvx_check_differences(jvxLinkDataDescriptor_con_params& params_one, jvxLinkDataDescriptor_con_params& params_other, jvxCBitField checkThis)
+{
+	jvxCBitField out = 0;
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT))
+	{
+		if (params_one.buffersize != params_other.buffersize)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT))
+	{
+		if (params_one.data_flow != params_other.data_flow)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT))
+	{
+		if (params_one.format != params_other.format)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT))
+	{
+		if (params_one.number_channels != params_other.number_channels)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT))
+	{
+		if (params_one.rate != params_other.rate)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT))
+	{
+		if (params_one.segmentation.x != params_other.segmentation.x)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT))
+	{
+		if (params_one.segmentation.y != params_other.segmentation.y)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT))
+	{
+		if (params_one.format_group != params_other.format_group)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT);
+		}
+	}
+	if (jvx_bitTest(checkThis, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMATSPEC_SHIFT))
+	{
+		if (params_one.format_spec != params_other.format_spec)
+		{
+			jvx_bitSet(out, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMATSPEC_SHIFT);
+		}
+	}
+	return out;
 }

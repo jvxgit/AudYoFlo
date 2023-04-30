@@ -449,6 +449,38 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, set_on
 		triggerTest = true;
 	}
 
+	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genMixChain::config.channel_routing))
+	{
+		jvxSize i;
+		jvxCBitField chanSelCorrect = (1 << szChannelRoutes) -1;
+		for (i = 0; i < szChannelRoutes; i++)
+		{
+			jvxSize idx = ptrChannelRoutes[i];
+			if (!jvx_bitTest(chanSelCorrect, idx))
+			{
+				// Here, we need to correct
+				jvxSize j;
+				idx = JVX_SIZE_UNSELECTED;
+				for (j = 0; j < szChannelRoutes; j++)
+				{
+					if (jvx_bitTest(chanSelCorrect, j))
+					{
+						idx = j;
+						break;
+					}
+				}
+				assert(JVX_CHECK_SIZE_SELECTED(idx));
+			}
+			
+			// CHeck this position
+			jvx_bitClear(chanSelCorrect, idx);
+			ptrChannelRoutes[i] = idx;
+		}
+		
+		operationMode = genMixChain::translate__config__operation_mode_from();
+		triggerTest = true;
+	}
+
 	if (triggerTest)
 	{
 		this->inform_chain_test();

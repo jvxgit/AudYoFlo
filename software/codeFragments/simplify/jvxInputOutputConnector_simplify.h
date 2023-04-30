@@ -118,8 +118,8 @@ public:
 					_common_set_ocon.theData_out.con_params.segmentation.y;
 				_common_set_icon.theData_in->con_compat.ext.subformat =
 					_common_set_ocon.theData_out.con_params.format_group;
-				_common_set_icon.theData_in->con_compat.ext.hints =
-					_common_set_ocon.theData_out.con_params.hints;
+				_common_set_icon.theData_in->con_compat.ext.additional_flags =
+					_common_set_ocon.theData_out.con_params.additional_flags;
 
 				// Here would be the right placce to enque a backward user hint
 
@@ -187,7 +187,7 @@ public:
 		_common_set_icon.theData_in->con_compat.number_buffers = 0;
 		_common_set_icon.theData_in->con_compat.number_channels = 0;
 		_common_set_icon.theData_in->con_compat.rate = 0;
-		_common_set_icon.theData_in->con_compat.ext.hints = 0;
+		_common_set_icon.theData_in->con_compat.ext.additional_flags = 0;
 		_common_set_icon.theData_in->con_compat.ext.segmentation_x = 0;
 		_common_set_icon.theData_in->con_compat.ext.segmentation_y = 0;
 		_common_set_icon.theData_in->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;

@@ -805,7 +805,7 @@ HjvxMicroConnection::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			ld_con.con_params.format = theData_outlnk->con_params.format;
 			ld_con.con_params.number_channels = theData_outlnk->con_params.number_channels;
 
-			jvx_bitFClear(ld_con.con_params.hints);
+			jvx_bitFClear(ld_con.con_params.additional_flags);
 			ld_con.con_params.segmentation.x = theData_outlnk->con_params.buffersize;
 			ld_con.con_params.segmentation.y = 1;
 			ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;

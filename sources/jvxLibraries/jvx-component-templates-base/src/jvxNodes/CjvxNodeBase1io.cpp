@@ -350,6 +350,84 @@ CjvxNodeBase1io::update_simple_params_from_ldesc()
 	node_inout._common_set_node_params_a_1io.format_spec = _common_set_icon.theData_in->con_params.format_spec.std_str();
 }
 
+jvxCBitField
+CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField cmpWhat)
+{
+	jvxCBitField what = 0;
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.buffersize != theData->con_params.buffersize)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+		}
+	}
+	
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.samplerate != theData->con_params.rate)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT);
+		}
+	}	
+	
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.number_channels != theData->con_params.number_channels)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
+		}
+	}
+		
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.format != theData->con_params.format)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT);
+		}
+	}
+
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.subformat != theData->con_params.format_group)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT);
+		}
+	}
+
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.segmentation.x != theData->con_params.segmentation.x)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
+		}
+	}
+	
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.segmentation.y != theData->con_params.segmentation.y)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT);
+		}
+	}
+
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.data_flow != theData->con_params.data_flow)
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
+		}
+	}
+
+	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMATSPEC_SHIFT))
+	{
+		if (node_inout._common_set_node_params_a_1io.format_spec != theData->con_params.format_spec.std_str())
+		{
+			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMATSPEC_SHIFT);
+		}
+	}
+	return what;
+}
+
 void
 CjvxNodeBase1io::update_ldesc_from_input_params_on_test()
 {

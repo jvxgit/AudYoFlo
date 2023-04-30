@@ -17,7 +17,8 @@ enum class jvxDataLinkDescriptorAllocFlags
 	// next chain element it is a zerocopy pipeline, Typically, each chain starts as a ZEROCOPY pipeline and ends as a non-zerocopy chain.
 	JVX_LINKDATA_ALLOCATION_FLAGS_SPACE_USER_HINTS_SHIFT = 4, // If we set this, the receiver needs to allocated space for a concatenation of user hints - one per pipeline stage
 	JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT = 5, // If we set this flag, the receiver must foresee fHeight buffers since the buffersize may be variable
-	JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN = 6 // this flag indicates that the component requires a run of a transfer call prior to any processing IN the processing loop
+	JVX_LINKDATA_ALLOCATION_FLAGS_THREAD_INIT_PRE_RUN = 6, // this flag indicates that the component requires a run of a transfer call prior to any processing IN the processing loop
+	JVX_LINKDATA_ALLOCATION_FLAGS_ALLOW_FHEIGHT_INFO_SHIFT = 7 // If we set this flag, the sender checks for a fHeight constraint on "process_connect_start"
 } ;
 
 #define JVX_LINKDATA_ALLOCATION_MASK_FORWARD_ELEMENT_TO_ELEMENT ((1 << (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT))
@@ -95,6 +96,19 @@ struct jvxDataProcessorHintDescriptorSearch
 #define JVX_BUFFER_FLAGS_TAKE_FROM_CALLER_MASK 1
 
 struct jvxLinkDataDescriptor;
+
+enum class jvxAddressLinkDataEntry
+{
+	JVX_ADDRESS_BUFFERSIZE_SHIFT = 0,
+	JVX_ADDRESS_SAMPLERATE_SHIFT = 1,
+	JVX_ADDRESS_NUM_CHANNELS_SHIFT = 2,
+	JVX_ADDRESS_FORMAT_SHIFT = 3,
+	JVX_ADDRESS_SUBFORMAT_SHIFT = 4,
+	JVX_ADDRESS_SEGX_SHIFT = 5,
+	JVX_ADDRESS_SEGY_SHIFT = 6,
+	JVX_ADDRESS_DATAFLOW_SHIFT = 7,
+	JVX_ADDRESS_FORMATSPEC_SHIFT = 8
+};
 
 // ==================================================================
 // JVXLINKDATAATTACHED JVXLINKDATAATTACHED JVXLINKDATAATTACHED JVXLINKDATAATTACHED
@@ -220,7 +234,7 @@ struct jvxLinkDataDescriptor_con_link
 
 struct jvxLinkDataDescriptor_ext
 {
-	jvxCBitField hints = 0;
+	jvxCBitField additional_flags = 0;
 	jvxDataFormatGroup subformat = JVX_DATAFORMAT_GROUP_NONE;
 	jvxSize segmentation_x = 0;
 	jvxSize segmentation_y = 0;
@@ -386,8 +400,9 @@ struct jvxLinkDataDescriptor_con_params
 	// Free parameter to specify properties of the data. in particular, used on "coded" bitstreams
 	jvxApiString format_spec;
 
-	// It seems that this field is not used at the moment
-	jvxCBitField hints = 0;
+	// We can announce and accept some aditional connection flags. These flags will also be copied to the connection
+	// flags on pprepare!!
+	jvxCBitField additional_flags = 0;
 };
 
 // =============================================================

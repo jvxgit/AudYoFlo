@@ -65,9 +65,10 @@ private:
 protected:
 
 	jvxBool bypass_buffer_mode = true;
-	jvxOperationMode mode = 
+	/*
+	jvxOperationMode mode =
 		jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT;
-
+		*/
 	class proc_params
 	{
 	public:
@@ -139,6 +140,7 @@ public:
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_processing_monitor);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_bypass_buffer);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_buffer_mode);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor,

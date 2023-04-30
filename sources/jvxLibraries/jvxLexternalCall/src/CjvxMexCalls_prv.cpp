@@ -272,8 +272,8 @@ CjvxMexCalls_prv::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* the
 		runtime.descrOutUse.con_params.segmentation.y;
 	runtime.descrInUse.con_compat.ext.subformat =
 		runtime.descrOutUse.con_params.format_group;
-	runtime.descrInUse.con_compat.ext.hints =
-		runtime.descrOutUse.con_params.hints;
+	runtime.descrInUse.con_compat.ext.additional_flags =
+		runtime.descrOutUse.con_params.additional_flags;
 	// END
 	
 	// set the pointers to null values to avoid uncontrolled access

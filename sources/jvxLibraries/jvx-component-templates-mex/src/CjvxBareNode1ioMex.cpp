@@ -165,8 +165,8 @@ CjvxBareNode1ioMex::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				_common_set_ocon.theData_out.con_params.segmentation.y;
 			_common_set_icon.theData_in->con_compat.ext.subformat =
 				_common_set_ocon.theData_out.con_params.format_group;
-			_common_set_icon.theData_in->con_compat.ext.hints =
-				_common_set_ocon.theData_out.con_params.hints;
+			_common_set_icon.theData_in->con_compat.ext.additional_flags =
+				_common_set_ocon.theData_out.con_params.additional_flags;
 
 			// Link the fully allocated buffers
 			resL = CjvxMexCalls::prepare_complete_receiver_to_sender(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
@@ -247,7 +247,7 @@ CjvxBareNode1ioMex::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		_common_set_icon.theData_in->con_compat.number_buffers = 0;
 		_common_set_icon.theData_in->con_compat.number_channels = 0;
 		_common_set_icon.theData_in->con_compat.rate = 0;
-		_common_set_icon.theData_in->con_compat.ext.hints = 0;
+		_common_set_icon.theData_in->con_compat.ext.additional_flags = 0;
 		_common_set_icon.theData_in->con_compat.ext.segmentation_x = 0;
 		_common_set_icon.theData_in->con_compat.ext.segmentation_y = 0;
 		_common_set_icon.theData_in->con_compat.ext.subformat = JVX_DATAFORMAT_GROUP_NONE;

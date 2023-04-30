@@ -77,102 +77,6 @@ CjvxNegotiate_common::CjvxNegotiate_common()
 	// This variable has its own constructor -> _latest_results
 }
 
-jvxErrorType 
-CjvxNegotiate_common::_check_valid(jvxLinkDataDescriptor_con_params& params, std::string& errReason)
-{
-	errReason.clear();
-	if (JVX_CHECK_SIZE_UNSELECTED(params.buffersize))
-	{
-		errReason = "Invalid buffersize specified.";
-		goto fail;
-	}
-	if (JVX_CHECK_SIZE_UNSELECTED(params.rate))
-	{
-		errReason = "Invalid samplerate specified.";
-		goto fail;
-	}
-	if (JVX_CHECK_SIZE_UNSELECTED(params.number_channels))
-	{
-		goto fail;
-	}
-	if (params.format == JVX_DATAFORMAT_NONE)
-	{
-		errReason = "Invalid format specified.";
-		goto fail;
-	}
-	if (params.format_group == JVX_DATAFORMAT_GROUP_NONE)
-	{
-		errReason = "Invalid format group specified.";
-		goto fail;
-	}
-	return JVX_NO_ERROR;
-fail:
-	return JVX_ERROR_INVALID_ARGUMENT;
-}
-
-jvxErrorType 
-CjvxNegotiate_common::_check_equal(jvxLinkDataDescriptor_con_params& params_one, jvxLinkDataDescriptor_con_params& params_other, jvxCBitField checkThis)
-{
-	jvxErrorType res = JVX_NO_ERROR;
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_BUFFERSIZE_SHIFT))
-	{
-		if (params_one.buffersize != params_other.buffersize)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_DATAFLOW_SHIFT))
-	{
-		if (params_one.data_flow != params_other.data_flow)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_FORMAT_SHIFT))
-	{
-		if (params_one.format != params_other.format)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_NUM_CHANNELS_SHIFT))
-	{
-		if (params_one.number_channels != params_other.number_channels)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SAMPLERATE_SHIFT))
-	{
-		if (params_one.rate != params_other.rate)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGX_SHIFT))
-	{
-		if (params_one.segmentation.x != params_other.segmentation.x)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGY_SHIFT))
-	{
-		if (params_one.segmentation.y != params_other.segmentation.y)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	if (jvx_bitTest(checkThis, (jvxSize)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SUBFORMAT_SHIFT))
-	{
-		if (params_one.format_group != params_other.format_group)
-		{
-			res = JVX_ERROR_INVALID_FORMAT;
-		}
-	}
-	return res;
-}
-
 void
 CjvxNegotiate_common::_set_parameters_fixed(
 	jvxSize num_channels,
@@ -462,7 +366,7 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool thereismismatch = false;
 
-	res = _check_valid(ld->con_params, txt);
+	res = jvx_check_valid(ld->con_params, txt);
 	if (res != JVX_NO_ERROR)
 	{
 		JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, res,
@@ -509,35 +413,35 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 		*modFlags = 0;
 		if (ld->con_params.buffersize != dataOut->con_params.buffersize)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_BUFFERSIZE_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
 		}
 		if (ld->con_params.rate != dataOut->con_params.rate)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SAMPLERATE_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT);
 		}
 		if (ld->con_params.number_channels != dataOut->con_params.number_channels)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_NUM_CHANNELS_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
 		}
 		if (ld->con_params.format != dataOut->con_params.format)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_FORMAT_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT);
 		}
 		if (ld->con_params.format_group != dataOut->con_params.format_group)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SUBFORMAT_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT);
 		}
 		if (ld->con_params.segmentation.x != dataOut->con_params.segmentation.x)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGX_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
 		}
 		if (ld->con_params.segmentation.y != dataOut->con_params.segmentation.y)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_SEGY_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT);
 		}
 		if (ld->con_params.data_flow != dataOut->con_params.data_flow)
 		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxNegotiateModificationSuggested::JVX_MODIFICATION_DATAFLOW_SHIFT);
+			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
 		}
 	}
 
@@ -806,7 +710,7 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 		descror,
 		"Entering CjvxNegotiate default input connector");
 
-	resComplain = _check_valid(theData_in->con_params, reason);
+	resComplain = jvx_check_valid(theData_in->con_params, reason);
 	if (resComplain != JVX_NO_ERROR)
 	{
 		JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, resComplain,

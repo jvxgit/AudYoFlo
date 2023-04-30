@@ -127,6 +127,16 @@ jvxCBitField jvx_bitFieldCBitField(jvxBitField entry)
 	return(entry.toCBitField());
 }
 
+bool jvx_evalBool(const jvxBitField& entry)
+{
+	return entry.evaluateBool();
+}
+
+bool jvx_evalBool(const jvxCBitField& entry)
+{
+	return entry != 0;
+}
+
 /*
 jvxUInt32 jvx_bitFieldValue64(jvxBitField& entry)
 {

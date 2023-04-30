@@ -18,6 +18,13 @@ enum class jvxBufferingMode
 	JVX_BUFFERING_FIXED
 };
 
+enum class jvxResamplerQuality
+{
+	JVX_RESAMPLER_QUALITY_LOW,
+	JVX_RESAMPLER_QUALITY_MEDIUM,
+	JVX_RESAMPLER_QUALITY_HIGH
+};
+
 #include "pcg_exports_node.h"
 
 class CjvxAuNConvert: public CjvxBareNode1ioRearrange, 
@@ -29,9 +36,12 @@ private:
 
 	struct
 	{
-		jvxSize granularityIn = 1;
-		jvxSize granularityOut = 1;
+		// jvxSize granularityOut = 1;
 		jvx_fixed_resampler_conversion cc;
+		jvxSize bSizeInMin = 0;
+		jvxSize bSizeInMax = 0;
+		jvxSize bSizeOutMin = 0;
+		jvxSize bSizeOutMax = 0;
 	} resampling;
 
 	struct
@@ -64,6 +74,10 @@ private:
 	} runtime;
 
 	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
+	jvxResamplerQuality resamplerQuality = jvxResamplerQuality::JVX_RESAMPLER_QUALITY_MEDIUM;
+
+	jvxCBitField checkRequestUpdate = 0;
+	jvxCBitField whatChanged = 0;
 
 public:
 
@@ -86,13 +100,16 @@ public:
 	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
-	void adapt_output_parameters();
+	void adapt_output_parameters_forward();
+	void adapt_output_parameters_backward();
+
+	void compute_buffer_relations(jvxBool fromInput);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
+
+	/*
 	jvxErrorType computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
 		jvxSize bSizeIn, jvxSize bSizeOut, jvxSize runCnt, jvxLinkDataDescriptor& tryThis
 		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
-	/*
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor,

@@ -20,6 +20,8 @@ void jvx_bitFClear(jvxBitField& entry);
 void jvx_bitFClear(jvxCBitField& entry);
 void jvx_bitFSet(jvxBitField& entry);
 void jvx_bitFSet(jvxCBitField& entry);
+bool jvx_evalBool(const jvxBitField& entry);
+bool jvx_evalBool(const jvxCBitField& entry);
 void jvx_bitToggle(jvxBitField& entry, jvxSize position);
 void jvx_cbitToggle(jvxCBitField& entry, jvxSize position);
 jvxSize jvx_bitCountFilled(jvxBitField entry);

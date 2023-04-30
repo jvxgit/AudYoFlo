@@ -163,5 +163,9 @@ jvxLinkDataAttachedChain* jvx_attached_push_front(jvxLinkDataAttachedChain* old_
 
 jvxLinkDataAttachedChain* jvx_attached_pop_front(jvxLinkDataAttachedChain* old_first, jvxLinkDataAttachedChain** removed_first);
 
+jvxErrorType jvx_check_valid(jvxLinkDataDescriptor_con_params& params, std::string& reason);
+
+jvxCBitField jvx_check_differences(jvxLinkDataDescriptor_con_params& params_one, 
+		jvxLinkDataDescriptor_con_params& params_other, jvxCBitField checkThis);
 
 #endif

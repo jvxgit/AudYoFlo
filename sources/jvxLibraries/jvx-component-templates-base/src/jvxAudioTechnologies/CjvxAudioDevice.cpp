@@ -568,7 +568,7 @@ CjvxAudioDevice::updateChainOutputParameter()
 	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
 	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
 	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
-	jvx_bitFClear(_common_set_ocon.theData_out.con_params.hints);
+	jvx_bitFClear(_common_set_ocon.theData_out.con_params.additional_flags);
 }
 
 jvxErrorType
@@ -602,7 +602,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	ld_con.con_params.format = params.format;
 	ld_con.con_params.number_channels = params.numOutputs;
 
-	jvx_bitFClear(ld_con.con_params.hints);
+	jvx_bitFClear(ld_con.con_params.additional_flags);
 	ld_con.con_params.segmentation.x = params.buffersize;
 	ld_con.con_params.segmentation.y = 1;
 	ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;

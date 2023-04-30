@@ -244,7 +244,7 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
 	_common_set_ocon.theData_out.con_params.segmentation.x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
 	_common_set_ocon.theData_out.con_params.segmentation.y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
-	_common_set_ocon.theData_out.con_params.hints = 0;
+	_common_set_ocon.theData_out.con_params.additional_flags = 0;
 
 	runtime.szElement = jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] *
 		jvxDataFormatGroup_size[_common_set_ocon.theData_out.con_params.format_group];
