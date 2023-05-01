@@ -116,7 +116,7 @@ CjvxAuNConvert::compute_buffer_relations(jvxBool fromInput)
 		{
 			resampling.bSizeInMin = node_inout._common_set_node_params_a_1io.buffersize / resampling.cc.downsamplingFactor;
 			resampling.bSizeInMin *= resampling.cc.downsamplingFactor;
-			resampling.bSizeInMax += resampling.cc.downsamplingFactor;
+			resampling.bSizeInMax = resampling.bSizeInMin + resampling.cc.downsamplingFactor;
 		}
 		resampling.bSizeOutMin = resampling.bSizeInMin * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
 		resampling.bSizeOutMax = resampling.bSizeInMax * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
@@ -129,7 +129,7 @@ CjvxAuNConvert::compute_buffer_relations(jvxBool fromInput)
 		{
 			resampling.bSizeOutMin = node_output._common_set_node_params_a_1io.buffersize / resampling.cc.oversamplingFactor;
 			resampling.bSizeOutMin *= resampling.cc.oversamplingFactor;
-			resampling.bSizeOutMax += resampling.cc.oversamplingFactor;
+			resampling.bSizeOutMax = resampling.bSizeOutMin + resampling.cc.oversamplingFactor;
 		}
 		resampling.bSizeInMin = resampling.bSizeOutMin * resampling.cc.downsamplingFactor / resampling.cc.oversamplingFactor;
 		resampling.bSizeInMax = resampling.bSizeOutMax * resampling.cc.downsamplingFactor / resampling.cc.oversamplingFactor;
@@ -189,12 +189,24 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 	// First, try to activate the setting as is:
 	jvxLinkDataDescriptor tryThis = *_common_set_icon.theData_in;
 
+	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+	log << "Entering function " << __FUNCTION__  << " to negotiate processing parameters." << std::endl;
+	JVX_STOP_LOCK_LOG;
+
 	// First, try to just activate the output desire - which typically does not really work
+	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+	log << "Trying proposed settings being applied directly to successor." << std::endl;
+	JVX_STOP_LOCK_LOG;
+
 	tryThis = *preferredByOutput;
 	res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	switch(res)
 	{
 		case JVX_NO_ERROR:
+
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			log << "Successor accepted proposed configuration." << std::endl;
+			JVX_STOP_LOCK_LOG;
 
 			// Reset the resampler to NOT resample
 			resampling.cc.downsamplingFactor = 1;
@@ -215,10 +227,19 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 			break;
 		case JVX_ERROR_COMPROMISE:
 
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			log << "Successor returned compromise - returned JVX_ERROR_POSTPONE to test the connection again." << std::endl;
+			JVX_STOP_LOCK_LOG;
+
 			// Too much complexity, we better run the test again!
 			res = JVX_ERROR_POSTPONE;
 			break;
 		default:
+
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			log << "Successor returned error. We will adapt input/output settings involving resampler." << std::endl;
+			JVX_STOP_LOCK_LOG;
+
 			// Simple forwarding did not work out, hence, let us find out step by step
 			whatChanged = CjvxNodeBase1io::requires_reconfig(preferredByOutput, checkRequestUpdate);
 			res = JVX_NO_ERROR;
@@ -232,6 +253,10 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 				// ===========================================================================================
 				if (jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT))
 				{
+					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					log << "Asking successor to adapt number of channels." << std::endl;
+					JVX_STOP_LOCK_LOG;
+
 					tryThis.con_params = _common_set_icon.theData_in->con_params;
 					tryThis.con_params.number_channels = preferredByOutput->con_params.number_channels;
 					switch (res)
@@ -243,6 +268,10 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 						res = JVX_ERROR_UNSUPPORTED;
 						break;
 					default:
+
+						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+						log << "Successor could not fulfill requirements." << std::endl;
+						JVX_STOP_LOCK_LOG;
 
 						// Override error message - can deal with it
 						res = JVX_NO_ERROR;
@@ -261,6 +290,10 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 				// ===========================================================================================
 				if (jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT))
 				{
+					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					log << "Asking successor to adapt processing format." << std::endl;
+					JVX_STOP_LOCK_LOG;
+
 					tryThis.con_params = _common_set_icon.theData_in->con_params;
 					tryThis.con_params.format = preferredByOutput->con_params.format;
 					res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -274,6 +307,10 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 						res = JVX_ERROR_UNSUPPORTED;
 						break;
 					default:
+
+						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+						log << "Successor could not fulfill requirements." << std::endl;
+						JVX_STOP_LOCK_LOG;
 
 						// Override error message - can deal with it
 						res = JVX_NO_ERROR;
@@ -293,6 +330,10 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 					(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT)) ||
 					(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT)))
 				{
+					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					log << "Adapting conversion parameters to convert samplerate/buffersize." << std::endl;
+					JVX_STOP_LOCK_LOG;
+
 
 					// Final attempt without any other components involved: convert resampling options
 					jvx_fixed_resampler_init_conversion(
@@ -331,75 +372,6 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 	return res;
 		//CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, preferredByOutput JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
-
-#if 0
-jvxErrorType
-CjvxAuNConvert::computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
-	jvxSize bSizeIn, jvxSize bSizeOut, jvxSize runCnt, 
-	jvxLinkDataDescriptor& startRequestSuccessorWiththis
-	JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	jvxErrorType res = JVX_NO_ERROR;
-	jvxData resamplingFacInOut = (jvxData)sRateOut / (jvxData)sRateIn;
-	jvxData bSizeInFrac = (jvxData) bSizeOut / resamplingFacInOut;
-	jvxSize bSizeInFwd = JVX_DATA2SIZE(bSizeInFrac);
-	jvxData bsizeOutFrac = 0;
-	jvxInt32 gcdVal = 1;	
-	jvxSize bSizeOutFwd = 0;
-
-	/*
-	 * Optimize the resampler settings
-	 */
-
-	switch (runCnt)
-	{
-	case 0:
-		// Try to force the successor to provide another buffersize
-		gcdVal = jvx_gcd(bSizeInFwd, bSizeOut);
-		startRequestSuccessorWiththis.con_params.buffersize = bSizeInFwd;
-		startRequestSuccessorWiththis.con_params.segmentation.x = startRequestSuccessorWiththis.con_params.buffersize;
-		res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &startRequestSuccessorWiththis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		if (res != JVX_NO_ERROR)
-		{
-
-		}
-		break;
-	case 1:
-
-		/*
-		resampling.loopNum = 1;
-		bsizeOutFrac = (jvxData)bSizeIn * (jvxData)resampling.loopNum * resamplingFacInOut;
-		while (bsizeOutFrac - floor(bsizeOutFrac) != 0.0)
-		{
-			resampling.loopNum++;
-			bsizeOutFrac = (jvxData)bSizeIn * (jvxData)resampling.loopNum * resamplingFacInOut;
-		}
-		bSizeOutFwd = JVX_DATA2SIZE(bsizeOutFrac);		
-		*/
-		jvx_fixed_resampler_init_conversion(&resampling.cc, sRateIn, sRateOut);
-
-		resampling.granularityIn = resampling.cc.downsamplingFactor;
-		resampling.granularityOut = resampling.cc.oversamplingFactor;
-		
-		// Update the output side
-		adapt_output_parameters();
-		test_set_output_parameters();
-
-		// Keep input as it is and adapt the output arguments
-		//startRequestSuccessorWiththis.con_params.buffersize = bSizeOutFwd;
-		//startRequestSuccessorWiththis.con_params.segmentation.x = startRequestSuccessorWiththis.con_params.buffersize;
-		res = JVX_ERROR_COMPROMISE;
-		break;
-	}
-	
-	if (
-		(res == JVX_NO_ERROR) ||
-		(res == JVX_ERROR_COMPROMISE))
-	{
-	}
-	return res;
-}
-#endif
 
 jvxErrorType
 CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
@@ -487,7 +459,16 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		if (runtime.active_resampling)
 		{
 			jvxDataFormat formOut = (jvxDataFormat)node_inout._common_set_node_params_a_1io.format;
-			runtime.numResampler = node_output._common_set_node_params_a_1io.number_channels;
+
+			switch (fixedLocationMode)
+			{
+			case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
+				runtime.numResampler = node_output._common_set_node_params_a_1io.number_channels;
+				break;
+			case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
+				runtime.numResampler = node_inout._common_set_node_params_a_1io.number_channels;
+				break;
+			}
 
 			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.fldResampler, jvx_fixed_resampler, runtime.numResampler);
 			for (i = 0; i < runtime.numResampler; i++)
@@ -577,6 +558,42 @@ CjvxAuNConvert::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType 
+CjvxAuNConvert::process_start_icon(
+	jvxSize pipeline_offset,
+	jvxSize* idx_stage,
+	jvxSize tobeAccessedByStage,
+	callback_process_start_in_lock clbk,
+	jvxHandle* priv_ptr)
+{
+	jvxSize idx_stage_local = JVX_SIZE_UNSELECTED;
+	jvxSize space = 0;
+	jvxErrorType res = CjvxBareNode1ioRearrange::process_start_icon(
+		pipeline_offset, idx_stage, tobeAccessedByStage, clbk, priv_ptr);
+	if (res == JVX_NO_ERROR)
+	{
+		switch (fixedLocationMode)
+		{
+		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
+			idx_stage_local = jvx_process_icon_extract_stage(_common_set_icon.theData_in, JVX_SIZE_UNSELECTED);
+			if (_common_set_icon.theData_in->con_data.fHeights)
+			{
+				space = runtime.lFieldRebuffer - runtime.fFieldRebuffer;
+				if (space >= resampling.bSizeOutMax)
+				{
+					_common_set_icon.theData_in->con_data.fHeights[idx_stage_local].x = resampling.bSizeInMax;
+				}
+				else
+				{
+					_common_set_icon.theData_in->con_data.fHeights[idx_stage_local].x = resampling.bSizeInMin;
+				}
+			}
+			break;
+		}
+	}
+	return res;
+}
+
 jvxErrorType
 CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
@@ -604,15 +621,18 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		jvxSize numCopyNextFrame = 0;
 		jvxSize numResamplerOut = 0;
 		jvxSize numResamplerIn = 0;
+		jvxSize numOutSamples = 0;
 		jvxSize cnt = 0;
 		jvxSize splCnt = 0;
-
-		jvxSize loopNum = JVX_MAX(runtime.nCFieldRebuffer,
-			_common_set_icon.theData_in->con_params.number_channels);
+		jvxSize loopNum = 0; 
 
 		switch (fixedLocationMode)
 		{
 		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
+
+			loopNum = JVX_MAX(runtime.nCFieldRebuffer,
+				_common_set_icon.theData_in->con_params.number_channels);
+
 			// Set the output to 0 first
 			for (cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
 			{
@@ -678,7 +698,71 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			runtime.fFieldRebuffer -= numResamplerIn;
 			break;
 		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
-			assert(0);
+
+			loopNum = JVX_MAX(runtime.nCFieldRebuffer,
+				_common_set_ocon.theData_out.con_params.number_channels);
+			// Input resampling
+			numResamplerOut = numInputSamples * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
+			numOutSamples = node_output._common_set_node_params_a_1io.buffersize;
+
+			assert(runtime.fFieldRebuffer + numResamplerOut <= runtime.lFieldRebuffer);
+
+			for (i = 0; i < runtime.numResampler; i++)
+			{
+				jvxData* targetOut = (jvxData*)runtime.ptrFieldBuffer[i];
+				targetOut += runtime.fFieldRebuffer;
+
+				fixed_resample_variable_out varOut;
+				varOut.bsizeIn = numInputSamples;
+				varOut.numOut = numResamplerOut;
+
+				// Important: use the "new" input buffer
+				jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsIn[i], targetOut, &varOut); // Full size resampling
+			}
+
+			runtime.fFieldRebuffer += numResamplerOut;
+
+			for (cnt = 0; cnt < node_output._common_set_node_params_a_1io.number_channels; cnt++)
+			{
+				jvxData* targetOut = bufsOut[cnt];
+				jvxSize splCnt = 0;
+				for (; splCnt < numOutSamples; splCnt++)
+				{
+					targetOut[splCnt] = 0;
+				}
+			}
+
+			for (cnt = 0; cnt < loopNum; cnt++)
+			{
+				jvxSize inCnt = cnt % runtime.nCFieldRebuffer;
+				jvxSize outCnt = cnt % _common_set_ocon.theData_out.con_params.number_channels;
+
+				jvxData* sourceOut = (jvxData*)runtime.ptrFieldBuffer[inCnt];
+				jvxData* targetOut = (jvxData*)bufsOut[outCnt];
+
+				for (splCnt = 0; splCnt < numOutSamples; splCnt++)
+				{
+					jvxData sampleOut = sourceOut[splCnt];
+					targetOut[splCnt] += sampleOut;
+				}
+			}
+
+			assert((runtime.fFieldRebuffer - numOutSamples) >= 0);
+
+			for(cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
+			{
+				jvxData* targetOut = (jvxData*)runtime.ptrFieldBuffer[cnt];
+				jvxData* sourceOut = (jvxData*)runtime.ptrFieldBuffer[cnt];
+				sourceOut += numOutSamples;
+				for (splCnt = 0; splCnt < (runtime.fFieldRebuffer - numOutSamples); splCnt++)
+				{
+					jvxData sampleOut = sourceOut[splCnt];
+					targetOut[splCnt] = sampleOut;
+				}
+			}
+			runtime.fFieldRebuffer -= numOutSamples;
+			assert(runtime.fFieldRebuffer >= 0);
+
 			break;
 		}
 	}
@@ -709,150 +793,3 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNConvert, set_config)
 	return JVX_NO_ERROR;
 }
 
-/*
-
-
-// ===================================================================
-jvxErrorType
-CjvxAuNChannelRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
-{
-	jvxErrorType res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-	if(res == JVX_NO_ERROR)
-	{
-	}
-	return res;
-}
-
-// ===================================================================
-// ===========================================================================
-
-jvxErrorType
-CjvxAuNChannelRearrange::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
-{
-
-	if (!_common_set_ocon.setup_for_termination)
-	{
-		jvxData** fieldInput = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-		jvxData** fieldOutput = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
-		jvxBool passThrough = (genChannelRearrange_node::passthrough.active.value == c_true);
-		// Talkthrough
-		jvxSize ii;
-		jvxSize inChans = _common_set_icon.theData_in->con_params.number_channels;
-		jvxSize outChans = _common_set_ocon.theData_out.con_params.number_channels;
-		if (passThrough)
-		{
-			inChans = JVX_MAX((int)inChans - 1, 0);
-			outChans = JVX_MAX((int)outChans - 1, 0);
-		}
-		jvxSize maxChans = JVX_MAX(inChans, outChans);
-		jvxSize minChans = JVX_MIN(inChans, outChans);
-
-		// This default function does not tolerate a lot of unexpected settings
-		assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
-		assert(_common_set_icon.theData_in->con_params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
-
-		if (minChans)
-		{
-			for (ii = 0; ii < maxChans; ii++)
-			{
-				jvxSize idxIn = ii % inChans;
-				jvxSize idxOut = ii % outChans;
-
-				assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
-				jvx_convertSamples_memcpy(
-					_common_set_icon.theData_in->con_data.buffers[
-						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][idxIn],
-							_common_set_ocon.theData_out.con_data.buffers[
-								*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][idxOut],
-									jvxDataFormat_size[_common_set_icon.theData_in->con_params.format],
-									_common_set_icon.theData_in->con_params.buffersize);
-			}
-		}
-		if (passThrough)
-		{
-			if ((inChans > 0) && (outChans > 0))
-			{
-				memcpy(fieldOutput[outChans], fieldInput[inChans], jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format) * _common_set_icon.theData_in->con_params.buffersize);
-			}
-		}
-		return fwd_process_buffers_icon(mt_mask, idx_stage);
-	}
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CjvxAuNChannelRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
-{
-	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
-	switch (tp)
-	{
-	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
-
-		// Forward call to base class
-		return CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		break;
-
-	default:
-		res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	}
-	return res;
-}
-
-// ===================================================================
-// ===================================================================
-
-jvxErrorType
-CjvxAuNChannelRearrange::put_configuration(jvxCallManagerConfiguration* callMan,
-	IjvxConfigProcessor* processor,
-	jvxHandle* sectionToContainAllSubsectionsForMe,
-	const char* filename,
-	jvxInt32 lineno)
-{
-	jvxSize i;
-	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1ioRearrange::put_configuration(callMan,
-		processor, sectionToContainAllSubsectionsForMe,
-		filename, lineno);
-	if (res == JVX_NO_ERROR)
-	{
-		if (_common_set_min.theState == JVX_STATE_ACTIVE)
-		{
-			genChannelRearrange_node::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe);
-		}
-	}
-	return res;
-}
-
-jvxErrorType
-CjvxAuNChannelRearrange::get_configuration(jvxCallManagerConfiguration* callMan,
-	IjvxConfigProcessor* processor,
-	jvxHandle* sectionWhereToAddAllSubsections)
-{
-	std::vector<std::string> warns;
-	jvxErrorType res = CjvxBareNode1ioRearrange::get_configuration(callMan, processor, sectionWhereToAddAllSubsections);;
-	if (res == JVX_NO_ERROR)
-	{
-		genChannelRearrange_node::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);
-	}
-	return res;
-}
-
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNChannelRearrange, get_level_pre)
-{
-	return JVX_NO_ERROR;
-}
-
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNChannelRearrange, get_level_post)
-{
-	return JVX_NO_ERROR;
-}
-
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNChannelRearrange, set_passthru)
-{
-	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genChannelRearrange_node::passthrough.active))
-	{
-		// Actually, we need not do anything here, this macro is considered only in the procesing function
-	}
-	return JVX_NO_ERROR;
-}
-*/

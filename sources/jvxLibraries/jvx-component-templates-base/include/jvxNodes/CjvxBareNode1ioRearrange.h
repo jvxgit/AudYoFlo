@@ -36,21 +36,6 @@ public:
 	// I am not sure about these functions..
 	// void update_output_params_on_test();
 	void output_params_from_ldesc_on_test();
-
-	/*
-	void input_props_from_ldesc_on_test();
-	void
-		CjvxBareNode1ioRearrange::input_props_from_ldesc_on_test()
-	{
-		CjvxSimplePropsPars::_common_set_node_params_a_1io.buffersize = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.buffersize);
-		CjvxSimplePropsPars::_common_set_node_params_a_1io.samplerate = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.rate);
-		CjvxSimplePropsPars::_common_set_node_params_a_1io.format = JVX_SIZE_INT16(_common_set_ldslave.theData_in->con_params.format);
-		CjvxSimplePropsPars::_common_set_node_params_a_1io.subformat = JVX_SIZE_INT16(_common_set_ldslave.theData_in->con_params.format_group);
-		CjvxSimplePropsPars::_common_set_node_params_a_1io.number_channels = JVX_SIZE_INT16(_common_set_ldslave.theData_in->con_params.number_channels);
-		CjvxSimplePropsPars::_common_set_node_params_a_1io.dimX = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.segmentation_x);
-		CjvxSimplePropsPars::_common_set_node_params_a_1io.dimY = JVX_SIZE_INT32(_common_set_ldslave.theData_in->con_params.segmentation_y);
-	}
-	*/
 };
 
 #endif

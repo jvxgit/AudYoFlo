@@ -1266,11 +1266,28 @@ bool jvx_try_lock_text_log(jvxrtst_backup& bkp);
 void jvx_lock_text_log(jvxrtst_backup& bkp);
 void jvx_unlock_text_log(jvxrtst_backup& bkp);
 
+enum class jvxLogLevel
+{
+	JVX_LOGLEVEL_0_NORMAL_OPERATION_WITH_LOW_DEGREE_OUTPUT = 0,
+	JVX_LOGLEVEL_1_NORMAL_OPERATION_WITH_AVRG_DEGREE_OUTPUT = 1,
+	JVX_LOGLEVEL_2_NORMAL_OPERATION_WITH_HIGH_DEGREE_OUTPUT = 2,
+	JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT = 3,
+	JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG = 4,
+	JVX_LOGLEVEL_5_OPERATION_WITH_HIGH_DEGREE_DEBUG = 5,
+	JVX_LOGLEVEL_6_OPERATION = 6,
+	JVX_LOGLEVEL_7_OPERATION = 7,
+	JVX_LOGLEVEL_8_OPERATION = 8,
+	JVX_LOGLEVEL_9_OPERATION = 9,
+	JVX_LOGLEVEL_10_OPERATION = 10
+};
+
+static int jvxLogLevel2Id(jvxLogLevel lev) {return (int)lev	;}
+
 #define JVX_LOCAL_START_OUTPUT_STREAM(varos, varsb) \
 		std::ostream varos(&varsb); 
 
 #define JVX_START_LOCK_LOG(LEVEL) \
-	if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > LEVEL) \
+	if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > jvxLogLevel2Id(LEVEL)) \
 	{ \
 		std::ostream& log = jvxrtst; \
 		jvx_lock_text_log(jvxrtst_bkp);
@@ -1280,7 +1297,7 @@ void jvx_unlock_text_log(jvxrtst_backup& bkp);
 	}
 
 #define JVX_START_LOCK_LOG_REF(ptr, LEVEL) \
-	if (ptr && ptr->jvxrtst_bkp.dbgModule && ptr->jvxrtst_bkp.dbgLevel > LEVEL) \
+	if (ptr && ptr->jvxrtst_bkp.dbgModule && ptr->jvxrtst_bkp.dbgLevel > jvxLogLevel2Id(LEVEL)) \
 	{ \
 		std::ostream& log = ptr->jvxrtst; \
 		jvx_lock_text_log(ptr->jvxrtst_bkp);

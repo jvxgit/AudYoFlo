@@ -98,6 +98,14 @@ public:
 	// ===================================================================================
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+
+	jvxErrorType process_start_icon(
+		jvxSize pipeline_offset,
+		jvxSize* idx_stage,
+		jvxSize tobeAccessedByStage,
+		callback_process_start_in_lock clbk = NULL,
+		jvxHandle* priv_ptr = NULL) override;
+
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	void adapt_output_parameters_forward();
@@ -105,26 +113,5 @@ public:
 
 	void compute_buffer_relations(jvxBool fromInput);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
-
-	/*
-	jvxErrorType computeResamplerOperation(jvxSize sRateIn, jvxSize sRateOut,
-		jvxSize bSizeIn, jvxSize bSizeOut, jvxSize runCnt, jvxLinkDataDescriptor& tryThis
-		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
-		IjvxConfigProcessor* processor,
-		jvxHandle* sectionToContainAllSubsectionsForMe,
-		const char* filename,
-		jvxInt32 lineno)override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
-		IjvxConfigProcessor* processor,
-		jvxHandle* sectionWhereToAddAllSubsections)override;
-
-	// ====================================================================================
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_level_pre);
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_level_post);
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_passthru);
-	*/
 
 };

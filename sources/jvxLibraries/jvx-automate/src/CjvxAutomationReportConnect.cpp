@@ -27,7 +27,7 @@ CjvxAutomationReportConnect::activate()
 	jvxErrorType res = _activate();
 	if (res == JVX_NO_ERROR)
 	{
-		JVX_START_LOCK_LOG(3);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << "Activated <" << nmComponent << ">." << std::endl;
 		JVX_STOP_LOCK_LOG;
 
@@ -46,7 +46,7 @@ CjvxAutomationReportConnect::deactivate()
 {
 	this->set_system_references(nullptr, nullptr);
 
-	JVX_START_LOCK_LOG(3);
+	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 	log << "Deactivating <" << nmComponent << ">." << std::endl;
 	JVX_STOP_LOCK_LOG;
 		
@@ -64,20 +64,20 @@ CjvxAutomationReportConnect::handle_report_ident(jvxReportCommandRequest req,
 	{
 	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_SUBDEVICE:
 
-		JVX_START_LOCK_LOG(3);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << __FUNCTION__ << "Sub device was born!" << std::endl;
 		JVX_STOP_LOCK_LOG;
 		break;
 
 	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_SUBDEVICE:
 
-		JVX_START_LOCK_LOG(3);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << __FUNCTION__ << "Sub device has died!" << std::endl;		
 		JVX_STOP_LOCK_LOG;
 		break;
 
 	default:
-		JVX_START_LOCK_LOG(3);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << __FUNCTION__ << "Another event was reported!" << std::endl;
 		JVX_STOP_LOCK_LOG;
 	}
@@ -97,7 +97,7 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 	{
 	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED:
 
-		JVX_START_LOCK_LOG(3);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << __FUNCTION__ << " - Report process connect for Uid <" << uid << ">." << std::endl;
 		JVX_STOP_LOCK_LOG;	
 
@@ -172,7 +172,7 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 		break;
 	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED:
 
-		JVX_START_LOCK_LOG(3);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << __FUNCTION__ << " - Report process to be disconnected Uid <" << uid << ">." << std::endl;
 		JVX_STOP_LOCK_LOG;
 
@@ -181,7 +181,7 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 		break;
 	default:
 
-		JVX_START_LOCK_LOG(3);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << __FUNCTION__ << " - Report process Uid <" << uid << ">, request <" << (int)req << ">." << std::endl;
 		JVX_STOP_LOCK_LOG;
 		break;
@@ -199,7 +199,7 @@ CjvxAutomationReportConnect::handle_report_ss(
 	jvxApiString astr;
 	jvxErrorType res = JVX_NO_ERROR;
 
-	JVX_START_LOCK_LOG(3);
+	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 	log << __FUNCTION__ << " - Report state switch component <" << jvxComponentIdentification_txt(tp) << ">, state switch <" << jvxStateSwitch_txt(ss) << ">." << std::endl;
 	JVX_STOP_LOCK_LOG;
 

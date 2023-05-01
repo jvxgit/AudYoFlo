@@ -60,7 +60,7 @@ namespace CayfAutomationModules
 		if (segId == 0)
 		{
 			// ==================================================================================
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, 3);
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 			log << "Connect from <" << jvxComponentIdentification_txt(tp_sink) <<
 				"> , connector <" << oconNmSrcPreChain << "> to <" << jvxComponentIdentification_txt(tpEnter) <<
 				"> , connector <" << iconNmEnterPreChain << ">." << std::endl;

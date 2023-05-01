@@ -318,7 +318,7 @@ CjvxNegotiate_common::_push_constraints()
 	// a request is generated from towards the end after the fixed-connection. It is not too bad to accept this condition I think but
 	// a warning should be generated in the verbose output. This kind of warning should not happen at every test but at the first test where 
 	// a modification request is accepted.
-	JVX_START_LOCK_LOG_REF(logObj, 3)
+	JVX_START_LOCK_LOG_REF(logObj, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
 	log << __FUNCTION__ << "Warning: stack has already been pushed but not popped afterwards." << std::endl;
 	JVX_STOP_LOCK_LOG_REF(logObj)
 
@@ -341,7 +341,7 @@ CjvxNegotiate_common::_pop_constraints()
 	// a request is generated from towards the end after the fixed-connection. It is not too bad to accept this condition I think but
 	// a warning should be generated in the verbose output. This kind of warning should not happen at every test but at the first test where 
 	// a modification request is accepted.
-	JVX_START_LOCK_LOG_REF(logObj, 3)
+	JVX_START_LOCK_LOG_REF(logObj, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
 	log << __FUNCTION__ << "Warning: stack has not been pushed before pop." << std::endl;
 	JVX_STOP_LOCK_LOG_REF(logObj)
 
