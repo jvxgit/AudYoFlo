@@ -12,6 +12,8 @@ protected:
 		IjvxInputConnector* to_conn = nullptr;
 		IjvxOutputConnectorSelect* from_select = nullptr;
 		IjvxInputConnectorSelect* to_select = nullptr;
+		jvxSize from_idTrigger = JVX_SIZE_UNSELECTED;
+		jvxSize to_idTrigger = JVX_SIZE_UNSELECTED;
 		oneBridgeElement()
 		{
 			from_conn = NULL;
@@ -56,12 +58,15 @@ public:
 		const std::string& nm, 
 		jvxBool dedThread, jvxBool 
 		boostThread, 
-		jvxBool interceptorBridge)
+		jvxBool interceptorBridge,
+		jvxSize from_idTriggerArg, jvxSize to_idTriggerArg)
 	{
 		_common_set_conn_bridge.theLink.from_conn = nullptr;
 		_common_set_conn_bridge.theLink.to_conn = nullptr;
 		_common_set_conn_bridge.theLink.from_select = from;
 		_common_set_conn_bridge.theLink.to_select = to;
+		_common_set_conn_bridge.theLink.from_idTrigger = from_idTriggerArg;		
+		_common_set_conn_bridge.theLink.to_idTrigger = to_idTriggerArg;
 		_common_set_conn_bridge.parent = parent;
 		_common_set_conn_bridge.name = nm;
 		_common_set_conn_bridge.refCnt_from = 0;
@@ -379,6 +384,18 @@ public:
 		}
 		return JVX_NO_ERROR;
 	};
+
+	void icon_trig_id(IjvxInputConnector** icon, jvxSize* trigId)
+	{
+		if (icon) *icon = _common_set_conn_bridge.theLink.to_conn;
+		if(trigId) *trigId = _common_set_conn_bridge.theLink.to_idTrigger;
+	}
+
+	void ocon_trig_id(IjvxOutputConnector** ocon, jvxSize* trigId)
+	{
+		if (ocon) *ocon = _common_set_conn_bridge.theLink.from_conn;
+		if (trigId) *trigId = _common_set_conn_bridge.theLink.from_idTrigger;
+	}
 };
 
 #endif

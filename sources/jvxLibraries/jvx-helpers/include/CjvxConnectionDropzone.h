@@ -39,12 +39,15 @@ protected:
 		{
 			jvxSize fac_uid;
 			jvxSize icon_id;
+			jvxSize iconTrigerId;
 		} identify_in;
 		struct
 		{
 			jvxSize fac_uid;
 			jvxSize ocon_id;
+			jvxSize oconTriggerId;
 		} identify_out;
+
 		std::string bridge_name;
 		jvxBool dedicatedThread;
 		jvxBool boostThread;
@@ -85,7 +88,7 @@ public:
 
 	void jvx_add_master(jvxSize mas_fac_uid, jvxSize mas_id, jvxBool reset_id);
 
-	void jvx_add_bridge(const char* bridge_name, jvxSize out_fac_uid, jvxSize out_ocon_id, jvxSize in_fac_uid, jvxSize in_icon_id, jvxBool ded_thread, jvxBool boost_thread);
+	void jvx_add_bridge(const char* bridge_name, jvxSize out_fac_uid, jvxSize out_ocon_id, jvxSize in_fac_uid, jvxSize in_icon_id, jvxBool ded_thread, jvxBool boost_thread, jvxSize oconTriggerId, jvxSize iconTriggerId);
 
 };
 

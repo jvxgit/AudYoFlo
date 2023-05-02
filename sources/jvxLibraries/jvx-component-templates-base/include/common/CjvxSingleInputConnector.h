@@ -6,6 +6,17 @@
 #include "common/CjvxSingleConnectorReport.h"
 #include "common/CjvxNegotiate.h"
 
+class CjvxSingleInputTriggerOutputConnector: public IjvxTriggerOutputConnector
+{
+public:
+	IjvxTriggerInputConnector* linked_ref = nullptr;
+public:
+	CjvxSingleInputTriggerOutputConnector();
+	virtual jvxErrorType trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data) override;
+	virtual jvxErrorType link_connect_itcon(IjvxTriggerInputConnector* otcon) override;
+	virtual jvxErrorType unlink_connect_itcon(IjvxTriggerInputConnector* otcon) override;
+};
+
 class CjvxSingleInputConnector: public IjvxInputConnector, public CjvxInputConnectorLink
 {
 protected:
@@ -13,11 +24,16 @@ protected:
 	CjvxSingleConnector_report<CjvxSingleInputConnector>* report = nullptr;
 	CjvxNegotiate_input neg_input;
 
+	CjvxSingleInputTriggerOutputConnector* trig_out = nullptr;
+	jvxBool withTriggerConnector = false;
+
 public:
-	CjvxSingleInputConnector();
+	CjvxSingleInputConnector(jvxBool withTriggerConnectorArg);
 	~CjvxSingleInputConnector();
 
-	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg);
+	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac,
+		const std::string& nm, 
+		CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg);
 	jvxErrorType deactivate();
 
 	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
@@ -38,6 +54,9 @@ public:
 	// Request for a PUSH from the connected async connection!!
 	jvxErrorType trigger_get_data();
 
+	virtual jvxErrorType request_trigger_otcon(IjvxTriggerOutputConnector** otcon) override;
+	virtual jvxErrorType return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
+
 	// =======================================================================================
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
@@ -47,6 +66,7 @@ public:
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
 #define JVX_INPUT_OUTPUT_SUPPRESS_START_STOP_TO
 #define JVX_INPUT_OUTPUT_SUPPRESS_PROCESS_BUFFERS_TO
+#define JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 #include "codeFragments/simplify/jvxInputConnector_simplify.h"
 #include "codeFragments/simplify/jvxConnectorCommon_simplify.h"
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
@@ -56,8 +76,11 @@ public:
 #undef JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
 #undef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP_TO
 #undef JVX_INPUT_OUTPUT_SUPPRESS_PROCESS_BUFFERS_TO
+#undef JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 
 };
+
+// =======================================================================================
 
 class CjvxSingleInputConnectorMulti: public CjvxSingleInputConnector
 {
@@ -67,13 +90,19 @@ public:
 
 	std::map<IjvxInputConnector*, CjvxSingleInputConnector*> allocatedConnectors;
 
-	CjvxSingleInputConnectorMulti();
-	~CjvxSingleInputConnectorMulti();
+	CjvxSingleInputConnectorMulti(jvxBool withTriggerConnectorArg): CjvxSingleInputConnector(withTriggerConnectorArg) {};
+	~CjvxSingleInputConnectorMulti()
+	{
+		assert(allocatedConnectors.size() == 0);
+	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_icon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
 		IjvxDataConnectionCommon* ass_connection_common, IjvxInputConnector** replace_connector) override;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION unselect_connect_icon(IjvxConnectorBridge* obj,
 		IjvxInputConnector* replace_connector) override;
 };
+
+
 
 #endif

@@ -31,7 +31,9 @@ namespace CayfAutomationModules
 		// jvxComponentIdentification tpSrc = JVX_COMPONENT_UNKNOWN;
 		jvxComponentIdentification tpInvolved = JVX_COMPONENT_UNKNOWN;
 		jvxBool dbgOut = false;
-
+		jvxSize oconIdTrigger = JVX_SIZE_UNSELECTED;
+		jvxSize iconIdTrigger = JVX_SIZE_UNSELECTED;
+		
 		ayfConnectConfigSrc2Snk() {};
 		ayfConnectConfigSrc2Snk(const std::string& chainName,
 			const std::list<ayfConnectConfigCpEntry>& connectedNodesArg,
@@ -41,10 +43,13 @@ namespace CayfAutomationModules
 			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED,
 			// jvxComponentIdentification tpSrcArg = JVX_COMPONENT_UNKNOWN,
 			jvxComponentIdentification tpInvolvedArg = JVX_COMPONENT_UNKNOWN,
-			jvxBool dbgOutArg = false) :
+			jvxBool dbgOutArg = false,
+			jvxSize oconTriggerIdArg = JVX_SIZE_UNSELECTED,
+			jvxSize iconTriggerIdArg = JVX_SIZE_UNSELECTED) :
 			chainNamePrefix(chainName), connectedNodes(connectedNodesArg),
 			nmMaster(nmMasterArg), oconNmSource(oconNmSourceArg), iconNmSink(iconNmSinkArg),
-			connectionCategory(connectionCategoryArg), tpInvolved(tpInvolvedArg), dbgOut(dbgOutArg)
+			connectionCategory(connectionCategoryArg), tpInvolved(tpInvolvedArg), dbgOut(dbgOutArg),
+			oconIdTrigger(oconTriggerIdArg), iconIdTrigger(iconTriggerIdArg)
 		{};
 	};
 
@@ -148,7 +153,9 @@ namespace CayfAutomationModules
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,			
 			jvxSize& bridgeId,
-			jvxSize segId = 0);
+			jvxSize segId,
+			jvxSize oconIdTrigger,
+			jvxSize iconIdTrigger);
 
 		// Functions to be called in the connection rule creation to adapt to use case
 

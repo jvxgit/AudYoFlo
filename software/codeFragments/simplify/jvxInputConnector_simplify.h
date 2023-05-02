@@ -331,3 +331,15 @@ virtual jvxErrorType connected_ocon(IjvxOutputConnector** ocon) override
 {
 	return _connected_ocon(ocon);
 }
+
+#ifndef JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
+virtual jvxErrorType request_trigger_otcon(IjvxTriggerOutputConnector** otcon) override
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+virtual jvxErrorType return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+#endif

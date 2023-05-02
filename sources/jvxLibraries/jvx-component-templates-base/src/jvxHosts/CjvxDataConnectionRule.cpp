@@ -79,16 +79,18 @@ CjvxDataConnectionRule::reset_master()
 jvxErrorType
 CjvxDataConnectionRule::add_bridge_specification(const jvxComponentIdentification& cp_id_from, const char* from_factory, const char* from_connector,
 	const jvxComponentIdentification& cp_id_to, const char* to_factory, const char* to_connector, const char* nmBridge,
-	jvxBool thread_group, jvxBool boost_group)
+	jvxBool thread_group, jvxBool boost_group, jvxSize oconIdTrigger, jvxSize iconIdTrigger)
 {
 	idAndBridge newElm;
 	newElm.conn_from.idCp = cp_id_from;
 	newElm.conn_from.sel_expression_fac = from_factory;
 	newElm.conn_from.sel_expression_macon = from_connector;
+	newElm.conn_from.idTrigger = oconIdTrigger;
 
 	newElm.conn_to.idCp = cp_id_to;
 	newElm.conn_to.sel_expression_fac = to_factory;
 	newElm.conn_to.sel_expression_macon = to_connector;
+	newElm.conn_to.idTrigger = iconIdTrigger;
 
 	newElm.bridge_name = nmBridge;
 	newElm.thread = thread_group;
@@ -695,6 +697,7 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part(IjvxDataConnections* allCo
 							{
 								theBridge.from.connector_factory_name = strCF_F.std_str();
 								theBridge.from.tp = tpCompare;
+								theBridge.from.oconTriggerId = elmB->conn_from.idTrigger;
 
 								resL = theCF_F->number_output_connectors(&numOC_F);
 								assert(resL == JVX_NO_ERROR);
@@ -934,6 +937,8 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part_finalize(IjvxDataConnectio
 
 						theBridge.to.connector_factory_name = strCF_T.std_str();
 						theBridge.to.tp = tpCompare;
+						theBridge.to.iconTriggerId = elmB->conn_to.idTrigger;
+
 						resL = theCF_T->number_input_connectors(&numIC_T);
 						assert(resL == JVX_NO_ERROR);
 						for (n = 0; n < numIC_T; n++)

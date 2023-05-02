@@ -115,7 +115,7 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 
 		assert(icon);
 
-		res = theProc->create_bridge(ocon, icon, elmB->bridge_name.c_str(), &elmB->uIdB, false); // Currently, no dedicated threads in "normal" connections
+		res = theProc->create_bridge(ocon, icon, elmB->bridge_name.c_str(), &elmB->uIdB, false, false, elmB->identify_out.oconTriggerId, elmB->identify_in.iconTrigerId); // Currently, no dedicated threads in "normal" connections
 		if (res != JVX_NO_ERROR)
 		{
 			JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb,
@@ -147,6 +147,8 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 
 	if (!errInBridge)
 	{
+		res = theProc->link_triggers_connection();
+
 		// Set the connections reference
 		theProc->set_connection_context(allConnections);
 		res = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -487,14 +489,19 @@ CjvxConnectionDropzone::jvx_add_master(jvxSize mas_fac_uid, jvxSize mas_id, jvxB
 
 void
 CjvxConnectionDropzone::jvx_add_bridge(const char* bridge_name, jvxSize out_fac_uid, jvxSize out_ocon_id, 
-	jvxSize in_fac_uid, jvxSize in_icon_id, jvxBool dedicatedThread, jvxBool boostThread)
+	jvxSize in_fac_uid, jvxSize in_icon_id, jvxBool dedicatedThread, jvxBool boostThread, 
+	jvxSize oconTriggerId, jvxSize iconTriggerId)
 {
 	lst_elm_bidges elm;
 	elm.bridge_name = bridge_name;
 	elm.identify_in.fac_uid = in_fac_uid;
 	elm.identify_in.icon_id = in_icon_id;
+	elm.identify_in.iconTrigerId = iconTriggerId;
+
 	elm.identify_out.fac_uid = out_fac_uid;
 	elm.identify_out.ocon_id = out_ocon_id;
+	elm.identify_out.oconTriggerId = oconTriggerId;
+
 	elm.dedicatedThread = dedicatedThread;
 	elm.boostThread = boostThread;
 	elm.uIdB = JVX_SIZE_UNSELECTED;

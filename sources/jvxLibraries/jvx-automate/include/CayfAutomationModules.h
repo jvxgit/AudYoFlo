@@ -34,10 +34,13 @@ namespace CayfAutomationModules
 			const std::string& oconNmArg = "",
 			const std::string& iconNmArg = "",
 			jvxSize assSegmentIdArg = 0,
-			const std::string& manSuffixArg = "") :
+			const std::string& manSuffixArg = "",
+			jvxSize idOconRefTriggerConnector = JVX_SIZE_UNSELECTED,
+			jvxSize idIconRefTriggerConnector = JVX_SIZE_UNSELECTED) :
 			cpTp(cpTpArg), modName(modNameArg), oconNm(oconNmArg),
 			iconNm(iconNmArg), manSuffix(manSuffixArg), 
-			assSegmentId(assSegmentIdArg)
+			assSegmentId(assSegmentIdArg),
+			idOconRefTriggerConnector(idOconRefTriggerConnector), idIconRefTriggerConnector(idIconRefTriggerConnector)
 		{
 		};
 
@@ -47,6 +50,8 @@ namespace CayfAutomationModules
 		std::string iconNm;
 		std::string manSuffix;
 		jvxSize assSegmentId = 0;
+		jvxSize idOconRefTriggerConnector = JVX_SIZE_UNSELECTED;
+		jvxSize idIconRefTriggerConnector = JVX_SIZE_UNSELECTED;
 	};	
 };
 #endif

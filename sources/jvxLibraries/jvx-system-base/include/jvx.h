@@ -28,6 +28,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 
 #include "typedefs/TjvxLinkDataDescriptor.h"
 #include "typedefs/TjvxConnector.h"
+#include "typedefs/TjvxTriggerConnector.h"
 
 #include "helpers/HjvxCastMin.h"
 
@@ -164,6 +165,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "interfaces/IjvxHost.h"
 #include "interfaces/IjvxConnectionIterator.h"
 #include "interfaces/IjvxConnector.h"
+#include "interfaces/IjvxTriggerConnector.h"
 #include "interfaces/IjvxConnectionMaster.h"
 #include "interfaces/IjvxEventLoopObject.h"
 #include "interfaces/IjvxDataConnections.h"

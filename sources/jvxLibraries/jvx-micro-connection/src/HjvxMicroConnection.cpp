@@ -181,13 +181,13 @@ HjvxMicroConnection::activate_connection(
 					goto exit_error;
 				}
 				
-				res = theProc->create_bridge(mocon, newElm.iconr, "Device to node bridge", &uId_bridge_dev_node);
+				res = theProc->create_bridge(mocon, newElm.iconr, "Device to node bridge", &uId_bridge_dev_node, false, false);
 				if (res != JVX_NO_ERROR)
 				{
 					goto exit_error;
 				}
 				
-				res = theProc->create_bridge(newElm.oconr, micon, "Node to device bridge", &uId_bridge_node_dev);
+				res = theProc->create_bridge(newElm.oconr, micon, "Node to device bridge", &uId_bridge_node_dev, false, false);
 				if (res != JVX_NO_ERROR)
 				{
 					goto exit_error;
@@ -391,7 +391,7 @@ HjvxMicroConnection::activate_connection(
 				}
 
 				jvxSize cnt = 0;
-				res = theProc->create_bridge(mocon, involvedObjects[cnt].iconr, "Device to node bridge", &uId_bridge_dev_node);
+				res = theProc->create_bridge(mocon, involvedObjects[cnt].iconr, "Device to node bridge", &uId_bridge_dev_node, false, false);
 				if (res != JVX_NO_ERROR)
 				{
 					goto exit_error;
@@ -401,14 +401,14 @@ HjvxMicroConnection::activate_connection(
 				{
 					res = theProc->create_bridge(involvedObjects[cnt].oconr, involvedObjects[cnt+1].iconr,
 						("Node #" + jvx_size2String(cnt) + " to node#" + jvx_size2String(cnt) + " bridge").c_str(),
-						&involvedObjects[cnt].uId_bridge_node_node);
+						&involvedObjects[cnt].uId_bridge_node_node, false, false);
 					if (res != JVX_NO_ERROR)
 					{
 						goto exit_error;
 					}
 					cnt++;
 				}
-				res = theProc->create_bridge(involvedObjects[cnt].oconr, micon, "Node to device bridge", &uId_bridge_node_dev);
+				res = theProc->create_bridge(involvedObjects[cnt].oconr, micon, "Node to device bridge", &uId_bridge_node_dev, false, false);
 				if (res != JVX_NO_ERROR)
 				{
 					goto exit_error;
@@ -688,6 +688,9 @@ HjvxMicroConnection::disconnect_connection()
 			{
 				goto exit_error;
 			}
+
+			// Remove the trigger connector references
+			theProc->unlink_triggers_connection();
 
 			theConnections->return_reference_connection_process(theProc);
 			theProc = NULL;

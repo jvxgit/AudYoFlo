@@ -37,14 +37,14 @@ extern "C"
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, 0, 0),
 						"*", "default",
 						AYF_HEADREST_OBJ,
-						"*", "default", "Audio to Processor");
+						"*", "default", "Audio to Processor", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
 						AYF_HEADREST_OBJ,
 						"*", "default", 
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, 0, 0),
-						"*", "default", "Processor to Audio Device");
+						"*", "default", "Processor to Audio Device", false, false);
 					assert(res == JVX_NO_ERROR);
 
 

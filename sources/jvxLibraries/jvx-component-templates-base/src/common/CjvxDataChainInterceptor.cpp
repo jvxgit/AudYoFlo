@@ -671,3 +671,27 @@ CjvxDataChainInterceptor::reference_component(
 	}
 	return JVX_NO_ERROR;
 }
+
+jvxErrorType 
+CjvxDataChainInterceptor::request_trigger_itcon(IjvxTriggerInputConnector** itcon)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType 
+CjvxDataChainInterceptor::return_trigger_itcon(IjvxTriggerInputConnector* itcon) 
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType 
+CjvxDataChainInterceptor::request_trigger_otcon(IjvxTriggerOutputConnector** otcon)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType 
+CjvxDataChainInterceptor::return_trigger_otcon(IjvxTriggerOutputConnector* otcon)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}

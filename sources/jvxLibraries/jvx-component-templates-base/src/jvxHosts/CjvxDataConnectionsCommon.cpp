@@ -239,6 +239,8 @@ CjvxDataConnectionCommon::_remove_connection()
 		{
 			return res;
 		}
+
+		theDataConnectionGroup->unlink_triggers_connection();
 	}
 	else
 	{
@@ -540,6 +542,121 @@ void
 CjvxDataConnectionCommon::about_release_intereptor(CjvxDataChainInterceptor* ptr)
 {
 
+}
+
+jvxErrorType
+CjvxDataConnectionCommon::_link_triggers_connection()
+{
+	for (auto& elm : _common_set_conn_comm.bridges)
+	{
+		IjvxInputConnector* icon = nullptr;
+		IjvxTriggerOutputConnector* otcon = nullptr;
+
+		IjvxOutputConnector* ocon = nullptr;
+		IjvxTriggerInputConnector* itcon = nullptr;
+
+		jvxSize itrigId = JVX_SIZE_UNSELECTED;
+		jvxSize otrigId = JVX_SIZE_UNSELECTED;
+
+		jvxBool pushNewElement = true;
+		oneChainTriggerIdElement newElement;
+		oneChainTriggerIdElement* workHere = &newElement;
+
+		elm.second.ptr->icon_trig_id(&icon, &itrigId);
+		elm.second.ptr->ocon_trig_id(&ocon, &otrigId);
+
+		if (JVX_CHECK_SIZE_SELECTED(itrigId))
+		{
+			if (icon)
+			{
+				icon->request_trigger_otcon(&otcon);
+			}
+		}
+
+		if (JVX_CHECK_SIZE_SELECTED(otrigId))
+		{
+			if (ocon)
+			{
+				ocon->request_trigger_itcon(&itcon);
+			}
+		}
+
+		if(itcon)
+		{
+			auto elmMap = mapIdTriggerConnect.find(itrigId);
+			if (elmMap != mapIdTriggerConnect.end())
+			{
+				workHere = &elmMap->second;
+				pushNewElement = false;
+			}
+			workHere->itcons.push_back(itcon);
+			if (pushNewElement)
+			{
+				mapIdTriggerConnect[itrigId] = *workHere;
+			}
+		}
+		if (otcon)
+		{
+			auto elmMap = mapIdTriggerConnect.find(otrigId);
+			if (elmMap != mapIdTriggerConnect.end())
+			{
+				workHere = &elmMap->second;
+				pushNewElement = false;
+			}
+			workHere->otcons.push_back(otcon);
+			if (pushNewElement)
+			{
+				mapIdTriggerConnect[otrigId] = *workHere;
+			}
+		}
+	}
+
+	// All bridges prepared here, next run the linking from the maps
+	for (auto elmMap : mapIdTriggerConnect)
+	{
+		for (auto elmpMapItcon : elmMap.second.itcons)
+		{
+			for (auto elmpMapOtcon : elmMap.second.otcons)
+			{
+				elmpMapItcon->link_connect_otcon(elmpMapOtcon);
+			}
+		}
+
+		for (auto elmpMapOtcon : elmMap.second.otcons)
+		{
+			for (auto elmpMapItcon : elmMap.second.itcons)
+			{
+				elmpMapOtcon->link_connect_itcon(elmpMapItcon);
+			}
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxDataConnectionCommon::_unlink_triggers_connection()
+{
+	// All bridges prepared here, next run the linking from the maps
+	for (auto elmMap : mapIdTriggerConnect)
+	{
+		for (auto elmpMapItcon : elmMap.second.itcons)
+		{
+			for (auto elmpMapOtcon : elmMap.second.otcons)
+			{
+				elmpMapItcon->unlink_connect_otcon(elmpMapOtcon);
+			}
+		}
+
+		for (auto elmpMapOtcon : elmMap.second.otcons)
+		{
+			for (auto elmpMapItcon : elmMap.second.itcons)
+			{
+				elmpMapOtcon->unlink_connect_itcon(elmpMapItcon);
+			}
+		}
+	}
+	mapIdTriggerConnect.clear();
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType 

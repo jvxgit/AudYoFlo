@@ -54,6 +54,7 @@ CjvxDataConnectionsProcess::CjvxDataConnectionsProcess(
 CjvxDataConnectionsProcess::~CjvxDataConnectionsProcess()
 {
 	assert(_common_set_conn_proc.associated_master == NULL);
+	assert(mapIdTriggerConnect.size() == 0);
 }
 
 void
@@ -229,7 +230,7 @@ CjvxDataConnectionsProcess::associate_master(IjvxConnectionMaster* theMaster, Ij
 
 jvxErrorType
 CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnectorSelect* conn_from, IjvxInputConnectorSelect* conn_to, const char* nm, 
-	jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)
+	jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread, jvxSize oconIdTrigger, jvxSize iconIdTrigger)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resf = JVX_NO_ERROR;
@@ -290,7 +291,7 @@ CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnectorSelect* conn_from, 
 			// ====================================================================================
 			newElm_orig.ptr = NULL;
 			JVX_DSP_SAFE_ALLOCATE_OBJECT(newElm_orig.ptr, CjvxConnectorBridge<CjvxDataConnectionCommon>(conn_from, conn_to, this, bname,
-				dedicatedThread, boostThread, false));
+				dedicatedThread, boostThread, false, oconIdTrigger, iconIdTrigger));
 			newElm_orig.refCnt = 0;
 			// ====================================================================================
 
@@ -298,7 +299,7 @@ CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnectorSelect* conn_from, 
 			newElm_from.uId = _common_set_conn_comm.unique_id_bridge;
 			JVX_DSP_SAFE_ALLOCATE_OBJECT(newElm_from.ptr, CjvxConnectorBridge<CjvxDataConnectionCommon>(conn_from, 
 				myInterceptor.ptr, this, bname + "_i_to",
-				dedicatedThread, boostThread, true));
+				dedicatedThread, boostThread, true, oconIdTrigger, iconIdTrigger));
 			newElm_from.refCnt = 0;
 			myInterceptor.fromConnected = true;
 
@@ -312,7 +313,7 @@ CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnectorSelect* conn_from, 
 			newElm_to.ptr = NULL;
 			JVX_DSP_SAFE_ALLOCATE_OBJECT(newElm_to.ptr, CjvxConnectorBridge<CjvxDataConnectionCommon>(myInterceptor.ptr, conn_to,
 				this, bname + "_from_o",
-				dedicatedThread, boostThread, true));
+				dedicatedThread, boostThread, true, oconIdTrigger, iconIdTrigger));
 			newElm_to.refCnt = 0;
 			myInterceptor.toConnected = true;
 
@@ -350,7 +351,7 @@ CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnectorSelect* conn_from, 
 			IjvxConnectionMaster* master = NULL;
 			newElm_orig.ptr = NULL;
 			JVX_DSP_SAFE_ALLOCATE_OBJECT(newElm_orig.ptr, CjvxConnectorBridge<CjvxDataConnectionCommon>(conn_from, conn_to, this, bname,
-				dedicatedThread, boostThread, false));
+				dedicatedThread, boostThread, false, oconIdTrigger, iconIdTrigger));
 			newElm_orig.refCnt = 0;
 			res = newElm_orig.ptr->init(get_master_ref(), theDataConnectionGroup/*static_cast<IjvxDataConnectionCommon*>(this)*/);
 			if (res != JVX_NO_ERROR)
@@ -372,6 +373,18 @@ CjvxDataConnectionsProcess::create_bridge(IjvxOutputConnectorSelect* conn_from, 
 	}
 	return JVX_ERROR_ALREADY_IN_USE;
 };
+
+jvxErrorType
+CjvxDataConnectionsProcess::link_triggers_connection()
+{
+	return _link_triggers_connection();
+}
+
+jvxErrorType 
+CjvxDataConnectionsProcess::unlink_triggers_connection()
+{
+	return _unlink_triggers_connection();
+}
 
 jvxErrorType
 CjvxDataConnectionsProcess::connect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))

@@ -155,7 +155,6 @@ public:
 		jvxComponentIdentification* cpTp, 
 		jvxApiString* modName,
 		jvxApiString* lContext) override;
-
 };
 
 // ===================================================================================

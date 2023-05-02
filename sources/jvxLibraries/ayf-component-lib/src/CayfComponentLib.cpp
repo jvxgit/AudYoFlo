@@ -189,12 +189,12 @@ CayfComponentLib::activate()
 
 								if (resC == JVX_NO_ERROR)
 								{
-									resC = theProc->create_bridge(static_cast<IjvxOutputConnector*>(this), icon, "Device to node bridge", &uId_bridge_dev_node);
+									resC = theProc->create_bridge(static_cast<IjvxOutputConnector*>(this), icon, "Device to node bridge", &uId_bridge_dev_node, false, false);
 								}
 
 								if (resC == JVX_NO_ERROR)
 								{
-									resC = theProc->create_bridge(ocon, static_cast<IjvxInputConnector*>(this), "Node to device bridge", &uId_bridge_node_dev);
+									resC = theProc->create_bridge(ocon, static_cast<IjvxInputConnector*>(this), "Node to device bridge", &uId_bridge_node_dev, false, false);
 								}
 
 								// Prevent that we run the test function immediately after connect

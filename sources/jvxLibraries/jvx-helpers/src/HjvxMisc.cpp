@@ -5904,6 +5904,11 @@ jvxostream::try_lock()
 
 // =================================================================
 
+int jvxLogLevel2Id(jvxLogLevel lev) 
+{ 
+	return (int)lev; 
+}
+
 // Do this before:  jvxrtst(&jvxos)
 
 void jvx_init_text_log(jvxrtst_backup& bkp)

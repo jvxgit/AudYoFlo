@@ -27,7 +27,14 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_bridge(jvxSize idx, IjvxConnectorBridge** theBridge) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_bridge( IjvxConnectorBridge* theBridge) = 0;
 	
-	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnectorSelect* conn_from, IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unqiue_id, jvxBool dedicatedThread = false, jvxBool boostThread = false) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnectorSelect* conn_from, IjvxInputConnectorSelect* conn_to, 
+		const char* nm, jvxSize* unqiue_id, 
+		jvxBool dedicatedThread, jvxBool boostThread,
+		jvxSize oconIdTrigger = JVX_SIZE_UNSELECTED, jvxSize iconIdTrigger = JVX_SIZE_UNSELECTED) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION link_triggers_connection() = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION unlink_triggers_connection() = 0;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION remove_bridge(jvxSize unique_id) = 0;
 	//virtual jvxErrorType JVX_CALLINGCONVENTION remove_bridges(IjvxOutputConnector* conn_from, IjvxInputConnector* conn_to) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION remove_all_bridges() = 0;
@@ -121,7 +128,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_bridge_specification(const jvxComponentIdentification& cp_id_from, const char* from_factory, const char* from_connector, 
 		const jvxComponentIdentification& cp_id_to, const char* to_factory, const char* to_connector, const char* nmBridge,
-		jvxBool thread_group = false, jvxBool boost_group = false) = 0;
+		jvxBool thread_group, jvxBool boost_group, jvxSize idOconTriggerConnect = JVX_SIZE_UNSELECTED, jvxSize idIconTriggerConnect = JVX_SIZE_UNSELECTED) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION rem_bridge(jvxSize uniqueId) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION rem_all_bridges() = 0;
 

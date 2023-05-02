@@ -168,10 +168,10 @@ CjvxGenericWrapperDevice_hostRelocator::x_select_master()
 		res = hdl_connection_process->associate_master(mas_dev);
 		assert(res == JVX_NO_ERROR);
 
-		res = hdl_connection_process->create_bridge(ocon_dev, icon_me, NULL, &id_device2me);
+		res = hdl_connection_process->create_bridge(ocon_dev, icon_me, NULL, &id_device2me, false, false);
 		assert(res == JVX_NO_ERROR);
 
-		res = hdl_connection_process->create_bridge(ocon_me, icon_dev, NULL, &id_me2device);
+		res = hdl_connection_process->create_bridge(ocon_me, icon_dev, NULL, &id_me2device, false, false);
 		assert(res == JVX_NO_ERROR);
 
 		// Connect chain master will come later when we call connect_chain from driving component
@@ -203,6 +203,8 @@ CjvxGenericWrapperDevice_hostRelocator::x_disconnect_chain(JVX_CONNECTION_FEEDBA
 	{
 		res = hdl_connection_process->disconnect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		assert(res == JVX_NO_ERROR);
+
+		hdl_connection_process->unlink_triggers_connection();
 
 		return JVX_NO_ERROR;
 	}

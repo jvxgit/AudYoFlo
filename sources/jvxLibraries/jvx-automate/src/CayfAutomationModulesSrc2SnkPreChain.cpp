@@ -55,7 +55,9 @@ namespace CayfAutomationModules
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,
 			jvxSize& bridgeId,
-			jvxSize segId)
+			jvxSize segId,
+			jvxSize oconIdTrigger,
+			jvxSize iconIdTrigger)
 	{
 		if (segId == 0)
 		{
@@ -69,7 +71,7 @@ namespace CayfAutomationModules
 			// First part of the connections
 			CayfAutomationModulesSrc2Snk::create_bridges(
 				theDataConnectionDefRuleHdl, tp_sink, tpEnter, elm,
-				oconNmSrcPreChain, iconNmEnterPreChain, bridgeId, 0);
+				oconNmSrcPreChain, iconNmEnterPreChain, bridgeId, 0, oconIdTrigger, iconIdTriggerPreChain);
 
 
 			// ==================================================================================
@@ -77,7 +79,7 @@ namespace CayfAutomationModules
 			// ==================================================================================
 			CayfAutomationModulesSrc2Snk::create_bridges(
 				theDataConnectionDefRuleHdl, tp_src, tp_sink, elm, config.oconNmSource,
-				config.iconNmSink, bridgeId, 1);
+				config.iconNmSink, bridgeId, 1, oconIdTriggerPreChain, iconIdTrigger);
 		}
 	}
 }

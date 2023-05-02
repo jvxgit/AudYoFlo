@@ -80,12 +80,16 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION depends_on_process(jvxSize* uIdProcess) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnectorSelect* conn_from, 
-		IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)override;
+		IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, 
+		jvxBool boostThread, jvxSize oconIdTrigger, jvxSize iconIdTrigger)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION connection_master_factory_is_involved(IjvxConnectionMasterFactory* and_this)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION associated_master(IjvxConnectionMaster** theMasterPtr) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION associate_master(IjvxConnectionMaster* theMaster, IjvxObject* theOwner) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION match_master(jvxBool* doesMatchRet, jvxComponentIdentification tpMatch, const char* wildcardMatch) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deassociate_master() override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION link_triggers_connection() override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION unlink_triggers_connection() override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_chain(jvxBool storeProtocol JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION connect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;

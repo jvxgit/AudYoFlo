@@ -200,6 +200,11 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) override;
 
+	jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override;
+	jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* itcon) override;
+	jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon)override;
+	jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
+
 	virtual jvxErrorType try_run_processing(IjvxConnectionMaster* master_ref);
 };
 

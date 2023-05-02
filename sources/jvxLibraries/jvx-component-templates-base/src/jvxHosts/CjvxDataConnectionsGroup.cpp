@@ -73,7 +73,8 @@ CjvxDataConnectionsGroup::set_name_unique_descriptor(IjvxCallProt* fdb)
 
 jvxErrorType
 CjvxDataConnectionsGroup::create_bridge(IjvxOutputConnectorSelect* conn_from, 
-	IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)
+	IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread,
+	jvxSize oconIdTrigger, jvxSize iconIdTrigger)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resf = JVX_NO_ERROR;
@@ -147,7 +148,7 @@ CjvxDataConnectionsGroup::create_bridge(IjvxOutputConnectorSelect* conn_from,
 		// ====================================================================================
 		newElm_orig.ptr = NULL;
 		JVX_DSP_SAFE_ALLOCATE_OBJECT(newElm_orig.ptr, CjvxConnectorBridge<CjvxDataConnectionCommon>(conn_from, conn_to, this, bname, 
-			dedicatedThread, boostThread, false));
+			dedicatedThread, boostThread, false, oconIdTrigger, iconIdTrigger));
 		newElm_orig.refCnt = 0;
 		// ====================================================================================
 
@@ -161,7 +162,8 @@ CjvxDataConnectionsGroup::create_bridge(IjvxOutputConnectorSelect* conn_from,
 
 			newElm_from.uId = idCnt;
 			JVX_DSP_SAFE_ALLOCATE_OBJECT(newElm_from.ptr, CjvxConnectorBridge<CjvxDataConnectionCommon>(conn_from,
-				myInterceptor.ptr, this, bname + "_i_to", dedicatedThread, boostThread, true));
+				myInterceptor.ptr, this, bname + "_i_to", dedicatedThread, boostThread, true,
+				oconIdTrigger, iconIdTrigger));
 			myInterceptor.fromConnected = true;
 			newElm_from.refCnt = 0;
 
@@ -180,7 +182,8 @@ CjvxDataConnectionsGroup::create_bridge(IjvxOutputConnectorSelect* conn_from,
 		{
 			newElm_to.uId = idCnt;
 			JVX_DSP_SAFE_ALLOCATE_OBJECT(newElm_to.ptr, CjvxConnectorBridge<CjvxDataConnectionCommon>(myInterceptor.ptr, conn_to,
-				this, bname + "_from_o", dedicatedThread, boostThread, true));
+				this, bname + "_from_o", dedicatedThread, boostThread, true,
+				oconIdTrigger, iconIdTrigger));
 			myInterceptor.toConnected = true;
 			newElm_to.refCnt = 0;
 
@@ -643,6 +646,19 @@ CjvxDataConnectionsGroup::object_hidden_interface(IjvxObject** objRef)
 }
 
 // ===============================================================================================
+
+jvxErrorType
+CjvxDataConnectionsGroup::link_triggers_connection()
+{
+	return _link_triggers_connection();
+}
+
+jvxErrorType
+CjvxDataConnectionsGroup::unlink_triggers_connection()
+{
+	return _unlink_triggers_connection();
+}
+
 
 jvxErrorType
 CjvxDataConnectionsGroup::report_event_interceptor(jvxDataChainReportType tp, jvxSize interceptorid)

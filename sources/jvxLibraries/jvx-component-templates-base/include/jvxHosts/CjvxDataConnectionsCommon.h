@@ -14,6 +14,12 @@ class CjvxDataConnectionCommon: public CjvxObject
 {
 protected:
 
+	struct oneChainTriggerIdElement
+	{
+		std::list<IjvxTriggerInputConnector*> itcons;
+		std::list<IjvxTriggerOutputConnector*> otcons;
+	};
+
 	struct oneInterceptor
 	{
 		CjvxDataChainInterceptor* ptr;
@@ -54,6 +60,8 @@ protected:
 	IjvxDataConnectionGroup* theDataConnectionGroup;
 	std::list<oneInterceptor> theInterceptors;
 	std::list <IjvxDataConnectionCommon*> dependencies;
+
+	std::map<jvxSize, oneChainTriggerIdElement> mapIdTriggerConnect;
 
 public:
 	CjvxDataConnectionCommon(
@@ -103,6 +111,10 @@ public:
 
 	void remove_interceptor_if(IjvxInputConnector* icon, IjvxOutputConnector* ocon);
 	virtual void about_release_intereptor(CjvxDataChainInterceptor* ptr);
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION _link_triggers_connection();
+	virtual jvxErrorType JVX_CALLINGCONVENTION _unlink_triggers_connection();
+
 };
 
 #endif

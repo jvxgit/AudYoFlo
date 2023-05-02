@@ -32,14 +32,14 @@ extern "C"
 					jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
 					"*", "default",
 					jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
-					"*", "default", "ABridge_dev_to_node");
+					"*", "default", "ABridge_dev_to_node", false, false);
 				assert(res == JVX_NO_ERROR);
 
 				res = theDataConnectionDefRuleHdl->add_bridge_specification(
 					jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
 					"*", "default",
 					jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
-					"*", "default", "ABridge_node_to_device");
+					"*", "default", "ABridge_node_to_device", false, false);
 				assert(res == JVX_NO_ERROR);
 
 				theDataConnectionDefRuleHdl->mark_rule_default();
@@ -64,14 +64,14 @@ extern "C"
 					jvxComponentIdentification(JVX_COMPONENT_VIDEO_DEVICE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
 					"*", "default",
 					jvxComponentIdentification(JVX_COMPONENT_VIDEO_NODE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
-					"*", "default", "VBridge_dev_to_node");
+					"*", "default", "VBridge_dev_to_node", false, false);
 				assert(res == JVX_NO_ERROR);
 
 				res = theDataConnectionDefRuleHdl->add_bridge_specification(
 					jvxComponentIdentification(JVX_COMPONENT_VIDEO_NODE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
 					"*", "default",
 					jvxComponentIdentification(JVX_COMPONENT_VIDEO_DEVICE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
-					"*", "default", "VBridge_node_to_device");
+					"*", "default", "VBridge_node_to_device", false, false);
 				assert(res == JVX_NO_ERROR);
 
 				theDataConnectionDefRuleHdl->mark_rule_default();

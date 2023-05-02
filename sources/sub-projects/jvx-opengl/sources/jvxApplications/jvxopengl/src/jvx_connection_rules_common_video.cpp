@@ -33,7 +33,7 @@ extern "C"
 						jvxComponentIdentification(JVX_COMPONENT_VIDEO_DEVICE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_VIDEO_DEVICE, JVX_SIZE_SLOT_RETAIN, JVX_SIZE_SLOT_RETAIN),
-						"*", "default", "VBridge_device_to_device");
+						"*", "default", "VBridge_device_to_device", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					theDataConnectionDefRuleHdl->mark_rule_default();

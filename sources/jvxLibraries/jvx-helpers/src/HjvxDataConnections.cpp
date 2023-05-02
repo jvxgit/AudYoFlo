@@ -47,7 +47,7 @@ jvx_start_process(IjvxDataConnections* allConnections,
 	{
 		resL = theProcess->create_bridge(elmB->second.outputC,
 			elmB->second.inputC, elmB->second.bridge_name.c_str(),
-			&elmB->second.theBId);
+			&elmB->second.theBId, false, false);
 		assert(resL == JVX_NO_ERROR);
 	}
 
@@ -1242,7 +1242,7 @@ jvxErrorType jvx_put_configuration_dataproc_rules(jvxCallManagerConfiguration* c
 				wildcard22 = str.std_str();
 
 				theNewRule->add_bridge_specification(tpId1, wildcard11.c_str(), wildcard12.c_str(),
-					tpId2, wildcard21.c_str(), wildcard22.c_str(), bridgename.c_str());
+					tpId2, wildcard21.c_str(), wildcard22.c_str(), bridgename.c_str(), false, false);
 				cnt2++;
 			}
 
@@ -1516,7 +1516,7 @@ jvx_rule_from_dropzone(IjvxDataConnections* theDatConnections, jvxConnectionRule
 		wildcard22 = elm->toConnectorWildcard;
 
 		theNewRule->add_bridge_specification(tpId1, wildcard11.c_str(), wildcard12.c_str(),
-			tpId2, wildcard21.c_str(), wildcard22.c_str(), bridgename.c_str());
+			tpId2, wildcard21.c_str(), wildcard22.c_str(), bridgename.c_str(), false, false);
 	}
 
 	// Finally, check that this rule is not yet registered

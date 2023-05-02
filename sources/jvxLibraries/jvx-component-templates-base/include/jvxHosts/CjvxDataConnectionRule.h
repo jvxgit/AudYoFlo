@@ -15,6 +15,7 @@ protected:
 		jvxComponentIdentification idCp;
 		std::string sel_expression_fac;
 		std::string sel_expression_macon;
+		jvxSize idTrigger = JVX_SIZE_UNSELECTED;
 	};
 
 	class idAndBridge
@@ -76,7 +77,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_bridge_specification(const jvxComponentIdentification& cp_id_from, const char* from_factory, const char* from_connector,
 		const jvxComponentIdentification& cp_id_to, const char* to_factory, const char* to_connector, 
-		const char* nmBridge, jvxBool thread_group, jvxBool boost_group) override;
+		const char* nmBridge, jvxBool thread_group, jvxBool boost_group, jvxSize oconIdTrigger, jvxSize iconIdTrigger) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION rem_bridge(jvxSize idCnt) override;
 

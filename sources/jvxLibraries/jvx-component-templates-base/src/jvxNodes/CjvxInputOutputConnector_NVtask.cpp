@@ -110,6 +110,18 @@ CjvxInputConnectorNVtask::reference_icon()
 	return this;
 }
 
+jvxErrorType
+CjvxInputConnectorNVtask::request_trigger_otcon(IjvxTriggerOutputConnector** otcon)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType
+CjvxInputConnectorNVtask::return_trigger_otcon(IjvxTriggerOutputConnector* otcon)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
 // ==========================================================
 
 CjvxOutputConnectorNVtask::CjvxOutputConnectorNVtask()
@@ -386,4 +398,16 @@ CjvxOutputConnectorNVtask::_transfer_forward_ocon(jvxLinkDataTransferType tp,
 	}
 
 	return res;
+}
+
+jvxErrorType 
+CjvxOutputConnectorNVtask::request_trigger_itcon(IjvxTriggerInputConnector** itcon)
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType 
+CjvxOutputConnectorNVtask::return_trigger_itcon(IjvxTriggerInputConnector* itcon)
+{
+	return JVX_ERROR_UNSUPPORTED;
 }

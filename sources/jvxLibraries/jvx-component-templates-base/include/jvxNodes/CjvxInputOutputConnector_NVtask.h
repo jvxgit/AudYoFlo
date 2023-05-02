@@ -80,6 +80,9 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** icon) override;
 
 	IjvxInputConnector* JVX_CALLINGCONVENTION reference_icon() override;
+
+	jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon)override;
+	jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
 	// jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 };
 
@@ -137,6 +140,10 @@ public:
 		jvxLinkDataTransferType tp, 
 		jvxHandle* data, 
 		JVX_CONNECTION_FEEDBACK_TYPE(fdb));
+
+	jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override;
+	jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* itcon) override;
+
 
 };
 #endif

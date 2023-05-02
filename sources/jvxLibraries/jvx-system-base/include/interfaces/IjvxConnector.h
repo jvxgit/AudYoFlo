@@ -5,6 +5,8 @@ JVX_INTERFACE IjvxConnectorFactory;
 JVX_INTERFACE IjvxInputConnector;
 JVX_INTERFACE IjvxOutputConnector;
 JVX_INTERFACE IjvxDataConnectionCommon;
+JVX_INTERFACE IjvxTriggerOutputConnector;
+JVX_INTERFACE IjvxTriggerInputConnector;
 
 typedef jvxErrorType(*callback_process_stop_in_lock)(jvxSize pipe_idx, jvxHandle* priv_ptr);
 typedef jvxErrorType(*callback_process_start_in_lock)(jvxSize* pipe_idx, jvxHandle* priv_ptr);
@@ -89,7 +91,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
 
-	
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) = 0;
 };
 
 // =============================================================================
@@ -148,6 +151,10 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_trigger_itcon(IjvxTriggerInputConnector** itcon) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_trigger_itcon(IjvxTriggerInputConnector* itcon) = 0;
+
 };
 	
 JVX_INTERFACE IjvxConnectorFactory : public IjvxInterfaceReference

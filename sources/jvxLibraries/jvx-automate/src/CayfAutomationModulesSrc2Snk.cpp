@@ -104,7 +104,7 @@ namespace CayfAutomationModules
 
 					this->create_bridges(theDataConnectionDefRuleHdl, derived.tpSrc,
 						derived.tpSink, elm->second.lstEntries, 
-						config.oconNmSource, config.iconNmSink, bridgeId);
+						config.oconNmSource, config.iconNmSink, bridgeId, 0, config.oconIdTrigger, config.iconIdTrigger);
 
 					resC = theDataConnectionDefRuleHdl->try_connect_direct(
 						con, refHostRefPtr,
@@ -153,7 +153,9 @@ namespace CayfAutomationModules
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,
 			jvxSize& bridgeId,
-			jvxSize segId)
+			jvxSize segId, 
+			jvxSize oconIdTrigger, 
+			jvxSize iconIdTrigger)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		
@@ -178,12 +180,14 @@ namespace CayfAutomationModules
 					"*", oconName.c_str(),
 					elmC.cpId,
 					"*", elmC.iconNm.c_str(),
-					("Bridge_" + jvx_size2String(bridgeId)).c_str());
+					("Bridge_" + jvx_size2String(bridgeId)).c_str(), false, false, 
+					oconIdTrigger, elmC.idIconRefTriggerConnector);
 				assert(res == JVX_NO_ERROR);
 				// ==================================================================================
 
 				tpOld = elmC.cpId;
 				oconName = elmC.oconNm;
+				oconIdTrigger = elmC.idOconRefTriggerConnector;
 				bridgeId++;
 			}
 		}
@@ -200,7 +204,9 @@ namespace CayfAutomationModules
 			"*", oconName.c_str(),
 			tp_sink,
 			"*", iconNameSink.c_str(),
-			("Bridge_" + jvx_size2String(bridgeId)).c_str());
+			("Bridge_" + jvx_size2String(bridgeId)).c_str(),false, false, 
+			oconIdTrigger,
+			iconIdTrigger);
 		bridgeId++;
 		assert(res == JVX_NO_ERROR);	
 		// ==================================================================================

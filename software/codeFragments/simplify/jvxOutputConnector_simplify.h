@@ -166,3 +166,14 @@ virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** i
 {
 	return _connected_icon(icon);
 }
+
+virtual jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+virtual jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* itcon) override
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+

@@ -40,7 +40,7 @@ extern "C"
 #else
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 0, 0),
 #endif
-						"*", "default", "ABridge_dev_to_node");
+						"*", "default", "ABridge_dev_to_node", false, false);
 
 					assert(res == JVX_NO_ERROR);
 
@@ -52,7 +52,7 @@ extern "C"
 #endif
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, 0, 0),
-						"*", "default", "ABridge_node_to_device");
+						"*", "default", "ABridge_node_to_device", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					theDataConnectionDefRuleHdl->mark_rule_default();
@@ -77,14 +77,14 @@ extern "C"
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, 0, 1),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 0, 0),
-						"*", "default", "ABridge_dev_to_node");
+						"*", "default", "ABridge_dev_to_node", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 0, 0),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, 0, 1),
-						"*", "default", "ABridge_node_to_device");
+						"*", "default", "ABridge_node_to_device", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					theDataConnectionDefRuleHdl->mark_rule_default();
@@ -113,7 +113,7 @@ extern "C"
 #else
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 0, 0),
 #endif
-						"*", "async-secondary-n", "ABridge_dev_to_node");
+						"*", "async-secondary-n", "ABridge_dev_to_node", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
@@ -124,7 +124,7 @@ extern "C"
 #endif
 						"*", "async-secondary-n",
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 0, 0),
-						"*", "async-secondary", "ABridge_node_to_device");
+						"*", "async-secondary", "ABridge_node_to_device", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					theDataConnectionDefRuleHdl->mark_rule_default();
@@ -153,7 +153,7 @@ extern "C"
 #else
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 0, 0),
 #endif
-						"*", "async-secondary-v", "ABridge_dev_to_node");
+						"*", "async-secondary-v", "ABridge_dev_to_node", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
@@ -164,7 +164,7 @@ extern "C"
 #endif
 						"*", "async-secondary-v",
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 0, 0),
-						"*", "async-secondary", "ABridge_node_to_device");
+						"*", "async-secondary", "ABridge_node_to_device", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					theDataConnectionDefRuleHdl->mark_rule_default();

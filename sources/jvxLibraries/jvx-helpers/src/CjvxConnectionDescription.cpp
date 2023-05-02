@@ -365,7 +365,8 @@ CjvxConnectionDescription::create_process_group_from_description(
 		}
 
 		// Seems to be ok, adding bridge to list
-		theDropzone.jvx_add_bridge(elm->bridge_name.c_str(), out_fac_uid, out_ocon_id, in_fac_uid, in_icon_id, elm->ded_thread, elm->boost_thread);
+		theDropzone.jvx_add_bridge(elm->bridge_name.c_str(), out_fac_uid, out_ocon_id, in_fac_uid, in_icon_id, 
+			elm->ded_thread, elm->boost_thread, elm->from.oconTriggerId, elm->to.iconTriggerId);
 	}
 	if (isProcess)
 	{

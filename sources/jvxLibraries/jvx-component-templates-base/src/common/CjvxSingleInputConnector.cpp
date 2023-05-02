@@ -1,14 +1,75 @@
 #include "jvx.h"
 #include "common/CjvxSingleInputConnector.h"
 
-CjvxSingleInputConnector::CjvxSingleInputConnector() 
+
+CjvxSingleInputTriggerOutputConnector::CjvxSingleInputTriggerOutputConnector()
 {
+}
+
+jvxErrorType
+CjvxSingleInputTriggerOutputConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	switch (purp)
+	{
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_BACKWARD:
+		break;
+	default:
+		res = JVX_ERROR_UNSUPPORTED;
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxSingleInputTriggerOutputConnector::link_connect_itcon(IjvxTriggerInputConnector* otcon)
+{
+	jvxErrorType res = JVX_ERROR_ALREADY_IN_USE;
+	if (linked_ref == nullptr)
+	{
+		linked_ref = otcon;
+		res = JVX_NO_ERROR;
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxSingleInputTriggerOutputConnector::unlink_connect_itcon(IjvxTriggerInputConnector* otcon)
+{
+	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+	if (linked_ref)
+	{
+		if (linked_ref == otcon)
+		{
+			res = JVX_NO_ERROR;
+		}
+		else
+		{
+			res = JVX_ERROR_ALREADY_IN_USE;
+		}
+	}
+	return res;
+}
+
+// =====================================================================================
+
+CjvxSingleInputConnector::CjvxSingleInputConnector(jvxBool withTriggerConnectorArg):
+	withTriggerConnector(withTriggerConnectorArg)
+{
+	if (withTriggerConnector)
+	{
+		JVX_SAFE_ALLOCATE_OBJECT(trig_out, CjvxSingleInputTriggerOutputConnector);
+	}
 }
 
 CjvxSingleInputConnector::~CjvxSingleInputConnector()
 {
 	assert(_common_set_icon.conn_in == nullptr);
 	assert(_common_set_icon.theCommon_to == nullptr);
+	if (withTriggerConnector)
+	{
+		JVX_SAFE_DELETE_OBJECT(trig_out);
+	}
 }
 
 jvxErrorType 
@@ -183,26 +244,44 @@ CjvxSingleInputConnector::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 	// Forward chaining, will end up immediately in _process_buffers_icon anyway
 	return _process_buffers_icon(mt_mask, idx_stage);
 }
-// ===============================================================================================
-// ===============================================================================================
 
-CjvxSingleInputConnectorMulti::CjvxSingleInputConnectorMulti()
+jvxErrorType 
+CjvxSingleInputConnector::request_trigger_otcon(IjvxTriggerOutputConnector** otcon) 
 {
-}
-
-CjvxSingleInputConnectorMulti::~CjvxSingleInputConnectorMulti()
-{
-	assert(allocatedConnectors.size() == 0);
+	if (trig_out)
+	{
+		*otcon = trig_out;
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType 
+CjvxSingleInputConnector::return_trigger_otcon(IjvxTriggerOutputConnector* otcon) 
+{
+	if (trig_out)
+	{
+		if (otcon == trig_out)
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+// ===============================================================================================
+// ===============================================================================================
+
+
+jvxErrorType 
 CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
-	IjvxDataConnectionCommon* ass_connection_common, IjvxInputConnector** replace_connector)
+	IjvxDataConnectionCommon* ass_connection_common, IjvxInputConnector** replace_connector) 
 {
 	CjvxSingleInputConnector* newConnector = nullptr;
 	if (numConnectorsInUse < (acceptNumberConnectors - 1))
 	{
-		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleInputConnector);
+		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleInputConnector(withTriggerConnector));
 	}
 	else if (numConnectorsInUse < acceptNumberConnectors)
 	{
@@ -211,11 +290,11 @@ CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, Ijv
 		newConnector = this;
 	}
 
-	if(newConnector)
+	if (newConnector)
 	{
 		*replace_connector = newConnector;
 		allocatedConnectors[*replace_connector] = newConnector;
-		
+
 		if (report)
 		{
 			report->report_selected_connector(newConnector);
@@ -225,15 +304,15 @@ CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, Ijv
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
 
-jvxErrorType 
+jvxErrorType
 CjvxSingleInputConnectorMulti::unselect_connect_icon(IjvxConnectorBridge* obj,
-	IjvxInputConnector* replace_connector)
+	IjvxInputConnector* replace_connector) 
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	CjvxSingleInputConnector* remConnector = nullptr;
 
 	auto elm = allocatedConnectors.find(replace_connector);
-	if(elm != allocatedConnectors.end())
+	if (elm != allocatedConnectors.end())
 	{
 		if (report)
 		{
@@ -257,4 +336,3 @@ CjvxSingleInputConnectorMulti::unselect_connect_icon(IjvxConnectorBridge* obj,
 	}
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
-

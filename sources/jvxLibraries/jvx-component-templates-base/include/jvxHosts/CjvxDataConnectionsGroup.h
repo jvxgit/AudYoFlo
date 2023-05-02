@@ -129,7 +129,8 @@ public:
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION create_bridge(IjvxOutputConnectorSelect* conn_from, 
-		IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread)override;
+		IjvxInputConnectorSelect* conn_to, const char* nm, jvxSize* unique_id, jvxBool dedicatedThread, jvxBool boostThread,
+		jvxSize oconIdTrigger, jvxSize iconIdTrigger)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION connect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION disconnect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
@@ -145,6 +146,9 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType, jvxHandle*) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION object_hidden_interface(IjvxObject** objRef) override;
 	
+	jvxErrorType link_triggers_connection()override;
+	jvxErrorType unlink_triggers_connection()override;
+
 	// ===============================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,

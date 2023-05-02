@@ -19,6 +19,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxConfigurationAttach.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxConnectionMaster.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxConnector.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxTriggerConnector.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxDataConnections.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxDevice.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/IjvxEventLoop.h
@@ -97,6 +98,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxConfiglines.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxConfigTokens.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxConnector.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxTriggerConnector.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxDataConnections.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxLinkDataDescriptor.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxEventLoop.h

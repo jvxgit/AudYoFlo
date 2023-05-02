@@ -18,6 +18,8 @@ namespace CayfAutomationModules
 		std::string oconNmSrcPreChain;
 		std::string iconNmEnterPreChain;
 		jvxComponentIdentification tpEnter = JVX_COMPONENT_UNKNOWN;
+		jvxSize oconIdTriggerPreChain = JVX_SIZE_UNSELECTED;
+		jvxSize iconIdTriggerPreChain = JVX_SIZE_UNSELECTED;
 
 		ayfConnectConfigSrc2SnkPreChain(
 			const ayfConnectConfigSrc2Snk& cfg,
@@ -25,7 +27,9 @@ namespace CayfAutomationModules
 			// Name of the output 
 			const std::string& oconNmSrcPreChainArg = "default",
 			const std::string& iconNmTriggerArg = "default",
-			const jvxComponentIdentification& cpEnterArg = JVX_COMPONENT_UNKNOWN) : ayfConnectConfigSrc2Snk(cfg),
+			const jvxComponentIdentification& cpEnterArg = JVX_COMPONENT_UNKNOWN,
+			jvxSize oconIdTriggerPreChainArg = JVX_SIZE_UNSELECTED,
+			jvxSize iconIdTriggerPreChainArg = JVX_SIZE_UNSELECTED) : ayfConnectConfigSrc2Snk(cfg),
 			oconNmSrcPreChain(oconNmSrcPreChainArg), iconNmEnterPreChain(iconNmTriggerArg)
 		{};
 
@@ -38,6 +42,9 @@ namespace CayfAutomationModules
 	protected:
 		std::string oconNmSrcPreChain = "default";
 		std::string iconNmEnterPreChain = "default";
+		jvxSize oconIdTriggerPreChain = JVX_SIZE_UNSELECTED; 
+		jvxSize iconIdTriggerPreChain = JVX_SIZE_UNSELECTED;
+
 		jvxComponentIdentification tpEnter = JVX_COMPONENT_UNKNOWN;
 		
 	public:
@@ -58,7 +65,9 @@ namespace CayfAutomationModules
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,
 			jvxSize& bridgeId,
-			jvxSize segId = 0) override;
+			jvxSize segId,
+			jvxSize oconIdTrigger,
+			jvxSize iconIdTrigger) override;
 
 		void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated) override;
 	};

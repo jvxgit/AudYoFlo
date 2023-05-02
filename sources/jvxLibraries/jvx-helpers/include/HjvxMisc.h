@@ -1281,7 +1281,7 @@ enum class jvxLogLevel
 	JVX_LOGLEVEL_10_OPERATION = 10
 };
 
-static int jvxLogLevel2Id(jvxLogLevel lev) {return (int)lev	;}
+int jvxLogLevel2Id(jvxLogLevel lev);
 
 #define JVX_LOCAL_START_OUTPUT_STREAM(varos, varsb) \
 		std::ostream varos(&varsb); 

@@ -34,28 +34,28 @@ extern "C"
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, 0, 0),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 0, 0),
-						"*", "default", "Audio to Measure Ir");
+						"*", "default", "Audio to Measure Ir", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 0, 0),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 0, 0),
-						"*", "default", "Measure Ir to Channel Annouce");
+						"*", "default", "Measure Ir to Channel Annouce", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 0, 0),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 1, 0),
-						"*", "default", "Channel Annouce to Speaker EQ");
+						"*", "default", "Channel Annouce to Speaker EQ", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 1, 0),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_DEVICE, 0, 0),
-						"*", "default", "Speaker Eq to Audio");
+						"*", "default", "Speaker Eq to Audio", false, false);
 					assert(res == JVX_NO_ERROR);
 
 

@@ -12,14 +12,16 @@ public:
 		std::string connector_factory_name;
 		std::string connector_name;
 		jvxComponentIdentification tp;
-		jvxSize uid;
+		jvxSize uid = 0;
+		jvxSize oconTriggerId = JVX_SIZE_UNSELECTED;
 	} from;
 	struct
 	{
 		std::string connector_factory_name;
 		std::string connector_name;
 		jvxComponentIdentification tp;
-		jvxSize uid;
+		jvxSize uid = 0;
+		jvxSize iconTriggerId = JVX_SIZE_UNSELECTED;
 	} to;
 	
 	CjvxDescriptBridge();

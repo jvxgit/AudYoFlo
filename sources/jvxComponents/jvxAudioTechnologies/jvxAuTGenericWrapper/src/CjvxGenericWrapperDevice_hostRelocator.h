@@ -243,6 +243,27 @@ public:
 		return this;
 	}
 
+	jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
+
+	jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* itcon) override
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
+
+	jvxErrorType request_trigger_otcon(IjvxTriggerOutputConnector** otcon)
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
+
+	jvxErrorType return_trigger_otcon(IjvxTriggerOutputConnector* otcon)
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
+
+
 	// =========================================================
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType, jvxHandle**)override;
 
