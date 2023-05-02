@@ -101,6 +101,11 @@ extern "C"
 			}
 			cnt++;
 #endif
+
+#ifdef JVX_ADDITIONAL_TECHNOLOGIES
+			JVX_ADDITIONAL_TECHNOLOGIES
+#endif
+
 			break;
 
 #ifdef JVX_ALL_AUDIONODE_CASES
