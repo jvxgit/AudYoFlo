@@ -71,7 +71,7 @@ int ffi_process_decode_iterator_context(void* opaque_hdl, void* it_handle)
 	if (opaque_hdl)
 	{
 		it = (IjvxConnectionIterator*)it_handle;
-		ll->process_decode_iterator(it, nullptr, &numBranches, nullptr, nullptr);		
+		ll->process_decode_iterator(it, nullptr, &numBranches, nullptr, nullptr, nullptr);		
 	}
 	return numBranches;
 }
@@ -128,7 +128,7 @@ struct component_ident* ffi_process_decode_iterator_component(void* opaque_hdl, 
 	if (opaque_hdl)
 	{
 		it = (IjvxConnectionIterator*)it_handle;
-		ll->process_decode_iterator(it, &cpTp, nullptr, nullptr, nullptr);
+		ll->process_decode_iterator(it, &cpTp, nullptr, nullptr, nullptr, nullptr);
 		ffi_host_allocate_component_ident(&retPtr, cpTp);
 	}
 	return retPtr;
@@ -161,7 +161,7 @@ char* ffi_process_decode_iterator_module(void* opaque_hdl, void* it_handle)
 	if (opaque_hdl)
 	{
 		it = (IjvxConnectionIterator*)it_handle;
-		ll->process_decode_iterator(it, nullptr, nullptr, &astr, nullptr);
+		ll->process_decode_iterator(it, nullptr, nullptr, &astr, nullptr, nullptr);
 		ffi_host_allocate_char_array(astr.std_str(), &retPtr);
 	}
 	return retPtr;
@@ -193,7 +193,7 @@ char* ffi_process_decode_iterator_connector(void* opaque_hdl, void* it_handle)
 	if (it_handle)
 	{
 		it = (IjvxConnectionIterator*)it_handle;
-		ll->process_decode_iterator(it, nullptr, nullptr, nullptr, &astr);
+		ll->process_decode_iterator(it, nullptr, nullptr, nullptr, nullptr, &astr);
 		ffi_host_allocate_char_array(astr.std_str(), &retPtr);
 	}
 	return retPtr;

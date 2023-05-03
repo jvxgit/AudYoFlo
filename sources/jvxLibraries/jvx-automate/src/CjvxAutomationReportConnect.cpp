@@ -112,6 +112,7 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 				jvxApiString dstr;
 				jvxApiString modName;
 				jvxApiString lCtxt;
+				jvxApiString description;
 				jvxComponentIdentification tpCp;
 				proc->description(&dstr);
 
@@ -130,13 +131,13 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 					}
 					else
 					{
-						it->reference_component(&tpCp, &modName, &lCtxt);
+						it->reference_component(&tpCp, &modName, &description, &lCtxt);
 
 #ifdef JVX_AUTOMATION_VERBOSE
 						std::cout << " - Component " << jvxComponentIdentification_txt(tpCp) << " -- " << modName.std_str() << " -- " << lCtxt.std_str() << std::endl;
 #endif
 
-						CayfAutomationModules::CayfAutomationModuleHandler::try_adapt_submodules(uid, modName.std_str(), tpCp);
+						CayfAutomationModules::CayfAutomationModuleHandler::try_adapt_submodules(uid, modName.std_str(), description.std_str(), tpCp);
 
 						jvxSize nn = 0;
 						it->number_next(&nn);

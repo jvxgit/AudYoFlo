@@ -28,7 +28,6 @@ enum class jvxResamplerQuality
 #include "pcg_exports_node.h"
 
 class CjvxAuNConvert: public CjvxBareNode1ioRearrange, 
-	
 	public genConvert_node
 {
 private:

@@ -365,6 +365,7 @@ namespace CayfAutomationModules
 	jvxErrorType
 		CayfAutomationModulesSrc2Snk::adapt_all_submodules(jvxSize uIdProc,
 			const std::string& modName,
+			const std::string& description,
 			const jvxComponentIdentification& tpCp)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
@@ -391,7 +392,7 @@ namespace CayfAutomationModules
 		}
 
 		if (JVX_CHECK_SIZE_SELECTED(theProc.processUid))
-		{
+		{			
 			IjvxObject* obj = nullptr;
 			refHostRefPtr->request_object_selected_component(tpCp, &obj);
 			if (obj)
@@ -405,7 +406,7 @@ namespace CayfAutomationModules
 					{
 						if (cbPtr)
 						{
-							cbPtr->adapt_single_property_on_connect(purposeId, theProc.chainName, modName, props);
+							cbPtr->adapt_single_property_on_connect(purposeId, theProc.chainName, modName, description, props);
 						}
 						retInterface<IjvxProperties>(ifFac, props);
 					}

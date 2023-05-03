@@ -13,6 +13,7 @@ namespace CayfAutomationModules
 			jvxSize purposeId, 
 			const std::string& nmChain,
 			const std::string& modName, 
+			const std::string& description,
 			IjvxProperties* props) = 0;
 		virtual jvxErrorType allow_master_connect(
 			jvxSize purposeId,

@@ -56,7 +56,7 @@ public:
 
 class CjvxAuNForwardBuffer: public CjvxBareNode1ioRearrange, 
 	public IjvxThreads_report, public CjvxAudioStackBuffer,
-	public IjvxManipulate, public genForwardBuffer_node
+	public genForwardBuffer_node
 {
 private:
 	
@@ -151,9 +151,6 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor,
 		jvxHandle* sectionWhereToAddAllSubsections)override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION set_manipulate_value(jvxSize id, jvxVariant* varray) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_manipulate_value(jvxSize id, jvxVariant* varray) override;
 
 	// ==================================================================================================
 

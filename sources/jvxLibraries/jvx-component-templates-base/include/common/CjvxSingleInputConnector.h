@@ -27,13 +27,15 @@ protected:
 	CjvxSingleInputTriggerOutputConnector* trig_out = nullptr;
 	jvxBool withTriggerConnector = false;
 
+	jvxSize conId = 0;
+
 public:
 	CjvxSingleInputConnector(jvxBool withTriggerConnectorArg);
 	~CjvxSingleInputConnector();
 
 	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac,
 		const std::string& nm, 
-		CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg);
+		CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg, jvxSize idCon);
 	jvxErrorType deactivate();
 
 	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
@@ -47,7 +49,7 @@ public:
 
 	jvxErrorType number_next(jvxSize*) override;
 	jvxErrorType reference_next(jvxSize, IjvxConnectionIterator**) override;
-	jvxErrorType reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*)override;
+	jvxErrorType reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*, jvxApiString*)override;
 
 	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requestTestChain);
 

@@ -195,6 +195,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
 		jvxComponentIdentification* cpTp, 
 		jvxApiString* modName,
+		jvxApiString* description,
 		jvxApiString* lContext) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override;

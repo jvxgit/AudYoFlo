@@ -46,6 +46,12 @@
 			break;
 #endif
 
+#ifdef JVX_INTERFACE_SUPPORT_MANIPULATE
+		case JVX_INTERFACE_MANIPULATE:
+			*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxManipulate*>(this));
+			break;
+#endif
+
 		default:
 #ifdef JVX_INTERFACE_SUPPORT_BASE_CLASS
 			res = JVX_INTERFACE_SUPPORT_BASE_CLASS::request_hidden_interface(tp, hdl);
@@ -150,6 +156,19 @@
 			{
 				res = JVX_ERROR_INVALID_ARGUMENT;
 		}
+			break;
+#endif
+
+#ifdef JVX_INTERFACE_SUPPORT_MANIPULATE
+		case JVX_INTERFACE_MANIPULATE:
+			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxManipulate*>(this)))
+			{
+				res = JVX_NO_ERROR;
+			}
+			else
+			{
+				res = JVX_ERROR_INVALID_ARGUMENT;
+			}
 			break;
 #endif
 

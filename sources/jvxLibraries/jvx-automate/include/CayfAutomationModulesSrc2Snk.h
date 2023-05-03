@@ -40,9 +40,8 @@ namespace CayfAutomationModules
 			const std::string& nmMasterArg = "default",
 			const std::string& oconNmSourceArg = "default",
 			const std::string& iconNmSinkArg = "",
-			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED,
-			// jvxComponentIdentification tpSrcArg = JVX_COMPONENT_UNKNOWN,
 			jvxComponentIdentification tpInvolvedArg = JVX_COMPONENT_UNKNOWN,
+			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED,
 			jvxBool dbgOutArg = false,
 			jvxSize oconTriggerIdArg = JVX_SIZE_UNSELECTED,
 			jvxSize iconTriggerIdArg = JVX_SIZE_UNSELECTED) :
@@ -142,7 +141,7 @@ namespace CayfAutomationModules
 		jvxErrorType deassociate_process(jvxSize uIdProcess) override;
 		jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated) override;
 		jvxErrorType deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated) override;
-		jvxErrorType adapt_all_submodules(jvxSize uIdProc, const std::string& modName,
+		jvxErrorType adapt_all_submodules(jvxSize uIdProc, const std::string& modName, const std::string& description,
 			const jvxComponentIdentification& tp_activated) override;
 
 		virtual void create_bridges(

@@ -17,6 +17,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
 		jvxComponentIdentification* cpTp, 
 		jvxApiString* modName, 
+		jvxApiString* description,
 		jvxApiString* lContext) override;
 
 	void set_master(CjvxConnectionMaster* master);

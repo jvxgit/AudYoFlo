@@ -652,6 +652,7 @@ jvxErrorType
 CjvxDataChainInterceptor::reference_component(
 	jvxComponentIdentification* cpTp, 
 	jvxApiString* modName,
+	jvxApiString* description,
 	jvxApiString* lContext)
 {
 	if (cpTp)
@@ -663,6 +664,10 @@ CjvxDataChainInterceptor::reference_component(
 		if (modName)
 		{
 			modName->assign("CjvxDataChainInterceptor");
+		}
+		if (description)
+		{
+			description->assign("CjvxDataChainInterceptor");
 		}
 		if (lContext)
 		{

@@ -111,7 +111,7 @@ public:
 	// ======================================================================
 	jvxErrorType process_access(jvxSize uId, jvxSize* catId, jvxApiString* astr, IjvxConnectionIterator** itRet);
 	jvxErrorType process_decode_iterator(IjvxConnectionIterator* it,
-		jvxComponentIdentification* retCp, jvxSize* numBranch, jvxApiString* modName, jvxApiString* lContext);
+		jvxComponentIdentification* retCp, jvxSize* numBranch, jvxApiString* modName, jvxApiString* description, jvxApiString* lContext);
 	jvxErrorType process_next_iterator(IjvxConnectionIterator* it, IjvxConnectionIterator** next, jvxSize id);
 	jvxErrorType process_system_ready(jvxApiString* astr);
 

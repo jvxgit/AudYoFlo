@@ -27,7 +27,7 @@ namespace CayfAutomationModules
 		{
 			this->oconNmSrcPreChain= cfg.oconNmSrcPreChain;
 			this->iconNmEnterPreChain = cfg.iconNmEnterPreChain;
-			this->tpEnter = cfg.tpEnter.tp;
+			this->tpEnter = cfg.tpEnter;
 			
 			if (tpEnter.tp == JVX_COMPONENT_UNKNOWN)
 			{

@@ -118,6 +118,7 @@ protected:
 	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_component(
 		 jvxComponentIdentification* cpTp, 
 		 jvxApiString* modName,
+		 jvxApiString* description,
 		 jvxApiString* lContext);
 
 	 // ==============================================================

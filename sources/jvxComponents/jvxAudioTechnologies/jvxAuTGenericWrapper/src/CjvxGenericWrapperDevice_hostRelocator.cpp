@@ -33,10 +33,11 @@ jvxErrorType
 CjvxGenericWrapperDevice_hostRelocator::reference_component(
 	jvxComponentIdentification* cpTp,
 	jvxApiString* modName,
+	jvxApiString* description,
 	jvxApiString* lContext) 
 {
 	// Re-locate the component information towards generic wrapper
-	return runtime.refDevice->_reference_component(cpTp, modName, lContext);
+	return runtime.refDevice->_reference_component(cpTp, modName, description, lContext);
 }
 
 jvxErrorType 

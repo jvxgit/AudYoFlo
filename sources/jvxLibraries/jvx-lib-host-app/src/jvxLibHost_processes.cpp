@@ -33,9 +33,9 @@ jvxLibHost::process_access(jvxSize uId, jvxSize* catId, jvxApiString* astr, Ijvx
 
 jvxErrorType
 jvxLibHost::process_decode_iterator(IjvxConnectionIterator* it, 
-	jvxComponentIdentification* retCp, jvxSize* numBranch, jvxApiString* modName, jvxApiString* lContext)
+	jvxComponentIdentification* retCp, jvxSize* numBranch, jvxApiString* modName, jvxApiString* description, jvxApiString* lContext)
 {
-	it->reference_component(retCp, modName, lContext);
+	it->reference_component(retCp, modName, description, lContext);
 	it->number_next(numBranch);
 	return JVX_NO_ERROR;
 }

@@ -429,10 +429,12 @@ jvxErrorType
 CjvxInputConnectorVtask::reference_component(
 	jvxComponentIdentification* cpTp, 
 	jvxApiString* modName, 
+	jvxApiString* description,
 	jvxApiString* lContext)
 {
 	jvxErrorType res = common_vtask._common_set_comnvtask.object->request_specialization(nullptr, cpTp, nullptr);
 	res = common_vtask._common_set_comnvtask.object->module_reference(modName, nullptr);
+	res = common_vtask._common_set_comnvtask.object->description(description);
 	if (lContext)
 	{
 		lContext->assign("VTask<" +

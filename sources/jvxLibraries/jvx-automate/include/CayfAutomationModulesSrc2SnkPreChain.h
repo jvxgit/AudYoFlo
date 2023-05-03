@@ -30,7 +30,9 @@ namespace CayfAutomationModules
 			const jvxComponentIdentification& cpEnterArg = JVX_COMPONENT_UNKNOWN,
 			jvxSize oconIdTriggerPreChainArg = JVX_SIZE_UNSELECTED,
 			jvxSize iconIdTriggerPreChainArg = JVX_SIZE_UNSELECTED) : ayfConnectConfigSrc2Snk(cfg),
-			oconNmSrcPreChain(oconNmSrcPreChainArg), iconNmEnterPreChain(iconNmTriggerArg)
+			oconNmSrcPreChain(oconNmSrcPreChainArg), iconNmEnterPreChain(iconNmTriggerArg), tpEnter(cpEnterArg),
+			oconIdTriggerPreChain(oconIdTriggerPreChainArg), 
+			iconIdTriggerPreChain(iconIdTriggerPreChainArg)
 		{};
 
 

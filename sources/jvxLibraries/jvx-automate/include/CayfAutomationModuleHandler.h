@@ -11,7 +11,7 @@ namespace CayfAutomationModules
 
 		virtual jvxErrorType adapt_all_submodules(
 			jvxSize uIdProc,			
-			const std::string& modName,
+			const std::string& modName, const std::string& description,
 			const jvxComponentIdentification& tpCp) = 0;
 
 		virtual jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated) = 0;
@@ -55,9 +55,9 @@ namespace CayfAutomationModules
 		// Call this function is "report_disconnect_process" which is called from within "handle_report_uid"
 		void try_deassociate_process(jvxSize uIdProcess);
 
-
 		void try_adapt_submodules(jvxSize uIdProc, 
-			const std::string& modName, const jvxComponentIdentification& tpCp);
+			const std::string& modName, const std::string& description,
+			const jvxComponentIdentification& tpCp);
 	};
 }
 

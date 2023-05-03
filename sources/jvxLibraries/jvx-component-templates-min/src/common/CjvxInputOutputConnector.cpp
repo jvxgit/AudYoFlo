@@ -506,6 +506,7 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		CjvxInputOutputConnector::_reference_component(
 			jvxComponentIdentification* cpTp, 
 			jvxApiString* modName,
+			jvxApiString* description,
 			jvxApiString* lContext)
 	{
 		jvxComponentIdentification cpId;
@@ -517,6 +518,7 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 			{
 				objRef->request_specialization(nullptr, &cpId, nullptr);
 				objRef->module_reference(modName, nullptr);
+				objRef->description(description);
 				_common_set_io_common.myParent->return_reference_object(objRef);
 				if (lContext)
 					lContext->assign(_common_set_io_common.descriptor);

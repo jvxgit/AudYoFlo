@@ -16,7 +16,7 @@ enum class jvxOperationModeMixChain
 #include "pcg_exports_node.h"
 
 
-class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, public IjvxManipulate,
+class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, 
 	public CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>,
 	public CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>,
 	public CjvxSpNMixChainEnterLeaveCommon, public genMixChain

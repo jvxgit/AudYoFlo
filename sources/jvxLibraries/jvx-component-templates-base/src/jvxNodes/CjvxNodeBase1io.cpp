@@ -489,3 +489,85 @@ CjvxNodeBase1io::constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg
 	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.data_flow, _common_set_ocon.theData_out.con_params.data_flow, JVX_DATAFLOW_NONE);
 	// ===================================================================
 }
+
+jvxErrorType
+CjvxNodeBase1io::set_manipulate_value(jvxSize id, jvxVariant* varray)
+{
+	jvxApiString* ptrString = NULL;
+	jvxErrorType res = JVX_NO_ERROR;
+
+	if (!varray)
+	{
+		return JVX_ERROR_INVALID_ARGUMENT;
+	}
+
+	switch (id)
+	{
+	case JVX_MANIPULATE_DESCRIPTION:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			_common_set_min.theDescription = ptrString->std_str();
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	case JVX_MANIPULATE_DESCRIPTOR:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			_common_set_min.theDescription = ptrString->std_str();
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	default:
+		res = JVX_ERROR_UNSUPPORTED;
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxNodeBase1io::get_manipulate_value(jvxSize id, jvxVariant* varray)
+{
+	jvxApiString* ptrString = NULL;
+	jvxErrorType res = JVX_NO_ERROR;
+
+	if (!varray)
+	{
+		return JVX_ERROR_INVALID_ARGUMENT;
+	}
+
+	switch (id)
+	{
+	case JVX_MANIPULATE_DESCRIPTION:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			ptrString->assign(_common_set_min.theDescription);
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	case JVX_MANIPULATE_DESCRIPTOR:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			ptrString->assign(_common_set_min.theDescription);
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	default:
+		res = JVX_ERROR_UNSUPPORTED;
+	}
+	return res;
+}

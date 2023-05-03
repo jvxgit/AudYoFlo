@@ -776,7 +776,8 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 	jvxErrorType
 		CjvxConnectionMasterIterator::reference_component(
 			jvxComponentIdentification* cpTp, 
-			jvxApiString* modName,
+			jvxApiString* modName,			
+			jvxApiString* description,
 			jvxApiString* lContext)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
@@ -790,6 +791,7 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 			{
 				res = objRef->request_specialization(nullptr, &cpId, nullptr);
 				objRef->module_reference(modName, nullptr);
+				objRef->description(description);
 				parentMaster->_common_set_ld_master.myParent->return_reference_object(objRef);
 				if (lContext)
 					lContext->assign(parentMaster->_common_set_ld_master.name);

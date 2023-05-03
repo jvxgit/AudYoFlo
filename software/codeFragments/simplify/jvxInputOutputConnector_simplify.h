@@ -252,9 +252,10 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
 		jvxComponentIdentification* cpTp,
 		jvxApiString* modName,
+		jvxApiString* description,
 		jvxApiString* lContext) override
 	{
-		return _reference_component(cpTp, modName, lContext);
+		return _reference_component(cpTp, modName, description, lContext);
 	}
 
 #ifdef JVX_INPUTOUTPUT_CONNECTOR_UNDEFINE_OBJECT_REFERENCE

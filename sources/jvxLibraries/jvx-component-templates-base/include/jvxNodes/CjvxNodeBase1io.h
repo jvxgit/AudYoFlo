@@ -18,7 +18,7 @@ class CjvxNodeBase1io : public IjvxNode, public CjvxObject,
 	public IjvxSequencerControl, public CjvxSequencerControl,
 	public IjvxConnectorFactory, public CjvxConnectorFactory,
 	public IjvxInputConnector, public IjvxOutputConnector, public CjvxInputOutputConnector,
-	public IjvxConfiguration
+	public IjvxConfiguration, public IjvxManipulate
 {
 protected:
 
@@ -110,6 +110,10 @@ public:
 	jvxCBitField requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField cmpWhat);
 
 	virtual void constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg);
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION set_manipulate_value(jvxSize id, jvxVariant* varray) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_manipulate_value(jvxSize id, jvxVariant* varray) override;
+
 };
 
 #define JVX_OS_REACT_INTERFACE_PARAMETERS_DECLARE \

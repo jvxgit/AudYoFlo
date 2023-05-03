@@ -75,7 +75,8 @@ CjvxSingleInputConnector::~CjvxSingleInputConnector()
 jvxErrorType 
 CjvxSingleInputConnector::activate(IjvxObject* theObj, 
 	IjvxConnectorFactory* conFac, const std::string& nm,
-	CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg)
+	CjvxSingleConnector_report<CjvxSingleInputConnector>* reportArg,
+	jvxSize conIdArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxInputOutputConnectorCore::activate(theObj, conFac, nullptr, nm);
@@ -85,6 +86,7 @@ CjvxSingleInputConnector::activate(IjvxObject* theObj,
 	assert(res == JVX_NO_ERROR);
 
 	this->report = reportArg;
+	conId = conIdArg;
 	return res;
 }
 
@@ -114,10 +116,21 @@ CjvxSingleInputConnector::reference_next(jvxSize, IjvxConnectionIterator**)
 	}
 
 jvxErrorType 
-CjvxSingleInputConnector::reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*)
+CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
+{
+	if (_common_set_io_common_ptr->_common_set_io_common.object)
 	{
-		return JVX_NO_ERROR;
+		_common_set_io_common_ptr->_common_set_io_common.object->request_specialization(nullptr, cpId, nullptr);
+		_common_set_io_common_ptr->_common_set_io_common.object->module_reference(modName, nullptr);
+		_common_set_io_common_ptr->_common_set_io_common.object->description(description);
+		if (linkName)
+		{
+			std::string nmCon = _common_set_io_common_ptr->_common_set_io_common.descriptor + "<" + jvx_size2String(conId) + ">";
+			linkName->assign(nmCon);
+		}
 	}
+	return JVX_NO_ERROR;
+}
 
 jvxErrorType 
 CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requesTestChain)
@@ -282,7 +295,12 @@ CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, Ijv
 	if (numConnectorsInUse < (acceptNumberConnectors - 1))
 	{
 		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleInputConnector(withTriggerConnector));
+		newConnector->activate(_common_set_io_common_ptr->_common_set_io_common.object,
+			_common_set_io_common_ptr->_common_set_io_common.myParent,
+			_common_set_io_common_ptr->_common_set_io_common.descriptor,
+			report, allocatedConnectors.size());
 	}
+
 	else if (numConnectorsInUse < acceptNumberConnectors)
 	{
 		IjvxInputConnector* retLoc = this;
@@ -326,6 +344,8 @@ CjvxSingleInputConnectorMulti::unselect_connect_icon(IjvxConnectorBridge* obj,
 		}
 		else
 		{
+			elm->second->deactivate();
+
 			// If it is one of the additional connectors, unselect and delete
 			res = elm->second->unselect_connect_icon(obj, replace_connector);
 			JVX_SAFE_DELETE_OBJ(elm->second);
