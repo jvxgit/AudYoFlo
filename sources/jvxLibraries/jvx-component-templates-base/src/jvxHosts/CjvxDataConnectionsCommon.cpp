@@ -618,7 +618,7 @@ CjvxDataConnectionCommon::_link_triggers_connection()
 		{
 			for (auto elmpMapOtcon : elmMap.second.otcons)
 			{
-				elmpMapItcon->link_connect_otcon(elmpMapOtcon);
+				elmpMapItcon->link_connect_tcon(elmpMapOtcon);
 			}
 		}
 
@@ -626,7 +626,7 @@ CjvxDataConnectionCommon::_link_triggers_connection()
 		{
 			for (auto elmpMapItcon : elmMap.second.itcons)
 			{
-				elmpMapOtcon->link_connect_itcon(elmpMapItcon);
+				elmpMapOtcon->link_connect_tcon(elmpMapItcon);
 			}
 		}
 	}
@@ -643,7 +643,7 @@ CjvxDataConnectionCommon::_unlink_triggers_connection()
 		{
 			for (auto elmpMapOtcon : elmMap.second.otcons)
 			{
-				elmpMapItcon->unlink_connect_otcon(elmpMapOtcon);
+				elmpMapItcon->unlink_connect_tcon(elmpMapOtcon);
 			}
 		}
 
@@ -651,7 +651,7 @@ CjvxDataConnectionCommon::_unlink_triggers_connection()
 		{
 			for (auto elmpMapItcon : elmMap.second.itcons)
 			{
-				elmpMapOtcon->unlink_connect_itcon(elmpMapItcon);
+				elmpMapOtcon->unlink_connect_tcon(elmpMapItcon);
 			}
 		}
 	}

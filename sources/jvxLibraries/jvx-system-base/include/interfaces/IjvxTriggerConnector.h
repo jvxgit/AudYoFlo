@@ -8,7 +8,7 @@ JVX_INTERFACE IjvxTriggerConnector
 {
 	virtual ~IjvxTriggerConnector() {};
 	
-	virtual jvxErrorType trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data = nullptr) = 0;
+	virtual jvxErrorType trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;
 };
 
 JVX_INTERFACE IjvxTriggerInputConnector: public IjvxTriggerConnector
@@ -16,8 +16,8 @@ JVX_INTERFACE IjvxTriggerInputConnector: public IjvxTriggerConnector
 public:
 	virtual ~IjvxTriggerInputConnector(){};
 	
-	virtual jvxErrorType link_connect_otcon(IjvxTriggerOutputConnector* otcon) = 0;
-	virtual jvxErrorType unlink_connect_otcon(IjvxTriggerOutputConnector* otcon) = 0;
+	virtual jvxErrorType link_connect_tcon(IjvxTriggerOutputConnector* otcon) = 0;
+	virtual jvxErrorType unlink_connect_tcon(IjvxTriggerOutputConnector* otcon) = 0;
 };
 
 JVX_INTERFACE IjvxTriggerOutputConnector : public IjvxTriggerConnector
@@ -25,8 +25,8 @@ JVX_INTERFACE IjvxTriggerOutputConnector : public IjvxTriggerConnector
 public:
 	virtual ~IjvxTriggerOutputConnector(){};
 	
-	virtual jvxErrorType link_connect_itcon(IjvxTriggerInputConnector* otcon) = 0;
-	virtual jvxErrorType unlink_connect_itcon(IjvxTriggerInputConnector* otcon) = 0;
+	virtual jvxErrorType link_connect_tcon(IjvxTriggerInputConnector* otcon) = 0;
+	virtual jvxErrorType unlink_connect_tcon(IjvxTriggerInputConnector* otcon) = 0;
 };
 
 #endif

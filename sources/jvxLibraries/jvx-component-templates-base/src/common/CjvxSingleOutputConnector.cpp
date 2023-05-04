@@ -1,12 +1,85 @@
 #include "common/CjvxSingleOutputConnector.h"
 
-CjvxSingleOutputConnector::CjvxSingleOutputConnector()
+jvxErrorType
+CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
+	jvxErrorType res = JVX_NO_ERROR;
+	const jvxChainConnectArguments* args = (const jvxChainConnectArguments*)data;
+	IjvxConnectionIterator** itReturn = (IjvxConnectionIterator**)data;
+	switch (purp)
+	{
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_CONNECT:
+		if (bwdRef)
+		{
+			res = bwdRef->_connect_connect_ocon(*args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_DISCONNECT:
+		if (bwdRef)
+		{
+			res = bwdRef->_disconnect_connect_ocon(*args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT:
+		if (itReturn)
+		{
+			*itReturn = static_cast<IjvxConnectionIterator*>(bwdRef);
+		}
+	default:
+		res = JVX_ERROR_UNSUPPORTED;
+	}
+	return res;
+}
+
+CjvxSingleOutputConnector::CjvxSingleOutputConnector(jvxBool withTriggerConnectorArg) :
+	CjvxConnector<CjvxOutputConnectorLink, CjvxSingleOutputTriggerConnector>(withTriggerConnectorArg)
+{
+	if (withTriggerConnector)
+	{
+		JVX_SAFE_ALLOCATE_OBJECT(trig_con, CjvxSingleOutputTriggerConnector);
+		trig_con->bwdRef = this;
+	}
+}
+
+CjvxSingleOutputConnector::~CjvxSingleOutputConnector()
+{
+	assert(_common_set_ocon.conn_out == nullptr);
+	assert(_common_set_ocon.theCommon_from == nullptr);
+	if (withTriggerConnector)
+	{
+		JVX_SAFE_DELETE_OBJECT(trig_con);
+	}
 }
 
 jvxErrorType 
-CjvxSingleOutputConnector::activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, 
-	CjvxSingleConnector_report<CjvxSingleOutputConnector>* reportArg)
+CjvxSingleOutputConnector::number_next(jvxSize* num)
+{
+	*num = 1;
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxSingleOutputConnector::reference_next(jvxSize idx, IjvxConnectionIterator** outReturn)
+{
+	*outReturn = nullptr;
+	if (_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		*outReturn = _common_set_ocon.theData_out.con_link.connect_to;
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxSingleOutputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
+{
+	return _reference_component(cpId, modName, description, linkName);
+}
+
+jvxErrorType
+CjvxSingleOutputConnector::activate(IjvxObject* theObj,
+	IjvxConnectorFactory* conFac, const std::string& nm,
+	CjvxSingleConnector_report<CjvxSingleOutputConnector>* reportArg,
+	jvxSize conIdArg)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxInputOutputConnectorCore::activate(theObj, conFac, nullptr, nm);
@@ -15,9 +88,12 @@ CjvxSingleOutputConnector::activate(IjvxObject* theObj, IjvxConnectorFactory* co
 	res = CjvxOutputConnectorCore::activate(this, this);
 	assert(res == JVX_NO_ERROR);
 
-	report = reportArg;
+	this->report = reportArg;
+	conId = conIdArg;
 	return res;
 }
+
+
 
 jvxErrorType
 CjvxSingleOutputConnector::deactivate()
@@ -43,14 +119,32 @@ CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor
 	return JVX_NO_ERROR;
 }
 
-CjvxSingleOutputConnectorMulti::CjvxSingleOutputConnectorMulti()
+jvxErrorType
+CjvxSingleOutputConnector::request_trigger_itcon(IjvxTriggerInputConnector** otcon)
 {
+	if (trig_con)
+	{
+		*otcon = trig_con;
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_UNSUPPORTED;
 }
 
-CjvxSingleOutputConnectorMulti::~CjvxSingleOutputConnectorMulti()
+jvxErrorType
+CjvxSingleOutputConnector::return_trigger_itcon(IjvxTriggerInputConnector* otcon)
 {
-	assert(allocatedConnectors.size() == 0);
+	if (trig_con)
+	{
+		if (otcon == trig_con)
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+	return JVX_ERROR_UNSUPPORTED;
 }
+
+// =================================================================================
 
 jvxErrorType
 CjvxSingleOutputConnectorMulti::select_connect_ocon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
@@ -59,8 +153,13 @@ CjvxSingleOutputConnectorMulti::select_connect_ocon(IjvxConnectorBridge* obj, Ij
 	CjvxSingleOutputConnector* newConnector = nullptr;
 	if (numConnectorsInUse < (acceptNumberConnectors - 1))
 	{
-		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleOutputConnector);
+		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleOutputConnector(withTriggerConnector));
+		newConnector->activate(_common_set_io_common_ptr->_common_set_io_common.object,
+			_common_set_io_common_ptr->_common_set_io_common.myParent,
+			_common_set_io_common_ptr->_common_set_io_common.descriptor,
+			report, allocatedConnectors.size());
 	}
+
 	else if (numConnectorsInUse < acceptNumberConnectors)
 	{
 		IjvxOutputConnector* retLoc = this;
@@ -104,6 +203,8 @@ CjvxSingleOutputConnectorMulti::unselect_connect_ocon(IjvxConnectorBridge* obj,
 		}
 		else
 		{
+			elm->second->deactivate();
+
 			// If it is one of the additional connectors, unselect and delete
 			res = elm->second->unselect_connect_ocon(obj, replace_connector);
 			JVX_SAFE_DELETE_OBJ(elm->second);

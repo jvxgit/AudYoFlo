@@ -2,12 +2,8 @@
 #include "common/CjvxSingleInputConnector.h"
 
 
-CjvxSingleInputTriggerOutputConnector::CjvxSingleInputTriggerOutputConnector()
-{
-}
-
 jvxErrorType
-CjvxSingleInputTriggerOutputConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data)
+CjvxSingleInputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
@@ -21,54 +17,26 @@ CjvxSingleInputTriggerOutputConnector::trigger(jvxTriggerConnectorPurpose purp, 
 	return res;
 }
 
-jvxErrorType 
-CjvxSingleInputTriggerOutputConnector::link_connect_itcon(IjvxTriggerInputConnector* otcon)
-{
-	jvxErrorType res = JVX_ERROR_ALREADY_IN_USE;
-	if (linked_ref == nullptr)
-	{
-		linked_ref = otcon;
-		res = JVX_NO_ERROR;
-	}
-	return res;
-}
-
-jvxErrorType
-CjvxSingleInputTriggerOutputConnector::unlink_connect_itcon(IjvxTriggerInputConnector* otcon)
-{
-	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
-	if (linked_ref)
-	{
-		if (linked_ref == otcon)
-		{
-			res = JVX_NO_ERROR;
-		}
-		else
-		{
-			res = JVX_ERROR_ALREADY_IN_USE;
-		}
-	}
-	return res;
-}
 
 // =====================================================================================
 
 CjvxSingleInputConnector::CjvxSingleInputConnector(jvxBool withTriggerConnectorArg):
-	withTriggerConnector(withTriggerConnectorArg)
+	CjvxConnector<CjvxInputConnectorLink, CjvxSingleInputTriggerConnector>(withTriggerConnectorArg)
 {
 	if (withTriggerConnector)
 	{
-		JVX_SAFE_ALLOCATE_OBJECT(trig_out, CjvxSingleInputTriggerOutputConnector);
+		JVX_SAFE_ALLOCATE_OBJECT(trig_con, CjvxSingleInputTriggerConnector);
+		trig_con->bwdRef = this;
 	}
 }
 
 CjvxSingleInputConnector::~CjvxSingleInputConnector()
 {
 	assert(_common_set_icon.conn_in == nullptr);
-	assert(_common_set_icon.theCommon_to == nullptr);
+	assert(_common_set_icon.theCommon_to == nullptr);	
 	if (withTriggerConnector)
 	{
-		JVX_SAFE_DELETE_OBJECT(trig_out);
+		JVX_SAFE_DELETE_OBJECT(trig_con);
 	}
 }
 
@@ -103,33 +71,75 @@ CjvxSingleInputConnector::deactivate()
 	return res;
 }
 
-jvxErrorType 
-CjvxSingleInputConnector::number_next(jvxSize*) 
+jvxErrorType
+CjvxSingleInputConnector::connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
+	jvxErrorType res = JVX_NO_ERROR;
+
+	_connect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb), false);
+
+	// If we have set a trigger forward, follow it but ONLY with the link data type for linkage!!
+	if (
+		trig_con && 
+		trig_con->linked_ref)
+	{
+		jvxChainConnectArguments args;
+		args.theMaster = theData->con_link.master;
+		args.uIdConnection = theData->con_link.uIdConn;
+		res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_CONNECT, &args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
+	return res;
+};
+
+jvxErrorType
+CjvxSingleInputConnector::disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	// If we have set a trigger forward, follow it but ONLY with the link data type for linkage!!
+	if (
+		trig_con &&
+		trig_con->linked_ref)
+	{
+		jvxChainConnectArguments args;
+		args.theMaster = theData->con_link.master;
+		args.uIdConnection = theData->con_link.uIdConn;
+		res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_DISCONNECT, &args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
+
+	_disconnect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb), false);
+
+	return res;
+}
+
+// ================================================================================================
+
+jvxErrorType 
+CjvxSingleInputConnector::number_next(jvxSize* num) 
+{
+	*num = 0;
+	if (trig_con)
+	{
+		*num = 1;
+	}
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType 
-CjvxSingleInputConnector::reference_next(jvxSize, IjvxConnectionIterator**) 
+CjvxSingleInputConnector::reference_next(jvxSize idx, IjvxConnectionIterator** onReturn) 
+{
+	*onReturn = nullptr;
+	if (trig_con)
 	{
-		return JVX_NO_ERROR;
+		trig_con->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT, onReturn JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 	}
+	return JVX_NO_ERROR;
+}
 
 jvxErrorType 
 CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
 {
-	if (_common_set_io_common_ptr->_common_set_io_common.object)
-	{
-		_common_set_io_common_ptr->_common_set_io_common.object->request_specialization(nullptr, cpId, nullptr);
-		_common_set_io_common_ptr->_common_set_io_common.object->module_reference(modName, nullptr);
-		_common_set_io_common_ptr->_common_set_io_common.object->description(description);
-		if (linkName)
-		{
-			std::string nmCon = _common_set_io_common_ptr->_common_set_io_common.descriptor + "<" + jvx_size2String(conId) + ">";
-			linkName->assign(nmCon);
-		}
-	}
-	return JVX_NO_ERROR;
+	return _reference_component(cpId, modName, description, linkName);
 }
 
 jvxErrorType 
@@ -261,9 +271,9 @@ CjvxSingleInputConnector::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 jvxErrorType 
 CjvxSingleInputConnector::request_trigger_otcon(IjvxTriggerOutputConnector** otcon) 
 {
-	if (trig_out)
+	if (trig_con)
 	{
-		*otcon = trig_out;
+		*otcon = trig_con;
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_UNSUPPORTED;
@@ -272,9 +282,9 @@ CjvxSingleInputConnector::request_trigger_otcon(IjvxTriggerOutputConnector** otc
 jvxErrorType 
 CjvxSingleInputConnector::return_trigger_otcon(IjvxTriggerOutputConnector* otcon) 
 {
-	if (trig_out)
+	if (trig_con)
 	{
-		if (otcon == trig_out)
+		if (otcon == trig_con)
 		{
 			return JVX_NO_ERROR;
 		}

@@ -525,6 +525,17 @@ CjvxNodeBase1io::set_manipulate_value(jvxSize id, jvxVariant* varray)
 			res = JVX_ERROR_INVALID_SETTING;
 		}
 		break;
+	case JVX_MANIPULATE_FACTORY_NAME:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			_common_set_io_common.descriptor = ptrString->std_str();
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
 	default:
 		res = JVX_ERROR_UNSUPPORTED;
 	}
@@ -560,6 +571,17 @@ CjvxNodeBase1io::get_manipulate_value(jvxSize id, jvxVariant* varray)
 		if (ptrString)
 		{
 			ptrString->assign(_common_set_min.theDescription);
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		break;
+	case JVX_MANIPULATE_FACTORY_NAME:
+		varray->getApiString(&ptrString);
+		if (ptrString)
+		{
+			ptrString->assign(_common_set_io_common.descriptor);
 		}
 		else
 		{

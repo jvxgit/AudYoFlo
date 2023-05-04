@@ -27,6 +27,8 @@ namespace CayfAutomationModules
 		{
 			this->oconNmSrcPreChain= cfg.oconNmSrcPreChain;
 			this->iconNmEnterPreChain = cfg.iconNmEnterPreChain;
+			this->oconIdTriggerPreChain = cfg.oconIdTriggerPreChain;
+			this->iconIdTriggerPreChain = cfg.iconIdTriggerPreChain;
 			this->tpEnter = cfg.tpEnter;
 			
 			if (tpEnter.tp == JVX_COMPONENT_UNKNOWN)
@@ -68,10 +70,10 @@ namespace CayfAutomationModules
 				"> , connector <" << iconNmEnterPreChain << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
-			// First part of the connections
+			// First part of the connections  the prechain!!
 			CayfAutomationModulesSrc2Snk::create_bridges(
 				theDataConnectionDefRuleHdl, tp_sink, tpEnter, elm,
-				oconNmSrcPreChain, iconNmEnterPreChain, bridgeId, 0, oconIdTrigger, iconIdTriggerPreChain);
+				oconNmSrcPreChain, iconNmEnterPreChain, bridgeId, 0, oconIdTriggerPreChain, iconIdTriggerPreChain);
 
 
 			// ==================================================================================
@@ -79,7 +81,7 @@ namespace CayfAutomationModules
 			// ==================================================================================
 			CayfAutomationModulesSrc2Snk::create_bridges(
 				theDataConnectionDefRuleHdl, tp_src, tp_sink, elm, config.oconNmSource,
-				config.iconNmSink, bridgeId, 1, oconIdTriggerPreChain, iconIdTrigger);
+				config.iconNmSink, bridgeId, 1, oconIdTrigger, iconIdTrigger);
 		}
 	}
 }

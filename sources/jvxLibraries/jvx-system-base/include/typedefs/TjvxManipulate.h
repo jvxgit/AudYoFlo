@@ -4,8 +4,9 @@
 typedef enum
 {
 	JVX_MANIPULATE_NONE = 0,
-	JVX_MANIPULATE_DESCRIPTION,
-	JVX_MANIPULATE_DESCRIPTOR
+	JVX_MANIPULATE_DESCRIPTION, // set a new description
+	JVX_MANIPULATE_DESCRIPTOR, // set a new descriptor
+	JVX_MANIPULATE_FACTORY_NAME // set a new connector factory name 
 } TjvxManipulateEnum;
 
 #endif

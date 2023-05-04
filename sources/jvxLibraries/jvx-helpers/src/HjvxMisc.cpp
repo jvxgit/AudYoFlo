@@ -4172,6 +4172,14 @@ jvx_activateObjectInModule(
 						astr.assign(astr.std_str() + attach_name);
 						resL = man->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &var);
 					}
+					/*
+					jvxErrorType resL = man->get_manipulate_value(JVX_MANIPULATE_FACTORY_NAME, &var);
+					if (resL == JVX_NO_ERROR)
+					{
+						astr.assign(astr.std_str() + attach_name);
+						resL = man->set_manipulate_value(JVX_MANIPULATE_FACTORY_NAME, &var);
+					}
+					*/
 					retInterfaceObj<IjvxManipulate>(obj, man);
 				}
 			}
