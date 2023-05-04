@@ -68,6 +68,31 @@
 		} \
 	} 
 
+
+#define JVX_MIN_NEG_SET_LDAT(neg, ldat) \
+	if (JVX_CHECK_SIZE_SELECTED(neg.min)) \
+	{ \
+		ldat = JVX_MAX(neg.min, ldat); \
+	}
+
+#define JVX_MAX_NEG_SET_LDAT(neg, ldat) \
+	if (JVX_CHECK_SIZE_SELECTED(neg.max)) \
+	{ \
+		ldat = JVX_MIN(neg.max, ldat); \
+	}
+
+#define JVX_MIN_NEG_SET_LDAT_CMP(neg, ldat, cmp) \
+	if (neg.min != cmp) \
+	{ \
+		ldat = JVX_MAX(neg.min, ldat); \
+	}
+
+#define JVX_MAX_NEG_SET_LDAT_CMP(neg, ldat, cmp) \
+	if (neg.max != cmp) \
+	{ \
+		ldat = JVX_MIN(neg.max, ldat); \
+	}
+
 CjvxNegotiate_common::CjvxNegotiate_common()
 {
 	//_common_set_node_params_neg.acceptOnlyExactMatchLinkDataInput = false;
@@ -401,7 +426,11 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 	// ===================================================================================
 	if (thereismismatch)
 	{
-		res = JVX_ERROR_COMPROMISE;
+		res = JVX_ERROR_UNSUPPORTED;
+		if (allowCompromiseOutput)
+		{
+			res = JVX_ERROR_COMPROMISE;
+		}
 	}
 	else
 	{
@@ -687,6 +716,55 @@ CjvxNegotiate_common::compare_core(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDesc
 		}
 	}
 }
+
+void
+CjvxNegotiate_common::_constrain_ldesc(jvxLinkDataDescriptor* theData) const
+{
+
+	// Prefer max buffersize 
+	JVX_MIN_NEG_SET_LDAT(preferred.buffersize, theData->con_params.buffersize);
+	JVX_MAX_NEG_SET_LDAT(preferred.buffersize, theData->con_params.buffersize);
+	// ===================================================================
+
+	// ===================================================================
+	// Prefer min samplerate
+	JVX_MAX_NEG_SET_LDAT(preferred.samplerate, theData->con_params.rate);
+	JVX_MIN_NEG_SET_LDAT(preferred.samplerate, theData->con_params.rate);
+	// ===================================================================
+
+	// ===================================================================
+	// Prefer min number channels
+	JVX_MAX_NEG_SET_LDAT(preferred.number_channels, theData->con_params.number_channels);
+	JVX_MIN_NEG_SET_LDAT(preferred.number_channels, theData->con_params.number_channels);
+	// ===================================================================
+
+	JVX_MAX_NEG_SET_LDAT(preferred.dimX, theData->con_params.segmentation.x);
+	JVX_MIN_NEG_SET_LDAT(preferred.dimX, theData->con_params.segmentation.x);
+
+	// ===================================================================
+
+	JVX_MAX_NEG_SET_LDAT(preferred.dimY, theData->con_params.segmentation.y);
+	JVX_MIN_NEG_SET_LDAT(preferred.dimY, theData->con_params.segmentation.y);
+
+	// ===================================================================
+	// Prefer min format
+	JVX_MAX_NEG_SET_LDAT_CMP(preferred.format, theData->con_params.format, JVX_DATAFORMAT_NONE);
+	JVX_MIN_NEG_SET_LDAT_CMP(preferred.format, theData->con_params.format, JVX_DATAFORMAT_NONE);
+	// ===================================================================
+
+	// ===================================================================
+	// Prefer min format
+	JVX_MAX_NEG_SET_LDAT_CMP(preferred.subformat, theData->con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
+	JVX_MIN_NEG_SET_LDAT_CMP(preferred.subformat, theData->con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
+	// ===================================================================
+
+	// ===================================================================
+	// Prefer min format
+	JVX_MAX_NEG_SET_LDAT_CMP(preferred.data_flow, theData->con_params.data_flow, JVX_DATAFLOW_NONE);
+	JVX_MIN_NEG_SET_LDAT_CMP(preferred.data_flow, theData->con_params.data_flow, JVX_DATAFLOW_NONE);
+}
+
+// ===================================================================
 // ====================================================================================
 
 CjvxNegotiate_input::CjvxNegotiate_input()

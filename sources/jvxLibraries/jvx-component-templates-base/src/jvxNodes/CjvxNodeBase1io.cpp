@@ -1,28 +1,6 @@
 #include "jvxNodes/CjvxNodeBase1io.h"
 
-#define JVX_MIN_NEG_SET_LDAT(neg, ldat) \
-	if (JVX_CHECK_SIZE_SELECTED(neg.min)) \
-	{ \
-		ldat = JVX_MAX(neg.min, ldat); \
-	}
 
-#define JVX_MAX_NEG_SET_LDAT(neg, ldat) \
-	if (JVX_CHECK_SIZE_SELECTED(neg.max)) \
-	{ \
-		ldat = JVX_MIN(neg.max, ldat); \
-	}
-
-#define JVX_MIN_NEG_SET_LDAT_CMP(neg, ldat, cmp) \
-	if (neg.min != cmp) \
-	{ \
-		ldat = JVX_MAX(neg.min, ldat); \
-	}
-
-#define JVX_MAX_NEG_SET_LDAT_CMP(neg, ldat, cmp) \
-	if (neg.max != cmp) \
-	{ \
-		ldat = JVX_MIN(neg.max, ldat); \
-	}
 
 CjvxNodeBase1io::CjvxNodeBase1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : 
 	CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
@@ -446,48 +424,7 @@ void
 CjvxNodeBase1io::constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg)
 {
 	// ===================================================================
-	// Prefer max buffersize 
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ocon.theData_out.con_params.buffersize);
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ocon.theData_out.con_params.buffersize);
-	// ===================================================================
-
-	// ===================================================================
-	// Prefer min samplerate
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.samplerate, _common_set_ocon.theData_out.con_params.rate);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.buffersize, _common_set_ocon.theData_out.con_params.rate);
-	// ===================================================================
-
-	// ===================================================================
-	// Prefer min number channels
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ocon.theData_out.con_params.number_channels);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.number_channels, _common_set_ocon.theData_out.con_params.number_channels);
-	// ===================================================================
-
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ocon.theData_out.con_params.segmentation.x);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimX, _common_set_ocon.theData_out.con_params.segmentation.x);
-
-	// ===================================================================
-
-	JVX_MAX_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ocon.theData_out.con_params.segmentation.y);
-	JVX_MIN_NEG_SET_LDAT(neg.preferred.dimY, _common_set_ocon.theData_out.con_params.segmentation.y);
-
-	// ===================================================================
-	// Prefer min format
-	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.format, _common_set_ocon.theData_out.con_params.format, JVX_DATAFORMAT_NONE);
-	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.format, _common_set_ocon.theData_out.con_params.format, JVX_DATAFORMAT_NONE);
-	// ===================================================================
-
-	// ===================================================================
-	// Prefer min format
-	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.subformat, _common_set_ocon.theData_out.con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
-	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.subformat, _common_set_ocon.theData_out.con_params.format_group, JVX_DATAFORMAT_GROUP_NONE);
-	// ===================================================================
-
-	// ===================================================================
-	// Prefer min format
-	JVX_MAX_NEG_SET_LDAT_CMP(neg.preferred.data_flow, _common_set_ocon.theData_out.con_params.data_flow, JVX_DATAFLOW_NONE);
-	JVX_MIN_NEG_SET_LDAT_CMP(neg.preferred.data_flow, _common_set_ocon.theData_out.con_params.data_flow, JVX_DATAFLOW_NONE);
-	// ===================================================================
+	neg._constrain_ldesc(&_common_set_ocon.theData_out);
 }
 
 jvxErrorType

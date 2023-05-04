@@ -110,7 +110,7 @@ public:
 	jvxBool stack_pushed;
 	jvxLinkDataDescriptor_con_params _latest_results;
 	negBehaviorType negBehavior = negBehaviorType::JVX_BEHAVIOR_AUDIO;
-	
+	jvxBool allowCompromiseOutput = true;
 	CjvxObjectLog* logObj = nullptr;
 
 public:
@@ -176,6 +176,8 @@ public:
 		IjvxObject* this_pointer,
 		jvxCBitField* modFlags
 		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+
+	void _constrain_ldesc(jvxLinkDataDescriptor* theData) const;
 };
 	
 class CjvxNegotiate_input : public CjvxNegotiate_common

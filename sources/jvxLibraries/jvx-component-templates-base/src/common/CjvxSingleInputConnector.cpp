@@ -129,9 +129,11 @@ jvxErrorType
 CjvxSingleInputConnector::reference_next(jvxSize idx, IjvxConnectionIterator** onReturn) 
 {
 	*onReturn = nullptr;
-	if (trig_con)
+	if (
+		trig_con &&
+		trig_con->linked_ref)
 	{
-		trig_con->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT, onReturn JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+		trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT, onReturn JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 	}
 	return JVX_NO_ERROR;
 }
@@ -161,6 +163,12 @@ CjvxSingleInputConnector::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		// Yes, we forward but this will end up in test_connect_forward where nothing really happens
 		res = _test_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+
+		if (trig_con &&
+			trig_con->linked_ref)
+		{
+			res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_TEST, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
 	}
 	return res;
 }

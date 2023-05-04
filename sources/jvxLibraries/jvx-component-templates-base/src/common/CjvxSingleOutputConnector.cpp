@@ -25,6 +25,14 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 		{
 			*itReturn = static_cast<IjvxConnectionIterator*>(bwdRef);
 		}
+		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_TEST:
+		if (bwdRef)
+		{
+			bwdRef->neg_output._constrain_ldesc(&bwdRef->_common_set_ocon.theData_out);
+			res = bwdRef->test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		}
+		break;
 	default:
 		res = JVX_ERROR_UNSUPPORTED;
 	}
