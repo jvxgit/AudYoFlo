@@ -927,6 +927,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 			// Only option to negotiate: buffersize
 			jvxCBitField checkFlags = 0;
 			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
 			jvx_bitInvert(checkFlags);
 
 			// Check if from the previous component only the samplerate or the number of channels deviate

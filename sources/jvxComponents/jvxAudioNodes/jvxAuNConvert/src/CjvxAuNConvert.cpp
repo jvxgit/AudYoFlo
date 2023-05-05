@@ -106,15 +106,21 @@ CjvxAuNConvert::from_input_to_output()
 }
 
 void
-CjvxAuNConvert::compute_buffer_relations(jvxBool fromInput)
+CjvxAuNConvert::compute_buffer_relations(jvxBool fromInput, jvxSize* bsizeArgOpt)
 {
+	jvxSize bSize = 0;
 	if (fromInput)
 	{
-		resampling.bSizeInMin = node_inout._common_set_node_params_a_1io.buffersize;
-		resampling.bSizeInMax = node_inout._common_set_node_params_a_1io.buffersize;
-		if (node_inout._common_set_node_params_a_1io.buffersize % resampling.cc.downsamplingFactor)
+		bSize = node_inout._common_set_node_params_a_1io.buffersize;
+		if (bsizeArgOpt)
 		{
-			resampling.bSizeInMin = node_inout._common_set_node_params_a_1io.buffersize / resampling.cc.downsamplingFactor;
+			bSize = *bsizeArgOpt;
+		}
+		resampling.bSizeInMin = bSize;
+		resampling.bSizeInMax = bSize;
+		if (bSize % resampling.cc.downsamplingFactor)
+		{
+			resampling.bSizeInMin = bSize / resampling.cc.downsamplingFactor;
 			resampling.bSizeInMin *= resampling.cc.downsamplingFactor;
 			resampling.bSizeInMax = resampling.bSizeInMin + resampling.cc.downsamplingFactor;
 		}
@@ -123,11 +129,16 @@ CjvxAuNConvert::compute_buffer_relations(jvxBool fromInput)
 	}
 	else
 	{
-		resampling.bSizeOutMin = node_output._common_set_node_params_a_1io.buffersize;
-		resampling.bSizeOutMax = node_output._common_set_node_params_a_1io.buffersize;
-		if (node_output._common_set_node_params_a_1io.buffersize % resampling.cc.oversamplingFactor)
+		bSize = node_output._common_set_node_params_a_1io.buffersize;
+		if (bsizeArgOpt)
 		{
-			resampling.bSizeOutMin = node_output._common_set_node_params_a_1io.buffersize / resampling.cc.oversamplingFactor;
+			bSize = *bsizeArgOpt;
+		}
+		resampling.bSizeOutMin = bSize;
+		resampling.bSizeOutMax = bSize;
+		if (bSize % resampling.cc.oversamplingFactor)
+		{
+			resampling.bSizeOutMin = bSize / resampling.cc.oversamplingFactor;
 			resampling.bSizeOutMin *= resampling.cc.oversamplingFactor;
 			resampling.bSizeOutMax = resampling.bSizeOutMin + resampling.cc.oversamplingFactor;
 		}
@@ -161,18 +172,19 @@ CjvxAuNConvert::adapt_output_parameters_forward()
 }
 
 void
-CjvxAuNConvert::adapt_output_parameters_backward()
+CjvxAuNConvert::adapt_output_parameters_backward(jvxSize numChannelsOutDesired, jvxDataFormat formOutDesired)
 {
 	// Recompute the input parameters
 	update_simple_params_from_ldesc();
 
 	// Only the output samplerate should have changed!
-	node_output._common_set_node_params_a_1io.samplerate = node_inout._common_set_node_params_a_1io.samplerate * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
+	jvxSize desiredSamplerate = node_inout._common_set_node_params_a_1io.samplerate * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
 
 	neg_output._update_parameters_fixed(
-		JVX_SIZE_UNSELECTED,
-		JVX_SIZE_UNSELECTED,
-		node_output._common_set_node_params_a_1io.samplerate);
+		numChannelsOutDesired,
+		resampling.bSizeOutMax,
+		desiredSamplerate,
+		formOutDesired);
 }
 
 jvxErrorType 
@@ -357,14 +369,15 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 				jvx_fixed_resampler_init_conversion(&resampling.cc, node_inout._common_set_node_params_a_1io.samplerate,
 					preferredByOutput->con_params.rate);
 
-				compute_buffer_relations(false);
+				// Adapt output buffersize as requested since compute_buffer_relations requires 				
+				compute_buffer_relations(false, &preferredByOutput->con_params.buffersize);
 				tryThis.con_params.buffersize = resampling.bSizeInMax;
 
 				// Here, we must rely on a buffersize update in the previous component - this is the degree of freedom that we have
 				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				if (res == JVX_NO_ERROR)
 				{
-					adapt_output_parameters_backward();					
+					adapt_output_parameters_backward(preferredByOutput->con_params.number_channels, preferredByOutput->con_params.format);
 				}
 				break;			
 			}		

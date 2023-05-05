@@ -108,9 +108,9 @@ public:
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	void adapt_output_parameters_forward();
-	void adapt_output_parameters_backward();
+	void adapt_output_parameters_backward(jvxSize numChannelsOutDesired, jvxDataFormat formOutDesired);
 
-	void compute_buffer_relations(jvxBool fromInput);
+	void compute_buffer_relations(jvxBool fromInput, jvxSize* bSizeArg = nullptr);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
 
 };

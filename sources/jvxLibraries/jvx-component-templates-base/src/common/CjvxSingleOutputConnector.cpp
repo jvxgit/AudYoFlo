@@ -119,11 +119,11 @@ CjvxSingleOutputConnector::deactivate()
 jvxErrorType
 CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requesTestChain)
 {
-	// We only accept ONE setting!!
+	// We only accept ONE setting!! Dataflow is forward
 	neg_output._update_parameters_fixed(params.number_channels,
 		params.buffersize, params.rate,
 		params.format, params.format_group,
-		JVX_DATAFLOW_PUSH_ON_PULL, nullptr);
+		JVX_DATAFLOW_PUSH_ACTIVE, nullptr);
 	return JVX_NO_ERROR;
 }
 
