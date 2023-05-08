@@ -34,6 +34,8 @@ class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange,
 	jvxSize* ptrChannelRoutes = nullptr;
 	jvxSize szChannelRoutes = 0;
 
+	std::vector<jvxSize> oldRouting;
+
 	/*
 	struct
 	{
@@ -70,6 +72,16 @@ public:
 	jvxErrorType request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl) override;
 	jvxErrorType return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl) override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionToContainAllSubsectionsForMe,
+		const char* filename,
+		jvxInt32 lineno)override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionWhereToAddAllSubsections)override;
+
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_on_config);
 
 	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn) override;
@@ -84,6 +96,7 @@ public:
 	void release_unique_id_stop(CjvxSingleOutputConnector* iconn, jvxSize uId) override;
 	virtual void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
 
+	static void correct_order_channel_route(jvxSize* ptrChannelRoutes, jvxSize szChannelRoutes);
 };
 
 	// ============================================================================

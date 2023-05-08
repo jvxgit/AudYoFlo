@@ -152,25 +152,55 @@ CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			{
 				genMixChain::deassociate__config(this);
 			}
+
+			if (szChannelRoutes)
+			{
+				std::vector<jvxSize> lstNew = oldRouting;
+				if (oldRouting.size() < szChannelRoutes)
+				{
+					oldRouting.resize(szChannelRoutes);
+				}
+
+				for (i = 0; i < szChannelRoutes; i++)
+				{					
+					oldRouting[i] = ptrChannelRoutes[i];
+				}
+
+				for (; i < lstNew.size(); i++)
+				{
+					oldRouting[i] = lstNew[i];
+				}
+
+				correct_order_channel_route(oldRouting.data(), oldRouting.size());
+
+				JVX_SAFE_DELETE_FIELD(ptrChannelRoutes);
+				szChannelRoutes = 0;
+			}
+
 			if (fldNewSz)
 			{
 				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(fldNew, jvxSize, fldNewSz);
 				for (i = 0; i < fldNewSz; i++)
 				{
 					fldNew[i] = i;
-					if (i < szChannelRoutes)
+					if (i < oldRouting.size())
 					{
-						fldNew[i] = ptrChannelRoutes[i];
+						fldNew[i] = oldRouting[i];
 					}
 				}
+
+
 			}
-			if (szChannelRoutes)
-			{
-				JVX_SAFE_DELETE_FIELD(ptrChannelRoutes);
-				szChannelRoutes = 0;
-			}
+
 			szChannelRoutes = fldNewSz;
 			ptrChannelRoutes = fldNew;
+			correct_order_channel_route(ptrChannelRoutes, szChannelRoutes);
+
+			oldRouting.resize(fldNewSz);
+			if (fldNewSz)
+			{
+				memcpy(oldRouting.data(), ptrChannelRoutes, fldNewSz * sizeof(jvxSize));
+			}
 			genMixChain::associate__config(this, ptrChannelRoutes, szChannelRoutes);
 		}
 
@@ -452,32 +482,15 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, set_on
 
 	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genMixChain::config.channel_routing))
 	{
-		jvxSize i;
-		jvxCBitField chanSelCorrect = (1 << szChannelRoutes) -1;
-		for (i = 0; i < szChannelRoutes; i++)
-		{
-			jvxSize idx = ptrChannelRoutes[i];
-			if (!jvx_bitTest(chanSelCorrect, idx))
-			{
-				// Here, we need to correct
-				jvxSize j;
-				idx = JVX_SIZE_UNSELECTED;
-				for (j = 0; j < szChannelRoutes; j++)
-				{
-					if (jvx_bitTest(chanSelCorrect, j))
-					{
-						idx = j;
-						break;
-					}
-				}
-				assert(JVX_CHECK_SIZE_SELECTED(idx));
-			}
-			
-			// CHeck this position
-			jvx_bitClear(chanSelCorrect, idx);
-			ptrChannelRoutes[i] = idx;
-		}
+		// Correct channel order
+		correct_order_channel_route(ptrChannelRoutes, szChannelRoutes);
 		
+		// Update channel routings
+		if (szChannelRoutes)
+		{
+			memcpy(oldRouting.data(), ptrChannelRoutes, szChannelRoutes * sizeof(jvxSize));
+		}
+
 		operationMode = genMixChain::translate__config__operation_mode_from();
 		triggerTest = true;
 	}
@@ -488,6 +501,36 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, set_on
 	}
 
 	return JVX_NO_ERROR;
+}
+
+void 
+CjvxSpNMixChainEnterLeave::correct_order_channel_route(jvxSize* ptrChannelRoutes, jvxSize szChannelRoutes)
+{
+	jvxSize i;
+	jvxCBitField chanSelCorrect = (1 << szChannelRoutes) - 1;
+	for (i = 0; i < szChannelRoutes; i++)
+	{
+		jvxSize idx = ptrChannelRoutes[i];
+		if (!jvx_bitTest(chanSelCorrect, idx))
+		{
+			// Here, we need to correct
+			jvxSize j;
+			idx = JVX_SIZE_UNSELECTED;
+			for (j = 0; j < szChannelRoutes; j++)
+			{
+				if (jvx_bitTest(chanSelCorrect, j))
+				{
+					idx = j;
+					break;
+				}
+			}
+			assert(JVX_CHECK_SIZE_SELECTED(idx));
+		}
+
+		// CHeck this position
+		jvx_bitClear(chanSelCorrect, idx);
+		ptrChannelRoutes[i] = idx;
+	}
 }
 
 jvxErrorType
@@ -602,3 +645,5 @@ CjvxSpNMixChainEnterLeave::return_hidden_interface(jvxInterfaceType tp, jvxHandl
 	}
 	return CjvxBareNode1ioRearrange::return_hidden_interface(tp, hdl);
 }
+
+

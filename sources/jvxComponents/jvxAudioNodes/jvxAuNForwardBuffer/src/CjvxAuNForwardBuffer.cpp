@@ -355,8 +355,11 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			}
 
 			jvxSize bs = node_output._common_set_node_params_a_1io.samplerate * genForwardBuffer_node::config.buffersize_msecs.value * 0.001;
+			/*
 			bs = JVX_MAX(
 				JVX_MAX(node_inout._common_set_node_params_a_1io.buffersize, node_output._common_set_node_params_a_1io.buffersize) * 4, bs);
+				*/
+			bs = JVX_MAX(node_inout._common_set_node_params_a_1io.buffersize + node_output._common_set_node_params_a_1io.buffersize, bs);
 			start_audiostack(
 				bs,
 				node_output._common_set_node_params_a_1io.number_channels,
@@ -927,6 +930,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 			// Only option to negotiate: buffersize
 			jvxCBitField checkFlags = 0;
 			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
 			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
 			jvx_bitInvert(checkFlags);
 

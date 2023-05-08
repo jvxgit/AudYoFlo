@@ -372,6 +372,7 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 				// Adapt output buffersize as requested since compute_buffer_relations requires 				
 				compute_buffer_relations(false, &preferredByOutput->con_params.buffersize);
 				tryThis.con_params.buffersize = resampling.bSizeInMax;
+				tryThis.con_params.segmentation.x = resampling.bSizeInMax;
 
 				// Here, we must rely on a buffersize update in the previous component - this is the degree of freedom that we have
 				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
