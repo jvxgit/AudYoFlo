@@ -47,6 +47,7 @@ public:
 	jvxErrorType start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	jvxErrorType stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
+
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	jvxErrorType number_next(jvxSize*) override;

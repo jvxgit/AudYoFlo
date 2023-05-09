@@ -7,6 +7,7 @@ CjvxSpNMixChainEnterLeave::CjvxSpNMixChainEnterLeave(JVX_CONSTRUCTOR_ARGUMENTS_M
 	_common_set_ldslave.zeroCopyBuffering_cfg = true;
 
 	CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::cbRef = this;
+	CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::cbRef = this;
 }
 
 CjvxSpNMixChainEnterLeave::~CjvxSpNMixChainEnterLeave()
@@ -16,6 +17,10 @@ CjvxSpNMixChainEnterLeave::~CjvxSpNMixChainEnterLeave()
 	assert((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors).size() == 0);
 	assert((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::processingConnectors).size() == 0);
 	assert((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen) == nullptr);
+
+	assert((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::selectedConnectors).size() == 0);
+	assert((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors).size() == 0);
+	assert((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen) == nullptr);
 }
 
 jvxErrorType 
@@ -459,6 +464,18 @@ CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		unlock();
 		break;
 	case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+		idxBufferProcess = idx_stage;
+		if (JVX_CHECK_SIZE_UNSELECTED(idxBufferProcess))
+		{
+			idxBufferProcess = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+		}
+
+		lock();
+		for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
+		{
+			elm.second.ioconn->trigger_put_data();
+		}
+		unlock();
 		break;
 	}
 

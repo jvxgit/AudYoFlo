@@ -33,6 +33,30 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 			res = bwdRef->test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
 		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_PREPARE:
+		if (bwdRef)
+		{			
+			res = bwdRef->prepare_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		}
+		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_POSTPROCESS:
+		if (bwdRef)
+		{
+			res = bwdRef->postprocess_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		}
+		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_START:
+		if (bwdRef)
+		{
+			res = bwdRef->start_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		}
+		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_STOP:
+		if (bwdRef)
+		{
+			res = bwdRef->stop_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		}
+		break;
 	default:
 		res = JVX_ERROR_UNSUPPORTED;
 	}
@@ -116,6 +140,39 @@ CjvxSingleOutputConnector::deactivate()
 	return res;
 }
 
+jvxErrorType 
+CjvxSingleOutputConnector::start_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	// Request a unique pipeline id
+	if (report)
+	{
+		report->request_unique_id_start(this, &_common_set_io_common_ptr->_common_set_io_common.myRuntimeId);
+	}
+
+	jvxErrorType res = _start_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	if (res == JVX_NO_ERROR)
+	{
+		if (report)
+		{
+			report->report_started_connector(this);
+		}
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxSingleOutputConnector::stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	jvxErrorType res = _stop_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
+	if (report)
+	{
+		report->report_stopped_connector(this);
+		report->release_unique_id_stop(this, _common_set_io_common_ptr->_common_set_io_common.myRuntimeId);
+	}
+	return res;
+}
+
 jvxErrorType
 CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requesTestChain)
 {
@@ -124,6 +181,27 @@ CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor
 		params.buffersize, params.rate,
 		params.format, params.format_group,
 		JVX_DATAFLOW_PUSH_ACTIVE, nullptr);
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxSingleOutputConnector::trigger_put_data()
+{
+	jvxErrorType res = _common_set_ocon.ocon->process_start_ocon(0, NULL, 0, NULL, NULL);
+	if (res == JVX_NO_ERROR)
+	{
+		jvxHandle** buffers_out = nullptr;
+		jvxSize idx_stage_local = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;;
+		buffers_out = _common_set_ocon.theData_out.con_data.buffers[idx_stage_local];
+
+		if (report)
+		{
+			report->report_process_buffers(this, buffers_out, _common_set_ocon.theData_out.con_params);
+		}
+
+		_common_set_ocon.ocon->process_buffers_ocon(JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
+		_common_set_ocon.ocon->process_stop_ocon(0, NULL, 0, NULL, NULL);
+	}
 	return JVX_NO_ERROR;
 }
 

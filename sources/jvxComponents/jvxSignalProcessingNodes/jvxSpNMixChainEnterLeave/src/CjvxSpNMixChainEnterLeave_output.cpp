@@ -65,6 +65,6 @@ CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleOutputConnector* oco
 
 	for (i = 0; i < szExtraBuffersChannels; i++)
 	{
-		memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);
+		memcpy(bufferPtrs[i], bufsOut[i], jvxDataFormat_getsize(params.format) * params.buffersize);
 	}
 }

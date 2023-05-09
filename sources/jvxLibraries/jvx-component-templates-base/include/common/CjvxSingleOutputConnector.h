@@ -37,7 +37,12 @@ public:
 	// =======================================================================================
 	// =======================================================================================
 
+	jvxErrorType start_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	jvxErrorType stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+
 	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requestTestChain);
+
+	jvxErrorType trigger_put_data();
 
 	virtual jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** otcon) override;
 	virtual jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* otcon) override;
@@ -51,6 +56,7 @@ public:
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr
 #define JVX_SUPPRESS_AUTO_READY_CHECK_ICON
 #define JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
+#define JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
 #include "codeFragments/simplify/jvxOutputConnector_simplify.h"
 #include "codeFragments/simplify/jvxConnectorCommon_simplify.h"
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
@@ -58,6 +64,7 @@ public:
 #undef JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE
 #undef JVX_SUPPRESS_AUTO_READY_CHECK_ICON
 #undef JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
+#undef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
 };
 
 class CjvxSingleOutputConnectorMulti : public CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>

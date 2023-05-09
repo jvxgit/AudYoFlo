@@ -645,7 +645,9 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		// Check function <write_samples_from_buffer>
 		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT)
 		{
-			if (res == JVX_NO_ERROR)
+			if (
+				(res == JVX_NO_ERROR) || 
+				(res == JVX_ERROR_BUFFER_OVERFLOW))
 			{
 				refThreads.cpPtr->trigger_wakeup();
 			}

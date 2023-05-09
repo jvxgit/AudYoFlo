@@ -73,11 +73,12 @@ virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_ocon(JVX_CONNECTI
 
 // ===============================================================================
 
-
+#ifndef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
 virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override
 {
 	return _start_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 };
+#endif
 
 // ===============================================================================
 
@@ -116,11 +117,12 @@ virtual jvxErrorType JVX_CALLINGCONVENTION process_stop_ocon(jvxSize idx_stage, 
 
 // ===============================================================================
 
-
+#ifndef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
 virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override
 {
 	return _stop_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 };
+#endif
 
 // ==============================================================================
 

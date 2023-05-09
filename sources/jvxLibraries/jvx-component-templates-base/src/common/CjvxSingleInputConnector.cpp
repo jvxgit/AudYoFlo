@@ -186,6 +186,12 @@ CjvxSingleInputConnector::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 			, _common_set_ldslave.descriptor.c_str()
 #endif
 		);
+
+		if (trig_con &&
+			trig_con->linked_ref)
+		{
+			res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_PREPARE, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
 	}
 	return res;
 }
@@ -196,6 +202,11 @@ CjvxSingleInputConnector::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 	jvxErrorType res = JVX_NO_ERROR;
 	if (res == JVX_NO_ERROR)
 	{
+		if (trig_con &&
+			trig_con->linked_ref)
+		{
+			res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_POSTPROCESS, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
 		_postprocess_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		res = jvx_deallocate_pipeline_and_buffers_postprocess_to(_common_set_icon.theData_in);
 	}
@@ -221,6 +232,12 @@ CjvxSingleInputConnector::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			report->report_started_connector(this);
 		}
 	}
+
+	if (trig_con &&
+		trig_con->linked_ref)
+	{
+		res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_START, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
 	return res;
 }
 
@@ -230,6 +247,12 @@ CjvxSingleInputConnector::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	if (res == JVX_NO_ERROR)
 	{
+		if (trig_con &&
+			trig_con->linked_ref)
+		{
+			res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_STOP, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+
 		res = _stop_connect_icon(true, &_common_set_io_common_ptr->_common_set_io_common.myRuntimeId JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 		if (report)

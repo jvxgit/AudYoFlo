@@ -427,6 +427,7 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			/*runtime.requiresRebuffering = jvx_bitTest(_common_set_icon.theData_in->con_data.alloc_flags,
 				(int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 				*/
+			// std::cout << "Hier" << std::endl;
 			break;
 		}
 		
@@ -513,7 +514,15 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			}
 			else
 			{
-				runtime.lFieldRebuffer = node_inout._common_set_node_params_a_1io.buffersize;
+				switch (fixedLocationMode)
+				{
+				case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
+					runtime.lFieldRebuffer = node_inout._common_set_node_params_a_1io.buffersize;
+					break;
+				case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
+					runtime.lFieldRebuffer = node_output._common_set_node_params_a_1io.buffersize;
+					break;
+				}
 			}
 
 			runtime.fFieldRebuffer = 0;
