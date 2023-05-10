@@ -20,6 +20,8 @@ namespace CayfAutomationModules
 		virtual jvxErrorType associate_process(jvxSize uIdProcess, 
 			const std::string& nmChain) = 0;
 		virtual jvxErrorType deassociate_process(jvxSize uIdProcess) = 0;
+
+		virtual void postponed_try_connect() = 0;
 	};
 
 	// =============================================================
@@ -58,6 +60,8 @@ namespace CayfAutomationModules
 		void try_adapt_submodules(jvxSize uIdProc, 
 			const std::string& modName, const std::string& description,
 			const jvxComponentIdentification& tpCp);
+
+		void report_configuration_done();
 	};
 }
 

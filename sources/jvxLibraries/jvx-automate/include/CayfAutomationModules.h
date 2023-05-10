@@ -5,24 +5,35 @@
 class CjvxObjectLog;
 
 namespace CayfAutomationModules
-{
+{	
 	JVX_INTERFACE ayfAutoConnect_callbacks
 	{
 		virtual ~ayfAutoConnect_callbacks() {};
 		virtual jvxErrorType adapt_single_property_on_connect(
-			jvxSize purposeId, 
+			jvxSize purposeId,
 			const std::string& nmChain,
-			const std::string& modName, 
+			const std::string& modName,
 			const std::string& description,
 			IjvxProperties* props) = 0;
-		virtual jvxErrorType allow_master_connect(
-			jvxSize purposeId,
-			jvxComponentIdentification tpIdTrigger,
-			jvxComponentIdentification& cpIdSrc,
-			jvxComponentIdentification& cpIdSink,
-			std::string& oconConnectorName,
-			std::string& iconConnectorName) = 0;
+	};
 
+	class CayfAutomationModulesCommon
+	{
+	protected:
+		IjvxReport* reportRefPtr = nullptr;
+		IjvxHost* refHostRefPtr = nullptr;
+		CjvxObjectLog* objLogRefPtr = nullptr;
+		jvxSize purposeId = JVX_SIZE_UNSELECTED;
+		jvxBool lockOperation = false;
+	public:
+		CayfAutomationModulesCommon() ;
+
+		jvxErrorType activate(IjvxReport* report,
+			IjvxHost* host,
+			jvxSize purpId,
+			CjvxObjectLog* ptrLog);
+
+		jvxErrorType deactivate();
 	};
 
 	class ayfConnectConfigCpEntry
@@ -54,5 +65,31 @@ namespace CayfAutomationModules
 		jvxSize idOconRefTriggerConnector = JVX_SIZE_UNSELECTED;
 		jvxSize idIconRefTriggerConnector = JVX_SIZE_UNSELECTED;
 	};	
+
+	class ayfOneModuleChainDefinition
+	{
+	public:
+		ayfOneModuleChainDefinition(const jvxComponentIdentification& cpIdArg) :
+			cpId(cpIdArg)
+		{
+
+		}
+		jvxComponentIdentification cpId;
+		bool operator < (const ayfOneModuleChainDefinition& elm) const
+		{
+			if (cpId < elm.cpId)
+			{
+				return true;
+			}
+			return false;
+		}
+	};
+
+	class ayfOneConnectedProcess
+	{
+	public:
+		jvxSize processUid = JVX_SIZE_UNSELECTED;
+		std::string chainName;
+	};
 };
 #endif

@@ -73,5 +73,14 @@ namespace CayfAutomationModules
 		}
 
 	}
+
+	void 
+		CayfAutomationModuleHandler::report_configuration_done()
+	{
+		for (auto& elm : registeredEntries)
+		{
+			elm->postponed_try_connect();
+		}
+	}
 };
 

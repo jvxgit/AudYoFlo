@@ -9,6 +9,19 @@ class CjvxObjectLog;
 
 namespace CayfAutomationModules
 {
+	JVX_INTERFACE ayfAutoConnectSrc2Snk_callbacks : public ayfAutoConnect_callbacks
+	{
+		virtual ~ayfAutoConnectSrc2Snk_callbacks() {};
+		virtual jvxErrorType allow_master_connect(
+			jvxSize purposeId,
+			jvxComponentIdentification tpIdTrigger,
+			jvxComponentIdentification& cpIdSrc,
+			jvxComponentIdentification& cpIdSink,
+			std::string& oconConnectorName,
+			std::string& iconConnectorName) = 0;
+
+	};
+
 	/*
 	* This class allows to costruct a chain composed of the following parts:
 	* SRC ->  <MOD1> -> <MOD2> -> .. -> <MODN> -> SNK
@@ -58,33 +71,7 @@ namespace CayfAutomationModules
 		jvxComponentIdentification cpId = JVX_COMPONENT_UNKNOWN;
 		ayfConnectConfigCpEntryRuntime(const ayfConnectConfigCpEntry& cp) :
 			ayfConnectConfigCpEntry(cp), cpId(JVX_COMPONENT_UNKNOWN) {};
-	};
-
-	class ayfOneModuleChainDefinition
-	{
-	public:
-		ayfOneModuleChainDefinition(const jvxComponentIdentification& cpIdArg): 
-			cpId(cpIdArg)
-		{
-
-		}
-		jvxComponentIdentification cpId;
-		bool operator < (const ayfOneModuleChainDefinition& elm) const
-		{
-			if (cpId < elm.cpId)
-			{
-				return true;
-			}			
-			return false;
-		}
-	};
-
-	class ayfOneConnectedProcess
-	{
-	public:
-		jvxSize processUid = JVX_SIZE_UNSELECTED;
-		std::string chainName;
-	};
+	};		
 
 	class ayfEstablishedProcesses
 	{
@@ -92,8 +79,8 @@ namespace CayfAutomationModules
 		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;
 		std::list<ayfOneConnectedProcess> connectedProcesses;
 	};
-	
-	class CayfAutomationModulesSrc2Snk: public CayfAutomationModuleHandlerIf
+		
+	class CayfAutomationModulesSrc2Snk: public CayfAutomationModulesCommon, public CayfAutomationModuleHandlerIf
 	{
 	
 	public:
@@ -110,14 +97,10 @@ namespace CayfAutomationModules
 
 		// For each master, store the connected modules
 		std::map<ayfOneModuleChainDefinition, ayfEstablishedProcesses> module_connections;
-		IjvxReport* reportRefPtr = nullptr;
-		IjvxHost* refHostRefPtr = nullptr;
-		CjvxObjectLog* objLogRefPtr = nullptr;
-		ayfAutoConnect_callbacks* cbPtr = nullptr;
+		ayfAutoConnectSrc2Snk_callbacks* cbPtr = nullptr;
 		ayfConnectConfigSrc2Snk config;
-		jvxSize purposeId = JVX_SIZE_UNSELECTED;
 		ayfConnectDerivedSrc2Snk derived;
-		jvxBool lockOperation = false;
+
 	public:
 
 		CayfAutomationModulesSrc2Snk()
@@ -126,7 +109,7 @@ namespace CayfAutomationModules
 
 		jvxErrorType activate(IjvxReport* report,
 			IjvxHost* host,
-			ayfAutoConnect_callbacks* cb,
+			ayfAutoConnectSrc2Snk_callbacks* cb,
 			jvxSize purpId,
 			const ayfConnectConfigSrc2Snk& cfg,
 			CjvxObjectLog* ptrLog = nullptr);
@@ -143,6 +126,7 @@ namespace CayfAutomationModules
 		jvxErrorType deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated) override;
 		jvxErrorType adapt_all_submodules(jvxSize uIdProc, const std::string& modName, const std::string& description,
 			const jvxComponentIdentification& tp_activated) override;
+		void postponed_try_connect();
 
 		virtual void create_bridges(
 			IjvxDataConnectionRule* theDataConnectionDefRuleHdl, 

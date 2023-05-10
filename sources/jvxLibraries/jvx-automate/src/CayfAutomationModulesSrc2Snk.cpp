@@ -6,7 +6,7 @@ namespace CayfAutomationModules
 	jvxErrorType 
 		CayfAutomationModulesSrc2Snk::activate(IjvxReport* report,
 		IjvxHost* host,
-		ayfAutoConnect_callbacks* cb,
+			ayfAutoConnectSrc2Snk_callbacks* cb,
 		jvxSize purpId,
 		const ayfConnectConfigSrc2Snk& cfg,
 		CjvxObjectLog* ptrLog)
@@ -275,6 +275,7 @@ namespace CayfAutomationModules
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 				log << "Activated module <" << cpElm.modName << "> with suffix <" << cpElm.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+
 				realizeChain.lstEntries.push_back(cpElm);
 			}
 			else
@@ -427,4 +428,8 @@ namespace CayfAutomationModules
 		derivedArgs.tpMaster = tp_activated;
 	}
 
+	void 
+		CayfAutomationModulesSrc2Snk::postponed_try_connect()
+	{
+	}
 }

@@ -25,6 +25,7 @@ include_directories(
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModules.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModules.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAutomationReport.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxAutomationReport.h
@@ -37,6 +38,9 @@ set(LOCAL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSrc2SnkPreChain.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSrc2SnkPreChain.cpp  
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSyncedIo.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSyncedIo.cpp  
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModuleHandler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModuleHandler.cpp

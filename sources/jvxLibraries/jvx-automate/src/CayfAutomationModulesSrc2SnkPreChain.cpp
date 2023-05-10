@@ -12,7 +12,7 @@ namespace CayfAutomationModules
 	jvxErrorType 
 		CayfAutomationModulesSrc2SnkPreChain::activate(IjvxReport* report,
 		IjvxHost* host,
-		ayfAutoConnect_callbacks* cb,
+			ayfAutoConnectSrc2Snk_callbacks* cb,
 		jvxSize purpId,
 		const ayfConnectConfigSrc2SnkPreChain& cfg,
 		CjvxObjectLog* ptrLog)
