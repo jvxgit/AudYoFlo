@@ -152,7 +152,12 @@ CjvxAutomationReport::handle_report_ident(
 					break;
 				}
 			}
-			assert(elm != handledComponents.end());
+
+			if (elm == handledComponents.end())
+			{
+				// Reported a device that was not yet established, ignoring call
+				goto out;
+			}
 
 			tpD = elm->second.cpTp;
 
@@ -218,6 +223,7 @@ CjvxAutomationReport::handle_report_ident(
 			}
 		}
 	}
+out:
 	return res;
 }
 
