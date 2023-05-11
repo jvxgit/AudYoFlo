@@ -6,6 +6,7 @@ git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	pacman -S yasm
 	pacman -S make
 	pacman -S base-devel
+	pacman -S unzip
 3) Add path to msys2 to PATH environment variable.
 
 4) In msys2.ini, uncomment line 
