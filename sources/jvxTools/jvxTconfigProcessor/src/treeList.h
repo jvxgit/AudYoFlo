@@ -165,6 +165,10 @@ public:
 
 	bool getOriginSection(std::string& str, int& lineno);
 
+	elementType getElementType() { return type; };
+
+	std::string getElementName() { return nameElement; };
+
 	bool isSectionEmpty(jvxBool* isEmpty);
 };
 

@@ -4,6 +4,8 @@
 
 #include "treeList.h"
 
+class CjvxSectionOriginList;
+
 class CjvxConfigProcessor: public IjvxConfigProcessor, public CjvxObject
 {
 public:
@@ -35,6 +37,8 @@ private:
 
 	//std::vector<rtpConfigData*> lstReferences;
 	std::list<jvxReturnToken*> garbage;
+
+	
 
 public:
 	
@@ -162,6 +166,12 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION getNumberIfdefs(jvxSize* value)override;
 
 	jvxErrorType JVX_CALLINGCONVENTION getIfdef_id(jvxApiString* lst, jvxSize idx)override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION generate_section_origin_list(IjvxSectionOriginList** lst, jvxConfigData* cfgData) override;
+	static jvxErrorType generate_section_origin_list(const std::string& path, CjvxSectionOriginList* lst, treeListElement* elm);
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION release_section_origin_list(IjvxSectionOriginList* lst) override;
+
 
 	void addIncludedFile(std::string fName);
 

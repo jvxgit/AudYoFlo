@@ -12,6 +12,8 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxConfigProcessor.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxConfigProcessor.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSectionOriginList.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSectionOriginList.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/treeList.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/treeList.h
   ${CMAKE_CURRENT_SOURCE_DIR}/flex/grammar.l

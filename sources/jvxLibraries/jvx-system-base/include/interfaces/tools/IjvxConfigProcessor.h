@@ -122,6 +122,9 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION removeHandle(jvxConfigData* toBeRemoved) = 0;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION generate_section_origin_list(IjvxSectionOriginList** lst, jvxConfigData* cfgData) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION release_section_origin_list(IjvxSectionOriginList* lst) = 0;
+
 	//virtual jvxErrorType JVX_CALLINGCONVENTION deallocate(jvxError* err) = 0;
 
 	//virtual jvxErrorType JVX_CALLINGCONVENTION deallocate(jvxString* err) = 0;

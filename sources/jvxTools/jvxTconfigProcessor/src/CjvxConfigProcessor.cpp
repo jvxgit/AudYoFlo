@@ -1,4 +1,5 @@
 #include "CjvxConfigProcessor.h"
+#include "CjvxSectionOriginList.h"
 
 extern int lexAssignFNames(std::vector<std::string> filenames);
 extern int lexAssignTBuffer(std::string filenames, std::string filename, int linenoStart);
@@ -45,6 +46,69 @@ CjvxConfigProcessor::~CjvxConfigProcessor()
 	if(topElementTree)
 		delete(topElementTree);
 	topElementTree = NULL;
+}
+
+jvxErrorType 
+CjvxConfigProcessor::generate_section_origin_list(IjvxSectionOriginList** lst, jvxConfigData* cfgDat)
+{
+	treeListElement* elm = reinterpret_cast<treeListElement*>(cfgDat);
+	CjvxSectionOriginList* newSecList = nullptr;
+	if (lst)
+	{
+		JVX_SAFE_ALLOCATE_OBJECT(newSecList, CjvxSectionOriginList);
+
+		jvxErrorType res = generate_section_origin_list("", newSecList, topElementTree);
+		if (res == JVX_NO_ERROR)
+		{
+			*lst = newSecList;
+		}
+		else
+		{
+			release_section_origin_list(newSecList);
+		}
+		return res;
+	}
+	return JVX_ERROR_INVALID_ARGUMENT;
+}
+
+jvxErrorType
+CjvxConfigProcessor::generate_section_origin_list(const std::string & path, CjvxSectionOriginList* lst, treeListElement* elm)
+{
+	int numSubEntries = elm->getNumberEntries();
+	for (int i = 0; i < numSubEntries; i++)
+	{
+		treeListElement* datOut = nullptr;
+		elm->getReferenceEntrySection_id(&datOut, i);
+		if (datOut)
+		{
+			treeListElement::elementType elmTp = datOut->getElementType();
+			if (elmTp == treeListElement::SECTION)
+			{
+				CjvxSectionOriginList::CjvxOneSectionConfig newElm;
+				std::string name = datOut->getElementName();
+				newElm.sectionPath = jvx_makePathExpr(path, name);				
+				datOut->getOriginSection(newElm.origin, newElm.lineno);
+
+				auto elm = lst->sectionList.find(newElm.sectionPath);
+				if (elm == lst->sectionList.end())
+				{
+					lst->sectionList[newElm.sectionPath] = newElm;
+				}
+				else
+				{
+					lst->duplicateList.push_back(newElm);
+				}
+			}
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxConfigProcessor::release_section_origin_list(IjvxSectionOriginList* lst) 
+{
+	JVX_SAFE_DELETE_OBJ(lst);
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType

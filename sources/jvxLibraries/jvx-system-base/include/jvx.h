@@ -119,6 +119,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "interfaces/tools/IjvxDataLogger.h"
 #include "interfaces/tools/IjvxDataLogReader.h"
 #include "interfaces/tools/IjvxConnection.h"
+#include "interfaces/tools/IjvxSectionOriginList.h"
 #include "interfaces/tools/IjvxConfigProcessor.h"
 #include "interfaces/tools/IjvxToolsHost.h"
 #include "interfaces/tools/IjvxExternalCallTarget.h"
