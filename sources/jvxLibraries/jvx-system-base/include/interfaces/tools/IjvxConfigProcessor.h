@@ -118,7 +118,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION getOriginSection(jvxConfigData* dataIn, jvxApiString* fName, jvxInt32* lineno) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION printConfiguration(jvxConfigData* print, jvxApiString* str, bool compactForm = false) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION printConfiguration(jvxConfigData* print, jvxApiString* str, bool compactForm = false, const char* fNameOut = "", IjvxSectionOriginList * decomposeIntoFiles = nullptr) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION removeHandle(jvxConfigData* toBeRemoved) = 0;
 

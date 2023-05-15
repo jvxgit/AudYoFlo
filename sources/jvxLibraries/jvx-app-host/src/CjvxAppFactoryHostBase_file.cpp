@@ -84,6 +84,8 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureFromFile(jvxCallManagerConfiguration* c
 
 						if ((res == JVX_NO_ERROR) && (datTmp1))
 						{
+							// Get the section to file mapper
+							cfgProc->generate_section_origin_list(&lstSectionsFile, datTmp1);
 
 							cfgProc->getNameCurrentEntry(datTmp1, &fldStr);
 							secName = fldStr.std_str();
@@ -101,8 +103,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureFromFile(jvxCallManagerConfiguration* c
 									res = JVX_ERROR_INTERNAL;
 								}
 							}
-
-
+							
 							cfgProc->removeHandle(datTmp1);
 							datTmp1 = NULL;
 
@@ -119,6 +120,9 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureFromFile(jvxCallManagerConfiguration* c
 						res = cfgProc->getConfigurationHandle(&datTmp1);
 						if ((res == JVX_NO_ERROR) && (datTmp1))
 						{
+							// Get the section to file mapper
+							cfgProc->generate_section_origin_list(&lstSectionsFile, datTmp1);
+
 							cfgProc->getNameCurrentEntry(datTmp1, &fldStr);
 
 							secName = fldStr.std_str();
@@ -298,6 +302,11 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 		cfgExt = NULL;
 	}
 
+	if (lstSectionsFile)
+	{
+		lstSectionsFile->start_collect_file_contents();
+	}
+
 	this->involvedComponents.theTools.hTools->reference_tool(tpCfg, &obj, 0, NULL);
 	if (obj)
 	{
@@ -363,7 +372,8 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 					this->involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION, (jvxHandle*)cfg);
 
 					get_configuration_specific(callConf, cfgProc, datTmp1);
-					res = cfgProc->printConfiguration(datTmp1, &fldStr, JVX_QT_HOST_1_PRINT_COMPACT_FORM);
+
+					res = cfgProc->printConfiguration(datTmp1, &fldStr, JVX_QT_HOST_1_PRINT_COMPACT_FORM, fName.c_str(), lstSectionsFile);
 					if (res == JVX_NO_ERROR)
 					{
 						content = fldStr.std_str();
@@ -389,10 +399,41 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 	}
 	obj = NULL;
 
-
 	if (res == JVX_NO_ERROR)
 	{
-		res = jvx_writeContentToFile(fName, content);
+		if (lstSectionsFile)
+		{
+			jvxSize num = 0;
+			lstSectionsFile->number_collected_file_contents(&num);
+			for (int i = 0; i < num; i++)
+			{
+				jvxApiString fNameOne;
+				jvxApiString contentOne;
+				std::string allContents;
+				jvxSize numSections = 0;
+				lstSectionsFile->number_collected_file_idx_number_content(i, &numSections);
+				for (int j = 0; j < numSections; j++)
+				{
+					lstSectionsFile->get_collected_file_idx_content_idx(i, &fNameOne, &contentOne, j);
+					allContents += contentOne.std_str();
+				}
+				res = jvx_writeContentToFile(fNameOne.std_str(), allContents);
+				if (res != JVX_NO_ERROR)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			res = jvx_writeContentToFile(fName, content);
+		}
 	}
+
+	if (lstSectionsFile)
+	{
+		lstSectionsFile->stop_collect_file_contents();
+	}
+
 	return(res);
 }

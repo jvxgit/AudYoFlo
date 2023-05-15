@@ -60,6 +60,8 @@ protected:
 	IjvxCommandLine* command_line;
 	IjvxBootSteps* boot_steps;
 
+	IjvxSectionOriginList* lstSectionsFile = nullptr;
+
 	std::string cfg_filename_in_use;
 	std::string cfg_filename_olay_in_use;
 

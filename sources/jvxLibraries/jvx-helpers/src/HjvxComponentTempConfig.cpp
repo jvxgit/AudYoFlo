@@ -90,7 +90,7 @@ CjvxComponentTempConfig::get_configuration_tc(IjvxConfiguration* cfgComp, const 
 			if (res == JVX_NO_ERROR)
 			{
 				confCall.call_purpose = JVX_CONFIGURATION_PURPOSE_CONFIG_ON_COMPONENT_STARTSTOP;
-				theConfigProc->printConfiguration(cfgData, &fldStr, true);
+				theConfigProc->printConfiguration( cfgData, &fldStr, true);
 				if (theRealHost)
 				{
 					res = theRealHost->store_config(description_comp, fldStr.c_str(), true);

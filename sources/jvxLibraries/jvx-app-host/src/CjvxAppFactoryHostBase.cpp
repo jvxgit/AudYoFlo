@@ -1017,6 +1017,24 @@ JVX_APP_FACTORY_HOST_CLASSNAME::shutdown_postprocess(jvxApiString* errorMessage,
 
 	if (bootState == JVX_STATE_PREPARED)
 	{
+		// Return the section entry file association
+		if (lstSectionsFile)
+		{
+			jvxComponentIdentification tpCfg(JVX_COMPONENT_CONFIG_PROCESSOR, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
+			IjvxObject* obj = NULL;
+			IjvxConfigProcessor* cfgProc = NULL;
+			this->involvedComponents.theTools.hTools->reference_tool(tpCfg, &obj, 0, NULL);
+			if (obj)
+			{
+				obj->request_specialization((jvxHandle**)&cfgProc, NULL, NULL);
+				if (cfgProc)
+				{
+					cfgProc->release_section_origin_list(lstSectionsFile);
+				}
+				this->involvedComponents.theTools.hTools->return_reference_tool(tpCfg, obj);
+			}
+		}
+
 		shutdown_postprocess_host();
 
 		res = shutdown_postprocess_specific(&errLoc); // shutdown_specific();

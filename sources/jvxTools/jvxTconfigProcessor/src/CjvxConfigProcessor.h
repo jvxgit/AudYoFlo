@@ -38,7 +38,7 @@ private:
 	//std::vector<rtpConfigData*> lstReferences;
 	std::list<jvxReturnToken*> garbage;
 
-	
+	std::map< IjvxSectionOriginList*, CjvxSectionOriginList*> allocated_SectionOrigins;
 
 public:
 	
@@ -47,7 +47,10 @@ public:
 
 	~CjvxConfigProcessor();
 	
-	void setTopElement(treeListElement* topElm){topElementTree = topElm;};
+	void setTopElement(treeListElement* topElm)
+	{
+		topElementTree = topElm;
+	};
 
 	// API API API API API API API API API API API API API API API API
 	virtual jvxErrorType JVX_CALLINGCONVENTION addIncludePath(const char* onePath)override;
@@ -154,7 +157,7 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION getOriginSection(jvxConfigData* dataIn, jvxApiString* fName, jvxInt32* lineno)override;
 
 	// Tranform representation into string
-	jvxErrorType JVX_CALLINGCONVENTION printConfiguration(jvxConfigData* print, jvxApiString* str, bool compactForm)override;
+	jvxErrorType JVX_CALLINGCONVENTION printConfiguration(jvxConfigData* print, jvxApiString* str, bool compactForm, const char* fNameOut = "", IjvxSectionOriginList * decomposeIntoFiles = nullptr)override;
 
 	// Remove handle
 	jvxErrorType JVX_CALLINGCONVENTION removeHandle(jvxConfigData* toBeRemoved)override;

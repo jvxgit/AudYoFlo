@@ -56,11 +56,13 @@ CjvxConfigProcessor::generate_section_origin_list(IjvxSectionOriginList** lst, j
 	if (lst)
 	{
 		JVX_SAFE_ALLOCATE_OBJECT(newSecList, CjvxSectionOriginList);
-
-		jvxErrorType res = generate_section_origin_list("", newSecList, topElementTree);
+		std::string path = elm->nameElement;
+		path = jvx_makePathExpr(path, "", true);
+		jvxErrorType res = generate_section_origin_list(path, newSecList, elm);
 		if (res == JVX_NO_ERROR)
 		{
 			*lst = newSecList;
+			allocated_SectionOrigins[*lst] = newSecList;
 		}
 		else
 		{
@@ -75,6 +77,7 @@ jvxErrorType
 CjvxConfigProcessor::generate_section_origin_list(const std::string & path, CjvxSectionOriginList* lst, treeListElement* elm)
 {
 	int numSubEntries = elm->getNumberEntries();
+
 	for (int i = 0; i < numSubEntries; i++)
 	{
 		treeListElement* datOut = nullptr;
@@ -82,11 +85,18 @@ CjvxConfigProcessor::generate_section_origin_list(const std::string & path, Cjvx
 		if (datOut)
 		{
 			treeListElement::elementType elmTp = datOut->getElementType();
-			if (elmTp == treeListElement::SECTION)
+			switch (elmTp)
 			{
+			case treeListElement::SECTION:
+			case treeListElement::VALUELIST:
+			case treeListElement::STRINGLIST:
+			case treeListElement::ASSIGNMENTVALUE:
+			case treeListElement::ASSIGNMENTSTRING:
+			case treeListElement::ASSIGNMENTHEXSTRING:
+			case treeListElement::COMMENT:
 				CjvxSectionOriginList::CjvxOneSectionConfig newElm;
 				std::string name = datOut->getElementName();
-				newElm.sectionPath = jvx_makePathExpr(path, name);				
+				newElm.sectionPath = jvx_makePathExpr(path, name);
 				datOut->getOriginSection(newElm.origin, newElm.lineno);
 
 				auto elm = lst->sectionList.find(newElm.sectionPath);
@@ -98,6 +108,9 @@ CjvxConfigProcessor::generate_section_origin_list(const std::string & path, Cjvx
 				{
 					lst->duplicateList.push_back(newElm);
 				}
+				generate_section_origin_list(newElm.sectionPath, lst, datOut);
+				break;
+
 			}
 		}
 	}
@@ -107,6 +120,11 @@ CjvxConfigProcessor::generate_section_origin_list(const std::string & path, Cjvx
 jvxErrorType 
 CjvxConfigProcessor::release_section_origin_list(IjvxSectionOriginList* lst) 
 {
+	auto elm = allocated_SectionOrigins.find(lst);
+	if (elm != allocated_SectionOrigins.end())
+	{
+		allocated_SectionOrigins.erase(elm);
+	}
 	JVX_SAFE_DELETE_OBJ(lst);
 	return JVX_NO_ERROR;
 }
@@ -1119,16 +1137,50 @@ CjvxConfigProcessor::getOriginSection(jvxConfigData* dataIn, jvxApiString* fName
 
 
 jvxErrorType
-CjvxConfigProcessor::printConfiguration(jvxConfigData* print, jvxApiString* str, bool compactForm)
+CjvxConfigProcessor::printConfiguration(jvxConfigData* print, jvxApiString* str, bool compactForm, const char* fNameOut, IjvxSectionOriginList* decomposeIntoFiles)
 {
 	treeListElement* elm = reinterpret_cast<treeListElement*>(print);
 
 	std::string buf;
-	elm->outputToString(buf, 0, compactForm);
-	//std::cout << buf << std::endl;
-	if (str)
+	std::string path = "";
+	path = jvx_makePathExpr(path, "", true);
+
+	CjvxSectionOriginList* decomposeIntoFileDirect = nullptr;
+	if (decomposeIntoFiles)
 	{
-		str->assign(buf);
+		auto elm = allocated_SectionOrigins.find(decomposeIntoFiles);
+		if (elm != allocated_SectionOrigins.end())
+		{
+			decomposeIntoFileDirect = elm->second;
+		}
+	}
+
+	elm->outputToString(path, fNameOut, buf, 0, compactForm, decomposeIntoFileDirect);
+
+	if (decomposeIntoFileDirect)
+	{
+		auto elm = decomposeIntoFileDirect->collections.find(fNameOut);
+		if (elm != decomposeIntoFileDirect->collections.end())
+		{
+			elm->second.content_sections.push_back(buf);
+
+		}
+		else
+		{
+			CjvxSectionOriginList::CjvxOneOutputContent newElm;
+			newElm.fName = fNameOut;
+			newElm.content_sections.push_back(buf);
+			decomposeIntoFileDirect->collections[newElm.fName] = newElm;
+		}
+		buf.clear();
+	}
+	else
+	{
+		//std::cout << buf << std::endl;
+		if (str)
+		{
+			str->assign(buf);
+		}
 	}
 	return(JVX_NO_ERROR);
 }

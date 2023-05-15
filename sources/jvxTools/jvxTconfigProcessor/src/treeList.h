@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "jvx.h"
-
+class CjvxSectionOriginList;
 
 class jvxReturnToken
 {
@@ -161,7 +161,9 @@ public:
 
 	bool getReferenceEntrySection_name(treeListElement** dataOut, const char* nameSection);
 
-	bool outputToString(std::string& bufOut, int numTabs = 0, bool compactForm = false);
+	bool outputToString(const std::string& path, const std::string& origin, std::string& bufOut, 
+		int numTabs = 0, bool compactForm = false, CjvxSectionOriginList* decomposeIntoFiles = nullptr,
+		std::list<std::string>* includeReferencesThisSection = nullptr);
 
 	bool getOriginSection(std::string& str, int& lineno);
 
@@ -189,7 +191,9 @@ public:
 	void push_front(treeListElement* newObject);
 	void setReference(treeListElement* tobereferenced);
 	void print(unsigned int numTabs = 0);
-	void outputToString(std::string& bufOut, unsigned int numTabs, bool compactForm);
+	void outputToString(const std::string& path, const std::string& origin, std::string& bufOut, 
+		unsigned int numTabs, bool compactForm, CjvxSectionOriginList* decomposeIntoFiles,
+		std::list<std::string>* includeReferencesThisSectionIn);
 };
 
 #endif

@@ -2,7 +2,7 @@
 #include <cassert>
 #include "treeList.h"
 #include "jvx.h"
-
+#include "CjvxSectionOriginList.h"
 // Print out doubles in high precision floating point
 #define HIGH_PRECISION_OUT
 
@@ -632,27 +632,43 @@ treeList::print(unsigned int numTabs)
 }
 
 void
-treeList::outputToString(std::string& bufOut, unsigned int numTabs, bool compactForm)
+treeList::outputToString(const std::string& path, const std::string& origin, 
+	std::string& bufOut, unsigned int numTabs, bool compactForm, 
+	CjvxSectionOriginList* decomposeIntoFiles,
+	std::list<std::string>* includeReferencesThisSectionIn)
 {
 
 	treeListElement* obj = this->content;
 	while(obj)
 	{
-		obj->outputToString(bufOut, numTabs + 1,compactForm);
+		obj->outputToString(path, origin, bufOut, numTabs + 1,compactForm, decomposeIntoFiles, includeReferencesThisSectionIn);
 		obj = obj->next;
 	}
 }
 
 bool 
-treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactForm)
+treeListElement::outputToString(const std::string& path, const std::string& origin, 
+	std::string& bufOutIn, int numTabsIn, bool compactForm, CjvxSectionOriginList* decomposeIntoFiles,
+	std::list<std::string>* includeReferencesThisSectionIn)
 {
 	unsigned int i,j;
 	jvxValue oneElm;
 	std::string tabs = "";
-	for(i = 0; i < (unsigned)numTabs; i++)
-		tabs += "\t";	
+	std::string bufOutSubSection;
+	std::string* bufOutFwd = &bufOutIn;
 	
+	std::string pathFwd;
+
+	std::string originFwd = origin;
+	jvxSize numTabsFwd = numTabsIn;
+
+	jvxBool startedSubSectionToFileHere = false;	
+	std::list<std::string> includeReferencesThisSectionLocal;
+
 	std::string flagtagstr = "";
+
+	for (i = 0; i < (unsigned)numTabsFwd; i++)
+		tabs += "\t";
 
 	if(this->acc_flags_set || this->cfg_flags_set)
 	{
@@ -669,6 +685,34 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		flagtagstr += ">";
 	}
 
+	numTabsFwd = numTabsIn;
+	bufOutFwd = &bufOutIn;
+	startedSubSectionToFileHere = false;
+	pathFwd = jvx_makePathExpr(path, this->nameElement);
+	originFwd = origin;
+	if (decomposeIntoFiles)
+	{
+		auto elm = decomposeIntoFiles->sectionList.find(pathFwd);
+		if (elm != decomposeIntoFiles->sectionList.end())
+		{
+			std::cout << "Path = " << pathFwd << " -- " << origin << std::endl;
+			originFwd = elm->second.origin;
+		}
+	}
+
+	if (originFwd != origin)
+	{
+		bufOutFwd = &bufOutSubSection;
+		numTabsFwd = 0;
+		startedSubSectionToFileHere = true;
+
+		tabs.clear();
+		for (i = 0; i < (unsigned)numTabsFwd; i++)
+			tabs += "\t";
+	}
+
+	// Special tabs rule here!
+
 	switch(this->type)
 	{
 	case treeListElement::STARTELM:
@@ -678,55 +722,57 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		//std::cout << "(stop element)" << std::endl;
 		break;
 	case treeListElement::SECTION:
+
 		if(!compactForm)
 		{
 			if(this->isGroup)
 			{
-				bufOut += tabs + "GROUP " + this->nameElement + flagtagstr + "\n";
+				*bufOutFwd += tabs + "GROUP " + this->nameElement + flagtagstr + "\n";
 			}
 			else
 			{
-				bufOut += tabs + "SECTION " + this->nameElement + flagtagstr + "\n";
+				*bufOutFwd += tabs + "SECTION " + this->nameElement + flagtagstr + "\n";
 			}
-			bufOut += tabs + "{" + "\n";
-			this->subsection->outputToString(bufOut, numTabs+1,compactForm);
-			bufOut += tabs + "};";
+			*bufOutFwd += tabs + "{" + "\n";
+			this->subsection->outputToString(pathFwd, originFwd, *bufOutFwd, numTabsFwd +1, compactForm, decomposeIntoFiles, &includeReferencesThisSectionLocal);
+			*bufOutFwd += tabs + "};";
 			if(this->lineno >= 0)
 			{
-				bufOut += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+				*bufOutFwd += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 			}
 			else
 			{
-				bufOut += "\n";
+				*bufOutFwd += "\n";
 			}
 		}
 		else
 		{
 			if(this->isGroup)
 			{
-				bufOut += "GROUP " + this->nameElement + flagtagstr + "{";
+				*bufOutFwd += "GROUP " + this->nameElement + flagtagstr + "{";
 			}
 			else
 			{
-				bufOut += "SECTION " + this->nameElement + flagtagstr + "{";
+				*bufOutFwd += "SECTION " + this->nameElement + flagtagstr + "{";
 			}
-			this->subsection->outputToString(bufOut, numTabs+1, compactForm);
-			bufOut += "};";
+			this->subsection->outputToString(path, origin , *bufOutFwd, numTabsFwd+1, compactForm, decomposeIntoFiles, &includeReferencesThisSectionLocal);
+			*bufOutFwd += "};";
 		}
+		
 		break;
 	case treeListElement::VALUELIST:
 		if(!compactForm)
 		{
 			if(this->isEmpty)
 			{
-				bufOut += tabs + "// Empty VALUELIST element " + this->nameElement + ", removed by configProcessor.";
+				*bufOutFwd += tabs + "// Empty VALUELIST element " + this->nameElement + ", removed by configProcessor.";
 				if(this->lineno >= 0)
 				{
-					bufOut += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 			else
@@ -737,26 +783,26 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 					multiList = true;
 				}
 
-				bufOut += tabs + this->nameElement + flagtagstr + " = [";
+				*bufOutFwd += tabs + this->nameElement + flagtagstr + " = [";
 				if (multiList)
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 
 				for (i = 0; i < this->dataArrayList.size(); i++)
 				{
 					if (multiList)
 					{
-						bufOut += tabs + "\t[";
+						*bufOutFwd += tabs + "\t[";
 					}
 					else
 					{
-						bufOut += "[";
+						*bufOutFwd += "[";
 					}
 					for(j = 0; j < this->dataArrayList[i].size(); j++)
 					{
 						if(j != 0)
-							bufOut += ", ";
+							*bufOutFwd += ", ";
 						oneElm = this->dataArrayList[i][j];
 
 
@@ -766,38 +812,38 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 						case JVX_DATAFORMAT_DATA:
 
 #ifdef HIGH_PRECISION_OUT
-							bufOut += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
+							* bufOutFwd += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
 #else
 							bufOut += jvx_data2String(oneElm.ct.valD, 30);
 #endif
 							break;
 						case JVX_DATAFORMAT_16BIT_LE:
-							bufOut += jvx_int322String(oneElm.ct.valI16) + "<i16>";
+							*bufOutFwd += jvx_int322String(oneElm.ct.valI16) + "<i16>";
 							break;
 						case JVX_DATAFORMAT_32BIT_LE:
-							bufOut += jvx_int322String(oneElm.ct.valI32) + "<i32>";
+							*bufOutFwd += jvx_int322String(oneElm.ct.valI32) + "<i32>";
 							break;
 						case JVX_DATAFORMAT_64BIT_LE:
-							bufOut += jvx_int642String(oneElm.ct.valI64) + "<i64>";
+							*bufOutFwd += jvx_int642String(oneElm.ct.valI64) + "<i64>";
 							break;
 						case JVX_DATAFORMAT_8BIT:
-							bufOut += jvx_int322String(oneElm.ct.valI8) + "<i8>";
+							*bufOutFwd += jvx_int322String(oneElm.ct.valI8) + "<i8>";
 							break;
 						case JVX_DATAFORMAT_U16BIT_LE:
-							bufOut += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
+							*bufOutFwd += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
 							break;
 						case JVX_DATAFORMAT_U32BIT_LE:
-							bufOut += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
+							*bufOutFwd += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
 							break;
 						case JVX_DATAFORMAT_U64BIT_LE:
-							bufOut += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
+							*bufOutFwd += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
 							break;
 						case JVX_DATAFORMAT_U8BIT:
-							bufOut += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
+							*bufOutFwd += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
 							break;
 						case JVX_DATAFORMAT_SIZE:
 							
-							bufOut += jvx_size2String(oneElm.ct.valS) + "<s>";
+							*bufOutFwd += jvx_size2String(oneElm.ct.valS) + "<s>";
 							/*
 							if (JVX_CHECK_SIZE_UNSELECTED(oneElm.ct.valS))
 							{
@@ -818,28 +864,28 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 							break;
 						}
 					}
-					bufOut += "]";
+					*bufOutFwd += "]";
 					if(i != (this->dataArrayList.size()-1))
 					{
-						bufOut += "; ";
-						bufOut += "\n";
+						*bufOutFwd += "; ";
+						*bufOutFwd += "\n";
 					}
 				}
 				if (multiList)
 				{
-					bufOut += "\n" + tabs + "];";
+					*bufOutFwd += "\n" + tabs + "];";
 				}
 				else
 				{
-					bufOut += "];";
+					*bufOutFwd += "];";
 				}
 				if(this->lineno >= 0)
 				{
-					bufOut += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 		}
@@ -847,14 +893,14 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(!this->isEmpty)
 			{
-				bufOut += this->nameElement + flagtagstr + "=[";
+				*bufOutFwd += this->nameElement + flagtagstr + "=[";
 				for(i = 0; i < this->dataArrayList.size(); i++)
 				{
-					bufOut += "[";
+					*bufOutFwd += "[";
 					for(j = 0; j < this->dataArrayList[i].size(); j++)
 					{
 						if(j != 0)
-							bufOut += ",";
+							*bufOutFwd += ",";
 						oneElm = this->dataArrayList[i][j];
 
 
@@ -863,37 +909,37 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 						case JVX_DATAFORMAT_DATA:
 
 #ifdef HIGH_PRECISION_OUT
-							bufOut += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
+							* bufOutFwd += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
 #else
-							bufOut += jvx_data2String(oneElm.ct.valD, 30);
+							* bufOutFwd += jvx_data2String(oneElm.ct.valD, 30);
 #endif
 							break;
 						case JVX_DATAFORMAT_16BIT_LE:
-							bufOut += jvx_int322String(oneElm.ct.valI16) + "<i16>";
+							*bufOutFwd += jvx_int322String(oneElm.ct.valI16) + "<i16>";
 							break;
 						case JVX_DATAFORMAT_32BIT_LE:
-							bufOut += jvx_int322String(oneElm.ct.valI32) + "<i32>";
+							*bufOutFwd += jvx_int322String(oneElm.ct.valI32) + "<i32>";
 							break;
 						case JVX_DATAFORMAT_64BIT_LE:
-							bufOut += jvx_int642String(oneElm.ct.valI64) + "<i64>";
+							*bufOutFwd += jvx_int642String(oneElm.ct.valI64) + "<i64>";
 							break;
 						case JVX_DATAFORMAT_8BIT:
-							bufOut += jvx_int322String(oneElm.ct.valI8) + "<i8>";
+							*bufOutFwd += jvx_int322String(oneElm.ct.valI8) + "<i8>";
 							break;
 						case JVX_DATAFORMAT_U16BIT_LE:
-							bufOut += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
+							*bufOutFwd += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
 							break;
 						case JVX_DATAFORMAT_U32BIT_LE:
-							bufOut += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
+							*bufOutFwd += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
 							break;
 						case JVX_DATAFORMAT_U64BIT_LE:
-							bufOut += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
+							*bufOutFwd += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
 							break;
 						case JVX_DATAFORMAT_U8BIT:
-							bufOut += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
+							*bufOutFwd += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
 							break;
 						case JVX_DATAFORMAT_SIZE:
-							bufOut += jvx_size2String(oneElm.ct.valS) + "<s>";
+							*bufOutFwd += jvx_size2String(oneElm.ct.valS) + "<s>";
 							/*
 							if (JVX_CHECK_SIZE_UNSELECTED(oneElm.ct.valS))
 							{
@@ -914,13 +960,13 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 							break;
 						}
 					}
-					bufOut += "]";
+					*bufOutFwd += "]";
 					if(i != (this->dataArrayList.size()-1))
 					{
-						bufOut += ";";
+						*bufOutFwd += ";";
 					}
 				}
-				bufOut += "];";
+				*bufOutFwd += "];";
 			}
 		}
 		break;
@@ -930,33 +976,33 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(this->isEmpty)
 			{
-				bufOut += tabs + "// Empty STRINGLIST element " + this->nameElement + ", removed by configProcessor.";
+				*bufOutFwd += tabs + "// Empty STRINGLIST element " + this->nameElement + ", removed by configProcessor.";
 				if(this->lineno >= 0)
 				{
-					bufOut += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 			else
 			{
-				bufOut += tabs + this->nameElement + flagtagstr + " = " + "{ ";
+				*bufOutFwd += tabs + this->nameElement + flagtagstr + " = " + "{ ";
 				for(i = 0; i < this->assignedStringList.size(); i++)
 				{
 					if( i != 0)
-						bufOut += ", ";
-					bufOut += "\"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedStringList[i]) + "\"";
+						*bufOutFwd += ", ";
+					*bufOutFwd += "\"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedStringList[i]) + "\"";
 				}
-				bufOut += "};";
+				*bufOutFwd += "};";
 				if(this->lineno >= 0)
 				{
-					bufOut += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 		}
@@ -964,14 +1010,14 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(!this->isEmpty)
 			{
-				bufOut += this->nameElement + flagtagstr + "=" + "{";
+				*bufOutFwd += this->nameElement + flagtagstr + "=" + "{";
 				for(i = 0; i < this->assignedStringList.size(); i++)
 				{
 					if( i != 0)
-						bufOut += ",";
-					bufOut += "\"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedStringList[i]) + "\"";
+						*bufOutFwd += ",";
+					*bufOutFwd += "\"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedStringList[i]) + "\"";
 				}
-				bufOut += "};";
+				*bufOutFwd += "};";
 			}
 		}
 		break;
@@ -980,83 +1026,83 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(this->isEmpty)
 			{
-				bufOut += tabs + "// Empty ASSIGNMENTVALUE element " + this->nameElement + ", removed by configProcessor.";
+				*bufOutFwd += tabs + "// Empty ASSIGNMENTVALUE element " + this->nameElement + ", removed by configProcessor.";
 				if(this->lineno >= 0)
 				{
-					bufOut += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 			else
 			{
-				bufOut += tabs + this->nameElement + flagtagstr + " = ";
+				*bufOutFwd += tabs + this->nameElement + flagtagstr + " = ";
 				oneElm = this->value;
 				switch (oneElm.tp)
 				{
 				case JVX_DATAFORMAT_DATA:
 
 #ifdef HIGH_PRECISION_OUT
-					bufOut += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
+					*bufOutFwd += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
 #else
-					bufOut += jvx_data2String(oneElm.ct.valD, 30);
+					*bufOutFwd += jvx_data2String(oneElm.ct.valD, 30);
 #endif
 					break;
 				case JVX_DATAFORMAT_16BIT_LE:
-					bufOut += jvx_int322String(oneElm.ct.valI16) + "<i16>";
+					*bufOutFwd += jvx_int322String(oneElm.ct.valI16) + "<i16>";
 					break;
 				case JVX_DATAFORMAT_32BIT_LE:
-					bufOut += jvx_int322String(oneElm.ct.valI32) + "<i32>";
+					*bufOutFwd += jvx_int322String(oneElm.ct.valI32) + "<i32>";
 					break;
 				case JVX_DATAFORMAT_64BIT_LE:
-					bufOut += jvx_int642String(oneElm.ct.valI64) + "<i64>";
+					*bufOutFwd += jvx_int642String(oneElm.ct.valI64) + "<i64>";
 					break;
 				case JVX_DATAFORMAT_8BIT:
-					bufOut += jvx_int322String(oneElm.ct.valI8) + "<i8>";
+					*bufOutFwd += jvx_int322String(oneElm.ct.valI8) + "<i8>";
 					break;
 				case JVX_DATAFORMAT_U16BIT_LE:
-					bufOut += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
+					*bufOutFwd += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
 					break;
 				case JVX_DATAFORMAT_U32BIT_LE:
-					bufOut += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
+					*bufOutFwd += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
 					break;
 				case JVX_DATAFORMAT_U64BIT_LE:
-					bufOut += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
+					*bufOutFwd += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
 					break;
 				case JVX_DATAFORMAT_U8BIT:
-					bufOut += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
+					*bufOutFwd += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
 					break;
 				case JVX_DATAFORMAT_SIZE:
-					bufOut += jvx_size2String(oneElm.ct.valS) + "<s>";
+					*bufOutFwd += jvx_size2String(oneElm.ct.valS) + "<s>";
 					/*
 					if (JVX_CHECK_SIZE_UNSELECTED(oneElm.ct.valS))
 					{
-						bufOut += "-1<s>";
+						*bufOutFwd += "-1<s>";
 					}
 					else if (JVX_CHECK_SIZE_DONTCARE(oneElm.ct.valS))
 					{
-						bufOut += "-2<s>";
+						*bufOutFwd += "-2<s>";
 					}
 					else if (JVX_CHECK_SIZE_RETAIN(oneElm.ct.valS))
 					{
-						bufOut += "-3<s>";
+						*bufOutFwd += "-3<s>";
 					}
 					else
 					{
-						bufOut += jvx_size2String(oneElm.ct.valS) + "<s>";
+						*bufOutFwd += jvx_size2String(oneElm.ct.valS) + "<s>";
 					}*/
 					break;
 				}
-				bufOut += ";";
+				*bufOutFwd += ";";
 				if (this->lineno >= 0)
 				{
-					bufOut += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 		}
@@ -1064,7 +1110,7 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(!this->isEmpty)
 			{
-				bufOut += this->nameElement + flagtagstr + "=";
+				*bufOutFwd += this->nameElement + flagtagstr + "=";
 				oneElm = this->value;
 
 				switch (oneElm.tp)
@@ -1072,57 +1118,57 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 				case JVX_DATAFORMAT_DATA:
 
 #ifdef HIGH_PRECISION_OUT
-					bufOut += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
+					*bufOutFwd += jvx_data2String_highPrecision(oneElm.ct.valD, 30);
 #else
-					bufOut += jvx_data2String(oneElm.ct.valD, 30);
+					*bufOutFwd += jvx_data2String(oneElm.ct.valD, 30);
 #endif
 					break;
 				case JVX_DATAFORMAT_16BIT_LE:
-					bufOut += jvx_int322String(oneElm.ct.valI16) + "<i16>";
+					*bufOutFwd += jvx_int322String(oneElm.ct.valI16) + "<i16>";
 					break;
 				case JVX_DATAFORMAT_32BIT_LE:
-					bufOut += jvx_int322String(oneElm.ct.valI32) + "<i32>";
+					*bufOutFwd += jvx_int322String(oneElm.ct.valI32) + "<i32>";
 					break;
 				case JVX_DATAFORMAT_64BIT_LE:
-					bufOut += jvx_int642String(oneElm.ct.valI64) + "<i64>";
+					*bufOutFwd += jvx_int642String(oneElm.ct.valI64) + "<i64>";
 					break;
 				case JVX_DATAFORMAT_8BIT:
-					bufOut += jvx_int322String(oneElm.ct.valI8) + "<i8>";
+					*bufOutFwd += jvx_int322String(oneElm.ct.valI8) + "<i8>";
 					break;
 				case JVX_DATAFORMAT_U16BIT_LE:
-					bufOut += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
+					*bufOutFwd += jvx_uint322String(oneElm.ct.valUI16) + "<ui16>";
 					break;
 				case JVX_DATAFORMAT_U32BIT_LE:
-					bufOut += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
+					*bufOutFwd += jvx_uint322String(oneElm.ct.valUI32) + "<ui32>";
 					break;
 				case JVX_DATAFORMAT_U64BIT_LE:
-					bufOut += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
+					*bufOutFwd += jvx_uint642String(oneElm.ct.valUI64) + "<ui64>";
 					break;
 				case JVX_DATAFORMAT_U8BIT:
-					bufOut += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
+					*bufOutFwd += jvx_uint322String(oneElm.ct.valUI8) + "<ui8>";
 					break;
 				case JVX_DATAFORMAT_SIZE:
-					bufOut += jvx_size2String(oneElm.ct.valS) + "<s>";
+					*bufOutFwd += jvx_size2String(oneElm.ct.valS) + "<s>";
 					/*
 					if (JVX_CHECK_SIZE_UNSELECTED(oneElm.ct.valS))
 					{
-						bufOut += "-1<s>";
+						*bufOutFwd += "-1<s>";
 					}
 					else if (JVX_CHECK_SIZE_DONTCARE(oneElm.ct.valS))
 					{
-						bufOut += "-2<s>";
+						*bufOutFwd += "-2<s>";
 					}
 					else if (JVX_CHECK_SIZE_RETAIN(oneElm.ct.valS))
 					{
-						bufOut += "-3<s>";
+						*bufOutFwd += "-3<s>";
 					}
 					else
 					{
-						bufOut += jvx_size2String(oneElm.ct.valS) + "<s>";
+						*bufOutFwd += jvx_size2String(oneElm.ct.valS) + "<s>";
 					}*/
 					break;
 				}
-				bufOut += ";";
+				*bufOutFwd += ";";
 			}
 		}
 		break;
@@ -1132,26 +1178,26 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(this->isEmpty)
 			{
-				bufOut += tabs + "// Empty ASSIGNMENTSTRING element " + this->nameElement + ", removed by configProcessor.";
+				*bufOutFwd += tabs + "// Empty ASSIGNMENTSTRING element " + this->nameElement + ", removed by configProcessor.";
 				if(this->lineno >= 0)
 				{
-					bufOut += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 			else
 			{
-				bufOut += tabs + this->nameElement + flagtagstr + " = \"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + "\";" ;
+				*bufOutFwd += tabs + this->nameElement + flagtagstr + " = \"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + "\";" ;
 				if(this->lineno >= 0)
 				{
-					bufOut += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 		}
@@ -1159,7 +1205,7 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(!this->isEmpty)
 			{
-				bufOut += this->nameElement + flagtagstr + "=\"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + "\";" ;
+				*bufOutFwd += this->nameElement + flagtagstr + "=\"" + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + "\";" ;
 			}
 		}
 		break;
@@ -1168,26 +1214,26 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(this->isEmpty)
 			{
-				bufOut += tabs + "// Empty ASSIGNMENTHEXSTRING element " + this->nameElement + ", removed by configProcessor.";
+				*bufOutFwd += tabs + "// Empty ASSIGNMENTHEXSTRING element " + this->nameElement + ", removed by configProcessor.";
 				if(this->lineno >= 0)
 				{
-					bufOut += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += ":: Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 			else
 			{
-				bufOut += tabs + this->nameElement + flagtagstr + " = " + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + ";" ;
+				*bufOutFwd += tabs + this->nameElement + flagtagstr + " = " + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + ";" ;
 				if(this->lineno >= 0)
 				{
-					bufOut += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
+					*bufOutFwd += "// Origin: " + this->filename + "::" + jvx_int2String(this->lineno) + "\n";
 				}
 				else
 				{
-					bufOut += "\n";
+					*bufOutFwd += "\n";
 				}
 			}
 		}
@@ -1195,7 +1241,7 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		{
 			if(!this->isEmpty)
 			{
-				bufOut += this->nameElement + "= " + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + ";" ;
+				*bufOutFwd += this->nameElement + "= " + jvx_replaceSpecialCharactersBeforeWriteSystem(this->assignedString) + ";" ;
 			}
 		}
 		break;
@@ -1203,9 +1249,49 @@ treeListElement::outputToString(std::string& bufOut, int numTabs, bool compactFo
 		if(!compactForm)
 		{			
 			// Only for manually built tree
-			bufOut += tabs + "//" + this->nameElement + "\n" ;
+			*bufOutFwd += tabs + "//" + this->nameElement + "\n" ;
 		}
 		break;
+	}
+
+	if (startedSubSectionToFileHere)
+	{
+		auto elm = decomposeIntoFiles->collections.find(originFwd);
+		if (elm != decomposeIntoFiles->collections.end())
+		{
+			elm->second.content_sections.push_back(bufOutSubSection);
+		}
+		else
+		{
+			CjvxSectionOriginList::CjvxOneOutputContent newElm;
+			newElm.fName = originFwd;
+			newElm.content_sections.push_back(bufOutSubSection);
+			decomposeIntoFiles->collections[originFwd] = newElm;
+
+		}
+
+		if (includeReferencesThisSectionIn)
+		{
+			auto elmSecs = includeReferencesThisSectionIn->begin();
+			for (; elmSecs != includeReferencesThisSectionIn->end(); elmSecs++)
+			{
+				if (*elmSecs == originFwd)
+				{
+					// An include was already added!!
+					break;
+				}
+			}
+			if (elmSecs == includeReferencesThisSectionIn->end())
+			{
+				tabs.clear();
+				for (i = 0; i < (unsigned)numTabsIn; i++)
+					tabs += "\t";
+
+				// Generate include only for first occurence
+				bufOutIn += tabs + "include \"" + originFwd + "\";\n";
+			}
+			includeReferencesThisSectionIn->push_back(originFwd);
+		}
 	}
 
 	return(true);

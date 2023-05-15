@@ -191,6 +191,7 @@ extern CjvxConfigProcessor* procStore;
 	{
 	   FILE* fPtrNew = NULL;
 	   YY_BUFFER_STATE buf = NULL;
+	   struct stat filestat;
 
 	   if(!modeUseFiles)
 	   {
@@ -207,7 +208,7 @@ extern CjvxConfigProcessor* procStore;
 		{
 			return(0);
 		}
-
+	   
 	   oneFileStackElement newElm;
 	   newElm.theBuf = YY_CURRENT_BUFFER;
 	   newElm.theFptr = currentFileHandle;
