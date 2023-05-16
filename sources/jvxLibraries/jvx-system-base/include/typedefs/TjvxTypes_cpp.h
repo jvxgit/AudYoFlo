@@ -332,6 +332,8 @@ enum class jvxReportCommandRequest
 
 	JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY, // IjvxReportCommandRequest_id
 
+	JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS, // IjvxReportCommandRequest_uid - contains tested process uid
+
 	JVX_REPORT_COMMAND_REQUEST_LIMIT
 };
 

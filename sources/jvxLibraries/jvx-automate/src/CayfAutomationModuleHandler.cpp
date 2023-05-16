@@ -48,11 +48,11 @@ namespace CayfAutomationModules
 	void
 		CayfAutomationModuleHandler::try_adapt_submodules(jvxSize uIdProc, 
 			const std::string& modName, const std::string& description, 
-			const jvxComponentIdentification& tpCp)
+			const jvxComponentIdentification& tpCp, jvxReportCommandRequest req)
 	{
 		for (auto& elm : registeredEntries)
 		{
-			elm->adapt_all_submodules(uIdProc, modName, description, tpCp);
+			elm->adapt_all_submodules(uIdProc, modName, description, tpCp, req);
 		}
 	}
 	void

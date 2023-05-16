@@ -148,6 +148,18 @@ CjvxDataConnectionsProcess::test_chain(jvxBool storeProtocol JVX_CONNECTION_FEED
 		{
 			_common_set_conn_proc.lastTestOk = false;
 		}
+
+		if (_common_set_conn_proc.lastTestOk)
+		{
+			if (_common_set.theReport)
+			{
+				//This must be reported immediately to be able to adapt before we actually start
+				CjvxReportCommandRequest_uid reportit(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS,
+					_common_set.theComponentType, _common_set_conn_comm.unique_id_system, jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_AUTOMATION);
+				reportit.set_immediate(true);
+				_common_set.theReport->request_command(reportit);
+			}
+		}
 		return res; // We need to return the success of the test_chain function
 	}
 	return JVX_ERROR_WRONG_STATE;

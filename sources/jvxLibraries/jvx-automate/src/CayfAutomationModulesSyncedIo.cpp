@@ -186,7 +186,7 @@ namespace CayfAutomationModules
 
 	jvxErrorType
 		CayfAutomationModulesSyncedIo::adapt_all_submodules(jvxSize uIdProc, const std::string& modName, const std::string& description,
-			const jvxComponentIdentification& tpCp)
+			const jvxComponentIdentification& tpCp, jvxReportCommandRequest req)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 
@@ -226,7 +226,7 @@ namespace CayfAutomationModules
 					{
 						if (cbPtr)
 						{
-							cbPtr->adapt_single_property_on_connect(purposeId, theProc.chainName, modName, description, props);
+							cbPtr->adapt_single_property_on_event(purposeId, theProc.chainName, modName, description, req, props);
 						}
 						retInterface<IjvxProperties>(ifFac, props);
 					}

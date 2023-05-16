@@ -211,7 +211,7 @@ namespace CayfAutomationModules
 		jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated) override;
 		jvxErrorType deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated) override;
 		jvxErrorType adapt_all_submodules(jvxSize uIdProc, const std::string& modName, const std::string& description,
-			const jvxComponentIdentification& tp_activated) override;
+			const jvxComponentIdentification& tp_activated, jvxReportCommandRequest req) override;
 
 		virtual void postponed_try_connect() override;
 		void try_connect(jvxComponentIdentification tp_reg, jvxBool& established);

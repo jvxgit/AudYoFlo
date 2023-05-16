@@ -9,11 +9,12 @@ namespace CayfAutomationModules
 	JVX_INTERFACE ayfAutoConnect_callbacks
 	{
 		virtual ~ayfAutoConnect_callbacks() {};
-		virtual jvxErrorType adapt_single_property_on_connect(
+		virtual jvxErrorType adapt_single_property_on_event(
 			jvxSize purposeId,
 			const std::string& nmChain,
 			const std::string& modName,
 			const std::string& description,
+			jvxReportCommandRequest req,
 			IjvxProperties* props) = 0;
 	};
 

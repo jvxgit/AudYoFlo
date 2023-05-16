@@ -894,7 +894,8 @@ static jvxTextHelpers jvxReportCommandRequest_str[(int)jvxReportCommandRequest::
 	{"cmdreq-rep-seq-evt", "JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_EVENT"},
 	{"cmdreq-rep-seq_cb", "JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_CALLBACK"},
 	{"cmdreq-proc-dis-cmplt", "JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_DISCONNECT_COMPLETE"},
-	{"cmdreq-req-upd-prop", "JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY"}
+	{"cmdreq-req-upd-prop", "JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY"},
+	{"cmdreq-proc-test", "JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS"}
 };
 	
 inline const char* jvxReportCommandRequest_txt(jvxReportCommandRequest coReq)

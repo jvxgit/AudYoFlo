@@ -96,6 +96,7 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 	switch (req)
 	{
 	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED:
+	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS:
 
 		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 		log << __FUNCTION__ << " - Report process connect for Uid <" << uid << ">." << std::endl;
@@ -136,8 +137,7 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 #ifdef JVX_AUTOMATION_VERBOSE
 						std::cout << " - Component " << jvxComponentIdentification_txt(tpCp) << " -- " << modName.std_str() << " -- " << lCtxt.std_str() << std::endl;
 #endif
-
-						CayfAutomationModules::CayfAutomationModuleHandler::try_adapt_submodules(uid, modName.std_str(), description.std_str(), tpCp);
+						CayfAutomationModules::CayfAutomationModuleHandler::try_adapt_submodules(uid, modName.std_str(), description.std_str(), tpCp, req);
 
 						jvxSize nn = 0;
 						it->number_next(&nn);
@@ -161,11 +161,15 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 					}
 				}
 
-				// Test this connection
-				jvxErrorType resTest = proc->test_chain(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				// Run the auto test only on process connected, otherwise we will produce an infinite loop!!
+				if (req == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED)
+				{
+					// Test this connection
+					jvxErrorType resTest = proc->test_chain(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
-				// Indicate that the "test" has been done and is not required anymore
-				proc->set_test_on_connect(false);
+					// Indicate that the "test" has been done and is not required anymore
+					proc->set_test_on_connect(false);
+				}
 
 				con->return_reference_connection_process(proc);
 			}

@@ -12,7 +12,7 @@ namespace CayfAutomationModules
 		virtual jvxErrorType adapt_all_submodules(
 			jvxSize uIdProc,			
 			const std::string& modName, const std::string& description,
-			const jvxComponentIdentification& tpCp) = 0;
+			const jvxComponentIdentification& tpCp, jvxReportCommandRequest req) = 0;
 
 		virtual jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated) = 0;
 		virtual jvxErrorType deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated) = 0;
@@ -59,7 +59,7 @@ namespace CayfAutomationModules
 
 		void try_adapt_submodules(jvxSize uIdProc, 
 			const std::string& modName, const std::string& description,
-			const jvxComponentIdentification& tpCp);
+			const jvxComponentIdentification& tpCp, jvxReportCommandRequest req);
 
 		void report_configuration_done();
 	};
