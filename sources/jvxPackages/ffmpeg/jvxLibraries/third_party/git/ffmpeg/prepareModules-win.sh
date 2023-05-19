@@ -8,6 +8,9 @@ if [ ! -d "ffmpeg" ]; then
 	# Commit id = 05438db02437e241a418e266a354bf4e7be7ac59
 	echo git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+	cd ffmpeg
+	git checkout 05438db02437e241a418e266a354bf4e7be7ac59
+	cd ..
 	
 	echo patch -R -p0 --binary < ffmpeg-fft-oc.patch
 	patch -R -p0 --binary < ffmpeg-fft-oc.patch

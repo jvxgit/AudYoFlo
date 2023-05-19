@@ -24,6 +24,11 @@ set(LOCAL_SOURCES
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/opt_common.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/sync_queue.c
     ${JVX_FFMPEG_SOURCE_DIR}/fftools/thread_queue.c	# ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/fftools/fftoolsres.rc
+
+	# Will be required in upcoming versions
+	#${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_enc.c
+	#${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_dec.c
+
  )
 
 # set_source_files_properties(${LOCAL_SOURCES} PROPERTIES LANGUAGE CXX )
