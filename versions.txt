@@ -1,0 +1,8 @@
+AudYoFlo Version Release History
+
+   Versionname     ||     Date     ||     Description           ||
+-------------------||--------------||---------------------------||
+    arbok          || 19.5.2023    ||   Initial version release ||
+-------------------||--------------||---------------------------||
+
+HK, 19.05.2023
