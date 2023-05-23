@@ -80,6 +80,8 @@ jvx_sequencer_widget::activate()
 		msgBox.exec();
 		exit(-1);
 	}
+
+	start_timer_wait(1000);
 }
 
 void 
@@ -97,6 +99,7 @@ jvx_sequencer_widget::deactivate()
 		theHostRef->return_hidden_interface(JVX_INTERFACE_REPORT, (jvxHandle*)theReport);
 		theReport = NULL;
 	}
+	stop_timer_wait();
 }
 
 void 
@@ -1033,9 +1036,9 @@ jvx_sequencer_widget::control_start_process(jvxSize period_msec, jvxSize granula
 
 	JVX_GET_TICKCOUNT_US_SETREF(&others.tStamp);
 	res = theSequencer->run_process(static_cast<IjvxSequencer_report*>(this), (jvxCBitField)-1, granularity_state_report);
-	runtime.theTimer = new QTimer(this);
-	connect(runtime.theTimer, SIGNAL(timeout()), this, SLOT(timerExpired()));
-	runtime.theTimer->start((int)period_msec);
+	
+	start_timer(period_msec);
+
 	runtime.externalTrigger = true;
 	if (res == JVX_NO_ERROR)
 	{
@@ -1126,7 +1129,7 @@ jvx_sequencer_widget::control_continue_process()
 jvxErrorType 
 jvx_sequencer_widget::immediate_sequencer_step()
 {
-	if (runtime.theTimer)
+	if (runtime.theTimerSeq)
 	{
 		timerExpired();
 		return JVX_NO_ERROR;
@@ -1462,13 +1465,9 @@ jvx_sequencer_widget::updateStateSequencer_inThread(jvxCBitField event_mask, jvx
 		jvxSize num = 0;
 		theSequencer->acknowledge_completion_process();
 
-		if (runtime.theTimer)
+		if (runtime.theTimerSeq)
 		{
-			// Stop the QTimer thread
-			runtime.theTimer->stop();
-
-			disconnect(this, SLOT(timerExpired()));
-			runtime.theTimer = NULL;
+			stop_timer();
 
 			if (theSeqRep)
 			{
@@ -1498,6 +1497,11 @@ jvx_sequencer_widget::timerExpired()
 	{
 		theSequencer->trigger_complete_process_extern(tStamp);
 	}
+}
+
+void 
+jvx_sequencer_widget::timerExpiredWait()
+{
 }
 
 void
@@ -2045,4 +2049,40 @@ jvx_sequencer_widget::buttonPushedModeAllOn()
 	jvxBitField btf;
 	jvx_bitFull(btf);
 	this->updateWindow(btf);
+}
+
+void
+jvx_sequencer_widget::start_timer(jvxSize period_msec)
+{
+	stop_timer_wait();
+	runtime.theTimerSeq = new QTimer(this);
+	connect(runtime.theTimerSeq, SIGNAL(timeout()), this, SLOT(timerExpired()));
+	runtime.theTimerSeq->start((int)period_msec);
+}
+
+void
+jvx_sequencer_widget::stop_timer()
+{
+	// Stop the QTimer thread
+	runtime.theTimerSeq->stop();
+	disconnect(this, SLOT(timerExpired()));
+	runtime.theTimerSeq = NULL;
+
+	start_timer_wait(1000);
+}
+
+void
+jvx_sequencer_widget::start_timer_wait(jvxSize period_msec)
+{
+	theTimerWait = new QTimer(this);
+	connect(theTimerWait, SIGNAL(timeout()), this, SLOT(timerExpiredWait()));
+	theTimerWait->start((int)period_msec);
+}
+
+void
+jvx_sequencer_widget::stop_timer_wait()
+{
+	theTimerWait->stop();
+	disconnect(this, SLOT(timerExpiredWait()));
+	theTimerWait = NULL;
 }

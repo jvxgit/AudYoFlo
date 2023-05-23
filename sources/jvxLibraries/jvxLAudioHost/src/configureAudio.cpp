@@ -3088,14 +3088,7 @@ void
 	}
 
 	JVX_GET_TICKCOUNT_US_SETREF(&tStampRef);
-	this->timerViewUpdate = new QTimer;
-	connect(this->timerViewUpdate, SIGNAL(timeout()), this, SLOT(timerExpired()));
-	this->timerViewUpdate->start(config.period_ms);
-
-	if (myParent->subWidgets.main.theWidget)
-	{
-		myParent->subWidgets.main.theWidget->inform_viewer_started();
-	}
+	start_timer();
 }
 
 void
@@ -3103,19 +3096,7 @@ configureAudio::stopProcessing()
 {
 	if (this->timerViewUpdate)
 	{
-		if (myParent->subWidgets.main.theWidget)
-		{
-			myParent->subWidgets.main.theWidget->inform_viewer_about_to_stop();
-		} 
-
-		this->timerViewUpdate->stop();
-		disconnect(this->timerViewUpdate, SIGNAL(timeout()));
-		delete(this->timerViewUpdate);
-
-		if (myParent->subWidgets.main.theWidget)
-		{
-			myParent->subWidgets.main.theWidget->inform_viewer_stopped();
-		}
+		stop_timer();
 	}
 	this->timerViewUpdate = NULL;
 }
@@ -4493,4 +4474,55 @@ configureAudio::select_bsize(int idx)
 		currentPropsDev->property_stop_delayed_group(callGate, nullptr );
 		this->myParent->updateWindow();
 	}
+}
+
+void
+configureAudio::start_timer()
+{
+	if (preAllowedTimer == false)
+	{
+		this->timerViewUpdate = new QTimer;
+		connect(this->timerViewUpdate, SIGNAL(timeout()), this, SLOT(timerExpired()));
+		this->timerViewUpdate->start(config.period_ms);
+
+		if (myParent->subWidgets.main.theWidget)
+		{
+			myParent->subWidgets.main.theWidget->inform_viewer_started();
+		}
+	}
+}
+
+void
+configureAudio::stop_timer()
+{
+	if (preAllowedTimer == false)
+	{
+		if (myParent->subWidgets.main.theWidget)
+		{
+			myParent->subWidgets.main.theWidget->inform_viewer_about_to_stop();
+		}
+
+		this->timerViewUpdate->stop();
+		disconnect(this->timerViewUpdate, SIGNAL(timeout()));
+		delete(this->timerViewUpdate);
+
+		if (myParent->subWidgets.main.theWidget)
+		{
+			myParent->subWidgets.main.theWidget->inform_viewer_stopped();
+		}
+	}
+}
+
+void 
+configureAudio::pre_allow_timer()
+{
+	start_timer();
+	preAllowedTimer = true;
+}
+
+void 
+configureAudio::post_allow_timer()
+{
+	preAllowedTimer = false;
+	stop_timer();
 }

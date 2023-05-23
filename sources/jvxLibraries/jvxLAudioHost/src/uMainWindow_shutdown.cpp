@@ -103,6 +103,10 @@ uMainWindow::close_app()
 void
 uMainWindow::preshutdown_widgets()
 {
+	if (theHostFeatures.viewerUpdateAlways)
+	{
+		subWidgets.theAudioDialog->post_allow_timer();
+	}
 	theControl.deactivate();
 	// subWidgets.theAudioDialog->terminate(); <- does not exist
 }

@@ -321,6 +321,11 @@ uMainWindow::postbootup_widgets()
 {
 	subWidgets.theSequencerWidget->set_control_ref(static_cast<IjvxMainWindowControl*>(&theControl), static_cast<IjvxQtSequencerWidget_report*>(this));
 	subWidgets.theSequencerWidget->update_window_rebuild();
+
+	if (theHostFeatures.viewerUpdateAlways)
+	{
+		subWidgets.theAudioDialog->pre_allow_timer();
+	}
 }
 
 // ##################################################################################

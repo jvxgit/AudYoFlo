@@ -51,12 +51,27 @@ CjvxRs232::initialize(IjvxHiddenInterface* hostRef, jvxHandle* priv, jvxConnecti
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_LOCK_MUTEX(_system.safeAccess);
 
-	if(_common_set_min.theState == JVX_STATE_NONE)
+	res = _initialize(hostRef);
+	res = _select();
+	res = _activate();
+	// if(_common_set_min.theState == JVX_STATE_NONE)
+	if(res == JVX_NO_ERROR)
 	{
+		jvxSize numComPortsPoll = POLL_COM_PORTS_MAX_ID;
+
+		if (whatsthis == JVX_CONNECT_PRIVATE_ARG_TYPE_CONNECTION_NUM_PORT)
+		{
+			numComPortsPoll = *((jvxSize*)priv);
+		}
 		// This method tries to open any com port in the range between 0 and 
-		for(jj = 0; jj < POLL_COM_PORTS_MAX_ID; jj++)
+		for(jj = 0; jj < numComPortsPoll; jj++)
 		{
 			std::string nmComPort = "\\\\.\\COM" + jvx_size2String(jj);
+
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
+			log << "Testing rs-232 port <" << nmComPort << ">" << std::endl;
+			JVX_STOP_LOCK_LOG
+
 			HANDLE hdl  = CreateFile(nmComPort.c_str(),
 				GENERIC_WRITE|GENERIC_READ,
 				0, NULL, OPEN_EXISTING,
@@ -83,10 +98,14 @@ CjvxRs232::initialize(IjvxHiddenInterface* hostRef, jvxHandle* priv, jvxConnecti
 				elm.dbg.fn = "";
 #endif
 
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
+				log << "-> Rs-232 port <" << nmComPort << "> is ready." << std::endl;
+				JVX_STOP_LOCK_LOG
+
 				this->_system.thePorts.push_back(elm);
 			}
 		}
-		_common_set_min.theState = JVX_STATE_INIT;
+		// _common_set_min.theState = JVX_STATE_INIT;
 		_system.refCount = 1;
 	}
 	else
@@ -106,7 +125,7 @@ CjvxRs232::availablePorts(jvxApiStringList* allPorts)
 	int i;
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if(_common_set_min.theState >= JVX_STATE_INIT)
+	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		std::vector<std::string> lst;
 		for(i = 0; i < _system.thePorts.size(); i++)
@@ -138,7 +157,7 @@ CjvxRs232::state_port(jvxSize idPort, jvxState* theState)
 	jvxErrorType res = JVX_NO_ERROR;
 	
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if(_common_set_min.theState >= JVX_STATE_INIT)
+	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		if(idPort < _system.thePorts.size())
 		{
@@ -166,7 +185,7 @@ CjvxRs232::start_port(jvxSize idPort, jvxHandle* cfgIn, jvxConnectionPrivateType
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if(_common_set_min.theState >= JVX_STATE_INIT)
+	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		jvxRs232Config* cfg = (jvxRs232Config*)cfgIn;
 		assert(whatsthis == JVX_CONNECT_PRIVATE_ARG_TYPE_RS232_CONFIG);
@@ -360,7 +379,7 @@ CjvxRs232::get_constraints_buffer(jvxSize idPort, jvxSize* bytesPrepend, jvxSize
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if(_common_set_min.theState >= JVX_STATE_INIT)
+	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		if(idPort < _system.thePorts.size())
 		{
@@ -412,7 +431,7 @@ CjvxRs232::sendMessage_port(jvxSize idPort, jvxByte* fld, jvxSize* szFld, jvxHan
 	jvxSize writtenSC = 0;
 
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if(_common_set_min.theState >= JVX_STATE_INIT)
+	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		if(idPort < _system.thePorts.size())
 		{
@@ -660,7 +679,7 @@ CjvxRs232::stop_port(jvxSize idPort)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if(_common_set_min.theState >= JVX_STATE_INIT)
+	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		if(idPort < _system.thePorts.size())
 		{
@@ -721,7 +740,7 @@ CjvxRs232::control_port(jvxSize idPort, jvxSize operation_id, jvxHandle* priv, j
 	jvxUInt16* retVal = NULL;
 
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if (_common_set_min.theState >= JVX_STATE_INIT)
+	if (_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		if (idPort < _system.thePorts.size())
 		{
@@ -806,8 +825,11 @@ CjvxRs232::terminate()
 	int i;
 
 	JVX_LOCK_MUTEX(_system.safeAccess);
-	if(_common_set_min.theState >= JVX_STATE_INIT)
+	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
+		jvxErrorType res = _deactivate();
+		res = _unselect();
+
 		if(_system.refCount == 1)
 		{
 			for(i = 0; i < _system.thePorts.size(); i++)
@@ -820,7 +842,7 @@ CjvxRs232::terminate()
 			}
 			_system.thePorts.clear();
 			CjvxObject::_terminate(); // This modifies the state to NONE
-			_common_set_min.theState = JVX_STATE_NONE;
+			//_common_set_min.theState = JVX_STATE_NONE;
 		}
 		_system.refCount--;
 	}

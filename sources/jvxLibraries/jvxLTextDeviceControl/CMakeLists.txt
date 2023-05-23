@@ -12,12 +12,12 @@ include_directories(
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxFlexibleTextControlDevice.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxFlexibleRs232TextDevice.cpp
+  // ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxFlexibleRs232TextDevice.cpp
   
   ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxFlexibleTextControlDevice.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxFlexibleRs232TextDevice.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxFlexibleConnectionTextDevice.h
 
-  ${CMAKE_CURRENT_SOURCE_DIR}/pcgf/CjvxFlexibleRs232TextDevice.pcgf
+  ${CMAKE_CURRENT_SOURCE_DIR}/pcgf/CjvxFlexibleConnectionTextDevice.pcgf
   )
 
 set(LOCAL_LIBS jvx-component-templates-base_static)

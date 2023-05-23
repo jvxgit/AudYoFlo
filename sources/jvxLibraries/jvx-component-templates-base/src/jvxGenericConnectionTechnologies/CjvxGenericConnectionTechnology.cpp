@@ -1,9 +1,9 @@
 #include "jvx.h"
 
-#include "jvxGenericRS232Technologies/CjvxGenericRS232Technology.h"
+#include "jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.h"
 #include "jvxGenericRS232Technologies/CjvxGenericRS232Device.h"
 
-CjvxGenericRS232Technology::CjvxGenericRS232Technology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
+CjvxGenericConnectionTechnology::CjvxGenericConnectionTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_COMPONENT_UNKNOWN);
@@ -11,13 +11,13 @@ CjvxGenericRS232Technology::CjvxGenericRS232Technology(JVX_CONSTRUCTOR_ARGUMENTS
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
 }
 
-CjvxGenericRS232Technology::~CjvxGenericRS232Technology()
+CjvxGenericConnectionTechnology::~CjvxGenericConnectionTechnology()
 {
 	terminate();
 }
 
 jvxErrorType
-CjvxGenericRS232Technology::activate()
+CjvxGenericConnectionTechnology::activate()
 {
 	jvxErrorType res = _activate();
 	if(res == JVX_NO_ERROR)
@@ -46,15 +46,29 @@ CjvxGenericRS232Technology::activate()
 				if (num > 0)
 				{
 					/* Check name of connection type */
-					res = subcomponents.theToolsHost->reference_tool(JVX_COMPONENT_CONNECTION, &subcomponents.theRs232Obj, 0, "jvxTRs232*");
-					if ((res == JVX_NO_ERROR) && subcomponents.theRs232Obj)
+					res = subcomponents.theToolsHost->reference_tool(JVX_COMPONENT_CONNECTION, &subcomponents.theConnectionObj, 0, connectionIdenitificationToken.c_str());
+					if ((res == JVX_NO_ERROR) && subcomponents.theConnectionObj)
 					{
-						res = subcomponents.theRs232Obj->request_specialization(reinterpret_cast<jvxHandle**>(&subcomponents.theRs232Ref), NULL, NULL);
+						res = subcomponents.theConnectionObj->request_specialization(reinterpret_cast<jvxHandle**>(&subcomponents.theConnectionRef), NULL, NULL);
 
-						if ((res == JVX_NO_ERROR) && subcomponents.theRs232Ref)
+						if ((res == JVX_NO_ERROR) && subcomponents.theConnectionRef)
 						{
-							res = subcomponents.theRs232Ref->initialize(_common_set_min.theHostRef, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
-							res = subcomponents.theRs232Ref->availablePorts(&thePorts);
+							JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
+							log << "Initializing custom device family matching connection module <" << connectionIdenitificationToken << ">." << std::endl;
+
+							if (JVX_CHECK_SIZE_SELECTED(numPortsPolled))
+							{
+								res = subcomponents.theConnectionRef->initialize(_common_set_min.theHostRef, &numPortsPolled, JVX_CONNECT_PRIVATE_ARG_TYPE_CONNECTION_NUM_PORT);
+							}
+							else
+							{
+								res = subcomponents.theConnectionRef->initialize(_common_set_min.theHostRef, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+							}
+							log << " -- done." << std::endl;
+
+							JVX_STOP_LOCK_LOG;
+
+							res = subcomponents.theConnectionRef->availablePorts(&thePorts);
 							if (res == JVX_NO_ERROR)
 							{
 								for (i = 0; i < thePorts.ll(); i++)
@@ -79,7 +93,7 @@ CjvxGenericRS232Technology::activate()
 
 
 jvxErrorType
-CjvxGenericRS232Technology::deactivate()
+CjvxGenericConnectionTechnology::deactivate()
 {
 	jvxSize i;
 	jvxErrorType res = _deactivate();
@@ -103,12 +117,12 @@ CjvxGenericRS232Technology::deactivate()
 #endif
 	}
 
-	if (subcomponents.theRs232Ref)
+	if (subcomponents.theConnectionRef)
 	{
-		subcomponents.theRs232Ref->terminate();
-		subcomponents.theToolsHost->return_reference_tool(JVX_COMPONENT_CONNECTION, subcomponents.theRs232Obj);
-		subcomponents.theRs232Ref = NULL;
-		subcomponents.theRs232Obj = NULL;
+		subcomponents.theConnectionRef->terminate();
+		subcomponents.theToolsHost->return_reference_tool(JVX_COMPONENT_CONNECTION, subcomponents.theConnectionObj);
+		subcomponents.theConnectionRef = NULL;
+		subcomponents.theConnectionObj = NULL;
 	}
 
 	if (subcomponents.theToolsHost)

@@ -8,15 +8,19 @@
 
 class CjvxGenericRS232Device;
 
-class CjvxGenericRS232Technology: public IjvxTechnology, public CjvxTechnology
+class CjvxGenericConnectionTechnology: public IjvxTechnology, public CjvxTechnology
 {
 protected:
+
+	// Default case: RS 232
+	std::string connectionIdenitificationToken = "jvxTRs232*";
+	jvxSize numPortsPolled = JVX_SIZE_UNSELECTED;
 
 	struct
 	{
 		IjvxToolsHost* theToolsHost;
-		IjvxObject* theRs232Obj;
-		IjvxConnection* theRs232Ref;
+		IjvxObject* theConnectionObj;
+		IjvxConnection* theConnectionRef;
 	} subcomponents;
 
 public:
@@ -24,9 +28,9 @@ public:
 	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 	// Component class interface member functions
 	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-	JVX_CALLINGCONVENTION CjvxGenericRS232Technology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	JVX_CALLINGCONVENTION CjvxGenericConnectionTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 
-	virtual JVX_CALLINGCONVENTION ~CjvxGenericRS232Technology();
+	virtual JVX_CALLINGCONVENTION ~CjvxGenericConnectionTechnology();
 	
 #include "codeFragments/simplify/jvxStateMachineTechnology_simplify.h"
 

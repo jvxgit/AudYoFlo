@@ -24,13 +24,13 @@ protected:
 	struct
 	{
 		int cntLabels;
-		QTimer* theTimer;
+		QTimer* theTimerSeq = nullptr;		
 		jvxBool externalTrigger;
 		jvxTimeStampData myTimerRef;
-		std::string firstError;
-
+		std::string firstError;	
 	} runtime;
 
+	QTimer* theTimerWait = nullptr;
 	struct
 	{
 		struct
@@ -142,6 +142,12 @@ public:
 	void viewTimeout(QLineEdit* line);
 
 	void setTimeout();
+	
+	void start_timer(jvxSize period_msec);
+	void stop_timer();
+
+	void start_timer_wait(jvxSize period_msec);
+	void stop_timer_wait();
 
 signals:
 
@@ -190,6 +196,7 @@ public slots:
 
 	void timerExpired();
 	void timerExpired_local();
+	void timerExpiredWait();
 
 	void newText_process_match();
 	void newSelection_process(int sel);

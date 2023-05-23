@@ -15,6 +15,7 @@ public:
 	//const char* nameDefaultAlgorithm;
 	mainWindow_UiExtension_host* myMainWidget;
 	jvxBool includesVideo;
+	jvxBool viewerUpdateAlways = false;
 
 	configureQtAudioHost_features()
 	{
@@ -23,6 +24,7 @@ public:
 		includesVideo = false;
 		hideHostStartButton = false;
 		disableSaveFunction = false;
+		viewerUpdateAlways = false;
 		myMainWidget = NULL;
 	};
 

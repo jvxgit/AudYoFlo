@@ -36,8 +36,8 @@ typedef enum
 	JVX_CONNECT_PRIVATE_ARG_TYPE_OUTPUT_STRING, /*<- jvxApiString* */
 	JVX_CONNECT_PRIVATE_ARG_TYPE_INPUT_STRING, /*<- const char* */
 
-	JVX_CONNECT_PRIVATE_ARG_TYPE_SECURE_CHANNEL_SPECIAL_CHAR /* <- jvxByte* to provide special character in case of secure channel packet handling */
-
+	JVX_CONNECT_PRIVATE_ARG_TYPE_SECURE_CHANNEL_SPECIAL_CHAR, /* <- jvxByte* to provide special character in case of secure channel packet handling */
+	JVX_CONNECT_PRIVATE_ARG_TYPE_CONNECTION_NUM_PORT, /* <- jvxSize* */
 
 } jvxConnectionPrivateTypeEnum;
 

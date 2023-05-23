@@ -101,6 +101,8 @@ private:
 	IjvxAccessProperties* currentPropsTech;
 
 	QTimer* timerViewUpdate;
+	jvxBool preAllowedTimer = false;
+
 	int progress;
 	jvxTimeStampData tStampRef;
 
@@ -152,6 +154,11 @@ public:
 	void acceptSlotConfiguration();
 
 	void reactivateComponent(const jvxComponentIdentification& cpTp);
+
+	void pre_allow_timer();
+	void post_allow_timer();
+	void start_timer();
+	void stop_timer();
 
 protected:
 

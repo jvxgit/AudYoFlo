@@ -315,7 +315,7 @@ CjvxGenericRS232TextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, 
 	{
 		receivedTextBuffer += std::string((char*)ptr, numRead);
 
-		if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_ALLINCOMING_SHIFT))
+		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 		{
 			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 			{
@@ -344,7 +344,7 @@ CjvxGenericRS232TextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, 
 		//token = receivedText.substr(0, posi_sep + runtime.separatorToken_rcv.size());
 		token = receivedTextBuffer.substr(0, posi_sep); // <- separator token removed
 
-		if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_ALLINCOMING_SHIFT))
+		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 		{
 			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 			{
@@ -357,7 +357,7 @@ CjvxGenericRS232TextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, 
 
 		receivedTextBuffer = receivedTextBuffer.substr(posi_sep + runtime.separatorToken_rcv.size(), std::string::npos);
 
-		if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_ALLINCOMING_SHIFT))
+		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 		{
 			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 			{
@@ -387,7 +387,7 @@ CjvxGenericRS232TextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, 
 		res = this->handle_single_received_text_token(token, reinterpret_cast<oneMessage_hdr*>(theMess), idIdentify);
 		if (res == JVX_ERROR_ABORT)
 		{
-			if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_ERRORS_SHIFT))
+			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 			{
 				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 				{
@@ -501,7 +501,7 @@ CjvxGenericRS232TextDevice::add_generic_message_queue(const std::string& myText,
 		auto elmL = mpMessages.find(mess->uId);
 		if (elmL == mpMessages.end())
 		{
-			if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_TIMING_SHIFT))
+			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 			{
 				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 				{
@@ -515,7 +515,7 @@ CjvxGenericRS232TextDevice::add_generic_message_queue(const std::string& myText,
 		}
 		else
 		{
-			if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_ERRORS_SHIFT))
+			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 			{
 				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 				{
@@ -571,7 +571,7 @@ CjvxGenericRS232TextDevice::add_message_queue(oneMessage_hdr* load_plus, jvxHand
 		auto elmL = mpMessages.find(mess->uId);
 		if (elmL == mpMessages.end())
 		{
-			if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_TIMING_SHIFT))
+			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 			{
 				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 				{
@@ -585,7 +585,7 @@ CjvxGenericRS232TextDevice::add_message_queue(oneMessage_hdr* load_plus, jvxHand
 		}
 		else
 		{
-			if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_ERRORS_SHIFT))
+			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 			{
 				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 				{
@@ -614,7 +614,7 @@ CjvxGenericRS232TextDevice::send_direct(oneMessage_hdr* load_plus)
 	jvxErrorType res = JVX_NO_ERROR;
 	this->translate_message_token(load_plus, txtOut);
 
-	if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_ALLOUTGOING_SHIFT))
+	if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLOUTGOING_SHIFT))
 	{
 		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 		{
@@ -627,7 +627,7 @@ CjvxGenericRS232TextDevice::send_direct(oneMessage_hdr* load_plus)
 
 	jvxByte* ptr = (jvxByte*)txtOut.c_str();
 	jvxSize sz = txtOut.size();
-	theRs232Tool->sendMessage_port(idDevice, ptr, &sz, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+	theConnectionTool->sendMessage_port(idDevice, ptr, &sz, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 	return res;
 }
 
@@ -646,7 +646,7 @@ CjvxGenericRS232TextDevice::post_message_hook(jvxSize idIdentify)
 jvxErrorType
 CjvxGenericRS232TextDevice::clear_input_buffer()
 {
-	if (jvx_bitTest(output_flags, JVX_GENERIC_RS232_OUTPUT_TIMING_SHIFT))
+	if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 	{
 		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 		{
