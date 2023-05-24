@@ -134,7 +134,7 @@ CjvxGenericConnectionDevice::activate()
 		// ==========================================================================================
 		// Initialize specific part BEFORE stat of message queues
 		// ==========================================================================================
-		resL = activate_specific_rs232();
+		resL = activate_specific_connection();
 
 		// ==========================================================================================
 		// ==========================================================================================
@@ -214,7 +214,7 @@ errorI:
 	{
 		JVX_DSP_SAFE_DELETE_FIELD(runtime.mem_incoming);
 	}
-	resL = deactivate_specific_rs232();
+	resL = deactivate_specific_connection();
 	runtime.sz_mem_incoming = 0;
 
 	_deactivate();
@@ -254,7 +254,7 @@ CjvxGenericConnectionDevice::deactivate()
 			}
 			runtime.sz_mem_incoming = 0;
 
-			resL = deactivate_specific_rs232();
+			resL = deactivate_specific_connection();
 
 
 			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)

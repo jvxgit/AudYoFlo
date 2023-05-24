@@ -172,24 +172,24 @@ CjvxCuTGpsDevice::convert_nmea_gpgga(const std::string& token)
 		jvxSize off = 0;
 		if (utcstr.size() == 5)
 		{
-			utcval = "0" + utcstr.substr(off, 1);
-			off += 1;
+			utcstr = "0" + utcstr;
 		}
-		else if (utcstr.size() == 6)
+		if (utcstr.size() == 6)
 		{
 			utcval = utcstr.substr(off, 2);
 			off += 2;
+			utcval += ":";
+			utcval += utcstr.substr(off, 2);
+			off += 2;
+			utcval += ":";
+			utcval += utcstr.substr(off, 2);
+			genGpsRs232_device::remote.gpgga.utc.value = utcval;
 		}
 		else
 		{
-			JVX_ASSERT(0);
+			std::cout << __FUNCTION__ << " warning: Invalid UTC" << std::endl;
+			// JVX_ASSERT(0);
 		}
-		utcval += ":";
-		utcval += utcstr.substr(off, 2);
-		off += 2;
-		utcval += ":";
-		utcval += utcstr.substr(off, 2);
-		genGpsRs232_device::remote.gpgga.utc.value = utcval;
 
 		genGpsRs232_device::remote.gpgga.latitude.value = jvx_string2Data(paramLst[1], err);
 		genGpsRs232_device::remote.gpgga.longitude.value = jvx_string2Data(paramLst[3], err);

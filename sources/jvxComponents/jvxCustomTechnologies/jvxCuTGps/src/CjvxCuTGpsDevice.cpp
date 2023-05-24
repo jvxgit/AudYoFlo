@@ -23,21 +23,21 @@ CjvxCuTGpsDevice::~CjvxCuTGpsDevice()
 }
 
 jvxErrorType
-CjvxCuTGpsDevice::activate_specific_rs232()
+CjvxCuTGpsDevice::activate_specific_connection()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	genGpsRs232_device::init_all();
 	genGpsRs232_device::allocate_all();
 	genGpsRs232_device::register_all(static_cast<CjvxProperties*>(this));
 	
-	return CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::activate_specific_rs232();
+	return CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::activate_specific_connection();
 }
 
 jvxErrorType
-CjvxCuTGpsDevice::deactivate_specific_rs232()
+CjvxCuTGpsDevice::deactivate_specific_connection()
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	res = CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::deactivate_specific_rs232();
+	res = CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::deactivate_specific_connection();
 
 	genGpsRs232_device::unregister_all(static_cast<CjvxProperties*>(this));
 	genGpsRs232_device::deallocate_all();

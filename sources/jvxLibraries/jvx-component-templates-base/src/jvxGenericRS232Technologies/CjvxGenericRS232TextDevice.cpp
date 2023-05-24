@@ -96,7 +96,7 @@ CjvxGenericRS232TextDevice::postprocess()
 // LOCAL TeXT LOG AND MESSAGE QUEUE MUST BE READY BEFORE THE DEVICE IS CONNECTED SINCE THE DEVIE MAY START IMMEDIATELY
 // Get the local text log
 jvxErrorType
-CjvxGenericRS232TextDevice::activate_specific_rs232()
+CjvxGenericRS232TextDevice::activate_specific_connection()
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -157,7 +157,7 @@ CjvxGenericRS232TextDevice::activate_specific_rs232()
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::deactivate_specific_rs232()
+CjvxGenericRS232TextDevice::deactivate_specific_connection()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (localTxtLog.theLocalTextLog)

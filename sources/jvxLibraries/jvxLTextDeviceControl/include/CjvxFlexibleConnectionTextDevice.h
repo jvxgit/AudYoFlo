@@ -99,7 +99,7 @@ public:
 	//virtual jvxErrorType handle_incoming_data(jvxByte* ptr, jvxSize numRead, jvxSize offset, jvxSize id_port, jvxHandle* addInfo, jvxConnectionPrivateTypeEnum whatsthis,
 	//	oneMessage_hdr_load* theMess) override;
 
-	virtual jvxErrorType activate_specific_rs232()override
+	virtual jvxErrorType activate_specific_connection()override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		jvxSize i;
@@ -114,7 +114,7 @@ public:
 		genPumpRs232_device::register_all(static_cast<CjvxProperties*>(this));
 		*/
 
-		res = CjvxGenericRS232TextDevice::activate_specific_rs232();
+		res = CjvxGenericRS232TextDevice::activate_specific_connection();
 		if (res != JVX_NO_ERROR)
 		{
 			return res;
@@ -149,6 +149,8 @@ public:
 				{
 					CjvxGenericConnectionDevice_pcg::mqueue_runtime.timeoutresponse_msec.value = timeoutresponse_msec;
 				}
+
+				theControl.print();
 			}
 			else
 			{
@@ -185,7 +187,7 @@ public:
 		return res;
 	};
 
-	virtual jvxErrorType deactivate_specific_rs232()override
+	virtual jvxErrorType deactivate_specific_connection()override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 
@@ -195,12 +197,12 @@ public:
 
 		theControl.terminate();
 
-		res = CjvxGenericRS232TextDevice::deactivate_specific_rs232();
+		res = CjvxGenericRS232TextDevice::deactivate_specific_connection();
 
 		return JVX_NO_ERROR;
 	};
 
-	virtual jvxErrorType goodbye_rs232()override
+	virtual jvxErrorType goodbye_connection()override
 	{
 		return JVX_NO_ERROR;
 	};

@@ -14,7 +14,7 @@ CjvxCuTGpsTechnology::~CjvxCuTGpsTechnology()
 {
 }
 
-CjvxGenericRS232Device*
+CjvxGenericConnectionDevice*
 CjvxCuTGpsTechnology::allocate_device(const std::string& pName, jvxSize id)
 {
 	std::string devName = "Gps device at port <" + pName + ">";

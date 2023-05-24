@@ -2598,7 +2598,7 @@ CjvxFlexibleTextControlDevice::parse_text_message(std::string message, const std
 							}
 							*/
 						}
-						idx0 = idx1;
+						idx0 = idx2 + 1;
 						elm = elmfwd;
 					}
 					else

@@ -163,10 +163,10 @@ public:
 	// =======================================================================
 
 	// Specific activation/deactivation
-	virtual jvxErrorType activate_specific_rs232() = 0;
-	virtual jvxErrorType deactivate_specific_rs232() = 0;
+	virtual jvxErrorType activate_specific_connection() = 0;
+	virtual jvxErrorType deactivate_specific_connection() = 0;
 
-	virtual jvxErrorType goodbye_rs232() = 0;
+	virtual jvxErrorType goodbye_connection() = 0;
 
 	// From message queue to port
 	virtual jvxErrorType translate_message_token(oneMessage_hdr* mess, std::string& txtOut) = 0;

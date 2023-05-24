@@ -29,10 +29,10 @@ public:
 	virtual JVX_CALLINGCONVENTION ~CjvxCuTGpsDevice();
 
 	//! Call specific initialization of rs232 Flow Control Device
-	jvxErrorType activate_specific_rs232() override;
+	jvxErrorType activate_specific_connection() override;
 
 	//! Call specific deactivation function
-	jvxErrorType deactivate_specific_rs232() override;
+	jvxErrorType deactivate_specific_connection() override;
 
 	//! Function to initiate initialization messages on first connect
 	void activate_init_messages() override;

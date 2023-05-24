@@ -11,7 +11,7 @@ public:
 
 	virtual JVX_CALLINGCONVENTION ~CjvxCuTGpsTechnology();
 
-	virtual CjvxGenericRS232Device* allocate_device(const std::string& pName, jvxSize id) override;
+	virtual CjvxGenericConnectionDevice* allocate_device(const std::string& pName, jvxSize id) override;
 
 };
 

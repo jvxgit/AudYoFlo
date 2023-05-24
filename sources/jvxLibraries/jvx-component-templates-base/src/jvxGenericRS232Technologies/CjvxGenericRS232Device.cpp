@@ -253,7 +253,7 @@ jvxErrorType
 CjvxGenericRS232Device::deactivate_connection_port()
 {
 	// Last chance to transmit a "goodbye message"
-	this->goodbye_rs232();
+	this->goodbye_connection();
 
 	this->theConnectionTool->stop_port(idDevice);
 

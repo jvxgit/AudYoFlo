@@ -70,8 +70,8 @@ public:
 
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
-	virtual jvxErrorType activate_specific_rs232()override;
-	virtual jvxErrorType deactivate_specific_rs232()override;
+	virtual jvxErrorType activate_specific_connection()override;
+	virtual jvxErrorType deactivate_specific_connection()override;
 	virtual jvxErrorType translate_message_token_separator(oneMessage_hdr* mess, std::string& txtOut, const std::string& sepToken);
 	virtual jvxErrorType post_message_hook(jvxSize idIdentify) override;
 	virtual jvxErrorType prepare_retransmit()override;

@@ -6,7 +6,7 @@
 #include "common/CjvxProperties.h"
 #include "common/CjvxTechnology.h"
 
-class CjvxGenericRS232Device;
+class CjvxGenericConnectionDevice;
 
 class CjvxGenericConnectionTechnology: public IjvxTechnology, public CjvxTechnology
 {
@@ -46,7 +46,7 @@ public:
 
 // #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
-	virtual CjvxGenericRS232Device* allocate_device(const std::string& pName, jvxSize id) = 0;
+	virtual CjvxGenericConnectionDevice* allocate_device(const std::string& pName, jvxSize id) = 0;
 };
 
 #endif

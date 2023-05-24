@@ -73,7 +73,7 @@ CjvxGenericConnectionTechnology::activate()
 							{
 								for (i = 0; i < thePorts.ll(); i++)
 								{
-									CjvxGenericRS232Device* newDevice = NULL;
+									CjvxGenericConnectionDevice* newDevice = NULL;
 									newDevice = this->allocate_device(thePorts.std_str_at(i), i);
 
 									oneDeviceWrapper elm;
