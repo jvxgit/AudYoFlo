@@ -52,7 +52,6 @@ public:
 
 	virtual jvxErrorType translate_message_token_separator(oneMessage_hdr* mess, std::string& txtOut, const std::string& sep_token) override
 	{
-		jvxSize idSel;
 		jvxErrorType res = JVX_NO_ERROR;
 
 		res = theControl.translate_message_token_separator(mess, txtOut, sep_token);
@@ -225,7 +224,6 @@ public:
 		std::string& txt_out, jvxSize callback_id, jvxSize num_digits) override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		jvxSize i;
 		jvxBool foundit = false;
 		jvxHandle* propref = NULL;
 		std::string txt_out_pp;
@@ -279,8 +277,7 @@ public:
 		const std::string& txt_in, const std::string& ref_token, 
 		jvxSize callback_id, jvxCBitField convertFinetuning) override
 	{
-		jvxErrorType res = JVX_NO_ERROR;
-		jvxSize i;
+		jvxErrorType res = JVX_NO_ERROR;	
 		jvxBool foundit = false;
 		jvxHandle* propref = NULL;
 
