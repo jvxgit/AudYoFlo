@@ -24,8 +24,8 @@ CjvxHostJvx::activate()
 		_init_sequences();
 
 		// Report state switch of host - of course, it is already late..
-		_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_SELECT, _common_set.theComponentType, res);
-		_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, _common_set.theComponentType, res);
+		postrun_stateswitch(JVX_STATE_SWITCH_SELECT, _common_set.theComponentType, res);
+		postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, _common_set.theComponentType, res);
 	}
 	return(res);
 }
@@ -37,8 +37,8 @@ CjvxHostJvx::deactivate()
 	if(_common_set_min.theState == JVX_STATE_ACTIVE)
 	{
 		// Report state switch of host - of course, it is early..
-		_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, _common_set.theComponentType);
-		_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_UNSELECT, _common_set.theComponentType);
+		prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, _common_set.theComponentType);
+		prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, _common_set.theComponentType);
 
 		_terminate_sequences();
 		res = CjvxHost::deactivate();

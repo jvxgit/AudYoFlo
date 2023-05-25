@@ -656,7 +656,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_initialize(jvxApiString* errorMessage, jvxH
 		// Set cross references such that all report callbacks end up in this class
 		involvedComponents.theHost.hFHost->set_external_report_target(report);
 		involvedComponents.theHost.hFHost->set_external_report_on_config(report_on_config);
-		involvedComponents.theHost.hFHost->set_external_report_state_switch(report_on_state_switch);
+		involvedComponents.theHost.hFHost->add_external_report_state_switch(report_on_state_switch, "application");
 		involvedComponents.theHost.hFHost->add_external_interface(reinterpret_cast<jvxHandle*>(command_line), JVX_INTERFACE_COMMAND_LINE);
 		if (boot_steps)
 		{
@@ -744,6 +744,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::shutdown_terminate(jvxApiString* errorMessage, j
 			involvedComponents.theHost.hFHost->remove_external_interface(reinterpret_cast<jvxHandle*>(boot_steps), JVX_INTERFACE_BOOT_STEPS);
 		}
 		involvedComponents.theHost.hFHost->remove_external_interface(reinterpret_cast<jvxHandle*>(command_line), JVX_INTERFACE_COMMAND_LINE);
+		involvedComponents.theHost.hFHost->remove_external_report_state_switch(report_on_state_switch);
 		command_line->reset_command_line_content();
 		command_line->reset_command_line();
 

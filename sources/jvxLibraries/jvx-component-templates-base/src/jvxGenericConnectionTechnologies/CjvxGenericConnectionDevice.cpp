@@ -9,7 +9,8 @@ CjvxGenericConnectionDevice::CjvxGenericConnectionDevice(JVX_CONSTRUCTOR_ARGUMEN
 	_common_set.theComponentType.unselected(JVX_COMPONENT_UNKNOWN);
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxDevice*>(this));
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
-	
+	_common_set.theInterfaceFactory = static_cast<IjvxInterfaceFactory*>(this);
+
 	theConnectionTool = NULL;
 	theConnectionObj = NULL;
 	idDevice = JVX_SIZE_UNSELECTED;

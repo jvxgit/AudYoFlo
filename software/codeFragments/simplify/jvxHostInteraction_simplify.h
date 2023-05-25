@@ -19,11 +19,16 @@
 		return _set_external_report_on_config(static_cast<CjvxObject*>(this), callbackStruct);
 	};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION set_external_report_state_switch(IjvxReportStateSwitch* callbackStruct) override
+	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_report_state_switch(IjvxReportStateSwitch* callbackStruct, const char* tag) override
 	{
-		return _set_external_report_state_switch(static_cast<CjvxObject*>(this), callbackStruct);
+		return _add_external_report_state_switch(callbackStruct, tag);
 	};
 	
+	virtual jvxErrorType JVX_CALLINGCONVENTION remove_external_report_state_switch(IjvxReportStateSwitch* callbackStruct) override
+	{
+		return _remove_external_report_state_switch(callbackStruct);
+	};
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_interface(jvxHandle* theHdl, jvxInterfaceType theIFacetype) override
 	{
 		return _add_external_interface(static_cast<CjvxObject*>(this), theHdl, theIFacetype);

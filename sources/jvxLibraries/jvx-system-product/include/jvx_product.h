@@ -18,6 +18,7 @@
 #include "interfaces/property-extender/IjvxPropertyExtenderDirectMixerControl.h"
 #include "interfaces/property-extender/IjvxPropertyExtenderHrtfDispenser.h"
 #include "interfaces/property-extender/IjvxPropertyExtenderChainControl.h"
+#include "interfaces/property-extender/IjvxPropertyExtenderHeadTrackerProvider.h"
 
 #include "interfaces/jvxCommunication/IjvxAudioEncoder.h"
 #include "interfaces/jvxCommunication/IjvxAudioDecoder.h"

@@ -16,7 +16,9 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION set_external_report_on_config(IjvxReportOnConfig* callbackStruct) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION set_external_report_state_switch(IjvxReportStateSwitch* callbackStruct) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_report_state_switch(IjvxReportStateSwitch* callbackStruct, const char* tag) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION remove_external_report_state_switch(IjvxReportStateSwitch* callbackStruct) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_component(
 		IjvxObject* theObj, IjvxGlobalInstance* theGlob,

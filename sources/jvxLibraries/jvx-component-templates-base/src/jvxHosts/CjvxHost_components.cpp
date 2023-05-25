@@ -1831,11 +1831,8 @@ CjvxHost::select_component(jvxComponentIdentification& tp, jvxSize idx,
 									IjvxCoreStateMachine* theObjectSm = static_cast<IjvxCoreStateMachine*>(theTech);
 									IjvxObject* theObject = static_cast<IjvxObject*>(theTech);
 									tp.uId = uid;
-									if (_common_set_host.reportOnStateSwitch)
-									{
-										_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
-									}
 
+									prerun_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
 									res = static_local_select(theHinterface, theObjectSm, theObject, tp, theOwner);
 
 									if (res == JVX_NO_ERROR)
@@ -1854,10 +1851,7 @@ CjvxHost::select_component(jvxComponentIdentification& tp, jvxSize idx,
 										}
 										res = JVX_ERROR_INTERNAL;
 									}
-									if (_common_set_host.reportOnStateSwitch)
-									{
-										_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_SELECT, tp, res);
-									}
+									postrun_stateswitch(JVX_STATE_SWITCH_SELECT, tp, res);									
 								}
 								else
 								{
@@ -1963,10 +1957,7 @@ CjvxHost::select_component(jvxComponentIdentification& tp, jvxSize idx,
 										IjvxCoreStateMachine* theObjectSm = static_cast<IjvxCoreStateMachine*>(theNewDevice);
 										IjvxObject* theObject = static_cast<IjvxObject*>(theNewDevice);
 										tp.uId = uid;
-										if (_common_set_host.reportOnStateSwitch)
-										{
-											_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
-										}
+										prerun_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
 										res = static_local_select(theHinterface, theObjectSm, theObject, tp, theOwner);
 
 										if (res == JVX_NO_ERROR)
@@ -1983,10 +1974,7 @@ CjvxHost::select_component(jvxComponentIdentification& tp, jvxSize idx,
 											tp.uId = JVX_SIZE_UNSELECTED;
 											res = JVX_ERROR_INTERNAL;
 										}
-										if (_common_set_host.reportOnStateSwitch)
-										{
-											_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_SELECT, tp, res);
-										}
+										postrun_stateswitch(JVX_STATE_SWITCH_SELECT, tp, res);
 									}
 									else
 									{
@@ -2223,17 +2211,9 @@ CjvxHost::activate_selected_component(const jvxComponentIdentification& tp)
 				{
 					if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech)
 					{
-						if (_common_set_host.reportOnStateSwitch)
-						{
-							_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
-						}
-
+						prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
 						res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->activate();
-
-						if (_common_set_host.reportOnStateSwitch)
-						{
-							_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
-						}
+						postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
 
 						if (res != JVX_NO_ERROR)
 						{
@@ -2270,15 +2250,9 @@ CjvxHost::activate_selected_component(const jvxComponentIdentification& tp)
 					{
 						if (elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev)
 						{
-							if (_common_set_host.reportOnStateSwitch)
-							{
-								_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
-							}
+							this->prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
 							res = elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev->activate();
-							if (_common_set_host.reportOnStateSwitch)
-							{
-								_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
-							}
+							this->postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
 							if (res != JVX_NO_ERROR)
 							{
 								jvxApiError theErr;
@@ -2748,17 +2722,9 @@ CjvxHost::deactivate_selected_component(const jvxComponentIdentification& tp)
 								}
 							}
 
-							if (_common_set_host.reportOnStateSwitch)
-							{
-								_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);
-							}
-
+							prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);
 							res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->deactivate();
-
-							if (_common_set_host.reportOnStateSwitch)
-							{
-								_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
-							}
+							postrun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);						
 						}
 						else
 						{
@@ -2820,15 +2786,9 @@ CjvxHost::deactivate_selected_component(const jvxComponentIdentification& tp)
 									elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].cfac = NULL;
 								}
 
-								if (_common_set_host.reportOnStateSwitch)
-								{
-									_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);
-								}
+								prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);								
 								res = elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev->deactivate();
-								if (_common_set_host.reportOnStateSwitch)
-								{
-									_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
-								}
+								postrun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);							
 							}
 							else
 							{
@@ -2922,18 +2882,9 @@ CjvxHost::unselect_selected_component(jvxComponentIdentification& tp)
 						IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
 						IjvxStateMachine* theObjectSm = static_cast<IjvxStateMachine*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
 
-						if (_common_set_host.reportOnStateSwitch)
-						{
-							_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
-						}
-
+						prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
 						res = static_local_unselect(theHinterface, theObjectSm);
-
-						if (_common_set_host.reportOnStateSwitch)
-						{
-							_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
-						}
-
+						postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
 
 						if (res == JVX_NO_ERROR)
 						{
@@ -3005,16 +2956,9 @@ CjvxHost::unselect_selected_component(jvxComponentIdentification& tp)
 								elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev);
 							IjvxStateMachine* theObjectSm = static_cast<IjvxStateMachine*>(elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev);
 
-							if (_common_set_host.reportOnStateSwitch)
-							{
-								_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
-							}
+							prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);							
 							res = static_local_unselect(theHinterface, theObjectSm);
-
-							if (_common_set_host.reportOnStateSwitch)
-							{
-								_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
-							}
+							postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);							
 
 							if (res == JVX_NO_ERROR)
 							{
@@ -3318,7 +3262,7 @@ CjvxHost::switch_state_component(const jvxComponentIdentification& cpId, jvxStat
 	}
 	if (targetObject)
 	{
-		_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(sswitch, cpId);
+		prerun_stateswitch(sswitch, cpId);
 		switch (sswitch)
 		{
 		case JVX_STATE_SWITCH_PREPARE:
@@ -3336,7 +3280,40 @@ CjvxHost::switch_state_component(const jvxComponentIdentification& cpId, jvxStat
 		default:
 			res = JVX_ERROR_WRONG_STATE;
 		}
-		_common_set_host.reportOnStateSwitch->post_hook_stateswitch(sswitch, cpId, res);
+		postrun_stateswitch(sswitch, cpId, res);
 	}
 	return(res);
+}
+
+jvxErrorType
+CjvxHost::prerun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp)
+{
+	for (auto& elm : _common_set_host.registeredStateSwitchHandlers)
+	{
+		elm.second.ptrReport->pre_hook_stateswitch(ss, tp);
+	}
+	/*
+	if (_common_set_host.reportOnStateSwitch)
+	{
+		_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
+	}
+	*/
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxHost::postrun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp, jvxErrorType res)
+{
+	for (auto& elm : _common_set_host.registeredStateSwitchHandlers)
+	{
+		elm.second.ptrReport->post_hook_stateswitch(ss, tp, res);
+	}
+
+	/*
+	if (_common_set_host.reportOnStateSwitch)
+	{
+		_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
+	}
+	*/
+	return JVX_NO_ERROR;
 }

@@ -8,16 +8,25 @@ class CjvxHostInteraction : public CjvxHostTypeHandler
 {
 protected:
 
-	typedef struct
+	class oneInterface
 	{
-		jvxHandle* theHdl;
-		jvxInterfaceType selector[1];
-	} oneInterface;
+	public:
+		jvxHandle* theHdl = nullptr;
+		jvxInterfaceType selector[1] = { JVX_INTERFACE_UNKNOWN };
+	} ;
 
-	typedef struct
+	class oneBlacklistEntry
 	{
-		jvxComponentType selector[1];
-	} oneBlacklistEntry;
+	public:
+		jvxComponentType selector[1] = {JVX_COMPONENT_UNKNOWN};
+	} ;
+
+	class oneEntryReportStateSwitch
+	{
+	public:
+		IjvxReportStateSwitch* ptrReport = nullptr;
+		std::string tag;
+	};
 
 	struct
 	{
@@ -29,8 +38,10 @@ protected:
 		} otherComponents;
 
 		IjvxReport* reportUnit;
-		IjvxReportOnConfig* reportOnConfig;
-		IjvxReportStateSwitch* reportOnStateSwitch;
+		IjvxReportOnConfig* reportOnConfig = nullptr;
+		
+		//IjvxReportStateSwitch* reportOnStateSwitch = nullptr;
+		std::map<IjvxReportStateSwitch*, oneEntryReportStateSwitch> registeredStateSwitchHandlers;
 
 		JVX_THREAD_ID threadId_registered;
 
@@ -61,6 +72,7 @@ protected:
 public:
 
 	CjvxHostInteraction();
+	~CjvxHostInteraction();
 
 	jvxErrorType _add_external_component(CjvxObject* meObj,
 		IjvxObject* theObj, IjvxGlobalInstance* theGlob, const char* locationDescription, jvxBool allowMultipleInstance,
@@ -68,7 +80,8 @@ public:
 
 	jvxErrorType _remove_external_component(CjvxObject* meObj, IjvxObject* theObj);
 
-	jvxErrorType _set_external_report_state_switch(CjvxObject* meObj, IjvxReportStateSwitch* theHdl);
+	jvxErrorType _add_external_report_state_switch(IjvxReportStateSwitch* theHdl, const char* tag);
+	jvxErrorType _remove_external_report_state_switch(IjvxReportStateSwitch* theHdl);
 
 	jvxErrorType _set_external_report_target(CjvxObject* meObj, IjvxReport* theHdl);
 

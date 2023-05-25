@@ -1636,6 +1636,45 @@ jvx_bitfieldSelectionMax(jvxBitField sel)
     return(retVal+1); // One more than the highest position
 }
 
+std::string
+jvx_selectionProp2String_start(jvxPropertyContainerSingle<jvxSelectionList_cpp>& selLstProp)
+{
+	std::string oldSelection;
+	jvxSize cnt = 0;
+	jvxSize idSel = jvx_bitfieldSelection2Id(selLstProp);
+	if (JVX_CHECK_SIZE_SELECTED(idSel))
+	{
+		oldSelection = selLstProp.value.entries[idSel];
+	}
+	return oldSelection;
+}
+
+void
+jvx_selectionProp2String_stop(jvxPropertyContainerSingle<jvxSelectionList_cpp>& selLstProp,
+	const std::string& oldSelection, jvxSize& idSel, jvxSize idxEntry)
+{
+	jvxSize cnt = 0;
+	for (auto elm : selLstProp.value.entries)
+	{
+		if (elm == oldSelection)
+		{
+			idSel = cnt;
+		}
+	}
+
+	if (JVX_CHECK_SIZE_UNSELECTED(idSel))
+	{
+		if (selLstProp.value.entries.size())
+		{
+			idSel = 0;
+		}
+	}
+	if (JVX_CHECK_SIZE_UNSELECTED(idSel))
+	{
+		jvx_bitZSet(selLstProp.value.selection(idxEntry), idSel);
+	}
+}
+
 /**
  *
  *///=======================================================================

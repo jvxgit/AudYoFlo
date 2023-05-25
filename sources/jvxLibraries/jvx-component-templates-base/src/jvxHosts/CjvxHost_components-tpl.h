@@ -105,10 +105,7 @@ CjvxHost::t_select_component(std::vector<oneObjType<T>>& registeredTypes,
 								IjvxObject* theObject = static_cast<IjvxObject*>(theObj);
 								tp.uId = uid;
 
-								if (_common_set_host.reportOnStateSwitch)
-								{
-									_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
-								}
+								prerun_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
 								res = static_local_select(theHinterface, theObjectSm, theObject, tp, theOwner);
 
 								if (res == JVX_NO_ERROR)
@@ -127,10 +124,7 @@ CjvxHost::t_select_component(std::vector<oneObjType<T>>& registeredTypes,
 									}
 									res = JVX_ERROR_INTERNAL;
 								}
-								if (_common_set_host.reportOnStateSwitch)
-								{
-									_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_SELECT, tp, res);
-								}
+								postrun_stateswitch(JVX_STATE_SWITCH_SELECT, tp, res);
 							}
 							else
 							{
@@ -183,15 +177,9 @@ CjvxHost::t_activate_component(std::vector<oneObjType<T>>& registeredObjs,
 			{
 				if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj)
 				{
-					if (_common_set_host.reportOnStateSwitch)
-					{
-						_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
-					}
+					prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);				
 					res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->activate();
-					if (_common_set_host.reportOnStateSwitch)
-					{
-						_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
-					}
+					postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);					
 					if (res != JVX_NO_ERROR)
 					{
 						jvxApiError theErr;
@@ -279,15 +267,9 @@ jvxErrorType CjvxHost::t_deactivate_component(std::vector<oneObjType<T>>& regist
 							elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac = NULL;
 						}
 
-						if (_common_set_host.reportOnStateSwitch)
-						{
-							_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);
-						}
+						prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);						
 						res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->deactivate();
-						if (_common_set_host.reportOnStateSwitch)
-						{
-							_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
-						}
+						postrun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
 					}
 					else
 					{
@@ -333,15 +315,9 @@ CjvxHost::t_unselect_component(std::vector<oneObjType<T>>& registeredObjs,
 					IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
 					IjvxCoreStateMachine* theObjectSm = static_cast<IjvxCoreStateMachine*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
 
-					if (_common_set_host.reportOnStateSwitch)
-					{
-						_common_set_host.reportOnStateSwitch->pre_hook_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
-					}
+					prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);					
 					res = static_local_unselect(theHinterface, theObjectSm);
-					if (_common_set_host.reportOnStateSwitch)
-					{
-						_common_set_host.reportOnStateSwitch->post_hook_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
-					}
+					postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);					
 
 					if (res == JVX_NO_ERROR)
 					{

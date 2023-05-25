@@ -11,6 +11,11 @@ CjvxHostInteraction::CjvxHostInteraction()
 	config.minHostFunctionality = false;
 }
 
+CjvxHostInteraction::~CjvxHostInteraction()
+{
+	assert(_common_set_host.registeredStateSwitchHandlers.size() == 0);
+}
+
 jvxErrorType
 CjvxHostInteraction::_add_external_component(CjvxObject* meObj,
 	IjvxObject* theObj, IjvxGlobalInstance* theGlob, const char* locationDescription, jvxBool allowMultipleInstance,
@@ -295,21 +300,40 @@ CjvxHostInteraction::_set_external_report_on_config(CjvxObject* meObj, IjvxRepor
 }
 
 jvxErrorType
-CjvxHostInteraction::_set_external_report_state_switch(CjvxObject* meObj, IjvxReportStateSwitch* theHdl)
+CjvxHostInteraction::_add_external_report_state_switch(IjvxReportStateSwitch* theHdl, const char* tag)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	jvxState stat = JVX_STATE_NONE;
-	meObj->_state( &stat);
-	if (stat == JVX_STATE_SELECTED)
+	oneEntryReportStateSwitch newElm;
+	newElm.ptrReport = theHdl;
+	newElm.tag = tag;
+	auto elm = _common_set_host.registeredStateSwitchHandlers.find(theHdl);
+	if (elm == _common_set_host.registeredStateSwitchHandlers.end())
 	{
-		_common_set_host.reportOnStateSwitch = theHdl;
+		_common_set_host.registeredStateSwitchHandlers[theHdl] = newElm;
 	}
 	else
 	{
-		res = JVX_ERROR_WRONG_STATE;
+		res = JVX_ERROR_DUPLICATE_ENTRY;
 	}
 	return(res);
 }
+
+jvxErrorType
+CjvxHostInteraction::_remove_external_report_state_switch(IjvxReportStateSwitch* theHdl)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	auto elm = _common_set_host.registeredStateSwitchHandlers.find(theHdl);
+	if(elm != _common_set_host.registeredStateSwitchHandlers.end())
+	{
+		_common_set_host.registeredStateSwitchHandlers.erase(elm);	
+	}
+	else
+	{
+		res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+	return(res);
+}
+
 jvxErrorType
 CjvxHostInteraction::_add_external_interface(CjvxObject* meObj, jvxHandle* theHdl, jvxInterfaceType theIFacetype)
 {

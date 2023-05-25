@@ -160,6 +160,9 @@ protected:
 	void add_self_reference();
 	void remove_self_reference();
 
+	jvxErrorType prerun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp);
+	jvxErrorType postrun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp, jvxErrorType res);
+
 	// A unique id to identify things within the host scope during one session. This id does not 
 	// allow global and infinite identifiation as UUIDs do
 	jvxSize myUniqueIdSelf;

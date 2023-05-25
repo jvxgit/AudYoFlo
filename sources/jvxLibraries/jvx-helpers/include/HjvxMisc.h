@@ -399,6 +399,13 @@ jvx_uint642Id(jvxUInt64 sel);
 jvxInt32
 jvx_bitfieldSelectionMax(jvxBitField sel);
 
+std::string
+jvx_selectionProp2String_start(jvxPropertyContainerSingle<jvxSelectionList_cpp>&selLstProp);
+
+void
+jvx_selectionProp2String_stop(jvxPropertyContainerSingle<jvxSelectionList_cpp>&selLstProp,
+	const std::string & oldSelection, jvxSize & idSel, jvxSize idxEntry = 0);
+
 //intmax_t
 //jvx_string2IntMax(const std::string& in, jvxBool& err);
 

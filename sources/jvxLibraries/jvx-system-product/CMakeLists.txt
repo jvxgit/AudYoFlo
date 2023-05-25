@@ -24,9 +24,13 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/jvxTools/IjvxRtAudioFileWriter.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/qt-audio-host/configureQtAudioHost_features.h
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/helpers/HpjvxCast.h
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderStreamAudioPlugin.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderHrtfDispenser.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderChainControl.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderHeadTrackerProvider.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxBinaryFastDataControl_ids.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxConfiglines.h
