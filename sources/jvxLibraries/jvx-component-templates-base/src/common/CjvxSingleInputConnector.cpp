@@ -158,7 +158,11 @@ CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_
 jvxErrorType
 CjvxSingleInputConnector::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in, nullptr, "none" JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	jvxErrorType res = JVX_NO_ERROR;
+	if (_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
+	{
+		res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in, nullptr, "none" JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
 	if (res == JVX_NO_ERROR)
 	{
 		// Yes, we forward but this will end up in test_connect_forward where nothing really happens
@@ -290,9 +294,12 @@ CjvxSingleInputConnector::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 	buffers_in = _common_set_icon.theData_in->con_data.buffers[idx_stage_local];
 	// jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 
-	if(report)
+	if (buffers_in) // <- buffers may be nullptr if the input side is only a "trigger"
 	{
-		report->report_process_buffers(this, buffers_in, _common_set_icon.theData_in->con_params);
+		if (report)
+		{
+			report->report_process_buffers(this, buffers_in, _common_set_icon.theData_in->con_params);
+		}
 	}
 
 	// Forward chaining, will end up immediately in _process_buffers_icon anyway

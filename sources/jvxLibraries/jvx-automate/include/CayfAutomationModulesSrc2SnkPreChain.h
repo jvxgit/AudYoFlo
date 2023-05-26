@@ -72,6 +72,7 @@ namespace CayfAutomationModules
 			jvxSize iconIdTrigger) override;
 
 		void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated) override;
+		void print(std::ostream& out);
 	};
 }
 

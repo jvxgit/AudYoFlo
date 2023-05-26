@@ -429,6 +429,61 @@ namespace CayfAutomationModules
 		derivedArgs.tpMaster = tp_activated;
 	}
 
+	void
+		CayfAutomationModulesSrc2Snk::print(std::ostream& out)
+	{
+		jvxSize segId = 0;
+		
+		// First the pre-chain
+		out << "## ##" << config.chainNamePrefix << std::endl;
+		this->print(out, segId);
+		out << std::endl;
+	}
+
+	void
+		CayfAutomationModulesSrc2Snk::print(std::ostream& out, jvxSize& segId)
+	{
+		std::string refIdIn;
+		std::string refIdOut;
+		if (JVX_CHECK_SIZE_SELECTED(config.oconIdTrigger))
+		{
+			refIdOut = "[" + jvx_size2String(config.oconIdTrigger) + "]";
+		}
+		out << "-->" << "<" << "TRIGGER" << ">#" << config.nmMaster << " + " << config.oconNmSource << refIdOut << std::endl;
+
+		printList(out, segId, config.connectedNodes);
+
+		if (JVX_CHECK_SIZE_SELECTED(config.iconIdTrigger))
+		{
+			refIdIn = "[" + jvx_size2String(config.iconIdTrigger) + "]";
+		}
+		out << "-->" << jvxComponentIdentification_txt(config.tpInvolved) << "+" << config.iconNmSink << refIdIn << "*||" << std::flush;
+	}
+
+	void
+		CayfAutomationModulesSrc2Snk::printList(std::ostream& out, jvxSize& segId, std::list<ayfConnectConfigCpEntry>& lst)
+	{
+		std::string refIdIn;
+		std::string refIdOut;
+		for (auto elm : lst)
+		{
+			refIdIn.clear();
+			refIdOut.clear();
+			if (elm.assSegmentId == segId)
+			{
+				if (JVX_CHECK_SIZE_SELECTED(elm.idIconRefTriggerConnector))
+				{
+					refIdIn = "[" + jvx_size2String(elm.idIconRefTriggerConnector) + "]";
+				}
+				if (JVX_CHECK_SIZE_SELECTED(elm.idOconRefTriggerConnector))
+				{
+					refIdIn = "[" + jvx_size2String(elm.idOconRefTriggerConnector) + "]";
+				}
+				out << "\t--><" << elm.modName << ">+" << elm.iconNm << refIdIn << "*|--|*" << "<" << elm.modName << ">+" << elm.oconNm << refIdOut << std::endl;
+			}
+		}
+	}
+
 	void 
 		CayfAutomationModulesSrc2Snk::postponed_try_connect()
 	{

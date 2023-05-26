@@ -877,6 +877,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 				// It may be useful if a previous module is fully flexible.
 				// The converter will ignore this parameter
 				ld_try.con_params.buffersize= preferredByOutput->con_params.buffersize;
+				ld_try.con_params.segmentation.x = preferredByOutput->con_params.segmentation.x;
 
 				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 				log << "Trying to negotiate modified parameters with successor in chain." << std::endl;

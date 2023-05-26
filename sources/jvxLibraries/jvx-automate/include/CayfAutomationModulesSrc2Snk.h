@@ -144,6 +144,10 @@ namespace CayfAutomationModules
 
 		// Depending on the use-case, derive the sinks and sources
 		virtual void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated);
+
+		virtual void print(std::ostream& out);
+		void print(std::ostream& out, jvxSize& segId);
+		void printList(std::ostream& out, jvxSize& segId, std::list<ayfConnectConfigCpEntry>& lst);
 	};
 }
 

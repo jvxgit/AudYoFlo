@@ -84,5 +84,45 @@ namespace CayfAutomationModules
 				config.iconNmSink, bridgeId, 1, oconIdTrigger, iconIdTrigger);
 		}
 	}
+
+	void 
+		CayfAutomationModulesSrc2SnkPreChain::print(std::ostream& out)
+	{
+		jvxSize segId = 0;
+		// First the pre-chain
+		out << config.chainNamePrefix << std::endl;	
+
+		std::string refIdIn;
+		std::string refIdOut;
+		if (JVX_CHECK_SIZE_SELECTED(oconIdTriggerPreChain))
+		{
+			refIdOut = "[" + jvx_size2String(oconIdTriggerPreChain) + "]";
+		}
+		out << "-->" << "<" << "TRIGGER" << ">#" << config.nmMaster << " + " << oconNmSrcPreChain << refIdOut << std::endl;
+
+		printList(out, segId, config.connectedNodes);
+		if (JVX_CHECK_SIZE_SELECTED(iconIdTriggerPreChain))
+		{
+			refIdIn = "[" + jvx_size2String(iconIdTriggerPreChain) + "]";
+		}
+		out << "-->" << jvxComponentIdentification_txt(tpEnter) << "+" << iconNmEnterPreChain << refIdIn << "*|-" << std::flush;
+
+		segId++;
+		refIdIn.clear();
+		refIdOut.clear();
+
+		if (JVX_CHECK_SIZE_SELECTED(config.oconIdTrigger))
+		{
+			refIdOut = "[" + jvx_size2String(config.oconIdTrigger) + "]";
+		}
+		out << "-|*" << "<" << jvxComponentIdentification_txt(config.tpInvolved) << "+" << config.oconNmSource << refIdOut << std::endl;
+
+		printList(out, segId, config.connectedNodes);
+		if (JVX_CHECK_SIZE_SELECTED(config.iconIdTrigger))
+		{
+			refIdIn = "[" + jvx_size2String(config.iconIdTrigger) + "]";
+		}
+		out << "-->" << "TRIGGER" << "+" << config.iconNmSink << refIdIn << "*||" << std::flush;
+	}
 }
 
