@@ -59,7 +59,7 @@ public:
 #include "codeFragments/simplify/jvxTechnologies_simplify.h"
 #include "codeFragments/simplify/jvxObjects_simplify.h"
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
-#include "codeFragments/simplify/jvxHiddenInterfaces_simplify.h"
+#include "codeFragments/simplify/jvxHiddenInterfaceFwd_simplify.h"
 #include "codeFragments/simplify/jvxSystemStatus_simplify.h"
 
 };

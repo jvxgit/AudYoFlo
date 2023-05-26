@@ -1,0 +1,7 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxGenericRs232Technology_pcg";
+	CLASSNAME = "CjvxGenericRs232Technology_pcg";
+
+	include "rs232-settings.pcgf";
+};

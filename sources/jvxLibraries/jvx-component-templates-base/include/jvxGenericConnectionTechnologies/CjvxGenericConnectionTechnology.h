@@ -1,5 +1,5 @@
-#ifndef __CJVXGENERICRS232TECHNOLOGY_H__
-#define __CJVXGENERICRS232TECHNOLOGY_H__
+#ifndef __CJVXGENERICCONNECTIONTECHNOLOGY_H__
+#define __CJVXGENERICCONNECTIONTECHNOLOGY_H__
 
 #include "jvx.h"
 
@@ -8,7 +8,8 @@
 
 class CjvxGenericConnectionDevice;
 
-class CjvxGenericConnectionTechnology: public IjvxTechnology, public CjvxTechnology
+class CjvxGenericConnectionTechnology: public IjvxTechnology, public CjvxTechnology,
+	public IjvxProperties, public CjvxProperties
 {
 protected:
 
@@ -39,10 +40,11 @@ public:
 #include "codeFragments/simplify/jvxSystemStatus_simplify.h"
 
 #define JVX_INTERFACE_SUPPORT_PROPERTIES
-#define JVX_INTERFACE_SUPPORT_SEQUENCER_CONTROL
-#include "codeFragments/simplify/jvxHiddenInterfaces_simplify.h"
+#include "codeFragments/simplify/jvxHiddenInterface_simplify.h"
 #undef JVX_INTERFACE_SUPPORT_PROPERTIES
-#undef JVX_INTERFACE_SUPPORT_SEQUENCER_CONTROL
+
+#include "codeFragments/simplify/jvxProperties_simplify.h"
+#include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
 // #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 

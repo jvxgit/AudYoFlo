@@ -4,7 +4,7 @@
 #include "jvxGenericRS232Technologies/CjvxGenericRS232Device.h"
 
 CjvxGenericConnectionTechnology::CjvxGenericConnectionTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
-	CjvxTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
 {
 	_common_set.theComponentType.unselected(JVX_COMPONENT_UNKNOWN);
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxTechnology*>(this));
@@ -95,7 +95,6 @@ CjvxGenericConnectionTechnology::activate()
 jvxErrorType
 CjvxGenericConnectionTechnology::deactivate()
 {
-	jvxSize i;
 	jvxErrorType res = _deactivate();
 	if(res == JVX_NO_ERROR)
 	{

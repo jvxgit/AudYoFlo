@@ -1,0 +1,32 @@
+	SECTION rs232_settings
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION baudrate
+		{
+			DESCRIPTION = "Baudrate";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+
+		SECTION stopbits
+		{
+			DESCRIPTION = "Stopbits";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+
+		SECTION parity
+		{
+			DESCRIPTION = "Parity";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+		SECTION bits4Bytes
+		{
+			DESCRIPTION = "Bits for bytes";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};
+	};	

@@ -33,7 +33,8 @@ public:
 #undef JVX_STATE_MACHINE_DEFINE_READY
 
 #include "codeFragments/simplify/jvxObjects_simplify.h"
-#include "codeFragments/simplify/jvxHiddenInterfaces_simplify.h"
+
+#include "codeFragments/simplify/jvxHiddenInterfaceFwd_simplify.h"
 
 	//#include "codeFragments/simplify/jvxProperties_simplify.h"
 
