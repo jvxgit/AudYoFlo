@@ -51,12 +51,15 @@ public:
 	jvxErrorType reference_next(jvxSize, IjvxConnectionIterator**) override;
 	jvxErrorType reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*, jvxApiString*)override;
 
+	jvxErrorType available_to_connect_ocon() override;
+
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr
 #define JVX_SUPPRESS_AUTO_READY_CHECK_ICON
 #define JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 #define JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
+#define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
 #include "codeFragments/simplify/jvxOutputConnector_simplify.h"
 #include "codeFragments/simplify/jvxConnectorCommon_simplify.h"
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
@@ -65,6 +68,7 @@ public:
 #undef JVX_SUPPRESS_AUTO_READY_CHECK_ICON
 #undef JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 #undef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
+#undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
 };
 
 class CjvxSingleOutputConnectorMulti : public CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>
@@ -72,6 +76,8 @@ class CjvxSingleOutputConnectorMulti : public CjvxConnectorMulti< IjvxOutputConn
 public:
 	CjvxSingleOutputConnectorMulti(jvxBool withTriggerConnectorArg) :
 		CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>(withTriggerConnectorArg) {};
+
+	jvxErrorType available_to_connect_ocon() override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_ocon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
 		IjvxDataConnectionCommon* ass_connection_common, IjvxOutputConnector** replace_connector) override;

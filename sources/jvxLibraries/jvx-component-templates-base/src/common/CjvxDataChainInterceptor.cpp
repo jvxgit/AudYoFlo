@@ -130,13 +130,23 @@ CjvxDataChainInterceptor::parent_factory(IjvxConnectorFactory** my_parent)
 // =============================================================================================
 
 jvxErrorType 
-CjvxDataChainInterceptor::associated_common_icon(IjvxDataConnectionCommon** ref)
+CjvxDataChainInterceptor::associated_connection_icon(IjvxDataConnectionCommon** ref)
 {
 	if (ref)
 	{
 		*ref = theCommon_in;
 	}
 	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxDataChainInterceptor::available_to_connect_icon()
+{
+	if (theCommon_in == nullptr)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ALREADY_IN_USE;
 }
 
 jvxErrorType 
@@ -174,13 +184,23 @@ CjvxDataChainInterceptor::unselect_connect_icon(IjvxConnectorBridge* obj,
 // =====================================================================
 
 jvxErrorType
-CjvxDataChainInterceptor::associated_common_ocon(IjvxDataConnectionCommon** ref)
+CjvxDataChainInterceptor::associated_connection_ocon(IjvxDataConnectionCommon** ref)
 {
 	if (ref)
 	{
 		*ref = theCommon_out;
 	}
 	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxDataChainInterceptor::available_to_connect_ocon()
+{
+	if (theCommon_out == nullptr)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ALREADY_IN_USE;
 }
 
 jvxErrorType

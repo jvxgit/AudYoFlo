@@ -331,16 +331,31 @@ CjvxSingleInputConnector::return_trigger_otcon(IjvxTriggerOutputConnector* otcon
 	return JVX_ERROR_UNSUPPORTED;
 }
 
+jvxErrorType 
+CjvxSingleInputConnector::available_to_connect_icon()
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
+
 // ===============================================================================================
 // ===============================================================================================
 
+jvxErrorType 
+CjvxSingleInputConnectorMulti::available_to_connect_icon() 
+{
+	if (numConnectorsInUse < acceptNumberConnectors)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ALREADY_IN_USE;
+}
 
 jvxErrorType 
 CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
 	IjvxDataConnectionCommon* ass_connection_common, IjvxInputConnector** replace_connector) 
 {
 	CjvxSingleInputConnector* newConnector = nullptr;
-	if (numConnectorsInUse < (acceptNumberConnectors - 1))
+	if (numConnectorsInUse < acceptNumberConnectors)
 	{
 		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleInputConnector(withTriggerConnector));
 		newConnector->activate(_common_set_io_common_ptr->_common_set_io_common.object,
@@ -348,12 +363,9 @@ CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, Ijv
 			_common_set_io_common_ptr->_common_set_io_common.descriptor,
 			report, allocatedConnectors.size());
 	}
-
-	else if (numConnectorsInUse < acceptNumberConnectors)
+	else 
 	{
-		IjvxInputConnector* retLoc = this;
-		_select_connect_icon(obj, master, ass_connection_common, &retLoc);
-		newConnector = this;
+		return JVX_ERROR_ALREADY_IN_USE;
 	}
 
 	if (newConnector)
@@ -385,19 +397,13 @@ CjvxSingleInputConnectorMulti::unselect_connect_icon(IjvxConnectorBridge* obj,
 			report->report_unselected_connector(elm->second);
 		}
 
-		if (replace_connector == static_cast<IjvxInputConnector*>(this))
-		{
-			// If this is the connector, just unselect it
-			_unselect_connect_icon(obj, replace_connector);
-		}
-		else
-		{
-			elm->second->deactivate();
+		assert(replace_connector != static_cast<IjvxInputConnector*>(this));
 
-			// If it is one of the additional connectors, unselect and delete
-			res = elm->second->unselect_connect_icon(obj, replace_connector);
-			JVX_SAFE_DELETE_OBJ(elm->second);
-		}
+		elm->second->deactivate();
+
+		// If it is one of the additional connectors, unselect and delete
+		res = elm->second->unselect_connect_icon(obj, replace_connector);
+		JVX_SAFE_DELETE_OBJ(elm->second);	
 
 		allocatedConnectors.erase(elm);
 		return JVX_NO_ERROR;

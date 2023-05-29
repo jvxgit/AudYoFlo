@@ -535,7 +535,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 			ic = icS->reference_icon();
 			if (ic)
 			{
-				ic->associated_common_icon(&assComm);
+				ic->associated_connection_icon(&assComm);
 				ic->connected_ocon(&oc);
 			}
 
@@ -595,7 +595,7 @@ jvx_connections_widget::ui_redraw_factories(IjvxDataConnectionProcess* theProces
 			oc = ocS->reference_ocon();
 			if (oc)
 			{
-				oc->associated_common_ocon(&assComm);
+				oc->associated_connection_ocon(&assComm);
 				oc->connected_icon(&ic);
 			}
 						
@@ -1510,7 +1510,6 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 		{
 			IjvxConnectorFactory* theConFac = NULL;
 			IjvxInputConnectorSelect* theIcons = NULL;
-			IjvxDataConnectionCommon* theCom = NULL;
 			theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 			if (theConFac)
 			{
@@ -1519,11 +1518,7 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 				{
 					jvxBool isAvail = false;
 					IjvxInputConnector* iconc = theIcons->reference_icon();
-					if (iconc)
-					{
-						iconc->associated_common_icon(&theCom);
-					}
-					if (theCom == NULL)
+					if (iconc && (iconc->available_to_connect_icon() == JVX_NO_ERROR))
 					{
 
 					}
@@ -1548,7 +1543,6 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 		{
 			IjvxConnectorFactory* theConFac = NULL;
 			IjvxOutputConnectorSelect* theOcons = NULL;
-			IjvxDataConnectionCommon* theCom = NULL;
 			theDataConnections->reference_connection_factory_uid(id_selected_connector.uid_select_confac, &theConFac);
 			if (theConFac)
 			{
@@ -1557,11 +1551,7 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 				{
 					jvxBool isAvail = false;
 					IjvxOutputConnector* oconc = theOcons->reference_ocon();
-					if (oconc)
-					{
-						oconc->associated_common_ocon(&theCom);
-					}
-					if (theCom == NULL)
+					if (oconc && (oconc->available_to_connect_ocon() == JVX_NO_ERROR))
 					{
 
 					}

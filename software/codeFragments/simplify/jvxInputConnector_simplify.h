@@ -298,10 +298,17 @@ virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_icon(JVX_CONNECTION_FEED
 	return res;
 };
 
-virtual jvxErrorType associated_common_icon(IjvxDataConnectionCommon** ref) override
+virtual jvxErrorType associated_connection_icon(IjvxDataConnectionCommon** ref) override
 {
-	return _associated_common_icon(ref);
+	return _associated_connection_icon(ref);
 }
+
+#ifndef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
+virtual jvxErrorType available_to_connect_icon() override
+{
+	return _available_to_connect_icon();
+}
+#endif
 
 virtual IjvxInputConnector* reference_icon() override
 {

@@ -151,12 +151,12 @@ CjvxSpNMeasureIr::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	if (res == JVX_NO_ERROR)
 	{
 		node_output._common_set_node_params_a_1io.number_channels = (jvxInt32)_common_set_ocon.theData_out.con_params.number_channels;
-		if (
-			(genMeasureIr_node::measurements.measurement_out_channels.value.entries.size() != node_output._common_set_node_params_a_1io.number_channels) ||
-			(genMeasureIr_node::measurements.measurement_in_channels.value.entries.size() != node_output._common_set_node_params_a_1io.number_channels))
-		{
-			reconstruct_properties(selMeasures, false);
-		}
+	}
+	if (
+		(genMeasureIr_node::measurements.measurement_out_channels.value.entries.size() != node_output._common_set_node_params_a_1io.number_channels) ||
+		(genMeasureIr_node::measurements.measurement_in_channels.value.entries.size() != node_inout._common_set_node_params_a_1io.number_channels))
+	{
+		reconstruct_properties(selMeasures, false);
 	}
 
 	return res;

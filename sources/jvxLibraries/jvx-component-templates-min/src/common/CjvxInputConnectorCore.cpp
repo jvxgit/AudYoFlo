@@ -30,13 +30,23 @@ CjvxInputConnectorCore::deactivate()
 // ===============================================================
 
 jvxErrorType
-CjvxInputConnectorCore::_associated_common_icon(IjvxDataConnectionCommon** ref)
+CjvxInputConnectorCore::_associated_connection_icon(IjvxDataConnectionCommon** ref)
 {
 	if (ref)
 	{
 		*ref = _common_set_icon.theCommon_to;
 	}
 	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxInputConnectorCore::_available_to_connect_icon()
+{
+	if (_common_set_icon.theCommon_to == nullptr)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ALREADY_IN_USE;
 }
 
 jvxErrorType

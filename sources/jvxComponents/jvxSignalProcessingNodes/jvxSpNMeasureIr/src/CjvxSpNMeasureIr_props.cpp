@@ -73,9 +73,9 @@ CjvxSpNMeasureIr::reconstruct_properties(jvxSize selMeasuresNew, jvxBool trigger
 	genMeasureIr_node::measurements.measurement_out_channels.value.entries.clear();
 	if (JVX_CHECK_SIZE_SELECTED(selMeasures))
 	{
-		if (JVX_CHECK_SIZE_SELECTED(node_inout._common_set_node_params_a_1io.number_channels))
+		if (JVX_CHECK_SIZE_SELECTED(node_output._common_set_node_params_a_1io.number_channels))
 		{
-			for (i = 0; i < node_inout._common_set_node_params_a_1io.number_channels; i++)
+			for (i = 0; i < node_output._common_set_node_params_a_1io.number_channels; i++)
 			{
 				std::string txt = "Rendering Channel #" + jvx_size2String(i);
 				genMeasureIr_node::measurements.measurement_out_channels.value.entries.push_back(txt);

@@ -53,7 +53,7 @@ CjvxNodeBase1io::reportRequestTestChainMaster()
 	IjvxDataConnectionCommon* dataConn = NULL;
 
 	// Inform the secondary chain to be updated
-	this->associated_common_icon(&dataConn);
+	this->associated_connection_icon(&dataConn);
 
 	if (dataConn)
 	{
@@ -266,7 +266,7 @@ CjvxNodeBase1io::inform_chain_test(jvxBool oldMethod)
 	IjvxDataConnectionCommon* dataConn = NULL;
 
 	// Inform the secondary chain to be updated
-	associated_common_icon(&dataConn);
+	associated_connection_icon(&dataConn);
 	if (dataConn)
 	{
 		dataConn->unique_id_connections(&processId);

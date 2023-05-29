@@ -325,8 +325,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 		for (; elmIc != lst_inputs.end(); elmIc++)
 		{
 			IjvxConnectorFactory* theConFac = NULL;
-			IjvxInputConnectorSelect* icons = NULL;
-			IjvxDataConnectionCommon* com = NULL;
+			IjvxInputConnectorSelect* icons = NULL;			
 			allConnections->reference_connection_factory_uid(elmIc->identify.fac_uid, &theConFac);
 			if (theConFac == NULL)
 			{
@@ -341,11 +340,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 				break;
 			}
 			IjvxInputConnector* iconc = icons->reference_icon();
-			if (iconc)
-			{
-				iconc->associated_common_icon(&com);
-			}
-			if (com)
+			if (iconc && (iconc->available_to_connect_icon() == JVX_NO_ERROR))
 			{
 				someWorkDone = true;
 				theConFac->return_reference_input_connector(icons);
@@ -370,7 +365,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 		{
 			IjvxConnectorFactory* theConFac = NULL;
 			IjvxOutputConnectorSelect* ocons = NULL;
-			IjvxDataConnectionCommon* com = NULL;
+			// IjvxDataConnectionCommon* com = NULL;
 			allConnections->reference_connection_factory_uid(elmOc->identify.fac_uid, &theConFac);
 			if (theConFac == NULL)
 			{
@@ -385,11 +380,7 @@ CjvxConnectionDropzone::jvx_cleanup_candidates_dropzone(IjvxDataConnections* all
 				break;
 			}
 			IjvxOutputConnector* oconc = ocons->reference_ocon();
-			if (oconc)
-			{
-				oconc->associated_common_ocon(&com);
-			}
-			if (com)
+			if (oconc && (oconc->available_to_connect_ocon() == JVX_NO_ERROR))
 			{
 				someWorkDone = true;
 				theConFac->return_reference_output_connector(ocons);

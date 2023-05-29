@@ -877,13 +877,9 @@ jvx_connections_widget::add_connector_dz()
 				theConFac->reference_input_connector(id_selected_connector.id_select_icon, &theIs);
 				if (theIs)
 				{
-					IjvxDataConnectionCommon* ref = NULL;
+					// IjvxDataConnectionCommon* ref = NULL;
 					IjvxInputConnector* theI = theIs->reference_icon();
-					if (theI)
-					{
-						theI->associated_common_icon(&ref);
-					}
-					if (ref == NULL)
+					if (theI && (theI->available_to_connect_icon() == JVX_NO_ERROR))
 					{
 						jvxBool alreadythere = false;
 						std::list<lst_elm_icons>::iterator elmI = lst_inputs.begin();
@@ -918,13 +914,8 @@ jvx_connections_widget::add_connector_dz()
 				theConFac->reference_output_connector(id_selected_connector.id_select_ocon, &theOs);
 				if (theOs)
 				{
-					IjvxDataConnectionCommon* ref = NULL;
 					IjvxOutputConnector* theO = theOs->reference_ocon();
-					if (theO)
-					{
-						theO->associated_common_ocon(&ref);
-					}
-					if (ref == NULL)
+					if (theO && (theO->available_to_connect_ocon() == JVX_NO_ERROR))
 					{
 						jvxBool alreadythere = false;
 						std::list<lst_elm_ocons>::iterator elmO = lst_outputs.begin();
@@ -1126,15 +1117,10 @@ jvx_connections_widget::add_connectors_dz()
 		for (j = 0; j < numIc; j++)
 		{
 			IjvxInputConnectorSelect* theIcs = NULL;
-			IjvxDataConnectionCommon* com = NULL;
 			theCoFac->reference_input_connector(j, &theIcs);
 			assert(theIcs);
 			IjvxInputConnector* theIcc = theIcs->reference_icon();
-			if (theIcc)
-			{
-				theIcc->associated_common_icon(&com);
-			}
-			if (!com)
+			if (theIcc && (theIcc->available_to_connect_icon() == JVX_NO_ERROR))
 			{
 				lst_elm_icons newElm;
 				jvxBool alreadyThere = false;
@@ -1167,11 +1153,7 @@ jvx_connections_widget::add_connectors_dz()
 			theCoFac->reference_output_connector(j, &theOcs);
 			assert(theOcs);
 			IjvxOutputConnector* theOcc = theOcs->reference_ocon();
-			if (theOcc)
-			{
-				theOcc->associated_common_ocon(&com);
-			}
-			if (!com)
+			if (theOcc && (theOcc->available_to_connect_ocon() == JVX_NO_ERROR))
 			{
 				lst_elm_ocons newElm;
 				jvxBool alreadyThere = false;

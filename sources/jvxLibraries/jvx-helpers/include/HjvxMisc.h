@@ -829,7 +829,8 @@ jvxErrorType jvx_activateObjectInModule(
 	const std::string& refModuleName, 
 	IjvxObject* theOwner = nullptr,
 	jvxBool extend_if_necessary = false,
-	const std::string& attach_name = "");
+	const std::string& attach_name = "",
+	jvxBool attachUId = false);
 jvxErrorType jvx_deactivateObjectInModule(IjvxHost* hHostRef, jvxComponentIdentification& tp);
 
 JVX_STATIC_INLINE jvxErrorType jvx_errc(jvxDspBaseErrorType errin)

@@ -46,7 +46,8 @@ public:
 	void _modify_ctxtid(jvxSize cxtIdArg);
 	jvxErrorType _descriptor_connector(jvxApiString* str);
 	jvxErrorType _parent_factory(IjvxConnectorFactory** my_parent);
-	jvxErrorType _associated_common(IjvxDataConnectionCommon** ref);
+	jvxErrorType _associated_connection(IjvxDataConnectionCommon** ref);
+	jvxErrorType _available_to_connect();
 
 	jvxSize _context_subid()
 	{

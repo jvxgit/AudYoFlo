@@ -29,13 +29,23 @@ CjvxOutputConnectorCore::deactivate()
 }
 
 jvxErrorType
-CjvxOutputConnectorCore::_associated_common_ocon(IjvxDataConnectionCommon** ref)
+CjvxOutputConnectorCore::_associated_connection_ocon(IjvxDataConnectionCommon** ref)
 {
 	if (ref)
 	{
 		*ref = _common_set_ocon.theCommon_from;
 	}
 	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxOutputConnectorCore::_available_to_connect_ocon()
+{
+	if (_common_set_ocon.theCommon_from == nullptr)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ALREADY_IN_USE;
 }
 
 jvxErrorType

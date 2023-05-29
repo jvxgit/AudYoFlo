@@ -1765,7 +1765,6 @@ CjvxHostJsonCommandsActShow::act_add_ocon_dz(const std::string& arg2, const std:
 	IjvxInputConnectorSelect* icons = NULL;
 	jvxComponentIdentification tpId;
 	jvxComponentIdentification tpIdL;
-	IjvxDataConnectionCommon* proc = NULL;
 	jvxApiString strMF;
 	jvxBool foundit = false;
 	jvxSize num, numcons, i, j;
@@ -1822,21 +1821,18 @@ CjvxHostJsonCommandsActShow::act_add_ocon_dz(const std::string& arg2, const std:
 					if (icons)
 					{
 						icons->descriptor_connector(&fldStr);
-						IjvxInputConnector* iconc = icons->reference_icon();
-						if (iconc)
-						{
-							iconc->associated_common_icon(&proc);
-						}
-						conFac->return_reference_input_connector(icons);
-						icons = NULL;
-
 						if (fldStr.std_str() == arg3)
 						{
-							if (proc)
+							jvxBool availCon = false;
+							IjvxInputConnector* iconc = icons->reference_icon();
+							if (iconc)
 							{
-								inUse = true;
+								availCon = (iconc->available_to_connect_icon() == JVX_NO_ERROR);
 							}
-							else
+							conFac->return_reference_input_connector(icons);
+							icons = NULL;
+
+							if (availCon)
 							{
 								lst_elm_icons newElm;
 								newElm.identify.fac_uid = uId;
@@ -1856,6 +1852,10 @@ CjvxHostJsonCommandsActShow::act_add_ocon_dz(const std::string& arg2, const std:
 								{
 									lst_inputs.push_back(newElm);
 								}
+							}
+							else
+							{
+								inUse = true;
 							}
 							foundit = true;
 							break;
@@ -2200,7 +2200,7 @@ CjvxHostJsonCommandsActShow::act_add_icon_dz(const std::string& arg2, const std:
 	IjvxOutputConnectorSelect* ocons = NULL;
 	jvxComponentIdentification tpId;
 	jvxComponentIdentification tpIdL;
-	IjvxDataConnectionCommon* proc = NULL;
+	
 	jvxApiString strMF;
 	jvxBool foundit = false;
 	jvxSize num, numcons, i, j;
@@ -2257,21 +2257,18 @@ CjvxHostJsonCommandsActShow::act_add_icon_dz(const std::string& arg2, const std:
 					if (ocons)
 					{
 						ocons->descriptor_connector(&fldStr);
-						IjvxOutputConnector* oconc = ocons->reference_ocon();
-						if (oconc)
-						{
-							oconc->associated_common_ocon(&proc);
-						}
-						conFac->return_reference_output_connector(ocons);
-						ocons = NULL;
-
 						if (fldStr.std_str() == arg3)
 						{
-							if (proc)
+							jvxBool availCon = false;
+							IjvxOutputConnector* oconc = ocons->reference_ocon();
+							if (oconc)
 							{
-								inUse = true;
+								availCon = (oconc->available_to_connect_ocon() == JVX_NO_ERROR);
 							}
-							else
+							conFac->return_reference_output_connector(ocons);
+							ocons = NULL;
+
+							if(availCon)
 							{
 								lst_elm_ocons newElm;
 								newElm.identify.fac_uid = uId;
@@ -2292,6 +2289,11 @@ CjvxHostJsonCommandsActShow::act_add_icon_dz(const std::string& arg2, const std:
 									lst_outputs.push_back(newElm);
 								}
 							}
+							else
+							{
+								inUse = true;
+							}
+
 							foundit = true;
 							break;
 						}

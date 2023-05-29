@@ -39,7 +39,7 @@ CjvxSignalProcessingDeviceDeploy::setInputParameters(jvxLinkDataDescriptor_con_p
 	inputParams = *params;
 
 	// Inform the secondary chain to be updated
-	this->associated_common_icon(&dataConn);
+	this->associated_connection_icon(&dataConn);
 
 	if (dataConn)
 	{

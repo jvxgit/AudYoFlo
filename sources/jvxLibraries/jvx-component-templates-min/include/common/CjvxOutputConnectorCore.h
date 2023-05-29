@@ -38,7 +38,8 @@ public:
 	jvxErrorType activate(CjvxInputOutputConnectorCore* commRef, IjvxOutputConnector* ocon);
 	jvxErrorType deactivate();
 
-	jvxErrorType _associated_common_ocon(IjvxDataConnectionCommon** ref);
+	jvxErrorType _associated_connection_ocon(IjvxDataConnectionCommon** ref);
+	jvxErrorType _available_to_connect_ocon();
 
 	jvxErrorType _supports_connector_class_ocon(
 		jvxDataFormatGroup format_group,

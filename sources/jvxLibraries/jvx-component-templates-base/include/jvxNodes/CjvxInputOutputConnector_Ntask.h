@@ -109,8 +109,9 @@ public:
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_CLASS(descriptor_connector, common_ntask, (jvxApiString* str), (str));
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_CLASS(parent_factory, common_ntask, (IjvxConnectorFactory** my_parent),
 		(my_parent));
-	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_common_icon, associated_common, common_ntask,
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_connection_icon, associated_connection, common_ntask,
 		(IjvxDataConnectionCommon** ref), (ref));
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(available_to_connect_icon, available_to_connect, common_ntask, (), ());
 
 	// =======================================================================================================
 
@@ -184,8 +185,10 @@ public:
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_CLASS(descriptor_connector, common_ntask, (jvxApiString* str), (str));
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_CLASS(parent_factory, common_ntask, (IjvxConnectorFactory** my_parent),
 		(my_parent));
-	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_common_ocon, associated_common, common_ntask, 
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_connection_ocon, associated_connection, common_ntask, 
 		(IjvxDataConnectionCommon** ref), (ref));
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(available_to_connect_ocon, available_to_connect, common_ntask,(), ());
+
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE(prepare_connect_ocon, (JVX_CONNECTION_FEEDBACK_TYPE(fdb)),
 		(JVX_CONNECTION_FEEDBACK_CALL(fdb)));
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE(postprocess_connect_ocon, (JVX_CONNECTION_FEEDBACK_TYPE(fdb)), 

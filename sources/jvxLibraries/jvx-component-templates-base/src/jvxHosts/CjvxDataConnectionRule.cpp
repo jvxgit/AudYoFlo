@@ -720,11 +720,7 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part(IjvxDataConnections* allCo
 									{
 										IjvxDataConnectionCommon* ref = NULL;
 										IjvxOutputConnector* ocon = theOcon_F->reference_ocon();
-										if (ocon)
-										{
-											ocon->associated_common_ocon(&ref);
-										}
-										if (ref == NULL)
+										if (ocon && (ocon->available_to_connect_ocon() == JVX_NO_ERROR))
 										{
 											theBridge.from.connector_name = strOc_F.std_str();
 
@@ -961,11 +957,7 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part_finalize(IjvxDataConnectio
 							{
 								IjvxDataConnectionCommon* ref = NULL;
 								IjvxInputConnector* icon = theIcon_T->reference_icon();
-								if (icon)
-								{
-									icon->associated_common_icon(&ref);
-								}
-								if (ref == NULL)
+								if (icon && (icon->available_to_connect_icon() == JVX_NO_ERROR))
 								{
 									theBridge.to.connector_name = strIc_T.std_str();
 									theBridge.bridge_name = elmB->bridge_name;
@@ -981,6 +973,15 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part_finalize(IjvxDataConnectio
 									}
 									// Positive for this bridge
 									bridgeCreated = true;
+								}
+								else
+								{
+									JVX_OUTPUT_REPORT_DEBUG_COUT_START(rep);
+									JVX_OUTPUT_REPORT_DEBUG_COUT_REF << "-->" << __FUNCTION__ << ": Found input connector, component identification = <" <<
+										jvxComponentIdentification_txt(theBridge.to.tp) <<
+										">, connector factory <" << theBridge.to.connector_factory_name << ">" <<
+										", connector <" << theBridge.to.connector_name << ">, but connector is already in use." << std::flush;
+									JVX_OUTPUT_REPORT_DEBUG_COUT_STOP(rep);
 								}
 							}
 							else

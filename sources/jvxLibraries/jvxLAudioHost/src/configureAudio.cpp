@@ -3098,7 +3098,6 @@ configureAudio::stopProcessing()
 	{
 		stop_timer();
 	}
-	this->timerViewUpdate = NULL;
 }
 
 void
@@ -4505,6 +4504,7 @@ configureAudio::stop_timer()
 		this->timerViewUpdate->stop();
 		disconnect(this->timerViewUpdate, SIGNAL(timeout()));
 		delete(this->timerViewUpdate);
+		this->timerViewUpdate = nullptr;
 
 		if (myParent->subWidgets.main.theWidget)
 		{

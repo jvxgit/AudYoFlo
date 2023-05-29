@@ -805,6 +805,8 @@ jvxErrorType
 CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+	jvxCBitField checkFlags = 0;
+	jvxLinkDataDescriptor ld_try;
 
 	switch(buffermode)
 	{
@@ -823,14 +825,16 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 		log << "Entering function " << __FUNCTION__ << ":" << std::endl;
 		JVX_STOP_LOCK_LOG;
 
+		res = JVX_ERROR_UNSUPPORTED;
+
+		// Start with a setup that will definitely work!
+		ld_try.con_params = _common_set_icon.theData_in->con_params;
+
 		if (
 			(node_output._common_set_node_params_a_1io.samplerate != preferredByOutput->con_params.rate) ||
-			(node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels) ||			
+			(node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels) ||
 			(node_output._common_set_node_params_a_1io.format != preferredByOutput->con_params.format))
 		{
-			res = JVX_ERROR_UNSUPPORTED;
-			jvxCBitField checkFlags = 0;
-
 			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 			log << "Condition to negotiate with previous component given." << std::endl;
 			log << "-- Samplerate: " << node_output._common_set_node_params_a_1io.samplerate << " vs. " <<
@@ -854,7 +858,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 
 			// At the moment, this is not considered since it is not fully clear why it would not match TODO
 			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT); // This may change here
-			
+
 			// Invert all properties
 			jvx_bitInvert(checkFlags);
 
@@ -863,10 +867,6 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 				preferredByOutput->con_params, checkFlags)))
 			{
 				// Prepare a test with only modified samplerate and number of channels
-				jvxLinkDataDescriptor ld_try;
-
-				// Start with a setup that will definitely work!
-				ld_try.con_params = _common_set_icon.theData_in->con_params;
 
 				// Then, adapt the samplerate and the number of channels and the format
 				ld_try.con_params.rate = preferredByOutput->con_params.rate;
@@ -876,7 +876,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 				// The buffersize is passed as well even though it will not really be of importance
 				// It may be useful if a previous module is fully flexible.
 				// The converter will ignore this parameter
-				ld_try.con_params.buffersize= preferredByOutput->con_params.buffersize;
+				ld_try.con_params.buffersize = preferredByOutput->con_params.buffersize;
 				ld_try.con_params.segmentation.x = preferredByOutput->con_params.segmentation.x;
 
 				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
@@ -891,39 +891,49 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 					log << "Negotiation returned JVX_ERROR_COMPROMISE." << std::endl;
 					JVX_STOP_LOCK_LOG;
-
-					// If we have found a compromise we need to check in detail that only the buffersize has deviates - which we accept
-					res = JVX_ERROR_UNSUPPORTED;
-					checkFlags = 0;
-					jvx_bitSet(checkFlags, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
-					jvx_bitSet(checkFlags, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
-					jvx_bitInvert(checkFlags);
-					if (!jvx_evalBool(jvx_check_differences(
-						_common_set_icon.theData_in->con_params, ld_try.con_params, checkFlags)))
-					{
-						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-						log << "Returned compromise is acceptable." << std::endl;
-						JVX_STOP_LOCK_LOG;
-
-						res = JVX_NO_ERROR;
-
-						// Update all input parameters
-						update_simple_params_from_ldesc();
-
-						// We can work with this - let us update the output parameters to the values as requested by the successor
-						node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
-						node_output._common_set_node_params_a_1io.samplerate = preferredByOutput->con_params.rate;
-
-						// test_set_output_parameters(); <- this will be called in the calling function
-
-						// Need to update the output parameter num channels and rate!
-						neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels,
-							JVX_SIZE_UNSELECTED,
-							node_output._common_set_node_params_a_1io.samplerate);
-					}
 				}
 			}
 		}
+		else
+		{
+			// Well, it seems that everything is ok			
+			ld_try.con_params.buffersize = preferredByOutput->con_params.buffersize;
+			ld_try.con_params.segmentation.x = preferredByOutput->con_params.segmentation.x;
+		}
+
+		// We need to check in detail that at this point, only the buffersize deviates - which we accept
+		checkFlags = 0;
+		jvx_bitSet(checkFlags, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+		jvx_bitSet(checkFlags, (jvxSize)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
+		jvx_bitInvert(checkFlags);
+		if (!jvx_evalBool(jvx_check_differences(
+			_common_set_icon.theData_in->con_params, ld_try.con_params, checkFlags)))
+		{
+			if (res == JVX_ERROR_COMPROMISE)
+			{
+				// If we come from this path
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				log << "Returned compromise is acceptable." << std::endl;
+				JVX_STOP_LOCK_LOG;
+			}
+
+			res = JVX_NO_ERROR;
+
+			// Update all input parameters
+			update_simple_params_from_ldesc();
+
+			// We can work with this - let us update the output parameters to the values as requested by the successor
+			node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
+			node_output._common_set_node_params_a_1io.samplerate = preferredByOutput->con_params.rate;
+
+			// test_set_output_parameters(); <- this will be called in the calling function
+
+			// Need to update the output parameter num channels and rate!
+			neg_output._update_parameters_fixed(node_output._common_set_node_params_a_1io.number_channels,
+				JVX_SIZE_UNSELECTED,
+				node_output._common_set_node_params_a_1io.samplerate);
+		}
+		
 		break;
 	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
 		if (node_output._common_set_node_params_a_1io.buffersize != preferredByOutput->con_params.buffersize)

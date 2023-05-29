@@ -448,7 +448,7 @@ CjvxBareNtask::inform_chain_test(IjvxInputConnector* icon)
 	// Inform the secondary chain to be updated
 	if (icon)
 	{
-		icon->associated_common_icon(&dataConn);
+		icon->associated_connection_icon(&dataConn);
 	}
 
 	if (dataConn)

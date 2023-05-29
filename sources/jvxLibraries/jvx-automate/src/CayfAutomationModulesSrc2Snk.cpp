@@ -268,7 +268,7 @@ namespace CayfAutomationModules
 			ayfConnectConfigCpEntryRuntime cpElm(elmM);
 
 			cpElm.cpId = cpElm.cpTp;
-			res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.modName, obj_dev, true, cpElm.manSuffix);
+			res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.modName, obj_dev, true, cpElm.manSuffix, cpElm.addUniqueId);
 
 			if(res == JVX_NO_ERROR)
 			{

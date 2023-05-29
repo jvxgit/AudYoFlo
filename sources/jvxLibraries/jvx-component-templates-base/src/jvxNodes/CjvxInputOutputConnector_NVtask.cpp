@@ -50,13 +50,23 @@ CjvxCommonNVtask::_parent_factory(IjvxConnectorFactory** my_parent)
 }
 
 jvxErrorType
-CjvxCommonNVtask::_associated_common(IjvxDataConnectionCommon** ref)
+CjvxCommonNVtask::_associated_connection(IjvxDataConnectionCommon** ref)
 {
 	if (ref)
 	{
 		*ref = _common_set_comnvtask.theCommon;
 	}
 	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxCommonNVtask::_available_to_connect()
+{
+	if (_common_set_comnvtask.theCommon == nullptr)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ALREADY_IN_USE;
 }
 
 // ==========================================================

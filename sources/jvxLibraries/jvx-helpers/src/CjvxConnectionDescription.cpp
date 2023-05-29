@@ -206,13 +206,8 @@ CjvxConnectionDescription::create_process_group_from_description(
 				ocons->descriptor_connector(&ttmp);
 				if (ttmp.std_str() == elm->from.connector_name)
 				{
-					IjvxDataConnectionCommon* refC = NULL;	
 					IjvxOutputConnector* ocon = ocons->reference_ocon();
-					if (ocon)
-					{
-						ocon->associated_common_ocon(&refC);
-					}
-					if (refC == NULL)
+					if (ocon && (ocon->available_to_connect_ocon() == JVX_NO_ERROR))
 					{
 						out_ocon_id = i;
 						break;
@@ -307,13 +302,8 @@ CjvxConnectionDescription::create_process_group_from_description(
 				icons->descriptor_connector(&ttmp);
 				if (ttmp.std_str() == elm->to.connector_name)
 				{
-					IjvxDataConnectionCommon* refC = NULL;
 					IjvxInputConnector* icon = icons->reference_icon();
-					if (icon)
-					{
-						icon->associated_common_icon(&refC);
-					}
-					if (refC == NULL)
+					if (icon && (icon->available_to_connect_icon() == JVX_NO_ERROR))
 					{
 						in_icon_id = i;
 						break;

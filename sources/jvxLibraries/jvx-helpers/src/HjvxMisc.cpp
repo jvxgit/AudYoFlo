@@ -4168,7 +4168,8 @@ jvx_activateObjectInModule(
 	const std::string& refModuleName, 
 	IjvxObject* theOwner, 
 	jvxBool extend_if_necessary,
-	const std::string& attach_name)
+	const std::string& attach_name,
+	jvxBool attachUId)
 {
 	jvxSize id = JVX_SIZE_UNSELECTED;
 	jvxSize i;
@@ -4208,7 +4209,14 @@ jvx_activateObjectInModule(
 					jvxErrorType resL = man->get_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &var);
 					if (resL == JVX_NO_ERROR)
 					{
-						astr.assign(astr.std_str() + attach_name);
+						std::string attName = astr.std_str() + attach_name;
+						if (attachUId)
+						{
+							jvxSize uId = JVX_SIZE_UNSELECTED;
+							hHostRef->request_unique_object_id(&uId);
+							attName += "{" + jvx_size2String(uId) + "}";
+						}
+						astr.assign(attName);
 						resL = man->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &var);
 					}
 					/*

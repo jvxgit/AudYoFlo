@@ -198,14 +198,24 @@ public:
 		return _unselect_connect_ocon(obj, replace_connector);
 	};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_ocon(IjvxDataConnectionCommon **ref) override
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_connection_ocon(IjvxDataConnectionCommon **ref) override
 	{
-		return _associated_common_ocon(ref);
+		return _associated_connection_ocon(ref);
 	};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon **ref) override
+	virtual jvxErrorType JVX_CALLINGCONVENTION available_to_connect_ocon() override
 	{
-		return _associated_common_icon(ref);
+		return _available_to_connect_ocon();
+	};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_connection_icon(IjvxDataConnectionCommon **ref) override
+	{
+		return _associated_connection_icon(ref);
+	};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION available_to_connect_icon() override
+	{
+		return available_to_connect_icon();
 	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_connector(jvxApiString* str) override

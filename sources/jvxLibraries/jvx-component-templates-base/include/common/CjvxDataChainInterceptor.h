@@ -95,7 +95,8 @@ public:
 	
 	// =============================================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon** ref) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_connection_icon(IjvxDataConnectionCommon** ref) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION available_to_connect_icon() override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_icon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master, 
 		IjvxDataConnectionCommon* ass_connection_common,
@@ -143,7 +144,8 @@ public:
 
 	// ====================================================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_ocon(IjvxDataConnectionCommon** ref) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_connection_ocon(IjvxDataConnectionCommon** ref) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION available_to_connect_ocon() override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_ocon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master, 
 		IjvxDataConnectionCommon* ass_connection_common,

@@ -47,12 +47,13 @@ public:
 	jvxErrorType start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	jvxErrorType stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
-
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	jvxErrorType number_next(jvxSize*) override;
 	jvxErrorType reference_next(jvxSize, IjvxConnectionIterator**) override;
 	jvxErrorType reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*, jvxApiString*)override;
+
+	jvxErrorType available_to_connect_icon() override;
 
 	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requestTestChain);
 
@@ -74,6 +75,7 @@ public:
 #define JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 #define JVX_CONNECTION_MASTER_SKIP_CONNECT_CONNECT_ICON
 #define JVX_CONNECTION_MASTER_SKIP_DISCONNECT_CONNECT_ICON
+#define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
 #include "codeFragments/simplify/jvxInputConnector_simplify.h"
 #include "codeFragments/simplify/jvxConnectorCommon_simplify.h"
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
@@ -86,6 +88,7 @@ public:
 #undef JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 #undef JVX_CONNECTION_MASTER_SKIP_CONNECT_CONNECT_ICON
 #undef JVX_CONNECTION_MASTER_SKIP_DISCONNECT_CONNECT_ICON
+#undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
 };
 
 // =======================================================================================
@@ -97,10 +100,12 @@ public:
 	CjvxSingleInputConnectorMulti(jvxBool withTriggerConnectorArg): 
 		CjvxConnectorMulti< IjvxInputConnector, CjvxSingleInputConnector>(withTriggerConnectorArg) {};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_icon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
+	jvxErrorType available_to_connect_icon() override;
+
+	jvxErrorType select_connect_icon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
 		IjvxDataConnectionCommon* ass_connection_common, IjvxInputConnector** replace_connector) override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION unselect_connect_icon(IjvxConnectorBridge* obj,
+	jvxErrorType unselect_connect_icon(IjvxConnectorBridge* obj,
 		IjvxInputConnector* replace_connector) override;
 };
 

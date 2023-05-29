@@ -400,17 +400,12 @@ CjvxConsoleHost_be_drivehost::show_dropzone(const oneDrivehostCommand& dh_comman
 					iconFac->reference_input_connector(elmi->identify.icon_id, &icon);
 					if (icon)
 					{
-						IjvxDataConnectionCommon* proc = NULL;
 						icon->descriptor_connector(&fldStr);
 						JVX_CREATE_CONNECTION_DROPZONE_ICON_NAME(jelmarrelml, fldStr.std_str());
 						jelmarrelmll.addConsumeElement(jelmarrelml);
 
 						IjvxInputConnector* iconc = icon->reference_icon();
-						if (iconc)
-						{
-							iconc->associated_common_icon(&proc);
-						}
-						if (proc == NULL)
+						if (iconc && (iconc->available_to_connect_icon() == JVX_NO_ERROR))
 						{
 							JVX_CREATE_CONNECTION_DROPZONE_ICON_AVAIL(jelmarrelml, JVX_INDICATE_TRUE_SHORT);
 						}
@@ -454,7 +449,6 @@ CjvxConsoleHost_be_drivehost::show_dropzone(const oneDrivehostCommand& dh_comman
 				connections->reference_connection_factory_uid(elmo->identify.fac_uid, &oconFac);
 				if (oconFac)
 				{
-					IjvxDataConnectionCommon* proc = NULL;
 					jvx_request_interfaceToObject(oconFac, NULL, &tpId, &strMF);
 					JVX_CREATE_CONNECTION_DROPZONE_OCON_FACTORY_IDENTITY(jelmarrelml, jvxComponentIdentification_txt(tpId));
 					jelmarrelmll.addConsumeElement(jelmarrelml);
@@ -469,11 +463,7 @@ CjvxConsoleHost_be_drivehost::show_dropzone(const oneDrivehostCommand& dh_comman
 						JVX_CREATE_CONNECTION_DROPZONE_OCON_NAME(jelmarrelml, fldStr.std_str());
 						jelmarrelmll.addConsumeElement(jelmarrelml);
 						IjvxOutputConnector* oconc = ocon->reference_ocon();
-						if (oconc)
-						{
-							oconc->associated_common_ocon(&proc);
-						}
-						if (proc == NULL)
+						if (oconc && (oconc->available_to_connect_ocon() == JVX_NO_ERROR))
 						{
 							JVX_CREATE_CONNECTION_DROPZONE_OCON_AVAIL(jelmarrelml, JVX_INDICATE_TRUE_SHORT);
 						}

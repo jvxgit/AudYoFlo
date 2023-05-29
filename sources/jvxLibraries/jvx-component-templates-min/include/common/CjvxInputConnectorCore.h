@@ -36,7 +36,9 @@ public:
 	jvxErrorType activate(CjvxInputOutputConnectorCore* commRef, IjvxInputConnector* icon);
 	jvxErrorType deactivate();
 
-	jvxErrorType _associated_common_icon(IjvxDataConnectionCommon** ref);
+	jvxErrorType _associated_connection_icon(IjvxDataConnectionCommon** ref);
+	jvxErrorType _available_to_connect_icon();
+
 
 	jvxErrorType _supports_connector_class_icon(
 		jvxDataFormatGroup format_group,

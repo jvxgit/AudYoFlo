@@ -230,7 +230,22 @@ CjvxSingleOutputConnector::return_trigger_itcon(IjvxTriggerInputConnector* otcon
 	return JVX_ERROR_UNSUPPORTED;
 }
 
+jvxErrorType
+CjvxSingleOutputConnector::available_to_connect_ocon()
+{
+	return JVX_ERROR_UNSUPPORTED;
+}
 // =================================================================================
+
+jvxErrorType
+CjvxSingleOutputConnectorMulti::available_to_connect_ocon()
+{
+	if (numConnectorsInUse < acceptNumberConnectors)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ALREADY_IN_USE;
+}
 
 jvxErrorType
 CjvxSingleOutputConnectorMulti::select_connect_ocon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
@@ -245,12 +260,9 @@ CjvxSingleOutputConnectorMulti::select_connect_ocon(IjvxConnectorBridge* obj, Ij
 			_common_set_io_common_ptr->_common_set_io_common.descriptor,
 			report, allocatedConnectors.size());
 	}
-
-	else if (numConnectorsInUse < acceptNumberConnectors)
+	else
 	{
-		IjvxOutputConnector* retLoc = this;
-		_select_connect_ocon(obj, master, ass_connection_common, &retLoc);
-		newConnector = this;
+		return JVX_ERROR_ALREADY_IN_USE;
 	}
 
 	if (newConnector)
@@ -282,19 +294,13 @@ CjvxSingleOutputConnectorMulti::unselect_connect_ocon(IjvxConnectorBridge* obj,
 			report->report_unselected_connector(elm->second);
 		}
 
-		if (replace_connector == static_cast<IjvxOutputConnector*>(this))
-		{
-			// If this is the connector, just unselect it
-			_unselect_connect_ocon(obj, replace_connector);
-		}
-		else
-		{
-			elm->second->deactivate();
+		assert(replace_connector != static_cast<IjvxOutputConnector*>(this));
+		
+		elm->second->deactivate();
 
-			// If it is one of the additional connectors, unselect and delete
-			res = elm->second->unselect_connect_ocon(obj, replace_connector);
-			JVX_SAFE_DELETE_OBJ(elm->second);
-		}
+		// If it is one of the additional connectors, unselect and delete
+		res = elm->second->unselect_connect_ocon(obj, replace_connector);
+		JVX_SAFE_DELETE_OBJ(elm->second);	
 
 		allocatedConnectors.erase(elm);
 		return JVX_NO_ERROR;

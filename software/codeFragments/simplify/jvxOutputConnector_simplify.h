@@ -126,10 +126,17 @@ virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_ocon(JVX_CONNECTION_FEED
 
 // ==============================================================================
 
-virtual jvxErrorType associated_common_ocon(IjvxDataConnectionCommon** ref) override
+virtual jvxErrorType associated_connection_ocon(IjvxDataConnectionCommon** ref) override
 {
-	return _associated_common_ocon(ref);
+	return _associated_connection_ocon(ref);
 }
+
+#ifndef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
+virtual jvxErrorType available_to_connect_ocon() override
+{
+	return _available_to_connect_ocon();
+}
+#endif
 
 // ==============================================================================
 

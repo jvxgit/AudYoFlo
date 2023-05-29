@@ -60,7 +60,8 @@ JVX_INTERFACE IjvxInputConnector : public IjvxInputConnectorSelect
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxInputConnector() {};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_icon(IjvxDataConnectionCommon** ref) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_connection_icon(IjvxDataConnectionCommon** ref) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION available_to_connect_icon() = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** ocon) = 0;
 
@@ -123,7 +124,10 @@ JVX_INTERFACE IjvxOutputConnector: public IjvxOutputConnectorSelect
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxOutputConnector() {};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION associated_common_ocon(IjvxDataConnectionCommon** ref) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION associated_connection_ocon(IjvxDataConnectionCommon** ref) = 0;
+
+	// Return JVX_NO_ERROR if connector is available for a new connection
+	virtual jvxErrorType JVX_CALLINGCONVENTION available_to_connect_ocon() = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) = 0;
 

@@ -63,9 +63,11 @@ CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleInputConnector* icon
 	
 	// The pointers are a shortcut!!
 	jvxData** bufsOut = (jvxData**)bufsSideChannel[idxBufferProcess];
+	jvxData** bufsFrom = (jvxData**)bufferPtrs;
 
 	for (i = 0; i < szExtraBuffersChannels; i++)
 	{
-		memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);
+		jvx_mixSamples_flp(bufsFrom[i], bufsOut[i], params.buffersize);
+		//memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);
 	}
 }

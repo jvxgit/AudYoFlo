@@ -201,7 +201,8 @@ public:
 
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_CLASS(descriptor_connector, common_vtask, (jvxApiString* str), (str));
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_CLASS(parent_factory, common_vtask,(IjvxConnectorFactory** my_parent), (my_parent));
-	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_common_icon, associated_common, common_vtask,(IjvxDataConnectionCommon** ref), (ref));
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_connection_icon, associated_connection, common_vtask,(IjvxDataConnectionCommon** ref), (ref));
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(available_to_connect_icon, available_to_connect, common_vtask, (), ());
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION select_connect_icon(IjvxConnectorBridge* obj, IjvxConnectionMaster* master,
 		IjvxDataConnectionCommon* ass_connection_common,
@@ -286,8 +287,10 @@ public:
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_CLASS(parent_factory, 
 		common_vtask, (IjvxConnectorFactory** my_parent), (my_parent));
 
-	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_common_ocon, 
-		associated_common, common_vtask, (IjvxDataConnectionCommon** ref), (ref));
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(associated_connection_ocon, 
+		associated_connection, common_vtask, (IjvxDataConnectionCommon** ref), (ref));
+	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE_FUNCNAME_CLASS(available_to_connect_ocon,
+		available_to_connect, common_vtask, (), ());
 
 	JVX_SUBCALL_PULLIN_FUNCTION_DECLARE(prepare_connect_ocon, 
 		(JVX_CONNECTION_FEEDBACK_TYPE(fdb)), (JVX_CONNECTION_FEEDBACK_CALL(fdb)));
