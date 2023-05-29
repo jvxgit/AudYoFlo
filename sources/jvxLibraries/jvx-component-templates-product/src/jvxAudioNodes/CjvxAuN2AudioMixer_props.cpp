@@ -54,8 +54,9 @@ void
 CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSide)
 {
 	jvxSize numChannels = 0;
-	std::string propUpdateIn = "";
-	std::string propUpdateOut = "";
+
+	jvxCallManagerProperties callGate;
+	CjvxProperties::_start_property_report_collect(callGate);
 
 	this->_lock_properties_local();
 	if (inputSide)
@@ -130,7 +131,7 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 				}
 			}
 
-			if (extender) propUpdateIn = extender->propUpdateLinearFields(true);
+			if (extender) extender->propUpdateLinearFields(this, true);
 
 			gen2AudioMixer_node::associate__mixer_input__mixer_control(static_cast<CjvxProperties*>(this),
 				mixer_input.fldGain, mixer_input.lenField,
@@ -214,7 +215,7 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 				}
 			}
 
-			if (extender) propUpdateOut = extender->propUpdateLinearFields(true);
+			if (extender) extender->propUpdateLinearFields(this, false);
 
 			gen2AudioMixer_node::associate__mixer_output__mixer_control(static_cast<CjvxProperties*>(this),
 				mixer_output.fldGain, mixer_output.lenField,
@@ -226,64 +227,28 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 	}
 	this->_unlock_properties_local();
 
+
 	// Report the changed properties
-	std::string props;
 	if (inputSide)
 	{
-		if (!props.empty())
-		{
-			props += ",";
-		}
-		props += gen2AudioMixer_node::mixer_input.mixer_control.channels.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_input.mixer_control.level_gain.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_input.mixer_control.level_avrg.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_input.mixer_control.level_max.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_input.mixer_control.level_mute.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_input.mixer_control.level_clip.descriptor.std_str();
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.channels.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_gain.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_avrg.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_max.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_mute.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_clip.descriptor.std_str(), true);
 	}
 	if (outputSide)
 	{
-		if (!props.empty())
-		{
-			props += ",";
-		}
-		props += gen2AudioMixer_node::mixer_output.mixer_control.channels.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_output.mixer_control.level_gain.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_output.mixer_control.level_avrg.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_output.mixer_control.level_max.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_output.mixer_control.level_mute.descriptor.std_str();
-		props += "," + gen2AudioMixer_node::mixer_output.mixer_control.level_clip.descriptor.std_str();
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.channels.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.level_gain.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.level_avrg.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.level_max.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.level_mute.descriptor.std_str(), true);
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.level_clip.descriptor.std_str(), true);
 	}
 
-	if (!propUpdateIn.empty())
-	{
-		if (!props.empty())
-		{
-			props += ",";
-		}
-		props += propUpdateIn;
-	}
-	if (!propUpdateOut.empty())
-	{
-		if (!props.empty())
-		{
-			props += ",";
-		}
-		props += propUpdateOut;
-	}
-	if (!props.empty())
-	{
-		CjvxProperties::property_changed_descriptor_tag_add(props);
-		props = "[" + props + "]";
-
-		// Report all properties to have a new desciptor also
-		// _report_command_request()
-		CjvxReportCommandRequest_id theRequest(
-			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY,
-			_common_set.theComponentType,
-			props.c_str());
-		_request_command(theRequest);
-	}
+	CjvxProperties::_stop_property_report_collect(callGate);	
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, set_extend_ifx_reference)

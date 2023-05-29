@@ -3377,7 +3377,7 @@ CjvxProperties::property_changed_descriptor_tag_add(std::string& descriptor)
 	{
 		if (!descriptor.empty())
 		{
-			descriptor += ", ";
+			descriptor += ",";
 		}
 		descriptor += elm + "+";
 	}

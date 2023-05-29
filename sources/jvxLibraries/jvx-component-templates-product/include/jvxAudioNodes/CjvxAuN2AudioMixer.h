@@ -27,7 +27,7 @@ public:
 	virtual void deleteLinearFields(jvxBool isInput) = 0;
 	virtual void reallocateLinearFields(jvxBool isInput, jvxSize lenField) = 0;
 	virtual void fillLinearFields(jvxBool isInput, jvxSize cnt, std::shared_ptr<CjvxChannelSpecificAttach>&) = 0;
-	virtual std::string propUpdateLinearFields(jvxBool isInput) = 0;
+	virtual void propUpdateLinearFields(CjvxProperties* props, jvxBool isInput) = 0;
 	virtual void putConfiguration_attached(jvxBool isInput, std::shared_ptr<CjvxChannelSpecificAttach>&, IjvxConfigProcessor* processor,
 		jvxHandle* sectionToContainAllSubsectionsForMe, const std::string& prefix) = 0;
 	virtual void getConfiguration_attached(jvxBool isInput, std::shared_ptr<CjvxChannelSpecificAttach>&, IjvxConfigProcessor* processor,
