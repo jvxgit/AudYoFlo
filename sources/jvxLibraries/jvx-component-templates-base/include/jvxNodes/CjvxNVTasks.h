@@ -73,6 +73,10 @@ protected:
 	struct
 	{
 		std::map<jvxSize, oneEntryProcessingVTask> lst_in_proc_tasks;
+
+		// This lock secures the lst_in_proc_tasks and all other locations where new ACTIVE connections are switched from prepared to active
+		// it mostly protects list lst_in_proc_tasks but may be used in extend.
+		// It is also used in the process call to only check started links
 		JVX_MUTEX_HANDLE safeAcces_proc_tasks;
 		jvxSize uId_proc_tasks;
 	} _common_set_nv_proc;	

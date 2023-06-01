@@ -32,7 +32,14 @@ SECTION PROPERTIES
 			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
 			CALLBACKS = {"update_source_direction"};
 
-			SECTION angles
+			SECTION angles_set
+			{
+				DESCRIPTION = "Callback, which is triggered, when source input_source_direction_angles_deg of BinauralAudioRender is changed.";
+				TYPE = "JVX_DATAFORMAT_DATA";
+				CALLBACK_SET_POSTHOOK = "update_source_direction";
+				ASSOCIATE_EXTERNAL = "yes";
+			};  
+			SECTION angles_inuse
 			{
 				DESCRIPTION = "Callback, which is triggered, when source input_source_direction_angles_deg of BinauralAudioRender is changed.";
 				TYPE = "JVX_DATAFORMAT_DATA";

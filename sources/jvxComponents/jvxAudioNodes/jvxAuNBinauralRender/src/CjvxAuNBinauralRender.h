@@ -9,8 +9,6 @@
 
 #include "jvx_fft_tools/jvx_firfft_cf.h"
 
-#define NEW_CODE
-
 enum class jvxRenderingUpdateStatus
 {
 	JVX_RENDERING_UPDATE_OFF,
@@ -42,50 +40,18 @@ class CjvxAuNBinauralRender : public CjvxBareNode1ioRearrange,
 {
 private:
 
-	typedef std::vector<CjvxFastConvolution> ConvolutionsLR;
-	typedef std::vector<ConvolutionsLR> ConvolutionsHrirCurrentNext;
-	typedef std::vector<ConvolutionsHrirCurrentNext> ConvolutionsSOFAdb;
-
-	ConvolutionsSOFAdb convolutions;
-	jvxSize idx_conv_hrir_current = 0;
-	jvxSize idx_conv_sofa_current = 0;
-
-	// Indicate if convolution switch happened.
-	bool conv_hrir_dirty = false;
-	bool sofa_db_dirty = false;
-
 	// This pointer reference should be non-null on state ACTIVE and higher - it is set in state SELECTED
 	IjvxPropertyExtenderHrtfDispenser* theHrtfDispenser = nullptr;
 
 	// Property containing azimuth (first array element) and inclination angle (second element) of rendered source.
-	jvxData input_source_direction_angles_deg[2] = { 0.0, 90.0 };
+	jvxData source_direction_angles_deg_set[2] = { 0.0, 90.0 };
 
 	// State array containing azimuth (first array element) and inclination angle (second element) of rendered source.
-	jvxData source_direction_angles_deg[2] = { 0.0, 90.0 };
-
-	// Helper buffer for mixing of output signals during convolution switch and interpolation.
-	jvxData* buffer_out_temp = nullptr;
-
-	/**
-	 * Helper function for linear interpolation of signal output filtered with old HRIR and new HRIR.
-	 * 
-	 * \param inout Array on which in-place weighting will be done. Needs a length greater of equal num_weights.
-	 * \param num_weights Number of weighting operations, which are performed.
-	 * \param weight_start The first element of the array will be weighted with weight_start + weight_delta.
-	 * \param weight_delta Amount by which the applied weight is increased for each weighted array element.
-	 */
-	void linear_weighting(jvxData* inout, jvxSize num_weights, jvxData weight_start, jvxData weight_delta);
+	jvxData source_direction_angles_deg_inuse[2] = { 0.0, 90.0 };
 	
 	void allocate_hrir_buffers(jvxOneRenderCore* renderer);
-	void deallocate_hrir_buffers(jvxOneRenderCore* renderer);
-
-	void init_convolution_set(ConvolutionsHrirCurrentNext& convolutions, jvxSize length_ir, jvxSize frame_advance);
-
-	
+	void deallocate_hrir_buffers(jvxOneRenderCore* renderer);	
 	void update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_deg, jvxData inclination_deg);
-
-	jvxSize toggle_idx(jvxSize idx);
-
 
 	// =================================================================================
 	jvxOneRenderCore* render_pri = nullptr;
@@ -158,15 +124,15 @@ public:
 	// =========================================================================================================
 	// IjvxPropertyExtenderHrtfDispenser_report
 	virtual jvxErrorType report_database_changed() override;
-
 	// =========================================================================================================
 	jvxErrorType prop_extender_type(jvxPropertyExtenderType* tp) override;
 	jvxErrorType prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp)override;
-	jvxErrorType set_spatial_azimuth(jvxData value) override;
-	jvxErrorType set_spatial_inclination(jvxData value) override;
+
+	jvxErrorType set_spatial_position(jvxData valueAzimuth, jvxData valueInclination) override;
 
 	jvxOneRenderCore* allocate_renderer(jvxSize bsize, jvxData startAz, jvxData startInc);
 	void deallocate_renderer(jvxOneRenderCore*& render_inst);
+	void try_trigger_update_position(jvxData azimuth, jvxData inclination);
 
 	jvxErrorType startup(jvxInt64 timestamp_us) override;
 	jvxErrorType expired(jvxInt64 timestamp_us, jvxSize* delta_ms) override;

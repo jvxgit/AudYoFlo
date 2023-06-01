@@ -47,9 +47,6 @@ protected:
 	// The channels are typically only allocated and deallocated within the main thread - on button push or similar
 	// However, in some situations. other inputs may need to be protected against removal of channels. In these cases, the 
 	// lock must be activated in the deriving classes	
-	jvxBool lockChannels = false;
-	JVX_MUTEX_HANDLE safeAccessChannelLists;
-
 	class oneEntryChannel
 	{
 	public:
@@ -74,6 +71,7 @@ protected:
 		jvxSize cntSamplesSinceMax = 0;
 		jvxCBool mute = c_false;
 		jvxCBool clip = c_false;
+		jvxSize idx_in_linear_list = JVX_SIZE_UNSELECTED;
 		std::shared_ptr<CjvxChannelSpecificAttach> attSpecificPtr;
 	};
 
@@ -92,6 +90,9 @@ protected:
 		std::map<std::string, std::list<oneEntryChannel> > outputChannelsInStorage;
 	};
 
+	// These two lists must be secured by the lock "_common_set_nv_proc.safeAcces_proc_tasks" since channels 
+	// may disappear while in processing! The lock is around the process function by default 
+	// due to the surrounding logic
 	std::map<jvxSize, oneEntryProcessChannelList> registeredChannelListInput;
 	std::map<jvxSize, oneEntryProcessChannelList> registeredChannelListOutput;
 
@@ -109,6 +110,15 @@ protected:
 		jvxBitField* fldMute = nullptr;
 		jvxCBool* fldClip = nullptr;
 		jvxSize lenField = 0;
+
+		// This association is always true in case of the main thread:
+		// The fields are reallocated only if a channel is added which 
+		// always happens in the main thread. However, within the main 
+		// processing thread as well as in any other thread, the association 
+		// may be temporarily unavailable. Since the adding and removal of the 
+		// channels is protected by the lock _common_set_nv_proc.safeAcces_proc_tasks,
+		// also this variable should be checked and evaluated with the same lock!!
+		jvxBool associationValid = false;
 	};
 
 	mixer_flds mixer_input;

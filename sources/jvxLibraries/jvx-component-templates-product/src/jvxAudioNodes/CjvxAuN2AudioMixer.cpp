@@ -18,13 +18,10 @@ CjvxAuN2AudioMixer::CjvxAuN2AudioMixer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	bufDef.format = JVX_DATAFORMAT_DATA;
 	bufDef.numChannels_fixed = 2; // <- Default: stereo output buffers
 	mixBuffers[bufDef.id] = bufDef;
-
-	JVX_INITIALIZE_MUTEX(safeAccessChannelLists);
 }
 
 CjvxAuN2AudioMixer::~CjvxAuN2AudioMixer()
 {
-	JVX_TERMINATE_MUTEX(safeAccessChannelLists);
 }
 
 jvxErrorType 
@@ -115,14 +112,20 @@ CjvxAuN2AudioMixer::connect_connect_ntask(
 		{
 			oneEntryProcessChannelList elmNew;
 			elmNew.uIdConn = uId;
+			JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			registeredChannelListInput[uId] = elmNew;
+			mixer_input.associationValid = false;
+			JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 		}
 		auto elmO = registeredChannelListOutput.find(uId);
 		if (elmO == registeredChannelListOutput.end())
 		{
 			oneEntryProcessChannelList elmNew;
 			elmNew.uIdConn = uId;
+			JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			registeredChannelListOutput[uId] = elmNew;
+			mixer_output.associationValid = false;
+			JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 		}
 	}
 	return res;
@@ -151,7 +154,10 @@ CjvxAuN2AudioMixer::disconnect_connect_ntask(
 #endif
 				*/
 			}
+			JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			registeredChannelListInput.erase(uId);
+			mixer_input.associationValid = false;
+			JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 		}
 
 		auto elmO = registeredChannelListOutput.find(uId);
@@ -166,7 +172,10 @@ CjvxAuN2AudioMixer::disconnect_connect_ntask(
 #endif
 				*/
 			}
+			JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			registeredChannelListOutput.erase(uId);
+			mixer_output.associationValid = false;
+			JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 		}
 		new_setup_to_properties(true, true);
 	}
@@ -212,15 +221,10 @@ CjvxAuN2AudioMixer::connect_connect_icon_vtask(
 			{
 				oneEntryProcessChannelList elmNew;
 				elmNew.uIdConn = uId;
-				if (lockChannels)
-				{
-					JVX_LOCK_MUTEX(safeAccessChannelLists);
-				}
+				JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 				registeredChannelListInput[uId] = elmNew;
-				if (lockChannels)
-				{
-					JVX_UNLOCK_MUTEX(safeAccessChannelLists);
-				}
+				mixer_input.associationValid = false;
+				JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			}
 
 			if (datOut)
@@ -233,15 +237,10 @@ CjvxAuN2AudioMixer::connect_connect_icon_vtask(
 			{
 				oneEntryProcessChannelList elmNew;
 				elmNew.uIdConn = uId;
-				if (lockChannels)
-				{
-					JVX_LOCK_MUTEX(safeAccessChannelLists);
-				}
+				JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 				registeredChannelListOutput[uId] = elmNew;
-				if (lockChannels)
-				{
-					JVX_UNLOCK_MUTEX(safeAccessChannelLists);
-				}
+				mixer_output.associationValid = false;
+				JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			}
 		}
 	}
@@ -280,15 +279,10 @@ CjvxAuN2AudioMixer::disconnect_connect_icon_vtask(
 			auto elmI = registeredChannelListInput.find(uId);
 			if (elmI != registeredChannelListInput.end())
 			{
-				if (lockChannels)
-				{
-					JVX_LOCK_MUTEX(safeAccessChannelLists);
-				}
+				JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 				registeredChannelListInput.erase(uId);
-				if (lockChannels)
-				{
-					JVX_UNLOCK_MUTEX(safeAccessChannelLists);
-				}
+				mixer_input.associationValid = false;
+				JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			}
 
 			// Here, we use the uId from the input side. The uId from the output side 
@@ -301,15 +295,10 @@ CjvxAuN2AudioMixer::disconnect_connect_icon_vtask(
 			auto elmO = registeredChannelListOutput.find(uId);
 			if (elmO != registeredChannelListOutput.end())
 			{
-				if (lockChannels)
-				{
-					JVX_LOCK_MUTEX(safeAccessChannelLists);
-				}
+				JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 				registeredChannelListOutput.erase(uId);
-				if (lockChannels)
-				{
-					JVX_UNLOCK_MUTEX(safeAccessChannelLists);
-				}
+				mixer_output.associationValid = false;
+				JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 			}
 
 			// once we have disconnected a device, we need to update the exposed channel list

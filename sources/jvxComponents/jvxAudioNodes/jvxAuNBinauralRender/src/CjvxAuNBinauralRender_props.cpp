@@ -13,52 +13,9 @@ CjvxAuNBinauralRender::get_property(
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, update_source_direction)
 {
-	if (
-		(this->input_source_direction_angles_deg[0] != this->source_direction_angles_deg[0]) ||
-		(this->input_source_direction_angles_deg[1] != this->source_direction_angles_deg[1]))
-	{
-		jvxBool triggerThread = false;
-		JVX_LOCK_MUTEX(safeAccessUpdateBgrd);
-		switch (updateHRir)
-		{
-		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK:
-			// Here, all previous updates had been completed		
-			newAzimuth = this->input_source_direction_angles_deg[0];
-			newInclination = this->input_source_direction_angles_deg[1];
-			updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_IN_OPERATION;
-			triggerThread = true;
-			break;
-		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_IN_OPERATION:
-			
-			// Latest update is pending. We can therefore update the target angle
-			newAzimuth = this->input_source_direction_angles_deg[0];
-			newInclination = this->input_source_direction_angles_deg[1];
-			break;
-
-		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF:
-
-			// No realtime processing yet, we can immediately set the target angles
-			// No need to trigger any on-the-fly update
-			this->source_direction_angles_deg[0] = this->input_source_direction_angles_deg[0];
-			this->source_direction_angles_deg[1] = this->input_source_direction_angles_deg[1];
-			break;
-
-		default:
-
-			// Here, the update can not be performed
-			missedUpdatesPosition++;
-		}
-		JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
-
-		if (triggerThread)
-		{
-			if (threads.cpPtr)
-			{
-				threads.cpPtr->trigger_wakeup();
-			}
-		}
-	}
-
+	jvxData azimuth = this->source_direction_angles_deg_set[0];
+	jvxData inclination = this->source_direction_angles_deg_set[1];
+	try_trigger_update_position(azimuth, inclination);
 	return JVX_NO_ERROR;
 }
 
@@ -124,9 +81,59 @@ CjvxAuNBinauralRender::report_database_changed()
 
 	// Allocate new renderer but as "secondary" renderer for now
 	render_sec = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
-		this->source_direction_angles_deg[0], this->source_direction_angles_deg[1]);
+		this->source_direction_angles_deg_inuse[0], this->source_direction_angles_deg_inuse[1]);
 	updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY;
 	JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
 
 	return JVX_NO_ERROR;
+}
+
+void
+CjvxAuNBinauralRender::try_trigger_update_position(jvxData azimuth, jvxData inclination)
+{
+	if (
+		(azimuth != this->source_direction_angles_deg_inuse[0]) ||
+		(inclination != this->source_direction_angles_deg_inuse[1]))
+	{
+		jvxBool triggerThread = false;
+		JVX_LOCK_MUTEX(safeAccessUpdateBgrd);
+		switch (updateHRir)
+		{
+		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK:
+			// Here, all previous updates had been completed		
+			newAzimuth = azimuth;
+			newInclination = inclination;
+			updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_IN_OPERATION;
+			triggerThread = true;
+			break;
+		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_IN_OPERATION:
+
+			// Latest update is pending. We can therefore update the target angle
+			newAzimuth = azimuth;
+			newInclination = inclination;
+			break;
+
+		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF:
+
+			// No realtime processing yet, we can immediately set the target angles
+			// No need to trigger any on-the-fly update
+			this->source_direction_angles_deg_inuse[0] = this->source_direction_angles_deg_set[0];
+			this->source_direction_angles_deg_inuse[1] = this->source_direction_angles_deg_set[1];
+			break;
+
+		default:
+
+			// Here, the update can not be performed
+			missedUpdatesPosition++;
+		}
+		JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
+
+		if (triggerThread)
+		{
+			if (threads.cpPtr)
+			{
+				threads.cpPtr->trigger_wakeup();
+			}
+		}
+	}
 }

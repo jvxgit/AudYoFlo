@@ -114,6 +114,8 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 			{
 				for (auto& oneChan : uidElm.second.channels)
 				{
+					oneChan.idx_in_linear_list = cnt;
+
 					assert(cnt < mixer_input.lenField);
 
 					mixer_input.fldGain[cnt] = oneChan.gain;
@@ -139,6 +141,10 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 				mixer_input.fldClip, mixer_input.lenField,
 				mixer_input.fldAvrg, mixer_input.lenField,
 				mixer_input.fldMax, mixer_input.lenField);
+			
+			JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
+			mixer_input.associationValid = true;
+			JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 		}
 	}
 
@@ -198,6 +204,7 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 			{
 				for (auto& oneChan : uidElm.second.channels)
 				{
+					oneChan.idx_in_linear_list = cnt;
 					assert(cnt < mixer_output.lenField);
 
 					mixer_output.fldGain[cnt] = oneChan.gain;
@@ -223,6 +230,10 @@ CjvxAuN2AudioMixer::new_setup_to_properties(jvxBool inputSide, jvxBool outputSid
 				mixer_output.fldClip, mixer_output.lenField,
 				mixer_output.fldAvrg, mixer_output.lenField,
 				mixer_output.fldMax, mixer_output.lenField);
+
+			JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
+			mixer_output.associationValid = true;
+			JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 		}
 	}
 	this->_unlock_properties_local();

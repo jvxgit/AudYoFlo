@@ -87,7 +87,8 @@ CjvxAuNBinauralRender::activate()
 		// register property
 		genBinauralRender_node::associate__local__source_direction(
 			static_cast<CjvxProperties*>(this),
-			input_source_direction_angles_deg, 2);
+			source_direction_angles_deg_set, 2,
+			source_direction_angles_deg_inuse, 2);
 
 		threads = reqInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
 		if (threads.cpPtr)
@@ -152,7 +153,7 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	// Allocate renderer
 	render_pri = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
-		this->source_direction_angles_deg[0], this->source_direction_angles_deg[1]);
+		this->source_direction_angles_deg_inuse[0], this->source_direction_angles_deg_inuse[1]);
 
 	// This can be outside the critical section since at this position, we have only the main thread!!
 	updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
@@ -268,27 +269,6 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	// return res;
 }
 
-
-void
-CjvxAuNBinauralRender::init_convolution_set(ConvolutionsHrirCurrentNext& convolutions, jvxSize length_ir, jvxSize frame_advance) {
-	
-	const jvxSize num_hrirs_per_sofa_db = 2;
-	const jvxSize num_convs_per_hrir = 2;
-	convolutions.clear();
-
-	convolutions.reserve(num_hrirs_per_sofa_db);
-	for (int idx_sets = 0; idx_sets < num_hrirs_per_sofa_db; idx_sets++) {
-		convolutions.push_back(ConvolutionsLR());
-		auto& new_hrir_pair = convolutions.back();
-		new_hrir_pair.reserve(num_convs_per_hrir);
-		for (int idx_conv = 0; idx_conv < num_convs_per_hrir; idx_conv++) {
-			new_hrir_pair.push_back(CjvxFastConvolution());
-			new_hrir_pair.back().init(length_ir, frame_advance);
-		}
-	}
-}
-
-
 void
 CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_deg, jvxData inclination_deg) 
 {
@@ -296,8 +276,8 @@ CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_
 	// std::cout << "New angles: azimuth: " << azimuth_deg << ", inclination: " << inclination_deg << std::endl;
 
 	// Update state array.
-	this->source_direction_angles_deg[0] = azimuth_deg;
-	this->source_direction_angles_deg[1] = inclination_deg;
+	this->source_direction_angles_deg_inuse[0] = azimuth_deg;
+	this->source_direction_angles_deg_inuse[1] = inclination_deg;
 
 	jvxSize length_hrir;
 	this->theHrtfDispenser->get_length_hrir(length_hrir, &loadId);
@@ -316,22 +296,6 @@ CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_
 	{
 		std::cout << __FUNCTION__ << " Warning: on update of position, the renderer is linked to database id #" <<
 			renderer->loadId << " whereas the currently active database id is #" << loadId << std::endl;
-	}
-}
-
-jvxSize CjvxAuNBinauralRender::toggle_idx(jvxSize idx)
-{
-	return 1 - idx;
-}
-
-
-void 
-CjvxAuNBinauralRender::linear_weighting(jvxData *inout, jvxSize num_weights, jvxData weight_start, jvxData weight_delta)
-{
-	jvxData interpolation_weight = weight_start;
-	for (jvxSize idx_weight = 0; idx_weight < num_weights; idx_weight++) {
-		interpolation_weight += weight_delta;
-		inout[idx_weight] *= interpolation_weight;
 	}
 }
 
@@ -386,16 +350,12 @@ CjvxAuNBinauralRender::prop_extender_specialization(jvxHandle** prop_extender, j
 }
 
 jvxErrorType
-CjvxAuNBinauralRender::set_spatial_azimuth(jvxData value)
+CjvxAuNBinauralRender::set_spatial_position(jvxData valueAzimuth, jvxData valueInclination)
 {
+	try_trigger_update_position(valueAzimuth, valueInclination);
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType
-CjvxAuNBinauralRender::set_spatial_inclination(jvxData value)
-{
-	return JVX_NO_ERROR;
-}
 
 // ==================================================================
 
