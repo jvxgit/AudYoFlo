@@ -7,11 +7,41 @@
 #include "jvxFastConvolution/CjvxFastConvolution.h"
 #include "pcg_exports_node.h"
 
-class CjvxAuNBinauralRender : public CjvxBareNode1ioRearrange, public IjvxPropertyExtenderHrtfDispenser_report,
+#include "jvx_fft_tools/jvx_firfft_cf.h"
+
+#define NEW_CODE
+
+enum class jvxRenderingUpdateStatus
+{
+	JVX_RENDERING_UPDATE_OFF,
+	JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK,
+	JVX_RENDERING_UPDATE_IN_OPERATION,
+	JVX_RENDERING_UPDATE_READY
+};
+
+class jvxOneRenderCore
+{
+public:
+
+	jvxData* buffer_hrir_left = nullptr;
+	jvxData* buffer_hrir_right = nullptr;
+	jvxSize length_buffer_hrir = JVX_SIZE_UNSELECTED;
+	jvxSize idx_sofa = 0;
+	jvx_firfft firfftcf_left;
+	jvx_firfft firfftcf_right;
+	jvxDataCplx* updatedWeightsLeft = nullptr;
+	jvxDataCplx* updatedWeightsRight = nullptr;
+	jvxSize lUpdatedWeights = 0;
+	jvxSize loadId = JVX_SIZE_UNSELECTED;
+};
+
+class CjvxAuNBinauralRender : public CjvxBareNode1ioRearrange, 
+	public IjvxPropertyExtender, public IjvxPropertyExtenderSpatialDirectionDirect,
+	public IjvxPropertyExtenderHrtfDispenser_report, public IjvxThreads_report,
 	public genBinauralRender_node
 {
 private:
-	
+
 	typedef std::vector<CjvxFastConvolution> ConvolutionsLR;
 	typedef std::vector<ConvolutionsLR> ConvolutionsHrirCurrentNext;
 	typedef std::vector<ConvolutionsHrirCurrentNext> ConvolutionsSOFAdb;
@@ -19,9 +49,6 @@ private:
 	ConvolutionsSOFAdb convolutions;
 	jvxSize idx_conv_hrir_current = 0;
 	jvxSize idx_conv_sofa_current = 0;
-
-	JVX_MUTEX_HANDLE mutex_convolutions;
-
 
 	// Indicate if convolution switch happened.
 	bool conv_hrir_dirty = false;
@@ -36,11 +63,6 @@ private:
 	// State array containing azimuth (first array element) and inclination angle (second element) of rendered source.
 	jvxData source_direction_angles_deg[2] = { 0.0, 90.0 };
 
-	jvxData* buffer_hrir_left = nullptr;
-	jvxData* buffer_hrir_right = nullptr;
-
-	jvxSize length_buffer_hrir = JVX_SIZE_UNSELECTED;
-
 	// Helper buffer for mixing of output signals during convolution switch and interpolation.
 	jvxData* buffer_out_temp = nullptr;
 
@@ -54,17 +76,32 @@ private:
 	 */
 	void linear_weighting(jvxData* inout, jvxSize num_weights, jvxData weight_start, jvxData weight_delta);
 	
-	void allocate_hrir_buffers(jvxSize length_ir);
-	void delete_hrir_buffers();
+	void allocate_hrir_buffers(jvxOneRenderCore* renderer);
+	void deallocate_hrir_buffers(jvxOneRenderCore* renderer);
 
 	void init_convolution_set(ConvolutionsHrirCurrentNext& convolutions, jvxSize length_ir, jvxSize frame_advance);
 
 	
-	void update_hrirs(jvxSize idx_conv_sofa, jvxData azimuth_deg, jvxData inclination_deg);
+	void update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_deg, jvxData inclination_deg);
 
 	jvxSize toggle_idx(jvxSize idx);
 
-	jvxSize frame_advance = JVX_SIZE_UNSELECTED;
+
+	// =================================================================================
+	jvxOneRenderCore* render_pri = nullptr;
+	jvxOneRenderCore* render_sec = nullptr;
+
+	refComp<IjvxThreads> threads;
+	JVX_MUTEX_HANDLE safeAccessUpdateBgrd;
+	
+	jvxRenderingUpdateStatus updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
+	jvxData newAzimuth = 0;
+	jvxData newInclination = 0;
+
+	jvxRenderingUpdateStatus updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
+
+	jvxSize missedUpdatesPosition = 0;
+
 
 public:
 
@@ -121,6 +158,22 @@ public:
 	// =========================================================================================================
 	// IjvxPropertyExtenderHrtfDispenser_report
 	virtual jvxErrorType report_database_changed() override;
+
+	// =========================================================================================================
+	jvxErrorType prop_extender_type(jvxPropertyExtenderType* tp) override;
+	jvxErrorType prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp)override;
+	jvxErrorType set_spatial_azimuth(jvxData value) override;
+	jvxErrorType set_spatial_inclination(jvxData value) override;
+
+	jvxOneRenderCore* allocate_renderer(jvxSize bsize, jvxData startAz, jvxData startInc);
+	void deallocate_renderer(jvxOneRenderCore*& render_inst);
+
+	jvxErrorType startup(jvxInt64 timestamp_us) override;
+	jvxErrorType expired(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
+	jvxErrorType wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms)override;
+	jvxErrorType stopped(jvxInt64 timestamp_us) override;
+
+
 };
 #endif
 

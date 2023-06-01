@@ -28,10 +28,12 @@ CjvxAuNBinauralRender::CjvxAuNBinauralRender(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DEC
 		JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED); /* data format group */
 
 	//outputArgsFromOutputParams = true;
+	JVX_INITIALIZE_MUTEX(safeAccessUpdateBgrd);
 }
 
 CjvxAuNBinauralRender::~CjvxAuNBinauralRender()
 {
+	JVX_TERMINATE_MUTEX(safeAccessUpdateBgrd);
 }
 
 // ===================================================================
@@ -49,6 +51,8 @@ CjvxAuNBinauralRender::select(IjvxObject* owner)
 		genBinauralRender_node::register_callbacks(static_cast<CjvxProperties*>(this),
 			set_extend_ifx_reference, update_source_direction,
 			reinterpret_cast<jvxHandle*>(this), NULL);
+
+		genBinauralRender_node::global.if_ext.interf_position_direct.ptr = static_cast<IjvxPropertyExtender*>(this);
 	}
 	return res;
 }
@@ -84,6 +88,13 @@ CjvxAuNBinauralRender::activate()
 		genBinauralRender_node::associate__local__source_direction(
 			static_cast<CjvxProperties*>(this),
 			input_source_direction_angles_deg, 2);
+
+		threads = reqInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
+		if (threads.cpPtr)
+		{
+			threads.cpPtr->initialize(this);
+		}
+
 	}
 	return res;
 }
@@ -94,6 +105,12 @@ CjvxAuNBinauralRender::deactivate()
 	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
+		if (threads.cpPtr)
+		{
+			threads.cpPtr->terminate();
+		}
+		retInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS, threads);
+
 		genBinauralRender_node::deassociate__local__source_direction(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::unregister__local__source_direction(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::deallocate__local__source_direction();
@@ -130,28 +147,18 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// for your algorithm now. The processing parameters can be found here:
 	// _common_set_icon.theData_in->con_params
 
-	JVX_INITIALIZE_MUTEX(this->mutex_convolutions);
-
 	jvxSize samplerate = _common_set_icon.theData_in->con_params.rate;
-	theHrtfDispenser->init(samplerate); // TODO: is called per input channel
-	
-	res = theHrtfDispenser->get_length_hrir(this->length_buffer_hrir);
-	assert(res == JVX_NO_ERROR);
-	
-	this->allocate_hrir_buffers(this->length_buffer_hrir);
+	theHrtfDispenser->init(&samplerate); // Check result in the future
 
-	// init convolution modules
-	this->frame_advance = _common_set_icon.theData_in->con_params.buffersize;
-	
-	this->convolutions.reserve(2);
-	this->convolutions.push_back(ConvolutionsHrirCurrentNext());
-	this->convolutions.push_back(ConvolutionsHrirCurrentNext());
+	// Allocate renderer
+	render_pri = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
+		this->source_direction_angles_deg[0], this->source_direction_angles_deg[1]);
 
-	this->init_convolution_set(this->convolutions.at(0), this->length_buffer_hrir, this->frame_advance);
+	// This can be outside the critical section since at this position, we have only the main thread!!
+	updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
+	updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 
-	this->update_hrirs(this->idx_conv_sofa_current, this->source_direction_angles_deg[0], this->source_direction_angles_deg[1]);
-
-	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(this->buffer_out_temp, jvxData, _common_set_icon.theData_in->con_params.buffersize);
+	threads.cpPtr->start();
 
 	return res;
 }
@@ -177,15 +184,19 @@ CjvxAuNBinauralRender::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	jvxErrorType res = CjvxBareNode1io::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res != JVX_NO_ERROR) return res;
 
+	threads.cpPtr->stop(5000);
+	updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
+	updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
+
+	deallocate_renderer(render_pri);
+	if (render_sec)
+	{
+		deallocate_renderer(render_sec);
+	}
+
 	// At this point the processing is completely done. You need to deallocate all buffers
 	// for your algorithm now. The processing parameters can be found here:
 	// _common_set_icon.theData_in->con_params
-
-	this->delete_hrir_buffers();
-
-	JVX_SAFE_DELETE_FIELD(this->buffer_out_temp);
-
-	JVX_TERMINATE_MUTEX(this->mutex_convolutions);
 
 	return res;
 }
@@ -209,76 +220,42 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	const jvxSize num_channels_in = _common_set_icon.theData_in->con_params.number_channels;
 	const jvxSize num_channels_out = _common_set_ocon.theData_out.con_params.number_channels;
 
-	JVX_TRY_LOCK_MUTEX_RESULT_TYPE lock_result = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
-	JVX_TRY_LOCK_MUTEX(lock_result, this->mutex_convolutions);
+	jvxBool runWithUpdate = false;
 
-	if (this->sofa_db_dirty) {
-		this->idx_conv_sofa_current = this->toggle_idx(this->idx_conv_sofa_current);
-		this->sofa_db_dirty = false;
-	}
+	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
+	JVX_TRY_LOCK_MUTEX(resM, safeAccessUpdateBgrd);
+	if (resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	{
+		if (updateDBase == jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY)
+		{
+			// Include the new renderer
+			if (render_sec)
+			{
+				jvxOneRenderCore* store = render_pri;
+				render_pri = render_sec;
+				render_sec = store;
+			}
+			updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 
-	auto& conv_hrir_current = this->convolutions.at(this->idx_conv_sofa_current).at(this->idx_conv_hrir_current);
-	auto& convolution_left_current = conv_hrir_current.at(0);
-	auto& convolution_right_current = conv_hrir_current.at(1);
-
-	if (!this->conv_hrir_dirty) {
-		convolution_left_current.process(in, out_left);
-		convolution_right_current.process(in, out_right);
-
-		jvxSize idx_conv_hrir_inactive = this->toggle_idx(this->idx_conv_hrir_current);
-		auto& conv_hrir_inactive = this->convolutions.at(this->idx_conv_sofa_current).at(idx_conv_hrir_inactive);
-		conv_hrir_inactive.at(0).process(in, this->buffer_out_temp);
-		conv_hrir_inactive.at(1).process(in, this->buffer_out_temp);
-
-	}
-	else {
-		// Switch of convolution objects with linear interpolation necessary.
-
-		
-		jvxSize idx_conv_hrir_next = this->toggle_idx(this->idx_conv_hrir_current);
-
-		auto& convolution_left_next = this->convolutions.at(this->idx_conv_sofa_current).at(idx_conv_hrir_next).at(0);
-		auto& convolution_right_next = this->convolutions.at(this->idx_conv_sofa_current).at(idx_conv_hrir_next).at(1);
-
-		const jvxSize num_samples = _common_set_icon.theData_in->con_params.buffersize;
-		jvxData const delta_interpolation_weight = 1.0 / ((jvxData)(num_samples + 1));
-
-		// Input to left output channel using old HRIR and linear falling weighting function.
-		convolution_left_current.process(in, this->buffer_out_temp);
-		linear_weighting(this->buffer_out_temp, num_samples, 1.0, -delta_interpolation_weight);
-		std::copy(this->buffer_out_temp, this->buffer_out_temp + num_samples, out_left);
-
-		// Input to right output channel using old HRIR and linear falling weighting function.
-		convolution_right_current.process(in, this->buffer_out_temp);
-		linear_weighting(this->buffer_out_temp, num_samples, 1.0, -delta_interpolation_weight);
-		std::copy(this->buffer_out_temp, this->buffer_out_temp + num_samples, out_right);
-
-
-		// Input to left output channel using new HRIR and linear rising weighting function.
-		convolution_left_next.process(in, this->buffer_out_temp);
-		linear_weighting(this->buffer_out_temp, num_samples, 0.0, delta_interpolation_weight);
-		for (jvxSize idx_sample = 0; idx_sample < num_samples; idx_sample++) {
-			out_left[idx_sample] += this->buffer_out_temp[idx_sample];
+			// Unblock the rir updates
+			updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 		}
 
-		// Input to right output channel using new HRIR and linear rising weighting function.
-		convolution_right_next.process(in, this->buffer_out_temp);
-		linear_weighting(this->buffer_out_temp, num_samples, 0.0, delta_interpolation_weight);
-		for (jvxSize idx_sample = 0; idx_sample < num_samples; idx_sample++) {
-			out_right[idx_sample] += this->buffer_out_temp[idx_sample];
+		if (updateHRir == jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY)
+		{
+			runWithUpdate = true;
+			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_left, in, out_left, render_pri->updatedWeightsLeft);
+			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_right, in, out_right, render_pri->updatedWeightsRight);
+			updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 		}
-
-
-		convolution_left_current.set_ir(this->buffer_hrir_left);
-		convolution_right_current.set_ir(this->buffer_hrir_right);
-
-		this->idx_conv_hrir_current = idx_conv_hrir_next;
-		this->conv_hrir_dirty = false;
-
+		JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
 	}
 
-	if (lock_result == JVX_TRY_LOCK_MUTEX_SUCCESS)
-		JVX_UNLOCK_MUTEX(this->mutex_convolutions);
+	if (!runWithUpdate)
+	{
+		jvx_firfft_cf_process(&render_pri->firfftcf_left, in, out_left);
+		jvx_firfft_cf_process(&render_pri->firfftcf_right, in, out_right);
+	}
 
 	
 	// Once you are done forward the processing flow to the ext stage. We can do this as follows:
@@ -313,31 +290,33 @@ CjvxAuNBinauralRender::init_convolution_set(ConvolutionsHrirCurrentNext& convolu
 
 
 void
-CjvxAuNBinauralRender::update_hrirs(jvxSize idx_conv_sofa, jvxData azimuth_deg, jvxData inclination_deg) {
-	
+CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_deg, jvxData inclination_deg) 
+{
+	jvxSize loadId = JVX_SIZE_UNSELECTED;
 	// std::cout << "New angles: azimuth: " << azimuth_deg << ", inclination: " << inclination_deg << std::endl;
 
 	// Update state array.
 	this->source_direction_angles_deg[0] = azimuth_deg;
 	this->source_direction_angles_deg[1] = inclination_deg;
 
-	if (this->length_buffer_hrir != JVX_SIZE_UNSELECTED) {
-		
-		jvxSize length_hrir;
-		this->theHrtfDispenser->get_length_hrir(length_hrir);
-		assert(this->length_buffer_hrir == length_hrir);
-
-	    this->theHrtfDispenser->copy_closest_hrir_pair(azimuth_deg, inclination_deg, this->buffer_hrir_left, this->buffer_hrir_right, this->length_buffer_hrir);
-
-		jvxSize const idx_hrir_next = this->toggle_idx(this->idx_conv_hrir_current);
-		
-		auto& conv_hrir_next = this->convolutions.at(idx_conv_sofa).at(idx_hrir_next);
-		conv_hrir_next.at(0).set_ir(this->buffer_hrir_left);
-		conv_hrir_next.at(1).set_ir(this->buffer_hrir_right);
-		
-		this->conv_hrir_dirty = true;
+	jvxSize length_hrir;
+	this->theHrtfDispenser->get_length_hrir(length_hrir, &loadId);
+	if (renderer->loadId == loadId)
+	{
+		jvxErrorType res = this->theHrtfDispenser->copy_closest_hrir_pair(azimuth_deg, inclination_deg,
+			renderer->buffer_hrir_left, renderer->buffer_hrir_right, renderer->length_buffer_hrir,
+			renderer->loadId);
+		if (res != JVX_NO_ERROR)
+		{
+			std::cout << __FUNCTION__ << " Warning: on update of position, the request to return hrir buffers failed with error <" << 
+				jvxErrorType_descr(res) << ">." << std::endl;
+		}
 	}
-	
+	else
+	{
+		std::cout << __FUNCTION__ << " Warning: on update of position, the renderer is linked to database id #" <<
+			renderer->loadId << " whereas the currently active database id is #" << loadId << std::endl;
+	}
 }
 
 jvxSize CjvxAuNBinauralRender::toggle_idx(jvxSize idx)
@@ -356,19 +335,18 @@ CjvxAuNBinauralRender::linear_weighting(jvxData *inout, jvxSize num_weights, jvx
 	}
 }
 
-void CjvxAuNBinauralRender::allocate_hrir_buffers(jvxSize length_ir)
+void 
+CjvxAuNBinauralRender::allocate_hrir_buffers(jvxOneRenderCore* renderer)
 {
-	JVX_SAFE_DELETE_FIELD(this->buffer_hrir_left);
-	JVX_SAFE_DELETE_FIELD(this->buffer_hrir_right);
-
-	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(this->buffer_hrir_left, jvxData, length_ir);
-	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(this->buffer_hrir_right, jvxData, length_ir);
+	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(renderer->buffer_hrir_left, jvxData, renderer->length_buffer_hrir);
+	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(renderer->buffer_hrir_right, jvxData, renderer->length_buffer_hrir);
 }
 
-void CjvxAuNBinauralRender::delete_hrir_buffers()
+void 
+CjvxAuNBinauralRender::deallocate_hrir_buffers(jvxOneRenderCore* renderer)
 {
-	JVX_SAFE_DELETE_FIELD(this->buffer_hrir_left);
-	JVX_SAFE_DELETE_FIELD(this->buffer_hrir_right);
+	JVX_SAFE_DELETE_FIELD(renderer->buffer_hrir_left);
+	JVX_SAFE_DELETE_FIELD(renderer->buffer_hrir_right);
 }
 
 /*
@@ -379,5 +357,138 @@ CjvxAuNPlayChannelId::test_set_output_parameters()
 }
 */
 
+jvxErrorType 
+CjvxAuNBinauralRender::prop_extender_type(jvxPropertyExtenderType* tp)
+{
+	if (tp)
+	{
+		*tp = jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_SPATIAL_POSITION_DIRECT;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType 
+CjvxAuNBinauralRender::prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp)
+{
+	switch (tp)
+	{
+	case jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_SPATIAL_POSITION_DIRECT:
+		if (prop_extender)
+		{
+			*prop_extender = reinterpret_cast<jvxHandle*>(static_cast<IjvxPropertyExtenderSpatialDirectionDirect*>(this));
+		}
+		return JVX_NO_ERROR;
+		break;
+	default:
+		break;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType
+CjvxAuNBinauralRender::set_spatial_azimuth(jvxData value)
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxAuNBinauralRender::set_spatial_inclination(jvxData value)
+{
+	return JVX_NO_ERROR;
+}
+
+// ==================================================================
+
+jvxErrorType 
+CjvxAuNBinauralRender::startup(jvxInt64 timestamp_us)
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxAuNBinauralRender::expired(jvxInt64 timestamp_us, jvxSize* delta_ms) 
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxAuNBinauralRender::wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms)
+{
+	JVX_LOCK_MUTEX(safeAccessUpdateBgrd);
+	if (updateHRir == jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_IN_OPERATION)
+	{
+		this->update_hrirs(render_pri, newAzimuth, newInclination);
+
+		// These updates may and should occur in this third thread since the new position may
+		// be triggered from the main thread as well as from the processing thread.
+		// If triggered from within the process thread, it is dangerous to run the update in
+		// the given thread since it might block the processing for a too long time. Therefore the third thread.
+		jvx_firfft_cf_compute_weights(&render_pri->firfftcf_left, render_pri->buffer_hrir_left, render_pri->length_buffer_hrir);
+		jvx_firfft_cf_copy_weights(&render_pri->firfftcf_left, render_pri->updatedWeightsLeft, render_pri->lUpdatedWeights);
+
+		jvx_firfft_cf_compute_weights(&render_pri->firfftcf_right, render_pri->buffer_hrir_right, render_pri->length_buffer_hrir);
+		jvx_firfft_cf_copy_weights(&render_pri->firfftcf_right, render_pri->updatedWeightsRight, render_pri->lUpdatedWeights);
+
+		updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY;
+	}
+	JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxAuNBinauralRender::stopped(jvxInt64 timestamp_us) 
+{
+	return JVX_NO_ERROR;
+}
+
 // ===================================================================
 // ===================================================================
+jvxOneRenderCore*
+CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData startInc)
+{
+	jvxOneRenderCore* render_inst = nullptr;
+	JVX_SAFE_ALLOCATE_OBJECT(render_inst, jvxOneRenderCore);
+
+	jvxErrorType res = theHrtfDispenser->get_length_hrir(render_inst->length_buffer_hrir, &render_inst->loadId);
+	assert(res == JVX_NO_ERROR);
+
+	// Allocate the hrir buffers
+	allocate_hrir_buffers(render_inst);
+	this->update_hrirs(render_inst, startAz, startInc);
+
+	jvx_firfft_initCfg(&render_inst->firfftcf_left);
+	jvx_firfft_initCfg(&render_inst->firfftcf_right);
+
+	render_inst->firfftcf_left.init.bsize = bsize;
+	render_inst->firfftcf_left.init.fir = render_inst->buffer_hrir_left;
+	render_inst->firfftcf_left.init.lFir = render_inst->length_buffer_hrir;
+	render_inst->firfftcf_left.init.type = JVX_FIRFFT_FLEXIBLE_FIR;
+
+	render_inst->firfftcf_right.init.bsize = bsize;
+	render_inst->firfftcf_right.init.fir = render_inst->buffer_hrir_right;
+	render_inst->firfftcf_right.init.lFir = render_inst->length_buffer_hrir;
+	render_inst->firfftcf_right.init.type = JVX_FIRFFT_FLEXIBLE_FIR;
+
+	jvx_firfft_cf_init(&render_inst->firfftcf_left);
+	jvx_firfft_cf_init(&render_inst->firfftcf_right);
+
+	render_inst->lUpdatedWeights = render_inst->firfftcf_left.derived.lFirW;
+	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(render_inst->updatedWeightsLeft, jvxDataCplx, render_inst->lUpdatedWeights);
+	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(render_inst->updatedWeightsRight, jvxDataCplx, render_inst->lUpdatedWeights);
+	return render_inst;
+}
+
+void
+CjvxAuNBinauralRender::deallocate_renderer(jvxOneRenderCore*& render_inst)
+{
+	JVX_DSP_SAFE_DELETE_FIELD(render_inst->updatedWeightsLeft);
+	JVX_DSP_SAFE_DELETE_FIELD(render_inst->updatedWeightsRight);
+	render_inst->lUpdatedWeights = 0;
+
+	jvx_firfft_cf_terminate(&render_inst->firfftcf_left);
+	jvx_firfft_cf_terminate(&render_inst->firfftcf_right);
+
+	deallocate_hrir_buffers(render_inst);
+
+	JVX_SAFE_DELETE_OBJECT(render_inst);
+}

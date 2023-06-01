@@ -6,9 +6,12 @@
 CjvxGenericConnectionTechnology::CjvxGenericConnectionTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
 {
+	JVX_DECLARE_OBJECT_REFERENCES(tpComp, IjvxTechnology);
+	/*
 	_common_set.theComponentType.unselected(JVX_COMPONENT_UNKNOWN);
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxTechnology*>(this));
-	_common_set.thisisme = static_cast<IjvxObject*>(this);
+	JVX_OBJECT_ASSIGN_BASIC_REFERENCES
+	*/
 }
 
 CjvxGenericConnectionTechnology::~CjvxGenericConnectionTechnology()

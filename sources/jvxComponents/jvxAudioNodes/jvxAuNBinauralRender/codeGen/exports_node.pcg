@@ -16,6 +16,11 @@ SECTION PROPERTIES
 				TYPE = "JVX_DATAFORMAT_PROPERTY_EXTENDER_INTERFACE";	
 				CALLBACK_SET_POSTHOOK = "set_extend_ifx_reference";
 			};  
+			SECTION interf_position_direct
+			{
+				DESCRIPTION = "Extender Interface direct Positioning";
+				TYPE = "JVX_DATAFORMAT_PROPERTY_EXTENDER_INTERFACE";					
+			};  
 		};
 	};
 

@@ -30,25 +30,7 @@
 #include "jvx_fft_tools/jvx_fft_core.h"
 #include "jvx_dsp_base.h"
 
-typedef struct
-{
-	struct
-	{
-		jvxFFT* corefft;
-		jvxIFFT* coreifft;
-		jvxDataCplx* spec;
-		jvxData* out;
-		jvxData* in;
-		jvxFFTGlobal* fftGlob;
-		jvxSize phase;
-		jvxSize outoffset;
-		jvxData normFactor;
-	} ram;
-
-	jvx_firfft_prmInit init_cpy;
-	jvx_firfft_prmDerived derived_cpy;
-} jvx_firfft_prv;
-		
+#include "jvx_fft_tools/jvx_firfft_prv.h"	
 
 jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 {
@@ -59,6 +41,14 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	init->init.lFft = JVX_SIZE_UNSELECTED;
 	init->init.delayFir = JVX_SIZE_UNSELECTED;
 	init->init.type = JVX_FIRFFT_SYMMETRIC_FIR;
+
+	init->derived.delay = 0;
+	init->derived.szFft = JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE;
+	init->derived.szFftValue = 0;
+	init->derived.lFirW = 0;
+
+	init->sync.firW = NULL;
+
 	init->prv = NULL;
 
 	resL = jvx_firfft_update(init, JVX_DSP_UPDATE_INIT, true);
@@ -122,9 +112,9 @@ jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl)
 
 		jvx_execute_fft(nHdl->ram.corefft);
 
-		hdl->sync.firW = NULL;
-		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(hdl->sync.firW, jvxDataCplx, nHdl->derived_cpy.szFftValue / 2 + 1);
-		for (i = 0; i < nHdl->derived_cpy.szFftValue / 2 + 1; i++)
+		hdl->sync.firW = NULL;		
+		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(hdl->sync.firW, jvxDataCplx, hdl->derived.lFirW);
+		for (i = 0; i < hdl->derived.lFirW; i++)
 		{
 			hdl->sync.firW[i].re = nHdl->ram.spec[i].re;
 			hdl->sync.firW[i].im = nHdl->ram.spec[i].im;
@@ -313,6 +303,8 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 				fftszmin,
 				JVX_FFT_ROUND_UP, &hdl->derived.szFftValue);
 			assert(resL == JVX_DSP_NO_ERROR);
+
+			hdl->derived.lFirW = hdl->derived.szFftValue / 2 + 1;
 
 			switch (hdl->init.type)
 			{

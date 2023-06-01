@@ -13,23 +13,52 @@ CjvxAuNBinauralRender::get_property(
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, update_source_direction)
 {
-	/* Check if HRIR update is necessary by comparing state direction array to input porperty. */
-	bool hrirs_dirty = false;
+	if (
+		(this->input_source_direction_angles_deg[0] != this->source_direction_angles_deg[0]) ||
+		(this->input_source_direction_angles_deg[1] != this->source_direction_angles_deg[1]))
+	{
+		jvxBool triggerThread = false;
+		JVX_LOCK_MUTEX(safeAccessUpdateBgrd);
+		switch (updateHRir)
+		{
+		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK:
+			// Here, all previous updates had been completed		
+			newAzimuth = this->input_source_direction_angles_deg[0];
+			newInclination = this->input_source_direction_angles_deg[1];
+			updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_IN_OPERATION;
+			triggerThread = true;
+			break;
+		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_IN_OPERATION:
+			
+			// Latest update is pending. We can therefore update the target angle
+			newAzimuth = this->input_source_direction_angles_deg[0];
+			newInclination = this->input_source_direction_angles_deg[1];
+			break;
 
-	if (this->input_source_direction_angles_deg[0] != this->source_direction_angles_deg[0]) {
-		hrirs_dirty = true;
+		case jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF:
+
+			// No realtime processing yet, we can immediately set the target angles
+			// No need to trigger any on-the-fly update
+			this->source_direction_angles_deg[0] = this->input_source_direction_angles_deg[0];
+			this->source_direction_angles_deg[1] = this->input_source_direction_angles_deg[1];
+			break;
+
+		default:
+
+			// Here, the update can not be performed
+			missedUpdatesPosition++;
+		}
+		JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
+
+		if (triggerThread)
+		{
+			if (threads.cpPtr)
+			{
+				threads.cpPtr->trigger_wakeup();
+			}
+		}
 	}
 
-	if (this->input_source_direction_angles_deg[1] != this->source_direction_angles_deg[1]) {
-		hrirs_dirty = true;
-	}
-
-	if (hrirs_dirty) {
-		const jvxData azimuth_deg = this->input_source_direction_angles_deg[0];
-		const jvxData inclination_deg = this->input_source_direction_angles_deg[1];
-
-		update_hrirs(this->idx_conv_sofa_current, azimuth_deg, inclination_deg);
-	}
 	return JVX_NO_ERROR;
 }
 
@@ -70,38 +99,34 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, set_extend
 jvxErrorType
 CjvxAuNBinauralRender::report_database_changed()
 {	
-	if (this->frame_advance == JVX_SIZE_UNSELECTED) return JVX_ERROR_NOT_READY;
+	// Here, we need to be careful: the fftw does not allow threaded creation of plans,
+	//
+	// https://www.fftw.org/fftw3_doc/Thread-safety.html
+	//
+	// The consequence is that we are not allowed to allocate fftws in parallel threads.
+	// Therefore, all fftw allocation must be in the main thread.
+	// The update of the position, in contrast, is relocated into another thread since this 
+	// update may occur in the main thread but also in the processing thread for high speed 
+	// modification.
 
-	// This function callback indicates, that the active SOFA database in the ayfHrtfDispenser has been changed.
-	JVX_LOCK_MUTEX(this->mutex_convolutions);
+	jvxBool triggerThread = false;
+	JVX_LOCK_MUTEX(safeAccessUpdateBgrd);
 
-	jvxSize new_length_hrir;
-	this->theHrtfDispenser->get_length_hrir(new_length_hrir);
+	// Cancel all current position updates
+	updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
 
-	if (this->length_buffer_hrir != new_length_hrir) {
-		this->length_buffer_hrir = new_length_hrir;
+	// jvxOneRenderCore* removedThis = render_sec;
 
-		this->allocate_hrir_buffers(this->length_buffer_hrir);
-		jvxSize idx_conv_sofa_next = this->toggle_idx(this->idx_conv_sofa_current);
-		this->convolutions.at(idx_conv_sofa_next) = ConvolutionsHrirCurrentNext();
-		auto& new_convolution = this->convolutions.at(idx_conv_sofa_next);
-		this->init_convolution_set(new_convolution, this->length_buffer_hrir, this->frame_advance);
-
-		const jvxData azimuth_deg = this->source_direction_angles_deg[0];
-		const jvxData inclination_deg = this->source_direction_angles_deg[1];
-
-		this->update_hrirs(idx_conv_sofa_next, azimuth_deg, inclination_deg);
-
-		this->sofa_db_dirty = true;
-	}
-	else {
-		const jvxData azimuth_deg = this->source_direction_angles_deg[0];
-		const jvxData inclination_deg = this->source_direction_angles_deg[1];
-
-		this->update_hrirs(this->idx_conv_sofa_current, azimuth_deg, inclination_deg);
+	if (render_sec)
+	{
+		deallocate_renderer(render_sec);
 	}
 
-	JVX_UNLOCK_MUTEX(this->mutex_convolutions);
+	// Allocate new renderer but as "secondary" renderer for now
+	render_sec = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
+		this->source_direction_angles_deg[0], this->source_direction_angles_deg[1]);
+	updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY;
+	JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
 
 	return JVX_NO_ERROR;
 }

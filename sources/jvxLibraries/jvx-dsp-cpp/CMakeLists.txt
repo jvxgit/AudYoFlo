@@ -58,7 +58,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioFftEqualizer/CjvxAudioFftEqualizer.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioFixedFftN1Filter/CjvxAudioFixedFftN1Filter.h
 
-
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxFastConvolution/CjvxFastConvolution.h
 	)
 
 #set(LOCAL_PCG_FILES

@@ -237,10 +237,13 @@ public:
 	 virtual jvxErrorType JVX_CALLINGCONVENTION report_properties_modified(const char* props_set) override;
 };
 
+#define  JVX_OBJECT_ASSIGN_BASIC_REFERENCES \
+	_common_set.thisisme = static_cast<IjvxObject*>(this); \
+	_common_set.theInterfaceFactory = static_cast<IjvxInterfaceFactory*>(this);
+
 #define JVX_DECLARE_OBJECT_REFERENCES(COMP_TP, COMP_IF) \
 	_common_set.theComponentType.unselected(COMP_TP); \
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<COMP_IF*>(this)); \
-	_common_set.theInterfaceFactory = static_cast<IjvxInterfaceFactory*>(this); \
-	_common_set.thisisme = static_cast<IjvxObject*>(this)
+	JVX_OBJECT_ASSIGN_BASIC_REFERENCES
 
 #endif

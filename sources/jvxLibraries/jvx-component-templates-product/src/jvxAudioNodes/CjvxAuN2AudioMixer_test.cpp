@@ -116,7 +116,15 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 #endif
 						*/
 					}
+					if (lockChannels)
+					{
+						JVX_LOCK_MUTEX(safeAccessChannelLists);
+					}
 					itElm->second.channels.clear();
+					if (lockChannels)
+					{
+						JVX_UNLOCK_MUTEX(safeAccessChannelLists);
+					}
 
 					i = 0;
 
@@ -163,7 +171,15 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 
 									// Use itElm->second.masName here: when first allocating the object we do not yet know the "friendly" name
 									updateChannelFromStorage(inputChannelsInStorage, newEntry, itElm->second.masName, true);
+									if (lockChannels)
+									{
+										JVX_LOCK_MUTEX(safeAccessChannelLists);
+									}
 									itElm->second.channels.push_back(newEntry);
+									if (lockChannels)
+									{
+										JVX_UNLOCK_MUTEX(safeAccessChannelLists);
+									}
 #ifdef JVX_AUDIOMIXER_DEBUG_SPECIFIC
 									newEntry.attSpecificPtr = nullptr;
 #endif
@@ -188,7 +204,15 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 							newEntry.name = nmMaster + " -- Channel#" + jvx_size2String(cnt);// +"/" + jvx_size2String(uId);
 							// Use itElm->second.masName here: when first allocating the object we do not yet know the "friendly" name
 							updateChannelFromStorage(inputChannelsInStorage, newEntry, itElm->second.masName, true);
+							if (lockChannels)
+							{
+								JVX_LOCK_MUTEX(safeAccessChannelLists);
+							}
 							itElm->second.channels.push_back(newEntry);
+							if (lockChannels)
+							{
+								JVX_UNLOCK_MUTEX(safeAccessChannelLists);
+							}
 #ifdef JVX_AUDIOMIXER_DEBUG_SPECIFIC
 							newEntry.attSpecificPtr = nullptr;
 #endif
@@ -245,7 +269,15 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 #endif
 						*/
 					}
+					if (lockChannels)
+					{
+						JVX_LOCK_MUTEX(safeAccessChannelLists);
+					}
 					itElm->second.channels.clear();
+					if (lockChannels)
+					{
+						JVX_UNLOCK_MUTEX(safeAccessChannelLists);
+					}
 
 					i = 0;
 
@@ -289,7 +321,15 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 								newEntry.name = nmMaster + "--" + selLst.strList.std_str_at(i);
 								// Use itElm->second.masName here: when first allocating the object we do not yet know the "friendly" name
 								updateChannelFromStorage(outputChannelsInStorage, newEntry, itElm->second.masName, false);
+								if (lockChannels)
+								{
+									JVX_LOCK_MUTEX(safeAccessChannelLists);
+								}
 								itElm->second.channels.push_back(newEntry);
+								if (lockChannels)
+								{
+									JVX_UNLOCK_MUTEX(safeAccessChannelLists);
+								}
 #ifdef JVX_AUDIOMIXER_DEBUG_SPECIFIC
 								newEntry.attSpecificPtr = nullptr;
 #endif
@@ -309,7 +349,15 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 							newEntry.name = nmMaster + " -- Channel#" + jvx_size2String(cnt);// +"/" + jvx_size2String(uId);
 							// Use itElm->second.masName here: when first allocating the object we do not yet know the "friendly" name
 							updateChannelFromStorage(outputChannelsInStorage, newEntry, itElm->second.masName, false);
+							if (lockChannels)
+							{
+								JVX_LOCK_MUTEX(safeAccessChannelLists);
+							}
 							itElm->second.channels.push_back(newEntry);
+							if (lockChannels)
+							{
+								JVX_UNLOCK_MUTEX(safeAccessChannelLists);
+							}
 #ifdef JVX_AUDIOMIXER_DEBUG_SPECIFIC
 							newEntry.attSpecificPtr = nullptr;
 #endif

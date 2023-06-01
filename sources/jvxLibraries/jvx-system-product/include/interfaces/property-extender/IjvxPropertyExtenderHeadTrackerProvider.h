@@ -1,11 +1,13 @@
 #ifndef _IJVXPROPERTYEXTENDERHEADTRACKERPROVIDER_H_
 #define _IJVXPROPERTYEXTENDERHEADTRACKERPROVIDER_H_
 
+JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider;
+
 JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider_report
 {
 public:
 	virtual ~IjvxPropertyExtenderHeadTrackerProvider_report() {};
-	virtual jvxErrorType report_rotation_angle(jvxData newValDegree) = 0;
+	virtual jvxErrorType report_rotation_angle(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxData newValDegree) = 0;
 };
 
 JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider

@@ -43,6 +43,12 @@ protected:
 	/* Direct external control of the mixer */
 	IjvxDirectMixerControlClient* theDirectMixer_ctrl_clnt = nullptr;
 	CjvxAuN2AudioMixer_channelExtender* extender = nullptr;
+	
+	// The channels are typically only allocated and deallocated within the main thread - on button push or similar
+	// However, in some situations. other inputs may need to be protected against removal of channels. In these cases, the 
+	// lock must be activated in the deriving classes	
+	jvxBool lockChannels = false;
+	JVX_MUTEX_HANDLE safeAccessChannelLists;
 
 	class oneEntryChannel
 	{

@@ -695,7 +695,7 @@ treeListElement::outputToString(const std::string& path, const std::string& orig
 		auto elm = decomposeIntoFiles->sectionList.find(pathFwd);
 		if (elm != decomposeIntoFiles->sectionList.end())
 		{
-			std::cout << "Path = " << pathFwd << " -- " << origin << std::endl;
+			// std::cout << "Path = " << pathFwd << " -- " << origin << std::endl;
 			originFwd = elm->second.origin;
 		}
 	}

@@ -28,6 +28,9 @@ public:
 	/* Load SOFA database file in path fName with specified samplerate.
 		@param samplerate: Sampling rate used to open SOFA database.
 	 */
+
+	jvxSize loadId = 0;
+
 	jvxErrorType open(jvxSize samplerate);
 
 	// Unload database and reset values.
@@ -39,6 +42,7 @@ class ayfHrtfDispenser : public IjvxPropertyExtender, public IjvxPropertyExtende
 {
 private:
 
+	jvxSize loadIdCnt = 1;
 	jvxBool is_initialized = false;
 	jvxBool started = false;
 
@@ -53,7 +57,6 @@ private:
 	float *buffer_hrir_left = nullptr;
 	float *buffer_hrir_right = nullptr;
 	jvxSize length_buffer_hrir = JVX_SIZE_UNSELECTED;
-	void allocate_hrir_buffers();
 
 	std::list<IjvxPropertyExtenderHrtfDispenser_report*> registeredListeners;
 
@@ -68,9 +71,10 @@ public:
 	
 	// ==============================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION init(jvxSize samplerate) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_length_hrir(jvxSize& length_hrir) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclination_deg, jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION init(jvxSize* samplerate) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_length_hrir(jvxSize& length_hrir, jvxSize* loadId) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclination_deg, 
+		jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir, jvxSize dataBaseId) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_closest_direction(jvxData& azimuth_deg, jvxData& inclination_deg) override;
 
 	// ==============================================================================
@@ -92,10 +96,13 @@ public:
 	jvxErrorType select_database(jvxSize idx_database);
 
 	// Load the selected SOFA database.
-	jvxErrorType load_selected_database();
+	jvxErrorType load_selected_database(oneSofaDataBase* dbase);
 
 	// Return list index of selected SOFA database.
 	jvxSize selected_database();
+
+	void allocate_hrir_buffers(oneSofaDataBase* dbase);
+
 };
 
 #endif
