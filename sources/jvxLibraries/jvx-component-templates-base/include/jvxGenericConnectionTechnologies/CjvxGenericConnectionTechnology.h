@@ -49,6 +49,7 @@ public:
 // #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
 	virtual CjvxGenericConnectionDevice* allocate_device(const std::string& pName, jvxSize id) = 0;
+
 };
 
 #endif

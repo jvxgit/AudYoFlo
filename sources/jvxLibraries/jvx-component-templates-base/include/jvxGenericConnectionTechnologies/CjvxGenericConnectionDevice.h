@@ -25,6 +25,7 @@
 
 // Macro to output timing messages about the communication on the std::cout channel
 // #define JVX_RS232_OUTPUT_MESSAGE_TIMING 
+class CjvxTechnology;
 
 class CjvxGenericConnectionDevice : public IjvxDevice, public CjvxDevice,
 	public CjvxObject, public IjvxProperties,
@@ -184,6 +185,8 @@ public:
 	virtual jvxErrorType cleared_messages_hook() = 0;
 
 	virtual jvxErrorType prepare_retransmit() = 0;
+
+	void setParent(IjvxDevice_report* tech);
 };
 
 #endif

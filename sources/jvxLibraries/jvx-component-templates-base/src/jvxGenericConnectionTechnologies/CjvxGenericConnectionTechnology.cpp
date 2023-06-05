@@ -79,6 +79,9 @@ CjvxGenericConnectionTechnology::activate()
 									CjvxGenericConnectionDevice* newDevice = NULL;
 									newDevice = this->allocate_device(thePorts.std_str_at(i), i);
 
+									// Set the backward technology reference to allow status update messages
+									newDevice->setParent(this);
+
 									oneDeviceWrapper elm;
 									elm.hdlDev = static_cast<IjvxDevice*>(newDevice);
 									_common_tech_set.lstDevices.push_back(elm);

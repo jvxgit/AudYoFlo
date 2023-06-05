@@ -81,6 +81,11 @@ CjvxGenericConnectionDevice::select(IjvxObject* theOwner)
 	if (res == JVX_NO_ERROR)
 	{
 		select_connection_specific();
+
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
 	}
 	return res;
 }
@@ -109,6 +114,14 @@ CjvxGenericConnectionDevice::unselect()
 	unselect_connection_specific();
 
 	res = _unselect();
+
+	if (res == JVX_NO_ERROR)
+	{
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
+	}
 	return res;
 }
 
@@ -204,6 +217,11 @@ CjvxGenericConnectionDevice::activate()
 			res = JVX_ERROR_COMPONENT_BUSY;
 			goto errorI;
 		}
+
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
 	}
 	return(res);
 
@@ -269,6 +287,11 @@ CjvxGenericConnectionDevice::deactivate()
 			mpMessages.clear();
 
 			_deactivate();
+
+			if (_common_set_device.report)
+			{
+				_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+			}
 		}
 	}
 	return(res);
@@ -933,4 +956,10 @@ CjvxGenericConnectionDevice::clear_inout_matching()
 	cleared_messages_hook();
 	JVX_UNLOCK_MUTEX(safeAccessChannel);
 	return res;
+}
+
+void 
+CjvxGenericConnectionDevice::setParent(IjvxDevice_report* tech)
+{
+	this->_common_set_device.report = tech;
 }
