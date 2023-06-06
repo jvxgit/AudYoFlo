@@ -69,6 +69,17 @@ CjvxAudioFFMpegReaderTechnology::return_device(IjvxDevice* dev)
 	return res;
 }
 
+jvxErrorType
+CjvxAudioFFMpegReaderTechnology::request_kill_device(CjvxAudioFFMpegReaderDevice* devPtr)
+{
+	jvxApiString astr;
+	devPtr->description(&astr);
+	std::string ident = astr.std_str();
+	
+	// This call is executed in a delayed way - this function hence does not immediately kill the device!!!
+	report_device_died(ident);
+	return JVX_NO_ERROR;
+}
 // =======================================================================================
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderTechnology, modify_fileio)

@@ -52,9 +52,10 @@ public:
 
 	std::string get_last_error();
 	// =================================================================
-
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare()override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION start()override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION stop()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION select(IjvxObject* owner)override;

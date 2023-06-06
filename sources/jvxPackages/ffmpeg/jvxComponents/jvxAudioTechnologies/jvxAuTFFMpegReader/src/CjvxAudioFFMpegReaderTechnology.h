@@ -68,6 +68,7 @@ public:
 		jvxSize& idSelectNew);
 	void update_local_properties(jvxBool trig_host, jvxSize idSelectNew);
 	void trigger_close_file_core(std::pair<IjvxDevice*, CjvxAudioFFMpegReaderDevice*> elm);
+	jvxErrorType request_kill_device(CjvxAudioFFMpegReaderDevice* devPtr);
 };
 
 #endif

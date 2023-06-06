@@ -35,6 +35,7 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 	jvxErrorType res = JVX_NO_ERROR;
 	AVDictionary* format_opts = nullptr, * codec_opts = nullptr, *filtered_opts = nullptr;
 	parentTech = par;	
+	_common_set_device.report = par;
 
 	// This code prepares the input from a file. The code has been copied in parts from ffplay app code in ffplay.c
 
@@ -258,7 +259,11 @@ CjvxAudioFFMpegReaderDevice::select(IjvxObject* owner)
 {
 	jvxErrorType res = CjvxAudioDevice::select(owner);
 	if (res == JVX_NO_ERROR)
-	{		
+	{	
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
 	}
 	return (res);
 }
@@ -270,6 +275,10 @@ CjvxAudioFFMpegReaderDevice::unselect()
 	jvxErrorType res = CjvxAudioDevice::unselect();
 	if (res == JVX_NO_ERROR)
 	{
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
 	}
 	return (res);
 }
@@ -345,6 +354,11 @@ CjvxAudioFFMpegReaderDevice::activate()
 		CjvxAudioDevice::properties_active.sourceName.value = jvx_shortenStringName(32, fParams.fName);
 		CjvxAudioDevice::properties_active.sinkName.value = "not-connected";
 
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
+
 	}
 	return (res);
 }
@@ -371,7 +385,10 @@ CjvxAudioFFMpegReaderDevice::deactivate()
 		genFFMpegReader_device::deallocate_all();
 		res = CjvxAudioDevice::deactivate();
 
-
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
 	}
 	return (res);
 }
@@ -387,10 +404,45 @@ CjvxAudioFFMpegReaderDevice::prepare()
 
 	if (res == JVX_NO_ERROR)
 	{        
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
 	}
 	return (res);
 }
 
+jvxErrorType
+CjvxAudioFFMpegReaderDevice::start()
+{
+	jvxSize i;
+	jvxErrorType res = CjvxAudioDevice::start();
+
+	if (res == JVX_NO_ERROR)
+	{
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
+	}
+	return (res);
+}
+
+jvxErrorType
+CjvxAudioFFMpegReaderDevice::stop()
+{
+	jvxErrorType res = CjvxAudioDevice::stop();
+	jvxSize numNotDeallocated = 0;
+	jvxErrorType resL;
+	if (res == JVX_NO_ERROR)
+	{
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
+	}
+	return (res);
+}
 
 jvxErrorType
 CjvxAudioFFMpegReaderDevice::postprocess()
@@ -400,6 +452,10 @@ CjvxAudioFFMpegReaderDevice::postprocess()
 	jvxErrorType resL;
 	if (res == JVX_NO_ERROR)
 	{		
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
 	}
 	return (res);
 }
@@ -888,6 +944,11 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, trig
 		}
 		genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 		genFFMpegReader_device::command.togpause.value = false;
+	}
+
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFFMpegReader_device::command.close))
+	{
+		parentTech->request_kill_device(this);
 	}
 
 	return JVX_NO_ERROR;
