@@ -403,7 +403,7 @@ CjvxAudioFFMpegReaderDevice::prepare()
 	jvxErrorType resL = JVX_NO_ERROR;
 
 	if (res == JVX_NO_ERROR)
-	{        
+	{       
 		if (_common_set_device.report)
 		{
 			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
@@ -637,6 +637,11 @@ CjvxAudioFFMpegReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	statusOutput = processingState::JVX_STATUS_RUNNING;
 	genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 
+	jvxCallManagerProperties callMan;
+	CjvxProperties::_start_property_report_collect(callMan);
+	CjvxProperties::add_property_report_collect(genFFMpegReader_device::monitor.file_status.descriptor.std_str());
+	CjvxProperties::_stop_property_report_collect(callMan);
+
 	return res;
 leave_error:
 	return res;
@@ -650,6 +655,12 @@ CjvxAudioFFMpegReaderDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 
 	statusOutput = processingState::JVX_STATUS_READY;
 	genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
+
+	jvxCallManagerProperties callMan;
+	CjvxProperties::_start_property_report_collect(callMan);
+	CjvxProperties::add_property_report_collect(genFFMpegReader_device::monitor.file_status.descriptor.std_str());
+	CjvxProperties::_stop_property_report_collect(callMan);
+
 
 	res = _stop_chain_master(NULL);
 	assert(res == JVX_NO_ERROR);
@@ -944,6 +955,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioFFMpegReaderDevice, trig
 		}
 		genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 		genFFMpegReader_device::command.togpause.value = false;
+		CjvxProperties::add_property_report_collect(genFFMpegReader_device::monitor.file_status.descriptor.std_str());
 	}
 
 	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, genFFMpegReader_device::command.close))
