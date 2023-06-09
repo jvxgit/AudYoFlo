@@ -1092,16 +1092,19 @@ endif()
 	set(JVX_COLLECTED_SUBMODULES "")
 	foreach(expr IN LISTS JVX_SUBMODULE_PASS_EXPRS)
 		message("--> Running sub-module pass <${expr}>")
+		## message("### ${JVX_COLLECTED_SUBMODULES}")
+
 		jvx_submodules("${JVXRT_SUBMODULE_PATH}" "${JVXRT_SUBPROJECTS_PATH_MAP}" "${expr}") # Path is set in the options file
 		
 		# We add the submodules to a global list to collect modules from multiple passes
 		list(APPEND JVX_COLLECTED_SUBMODULES ${JVX_CONFIGURED_AUDIO_SUBMODULES})
+		## message("##1## ${JVX_COLLECTED_SUBMODULES}")
 		
-		# message("-> ${JVX_COLLECTED_SUBMODULES}")
 		jvx_submodules("${JVXRT_SUBMODULE_FLUTTER_PATH}" "${JVXRT_SUBPROJECTS_FLUTTER_PATH_MAP}" "${expr}") # Path is set in the options file
-
+	
 		# We add the submodules to a global list to collect modules from multiple passes
 		list(APPEND JVX_COLLECTED_SUBMODULES ${JVX_CONFIGURED_AUDIO_SUBMODULES})
+		## message("##2## ${JVX_COLLECTED_SUBMODULES}")
 
 	endforeach()
 	# message(FATAL_ERROR "Stop")
