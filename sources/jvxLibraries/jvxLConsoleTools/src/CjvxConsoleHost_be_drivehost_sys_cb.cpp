@@ -7,6 +7,12 @@
 #include "jvxTDataLogger.h"
 #include "jvxTSocket.h"
 
+#include "jvxTrtAudioFileReader.h"
+#include "jvxTrtAudioFileWriter.h"
+#include "jvxAuTGenericWrapper.h"
+#include "jvxTDataConverter.h"
+#include "jvxTResampler.h"
+
 #ifndef JVX_CONFIGURE_HOST_STATIC_NODE
 
 // Default black listing in case of host that loads dynamic objects
@@ -75,8 +81,6 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 	JVX_START_SLOTS_SUBPRODUCT(theHostFeatures.numSlotsComponents, _command_line_parameters_hosttype.num_slots_max, _command_line_parameters_hosttype.num_subslots_max);
 #endif
 
-	bootup_sequencer_config();
-
 	// Attach backward references
 	theHostFeatures.if_report = static_cast<IjvxReport*>(this);
 
@@ -103,15 +107,37 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 	LOAD_ONE_MODULE_LIB_FULL(jvxTThreads_init, jvxTThreads_terminate, "Threads", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTDataLogger_init, jvxTDataLogger_terminate, "Data Logger", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTSocket_init, jvxTSocket_terminate, "Sockets", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTDataConverter_init,
+		jvxTDataConverter_terminate,
+		"Data Converter",
+		involvedComponents.addedStaticObjects,
+		involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTResampler_init,
+		jvxTResampler_terminate,
+		"Resampler",
+		involvedComponents.addedStaticObjects,
+		involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTrtAudioFileReader_init,
+		jvxTrtAudioFileReader_terminate,
+		"RT Audio Reader",
+		involvedComponents.addedStaticObjects,
+		involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTrtAudioFileWriter_init,
+		jvxTrtAudioFileWriter_terminate,
+		"RT Audio Writer",
+		involvedComponents.addedStaticObjects,
+		involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxAuTGenericWrapper_init,
+		jvxAuTGenericWrapper_terminate,
+		"Generic Wrapper",
+		involvedComponents.addedStaticObjects,
+		involvedComponents.theHost.hFHost);
 
 	// Do not allow that host components are loaded via DLL
-	this->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_HOST);
-	/*
-	this->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_CONFIG_PROCESSOR);
-	this->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_SYSTEM_TEXT_LOG);
-	this->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_THREADS);
-	this->involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_DATALOGGER);
-	*/
+	involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_HOST);
+	involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_MIN_HOST);
+	involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_OFF_HOST);
+	involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_FACTORY_HOST);
 
 	assert(linkedPriFrontend.fe);
 	if (linkedPriFrontend.st == JVX_STATE_INIT)
@@ -164,14 +190,6 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 		}
 	}
 
-	res = bootup_specific();
-	if (res != JVX_NO_ERROR)
-	{
-		std::string errTxt = "Function <bootup_specific> failed, reason:";
-		errTxt += jvxErrorType_descr(res);
-		errloc->assign(errTxt);
-	}
-
 	// Run the loop to get the components
 	static_load_loop();
 
@@ -196,14 +214,6 @@ CjvxConsoleHost_be_drivehost::boot_prepare_specific(jvxApiString* errloc)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	
-	res = postbootup_specific();
-	if (res != JVX_NO_ERROR)
-	{
-		std::string errTxt = "Function <postbootup_specific> failed, reason:";
-		errTxt += jvxErrorType_descr(res);
-		errloc->assign(errTxt);
-	}
-
 	if (config.auto_start)
 	{
 		std::string command = "act(sequencer, start);";

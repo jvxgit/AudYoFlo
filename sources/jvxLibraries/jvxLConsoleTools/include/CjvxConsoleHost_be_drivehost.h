@@ -278,11 +278,7 @@ public:
 		IjvxConfigurationExtender* ext) override;
 	void report_config_file_read_successful(jvxCallManagerConfiguration* callConf, const char* fName) override;
 
-	jvxErrorType bootup_specific();
-	jvxErrorType postbootup_specific();
 	jvxErrorType shutdown_specific();
-
-	void bootup_sequencer_config();
 
 	virtual jvxErrorType boot_initialize_product()override;
 

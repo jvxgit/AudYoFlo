@@ -42,7 +42,6 @@ set(LOCAL_SOURCES
 	 ${CMAKE_CURRENT_SOURCE_DIR}/../src/CjvxConsoleHost_be_drivehost_act.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/../src/CjvxConsoleHost_be_drivehost_file.cpp
 
-	 ${JVX_INTEGRATE_SOURCES_PATH}/sources/jvxLibraries/jvxLConsoleTools/src/CjvxConsoleHost_be_drivehost_boot_specific.cpp
 	 ${JVX_INTEGRATE_SOURCES_PATH}/sources/jvxLibraries/jvxLConsoleTools/src/CjvxConsoleHost_be_drivehost_shutdown_specific.cpp
 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/../src/CjvxConsoleHost_be_print.cpp
