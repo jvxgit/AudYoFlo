@@ -10,7 +10,20 @@
 		endif()
 	else(JVX_LINK_WITH_DEVELOP_HOST)
 		if(JVX_LINK_WITH_CONSOLE_HOST)
-			# Link with develop host
+		
+			include_directories(
+				# Console linkage
+				${JVX_BINARY_DIR}/base/sources/jvxEventLoop/CjvxEStandalone
+				${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHJvx/
+				${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleTools/include
+				${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLWebConsoleTools/include
+				${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-net-helpers/include
+				${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
+				${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-host-json/include
+				${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-json/include
+				${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-app-host/include)
+				
+			# Link with console host
 			set(LOCAL_LIBS ${LOCAL_LIBS}
 				jvxLConsoleHost-static_static
 				jvxLWebConsoleTools_static
