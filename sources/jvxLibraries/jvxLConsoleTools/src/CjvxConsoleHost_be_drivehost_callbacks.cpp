@@ -83,15 +83,94 @@ CjvxConsoleHost_be_drivehost::request_command(const CjvxReportCommandRequest& re
 	jvxCBitField p1 = 0;
 	jvxErrorType res = JVX_NO_ERROR;
 
+	JVX_THREAD_ID tIdLocal = JVX_GET_CURRENT_THREAD_ID();
+	
+	if (request.request() == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN)
+	{
+		assert(tIdLocal == threadIdMainLoop);
+		const CjvxReportCommandRequest_uid* ptrReq = castCommandRequest<CjvxReportCommandRequest_uid>(request);
+		if (ptrReq)
+		{
+			IjvxDataConnections* theDataConnections = NULL;
+			if (involvedComponents.theHost.hFHost)
+			{
+				theDataConnections = reqInterfaceObj<IjvxDataConnections>(involvedComponents.theHost.hFHost);
+				if (theDataConnections)
+				{
+					jvxSize num = 0;
+					jvxSize uId = JVX_SIZE_UNSELECTED;
+					ptrReq->uid(&uId);
+
+					res = theDataConnections->add_process_test(uId, &num, request.immediate());
+					if (res == JVX_ERROR_POSTPONE)
+					{
+						// In case we receive a POSTPONE, this indicates that we need to change thread
+						// Post this event to be rescheduled
+						evElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
+						evElm.eventClass = JVX_EVENTLOOP_REQUEST_TRIGGER;
+						evElm.eventType = JVX_EVENTLOOP_EVENT_SPECIFIC + 3; // This is the reschedule id - to be checked!
+						evElm.origin_fe = this;
+						evElm.target_be = this;
+
+						// The data element will be copied in scheduler
+						evElm.autoDeleteOnProcess = true;
+						evElm.param = (jvxHandle*)&request;
+						evElm.paramType = JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST;
+						res = this->evLop->event_schedule(&evElm, NULL, NULL);
+					}
+					else
+					{
+						if (num)
+						{
+							jvxCBitField requestStart = 0;
+							jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT);
+							jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_SHIFT);
+							jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
+
+							this->report_command_request(requestStart, NULL, 0);
+						}
+					}
+					retInterfaceObj<IjvxDataConnections>(involvedComponents.theHost.hFHost, theDataConnections);
+				}
+			}
+		}
+		return res;
+	}
+
+
 	if (request.immediate())
 	{
+		assert(tIdLocal == threadIdMainLoop);
 		switch (request.request())
 		{
 		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
 			
-			// Trigger a step within the sequencer immediately - have to rethink this later
-			assert(0);
-			break;
+			switch (request.request())
+			{
+			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
+				
+				// We need to trigger the peridodic sequencer step immediately!!
+				/*
+				if (subWidgets.theSequencerWidget)
+				{
+					res = subWidgets.theSequencerWidget->immediate_sequencer_step();
+				}
+				*/
+				break;
+			}
+
+			if (this->theHostFeatures.automation.if_report_automate)
+			{
+				jvxErrorType resL = JVX_NO_ERROR;
+				jvxReportCommandBroadcastType broad = request.broadcast();
+				switch (broad)
+				{
+				case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_AUTOMATION:
+					resL = this->theHostFeatures.automation.if_report_automate->request_command(request);
+					break;
+				}
+			}
+			return res;
 		}
 
 		if (this->theHostFeatures.automation.if_report_automate)
@@ -427,16 +506,20 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
 				cp = request->origin();
 				
-				// Handle update of component list
-				assert(0);
+				std::cout << __FUNCTION__ << "Reported new component list for component <" << jvxComponentIdentification_txt(cp) << "> - need to forward this request via web socket later" << std::endl;
+				break;
+
+			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
+				cp = request->origin();
+				std::cout << __FUNCTION__ << "Reported update all components for component <" << jvxComponentIdentification_txt(cp) << "> - need to forward this request via web socket later" << std::endl;
 				break;
 			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
 
-				// Handle system status update
-				assert(0);
+				std::cout << __FUNCTION__ << "Reported system status changed - need to forward this request via web socket later" << std::endl;
 				break;
 			}
 			break;
+
 		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
 			request->specialization(reinterpret_cast<const jvxHandle**>(&iface_rm), tp);
 			if (iface_rm)
@@ -458,11 +541,18 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 								theSchedule->schedule_main_loop(schedId, userData);
 								theFac->return_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle*>(theSchedule));
 							}
+							else
+							{
+								jvxApiString astr;
+								theObj->description(&astr);
+								std::cout << __FUNCTION__ << " : Request to re-schedule in main thread failed for object <" << astr.std_str() << ">, reason: JVX_INTERFACE_SCHEDULE not supported." << std::endl;
+							}
 						}
 						involvedHost.hHost->return_object_selected_component(cpId, theObj);
 					}
 				}
 			}
+			
 			break;
 		default:
 			break;
@@ -481,6 +571,7 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 		}
 		return JVX_NO_ERROR;
 	}
+
 	return CjvxConsoleHost_be_print::process_event(theQueueElement
 		/*
 		message_id, origin, priv_fe,

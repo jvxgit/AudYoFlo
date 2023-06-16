@@ -396,10 +396,12 @@ CjvxConsoleHost_be_print::process_event(TjvxEventLoopElement* theQueueElement)
 	{
 	case JVX_EVENTLOOP_EVENT_ACTIVATE:
 		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_COMMAND_LINE);
+		threadIdMainLoop = JVX_GET_CURRENT_THREAD_ID();
 		this->process_init((IjvxCommandLine*)param);
 		break;
 	case JVX_EVENTLOOP_EVENT_DEACTIVATE:
 		this->process_shutdown();
+		threadIdMainLoop = JVX_INVALID_THREAD_ID;
 		break;
 	case JVX_EVENTLOOP_EVENT_TEXT_SHOW:
 		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_STDSTRING);
