@@ -44,7 +44,7 @@ protected:
 	std::string user_input;
 	jvxBool arrowupdownmode; 
 
-	JVX_THREAD_ID threadIdMainLoop = JVX_INVALID_THREAD_ID;
+	JVX_THREAD_ID threadIdMainLoop = JVX_THREAD_ID_INVALID;
 
 public:
 

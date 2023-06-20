@@ -31,6 +31,7 @@ class uMainWindow:
 	public IjvxMainWindowControl_connect,
 	public IjvxMainWindowController_report,
 	public jvx_menu_host_bridge_components_report,
+	public CjvxHandleRequestCommands_callbacks,
 	public JVX_APPHOST_PRODUCT_CLASSNAME
 {
 	friend class mainCentral;
@@ -249,6 +250,15 @@ public:
 	virtual jvxErrorType set_variable_edit(jvxHandle* privData, jvxValue& var, jvxSize id) override;
 
 	virtual void keyPressEvent(QKeyEvent* event) override;
+
+	virtual void trigger_immediate_sequencerStep() override;
+	virtual void trigger_threadChange_forward(const CjvxReportCommandRequest* ptr) override;
+
+	virtual void run_mainthread_triggerTestChainDone() override;
+	virtual void run_mainthread_updateComponentList(jvxComponentIdentification cpId) override;
+	virtual void run_mainthread_updateProperties(jvxComponentIdentification cpId) override;
+	virtual void run_mainthread_updateSystemStatus() override;
+
 private:
 
 	void updateWindow(jvxCBitField prio = ((jvxCBitField)1 << JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT));

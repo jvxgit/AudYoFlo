@@ -36,6 +36,7 @@ uMainWindow::uMainWindow() :
 
 	// Link the configure host features
 	confHostFeatures = static_cast<configureHost_features*>(&theHostFeatures);
+	this->reqHandle.reportRef = this;
 
 }
 
@@ -81,11 +82,74 @@ uMainWindow::report_simple_text_message(const char* txt, jvxReportPriority prio)
 
 // ===========================================================================
 
+void 
+uMainWindow::run_mainthread_triggerTestChainDone()
+{
+	// This trioggers the "old" command interface
+	jvxCBitField requestStart = 0;
+	jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT);
+	jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_SHIFT);
+	jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
+
+	this->report_command_request(requestStart, NULL, 0);
+}
+
+void 
+uMainWindow::trigger_immediate_sequencerStep()
+{
+	// We trigger the sequencer - immediately!
+	jvxErrorType res = JVX_NO_ERROR;
+	if (subWidgets.theSequencerWidget)
+	{
+		res = subWidgets.theSequencerWidget->immediate_sequencer_step();
+	}
+}
+
+void 
+uMainWindow::trigger_threadChange_forward(const CjvxReportCommandRequest* request)
+{
+	// We make a copy of the command request and marshall the copy to the other thread
+	CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(*request);
+	emit emit_request_command(ptr);
+}
+
+// =============================================================================
+
+void 
+uMainWindow::run_mainthread_updateComponentList(jvxComponentIdentification cpId)
+{
+	if (subWidgets.bridgeMenuComponents)
+	{
+		subWidgets.bridgeMenuComponents->updateWindowSingle(cpId);
+	}
+}
+
+void 
+uMainWindow::run_mainthread_updateProperties(jvxComponentIdentification cpId)
+{
+	if (subWidgets.main.theWidget)
+	{
+		subWidgets.main.theWidget->inform_update_properties(cpId);
+	}	
+}
+
+void 
+uMainWindow::run_mainthread_updateSystemStatus()
+{
+	jvxCBitField prio = 0;
+	jvx_bitZSet(prio, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT);
+	this->updateWindow(prio);
+}
+
 jvxErrorType
 uMainWindow::request_command(const CjvxReportCommandRequest& request)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	CjvxReportCommandRequest* ptr = NULL;
+
+	return reqHandle._request_command(request);
+
+/*
 
 	if (request.request() == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN)
 	{
@@ -159,6 +223,7 @@ uMainWindow::request_command(const CjvxReportCommandRequest& request)
 	}
 	
 	return res;
+*/
 }
 
 jvxErrorType 
@@ -187,6 +252,11 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 	{
 		resL = subWidgets.main.theWidget->report_command_request(*request);
 	}
+
+#if 1
+	reqHandle._request_command_in_main_thread(request);
+
+#else
 
 	switch (tp)
 	{
@@ -263,6 +333,7 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 
 	//delete request;
 	jvx_command_request_copy_dealloc(request);
+#endif
 }
 
 // ============================================================================
@@ -292,25 +363,7 @@ uMainWindow::report_command_request(jvxCBitField request,
 void
 uMainWindow::trigger_test_chain_inThread()
 {
-	if (involvedComponents.theHost.hFHost)
-	{
-		jvxCBitField requestStart = 0;
-		jvxSize numTested = 0;
-		IjvxDataConnections* theDataConnections = reqInterfaceObj<IjvxDataConnections>(involvedComponents.theHost.hFHost);
-		if (theDataConnections)
-		{
-			theDataConnections->trigger_process_test_all(&numTested);
-			retInterfaceObj<IjvxDataConnections>(involvedComponents.theHost.hFHost, theDataConnections);
-		}
-		if (numTested)
-		{
-			jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT);
-			jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_SHIFT);
-			jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
-
-			this->report_command_request(requestStart, NULL, 0);
-		}
-	}
+	reqHandle._run_all_tests();	
 }
 
 void
@@ -807,8 +860,7 @@ uMainWindow::boot_initialize_specific(jvxApiString* errloc)
 	*/
 
 	/* Setup the extending widgets */
-	setup_widgets();
-
+	setup_widgets();	
 	/*
 	szz = this->minimumSize();
 	std::cout << "B) Min: " << szz.width() << ":" << szz.height() << std::endl;

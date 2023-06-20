@@ -4,6 +4,8 @@
 jvxLibHost myLibHost;
 #endif
 
+JVX_THREAD_ID mainThreadId = JVX_THREAD_ID_INVALID;
+
 // ===================================================================================
 // Some global variables lingering around
 // ===================================================================================
@@ -91,6 +93,7 @@ struct retOpaqueHandle ffi_allocate_backend_handle()
 #endif
 
 	retVal.opaque_hdl = reinterpret_cast<void*>(newLib);
+	// myLibHost.setMainThread();
 	lst_active_referenes[retVal.opaque_hdl] = newLib;
 	retVal.err_code = (int)JVX_NO_ERROR;
 
@@ -107,6 +110,9 @@ int ffi_deallocate_backend_handle(void* opaque_hdl)
 		if (elm != lst_active_referenes.end())
 		{
 			jvxLibHost* ll = elm->second;
+
+			// myLibHost.resetMainThread();
+
 #ifdef JVX_LIB_SINGLETON
 			assert(ll == &myLibHost);
 #else

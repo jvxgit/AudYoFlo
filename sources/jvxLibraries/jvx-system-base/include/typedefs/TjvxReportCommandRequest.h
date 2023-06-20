@@ -89,6 +89,12 @@ public:
 	{
 		immediate_call = immArg;
 	};
+
+	virtual void set_request(jvxReportCommandRequest reqArg)
+	{
+		req = reqArg;
+	};
+
 };
 
 //! Datatype to reschedule a request to the main thread. The event is described by the "id"

@@ -40,7 +40,9 @@ private:
 	
 	CjvxCommandLine commLine;
 	configureLibHost_features theHostFeatures;
-	JVX_THREAD_ID mainThreadId = JVX_NULLTHREAD;
+	
+	// Main thread id preset on initSystem!
+	JVX_THREAD_ID mainThreadId = JVX_THREAD_ID_INVALID;
 	JVX_MUTEX_HANDLE safeAccessEngineThreads;
 	jvxBool init_done = false;
 	callbacks_capi cbks_api;
@@ -100,13 +102,13 @@ public:
 #endif
 	// =====================================================================================
 
-
 	jvxErrorType initSystem(const char* [], int, callbacks_capi* cbks = nullptr, bool executableInBinFolder = true);
 	jvxErrorType terminateSystem();
 
 	// Asynchronous forward functions to switch threads
 	// ======================================================================
 	jvxErrorType request_command_fwd(const CjvxReportCommandRequest& request, jvxBool async);
+	jvxErrorType request_test_chain(const CjvxReportCommandRequest_uid& req);
 
 	// ======================================================================
 	jvxErrorType process_access(jvxSize uId, jvxSize* catId, jvxApiString* astr, IjvxConnectionIterator** itRet);

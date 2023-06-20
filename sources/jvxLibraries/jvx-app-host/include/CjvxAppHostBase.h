@@ -2,6 +2,7 @@
 #define __CJVXAPPHOSTBASE_H__
 
 #include "CjvxAppFactoryHostBase.h"
+#include "CjvxRequestCommandsHandler.h"
 
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
 #define JVX_APPHOST_CLASSNAME CjvxAppHostBase_nd
@@ -38,6 +39,8 @@ protected:
 
 	IjvxReportSystem* if_report_automate_ = nullptr;
 	IjvxAutoDataConnect* if_autoconnect_ = nullptr;
+
+	CjvxRequestCommandsHandler reqHandle;
 
 public:
 	JVX_APPHOST_CLASSNAME();

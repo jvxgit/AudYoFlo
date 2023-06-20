@@ -216,6 +216,8 @@ int ffi_host_initialize(void* opaque_hdl, const char** argv, int argc, func_poin
 				argv[0] = alternativePath.c_str();
 			}
 		}
+
+		mainThreadId = JVX_GET_CURRENT_THREAD_ID();;
 		res = ll->initSystem(argv, argc, &capi, (executableInBinFolder != 0));
 	}
 	return res;
@@ -240,6 +242,7 @@ int ffi_host_terminate(void* opaque_hdl)
 	if (ll)
 	{
 		res = ll->terminateSystem();
+		mainThreadId = JVX_THREAD_ID_INVALID;
 	}
 	return res;
 }

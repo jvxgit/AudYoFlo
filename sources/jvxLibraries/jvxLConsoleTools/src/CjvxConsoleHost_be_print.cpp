@@ -401,7 +401,7 @@ CjvxConsoleHost_be_print::process_event(TjvxEventLoopElement* theQueueElement)
 		break;
 	case JVX_EVENTLOOP_EVENT_DEACTIVATE:
 		this->process_shutdown();
-		threadIdMainLoop = JVX_INVALID_THREAD_ID;
+		threadIdMainLoop = JVX_THREAD_ID_INVALID;
 		break;
 	case JVX_EVENTLOOP_EVENT_TEXT_SHOW:
 		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_STDSTRING);

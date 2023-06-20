@@ -30,6 +30,9 @@ set(LOCAL_SOURCES
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/src/CjvxAppFactoryHostProduct.cpp
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include/CjvxAppFactoryHostProduct.h
 
+	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/src/CjvxRequestCommandsHandler.cpp
+	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include/CjvxRequestCommandsHandler.h
+
   )
 
 # Generate header file for configuration setup of library

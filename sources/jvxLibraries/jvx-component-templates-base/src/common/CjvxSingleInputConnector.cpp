@@ -358,6 +358,7 @@ CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, Ijv
 	if (numConnectorsInUse < acceptNumberConnectors)
 	{
 		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleInputConnector(withTriggerConnector));
+		newConnector->select_connect_icon(obj, master, ass_connection_common, replace_connector);
 		newConnector->activate(_common_set_io_common_ptr->_common_set_io_common.object,
 			_common_set_io_common_ptr->_common_set_io_common.myParent,
 			_common_set_io_common_ptr->_common_set_io_common.descriptor,

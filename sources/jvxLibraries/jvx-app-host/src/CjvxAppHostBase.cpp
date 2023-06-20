@@ -248,6 +248,7 @@ JVX_APPHOST_CLASSNAME::shutdownHostFactory(jvxApiString* errorMessage, jvxHandle
 						automation->return_hidden_interface(JVX_INTERFACE_REPORT_SYSTEM, reinterpret_cast<jvxHandle*>(if_report_automate_));
 						if_report_automate_ = nullptr;
 						confHostFeatures->automation.if_report_automate = nullptr;
+						reqHandle.automationReport = nullptr;
 					}
 					if (if_autoconnect_)
 					{
@@ -465,6 +466,8 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_HOSTTYPEHANDLER, reinterpret_cast<jvxHandle*>(theTypeHandler));
 	}
 
+	reqHandle.hostRef = involvedHost.hHost;
+
 	return boot_initialize_product();
 }
 
@@ -491,6 +494,8 @@ JVX_APPHOST_CLASSNAME::shutdown_terminate_base()
 	std::string txtOut;	
 
 	shutdown_terminate_product();
+
+	reqHandle.hostRef = nullptr;
 
 	// The following two actions only work on host app types, factory host does not support it
 	IjvxHostTypeHandler* theTypeHandler = NULL;
@@ -553,6 +558,7 @@ JVX_APPHOST_CLASSNAME::on_components_before_configure()
 					{
 						automation->request_hidden_interface(JVX_INTERFACE_REPORT_SYSTEM, reinterpret_cast<jvxHandle**>(&if_report_automate_));
 						confHostFeatures->automation.if_report_automate = if_report_automate_;
+						reqHandle.automationReport = confHostFeatures->automation.if_report_automate;
 					}
 
 					// If the external pointer is unset we use the one from the automation component
@@ -575,7 +581,7 @@ JVX_APPHOST_CLASSNAME::on_components_before_configure()
 		// UI system or in a component which can be triggered from within the UI thread
 		if (confHostFeatures->automation.if_autoconnect)
 		{
-			involvedComponents.theHost.hFHost->add_external_interface(confHostFeatures->automation.if_autoconnect, JVX_INTERFACE_AUTO_DATA_CONNECT);
+			involvedComponents.theHost.hFHost->add_external_interface(confHostFeatures->automation.if_autoconnect, JVX_INTERFACE_AUTO_DATA_CONNECT);			
 		}
 
 		// Here, we start all system components. System components are loaded before the

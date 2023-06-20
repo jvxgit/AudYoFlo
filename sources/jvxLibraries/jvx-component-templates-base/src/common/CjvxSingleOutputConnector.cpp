@@ -252,9 +252,13 @@ CjvxSingleOutputConnectorMulti::select_connect_ocon(IjvxConnectorBridge* obj, Ij
 	IjvxDataConnectionCommon* ass_connection_common, IjvxOutputConnector** replace_connector)
 {
 	CjvxSingleOutputConnector* newConnector = nullptr;
-	if (numConnectorsInUse < (acceptNumberConnectors - 1))
+	if (numConnectorsInUse < acceptNumberConnectors)
 	{
 		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleOutputConnector(withTriggerConnector));
+
+		// replace_connector is overridden here but will be modified later
+		newConnector->select_connect_ocon(obj, master, ass_connection_common, replace_connector);
+
 		newConnector->activate(_common_set_io_common_ptr->_common_set_io_common.object,
 			_common_set_io_common_ptr->_common_set_io_common.myParent,
 			_common_set_io_common_ptr->_common_set_io_common.descriptor,

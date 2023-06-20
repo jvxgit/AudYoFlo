@@ -661,7 +661,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_initialize(jvxApiString* errorMessage, jvxH
 		if (boot_steps)
 		{
 			involvedComponents.theHost.hFHost->add_external_interface(reinterpret_cast<jvxHandle*>(boot_steps), JVX_INTERFACE_BOOT_STEPS);
-		}
+		}		
 
 		res = boot_initialize_specific(&errLoc);
 		if (res == JVX_NO_ERROR)

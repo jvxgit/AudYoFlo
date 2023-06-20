@@ -189,3 +189,26 @@ jvxLibHost::request_command_fwd(const CjvxReportCommandRequest& request, jvxBool
 
 	return JVX_NO_ERROR;
 }
+
+jvxErrorType
+jvxLibHost::request_test_chain(const CjvxReportCommandRequest_uid& req)
+{
+	jvxErrorType res = JVX_ERROR_NOT_READY;
+	IjvxDataConnections* theDataConnections = NULL;
+	if (involvedComponents.theHost.hFHost)
+	{
+		res = JVX_NO_ERROR;
+		theDataConnections = reqInterfaceObj<IjvxDataConnections>(involvedComponents.theHost.hFHost);
+		if (theDataConnections)
+		{
+			jvxSize num = 0;
+			jvxSize uId = JVX_SIZE_UNSELECTED;
+			req.uid(&uId);
+
+			res = theDataConnections->add_process_test(uId, &num, req.immediate());
+			retInterfaceObj<IjvxDataConnections>(involvedComponents.theHost.hFHost, theDataConnections);
+		}
+	}
+	return res;
+}
+

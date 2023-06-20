@@ -103,6 +103,26 @@ jvxErrorType request_command(const CjvxReportCommandRequest& request, jvxBool fo
 	{
 		immediatecall = false;
 	}
+
+	/*
+	if (request.request() == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN)
+	{
+		const CjvxReportCommandRequest_uid* ptrReq = castCommandRequest<CjvxReportCommandRequest_uid>(request);
+		if (ptrReq) 
+		{
+			res = backRef->request_test_chain(*ptrReq);
+			if (res == JVX_ERROR_POSTPONE)
+			{
+				CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(request);				
+				ptr->set_immediate(false);
+				// res = request_command(*ptr, true, backRef);
+				jvx_command_request_copy_dealloc(ptr);
+			}
+		}
+		return res;
+	}
+	*/
+
 	jvxReportCommandRequest req = request.request();
 	if (immediatecall)
 	{	
@@ -136,8 +156,9 @@ jvxErrorType request_command(const CjvxReportCommandRequest& request, jvxBool fo
 					CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(request);
 					// assert(0); // need to fix this
 					ptr->modify_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
-					return request_command(*ptr, true, backRef);
+					res = request_command(*ptr, true, backRef);
 					jvx_command_request_copy_dealloc(ptr);
+					return res;
 				}
 			}
 		}

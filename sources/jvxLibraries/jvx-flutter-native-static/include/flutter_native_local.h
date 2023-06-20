@@ -39,4 +39,7 @@ extern jvxErrorType __last_error;
 #define JRE __last_error = JVX_NO_ERROR
 #define JSE __last_error = res
 ;
+
+extern JVX_THREAD_ID mainThreadId;
+
 #endif
