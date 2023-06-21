@@ -106,10 +106,8 @@ uMainWindow::trigger_immediate_sequencerStep()
 }
 
 void 
-uMainWindow::trigger_threadChange_forward(const CjvxReportCommandRequest* request)
+uMainWindow::trigger_threadChange_forward(CjvxReportCommandRequest* ptr)
 {
-	// We make a copy of the command request and marshall the copy to the other thread
-	CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(*request);
 	emit emit_request_command(ptr);
 }
 
@@ -254,7 +252,7 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 	}
 
 #if 1
-	reqHandle._request_command_in_main_thread(request);
+	reqHandle.request_command_in_main_thread(request);
 
 #else
 

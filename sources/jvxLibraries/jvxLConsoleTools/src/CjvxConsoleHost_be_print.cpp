@@ -147,6 +147,11 @@ CjvxConsoleHost_be_print::add_sec_reference_frontend(IjvxEventLoop_frontend* the
 	jvxOneFrontendAndState newElm;
 	newElm.fe = theFrontend;
 	newElm.st = JVX_STATE_INIT;
+	newElm.fwd = nullptr;
+	if (newElm.fe)
+	{
+		newElm.fe->request_if_command_forward(&newElm.fwd);
+	}
 	linkedSecFrontends.push_back(newElm);
 	return JVX_NO_ERROR;
 }

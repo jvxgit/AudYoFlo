@@ -81,6 +81,8 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_property(jvxFrontendSupportRequestType tp, jvxHandle* load) override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_if_command_forward(IjvxReportSystemForward** fwdCalls) override;
+
 	jvxErrorType cleanup(
 		jvxSize message_id,
 		jvxHandle* param, jvxSize paramType,

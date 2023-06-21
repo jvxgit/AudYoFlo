@@ -6,19 +6,100 @@ CjvxRequestCommandsHandler::CjvxRequestCommandsHandler()
 }
 
 jvxErrorType
-CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& request)
+CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& request, jvxBool verbose)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	CjvxReportCommandRequest* ptr = NULL;
 	const CjvxReportCommandRequest_uid* ptrReq = nullptr;
 	jvxReportCommandRequest reqTpMod = request.request();;
 
+	if (verbose)
+	{
+		std::cout << "--Incoming command request --" << std::endl;
+		if (request.immediate())
+		{
+			std::cout << "- immediate" << std::endl;
+		}
+		else
+		{
+			std::cout << "- not immediate" << std::endl;
+		}
+		std::cout << "- request = " << jvxReportCommandRequest_txt(request.request()) << std::endl;
+		std::cout << "- type = " << jvxReportCommandDataType_txt(request.datatype()) << std::endl;
+		std::cout << "- origin = " << jvxComponentIdentification_txt(request.origin()) << std::endl;
+		std::cout << "- - " << jvxReportCommandDataType_txt(request.datatype()) << std::endl;
+
+		switch (request.datatype())
+		{
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_BASE:
+			break;
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_UID:
+			{
+				auto ptrH = castCommandRequest<CjvxReportCommandRequest_uid>(request);
+				if (ptrH)
+				{
+					jvxSize uId = 0;
+					ptrH->uid(&uId);
+					std::cout << "- - - uid = " << uId << std::endl;
+				}
+			}
+			break;
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
+			{
+				auto ptrH = castCommandRequest<CjvxReportCommandRequest_rm>(request);
+				if (ptrH)
+				{
+					jvxSize sId = ptrH->schedule_id();
+					std::cout << "- - - sid = " << sId << std::endl;
+				}
+			}
+			break;
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SEQ:
+		{
+			auto ptrH = castCommandRequest<CjvxReportCommandRequest_seq>(request);
+			if (ptrH)
+			{
+				TjvxSequencerEvent ev;	
+				ptrH->seq_event(&ev);
+				std::cout << "- - - ev = " << jvxSequencerEventType_txt(ev.tp) << std::endl;
+			}
+		}
+		break;
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS:
+		{
+			auto ptrH = castCommandRequest<CjvxReportCommandRequest_ss>(request);
+			if (ptrH)
+			{
+
+				jvxStateSwitch ss;
+				ptrH->sswitch(&ss);
+				std::cout << "- - - ss = " << jvxStateSwitch_txt(ss) << std::endl;
+			}
+		}
+		break;
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_IDENT:
+		{
+			auto ptrH = castCommandRequest<CjvxReportCommandRequest_id>(request);
+			if (ptrH)
+			{
+
+				jvxApiString id;
+				ptrH->ident(&id);
+				std::cout << "- - - id = " << id.std_str()  << std::endl;
+			}
+		}
+		break;
+		}
+
+		std::cout << "---------------------------" << std::endl << std::endl;
+	}
 	if (request.immediate())
 	{
 		switch (request.request())
 		{
 		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
 
+			// We need to check the thread here - we are not allowed to run this outside of the main thread!!
 			if (reportRef)
 			{
 				reportRef->trigger_immediate_sequencerStep();				
@@ -26,6 +107,7 @@ CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& req
 			break;
 		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN:
 			
+			// This function may be called from outside the main thread!
 			// This prevents forwarding this request to the postpone thread
 			reqTpMod = jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UNSPECIFIC;
 
@@ -144,7 +226,7 @@ CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& req
 }
 
 void
-CjvxRequestCommandsHandler::_request_command_in_main_thread(CjvxReportCommandRequest* request)
+CjvxRequestCommandsHandler::request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool removeAfterHandle)
 {
 	jvxReportCommandDataType tp = request->datatype();
 	const CjvxReportCommandRequest_rm* iface_rm = NULL;
@@ -274,8 +356,11 @@ CjvxRequestCommandsHandler::_request_command_in_main_thread(CjvxReportCommandReq
 		}
 	}
 
-	//delete request;
-	jvx_command_request_copy_dealloc(request);
+	if (removeAfterHandle)
+	{
+		//delete request;
+		jvx_command_request_copy_dealloc(request);
+	}
 }
 
 void

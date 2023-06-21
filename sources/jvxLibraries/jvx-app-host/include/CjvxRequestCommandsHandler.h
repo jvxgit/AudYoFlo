@@ -21,7 +21,7 @@ public:
 	 * For the remaining command requests, the trigger is stored in the request queue and will
 	 * be postponed. This way, the request always comes out in a delayed fashion - even if the 
 	 * request was triggered from within the main thread. */
-	virtual void trigger_threadChange_forward(const CjvxReportCommandRequest* ptr) = 0;
+	virtual void trigger_threadChange_forward(CjvxReportCommandRequest* ptr_to_copy) = 0;
 	
 	/**
 	 * If a test request was attached to the queue and all tests runs were completed, the succesful test is
@@ -49,7 +49,7 @@ public:
 
 };
 
-class CjvxRequestCommandsHandler
+class CjvxRequestCommandsHandler : public IjvxReportSystemForward
 {
 public:
 	// Host handle set and removed in
@@ -69,8 +69,10 @@ public:
 	// ================================================================
 	CjvxRequestCommandsHandler();
 
-	jvxErrorType _request_command(const CjvxReportCommandRequest& request);
-	void _request_command_in_main_thread(CjvxReportCommandRequest* request);
+	virtual void request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool removeAfterHandle = true) override;
+
+	jvxErrorType _request_command(const CjvxReportCommandRequest& request, jvxBool verbose = true);
+	
 	void _run_all_tests();
 };
 

@@ -42,4 +42,12 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION interface_sub_report(IjvxSubReport** subReport) = 0;
 };
 
+JVX_INTERFACE IjvxReportSystemForward
+{
+public:
+	virtual ~IjvxReportSystemForward() {};
+
+	virtual void request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool removeAfterHandle = true) = 0;
+};
+
 #endif

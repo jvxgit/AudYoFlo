@@ -75,7 +75,7 @@ class CjvxConsoleHost_be_drivehost :
 	public IjvxReportOnConfig,
 	public IjvxSequencer_report,
 	public IjvxEventLoop_frontend, 
-	public JVX_APPHOST_PRODUCT_CLASSNAME,
+	public JVX_APPHOST_PRODUCT_CLASSNAME, public CjvxHandleRequestCommands_callbacks,
 	public IjvxConfigurationExtender_report
 {
 private:
@@ -205,6 +205,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_register_be_commandline(IjvxCommandLine* comLine)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_readout_be_commandline(IjvxCommandLine* comLine)override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_if_command_forward(IjvxReportSystemForward** fwdCalls) override;
+
 	// =======================================================================================
 	// Interface IjvxEventLoop_backend
 	// =======================================================================================
@@ -241,6 +243,7 @@ public:
 	// =======================================================================================
 	// =======================================================================================
 
+	
 	void postMessage_inThread(std::string message);
 	void postMessage_outThread(std::string message);
 	void fatalStop(std::string message1, std::string message2);
@@ -321,6 +324,42 @@ public:
 
 	jvxErrorType run_prop_command(const std::string command);
 	jvxErrorType run_quit_command(jvxBool restart);
+
+	// ===============================================================================
+	/**
+	 * If the request to run a sequencer step immediately, this callback is triggered.
+	 */
+	virtual void trigger_immediate_sequencerStep() override;
+
+	/**
+	 * For the remaining command requests, the trigger is stored in the request queue and will
+	 * be postponed. This way, the request always comes out in a delayed fashion - even if the
+	 * request was triggered from within the main thread. */
+	virtual void trigger_threadChange_forward(CjvxReportCommandRequest* ptr) override;
+
+	/**
+	 * If a test request was attached to the queue and all tests runs were completed, the succesful test is
+	 * reported to all connected listeners.
+	 */
+	virtual void run_mainthread_triggerTestChainDone() override;
+
+	/*
+	 * This callback is called if the component list of a technology has changed. The technology is passed as cpId.
+	 * Typically, we end up here since the the request is delayed into the request event queue.
+	 */
+	virtual void run_mainthread_updateComponentList(jvxComponentIdentification cpId) override;
+
+	/*
+	 * This callback is called if the properties have changed.
+	 * Typically, we end up here since the the request is delayed into the request event queue.
+	 */
+	virtual void run_mainthread_updateProperties(jvxComponentIdentification cpId) override;
+
+	/*
+	 * This callback is called if the system state has changed.
+	 * Typically, we end up here since the the request is delayed into the request event queue.
+	 */
+	virtual void run_mainthread_updateSystemStatus() override;
 };
 
 #endif

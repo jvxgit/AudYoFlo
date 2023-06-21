@@ -83,6 +83,8 @@ CjvxConsoleHost_be_drivehost::request_command(const CjvxReportCommandRequest& re
 	jvxCBitField p1 = 0;
 	jvxErrorType res = JVX_NO_ERROR;
 
+	return reqHandle._request_command(request);
+
 	JVX_THREAD_ID tIdLocal = JVX_GET_CURRENT_THREAD_ID();
 	
 	if (request.request() == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN)
@@ -484,11 +486,30 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 		report_command_request_inThread(request, param_fwd->caseSpecificData, param_fwd->szCaseSpecificData);		
 		return JVX_NO_ERROR;
 	}
-	else if (event_type == JVX_EVENTLOOP_EVENT_SPECIFIC + 3)
+	else if (event_type == JVX_EVENTLOOP_EVENT_FWD_REQUEST_COMMAND)
 	{
-		const CjvxReportCommandRequest* request = (const CjvxReportCommandRequest*)param;
+		// We pass this forward to the handler and remove the object there!
+		CjvxReportCommandRequest* request = (CjvxReportCommandRequest*)param;
 
 		jvxReportCommandDataType tp = request->datatype();
+		if (paramType == JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST)
+		{
+			reqHandle.request_command_in_main_thread(request);
+		}
+
+		// We are the primary frontend!!
+		std::list<jvxOneFrontendAndState>::iterator elm = this->linkedSecFrontends.begin();
+		for (; elm != linkedSecFrontends.end(); elm++)
+		{
+			if (elm->fwd)
+			{
+				elm->fwd->request_command_in_main_thread(request);
+			}
+		}
+
+		// Here, we need to forward these reports to the other frontend
+		return JVX_NO_ERROR;
+		/*
 		const CjvxReportCommandRequest_rm* iface_rm = NULL;
 		jvxReportCommandRequest req = request->request();
 		jvxComponentIdentification cp;
@@ -569,7 +590,7 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 				break;
 			}
 		}
-		return JVX_NO_ERROR;
+		return JVX_NO_ERROR;*/
 	}
 
 	return CjvxConsoleHost_be_print::process_event(theQueueElement
@@ -962,4 +983,95 @@ CjvxConsoleHost_be_drivehost::report_command_request_inThread(jvxCBitField reque
 		//this->updateWindow(request);
 		//this->subWidgets.realtimeViewer.props.theWidget->updateWindow_update(false);
 	}
+}
+
+
+// ===============================================================================
+/**
+ * If the request to run a sequencer step immediately, this callback is triggered.
+ */
+void 
+CjvxConsoleHost_be_drivehost::trigger_immediate_sequencerStep()
+{
+	// What to do here?
+}
+
+/**
+ * For the remaining command requests, the trigger is stored in the request queue and will
+ * be postponed. This way, the request always comes out in a delayed fashion - even if the
+ * request was triggered from within the main thread. */
+void 
+CjvxConsoleHost_be_drivehost::trigger_threadChange_forward(CjvxReportCommandRequest* ptr)
+{
+	TjvxEventLoopElement evElm;
+
+	// Post this event to be rescheduled
+	evElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
+	evElm.eventClass = JVX_EVENTLOOP_REQUEST_TRIGGER;
+	evElm.eventType = JVX_EVENTLOOP_EVENT_FWD_REQUEST_COMMAND; 
+	evElm.origin_fe = this;
+	evElm.target_be = this;
+
+	// The data element will be copied in scheduler
+	evElm.autoDeleteOnProcess = false;
+	evElm.param = (jvxHandle*)ptr;
+	evElm.paramType = JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST;
+	jvxErrorType res = this->evLop->event_schedule(&evElm, NULL, NULL);
+	assert(res == JVX_NO_ERROR);
+}
+
+/**
+ * If a test request was attached to the queue and all tests runs were completed, the succesful test is
+ * reported to all connected listeners.
+ */
+void 
+CjvxConsoleHost_be_drivehost::run_mainthread_triggerTestChainDone()
+{
+	// This trioggers the "old" command interface
+	jvxCBitField requestStart = 0;
+	jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT);
+	jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_SHIFT);
+	jvx_bitSet(requestStart, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
+
+	this->report_command_request(requestStart, NULL, 0);
+}
+
+/*
+ * This callback is called if the component list of a technology has changed. The technology is passed as cpId.
+ * Typically, we end up here since the the request is delayed into the request event queue.
+ */
+void 
+CjvxConsoleHost_be_drivehost::run_mainthread_updateComponentList(jvxComponentIdentification cpId)
+{
+	// What to do here?
+}
+
+/*
+ * This callback is called if the properties have changed.
+ * Typically, we end up here since the the request is delayed into the request event queue.
+ */
+void 
+CjvxConsoleHost_be_drivehost::run_mainthread_updateProperties(jvxComponentIdentification cpId)
+{
+	// What to do here?
+}
+
+/*
+ * This callback is called if the system state has changed.
+ * Typically, we end up here since the the request is delayed into the request event queue.
+ */
+void 
+CjvxConsoleHost_be_drivehost::run_mainthread_updateSystemStatus()
+{
+	// What to do here?
+}
+
+jvxErrorType 
+CjvxConsoleHost_be_drivehost::request_if_command_forward(IjvxReportSystemForward** fwdCalls)
+{
+	if (fwdCalls)
+	{
+		*fwdCalls = nullptr;
+	}
+	return JVX_ERROR_UNSUPPORTED;
 }

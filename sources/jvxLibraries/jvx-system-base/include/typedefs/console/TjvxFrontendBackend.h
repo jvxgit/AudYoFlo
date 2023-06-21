@@ -5,13 +5,15 @@ class jvxOneFrontendAndState
 {
 public:
 
-	IjvxEventLoop_frontend* fe;
-	jvxState st;
+	IjvxEventLoop_frontend* fe = nullptr;
+	jvxState st = JVX_STATE_NONE;
+	IjvxReportSystemForward* fwd = nullptr;
 
 	jvxOneFrontendAndState()
 	{
-		fe = NULL;
+		fe = nullptr;
 		st = JVX_STATE_NONE;
+		fwd = nullptr;
 	};
 
 	bool operator == (IjvxEventLoop_frontend* compareThat)

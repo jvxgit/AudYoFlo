@@ -22,6 +22,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_want_to_shutdown_ext(jvxBool restart) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_property(jvxFrontendSupportRequestType tp, jvxHandle* load) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_if_command_forward(IjvxReportSystemForward** fwdCalls) = 0;
 };
 	
 JVX_INTERFACE IjvxEventLoop_backend

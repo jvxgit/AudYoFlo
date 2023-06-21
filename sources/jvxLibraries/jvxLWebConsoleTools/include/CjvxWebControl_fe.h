@@ -128,7 +128,7 @@ public:
 class CjvxWebControl_fe: public IjvxEventLoop_frontend_ctrl,
 	public CjvxWebServerHost, public IjvxWebServerHost_hooks,
 	public IjvxEventLoop_backend, public IjvxReport, public IjvxConfigurationExtender_report,
-	public HjvxPropertyStreamUdpSocket_report
+	public HjvxPropertyStreamUdpSocket_report, public IjvxReportSystemForward
 	//public IjvxEventLoop_threadcleanup
 
 {
@@ -262,6 +262,10 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_want_to_shutdown_ext(jvxBool restart) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_property(jvxFrontendSupportRequestType tp, jvxHandle* load)override;
+	// =========================================================================
+
+	jvxErrorType request_if_command_forward(IjvxReportSystemForward** fwdCalls) override;
+	void request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool removeAfterHandle = true) override;
 	// =========================================================================
 
 	virtual jvxErrorType synchronizeWebServerCoEvents(jvxHandle* context_server, jvxHandle* context_conn, jvxWebServerHandlerPurpose purp, jvxSize uniqueId,

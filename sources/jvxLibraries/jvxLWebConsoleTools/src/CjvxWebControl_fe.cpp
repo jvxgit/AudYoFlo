@@ -2800,6 +2800,22 @@ CjvxWebControl_fe::request_property(jvxFrontendSupportRequestType tp, jvxHandle*
 
 }
 
+jvxErrorType 
+CjvxWebControl_fe::request_if_command_forward(IjvxReportSystemForward** fwdCalls)
+{
+	if (fwdCalls)
+	{
+		*fwdCalls = this;
+	}
+	return JVX_NO_ERROR;
+}
+
+void 
+CjvxWebControl_fe::request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool)
+{
+	// Here, we can forward the requests!!!
+}
+
 jvxErrorType
 CjvxWebControl_fe::report_special_event(TjvxEventLoopElement* theQueueElement, jvxHandle* priv)
 {

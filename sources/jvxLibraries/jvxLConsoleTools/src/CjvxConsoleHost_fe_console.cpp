@@ -1203,3 +1203,14 @@ CjvxConsoleHost_fe_console::trigger_sigint_ext_core()
 {
     JVX_SET_NOTIFICATION(informShutdown);
 }
+
+
+jvxErrorType
+CjvxConsoleHost_fe_console::request_if_command_forward(IjvxReportSystemForward** fwdCalls)
+{
+	if (fwdCalls)
+	{
+		*fwdCalls = nullptr;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
