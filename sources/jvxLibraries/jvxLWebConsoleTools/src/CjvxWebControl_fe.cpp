@@ -447,6 +447,7 @@ CjvxWebControl_fe::synchronizeWebServerCoEvents(jvxHandle* context_server,
 	std::string command;
 	jvxBool requiresInterpretation = false;
 	jvxBool errorDetected = false;
+	std::string errorDescription;
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize myId = 0;
 	jvxApiString str;
@@ -460,9 +461,29 @@ CjvxWebControl_fe::synchronizeWebServerCoEvents(jvxHandle* context_server,
 	//}
 	report_event_request_translate(
 		context_server, context_conn, purp, uniqueId, strictConstConnection, uriprefix, 0,
-		NULL, 0, command, requiresInterpretation, errorDetected, &jvxrtst, 
+		NULL, 0, command, requiresInterpretation, errorDetected, errorDescription, &jvxrtst, 
 		static_cast<jvx_lock*>(&jvxrtst_bkp.jvxos), (config.silent_mode!= c_false));
-	if (requiresInterpretation)
+
+	// Error priority is higher than the interpretation prio!!
+	if (errorDetected)
+	{
+		CjvxJsonElementList jsec;
+		CjvxJsonElement jelm; 
+		std::string strOut;
+		jelm.makeAssignmentString("error_description", errorDescription);
+		jsec.addConsumeElement(jelm); 
+		jelm.makeAssignmentString("return_code", jvxErrorType_str[JVX_ERROR_INVALID_ARGUMENT].friendly);
+		jsec.insertConsumeElementFront(jelm);
+
+		jsec.printString(strOut, JVX_JSON_PRINT_JSON, 0, "", "", "", false);
+		this->hdl->in_connect_write_header_response(context_server, context_conn, JVX_WEB_SERVER_RESPONSE_JSON);
+		hdl->in_connect_write_response(context_server, context_conn, strOut.c_str());
+		if (!config.silent_mode)
+		{
+			std::cout << "Return: " << strOut << std::endl;
+		}
+	}
+	else if (requiresInterpretation)
 	{
 	    // std::cout << __FUNCTION__ << " entering blocking loop" << std::endl;
 		TjvxEventLoopElement elm;

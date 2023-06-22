@@ -536,7 +536,7 @@ CjvxWebServerHost::report_event_request_translate(
 	jvxBool strictConstConnection, const char* uriprefix, int header,
 	char* payload_ws, size_t szFld,
 	std::string& command, jvxBool& requiresInterpretation,
-	jvxBool& errorDetected, std::ostream* os, jvx_lock* jvxlock, jvxBool silentMode)
+	jvxBool& errorDetected, std::string& errorDescription, std::ostream* os, jvx_lock* jvxlock, jvxBool silentMode)
 
 {
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;
@@ -635,15 +635,6 @@ CjvxWebServerHost::report_event_request_translate(
 			cpType.slotid = 0;
 			cpType.slotsubid = 0;
 
-			if (suburl == "/multi")
-			{
-				resL = jvx_findValueHttpQuery(query_list, token, "multi");
-				if (resL == JVX_NO_ERROR)
-				{
-					suburl = token;
-				}
-			}
-
 			resL = jvx_findValueHttpQuery(query_list, token, "slotid");
 			if (resL == JVX_NO_ERROR)
 			{
@@ -663,78 +654,110 @@ CjvxWebServerHost::report_event_request_translate(
 				}
 			}
 
-			resL = jvx_findValueHttpQuery(query_list, token, "purpose");
-			if (resL != JVX_NO_ERROR)
+			if (suburl == "/devices")
 			{
-				resL = jvx_findValueHttpQuery(query_list, token, "content_only");
-				if (resL == JVX_NO_ERROR)
-				{
-					if (token == "yes")
-					{
-						contentOnly = true;
-					}
-				}
-				resL = jvx_findValueHttpQuery(query_list, token, "offset");
-				if (resL == JVX_NO_ERROR)
-				{
-					offset = jvx_string2Size(token, isErr);
-					if (isErr)
-					{
-						std::cout << __FUNCTION__ << "Error" << std::endl;
-					}
-				}
-				resL = jvx_findValueHttpQuery(query_list, token, "num_elements");
-				if (resL == JVX_NO_ERROR)
-				{
-					num_elements = jvx_string2Size(token, isErr);
-					if (isErr)
-					{
-						std::cout << __FUNCTION__ << "Error" << std::endl;
-					}
-				}
-				resL = jvx_findValueHttpQuery(query_list, token, "call_context");
-				if (resL == JVX_NO_ERROR)
-				{
-					context_token = token;
-				}
-
-
-				// Function to get the value of a property
-				command = "act(";
-				command += jvxComponentIdentification_txt(cpType);
-				command += ", get_property, ";
-				command += suburl;
-				command += ", " + jvx_size2String(offset);
-				command += ", " + jvx_size2String(num_elements);
-				if (contentOnly)
-				{
-					command += ", yes";
-				}
-
-				if (!context_token.empty())
-				{
-					// If there is a context, add the "missing" contentOnly
-					if (!contentOnly)
-					{
-						command += ", no";
-					}
-
-					// And add the context token
-					command += ", " + context_token;
-				}
-				command += ")";
-			}
-			else 
-			{
-				// Replace hastag by | to match the command syntax
-				token = jvx_replaceCharacter(token, ':', '|');
+				// Show all devices of a technology
 				command = "show(";
 				command += jvxComponentIdentification_txt(cpType);
-				command += ", properties,";
+				command += ", devices";
 				command += token;
-				command += ",";
-				command += suburl;
 				command += ")";
+			}
+			else if (suburl == "/options")
+			{
+				// Show all selection options
+				command = "show(";
+				command += jvxComponentIdentification_txt(cpType);
+				command += ", options";
+				command += token;
+				command += ")";
+			}
+			else
+			{
+				if (suburl == "/multi")
+				{
+					resL = jvx_findValueHttpQuery(query_list, token, "multi");
+					if (resL == JVX_NO_ERROR)
+					{
+						suburl = token;
+					}
+				}
+
+				resL = jvx_findValueHttpQuery(query_list, token, "purpose");
+				if (resL != JVX_NO_ERROR)
+				{
+					// Here we run a "get_property"
+					resL = jvx_findValueHttpQuery(query_list, token, "content_only");
+					if (resL == JVX_NO_ERROR)
+					{
+						if (token == "yes")
+						{
+							contentOnly = true;
+						}
+					}
+					resL = jvx_findValueHttpQuery(query_list, token, "offset");
+					if (resL == JVX_NO_ERROR)
+					{
+						offset = jvx_string2Size(token, isErr);
+						if (isErr)
+						{
+							std::cout << __FUNCTION__ << "Error" << std::endl;
+						}
+					}
+					resL = jvx_findValueHttpQuery(query_list, token, "num_elements");
+					if (resL == JVX_NO_ERROR)
+					{
+						num_elements = jvx_string2Size(token, isErr);
+						if (isErr)
+						{
+							std::cout << __FUNCTION__ << "Error" << std::endl;
+						}
+					}
+					resL = jvx_findValueHttpQuery(query_list, token, "call_context");
+					if (resL == JVX_NO_ERROR)
+					{
+						context_token = token;
+					}
+
+					// Function to get the value of a property
+					command = "act(";
+					command += jvxComponentIdentification_txt(cpType);
+					command += ", get_property, ";
+					command += suburl;
+					command += ", " + jvx_size2String(offset);
+					command += ", " + jvx_size2String(num_elements);
+					if (contentOnly)
+					{
+						command += ", yes";
+					}
+
+					if (!context_token.empty())
+					{
+						// If there is a context, add the "missing" contentOnly
+						if (!contentOnly)
+						{
+							command += ", no";
+						}
+
+						// And add the context token
+						command += ", " + context_token;
+					}
+					command += ")";
+				}
+				else
+				{
+					// Here we run a "properties" and we may add the degree of details by "purpose=full..."
+
+					// Replace hastag by | to match the command syntax
+					token = jvx_replaceCharacter(token, ':', '|');
+					command = "show(";
+					command += jvxComponentIdentification_txt(cpType);
+					command += ", properties,";
+					command += token;
+					command += ",";
+					command += suburl;
+					command += ")";
+				}
 			}
 
 			requiresInterpretation = true;
@@ -775,17 +798,65 @@ CjvxWebServerHost::report_event_request_translate(
 		case 3:
 
 			suburl = url.substr(((std::string)uriprefix).size(), std::string::npos);
-			if (suburl == "list")
+			jvx_parseHttpQueryIntoPieces(query_list, url_query);
+
+			if (suburl == "path")
+			{
+				jvxSize pId = 0;
+				resL = jvx_findValueHttpQuery(query_list, token, "id");
+				if (resL == JVX_NO_ERROR)
+				{
+					pId = jvx_string2Size(token, isErr);
+					if (isErr)
+					{
+						std::cout << __FUNCTION__ << "Error" << std::endl;
+					}
+					command = "show(connections, path, ";
+					command += jvx_size2String(pId);
+					command += ")";
+				}
+				else
+				{
+					command = "show(connections, path)";
+				}
+
+				// Address "/jvx/host/connections/"
+				requiresInterpretation = true;
+			}
+			else if (suburl == "upath")
+			{
+				jvxSize pId = 0;
+				resL = jvx_findValueHttpQuery(query_list, token, "id");
+				if (resL == JVX_NO_ERROR)
+				{
+					pId = jvx_string2Size(token, isErr);
+					if (isErr)
+					{
+						std::cout << __FUNCTION__ << "Error" << std::endl;
+					}
+					command = "show(connections, upath, ";
+					command += jvx_size2String(pId);
+					command += ")";
+				}
+				else
+				{
+					errorDetected = true;
+					errorDescription = "Requested upath connection return but the id is not specified.";
+				}
+
+				// Address "/jvx/host/connections/"
+				requiresInterpretation = true;
+			}
+			else if (suburl == "list")
 			{
 				// Address "/jvx/host/connections/"
 				command = "show(connections);";
 				requiresInterpretation = true;
 			}
-			else if (suburl == "path")
+			else
 			{
-				// Address "/jvx/host/connections/"
-				command = "show(connections, path);";
-				requiresInterpretation = true;
+				errorDetected = true;
+				errorDescription = "Wrong option to address connections, [path, upath or list] are valid options.";
 			}
 			break;
 
@@ -957,43 +1028,111 @@ CjvxWebServerHost::report_event_request_translate(
 					std::cout << __FUNCTION__ << "Error" << std::endl;
 				}
 			}
-			resL = jvx_findValueHttpQuery(query_list, token, "offset");
-			if (resL == JVX_NO_ERROR)
-			{
-				offset = jvx_string2Size(token, isErr);
-				if (isErr)
-				{
-					std::cout << __FUNCTION__ << "Error" << std::endl;
-				}
-			}
-			resL = jvx_findValueHttpQuery(query_list, token, "report");
-			if (resL == JVX_NO_ERROR)
-			{
-				if (token == "yes")
-				{
-					pretoken = "[r]";
-				}
-			}
 
-			if (in_params.size())
+			if (
+				(suburl == "/activate") || (suburl == "/select"))
 			{
-				// Function to set the value of a property
-				command = "act" + pretoken + "(";
-				command += jvxComponentIdentification_txt(cpType);
-				command += ", set_property, ";
-				command += suburl;
-				command += ", ";
-				command += in_params;
-				if (offset > 0)
+				suburl = suburl.substr(1, std::string::npos);
+				jvxBool idFound = false;				
+				jvxSize idUnit = 0;
+				resL = jvx_findValueHttpQuery(query_list, token, "id");
+				if (resL == JVX_NO_ERROR)
 				{
-					command += ", " + jvx_size2String(offset);
+					idFound = true;
+					idUnit = jvx_string2Size(token, isErr);
+					if (isErr)
+					{						
+						std::cout << __FUNCTION__ << "Error" << std::endl;
+					}
+				}
+				else
+				{
+					if (!in_params.empty())
+					{
+						idUnit = jvx_string2Size(in_params, isErr);
+						idFound = true;
+						if (isErr)
+						{							
+							std::cout << __FUNCTION__ << "Error" << std::endl;
+						}
+					}
+				}
+
+				/*
+				* Do not catch this error, the system will report
+				if (suburl == "/select")
+				{
+					if (isErr)
+					{
+						errorDetected = true;
+						errorDescription = "To select an object, a valid id must be specified either by query argument <id> or an id in the load part.";
+					}
+				}
+				*/
+
+				// Function to set the value of a property
+				command = "act(";
+				command += jvxComponentIdentification_txt(cpType);
+				command += ", " + suburl;
+				if (idFound)
+				{
+					command += ", " + jvx_size2String(idUnit);
 				}
 				command += ")";
 			}
-			else
+			else if(
+					(suburl == "/deactivate") || (suburl == "/unselect"))
+				{
+					suburl = suburl.substr(1, std::string::npos);
+
+					// Function to set the value of a property
+					command = "act(";
+					command += jvxComponentIdentification_txt(cpType);
+					command += ", " + suburl;
+					command += ")";
+				}
+			else			
 			{
-				std::cout << __FUNCTION__ << "Error: Empty command in PUT request" << std::endl;
-				errorDetected = true;
+				// All related to set_property
+				resL = jvx_findValueHttpQuery(query_list, token, "offset");
+				if (resL == JVX_NO_ERROR)
+				{
+					offset = jvx_string2Size(token, isErr);
+					if (isErr)
+					{
+						std::cout << __FUNCTION__ << "Error" << std::endl;
+					}
+				}
+				resL = jvx_findValueHttpQuery(query_list, token, "report");
+				if (resL == JVX_NO_ERROR)
+				{
+					if (token == "yes")
+					{
+						pretoken = "[r]";
+					}
+				}
+
+				if (in_params.size())
+				{
+					// Function to set the value of a property
+					command = "act" + pretoken + "(";
+					command += jvxComponentIdentification_txt(cpType);
+					command += ", set_property, ";
+					command += suburl;
+					command += ", ";
+					command += in_params;
+					if (offset > 0)
+					{
+						command += ", " + jvx_size2String(offset);
+					}
+					command += ")";
+				}
+				else
+				{
+					// std::cout << __FUNCTION__ << "Error: Empty command in PUT request" << std::endl;
+					errorDetected = true;
+					errorDescription = "Passing an empty command to the interpreter is not a valid option.";
+				}
 			}
 
 			requiresInterpretation = true;
@@ -1157,8 +1296,9 @@ CjvxWebServerHost::report_event_request_translate(
 				}
 				else
 				{
-					std::cout << __FUNCTION__ << "Error: Empty command in PUT request" << std::endl;
+					// std::cout << __FUNCTION__ << "Error: Empty command in PUT request" << std::endl;
 					errorDetected = true;
+					errorDescription = "Passing an empty command to the interpreter is not a valid option.";
 				}
 
 				requiresInterpretation = true;

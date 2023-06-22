@@ -306,6 +306,10 @@ CjvxHostJsonCommandsShow::show_connections(const oneDrivehostCommand& dh_command
 		{
 			showmode = JVX_DRIVEHOST_CONNECTION_SHOW_LAST;
 		}
+		else if (args[1] == "upath")
+		{
+			showmode = JVX_DRIVEHOST_CONNECTION_SHOW_UPATH;
+		}
 		else
 		{
 			JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_INVALID_ARGUMENT, "Option <" + args[1] + "> is not valid.");
@@ -348,7 +352,20 @@ CjvxHostJsonCommandsShow::output_connections_core(
 		{
 			if (JVX_CHECK_SIZE_SELECTED(specId))
 			{
-				if (specId < num)
+				jvxBool idOutOfBounds = false;
+				if (showmode == JVX_DRIVEHOST_CONNECTION_SHOW_PATH)
+				{
+					if (specId >= num)
+					{
+						idOutOfBounds = true;
+					}
+				}
+
+				if (idOutOfBounds)
+				{
+					JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_ID_OUT_OF_BOUNDS, ("Specified id for connection <" + jvx_size2String(specId) + "> is out of bounds."));
+				}
+				else
 				{
 					CjvxJsonArrayElement jarrelm;
 					std::string txt;
@@ -363,10 +380,6 @@ CjvxHostJsonCommandsShow::output_connections_core(
 					{
 						JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
 					}
-				}
-				else
-				{
-					JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_ID_OUT_OF_BOUNDS, ("Specified id for connection <" + jvx_size2String(specId) + "> is out of bounds."));
 				}
 			} // if (JVX_CHECK_SIZE_SELECTED(specId))
 			else
@@ -1015,12 +1028,13 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 	jvxSize ruleId = JVX_SIZE_UNSELECTED;
 	jvxApiString astr;
 	jvxErrorType resL = JVX_NO_ERROR;
+	jvxSize cmpIdx = idx;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
 
 	// Check for index within range was done before
+	connections->number_connections_process(&num);
 	if (JVX_CHECK_SIZE_UNSELECTED(idx))
-	{
-		connections->number_connections_process(&num);
+	{		
 		for (i = 0; i < num; i++)
 		{
 			res = connections->reference_connection_process(i, &oneProcess);
@@ -1036,11 +1050,39 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 			}
 		}
 	}
+	else
+	{
+		if (showmode == JVX_DRIVEHOST_CONNECTION_SHOW_UPATH)
+		{			
+			idx = JVX_SIZE_UNSELECTED;
+			for (i = 0; i < num; i++)
+			{
+				jvxSize uId = JVX_SIZE_UNSELECTED;
+				res = connections->reference_connection_process(i, &oneProcess);
+				assert(res == JVX_NO_ERROR);
+				assert(oneProcess);
+				oneProcess->unique_id_connections(&uId);
+				connections->return_reference_connection_process(oneProcess);
+				if (cmpIdx == uId)
+				{
+					idx = i;
+					break;
+				}
+			}
+		}
+	}
 
 	if (JVX_CHECK_SIZE_UNSELECTED(idx))
 	{
 		res = JVX_ERROR_ELEMENT_NOT_FOUND;
-		errTxt = "Could not find specified element <" + specName;
+		if (showmode == JVX_DRIVEHOST_CONNECTION_SHOW_UPATH)
+		{
+			errTxt = "Could not find specified element with uid <" + jvx_size2String(cmpIdx) + ">";
+		}
+		else
+		{
+			errTxt = "Could not find specified element with name <" + specName + ">";
+		}
 	}
 	else
 	{
@@ -1113,6 +1155,7 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 
 					break;
 				case JVX_DRIVEHOST_CONNECTION_SHOW_PATH:
+				case JVX_DRIVEHOST_CONNECTION_SHOW_UPATH:
 
 					res = oneProcess->transfer_forward_chain(JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON, &elmlp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 					elmr.makeSection("process_path", elmlp);
