@@ -116,7 +116,8 @@ typedef enum
 	JVX_COMPONENT_CRYPT,
 	JVX_COMPONENT_WEBSERVER,
 	JVX_COMPONENT_REMOTE_CALL,
-	JVX_COMPONENT_PACKETFILTER_RULE
+	JVX_COMPONENT_PACKETFILTER_RULE,
+	JVX_COMPONENT_LOGREMOTEHANDLER
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 #define JVX_INCLUDE_COMPONENTS
@@ -146,7 +147,7 @@ struct jvxComponentClassAssociation
 	jvxComponentTypeClass comp_child_class = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE;
 };
 
-extern jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT];
+extern jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT+1];
 
 #define JVX_START_SLOTS_BASE(arr, slots_max, subslots_max) \
 	arr[JVX_COMPONENT_AUDIO_TECHNOLOGY] = slots_max; \

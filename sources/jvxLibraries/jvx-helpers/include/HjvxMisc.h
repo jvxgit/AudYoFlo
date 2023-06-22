@@ -626,6 +626,8 @@ namespace jvx {
 		std::string asciToUtf8(const std::string& in);
 		std::string utf82Ascii(const std::string& in);
 		jvxInt32 hash(std::string str);
+
+		void debug_out_command_request(const CjvxReportCommandRequest& request, std::ostream& str, const std::string& tag);
 	}
 }
 
@@ -1253,6 +1255,7 @@ public:
 	void set_module_name(const std::string& modName)
 	{
 		theModuleName = modName;
+		jvxos.set_module_name(theModuleName);
 	};
 } ;
 
@@ -1273,21 +1276,6 @@ void jvx_return_text_log(jvxrtst_backup& bkp);
 bool jvx_try_lock_text_log(jvxrtst_backup& bkp);
 void jvx_lock_text_log(jvxrtst_backup& bkp);
 void jvx_unlock_text_log(jvxrtst_backup& bkp);
-
-enum class jvxLogLevel
-{
-	JVX_LOGLEVEL_0_NORMAL_OPERATION_WITH_LOW_DEGREE_OUTPUT = 0,
-	JVX_LOGLEVEL_1_NORMAL_OPERATION_WITH_AVRG_DEGREE_OUTPUT = 1,
-	JVX_LOGLEVEL_2_NORMAL_OPERATION_WITH_HIGH_DEGREE_OUTPUT = 2,
-	JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT = 3,
-	JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG = 4,
-	JVX_LOGLEVEL_5_OPERATION_WITH_HIGH_DEGREE_DEBUG = 5,
-	JVX_LOGLEVEL_6_OPERATION = 6,
-	JVX_LOGLEVEL_7_OPERATION = 7,
-	JVX_LOGLEVEL_8_OPERATION = 8,
-	JVX_LOGLEVEL_9_OPERATION = 9,
-	JVX_LOGLEVEL_10_OPERATION = 10
-};
 
 int jvxLogLevel2Id(jvxLogLevel lev);
 

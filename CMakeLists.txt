@@ -718,6 +718,7 @@ endif()
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxPacketFilterRules/jvxPFRDefault
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxTThreads
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxTSharedMemory
+	${JVX_BASE_ROOT}/sources/jvxTools/jvxTLogRemoteHandler
 	
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxTools/jvxTResampler
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxTools/jvxTDataConverter

@@ -110,6 +110,10 @@ jvxLibHost::request_command(const CjvxReportCommandRequest& request)
 {
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 
+#ifdef JVX_NEW_COMMAND_HANDLING
+	return reqHandle.request_command(request, true);
+#else
+
 	// Make a copy of the Text field and transfer via callback
 	if (cbks_api.request_command)
 	{
@@ -122,6 +126,7 @@ jvxLibHost::request_command(const CjvxReportCommandRequest& request)
 			res = cbks_api.request_command(request, false, nullptr);
 		}
 	}
+#endif
 
 	// sub reports are in a mutex since they may also deal with commands outside the main thread
 	/*

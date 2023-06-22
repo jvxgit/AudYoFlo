@@ -53,11 +53,13 @@ include_directories(
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSystemTextLog/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTThreads/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTLogRemoteHandler/
   
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxTools/jvxTDataConverter/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxTools/jvxTResampler/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxTools/jvxTrtAudioFileReader/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxTools/jvxTrtAudioFileWriter/
+
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTGenericWrapper/
 
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -93,6 +95,7 @@ set(LOCAL_LIBS
   jvxTResampler_static
   jvxTrtAudioFileReader_static
   jvxTrtAudioFileWriter_static
+  jvxTLogRemoteHandler_static
   jvxAuTGenericWrapper_static
   qwt_static
   jvx-app-host-static_static

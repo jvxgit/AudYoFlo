@@ -5,8 +5,16 @@ CjvxRequestCommandsHandler::CjvxRequestCommandsHandler()
 
 }
 
+void 
+CjvxRequestCommandsHandler::initialize_fwd_link(CjvxHandleRequestCommands_callbacks* ptr)
+{
+	fwd_request = ptr;
+	mainThreadId = JVX_GET_CURRENT_THREAD_ID();
+	
+}
+
 jvxErrorType
-CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& request, jvxBool verbose)
+CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& request, jvxBool verbose)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	CjvxReportCommandRequest* ptr = NULL;
@@ -15,98 +23,62 @@ CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& req
 
 	if (verbose)
 	{
-		std::cout << "--Incoming command request --" << std::endl;
-		if (request.immediate())
-		{
-			std::cout << "- immediate" << std::endl;
-		}
-		else
-		{
-			std::cout << "- not immediate" << std::endl;
-		}
-		std::cout << "- request = " << jvxReportCommandRequest_txt(request.request()) << std::endl;
-		std::cout << "- type = " << jvxReportCommandDataType_txt(request.datatype()) << std::endl;
-		std::cout << "- origin = " << jvxComponentIdentification_txt(request.origin()) << std::endl;
-		std::cout << "- - " << jvxReportCommandDataType_txt(request.datatype()) << std::endl;
+		jvxErrorType resLock = JVX_NO_ERROR;
+		std::ostream* out_stream = &std::cout;
 
-		switch (request.datatype())
+		if (log_stream.hdl)
 		{
-		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_BASE:
-			break;
-		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_UID:
+			resLock = log_stream.hdl->start_lock();
+			if (resLock == JVX_NO_ERROR)
 			{
-				auto ptrH = castCommandRequest<CjvxReportCommandRequest_uid>(request);
-				if (ptrH)
+				out_stream = log_stream.hdl->log_str();
+
+				// The function still may return a NULL-pointer
+				if (!out_stream)
 				{
-					jvxSize uId = 0;
-					ptrH->uid(&uId);
-					std::cout << "- - - uid = " << uId << std::endl;
+					out_stream = &std::cout;
 				}
 			}
-			break;
-		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
-			{
-				auto ptrH = castCommandRequest<CjvxReportCommandRequest_rm>(request);
-				if (ptrH)
-				{
-					jvxSize sId = ptrH->schedule_id();
-					std::cout << "- - - sid = " << sId << std::endl;
-				}
-			}
-			break;
-		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SEQ:
+		}
+		if (out_stream)
 		{
-			auto ptrH = castCommandRequest<CjvxReportCommandRequest_seq>(request);
-			if (ptrH)
+			jvx::helper::debug_out_command_request(request, *out_stream, "");
+		}
+		if (resLock == JVX_NO_ERROR)
+		{			
+			if (log_stream.hdl)
 			{
-				TjvxSequencerEvent ev;	
-				ptrH->seq_event(&ev);
-				std::cout << "- - - ev = " << jvxSequencerEventType_txt(ev.tp) << std::endl;
+				log_stream.hdl->stop_lock();
 			}
 		}
-		break;
-		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS:
-		{
-			auto ptrH = castCommandRequest<CjvxReportCommandRequest_ss>(request);
-			if (ptrH)
-			{
-
-				jvxStateSwitch ss;
-				ptrH->sswitch(&ss);
-				std::cout << "- - - ss = " << jvxStateSwitch_txt(ss) << std::endl;
-			}
-		}
-		break;
-		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_IDENT:
-		{
-			auto ptrH = castCommandRequest<CjvxReportCommandRequest_id>(request);
-			if (ptrH)
-			{
-
-				jvxApiString id;
-				ptrH->ident(&id);
-				std::cout << "- - - id = " << id.std_str()  << std::endl;
-			}
-		}
-		break;
-		}
-
-		std::cout << "---------------------------" << std::endl << std::endl;
 	}
+
+	JVX_THREAD_ID locThreadId = JVX_GET_CURRENT_THREAD_ID();
+
 	if (request.immediate())
 	{
 		switch (request.request())
 		{
 		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
 
-			// We need to check the thread here - we are not allowed to run this outside of the main thread!!
-			if (reportRef)
+			if (locThreadId != mainThreadId)
 			{
-				reportRef->trigger_immediate_sequencerStep();				
+				if (fwd_request)
+				{
+					fwd_request->report_error(JVX_ERROR_THREADING_MISMATCH, request);
+				}
+			}
+			else
+			{
+				// We need to check the thread here - we are not allowed to run this outside of the main thread!!
+				if (fwd_request)
+				{
+					fwd_request->trigger_immediate_sequencerStep();
+				}
 			}
 			break;
 		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN:
-			
+
 			// This function may be called from outside the main thread!
 			// This prevents forwarding this request to the postpone thread
 			reqTpMod = jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UNSPECIFIC;
@@ -139,16 +111,16 @@ CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& req
 								// We will end up here only if 
 								// 1) immediate and
 								// 2) we ended here in main thread
-								if (reportRef)
+								if (fwd_request)
 								{
-									reportRef->run_mainthread_triggerTestChainDone();
+									fwd_request->run_mainthread_triggerTestChainDone();
 								}
 							}
 						}
 						retInterfaceObj<IjvxDataConnections>(hostRef, theDataConnections);
 					}
 				}
-			}			
+			}
 		}
 
 		if (automationReport)
@@ -161,6 +133,11 @@ CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& req
 				resL = automationReport->request_command(request);
 				break;
 			}
+		}
+
+		if (fwd_request)
+		{
+			fwd_request->run_immediate_rescheduleRequest(request);
 		}
 		return res;
 	}
@@ -198,9 +175,9 @@ CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& req
 								// We will end up here only if 
 								// 1) immediate and
 								// 2) we ended here in main thread
-								if (reportRef)
+								if (fwd_request)
 								{
-									reportRef->run_mainthread_triggerTestChainDone();
+									fwd_request->run_mainthread_triggerTestChainDone();
 								}
 							}
 						}
@@ -215,9 +192,9 @@ CjvxRequestCommandsHandler::_request_command(const CjvxReportCommandRequest& req
 		{
 			ptr = jvx_command_request_copy_alloc(request);
 			ptr->set_request(reqTpMod);
-			if (reportRef)
+			if (fwd_request)
 			{
-				reportRef->trigger_threadChange_forward(ptr);
+				fwd_request->trigger_threadChange_forward(ptr);
 			}
 		}
 	}
@@ -241,118 +218,122 @@ CjvxRequestCommandsHandler::request_command_in_main_thread(CjvxReportCommandRequ
 	jvxSize schedId = JVX_SIZE_UNSELECTED;
 	jvxErrorType resL = JVX_NO_ERROR;
 
-	switch (tp)
+	// RESCHEDULED requests have been handled before and will be forwarded only!!
+	if (request->broadcast() != jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED)
 	{
-	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_BASE:
-		switch (req)
+		switch (tp)
 		{
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
-			if (reportRef)
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_BASE:
+			switch (req)
 			{
-				reportRef->run_mainthread_updateComponentList(cpId);
-			}
-			break;
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
-
-			if (reportRef)
-			{
-				reportRef->run_mainthread_updateProperties(cpId);
-			}
-			break;
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
-
-			if (reportRef)
-			{
-				reportRef->run_mainthread_updateSystemStatus();
-			}
-			break;
-		}
-		break;
-	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
-		request->specialization(reinterpret_cast<const jvxHandle**>(&iface_rm), tp);
-		if (iface_rm)
-		{
-			jvxHandle* userData = request->user_data();
-			schedId = iface_rm->schedule_id();
-			if (hostRef)
-			{
-				hostRef->request_object_selected_component(cpId, &theObj);
-				if (theObj)
+			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
+				if (fwd_request)
 				{
-					theObj->interface_factory(&theFac);
-					if (theFac)
-					{
-						IjvxSchedule* theSchedule = NULL;
-						theFac->request_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle**>(&theSchedule));
-						if (theSchedule)
-						{
-							theSchedule->schedule_main_loop(schedId, userData);
-							theFac->return_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle*>(theSchedule));
-						}
-						else
-						{
-							jvxApiString astr;
-							theObj->description(&astr);
-							std::cout << __FUNCTION__ << " : Request to re-schedule in main thread failed for object <" << astr.std_str() << ">, reason: JVX_INTERFACE_SCHEDULE not supported." << std::endl;
-						}
-					}
-					hostRef->return_object_selected_component(cpId, theObj);
+					fwd_request->run_mainthread_updateComponentList(cpId);
 				}
+				break;
+			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
+
+				if (fwd_request)
+				{
+					fwd_request->run_mainthread_updateProperties(cpId);
+				}
+				break;
+			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
+
+				if (fwd_request)
+				{
+					fwd_request->run_mainthread_updateSystemStatus();
+				}
+				break;
 			}
-		}
-		break;
-	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_UID:
-		switch (req)
-		{
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN:
-			// Special rules for the test chain
-			ptrReq = castCommandRequest<CjvxReportCommandRequest_uid>(*request);
-			if (ptrReq)
+			break;
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
+			request->specialization(reinterpret_cast<const jvxHandle**>(&iface_rm), tp);
+			if (iface_rm)
 			{
-				IjvxDataConnections* theDataConnections = NULL;
+				jvxHandle* userData = request->user_data();
+				schedId = iface_rm->schedule_id();
 				if (hostRef)
 				{
-					theDataConnections = reqInterfaceObj<IjvxDataConnections>(hostRef);
-					if (theDataConnections)
+					hostRef->request_object_selected_component(cpId, &theObj);
+					if (theObj)
 					{
-						jvxSize num = 0;
-						jvxSize uId = JVX_SIZE_UNSELECTED;
-						ptrReq->uid(&uId);
-
-						// Try to add the current test to the test trigger queue
-						resL = theDataConnections->trigger_process_test_all(&num); // we trigger the test "immediately" since it is already the postponed version
-						if (num)
+						theObj->interface_factory(&theFac);
+						if (theFac)
 						{
-							// If any test was actually tested, there might be a change
-							// We will end up here only if 
-							// 1) immediate and
-							// 2) we ended here in main thread
-							if (reportRef)
+							IjvxSchedule* theSchedule = NULL;
+							theFac->request_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle**>(&theSchedule));
+							if (theSchedule)
 							{
-								reportRef->run_mainthread_triggerTestChainDone();
+								theSchedule->schedule_main_loop(schedId, userData);
+								theFac->return_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle*>(theSchedule));
+							}
+							else
+							{
+								jvxApiString astr;
+								theObj->description(&astr);
+								std::cout << __FUNCTION__ << " : Request to re-schedule in main thread failed for object <" << astr.std_str() << ">, reason: JVX_INTERFACE_SCHEDULE not supported." << std::endl;
 							}
 						}
-						retInterfaceObj<IjvxDataConnections>(hostRef, theDataConnections);
+						hostRef->return_object_selected_component(cpId, theObj);
 					}
 				}
 			}
 			break;
-		}
-		break;
-	
-	default:
-		break;
-	}
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_UID:
+			switch (req)
+			{
+			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN:
+				// Special rules for the test chain
+				ptrReq = castCommandRequest<CjvxReportCommandRequest_uid>(*request);
+				if (ptrReq)
+				{
+					IjvxDataConnections* theDataConnections = NULL;
+					if (hostRef)
+					{
+						theDataConnections = reqInterfaceObj<IjvxDataConnections>(hostRef);
+						if (theDataConnections)
+						{
+							jvxSize num = 0;
+							jvxSize uId = JVX_SIZE_UNSELECTED;
+							ptrReq->uid(&uId);
 
-	if (this->automationReport)
-	{
-		jvxErrorType resL = JVX_NO_ERROR;
-		jvxReportCommandBroadcastType broad = request->broadcast();
-		switch (broad)
-		{
-		case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_AUTOMATION:
-			resL = automationReport->request_command(*request);
+							// Try to add the current test to the test trigger queue
+							resL = theDataConnections->trigger_process_test_all(&num); // we trigger the test "immediately" since it is already the postponed version
+							if (num)
+							{
+								// If any test was actually tested, there might be a change
+								// We will end up here only if 
+								// 1) immediate and
+								// 2) we ended here in main thread
+								if (fwd_request)
+								{
+									fwd_request->run_mainthread_triggerTestChainDone();
+								}
+							}
+							retInterfaceObj<IjvxDataConnections>(hostRef, theDataConnections);
+						}
+					}
+				}
+				break;
+			}
 			break;
+
+		default:
+			break;
+		}
+
+		if (this->automationReport)
+		{
+			jvxErrorType resL = JVX_NO_ERROR;
+			jvxReportCommandBroadcastType broad = request->broadcast();
+			switch (broad)
+			{
+			case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_AUTOMATION:
+				resL = automationReport->request_command(*request);
+				break;
+			}
 		}
 	}
 
@@ -364,7 +345,7 @@ CjvxRequestCommandsHandler::request_command_in_main_thread(CjvxReportCommandRequ
 }
 
 void
-CjvxRequestCommandsHandler::_run_all_tests()
+CjvxRequestCommandsHandler::run_all_tests()
 {
 	if (hostRef)
 	{
@@ -378,9 +359,9 @@ CjvxRequestCommandsHandler::_run_all_tests()
 		}
 		if (numTested)
 		{
-			if (reportRef)
+			if (fwd_request)
 			{
-				reportRef->run_mainthread_triggerTestChainDone();
+				fwd_request->run_mainthread_triggerTestChainDone();
 			}
 		}
 	}

@@ -68,6 +68,7 @@ include_directories(
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSystemTextLog/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTThreads/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTLogRemoteHandler/
   )
 
 #if(JVX_OS MATCHES "windows")#
@@ -81,6 +82,7 @@ set(LOCAL_LIBS
     jvxTSystemTextLog_static
 	jvxTDataLogger_static
 	jvxTThreads_static
+	jvxTLogRemoteHandler_static
 	jvx-host-json_static
 	jvx-app-host-static_static
 	)

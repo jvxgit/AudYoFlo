@@ -66,6 +66,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "typedefs/tools/TjvxText2Speech.h"
 #include "typedefs/tools/TjvxTextLog.h"
 
+#include "typedefs/tools/TjvxLogRemoteHandler.h"
 
 // Hidden interfaces
 #include "typedefs/TjvxSequencer.h"
@@ -133,6 +134,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "interfaces/tools/IjvxLocalTextLog.h"
 #include "interfaces/tools/IjvxThreads.h"
 #include "interfaces/tools/IjvxSharedMemory.h"
+#include "interfaces/tools/IjvxLogRemoteHandler.h"
 
 // Dependency for this header: IjvxRemoteCall uses IjvxConnection!!
 #include "interfaces/tools/IjvxRemoteCall.h"

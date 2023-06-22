@@ -6,6 +6,8 @@
 #include "allHostsStatic_common.h"
 #include "interfaces/all-hosts/configHostFeatures_common.h"
 
+#include "CjvxRequestCommandsHandler.h"
+
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
 #define JVX_APP_FACTORY_HOST_CLASSNAME CjvxAppFactoryHostBase_nd
 #else
@@ -64,6 +66,8 @@ protected:
 
 	std::string cfg_filename_in_use;
 	std::string cfg_filename_olay_in_use;
+
+	CjvxRequestCommandsHandler reqHandle;
 
 public:
 	JVX_APP_FACTORY_HOST_CLASSNAME();

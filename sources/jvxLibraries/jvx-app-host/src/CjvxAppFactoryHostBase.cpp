@@ -811,8 +811,22 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_activate(jvxApiString* errorMessage, jvxHan
 				errorMessage->assign("Failed to obtain tools host reference: " + errLoc.std_str());
 			}
 			return res;
-		}
+		}		
 
+		// ======================================================================================
+		// Try to get a logger for the main host
+		// ======================================================================================
+		involvedComponents.theTools.hTools->instance_tool(JVX_COMPONENT_LOGREMOTEHANDLER, &reqHandle.log_stream.obj, 0, nullptr);
+		if (reqHandle.log_stream.obj)
+		{
+			reqHandle.log_stream.obj->request_specialization(reinterpret_cast<jvxHandle**>(&reqHandle.log_stream.hdl), nullptr, nullptr, nullptr);
+			if (reqHandle.log_stream.hdl)
+			{
+				reqHandle.log_stream.hdl->initialize(involvedComponents.theHost.hFHost);
+				reqHandle.log_stream.hdl->configure(QUOTE(JVX_APP_FACTORY_HOST_CLASSNAME), jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			}
+		}
+		
 		res = boot_activate_specific(&errLoc); // postbootup_specific();
 		if (res == JVX_NO_ERROR)
 		{
@@ -879,6 +893,20 @@ JVX_APP_FACTORY_HOST_CLASSNAME::shutdown_deactivate(jvxApiString* errorMessage, 
 				errorMessage->assign(txt);
 			}
 			return res;
+		}
+
+		if(reqHandle.log_stream.hdl)
+		{
+			reqHandle.log_stream.hdl->terminate();
+			involvedComponents.theTools.hTools->return_instance_tool(JVX_COMPONENT_LOGREMOTEHANDLER, reqHandle.log_stream.obj, 0, nullptr);
+			reqHandle.log_stream.obj = nullptr;
+			reqHandle.log_stream.hdl = nullptr;
+		}
+
+		if(involvedComponents.theHost.hFHost)
+		{
+			res = involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle*>(involvedComponents.theTools.hTools));
+			involvedComponents.theTools.hTools = nullptr;
 		}
 
 		// The deactivate function in the host checks that no component is left unterminated

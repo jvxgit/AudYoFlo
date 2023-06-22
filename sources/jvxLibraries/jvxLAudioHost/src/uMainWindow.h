@@ -258,6 +258,8 @@ public:
 	virtual void run_mainthread_updateComponentList(jvxComponentIdentification cpId) override;
 	virtual void run_mainthread_updateProperties(jvxComponentIdentification cpId) override;
 	virtual void run_mainthread_updateSystemStatus() override;
+	virtual void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) override;
+	virtual void report_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
 
 private:
 

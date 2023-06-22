@@ -4,6 +4,8 @@
 #include "common/CjvxProperties.h"
 #include "pcg_exports_lib.h"
 
+#define JVX_NEW_COMMAND_HANDLING
+
 class CjvxHostJsonCommandsActShow;
 class jvxLibHost;
 
@@ -21,7 +23,7 @@ public:
 		jvxHandle* caseSpecificData,
 		jvxSize szSpecificData) = nullptr;
 
-	jvxErrorType(*request_command)(const CjvxReportCommandRequest& request, jvxBool forceAsync, jvxLibHost* backRef) = nullptr;
+	// jvxErrorType(*request_command)(const CjvxReportCommandRequest& request, jvxBool forceAsync, jvxLibHost* backRef) = nullptr;
 };
 
 // ==============================================================================
@@ -298,6 +300,8 @@ public:
 	jvxErrorType allocate_json_show_handle();
 	jvxErrorType deallocate_json_show_handle();
 
+	jvxErrorType set_request_command_handler(CjvxHandleRequestCommands_callbacks* refFwdReqCommands);
+
 	jvxErrorType interpret_command(const char* command, jvxApiString* result, jvxBool jsonOut) override;
 	// void run_direct_show_command(const std::string& command, jvxApiString* retVal = nullptr, jvxBool jsonOut = false);
 
@@ -312,6 +316,7 @@ public:
 	// ================================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_properties_modified(const char* props_set) override;
+
 #define JVX_OBJECT_ZERO_REFERENCE
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 #undef JVX_OBJECT_ZERO_REFERENCE

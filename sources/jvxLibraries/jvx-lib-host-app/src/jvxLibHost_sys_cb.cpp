@@ -11,6 +11,7 @@
 #include "jvxTrtAudioFileReader.h"
 #include "jvxTrtAudioFileWriter.h"
 #include "jvxAuTGenericWrapper.h"
+#include "jvxTLogRemoteHandler.h"
 
 extern "C"
 {
@@ -137,6 +138,10 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 		involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTDataLogger_init,
 		jvxTDataLogger_terminate, "Data Logger",
+		involvedComponents.addedStaticObjects,
+		involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTLogRemoteHandler_init,
+		jvxTDataLogger_terminate, "Remote Log Handler",
 		involvedComponents.addedStaticObjects,
 		involvedComponents.theHost.hFHost);
 	

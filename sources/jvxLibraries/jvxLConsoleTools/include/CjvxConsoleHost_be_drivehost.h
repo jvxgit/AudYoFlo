@@ -360,6 +360,9 @@ public:
 	 * Typically, we end up here since the the request is delayed into the request event queue.
 	 */
 	virtual void run_mainthread_updateSystemStatus() override;
+
+	virtual void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) override;
+	virtual void report_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
 };
 
 #endif

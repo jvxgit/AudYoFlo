@@ -225,5 +225,5 @@ void assign_report_functions(callbacks_capi* capi)
 	capi->async_report_simple_text_message = async_report_simple_text_message;
 	capi->sync_report_internals_have_changed = sync_report_internals_have_changed;
 	capi->async_report_command_request = async_report_command_request;
-	capi->request_command = request_command;
+	// capi->request_command = request_command;
 }

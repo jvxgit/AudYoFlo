@@ -363,6 +363,19 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 		reinterpret_cast<jvxHandle**>(&theTypeHandler));
 	if ((res == JVX_NO_ERROR) && theTypeHandler)
 	{
+		// Verify the integrity of the system: the component list must be properly filled.
+		// If we crash here, the definition in TjvxTypes.cpp, line 5, is broken since we 
+		// added or removed a component type. Please check that position
+		if (
+			(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_class != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) ||
+			(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_sec_type != JVX_COMPONENT_ALL_LIMIT))
+		{
+			std::cout << __FUNCTION__ << ": Fatal error: the component settings are broken due to a malfunctioning system setup at compile time." << std::endl;
+			assert(0);
+			exit(0);
+		}
+		// ========================================================================================================
+
 		for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
 		{
 			jvxComponentType tp[2];

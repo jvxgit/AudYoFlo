@@ -4005,6 +4005,107 @@ namespace jvx {
 			}
 			return h;
 		}
+
+		void debug_out_command_request(const CjvxReportCommandRequest& request, std::ostream& str, const std::string& tag)
+		{
+			str << tag << "--Incoming command request --" << std::endl;
+			if (request.immediate())
+			{
+				str << tag << "- immediate" << std::endl;
+			}
+			else
+			{
+				str << tag << "- not immediate" << std::endl;
+			}
+
+			//jvxReportCommandRequestBroad
+			auto broadC = request.broadcast();
+			switch (broadC)
+			{
+			case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_NONE:
+				str << tag << "- broadcast = none" << std::endl;
+				break;
+
+			case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_AUTOMATION:
+				str << tag << "- broadcast = automation" << std::endl;
+				break;
+			case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_NO_FURTHER:
+				str << tag << "- broadcast = no_further" << std::endl;
+				break;
+			case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED:
+				str << tag << "- broadcast = rescheduled" << std::endl;
+				break;
+			}
+
+			str << tag << "- request = " << jvxReportCommandRequest_txt(request.request()) << std::endl;
+			str << tag << "- type = " << jvxReportCommandDataType_txt(request.datatype()) << std::endl;
+			str << tag << "- origin = " << jvxComponentIdentification_txt(request.origin()) << std::endl;
+			str << tag << "- - " << jvxReportCommandDataType_txt(request.datatype()) << std::endl;
+
+			switch (request.datatype())
+			{
+			case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_BASE:
+				break;
+			case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_UID:
+			{
+				auto ptrH = castCommandRequest<CjvxReportCommandRequest_uid>(request);
+				if (ptrH)
+				{
+					jvxSize uId = 0;
+					ptrH->uid(&uId);
+					str << tag << "- - - uid = " << uId << std::endl;
+				}
+			}
+			break;
+			case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
+			{
+				auto ptrH = castCommandRequest<CjvxReportCommandRequest_rm>(request);
+				if (ptrH)
+				{
+					jvxSize sId = ptrH->schedule_id();
+					str << tag << "- - - sid = " << sId << std::endl;
+				}
+			}
+			break;
+			case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SEQ:
+			{
+				auto ptrH = castCommandRequest<CjvxReportCommandRequest_seq>(request);
+				if (ptrH)
+				{
+					TjvxSequencerEvent ev;
+					ptrH->seq_event(&ev);
+					str << tag << "- - - ev = " << jvxSequencerEventType_txt(ev.tp) << std::endl;
+				}
+			}
+			break;
+			case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS:
+			{
+				auto ptrH = castCommandRequest<CjvxReportCommandRequest_ss>(request);
+				if (ptrH)
+				{
+
+					jvxStateSwitch ss;
+					ptrH->sswitch(&ss);
+					str << tag << "- - - ss = " << jvxStateSwitch_txt(ss) << std::endl;
+				}
+			}
+			break;
+			case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_IDENT:
+			{
+				auto ptrH = castCommandRequest<CjvxReportCommandRequest_id>(request);
+				if (ptrH)
+				{
+
+					jvxApiString id;
+					ptrH->ident(&id);
+					str << tag << "- - - id = " << id.std_str() << std::endl;
+				}
+			}
+			break;
+			}
+
+			str << tag << "---------------------------" << std::endl << std::endl;
+		};
 	}
 }
 

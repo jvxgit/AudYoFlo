@@ -36,7 +36,7 @@ uMainWindow::uMainWindow() :
 
 	// Link the configure host features
 	confHostFeatures = static_cast<configureHost_features*>(&theHostFeatures);
-	this->reqHandle.reportRef = this;
+	this->reqHandle.initialize_fwd_link(this);
 
 }
 
@@ -139,13 +139,25 @@ uMainWindow::run_mainthread_updateSystemStatus()
 	this->updateWindow(prio);
 }
 
+void 
+uMainWindow::run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request)
+{
+}
+
+void 
+uMainWindow::report_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
+{
+	std::cout << __FUNCTION__ << ": Error reported, " << jvxErrorType_descr(resError) << std::endl;
+	jvx::helper::debug_out_command_request(request, std::cout, "ERROR");
+}
+
 jvxErrorType
 uMainWindow::request_command(const CjvxReportCommandRequest& request)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	CjvxReportCommandRequest* ptr = NULL;
 
-	return reqHandle._request_command(request);
+	return reqHandle.request_command(request);
 
 /*
 
@@ -361,7 +373,7 @@ uMainWindow::report_command_request(jvxCBitField request,
 void
 uMainWindow::trigger_test_chain_inThread()
 {
-	reqHandle._run_all_tests();	
+	reqHandle.run_all_tests();	
 }
 
 void

@@ -42,4 +42,49 @@ extern jvxErrorType __last_error;
 
 extern JVX_THREAD_ID mainThreadId;
 
+class jvxRequestCommandHandlerLocal : public CjvxHandleRequestCommands_callbacks
+{
+
+public:
+	jvxLibHost* backRef = nullptr;
+
+	/**
+	 * If the request to run a sequencer step immediately, this callback is triggered.
+	 */
+	void trigger_immediate_sequencerStep() override;
+
+	/**
+	 * For the remaining command requests, the trigger is stored in the request queue and will
+	 * be postponed. This way, the request always comes out in a delayed fashion - even if the
+	 * request was triggered from within the main thread. */
+	void trigger_threadChange_forward(CjvxReportCommandRequest* ptr_to_copy) override;
+
+	/**
+	 * If a test request was attached to the queue and all tests runs were completed, the succesful test is
+	 * reported to all connected listeners.
+	 */
+	void run_mainthread_triggerTestChainDone() override;
+
+	/*
+	 * This callback is called if the component list of a technology has changed. The technology is passed as cpId.
+	 * Typically, we end up here since the the request is delayed into the request event queue.
+	 */
+	void run_mainthread_updateComponentList(jvxComponentIdentification cpId) override;
+
+	/*
+	 * This callback is called if the properties have changed.
+	 * Typically, we end up here since the the request is delayed into the request event queue.
+	 */
+	void run_mainthread_updateProperties(jvxComponentIdentification cpId) override;
+
+	/*
+	 * This callback is called if the system state has changed.
+	 * Typically, we end up here since the the request is delayed into the request event queue.
+	 */
+	void run_mainthread_updateSystemStatus() override;
+
+	void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) override;
+
+	void report_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
+};
 #endif

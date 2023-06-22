@@ -2,7 +2,7 @@
 #include "typedefs/TjvxTypes.h"
 #include "typedefs/TjvxTypes_cpp.h"
 
-jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT] =
+jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT+1] =
 {
 	/* JVX_COMPONENT_UNKNOWN */
 	{jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE, JVX_COMPONENT_UNKNOWN, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE},
@@ -118,8 +118,11 @@ jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT] =
 	{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, JVX_COMPONENT_UNKNOWN, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE }, /*JVX_COMPONENT_REMOTE_CALL*/
 		
 	/* JVX_COMPONENT_PACKETFILTER_RULE */
-	{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, JVX_COMPONENT_UNKNOWN, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE } /*,JVX_COMPONENT_PACKETFILTER_RULE*/
+	{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, JVX_COMPONENT_UNKNOWN, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE }, /*,JVX_COMPONENT_PACKETFILTER_RULE*/
 
+	/* JVX_COMPONENT_LOGREMOTEHANDLER */
+	{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, JVX_COMPONENT_UNKNOWN, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE } /* JVX_COMPONENT_LOGREMOTEHANDLER */
+				
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 #define JVX_INCLUDE_CLASSES
 #include "typedefs/TpjvxTypes_components.h"
@@ -132,7 +135,11 @@ jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT] =
 	,{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_HOST, JVX_COMPONENT_UNKNOWN, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE } /*JVX_COMPONENT_OFF_HOST*/
 	,{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_PROCESS, JVX_COMPONENT_UNKNOWN, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE } /*JVX_COMPONENT_INTERCEPTOR*/
 	,{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_SIMPLE, JVX_COMPONENT_SYSTEM_AUTOMATION,
-		"Automation", "automation", NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE } /*JVX_COMPONENT_AUTOMATION*/
+		"Automation", "automation", NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE }, /*JVX_COMPONENT_AUTOMATION*/
+
+	// I added this entry here to verify that new components do not break the system!!
+	{ jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT, JVX_COMPONENT_ALL_LIMIT, NULL, NULL, NULL, jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE }
+
 };
 
 jvxUInt16 jvx_txt2UInt16(const char* in, jvxCBool* err)

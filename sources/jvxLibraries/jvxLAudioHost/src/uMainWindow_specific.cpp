@@ -14,6 +14,7 @@
 #include "jvxTrtAudioFileReader.h"
 #include "jvxTrtAudioFileWriter.h"
 #include "jvxAuTGenericWrapper.h"
+#include "jvxTLogRemoteHandler.h"
 
 #include "jvxQtAudioHostHookupEntries.h"
 #include "interfaces/all-hosts/jvxHostHookupEntries.h"
@@ -154,6 +155,10 @@ uMainWindow_specific::bootup_negotiate_specific()
 		parentRef->involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTDataLogger_init,
 		jvxTDataLogger_terminate, "Data Logger",
+		parentRef->involvedComponents.addedStaticObjects,
+		parentRef->involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTLogRemoteHandler_init,
+		jvxTDataLogger_terminate, "Remote Log Handler",
 		parentRef->involvedComponents.addedStaticObjects,
 		parentRef->involvedComponents.theHost.hFHost);
 

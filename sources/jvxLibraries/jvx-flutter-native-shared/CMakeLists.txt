@@ -128,7 +128,7 @@ if(JVX_OS MATCHES "windows")
 endif()
 
 # 
-# Befehl				=	O:\ayf-templates\windows\jvxrt-submodules\ayfbinrender\sources\flutter\ayfbinrender\build\windows\runner\Debug\ayfBinRender.exe
-# Befehlsargumente		=   --workdir C:\jvxrt\audio\release\runtime --preload C:\jvxrt\audio\release\runtime\bin\zlib.dll --preload C:\jvxrt\audio\release\runtime\bin\libfftw3-3.dll --jvxdir jvxComponents --config ayfbinrender.jvx --textlog --verbose_dll --textloglev 10
-# Arbeitsverzeichnis	=   C:\jvxrt\build.audio.all\release\runtime
+# Befehl				=	O:\ayfdevelop\AudYoFlo\flutter\ayfbinrender\ayfbinrender\build\windows\runner\Debug\ayfBinRender.exe
+# Befehlsargumente		=   --workdir C:\jvxrt\audio-sdk\release\sdk --preload C:\jvxrt\audio-sdk\release\sdk\bin\zlib.dll --preload C:\jvxrt\audio-sdk\release\sdk\bin\libfftw3-3.dll --jvxdir jvxComponents --config ayfbinrender.jvx --textlog --verbose_dll --textloglev 10
+# Arbeitsverzeichnis	=   C:\jvxrt\audio-sdk\release\sdk
 #

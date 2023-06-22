@@ -83,7 +83,7 @@ CjvxConsoleHost_be_drivehost::request_command(const CjvxReportCommandRequest& re
 	jvxCBitField p1 = 0;
 	jvxErrorType res = JVX_NO_ERROR;
 
-	return reqHandle._request_command(request);
+	return reqHandle.request_command(request);
 
 	JVX_THREAD_ID tIdLocal = JVX_GET_CURRENT_THREAD_ID();
 	
@@ -491,21 +491,23 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 		// We pass this forward to the handler and remove the object there!
 		CjvxReportCommandRequest* request = (CjvxReportCommandRequest*)param;
 
+		// jvx::helper::debug_out_command_request(*request, std::cout, __FUNCTION__);
+
 		jvxReportCommandDataType tp = request->datatype();
-		if (paramType == JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST)
-		{
-			reqHandle.request_command_in_main_thread(request);
-		}
+		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST);
+		reqHandle.request_command_in_main_thread(request, false);
 
 		// We are the primary frontend!!
-		std::list<jvxOneFrontendAndState>::iterator elm = this->linkedSecFrontends.begin();
-		for (; elm != linkedSecFrontends.end(); elm++)
-		{
-			if (elm->fwd)
+		for(auto& elm: this->linkedSecFrontends)
+		{		
+			if (elm.fwd)
 			{
-				elm->fwd->request_command_in_main_thread(request);
+				elm.fwd->request_command_in_main_thread(request, false);
 			}
 		}
+
+		// Do not delete it before here!
+		jvx_command_request_copy_dealloc(request);
 
 		// Here, we need to forward these reports to the other frontend
 		return JVX_NO_ERROR;
@@ -1017,7 +1019,11 @@ CjvxConsoleHost_be_drivehost::trigger_threadChange_forward(CjvxReportCommandRequ
 	evElm.param = (jvxHandle*)ptr;
 	evElm.paramType = JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST;
 	jvxErrorType res = this->evLop->event_schedule(&evElm, NULL, NULL);
-	assert(res == JVX_NO_ERROR);
+	if (res != JVX_NO_ERROR)
+	{
+		std::cout << "Forwarding a command request failed with error <" << jvxErrorType_descr(res) << ">" << std::endl;
+		jvx::helper::debug_out_command_request(*ptr, std::cout, "failed");
+	}
 }
 
 /**
@@ -1066,6 +1072,25 @@ CjvxConsoleHost_be_drivehost::run_mainthread_updateSystemStatus()
 	// What to do here?
 }
 
+void 
+CjvxConsoleHost_be_drivehost::run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request)
+{
+	/*
+	 * The immediate requests are forwarded with the "RESCHEDULED" broadcast type. They have been processed but
+	 * they may be reported still
+	 */
+	auto ptr = jvx_command_request_copy_alloc(request);
+	ptr->set_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
+	trigger_threadChange_forward(ptr);
+}
+
+void 
+CjvxConsoleHost_be_drivehost::report_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
+{
+	std::cout << __FUNCTION__ << ": Error reported, " << jvxErrorType_descr(resError) << std::endl;
+	jvx::helper::debug_out_command_request(request, std::cout, "ERROR");
+}
+
 jvxErrorType 
 CjvxConsoleHost_be_drivehost::request_if_command_forward(IjvxReportSystemForward** fwdCalls)
 {
@@ -1075,3 +1100,4 @@ CjvxConsoleHost_be_drivehost::request_if_command_forward(IjvxReportSystemForward
 	}
 	return JVX_ERROR_UNSUPPORTED;
 }
+

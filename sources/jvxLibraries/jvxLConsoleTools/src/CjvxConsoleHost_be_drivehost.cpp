@@ -35,7 +35,7 @@ CjvxConsoleHost_be_drivehost::CjvxConsoleHost_be_drivehost():
 	theCallback_exchg_property.cb_priv = NULL;
 
 	confHostFeatures = static_cast<configureHost_features*>(&theHostFeatures);
-	this->reqHandle.reportRef = this;
+	this->reqHandle.initialize_fwd_link( this);
 }
 
 

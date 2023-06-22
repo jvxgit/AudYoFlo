@@ -63,6 +63,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION unique_id_selected_component(const jvxComponentIdentification& tp, jvxSize * uId) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION switch_state_component(const jvxComponentIdentification& cpId, jvxStateSwitch sswitch) = 0;
+
+	// virtual jvxErrorType JVX_CALLINGCONVENTION switch_state_component(const jvxComponentIdentification& cpId, jvxStateSwitch sswitch) = 0;
 	//virtual jvxErrorType JVX_CALLINGCONVENTION set_external_widget_host(jvxHandle* theWidgetHost, jvxWidgetHostType widgetType) = 0;
 
 };

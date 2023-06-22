@@ -163,6 +163,13 @@ jvxLibHost::report_properties_modified(const char* props_set)
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+jvxLibHost::set_request_command_handler(CjvxHandleRequestCommands_callbacks* refFwdReqCommands)
+{
+	reqHandle.initialize_fwd_link(refFwdReqCommands);
+	return JVX_NO_ERROR;
+}
+
 jvxErrorType 
 jvxLibHost::put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,
 	jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename , jvxInt32 lineno )

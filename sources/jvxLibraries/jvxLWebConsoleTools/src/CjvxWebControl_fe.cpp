@@ -2550,6 +2550,7 @@ CjvxWebControl_fe::report_command_request(
 jvxErrorType
 CjvxWebControl_fe::request_command(const CjvxReportCommandRequest& request)
 {
+	jvx::helper::debug_out_command_request(request, std::cout, (std::string)"-- <" + __FUNCTION__ + ">");
 	return JVX_ERROR_UNSUPPORTED;
 }
 
@@ -2811,8 +2812,9 @@ CjvxWebControl_fe::request_if_command_forward(IjvxReportSystemForward** fwdCalls
 }
 
 void 
-CjvxWebControl_fe::request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool)
+CjvxWebControl_fe::request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool removeObject)
 {
+	jvx::helper::debug_out_command_request(*request, std::cout, __FUNCTION__);
 	// Here, we can forward the requests!!!
 }
 

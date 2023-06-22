@@ -6,6 +6,7 @@
 #include "jvxTThreads.h"
 #include "jvxTDataLogger.h"
 #include "jvxTSocket.h"
+#include "jvxTLogRemoteHandler.h"
 
 #include "jvxTrtAudioFileReader.h"
 #include "jvxTrtAudioFileWriter.h"
@@ -107,6 +108,8 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 	LOAD_ONE_MODULE_LIB_FULL(jvxTThreads_init, jvxTThreads_terminate, "Threads", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTDataLogger_init, jvxTDataLogger_terminate, "Data Logger", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTSocket_init, jvxTSocket_terminate, "Sockets", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTLogRemoteHandler_init, jvxTDataLogger_terminate, "Remote Log Handler", involvedComponents.addedStaticObjects,involvedComponents.theHost.hFHost);
+
 	LOAD_ONE_MODULE_LIB_FULL(jvxTDataConverter_init,
 		jvxTDataConverter_terminate,
 		"Data Converter",

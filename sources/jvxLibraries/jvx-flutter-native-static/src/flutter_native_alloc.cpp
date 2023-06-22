@@ -3,6 +3,7 @@
 #ifdef JVX_LIB_SINGLETON
 jvxLibHost myLibHost;
 #endif
+jvxRequestCommandHandlerLocal myReqCmdFwdSingleton;
 
 JVX_THREAD_ID mainThreadId = JVX_THREAD_ID_INVALID;
 
@@ -92,6 +93,10 @@ struct retOpaqueHandle ffi_allocate_backend_handle()
 	newLib = new jvxLibHost();
 #endif
 
+	// Set the cross links between lib and forward instance
+	myReqCmdFwdSingleton.backRef = newLib;
+	newLib->set_request_command_handler(&myReqCmdFwdSingleton);
+	
 	retVal.opaque_hdl = reinterpret_cast<void*>(newLib);
 	// myLibHost.setMainThread();
 	lst_active_referenes[retVal.opaque_hdl] = newLib;
@@ -112,6 +117,10 @@ int ffi_deallocate_backend_handle(void* opaque_hdl)
 			jvxLibHost* ll = elm->second;
 
 			// myLibHost.resetMainThread();
+
+			// Set the cross links between lib and forward instance
+			myReqCmdFwdSingleton.backRef = nullptr;
+			ll->set_request_command_handler(nullptr);
 
 #ifdef JVX_LIB_SINGLETON
 			assert(ll == &myLibHost);
@@ -473,4 +482,81 @@ extern "C"
 	}
 }
 
+void 
+jvxRequestCommandHandlerLocal::trigger_immediate_sequencerStep()
+{
+	this->backRef->sequencer_trigger();
+}
 
+void 
+jvxRequestCommandHandlerLocal::trigger_threadChange_forward(CjvxReportCommandRequest* ptr_to_copy)
+{
+	CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(*ptr_to_copy);
+	report_callback* cbk = nullptr;
+	JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(cbk, struct report_callback);
+	cbk->callback_id = JVX_FFI_CALLBACK_REQUEST_COMMAND;
+	cbk->callback_subid = (int)ptr->request();
+
+	cbk->load_fld = ptr;
+	cbk->sz_fld = sizeof(*ptr_to_copy);
+	bool resultSend = send_async_dart(cbk);
+	if (resultSend == false)
+	{
+		JVX_DSP_SAFE_DELETE_OBJECT(cbk);
+		JVX_DSP_SAFE_DELETE_OBJECT(ptr);
+		// return JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+	}
+}
+
+void 
+jvxRequestCommandHandlerLocal::run_mainthread_triggerTestChainDone()
+{
+
+}
+
+void 
+jvxRequestCommandHandlerLocal::run_mainthread_updateComponentList(jvxComponentIdentification cpId)
+{
+
+}
+
+void 
+jvxRequestCommandHandlerLocal::run_mainthread_updateProperties(jvxComponentIdentification cpId)
+{
+
+}
+
+void 
+jvxRequestCommandHandlerLocal::run_mainthread_updateSystemStatus()
+{
+
+}
+  
+void 
+jvxRequestCommandHandlerLocal::run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request)
+{
+	CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(request);
+	ptr->modify_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
+
+	report_callback* cbk = nullptr;
+	JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(cbk, struct report_callback);
+	cbk->callback_id = JVX_FFI_CALLBACK_REQUEST_COMMAND;
+	cbk->callback_subid = (int)ptr->request();
+
+	cbk->load_fld = ptr;
+	cbk->sz_fld = sizeof(request);
+	bool resultSend = send_async_dart(cbk);
+	if (resultSend == false)
+	{
+		JVX_DSP_SAFE_DELETE_OBJECT(cbk);
+		JVX_DSP_SAFE_DELETE_OBJECT(ptr);
+		// return JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+	}
+}
+
+void
+jvxRequestCommandHandlerLocal::report_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
+{
+	std::cout << __FUNCTION__ << ": Error reported, " << jvxErrorType_descr(resError) << std::endl;
+	jvx::helper::debug_out_command_request(request, std::cout, "ERROR");
+}

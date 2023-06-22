@@ -1,7 +1,8 @@
 #ifndef __CJVXREQUESTCOMMANDSHANDLER_H__
 #define __CJVXREQUESTCOMMANDSHANDLER_H__
 
-#include "CjvxAppFactoryHostBase.h"
+//#include "CjvxAppFactoryHostBase.h"
+#include "jvx.h"
 
 /**
  * This class was introduced to standardize the handing of the command request triggers arriving.
@@ -47,6 +48,13 @@ public:
 	 */
 	virtual void run_mainthread_updateSystemStatus() = 0;
 
+	/*
+	* Immediate requests are often rescheduled to the main thread to be reported somewhere
+	 */
+	virtual void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) = 0;
+
+	virtual void report_error(jvxErrorType resError, const CjvxReportCommandRequest& request) = 0;
+
 };
 
 class CjvxRequestCommandsHandler : public IjvxReportSystemForward
@@ -62,18 +70,26 @@ public:
 	// 2) shutdownHostFactory
 	IjvxReportSystem* automationReport = nullptr;
 
-	// Pointer to couple the application and its member function to the code from CjvxHandleRequestCommands.
+	// Pointer sto couple the application and its member function to the code from CjvxHandleRequestCommands.
 	// Could be assigned in uMainWindow::uMainWindow()
-	CjvxHandleRequestCommands_callbacks* reportRef = nullptr;
-	
+	CjvxHandleRequestCommands_callbacks* fwd_request = nullptr;
+	struct
+	{
+		IjvxObject* obj = nullptr;
+		IjvxLogRemoteHandler* hdl = nullptr;
+	} log_stream;
+
+	JVX_THREAD_ID mainThreadId = JVX_THREAD_ID_INVALID;
+
 	// ================================================================
 	CjvxRequestCommandsHandler();
 
 	virtual void request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool removeAfterHandle = true) override;
 
-	jvxErrorType _request_command(const CjvxReportCommandRequest& request, jvxBool verbose = true);
-	
-	void _run_all_tests();
+	void initialize_fwd_link(CjvxHandleRequestCommands_callbacks* ptr);
+
+	jvxErrorType request_command(const CjvxReportCommandRequest& request, jvxBool verbose = true);
+	void run_all_tests();
 };
 
 #endif

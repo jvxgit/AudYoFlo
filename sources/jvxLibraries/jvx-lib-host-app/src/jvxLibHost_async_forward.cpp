@@ -24,6 +24,10 @@ jvxLibHost::request_command_fwd(const CjvxReportCommandRequest& request, jvxBool
 
 	if (mayEnter)
 	{
+#ifdef JVX_NEW_COMMAND_HANDLING
+		// This is not nice: if we add "false" to not remove the object, we can convert it to non-const since all within the function is const
+		reqHandle.request_command_in_main_thread((CjvxReportCommandRequest*) &request, false);
+#else
 		jvxReportCommandDataType tp = request.datatype();
 		const CjvxReportCommandRequest_rm* iface_rm = NULL;
 		const CjvxReportCommandRequest_uid* iface_uid = NULL;
@@ -164,20 +168,20 @@ jvxLibHost::request_command_fwd(const CjvxReportCommandRequest& request, jvxBool
 				}
 			}
 		}
+#endif
 	}
 
 	// Forward all async calls towards. This includes also the rescheduled immediate messages!! 
-	if (async_call)
+	assert(async_call);
+
+	// We have to put this part into a critical section: new websockets can pop up at anytime since the 
+	// web server "lifes" in his own thread
+	JVX_LOCK_MUTEX(safeAccessSubReports);
+	for (auto elm : subReports)
 	{
-		// We have to put this part into a critical section: new websockets can pop up at anytime since the 
-		// web server "lifes" in his own thread
-		JVX_LOCK_MUTEX(safeAccessSubReports);
-		for (auto elm : subReports)
-		{
-			elm->request_command(request);
-		}
-		JVX_UNLOCK_MUTEX(safeAccessSubReports);
+		elm->request_command(request);
 	}
+	JVX_UNLOCK_MUTEX(safeAccessSubReports);
 
 	if (async_call)
 	{

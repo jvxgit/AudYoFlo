@@ -23,6 +23,7 @@ include_directories(
 	${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
 	${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTThreads/
 	${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSocket/
+	${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTLogRemoteHandler/
   )
 
 set(LOCAL_SOURCES
@@ -79,6 +80,7 @@ set(LOCAL_LIBS
 	jvxTThreads_static
 	jvxTDataLogger_static
 	jvxTSocket_static
+	jvxTLogRemoteHandler_static
 	 )
 
 # Include the project specific references
