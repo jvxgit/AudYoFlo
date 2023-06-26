@@ -1970,7 +1970,7 @@ CjvxFlexibleTextControlDevice::process_incoming_message(const std::string& token
 		{
 			jvxSize id = elm->second.id;
 			oneMessage_hdr* ptr_hdr_ret = NULL;
-			resL = interact->device_check_pending_uid(id, (jvxSize)JVX_GENERIC_RS232_MESSAGE_OFFSET, &tStamp_sent, &ptr_hdr_ret);
+			resL = interact->device_check_pending_uid(id, (jvxSize)JVX_GENERIC_CONNECTION_MESSAGE_OFFSET, &tStamp_sent, &ptr_hdr_ret);
 			if (resL == JVX_NO_ERROR)
 			{
 				jvxBool matches_rule = false;
@@ -2026,7 +2026,7 @@ CjvxFlexibleTextControlDevice::process_incoming_message(const std::string& token
 						JVX_SLEEP_MS(elm->second.post_timeout_msec);
 					}
 					*uId = id;
-					*messType = JVX_GENERIC_RS232_MESSAGE_OFFSET;
+					*messType = JVX_GENERIC_CONNECTION_MESSAGE_OFFSET;
 					identifiedMessage = true;
 
 					
@@ -2095,7 +2095,7 @@ jvxErrorType
 CjvxFlexibleTextControlDevice::translate_message_token_separator(oneMessage_hdr* mess, std::string& txtOut, const std::string& sepToken)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	if (mess->tp == JVX_GENERIC_RS232_MESSAGE_OFFSET)
+	if (mess->tp == JVX_GENERIC_CONNECTION_MESSAGE_OFFSET)
 	{
 		if (mess->sz_elm == sizeof(oneMessage_hdr_ids))
 		{
@@ -2190,7 +2190,7 @@ CjvxFlexibleTextControlDevice::trigger_send_command(const std::string& cmd_name,
 	memset(&fld, 0, sizeof(oneMessage_hdr_ids));
 
 	fld.hdr.sz_elm = sizeof(oneMessage_hdr_ids);
-	fld.hdr.tp = JVX_GENERIC_RS232_MESSAGE_OFFSET;
+	fld.hdr.tp = JVX_GENERIC_CONNECTION_MESSAGE_OFFSET;
 
 	auto elmc = lst_commands.begin();
 	for (; elmc != lst_commands.end(); elmc++)
@@ -2256,7 +2256,7 @@ CjvxFlexibleTextControlDevice::trigger_send_seq(const std::string& seq_name, jvx
 	oneMessage_hdr_ids fld;
 	memset(&fld, 0, sizeof(oneMessage_hdr_ids));
 	fld.hdr.sz_elm = sizeof(oneMessage_hdr_ids);
-	fld.hdr.tp = JVX_GENERIC_RS232_MESSAGE_OFFSET;
+	fld.hdr.tp = JVX_GENERIC_CONNECTION_MESSAGE_OFFSET;
 
 	if (interact)
 	{

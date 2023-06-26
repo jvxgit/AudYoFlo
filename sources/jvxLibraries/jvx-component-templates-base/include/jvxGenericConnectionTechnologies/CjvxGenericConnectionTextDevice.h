@@ -8,7 +8,7 @@
 
 #include "pcg_CjvxGenericConnectionTextDevice_pcg.h"
 
-#define JVX_SIZE_GENERIC_RS232_MESSAGE 128
+#define JVX_SIZE_GENERIC_CONNECTION_MESSAGE 128
 
 class CjvxGenericConnectionTextDevice : public CjvxGenericRS232Device, public CjvxGenericConnectionTextDevice_pcg
 {
@@ -36,7 +36,7 @@ class CjvxGenericConnectionTextDevice : public CjvxGenericRS232Device, public Cj
 
 	union oneMessageContent
 	{
-		char generic_message[JVX_SIZE_GENERIC_RS232_MESSAGE];
+		char generic_message[JVX_SIZE_GENERIC_CONNECTION_MESSAGE];
 	};
 
 	typedef struct

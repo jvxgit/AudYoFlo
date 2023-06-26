@@ -5,7 +5,6 @@
 #define TIMEOUT_IF_MQUEUE_CAN_NOT_BE_HANDLED_MSEC 500
 
 #include "CjvxFlexibleTextControlDevice.h"
-//#include "jvxGenericRS232Technologies/CjvxGenericConnectionTextDevice.h"
 
 // CjvxGenericRS232TextDevice
 template <class T>
@@ -68,7 +67,7 @@ public:
 	virtual jvxErrorType handle_single_received_text_token(const std::string& token, oneMessage_hdr* commContext, jvxSize* idIdentify) override
 	{
 		jvxSize uId = JVX_SIZE_UNSELECTED;
-		jvxSize messType = JVX_GENERIC_RS232_MESSAGE_OFFSET;
+		jvxSize messType = JVX_GENERIC_CONNECTION_MESSAGE_OFFSET;
 
 		jvxErrorType resL = theControl.process_incoming_message(token, &uId, &messType, idIdentify);
 		if (resL == JVX_NO_ERROR)

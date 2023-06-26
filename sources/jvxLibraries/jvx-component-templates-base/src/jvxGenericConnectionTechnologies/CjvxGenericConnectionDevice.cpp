@@ -346,9 +346,9 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 		theMess.expectResponse = false;
 		theMess.mId = JVX_SIZE_UNSELECTED;
 		theMess.uId = JVX_SIZE_UNSELECTED;
-		theMess.tp = JVX_GENERIC_RS232_NO_MESSAGE_TYPE;
+		theMess.tp = JVX_GENERIC_CONNECTION_NO_MESSAGE_TYPE;
 		theMess.sz_elm = sizeof(oneMessage_hdr);
-		theMess.stat = JVX_GENERIC_RS232_STATUS_NONE;
+		theMess.stat = JVX_GENERIC_CONNECTION_STATUS_NONE;
 
 		// Handle incoming data
 		resL = this->handle_incoming_data(ptr, toProcess, offset, id_port, addInfo, whatsthis, &theMess, &idIdentify);
@@ -432,7 +432,7 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 					jvx_unlock_text_log(jvxrtst_bkp);
 				}
 			}
-			theMess.tp = JVX_GENERIC_RS232_GENERIC_MESSAGE;
+			theMess.tp = JVX_GENERIC_CONNECTION_GENERIC_MESSAGE;
 			break;
 		}
 		toProcess = 0;
@@ -471,7 +471,7 @@ CjvxGenericConnectionDevice::remove_data_from_map(oneMessage_hdr* theMess)
 	jvxBool trigger_queue = false;
 
 	jvx_message_queue_get_timestamp_us(theMQueue, &tstamp);
-	if (theMess->tp != JVX_GENERIC_RS232_NO_MESSAGE_TYPE)
+	if (theMess->tp != JVX_GENERIC_CONNECTION_NO_MESSAGE_TYPE)
 	{
 		JVX_LOCK_MUTEX(safeAccessChannel);
 		auto elm = mpMessages.find(theMess->uId);
@@ -526,7 +526,7 @@ CjvxGenericConnectionDevice::check_pending_uid(jvxSize uId, jvxSize mTp, oneMess
 		}
 		else
 		{
-			if (elm->second->stat == JVX_GENERIC_RS232_STATUS_SENT)
+			if (elm->second->stat == JVX_GENERIC_CONNECTION_STATUS_SENT)
 			{
 				if (elm->second->tp == mTp)
 				{
@@ -609,7 +609,7 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 		{
 			if (elm->second->expectResponse)
 			{
-				if (elm->second->stat == JVX_GENERIC_RS232_STATUS_RETRANSMIT)
+				if (elm->second->stat == JVX_GENERIC_CONNECTION_STATUS_RETRANSMIT)
 				{
 					retransmit = true;
 					messPtr = elm->second;
@@ -677,7 +677,7 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 							jvx_unlock_text_log(jvxrtst_bkp);
 					}
 				}
-				elm->second->stat = JVX_GENERIC_RS232_STATUS_SENT;
+				elm->second->stat = JVX_GENERIC_CONNECTION_STATUS_SENT;
 				elm->second->timestamp_sent_us = messPtr->timestamp_sent_us;
 			}
 			else
@@ -807,7 +807,7 @@ CjvxGenericConnectionDevice::callback_thread_timer_expired(jvxInt64 timestamp_us
 		auto elm = mpMessages.begin();
 		for (; elm != mpMessages.end(); elm++)
 		{
-			if(elm->second->stat == JVX_GENERIC_RS232_STATUS_SENT)
+			if(elm->second->stat == JVX_GENERIC_CONNECTION_STATUS_SENT)
 			{
 				// Check those messages in SENT mode only
 				deltaT = tstamp - elm->second->timestamp_sent_us;
@@ -834,7 +834,7 @@ CjvxGenericConnectionDevice::callback_thread_timer_expired(jvxInt64 timestamp_us
 								"> - mid <" << elm->second->mId << "> (retransmission nr." << elm->second->retrans_cnt << ")." << std::endl;
 						}
 						trigger_queue = true;
-						elm->second->stat = JVX_GENERIC_RS232_STATUS_RETRANSMIT;
+						elm->second->stat = JVX_GENERIC_CONNECTION_STATUS_RETRANSMIT;
 						// Counter will be increment in message loop
 					}
 					else

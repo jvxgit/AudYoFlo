@@ -267,7 +267,7 @@ CjvxGenericConnectionTextDevice::translate_message_token(oneMessage_hdr* mess, s
 	{
 		switch (mess->tp)
 		{
-		case JVX_GENERIC_RS232_GENERIC_MESSAGE:
+		case JVX_GENERIC_CONNECTION_GENERIC_MESSAGE:
 			
 			ct_ptr = (jvxByte*)mess;
 			ct_ptr += sizeof(oneMessage_hdr);
@@ -477,8 +477,8 @@ CjvxGenericConnectionTextDevice::add_generic_message_queue(const std::string& my
 	mess = (oneMessage_hdr*)bPtr;
 	
 	mess->expectResponse = false;
-	mess->stat = JVX_GENERIC_RS232_STATUS_INIT;
-	mess->tp = JVX_GENERIC_RS232_GENERIC_MESSAGE;
+	mess->stat = JVX_GENERIC_CONNECTION_STATUS_INIT;
+	mess->tp = JVX_GENERIC_CONNECTION_GENERIC_MESSAGE;
 	mess->retrans_cnt = 0;
 
 	JVX_LOCK_MUTEX(safeAccessChannel);
@@ -493,7 +493,7 @@ CjvxGenericConnectionTextDevice::add_generic_message_queue(const std::string& my
 	mess_q.hdr.sz_elm = sizeof(oneGenericMessage);
 	char* loadPtr = (char*)&mess_q;
 	loadPtr += sizeof(oneMessage_hdr);
-	jvx_fillCharStr(loadPtr, JVX_SIZE_GENERIC_RS232_MESSAGE, myText);
+	jvx_fillCharStr(loadPtr, JVX_SIZE_GENERIC_CONNECTION_MESSAGE, myText);
 
 	if (JVX_CHECK_SIZE_SELECTED(mess->uId))
 	{
@@ -554,7 +554,7 @@ CjvxGenericConnectionTextDevice::add_message_queue(oneMessage_hdr* load_plus, jv
 	memcpy(mess, load_plus, szAlloc);
 
 	mess->expectResponse = expect_response;
-	mess->stat = JVX_GENERIC_RS232_STATUS_INIT;
+	mess->stat = JVX_GENERIC_CONNECTION_STATUS_INIT;
 	mess->retrans_cnt = 0;
 
 	JVX_LOCK_MUTEX(safeAccessChannel);

@@ -4,6 +4,7 @@ SECTION PROPERTIES
 	
 	GROUP flex_remote
 	{
+		/*
 		SECTION error_recovery
 		{
 			DESCRIPTION = "Error recovery parameters";
@@ -61,7 +62,6 @@ SECTION PROPERTIES
 				CALLBACK_SET_POSTHOOK = "trigger_sequence_command";
 			};
 	
-			/*
 			SECTION device_state
 			{
 				// This property will be updated on activate!
@@ -71,8 +71,8 @@ SECTION PROPERTIES
 				SELECTION_LIST_SELECTED = {"yes"};
 				SELECTION_LIST_EXCLUSIVE = {"yes"};
 			};
-			*/
 		};
+		*/
 
 		SECTION monitor
 		{
