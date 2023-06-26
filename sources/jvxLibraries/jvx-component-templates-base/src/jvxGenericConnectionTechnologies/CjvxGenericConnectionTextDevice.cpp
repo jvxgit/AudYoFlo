@@ -1,4 +1,4 @@
-#include "jvxGenericRS232Technologies/CjvxGenericRS232TextDevice.h"
+#include "jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice.h"
 
 #include <sstream>
 
@@ -12,7 +12,7 @@ static const char * rs2323text_separator_token[JVX_NUM_RS232_SEP_TOKENS] =
 	"\r\n\xFF"
 };
 
-CjvxGenericRS232TextDevice::CjvxGenericRS232TextDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
+CjvxGenericConnectionTextDevice::CjvxGenericConnectionTextDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxGenericRS232Device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {	
 	localTxtLog.useLocalTextLog = true;
@@ -28,7 +28,7 @@ CjvxGenericRS232TextDevice::CjvxGenericRS232TextDevice(JVX_CONSTRUCTOR_ARGUMENTS
 	// Specify number of bytes in input string field
 }
 
-CjvxGenericRS232TextDevice::~CjvxGenericRS232TextDevice()
+CjvxGenericConnectionTextDevice::~CjvxGenericConnectionTextDevice()
 {
 	JVX_TERMINATE_MUTEX(safeAccessDataAvail);
 	JVX_TERMINATE_MUTEX(safeTextBuffer);
@@ -37,29 +37,29 @@ CjvxGenericRS232TextDevice::~CjvxGenericRS232TextDevice()
 // =================================================================================================
 
 jvxErrorType
-CjvxGenericRS232TextDevice::select(IjvxObject* theOwner)
+CjvxGenericConnectionTextDevice::select(IjvxObject* theOwner)
 {
 	jvxErrorType res = CjvxGenericRS232Device::select(theOwner);
 	if (res == JVX_NO_ERROR)
 	{
-		CjvxGenericRs232TextDevice_pcg::init_all();
-		CjvxGenericRs232TextDevice_pcg::allocate_all();
-		CjvxGenericRs232TextDevice_pcg::register_all(static_cast<CjvxProperties*>(this));
-		CjvxGenericRs232TextDevice_pcg::register_callbacks(static_cast<CjvxProperties*>(this),
+		CjvxGenericConnectionTextDevice_pcg::init_all();
+		CjvxGenericConnectionTextDevice_pcg::allocate_all();
+		CjvxGenericConnectionTextDevice_pcg::register_all(static_cast<CjvxProperties*>(this));
+		CjvxGenericConnectionTextDevice_pcg::register_callbacks(static_cast<CjvxProperties*>(this),
 			cb_rs232_local_text_log_set, cb_rs232_generic_message_set, reinterpret_cast<jvxHandle*>(this), NULL);
 	}
 	return(res);
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::unselect()
+CjvxGenericConnectionTextDevice::unselect()
 {
 	jvxErrorType res = CjvxGenericRS232Device::_pre_check_unselect();
 	if (res == JVX_NO_ERROR)
 	{
-		CjvxGenericRs232TextDevice_pcg::unregister_all(static_cast<CjvxProperties*>(this));
-		CjvxGenericRs232TextDevice_pcg::deallocate_all();
-		CjvxGenericRs232TextDevice_pcg::unregister_callbacks(static_cast<CjvxProperties*>(this), NULL);
+		CjvxGenericConnectionTextDevice_pcg::unregister_all(static_cast<CjvxProperties*>(this));
+		CjvxGenericConnectionTextDevice_pcg::deallocate_all();
+		CjvxGenericConnectionTextDevice_pcg::unregister_callbacks(static_cast<CjvxProperties*>(this), NULL);
 
 
 		CjvxGenericRS232Device::unselect();
@@ -70,7 +70,7 @@ CjvxGenericRS232TextDevice::unselect()
 // =================================================================================================
 
 jvxErrorType
-CjvxGenericRS232TextDevice::prepare()
+CjvxGenericConnectionTextDevice::prepare()
 {
 	jvxErrorType res = CjvxGenericRS232Device::prepare();
 	if (res == JVX_NO_ERROR)
@@ -81,7 +81,7 @@ CjvxGenericRS232TextDevice::prepare()
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::postprocess()
+CjvxGenericConnectionTextDevice::postprocess()
 {
 	jvxErrorType res = CjvxGenericRS232Device::postprocess();
 	if (res == JVX_NO_ERROR)
@@ -96,7 +96,7 @@ CjvxGenericRS232TextDevice::postprocess()
 // LOCAL TeXT LOG AND MESSAGE QUEUE MUST BE READY BEFORE THE DEVICE IS CONNECTED SINCE THE DEVIE MAY START IMMEDIATELY
 // Get the local text log
 jvxErrorType
-CjvxGenericRS232TextDevice::activate_specific_connection()
+CjvxGenericConnectionTextDevice::activate_specific_connection()
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -125,15 +125,15 @@ CjvxGenericRS232TextDevice::activate_specific_connection()
 		}
 
 		jvxSize idSel = jvx_bitfieldSelection2Id(
-			CjvxGenericRs232TextDevice_pcg::rs232_sep_token.receiver.value.selection(),
-			CjvxGenericRs232TextDevice_pcg::rs232_sep_token.receiver.value.entries.size());
+			CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.receiver.value.selection(),
+			CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.receiver.value.entries.size());
 
 		assert(idSel < JVX_NUM_RS232_SEP_TOKENS);
 		runtime.separatorToken_rcv = rs2323text_separator_token[idSel];
 
 		idSel = jvx_bitfieldSelection2Id(
-			CjvxGenericRs232TextDevice_pcg::rs232_sep_token.send.value.selection(),
-			CjvxGenericRs232TextDevice_pcg::rs232_sep_token.send.value.entries.size());
+			CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.selection(),
+			CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.entries.size());
 
 		assert(idSel < JVX_NUM_RS232_SEP_TOKENS);
 		runtime.separatorToken_send = rs2323text_separator_token[idSel];
@@ -157,7 +157,7 @@ CjvxGenericRS232TextDevice::activate_specific_connection()
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::deactivate_specific_connection()
+CjvxGenericConnectionTextDevice::deactivate_specific_connection()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (localTxtLog.theLocalTextLog)
@@ -178,7 +178,7 @@ CjvxGenericRS232TextDevice::deactivate_specific_connection()
 
 // ==========================================================================================================
 jvxErrorType
-CjvxGenericRS232TextDevice::activate()
+CjvxGenericConnectionTextDevice::activate()
 {
 	jvxErrorType res = CjvxGenericRS232Device::_pre_check_activate();
 	if (res == JVX_NO_ERROR)
@@ -191,7 +191,7 @@ CjvxGenericRS232TextDevice::activate()
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::deactivate()
+CjvxGenericConnectionTextDevice::deactivate()
 {
 	jvxErrorType res = CjvxGenericRS232Device::deactivate();
 	if (res == JVX_NO_ERROR)
@@ -204,7 +204,7 @@ CjvxGenericRS232TextDevice::deactivate()
 // ===========================================================================================
 
 jvxErrorType
-CjvxGenericRS232TextDevice::put_configuration(jvxCallManagerConfiguration* callConf,
+CjvxGenericConnectionTextDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename, jvxInt32 lineno)
 {
@@ -218,7 +218,7 @@ CjvxGenericRS232TextDevice::put_configuration(jvxCallManagerConfiguration* callC
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
-			CjvxGenericRs232TextDevice_pcg::put_configuration_all(callConf, processor,
+			CjvxGenericConnectionTextDevice_pcg::put_configuration_all(callConf, processor,
 				sectionToContainAllSubsectionsForMe, &warns);
 			for (i = 0; i < warns.size(); i++)
 			{
@@ -230,7 +230,7 @@ CjvxGenericRS232TextDevice::put_configuration(jvxCallManagerConfiguration* callC
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
+CjvxGenericConnectionTextDevice::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	jvxErrorType res = CjvxGenericRS232Device::get_configuration(callConf, processor,
@@ -239,7 +239,7 @@ CjvxGenericRS232TextDevice::get_configuration(jvxCallManagerConfiguration* callC
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
-			CjvxGenericRs232TextDevice_pcg::get_configuration_all(callConf, processor,
+			CjvxGenericConnectionTextDevice_pcg::get_configuration_all(callConf, processor,
 				sectionWhereToAddAllSubsections);
 		}
 	}
@@ -249,13 +249,13 @@ CjvxGenericRS232TextDevice::get_configuration(jvxCallManagerConfiguration* callC
 // ====================================================================================
 
 jvxErrorType 
-CjvxGenericRS232TextDevice::translate_message_token_separator(oneMessage_hdr* mess, std::string& txtOut, const std::string& sepToken)
+CjvxGenericConnectionTextDevice::translate_message_token_separator(oneMessage_hdr* mess, std::string& txtOut, const std::string& sepToken)
 {
 	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::translate_message_token(oneMessage_hdr* mess, std::string& txtOut)
+CjvxGenericConnectionTextDevice::translate_message_token(oneMessage_hdr* mess, std::string& txtOut)
 {
 	jvxByte* ct_ptr = NULL;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -273,7 +273,8 @@ CjvxGenericRS232TextDevice::translate_message_token(oneMessage_hdr* mess, std::s
 			ct_ptr += sizeof(oneMessage_hdr);
 			txtOut = std::string((char*)ct_ptr);
 			// Add separator token
-			idSel = jvx_bitfieldSelection2Id(CjvxGenericRs232TextDevice_pcg::rs232_sep_token.send.value.selection(), CjvxGenericRs232TextDevice_pcg::rs232_sep_token.send.value.entries.size());
+			idSel = jvx_bitfieldSelection2Id(CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.selection(), 
+				CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.entries.size());
 			assert(idSel < JVX_NUM_RS232_SEP_TOKENS);
 			txtOut += runtime.separatorToken_send;
 			res = JVX_NO_ERROR;
@@ -289,7 +290,7 @@ CjvxGenericRS232TextDevice::translate_message_token(oneMessage_hdr* mess, std::s
  * Send all initial messages on connect - use the message queue to do so!!!
  */
 void
-CjvxGenericRS232TextDevice::activate_init_messages()
+CjvxGenericConnectionTextDevice::activate_init_messages()
 {
 	std::string myText = "123-Test";
 	add_generic_message_queue(myText);
@@ -299,7 +300,7 @@ CjvxGenericRS232TextDevice::activate_init_messages()
  * Handle incoming data
  */
 jvxErrorType
-CjvxGenericRS232TextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, jvxSize offset, 
+CjvxGenericConnectionTextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, jvxSize offset, 
 	jvxSize id_port, jvxHandle* addInfo, 
 	jvxConnectionPrivateTypeEnum whatsthis, 
 	oneMessage_hdr* theMess, jvxSize* idIdentify)
@@ -371,7 +372,7 @@ CjvxGenericRS232TextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, 
 
 		if (token.size())
 		{
-			if (CjvxGenericRs232TextDevice_pcg::rs232_log.text_log_active.value)
+			if (CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_active.value)
 			{
 				if (localTxtLog.theLocalTextLog)
 				{
@@ -410,16 +411,16 @@ CjvxGenericRS232TextDevice::handle_incoming_data(jvxByte* ptr, jvxSize numRead, 
  * In observer, report incoming messages to application on a slower basis than each incoming messages
  */
 void 
-CjvxGenericRS232TextDevice::report_observer_timeout()
+CjvxGenericConnectionTextDevice::report_observer_timeout()
 {
 	JVX_LOCK_MUTEX(safeAccessDataAvail);
 	if (jvx_bitTest(reportEventDataAvail, JVX_RS232_TEXTLOG_SHIFT))
 	{
 		_report_property_has_changed(
-			CjvxGenericRs232TextDevice_pcg::rs232_log.text_log_collect.category,
-			CjvxGenericRs232TextDevice_pcg::rs232_log.text_log_collect.globalIdx,
+			CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_collect.category,
+			CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_collect.globalIdx,
 			true, 0, 
-			CjvxGenericRs232TextDevice_pcg::rs232_log.text_log_collect.num,
+			CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_collect.num,
 			JVX_COMPONENT_UNKNOWN);
 		jvx_bitClear(reportEventDataAvail, JVX_RS232_TEXTLOG_SHIFT);
 	}
@@ -429,19 +430,19 @@ CjvxGenericRS232TextDevice::report_observer_timeout()
 /*
  * Callback to pass a generic text message to the rs232 device. Just add the separator token
  */
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericRS232TextDevice, cb_rs232_generic_message_set)
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericConnectionTextDevice, cb_rs232_generic_message_set)
 {
-	std::string txt_mess = CjvxGenericRs232TextDevice_pcg::rs232_transfer.genmessage.value;
-	CjvxGenericRs232TextDevice_pcg::rs232_transfer.genmessage.value.clear();
+	std::string txt_mess = CjvxGenericConnectionTextDevice_pcg::rs232_transfer.genmessage.value;
+	CjvxGenericConnectionTextDevice_pcg::rs232_transfer.genmessage.value.clear();
 	add_generic_message_queue(txt_mess);
-	CjvxGenericRs232TextDevice_pcg::rs232_transfer.genmessage.value.clear();
+	CjvxGenericConnectionTextDevice_pcg::rs232_transfer.genmessage.value.clear();
 	return JVX_NO_ERROR;
 }
 
 /*
  * Clear local text log
  */
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericRS232TextDevice, cb_rs232_local_text_log_set)
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericConnectionTextDevice, cb_rs232_local_text_log_set)
 {
 	if (localTxtLog.theLocalTextLog)
 	{
@@ -456,7 +457,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericRS232TextDevice, cb_rs
 			JVX_COMPONENT_UNKNOWN);
 		*/
 	}
-	CjvxGenericRs232TextDevice_pcg::rs232_log.text_log_clear.value = c_false;
+	CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_clear.value = c_false;
 	return JVX_NO_ERROR;
 }
 
@@ -464,7 +465,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericRS232TextDevice, cb_rs
  * Adde a text message to quque, add
  */
 jvxErrorType
-CjvxGenericRS232TextDevice::add_generic_message_queue(const std::string& myText, jvxSize uId)
+CjvxGenericConnectionTextDevice::add_generic_message_queue(const std::string& myText, jvxSize uId)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	oneMessage_hdr* mess;
@@ -538,7 +539,7 @@ CjvxGenericRS232TextDevice::add_generic_message_queue(const std::string& myText,
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::add_message_queue(oneMessage_hdr* load_plus, jvxHandle* priv, jvxBool expect_response)
+CjvxGenericConnectionTextDevice::add_message_queue(oneMessage_hdr* load_plus, jvxHandle* priv, jvxBool expect_response)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	oneMessage_hdr* mess = NULL;
@@ -608,7 +609,7 @@ CjvxGenericRS232TextDevice::add_message_queue(oneMessage_hdr* load_plus, jvxHand
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::send_direct(oneMessage_hdr* load_plus)
+CjvxGenericConnectionTextDevice::send_direct(oneMessage_hdr* load_plus)
 {
 	std::string txtOut;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -632,19 +633,19 @@ CjvxGenericRS232TextDevice::send_direct(oneMessage_hdr* load_plus)
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::handle_single_received_text_token(const std::string& token, oneMessage_hdr* commContext, jvxSize* idIdentify)
+CjvxGenericConnectionTextDevice::handle_single_received_text_token(const std::string& token, oneMessage_hdr* commContext, jvxSize* idIdentify)
 {
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::post_message_hook(jvxSize idIdentify)
+CjvxGenericConnectionTextDevice::post_message_hook(jvxSize idIdentify)
 {
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::clear_input_buffer()
+CjvxGenericConnectionTextDevice::clear_input_buffer()
 {
 	if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 	{
@@ -662,7 +663,7 @@ CjvxGenericRS232TextDevice::clear_input_buffer()
 }
 
 jvxErrorType
-CjvxGenericRS232TextDevice::prepare_retransmit()
+CjvxGenericConnectionTextDevice::prepare_retransmit()
 {
 	return clear_input_buffer();
 }

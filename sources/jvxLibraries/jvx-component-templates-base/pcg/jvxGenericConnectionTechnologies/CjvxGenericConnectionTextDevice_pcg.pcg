@@ -1,7 +1,7 @@
 SECTION PROPERTIES
 {	
-	OUTPUTFILE_NAME = "CjvxGenericRs232TextDevice_pcg";
-	CLASSNAME = "CjvxGenericRs232TextDevice_pcg";
+	OUTPUTFILE_NAME = "CjvxGenericConnectionTextDevice_pcg";
+	CLASSNAME = "CjvxGenericConnectionTextDevice_pcg";
 
 	SECTION rs232_sep_token
 	{

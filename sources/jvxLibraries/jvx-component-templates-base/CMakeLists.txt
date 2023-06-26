@@ -154,13 +154,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericConnectionTechnologies/CjvxGenericConnectionDevice.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice.cpp
 	
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRS232Technologies/CjvxGenericRS232Technology.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRS232Technologies/CjvxGenericRS232Device.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRS232Technologies/CjvxGenericRS232TextDevice.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRS232Technologies/CjvxGenericRS232Technology.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRS232Technologies/CjvxGenericRS232Device.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRS232Technologies/CjvxGenericRS232TextDevice.h
 
 	
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxDevices/CjvxBareDeviceNtask.h
@@ -238,11 +238,11 @@ set(LOCAL_PCG_FILES
 	 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxTools/jvxPacketFilterRules/CjvxPacketFilterRule_pcg.pcg
 	 
-	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericConnectionDevice_pcg.pcg
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericConnectionTechnologies/CjvxGenericConnectionDevice_pcg.pcg
+	${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice_pcg.pcg
 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericRS232Technology_pcg.pcg
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericRS232Device_pcg.pcg
-	${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericRS232TextDevice_pcg.pcg
 
 	${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxTechnologies/CjvxFullMasterDevice_pcg.pcg
  )

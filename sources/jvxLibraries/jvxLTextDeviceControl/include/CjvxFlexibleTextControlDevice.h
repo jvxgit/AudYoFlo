@@ -2,12 +2,25 @@
 #define __CJVXFLEXIBLETEXTCONTROLDEVICE__H__
 
 #include "jvx.h"
+#include "common/CjvxProperties.h"
+
+enum class jvxFlexibleControlQualityIndicator
+{
+	JVX_CONNECTION_QUALITY_NOT_CONNECTED,
+	JVX_CONNECTION_QUALITY_CONNECTED,
+	JVX_CONNECTION_QUALITY_GOOD,
+	JVX_CONNECTION_QUALITY_STUCK,
+	JVX_CONNECTION_QUALITY_BAD
+};
+
+#include "pcg_CjvxFlexibleTextControlDevice.h"
 
 typedef enum
 {
 	JVX_FLEXIBLE_CONTROL_EVENT_COMMAND_UNKNOWN,
 	JVX_FLEXIBLE_CONTROL_EVENT_COMMAND_COMPLETE
 } jvxFlexibleControlEventType;
+
 
 JVX_INTERFACE IjvxFlexibleTextControlDevice_interact
 {
@@ -27,9 +40,16 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_message(const std::string& mess) = 0;
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_callback(jvxFlexibleControlEventType tp, jvxSize callback_id, jvxHandle* spec) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION decide_quality(
+		jvxFlexibleControlQualityIndicator* quality,
+		jvxSize num_incoming_messages,
+		jvxSize num_skip_messages,
+		jvxSize num_unmatched_messages,
+		jvxSize num_unknown_messages) = 0;
 };
 
-class CjvxFlexibleTextControlDevice 
+class CjvxFlexibleTextControlDevice : public CjvxFlexibleTextControlDevice_genpcg
 {
 public:
 	struct oneDefinitionSeperatorChar
@@ -197,7 +217,7 @@ private:
 
 	IjvxFlexibleTextControlDevice_interact* interact;
 	std::string fname;
-	IjvxProperties* propRef;
+	CjvxProperties* propRef;
 	jvxBool verbose_out;
 
 	std::map<std::string, oneDefinitionPropRef> lst_proprefs;
@@ -214,6 +234,17 @@ private:
 
 	jvxSize timeout_slow_for_device_msecs;
 
+	// ================================================================
+	struct
+	{
+		jvxSize num_incoming_messages = 0;
+		jvxSize num_skip_messages = 0;
+		jvxSize num_unmatched_messages = 0;
+		jvxSize num_unknown_messages = 0;
+		jvxFlexibleControlQualityIndicator quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_NOT_CONNECTED;
+	} monitor;
+	// ================================================================
+
 public:
 	JVX_CALLINGCONVENTION CjvxFlexibleTextControlDevice();
 	virtual JVX_CALLINGCONVENTION ~CjvxFlexibleTextControlDevice();	
@@ -222,7 +253,7 @@ public:
 		IjvxConfigProcessor* confProc, 
 		const std::string& fname_config, 
 		IjvxFlexibleTextControlDevice_interact* report, 
-		IjvxProperties* propRef,
+		CjvxProperties* propRef,
 		std::vector<std::string>& errs, jvxSize* desired_mqueue_size,
 		jvxBool verbose_out,
 		oneDefinitionSeperatorChar* elms_sep = NULL, 
@@ -250,10 +281,11 @@ public:
 	jvxErrorType check_set_status_seq(const std::string& seq_name, jvxBitField* error_bfld, jvxBitField* returned_bfld, jvxBitField* complete_bfld);
 
 	jvxErrorType cleared_messages();
+	void report_observer_timeout();
 
 private:
 	jvxErrorType parse_input(IjvxConfigProcessor* confProc, std::vector<std::string>& errs);
-	jvxErrorType process_input(IjvxProperties* propRef, std::vector<std::string>& errs);
+	jvxErrorType process_input(CjvxProperties* propRef, std::vector<std::string>& errs);
 	jvxErrorType link_references(std::vector<std::string>& errs);
 
 	bool check_sep_character(char c, const std::list<oneDefinitionSeperatorChar> & lst_seps, std::string& replace);

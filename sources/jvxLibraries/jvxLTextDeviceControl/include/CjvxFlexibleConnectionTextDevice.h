@@ -113,7 +113,7 @@ public:
 		genPumpRs232_device::register_all(static_cast<CjvxProperties*>(this));
 		*/
 
-		res = CjvxGenericRS232TextDevice::activate_specific_connection();
+		res = T::activate_specific_connection();
 		if (res != JVX_NO_ERROR)
 		{
 			return res;
@@ -131,7 +131,7 @@ public:
 			jvxSize desired_mq_size = 0;
 			resL = theControl.init(hdlProcObj, fname_config,
 				static_cast<IjvxFlexibleTextControlDevice_interact*>(this),
-				static_cast<IjvxProperties*>(this), errs,
+				static_cast<CjvxProperties*>(this), errs,
 				&desired_mq_size, true);
 			if (resL == JVX_NO_ERROR)
 			{
@@ -196,7 +196,7 @@ public:
 
 		theControl.terminate();
 
-		res = CjvxGenericRS232TextDevice::deactivate_specific_connection();
+		res = T::deactivate_specific_connection();
 
 		return JVX_NO_ERROR;
 	};
@@ -315,7 +315,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_message_queue(oneMessage_hdr* load_plus, jvxHandle* priv, jvxBool expect_response) override
 	{
-		return CjvxGenericRS232TextDevice::add_message_queue(load_plus, priv, expect_response);
+		return T::add_message_queue(load_plus, priv, expect_response);
 	}
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION device_check_pending_uid(jvxSize uId, jvxSize mTp, jvxTick* Stamp, oneMessage_hdr** ptr_hdr_ret) override
@@ -346,7 +346,7 @@ public:
 
 	virtual jvxErrorType send_direct(oneMessage_hdr* load_plus) override
 	{
-		return CjvxGenericRS232TextDevice::send_direct(load_plus);
+		return T::send_direct(load_plus);
 	}
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_callback(jvxFlexibleControlEventType tp, jvxSize callback_id, jvxHandle* spec) override
@@ -365,7 +365,7 @@ public:
 		const jvx::propertyAddress::IjvxPropertyAddress& ident,
 		const jvx::propertyDetail::CjvxTranferDetail& trans) override
 	{
-		jvxErrorType res = CjvxGenericRS232TextDevice::set_property(
+		jvxErrorType res = T::set_property(
 			callGate, rawPtr, ident, trans);
 
 		if (res == JVX_NO_ERROR)
@@ -378,6 +378,21 @@ public:
 			}
 		}
 		return res;
+	}
+
+	jvxErrorType decide_quality(
+			jvxFlexibleControlQualityIndicator* quality,
+			jvxSize num_incoming_messages,
+			jvxSize num_skip_messages,
+			jvxSize num_unmatched_messages,
+			jvxSize num_unknown_messages) override
+	{
+		*quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_BAD;
+		if (num_incoming_messages > 0)
+		{
+			*quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_GOOD;
+		}
+		return JVX_NO_ERROR;
 	}
 };
 

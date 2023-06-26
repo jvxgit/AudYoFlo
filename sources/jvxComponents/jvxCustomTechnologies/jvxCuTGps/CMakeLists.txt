@@ -20,7 +20,9 @@ include_directories(
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
   ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
+  
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLTextDeviceControl/include
+  ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvxLTextDeviceControl/generated
   )
 
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp

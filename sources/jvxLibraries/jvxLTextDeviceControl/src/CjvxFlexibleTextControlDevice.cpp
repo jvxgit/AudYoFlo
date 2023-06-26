@@ -417,7 +417,7 @@ CjvxFlexibleTextControlDevice::init(
 	IjvxConfigProcessor* confProc, 
 	const std::string& fname_config, 
 	IjvxFlexibleTextControlDevice_interact* report, 
-	IjvxProperties* prop_ref,
+	CjvxProperties* prop_ref_arg,
 	std::vector<std::string>& errs, jvxSize* des_mq_sz,
 	jvxBool verbose_out_param,
 	oneDefinitionSeperatorChar* elms_sep,
@@ -429,6 +429,7 @@ CjvxFlexibleTextControlDevice::init(
 	interact = report;
 	fname = fname_config;	
 	verbose_out = verbose_out_param;
+	propRef = prop_ref_arg;
 
 	if (des_mq_sz)
 	{
@@ -457,13 +458,31 @@ CjvxFlexibleTextControlDevice::init(
 		res = parse_input(confProc, errs);
 		if (res == JVX_NO_ERROR)
 		{
-			res = process_input(prop_ref, errs);
+			res = process_input(propRef, errs);
 		}
 		if (res == JVX_NO_ERROR)
 		{
 			res = link_references(errs);
 		}
 	}
+
+	monitor.num_incoming_messages = 0;
+	monitor.num_skip_messages = 0;
+	monitor.num_unmatched_messages = 0;
+	monitor.num_unknown_messages = 0;
+
+	monitor.quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_NOT_CONNECTED;
+
+	// Expose additional properties
+	CjvxFlexibleTextControlDevice_genpcg::init_all();
+	CjvxFlexibleTextControlDevice_genpcg::allocate_all();
+	CjvxFlexibleTextControlDevice_genpcg::register_all(propRef);
+	CjvxFlexibleTextControlDevice_genpcg::associate__flex_remote__monitor(propRef,
+		&monitor.num_incoming_messages, 1,
+		&monitor.num_skip_messages, 1,
+		&monitor.num_unmatched_messages, 1,
+		&monitor.num_unknown_messages, 1);
+
 	return res;
 }
 
@@ -472,7 +491,13 @@ jvxErrorType
 CjvxFlexibleTextControlDevice::terminate()
 {
 	interact = NULL;
+	
+	CjvxFlexibleTextControlDevice_genpcg::deassociate__flex_remote__monitor(propRef);
+	CjvxFlexibleTextControlDevice_genpcg::unregister_all(propRef);
+	CjvxFlexibleTextControlDevice_genpcg::deallocate_all();
+
 	propRef = NULL;
+
 	lst_proprefs.clear();
 	lst_setprops.clear();
 	lst_tokens.clear();
@@ -1185,7 +1210,7 @@ CjvxFlexibleTextControlDevice::parse_input(IjvxConfigProcessor* confProc, std::v
 }
 
 jvxErrorType
-CjvxFlexibleTextControlDevice::process_input(IjvxProperties* propRef, std::vector<std::string>& errs)
+CjvxFlexibleTextControlDevice::process_input(CjvxProperties* propRef, std::vector<std::string>& errs)
 {
 	jvx::propertyAddress::CjvxPropertyAddressDescriptor addrProp(nullptr);
 	jvxErrorType res = JVX_NO_ERROR;
@@ -1200,7 +1225,7 @@ CjvxFlexibleTextControlDevice::process_input(IjvxProperties* propRef, std::vecto
 		if (!elm_proprefs->second.prop_name.empty())
 		{
 			addrProp.descriptor = elm_proprefs->second.prop_name.c_str();
-			res = propRef->description_property(callGate,
+			res = propRef->_description_property(callGate,
 				elm_proprefs->second.descr, addrProp);
 			if (res != JVX_NO_ERROR)
 			{
@@ -1222,7 +1247,7 @@ CjvxFlexibleTextControlDevice::process_input(IjvxProperties* propRef, std::vecto
 	{
 		elm_setprops->second.descr.reset();
 		addrProp.descriptor = elm_setprops->first.c_str();
-		res = propRef->description_property(callGate,
+		res = propRef->_description_property(callGate,
 			elm_setprops->second.descr,
 			addrProp);
 		if (res != JVX_NO_ERROR)
@@ -1910,6 +1935,8 @@ CjvxFlexibleTextControlDevice::process_incoming_message(const std::string& token
 		interact->report_message(mess);
 	}
 
+	this->monitor.num_incoming_messages++;
+
 	// Check if it is a "skip token"
 	auto elmskip = skip_tokens.begin();
 	for (; elmskip != skip_tokens.end(); elmskip++)
@@ -1928,6 +1955,8 @@ CjvxFlexibleTextControlDevice::process_incoming_message(const std::string& token
 					std::cout << mess << std::endl;
 				}
 			}
+
+			this->monitor.num_skip_messages++;
 			*uId = JVX_SIZE_DONTCARE;
 			res = JVX_ERROR_EMPTY_LIST;
 			return res;
@@ -2034,6 +2063,7 @@ CjvxFlexibleTextControlDevice::process_incoming_message(const std::string& token
 						interact->report_message(mess);
 					}
 
+					this->monitor.num_unmatched_messages++;
 					foundunmatched = true;
 					break;
 				}
@@ -2052,6 +2082,8 @@ CjvxFlexibleTextControlDevice::process_incoming_message(const std::string& token
 						std::cout << mess << std::endl;
 					}
 				}
+				this->monitor.num_unknown_messages++;
+
 				res = JVX_ERROR_ABORT;
 			}
 		}
@@ -2821,4 +2853,16 @@ CjvxFlexibleTextControlDevice::cleared_messages()
 		}
 	}
 	return JVX_NO_ERROR;
+}
+
+void 
+CjvxFlexibleTextControlDevice::report_observer_timeout()
+{
+	std::cout << "Observe the module to detect stagnation." << std::endl;
+	if (interact)
+	{
+		interact->decide_quality(&monitor.quality, monitor.num_incoming_messages,
+			monitor.num_skip_messages, monitor.num_unmatched_messages, monitor.num_unknown_messages);
+		translate__flex_remote__monitor__device_state_to(monitor.quality);
+	}
 }

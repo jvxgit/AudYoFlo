@@ -3,7 +3,7 @@
 #include "jvxGenericRS232Technologies/CjvxGenericRS232Device.h"
 
 CjvxCuTGpsDevice::CjvxCuTGpsDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	CjvxSequencerControl::oneCondition elmCo;
 
@@ -30,14 +30,14 @@ CjvxCuTGpsDevice::activate_specific_connection()
 	genGpsRs232_device::allocate_all();
 	genGpsRs232_device::register_all(static_cast<CjvxProperties*>(this));
 	
-	return CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::activate_specific_connection();
+	return CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>::activate_specific_connection();
 }
 
 jvxErrorType
 CjvxCuTGpsDevice::deactivate_specific_connection()
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	res = CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::deactivate_specific_connection();
+	res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>::deactivate_specific_connection();
 
 	genGpsRs232_device::unregister_all(static_cast<CjvxProperties*>(this));
 	genGpsRs232_device::deallocate_all();
@@ -55,7 +55,7 @@ CjvxCuTGpsDevice::activate_init_messages()
 void
 CjvxCuTGpsDevice::report_observer_timeout()
 {
-	CjvxGenericRS232TextDevice::report_observer_timeout();
+	CjvxGenericConnectionTextDevice::report_observer_timeout();
 	// Do nothing
 }
 
@@ -67,7 +67,7 @@ CjvxCuTGpsDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 {
 	jvxSize i;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::put_configuration(callConf, processor, sectionToContainAllSubsectionsForMe);
+	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>::put_configuration(callConf, processor, sectionToContainAllSubsectionsForMe);
 	if (res == JVX_NO_ERROR)
 	{
 		if (_common_set_min.theState == JVX_STATE_ACTIVE)
@@ -88,7 +88,7 @@ CjvxCuTGpsDevice::get_configuration(jvxCallManagerConfiguration* callConf,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	
-	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::get_configuration(callConf, processor, sectionWhereToAddAllSubsections);
+	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>::get_configuration(callConf, processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{
 		genGpsRs232_device::get_configuration_all(callConf, processor, sectionWhereToAddAllSubsections);
@@ -144,7 +144,7 @@ CjvxCuTGpsDevice::set_property(
 	const jvx::propertyAddress::IjvxPropertyAddress& ident,
 	const jvx::propertyDetail::CjvxTranferDetail& trans)
 {
-	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>::set_property(
+	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>::set_property(
 		callGate, rawPtr,ident, trans);
 	if(res == JVX_NO_ERROR)
 	{
@@ -182,4 +182,3 @@ CjvxCuTGpsDevice::set_property(
 	}
 	return res;
 }
-

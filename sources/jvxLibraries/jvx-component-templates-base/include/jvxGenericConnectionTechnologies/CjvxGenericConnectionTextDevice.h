@@ -6,11 +6,11 @@
 // SOme default parameters
 #define JVX_RS232_TEXTLOG_SHIFT 0
 
-#include "pcg_CjvxGenericRS232TextDevice_pcg.h"
+#include "pcg_CjvxGenericConnectionTextDevice_pcg.h"
 
 #define JVX_SIZE_GENERIC_RS232_MESSAGE 128
 
-class CjvxGenericRS232TextDevice : public CjvxGenericRS232Device, public CjvxGenericRs232TextDevice_pcg
+class CjvxGenericConnectionTextDevice : public CjvxGenericRS232Device, public CjvxGenericConnectionTextDevice_pcg
 {
 	JVX_MUTEX_HANDLE safeTextBuffer;
 	std::string receivedTextBuffer;
@@ -46,8 +46,8 @@ class CjvxGenericRS232TextDevice : public CjvxGenericRS232Device, public CjvxGen
 	} oneGenericMessage;
 
 public:
-	CjvxGenericRS232TextDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-	~CjvxGenericRS232TextDevice();
+	CjvxGenericConnectionTextDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	~CjvxGenericConnectionTextDevice();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callConf,
 		IjvxConfigProcessor* processor, jvxHandle* sectionToContainAllSubsectionsForMe,

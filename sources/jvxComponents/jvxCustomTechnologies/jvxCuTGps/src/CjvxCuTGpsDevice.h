@@ -8,7 +8,7 @@
 
 #define JVX_FLOW_CONDITION_FLOW_BOUNDS_ID 0
 
-#include "jvxGenericRS232Technologies/CjvxGenericRS232TextDevice.h"
+#include "jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice.h"
 #include "CjvxFlexibleConnectionTextDevice.h"
 #include "pcg_exports_device.h"
 
@@ -16,7 +16,7 @@
  * Class to drive a flow control rs-232 device. Each device sorresponds to one rs-232 connection.
  * Flow control devices do not send any messages but accept incoming messages.
  */
-class CjvxCuTGpsDevice : public CjvxFlexibleConnectionTextDevice<CjvxGenericRS232TextDevice>, 
+class CjvxCuTGpsDevice : public CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>, 
 	public genGpsRs232_device
 {
 
