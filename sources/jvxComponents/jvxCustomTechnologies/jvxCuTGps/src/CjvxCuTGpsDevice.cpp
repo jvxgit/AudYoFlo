@@ -67,7 +67,8 @@ CjvxCuTGpsDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 {
 	jvxSize i;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>::put_configuration(callConf, processor, sectionToContainAllSubsectionsForMe);
+	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice<CjvxGenericRS232Device>>::put_configuration(
+		callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
 	if (res == JVX_NO_ERROR)
 	{
 		if (_common_set_min.theState == JVX_STATE_ACTIVE)
@@ -88,7 +89,7 @@ CjvxCuTGpsDevice::get_configuration(jvxCallManagerConfiguration* callConf,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	
-	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>::get_configuration(callConf, processor, sectionWhereToAddAllSubsections);
+	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice<CjvxGenericRS232Device>>::get_configuration(callConf, processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{
 		genGpsRs232_device::get_configuration_all(callConf, processor, sectionWhereToAddAllSubsections);

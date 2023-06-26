@@ -154,8 +154,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericConnectionTechnologies/CjvxGenericConnectionDevice.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.h
+
+	# This is now a template
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice.cpp
 	
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRS232Technologies/CjvxGenericRS232Technology.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRS232Technologies/CjvxGenericRS232Device.cpp
