@@ -5,7 +5,7 @@
 #include "jvxGenericConnectionTechnologies\CjvxGenericConnectionDevice.h"
 
 // SOme default parameters
-#define JVX_RS232_TEXTLOG_SHIFT 0
+#define JVX_CONNECTION_TEXTLOG_SHIFT 0
 
 #include "pcg_CjvxGenericConnectionTextDevice_pcg.h"
 
@@ -13,8 +13,8 @@
 
 #include <sstream>
 
-#define JVX_NUM_RS232_SEP_TOKENS 5
-static const char* rs2323text_separator_token[JVX_NUM_RS232_SEP_TOKENS] =
+#define JVX_NUM_MESSAGE_SEP_TOKENS 5
+static const char* message_separator_token[JVX_NUM_MESSAGE_SEP_TOKENS] =
 {
 	"\r",
 	"\n",
@@ -153,7 +153,7 @@ public:
 			CjvxGenericConnectionTextDevice_pcg::allocate_all();
 			CjvxGenericConnectionTextDevice_pcg::register_all(static_cast<CjvxProperties*>(this));
 			CjvxGenericConnectionTextDevice_pcg::register_callbacks(static_cast<CjvxProperties*>(this),
-				cb_rs232_local_text_log_set, cb_rs232_generic_message_set, reinterpret_cast<jvxHandle*>(this), NULL);
+				cb_message_local_text_log_set, cb_message_generic_message_set, reinterpret_cast<jvxHandle*>(this), NULL);
 		}
 		return(res);
 	}
@@ -390,18 +390,18 @@ public:
 			}
 
 			jvxSize idSel = jvx_bitfieldSelection2Id(
-				CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.receiver.value.selection(),
-				CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.receiver.value.entries.size());
+				CjvxGenericConnectionTextDevice_pcg::message_sep_token.receiver.value.selection(),
+				CjvxGenericConnectionTextDevice_pcg::message_sep_token.receiver.value.entries.size());
 
-			assert(idSel < JVX_NUM_RS232_SEP_TOKENS);
-			runtime.separatorToken_rcv = rs2323text_separator_token[idSel];
+			assert(idSel < JVX_NUM_MESSAGE_SEP_TOKENS);
+			runtime.separatorToken_rcv = message_separator_token[idSel];
 
 			idSel = jvx_bitfieldSelection2Id(
-				CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.selection(),
-				CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.entries.size());
+				CjvxGenericConnectionTextDevice_pcg::message_sep_token.send.value.selection(),
+				CjvxGenericConnectionTextDevice_pcg::message_sep_token.send.value.entries.size());
 
-			assert(idSel < JVX_NUM_RS232_SEP_TOKENS);
-			runtime.separatorToken_send = rs2323text_separator_token[idSel];
+			assert(idSel < JVX_NUM_MESSAGE_SEP_TOKENS);
+			runtime.separatorToken_send = message_separator_token[idSel];
 
 			if (localTxtLog.useLocalTextLog)
 			{
@@ -481,9 +481,9 @@ public:
 				ct_ptr += sizeof(oneMessage_hdr);
 				txtOut = std::string((char*)ct_ptr);
 				// Add separator token
-				idSel = jvx_bitfieldSelection2Id(CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.selection(),
-					CjvxGenericConnectionTextDevice_pcg::rs232_sep_token.send.value.entries.size());
-				assert(idSel < JVX_NUM_RS232_SEP_TOKENS);
+				idSel = jvx_bitfieldSelection2Id(CjvxGenericConnectionTextDevice_pcg::message_sep_token.send.value.selection(),
+					CjvxGenericConnectionTextDevice_pcg::message_sep_token.send.value.entries.size());
+				assert(idSel < JVX_NUM_MESSAGE_SEP_TOKENS);
 				txtOut += runtime.separatorToken_send;
 				res = JVX_NO_ERROR;
 				break;
@@ -566,14 +566,14 @@ public:
 
 			if (token.size())
 			{
-				if (CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_active.value)
+				if (CjvxGenericConnectionTextDevice_pcg::message_log.text_log_active.value)
 				{
 					if (localTxtLog.theLocalTextLog)
 					{
 						localTxtLog.theLocalTextLog->attach_entry((token + runtime.separatorToken_rcv).c_str());
 					}
 					JVX_LOCK_MUTEX(safeAccessDataAvail);
-					jvx_bitSet(reportEventDataAvail, JVX_RS232_TEXTLOG_SHIFT);
+					jvx_bitSet(reportEventDataAvail, JVX_CONNECTION_TEXTLOG_SHIFT);
 					JVX_UNLOCK_MUTEX(safeAccessDataAvail);
 				}
 			}
@@ -604,15 +604,15 @@ public:
 	virtual void report_observer_timeout() override
 	{
 		JVX_LOCK_MUTEX(safeAccessDataAvail);
-		if (jvx_bitTest(reportEventDataAvail, JVX_RS232_TEXTLOG_SHIFT))
+		if (jvx_bitTest(reportEventDataAvail, JVX_CONNECTION_TEXTLOG_SHIFT))
 		{
 			_report_property_has_changed(
-				CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_collect.category,
-				CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_collect.globalIdx,
+				CjvxGenericConnectionTextDevice_pcg::message_log.text_log_collect.category,
+				CjvxGenericConnectionTextDevice_pcg::message_log.text_log_collect.globalIdx,
 				true, 0,
-				CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_collect.num,
+				CjvxGenericConnectionTextDevice_pcg::message_log.text_log_collect.num,
 				JVX_COMPONENT_UNKNOWN);
-			jvx_bitClear(reportEventDataAvail, JVX_RS232_TEXTLOG_SHIFT);
+			jvx_bitClear(reportEventDataAvail, JVX_CONNECTION_TEXTLOG_SHIFT);
 		}
 		JVX_UNLOCK_MUTEX(safeAccessDataAvail);
 	}
@@ -640,16 +640,16 @@ public:
 	}
 
 	//JVX_THREADS_FORWARD_C_CALLBACK_DECLARE_ALL;
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL_H(CjvxGenericConnectionTextDevice<T>, cb_rs232_generic_message_set)
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL_H(CjvxGenericConnectionTextDevice<T>, cb_message_generic_message_set)
 	{
-		std::string txt_mess = CjvxGenericConnectionTextDevice_pcg::rs232_transfer.genmessage.value;
-		CjvxGenericConnectionTextDevice_pcg::rs232_transfer.genmessage.value.clear();
+		std::string txt_mess = CjvxGenericConnectionTextDevice_pcg::message_transfer.genmessage.value;
+		CjvxGenericConnectionTextDevice_pcg::message_transfer.genmessage.value.clear();
 		add_generic_message_queue(txt_mess);
-		CjvxGenericConnectionTextDevice_pcg::rs232_transfer.genmessage.value.clear();
+		CjvxGenericConnectionTextDevice_pcg::message_transfer.genmessage.value.clear();
 		return JVX_NO_ERROR;
 	}
 
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL_H(CjvxGenericConnectionTextDevice<T>, cb_rs232_local_text_log_set)
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL_H(CjvxGenericConnectionTextDevice<T>, cb_message_local_text_log_set)
 	{
 		if (localTxtLog.theLocalTextLog)
 		{
@@ -664,7 +664,7 @@ public:
 				JVX_COMPONENT_UNKNOWN);
 			*/
 		}
-		CjvxGenericConnectionTextDevice_pcg::rs232_log.text_log_clear.value = c_false;
+		CjvxGenericConnectionTextDevice_pcg::message_log.text_log_clear.value = c_false;
 		return JVX_NO_ERROR;
 	}
 

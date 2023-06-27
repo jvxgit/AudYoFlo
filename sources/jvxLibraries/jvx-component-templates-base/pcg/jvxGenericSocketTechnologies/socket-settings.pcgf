@@ -1,0 +1,16 @@
+	SECTION socket_settings
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION local_port
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 65000;			
+		};
+		SECTION remote_port
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = -1;			
+		};
+	};	

@@ -1,5 +1,25 @@
 #include "CjvxFlexibleTextControlDevice.h"
 
+char allowedCharsSeparator[] =
+{
+	'[', ']', '{', '}', '<', '>', '|',
+	'#', '^', '°', '(', ')', 0
+};
+
+jvxBool isSpeChar(char c)
+{
+	jvxSize cnt = 0;
+	while(allowedCharsSeparator[cnt] != 0)
+	{ 
+		if (c == allowedCharsSeparator[cnt])
+		{
+			return true;
+		}
+		cnt++;
+	}
+	return false;
+}
+
 static const char* lookupElementType[] =
 {
 	"JVX_CONTROL_DEVICE_UNDEFINED",
@@ -286,6 +306,31 @@ CjvxFlexibleTextControlDevice::jvx_parseSequenceIntoToken(
 					isReference = false;
 				}
 				state = 1;
+			}
+
+			// These chars can not be part of a text or reference but will be a text itself
+			else if (isSpeChar(c))
+			{
+				if (token.size())
+				{
+					if (isReference)
+					{
+						nElm.tp = JVX_CONTROL_DEVICE_REFERENCE;
+						nElm.txt = token;
+					}
+					else
+					{
+						nElm.tp = JVX_CONTROL_DEVICE_TEXT;
+						nElm.txt = token;
+					}
+					args.push_back(nElm);
+				}
+				token = input.substr(i, 1);
+				nElm.tp = JVX_CONTROL_DEVICE_TEXT;
+				nElm.txt = token;
+				args.push_back(nElm);
+				token.clear();
+				isReference = false;
 			}
 			else
 			{
@@ -2063,6 +2108,10 @@ CjvxFlexibleTextControlDevice::process_incoming_message(const std::string& token
 						interact->report_message(mess);
 					}
 
+					if (interact)
+					{
+						interact->inform_identified_unmatched(elmu->first.c_str());
+					}
 					this->monitor.num_unmatched_messages++;
 					foundunmatched = true;
 					break;

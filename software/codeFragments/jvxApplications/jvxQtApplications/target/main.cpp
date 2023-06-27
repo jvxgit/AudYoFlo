@@ -289,5 +289,6 @@ int CALLBACK WinMain(
 		delete[](newArgv);
 		newArgc = 0;
 	}
+
 	return 0;
 }

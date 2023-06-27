@@ -59,14 +59,8 @@ CjvxGenericConnectionTechnology::activate()
 							JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
 							log << "Initializing custom device family matching connection module <" << connectionIdenitificationToken << ">." << std::endl;
 
-							if (JVX_CHECK_SIZE_SELECTED(numPortsPolled))
-							{
-								res = subcomponents.theConnectionRef->initialize(_common_set_min.theHostRef, &numPortsPolled, JVX_CONNECT_PRIVATE_ARG_TYPE_CONNECTION_NUM_PORT);
-							}
-							else
-							{
-								res = subcomponents.theConnectionRef->initialize(_common_set_min.theHostRef, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
-							}
+							res = this->initializeConnectionCoreModule(subcomponents.theConnectionRef);
+
 							log << " -- done." << std::endl;
 
 							JVX_STOP_LOCK_LOG;

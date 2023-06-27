@@ -3,7 +3,7 @@ SECTION PROPERTIES
 	OUTPUTFILE_NAME = "CjvxGenericConnectionTextDevice_pcg";
 	CLASSNAME = "CjvxGenericConnectionTextDevice_pcg";
 
-	SECTION rs232_sep_token
+	SECTION message_sep_token
 	{
 		DESCRIPTION = "Define message sep tokens";  // Defaults to NAME if not present
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
@@ -29,7 +29,7 @@ SECTION PROPERTIES
 		}; 
 	};	
 
-	SECTION rs232_log
+	SECTION message_log
 	{
 		DESCRIPTION = "Property to view rs-232 messages";  // Defaults to NAME if not present
 		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
@@ -62,7 +62,7 @@ SECTION PROPERTIES
 		};
 	};	
 
-	SECTION rs232_transfer
+	SECTION message_transfer
 	{
 		DESCRIPTION = "Properties in state active for SLD via RS232";  // Defaults to NAME if not present
 		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present

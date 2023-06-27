@@ -1,0 +1,7 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxGenericSocketDevice_pcg";
+	CLASSNAME = "CjvxGenericSocketDevice_pcg";
+
+	include "socket-settings.pcgf";
+};

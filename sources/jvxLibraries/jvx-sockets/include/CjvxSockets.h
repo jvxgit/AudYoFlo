@@ -5,6 +5,11 @@
 
 #include "jvx.h"
 
+/**
+ * This class implememts a socket in any of the given implementations:
+ * 1) CjvxSocketsServer -> either a TCP server or a UNIX socket server
+ * 2) 
+ */
 #include "CjvxSocketsApi.h"
 #include "CjvxSocketsCommon.h"
 

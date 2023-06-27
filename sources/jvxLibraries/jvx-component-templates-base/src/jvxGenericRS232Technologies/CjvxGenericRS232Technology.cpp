@@ -36,3 +36,18 @@ CjvxGenericRs232Technology::deactivate()
 	}
 	return res;
 }
+
+jvxErrorType
+CjvxGenericRs232Technology::initializeConnectionCoreModule(IjvxConnection* conn)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	if (JVX_CHECK_SIZE_SELECTED(numPortsPolled))
+	{
+		res = conn->initialize(_common_set_min.theHostRef, &numPortsPolled, JVX_CONNECT_PRIVATE_ARG_TYPE_CONNECTION_NUM_PORT);
+	}
+	else
+	{
+		res = conn->initialize(_common_set_min.theHostRef, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+	}
+	return res;
+}

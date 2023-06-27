@@ -714,6 +714,7 @@ endif()
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxTLocalTextLog
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxTRemoteCall
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxTSocket
+	${JVX_BASE_ROOT}/sources/jvxTools/jvxTNewSocket
     ${JVX_BASE_ROOT}/sources/jvxTools/jvxTDataLogReader
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxPacketFilterRules/jvxPFRDefault
 	${JVX_BASE_ROOT}/sources/jvxTools/jvxTThreads

@@ -5,6 +5,13 @@
 
 class CjvxSocketsClientInterface;
 
+/**
+ * This class is the entry to all clients. TCP/UDP clients expose one interface, PCAP may expose more.
+ * The object of type CjvxSocketsClientFactory is to be initialized according to the intended socket type
+ * using the initialize function. Then, the function combo of number_interfaces and request_interface allow to get
+ * access to the actual interface.
+ * Then, 
+ */
 class CjvxSocketsClientFactory
 {
 public:
@@ -16,6 +23,8 @@ public:
 		jvxSocketsConnectionType socketType = jvxSocketsConnectionType::JVX_SOCKET_TYPE_TCP;
 		jvxBool inUse = false;
 	};
+
+protected:
 	std::list<oneInterfaceReference> interfaces;
 	
 

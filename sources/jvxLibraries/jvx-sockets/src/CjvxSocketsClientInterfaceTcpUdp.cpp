@@ -54,19 +54,21 @@ CjvxSocketsClientInterfaceTcpUdp::pre_start_socket()
 jvxErrorType
 CjvxSocketsClientInterfaceTcpUdp::start_socket()
 {
+	int sockTp = SOCK_STREAM;
 	int proto = IPPROTO_TCP;
 	if (socketType == jvxSocketsConnectionType::JVX_SOCKET_TYPE_UDP)
 	{
 		proto = IPPROTO_UDP;
+		sockTp = SOCK_DGRAM;
 	}
 
 	switch (family)
 	{
 	case jvxSocketsFamily::JVX_SOCKET_IP_V4:
-		theSocket = socket(AF_INET, SOCK_STREAM, proto);
+		theSocket = socket(AF_INET, sockTp, proto);
 		break;
 	case jvxSocketsFamily::JVX_SOCKET_IP_V6:
-		theSocket = socket(AF_INET6, SOCK_DGRAM, proto);
+		theSocket = socket(AF_INET6, sockTp, proto);
 		break;
 	default:
 		assert(0);

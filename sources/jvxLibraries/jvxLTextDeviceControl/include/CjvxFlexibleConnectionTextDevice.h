@@ -134,7 +134,7 @@ public:
 				&desired_mq_size, true);
 			if (resL == JVX_NO_ERROR)
 			{
-				std::cout << "::" << __FUNCTION__ << ": Successfully opened rs232 device instruction file <" << fname_config << ">." << std::endl;
+				std::cout << "::" << __FUNCTION__ << ": Successfully opened text device instruction file <" << fname_config << ">." << std::endl;
 				theControl.print();
 
 				// Setup the size of the message queue
@@ -391,6 +391,11 @@ public:
 		{
 			*quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_GOOD;
 		}
+		return JVX_NO_ERROR;
+	}
+
+	jvxErrorType inform_identified_unmatched(const char* ruleUnmatched) override
+	{
 		return JVX_NO_ERROR;
 	}
 };

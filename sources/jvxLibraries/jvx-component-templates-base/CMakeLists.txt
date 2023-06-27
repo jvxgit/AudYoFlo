@@ -163,7 +163,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRS232Technologies/CjvxGenericRS232Technology.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRS232Technologies/CjvxGenericRS232Device.h
 
-	
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericSocketTechnologies/CjvxGenericSocketTechnology.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericSocketTechnologies/CjvxGenericSocketTechnology.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericSocketTechnologies/CjvxGenericSocketDevice.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericSocketTechnologies/CjvxGenericSocketDevice.h
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxDevices/CjvxBareDeviceNtask.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxBareDeviceNtask.cpp
 
@@ -244,6 +248,9 @@ set(LOCAL_PCG_FILES
 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericRS232Technology_pcg.pcg
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericRS232Device_pcg.pcg
+
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericSocketTechnologies/CjvxGenericSocketTechnology_pcg.pcg
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericSocketTechnologies/CjvxGenericSocketDevice_pcg.pcg
 
 	${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxTechnologies/CjvxFullMasterDevice_pcg.pcg
  )

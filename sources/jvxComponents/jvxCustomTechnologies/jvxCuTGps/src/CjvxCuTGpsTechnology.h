@@ -1,9 +1,9 @@
 #ifndef __CjvxCuTGpsTechnology_H__
 #define __CjvxCuTGpsTechnology_H__
 
-#include "jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.h"
+#include "jvxGenericRs232Technologies/CjvxGenericRs232Technology.h"
 
-class CjvxCuTGpsTechnology : public CjvxGenericConnectionTechnology
+class CjvxCuTGpsTechnology : public CjvxGenericRs232Technology
 {
 
 public:

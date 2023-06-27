@@ -44,57 +44,61 @@ CjvxSocketsClientInterfaceTcp::set_opts_socket()
 	int flag = 1;
 	int errCode = 0;
 	jvxErrorType res = JVX_NO_ERROR;
-	if (disableNagleAlgorithmTcp)
+
+	if (socketType == jvxSocketsConnectionType::JVX_SOCKET_TYPE_TCP)
 	{
-#ifdef JVX_OS_WINDOWS
-		flag = 1;
-		errCode = setsockopt(theSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
-		if (errCode != 0)
+		if (disableNagleAlgorithmTcp)
 		{
-			res = JVX_ERROR_INTERNAL;
-			errCode = WSAGetLastError();
-			switch (errCode)
+#ifdef JVX_OS_WINDOWS
+			flag = 1;
+			errCode = setsockopt(theSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+			if (errCode != 0)
 			{
-			case WSANOTINITIALISED:
-				last_error = "A successful WSAStartup call must occur before using this function.";
-				break;
-			case WSAENETDOWN:
-				last_error = "The network subsystem has failed.";
-				break;
-			case WSAEFAULT:
-				last_error = "The buffer pointed to by the optval parameter is not in a valid part of the process address space or the optlen parameter is too small.";
-				break;
-			case WSAEINPROGRESS:
-				last_error = "A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function.";
-				break;
-			case WSAEINVAL:
-				last_error = "The level parameter is not valid, or the information in the buffer pointed to by the optval parameter is not valid.";
-				break;
-			case WSAENETRESET:
-				last_error = "The connection has timed out when SO_KEEPALIVE is set.";
-				break;
-			case WSAENOPROTOOPT:
-				last_error = "The option is unknown or unsupported for the specified provider or socket (see SO_GROUP_PRIORITY limitations).";
-				break;
-			case WSAENOTCONN:
-				last_error = "The connection has been reset when SO_KEEPALIVE is set.";
-				break;
-			case WSAENOTSOCK:
-				last_error = "The descriptor is not a socket.";
-				break;
+				res = JVX_ERROR_INTERNAL;
+				errCode = WSAGetLastError();
+				switch (errCode)
+				{
+				case WSANOTINITIALISED:
+					last_error = "A successful WSAStartup call must occur before using this function.";
+					break;
+				case WSAENETDOWN:
+					last_error = "The network subsystem has failed.";
+					break;
+				case WSAEFAULT:
+					last_error = "The buffer pointed to by the optval parameter is not in a valid part of the process address space or the optlen parameter is too small.";
+					break;
+				case WSAEINPROGRESS:
+					last_error = "A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function.";
+					break;
+				case WSAEINVAL:
+					last_error = "The level parameter is not valid, or the information in the buffer pointed to by the optval parameter is not valid.";
+					break;
+				case WSAENETRESET:
+					last_error = "The connection has timed out when SO_KEEPALIVE is set.";
+					break;
+				case WSAENOPROTOOPT:
+					last_error = "The option is unknown or unsupported for the specified provider or socket (see SO_GROUP_PRIORITY limitations).";
+					break;
+				case WSAENOTCONN:
+					last_error = "The connection has been reset when SO_KEEPALIVE is set.";
+					break;
+				case WSAENOTSOCK:
+					last_error = "The descriptor is not a socket.";
+					break;
+				}
 			}
-		}
 
 #else
-		flag = 1;
-		errCode = setsockopt(theSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));    /* length of option value */
-		if (errCode < 0)
-		{
-			res = JVX_ERROR_INTERNAL;
-			last_error = (std::string)"Was not able to set socket options, Error: " + strerror(errno);
-		}
+			flag = 1;
+			errCode = setsockopt(theSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));    /* length of option value */
+			if (errCode < 0)
+			{
+				res = JVX_ERROR_INTERNAL;
+				last_error = (std::string)"Was not able to set socket options, Error: " + strerror(errno);
+			}
 #endif
 
+		}
 	}
 	return res;
 }
@@ -104,63 +108,69 @@ CjvxSocketsClientInterfaceTcp::connect_socket()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	int errCode = 0;
+	jvxBool connectMe = false;
 
-	// =================================================================================
-	// LOOKUP TARGET SERVER NAME
-	// =================================================================================
-	switch (family)
+	if (JVX_CHECK_SIZE_SELECTED(remotePort))
 	{
-	case jvxSocketsFamily::JVX_SOCKET_IP_V4:
-		res = CjvxSocketsCommon::hostNameToSockAddr(
-			&targetServer_ip4,
-			targetName.c_str(),
-			remotePort);
-		break;
-	case jvxSocketsFamily::JVX_SOCKET_IP_V6:
-		res = CjvxSocketsCommon::hostNameToSockAddr(&targetServer_ip6,
-			targetName.c_str(),
-			remotePort);
-		break;
-	}
-
-	if (res != JVX_NO_ERROR)
-	{
-#ifdef JVX_OS_WINDOWS
-		int errCode = WSAGetLastError();
-		switch (errCode)
+		// =================================================================================
+		// LOOKUP TARGET SERVER NAME
+		// =================================================================================
+		switch (family)
 		{
-		case WSANOTINITIALISED:
-			last_error = "A successful WSAStartup call must occur before using this function.";
+		case jvxSocketsFamily::JVX_SOCKET_IP_V4:
+			res = CjvxSocketsCommon::hostNameToSockAddr(
+				&targetServer_ip4,
+				targetName.c_str(),
+				remotePort);
 			break;
-		case WSAENETDOWN:
-			last_error = "The network subsystem has failed.";
+		case jvxSocketsFamily::JVX_SOCKET_IP_V6:
+			res = CjvxSocketsCommon::hostNameToSockAddr(&targetServer_ip6,
+				targetName.c_str(),
+				remotePort);
 			break;
-		case WSAHOST_NOT_FOUND:
-			last_error = "An authoritative answer host was not found.";
-			break;
-		case WSATRY_AGAIN:
-			last_error = "A nonauthoritative host was not found, or the server failure.";
-			break;
-		case WSANO_RECOVERY:
-			last_error = "A nonrecoverable error occurred.";
-			break;
-		case WSANO_DATA:
-			last_error = "A valid name exists, but no data record of the requested type exists.";
-			break;
-		case WSAEINPROGRESS:
-			last_error = "A blocking Winsock call is in progress, or the service provider is still processing a callback function.";
-			break;
-		case WSAEFAULT:
-			last_error = "The name parameter is not a valid part of the user address space.";
-			break;
-		case WSAEINTR:
-			last_error = "The socket was closed.";
-			break;
-		}
+		}	
+		connectMe = true;
+
+		if (res != JVX_NO_ERROR)
+		{
+#ifdef JVX_OS_WINDOWS
+			int errCode = WSAGetLastError();
+			switch (errCode)
+			{
+			case WSANOTINITIALISED:
+				last_error = "A successful WSAStartup call must occur before using this function.";
+				break;
+			case WSAENETDOWN:
+				last_error = "The network subsystem has failed.";
+				break;
+			case WSAHOST_NOT_FOUND:
+				last_error = "An authoritative answer host was not found.";
+				break;
+			case WSATRY_AGAIN:
+				last_error = "A nonauthoritative host was not found, or the server failure.";
+				break;
+			case WSANO_RECOVERY:
+				last_error = "A nonrecoverable error occurred.";
+				break;
+			case WSANO_DATA:
+				last_error = "A valid name exists, but no data record of the requested type exists.";
+				break;
+			case WSAEINPROGRESS:
+				last_error = "A blocking Winsock call is in progress, or the service provider is still processing a callback function.";
+				break;
+			case WSAEFAULT:
+				last_error = "The name parameter is not a valid part of the user address space.";
+				break;
+			case WSAEINTR:
+				last_error = "The socket was closed.";
+				break;
+			}
 #else
-		last_error = (std::string)"Was not able to get server by hostname, error: " + strerror(errno);
+			last_error = (std::string)"Was not able to get server by hostname, error: " + strerror(errno);
 #endif
+		}
 	}
+
 	if (res == JVX_NO_ERROR)
 	{
 		res = CjvxSocketsClientInterfaceTcpUdp::connect_socket();
@@ -171,11 +181,15 @@ CjvxSocketsClientInterfaceTcp::connect_socket()
 		// ==================================================================================
 		// Connect to target server..
 		// ==================================================================================
-
-		errCode = CjvxSocketsCommon::connect_timeout(theSocket,
-			(const sockaddr*)&targetServer_ip4,
-			sizeof(targetServer_ip4),
-			timeout_msecs); // <- we can not put this in mutexes to avoid blockign
+		errCode = 0;
+			
+		if (connectMe)
+		{
+			errCode = CjvxSocketsCommon::connect_timeout(theSocket,
+				(const sockaddr*)&targetServer_ip4,
+				sizeof(targetServer_ip4),
+				timeout_msecs); // <- we can not put this in mutexes to avoid blockign
+		}
 
 		if (errCode != 0)
 		{

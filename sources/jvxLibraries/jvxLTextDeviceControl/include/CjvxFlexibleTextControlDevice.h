@@ -47,6 +47,8 @@ public:
 		jvxSize num_skip_messages,
 		jvxSize num_unmatched_messages,
 		jvxSize num_unknown_messages) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION inform_identified_unmatched(const char* ruleUnmatched) = 0;
 };
 
 class CjvxFlexibleTextControlDevice : public CjvxFlexibleTextControlDevice_genpcg

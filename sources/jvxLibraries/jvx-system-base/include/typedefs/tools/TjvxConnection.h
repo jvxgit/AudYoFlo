@@ -39,6 +39,7 @@ typedef enum
 	JVX_CONNECT_PRIVATE_ARG_TYPE_SECURE_CHANNEL_SPECIAL_CHAR, /* <- jvxByte* to provide special character in case of secure channel packet handling */
 	JVX_CONNECT_PRIVATE_ARG_TYPE_CONNECTION_NUM_PORT, /* <- jvxSize* */
 
+	JVX_CONNECT_PRIVATE_ARG_TYPE_NEW_SOCKET_ADD_INFO /* IjvxSocketsAdditionalInfoPacket*/
 } jvxConnectionPrivateTypeEnum;
 
 typedef enum

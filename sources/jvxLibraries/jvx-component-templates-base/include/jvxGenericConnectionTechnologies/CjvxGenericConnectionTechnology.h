@@ -15,7 +15,6 @@ protected:
 
 	// Default case: RS 232
 	std::string connectionIdenitificationToken = "jvxTRs232*";
-	jvxSize numPortsPolled = JVX_SIZE_UNSELECTED;
 
 	struct
 	{
@@ -49,7 +48,7 @@ public:
 // #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
 	virtual CjvxGenericConnectionDevice* allocate_device(const std::string& pName, jvxSize id) = 0;
-
+	virtual jvxErrorType initializeConnectionCoreModule(IjvxConnection* conn) = 0;
 };
 
 #endif

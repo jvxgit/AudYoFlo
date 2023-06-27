@@ -6,9 +6,12 @@ JVX_INTERFACE IjvxConnection_report
 public:
 	virtual ~IjvxConnection_report(){};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION provide_data_and_length(jvxByte**ptr, jvxSize* maxNumCopy, jvxSize* offset, jvxSize id_port, jvxHandle* addInfo, jvxConnectionPrivateTypeEnum whatsthis) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION report_data_and_read(jvxByte* ptr, jvxSize numRead, jvxSize offset, jvxSize id_port, jvxHandle* addInfo, jvxConnectionPrivateTypeEnum whatsthis) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxBitField eventMask, jvxSize id_port, jvxHandle* addInfo, jvxConnectionPrivateTypeEnum whatsthis) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION provide_data_and_length(jvxByte**ptr, jvxSize* maxNumCopy, jvxSize* offset, jvxSize id_port, 
+		jvxHandle* addInfo, jvxConnectionPrivateTypeEnum whatsthis) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION report_data_and_read(jvxByte* ptr, jvxSize numRead, jvxSize offset, jvxSize id_port, 
+		jvxHandle* addInfo, jvxConnectionPrivateTypeEnum whatsthis) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxBitField eventMask, jvxSize id_port, jvxHandle* addInfo, 
+		jvxConnectionPrivateTypeEnum whatsthis) = 0;
 
 };
 

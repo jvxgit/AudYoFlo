@@ -2,7 +2,7 @@
 #include "CjvxCuTGpsDevice.h"
 
 CjvxCuTGpsTechnology::CjvxCuTGpsTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxGenericConnectionTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxGenericRs232Technology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.unselected(JVX_COMPONENT_CUSTOM_TECHNOLOGY);
 	// numPortsPolled = 20;

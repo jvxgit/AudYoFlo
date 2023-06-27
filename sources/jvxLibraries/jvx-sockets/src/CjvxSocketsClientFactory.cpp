@@ -48,6 +48,7 @@ CjvxSocketsClientFactory::initialize(jvxSocketsConnectionType tp)
 		iface->name = "TCP Client";
 		iface->id = 0;
 		iface->numRefsMax = 1;
+		iface->socketType = tp;
 		ifaceRef.ptr = iface;
 		interfaces.push_back(ifaceRef);
 	}
@@ -60,6 +61,7 @@ CjvxSocketsClientFactory::initialize(jvxSocketsConnectionType tp)
 		iface->name = "UDP Client";
 		iface->id = 0;
 		iface->numRefsMax = 1;
+		iface->socketType = tp;
 		ifaceRef.ptr = iface;
 		interfaces.push_back(ifaceRef);
 	}
@@ -72,6 +74,7 @@ CjvxSocketsClientFactory::initialize(jvxSocketsConnectionType tp)
 		iface->name = "Unix Client";
 		iface->id = 0;
 		iface->numRefsMax = 1;
+		iface->socketType = tp;
 		ifaceRef.ptr = iface;
 		interfaces.push_back(ifaceRef);
 	}
@@ -113,6 +116,7 @@ CjvxSocketsClientFactory::initialize(jvxSocketsConnectionType tp)
 			iface->dev_description += ">";
 
 			iface->id = cnt;
+			iface->socketType = tp;
 
 #ifndef JVX_PCAP_DIRECT_SEND
 			iface->my_send_queue = NULL;

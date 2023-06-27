@@ -14,9 +14,12 @@ public:
 
 	// std::list<CjvxSocketClientConnection> connections;
 	std::string name;
+
 	jvxSize id = 0;
 	jvxSize numRefsMax = JVX_SIZE_UNSELECTED;
 	std::string last_error = "no error";
+
+protected:
 
 	JVX_THREAD_ID idMainThread = JVX_NULLTHREAD;
 	
