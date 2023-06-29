@@ -23,6 +23,9 @@ set(LOCAL_SOURCES
 set(LOCAL_PCG_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/pcgf/CjvxFlexibleTextControlDevice.pcg)
 
+set(LOCAL_PCG_FILE_OPTIONS
+	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg
+	)
 set(LOCAL_LIBS jvx-component-templates-base_static)
 
 set(BUILD_STATIC TRUE)

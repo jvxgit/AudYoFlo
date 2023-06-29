@@ -33,14 +33,8 @@ CjvxNewSocket::initialize(IjvxHiddenInterface* hostRef, jvxHandle* priv, jvxConn
 		if (whatsthis == JVX_CONNECT_PRIVATE_ARG_TYPE_INPUT_STRING)
 		{
 			std::string command = (const char*)priv;
-			if (command == "udp")
-			{
-				sFac.initialize(jvxSocketsConnectionType::JVX_SOCKET_TYPE_UDP);
-			}
-			else
-			{
-				res = JVX_ERROR_UNSUPPORTED;
-			}
+			jvxSocketsConnectionType tp = jvxSocketsConnectionType_decode(command.c_str());
+			res = sFac.initialize(tp);
 		}
 	}
 	return res;
@@ -129,11 +123,33 @@ CjvxNewSocket::start_port(jvxSize idPort, jvxHandle* cfgIn, jvxConnectionPrivate
 				theIfaceStartUdp = static_cast<CjvxSocketsClientInterfaceTcpUdp*>(theIfaceStart);
 				if (theIfaceStartUdp)
 				{
+					jvxSize locPort = 65000;
+					jvxSize remPort = -1;
 					if (whatsthis == jvxConnectionPrivateTypeEnum::JVX_CONNECT_PRIVATE_ARG_TYPE_INPUT_STRING)
 					{
+						// Format is: <locPort>,<remPort>
+						jvxBool err = false;
 						std::string cfgToken = (const char*)cfgIn;
+						std::vector<std::string> outs;
+						jvx_parseCommandLineOneToken(cfgToken, outs, ',');
+						if (outs.size() > 0)
+						{
+							jvxSize val = jvx_string2Size(outs[0], err);
+							if (!err)
+							{
+								locPort = val;
+							}
+						}
+						if (outs.size() >1)
+						{
+							jvxSize val = jvx_string2Size(outs[1], err);
+							if (!err)
+							{
+								remPort = val;
+							}
+						}
 					}
-					theIfaceStartUdp->configure("", -1, 65000);
+					theIfaceStartUdp->configure("", remPort, locPort);
 				}
 				break;
 			default:

@@ -380,16 +380,17 @@ public:
 	}
 
 	jvxErrorType decide_quality(
-			jvxFlexibleControlQualityIndicator* quality,
+		jvxRemoteConnectionQuality* quality,
 			jvxSize num_incoming_messages,
 			jvxSize num_skip_messages,
 			jvxSize num_unmatched_messages,
 			jvxSize num_unknown_messages) override
 	{
-		*quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_BAD;
+		// Very simple default rule to derive quality
+		*quality = jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_NO_DATA;
 		if (num_incoming_messages > 0)
 		{
-			*quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_GOOD;
+			*quality = jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_GOOD;
 		}
 		return JVX_NO_ERROR;
 	}

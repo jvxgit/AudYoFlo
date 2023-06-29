@@ -4,15 +4,6 @@
 #include "jvx.h"
 #include "common/CjvxProperties.h"
 
-enum class jvxFlexibleControlQualityIndicator
-{
-	JVX_CONNECTION_QUALITY_NOT_CONNECTED,
-	JVX_CONNECTION_QUALITY_CONNECTED,
-	JVX_CONNECTION_QUALITY_GOOD,
-	JVX_CONNECTION_QUALITY_STUCK,
-	JVX_CONNECTION_QUALITY_BAD
-};
-
 #include "pcg_CjvxFlexibleTextControlDevice.h"
 
 typedef enum
@@ -42,7 +33,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_callback(jvxFlexibleControlEventType tp, jvxSize callback_id, jvxHandle* spec) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION decide_quality(
-		jvxFlexibleControlQualityIndicator* quality,
+		jvxRemoteConnectionQuality* quality,
 		jvxSize num_incoming_messages,
 		jvxSize num_skip_messages,
 		jvxSize num_unmatched_messages,
@@ -243,7 +234,7 @@ private:
 		jvxSize num_skip_messages = 0;
 		jvxSize num_unmatched_messages = 0;
 		jvxSize num_unknown_messages = 0;
-		jvxFlexibleControlQualityIndicator quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_NOT_CONNECTED;
+		jvxRemoteConnectionQuality quality = jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_NOT_CONNECTED;
 	} monitor;
 	// ================================================================
 

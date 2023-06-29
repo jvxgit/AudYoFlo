@@ -84,7 +84,9 @@ CjvxGenericSocketDevice::activate_connection_port()
 	}
 
 	// Copy socket configuration
-	std::string cfgToken = "65000";
+	std::string cfgToken = jvx_size2String(CjvxGenericSocketDevice_pcg::socket_settings.local_port.value);
+	cfgToken += ",";
+	cfgToken += jvx_size2String(CjvxGenericSocketDevice_pcg::socket_settings.remote_port.value);;
 
 	return this->theConnectionTool->start_port(idDevice, (jvxHandle*)cfgToken.c_str(), JVX_CONNECT_PRIVATE_ARG_TYPE_INPUT_STRING, static_cast<IjvxConnection_report*>(this));
 }

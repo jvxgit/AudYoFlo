@@ -923,4 +923,70 @@ inline const char* jvxReportCommandDataType_txt(jvxReportCommandDataType coTp)
 	return(jvxReportCommandDataType_str[(int)coTp].friendly);
 };
 
+// ==============================================================================
+static jvxTextHelpers jvxSocketsConnectionType_str[(int)jvxSocketsConnectionType::JVX_SOCKET_TYPE_LIMIT] =
+{
+	{"none", "JVX_SOCKET_TYPE_NONE"},
+	{"tcp", "JVX_SOCKET_TYPE_TCP"},
+	{"udp", "JVX_SOCKET_TYPE_UDP"},
+	{"unix", "JVX_SOCKET_TYPE_UNIX"},
+	{"pcap", "JVX_SOCKET_TYPE_PCAP"},
+	{"bth", "JVX_SOCKET_TYPE_BTH"}
+};
+
+inline const char* jvxSocketsConnectionType_txt(jvxSocketsConnectionType soTp)
+{
+	assert((int)soTp < (int)jvxSocketsConnectionType::JVX_SOCKET_TYPE_LIMIT);
+	return(jvxSocketsConnectionType_str[(int)soTp].friendly);
+};
+
+inline jvxSocketsConnectionType jvxSocketsConnectionType_decode(const char* txt)
+{
+	jvxSize i;
+	jvxSocketsConnectionType retVal = jvxSocketsConnectionType::JVX_SOCKET_TYPE_NONE;
+	for (i = 0; i < (int)jvxSocketsConnectionType::JVX_SOCKET_TYPE_LIMIT; i++)
+	{
+		if (
+			(strcmp(jvxSocketsConnectionType_str[i].friendly, txt) == 0) ||
+			(strcmp(jvxSocketsConnectionType_str[i].full, txt) == 0))
+		{
+			return (jvxSocketsConnectionType)i;
+		}
+	}
+	return retVal;
+}
+
+// ==============================================================================
+static jvxTextHelpers jvxRemoteConnectionQuality_str[(int)jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_LIMIT] =
+{
+	{"none", "JVX_REMOTE_CONNECTION_QUALITY_NONE"},
+	{"good", "JVX_REMOTE_CONNECTION_QUALITY_GOOD"},
+	{"weak", "JVX_REMOTE_CONNECTION_QUALITY_WEAK"},
+	{"bad", "JVX_REMOTE_CONNECTION_QUALITY_BAD"},
+	{"nodata", "JVX_REMOTE_CONNECTION_QUALITY_NO_DATA"},
+	{"noconnect", "JVX_REMOTE_CONNECTION_QUALITY_NOT_CONNECTED"}
+};
+
+inline const char* jvxRemoteConnectionQuality_txt(jvxRemoteConnectionQuality soTp)
+{
+	assert((int)soTp < (int)jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_LIMIT);
+	return(jvxRemoteConnectionQuality_str[(int)soTp].friendly);
+};
+
+inline jvxRemoteConnectionQuality jvxRemoteConnectionQuality_decode(const char* txt)
+{
+	jvxSize i;
+	jvxRemoteConnectionQuality retVal = jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_NONE;
+	for (i = 0; i < (int)jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_LIMIT; i++)
+	{
+		if (
+			(strcmp(jvxRemoteConnectionQuality_str[i].friendly, txt) == 0) ||
+			(strcmp(jvxRemoteConnectionQuality_str[i].full, txt) == 0))
+		{
+			return (jvxRemoteConnectionQuality)i;
+		}
+	}
+	return retVal;
+}
+
 #endif

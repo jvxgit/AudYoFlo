@@ -411,7 +411,11 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 	if (
 		(elm.format == JVX_DATAFORMAT_SELECTION_LIST) &&
 		(elm.decoderType == JVX_PROPERTY_DECODER_SINGLE_SELECTION) &&
-		(!elm.translations.tpName.empty()))
+		(
+			(!elm.translations.tpName.empty())||
+			(!elm.selection.extract_string.empty())
+		)
+	)
 	{
 
 		// Property to enum
@@ -432,6 +436,18 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 		}
 		else
 		{
+			if(!elm.selection.extract_string.empty())
+			{
+				out_translators << "\t\t// LOC#1" << std::endl;
+				out_translators << "\t\tjvxSize idSel = jvx_bitfieldSelection2Id(" << propertySectionName << "." << elm.name << ");" << std::endl;
+				out_translators << "\t\tif(JVX_CHECK_SIZE_UNSELECTED(idSel))" << std::endl;
+				out_translators << "\t\t{" << std::endl;									
+				out_translators << "\t\t\t return " << elm.translations.tpName << "::" << elm.selection.extract_string << ";" << std::endl;
+				out_translators << "\t\t}" << std::endl;									
+				out_translators << "\t\treturn (" << elm.translations.tpName << ")idSel;" << std::endl;
+			}
+			else
+			{
 			for (i = 0; i < elm.selection.strings.size(); i++)
 			{
 				if (i == elm.selection.strings.size() - 1)
@@ -480,6 +496,7 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 					}
 				}
 			}
+			}
 		}
 		out_translators << "\t};" << std::endl;
 
@@ -505,6 +522,14 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 		}
 		else
 		{
+			if(!elm.selection.extract_string.empty())
+			{
+				out_translators << "\t\t// LOC#2" << std::endl;
+				out_translators << "\t\tjvx_bitZSet(" <<
+						propertySectionName << "." << elm.name << ".value.selection(idx), (int)val);" << std::endl;
+			}
+			else
+			{
 			if (elm.selection.strings.size() == 1)
 			{
 				out_translators << "\t\tjvx_bitZSet(" <<
@@ -548,6 +573,7 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 					}
 				}
 				out_translators << "\t\t}" << std::endl;
+			}
 			}
 		}
 		out_translators << "\t};" << std::endl;
@@ -884,31 +910,64 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 			}
 			else
 			{
-
-				for (k = 0; k < elm.selection.strings.size(); k++)
+				if(!elm.selection.extract_string.empty())
 				{
-					out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
+					out << "\t\t// LOC#3" << std::endl;
+					out << "\t\tfor(int ii = 0; ii < (int)" << elm.translations.tpName << "::" << elm.selection.extract_string << "; ii++)" << std::endl;
+					out << "\t\t{" << std::endl;
+					out << "\t\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(" 
+						<< elm.translations.tpName << "_txt(" << "(" << elm.translations.tpName << ")ii));" << std::endl;
+					out << "\t\t}" << std::endl;
+				}
+				else
+				{
+					
+					for (k = 0; k < elm.selection.strings.size(); k++)
+					{
+						out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
+					}
 				}
 			}
 
-			for (k = 0; k < elm.selection.strings.size(); k++)
+			if(!elm.selection.extract_string.empty())
 			{
-				if (k < elm.selection.selected.size())
+				out << "\t\t// LOC#4" << std::endl;
+				if(!elm.selection.extract_selected.empty())
 				{
-					if (elm.selection.selected[k])
-					{
-						// Do not "fill" the selection itself but the init variable
-						out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
-					}
+					out << "\t\tjvx_bitZSet(" << propertySectionName << "." << elm.name << ".value.init_selection, (int)" 
+						<< elm.translations.tpName << "::" << elm.selection.extract_selected << ");" << std::endl;							
+					out << "\t\tfor(int ii = 0; ii < (int)" << elm.translations.tpName << "::" << elm.selection.extract_string << "; ii++)" << std::endl;
+					out << "\t\t{" << std::endl;
+					out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << ii);" << std::endl;
+					out << "\t\t}" << std::endl;		
 				}
-				if (k < elm.selection.exclusive.size())
+				else
 				{
-					if (elm.selection.exclusive[k])
-					{
-						out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
-					}
+					out << "\t\t#error Failed to identify initialize selection for expression <" << elm.selection.extract_string << ">." << std::endl;
 				}
-				out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
+			}
+			else
+			{
+					
+				for (k = 0; k < elm.selection.strings.size(); k++)
+				{
+					if (k < elm.selection.selected.size())
+					{
+						if (elm.selection.selected[k])
+						{
+							// Do not "fill" the selection itself but the init variable
+							out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
+						}
+					}
+					if (k < elm.selection.exclusive.size())
+					{
+						if (elm.selection.exclusive[k])
+						{
+							out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
+						}
+					}
+					out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
+				}
 			}
 			out << "\t\t" << propertySectionName << "." << elm.name << ".isValid = false;" << std::endl;
 			break;
@@ -1075,30 +1134,65 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 						}
 						else
 						{
-
-							for (k = 0; k < elm.selection.strings.size(); k++)
+							if(!elm.selection.extract_string.empty())
 							{
-								out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
+								std::vector<std::string> tokens;
+								jvx_parseCommandLineOneToken(elm.selection.extract_string, tokens, ',');
+								out << "\t\tfor(int ii = 0; ii < (int)" << elm.translations.tpName << "::" << elm.selection.extract_string << "; ii++)" << std::endl;
+								out << "\t\t{" << std::endl;
+								out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(" << elm.translations.tpName 
+									<< "_txt(" << "(" << elm.translations.tpName << ")ii));" << std::endl;
+								out << "\t\t}" << std::endl;
+							}
+							else
+							{
+					
+								for (k = 0; k < elm.selection.strings.size(); k++)
+								{
+									out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
+								}
 							}
 						}
 
-						for (k = 0; k < elm.selection.strings.size(); k++)
+						if(!elm.selection.extract_string.empty())
 						{
-							if (k < elm.selection.selected.size())
+							out << "\t\t// LOC#6" << std::endl;
+							if(!elm.selection.extract_selected.empty())
 							{
-								if (elm.selection.selected[k])
-								{
-									out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
-								}
+								out << "\t\tjvx_bitZSet(" << propertySectionName << "." << elm.name << ".value.init_selection, (int)" 
+									<< elm.translations.tpName << "::" << elm.selection.extract_selected << ");" << std::endl;							
+								out << "\t\tfor(int ii = 0; ii < (int)" << elm.translations.tpName << "::" << elm.selection.extract_string << "; ii++)" << std::endl;
+								out << "\t\t{" << std::endl;
+								out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << ii);" << std::endl;
+								out << "\t\t}" << std::endl;										
 							}
-							if (k < elm.selection.exclusive.size())
+							else
 							{
-								if (elm.selection.exclusive[k])
-								{
-									out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
-								}
+								out << "\t\t#error Failed to identify initialize selection for expression <" << elm.selection.extract_string << ">." << std::endl;
 							}
-							out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
+							
+						}
+						else
+						{
+					
+							for (k = 0; k < elm.selection.strings.size(); k++)
+							{
+								if (k < elm.selection.selected.size())
+								{
+									if (elm.selection.selected[k])
+									{
+										out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
+									}
+								}
+								if (k < elm.selection.exclusive.size())
+								{
+									if (elm.selection.exclusive[k])
+									{
+										out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
+									}
+								}
+								out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
+							}
 						}
 						out << "\t\t" << propertySectionName << "." << elm.name << ".value.set_all(" << propertySectionName << "." << elm.name << ".value.init_selection); " << std::endl;
 
@@ -1153,24 +1247,38 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 					}
 					else
 					{
-						for (k = 0; k < elm.selection.strings.size(); k++)
+						if(!elm.selection.extract_string.empty())
 						{
-							out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
-							if (k < elm.selection.selected.size())
+							out << "\t\t// LOC#7" << std::endl;
+							out << "\t\tfor(int ii = 0; ii < (int)" << elm.translations.tpName << "::" << elm.selection.extract_string << "; ii++)" << std::endl;
+							out << "\t\t{" << std::endl;
+							out << "\t\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(" << elm.translations.tpName 
+								<< "_txt(" << "(" << elm.translations.tpName << ")ii));" << std::endl;
+							out << "\t\t}" << std::endl;
+							
+						}
+						else
+						{
+					
+							for (k = 0; k < elm.selection.strings.size(); k++)
 							{
-								if (elm.selection.selected[k])
+								out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
+								if (k < elm.selection.selected.size())
 								{
-									out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
+									if (elm.selection.selected[k])
+									{
+										out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
+									}
 								}
-							}
-							if (k < elm.selection.exclusive.size())
-							{
-								if (elm.selection.exclusive[k])
+								if (k < elm.selection.exclusive.size())
 								{
-									out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
+									if (elm.selection.exclusive[k])
+									{
+										out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
+									}
 								}
+								out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
 							}
-							out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
 						}
 					}
 					out << "\t\t" << propertySectionName << "." << elm.name << ".value.set_all(" << propertySectionName << "." << elm.name << ".value.init_selection); " << std::endl;
@@ -1305,24 +1413,51 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 						}
 						else
 						{
-							for (k = 0; k < elm.selection.strings.size(); k++)
+							if(!elm.selection.extract_string.empty())
 							{
-								out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
-								if (k < elm.selection.selected.size())
+								out << "\t\t// LOC#8" << std::endl;
+								out << "\t\tfor(int ii = 0; ii < (int)" << elm.translations.tpName << "::" << elm.selection.extract_string << "; ii++)" << std::endl;
+								out << "\t\t{" << std::endl;
+								out << "\t\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(" << elm.translations.tpName 
+									<< "_txt(" << "(" << elm.translations.tpName << ")ii));" << std::endl;
+								out << "\t\t}" << std::endl;
+								if(!elm.selection.extract_selected.empty())
 								{
-									if (elm.selection.selected[k])
-									{
-										out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
-									}
+									out << "\t\tjvx_bitZSet(" << propertySectionName << "." << elm.name << ".value.init_selection, (int)" 
+										<< elm.translations.tpName << "::" << elm.selection.extract_selected << ");" << std::endl;							
+									out << "\t\tfor(int ii = 0; ii < (int)" << elm.translations.tpName << "::" << elm.selection.extract_string << "; ii++)" << std::endl;
+									out << "\t\t{" << std::endl;
+									out << "\t\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << ii);" << std::endl;
+									out << "\t\t}" << std::endl;	
 								}
-								if (k < elm.selection.exclusive.size())
+								else
 								{
-									if (elm.selection.exclusive[k])
-									{
-										out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
-									}
+									out << "\t\t#error Failed to identify initialize selection for expression <" << elm.selection.extract_string << ">." << std::endl;
 								}
-								out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
+								
+							}
+							else
+							{
+					
+								for (k = 0; k < elm.selection.strings.size(); k++)
+								{
+									out << "\t\t" << propertySectionName << "." << elm.name << ".value.entries.push_back(\"" << elm.selection.strings[k] << "\");" << std::endl;
+									if (k < elm.selection.selected.size())
+									{
+										if (elm.selection.selected[k])
+										{
+											out << "\t\t" << propertySectionName << "." << elm.name << ".value.init_selection |= (1 << " << k << ");" << std::endl;
+										}
+									}
+									if (k < elm.selection.exclusive.size())
+									{
+										if (elm.selection.exclusive[k])
+										{
+											out << "\t\t" << propertySectionName << "." << elm.name << ".value.exclusive |= (1 << " << k << ");" << std::endl;
+										}
+									}
+									out << "\t\t" << propertySectionName << "." << elm.name << ".value.selectable |= (1 << " << k << ");" << std::endl;
+								}
 							}
 						}
 						out << "\t\t" << propertySectionName << "." << elm.name << ".value.set_all(" << propertySectionName << "." << elm.name << ".value.init_selection); " << std::endl;

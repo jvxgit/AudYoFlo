@@ -8,6 +8,7 @@ JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider_report
 public:
 	virtual ~IjvxPropertyExtenderHeadTrackerProvider_report() {};
 	virtual jvxErrorType report_rotation_angle(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxData newValDegree) = 0;
+	virtual jvxErrorType report_quality(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxRemoteConnectionQuality qual, jvxData qualValue = -1) = 0;
 };
 
 JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider

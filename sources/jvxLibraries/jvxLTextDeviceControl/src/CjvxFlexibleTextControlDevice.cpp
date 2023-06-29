@@ -516,7 +516,7 @@ CjvxFlexibleTextControlDevice::init(
 	monitor.num_unmatched_messages = 0;
 	monitor.num_unknown_messages = 0;
 
-	monitor.quality = jvxFlexibleControlQualityIndicator::JVX_CONNECTION_QUALITY_NOT_CONNECTED;
+	monitor.quality = jvxRemoteConnectionQuality::JVX_REMOTE_CONNECTION_QUALITY_NOT_CONNECTED;
 
 	// Expose additional properties
 	CjvxFlexibleTextControlDevice_genpcg::init_all();
@@ -2907,11 +2907,11 @@ CjvxFlexibleTextControlDevice::cleared_messages()
 void 
 CjvxFlexibleTextControlDevice::report_observer_timeout()
 {
-	std::cout << "Observe the module to detect stagnation." << std::endl;
+	// std::cout << "Observe the module to detect stagnation." << std::endl;
 	if (interact)
 	{
 		interact->decide_quality(&monitor.quality, monitor.num_incoming_messages,
 			monitor.num_skip_messages, monitor.num_unmatched_messages, monitor.num_unknown_messages);
-		translate__flex_remote__monitor__device_state_to(monitor.quality);
+		translate__flex_remote__monitor__current_quality_to(monitor.quality);
 	}
 }

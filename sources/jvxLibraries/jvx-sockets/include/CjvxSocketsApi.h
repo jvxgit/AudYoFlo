@@ -34,17 +34,6 @@ enum class jvxSocketsErrorType
 	JVX_SOCKET_ERROR_MISC
 };
 
-enum class jvxSocketsConnectionType
-{
-	JVX_SOCKET_TYPE_TCP,
-	JVX_SOCKET_TYPE_UDP,
-	JVX_SOCKET_TYPE_UNIX,
-#ifdef JVX_WITH_PCAP
-	JVX_SOCKET_TYPE_PCAP,
-#endif
-	JVX_SOCKET_TYPE_BTH
-};
-
 enum class jvxSocketsConnectionTransfer
 {
 	JVX_SOCKET_TRANSFER_NORMAL,

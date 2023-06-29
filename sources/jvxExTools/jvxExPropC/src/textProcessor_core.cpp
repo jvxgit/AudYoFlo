@@ -147,6 +147,8 @@ initProperty(onePropertyDefinition& oneProperty)
 
 	oneProperty.selection.strings.clear();
 	oneProperty.selection.selected.clear();
+	oneProperty.selection.extract_string.clear();
+	oneProperty.selection.extract_selected.clear();
 	oneProperty.selection.exclusive.clear();
 
 	oneProperty.selection.varname = "";
@@ -1294,22 +1296,34 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 					}
 				}
 
-				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theSubContent, SELECTION_LIST_NAMES, &newProp.selection.strings), SELECTION_LIST_NAMES, theSubContent);
-
-				entrylist.clear();
-				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theSubContent, SELECTION_LIST_SELECTED, &entrylist), SELECTION_LIST_SELECTED, theSubContent);
-				for(k = 0; k < entrylist.size(); k++)
+				newProp.selection.strings.clear();
+				newProp.selection.extract_string.clear();
+				if(HjvxConfigProcessor_readEntry_assignmentString(theReader, theSubContent, SELECTION_LIST_NAMES, &newProp.selection.extract_string) != JVX_NO_ERROR)
 				{
-					if(entrylist[k] == "yes")
-					{
-						newProp.selection.selected.push_back(1);
-					}
-					else
-					{
-						newProp.selection.selected.push_back(0);
-					}
+					SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theSubContent, SELECTION_LIST_NAMES, &newProp.selection.strings), SELECTION_LIST_NAMES, theSubContent);
 				}
 
+				// ===============================================================================================
+				
+				newProp.selection.selected.clear();
+				newProp.selection.extract_selected.clear();
+				if(HjvxConfigProcessor_readEntry_assignmentString(theReader, theSubContent, SELECTION_LIST_SELECTED, &newProp.selection.extract_selected) != JVX_NO_ERROR)
+				{
+					entrylist.clear();
+					SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theSubContent, SELECTION_LIST_SELECTED, &entrylist), SELECTION_LIST_SELECTED, theSubContent);
+					for(k = 0; k < entrylist.size(); k++)
+					{
+						if(entrylist[k] == "yes")
+						{
+							newProp.selection.selected.push_back(1);
+						}
+						else
+						{
+							newProp.selection.selected.push_back(0);
+						}
+					}
+				}
+				
 				entrylist.clear();
 				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theSubContent, SELECTION_LIST_EXCLUSIVE, &entrylist), SELECTION_LIST_EXCLUSIVE, theSubContent);
 				for(k = 0; k < entrylist.size(); k++)

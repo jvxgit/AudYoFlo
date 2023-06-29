@@ -1,16 +1,36 @@
-	SECTION socket_settings
-	{
-		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
-		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+SECTION socket_settings
+{
+	GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+	ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
 
-		SECTION local_port
-		{
-			TYPE = "JVX_DATAFORMAT_SIZE";	
-			INIT_SET = 65000;			
-		};
-		SECTION remote_port
-		{
-			TYPE = "JVX_DATAFORMAT_SIZE";	
-			INIT_SET = -1;			
-		};
-	};	
+	SECTION local_port
+	{
+		TYPE = "JVX_DATAFORMAT_SIZE";	
+		INIT_SET = 65000;			
+	};
+	
+	SECTION remote_port
+	{
+		TYPE = "JVX_DATAFORMAT_SIZE";	
+		INIT_SET = -1;			
+	};
+	
+	SECTION connection_type
+	{			
+		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";					
+		SELECTION_LIST_NAMES = {"None", "Tcp", "Udp", "Unix", "Pcap", "Bth"};
+		SELECTION_LIST_SELECTED = {"no", "no", "yes", "no", "no", "no"};
+		SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes", "yes"}; 
+		SELECTION_LIST_TRANSLATORS = {
+			"jvxSocketsConnectionType::JVX_SOCKET_TYPE_NONE",
+			"jvxSocketsConnectionType::JVX_SOCKET_TYPE_TCP", 
+			"jvxSocketsConnectionType::JVX_SOCKET_TYPE_UDP", 
+			"jvxSocketsConnectionType::JVX_SOCKET_TYPE_UNIX", 
+			"jvxSocketsConnectionType::JVX_SOCKET_TYPE_PCAP", 
+			"jvxSocketsConnectionType::JVX_SOCKET_TYPE_BTH"};
+		SELECTION_TRANSLATOR_TYPE = "jvxSocketsConnectionType";			
+		SELECTION_TRANSLATOR_ENUM_CLASS = "jvxSocketsConnectionType";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";	
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";			
+	};
+};	

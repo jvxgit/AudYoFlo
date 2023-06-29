@@ -80,9 +80,9 @@ CjvxSocketsClientFactory::initialize(jvxSocketsConnectionType tp)
 	}
 	break;
 
-#ifdef JVX_WITH_PCAP
 	case jvxSocketsConnectionType::JVX_SOCKET_TYPE_PCAP:
 
+#ifdef JVX_WITH_PCAP
 		// retreive the device list from the local machine
 		if (pcap_findalldevs(&alldevs, errbuf) == -1)
 		{
@@ -128,8 +128,11 @@ CjvxSocketsClientFactory::initialize(jvxSocketsConnectionType tp)
 		}
 
 		pcap_freealldevs(alldevs);
-		break;
+#else
+		std::cout << __FUNCTION__ << ": Error: Requesting PCAP socket but PCAP is not active at build time." << std::endl;
 #endif
+		break;
+
 	}
 	return JVX_NO_ERROR;
 }

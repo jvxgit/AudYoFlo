@@ -137,7 +137,9 @@ struct onePropertyDefinition
 	struct
 	{
 		std::vector<std::string> strings;
+		std::string extract_string;
 		std::vector<jvxUInt16> selected;
+		std::string extract_selected;
 		std::vector<jvxUInt16> exclusive;
 
 		std::string varname;
