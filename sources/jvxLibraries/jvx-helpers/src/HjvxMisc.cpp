@@ -1346,7 +1346,7 @@ jvx_string2ValueList(const std::string& input, jvxHandle* ptrVal, jvxDataFormat 
 	jvxInt32* ptrI32 = NULL;
 	jvxInt16* ptrI16 = NULL;
 	jvxInt8* ptrI8 = NULL;
-	jvxUInt64* ptrSize = NULL;
+	jvxSize* ptrSize = NULL;
 	jvxUInt64* ptrUI64 = NULL;
 	jvxUInt32* ptrUI32 = NULL;
 	jvxUInt16* ptrUI16 = NULL;
