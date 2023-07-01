@@ -9,7 +9,7 @@ endif()
 
 set(SDL_LIBRARY_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/libsdl/SDL2-2.26.3" CACHE INTERNAL "libsdl lib path (windows)")
 if(JVX_PLATFORM MATCHES "32bit")
-	set(SDL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/libsdl/SDL2-2.26.3/lib/86/SDL2.lib" CACHE INTERNAL "libsdl lib (windows)")
+	set(SDL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/libsdl/SDL2-2.26.3/lib/x86/SDL2.lib" CACHE INTERNAL "libsdl lib (windows)")
 else()
 	set(SDL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/libsdl/SDL2-2.26.3/lib/x64/SDL2.lib" CACHE INTERNAL "libsdl lib (windows)")
 endif()

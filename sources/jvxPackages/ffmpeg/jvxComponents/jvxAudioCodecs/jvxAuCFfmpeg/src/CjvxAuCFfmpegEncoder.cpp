@@ -328,8 +328,8 @@ CjvxAuCFfmpegAudioEncoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 			jvx_convertSamples_memcpy(bufsInData[i], cParams.frame->data[i], sizeof(double), cParams.frame->nb_samples);
 #else
 			jvx_convertSamples_from_data_to_float<double>(
-				(jvxData*)bufsOutData[i],
-				(double*)cParams.frame->data[0],
+				(jvxData*)bufsInData[i],
+				(double*)cParams.frame->data[i],
 				cParams.frame->nb_samples,
 				0, 1, 0, 1);
 #endif
