@@ -576,6 +576,7 @@ typedef jvx::propertyRawPointerType::CjvxRawPointerTypeField<jvxInt8> jPRFI8;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeField<jvxUInt64> jPRFU64;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeField<jvxUInt32> jPRFU32;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeField<jvxUInt16> jPRFU16;
+typedef jPRFU16 jPRFCBOOL;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeField<jvxUInt8> jPRFU8;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeFieldSize jPRFS;
 

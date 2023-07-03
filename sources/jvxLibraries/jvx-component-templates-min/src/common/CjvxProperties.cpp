@@ -1318,7 +1318,12 @@ CjvxProperties::_get_property(
 				}
 				else
 				{
-					convert.convertFilterStart(fld, selection->propDescriptor->format, formatLocal);
+					if ((selection->propDescriptor->num == 1) && (tune.offsetStart == 0))
+					{
+						// Corrected on 03.07.2023 HK - this led to a segmentation fault!!
+						// The auto conversion only works in case of a single value. More than one value can not be corrected!!
+						convert.convertFilterStart(fld, selection->propDescriptor->format, formatLocal);
+					}
 					if (formatLocal != selection->propDescriptor->format)
 					{
 						if (
