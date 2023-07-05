@@ -1,0 +1,16 @@
+set(PROJECT_NAME qt-aqt)
+include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
+
+if(${JVX_OS} MATCHES "windows")
+	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/qt)
+		message("qt sub project not available. Starting script to download it.") 
+		set(JVX_QT_ARCH_TOKEN "win64_msvc2019_64")
+		if(${JVX_PLATFORM} MATCHES "32bit")
+			set(JVX_QT_ARCH_TOKEN "win32_msvc2019")
+		endif()
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_QT_ARCH_TOKEN}; exit")
+		message("qt-aqt installation complete.")
+	endif()
+endif()
+
+message(FATAL_ERROR "Hier")
