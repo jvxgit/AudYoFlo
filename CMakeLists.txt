@@ -831,12 +831,12 @@ endif()
 			      endif()
 		endif()
 
-		if(JVX_USE_PCAP)
-			set(JVX_BASE_APPS ${JVX_BASE_APPS}
-				${JVX_BASE_ROOT}/sources/jvxApplications/jvxPacketFilterBridge)
-		endif()
-
 		if(JVX_USE_QT)
+			if(JVX_USE_PCAP)
+				set(JVX_BASE_APPS ${JVX_BASE_APPS}
+					${JVX_BASE_ROOT}/sources/jvxApplications/jvxPacketFilterBridge)
+			endif()
+			
 			if(JVX_USE_PART_WEBSERVER)
 				set(JVX_BASE_APPS ${JVX_BASE_APPS}
 					${JVX_BASE_ROOT}/sources/jvxProjects/jvxWebExample)
