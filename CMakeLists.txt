@@ -402,6 +402,14 @@ endif()
   find_platform_specific()
 
   if(JVX_FLUTTER_UI)
+  
+	# Check for invalid Flutter activation on win32 builds
+    if(${JVX_OS} MATCHES "windows")
+		if(${JVX_PLATFORM} MATCHES "32bit")
+			message(FATAL_ERROR "Flutter is not supported for win32! Please deactivate the option <JVX_FLUTTER_UI>.")
+		endif()
+	endif()
+
 	set(FLUTTER_SDK_PATH "" CACHE STRING "Flutter sdk find path")
 	
 	# message("-1-> ${FLUTTER_SDK_PATH}")

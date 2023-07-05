@@ -14,6 +14,7 @@ sources/jvxLibraries/third_party/web/qcustomplot/qcustomplot
 sources/jvxLibraries/third_party/web/boost/boost
 sources/jvxLibraries/third_party/web/npcap/npcap-sdk
 sources/jvxLibraries/third_party/web/libsdl/libsdl
+sources/jvxLibraries/third_party/web/qt/qt
 sources/sub-projects/vst3sdk
 sources/jvxPackages/ffmpeg/jvxLibraries/third_party/git/ffmpeg/ffmpeg
 sources/jvxPackages/ffmpeg/jvxLibraries/third_party/web/libsdl/libsdl
