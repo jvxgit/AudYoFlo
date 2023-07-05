@@ -246,7 +246,7 @@ int CALLBACK WinMain(
 	else
 	{
 		jvxSize i;
-		for(i = 1; i < argc; i++)
+		for(i = 0; i < argc; i++)
 		{
 			lstArgs.push_back(argv[i]);
 		}
