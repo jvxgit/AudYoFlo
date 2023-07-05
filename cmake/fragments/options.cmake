@@ -55,6 +55,7 @@ option(JVX_USE_FFTW "Build with fftw" ON)
 option(JVX_CIVETWEB_INCLUDED_AS_SOURCE "Integrate civetweb source code in web server." ON)
 option(JVX_USE_FFMPEG "Use ffmpeg library" OFF)
 option(JVX_USE_CCACHE "Build with ccache support" ON)
+option(JVX_INSTALL_QT_ON_BUILD "Download and install QT on first build" ON)
 
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")

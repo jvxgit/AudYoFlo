@@ -348,6 +348,10 @@ if(JVX_COMPILE_BUILDTOOLS)
 
 else(JVX_COMPILE_BUILDTOOLS)
 
+# Run early projects - before all checks - to install required components
+include(${JVX_CMAKE_DIR}/fragments/thrdparty-early.cmake)
+jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early")
+
 # configure qt # FIXME: to be moved into macros.cmake?
 if(JVX_USE_QT)
         find_qt()
