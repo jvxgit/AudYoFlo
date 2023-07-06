@@ -342,6 +342,7 @@ static inline jvxSize jvxDataFormatGroup_getsize(jvxSize idx)
 	assert(idx < JVX_DATAFORMAT_GROUP_LIMIT);
 	return(jvxDataFormatGroup_size[idx]);
 }
+
 // ====================================================================		
 
 typedef enum

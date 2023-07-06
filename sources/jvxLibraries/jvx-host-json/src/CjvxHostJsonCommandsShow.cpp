@@ -698,6 +698,12 @@ CjvxHostJsonCommandsShow::show_version(const oneDrivehostCommand& dh_command, co
 	JVX_CREATE_VERSION_DATA(jelm_entry, JVX_DATA_STRING);
 	jelmlst_entries.addConsumeElement(jelm_entry);
 
+	JVX_CREATE_VERSION_COMPILE_NUM32BITS(jelm_entry, jvx_size2String(JVX_NUMBER_32BITS_BITFIELD));
+	jelmlst_entries.addConsumeElement(jelm_entry);
+
+	JVX_CREATE_VERSION_COMPILE_DATATYPE(jelm_entry, jvxDataTypeSpec_txt(JVX_DATA_DATAFORMAT_ENUM));
+	jelmlst_entries.addConsumeElement(jelm_entry);
+	
 	jelm_version.makeSection("version", jelmlst_entries);
 	jsec.addConsumeElement(jelm_version);
 

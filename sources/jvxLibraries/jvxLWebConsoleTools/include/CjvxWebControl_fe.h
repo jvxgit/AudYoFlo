@@ -5,134 +5,33 @@
 #include "interfaces/console/IjvxEventLoop_frontend_ctrl.h"
 #include "common/CjvxWebServerHost.h"
 #include "typedefs/console/TjvxFrontendBackend.h"
-#include "jvx-net-helpers.h"
 #include "allHostsStatic_common.h"
+#include "CjvxWebControl_fe_types.h"
+#include "CjvxBinaryWebSockets.h"
+#include "CjvxTextWebSockets.h"
 
 #include <map>
 
 // #define JVX_VERBOSE_FLOW_CONTROL
 
-typedef enum
-{
-	JVX_PROPERTY_WEBSOCKET_STATE_NONE,
-	JVX_PROPERTY_WEBSOCKET_STATE_IN_TRANSFER
-}jvxStreamPropertyTransferState;
 
-class onePropertyWebSocketDefinition
-{
-public:
-	std::string propertyName;
-	jvxComponentIdentification cpId;
-	jvxDataFormat format_spec;
-	jvxSize numElms_spec;
-	jvxPropertyDecoderHintType htTp;
-	jvxSize offset;
-	jvxSize uniqueId;
-	jvxUInt32 param0;
-	jvxUInt32 param1;
-	jvxPropertyTransferPriority prio;
-	jvxState state_active;
-	jvxPropertyStreamCondUpdate cond_update;
-	jvxSize param_cond_update;
-	jvxUInt32 tStamp;
-	jvxStreamPropertyTransferState state_transfer;
-	jvxSize streamPropertyInTransferState;
-	//jvxSize streamPropertyInTransferStateMax;
-	jvxBool requiresFlowControl;
-	jvxSize num_emit_min;
-	jvxSize num_emit_max;
-
-	struct
-	{
-		jvxInt32 port;
-		std::string target;
-		
-	} high_prio;
-
-	struct
-	{
-		jvx_propertyReferenceTriple theTriple;
-		jvxPropertyDescriptor descr;
-		jvxByte* allocatedRawBuffer;
-		jvxSize szRawBuffer;
-		jvxHandle* referencedPayloadBuffer;
-		jvxState transferState;
-		jvxSize cntTicks;
-
-		jvxExternalBuffer* specbuffer;
-		jvxSize specbuffer_sz;
-		jvxBool specbuffer_valid;
-
-		jvxBool serious_fail;
-		jvxData last_send_msec;
-		jvxUInt32 latest_tstamp;
-
-		struct
-		{
-			HjvxPropertyStreamUdpSocket* udpSocket;
-		} prio_high;
-
-		// jvxOnePropertyWebSocketTransferState messageTransferState;
-	} runtime;
-
-	onePropertyWebSocketDefinition()
-	{
-		//std::string propertyName;
-		cpId = JVX_COMPONENT_UNKNOWN;
-		format_spec = JVX_DATAFORMAT_NONE;
-		numElms_spec = 0;
-		htTp = JVX_PROPERTY_DECODER_NONE;
-		offset = 0;
-		uniqueId = JVX_SIZE_UNSELECTED;
-		param0 = 0;
-		param1 = 0;
-		prio = JVX_PROP_CONNECTION_TYPE_NORMAL_PRIO;
-		state_active = JVX_STATE_NONE;
-		cond_update = JVX_PROP_STREAM_UPDATE_TIMEOUT;
-		param_cond_update = JVX_SIZE_UNSELECTED;
-		tStamp = 0;
-		state_transfer = JVX_PROPERTY_WEBSOCKET_STATE_NONE;
-		streamPropertyInTransferState = 0;
-		//jvxSize streamPropertyInTransferStateMax;
-		requiresFlowControl = false;
-		num_emit_min = 0;
-		num_emit_max = JVX_SIZE_UNSELECTED;
-		high_prio.port = 0;
-		
-		// high_prio.target;
-
-		jvx_initPropertyReferenceTriple(&runtime.theTriple);
-		jvx_initPropertyDescription(runtime.descr);
-		runtime.allocatedRawBuffer = NULL;
-		runtime.szRawBuffer = 0;
-		runtime.referencedPayloadBuffer = NULL;
-		runtime.transferState = JVX_STATE_NONE;
-		runtime.cntTicks = 0;
-		runtime.specbuffer = NULL;
-		runtime.specbuffer_sz = 0;
-		runtime.specbuffer_valid = false;
-		runtime.serious_fail = false;
-		runtime.last_send_msec = 0;
-		runtime.latest_tstamp = 0;
-		runtime.prio_high.udpSocket = NULL;
-
-	};
-
-	~onePropertyWebSocketDefinition()
-	{
-	
-
-	};
-};
+// ===================================================================
+// ============================================================================
 
 class CjvxWebControl_fe: public IjvxEventLoop_frontend_ctrl,
 	public CjvxWebServerHost, public IjvxWebServerHost_hooks,
 	public IjvxEventLoop_backend, public IjvxReport, public IjvxConfigurationExtender_report,
-	public HjvxPropertyStreamUdpSocket_report, public IjvxReportSystemForward
+	public IjvxReportSystemForward	
 	//public IjvxEventLoop_threadcleanup
 
 {
+	friend class CjvxBinaryWebSockets;
+	friend class CjvxTextWebSockets;
+
 private:
+
+	CjvxBinaryWebSockets binWs;
+	CjvxTextWebSockets txtWs;
 
 	typedef enum
 	{
@@ -145,11 +44,7 @@ private:
 		JVX_PROPERTY_FLOW_READY,
 		JVX_PROPERTY_FLOW_WAIT_FOR_RESPONSE
 	} jvxOnePropertyWebSocketTransferState;
-	
-	struct
-	{
-		std::map<jvxInt32, HjvxPropertyStreamUdpSocket*> theUdpSockets;
-	} high_prio_transfer;
+		
 
 	typedef struct
 	{
@@ -167,9 +62,6 @@ private:
 		std::string ret_mthread;
 	} oneThreadReturnType;
 
-	jvxSize wsUniqueId;
-	std::map<jvxSize, onePropertyWebSocketDefinition> lstUpdateProperties;
-
 	std::vector<oneAllocatedField> flds;
 	JVX_MUTEX_HANDLE safeAccessMemList;
 	jvxSize timerCount;
@@ -184,31 +76,6 @@ private:
 		jvxInt16 closeProcedureState;
 	} myWebServer;
 
-	typedef struct
-	{
-		jvxHandle* context_conn;
-		jvxHandle* context_server;
-	} jvxWebContext;
-
-	struct
-	{
-		jvxWebContext theCtxt;
-		jvxSize timeout_msec;
-		jvxSize ping_cnt_trigger;
-		jvxSize ping_cnt_close;
-		jvxSize ping_cnt_close_failed;
-		jvxSize wsMessId;
-		std::string uri;
-		std::string query;
-		std::string local_uri;
-		std::string url_origin;
-		std::string user;
-		jvxSize current_ping_count;
-
-	} webSocketPeriodic;
-
-	jvxTimeStampData tStamp;
-
 	struct
 	{
 		jvxCBool silent_mode;
@@ -219,6 +86,7 @@ private:
 	} config;
 
 	std::vector<oneAddedStaticComponent> addedStaticObjects;
+	
 
 	JVX_DEFINE_RT_ST_INSTANCES
 
@@ -350,26 +218,9 @@ public:
 	virtual void right_before_start() override;
 
 private:
-
-	jvxErrorType try_activate_property(onePropertyWebSocketDefinition& defOneProperty);
-	jvxErrorType deactivate_property(onePropertyWebSocketDefinition& defOneProperty);
-	jvxPropertyTransferType check_transfer_property(onePropertyWebSocketDefinition& defOneProperty, jvxPropertyStreamCondUpdate theReason, const jvxComponentIdentification& idCp = jvxComponentIdentification(JVX_COMPONENT_UNKNOWN), jvxPropertyCategoryType cat = JVX_PROPERTY_CATEGORY_UNKNOWN, jvxSize propId = JVX_SIZE_UNSELECTED);
-	jvxErrorType transfer_activated_property(onePropertyWebSocketDefinition& defOneProperty, jvxSize & numBytesTransferred);
 	
-	jvxErrorType allocateLinearBuffer_propstream(onePropertyWebSocketDefinition& defOneProperty);
-	jvxErrorType deallocateLinearBuffer_propstream(onePropertyWebSocketDefinition& defOneProperty);
-
-	jvxErrorType allocateMultichannelCircBuf_propstream(onePropertyWebSocketDefinition& defOneProperty);
-	jvxErrorType deallocateMultichannelCircBuf_propstream(onePropertyWebSocketDefinition& defOneProperty);
-
-	void step_update_properties_websocket(jvxPropertyStreamCondUpdate theReason, jvxBool* has_disconnected,
-		const jvxComponentIdentification& idCp = jvxComponentIdentification(JVX_COMPONENT_UNKNOWN), jvxPropertyCategoryType cat = JVX_PROPERTY_CATEGORY_UNKNOWN, jvxSize propId = JVX_SIZE_UNSELECTED);
-
-	jvxErrorType disconnect_udp_port(const onePropertyWebSocketDefinition& prop_elm);
-	virtual jvxErrorType report_incoming_packet(jvxByte* fld, jvxSize sz, HjvxPropertyStreamUdpSocket* resp_socket)override;
-	virtual jvxErrorType report_connection_error(const char* errorText)override;
-	
-	void web_socket_disconnect();
+	void web_socket_disconnect(jvxHandle* hdl);
+	void process_incoming_binary(char* payload, size_t szFld);
 };
 
 #endif

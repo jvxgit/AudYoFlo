@@ -989,4 +989,18 @@ inline jvxRemoteConnectionQuality jvxRemoteConnectionQuality_decode(const char* 
 	return retVal;
 }
 
+// ====================================================================		
+
+inline jvxTextHelpers jvxDataTypeSpec_str[JVX_DATA_TYPE_SPEC_LIMIT] =
+{
+	{"dbl", "JVX_DATA_TYPE_SPEC_DOUBLE"},
+	{"flt", "JVX_DATA_TYPE_SPEC_FLOAT"}
+};
+
+inline const char* jvxDataTypeSpec_txt(jvxSize id)
+{
+	assert(id < JVX_DATA_TYPE_SPEC_LIMIT);
+	return jvxDataTypeSpec_str[id].friendly;
+}
+
 #endif

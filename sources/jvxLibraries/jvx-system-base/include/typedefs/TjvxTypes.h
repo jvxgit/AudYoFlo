@@ -25,7 +25,8 @@ jvxData jvx_txt2Data(const char* in, jvxCBool* err);
 typedef enum 
 {
 	JVX_DATA_TYPE_SPEC_DOUBLE, 
-	JVX_DATA_TYPE_SPEC_FLOAT
+	JVX_DATA_TYPE_SPEC_FLOAT,
+	JVX_DATA_TYPE_SPEC_LIMIT
 } jvxDataTypeSpec;
 
 typedef enum

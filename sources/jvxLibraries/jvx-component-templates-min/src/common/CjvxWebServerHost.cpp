@@ -269,6 +269,8 @@ CjvxWebServerHost::report_server_ws_event(
 	jvxBool strictConstConnection, const char* uriprefix, int header, char* payload, size_t szFld)
 {
 	jvxErrorType res = JVX_NO_ERROR;
+
+	jvxSize identify = notifyWsIds.theIds[uniqueId].identify;
 	if (theHooks)
 	{
 		res = theHooks->synchronizeWebServerWsEvents(context_server, context_conn, purp, uniqueId,
@@ -286,7 +288,8 @@ jvxErrorType
 CjvxWebServerHost::report_event_request_core(
 	jvxHandle* context_server, jvxHandle* context_conn,
 	jvxWebServerHandlerPurpose purp, jvxSize uniqueId,
-	jvxBool strictConstConnection, const char* uriprefix, int header, char* payload, size_t szFld)
+	jvxBool strictConstConnection, const char* uriprefix, 
+	int header, char* payload, size_t szFld)
 
 {
 	jvxSize identify = JVX_SIZE_UNSELECTED;

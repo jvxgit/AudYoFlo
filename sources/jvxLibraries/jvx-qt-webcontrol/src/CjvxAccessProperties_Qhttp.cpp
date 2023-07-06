@@ -2272,7 +2272,7 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 								}
 								if (a != 0)
 								{
-									propStringPtr += ",";
+									propStringPtr += ":";// The following list extractor expects a ":" - changed by HK 06.07.2023
 								}
 								propStringPtr += myString.std_str();
 							}
@@ -2425,7 +2425,7 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 									}
 									if (a != 0)
 									{
-										propStringPtr += ",";
+										propStringPtr += ":"; // The following list extractor expects a ":" - changed by HK 06.07.2023
 									}
 									propStringPtr += myString.std_str();
 								}

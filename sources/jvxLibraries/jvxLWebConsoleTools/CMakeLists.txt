@@ -16,6 +16,15 @@ include_directories(
 set(LOCAL_SOURCES
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxWebControl_fe.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxWebControl_fe.h
+
+	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxBinaryWebSockets.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxBinaryWebSockets.h
+
+	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxTextWebSockets.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxTextWebSockets.h
+
+	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxWebControl_fe_types.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxWebControl_fe_private.h
   )
 
 #set(LOCAL_PCG_FILES

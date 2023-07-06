@@ -23,6 +23,12 @@
 #define JVX_CREATE_VERSION_DATA(jelm, txt) \
 	jelm.makeAssignmentString("date_tag", txt)
 
+#define JVX_CREATE_VERSION_COMPILE_NUM32BITS(jelm, txt) \
+	jelm.makeAssignmentString("num32BitFld", txt)
+
+#define JVX_CREATE_VERSION_COMPILE_DATATYPE(jelm, txt) \
+	jelm.makeAssignmentString("dtTp", txt)
+
 #define JVX_CREATE_SYSTEM(jelm, jarr) \
 	jelm.makeArray("system", jarr);
 

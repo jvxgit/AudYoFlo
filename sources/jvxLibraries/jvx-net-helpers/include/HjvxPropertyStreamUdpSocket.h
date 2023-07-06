@@ -1,3 +1,6 @@
+#ifndef __HJVXPROPERTYSTREAMUDPSOCKET_H__
+#define __HJVXPROPERTYSTREAMUDPSOCKET_H__
+
 #include "jvx.h"
 
 class HjvxPropertyStreamUdpSocket;
@@ -62,3 +65,5 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxBitField eventMask, jvxSize id_port, jvxHandle* addInfo, jvxConnectionPrivateTypeEnum whatsthis) override;
 
 };
+
+#endif

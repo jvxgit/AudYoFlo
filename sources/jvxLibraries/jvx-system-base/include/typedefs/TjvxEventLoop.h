@@ -55,6 +55,7 @@ typedef enum
 	JVX_EVENTLOOP_DATAFORMAT_INTPTR_T, // Passes an int variable in pointer, e.g. o indicate a specific id
 	JVX_EVENTLOOP_DATAFORMAT_MEMORY_BUF,
 	JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST, // Passes a pointer of class type CjvxReportCommandRequest. Should be auto deleted if rescheduled
+	JVX_EVENTLOOP_DATAFORMAT_HANDLE_PTR,
 	JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC
 } jvxOneEventDatatypeId;
 
