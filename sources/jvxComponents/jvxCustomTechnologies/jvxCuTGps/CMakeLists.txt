@@ -4,7 +4,8 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 # add a target to generate API documentation with Doxygen
 # FIXME: support in common foot for this?
 find_package(Doxygen)
-if(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND AND LATEX_FOUND AND LATEX_DVIPS_FOUND)
+  message("--> Running documentation generation in project <${PROJECT_NAME}>.")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile @ONLY)
   add_custom_target(${PROJECT_NAME}-doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile
@@ -12,7 +13,7 @@ if(DOXYGEN_FOUND)
     COMMENT "Generating ${PROJECT_NAME} documentation with Doxygen" VERBATIM
     )
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc DESTINATION ${INSTALL_PATH_DOC}/${PROJECT_NAME})
-endif(DOXYGEN_FOUND)
+endif()
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src

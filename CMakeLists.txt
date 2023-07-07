@@ -278,6 +278,10 @@ if(JVX_SUBPRODUCT_HELPER_PATH)
 		)
 endif()
 
+# Early find rules for rt-bt build -- for Doxygen
+find_host_package(LATEX COMPONENTS DVIPS)	
+find_host_package(Doxygen)
+
 # if(${JVX_OS} MATCHES "Emscripten")
 
 #	set(JVX_BASE_SYSTEM_STATIC_LIBS 
@@ -423,7 +427,7 @@ endif()
 	# message(FATAL_ERROR "-2-> ${FLUTTER_SDK_PATH}")
 			
 	if(NOT EXISTS ${FLUTTER_SDK_PATH})
-		message(FATAL_ERROR "The environment variable <FLUTTER_SDK_PATH> must be set if compiling Flutter support - it is <${FLUTTER_SDK_PATH}>.")
+		message(FATAL_ERROR "The environment variable <FLUTTER_SDK_PATH> must be set if compiling Flutter support - it is <${FLUTTER_SDK_PATH}> but that folder seems to not exist.")
 	endif()
   endif()
 

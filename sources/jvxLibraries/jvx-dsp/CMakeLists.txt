@@ -10,15 +10,15 @@ configure_file(include/jvx_dsp.h.in ${CMAKE_CURRENT_BINARY_DIR}/jvx_dsp.h)
 
 # add a target to generate API documentation with Doxygen
 # FIXME: support in common foot for this?
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND AND LATEX_FOUND AND LATEX_DVIPS_FOUND)
+  message("--> Running documentation generation in project <${PROJECT_NAME}>.")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile @ONLY)
   add_custom_target(jvx-dsp-doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc
     COMMENT "Generating ${PROJECT_NAME} documentation with Doxygen" VERBATIM
     )
-endif(DOXYGEN_FOUND)
+endif()
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
