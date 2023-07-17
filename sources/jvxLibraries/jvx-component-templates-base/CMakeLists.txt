@@ -173,6 +173,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/jvxCommonTypedefs.h
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleConnectorCommon.h
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleInputConnector.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxSingleInputConnector.cpp
 

@@ -262,7 +262,7 @@ namespace CayfAutomationModules
 		if (con)
 		{
 			// Get the creation rule!
-			auto& elm = module_connections.find(tp_reg);
+			auto elm = module_connections.find(tp_reg);
 			assert(elm != module_connections.end());
 
 			jvxDataConnectionRuleParameters params(false, false, true, elm->second.supportNodeRuntime.driveSupportNodeChain.dbgOut, true);

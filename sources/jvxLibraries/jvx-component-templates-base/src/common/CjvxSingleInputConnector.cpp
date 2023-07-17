@@ -76,7 +76,7 @@ CjvxSingleInputConnector::connect_connect_icon(jvxLinkDataDescriptor* theData JV
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	_connect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb), false);
+	_connect_connect_icon(theData, false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	// If we have set a trigger forward, follow it but ONLY with the link data type for linkage!!
 	if (
@@ -107,7 +107,7 @@ CjvxSingleInputConnector::disconnect_connect_icon(jvxLinkDataDescriptor* theData
 		res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_DISCONNECT, &args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 
-	_disconnect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb), false);
+	_disconnect_connect_icon(theData, false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	return res;
 }

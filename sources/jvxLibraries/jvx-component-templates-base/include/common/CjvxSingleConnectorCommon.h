@@ -44,14 +44,14 @@ public:
 
 	jvxErrorType _reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
 	{
-		if (_common_set_io_common_ptr->_common_set_io_common.object)
+		if (T1::_common_set_io_common_ptr->_common_set_io_common.object)
 		{
-			_common_set_io_common_ptr->_common_set_io_common.object->request_specialization(nullptr, cpId, nullptr);
-			_common_set_io_common_ptr->_common_set_io_common.object->module_reference(modName, nullptr);
-			_common_set_io_common_ptr->_common_set_io_common.object->description(description);
+			T1::_common_set_io_common_ptr->_common_set_io_common.object->request_specialization(nullptr, cpId, nullptr);
+			T1::_common_set_io_common_ptr->_common_set_io_common.object->module_reference(modName, nullptr);
+			T1::_common_set_io_common_ptr->_common_set_io_common.object->description(description);
 			if (linkName)
 			{
-				std::string nmCon = _common_set_io_common_ptr->_common_set_io_common.descriptor + "<" + jvx_size2String(conId) + ">";
+				std::string nmCon = T1::_common_set_io_common_ptr->_common_set_io_common.descriptor + "<" + jvx_size2String(conId) + ">";
 				linkName->assign(nmCon);
 			}
 		}
