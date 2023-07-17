@@ -1,5 +1,5 @@
 
-#include "jvxGenericRS232Technologies/CjvxGenericRS232Device.h"
+#include "jvxGenericRs232Technologies/CjvxGenericRs232Device.h"
 
 #define STAT_LST_BAUDRATES_NUM 5
 static jvxSize stat_lst_baudrates[STAT_LST_BAUDRATES_NUM] = { 9600, 19200, 38400, 57600, 115200 };
@@ -40,19 +40,19 @@ static oneLocEntryStopbits stat_lst_stopbits[STAT_LST_STOPBITS_NUM] =
 // ==================================================================================================
 // ==================================================================================================
 
-CjvxGenericRS232Device::CjvxGenericRS232Device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+CjvxGenericRs232Device::CjvxGenericRs232Device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxGenericConnectionDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	// , jvxrtst_local(&jvxrtst_bkp_local.jvxos)
 {
 }
 
-CjvxGenericRS232Device::~CjvxGenericRS232Device()
+CjvxGenericRs232Device::~CjvxGenericRs232Device()
 {
 }
 
 
 jvxErrorType
-CjvxGenericRS232Device::put_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
+CjvxGenericRs232Device::put_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
 	jvxHandle* sectionToContainAllSubsectionsForMe,  const char* filename, jvxInt32 lineno)
 {
 	jvxSize i;
@@ -70,7 +70,7 @@ CjvxGenericRS232Device::put_configuration(jvxCallManagerConfiguration* callConf,
 }
 
 jvxErrorType
-CjvxGenericRS232Device::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
+CjvxGenericRs232Device::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	if (_common_set_min.theState >= JVX_STATE_SELECTED)
@@ -81,7 +81,7 @@ CjvxGenericRS232Device::get_configuration(jvxCallManagerConfiguration* callConf,
 }
 
 void 
-CjvxGenericRS232Device::select_connection_specific()
+CjvxGenericRs232Device::select_connection_specific()
 {
 	jvxSize i;
 	CjvxGenericRs232Device_pcg::init_all();
@@ -125,7 +125,7 @@ CjvxGenericRS232Device::select_connection_specific()
 }
 
 void
-CjvxGenericRS232Device::unselect_connection_specific()
+CjvxGenericRs232Device::unselect_connection_specific()
 {
 	// SPecific here
 	_lock_properties_local();
@@ -148,7 +148,7 @@ CjvxGenericRS232Device::unselect_connection_specific()
 }
 
 jvxErrorType
-CjvxGenericRS232Device::activate_connection_port()
+CjvxGenericRs232Device::activate_connection_port()
 {
 	
 
@@ -250,7 +250,7 @@ CjvxGenericRS232Device::activate_connection_port()
 }
 
 jvxErrorType
-CjvxGenericRS232Device::deactivate_connection_port()
+CjvxGenericRs232Device::deactivate_connection_port()
 {
 	// Last chance to transmit a "goodbye message"
 	this->goodbye_connection();

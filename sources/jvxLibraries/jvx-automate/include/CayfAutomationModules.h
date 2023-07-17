@@ -8,6 +8,7 @@ namespace CayfAutomationModules
 {	
 	JVX_INTERFACE ayfAutoConnect_callbacks
 	{
+	public:
 		virtual ~ayfAutoConnect_callbacks() {};
 		virtual jvxErrorType adapt_single_property_on_event(
 			jvxSize purposeId,

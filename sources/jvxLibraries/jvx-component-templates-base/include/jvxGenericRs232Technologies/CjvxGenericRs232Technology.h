@@ -3,7 +3,7 @@
 
 #include "jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.h"
 
-#include "pcg_CjvxGenericRS232Technology_pcg.h"
+#include "pcg_CjvxGenericRs232Technology_pcg.h"
 
 class CjvxGenericRs232Technology : public CjvxGenericConnectionTechnology, public CjvxGenericRs232Technology_pcg
 {

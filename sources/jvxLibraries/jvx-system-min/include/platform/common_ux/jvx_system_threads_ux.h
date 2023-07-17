@@ -6,7 +6,6 @@
 #define JVX_THREAD_PRIO_RT_PREEMPT_MAX 49
 
 #define JVX_THREAD_ID pthread_t
-#define JVX_THREAD_ID pthread_t
 
 #define JVX_THREAD_HANDLE pthread_t
 #define JVX_NULLTHREAD ((pthread_t)0)
@@ -79,6 +78,7 @@ JVX_STATIC_INLINE JVX_THREAD_PRIORITY JVX_GET_THREAD_PRIORITY(pthread_t a)
 }
 
 #define JVX_RETURN_THREAD(a) return((void*)((long long)a))
+#define JVX_THREAD_ID_INVALID 0
 #define JVX_GET_CURRENT_THREAD_ID pthread_self
 #define JVX_GET_CURRENT_THREAD_HANDLE pthread_self
 #define JVX_THREAD_RETURN_TYPE void*

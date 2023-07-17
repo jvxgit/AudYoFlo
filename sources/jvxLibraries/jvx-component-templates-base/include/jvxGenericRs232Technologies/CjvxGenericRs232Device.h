@@ -3,15 +3,15 @@
 
 #include "jvxGenericConnectionTechnologies/CjvxGenericConnectionDevice.h"
 
-#include "pcg_CjvxGenericRS232Device_pcg.h"
+#include "pcg_CjvxGenericRs232Device_pcg.h"
 
-class CjvxGenericRS232Device : public CjvxGenericConnectionDevice,
+class CjvxGenericRs232Device : public CjvxGenericConnectionDevice,
 	public CjvxGenericRs232Device_pcg
 {
 public:
-	JVX_CALLINGCONVENTION CjvxGenericRS232Device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	JVX_CALLINGCONVENTION CjvxGenericRs232Device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 
-	virtual JVX_CALLINGCONVENTION ~CjvxGenericRS232Device();
+	virtual JVX_CALLINGCONVENTION ~CjvxGenericRs232Device();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor, jvxHandle* sectionToContainAllSubsectionsForMe,

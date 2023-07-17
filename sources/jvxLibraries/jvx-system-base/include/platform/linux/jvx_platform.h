@@ -97,6 +97,8 @@
 
 #define JVX_HMODULE void*
 
+#define JVX_HMODULE_INVALID NULL
+
 #define JVX_INVALID_HANDLE_VALUE INVALID_HANDLE_VALUE
 
 //===============================================

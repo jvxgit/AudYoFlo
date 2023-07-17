@@ -158,10 +158,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	# This is now a template
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice.h
 	
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRS232Technologies/CjvxGenericRS232Technology.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRS232Technologies/CjvxGenericRS232Device.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRS232Technologies/CjvxGenericRS232Technology.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRS232Technologies/CjvxGenericRS232Device.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRs232Technologies/CjvxGenericRs232Technology.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericRs232Technologies/CjvxGenericRs232Device.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRs232Technologies/CjvxGenericRs232Technology.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericRs232Technologies/CjvxGenericRs232Device.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxGenericSocketTechnologies/CjvxGenericSocketTechnology.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxGenericSocketTechnologies/CjvxGenericSocketTechnology.h
@@ -246,8 +246,8 @@ set(LOCAL_PCG_FILES
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericConnectionTechnologies/CjvxGenericConnectionDevice_pcg.pcg
 	${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericConnectionTechnologies/CjvxGenericConnectionTextDevice_pcg.pcg
 
-	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericRS232Technology_pcg.pcg
-	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies/CjvxGenericRS232Device_pcg.pcg
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRs232Technologies/CjvxGenericRs232Technology_pcg.pcg
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRs232Technologies/CjvxGenericRs232Device_pcg.pcg
 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericSocketTechnologies/CjvxGenericSocketTechnology_pcg.pcg
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericSocketTechnologies/CjvxGenericSocketDevice_pcg.pcg
@@ -260,7 +260,7 @@ set(LOCAL_PCG_FILE_OPTIONS
 	-I ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxHosts
 	-I ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-dsp-base-cpp/pcg/jvxLogToFile
 	-I ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxDevices
-	-I ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRS232Technologies
+	-I ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxGenericRs232Technologies
 	)
 
 ## Add some dependencies which cmake seems not to find itsel (pcg -> header -> other header) 

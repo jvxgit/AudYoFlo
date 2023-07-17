@@ -7,6 +7,7 @@ namespace CayfAutomationModules
 {
 	JVX_INTERFACE CayfAutomationModuleHandlerIf
 	{
+	public:
 		virtual ~CayfAutomationModuleHandlerIf() {};
 
 		virtual jvxErrorType adapt_all_submodules(

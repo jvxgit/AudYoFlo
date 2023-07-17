@@ -1,7 +1,7 @@
 #include "jvx.h"
 
 #include "jvxGenericConnectionTechnologies/CjvxGenericConnectionTechnology.h"
-#include "jvxGenericRS232Technologies/CjvxGenericRS232Device.h"
+#include "jvxGenericRs232Technologies/CjvxGenericRs232Device.h"
 
 CjvxGenericConnectionTechnology::CjvxGenericConnectionTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)

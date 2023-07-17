@@ -2273,7 +2273,7 @@ CjvxFlexibleTextControlDevice::trigger_send_command(const std::string& cmd_name,
 				}
 			}
 
-			// CjvxGenericRS232TextDevice::activate_init_messages();
+			// CjvxGenericRs232TextDevice::activate_init_messages();
 			res = interact->add_message_queue(reinterpret_cast<oneMessage_hdr*>(&fld), reinterpret_cast<jvxHandle*>(this), 
 				(elmc->second.resp_ref_lst.size() != 0));
 			if (res != JVX_NO_ERROR)
@@ -2362,7 +2362,7 @@ CjvxFlexibleTextControlDevice::trigger_send_seq(const std::string& seq_name, jvx
 					}
 					else
 					{
-						// CjvxGenericRS232TextDevice::activate_init_messages();
+						// CjvxGenericRs232TextDevice::activate_init_messages();
 						res = interact->add_message_queue(reinterpret_cast<oneMessage_hdr*>(&fld),
 							reinterpret_cast<jvxHandle*>(this), elmc->expects_response);
 						if (res != JVX_NO_ERROR)

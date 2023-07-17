@@ -6,7 +6,7 @@
 
 #include "CjvxFlexibleTextControlDevice.h"
 
-// CjvxGenericRS232TextDevice
+// CjvxGenericRs232TextDevice
 template <class T>
 class CjvxFlexibleConnectionTextDevice : public T, public IjvxFlexibleTextControlDevice_interact
 {

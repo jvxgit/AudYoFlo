@@ -1,6 +1,6 @@
 #include "CjvxCuTGpsDevice.h"
 #include <sstream>
-#include "jvxGenericRS232Technologies/CjvxGenericRS232Device.h"
+#include "jvxGenericRs232Technologies/CjvxGenericRs232Device.h"
 
 CjvxCuTGpsDevice::CjvxCuTGpsDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
@@ -67,7 +67,7 @@ CjvxCuTGpsDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 {
 	jvxSize i;
 	std::vector<std::string> warns;
-	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice<CjvxGenericRS232Device>>::put_configuration(
+	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice<CjvxGenericRs232Device>>::put_configuration(
 		callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
 	if (res == JVX_NO_ERROR)
 	{
@@ -89,7 +89,7 @@ CjvxCuTGpsDevice::get_configuration(jvxCallManagerConfiguration* callConf,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	
-	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice<CjvxGenericRS232Device>>::get_configuration(callConf, processor, sectionWhereToAddAllSubsections);
+	jvxErrorType res = CjvxFlexibleConnectionTextDevice<CjvxGenericConnectionTextDevice<CjvxGenericRs232Device>>::get_configuration(callConf, processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{
 		genGpsRs232_device::get_configuration_all(callConf, processor, sectionWhereToAddAllSubsections);

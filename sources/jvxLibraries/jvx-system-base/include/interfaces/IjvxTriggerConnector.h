@@ -6,6 +6,7 @@ JVX_INTERFACE IjvxTriggerInputConnector;
 
 JVX_INTERFACE IjvxTriggerConnector
 {
+public:
 	virtual ~IjvxTriggerConnector() {};
 	
 	virtual jvxErrorType trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;

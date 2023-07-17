@@ -11,6 +11,7 @@ namespace CayfAutomationModules
 {
 	JVX_INTERFACE ayfAutoConnectSrc2Snk_callbacks : public ayfAutoConnect_callbacks
 	{
+	public:
 		virtual ~ayfAutoConnectSrc2Snk_callbacks() {};
 		virtual jvxErrorType allow_master_connect(
 			jvxSize purposeId,
