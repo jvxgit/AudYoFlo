@@ -115,7 +115,7 @@ CjvxInputConnectorCore::_unselect_connect_icon(IjvxConnectorBridge* bri, IjvxInp
 }
 
 jvxErrorType
-CjvxInputConnectorCore::_connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb), jvxBool forward)
+CjvxInputConnectorCore::_connect_connect_icon(jvxLinkDataDescriptor *theData, jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	_common_set_icon.theData_in = theData;

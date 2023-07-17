@@ -54,7 +54,7 @@ public:
 
 	// ===============================================================================
 
-	jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb), jvxBool forward);
+	jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor *theData, jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 	virtual jvxErrorType _connect_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
 
 	jvxErrorType _disconnect_connect_icon(jvxLinkDataDescriptor* theData, jvxBool forward JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));

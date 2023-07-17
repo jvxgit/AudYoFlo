@@ -6,7 +6,7 @@ virtual jvxErrorType JVX_CALLINGCONVENTION connect_connect_icon(jvxLinkDataDescr
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 	forward = false;
 #endif
-	return _connect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb), forward);
+	return _connect_connect_icon(theData, forward JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 };
 #endif
 

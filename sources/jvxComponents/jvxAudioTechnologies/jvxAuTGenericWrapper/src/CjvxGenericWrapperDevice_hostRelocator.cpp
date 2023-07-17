@@ -383,7 +383,7 @@ CjvxGenericWrapperDevice_hostRelocator::x_test_master(JVX_CONNECTION_FEEDBACK_TY
 jvxErrorType
 CjvxGenericWrapperDevice_hostRelocator::connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	CjvxInputOutputConnector::_connect_connect_icon(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb), false);
+	CjvxInputOutputConnector::_connect_connect_icon(theData, false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	return runtime.refDevice->connect_connect_icon_x(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
 
