@@ -359,20 +359,20 @@ CjvxAudioAlsaDevice::prepare()
 	{        
 		CjvxProperties::_lock_properties_local();
 
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.ratesselection.category,
-							     genAlsa_device::properties_active.ratesselection.globalIdx);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.sizesselection.category,
-							     genAlsa_device::properties_active.sizesselection.globalIdx);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.accessType.category,
-							     genAlsa_device::properties_active.accessType.globalIdx);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.formatType.category,
-							     genAlsa_device::properties_active.accessType.globalIdx);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.periodsInput.category,
-							     genAlsa_device::properties_active.accessType.globalIdx);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.periodsOutput.category,
-							     genAlsa_device::properties_active.accessType.globalIdx);
-		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genAlsa_device::properties_active.controlThreads.category,
-							     genAlsa_device::properties_active.controlThreads.globalIdx);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, 
+				genAlsa_device::properties_active.ratesselection);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, 
+				genAlsa_device::properties_active.sizesselection);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, 
+				genAlsa_device::properties_active.accessType);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, 
+				genAlsa_device::properties_active.formatType);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, 
+				genAlsa_device::properties_active.periodsInput);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, 
+				genAlsa_device::properties_active.periodsOutput);
+		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, 
+				genAlsa_device::properties_active.controlThreads);
 
 		CjvxProperties::_unlock_properties_local();
 	}
@@ -390,13 +390,20 @@ CjvxAudioAlsaDevice::postprocess()
 	{
 		CjvxProperties::_lock_properties_local();
 
-		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.ratesselection.category, genAlsa_device::properties_active.ratesselection.globalIdx);
-		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.sizesselection.category, genAlsa_device::properties_active.sizesselection.globalIdx);
-		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.accessType.category, genAlsa_device::properties_active.accessType.globalIdx);
-		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.formatType.category, genAlsa_device::properties_active.formatType.globalIdx);
-		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.periodsInput.category, genAlsa_device::properties_active.accessType.globalIdx);
-		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.periodsOutput.category, genAlsa_device::properties_active.accessType.globalIdx);
-		CjvxProperties::_undo_update_property_access_type(genAlsa_device::properties_active.controlThreads.category, genAlsa_device::properties_active.controlThreads.globalIdx);
+		CjvxProperties::_undo_update_property_access_type(
+				genAlsa_device::properties_active.ratesselection);
+		CjvxProperties::_undo_update_property_access_type(
+				genAlsa_device::properties_active.sizesselection);
+		CjvxProperties::_undo_update_property_access_type(
+				genAlsa_device::properties_active.accessType);
+		CjvxProperties::_undo_update_property_access_type(
+				genAlsa_device::properties_active.formatType);
+		CjvxProperties::_undo_update_property_access_type(
+				genAlsa_device::properties_active.periodsInput);
+		CjvxProperties::_undo_update_property_access_type(
+				genAlsa_device::properties_active.periodsOutput);
+		CjvxProperties::_undo_update_property_access_type(
+				genAlsa_device::properties_active.controlThreads);
 
 		CjvxProperties::_unlock_properties_local();
 	}
@@ -557,14 +564,14 @@ CjvxAudioAlsaDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
     
 
     // Prepare link data datatype
-    _common_set_ldslave.theData_out.con_compat.buffersize = _inproc.buffersize;
-    _common_set_ldslave.theData_out.con_params.buffersize = _inproc.buffersize;
-    _common_set_ldslave.theData_out.con_params.format = _inproc.format;
-    _common_set_ldslave.theData_out.con_data.buffers = NULL;
-    _common_set_ldslave.theData_out.con_data.number_buffers = 1;
-    _common_set_ldslave.theData_out.con_params.number_channels = _inproc.numInputs;
-    _common_set_ldslave.theData_out.con_params.rate = CjvxAudioDevice::properties_active.samplerate.value;
-    //_common_set_ldslave.theData_out.pipeline.idx_stage = 0;
+    _common_set_ocon.theData_out.con_compat.buffersize = _inproc.buffersize;
+    _common_set_ocon.theData_out.con_params.buffersize = _inproc.buffersize;
+    _common_set_ocon.theData_out.con_params.format = _inproc.format;
+    _common_set_ocon.theData_out.con_data.buffers = NULL;
+    _common_set_ocon.theData_out.con_data.number_buffers = 1;
+    _common_set_ocon.theData_out.con_params.number_channels = _inproc.numInputs;
+    _common_set_ocon.theData_out.con_params.rate = CjvxAudioDevice::properties_active.samplerate.value;
+    //_common_set_ocon.theData_out.pipeline.idx_stage = 0;
 
     // New type of connection by propagating through linked elements
     res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -585,8 +592,8 @@ CjvxAudioAlsaDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
     JVX_GET_TICKCOUNT_US_SETREF(&inProcessing.theTimestamp);
     inProcessing.timestamp_previous = -1;
-    inProcessing.deltaT_theory_us = (jvxData) _common_set_ldslave.theData_out.con_params.buffersize /
-	(jvxData) _common_set_ldslave.theData_out.con_params.rate * 1000.0 * 1000.0;
+    inProcessing.deltaT_theory_us = (jvxData) _common_set_ocon.theData_out.con_params.buffersize /
+	(jvxData) _common_set_ocon.theData_out.con_params.rate * 1000.0 * 1000.0;
     inProcessing.deltaT_average_us = 0;
 
     return(res);
@@ -666,19 +673,19 @@ CjvxAudioAlsaDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	// This is the return from the link list
 
-	_common_set_ldslave.theData_in->con_params.buffersize = _inproc.buffersize;
-	_common_set_ldslave.theData_in->con_params.format = _inproc.format;
-	_common_set_ldslave.theData_in->con_data.buffers = NULL;
-	_common_set_ldslave.theData_in->con_data.number_buffers = JVX_MAX(_common_set_ldslave.theData_in->con_data.number_buffers, 1);
-	_common_set_ldslave.theData_in->con_params.number_channels = _inproc.numOutputs;
-	_common_set_ldslave.theData_in->con_params.rate = _inproc.samplerate;
+	_common_set_icon.theData_in->con_params.buffersize = _inproc.buffersize;
+	_common_set_icon.theData_in->con_params.format = _inproc.format;
+	_common_set_icon.theData_in->con_data.buffers = NULL;
+	_common_set_icon.theData_in->con_data.number_buffers = JVX_MAX(_common_set_icon.theData_in->con_data.number_buffers, 1);
+	_common_set_icon.theData_in->con_params.number_channels = _inproc.numOutputs;
+	_common_set_icon.theData_in->con_params.rate = _inproc.samplerate;
 
 	// Connect the output side and start this link
 	res = allocate_pipeline_and_buffers_prepare_to();
 
 	// Do not attach any user hint into backward direction
-	_common_set_ldslave.theData_in->con_compat.user_hints = NULL;
-	// _common_set_ldslave.theData_in->pipeline.idx_stage = 0;
+	_common_set_icon.theData_in->con_compat.user_hints = NULL;
+	// _common_set_icon.theData_in->pipeline.idx_stage = 0;
 
 	return res;
 }
@@ -745,8 +752,8 @@ CjvxAudioAlsaDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
     if(res == JVX_NO_ERROR)
     {
         if(
-                (_common_set_ldslave.theData_out.con_params.format == JVX_DATAFORMAT_16BIT_LE) &&
-                (_common_set_ldslave.theData_in->con_params.format == JVX_DATAFORMAT_16BIT_LE))
+                (_common_set_ocon.theData_out.con_params.format == JVX_DATAFORMAT_16BIT_LE) &&
+                (_common_set_icon.theData_in->con_params.format == JVX_DATAFORMAT_16BIT_LE))
         {
             std::cout << "Trying to auto-switch access mode in ALSA Driver to <SND_PCM_FORMAT_S16_LE>." << std::endl;
             for(i = 0; i < genAlsa_device::properties_active.formatType.value.entries.size(); i++)
@@ -765,8 +772,8 @@ CjvxAudioAlsaDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
             }
         }
         if(
-                (_common_set_ldslave.theData_out.con_params.format == JVX_DATAFORMAT_32BIT_LE) &&
-                (_common_set_ldslave.theData_in->con_params.format == JVX_DATAFORMAT_32BIT_LE))
+                (_common_set_ocon.theData_out.con_params.format == JVX_DATAFORMAT_32BIT_LE) &&
+                (_common_set_icon.theData_in->con_params.format == JVX_DATAFORMAT_32BIT_LE))
         {
             std::cout << "Trying to auto-switch access mode in ALSA Driver to <SND_PCM_FORMAT_S32_LE>." << std::endl;
             for(i = 0; i < genAlsa_device::properties_active.formatType.value.entries.size(); i++)

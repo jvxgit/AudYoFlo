@@ -401,32 +401,32 @@ CjvxAudioAlsaDevice::read_write_loop_inclass_pspon()
 			{
 				jvxTick tt = JVX_GET_TICKCOUNT_US_GET_CURRENT(&runtime.inAction.refTimer);
 
-				if (_common_set_ldslave.theData_out.con_link.connect_to)
+				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-				    _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+				    _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 				}
 				
-				jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-				jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+				jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+				jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 
 				// Samples from HW buffers to SW buffers
 				copyBuffers_hwToSw_interleaved(runtime.theArea_rw_input,
-							       _common_set_ldslave.theData_out.con_data.buffers[idxToProc],
+							       _common_set_ocon.theData_out.con_data.buffers[idxToProc],
 							       0, runtime.inAction.buffersize);
 
 				/*============ PASS SAMPLES TO PROCESSING UNIT ==================*/
-				if (_common_set_ldslave.theData_out.con_link.connect_to)
+				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-				    _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+				    _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 				}
 				
 				// Samples from SW buffers to HW buffers
-				copyBuffers_swToHw_interleaved(runtime.theArea_rw_output, _common_set_ldslave.theData_in->con_data.buffers[idxFromProc],
+				copyBuffers_swToHw_interleaved(runtime.theArea_rw_output, _common_set_icon.theData_in->con_data.buffers[idxFromProc],
 						0, runtime.inAction.buffersize);
 
-				if (_common_set_ldslave.theData_out.con_link.connect_to)
+				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-				    _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+				    _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 				}
 
 #ifdef WRITE_LOGFILE
@@ -565,28 +565,28 @@ CjvxAudioAlsaDevice::read_write_loop_inclass_pspoff()
 		{
 			jvxTick tt = JVX_GET_TICKCOUNT_US_GET_CURRENT(&runtime.inAction.refTimer);
 
-			if (_common_set_ldslave.theData_out.con_link.connect_to)
+			if (_common_set_ocon.theData_out.con_link.connect_to)
 			{
-			    _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+			    _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 			}
 
-			jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-			jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+			jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+			jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 
 			// Samples from HW buffers to SW buffers
-			copyBuffers_hwToSw_interleaved(runtime.theArea_rw_input, _common_set_ldslave.theData_out.con_data.buffers[idxToProc], 0, runtime.inAction.buffersize);
+			copyBuffers_hwToSw_interleaved(runtime.theArea_rw_input, _common_set_ocon.theData_out.con_data.buffers[idxToProc], 0, runtime.inAction.buffersize);
 
 			/*============ PASS SAMPLES TO PROCESSING UNIT ==================*/
-			if (_common_set_ldslave.theData_out.con_link.connect_to)
+			if (_common_set_ocon.theData_out.con_link.connect_to)
 			{
-			    _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+			    _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 			}
 			
-			copyBuffers_swToHw_interleaved(runtime.theArea_rw_output, _common_set_ldslave.theData_in->con_data.buffers[idxFromProc], 0, runtime.inAction.buffersize);
+			copyBuffers_swToHw_interleaved(runtime.theArea_rw_output, _common_set_icon.theData_in->con_data.buffers[idxFromProc], 0, runtime.inAction.buffersize);
 
-			if (_common_set_ldslave.theData_out.con_link.connect_to)
+			if (_common_set_ocon.theData_out.con_link.connect_to)
 			{
-			    _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			    _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 			}
 			
 			if (runtime.inAction.output.pcmHandle)
@@ -731,14 +731,14 @@ CjvxAudioAlsaDevice::mmap_read_write_loop_inclass()
 			frames = runtime.inAction.buffersize;
 			err = snd_pcm_mmap_begin(runtime.inAction.output.pcmHandle, &my_areas, &offset, &frames);
 
-			jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+			jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 	
-			this->copyBuffers_swToHw_interleaved(my_areas, _common_set_ldslave.theData_in->con_data.buffers[idxFromProc], offset, frames);
+			this->copyBuffers_swToHw_interleaved(my_areas, _common_set_icon.theData_in->con_data.buffers[idxFromProc], offset, frames);
 			commitres = snd_pcm_mmap_commit(runtime.inAction.output.pcmHandle, offset, frames);
 
-			if (_common_set_ldslave.theData_out.con_link.connect_to)
+			if (_common_set_ocon.theData_out.con_link.connect_to)
 			{
-			    _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			    _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 			}
 
 			// Now input side
@@ -757,22 +757,22 @@ CjvxAudioAlsaDevice::mmap_read_write_loop_inclass()
 				err = snd_pcm_mmap_begin(runtime.inAction.input.pcmHandle, &my_areas, &offset, &frames);
 				frames = runtime.inAction.buffersize;
 
-				if (_common_set_ldslave.theData_out.con_link.connect_to)
+				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-				    _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+				    _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 				}
 
-				jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+				jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 	
-				this->copyBuffers_hwToSw_interleaved(my_areas, _common_set_ldslave.theData_out.con_data.buffers[idxToProc], offset, frames);
+				this->copyBuffers_hwToSw_interleaved(my_areas, _common_set_ocon.theData_out.con_data.buffers[idxToProc], offset, frames);
 				commitres = snd_pcm_mmap_commit(runtime.inAction.input.pcmHandle, offset, frames);
 
 				jvxTick tt = JVX_GET_TICKCOUNT_US_GET_CURRENT(&runtime.inAction.refTimer);
 
 				/*============ PASS SAMPLES TO PROCESSING UNIT ==================*/
-				if (_common_set_ldslave.theData_out.con_link.connect_to)
+				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-				    _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+				    _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 				}	
 			}				//if(avail >= 0)
 			else
@@ -922,27 +922,27 @@ CjvxAudioAlsaDevice::read_write_callback()
 	{
 		jvxTick tt = JVX_GET_TICKCOUNT_US_GET_CURRENT(&runtime.inAction.refTimer);
 
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-		    _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+		    _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		}
 		
-		jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
-		jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+		jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+		jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 		
-		this->copyBuffers_hwToSw_interleaved(runtime.theArea_rw_input, _common_set_ldslave.theData_out.con_data.buffers[idxToProc], 0, runtime.inAction.buffersize);
+		this->copyBuffers_hwToSw_interleaved(runtime.theArea_rw_input, _common_set_ocon.theData_out.con_data.buffers[idxToProc], 0, runtime.inAction.buffersize);
 
 		/*============ PASS SAMPLES TO PROCESSING UNIT ==================*/
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-		    _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+		    _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 		}
 
-		this->copyBuffers_swToHw_interleaved(runtime.theArea_rw_output, _common_set_ldslave.theData_in->con_data.buffers[idxFromProc], 0, runtime.inAction.buffersize);
+		this->copyBuffers_swToHw_interleaved(runtime.theArea_rw_output, _common_set_icon.theData_in->con_data.buffers[idxFromProc], 0, runtime.inAction.buffersize);
 
-		if (_common_set_ldslave.theData_out.con_link.connect_to)
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-		    _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+		    _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 		}		
 
 #ifdef WRITE_LOGFILE
@@ -1100,7 +1100,7 @@ CjvxAudioAlsaDevice::mmap_callback()
 		frames = runtime.inAction.buffersize;
 		err = snd_pcm_mmap_begin(runtime.inAction.output.pcmHandle, &my_areas, &offset, &frames);
 
-		jvxSize idxFromProc = *_common_set_ldslave.theData_in->con_pipeline.idx_stage_ptr;
+		jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 		
 		if (err == 0)
 		{
@@ -1117,7 +1117,7 @@ CjvxAudioAlsaDevice::mmap_callback()
 				//std::cout << "offset: " << offset << ", frames:" << frames << std::endl;
 				readComplete = true;
 
-				switch (_common_set_ldslave.theData_in->con_params.format)
+				switch (_common_set_icon.theData_in->con_params.format)
 				{
 				case JVX_DATAFORMAT_DATA:
 
@@ -1130,7 +1130,7 @@ CjvxAudioAlsaDevice::mmap_callback()
 							jvxInt32 idMap = inProcessing.map_output_chans[i];
 							if(idMap >= 0)
 							{
-								jvxData* ptrSrc_dbl = (jvxData*) _common_set_ldslave.theData_in->con_data.buffers[idxFromProc][i];
+								jvxData* ptrSrc_dbl = (jvxData*) _common_set_icon.theData_in->con_data.buffers[idxFromProc][i];
 								jvxInt32* ptrTarget_int32 = (jvxInt32*) my_areas[idMap].addr;
                                 ptrTarget_int32 += my_areas[idMap].first / 32;
                                 ptrTarget_int32 += offset * my_areas[idMap].step / 32;
@@ -1152,7 +1152,7 @@ CjvxAudioAlsaDevice::mmap_callback()
 							jvxInt32 idMap = inProcessing.map_output_chans[i];
 							if (idMap >= 0)
 							{
-							    jvxData* ptrSrc_dbl = (jvxData*) _common_set_ldslave.theData_in->con_data.buffers[idxFromProc][i];
+							    jvxData* ptrSrc_dbl = (jvxData*) _common_set_icon.theData_in->con_data.buffers[idxFromProc][i];
 								jvxInt16* ptrTarget_int16 = (jvxInt16*) my_areas[idMap].addr;
 								ptrTarget_int16 += my_areas[i].first / 16;
 								ptrTarget_int16 += offset * my_areas[i].step / 16;
@@ -1179,9 +1179,9 @@ CjvxAudioAlsaDevice::mmap_callback()
 			}
 			commitres = snd_pcm_mmap_commit(runtime.inAction.output.pcmHandle, offset, frames);
 
-			if (_common_set_ldslave.theData_out.con_link.connect_to)
+			if (_common_set_ocon.theData_out.con_link.connect_to)
 			{
-			    _common_set_ldslave.theData_out.con_link.connect_to->process_stop_icon();
+			    _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 			}
 		}
 
@@ -1203,15 +1203,15 @@ CjvxAudioAlsaDevice::mmap_callback()
 			{
 				writeComplete = true;
 
-				if (_common_set_ldslave.theData_out.con_link.connect_to)
+				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-				    _common_set_ldslave.theData_out.con_link.connect_to->process_start_icon();
+				    _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 				}
 
-				jvxSize idxToProc = *_common_set_ldslave.theData_out.con_pipeline.idx_stage_ptr;
+				jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
 	
 				// Convert the input
-				switch (_common_set_ldslave.theData_out.con_params.format)
+				switch (_common_set_ocon.theData_out.con_params.format)
 				{
 				case JVX_DATAFORMAT_DATA:
 
@@ -1224,7 +1224,7 @@ CjvxAudioAlsaDevice::mmap_callback()
 							jvxInt32 idMap = inProcessing.map_output_chans[i];
 							if (idMap >= 0)
 							{
-								jvxData* ptrTarget_dbl = (jvxData*) _common_set_ldslave.theData_out.con_data.buffers[idxToProc][i];
+								jvxData* ptrTarget_dbl = (jvxData*) _common_set_ocon.theData_out.con_data.buffers[idxToProc][i];
 								jvxInt32* ptrSrc_int32 = (jvxInt32*) my_areas[idMap].addr;
 								ptrSrc_int32 += my_areas[i].first / 32;
 								ptrSrc_int32 += offset * my_areas[i].step / 32;
@@ -1244,7 +1244,7 @@ CjvxAudioAlsaDevice::mmap_callback()
 							jvxInt32 idMap = inProcessing.map_output_chans[i];
 							if (idMap >= 0)
 							{
-								jvxData* ptrTarget_dbl = (jvxData*) _common_set_ldslave.theData_out.con_data.buffers[idxToProc][i];
+								jvxData* ptrTarget_dbl = (jvxData*) _common_set_ocon.theData_out.con_data.buffers[idxToProc][i];
 								jvxInt16* ptrSrc_int16 = (jvxInt16*) my_areas[i].addr;
 								ptrSrc_int16 += my_areas[i].first / 16;
 								ptrSrc_int16 += offset * my_areas[i].step / 16;
@@ -1266,9 +1266,9 @@ CjvxAudioAlsaDevice::mmap_callback()
 
 			/*============ PASS SAMPLES TO PROCESSING UNIT ==================*/
 			// I am the master. I will start the chain here!
-			if (_common_set_ldslave.theData_out.con_link.connect_to)
+			if (_common_set_ocon.theData_out.con_link.connect_to)
 			{
-			    _common_set_ldslave.theData_out.con_link.connect_to->process_buffers_icon();
+			    _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 			}
 
 			//runtime.ram.numOutputs, runtime.ram.numInputs,
@@ -1421,7 +1421,7 @@ CjvxAudioAlsaDevice::fillBuffersBeforeStart_mmap()
 				resA = snd_pcm_mmap_begin(runtime.inAction.output.pcmHandle, &my_areas, &offset, &frames);
 				if (resA == 0)
 				{
-					this->copyBuffers_swToHw_interleaved(my_areas, _common_set_ldslave.theData_in->con_data.buffers[0], offset, frames);
+					this->copyBuffers_swToHw_interleaved(my_areas, _common_set_icon.theData_in->con_data.buffers[0], offset, frames);
 				}
 				resA = snd_pcm_mmap_commit(runtime.inAction.output.pcmHandle, offset, frames);
 				if(stillToWrite >= 0)
@@ -1447,7 +1447,7 @@ CjvxAudioAlsaDevice::fillBuffersBeforeStart_mmap()
 			resA = snd_pcm_mmap_begin(runtime.inAction.input.pcmHandle, &my_areas, &offset, &frames);
 			if (resA == 0)
 			{
-				this->copyBuffers_hwToSw_interleaved(my_areas, _common_set_ldslave.theData_out.con_data.buffers[0], offset, frames);
+				this->copyBuffers_hwToSw_interleaved(my_areas, _common_set_ocon.theData_out.con_data.buffers[0], offset, frames);
 			}
 			resA = snd_pcm_mmap_commit(runtime.inAction.input.pcmHandle, offset, frames);
 			numSamplesInFifo = snd_pcm_avail_update(runtime.inAction.input.pcmHandle);
@@ -1468,7 +1468,7 @@ CjvxAudioAlsaDevice::copyBuffers_hwToSw_interleaved(const snd_pcm_channel_area_t
 	int i, j;
 
 	int step = runtime.ram.szOneElement_hw * 8;
-	switch (_common_set_ldslave.theData_out.con_params.format)
+	switch (_common_set_ocon.theData_out.con_params.format)
 	{
 	case JVX_DATAFORMAT_DATA:
 
@@ -1658,7 +1658,7 @@ CjvxAudioAlsaDevice::copyBuffers_swToHw_interleaved(const snd_pcm_channel_area_t
 {
 	int i, j;
 	int step = runtime.ram.szOneElement_hw * 8;
-	switch (_common_set_ldslave.theData_out.con_params.format)
+	switch (_common_set_ocon.theData_out.con_params.format)
 	{
 	case JVX_DATAFORMAT_DATA:
 
@@ -2849,10 +2849,10 @@ CjvxAudioAlsaDevice::prepareAlsa()
 	assert(idFound >= 0);
 
 	runtime.inAction.format = detectedProps.availableFormatTypes[idFound];
-	runtime.inAction.sRate = _common_set_ldslave.theData_out.con_params.rate;
+	runtime.inAction.sRate = _common_set_ocon.theData_out.con_params.rate;
 	runtime.inAction.periodsInput = genAlsa_device::properties_active.periodsInput.value.val();
 	runtime.inAction.periodsOutput = genAlsa_device::properties_active.periodsOutput.value.val();
-	runtime.inAction.buffersize = _common_set_ldslave.theData_out.con_params.buffersize;
+	runtime.inAction.buffersize = _common_set_ocon.theData_out.con_params.buffersize;
 	runtime.inAction.asyncCallback = shareWithUi.asyncCallbacks;
 
 #ifdef WRITE_LOGFILE
@@ -2897,8 +2897,8 @@ CjvxAudioAlsaDevice::prepareAlsa()
 
 	std::cout << "ALSA: Access Type selection: " << accessTypesStrings[runtime.inAction.accessMode] << std::endl;
 	std::cout << "ALSA: Format Type selection: " << formatTypesStrings[runtime.inAction.format] << std::endl;
-	std::cout << "ALSA: Samplerate selection: " << _common_set_ldslave.theData_out.con_params.rate << std::endl;
-	std::cout << "ALSA: Buffersize selection: " << _common_set_ldslave.theData_out.con_params.buffersize << std::endl;
+	std::cout << "ALSA: Samplerate selection: " << _common_set_ocon.theData_out.con_params.rate << std::endl;
+	std::cout << "ALSA: Buffersize selection: " << _common_set_ocon.theData_out.con_params.buffersize << std::endl;
 	std::cout << "ALSA: Period selection input: " << runtime.inAction.periodsInput << std::endl;
 	std::cout << "ALSA: Period selection output: " << runtime.inAction.periodsOutput << std::endl;
 	std::cout << "ALSA: Async Callback: " << runtime.inAction.asyncCallback << std::endl;
