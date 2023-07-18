@@ -4,30 +4,38 @@ message("--> configuring ffmpeg")
 
 if(${JVX_OS} MATCHES "windows")
 	
-	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg)
+	if(JVX_PLATFORM MATCHES "32bit")
+		set(JVX_FFMPEG_POSTFIX "win32")
+	else()
+		set(JVX_FFMPEG_POSTFIX "x64")
+	endif()
+	
+	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX})
 
 		FIND_PROGRAM(msys2 "msys2_shell.cmd" REQUIRED)
 		message("ffmpeg sub project not available. Starting script to download it.") 
 		message("This is going to take a while..") 
-		message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh") 
-		execute_process(COMMAND ${msys2} -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh")
+		message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX}") 
+		execute_process(COMMAND ${msys2} -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX}")
 		message("ffmpeg installation complete.")
 	endif()
 
-	set(JVX_FFMPEG_LIB_AVCODEC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libavcodec.a")
-	set(JVX_FFMPEG_LIB_AVDEVICE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libavdevice.a")
-	set(JVX_FFMPEG_LIB_AVFILTER "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libavfilter.a")
-	set(JVX_FFMPEG_LIB_AVFORMAT "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libavformat.a")
-	set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libavutil.a")
-	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libswresample.a")
-	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/lib/libswscale.a")
+	## message(FATAL_ERROR "Wait here!")
+	
+	set(JVX_FFMPEG_LIB_AVCODEC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavcodec.a")
+	set(JVX_FFMPEG_LIB_AVDEVICE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavdevice.a")
+	set(JVX_FFMPEG_LIB_AVFILTER "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavfilter.a")
+	set(JVX_FFMPEG_LIB_AVFORMAT "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavformat.a")
+	set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavutil.a")
+	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswresample.a")
+	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswscale.a")
 
-	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg" CACHE INTERNAL "ffmpeg source code path (windows)")
+	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}" CACHE INTERNAL "ffmpeg source code path (windows)")
 	
 	set(JVX_FFMPEG_INCLUDE_DIR 
-		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg"	
-		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/compat/atomics/win32" CACHE INTERNAL "ffmpeg include path (windows)")
+		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}"	
+		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/include"
+		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/compat/atomics/win32" CACHE INTERNAL "ffmpeg include path (windows)")
 		
 	set(JVX_FFMPEG_LIBS 
 		${JVX_FFMPEG_LIB_AVCODEC}

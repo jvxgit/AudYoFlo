@@ -3,8 +3,16 @@
 # Rn this script as follows:
 # msys2_shell.cmd -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh"
 
-if [ ! -d "ffmpeg" ]; then
+#postfix="x64"
+#if [ $# -ge 1 ]; then 
+	postfix=$1
+# fi
 
+folder="ffmpeg-$postfix"
+
+echo "Checking for existence of folder $folder"
+if [ ! -d $folder ]; then
+	
 	# Commit id = 05438db02437e241a418e266a354bf4e7be7ac59
 	echo git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
@@ -41,14 +49,18 @@ if [ ! -d "ffmpeg" ]; then
 
 	echo patch -R -p0 --binary <  ffmpeg-dbg-rtmp.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-rtmp.patch
-
+	
+	mv ffmpeg $folder
+else
+	echo "Folder $folder already exists"
 fi
 
-if [ -d "ffmpeg" ]; then
+if [ -d $folder ]; then
 	
-	echo cd ffmpeg
-	cd ffmpeg
+	echo cd $folder
+	cd $folder
 	
+	echo "Checking for existence of subfolder lib"
 	if [ ! -d "lib" ]; then
 		
 		echo ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --prefix=./
@@ -78,5 +90,7 @@ if [ -d "ffmpeg" ]; then
 	
 		echo make install
 		make install
+	else
+		echo "Subfolder lib already exists"
 	fi
 fi
