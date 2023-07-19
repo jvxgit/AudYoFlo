@@ -14,7 +14,7 @@ realtimeViewerPlots::realtimeViewerPlots(QWidget* parent, CjvxRealtimeViewer* th
 	connect(this, SIGNAL(emit_updateWindow_redraw_all()), this, SLOT(updateWindow_redraw_all()), Qt::QueuedConnection);
 
 	// Set reference for low level function calls
-	this->setProperty("BASE_REALTIMEVIEWER", qVariantFromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
+	this->setProperty("BASE_REALTIMEVIEWER", QVariant::fromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
 //	this->selectionUser.description = "No description";
 //	selectionUser.idInsert = -1;
 }

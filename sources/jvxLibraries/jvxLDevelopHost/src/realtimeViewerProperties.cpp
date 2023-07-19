@@ -47,7 +47,7 @@ realtimeViewerProperties::realtimeViewerProperties(QWidget* parent, CjvxRealtime
 	myCallback.callback_item = callbackUpdateField;
 	myCallback.privData = reinterpret_cast<jvxHandle*>(this);
 
-	this->setProperty("BASE_REALTIMEVIEWER", qVariantFromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
+	this->setProperty("BASE_REALTIMEVIEWER", QVariant::fromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
 
 //	this->selectionUser.description = "No description";
 //	selectionUser.idInsert = -1;

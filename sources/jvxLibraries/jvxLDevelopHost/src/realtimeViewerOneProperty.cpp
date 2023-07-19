@@ -70,7 +70,7 @@ realtimeViewerOneProperty::realtimeViewerOneProperty(realtimeViewerProperties* p
 	references.itemId = itemId;
 
 	// Set reference for low level function calls
-	this->setProperty("BASE_REALTIMEVIEWER", qVariantFromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
+	this->setProperty("BASE_REALTIMEVIEWER", QVariant::fromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
 };
 
 realtimeViewerOneProperty::~realtimeViewerOneProperty()
@@ -1754,7 +1754,7 @@ realtimeViewerOneProperty::updateWindow_contents(jvxBool& requiresRedraw, jvxBoo
 								{
 									const QColor color(Qt::white);
 									const QModelIndex idx = theItemData->combo_box->model()->index((int)i, 0);
-									theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundColorRole);
+									theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundRole);
 								}
 
 								theItemData->button_3->setEnabled(false);
@@ -1766,7 +1766,7 @@ realtimeViewerOneProperty::updateWindow_contents(jvxBool& requiresRedraw, jvxBoo
 									theItemData->combo_box->setCurrentIndex((int)theItemData->selection);
 									const QColor color(Qt::red);
 									const QModelIndex idx = theItemData->combo_box->model()->index((int)theItemData->selection, 0);
-									theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundColorRole);
+									theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundRole);
 
 								}
 							}
@@ -1812,15 +1812,14 @@ realtimeViewerOneProperty::updateWindow_contents(jvxBool& requiresRedraw, jvxBoo
 							{
 								const QColor color(Qt::white);
 								const QModelIndex idx = theItemData->combo_box->model()->index((int)i, 0);
-								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundColorRole);
+								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundRole);
 							}
 							if(JVX_CHECK_SIZE_SELECTED(theItemData->selection) && (theItemData->selection < (jvxInt16)selList.strList.ll()))
 							{
 								theItemData->combo_box->setCurrentIndex((int)theItemData->selection);
 								const QColor color(Qt::red);
 								const QModelIndex idx = theItemData->combo_box->model()->index((int)theItemData->selection, 0);
-								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundColorRole);
-
+								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundRole);
 							}
 							break;
 
@@ -1863,15 +1862,14 @@ realtimeViewerOneProperty::updateWindow_contents(jvxBool& requiresRedraw, jvxBoo
 							{
 								const QColor color(Qt::white);
 								const QModelIndex idx = theItemData->combo_box->model()->index((int)i, 0);
-								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundColorRole);
+								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundRole);
 							}
 							if(JVX_CHECK_SIZE_SELECTED(theItemData->selection) && (theItemData->selection < (jvxInt16)selList.strList.ll()))
 							{
 								theItemData->combo_box->setCurrentIndex((int)theItemData->selection);
 								const QColor color(Qt::red);
 								const QModelIndex idx = theItemData->combo_box->model()->index((int)theItemData->selection, 0);
-								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundColorRole);
-
+								theItemData->combo_box->model()->setData(idx, color, Qt::BackgroundRole);
 							}
 							break;
 

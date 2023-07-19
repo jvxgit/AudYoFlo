@@ -245,13 +245,13 @@ jvxAcousticMeasure::mouse_dblclick_td(QMouseEvent* event)
 void
 jvxAcousticMeasure::mouse_wheel_td(QWheelEvent* event)
 {
-	QPoint pt = event->pos();
+	QPointF pt = event->position();
 	jvxData pos_x = qcp_timedomain->xAxis->pixelToCoord(pt.x());
 	jvxData pos_y = qcp_timedomain->yAxis->pixelToCoord(pt.y());
 
 	if (mouseMode == JVX_MOUSE_MODE_EDIT_DIAGRAM)
 	{
-		int dd = event->delta();
+		int dd = event->angleDelta().y();
 
 		if (td.autox == false)
 		{
@@ -532,10 +532,10 @@ jvxAcousticMeasure::mouse_dblclick_sec(QMouseEvent *event)
 void
 jvxAcousticMeasure::mouse_wheel_sec(QWheelEvent *event)
 {
-	QPoint pt = event->pos();
+	QPointF pt = event->position();
 	jvxData pos_x = qcp_secondary->xAxis->pixelToCoord(pt.x());
 	jvxData pos_y = qcp_secondary->yAxis->pixelToCoord(pt.y());
-	int dd = event->delta();
+	int dd = event->angleDelta().y();
 
 	if (mouseMode == JVX_MOUSE_MODE_EDIT_DIAGRAM)
 	{

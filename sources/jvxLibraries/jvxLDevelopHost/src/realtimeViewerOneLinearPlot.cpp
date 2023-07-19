@@ -25,7 +25,7 @@ realtimeViewerOneLinearPlot::realtimeViewerOneLinearPlot(realtimeViewerPlots* pa
 	plot.theLegend = NULL;
 
 	// Set reference for low level function calls
-	this->setProperty("BASE_REALTIMEVIEWER", qVariantFromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
+	this->setProperty("BASE_REALTIMEVIEWER", QVariant::fromValue(reinterpret_cast<void*>(static_cast<realtimeViewer_base*>(this))));
 }
 
 /**

@@ -27,7 +27,7 @@ namespace JVX_PROJECT_NAMESPACE {
 		this->clippingUpdateTimer = new QTimer(this);
 		this->clippingReleaseTimer = new QTimer(this);
 
-		this->lastSelectFileDir = QDir::homePath();
+		this->lastSelectFileDir.setPath( QDir::homePath() );
 
 		thePropRef_algo = NULL;
 		thePropRef_dev = NULL;
