@@ -95,7 +95,7 @@ public:
 			filename, lineno);
 		if (res == JVX_NO_ERROR)
 		{
-			if (_common_set_min.theState >= JVX_STATE_SELECTED)
+			if (T::_common_set_min.theState >= JVX_STATE_SELECTED)
 			{
 				CjvxGenericConnectionTextDevice_pcg::put_configuration_all(callConf, processor,
 					sectionToContainAllSubsectionsForMe, &warns);
@@ -115,7 +115,7 @@ public:
 			sectionWhereToAddAllSubsections);
 		if (res == JVX_NO_ERROR)
 		{
-			if (_common_set_min.theState >= JVX_STATE_SELECTED)
+			if (T::_common_set_min.theState >= JVX_STATE_SELECTED)
 			{
 				CjvxGenericConnectionTextDevice_pcg::get_configuration_all(callConf, processor,
 					sectionWhereToAddAllSubsections);
@@ -176,7 +176,7 @@ public:
 		jvxErrorType res = T::_pre_check_activate();
 		if (res == JVX_NO_ERROR)
 		{
-			message_queue.sz_mqueue_elements = sizeof(oneMessage_hdr) + sizeof(oneMessageContent);
+			T::message_queue.sz_mqueue_elements = sizeof(oneMessage_hdr) + sizeof(oneMessageContent);
 			jvx_bitFClear(reportEventDataAvail);
 			res = T::activate();
 		}
@@ -210,13 +210,14 @@ public:
 		mess->tp = JVX_GENERIC_CONNECTION_GENERIC_MESSAGE;
 		mess->retrans_cnt = 0;
 
-		JVX_LOCK_MUTEX(safeAccessChannel);
-		mess->mId = mIdMessages++;
-		JVX_UNLOCK_MUTEX(safeAccessChannel);
+		T::lock_channel();
+		//T::lock_channel();
+		mess->mId = T::mIdMessages++;
+		T::unlock_channel();
 
 		mess->uId = uId; // Only one type: generic message
 		mess->sz_elm = szAlloc;
-		jvx_message_queue_get_timestamp_us(theMQueue, &mess->timestamp_enter_us);
+		jvx_message_queue_get_timestamp_us(T::theMQueue, &mess->timestamp_enter_us);
 
 		mess_q.hdr = *mess;
 		mess_q.hdr.sz_elm = sizeof(oneGenericMessage);
@@ -227,37 +228,37 @@ public:
 		if (JVX_CHECK_SIZE_SELECTED(mess->uId))
 		{
 			// Only add messages with valid uIds
-			JVX_LOCK_MUTEX(safeAccessChannel);
-			auto elmL = mpMessages.find(mess->uId);
-			if (elmL == mpMessages.end())
+			T::lock_channel();
+			auto elmL = T::mpMessages.find(mess->uId);
+			if (elmL == T::mpMessages.end())
 			{
-				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
+				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp);
 						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" <<
 							mess->mId << "> to list of pending messages." << std::endl;
-						jvx_unlock_text_log(jvxrtst_bkp);
+						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
 				}
-				mpMessages[mess->uId] = mess;
+				T::mpMessages[mess->uId] = mess;
 			}
 			else
 			{
-				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
+				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp);
 						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid <" <<
 							mess->mId << "> to list of pending messages, a message with the same uid is already pending." << std::endl;
-						jvx_unlock_text_log(jvxrtst_bkp);
+						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
 				}
 				res = JVX_ERROR_ALREADY_IN_USE;
 			}
-			JVX_UNLOCK_MUTEX(safeAccessChannel);
+			T::unlock_channel();
 		}
 
 		if (res == JVX_NO_ERROR)
@@ -285,9 +286,9 @@ public:
 		mess->stat = JVX_GENERIC_CONNECTION_STATUS_INIT;
 		mess->retrans_cnt = 0;
 
-		JVX_LOCK_MUTEX(safeAccessChannel);
+		T::lock_channel();
 		mess->mId = mIdMessages++;
-		JVX_UNLOCK_MUTEX(safeAccessChannel);
+		T::unlock_channel();
 
 		mess->sz_elm = szAlloc;
 
@@ -296,37 +297,37 @@ public:
 		if (JVX_CHECK_SIZE_SELECTED(mess->uId))
 		{
 			// Only add messages with valid uIds
-			JVX_LOCK_MUTEX(safeAccessChannel);
+			T::lock_channel();
 			auto elmL = mpMessages.find(mess->uId);
 			if (elmL == mpMessages.end())
 			{
-				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
+				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp);
 						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" << mess->mId <<
 							"> to list of pending messages." << std::endl;
-						jvx_unlock_text_log(jvxrtst_bkp);
+						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
 				}
 				mpMessages[mess->uId] = mess;
 			}
 			else
 			{
-				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
+				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp);
 						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid >" << mess->mId <<
 							"> to list of pending messages, a message with the same uid is already pending." << std::endl;
-						jvx_unlock_text_log(jvxrtst_bkp);
+						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
 				}
 				res = JVX_ERROR_ALREADY_IN_USE;
 			}
-			JVX_UNLOCK_MUTEX(safeAccessChannel);
+			T::unlock_channel();
 		}
 
 		if (res == JVX_NO_ERROR)
@@ -342,14 +343,14 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		this->translate_message_token(load_plus, txtOut);
 
-		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLOUTGOING_SHIFT))
+		if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLOUTGOING_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(T::jvxrtst_bkp);
 				jvxrtst << "::" << __FUNCTION__ << "-> sending message direct, uid <" << load_plus->uId << "> - mid <" <<
 					load_plus->mId << "> bypassing message queue, context <" << txtOut << ">." << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp);
+				jvx_unlock_text_log(T::jvxrtst_bkp);
 			}
 		}
 
@@ -406,7 +407,7 @@ public:
 			if (localTxtLog.useLocalTextLog)
 			{
 
-				localTxtLog.theLocalTextLog->initialize(_common_set_min.theHostRef);
+				localTxtLog.theLocalTextLog->initialize(T::_common_set_min.theHostRef);
 				localTxtLog.theLocalTextLog->configure(JVX_LOCAL_TEXT_LOG_CONFIG_SEPARATOR_CHAR, (jvxHandle*)runtime.separatorToken_rcv.c_str());
 
 				localTxtLog.theLocalTextLog->start(localTxtLog.szLocalTextLog);
@@ -510,14 +511,14 @@ public:
 		{
 			receivedTextBuffer += std::string((char*)ptr, numRead);
 
-			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
+			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp);
 					jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with new input is <" <<
 						jvx_prepareStringForLogfile(receivedTextBuffer) << ">." << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp);
+					jvx_unlock_text_log(T::jvxrtst_bkp);
 				}
 			}
 		}
@@ -539,28 +540,28 @@ public:
 			//token = receivedText.substr(0, posi_sep + runtime.separatorToken_rcv.size());
 			token = receivedTextBuffer.substr(0, posi_sep); // <- separator token removed
 
-			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
+			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp);
 					jvxrtst << "::" << __FUNCTION__ << ": Text token to seperator character is <" << jvx_prepareStringForLogfile(token)
 						<< ">, sep index is " << posi_sep << "." << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp);
+					jvx_unlock_text_log(T::jvxrtst_bkp);
 				}
 			}
 
 			receivedTextBuffer = receivedTextBuffer.substr(posi_sep + runtime.separatorToken_rcv.size(), std::string::npos);
 
-			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
+			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp);
 					jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with removed message is <"
 						<< jvx_prepareStringForLogfile(receivedTextBuffer)
 						<< ">." << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp);
+					jvx_unlock_text_log(T::jvxrtst_bkp);
 				}
 			}
 
@@ -582,14 +583,14 @@ public:
 			res = this->handle_single_received_text_token(token, reinterpret_cast<oneMessage_hdr*>(theMess), idIdentify);
 			if (res == JVX_ERROR_ABORT)
 			{
-				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
+				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp);
 						jvxrtst << "::" << __FUNCTION__ << ": Failed to match message <" <<
 							jvx_prepareStringForLogfile(token) << "> in submodule, error reason: " << jvxErrorType_txt(res) << "." << std::endl;
-						jvx_unlock_text_log(jvxrtst_bkp);
+						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
 				}
 			}
@@ -624,13 +625,13 @@ public:
 
 	virtual jvxErrorType clear_input_buffer()
 	{
-		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
+		if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(T::jvxrtst_bkp);
 				jvxrtst << "::" << __FUNCTION__ << "Clearing input text buffer." << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp);
+				jvx_unlock_text_log(T::jvxrtst_bkp);
 			}
 		}
 		JVX_LOCK_MUTEX(safeTextBuffer);

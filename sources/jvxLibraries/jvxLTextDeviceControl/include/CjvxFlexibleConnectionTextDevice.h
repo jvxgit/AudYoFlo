@@ -27,14 +27,14 @@ public:
 		fname_config = "myConfig.jif";
 
 		// Specify verbose level
-		jvx_bitSet(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT);
-		jvx_bitSet(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_UNMATCHED_SHIFT);
-		jvx_bitSet(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_SUBMODULE_OFFSET);
+		jvx_bitSet(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT);
+		jvx_bitSet(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_UNMATCHED_SHIFT);
+		jvx_bitSet(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_SUBMODULE_OFFSET);
 		// 	JVX_GENERIC_RS232_OUTPUT_ALLINCOMING_SHIFT
 		// JVX_GENERIC_RS232_OUTPUT_ALLOUTGOING_SHIFT
 		// JVX_GENERIC_RS232_OUTPUT_ERRORS_SHIFT 5
 
-		output_flags = JVX_GENERIC_CONNECTION_OUTPUT_ALL;
+		T::output_flags = JVX_GENERIC_CONNECTION_OUTPUT_ALL;
 
 		output_sm_cout = false; // <- output all sub module messages to cout
 		timeoutobserver_msec = 1000; // Observer timeout
@@ -330,7 +330,7 @@ public:
 		}
 		else
 		{
-			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_SUBMODULE_OFFSET))
+			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_SUBMODULE_OFFSET))
 			{
 				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 				{

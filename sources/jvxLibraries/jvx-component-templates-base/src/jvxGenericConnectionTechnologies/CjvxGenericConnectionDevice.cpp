@@ -963,3 +963,15 @@ CjvxGenericConnectionDevice::setParent(IjvxDevice_report* tech)
 {
 	this->_common_set_device.report = tech;
 }
+
+void 
+CjvxGenericConnectionDevice::lock_channel()
+{
+	JVX_LOCK_MUTEX(safeAccessChannel);
+}
+
+void 
+CjvxGenericConnectionDevice::unlock_channel()
+{
+	JVX_UNLOCK_MUTEX(safeAccessChannel);
+}

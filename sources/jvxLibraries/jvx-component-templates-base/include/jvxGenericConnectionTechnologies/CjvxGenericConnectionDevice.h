@@ -36,9 +36,11 @@ class CjvxGenericConnectionDevice : public IjvxDevice, public CjvxDevice,
 	public CjvxGenericConnectionDevice_pcg
 {
 
+private:
+	JVX_MUTEX_HANDLE safeAccessChannel;
+
 protected:
 
-	JVX_MUTEX_HANDLE safeAccessChannel;
 	jvxSize mIdMessages;
 	jvxBool fullPingPong;
 
@@ -188,6 +190,9 @@ public:
 	virtual jvxErrorType prepare_retransmit() = 0;
 
 	void setParent(IjvxDevice_report* tech);
+
+	void lock_channel();
+	void unlock_channel();
 };
 
 #endif
