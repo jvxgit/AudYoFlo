@@ -67,6 +67,7 @@
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/portaudio
 			)
 	else()
+        list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 		find_package(portaudio)
 	endif()
   endif(JVX_USE_PART_PAUDIO)
