@@ -568,11 +568,11 @@ protected:
 #define JVX_TRANSLATE_PROP_ADDRESS_IDX_CAT(ident, propId, category) \
 	jvxSize propId = JVX_SIZE_UNSELECTED; \
 	jvxPropertyCategoryType category = JVX_PROPERTY_CATEGORY_UNKNOWN; \
-	_translate_address_idx(callGate, ident, propId, category)
+	this->_translate_address_idx(callGate, ident, propId, category)
 
 #define JVX_TRANSLATE_PROP_ADDRESS_DESCRIPTOR(ident, propDescr) \
 	jvxApiString propDescr; \
-	_translate_address_descriptor(callGate, ident, propDescr)
+	this->_translate_address_descriptor(callGate, ident, propDescr)
 
 #define JVX_PROPERTIES_ALL_START(clsName) \
 	clsName::init_all(); \
