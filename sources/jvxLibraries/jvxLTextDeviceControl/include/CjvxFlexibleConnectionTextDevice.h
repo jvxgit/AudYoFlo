@@ -39,7 +39,7 @@ public:
 		output_sm_cout = false; // <- output all sub module messages to cout
 		timeoutobserver_msec = 1000; // Observer timeout
 		timeoutresponse_msec = 10000; // Timeout to await response from device
-		fullPingPong = true; // <- allows always only one message to be held in pending state
+		T::fullPingPong = true;		  // <- allows always only one message to be held in pending state
 	};
 
 	virtual JVX_CALLINGCONVENTION ~CjvxFlexibleConnectionTextDevice()
@@ -118,7 +118,7 @@ public:
 			return res;
 		}
 
-		_common_set.theToolsHost->reference_tool(JVX_COMPONENT_CONFIG_PROCESSOR, &cfProcObj, 0, NULL);
+		T::_common_set.theToolsHost->reference_tool(JVX_COMPONENT_CONFIG_PROCESSOR, &cfProcObj, 0, NULL);
 		if (cfProcObj)
 		{
 			cfProcObj->request_specialization(reinterpret_cast<jvxHandle**>(&hdlProcObj), NULL, NULL);
@@ -138,7 +138,7 @@ public:
 				theControl.print();
 
 				// Setup the size of the message queue
-				message_queue.sz_mqueue_elements = JVX_MAX(message_queue.sz_mqueue_elements, desired_mq_size);
+				T::message_queue.sz_mqueue_elements = JVX_MAX(T::message_queue.sz_mqueue_elements, desired_mq_size);
 				if (JVX_CHECK_SIZE_SELECTED(timeoutobserver_msec))
 				{
 					CjvxGenericConnectionDevice_pcg::mqueue_runtime.timeoutobserver_msec.value = timeoutobserver_msec;
@@ -170,7 +170,7 @@ public:
 
 		if (cfProcObj)
 		{
-			_common_set.theToolsHost->return_reference_tool(JVX_COMPONENT_CONFIG_PROCESSOR, cfProcObj);
+			T::_common_set.theToolsHost->return_reference_tool(JVX_COMPONENT_CONFIG_PROCESSOR, cfProcObj);
 		}
 		cfProcObj = NULL;
 		hdlProcObj = NULL;
@@ -319,7 +319,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION device_check_pending_uid(jvxSize uId, jvxSize mTp, jvxTick* Stamp, oneMessage_hdr** ptr_hdr_ret) override
 	{
-		return check_pending_uid(uId, mTp, ptr_hdr_ret);
+		return T::check_pending_uid(uId, mTp, ptr_hdr_ret);
 	}
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_message(const std::string& mess) override
@@ -332,11 +332,11 @@ public:
 		{
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_SUBMODULE_OFFSET))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
-					jvxrtst << "::SUBMODULE: " << mess << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp);
+					T::jvxrtst << "::SUBMODULE: " << mess << std::endl;
+					jvx_unlock_text_log(T::jvxrtst_bkp);
 				}
 			}
 		}

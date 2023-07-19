@@ -2,7 +2,7 @@
 #define __CJVXGENERICCONNECTIONTEXTDEVICE_H__
 
 #include "common/CjvxProperties.h"
-#include "jvxGenericConnectionTechnologies\CjvxGenericConnectionDevice.h"
+#include "jvxGenericConnectionTechnologies/CjvxGenericConnectionDevice.h"
 
 // SOme default parameters
 #define JVX_CONNECTION_TEXTLOG_SHIFT 0
@@ -211,7 +211,6 @@ public:
 		mess->retrans_cnt = 0;
 
 		T::lock_channel();
-		//T::lock_channel();
 		mess->mId = T::mIdMessages++;
 		T::unlock_channel();
 
@@ -237,7 +236,7 @@ public:
 					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp);
-						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" <<
+						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" <<
 							mess->mId << "> to list of pending messages." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
@@ -251,7 +250,7 @@ public:
 					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp);
-						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid <" <<
+						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid <" <<
 							mess->mId << "> to list of pending messages, a message with the same uid is already pending." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
@@ -263,7 +262,7 @@ public:
 
 		if (res == JVX_NO_ERROR)
 		{
-			res = jvx_message_queue_add_message_to_queue(theMQueue, mess->uId, &mess_q, mess_q.hdr.sz_elm, reinterpret_cast<jvxHandle*>(this));
+			res = jvx_message_queue_add_message_to_queue(T::theMQueue, mess->uId, &mess_q, mess_q.hdr.sz_elm, reinterpret_cast<jvxHandle*>(this));
 		}
 		return res;
 	}
@@ -287,31 +286,31 @@ public:
 		mess->retrans_cnt = 0;
 
 		T::lock_channel();
-		mess->mId = mIdMessages++;
+		mess->mId = T::mIdMessages++;
 		T::unlock_channel();
 
 		mess->sz_elm = szAlloc;
 
-		jvx_message_queue_get_timestamp_us(theMQueue, &mess->timestamp_enter_us);
+		jvx_message_queue_get_timestamp_us(T::theMQueue, &mess->timestamp_enter_us);
 
 		if (JVX_CHECK_SIZE_SELECTED(mess->uId))
 		{
 			// Only add messages with valid uIds
 			T::lock_channel();
-			auto elmL = mpMessages.find(mess->uId);
-			if (elmL == mpMessages.end())
+			auto elmL = T::mpMessages.find(mess->uId);
+			if (elmL == T::mpMessages.end())
 			{
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
 					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp);
-						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" << mess->mId <<
+						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" << mess->mId <<
 							"> to list of pending messages." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
 				}
-				mpMessages[mess->uId] = mess;
+				T::mpMessages[mess->uId] = mess;
 			}
 			else
 			{
@@ -320,7 +319,7 @@ public:
 					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp);
-						jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid >" << mess->mId <<
+						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid >" << mess->mId <<
 							"> to list of pending messages, a message with the same uid is already pending." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
@@ -332,7 +331,7 @@ public:
 
 		if (res == JVX_NO_ERROR)
 		{
-			res = jvx_message_queue_add_message_to_queue(theMQueue, load_plus->uId, load_plus, load_plus->sz_elm, reinterpret_cast<jvxHandle*>(this));
+			res = jvx_message_queue_add_message_to_queue(T::theMQueue, load_plus->uId, load_plus, load_plus->sz_elm, reinterpret_cast<jvxHandle *>(this));
 		}
 		return res;
 	}
@@ -348,7 +347,7 @@ public:
 			if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 			{
 				jvx_lock_text_log(T::jvxrtst_bkp);
-				jvxrtst << "::" << __FUNCTION__ << "-> sending message direct, uid <" << load_plus->uId << "> - mid <" <<
+				T::jvxrtst << "::" << __FUNCTION__ << "-> sending message direct, uid <" << load_plus->uId << "> - mid <" <<
 					load_plus->mId << "> bypassing message queue, context <" << txtOut << ">." << std::endl;
 				jvx_unlock_text_log(T::jvxrtst_bkp);
 			}
@@ -356,7 +355,7 @@ public:
 
 		jvxByte* ptr = (jvxByte*)txtOut.c_str();
 		jvxSize sz = txtOut.size();
-		theConnectionTool->sendMessage_port(idDevice, ptr, &sz, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+		T::theConnectionTool->sendMessage_port(T::idDevice, ptr, &sz, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 		return res;
 	}
 
@@ -368,10 +367,10 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		if (localTxtLog.useLocalTextLog)
 		{
-			if (_common_set.theToolsHost)
+			if (T::_common_set.theToolsHost)
 			{
-				resL = _common_set.theToolsHost->instance_tool(JVX_COMPONENT_LOCAL_TEXT_LOG, &localTxtLog.theLocalTextLog_obj,
-					0, NULL);
+				resL = T::_common_set.theToolsHost->instance_tool(JVX_COMPONENT_LOCAL_TEXT_LOG, &localTxtLog.theLocalTextLog_obj,
+																  0, NULL);
 				if ((resL == JVX_NO_ERROR) && localTxtLog.theLocalTextLog_obj)
 				{
 					resL = localTxtLog.theLocalTextLog_obj->request_specialization(reinterpret_cast<jvxHandle**>(
@@ -387,7 +386,7 @@ public:
 			{
 				localTxtLog.useLocalTextLog = false;
 				std::cout << "::" << __FUNCTION__ << "Error: Failed to open logger object for component< " <<
-					_common_set.theModuleName << "> since tools host reference is not vailable." << std::endl;
+					T::_common_set.theModuleName << "> since tools host reference is not vailable." << std::endl;
 			}
 
 			jvxSize idSel = jvx_bitfieldSelection2Id(
@@ -414,8 +413,8 @@ public:
 				localTxtLog.theLocalTextLog->attach_entry(("Starting local text log" + runtime.separatorToken_rcv).c_str());
 
 				jvxCallManagerProperties callMan;
-				install_property_reference(callMan, jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<IjvxLocalTextLog>(localTxtLog.theLocalTextLog),
-					jPAD("/text_log_collect"));
+				T::install_property_reference(callMan, jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<IjvxLocalTextLog>(localTxtLog.theLocalTextLog),
+											  jPAD("/text_log_collect"));
 				//CjvxGenericRs232TextDevice_pcg::associate__rs232_log(static_cast<CjvxProperties*>(this), localTxtLog.theLocalTextLog);
 			}
 		}
@@ -428,13 +427,13 @@ public:
 		if (localTxtLog.theLocalTextLog)
 		{
 			jvxCallManagerProperties callMan;
-			uninstall_property_reference(callMan, jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<IjvxLocalTextLog>(localTxtLog.theLocalTextLog),
-				jPAD("/text_log_collect"));
+			T::uninstall_property_reference(callMan, jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<IjvxLocalTextLog>(localTxtLog.theLocalTextLog),
+											jPAD("/text_log_collect"));
 			// CjvxGenericRs232TextDevice_pcg::deassociate__rs232_log(static_cast<CjvxProperties*>(this));
 
 			localTxtLog.theLocalTextLog->stop();
 			localTxtLog.theLocalTextLog->terminate();
-			_common_set.theToolsHost->return_instance_tool(JVX_COMPONENT_LOCAL_TEXT_LOG, localTxtLog.theLocalTextLog_obj, 0, NULL);
+			T::_common_set.theToolsHost->return_instance_tool(JVX_COMPONENT_LOCAL_TEXT_LOG, localTxtLog.theLocalTextLog_obj, 0, NULL);
 		}
 		localTxtLog.theLocalTextLog = NULL;
 		localTxtLog.theLocalTextLog_obj = NULL;
@@ -516,7 +515,7 @@ public:
 				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 				{
 					jvx_lock_text_log(T::jvxrtst_bkp);
-					jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with new input is <" <<
+					T::jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with new input is <" <<
 						jvx_prepareStringForLogfile(receivedTextBuffer) << ">." << std::endl;
 					jvx_unlock_text_log(T::jvxrtst_bkp);
 				}
@@ -545,7 +544,7 @@ public:
 				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 				{
 					jvx_lock_text_log(T::jvxrtst_bkp);
-					jvxrtst << "::" << __FUNCTION__ << ": Text token to seperator character is <" << jvx_prepareStringForLogfile(token)
+					T::jvxrtst << "::" << __FUNCTION__ << ": Text token to seperator character is <" << jvx_prepareStringForLogfile(token)
 						<< ">, sep index is " << posi_sep << "." << std::endl;
 					jvx_unlock_text_log(T::jvxrtst_bkp);
 				}
@@ -558,7 +557,7 @@ public:
 				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 				{
 					jvx_lock_text_log(T::jvxrtst_bkp);
-					jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with removed message is <"
+					T::jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with removed message is <"
 						<< jvx_prepareStringForLogfile(receivedTextBuffer)
 						<< ">." << std::endl;
 					jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -588,7 +587,7 @@ public:
 					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp);
-						jvxrtst << "::" << __FUNCTION__ << ": Failed to match message <" <<
+						T::jvxrtst << "::" << __FUNCTION__ << ": Failed to match message <" <<
 							jvx_prepareStringForLogfile(token) << "> in submodule, error reason: " << jvxErrorType_txt(res) << "." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
 					}
@@ -607,7 +606,7 @@ public:
 		JVX_LOCK_MUTEX(safeAccessDataAvail);
 		if (jvx_bitTest(reportEventDataAvail, JVX_CONNECTION_TEXTLOG_SHIFT))
 		{
-			_report_property_has_changed(
+			T::_report_property_has_changed(
 				CjvxGenericConnectionTextDevice_pcg::message_log.text_log_collect.category,
 				CjvxGenericConnectionTextDevice_pcg::message_log.text_log_collect.globalIdx,
 				true, 0,
@@ -630,7 +629,7 @@ public:
 			if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
 			{
 				jvx_lock_text_log(T::jvxrtst_bkp);
-				jvxrtst << "::" << __FUNCTION__ << "Clearing input text buffer." << std::endl;
+				T::jvxrtst << "::" << __FUNCTION__ << "Clearing input text buffer." << std::endl;
 				jvx_unlock_text_log(T::jvxrtst_bkp);
 			}
 		}
