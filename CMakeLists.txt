@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required (VERSION 3.15)
 
 # configure and check subproduct (default audio)
 # set(JVX_PRODUCT "audio" CACHE STRING "Select the Javox product to build (audio)")
