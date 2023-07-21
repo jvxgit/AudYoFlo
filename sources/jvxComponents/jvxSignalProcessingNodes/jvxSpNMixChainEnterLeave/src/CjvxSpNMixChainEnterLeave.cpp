@@ -413,7 +413,7 @@ CjvxSpNMixChainEnterLeave::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 				for (j = 0; j < szExtraBuffersChannels; j++)
 				{
 					_common_set_icon.theData_in->con_data.buffers[i][j + _common_set_ocon.theData_out.con_params.number_channels] = nullptr;
-					JVX_DSP_SAFE_DELETE_FIELD(bufsSideChannel[i][j]);					
+					JVX_DSP_SAFE_DELETE_FIELD_TYPE(bufsSideChannel[i][j], jvxByte);
 				}
 				JVX_DSP_SAFE_DELETE_FIELD(bufsSideChannel[i]);
 			}
