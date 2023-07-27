@@ -1,5 +1,5 @@
 template <typename T> jvxErrorType
-CjvxHost::t_select_component(std::vector<oneObjType<T>>& registeredTypes,
+CjvxComponentHost::t_select_component(std::vector<oneObjType<T>>& registeredTypes,
 	jvxComponentIdentification& tp, jvxSize idx,
 	IjvxObject* theOwner, jvxBool extend_if_necessary)
 {
@@ -93,12 +93,12 @@ CjvxHost::t_select_component(std::vector<oneObjType<T>>& registeredTypes,
 
 						if (res == JVX_NO_ERROR)
 						{
-							res = theObj->initialize(this);
+							res = theObj->initialize(hIfRef);
 							if (res == JVX_NO_ERROR)
 							{
 								jvxSize uid = 0;
 								std::string nm = jvxComponentIdentification_txt(tp);
-								obtain_unique_id(&uid, nm.c_str());
+								uIdInst->obtain_unique_id(&uid, nm.c_str());
 
 								IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(theObj);
 								IjvxCoreStateMachine* theObjectSm = static_cast<IjvxCoreStateMachine*>(theObj);
@@ -156,7 +156,7 @@ CjvxHost::t_select_component(std::vector<oneObjType<T>>& registeredTypes,
 }
 
 template <class T> jvxErrorType
-CjvxHost::t_activate_component(std::vector<oneObjType<T>>& registeredObjs,
+CjvxComponentHost::t_activate_component(std::vector<oneObjType<T>>& registeredObjs,
 	const jvxComponentIdentification& tp)
 {
 	jvxApiString theName;
@@ -186,8 +186,8 @@ CjvxHost::t_activate_component(std::vector<oneObjType<T>>& registeredObjs,
 						elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->description(&theName);
 						elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->lasterror(&theErr);
 
-						this->_common_set.theErrordescr = (std::string)"Failed to activate node type <" + elmIt_ob->description + ">, node <" +
-							theName.std_str() + ">, reason: " + theErr.errorDescription.std_str();
+						reportErrorDescription((std::string)"Failed to activate node type <" + elmIt_ob->description + ">, node <" +
+							theName.std_str() + ">, reason: " + theErr.errorDescription.std_str());
 					}
 					else
 					{
@@ -202,7 +202,7 @@ CjvxHost::t_activate_component(std::vector<oneObjType<T>>& registeredObjs,
 							elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac);
 						if (res != JVX_NO_ERROR)
 						{
-							this->_report_text_message("Failed to add connector and/or connector master factory for node", JVX_REPORT_PRIORITY_WARNING);
+							reportErrorDescription("Failed to add connector and/or connector master factory for node", true);
 						}
 					}
 				}
@@ -220,8 +220,8 @@ CjvxHost::t_activate_component(std::vector<oneObjType<T>>& registeredObjs,
 	return res;
 }
 
-template <class T>
-jvxErrorType CjvxHost::t_deactivate_component(std::vector<oneObjType<T>>& registeredObjs,
+template <class T> jvxErrorType 
+CjvxComponentHost::t_deactivate_component(std::vector<oneObjType<T>>& registeredObjs,
 	const jvxComponentIdentification& tp)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -291,7 +291,7 @@ jvxErrorType CjvxHost::t_deactivate_component(std::vector<oneObjType<T>>& regist
 }
 
 template <class T> jvxErrorType
-CjvxHost::t_unselect_component(std::vector<oneObjType<T>>& registeredObjs,
+CjvxComponentHost::t_unselect_component(std::vector<oneObjType<T>>& registeredObjs,
 	jvxComponentIdentification& tp)
 {
 	int h;
@@ -322,7 +322,7 @@ CjvxHost::t_unselect_component(std::vector<oneObjType<T>>& registeredObjs,
 					if (res == JVX_NO_ERROR)
 					{
 						// Release the unique id
-						release_unique_id(elmIt_ob->instances.theHandle_shortcut[tp.slotid].uid);
+						uIdInst->release_unique_id(elmIt_ob->instances.theHandle_shortcut[tp.slotid].uid);
 						tp.uId = JVX_SIZE_UNSELECTED;
 						elmIt_ob->instances.theHandle_shortcut[tp.slotid].uid = JVX_SIZE_UNSELECTED;
 

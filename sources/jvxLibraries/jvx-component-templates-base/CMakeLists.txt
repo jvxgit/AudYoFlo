@@ -99,11 +99,15 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxMinHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxConnectionHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHost.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHost.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHostTools.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxMinHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxConnectionHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost-tpl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_callbacks.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxComponentHost.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxComponentHostTools.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_components.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_components-tpl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_connections.cpp
@@ -144,8 +148,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHostTypeHandler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHostTypeHandler.cpp
 
+	# These are template classes
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxFactoryHosts/CjvxDefaultInterfaceFactory.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxFactoryHosts/CjvxDefaultInterfaceFactory.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxFactoryHosts/CjvxInterfaceFactory.h
 	
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTools/jvxPacketFilterRules/CjvxPacketFilterRule.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxTools/jvxPacketFilterRules/CjvxPacketFilterRule.cpp

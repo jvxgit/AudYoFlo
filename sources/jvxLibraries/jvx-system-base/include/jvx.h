@@ -164,6 +164,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 // Host interface
 #include "interfaces/IjvxStateMachine.h"
 #include "interfaces/IjvxHostInteraction.h"
+#include "interfaces/IjvxComponentHost.h"
 #include "interfaces/IjvxFactoryHost.h"
 #include "interfaces/IjvxHost.h"
 #include "interfaces/IjvxConnectionIterator.h"

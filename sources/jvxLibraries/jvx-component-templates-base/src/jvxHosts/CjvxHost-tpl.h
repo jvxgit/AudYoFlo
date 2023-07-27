@@ -11,7 +11,7 @@
  */
 
 template <class T> jvxErrorType
-CjvxHost::t_reference_tool(std::vector<oneObjType<T>>& registeredTypes,
+CjvxComponentHostTools::t_reference_tool(std::vector<oneObjType<T>>& registeredTypes,
 	const jvxComponentIdentification& tp,
 	IjvxObject** theObject, jvxSize filter_id,
 	const char* filter_token,
@@ -189,7 +189,7 @@ CjvxHost::t_reference_tool(std::vector<oneObjType<T>>& registeredTypes,
 }
 
 template <class T> jvxErrorType
-CjvxHost::t_return_reference_tool(std::vector<oneObjType<T>>& registeredTypes,
+CjvxComponentHostTools::t_return_reference_tool(std::vector<oneObjType<T>>& registeredTypes,
 	jvxComponentType tp,
 	IjvxObject* theObject)
 {

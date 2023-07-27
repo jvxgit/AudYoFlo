@@ -1,6 +1,9 @@
 #ifndef __JVX_PLATFORM_H___WINDOWS__
 #define __JVX_PLATFORM_H___WINDOWS__
 
+// Pragmas for windows 
+#pragma warning( disable : 4065)
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <ws2bth.h>

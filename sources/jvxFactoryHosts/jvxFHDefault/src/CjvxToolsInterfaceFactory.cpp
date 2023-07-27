@@ -5,7 +5,7 @@ namespace JVX_PROJECT_NAMESPACE {
 #endif
 
 CjvxToolsInterfaceFactory::CjvxToolsInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
-	CjvxDefaultInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
+	CjvxInterfaceFactory<IjvxFactoryHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	myUniqueId = 1;
 #ifdef JVX_MINIMUM_HOST_FUNCTIONALITY

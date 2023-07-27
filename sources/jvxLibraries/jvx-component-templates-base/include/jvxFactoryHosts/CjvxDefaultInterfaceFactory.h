@@ -10,32 +10,33 @@
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
-class CjvxDefaultInterfaceFactory: public IjvxFactoryHost, public CjvxObject, public CjvxMinHost
+// T = IjvxFactoryHost or IjvxHost
+template <class T>
+class CjvxDefaultInterfaceFactory: public T, public CjvxObject, public CjvxMinHost
 {
 public:
 	// ===================================================================================================
 	// ===================================================================================================
-	JVX_CALLINGCONVENTION CjvxDefaultInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	JVX_CALLINGCONVENTION CjvxDefaultInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
+		CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	{
+		_common_set.theComponentType.unselected(JVX_COMPONENT_FACTORY_HOST);
+		_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxInterfaceFactory*>(this));
+		_common_set.thisisme = static_cast<IjvxObject*>(this);
+	};
 
-	virtual JVX_CALLINGCONVENTION ~CjvxDefaultInterfaceFactory();
+	virtual JVX_CALLINGCONVENTION ~CjvxDefaultInterfaceFactory() {};
 
 	// ===================================================================================================
 
 	#include "codeFragments/simplify/jvxObjects_simplify.h"
-	
-
-#ifdef JVX_OS_WINDOWS
-#pragma warning( disable : 4065)
-#endif
 	#include "codeFragments/simplify/jvxHiddenInterface_simplify.h"
-#include "codeFragments/simplify/jvxMinHost_simplify.h"
-
+	#include "codeFragments/simplify/jvxMinHost_simplify.h"
 };
 
 #ifdef JVX_PROJECT_NAMESPACE
 }
 #endif
-
 
 #endif
 
