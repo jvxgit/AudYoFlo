@@ -3,14 +3,11 @@
 
 #include "jvx.h"
 #include "jvxFactoryHosts/CjvxInterfaceFactory.h"
-#include "common/CjvxProperties.h"
 
 #define JVX_MINIMUM_HOST_FUNCTIONALITY
 
 #include "jvxHosts/CjvxHostInteraction.h"
 #include "jvxHosts/CjvxUniqueId.h"
-
-#include "pcg_CjvxFactoryHost_pcg.h"
 
 #define SECTIONNAME_ALL_SUBSECTIONS "factoryhost_allSubSections"
 #define SECTIONNAME_ALL_EXTERNAL_ENTRIES "factoryhost_allExternalEntries"
@@ -21,8 +18,7 @@ namespace JVX_PROJECT_NAMESPACE {
 
 class CjvxToolsInterfaceFactory : public CjvxInterfaceFactory<IjvxFactoryHost>,
 		public CjvxHostInteraction,
-		public IjvxConfiguration, public IjvxConfigurationExtender,
-		public CjvxFactoryHost_genpcg
+		public IjvxConfiguration, public IjvxConfigurationExtender
 {
 private:
 

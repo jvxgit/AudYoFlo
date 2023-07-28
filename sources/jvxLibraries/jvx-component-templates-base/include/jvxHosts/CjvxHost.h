@@ -16,8 +16,6 @@
 #include "jvxFactoryHosts/CjvxDefaultInterfaceFactory.h"
 #include "jvxFactoryHosts/CjvxInterfaceFactory.h"
 
-#include "pcg_CjvxHost_pcg.h"
-
 /*
 #define JVX_HBDX1_CHECK_CALLING_THREAD_ID \
 	JVX_THREAD_ID theThreadId = JVX_GET_CURRENT_THREAD_ID(); \
@@ -37,8 +35,7 @@ class CjvxHost:
 	public CjvxComponentHostTools, 
 	public IjvxSequencer, public CjvxSequencer, 
 	public IjvxDataConnections, public CjvxDataConnections,	
-	public IjvxPropertyAttach,
-	public CjvxHost_genpcg
+	public IjvxPropertyAttach
 {
 public:
 

@@ -246,7 +246,6 @@ set(LOCAL_PCG_FILES
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxDataConnection/CjvxDataConnectionGroup_pcg.pcg
 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxHosts/CjvxHost_pcg.pcg
-	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxHosts/CjvxFactoryHost_pcg.pcg
 	 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxTools/jvxPacketFilterRules/CjvxPacketFilterRule_pcg.pcg
 	 
