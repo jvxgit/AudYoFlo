@@ -11,7 +11,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
-  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHJvx/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHAppHost/
  ${JVX_BASE_BINARY_DIR}/sources/jvxFactoryHosts/jvxFHDefault
   )
 
@@ -43,7 +43,7 @@ endif()
 
 set(LOCAL_COMPILE_DEFINITIONS "")
 set(LOCAL_LIBS 
-	jvxHJvx_static
+	jvxHAppHost_static
 	jvxFHDefault_static)
 
 set(BUILD_STATIC TRUE)

@@ -98,20 +98,20 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxMinHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxConnectionMinHost.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHost.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxFullHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHostTools.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxMinHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxConnectionMinHost.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxFullHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost-tpl.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_callbacks.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_components-tpl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxComponentHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxComponentHostTools.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_components.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_components-tpl.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_connections.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_sequencer.cpp	
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxFullHost_callbacks.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxFullHost_components.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxFullHost_connections.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxFullHost_sequencer.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxUniqueId.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxUniqueId.cpp
 	

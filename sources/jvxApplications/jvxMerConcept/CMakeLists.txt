@@ -48,7 +48,7 @@ include_directories(
   ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qwt-${JVX_QWT_VERSION}/src
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTGenericWrapper/
   ${JVX_BINARY_DIR}/base/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAsio/
-  ${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHJvx
+  ${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHAppHost
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioNodes/jvxAuNNoiseReductionMc/
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads/include
   ${SNDFILE_INCLUDEDIR}
@@ -57,7 +57,7 @@ include_directories(
 set(LOCAL_COMPILE_DEFINITIONS "COMPILE_FOR_CONSOLE;JVX_HOST_USE_ONLY_STATIC_OBJECTS")
 
 set(LOCAL_LIBS
-  jvxHJvx_static
+  jvxHAppHost_static
   jvxLthreads_static
   jvxAuNNoiseReductionMc_static
   jvxAuTGenericWrapper_static

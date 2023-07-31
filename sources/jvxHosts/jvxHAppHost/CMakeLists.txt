@@ -1,4 +1,4 @@
-set(PROJECT_NAME jvxHJvx)
+set(PROJECT_NAME jvxHAppHost)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -10,13 +10,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
   )
 
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxHostJvx.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxHostJvx_config.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxHostJvx.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxHostJvx_config.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppHost.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppHost_config.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppHost.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppHost_config.h
     
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxHostJvx_propertypool.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxHostJvx_configurationline.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppHost_propertypool.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppHost_configurationline.cpp
   )
 
 set(LOCAL_COMPILE_DEFINITIONS_SHARED "COMPONENT_DESCRIPTOR_NAME=CJVXHOST-DLL")

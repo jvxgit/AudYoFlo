@@ -4,7 +4,7 @@
 #include "jvx.h"
 #include "common/CjvxObject.h"
 #include "jvxHosts/CjvxMinHost.h"
-
+#include "jvxHosts/CjvxUniqueId.h"
 
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {

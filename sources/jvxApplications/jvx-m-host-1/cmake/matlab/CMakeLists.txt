@@ -10,7 +10,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../common
   ${MATLAB_INCLUDE_PATH}
-  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHJvx/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHAppHost/
   ${JVX_BASE_ROOT}/software/typedefs/tools/
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src
@@ -58,7 +58,7 @@ set(LOCAL_LIBS
   jvxLFileIO_static
   jvxTExternalCall_matlab_static
   jvx-app-host-shared_static
-  jvxHJvx_static
+  jvxHAppHost_static
   jvxLthreads_static
   )
 
@@ -110,7 +110,7 @@ set(LOCAL_LIBS
 	jvxAuTOfflineAudio_static
 	jvxTExternalCall_matlab_static
 	 jvx-app-host-shared_static
-	jvxHJvx_static
+	jvxHAppHost_static
 	jvx-dsp-base_static
 	)
 set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS_COMMON};CONFIG_COMPILE_FOR_MATLAB;JVX_MATLAB_OFFLINE_AUDIO")

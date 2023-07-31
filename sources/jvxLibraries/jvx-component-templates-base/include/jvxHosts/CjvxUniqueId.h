@@ -1,6 +1,8 @@
 #ifndef __CJVXUNIQUEID_H__
 #define __CJVXUNIQUEID_H__
 
+#include "jvx.h"
+
 class CjvxUniqueId
 {
 protected:

@@ -1,4 +1,4 @@
-#include "jvxHosts/CjvxHost.h"
+#include "jvxHosts/CjvxFullHost.h"
 
 typedef enum
 {
@@ -86,7 +86,7 @@ CjvxHostBdx1::prepareCompone(IjvxScannerDevice* theDevice)
 */
 
 jvxErrorType
-CjvxHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
+CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;
@@ -2264,7 +2264,7 @@ step_leave:
 }
 
 jvxErrorType
-CjvxHost::sequencer_started(jvxInt64 timestamp_us)
+CjvxFullHost::sequencer_started(jvxInt64 timestamp_us)
 {
 	if (_common_set_sequencer.report)
 	{
@@ -2278,7 +2278,7 @@ CjvxHost::sequencer_started(jvxInt64 timestamp_us)
 }
 
 jvxErrorType
-CjvxHost::sequencer_stopped(jvxInt64 timestamp_us)
+CjvxFullHost::sequencer_stopped(jvxInt64 timestamp_us)
 {
 	if(_common_set_sequencer.report)
 	{

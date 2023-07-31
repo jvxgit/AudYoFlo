@@ -8,7 +8,7 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../include
 	${CMAKE_CURRENT_SOURCE_DIR}/../include/platform/${JVX_OS}
 	${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
-	${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHJvx/
+	${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHAppHost/
 	${JVX_INTEGRATE_SOURCES_PATH}/software/codeFragments/jvxHosts/common
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-json/include
 	

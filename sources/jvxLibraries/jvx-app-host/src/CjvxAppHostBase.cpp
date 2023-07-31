@@ -2,9 +2,9 @@
 
 // Includes for main host application
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
-#include "jvxHJvx_nd.h"
+#include "jvxHAppHost_nd.h"
 #else
-#include "jvxHJvx.h"
+#include "jvxHAppHost.h"
 #endif
 
 extern "C"
@@ -122,9 +122,9 @@ JVX_APPHOST_CLASSNAME::openHostFactory(jvxApiString* errorMessage, jvxHandle* co
 	// Initialize the host component
 	// ======================================================
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
-	res = jvxHJvx_nd_init(&involvedComponents.theHost.hobject, NULL);
+	res = jvxHAppHost_nd_init(&involvedComponents.theHost.hobject, NULL);
 #else
-	res = jvxHJvx_init(&involvedComponents.theHost.hobject, NULL);
+	res = jvxHAppHost_init(&involvedComponents.theHost.hobject, NULL);
 #endif
 	if (res != JVX_NO_ERROR)
 	{
@@ -163,9 +163,9 @@ jvxErrorType
 JVX_APPHOST_CLASSNAME::closeHostFactory(jvxApiString* errorMessage, jvxHandle* context)
 {
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
-	jvxHJvx_nd_terminate(this->involvedComponents.theHost.hobject);
+	jvxHAppHost_nd_terminate(this->involvedComponents.theHost.hobject);
 #else
-	jvxHJvx_terminate(this->involvedComponents.theHost.hobject);
+	jvxHAppHost_terminate(this->involvedComponents.theHost.hobject);
 #endif
 	involvedHost.hHost = NULL;
 	return JVX_NO_ERROR;

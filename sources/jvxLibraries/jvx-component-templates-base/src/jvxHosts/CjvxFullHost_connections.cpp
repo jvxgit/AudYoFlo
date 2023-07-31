@@ -1,9 +1,9 @@
 #include "jvx.h"
-#include "jvxHosts/CjvxHost.h"
+#include "jvxHosts/CjvxFullHost.h"
 #include <sstream>
 
 jvxErrorType
-CjvxHost::connection_factory_to_be_added(
+CjvxFullHost::connection_factory_to_be_added(
 	jvxComponentIdentification tp_activated,
 	IjvxConnectorFactory* add_this, 
 	IjvxConnectionMasterFactory* and_this)
@@ -78,7 +78,7 @@ CjvxHost::connection_factory_to_be_added(
 }
 
 jvxErrorType
-CjvxHost::connection_factory_to_be_removed(
+CjvxFullHost::connection_factory_to_be_removed(
 	jvxComponentIdentification tp_activated, IjvxConnectorFactory* rem_this, IjvxConnectionMasterFactory* and_this)
 {
 	jvxErrorType res = JVX_NO_ERROR;

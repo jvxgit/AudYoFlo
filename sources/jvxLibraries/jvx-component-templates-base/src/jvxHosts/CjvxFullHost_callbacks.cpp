@@ -1,6 +1,6 @@
-#include "jvxHosts/CjvxHost.h"
+#include "jvxHosts/CjvxFullHost.h"
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHost, cb_command_post_set)
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_post_set)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (ident.cat == JVX_PROPERTY_CATEGORY_UNSPECIFIC)
@@ -101,7 +101,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHost, cb_command_post_set)
 	return res;
 }
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHost, cb_command_pre_get)
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_pre_get)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (ident.id == CjvxHost_genpcg::ext_interfaces.properties_active.application_property_autostart.globalIdx)
@@ -159,7 +159,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHost, cb_command_pre_get)
 }
 
 jvxErrorType 
-CjvxHost::attach_property_submodule(const char* prefix, IjvxProperties* props)
+CjvxFullHost::attach_property_submodule(const char* prefix, IjvxProperties* props)
 {
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 	if (props)
@@ -181,7 +181,7 @@ CjvxHost::attach_property_submodule(const char* prefix, IjvxProperties* props)
 }
 
 jvxErrorType 
-CjvxHost::detach_property_submodule(IjvxProperties* props)
+CjvxFullHost::detach_property_submodule(IjvxProperties* props)
 {
 	if (props)
 	{

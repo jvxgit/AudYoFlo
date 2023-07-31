@@ -12,7 +12,7 @@ set(LOCAL_SOURCES
 
 include_directories(
   ${JVX_BINARY_DIR}/base/sources/jvxEventLoop/CjvxEStandalone
-  ${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHJvx/
+  ${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHAppHost/
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleTools/include
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLWebConsoleTools/include

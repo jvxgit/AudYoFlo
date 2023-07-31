@@ -1,15 +1,15 @@
 #ifndef __CJVXHOSTJVX_H__
 #define __CJVXHOSTJVX_H__
 
-#include "jvxHosts/CjvxHost.h"
+#include "jvxHosts/CjvxFullHost.h"
 #include "common/CjvxConfigurationLine.h"
 #include "common/CjvxPropertyPool.h"
 
-class CjvxHostJvx :
+class CjvxAppHost :
 	public IjvxConfiguration, public IjvxConfigurationDone, public IjvxConfigurationLine,
 	public IjvxConfigurationExtender, public IjvxConfigurationAttach,
 	public IjvxPropertyPool, public CjvxPropertyPool,
-	public CjvxHost, public CjvxConfigurationLine
+	public CjvxFullHost, public CjvxConfigurationLine
 {
 protected:
 	
@@ -42,7 +42,7 @@ protected:
 	std::list<CjvxConfigurationSubModule> registeredConfigSubmodules;
 public:
 
-	CjvxHostJvx(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	CjvxAppHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 
 	// ====================================================================================
 	// Interface IjvxStateMachine

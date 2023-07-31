@@ -66,7 +66,7 @@ include_directories(
 
   ## Static and dynamic lib versions are exported using the same header file (C-entries)
   ## but can be distinguished by using different libraries!
-  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHJvx
+  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHAppHost
 
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_SUBPRODUCT_ROOT}/software/codeFragments/jvxHosts/common
@@ -91,7 +91,7 @@ set(LOCAL_LIBS
   jvxLthreads_static
 
   # Allow only static component linkage
-  jvxHJvx_static_nd
+  jvxHAppHost_static_nd
   jvxTconfigProcessor_static
   jvxTSystemTextLog_static
   jvxTThreads_static

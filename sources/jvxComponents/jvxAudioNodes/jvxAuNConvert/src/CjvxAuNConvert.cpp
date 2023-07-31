@@ -559,7 +559,7 @@ CjvxAuNConvert::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		for (i = 0; i < runtime.nCFieldRebuffer; i++)
 		{
-			JVX_SAFE_DELETE_FIELD(runtime.ptrFieldBuffer[i]);
+			JVX_SAFE_DELETE_FIELD_TYPE(runtime.ptrFieldBuffer[i], jvxByte);
 		}
 		JVX_SAFE_DELETE_FIELD(runtime.ptrFieldBuffer);
 

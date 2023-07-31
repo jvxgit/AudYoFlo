@@ -30,17 +30,47 @@
 //			CjvxHostInteraction, IjvxConfiguration, IjvxConfigurationExtender,
 //			CjvxFactoryHost_genpcg
 
-class CjvxHost: 
+class CjvxComConHost :
 	public CjvxInterfaceFactory<IjvxHost>,
-	public CjvxComponentHostTools, 
-	public IjvxSequencer, public CjvxSequencer, 
-	public IjvxDataConnections, public CjvxDataConnections,	
+	public CjvxComponentHostTools,
+	public IjvxDataConnections, public CjvxDataConnections
+{
+public:
+	JVX_CALLINGCONVENTION CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+		CjvxInterfaceFactory<IjvxHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	{
+
+	};
+	virtual JVX_CALLINGCONVENTION ~CjvxComConHost()
+	{
+
+	};
+
+	// Second part is IjvxComponentHost realized by mix-in!
+#include "codeFragments/simplify/jvxComponentHost_simplify.h"
+
+	// ====================================================================================
+	// Interface IjvxToolsHost
+	// ====================================================================================
+
+#include "codeFragments/simplify/jvxComponentHostTools_simplify.h"
+#include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
+
+#include "codeFragments/simplify/jvxHostInteraction_simplify.h"
+#include "codeFragments/simplify/jvxHostTypeHandler_simplify.h"
+#include "codeFragments/simplify/jvxDataConnections_simplify.h"
+
+
+};
+
+class CjvxFullHost: public CjvxComConHost,
+	public IjvxSequencer, public CjvxSequencer,
 	public IjvxPropertyAttach
 {
 public:
 
-	JVX_CALLINGCONVENTION CjvxHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-	virtual JVX_CALLINGCONVENTION ~CjvxHost();
+	JVX_CALLINGCONVENTION CjvxFullHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	virtual JVX_CALLINGCONVENTION ~CjvxFullHost();
 
 	// ================================================================================================
 	// Interface IjvxCoreStateMachine
@@ -61,15 +91,6 @@ public:
 	// =================================================================================================
 	virtual jvxErrorType JVX_CALLINGCONVENTION boot_complete(jvxBool* bootComplete) override;
 	
-	// Second part is IjvxComponentHost realized by mix-in!
-#include "codeFragments/simplify/jvxComponentHost_simplify.h"
-
-	// ====================================================================================
-	// Interface IjvxToolsHost
-	// ====================================================================================
-
-#include "codeFragments/simplify/jvxComponentHostTools_simplify.h"
-
 	// ====================================================================================
 	// Interface IjvxHiddenInterface
 	// ====================================================================================
@@ -89,12 +110,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION attach_property_submodule(const char* prefix, IjvxProperties* props) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION detach_property_submodule(IjvxProperties* props) override;
 
-#include "codeFragments/simplify/jvxHostInteraction_simplify.h"
-#include "codeFragments/simplify/jvxHostTypeHandler_simplify.h"
 #include "codeFragments/simplify/jvxSequencer_simplify.h"
-#include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
-#include "codeFragments/simplify/jvxDataConnections_simplify.h"
-
 
 protected:
 

@@ -1,14 +1,14 @@
 #include "jvx.h"
 #include "jvx-helpers.h"
 
-#include "jvxHosts/CjvxHost.h"
+#include "jvxHosts/CjvxFullHost.h"
 
 // ================================================================
 // Control sub components
 // ================================================================
 
 jvxErrorType
-CjvxHost::system_ready()
+CjvxFullHost::system_ready()
 {
 	// Indicate that boot process is complete
 	bootComplete = true;
@@ -61,7 +61,7 @@ CjvxHost::system_ready()
 }
 
 jvxErrorType
-CjvxHost::system_about_to_shutdown()
+CjvxFullHost::system_about_to_shutdown()
 {
 	auto elmTT = _common_set_types.registeredTechnologyTypes.begin();
 	for (; elmTT != _common_set_types.registeredTechnologyTypes.end(); elmTT++)
@@ -114,13 +114,13 @@ CjvxHost::system_about_to_shutdown()
 }
 
 jvxErrorType
-CjvxHost::owner(IjvxObject** ownerOnReturn)
+CjvxFullHost::owner(IjvxObject** ownerOnReturn)
 {
 	return CjvxObject::_owner(ownerOnReturn);
 }
 
 jvxErrorType
-CjvxHost::boot_complete(jvxBool* bootCompleteReturn)
+CjvxFullHost::boot_complete(jvxBool* bootCompleteReturn)
 {
 	if (bootCompleteReturn)
 	{
@@ -133,7 +133,7 @@ CjvxHost::boot_complete(jvxBool* bootCompleteReturn)
 // =============================================================================
 
 jvxErrorType
-CjvxHost::prerun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp)
+CjvxFullHost::prerun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp)
 {
 	for (auto& elm : _common_set_host.registeredStateSwitchHandlers)
 	{
@@ -150,7 +150,7 @@ CjvxHost::prerun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp)
 
 // ======================================================================================
 jvxErrorType
-CjvxHost::postrun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp, jvxErrorType res)
+CjvxFullHost::postrun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp, jvxErrorType res)
 {
 	for (auto& elm : _common_set_host.registeredStateSwitchHandlers)
 	{
@@ -167,13 +167,13 @@ CjvxHost::postrun_stateswitch(jvxStateSwitch ss, jvxComponentIdentification tp, 
 }
 
 jvxState
-CjvxHost::myState()
+CjvxFullHost::myState()
 {
 	return _common_set_min.theState;
 }
 
 void
-CjvxHost::reportErrorDescription(const std::string& descr, jvxBool isWarning)
+CjvxFullHost::reportErrorDescription(const std::string& descr, jvxBool isWarning)
 {
 	if (isWarning)
 	{
@@ -186,7 +186,7 @@ CjvxHost::reportErrorDescription(const std::string& descr, jvxBool isWarning)
 }
 
 jvxSize
-CjvxHost::myRegisteredHostId()
+CjvxFullHost::myRegisteredHostId()
 {
 	return this->_common_set.register_host_id;
 }

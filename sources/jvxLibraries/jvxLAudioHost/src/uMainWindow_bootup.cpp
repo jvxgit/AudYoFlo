@@ -10,9 +10,9 @@
 
 // Includes for main host application
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
-#include "jvxHJvx_nd.h"
+#include "jvxHAppHost_nd.h"
 #else
-#include "jvxHJvx.h"
+#include "jvxHAppHost.h"
 #endif
 
 #include "jvxQtAudioHostHookupEntries.h"

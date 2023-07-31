@@ -1,6 +1,6 @@
 #include "jvx.h"
 
-#include "jvxHosts/CjvxHost.h"
+#include "jvxHosts/CjvxFullHost.h"
 #include <iostream>
 
 
@@ -32,8 +32,8 @@ isInList(std::vector<std::string> lst, std::string entry)
 /**
  * Constructor: Only those commands required on this class derivation level.
  */
-CjvxHost::CjvxHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxInterfaceFactory<IjvxHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+CjvxFullHost::CjvxFullHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+	CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.tp = JVX_COMPONENT_HOST;
 	_common_set.theComponentType.slotid = JVX_SIZE_UNSELECTED;
@@ -70,7 +70,7 @@ CjvxHost::CjvxHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 /**
  * Destructor: Only terminate call
  */
-CjvxHost::~CjvxHost()
+CjvxFullHost::~CjvxFullHost()
 {
 	this->terminate();
 }
@@ -83,7 +83,7 @@ CjvxHost::~CjvxHost()
  * Initialize the current component
  */
 jvxErrorType
-CjvxHost::initialize(IjvxHiddenInterface* theOtherhost)
+CjvxFullHost::initialize(IjvxHiddenInterface* theOtherhost)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (theOtherhost == NULL)
@@ -107,7 +107,7 @@ CjvxHost::initialize(IjvxHiddenInterface* theOtherhost)
 }
 
 jvxErrorType
-CjvxHost::select(IjvxObject* theOwner)
+CjvxFullHost::select(IjvxObject* theOwner)
 {
 	jvxErrorType res = _select(theOwner);
 	if (res == JVX_NO_ERROR)
@@ -136,7 +136,7 @@ CjvxHost::select(IjvxObject* theOwner)
 }
 
 void
-CjvxHost::add_self_reference()
+CjvxFullHost::add_self_reference()
 {
 	// Add this host to list of accessible objects
 	// All other components
@@ -159,7 +159,7 @@ CjvxHost::add_self_reference()
 }
 
 void
-CjvxHost::remove_self_reference()
+CjvxFullHost::remove_self_reference()
 {
 	auto elm = _common_set_host.otherComponents.availableOtherComponents.begin();
 	for (; elm != _common_set_host.otherComponents.availableOtherComponents.end(); elm++)
@@ -176,7 +176,7 @@ CjvxHost::remove_self_reference()
  * Activate host component
  */
 jvxErrorType
-CjvxHost::activate()
+CjvxFullHost::activate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize i;
@@ -268,7 +268,7 @@ CjvxHost::activate()
 }
 
 jvxErrorType
-CjvxHost::unselectAllComponents()
+CjvxFullHost::unselectAllComponents()
 {
 	jvxSize i, j, k;
 	// A little bit of complicated since the list of slots is resized on every unselect!!
@@ -395,7 +395,7 @@ CjvxHost::unselectAllComponents()
  * Deactivate host component
  */
 jvxErrorType
-CjvxHost::deactivate()
+CjvxFullHost::deactivate()
 {
 	jvxSize i;
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
@@ -455,7 +455,7 @@ CjvxHost::deactivate()
 }
 
 jvxErrorType
-CjvxHost::unselect()
+CjvxFullHost::unselect()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (_common_set_min.theState == JVX_STATE_SELECTED)
@@ -482,7 +482,7 @@ CjvxHost::unselect()
  * Terminate host component
  */
 jvxErrorType
-CjvxHost::terminate()
+CjvxFullHost::terminate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = _terminate();
@@ -511,7 +511,7 @@ CjvxHost::set_external_widget_host(jvxHandle* theWidgetHost, jvxWidgetHostType w
 // ====================================================================
 
 jvxErrorType
-CjvxHost::object_hidden_interface(IjvxObject** objRef)
+CjvxFullHost::object_hidden_interface(IjvxObject** objRef)
 {
 	if (objRef)
 	{
@@ -521,7 +521,7 @@ CjvxHost::object_hidden_interface(IjvxObject** objRef)
 }
 
 jvxErrorType
-CjvxHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
+CjvxFullHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxHostInteraction::request_hidden_interface(tp, hdl);
@@ -593,7 +593,7 @@ CjvxHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 }
 
 jvxErrorType
-CjvxHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
+CjvxFullHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxHostInteraction::return_hidden_interface(tp, hdl);
@@ -686,7 +686,7 @@ CjvxHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 }
 
 void
-CjvxHost::load_dynamic_objects()
+CjvxFullHost::load_dynamic_objects()
 {
 	if (!config.use_only_static_objects)
 	{
@@ -697,7 +697,7 @@ CjvxHost::load_dynamic_objects()
 }
 
 void
-CjvxHost::unload_dynamic_objects()
+CjvxFullHost::unload_dynamic_objects()
 {
 	if (!config.use_only_static_objects)
 	{

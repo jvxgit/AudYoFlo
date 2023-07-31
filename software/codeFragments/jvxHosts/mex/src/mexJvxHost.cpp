@@ -13,7 +13,7 @@ extern "C"
 #include "jvx_misc/jvx_printf.h"
 };
 
-#include "jvxHJvx.h"
+#include "jvxHAppHost.h"
 #ifdef CONFIG_COMPILE_FOR_MATLAB
 #include "jvxTExternalCall_matlab.h"
 #elif defined CONFIG_COMPILE_FOR_OCTAVE

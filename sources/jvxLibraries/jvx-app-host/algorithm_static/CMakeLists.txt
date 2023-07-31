@@ -11,7 +11,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
-  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHJvx/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHAppHost/
  ${JVX_BASE_BINARY_DIR}/sources/jvxFactoryHosts/jvxFHDefault
   )
 
@@ -45,7 +45,7 @@ endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../include/jvx-app-host-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/jvx-app-host-config.h)
 set(LOCAL_COMPILE_DEFINITIONS "JVX_HOST_USE_ONLY_STATIC_OBJECTS;JVX_CONFIGURE_HOST_STATIC_NODE")
 set(LOCAL_LIBS 
-	jvxHJvx_static_nd
+	jvxHAppHost_static_nd
 	jvxFHDefault_static_nd)
 	
 set(BUILD_STATIC TRUE)

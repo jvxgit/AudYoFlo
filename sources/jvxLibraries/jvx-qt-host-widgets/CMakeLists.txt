@@ -100,7 +100,7 @@ include_directories(
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTThreadController/
 
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHJvx
+  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHAppHost
 
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_SUBPRODUCT_ROOT}/software/codeFragments/jvxHosts/common

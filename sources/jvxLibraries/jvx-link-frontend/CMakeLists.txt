@@ -7,7 +7,7 @@ include_directories(
   
   # Console linkage
 	${JVX_BINARY_DIR}/base/sources/jvxEventLoop/CjvxEStandalone
-	${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHJvx/
+	${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHAppHost/
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleTools/include
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLWebConsoleTools/include
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-net-helpers/include
