@@ -112,7 +112,7 @@ public:
 		jvxApiString fldStr;
 		jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 		int numRet = 0;
-		for (i = 0; i < _common_set_host.otherComponents.availableOtherComponents.size(); i++)
+		for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 		{
 			if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.tp == tp)
 			{
