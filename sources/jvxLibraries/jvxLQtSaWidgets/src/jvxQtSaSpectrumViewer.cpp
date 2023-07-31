@@ -6,6 +6,8 @@
 #include "qwt_plot_curve.h"
 #include "qwt_plot_grid.h"
 #include "qwt_scale_engine.h"
+#include "qwt_text.h"
+#include "qpen.h"
 
 #define PIXEL_SIZE_FONTS 9
 

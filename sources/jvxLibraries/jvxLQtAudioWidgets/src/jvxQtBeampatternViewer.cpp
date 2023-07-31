@@ -8,6 +8,7 @@
 #include "qwt_color_map.h"
 #include "qwt_raster_data.h"
 #include "qwt_scale_engine.h"
+#include "qwt_interval.h"
 
 #define PIXEL_SIZE_FONTS 9
 class jvxQwtColorMap: public QwtLinearColorMap
