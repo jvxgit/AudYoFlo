@@ -1,5 +1,5 @@
-#ifndef __CJVXHOST_H__
-#define __CJVXHOST_H__
+#ifndef __CJVXFULLHOST_H__
+#define __CJVXFULLHOST_H__
 
 #include "jvx.h"
 #include "common/CjvxObject.h"

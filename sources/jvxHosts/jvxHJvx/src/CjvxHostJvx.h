@@ -1,30 +1,15 @@
 #ifndef __CJVXHOSTJVX_H__
 #define __CJVXHOSTJVX_H__
 
-#ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
 #include "jvxHosts/CjvxHost.h"
-#else
-#include "jvxHosts/CjvxHost_dll.h"
-#endif
 #include "common/CjvxConfigurationLine.h"
 #include "common/CjvxPropertyPool.h"
 
-#ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
-#define JVX_HOST_JVX_CLASSNAME CjvxHostJvx
-#else
-#define JVX_HOST_JVX_CLASSNAME CjvxHostJvx_dll
-#endif
-
-class JVX_HOST_JVX_CLASSNAME :
+class CjvxHostJvx :
 	public IjvxConfiguration, public IjvxConfigurationDone, public IjvxConfigurationLine,
 	public IjvxConfigurationExtender, public IjvxConfigurationAttach,
 	public IjvxPropertyPool, public CjvxPropertyPool,
-#ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
-	public CjvxHost, 
-#else
-	public CjvxHost_dll, 
-#endif
-	public CjvxConfigurationLine
+	public CjvxHost, public CjvxConfigurationLine
 {
 protected:
 	
@@ -57,7 +42,7 @@ protected:
 	std::list<CjvxConfigurationSubModule> registeredConfigSubmodules;
 public:
 
-	JVX_HOST_JVX_CLASSNAME(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	CjvxHostJvx(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 
 	// ====================================================================================
 	// Interface IjvxStateMachine

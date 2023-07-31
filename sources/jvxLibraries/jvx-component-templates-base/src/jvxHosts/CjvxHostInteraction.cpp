@@ -8,7 +8,7 @@ CjvxHostInteraction::CjvxHostInteraction()
 	_common_set_host.threadId_registered = JVX_NULLTHREAD;
 	_common_set_host.loadFilter.theCallback = NULL;
 	_common_set_host.loadFilter.theCallback_priv = NULL;
-	config.minHostFunctionality = false;
+	config.minHostFunctionality_ = false;
 }
 
 CjvxHostInteraction::~CjvxHostInteraction()
@@ -65,7 +65,12 @@ CjvxHostInteraction::_add_external_component(CjvxObject* meObj,
 				allowsMultiObjects = false;
 			}
 
-			if (config.minHostFunctionality)
+			// If we have minHost function, the fwd-call does nothing
+			res = fwd_add_external_component(meObj,
+				theObj, theGlob, locationDescription, allowMultipleInstance,
+				funcInit, funcTerm, tp.tp);
+			
+			if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 			{
 				// All other components
 				jvxOneComponentModule elm;
@@ -78,7 +83,7 @@ CjvxHostInteraction::_add_external_component(CjvxObject* meObj,
 				elm.common.linkage.dllPath = "NONE";
 				elm.common.linkage.sharedObjectEntry = NULL;
 				elm.common.linkage.funcInit = funcInit;
-				elm.common.linkage.funcTerm = funcTerm;				
+				elm.common.linkage.funcTerm = funcTerm;
 				elm.common.tp = tp.tp;
 				elm.common.allowsMultiObjects = allowsMultiObjects;
 				elm.common.externalLink.description = locationDescription;
@@ -88,39 +93,8 @@ CjvxHostInteraction::_add_external_component(CjvxObject* meObj,
 
 				_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
 				staticModules[theObj] = mName;
+				res = JVX_NO_ERROR;
 				std::cout << "  - added" << std::endl;
-			}
-			else
-			{
-				res = fwd_add_external_component( meObj,
-					 theObj,  theGlob,locationDescription,  allowMultipleInstance,
-					funcInit, funcTerm, tp.tp);
-				if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
-				{
-					// All other components
-					jvxOneComponentModule elm;
-
-					elm.theObj_single = NULL;
-					elm.theObj_single = theObj;
-					elm.theGlob_single = theGlob;
-					elm.common.isExternalComponent = true;
-					elm.common.id = (jvxSize)_common_set_host.otherComponents.availableOtherComponents.size();
-					elm.common.linkage.dllPath = "NONE";
-					elm.common.linkage.sharedObjectEntry = NULL;
-					elm.common.linkage.funcInit = funcInit;
-					elm.common.linkage.funcTerm = funcTerm;
-					elm.common.tp = tp.tp;
-					elm.common.allowsMultiObjects = allowsMultiObjects;
-					elm.common.externalLink.description = locationDescription;
-					elm.common.dllProps = 0;
-					elm.common.hObject = theObj;
-					elm.common.hGlobInst = theGlob;
-
-					_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
-					staticModules[theObj] = mName;
-					res = JVX_NO_ERROR;
-					std::cout << "  - added" << std::endl;
-				}
 			}
 		}
 		else
@@ -144,12 +118,9 @@ CjvxHostInteraction::_remove_external_component(CjvxObject* meObj, IjvxObject* t
 	meObj->_state(&stat);
 	if (stat == JVX_STATE_SELECTED)
 	{
-		if (!config.minHostFunctionality)
-		{
-			// Try all higher functional removals first
-			fwd_remove_external_component(meObj, theObj);
-		}
-
+		// Try all higher functional removals first
+		fwd_remove_external_component(meObj, theObj);
+		
 		std::vector<jvxOneComponentModule>::iterator elm = this->_common_set_host.otherComponents.availableOtherComponents.begin();
 		for (; elm != this->_common_set_host.otherComponents.availableOtherComponents.end(); elm++)
 		{
@@ -822,10 +793,17 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 									{
 										if (specCompAdd)
 										{
-											if (config.minHostFunctionality)
+											jvxErrorType res = fwd_load_all_components(tpCheck.tp, specCompAdd,
+												allowMultipleObjectsAdd, newObjAdd, newGlobInstAdd,
+												thePack, thePackIdx, fileName, funcInitAdd, funcTermAdd,
+												dllHandle, dllProps, numAdded);
+											if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 											{
 												jvxOneComponentModule elm;
 
+												elm.theObj_single = NULL;
+												elm.theObj_single = newObjAdd;
+												elm.theGlob_single = newGlobInstAdd;
 												elm.common.isExternalComponent = false;
 												elm.common.id = (jvxSize)_common_set_host.otherComponents.availableOtherComponents.size();
 												elm.common.tp = tpCheck.tp;
@@ -837,50 +815,15 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 												elm.common.linkage.funcInit = funcInitAdd;
 												elm.common.linkage.funcTerm = funcTermAdd;
 												elm.common.linkage.sharedObjectEntry = dllHandle;
-												elm.common.linkage.packPtr = thePack;
-												elm.common.linkage.packIdx = thePackIdx;
 
 												elm.common.externalLink.description = "NONE";
 												elm.common.dllProps = dllProps;
-												elm.theObj_single = newObjAdd;
-												elm.theGlob_single = newGlobInstAdd;
 
+												elm.common.linkage.packPtr = thePack;
+												elm.common.linkage.packIdx = thePackIdx;
 												_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
 												numAdded++;
-											}
-											else
-											{												
-												jvxErrorType res = fwd_load_all_components(tpCheck.tp, specCompAdd, 
-													allowMultipleObjectsAdd, newObjAdd, newGlobInstAdd,
-													thePack, thePackIdx, fileName, funcInitAdd, funcTermAdd,
-													dllHandle, dllProps, numAdded);
-												if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
-												{
-													jvxOneComponentModule elm;
 
-													elm.theObj_single = NULL;
-													elm.theObj_single = newObjAdd;
-													elm.theGlob_single = newGlobInstAdd;
-													elm.common.isExternalComponent = false;
-													elm.common.id = (jvxSize)_common_set_host.otherComponents.availableOtherComponents.size();
-													elm.common.tp = tpCheck.tp;
-													elm.common.allowsMultiObjects = allowMultipleObjectsAdd;
-													elm.common.hObject = newObjAdd;
-													elm.common.hGlobInst = newGlobInstAdd;
-
-													elm.common.linkage.dllPath = fileName;
-													elm.common.linkage.funcInit = funcInitAdd;
-													elm.common.linkage.funcTerm = funcTermAdd;
-													elm.common.linkage.sharedObjectEntry = dllHandle;
-
-													elm.common.externalLink.description = "NONE";
-													elm.common.dllProps = dllProps;
-
-													elm.common.linkage.packPtr = thePack;
-													elm.common.linkage.packIdx = thePackIdx;
-													_common_set_host.otherComponents.availableOtherComponents.push_back(elm);
-													numAdded++;
-												}
 											}
 
 											if (isPackageMainComponent)
@@ -989,12 +932,7 @@ CjvxHostInteraction::pre_unloadAllComponents()
 	jvxSize i;
 	std::list<JVX_HMODULE> unloadLibs;
 
-	if (!config.minHostFunctionality)
-	{
-		jvxSize j;
-
-		fwd_pre_unload_all_components();
-	}
+	fwd_pre_unload_all_components();
 
 	std::vector<jvxOneComponentModule> remainListO;
 	for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
@@ -1020,10 +958,7 @@ jvxErrorType
 CjvxHostInteraction::unloadAllComponents()
 {
 	jvxSize i;
-	if (!config.minHostFunctionality)
-	{
-		fwd_unload_all_components();
-	}
+	fwd_unload_all_components();
 
 	std::vector<jvxOneComponentModule> remainListO;
 	for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)

@@ -115,7 +115,11 @@ protected:
 
 	struct
 	{
-		jvxBool minHostFunctionality;
+		jvxBool minHostFunctionality_ = false;
+
+		//! The host may be configured to load dynamic libraries or solely rely on static libraries.
+		//! Also, a mix of both is possible with higher prio for the static libraries.
+		jvxBool use_only_static_objects = false;
 	} config;
 
 	std::map<IjvxObject*, std::string> staticModules;

@@ -9,18 +9,10 @@ CjvxToolsInterfaceFactory::CjvxToolsInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_M
 {
 	myUniqueId = 1;
 
-#ifdef JVX_MINIMUM_HOST_FUNCTIONALITY
-
-	// Only min host function, that is, not component type specific lineup
-	config.minHostFunctionality = true;
-#endif
-
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
 
 	// Do not load components from dlls
-	config_dll.use_only_static_objects = true;
-#else
-	config_dll.use_only_static_objects = false;
+	config.use_only_static_objects = true;
 #endif
 
 }
@@ -107,11 +99,12 @@ CjvxToolsInterfaceFactory::activate()
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile);
 		_unlock_properties_local();
 
-		if (!config_dll.use_only_static_objects)
+		if (!config.use_only_static_objects)
 		{
 			this->loadAllComponents(JVX_EVALUATE_BITFIELD(CjvxHost_genpcg::properties_selected.do_unload_dlls.value.selection() & 0x1),
 				CjvxHost_genpcg::properties_selected.component_path.value, true, true);
 		}
+
 		if (CjvxHost_genpcg::properties_selected.textLog_activate.value == c_true)
 		{
 			if (_common_set.theToolsHost)
@@ -203,7 +196,7 @@ CjvxToolsInterfaceFactory::deactivate()
 		assert(res == JVX_NO_ERROR);
 
 		// unload all Dlls
-		if (!config_dll.use_only_static_objects)
+		if (!config.use_only_static_objects)
 		{
 			this->unloadAllComponents();
 		}

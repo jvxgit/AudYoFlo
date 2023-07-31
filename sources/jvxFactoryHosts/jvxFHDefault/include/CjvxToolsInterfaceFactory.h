@@ -43,11 +43,6 @@ private:
 	
 	jvxSize myUniqueId;
 
-	struct
-	{
-		jvxBool use_only_static_objects;
-	} config_dll;
-
 public:
 
 	// ===================================================================================================

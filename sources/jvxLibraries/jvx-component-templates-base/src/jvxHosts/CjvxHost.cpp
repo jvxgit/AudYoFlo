@@ -688,11 +688,22 @@ CjvxHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 void
 CjvxHost::load_dynamic_objects()
 {
+	if (!config.use_only_static_objects)
+	{
+		this->loadAllComponents(JVX_EVALUATE_BITFIELD(CjvxHost_genpcg::properties_selected.do_unload_dlls.value.selection() & 0x1),
+			CjvxHost_genpcg::properties_selected.component_path.value, (CjvxHost_genpcg::properties_selected.host_output_cout.value == c_true),
+			(CjvxHost_genpcg::properties_selected.host_verbose_dll.value == c_true));
+	}
 }
 
 void
 CjvxHost::unload_dynamic_objects()
 {
+	if (!config.use_only_static_objects)
+	{
+		pre_unloadAllComponents();
+		this->unloadAllComponents();
+	}
 }
 
 // ===============================================================================================

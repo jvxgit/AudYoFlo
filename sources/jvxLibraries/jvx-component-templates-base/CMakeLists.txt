@@ -111,9 +111,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_components.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_components-tpl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_connections.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_sequencer.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHost_dll.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_dll.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_sequencer.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxUniqueId.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxUniqueId.cpp
 	

@@ -701,10 +701,15 @@ endif()
   # build hosts
   ###
   set(JVX_BASE_HOST_COMPONENTS
-    ${JVX_BASE_ROOT}/sources/jvxHosts/jvxHDefault
-    ${JVX_BASE_ROOT}/sources/jvxHosts/jvxHJvx
-	${JVX_BASE_ROOT}/sources/jvxHosts/jvxHCon
+    # ${JVX_BASE_ROOT}/sources/jvxHosts/jvxHDefault
+    
+	# Main host as used in all standalone projects
+	${JVX_BASE_ROOT}/sources/jvxHosts/jvxHJvx
+	
+	# Main host as used in all factory host projects
 	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHDefault
+	
+	${JVX_BASE_ROOT}/sources/jvxHosts/jvxHCon
 	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHCon)
 
   ###
