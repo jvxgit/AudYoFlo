@@ -22,7 +22,7 @@ include_directories(
 	${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qwt-${JVX_QWT_VERSION}/src
 	${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qwtPolar-${JVX_QWT_POLAR_VERSION}/src
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-helpers/include
-	${JVX_BINARY_DIR}/base/sources/jvxFactoryHosts/jvxFHDefault
+	${JVX_BINARY_DIR}/base/sources/jvxFactoryHosts/jvxFHAppFactoryHost
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-webcontrol/include
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-app-templates/src
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/include/interfaces/qt
@@ -40,7 +40,7 @@ set(LOCAL_SOURCES
 set(LOCAL_LIBS
 	jvx-qt-helpers_static
 	jvx-qt-webcontrol-shared_static
-	jvxFHDefault_static
+	jvxFHAppFactoryHost_static
 	jvxTSystemTextLog_static
 	jvx-qt-app-templates_static
 	)

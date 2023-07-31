@@ -1,4 +1,4 @@
-#include "CjvxToolsInterfaceFactory.h"
+#include "CjvxAppFactoryHost.h"
 #include "jvx-helpers.h"
 
 #define REPORT_ERROR(a, b) if(report) {report->report_simple_text_message(a,b);}
@@ -9,7 +9,7 @@
 // =================================================================
 
 jvxErrorType
-CjvxToolsInterfaceFactory::put_configuration(jvxCallManagerConfiguration* callConf,
+CjvxAppFactoryHost::put_configuration(jvxCallManagerConfiguration* callConf,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionToContainAllSubsectionsForMe,
 	const char* filename, jvxInt32 lineno)
@@ -127,7 +127,7 @@ CjvxToolsInterfaceFactory::put_configuration(jvxCallManagerConfiguration* callCo
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
+CjvxAppFactoryHost::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {
 	jvxSize i,j,k,h;
@@ -214,7 +214,7 @@ CjvxToolsInterfaceFactory::get_configuration(jvxCallManagerConfiguration* callCo
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::register_extension(IjvxConfigurationExtender_report* bwd, const char* sectionName)
+CjvxAppFactoryHost::register_extension(IjvxConfigurationExtender_report* bwd, const char* sectionName)
 {
 	std::string entryStr = sectionName;
 	std::vector<oneExternalConfigHook>::iterator elm = jvx_findItemSelectorInList<oneExternalConfigHook, std::string>(externalConfigHooks, entryStr);
@@ -230,7 +230,7 @@ CjvxToolsInterfaceFactory::register_extension(IjvxConfigurationExtender_report* 
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::unregister_extension(const char* sectionName)
+CjvxAppFactoryHost::unregister_extension(const char* sectionName)
 {
 	std::string entryStr = sectionName;
 	std::vector<oneExternalConfigHook>::iterator elm = jvx_findItemSelectorInList<oneExternalConfigHook, std::string>(externalConfigHooks, entryStr);
@@ -243,14 +243,14 @@ CjvxToolsInterfaceFactory::unregister_extension(const char* sectionName)
 }
 
 jvxErrorType 
-CjvxToolsInterfaceFactory::clear_configuration_entries()
+CjvxAppFactoryHost::clear_configuration_entries()
 {
 	externalConfigEntries.clear();
 	return(JVX_NO_ERROR);
 }
 
 jvxErrorType 
-CjvxToolsInterfaceFactory::set_configuration_entry(const char* entryname, jvxHandle* fld, jvxConfigSectionTypes tp, jvxSize id)
+CjvxAppFactoryHost::set_configuration_entry(const char* entryname, jvxHandle* fld, jvxConfigSectionTypes tp, jvxSize id)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxApiStringList* lstStr;
@@ -367,7 +367,7 @@ CjvxToolsInterfaceFactory::set_configuration_entry(const char* entryname, jvxHan
 }
 
 jvxErrorType 
-CjvxToolsInterfaceFactory::get_configuration_entry(const char* entryname, jvxHandle* fld, jvxConfigSectionTypes* tp, jvxSize id)
+CjvxAppFactoryHost::get_configuration_entry(const char* entryname, jvxHandle* fld, jvxConfigSectionTypes* tp, jvxSize id)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	std::string entryStr = entryname;

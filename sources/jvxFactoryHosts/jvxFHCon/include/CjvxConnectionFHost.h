@@ -1,10 +1,10 @@
 #ifndef CJVXCONNECTIONFHOST_H__
 #define CJVXCONNECTIONFHOST_H__
 
-#include "CjvxToolsInterfaceFactory.h"
+#include "CjvxAppFactoryHost.h"
 #include "jvxHosts/CjvxDataConnections.h"
 	
-class CjvxConnectionFHost : public CjvxToolsInterfaceFactory,
+class CjvxConnectionFHost : public CjvxAppFactoryHost,
 	public IjvxDataConnections, public CjvxDataConnections
 {
 public:

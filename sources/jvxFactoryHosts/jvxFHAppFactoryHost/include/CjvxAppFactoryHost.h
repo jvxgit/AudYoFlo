@@ -1,5 +1,5 @@
-#ifndef __CJVXTOOLSINTERFACEFACTORY_H__
-#define __CJVXTOOLSINTERFACEFACTORY_H__
+#ifndef __CJVXAPPFACTORYHOST_H__
+#define __CJVXAPPFACTORYHOST_H__
 
 #include "jvx.h"
 #include "jvxFactoryHosts/CjvxInterfaceFactory.h"
@@ -16,7 +16,7 @@
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
-class CjvxToolsInterfaceFactory : public CjvxInterfaceFactory<IjvxFactoryHost>,
+class CjvxAppFactoryHost : public CjvxInterfaceFactory<IjvxFactoryHost>,
 		public CjvxHostInteractionTools<CjvxHostInteraction>,
 		public IjvxConfiguration, public IjvxConfigurationExtender
 {
@@ -48,8 +48,8 @@ public:
 	// ===================================================================================================
 	// ===================================================================================================
 
-	JVX_CALLINGCONVENTION CjvxToolsInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-	virtual JVX_CALLINGCONVENTION ~CjvxToolsInterfaceFactory();
+	JVX_CALLINGCONVENTION CjvxAppFactoryHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	virtual JVX_CALLINGCONVENTION ~CjvxAppFactoryHost();
 
 	// ===================================================================================================
 	// Interface <IjvxStateMachine>

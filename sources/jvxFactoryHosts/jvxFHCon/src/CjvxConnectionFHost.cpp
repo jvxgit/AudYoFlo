@@ -1,7 +1,7 @@
 #include "CjvxConnectionFHost.h"
 
 CjvxConnectionFHost::CjvxConnectionFHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : 
-	CjvxToolsInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxAppFactoryHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 }
 
@@ -23,7 +23,7 @@ CjvxConnectionFHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** h
 		}
 		break;
 	default:
-		res = CjvxToolsInterfaceFactory::request_hidden_interface(tp, hdl);
+		res = CjvxAppFactoryHost::request_hidden_interface(tp, hdl);
 	}
 	
 	return(res);
@@ -49,7 +49,7 @@ CjvxConnectionFHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl
 
 
 	default:
-		res = CjvxToolsInterfaceFactory::return_hidden_interface(tp, hdl);
+		res = CjvxAppFactoryHost::return_hidden_interface(tp, hdl);
 	}
 
 	return res;

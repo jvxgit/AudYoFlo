@@ -1,10 +1,10 @@
-#include "CjvxToolsInterfaceFactory.h"
+#include "CjvxAppFactoryHost.h"
 
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
-CjvxToolsInterfaceFactory::CjvxToolsInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
+	CjvxAppFactoryHost::CjvxAppFactoryHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxInterfaceFactory<IjvxFactoryHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	myUniqueId = 1;
@@ -17,7 +17,7 @@ CjvxToolsInterfaceFactory::CjvxToolsInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_M
 
 }
 
-CjvxToolsInterfaceFactory::~CjvxToolsInterfaceFactory()
+	CjvxAppFactoryHost::~CjvxAppFactoryHost()
 {
 }
 
@@ -28,7 +28,7 @@ CjvxToolsInterfaceFactory::~CjvxToolsInterfaceFactory()
  * Initialize the current component
  */
 jvxErrorType
-CjvxToolsInterfaceFactory::initialize(IjvxHiddenInterface* theOtherhost)
+CjvxAppFactoryHost::initialize(IjvxHiddenInterface* theOtherhost)
 {
 	jvxErrorType res = _initialize(theOtherhost);
 	if(res == JVX_NO_ERROR)
@@ -41,7 +41,7 @@ CjvxToolsInterfaceFactory::initialize(IjvxHiddenInterface* theOtherhost)
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::select(IjvxObject* theOwner)
+CjvxAppFactoryHost::select(IjvxObject* theOwner)
 {
 	jvxErrorType res = _select(theOwner);
 	if(res == JVX_NO_ERROR)
@@ -54,19 +54,19 @@ CjvxToolsInterfaceFactory::select(IjvxObject* theOwner)
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::system_ready()
+CjvxAppFactoryHost::system_ready()
 {
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::system_about_to_shutdown()
+CjvxAppFactoryHost::system_about_to_shutdown()
 {
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::owner(IjvxObject** dependsOn) 
+CjvxAppFactoryHost::owner(IjvxObject** dependsOn) 
 {
 	return _owner(dependsOn);
 };
@@ -75,7 +75,7 @@ CjvxToolsInterfaceFactory::owner(IjvxObject** dependsOn)
  * Activate host component
  */
 jvxErrorType
-CjvxToolsInterfaceFactory::activate()
+CjvxAppFactoryHost::activate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize i;
@@ -153,7 +153,7 @@ CjvxToolsInterfaceFactory::activate()
  * Deactivate host component
  */
 jvxErrorType
-CjvxToolsInterfaceFactory::deactivate()
+CjvxAppFactoryHost::deactivate()
 {
 	jvxSize i;
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
@@ -207,7 +207,7 @@ CjvxToolsInterfaceFactory::deactivate()
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::unselect()
+CjvxAppFactoryHost::unselect()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_SELECTED)
@@ -229,7 +229,7 @@ CjvxToolsInterfaceFactory::unselect()
  * Terminate host component
  */
 jvxErrorType
-CjvxToolsInterfaceFactory::terminate()
+CjvxAppFactoryHost::terminate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = _terminate();
@@ -240,7 +240,7 @@ CjvxToolsInterfaceFactory::terminate()
 // ==========================================================================================
 
 jvxErrorType
-CjvxToolsInterfaceFactory::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
+CjvxAppFactoryHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxHostInteraction::request_hidden_interface(tp, hdl);
@@ -288,7 +288,7 @@ CjvxToolsInterfaceFactory::request_hidden_interface(jvxInterfaceType tp, jvxHand
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
+CjvxAppFactoryHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxHostInteraction::return_hidden_interface(tp, hdl);
@@ -362,7 +362,7 @@ CjvxToolsInterfaceFactory::return_hidden_interface(jvxInterfaceType tp, jvxHandl
 // ==========================================================================================
 
 jvxErrorType
-CjvxToolsInterfaceFactory::number_tools(const jvxComponentIdentification& tp, jvxSize* num)
+CjvxAppFactoryHost::number_tools(const jvxComponentIdentification& tp, jvxSize* num)
 {
 	return _number_tools(tp,  num);
 #if 0
@@ -391,7 +391,7 @@ CjvxToolsInterfaceFactory::number_tools(const jvxComponentIdentification& tp, jv
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::identification_tool(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* description, jvxApiString* descriptor, jvxBool* mulInst)
+CjvxAppFactoryHost::identification_tool(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* description, jvxApiString* descriptor, jvxBool* mulInst)
 {
 	return _identification_tool(tp, idx, description, descriptor, mulInst);
 #if 0
@@ -432,7 +432,7 @@ CjvxToolsInterfaceFactory::identification_tool(const jvxComponentIdentification&
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, 
+CjvxAppFactoryHost::reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, 
 	jvxSize filter_id, const char* filter_descriptor, jvxBitField filter_stateMask,
 	IjvxReferenceSelector* decider)
 {
@@ -506,7 +506,7 @@ CjvxToolsInterfaceFactory::reference_tool(const jvxComponentIdentification& tp, 
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::return_reference_tool(const jvxComponentIdentification& tp, IjvxObject* theObject)
+CjvxAppFactoryHost::return_reference_tool(const jvxComponentIdentification& tp, IjvxObject* theObject)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 	jvxSize i;
@@ -536,7 +536,7 @@ CjvxToolsInterfaceFactory::return_reference_tool(const jvxComponentIdentificatio
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::instance_tool(jvxComponentType tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor)
+CjvxAppFactoryHost::instance_tool(jvxComponentType tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor)
 {
 	return _instance_tool(tp, theObject, filter_id, filter_descriptor);
 #if 0
@@ -666,7 +666,7 @@ CjvxToolsInterfaceFactory::instance_tool(jvxComponentType tp, IjvxObject** theOb
 }
 
 jvxErrorType
-CjvxToolsInterfaceFactory::return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor)
+CjvxAppFactoryHost::return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor)
 {
 	return _return_instance_tool(tp,theObject,  filter_id, filter_descriptor);
 #if 0

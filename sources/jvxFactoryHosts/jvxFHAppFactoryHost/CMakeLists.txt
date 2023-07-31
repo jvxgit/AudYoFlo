@@ -3,7 +3,7 @@ if(DEFINED JVX_SDK_PATH)
 	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
 endif(DEFINED JVX_SDK_PATH)
 
-set(PROJECT_NAME jvxFHDefault)
+set(PROJECT_NAME jvxFHAppFactoryHost)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 include_directories(
@@ -16,10 +16,10 @@ include_directories(
   )
 
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxToolsInterfaceFactory.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxToolsInterfaceFactory_config.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppFactoryHost.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAppFactoryHost_config.cpp
 
-	${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxToolsInterfaceFactory.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxAppFactoryHost.h
   )
 
 set(LOCAL_COMPILE_DEFINITIONS_SHARED "COMPONENT_DESCRIPTOR_NAME=CJVXHOST-DLL")

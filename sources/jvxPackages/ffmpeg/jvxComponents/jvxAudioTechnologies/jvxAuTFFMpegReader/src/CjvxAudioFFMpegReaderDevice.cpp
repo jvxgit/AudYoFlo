@@ -615,6 +615,7 @@ CjvxAudioFFMpegReaderDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TY
 jvxErrorType
 CjvxAudioFFMpegReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
+	jvxCallManagerProperties callMan;
 	jvxErrorType res = JVX_NO_ERROR;
 
 	// If the chain is started, the object itself should also be started if not done so before
@@ -637,7 +638,6 @@ CjvxAudioFFMpegReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	statusOutput = processingState::JVX_STATUS_RUNNING;
 	genFFMpegReader_device::translate__monitor__file_status_to(statusOutput);
 
-	jvxCallManagerProperties callMan;
 	CjvxProperties::_start_property_report_collect(callMan);
 	CjvxProperties::add_property_report_collect(genFFMpegReader_device::monitor.file_status.descriptor.std_str());
 	CjvxProperties::_stop_property_report_collect(callMan);

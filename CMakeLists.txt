@@ -707,7 +707,7 @@ endif()
 	${JVX_BASE_ROOT}/sources/jvxHosts/jvxHAppHost
 	
 	# Main host as used in all factory host projects
-	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHDefault
+	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHAppFactoryHost
 	
 	${JVX_BASE_ROOT}/sources/jvxHosts/jvxHCon
 	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHCon)

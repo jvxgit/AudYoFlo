@@ -12,7 +12,7 @@ include_directories(
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHAppHost/
- ${JVX_BASE_BINARY_DIR}/sources/jvxFactoryHosts/jvxFHDefault
+ ${JVX_BASE_BINARY_DIR}/sources/jvxFactoryHosts/jvxFHAppFactoryHost
   )
 
 set(LOCAL_SOURCES
@@ -44,7 +44,7 @@ endif()
 set(LOCAL_COMPILE_DEFINITIONS "")
 set(LOCAL_LIBS 
 	jvxHAppHost_static
-	jvxFHDefault_static)
+	jvxFHAppFactoryHost_static)
 
 set(BUILD_STATIC TRUE)
 set(IS_C_LIB FALSE)
