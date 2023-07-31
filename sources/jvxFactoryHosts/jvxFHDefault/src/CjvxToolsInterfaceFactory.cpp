@@ -8,11 +8,16 @@ CjvxToolsInterfaceFactory::CjvxToolsInterfaceFactory(JVX_CONSTRUCTOR_ARGUMENTS_M
 	CjvxInterfaceFactory<IjvxFactoryHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	myUniqueId = 1;
+
 #ifdef JVX_MINIMUM_HOST_FUNCTIONALITY
+
+	// Only min host function, that is, not component type specific lineup
 	config.minHostFunctionality = true;
 #endif
 
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
+
+	// Do not load components from dlls
 	config_dll.use_only_static_objects = true;
 #else
 	config_dll.use_only_static_objects = false;
@@ -366,6 +371,8 @@ CjvxToolsInterfaceFactory::return_hidden_interface(jvxInterfaceType tp, jvxHandl
 jvxErrorType
 CjvxToolsInterfaceFactory::number_tools(const jvxComponentIdentification& tp, jvxSize* num)
 {
+	return _number_tools(tp,  num);
+#if 0
 	jvxErrorType res = JVX_NO_ERROR;
 	int numRet = 0;
 	jvxSize i;
@@ -387,11 +394,14 @@ CjvxToolsInterfaceFactory::number_tools(const jvxComponentIdentification& tp, jv
 		*num = numRet;
 	}
 	return(res);
+#endif
 }
 
 jvxErrorType
 CjvxToolsInterfaceFactory::identification_tool(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* description, jvxApiString* descriptor, jvxBool* mulInst)
 {
+	return _identification_tool(tp, idx, description, descriptor, mulInst);
+#if 0
 	jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
 	int numRet = 0;
 	jvxApiString fldStr;
@@ -425,6 +435,7 @@ CjvxToolsInterfaceFactory::identification_tool(const jvxComponentIdentification&
 		}
 	}
 	return(res);
+#endif
 }
 
 jvxErrorType
@@ -432,6 +443,16 @@ CjvxToolsInterfaceFactory::reference_tool(const jvxComponentIdentification& tp, 
 	jvxSize filter_id, const char* filter_descriptor, jvxBitField filter_stateMask,
 	IjvxReferenceSelector* decider)
 {
+	// If there is a filter, deactivate id return
+	if (filter_descriptor)
+	{
+		filter_id = JVX_SIZE_UNSELECTED;
+	}
+
+	return _reference_tool(tp, theObject,
+		filter_id, filter_descriptor, filter_stateMask,
+		decider);
+#if 0
 	jvxSize i = 0;
 	jvxSize cnt = 0;
 	jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
@@ -488,6 +509,7 @@ CjvxToolsInterfaceFactory::reference_tool(const jvxComponentIdentification& tp, 
 		}
 	}
 	return(res);
+#endif
 }
 
 jvxErrorType
@@ -502,6 +524,8 @@ CjvxToolsInterfaceFactory::return_reference_tool(const jvxComponentIdentificatio
 		return(JVX_NO_ERROR);
 	}
 
+	return _return_reference_tool(tp, theObject);
+#if 0
 	for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 	{
 		if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.tp == tp)
@@ -515,11 +539,14 @@ CjvxToolsInterfaceFactory::return_reference_tool(const jvxComponentIdentificatio
 		}
 	}
 	return(res);
+#endif
 }
 
 jvxErrorType
 CjvxToolsInterfaceFactory::instance_tool(jvxComponentType tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor)
 {
+	return _instance_tool(tp, theObject, filter_id, filter_descriptor);
+#if 0
 	jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
 	int numRet = 0;
 	jvxApiString fldStr;
@@ -642,11 +669,14 @@ CjvxToolsInterfaceFactory::instance_tool(jvxComponentType tp, IjvxObject** theOb
 		}
 	}
 	return(res);
+#endif
 }
 
 jvxErrorType
 CjvxToolsInterfaceFactory::return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor)
 {
+	return _return_instance_tool(tp,theObject,  filter_id, filter_descriptor);
+#if 0
 	jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
 	int numRet = 0;
 	jvxSize i;
@@ -692,6 +722,7 @@ CjvxToolsInterfaceFactory::return_instance_tool(jvxComponentType tp, IjvxObject*
 		}
 	}
 	return(res);
+#endif
 }
 
 #ifdef JVX_PROJECT_NAMESPACE

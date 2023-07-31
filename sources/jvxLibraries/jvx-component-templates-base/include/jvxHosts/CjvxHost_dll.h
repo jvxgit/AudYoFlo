@@ -14,8 +14,9 @@ public:
 
 protected:
 
-	virtual void load_dynamic_objects();
-	virtual void unload_dynamic_objects();
+	//! Functions to load and unload the dlls - to be redefined from CjvxHost class
+	void load_dynamic_objects() override;
+	void unload_dynamic_objects() override;
 };
 
 #endif

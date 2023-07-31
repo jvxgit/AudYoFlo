@@ -8,8 +8,7 @@
 
 template <class T>
 class CjvxInterfaceFactory : public CjvxDefaultInterfaceFactory<T>,
-		public IjvxToolsHost, public IjvxUniqueId, public CjvxUniqueId,
-		public IjvxProperties, public CjvxProperties,
+		public IjvxToolsHost, public IjvxProperties, public CjvxProperties,
 		public CjvxHost_genpcg
 {
 public:
@@ -23,7 +22,6 @@ public:
 	{
 	};
 
-#include "codeFragments/simplify/jvxUniqueId_simplify.h"
 #include "codeFragments/simplify/jvxProperties_simplify.h"
 
 	// Interface <IjvxToolsHost>: open

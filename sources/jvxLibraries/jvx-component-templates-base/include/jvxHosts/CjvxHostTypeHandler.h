@@ -2,6 +2,8 @@
 #define __CJVXHOSTTYPEHANDLER_H__
 
 #include "jvx.h"
+#include "CjvxHostInteraction.h"
+
 	// >>>>>>>>>>>>>>>>>>>>>>>>
 
 	struct oneTechnology
@@ -57,50 +59,9 @@
 	};
 
 	// >>>>>>>>>>>>>>>>>>>>>>>>
-
-	template <class T> class oneObj
-	{
-	public:
-		jvxOneComponentModuleWrap common;
-		T* theHandle_single;// In case multiple objects are not allowed, always return this, otherwise, always return a new instance
-		oneObj()
-		{
-			theHandle_single = NULL;
-		};
-	} ;
-
-	template <class T> class oneSelectedObj
-	{
-	public:
-		T* obj = nullptr;
-		jvxSize idSel = JVX_SIZE_UNSELECTED;
-		jvxSize uid = JVX_SIZE_UNSELECTED;
-		IjvxConnectorFactory* cfac = nullptr;
-		IjvxConnectionMasterFactory* mfac = nullptr;
-		oneSelectedObj()
-		{
-			obj = NULL;
-			idSel = JVX_SIZE_UNSELECTED;
-			cfac = NULL;
-			mfac = NULL;
-		};
-	} ;
-
-	template <class T> class objT
-	{
-	public:
-		std::vector<oneObj<T>> availableEndpoints;
-		std::vector<oneSelectedObj<T>> theHandle_shortcut;
-		jvxSize numSlotsMax = 0;
-		objT()
-		{
-			numSlotsMax = 0;
-		};
-	} ;
-
 	// >>>>>>>>>>>>>>>>>>>>>>>>
 
-class CjvxHostTypeHandler
+class CjvxHostTypeHandler: public CjvxHostInteraction
 {
 protected:
 	typedef struct
@@ -113,16 +74,6 @@ protected:
 		std::string tokenInConfigFile;
 	} oneTechnologyType;
 
-	template <typename T> class oneObjType
-	{
-	public:
-		objT<T> instances;
-		jvxComponentType selector[1];
-		jvxComponentTypeClass classType;
-		std::string description;
-		std::string tokenInConfigFile;
-	} ;
-	
 	struct
 	{
 		std::vector<oneTechnologyType> registeredTechnologyTypes;
@@ -136,6 +87,27 @@ public:
 
 	~CjvxHostTypeHandler();
 
+	// =================================================================================
+
+	jvxErrorType fwd_add_external_component(CjvxObject * meObj,
+		IjvxObject * theObj, IjvxGlobalInstance * theGlob, const char* locationDescription, jvxBool allowMultipleInstance,
+		jvxInitObject_tp funcInit, jvxTerminateObject_tp funcTerm, jvxComponentType tp) override;
+
+	void fwd_remove_external_component(CjvxObject* meObj, IjvxObject* theObj) override;
+
+	jvxErrorType fwd_load_all_components(jvxComponentType tp,
+		jvxHandle* specCompAdd, jvxBool allowMultipleObjectsAdd,
+		IjvxObject* newObjAdd, IjvxGlobalInstance* newGlobInstAdd,
+		IjvxPackage* thePack, jvxSize thePackIdx,
+		const std::string& fileName,
+		jvxInitObject_tp funcInitAdd, jvxTerminateObject_tp funcTermAdd,
+		JVX_HMODULE dllHandle, jvxBitField dllProps, jvxSize& numAdded) override;
+
+	void fwd_pre_unload_all_components() override;
+
+	void fwd_unload_all_components() override;
+
+	// =================================================================================
 	jvxErrorType _component_class(jvxComponentType tp, jvxComponentTypeClass& tpCls);
 	jvxErrorType _add_type_host(IjvxObject* theObj, jvxComponentType* tp, jvxSize numtp, const char* description, 
 		const char* tokenConfig, jvxComponentTypeClass classType, jvxSize numSlotsMax,

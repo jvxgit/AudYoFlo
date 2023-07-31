@@ -1,6 +1,6 @@
 #include "jvx.h"
 
-#include "jvxHosts/CjvxConnectionHost.h"
+#include "jvxHosts/CjvxConnectionMinHost.h"
 
 // ====================================================================
 // Member functions: Allocate/deallocate object
@@ -9,8 +9,8 @@
 /**
  * Constructor: Only those commands required on this class derivation level.
  */
-CjvxConnectionHost::CjvxConnectionHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE): 
-	CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+CjvxConnectionMinHost::CjvxConnectionMinHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
+	CjvxDefaultInterfaceFactory<IjvxMinHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.tp = JVX_COMPONENT_MIN_HOST;
 	_common_set.theComponentType.slotid = 0;
@@ -25,7 +25,7 @@ CjvxConnectionHost::CjvxConnectionHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 /**
  * Destructor: Only terminate call
  */
-CjvxConnectionHost::~CjvxConnectionHost()
+CjvxConnectionMinHost::~CjvxConnectionMinHost()
 {
 	this->terminate();
 }
@@ -38,7 +38,7 @@ CjvxConnectionHost::~CjvxConnectionHost()
  * Initialize the current component
  */
 jvxErrorType
-CjvxConnectionHost::initialize(IjvxHiddenInterface* theOtherhost)
+CjvxConnectionMinHost::initialize(IjvxHiddenInterface* theOtherhost)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (theOtherhost == NULL)
@@ -56,7 +56,7 @@ CjvxConnectionHost::initialize(IjvxHiddenInterface* theOtherhost)
 }
 
 jvxErrorType
-CjvxConnectionHost::select(IjvxObject* theOwner)
+CjvxConnectionMinHost::select(IjvxObject* theOwner)
 {
 	jvxErrorType res = _select(theOwner);
 	return(res);
@@ -67,7 +67,7 @@ CjvxConnectionHost::select(IjvxObject* theOwner)
  * Activate host component
  */
 jvxErrorType
-CjvxConnectionHost::activate()
+CjvxConnectionMinHost::activate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
@@ -82,7 +82,7 @@ CjvxConnectionHost::activate()
  * Deactivate host component
  */
 jvxErrorType
-CjvxConnectionHost::deactivate()
+CjvxConnectionMinHost::deactivate()
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if(_common_set_min.theState == JVX_STATE_ACTIVE)
@@ -97,7 +97,7 @@ CjvxConnectionHost::deactivate()
 }
 
 jvxErrorType
-CjvxConnectionHost::unselect()
+CjvxConnectionMinHost::unselect()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_SELECTED)
@@ -116,7 +116,7 @@ CjvxConnectionHost::unselect()
  * Terminate host component
  */
 jvxErrorType
-CjvxConnectionHost::terminate()
+CjvxConnectionMinHost::terminate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = _terminate();
@@ -124,7 +124,7 @@ CjvxConnectionHost::terminate()
 }
 
 jvxErrorType 
-CjvxConnectionHost::owner(IjvxObject** dependsOn)
+CjvxConnectionMinHost::owner(IjvxObject** dependsOn)
 {
 	return _owner(dependsOn);
 }
@@ -132,7 +132,7 @@ CjvxConnectionHost::owner(IjvxObject** dependsOn)
 // ====================================================================
 
 jvxErrorType
-CjvxConnectionHost::object_hidden_interface(IjvxObject** objRef)
+CjvxConnectionMinHost::object_hidden_interface(IjvxObject** objRef)
 {
 	if (objRef)
 	{
@@ -142,7 +142,7 @@ CjvxConnectionHost::object_hidden_interface(IjvxObject** objRef)
 }
 
 jvxErrorType
-CjvxConnectionHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
+CjvxConnectionMinHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = JVX_NO_ERROR;
@@ -176,7 +176,7 @@ CjvxConnectionHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hd
 }
 
 jvxErrorType
-CjvxConnectionHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
+CjvxConnectionMinHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	switch (tp)
@@ -218,7 +218,7 @@ CjvxConnectionHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 }
 
 jvxErrorType
-CjvxConnectionHost::request_command(const CjvxReportCommandRequest& request)
+CjvxConnectionMinHost::request_command(const CjvxReportCommandRequest& request)
 {
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 

@@ -1,7 +1,7 @@
 #include "CjvxHostJvx.h"
 
 jvxErrorType
-CjvxHostJvx::number_lines(jvxSize* num_lines)  
+JVX_HOST_JVX_CLASSNAME::number_lines(jvxSize* num_lines)  
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
@@ -11,7 +11,7 @@ CjvxHostJvx::number_lines(jvxSize* num_lines)
 	};
 
 jvxErrorType
-CjvxHostJvx::master_line(jvxSize idxLine, jvxComponentIdentification* tp_master) 
+JVX_HOST_JVX_CLASSNAME::master_line(jvxSize idxLine, jvxComponentIdentification* tp_master) 
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
@@ -21,7 +21,7 @@ CjvxHostJvx::master_line(jvxSize idxLine, jvxComponentIdentification* tp_master)
 	};
 
 jvxErrorType
-CjvxHostJvx::add_line(const jvxComponentIdentification& tp_master, const char* description) 
+JVX_HOST_JVX_CLASSNAME::add_line(const jvxComponentIdentification& tp_master, const char* description) 
 	{
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{
@@ -33,7 +33,7 @@ CjvxHostJvx::add_line(const jvxComponentIdentification& tp_master, const char* d
 	// ======================================================================================
 
 jvxErrorType
-CjvxHostJvx::add_slave_line(const jvxComponentIdentification& tp_master, const jvxComponentIdentification& tp_slave) 
+JVX_HOST_JVX_CLASSNAME::add_slave_line(const jvxComponentIdentification& tp_master, const jvxComponentIdentification& tp_slave) 
 	{
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{
@@ -43,7 +43,7 @@ CjvxHostJvx::add_slave_line(const jvxComponentIdentification& tp_master, const j
 	};
 
 jvxErrorType
-CjvxHostJvx::remove_slave_line(const jvxComponentIdentification& tp_master, const jvxComponentIdentification& tp_slave) 
+JVX_HOST_JVX_CLASSNAME::remove_slave_line(const jvxComponentIdentification& tp_master, const jvxComponentIdentification& tp_slave) 
 	{
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{
@@ -53,7 +53,7 @@ CjvxHostJvx::remove_slave_line(const jvxComponentIdentification& tp_master, cons
 	};
 
 jvxErrorType
-CjvxHostJvx::number_slaves_line(const jvxComponentIdentification& tp_master, jvxSize* num_lines) 
+JVX_HOST_JVX_CLASSNAME::number_slaves_line(const jvxComponentIdentification& tp_master, jvxSize* num_lines) 
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
@@ -63,7 +63,7 @@ CjvxHostJvx::number_slaves_line(const jvxComponentIdentification& tp_master, jvx
 	};
 
 jvxErrorType
-CjvxHostJvx::slave_line_master(const jvxComponentIdentification& tp_master, jvxSize idxEntry, jvxComponentIdentification* tp_slave) 
+JVX_HOST_JVX_CLASSNAME::slave_line_master(const jvxComponentIdentification& tp_master, jvxSize idxEntry, jvxComponentIdentification* tp_slave) 
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
@@ -75,7 +75,7 @@ CjvxHostJvx::slave_line_master(const jvxComponentIdentification& tp_master, jvxS
 	// ======================================================================================
 
 jvxErrorType
-CjvxHostJvx::add_configuration_property_line(const jvxComponentIdentification& tp_master, jvxSize system_property_id) 
+JVX_HOST_JVX_CLASSNAME::add_configuration_property_line(const jvxComponentIdentification& tp_master, jvxSize system_property_id) 
 	{
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{
@@ -85,7 +85,7 @@ CjvxHostJvx::add_configuration_property_line(const jvxComponentIdentification& t
 	};
 
 jvxErrorType
-CjvxHostJvx::remove_configuration_property_line(const jvxComponentIdentification& tp_master, jvxSize system_property_id) 
+JVX_HOST_JVX_CLASSNAME::remove_configuration_property_line(const jvxComponentIdentification& tp_master, jvxSize system_property_id) 
 	{
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{
@@ -95,7 +95,7 @@ CjvxHostJvx::remove_configuration_property_line(const jvxComponentIdentification
 	};
 
 jvxErrorType
-CjvxHostJvx::number_property_ids_line(const jvxComponentIdentification& tp_master, jvxSize* num_lines) 
+JVX_HOST_JVX_CLASSNAME::number_property_ids_line(const jvxComponentIdentification& tp_master, jvxSize* num_lines) 
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
@@ -105,7 +105,7 @@ CjvxHostJvx::number_property_ids_line(const jvxComponentIdentification& tp_maste
 	};
 
 jvxErrorType
-CjvxHostJvx::property_id_line_master(const jvxComponentIdentification& tp_master, jvxSize idxEntry, jvxSize* the_prop_id) 
+JVX_HOST_JVX_CLASSNAME::property_id_line_master(const jvxComponentIdentification& tp_master, jvxSize idxEntry, jvxSize* the_prop_id) 
 	{
 		if (_common_set_min.theState >= JVX_STATE_SELECTED)
 		{
@@ -117,7 +117,7 @@ CjvxHostJvx::property_id_line_master(const jvxComponentIdentification& tp_master
 	// ======================================================================================
 
 jvxErrorType
-CjvxHostJvx::report_property_was_set(const jvxComponentIdentification& tpFrom, jvxPropertyCategoryType cat, jvxSize propIdx,
+JVX_HOST_JVX_CLASSNAME::report_property_was_set(const jvxComponentIdentification& tpFrom, jvxPropertyCategoryType cat, jvxSize propIdx,
 		jvxBool onlyContent, const jvxComponentIdentification& tpTo) 
 	{
 		if (_common_set_min.theState > JVX_STATE_SELECTED)
@@ -128,7 +128,7 @@ CjvxHostJvx::report_property_was_set(const jvxComponentIdentification& tpFrom, j
 	};
 
 jvxErrorType
-CjvxHostJvx::refresh_all() 
+JVX_HOST_JVX_CLASSNAME::refresh_all() 
 	{
 		if (_common_set_min.theState > JVX_STATE_SELECTED)
 		{
@@ -140,7 +140,7 @@ CjvxHostJvx::refresh_all()
 	// ======================================================================================
 
 jvxErrorType
-CjvxHostJvx::remove_line(const jvxComponentIdentification& tp_master) 
+JVX_HOST_JVX_CLASSNAME::remove_line(const jvxComponentIdentification& tp_master) 
 	{
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{
@@ -150,7 +150,7 @@ CjvxHostJvx::remove_line(const jvxComponentIdentification& tp_master)
 	};
 
 jvxErrorType
-CjvxHostJvx::remove_all_lines()  
+JVX_HOST_JVX_CLASSNAME::remove_all_lines()  
 	{
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{

@@ -1,9 +1,10 @@
 #ifndef __CJVXCOMPONENTHOST_H__
 #define __CJVXCOMPONENTHOST_H__
 
-#include "jvxHosts/CjvxHostInteraction.h"
 
-class CjvxComponentHost: public CjvxHostInteraction
+#include "jvxHosts/CjvxHostTypeHandler.h"
+
+class CjvxComponentHost: public CjvxHostTypeHandler
 {
 protected:
 	IjvxDataConnections* datConns = nullptr;
@@ -82,10 +83,10 @@ public:
 	virtual void reportErrorDescription(const std::string& descr, jvxBool isWarning = false) = 0;
 	virtual jvxSize myRegisteredHostId() = 0;
 
-	virtual jvxErrorType _reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id,
+	virtual jvxErrorType map_reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id,
 		const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE,
 		IjvxReferenceSelector* decider = nullptr) = 0;
-	virtual jvxErrorType _return_reference_tool(const jvxComponentIdentification&, 
+	virtual jvxErrorType map_return_reference_tool(const jvxComponentIdentification&, 
 		IjvxObject* theObject) = 0;
 
 

@@ -9,7 +9,14 @@
 #include "common/CjvxConfigurationLine.h"
 #include "common/CjvxPropertyPool.h"
 
-class CjvxHostJvx: public IjvxConfiguration, public IjvxConfigurationDone, public IjvxConfigurationLine,
+#ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
+#define JVX_HOST_JVX_CLASSNAME CjvxHostJvx
+#else
+#define JVX_HOST_JVX_CLASSNAME CjvxHostJvx_dll
+#endif
+
+class JVX_HOST_JVX_CLASSNAME :
+	public IjvxConfiguration, public IjvxConfigurationDone, public IjvxConfigurationLine,
 	public IjvxConfigurationExtender, public IjvxConfigurationAttach,
 	public IjvxPropertyPool, public CjvxPropertyPool,
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
@@ -50,7 +57,7 @@ protected:
 	std::list<CjvxConfigurationSubModule> registeredConfigSubmodules;
 public:
 
-	CjvxHostJvx(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	JVX_HOST_JVX_CLASSNAME(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 
 	// ====================================================================================
 	// Interface IjvxStateMachine

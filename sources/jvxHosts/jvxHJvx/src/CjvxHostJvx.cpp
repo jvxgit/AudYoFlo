@@ -2,7 +2,7 @@
 #include "CjvxHostJvx_config.h"
 #include "jvx-helpers.h"
 
-CjvxHostJvx::CjvxHostJvx(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE): 
+JVX_HOST_JVX_CLASSNAME::JVX_HOST_JVX_CLASSNAME(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 #ifdef JVX_HOST_USE_ONLY_STATIC_OBJECTS
 	CjvxHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 #else
@@ -14,7 +14,7 @@ CjvxHostJvx::CjvxHostJvx(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 }
 
 jvxErrorType
-CjvxHostJvx::activate()
+JVX_HOST_JVX_CLASSNAME::activate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	_common_set_min.theHostRef = static_cast<IjvxHiddenInterface*>(this);
@@ -31,7 +31,7 @@ CjvxHostJvx::activate()
 }
 
 jvxErrorType
-CjvxHostJvx::deactivate()
+JVX_HOST_JVX_CLASSNAME::deactivate()
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if(_common_set_min.theState == JVX_STATE_ACTIVE)
@@ -52,7 +52,7 @@ CjvxHostJvx::deactivate()
 // ================================================================
 
 jvxErrorType
-CjvxHostJvx::object_hidden_interface(IjvxObject** objRef)
+JVX_HOST_JVX_CLASSNAME::object_hidden_interface(IjvxObject** objRef)
 {
 	if (objRef)
 	{
@@ -62,7 +62,7 @@ CjvxHostJvx::object_hidden_interface(IjvxObject** objRef)
 }
 
 jvxErrorType
-CjvxHostJvx::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
+JVX_HOST_JVX_CLASSNAME::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 {
 	switch(tp)
 	{
@@ -110,7 +110,7 @@ CjvxHostJvx::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 }
 
 jvxErrorType
-CjvxHostJvx::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
+JVX_HOST_JVX_CLASSNAME::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 {
 	switch(tp)
 	{
@@ -157,7 +157,7 @@ CjvxHostJvx::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 }
 
 jvxErrorType
-CjvxHostJvx::activate_selected_component(const jvxComponentIdentification& tp)
+JVX_HOST_JVX_CLASSNAME::activate_selected_component(const jvxComponentIdentification& tp)
 {
 	jvxErrorType res = CjvxHost::activate_selected_component(tp);
 	if(res == JVX_NO_ERROR)
@@ -169,7 +169,7 @@ CjvxHostJvx::activate_selected_component(const jvxComponentIdentification& tp)
 }
 
 jvxErrorType
-CjvxHostJvx::attach_configuration_submodule(const char* prefix, IjvxConfiguration* cfg)
+JVX_HOST_JVX_CLASSNAME::attach_configuration_submodule(const char* prefix, IjvxConfiguration* cfg)
 {
 	auto elm = std::find_if(registeredConfigSubmodules.begin(), registeredConfigSubmodules.end(), [&](const CjvxConfigurationSubModule& elm) 
 		{ return elm.prefix == prefix; });
@@ -185,7 +185,7 @@ CjvxHostJvx::attach_configuration_submodule(const char* prefix, IjvxConfiguratio
 }
 
 jvxErrorType
-CjvxHostJvx::JVX_CALLINGCONVENTION detach_configuration_submodule(IjvxConfiguration* cfg)
+JVX_HOST_JVX_CLASSNAME::JVX_CALLINGCONVENTION detach_configuration_submodule(IjvxConfiguration* cfg)
 {
 	auto elm = std::find_if(registeredConfigSubmodules.begin(), registeredConfigSubmodules.end(), [&](const CjvxConfigurationSubModule& elm)
 		{ return elm.cfgRef == cfg; });

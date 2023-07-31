@@ -4,19 +4,19 @@
 #include "jvx.h"
 #include "common/CjvxObject.h"
 #include "jvxHosts/CjvxDataConnections.h"
+#include "jvxFactoryHosts/CjvxDefaultInterfaceFactory.h"
 #include "jvxHosts/CjvxMinHost.h"
 #include "jvxHosts/CjvxUniqueId.h"
 
-class CjvxConnectionHost: 
-	public IjvxMinHost, public CjvxObject, public CjvxMinHost,
+class CjvxConnectionMinHost: 
+	public CjvxDefaultInterfaceFactory<IjvxMinHost>,
 	public IjvxDataConnections, public CjvxDataConnections,
-	public IjvxUniqueId, public CjvxUniqueId,
 	public IjvxReportSystem
 {
 public:
 
-	JVX_CALLINGCONVENTION CjvxConnectionHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-	virtual JVX_CALLINGCONVENTION ~CjvxConnectionHost();
+	JVX_CALLINGCONVENTION CjvxConnectionMinHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	virtual JVX_CALLINGCONVENTION ~CjvxConnectionMinHost();
 
 	// ================================================================================================
 	// Interface IjvxCoreStateMachine
@@ -47,7 +47,7 @@ public:
 #include "codeFragments/simplify/jvxObjects_simplify.h"
 #include "codeFragments/simplify/jvxDataConnections_simplify.h"
 #include "codeFragments/simplify/jvxMinHost_simplify.h"
-#include "codeFragments/simplify/jvxUniqueId_simplify.h"
+// #include "codeFragments/simplify/jvxUniqueId_simplify.h"
 
 
 };

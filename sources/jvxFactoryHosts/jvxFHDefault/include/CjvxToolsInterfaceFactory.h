@@ -6,7 +6,7 @@
 
 #define JVX_MINIMUM_HOST_FUNCTIONALITY
 
-#include "jvxHosts/CjvxHostInteraction.h"
+#include "jvxHosts/CjvxHostInteractionTools.h"
 #include "jvxHosts/CjvxUniqueId.h"
 
 #define SECTIONNAME_ALL_SUBSECTIONS "factoryhost_allSubSections"
@@ -17,7 +17,7 @@ namespace JVX_PROJECT_NAMESPACE {
 #endif
 
 class CjvxToolsInterfaceFactory : public CjvxInterfaceFactory<IjvxFactoryHost>,
-		public CjvxHostInteraction,
+		public CjvxHostInteractionTools<CjvxHostInteraction>,
 		public IjvxConfiguration, public IjvxConfigurationExtender
 {
 private:

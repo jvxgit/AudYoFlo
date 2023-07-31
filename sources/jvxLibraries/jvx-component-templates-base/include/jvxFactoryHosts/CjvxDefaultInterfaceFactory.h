@@ -12,7 +12,8 @@ namespace JVX_PROJECT_NAMESPACE {
 
 // T = IjvxFactoryHost or IjvxHost
 template <class T>
-class CjvxDefaultInterfaceFactory: public T, public CjvxObject, public CjvxMinHost
+class CjvxDefaultInterfaceFactory: public T, public CjvxObject, public CjvxMinHost,
+	public IjvxUniqueId, public CjvxUniqueId
 {
 public:
 	// ===================================================================================================
@@ -29,9 +30,12 @@ public:
 
 	// ===================================================================================================
 
-	#include "codeFragments/simplify/jvxObjects_simplify.h"
-	#include "codeFragments/simplify/jvxHiddenInterface_simplify.h"
-	#include "codeFragments/simplify/jvxMinHost_simplify.h"
+#include "codeFragments/simplify/jvxObjects_simplify.h"
+#include "codeFragments/simplify/jvxHiddenInterface_simplify.h"
+#include "codeFragments/simplify/jvxMinHost_simplify.h"
+
+#include "codeFragments/simplify/jvxUniqueId_simplify.h"
+
 };
 
 #ifdef JVX_PROJECT_NAMESPACE

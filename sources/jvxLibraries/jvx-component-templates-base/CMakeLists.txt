@@ -97,12 +97,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxVideoTechnologies/CjvxVideoTechnology.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxMinHost.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxConnectionHost.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxConnectionMinHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHostTools.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxMinHost.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxConnectionHost.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxConnectionMinHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost-tpl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHost_callbacks.cpp
@@ -143,7 +143,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHostInteraction.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHostInteraction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHostInteraction-tpl.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHostInteractionTools.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxHostTypeHandler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxHostTypeHandler.cpp

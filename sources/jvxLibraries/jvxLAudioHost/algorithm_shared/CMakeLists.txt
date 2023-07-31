@@ -60,6 +60,9 @@ include_directories(
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTThreadController/
 
   ${CMAKE_CURRENT_BINARY_DIR}
+
+  ## Static and dynamic lib versions are exported using the same header file (C-entries)
+  ## but can be distinguished by using different libraries!
   ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHJvx
 
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
@@ -83,6 +86,8 @@ endif()
 set(LOCAL_LIBS
   jvxLFileIO_static
   jvxLthreads_static
+
+  # Allow dynamic and static linkage at once!
   jvxHJvx_static
   jvxTconfigProcessor_static
   jvxTSystemTextLog_static

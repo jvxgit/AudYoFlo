@@ -953,4 +953,22 @@ CjvxComponentHostTools::_return_instance_tool(jvxComponentType tp, IjvxObject* t
 	return(res);
 }
 
+// ============================================================================================================
+
+jvxErrorType 
+CjvxComponentHostTools::map_reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id,
+	const char* filter_descriptor, jvxBitField filter_stateMask ,
+	IjvxReferenceSelector* decider )
+{
+	return _reference_tool(tp, theObject, filter_id,
+		filter_descriptor, filter_stateMask,
+		decider);
+}
+
+jvxErrorType 
+CjvxComponentHostTools::map_return_reference_tool(const jvxComponentIdentification& tp,
+	IjvxObject* theObject)
+{
+	return _return_reference_tool(tp, theObject);
+}
 

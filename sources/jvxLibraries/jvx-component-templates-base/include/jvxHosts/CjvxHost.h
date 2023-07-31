@@ -110,7 +110,7 @@ protected:
 
 	jvxErrorType unselectAllComponents();
 
-
+	// These two functions extend the host to allow dynamic load of components
 	virtual void load_dynamic_objects();
 	virtual void unload_dynamic_objects();
 

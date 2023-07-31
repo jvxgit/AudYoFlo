@@ -36,7 +36,7 @@ CjvxComponentHost::static_local_unselect(IjvxHiddenInterface* theHinterface,
 
 // =====================================================================
 
-CjvxComponentHost::CjvxComponentHost() : CjvxHostInteraction()
+CjvxComponentHost::CjvxComponentHost() : CjvxHostTypeHandler()
 {
 }
 
@@ -3608,7 +3608,9 @@ CjvxComponentHost::_request_object_selected_component(const jvxComponentIdentifi
 			}
 			else
 			{
-				res = _reference_tool(tp, theObj, JVX_SIZE_UNSELECTED, nullptr);
+				// Here, we call a virtual abstract function implementation since the 
+				// "tools" host is in deriving class
+				res = map_reference_tool(tp, theObj, JVX_SIZE_UNSELECTED, nullptr);
 			}
 		}
 	}
@@ -3829,7 +3831,9 @@ CjvxComponentHost::_return_object_selected_component(const jvxComponentIdentific
 			}
 			else
 			{
-				res = _return_reference_tool(tp, theObj);
+				// Here, we call a virtual abstract function implementation since the 
+				// "tools" host is in deriving class
+				res = map_return_reference_tool(tp, theObj);
 			}
 		}
 	}

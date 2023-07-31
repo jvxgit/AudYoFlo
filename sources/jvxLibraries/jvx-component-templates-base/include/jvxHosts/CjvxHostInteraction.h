@@ -2,9 +2,59 @@
 #define _CJVXHOSTINTERACTION_H__
 
 #include "common/CjvxObject.h"
-#include "CjvxHostTypeHandler.h"
+#include <map>
 
-class CjvxHostInteraction : public CjvxHostTypeHandler
+template <class T> class oneObj
+{
+public:
+	jvxOneComponentModuleWrap common;
+	T* theHandle_single;// In case multiple objects are not allowed, always return this, otherwise, always return a new instance
+	oneObj()
+	{
+		theHandle_single = NULL;
+	};
+};
+
+template <class T> class oneSelectedObj
+{
+public:
+	T* obj = nullptr;
+	jvxSize idSel = JVX_SIZE_UNSELECTED;
+	jvxSize uid = JVX_SIZE_UNSELECTED;
+	IjvxConnectorFactory* cfac = nullptr;
+	IjvxConnectionMasterFactory* mfac = nullptr;
+	oneSelectedObj()
+	{
+		obj = NULL;
+		idSel = JVX_SIZE_UNSELECTED;
+		cfac = NULL;
+		mfac = NULL;
+	};
+};
+
+template <class T> class objT
+{
+public:
+	std::vector<oneObj<T>> availableEndpoints;
+	std::vector<oneSelectedObj<T>> theHandle_shortcut;
+	jvxSize numSlotsMax = 0;
+	objT()
+	{
+		numSlotsMax = 0;
+	};
+};
+
+template <typename T> class oneObjType
+{
+public:
+	objT<T> instances;
+	jvxComponentType selector[1];
+	jvxComponentTypeClass classType;
+	std::string description;
+	std::string tokenInConfigFile;
+};
+
+class CjvxHostInteraction 
 {
 protected:
 
@@ -125,20 +175,27 @@ protected:
 
 	jvxErrorType _set_component_load_filter_function(jvxLoadModuleFilterCallback regme, jvxHandle* priv);
 
-	// ==========================================================================================
-private:
+	// Try to forward call to add component. If return value if JVX_ERROR_ELEMENT_NOT_FOUND,
+	// procede locally -> availableOtherComponents
+	virtual jvxErrorType fwd_add_external_component(CjvxObject* meObj,
+		IjvxObject* theObj, IjvxGlobalInstance* theGlob, const char* locationDescription, jvxBool allowMultipleInstance,
+		jvxInitObject_tp funcInit, jvxTerminateObject_tp funcTerm, jvxComponentType tp);
 
-	// The following are template functions as included by CvxHostInteraction-tpl.h
-	template <class T> jvxErrorType t_add_external_component(IjvxObject* theObj, 
-		IjvxGlobalInstance* theGlob, const char* locationDescription, jvxBool allowMultipleInstance,
-		jvxInitObject_tp funcInit, jvxTerminateObject_tp funcTerm,
-		std::vector<oneObjType<T>>& registeredObj, const jvxComponentIdentification& tp);
+	virtual void fwd_remove_external_component(CjvxObject* meObj, IjvxObject* theObj);
 
-	template <class T> void t_remove_external_component(IjvxObject* theObj, 
-		std::vector<oneObjType<T>>& registeredObj);
+	// Try to forward call to load component. If return value if JVX_ERROR_ELEMENT_NOT_FOUND,
+	// procede locally -> availableOtherComponents
+	virtual jvxErrorType fwd_load_all_components(jvxComponentType tp, 
+		jvxHandle* specCompAdd, jvxBool allowMultipleObjectsAdd,
+		IjvxObject* newObjAdd,IjvxGlobalInstance* newGlobInstAdd,
+		IjvxPackage* thePack, jvxSize thePackIdx,
+		const std::string& fileName, 
+		jvxInitObject_tp funcInitAdd, jvxTerminateObject_tp funcTermAdd,
+		JVX_HMODULE dllHandle, jvxBitField dllProps, jvxSize& numAdded);
 
-	template <class T> void t_pre_unload_dlls(std::vector<oneObjType<T>>& registeredObj);
-	template <class T> void t_unload_dlls(std::vector<oneObjType<T>>& registeredObj);
+	virtual void fwd_pre_unload_all_components();
+
+	virtual void fwd_unload_all_components();
 };
 
 #endif
