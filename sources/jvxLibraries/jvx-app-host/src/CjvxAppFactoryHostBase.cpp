@@ -562,7 +562,9 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_initialize(jvxApiString* errorMessage, jvxH
 		if (!_command_line_parameters.changeWorkDir.empty())
 		{
 			std::cout << "#### Changing working directory to <" << _command_line_parameters.changeWorkDir << ">" << std::endl;
-			JVX_CHDIR(_command_line_parameters.changeWorkDir.c_str());
+			if (JVX_CHDIR(_command_line_parameters.changeWorkDir.c_str()) == -1) {
+				std::cout << __FUNCTION__ << ": Changing working directory to <" << _command_line_parameters.changeWorkDir << "> failed!!" << std::endl;
+			};
 		}
 		else
 		{
@@ -951,8 +953,9 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 		// Read and confirm current working directory
 		char wdir[JVX_MAXSTRING+1];
 		memset(wdir, 0, JVX_MAXSTRING + 1);
-		JVX_GETCURRENTDIRECTORY(wdir, JVX_MAXSTRING);
-		std::cout << "### Current working directory: " << wdir << " ###" << std::endl;
+		if (JVX_GETCURRENTDIRECTORY(wdir, JVX_MAXSTRING)) {
+			std::cout << "### Current working directory: " << wdir << " ###" << std::endl;
+		}
 
 		// ============================================================================================
 

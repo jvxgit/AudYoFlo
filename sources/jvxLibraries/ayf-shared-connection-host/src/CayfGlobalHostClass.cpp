@@ -6,11 +6,13 @@
 
 static std::string combineWithCwd(const std::string& fName)
 {
-	std::string fNameRet;
+	std::string fNameRet = ".";
 	char wDir[JVX_MAXSTRING] = { 0 };
-	JVX_GETCURRENTDIRECTORY(wDir, JVX_MAXSTRING);
-	fNameRet = wDir;
-	fNameRet += JVX_SEPARATOR_DIR + fName;
+	if (JVX_GETCURRENTDIRECTORY(wDir, JVX_MAXSTRING))
+	{
+		fNameRet = wDir;
+		fNameRet += JVX_SEPARATOR_DIR + fName;
+	}
 	return fNameRet;
 }
 

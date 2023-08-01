@@ -187,8 +187,10 @@ ayfHrtfDispenser::start(const std::string& directory)
 
 		mysofa_getversion(&sofa_major_version, &sofa_minor_version, &sofpat);
 
-		JVX_GETCURRENTDIRECTORY(bufRet, MAX_PATH);
-		curWorkingDir = bufRet;
+		if (JVX_GETCURRENTDIRECTORY(bufRet, MAX_PATH))
+		{
+			curWorkingDir = bufRet;
+		}
 		pathName = directory;
 		// Check folder to collect all files
 		JVX_HANDLE_DIR searchHandle;
