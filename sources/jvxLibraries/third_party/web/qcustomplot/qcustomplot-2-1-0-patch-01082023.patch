@@ -1,8 +1,17 @@
 Common subdirectories: qcustomplot.orig/documentation and qcustomplot/documentation
 Common subdirectories: qcustomplot.orig/examples and qcustomplot/examples
 diff -u qcustomplot.orig/qcustomplot.cpp qcustomplot/qcustomplot.cpp
---- qcustomplot.orig/qcustomplot.cpp	2021-03-30 13:48:47.000000000 +0200
-+++ qcustomplot/qcustomplot.cpp	2023-01-19 07:20:50.851942200 +0100
+--- qcustomplot.orig/qcustomplot.cpp	2022-11-06 16:54:46.000000000 +0100
++++ qcustomplot/qcustomplot.cpp	2023-08-01 14:58:03.567164814 +0200
+@@ -678,7 +678,7 @@
+ QCPPainter *QCPPaintBufferPixmap::startPainting()
+ {
+   QCPPainter *result = new QCPPainter(&mBuffer);
+-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
++#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+   result->setRenderHint(QPainter::HighQualityAntialiasing);
+ #endif
+   return result;
 @@ -785,6 +785,13 @@
      qDebug() << Q_FUNC_INFO << "OpenGL pbuffer isn't valid, reallocateBuffer was not called?";
      return;
@@ -31,7 +40,16 @@ diff -u qcustomplot.orig/qcustomplot.cpp qcustomplot/qcustomplot.cpp
    painter->drawImage(0, 0, mGlFrameBuffer->toImage());
  }
  
-@@ -20916,6 +20930,23 @@
+@@ -15488,7 +15502,7 @@
+   QCPPainter painter(this);
+   if (painter.isActive())
+   {
+-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
++#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+   painter.setRenderHint(QPainter::HighQualityAntialiasing); // to make Antialiasing look good if using the OpenGL graphicssystem
+ #endif
+     if (mBackgroundBrush.style() != Qt::NoBrush)
+@@ -20935,6 +20949,23 @@
    addData(keys, values, alreadySorted);
  }
  
@@ -55,7 +73,7 @@ diff -u qcustomplot.orig/qcustomplot.cpp qcustomplot/qcustomplot.cpp
  /*!
    Sets how the single data points are connected in the plot. For scatter-only plots, set \a ls to
    \ref lsNone and \ref setScatterStyle to the desired scatter style.
-@@ -21051,6 +21082,37 @@
+@@ -21070,6 +21101,37 @@
  }
  
  /*! \overload
@@ -93,7 +111,7 @@ diff -u qcustomplot.orig/qcustomplot.cpp qcustomplot/qcustomplot.cpp
    
    Adds the provided data point as \a key and \a value to the current data.
    
-@@ -21062,6 +21124,17 @@
+@@ -21081,6 +21143,17 @@
    mDataContainer->add(QCPGraphData(key, value));
  }
  
@@ -112,9 +130,9 @@ diff -u qcustomplot.orig/qcustomplot.cpp qcustomplot/qcustomplot.cpp
    Implements a selectTest specific to this plottable's point geometry.
  
 diff -u qcustomplot.orig/qcustomplot.h qcustomplot/qcustomplot.h
---- qcustomplot.orig/qcustomplot.h	2021-03-30 13:48:46.000000000 +0200
-+++ qcustomplot/qcustomplot.h	2023-01-19 07:13:55.587455000 +0100
-@@ -5494,6 +5494,7 @@
+--- qcustomplot.orig/qcustomplot.h	2022-11-06 16:54:46.000000000 +0100
++++ qcustomplot/qcustomplot.h	2023-08-01 14:54:56.803343472 +0200
+@@ -5531,6 +5531,7 @@
    // setters:
    void setData(QSharedPointer<QCPGraphDataContainer> data);
    void setData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted=false);
@@ -122,7 +140,7 @@ diff -u qcustomplot.orig/qcustomplot.h qcustomplot/qcustomplot.h
    void setLineStyle(LineStyle ls);
    void setScatterStyle(const QCPScatterStyle &style);
    void setScatterSkip(int skip);
-@@ -5503,7 +5504,9 @@
+@@ -5540,7 +5541,9 @@
    // non-property methods:
    void addData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted=false);
    void addData(double key, double value);

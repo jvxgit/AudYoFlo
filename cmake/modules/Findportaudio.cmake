@@ -42,7 +42,7 @@ endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
-  PortAudio
+  portaudio
   DEFAULT_MSG
   PortAudio_LINK_LIBRARIES
   PortAudio_INCLUDEDIR

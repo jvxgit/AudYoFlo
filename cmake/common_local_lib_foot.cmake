@@ -196,7 +196,7 @@ if (LOCAL_MATCONF_SCRIPTS OR USES_OTHER_LOCAL_MATCONF_SCRIPTS)
       endforeach()
       add_custom_command(
         COMMAND ${Matlab_MAIN_PROGRAM}
-        ARGS ${MATLAB_START_FLAGS} -r \"global arg_list\; arg_list = { ${__MATLAB_TMP_LIST} }\; run('${LOCAL_MATCONF_SCRIPT}')\; exit\;\"
+        ARGS ${MATLAB_START_FLAGS} -r "global arg_list; arg_list = { ${__MATLAB_TMP_LIST} }; run('${LOCAL_MATCONF_SCRIPT}'); exit;"
         OUTPUT  ${OUTFILE}
         DEPENDS ${LOCAL_MATCONF_SCRIPT} ${Matlab_MAIN_PROGRAM}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
