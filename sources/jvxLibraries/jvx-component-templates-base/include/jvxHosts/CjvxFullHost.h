@@ -30,18 +30,17 @@
 //			CjvxHostInteraction, IjvxConfiguration, IjvxConfigurationExtender,
 //			CjvxFactoryHost_genpcg
 
-class CjvxComConHost :
-	public CjvxInterfaceFactory<IjvxHost>,
-	public CjvxComponentHostTools,
-	public IjvxDataConnections, public CjvxDataConnections
+// ========================================================================================
+
+class CjvxComHost : public CjvxInterfaceFactory<IjvxHost>, public CjvxComponentHostTools
 {
 public:
-	JVX_CALLINGCONVENTION CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+	JVX_CALLINGCONVENTION CjvxComHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 		CjvxInterfaceFactory<IjvxHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
 
 	};
-	virtual JVX_CALLINGCONVENTION ~CjvxComConHost()
+	virtual JVX_CALLINGCONVENTION ~CjvxComHost()
 	{
 
 	};
@@ -54,6 +53,24 @@ public:
 	// ====================================================================================
 
 #include "codeFragments/simplify/jvxComponentHostTools_simplify.h"
+};
+
+// ========================================================================================
+
+class CjvxComConHost : public CjvxComHost,
+	public IjvxDataConnections, public CjvxDataConnections
+{
+public:
+	JVX_CALLINGCONVENTION CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+		CjvxComHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	{
+
+	};
+	virtual JVX_CALLINGCONVENTION ~CjvxComConHost()
+	{
+
+	};
+
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
 #include "codeFragments/simplify/jvxHostInteraction_simplify.h"

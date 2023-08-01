@@ -11,8 +11,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-plugin-connector/src
 
-  # ${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHCon
-  ${JVX_BASE_BINARY_DIR}/sources/jvxFactoryHosts/jvxFHCon
+  ${JVX_BASE_BINARY_DIR}/sources/jvxFactoryHosts/jvxFHAppFactoryHostCon
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
@@ -43,8 +42,7 @@ set(LOCAL_SOURCES
   )
 
 set(LOCAL_LIBS 
-	#jvxHCon_static
-	jvxFHCon_static_nd
+	jvxFHAppFactoryHostCon_static_nd
 	jvxTconfigProcessor_static
 	jvxTSystemTextLog_static
 	jvxTThreads_static

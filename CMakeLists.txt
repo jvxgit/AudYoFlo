@@ -703,14 +703,18 @@ endif()
   set(JVX_BASE_HOST_COMPONENTS
     # ${JVX_BASE_ROOT}/sources/jvxHosts/jvxHDefault
     
-	# Main host as used in all standalone projects
+	# Main host as used in all standalone projects - typically used with app-host library
 	${JVX_BASE_ROOT}/sources/jvxHosts/jvxHAppHost
 	
-	# Main host as used in all factory host projects
+	# Main factory host as used in all factory host projects - typically used with app-host library
 	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHAppFactoryHost
 	
-	${JVX_BASE_ROOT}/sources/jvxHosts/jvxHCon
-	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHCon)
+	# Main factory host with added interfaces for connections - currently used in VST projects
+	${JVX_BASE_ROOT}/sources/jvxFactoryHosts/jvxFHAppFactoryHostCon
+
+	# Main min host with added interfaces for connections - currently used in shared-connection-host
+	${JVX_BASE_ROOT}/sources/jvxMinHosts/jvxMHAppMinHostCon
+	)
 
   ###
   # build event loops

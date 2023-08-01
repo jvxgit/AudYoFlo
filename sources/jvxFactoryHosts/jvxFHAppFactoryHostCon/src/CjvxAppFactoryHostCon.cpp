@@ -1,16 +1,16 @@
-#include "CjvxConnectionFHost.h"
+#include "CjvxAppFactoryHostCon.h"
 
-CjvxConnectionFHost::CjvxConnectionFHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : 
+CjvxAppFactoryHostCon::CjvxAppFactoryHostCon(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : 
 	CjvxAppFactoryHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 }
 
-CjvxConnectionFHost::~CjvxConnectionFHost()
+CjvxAppFactoryHostCon::~CjvxAppFactoryHostCon()
 {
 }
 
 jvxErrorType
-CjvxConnectionFHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
+CjvxAppFactoryHostCon::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = JVX_NO_ERROR;
@@ -30,7 +30,7 @@ CjvxConnectionFHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** h
 }
 
 jvxErrorType
-CjvxConnectionFHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
+CjvxAppFactoryHostCon::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = JVX_NO_ERROR;

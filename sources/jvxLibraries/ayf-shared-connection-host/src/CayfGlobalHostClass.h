@@ -2,7 +2,6 @@
 #define __CAYFGLOBALHOSTCLASS_H__
 
 #include "jvx.h"
-#include "jvxHCon.h"
 #include "CjvxHostJsonCommandsProperties.h"
 #include "CjvxHostJsonCommandsConfigShow.h"
 

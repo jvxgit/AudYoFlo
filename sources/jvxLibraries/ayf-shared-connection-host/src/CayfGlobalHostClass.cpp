@@ -1,5 +1,6 @@
 #include "CayfGlobalHostClass.h"
 #include "CjvxHostJsonDefines.h"
+#include "jvxMHAppMinHostCon.h"
 
 #include "jvxTconfigProcessor.h"
 
@@ -68,7 +69,7 @@ CayfGlobalHostClass::register_module_host(const char* nm, jvxApiString& nmAsRegi
 	if (globalHostRef == nullptr)
 	{
 		// start hostref
-		jvxHCon_init(&globalHostObj);
+		jvxMHAppMinHostCon_init(&globalHostObj);
 		assert(globalHostObj);
 
 		// Start config reader
@@ -134,7 +135,7 @@ CayfGlobalHostClass::unregister_module_host(IjvxObject* regMe)
 		assert(resC == JVX_NO_ERROR);
 
 		globalHostRef = nullptr;
-		jvxHCon_terminate(globalHostObj);
+		jvxMHAppMinHostCon_terminate(globalHostObj);
 		globalHostObj = nullptr;
 
 		if (confProcObj)

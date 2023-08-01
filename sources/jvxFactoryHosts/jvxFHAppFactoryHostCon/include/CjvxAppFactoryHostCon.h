@@ -4,12 +4,12 @@
 #include "CjvxAppFactoryHost.h"
 #include "jvxHosts/CjvxDataConnections.h"
 	
-class CjvxConnectionFHost : public CjvxAppFactoryHost,
+class CjvxAppFactoryHostCon : public CjvxAppFactoryHost,
 	public IjvxDataConnections, public CjvxDataConnections
 {
 public:
-	JVX_CALLINGCONVENTION CjvxConnectionFHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-	virtual JVX_CALLINGCONVENTION ~CjvxConnectionFHost();
+	JVX_CALLINGCONVENTION CjvxAppFactoryHostCon(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	virtual JVX_CALLINGCONVENTION ~CjvxAppFactoryHostCon();
 
 #include "codeFragments/simplify/jvxDataConnections_simplify.h"
 

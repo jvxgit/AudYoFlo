@@ -2,7 +2,7 @@
 #include "CjvxPluginCommon.h"
 #include "CjvxPluginProcessor_specific.h"
 
-#include "jvxFHCon_nd.h"
+#include "jvxFHAppFactoryHostCon_nd.h"
 #include "jvxTconfigProcessor.h"
 #include "jvxTSystemTextLog.h"
 #include "jvxTThreads.h"
@@ -91,7 +91,7 @@ CjvxPluginProcessor::initialize_connection(jvxSize numPluginInChannels, jvxSize 
 	
 	if(objHost == nullptr)
 	{
-		jvxFHCon_nd_init(&objHost);
+		jvxFHAppFactoryHostCon_nd_init(&objHost);
 		assert(objHost);
 		jvxState stat = JVX_STATE_NONE;
 
@@ -322,7 +322,7 @@ CjvxPluginProcessor::terminate_connection()
 			facHost = nullptr;
 			if (objHost)
 			{
-				jvxFHCon_nd_terminate(objHost);
+				jvxFHAppFactoryHostCon_nd_terminate(objHost);
 			}
 			objHost = nullptr;
 		}

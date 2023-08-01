@@ -9,7 +9,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-host-json/include
-  ${JVX_BASE_BINARY_DIR}/sources/jvxHosts/jvxHCon/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxMinHosts/jvxMHAppMinHostCon/
 
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor
   )
@@ -32,7 +32,7 @@ set(JVX_FORCE_RUNTIME_IMPORTLIB TRUE)
 set(JVX_SDK_FORCE_DEPLOY_IMPORT_STATIC_LIB TRUE)
 
 set(LOCAL_LIBS 
-    jvxHCon_static
+    jvxMHAppMinHostCon_static
     jvxTconfigProcessor_static
     jvx-host-json_static)
 
