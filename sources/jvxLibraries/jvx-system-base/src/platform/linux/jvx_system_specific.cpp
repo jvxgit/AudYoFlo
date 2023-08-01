@@ -21,8 +21,8 @@ std::string JVX_GET_CURRENT_MODULE_PATH(void* ptrIdentify)
 		char arg1[20] = { 0 };
 		char path[JVX_MAXSTRING + 1] = {0};
 		sprintf( arg1, "/proc/%d/exe", getpid() );
-		readlink( arg1, path, JVX_MAXSTRING );
-		retVal = path;
+		ssize_t length = readlink( arg1, path, JVX_MAXSTRING );
+		retVal = std::string(path, length);
 	}
 	return retVal;
 }
