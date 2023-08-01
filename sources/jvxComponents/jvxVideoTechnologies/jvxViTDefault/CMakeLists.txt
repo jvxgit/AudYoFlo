@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 2.8.11)
-
 set(PROJECT_NAME jvxViTDefault)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 

@@ -1,4 +1,3 @@
-cmake_minimum_required (VERSION 2.8)
 if(${JVX_OS} MATCHES "windows")
 	set(JVX_TARGET_NAME "fftw-3.3-win")
 	message("--> Configuring ${JVX_TARGET_NAME}")

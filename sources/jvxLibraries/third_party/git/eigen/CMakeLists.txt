@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 2.8)
-
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/eigen)
 	message("eigen sub project not available. Starting script to download it.") 
 	if(${JVX_OS} MATCHES "windows")

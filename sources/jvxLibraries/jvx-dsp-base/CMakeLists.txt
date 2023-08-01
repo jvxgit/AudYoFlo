@@ -1,4 +1,3 @@
-cmake_minimum_required (VERSION 2.8.11)
 if(DEFINED JVX_SDK_PATH)
   include(${JVX_SDK_PATH}/cmake/standalone.cmake)
 endif(DEFINED JVX_SDK_PATH)

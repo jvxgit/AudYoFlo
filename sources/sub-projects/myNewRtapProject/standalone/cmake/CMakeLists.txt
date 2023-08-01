@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 2.8.11)
-
 PROJECT("myNewRtapProject")
 
 # If working with automatic relative to absolute path generation,

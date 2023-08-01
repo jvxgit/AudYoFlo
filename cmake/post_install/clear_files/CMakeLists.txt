@@ -1,5 +1,3 @@
-
-	
 	if(JVX_OS MATCHES "windows")
 		
 		get_filename_component(gitfolder ${GIT_EXECUTABLE} DIRECTORY)

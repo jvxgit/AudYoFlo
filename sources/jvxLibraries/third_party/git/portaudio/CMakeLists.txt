@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 2.8)
-
 message("--> configuring PortAudio")
 
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/portaudio)

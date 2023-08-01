@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 2.8.11)
-
 # Some common include files
 set(PROJECT_NAME myNewRtapApplication)
 include(${JVX_CMAKE_DIR}/common_local_exe_head.cmake)

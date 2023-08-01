@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 2.8)
-
 set(JVX_TARGET_NAME "jvx-audio-stack-c674x")
 message("--> Configuring ${JVX_TARGET_NAME}")
 project(${JVX_TARGET_NAME})

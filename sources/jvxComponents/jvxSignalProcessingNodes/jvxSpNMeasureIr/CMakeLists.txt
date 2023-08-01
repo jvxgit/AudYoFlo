@@ -1,4 +1,3 @@
-cmake_minimum_required (VERSION 2.8.11)
 if(JVX_USE_FFTW)
 	set(PROJECT_NAME jvxSpNMeasureIr)
 	include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)

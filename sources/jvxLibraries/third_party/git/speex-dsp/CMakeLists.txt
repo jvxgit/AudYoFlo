@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 2.8.11)
-
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/speexdsp)
 	message("speexdsp sub project not available. Starting script to download it.") 
 	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")

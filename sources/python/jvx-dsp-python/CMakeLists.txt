@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.4...3.18)
-
 # Additional information:
 # https://pybind11.readthedocs.io/en/stable/cmake/index.html
 

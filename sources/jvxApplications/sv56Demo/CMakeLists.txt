@@ -1,4 +1,3 @@
-cmake_minimum_required (VERSION 2.8.11)
 set(PROJECT_NAME sv56Demo)
 include(${JVX_CMAKE_DIR}/common_local_head.cmake)
 

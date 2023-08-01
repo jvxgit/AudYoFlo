@@ -1,6 +1,5 @@
 # Buiding web assembly in cmake:
 # https://gist.github.com/WesThorburn/00c47b267a0e8c8431e06b14997778e4
-cmake_minimum_required(VERSION 3.5.1)
 
 message("--> Configuring ${PROJECT_NAME}")
 set(JVX_TARGET_NAME ${PROJECT_NAME})
