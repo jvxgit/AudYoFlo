@@ -1804,12 +1804,14 @@ jvx_absoluteToRelativePath(std::string path, bool isFile, const char* curPath)
 		}
 	}
 
-	std::string wd;
+	std::string wd = ".";
 	if (curPath == NULL)
 	{
 		char str[JVX_MAXSTRING + 1] = { 0 };
-		JVX_GETCURRENTDIRECTORY(str, JVX_MAXSTRING);
-		wd = str;
+		if (JVX_GETCURRENTDIRECTORY(str, JVX_MAXSTRING))
+		{
+			wd = str;
+		}
 	}
 	else
 	{

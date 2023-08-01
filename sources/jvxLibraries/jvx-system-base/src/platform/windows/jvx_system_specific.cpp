@@ -126,3 +126,18 @@ std::string JVX_DATE()
 
 	return(strDate);
 }
+
+/*
+std::string JVX_GETCURRENTDIRECTORY()
+{
+	std::string retVal = __FUNCTION__;
+	retVal += ": ERROR on convert, buffer may be too short";
+	char destBuf[JVX_MAXSTRING + 1] = { 0 };
+	char* bufRet = _getcwd(destBuf, JVX_MAXSTRING); /*GetCurrentDirectory(b, a)* /
+	if (bufRet)
+	{
+		retVal = bufRet;
+	}
+	return retVal;
+}
+*/
