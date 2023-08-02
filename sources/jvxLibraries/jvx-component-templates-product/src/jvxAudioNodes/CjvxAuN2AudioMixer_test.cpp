@@ -1,6 +1,8 @@
 #include "jvx.h"
 #include "jvxAudioNodes/CjvxAuN2AudioMixer.h"
 
+#define JVX_STRING_COMPOSE_OUTPUT_CHANNEL(nmMaster, cnt) nmMaster + " -- Channel#" + jvx_size2String(cnt);
+
 jvxErrorType
 CjvxAuN2AudioMixer::test_connect_icon_ntask(
 	jvxLinkDataDescriptor* theData_in,
@@ -282,7 +284,6 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 					jPD detailSrc;
 					jvx::propertyCallCompactElement cptElmSrc(callManSrc, rawPtrSrc, identSrc, detailSrc);
 					cptTrans.propReqs.push_back(&cptElmSrc);
-					jvxBool channelsFound = false;
 
 					jvxErrorType resL = datOut->con_link.connect_to->transfer_forward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES,
 						reinterpret_cast<jvxHandle*>(&cptTrans) JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
@@ -290,6 +291,7 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 					{
 						nmMaster = srcName.std_str();
 					}
+
 					if ((cptElmSrc.resCall == JVX_NO_ERROR) && (callManChans.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
 					{
 						for (i = 0; i < selLst.strList.ll(); i++)
@@ -311,26 +313,26 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 								cnt++;
 							}
 						}
-						
-						// assert(datOut->con_params.number_channels == itElm->second.channels.size());
-						if(datOut->con_params.number_channels != itElm->second.channels.size())
-						{
-							// If there is a difference, we might have a channel constraint acting before the actual device.
-							// In that case, we are about to change the number of channels and should trigger another test!
-							
-							itElm->second.channels.resize(datOut->con_params.number_channels);
-							// reRunTestThisChain = true;
-						}
-						channelsFound = true;
-
 					}
-					if(!channelsFound)
+
+					// Modified this assertion code to find useful assumptions if the device does not deliver the required names, 02. Aug. 2023 - HK
+					// assert(datOut->con_params.number_channels == itElm->second.channels.size());
+					if (datOut->con_params.number_channels < itElm->second.channels.size())
 					{
+						// If there is a difference, we might have a channel constraint acting before the actual device.
+						// In that case, we are about to change the number of channels and should trigger another test!
+
+						itElm->second.channels.resize(datOut->con_params.number_channels);
+						// reRunTestThisChain = true;
+					}
+					if (datOut->con_params.number_channels > itElm->second.channels.size())
+					{
+						cnt = itElm->second.channels.size();
 						for (; cnt < datOut->con_params.number_channels; cnt++)
 						{
 							oneEntryChannel newEntry;
 							if (extender) newEntry.attSpecificPtr = extender->allocateAttachChannelSpecific(false);
-							newEntry.name = nmMaster + " -- Channel#" + jvx_size2String(cnt);// +"/" + jvx_size2String(uId);
+							newEntry.name = JVX_STRING_COMPOSE_OUTPUT_CHANNEL(nmMaster, cnt);
 							// Use itElm->second.masName here: when first allocating the object we do not yet know the "friendly" name
 							updateChannelFromStorage(outputChannelsInStorage, newEntry, itElm->second.masName, false);
 							JVX_LOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
@@ -340,7 +342,8 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 #ifdef JVX_AUDIOMIXER_DEBUG_SPECIFIC
 							newEntry.attSpecificPtr = nullptr;
 #endif
-						}
+						}						
+						cnt++;
 					}
 					new_setup_to_properties(false, true);
 				}
