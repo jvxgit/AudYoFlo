@@ -384,12 +384,14 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 	jvxLinkDataDescriptor* ld,
 	jvxLinkDataDescriptor* dataOut,
 	IjvxObject* this_pointer,
-	jvxCBitField* modFlags
+	jvxCBitField* modFlagsRet
 	JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	std::string txt;
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool thereismismatch = false;
+	jvxCBitField modFlagsLoc = 0;
+	jvxLinkDataDescriptor ld_fixed = *ld;
 
 	res = jvx_check_valid(ld->con_params, txt);
 	if (res != JVX_NO_ERROR)
@@ -400,7 +402,7 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 	}
 
 	// compare_core(ld, ld, thereismismatch);
-	compare_core(ld, nullptr, thereismismatch); // Test this: the passed struct should NOT be modified
+	compare_core(ld, &ld_fixed, thereismismatch); // Test this: the passed struct should NOT be modified
 
 	if (this->negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
@@ -427,6 +429,8 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 	if (thereismismatch)
 	{
 		res = JVX_ERROR_UNSUPPORTED;
+
+		// We may accept the new parameters and modify them to return a compromise
 		if (allowCompromiseOutput)
 		{
 			res = JVX_ERROR_COMPROMISE;
@@ -437,55 +441,54 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 		res = JVX_NO_ERROR;
 	}
 
-	if (modFlags)
+	if (ld->con_params.buffersize != dataOut->con_params.buffersize)
 	{
-		*modFlags = 0;
-		if (ld->con_params.buffersize != dataOut->con_params.buffersize)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
-		}
-		if (ld->con_params.rate != dataOut->con_params.rate)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT);
-		}
-		if (ld->con_params.number_channels != dataOut->con_params.number_channels)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
-		}
-		if (ld->con_params.format != dataOut->con_params.format)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT);
-		}
-		if (ld->con_params.format_group != dataOut->con_params.format_group)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT);
-		}
-		if (ld->con_params.segmentation.x != dataOut->con_params.segmentation.x)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
-		}
-		if (ld->con_params.segmentation.y != dataOut->con_params.segmentation.y)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT);
-		}
-		if (ld->con_params.data_flow != dataOut->con_params.data_flow)
-		{
-			jvx_bitSet(*modFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
-		}
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
 	}
+	if (ld->con_params.rate != dataOut->con_params.rate)
+	{
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT);
+	}
+	if (ld->con_params.number_channels != dataOut->con_params.number_channels)
+	{
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
+	}
+	if (ld->con_params.format != dataOut->con_params.format)
+	{
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT);
+	}
+	if (ld->con_params.format_group != dataOut->con_params.format_group)
+	{
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT);
+	}
+	if (ld->con_params.segmentation.x != dataOut->con_params.segmentation.x)
+	{
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
+	}
+	if (ld->con_params.segmentation.y != dataOut->con_params.segmentation.y)
+	{
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT);
+	}
+	if (ld->con_params.data_flow != dataOut->con_params.data_flow)
+	{
+		jvx_bitSet(modFlagsLoc, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
+	}
+	
+	// Prepare for return
+	if (modFlagsRet)
+		*modFlagsRet = modFlagsLoc;
 
 	switch (res)
 	{
 	case JVX_ERROR_UNSUPPORTED:
-		// No chance
+		// No chance to negotiate
 		break;
 	case JVX_NO_ERROR:			// Modifications in propsal have not been made. This may also be a modification in dataOut
 	case JVX_ERROR_COMPROMISE:	// Modifications in propsal has been made. This will also be a modification in dataOut
-		// No modification needed to be done, just use the propsed settings
-		if (modFlags == NULL)
-		{
-			dataOut->con_params = ld->con_params;
-		}
+		
+		// In case of a compromise as well as in the case that the passed option is taken, copy new parameters to output arguments
+		// This code was fixed 02.Aug 2023 - HK
+		dataOut->con_params = ld_fixed.con_params;
 		break;
 	}
 

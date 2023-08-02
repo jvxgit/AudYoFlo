@@ -311,7 +311,16 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 								cnt++;
 							}
 						}
-						assert(datOut->con_params.number_channels == itElm->second.channels.size());
+						
+						// assert(datOut->con_params.number_channels == itElm->second.channels.size());
+						if(datOut->con_params.number_channels != itElm->second.channels.size())
+						{
+							// If there is a difference, we might have a channel constraint acting before the actual device.
+							// In that case, we are about to change the number of channels and should trigger another test!
+							
+							itElm->second.channels.resize(datOut->con_params.number_channels);
+							// reRunTestThisChain = true;
+						}
 						channelsFound = true;
 
 					}

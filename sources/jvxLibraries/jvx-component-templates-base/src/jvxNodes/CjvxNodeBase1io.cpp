@@ -201,9 +201,10 @@ CjvxNodeBase1io::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* d
 
 		if (res == JVX_NO_ERROR)
 		{
+			jvxCBitField modFlags = 0;
 			// There is only room to negotiate 
 			res = neg_input._negotiate_transfer_backward_ocon(ld,
-				&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), NULL
+				&_common_set_ocon.theData_out, static_cast<IjvxObject*>(this), &modFlags
 				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 		break;
@@ -242,6 +243,15 @@ CjvxNodeBase1io::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkData
 
 			// Here is the place where we can reject the backwrd settings if it does not fit!!
 			accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
+			// We may have re-modified the parameters again since the local module did not accept the
+			// new input parameters. If that is the case, we need to finally check the resulting output
+			jvxBool mismatch = false;
+			neg_input.compare_core(preferredByOutput, &_common_set_ocon.theData_out, mismatch);
+			if (mismatch)
+			{
+				res = JVX_ERROR_COMPROMISE;
+			}
 		}
 
 	}
