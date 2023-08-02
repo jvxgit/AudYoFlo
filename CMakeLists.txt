@@ -799,12 +799,7 @@ endif()
 		endif()
 		
 		if(JVX_USE_QT)
-			set(JVX_BASE_APPS ${JVX_BASE_APPS}
-				${JVX_BASE_ROOT}/sources/jvxApplications/jvxQtWebControl
-				${JVX_BASE_ROOT}/sources/jvxApplications/jvxQmlTest
-				${JVX_BASE_ROOT}/sources/jvxApplications/qtexamples/application
-				${JVX_BASE_ROOT}/sources/jvxApplications/qtexamples/openglwindow
-				
+			set(JVX_BASE_APPS ${JVX_BASE_APPS}				
 				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxRtprocHost
 				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxRtprocNetHost
 				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxRtprocHost-1
@@ -826,33 +821,43 @@ endif()
 		
 		endif()
 
-		set(JVX_BASE_APPS ${JVX_BASE_APPS}
-			${JVX_BASE_ROOT}/sources/jvxApplications/jvxRemoteCallServer
-			${JVX_BASE_ROOT}/sources/jvxApplications/jvxRemoteCallClient
-			${JVX_BASE_ROOT}/sources/jvxApplications/jvxUdpDataViewer
+		if(JVX_ENGAGE_TEST_EXAMPLES)
+			set(JVX_BASE_APPS ${JVX_BASE_APPS}
+				${JVX_BASE_ROOT}/sources/jvxApplications/jvxRemoteCallServer
+				${JVX_BASE_ROOT}/sources/jvxApplications/jvxRemoteCallClient
+				${JVX_BASE_ROOT}/sources/jvxApplications/jvxUdpDataViewer
 			
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/sv56Demo
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxSocketTestClient			
-			)
-			
-		if(JVX_USE_OPENGL_X11)
-			if(${JVX_OS} MATCHES "windows")
-			  set(JVX_BASE_APPS ${JVX_BASE_APPS}
-				${JVX_BASE_ROOT}/sources/jvxApplications/jvxTestOpenGl
-				${JVX_BASE_ROOT}/sources/jvxApplications/jvxTestCameraOpenGl
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/sv56Demo
+				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxSocketTestClient			
 				)
-			      endif()
-		endif()
-
-		if(JVX_USE_QT)
-			if(JVX_USE_PCAP)
-				set(JVX_BASE_APPS ${JVX_BASE_APPS}
-					${JVX_BASE_ROOT}/sources/jvxApplications/jvxPacketFilterBridge)
-			endif()
 			
-			if(JVX_USE_PART_WEBSERVER)
+			if(JVX_USE_OPENGL_X11)
+				if(${JVX_OS} MATCHES "windows")
+					set(JVX_BASE_APPS ${JVX_BASE_APPS}
+						${JVX_BASE_ROOT}/sources/jvxApplications/jvxTestOpenGl
+						${JVX_BASE_ROOT}/sources/jvxApplications/jvxTestCameraOpenGl
+					)
+				endif()
+			endif()
+
+			if(JVX_USE_QT)
+			
 				set(JVX_BASE_APPS ${JVX_BASE_APPS}
-					${JVX_BASE_ROOT}/sources/jvxProjects/jvxWebExample)
+					${JVX_BASE_ROOT}/sources/jvxApplications/jvxQtWebControl
+					${JVX_BASE_ROOT}/sources/jvxApplications/jvxQmlTest
+					${JVX_BASE_ROOT}/sources/jvxApplications/qtexamples/application
+					${JVX_BASE_ROOT}/sources/jvxApplications/qtexamples/openglwindow
+					)
+
+				if(JVX_USE_PCAP)
+					set(JVX_BASE_APPS ${JVX_BASE_APPS}
+						${JVX_BASE_ROOT}/sources/jvxApplications/jvxPacketFilterBridge)
+				endif()
+			
+				if(JVX_USE_PART_WEBSERVER)
+					set(JVX_BASE_APPS ${JVX_BASE_APPS}
+						${JVX_BASE_ROOT}/sources/jvxProjects/jvxWebExample)
+				endif()
 			endif()
 		endif()
 	endif()
