@@ -1,7 +1,7 @@
 #ifndef __IJVXCOMPONENTHOST_H__
 #define __IJVXCOMPONENTHOST_H__
 
-JVX_INTERFACE IjvxComponentHost
+JVX_INTERFACE IjvxComponentHost: public IjvxHostTypeHandler // <- this organizes the host type classes etc
 {
 public:
 

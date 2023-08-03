@@ -74,7 +74,9 @@
 		return _request_id_main_thread(thread_id);
 	}
 
+	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_boot_complete(jvxBool isComplete) override
 	{
 		return _report_boot_complete(isComplete);
 	}
+	*/

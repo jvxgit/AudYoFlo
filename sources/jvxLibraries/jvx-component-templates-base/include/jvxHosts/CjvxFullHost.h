@@ -13,6 +13,7 @@
 #include "jvxHosts/CjvxDataConnections.h"
 #include "jvxHosts/CjvxMinHost.h"
 #include "jvxHosts/CjvxUniqueId.h"	
+#include "jvxHosts/CjvxInterfaceHostTpl.h"
 #include "jvxFactoryHosts/CjvxDefaultInterfaceFactory.h"
 #include "jvxFactoryHosts/CjvxInterfaceFactory.h"
 
@@ -32,15 +33,20 @@
 
 // ========================================================================================
 
-class CjvxComHost : public CjvxInterfaceFactory<IjvxHost>, public CjvxComponentHostTools
+
+
+// ========================================================================================
+
+class CjvxComConHost : public CjvxInterfaceHostTpl<IjvxHost, CjvxComponentHostTools>,
+	public IjvxDataConnections, public CjvxDataConnections
 {
 public:
-	JVX_CALLINGCONVENTION CjvxComHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-		CjvxInterfaceFactory<IjvxHost>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	JVX_CALLINGCONVENTION CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+		CjvxInterfaceHostTpl<IjvxHost, CjvxComponentHostTools>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
 
 	};
-	virtual JVX_CALLINGCONVENTION ~CjvxComHost()
+	virtual JVX_CALLINGCONVENTION ~CjvxComConHost()
 	{
 
 	};
@@ -53,23 +59,7 @@ public:
 	// ====================================================================================
 
 #include "codeFragments/simplify/jvxComponentHostTools_simplify.h"
-};
 
-// ========================================================================================
-
-class CjvxComConHost : public CjvxComHost,
-	public IjvxDataConnections, public CjvxDataConnections
-{
-public:
-	JVX_CALLINGCONVENTION CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-		CjvxComHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
-	{
-
-	};
-	virtual JVX_CALLINGCONVENTION ~CjvxComConHost()
-	{
-
-	};
 
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
@@ -102,11 +92,6 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION system_ready() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION system_about_to_shutdown() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION owner(IjvxObject** dependsOn) override;
-
-	// =================================================================================================
-	// Interface IjvxHost
-	// =================================================================================================
-	virtual jvxErrorType JVX_CALLINGCONVENTION boot_complete(jvxBool* bootComplete) override;
 	
 	// ====================================================================================
 	// Interface IjvxHiddenInterface
@@ -162,7 +147,6 @@ protected:
 	// A unique id to identify things within the host scope during one session. This id does not 
 	// allow global and infinite identifiation as UUIDs do
 	jvxSize myUniqueIdSelf;
-	jvxBool bootComplete = false;
 private:
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_command_post_set);

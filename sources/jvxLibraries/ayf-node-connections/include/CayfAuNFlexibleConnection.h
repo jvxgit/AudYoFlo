@@ -175,7 +175,7 @@ namespace AyfConnection
 				IjvxHost* theHost = reqInterface<IjvxHost>(CayfAuNConnection<S>::_common_set_min.theHostRef);
 				if (theHost)
 				{
-					theHost->boot_complete(&allowConnect);
+					theHost->status_system_ready(&allowConnect);
 				}
 
 				if (allowConnect)

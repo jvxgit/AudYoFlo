@@ -5,7 +5,12 @@ JVX_INTERFACE IjvxMinHost : public IjvxInterfaceFactory, public IjvxCoreStateMac
 {
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxMinHost() {};
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_unique_host_id(jvxSize* uId) = 0;
+
+	//! Return boot status. bootComplete is true on return if
+	virtual jvxErrorType JVX_CALLINGCONVENTION status_system_ready(jvxBool* bootComplete) = 0;
+
 };
 
 JVX_INTERFACE IjvxFactoryHost: public IjvxMinHost, public IjvxHostInteraction, public IjvxSystemStatus
@@ -13,8 +18,9 @@ JVX_INTERFACE IjvxFactoryHost: public IjvxMinHost, public IjvxHostInteraction, p
 public:
 
 	virtual JVX_CALLINGCONVENTION ~IjvxFactoryHost(){};
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_id_main_thread(JVX_THREAD_ID* thread_id) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION report_boot_complete(jvxBool isComplete) = 0;
+	// virtual jvxErrorType JVX_CALLINGCONVENTION report_boot_complete(jvxBool isComplete) = 0;
 };
 	
 #endif	

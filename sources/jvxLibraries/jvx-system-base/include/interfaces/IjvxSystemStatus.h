@@ -11,7 +11,6 @@ public:
 
 	// Callback to report that the system is about to shutdown
 	virtual jvxErrorType JVX_CALLINGCONVENTION system_about_to_shutdown() = 0;
-
 };
 
 #endif

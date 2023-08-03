@@ -15,6 +15,9 @@ template <class T>
 class CjvxDefaultInterfaceFactory: public T, public CjvxObject, public CjvxMinHost,
 	public IjvxUniqueId, public CjvxUniqueId
 {
+protected:
+	jvxBool hostReady = false;
+
 public:
 	// ===================================================================================================
 	// ===================================================================================================
@@ -27,6 +30,15 @@ public:
 	};
 
 	virtual JVX_CALLINGCONVENTION ~CjvxDefaultInterfaceFactory() {};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION status_system_ready(jvxBool* bootCompleteReturn) override
+	{
+		if (bootCompleteReturn)
+		{
+			*bootCompleteReturn = hostReady;
+		}
+		return JVX_NO_ERROR;
+	}
 
 	// ===================================================================================================
 

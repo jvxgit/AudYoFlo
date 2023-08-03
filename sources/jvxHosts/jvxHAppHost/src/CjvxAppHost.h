@@ -1,13 +1,13 @@
-#ifndef __CJVXHOSTJVX_H__
-#define __CJVXHOSTJVX_H__
+#ifndef __CJVXAPPHOSTJVX_H__
+#define __CJVXAPPHOSTJVX_H__
 
 #include "jvxHosts/CjvxFullHost.h"
 #include "common/CjvxConfigurationLine.h"
 #include "common/CjvxPropertyPool.h"
 
 class CjvxAppHost :
-	public IjvxConfiguration, public IjvxConfigurationDone, public IjvxConfigurationLine,
-	public IjvxConfigurationExtender, public IjvxConfigurationAttach,
+	public IjvxConfigurationDone, public IjvxConfigurationLine,
+	public IjvxConfigurationAttach,
 	public IjvxPropertyPool, public CjvxPropertyPool,
 	public CjvxFullHost, public CjvxConfigurationLine
 {

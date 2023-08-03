@@ -12,13 +12,27 @@
 #define SECTIONNAME_ALL_SUBSECTIONS "factoryhost_allSubSections"
 #define SECTIONNAME_ALL_EXTERNAL_ENTRIES "factoryhost_allExternalEntries"
 
+#include "jvxHosts/CjvxInterfaceHostTpl.h"
+
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
-class CjvxAppFactoryHost : public CjvxInterfaceFactory<IjvxFactoryHost>,
-		public CjvxHostInteractionTools<CjvxHostInteraction>,
-		public IjvxConfiguration, public IjvxConfigurationExtender
+class CjvxFactoryHost : public CjvxInterfaceHostTpl < IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> >
+{
+public:
+	JVX_CALLINGCONVENTION CjvxFactoryHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+		CjvxInterfaceHostTpl <IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> >(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	{
+	};
+
+	virtual JVX_CALLINGCONVENTION ~CjvxFactoryHost()
+	{
+	};
+};
+
+
+class CjvxAppFactoryHost : public CjvxFactoryHost
 {
 private:
 
@@ -68,8 +82,122 @@ public:
 	// ===================================================================================================
 	// Interface <IjvxHiddenInterface>
 	// ===================================================================================================
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)override
+	{
+		jvxErrorType res = JVX_NO_ERROR;
+		res = CjvxHostInteraction::request_hidden_interface(tp, hdl);
+		if (res != JVX_NO_ERROR)
+		{
+			res = JVX_NO_ERROR;
+			switch (tp)
+			{
+			case JVX_INTERFACE_PROPERTIES:
+				if (hdl)
+				{
+					*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxProperties*>(this));
+				}
+				break;
+			case JVX_INTERFACE_TOOLS_HOST:
+				if (hdl)
+				{
+					*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxToolsHost*>(this));
+				}
+				break;
+			case JVX_INTERFACE_UNIQUE_ID:
+				if (hdl)
+				{
+					*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxUniqueId*>(this));
+				}
+				break;
+			case JVX_INTERFACE_CONFIGURATION:
+				if (hdl)
+				{
+					*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxConfiguration*>(this));
+				}
+				break;
+			case JVX_INTERFACE_CONFIGURATION_EXTENDER:
+				if (hdl)
+				{
+					*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxConfigurationExtender*>(this));
+				}
+				break;
+			default:
+
+				res = _request_hidden_interface(tp, hdl);
+			}
+		}
+		return(res);
+	};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)override
+	{
+		jvxErrorType res = JVX_NO_ERROR;
+		res = CjvxHostInteraction::return_hidden_interface(tp, hdl);
+		if (res != JVX_NO_ERROR)
+		{
+			res = JVX_NO_ERROR;
+			switch (tp)
+			{
+			case JVX_INTERFACE_PROPERTIES:
+				if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxProperties*>(this)))
+				{
+					res = JVX_NO_ERROR;
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+				break;
+
+			case JVX_INTERFACE_TOOLS_HOST:
+				if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxToolsHost*>(this)))
+				{
+					res = JVX_NO_ERROR;
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+				break;
+
+			case JVX_INTERFACE_UNIQUE_ID:
+				if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxUniqueId*>(this)))
+				{
+					res = JVX_NO_ERROR;
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+				break;
+
+			case JVX_INTERFACE_CONFIGURATION:
+				if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxConfiguration*>(this)))
+				{
+					res = JVX_NO_ERROR;
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+				break;
+
+			case JVX_INTERFACE_CONFIGURATION_EXTENDER:
+				if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxConfigurationExtender*>(this)))
+				{
+					res = JVX_NO_ERROR;
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+				break;
+			default:
+				res = _return_hidden_interface(tp, hdl);
+			}
+		}
+		return res;
+	};
 
 	// ===================================================================================================
 	// Interface <IjvxToolsHost>

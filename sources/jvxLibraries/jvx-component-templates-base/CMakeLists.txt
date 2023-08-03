@@ -98,6 +98,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxMinHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxConnectionMinHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxFullHost.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxInterfaceHostTpl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHostTools.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxMinHost.cpp

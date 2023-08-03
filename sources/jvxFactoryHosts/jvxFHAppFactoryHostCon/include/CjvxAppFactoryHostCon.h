@@ -4,6 +4,19 @@
 #include "CjvxAppFactoryHost.h"
 #include "jvxHosts/CjvxDataConnections.h"
 	
+class CjvxFactoryHostConnections : public CjvxInterfaceHostTplConnections < IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> >
+{
+public:
+	JVX_CALLINGCONVENTION CjvxFactoryHostConnections(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+		CjvxInterfaceHostTplConnections <IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> >(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	{
+	};
+
+	virtual JVX_CALLINGCONVENTION ~CjvxFactoryHostConnections()
+	{
+	};
+};
+
 class CjvxAppFactoryHostCon : public CjvxAppFactoryHost,
 	public IjvxDataConnections, public CjvxDataConnections
 {

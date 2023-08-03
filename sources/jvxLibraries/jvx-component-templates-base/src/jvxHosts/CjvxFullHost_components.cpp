@@ -11,7 +11,11 @@ jvxErrorType
 CjvxFullHost::system_ready()
 {
 	// Indicate that boot process is complete
-	bootComplete = true;
+	hostReady = true;
+
+	// Forward to class CjvxHostInteraction
+	CjvxHostInteraction::_report_boot_complete(hostReady);
+
 	auto elmTT = _common_set_types.registeredTechnologyTypes.begin();
 	for (; elmTT != _common_set_types.registeredTechnologyTypes.end(); elmTT++)
 	{
@@ -109,7 +113,11 @@ CjvxFullHost::system_about_to_shutdown()
 		}
 	}
 
-	bootComplete = false;
+	hostReady = false;
+
+	// Forward to class CjvxHostInteraction
+	CjvxHostInteraction::_report_boot_complete(hostReady);
+
 	return JVX_NO_ERROR;
 }
 
@@ -117,16 +125,6 @@ jvxErrorType
 CjvxFullHost::owner(IjvxObject** ownerOnReturn)
 {
 	return CjvxObject::_owner(ownerOnReturn);
-}
-
-jvxErrorType
-CjvxFullHost::boot_complete(jvxBool* bootCompleteReturn)
-{
-	if (bootCompleteReturn)
-	{
-		*bootCompleteReturn = bootComplete;
-	}
-	return JVX_NO_ERROR;
 }
 
 // =============================================================================

@@ -177,7 +177,8 @@ JVX_APPHOST_CLASSNAME::shutdownHostFactory(jvxApiString* errorMessage, jvxHandle
 	jvxSize i;
 	// Here, we deactivate all dynamic objects found in slots. We need to do this to
 	// allow text log in deactivate callbacks
-	this->involvedHost.hHost->system_about_to_shutdown();
+
+	// this->involvedHost.hHost->system_about_to_shutdown(); <- this was moved to <on_components_stop>
 
 	// HINT HK 21.04.2023: Changed this part: it browsed through all components previously but
 	// it is better to handle the automation components after all the others!!!
@@ -683,6 +684,7 @@ JVX_APPHOST_CLASSNAME::boot_prepare_host_start()
 void
 JVX_APPHOST_CLASSNAME::boot_prepare_host_stop()
 {
+	// Wrap up rules. Here we postpone all required steps under all conditions
 	if (!onConnectionRulesStarted)
 	{
 		this->on_connection_rules_started();
@@ -695,6 +697,8 @@ JVX_APPHOST_CLASSNAME::boot_prepare_host_stop()
 
 	if (!onComponentsConfigured)
 	{
+		// Here we catch the case if no config file was loaded:
+		// onComponentsConfigured is set to true in the config file load routine
 		this->on_components_configured();
 	}
 
@@ -708,7 +712,7 @@ JVX_APPHOST_CLASSNAME::boot_prepare_host_stop()
 		this->on_connections_started();
 	}
 
-	involvedHost.hHost->report_boot_complete(true);
+	// involvedHost.hHost->report_boot_complete(true); <- this was moved to <on_components_configured>	
 }
 
 jvxErrorType 
@@ -798,8 +802,7 @@ JVX_APPHOST_CLASSNAME::shutdown_postprocess_host()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	// Indicate that we are about to shutdown
-	involvedHost.hHost->report_boot_complete(false);
+	// involvedHost.hHost->report_boot_complete(false); -> moved to <on_components_stop> via IjvxSystemState::system_about_to_shutdown
 
 	on_connections_stop();
 	
