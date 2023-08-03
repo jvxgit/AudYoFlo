@@ -22,6 +22,9 @@ CjvxComponentHostTools::_number_tools(const jvxComponentIdentification& tp, jvxS
 	// If the first part returned an error, the type may reference another object type
 	if (res != JVX_NO_ERROR)
 	{
+		res = CjvxHostInteractionTools<CjvxComponentHost>::_number_tools(
+			tp, num);
+		/*
 		for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 		{
 			if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.tp == tp.tp)
@@ -35,6 +38,7 @@ CjvxComponentHostTools::_number_tools(const jvxComponentIdentification& tp, jvxS
 			*num = cnt;
 		}
 		res = JVX_NO_ERROR;
+		*/
 	}
 	return(res);
 }
@@ -92,6 +96,10 @@ CjvxComponentHostTools::_identification_tool(const jvxComponentIdentification& t
 		}
 	}
 
+	return CjvxHostInteractionTools<CjvxComponentHost>::_identification_tool(
+		tp, idx, description,descriptor, multipleInstances);
+
+	/*
 	for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 	{
 		if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.tp == tp.tp)
@@ -107,6 +115,7 @@ CjvxComponentHostTools::_identification_tool(const jvxComponentIdentification& t
 		}
 	}
 	return(res);
+	*/
 }
 	
 jvxErrorType 
@@ -392,6 +401,11 @@ CjvxComponentHostTools::_reference_tool(const jvxComponentIdentification& tp,
 		// Find in all other components
 		// =====================================================================================
 
+		res = CjvxHostInteractionTools<CjvxComponentHost>::_reference_tool(
+			tp, theObject, filter_id, filter_descriptor, filter_stateMask,
+			decider);
+
+		/*
 		cnt = 0;
 		for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 		{
@@ -431,6 +445,7 @@ CjvxComponentHostTools::_reference_tool(const jvxComponentIdentification& tp,
 				}
 			}
 		}
+			*/
 	}
 	return(res);
 }
@@ -542,6 +557,10 @@ CjvxComponentHostTools::_return_reference_tool(
 
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 	{
+		res = CjvxHostInteractionTools<CjvxComponentHost>::_return_reference_tool(
+			tp, theObject);
+		
+		/*
 		for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 		{
 			if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.tp == tp.tp)
@@ -554,6 +573,7 @@ CjvxComponentHostTools::_return_reference_tool(
 				}
 			}
 		}
+		*/
 	}
 	return(res);
 }
@@ -676,6 +696,9 @@ CjvxComponentHostTools::_instance_tool(jvxComponentType tp, IjvxObject** theObje
 		}
 	}
 
+	return CjvxHostInteractionTools<CjvxComponentHost>::_instance_tool(
+		tp, theObject, filter_id, filter_descriptor);
+	/*
 	for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 	{
 		if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.tp == tp)
@@ -786,6 +809,7 @@ CjvxComponentHostTools::_instance_tool(jvxComponentType tp, IjvxObject** theObje
 		}
 	}
 	return(res);
+	*/
 }
 	
 jvxErrorType 
@@ -910,6 +934,10 @@ CjvxComponentHostTools::_return_instance_tool(jvxComponentType tp, IjvxObject* t
 		}
 	}
 
+	return CjvxHostInteractionTools<CjvxComponentHost>::_return_instance_tool(
+		tp, theObject, filter_id, filter_descriptor);
+
+	/*
 	for (i = 0; i < this->_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 	{
 		if (this->_common_set_host.otherComponents.availableOtherComponents[i].common.tp == tp)
@@ -951,6 +979,7 @@ CjvxComponentHostTools::_return_instance_tool(jvxComponentType tp, IjvxObject* t
 		}
 	}
 	return(res);
+	*/
 }
 
 // ============================================================================================================

@@ -101,6 +101,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxInterfaceHostTpl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHost.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComponentHostTools.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxFactoryHostTpl.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxHosts/CjvxComConHostTpl.h
+
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxMinHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxConnectionMinHost.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxHosts/CjvxFullHost.cpp

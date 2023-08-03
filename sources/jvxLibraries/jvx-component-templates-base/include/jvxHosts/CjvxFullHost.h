@@ -17,6 +17,8 @@
 #include "jvxFactoryHosts/CjvxDefaultInterfaceFactory.h"
 #include "jvxFactoryHosts/CjvxInterfaceFactory.h"
 
+#include "jvxHosts/CjvxComConHostTpl.h"
+
 /*
 #define JVX_HBDX1_CHECK_CALLING_THREAD_ID \
 	JVX_THREAD_ID theThreadId = JVX_GET_CURRENT_THREAD_ID(); \
@@ -33,44 +35,7 @@
 
 // ========================================================================================
 
-
-
-// ========================================================================================
-
-class CjvxComConHost : public CjvxInterfaceHostTpl<IjvxHost, CjvxComponentHostTools>,
-	public IjvxDataConnections, public CjvxDataConnections
-{
-public:
-	JVX_CALLINGCONVENTION CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-		CjvxInterfaceHostTpl<IjvxHost, CjvxComponentHostTools>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
-	{
-
-	};
-	virtual JVX_CALLINGCONVENTION ~CjvxComConHost()
-	{
-
-	};
-
-	// Second part is IjvxComponentHost realized by mix-in!
-#include "codeFragments/simplify/jvxComponentHost_simplify.h"
-
-	// ====================================================================================
-	// Interface IjvxToolsHost
-	// ====================================================================================
-
-#include "codeFragments/simplify/jvxComponentHostTools_simplify.h"
-
-
-#include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
-
-#include "codeFragments/simplify/jvxHostInteraction_simplify.h"
-#include "codeFragments/simplify/jvxHostTypeHandler_simplify.h"
-#include "codeFragments/simplify/jvxDataConnections_simplify.h"
-
-
-};
-
-class CjvxFullHost: public CjvxComConHost,
+class CjvxFullHost: public CjvxComConHostTpl< CjvxInterfaceHostTplConnections<IjvxHost, CjvxComponentHostTools>>,
 	public IjvxSequencer, public CjvxSequencer,
 	public IjvxPropertyAttach
 {

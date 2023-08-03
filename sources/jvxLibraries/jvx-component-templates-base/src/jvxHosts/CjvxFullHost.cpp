@@ -33,7 +33,7 @@ isInList(std::vector<std::string> lst, std::string entry)
  * Constructor: Only those commands required on this class derivation level.
  */
 CjvxFullHost::CjvxFullHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-	CjvxComConHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxComConHostTpl< CjvxInterfaceHostTplConnections<IjvxHost, CjvxComponentHostTools>>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theComponentType.tp = JVX_COMPONENT_HOST;
 	_common_set.theComponentType.slotid = JVX_SIZE_UNSELECTED;
@@ -524,32 +524,9 @@ jvxErrorType
 CjvxFullHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	res = CjvxHostInteraction::request_hidden_interface(tp, hdl);
-	if (res != JVX_NO_ERROR)
-	{
-		res = JVX_NO_ERROR;
+
 		switch (tp)
 		{
-		case JVX_INTERFACE_PROPERTIES:
-			if (hdl)
-			{
-				*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxProperties*>(this));
-			}
-			break;
-
-		case JVX_INTERFACE_TOOLS_HOST:
-			if (hdl)
-			{
-				*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxToolsHost*>(this));
-			}
-			return(JVX_NO_ERROR);
-
-		case JVX_INTERFACE_UNIQUE_ID:
-			if (hdl)
-			{
-				*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxUniqueId*>(this));
-			}
-			return(JVX_NO_ERROR);
 
 		case JVX_INTERFACE_PROPERTY_ATTACH:
 			if (hdl)
@@ -564,30 +541,11 @@ CjvxFullHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 				*hdl = static_cast<IjvxSequencer*>(this);
 			}
 			break;
-		case JVX_INTERFACE_HOSTTYPEHANDLER:
-			if (hdl)
-			{
-				*hdl = static_cast<IjvxHostTypeHandler*>(this);
-			}
-			break;
-		case JVX_INTERFACE_HOST:
-			if (hdl)
-			{
-				*hdl = static_cast<IjvxHost*>(this);
-			}
-			break;
-
-		case JVX_INTERFACE_DATA_CONNECTIONS:
-			if (hdl)
-			{
-				*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxDataConnections*>(this));
-			}
-			break;
 
 		default:
 
-			res = _request_hidden_interface(tp, hdl);
-		}
+			res = CjvxComConHostTpl< CjvxInterfaceHostTplConnections<IjvxHost, CjvxComponentHostTools>>::request_hidden_interface(tp, hdl);
+		
 	}
 	return(res);
 }
@@ -596,36 +554,9 @@ jvxErrorType
 CjvxFullHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	res = CjvxHostInteraction::return_hidden_interface(tp, hdl);
-	if (res != JVX_NO_ERROR)
-	{
-		res = JVX_NO_ERROR;
+	
 		switch (tp)
 		{
-		case JVX_INTERFACE_PROPERTIES:
-			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxProperties*>(this)))
-			{
-				res = JVX_NO_ERROR;
-			}
-			else
-			{
-				res = JVX_ERROR_INVALID_ARGUMENT;
-			}
-			break;
-
-		case JVX_INTERFACE_TOOLS_HOST:
-			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxToolsHost*>(this)))
-			{
-				return(JVX_NO_ERROR);
-			}
-			return(JVX_ERROR_INVALID_ARGUMENT);
-
-		case JVX_INTERFACE_UNIQUE_ID:
-			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxUniqueId*>(this)))
-			{
-				return(JVX_NO_ERROR);
-			}
-			return(JVX_ERROR_INVALID_ARGUMENT);
 
 		case JVX_INTERFACE_PROPERTY_ATTACH:
 			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxPropertyAttach*>(this)))
@@ -644,43 +575,11 @@ CjvxFullHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 			{
 				res = JVX_ERROR_INVALID_ARGUMENT;
 			}
-			break;
+			break;		
 
-		case JVX_INTERFACE_HOSTTYPEHANDLER:
-			if (hdl == static_cast<IjvxHostTypeHandler*>(this))
-			{
-				res = JVX_NO_ERROR;
-			}
-			else
-			{
-				res = JVX_ERROR_INVALID_ARGUMENT;
-			}
-			break;
-
-		case JVX_INTERFACE_HOST:
-			if (hdl == static_cast<IjvxHost*>(this))
-			{
-				res = JVX_NO_ERROR;
-			}
-			else
-			{
-				res = JVX_ERROR_INVALID_ARGUMENT;
-			}
-			break;
-
-		case JVX_INTERFACE_DATA_CONNECTIONS:
-			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxDataConnections*>(this)))
-			{
-				res = JVX_NO_ERROR;
-			}
-			else
-			{
-				res = JVX_ERROR_INVALID_ARGUMENT;
-			}
-			break;
 		default:
-			res = _return_hidden_interface(tp, hdl);
-		}
+			res = CjvxComConHostTpl< CjvxInterfaceHostTplConnections<IjvxHost, CjvxComponentHostTools>>::return_hidden_interface(tp, hdl);
+		
 	}
 	return res;
 }
