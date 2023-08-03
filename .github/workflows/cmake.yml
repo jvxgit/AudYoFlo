@@ -1,0 +1,116 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+
+    - name: Update Packages
+      run: sudo apt update
+
+    - name: Upgrade Packages
+      run: sudo apt full-upgrade
+
+    - name: Install dependecies
+      run: sudo apt install -y build-essential
+        libgl1-mesa-dev
+        libglew-dev
+        libsdl2-dev
+        libsdl2-image-dev
+        libglm-dev
+        libfreetype6-dev
+        freeglut3-dev
+        libxmu-dev
+        flex
+        bison
+        cmake
+        portaudio19-dev
+        libsndfile1-dev
+        libfftw3-3
+        libfftw3-dev
+        alsa-utils
+        libasound2-dev
+        octave
+        liboctave-dev
+        libboost-dev
+        libeigen3-dev
+        libopencv-dev
+        python3-opencv
+        libpcap-dev
+        ninja-build
+
+    - name: Install Aqt
+      run: pip install aqtinstall
+
+    - name: Configure buildtools
+      run: |
+        cmake -B ${{github.workspace}}/build \
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+          -DJVX_COMPILE_BUILDTOOLS=TRUE \
+          -DCMAKE_INSTALL_PREFIX=release \
+          -G Ninja
+
+    - name: Build buildtools
+      # Build builttools with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Install buildtools
+      # Install builttools with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
+
+    - name: Cleanup build directory
+      run: rm -r ${{github.workspace}}/build/CMakeFiles ${{github.workspace}}/build/CMakeCache.txt
+
+    - name: Configure AudYoFlo
+      run: |
+        cmake -B ${{github.workspace}}/build \
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+          -DCMAKE_INSTALL_PREFIX=release \
+          -G Ninja \
+          -DJVX_PRODUCT=audio \
+          -DJVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD=16 \
+          -DJVX_DEPLOY_UNSTABLE=TRUE\
+          -DJVX_USE_PART_ALSA=TRUE\
+          -DJVX_USE_PART_PAUDIO=TRUE\
+          -DJVX_USE_PART_RS232=TRUE \
+          -DJVX_USE_QT=TRUE \
+          -DJVX_USE_QWT=TRUE \
+          -DJVX_USE_QWT_POLAR=TRUE \
+          -DJVX_USE_PART_CORECONTROL=TRUE \
+          -DJVX_USE_CONSOLE_APPS=TRUE \
+          -DJVX_USE_PART_MATLAB=FALSE \
+          -DJVX_COMPILE_GOD_HOST=TRUE \
+          -DJVX_MATLAB_PROPERTY_GENERATOR=TRUE \
+          -DJVX_USE_PART_WEBSERVER=TRUE \
+          -DJVX_DEPLOY_EXAMPLES=TRUE \
+          -DJVX_USE_BOOST=TRUE \
+          -DJVX_USE_EIGEN=TRUE \
+          -DJVX_DEPLOY_LIBRARY_DSP_MATLAB=FALSE \
+          -DJVX_INCLUDE_EBUR128=TRUE \
+          -DJVX_USE_VST=FALSE \
+          -DSMTG_CREATE_PLUGIN_LINK=FALSE \
+          -DJVX_USE_PART_MPG123=FALSE \
+          -DJVX_USE_LIBMYSOFA=TRUE \
+          -DLIBMYSOFA_BUILD_TESTS=FALSE \
+          -DJVX_USE_HOA_CIRC_ARRAY=FALSE \
+          -DJVX_SYSTEM_USE_DATA_FORMAT_FLOAT=FALSE
+
+    - name: Build AudYoFlo
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
