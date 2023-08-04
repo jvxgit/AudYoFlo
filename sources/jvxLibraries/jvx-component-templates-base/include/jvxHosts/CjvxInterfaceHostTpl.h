@@ -4,8 +4,8 @@
 #include "jvx.h"
 #include "jvxFactoryHosts/CjvxInterfaceFactory.h"
 
-// Template "H" represents the host type, template "T" represents the hostinteraction specialization
-// COnstraint: T must be derived from CjvxHostInteraction!!
+// Template "H" represents the host type, template "A" represents the hostinteraction specialization
+// Constraint: T must be derived from CjvxHostInteraction!!
 template <class H, class A>
 class CjvxInterfaceHostTpl : public CjvxInterfaceFactory<H>, 
 	public IjvxConfiguration, public IjvxConfigurationExtender, public A
@@ -74,7 +74,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		res = CjvxHostInteraction::return_hidden_interface(tp, hdl); // <- this is not T since we forward this to the registered additional interfaces!
+		res = CjvxHostInteraction::return_hidden_interface(tp, hdl); // <- this is not A since we forward this to the registered additional interfaces!
 		if (res != JVX_NO_ERROR)
 		{
 			res = JVX_NO_ERROR;
@@ -141,6 +141,8 @@ public:
 		return res;
 	};
 };
+
+#include "jvxHosts/CjvxDataConnections.h"
 
 template <class H, class A>
 class CjvxInterfaceHostTplConnections : public CjvxInterfaceHostTpl<H, A>,

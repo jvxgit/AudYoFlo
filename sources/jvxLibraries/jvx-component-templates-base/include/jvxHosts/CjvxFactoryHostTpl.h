@@ -60,19 +60,18 @@ public:
 	// ===================================================================================================
 	jvxErrorType initialize(IjvxHiddenInterface* theOtherHost) override
 	{
-		jvxErrorType res = _initialize(theOtherHost);
+		jvxErrorType res = T::_initialize(theOtherHost);
 		if (res == JVX_NO_ERROR)
 		{
-			_common_set_host.threadId_registered = JVX_GET_CURRENT_THREAD_ID();
-
-			reset();
+			T::_common_set_host.threadId_registered = JVX_GET_CURRENT_THREAD_ID();
+			T::reset();
 		}
 		return(res);
 	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION select(IjvxObject* theOwner) override
 	{
-		jvxErrorType res = _select(theOwner);
+		jvxErrorType res = T::_select(theOwner);
 		if (res == JVX_NO_ERROR)
 		{
 			this->init__properties_selected();
@@ -87,11 +86,11 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		jvxSize i;
 
-		_common_set_min.theHostRef = static_cast<IjvxHiddenInterface*>(this);
-		res = _activate_no_text_log();
+		T::_common_set_min.theHostRef = static_cast<IjvxHiddenInterface*>(this);
+		res = T::_activate_no_text_log();
 		if (res == JVX_NO_ERROR)
 		{
-			_lock_properties_local();
+			T::_lock_properties_local();
 			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.component_path);
 			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.configure_parts);
 			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.do_unload_dlls);
