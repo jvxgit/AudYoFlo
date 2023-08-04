@@ -74,7 +74,7 @@
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_connection_group(IjvxDataConnectionGroup* connected) override
 	{
-		return  _return_reference_connection_group(connected);
+		return this->_return_reference_connection_group(connected);
 	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION create_connection_group(
