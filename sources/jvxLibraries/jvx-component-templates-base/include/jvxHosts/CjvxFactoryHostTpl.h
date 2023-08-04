@@ -116,15 +116,15 @@ public:
 			{
 				if (T::_common_set.theToolsHost)
 				{
-					jvxErrorType resL = _common_set.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG,
-						&jvxrtst_bkp.theTextLogger_obj, 0, NULL);
-					if ((resL == JVX_NO_ERROR) && jvxrtst_bkp.theTextLogger_obj)
+					jvxErrorType resL = T::_common_set.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG,
+						&T::jvxrtst_bkp.theTextLogger_obj, 0, NULL);
+					if ((resL == JVX_NO_ERROR) && T::jvxrtst_bkp.theTextLogger_obj)
 					{
-						resL = jvxrtst_bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(&jvxrtst_bkp.theTextLogger_hdl), NULL, NULL);
+						resL = T::jvxrtst_bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(&T::jvxrtst_bkp.theTextLogger_hdl), NULL, NULL);
 					}
 				}
 
-				if (jvxrtst_bkp.theTextLogger_hdl)
+				if (T::jvxrtst_bkp.theTextLogger_hdl)
 				{
 					std::cout << "Starting text log file:" << std::endl;
 					std::cout << " --> Filename = " << CjvxHost_genpcg::properties_selected.textLog_filename.value << std::endl;
@@ -133,7 +133,7 @@ public:
 					std::cout << " --> File transfer size = " << CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile.value << std::endl;
 					std::cout << " --> Debug level = " << CjvxHost_genpcg::properties_selected.textLog_dbglevel.value << std::endl;
 
-					jvxrtst_bkp.theTextLogger_hdl->initialize(
+					T::jvxrtst_bkp.theTextLogger_hdl->initialize(
 						static_cast<IjvxHiddenInterface*>(this),
 						CjvxHost_genpcg::properties_selected.textLog_filename.value.c_str(),
 						CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile.value,
@@ -145,10 +145,10 @@ public:
 					for (i = 0; i < CjvxHost_genpcg::properties_selected.textLog_expressions.value.size(); i++)
 					{
 						std::cout << " -->-->" << CjvxHost_genpcg::properties_selected.textLog_expressions.value[i] << std::endl;
-						jvxrtst_bkp.theTextLogger_hdl->addTextLogExpression(CjvxHost_genpcg::properties_selected.textLog_expressions.value[i].c_str());
+						T::jvxrtst_bkp.theTextLogger_hdl->addTextLogExpression(CjvxHost_genpcg::properties_selected.textLog_expressions.value[i].c_str());
 					}
 
-					jvxrtst_bkp.theTextLogger_hdl->start();
+					T::jvxrtst_bkp.theTextLogger_hdl->start();
 				}
 			}
 		}
@@ -160,24 +160,24 @@ public:
 	{
 		jvxSize i;
 		jvxErrorType res = JVX_ERROR_WRONG_STATE;
-		if (_common_set_min.theState == JVX_STATE_ACTIVE)
+		if (T::_common_set_min.theState == JVX_STATE_ACTIVE)
 		{
 			jvxState stat = JVX_STATE_NONE;
-			for (i = 0; i < _common_set_host.otherComponents.availableOtherComponents.size(); i++)
+			for (i = 0; i < T::_common_set_host.otherComponents.availableOtherComponents.size(); i++)
 			{
-				_common_set_host.otherComponents.availableOtherComponents[i].theObj_single->state(&stat);
+				T::_common_set_host.otherComponents.availableOtherComponents[i].theObj_single->state(&stat);
 				assert(stat == JVX_STATE_NONE);
 			}
 
-			if (jvxrtst_bkp.theTextLogger_hdl)
+			if (T::jvxrtst_bkp.theTextLogger_hdl)
 			{
-				jvxrtst_bkp.theTextLogger_hdl->stop();
-				jvxrtst_bkp.theTextLogger_hdl->terminate();
+				T::jvxrtst_bkp.theTextLogger_hdl->stop();
+				T::jvxrtst_bkp.theTextLogger_hdl->terminate();
 
-				_common_set.theToolsHost->return_reference_tool(jvxComponentIdentification(JVX_COMPONENT_SYSTEM_TEXT_LOG,
-					JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED), jvxrtst_bkp.theTextLogger_obj);
-				jvxrtst_bkp.theTextLogger_obj = NULL;
-				jvxrtst_bkp.theTextLogger_hdl = NULL;
+				T::_common_set.theToolsHost->return_reference_tool(jvxComponentIdentification(JVX_COMPONENT_SYSTEM_TEXT_LOG,
+					JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED), T::jvxrtst_bkp.theTextLogger_obj);
+				T::jvxrtst_bkp.theTextLogger_obj = NULL;
+				T::jvxrtst_bkp.theTextLogger_hdl = NULL;
 			}
 
 			T::_lock_properties_local();
@@ -212,12 +212,12 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION unselect() override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		if (_common_set_min.theState == JVX_STATE_SELECTED)
+		if (T::_common_set_min.theState == JVX_STATE_SELECTED)
 		{
 			T::unregister__properties_selected(static_cast<CjvxProperties*>(this));
 			T::deallocate__properties_selected();
 
-			res = _unselect();
+			res = T::_unselect();
 			assert(res == JVX_NO_ERROR);
 		}
 		else
@@ -297,7 +297,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor) override
 	{
-		return _return_instance_tool(tp, theObject, filter_id, filter_descriptor);
+		return T::_return_instance_tool(tp, theObject, filter_id, filter_descriptor);
 	};
 
 
