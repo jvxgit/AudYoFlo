@@ -51,7 +51,7 @@
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION set_component_load_filter_function(jvxLoadModuleFilterCallback regme, jvxHandle* priv) override
 	{
-		return  _set_component_load_filter_function(regme, priv);
+		return this->_set_component_load_filter_function(regme, priv);
 	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION store_config(const char* token, const char* cfgToken, jvxBool overwrite_old = true) override
