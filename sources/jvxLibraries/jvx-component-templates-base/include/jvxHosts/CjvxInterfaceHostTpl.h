@@ -6,9 +6,9 @@
 
 // Template "H" represents the host type, template "T" represents the hostinteraction specialization
 // COnstraint: T must be derived from CjvxHostInteraction!!
-template <class H, class T>
+template <class H, class A>
 class CjvxInterfaceHostTpl : public CjvxInterfaceFactory<H>, 
-	public IjvxConfiguration, public IjvxConfigurationExtender, public T
+	public IjvxConfiguration, public IjvxConfigurationExtender, public A
 {
 public:
 	JVX_CALLINGCONVENTION CjvxInterfaceHostTpl(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
@@ -65,7 +65,7 @@ public:
 				break;
 			default:
 
-				res = _request_hidden_interface(tp, hdl);
+				res = CjvxInterfaceFactory<H>::_request_hidden_interface(tp, hdl);
 			}
 		}
 		return(res);
@@ -135,20 +135,20 @@ public:
 				}
 				break;
 			default:
-				res = _return_hidden_interface(tp, hdl);
+				res = CjvxInterfaceFactory<H>::_return_hidden_interface(tp, hdl);
 			}
 		}
 		return res;
 	};
 };
 
-template <class H, class T>
-class CjvxInterfaceHostTplConnections : public CjvxInterfaceHostTpl<H, T>,
+template <class H, class A>
+class CjvxInterfaceHostTplConnections : public CjvxInterfaceHostTpl<H, A>,
 	public IjvxDataConnections, public CjvxDataConnections
 {
 public:
 	JVX_CALLINGCONVENTION CjvxInterfaceHostTplConnections(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-		CjvxInterfaceHostTpl<H, T>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+		CjvxInterfaceHostTpl<H, A>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
 
 	};
@@ -172,7 +172,7 @@ public:
 			
 			default:
 
-				res = CjvxInterfaceHostTpl<H, T>::request_hidden_interface(tp, hdl);
+				res = CjvxInterfaceHostTpl<H, A>::request_hidden_interface(tp, hdl);
 			
 		}
 		return(res);
@@ -197,7 +197,7 @@ public:
 
 			
 			default:
-				res = CjvxInterfaceHostTpl<H, T>::return_hidden_interface(tp, hdl);
+				res = CjvxInterfaceHostTpl<H, A>::return_hidden_interface(tp, hdl);
 			
 		}
 		return res;

@@ -1,7 +1,7 @@
 jvxErrorType
 number_components_system(const jvxComponentIdentification& tp, jvxSize* numPtr)
 {
-	return _number_components_system(tp, numPtr);
+	return this->_number_components_system(tp, numPtr);
 }
 
 /*
@@ -10,7 +10,7 @@ number_components_system(const jvxComponentIdentification& tp, jvxSize* numPtr)
 jvxErrorType
 name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str)
 {
-	return _name_component_system(tp, idx, str);
+	return this->_name_component_system(tp, idx, str);
 }
 
 /*
@@ -19,7 +19,7 @@ name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiS
 jvxErrorType
 description_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str)
 {
-	return _description_component_system( tp, idx, str);
+	return this->_description_component_system( tp, idx, str);
 
 }
 
@@ -29,7 +29,7 @@ description_component_system(const jvxComponentIdentification& tp, jvxSize idx, 
 jvxErrorType
 descriptor_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str, jvxApiString* substr)
 {
-	return _descriptor_component_system( tp, idx,  str,  substr);
+	return this->_descriptor_component_system( tp, idx,  str,  substr);
 
 }
 
@@ -39,7 +39,7 @@ descriptor_component_system(const jvxComponentIdentification& tp, jvxSize idx, j
 jvxErrorType
 module_reference_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str, jvxComponentAccessType* acTp)
 {
-	return _module_reference_component_system(tp, idx, str, acTp);
+	return this->_module_reference_component_system(tp, idx, str, acTp);
 }
 
 /*
@@ -48,7 +48,7 @@ module_reference_component_system(const jvxComponentIdentification& tp, jvxSize 
 jvxErrorType
 feature_class_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxBitField* ft)
 {
-	return _feature_class_component_system( tp, idx,  ft);
+	return this->_feature_class_component_system( tp, idx,  ft);
 }
 
 jvxErrorType
@@ -56,21 +56,21 @@ role_component_system(jvxComponentType tp,
 	jvxComponentType* parentTp, jvxComponentType* childTp, 
 	jvxComponentTypeClass* classTp)
 {
-	return _role_component_system( tp, parentTp,  childTp, classTp);
+	return this->_role_component_system( tp, parentTp,  childTp, classTp);
 }
 
 jvxErrorType 
 number_slots_component_system(const jvxComponentIdentification& tp, jvxSize* szSlots_current,
 	jvxSize* szSubSlots_current, jvxSize* szSlots_max, jvxSize* szSubSlots_max)
 {
-	return _number_slots_component_system(tp, szSlots_current,
+	return this->_number_slots_component_system(tp, szSlots_current,
 		szSubSlots_current, szSlots_max, szSubSlots_max);
 }
 
 jvxErrorType 
 set_number_subslots_system(const jvxComponentIdentification& tp, jvxSize newVal)
 {
-	return _set_number_subslots_system(tp, newVal);
+	return this->_set_number_subslots_system(tp, newVal);
 }
 
 // ====================================================================================================================
@@ -85,7 +85,7 @@ set_number_subslots_system(const jvxComponentIdentification& tp, jvxSize newVal)
 jvxErrorType
 module_reference_selected_component(const jvxComponentIdentification& tp, jvxApiString* str, jvxComponentAccessType* acTp)
 {
-	return _module_reference_selected_component(tp, str, acTp);
+	return this->_module_reference_selected_component(tp, str, acTp);
 }
 
 /*
@@ -94,7 +94,7 @@ module_reference_selected_component(const jvxComponentIdentification& tp, jvxApi
 jvxErrorType
 description_selected_component(const jvxComponentIdentification& tp, jvxApiString* str)
 {
-	return _description_selected_component(tp, str);
+	return this->_description_selected_component(tp, str);
 }
 
 
@@ -104,7 +104,7 @@ description_selected_component(const jvxComponentIdentification& tp, jvxApiStrin
 jvxErrorType
 descriptor_selected_component(const jvxComponentIdentification& tp, jvxApiString* str, jvxApiString* substr)
 {
-	return _descriptor_selected_component(tp, str, substr);
+	return this->_descriptor_selected_component(tp, str, substr);
 }
 
 /*
@@ -113,7 +113,7 @@ descriptor_selected_component(const jvxComponentIdentification& tp, jvxApiString
 jvxErrorType
 feature_class_selected_component(const jvxComponentIdentification& tp, jvxBitField* ft)
 {
-	return _feature_class_selected_component(tp, ft);
+	return this->_feature_class_selected_component(tp, ft);
 }
 
 /*
@@ -123,7 +123,7 @@ jvxErrorType
 select_component(jvxComponentIdentification& tp, jvxSize idx,
 	IjvxObject* theOwner, jvxBool extend_if_necessary)
 {
-	return _select_component(tp, idx, theOwner, extend_if_necessary);
+	return this->_select_component(tp, idx, theOwner, extend_if_necessary);
 }
 
 /**
@@ -132,7 +132,7 @@ select_component(jvxComponentIdentification& tp, jvxSize idx,
 jvxErrorType
 selection_component(const jvxComponentIdentification& tp, jvxSize* idRet)
 {
-	return _selection_component(tp, idRet);
+	return this->_selection_component(tp, idRet);
 }
 
 /**
@@ -141,13 +141,13 @@ selection_component(const jvxComponentIdentification& tp, jvxSize* idRet)
 jvxErrorType
 activate_selected_component(const jvxComponentIdentification& tp)
 {
-	return _activate_selected_component(tp);
+	return this->_activate_selected_component(tp);
 }
 
 jvxErrorType
 is_ready_selected_component(const jvxComponentIdentification& tp, jvxBool* ready, jvxApiString* reasonIfNot)
 {
-	return _is_ready_selected_component(tp, ready, reasonIfNot);
+	return this->_is_ready_selected_component(tp, ready, reasonIfNot);
 
 }
 
@@ -157,7 +157,7 @@ is_ready_selected_component(const jvxComponentIdentification& tp, jvxBool* ready
 jvxErrorType
 state_selected_component(const jvxComponentIdentification& tp, jvxState* st)
 {
-	return _state_selected_component(tp, st);
+	return this->_state_selected_component(tp, st);
 }
 
 /**
@@ -166,7 +166,7 @@ state_selected_component(const jvxComponentIdentification& tp, jvxState* st)
 jvxErrorType
 deactivate_selected_component(const jvxComponentIdentification& tp)
 {
-	return _deactivate_selected_component( tp);
+	return this->_deactivate_selected_component( tp);
 }
 
 /**
@@ -175,31 +175,31 @@ deactivate_selected_component(const jvxComponentIdentification& tp)
 jvxErrorType
 unselect_selected_component(jvxComponentIdentification& tp)
 {
-	return _unselect_selected_component(tp);
+	return this->_unselect_selected_component(tp);
 }
 
 jvxErrorType
 unique_id_selected_component(const jvxComponentIdentification& tp, jvxSize* uId)
 {
-	return _unique_id_selected_component(tp, uId);
+	return this->_unique_id_selected_component(tp, uId);
 }
 
 jvxErrorType
 switch_state_component(const jvxComponentIdentification& cpId, jvxStateSwitch sswitch)
 {
-	return _switch_state_component( cpId, sswitch);
+	return this->_switch_state_component( cpId, sswitch);
 }
 
 jvxErrorType
 request_hidden_interface_selected_component(const jvxComponentIdentification& tp, jvxInterfaceType ifTp, jvxHandle** iface)
 {
-	return _request_hidden_interface_selected_component(tp,  ifTp, iface);
+	return this->_request_hidden_interface_selected_component(tp,  ifTp, iface);
 }
 
 jvxErrorType
 return_hidden_interface_selected_component(const jvxComponentIdentification& tp, jvxInterfaceType ifTp, jvxHandle* iface)
 {
-	return _return_hidden_interface_selected_component(tp, ifTp, iface);
+	return this->_return_hidden_interface_selected_component(tp, ifTp, iface);
 }
 
 // ======================================================================
@@ -208,11 +208,11 @@ return_hidden_interface_selected_component(const jvxComponentIdentification& tp,
 jvxErrorType
 request_object_selected_component(const jvxComponentIdentification& tp, IjvxObject** theObj)
 {
-	return _request_object_selected_component(tp, theObj);
+	return this->_request_object_selected_component(tp, theObj);
 }
 
 jvxErrorType
 return_object_selected_component(const jvxComponentIdentification& tp, IjvxObject* theObj)
 {
-	return _return_object_selected_component(tp, theObj);
+	return this->_return_object_selected_component(tp, theObj);
 }
