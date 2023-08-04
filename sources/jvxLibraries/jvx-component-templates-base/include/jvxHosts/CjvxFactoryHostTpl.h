@@ -13,6 +13,7 @@
 #define SECTIONNAME_ALL_EXTERNAL_ENTRIES "factoryhost_allExternalEntries"
 
 #include "jvxHosts/CjvxInterfaceHostTpl.h"
+#include "jvx-helpers.h"
 
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
@@ -74,9 +75,9 @@ public:
 		jvxErrorType res = T::_select(theOwner);
 		if (res == JVX_NO_ERROR)
 		{
-			this->init__properties_selected();
-			this->allocate__properties_selected();
-			this->register__properties_selected(static_cast<CjvxProperties*>(this));
+			T::init__properties_selected();
+			T::allocate__properties_selected();
+			T::register__properties_selected(static_cast<CjvxProperties*>(this));
 		}
 		return(res);
 	}
@@ -91,21 +92,21 @@ public:
 		if (res == JVX_NO_ERROR)
 		{
 			T::_lock_properties_local();
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.component_path);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.configure_parts);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.do_unload_dlls);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.host_output_cout);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.host_verbose_dll);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_activate);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_dbglevel);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_expressions);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_filename);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferRW);
-			_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile);
-			_unlock_properties_local();
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.component_path);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.configure_parts);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.do_unload_dlls);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.host_output_cout);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.host_verbose_dll);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_activate);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_dbglevel);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_expressions);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_filename);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferRW);
+			T::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile);
+			T::_unlock_properties_local();
 
-			if (!config.use_only_static_objects)
+			if (!T::config.use_only_static_objects)
 			{
 				this->loadAllComponents(JVX_EVALUATE_BITFIELD(CjvxHost_genpcg::properties_selected.do_unload_dlls.value.selection() & 0x1),
 					CjvxHost_genpcg::properties_selected.component_path.value, true, true);
@@ -113,7 +114,7 @@ public:
 
 			if (CjvxHost_genpcg::properties_selected.textLog_activate.value == c_true)
 			{
-				if (_common_set.theToolsHost)
+				if (T::_common_set.theToolsHost)
 				{
 					jvxErrorType resL = _common_set.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG,
 						&jvxrtst_bkp.theTextLogger_obj, 0, NULL);
@@ -179,30 +180,30 @@ public:
 				jvxrtst_bkp.theTextLogger_hdl = NULL;
 			}
 
-			_lock_properties_local();
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.component_path);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.configure_parts);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.do_unload_dlls);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.host_output_cout);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.host_verbose_dll);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_activate);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_dbglevel);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_expressions);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_filename);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferRW);
-			_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile);
-			_unlock_properties_local();
+			T::_lock_properties_local();
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.component_path);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.configure_parts);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.do_unload_dlls);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.host_output_cout);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.host_verbose_dll);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_activate);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_dbglevel);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_expressions);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_filename);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferRW);
+			T::_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile);
+			T::_unlock_properties_local();
 
-			res = _deactivate_no_text_log();
+			res = T::_deactivate_no_text_log();
 			assert(res == JVX_NO_ERROR);
 
 			// unload all Dlls
-			if (!config.use_only_static_objects)
+			if (!T::config.use_only_static_objects)
 			{
 				this->unloadAllComponents();
 			}
-			_common_set_min.theHostRef = NULL;
+			T::_common_set_min.theHostRef = NULL;
 		}
 
 		return(res);
@@ -213,8 +214,8 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		if (_common_set_min.theState == JVX_STATE_SELECTED)
 		{
-			unregister__properties_selected(static_cast<CjvxProperties*>(this));
-			deallocate__properties_selected();
+			T::unregister__properties_selected(static_cast<CjvxProperties*>(this));
+			T::deallocate__properties_selected();
 
 			res = _unselect();
 			assert(res == JVX_NO_ERROR);
@@ -229,7 +230,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate()override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		res = _terminate();
+		res = T::_terminate();
 		return(res);
 	};
 
@@ -245,7 +246,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION owner(IjvxObject** dependsOn) override
 	{
-		return _owner(dependsOn);
+		return T::_owner(dependsOn);
 	}
 
 	// ===================================================================================================
@@ -253,12 +254,12 @@ public:
 	// ===================================================================================================
 	jvxErrorType number_tools(const jvxComponentIdentification& tp, jvxSize* num)override
 	{
-		return _number_tools(tp, num);
+		return T::_number_tools(tp, num);
 	};
 
 	jvxErrorType identification_tool(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* description, jvxApiString* descriptor, jvxBool* mulInst)override
 	{
-		return _identification_tool(tp, idx, description, descriptor, mulInst);
+		return T::_identification_tool(tp, idx, description, descriptor, mulInst);
 	};
 
 	jvxErrorType reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor,
@@ -270,7 +271,7 @@ public:
 			filter_id = JVX_SIZE_UNSELECTED;
 		}
 
-		return _reference_tool(tp, theObject,
+		return T::_reference_tool(tp, theObject,
 			filter_id, filter_descriptor, filter_stateMask,
 			decider);
 	};
@@ -286,12 +287,12 @@ public:
 			return(JVX_NO_ERROR);
 		}
 
-		return _return_reference_tool(tp, theObject);
+		return T::_return_reference_tool(tp, theObject);
 	}
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION instance_tool(jvxComponentType tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor) override
 	{
-		return _instance_tool(tp, theObject, filter_id, filter_descriptor);
+		return T::_instance_tool(tp, theObject, filter_id, filter_descriptor);
 	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor) override
@@ -524,7 +525,7 @@ public:
 		std::string entryStr = entryname;
 		if (fld)
 		{
-			std::vector<oneExternalConfigEntry>::iterator elm = jvx_findItemSelectorInList<oneExternalConfigEntry, std::string>(externalConfigEntries, entryStr);
+			auto elm = jvx_findItemSelectorInList<oneExternalConfigEntry, std::string>(externalConfigEntries, entryStr);
 			if (elm == externalConfigEntries.end())
 			{
 				oneExternalConfigEntry newEntry;
@@ -635,7 +636,7 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		std::string entryStr = entryname;
 		jvxBool allowCopyTypeSafe = false;
-		std::vector<oneExternalConfigEntry>::iterator elm = jvx_findItemSelectorInList<oneExternalConfigEntry, std::string>(externalConfigEntries, entryStr);
+		auto elm = jvx_findItemSelectorInList<oneExternalConfigEntry, std::string>(externalConfigEntries, entryStr);
 		if (elm != externalConfigEntries.end())
 		{
 			if (tp)
@@ -696,7 +697,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION register_extension(IjvxConfigurationExtender_report* bwd, const char* sectionName)override
 	{
 		std::string entryStr = sectionName;
-		std::vector<oneExternalConfigHook>::iterator elm = jvx_findItemSelectorInList<oneExternalConfigHook, std::string>(externalConfigHooks, entryStr);
+		auto elm = jvx_findItemSelectorInList<oneExternalConfigHook, std::string>(externalConfigHooks, entryStr);
 		if (elm == externalConfigHooks.end())
 		{
 			oneExternalConfigHook newElm;
@@ -711,7 +712,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION unregister_extension(const char* sectionName)override
 	{
 		std::string entryStr = sectionName;
-		std::vector<oneExternalConfigHook>::iterator elm = jvx_findItemSelectorInList<oneExternalConfigHook, std::string>(externalConfigHooks, entryStr);
+		auto elm = jvx_findItemSelectorInList<oneExternalConfigHook, std::string>(externalConfigHooks, entryStr);
 		if (elm != externalConfigHooks.end())
 		{
 			externalConfigHooks.erase(elm);
