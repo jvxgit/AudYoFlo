@@ -7,7 +7,8 @@ local_path = '@JVX_LOC_MAT_PATH_PROJECT@';
 addpath(local_path);
 hdl.local_path = local_path;
 
-% local_lib_path = '@JVX_LOC_MAT_PATH_PROJECT@/../../../../jvxLibraries/ayf-headrest-matlab';
+% Here, we may add some other library folders in the development folder hierarchy
+% local_lib_path = '@JVX_LOC_MAT_PATH_PROJECT@/../../../../jvxLibraries/mylibrary-matlab';
 % addpath(local_lib_path);
 % hdl.local_lib_path = local_lib_path;
 
