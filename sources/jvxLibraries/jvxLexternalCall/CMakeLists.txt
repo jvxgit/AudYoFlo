@@ -7,6 +7,9 @@ include_directories(
   )
 
 set(LOCAL_SOURCES
+	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCalls.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCallsTpl.h
+
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMexCalls.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMexCalls_prv.cpp
   )
