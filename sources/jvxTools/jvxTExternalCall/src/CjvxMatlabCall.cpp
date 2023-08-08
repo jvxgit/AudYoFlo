@@ -84,8 +84,8 @@ CjvxExternalCall::unregisterThreadId()
 jvxErrorType
 CjvxExternalCall::external_call( jvxInt32 nlhs, jvxExternalDataType **plhs, jvxInt32 nrhs, const jvxExternalDataType **prhs, int offset_nlhs, int offset_nrhs )
 {
-	const mxArray* arr1;
-	const mxArray* arr2;
+	const mxArray* arr1 = nullptr;
+	const mxArray* arr2 = nullptr;
 	std::string nObject;
 
 	std::string nFunction;
@@ -93,15 +93,23 @@ CjvxExternalCall::external_call( jvxInt32 nlhs, jvxExternalDataType **plhs, jvxI
 	unsigned short i;
 	jvxErrorType res = JVX_NO_ERROR;
 
-	if(nrhs >= 2)
+	// Find optional name of object
+	if (nrhs >= 1)
 	{
 		arr1 = (const mxArray*)prhs[0];
+		if (mxIsChar(arr1))
+		{
+			nObject = createCStringMex(arr1);
+		}
+	}
+
+	if(nrhs >= 2)
+	{
 		arr2 = (const mxArray*)prhs[1];
-		if((mxIsChar(arr1))&&((mxIsChar(arr2))))
+		if((mxIsChar(arr2)))
 		{
 			// First argument is a string, so take this string and
 			// select an object in the list of registered function objects
-			nObject = createCStringMex(arr1);
 			nFunction = createCStringMex(arr2);
 			for(i=0; i < this->_lst_functions.size(); i++)
 			{
@@ -150,7 +158,22 @@ CjvxExternalCall::external_call( jvxInt32 nlhs, jvxExternalDataType **plhs, jvxI
 	if(nlhs >= 1)
 	{
 		mxArray* ptr = NULL;
-		this->mexReturnStructsFunctions(ptr, this->_lst_functions);
+		std::vector<elementFunctions> lstFcts;
+		if (nObject.empty())
+		{
+			lstFcts = this->_lst_functions;
+		}
+		else
+		{
+			for (auto elmL : this->_lst_functions)
+			{
+				if (elmL.objectName == nObject)
+				{
+					lstFcts.push_back(elmL);
+				}
+			}
+		}
+		this->mexReturnStructsFunctions(ptr, lstFcts);
 		plhs[0] = ptr;
 	}
 	this->mexFillEmpty(nlhs, (mxArray**)plhs);
