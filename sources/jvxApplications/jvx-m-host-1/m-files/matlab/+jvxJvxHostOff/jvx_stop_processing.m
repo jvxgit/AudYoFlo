@@ -1,5 +1,6 @@
 function [hObject, handles] = jvx_stop_processing(hObject, handles, skip_shutdown_seq)
 
+    global inProcessing;
     if(~skip_shutdown_seq)
          % Trigger shutdown of sequencer
          [a b] = handles.hostcall('trigger_stop_process');
@@ -21,6 +22,10 @@ function [hObject, handles] = jvx_stop_processing(hObject, handles, skip_shutdow
              jvxJvxHost.jvx_display_error(mfilename, 16, 'jvx_stop_processing', stat_sequencer.DESCRIPTION_STRING); 
              %% origFile, errCode, errOperation, errDescr, errorsAsWarnings
          end
+    end
+    
+    if(inProcessing.triggerStop)
+        warning(['Processing stopped early, reason: <' inProcessing.reportError '>.']);
     end
     
     % Wait for completion

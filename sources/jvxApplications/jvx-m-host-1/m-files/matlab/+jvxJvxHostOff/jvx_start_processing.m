@@ -30,6 +30,8 @@ end
 % Start variable inProcessing
 global inProcessing;
 inProcessing.jvx_start_handles = handles.local.private;
+inProcessing.triggerStop = false;
+inProcessing.reportError = '';
 
 % Trigger once, all steps should happen within the one step in case of
 % audio processing.

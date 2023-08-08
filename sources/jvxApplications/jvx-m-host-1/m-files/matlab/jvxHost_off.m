@@ -1300,6 +1300,11 @@ if(handles.jvx_struct.properties.node.offline_node.id_subproject_name >= 0)
         jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'stop_property_group', b.DESCRIPTION_STRING, false);
     end
     
+    % If we have modified the subproject the host has not set the right
+    % path. You need to restart to take effect
+    handles.jvx_struct.allowStart = false;
+    guidata(hObject, handles);
+    
         % Obtain references to all relevant properties
     [hObject, handles] = jvxJvxHostOff.jvx_refresh_props(hObject, handles);
     

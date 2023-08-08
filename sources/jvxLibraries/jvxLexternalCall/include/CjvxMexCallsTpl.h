@@ -125,6 +125,39 @@ public:
 		return JVX_ERROR_NOT_READY;
 	};
 
+	jvxErrorType put_configuration(jvxCallManagerConfiguration* callConf,
+			IjvxConfigProcessor* processor,
+			jvxHandle* sectionToContainAllSubsectionsForMe,
+			const char* filename,
+			jvxInt32 lineno)
+	{
+		jvxSize i;
+		jvxErrorType res = T::put_configuration(callConf,
+			processor,
+			sectionToContainAllSubsectionsForMe,
+			filename, lineno);
+
+		if (res == JVX_NO_ERROR)
+		{
+			res = CjvxMexCalls::put_configuration(callConf, processor, this->_common_set_min.theState, sectionToContainAllSubsectionsForMe, filename, lineno);
+		}
+		return res;
+	};
+
+	jvxErrorType get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* processor,
+		jvxHandle* sectionWhereToAddAllSubsections)
+	{
+		jvxErrorType res = T::get_configuration(callConf, processor,
+			sectionWhereToAddAllSubsections);
+
+		if (res == JVX_NO_ERROR)
+		{
+			res = CjvxMexCalls::get_configuration(callConf, processor, sectionWhereToAddAllSubsections);
+		}
+		return res;
+	};
+
+	// ==========================================================================================
 	virtual void initExternalCall() = 0;
 	virtual void terminateExternalCall() = 0;
 	virtual void onPrepareConnectMexCalls() = 0;

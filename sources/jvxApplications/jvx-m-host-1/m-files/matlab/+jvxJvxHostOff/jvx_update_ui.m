@@ -188,6 +188,7 @@ set(handles.uitable_outchannels, 'Enable', enable);
 % Set start/stop button text and enable
 txtField = 'start';
 enable = 'off';
+ttString = '';
 
 if(handles.jvx_struct.sequencer.iamprocessing)
     enable = 'on';
@@ -199,7 +200,15 @@ else
             handles.jvx_struct.sequencer.system_ready_for_processing.chain_ready)
         enable = 'on';       
     end
+    
     set(handles.text_reason_node, 'String', handles.jvx_struct.sequencer.system_ready_for_processing.chain_ready_reason_if_not);
+    
+    % We might block start if we have chosen a new sub-project. In that
+    % case, the path is definitely wrong. You need to save config and restart the host then
+    if(~handles.jvx_struct.allowStart)
+        ttString = 'The subproject was changed. In that case you need to store config and restart to set the path properly.';
+        enable = 'off';
+    end
 end
 
 % Ready or not images
@@ -224,6 +233,7 @@ end
 
 set(handles.pushbutton_startstop, 'String', txtField);
 set(handles.pushbutton_startstop, 'Enable', enable);
+set(handles.pushbutton_startstop, 'Tooltip', ttString);
 
 txtField = {};
 allVariables = whos('global');

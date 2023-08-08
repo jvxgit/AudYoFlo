@@ -1946,6 +1946,18 @@ mexJvxHost::mexReturnPropertyNumerical(mxArray*& plhs, jvxSize hdlIdx, jvxProper
 		case JVX_DATAFORMAT_64BIT_LE:
 			classIdAlloc = mxINT64_CLASS;
 			break;
+		case JVX_DATAFORMAT_U8BIT:
+			classIdAlloc = mxUINT8_CLASS;
+			break;
+		case JVX_DATAFORMAT_U16BIT_LE:
+			classIdAlloc = mxUINT16_CLASS;
+			break;
+		case JVX_DATAFORMAT_U32BIT_LE:
+			classIdAlloc = mxINT32_CLASS;
+			break;
+		case JVX_DATAFORMAT_U64BIT_LE:
+			classIdAlloc = mxINT64_CLASS;
+			break;
 		case JVX_DATAFORMAT_DATA:
 			classIdAlloc = JVX_DATA_MEX_CONVERT;
 			break;
@@ -2099,6 +2111,18 @@ mexJvxHost::mexReturnPropertyNumerical(mxArray*& plhs, jvxDataFormat format, jvx
 			break;
 		case JVX_DATAFORMAT_64BIT_LE:
 			classIdAlloc = mxINT64_CLASS;
+			break;
+		case JVX_DATAFORMAT_U8BIT:
+			classIdAlloc = mxUINT8_CLASS;
+			break;
+		case JVX_DATAFORMAT_U16BIT_LE:
+			classIdAlloc = mxUINT16_CLASS;
+			break;
+		case JVX_DATAFORMAT_U32BIT_LE:
+			classIdAlloc = mxUINT32_CLASS;
+			break;
+		case JVX_DATAFORMAT_U64BIT_LE:
+			classIdAlloc = mxUINT64_CLASS;
 			break;
 		case JVX_DATAFORMAT_DATA:
 			classIdAlloc = JVX_DATA_MEX_CONVERT;

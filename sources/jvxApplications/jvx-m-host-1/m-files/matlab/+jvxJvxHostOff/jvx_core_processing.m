@@ -106,6 +106,10 @@ set(handles.text_progress_7, 'BackgroundColor', [0 0.1 0]);
 set(handles.text_percent_progress, 'String', [num2str(inProcessing.progress) ' %']);
  
 while(inProcessing.isRunning)
+    if(inProcessing.triggerStop)
+        inProcessing.isRunning = false;
+        break;
+    end
     if(inProcessing.frameCnt <=  inProcessing.in_frames)
         oneFrameIn = inProcessing.in_data(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1));
         

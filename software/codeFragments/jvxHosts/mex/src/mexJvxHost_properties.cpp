@@ -458,6 +458,11 @@ mexJvxHost::get_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 						case JVX_DATAFORMAT_8BIT:
 						case JVX_DATAFORMAT_16BIT_LE:
 						case JVX_DATAFORMAT_32BIT_LE:
+						case JVX_DATAFORMAT_64BIT_LE:
+						case JVX_DATAFORMAT_U8BIT:
+						case JVX_DATAFORMAT_U16BIT_LE:
+						case JVX_DATAFORMAT_U32BIT_LE:
+						case JVX_DATAFORMAT_U64BIT_LE:
 						case JVX_DATAFORMAT_DATA:
 							
 							if(nlhs > 1)
@@ -740,6 +745,11 @@ mexJvxHost::get_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 						case JVX_DATAFORMAT_8BIT:
 						case JVX_DATAFORMAT_16BIT_LE:
 						case JVX_DATAFORMAT_32BIT_LE:
+						case JVX_DATAFORMAT_64BIT_LE:
+						case JVX_DATAFORMAT_U8BIT:
+						case JVX_DATAFORMAT_U16BIT_LE:
+						case JVX_DATAFORMAT_U32BIT_LE:
+						case JVX_DATAFORMAT_U64BIT_LE:
 						case JVX_DATAFORMAT_DATA:
 							if (nlhs > 1)
 							{
@@ -996,6 +1006,11 @@ mexJvxHost::get_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 						case JVX_DATAFORMAT_8BIT:
 						case JVX_DATAFORMAT_16BIT_LE:
 						case JVX_DATAFORMAT_32BIT_LE:
+						case JVX_DATAFORMAT_64BIT_LE:
+						case JVX_DATAFORMAT_U8BIT:
+						case JVX_DATAFORMAT_U16BIT_LE:
+						case JVX_DATAFORMAT_U32BIT_LE:
+						case JVX_DATAFORMAT_U64BIT_LE:
 						case JVX_DATAFORMAT_DATA:
 							
 							if(nlhs > 1)
@@ -1248,6 +1263,11 @@ mexJvxHost::set_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 						case JVX_DATAFORMAT_8BIT:
 						case JVX_DATAFORMAT_16BIT_LE:
 						case JVX_DATAFORMAT_32BIT_LE:
+						case JVX_DATAFORMAT_64BIT_LE:
+						case JVX_DATAFORMAT_U8BIT:
+						case JVX_DATAFORMAT_U16BIT_LE:
+						case JVX_DATAFORMAT_U32BIT_LE:
+						case JVX_DATAFORMAT_U64BIT_LE:
 						case JVX_DATAFORMAT_DATA:
 
 							res = copyDataToComponentNumerical(prhs[paramId], theTriple, theDescr.category, theDescr.format, theDescr.num, theDescr.globalIdx, offset, &callGate.access_protocol);
@@ -1589,6 +1609,11 @@ mexJvxHost::set_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 						case JVX_DATAFORMAT_8BIT:
 						case JVX_DATAFORMAT_16BIT_LE:
 						case JVX_DATAFORMAT_32BIT_LE:
+						case JVX_DATAFORMAT_64BIT_LE:
+						case JVX_DATAFORMAT_U8BIT:
+						case JVX_DATAFORMAT_U16BIT_LE:
+						case JVX_DATAFORMAT_U32BIT_LE:
+						case JVX_DATAFORMAT_U64BIT_LE:
 						case JVX_DATAFORMAT_DATA:
 
 							res = copyDataToComponentNumerical(prhs[paramId], theTriple, theDescr.category, theDescr.format, 
@@ -1907,6 +1932,11 @@ mexJvxHost::set_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 							case JVX_DATAFORMAT_8BIT:
 							case JVX_DATAFORMAT_16BIT_LE:
 							case JVX_DATAFORMAT_32BIT_LE:
+							case JVX_DATAFORMAT_64BIT_LE:
+							case JVX_DATAFORMAT_U8BIT:
+							case JVX_DATAFORMAT_U16BIT_LE:
+							case JVX_DATAFORMAT_U32BIT_LE:
+							case JVX_DATAFORMAT_U64BIT_LE:
 							case JVX_DATAFORMAT_DATA:
 							case JVX_DATAFORMAT_SIZE:
 								res = copyDataToComponentNumerical(prhs[paramId], theTriple, descr.format, descr.num, descString.c_str(), offset, &callGate.access_protocol);
@@ -2558,6 +2588,8 @@ mexJvxHost::copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyRefere
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxHandle* data = NULL;
 	jvxCallManagerProperties callGate;
+	numTypeConvert inputConvert = { 0 };
+
 	switch(format)
 	{
 	case JVX_DATAFORMAT_DATA:
@@ -2620,9 +2652,79 @@ mexJvxHost::copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyRefere
 			}
 		}
 		break;
+	case JVX_DATAFORMAT_U64BIT_LE:
+		if (mxIsUint64(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_U32BIT_LE:
+		if (mxIsUint32(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_U16BIT_LE:
+		if (mxIsUint16(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_U8BIT:
+		if (mxIsUint8(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
 	}
 
-	if(data)
+	if (!data)
+	{
+		/*
+		jvxData singleDat = 0;
+		jvxInt8 singleInt8 = 0;
+		jvxInt16 singleInt16 = 0;
+		jvxInt32 singleInt32 = 0;
+		jvxInt64 singleInt64 = 0;
+		jvxInt8 singleInt8 = 0;
+		jvxUInt16 singleUInt16 = 0;
+		jvxUInt32 singleUInt32 = 0;
+		jvxUInt64 singleUInt64 = 0;
+		*/
+		if (numElms == 1)
+		{
+			if(convertSingleNumericalUnion(format, inputConvert, prhs) == JVX_NO_ERROR)
+			{
+				data = &inputConvert;
+			}
+		}
+	}
+
+	if (data)
 	{
 		jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(uniqueId, cat);
 		jvx::propertyDetail::CjvxTranferDetail trans(true);
@@ -3741,4 +3843,133 @@ mexJvxHost::copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_proper
 		break;
 	}
 	return(res);
+}
+
+jvxErrorType
+mexJvxHost::convertSingleNumericalUnion(jvxDataFormat format, numTypeConvert& inputConvert, const mxArray* prhs)
+{
+	jvxErrorType res = JVX_ERROR_INVALID_FORMAT;
+	void* data = mxGetData(prhs);
+	if ((mxGetM(prhs) == 1) && (mxGetN(prhs) == 1))
+	{
+		res = JVX_NO_ERROR;
+		switch (format)
+		{
+		case JVX_DATAFORMAT_DATA:
+			if (mxIsData(prhs)) inputConvert.singleDat = (jvxData) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+
+		case JVX_DATAFORMAT_8BIT:
+			if (mxIsData(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_16BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_32BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_64BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+
+		case JVX_DATAFORMAT_U8BIT:
+			if (mxIsData(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_U16BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_U32BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_U64BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+
+		default:
+			return JVX_ERROR_INVALID_ARGUMENT;
+
+		}
+	}
+	return res;
 }

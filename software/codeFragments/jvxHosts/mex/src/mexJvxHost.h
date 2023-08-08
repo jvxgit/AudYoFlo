@@ -53,6 +53,19 @@ class mexJvxHost: public CjvxCToMatlabConverter, public IjvxReport,
 		IjvxToolsHost* hTools;
 	} jvxhost;
 	*/
+	union numTypeConvert 
+	{
+		jvxData singleDat;
+		jvxInt8 singleInt8;
+		jvxInt16 singleInt16;
+		jvxInt32 singleInt32;
+		jvxInt64 singleInt64;
+		jvxInt8 singleUInt8;
+		jvxUInt16 singleUInt16;
+		jvxUInt32 singleUInt32;
+		jvxUInt64 singleUInt64;
+	};
+
 	struct
 	{
 		IjvxObject* theObj;
@@ -294,6 +307,7 @@ public:
 	void mexReturnOutputConnector(mxArray*& plhs, IjvxOutputConnector* theOCon);
 	void mexReturnInputConnector(mxArray*& plhs, IjvxInputConnector* theICon);
 
+	jvxErrorType convertSingleNumericalUnion(jvxDataFormat format, numTypeConvert& inputConvert, const mxArray* prhs);
 
 	/*void mexReturnConnectionRuleMaster(mxArray*& plhs, const jvxComponentIdentification& cpId,
 		const std::string& selFac, const std::string& selMasCon);

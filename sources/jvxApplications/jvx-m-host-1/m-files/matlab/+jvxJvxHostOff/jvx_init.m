@@ -36,6 +36,8 @@ for(ind=1:size(subfolders,1))
     end
 end
 
+handles.jvx_struct.allowStart = true;
+
 % Processing data
 handles.jvx_struct.properties_run.active = false;
 
