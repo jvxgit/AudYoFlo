@@ -22,9 +22,41 @@ JVX_SYSTEM_LIB_END
 #define JVX_SAFE_ALLOCATE_OBJECT_CPP_Z(retPtr, dataType) { retPtr = new dataType; memset(retPtr, 0, sizeof(dataType)); }
 #define JVX_SAFE_ALLOCATE_FIELD(retPtr, dataType, numElements) { retPtr = new dataType[numElements]; }
 #define JVX_SAFE_ALLOCATE_FIELD_CPP_Z(retPtr, dataType, numElements) { retPtr = new dataType[numElements];  memset(retPtr, 0, sizeof(dataType)* (numElements)); }
+#define JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(retPtr, dataType, dimY, dimX) \
+{ \
+	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(retPtr, dataType*, dimY); \
+	for(jvxSize i = 0; i < dimY; i++) \
+	{ \
+		JVX_SAFE_ALLOCATE_FIELD_CPP_Z(retPtr[i], dataType, dimX); \
+	} \
+}
+
 #define JVX_SAFE_DELETE_OBJECT(ptr) { if(ptr) delete(ptr); ptr = nullptr; }
 #define JVX_SAFE_DELETE_FIELD(ptr) { if(ptr) delete[](ptr); ptr = nullptr; }
+#define JVX_SAFE_DELETE_2DFIELD(ptr, dimY) \
+{ \
+	if(ptr) \
+	{ \
+		for(jvxSize i = 0; i < dimY; i++) \
+		{ \
+			JVX_SAFE_DELETE_FIELD(ptr[i]); \
+		} \
+		JVX_SAFE_DELETE_FIELD(ptr); \
+	} \
+}
+
 #define JVX_SAFE_DELETE_FIELD_TYPE(ptr, type) { if(ptr) delete[]((type*)ptr); ptr = nullptr; }
+#define JVX_SAFE_DELETE_2DFIELD_TYPE(ptr, dimY, type) \
+{ \
+	if(ptr) \
+	{ \
+		for(jvxSize i = 0; i < dimY; i++) \
+		{ \
+			JVX_SAFE_DELETE_FIELD_TYPE(ptr[i], type*); \
+		} \
+		JVX_SAFE_DELETE_FIELD_TYPE(ptr, type); \
+	} \
+}
 
 #else
 
