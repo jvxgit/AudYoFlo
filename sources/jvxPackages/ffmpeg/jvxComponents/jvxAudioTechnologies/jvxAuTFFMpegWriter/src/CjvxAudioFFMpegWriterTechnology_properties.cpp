@@ -210,7 +210,7 @@ CjvxAudioFFMpegWriterTechnology::update_local_properties(jvxBool trig_host, jvxS
 		this->_request_command(CjvxReportCommandRequest_id(
 			jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY,
 			_common_set.theComponentType,
-			CjvxProperties::property_changed_descriptor_tag_add( genFFMpegWriter_technology::file_params.file_sub_type.descriptor.std_str()).c_str()));
+			CjvxProperties::property_changed_descriptor_tag_add(lval < std::string>( genFFMpegWriter_technology::file_params.file_sub_type.descriptor.std_str())).c_str()));
 
 		CjvxProperties::add_property_report_collect(genFFMpegWriter_technology::file_params.file_sub_type.descriptor.std_str(), true);
 
