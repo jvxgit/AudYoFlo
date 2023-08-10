@@ -150,15 +150,15 @@ textProcessor_core::generateCode(const std::string& outFilenameH, const std::str
 		streamH << "\tif(!((nrhs >= " << allFs.lstFunctions[i].acceptInputMin << ") && (nrhs <= "
 			<< allFs.lstFunctions[i].acceptInputMax << ")))" << std::endl;
 		streamH << "\t{" << std::endl << "\t\t" << THE_EXTERNAL_CALL_HANDLER << "->postMessageExternal((\"" << "(" << allFs.friendlyNameReferenceClass << "::"
-			<< allFs.lstFunctions[i].nameFunctionCpp << ")" << " Number of input arguments is not correct, expect a value between (\" + jvx_int2String(offset_nlhs) + \" + "
-			<< (allFs.lstFunctions[i].acceptInputMin) << ") and (\" + jvx_int2String(offset_nlhs) + \" + " << (allFs.lstFunctions[i].acceptInputMax)
-			<< ").\\n\").c_str());" << std::endl << "\t\t" << MACRO_LEAVE_NEG_NUMBER_INPUT_PARAMETERS << ";" << std::endl << "\t}" << std::endl ;
+			<< allFs.lstFunctions[i].nameFunctionCpp << ")" << " Number of input arguments is not correct, expect a value between \" + jvx_int2String(offset_nrhs + "
+			<< allFs.lstFunctions[i].acceptInputMin << ") + \" and \" + jvx_int2String(offset_nrhs + " << allFs.lstFunctions[i].acceptInputMax << ") + \""
+			<< ".\\n\").c_str());" << std::endl << "\t\t" << MACRO_LEAVE_NEG_NUMBER_INPUT_PARAMETERS << ";" << std::endl << "\t}" << std::endl ;
 		streamH << "\tif(!((nlhs >= " << allFs.lstFunctions[i].acceptOutputMin << ") && (nlhs <= "
 			<< JVX_MAX(allFs.lstFunctions[i].acceptOutputMax,1) << ")))" << std::endl;
 		streamH << "\t{" << std::endl << "\t\t" << THE_EXTERNAL_CALL_HANDLER << "->postMessageExternal((\"" << "(" << allFs.friendlyNameReferenceClass << "::"
-			<< allFs.lstFunctions[i].nameFunctionCpp << ")" << " Number of output arguments is not correct, expect a value between (\" + jvx_int2String(offset_nlhs) + \" + "
-			<< allFs.lstFunctions[i].acceptOutputMin << " and \" + jvx_int2String(offset_nrhs) + \" + " << JVX_MAX(1, allFs.lstFunctions[i].acceptOutputMax)
-			<< ").\\n\").c_str());" << std::endl << "\t\t" << MACRO_LEAVE_NEG_NUMBER_OUTPUT_PARAMETERS << ";" << std::endl << "\t}" << std::endl ;
+			<< allFs.lstFunctions[i].nameFunctionCpp << ")" << " Number of output arguments is not correct, expect a value between \" + jvx_int2String(offset_nlhs + "
+			<< allFs.lstFunctions[i].acceptOutputMin << ") + \" and \" + jvx_int2String(offset_nlhs + " << JVX_MAX(1, allFs.lstFunctions[i].acceptOutputMax) << ") + \""
+			<< ".\\n\").c_str());" << std::endl << "\t\t" << MACRO_LEAVE_NEG_NUMBER_OUTPUT_PARAMETERS << ";" << std::endl << "\t}" << std::endl ;
 
 		std::ostringstream parametersFcall;
 		std::ostringstream parametersTFcall;
