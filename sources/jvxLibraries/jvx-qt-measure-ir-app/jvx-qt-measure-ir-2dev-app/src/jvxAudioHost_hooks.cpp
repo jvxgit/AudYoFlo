@@ -66,7 +66,7 @@ AUNTASK; (PRIMARY MASTER)
 extern "C"
 {
 	// open function - to be provided by the application
-	extern jvxErrorType jvx_access_link_object_audionode(jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm,
+	extern jvxErrorType jvx_access_link_object_specialization(jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm,
 		jvxApiString* adescr);
 };
 
@@ -204,7 +204,7 @@ jvxErrorType jvx_access_link_objects(jvxInitObject_tp* funcInit, jvxTerminateObj
 
 		case 2:
 
-			return jvx_access_link_object_audionode(funcInit, funcTerm, adescr);
+			return jvx_access_link_object_specialization(funcInit, funcTerm, adescr);
 		default:
 			break;
 		}
@@ -409,6 +409,8 @@ const char* componentsOnLoad_sptechs[] =
 #include "interfaces/qt-audio-host/configureQtAudioHost_features.h"
 extern "C"
 {
+	extern jvxErrorType jvx_configure_factoryhost_features_specialization(configureQtAudioHost_features* cfgFeat, jvxBool is1dev);
+
 jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* features)
 {
 	configureQtAudioHost_features* theFeaturesA = NULL;
@@ -417,8 +419,6 @@ jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* f
 	{
 		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_TECHNOLOGY] = 2;
 		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_DEVICE] = 2;
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_NODE] = 2;
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = 3;
 		theFeaturesA->numSlotsComponents[JVX_COMPONENT_SIGNAL_PROCESSING_TECHNOLOGY] = 1;
 		theFeaturesA->numSlotsComponents[JVX_COMPONENT_SIGNAL_PROCESSING_DEVICE] = JVX_SIZE_UNSELECTED;
 
@@ -431,14 +431,13 @@ jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* f
 		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_TECHNOLOGY] = componentsOnLoad_audiotechnologies;
 
 		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_NODE] = true;
-		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_NODE] = componentsOnLoad_algorithms;
-
-		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = componentsOnLoad_spnodes;
 		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = true;
 
 		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_SIGNAL_PROCESSING_TECHNOLOGY] = componentsOnLoad_sptechs;
 		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_SIGNAL_PROCESSING_TECHNOLOGY] = true;
 		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_SIGNAL_PROCESSING_DEVICE] = true;
+
+		jvx_configure_factoryhost_features_specialization(theFeaturesA, false);
 	}
 	return(JVX_NO_ERROR);
 }
@@ -449,335 +448,3 @@ jvxErrorType jvx_invalidate_factoryhost_features(configureFactoryHost_features* 
 }
 
 }
-
-#if 0
-extern "C"
-{
-jvxErrorType jvx_access_link_objects(jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm, 
-	jvxApiString* description, jvxComponentType tp, jvxSize id)
-{
-	std::string descr;
-	jvxSize mL;
-
-	switch (tp)
-	{
-	case JVX_COMPONENT_AUDIO_TECHNOLOGY:
-		switch (id)
-		{
-#ifdef JVX_USE_PORTAUDIO
-		case 0:
-			mL = JVX_MAXSTRING - 1;
-			descr = "PortAudio Audio";
-			mL = JVX_MAXSTRING - 1;
-			*funcInit = jvxAuTPortAudio_init;
-			*funcTerm = jvxAuTPortAudio_terminate;
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-
-		case 1:
-#else
-		case 0:
-#endif
-			mL = JVX_MAXSTRING - 1;
-
-#if defined JVX_OS_WINDOWS
-			descr = "Asio Audio";
-			*funcInit = jvxAuTAsio_init;
-			*funcTerm = jvxAuTAsio_terminate;
-#elif defined JVX_OS_LINUX
-			descr = "Alsa Audio";
-			*funcInit = jvxAuTAlsa_init;
-			*funcTerm = jvxAuTAlsa_terminate;
-#elif defined JVX_OS_MACOSX
-			descr = "Core Audio";
-			*funcInit = jvxAuTCoreAudio_init;
-			*funcTerm = jvxAuTCoreAudio_terminate;
-#endif
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-			break;
-		case 2:
-			descr = "Network Master Audio";
-			mL = JVX_MAXSTRING - 1;
-			*funcInit = jvxAuTNetwork_master_init;
-			*funcTerm = jvxAuTNetwork_master_terminate;
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-			break;
-		case 3:
-			descr = "Network Slave Audio";
-			mL = JVX_MAXSTRING - 1;
-			*funcInit = jvxAuTNetwork_slave_init;
-			*funcTerm = jvxAuTNetwork_slave_terminate;
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-			break;
-		default:
-
-			break;
-		}
-		break;
-	case JVX_COMPONENT_AUDIO_NODE:
-		switch (id)
-		{
-		case 0:
-			descr = "Play Channel";
-			mL = JVX_MAXSTRING - 1;
-			*funcInit = jvxAuNPlayChannelId_init;
-			*funcTerm = jvxAuNPlayChannelId_terminate;
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-
-		default:
-			break;
-		}
-		break;
-
-
-	case JVX_COMPONENT_SIGNAL_PROCESSING_NODE:
-		switch (id)
-		{
-		case 0:
-			
-			descr = "MeasureIr";
-			mL = JVX_MAXSTRING - 1;
-			*funcInit = jvxSpNMeasureIr_init;
-			*funcTerm = jvxSpNMeasureIr_terminate;
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-
-		
-		default:
-			break;
-		}
-		break;
-
-	case JVX_COMPONENT_DATALOGGER:
-		switch (id)
-		{
-		case 0:
-
-			descr = "Data Logger";
-			mL = JVX_MAXSTRING - 1;
-			*funcInit = jvxTDataLogger_init;
-			*funcTerm = jvxTDataLogger_terminate;
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-		default:
-			break;
-		}
-		break;
-
-	default:
-		break;
-
-#if defined JVX_OS_WINDOWS
-	case JVX_COMPONENT_TEXT2SPEECH:
-		switch (id)
-		{
-		case 0:
-			descr = "MSW Text 2 Speech";
-			mL = JVX_MAXSTRING - 1;
-			*funcInit = jvxTMswText2Speech_init;
-			*funcTerm = jvxTMswText2Speech_terminate;
-
-			// description is a buffer of length JVX_MAXSTRING
-			mL = JVX_MIN(descr.size(), mL);
-			memcpy(description, descr.c_str(), mL);
-			return(JVX_NO_ERROR);
-
-		default:
-			break;
-		}
-		break;
-#endif
-	}
-	return(JVX_ERROR_ELEMENT_NOT_FOUND);
-}
-
-
-
-
-
-// =============================================================
-// Configure ui extensions
-// =============================================================
-#include "CjvxQtComponentWidget_socket_master_dev.h"
-#include "CjvxQtComponentWidget_socket_slave_dev.h"
-
-#include "CjvxQtComponentWidget_socket_tech.h"
-
-// =============================================================
-// Configure ui extensions
-// =============================================================
-jvxErrorType
-IjvxQtComponentWidget_init(IjvxQtComponentWidget** onReturn, jvxBitField featureClass, const jvxComponentIdentification& cpId)
-{
-	CjvxQtComponentWidget_socket_master_dev* newElmMDev = NULL;
-	CjvxQtComponentWidget_socket_slave_dev* newElmSDev = NULL;
-	CjvxQtComponentWidget_socket_tech* newElmTech = NULL;
-	switch (cpId.tp)
-	{
-	case JVX_COMPONENT_AUDIO_DEVICE:
-		if (JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_MASTER))
-		{
-			newElmMDev = new CjvxQtComponentWidget_socket_master_dev("VERBOSE=yes,RTUPDATE=yes");
-			if (onReturn)
-				*onReturn = static_cast<IjvxQtComponentWidget*>(newElmMDev);
-			return JVX_NO_ERROR;
-		}
-		else if (JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_SLAVE))
-		{
-			newElmSDev = new CjvxQtComponentWidget_socket_slave_dev("VERBOSE=yes,RTUPDATE=yes");
-			if (onReturn)
-				*onReturn = static_cast<IjvxQtComponentWidget*>(newElmSDev);
-			return JVX_NO_ERROR;
-		}
-		break;
-
-	case JVX_COMPONENT_AUDIO_TECHNOLOGY:
-
-		/* Shared UI */
-		if ((JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_MASTER) ||
-			JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_SLAVE)))
-		{
-			newElmTech = new CjvxQtComponentWidget_socket_tech("VERBOSE=yes,RTUPDATE=yes");
-
-		}
-
-		if (onReturn)
-			*onReturn = static_cast<IjvxQtComponentWidget*>(newElmTech);
-		return JVX_NO_ERROR;
-
-		break;
-	}
-	if (onReturn)
-		*onReturn = NULL;
-	return JVX_ERROR_UNSUPPORTED;
-}
-
-jvxErrorType
-IjvxQtComponentWidget_terminate(IjvxQtComponentWidget* returnMe, jvxBitField featureClass,
-	const jvxComponentIdentification& cpId)
-{
-	switch (cpId.tp)
-	{
-	case JVX_COMPONENT_AUDIO_DEVICE:
-		if ((JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_MASTER) ||
-			JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_SLAVE)))
-		{
-			delete(returnMe);
-		}
-		return JVX_NO_ERROR;
-	case JVX_COMPONENT_AUDIO_TECHNOLOGY:
-		if ((JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_MASTER) ||
-			JVX_EVALUATE_BITFIELD(featureClass & JVX_FEATURE_CLASS_COMPONENT_SOCKET_SLAVE)))
-		{
-			delete(returnMe);
-		}
-		return JVX_NO_ERROR;
-		break;
-	}
-	return JVX_ERROR_UNSUPPORTED;
-}
-
-// =======================================================================
-
-#include "myCentralWidget.h"
-
-// =============================================================
-// Main widget entry functions
-// =============================================================
-jvxErrorType
-mainWindow_UiExtension_host_init(mainWindow_UiExtension_host** onReturn, QWidget* parent)
-{
-#ifdef JVX_PROJECT_NAMESPACE
-	JVX_PROJECT_NAMESPACE::myCentralWidget* elm = new JVX_PROJECT_NAMESPACE::myCentralWidget(parent);
-#else
-	myCentralWidget* elm = new myCentralWidget(parent);
-#endif
-	if (onReturn)
-	{
-		*onReturn = static_cast<mainWindow_UiExtension_host*>(elm);
-	}
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-mainWindow_UiExtension_host_terminate(mainWindow_UiExtension_host* elm)
-{
-	delete(elm);
-	return JVX_NO_ERROR;
-}
-
-// =============================================================
-// Specify some runtime host configurations
-// =============================================================
-const char* componentsOnLoad_algorithms[] =
-{
-	"jvxAuNPlayChannelId",
-	NULL
-}; 
-
-const char* componentsOnLoad_spnodes[] =
-{
-	"jvxSpNMeasureIr",
-	NULL
-};
-
-#include "interfaces/qt-audio-host/configureQtAudioHost_features.h"
-extern "C"
-{
-	jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* features)
-{
-	configureQtAudioHost_features* theFeaturesA = NULL;
-	features->request_specialization(reinterpret_cast<jvxHandle**>(&theFeaturesA), JVX_HOST_IMPLEMENTATION_QT_AUDIO_HOST);
-	if (theFeaturesA)
-	{
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_TECHNOLOGY] = 1;
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_DEVICE] = 1;
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_NODE] = 1;
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = 1;
-
-		theFeaturesA->config_ui.minWidthWindow = JVX_MAX(theFeaturesA->config_ui.minWidthWindow, 1280);
-		theFeaturesA->config_ui.minHeightWindow = JVX_MAX(theFeaturesA->config_ui.minHeightWindow, 960);
-		theFeaturesA->config_ui.tweakUi = JVX_QT_MAINWIDGET_NO_EXPAND_CENTER;
-
-		/*
-		theFeaturesA->config_ui.minWidthWindow = JVX_MAX(theFeaturesA->config_ui.minWidthWindow, 800);
-		theFeaturesA->config_ui.minHeightWindow = JVX_MAX(theFeaturesA->config_ui.minHeightWindow, 600);
-		theFeaturesA->config_ui.tweakUi = JVX_QT_MAINWIDGET_NO_EXPAND_CENTER;
-		*/
-
-		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_NODE] = true;
-		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_NODE] = componentsOnLoad_algorithms;
-		
-		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = componentsOnLoad_spnodes;
-		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = true;
-	}
-	return(JVX_NO_ERROR);
-}
-}
-
-#endif

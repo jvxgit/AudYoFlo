@@ -1045,7 +1045,9 @@ jvxBool jvx_compare_match_component_identification(const jvxComponentIdentificat
 jvxErrorType jvx_parseHttpQueryIntoPieces(std::vector<std::string>& qList, std::string in);
 jvxErrorType jvx_findValueHttpQuery(std::vector<std::string>& qList, std::string& out, const std::string& lookfor);
 	
-std::string jvx_getCallProtStringShort(IjvxCallProt* fdb); 
+std::string jvx_getCallProtStringLocalError(IjvxCallProt* fdb);
+std::string jvx_getCallProtStringNextErrorTree(IjvxCallProt* fdb, jvxBool& err);
+
 void jvx_getCallProtObject(IjvxCallProt* fdb, IjvxObject* object, const char* conn, const char* origin, const char* context = NULL, const char* comment = NULL);
 void jvx_getCallProtConnector(IjvxCallProt* fdb, IjvxCommonConnector* refto, const char* origin);
 void jvx_getCallProtNoLink(IjvxCallProt* fdb, const std::string& txt_orig, const char* origin, const char* ctxt, const char* comment);

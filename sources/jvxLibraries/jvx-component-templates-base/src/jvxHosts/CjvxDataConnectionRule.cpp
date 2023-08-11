@@ -374,8 +374,9 @@ CjvxDataConnectionRule::try_connect_direct(
 										proc_id,
 										params_init.dbg_output,
 										params_init.report_automation, catId
-										JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
-									//JVX_CONNECTION_FEEDBACK_CALL_A(fdb_loc));
+										JVX_CONNECTION_FEEDBACK_CALL_A(fdb_loc));
+									// JVX_CONNECTION_FEEDBACK_CALL_A_NULL
+									// JVX_CONNECTION_FEEDBACK_CALL_A(fdb_loc));
 									if (resL == JVX_NO_ERROR)
 									{
 										// theNewConnection.mark_from_rule();
@@ -410,10 +411,14 @@ CjvxDataConnectionRule::try_connect_direct(
 									}
 									else
 									{
-										JVX_OUTPUT_REPORT_DEBUG_COUT_START(rep);
-										JVX_OUTPUT_REPORT_DEBUG_COUT_REF << "Failed to autoconnect, reason: " <<
-											JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING(fdb_loc) << std::flush;
-										JVX_OUTPUT_REPORT_DEBUG_COUT_STOP(rep);
+										if (params_init.dbg_output)
+										{
+											jvxBool err = false;
+											JVX_OUTPUT_REPORT_DEBUG_COUT_START(rep);
+											JVX_OUTPUT_REPORT_DEBUG_COUT_REF << "Failed to autoconnect, reason: " <<
+												JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING_NEXT_ERROR(fdb_loc, err) << std::flush;
+											JVX_OUTPUT_REPORT_DEBUG_COUT_STOP(rep);
+										}
 									}
 								}
 								else

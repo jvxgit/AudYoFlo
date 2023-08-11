@@ -168,7 +168,14 @@ public:
 #define JVX_CONNECTION_FEEDBACK_ON_ENTER_CONN(fdb, refto) jvx_getCallProtConnector(fdb, refto, JVX_CONNECTION_ORIGIN)
 #define JVX_CONNECTION_FEEDBACK_ON_ENTER_FAC_MAS(fdb, refto) jvx_getCallProtFactoryMaster(fdb, refto, JVX_CONNECTION_ORIGIN)
 #define JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, res, err_mess) if(fdb) {fdb->setErrorCode(res, err_mess, JVX_CONNECTION_ORIGIN);}
-#define JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING(fdb) jvx_getCallProtStringShort(fdb)
+
+// Call the function to check for the reported error in the feedback tree element. If there is no error on the object level,
+// no child will be queried-
+#define JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING(fdb) jvx_getCallProtStringLocalError(fdb)
+
+// Call the function to check for the next reported error in the feedback tree. If the local element has no such 
+// element, the algorithm will recursively descend into the structure to find the next error from start to stop of the tree
+#define JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING_NEXT_ERROR(fdb, err) jvx_getCallProtStringNextErrorTree(fdb, err)
 #define JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, txt, errTp) JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, errTp, txt)
 #define JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, txt, errTp) JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, errTp, txt)
 #define JVX_CONNECTION_FEEDBACK_SET_COMMENT_STRING(fdb, txt) JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, JVX_NO_ERROR, txt)

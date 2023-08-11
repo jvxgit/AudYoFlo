@@ -5618,7 +5618,7 @@ jvxErrorType jvx_findValueHttpQuery(std::vector<std::string>& qList, std::string
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
 
-std::string jvx_getCallProtStringShort(IjvxCallProt* fdb)
+std::string jvx_getCallProtStringLocalError(IjvxCallProt* fdb)
 {
 	std::string ret;
 	jvxApiString str1; 
@@ -5636,6 +5636,48 @@ std::string jvx_getCallProtStringShort(IjvxCallProt* fdb)
 		else
 		{
 			ret = "NO ERROR";
+		}
+	}
+	return ret;
+}
+
+// This function browses a feedback struct and tries to find an error. If there is no error on the current level,
+// the references to the next level are recursively checked. If there was an error reported, of course,
+// there could be no error in the feedback tree if a developer did not fill in the error code properly..
+std::string jvx_getCallProtStringNextErrorTree(IjvxCallProt* fdb, jvxBool& err)
+{
+	std::string ret;
+	jvxApiString str1;
+	jvxApiString str2;
+	err = false;
+	if (fdb)
+	{
+		fdb->getErrorShort(&err, &str1, &str2);
+		if (err)
+		{
+			ret = str2.std_str();
+			ret += ":";
+			ret += str1.std_str();
+		}
+		else
+		{
+			jvxSize num = 0;
+			jvxSize i;
+			IjvxCallProt* nx = nullptr;
+			ret = "NO ERROR";
+			fdb->getNumberNext(&num);
+			for (i = 0; i < num; i++)
+			{
+				fdb->getNext(nullptr, &nx, i);
+				if (nx)
+				{
+					ret = jvx_getCallProtStringNextErrorTree(nx, err);
+					if (err)
+					{
+						break;
+					}
+				}
+			}
 		}
 	}
 	return ret;

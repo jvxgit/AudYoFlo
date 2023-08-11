@@ -2,6 +2,9 @@
 
 extern "C"
 {
+	extern jvxErrorType jvx_default_connection_rules_add_specialization(jvxComponentIdentification* tpEnque, jvxBool is1dev);
+
+
 	jvxErrorType jvx_default_connection_rules_add(IjvxDataConnections* theDataConnectionDefRule)
 	{
 		std::cout << __FUNCTION__ << ": Custom connection rules hook function, located in " << __FILE__ << std::endl;
@@ -154,6 +157,8 @@ extern "C"
 				&theDataConnectionDefRule_id, &params);
 			if (res == JVX_NO_ERROR)
 			{
+				jvxComponentIdentification tpEnqueue = jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 2, 0);
+				jvx_default_connection_rules_add_specialization(&tpEnqueue, false);
 				IjvxDataConnectionRule* theDataConnectionDefRuleHdl = NULL;
 				jvxSize theDataConnectionDefRule_id_master = JVX_SIZE_UNSELECTED;
 				jvxSize theDataConnectionDefRule_id_slave = JVX_SIZE_UNSELECTED;
@@ -181,12 +186,12 @@ extern "C"
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 1, 0),
 						"*", "default",
-						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 2, 0),
+						tpEnqueue,
 						"*", "default", "Channel Annouce to Speaker EQ", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
-						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 2, 0),
+						tpEnqueue,
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_DEVICE, 0, 0),
 						"*", "default", "Speaker Eq to Audio", false, false);

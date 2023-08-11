@@ -39,7 +39,7 @@
 extern "C"
 {
 	// open function - to be provided by the application
-	extern jvxErrorType jvx_access_link_object_audionode(jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm,
+	extern jvxErrorType jvx_access_link_object_specialization(jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm,
 		jvxApiString* adescr);
 };
 
@@ -151,7 +151,7 @@ jvxErrorType jvx_access_link_objects(jvxInitObject_tp* funcInit, jvxTerminateObj
 
 		case 1:
 
-			return jvx_access_link_object_audionode(funcInit, funcTerm, adescr);
+			return jvx_access_link_object_specialization(funcInit, funcTerm, adescr);
 
 		default:
 			break;
@@ -334,7 +334,8 @@ const char* componentsOnLoad_audiotechnologies[] =
 	nullptr
 };
 
-const char* componentsOnLoad_algorithms[] =
+/*
+const char* componentsOnLoad_aunodes[] =
 {
 	"jvxAuNPlayChannelId",
 	NULL
@@ -346,10 +347,13 @@ const char* componentsOnLoad_spnodes[] =
 	"jvxSpNSpeakerEqualizer",
 	NULL
 };
+*/
 
 #include "interfaces/qt-audio-host/configureQtAudioHost_features.h"
 extern "C"
-{
+{	
+	extern jvxErrorType jvx_configure_factoryhost_features_specialization(configureQtAudioHost_features* cfgFeat, jvxBool is1dev);
+
 jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* features)
 {
 	configureQtAudioHost_features* theFeaturesA = NULL;
@@ -358,8 +362,6 @@ jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* f
 	{
 		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_TECHNOLOGY] = 1;
 		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_DEVICE] = 1;
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_NODE] = 1;
-		theFeaturesA->numSlotsComponents[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = 2;
 
 		/*
 		theFeaturesA->config_ui.minWidthWindow = JVX_MAX(theFeaturesA->config_ui.minWidthWindow, 1280);
@@ -380,11 +382,16 @@ jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* f
 		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_TECHNOLOGY] = true;
 		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_TECHNOLOGY] = componentsOnLoad_audiotechnologies;
 
-		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_NODE] = true;
-		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_NODE] = componentsOnLoad_algorithms;
-		
-		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = componentsOnLoad_spnodes;
+		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_NODE] = true;	
 		theFeaturesA->flag_blockModuleEdit[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = true;
+
+		/*
+		theFeaturesA->numSlotsComponents[JVX_COMPONENT_AUDIO_NODE] = 1;
+		theFeaturesA->numSlotsComponents[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = 2;
+		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_NODE] = componentsOnLoad_aunodes;
+		theFeaturesA->lst_ModulesOnStart[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = componentsOnLoad_spnodes;
+		*/
+		jvx_configure_factoryhost_features_specialization(theFeaturesA, true);
 	}
 	return(JVX_NO_ERROR);
 }

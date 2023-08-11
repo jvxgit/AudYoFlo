@@ -80,7 +80,7 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 		{
 			JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, 
 				("Failed to get reference output connector on creation of bridge <" + elmB->bridge_name + ">.").c_str(), res);
-			res = allConnections->return_reference_connection_factory(theConFacO);
+			resL = allConnections->return_reference_connection_factory(theConFacO);
 			errInBridge = true;
 			break;
 		}
@@ -93,8 +93,8 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 		{
 			JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, 
 				("Failed to get reference connector factory for input connector on creation of bridge <" + elmB->bridge_name + ">.").c_str(), res);
-			res = theConFacO->return_reference_output_connector(ocon);
-			res = allConnections->return_reference_connection_factory(theConFacO);
+			resL = theConFacO->return_reference_output_connector(ocon);
+			resL = allConnections->return_reference_connection_factory(theConFacO);
 			errInBridge = true;
 			break;
 		}
@@ -106,9 +106,9 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 		{
 			JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, 
 				("Failed to get reference input connector on creation of bridge <" + elmB->bridge_name + ">.").c_str(), res);
-			res = theConFacO->return_reference_output_connector(ocon);
-			res = allConnections->return_reference_connection_factory(theConFacO);
-			res = allConnections->return_reference_connection_factory(theConFacI);
+			resL = theConFacO->return_reference_output_connector(ocon);
+			resL = allConnections->return_reference_connection_factory(theConFacO);
+			resL = allConnections->return_reference_connection_factory(theConFacI);
 			errInBridge = true;
 			break;
 		}
@@ -120,10 +120,10 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 		{
 			JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb,
 				("Failed to create bridge <" + elmB->bridge_name + ">.").c_str(), res);
-			res = theConFacI->return_reference_input_connector(icon); 
-			res = theConFacO->return_reference_output_connector(ocon);
-			res = allConnections->return_reference_connection_factory(theConFacO);
-			res = allConnections->return_reference_connection_factory(theConFacI);
+			resL = theConFacI->return_reference_input_connector(icon); 
+			resL = theConFacO->return_reference_output_connector(ocon);
+			resL = allConnections->return_reference_connection_factory(theConFacO);
+			resL = allConnections->return_reference_connection_factory(theConFacI);
 			errInBridge = true;
 			break;
 		}
@@ -145,25 +145,21 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 		}
 	}
 
-	if (!errInBridge)
+	if (errInBridge)
+	{
+		assert(res != JVX_NO_ERROR);
+	}
+
+	if (res == JVX_NO_ERROR)
 	{
 		res = theProc->link_triggers_connection();
 
 		// Set the connections reference
 		theProc->set_connection_context(allConnections);
 		res = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-		if (res != JVX_NO_ERROR)
-		{
-			// Remove all bridges
-			elmB = lst_bridges.begin();
-			for (; elmB != lst_bridges.end(); elmB++)
-			{
-				theProc->remove_bridge(elmB->uIdB);
-			}
-			theProc->deassociate_master();
-		}
 	}
-	else
+	
+	if (res != JVX_NO_ERROR)
 	{
 		// Remove all bridges
 		elmB = lst_bridges.begin();
@@ -172,7 +168,7 @@ CjvxConnectionDropzone::connect_process_from_dropzone(IjvxDataConnections* allCo
 			theProc->remove_bridge(elmB->uIdB);
 		}
 		theProc->deassociate_master();
-	}
+	}	
 
 exit_fail_II:
 	theMasterFactory->return_reference_connector_master(theMaster);

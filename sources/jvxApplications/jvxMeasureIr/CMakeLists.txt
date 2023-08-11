@@ -13,6 +13,7 @@ set(LOCAL_SOURCES
 
 # Some required include paths
 include_directories(
+	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/include/interfaces/qt
 	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNSpeakerEqualizer/
  )
 

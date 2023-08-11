@@ -173,7 +173,7 @@ public:
 		{
 			// It may be such that a select had failed. In that case, we need to 
 			// silently accept this
-			std::cout << "WARNING: Bridge <" << _common_set_conn_bridge.name << "> failed to unselect of connector <from>." << std::endl;
+			std::cout << "WARNING: Bridge <" << _common_set_conn_bridge.name << "> failed to unselect connector <from>." << std::endl;
 			//return res;
 		}
 
@@ -189,7 +189,7 @@ public:
 		{
 			// It may be such that a select had failed. In that case, we need to 
 			// silently accept this
-			std::cout << "WARNING: Bridge <" << _common_set_conn_bridge.name << "> failed to unselect of connector <to>." << std::endl;
+			std::cout << "WARNING: Bridge <" << _common_set_conn_bridge.name << "> failed to unselect connector <to>." << std::endl;
 			//return res;
 		}
 	
