@@ -13,7 +13,7 @@ public:
 	struct _common_set_node_params_a_1io_t
 	{
 		jvxInt32 buffersize = JVX_SIZE_UNSELECTED_INT32;
-		jvxInt32 number_channels = JVX_SIZE_UNSELECTED_INT32;
+		jvxSize number_channels = JVX_SIZE_UNSELECTED_INT32;
 		jvxInt32 samplerate = JVX_SIZE_UNSELECTED_INT32;
 		jvxInt16 format = JVX_DATAFORMAT_NONE;
 		jvxInt16 subformat = JVX_DATAFORMAT_GROUP_NONE;
@@ -28,7 +28,7 @@ public:
 		void reset()
 		{
 			buffersize = JVX_SIZE_UNSELECTED_INT32;
-			number_channels = JVX_SIZE_UNSELECTED_INT32;
+			number_channels = JVX_SIZE_UNSELECTED;
 			samplerate = JVX_SIZE_UNSELECTED_INT32;
 			format = JVX_DATAFORMAT_NONE;
 			subformat = JVX_DATAFORMAT_GROUP_NONE;

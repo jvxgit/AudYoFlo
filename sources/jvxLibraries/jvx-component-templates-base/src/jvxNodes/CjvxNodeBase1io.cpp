@@ -24,8 +24,8 @@ CjvxNodeBase1io::activate()
 
 	if (res == JVX_NO_ERROR)
 	{
-		node_inout.initialize(this);
-		node_inout.updtag_all("InOut");
+		node_inout.initialize(this, prefix_descriptor_properties);
+		node_inout.updtag_all(prefix_description_properties);
 		JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this),
 			"default", NULL, _common_set.theModuleName.c_str());
 	}

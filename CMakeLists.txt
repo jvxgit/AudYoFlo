@@ -525,6 +525,8 @@ endif()
 	  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-http
 	  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-webcontrol
 	  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-app-templates
+	  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-measure-ir-app/jvx-qt-measure-ir-1dev-app
+	  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-measure-ir-app/jvx-qt-measure-ir-2dev-app
 	  )
 	  
 	if(JVX_COMPILE_GOD_HOST)
@@ -806,7 +808,7 @@ endif()
 				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxVocoder
 				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxMyHost
 				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxMeasureIr
-				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxMeasureIr2Dev
+				# ${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvxMeasureIr2Dev
 				${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/ayfHosts/ayfQtAudioHostStart
 				)
 				

@@ -24,6 +24,9 @@ CjvxBareNode1ioRearrange::CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MAC
 	
 	forward_complain = false;
 	neg_output.logObj = this;
+
+	prefix_descriptor_properties = "input";
+	prefix_description_properties = "Input";
 }
 
 jvxErrorType 
@@ -35,7 +38,6 @@ CjvxBareNode1ioRearrange::activate()
 		node_output.initialize(this, "output", true);
 		//outputArgsFromInputOnInit_set = false;
 
-		node_inout.updtag_all("Input");
 		node_output.updtag_all("Output");
 	}
 	return res;

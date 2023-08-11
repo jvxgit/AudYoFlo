@@ -43,8 +43,8 @@
         <colorrole role="Window">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>255</red>
-           <green>255</green>
+           <red>170</red>
+           <green>170</green>
            <blue>255</blue>
           </color>
          </brush>
@@ -63,8 +63,8 @@
         <colorrole role="Window">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>255</red>
-           <green>255</green>
+           <red>170</red>
+           <green>170</green>
            <blue>255</blue>
           </color>
          </brush>
@@ -74,8 +74,8 @@
         <colorrole role="Base">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>255</red>
-           <green>255</green>
+           <red>170</red>
+           <green>170</green>
            <blue>255</blue>
           </color>
          </brush>
@@ -83,8 +83,8 @@
         <colorrole role="Window">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>255</red>
-           <green>255</green>
+           <red>170</red>
+           <green>170</green>
            <blue>255</blue>
           </color>
          </brush>
@@ -104,6 +104,70 @@
      <layout class="QGridLayout" name="gridLayout_8">
       <item row="1" column="0">
        <widget class="QTabWidget" name="tabWidget_app">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>170</red>
+              <green>170</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>170</red>
+              <green>170</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>170</red>
+              <green>170</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>170</red>
+              <green>170</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
+        </property>
         <property name="styleSheet">
          <string notr="true">QTabBar::tab {
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -697,7 +761,7 @@ QTabBar::tab:!selected {
                       <item row="0" column="7">
                        <widget class="QLineEdit" name="lineEdit_11">
                         <property name="accessibleDescription">
-                         <string>measure:/JVX_AUDIONODE_OUTPUT_CHANNELS:NUMDIGITS=0</string>
+                         <string>measure:/output/num_channels:NUMDIGITS=0</string>
                         </property>
                        </widget>
                       </item>
@@ -750,7 +814,7 @@ QTabBar::tab:!selected {
                       <item row="0" column="5">
                        <widget class="QLineEdit" name="lineEdit_10">
                         <property name="accessibleDescription">
-                         <string>measure:/JVX_AUDIONODE_INPUT_CHANNELS:NUMDIGITS=0</string>
+                         <string>measure:/input/num_channels:NUMDIGITS=0</string>
                         </property>
                        </widget>
                       </item>
@@ -2487,9 +2551,7 @@ QTabBar::tab:!selected {
   </layout>
  </widget>
  <resources>
-  <include location="jvxHoaMeasureIr.qrc"/>
-  <include location="jvxHoaMeasureIr.qrc"/>
-  <include location="jvxHoaMeasureIr.qrc"/>
+  <include location="jvxMeasureIr.qrc"/>
  </resources>
  <connections/>
  <slots>
