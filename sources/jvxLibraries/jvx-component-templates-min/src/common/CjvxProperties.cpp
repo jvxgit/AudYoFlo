@@ -3433,6 +3433,65 @@ CjvxProperties::add_property_report_collect(const std::string& propDescr, jvxBoo
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CjvxProperties::add_properties_report_collect(const std::list<std::string>& propDescr, jvxBool reportDescriptorChanged)
+{
+	jvxBool reportImmediate = true;
+	std::string repToken;
+	_lock_properties_local();
+
+	// Check if we arrive here within a property set function run
+	if (_common_set_property_report.startCntStack > 0)
+	{
+		// Yes, a run is on. Add the property to the list but do not report yet
+		reportImmediate = false;
+	}
+		
+	for (auto elmN : propDescr)
+	{
+		std::string propPrefix = jvx_makePathExpr(_common_set_property_report.reportPrefix, elmN);
+		std::string propPrefixContentOnly = propPrefix;
+		if (reportDescriptorChanged)
+		{
+			propPrefix = CjvxProperties::property_changed_descriptor_tag_add(propPrefix);
+		}
+		
+		// Report each property only once! Check if the entry is already in the list. If not, try to find the version without the content flag
+		auto elm = std::find(_common_set_property_report.collectedProps.begin(), _common_set_property_report.collectedProps.end(), propPrefix);
+		if (elm == _common_set_property_report.collectedProps.end())
+		{
+			// This property is not yet in the list. We will add it.
+			
+			// However, at first, try to find a "content-only" version
+			elm = std::find(_common_set_property_report.collectedProps.begin(), _common_set_property_report.collectedProps.end(), propPrefixContentOnly);
+			if (elm != _common_set_property_report.collectedProps.end())
+			{
+				// If we found a content only version, remove it
+				_common_set_property_report.collectedProps.erase(elm);
+			}
+		
+			// Now add the new element
+			_common_set_property_report.collectedProps.push_back(propPrefix);
+		}
+	}
+
+	if (reportImmediate)
+	{
+		repToken = jvx::helper::properties::collectedPropsToString(_common_set_property_report.collectedProps);
+		_common_set_property_report.collectedProps.clear();		
+	}
+	_unlock_properties_local();
+
+	if (reportImmediate)
+	{
+		if (_common_set_property_report.reportRef)
+		{
+			_common_set_property_report.reportRef->report_properties_modified(repToken.c_str());
+		}
+	}
+
+	return JVX_NO_ERROR;
+}
 // ===============================================================================
 
 jvxErrorType 

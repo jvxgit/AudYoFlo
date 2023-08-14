@@ -4,7 +4,7 @@
 #define JVX_MAIN_CENTRAL_DECLARE_TREE_WIDGET(propertyTreeWidget) \
 	struct \
 	{ \
-		IjvxQtSpecificHWidget* widget; \
+		IjvxQtPropertyTreeWidget* widget; \
 		QWidget* qwidget; \
 	} propertyTreeWidget;
 

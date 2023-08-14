@@ -236,6 +236,36 @@ myCentralWidget::report_widget_specific(jvxSize id, jvxHandle* spec)
 {
 }
 
+jvxErrorType 
+myCentralWidget::report_command_request(const CjvxReportCommandRequest& req)
+{
+	auto ptrIf = castCommandRequest<CjvxReportCommandRequest_id>(req);
+	auto reqTp = req.request();
+	auto dtTp = req.datatype();
+	auto orig = req.origin();
+
+	jvxApiString astr;
+	switch (dtTp)
+	{
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_IDENT:
+		switch (reqTp)
+		{
+		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
+			assert(ptrIf);
+			ptrIf->ident(&astr);
+			std::cout << "Request to update property from <" << jvxComponentIdentification_txt(orig) << ">: " << astr.std_str() << std::endl;
+
+			propertyTreeWidget.widget->fwd_command_request(req);
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
+	return JVX_NO_ERROR;
+}
+
 
 #ifdef JVX_PROJECT_NAMESPACE
 }

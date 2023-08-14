@@ -67,6 +67,8 @@ public:
 
 	virtual void inform_inactive(const jvxComponentIdentification& tp, IjvxAccessProperties* propRef) override;
 
+	jvxErrorType report_command_request(const CjvxReportCommandRequest& req) override;
+
 	// ===========================================================================
 	
 	virtual void report_widget_closed(QWidget* theClosedWidget) override;

@@ -7,7 +7,7 @@
 #include "CjvxQtSaWidgetWrapper.h" 
 
 class jvx_property_tree_widget : public QWidget, 
-	public IjvxQtSpecificHWidget,
+	public IjvxQtPropertyTreeWidget,
 	public IjvxQtSaWidgetWrapper_report,
 	public Ui::jvx_property_tree
 {
@@ -21,6 +21,7 @@ private:
 		IjvxAccessProperties* propRef;
 		std::string ident;
 		std::string prefix;
+		jvxComponentIdentification cpId;
 		oneEntryProp()
 		{
 			clear();
@@ -83,6 +84,8 @@ public:
 	virtual jvxErrorType reportPropertyGet(const char* tag, const char* propDescrptior, jvxHandle* ptrFld, jvxSize offset, jvxSize numElements, jvxDataFormat format, jvxErrorType res_in_call) override;
 	virtual jvxErrorType reportAllPropertiesAssociateComplete(const char* tag) override;
 	virtual jvxErrorType reportPropertySpecific(jvxSaWidgetWrapperspecificReport, jvxHandle* props) override;
+
+	virtual void fwd_command_request(const CjvxReportCommandRequest& req) override;
 
 private:
 	void select_new_prop_ref(const oneEntryProp& prop);

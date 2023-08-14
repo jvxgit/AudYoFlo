@@ -1,7 +1,7 @@
 #include "jvx_property_tree_widget.h"
 
-JVX_QT_WIDGET_INIT_DEFINE(IjvxQtSpecificHWidget, jvxQtPropertyTreeWidget, jvx_property_tree_widget);
-JVX_QT_WIDGET_TERMINATE_DEFINE(IjvxQtSpecificHWidget, jvxQtPropertyTreeWidget);
+JVX_QT_WIDGET_INIT_DEFINE(IjvxQtPropertyTreeWidget, jvxQtPropertyTreeWidget, jvx_property_tree_widget);
+JVX_QT_WIDGET_TERMINATE_DEFINE(IjvxQtPropertyTreeWidget, jvxQtPropertyTreeWidget);
 
 // #define JVX_WIDGET_TAG_NAME "element_tag"
 
@@ -69,9 +69,12 @@ jvx_property_tree_widget::addPropertyReference(IjvxAccessProperties* propRef, co
 	if (elm == mapAllProps.end())
 	{
 		oneEntryProp newElm;
+		
 		newElm.ident = identArg;
 		newElm.prefix = prefixArg;
 		newElm.propRef = propRef;
+		propRef->get_reference_component_description(nullptr, nullptr, nullptr, &newElm.cpId);
+
 		mapAllProps[propRef] = newElm;
 
 		jvxCBitField prio = 0;
@@ -370,4 +373,39 @@ jvx_property_tree_widget::new_token_search(QString txt)
 	token_search = txt.toLatin1().data();
 	treeWidget_props->setProperty("search-tree", QVariant(token_search.c_str()));
 	widget_wrapper->trigger_updateWindow(tag_name);
+}
+
+void 
+jvx_property_tree_widget::fwd_command_request(const CjvxReportCommandRequest& req)
+{
+	auto orig = req.origin();
+	auto ptrIf = castCommandRequest<CjvxReportCommandRequest_id>(req);
+	auto reqTp = req.request();
+	auto dtTp = req.datatype();
+	auto elm = mapAllProps.end();
+	jvxApiString astr;
+	switch (dtTp)
+	{
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_IDENT:
+		switch (reqTp)
+		{
+		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
+			assert(ptrIf);
+			ptrIf->ident(&astr);
+			elm = mapAllProps.find(propRefSelect);
+			if (elm != mapAllProps.end())
+			{
+				if (elm->second.cpId == orig)
+				{
+					if (widget_wrapper)
+					{
+						treeWidget_props->setProperty("search-tree", QVariant(token_search.c_str()));
+						widget_wrapper->trigger_updateWindow(tag_name);
+					}
+					// std::cout << "Request to update property from <" << jvxComponentIdentification_txt(orig) << ">: " << astr.std_str() << std::endl;
+				}
+			}
+			break;
+		}
+	}
 }
