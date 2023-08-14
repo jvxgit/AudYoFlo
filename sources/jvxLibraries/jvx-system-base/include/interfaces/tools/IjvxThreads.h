@@ -24,7 +24,7 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION thread_id(JVX_THREAD_ID* t_id) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION stop(jvxSize timeout_stop)  = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION stop(jvxSize timeout_stop_msecs = 5000)  = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate() = 0;
 
