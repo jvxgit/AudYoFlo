@@ -1,3 +1,6 @@
+#ifndef __JVX_FIRFFT_PRV_H__
+#define __JVX_FIRFFT_PRV_H__
+
 typedef struct
 {
 	struct
@@ -16,3 +19,7 @@ typedef struct
 	jvx_firfft_prmInit init_cpy;
 	jvx_firfft_prmDerived derived_cpy;
 } jvx_firfft_prv;
+
+void jvx_firfft_resetDerived(jvx_firfft* init);
+
+#endif

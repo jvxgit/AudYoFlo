@@ -42,10 +42,7 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	init->init.delayFir = JVX_SIZE_UNSELECTED;
 	init->init.type = JVX_FIRFFT_SYMMETRIC_FIR;
 
-	init->derived.delay = 0;
-	init->derived.szFft = JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE;
-	init->derived.szFftValue = 0;
-	init->derived.lFirW = 0;
+	jvx_firfft_resetDerived(init);
 
 	init->sync.firW = NULL;
 
@@ -337,4 +334,13 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 		break;
 	}
 	return JVX_DSP_NO_ERROR;
+}
+
+void
+jvx_firfft_resetDerived(jvx_firfft* init)
+{
+	init->derived.delay = 0;
+	init->derived.szFft = JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE;
+	init->derived.szFftValue = 0;
+	init->derived.lFirW = 0;
 }

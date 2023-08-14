@@ -19,6 +19,8 @@ CjvxAuNPlayChannelId::CjvxAuNPlayChannelId(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLA
 	
 	playback_status = JVX_CHANNEL_OUTPUT_STATE_READY;
 	mixT2S.initialize();
+
+	forward_complain = true;
 }
 
 CjvxAuNPlayChannelId::~CjvxAuNPlayChannelId()

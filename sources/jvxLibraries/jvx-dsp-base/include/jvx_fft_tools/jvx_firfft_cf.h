@@ -37,8 +37,8 @@ JVX_DSP_LIB_BEGIN
 jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl);
 jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl);
 
-jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg);
-jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxDataCplx* newWeights);
+jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxCBool addOnOut);
+jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxDataCplx* newWeights, jvxCBool addOnOut);
 
 void jvx_firfft_cf_compute_weights(jvx_firfft* hdl, jvxData* fir, jvxSize lFir);
 void jvx_firfft_cf_copy_weights(jvx_firfft* hdl, jvxDataCplx* firW, jvxSize lFirW);

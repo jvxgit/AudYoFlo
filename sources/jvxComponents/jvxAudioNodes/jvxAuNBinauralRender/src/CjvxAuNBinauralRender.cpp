@@ -245,8 +245,8 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		if (updateHRir == jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY)
 		{
 			runWithUpdate = true;
-			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_left, in, out_left, render_pri->updatedWeightsLeft);
-			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_right, in, out_right, render_pri->updatedWeightsRight);
+			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_left, in, out_left, render_pri->updatedWeightsLeft, false);
+			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_right, in, out_right, render_pri->updatedWeightsRight, false);
 			updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 		}
 		JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
@@ -254,8 +254,8 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 	if (!runWithUpdate)
 	{
-		jvx_firfft_cf_process(&render_pri->firfftcf_left, in, out_left);
-		jvx_firfft_cf_process(&render_pri->firfftcf_right, in, out_right);
+		jvx_firfft_cf_process(&render_pri->firfftcf_left, in, out_left, false);
+		jvx_firfft_cf_process(&render_pri->firfftcf_right, in, out_right, false);
 	}
 
 	

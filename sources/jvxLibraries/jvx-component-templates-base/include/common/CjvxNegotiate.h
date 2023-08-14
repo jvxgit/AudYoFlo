@@ -119,8 +119,7 @@ public:
 
 	/**
 	 * This function allows to specify a FIXED setting. Note that the default arguments are set to valid values - no dont-cares.
-	 * 
-	 */
+	 *///=======================================================================================================
 	void _set_parameters_fixed(
 		jvxSize num_channels = 1,
 		jvxSize bsize = 512,
@@ -131,6 +130,9 @@ public:
 		jvxSize segment_x = JVX_SIZE_UNSELECTED,
 		jvxSize segment_y = JVX_SIZE_UNSELECTED);
 
+	/** This function updates the preferred settings. When invoking with no argument or with the default arg,
+	 * no constraint will be set.
+	 *///======================================================================================================
 	jvxConstraintSetResult _update_parameters_fixed(
 		jvxSize num_channels = JVX_SIZE_UNSELECTED,
 		jvxSize bsize = JVX_SIZE_UNSELECTED,

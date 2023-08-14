@@ -187,8 +187,10 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl)
 
 jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl)
 {
+	jvxErrorType res = JVX_DSP_ERROR_WRONG_STATE;
 	if (hdl->prv)
 	{
+		res = JVX_DSP_ERROR_WRONG_STATE;
 		jvx_firfft_cf_prv* nHdl = (jvx_firfft_cf_prv*)hdl->prv;
 
 		if (nHdl->ram_cf.corefft)
@@ -222,15 +224,18 @@ jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl)
 
 			JVX_DSP_SAFE_DELETE_OBJECT(nHdl);
 			hdl->prv = NULL;
-
-			return JVX_DSP_NO_ERROR;
+			
+			res = JVX_DSP_NO_ERROR;
 		}
-		return JVX_DSP_ERROR_WRONG_STATE;
+		if (res == JVX_NO_ERROR)
+		{
+			jvx_firfft_resetDerived(hdl);
+		}
 	}
-	return JVX_DSP_ERROR_WRONG_STATE;
+	return res;
 }
 
-jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg)
+jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxCBool addOnOut)
 {
 	jvxSize i;
 	jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
@@ -308,15 +313,32 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 		}
 		jvx_execute_ifft(coreifft);
 
-		for (i = 0; i < ll1; i++)
+		if (addOnOut)
 		{
-			*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
-		}
+			for (i = 0; i < ll1; i++)
+			{
+				*out++ += *ptrOut++ * nHdl->firfft.ram.normFactor;
+			}
 
-		ptrOut = out_src;
-		for (i = 0; i < ll2; i++)
+			ptrOut = out_src;
+			for (i = 0; i < ll2; i++)
+			{
+				*out++ += *ptrOut++ * nHdl->firfft.ram.normFactor;
+			}
+
+		}
+		else
 		{
-			*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
+			for (i = 0; i < ll1; i++)
+			{
+				*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
+			}
+
+			ptrOut = out_src;
+			for (i = 0; i < ll2; i++)
+			{
+				*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
+			}
 		}
 
 		nHdl->firfft.ram.phase = (nHdl->firfft.ram.phase + nHdl->firfft.init_cpy.bsize) % nHdl->firfft.derived_cpy.szFftValue;
@@ -326,7 +348,7 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 	return JVX_DSP_ERROR_WRONG_STATE;
 }
 
-jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxDataCplx* newWeights)
+jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxDataCplx* newWeights, jvxCBool addOnOut)
 {
 	jvxSize i;
 	jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
@@ -440,28 +462,58 @@ jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxDat
 
 		weightCf_old = 1.0;
 		weightCf_new = 0.0;
-		for (i = 0; i < ll1; i++)
+
+		if (addOnOut)
 		{
-			*out = *ptrOut_old++ * weightCf_old + *ptrOut_new++ * weightCf_new;
-			*out *= nHdl->firfft.ram.normFactor;
+			for (i = 0; i < ll1; i++)
+			{
+				accu = *ptrOut_old++ * weightCf_old + *ptrOut_new++ * weightCf_new;
+				accu *= nHdl->firfft.ram.normFactor;
+				*out += accu;
 
-			out++;
-			weightCf_old -= nHdl->ram_cf.cf_inc;
-			weightCf_new += nHdl->ram_cf.cf_inc;
+				out++;
+				weightCf_old -= nHdl->ram_cf.cf_inc;
+				weightCf_new += nHdl->ram_cf.cf_inc;
+			}
+
+			ptrOut_old = out_src_old;
+			ptrOut_new = out_src_new;
+			for (i = 0; i < ll2; i++)
+			{
+				accu = *ptrOut_old++ * weightCf_old + *ptrOut_new++ * weightCf_new;
+				accu *= nHdl->firfft.ram.normFactor;
+				*out += accu;
+
+				out++;
+				weightCf_old -= nHdl->ram_cf.cf_inc;
+				weightCf_new += nHdl->ram_cf.cf_inc;
+			}
+
 		}
-
-		ptrOut_old = out_src_old;
-		ptrOut_new = out_src_new;
-		for (i = 0; i < ll2; i++)
+		else
 		{
-			*out = *ptrOut_old++ * weightCf_old + *ptrOut_new++ * weightCf_new;
-			*out *= nHdl->firfft.ram.normFactor;
+			for (i = 0; i < ll1; i++)
+			{
+				*out = *ptrOut_old++ * weightCf_old + *ptrOut_new++ * weightCf_new;
+				*out *= nHdl->firfft.ram.normFactor;
 
-			out++;
-			weightCf_old -= nHdl->ram_cf.cf_inc;
-			weightCf_new += nHdl->ram_cf.cf_inc;
+				out++;
+				weightCf_old -= nHdl->ram_cf.cf_inc;
+				weightCf_new += nHdl->ram_cf.cf_inc;
+			}
+
+			ptrOut_old = out_src_old;
+			ptrOut_new = out_src_new;
+			for (i = 0; i < ll2; i++)
+			{
+				*out = *ptrOut_old++ * weightCf_old + *ptrOut_new++ * weightCf_new;
+				*out *= nHdl->firfft.ram.normFactor;
+
+				out++;
+				weightCf_old -= nHdl->ram_cf.cf_inc;
+				weightCf_new += nHdl->ram_cf.cf_inc;
+			}
 		}
-
 		nHdl->firfft.ram.phase = (nHdl->firfft.ram.phase + nHdl->firfft.init_cpy.bsize) % nHdl->firfft.derived_cpy.szFftValue;
 
 		return JVX_DSP_NO_ERROR;

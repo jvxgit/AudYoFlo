@@ -156,15 +156,24 @@ CjvxNodeBase1io::accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 jvxErrorType
 CjvxNodeBase1io::accept_input_parameters_stop(jvxErrorType resTest)
 {
+	jvxErrorType res = JVX_NO_ERROR;
 	if (resTest == JVX_NO_ERROR)
 	{
 		update_simple_params_from_ldesc();
 	}
 	else
 	{
-		// We might try to negotiate to the successor!
+		// Forward the error here - update the error code!
+		res = resTest;
 	}
-	return neg_input._pop_constraints();
+
+	// Run the pop in any case..
+	jvxErrorType resL = neg_input._pop_constraints();
+	if (res == JVX_NO_ERROR)
+	{
+		res = resL;
+	}
+	return res;
 }
 
 void
