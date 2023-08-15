@@ -355,6 +355,15 @@ jvxAcousticMeasure::showThisProcessor(jvxMeasurementDataProcessorTask task)
 			retVal = true;
 		}
 		break;
+	case JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS:
+		if (
+			(modeTd == JVX_PLOT_MODE_TD_IR) &&
+			(dataPlot1.oneChan.lBuf) && 
+			(dataPlot2.oneChan.lBuf))
+		{
+			retVal = true;
+		}
+		break;
 	}
 	return retVal;
 }

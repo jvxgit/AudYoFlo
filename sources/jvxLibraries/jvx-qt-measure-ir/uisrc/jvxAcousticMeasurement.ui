@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1490</width>
+    <width>1684</width>
     <height>902</height>
    </rect>
   </property>
@@ -569,7 +569,7 @@
     <widget class="QFrame" name="frame_10">
      <property name="minimumSize">
       <size>
-       <width>50</width>
+       <width>100</width>
        <height>0</height>
       </size>
      </property>
@@ -4752,22 +4752,6 @@
     <hint type="destinationlabel">
      <x>1373</x>
      <y>163</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_td_process</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>acousticMeasure</receiver>
-   <slot>clicked_process_td(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1480</x>
-     <y>70</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1373</x>
-     <y>353</y>
     </hint>
    </hints>
   </connection>

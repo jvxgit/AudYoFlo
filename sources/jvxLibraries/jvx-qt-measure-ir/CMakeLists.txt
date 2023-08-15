@@ -11,6 +11,7 @@ set(LOCAL_UI_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/uisrc/jvxAcousticMeasurement.ui
 	${CMAKE_CURRENT_SOURCE_DIR}/uisrc/jvxMeasureControl.ui
 	${CMAKE_CURRENT_SOURCE_DIR}/uisrc/jvxAcousticEqualizer.ui
+	${CMAKE_CURRENT_SOURCE_DIR}/uisrc/jvxExtractHrtfs.ui
 	)
 
 set(LOCAL_UI_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/uisrc)
@@ -43,6 +44,9 @@ set(LOCAL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxAcousticEqualizer.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxAcousticEqualizer.cpp
+
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxExtractHrtfs.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxExtractHrtfs.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxMeasureControl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxMeasureControl.cpp

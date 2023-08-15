@@ -115,20 +115,24 @@ jvxAcousticEqualizer::terminate()
 jvxErrorType
 jvxAcousticEqualizer::process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld)
 {
+	if (task != jvxMeasurementDataProcessorTask::JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE)
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
 	jvxMeasurementTaskEqualize* eq_data = (jvxMeasurementTaskEqualize*)fld;
 	lIrMeasured = eq_data->len_ir;
 	irMeasured.resize(lIrMeasured);
-	memcpy(irMeasured.data(), eq_data->ir_measured, sizeof(jvxData) * lIrMeasured);
+	memcpy(irMeasured.data(), eq_data->ir_measured, sizeof(jvxData)* lIrMeasured);
 
 	marker_meas_x.resize(eq_data->len_markers_measured);
 	marker_meas_y.resize(eq_data->len_markers_measured);
-	memcpy(marker_meas_x.data(), eq_data->markers_measured_x, sizeof(jvxData) * marker_meas_x.size());
-	memcpy(marker_meas_y.data(), eq_data->markers_measured_y, sizeof(jvxData) * marker_meas_y.size());
+	memcpy(marker_meas_x.data(), eq_data->markers_measured_x, sizeof(jvxData)* marker_meas_x.size());
+	memcpy(marker_meas_y.data(), eq_data->markers_measured_y, sizeof(jvxData)* marker_meas_y.size());
 
 	marker_desired_x.resize(eq_data->len_markers_desired);
 	marker_desired_y.resize(eq_data->len_markers_desired);
-	memcpy(marker_desired_x.data(), eq_data->markers_desired_x, sizeof(jvxData) * marker_desired_x.size());
-	memcpy(marker_desired_y.data(), eq_data->markers_desired_y, sizeof(jvxData) * marker_desired_y.size());
+	memcpy(marker_desired_x.data(), eq_data->markers_desired_x, sizeof(jvxData)* marker_desired_x.size());
+	memcpy(marker_desired_y.data(), eq_data->markers_desired_y, sizeof(jvxData)* marker_desired_y.size());
 
 	dataTag = eq_data->dataTag;
 	measureName = eq_data->measName;

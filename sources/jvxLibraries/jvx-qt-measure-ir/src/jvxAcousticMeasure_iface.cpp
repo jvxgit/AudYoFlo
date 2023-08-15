@@ -78,6 +78,7 @@ jvxAcousticMeasure::jvxAcousticMeasure(QWidget* parent) : QWidget(parent)
 	mouseMode = JVX_MOUSE_MODE_NONE;
 
 	equalizerWidget = NULL;
+	hrtfWidget = nullptr;
 }
 
 jvxAcousticMeasure::~jvxAcousticMeasure()
@@ -98,6 +99,9 @@ jvxAcousticMeasure::getMyQWidget(QWidget** retWidget, jvxSize id )
 	case 1:
 		*retWidget = static_cast<QWidget*> (equalizerWidget);
 		break;
+	case 2:
+		*retWidget = static_cast<QWidget*> (hrtfWidget);
+		break;
 	}
 }
 
@@ -112,7 +116,9 @@ jvxAcousticMeasure::init(IjvxHost* theHost, jvxCBitField mode,
 	this->setupUi(this);
 
 	this->setWindowTitle("Acoustic Measument - base");
+	
 	equalizerWidget = new jvxAcousticEqualizer(this);
+	hrtfWidget = new jvxExtractHrtfs(this);
 
 	for (i = 0; i < JVX_QT_NUMBER_COLORS; i++)
 	{
@@ -232,6 +238,7 @@ jvxAcousticMeasure::init(IjvxHost* theHost, jvxCBitField mode,
 	reset_marker_sec_edit();
 
 	equalizerWidget->init(static_cast<IjvxQtAcousticMeasurement*>(this));
+	hrtfWidget->init(static_cast<IjvxQtAcousticMeasurement*>(this));
 
 	theHostRef = theHost;
 }
@@ -240,6 +247,11 @@ void
 jvxAcousticMeasure::terminate()
 {
 	theHostRef = nullptr;
+
+	hrtfWidget->terminate();
+	delete hrtfWidget;
+	hrtfWidget = nullptr;
+
 	equalizerWidget->terminate();
 	delete equalizerWidget;
 	equalizerWidget = nullptr;
@@ -579,6 +591,9 @@ jvxAcousticMeasure::trigger_processor()
 			case JVX_ACOUSTIC_MEASURE_TASK_STORE_DELAY:
 			case JVX_ACOUSTIC_MEASURE_TASK_STORE_EQUALIZER:
 				break;
+			case JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS:
+				trigger_proc_hrtfs(proc->proc);
+				break;
 			}
 		}
 	}
@@ -611,3 +626,36 @@ jvxAcousticMeasure::trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* pr
 	taskData.samplerate = dataPlot1.oneChan.rate;
 	proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE, &taskData);
 }
+
+void
+jvxAcousticMeasure::trigger_proc_hrtfs(IjvxQtAcousticMeasurement_process* proc)
+{
+	jvxMeasurementTaskExtractHrtfs taskData;
+	jvxBool readyForProcess = true;
+
+	if (!dataPlot1.oneChan.lBuf)
+	{
+		readyForProcess = false;
+	}
+	taskData.ir_data1 = dataPlot1.oneChan.bufIr;
+	taskData.ir_data1_len = dataPlot1.oneChan.lBuf;
+	taskData.ir_data1_rate = dataPlot1.oneChan.rate;
+	taskData.ir_data1_meas_name = dataPlot1.measurement_name.c_str();
+	taskData.ir_data1_chan_name = dataPlot1.channel_name.c_str();
+
+	if (!dataPlot2.oneChan.lBuf)
+	{
+		readyForProcess = false;
+	}
+	taskData.ir_data2 = dataPlot2.oneChan.bufIr;
+	taskData.ir_data2_len = dataPlot2.oneChan.lBuf;
+	taskData.ir_data2_rate = dataPlot2.oneChan.rate;
+	taskData.ir_data2_meas_name = dataPlot2.measurement_name.c_str();
+	taskData.ir_data2_chan_name = dataPlot2.channel_name.c_str();
+
+	if (readyForProcess)
+	{
+		proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS, &taskData);
+	}
+}
+		

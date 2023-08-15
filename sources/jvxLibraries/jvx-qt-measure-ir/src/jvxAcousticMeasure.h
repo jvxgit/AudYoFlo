@@ -7,6 +7,7 @@
 #include "jvxSpNMeasureIr_props.h"
 
 #include "jvxAcousticEqualizer.h"
+#include "jvxExtractHrtfs.h"
 
 #include "jvx-qcp-qt-helpers.h"
 
@@ -221,7 +222,8 @@ private:
 	std::string dataTag;
 
 	jvxAcousticEqualizer* equalizerWidget;
-	
+	jvxExtractHrtfs* hrtfWidget;
+
 	std::map< jvxMeasurementDataProcessorTask, 
 		std::list<oneRegisteredProcessor > > registeredProcessors;
 
@@ -346,7 +348,12 @@ public:
 	void reset_marker_td_edit();
 	void reset_marker_sec_edit();
 	
+	/**
+	 * This function evaluates the currently shown data plots and then shows only those processors which
+	 * fit to the shown data plots.
+	 */
 	jvxBool showThisProcessor(jvxMeasurementDataProcessorTask task);
+
 	jvxErrorType import_data_plot(
 		oneSetDataPlot& dtPlot,
 		const std::string& nmMeas,
@@ -364,6 +371,7 @@ public:
 		IjvxConfigProcessor* processor);
 
 	void trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* proc);
+	void trigger_proc_hrtfs(IjvxQtAcousticMeasurement_process* proc);
 
 signals:
 
