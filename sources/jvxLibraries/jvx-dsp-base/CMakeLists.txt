@@ -53,6 +53,9 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_signal/jvx_signal.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_matrix/jvx_matrix.c
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_conv/jvx_conv.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_conv/jvx_conv.h
+
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_resampler/jvx_fixed_resampler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_matrix/jvx_matrix.h
   )
