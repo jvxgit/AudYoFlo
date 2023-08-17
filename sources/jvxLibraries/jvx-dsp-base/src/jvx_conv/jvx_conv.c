@@ -1,6 +1,19 @@
 #include "jvx_conv/jvx_conv.h"
 #include "jvx_dsp_base.h"
 
+jvxData
+jvx_compute_energy(jvxData* inF, jvxSize ninF)
+{
+	jvxSize i;
+	jvxData out = 0;
+	for (i = 0; i < ninF; i++)
+	{
+		out += *inF * *inF;
+		inF++;
+	}
+	return out;
+}
+
 jvxData 
 jvx_compute_conv_energy(jvxData* inF, jvxSize ninF, jvxData* inS, jvxSize ninS)
 {

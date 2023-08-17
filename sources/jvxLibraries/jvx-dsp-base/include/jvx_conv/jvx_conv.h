@@ -5,6 +5,9 @@
 
 JVX_DSP_LIB_BEGIN
 
+jvxData
+jvx_compute_energy(jvxData* inF, jvxSize ninF);
+
 jvxData 
 jvx_compute_conv_energy(jvxData* in1, jvxSize nin1, jvxData* in2, jvxSize nin2);
 
