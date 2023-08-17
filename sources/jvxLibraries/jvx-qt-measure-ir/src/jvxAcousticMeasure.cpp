@@ -355,7 +355,7 @@ jvxAcousticMeasure::showThisProcessor(jvxMeasurementDataProcessorTask task)
 			retVal = true;
 		}
 		break;
-	case JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS:
+	case JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS:
 		if (
 			(modeTd == JVX_PLOT_MODE_TD_IR) &&
 			(dataPlot1.oneChan.lBuf) && 
@@ -369,7 +369,7 @@ jvxAcousticMeasure::showThisProcessor(jvxMeasurementDataProcessorTask task)
 }
 
 jvxErrorType 
-jvxAcousticMeasure::register_data_processor(const char* descr, jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld)
+jvxAcousticMeasure::register_data_processor(const char* descr, jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld, jvxSize tagId)
 {
 	std::list<oneRegisteredProcessor> newLst;
 	std::list<oneRegisteredProcessor>* lstPtr = &newLst;
@@ -385,7 +385,7 @@ jvxAcousticMeasure::register_data_processor(const char* descr, jvxMeasurementDat
 	auto elmL = lstPtr->begin();
 	for (; elmL != lstPtr->end(); elmL++)
 	{
-		if (elmL->proc == fld)
+		if ((elmL->proc == fld) && (elmL->tagId == tagId))
 		{
 			return JVX_ERROR_DUPLICATE_ENTRY;
 		}
@@ -396,6 +396,7 @@ jvxAcousticMeasure::register_data_processor(const char* descr, jvxMeasurementDat
 	newElm.descr = descr;
 	newElm.proc = fld;
 	newElm.task = task;
+	newElm.tagId = tagId;
 
 	lstPtr->push_back(newElm);
 
@@ -408,7 +409,7 @@ jvxAcousticMeasure::register_data_processor(const char* descr, jvxMeasurementDat
 }
 
 jvxErrorType 
-jvxAcousticMeasure::unregister_data_processor(jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld)
+jvxAcousticMeasure::unregister_data_processor(jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld, jvxSize idTag)
 {
 	auto elm = registeredProcessors.find(task);
 	if (elm != registeredProcessors.end())
@@ -416,7 +417,7 @@ jvxAcousticMeasure::unregister_data_processor(jvxMeasurementDataProcessorTask ta
 		auto elmL = elm->second.begin();
 		for (; elmL != elm->second.end(); elmL++)
 		{
-			if (elmL->proc == fld)
+			if ((elmL->proc == fld) && (elmL->tagId == idTag))
 			{
 				break;
 			}

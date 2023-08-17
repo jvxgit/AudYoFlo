@@ -70,10 +70,12 @@ public:
 	jvxAcousticEqualizer(QWidget* parent);
 	~jvxAcousticEqualizer();
 
-	void init(IjvxQtAcousticMeasurement* refMeasure);
-	void terminate();
+	void init(IjvxQtAcousticMeasurement* refMeasure) override;
+	void terminate() override;
+	jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId) override;
+	QWidget* my_widget() override;
 
-	virtual jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld) override;
+	// ====================================================================================================
 
 	void q_marker_idx(QVector<jvxData>& marker_x, jvxSize& idxMarkLow, jvxSize& idxMarkUp, jvxData f);
 

@@ -10,7 +10,7 @@ typedef enum
 	JVX_ACOUSTIC_MEASURE_TASK_DELAY,
 	JVX_ACOUSTIC_MEASURE_TASK_STORE_DELAY,
 	JVX_ACOUSTIC_MEASURE_TASK_STORE_EQUALIZER,
-	JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS /* jvxMeasurementTaskExtractHrtfs */
+	JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS /* jvxMeasurementTaskPass2Ir */
 } jvxMeasurementDataProcessorTask;
 
 struct jvxMeasurementTaskEqualize
@@ -34,7 +34,7 @@ struct jvxMeasurementTaskEqualize
 	jvxSize samplerate = JVX_SIZE_UNSELECTED;
 };
 
-struct jvxMeasurementTaskExtractHrtfs
+struct jvxMeasurementTaskPass2Ir
 {
 	jvxData* ir_data1 = nullptr;
 	jvxSize ir_data1_len = 0;
@@ -50,12 +50,18 @@ struct jvxMeasurementTaskExtractHrtfs
 
 };
 
+JVX_INTERFACE  IjvxQtAcousticMeasurement;
+
 JVX_INTERFACE IjvxQtAcousticMeasurement_process
 {
 public:
 	virtual ~IjvxQtAcousticMeasurement_process() {};
 
-	virtual jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld) = 0;
+	virtual void init(IjvxQtAcousticMeasurement* refMeasure) = 0;
+	virtual void terminate() = 0;
+	virtual jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId) = 0;
+
+	virtual QWidget* my_widget() = 0;
 };
 
 JVX_INTERFACE IjvxQtAcousticMeasurement : public IjvxQtSpecificHWidget
@@ -66,11 +72,13 @@ public:
 	virtual jvxErrorType register_data_processor(
 		const char* descr,
 		jvxMeasurementDataProcessorTask task,
-		IjvxQtAcousticMeasurement_process* fld) = 0;
+		IjvxQtAcousticMeasurement_process* fld,
+		jvxSize tagId) = 0;
 
 	virtual jvxErrorType unregister_data_processor(
 		jvxMeasurementDataProcessorTask task,
-		IjvxQtAcousticMeasurement_process* fld) = 0;
+		IjvxQtAcousticMeasurement_process* fld, 
+		jvxSize tagId) = 0;
 
 	// =================================================
 

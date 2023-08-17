@@ -30,8 +30,8 @@ jvxExtractHrtfs::init(IjvxQtAcousticMeasurement* refMeasureArg)
 	if (refMeasure)
 	{
 		refMeasure->register_data_processor("Extract HRTFs",
-			JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS,
-			static_cast<IjvxQtAcousticMeasurement_process*>(this));
+			JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS,
+			static_cast<IjvxQtAcousticMeasurement_process*>(this), 0);
 	}
 
 	// Have 2 plots in one diagram
@@ -50,20 +50,20 @@ jvxExtractHrtfs::terminate()
 	{
 		refMeasure->unregister_data_processor(
 			JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE,
-			static_cast<IjvxQtAcousticMeasurement_process*>(this));
+			static_cast<IjvxQtAcousticMeasurement_process*>(this), 0);
 	}
 	refMeasure = NULL;
 }
 
 jvxErrorType
-jvxExtractHrtfs::process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld)
+jvxExtractHrtfs::process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize idTag)
 {
-	if (task != jvxMeasurementDataProcessorTask::JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS)
+	if (task != jvxMeasurementDataProcessorTask::JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS)
 	{
 		return JVX_ERROR_UNSUPPORTED;
 	}
 
-	jvxMeasurementTaskExtractHrtfs* dataTransfer = (jvxMeasurementTaskExtractHrtfs*)fld;
+	jvxMeasurementTaskPass2Ir* dataTransfer = (jvxMeasurementTaskPass2Ir*)fld;
 
 	setData1.irMeasured.resize(dataTransfer->ir_data1_len);
 	memcpy(setData1.irMeasured.data(), dataTransfer->ir_data1, sizeof(jvxData) * dataTransfer->ir_data1_len);
@@ -82,6 +82,12 @@ jvxExtractHrtfs::process_data(jvxMeasurementDataProcessorTask task, jvxHandle* f
 	update_window(); 
 
 	return JVX_NO_ERROR;
+}
+
+QWidget* 
+jvxExtractHrtfs::my_widget()
+{
+	return static_cast<QWidget*>(this);
 }
 
 void

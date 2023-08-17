@@ -6,9 +6,6 @@
 #include "jvxQtAcousticMeasurement.h"
 #include "jvxSpNMeasureIr_props.h"
 
-#include "jvxAcousticEqualizer.h"
-#include "jvxExtractHrtfs.h"
-
 #include "jvx-qcp-qt-helpers.h"
 
 #define JVX_LOG10_EPS 1e-10
@@ -28,6 +25,7 @@ public:
 		jvxMeasurementDataProcessorTask task;
 		IjvxQtAcousticMeasurement_process* proc;
 		std::string descr;
+		jvxSize tagId;
 		oneRegisteredProcessor()
 		{
 			proc = NULL;
@@ -221,8 +219,14 @@ private:
 	std::map<jvxPlotModeEnumSecondary, set_markers> lstSecMarkers;
 	std::string dataTag;
 
-	jvxAcousticEqualizer* equalizerWidget;
-	jvxExtractHrtfs* hrtfWidget;
+	struct oneProcessorAllocated
+	{
+		IjvxQtAcousticMeasurement_process* proc;
+		jvxSize idAlloc;
+	};
+	std::list<oneProcessorAllocated> lstSubProcessors;
+	// equalizerWidget;
+	// hrtfWidget;
 
 	std::map< jvxMeasurementDataProcessorTask, 
 		std::list<oneRegisteredProcessor > > registeredProcessors;
@@ -269,8 +273,8 @@ public:
 
 	// =====================================================================
 
-	virtual jvxErrorType register_data_processor(const char* descr, jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld) override;
-	virtual jvxErrorType unregister_data_processor(jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld) override;
+	virtual jvxErrorType register_data_processor(const char* descr, jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld, jvxSize tagId) override;
+	virtual jvxErrorType unregister_data_processor(jvxMeasurementDataProcessorTask task, IjvxQtAcousticMeasurement_process* fld, jvxSize tagId) override;
 
 	// =====================================================================
 
@@ -370,8 +374,8 @@ public:
 		set_markers& oneSet,
 		IjvxConfigProcessor* processor);
 
-	void trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* proc);
-	void trigger_proc_hrtfs(IjvxQtAcousticMeasurement_process* proc);
+	void trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId);
+	void trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId);
 
 signals:
 

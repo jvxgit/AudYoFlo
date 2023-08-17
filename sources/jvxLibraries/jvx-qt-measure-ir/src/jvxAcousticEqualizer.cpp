@@ -66,7 +66,8 @@ jvxAcousticEqualizer::init(IjvxQtAcousticMeasurement* refMeasureArg)
 	{
 		refMeasure->register_data_processor("Equalize IR",
 			JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE,
-			static_cast<IjvxQtAcousticMeasurement_process*>(this));
+			static_cast<IjvxQtAcousticMeasurement_process*>(this), 
+			JVX_SIZE_UNSELECTED);
 	}
 
 	for (i = 0; i < JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE; i++)
@@ -107,13 +108,13 @@ jvxAcousticEqualizer::terminate()
 	{
 		refMeasure->unregister_data_processor(
 			JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE,
-			static_cast<IjvxQtAcousticMeasurement_process*>(this));
+			static_cast<IjvxQtAcousticMeasurement_process*>(this), JVX_SIZE_UNSELECTED);
 	}
 	refMeasure = NULL;
 }
 
 jvxErrorType
-jvxAcousticEqualizer::process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld)
+jvxAcousticEqualizer::process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId)
 {
 	if (task != jvxMeasurementDataProcessorTask::JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE)
 	{
@@ -148,6 +149,14 @@ jvxAcousticEqualizer::process_data(jvxMeasurementDataProcessorTask task, jvxHand
 	}
 	return JVX_NO_ERROR;
 }
+
+QWidget*
+jvxAcousticEqualizer::my_widget()
+{
+	return static_cast<QWidget*>(this);
+}
+
+// ====================================================================================
 
 void
 jvxAcousticEqualizer::update_window()

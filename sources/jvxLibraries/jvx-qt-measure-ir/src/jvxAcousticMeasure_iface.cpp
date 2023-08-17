@@ -1,4 +1,6 @@
 #include "jvxAcousticMeasure.h"
+#include "jvxAcousticEqualizer.h"
+#include "jvxExtractHrtfs.h"
 
 #define JVX_QT_NUMBER_COLORS 5
 #define JVX_QT_NUMBER_STYLES 3
@@ -6,6 +8,79 @@
 #define JVX_QT_NUMBER_WIDTHS 3
 
 Q_DECLARE_METATYPE(jvxAcousticMeasure::oneRegisteredProcessor*)
+
+extern "C"
+{
+
+#define FUNC_CORE_PROT_DECLARE jvx_acoustic_measure_init_submodule
+#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_acoustic_measure_init_submodule_local
+#define FUNC_CORE_PROT_ARGS IjvxQtAcousticMeasurement_process** procOnReturn, QWidget* parentWidget, jvxSize idAlloc
+#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
+
+#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
+#pragma comment(linker, "/alternatename:jvx_acoustic_measure_init_submodule=jvx_acoustic_measure_init_submodule_local")
+#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
+#pragma comment(linker, "/alternatename:_jvx_acoustic_measure_init_submodule=_jvx_acoustic_measure_init_submodule_local")
+#endif
+
+#include "platform/jvx_platform_weak_defines.h"
+	{
+		std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+		switch (idAlloc)
+		{
+		case 0:
+			*procOnReturn = new jvxAcousticEqualizer(parentWidget);
+			return JVX_NO_ERROR;
+			break;
+		case 1:
+			*procOnReturn = new jvxExtractHrtfs(parentWidget);
+			return JVX_NO_ERROR;
+			break;
+		}
+		return JVX_ERROR_ID_OUT_OF_BOUNDS;
+	}
+
+#undef FUNC_CORE_PROT_DECLARE
+#undef FUNC_CORE_PROT_DECLARE_LOCAL
+#undef FUNC_CORE_PROT_ARGS
+#undef FUNC_CORE_PROT_RETURNVAL
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#define FUNC_CORE_PROT_DECLARE jvx_acoustic_measure_terminate_submodule
+#define FUNC_CORE_PROT_DECLARE_LOCAL jvx_acoustic_measure_terminate_submodule_local
+#define FUNC_CORE_PROT_ARGS IjvxQtAcousticMeasurement_process* procOnReturn, jvxSize idAlloc
+#define FUNC_CORE_PROT_RETURNVAL jvxErrorType
+
+#if defined(JVX_SYS_WINDOWS_MSVC_64BIT)
+#pragma comment(linker, "/alternatename:jvx_acoustic_measure_terminate_submodule=jvx_acoustic_measure_terminate_submodule_local")
+#elif defined(JVX_SYS_WINDOWS_MSVC_32BIT)
+#pragma comment(linker, "/alternatename:_jvx_acoustic_measure_terminate_submodule=_jvx_acoustic_measure_terminate_submodule_local")
+#endif
+
+#include "platform/jvx_platform_weak_defines.h"
+	{
+		switch (idAlloc)
+		{
+		case 0:
+			delete procOnReturn;
+			return JVX_NO_ERROR;
+			break;
+		case 1:
+			delete procOnReturn;
+			return JVX_NO_ERROR;
+			break;
+		}
+		return JVX_ERROR_ID_OUT_OF_BOUNDS;
+	}
+
+#undef FUNC_CORE_PROT_DECLARE
+#undef FUNC_CORE_PROT_DECLARE_LOCAL
+#undef FUNC_CORE_PROT_ARGS
+#undef FUNC_CORE_PROT_RETURNVAL
+}
+
+
+// ==============================================================================
 
 typedef struct
 {
@@ -75,10 +150,7 @@ jvxAcousticMeasure::jvxAcousticMeasure(QWidget* parent) : QWidget(parent)
 	propRef = NULL;
 	modeTd = JVX_PLOT_MODE_TD_IR;
 	modeSec = JVX_PLOT_MODE_SEC_MAG;
-	mouseMode = JVX_MOUSE_MODE_NONE;
-
-	equalizerWidget = NULL;
-	hrtfWidget = nullptr;
+	mouseMode = JVX_MOUSE_MODE_NONE;	
 }
 
 jvxAcousticMeasure::~jvxAcousticMeasure()
@@ -96,12 +168,23 @@ jvxAcousticMeasure::getMyQWidget(QWidget** retWidget, jvxSize id )
 	case 0:
 		*retWidget = static_cast<QWidget*>(this);
 		break;
+	default:
+	{		
+		auto elm = lstSubProcessors.begin();
+		std::advance(elm, id - 1);
+		if (elm != lstSubProcessors.end())
+		{
+			*retWidget = elm->proc->my_widget();
+		}		
+	}
+	/*
 	case 1:
-		*retWidget = static_cast<QWidget*> (equalizerWidget);
+		*retWidget = equalizerWidget->my_widget();
 		break;
 	case 2:
-		*retWidget = static_cast<QWidget*> (hrtfWidget);
+		*retWidget = hrtfWidget->my_widget();// static_cast<QWidget*> (hrtfWidget);
 		break;
+	*/
 	}
 }
 
@@ -117,8 +200,28 @@ jvxAcousticMeasure::init(IjvxHost* theHost, jvxCBitField mode,
 
 	this->setWindowTitle("Acoustic Measument - base");
 	
-	equalizerWidget = new jvxAcousticEqualizer(this);
-	hrtfWidget = new jvxExtractHrtfs(this);
+	jvxSize cnt = 0;
+	while (1)
+	{
+		IjvxQtAcousticMeasurement_process* retPtr = nullptr;
+		jvxErrorType loopRes =
+			jvx_acoustic_measure_init_submodule(&retPtr, this, cnt);
+		if (loopRes == JVX_NO_ERROR)
+		{
+			if (retPtr)
+			{
+				oneProcessorAllocated newElm;
+				newElm.proc = retPtr;
+				newElm.idAlloc = cnt;
+				lstSubProcessors.push_back(newElm);
+			}
+		}
+		else
+		{
+			break;
+		}
+		cnt++;
+	}
 
 	for (i = 0; i < JVX_QT_NUMBER_COLORS; i++)
 	{
@@ -237,9 +340,10 @@ jvxAcousticMeasure::init(IjvxHost* theHost, jvxCBitField mode,
 	reset_marker_td_edit();
 	reset_marker_sec_edit();
 
-	equalizerWidget->init(static_cast<IjvxQtAcousticMeasurement*>(this));
-	hrtfWidget->init(static_cast<IjvxQtAcousticMeasurement*>(this));
-
+	for (auto& elm : lstSubProcessors)
+	{
+		elm.proc->init(static_cast<IjvxQtAcousticMeasurement*>(this));
+	}
 	theHostRef = theHost;
 }
 
@@ -248,13 +352,13 @@ jvxAcousticMeasure::terminate()
 {
 	theHostRef = nullptr;
 
-	hrtfWidget->terminate();
-	delete hrtfWidget;
-	hrtfWidget = nullptr;
-
-	equalizerWidget->terminate();
-	delete equalizerWidget;
-	equalizerWidget = nullptr;
+	jvxSize cnt = 0;
+	for (auto& elm : lstSubProcessors)
+	{
+		elm.proc->terminate();
+		jvx_acoustic_measure_terminate_submodule(elm.proc, elm.idAlloc);
+	}
+	lstSubProcessors.clear();
 }
 
 void 
@@ -585,14 +689,14 @@ jvxAcousticMeasure::trigger_processor()
 			switch (proc->task)
 			{
 			case JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE:
-				trigger_proc_equalizer(proc->proc);
+				trigger_proc_equalizer(proc->proc, proc->tagId);
 				break;
 			case JVX_ACOUSTIC_MEASURE_TASK_DELAY:
 			case JVX_ACOUSTIC_MEASURE_TASK_STORE_DELAY:
 			case JVX_ACOUSTIC_MEASURE_TASK_STORE_EQUALIZER:
 				break;
-			case JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS:
-				trigger_proc_hrtfs(proc->proc);
+			case JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS:
+				trigger_proc_pass2ir(proc->proc, proc->tagId);
 				break;
 			}
 		}
@@ -600,7 +704,7 @@ jvxAcousticMeasure::trigger_processor()
 }
 
 void
-jvxAcousticMeasure::trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* proc)
+jvxAcousticMeasure::trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId)
 {
 	jvxMeasurementTaskEqualize taskData;
 
@@ -624,13 +728,13 @@ jvxAcousticMeasure::trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* pr
 	taskData.chanName = dataPlot1.channel_name.c_str();
 
 	taskData.samplerate = dataPlot1.oneChan.rate;
-	proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE, &taskData);
+	proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_EQUALIZE, &taskData, tagId);
 }
 
 void
-jvxAcousticMeasure::trigger_proc_hrtfs(IjvxQtAcousticMeasurement_process* proc)
+jvxAcousticMeasure::trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId)
 {
-	jvxMeasurementTaskExtractHrtfs taskData;
+	jvxMeasurementTaskPass2Ir taskData;
 	jvxBool readyForProcess = true;
 
 	if (!dataPlot1.oneChan.lBuf)
@@ -655,7 +759,7 @@ jvxAcousticMeasure::trigger_proc_hrtfs(IjvxQtAcousticMeasurement_process* proc)
 
 	if (readyForProcess)
 	{
-		proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_EXTRACT_HRTFS, &taskData);
+		proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS, &taskData, tagId);
 	}
 }
 		

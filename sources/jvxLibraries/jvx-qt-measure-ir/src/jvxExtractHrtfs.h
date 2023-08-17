@@ -54,10 +54,10 @@ public:
 	jvxExtractHrtfs(QWidget* parent);
 	~jvxExtractHrtfs();
 
-	void init(IjvxQtAcousticMeasurement* refMeasure);
-	void terminate();
-
-	virtual jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld) override;
+	void init(IjvxQtAcousticMeasurement* refMeasure) override;
+	void terminate() override;
+	jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId) override;
+	QWidget* my_widget() override;
 
 	void compute_auto();
 	void replot_hrtfs();

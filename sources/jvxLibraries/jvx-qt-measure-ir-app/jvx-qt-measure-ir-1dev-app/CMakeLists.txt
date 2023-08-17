@@ -155,6 +155,7 @@ endif(JVX_OS MATCHES "macosx")
 
 set(JVX_PREPARE_QT_WORKSPACE_VS TRUE)
 set(BUILD_STATIC TRUE)
+set(JVX_AUTOGEN_REPLACEMENT "qt_generated")
 
 # Some common include files
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
