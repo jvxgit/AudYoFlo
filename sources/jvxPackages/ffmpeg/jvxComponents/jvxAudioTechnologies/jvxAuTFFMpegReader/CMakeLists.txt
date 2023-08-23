@@ -58,3 +58,6 @@ set(JVX_COMPONENT_ONLY_STATIC TRUE)
 ## message(FATAL_ERROR "->   ${JVX_FFMPEG_INCLUDE_DIR}")
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+add_dependencies(${JVX_TARGET_NAME_STATIC} jvx-component-templates-base_static)
+
