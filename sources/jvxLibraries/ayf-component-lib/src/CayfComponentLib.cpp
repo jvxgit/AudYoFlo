@@ -1,5 +1,8 @@
 #include "ayf-connection-host.h"
 #include "CayfComponentLib.h"
+#include "common/CjvxConnectorFactory.h"
+
+
 
 /*
 extern jvxErrorType register_module_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, IjvxMinHost** hostOnReturn);
@@ -10,11 +13,29 @@ CayfComponentLib::CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
 {
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
+
+	populateBindingRefs();
 }
 
 CayfComponentLib::~CayfComponentLib()
 {
 
+}
+
+jvxErrorType
+CayfComponentLib::populateBindingRefs()
+{
+
+	// Currently just alocal assignemnt
+	binding.bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
+	binding.ayf_register_module_host_call = ayf_register_module_host;
+	binding.ayf_unregister_module_host_call = ayf_unregister_module_host;
+	binding.ayf_load_config_content_call = ayf_load_config_content;
+	binding.ayf_release_config_content_call = ayf_release_config_content;
+	binding.ayf_attach_component_module_call = ayf_attach_component_module;
+	binding.ayf_detach_component_module_call = ayf_detach_component_module;
+	binding.ayf_forward_text_command_call = ayf_forward_text_command;
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType
@@ -25,11 +46,18 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 	if (res == JVX_NO_ERROR)
 	{
 		jvxApiString astr;
-		ayf_register_module_host(regName.c_str(), astr, this, &this->host, &this->confProcHdl);
+		if (binding.ayf_register_module_host_call)
+		{
+			binding.ayf_register_module_host_call(regName.c_str(), astr, this, &this->host, &this->confProcHdl);
+		}
 		this->hostRef = static_cast<IjvxHiddenInterface*>(this->host);
 		_common_set_min.theHostRef = this->hostRef;		
 
-		ayf_load_config_content(this, &cfgDataInit, nullptr);
+		// If we received a config processor pointer, we load the global configure tokens
+		if (this->confProcHdl)
+		{
+			binding.ayf_load_config_content_call(this, &cfgDataInit, nullptr);
+		}
 	}
 	return res;
 }
@@ -42,12 +70,17 @@ CayfComponentLib::terminate()
 	{
 		if (cfgDataInit)
 		{
-			ayf_release_config_content(this, cfgDataInit);
+			if (this->confProcHdl)
+			{
+				binding.ayf_release_config_content_call(this, cfgDataInit);
+			}
 		}
-		ayf_unregister_module_host(this);
+		binding.ayf_unregister_module_host_call(this);
 	}
 	this->hostRef = nullptr;
 	_common_set_min.theHostRef = nullptr;
+
+	this->confProcHdl = nullptr;
 	CjvxObject::_terminate();
 	return res;
 }
@@ -68,10 +101,16 @@ CayfComponentLib::activate()
 		JVX_PROPERTIES_ALL_START(genComponentLib);
 
 		// Need this link
+		/*
 		_common_set_ocon.ocon = static_cast<IjvxOutputConnector*>(this);
 		_common_set_icon.icon = static_cast<IjvxInputConnector*>(this);
 		_common_set_io_common.theMaster = static_cast<IjvxConnectionMaster*>(this);
+		*/
+		CjvxInputOutputConnector::lds_activate(nullptr, static_cast<IjvxObject*>(this),
+			nullptr, static_cast<IjvxConnectionMaster*>(this), "default", 
+			static_cast<IjvxInputConnector*>(this), static_cast<IjvxOutputConnector*>(this));
 
+		// Allocate the single main node for processing 
 		resC = allocateMainNode(); 
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
@@ -309,6 +348,7 @@ CayfComponentLib::deactivate()
 		this->mainObj = nullptr;
 		this->mainNode = nullptr;
 		
+		CjvxInputOutputConnector::lds_deactivate();
 		resC = _deactivate();
 		assert(resC == JVX_NO_ERROR);
 
@@ -362,7 +402,10 @@ CayfComponentLib::new_text_message_status(int value, char* fldRespond, jvxSize s
 		{
 			// txtMessageResponse = txtMessageCollect;
 			jvxApiString astr;
-			ayf_forward_text_command(txtMessageCollect.c_str(), this, astr);
+			if (binding.ayf_forward_text_command_call)
+			{
+				binding.ayf_forward_text_command_call(txtMessageCollect.c_str(), this, astr);
+			}
 			txtMessageResponse = astr.std_str();
 			txtMessageStatus = ayfTextIoStatus::AYF_TEXT_IO_STATUS_RESPONDING;
 			res = JVX_NO_ERROR;
@@ -393,13 +436,21 @@ CayfComponentLib::new_text_message_status(int value, char* fldRespond, jvxSize s
 jvxErrorType 
 CayfComponentLib::attach_component_module(const std::string& nm, IjvxObject* priObj, IjvxObject* attachMe)
 {
-	return ayf_attach_component_module(nm.c_str(), priObj, attachMe);
+	if (binding.ayf_attach_component_module_call)
+	{
+		return binding.ayf_attach_component_module_call(nm.c_str(), priObj, attachMe);
+	}
+	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType 
 CayfComponentLib::detach_component_module(const std::string& nm, IjvxObject* priObj)
 {
-	return ayf_detach_component_module(nm.c_str(), priObj);
+	if (binding.ayf_detach_component_module_call)
+	{
+		return binding.ayf_detach_component_module_call(nm.c_str(), priObj);
+	}
+	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType

@@ -10,6 +10,48 @@
 #include "pcg_CayfComponentLib.h"
 #include "jvx.h"
 
+enum class ayfHostBindingType
+{
+	// There is no host at all!!
+	AYF_HOST_BINDING_NONE,
+
+	// There is a very minor host binding
+	AYF_HOST_BINDING_MIN,
+
+	// There is a full host binding but embedded somewhere
+	AYF_HOST_BINDING_EMBEDDED_HOST,
+
+	// There is a full host binding
+	AYF_HOST_BINDING_FULL_HOST,
+};
+
+struct ayfHostBindingReferences
+{
+	ayfHostBindingType bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+
+	// An external module is added to host if allowed
+	jvxErrorType(*ayf_register_module_host_call)(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe,
+		IjvxMinHost** hostOnReturn, IjvxConfigProcessor** cfgOnReturn) = nullptr;
+
+	// Unregister external module
+	jvxErrorType(*ayf_unregister_module_host_call)(IjvxObject* regMe) = nullptr;
+
+	// Load config content from host - in most cases due to a postponed load of the module/component
+	jvxErrorType(*ayf_load_config_content_call)(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName) = nullptr;
+
+	// Release the config content
+	jvxErrorType(*ayf_release_config_content_call)(IjvxObject* priObj, jvxConfigData* datOnReturn) = nullptr;
+
+	// Function to attach another component - the secondary component is associated to the first object
+	jvxErrorType(*ayf_attach_component_module_call)(const char* nm, IjvxObject* priObj, IjvxObject* attachMe) = nullptr;
+
+	// Detach the previously attached component
+	jvxErrorType(*ayf_detach_component_module_call)(const char* nm, IjvxObject* priObj) = nullptr;
+
+	// Forward a text token to the host from where the appropriate action is taken
+	jvxErrorType(*ayf_forward_text_command_call)(const char* command, IjvxObject* priObj, jvxApiString& astr) = nullptr;
+};
+
 class CayfComponentLib :
 	public IjvxNode,
 	public CjvxObject,
@@ -44,7 +86,7 @@ protected:
 
 protected:
 	IjvxNode* mainNode = nullptr;
-
+	ayfHostBindingReferences binding;
 private:
 	
 	enum class ayfTextIoStatus
@@ -89,6 +131,8 @@ private:
 public:
 	CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~CayfComponentLib();
+
+	jvxErrorType populateBindingRefs();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate()override;
