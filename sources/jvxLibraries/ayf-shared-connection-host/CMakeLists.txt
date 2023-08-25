@@ -26,10 +26,10 @@ set(BUILD_SHARED TRUE)
 # this changes the name of the output to be followed by "_import"
 # It does NOT produce an import lib in the SDK for all projects which
 # are compiled to form a runtime
-set(JVX_FORCE_RUNTIME_IMPORTLIB TRUE)
+# set(JVX_FORCE_RUNTIME_IMPORTLIB TRUE)
 
 # This allows to copy import lib (.lib file) to sdk also
-set(JVX_SDK_FORCE_DEPLOY_IMPORT_STATIC_LIB TRUE)
+# set(JVX_SDK_FORCE_DEPLOY_IMPORT_STATIC_LIB TRUE)
 
 set(LOCAL_LIBS 
     jvxMHAppMinHostCon_static

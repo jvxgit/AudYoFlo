@@ -28,7 +28,7 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 		_common_set_ocon.theData_out.con_params.buffersize = procParams.bSize;
 		_common_set_ocon.theData_out.con_params.segmentation.x = procParams.bSize;
 		_common_set_ocon.theData_out.con_params.number_channels = procParams.numInChans;
-		_common_set_ocon.theData_out.con_params.segmentation.y = procParams.numInChans;
+		_common_set_ocon.theData_out.con_params.segmentation.y = 1;
 		_common_set_ocon.theData_out.con_params.rate = procParams.sRate;
 		_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
 		_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
@@ -50,9 +50,14 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 		resC = theConnections->ready_for_start(uId_process , &astr);
 		if (resC != JVX_NO_ERROR)
 		{
+			std::cout << "Subsystem not ready, reason: <" << astr.std_str() << ">." << std::endl;
 			genComponentLib::status.errorcode_test.value = jvxErrorType_descr(resC);
 			genComponentLib::status.errordescription_test.value = astr.std_str();
 			goto exit_error;
+		}
+		else
+		{
+			std::cout << "Subsystem ready for processing!" << std::endl;
 		}
 
 		resC = this->prepare();

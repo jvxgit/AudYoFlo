@@ -1,0 +1,10 @@
+EXPORTS 
+
+	ayf_embedding_proxy_init
+	ayf_embedding_proxy_terminate
+
+	ayf_embedding_proxy_host_set
+	ayf_embedding_proxy_host_reset
+		
+		
+		

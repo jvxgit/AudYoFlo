@@ -10,7 +10,8 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
 
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-component-templates-base/include
-  ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-shared-connection-host/include
+  # ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-shared-connection-host/include
+  ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-embedding-proxy/include
   )
 
 set(LOCAL_SOURCES
@@ -24,7 +25,9 @@ set(LOCAL_PCG_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/pcg/CayfComponentLib.pcg)
 
 set(LOCAL_LIBS 
-	ayf-shared-connection-host_import)
+	# ayf-shared-connection-host_import
+	ayf-embedding-proxy_import
+	)
 
 set(BUILD_STATIC TRUE)
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)

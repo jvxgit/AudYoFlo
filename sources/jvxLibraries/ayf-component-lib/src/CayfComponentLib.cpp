@@ -1,8 +1,7 @@
-#include "ayf-connection-host.h"
 #include "CayfComponentLib.h"
 #include "common/CjvxConnectorFactory.h"
 
-
+#include "ayf-embedding-proxy-entries.h"
 
 /*
 extern jvxErrorType register_module_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, IjvxMinHost** hostOnReturn);
@@ -14,7 +13,7 @@ CayfComponentLib::CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 {
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
 
-	populateBindingRefs();
+
 }
 
 CayfComponentLib::~CayfComponentLib()
@@ -25,8 +24,11 @@ CayfComponentLib::~CayfComponentLib()
 jvxErrorType
 CayfComponentLib::populateBindingRefs()
 {
-
+	binding.bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
+	ayf_embedding_proxy_init("MyRegisteredName", &idRegister, &binding, rootPath.c_str());
+	
 	// Currently just alocal assignemnt
+	/*
 	binding.bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
 	binding.ayf_register_module_host_call = ayf_register_module_host;
 	binding.ayf_unregister_module_host_call = ayf_unregister_module_host;
@@ -35,7 +37,21 @@ CayfComponentLib::populateBindingRefs()
 	binding.ayf_attach_component_module_call = ayf_attach_component_module;
 	binding.ayf_detach_component_module_call = ayf_detach_component_module;
 	binding.ayf_forward_text_command_call = ayf_forward_text_command;
+	*/
 	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CayfComponentLib::unpopulateBindingRefs()
+{
+	ayf_embedding_proxy_terminate(idRegister);
+	return JVX_NO_ERROR;
+}
+
+void
+CayfComponentLib::setExecutableRootPath(const std::string& rootPathArg)
+{
+	rootPath = rootPathArg;
 }
 
 jvxErrorType
@@ -45,6 +61,8 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 	res = CjvxObject::_initialize(hostRef);
 	if (res == JVX_NO_ERROR)
 	{
+		populateBindingRefs();
+
 		jvxApiString astr;
 		if (binding.ayf_register_module_host_call)
 		{
@@ -82,12 +100,15 @@ CayfComponentLib::terminate()
 
 	this->confProcHdl = nullptr;
 	CjvxObject::_terminate();
+
+	unpopulateBindingRefs();
 	return res;
 }
 
 jvxErrorType
 CayfComponentLib::activate()
 {
+	jvxApiString astr;
 	jvxErrorType resC = JVX_NO_ERROR;
 	IjvxDataConnections* theConnections = NULL;
 	IjvxDataConnectionProcess* theProc = NULL;
@@ -111,56 +132,51 @@ CayfComponentLib::activate()
 			static_cast<IjvxInputConnector*>(this), static_cast<IjvxOutputConnector*>(this));
 
 		// Allocate the single main node for processing 
-		resC = allocateMainNode(); 
+		resC = allocate_main_node(); 
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
 			this->mainNode = castFromObject<IjvxNode>(this->mainObj);
 			resC = this->mainNode->initialize(this->hostRef);
+
 			if (resC == JVX_NO_ERROR)
 			{
 				this->mainNode->set_location_info(jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
 				
 				resC = this->mainNode->select(nullptr);
-				passConfigSection(this->mainNode, regName);
+
+				this->mainNode->module_reference(&astr, nullptr);
+
+				passConfigSection(this->mainNode, astr.std_str());
 
 			}
 			if (resC == JVX_NO_ERROR)
 			{
-				// Add the sub components
-				props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-				if (props)
-				{
-					IjvxPropertyExtender* pExt = nullptr;
-					jvxCallManagerProperties callMan;
-					jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<IjvxPropertyExtender> rPtr(&pExt);
-					// rPtr.atype(jvx::propertyRawPointerType::apiType::JVX_RAW_POINTER_API_TYPE_DLL);
-					jvxErrorType resL = props->get_property(callMan, rPtr, jPAD("/iface/ex_interface"), jPD(true));
-					if (pExt)
-					{
-						IjvxPropertyExtenderChainControl* propExtSpec = castPropIfExtender< IjvxPropertyExtenderChainControl>(pExt);
-						if (propExtSpec)
-						{
-							propExtSpec->set_stateswitch_node_handler(this);
-							attachAllSubModules(propExtSpec);
-							
-						}
-					}
-
-					retInterfaceObj<IjvxProperties>(this->mainNode, props);
-				}
+				resC = on_main_node_selected();
 			}
 
 			resC = this->mainNode->activate();
 			if (resC == JVX_NO_ERROR)
 			{
-				passConfigSection(this->mainNode, regName);
+				passConfigSection(this->mainNode, astr.std_str());
 
 				// Attach main node to host control
-				attach_component_module(mainNodeName, this, this->mainObj);
+				if (binding.ayf_attach_component_module_call)
+				{
+					resC = binding.ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+				}
 
 				// Create simple connection
 				theConnections = reqInterface<IjvxDataConnections>(this->host);
-				if (theConnections)
+				if (!theConnections)
+				{
+					// Special care here: connect objects locally "by hand"
+					JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS(fdb);
+					JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS_INIT(fdb);
+					jvxChainConnectArguments args; 
+					args.uIdConnection = 1;
+					this->_connect_chain_master(args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+				}
+				else
 				{
 					std::string nmprocess = chainName;
 					jvxSize cnt = 1;
@@ -310,33 +326,17 @@ CayfComponentLib::deactivate()
 		}
 		theConnections = nullptr;
 
-		resC = detach_component_module(mainNodeName, this);
+		if (binding.ayf_detach_component_module_call)
+		{
+			resC = binding.ayf_detach_component_module_call(mainNodeName.c_str(), this);
+		}
 		assert(resC == JVX_NO_ERROR);
 
 		resC = this->mainNode->deactivate();
 		assert(resC == JVX_NO_ERROR);
 
-		// Add the sub components
-		props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-		if (props)
-		{
-			IjvxPropertyExtender* pExt = nullptr;
-			jvxCallManagerProperties callMan;
-			jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<IjvxPropertyExtender> rPtr(&pExt);
-			// rPtr.atype(jvx::propertyRawPointerType::apiType::JVX_RAW_POINTER_API_TYPE_DLL);
-			jvxErrorType resL = props->get_property(callMan,
-				rPtr, jPAD("/iface/ex_interface"), jPD(true));
-			if (pExt)
-			{
-				IjvxPropertyExtenderChainControl* propExtSpec = castPropIfExtender< IjvxPropertyExtenderChainControl>(pExt);
-				if (propExtSpec)
-				{
-					this->detachAllSubModules(propExtSpec);
-					propExtSpec->set_stateswitch_node_handler(nullptr);
-				}
-			}
-			retInterfaceObj<IjvxProperties>(this->mainNode, props);
-		}
+		resC = before_main_node_unselect();
+		assert(resC == JVX_NO_ERROR);
 
 		resC = this->mainNode->unselect();
 		assert(resC == JVX_NO_ERROR);
@@ -344,7 +344,7 @@ CayfComponentLib::deactivate()
 		resC = this->mainNode->terminate();
 		assert(resC == JVX_NO_ERROR);
 
-		deallocateMainNode();
+		deallocate_main_node();
 		this->mainObj = nullptr;
 		this->mainNode = nullptr;
 		
@@ -433,77 +433,29 @@ CayfComponentLib::new_text_message_status(int value, char* fldRespond, jvxSize s
 	return res;
 }
 
-jvxErrorType 
-CayfComponentLib::attach_component_module(const std::string& nm, IjvxObject* priObj, IjvxObject* attachMe)
-{
-	if (binding.ayf_attach_component_module_call)
-	{
-		return binding.ayf_attach_component_module_call(nm.c_str(), priObj, attachMe);
-	}
-	return JVX_ERROR_UNSUPPORTED;
-}
-
-jvxErrorType 
-CayfComponentLib::detach_component_module(const std::string& nm, IjvxObject* priObj)
-{
-	if (binding.ayf_detach_component_module_call)
-	{
-		return binding.ayf_detach_component_module_call(nm.c_str(), priObj);
-	}
-	return JVX_ERROR_UNSUPPORTED;
-}
-
-jvxErrorType
-CayfComponentLib::runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node, const char* moduleName, IjvxObject* theOwner)
-{
-	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
-	switch (ss)
-	{
-	case JVX_STATE_SWITCH_SELECT:
-		res = node->select(theOwner);
-		passConfigSection(node, moduleName);
-		break;
-	case JVX_STATE_SWITCH_ACTIVATE:
-		res = node->activate();
-		passConfigSection(node, moduleName);
-		break;
-	case JVX_STATE_SWITCH_DEACTIVATE:
-		res = node->deactivate();
-		break;
-	case JVX_STATE_SWITCH_UNSELECT:
-		res = node->unselect();
-		break;
-	default:
-		assert(0);
-	}
-	return res;
-}
-
-jvxErrorType
-CayfComponentLib::componentsAboutToConnect()
-{
-	return JVX_NO_ERROR;
-}
-
 jvxErrorType
 CayfComponentLib::passConfigSection(IjvxSimpleNode* node, const std::string& moduleName)
 {
+	jvxErrorType res = JVX_NO_ERROR;
 	jvxConfigData* datSec = nullptr;
 	if (confProcHdl && cfgDataInit)
 	{
 		confProcHdl->getReferenceEntryCurrentSection_name(cfgDataInit, &datSec, moduleName.c_str());
 		if (datSec)
 		{
+
+			// The passed configuration is a section with the name as it fits. We need not search for any 
+			// sub section to match it properly
 			IjvxConfiguration* cfg = reqInterfaceObj<IjvxConfiguration>(node);
 			if (cfg)
 			{
 				jvxCallManagerConfiguration callMan;
-				cfg->put_configuration(&callMan, confProcHdl, datSec);
-				retInterfaceObj<IjvxConfiguration>(node,cfg);
+				res = cfg->put_configuration(&callMan, confProcHdl, datSec);
+				retInterfaceObj<IjvxConfiguration>(node, cfg);
 			}
 		}
 	}
-	return JVX_NO_ERROR;
+	return res;
 }
 
 // Callback to report that the system is ready now
