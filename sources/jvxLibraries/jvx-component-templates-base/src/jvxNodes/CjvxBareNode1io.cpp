@@ -182,8 +182,11 @@ CjvxBareNode1io::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize idRuntime = JVX_SIZE_UNSELECTED;
-	_common_set.theUniqueId->obtain_unique_id(&idRuntime, _common_set.theDescriptor.c_str());
-		
+	if (_common_set.theUniqueId)
+	{
+		_common_set.theUniqueId->obtain_unique_id(&idRuntime, _common_set.theDescriptor.c_str());
+	}
+
 	start_autostart();
 
 	res = _start_connect_icon(true, idRuntime JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -209,8 +212,10 @@ CjvxBareNode1io::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxSize idRuntime = JVX_SIZE_UNSELECTED;
 	res = _stop_connect_icon(true, &idRuntime JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
-	_common_set.theUniqueId->release_unique_id(idRuntime);
-	
+	if (_common_set.theUniqueId)
+	{
+		_common_set.theUniqueId->release_unique_id(idRuntime);
+	}
 	stop_autostart();
 	return res;
 };

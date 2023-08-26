@@ -3,6 +3,60 @@
 
 #include "ayf-embedding-proxy-entries.h"
 
+#include "jvxHosts/CjvxDataConnections.h"
+
+#define Q(x) #x
+#define Quotes(x) Q(x)
+#define SET_DLL_REFERENCE(ret, entry) ret. ## entry ## _call = (entry) JVX_GETPROCADDRESS(proxyLibHandle, Quotes(entry))
+
+// Create a local data connections object if required
+class myLocalHost : public IjvxDataConnections, public CjvxDataConnections, public IjvxHiddenInterface
+{
+public:
+
+	jvxErrorType request_hidden_interface(jvxInterfaceType ifTp, jvxHandle** retPtr) override
+	{
+		switch (ifTp)
+		{
+		case JVX_INTERFACE_DATA_CONNECTIONS:
+			if (retPtr)
+			{
+				*retPtr = reinterpret_cast<jvxHandle*>(static_cast<IjvxDataConnections*>(this));
+			}
+			return JVX_NO_ERROR;
+			break;
+		default:
+			break;
+		}
+		return JVX_ERROR_UNSUPPORTED;
+	}
+
+	jvxErrorType return_hidden_interface(jvxInterfaceType ifTp, jvxHandle* ptrRet)
+	{
+		switch (ifTp)
+		{
+		case JVX_INTERFACE_DATA_CONNECTIONS:
+			if (ptrRet == reinterpret_cast<jvxHandle*>(static_cast<IjvxDataConnections*>(this)))
+			{
+				return JVX_NO_ERROR;
+			}
+			return JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		default:
+			break;
+		}
+		return JVX_ERROR_UNSUPPORTED;
+	}
+
+	jvxErrorType object_hidden_interface(IjvxObject** objRef)
+	{
+		if (objRef) *objRef = nullptr;
+		return JVX_NO_ERROR;
+	}
+
+#include "codeFragments/simplify/jvxDataConnections_simplify.h"
+};
+
 /*
 extern jvxErrorType register_module_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, IjvxMinHost** hostOnReturn);
 extern jvxErrorType unregister_module_host(IjvxObject* regMe);
@@ -24,8 +78,19 @@ CayfComponentLib::~CayfComponentLib()
 jvxErrorType
 CayfComponentLib::populateBindingRefs()
 {
-	binding.bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
-	ayf_embedding_proxy_init("MyRegisteredName", &idRegister, &binding, rootPath.c_str());
+	std::string fNameDll = "ayf-embedding-proxy_import.dll";
+	proxyLibHandle = JVX_LOADLIBRARY(fNameDll.c_str());
+	if (proxyLibHandle != JVX_HMODULE_INVALID)
+	{
+		SET_DLL_REFERENCE(proxyReferences, ayf_embedding_proxy_init);
+		SET_DLL_REFERENCE(proxyReferences, ayf_embedding_proxy_terminate);
+	}
+
+	binding.bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+	if (proxyReferences.ayf_embedding_proxy_init_call)
+	{
+		proxyReferences.ayf_embedding_proxy_init_call("MyRegisteredName", &idRegister, &binding, rootPath.c_str());
+	}
 	
 	// Currently just alocal assignemnt
 	/*
@@ -44,7 +109,13 @@ CayfComponentLib::populateBindingRefs()
 jvxErrorType
 CayfComponentLib::unpopulateBindingRefs()
 {
-	ayf_embedding_proxy_terminate(idRegister);
+	if(proxyReferences.ayf_embedding_proxy_terminate_call)
+	{
+		proxyReferences.ayf_embedding_proxy_terminate_call(idRegister);
+		JVX_UNLOADLIBRARY(proxyLibHandle);
+		proxyLibHandle = JVX_HMODULE_INVALID;
+	}
+
 	return JVX_NO_ERROR;
 }
 
@@ -66,9 +137,17 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 		jvxApiString astr;
 		if (binding.ayf_register_module_host_call)
 		{
-			binding.ayf_register_module_host_call(regName.c_str(), astr, this, &this->host, &this->confProcHdl);
+			binding.ayf_register_module_host_call(regName.c_str(), astr, this, &this->minHostRef, &this->confProcHdl);
 		}
-		this->hostRef = static_cast<IjvxHiddenInterface*>(this->host);
+		this->hostRef = static_cast<IjvxHiddenInterface*>(this->minHostRef);
+
+		// If there is no host embedding available, open this tiny local host implementation
+		if (this->hostRef == nullptr)
+		{
+			JVX_DSP_SAFE_ALLOCATE_OBJECT(locHost, myLocalHost);
+			this->hostRef = locHost;
+		}
+
 		_common_set_min.theHostRef = this->hostRef;		
 
 		// If we received a config processor pointer, we load the global configure tokens
@@ -84,17 +163,28 @@ jvxErrorType
 CayfComponentLib::terminate()
 {
 	jvxErrorType res = JVX_NO_ERROR;	
-	if (_common_set_min.theHostRef)
+
+	if (cfgDataInit)
 	{
-		if (cfgDataInit)
+		if (this->confProcHdl)
 		{
-			if (this->confProcHdl)
-			{
-				binding.ayf_release_config_content_call(this, cfgDataInit);
-			}
+			binding.ayf_release_config_content_call(this, cfgDataInit);
 		}
-		binding.ayf_unregister_module_host_call(this);
 	}
+	
+	if (locHost)
+	{
+		JVX_DSP_SAFE_DELETE_OBJECT(locHost);
+	}
+	else
+	{
+		if (binding.ayf_unregister_module_host_call)
+		{
+			binding.ayf_unregister_module_host_call(this);
+		}
+		this->minHostRef = nullptr;
+	}
+
 	this->hostRef = nullptr;
 	_common_set_min.theHostRef = nullptr;
 
@@ -166,110 +256,101 @@ CayfComponentLib::activate()
 				}
 
 				// Create simple connection
-				theConnections = reqInterface<IjvxDataConnections>(this->host);
-				if (!theConnections)
+				theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
+				assert(theConnections);
+
+				std::string nmprocess = chainName;
+				jvxSize cnt = 1;
+				jvxBool interceptors = false;
+				jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
+				jvxBool preventStore = true;
+				IjvxConnectorFactory* iFac = nullptr;
+				IjvxInputConnectorSelect* icon = nullptr;
+				IjvxOutputConnectorSelect* ocon = nullptr;
+				jvxSize uId_bridge_dev_node = JVX_SIZE_UNSELECTED;
+				jvxSize uId_bridge_node_dev = JVX_SIZE_UNSELECTED;
+				iFac = reqInterfaceObj< IjvxConnectorFactory>(this->mainNode);
+				if (iFac)
 				{
-					// Special care here: connect objects locally "by hand"
-					JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS(fdb);
-					JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS_INIT(fdb);
-					jvxChainConnectArguments args; 
-					args.uIdConnection = 1;
-					this->_connect_chain_master(args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-				}
-				else
-				{
-					std::string nmprocess = chainName;
-					jvxSize cnt = 1;
-					jvxBool interceptors = false;
-					jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
-					jvxBool preventStore = true;
-					IjvxConnectorFactory* iFac = nullptr;
-					IjvxInputConnectorSelect* icon = nullptr;
-					IjvxOutputConnectorSelect* ocon = nullptr;
-					jvxSize uId_bridge_dev_node = JVX_SIZE_UNSELECTED;
-					jvxSize uId_bridge_node_dev = JVX_SIZE_UNSELECTED;
-					iFac = reqInterfaceObj< IjvxConnectorFactory>(this->mainNode);
-					if (iFac)
+					jvxSize numIcons = 0;
+					jvxSize numOcons = 0;
+					iFac->number_input_connectors(&numIcons);
+					iFac->number_output_connectors(&numOcons);
+					if ((numIcons > 0) && (numOcons > 0))
 					{
-						jvxSize numIcons = 0;
-						jvxSize numOcons = 0;
-						iFac->number_input_connectors(&numIcons);
-						iFac->number_output_connectors(&numOcons);
-						if ((numIcons > 0) && (numOcons > 0))
+						iFac->reference_input_connector(0, &icon);
+						iFac->reference_output_connector(0, &ocon);
+						if (icon && ocon)
 						{
-							iFac->reference_input_connector(0, &icon);
-							iFac->reference_output_connector(0, &ocon);
-							if (icon && ocon)
+							resC = JVX_ERROR_DUPLICATE_ENTRY;
+							while (1)
 							{
-								resC = JVX_ERROR_DUPLICATE_ENTRY;
-								while (1)
-								{
 
-									resC = theConnections->create_connection_process(nmprocess.c_str(), &uId_process, interceptors, false, false, false, idProcDepends);
-									if (resC == JVX_NO_ERROR)
-									{
-										break;
-									}
-									nmprocess = chainName + "(" + jvx_size2String(cnt) + ")";
-									cnt++;
-
-									if (cnt >= 10)
-									{
-										break;
-									}
-								}
-
+								resC = theConnections->create_connection_process(nmprocess.c_str(), &uId_process, interceptors, false, false, false, idProcDepends);
 								if (resC == JVX_NO_ERROR)
 								{
-									resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
+									break;
 								}
+								nmprocess = chainName + "(" + jvx_size2String(cnt) + ")";
+								cnt++;
 
-								if (resC == JVX_NO_ERROR)
+								if (cnt >= 10)
 								{
-									resC = theProc->set_connection_context(theConnections);
+									break;
 								}
-
-								if (resC == JVX_NO_ERROR)
-								{
-									// Do not create an entry in the config file by actively preventing it!
-									resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore);
-								}
-
-								if (resC == JVX_NO_ERROR)
-								{
-									// We need to specify this object as the owener, otherwise, the connection will
-									// be removed before the "deactivate" member function is called
-									resC = theProc->associate_master(static_cast<IjvxConnectionMaster*>(this), nullptr);
-								}
-
-								if (resC == JVX_NO_ERROR)
-								{
-									resC = theProc->create_bridge(static_cast<IjvxOutputConnector*>(this), icon, "Device to node bridge", &uId_bridge_dev_node, false, false);
-								}
-
-								if (resC == JVX_NO_ERROR)
-								{
-									resC = theProc->create_bridge(ocon, static_cast<IjvxInputConnector*>(this), "Node to device bridge", &uId_bridge_node_dev, false, false);
-								}
-
-								// Prevent that we run the test function immediately after connect
-								theProc->set_test_on_connect(false);
-
-								if (resC == JVX_NO_ERROR)
-								{
-									resC = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-								}
-
-								theConnections->return_reference_connection_process(theProc);
-								theProc = nullptr;
 							}
-							retInterfaceObj< IjvxConnectorFactory>(this->mainNode, iFac);
-							iFac = nullptr;
+
+							if (resC == JVX_NO_ERROR)
+							{
+								resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
+							}
+
+							if (resC == JVX_NO_ERROR)
+							{
+								resC = theProc->set_connection_context(theConnections);
+							}
+
+							if (resC == JVX_NO_ERROR)
+							{
+								// Do not create an entry in the config file by actively preventing it!
+								resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore);
+							}
+
+							if (resC == JVX_NO_ERROR)
+							{
+								// We need to specify this object as the owener, otherwise, the connection will
+								// be removed before the "deactivate" member function is called
+								resC = theProc->associate_master(static_cast<IjvxConnectionMaster*>(this), nullptr);
+							}
+
+							if (resC == JVX_NO_ERROR)
+							{
+								resC = theProc->create_bridge(static_cast<IjvxOutputConnector*>(this), icon, "Device to node bridge", &uId_bridge_dev_node, false, false);
+							}
+
+							if (resC == JVX_NO_ERROR)
+							{
+								resC = theProc->create_bridge(ocon, static_cast<IjvxInputConnector*>(this), "Node to device bridge", &uId_bridge_node_dev, false, false);
+							}
+
+							// Prevent that we run the test function immediately after connect
+							theProc->set_test_on_connect(false);
+
+							if (resC == JVX_NO_ERROR)
+							{
+								resC = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+							}
+
+							theConnections->return_reference_connection_process(theProc);
+							theProc = nullptr;
 						}
+						retInterfaceObj< IjvxConnectorFactory>(this->mainNode, iFac);
+						iFac = nullptr;
 					}
-					retInterface<IjvxDataConnections>(this->host, theConnections);
-					theConnections = nullptr;
 				}
+				retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+				theConnections = nullptr;
+
 			} // resC = this->mainNode->activate(); if (resC == JVX_NO_ERROR)
 		}
 	}
@@ -302,7 +383,7 @@ CayfComponentLib::deactivate()
 	IjvxDataConnections* theConnections = NULL;
 	IjvxDataConnectionProcess* theProc = NULL;
 	IjvxProperties* props = nullptr;
-	theConnections = reqInterface<IjvxDataConnections>(this->host);
+	theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
 	resC = _pre_check_deactivate();
 	if (resC == JVX_NO_ERROR)
 	{
@@ -322,7 +403,7 @@ CayfComponentLib::deactivate()
 				assert(resC == JVX_NO_ERROR);
 			}
 			uId_process = JVX_SIZE_UNSELECTED;
-			retInterface<IjvxDataConnections>(this->host, theConnections);
+			retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 		}
 		theConnections = nullptr;
 

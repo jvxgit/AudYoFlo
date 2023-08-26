@@ -9,7 +9,7 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 	IjvxDataConnections* theConnections = NULL;
 	IjvxDataConnectionProcess* theProc = NULL;
 	jvxApiString astr;
-	theConnections = reqInterface<IjvxDataConnections>(this->host);
+	theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
 	if (theConnections)
 	{
 		resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
@@ -76,7 +76,7 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 			goto exit_error;
 		}
 		theConnections->return_reference_connection_process(theProc);
-		retInterface<IjvxDataConnections>(this->host, theConnections);
+		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 	}
 	return JVX_NO_ERROR;
 
@@ -87,7 +87,7 @@ exit_error:
 		{
 			theConnections->return_reference_connection_process(theProc);
 		}
-		retInterface<IjvxDataConnections>(this->host, theConnections);
+		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 	}
 	return resC;
 }
@@ -149,7 +149,7 @@ CayfComponentLib::stopProcessor()
 	this->state(&stat);
 	if (stat > JVX_STATE_ACTIVE)
 	{
-		theConnections = reqInterface<IjvxDataConnections>(this->host);
+		theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
 		assert(theConnections);
 
 		resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
@@ -173,7 +173,7 @@ CayfComponentLib::stopProcessor()
 			assert(resC == JVX_NO_ERROR);
 		}
 		theConnections->return_reference_connection_process(theProc);
-		retInterface<IjvxDataConnections>(this->host, theConnections);
+		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 		procParams.reset();
 	}
 	return JVX_NO_ERROR;

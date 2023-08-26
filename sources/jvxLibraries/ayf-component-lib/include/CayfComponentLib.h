@@ -11,7 +11,10 @@
 #include "jvx.h"
 
 #include "ayf-embedding-proxy.h"
+#include "ayf-embedding-proxy-entries.h"
 
+class myLocalHost;
+	
 class CayfComponentLib :
 	public IjvxNode,
 	public CjvxObject,
@@ -58,7 +61,7 @@ private:
 	};
 
 
-	IjvxMinHost* host = nullptr;
+	IjvxMinHost* minHostRef = nullptr;
 	IjvxHiddenInterface* hostRef = nullptr;
 
 	jvxSize uId_process = JVX_SIZE_UNSELECTED;
@@ -89,6 +92,12 @@ private:
 	ayfTextIoStatus txtMessageStatus = ayfTextIoStatus::AYF_TEXT_IO_STATUS_INIT;
 
 	std::string rootPath;
+
+	myLocalHost* locHost = nullptr;
+	IjvxHiddenInterface* localAllocatedHost = nullptr;
+
+	JVX_HMODULE proxyLibHandle = JVX_HMODULE_INVALID;
+	ayfEmbeddingProxyReferences proxyReferences;
 
 public:
 	CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

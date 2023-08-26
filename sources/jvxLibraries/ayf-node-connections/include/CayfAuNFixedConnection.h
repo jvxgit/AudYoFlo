@@ -12,6 +12,8 @@ namespace AyfConnection
 		public HjvxMicroConnection_hooks_simple,
 		public HjvxMicroConnection_hooks_fwd
 	{
+		jvxSize idRuntimeLocal = JVX_SIZE_UNSELECTED;
+
 	public:
 
 		JVX_CALLINGCONVENTION CayfAuNFixedConnection(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
@@ -239,16 +241,24 @@ namespace AyfConnection
 
 		;
 		virtual jvxErrorType hook_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
-		{
-			jvxSize idRuntime = JVX_SIZE_UNSELECTED;
-			CayfAuNConnection<S>::_common_set.theUniqueId->obtain_unique_id(&idRuntime, CayfAuNConnection<S>::_common_set.theDescriptor.c_str());
-			return CayfAuNConnection<S>::_start_connect_icon(true, idRuntime JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		{			
+			if (CayfAuNConnection<S>::_common_set.theUniqueId)
+			{
+				CayfAuNConnection<S>::_common_set.theUniqueId->obtain_unique_id(&idRuntimeLocal, CayfAuNConnection<S>::_common_set.theDescriptor.c_str());
+			}
+			return CayfAuNConnection<S>::_start_connect_icon(true, idRuntimeLocal JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 
 		;
 		virtual jvxErrorType hook_stop(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 		{
-			return CayfAuNConnection<S>::_stop_connect_icon(true, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			jvxErrorType res = CayfAuNConnection<S>::_stop_connect_icon(true, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if(CayfAuNConnection<S>::_common_set.theUniqueId)
+			{
+				CayfAuNConnection<S>::_common_set.theUniqueId->release_unique_id(idRuntimeLocal);
+				idRuntimeLocal = JVX_SIZE_UNSELECTED;
+			}
+			return res;
 		}
 
 		virtual jvxErrorType hook_process_start(
