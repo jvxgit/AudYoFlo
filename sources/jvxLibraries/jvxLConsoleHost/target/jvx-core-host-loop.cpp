@@ -192,8 +192,8 @@ typedef struct
 
 
 // ===================================================================================
-
-int main(int argc, char* argv[])
+void
+jvx_core_host_loop(int argc, char* argv[])
 {
 	jvxSize i, j;
 	jvxErrorType res = JVX_NO_ERROR, resL;
@@ -420,7 +420,7 @@ int main(int argc, char* argv[])
 				evLElm.autoDeleteOnProcess = c_false;
 
 				res = eLoop_hdl->event_schedule(&evLElm, NULL, NULL);
-				
+
 				assert(res == JVX_NO_ERROR);
 
 				res = eLoop_hdl->wait_stop(10000);
@@ -451,13 +451,11 @@ int main(int argc, char* argv[])
 
 		jvxEStandalone_terminate(evLoop_obj);
 	}
-	
+
 	if (generatedArgs)
 	{
 		delete[](newArgv);
 		newArgc = 0;
 	}
-
-	return(0);
 }
 

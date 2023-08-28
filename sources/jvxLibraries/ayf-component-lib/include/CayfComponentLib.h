@@ -61,7 +61,7 @@ private:
 	};
 
 
-	IjvxMinHost* minHostRef = nullptr;
+	IjvxMinHost* minHostRef = nullptr; 
 	IjvxHiddenInterface* hostRef = nullptr;
 
 	jvxSize uId_process = JVX_SIZE_UNSELECTED;

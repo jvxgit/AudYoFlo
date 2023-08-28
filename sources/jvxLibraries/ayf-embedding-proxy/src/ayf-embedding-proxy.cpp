@@ -1,9 +1,7 @@
 #include "ayf-embedding-proxy.h"
 
-#ifdef JVX_OS_WINDOWS
-#define MIN_HOST_DLL_NAME "ayf-shared-connection-host.dll"
-#define EMB_HOST_DLL_NAME "ayf-shared-embedded-host.dll"
-#endif
+#include "ayf-embedding-libs.h"
+
 #define EMBEDDED_HOST_SELECTION "EMBEDDED_HOST"
 #define EMBEDDED_HOST_SO_ASSIGN_MIN_HOST "EMBEDDED_HOST_DLL_MIN_HOST"
 #define EMBEDDED_HOST_SO_ASSIGN_EMB_HOST "EMBEDDED_HOST_DLL_EMB_HOST"
@@ -141,32 +139,6 @@ extern "C"
 				}
 			}
 			
-			jvxBool runLoop = true;
-			while (runLoop)
-			{
-				switch (embedId)
-				{
-				case (int)ayfHostBindingType::AYF_HOST_BINDING_MIN:
-
-					messagesConsole.push_back("Trying to open min host <loadDllName>.");
-					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
-					if (modHostPart != JVX_HMODULE_INVALID)
-					{
-						messagesConsole.push_back("Opening successful!");
-						registerMinHost(retReferences, modHostPart);
-						runLoop = false;
-					}
-					break;
-				case (int)ayfHostBindingType::AYF_HOST_BINDING_NONE:
-					messagesConsole.push_back("Running with no binding.");
-					retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
-					runLoop = false;
-					break;
-				}
-
-				embedId--;
-			}
-
 			if (openConsole)
 			{
 #ifdef JVX_OS_WINDOWS
@@ -182,11 +154,38 @@ extern "C"
 				consoleAttached = true;
 #endif
 			}
+
+			jvxBool runLoop = true;
+			while (runLoop)
+			{
+				switch (embedId)
+				{
+				case (int)ayfHostBindingType::AYF_HOST_BINDING_MIN:
+
+					std::cout << "Trying to open min host <loadDllName>." << std::endl;
+					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
+					if (modHostPart != JVX_HMODULE_INVALID)
+					{
+						std::cout << " --> Opening successful!" << std::endl;
+						registerMinHost(retReferences, modHostPart);
+						runLoop = false;
+					}
+					break;
+				case (int)ayfHostBindingType::AYF_HOST_BINDING_NONE:
+					std::cout << " --> Running with no binding." << std::endl;
+					retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+					runLoop = false;
+					break;
+				}
+
+				embedId--;
+			}
+
 			bindTypeFirstModule = retReferences->bindType;
 			registeredInstances[uId] = nm;
 			if (idRegistered) *idRegistered = uId;
 			uId++;
-		}
+		} // if (registeredInstances.size() == 0)
 		else
 		{
 			switch (bindTypeFirstModule)

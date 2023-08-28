@@ -1,6 +1,6 @@
 jvx_exclude_platform("Emscripten")
 
-set(PROJECT_NAME ayf-shared-connection-host)
+set(PROJECT_NAME ayf-shared-connection-min-host)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 include_directories(

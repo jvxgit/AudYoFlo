@@ -91,8 +91,10 @@ CjvxBinaryWebSockets::unregister_binary_socket_main_loop(jvxHandle* refCtxt)
 void 
 CjvxBinaryWebSockets::force_stop_properties(jvxHandle* hdl)
 {
-	// What could be a reason to popup here?
-	assert(0);
+	// We may end up here if the web console app stops itself:
+	// The message queue is already down but the last websocket message arrived. 
+	// In that case we need to remove all properties from the observer list "by hand"
+	// This only affects the additional udp update routines.
 	if (hdl == webSocketPeriodic.theCtxt.context_conn)
 	{
 		auto elm = lstUpdateProperties.begin();

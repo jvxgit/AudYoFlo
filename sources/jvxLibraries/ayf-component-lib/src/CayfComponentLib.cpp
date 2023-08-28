@@ -2,6 +2,7 @@
 #include "common/CjvxConnectorFactory.h"
 
 #include "ayf-embedding-proxy-entries.h"
+#include "ayf-embedding-libs.h"
 
 #include "jvxHosts/CjvxDataConnections.h"
 
@@ -78,7 +79,7 @@ CayfComponentLib::~CayfComponentLib()
 jvxErrorType
 CayfComponentLib::populateBindingRefs()
 {
-	std::string fNameDll = "ayf-embedding-proxy_import.dll";
+	std::string fNameDll = AYF_EMBEDDING_PROXY_HOST;
 	proxyLibHandle = JVX_LOADLIBRARY(fNameDll.c_str());
 	if (proxyLibHandle != JVX_HMODULE_INVALID)
 	{

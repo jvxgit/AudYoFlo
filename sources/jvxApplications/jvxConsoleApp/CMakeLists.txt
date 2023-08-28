@@ -12,6 +12,7 @@ include_directories(
   ${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHAppHost/
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleTools/include
+  ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleHost/include
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
 ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-host-json/include
 ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-json/include
@@ -23,7 +24,7 @@ ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-json/include
 set(LOCAL_COMPILE_DEFINITIONS "COMPILE_FOR_CONSOLE")
 
 set(LOCAL_LIBS
-	jvxLConsoleHost-shared_static
+	jvxLConsoleHostApp-shared_static
 	)
 
 force_console_app()

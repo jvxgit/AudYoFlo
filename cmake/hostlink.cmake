@@ -29,7 +29,7 @@
 
 			# Link with console host
 			set(LOCAL_LIBS ${LOCAL_LIBS}				
-				jvxLConsoleHost-static_static
+				jvxLConsoleHostApp-static_static
 				jvxLWebConsoleTools_static
 				)
 			# In case of standalone builds, we need to pull in some other libraries

@@ -4,6 +4,7 @@
 #include "CjvxWebControl_fe.h"
 #include "CjvxConsoleHost_fe_console.h"
 #include "CjvxConsoleHost_be_drivehost.h"
+#include "jvx-core-host-loop.h"
 
 static CjvxConsoleHost_fe_console* theConsole_fe = NULL;
 static CjvxWebControl_fe* theWeb_fe = NULL;
@@ -143,4 +144,10 @@ jvxErrorType jvx_invalidate_factoryhost_features(configureFactoryHost_features* 
 {
 	return(JVX_NO_ERROR);
 }
+}
+
+int main(int argc, char* argv[])
+{
+	jvx_core_host_loop(argc, argv);
+	return(0);
 }

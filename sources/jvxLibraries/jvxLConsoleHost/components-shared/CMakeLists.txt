@@ -6,7 +6,8 @@ set(PROJECT_NAME jvxLConsoleHost-shared)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 set(LOCAL_SOURCES
-  ${CMAKE_CURRENT_SOURCE_DIR}/../target/main.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/../include/jvx-core-host-loop.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/../target/jvx-core-host-loop.cpp
   )
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${JVX_CMAKE_C_FLAGS_EXEC} ${JVX_PLATFORM_FLAGS}")

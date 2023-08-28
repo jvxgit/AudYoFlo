@@ -15,6 +15,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleTools/include
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLWebConsoleTools/include
+  ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleHost/include
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_BINARY_DIR}/base/sources/jvxTools/jvxTWebServer
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-json/include
@@ -27,7 +28,7 @@ include_directories(
 set(LOCAL_COMPILE_DEFINITIONS "COMPILE_FOR_CONSOLE")
 
 set(LOCAL_LIBS
-	jvxLConsoleHost-shared_static
+	jvxLConsoleHostApp-shared_static
 	jvxLWebConsoleTools_static
 	)
 
