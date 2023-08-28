@@ -497,7 +497,7 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST);
 		reqHandle.request_command_in_main_thread(request, false);
 
-		// We are the primary frontend!!
+		// We are the primary backend!!
 		for(auto& elm: this->linkedSecFrontends)
 		{		
 			if (elm.fwd)
