@@ -505,6 +505,7 @@ endif()
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-node-connections
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-shared-connection-min-host
+	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-shared-connection-full-host
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-component-lib
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-embedding-proxy
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-link-frontend
