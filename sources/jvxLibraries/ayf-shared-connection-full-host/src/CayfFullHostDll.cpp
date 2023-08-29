@@ -1,6 +1,5 @@
-//#include "CayfGlobalHostClass.h"
-//CayfGlobalHostClass globalHostInstance;
-#include "jvx.h"
+#include "CayfFullHostClass.h"
+CayfFullHostClass globalHostInstance;
 
 extern "C"
 {

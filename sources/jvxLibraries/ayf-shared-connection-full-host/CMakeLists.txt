@@ -16,6 +16,10 @@ include_directories(
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostDll.cpp
+  
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostClass.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostClass.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-connect-host.def)
 
 set(BUILD_SHARED TRUE)
