@@ -322,7 +322,10 @@ public:
 	jvxErrorType one_step_sequencer(IjvxSequencer* sequencer, jvxSize timeout_msec);
 	void handle_step_process_non_usual_return(IjvxSequencer* sequencer, jvxErrorType resIn);
 
+	//! This function is triggered if a command shall be involved immediately
 	jvxErrorType run_prop_command(const std::string command);
+
+	//! This function is triggered if the host is to be switched off via property control
 	jvxErrorType run_quit_command(jvxBool restart);
 
 	// ===============================================================================

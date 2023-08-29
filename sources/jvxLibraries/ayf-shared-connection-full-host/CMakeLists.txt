@@ -12,6 +12,8 @@ include_directories(
   ${JVX_BASE_BINARY_DIR}/sources/jvxMinHosts/jvxMHAppMinHostCon/
 
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor
+
+  ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleHost/include
   )
 
 set(LOCAL_SOURCES
@@ -32,7 +34,9 @@ set(BUILD_SHARED TRUE)
 # This allows to copy import lib (.lib file) to sdk also
 # set(JVX_SDK_FORCE_DEPLOY_IMPORT_STATIC_LIB TRUE)
 
-set(LOCAL_LIBS 
+set(LOCAL_LIBS
+		jvxLConsoleHost-shared_static
+		jvx-link-frontend_static
 	)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

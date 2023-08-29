@@ -8,7 +8,7 @@
 
 #define Q(x) #x
 #define Quotes(x) Q(x)
-#define SET_DLL_REFERENCE(ret, entry) ret. ## entry ## _call = (entry) JVX_GETPROCADDRESS(proxyLibHandle, Quotes(entry))
+#define SET_DLL_REFERENCE(ret, entry) ret. ## entry ## _call = (entry) JVX_GETPROCADDRESS(proxyLibHandleGlobal, Quotes(entry))
 
 // Create a local data connections object if required
 class myLocalHost : public IjvxDataConnections, public CjvxDataConnections, public IjvxHiddenInterface
@@ -63,67 +63,88 @@ extern jvxErrorType register_module_host(const char* nm, jvxApiString& nmAsRegis
 extern jvxErrorType unregister_module_host(IjvxObject* regMe);
 */
 
-CayfComponentLib::CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
-	CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
-{
-	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
+// ================================================================================================
+// Here, we run the global stuff: opening sub dll once and receiving the binding references
+// ================================================================================================
 
-
-}
-
-CayfComponentLib::~CayfComponentLib()
-{
-
-}
+JVX_HMODULE proxyLibHandleGlobal = JVX_HMODULE_INVALID;
+ayfEmbeddingProxyReferences proxyReferencesGlobal;
+ayfHostBindingReferences bindingGlobal;
+jvxSize idRegisterGlobal = 0;
+jvxSize refCntGlobal = 0;
 
 jvxErrorType
-CayfComponentLib::populateBindingRefs()
+CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const std::string& rootPath, ayfHostBindingType& bindTypeOnReturn)
 {
-	std::string fNameDll = AYF_EMBEDDING_PROXY_HOST;
-	proxyLibHandle = JVX_LOADLIBRARY(fNameDll.c_str());
-	if (proxyLibHandle != JVX_HMODULE_INVALID)
+	if (proxyLibHandleGlobal == JVX_HMODULE_INVALID)
 	{
-		SET_DLL_REFERENCE(proxyReferences, ayf_embedding_proxy_init);
-		SET_DLL_REFERENCE(proxyReferences, ayf_embedding_proxy_terminate);
-	}
+		std::string fNameDll = AYF_EMBEDDING_PROXY_HOST;
+		proxyLibHandleGlobal = JVX_LOADLIBRARY(fNameDll.c_str());
+		if (proxyLibHandleGlobal != JVX_HMODULE_INVALID)
+		{
+			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_init);
+			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_terminate);
+		}
 
-	binding.bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
-	if (proxyReferences.ayf_embedding_proxy_init_call)
-	{
-		proxyReferences.ayf_embedding_proxy_init_call("MyRegisteredName", &idRegister, &binding, rootPath.c_str());
+		if (proxyReferencesGlobal.ayf_embedding_proxy_init_call)
+		{
+			proxyReferencesGlobal.ayf_embedding_proxy_init_call(myRegisterName.c_str(), &idRegisterGlobal, &bindingGlobal, rootPath.c_str());
+		}
+
+		refCntGlobal = 1;
+		// Currently just alocal assignemnt
+		/*
+		binding->bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
+		binding->ayf_register_module_host_call = ayf_register_module_host;
+		binding->ayf_unregister_module_host_call = ayf_unregister_module_host;
+		binding->ayf_load_config_content_call = ayf_load_config_content;
+		binding->ayf_release_config_content_call = ayf_release_config_content;
+		binding->ayf_attach_component_module_call = ayf_attach_component_module;
+		binding->ayf_detach_component_module_call = ayf_detach_component_module;
+		binding->ayf_forward_text_command_call = ayf_forward_text_command;
+		*/
+
+		bindTypeOnReturn = bindingGlobal.bindType;
+		return JVX_NO_ERROR;
 	}
-	
-	// Currently just alocal assignemnt
-	/*
-	binding.bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
-	binding.ayf_register_module_host_call = ayf_register_module_host;
-	binding.ayf_unregister_module_host_call = ayf_unregister_module_host;
-	binding.ayf_load_config_content_call = ayf_load_config_content;
-	binding.ayf_release_config_content_call = ayf_release_config_content;
-	binding.ayf_attach_component_module_call = ayf_attach_component_module;
-	binding.ayf_detach_component_module_call = ayf_detach_component_module;
-	binding.ayf_forward_text_command_call = ayf_forward_text_command;
-	*/
-	return JVX_NO_ERROR;
+	bindTypeOnReturn = bindingGlobal.bindType;
+	return JVX_ERROR_ALREADY_IN_USE;
 }
 
 jvxErrorType
 CayfComponentLib::unpopulateBindingRefs()
 {
-	if(proxyReferences.ayf_embedding_proxy_terminate_call)
+	if (proxyLibHandleGlobal)
 	{
-		proxyReferences.ayf_embedding_proxy_terminate_call(idRegister);
-		JVX_UNLOADLIBRARY(proxyLibHandle);
-		proxyLibHandle = JVX_HMODULE_INVALID;
+		refCntGlobal--;
+		if (refCntGlobal == 0)
+		{
+			if (proxyReferencesGlobal.ayf_embedding_proxy_terminate_call)
+			{
+				proxyReferencesGlobal.ayf_embedding_proxy_terminate_call(idRegisterGlobal);
+				JVX_UNLOADLIBRARY(proxyLibHandleGlobal);
+				proxyLibHandleGlobal = JVX_HMODULE_INVALID;
+			}
+		}
+		return JVX_NO_ERROR;
 	}
-
-	return JVX_NO_ERROR;
+	return JVX_ERROR_WRONG_STATE;
 }
 
-void
-CayfComponentLib::setExecutableRootPath(const std::string& rootPathArg)
+// ===========================================================================
+// ===========================================================================
+// ===========================================================================
+
+CayfComponentLib::CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+	CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
 {
-	rootPath = rootPathArg;
+	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
+	binding = &bindingGlobal;
+}
+
+CayfComponentLib::~CayfComponentLib()
+{
+	binding = nullptr;
 }
 
 jvxErrorType
@@ -133,12 +154,10 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 	res = CjvxObject::_initialize(hostRef);
 	if (res == JVX_NO_ERROR)
 	{
-		populateBindingRefs();
-
 		jvxApiString astr;
-		if (binding.ayf_register_module_host_call)
+		if (binding->ayf_register_module_host_call)
 		{
-			binding.ayf_register_module_host_call(regName.c_str(), astr, this, &this->minHostRef, &this->confProcHdl);
+			binding->ayf_register_module_host_call(regName.c_str(), astr, this, &this->minHostRef, &this->confProcHdl);
 		}
 		this->hostRef = static_cast<IjvxHiddenInterface*>(this->minHostRef);
 
@@ -154,7 +173,7 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 		// If we received a config processor pointer, we load the global configure tokens
 		if (this->confProcHdl)
 		{
-			binding.ayf_load_config_content_call(this, &cfgDataInit, nullptr);
+			binding->ayf_load_config_content_call(this, &cfgDataInit, nullptr);
 		}
 	}
 	return res;
@@ -169,7 +188,7 @@ CayfComponentLib::terminate()
 	{
 		if (this->confProcHdl)
 		{
-			binding.ayf_release_config_content_call(this, cfgDataInit);
+			binding->ayf_release_config_content_call(this, cfgDataInit);
 		}
 	}
 	
@@ -179,9 +198,9 @@ CayfComponentLib::terminate()
 	}
 	else
 	{
-		if (binding.ayf_unregister_module_host_call)
+		if (binding->ayf_unregister_module_host_call)
 		{
-			binding.ayf_unregister_module_host_call(this);
+			binding->ayf_unregister_module_host_call(this);
 		}
 		this->minHostRef = nullptr;
 	}
@@ -251,9 +270,9 @@ CayfComponentLib::activate()
 				passConfigSection(this->mainNode, astr.std_str());
 
 				// Attach main node to host control
-				if (binding.ayf_attach_component_module_call)
+				if (binding->ayf_attach_component_module_call)
 				{
-					resC = binding.ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+					resC = binding->ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
 				}
 
 				// Create simple connection
@@ -408,9 +427,9 @@ CayfComponentLib::deactivate()
 		}
 		theConnections = nullptr;
 
-		if (binding.ayf_detach_component_module_call)
+		if (binding->ayf_detach_component_module_call)
 		{
-			resC = binding.ayf_detach_component_module_call(mainNodeName.c_str(), this);
+			resC = binding->ayf_detach_component_module_call(mainNodeName.c_str(), this);
 		}
 		assert(resC == JVX_NO_ERROR);
 
@@ -484,9 +503,9 @@ CayfComponentLib::new_text_message_status(int value, char* fldRespond, jvxSize s
 		{
 			// txtMessageResponse = txtMessageCollect;
 			jvxApiString astr;
-			if (binding.ayf_forward_text_command_call)
+			if (binding->ayf_forward_text_command_call)
 			{
-				binding.ayf_forward_text_command_call(txtMessageCollect.c_str(), this, astr);
+				binding->ayf_forward_text_command_call(txtMessageCollect.c_str(), this, astr);
 			}
 			txtMessageResponse = astr.std_str();
 			txtMessageStatus = ayfTextIoStatus::AYF_TEXT_IO_STATUS_RESPONDING;

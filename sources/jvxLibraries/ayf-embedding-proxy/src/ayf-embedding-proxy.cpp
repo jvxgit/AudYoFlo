@@ -3,8 +3,9 @@
 #include "ayf-embedding-libs.h"
 
 #define EMBEDDED_HOST_SELECTION "EMBEDDED_HOST"
-#define EMBEDDED_HOST_SO_ASSIGN_MIN_HOST "EMBEDDED_HOST_DLL_MIN_HOST"
-#define EMBEDDED_HOST_SO_ASSIGN_EMB_HOST "EMBEDDED_HOST_DLL_EMB_HOST"
+#define EMBEDDED_HOST_SO_ASSIGN_MIN_HOST "DLL_MIN_HOST"
+#define EMBEDDED_HOST_SO_ASSIGN_EMB_HOST "DLL_EMB_HOST"
+#define EMBEDDED_HOST_SO_ASSIGN_EMB_ARGS "DLL_EMB_ARG"
 #define EMBEDDED_HOST_OPEN_CONSOLE "OPEN_CONSOLE"
 
 
@@ -27,7 +28,19 @@ static void registerMinHost(ayfHostBindingReferences* retReferences, JVX_HMODULE
 	SET_DLL_REFERENCE(retReferences, ayf_attach_component_module);
 	SET_DLL_REFERENCE(retReferences, ayf_detach_component_module);
 	SET_DLL_REFERENCE(retReferences, ayf_forward_text_command);
-	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
+	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
+}
+
+static void registerEmbHost(ayfHostBindingReferences* retReferences, JVX_HMODULE modHostPart)
+{
+	SET_DLL_REFERENCE(retReferences, ayf_register_module_host);
+	SET_DLL_REFERENCE(retReferences, ayf_unregister_module_host);
+	SET_DLL_REFERENCE(retReferences, ayf_load_config_content);
+	SET_DLL_REFERENCE(retReferences, ayf_release_config_content);
+	SET_DLL_REFERENCE(retReferences, ayf_attach_component_module);
+	SET_DLL_REFERENCE(retReferences, ayf_detach_component_module);
+	SET_DLL_REFERENCE(retReferences, ayf_forward_text_command);
+	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_FULL_HOST;
 }
 
 extern "C"
@@ -39,9 +52,12 @@ extern "C"
 		jvxBool openConsole = false;
 		std::string loadDllNameMinHost = MIN_HOST_DLL_NAME;
 		std::string loadDllNameEmbHost = EMB_HOST_DLL_NAME;
+		std::string argsExp; 
+		std::vector<std::string> lstArgs;
+
 		// std::string loadDllNameFullHost = ""; // This one should not be loaded, it should be there already
 		std::string loadDllName = loadDllNameMinHost;
-		int embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN;
+		int embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
 		// Check what is desired from first caller
 
 		if (registeredInstances.size() == 0)
@@ -105,7 +121,7 @@ extern "C"
 									{
 										if (assValue == "MIN")
 										{
-											embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN;
+											embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
 											loadDllName = loadDllNameMinHost;
 										}
 										if (assValue == "EMB")
@@ -117,6 +133,12 @@ extern "C"
 										{
 											embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_NONE;
 										}
+									}
+
+									if (assToken == EMBEDDED_HOST_SO_ASSIGN_EMB_ARGS)
+									{
+										argsExp = assValue;
+										jvx_parseCommandLineOneToken(argsExp, lstArgs, ',');
 									}
 								}
 							}
@@ -160,9 +182,21 @@ extern "C"
 			{
 				switch (embedId)
 				{
-				case (int)ayfHostBindingType::AYF_HOST_BINDING_MIN:
+				case (int)ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST:
 
-					std::cout << "Trying to open min host <loadDllName>." << std::endl;
+					std::cout << "Trying to open emb host <" << loadDllName << ">." << std::endl;
+					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
+					if (modHostPart != JVX_HMODULE_INVALID)
+					{
+						std::cout << " --> Opening successful!" << std::endl;
+						registerEmbHost(retReferences, modHostPart);
+						runLoop = false;
+					}
+					break;
+
+				case (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST:
+
+					std::cout << "Trying to open min host <" << loadDllName << ">." << std::endl;
 					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
 					if (modHostPart != JVX_HMODULE_INVALID)
 					{
@@ -190,7 +224,11 @@ extern "C"
 		{
 			switch (bindTypeFirstModule)
 			{
-			case ayfHostBindingType::AYF_HOST_BINDING_MIN:
+			case ayfHostBindingType::AYF_HOST_BINDING_FULL_HOST:
+				registerEmbHost(retReferences, modHostPart);
+				break;
+
+			case ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST:
 				registerMinHost(retReferences, modHostPart);
 				break;
 			}

@@ -9,7 +9,7 @@ enum class ayfHostBindingType
 	AYF_HOST_BINDING_NONE,
 
 	// There is a very minor host binding
-	AYF_HOST_BINDING_MIN,
+	AYF_HOST_BINDING_MIN_HOST,
 
 	// There is a full host binding but embedded somewhere
 	AYF_HOST_BINDING_EMBEDDED_HOST,

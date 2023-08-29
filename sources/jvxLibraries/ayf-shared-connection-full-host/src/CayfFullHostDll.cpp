@@ -5,12 +5,12 @@ extern "C"
 {
 	jvxErrorType ayf_register_module_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, IjvxMinHost** hostOnReturn, IjvxConfigProcessor** cfgOnReturn)
 	{
-		return JVX_NO_ERROR;// globalHostInstance.register_module_host(nm, nmAsRegistered, regMe, hostOnReturn, cfgOnReturn);
+		return globalHostInstance.register_module_host(nm, nmAsRegistered, regMe, hostOnReturn, cfgOnReturn);
 	}
 
 	jvxErrorType ayf_unregister_module_host(IjvxObject* regMe)
 	{
-		return JVX_NO_ERROR;//globalHostInstance.unregister_module_host(regMe);
+		return globalHostInstance.unregister_module_host(regMe);
 	}
 
 	jvxErrorType ayf_load_config_content(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName)

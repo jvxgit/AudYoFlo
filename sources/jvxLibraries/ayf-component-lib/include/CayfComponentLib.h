@@ -48,8 +48,8 @@ protected:
 
 protected:
 	IjvxNode* mainNode = nullptr;
-	ayfHostBindingReferences binding;
-	jvxSize idRegister = 0;
+	ayfHostBindingReferences* binding = nullptr;
+
 private:
 	
 	enum class ayfTextIoStatus
@@ -91,21 +91,19 @@ private:
 	std::string txtMessageResponse;
 	ayfTextIoStatus txtMessageStatus = ayfTextIoStatus::AYF_TEXT_IO_STATUS_INIT;
 
-	std::string rootPath;
-
 	myLocalHost* locHost = nullptr;
 	IjvxHiddenInterface* localAllocatedHost = nullptr;
-
-	JVX_HMODULE proxyLibHandle = JVX_HMODULE_INVALID;
-	ayfEmbeddingProxyReferences proxyReferences;
 
 public:
 	CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~CayfComponentLib();
 
-	jvxErrorType populateBindingRefs();
-	jvxErrorType unpopulateBindingRefs();
-	void setExecutableRootPath(const std::string& rootPathArg);
+	// Static functions to initialize embedding system
+	static jvxErrorType populateBindingRefs(
+		const std::string& myRegisterName, 
+		const std::string& rootPath, 
+		ayfHostBindingType& bindTypeOnReturn);
+	static jvxErrorType unpopulateBindingRefs();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate()override;

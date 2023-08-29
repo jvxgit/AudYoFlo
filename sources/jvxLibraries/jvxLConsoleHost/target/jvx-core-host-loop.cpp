@@ -191,6 +191,19 @@ typedef struct
 } oneBackendStruct;
 
 
+IjvxEventLoop_frontend_ctrl* shutdownFrontend = nullptr;
+
+jvxErrorType
+jvx_core_host_loop_stop()
+{
+	if (shutdownFrontend)
+	{
+		shutdownFrontend->report_want_to_shutdown_ext(false);
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
 // ===================================================================================
 void
 jvx_core_host_loop(int argc, char* argv[])
@@ -274,6 +287,10 @@ jvx_core_host_loop(int argc, char* argv[])
 				resL = jvx_manage_frontends(&theNewFrontend.ref, cnt, c_true);
 				if (resL == JVX_NO_ERROR)
 				{
+					if (shutdownFrontend == nullptr)
+					{
+						shutdownFrontend = theNewFrontend.ref;
+					}
 					theNewFrontend.ref->returns_from_start(&theNewFrontend.returnsFromStart);
 					if (!theNewFrontend.returnsFromStart)
 					{
@@ -447,6 +464,7 @@ jvx_core_host_loop(int argc, char* argv[])
 			{
 				jvx_manage_backends(&theBackends[i].ref, theBackends[i].cnt, c_false);
 			}
+			shutdownFrontend = nullptr;
 		}
 
 		jvxEStandalone_terminate(evLoop_obj);

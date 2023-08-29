@@ -98,6 +98,7 @@ public:
 	void output_sequencer_event(jvxSpecialEventType_seq* seq);
 	jvxErrorType handle_ctrl_c(jvxBool ctrlcpressed, jvxBool config_noconsole);
 
+
 private:
 };
 
