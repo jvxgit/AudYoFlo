@@ -302,10 +302,16 @@ CjvxConsoleHost_be_drivehost::report_want_to_shutdown_ext(jvxBool restart)
 }
 
 jvxErrorType
-CjvxConsoleHost_be_drivehost::request_property(jvxFrontendSupportRequestType tp, jvxHandle* load)
+CjvxConsoleHost_be_drivehost::query_property(jvxFrontendSupportQueryType tp, jvxHandle* load)
 {
 	return JVX_ERROR_UNSUPPORTED;
 
+}
+
+jvxErrorType
+CjvxConsoleHost_be_drivehost::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load)
+{
+	return JVX_ERROR_UNSUPPORTED;
 }
 // =============================================================================================
 // =============================================================================================

@@ -1602,10 +1602,15 @@ CjvxWebControl_fe::report_want_to_shutdown_ext(jvxBool restart)
 }
 
 jvxErrorType
-CjvxWebControl_fe::request_property(jvxFrontendSupportRequestType tp, jvxHandle* load)
+CjvxWebControl_fe::query_property(jvxFrontendSupportQueryType tp, jvxHandle* load)
 {
 	return JVX_ERROR_UNSUPPORTED;
+}
 
+jvxErrorType
+CjvxWebControl_fe::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load)
+{
+	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType 

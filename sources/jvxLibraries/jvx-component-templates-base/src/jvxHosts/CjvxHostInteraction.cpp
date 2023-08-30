@@ -1161,6 +1161,33 @@ CjvxHostInteraction::_report_boot_complete(jvxBool isComplete)
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CjvxHostInteraction::_add_external_factory(IjvxExternalModuleFactory* oneModFactory)
+{
+	auto elm = extModuleFactories.find(oneModFactory);
+	if (elm == extModuleFactories.end())
+	{
+		oneExternalModuleFactory newElm;
+		newElm.theFac = oneModFactory;
+		extModuleFactories[oneModFactory] = newElm;
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_DUPLICATE_ENTRY;
+}
+
+jvxErrorType
+CjvxHostInteraction::_remove_external_factory(IjvxExternalModuleFactory* oneModFactory)
+{
+	auto elm = extModuleFactories.find(oneModFactory);
+	if (elm == extModuleFactories.end())
+	{
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+	extModuleFactories.erase(elm);
+	return JVX_NO_ERROR;
+}
+
+
 jvxErrorType 
 CjvxHostInteraction::fwd_add_external_component(CjvxObject* meObj,
 	IjvxObject* theObj, IjvxGlobalInstance* theGlob, const char* locationDescription, jvxBool allowMultipleInstance,
@@ -1196,3 +1223,4 @@ void
 CjvxHostInteraction::fwd_unload_all_components()
 {
 }
+

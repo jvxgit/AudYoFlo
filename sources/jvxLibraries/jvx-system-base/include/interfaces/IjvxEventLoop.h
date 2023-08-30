@@ -21,7 +21,9 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_want_to_shutdown_ext(jvxBool restart) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_property(jvxFrontendSupportRequestType tp, jvxHandle* load) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION query_property(jvxFrontendSupportQueryType tp, jvxHandle* load) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_if_command_forward(IjvxReportSystemForward** fwdCalls) = 0;
 };

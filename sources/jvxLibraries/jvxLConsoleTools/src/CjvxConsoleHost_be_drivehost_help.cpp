@@ -171,8 +171,14 @@ CjvxConsoleHost_be_drivehost::process_help_command(IjvxEventLoop_frontend* origi
 		}
 	}
 	std::cout << std::endl;
-	std::cout << "\tquit: terminate program" << std::endl;
-
+	if (!config_noquit)
+	{
+		std::cout << "\tquit: terminate program" << std::endl;
+	}
+	else
+	{
+		std::cout << "\tquit: terminate program - this command is not allowed in this configuration." << std::endl;
+	}
 	jvxBool foundOne = false;
 
 	std::string command = "help";

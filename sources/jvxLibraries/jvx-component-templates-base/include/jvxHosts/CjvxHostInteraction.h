@@ -71,6 +71,13 @@ protected:
 		jvxComponentType selector[1] = {JVX_COMPONENT_UNKNOWN};
 	} ;
 
+	class oneExternalModuleFactory
+	{
+	public:
+		IjvxExternalModuleFactory* theFac;
+		// What else??
+	};
+
 	class oneEntryReportStateSwitch
 	{
 	public:
@@ -123,6 +130,9 @@ protected:
 	} config;
 
 	std::map<IjvxObject*, std::string> staticModules;
+
+	std::map<IjvxExternalModuleFactory*, oneExternalModuleFactory> extModuleFactories;
+
 public:
 
 	CjvxHostInteraction();
@@ -133,6 +143,9 @@ public:
 		jvxInitObject_tp funcInit, jvxTerminateObject_tp funcTerm);
 
 	jvxErrorType _remove_external_component(CjvxObject* meObj, IjvxObject* theObj);
+
+	jvxErrorType _add_external_factory(IjvxExternalModuleFactory* oneModFactory);
+	jvxErrorType _remove_external_factory(IjvxExternalModuleFactory* oneModFactory);
 
 	jvxErrorType _add_external_report_state_switch(IjvxReportStateSwitch* theHdl, const char* tag);
 	jvxErrorType _remove_external_report_state_switch(IjvxReportStateSwitch* theHdl);

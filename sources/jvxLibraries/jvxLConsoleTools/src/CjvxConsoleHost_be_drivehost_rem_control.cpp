@@ -30,7 +30,7 @@ JVX_PROPERTIES_CALLBACK_DEFINE(CjvxConsoleHost_be_drivehost, cb_shutdown)
 JVX_PROPERTIES_CALLBACK_DEFINE(CjvxConsoleHost_be_drivehost, cb_restart)
 {
 	// In property set of restart property
-	return run_quit_command(true);
+	return run_quit_command(true);	
 }
 
 JVX_PROPERTIES_CALLBACK_DEFINE(CjvxConsoleHost_be_drivehost, cb_xchg_property)

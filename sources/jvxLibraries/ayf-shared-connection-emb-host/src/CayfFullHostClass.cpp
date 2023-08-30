@@ -28,25 +28,6 @@ CayfFullHostClass::~CayfFullHostClass()
 	
 }
 
-#include "interfaces/all-hosts/configHostFeatures_common.h"
-extern "C"
-{
-	jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* features)
-	{
-		configureHost_features* theFeaturesH = NULL;
-		features->request_specialization(reinterpret_cast<jvxHandle**>(&theFeaturesH), JVX_HOST_IMPLEMENTATION_HOST);
-		if (theFeaturesH)
-		{
-		}
-		return(JVX_NO_ERROR);
-	}
-
-	jvxErrorType jvx_invalidate_factoryhost_features(configureFactoryHost_features* features)
-	{
-		return(JVX_NO_ERROR);
-	}
-}
-
 JVX_THREAD_ENTRY_FUNCTION(runHost, param)
 {
 	// void parameter param
@@ -108,7 +89,7 @@ CayfFullHostClass::mainThreadLoop()
 	return JVX_THREAD_EXIT_NORMAL;
 }
 
-
+/*
 jvxErrorType 
 CayfFullHostClass::load_config_content(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName)
 {
@@ -174,6 +155,19 @@ CayfFullHostClass::returnReferencePropertiesObject(jvx_propertyReferenceTriple& 
 // ================================================================================
 // ================================================================================
 
+jvxErrorType 
+CayfFullHostClass::invite_load_components_active(IjvxHost* hostRef)
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CayfFullHostClass::finalize_unload_components_active(IjvxHost* hostRef)
+{
+	return JVX_NO_ERROR;
+}
+
+/*
 std::string
 CayfFullHostClass::processTextMessage(std::string txt, oneEntryHostList& entry)
 {
@@ -187,3 +181,4 @@ CayfFullHostClass::configOneObject(const std::string& nm, IjvxObject* theObj)
 	jvxConfigData* retPtr = nullptr;
 	return retPtr;
 }
+*/

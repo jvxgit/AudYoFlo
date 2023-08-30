@@ -1,10 +1,16 @@
 #ifndef __TJVXEVENTLOOP_H__
 #define __TJVXEVENTLOOP_H__
 
-typedef enum
+enum class jvxFrontendSupportQueryType
 {
-	JVX_FRONTEND_SUPPORTS_SHUTDOWN = 0
-} jvxFrontendSupportRequestType;
+	JVX_FRONTEND_READ_SUPPORTS_SHUTDOWN = 0 // Non blocking read, with jvxBool*
+};
+
+enum class jvxFrontendTriggerType
+{
+	JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_INVITE = 0, // blocking access to main loop, with IjvxExternalModuelFactory*
+	JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_UNINVITE = 1 // blocking access to main loop, with IjvxExternalModuelFactory*
+};
 
 typedef enum
 {
@@ -19,6 +25,8 @@ typedef enum
 	JVX_EVENTLOOP_EVENT_CLEAR_ALL_MESSAGE_FE,
 	JVX_EVENTLOOP_EVENT_CLEAR_ALL_MESSAGE_BE,
 	JVX_EVENTLOOP_EVENT_FWD_REQUEST_COMMAND,
+	JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_INVITE,
+	JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_UNINVITE,
 	JVX_EVENTLOOP_EVENT_SPECIFIC
 } jvxOneEventType;
 

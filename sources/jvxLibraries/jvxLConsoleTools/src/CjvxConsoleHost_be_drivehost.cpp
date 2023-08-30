@@ -375,14 +375,32 @@ CjvxConsoleHost_be_drivehost::report_readout_fe_commandline(IjvxCommandLine* com
 
 jvxErrorType
 CjvxConsoleHost_be_drivehost::report_register_be_commandline(IjvxCommandLine* comLine)
-{
-	return JVX_NO_ERROR;
+{	
+	jvxErrorType res = CjvxConsoleHost_be_print::report_register_be_commandline(comLine);
+	if (res == JVX_NO_ERROR)
+	{
+		// comLine->register_option("--no-quit", "", "Option to disallow <quit>.");		
+	}
+	return res;
 }
 
 jvxErrorType
 CjvxConsoleHost_be_drivehost::report_readout_be_commandline(IjvxCommandLine* comLine)
 {
-	return JVX_NO_ERROR;
+	
+	jvxErrorType res = CjvxConsoleHost_be_print::report_readout_be_commandline(comLine);
+	if (res == JVX_NO_ERROR)
+	{
+		/*
+		num = 0;
+		comLine->number_entries_option("--no-quit", &num);
+		if (num)
+		{
+			config_noquit = true;
+		}
+		*/
+	}
+	return res;
 }
 
 jvxErrorType

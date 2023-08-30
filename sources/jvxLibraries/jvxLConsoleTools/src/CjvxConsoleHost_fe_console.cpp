@@ -199,18 +199,67 @@ CjvxConsoleHost_fe_console::report_want_to_shutdown_ext(jvxBool restart)
 }
 
 jvxErrorType
-CjvxConsoleHost_fe_console::request_property(jvxFrontendSupportRequestType tp, jvxHandle* load)
+CjvxConsoleHost_fe_console::query_property(jvxFrontendSupportQueryType tp, jvxHandle* load)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool* ptrloadbool = (jvxBool*)load;
 	switch (tp)
 	{
-	case JVX_FRONTEND_SUPPORTS_SHUTDOWN:
+	case jvxFrontendSupportQueryType::JVX_FRONTEND_READ_SUPPORTS_SHUTDOWN:
 		*ptrloadbool = true; // <- supports restart
 		if (config_noconsole)
 		{
 			*ptrloadbool = true;
 		}
+		break;	
+	default:
+		res = JVX_ERROR_UNSUPPORTED;
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxConsoleHost_fe_console::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	TjvxEventLoopElement evLElm;
+	switch (tp)
+	{
+	case jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_INVITE:
+
+		evLElm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);
+		evLElm.priv_fe = NULL;
+		evLElm.target_be = linkedPriBackend.be;
+		evLElm.priv_be = NULL;
+
+		evLElm.param = load;
+		evLElm.paramType = JVX_EVENTLOOP_DATAFORMAT_HANDLE_PTR;
+
+		evLElm.eventType = JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_INVITE;
+		evLElm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
+		evLElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
+		evLElm.delta_t = JVX_SIZE_UNSELECTED;
+		evLElm.autoDeleteOnProcess = c_false;
+
+		res = evLop->event_schedule(&evLElm, NULL, NULL);
+		break;
+	case jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_UNINVITE:
+
+		evLElm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);
+		evLElm.priv_fe = NULL;
+		evLElm.target_be = linkedPriBackend.be;
+		evLElm.priv_be = NULL;
+
+		evLElm.param = load;
+		evLElm.paramType = JVX_EVENTLOOP_DATAFORMAT_HANDLE_PTR;
+
+		evLElm.eventType = JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_UNINVITE;
+		evLElm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
+		evLElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
+		evLElm.delta_t = JVX_SIZE_UNSELECTED;
+		evLElm.autoDeleteOnProcess = c_false;
+
+		res = evLop->event_schedule(&evLElm, NULL, NULL);
 		break;
 	default:
 		res = JVX_ERROR_UNSUPPORTED;
@@ -1172,7 +1221,7 @@ CjvxConsoleHost_fe_console::report_register_fe_commandline(IjvxCommandLine* comL
 {
 	if (comLine)
 	{
-		comLine->register_option("--no-console-input", "", "Start host to not expect any user input.");
+		comLine->register_option("--no-console-input", "", "Start host to not expect any user input.");		
 	}
 	return JVX_NO_ERROR;
 }
@@ -1187,7 +1236,7 @@ CjvxConsoleHost_fe_console::report_readout_fe_commandline(IjvxCommandLine* comLi
 		if (num)
 		{
 			config_noconsole = true;
-		}
+		}		
 	}
 	return JVX_NO_ERROR;
 }

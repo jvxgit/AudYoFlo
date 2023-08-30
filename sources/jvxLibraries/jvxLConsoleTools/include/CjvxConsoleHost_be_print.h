@@ -46,6 +46,8 @@ protected:
 
 	JVX_THREAD_ID threadIdMainLoop = JVX_THREAD_ID_INVALID;
 
+	jvxBool config_noquit = false;
+
 public:
 
 	CjvxConsoleHost_be_print();

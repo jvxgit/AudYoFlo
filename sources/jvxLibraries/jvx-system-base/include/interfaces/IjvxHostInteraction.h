@@ -22,6 +22,9 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_report_state_switch(IjvxReportStateSwitch* callbackStruct, const char* tag) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION remove_external_report_state_switch(IjvxReportStateSwitch* callbackStruct) = 0;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_factory(IjvxExternalModuleFactory* oneModFactory) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION remove_external_factory(IjvxExternalModuleFactory* oneModFactory) = 0;
+
 	//! Add an remove external compoment factories. This function is used whenever static libraries are involved.
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_component(
 		IjvxObject* theObj, IjvxGlobalInstance* theGlob,

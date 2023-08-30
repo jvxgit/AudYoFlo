@@ -163,6 +163,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 
 // Host interface
 #include "interfaces/IjvxStateMachine.h"
+#include "interfaces/IjvxExternalModuleFactory.h"
 #include "interfaces/IjvxHostInteraction.h"
 #include "interfaces/IjvxComponentHost.h"
 #include "interfaces/IjvxFactoryHost.h"
@@ -188,9 +189,6 @@ JVX_INTERFACE IjvxGlobalInstance;
 
 // Scheduler component interface
 #include "interfaces/IjvxScheduler.h"
-
-// interface to connect external components
-#include "interfaces/IjvxExternalModuleFactory.h"
 
 // Introduce abstract interface for access to properties
 #include "interfaces/properties_hosts/IjvxAccessProperties.h"

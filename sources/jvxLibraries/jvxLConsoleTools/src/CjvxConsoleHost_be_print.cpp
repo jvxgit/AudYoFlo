@@ -445,21 +445,28 @@ CjvxConsoleHost_be_print::process_event(TjvxEventLoopElement* theQueueElement)
 			}
 			else if (internaltextbuffer == "quit")
 			{
-				store_entry_console_list(internaltextbuffer);
-				res = this->process_shutdown();
-			
-				switch (res)
+				if (!config_noquit)
 				{
-				case JVX_NO_ERROR:
-					jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_WANT_SHUTDOWN_SHIFT);
-					internaltextbuffer.clear();
-					dontclearline = true;
-					break;
-				case JVX_ERROR_NOT_READY:
-					jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_POSTPONE_SHUTDOWN_SHIFT);
-					internaltextbuffer.clear();
-					dontclearline = true;
-					break;
+					store_entry_console_list(internaltextbuffer);
+					res = this->process_shutdown();
+
+					switch (res)
+					{
+					case JVX_NO_ERROR:
+						jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_WANT_SHUTDOWN_SHIFT);
+						internaltextbuffer.clear();
+						dontclearline = true;
+						break;
+					case JVX_ERROR_NOT_READY:
+						jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_POSTPONE_SHUTDOWN_SHIFT);
+						internaltextbuffer.clear();
+						dontclearline = true;
+						break;
+					}
+				}
+				else
+				{
+					std::cout << "Command <quit> is not allowed in this configuration mode." << std::endl;
 				}
 			}
 			else
@@ -714,7 +721,14 @@ CjvxConsoleHost_be_print::process_help_command(IjvxEventLoop_frontend* origin)
 	std::cout << std::endl;
 	std::cout << "Usage: " << std::endl;
 	std::cout << "\thelp: print this message" << std::endl;
-	std::cout << "\tquit: terminate program" << std::endl;
+	if (!config_noquit)
+	{
+		std::cout << "\tquit: terminate program" << std::endl;
+	}
+	else
+	{
+		std::cout << "\tquit: terminate program - this command is not allowed in this configuration." << std::endl;
+	}
 }
 
 void 
@@ -731,12 +745,25 @@ CjvxConsoleHost_be_print::process_full_command(const std::string& command,
 jvxErrorType
 CjvxConsoleHost_be_print::report_register_be_commandline(IjvxCommandLine* comLine)
 {
+	if (comLine)
+	{
+		comLine->register_option("--no-quit", "", "Option to disallow <quit>.");
+	}
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
 CjvxConsoleHost_be_print::report_readout_be_commandline(IjvxCommandLine* comLine)
 {
+	if (comLine)
+	{
+		jvxSize num = 0;
+		comLine->number_entries_option("--no-quit", &num);
+		if (num)
+		{
+			config_noquit = true;
+		}
+	}
 	return JVX_NO_ERROR;
 }
 

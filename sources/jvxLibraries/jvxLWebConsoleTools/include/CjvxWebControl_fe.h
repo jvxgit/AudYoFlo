@@ -129,7 +129,9 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_special_event(TjvxEventLoopElement* theQueueElement, jvxHandle* priv) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_want_to_shutdown_ext(jvxBool restart) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_property(jvxFrontendSupportRequestType tp, jvxHandle* load)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION query_property(jvxFrontendSupportQueryType tp, jvxHandle* load)override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load)override;
 	// =========================================================================
 
 	jvxErrorType request_if_command_forward(IjvxReportSystemForward** fwdCalls) override;

@@ -59,8 +59,10 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 		jvx_set_property(theProps, &theCallback_exchg_property, 0, 1, JVX_DATAFORMAT_CALLBACK, true, "/ext_callbacks/cb_xchg_property", callGate);
 
 		supports_shutdown = false;
-		linkedPriFrontend.fe->request_property(JVX_FRONTEND_SUPPORTS_SHUTDOWN, &supports_shutdown);
-		if (supports_shutdown)
+		linkedPriFrontend.fe->query_property(jvxFrontendSupportQueryType::JVX_FRONTEND_READ_SUPPORTS_SHUTDOWN, &supports_shutdown);
+
+		// Shutdown may be controlled by frontend setting and backend command line option!!
+		if (supports_shutdown && !config_noquit)
 		{
 			theCallback_shutdown.cb = cb_shutdown;
 			theCallback_shutdown.cb_priv = reinterpret_cast<jvxHandle*>(this);
@@ -378,6 +380,12 @@ CjvxConsoleHost_be_drivehost::shutdown_terminate_specific(jvxApiString* errloc)
 
 	// Free all host types and data connections
 	shutdown_terminate_base();
+
+	jvx_invalidate_factoryhost_features(&theHostFeatures);
+
+	theHostFeatures.if_report = nullptr;
+	theHostFeatures.fHost = nullptr;
+	theHostFeatures.hHost = nullptr;
 
 	involvedComponents.theHost.hFHost->remove_external_interface(
 		reinterpret_cast<jvxHandle*>(static_cast<IjvxEventLoop*>(evLop)), JVX_INTERFACE_EVENTLOOP);

@@ -74,6 +74,16 @@
 		return this->_request_id_main_thread(thread_id);
 	}
 
+	jvxErrorType add_external_factory(IjvxExternalModuleFactory* oneModFactory)override
+	{
+		return this->_add_external_factory(oneModFactory);
+	}
+	
+	jvxErrorType remove_external_factory(IjvxExternalModuleFactory* oneModFactory)override
+	{
+		return this->_remove_external_factory(oneModFactory);
+	}
+		
 	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_boot_complete(jvxBool isComplete) override
 	{

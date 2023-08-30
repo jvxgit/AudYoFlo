@@ -191,14 +191,36 @@ typedef struct
 } oneBackendStruct;
 
 
-IjvxEventLoop_frontend_ctrl* shutdownFrontend = nullptr;
+IjvxEventLoop_frontend_ctrl* primaryFrontend = nullptr;
 
 jvxErrorType
 jvx_core_host_loop_stop()
 {
-	if (shutdownFrontend)
+	if (primaryFrontend)
 	{
-		shutdownFrontend->report_want_to_shutdown_ext(false);
+		primaryFrontend->report_want_to_shutdown_ext(false);
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType
+jvx_core_host_loop_trigger_invite(IjvxExternalModuleFactory* trig_this)
+{
+	if (primaryFrontend)
+	{
+		primaryFrontend->trigger_sync(jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_INVITE, trig_this);
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
+jvxErrorType
+jvx_core_host_loop_trigger_uninvite(IjvxExternalModuleFactory* trig_this)
+{
+	if (primaryFrontend)
+	{
+		primaryFrontend->trigger_sync(jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_UNINVITE, trig_this);
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_UNSUPPORTED;
@@ -287,9 +309,9 @@ jvx_core_host_loop(int argc, char* argv[])
 				resL = jvx_manage_frontends(&theNewFrontend.ref, cnt, c_true);
 				if (resL == JVX_NO_ERROR)
 				{
-					if (shutdownFrontend == nullptr)
+					if (primaryFrontend == nullptr)
 					{
-						shutdownFrontend = theNewFrontend.ref;
+						primaryFrontend = theNewFrontend.ref;
 					}
 					theNewFrontend.ref->returns_from_start(&theNewFrontend.returnsFromStart);
 					if (!theNewFrontend.returnsFromStart)
@@ -464,7 +486,7 @@ jvx_core_host_loop(int argc, char* argv[])
 			{
 				jvx_manage_backends(&theBackends[i].ref, theBackends[i].cnt, c_false);
 			}
-			shutdownFrontend = nullptr;
+			primaryFrontend = nullptr;
 		}
 
 		jvxEStandalone_terminate(evLoop_obj);
