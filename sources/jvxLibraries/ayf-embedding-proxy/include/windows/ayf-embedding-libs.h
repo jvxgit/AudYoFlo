@@ -6,7 +6,7 @@
 
 // These libraries will be loaded by the proxy lib
 #define MIN_HOST_DLL_NAME "ayf-shared-connection-min-host.dll"
-#define EMB_HOST_DLL_NAME "ayf-shared-connection-full-host.dll"
+#define EMB_HOST_DLL_NAME "ayf-shared-connection-emb-host.dll"
 
 #endif
 

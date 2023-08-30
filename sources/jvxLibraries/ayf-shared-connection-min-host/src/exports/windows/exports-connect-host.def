@@ -1,7 +1,7 @@
 EXPORTS 
 
-		ayf_register_module_host
-		ayf_unregister_module_host
+		ayf_register_object_host
+		ayf_unregister_object_host
 
 		ayf_load_config_content
 		ayf_release_config_content

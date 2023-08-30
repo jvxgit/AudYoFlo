@@ -90,9 +90,8 @@ public:
 
 	virtual jvxSize ll() const;
 	
-#ifdef JVX_COMPILE_SMALL
-	virtual const char* const_char_at(jvxSize idx) const;
-#else
+	virtual const char* c_str_at(jvxSize idx) const;
+#ifndef JVX_COMPILE_SMALL
 	virtual std::string std_str_at(jvxSize idx) const;
 #endif	
 	virtual void clear();

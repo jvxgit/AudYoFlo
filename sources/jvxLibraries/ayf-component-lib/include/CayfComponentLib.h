@@ -15,6 +15,149 @@
 
 class myLocalHost;
 	
+JVX_INTERFACE IjvxComponentLib
+{
+public:
+	virtual ~IjvxComponentLib() {};
+
+	virtual jvxErrorType deployProcParametersStartProcessor(
+		jvxSize numInChans, jvxSize numOutChans,
+		jvxSize bSize, jvxSize sRate,
+		jvxDataFormat format, jvxDataFormatGroup formGroup) = 0;
+	virtual jvxErrorType process_one_buffer_interleaved(
+		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
+		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut) = 0;
+	virtual jvxErrorType stopProcessor() = 0;
+};
+
+class CjvxComponentLibContainer
+{
+private:
+	JVX_MUTEX_HANDLE safeAccess;
+	jvxSize numInChans = 0;
+	jvxSize numOutChans = 0;
+	jvxSize bSize = 0;
+	jvxSize sRate = 0;
+	jvxDataFormat format = JVX_DATAFORMAT_NONE;
+	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
+
+public:
+
+	IjvxComponentLib* proc = nullptr;
+	jvxHandle* procClass = nullptr;
+	ayfHostBindingReferences* bindRefs = nullptr;
+	
+	IjvxExternalModuleFactory* fac = nullptr;
+
+	CjvxComponentLibContainer()
+	{
+		JVX_INITIALIZE_MUTEX(safeAccess);
+	};
+
+	~CjvxComponentLibContainer()
+	{
+		JVX_INITIALIZE_MUTEX(safeAccess);
+	};
+
+	void reset()
+	{
+		proc = nullptr;
+		procClass = nullptr;
+		numInChans = 0;
+		numOutChans = 0;
+		bSize = 0;
+		sRate = 0;
+		format = JVX_DATAFORMAT_NONE;
+		formGroup = JVX_DATAFORMAT_GROUP_NONE;
+	};
+
+	jvxErrorType setupInit(
+		IjvxComponentLib* procArg,
+		jvxHandle* procClassArg,
+		jvxSize numInChansArg,
+		jvxSize numOutChansArg,
+		jvxSize bSizeArg,
+		jvxSize sRateArg,
+		jvxDataFormat formatArg,
+		jvxDataFormatGroup formGroupArg,
+		ayfHostBindingReferences* bindRefsArg)
+	{
+		JVX_LOCK_MUTEX(safeAccess);
+		proc = procArg;
+		procClass = procClassArg;
+		numInChans = numInChansArg;
+		numOutChans = numOutChansArg;
+		bSize = bSizeArg;
+		sRate = sRateArg;
+		format = formatArg;
+		formGroup = formGroupArg;
+		JVX_UNLOCK_MUTEX(safeAccess);
+		return JVX_NO_ERROR;
+	};
+
+	void lock()
+	{
+		JVX_LOCK_MUTEX(safeAccess);
+	};
+
+	void unlock()
+	{
+		JVX_UNLOCK_MUTEX(safeAccess);
+	};
+
+	jvxErrorType setupTerm()
+	{
+		JVX_LOCK_MUTEX(safeAccess);
+		reset();
+		JVX_UNLOCK_MUTEX(safeAccess);
+	};
+
+	jvxErrorType deployProcParametersStartProcessor()
+	{
+		jvxErrorType res = JVX_ERROR_NOT_READY;
+		JVX_LOCK_MUTEX(safeAccess);
+		if (proc)
+		{
+			res = proc->deployProcParametersStartProcessor(numInChans,
+				numOutChans,
+				bSize,
+				sRate,
+				format,
+				formGroup);
+		}
+		JVX_UNLOCK_MUTEX(safeAccess);
+		return res;
+	};
+
+	jvxErrorType process_one_buffer_interleaved(
+		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
+		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut)
+	{
+		jvxErrorType res = JVX_ERROR_NOT_READY;
+		JVX_LOCK_MUTEX(safeAccess);
+		if (proc)
+		{
+			res = proc->process_one_buffer_interleaved(
+				inInterleaved, numSamplesIn, numChannelsIn,
+				outInterleaved, numSamlesOut, numChannelsOut);
+		}
+		JVX_UNLOCK_MUTEX(safeAccess);
+		return res;
+	}
+	jvxErrorType stopProcessor()
+	{
+		jvxErrorType res = JVX_ERROR_NOT_READY;
+		JVX_LOCK_MUTEX(safeAccess);
+		if (proc)
+		{
+			res = proc->stopProcessor();
+		}
+		JVX_UNLOCK_MUTEX(safeAccess);
+		return res;
+	};
+};
+
+
 class CayfComponentLib :
 	public IjvxNode,
 	public CjvxObject,
@@ -27,6 +170,8 @@ class CayfComponentLib :
 	public IjvxConnectionMaster, public CjvxConnectionMaster,
 
 	public IjvxProperties, public CjvxProperties,
+
+	public IjvxComponentLib,
 
 	public genComponentLib
 {
@@ -102,11 +247,14 @@ public:
 	static jvxErrorType populateBindingRefs(
 		const std::string& myRegisterName, 
 		const std::string& rootPath, 
-		ayfHostBindingType& bindTypeOnReturn);
+		ayfHostBindingReferences*& bindOnReturn);
 	static jvxErrorType unpopulateBindingRefs();
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxMinHost* hostRef, IjvxConfigProcessor* confProc, const std::string& regName);
+	
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate()override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION terminate(ayfHostBindingReferences*& bindOnReturn);
 
 	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION select(IjvxObject* theObj) override;
@@ -116,15 +264,21 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate() override;
 
+	// ===============================================================
+	// Interface <IjvxComponentLibCore>
+	// ===============================================================
 	jvxErrorType deployProcParametersStartProcessor(
 		jvxSize numInChans, jvxSize numOutChans, 
 		jvxSize bSize, jvxSize sRate, 
-		jvxDataFormat format, jvxDataFormatGroup formGroup);
+		jvxDataFormat format, jvxDataFormatGroup formGroup) override;
 	jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn, 
-		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
-	jvxErrorType stopProcessor();
+		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut) override;
+	jvxErrorType stopProcessor() override;
 	
+	// ===============================================================
+	// ===============================================================
+
 	jvxErrorType add_text_message_token(const std::string& txtIn);
 	jvxErrorType new_text_message_status(int value, char* fldRespond, jvxSize szRespond, int* newStatOnReturn);
 

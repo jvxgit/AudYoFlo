@@ -74,7 +74,7 @@ jvxSize idRegisterGlobal = 0;
 jvxSize refCntGlobal = 0;
 
 jvxErrorType
-CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const std::string& rootPath, ayfHostBindingType& bindTypeOnReturn)
+CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn)
 {
 	if (proxyLibHandleGlobal == JVX_HMODULE_INVALID)
 	{
@@ -104,10 +104,10 @@ CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const s
 		binding->ayf_forward_text_command_call = ayf_forward_text_command;
 		*/
 
-		bindTypeOnReturn = bindingGlobal.bindType;
+		bindOnReturn = &bindingGlobal;
 		return JVX_NO_ERROR;
 	}
-	bindTypeOnReturn = bindingGlobal.bindType;
+	bindOnReturn = &bindingGlobal;
 	return JVX_ERROR_ALREADY_IN_USE;
 }
 
@@ -121,9 +121,9 @@ CayfComponentLib::unpopulateBindingRefs()
 		{
 			if (proxyReferencesGlobal.ayf_embedding_proxy_terminate_call)
 			{
-				proxyReferencesGlobal.ayf_embedding_proxy_terminate_call(idRegisterGlobal);
+				proxyReferencesGlobal.ayf_embedding_proxy_terminate_call(idRegisterGlobal, &bindingGlobal);
 				JVX_UNLOADLIBRARY(proxyLibHandleGlobal);
-				proxyLibHandleGlobal = JVX_HMODULE_INVALID;
+				proxyLibHandleGlobal = JVX_HMODULE_INVALID;				
 			}
 		}
 		return JVX_NO_ERROR;
@@ -147,18 +147,28 @@ CayfComponentLib::~CayfComponentLib()
 	binding = nullptr;
 }
 
-jvxErrorType
+jvxErrorType 
 CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
+{
+	// This entry to be done later..
+	jvxErrorType res = JVX_NO_ERROR;
+	res = CjvxObject::_initialize(hostRef);
+	if (res == JVX_NO_ERROR)
+	{
+		assert(0);
+	}
+	return res;
+}
+
+jvxErrorType
+CayfComponentLib::initialize(IjvxMinHost* hostRef, IjvxConfigProcessor* confProc, const std::string& regName)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxObject::_initialize(hostRef);
 	if (res == JVX_NO_ERROR)
 	{
-		jvxApiString astr;
-		if (binding->ayf_register_module_host_call)
-		{
-			binding->ayf_register_module_host_call(regName.c_str(), astr, this, &this->minHostRef, &this->confProcHdl);
-		}
+		this->minHostRef = hostRef;
+		this->confProcHdl = confProc;
 		this->hostRef = static_cast<IjvxHiddenInterface*>(this->minHostRef);
 
 		// If there is no host embedding available, open this tiny local host implementation
@@ -173,7 +183,10 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 		// If we received a config processor pointer, we load the global configure tokens
 		if (this->confProcHdl)
 		{
-			binding->ayf_load_config_content_call(this, &cfgDataInit, nullptr);
+			if (binding->ayf_load_config_content_call)
+			{
+				binding->ayf_load_config_content_call(this, &cfgDataInit, nullptr);
+			}
 		}
 	}
 	return res;
@@ -181,6 +194,15 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 
 jvxErrorType
 CayfComponentLib::terminate()
+{
+	// To be done later
+	jvxErrorType res = JVX_NO_ERROR;
+	assert(0);
+	return res;
+}
+
+jvxErrorType
+CayfComponentLib::terminate(ayfHostBindingReferences*& refOnReturn)
 {
 	jvxErrorType res = JVX_NO_ERROR;	
 
@@ -198,10 +220,7 @@ CayfComponentLib::terminate()
 	}
 	else
 	{
-		if (binding->ayf_unregister_module_host_call)
-		{
-			binding->ayf_unregister_module_host_call(this);
-		}
+		refOnReturn = binding;
 		this->minHostRef = nullptr;
 	}
 
@@ -211,7 +230,6 @@ CayfComponentLib::terminate()
 	this->confProcHdl = nullptr;
 	CjvxObject::_terminate();
 
-	unpopulateBindingRefs();
 	return res;
 }
 

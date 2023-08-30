@@ -21,8 +21,8 @@ jvxBool consoleAttached = false;
 
 static void registerMinHost(ayfHostBindingReferences* retReferences, JVX_HMODULE modHostPart)
 {
-	SET_DLL_REFERENCE(retReferences, ayf_register_module_host);
-	SET_DLL_REFERENCE(retReferences, ayf_unregister_module_host);
+	SET_DLL_REFERENCE(retReferences, ayf_register_object_host);
+	SET_DLL_REFERENCE(retReferences, ayf_unregister_object_host);
 	SET_DLL_REFERENCE(retReferences, ayf_load_config_content);
 	SET_DLL_REFERENCE(retReferences, ayf_release_config_content);
 	SET_DLL_REFERENCE(retReferences, ayf_attach_component_module);
@@ -33,14 +33,33 @@ static void registerMinHost(ayfHostBindingReferences* retReferences, JVX_HMODULE
 
 static void registerEmbHost(ayfHostBindingReferences* retReferences, JVX_HMODULE modHostPart)
 {
-	SET_DLL_REFERENCE(retReferences, ayf_register_module_host);
-	SET_DLL_REFERENCE(retReferences, ayf_unregister_module_host);
+	/*
+	SET_DLL_REFERENCE(retReferences, ayf_register_object_host);
+	SET_DLL_REFERENCE(retReferences, ayf_unregister_object_host);
 	SET_DLL_REFERENCE(retReferences, ayf_load_config_content);
 	SET_DLL_REFERENCE(retReferences, ayf_release_config_content);
 	SET_DLL_REFERENCE(retReferences, ayf_attach_component_module);
 	SET_DLL_REFERENCE(retReferences, ayf_detach_component_module);
 	SET_DLL_REFERENCE(retReferences, ayf_forward_text_command);
-	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_FULL_HOST;
+	*/
+	SET_DLL_REFERENCE(retReferences, ayf_register_factory_host);
+	SET_DLL_REFERENCE(retReferences, ayf_unregister_factory_host);
+	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST;
+}
+
+void reset_entries(ayfHostBindingReferences* retReferences)
+{
+	retReferences->argsFullHost.clear();
+	retReferences->ayf_attach_component_module_call = nullptr;
+	retReferences->ayf_detach_component_module_call = nullptr;
+	retReferences->ayf_forward_text_command_call = nullptr;
+	retReferences->ayf_load_config_content_call = nullptr;
+	retReferences->ayf_register_object_host_call = nullptr;
+	retReferences->ayf_release_config_content_call = nullptr;
+	retReferences->ayf_unregister_object_host_call = nullptr;
+	retReferences->ayf_register_factory_host_call = nullptr;
+	retReferences->ayf_unregister_factory_host_call = nullptr;
+	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
 }
 
 extern "C"
@@ -54,6 +73,7 @@ extern "C"
 		std::string loadDllNameEmbHost = EMB_HOST_DLL_NAME;
 		std::string argsExp; 
 		std::vector<std::string> lstArgs;
+		std::string modulePath = JVX_GET_CURRENT_MODULE_PATH(ayf_embedding_proxy_init);
 
 		// std::string loadDllNameFullHost = ""; // This one should not be loaded, it should be there already
 		std::string loadDllName = loadDllNameMinHost;
@@ -190,6 +210,7 @@ extern "C"
 					{
 						std::cout << " --> Opening successful!" << std::endl;
 						registerEmbHost(retReferences, modHostPart);
+						retReferences->argsFullHost.assign(lstArgs);
 						runLoop = false;
 					}
 					break;
@@ -224,7 +245,7 @@ extern "C"
 		{
 			switch (bindTypeFirstModule)
 			{
-			case ayfHostBindingType::AYF_HOST_BINDING_FULL_HOST:
+			case ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST:
 				registerEmbHost(retReferences, modHostPart);
 				break;
 
@@ -239,7 +260,7 @@ extern "C"
 		return JVX_NO_ERROR;
 	}
 
-	jvxErrorType ayf_embedding_proxy_terminate(jvxSize idRegistered)
+	jvxErrorType ayf_embedding_proxy_terminate(jvxSize idRegistered, ayfHostBindingReferences* retReferences)
 	{
 		auto elm = registeredInstances.find(idRegistered);
 		if (elm == registeredInstances.end())
@@ -251,10 +272,12 @@ extern "C"
 
 		if (registeredInstances.size() == 0)
 		{
+			std::cout << "Last registered instance terminated, shutting down embedding proxy!" << std::endl;
 			if (modHostPart != JVX_HMODULE_INVALID)
 			{
 				JVX_UNLOADLIBRARY(modHostPart);
 				modHostPart = JVX_HMODULE_INVALID;
+				reset_entries(retReferences);
 
 				if (consoleAttached)
 				{

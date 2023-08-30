@@ -3,12 +3,12 @@ CayfGlobalHostClass globalHostInstance;
 
 extern "C"
 {
-	jvxErrorType ayf_register_module_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, IjvxMinHost** hostOnReturn, IjvxConfigProcessor** cfgOnReturn)
+	jvxErrorType ayf_register_object_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, IjvxMinHost** hostOnReturn, IjvxConfigProcessor** cfgOnReturn)
 	{
 		return globalHostInstance.register_module_host(nm, nmAsRegistered, regMe, hostOnReturn, cfgOnReturn);
 	}
 
-	jvxErrorType ayf_unregister_module_host(IjvxObject* regMe)
+	jvxErrorType ayf_unregister_object_host(IjvxObject* regMe)
 	{
 		return globalHostInstance.unregister_module_host(regMe);
 	}

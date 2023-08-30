@@ -1,0 +1,6 @@
+EXPORTS 
+
+		ayf_register_factory_host
+		ayf_unregister_factory_host
+		
+		

@@ -6,7 +6,7 @@
 extern "C"
 {
 	jvxErrorType ayf_embedding_proxy_init(const char* nm, jvxSize* idRegistered, ayfHostBindingReferences* retReferences, const char* fNameIni);
-	jvxErrorType ayf_embedding_proxy_terminate(jvxSize idRegistered);
+	jvxErrorType ayf_embedding_proxy_terminate(jvxSize idRegistered, ayfHostBindingReferences* bindings);
 
 	jvxErrorType ayf_embedding_proxy_host_set(IjvxHost* hostRefOnInit);
 	jvxErrorType ayf_embedding_proxy_host_reset();
@@ -15,7 +15,7 @@ extern "C"
 #else
 
 typedef jvxErrorType (*ayf_embedding_proxy_init)(const char* nm, jvxSize* idRegistered, ayfHostBindingReferences* retReferences, const char* fNameIni);
-typedef jvxErrorType (*ayf_embedding_proxy_terminate)(jvxSize idRegistered);
+typedef jvxErrorType (*ayf_embedding_proxy_terminate)(jvxSize idRegistered, ayfHostBindingReferences* bindings);
 typedef jvxErrorType (*ayf_embedding_proxy_host_set)(IjvxHost* hostRefOnInit);
 typedef jvxErrorType (*ayf_embedding_proxy_host_reset)();
 

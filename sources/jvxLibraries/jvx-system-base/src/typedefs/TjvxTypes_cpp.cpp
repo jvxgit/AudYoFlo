@@ -254,15 +254,14 @@ jvxSize jvxApiStringList::ll() const
 	return lStrings;
 }
 
-#ifdef JVX_COMPILE_SMALL
 const char*
-jvxApiStringList::const_char_at(jvxSize idx) const
+jvxApiStringList::c_str_at(jvxSize idx) const
 {
 	const char* ret = NULL;;
 	if (idx < lStrings)
 	{
 		assert(bStrings);
-		ret = bStrings[idx].const_char_ref();
+		ret = bStrings[idx].c_str();
 	}
 	else
 	{
@@ -270,7 +269,7 @@ jvxApiStringList::const_char_at(jvxSize idx) const
 	}
 	return ret;
 }
-#else
+#ifndef JVX_COMPILE_SMALL
 std::string
 jvxApiStringList::std_str_at(jvxSize idx) const
 {
