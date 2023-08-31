@@ -59,7 +59,7 @@ CjvxFullHost::CjvxFullHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	uIdInst = static_cast<IjvxUniqueId*>(this);
 	hIfRef = static_cast<IjvxHiddenInterface*>(this);
 	myObjectRef = static_cast<IjvxObject*>(this);
-
+	
 	/*
 	myModuleName = _common_set.theModuleName;
 	myDescription = _common_set_min.theDescription;

@@ -309,7 +309,7 @@ CjvxConsoleHost_be_drivehost::query_property(jvxFrontendSupportQueryType tp, jvx
 }
 
 jvxErrorType
-CjvxConsoleHost_be_drivehost::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load)
+CjvxConsoleHost_be_drivehost::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load, jvxBool blockedCall)
 {
 	return JVX_ERROR_UNSUPPORTED;
 }
@@ -492,6 +492,26 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 		report_command_request_inThread(request, param_fwd->caseSpecificData, param_fwd->szCaseSpecificData);		
 		return JVX_NO_ERROR;
 	}
+
+	// =============================================================================
+	// Invite or uninvite extern module factory to be triggered!!
+	// =============================================================================
+	else if (event_type == JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_INVITE)
+	{
+		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_HANDLE_PTR);
+		IjvxExternalModuleFactory* triggerThis = (IjvxExternalModuleFactory*)param;
+		res = involvedComponents.theHost.hFHost->trigger_external_factory(triggerThis, true);
+	}
+	else if (event_type == JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_UNINVITE)
+	{
+		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_HANDLE_PTR);
+		IjvxExternalModuleFactory* triggerThis = (IjvxExternalModuleFactory*)param;
+		res = involvedComponents.theHost.hFHost->trigger_external_factory(triggerThis, false);
+	}
+
+	// =============================================================================
+	// =============================================================================
+
 	else if (event_type == JVX_EVENTLOOP_EVENT_FWD_REQUEST_COMMAND)
 	{
 		// We pass this forward to the handler and remove the object there!

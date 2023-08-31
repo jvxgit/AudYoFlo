@@ -81,7 +81,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION query_property(jvxFrontendSupportQueryType tp, jvxHandle* load) override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load, jvxBool blockedRun) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_if_command_forward(IjvxReportSystemForward** fwdCalls) override;
 

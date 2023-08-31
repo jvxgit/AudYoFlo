@@ -219,10 +219,20 @@ CjvxConsoleHost_fe_console::query_property(jvxFrontendSupportQueryType tp, jvxHa
 }
 
 jvxErrorType
-CjvxConsoleHost_fe_console::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load)
+CjvxConsoleHost_fe_console::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load, jvxBool blockedRun)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	TjvxEventLoopElement evLElm;
+
+	if (blockedRun)
+	{
+		evLElm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
+	}
+	else
+	{
+		evLElm.eventClass = JVX_EVENTLOOP_REQUEST_TRIGGER;
+	}
+
 	switch (tp)
 	{
 	case jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_INVITE:
@@ -236,7 +246,7 @@ CjvxConsoleHost_fe_console::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* l
 		evLElm.paramType = JVX_EVENTLOOP_DATAFORMAT_HANDLE_PTR;
 
 		evLElm.eventType = JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_INVITE;
-		evLElm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
+		
 		evLElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
 		evLElm.delta_t = JVX_SIZE_UNSELECTED;
 		evLElm.autoDeleteOnProcess = c_false;
@@ -254,7 +264,6 @@ CjvxConsoleHost_fe_console::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* l
 		evLElm.paramType = JVX_EVENTLOOP_DATAFORMAT_HANDLE_PTR;
 
 		evLElm.eventType = JVX_EVENTLOOP_EVENT_TRIGGER_EXTERNAL_MODULE_FACTORY_UNINVITE;
-		evLElm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
 		evLElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
 		evLElm.delta_t = JVX_SIZE_UNSELECTED;
 		evLElm.autoDeleteOnProcess = c_false;

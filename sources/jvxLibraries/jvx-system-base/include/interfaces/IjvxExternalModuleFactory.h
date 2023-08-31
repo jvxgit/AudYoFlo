@@ -3,11 +3,11 @@
 
 JVX_INTERFACE IjvxExternalModuleFactory
 {
- public:
-  virtual JVX_CALLINGCONVENTION ~IjvxExternalModuleFactory(){};
+public:
+	virtual JVX_CALLINGCONVENTION ~IjvxExternalModuleFactory() {};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION invite_load_components_active(IjvxHost* hostRef) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION finalize_unload_components_active(IjvxHost* hostRef) = 0;
+	// Trigger an "invite" to include an external component. If isInvite is true it is the invite, if false, it is the "kick-out"
+	virtual jvxErrorType JVX_CALLINGCONVENTION invite_external_components(IjvxHiddenInterface* hostRef, jvxBool inviteToJoin) = 0;
 };
 
 #endif

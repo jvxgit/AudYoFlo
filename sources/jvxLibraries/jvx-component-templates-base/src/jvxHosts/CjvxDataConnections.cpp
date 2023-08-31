@@ -5,8 +5,6 @@ CjvxDataConnections::CjvxDataConnections()
 	_common_set_data_connection.unique_id = 1;
 	_common_set_data_connection.theHost = NULL;
 	unique_descriptor = "NONE_SPECIFIED";
-
-	pending_test_requests.threadIdMainThread = JVX_GET_CURRENT_THREAD_ID();
 }
 
 CjvxDataConnections::~CjvxDataConnections()
@@ -18,6 +16,9 @@ CjvxDataConnections::_set_system_refs(IjvxHiddenInterface* theHostRef, IjvxRepor
 {
 	_common_set_data_connection.theHost = theHostRef;
 	_common_set_data_connection.theReport = theReportArg;
+
+	// We need to put this line here for the case that the main thread is not the "startup" thread
+	pending_test_requests.threadIdMainThread = JVX_GET_CURRENT_THREAD_ID();
 }
 
 jvxErrorType

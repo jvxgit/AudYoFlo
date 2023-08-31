@@ -20,12 +20,12 @@ static std::string combineWithCwd(const std::string& fName)
 
 CayfFullHostClass::CayfFullHostClass() : CjvxHostJsonCommandsProperties(config_show)
 {
-	
+	JVX_INITIALIZE_MUTEX(safeAccess);
 }
 
 CayfFullHostClass::~CayfFullHostClass()
 {
-	
+	JVX_TERMINATE_MUTEX(safeAccess);
 }
 
 JVX_THREAD_ENTRY_FUNCTION(runHost, param)
@@ -42,6 +42,41 @@ JVX_THREAD_ENTRY_FUNCTION(runHost, param)
 jvxErrorType 
 CayfFullHostClass::register_factory_host(const char* nm, jvxApiString& nmAsRegistered, IjvxExternalModuleFactory* regMe, int argc, const char* argv[])
 {
+	jvxBool triggerNew = false;
+	oneRegisteredFactory newElm;
+	jvxBool runMeInit = true;
+	newElm.name = nm;
+	newElm.nameAsRegistered = nm;
+	newElm.theFactory = regMe;
+
+	// Expect that these requests all come from a single thread!!
+	if (requestThread == JVX_THREAD_ID_INVALID)
+	{
+		requestThread = JVX_GET_CURRENT_THREAD_ID();
+	}
+	assert(requestThread == JVX_GET_CURRENT_THREAD_ID());
+
+	// If we drop in here while shutting down, we run active wait.
+	// I do not see any way to loop here, typically, the host should not be in shutdown since
+	// the dll will be closed immediately if there is no other request
+	while (runMeInit)
+	{
+		JVX_LOCK_MUTEX(safeAccess);
+		if (!shutDownProcess)
+		{
+			runMeInit = false;
+		}
+		JVX_UNLOCK_MUTEX(safeAccess);
+	}
+
+	JVX_LOCK_MUTEX(safeAccess);
+	if (firstRunExternalFacs)
+	{
+		triggerNew = true;
+	}
+	factories_pending.push_back(newElm);
+	JVX_UNLOCK_MUTEX(safeAccess);
+
 	if (hostStarted == false)
 	{
 		jvxSize i;
@@ -52,6 +87,11 @@ CayfFullHostClass::register_factory_host(const char* nm, jvxApiString& nmAsRegis
 		JVX_CREATE_THREAD(hdlHostThread, runHost, this, idHostThread);
 		hostStarted = true;
 	}
+
+	if (triggerNew)
+	{
+		jvx_core_host_loop_trigger_invite(this, false);
+	}
 	return JVX_NO_ERROR;
 }
 
@@ -59,13 +99,55 @@ jvxErrorType
 CayfFullHostClass::unregister_factory_host(IjvxExternalModuleFactory* regMe)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	if (hostStarted)
+	jvxBool triggerRemove = false;
+
+	assert(requestThread == JVX_GET_CURRENT_THREAD_ID());
+
+	JVX_LOCK_MUTEX(safeAccess);
+	for(auto elm = factories_active.begin(); elm != factories_active.end(); elm++)
 	{
-		jvxErrorType res = jvx_core_host_loop_stop();
-		assert(res == JVX_NO_ERROR);
-		JVX_WAIT_FOR_THREAD_TERMINATE_INF(hdlHostThread);
+		if (elm->theFactory == regMe)
+		{
+			factories_remove.push_back(*elm);
+			factories_active.erase(elm);
+			triggerRemove = true;
+			break;
+		}
 	}
-	
+	JVX_UNLOCK_MUTEX(safeAccess);
+
+	if (triggerRemove)
+	{
+		jvx_core_host_loop_trigger_uninvite(this, true); // Blocking run: must be OUTSIDE the lock
+	}
+
+	jvxSize cntAll = 0;
+
+	// We put the shutdown into a mutex: if another something requests a register while in shutdown, we should block it until shutdown is complete!!
+	JVX_LOCK_MUTEX(safeAccess);
+	cntAll += factories_active.size() + factories_pending.size();
+	if (cntAll == 0)
+	{
+		shutDownProcess = true;
+	}
+	JVX_UNLOCK_MUTEX(safeAccess);
+
+	// The shutdown must not be in the lock: we will run the factory disinvite within the shutdown loop and would block
+	if (shutDownProcess)
+	{
+		if (hostStarted)
+		{
+			jvxErrorType res = jvx_core_host_loop_stop();
+			assert(res == JVX_NO_ERROR);
+			JVX_WAIT_FOR_THREAD_TERMINATE_INF(hdlHostThread);
+		}
+	}
+
+	JVX_LOCK_MUTEX(safeAccess);
+	shutDownProcess = false;
+	hostStarted = false;
+	JVX_UNLOCK_MUTEX(safeAccess);
+
 	return res;
 }
 
@@ -156,14 +238,32 @@ CayfFullHostClass::returnReferencePropertiesObject(jvx_propertyReferenceTriple& 
 // ================================================================================
 
 jvxErrorType 
-CayfFullHostClass::invite_load_components_active(IjvxHost* hostRef)
+CayfFullHostClass::invite_external_components(IjvxHiddenInterface* hostRef, jvxBool isInvite)
 {
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType 
-CayfFullHostClass::finalize_unload_components_active(IjvxHost* hostRef)
-{
+	if (isInvite)
+	{
+		JVX_LOCK_MUTEX(safeAccess);
+		firstRunExternalFacs = true;
+		while(factories_pending.size())
+		{
+			auto elm = factories_pending.begin(); 
+			elm->theFactory->invite_external_components(hostRef, isInvite);
+			factories_active.push_back(*elm);
+			factories_pending.erase(elm);
+		}
+		JVX_UNLOCK_MUTEX(safeAccess);
+	}
+	else
+	{
+		JVX_LOCK_MUTEX(safeAccess);
+		while (factories_remove.size())
+		{
+			auto elm = factories_remove.begin();
+			elm->theFactory->invite_external_components(hostRef, isInvite);
+			factories_remove.erase(elm);
+		}
+		JVX_UNLOCK_MUTEX(safeAccess);
+	}
 	return JVX_NO_ERROR;
 }
 

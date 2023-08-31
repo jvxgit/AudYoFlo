@@ -993,6 +993,9 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 		// Here, we run the default component activation with the call to systemReady - which we may need to use as the last step before system is up
 		boot_prepare_host_stop();
 		
+		// Trigger all external factories here!!
+		involvedComponents.theHost.hFHost->trigger_external_factory(nullptr, true);
+
 		res = boot_prepare_specific(&errLoc); // postbootup_specific();
 		if (res == JVX_NO_ERROR)
 		{
@@ -1085,6 +1088,9 @@ JVX_APP_FACTORY_HOST_CLASSNAME::shutdown_postprocess(jvxApiString* errorMessage,
 			return res;
 		}
 		
+		// Uninvite the external factories
+		involvedComponents.theHost.hFHost->trigger_external_factory(nullptr, false);
+
 		(static_cast<IjvxObject*>(this->involvedComponents.theHost.hFHost))->state(&theState);
 		//this->involvedComponents.theHost.hFHost->state(&theState);
 

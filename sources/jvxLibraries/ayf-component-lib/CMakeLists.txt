@@ -19,8 +19,11 @@ include_directories(
 set(LOCAL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfComponentLib.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfComponentLib.cpp  
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfComponentLibContainer.h
+
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfComponentLib.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfComponentLib_process.cpp 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfComponentLibContainer.cpp  
 )
 
 set(LOCAL_PCG_FILES

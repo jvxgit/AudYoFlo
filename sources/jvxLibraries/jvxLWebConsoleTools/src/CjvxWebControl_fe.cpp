@@ -1608,7 +1608,7 @@ CjvxWebControl_fe::query_property(jvxFrontendSupportQueryType tp, jvxHandle* loa
 }
 
 jvxErrorType
-CjvxWebControl_fe::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load)
+CjvxWebControl_fe::trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load, jvxBool blockedRun)
 {
 	return JVX_ERROR_UNSUPPORTED;
 }

@@ -20,7 +20,7 @@ namespace JVX_PROJECT_NAMESPACE {
 #endif
 
 template <class T>
-class CjvxFactoryHost : public T
+class CjvxFactoryHostTpl : public T
 {
 protected:
 
@@ -46,13 +46,16 @@ protected:
 	jvxSize myUniqueId;
 
 public:
-	JVX_CALLINGCONVENTION CjvxFactoryHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+	JVX_CALLINGCONVENTION CjvxFactoryHostTpl(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 		T(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
 		myUniqueId = 1;
+
+		// Attach cross link to initialize CjvxHostInteraction
+		CjvxHostInteraction::hostRefPass = static_cast<IjvxHiddenInterface*>(this);
 	};
 
-	virtual JVX_CALLINGCONVENTION ~CjvxFactoryHost()
+	virtual JVX_CALLINGCONVENTION ~CjvxFactoryHostTpl()
 	{
 	};
 

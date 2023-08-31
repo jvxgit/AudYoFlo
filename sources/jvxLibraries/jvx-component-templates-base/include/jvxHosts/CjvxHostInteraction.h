@@ -133,6 +133,8 @@ protected:
 
 	std::map<IjvxExternalModuleFactory*, oneExternalModuleFactory> extModuleFactories;
 
+	IjvxHiddenInterface* hostRefPass = nullptr;
+
 public:
 
 	CjvxHostInteraction();
@@ -146,6 +148,7 @@ public:
 
 	jvxErrorType _add_external_factory(IjvxExternalModuleFactory* oneModFactory);
 	jvxErrorType _remove_external_factory(IjvxExternalModuleFactory* oneModFactory);
+	jvxErrorType _trigger_external_factory(IjvxExternalModuleFactory* oneModFactory, jvxBool isInvite);
 
 	jvxErrorType _add_external_report_state_switch(IjvxReportStateSwitch* theHdl, const char* tag);
 	jvxErrorType _remove_external_report_state_switch(IjvxReportStateSwitch* theHdl);

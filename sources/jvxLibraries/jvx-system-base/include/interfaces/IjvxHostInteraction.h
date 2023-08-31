@@ -24,6 +24,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_factory(IjvxExternalModuleFactory* oneModFactory) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION remove_external_factory(IjvxExternalModuleFactory* oneModFactory) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_external_factory(IjvxExternalModuleFactory* oneModFactory, jvxBool isInvite) = 0;
 
 	//! Add an remove external compoment factories. This function is used whenever static libraries are involved.
 	virtual jvxErrorType JVX_CALLINGCONVENTION add_external_component(

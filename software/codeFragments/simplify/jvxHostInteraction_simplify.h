@@ -83,7 +83,12 @@
 	{
 		return this->_remove_external_factory(oneModFactory);
 	}
-		
+
+	jvxErrorType trigger_external_factory(IjvxExternalModuleFactory* oneModFactory, jvxBool isInvite) override
+	{
+		return this->_trigger_external_factory(oneModFactory, isInvite);
+	}
+	
 	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_boot_complete(jvxBool isComplete) override
 	{

@@ -1187,6 +1187,18 @@ CjvxHostInteraction::_remove_external_factory(IjvxExternalModuleFactory* oneModF
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CjvxHostInteraction::_trigger_external_factory(IjvxExternalModuleFactory* oneModFactory, jvxBool isInvite)
+{
+	for (auto elm : extModuleFactories)
+	{
+		if ((oneModFactory == nullptr) || (oneModFactory == elm.second.theFac))
+		{
+			elm.second.theFac->invite_external_components(hostRefPass, isInvite);
+		}
+	}
+	return JVX_NO_ERROR;
+}
 
 jvxErrorType 
 CjvxHostInteraction::fwd_add_external_component(CjvxObject* meObj,

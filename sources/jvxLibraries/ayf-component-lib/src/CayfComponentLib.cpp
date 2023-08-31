@@ -152,16 +152,24 @@ CayfComponentLib::initialize(IjvxHiddenInterface* hostRef)
 {
 	// This entry to be done later..
 	jvxErrorType res = JVX_NO_ERROR;
+	/*
 	res = CjvxObject::_initialize(hostRef);
 	if (res == JVX_NO_ERROR)
 	{
-		assert(0);
+		// 
+	*/
+	IjvxToolsHost* toolsHost = reqInterface<IjvxToolsHost>(hostRef);
+	if (toolsHost)
+	{
+		embHost.retCfgProc = reqRefTool<IjvxConfigProcessor>(toolsHost, embHost.tp);
+		retInterface<IjvxToolsHost>(hostRef, toolsHost);
 	}
-	return res;
+	embHost.hostRef = reqInterface<IjvxHost>(hostRef);
+	return initialize(embHost.hostRef, embHost.retCfgProc.cpPtr, _common_set.theModuleName);
 }
 
 jvxErrorType
-CayfComponentLib::initialize(IjvxMinHost* hostRef, IjvxConfigProcessor* confProc, const std::string& regName)
+CayfComponentLib::initialize(IjvxMinHost* hostRef, IjvxConfigProcessor* confProc, const std::string& realRegName)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	res = CjvxObject::_initialize(hostRef);
@@ -197,8 +205,22 @@ CayfComponentLib::terminate()
 {
 	// To be done later
 	jvxErrorType res = JVX_NO_ERROR;
-	assert(0);
+	ayfHostBindingReferences* bind = nullptr;
+
+	IjvxHiddenInterface* hostRefLoc = _common_set_min.theHostRef;
+
+	res = terminate(bind);
+
+	IjvxToolsHost* toolsHost = reqInterface<IjvxToolsHost>(hostRefLoc);
+	if (toolsHost)
+	{
+		retRefTool<IjvxConfigProcessor>(toolsHost, embHost.tp.tp, embHost.retCfgProc);
+		retInterface<IjvxToolsHost>(embHost.hostRef, toolsHost);
+	}
+	retInterface<IjvxHost>(hostRefLoc, embHost.hostRef);
+
 	return res;
+
 }
 
 jvxErrorType

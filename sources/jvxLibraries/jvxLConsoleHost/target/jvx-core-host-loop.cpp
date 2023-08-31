@@ -205,22 +205,22 @@ jvx_core_host_loop_stop()
 }
 
 jvxErrorType
-jvx_core_host_loop_trigger_invite(IjvxExternalModuleFactory* trig_this)
+jvx_core_host_loop_trigger_invite(IjvxExternalModuleFactory* trig_this, jvxBool blockedRun)
 {
 	if (primaryFrontend)
 	{
-		primaryFrontend->trigger_sync(jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_INVITE, trig_this);
+		primaryFrontend->trigger_sync(jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_INVITE, trig_this, blockedRun);
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType
-jvx_core_host_loop_trigger_uninvite(IjvxExternalModuleFactory* trig_this)
+jvx_core_host_loop_trigger_uninvite(IjvxExternalModuleFactory* trig_this, jvxBool blockedRun)
 {
 	if (primaryFrontend)
 	{
-		primaryFrontend->trigger_sync(jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_UNINVITE, trig_this);
+		primaryFrontend->trigger_sync(jvxFrontendTriggerType::JVX_FRONTEND_WRITE_SYNC_TRIGGER_EXT_FACTORY_UNINVITE, trig_this, blockedRun);
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_UNSUPPORTED;

@@ -7,6 +7,24 @@
 
 class CayfFullHostClass : public CjvxHostJsonCommandsProperties, public IjvxExternalModuleFactory
 {
+private:
+
+	class oneRegisteredFactory
+	{
+	public:
+		std::string name;
+		std::string nameAsRegistered;
+		IjvxExternalModuleFactory* theFactory;
+	};
+
+	std::list<oneRegisteredFactory> factories_pending;
+	std::list<oneRegisteredFactory> factories_active;
+	std::list<oneRegisteredFactory> factories_remove;
+
+	jvxBool firstRunExternalFacs = false;
+	jvxBool shutDownProcess = false;
+	JVX_THREAD_ID requestThread = JVX_THREAD_ID_INVALID;
+
 public:
 
 	jvxBool hostStarted = false;
@@ -14,6 +32,8 @@ public:
 	JVX_THREAD_ID idHostThread = 0;
 
 	jvxApiStringList astrlArgv;
+
+	JVX_MUTEX_HANDLE safeAccess;
 
 	/*
 	class oneEntryAttachedComponent
@@ -65,8 +85,7 @@ public:
 	virtual jvxErrorType requestReferencePropertiesObject(jvx_propertyReferenceTriple& theTriple, const jvxComponentIdentification& tp) override;
 	virtual jvxErrorType returnReferencePropertiesObject(jvx_propertyReferenceTriple& theTriple, const jvxComponentIdentification& tp) override;
 
-	jvxErrorType invite_load_components_active(IjvxHost* hostRef) override;
-	jvxErrorType finalize_unload_components_active(IjvxHost* hostRef) override;
+	jvxErrorType invite_external_components(IjvxHiddenInterface* hostRef, jvxBool isInvite) override;
 
 };
 

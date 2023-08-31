@@ -8,7 +8,7 @@
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
-class CjvxAppFactoryHost : public CjvxFactoryHost< CjvxInterfaceHostTpl < IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> > >
+class CjvxAppFactoryHost : public CjvxFactoryHostTpl< CjvxInterfaceHostTpl < IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> > >
 {
 public:
 

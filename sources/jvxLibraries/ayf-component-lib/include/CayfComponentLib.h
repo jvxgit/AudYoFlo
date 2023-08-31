@@ -1,3 +1,6 @@
+#ifndef __CAYFCOMPONENTLIB_H_
+#define __CAYFCOMPONENTLIB_H_
+
 #include "common/CjvxObject.h"
 #include "common/CjvxConnectionMaster.h"
 #include "common/CjvxConnectorMasterFactory.h"
@@ -13,150 +16,9 @@
 #include "ayf-embedding-proxy.h"
 #include "ayf-embedding-proxy-entries.h"
 
+//#include "IayfComponentLib.h"
+
 class myLocalHost;
-	
-JVX_INTERFACE IjvxComponentLib
-{
-public:
-	virtual ~IjvxComponentLib() {};
-
-	virtual jvxErrorType deployProcParametersStartProcessor(
-		jvxSize numInChans, jvxSize numOutChans,
-		jvxSize bSize, jvxSize sRate,
-		jvxDataFormat format, jvxDataFormatGroup formGroup) = 0;
-	virtual jvxErrorType process_one_buffer_interleaved(
-		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
-		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut) = 0;
-	virtual jvxErrorType stopProcessor() = 0;
-};
-
-class CjvxComponentLibContainer
-{
-private:
-	JVX_MUTEX_HANDLE safeAccess;
-	jvxSize numInChans = 0;
-	jvxSize numOutChans = 0;
-	jvxSize bSize = 0;
-	jvxSize sRate = 0;
-	jvxDataFormat format = JVX_DATAFORMAT_NONE;
-	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
-
-public:
-
-	IjvxComponentLib* proc = nullptr;
-	jvxHandle* procClass = nullptr;
-	ayfHostBindingReferences* bindRefs = nullptr;
-	
-	IjvxExternalModuleFactory* fac = nullptr;
-
-	CjvxComponentLibContainer()
-	{
-		JVX_INITIALIZE_MUTEX(safeAccess);
-	};
-
-	~CjvxComponentLibContainer()
-	{
-		JVX_INITIALIZE_MUTEX(safeAccess);
-	};
-
-	void reset()
-	{
-		proc = nullptr;
-		procClass = nullptr;
-		numInChans = 0;
-		numOutChans = 0;
-		bSize = 0;
-		sRate = 0;
-		format = JVX_DATAFORMAT_NONE;
-		formGroup = JVX_DATAFORMAT_GROUP_NONE;
-	};
-
-	jvxErrorType setupInit(
-		IjvxComponentLib* procArg,
-		jvxHandle* procClassArg,
-		jvxSize numInChansArg,
-		jvxSize numOutChansArg,
-		jvxSize bSizeArg,
-		jvxSize sRateArg,
-		jvxDataFormat formatArg,
-		jvxDataFormatGroup formGroupArg,
-		ayfHostBindingReferences* bindRefsArg)
-	{
-		JVX_LOCK_MUTEX(safeAccess);
-		proc = procArg;
-		procClass = procClassArg;
-		numInChans = numInChansArg;
-		numOutChans = numOutChansArg;
-		bSize = bSizeArg;
-		sRate = sRateArg;
-		format = formatArg;
-		formGroup = formGroupArg;
-		JVX_UNLOCK_MUTEX(safeAccess);
-		return JVX_NO_ERROR;
-	};
-
-	void lock()
-	{
-		JVX_LOCK_MUTEX(safeAccess);
-	};
-
-	void unlock()
-	{
-		JVX_UNLOCK_MUTEX(safeAccess);
-	};
-
-	jvxErrorType setupTerm()
-	{
-		JVX_LOCK_MUTEX(safeAccess);
-		reset();
-		JVX_UNLOCK_MUTEX(safeAccess);
-	};
-
-	jvxErrorType deployProcParametersStartProcessor()
-	{
-		jvxErrorType res = JVX_ERROR_NOT_READY;
-		JVX_LOCK_MUTEX(safeAccess);
-		if (proc)
-		{
-			res = proc->deployProcParametersStartProcessor(numInChans,
-				numOutChans,
-				bSize,
-				sRate,
-				format,
-				formGroup);
-		}
-		JVX_UNLOCK_MUTEX(safeAccess);
-		return res;
-	};
-
-	jvxErrorType process_one_buffer_interleaved(
-		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
-		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut)
-	{
-		jvxErrorType res = JVX_ERROR_NOT_READY;
-		JVX_LOCK_MUTEX(safeAccess);
-		if (proc)
-		{
-			res = proc->process_one_buffer_interleaved(
-				inInterleaved, numSamplesIn, numChannelsIn,
-				outInterleaved, numSamlesOut, numChannelsOut);
-		}
-		JVX_UNLOCK_MUTEX(safeAccess);
-		return res;
-	}
-	jvxErrorType stopProcessor()
-	{
-		jvxErrorType res = JVX_ERROR_NOT_READY;
-		JVX_LOCK_MUTEX(safeAccess);
-		if (proc)
-		{
-			res = proc->stopProcessor();
-		}
-		JVX_UNLOCK_MUTEX(safeAccess);
-		return res;
-	};
-};
-
 
 class CayfComponentLib :
 	public IjvxNode,
@@ -171,7 +33,7 @@ class CayfComponentLib :
 
 	public IjvxProperties, public CjvxProperties,
 
-	public IjvxComponentLib,
+	//public IjvxComponentLib,
 
 	public genComponentLib
 {
@@ -239,6 +101,13 @@ private:
 	myLocalHost* locHost = nullptr;
 	IjvxHiddenInterface* localAllocatedHost = nullptr;
 
+	struct
+	{
+		jvxComponentIdentification tp = JVX_COMPONENT_CONFIG_PROCESSOR;
+		refComp<IjvxConfigProcessor> retCfgProc;
+		IjvxHost* hostRef = nullptr;
+	} embHost;
+
 public:
 	CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~CayfComponentLib();
@@ -251,7 +120,7 @@ public:
 	static jvxErrorType unpopulateBindingRefs();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxMinHost* hostRef, IjvxConfigProcessor* confProc, const std::string& regName);
+	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxMinHost* hostRef, IjvxConfigProcessor* confProc, const std::string& realRegName);
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate(ayfHostBindingReferences*& bindOnReturn);
@@ -270,11 +139,11 @@ public:
 	jvxErrorType deployProcParametersStartProcessor(
 		jvxSize numInChans, jvxSize numOutChans, 
 		jvxSize bSize, jvxSize sRate, 
-		jvxDataFormat format, jvxDataFormatGroup formGroup) override;
+		jvxDataFormat format, jvxDataFormatGroup formGroup);
 	jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn, 
-		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut) override;
-	jvxErrorType stopProcessor() override;
+		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
+	jvxErrorType stopProcessor();
 	
 	// ===============================================================
 	// ===============================================================
@@ -351,3 +220,5 @@ public:
 	jvxErrorType passConfigSection(IjvxSimpleNode* node, const std::string& moduleName);
 
 };
+
+#endif

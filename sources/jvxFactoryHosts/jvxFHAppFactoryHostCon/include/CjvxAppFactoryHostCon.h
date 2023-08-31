@@ -8,7 +8,7 @@
 #include "jvxHosts/CjvxFactoryHostTpl.h"
 
 
-class CjvxAppFactoryHostCon : public CjvxFactoryHost< CjvxInterfaceHostTplConnections < IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> > >
+class CjvxAppFactoryHostCon : public CjvxFactoryHostTpl< CjvxInterfaceHostTplConnections < IjvxFactoryHost, CjvxHostInteractionTools<CjvxHostInteraction> > >
 {
 public:
 	JVX_CALLINGCONVENTION CjvxAppFactoryHostCon(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

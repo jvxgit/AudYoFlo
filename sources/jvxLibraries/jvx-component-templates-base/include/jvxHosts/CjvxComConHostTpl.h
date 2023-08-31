@@ -9,8 +9,10 @@ public:
 	JVX_CALLINGCONVENTION CjvxComConHostTpl(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 		T(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
-
+		// Attach cross link to initialize CjvxHostInteraction
+		CjvxHostInteraction::hostRefPass = static_cast<IjvxHiddenInterface*>(this);
 	};
+
 	virtual JVX_CALLINGCONVENTION ~CjvxComConHostTpl()
 	{
 
