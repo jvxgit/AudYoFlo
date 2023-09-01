@@ -202,6 +202,9 @@ JVX_INTERFACE IjvxGlobalInstance;
 // Additional special functions for system automation
 #include "interfaces/IjvxAutoDataConnect.h"
 
+// Extension of the component host to expose additional interface
+#include "interfaces/IjvxComponentHostExt.h"
+
 // =============================================================
 // MORE TYPEDEFS MORE TYPEDEFS MORE TYPEDEFS MORE TYPEDEFS MORE TYPEDEFS
 // =============================================================

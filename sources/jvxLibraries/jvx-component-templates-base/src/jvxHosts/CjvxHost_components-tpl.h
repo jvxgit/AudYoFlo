@@ -1,3 +1,25 @@
+template <class T> void shrinkGridList(std::vector<oneSelectedObj<T>>& inOutList)
+{
+	int h;
+
+	// Try to reduce size of the slot list
+	std::vector<oneSelectedObj<T>> newLst;
+	int sz = (int)inOutList.size();
+	for (h = sz - 1; h >= 0; h--)
+	{
+		if (inOutList[h].obj)
+		{
+			break;
+		}
+	}
+	int copyTo = h;
+	for (h = 0; h <= copyTo; h++)
+	{
+		newLst.push_back(inOutList[h]);
+	}
+	inOutList = newLst;
+}
+
 template <typename T> jvxErrorType
 CjvxComponentHost::t_select_component(std::vector<oneObjType<T>>& registeredTypes,
 	jvxComponentIdentification& tp, jvxSize idx,
@@ -137,8 +159,17 @@ CjvxComponentHost::t_select_component(std::vector<oneObjType<T>>& registeredType
 					}
 					else
 					{
-						res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+						jvxSize idxOff = idx - elmIt_ob->instances.availableEndpoints.size();
+						if (idxOff < elmIt_ob->instances.externalEndpoints.size())
+						{
+							res = JVX_ERROR_NO_ACCESS;
+						}
+						else
+						{
+							res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+						}
 					}
+
 				}
 				else
 				{
@@ -177,33 +208,40 @@ CjvxComponentHost::t_activate_component(std::vector<oneObjType<T>>& registeredOb
 			{
 				if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj)
 				{
-					prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);				
-					res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->activate();
-					postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);					
-					if (res != JVX_NO_ERROR)
+					if (JVX_CHECK_SIZE_SELECTED(elmIt_ob->instances.theHandle_shortcut[tp.slotid].idSel))
 					{
-						jvxApiError theErr;
-						elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->description(&theName);
-						elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->lasterror(&theErr);
+						prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
+						res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->activate();
+						postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
+						if (res != JVX_NO_ERROR)
+						{
+							jvxApiError theErr;
+							elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->description(&theName);
+							elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->lasterror(&theErr);
 
-						reportErrorDescription((std::string)"Failed to activate node type <" + elmIt_ob->description + ">, node <" +
-							theName.std_str() + ">, reason: " + theErr.errorDescription.std_str());
+							reportErrorDescription((std::string)"Failed to activate node type <" + elmIt_ob->description + ">, node <" +
+								theName.std_str() + ">, reason: " + theErr.errorDescription.std_str());
+						}
+						else
+						{
+							elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
+								JVX_INTERFACE_CONNECTOR_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac));
+							elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
+								JVX_INTERFACE_CONNECTOR_MASTER_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac));
+
+							res = this->connection_factory_to_be_added(
+								tp,
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac,
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac);
+							if (res != JVX_NO_ERROR)
+							{
+								reportErrorDescription("Failed to add connector and/or connector master factory for node", true);
+							}
+						}
 					}
 					else
 					{
-						elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
-							JVX_INTERFACE_CONNECTOR_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac));
-						elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
-							JVX_INTERFACE_CONNECTOR_MASTER_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac));
-
-						res = this->connection_factory_to_be_added(
-							tp,
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac,
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac);
-						if (res != JVX_NO_ERROR)
-						{
-							reportErrorDescription("Failed to add connector and/or connector master factory for node", true);
-						}
+						res = JVX_ERROR_NO_ACCESS;
 					}
 				}
 				else
@@ -242,38 +280,45 @@ CjvxComponentHost::t_deactivate_component(std::vector<oneObjType<T>>& registered
 			{
 				if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj)
 				{
-					// HK:CHECKTHIS
-					elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->state(&stat);
-					if (stat == JVX_STATE_ACTIVE)
+					if (JVX_CHECK_SIZE_SELECTED(elmIt_ob->instances.theHandle_shortcut[tp.slotid].idSel))
 					{
-						res = this->connection_factory_to_be_removed(
-							tp,
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac,
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac);
 
-						if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac)
+						elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->state(&stat);
+						if (stat == JVX_STATE_ACTIVE)
 						{
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->return_hidden_interface(
-								JVX_INTERFACE_CONNECTOR_FACTORY,
-								reinterpret_cast<jvxHandle*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac));
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac = NULL;
-						}
+							res = this->connection_factory_to_be_removed(
+								tp,
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac,
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac);
 
-						if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac)
+							if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac)
+							{
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->return_hidden_interface(
+									JVX_INTERFACE_CONNECTOR_FACTORY,
+									reinterpret_cast<jvxHandle*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac));
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].cfac = NULL;
+							}
+
+							if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac)
+							{
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->return_hidden_interface(
+									JVX_INTERFACE_CONNECTOR_MASTER_FACTORY,
+									reinterpret_cast<jvxHandle*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac));
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac = NULL;
+							}
+
+							prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);
+							res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->deactivate();
+							postrun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
+						}
+						else
 						{
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->return_hidden_interface(
-								JVX_INTERFACE_CONNECTOR_MASTER_FACTORY,
-								reinterpret_cast<jvxHandle*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac));
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].mfac = NULL;
+							res = JVX_ERROR_WRONG_STATE_SUBMODULE;
 						}
-
-						prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);						
-						res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->deactivate();
-						postrun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
 					}
 					else
 					{
-						res = JVX_ERROR_WRONG_STATE_SUBMODULE;
+						res = JVX_ERROR_NO_ACCESS;
 					}
 				}
 				else
@@ -312,57 +357,64 @@ CjvxComponentHost::t_unselect_component(std::vector<oneObjType<T>>& registeredOb
 			{
 				if (elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj != NULL)
 				{
-					IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
-					IjvxCoreStateMachine* theObjectSm = static_cast<IjvxCoreStateMachine*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
-
-					prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);					
-					res = static_local_unselect(theHinterface, theObjectSm);
-					postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);					
-
-					if (res == JVX_NO_ERROR)
+					if (JVX_CHECK_SIZE_SELECTED(elmIt_ob->instances.theHandle_shortcut[tp.slotid].idSel))
 					{
-						// Release the unique id
-						uIdInst->release_unique_id(elmIt_ob->instances.theHandle_shortcut[tp.slotid].uid);
-						tp.uId = JVX_SIZE_UNSELECTED;
-						elmIt_ob->instances.theHandle_shortcut[tp.slotid].uid = JVX_SIZE_UNSELECTED;
+						IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
+						IjvxCoreStateMachine* theObjectSm = static_cast<IjvxCoreStateMachine*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
+						IjvxObject* theObject = static_cast<IjvxObject*>(elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
+						prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
+						res = static_local_unselect(theHinterface, theObject, tp, theObjectSm);
+						postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
 
-						res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->terminate();
 						if (res == JVX_NO_ERROR)
 						{
-							if (elmIt_ob->instances.availableEndpoints[elmIt_ob->instances.theHandle_shortcut[tp.slotid].idSel].common.allowsMultiObjects)
-							{
-								elmIt_ob->instances.availableEndpoints[elmIt_ob->instances.theHandle_shortcut[tp.slotid].idSel].common.linkage.funcTerm(
-									elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
-							}
-							elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj = NULL;
-						}
-					}
+							// Release the unique id
+							uIdInst->release_unique_id(elmIt_ob->instances.theHandle_shortcut[tp.slotid].uid);
+							tp.uId = JVX_SIZE_UNSELECTED;
+							elmIt_ob->instances.theHandle_shortcut[tp.slotid].uid = JVX_SIZE_UNSELECTED;
 
-					// Try to reduce size of the slot list
-					std::vector<oneSelectedObj<T>> newLst;
-					int sz = (int)elmIt_ob->instances.theHandle_shortcut.size();
-					for (h = sz - 1; h >= 0; h--)
-					{
-						if (elmIt_ob->instances.theHandle_shortcut[h].obj)
+							res = elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj->terminate();
+							if (res == JVX_NO_ERROR)
+							{
+								if (elmIt_ob->instances.availableEndpoints[elmIt_ob->instances.theHandle_shortcut[tp.slotid].idSel].common.allowsMultiObjects)
+								{
+									elmIt_ob->instances.availableEndpoints[elmIt_ob->instances.theHandle_shortcut[tp.slotid].idSel].common.linkage.funcTerm(
+										elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj);
+								}
+								elmIt_ob->instances.theHandle_shortcut[tp.slotid].obj = NULL;
+							}
+						}
+
+						// Try to reduce size of the slot list
+						std::vector<oneSelectedObj<T>> newLst;
+						int sz = (int)elmIt_ob->instances.theHandle_shortcut.size();
+						for (h = sz - 1; h >= 0; h--)
 						{
-							break;
+							if (elmIt_ob->instances.theHandle_shortcut[h].obj)
+							{
+								break;
+							}
+						}
+						int copyTo = h;
+						for (h = 0; h <= copyTo; h++)
+						{
+							newLst.push_back(elmIt_ob->instances.theHandle_shortcut[h]);
+						}
+						elmIt_ob->instances.theHandle_shortcut = newLst;
+						if (res != JVX_NO_ERROR)
+						{
+							res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
 						}
 					}
-					int copyTo = h;
-					for (h = 0; h <= copyTo; h++)
+					else
 					{
-						newLst.push_back(elmIt_ob->instances.theHandle_shortcut[h]);
-					}
-					elmIt_ob->instances.theHandle_shortcut = newLst;
-					if (res != JVX_NO_ERROR)
-					{
-						res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+						res = JVX_ERROR_NO_ACCESS;
 					}
 				}
 				else
 				{
 					res = JVX_ERROR_WRONG_STATE_SUBMODULE;
-				}
+				}				
 			}
 		}
 		else

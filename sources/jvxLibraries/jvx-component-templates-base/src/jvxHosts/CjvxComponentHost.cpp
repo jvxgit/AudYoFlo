@@ -23,13 +23,18 @@ CjvxComponentHost::static_local_select(IjvxHiddenInterface* theHinterface,
 
 jvxErrorType
 CjvxComponentHost::static_local_unselect(IjvxHiddenInterface* theHinterface,
+	IjvxObject* theObject, const jvxComponentIdentification& tpIdOld,
 	IjvxCoreStateMachine* theObjectSm)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	assert(theObjectSm);
 	assert(theHinterface);
 
+	jvxComponentIdentification tpId = tpIdOld;
+	jvx::align::resetComponentIdOnUnset(tpId);
+
 	res = theObjectSm->unselect();
+	res = theObject->set_location_info(tpId);
 
 	return res;
 }
@@ -55,7 +60,7 @@ CjvxComponentHost::_number_components_system(const jvxComponentIdentification& t
 	if (elmIt_tech != _common_set_types.registeredTechnologyTypes.end())
 	{
 		res = JVX_NO_ERROR;
-		numL = elmIt_tech->technologyInstances.availableTechnologies.size();
+		numL = elmIt_tech->technologyInstances.availableTechnologies.size() + elmIt_tech->technologyInstances.externalTechnologies.size();
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 	{
@@ -85,7 +90,7 @@ CjvxComponentHost::_number_components_system(const jvxComponentIdentification& t
 		if (elmIt_ep != _common_set_types.registeredNodeTypes.end())
 		{
 			res = JVX_NO_ERROR;
-			numL = elmIt_ep->instances.availableEndpoints.size();
+			numL = elmIt_ep->instances.availableEndpoints.size() + elmIt_ep->instances.externalEndpoints.size();
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
@@ -125,7 +130,15 @@ CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, 
 		}
 		else
 		{
-			res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			jvxSize idxOff = idx - elmIt_tech->technologyInstances.availableTechnologies.size();
+			if (idxOff < elmIt_tech->technologyInstances.externalTechnologies.size())
+			{
+				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->name(str);
+			}
+			else
+			{
+				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			}
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
@@ -166,7 +179,15 @@ CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, 
 			}
 			else
 			{
-				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				jvxSize idxOff = idx - elmIt_ep->instances.availableEndpoints.size();
+				if (idxOff < elmIt_ep->instances.externalEndpoints.size())
+				{
+					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->name(str);
+				}
+				else
+				{
+					res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				}
 			}
 		}
 	}
@@ -210,7 +231,26 @@ CjvxComponentHost::_description_component_system(const jvxComponentIdentificatio
 		}
 		else
 		{
-			res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			jvxSize idxOff = idx - elmIt_tech->technologyInstances.availableTechnologies.size();
+			if (idxOff < elmIt_tech->technologyInstances.externalTechnologies.size())
+			{
+				std::string combine;
+
+				jvxApiString astrP;
+				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->module_reference(&astrP, nullptr);
+				combine = (std::string)"E:" + astrP.std_str() + ":";
+				astrP.clear();
+				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->description(&astrP);
+				combine += astrP.std_str();
+				if (str)
+				{
+					*str = combine;
+				}
+			}
+			else
+			{
+				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			}
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
@@ -251,8 +291,29 @@ CjvxComponentHost::_description_component_system(const jvxComponentIdentificatio
 			}
 			else
 			{
-				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				jvxSize idxOff = idx - elmIt_ep->instances.availableEndpoints.size();
+				if (idxOff < elmIt_ep->instances.externalEndpoints.size())
+				{
+					std::string combine;
+
+					jvxApiString astrP;
+					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->module_reference(&astrP, nullptr);
+					combine = (std::string)"E:" + astrP.std_str() + ":";
+					astrP.clear();
+					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->description(&astrP);
+					combine += astrP.std_str();
+					if (str)
+					{
+						*str = combine;
+					}
+
+				}
+				else
+				{
+					res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				}
 			}
+
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
@@ -294,8 +355,17 @@ CjvxComponentHost::_descriptor_component_system(const jvxComponentIdentification
 		}
 		else
 		{
-			res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			jvxSize idxOff = idx - elmIt_tech->technologyInstances.availableTechnologies.size();
+			if (idxOff < elmIt_tech->technologyInstances.externalTechnologies.size())
+			{
+				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->descriptor(str, substr);
+			}
+			else
+			{
+				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			}
 		}
+
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 	{
@@ -335,7 +405,15 @@ CjvxComponentHost::_descriptor_component_system(const jvxComponentIdentification
 			}
 			else
 			{
-				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				jvxSize idxOff = idx - elmIt_ep->instances.availableEndpoints.size();
+				if (idxOff < elmIt_ep->instances.externalEndpoints.size())
+				{
+					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->descriptor(str, substr);
+				}
+				else
+				{
+					res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				}
 			}
 		}
 	}
@@ -380,8 +458,17 @@ CjvxComponentHost::_module_reference_component_system(const jvxComponentIdentifi
 		}
 		else
 		{
-			res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			jvxSize idxOff = idx - elmIt_tech->technologyInstances.availableTechnologies.size();
+			if (idxOff < elmIt_tech->technologyInstances.externalTechnologies.size())
+			{
+				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->module_reference(str, acTp);
+			}
+			else
+			{
+				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			}
 		}
+
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 	{
@@ -425,8 +512,17 @@ CjvxComponentHost::_module_reference_component_system(const jvxComponentIdentifi
 			}
 			else
 			{
-				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				jvxSize idxOff = idx - elmIt_ep->instances.availableEndpoints.size();
+				if (idxOff < elmIt_ep->instances.externalEndpoints.size())
+				{
+					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->module_reference(str, acTp);
+				}
+				else
+				{
+					res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				}
 			}
+
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
@@ -473,8 +569,17 @@ CjvxComponentHost::_feature_class_component_system(const jvxComponentIdentificat
 		}
 		else
 		{
-			res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			jvxSize idxOff = idx - elmIt_tech->technologyInstances.availableTechnologies.size();
+			if (idxOff < elmIt_tech->technologyInstances.externalTechnologies.size())
+			{
+				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->feature_class(ft);
+			}
+			else
+			{
+				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+			}
 		}
+
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 	{
@@ -538,8 +643,17 @@ CjvxComponentHost::_feature_class_component_system(const jvxComponentIdentificat
 			}
 			else
 			{
-				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				jvxSize idxOff = idx - elmIt_ep->instances.availableEndpoints.size();
+				if (idxOff < elmIt_ep->instances.externalEndpoints.size())
+				{
+					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->feature_class(ft);
+				}
+				else
+				{
+					res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				}
 			}
+
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
@@ -1772,8 +1886,17 @@ CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx
 						}
 						else
 						{
-							res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+							jvxSize idxOff = idx - elmIt_tech->technologyInstances.availableTechnologies.size();
+							if (idxOff < elmIt_tech->technologyInstances.externalTechnologies.size())
+							{
+								res = JVX_ERROR_NO_ACCESS;
+							}
+							else
+							{
+								res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+							}
 						}
+
 					}
 					else
 					{
@@ -1955,11 +2078,11 @@ CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx
  * Return the idx to identify the currently selected component
  */
 jvxErrorType
-CjvxComponentHost::_selection_component(const jvxComponentIdentification& tp, jvxSize* idRet)
+CjvxComponentHost::_selection_component(const jvxComponentIdentification& tp, jvxSize* idRet, jvxApiString* modNmRet)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 	jvxSize id = JVX_SIZE_UNSELECTED;
-
+	std::string nmSelected;
 	std::vector<oneTechnologyType>::iterator elmIt_tech;
 	elmIt_tech = jvx_findItemSelectorInList_one<oneTechnologyType, jvxComponentType>(_common_set_types.registeredTechnologyTypes, tp.tp, 0);
 	if (elmIt_tech != _common_set_types.registeredTechnologyTypes.end())
@@ -1974,6 +2097,7 @@ CjvxComponentHost::_selection_component(const jvxComponentIdentification& tp, jv
 			else
 			{
 				id = elmIt_tech->technologyInstances.selTech[tp.slotid].idSel;
+				nmSelected = elmIt_tech->technologyInstances.selTech[tp.slotid].nmExternal;
 				/*
 				if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech != NULL)
 				{
@@ -2043,6 +2167,7 @@ CjvxComponentHost::_selection_component(const jvxComponentIdentification& tp, jv
 				else
 				{
 					id = elmIt_ep->instances.theHandle_shortcut[tp.slotid].idSel;
+					nmSelected = elmIt_ep->instances.theHandle_shortcut[tp.slotid].nmExternal;
 				}
 			}
 		}
@@ -2087,7 +2212,10 @@ CjvxComponentHost::_selection_component(const jvxComponentIdentification& tp, jv
 	{
 		*idRet = id;
 	}
-
+	if (modNmRet)
+	{
+		*modNmRet = nmSelected;
+	}
 	return(res);
 }
 
@@ -2119,18 +2247,25 @@ CjvxComponentHost::_activate_selected_component(const jvxComponentIdentification
 				{
 					if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech)
 					{
-						prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
-						res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->activate();
-						postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
-
-						if (res != JVX_NO_ERROR)
+						if (JVX_CHECK_SIZE_SELECTED(elmIt_tech->technologyInstances.selTech[tp.slotid].idSel))
 						{
-							jvxApiError theErr;
-							elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->description(&theName);
-							elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->lasterror(&theErr);
+							prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
+							res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->activate();
+							postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, res);
 
-							reportErrorDescription ((std::string)"Failed to activate technology type <" + elmIt_tech->description + ">, technology <" +
-								theName.std_str() + ">, reason: " + theErr.errorDescription.std_str());
+							if (res != JVX_NO_ERROR)
+							{
+								jvxApiError theErr;
+								elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->description(&theName);
+								elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->lasterror(&theErr);
+
+								reportErrorDescription((std::string)"Failed to activate technology type <" + elmIt_tech->description + ">, technology <" +
+									theName.std_str() + ">, reason: " + theErr.errorDescription.std_str());
+							}
+						}
+						else
+						{
+							res = JVX_ERROR_NO_ACCESS;
 						}
 					}
 					else
@@ -2584,59 +2719,69 @@ CjvxComponentHost::_deactivate_selected_component(const jvxComponentIdentificati
 				{
 					if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech)
 					{
-						elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->state(&stat);
 
-						if (stat >= JVX_STATE_ACTIVE)
+						if (JVX_CHECK_SIZE_SELECTED(elmIt_tech->technologyInstances.selTech[tp.slotid].idSel))
 						{
-							// Deactivate all devices
-							while (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev.size())
+
+							elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->state(&stat);
+
+							if (stat >= JVX_STATE_ACTIVE)
 							{
-								for (k = 0; k < elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev.size(); k++)
+								// Deactivate all devices
+								while (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev.size())
 								{
-									if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].dev)
+									for (k = 0; k < elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev.size(); k++)
 									{
-										jvxComponentIdentification tpIdDev = jvxComponentIdentification(elmIt_tech->selector[1], tp.slotid, k);
-										resL = _state_selected_component(tpIdDev, &stat);
-										if (stat >= JVX_STATE_ACTIVE)
+										if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].dev)
 										{
-											res = this->connection_factory_to_be_removed(
-												tpIdDev,
-												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac,
-												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac);
-
-											if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac)
+											jvxComponentIdentification tpIdDev = jvxComponentIdentification(elmIt_tech->selector[1], tp.slotid, k);
+											resL = _state_selected_component(tpIdDev, &stat);
+											if (stat >= JVX_STATE_ACTIVE)
 											{
-												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].dev->return_hidden_interface(
-													JVX_INTERFACE_CONNECTOR_FACTORY,
-													reinterpret_cast<jvxHandle*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac));
-												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac = NULL;
-											}
-											if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac)
-											{
-												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].dev->return_hidden_interface(
-													JVX_INTERFACE_CONNECTOR_MASTER_FACTORY,
-													reinterpret_cast<jvxHandle*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac));
-												elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac = NULL;
+												res = this->connection_factory_to_be_removed(
+													tpIdDev,
+													elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac,
+													elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac);
+
+												if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac)
+												{
+													elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].dev->return_hidden_interface(
+														JVX_INTERFACE_CONNECTOR_FACTORY,
+														reinterpret_cast<jvxHandle*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac));
+													elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].cfac = NULL;
+												}
+												if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac)
+												{
+													elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].dev->return_hidden_interface(
+														JVX_INTERFACE_CONNECTOR_MASTER_FACTORY,
+														reinterpret_cast<jvxHandle*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac));
+													elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[k].mfac = NULL;
+												}
+
+												resL = _deactivate_selected_component(tpIdDev);
+												assert(resL == JVX_NO_ERROR);
 											}
 
-											resL = _deactivate_selected_component(tpIdDev);
+											resL = _unselect_selected_component(tpIdDev);
 											assert(resL == JVX_NO_ERROR);
+											break;
 										}
-
-										resL = _unselect_selected_component(tpIdDev);
-										assert(resL == JVX_NO_ERROR);
-										break;
 									}
 								}
+
+								prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);
+								res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->deactivate();
+								postrun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
+							}
+							else
+							{
+								res = JVX_ERROR_WRONG_STATE_SUBMODULE;
 							}
 
-							prerun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp);
-							res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->deactivate();
-							postrun_stateswitch(JVX_STATE_SWITCH_DEACTIVATE, tp, res);
 						}
 						else
 						{
-							res = JVX_ERROR_WRONG_STATE_SUBMODULE;
+							res = JVX_ERROR_NO_ACCESS;
 						}
 					}
 				}
@@ -2787,53 +2932,61 @@ CjvxComponentHost::_unselect_selected_component(jvxComponentIdentification& tp)
 				{
 					if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech != NULL)
 					{
-						IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
-						IjvxStateMachine* theObjectSm = static_cast<IjvxStateMachine*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
-
-						prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
-						res = static_local_unselect(theHinterface, theObjectSm);
-						postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
-
-						if (res == JVX_NO_ERROR)
+						if (JVX_CHECK_SIZE_SELECTED(elmIt_tech->technologyInstances.selTech[tp.slotid].idSel))
 						{
-							// Release the unique id
-							uIdInst->release_unique_id(elmIt_tech->technologyInstances.selTech[tp.slotid].uid);
-							tp.uId = JVX_SIZE_UNSELECTED;
-							elmIt_tech->technologyInstances.selTech[tp.slotid].uid = JVX_SIZE_UNSELECTED;
+							IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
+							IjvxStateMachine* theObjectSm = static_cast<IjvxStateMachine*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
+							IjvxObject* theObject = static_cast<IjvxObject*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
 
-							res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->terminate();
+							prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
+							res = static_local_unselect(theHinterface, theObject, tp, theObjectSm);
+							postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
+
 							if (res == JVX_NO_ERROR)
 							{
-								if (elmIt_tech->technologyInstances.availableTechnologies[elmIt_tech->technologyInstances.selTech[tp.slotid].idSel].
-									common.allowsMultiObjects)
-								{
-									elmIt_tech->technologyInstances.availableTechnologies[elmIt_tech->technologyInstances.selTech[tp.slotid].idSel].common.linkage.funcTerm(
-										elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
-								}
-								elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech = NULL;
-							}
+								// Release the unique id
+								uIdInst->release_unique_id(elmIt_tech->technologyInstances.selTech[tp.slotid].uid);
+								tp.uId = JVX_SIZE_UNSELECTED;
+								elmIt_tech->technologyInstances.selTech[tp.slotid].uid = JVX_SIZE_UNSELECTED;
 
-							// Try to reduce size of the slot list
-							std::vector<oneSelectedTechnology> newLst;
-							int sz = (int)elmIt_tech->technologyInstances.selTech.size();
-							for (h = sz - 1; h >= 0; h--)
-							{
-								if (elmIt_tech->technologyInstances.selTech[h].theHandle_shortcut_tech)
+								res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->terminate();
+								if (res == JVX_NO_ERROR)
 								{
-									break;
+									if (elmIt_tech->technologyInstances.availableTechnologies[elmIt_tech->technologyInstances.selTech[tp.slotid].idSel].
+										common.allowsMultiObjects)
+									{
+										elmIt_tech->technologyInstances.availableTechnologies[elmIt_tech->technologyInstances.selTech[tp.slotid].idSel].common.linkage.funcTerm(
+											elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
+									}
+									elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech = NULL;
 								}
-							}
-							int copyTo = h;
-							for (h = 0; h <= copyTo; h++)
-							{
-								newLst.push_back(elmIt_tech->technologyInstances.selTech[h]);
-							}
-							elmIt_tech->technologyInstances.selTech = newLst;
 
+								// Try to reduce size of the slot list
+								std::vector<oneSelectedTechnology> newLst;
+								int sz = (int)elmIt_tech->technologyInstances.selTech.size();
+								for (h = sz - 1; h >= 0; h--)
+								{
+									if (elmIt_tech->technologyInstances.selTech[h].theHandle_shortcut_tech)
+									{
+										break;
+									}
+								}
+								int copyTo = h;
+								for (h = 0; h <= copyTo; h++)
+								{
+									newLst.push_back(elmIt_tech->technologyInstances.selTech[h]);
+								}
+								elmIt_tech->technologyInstances.selTech = newLst;
+
+							}
+							if (res != JVX_NO_ERROR)
+							{
+								res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+							}
 						}
-						if (res != JVX_NO_ERROR)
+						else
 						{
-							res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+							res = JVX_ERROR_NO_ACCESS;
 						}
 					}
 					else
@@ -2863,9 +3016,10 @@ CjvxComponentHost::_unselect_selected_component(jvxComponentIdentification& tp)
 							IjvxHiddenInterface* theHinterface = static_cast<IjvxHiddenInterface*>(
 								elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev);
 							IjvxStateMachine* theObjectSm = static_cast<IjvxStateMachine*>(elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev);
+							IjvxObject* theObject = static_cast<IjvxObject*>(elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev);
 
 							prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
-							res = static_local_unselect(theHinterface, theObjectSm);
+							res = static_local_unselect(theHinterface, theObject, tp, theObjectSm);
 							postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
 
 							if (res == JVX_NO_ERROR)
@@ -3041,7 +3195,7 @@ CjvxComponentHost::_unique_id_selected_component(const jvxComponentIdentificatio
 					if (elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj)
 					{
 						elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->request_unique_object_id(uId);
-					}
+					}				
 					else
 					{
 						res = JVX_ERROR_WRONG_STATE;
@@ -3092,7 +3246,25 @@ CjvxComponentHost::_switch_state_component(const jvxComponentIdentification& cpI
 			{
 				if (elmIt_tech->technologyInstances.selTech[cpId.slotid].theHandle_shortcut_tech)
 				{
-					targetObject = elmIt_tech->technologyInstances.selTech[cpId.slotid].theHandle_shortcut_tech;
+					if (JVX_CHECK_SIZE_SELECTED(elmIt_tech->technologyInstances.selTech[cpId.slotid].idSel))
+					{
+						targetObject = elmIt_tech->technologyInstances.selTech[cpId.slotid].theHandle_shortcut_tech;
+					}
+					else
+					{
+						// External components can be addressed if state is ACTIVE or higher
+						switch (sswitch)
+						{
+						case jvxStateSwitch::JVX_STATE_SWITCH_PREPARE:
+						case jvxStateSwitch::JVX_STATE_SWITCH_START:
+						case jvxStateSwitch::JVX_STATE_SWITCH_STOP:
+						case jvxStateSwitch::JVX_STATE_SWITCH_POSTPROCESS:
+							targetObject = elmIt_tech->technologyInstances.selTech[cpId.slotid].theHandle_shortcut_tech;
+							break;
+						default: 
+							res = JVX_ERROR_NO_ACCESS;
+						}
+					}
 				}
 				else
 				{
@@ -3154,7 +3326,25 @@ CjvxComponentHost::_switch_state_component(const jvxComponentIdentification& cpI
 				{
 					if (elmIt_ep->instances.theHandle_shortcut[cpId.slotid].obj)
 					{
-						targetObject = elmIt_ep->instances.theHandle_shortcut[cpId.slotid].obj;
+						if (JVX_CHECK_SIZE_SELECTED(elmIt_ep->instances.theHandle_shortcut[cpId.slotid].idSel))
+						{
+							targetObject = elmIt_ep->instances.theHandle_shortcut[cpId.slotid].obj;
+						}
+						else
+						{
+							// External components can be addressed if state is ACTIVE or higher
+							switch (sswitch)
+							{
+							case jvxStateSwitch::JVX_STATE_SWITCH_PREPARE:
+							case jvxStateSwitch::JVX_STATE_SWITCH_START:
+							case jvxStateSwitch::JVX_STATE_SWITCH_STOP:
+							case jvxStateSwitch::JVX_STATE_SWITCH_POSTPROCESS:
+								targetObject = elmIt_tech->technologyInstances.selTech[cpId.slotid].theHandle_shortcut_tech;
+								break;
+							default:
+								res = JVX_ERROR_NO_ACCESS;
+							}
+						}
 					}
 					else
 					{

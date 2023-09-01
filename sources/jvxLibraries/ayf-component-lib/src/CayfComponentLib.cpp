@@ -255,6 +255,8 @@ CayfComponentLib::terminate(ayfHostBindingReferences*& refOnReturn)
 	return res;
 }
 
+#include "common/CjvxConnectorFactory.h"
+
 jvxErrorType
 CayfComponentLib::activate()
 {
@@ -277,9 +279,31 @@ CayfComponentLib::activate()
 		_common_set_icon.icon = static_cast<IjvxInputConnector*>(this);
 		_common_set_io_common.theMaster = static_cast<IjvxConnectionMaster*>(this);
 		*/
+		if (exposeFactories)
+		{
+			JVX_SAFE_ALLOCATE_OBJECT(optConFactory, CjvySimpleConnectorFactory(static_cast<IjvxObject*>(this)));
+			JVX_SAFE_ALLOCATE_OBJECT(optMasFactory, CjvxSimpleConnectionMasterFactory(static_cast<IjvxObject*>(this)));
+		}
+
 		CjvxInputOutputConnector::lds_activate(nullptr, static_cast<IjvxObject*>(this),
-			nullptr, static_cast<IjvxConnectionMaster*>(this), "default", 
+			optConFactory, static_cast<IjvxConnectionMaster*>(this), "default",
 			static_cast<IjvxInputConnector*>(this), static_cast<IjvxOutputConnector*>(this));
+
+		// Start the input output connector factory
+		if (optConFactory)
+		{
+			optConFactory->activate(
+				static_cast<IjvxInputConnectorSelect*>(this), 
+				static_cast<IjvxOutputConnectorSelect*>(this), 
+				static_cast<IjvxConnectionMaster*>(this), 
+				_common_set.theModuleName.c_str());
+		}
+
+		if (optMasFactory)
+		{
+			_init_master(static_cast<CjvxObject*>(this), "default", optMasFactory);
+			optMasFactory->activate("default", static_cast<IjvxConnectionMaster*>(this));
+		}
 
 		// Allocate the single main node for processing 
 		resC = allocate_main_node(); 
@@ -309,10 +333,19 @@ CayfComponentLib::activate()
 			{
 				passConfigSection(this->mainNode, astr.std_str());
 
-				// Attach main node to host control
-				if (binding->ayf_attach_component_module_call)
+				// Attach main node to host control - if embedded in full host
+				IjvxComponentHostExt* hostExt = nullptr;
+				hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+				if (hostExt)
 				{
-					resC = binding->ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+					hostExt->attach_external_component(mainNode, regName.c_str(), true);
+				}
+				else
+				{
+					if (binding->ayf_attach_component_module_call)
+					{
+						resC = binding->ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+					}
 				}
 
 				// Create simple connection
@@ -450,26 +483,42 @@ CayfComponentLib::deactivate()
 		if (theConnections)
 		{
 			resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
-			assert(resC == JVX_NO_ERROR);
-
-			resC = theProc->disconnect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-			assert(resC == JVX_NO_ERROR);
-
-			theConnections->return_reference_connection_process(theProc);
-
-			if (JVX_CHECK_SIZE_SELECTED(uId_process))
+			
+			// The process might have been removed already if we use the embedded or full host: 
+			// As soon as we unregister the connector factory and/or the master factory, the process will be cleared by
+			// the host. This is ok, however.
+			if (resC == JVX_NO_ERROR)
 			{
-				resC = theConnections->remove_connection_process(uId_process);
+
+				resC = theProc->disconnect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 				assert(resC == JVX_NO_ERROR);
+
+				theConnections->return_reference_connection_process(theProc);
+
+				if (JVX_CHECK_SIZE_SELECTED(uId_process))
+				{
+					resC = theConnections->remove_connection_process(uId_process);
+					assert(resC == JVX_NO_ERROR);
+				}
 			}
+			resC = JVX_NO_ERROR;
 			uId_process = JVX_SIZE_UNSELECTED;
 			retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 		}
 		theConnections = nullptr;
 
-		if (binding->ayf_detach_component_module_call)
+		IjvxComponentHostExt* hostExt = nullptr;
+		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+		if (hostExt)
 		{
-			resC = binding->ayf_detach_component_module_call(mainNodeName.c_str(), this);
+			resC = hostExt->detach_external_component(this->mainNode, regName.c_str(), JVX_STATE_ACTIVE);
+		}
+		else
+		{
+			if (binding->ayf_detach_component_module_call)
+			{
+				resC = binding->ayf_detach_component_module_call(mainNodeName.c_str(), this);
+			}
 		}
 		assert(resC == JVX_NO_ERROR);
 
@@ -489,7 +538,21 @@ CayfComponentLib::deactivate()
 		this->mainObj = nullptr;
 		this->mainNode = nullptr;
 		
+		if (optMasFactory)
+		{			
+			optMasFactory->deactivate();
+			_terminate_master();
+			JVX_SAFE_DELETE_OBJECT(optMasFactory);
+		}
+
+		if (optConFactory)
+		{
+			optConFactory->deactivate();
+			JVX_SAFE_DELETE_OBJECT(optConFactory);
+		}
+
 		CjvxInputOutputConnector::lds_deactivate();
+
 		resC = _deactivate();
 		assert(resC == JVX_NO_ERROR);
 

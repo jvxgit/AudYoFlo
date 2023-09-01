@@ -130,9 +130,9 @@ select_component(jvxComponentIdentification& tp, jvxSize idx,
  * Return the idx to identify the currently selected component
  */
 jvxErrorType
-selection_component(const jvxComponentIdentification& tp, jvxSize* idRet)
+selection_component(const jvxComponentIdentification& tp, jvxSize* idRet, jvxApiString* modNmRet)
 {
-	return this->_selection_component(tp, idRet);
+	return this->_selection_component(tp, idRet, modNmRet);
 }
 
 /**

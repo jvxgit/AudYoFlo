@@ -105,7 +105,7 @@ CayfComponentLibContainer::stopProcessor(CayfComponentLib* compProc)
 jvxErrorType
 CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef) 
 {
-	jvxApiString realRegName;
+	jvxApiString realRegName = regName;
 	IjvxMinHost* minHostRef = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
 
@@ -121,11 +121,25 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 		{
 			bindRefs->ayf_register_object_host_call(regName.c_str(), realRegName, deviceEntryObject, &minHostRef, &confProcHdl);
 		}
-		deviceEntryObject->initialize(minHostRef, confProcHdl, realRegName.std_str());
+		regName = realRegName.std_str();
+		deviceEntryObject->initialize(minHostRef, confProcHdl, regName);
 	}
 
+	deviceEntryObject->set_location_info(jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
 	deviceEntryObject->select(nullptr);
 	deviceEntryObject->activate();
+
+	// Add the new component to component host grid structure
+	if (hostRef)
+	{
+		IjvxComponentHostExt* hostExt = nullptr;
+		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+		if (hostExt)
+		{
+			hostExt->attach_external_component(deviceEntryObject, regName.c_str(), true);
+		}
+	}
+
 	deployProcParametersStartProcessor(deviceEntryObject);
 
 	// This function is inside the lock
@@ -144,6 +158,18 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 	unsetReference();
 
 	stopProcessor(deviceEntryObject);
+
+	// Add the new component to component host grid structure
+	if (hostRef)
+	{
+		IjvxComponentHostExt* hostExt = nullptr;
+		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+		if (hostExt)
+		{
+			hostExt->detach_external_component(deviceEntryObject, regName.c_str(), JVX_STATE_ACTIVE);
+		}
+	}
+
 	deviceEntryObject->deactivate();
 	deviceEntryObject->unselect();
 	if (hostRef)

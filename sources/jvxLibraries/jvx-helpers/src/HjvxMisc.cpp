@@ -4109,6 +4109,16 @@ namespace jvx {
 			str << tag << "---------------------------" << std::endl << std::endl;
 		};
 	}
+
+	namespace align {
+
+		void resetComponentIdOnUnset(jvxComponentIdentification& tp)
+		{
+			tp.slotid = JVX_SIZE_UNSELECTED;
+			tp.slotsubid = JVX_SIZE_UNSELECTED;
+			tp.uId = JVX_SIZE_UNSELECTED;
+		}
+	}
 }
 
 void jvx_AllocateOneRcParameter(jvxRCOneParameter* ptr, jvxDataFormat form, jvxSize numChans, jvxSize bSize, jvxBool allocateBuf )

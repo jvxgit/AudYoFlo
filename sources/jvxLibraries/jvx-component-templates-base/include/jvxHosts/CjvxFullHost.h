@@ -37,7 +37,7 @@
 
 class CjvxFullHost: public CjvxComConHostTpl< CjvxInterfaceHostTplConnections<IjvxHost, CjvxComponentHostTools>>,
 	public IjvxSequencer, public CjvxSequencer,
-	public IjvxPropertyAttach
+	public IjvxPropertyAttach, public IjvxComponentHostExt
 {
 public:
 
@@ -76,6 +76,12 @@ public:
 	// ====================================================================================
 	virtual jvxErrorType JVX_CALLINGCONVENTION attach_property_submodule(const char* prefix, IjvxProperties* props) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION detach_property_submodule(IjvxProperties* props) override;
+
+	// ====================================================================================
+	// Interface: IjvxComponentHostExt
+	// ====================================================================================
+	jvxErrorType attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, jvxBool regConnFactory) override;
+	jvxErrorType detach_external_component(IjvxObject* toBeDetached, const char* moduleGroup, jvxState statOnLeave) override;
 
 #include "codeFragments/simplify/jvxSequencer_simplify.h"
 

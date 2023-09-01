@@ -16,6 +16,15 @@
 		}
 	} ;
 
+	struct oneExternalTechnology
+	{
+		IjvxTechnology* theHandle_single; // In case multiple objects are not allowed, always return this, otherwise, always return a new instance
+		oneExternalTechnology()
+		{
+			theHandle_single = NULL;
+		}
+	};
+
 	struct oneSelectedDevice
 	{
 		IjvxDevice* dev;
@@ -34,6 +43,7 @@
 	{
 		IjvxTechnology* theHandle_shortcut_tech;
 		jvxSize idSel;
+		std::string nmExternal;
 		jvxSize uid = JVX_SIZE_UNSELECTED;
 		std::vector<oneSelectedDevice> theHandle_shortcut_dev;
 		jvxSize numSubSlotsMax;
@@ -48,6 +58,7 @@
 	struct technologiesT
 	{
 		std::vector<oneTechnology> availableTechnologies;
+		std::vector<oneExternalTechnology> externalTechnologies;
 		std::vector<oneSelectedTechnology> selTech;
 		jvxSize numSlotsMax;
 		jvxSize numSubSlotsMax;
@@ -64,6 +75,12 @@
 class CjvxHostTypeHandler: public CjvxHostInteraction
 {
 protected:
+	struct oneDynCfgModule
+	{
+		std::string moduleName;
+		std::list<IjvxObject*> associatedExternalComponents;
+	};
+
 	typedef struct
 	{
 		technologiesT technologyInstances;
@@ -80,6 +97,8 @@ protected:
 		std::vector<oneObjType<IjvxNode>> registeredNodeTypes;
 		std::vector<oneObjType<IjvxSimpleComponent>> registeredSimpleTypes;
 	} _common_set_types;
+
+	std::map<std::string, oneDynCfgModule> configModuleDefinitions;
 
 public:
 

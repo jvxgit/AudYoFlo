@@ -213,6 +213,7 @@ refComp<T> reqRefTool(IjvxToolsHost* tHost, const jvxComponentIdentification& tp
 	refComp<T> inst;
 	if (tHost)
 	{
+		// Note: we can only check here since multiple types are linked to identical type
 		if (checkComponentType<T>(tp.tp))
 		{
 			tHost->reference_tool(tp, &inst.objPtr, fId, fTag, filter_stateMask, decider);
@@ -230,6 +231,7 @@ void retRefTool(IjvxToolsHost* tHost, jvxComponentType tp, refComp<T>& inst)
 {
 	if (tHost)
 	{
+		// Note: we can only check here since multiple types are linked to identical type
 		if (checkComponentType<T>(tp))
 		{
 			tHost->return_reference_tool(tp, inst.objPtr);	
@@ -245,6 +247,7 @@ refComp<T> reqInstTool(IjvxToolsHost* tHost, jvxComponentType tp, jvxSize fId = 
 	refComp<T> inst;
 	if (tHost)
 	{
+		// Note: we can only check here since multiple types are linked to identical type
 		if (checkComponentType<T>(tp))
 		{
 			tHost->instance_tool(tp, &inst.objPtr, fId, fTag);
@@ -263,6 +266,7 @@ jvxErrorType retInstTool(IjvxToolsHost* tHost, jvxComponentType tp, refComp<T>& 
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 	if (tHost)
 	{
+		// Note: we can only check here since multiple types are linked to identical type
 		if (checkComponentType<T>(tp))
 		{
 			res = tHost->return_instance_tool(tp, inst.objPtr, fId, fTag);
@@ -298,6 +302,8 @@ T* castFromObject(IjvxObject* obj)
 	if(obj)
 	{
 		obj->request_specialization(&vPtr, &cTp, nullptr);
+
+		// Note: we can only check here since multiple types are linked to identical type
 		if (checkComponentType<T>(cTp.tp))
 		{
 			retPtr = (T*)vPtr;

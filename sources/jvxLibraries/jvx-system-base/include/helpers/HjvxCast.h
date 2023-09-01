@@ -96,6 +96,11 @@ jvxInterfaceType getInterfaceType()
 	{
 		tp = JVX_INTERFACE_PACKAGE;
 	}
+	else if (std::is_same<T, IjvxComponentHostExt>::value)
+	{
+		tp = JVX_INTERFACE_COMPONENT_HOST_EXT;
+	}
+
 	/*
 	else if (std::is_same<T, IjvxQtWidgetHost>:value)
 	{

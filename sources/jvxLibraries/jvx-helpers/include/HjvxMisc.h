@@ -629,6 +629,11 @@ namespace jvx {
 
 		void debug_out_command_request(const CjvxReportCommandRequest& request, std::ostream& str, const std::string& tag);
 	}
+
+	namespace align {
+
+		void resetComponentIdOnUnset(jvxComponentIdentification& tp);
+	}
 }
 
 void 

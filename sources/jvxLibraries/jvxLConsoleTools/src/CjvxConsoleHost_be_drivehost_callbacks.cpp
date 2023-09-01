@@ -85,6 +85,8 @@ CjvxConsoleHost_be_drivehost::request_command(const CjvxReportCommandRequest& re
 
 	return reqHandle.request_command(request);
 
+#if 0
+	//The following seems forgotten code. Need to check that this still works, though.
 	JVX_THREAD_ID tIdLocal = JVX_GET_CURRENT_THREAD_ID();
 	
 	if (request.request() == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN)
@@ -204,6 +206,7 @@ CjvxConsoleHost_be_drivehost::request_command(const CjvxReportCommandRequest& re
 
 	}
 	return res;
+#endif
 }
 
 jvxErrorType CjvxConsoleHost_be_drivehost::interface_sub_report(IjvxSubReport** subReport)

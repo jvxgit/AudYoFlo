@@ -51,7 +51,7 @@ public:
 	jvxErrorType _select_component(jvxComponentIdentification& tp, jvxSize idx,
 			IjvxObject* theOwner, jvxBool extend_if_necessary);
 
-	jvxErrorType _selection_component(const jvxComponentIdentification& tp, jvxSize* idRet);
+	jvxErrorType _selection_component(const jvxComponentIdentification& tp, jvxSize* idRet, jvxApiString* modNmRet);
 	jvxErrorType _activate_selected_component(const jvxComponentIdentification& tp);
 
 	jvxErrorType _is_ready_selected_component(const jvxComponentIdentification& tp, jvxBool* ready, jvxApiString* reasonIfNot);
@@ -111,6 +111,7 @@ public:
 		IjvxObject* theOwner);
 
 	static jvxErrorType static_local_unselect(IjvxHiddenInterface* theHinterface,
+		IjvxObject* theObject, const jvxComponentIdentification& tpIdOld,
 		IjvxCoreStateMachine* theObjectSm);
 };
 

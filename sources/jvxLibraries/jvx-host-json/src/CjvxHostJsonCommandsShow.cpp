@@ -149,8 +149,8 @@ CjvxHostJsonCommandsShow::create_active_component_one_type(jvxComponentType tpel
 			jelmlstl.addConsumeElement(jelml);
 			hHost->selection_component(tp, &idS);
 			fldDescr.assign("--");
-			fldDescror.assign("--");
-			if (JVX_CHECK_SIZE_SELECTED(idS))
+			fldDescror.assign("--");			
+			if (JVX_CHECK_SIZE_SELECTED(idS) || (idS == JVX_SIZE_SLOT_OFF_SYSTEM))
 			{
 				hHost->description_selected_component(tp, &fldDescr);
 				hHost->descriptor_selected_component(tp, &fldDescror);
@@ -1629,7 +1629,7 @@ CjvxHostJsonCommandsShow::show_single_component(
 
 
 					hHost->selection_component(tp, &idS);
-					if (JVX_CHECK_SIZE_SELECTED(idS))
+					if (JVX_CHECK_SIZE_SELECTED(idS) || (idS == JVX_SIZE_SLOT_OFF_SYSTEM))
 					{
 						IjvxObject* theObject = NULL;
 						jvxHandle* theHdl = NULL;
@@ -2102,6 +2102,7 @@ CjvxHostJsonCommandsShow::show_single_component(
 
 			// Show only the names of the available components - and highlight the selected one
 			// = tpAll[dh_command.subaddress];
+
 			res = hHost->selection_component(tp, &idS);
 			if ((res == JVX_NO_ERROR) || (res == JVX_ERROR_ID_OUT_OF_BOUNDS))
 			{
@@ -2115,11 +2116,30 @@ CjvxHostJsonCommandsShow::show_single_component(
 						CjvxJsonElementList jelmlst_entries;
 						CjvxJsonElement jelm_entry;
 						CjvxJsonArrayElement jarr_entry;
+						jvxBool thisSelected = false;
 
 						JVX_CREATE_COMPONENT_TYPE(jelm_entry, jvxComponentType_txt((jvxSize)tp.tp));
 						jelmlst_entries.addConsumeElement(jelm_entry);
 
-						if (idS == i)
+						if (idS == JVX_SIZE_SLOT_OFF_SYSTEM)
+						{
+							jvxApiString astrModNameSel;
+							hHost->selection_component(tp, nullptr, &astrModNameSel);
+							hHost->module_reference_component_system(tp, i, &fldStr, nullptr);
+							if (astrModNameSel.std_str() == fldStr.std_str())
+							{
+								thisSelected = true;
+							}
+						}
+						else
+						{
+							if (idS == i)
+							{
+								thisSelected = true;
+							}
+						}
+	
+						if (thisSelected)
 						{
 							JVX_CREATE_COMPONENT_SELECTED(jelm_entry, JVX_INDICATE_TRUE_SHORT);
 						}
@@ -2127,6 +2147,7 @@ CjvxHostJsonCommandsShow::show_single_component(
 						{
 							JVX_CREATE_COMPONENT_SELECTED(jelm_entry, JVX_INDICATE_FALSE_SHORT);
 						}
+
 						jelmlst_entries.addConsumeElement(jelm_entry);
 
 						hHost->description_component_system(tp, i, &fldStr);
@@ -2138,7 +2159,7 @@ CjvxHostJsonCommandsShow::show_single_component(
 						jelmlst_entries.addConsumeElement(jelm_entry);
 
 						stat = JVX_STATE_NONE;
-						if (idS == i)
+						if (thisSelected)
 						{
 							hHost->state_selected_component(tp, &stat);
 

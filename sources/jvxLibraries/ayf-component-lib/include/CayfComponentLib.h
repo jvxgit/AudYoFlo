@@ -20,6 +20,98 @@
 
 class myLocalHost;
 
+class CjvySimpleConnectorFactory : public IjvxConnectorFactory, public CjvxConnectorFactory
+{
+private:
+	IjvxObject* objRef = nullptr;
+public:
+	CjvySimpleConnectorFactory(IjvxObject* objArg) : objRef(objArg) {};
+
+	void activate(IjvxInputConnectorSelect* icon, IjvxOutputConnectorSelect* ocon,
+		IjvxConnectionMaster* master, const std::string& dbgHint)
+	{
+		oneInputConnectorElement newElmIn;
+		newElmIn.theConnector = icon;
+		oneOutputConnectorElement newElmOut;
+		newElmOut.theConnector = ocon;
+
+		_common_set_conn_factory.input_connectors[newElmIn.theConnector] = newElmIn;
+		_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut;
+		CjvxConnectorFactory::_activate_factory(objRef); 
+	};
+
+	void deactivate()
+	{
+		CjvxConnectorFactory::_deactivate_factory();
+		_common_set_conn_factory.input_connectors.clear();
+		_common_set_conn_factory.output_connectors.clear();
+	};
+
+#include "codeFragments/simplify/jvxConnectorFactory_simplify.h"
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_reference_object(IjvxObject** obj)override
+	{
+		if (obj)
+		{
+			*obj = objRef;
+		}
+		return JVX_NO_ERROR;
+	};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_object(IjvxObject* obj) override
+	{
+		if (obj == objRef)
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_INVALID_ARGUMENT;
+	};
+};
+
+
+class CjvxSimpleConnectionMasterFactory: public IjvxConnectionMasterFactory, public CjvxConnectionMasterFactory
+{
+private:
+	IjvxObject * objRef = nullptr;
+public:
+	CjvxSimpleConnectionMasterFactory(IjvxObject* objArg) : objRef(objArg) {};
+
+	void activate(const std::string& name, IjvxConnectionMaster* mas)
+	{
+		oneMasterElement newElm;
+		newElm.descror = "default";
+		newElm.theMaster = mas;
+		_common_set_conn_master_factory.masters[newElm.theMaster] = newElm;
+		_activate_master_factory(objRef);
+	};
+
+	void deactivate()
+	{
+		_deactivate_master_factory();
+		_common_set_conn_master_factory.masters.clear();		
+	};
+
+#include "codeFragments/simplify/jvxConnectorMasterFactory_simplify.h"
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_reference_object(IjvxObject** obj)override
+	{
+		if (obj)
+		{
+			*obj = objRef;
+		}
+		return JVX_NO_ERROR;
+	};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_object(IjvxObject* obj) override
+	{
+		if (obj == objRef)
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_INVALID_ARGUMENT;
+	};
+};
+
 class CayfComponentLib :
 	public IjvxNode,
 	public CjvxObject,
@@ -52,6 +144,10 @@ protected:
 
 	IjvxConfigProcessor* confProcHdl = nullptr;
 	jvxConfigData* cfgDataInit = nullptr;
+
+	jvxBool exposeFactories = true;
+	CjvySimpleConnectorFactory* optConFactory = nullptr;
+	CjvxSimpleConnectionMasterFactory* optMasFactory = nullptr;
 
 protected:
 	IjvxNode* mainNode = nullptr;
@@ -185,13 +281,89 @@ public:
 		// =====================================================================
 	// Activate the relevant hidden interfaces
 	// =====================================================================
-// #define JVX_INTERFACE_SUPPORT_CONNECTOR_FACTORY
-// #define JVX_INTERFACE_SUPPORT_CONNECTOR_MASTER_FACTORY
-#define JVX_INTERFACE_SUPPORT_PROPERTIES
-#include "codeFragments/simplify/jvxHiddenInterface_simplify.h"
-#undef JVX_INTERFACE_SUPPORT_PROPERTIES
-// #undef JVX_INTERFACE_SUPPORT_CONNECTOR_MASTER_FACTORY
-// #undef JVX_INTERFACE_SUPPORT_CONNECTOR_FACTORY
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)override
+	{
+		jvxErrorType res = JVX_NO_ERROR;
+
+		switch (tp)
+		{
+		case JVX_INTERFACE_PROPERTIES:
+			*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxProperties*>(this));
+			break;
+
+		case JVX_INTERFACE_CONNECTOR_FACTORY:
+			*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxConnectorFactory*>(optConFactory));
+			break;
+
+		case JVX_INTERFACE_CONNECTOR_MASTER_FACTORY:
+			*hdl = reinterpret_cast<jvxHandle*>(static_cast<IjvxConnectionMasterFactory*>(optMasFactory));
+			break;
+
+		default:
+			res = _request_hidden_interface(tp, hdl);
+		}
+		return(res);
+	};
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)override
+	{
+		jvxErrorType res = JVX_NO_ERROR;
+
+		switch (tp)
+		{
+		case JVX_INTERFACE_PROPERTIES:
+			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxProperties*>(this)))
+			{
+				res = JVX_NO_ERROR;
+			}
+			else
+			{
+				res = JVX_ERROR_INVALID_ARGUMENT;
+			}
+			break;
+
+		case JVX_INTERFACE_CONNECTOR_FACTORY:
+			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxConnectorFactory*>(optConFactory)))
+			{
+				res = JVX_NO_ERROR;
+			}
+			else
+			{
+				res = JVX_ERROR_INVALID_ARGUMENT;
+			}
+			break;
+		case JVX_INTERFACE_CONNECTOR_MASTER_FACTORY:
+			if (hdl == reinterpret_cast<jvxHandle*>(static_cast<IjvxConnectionMasterFactory*>(optMasFactory)))
+			{
+				res = JVX_NO_ERROR;
+			}
+			else
+			{
+				res = JVX_ERROR_INVALID_ARGUMENT;
+			}
+			break;
+
+		default:
+			res = _return_hidden_interface(tp, hdl);
+		}
+		return(res);
+	};
+
+	jvxErrorType
+		object_hidden_interface(IjvxObject** objRef) override
+	{
+		if (objRef)
+		{
+			*objRef = static_cast<IjvxObject*>(this);
+		}
+		return JVX_NO_ERROR;
+	};
+
+
+
+
+
 
 #define JVX_STATEMACHINE_FULL_SKIP_INIT_TERM
 #define JVX_STATE_MACHINE_DEFINE_PREPAREPOSTPROCESS

@@ -15,12 +15,24 @@ public:
 	};
 };
 
+template <class T> class oneExternalObj
+{
+public:
+	std::string moduleName;
+	T* theHandle_single;// In case multiple objects are not allowed, always return this, otherwise, always return a new instance
+	oneExternalObj()
+	{
+		theHandle_single = NULL;
+	};
+};
+
 template <class T> class oneSelectedObj
 {
 public:
 	T* obj = nullptr;
 	jvxSize idSel = JVX_SIZE_UNSELECTED;
 	jvxSize uid = JVX_SIZE_UNSELECTED;
+	std::string nmExternal;
 	IjvxConnectorFactory* cfac = nullptr;
 	IjvxConnectionMasterFactory* mfac = nullptr;
 	oneSelectedObj()
@@ -36,6 +48,7 @@ template <class T> class objT
 {
 public:
 	std::vector<oneObj<T>> availableEndpoints;
+	std::vector<oneExternalObj<T>> externalEndpoints;
 	std::vector<oneSelectedObj<T>> theHandle_shortcut;
 	jvxSize numSlotsMax = 0;
 	objT()
