@@ -22,8 +22,9 @@ private:
 public:
 
 	CayfComponentLib* processorRef = nullptr;	
-	ayfHostBindingReferences* bindRefs = nullptr;
-	
+	ayfHostBindingReferencesMinHost* bindRefsMinHost = nullptr;
+	ayfHostBindingReferencesEmbHost* bindRefsEmbHost = nullptr;
+
 	CayfComponentLibContainer();
 	~CayfComponentLibContainer();
 
@@ -45,13 +46,13 @@ public:
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
 	jvxErrorType stopProcessor(CayfComponentLib* compProc);
 	
-	virtual CayfComponentLib* allocateDeviceObject(int passthroughMode) = 0;
+	virtual CayfComponentLib* allocateDeviceObject(int passthroughMode, CayfComponentLibContainer* parent) = 0;
 	virtual void deallocateDeviceObject(CayfComponentLib* delMe) = 0;
 
 	//! Callback entry to allocate the objects
 	jvxErrorType invite_external_components(IjvxHiddenInterface* hostRef, jvxBool inviteToJoin) override;
 
-
+	void linkBinding(ayfHostBindingReferences* bindRef);
 };
 
 #endif

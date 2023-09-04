@@ -35,8 +35,7 @@ CjvxAppHost::put_configuration(jvxCallManagerConfiguration* callConf,
 	jvxValue valD;
 	jvxConfigSectionTypes tp = JVX_CONFIG_SECTION_TYPE_UNKNOWN;
 	jvxSize h;
-	jvxSize slotid;
-	jvxSize slotsubid;
+	jvxSize slotid;jvxSize slotsubid;
 	std::string slottoken;
 	jvxSize numSlots = 1;
 	jvxValue val;
@@ -139,10 +138,48 @@ CjvxAppHost::put_configuration(jvxCallManagerConfiguration* callConf,
 								}
 								break;
 							}
-							
+
 						}
 					}
 				}// if(datTmpLoc)
+
+				datTmpLoc = nullptr;
+				processor->getReferenceEntryCurrentSection_name(datTmp, &datTmpLoc, SECTIONNAME_ALL_EXTERNAL_MODULE_ENTRIES);
+				if (datTmpLoc)
+				{
+					jvxSize numModEntries = 0;
+					processor->getNumberSubsectionsCurrentSection(datTmpLoc, &numModEntries);
+					for (i = 0; i < numModEntries; i++)
+					{
+						jvxConfigData* datTmpOut = nullptr;
+						processor->getReferenceSubsectionCurrentSection_id(datTmpLoc, &datTmpOut, i);
+						if (datTmpOut)
+						{
+							jvxApiString modAstr;
+							jvxApiString cfgStr;
+							jvxApiString fNameAstr;
+							int lineNoCfg = 0;
+							processor->getNameCurrentEntry(datTmpOut, &modAstr);
+							processor->printConfiguration(datTmpOut, &cfgStr, true);
+							processor->getOriginSection(datTmpLoc, &fNameAstr, &lineNoCfg);
+
+							oneDynExtCfg newElm;
+							newElm.cfgString = cfgStr.std_str();
+							newElm.moduleName = modAstr.std_str();
+							newElm.fName = fNameAstr.std_str();
+							newElm.lineNo = lineNoCfg;
+							auto exElm = extModulesConfigs.find(newElm.moduleName);
+							if (exElm == extModulesConfigs.end())
+							{
+								extModulesConfigs[newElm.moduleName] = newElm;
+							}
+							else
+							{
+								std::cout << "Warning: Module <" << newElm.moduleName << "> stored multiple times in configuration for external modules." << std::endl;
+							}
+						}
+					}
+				}
 			}
 
 			if (jvx_bitTest(CjvxHost_genpcg::properties_selected.configure_parts.value.selection(), 0))
@@ -518,6 +555,39 @@ CjvxAppHost::get_configuration(jvxCallManagerConfiguration* callConf,
 					}
 					processor->addSubsectionToSection(datTmp, datTmpLoc);
 				}
+			}
+		
+			if (extModuleDefinitions.size())
+			{
+				datTmpLoc = nullptr;
+				datAdd = nullptr;
+				jvxConfigData* datAddAdd = nullptr;
+				processor->createEmptySection(&datTmpLoc, SECTIONNAME_ALL_EXTERNAL_MODULE_ENTRIES);
+				for (auto& elm : extModuleDefinitions)
+				{
+					processor->createEmptySection(&datAdd, elm.second.moduleName.c_str());
+					for (auto& elmI : elm.second.associatedExternalComponents)
+					{			
+						jvxApiString modAstr;
+						elmI->module_reference(&modAstr, nullptr);
+						auto ifElm = reqInterfaceObj<IjvxConfiguration>(elmI);
+						if(ifElm)
+						{
+							processor->createEmptySection(&datTmp_add, modAstr.c_str());
+							ifElm->get_configuration(callConf, processor, datTmp_add);
+						}
+						else
+						{
+							std::string commStr = "No configuration for module reference <" + modAstr.std_str();
+							commStr += ">.";
+							processor->createComment(&datTmp_add, commStr.c_str());
+						}
+						processor->addSubsectionToSection(datAdd, datTmp_add);
+						retInterfaceObj<IjvxConfiguration>(elmI, ifElm);
+					}
+					processor->addSubsectionToSection(datTmpLoc, datAdd);
+				}
+				processor->addSubsectionToSection(datTmp, datTmpLoc);
 			}
 		}
 

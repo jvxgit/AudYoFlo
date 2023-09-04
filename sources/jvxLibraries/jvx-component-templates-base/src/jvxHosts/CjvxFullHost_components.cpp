@@ -191,7 +191,7 @@ CjvxFullHost::myRegisteredHostId()
 }
 
 jvxErrorType 
-CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, jvxBool regConnFactory)
+CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, jvxBool regConnFactory, jvxBool noCfgSave)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxHandle* refSpec = nullptr;
@@ -300,6 +300,7 @@ CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* mo
 
 						elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj = node;
 						elmIt_ep->instances.theHandle_shortcut[tp.slotid].nmExternal = modStr.std_str();
+						elmIt_ep->instances.theHandle_shortcut[tp.slotid].noCfgSave = noCfgSave; 
 						std::string nm = jvxComponentIdentification_txt(tp);
 						if (uIdInst)
 							uIdInst->obtain_unique_id(&uid, nm.c_str());
@@ -384,17 +385,17 @@ CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* mo
 		if (moduleGroup)
 		{
 			std::string modName = moduleGroup;
-			auto elm = configModuleDefinitions.find(modName);
-			if (elm != configModuleDefinitions.end())
+			auto elm = extModuleDefinitions.find(modName);
+			if (elm != extModuleDefinitions.end())
 			{
 				elm->second.associatedExternalComponents.push_back(toBeAttached);
 			}
 			else
 			{
-				CjvxHostTypeHandler::oneDynCfgModule newElm;
+				CjvxHostTypeHandler::oneDynExtModule newElm;
 				newElm.associatedExternalComponents.push_back(toBeAttached);
 				newElm.moduleName = modName;
-				configModuleDefinitions[modName] = newElm;
+				extModuleDefinitions[modName] = newElm;
 			}
 		}
 	}
@@ -531,8 +532,8 @@ CjvxFullHost::detach_external_component(IjvxObject* toBeDetached, const char* mo
 		{
 			res = JVX_ERROR_ELEMENT_NOT_FOUND;
 			std::string modName = moduleGroup;
-			auto elm = configModuleDefinitions.find(modName);
-			if (elm != configModuleDefinitions.end())
+			auto elm = extModuleDefinitions.find(modName);
+			if (elm != extModuleDefinitions.end())
 			{
 				auto elmI = elm->second.associatedExternalComponents.begin();
 				
@@ -548,11 +549,59 @@ CjvxFullHost::detach_external_component(IjvxObject* toBeDetached, const char* mo
 
 				if (elm->second.associatedExternalComponents.size() == 0)
 				{
-					configModuleDefinitions.erase(elm);
+					extModuleDefinitions.erase(elm);
 				}
 			}
 		}
 	}
 
+	return res;
+}
+
+jvxErrorType 
+CjvxFullHost::load_config_content_module(const char* modName, jvxConfigData** cfgData)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	auto inst = extModulesConfigs.find(modName);
+	if (inst != extModulesConfigs.end())
+	{
+		if (!inst->second.cfgString.empty())
+		{
+			jvxComponentIdentification tpCfg(JVX_COMPONENT_CONFIG_PROCESSOR, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
+			auto cfg = reqRefTool<IjvxConfigProcessor>(this, tpCfg);
+			if (cfg.cpPtr)
+			{
+
+				res = cfg.cpPtr->parseTextField(inst->second.cfgString.c_str(), "internal", 0);
+				if (res == JVX_NO_ERROR)
+				{
+					cfg.cpPtr->getConfigurationHandle(cfgData);
+				}
+			}
+			retRefTool<IjvxConfigProcessor>(this, tpCfg.tp, cfg);			
+		}
+		res = JVX_NO_ERROR;
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxFullHost::release_config_content_module(const char* modName, jvxConfigData* cfgData)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	auto inst = extModulesConfigs.find(modName);
+	if (inst != extModulesConfigs.end())
+	{
+		if (cfgData)
+		{
+			jvxComponentIdentification tpCfg(JVX_COMPONENT_CONFIG_PROCESSOR, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
+			auto cfg = reqRefTool<IjvxConfigProcessor>(this, tpCfg);
+			if (cfg.cpPtr)
+			{
+				cfg.cpPtr->removeHandle(cfgData);
+			}
+			res = JVX_NO_ERROR;
+		}
+	}
 	return res;
 }

@@ -470,6 +470,8 @@ CjvxFullHost::unselect()
 
 		res = _unselect();
 		assert(res == JVX_NO_ERROR);
+
+		extModulesConfigs.clear();
 	}
 	else
 	{

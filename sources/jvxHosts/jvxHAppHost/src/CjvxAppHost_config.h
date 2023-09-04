@@ -4,6 +4,7 @@
 #define SECTIONNAME_ALL_SUBSECTIONS "host_allSubSections"
 
 #define SECTIONNAME_ALL_EXTERNAL_ENTRIES "host_allExternalEntries"
+#define SECTIONNAME_ALL_EXTERNAL_MODULE_ENTRIES "host_allExternalModEntries"
 
 #define SECTIONNAME_NUMSLOTS_TECHNOLOGY_PREFIX "host_slotnum_technology_"
 #define SECTIONNAME_STATE_TECHNOLOGY_PREFIX "host_state_technology_"

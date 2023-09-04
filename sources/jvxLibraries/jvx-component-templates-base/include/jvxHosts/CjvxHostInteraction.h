@@ -32,6 +32,7 @@ public:
 	T* obj = nullptr;
 	jvxSize idSel = JVX_SIZE_UNSELECTED;
 	jvxSize uid = JVX_SIZE_UNSELECTED;
+	jvxBool noCfgSave = false;
 	std::string nmExternal;
 	IjvxConnectorFactory* cfac = nullptr;
 	IjvxConnectionMasterFactory* mfac = nullptr;

@@ -12,6 +12,16 @@ extern "C"
 	{
 		return globalHostInstance.unregister_factory_host(regMe);
 	}
+
+	jvxErrorType ayf_load_config_content_factory_host(IjvxExternalModuleFactory* priIf, jvxConfigData** datOnReturn, const char* fName)
+	{
+		return globalHostInstance.load_config_content(priIf, datOnReturn, fName);
+	}
+
+	jvxErrorType ayf_release_config_content_factory_host(IjvxExternalModuleFactory* priIf, jvxConfigData* datOnReturn)
+	{
+		return globalHostInstance.release_config_content(priIf, datOnReturn);
+	}
 }
 
 #include "interfaces/all-hosts/configHostFeatures_common.h"
@@ -28,6 +38,7 @@ extern "C"
 			{
 				theFeaturesH->hHost->add_external_factory(static_cast<IjvxExternalModuleFactory*>(&globalHostInstance));
 			}
+			globalHostInstance.setHost(theFeaturesH->hHost);
 		}
 		return(JVX_NO_ERROR);
 	}
@@ -42,6 +53,7 @@ extern "C"
 			if (theFeaturesH->hHost)
 			{
 				theFeaturesH->hHost->remove_external_factory(static_cast<IjvxExternalModuleFactory*>(&globalHostInstance));
+				globalHostInstance.setHost(nullptr);
 			}
 		}
 		return(JVX_NO_ERROR);

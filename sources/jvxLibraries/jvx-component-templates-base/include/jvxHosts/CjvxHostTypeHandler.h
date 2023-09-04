@@ -75,10 +75,19 @@
 class CjvxHostTypeHandler: public CjvxHostInteraction
 {
 protected:
-	struct oneDynCfgModule
+	struct oneDynExtModule
 	{
 		std::string moduleName;
 		std::list<IjvxObject*> associatedExternalComponents;
+	};
+
+	struct oneDynExtCfg
+	{
+		std::string moduleName;
+		std::string cfgString;
+		std::string fName;
+		int lineNo = 0;
+		jvxSize refCnt = 0;
 	};
 
 	typedef struct
@@ -98,7 +107,8 @@ protected:
 		std::vector<oneObjType<IjvxSimpleComponent>> registeredSimpleTypes;
 	} _common_set_types;
 
-	std::map<std::string, oneDynCfgModule> configModuleDefinitions;
+	std::map<std::string, oneDynExtModule> extModuleDefinitions;
+	std::map<std::string, oneDynExtCfg> extModulesConfigs;
 
 public:
 

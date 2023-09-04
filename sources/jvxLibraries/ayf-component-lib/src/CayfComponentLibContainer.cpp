@@ -10,6 +10,13 @@ CayfComponentLibContainer::~CayfComponentLibContainer()
 	JVX_INITIALIZE_MUTEX(safeAccess);
 };
 
+void 
+CayfComponentLibContainer::linkBinding(ayfHostBindingReferences* bindRef)
+{
+	bindRef->request_specialization(reinterpret_cast<jvxHandle**>(&bindRefsMinHost), ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST);
+	bindRef->request_specialization(reinterpret_cast<jvxHandle**>(&bindRefsEmbHost), ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST);
+}
+
 void
 CayfComponentLibContainer::reset()
 {
@@ -109,17 +116,17 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 	IjvxMinHost* minHostRef = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
 
-	CayfComponentLib* deviceEntryObject = allocateDeviceObject(passthroughMode);
+	CayfComponentLib* deviceEntryObject = allocateDeviceObject(passthroughMode, this);
 
 	if (hostRef)
 	{
 		deviceEntryObject->initialize(hostRef);
 	}
 	else
-	{
-		if (bindRefs->ayf_register_object_host_call)
+	{		
+		if (bindRefsMinHost)
 		{
-			bindRefs->ayf_register_object_host_call(regName.c_str(), realRegName, deviceEntryObject, &minHostRef, &confProcHdl);
+			bindRefsMinHost->ayf_register_object_host_call(regName.c_str(), realRegName, deviceEntryObject, &minHostRef, &confProcHdl);
 		}
 		regName = realRegName.std_str();
 		deviceEntryObject->initialize(minHostRef, confProcHdl, regName);
@@ -151,7 +158,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 jvxErrorType
 CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 {
-	ayfHostBindingReferences* bindOnReturn = nullptr;
+	ayfHostBindingReferencesMinHost* bindOnReturn = nullptr;
 	CayfComponentLib* deviceEntryObject = processorRef;
 
 	// This removes the processing reference for procesing loop in a lock!!
@@ -205,26 +212,23 @@ CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numIn
 	formGroup = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
 	passthroughMode = passthroughModeArg;
 
-	if (bindRefs->bindType == ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST)
+	if (bindRefsEmbHost)
 	{
-		if (bindRefs->ayf_register_factory_host_call)
+		jvxSize i;
+		const char** argv = nullptr;
+		int argc = bindRefsEmbHost->argsFullHost.ll();
+		if (argc)
 		{
-			jvxSize i;
-			const char** argv = nullptr;
-			int argc = bindRefs->argsFullHost.ll();
-			if (argc)
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(argv, const char*, argc);
+			for (i = 0; i < argc; i++)
 			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(argv, const char*, argc);
-				for (i = 0; i < argc; i++)
-				{
-					argv[i] = bindRefs->argsFullHost.c_str_at(i);
-				}
+				argv[i] = bindRefsEmbHost->argsFullHost.c_str_at(i);
 			}
-			bindRefs->ayf_register_factory_host_call(regName.c_str(), realRegName, this, argc, argv);
-			if (argc)
-			{
-				JVX_DSP_SAFE_DELETE_FIELD(argv);
-			}
+		}
+		bindRefsEmbHost->ayf_register_factory_host_call(regName.c_str(), realRegName, this, argc, argv);
+		if (argc)
+		{
+			JVX_DSP_SAFE_DELETE_FIELD(argv);
 		}
 	}
 	else
@@ -237,12 +241,9 @@ CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numIn
 jvxErrorType
 CayfComponentLibContainer::stopBinding()
 {
-	if (bindRefs->bindType == ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST)
+	if (bindRefsEmbHost)
 	{
-		if (bindRefs->ayf_unregister_factory_host_call)
-		{
-			bindRefs->ayf_unregister_factory_host_call(this);
-		}
+		bindRefsEmbHost->ayf_unregister_factory_host_call(this);
 	}
 	else
 	{

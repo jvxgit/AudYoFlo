@@ -1252,59 +1252,73 @@ template<typename T> static void get_configuration_component_node(
 			theStruct.theHandle_shortcut[slotid].obj->owner(&theOwner);
 			if (theOwner == nullptr)
 			{
-				theStruct.theHandle_shortcut[slotid].obj->request_hidden_interface(JVX_INTERFACE_CONFIGURATION, (jvxHandle**)&config_local);
-				if (config_local)
+				if (theStruct.theHandle_shortcut[slotid].noCfgSave)
 				{
-					processor->createEmptySection(&datTmp_add, token11.c_str());
-					config_local->get_configuration(callConf, processor, datTmp_add);
+					processor->addSubsectionToSection(datTmp, datTmp_intro);
+					jvxApiString strL;
+					jvxComponentIdentification cpId;
+					std::string txt = " Component <";
+					theStruct.theHandle_shortcut[slotid].obj->name(&strL);
+					txt += strL.std_str();
+					txt += "> is not handled here since the <no save> flag is set.";
+					processor->createComment(&datTmp_add, txt.c_str());
 				}
-				theStruct.theHandle_shortcut[slotid].obj->return_hidden_interface(JVX_INTERFACE_CONFIGURATION, config_local);
-
-
-				// Check if anything should be stored at all
-				storeNameAndState = true;
-				if (callConf->configModeFlags & JVX_CONFIG_MODE_OVERLAY)
+				else
 				{
-					if (!datTmp_add)
+					theStruct.theHandle_shortcut[slotid].obj->request_hidden_interface(JVX_INTERFACE_CONFIGURATION, (jvxHandle**)&config_local);
+					if (config_local)
 					{
-						storeNameAndState = false;
+						processor->createEmptySection(&datTmp_add, token11.c_str());
+						config_local->get_configuration(callConf, processor, datTmp_add);
 					}
-					else
+					theStruct.theHandle_shortcut[slotid].obj->return_hidden_interface(JVX_INTERFACE_CONFIGURATION, config_local);
+
+
+					// Check if anything should be stored at all
+					storeNameAndState = true;
+					if (callConf->configModeFlags & JVX_CONFIG_MODE_OVERLAY)
 					{
-						jvxBool isEmpty = false;
-						processor->isSectionEmpty(datTmp_add, &isEmpty);
-						if (isEmpty)
+						if (!datTmp_add)
 						{
-							processor->removeHandle(datTmp_add);
-							processor->removeHandle(datTmp_intro);
-							datTmp_add = NULL;
-							datTmp_intro = nullptr;
 							storeNameAndState = false;
 						}
+						else
+						{
+							jvxBool isEmpty = false;
+							processor->isSectionEmpty(datTmp_add, &isEmpty);
+							if (isEmpty)
+							{
+								processor->removeHandle(datTmp_add);
+								processor->removeHandle(datTmp_intro);
+								datTmp_add = NULL;
+								datTmp_intro = nullptr;
+								storeNameAndState = false;
+							}
+						}
 					}
-				}
 
-				if (storeNameAndState)
-				{
-					jvxApiString strL;
-					theStruct.theHandle_shortcut[slotid].obj->name(&strL);
-
-					processor->addSubsectionToSection(datTmp, datTmp_intro);
-
-					entry = strL.std_str();
-					HjvxConfigProcessor_writeEntry_assignmentString(processor, datTmp, token1, &entry);
-
-					// Write the state of the selected scanner technology
-					jvxState stat = JVX_STATE_NONE;
-					res = theStruct.theHandle_shortcut[slotid].obj->state(&stat);
-					if (res == JVX_NO_ERROR)
+					if (storeNameAndState)
 					{
-						valS = jvx_stateToIndex(stat);
-						HjvxConfigProcessor_writeEntry_assignment<jvxSize>(processor, datTmp, tokena, &valS);
-					}
-					else
-					{
-						errorDetected = true;
+						jvxApiString strL;
+						theStruct.theHandle_shortcut[slotid].obj->name(&strL);
+
+						processor->addSubsectionToSection(datTmp, datTmp_intro);
+
+						entry = strL.std_str();
+						HjvxConfigProcessor_writeEntry_assignmentString(processor, datTmp, token1, &entry);
+
+						// Write the state of the selected scanner technology
+						jvxState stat = JVX_STATE_NONE;
+						res = theStruct.theHandle_shortcut[slotid].obj->state(&stat);
+						if (res == JVX_NO_ERROR)
+						{
+							valS = jvx_stateToIndex(stat);
+							HjvxConfigProcessor_writeEntry_assignment<jvxSize>(processor, datTmp, tokena, &valS);
+						}
+						else
+						{
+							errorDetected = true;
+						}
 					}
 				}
 			}

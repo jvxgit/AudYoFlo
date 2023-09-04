@@ -19,6 +19,7 @@
 //#include "IayfComponentLib.h"
 
 class myLocalHost;
+class CayfComponentLibContainer;
 
 class CjvySimpleConnectorFactory : public IjvxConnectorFactory, public CjvxConnectorFactory
 {
@@ -142,16 +143,19 @@ protected:
 	std::string mainNodeName = "CayfComponentLibMainNode";
 	IjvxObject* mainObj = nullptr;
 
+	CayfComponentLibContainer* parent = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
 	jvxConfigData* cfgDataInit = nullptr;
 
 	jvxBool exposeFactories = true;
 	CjvySimpleConnectorFactory* optConFactory = nullptr;
 	CjvxSimpleConnectionMasterFactory* optMasFactory = nullptr;
-
+	
 protected:
 	IjvxNode* mainNode = nullptr;
 	ayfHostBindingReferences* binding = nullptr;
+	ayfHostBindingReferencesMinHost* bindingMinHost = nullptr;
+	ayfHostBindingReferencesEmbHost* bindingEmbHost = nullptr;
 
 private:
 	
@@ -205,7 +209,7 @@ private:
 	} embHost;
 
 public:
-	CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, CayfComponentLibContainer* parent);
 	~CayfComponentLib();
 
 	// Static functions to initialize embedding system
@@ -219,7 +223,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxMinHost* hostRef, IjvxConfigProcessor* confProc, const std::string& realRegName);
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate()override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION terminate(ayfHostBindingReferences*& bindOnReturn);
+	virtual jvxErrorType JVX_CALLINGCONVENTION terminate(ayfHostBindingReferencesMinHost*& bindOnReturn);
 
 	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION select(IjvxObject* theObj) override;

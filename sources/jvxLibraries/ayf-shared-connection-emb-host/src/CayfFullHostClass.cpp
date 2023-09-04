@@ -171,21 +171,100 @@ CayfFullHostClass::mainThreadLoop()
 	return JVX_THREAD_EXIT_NORMAL;
 }
 
+jvxErrorType 
+CayfFullHostClass::load_config_content(IjvxExternalModuleFactory* priIf, jvxConfigData** datOnReturn, const char* fName)
+{
+	if (hHost)
+	{
+		auto inst = reqInterface<IjvxComponentHostExt>(hHost);
+		if (inst)
+		{
+			std::string modName;
+			JVX_LOCK_MUTEX(safeAccess);
+			for (auto& elm : factories_active)
+			{
+				if (elm.theFactory == priIf)
+				{
+					modName = elm.nameAsRegistered;
+					break;
+				}
+			}
+			if (modName.empty())
+			{
+				for (auto& elm : factories_pending)
+				{
+					if (elm.theFactory == priIf)
+					{
+						modName = elm.nameAsRegistered;
+						break;
+					}
+				}
+			}
+			JVX_UNLOCK_MUTEX(safeAccess);
+
+			if (!modName.empty())
+			{
+				inst->load_config_content_module(modName.c_str(), datOnReturn);
+			}
+		}
+	}
+	return JVX_ERROR_ELEMENT_NOT_FOUND;
+}
+
+jvxErrorType 
+CayfFullHostClass::release_config_content(IjvxExternalModuleFactory* priIf, jvxConfigData* datOnReturn)
+{
+	if (hHost)
+	{
+		auto inst = reqInterface<IjvxComponentHostExt>(hHost);
+		if (inst)
+		{
+			std::string modName;
+			JVX_LOCK_MUTEX(safeAccess);
+			for (auto& elm : factories_active)
+			{
+				if (elm.theFactory == priIf)
+				{
+					modName = elm.nameAsRegistered;
+					break;
+				}
+			}
+			if (modName.empty())
+			{
+				for (auto& elm : factories_pending)
+				{
+					if (elm.theFactory == priIf)
+					{
+						modName = elm.nameAsRegistered;
+						break;
+					}
+				}
+			}
+			if (modName.empty())
+			{
+				for (auto& elm : factories_remove)
+				{
+					if (elm.theFactory == priIf)
+					{
+						modName = elm.nameAsRegistered;
+						break;
+					}
+				}
+			}
+			JVX_UNLOCK_MUTEX(safeAccess);
+
+			if (!modName.empty())
+			{
+				inst->release_config_content_module(modName.c_str(), datOnReturn);
+			}
+		}
+	}
+	return JVX_ERROR_ELEMENT_NOT_FOUND;
+}
+
 /*
-jvxErrorType 
-CayfFullHostClass::load_config_content(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName)
-{
-	return JVX_ERROR_ELEMENT_NOT_FOUND;
-}
 
-jvxErrorType 
-CayfFullHostClass::release_config_content(IjvxObject* priObj, jvxConfigData* datOnReturn)
-{
-	
-	return JVX_ERROR_ELEMENT_NOT_FOUND;
-}
-
-jvxErrorType 
+jvxErrorType
 CayfFullHostClass::attach_component_module(const char* nm, IjvxObject* priObj, IjvxObject* attachMe)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;

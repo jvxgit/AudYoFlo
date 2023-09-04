@@ -5,6 +5,9 @@ CjvxDataConnections::CjvxDataConnections()
 	_common_set_data_connection.unique_id = 1;
 	_common_set_data_connection.theHost = NULL;
 	unique_descriptor = "NONE_SPECIFIED";
+
+	// First init here and another (optional) later in _set_system_refs
+	pending_test_requests.threadIdMainThread = JVX_GET_CURRENT_THREAD_ID();
 }
 
 CjvxDataConnections::~CjvxDataConnections()

@@ -25,6 +25,7 @@ private:
 	jvxBool shutDownProcess = false;
 	JVX_THREAD_ID requestThread = JVX_THREAD_ID_INVALID;
 
+	IjvxHiddenInterface* hHost = nullptr;
 public:
 
 	jvxBool hostStarted = false;
@@ -85,8 +86,11 @@ public:
 	virtual jvxErrorType requestReferencePropertiesObject(jvx_propertyReferenceTriple& theTriple, const jvxComponentIdentification& tp) override;
 	virtual jvxErrorType returnReferencePropertiesObject(jvx_propertyReferenceTriple& theTriple, const jvxComponentIdentification& tp) override;
 
-	jvxErrorType invite_external_components(IjvxHiddenInterface* hostRef, jvxBool isInvite) override;
+	jvxErrorType load_config_content(IjvxExternalModuleFactory* priIf, jvxConfigData** datOnReturn, const char* fName);
+	jvxErrorType release_config_content(IjvxExternalModuleFactory* priIf, jvxConfigData* datOnReturn);
 
+	jvxErrorType invite_external_components(IjvxHiddenInterface* hostRef, jvxBool isInvite) override;
+	void setHost(IjvxHiddenInterface* hHostArg) { hHost = hHostArg; };
 };
 
 #endif

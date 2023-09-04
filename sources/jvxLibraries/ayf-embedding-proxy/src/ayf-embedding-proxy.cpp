@@ -12,6 +12,7 @@
 std::map<jvxSize, std::string> registeredInstances;
 JVX_HMODULE modHostPart = JVX_HMODULE_INVALID;
 ayfHostBindingType bindTypeFirstModule = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+ayfHostBindingReferences* bindPtrFirstModule = nullptr;
 jvxSize uId = 1;
 jvxBool consoleAttached = false;
 
@@ -19,7 +20,7 @@ jvxBool consoleAttached = false;
 #define Quotes(x) Q(x)
 #define SET_DLL_REFERENCE(ret, entry) ret-> ## entry ## _call = (entry) JVX_GETPROCADDRESS(modHostPart, Quotes(entry))
 
-static void registerMinHost(ayfHostBindingReferences* retReferences, JVX_HMODULE modHostPart)
+static void registerMinHost(ayfHostBindingReferencesMinHost* retReferences, JVX_HMODULE modHostPart)
 {
 	SET_DLL_REFERENCE(retReferences, ayf_register_object_host);
 	SET_DLL_REFERENCE(retReferences, ayf_unregister_object_host);
@@ -31,25 +32,23 @@ static void registerMinHost(ayfHostBindingReferences* retReferences, JVX_HMODULE
 	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
 }
 
-static void registerEmbHost(ayfHostBindingReferences* retReferences, JVX_HMODULE modHostPart)
+static void registerEmbHost(ayfHostBindingReferencesEmbHost* retReferences, JVX_HMODULE modHostPart)
 {
-	/*
-	SET_DLL_REFERENCE(retReferences, ayf_register_object_host);
-	SET_DLL_REFERENCE(retReferences, ayf_unregister_object_host);
-	SET_DLL_REFERENCE(retReferences, ayf_load_config_content);
-	SET_DLL_REFERENCE(retReferences, ayf_release_config_content);
-	SET_DLL_REFERENCE(retReferences, ayf_attach_component_module);
-	SET_DLL_REFERENCE(retReferences, ayf_detach_component_module);
-	SET_DLL_REFERENCE(retReferences, ayf_forward_text_command);
-	*/
 	SET_DLL_REFERENCE(retReferences, ayf_register_factory_host);
 	SET_DLL_REFERENCE(retReferences, ayf_unregister_factory_host);
+	SET_DLL_REFERENCE(retReferences, ayf_load_config_content_factory_host);
+	SET_DLL_REFERENCE(retReferences, ayf_release_config_content_factory_host);
 	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST;
 }
 
 void reset_entries(ayfHostBindingReferences* retReferences)
 {
-	retReferences->argsFullHost.clear();
+	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+}
+
+void reset_entries(ayfHostBindingReferencesMinHost* retReferences)
+{
+	reset_entries(static_cast<ayfHostBindingReferences*>(retReferences));
 	retReferences->ayf_attach_component_module_call = nullptr;
 	retReferences->ayf_detach_component_module_call = nullptr;
 	retReferences->ayf_forward_text_command_call = nullptr;
@@ -57,14 +56,20 @@ void reset_entries(ayfHostBindingReferences* retReferences)
 	retReferences->ayf_register_object_host_call = nullptr;
 	retReferences->ayf_release_config_content_call = nullptr;
 	retReferences->ayf_unregister_object_host_call = nullptr;
-	retReferences->ayf_register_factory_host_call = nullptr;
-	retReferences->ayf_unregister_factory_host_call = nullptr;
-	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
 }
 
+void reset_entries(ayfHostBindingReferencesEmbHost* retReferences)
+{
+	reset_entries(static_cast<ayfHostBindingReferences*>(retReferences));
+
+	retReferences->ayf_load_config_content_factory_host_call = nullptr;
+	retReferences->ayf_register_factory_host_call = nullptr;
+	retReferences->ayf_release_config_content_factory_host_call = nullptr;
+	retReferences->ayf_unregister_factory_host_call = nullptr;
+}
 extern "C"
 {
-	jvxErrorType ayf_embedding_proxy_init(const char* nm, jvxSize* idRegistered, ayfHostBindingReferences* retReferences, const char* fNameIniPath)
+	jvxErrorType ayf_embedding_proxy_init(const char* nm, jvxSize* idRegistered, ayfHostBindingReferences** retReferences, const char* fNameIniPath)
 	{
 		std::list<std::string> messagesConsole;
 
@@ -79,6 +84,12 @@ extern "C"
 		std::string loadDllName = loadDllNameMinHost;
 		int embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
 		// Check what is desired from first caller
+
+		if (retReferences == nullptr)
+		{
+			return JVX_ERROR_INVALID_ARGUMENT;
+		}
+
 
 		if (registeredInstances.size() == 0)
 		{
@@ -208,9 +219,15 @@ extern "C"
 					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
 					if (modHostPart != JVX_HMODULE_INVALID)
 					{
+						ayfHostBindingReferencesEmbHost* ptrRet = nullptr;
+						JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferencesEmbHost);
 						std::cout << " --> Opening successful!" << std::endl;
-						registerEmbHost(retReferences, modHostPart);
-						retReferences->argsFullHost.assign(lstArgs);
+						registerEmbHost(ptrRet, modHostPart);
+						ptrRet->argsFullHost.assign(lstArgs);
+						if (retReferences)
+						{
+							*retReferences = static_cast<ayfHostBindingReferences*>(ptrRet);
+						}
 						runLoop = false;
 					}
 					break;
@@ -221,14 +238,28 @@ extern "C"
 					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
 					if (modHostPart != JVX_HMODULE_INVALID)
 					{
+						ayfHostBindingReferencesMinHost* ptrRet = nullptr;
+						JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferencesMinHost);
 						std::cout << " --> Opening successful!" << std::endl;
-						registerMinHost(retReferences, modHostPart);
+						registerMinHost(ptrRet, modHostPart);
+						if (retReferences)
+						{
+							*retReferences = static_cast<ayfHostBindingReferences*>(ptrRet);
+						}
 						runLoop = false;
 					}
 					break;
 				case (int)ayfHostBindingType::AYF_HOST_BINDING_NONE:
 					std::cout << " --> Running with no binding." << std::endl;
-					retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+					{
+						ayfHostBindingReferences* ptrRet = nullptr;
+						JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferences);
+						ptrRet->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+						if (retReferences)
+						{
+							*retReferences = static_cast<ayfHostBindingReferences*>(ptrRet);
+						}
+					}
 					runLoop = false;
 					break;
 				}
@@ -236,21 +267,29 @@ extern "C"
 				embedId--;
 			}
 
-			bindTypeFirstModule = retReferences->bindType;
+			bindTypeFirstModule = (*retReferences)->bindType;
+			bindPtrFirstModule = *retReferences;
+
 			registeredInstances[uId] = nm;
 			if (idRegistered) *idRegistered = uId;
 			uId++;
 		} // if (registeredInstances.size() == 0)
 		else
 		{
+			ayfHostBindingReferences* ptr = nullptr;
+			ayfHostBindingReferencesMinHost* ptrMin = nullptr;
+			ayfHostBindingReferencesEmbHost* ptrEmb = nullptr;
 			switch (bindTypeFirstModule)
 			{
 			case ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST:
-				registerEmbHost(retReferences, modHostPart);
+
+				bindPtrFirstModule->request_specialization(reinterpret_cast<jvxHandle**>(&ptrEmb), bindTypeFirstModule);
+				registerEmbHost(ptrEmb, modHostPart);
 				break;
 
 			case ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST:
-				registerMinHost(retReferences, modHostPart);
+				bindPtrFirstModule->request_specialization(reinterpret_cast<jvxHandle**>(&ptrMin), bindTypeFirstModule);
+				registerMinHost(ptrMin, modHostPart);
 				break;
 			}
 
@@ -277,7 +316,28 @@ extern "C"
 			{
 				JVX_UNLOADLIBRARY(modHostPart);
 				modHostPart = JVX_HMODULE_INVALID;
-				reset_entries(retReferences);
+
+				ayfHostBindingReferences* ptr = nullptr;
+				ayfHostBindingReferencesMinHost* ptrMin = nullptr;
+				ayfHostBindingReferencesEmbHost* ptrEmb = nullptr;
+				switch (bindTypeFirstModule)
+				{
+				case ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST:
+
+					bindPtrFirstModule->request_specialization(reinterpret_cast<jvxHandle**>(&ptrEmb), bindTypeFirstModule);
+					reset_entries(ptrEmb);
+					break;
+
+				case ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST:
+					bindPtrFirstModule->request_specialization(reinterpret_cast<jvxHandle**>(&ptrMin), bindTypeFirstModule);
+					reset_entries(ptrMin);
+					break;
+				}
+
+				assert(bindPtrFirstModule);
+				JVX_SAFE_DELETE_OBJ(bindPtrFirstModule);
+
+				bindTypeFirstModule = ayfHostBindingType::AYF_HOST_BINDING_NONE;
 
 				if (consoleAttached)
 				{
