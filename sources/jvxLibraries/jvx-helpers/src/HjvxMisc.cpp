@@ -6226,6 +6226,7 @@ jvx_unlock_text_log(jvxrtst_backup& bkp)
 	bkp.jvxos.unlock();
 }
 
+//static std::list< CjvxReportCommandRequest*> fldPtrs;
 CjvxReportCommandRequest* jvx_command_request_copy_alloc(const CjvxReportCommandRequest& in)
 {
 	CjvxReportCommandRequest* ret = nullptr;
@@ -6250,10 +6251,21 @@ CjvxReportCommandRequest* jvx_command_request_copy_alloc(const CjvxReportCommand
 	default:
 		JVX_DSP_SAFE_ALLOCATE_OBJECT(ret, CjvxReportCommandRequest(in));
 	}
+	//fldPtrs.push_back(ret);
+	//std::cout << "Number of pointers in list: " << fldPtrs.size() << std::endl;
 	return ret;
 }
 
 void jvx_command_request_copy_dealloc(CjvxReportCommandRequest* in)
 {
+	/*
+	auto elm = std::find(fldPtrs.begin(), fldPtrs.end(), in);
+	if (elm != fldPtrs.end())
+	{
+		fldPtrs.erase(elm);
+
+	}
+	std::cout << "Number of pointers in list: " << fldPtrs.size() << std::endl;
+	*/
 	JVX_DSP_SAFE_DELETE_OBJECT(in);
 }

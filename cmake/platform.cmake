@@ -97,5 +97,9 @@ if(${JVX_OS_NAME} MATCHES "Windows")
 endif()
 message("Running on system ${JVX_OS_NAME}, the tool executable extension is <${JVX_EXECUTABLE_EXTENSION_OPERATE}>")
 
+if(JVX_TRACK_MEMORY_LEAKS)
+	set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_TRACK_MEMORY_LEAKS")
+endif()
+
 # include platform specific stuff
 include(${JVX_CMAKE_DIR}/${JVX_OS}.cmake)

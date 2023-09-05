@@ -252,7 +252,7 @@ public:
 	virtual void keyPressEvent(QKeyEvent* event) override;
 
 	virtual void trigger_immediate_sequencerStep() override;
-	virtual void trigger_threadChange_forward(CjvxReportCommandRequest* ptr) override;
+	virtual jvxErrorType trigger_threadChange_forward(CjvxReportCommandRequest* ptr) override;
 
 	virtual void run_mainthread_triggerTestChainDone() override;
 	virtual void run_mainthread_updateComponentList(jvxComponentIdentification cpId) override;

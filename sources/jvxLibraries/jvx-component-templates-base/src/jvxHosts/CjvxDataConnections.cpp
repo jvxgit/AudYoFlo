@@ -75,7 +75,12 @@ CjvxDataConnections::_remove_all_connection()
 			toRemove->unique_id_connections(&proc_id);
 
 			// This may remove entries in the list!!
-			toRemove->remove_connection();
+			jvxErrorType res = toRemove->remove_connection();
+			assert(res == JVX_NO_ERROR);
+
+			// Deassociate and terminate - same as in function <_remove_connection_process>
+			toRemove->deassociate_master();
+			toRemove->_terminate();
 			
 			// Now we have to find the entry in "new" list
 			elm = _common_set_data_connection.connections_process.begin();
@@ -87,6 +92,8 @@ CjvxDataConnections::_remove_all_connection()
 					break;
 				}
 			}
+
+			JVX_SAFE_DELETE_OBJ(toRemove);
 		}
 		else
 		{

@@ -593,8 +593,8 @@ CjvxDataConnectionsProcess::disconnect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res == JVX_NO_ERROR)
 		{
-			jvxErrorType resL = this->_deactivate();
-			assert(resL == JVX_NO_ERROR);
+			CjvxDataConnectionProcess_genpcg::unregister_all(static_cast<CjvxProperties*>(this));
+			CjvxDataConnectionProcess_genpcg::deallocate_all();
 
 			if (JVX_CHECK_SIZE_SELECTED(connRuleId))
 			{
@@ -609,6 +609,9 @@ CjvxDataConnectionsProcess::disconnect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					}
 				}
 			}
+
+			jvxErrorType resL = this->_deactivate();
+			assert(resL == JVX_NO_ERROR);			
 		}
 		else
 		{
@@ -617,7 +620,7 @@ CjvxDataConnectionsProcess::disconnect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		assert(res == JVX_NO_ERROR);
 
 		res = _common_set_conn_proc.associated_master->set_connection_context(NULL);
-		assert(res == JVX_NO_ERROR);
+		assert(res == JVX_NO_ERROR);		
 
 #ifdef JVX_DATACONNECTIONS_VERBOSE
 		std::cout << "+++++++++++++++++++++++++++++ " << std::endl;

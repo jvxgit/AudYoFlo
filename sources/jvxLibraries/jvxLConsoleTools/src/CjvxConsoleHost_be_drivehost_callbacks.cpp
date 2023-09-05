@@ -392,6 +392,9 @@ CjvxConsoleHost_be_drivehost::report_process_event(TjvxEventLoopElement* theQueu
 jvxErrorType
 CjvxConsoleHost_be_drivehost::report_cancel_event(TjvxEventLoopElement* theQueueElement)
 {
+	jvxHandle* param = theQueueElement->param;
+	jvxSize sz_param = theQueueElement->sz_param;
+	jvxSize paramType = theQueueElement->paramType;
 	if ( theQueueElement->paramType == JVX_EVENTLOOP_DATAFORMAT_STDSTRING)
 	{
 		std::string* newStr = (std::string*)theQueueElement->param;
@@ -402,6 +405,20 @@ CjvxConsoleHost_be_drivehost::report_cancel_event(TjvxEventLoopElement* theQueue
 		assert(theQueueElement->paramType == JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC);
 		report_property_changed* summarizeit = (report_property_changed*)theQueueElement->param;
 		JVX_DSP_SAFE_DELETE_OBJECT(summarizeit);
+	}
+	else if (theQueueElement->eventType == JVX_EVENTLOOP_EVENT_FWD_REQUEST_COMMAND)
+	{
+		// This message did not really got processed. However, we need to remove the data
+		// We pass this forward to the handler and remove the object there!
+		CjvxReportCommandRequest* request = (CjvxReportCommandRequest*)param;
+
+		// jvx::helper::debug_out_command_request(*request, std::cout, __FUNCTION__);
+
+		jvxReportCommandDataType tp = request->datatype();
+		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST);
+		
+		// Object is deleted from queue - we must remove this element also from memory
+		jvx_command_request_copy_dealloc(request);
 	}
 	return JVX_ERROR_UNSUPPORTED;
 }
@@ -1031,7 +1048,7 @@ CjvxConsoleHost_be_drivehost::trigger_immediate_sequencerStep()
  * For the remaining command requests, the trigger is stored in the request queue and will
  * be postponed. This way, the request always comes out in a delayed fashion - even if the
  * request was triggered from within the main thread. */
-void 
+jvxErrorType 
 CjvxConsoleHost_be_drivehost::trigger_threadChange_forward(CjvxReportCommandRequest* ptr)
 {
 	TjvxEventLoopElement evElm;
@@ -1053,6 +1070,7 @@ CjvxConsoleHost_be_drivehost::trigger_threadChange_forward(CjvxReportCommandRequ
 		std::cout << "Forwarding a command request failed with error <" << jvxErrorType_descr(res) << ">" << std::endl;
 		jvx::helper::debug_out_command_request(*ptr, std::cout, "failed");
 	}
+	return res;
 }
 
 /**
@@ -1110,7 +1128,12 @@ CjvxConsoleHost_be_drivehost::run_immediate_rescheduleRequest(const CjvxReportCo
 	 */
 	auto ptr = jvx_command_request_copy_alloc(request);
 	ptr->set_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
-	trigger_threadChange_forward(ptr);
+	jvxErrorType res = trigger_threadChange_forward(ptr);
+	if (res != JVX_NO_ERROR)
+	{
+		// This message was not taken by subsystem, we need to deallocate right away
+		jvx_command_request_copy_dealloc(ptr);
+	}
 }
 
 void 

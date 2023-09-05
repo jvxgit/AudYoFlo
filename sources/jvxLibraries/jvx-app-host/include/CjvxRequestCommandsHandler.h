@@ -22,7 +22,7 @@ public:
 	 * For the remaining command requests, the trigger is stored in the request queue and will
 	 * be postponed. This way, the request always comes out in a delayed fashion - even if the 
 	 * request was triggered from within the main thread. */
-	virtual void trigger_threadChange_forward(CjvxReportCommandRequest* ptr_to_copy) = 0;
+	virtual jvxErrorType trigger_threadChange_forward(CjvxReportCommandRequest* ptr_to_copy) = 0;
 	
 	/**
 	 * If a test request was attached to the queue and all tests runs were completed, the succesful test is

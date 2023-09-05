@@ -444,6 +444,7 @@ CjvxEStandalone::removeAllEvents(std::list<TjvxEventLoopElement>& queue, jvxSize
 		{
 			switch (elm->eventClass)
 			{
+			case JVX_EVENTLOOP_REQUEST_TRIGGER: // Modified by HK
 			case JVX_EVENTLOOP_REQUEST_TRIGGER_RESPONSE:
 				if (elm->origin_fe)
 				{

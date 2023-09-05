@@ -488,7 +488,7 @@ jvxRequestCommandHandlerLocal::trigger_immediate_sequencerStep()
 	this->backRef->sequencer_trigger();
 }
 
-void 
+jvxErrorType 
 jvxRequestCommandHandlerLocal::trigger_threadChange_forward(CjvxReportCommandRequest* ptr_to_copy)
 {
 	CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(*ptr_to_copy);
@@ -506,6 +506,7 @@ jvxRequestCommandHandlerLocal::trigger_threadChange_forward(CjvxReportCommandReq
 		JVX_DSP_SAFE_DELETE_OBJECT(ptr);
 		// return JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
 	}
+	return JVX_NO_ERROR;
 }
 
 void 

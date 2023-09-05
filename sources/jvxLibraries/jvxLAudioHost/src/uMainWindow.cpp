@@ -105,10 +105,11 @@ uMainWindow::trigger_immediate_sequencerStep()
 	}
 }
 
-void 
+jvxErrorType 
 uMainWindow::trigger_threadChange_forward(CjvxReportCommandRequest* ptr)
 {
 	emit emit_request_command(ptr);
+	return JVX_NO_ERROR;
 }
 
 // =============================================================================
