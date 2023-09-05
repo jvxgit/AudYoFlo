@@ -81,7 +81,7 @@ extern "C"
 		std::string modulePath = JVX_GET_CURRENT_MODULE_PATH(ayf_embedding_proxy_init);
 
 		// std::string loadDllNameFullHost = ""; // This one should not be loaded, it should be there already
-		std::string loadDllName = loadDllNameMinHost;
+		// std::string loadDllName = loadDllNameMinHost;
 		int embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
 		// Check what is desired from first caller
 
@@ -136,9 +136,9 @@ extern "C"
 										loadDllNameMinHost = assValue;
 									}
 
-									if (assToken == EMBEDDED_HOST_SO_ASSIGN_MIN_HOST)
+									if (assToken == EMBEDDED_HOST_SO_ASSIGN_EMB_HOST)
 									{
-										loadDllNameMinHost = assValue;
+										loadDllNameEmbHost = assValue;
 									}
 
 									if (assToken == EMBEDDED_HOST_OPEN_CONSOLE)
@@ -152,13 +152,11 @@ extern "C"
 									{
 										if (assValue == "MIN")
 										{
-											embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
-											loadDllName = loadDllNameMinHost;
+											embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;											
 										}
 										if (assValue == "EMB")
 										{
 											embedId = (int)ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST;
-											loadDllName = loadDllNameEmbHost;
 										}						
 										if (assValue == "NONE")
 										{
@@ -215,8 +213,8 @@ extern "C"
 				{
 				case (int)ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST:
 
-					std::cout << "Trying to open emb host <" << loadDllName << ">." << std::endl;
-					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
+					std::cout << "Trying to open emb host <" << loadDllNameEmbHost << ">." << std::endl;
+					modHostPart = JVX_LOADLIBRARY(loadDllNameEmbHost.c_str());
 					if (modHostPart != JVX_HMODULE_INVALID)
 					{
 						ayfHostBindingReferencesEmbHost* ptrRet = nullptr;
@@ -234,8 +232,8 @@ extern "C"
 
 				case (int)ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST:
 
-					std::cout << "Trying to open min host <" << loadDllName << ">." << std::endl;
-					modHostPart = JVX_LOADLIBRARY(loadDllName.c_str());
+					std::cout << "Trying to open min host <" << loadDllNameMinHost << ">." << std::endl;
+					modHostPart = JVX_LOADLIBRARY(loadDllNameMinHost.c_str());
 					if (modHostPart != JVX_HMODULE_INVALID)
 					{
 						ayfHostBindingReferencesMinHost* ptrRet = nullptr;

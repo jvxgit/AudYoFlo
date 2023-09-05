@@ -22,9 +22,11 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostClass.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostClass.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-connect-host.def)
+  # ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-connect-host.def
+)
 
-set(BUILD_SHARED TRUE)
+# set(BUILD_SHARED TRUE)
+set(BUILD_STATIC TRUE)
 
 # this changes the name of the output to be followed by "_import"
 # It does NOT produce an import lib in the SDK for all projects which
