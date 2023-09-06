@@ -22,7 +22,7 @@ set(LOCAL_SOURCES
   )
 
 set(LOCAL_LIBS ${LOCAL_LIBS}
-	jvxLConsoleHost-static_static
+	# jvxLConsoleHost-static_static <- here, we leave the involved console lib open. Then, we can link to "shared" or "static" also
 	jvxLWebConsoleTools_static
 	)
 	

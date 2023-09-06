@@ -23,7 +23,7 @@ extern "C"
 
   #include "platform/jvx_platform_weak_defines.h"
      {
-		std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+		std::cout << __FUNCTION__ << ", " << __FILE__ << "," << __LINE__ << ": Default (weak) implementation chosen." << std::endl;
 		// Default implementation does just nothing
 	}
 
@@ -44,7 +44,7 @@ extern "C"
 #endif
   #include "platform/jvx_platform_weak_defines.h"
         {
-		 std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+		 std::cout << __FUNCTION__ << ", " << __FILE__ << "," << __LINE__ << ": Default (weak) implementation chosen." << std::endl;
 		// Default implementation does just nothing
 	}
   #undef FUNC_CORE_PROT_DECLARE
@@ -69,7 +69,7 @@ extern "C"
 
 #include "platform/jvx_platform_weak_defines.h"
 		{
-			std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+			std::cout << __FUNCTION__ << ", " << __FILE__ << "," << __LINE__ << ": Default (weak) implementation chosen." << std::endl;
 			// Default implementation does just nothing
 			return(JVX_NO_ERROR);
 		}
@@ -93,7 +93,7 @@ extern "C"
 
 #include "platform/jvx_platform_weak_defines.h"
 		{
-			std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+			std::cout << __FUNCTION__ << ", " << __FILE__ << "," << __LINE__ << ": Default (weak) implementation chosen." << std::endl;
 			// Default implementation does just nothing
 			return(JVX_NO_ERROR);
 		}
@@ -118,7 +118,7 @@ extern "C"
 
 #include "platform/jvx_platform_weak_defines.h"
 		{
-			std::cout << __FUNCTION__ << ": Default (weak) implementation chosen." << std::endl;
+			std::cout << __FUNCTION__ << ", " << __FILE__ << "," << __LINE__ << ": Default (weak) implementation chosen." << std::endl;
 			// Default implementation does just nothing
 			return(JVX_ERROR_ELEMENT_NOT_FOUND);
 		}
