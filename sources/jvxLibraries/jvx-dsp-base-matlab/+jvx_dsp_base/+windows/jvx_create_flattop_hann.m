@@ -1,4 +1,9 @@
-function [win] = fthann(bsize, fshift)
+function [win] = jvx_create_flattop_hann(bsize, fshift, normalizeArg)
+
+normalize = true;
+if(nargin >= 3)
+    normalize = normalizeArg;
+end
 
 win = zeros(1, bsize);
 
@@ -15,4 +20,6 @@ for(ind = 0:2*l_plus_ft - bsize-1)
     win(ind +bsize - l_plus_ft +1 ) =1;
 end
 
-win = win / fitsin;
+if(normalize)
+    win = win / fitsin;
+end

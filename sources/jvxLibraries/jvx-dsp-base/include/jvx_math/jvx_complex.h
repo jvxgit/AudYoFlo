@@ -72,7 +72,7 @@ jvxDataCplx JVX_STATIC_INLINE jvx_complex_add_i(jvxDataCplx in1, jvxDataCplx in2
 {
 	jvxDataCplx out;
 	out.re = in1.re + in2.re;
-	out.im = in1.im * in2.im;
+	out.im = in1.im + in2.im;
 	return out;
 }
 

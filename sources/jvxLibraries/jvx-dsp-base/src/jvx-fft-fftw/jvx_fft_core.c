@@ -208,7 +208,7 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 						  jvxFFTSize fftType,
 						  jvxData** in_ptr_fld_N,
 						  jvxDataCplx** out_ptr_fld_N2P1,
-						  jvxSize* N,
+						  jvxSize* NfftSize,
 						  jvxFftIfftOperate operate,
 						  jvxData* input,
 						  jvxDataCplx* output,
@@ -308,9 +308,9 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 				{
 					*out_ptr_fld_N2P1 = ptr->output;
 				}
-				if(N)
+				if(NfftSize)
 				{
-					*N = ptr->common.fftParameters.fftSize;
+					*NfftSize = ptr->common.fftParameters.fftSize;
 				}
 			}
 			else
@@ -341,7 +341,7 @@ jvxDspBaseErrorType jvx_create_fft_complex_2_complex(jvxFFT** hdlRef,
 						     jvxFFTSize fftType,
 						     jvxDataCplx** in_ptr_fld_N,
 						     jvxDataCplx** out_ptr_fld_N,
-						     jvxSize* N,
+						     jvxSize* NfftSize,
 						     jvxFftIfftOperate operate,
 						     jvxDataCplx* input,
 						     jvxDataCplx* output,
@@ -437,9 +437,9 @@ jvxDspBaseErrorType jvx_create_fft_complex_2_complex(jvxFFT** hdlRef,
 				{
 					*out_ptr_fld_N = ptr->output;
 				}
-				if(N)
+				if(NfftSize)
 				{
-					*N = ptr->common.fftParameters.fftSize;
+					*NfftSize = ptr->common.fftParameters.fftSize;
 				}
 
 			}
