@@ -58,7 +58,10 @@ set(LOCAL_SOURCES
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_resampler/jvx_fixed_resampler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_matrix/jvx_matrix.h
-  )
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_windows/jvx_windows.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_math/jvx_complex.h
+)
 
 if(JVX_USE_FFTW)
 	set(LOCAL_SOURCES ${LOCAL_SOURCES}

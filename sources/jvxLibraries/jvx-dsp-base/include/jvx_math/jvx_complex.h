@@ -50,6 +50,50 @@ void jvx_complex_multiply_conj1(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* o
 //! square of magnitude
 void jvx_complex_square_of_magnitude(jvxDataCplx in, jvxData* out);
 
+//! complex multiplication
+jvxDataCplx JVX_STATIC_INLINE jvx_complex_multiply_i(jvxDataCplx in1, jvxDataCplx in2)
+{
+	jvxDataCplx out;
+	out.re = in1.re * in2.re - in1.im * in2.im;
+	out.im = in1.im * in2.re + in1.re * in2.im;
+	return out;
+}
+
+//! complex multiplication with conjugate first argument
+jvxDataCplx JVX_STATIC_INLINE jvx_complex_multiply_conj1_i(jvxDataCplx in1, jvxDataCplx in2)
+{
+	jvxDataCplx out;
+	out.re = in1.re * in2.re + in1.im * in2.im;
+	out.im = in1.re * in2.im - in1.im * in2.re;
+	return out;
+}
+
+jvxDataCplx JVX_STATIC_INLINE jvx_complex_add_i(jvxDataCplx in1, jvxDataCplx in2)
+{
+	jvxDataCplx out;
+	out.re = in1.re + in2.re;
+	out.im = in1.im * in2.im;
+	return out;
+}
+
+jvxDataCplx JVX_STATIC_INLINE jvx_complex_sub_i(jvxDataCplx in1, jvxDataCplx in2)
+{
+	jvxDataCplx out;
+	out.re = in1.re - in2.re;
+	out.im = in1.im - in2.im;
+	return out;
+}
+
+// https://mathworld.wolfram.com/ComplexDivision.html
+jvxDataCplx JVX_STATIC_INLINE jvx_complex_div_i(jvxDataCplx in1, jvxDataCplx in2)
+{
+	jvxDataCplx out;
+	jvxData den = in2.re * in2.re + in2.im * in2.im;
+	out.re = (in1.re * in2.re + in1.im * in2.im) / den;
+	out.im = (in1.im * in2.re - in1.re * in2.im) / den;
+	return out;
+}
+
 JVX_DSP_LIB_END
 
 #endif
