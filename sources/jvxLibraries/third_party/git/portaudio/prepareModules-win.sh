@@ -3,7 +3,10 @@
 if [ ! -d "portaudio" ]; then
 
 	git  clone https://github.com/PortAudio/portaudio.git
-	
+	cd portaudio
+	git checkout  929e2e8f7af281c5eb4fa07758930d542ec43d97 
+	cd ..
+
 	patch -R -p0 --binary < patch-cml.patch
 	
 	# This patch to avoid symbols in ksmedia conflicting with strmiids in windows
