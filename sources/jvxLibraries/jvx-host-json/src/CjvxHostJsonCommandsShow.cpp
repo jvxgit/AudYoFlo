@@ -34,11 +34,16 @@ CjvxHostJsonCommandsShow::produce_component_core(CjvxJsonElementList& jsec)
 		jvxSize numSlots = 0;
 		jvxSize numSubSlots = 0;
 		jvxComponentIdentification parentTp(JVX_COMPONENT_UNKNOWN);
+		jvxComponentTypeClass clTp = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE;
 
 		JVX_CREATE_COMPONENT_TYPE(jelml, jvxComponentType_txt(tp.tp));
 		jelmlstl.addConsumeElement(jelml);
 
-		hHost->role_component_system(tp.tp, &parentTp.tp, nullptr, nullptr);
+		hHost->role_component_system(tp.tp, &parentTp.tp, nullptr, &clTp);
+
+		JVX_CREATE_COMPONENT_TYPE_CLASS(jelml, jvxComponentTypeClass_txt(clTp));
+		jelmlstl.addConsumeElement(jelml);
+
 		resL = hHost->number_slots_component_system(tp, &numSlots, NULL, nullptr, nullptr);
 		if (resL == JVX_ERROR_ELEMENT_NOT_FOUND)
 		{

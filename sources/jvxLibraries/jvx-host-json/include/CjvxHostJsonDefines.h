@@ -50,6 +50,9 @@
 #define JVX_CREATE_COMPONENT_TYPE(jelm, txt) \
 	jelm.makeAssignmentString("component_type", txt)
 
+#define JVX_CREATE_COMPONENT_TYPE_CLASS(jelm, txt) \
+	jelm.makeAssignmentString("component_type_class", txt)
+
 #define JVX_CREATE_COMPONENT_TYPE_SEC(jelm, txt) \
 	jelm.makeAssignmentString("component_type_sec", txt)
 

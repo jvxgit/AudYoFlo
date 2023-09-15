@@ -94,13 +94,21 @@ typedef struct
 	char** argv;
 } jvx_argcv_struct;
 	
-	typedef struct
+// This element may be used in blocking calls and in immediate calls to 
+// assign output data of a request. In case the call is blocking, notification
+// must be used to siignal that processing is complete. If the notification is
+// JVX_INVALID_HANDLE_VALUE, the call is immediate rather than blocking such that we need not signal 
+// completion!
+class TjvxEventLoopElementSync
 {
-	JVX_NOTIFY_HANDLE notification;
-	jvxErrorType result_block;
-	jvxHandle* priv;
-	jvxSize mId;
-} TjvxEventLoopElementSync;
+public:
+
+	//! Signal the completion
+	JVX_NOTIFY_HANDLE notification = JVX_INVALID_HANDLE_VALUE;
+	jvxErrorType result_block = JVX_ERROR_UNSUPPORTED;
+	jvxHandle* priv = nullptr;
+	jvxSize mId = JVX_SIZE_UNSELECTED;
+};
 
 JVX_INTERFACE IjvxEventLoop_frontend;
 JVX_INTERFACE IjvxEventLoop_backend;

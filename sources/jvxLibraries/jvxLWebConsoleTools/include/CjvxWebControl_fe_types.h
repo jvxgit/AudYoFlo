@@ -173,4 +173,22 @@ public:
 	}
 };
 
+struct jvxOneWsTextRequest
+{
+	std::string cmd;
+	jvxHandle* ctxt = nullptr;
+};
+
+enum class ayfTextWebSocketState
+{
+	AYF_WEBSOCKET_NONE,
+	AYF_WEBSOCKET_READY
+};
+
+class jvxWsTextConnection : public jvxWsConnection
+{
+public:
+	ayfTextWebSocketState status = ayfTextWebSocketState::AYF_WEBSOCKET_NONE;
+};
+
 #endif

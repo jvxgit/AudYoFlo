@@ -56,11 +56,13 @@ private:
 	jvxOnePriBackendAndState linkedPriBackend;
 	std::list<jvxOneBackendAndState> linkedSecBackends;
 
-	typedef struct
+	class oneThreadReturnType
 	{
+	public:
 		jvxErrorType res_mthread;
 		std::string ret_mthread;
-	} oneThreadReturnType;
+		std::string ctx_mthread;
+	} ;
 
 	std::vector<oneAllocatedField> flds;
 	JVX_MUTEX_HANDLE safeAccessMemList;
@@ -223,6 +225,7 @@ private:
 	
 	void web_socket_disconnect(jvxHandle* hdl);
 	void process_incoming_binary(char* payload, size_t szFld);
+	void process_incoming_text(jvxHandle* ctxt, char* payload, size_t szFld);
 };
 
 #endif

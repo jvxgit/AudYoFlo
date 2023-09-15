@@ -184,6 +184,14 @@ CjvxEStandalone::event_schedule(TjvxEventLoopElement* newElm, jvxErrorType* res_
 		{
 			if (JVX_GET_CURRENT_THREAD_ID() == inThread.theThreadId)
 			{
+				// We may attach a "blocking result" field also in immediate call. But we may not notify whatever
+				TjvxEventLoopElementSync myBlockingStruct;
+				if (blockPrivate)
+				{
+					myBlockingStruct.priv = blockPrivate;
+					newElm->oneHdlBlock = &myBlockingStruct;
+				}
+				
 				resL = this->processEvent(newElm);
 				if ((newElm->target_be == NULL) &&newElm->origin_fe)
 				{

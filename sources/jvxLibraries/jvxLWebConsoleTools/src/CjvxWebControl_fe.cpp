@@ -5,55 +5,6 @@
 #include "CjvxWebControl_fe_private.h"
 
 // =================================================================================================================
-
-void 
-CjvxTextWebSockets::register_binary_socket_main_loop(jvxWebContext* ctxt)
-{
-	jvxApiString uri;
-	jvxApiString query;
-	jvxApiString local_uri;
-	jvxApiString url_origin;
-	jvxApiString user;
-	jvxWsConnection newConn;
-	newConn.theCtxt = *ctxt;
-
-	// Get the originating IP address 
-	hostRef->request_event_information(newConn.theCtxt.context_server, newConn.theCtxt.context_conn,
-		&uri, &query, &local_uri, &url_origin, &user);
-	newConn.theCtxt.uri = uri.std_str();
-	newConn.query = query.std_str();
-	newConn.local_uri = local_uri.std_str();
-	newConn.url_origin = url_origin.std_str();
-	newConn.user = user.std_str();
-
-	// Obtain the status and send it out via the open socket
-	// TODO
-
-	// Add the new connect socket to the list of stored sockets
-	connectedTextSockets[newConn.theCtxt.context_conn] = newConn;
-
-	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-	log << "Web socket connection from " << url_origin.std_str() << ":" << user.std_str() << std::endl;
-	JVX_STOP_LOCK_LOG_REF(hostRef);
-}
-
-jvxErrorType 
-CjvxTextWebSockets::unregister_binary_socket_main_loop(jvxHandle* refCtxt)
-{
-	auto elm = connectedTextSockets.begin();
-
-	for (; elm != connectedTextSockets.end(); elm++)
-	{
-		if (elm->first == refCtxt)
-		{
-			// This ends the text socket, just remove it
-			connectedTextSockets.erase(elm);
-			return JVX_NO_ERROR;
-		}
-	}
-	return JVX_ERROR_ELEMENT_NOT_FOUND;
-}
-
 // =================================================================================================================
 
 #define JVX_CREATE_ERROR_NO_RETURN(lstelmr, err, txt) \
@@ -583,6 +534,46 @@ CjvxWebControl_fe::synchronizeWebServerCoEvents(jvxHandle* context_server,
 	return(res);
 }
 
+	void
+		CjvxWebControl_fe::process_incoming_text(jvxHandle* ctxt, char* payload, jvxSize szFld)
+	{
+		TjvxEventLoopElement elm;
+		jvxOneWsTextRequest fwdRequest;
+		std::string cmd(payload, szFld);
+		fwdRequest.cmd = cmd;
+		fwdRequest.ctxt = ctxt;
+
+		// Schedule removal of timeout thread followed by new timeout thread
+		elm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);
+		elm.priv_fe = NULL;
+		elm.target_be = static_cast<IjvxEventLoop_backend*>(this);
+		elm.priv_be = NULL;
+
+		elm.param = (jvxHandle*)&fwdRequest;
+		elm.paramType = JVX_EVENTLOOP_DATAFORMAT_SPEC_JVXONEWSTEXTREQUEST;
+
+		elm.eventType = JVX_EVENT_LOOP_EVENT_WS_TEXT_INPUT;
+		elm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
+		elm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
+		elm.delta_t = JVX_TIMOUT_BLOCKING_CALL_MSEC;
+		elm.autoDeleteOnProcess = c_false;
+
+		jvxErrorType res = this->evLop->event_schedule(&elm, NULL, NULL);
+		switch (res)
+		{
+		case JVX_ERROR_END_OF_FILE:
+			std::cout << "Disconnected websocket not reported since host shutdown deadline was missed!" << std::endl;
+			break;
+		case JVX_ERROR_ABORT:
+			std::cout << "Disconnected websocket not reported since host does not accept events from this frontend currently!" << std::endl;
+			break;
+		case JVX_NO_ERROR:
+			break;
+		default:
+			assert(0);
+		}
+	}
+
 	void 
 	CjvxWebControl_fe::process_incoming_binary(char* payload, size_t szFld)
 	{
@@ -811,7 +802,7 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 	{
 		TjvxEventLoopElement elm;
 		jvxWebContext* ctxt = NULL;
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(ctxt, jvxWebContext);
+		JVX_DSP_SAFE_ALLOCATE_OBJECT(ctxt, jvxWebContext);
 		ctxt->context_conn = context_conn;
 		ctxt->context_server = context_server;
 		ctxt->uri = uriprefix;
@@ -862,8 +853,7 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 
 		case 0x1: // Binary message
 
-			assert(0);
-			// process_incoming_text(payload, szFld);
+			process_incoming_text(context_conn, payload, szFld);
 			break;
 
 		case 0x2: // Binary message
@@ -979,7 +969,23 @@ CjvxWebControl_fe::report_assign_output(TjvxEventLoopElement* theQueueElement, j
 		// we must decide wether or not to update the connected UI - maybe via websocket?
 		assert(theQueueElement->paramType == JVX_EVENTLOOP_DATAFORMAT_JVXJSONMULTFIELDS);
 		CjvxJsonElementList* jlst = (CjvxJsonElementList*)theQueueElement->param;
+		CjvxJsonElementList cLst;
 		assert(myPrivateMem);
+
+		// We can add a context to better identify a request
+		if (!myPrivateMem->ctx_mthread.empty())
+		{
+			std::string tmp;
+			std::vector<std::string> errs;
+			jlst->printString(tmp, JVX_JSON_PRINT_JSON, 0, "", "", "", false);
+			if (CjvxJsonElementList::stringToRepresentation(tmp, cLst, errs) == JVX_NO_ERROR)
+			{
+				CjvxJsonElement addCtc;
+				addCtc.makeAssignmentString("call_context", myPrivateMem->ctx_mthread);
+				cLst.addConsumeElement(addCtc);
+				jlst = &cLst;
+			}
+		}
 
 		myPrivateMem->ret_mthread.clear();
 		jlst->printString(myPrivateMem->ret_mthread, JVX_JSON_PRINT_JSON, 0, "", "", "", false);
@@ -1075,6 +1081,7 @@ CjvxWebControl_fe::inthread_report_event_request(jvxHandle* context_server, jvxH
 // JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC + 3 -> jvxPropertyConfigurePropertySend*
 // JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC + 2 -> jvxPropertyPropertyObserveHeader*
 // JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC + 4 -> jvxPropertyPropertyObserveHeader_response*
+// JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC + 5 -> jvxOneWsTextRequest*
 
 jvxErrorType
 CjvxWebControl_fe::process_event(TjvxEventLoopElement* theQueueElement)
@@ -1122,6 +1129,7 @@ CjvxWebControl_fe::process_event(TjvxEventLoopElement* theQueueElement)
 	jvxPropertyPropertyObserveHeader_response* pheader_resp = NULL;
 	jvxPropertyConfigurePropertySend* passed = NULL;
 	jvxRawStreamHeader_response*raw_pheader_resp = NULL;
+	jvxOneWsTextRequest* refWsText = nullptr;
 	std::string errTxt;
 	CjvxJsonElementList jlstresp;
 	std::string command;
@@ -1289,7 +1297,7 @@ CjvxWebControl_fe::process_event(TjvxEventLoopElement* theQueueElement)
 		}
 		else if (ctxt->uri == JVX_URI_TEXT_SOCKET)
 		{
-			txtWs.register_binary_socket_main_loop(ctxt);
+			txtWs.register_text_socket_main_loop(ctxt);
 		}
 		return JVX_NO_ERROR;
 		break;
@@ -1395,13 +1403,18 @@ CjvxWebControl_fe::process_event(TjvxEventLoopElement* theQueueElement)
 
 		return JVX_NO_ERROR;
 		break;
-	case JVX_EVENTLOOP_EVENT_SPECIFIC + 8:
+	case JVX_EVENT_LOOP_EVENT_WS_COMM_ERROR:
 		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_STDSTRING);
 		errtxt = (std::string*)param;
 		std::cout << "Communication error reported, err description: <" << *errtxt << ">." << std::endl;
 		assert(0); // Better handling in future here to drop the web socket and do a clean recovery
 		break;
 
+	case JVX_EVENT_LOOP_EVENT_WS_TEXT_INPUT:
+		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_SPEC_JVXONEWSTEXTREQUEST);
+		refWsText = (jvxOneWsTextRequest*)param;
+		txtWs.process_incoming_text_message(refWsText);
+		break;
 	default:
 		break;
 	}
@@ -1690,7 +1703,7 @@ CjvxWebControl_fe::report_special_event(TjvxEventLoopElement* theQueueElement, j
 void
 CjvxWebControl_fe::web_socket_disconnect(jvxHandle* hdl)
 {
-	jvxErrorType res = txtWs.unregister_binary_socket_main_loop(hdl);
+	jvxErrorType res = txtWs.unregister_text_socket_main_loop(hdl);
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 	{
 		res = binWs.unregister_binary_socket_main_loop(hdl);
