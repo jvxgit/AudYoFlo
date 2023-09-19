@@ -140,8 +140,8 @@ jelm.makeAssignmentString("seq_element_assoc_mode", txt)
 	jelm.makeAssignmentString("seq_step_descr", txt)
 
 
-#define JVX_CREATE_CONNECTIONS(jelm, jarr) \
-	jelm.makeArray("connections", jarr);
+#define JVX_CREATE_CONNECTION_PROCESSES(jelm, jarr) \
+	jelm.makeArray("connection_processes", jarr);
 
 #define JVX_CREATE_MASTER_NAME(jelm, txt) \
 	jelm.makeAssignmentString("master_name", txt)

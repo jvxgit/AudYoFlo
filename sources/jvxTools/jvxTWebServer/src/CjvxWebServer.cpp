@@ -180,6 +180,23 @@ CjvxWebServer::start()
 	return(JVX_ERROR_WRONG_STATE);
 }
 
+void
+CjvxWebServer::in_connect_url_decode(const char* inPtr, jvxApiString& onReturn)
+{
+	if (inPtr)
+	{
+		std::string inStr = inPtr;
+		if (inStr.size())
+		{
+			char* tmp = nullptr;
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(tmp, char, inStr.size()+1);
+			mg_url_decode(inStr.c_str(), inStr.size(), tmp, inStr.size()+1, 1);
+			inStr = std::string(tmp, inStr.size());
+			JVX_DSP_SAFE_DELETE_FIELD(tmp);
+		}
+		onReturn = inStr;
+	}
+}
 jvxErrorType 
 CjvxWebServer::in_connect_request_specifiers(jvxHandle* server, jvxHandle* conn,
 	jvxApiString* request_uri_on_return, jvxApiString* query_on_return,
@@ -212,8 +229,8 @@ CjvxWebServer::in_connect_request_specifiers(jvxHandle* server, jvxHandle* conn,
 
 		ret = mg_get_request_info(theConnection)->query_string;
 		if (ret)
-		{
-			queri_uri = ret;
+		{						
+			queri_uri = ret;			
 		}
 
 		ret = mg_get_request_info(theConnection)->remote_addr;

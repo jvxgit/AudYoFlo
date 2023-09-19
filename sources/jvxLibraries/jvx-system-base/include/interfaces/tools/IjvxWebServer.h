@@ -55,6 +55,8 @@ public:
 		jvxApiString* local_uri_on_return, jvxApiString* origin_request_on_return,
 		jvxApiString* origin_user) = 0;
 
+	virtual void JVX_CALLINGCONVENTION in_connect_url_decode(const char* inPtr, jvxApiString& onReturn) = 0;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION in_connect_write_response(jvxHandle* server, jvxHandle* conn, const char* response_text) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION in_connect_write_header_response(jvxHandle* server, jvxHandle* conn, jvxWebServerResponseType resp) = 0;

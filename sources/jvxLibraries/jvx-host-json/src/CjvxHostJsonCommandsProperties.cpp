@@ -651,7 +651,7 @@ CjvxHostJsonCommandsProperties::show_property_component_list(
 	CjvxJsonElementList jelmret_local;
 	CjvxJsonElement jelm_entry;
 	std::vector<std::string> tokens;
-	jvx_parseStringListIntoTokens(args, tokens, ';');
+	jvx_parseStringListIntoTokens(args, tokens); // , ';');
 	for (auto elm : tokens)
 	{
 		std::string addElement = elm;

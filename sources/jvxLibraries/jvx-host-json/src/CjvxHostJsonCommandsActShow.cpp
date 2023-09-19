@@ -15,6 +15,7 @@ CjvxHostJsonCommandsActShow::act_edit_config(const oneDrivehostCommand& dh_comma
 	jvxSize szSlots = 0;
 	jvxSize szSlotsub = 0;
 	CjvxJsonElement jelm_result; 
+
 	// Arg1: add sequence, remove sequence, activate sequence, add step, remove step, modify step
 	if (args.size() > off)
 	{

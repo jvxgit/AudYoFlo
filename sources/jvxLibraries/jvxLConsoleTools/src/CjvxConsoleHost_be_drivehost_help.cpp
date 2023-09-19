@@ -12,7 +12,9 @@ CjvxConsoleHost_be_drivehost::process_help_command(IjvxEventLoop_frontend* origi
 	std::cout << "\t\t\t\t " << "Show full or compact (<compact>) version of system status." << std::endl; 
 	std::cout << "\t\t <address>: components" << std::endl;
 	std::cout << "\t\t <address>: sequencer" << std::endl;
-	std::cout << "\t\t\t\t " << "optionally specify runqueue or leavequeue" << std::endl;
+	std::cout << "\t\t\t\t " << "optionally specify a sequence id or \"status\" runqueue or leavequeue" << std::endl;
+	std::cout << "\t\t\t\t " << "optionally specify \"queue_type_run\" or \"queue_type_leave\"" << std::endl;
+	std::cout << "\t\t\t\t " << "optionally specify id for queue element" << std::endl;
 	std::cout << "\t\t <address>: hosttypehandler" << std::endl;
 	std::cout << "\t\t <address>: configline" << std::endl;
 	std::cout << "\t\t <address>: <component> <varargs>" << std::endl;

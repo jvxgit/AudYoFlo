@@ -577,7 +577,11 @@ CjvxWebServerHost::report_event_request_translate(
 	std::string context_token;
 	std::string pretoken;
 	hdl->in_connect_request_specifiers(context_server, context_conn, &uri, &query, &local_uri, &origin, &user);
+
+	hdl->in_connect_url_decode(uri.c_str(), uri);
 	url = uri.std_str();
+
+	hdl->in_connect_url_decode(query.c_str(), query);
 	url_query = query.std_str();
 
 	theRef = notifyCoIds.theIds[uniqueId];

@@ -20,7 +20,6 @@ CjvxHostJsonCommandsShow::produce_component_core(CjvxJsonElementList& jsec)
 	std::string values;
 	jvxCBitField pMode = 0;
 	jvxErrorType resL = JVX_NO_ERROR;
-
 	for (i = 1; i < JVX_COMPONENT_ALL_LIMIT; i++)
 	{
 		CjvxJsonElementList jelmlstl;
@@ -332,14 +331,19 @@ CjvxHostJsonCommandsShow::show_connections(const oneDrivehostCommand& dh_command
 		arg2set = true;
 	}
 
-	output_connections_core(jsec, showmode, arg2set, specId,specName );
+	CjvxJsonArray jelmarr;
+	CjvxJsonElement jelml;
+
+	output_connection_processes_core(jelmarr, showmode, arg2set, specId,specName );
+	JVX_CREATE_CONNECTION_PROCESSES(jelml, jelmarr);
+	jsec.addConsumeElement(jelml);
 	return JVX_NO_ERROR;
 }
 
 
 jvxErrorType
-CjvxHostJsonCommandsShow::output_connections_core(
-	CjvxJsonElementList& jsec,
+CjvxHostJsonCommandsShow::output_connection_processes_core(
+	CjvxJsonArray& jarr,
 	jvxDrivehostConnectionShow showmode,
 	jvxBool arg2set, jvxSize specId, const std::string& specName)
 {
@@ -351,7 +355,6 @@ CjvxHostJsonCommandsShow::output_connections_core(
 	jvxErrorType res = hHost->request_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle**>(&connections));
 	if ((res == JVX_NO_ERROR) && connections)
 	{
-		CjvxJsonArray jarr;
 		connections->number_connections_process(&num);
 		if (arg2set)
 		{
@@ -368,7 +371,8 @@ CjvxHostJsonCommandsShow::output_connections_core(
 
 				if (idOutOfBounds)
 				{
-					JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_ID_OUT_OF_BOUNDS, ("Specified id for connection <" + jvx_size2String(specId) + "> is out of bounds."));
+					goto exit_fail;
+					// JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_ID_OUT_OF_BOUNDS, ("Specified id for connection <" + jvx_size2String(specId) + "> is out of bounds."));
 				}
 				else
 				{
@@ -383,7 +387,8 @@ CjvxHostJsonCommandsShow::output_connections_core(
 					}
 					else
 					{
-						JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
+						goto exit_fail;
+						// JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
 					}
 				}
 			} // if (JVX_CHECK_SIZE_SELECTED(specId))
@@ -400,7 +405,8 @@ CjvxHostJsonCommandsShow::output_connections_core(
 				}
 				else
 				{
-					JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
+					goto exit_fail;
+					// JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
 				}
 			}
 		} // if (arg1set)
@@ -424,10 +430,10 @@ CjvxHostJsonCommandsShow::output_connections_core(
 			} // for(i = 0; i < num; i++)
 		}
 
-		res = hHost->return_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle*>(connections));
-		JVX_CREATE_CONNECTIONS(jelm, jarr);
-		jsec.addConsumeElement(jelm);
+		res = hHost->return_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle*>(connections));		
 	} // res = runtime.theHostRef->request_hidden_interface(JVX_INTERFACE
+
+exit_fail:
 	return res;
 }
 
@@ -661,15 +667,15 @@ CjvxHostJsonCommandsShow::show_system_compact(const oneDrivehostCommand& dh_comm
 
 	// ====================================================
 
-	output_sequencer_status(jelmoutll);
+	output_sequencer_status(jelmoutll, false, false, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
 	JVX_CREATE_SEQUENCER(jelm_comps, jelmoutll);
 	jelmoutl.addConsumeElement(jelm_comps);
 
 	// ====================================================
-
-	output_connections_core(jelmoutll, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
-	jelm_comps.makeSection("connections", jelmoutll);
-	jelmoutl.addConsumeElement(jelm_comps);
+	CjvxJsonArray jelmarr;
+	output_connection_processes_core(jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
+	JVX_CREATE_CONNECTION_PROCESSES(jelm_comps, jelmarr);
+	jsec.addConsumeElement(jelm_comps);
 
 	// ====================================================
 
@@ -752,16 +758,45 @@ CjvxHostJsonCommandsShow::show_system(const oneDrivehostCommand& dh_command, con
 
 		// ====================================================
 		
-		output_sequencer_status(jelmoutll);
+		output_sequencer_status(jelmoutll, false, false, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
 		JVX_CREATE_SEQUENCER(jelmout, jelmoutll);
 		jelmoutl.addConsumeElement(jelmout);
 
 		// ====================================================
 		
-		output_connections_core(jelmoutll, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
-		jelmout.makeSection("connections", jelmoutll);
+		CjvxJsonArray jelmarr;
+		output_connection_processes_core(jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
+		JVX_CREATE_CONNECTION_PROCESSES(jelmout, jelmarr);
 		jelmoutl.addConsumeElement(jelmout);
 
+		// ====================================================
+
+		jelmoutall.makeSection("system", jelmoutl);
+		jsec.addConsumeElement(jelmoutall);
+
+		return JVX_NO_ERROR;
+	}
+	else if (token == "full")
+	{
+		// Return full system status
+		produce_component_core(jelmoutl);
+		// jelmout.makeSection("components", jelmoutll);
+		// jelmoutl.addConsumeElement(jelmout);
+
+		// ====================================================
+
+		output_sequencer_status(jelmoutll, true, true, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
+		JVX_CREATE_SEQUENCER(jelmout, jelmoutll);
+		jelmoutl.addConsumeElement(jelmout);
+
+		// ====================================================
+
+		CjvxJsonArray jelmarr;
+		output_connection_processes_core(jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_PATH);
+		JVX_CREATE_CONNECTION_PROCESSES(jelmout, jelmarr);
+		jelmoutl.addConsumeElement(jelmout);
+
+		// ====================================================
 		// ====================================================
 
 		jelmoutall.makeSection("system", jelmoutl);
@@ -786,121 +821,56 @@ CjvxHostJsonCommandsShow::show_sequencer(const oneDrivehostCommand& dh_command, 
 	jvxBool showRunQueue = false;
 	jvxBool showLeaveQueue = false;
 	jvxBool err = false;
+	std::string token = "full";
 	jvxSize i;	
 	CjvxJsonElement jelm;
 
-	/*
-	CjvxJsonElementList jelmlstl;
-	CjvxJsonElement jelml;
-	CjvxJsonElementList jelmlstll;
-	CjvxJsonElement jelmll;
-	CjvxJsonElementList jelmlstlll;
-	CjvxJsonElement jelmlll;
-
-	jvxCBitField pMode = 0;
-	jvx_cbitSet(pMode, JVX_JSON_PRINT_MODE_ADD_LAYER_OUTPUT_COMPACT);
-
-	jelmlll.makeAssignmentString("a", "b");
-	jelmlstlll.addConsumeElement(jelmlll);
-	jelmlll.makeAssignmentString("c", "d");
-	jelmlstlll.addConsumeElement(jelmlll);
-
-	jelmll.makeSection("e", jelmlstlll);
-	jelmlstll.addConsumeElement(jelmll);
-
-	jelml.makeSection("f", jelmlstll);
-	jelmlstl.addConsumeElement(jelml);
-
-	jelmlll.makeAssignmentString("z", "y");
-	jelmlstlll.addConsumeElement(jelmlll);
-	jelmlll.makeAssignmentString("w", "x");
-	jelmlstlll.addConsumeElement(jelmlll);
-
-	jelmll.makeSection("g", jelmlstlll);
-	jelmlstll.addConsumeElement(jelmll);
-	jelmlstll.setPrintMode(pMode);
-
-	jelml.makeSection("h", jelmlstll);
-	jelmlstl.addConsumeElement(jelml);
-
-	std::string txt;
-	jelmlstl.printString(txt, JVX_JSON_PRINT_TXTCONSOLE, 0, "\t", "\t", false);
-	std::cout << std::endl << txt << std::endl;
-	txt.clear();
-	jelmlstl.printString(txt, JVX_JSON_PRINT_JSON, 0, "\t", "\t", false);
-	std::cout << std::endl << txt << std::endl;
-	*/
-
 	if (args.size() > off)
-	{
+	{		
 		idS = jvx_string2Size(args[off], err);
 		if (err)
 		{
+			idS = JVX_SIZE_UNSELECTED;
 			if (args[off] == "status")
 			{
-				CjvxJsonElementList jelmlstl;
-				CjvxJsonElement jelml;
-				output_sequencer_status(jelmlstl);
-				jelml.makeSection("sequencer", jelmlstl);
-				jelmlst.addConsumeElement(jelml);
-				return JVX_NO_ERROR;
-			}
-			else
-			{
-				JVX_CREATE_ERROR_RETURN(jelmlst, JVX_ERROR_INVALID_ARGUMENT, ("Invalid specification of squence id <" + args[off] + ">."));
+				token = "status";
 			}
 		}
-		
 	}
+
+	showRunQueue = true;
+	showLeaveQueue = true;
 
 	if (args.size() > off + 1)
 	{
 		if (args[off + 1] == jvxSequencerQueueType_str[JVX_SEQUENCER_QUEUE_TYPE_RUN].friendly)
 		{
-			showRunQueue = true;
+			showLeaveQueue = false;
 		}
-		else if (args[off+1] == jvxSequencerQueueType_str[JVX_SEQUENCER_QUEUE_TYPE_LEAVE].friendly)
+		else if (args[off + 1] == jvxSequencerQueueType_str[JVX_SEQUENCER_QUEUE_TYPE_LEAVE].friendly)
 		{
-			showRunQueue = true;
-		}
-		else
-		{ 
-			JVX_CREATE_ERROR_RETURN(jelmlst, JVX_ERROR_INVALID_ARGUMENT, ("Invalid specification of queue type <" + args[off + 1] + ">."));
+			showRunQueue = false;
 		}
 	}
 	else
 	{
-		showRunQueue = true;
-		showLeaveQueue = true;
+		
 	}
-
 	if (args.size() > off + 2)
 	{
-		idSS = jvx_string2Size(args[off+2], err);
-		if (err)
-		{
-			JVX_CREATE_ERROR_RETURN(jelmlst, JVX_ERROR_INVALID_ARGUMENT, ("Invalid specification of squence id <" + args[off + 2] + ">."));
-		}
+		idSS = jvx_string2Size(args[off + 2], err);	
 	}
-	
-	res = hHost->request_hidden_interface(JVX_INTERFACE_SEQUENCER, reinterpret_cast<jvxHandle**>(&sequencer));
-	if ((res == JVX_NO_ERROR) && sequencer)
+
+	CjvxJsonElementList jelmlstl;
+	CjvxJsonElement jelml;
+	if (token == "status")
 	{
-		CjvxJsonArray jarr;
-		sequencer->number_sequences(&num);
-		for(i = 0; i < num; i++)
-		{ 
-			CjvxJsonArrayElement jarrelm;
-			std::string txt;
-			CjvxJsonElementList jelmoneseq;
-			output_one_sequence(sequencer, i, showRunQueue, showLeaveQueue, idSS, jelmoneseq);
-			jarrelm.makeSection(jelmoneseq);
-			jarr.addConsumeElement(jarrelm);
-		} // for(i = 0; i < num; i++)
-		res = hHost->return_hidden_interface(JVX_INTERFACE_SEQUENCER, reinterpret_cast<jvxHandle*>(sequencer));
-		JVX_CREATE_SEQUENCES(jelm, jarr);
-		jelmlst.addConsumeElement(jelm);
-	} // res = runtime.theHostRef->request_hidden_interface(JVX_INTERFACE
+		showRunQueue = false;
+		showLeaveQueue = false;
+	}
+	output_sequencer_status(jelmlstl, showRunQueue, showLeaveQueue, idS, idSS);
+	jelml.makeSection("sequencer", jelmlstl);
+	jelmlst.addConsumeElement(jelml);
 	return JVX_NO_ERROR;
 }
 
@@ -2489,7 +2459,53 @@ CjvxHostJsonCommandsShow::show_alive(const oneDrivehostCommand& dh_command, cons
 }
 
 jvxErrorType
-CjvxHostJsonCommandsShow::output_sequencer_status(CjvxJsonElementList& jelmlst)
+CjvxHostJsonCommandsShow::output_sequencer_queues(CjvxJsonElementList& jelmlst, jvxBool showRunQueue, jvxBool showLeaveQueue, jvxSize idS, jvxSize idSS)
+{
+	IjvxSequencer* sequencer = NULL;
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxApiString  fldStr;
+	jvxSequencerQueueType tp = JVX_SEQUENCER_QUEUE_TYPE_NONE;
+	jvxSize num = 0;
+	jvxSize i;
+	CjvxJsonElement jelm;
+	res = hHost->request_hidden_interface(JVX_INTERFACE_SEQUENCER, reinterpret_cast<jvxHandle**>(&sequencer));
+	if ((res == JVX_NO_ERROR) && sequencer)
+	{
+		CjvxJsonArray jarr;
+		sequencer->number_sequences(&num);
+		for (i = 0; i < num; i++)
+		{
+			jvxBool showThis = false;
+			if(JVX_CHECK_SIZE_UNSELECTED(idS))
+			{ 
+				showThis = true;
+			}
+			else
+			{
+				if (i == idS)
+				{
+					showThis = true;
+				}
+			}
+			if (showThis)
+			{
+				CjvxJsonArrayElement jarrelm;
+				std::string txt;
+				CjvxJsonElementList jelmoneseq;
+				output_one_sequence(sequencer, i, showRunQueue, showLeaveQueue, idSS, jelmoneseq);
+				jarrelm.makeSection(jelmoneseq);
+				jarr.addConsumeElement(jarrelm);
+			}
+		} // for(i = 0; i < num; i++)
+		res = hHost->return_hidden_interface(JVX_INTERFACE_SEQUENCER, reinterpret_cast<jvxHandle*>(sequencer));
+		JVX_CREATE_SEQUENCES(jelm, jarr);
+		jelmlst.addConsumeElement(jelm);
+	} // res = runtime.theHostRef->request_hidden_interface(JVX_INTERFACE
+	return res;
+}
+
+jvxErrorType
+CjvxHostJsonCommandsShow::output_sequencer_status(CjvxJsonElementList& jelmlst, jvxBool showRunQueue, jvxBool showLeaveQueue, jvxSize idS, jvxSize idSS)
 {
 	IjvxSequencer* sequencer = NULL;
 	jvxApiString  fldStr;
@@ -2550,6 +2566,11 @@ CjvxHostJsonCommandsShow::output_sequencer_status(CjvxJsonElementList& jelmlst)
 		}
 
 		hHost->return_hidden_interface(JVX_INTERFACE_SEQUENCER, reinterpret_cast<jvxHandle*>(sequencer));
+
+		if (showRunQueue || showLeaveQueue)
+		{
+			res = output_sequencer_queues(jelmlst, showRunQueue, showLeaveQueue, idS, idSS);
+		}
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_CALL_SUB_COMPONENT_FAILED;

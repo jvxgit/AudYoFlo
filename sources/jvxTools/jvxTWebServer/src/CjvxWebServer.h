@@ -252,6 +252,8 @@ public:
 		jvxApiString* local_uri_on_return, jvxApiString* origin_request_on_return,
 		jvxApiString* origin_user)override;
 
+	void in_connect_url_decode(const char* inPtr, jvxApiString& onReturn) override;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION in_connect_write_response(jvxHandle* server, jvxHandle* conn, const char* response_text)override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION in_connect_write_header_response(jvxHandle* server, jvxHandle* conn, jvxWebServerResponseType resp)override;

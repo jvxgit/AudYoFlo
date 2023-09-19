@@ -91,7 +91,7 @@ CjvxTextWebSockets::process_incoming_text_message(jvxOneWsTextRequest* mess)
 			}
 			if (cmd == "AYF_WS_HOST_CONNECT")
 			{
-				jvxApiString cmd = "show(system);";
+				jvxApiString cmd = "show(system, full);";
 				// std::cout << __FUNCTION__ << " entering blocking loop" << std::endl;
 				TjvxEventLoopElement elm;
 				CjvxWebControl_fe::oneThreadReturnType myPrivateMemReturn;

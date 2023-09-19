@@ -36,15 +36,16 @@ public:
 	jvxErrorType output_one_connection_rule(IjvxDataConnections* connections, jvxSize idx, const std::string& specName, CjvxJsonElementList& lstelmr,
 		std::string& errTxt);
 	
-	jvxErrorType output_connections_core(
-		CjvxJsonElementList& jsec,
+	jvxErrorType output_connection_processes_core(
+		CjvxJsonArray& jarr,
 		jvxDrivehostConnectionShow showmode = JVX_DRIVEHOST_CONNECTION_SHOW_NORMAL,
 		jvxBool arg2set = false, jvxSize specId = JVX_SIZE_UNSELECTED, 
 		const std::string& specName = "");
 
 	jvxErrorType output_one_process_details(IjvxDataConnectionProcess* oneProcess, CjvxJsonElement& lstelmr);
 	jvxErrorType output_one_rule_details(IjvxDataConnectionRule* oneRule, CjvxJsonElement& elmr);
-	jvxErrorType output_sequencer_status(CjvxJsonElementList& jelmlst);
+	jvxErrorType output_sequencer_status(CjvxJsonElementList& jelmlst, jvxBool showRunQueue, jvxBool showLeaveQueue, jvxSize idS, jvxSize idSS);
+	jvxErrorType output_sequencer_queues(CjvxJsonElementList& jelmlst, jvxBool showRunQueue, jvxBool showLeaveQueue, jvxSize idS, jvxSize idSS);
 
 	jvxErrorType show_single_component(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, const std::string& addArg, jvxSize off, CjvxJsonElementList& jelmret);
 	jvxErrorType show_hosttype_handler(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, jvxSize off, CjvxJsonElementList& jelmret);
