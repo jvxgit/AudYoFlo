@@ -1883,7 +1883,7 @@ namespace jvx {
 			jvxErrorType toString(jvxHandle* fld, jvxSize offsetStart, jvxSize numElements, jvxDataFormat format,
 				jvxBool contentOnly, jvxPropertyDecoderHintType decTp, std::string& retVal, std::string& retValPostProcess,
 				jvxSize numDigits, jvxBool binList,
-				jvxContext* ctxt, jvxCBitField fineTuningParams)
+				jvxContext* ctxt, jvxBool* noEntry, jvxCBitField fineTuningParams)
 			{
 				jvxErrorType res = JVX_NO_ERROR;
 				jvxBool propAccessible = false;
@@ -1949,6 +1949,10 @@ namespace jvx {
 							retValPostProcess =  "";
 							selLst = (jvxSelectionList*)fld;
 							retVal = jvx_selList2String(selLst, retValPostProcess, contentOnly, fineTuningParams);
+							if (noEntry)
+							{
+								*noEntry = (selLst->strList.ll() == 0);
+							}
 							break;
 						case JVX_DATAFORMAT_VALUE_IN_RANGE:
 							retVal = "";
@@ -2101,15 +2105,16 @@ namespace jvx {
 							retValPostProcess = "";
 							selLst = (jvxSelectionList*)fld;
 							assert(selLst);
-
 							retVal = jvx_selList2String(selLst, retValPostProcess, contentOnly, fineTuningParams);
-							
+							if (noEntry)
+							{
+								*noEntry = (selLst->strList.ll() == 0);
+							}
 							break;
 						case JVX_DATAFORMAT_STRING:
 							retVal = "-none-error-";
 							strL = (jvxApiString*)fld;
 							assert(strL);
-							strL->assert_valid();
 							retVal = strL->std_str();
 							break;
 						case JVX_DATAFORMAT_STRING_LIST:
@@ -2117,6 +2122,10 @@ namespace jvx {
 							retValPostProcess = "";
 							strLst = (jvxApiStringList*)fld;
 							assert(strLst);
+							if (noEntry)
+							{
+								*noEntry = (strLst->ll() == 0);
+							}
 							for (i = 0; i < strLst->ll(); i++)
 							{
 								if (i > 0)
@@ -2146,13 +2155,13 @@ namespace jvx {
 
 			jvxErrorType toString(const jvx_propertyReferenceTriple& theTriple, jvxCallManagerProperties& callGate,
 				const jvx::propertyDescriptor::CjvxPropertyDescriptorCore& theDescr, std::string& retVal, std::string& retValPostProcess,
-				jvxSize numDigits, jvxBool binList, jvxSize offStart, jvxSize numElms, jvxBool contentOnly, jvxCBitField fineTuningParams)
+				jvxSize numDigits, jvxBool binList, jvxSize offStart, jvxSize numElms, jvxBool contentOnly, jvxBool* noEntry, jvxCBitField fineTuningParams)
 			{
 				jvxErrorType res = JVX_NO_ERROR;
 				jvxBool propAccessible = false;
 				jvxHandle* ptrVal = NULL;
 				jvxSelectionList selLst;
-				jvxApiString strL(0);
+				jvxApiString strL;
 				jvxValueInRange valR(0);
 
 				jvxData valD = 0;
@@ -2308,7 +2317,7 @@ namespace jvx {
 					{
 						// Here, we have no more offset since the filled field always starts from zero!!!
 						res = toString(ptrVal, 0, numElms, theDescr.format, contentOnly, theDescr.decTp, retVal, retValPostProcess, numDigits, binList, callGate.context,
-							fineTuningParams);
+							noEntry, fineTuningParams);
 					}
 
 					if (theDescr.num > 1)
@@ -2338,7 +2347,7 @@ namespace jvx {
 
 			jvxErrorType toString(IjvxAccessProperties* propRef, jvxCallManagerProperties& callGate,
 				const jvxPropertyDescriptor& theDescr, std::string& retVal, std::string& retValPostProcess,
-				jvxSize numDigits, jvxBool binList, jvxSize offStart, jvxSize numElms, jvxBool contentOnly, jvxCBitField fineTuningParams)
+				jvxSize numDigits, jvxBool binList, jvxSize offStart, jvxSize numElms, jvxBool contentOnly, jvxBool* noEntry, jvxCBitField fineTuningParams)
 			{
 				jvxErrorType res = JVX_NO_ERROR;
 				jvxBool propAccessible = false;
@@ -2483,7 +2492,7 @@ namespace jvx {
 				{
 					// Here, we have no more offset since the filled field always starts from zero!!!
 					res = toString(ptrVal, 0, numElms, theDescr.format, contentOnly, theDescr.decTp, retVal, retValPostProcess, numDigits, binList, callGate.context,
-						fineTuningParams);
+						noEntry, fineTuningParams);
 				}
 
 				if (theDescr.num > 1)

@@ -307,7 +307,11 @@ CjvxWebServer::in_connect_write_header_response(jvxHandle* server, jvxHandle* co
 		switch(resp)
 		{
 		case JVX_WEB_SERVER_RESPONSE_JSON:
-			response = "HTTP/1.1 200 OK\r\nContent-Type: ";
+
+			// Found a solution for CORS here: https://groups.google.com/g/civetweb/c/FYqENVWa9F0?pli=1
+			response = "HTTP/1.1 200 OK\r\n";
+			response += "Access-Control-Allow-Origin: *\r\n";
+			response += "Content-Type: ";
 			response += "text/json; charset=utf-8\r\nConnection: close\r\n\r\n";
 			
 			break;

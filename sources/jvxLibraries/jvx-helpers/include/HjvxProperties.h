@@ -229,13 +229,13 @@ namespace jvx {
 			*/
 			jvxErrorType toString(jvxHandle* fld, jvxSize offsetStart, jvxSize numElements, jvxDataFormat format,
 				jvxBool contentOnly, jvxPropertyDecoderHintType decTp, std::string& retVal, std::string& retValPostProcess,
-				jvxSize numDigits, jvxBool binList, jvxContext* ctxt = NULL, jvxCBitField fineTuningParams = 0);
+				jvxSize numDigits, jvxBool binList, jvxContext* ctxt = NULL, jvxBool* noEntry = nullptr, jvxCBitField fineTuningParams = 0);
 
 			/* This function is used to obtain a property value from a component and trasnform it into a string.*/
 			jvxErrorType toString(const jvx_propertyReferenceTriple& theTriple, jvxCallManagerProperties& callGate, 
 				const jvx::propertyDescriptor::CjvxPropertyDescriptorCore& theDescr, std::string& retVal, std::string& retValPostProcess, jvxSize numDigits,
 				jvxBool binList = false, jvxSize offStart = 0, jvxSize numElms = JVX_SIZE_UNSELECTED, 
-				jvxBool contentOnly = false, jvxCBitField fineTuningParams = 0);
+				jvxBool contentOnly = false, jvxBool* noEntry = nullptr, jvxCBitField fineTuningParams = 0);
 
 
 			/* Function used to convert an array into a string */
@@ -243,7 +243,7 @@ namespace jvx {
 				const jvxPropertyDescriptor& theDescr, std::string& retVal,
 				std::string& retValPostProcess,
 				jvxSize numDigits, jvxBool binList = false, jvxSize offStart = 0, 
-				jvxSize numElms = JVX_SIZE_UNSELECTED, jvxBool contentOnly = false,
+				jvxSize numElms = JVX_SIZE_UNSELECTED, jvxBool contentOnly = false, jvxBool* noEntry = nullptr,
 				jvxCBitField fineTuningParams = 0);
 
 			 void numSubEntriesSingleObjectField(jvxSize& numSubElements, jvxDataFormat format, jvxHandle* fld);

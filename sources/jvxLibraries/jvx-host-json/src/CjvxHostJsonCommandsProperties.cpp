@@ -457,11 +457,12 @@ CjvxHostJsonCommandsProperties::show_property_component(
 		}
 		if (res == JVX_NO_ERROR)
 		{
+			jvxBool noEntry = false;
 			callGate.context = ctxt_ptr;
 			callGate.on_get.prop_access_type = &theDescr.accessType;
 
 			res = jvx::helper::properties::toString(theTriple, callGate, theDescr, value, valuePP, config_show_ref.numdigits, config_show_ref.outputPropertyFieldsBase64,
-				offsetS, numElms, contentOnlyBool);
+				offsetS, numElms, contentOnlyBool, &noEntry);
 			if (res == JVX_NO_ERROR)
 			{
 				CjvxJsonElement jelm;
@@ -517,14 +518,17 @@ CjvxHostJsonCommandsProperties::show_property_component(
 						case JVX_DATAFORMAT_SELECTION_LIST:
 						case JVX_DATAFORMAT_STRING_LIST:
 
-							jvx_parseStringListIntoTokens(valuePP, elms);
-							for (auto elm : elms)
+							if (!noEntry)
 							{
-								jelml_arr.makeString(elm);
-								jelm_arr.addConsumeElement(jelml_arr);
+								jvx_parseStringListIntoTokens(valuePP, elms);
+								for (auto elm : elms)
+								{
+									jelml_arr.makeString(elm);
+									jelm_arr.addConsumeElement(jelml_arr);
+								}
+								jelm.makeArray("pf", jelm_arr);
+								jelmret.addConsumeElement(jelm);
 							}
-							jelm.makeArray("pf", jelm_arr);
-							jelmret.addConsumeElement(jelm);
 
 							break;
 						default:
@@ -587,15 +591,19 @@ CjvxHostJsonCommandsProperties::show_property_component(
 
 						case JVX_DATAFORMAT_STRING_LIST:
 							
-							jvx_parseStringListIntoTokens(valuePP, elms);
-							for (auto elm : elms)
+							// Empty lists should not produce an entry here. Otherwise, there is no chance to distinguish
+							// between "" and empty
+							if (!noEntry)
 							{
-								jelml_arr.makeString(elm);
-								jelm_arr.addConsumeElement(jelml_arr);
+								jvx_parseStringListIntoTokens(valuePP, elms);
+								for (auto elm : elms)
+								{
+									jelml_arr.makeString(elm);
+									jelm_arr.addConsumeElement(jelml_arr);
+								}
+								jelm.makeArray("property_fld", jelm_arr);
+								jelmret.addConsumeElement(jelm);
 							}
-							jelm.makeArray("property_fld", jelm_arr);
-							jelmret.addConsumeElement(jelm);
-
 							break;
 						default:
 							jelm.makeAssignmentString("property", value);

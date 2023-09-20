@@ -651,6 +651,7 @@ CjvxWebServerHost::report_event_request_translate(
 					std::cout << __FUNCTION__ << "Error" << std::endl;
 				}
 			}
+			token.clear();
 			resL = jvx_findValueHttpQuery(query_list, token, "slotsubid");
 			if (resL == JVX_NO_ERROR)
 			{
@@ -660,6 +661,7 @@ CjvxWebServerHost::report_event_request_translate(
 					std::cout << __FUNCTION__ << "Error" << std::endl;
 				}
 			}
+			token.clear();
 
 			if (suburl == "/devices")
 			{
@@ -667,7 +669,6 @@ CjvxWebServerHost::report_event_request_translate(
 				command = "show(";
 				command += jvxComponentIdentification_txt(cpType);
 				command += ", devices";
-				command += token;
 				command += ")";
 			}
 			else if (suburl == "/options")
@@ -676,7 +677,6 @@ CjvxWebServerHost::report_event_request_translate(
 				command = "show(";
 				command += jvxComponentIdentification_txt(cpType);
 				command += ", options";
-				command += token;
 				command += ")";
 			}
 			else
