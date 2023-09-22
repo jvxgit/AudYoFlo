@@ -194,7 +194,8 @@ namespace jvx {
 	{
 		namespace properties
 		{
-
+			jvxErrorType valueInRangeFromString(jvxValueInRange* valRange, std::string txtToken);
+			jvxErrorType selectionFromString(jvxSelectionList* selLst, std::string txtToken);
 			std::string collectedPropsToString(const std::list<std::string>& propLst);
 			std::list<std::string> stringToCollectedProps(const std::string& propLstStr);
 
