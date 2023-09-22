@@ -1118,45 +1118,82 @@ CjvxWebServerHost::report_event_request_translate(
 				}
 			else			
 			{
-				// All related to set_property
-				resL = jvx_findValueHttpQuery(query_list, token, "offset");
-				if (resL == JVX_NO_ERROR)
-				{
-					offset = jvx_string2Size(token, isErr);
-					if (isErr)
-					{
-						std::cout << __FUNCTION__ << "Error" << std::endl;
-					}
-				}
 				resL = jvx_findValueHttpQuery(query_list, token, "report");
 				if (resL == JVX_NO_ERROR)
 				{
 					if (token == "yes")
 					{
-						pretoken = "[r]";
+						pretoken += "r";
 					}
+					token.clear();
+				}
+				resL = jvx_findValueHttpQuery(query_list, token, "collect");
+				if (resL == JVX_NO_ERROR)
+				{
+					if (token == "yes")
+					{
+						pretoken += "c";
+					}
+					token.clear();
+				}
+				if (!pretoken.empty())
+				{
+					pretoken = "[" + pretoken + "]";
 				}
 
-				if (in_params.size())
+				if (suburl == "/multi")
 				{
-					// Function to set the value of a property
-					command = "act" + pretoken + "(";
-					command += jvxComponentIdentification_txt(cpType);
-					command += ", set_property, ";
-					command += suburl;
-					command += ", ";
-					command += in_params;
-					if (offset > 0)
+					if (in_params.size())
 					{
-						command += ", " + jvx_size2String(offset);
+						// Function to set the value of a property
+						command = "act" + pretoken + "(";
+						command += jvxComponentIdentification_txt(cpType);
+						command += ", set_property, ";						
+						command += in_params;						
+						command += ")";
 					}
-					command += ")";
+					else
+					{
+						// std::cout << __FUNCTION__ << "Error: Empty command in PUT request" << std::endl;
+						errorDetected = true;
+						errorDescription = "Passing an empty command to the interpreter is not a valid option.";
+					}
 				}
 				else
 				{
-					// std::cout << __FUNCTION__ << "Error: Empty command in PUT request" << std::endl;
-					errorDetected = true;
-					errorDescription = "Passing an empty command to the interpreter is not a valid option.";
+					// All related to set_property
+					resL = jvx_findValueHttpQuery(query_list, token, "offset");
+					if (resL == JVX_NO_ERROR)
+					{
+						offset = jvx_string2Size(token, isErr);
+						if (isErr)
+						{
+							std::cout << __FUNCTION__ << "Error" << std::endl;
+						}
+					}
+
+
+					if (in_params.size())
+					{
+						// Function to set the value of a property
+						command = "act" + pretoken + "(";
+						command += jvxComponentIdentification_txt(cpType);
+						command += ", set_property, ";
+						command += suburl;
+						command += ", ";
+						command += in_params;
+						if (offset > 0)
+						{
+							command += ", " + jvx_size2String(offset);
+						}
+						command += ")";
+					}
+					else
+					{
+						// std::cout << __FUNCTION__ << "Error: Empty command in PUT request" << std::endl;
+						errorDetected = true;
+						errorDescription = "Passing an empty command to the interpreter is not a valid option.";
+					}
 				}
 			}
 

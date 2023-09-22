@@ -5,7 +5,7 @@ void jvx_initPropertyReferenceTriple(jvx_propertyReferenceTriple* theTuple)
 {
 	theTuple->theObj = NULL;
 	theTuple->theHdl = NULL;
-	theTuple->theProps = NULL;
+	theTuple->theProps = NULL;	
 }
 
 bool jvx_isValidPropertyReferenceTriple(jvx_propertyReferenceTriple* theTuple)
@@ -898,6 +898,54 @@ namespace jvx {
 	namespace helper {
 		namespace properties
 		{
+			jvxErrorType valueInRangeFromString(jvxValueInRange* valRange, std::string txtToken)
+			{
+				jvxErrorType res = JVX_NO_ERROR;
+				jvxSize i;
+				jvxBool errBracketsNotFound = false;
+				txtToken = jvx_parseStringFromBrackets(txtToken, errBracketsNotFound, '[', ']');
+
+				std::vector<std::string> tokens;
+				jvx_parseCommandLineOneToken(txtToken, tokens, ',');
+				for (i = 0; i < valRange->num; i++)
+				{
+					jvxBool err = false;
+					if (i < tokens.size())
+					{
+						valRange->fld[i] = jvx_string2Data(tokens[i], err);
+					}
+					if (err)
+					{
+						res = JVX_ERROR_PARSE_ERROR;
+						break;
+					}
+				}
+				return res;
+			}		
+
+			jvxErrorType selectionFromString(jvxSelectionList* selLst, std::string txtToken)
+			{
+				jvxErrorType res = JVX_NO_ERROR;
+				jvxSize i;
+				jvxBool errBracketsNotFound = false;
+				txtToken = jvx_parseStringFromBrackets(txtToken, errBracketsNotFound, '[', ']');				
+				std::vector<std::string> tokens;
+				jvx_parseCommandLineOneToken(txtToken, tokens, ',');
+				for (i = 0; i < selLst->num; i++)
+				{
+					jvxBool err = false;
+					if (i < tokens.size())
+					{
+						selLst->bitFieldSelected(i) = jvx_string2BitField(tokens[i], err);
+					}
+					if (err)
+					{
+						res = JVX_ERROR_PARSE_ERROR;
+						break;
+					}
+				}
+				return res;
+			}
 
 			std::string
 			collectedPropsToString(const std::list<std::string>& propLst)
@@ -974,7 +1022,7 @@ namespace jvx {
 
 				jvxByte* fldB = (jvxByte*)fld;
 				jvxSize numCopy = numElements;
-
+				jvxSize i;
 				// Currently, only single elements are supported
 				if (numElements > 0)
 				{
@@ -1209,6 +1257,7 @@ namespace jvx {
 
 						case JVX_DATAFORMAT_SELECTION_LIST:
 
+							// loadTarget = "0x00000001::0x0000000::0x0000000::3::eins:zwei";
 							if (jvx_bitTest(fineTuningParams, JVX_STRING_PROPERTY_FINE_TUNING_SELECTIONLIST_SELID_SHIFT))
 							{
 								((jvxSelectionList*)fld)->bitFieldSelected() = jvx_string2BitField2SelId(loadTarget, llsel, err);
@@ -1219,88 +1268,67 @@ namespace jvx {
 							}
 							else
 							{
-
+								// WE decide based on the string 
+								contentOnly = true;
 								txt_pos = loadTarget.find("::");
-								if (txt_pos != std::string::npos)
+								txtToken = loadTarget.substr(0, txt_pos);
+								res = selectionFromString((jvxSelectionList*)fld, loadTarget);
+								if (res != JVX_NO_ERROR)
 								{
-									txtToken = loadTarget.substr(0, txt_pos);
-									((jvxSelectionList*)fld)->bitFieldSelected() = jvx_string2BitField(txtToken, err);
-									loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-									if (err)
-									{
-										res = JVX_ERROR_PARSE_ERROR;
-									}
+									// Error, stop processing
+									break;
 								}
-								else
+								if (txt_pos == std::string::npos)
 								{
-									// Very short version: set only the selection!!!
-									txtToken = loadTarget.substr(0, txt_pos);
-									((jvxSelectionList*)fld)->bitFieldSelected() = jvx_string2BitField(txtToken, err);
-									if (err)
-									{
-										res = JVX_ERROR_PARSE_ERROR;
-									}
+									// That was it from here - only the main property value									
+									break;
+								}
+								
+								// Get the next fragment
+								loadTarget = loadTarget.substr(txt_pos + 2);
+								txt_pos = loadTarget.find("::");
+								txtToken = loadTarget.substr(0, txt_pos);								
+								((jvxSelectionList*)fld)->bitFieldSelectable = jvx_string2BitField(txtToken, err);
+								if (err)
+								{
+									res = JVX_ERROR_PARSE_ERROR;
+									break;
+								}
+								if (txt_pos == std::string::npos)
+								{
+									// That was it from here - only the main property value
+									break;
+								}
+							
+								loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+								txt_pos = loadTarget.find("::");
+								txtToken = loadTarget.substr(0, txt_pos);
+								((jvxSelectionList*)fld)->bitFieldExclusive = jvx_string2BitField(txtToken, err);
+								if (err)
+								{
+									res = JVX_ERROR_PARSE_ERROR;
+									break;
+								}
+								if (txt_pos == std::string::npos)
+								{
+									// That was it from here - only the main property value
 									break;
 								}
 
+								loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
 								txt_pos = loadTarget.find("::");
-								if (txt_pos != std::string::npos)
-								{
-									txtToken = loadTarget.substr(0, txt_pos);
-									((jvxSelectionList*)fld)->bitFieldSelectable = jvx_string2BitField(txtToken, err);
-									loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-									if (err)
-									{
-										res = JVX_ERROR_PARSE_ERROR;
-									}
-								}
-								else
-								{
-									// Very short version: set only the selection!!!
-									txtToken = loadTarget.substr(0, txt_pos);
-									((jvxSelectionList*)fld)->bitFieldSelected() = jvx_string2BitField(txtToken, err);
-									if (err)
-									{
-										res = JVX_ERROR_PARSE_ERROR;
-									}
-									break;
-								}
-
-								txt_pos = loadTarget.find("::");
-								if (txt_pos != std::string::npos)
-								{
-									txtToken = loadTarget.substr(0, txt_pos);
-									((jvxSelectionList*)fld)->bitFieldExclusive = jvx_string2BitField(txtToken, err);
-									loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-									if (err)
-									{
-										res = JVX_ERROR_PARSE_ERROR;
-									}
-								}
-								else
-								{
-									res = JVX_ERROR_ELEMENT_NOT_FOUND;
-								}
-
-								txt_pos = loadTarget.find("::");
-								if (txt_pos != std::string::npos)
-								{
-									txt_lst_found = true;
-									txtToken = loadTarget.substr(0, txt_pos);
-									loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-								}
-								else
-								{
-									txtToken = loadTarget;
-									loadTarget = "";
-								}
-
+								txtToken = loadTarget.substr(0, txt_pos);	
 								selLst_ll = jvx_string2Size(txtToken, err);
 								if (err)
 								{
 									res = JVX_ERROR_PARSE_ERROR;
+									break;
 								}
-
+								if (txt_pos != std::string::npos)
+								{
+									txt_lst_found = true;
+									loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+								}
 								if (!loadTargetPP.empty())
 								{
 									contentOnly = false;
@@ -1317,6 +1345,7 @@ namespace jvx {
 									}
 									else
 									{
+										contentOnly = false;
 										((jvxSelectionList*)fld)->strList.assign_empty(selLst_ll);
 									}
 								}
@@ -1326,57 +1355,48 @@ namespace jvx {
 							((jvxApiString*)fld)->assign(loadTarget);
 							break;
 						case JVX_DATAFORMAT_VALUE_IN_RANGE:
+							
+							contentOnly = true;
+							// loadTarget = "1.0::0::10";
 							txt_pos = loadTarget.find("::");
-							((jvxValueInRange*)fld)->val() = 0;
-							((jvxValueInRange*)fld)->minVal = 0;
-							((jvxValueInRange*)fld)->maxVal = 0;
+							txtToken = loadTarget.substr(0, txt_pos);				
+							res = valueInRangeFromString((jvxValueInRange*)fld, txtToken);
+							if (res != JVX_NO_ERROR)
+							{
+								// Error, stop processing
+								break;
+							}
 							if (txt_pos == std::string::npos)
 							{
-								// contentOnly is true!
-								((jvxValueInRange*)fld)->val() = jvx_string2Data(loadTarget, err);
-								if (err)
-								{
-									res = JVX_ERROR_PARSE_ERROR;
-								}
+								// That was it from here - only the main property value
+								break;
 							}
-							else
+
+							loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+							txt_pos = loadTarget.find("::");
+							txtToken = loadTarget.substr(0, txt_pos);
+							((jvxValueInRange*)fld)->minVal = jvx_string2Data(txtToken, err);
+							if (err)
 							{
-								contentOnly = false;
-								txtToken = loadTarget.substr(0, txt_pos);
-								loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-								((jvxValueInRange*)fld)->val() = jvx_string2Data(txtToken, err);
-								if (err)
-								{
-									res = JVX_ERROR_PARSE_ERROR;
-								}
-
-								// loadTarget contains min::max
-								if (res == JVX_NO_ERROR)
-								{
-									txt_pos = loadTarget.find("::");
-									if (txt_pos != std::string::npos)
-									{
-										txtToken = loadTarget.substr(0, txt_pos);
-										loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-										((jvxValueInRange*)fld)->minVal = jvx_string2Data(txtToken, err);
-										if (err)
-										{
-											res = JVX_ERROR_PARSE_ERROR;
-										}
-
-										((jvxValueInRange*)fld)->maxVal = jvx_string2Data(loadTarget, err);
-										if (err)
-										{
-											res = JVX_ERROR_PARSE_ERROR;
-										}
-									}
-									else
-									{
-										res = JVX_ERROR_ELEMENT_NOT_FOUND;
-									}
-								}
+								res = JVX_ERROR_PARSE_ERROR;
+								break;
+							}
+							if (txt_pos == std::string::npos)
+							{
+								// That was it from here - only the main property value
+								break;
 							}
 
+							loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);							
+							((jvxValueInRange*)fld)->maxVal = jvx_string2Data(loadTarget, err);
+							if (err)
+							{
+								res = JVX_ERROR_PARSE_ERROR;
+								break;
+							}
+
+							// If we reach here, it is not a contentOnly request!!
+							contentOnly = false;
 							break;
 						case JVX_DATAFORMAT_HANDLE:
 						case JVX_DATAFORMAT_BYTE:

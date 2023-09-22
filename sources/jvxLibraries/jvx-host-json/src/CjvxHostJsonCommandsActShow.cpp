@@ -1244,11 +1244,24 @@ CjvxHostJsonCommandsActShow::act_single_component(const oneDrivehostCommand& dh_
 		if (actionString == "set_property")
 		{
 			jvxBool report = false;
-			if (addArg == "r")
+			jvxBool collect = false;
+			for (j = 0; j < addArg.size(); j++)
 			{
-				report = true;
+				switch (addArg[j])
+				{
+				case 'r':
+					report = true;
+					break;
+				case 'c':
+					collect = true;
+					break;
+				default:
+					// Unknown option ignored
+					break;
+
+				}
 			}
-			res = act_set_property_component(dh_command, firstArg, secondArg, thirdArg, jelmret, report);
+			res = act_set_property_component(dh_command, firstArg, secondArg, thirdArg, jelmret, report, collect);
 			foundOperation = true;
 		}
 	}
@@ -2381,7 +2394,7 @@ CjvxHostJsonCommandsActShow::act_get_property_component(const oneDrivehostComman
 
 jvxErrorType
 CjvxHostJsonCommandsActShow::act_set_property_component(const oneDrivehostCommand& dh_command, const std::string& identificationTarget,
-	const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet)
+	const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet, jvxBool collect)
 {
 	std::string errTxt;
 	// Argument numElements does not really make sense: the number is inherent to passed string
@@ -2389,7 +2402,7 @@ CjvxHostJsonCommandsActShow::act_set_property_component(const oneDrivehostComman
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxComponentIdentification tp((jvxComponentType)dh_command.subaddress, dh_command.subsubaddress, dh_command.subsubsubaddress);
 
-	res = act_set_property_component_core(tp, identificationTarget, loadTarget, offsetStart, jelmret, reportSet, errTxt);
+	res = act_set_property_component_core(tp, identificationTarget, loadTarget, offsetStart, jelmret, reportSet, collect, errTxt);
 	if (res != JVX_NO_ERROR)
 	{
 		JVX_CREATE_ERROR_NO_RETURN(jelmret, res, errTxt);

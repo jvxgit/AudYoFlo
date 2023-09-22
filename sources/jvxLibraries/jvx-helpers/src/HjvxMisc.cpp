@@ -3136,9 +3136,10 @@ jvxErrorType	jvx_parsePropertyLinkDescriptor(std::string propTargetNameStr, std:
 }
 
 std::string 
-jvx_parseStringFromBrackets(const std::string& in, char lB, char rB)
+jvx_parseStringFromBrackets(const std::string& in, jvxBool& errBracketsNotFound, char lB, char rB)
 {
-	std::string ret = "";
+	std::string ret = in;
+	errBracketsNotFound = false;
 	jvxSize idxL = in.find(lB);
 	jvxSize idxR = in.rfind(rB);
 	if ((idxL != std::string::npos) &&
@@ -3148,6 +3149,10 @@ jvx_parseStringFromBrackets(const std::string& in, char lB, char rB)
 		{
 			ret = in.substr(idxL + 1, idxR - idxL - 1);
 		}
+	}
+	else
+	{
+		errBracketsNotFound = true;
 	}
 	return ret;
 }

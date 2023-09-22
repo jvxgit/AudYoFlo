@@ -84,7 +84,7 @@ public:
 		jvxBool content_only = false, jvxBool compact = false);
 
 	jvxErrorType act_set_property_component(const oneDrivehostCommand& dh_command, const std::string& identificationTarget,
-			const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet = false);
+			const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet = false, jvxBool collect = false);
 
 	jvxErrorType act_state_switch_component(const oneDrivehostCommand& dh_command,
 			const std::string& identificationComponent, jvxStateSwitch theSwitch, CjvxJsonElementList& jelmret,

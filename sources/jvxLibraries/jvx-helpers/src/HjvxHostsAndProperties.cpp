@@ -6,6 +6,7 @@ jvxErrorType jvx_getReferencePropertiesObject(IjvxHost* theHost, jvx_propertyRef
 	jvxErrorType resL = JVX_NO_ERROR;
 	jvx_initPropertyReferenceTriple(theTriple);
 
+	theTriple->cpId = tp;
 	res = theHost->request_object_selected_component(tp, &theTriple->theObj);
 	if((res == JVX_NO_ERROR) && (theTriple->theObj))
 	{
@@ -100,6 +101,7 @@ jvxErrorType jvx_returnReferencePropertiesObject(IjvxHost* theHost, jvx_property
 		theHost->return_object_selected_component(tp, theTriple->theObj);
 	}
 	theTriple->theObj = NULL;
+	theTriple->cpId.reset();
 	return(res);
 }
 

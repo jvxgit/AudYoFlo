@@ -571,7 +571,7 @@ jvxErrorType
 jvx_parsePropertyLinkDescriptor(std::string propTargetNameStr, std::string& tag, std::string& propname, std::vector<std::string>& paramlst);
 
 std::string
-jvx_parseStringFromBrackets(const std::string& in, char lB = '(', char rB = ')');
+jvx_parseStringFromBrackets(const std::string& in, jvxBool& errBracketsNotFound, char lB = '(', char rB = ')');
 
 jvxErrorType 
 jvx_stringToMacAddress(std::string str, jvxUInt8* mac);

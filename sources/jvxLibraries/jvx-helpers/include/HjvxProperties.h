@@ -6,11 +6,12 @@ struct jvx_propertyReferenceTriple
 	IjvxObject* theObj;
 	jvxHandle* theHdl;
 	IjvxProperties* theProps;
+	jvxComponentIdentification cpId;
 	jvx_propertyReferenceTriple()
 	{
-		theObj = NULL;
-		theHdl = NULL;
-		theProps = NULL;
+		theObj = nullptr;
+		theHdl = nullptr;
+		theProps = nullptr;
 	};
 };
 

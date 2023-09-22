@@ -1625,9 +1625,9 @@ CjvxHostJsonCommandsShow::show_single_component(
 				{
 					idtarget = args[off + 1];
 				}
-				
-				std::string propBr = jvx_parseStringFromBrackets(idtarget, '[', ']');
-				if (propBr.empty())
+				jvxBool errBracketsNotFound = false;
+				std::string propBr = jvx_parseStringFromBrackets(idtarget, errBracketsNotFound , '[', ']');
+				if (errBracketsNotFound)
 				{
 					res = CjvxHostJsonCommandsShow::show_property_component(
 						tp, idtarget, args, off+1, jelmlst_ret, content_only, compact, errTxt);
@@ -2219,9 +2219,10 @@ CjvxHostJsonCommandsShow::show_single_component(
 								if (!props.empty())
 								{
 									// Add property in brackets?
-									std::string propBr = jvx_parseStringFromBrackets(props, '[', ']');
+									jvxBool errBracketsNotFound = false;
+									std::string propBr = jvx_parseStringFromBrackets(props, errBracketsNotFound, '[', ']');
 
-									if (propBr.empty())
+									if (errBracketsNotFound)
 									{
 										// Single property
 										jvxErrorType resP = this->show_property_component(tp, props, args, off, jelmlst_props_cont,

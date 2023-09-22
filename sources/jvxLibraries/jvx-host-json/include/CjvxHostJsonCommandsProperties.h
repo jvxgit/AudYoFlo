@@ -121,20 +121,22 @@ public:
 	 * 
 	 * 
 	 */
-	jvxErrorType act_set_property_component_core(jvxComponentIdentification tp, const std::string& identificationTarget,
-		const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt);
+	jvxErrorType act_set_property_component_core(const jvxComponentIdentification& tp, const std::string& identificationTarget,
+		const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet, jvxBool collect, std::string& errTxt);
 
 	void attach_single_property_json_list(jvxComponentIdentification tp,
 		const std::string& propDescr, std::vector<std::string>& argsIn, jvxSize off,
 		CjvxJsonElementList& jelmlst_props, jvxBool content_only, jvxBool compact);
 
-	jvxErrorType act_set_property_component_single(jvxComponentIdentification tp,
+	jvxErrorType act_set_property_component_single(
+		const jvx_propertyReferenceTriple& theTriple, jvxCallManagerProperties& callGate,
 		const std::string& identificationTarget,
 		const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt);
 
 	jvxErrorType act_set_property_component_list(
-		jvxComponentIdentification tp,
-		const std::string& props, CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt);
+		const jvx_propertyReferenceTriple& theTriple, jvxCallManagerProperties& callGate,
+		const std::string& props, const std::string& loadTarget, 
+		CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt);
 
 	// ================================================================================
 

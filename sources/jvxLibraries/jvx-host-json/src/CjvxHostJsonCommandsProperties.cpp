@@ -34,11 +34,11 @@ CjvxHostJsonCommandsProperties::show_property_list(jvxComponentIdentification tp
 		jvxSize showCnt = 0;
 		CjvxJsonElementList jelml_allprops;
 		CjvxJsonElement jelm_allprops;
-
+		jvxBool errBracketsNotFound = false;
 		if (!filter_prop_str.empty())
 		{
-			std::string propBr = jvx_parseStringFromBrackets(filter_prop_str, '[', ']');
-			if (propBr.empty())
+			std::string propBr = jvx_parseStringFromBrackets(filter_prop_str, errBracketsNotFound, '[', ']');
+			if (errBracketsNotFound)
 			{
 				filter_exprs.push_back(filter_prop_str);
 			}
@@ -664,8 +664,9 @@ CjvxHostJsonCommandsProperties::show_property_component_list(
 	{
 		std::string addElement = elm;
 		std::vector<std::string> argsIn;
-		std::string argsBr = jvx_parseStringFromBrackets(elm, '(', ')');
-		if (argsBr.empty())
+		jvxBool errBracketsNotFound = false;
+		std::string argsBr = jvx_parseStringFromBrackets(elm, errBracketsNotFound, '(', ')');
+		if (errBracketsNotFound)
 		{
 			// Is it a wildcard?
 			size_t pos = elm.find("*");
@@ -787,7 +788,7 @@ CjvxHostJsonCommandsProperties::attach_single_property_json_list(jvxComponentIde
 
 jvxErrorType
 CjvxHostJsonCommandsProperties::act_set_property_component_single(
-	jvxComponentIdentification tp,
+	const jvx_propertyReferenceTriple& theTriple, jvxCallManagerProperties& callGate,
 	const std::string& identificationTarget,
 	const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt)
 {
@@ -798,86 +799,71 @@ CjvxHostJsonCommandsProperties::act_set_property_component_single(
 	jvxSize idS;
 	jvxSize offsetS = 0;
 	jvxBool err = false;
-	jvxCallManagerProperties callGate;
-	jvx_propertyReferenceTriple theTriple;
-
-	jvx_initPropertyReferenceTriple(&theTriple);
-
-	this->requestReferencePropertiesObject(theTriple, tp);
-
-	if (jvx_isValidPropertyReferenceTriple(&theTriple))
+	idS = jvx_string2Size(identificationTarget, err);
+	if (!err)
 	{
-		idS = jvx_string2Size(identificationTarget, err);
+		jvx::propertyAddress::CjvxPropertyAddressLinear ident(idS);
+
+		res = theTriple.theProps->description_property(callGate, theDescr, ident);
+	}
+	else
+	{
+		jvx::propertyAddress::CjvxPropertyAddressDescriptor ident(identificationTarget.c_str());
+		res = theTriple.theProps->description_property(callGate, theDescr, ident);
+	}
+	if (res == JVX_NO_ERROR)
+	{
+		offsetS = jvx_string2Size(offsetStart, err);
 		if (!err)
 		{
-			jvx::propertyAddress::CjvxPropertyAddressLinear ident(idS);
-
-			res = theTriple.theProps->description_property(callGate, theDescr, ident);
-		}
-		else
-		{
-			jvx::propertyAddress::CjvxPropertyAddressDescriptor ident(identificationTarget.c_str());
-			res = theTriple.theProps->description_property(callGate, theDescr, ident);
-		}
-		if (res == JVX_NO_ERROR)
-		{
-			offsetS = jvx_string2Size(offsetStart, err);
-			if (!err)
+			callGate.on_set.report_set = reportSet;
+			res = jvx::helper::properties::fromString(theTriple, callGate, theDescr, loadTarget, loadTargetPP, offsetS);
+			if (res != JVX_NO_ERROR)
 			{
-				callGate.on_set.report_set = reportSet;
-				res = jvx::helper::properties::fromString(theTriple, callGate, theDescr, loadTarget, loadTargetPP, offsetS);
-				if (res != JVX_NO_ERROR)
-				{
-					errTxt = "Failed to convert expression <" + loadTarget + "> into a valid value for property with descriptor <" + identificationTarget + ">  for component <" + jvxComponentIdentification_txt(tp) + ", reason: ";
-					errTxt += jvxErrorType_descr(res);
-				}
-			}
-			else
-			{
-				errTxt = "Failed to convert expression <" + offsetStart + "> into a valid offset for property with descriptor <" + identificationTarget + ">  for component <" + jvxComponentIdentification_txt(tp) + ", reason: ";
+				errTxt = "Failed to convert expression <" + loadTarget + "> into a valid value for property with descriptor <" + identificationTarget + ">  for component <" + 
+					jvxComponentIdentification_txt(theTriple.cpId.tp) + ", reason: ";
 				errTxt += jvxErrorType_descr(res);
 			}
 		}
 		else
 		{
-			errTxt = "The property value with descriptor <" + identificationTarget + "> could not be obtained for component <" + jvxComponentIdentification_txt(tp) + ", reason: ";
+			errTxt = "Failed to convert expression <" + offsetStart + "> into a valid offset for property with descriptor <" + identificationTarget + ">  for component <" + 
+				jvxComponentIdentification_txt(theTriple.cpId.tp) + ", reason: ";
 			errTxt += jvxErrorType_descr(res);
 		}
-		this->returnReferencePropertiesObject(theTriple, tp);
 	}
 	else
 	{
-		res = JVX_ERROR_ELEMENT_NOT_FOUND;
-		errTxt = "The property value with descriptor <" + identificationTarget + "> can not be found for component <" + jvxComponentIdentification_txt(tp) + ".";
+		errTxt = "The property value with descriptor <" + identificationTarget + "> could not be obtained for component <" + 
+			jvxComponentIdentification_txt(theTriple.cpId.tp) + ", reason: ";
 		errTxt += jvxErrorType_descr(res);
 	}
+	
 	return res;
 }
 
 jvxErrorType
 CjvxHostJsonCommandsProperties::act_set_property_component_list(
-	jvxComponentIdentification tp,
-	const std::string& props, CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt)
+	const jvx_propertyReferenceTriple& theTriple, jvxCallManagerProperties& callGate,
+	const std::string& props, const std::string& loadTarget, 
+	CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt)
 {
 	CjvxJsonArray jsonArr;
 
 	std::vector<std::string> args;
-	jvxErrorType resL = jvx_parseStringListIntoTokens(props, args, ';');
+	jvxErrorType resL = jvx_parseStringListIntoTokens(props, args, ',');
 	for (auto str : args)
 	{
 		CjvxJsonArrayElement arr;
 		CjvxJsonElementList locSec;
 		CjvxJsonElement locElm;
+		jvxBool errBracketsNotFound = false;
 		// arr.makeSection()
 
-		std::string propsBraces = jvx_parseStringFromBrackets(str, '(', ')');
-		if (propsBraces.empty())
-		{
-			propsBraces = str;
-		}
+		std::string propsBraces = jvx_parseStringFromBrackets(str, errBracketsNotFound, '(', ')');
 		std::vector<std::string> elms;
 		std::string idTarget = propsBraces;
-		std::string load;
+		std::string load = loadTarget;
 		std::string offs;
 		resL = jvx_parseStringListIntoTokens(propsBraces, elms, ',');
 		if (elms.size() > 0)
@@ -893,7 +879,7 @@ CjvxHostJsonCommandsProperties::act_set_property_component_list(
 			offs = elms[2];
 		}
 
-		resL = act_set_property_component_single(tp, idTarget, load, offs, locSec, reportSet, errTxt);
+		resL = act_set_property_component_single(theTriple, callGate, idTarget, load, offs, locSec, reportSet, errTxt);
 		locElm.makeAssignmentString("return_code", jvxErrorType_str[resL].friendly);
 		locSec.addConsumeElement(locElm);
 		JVX_CREATE_COMPONENT_DESCRIPTOR(locElm, idTarget);
@@ -915,8 +901,9 @@ CjvxHostJsonCommandsProperties::act_get_property_component_core(jvxComponentIden
 {
 	if (!props.empty())
 	{
-		std::string propBr = jvx_parseStringFromBrackets(props, '[', ']');
-		if (propBr.empty())
+		jvxBool errBracketsNotFound = false;
+		std::string propBr = jvx_parseStringFromBrackets(props, errBracketsNotFound, '[', ']');
+		if (errBracketsNotFound)
 		{
 			return show_property_component(
 				tp, props, args, off, jelmret, content_only, compact, errTxt);
@@ -928,15 +915,46 @@ CjvxHostJsonCommandsProperties::act_get_property_component_core(jvxComponentIden
 }
 
 jvxErrorType
-CjvxHostJsonCommandsProperties::act_set_property_component_core(jvxComponentIdentification tp, const std::string& identificationTarget,
-	const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet, std::string& errTxt)
+CjvxHostJsonCommandsProperties::act_set_property_component_core(const jvxComponentIdentification& tp, const std::string& identificationTarget,
+	const std::string& loadTarget, const std::string& offsetStart, CjvxJsonElementList& jelmret, jvxBool reportSet, jvxBool collect, std::string& errTxt)
 {
-	std::string props = jvx_parseStringFromBrackets(identificationTarget, '[', ']');
-	if (props.empty())
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxBool errBracketsNotFound = false;
+	std::string props = jvx_parseStringFromBrackets(identificationTarget, errBracketsNotFound, '[', ']');
+	jvx_propertyReferenceTriple theTriple;
+	jvx_initPropertyReferenceTriple(&theTriple);
+	this->requestReferencePropertiesObject(theTriple, tp);
+	if (jvx_isValidPropertyReferenceTriple(&theTriple))
 	{
-		return act_set_property_component_single(tp,
-			identificationTarget, loadTarget, offsetStart, jelmret, reportSet, errTxt);
+		jvxCallManagerProperties callGate;		
+		if (collect)
+		{
+			res = theTriple.theProps->start_property_report_collect(callGate);
+		}
+		if (res == JVX_NO_ERROR)
+		{
+			if (errBracketsNotFound)
+			{
+				res = act_set_property_component_single(theTriple, callGate,
+					identificationTarget, loadTarget, offsetStart, jelmret, reportSet, errTxt);
+			}
+			else
+			{
+				res = act_set_property_component_list(theTriple, callGate,
+					props, loadTarget, jelmret, reportSet, errTxt);
+			}
+			if (collect)
+			{
+				res = theTriple.theProps->stop_property_report_collect(callGate);
+			}
+		}
+		this->returnReferencePropertiesObject(theTriple, tp);
 	}
-	return act_set_property_component_list(tp,
-		props, jelmret, reportSet, errTxt);
+	else
+	{
+		res = JVX_ERROR_ELEMENT_NOT_FOUND;
+		errTxt = "The property interface reference for component <" + jvxComponentIdentification_txt(tp) + " is not available.";
+		errTxt += jvxErrorType_descr(res);
+	}
+	return res;
 }
