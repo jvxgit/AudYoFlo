@@ -255,6 +255,7 @@ public:
 class TjvxSequencerEvent
 {
 public:
+	jvxSequencerStatus seqStat = jvxSequencerStatus::JVX_SEQUENCER_STATUS_NONE;
 	jvxCBitField event_mask = 0;
 	jvxApiString description;
 	jvxSize sequenceId = JVX_SIZE_UNSELECTED;

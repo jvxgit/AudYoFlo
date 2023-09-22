@@ -653,7 +653,7 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 // =============================================================================================
 
 jvxErrorType
-CjvxConsoleHost_be_drivehost::report_event(
+CjvxConsoleHost_be_drivehost::report_event(jvxSequencerStatus seqStat,
 	jvxCBitField event_mask, const char* descriptionin, jvxSize sequenceId,
 	jvxSize stepId, jvxSequencerQueueType qtp, jvxSequencerElementType etp, 
 	jvxSize fId, jvxSize oper_state, jvxBool indicateFirstError)
@@ -830,6 +830,23 @@ CjvxConsoleHost_be_drivehost::report_event(
 			(*elm).fe->report_special_event(&qel, NULL);
 		}
 	}
+
+	// Map this callback to the new generic API
+	jvxErrorType res = JVX_NO_ERROR;
+	TjvxSequencerEvent theEv;
+	theEv.event_mask = event_mask;
+	theEv.description.assign(descriptionin);
+	theEv.sequenceId = sequenceId;
+	theEv.stepId = stepId;
+	theEv.tp = qtp;
+	theEv.stp = etp;
+	theEv.fId = fId;
+	theEv.current_state = oper_state;
+	theEv.seqStat = seqStat;
+	theEv.indicateFirstError = indicateFirstError;
+	CjvxReportCommandRequest_seq seqEvent(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_EVENT,
+		JVX_COMPONENT_UNKNOWN, &theEv);
+	res = this->request_command(seqEvent);
 	return JVX_NO_ERROR;
 }
 

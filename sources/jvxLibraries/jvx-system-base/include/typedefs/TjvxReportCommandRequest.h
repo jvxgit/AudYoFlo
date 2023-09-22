@@ -366,6 +366,7 @@ public:
 	{
 		if (ev)
 		{
+			ev->seqStat = theEvent.seqStat;
 			ev->event_mask = theEvent.event_mask;
 			ev->description.assign(theEvent.description.std_str());
 			ev->sequenceId = theEvent.sequenceId;

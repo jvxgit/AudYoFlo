@@ -682,7 +682,8 @@ CjvxSequencer::_run_process(IjvxSequencer_report* report, jvxHandle* privateData
 
 		if (_common_set_sequencer.report)
 		{
-			_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_SEQUENCE_STARTUP_COMPLETE,
+			_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+				JVX_SEQUENCER_EVENT_SEQUENCE_STARTUP_COMPLETE,
 				("Startup of sequence " + jvx_size2String(_common_set_sequencer.inOperation->idxSequence) + " successfully completed").c_str(),
 				JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED, JVX_SEQUENCER_QUEUE_TYPE_NONE, JVX_SEQUENCER_TYPE_COMMAND_NONE, JVX_SIZE_UNSELECTED,
 				_common_set_sequencer.in_processing_state, true);

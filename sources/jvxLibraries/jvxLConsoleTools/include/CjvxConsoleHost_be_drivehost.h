@@ -224,7 +224,7 @@ public:
 	// Interface IjvxSequencer_report
 	// =======================================================================================
 	// Report the status of the sequencer if desired
-	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxCBitField event_mask, const char* description, jvxSize sequenceId, 
+	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxSequencerStatus seqStat,jvxCBitField event_mask, const char* description, jvxSize sequenceId,
 		jvxSize stepId, jvxSequencerQueueType tp, jvxSequencerElementType stp, jvxSize fId, jvxSize oper_state, jvxBool inMainLoop) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION sequencer_callback(jvxSize sequenceId, jvxSize stepId, jvxSequencerQueueType tp, jvxSize functionId)override;

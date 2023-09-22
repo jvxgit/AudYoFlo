@@ -93,6 +93,8 @@ namespace jvx {
 					{
 						TjvxSequencerEvent ev;
 						seqPtr->seq_event(&ev);
+						jelm.makeAssignmentString("seq-state", jvxSequencerStatus_txt(ev.seqStat));
+						jelmlspec.addConsumeElement(jelm);
 						jelm.makeAssignmentString("seqev-descr", ev.description.std_str());
 						jelmlspec.addConsumeElement(jelm);
 						jelm.makeAssignmentString("seqev-qtp", jvxSequencerQueueType_txt(ev.tp));
@@ -107,8 +109,10 @@ namespace jvx {
 						jelmlspec.addConsumeElement(jelm);
 						jelm.makeAssignmentString("seqev-ferror", ((ev.indicateFirstError == true) ? "yes" : "no"));
 						jelmlspec.addConsumeElement(jelm);
-						jelm.makeAssignmentInt("seqev-state", ev.current_state);
+						jelm.makeAssignmentInt("seqev-state-id", ev.current_state);
 						jelmlspec.addConsumeElement(jelm);						
+						jelm.makeAssignmentString("seqev-mask", jvx_size2String(ev.event_mask));
+						jelmlspec.addConsumeElement(jelm);
 					}
 					else
 					{

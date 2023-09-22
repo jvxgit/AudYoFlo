@@ -314,84 +314,93 @@ CjvxHostJsonCommandsShow::show_connections(const oneDrivehostCommand& dh_command
 		{
 			showmode = JVX_DRIVEHOST_CONNECTION_SHOW_UPATH;
 		}
+		else if (args[1] == "ready")
+		{
+			showmode = JVX_DRIVEHOST_CONNECTION_SHOW_READY;
+		}
 		else
 		{
 			JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_INVALID_ARGUMENT, "Option <" + args[1] + "> is not valid.");
 		}
 	}
-	if (args.size() >= 3)
+
+	IjvxDataConnections* connections = NULL;
+	// Just list all connections
+	res = hHost->request_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle**>(&connections));
+	if ((res == JVX_NO_ERROR) && connections)
 	{
-		specName = args[2];
-		specId = jvx_string2Size(specName, err);
-		if (err)
+		if (showmode == JVX_DRIVEHOST_CONNECTION_SHOW_READY)
 		{
-			// It is not a string, use it as a name
-			specId = JVX_SIZE_UNSELECTED;
+			jvxApiString astr;
+			jvxErrorType resStart = connections->ready_for_start(&astr);
+			CjvxJsonElement jelm;
+			jelm.makeAssignmentString("ready_for_start", jvxErrorType_txt(resStart));
+			jsec.addConsumeElement(jelm);
+			jelm.makeAssignmentString("reason_if_not", astr.std_str());			
+			jsec.addConsumeElement(jelm);
 		}
-		arg2set = true;
+		else
+		{
+			if (args.size() >= 3)
+			{
+				specName = args[2];
+				specId = jvx_string2Size(specName, err);
+				if (err)
+				{
+					// It is not a string, use it as a name
+					specId = JVX_SIZE_UNSELECTED;
+				}
+				arg2set = true;
+			}
+
+			CjvxJsonArray jelmarr;
+			CjvxJsonElement jelml;
+
+			output_connection_processes_core(connections, jelmarr, showmode, arg2set, specId, specName);
+			JVX_CREATE_CONNECTION_PROCESSES(jelml, jelmarr);
+			jsec.addConsumeElement(jelml);
+		}
+		hHost->return_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle*>(connections));
 	}
-
-	CjvxJsonArray jelmarr;
-	CjvxJsonElement jelml;
-
-	output_connection_processes_core(jelmarr, showmode, arg2set, specId,specName );
-	JVX_CREATE_CONNECTION_PROCESSES(jelml, jelmarr);
-	jsec.addConsumeElement(jelml);
-	return JVX_NO_ERROR;
+	else
+	{
+		JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_INVALID_ARGUMENT, "Failed to receive handle for connections.");
+	}
+	return res;
 }
 
 
 jvxErrorType
 CjvxHostJsonCommandsShow::output_connection_processes_core(
+	IjvxDataConnections* connections, 
 	CjvxJsonArray& jarr,
 	jvxDrivehostConnectionShow showmode,
 	jvxBool arg2set, jvxSize specId, const std::string& specName)
 {
+	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize num = 0, i = 0;
 	std::string errTxt;
 	CjvxJsonElement jelm;
-	IjvxDataConnections* connections = NULL;
-	// Just list all connections
-	jvxErrorType res = hHost->request_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle**>(&connections));
-	if ((res == JVX_NO_ERROR) && connections)
-	{
-		connections->number_connections_process(&num);
-		if (arg2set)
-		{
-			if (JVX_CHECK_SIZE_SELECTED(specId))
-			{
-				jvxBool idOutOfBounds = false;
-				if (showmode == JVX_DRIVEHOST_CONNECTION_SHOW_PATH)
-				{
-					if (specId >= num)
-					{
-						idOutOfBounds = true;
-					}
-				}
 
-				if (idOutOfBounds)
+	connections->number_connections_process(&num);
+	if (arg2set)
+	{
+		if (JVX_CHECK_SIZE_SELECTED(specId))
+		{
+			jvxBool idOutOfBounds = false;
+			if (showmode == JVX_DRIVEHOST_CONNECTION_SHOW_PATH)
+			{
+				if (specId >= num)
 				{
-					goto exit_fail;
-					// JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_ID_OUT_OF_BOUNDS, ("Specified id for connection <" + jvx_size2String(specId) + "> is out of bounds."));
+					idOutOfBounds = true;
 				}
-				else
-				{
-					CjvxJsonArrayElement jarrelm;
-					std::string txt;
-					CjvxJsonElementList jelmoneseq;
-					res = output_one_process(connections, specId, specName, jelmoneseq, errTxt, showmode);
-					if (res == JVX_NO_ERROR)
-					{
-						jarrelm.makeSection(jelmoneseq);
-						jarr.addConsumeElement(jarrelm);
-					}
-					else
-					{
-						goto exit_fail;
-						// JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
-					}
-				}
-			} // if (JVX_CHECK_SIZE_SELECTED(specId))
+			}
+
+			if (idOutOfBounds)
+			{
+				goto exit_fail;
+				// JVX_CREATE_ERROR_RETURN(jsec, JVX_ERROR_ID_OUT_OF_BOUNDS, ("Specified id for connection <" + jvx_size2String(specId) + "> is out of bounds."));
+			}
 			else
 			{
 				CjvxJsonArrayElement jarrelm;
@@ -409,28 +418,44 @@ CjvxHostJsonCommandsShow::output_connection_processes_core(
 					// JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
 				}
 			}
-		} // if (arg1set)
+		} // if (JVX_CHECK_SIZE_SELECTED(specId))
 		else
 		{
-			for (i = 0; i < num; i++)
+			CjvxJsonArrayElement jarrelm;
+			std::string txt;
+			CjvxJsonElementList jelmoneseq;
+			res = output_one_process(connections, specId, specName, jelmoneseq, errTxt, showmode);
+			if (res == JVX_NO_ERROR)
 			{
-				CjvxJsonArrayElement jarrelm;
-				std::string txt;
-				CjvxJsonElementList jelmoneseq;
-				res = output_one_process(connections, i, "", jelmoneseq, errTxt, showmode);
-				if (res == JVX_NO_ERROR)
-				{
-					jarrelm.makeSection(jelmoneseq);
-					jarr.addConsumeElement(jarrelm);
-				}
-				else
-				{
-					JVX_CREATE_ERROR_NO_RETURN(jelmoneseq, res, errTxt);
-				}
-			} // for(i = 0; i < num; i++)
+				jarrelm.makeSection(jelmoneseq);
+				jarr.addConsumeElement(jarrelm);
+			}
+			else
+			{
+				goto exit_fail;
+				// JVX_CREATE_ERROR_RETURN(jsec, res, errTxt);
+			}
 		}
+	} // if (arg1set)
+	else
+	{
+		for (i = 0; i < num; i++)
+		{
+			CjvxJsonArrayElement jarrelm;
+			std::string txt;
+			CjvxJsonElementList jelmoneseq;
+			res = output_one_process(connections, i, "", jelmoneseq, errTxt, showmode);
+			if (res == JVX_NO_ERROR)
+			{
+				jarrelm.makeSection(jelmoneseq);
+				jarr.addConsumeElement(jarrelm);
+			}
+			else
+			{
+				JVX_CREATE_ERROR_NO_RETURN(jelmoneseq, res, errTxt);
+			}
+		} // for(i = 0; i < num; i++)
 
-		res = hHost->return_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle*>(connections));		
 	} // res = runtime.theHostRef->request_hidden_interface(JVX_INTERFACE
 
 exit_fail:
@@ -673,9 +698,16 @@ CjvxHostJsonCommandsShow::show_system_compact(const oneDrivehostCommand& dh_comm
 
 	// ====================================================
 	CjvxJsonArray jelmarr;
-	output_connection_processes_core(jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
-	JVX_CREATE_CONNECTION_PROCESSES(jelm_comps, jelmarr);
-	jsec.addConsumeElement(jelm_comps);
+	IjvxDataConnections* connections = NULL;
+	// Just list all connections
+	jvxErrorType res = hHost->request_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle**>(&connections));
+	if ((res == JVX_NO_ERROR) && connections)
+	{
+		output_connection_processes_core(connections, jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
+		JVX_CREATE_CONNECTION_PROCESSES(jelm_comps, jelmarr);
+		jsec.addConsumeElement(jelm_comps);
+		res = hHost->return_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle*>(connections));
+	}
 
 	// ====================================================
 
@@ -765,9 +797,16 @@ CjvxHostJsonCommandsShow::show_system(const oneDrivehostCommand& dh_command, con
 		// ====================================================
 		
 		CjvxJsonArray jelmarr;
-		output_connection_processes_core(jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
-		JVX_CREATE_CONNECTION_PROCESSES(jelmout, jelmarr);
-		jelmoutl.addConsumeElement(jelmout);
+		IjvxDataConnections* connections = NULL;
+		// Just list all connections
+		jvxErrorType res = hHost->request_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle**>(&connections));
+		if ((res == JVX_NO_ERROR) && connections)
+		{
+			output_connection_processes_core(connections, jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT);
+			JVX_CREATE_CONNECTION_PROCESSES(jelmout, jelmarr);
+			jelmoutl.addConsumeElement(jelmout);
+			res = hHost->return_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle*>(connections));
+		}
 
 		// ====================================================
 
@@ -792,9 +831,16 @@ CjvxHostJsonCommandsShow::show_system(const oneDrivehostCommand& dh_command, con
 		// ====================================================
 
 		CjvxJsonArray jelmarr;
-		output_connection_processes_core(jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_PATH);
-		JVX_CREATE_CONNECTION_PROCESSES(jelmout, jelmarr);
-		jelmoutl.addConsumeElement(jelmout);
+		IjvxDataConnections* connections = NULL;
+		// Just list all connections
+		jvxErrorType res = hHost->request_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle**>(&connections));
+		if ((res == JVX_NO_ERROR) && connections)
+		{
+			output_connection_processes_core(connections, jelmarr, JVX_DRIVEHOST_CONNECTION_SHOW_PATH);
+			JVX_CREATE_CONNECTION_PROCESSES(jelmout, jelmarr);
+			jelmoutl.addConsumeElement(jelmout);
+			res = hHost->return_hidden_interface(JVX_INTERFACE_DATA_CONNECTIONS, reinterpret_cast<jvxHandle*>(connections));
+		}
 
 		// ====================================================
 		// ====================================================

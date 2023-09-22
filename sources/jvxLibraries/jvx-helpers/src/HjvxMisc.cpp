@@ -5301,7 +5301,7 @@ std::string jvxComponentIdentification_txt(jvxComponentIdentification cpTp, bool
 	}
 
 	txt += "<";
-	txt += jvx_size2String(cpTp.slotid, 1);
+	txt += jvx_size2String(cpTp.slotid, 3/*1*/);
 	/*
 	switch (cpTp.slotid)
 	{
@@ -5330,7 +5330,7 @@ std::string jvxComponentIdentification_txt(jvxComponentIdentification cpTp, bool
 
 	txt += ",";
 
-	txt += jvx_size2String(cpTp.slotsubid, 1);
+	txt += jvx_size2String(cpTp.slotsubid, 3/* 1*/);
 	/*
 	switch (cpTp.slotsubid)
 	{

@@ -37,7 +37,7 @@ public:
 		std::string& errTxt);
 	
 	jvxErrorType output_connection_processes_core(
-		CjvxJsonArray& jarr,
+		IjvxDataConnections* connections, CjvxJsonArray& jarr,
 		jvxDrivehostConnectionShow showmode = JVX_DRIVEHOST_CONNECTION_SHOW_NORMAL,
 		jvxBool arg2set = false, jvxSize specId = JVX_SIZE_UNSELECTED, 
 		const std::string& specName = "");

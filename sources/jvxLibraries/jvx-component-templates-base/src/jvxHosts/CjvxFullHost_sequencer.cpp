@@ -119,7 +119,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 	{
 		if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_DEBUG_MESSAGE)
 		{
-			_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
+			_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+				JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
 				"Enter Event Loop", JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED, JVX_SEQUENCER_QUEUE_TYPE_NONE,
 				JVX_SEQUENCER_TYPE_COMMAND_NONE, JVX_SIZE_UNSELECTED, 
 				_common_set_sequencer.in_processing_state);
@@ -163,7 +164,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 				{
 					if (_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_REPORT_ENTERED_STEP_BREAK)
 					{
-						_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
+						_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+							JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
 							"Single Step Break", JVX_SIZE_UNSELECTED,
 							JVX_SIZE_UNSELECTED,
 							JVX_SEQUENCER_QUEUE_TYPE_NONE,
@@ -336,7 +338,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 					{
 						if (_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_REPORT_ENTERED_STEP_BREAK)
 						{
-							_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
+							_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+								JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
 								"Step Breakpoint", JVX_SIZE_UNSELECTED,
 								JVX_SIZE_UNSELECTED,
 								JVX_SEQUENCER_QUEUE_TYPE_NONE,
@@ -377,7 +380,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 						errorDescription += ">, component <";
 						errorDescription += jvxComponentIdentification_txt(theStep->step_target);
 						errorDescription += "> due to non matching mode selection.";
-						_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_REPORT_SKIPPED_STEP,
+						_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+							JVX_SEQUENCER_EVENT_REPORT_SKIPPED_STEP,
 							errorDescription.c_str(), 
 							_common_set_sequencer.inOperation->idxSequence,
 							_common_set_sequencer.inOperation->idxStep,
@@ -441,7 +445,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 							txt += jvxComponentIdentification_txt(theStep->step_target);
 							txt += ">: Failed to get reference to component.";
 
-							_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_INFO_TEXT,
+							_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+								JVX_SEQUENCER_EVENT_INFO_TEXT,
 								txt.c_str(), 
 								_common_set_sequencer.inOperation->idxSequence, 
 								_common_set_sequencer.inOperation->idxStep, 
@@ -523,7 +528,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 				{
 					if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_DEBUG_MESSAGE)
 					{
-						_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
+						_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+							JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
 							"Start Execute Command", _common_set_sequencer.inOperation->idxSequence,
 							_common_set_sequencer.inOperation->idxStep,
 							_common_set_sequencer.inOperation->currentQueueTp,
@@ -1420,7 +1426,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 				{
 					if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_DEBUG_MESSAGE)
 					{
-						_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
+						_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+							JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
 							"Stop Execute Command", _common_set_sequencer.inOperation->idxSequence,
 							_common_set_sequencer.inOperation->idxStep,
 							_common_set_sequencer.inOperation->currentQueueTp,
@@ -1493,7 +1500,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 					{
 						if (_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR)
 						{
-							_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
+							_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+								JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
 								errorDescription.c_str(), _common_set_sequencer.inOperation->idxSequence,
 								_common_set_sequencer.inOperation->idxStep,
 								_common_set_sequencer.inOperation->currentQueueTp,
@@ -1512,7 +1520,8 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 					{
 						if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP)
 						{
-							_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP,
+							_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+								JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP,
 								theStep->description.c_str(),
 								_common_set_sequencer.inOperation->idxSequence,
 								_common_set_sequencer.inOperation->idxStep,
@@ -1542,7 +1551,8 @@ jump_to_next_step:
 				{
 					if (_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_REPORT_OPERATION_STATE)
 					{
-						_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_REPORT_OPERATION_STATE,
+						_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+							JVX_SEQUENCER_EVENT_REPORT_OPERATION_STATE,
 							"Report State while waiting", _common_set_sequencer.inOperation->idxSequence,
 							_common_set_sequencer.inOperation->idxStep,
 							_common_set_sequencer.inOperation->currentQueueTp,
@@ -1717,7 +1727,8 @@ jump_to_next_step:
 						{
 							if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP)
 							{
-								_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
+								_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+									JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
 									errorDescription.c_str(), _common_set_sequencer.inOperation->idxSequence,
 									_common_set_sequencer.inOperation->idxStep,
 									_common_set_sequencer.inOperation->currentQueueTp,
@@ -1754,7 +1765,8 @@ jump_to_next_step:
 						{
 							if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP)
 							{
-								_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
+								_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+									JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
 									errorDescription.c_str(), _common_set_sequencer.inOperation->idxSequence,
 									_common_set_sequencer.inOperation->idxStep,
 									_common_set_sequencer.inOperation->currentQueueTp,
@@ -1793,7 +1805,8 @@ jump_to_next_step:
 					{
 						if (_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_STEP)
 						{
-							_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
+							_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+								JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_STEP_ERROR,
 								errorDescription.c_str(), _common_set_sequencer.inOperation->idxSequence,
 								_common_set_sequencer.inOperation->idxStep,
 								_common_set_sequencer.inOperation->currentQueueTp,
@@ -2055,7 +2068,8 @@ jump_to_next_step:
 				{
 					if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_SEQUENCE_ERROR)
 					{
-						_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_SEQUENCE_ERROR,
+						_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState,
+							JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_SEQUENCE_ERROR,
 							"", _common_set_sequencer.inOperation->idxSequence,
 							_common_set_sequencer.inOperation->idxStep,
 							_common_set_sequencer.inOperation->currentQueueTp,
@@ -2073,6 +2087,7 @@ jump_to_next_step:
 						if (theStep)
 						{
 							_common_set_sequencer.report->report_event(
+								_common_set_sequencer.inOperation->theSeqState,
 								//JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ABORT,
 								_common_set_sequencer.inOperation->howtosaygoodbye,
 								"", _common_set_sequencer.inOperation->idxSequence,
@@ -2085,6 +2100,7 @@ jump_to_next_step:
 						else
 						{
 							_common_set_sequencer.report->report_event(
+								_common_set_sequencer.inOperation->theSeqState,
 								//JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ABORT,
 								_common_set_sequencer.inOperation->howtosaygoodbye,
 								"", _common_set_sequencer.inOperation->idxSequence,
@@ -2103,7 +2119,8 @@ jump_to_next_step:
 				{
 					if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_SEQUENCE)
 					{
-						_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_SEQUENCE,
+						_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState, 
+							JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_SEQUENCE,
 							"", _common_set_sequencer.inOperation->idxSequence,
 							_common_set_sequencer.inOperation->idxStep,
 							_common_set_sequencer.inOperation->currentQueueTp,
@@ -2163,7 +2180,8 @@ jump_to_next_step:
 			{
 				if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ERROR)
 				{
-					_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ERROR,
+					_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState, 
+						JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ERROR,
 						"", _common_set_sequencer.inOperation->idxSequence,
 						_common_set_sequencer.inOperation->idxStep,
 						_common_set_sequencer.inOperation->currentQueueTp,
@@ -2189,6 +2207,7 @@ jump_to_next_step:
 					}
 
 					_common_set_sequencer.report->report_event(
+						_common_set_sequencer.inOperation->theSeqState,
 						//JVX_SEQUENCER_EVENT_INCOMPLETE_COMPLETION_PROCESS_ABORT,
 						_common_set_sequencer.inOperation->howtosaygoodbye,
 						"", _common_set_sequencer.inOperation->idxSequence,
@@ -2205,7 +2224,8 @@ jump_to_next_step:
 			{
 				if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_PROCESS)
 				{
-					_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_PROCESS,
+					_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState, 
+						JVX_SEQUENCER_EVENT_SUCCESSFUL_COMPLETION_PROCESS,
 						"", _common_set_sequencer.inOperation->idxSequence,
 						_common_set_sequencer.inOperation->idxStep,
 						_common_set_sequencer.inOperation->currentQueueTp,
@@ -2230,7 +2250,8 @@ jump_to_next_step:
 		{
 			if (theStep)
 			{
-				_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
+				_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState, 
+					JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
 					"Leave Message Queue", _common_set_sequencer.inOperation->idxSequence,
 					_common_set_sequencer.inOperation->idxStep,
 					_common_set_sequencer.inOperation->currentQueueTp,
@@ -2240,7 +2261,8 @@ jump_to_next_step:
 			}
 			else
 			{
-				_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
+				_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState, 
+					JVX_SEQUENCER_EVENT_DEBUG_MESSAGE,
 					"Leave Message Queue", _common_set_sequencer.inOperation->idxSequence,
 					_common_set_sequencer.inOperation->idxStep,
 					_common_set_sequencer.inOperation->currentQueueTp,
@@ -2268,7 +2290,8 @@ CjvxFullHost::sequencer_started(jvxInt64 timestamp_us)
 {
 	if (_common_set_sequencer.report)
 	{
-		_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_PROCESS_STARTUP_COMPLETE,
+		_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState, 
+			JVX_SEQUENCER_EVENT_PROCESS_STARTUP_COMPLETE,
 			"Startup of sequencer thread successfully completed", JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED, 
 			JVX_SEQUENCER_QUEUE_TYPE_NONE, JVX_SEQUENCER_TYPE_COMMAND_NONE, JVX_SIZE_UNSELECTED,
 			_common_set_sequencer.in_processing_state,
@@ -2284,7 +2307,8 @@ CjvxFullHost::sequencer_stopped(jvxInt64 timestamp_us)
 	{
 		if(_common_set_sequencer.inOperation->eventMask & JVX_SEQUENCER_EVENT_PROCESS_TERMINATED)
 		{
-			_common_set_sequencer.report->report_event(JVX_SEQUENCER_EVENT_PROCESS_TERMINATED,
+			_common_set_sequencer.report->report_event(_common_set_sequencer.inOperation->theSeqState, 
+				JVX_SEQUENCER_EVENT_PROCESS_TERMINATED,
 				"", JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED, JVX_SEQUENCER_QUEUE_TYPE_NONE, JVX_SEQUENCER_TYPE_COMMAND_NONE, JVX_SIZE_UNSELECTED,
 				_common_set_sequencer.in_processing_state,
 				true);

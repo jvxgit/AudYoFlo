@@ -870,6 +870,12 @@ CjvxWebServerHost::report_event_request_translate(
 				// Address "/jvx/host/connections/"
 				requiresInterpretation = true;
 			}
+			else if (suburl == "ready")
+			{
+				// Address "/jvx/host/connections/"
+				command = "show(connections, ready);";
+				requiresInterpretation = true;
+			}
 			else if (suburl == "list")
 			{
 				// Address "/jvx/host/connections/"
