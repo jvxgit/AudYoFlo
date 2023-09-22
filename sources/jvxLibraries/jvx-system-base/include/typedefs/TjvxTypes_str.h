@@ -881,7 +881,7 @@ static jvxTextHelpers jvxReportCommandRequest_str[(int)jvxReportCommandRequest::
 	{"cmdreq-upd-stat-cp", "JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT"},
 	{"cmdreq-sys-stat", "JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED"},
 	{"cmdreq-trig-seq-imm", "JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE"},
-	{"cmdreq-upd-props", "JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTIES"},
+	{"cmdreq-upd-props", "JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES"},
 	{"cmdreq-resched-main", "JVX_REPORT_COMMAND_REQUEST_RESCHEDULE_MAIN"},
 	{"cmdreq-born-sub-dev", "JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_SUBDEVICE"},
 	{"cmdreq-died-sub-dev", "JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_SUBDEVICE"},

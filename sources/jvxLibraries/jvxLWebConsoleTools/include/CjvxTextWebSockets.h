@@ -25,6 +25,8 @@ public:
 	void initialize(CjvxWebControl_fe* hostrefArg);
 
 	jvxErrorType process_incoming_text_message(jvxOneWsTextRequest* arg);
+
+	jvxErrorType fwd_command_request_main_loop(const CjvxReportCommandRequest& request);
 };
 
 #endif

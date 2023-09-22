@@ -176,6 +176,9 @@ jelm.makeAssignmentString("seq_element_assoc_mode", txt)
 #define JVX_CREATE_CONNECTION_STATUS(jelm, txt) \
 	jelm.makeAssignmentString("status", txt);
 
+#define JVX_CREATE_CONNECTION_CATEGORY(jelm, catId) \
+	jelm.makeAssignmentInt("category_id", catId);
+
 #define JVX_CREATE_CONNECTION_RULE_NAME(jelm, txt) \
 	jelm.makeAssignmentString("rule_name", txt);
 

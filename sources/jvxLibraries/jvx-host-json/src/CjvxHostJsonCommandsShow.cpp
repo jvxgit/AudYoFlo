@@ -1074,6 +1074,8 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 			jvxBool testok = false;
 			jvxState stat = JVX_STATE_NONE;
 			jvxSize uid = JVX_SIZE_UNSELECTED;
+			jvxSize catId = JVX_SIZE_UNSELECTED;
+			IjvxConnectionIterator* itRet = nullptr;
 			oneProcess->descriptor_connection(&fldStr);
 			connections->uid_for_reference(oneProcess, &uid);
 
@@ -1084,6 +1086,11 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 			
 			JVX_CREATE_CONNECTION_UID(elmr, uid);
 			lstelmr.addConsumeElement(elmr);
+
+			/*
+			oneProcess->description(&fldStr);
+			JVX_CREATE_COMPONENT_DESCRIPTOR(elmr, fldStr.c_str());
+			*/
 
 			// Only name and uid in compact mode
 			if (showmode != JVX_DRIVEHOST_CONNECTION_SHOW_COMPACT)
@@ -1101,6 +1108,10 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 				oneProcess->status(&stat);
 				oneProcess->status_chain(&testok JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				JVX_CREATE_CONNECTION_STATUS(elmr, jvxState_txt(stat));
+				lstelmr.addConsumeElement(elmr);
+
+				oneProcess->category_id(&catId); // catId
+				JVX_CREATE_CONNECTION_CATEGORY(elmr, catId);
 				lstelmr.addConsumeElement(elmr);
 
 				if (testok)
@@ -1138,8 +1149,13 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 				case JVX_DRIVEHOST_CONNECTION_SHOW_PATH:
 				case JVX_DRIVEHOST_CONNECTION_SHOW_UPATH:
 
-					res = oneProcess->transfer_forward_chain(JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON, &elmlp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+					oneProcess->iterator_chain(&itRet); // it
+					
+					res = output_process_iterator_path(itRet, elmlp);
 					elmr.makeSection("process_path", elmlp);
+
+					//res = oneProcess->transfer_forward_chain(JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON, &elmlp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+					//elmr.makeSection("process_path", elmlp);
 					break;
 				case JVX_DRIVEHOST_CONNECTION_SHOW_LAST:
 					std::ostringstream sstr;
@@ -1155,6 +1171,59 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 	}
 	
 	return res;
+}
+
+jvxErrorType
+CjvxHostJsonCommandsShow::output_process_iterator_path(IjvxConnectionIterator* itRet, CjvxJsonElementList& elmlp)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	CjvxJsonElement elm;
+	CjvxJsonArray elmArr;
+	jvxComponentIdentification cpId;
+	jvxApiString mStr;
+	jvxApiString dStr;
+	jvxApiString lStr;
+	jvxSize i;
+	jvxSize nBranches = 0;
+	// nameConnector, nameModule, cpId, nameComponent
+	if (itRet)
+	{
+		itRet->reference_component(&cpId, &mStr, &dStr, &lStr);
+		elm.makeAssignmentString("component_identification", jvxComponentIdentification_txt(cpId));
+		elmlp.addConsumeElement(elm);
+
+		elm.makeAssignmentSize("uid", cpId.uId);
+		elmlp.addConsumeElement(elm);
+
+		elm.makeAssignmentString("module_name", mStr.c_str());
+		elmlp.addConsumeElement(elm);
+
+		elm.makeAssignmentString("description", dStr.c_str());
+		elmlp.addConsumeElement(elm);
+		
+		elm.makeAssignmentString("context", lStr.c_str());
+		elmlp.addConsumeElement(elm);
+
+		itRet->number_next(&nBranches);
+
+		for(i = 0; i < nBranches; i++)
+		{
+			IjvxConnectionIterator* itNext = nullptr;
+			CjvxJsonArrayElement elmArrElm;
+			itRet->reference_next(i, &itNext);
+			if (itNext)
+			{
+				CjvxJsonElementList elmNextLst;
+				jvxErrorType resL = output_process_iterator_path(itNext, elmNextLst);
+				elmArrElm.makeSection(elmNextLst);
+				elmArr.addConsumeElement(elmArrElm);
+			}
+		}
+		elm.makeArray("next", elmArr);
+		elmlp.addConsumeElement(elm);
+	}
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType

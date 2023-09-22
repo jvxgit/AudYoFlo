@@ -824,7 +824,23 @@ CjvxWebServerHost::report_event_request_translate(
 				}
 				else
 				{
-					command = "show(connections, path)";
+					jvxSize pId = 0;
+					resL = jvx_findValueHttpQuery(query_list, token, "uid");
+					if (resL == JVX_NO_ERROR)
+					{
+						pId = jvx_string2Size(token, isErr);
+						if (isErr)
+						{
+							std::cout << __FUNCTION__ << "Error" << std::endl;
+						}
+						command = "show(connections, upath, ";
+						command += jvx_size2String(pId);
+						command += ")";
+					}
+					else
+					{
+						command = "show(connections, path)";
+					}
 				}
 
 				// Address "/jvx/host/connections/"
@@ -1025,6 +1041,7 @@ CjvxWebServerHost::report_event_request_translate(
 				{
 					std::cout << __FUNCTION__ << "Error" << std::endl;
 				}
+				token.clear();
 			}
 			resL = jvx_findValueHttpQuery(query_list, token, "slotsubid");
 			if (resL == JVX_NO_ERROR)
@@ -1034,6 +1051,7 @@ CjvxWebServerHost::report_event_request_translate(
 				{
 					std::cout << __FUNCTION__ << "Error" << std::endl;
 				}
+				token.clear();
 			}
 
 			if (

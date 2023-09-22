@@ -146,3 +146,31 @@ CjvxTextWebSockets::process_incoming_text_message(jvxOneWsTextRequest* mess)
 
 	return JVX_NO_ERROR;
 }
+
+jvxErrorType 
+CjvxTextWebSockets::fwd_command_request_main_loop(const CjvxReportCommandRequest& request)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	// We are in mainloop here. Therefore, we need no lock!
+	// All async requests must have been synchronized to main loop before!!
+	for (auto elm : connectedTextSockets)
+	{
+		jvxErrorType resL = JVX_NO_ERROR;
+		if (elm.second.status == ayfTextWebSocketState::AYF_WEBSOCKET_READY)
+		{
+			std::string transtoken;
+			resL = jvx::helper::json::commandRequest2Json(request, transtoken);
+			if (resL == JVX_NO_ERROR)
+			{
+				resL = hostRef->myWebServer.hdl->in_connect_send_ws_packet((struct mg_connection*)(elm.first), JVX_WEBSOCKET_OPCODE_TEXT,
+					(const char*)transtoken.c_str(), transtoken.size());
+				if (resL != JVX_NO_ERROR)
+				{
+					std::cout << __FUNCTION__ << ": Warning: Call to <in_connect_send_ws_packet> failed with error reason: "
+						<< jvxErrorType_descr(resL) << "." << std::endl;
+				}
+			}
+		}
+	}
+	return res;
+}

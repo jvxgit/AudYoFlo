@@ -43,6 +43,7 @@ public:
 		const std::string& specName = "");
 
 	jvxErrorType output_one_process_details(IjvxDataConnectionProcess* oneProcess, CjvxJsonElement& lstelmr);
+	jvxErrorType output_process_iterator_path(IjvxConnectionIterator* itRet, CjvxJsonElementList& elmlp);
 	jvxErrorType output_one_rule_details(IjvxDataConnectionRule* oneRule, CjvxJsonElement& elmr);
 	jvxErrorType output_sequencer_status(CjvxJsonElementList& jelmlst, jvxBool showRunQueue, jvxBool showLeaveQueue, jvxSize idS, jvxSize idSS);
 	jvxErrorType output_sequencer_queues(CjvxJsonElementList& jelmlst, jvxBool showRunQueue, jvxBool showLeaveQueue, jvxSize idS, jvxSize idSS);

@@ -1488,9 +1488,10 @@ CjvxWebControl_fe::report_command_request(
 
 jvxErrorType
 CjvxWebControl_fe::request_command(const CjvxReportCommandRequest& request)
-{
+{	
+	std::cout << __FUNCTION__ << "Warning: Unexpected direct call to function that need to be synchronized!" << std::endl;
 	jvx::helper::debug_out_command_request(request, std::cout, (std::string)"-- <" + __FUNCTION__ + ">");
-	return JVX_ERROR_UNSUPPORTED;
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType 
@@ -1639,8 +1640,14 @@ CjvxWebControl_fe::request_if_command_forward(IjvxReportSystemForward** fwdCalls
 void 
 CjvxWebControl_fe::request_command_in_main_thread(CjvxReportCommandRequest* request, jvxBool removeObject)
 {
-	jvx::helper::debug_out_command_request(*request, std::cout, __FUNCTION__);
-	// Here, we can forward the requests!!!
+	if (request)
+	{
+		jvxErrorType res = txtWs.fwd_command_request_main_loop(*request);
+		if (res != JVX_NO_ERROR)
+		{
+			jvx::helper::debug_out_command_request(*request, std::cout, (std::string)"-- <" + __FUNCTION__ + ">");
+		}
+	}
 }
 
 jvxErrorType

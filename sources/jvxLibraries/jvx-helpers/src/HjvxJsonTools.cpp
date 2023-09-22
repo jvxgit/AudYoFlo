@@ -26,7 +26,14 @@ namespace jvx {
 				jelm.makeAssignmentString("type", jvxReportCommandDataType_txt(dtype));
 				jelml.addConsumeElement(jelm);
 
-				jelm.makeAssignmentString("origin", jvxComponentIdentification_txt(cpId));
+				CjvxJsonElementList jelmlOrig;
+				jelm.makeAssignmentString("component_identification", jvxComponentIdentification_txt(cpId));
+				jelmlOrig.addConsumeElement(jelm);
+
+				jelm.makeAssignmentInt("uid", cpId.uId);
+				jelmlOrig.addConsumeElement(jelm);
+
+				jelm.makeSection("origin", jelmlOrig);
 				jelml.addConsumeElement(jelm);
 
 				switch (dtype)

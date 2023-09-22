@@ -232,6 +232,7 @@ public:
 		jvxCallManagerProperties callGate;
 		// jvxSize num_digits = 4;
 		jvxBool bin_list = false;
+		jvxBool noEntry = false;
 		jvxCBitField fTuning = 0;
 		jvx_bitSet(fTuning, JVX_STRING_PROPERTY_FINE_TUNING_SELECTIONLIST_SELID_SHIFT);
 
@@ -247,6 +248,7 @@ public:
 				offset,
 				num_elms,
 				ctentonly,
+				&noEntry,
 				fTuning);
 			switch (descr->format)
 			{
