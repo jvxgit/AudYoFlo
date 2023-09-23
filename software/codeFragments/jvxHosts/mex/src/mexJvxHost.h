@@ -377,7 +377,7 @@ public:
   virtual jvxErrorType JVX_CALLINGCONVENTION report_os_specific(jvxSize commandId, void* context)override;
 
 	/* INTERFACE IjvxSequencer_report */
-	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId, 
+	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxSequencerStatus stat, jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId,
 		jvxSequencerQueueType tp, jvxSequencerElementType stp, jvxSize fId, jvxSize current_state,
 		jvxBool indicateFirstError)override;
 	

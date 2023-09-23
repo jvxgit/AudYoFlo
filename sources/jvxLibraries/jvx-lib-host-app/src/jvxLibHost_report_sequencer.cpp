@@ -2,13 +2,14 @@
 
 // ========================================================================
 jvxErrorType
-jvxLibHost::report_event(jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId,
+jvxLibHost::report_event(jvxSequencerStatus stat, jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId,
 	jvxSequencerQueueType tp, jvxSequencerElementType stp, jvxSize fId, jvxSize current_state, jvxBool indicateFirstError)
 {
 	// Map this callback to the new generic API
 	jvxErrorType res = JVX_NO_ERROR;
 	TjvxSequencerEvent theEv;
 	theEv.event_mask = event_mask;
+	theEv.seqStat = stat;
 	theEv.description.assign(description);
 	theEv.sequenceId = sequenceId;
 	theEv.stepId = stepId;

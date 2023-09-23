@@ -1267,7 +1267,7 @@ jvx_sequencer_widget::newSelectionCheckbox_loop(bool flag)
  *///====================================================================
 
 jvxErrorType
-jvx_sequencer_widget::report_event(jvxCBitField event_mask, const char* description, 
+jvx_sequencer_widget::report_event(jvxSequencerStatus stat, jvxCBitField event_mask, const char* description,
 	jvxSize sequenceId, jvxSize stepId, jvxSequencerQueueType tp, 
 	jvxSequencerElementType stp, jvxSize fId, jvxSize operation_state, jvxBool inMainLoop)
 {

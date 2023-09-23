@@ -538,6 +538,7 @@ CayfGlobalHostClass::processTextMessage(std::string txt, oneEntryHostList& entry
 				jvxBool content_only = false;
 				jvxBool compact = false;
 				jvxBool reportSet = false;
+				jvxBool collect = false;
 				for (j = 0; j < addArg.size(); j++)
 				{
 					switch (addArg[j])
@@ -622,7 +623,7 @@ CayfGlobalHostClass::processTextMessage(std::string txt, oneEntryHostList& entry
 						{
 							offs = args[3];
 						}
-						resC = act_set_property_component_core(tp, props, loadTarget, offs, jelmret, reportSet, errTxt);
+						resC = act_set_property_component_core(tp, props, loadTarget, offs, jelmret, reportSet, collect, errTxt);
 					}
 					else
 					{

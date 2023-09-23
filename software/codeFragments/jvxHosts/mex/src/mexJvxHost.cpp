@@ -2800,7 +2800,7 @@ mexJvxHost::report_os_specific(jvxSize commandId, void* context)
 // ==========================================================================================
 
 jvxErrorType
-mexJvxHost::report_event(jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId, jvxSequencerQueueType tp, 
+mexJvxHost::report_event(jvxSequencerStatus stat, jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId, jvxSequencerQueueType tp,
 	jvxSequencerElementType stp, jvxSize fId, jvxSize current_state, jvxBool indicateFirstError)
 {
 	jvxBool reportMe = true;

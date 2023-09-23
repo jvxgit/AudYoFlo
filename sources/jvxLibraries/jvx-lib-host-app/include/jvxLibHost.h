@@ -274,7 +274,7 @@ public:
 	// =============================================================================
 	// IjvxSequencer_report IjvxSequencer_report IjvxSequencer_report IjvxSequencer_report
 	// =============================================================================	
-	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId,
+	virtual jvxErrorType JVX_CALLINGCONVENTION report_event(jvxSequencerStatus stat, jvxCBitField event_mask, const char* description, jvxSize sequenceId, jvxSize stepId,
 		jvxSequencerQueueType tp, jvxSequencerElementType stp, jvxSize fId, jvxSize current_state, jvxBool indicateFirstError) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION sequencer_callback(jvxSize sequenceId, jvxSize stepId, jvxSequencerQueueType tp, jvxSize functionId) override;
 	// =============================================================================
