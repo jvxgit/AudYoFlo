@@ -1154,7 +1154,7 @@ CjvxConsoleHost_be_drivehost::run_immediate_rescheduleRequest(const CjvxReportCo
 }
 
 void 
-CjvxConsoleHost_be_drivehost::report_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
+CjvxConsoleHost_be_drivehost::report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
 {
 	std::cout << __FUNCTION__ << ": Error reported, " << jvxErrorType_descr(resError) << std::endl;
 	jvx::helper::debug_out_command_request(request, std::cout, "ERROR");

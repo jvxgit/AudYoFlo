@@ -556,7 +556,7 @@ jvxRequestCommandHandlerLocal::run_immediate_rescheduleRequest(const CjvxReportC
 }
 
 void
-jvxRequestCommandHandlerLocal::report_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
+jvxRequestCommandHandlerLocal::report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
 {
 	std::cout << __FUNCTION__ << ": Error reported, " << jvxErrorType_descr(resError) << std::endl;
 	jvx::helper::debug_out_command_request(request, std::cout, "ERROR");

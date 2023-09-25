@@ -41,6 +41,7 @@ jvxLibHost::initSystem(const char* argv[] , int argc, callbacks_capi* cbks, bool
 	{
 		if (init_done == false)
 		{
+			reqHandle.fwdRequestAllowed = true;
 			if (cbks)
 			{
 				cbks_api = *cbks;
@@ -199,6 +200,9 @@ jvxLibHost::terminateSystem()
 
 	if (synchronize_thread_enter())
 	{
+		// We decouple the asyn messages here - no more messages to be transmitted as we need to shutdown in "one step"
+		// reqHandle.fwdRequestAllowed = false;
+
 		res = shutdown_stop(&errMess, NULL);
 		if (res != JVX_NO_ERROR)
 		{

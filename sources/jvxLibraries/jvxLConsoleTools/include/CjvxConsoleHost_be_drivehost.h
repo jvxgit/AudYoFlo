@@ -366,7 +366,7 @@ public:
 	virtual void run_mainthread_updateSystemStatus() override;
 
 	virtual void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) override;
-	virtual void report_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
+	virtual void report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
 };
 
 #endif

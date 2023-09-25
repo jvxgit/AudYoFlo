@@ -146,7 +146,7 @@ uMainWindow::run_immediate_rescheduleRequest(const CjvxReportCommandRequest& req
 }
 
 void 
-uMainWindow::report_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
+uMainWindow::report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request)
 {
 	std::cout << __FUNCTION__ << ": Error reported, " << jvxErrorType_descr(resError) << std::endl;
 	jvx::helper::debug_out_command_request(request, std::cout, "ERROR");

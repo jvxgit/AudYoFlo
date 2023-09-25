@@ -65,7 +65,7 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 			{
 				if (fwd_request)
 				{
-					fwd_request->report_error(JVX_ERROR_THREADING_MISMATCH, request);
+					fwd_request->report_immediate_error(JVX_ERROR_THREADING_MISMATCH, request);
 				}
 			}
 			else
@@ -135,9 +135,13 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 			}
 		}
 
-		if (fwd_request)
+		if (fwd_request && fwdRequestAllowed)
 		{
 			fwd_request->run_immediate_rescheduleRequest(request);
+		}
+		else
+		{
+			res = JVX_ERROR_WRONG_STATE;
 		}
 		return res;
 	}
@@ -175,9 +179,13 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 								// We will end up here only if 
 								// 1) immediate and
 								// 2) we ended here in main thread
-								if (fwd_request)
+								if (fwd_request && fwdRequestAllowed)
 								{
 									fwd_request->run_mainthread_triggerTestChainDone();
+								}
+								else
+								{
+									res = JVX_ERROR_WRONG_STATE;
 								}
 							}
 						}
@@ -190,11 +198,15 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 
 		if (reqTpMod != jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UNSPECIFIC)
 		{
-			ptr = jvx_command_request_copy_alloc(request);
-			ptr->set_request(reqTpMod);
-			if (fwd_request)
+			if (fwdRequestAllowed && fwd_request)
 			{
+				ptr = jvx_command_request_copy_alloc(request);
+				ptr->set_request(reqTpMod);			
 				fwd_request->trigger_threadChange_forward(ptr);
+			}
+			else
+			{
+				res = JVX_ERROR_WRONG_STATE;
 			}
 		}
 	}

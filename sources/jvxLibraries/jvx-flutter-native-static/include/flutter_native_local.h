@@ -85,6 +85,6 @@ public:
 
 	void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) override;
 
-	void report_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
+	void report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
 };
 #endif

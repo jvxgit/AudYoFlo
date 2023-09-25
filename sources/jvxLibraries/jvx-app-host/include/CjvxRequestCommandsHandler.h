@@ -53,7 +53,7 @@ public:
 	 */
 	virtual void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) = 0;
 
-	virtual void report_error(jvxErrorType resError, const CjvxReportCommandRequest& request) = 0;
+	virtual void report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request) = 0;
 
 };
 
@@ -80,6 +80,8 @@ public:
 	} log_stream;
 
 	JVX_THREAD_ID mainThreadId = JVX_THREAD_ID_INVALID;
+
+	jvxBool fwdRequestAllowed = true;
 
 	// ================================================================
 	CjvxRequestCommandsHandler();
