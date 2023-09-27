@@ -139,6 +139,7 @@ struct one_sequencer_event
 	int setp;
 	int fId;
 	int seq_state_id;
+	int statSeq;
 	int indicateFirstError;	
 };
 

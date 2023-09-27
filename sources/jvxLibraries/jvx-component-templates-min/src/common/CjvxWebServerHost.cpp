@@ -1245,6 +1245,36 @@ CjvxWebServerHost::report_event_request_translate(
 
 			// Address "/jvx/host/connections/"
 			break;
+
+		case 5:
+			// Address "/jvx/host/system/"
+
+			suburl = url.substr(((std::string)uriprefix).size(), std::string::npos);
+			if (suburl == "file")
+			{
+				// cmd = file(config, write)
+				bool readOp = false;
+				resL = jvx_findValueHttpQuery(query_list, token, "read");
+				if (resL == JVX_NO_ERROR)
+				{
+					if (token == "yes")
+					{
+						readOp = true;						
+					}
+				}
+				if (readOp)
+				{
+					command = "file(config, read)";
+					requiresInterpretation = true;
+				}
+				else
+				{
+					command = "file(config, write)";
+					requiresInterpretation = true;
+				}
+			}
+			break;
+		
 		}
 #if 0 
 		if (uniqueId == notifyCoIds.theIds[0])

@@ -297,6 +297,7 @@ void ffi_host_allocate_sequencer_event__char_array(TjvxSequencerEvent* ev, struc
 		(*ptrRet)->seq_state_id = ev->current_state;
 		(*ptrRet)->setp = ev->stp;
 		(*ptrRet)->stepId = ev->stepId;
+		(*ptrRet)->statSeq = ev->seqStat;
 	}
 }
 int ffi_simple_call()

@@ -1808,7 +1808,7 @@ namespace jvx {
 					case JVX_DATAFORMAT_U64BIT_LE:
 						delete[]((jvxByte*)ptrVal);
 						ptrVal = NULL;
-						break;
+						break; 
 					}
 				}
 				return res;
