@@ -113,6 +113,23 @@ JVX_HMODULE JVX_LOADLIBRARY_PATH(std::string fName, std::string dir);
 
 #define JVX_UNLOADLIBRARY(hMod) FreeLibrary(hMod)
 
+// ============================ Processes =============================================
+struct JVX_PROCESS_HANDLE
+{
+	STARTUPINFO info = { sizeof(info) };
+	PROCESS_INFORMATION processInfo;
+};
+
+// https://learn.microsoft.com/de-de/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa
+#define JVX_CREATE_PROCESS(procHandle, appName, cmdLine) CreateProcess(appName, cmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo))
+#define JVX_TERMINATE_PROCESS(procHandle, exitCode) TerminateProcess(procHandle.processInfo.hProcess, exitCode)
+
+#define JVX_WAIT_FOR_PROCESS_COMPLETE(procHandle, timeWait) WaitForSingleObject(procHandle, processInfo.hProcess, timeWait)
+
+#define JVX_CREATE_PROCESS_RESULT BOOL
+#define JVX_CREATE_PROCESS_FAILED FALSE
+#define JVX_CREATE_PROCESS_SUCCESS TRUE
+
 //===============================================
 // Everything for network stuff
 //===============================================

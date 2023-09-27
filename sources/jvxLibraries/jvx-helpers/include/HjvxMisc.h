@@ -623,6 +623,7 @@ jvx_compareStringsWildcard(std::string compareme_wc, std::string tome);
 
 namespace jvx {
 	namespace helper {
+		std::string filterEscapes(const std::string& in, jvxBool allowSomeEscapes = false);
 		std::string asciToUtf8(const std::string& in);
 		std::string utf82Ascii(const std::string& in);
 		jvxInt32 hash(std::string str);

@@ -68,7 +68,8 @@ CjvxPortAudioTechnology::activate()
 					std::string device_name = "[";
 					device_name += hostInfo->name;
 					device_name += "]: ";
-					device_name += jvx::helper::asciToUtf8(deviceInfo->name);
+					device_name += jvx::helper::filterEscapes(jvx::helper::asciToUtf8(deviceInfo->name));
+					// device_name += jvx::helper::asciToUtf8(deviceInfo->name);
 
 					CjvxPortAudioDevice* ptrDev = new CjvxPortAudioDevice(device_name.c_str(), false, _common_set.theDescriptor.c_str(), _common_set.theFeatureClass,
 						_common_set.theModuleName.c_str(), JVX_COMPONENT_ACCESS_SUB_COMPONENT, JVX_COMPONENT_AUDIO_DEVICE, "", NULL);

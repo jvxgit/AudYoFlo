@@ -3823,6 +3823,108 @@ jvxBool jvx_compareStringsWildcard(std::string compareme_wc, std::string tome)
 
 namespace jvx {
 	namespace helper {
+
+		std::string filterEscapes(const std::string& in, jvxBool allowSomeEscapes )
+		{
+			// Allowed escapes:
+			// https://www.tutorialspoint.com/json_simple/json_simple_escape_characters.htm
+			// Backspace to be replaced with \b
+			// Form feed to be replaced with \f
+			// Newline to be replaced with \n
+			// Carriage return to be replaced with \r
+			// Tab to be replaced with \t
+			// Double quote to be replaced with \"
+			// Backslash to be replaced with \\
+			
+			int mode = 0;
+			std::string retVal;
+			for (char c : in)
+			{
+				switch (mode)
+				{
+				case 0:
+					switch (c)
+					{
+					case '\\':					
+						mode = 1;
+						break;
+					case '\b':
+						retVal += "\\\\b";
+						break;
+					case '\f':
+						retVal += "\\\\f";
+						break;
+					case '\n':
+						retVal += "\\\\n";
+						break;
+					case '\r':
+						retVal += "\\\\r";
+						break;
+					case '\t':
+						retVal += "\\\\t";
+						break;
+					case '\"':
+						retVal += "\\\"";
+						break;
+					default:
+						retVal.push_back(c);
+					}
+					break;
+				case 1:
+					if (allowSomeEscapes)
+					{
+						switch (c)
+						{
+						case 'b':
+							retVal += "\b";
+							break;
+						case 'f':
+							retVal += "\f";
+							break;
+						case 'n':
+							retVal += "\n";
+							break;
+						case 'r':
+							retVal += "\r";
+							break;
+						case 't':
+							retVal += "\t";
+							break;
+						case '\"':
+							retVal += "\"";
+							break;
+						case '\\':
+							retVal += "\\\\";
+							break;
+						default:
+							retVal += "\\";
+							retVal += "\\";
+							retVal.push_back(c);
+							break;
+						}
+					}
+					else
+					{
+						switch (c)
+						{
+						case '\\':
+							retVal += "\\\\";
+							break;
+						default:
+							retVal += "\\";
+							retVal += "\\";
+							retVal.push_back(c);
+							break;
+						}
+					}
+					mode = 0;
+				default:
+					break;
+				}
+			}
+			return retVal;
+		}
+
 		std::string asciToUtf8(const std::string& in)
 		{
 			/* RFC 2044 in short:
