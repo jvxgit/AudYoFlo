@@ -48,6 +48,7 @@ protected:
 
 	jvxBool config_noquit = false;
 
+
 public:
 
 	CjvxConsoleHost_be_print();

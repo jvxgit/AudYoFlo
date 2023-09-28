@@ -2311,6 +2311,7 @@ namespace jvx {
 						ptrVal = &valR;
 						break;
 					case JVX_DATAFORMAT_HANDLE:
+					case JVX_DATAFORMAT_CALLBACK:
 					case JVX_DATAFORMAT_BYTE:
 					case JVX_DATAFORMAT_LIMIT:
 					case JVX_DATAFORMAT_NONE:

@@ -14,6 +14,19 @@
 #include "jvxTDataConverter.h"
 #include "jvxTResampler.h"
 
+#define JVX_PRINTOUT_UI_STARTED std::cout << "UI thread started with cmdline <" << cmdLine << std::endl
+#define JVX_PRINTOUT_UI_FAILED std::cout << "Failed to start UI thread with cmdline <" << cmdLine << std::endl
+
+JVX_THREAD_ENTRY_FUNCTION(observeProcess, param)
+{
+	CjvxConsoleHost_be_drivehost* this_pointer = reinterpret_cast<CjvxConsoleHost_be_drivehost*> (param);
+	if (this_pointer)
+	{
+		this_pointer->observeThreadLoop();
+	}
+	return 0;
+}
+
 #ifndef JVX_CONFIGURE_HOST_STATIC_NODE
 
 // Default black listing in case of host that loads dynamic objects
@@ -237,6 +250,24 @@ CjvxConsoleHost_be_drivehost::boot_prepare_specific(jvxApiString* errloc)
 		evelm.delta_t = 0;
 		evelm.autoDeleteOnProcess = c_true;
 		jvxErrorType resL = evLop->event_schedule(&evelm, NULL, NULL);
+	}
+
+	if (!startAppExe.empty())
+	{		
+		JVX_CREATE_PROCESS_RESULT resP = JVX_CREATE_PROCESS_FAILED;
+		std::string cmdLine = startAppExe + " " + startAppArgs;		
+		resP = JVX_CREATE_PROCESS(hdlProc, (char*)(cmdLine.c_str()));
+		if (resP == JVX_CREATE_PROCESS_SUCCESS)
+		{
+			JVX_PRINTOUT_UI_STARTED;
+			startAppRunning = true;
+			observerThreadRunning = true;
+			JVX_CREATE_THREAD(startAppObserveThread, observeProcess, this, startAppObserveThreadId)
+		}
+		else
+		{
+			JVX_PRINTOUT_UI_FAILED;
+		}
 	}
 
 	return res;
@@ -470,6 +501,16 @@ CjvxConsoleHost_be_drivehost::shutdown_deactivate_specific(jvxApiString* errloc)
 jvxErrorType 
 CjvxConsoleHost_be_drivehost::shutdown_postprocess_specific(jvxApiString* errloc)
 {
+	if (startAppRunning)
+	{
+		observerThreadRunning = false;
+
+		// This should trigger the observer thread
+		JVX_TERMINATE_PROCESS(hdlProc, 0);
+
+		// Wait for the thread to complete
+		JVX_WAIT_FOR_THREAD_TERMINATE_INF(startAppObserveThread);
+	}
 	return JVX_NO_ERROR;
 }
 
@@ -536,3 +577,35 @@ CjvxConsoleHost_be_drivehost::report_config_file_read_successful(jvxCallManagerC
 {
 
 }
+
+void
+CjvxConsoleHost_be_drivehost::observeThreadLoop()
+{
+	while (1)
+	{
+		JVX_WAIT_RESULT resW = JVX_WAIT_FOR_PROCESS_COMPLETE(hdlProc, JVX_INFINITE_MS);
+		startAppRunning = false;
+
+		if (observerThreadRunning)
+		{
+			JVX_CREATE_PROCESS_RESULT resP = JVX_CREATE_PROCESS_FAILED;
+			std::string cmdLine = startAppExe + " " + startAppArgs;			
+			resP = JVX_CREATE_PROCESS(hdlProc, (char*)(cmdLine.c_str()));
+			if (resP == JVX_CREATE_PROCESS_SUCCESS)
+			{
+				JVX_PRINTOUT_UI_STARTED;
+				startAppRunning = true;
+			}
+			else
+			{
+				JVX_PRINTOUT_UI_FAILED;
+				break;
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+

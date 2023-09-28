@@ -467,6 +467,9 @@ CjvxHostJsonCommandsProperties::show_property_component(
 			{
 				CjvxJsonElement jelm;
 
+				// Avoid problems with escape and non-utf8 chars
+				value = jvx::helper::filterEscapes(jvx::helper::asciToUtf8(value));
+
 				if (config_show_ref.get_property_compact || compact)
 				{
 					jvxUInt32 bf = 0;

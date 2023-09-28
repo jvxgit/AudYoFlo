@@ -379,7 +379,8 @@ CjvxConsoleHost_be_drivehost::report_register_be_commandline(IjvxCommandLine* co
 	jvxErrorType res = CjvxConsoleHost_be_print::report_register_be_commandline(comLine);
 	if (res == JVX_NO_ERROR)
 	{
-		// comLine->register_option("--no-quit", "", "Option to disallow <quit>.");		
+		comLine->register_option("--startExe", "", "Pass execuitable to be started at startup to connect UI.", "", true, JVX_DATAFORMAT_STRING);
+		comLine->register_option("--startArgs", "", "Pass exectutable start args.","", true, JVX_DATAFORMAT_STRING);
 	}
 	return res;
 }
@@ -390,15 +391,24 @@ CjvxConsoleHost_be_drivehost::report_readout_be_commandline(IjvxCommandLine* com
 	
 	jvxErrorType res = CjvxConsoleHost_be_print::report_readout_be_commandline(comLine);
 	if (res == JVX_NO_ERROR)
-	{
-		/*
-		num = 0;
-		comLine->number_entries_option("--no-quit", &num);
+	{		
+		jvxApiString astr;
+		jvxSize num = 0;
+		comLine->number_entries_option("--startExe", &num);
 		if (num)
 		{
-			config_noquit = true;
+			comLine->content_entry_option("--startExe", 0, &astr, JVX_DATAFORMAT_STRING);
+			startAppExe = astr.std_str();
 		}
-		*/
+
+		num = 0;
+		astr.clear();
+		comLine->number_entries_option("--startArgs", &num);
+		if (num)
+		{
+			comLine->content_entry_option("--startArgs", 0, &astr, JVX_DATAFORMAT_STRING);
+			startAppArgs = astr.std_str();
+		}
 	}
 	return res;
 }

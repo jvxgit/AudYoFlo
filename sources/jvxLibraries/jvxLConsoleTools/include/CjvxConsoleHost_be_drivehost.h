@@ -127,6 +127,13 @@ private:
 	jvxCallbackPrivate theCallback_exchg_property;
 	JVX_PROPERTIES_CALLBACK_DECLARE(cb_xchg_property);
 	
+	std::string startAppExe;
+	std::string startAppArgs;
+	JVX_CREATE_PROCESS_HANDLE hdlProc;
+	jvxBool startAppRunning = false;
+	jvxBool observerThreadRunning = false;
+	JVX_THREAD_ID startAppObserveThreadId = 0;
+	JVX_THREAD_HANDLE startAppObserveThread = JVX_INVALID_HANDLE_VALUE;
 
 public:
 	CjvxConsoleHost_be_drivehost();
@@ -367,6 +374,8 @@ public:
 
 	virtual void run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request) override;
 	virtual void report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
+
+	void observeThreadLoop();
 };
 
 #endif
