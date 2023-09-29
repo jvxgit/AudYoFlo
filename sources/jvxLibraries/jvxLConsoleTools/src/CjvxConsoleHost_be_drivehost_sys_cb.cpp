@@ -583,7 +583,7 @@ CjvxConsoleHost_be_drivehost::observeThreadLoop()
 {
 	while (1)
 	{
-		JVX_WAIT_RESULT resW = JVX_WAIT_FOR_PROCESS_COMPLETE(hdlProc, JVX_INFINITE_MS);
+		JVX_WAIT_RESULT resW = JVX_WAIT_FOR_PROCESS_COMPLETE(hdlProc);
 		startAppRunning = false;
 
 		if (observerThreadRunning)

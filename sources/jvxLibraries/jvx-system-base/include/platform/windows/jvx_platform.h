@@ -123,7 +123,7 @@ struct JVX_CREATE_PROCESS_HANDLE
 // https://learn.microsoft.com/de-de/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa
 #define JVX_CREATE_PROCESS(procHandle, cmdLine) CreateProcess(NULL, cmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo)
 #define JVX_TERMINATE_PROCESS(procHandle, exitCode) TerminateProcess(procHandle.processInfo.hProcess, exitCode)
-#define JVX_WAIT_FOR_PROCESS_COMPLETE(hdlProc, timeOut_msec) WaitForSingleObject(hdlProc.processInfo.hProcess, timeOut_msec)
+#define JVX_WAIT_FOR_PROCESS_COMPLETE(hdlProc) WaitForSingleObject(hdlProc.processInfo.hProcess, JVX_INFINITE_MS)
 
 #define JVX_CREATE_PROCESS_RESULT BOOL
 #define JVX_CREATE_PROCESS_FAILED FALSE

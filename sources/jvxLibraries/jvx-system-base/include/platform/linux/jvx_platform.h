@@ -256,6 +256,27 @@ JVX_STATIC_INLINE void* JVX_LOADLIBRARY_PATH(std::string fName, std::string dir)
 
 #define JVX_UNLOADLIBRARY(a) dlclose(a)
 
+
+#define JVX_CREATE_PROCESS_HANDLE pid_t
+#define JVX_CREATE_PROCESS(procHandle, cmdLine) posix_spawn(&procHandle, cmdLine, NULL, NULL, NULL, NULL);
+#define JVX_TERMINATE_PROCESS(procHandle, exitCode) kill(procHandle, SIGKILL)
+JVX_STATIC_INLINE void JVX_WAIT_FOR_PROCESS_COMPLETE(JVX_CREATE_PROCESS_HANDLE hdlProc) 
+{
+	int status = 0;
+	
+	// Wait for process to complete
+	waitpid(pid, &status, 0);
+	
+	// https://linux.die.net/man/2/waitid
+	// WIFEXITED(status);
+}
+
+#define JVX_CREATE_PROCESS_RESULT int
+
+// Error indicated by errno error code
+#define JVX_CREATE_PROCESS_FAILED 1 
+#define JVX_CREATE_PROCESS_SUCCESS 0
+
 #define JVX_HANDLE_ void*
 
 #define INVALID_HANDLE_VALUE NULL
