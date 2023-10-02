@@ -93,6 +93,8 @@ CjvxAuN2AudioMixer::terminate()
 	outputChannelsInStorage.clear();
 	profileList.clear();
 
+	CjvxNVTasks::terminate();
+
 	return JVX_NO_ERROR;
 }
 

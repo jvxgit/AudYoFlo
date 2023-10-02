@@ -151,6 +151,8 @@ protected:
 	CjvySimpleConnectorFactory* optConFactory = nullptr;
 	CjvxSimpleConnectionMasterFactory* optMasFactory = nullptr;
 	
+	std::string conToName = "default";
+	std::string conFromName = "default";
 protected:
 	IjvxNode* mainNode = nullptr;
 	ayfHostBindingReferences* binding = nullptr;

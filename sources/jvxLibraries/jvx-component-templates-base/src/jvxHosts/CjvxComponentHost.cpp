@@ -3339,7 +3339,7 @@ CjvxComponentHost::_switch_state_component(const jvxComponentIdentification& cpI
 							case jvxStateSwitch::JVX_STATE_SWITCH_START:
 							case jvxStateSwitch::JVX_STATE_SWITCH_STOP:
 							case jvxStateSwitch::JVX_STATE_SWITCH_POSTPROCESS:
-								targetObject = elmIt_tech->technologyInstances.selTech[cpId.slotid].theHandle_shortcut_tech;
+								targetObject = elmIt_ep->instances.theHandle_shortcut[cpId.slotid].obj;
 								break;
 							default:
 								res = JVX_ERROR_NO_ACCESS;

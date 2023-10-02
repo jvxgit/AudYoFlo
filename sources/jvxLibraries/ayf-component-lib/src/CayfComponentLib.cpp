@@ -287,6 +287,7 @@ CayfComponentLib::terminate(ayfHostBindingReferencesMinHost*& refOnReturn)
 jvxErrorType
 CayfComponentLib::activate()
 {
+	jvxSize i;
 	jvxApiString astr;
 	jvxErrorType resC = JVX_NO_ERROR;
 	IjvxDataConnections* theConnections = NULL;
@@ -396,77 +397,113 @@ CayfComponentLib::activate()
 					jvxSize numOcons = 0;
 					iFac->number_input_connectors(&numIcons);
 					iFac->number_output_connectors(&numOcons);
-					if ((numIcons > 0) && (numOcons > 0))
+					for (i = 0; i < numIcons; i++)
 					{
-						iFac->reference_input_connector(0, &icon);
-						iFac->reference_output_connector(0, &ocon);
-						if (icon && ocon)
+						jvxApiString conName;
+						iFac->reference_input_connector(i, &icon);
+						if (icon)
 						{
-							resC = JVX_ERROR_DUPLICATE_ENTRY;
-							while (1)
+							icon->descriptor_connector(&conName);
+							if (conName.std_str() == conToName)
 							{
-
-								resC = theConnections->create_connection_process(nmprocess.c_str(), &uId_process, interceptors, false, false, false, idProcDepends);
-								if (resC == JVX_NO_ERROR)
-								{
-									break;
-								}
-								nmprocess = chainName + "(" + jvx_size2String(cnt) + ")";
-								cnt++;
-
-								if (cnt >= 10)
-								{
-									break;
-								}
+								break;
 							}
-
-							if (resC == JVX_NO_ERROR)
+							else
 							{
-								resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
+								iFac->return_reference_input_connector(icon);
+								icon = nullptr;
 							}
-
-							if (resC == JVX_NO_ERROR)
-							{
-								resC = theProc->set_connection_context(theConnections);
-							}
-
-							if (resC == JVX_NO_ERROR)
-							{
-								// Do not create an entry in the config file by actively preventing it!
-								resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore);
-							}
-
-							if (resC == JVX_NO_ERROR)
-							{
-								// We need to specify this object as the owener, otherwise, the connection will
-								// be removed before the "deactivate" member function is called
-								resC = theProc->associate_master(static_cast<IjvxConnectionMaster*>(this), nullptr);
-							}
-
-							if (resC == JVX_NO_ERROR)
-							{
-								resC = theProc->create_bridge(static_cast<IjvxOutputConnector*>(this), icon, "Device to node bridge", &uId_bridge_dev_node, false, false);
-							}
-
-							if (resC == JVX_NO_ERROR)
-							{
-								resC = theProc->create_bridge(ocon, static_cast<IjvxInputConnector*>(this), "Node to device bridge", &uId_bridge_node_dev, false, false);
-							}
-
-							// Prevent that we run the test function immediately after connect
-							theProc->set_test_on_connect(false);
-
-							if (resC == JVX_NO_ERROR)
-							{
-								resC = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-							}
-
-							theConnections->return_reference_connection_process(theProc);
-							theProc = nullptr;
 						}
-						retInterfaceObj< IjvxConnectorFactory>(this->mainNode, iFac);
-						iFac = nullptr;
 					}
+
+					for (i = 0; i < numOcons; i++)
+					{
+						jvxApiString conName;
+						iFac->reference_output_connector(i, &ocon);
+						if (ocon)
+						{
+							ocon->descriptor_connector(&conName);
+							if (conName.std_str() == conFromName)
+							{
+								break;
+							}
+							else
+							{
+								iFac->return_reference_output_connector(ocon);
+								ocon = nullptr;
+							}
+						}
+					}
+					if (icon && ocon)
+					{
+						resC = JVX_ERROR_DUPLICATE_ENTRY;
+						while (1)
+						{
+
+							resC = theConnections->create_connection_process(nmprocess.c_str(), &uId_process, interceptors, false, false, false, idProcDepends);
+							if (resC == JVX_NO_ERROR)
+							{
+								break;
+							}
+							nmprocess = chainName + "(" + jvx_size2String(cnt) + ")";
+							cnt++;
+
+							if (cnt >= 10)
+							{
+								break;
+							}
+						}
+
+						if (resC == JVX_NO_ERROR)
+						{
+							resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
+						}
+
+						if (resC == JVX_NO_ERROR)
+						{
+							resC = theProc->set_connection_context(theConnections);
+						}
+
+						if (resC == JVX_NO_ERROR)
+						{
+							// Do not create an entry in the config file by actively preventing it!
+							resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore);
+						}
+
+						if (resC == JVX_NO_ERROR)
+						{
+							// We need to specify this object as the owener, otherwise, the connection will
+							// be removed before the "deactivate" member function is called
+							resC = theProc->associate_master(static_cast<IjvxConnectionMaster*>(this), nullptr);
+						}
+
+						if (resC == JVX_NO_ERROR)
+						{
+							resC = theProc->create_bridge(static_cast<IjvxOutputConnector*>(this), icon, "Device to node bridge", &uId_bridge_dev_node, false, false);
+						}
+
+						if (resC == JVX_NO_ERROR)
+						{
+							resC = theProc->create_bridge(ocon, static_cast<IjvxInputConnector*>(this), "Node to device bridge", &uId_bridge_node_dev, false, false);
+						}
+
+						// Prevent that we run the test function immediately after connect
+						theProc->set_test_on_connect(false);
+
+						if (resC == JVX_NO_ERROR)
+						{
+							resC = theProc->connect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+						}
+
+						theConnections->return_reference_connection_process(theProc);
+						theProc = nullptr;
+					}
+					else
+					{
+						std::cout << "Unable to find connectors for from and to connection." << std::endl;
+					}
+					retInterfaceObj< IjvxConnectorFactory>(this->mainNode, iFac);
+					iFac = nullptr;
 				}
 				retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 				theConnections = nullptr;

@@ -600,3 +600,8 @@ macro(jvx_single_platform jvx_platform)
 		return()
 	endif()
 endmacro(jvx_single_platform)
+
+macro(windows_to_shell_path WIN_PATH OUTDIR)
+cmake_path(CONVERT ${WIN_PATH} TO_CMAKE_PATH_LIST PATH)
+string(REGEX REPLACE "^([a-zA-Z]):" "/\\1" ${OUTDIR} "${PATH}")
+endmacro()
