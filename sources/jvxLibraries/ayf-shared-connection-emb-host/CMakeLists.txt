@@ -36,8 +36,7 @@ set(BUILD_STATIC TRUE)
 # This allows to copy import lib (.lib file) to sdk also
 # set(JVX_SDK_FORCE_DEPLOY_IMPORT_STATIC_LIB TRUE)
 
-set(LOCAL_LIBS
-		jvxLConsoleHost-shared_static
+set(LOCAL_LIBS		
 		jvx-link-frontend_static
 	)
 
