@@ -194,7 +194,9 @@ namespace jvx {
 	{
 		namespace properties
 		{
+			jvxErrorType valueInRangeFromString(jvxValueInRange* valPtr, std::string loadTarget, jvxBool& contentOnly);
 			jvxErrorType valueInRangeFromString(jvxValueInRange* valRange, std::string txtToken);
+
 			jvxErrorType selectionFromString(jvxSelectionList* selLst, std::string txtToken);
 			std::string collectedPropsToString(const std::list<std::string>& propLst);
 			std::list<std::string> stringToCollectedProps(const std::string& propLstStr);
@@ -249,6 +251,8 @@ namespace jvx {
 				jvxCBitField fineTuningParams = 0);
 
 			 void numSubEntriesSingleObjectField(jvxSize& numSubElements, jvxDataFormat format, jvxHandle* fld);
+
+			 jvxErrorType selectionListFromString(jvxSelectionList* selLstPtr, std::string loadTarget, jvxCBitField fineTuningParams, jvxSize llsel, jvxBool& contentOnly, std::string loadTargetPP);
 		}
 	}
 }

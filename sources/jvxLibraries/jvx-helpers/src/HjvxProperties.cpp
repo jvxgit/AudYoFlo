@@ -898,6 +898,56 @@ namespace jvx {
 	namespace helper {
 		namespace properties
 		{
+			jvxErrorType valueInRangeFromString(jvxValueInRange* valPtr, std::string loadTarget, jvxBool& contentOnly)
+			{
+				jvxErrorType res = JVX_NO_ERROR;
+				bool err = false;
+				contentOnly = true;
+				// loadTarget = "1.0::0::10";
+				size_t txt_pos = loadTarget.find("::");
+				std::string txtToken = loadTarget.substr(0, txt_pos);
+				res = valueInRangeFromString(valPtr, txtToken);
+				if (res != JVX_NO_ERROR)
+				{
+					// Error, stop processing
+					goto exit_out;
+				}
+				if (txt_pos == std::string::npos)
+				{
+					// That was it from here - only the main property value
+					goto exit_out;
+				}
+
+				loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+				txt_pos = loadTarget.find("::");
+				txtToken = loadTarget.substr(0, txt_pos);
+				valPtr->minVal = jvx_string2Data(txtToken, err);
+				if (err)
+				{
+					res = JVX_ERROR_PARSE_ERROR;
+					goto exit_out;
+				}
+				if (txt_pos == std::string::npos)
+				{
+					// That was it from here - only the main property value
+					goto exit_out;
+				}
+
+				loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+				valPtr->maxVal = jvx_string2Data(loadTarget, err);
+				if (err)
+				{
+					res = JVX_ERROR_PARSE_ERROR;
+					goto exit_out;
+				}
+
+				// If we reach here, it is not a contentOnly request!!
+				contentOnly = false;
+
+			exit_out:
+				return res;
+			}
+
 			jvxErrorType valueInRangeFromString(jvxValueInRange* valRange, std::string txtToken)
 			{
 				jvxErrorType res = JVX_NO_ERROR;
@@ -1016,9 +1066,6 @@ namespace jvx {
 				jvxSize txt_pos;
 				std::string txtToken;
 				contentOnly = true;
-				jvxBool txt_lst_found = false;
-				std::vector<std::string> theTokens;
-				jvxSize selLst_ll = 0;
 
 				jvxByte* fldB = (jvxByte*)fld;
 				jvxSize numCopy = numElements;
@@ -1054,9 +1101,13 @@ namespace jvx {
 							break;
 
 						case JVX_DATAFORMAT_SELECTION_LIST:
+							res = selectionListFromString((jvxSelectionList*)fld, loadTarget, fineTuningParams, llsel, contentOnly, loadTargetPP);							
+							break;
+						case JVX_DATAFORMAT_VALUE_IN_RANGE:
+							res = valueInRangeFromString((jvxValueInRange*)fld, loadTarget, contentOnly);
+							break;
 						case JVX_DATAFORMAT_STRING:
 						case JVX_DATAFORMAT_STRING_LIST:
-						case JVX_DATAFORMAT_VALUE_IN_RANGE:
 						case JVX_DATAFORMAT_HANDLE:
 						case JVX_DATAFORMAT_BYTE:
 						case JVX_DATAFORMAT_LIMIT:
@@ -1256,147 +1307,14 @@ namespace jvx {
 
 
 						case JVX_DATAFORMAT_SELECTION_LIST:
-
-							// loadTarget = "0x00000001::0x0000000::0x0000000::3::eins:zwei";
-							if (jvx_bitTest(fineTuningParams, JVX_STRING_PROPERTY_FINE_TUNING_SELECTIONLIST_SELID_SHIFT))
-							{
-								((jvxSelectionList*)fld)->bitFieldSelected() = jvx_string2BitField2SelId(loadTarget, llsel, err);
-								if (err)
-								{
-									res = JVX_ERROR_PARSE_ERROR;
-								}
-							}
-							else
-							{
-								// WE decide based on the string 
-								contentOnly = true;
-								txt_pos = loadTarget.find("::");
-								txtToken = loadTarget.substr(0, txt_pos);
-								res = selectionFromString((jvxSelectionList*)fld, loadTarget);
-								if (res != JVX_NO_ERROR)
-								{
-									// Error, stop processing
-									break;
-								}
-								if (txt_pos == std::string::npos)
-								{
-									// That was it from here - only the main property value									
-									break;
-								}
-								
-								// Get the next fragment
-								loadTarget = loadTarget.substr(txt_pos + 2);
-								txt_pos = loadTarget.find("::");
-								txtToken = loadTarget.substr(0, txt_pos);								
-								((jvxSelectionList*)fld)->bitFieldSelectable = jvx_string2BitField(txtToken, err);
-								if (err)
-								{
-									res = JVX_ERROR_PARSE_ERROR;
-									break;
-								}
-								if (txt_pos == std::string::npos)
-								{
-									// That was it from here - only the main property value
-									break;
-								}
-							
-								loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-								txt_pos = loadTarget.find("::");
-								txtToken = loadTarget.substr(0, txt_pos);
-								((jvxSelectionList*)fld)->bitFieldExclusive = jvx_string2BitField(txtToken, err);
-								if (err)
-								{
-									res = JVX_ERROR_PARSE_ERROR;
-									break;
-								}
-								if (txt_pos == std::string::npos)
-								{
-									// That was it from here - only the main property value
-									break;
-								}
-
-								loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-								txt_pos = loadTarget.find("::");
-								txtToken = loadTarget.substr(0, txt_pos);	
-								selLst_ll = jvx_string2Size(txtToken, err);
-								if (err)
-								{
-									res = JVX_ERROR_PARSE_ERROR;
-									break;
-								}
-								if (txt_pos != std::string::npos)
-								{
-									txt_lst_found = true;
-									loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-								}
-								if (!loadTargetPP.empty())
-								{
-									contentOnly = false;
-									jvx_parseCommandLineOneToken(loadTargetPP, theTokens, ':');
-									((jvxSelectionList*)fld)->strList.assign(theTokens);
-								}
-								else
-								{
-									if (txt_lst_found)
-									{
-										contentOnly = false;
-										jvx_parseCommandLineOneToken(loadTarget, theTokens, ':'); // We need to use a separator other than "," tp work due to the command parser
-										((jvxSelectionList*)fld)->strList.assign(theTokens);
-									}
-									else
-									{
-										contentOnly = false;
-										((jvxSelectionList*)fld)->strList.assign_empty(selLst_ll);
-									}
-								}
-							}
+							selectionListFromString((jvxSelectionList*)fld, loadTarget, fineTuningParams, llsel, contentOnly, loadTargetPP);
 							break;
 						case JVX_DATAFORMAT_STRING:
 							((jvxApiString*)fld)->assign(loadTarget);
 							break;
 						case JVX_DATAFORMAT_VALUE_IN_RANGE:
 							
-							contentOnly = true;
-							// loadTarget = "1.0::0::10";
-							txt_pos = loadTarget.find("::");
-							txtToken = loadTarget.substr(0, txt_pos);				
-							res = valueInRangeFromString((jvxValueInRange*)fld, txtToken);
-							if (res != JVX_NO_ERROR)
-							{
-								// Error, stop processing
-								break;
-							}
-							if (txt_pos == std::string::npos)
-							{
-								// That was it from here - only the main property value
-								break;
-							}
-
-							loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
-							txt_pos = loadTarget.find("::");
-							txtToken = loadTarget.substr(0, txt_pos);
-							((jvxValueInRange*)fld)->minVal = jvx_string2Data(txtToken, err);
-							if (err)
-							{
-								res = JVX_ERROR_PARSE_ERROR;
-								break;
-							}
-							if (txt_pos == std::string::npos)
-							{
-								// That was it from here - only the main property value
-								break;
-							}
-
-							loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);							
-							((jvxValueInRange*)fld)->maxVal = jvx_string2Data(loadTarget, err);
-							if (err)
-							{
-								res = JVX_ERROR_PARSE_ERROR;
-								break;
-							}
-
-							// If we reach here, it is not a contentOnly request!!
-							contentOnly = false;
+							valueInRangeFromString((jvxValueInRange*)fld, loadTarget, contentOnly);
 							break;
 						case JVX_DATAFORMAT_HANDLE:
 						case JVX_DATAFORMAT_BYTE:
@@ -1488,11 +1406,29 @@ namespace jvx {
 								res = jvx_string2ValueList(loadTarget, ptrVal, theDescr.format, theDescr.num, &numValuesPassed);
 							}
 							break;
-
+						case JVX_DATAFORMAT_VALUE_IN_RANGE:
+							ptrVal = &valR;
+							valR.resize(theDescr.num);
+							break;
 						case JVX_DATAFORMAT_SELECTION_LIST:
+
+							ptrVal = &selLst;
+
+							// Create the max space as required. We do not yet know how many values are passed in the string, therefore max useful size
+							selLst.resize(theDescr.num);
+
+							// Get current number of options we may have
+							callGateLoc = callGate;
+							callGateLoc.call_purpose = JVX_PROPERTY_CALL_PURPOSE_SIZE_ONLY;
+							ident.reset(theDescr.globalIdx, theDescr.category);
+							trans.reset(true);
+							theTriple.theProps->get_property(
+								callGateLoc, jPRG(&szSel,
+									1, JVX_DATAFORMAT_SIZE),
+								ident, trans);							
+							break;
 						case JVX_DATAFORMAT_STRING:
 						case JVX_DATAFORMAT_STRING_LIST:
-						case JVX_DATAFORMAT_VALUE_IN_RANGE:
 						case JVX_DATAFORMAT_HANDLE:
 						case JVX_DATAFORMAT_BYTE:
 						case JVX_DATAFORMAT_LIMIT:
@@ -1543,7 +1479,7 @@ namespace jvx {
 						case JVX_DATAFORMAT_SELECTION_LIST:
 							ptrVal = &selLst;
 
-							// Get current value from selection
+							// Get current number of options we may have
 							callGateLoc = callGate;
 							callGateLoc.call_purpose = JVX_PROPERTY_CALL_PURPOSE_SIZE_ONLY;
 							ident.reset(theDescr.globalIdx, theDescr.category);
@@ -1690,9 +1626,15 @@ namespace jvx {
 							break;
 
 						case JVX_DATAFORMAT_SELECTION_LIST:
+							ptrVal = &selLst;
+							selLst.resize(theDescr.num);
+							break;
+						case JVX_DATAFORMAT_VALUE_IN_RANGE:
+							ptrVal = &valR;
+							valR.resize(theDescr.num);
+							break;
 						case JVX_DATAFORMAT_STRING:
 						case JVX_DATAFORMAT_STRING_LIST:
-						case JVX_DATAFORMAT_VALUE_IN_RANGE:
 						case JVX_DATAFORMAT_HANDLE:
 						case JVX_DATAFORMAT_BYTE:
 						case JVX_DATAFORMAT_LIMIT:
@@ -1839,7 +1781,7 @@ namespace jvx {
 
 							if (!oneFld.empty())
 							{
-								oneFld += ", ";
+								oneFld += ",";
 							}
 							oneFld += oneToken;
 						}
@@ -2566,6 +2508,112 @@ namespace jvx {
 					break;
 				}
 			}	
+
+			jvxErrorType selectionListFromString(jvxSelectionList*selLstPtr, std::string loadTarget, jvxCBitField fineTuningParams, jvxSize llsel, jvxBool& contentOnly, std::string loadTargetPP)
+			{
+				bool err = false;
+				jvxErrorType res = JVX_NO_ERROR;
+
+				jvxBool txt_lst_found = false;
+				std::vector<std::string> theTokens;
+				jvxSize selLst_ll = 0;
+
+				// loadTarget = "0x00000001::0x0000000::0x0000000::3::eins:zwei";
+				if (jvx_bitTest(fineTuningParams, JVX_STRING_PROPERTY_FINE_TUNING_SELECTIONLIST_SELID_SHIFT))
+				{
+					selLstPtr->bitFieldSelected() = jvx_string2BitField2SelId(loadTarget, llsel, err);
+					if (err)
+					{
+						res = JVX_ERROR_PARSE_ERROR;
+					}
+				}
+				else
+				{
+					// WE decide based on the string 
+					contentOnly = true;
+					size_t txt_pos = loadTarget.find("::");
+					std::string txtToken = loadTarget.substr(0, txt_pos);
+					res = selectionFromString(selLstPtr, loadTarget);
+					if (res != JVX_NO_ERROR)
+					{
+						// Error, stop processing
+						goto exit_out;
+					}
+					if (txt_pos == std::string::npos)
+					{
+						// That was it from here - only the main property value									
+						goto exit_out;
+					}
+
+					// Get the next fragment
+					loadTarget = loadTarget.substr(txt_pos + 2);
+					txt_pos = loadTarget.find("::");
+					txtToken = loadTarget.substr(0, txt_pos);
+					selLstPtr->bitFieldSelectable = jvx_string2BitField(txtToken, err);
+					if (err)
+					{
+						res = JVX_ERROR_PARSE_ERROR;
+						goto exit_out;
+					}
+					if (txt_pos == std::string::npos)
+					{
+						// That was it from here - only the main property value
+						goto exit_out;
+					}
+
+					loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+					txt_pos = loadTarget.find("::");
+					txtToken = loadTarget.substr(0, txt_pos);
+					selLstPtr->bitFieldExclusive = jvx_string2BitField(txtToken, err);
+					if (err)
+					{
+						res = JVX_ERROR_PARSE_ERROR;
+						goto exit_out;
+					}
+					if (txt_pos == std::string::npos)
+					{
+						// That was it from here - only the main property value
+						goto exit_out;
+					}
+
+					loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+					txt_pos = loadTarget.find("::");
+					txtToken = loadTarget.substr(0, txt_pos);
+					selLst_ll = jvx_string2Size(txtToken, err);
+					if (err)
+					{
+						res = JVX_ERROR_PARSE_ERROR;
+						goto exit_out;
+					}
+					if (txt_pos != std::string::npos)
+					{
+						txt_lst_found = true;
+						loadTarget = loadTarget.substr(txt_pos + 2, std::string::npos);
+					}
+					if (!loadTargetPP.empty())
+					{
+						contentOnly = false;
+						jvx_parseCommandLineOneToken(loadTargetPP, theTokens, ':');
+						selLstPtr->strList.assign(theTokens);
+					}
+					else
+					{
+						if (txt_lst_found)
+						{
+							contentOnly = false;
+							jvx_parseCommandLineOneToken(loadTarget, theTokens, ':'); // We need to use a separator other than "," tp work due to the command parser
+							selLstPtr->strList.assign(theTokens);
+						}
+						else
+						{
+							contentOnly = false;
+							selLstPtr->strList.assign_empty(selLst_ll);
+						}
+					}
+				}
+				exit_out:
+				return res;
+			}
 		} // namespace properties
 	} // namespace helpers
 } // namespace jvx
