@@ -334,8 +334,9 @@ CjvxMixMatrix::start()
 				myMixMatrixHandle.prm_sync.lin_array_gain_factors[cnt] = theInterSections[cnt].factor;
 				myMixMatrixHandle.prm_sync.lin_array_callbacks[cnt] = theInterSections[cnt].cbHandle.theCallback;
 				myMixMatrixHandle.prm_sync.lin_array_contexts[cnt] = theInterSections[cnt].cbHandle.privData;
+				cnt++;
 			}
-			myMixMatrixHandle.prm_sync.lin_array_contexts[cnt] = theInterSections[cnt].cbHandle.privData;
+			// myMixMatrixHandle.prm_sync.lin_array_contexts[cnt] = theInterSections[cnt].cbHandle.privData;
 		}
 
 		jvx_mixmatrix_update(&myMixMatrixHandle, JVX_DSP_UPDATE_SYNC, true);
