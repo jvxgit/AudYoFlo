@@ -386,8 +386,10 @@ public:
 #include "codeFragments/simplify/jvxProperties_simplify.h"
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 
+	/*
 	virtual jvxErrorType attachAllSubModules(IjvxPropertyExtenderChainControl* propExtSpec) = 0;
 	virtual jvxErrorType detachAllSubModules(IjvxPropertyExtenderChainControl* propExtSpec) = 0;
+	*/
 
 	// Interface function to involve a node in this chain
 	virtual jvxErrorType allocate_main_node() = 0;
