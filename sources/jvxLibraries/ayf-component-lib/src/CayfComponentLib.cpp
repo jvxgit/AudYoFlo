@@ -108,6 +108,9 @@ CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const s
 		bindOnReturn = bindingGlobal;
 		return JVX_NO_ERROR;
 	}
+
+	// We need to increment the global ref counter on every single call - to find out when to unload the lib on the last component
+	refCntGlobal++;
 	bindOnReturn = bindingGlobal;
 	return JVX_ERROR_ALREADY_IN_USE;
 }

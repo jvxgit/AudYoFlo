@@ -122,6 +122,7 @@ CayfFullHostClass::unregister_factory_host(IjvxExternalModuleFactory* regMe)
 	}
 
 	jvxSize cntAll = 0;
+	jvxBool shutdownRun = false;
 
 	// We put the shutdown into a mutex: if another something requests a register while in shutdown, we should block it until shutdown is complete!!
 	JVX_LOCK_MUTEX(safeAccess);
@@ -139,13 +140,17 @@ CayfFullHostClass::unregister_factory_host(IjvxExternalModuleFactory* regMe)
 		{
 			jvxErrorType res = jvx_core_host_loop_stop();
 			assert(res == JVX_NO_ERROR);
-			JVX_WAIT_FOR_THREAD_TERMINATE_INF(hdlHostThread);
+			JVX_WAIT_FOR_THREAD_TERMINATE_INF(hdlHostThread);			
+			shutdownRun = true;
 		}
 	}
 
 	JVX_LOCK_MUTEX(safeAccess);
-	shutDownProcess = false;
-	hostStarted = false;
+	shutDownProcess = false;	
+	if (shutdownRun)
+	{
+		hostStarted = false;
+	}
 	JVX_UNLOCK_MUTEX(safeAccess);
 
 	return res;

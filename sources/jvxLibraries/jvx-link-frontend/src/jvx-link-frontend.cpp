@@ -26,7 +26,6 @@ extern "C"
 				assert(theConsole_fe != NULL);
 				assert(theConsole_fe == *theFrontend);
 				JVX_DSP_SAFE_DELETE_OBJECT(theConsole_fe);
-				theConsole_fe = NULL;
 				*theFrontend = NULL;
 			}
 			return JVX_NO_ERROR;
@@ -43,7 +42,7 @@ extern "C"
 			{
 				assert(theWeb_fe != NULL);
 				assert(theWeb_fe == *theFrontend);
-				JVX_DSP_SAFE_DELETE_OBJECT(theWeb_fe);
+				JVX_DSP_SAFE_DELETE_OBJECT(theWeb_fe);				
 				*theFrontend = NULL;
 			}
 			return JVX_NO_ERROR;
@@ -66,7 +65,7 @@ extern "C"
 			{
 				assert(main_be != NULL);
 				assert(main_be == *theBackend);
-				JVX_DSP_SAFE_DELETE_OBJECT(*theBackend);
+				JVX_DSP_SAFE_DELETE_OBJECT(main_be);
 				*theBackend = NULL;
 			}
 			return JVX_NO_ERROR;

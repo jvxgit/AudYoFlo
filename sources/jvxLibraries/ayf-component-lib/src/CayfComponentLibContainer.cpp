@@ -7,7 +7,7 @@ CayfComponentLibContainer::CayfComponentLibContainer()
 
 CayfComponentLibContainer::~CayfComponentLibContainer()
 {
-	JVX_INITIALIZE_MUTEX(safeAccess);
+	JVX_TERMINATE_MUTEX(safeAccess);
 };
 
 void 
