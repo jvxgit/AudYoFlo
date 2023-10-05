@@ -114,5 +114,3 @@ elseif(${JVX_OS} MATCHES "linux")
 		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")		
 endif()
 
-message(FATAL_ERROR "Hier ${JVX_OS}")
-

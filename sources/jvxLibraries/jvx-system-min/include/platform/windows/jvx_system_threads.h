@@ -18,6 +18,7 @@
 #define JVX_CREATE_THREAD(hdl, entry, param, id) hdl = CreateThread(NULL, 0, entry, param, 0, &id);
 #define JVX_WAIT_TIMEOUT DWORD
 #define JVX_NOTIFY_HANDLE HANDLE
+#define JVX_NOTIFY_HANDLE_DECLARE(notification) JVX_NOTIFY_HANDLE notification = JVX_INVALID_HANDLE_VALUE
 #define JVX_INITIALIZE_NOTIFICATION(a) a = CreateEvent(NULL, false, false, NULL)
 #define JVX_TERMINATE_NOTIFICATION(a) CloseHandle(a)
 #define JVX_WAIT_FOR_NOTIFICATION_I(hdl)
