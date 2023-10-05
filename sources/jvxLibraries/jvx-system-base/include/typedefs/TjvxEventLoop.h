@@ -104,7 +104,7 @@ class TjvxEventLoopElementSync
 public:
 
 	//! Signal the completion
-	JVX_NOTIFY_HANDLE notification = JVX_INVALID_HANDLE_VALUE;
+	JVX_NOTIFY_HANDLE_DECLARE(notification);
 	jvxErrorType result_block = JVX_ERROR_UNSUPPORTED;
 	jvxHandle* priv = nullptr;
 	jvxSize mId = JVX_SIZE_UNSELECTED;

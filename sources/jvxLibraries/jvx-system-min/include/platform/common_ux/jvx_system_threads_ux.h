@@ -232,6 +232,9 @@ typedef struct
     int condSet;
 } JVX_NOTIFY_HANDLE;
 
+#define JVX_NOTIFY_HANDLE_DECLARE(notification) JVX_NOTIFY_HANDLE notification;
+// JVX_NOTIFY_HANDLE notification = JVX_INVALID_HANDLE_VALUE;
+
 #define JVX_INITIALIZE_NOTIFICATION(hdl)  jvx_initialize_notification_l(&hdl)
 
 #if defined(JVX_OS_LINUX) || defined(JVX_OS_EMSCRIPTEN)

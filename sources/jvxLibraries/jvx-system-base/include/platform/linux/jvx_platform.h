@@ -50,6 +50,7 @@
 #include <termios.h>
 #include <signal.h>
 #include <memory>
+#include <sys/wait.h>
 
 // Make sure that threads behave as desired
 #define JVX_DEBUG_THREADS
@@ -265,7 +266,7 @@ JVX_STATIC_INLINE void JVX_WAIT_FOR_PROCESS_COMPLETE(JVX_CREATE_PROCESS_HANDLE h
 	int status = 0;
 	
 	// Wait for process to complete
-	waitpid(pid, &status, 0);
+	waitpid(hdlProc, &status, 0);
 	
 	// https://linux.die.net/man/2/waitid
 	// WIFEXITED(status);
