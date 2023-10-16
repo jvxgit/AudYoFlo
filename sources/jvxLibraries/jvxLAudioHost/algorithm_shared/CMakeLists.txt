@@ -12,6 +12,10 @@ set(LOCAL_UI_SOURCES
     )
 set(LOCAL_UI_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../uisrc)
 
+set(LOCAL_QT_RESOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/../uisrc/host_resources.qrc
+	)
+
 set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/../src/uMainWindow_specific.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../src/uMainWindow.cpp

@@ -3596,7 +3596,9 @@
   <tabstop>lineEdit_outwav_artist</tabstop>
   <tabstop>lineEdit_outwav_title</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="host_resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>comboBox_technologies</sender>

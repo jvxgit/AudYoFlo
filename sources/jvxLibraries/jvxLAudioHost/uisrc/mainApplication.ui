@@ -1825,7 +1825,9 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="host_resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionSave</sender>

@@ -38,6 +38,8 @@ uMainWindow::uMainWindow() :
 	confHostFeatures = static_cast<configureHost_features*>(&theHostFeatures);
 	this->reqHandle.initialize_fwd_link(this);
 
+	Q_INIT_RESOURCE(host_resources);
+
 }
 
 uMainWindow::~uMainWindow(void)

@@ -31,6 +31,8 @@ public:
 
 	jvxErrorType _feature_class_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxBitField* ft);
 
+	jvxErrorType _capabilities_devices_component_system(const jvxComponentIdentification&, jvxSize idx, jvxDeviceCapabilities& caps);
+
 	jvxErrorType _role_component_system(jvxComponentType tp,
 			jvxComponentType* parentTp, jvxComponentType* childTp,
 			jvxComponentTypeClass* classTp);

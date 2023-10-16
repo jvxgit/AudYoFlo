@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="himages">
+    <file>images/icons8-audio-50.png</file>
+    <file>images/icons8-mic-50.png</file>
+  </qresource>
+</RCC>

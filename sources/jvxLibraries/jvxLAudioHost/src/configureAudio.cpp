@@ -912,9 +912,38 @@ configureAudio::updateWindow()
 
 				for (i = 0; i < num; i++)
 				{
+					QIcon icon;
+					jvxDeviceCapabilities caps;
+					res = theHost->capabilities_devices_component_system(tpIdT, i, caps);
+					if (jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_INPUT_SHIFT))
+					{
+						icon.addFile(QString::fromUtf8(":/himages/images/icons8-mic-50.png"), QSize(), QIcon::Normal, QIcon::Off);
+					}
+					else if (jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_OUTPUT_SHIFT))
+					{
+						icon.addFile(QString::fromUtf8(":/himages/images/icons8-audio-50.png"), QSize(), QIcon::Normal, QIcon::Off);
+					}
+
 					res = theHost->description_component_system(tpAll[JVX_COMPONENT_AUDIO_DEVICE], i, &strL);
-					this->comboBox_devices->addItem(strL.c_str());
+					this->comboBox_devices->addItem(icon, strL.c_str());
 				}
+
+				/*
+				for (i = 0; i < num; i++)
+				{
+					// QVariant* v = nullptr;
+					// QPixmap pin(":/images/images/icon_start.png");
+
+					//pushButton->setIcon(icon);
+					//pushButton->setIconSize(QSize(48, 48));
+					//pushButton->setFlat(false);
+
+					// QPixmap pin(":/res/grad0-120.jpeg");
+					// QPixmap pout(":/res/grad0-120.jpeg");
+					
+					this->comboBox_devices->setItemIcon(i, icon);
+				}
+				*/
 
 				this->comboBox_devices->setCurrentIndex(sel + 1);
 				res = theHost->state_selected_component(tpAll[JVX_COMPONENT_AUDIO_DEVICE], &statDev);

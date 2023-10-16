@@ -14,6 +14,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*, jvxApiString* substr = NULL) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION module_reference_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*, jvxComponentAccessType* acTp) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION feature_class_component_system(const jvxComponentIdentification&, jvxSize idx, jvxBitField*) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION capabilities_devices_component_system(const jvxComponentIdentification&, jvxSize idx, jvxDeviceCapabilities& caps) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION role_component_system(
 		jvxComponentType tp,

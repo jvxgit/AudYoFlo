@@ -678,6 +678,26 @@ CjvxComponentHost::_feature_class_component_system(const jvxComponentIdentificat
 	return(res);
 }
 
+jvxErrorType 
+CjvxComponentHost::_capabilities_devices_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxDeviceCapabilities& caps)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	std::vector<oneTechnologyType>::iterator elmIt_tech;
+	elmIt_tech = jvx_findItemSelectorInList_one<oneTechnologyType, jvxComponentType>(_common_set_types.registeredTechnologyTypes, tp.tp, 0);
+	if (elmIt_tech != _common_set_types.registeredTechnologyTypes.end())
+	{
+		res = JVX_NO_ERROR;
+		if (tp.slotid < elmIt_tech->technologyInstances.selTech.size())
+		{
+			if (elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech)
+			{
+				res = elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->capabilities_device(idx, caps);
+			}
+		}
+	}
+	return res;
+}
+
 jvxErrorType
 CjvxComponentHost::_role_component_system(jvxComponentType tp,
 	jvxComponentType* parentTp, jvxComponentType* childTp,

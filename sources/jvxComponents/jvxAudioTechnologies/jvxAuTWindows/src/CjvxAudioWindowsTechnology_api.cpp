@@ -171,11 +171,14 @@ CjvxAudioWindowsTechnology::activate_windows_audio_technology()
 
             // Keep this handle on, therefore ref count
             device->AddRef();
+            /*
+            deviceName += "|i";
             if (defDevice)
             {
-                deviceName = "Default Input Audio Device";
+                // deviceName = "Default Input Audio Device";
+                deviceName += "d";
             }
-
+            */
             // Convert device name to UTF8
             deviceName = jvx::helper::asciToUtf8(deviceName);
 
@@ -187,7 +190,7 @@ CjvxAudioWindowsTechnology::activate_windows_audio_technology()
                 JVX_COMPONENT_ACCESS_SUB_COMPONENT,
                 (jvxComponentType)(_common_set.theComponentType.tp + 1),
                 txt.c_str(), NULL);
-            newDevice->setHandle(this, device, &wext, true, false);
+            newDevice->setHandle(this, device, &wext, true, defDevice);
 
             // Whatever to be done for initialization
             oneDeviceWrapper elm;
@@ -231,10 +234,14 @@ CjvxAudioWindowsTechnology::activate_windows_audio_technology()
             // Keep this handle on, therefore ref count
             device->AddRef();
 
+            /*
+            deviceName += "|o";
             if (defDevice)
             {
-                deviceName = "Default Output Audio Device";
+                // deviceName = "Default Output Audio Device";
+                deviceName += "d";
             }
+            */
 
             // Convert device name to UTF8
             deviceName = jvx::helper::asciToUtf8(deviceName);
@@ -247,7 +254,7 @@ CjvxAudioWindowsTechnology::activate_windows_audio_technology()
                 JVX_COMPONENT_ACCESS_SUB_COMPONENT,
                 (jvxComponentType)(_common_set.theComponentType.tp + 1),
                 txt.c_str(), NULL);
-            newDevice->setHandle(this, device, &wext, false, false);
+            newDevice->setHandle(this, device, &wext, false, defDevice);
 
             // Whatever to be done for initialization
             oneDeviceWrapper elm;
