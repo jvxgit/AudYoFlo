@@ -163,12 +163,28 @@ namespace jvx
 
 		jvxSize origin_call_id = JVX_SIZE_UNSELECTED;
 
+		struct
+		{
+			jvxAccessProtocol access_protocol = JVX_ACCESS_PROTOCOL_OK;
+		} internal_stack;
+
 		void reset()
 		{
 			accessFlags = JVX_ACCESS_ROLE_DEFAULT;
 			access_protocol = JVX_ACCESS_PROTOCOL_OK;
 			origin_call_id = JVX_SIZE_UNSELECTED;
 		};
+
+		void p_push()
+		{
+			internal_stack.access_protocol = access_protocol;
+		}
+
+		void p_pop()
+		{
+			access_protocol = internal_stack.access_protocol;
+		}
+
 	};
 };
 typedef jvx::callManager jvxCallManager;
