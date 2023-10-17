@@ -53,7 +53,7 @@ feature_class_component_system(const jvxComponentIdentification& tp, jvxSize idx
 
 jvxErrorType capabilities_devices_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxDeviceCapabilities& caps)
 {
-	return _capabilities_devices_component_system(tp, idx, caps);
+	return this->_capabilities_devices_component_system(tp, idx, caps);
 }
 
 jvxErrorType
