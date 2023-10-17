@@ -43,6 +43,22 @@ void jvx_bitZSet(jvxCBitField& entry, jvxSize position);
 void jvx_bitClear(jvxCBitField& entry, jvxSize position);
 void jvx_bitToggle(jvxCBitField& entry, jvxSize position);
 jvxUInt32 jvx_bitFieldValue32(jvxCBitField entry);
+
+// ==========================================================
+template <class T>
+jvxBool jvx_bitTest(T entry, jvxSize position)
+{
+	assert(JVX_CHECK_SIZE_SELECTED(position));
+	return((entry & ((T)1 << position)) != 0);
+}
+
+template <class T>
+void jvx_bitZSet(T& entry, jvxSize position)
+{
+	assert(JVX_CHECK_SIZE_SELECTED(position));
+	entry = ((T)1 << position);
+}
+
 // ==========================================================
 
 

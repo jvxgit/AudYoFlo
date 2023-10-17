@@ -61,6 +61,11 @@ void jvx_cbitZSet(jvxCBitField& entry, jvxSize position)
 	entry = ((jvxCBitField)1 << position);
 }
 
+void jvx_cbitZSet(jvxCBitField16& entry, jvxSize position)
+{
+	entry = ((jvxCBitField16)1 << position);
+}
+
 void jvx_bitClear(jvxBitField& entry, jvxSize position)
 {
 	entry.bit_clear(position);

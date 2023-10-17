@@ -260,6 +260,12 @@ enum class jvxDeviceDataFlowType
 	JVX_DEVICE_DATAFLOW_LIMIT
 };
 
+enum class jvxDeviceCapabilityFlagsShift
+{
+	// Indicate that device is the default device
+	JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT
+};
+
 class jvxDeviceCapabilities
 {
 public:

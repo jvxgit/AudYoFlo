@@ -911,39 +911,43 @@ configureAudio::updateWindow()
 				}
 
 				for (i = 0; i < num; i++)
+				{					
+					res = theHost->description_component_system(tpAll[JVX_COMPONENT_AUDIO_DEVICE], i, &strL);
+					this->comboBox_devices->addItem(strL.c_str());
+				}
+
+				
+				for (i = 0; i < num; i++)
 				{
 					QIcon icon;
 					jvxDeviceCapabilities caps;
 					res = theHost->capabilities_devices_component_system(tpIdT, i, caps);
-					if (jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_INPUT_SHIFT))
+					if (
+						(
+							(jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_INPUT_SHIFT)) &&
+							(jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_OUTPUT_SHIFT))) ||
+						(jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_DUPLEX_SHIFT)))
 					{
-						icon.addFile(QString::fromUtf8(":/himages/images/icons8-mic-50.png"), QSize(), QIcon::Normal, QIcon::Off);
+						icon.addFile(QString::fromUtf8(":/himages/images/icons8-mic-audio-50.png"), QSize(), QIcon::Normal, QIcon::Off);
 					}
 					else if (jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_OUTPUT_SHIFT))
 					{
 						icon.addFile(QString::fromUtf8(":/himages/images/icons8-audio-50.png"), QSize(), QIcon::Normal, QIcon::Off);
 					}
-
-					res = theHost->description_component_system(tpAll[JVX_COMPONENT_AUDIO_DEVICE], i, &strL);
-					this->comboBox_devices->addItem(icon, strL.c_str());
-				}
-
-				/*
-				for (i = 0; i < num; i++)
-				{
-					// QVariant* v = nullptr;
-					// QPixmap pin(":/images/images/icon_start.png");
-
-					//pushButton->setIcon(icon);
-					//pushButton->setIconSize(QSize(48, 48));
-					//pushButton->setFlat(false);
-
-					// QPixmap pin(":/res/grad0-120.jpeg");
-					// QPixmap pout(":/res/grad0-120.jpeg");
+					else if (jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_INPUT_SHIFT))
+					{
+						icon.addFile(QString::fromUtf8(":/himages/images/icons8-mic-50.png"), QSize(), QIcon::Normal, QIcon::Off);
+					}
 					
-					this->comboBox_devices->setItemIcon(i, icon);
-				}
-				*/
+					this->comboBox_devices->setItemIcon(i+1, icon);
+					if (jvx_bitTest<jvxCBitField16>(caps.flags, (int)jvxDeviceCapabilityFlagsShift::JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT))
+					{
+						auto var = this->comboBox_devices->itemData(i+1, Qt::FontRole);
+						QFont ftT = var.value<QFont>();
+						ftT.setItalic(true);
+						this->comboBox_devices->setItemData(i+1, ftT, Qt::FontRole);
+					}
+				}				
 
 				this->comboBox_devices->setCurrentIndex(sel + 1);
 				res = theHost->state_selected_component(tpAll[JVX_COMPONENT_AUDIO_DEVICE], &statDev);

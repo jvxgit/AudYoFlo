@@ -518,6 +518,11 @@ CjvxAudioWindowsDevice::setHandle(
         jvx_bitZSet(_common_set_device.caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_OUTPUT_SHIFT);        
         _common_set.theName = _common_set.theName + " output";
     }
+
+    if (isDefaultDevice)
+    {
+        jvx_bitZSet<jvxCBitField16>(_common_set_device.caps.flags, (int)jvxDeviceCapabilityFlagsShift::JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT);
+    }
     _common_set_device.report = static_cast<IjvxDevice_report*>(parentTech);
 }
 
