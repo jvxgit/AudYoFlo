@@ -19,7 +19,7 @@ template <class T> void SafeRelease(T** ppT)
 }
 
 jvxErrorType
-scan_device(IMMDeviceCollection* DeviceCollection, IMMDevice** device, WAVEFORMATEXTENSIBLE* pwex, std::string& retVal, jvxSize DeviceIndex, jvxBool defDevice)
+scan_device(IMMDeviceCollection* DeviceCollection, IMMDevice** device, WAVEFORMATEXTENSIBLE* pwex, std::string& retVal, jvxSize DeviceIndex, jvxBool& defDevice, LPWSTR deviceIdDefault)
 {
     jvxErrorType res = JVX_NO_ERROR;
     
@@ -44,6 +44,12 @@ scan_device(IMMDeviceCollection* DeviceCollection, IMMDevice** device, WAVEFORMA
         printf("Unable to get device " JVX_PRINTF_CAST_SIZE " id: %x\n", DeviceIndex, hr);
         res = JVX_ERROR_INTERNAL;
         goto leave_exit_error;
+    }
+
+    defDevice = false;
+    if (wcscmp(deviceId, deviceIdDefault) == 0)
+    {
+        defDevice = true;
     }
 
     IPropertyStore* propertyStore;
@@ -132,6 +138,9 @@ CjvxAudioWindowsTechnology::activate_windows_audio_technology()
 	IMMDeviceCollection* deviceCollectionInput = NULL;
     IMMDeviceCollection* deviceCollectionOutput = NULL;
 
+    LPWSTR deviceIdDefault = nullptr;
+    IMMDevice* device = nullptr;
+
 	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&deviceEnumerator));
 	if (FAILED(hr))
 	{
@@ -150,35 +159,42 @@ CjvxAudioWindowsTechnology::activate_windows_audio_technology()
 	{
 		assert(0);
 	}
-	for (UINT i = 0; i <= deviceCount; i += 1)
+
+    // First, open the default device to identify it
+     device = nullptr;
+    deviceIdDefault = nullptr;
+    deviceEnumerator->GetDefaultAudioEndpoint(eCapture, eCommunications, &device);
+    if (device)
+    {
+        hr = device->GetId(&deviceIdDefault);
+        if (FAILED(hr))
+        {
+            assert(0);
+        }
+        device->Release();
+        device = nullptr;
+    }
+
+
+	for (UINT i = 0; i < deviceCount; i += 1)
 	{
-        IMMDevice* device = nullptr;
+        device = nullptr;
 		std::string deviceName;
         jvxBool defDevice = false;
         WAVEFORMATEXTENSIBLE wext = { 0 };
-
-        // Get the default handle and pass along in function call
-        if (i == deviceCount)
-        {
-            deviceEnumerator->GetDefaultAudioEndpoint(eCapture, eCommunications, &device);
-            defDevice = true;
-        }
-
-        if (scan_device(deviceCollectionInput, &device, &wext, deviceName, i, defDevice) == JVX_NO_ERROR)
+        
+        if (scan_device(deviceCollectionInput, &device, &wext, deviceName, i, defDevice, deviceIdDefault) == JVX_NO_ERROR)
         {
             std::string txt = _common_set.theComponentSubTypeDescriptor;
             txt += "/input";
 
+            // Modified HK: According to 
+            // https://learn.microsoft.com/de-de/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdeviceenumerator-getdefaultaudioendpoint
+            // there is no need to add a reference as it holds one if open
+             
             // Keep this handle on, therefore ref count
-            device->AddRef();
-            /*
-            deviceName += "|i";
-            if (defDevice)
-            {
-                // deviceName = "Default Input Audio Device";
-                deviceName += "d";
-            }
-            */
+            // device->AddRef();
+
             // Convert device name to UTF8
             deviceName = jvx::helper::asciToUtf8(deviceName);
 
@@ -213,36 +229,41 @@ CjvxAudioWindowsTechnology::activate_windows_audio_technology()
     {
         assert(0);
     }
-    for (UINT i = 0; i <= deviceCount; i += 1)
+    
+    // First, open the default device to identify it
+    device = nullptr;
+    deviceIdDefault = nullptr;
+    deviceEnumerator->GetDefaultAudioEndpoint(eRender, eCommunications, &device); 
+    if (device)
     {
-        IMMDevice* device = nullptr;
+        hr = device->GetId(&deviceIdDefault);
+        if (FAILED(hr))
+        {
+            assert(0);
+        }
+        device->Release();
+        device = nullptr;
+    }
+
+    for (UINT i = 0; i < deviceCount; i += 1)
+    {
+        device = nullptr;
         std::string deviceName;
         jvxBool defDevice = false;
         WAVEFORMATEXTENSIBLE wext = { 0 };
 
-        if (i == deviceCount)
-        {
-            deviceEnumerator->GetDefaultAudioEndpoint(eRender, eCommunications, &device);
-            defDevice = true;
-        }
-
-        if (scan_device(deviceCollectionOutput, &device, &wext, deviceName, i, defDevice) == JVX_NO_ERROR)
+        if (scan_device(deviceCollectionOutput, &device, &wext, deviceName, i, defDevice, deviceIdDefault) == JVX_NO_ERROR)
         {
             std::string txt = _common_set.theComponentSubTypeDescriptor;
             txt += "/output";
 
+            // Modified HK: According to 
+            // https://learn.microsoft.com/de-de/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdeviceenumerator-getdefaultaudioendpoint
+            // there is no need to add a reference as it holds one if open
+            
             // Keep this handle on, therefore ref count
-            device->AddRef();
-
-            /*
-            deviceName += "|o";
-            if (defDevice)
-            {
-                // deviceName = "Default Output Audio Device";
-                deviceName += "d";
-            }
-            */
-
+            // device->AddRef();
+            
             // Convert device name to UTF8
             deviceName = jvx::helper::asciToUtf8(deviceName);
 
