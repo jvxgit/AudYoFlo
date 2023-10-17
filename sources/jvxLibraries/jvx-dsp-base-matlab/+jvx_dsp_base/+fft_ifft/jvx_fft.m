@@ -17,7 +17,7 @@ function [out] = jvx_fft(in)
     for(ind = 1:num)
         inV = in(ind,:);
         if(useFftw)
-            [tre, tim] = jvxFFTWFft_m(in(ind,:));
+            [tre, tim] = jvxFFTWFft(in(ind,:));
             tmp = tre+1i*tim;
         else
             tmp = fft(inV);

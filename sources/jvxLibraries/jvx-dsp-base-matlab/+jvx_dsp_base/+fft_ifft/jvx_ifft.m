@@ -20,7 +20,7 @@ function [out] = jvx_ifft(in)
         tmp = in(ind,:);
         
         if(useFftw)
-            tmp = jvxFFTWIfft_m(real(tmp), imag(tmp));
+            tmp = jvxFFTWIfft(real(tmp), imag(tmp));
         else
             tmp = [tmp conj(fliplr(tmp(2:llout/2)))];
             tmp = real(ifft(tmp));
