@@ -498,7 +498,7 @@ public:
 
 	static bool mexReturnDataFieldCell(mxArray*& plhs, std::vector<jvxData*> lstDbls, std::vector<jvxSize> lengths);
 
-	static bool mexReturnGenericNumeric(mxArray*& retObject, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat);
+	static bool mexReturnGenericNumeric(mxArray*& retObject, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat, jvxBool isCplx = false);
 
 	static jvxErrorType convertMexToC(jvxHandle** fieldOutput, jvxInt32 dimY, jvxInt32 dimX,
 		jvxDataFormat processingFormat, const jvxExternalDataType* ptrF, const char* nameVar, bool convertFloat,

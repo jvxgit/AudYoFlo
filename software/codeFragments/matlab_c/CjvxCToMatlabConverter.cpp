@@ -787,11 +787,12 @@ CjvxCToMatlabConverter::mexReturnDataFieldCell(mxArray*& plhs, std::vector<jvxDa
 
 //! Matlab C conversion functions
 bool
-CjvxCToMatlabConverter::mexReturnGenericNumeric(mxArray*& retObject, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat)
+CjvxCToMatlabConverter::mexReturnGenericNumeric(mxArray*& retObject, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat, jvxBool isCplx)
 {
 	mxArray* ptr = NULL;
 
 	jvxData* ptrDouble = NULL;
+	jvxDataCplx* ptrDoubleCplx = NULL;
 	float* ptrFloat = NULL;
 	jvxInt32* ptrInt32 = NULL;
 	jvxInt64* ptrInt64 = NULL;
@@ -801,16 +802,35 @@ CjvxCToMatlabConverter::mexReturnGenericNumeric(mxArray*& retObject, const jvxHa
 	switch (processingFormat)
 	{
 	case JVX_DATAFORMAT_DATA:
-		ptr = mxCreateNumericMatrix(dimY, dimX, JVX_DATA_MEX_CONVERT, mxREAL);
-		ptrDouble = (jvxData*)mxGetData(ptr);
-		for (int i = 0; i < dimX; i++)
+		if (isCplx)
 		{
-			for (int ii = 0; ii < dimY; ii++)
+			ptr = mxCreateNumericMatrix(dimY, dimX, JVX_DATA_MEX_CONVERT, mxCOMPLEX);
+			ptrDoubleCplx = (jvxDataCplx*)mxGetData(ptr);
+			// mxComplexDouble* dat = mxGetComplexDoubles(ptr);
+			// mxComplexDouble is a struct for real and imaginary part - just the same as the jvxDataCplx type
+
+			for (int i = 0; i < dimX; i++)
 			{
-				ptrDouble[i*dimY + ii] = ((jvxData*)fieldInput[ii])[i];
+				for (int ii = 0; ii < dimY; ii++)
+				{
+					ptrDoubleCplx[i * dimY + ii] = ((jvxDataCplx*)fieldInput[ii])[i];
+				}
 			}
+			ptrDoubleCplx = NULL; 			
 		}
-		ptrDouble = NULL;
+		else
+		{
+			ptr = mxCreateNumericMatrix(dimY, dimX, JVX_DATA_MEX_CONVERT, mxREAL);
+			ptrDouble = (jvxData*)mxGetData(ptr);
+			for (int i = 0; i < dimX; i++)
+			{
+				for (int ii = 0; ii < dimY; ii++)
+				{
+					ptrDouble[i * dimY + ii] = ((jvxData*)fieldInput[ii])[i];
+				}
+			}
+			ptrDouble = NULL;
+		}
 		break;
 	case JVX_DATAFORMAT_16BIT_LE:
 		ptr = mxCreateNumericMatrix(dimY, dimX, mxINT16_CLASS, mxREAL);

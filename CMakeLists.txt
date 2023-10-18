@@ -890,6 +890,10 @@ endif()
 
   endif()
 
+  if(JVX_USE_PART_MATLAB)
+	set(JVX_BASE_APPS ${JVX_BASE_APPS} ${JVX_BASE_ROOT}/sources/jvxApplications/mexex)
+   endif()
+
  	# ===========================================================================
 	# Flutter project code
 	# ===========================================================================

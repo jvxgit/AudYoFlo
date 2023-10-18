@@ -31,10 +31,10 @@ public:
 	// =================================================================================
 
 	//! External C conversion functions, dimY x dimX matrix of different RTProc dataformat
-	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat, jvxBool cplx = false) = 0;
 
 	//! External C conversion functions, 1 x dimX matrix of different RTProc dataformat
-	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**, const jvxHandle* fieldInput, jvxInt32 dimX, jvxDataFormat processingFormat)=0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**, const jvxHandle* fieldInput, jvxInt32 dimX, jvxDataFormat processingFormat, jvxBool cplx = false)=0;
 
 	//! Convert a string (const char*) into a Matlab string
 	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**, const char* textInput) = 0;

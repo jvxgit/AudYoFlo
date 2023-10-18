@@ -89,12 +89,12 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**,
 								      const jvxHandle** fieldInput,
 								      jvxInt32 dimY, jvxInt32 dimX,
-								      jvxDataFormat processingFormat) override;
+								      jvxDataFormat processingFormat, jvxBool cplx = false) override;
 
 	//! External C conversion functions, 1 x dimX matrix of different RTProc dataformat
 	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**,
 								      const jvxHandle* fieldInput, jvxInt32 dimX,
-								      jvxDataFormat processingFormat) override;
+								      jvxDataFormat processingFormat, jvxBool cplx = false) override;
 
 	//! Convert a string (const char*) into a Matlab string
 	virtual jvxErrorType JVX_CALLINGCONVENTION convertCToExternal(jvxExternalDataType**, const char* textInput) override;

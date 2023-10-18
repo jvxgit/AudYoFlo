@@ -446,14 +446,14 @@ CjvxExternalCall::CjvxExternalCall(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 
 //! Matlab C conversion functions
 jvxErrorType
-CjvxExternalCall::convertCToExternal(jvxExternalDataType** retObject, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat)
+CjvxExternalCall::convertCToExternal(jvxExternalDataType** retObject, const jvxHandle** fieldInput, jvxInt32 dimY, jvxInt32 dimX, jvxDataFormat processingFormat, jvxBool isCplx)
 {
 	if(this->checkThread())
 	{
 		if(retObject)
 		{
 			mxArray* ptr = NULL;
-			bool resL = mexReturnGenericNumeric(ptr, fieldInput, dimY, dimX, processingFormat);
+			bool resL = mexReturnGenericNumeric(ptr, fieldInput, dimY, dimX, processingFormat, isCplx);
 			if (resL)
 			{
 				assert(ptr);
@@ -470,9 +470,9 @@ CjvxExternalCall::convertCToExternal(jvxExternalDataType** retObject, const jvxH
 
 //! Matlab C conversion functions
 jvxErrorType
-CjvxExternalCall::convertCToExternal(jvxExternalDataType** retObject, const jvxHandle* fieldInput, jvxInt32 dimX, jvxDataFormat processingFormat)
+CjvxExternalCall::convertCToExternal(jvxExternalDataType** retObject, const jvxHandle* fieldInput, jvxInt32 dimX, jvxDataFormat processingFormat, jvxBool isCplx)
 {
-	return(convertCToExternal(retObject, &fieldInput, 1, dimX, processingFormat));
+	return(convertCToExternal(retObject, &fieldInput, 1, dimX, processingFormat, isCplx));
 }
 
 jvxErrorType
