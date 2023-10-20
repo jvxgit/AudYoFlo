@@ -51,6 +51,7 @@ public:
 		std::string replaceby;
 	};
 
+	std::list<std::string> lstSubTokensParse;
 private:
 
 	typedef enum

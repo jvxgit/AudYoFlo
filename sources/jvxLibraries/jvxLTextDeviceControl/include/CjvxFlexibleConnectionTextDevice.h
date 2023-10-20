@@ -75,6 +75,14 @@ public:
 			commContext->uId = uId;
 			commContext->tp = messType;
 		}
+		auto elm = theControl.lstSubTokensParse.begin();
+		while (elm != theControl.lstSubTokensParse.end())
+		{
+			jvxSize idIdentifyLoc = 0;
+			theControl.process_incoming_message(*elm, &uId, &messType, &idIdentifyLoc);
+			theControl.lstSubTokensParse.erase(elm);
+			elm = theControl.lstSubTokensParse.begin();
+		}
 		return resL;
 	};
 
