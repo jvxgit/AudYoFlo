@@ -638,6 +638,16 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 			jvxBool showThis = true;
 			jvxSize idxArray = 0;
 
+			auto varRef = uiRefTp->property("JVX_THE_SUBWIDGET");
+			if (varRef.isValid())
+			{
+				CjvxQtSaWidgetWrapper_elementbase* openWidget = varRef.value<CjvxQtSaWidgetWrapper_elementbase*>();
+				if (openWidget)
+				{
+					openWidget->update_window();
+				}
+			}
+
 			everythingOk = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs, idxArray);
 
 			theItem->setHidden(false);

@@ -576,99 +576,122 @@ CjvxSocketsConnectionTcp::operate_one_read()
 	jvxSize szRead = 0;
 	int readNum = 0;
 	jvxSize offset = 0;
+	jvxSize repetitions = 0;
+	jvxBool repeatThis = true; // Run this at least once!!
 
-	JVX_SOCKET_NUM_BYTES bytes_available = 0;
-	int ioerr = JVX_IOCTRL_SOCKET_FIONREAD(parent->theSocket, &bytes_available);
+	while (repeatThis)
+	{
+		repeatThis = false;
+		JVX_SOCKET_NUM_BYTES bytes_available = 0;
+		int ioerr = JVX_IOCTRL_SOCKET_FIONREAD(parent->theSocket, &bytes_available);
 
-	if(bytes_available == 0)
-	{
-		// https://github.com/micropython/micropython/issues/3747
-		/*
-		In case where you're waiting for data to be received (POLLIN) and connection gets terminated by peer - you'll receive POLLIN event followed by zero sized recv().
-		This is common behavior for *unix base system, you can check it by man recv..
-		*/
-		reportDisconnect = true;
-	}
-	else
-	{
-		while (bytes_available)
+		if (bytes_available == 0)
 		{
-			maxNumCopy = bytes_available;
-			ptrRead = NULL;
-			offset = 0;
-
-			if (theReportConnection)
+			// https://github.com/micropython/micropython/issues/3747
+			/*
+			In case where you're waiting for data to be received (POLLIN) and connection gets terminated by peer - you'll receive POLLIN event followed by zero sized recv().
+			This is common behavior for *unix base system, you can check it by man recv..
+			*/
+			reportDisconnect = true;
+		}
+		else
+		{
+			while (bytes_available)
 			{
-				theReportConnection->provide_data_and_length(&ptrRead, &maxNumCopy, &offset, NULL);
-			}
-			else
-			{
-				maxNumCopy = 0;
-			}
-
-			if (maxNumCopy == 0)
-			{
-				ptrRead = &oneChar;
-				maxNumCopy = 1;
+				maxNumCopy = bytes_available;
+				ptrRead = NULL;
 				offset = 0;
-			}
 
-			szRead = maxNumCopy;
-			assert(szRead > 0);
-			readNum = recv(parent->theSocket, ptrRead + offset, JVX_SIZE_INT(szRead), 0);
-			if (readNum > 0)
-			{
 				if (theReportConnection)
 				{
-					theReportConnection->report_data_and_read(ptrRead, readNum, offset,
-															  NULL);
+					theReportConnection->provide_data_and_length(&ptrRead, &maxNumCopy, &offset, NULL);
 				}
-				bytes_available -= (JVX_SOCKET_NUM_BYTES)readNum;
-			}
-			else
-			{
-				/*
-				 * No error reported to application
-				 */
-				/*
-				if (theReportConnection)
+				else
 				{
-					theReportConnection->report_data_and_read(ptrRead, readNum, offset,
-						NULL);
+					maxNumCopy = 0;
 				}
-				*/
+
+				if (maxNumCopy == 0)
+				{
+					ptrRead = &oneChar;
+					maxNumCopy = 1;
+					offset = 0;
+				}
+
+				szRead = maxNumCopy;
+				assert(szRead > 0);
+				readNum = recv(parent->theSocket, ptrRead + offset, JVX_SIZE_INT(szRead), 0);
+				if (readNum > 0)
+				{
+					if (theReportConnection)
+					{
+						theReportConnection->report_data_and_read(ptrRead, readNum, offset,
+							NULL);
+					}
+					bytes_available -= (JVX_SOCKET_NUM_BYTES)readNum;
+				}
+				else
+				{
+					/*
+					 * No error reported to application
+					 */
+					 /*
+					 if (theReportConnection)
+					 {
+						 theReportConnection->report_data_and_read(ptrRead, readNum, offset,
+							 NULL);
+					 }
+					 */
 #ifdef JVX_OS_WINDOWS
-				int errCode = WSAGetLastError();
-				switch (errCode)
-				{
-				case WSAEFAULT:
-					std::cout << __FUNCTION__ << ": Error: The name parameter is not a valid part of the user address space, " <<
-						"or the buffer size specified by the namelen parameter is too small to hold the complete host name." << std::endl;
-					break;
-				case WSANOTINITIALISED:
-					std::cout << __FUNCTION__ << ": Error: A successful WSAStartup call must occur before using this function." << std::endl;
-					break;
-				case WSAENETDOWN:
-					std::cout << __FUNCTION__ << ": Error: The network subsystem has failed." << std::endl;
-					break;
-				case WSAEINPROGRESS:
-					std::cout << __FUNCTION__ << ": Error: A blocking Winsock call is in progress, or the service " <<
-						"provider is still processing a callback function." << std::endl;
-					break;
-				case WSAEWOULDBLOCK:
-					std::cout << __FUNCTION__ << ": Error: A data transfer would block the socket." << std::endl;
-					break;
-				default:
-					std::cout << __FUNCTION__ << ": Error: Function <sendto> failed, error: " << errCode << "." << std::endl;
-				}
+					int errCode = WSAGetLastError();
+					switch (errCode)
+					{
+					case WSAEFAULT:
+						std::cout << __FUNCTION__ << ": Error: The name parameter is not a valid part of the user address space, " <<
+							"or the buffer size specified by the namelen parameter is too small to hold the complete host name." << std::endl;
+						break;
+					case WSANOTINITIALISED:
+						std::cout << __FUNCTION__ << ": Error: A successful WSAStartup call must occur before using this function." << std::endl;
+						break;
+					case WSAENETDOWN:
+						std::cout << __FUNCTION__ << ": Error: The network subsystem has failed." << std::endl;
+						break;
+					case WSAEINPROGRESS:
+						std::cout << __FUNCTION__ << ": Error: A blocking Winsock call is in progress, or the service " <<
+							"provider is still processing a callback function." << std::endl;
+						break;
+					case WSAEWOULDBLOCK:
+						std::cout << __FUNCTION__ << ": Error: A data transfer would block the socket." << std::endl;
+						break;
+					case WSAEMSGSIZE:
+
+						// we use a special rule: if additional bytes landed in the input receive buffer while we are processing, the assumed buffersize is no longer
+						// correct. We need to run this function again to receive the "larger" buffer. If this happens again and again, there is a structural problem.
+						// Therefore, we count the repetitions and stop after 10 iterations in a row!
+						// I see this event occuring mostly when using a debugger to slow down the receiver loop. Then, it makes sense to repeat to recover from the
+						// interruption. -- HK, 22102023
+						std::cout << __FUNCTION__ << ": Warning: A data transfer requires a larger buffersize, repetiton = <" << repetitions << ">." << std::endl;
+						if (repetitions < 10)
+						{
+							repeatThis = true;
+						}
+						repetitions++;
+						break;
+					default:
+						std::cout << __FUNCTION__ << ": Error: Function <recv> failed, error: " << errCode << "." << std::endl;
+					}
 #else
-				std::cout << __FUNCTION__ << ": Error: Function <sendto> failed, error: " << strerror(errno) << std::endl;
+					std::cout << __FUNCTION__ << ": Error: Function <sendto> failed, error: " << strerror(errno) << std::endl;
 
 #endif	
-				reportDisconnect = true;
-				break;
-			}
-		} // while (bytes_available)
+					if (!repeatThis)
+					{
+						reportDisconnect = true;
+					}
+					break;
+				}
+			} // while (bytes_available)
+		}
 	}
 	return reportDisconnect;
 }
