@@ -15,15 +15,19 @@ sources/jvxLibraries/third_party/web/boost/boost
 sources/jvxLibraries/third_party/web/npcap/npcap-sdk
 sources/jvxLibraries/third_party/web/libsdl/libsdl
 sources/jvxLibraries/third_party/web/qt/qt
+sources/jvxLibraries/third_party/web/qt/aqt.exe
+sources/jvxLibraries/third_party/web/qt/aqtinstall.log
+
 sources/sub-projects/vst3sdk
-sources/jvxPackages/ffmpeg/jvxLibraries/third_party/git/ffmpeg/ffmpeg
+sources/jvxPackages/ffmpeg/jvxLibraries/third_party/git/ffmpeg/ffmpeg-win32
+sources/jvxPackages/ffmpeg/jvxLibraries/third_party/git/ffmpeg/ffmpeg-x64
 sources/jvxPackages/ffmpeg/jvxLibraries/third_party/web/libsdl/libsdl
 sources/python/jvx-dsp-python/python/runtime/local.py
 
 sources/wp-modules/simpletest/python/runtime/local.py
 
+sources/jvxLibraries/third_party/web/hdf5/hdf5-1.14.2
 
-
-
+sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4
 
 
