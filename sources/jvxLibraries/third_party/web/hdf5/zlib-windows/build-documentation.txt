@@ -1,0 +1,17 @@
+Steps to build hdf5 on Windows
+
+1) Get zlib source code from here:
+git clone https://github.com/madler/zlib.git
+
+2) Checkout out version 1.2.13
+cd zlib
+git checkout v1.2.13
+
+3) Open Visual Studio and solution "zlib/contrib/vstudio/vc14/zlibvc.sln"
+
+4) Upgrage to version v14.3
+
+5) "Batch erstellen" -> select all non Itanium targets -> Build
+
+6) Extract the build outputs
+

@@ -116,4 +116,12 @@ if(JVX_USE_EIGEN)
 	endif()
 endif()
 
+if(JVX_USE_HDF5)
+	if(JVX_INSTALL_EXTERNAL_LIBS)
+		# This part here only when downloading HDF5		
+		set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} 
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/hdf5)
+	endif()
+endif()
+
 

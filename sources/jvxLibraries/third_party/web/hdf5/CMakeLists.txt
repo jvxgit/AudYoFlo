@@ -1,0 +1,30 @@
+set(PROJECT_NAME hdf5)
+include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
+
+if(${JVX_OS} MATCHES "windows")
+	set(targetfolder hdf5-1.14.2)
+	set(archtoken x64)
+	if(${JVX_PLATFORM} MATCHES "32bit")
+		set(archtoken win32)
+	endif()
+	set(reltoken MDd)	
+	if(CMAKE_BUILD_TYPE STREQUAL "Release")
+		set(reltoken MD)
+	endif()		
+
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}_${reltoken}")
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+			message("hdf5 sub project not available. Starting script to download it.") 
+			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+			message("hdf5 installation complete.")
+		endif()
+	
+		execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${reltoken} ${targetfolder}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+	endif()
+
+	set(AYF_HDF5_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}_${reltoken}/include" CACHE INTERNAL "hdf5 include references")
+	set(AYF_HDF5_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}_${reltoken}/lib/hdf5_D.lib" CACHE INTERNAL "hdf5 library references")
+	set(AYF_HDF5_SHARED_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}_${reltoken}/bin/hdf5_D.dll" CACHE INTERNAL "hdf5 library references")
+endif()
+
+# message(FATAL_ERROR "Hier -- ${ZLIB_DIR}")

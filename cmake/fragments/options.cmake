@@ -80,6 +80,7 @@ option(JVX_USE_PART_COREAUDIO  "Compile with Coreaudio support (MacOS only)" OFF
 option(JVX_USE_PART_WASAPI  "Compile with WASAPI support (Windows only)" OFF)
 option(JVX_USE_BOOST "Find boost - compilation is not required since it is a header lib" OFF)
 option(JVX_USE_EIGEN "Find Eigen - compilation is not required since it is a header lib" OFF)
+option(JVX_USE_HDF5 "Find HDF5 precompiled binary" OFF)
 option(JVX_USE_VST "Find VST sdk examples" OFF)
 option(JVX_USE_PART_MPG123 "Find mpg123 mp3 decoder library" OFF)
 option(JVX_FLUTTER_UI "Compile flutter ffi lib" OFF)
