@@ -553,7 +553,11 @@ endif()
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-hrtf-dispenser)
 	endif()
 
-
+	if(JVX_USE_HDF5)
+		set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-hdf5io)
+	endif()
+	
 	include(${JVX_CMAKE_DIR}/fragments/thrdparty.cmake)
 
   ###

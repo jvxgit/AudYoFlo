@@ -4215,6 +4215,43 @@ namespace jvx {
 
 			str << tag << "---------------------------" << std::endl << std::endl;
 		};
+	
+		jvxErrorType scanForFiles(const std::string& pathname, const std::string& ext, std::function< void(const std::string& fNamePath) > lambda, const std::string& wcName)
+		{
+			// Check folder to collect all files
+			JVX_HANDLE_DIR searchHandle;
+			JVX_DIR_FIND_DATA searchResult = INIT_SEARCH_DIR_DEFAULT;;
+			searchHandle = JVX_FINDFIRSTFILE_WC(searchHandle, pathname.c_str(), ext.c_str(), searchResult);
+
+			bool result = true;
+			bool foundElement = false;
+
+			// If entry exists
+			if (searchHandle != INVALID_HANDLE_VALUE)
+			{
+				// scan for sofa files
+				do
+				{
+					std::string fileName = pathname;
+					std::string fileNameInPath = JVX_GETFILENAMEDIR(searchResult);
+
+					fileName += JVX_SEPARATOR_DIR;
+					fileName += fileNameInPath;
+
+					if (jvx_compareStringsWildcard(wcName, fileNameInPath))
+					{
+						// Backslash is not wanted
+						fileName = jvx_replaceStrInStr(fileName, "\\", "/");
+						fileName = jvx_absoluteToRelativePath(fileName, true);
+
+						lambda(fileName);
+					}
+				} while (JVX_FINDNEXTFILE(searchHandle, searchResult, ext.c_str()));//FindNextFile( searchHandle, &searchResult )
+				JVX_FINDCLOSE(searchHandle);//FindClose( searchHandle );
+				return JVX_NO_ERROR;
+			}
+			return JVX_ERROR_ELEMENT_NOT_FOUND;
+		}
 	}
 
 	namespace align {

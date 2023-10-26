@@ -629,6 +629,8 @@ namespace jvx {
 		jvxInt32 hash(std::string str);
 
 		void debug_out_command_request(const CjvxReportCommandRequest& request, std::ostream& str, const std::string& tag);
+
+		jvxErrorType scanForFiles(const std::string& pathname, const std::string& ext, std::function< void(const std::string& fNamePath) > lambda, const std::string& wcName  ="*");
 	}
 
 	namespace align {
