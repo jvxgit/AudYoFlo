@@ -488,7 +488,7 @@ jvxErrorType CayfHdf5Io::addNewDataSet(oneEntryToc * addThis)
 }
 
 jvxErrorType 
-CayfHdf5Io::readDataFromDataSet(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize& numElements)
+CayfHdf5Io::readDataFromDataSet(const std::string& dataSet, jvxHandle* bufArg, jvxDataFormat form, jvxSize& numElements)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -496,10 +496,16 @@ CayfHdf5Io::readDataFromDataSet(const std::string& dataSet, jvxHandle* buf, jvxD
 	if (elm != toc.end())
 	{
 		res = JVX_ERROR_INVALID_ARGUMENT;
-		if (form == elm->second->format)
+		jvxHandle* bufCopy = bufArg;
+		jvxBool conversionReq = false;
+		if (form != elm->second->format)
 		{
-			// Constraint: the format must match!!
+			conversionReq = true;
+			bufCopy = jvx::helper::genericDataBufferAllocate1D(elm->second->format, numElements);
+		}
 
+		if(bufCopy)
+		{
 			res = JVX_ERROR_OPEN_FILE_FAILED;
 
 			// Open the dataset
@@ -542,7 +548,7 @@ CayfHdf5Io::readDataFromDataSet(const std::string& dataSet, jvxHandle* buf, jvxD
 				mem_type_id, // single element memory type
 				sm_space /*H5S_ALL*/, // memory space output buffer
 				f_space/*H5S_ALL*/, // Memory space file
-				H5P_DEFAULT, buf);
+				H5P_DEFAULT, bufCopy);
 
 			//hid_t p_type = H5Tget_native_type(f_type, H5T_DIR_DEFAULT);
 			// sndims = H5Sget_simple_extent_ndims(f_space);
@@ -554,7 +560,14 @@ CayfHdf5Io::readDataFromDataSet(const std::string& dataSet, jvxHandle* buf, jvxD
 			H5Sclose(f_space);
 			H5Sclose(sm_space);
 			H5Dclose(dset);
+
+			if (conversionReq)
+			{
+				jvx::helper::genericDataBufferConvert(&bufCopy, elm->second->format, &bufArg, form, 1, numElements);
+				jvx::helper::genericDataBufferDeallocate(bufCopy, elm->second->format);
+			}
 		}
+		bufCopy = nullptr;
 	}
 	return res;
 
@@ -563,15 +576,23 @@ exit_error:
 }
 
 jvxErrorType
-CayfHdf5Io::readDataFromDataSet1Line(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize& numElements, jvxSize idx)
+CayfHdf5Io::readDataFromDataSet1Line(const std::string& dataSet, jvxHandle* bufArg, jvxDataFormat form, jvxSize& numElements, jvxSize idx)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 	auto elm = toc.find(dataSet);
 	if (elm != toc.end())
 	{
+		jvxHandle* bufCopy = bufArg;
+		jvxBool conversionReq = false;
 		res = JVX_ERROR_INVALID_ARGUMENT;
-		if (form == elm->second->format)
+		if (form != elm->second->format)
+		{
+			conversionReq = true;
+			bufCopy = jvx::helper::genericDataBufferAllocate1D(elm->second->format, numElements);
+		}
+		
+		if(bufCopy)
 		{
 			// Constraint: the format must match!!
 
@@ -632,7 +653,7 @@ CayfHdf5Io::readDataFromDataSet1Line(const std::string& dataSet, jvxHandle* buf,
 				mem_type_id, // single element memory type
 				sm_space /*H5S_ALL*/, // memory space output buffer
 				f_space/*H5S_ALL*/, // Memory space file
-				H5P_DEFAULT, buf);
+				H5P_DEFAULT, bufCopy);
 
 			//hid_t p_type = H5Tget_native_type(f_type, H5T_DIR_DEFAULT);
 			// sndims = H5Sget_simple_extent_ndims(f_space);
@@ -644,7 +665,14 @@ CayfHdf5Io::readDataFromDataSet1Line(const std::string& dataSet, jvxHandle* buf,
 			H5Sclose(f_space);
 			H5Sclose(sm_space);
 			H5Dclose(dset);
+
+			if (conversionReq)
+			{
+				jvx::helper::genericDataBufferConvert(&bufCopy, elm->second->format, &bufArg, form, 1, numElements);
+				jvx::helper::genericDataBufferDeallocate(bufCopy, elm->second->format);
+			}
 		}
+		bufCopy = nullptr;
 	}
 	return res;
 
@@ -775,7 +803,7 @@ CayfHdf5Io::createDataSet(const std::string& dataSet, jvxDataFormat form, jvxSiz
 #ifdef JVX_DATA_FORMAT_DOUBLE
 			((CayfHdf5O_prv*)hdf5Private)->mem_tp_id = H5T_NATIVE_DOUBLE;
 #else
-			((CayfHdf5Io_prv*)hdf5Private)->mem_tp_id = H5T_NATIVE_FLOAT;
+			((CayfHdf5O_prv*)hdf5Private)->mem_tp_id = H5T_NATIVE_FLOAT;
 #endif
 			break;
 		case JVX_DATAFORMAT_FLOAT:

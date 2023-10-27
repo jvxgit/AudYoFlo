@@ -4252,6 +4252,552 @@ namespace jvx {
 			}
 			return JVX_ERROR_ELEMENT_NOT_FOUND;
 		}
+	
+		jvxHandle* genericDataBufferAllocate1D(jvxDataFormat form, jvxSize num)
+		{
+			jvxHandle* bufRet = nullptr;
+			switch (form)
+			{
+			case JVX_DATAFORMAT_DOUBLE:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, double, num);
+				break;
+			case JVX_DATAFORMAT_FLOAT:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, float, num);
+				break;
+			case JVX_DATAFORMAT_DATA:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxData, num);
+				break;
+
+			case JVX_DATAFORMAT_64BIT_LE:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxInt64, num);
+				break;
+			case JVX_DATAFORMAT_U64BIT_LE:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxUInt64, num);
+				break;
+
+			case JVX_DATAFORMAT_32BIT_LE:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxInt32, num);
+				break;
+			case JVX_DATAFORMAT_U32BIT_LE:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxUInt32, num);
+				break;
+
+			case JVX_DATAFORMAT_16BIT_LE:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxInt16, num);
+				break;
+			case JVX_DATAFORMAT_U16BIT_LE:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxUInt16, num);
+				break;
+
+			case JVX_DATAFORMAT_8BIT:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxInt8, num);
+				break;
+			case JVX_DATAFORMAT_U8BIT:
+				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(bufRet, jvxUInt8, num);
+				break;
+			default:
+				break;
+			}
+			return bufRet;
+		}
+
+		void genericDataBufferDeallocate(jvxHandle*& buf, jvxDataFormat form)
+		{
+			switch (form)
+			{
+			case JVX_DATAFORMAT_DOUBLE:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, double);
+				break;
+			case JVX_DATAFORMAT_FLOAT:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, float);
+				break;
+			case JVX_DATAFORMAT_DATA:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxData);
+				break;
+			case JVX_DATAFORMAT_64BIT_LE:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxInt64);
+				break;
+			case JVX_DATAFORMAT_U64BIT_LE:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxUInt64);
+				break;
+			case JVX_DATAFORMAT_32BIT_LE:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxInt32);
+				break;
+			case JVX_DATAFORMAT_U32BIT_LE:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxUInt32);
+				break;
+			case JVX_DATAFORMAT_16BIT_LE:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxInt16);
+				break;
+			case JVX_DATAFORMAT_U16BIT_LE:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxUInt16);
+				break;
+			case JVX_DATAFORMAT_8BIT:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxInt8);
+				break;
+			case JVX_DATAFORMAT_U8BIT:
+				JVX_SAFE_DELETE_FIELD_TYPE(buf, jvxUInt8);
+				break;
+			default:
+				break;
+			}
+		}
+
+		jvxErrorType genericDataBufferConvert(jvxHandle** bufsIn, jvxDataFormat formIn, jvxHandle** bufsOut, jvxDataFormat formOut, jvxSize nChans, jvxSize numElms)
+		{
+			jvxErrorType res = JVX_NO_ERROR;
+			jvxSize i;
+			switch (formOut)
+			{
+			case JVX_DATAFORMAT_DATA:
+				switch (formIn)
+				{
+				case JVX_DATAFORMAT_DATA:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(jvxData), numElms);
+					}
+					break;
+
+				case JVX_DATAFORMAT_DOUBLE:
+#ifdef JVX_DATA_FORMAT_DOUBLE
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(double), numElms);
+					}
+#else
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_float_to_data<double>((double*)bufsIn[i], (jvxData*)bufsOut[i], numElms);
+					}
+#endif
+					break;
+				case JVX_DATAFORMAT_FLOAT:
+#ifdef JVX_DATA_FORMAT_DOUBLE
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_float_to_data<float>((double*)bufsIn[i], (jvxData*)bufsOut[i], numElms);
+					}
+#else
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(float), numElms);
+					}
+#endif
+					break;
+
+				case JVX_DATAFORMAT_64BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt64, jvxData>(
+							(jvxInt64*)bufsIn[i],
+							(jvxData*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_64_DIV);
+					}
+					break;
+				case JVX_DATAFORMAT_32BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
+							(jvxInt32*)bufsIn[i],
+							(jvxData*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_32_DIV);
+					}
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, jvxData>(
+							(jvxInt16*)bufsIn[i],
+							(jvxData*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_16_DIV);
+					}
+					break;
+
+				case JVX_DATAFORMAT_8BIT:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt8, jvxData>(
+							(jvxInt8*)bufsIn[i],
+							(jvxData*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_8_DIV);
+					}
+					break;
+				default:
+					res = JVX_ERROR_UNSUPPORTED;
+				}
+				break;
+
+				// ===================================================================================================
+			case JVX_DATAFORMAT_DOUBLE:
+				switch (formIn)
+				{
+				case JVX_DATAFORMAT_DATA:
+#ifdef JVX_DATA_FORMAT_DOUBLE
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(double), numElms);
+					}
+#else
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_data_to_float<double>((jvxData*)bufsIn[i], (double*)bufsOut[i], numElms);
+					}
+#endif
+					break;
+
+				case JVX_DATAFORMAT_DOUBLE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(double), numElms);
+					}
+					break;
+
+				case JVX_DATAFORMAT_FLOAT:
+					
+					// This conversion should not be required!
+					res = JVX_ERROR_UNSUPPORTED;
+					break;
+
+				case JVX_DATAFORMAT_64BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt64, double>(
+							(jvxInt64*)bufsIn[i],
+							(double*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_64_DIV);
+					}
+					break;
+				case JVX_DATAFORMAT_32BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, double>(
+							(jvxInt32*)bufsIn[i],
+							(double*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_32_DIV);
+					}
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, double>(
+							(jvxInt16*)bufsIn[i],
+							(double*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_16_DIV);
+					}
+					break;
+
+				case JVX_DATAFORMAT_8BIT:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt8, double>(
+							(jvxInt8*)bufsIn[i],
+							(double*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_8_DIV);
+					}
+					break;
+				default:
+					res = JVX_ERROR_UNSUPPORTED;
+				}
+				break;
+
+				// ===================================================================================================
+			case JVX_DATAFORMAT_FLOAT:
+				switch (formIn)
+				{
+				case JVX_DATAFORMAT_DATA:
+#ifdef JVX_DATA_FORMAT_DOUBLE
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_data_to_float<float>((jvxData*)bufsIn[i], (float*)bufsOut[i], numElms);
+					}
+#else
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(float), numElms);
+					}
+#endif
+					break;
+
+				case JVX_DATAFORMAT_DOUBLE:				
+
+					// This conversion should not be required!
+					res = JVX_ERROR_UNSUPPORTED;
+					break;
+
+				case JVX_DATAFORMAT_FLOAT:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(float), numElms);
+					}
+					break;
+
+				case JVX_DATAFORMAT_64BIT_LE:
+
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt64, float>(
+							(jvxInt64*)bufsIn[i],
+							(float*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_64_DIV);
+					}
+					break;
+				case JVX_DATAFORMAT_32BIT_LE:
+
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, float>(
+							(jvxInt32*)bufsIn[i],
+							(float*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_32_DIV);
+					}
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, float>(
+							(jvxInt16*)bufsIn[i],
+							(float*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_16_DIV);
+					}
+					break;
+
+				case JVX_DATAFORMAT_8BIT:
+
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt8, float>(
+							(jvxInt8*)bufsIn[i],
+							(float*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_8_DIV);
+					}
+					break;
+				default:
+					res = JVX_ERROR_UNSUPPORTED;
+				}
+				break;
+			
+				// ==============================================================================================
+
+			case JVX_DATAFORMAT_64BIT_LE:
+				switch (formIn)
+				{
+				case JVX_DATAFORMAT_DATA:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt64>(
+							(jvxData*)bufsIn[i],
+							(jvxInt64*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_64_DATA);
+					}
+					break;
+
+				case JVX_DATAFORMAT_64BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(jvxInt64), numElms);
+					}
+					break;
+
+				case JVX_DATAFORMAT_32BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt32, jvxInt64, jvxInt64>(
+							(jvxInt32*)bufsIn[i], (jvxInt64*)bufsOut[i], numElms, 32);
+					}
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt16, jvxInt64, jvxInt64>(
+							(jvxInt16*)bufsIn[i], (jvxInt64*)bufsOut[i], numElms, 48);
+					}
+					break;
+				case JVX_DATAFORMAT_8BIT:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt8, jvxInt64, jvxInt64>(
+							(jvxInt8*)bufsIn[i], (jvxInt64*)bufsOut[i], numElms, 56);
+					}
+					break;
+				default:
+					res = JVX_ERROR_UNSUPPORTED;
+					break;
+				}
+
+				// ==============================================================================================
+
+			case JVX_DATAFORMAT_32BIT_LE:
+				switch (formIn)
+				{
+				case JVX_DATAFORMAT_DATA:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt32>(
+							(jvxData*)bufsIn[i],
+							(jvxInt32*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_32_DATA);
+					}
+					break;
+
+				case JVX_DATAFORMAT_64BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt64, jvxInt32, jvxInt64>(
+							(jvxInt64*)bufsIn[i], (jvxInt32*)bufsOut[i], numElms, 32);
+					}
+					break;
+
+				case JVX_DATAFORMAT_32BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(jvxInt32), numElms);
+					}
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt16, jvxInt32, jvxInt32>(
+							(jvxInt16*)bufsIn[i], (jvxInt32*)bufsOut[i], numElms, 16);
+					}
+					break;
+				case JVX_DATAFORMAT_8BIT:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt8, jvxInt32, jvxInt32>(
+							(jvxInt8*)bufsIn[i], (jvxInt32*)bufsOut[i], numElms, 24);
+					}
+					break;
+				default:
+					res = JVX_ERROR_UNSUPPORTED;
+					break;
+				}
+
+				// ==============================================================================================
+
+			case JVX_DATAFORMAT_16BIT_LE:
+				switch (formIn)
+				{
+				case JVX_DATAFORMAT_DATA:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt16>(
+							(jvxData*)bufsIn[i],
+							(jvxInt16*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_16_DATA);
+					}
+					break;
+
+				case JVX_DATAFORMAT_64BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt64, jvxInt16, jvxInt64>(
+							(jvxInt64*)bufsIn[i], (jvxInt16*)bufsOut[i], numElms, 48);
+					}
+					break;
+
+				case JVX_DATAFORMAT_32BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt32, jvxInt16, jvxInt32>(
+							(jvxInt32*)bufsIn[i], (jvxInt16*)bufsOut[i], numElms, 16);
+					}
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(jvxInt16), numElms);
+					}
+					break;
+				case JVX_DATAFORMAT_8BIT:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftleft_to_fxp<jvxInt8, jvxInt16, jvxInt16>(
+							(jvxInt8*)bufsIn[i], (jvxInt16*)bufsOut[i], numElms, 8);
+					}
+					break;
+				default:
+					res = JVX_ERROR_UNSUPPORTED;
+					break;
+				}
+
+				// ==============================================================================================
+
+			case JVX_DATAFORMAT_8BIT:
+				switch (formIn)
+				{
+				case JVX_DATAFORMAT_DATA:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt8>(
+							(jvxData*)bufsIn[i],
+							(jvxInt8*)bufsOut[i],
+							numElms,
+							JVX_MAX_INT_8_DATA);
+					}
+					break;
+
+				case JVX_DATAFORMAT_64BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt64, jvxInt8, jvxInt64>(
+							(jvxInt64*)bufsIn[i], (jvxInt8*)bufsOut[i], numElms, 56);
+					}
+					break;
+
+				case JVX_DATAFORMAT_32BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt32, jvxInt8, jvxInt32>(
+							(jvxInt32*)bufsIn[i], (jvxInt8*)bufsOut[i], numElms, 24);
+					}
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_from_fxp_shiftright_to_fxp<jvxInt16, jvxInt8, jvxInt16>(
+							(jvxInt16*)bufsIn[i], (jvxInt8*)bufsOut[i], numElms, 8);
+					}
+					break;
+				case JVX_DATAFORMAT_8BIT:
+					for (i = 0; i < nChans; i++)
+					{
+						jvx_convertSamples_memcpy(bufsIn[i], bufsOut[i], sizeof(jvxInt8), numElms);
+					}
+					break;
+				default:
+					res = JVX_ERROR_UNSUPPORTED;
+					break;
+				}
+			default:
+				res = JVX_ERROR_UNSUPPORTED;
+				break;
+			}
+			return res;
+		}
 	}
 
 	namespace align {

@@ -631,6 +631,11 @@ namespace jvx {
 		void debug_out_command_request(const CjvxReportCommandRequest& request, std::ostream& str, const std::string& tag);
 
 		jvxErrorType scanForFiles(const std::string& pathname, const std::string& ext, std::function< void(const std::string& fNamePath) > lambda, const std::string& wcName  ="*");
+		
+		jvxHandle* genericDataBufferAllocate1D(jvxDataFormat form, jvxSize num);
+		void genericDataBufferDeallocate(jvxHandle*& buf, jvxDataFormat form);
+
+		jvxErrorType genericDataBufferConvert(jvxHandle** bufsIn, jvxDataFormat formIn, jvxHandle** bufsOut, jvxDataFormat formOut, jvxSize nChans, jvxSize numElms);
 	}
 
 	namespace align {
