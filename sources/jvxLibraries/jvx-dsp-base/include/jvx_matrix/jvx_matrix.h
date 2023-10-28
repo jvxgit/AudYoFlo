@@ -32,8 +32,6 @@ typedef struct
 jvxDspBaseErrorType jvx_matrix_initConfig(jvx_matrix* theMatrix);
 jvxDspBaseErrorType jvx_matrix_prepare(jvx_matrix* theMatrix);
 jvxDspBaseErrorType jvx_matrix_postprocess(jvx_matrix* theMatrix);
-jvxDspBaseErrorType jvx_matrix_process_real(jvx_matrix* theMatrix, const void** in, void** out, jvxSize offset, jvxSize num);
-jvxDspBaseErrorType jvx_matrix_process_cplx(jvx_matrix* theMatrix, const void** in, void** out, jvxSize offset, jvxSize num);
 jvxDspBaseErrorType jvx_matrix_update(jvx_matrix* theMatrix, jvxInt16 whatToUpdate, jvxCBool do_set);
 
 JVX_DSP_LIB_END

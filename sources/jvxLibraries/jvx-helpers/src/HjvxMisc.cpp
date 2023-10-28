@@ -4376,7 +4376,7 @@ namespace jvx {
 #ifdef JVX_DATA_FORMAT_DOUBLE
 					for (i = 0; i < nChans; i++)
 					{
-						jvx_convertSamples_from_float_to_data<float>((double*)bufsIn[i], (jvxData*)bufsOut[i], numElms);
+						jvx_convertSamples_from_float_to_data<float>((float*)bufsIn[i], (jvxData*)bufsOut[i], numElms);
 					}
 #else
 					for (i = 0; i < nChans; i++)
