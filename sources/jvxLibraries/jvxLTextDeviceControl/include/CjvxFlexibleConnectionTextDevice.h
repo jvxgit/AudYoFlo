@@ -173,7 +173,8 @@ public:
 		else
 		{
 			res = JVX_ERROR_INTERNAL;
-			std::cout << "Failed to obtain file parser." << std::endl;
+			std::cout << __FUNCTION__ << ": Error: Failed to obtain file parser handle." << std::endl;
+			JVX_ASSERT(0);
 		}
 
 		if (cfProcObj)

@@ -228,4 +228,7 @@ JVX_INTERFACE IjvxGlobalInstance;
 
 #include "helpers/HjvxCastProduct.h"
 
+// Macros
+#include "macros/MjvxMacros.h"
+
 #endif

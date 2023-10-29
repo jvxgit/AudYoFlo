@@ -94,6 +94,8 @@ mexJvxHost::mexJvxHost(void) :
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
 	
+	CjvxPropertiesToMatlabConverter::converter = this;
+
 	this->externalCall.theObj = NULL;
 	this->externalCall.theGLobal = NULL;
 	externalCall.fromHost.theObj = NULL;

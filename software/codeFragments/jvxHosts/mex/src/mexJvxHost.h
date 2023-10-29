@@ -12,6 +12,7 @@
 #include <vector>
 #include "jvx.h"
 #include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
+#include "codeFragments/matlab_c/CjvxPropertiesToMatlabConverter.h"
 #include "commandline/CjvxCommandLine.h"
 #include "common/CjvxRealtimeViewer.h"
 #include "typedefs/tools/TjvxExternalCall.h"
@@ -39,7 +40,8 @@
 #define MEX_PARAMETER_ERROR_STRING_MATCH(p, id) this->report_simple_text_message(((std::string)"Parameter <" + p + ", #" + jvx_int2String(id) + "> does not match any of the allowed options.").c_str(), JVX_REPORT_PRIORITY_ERROR);
 #define TIMEOUT_WAIT_MAX_PROCESS_COMPLETE_MS 5000
 
-class mexJvxHost: public CjvxCToMatlabConverter, public IjvxReport, 
+class mexJvxHost: public CjvxCToMatlabConverter, public CjvxPropertiesToMatlabConverter,
+	public IjvxReport,
 	public IjvxSequencer_report, public CjvxReportMessageQueue, 
 	public IjvxPrintf , public JVX_APPHOST_PRODUCT_CLASSNAME
 {
@@ -317,11 +319,6 @@ public:
 
 	void mexReturnSequencerStatus(mxArray*& plhs, jvxSequencerStatus status, jvxSize idxSeq, jvxSequencerQueueType qTp, jvxSize idxStep, jvxBool loopEn);
 
-	void mexReturnStructOneProperty(mxArray*& plhs, jvxPropertyCategoryType catProperty, jvxUInt64 allowStateMask, jvxUInt64 allowThreadingMask,
-			jvxDataFormat format, jvxSize numElms, jvxPropertyAccessType accessType, jvxPropertyDecoderHintType decHtTp, jvxSize hdlIdx,
-			jvxPropertyContext context, const std::string& name, const std::string& description, const std::string& descriptor,
-		jvxBool isValid, jvxFlagTag accessFlags);
-
 	jvxErrorType mexReturnPropertyNumerical(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms, 
 		jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
 	jvxErrorType mexReturnPropertyNumericalSize(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms, jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
@@ -330,8 +327,6 @@ public:
 
 	jvxErrorType mexReturnPropertyOthers(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms, jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
 	jvxErrorType mexReturnPropertyOthers(mxArray*& plhs, jvxDataFormat format, jvxSize numElms, const char* descr, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
-
-	void mexReturnStructProperties(mxArray*& plhs, jvx_propertyReferenceTriple& theTriple);
 
 	jvxErrorType copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, 
 		jvxPropertyCategoryType cat, jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);

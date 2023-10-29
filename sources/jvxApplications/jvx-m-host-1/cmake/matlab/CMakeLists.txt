@@ -39,12 +39,16 @@ set(LOCAL_SOURCES
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/target/entryMex.cpp
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common/realtimeViewer_helpers.cpp
   ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.cpp
+  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxPropertiesToMatlabConverter.cpp
   
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexJvxHost_specific.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexJvxHost_hooks.cpp
 
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src/mexJvxHost.h
+
   ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.h
+  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxPropertiesToMatlabConverter.h
+
    ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src/mexCmdMapperJvxHost.h
 
    ${JVX_SUBPRODUCT_ROOT}/software/codeFragments/jvxHosts/common/jvx_sequencer_common_audio_video.cpp

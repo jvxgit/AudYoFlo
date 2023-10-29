@@ -211,7 +211,7 @@ private:
 
 	IjvxFlexibleTextControlDevice_interact* interact;
 	std::string fname;
-	CjvxProperties* propRef;
+	CjvxProperties* propRef = nullptr;
 	jvxBool verbose_out;
 
 	std::map<std::string, oneDefinitionPropRef> lst_proprefs;

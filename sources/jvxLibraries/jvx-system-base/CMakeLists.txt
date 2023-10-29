@@ -145,6 +145,8 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/tools/TjvxTextLog.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/tools/TjvxWebServer.h
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/macros/MjvxMacros.h
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/helpers/HjvxCastMin.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/helpers/HjvxCast.h
 
