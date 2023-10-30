@@ -39,6 +39,18 @@ public:
 		jvxPropertyContext context, const std::string& name, const std::string& description, const std::string& descriptor,
 		jvxBool isValid, jvxFlagTag accessFlags);
 
+	jvxErrorType mexGetPropertyCore(mxArray*& arr, jvx_propertyReferenceTriple& theTriple, const std::string& descString, jvxSize offset, std::string& errMessOnReturn);
+
+	jvxErrorType mexReturnPropertyNumerical(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms,
+		jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
+	jvxErrorType mexReturnPropertyNumericalSize(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms, jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
+	jvxErrorType mexReturnPropertyNumerical(mxArray*& plhs, jvxDataFormat format, jvxSize numElms, const char* descr, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
+	jvxErrorType mexReturnPropertyNumericalSize(mxArray*& plhs, jvxDataFormat format, jvxSize numElms, const char* descr, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
+
+	jvxErrorType mexReturnPropertyOthers(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms, jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
+	jvxErrorType mexReturnPropertyOthers(mxArray*& plhs, jvxDataFormat format, jvxSize numElms, const char* descr, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
+
+
 };
 
 #endif

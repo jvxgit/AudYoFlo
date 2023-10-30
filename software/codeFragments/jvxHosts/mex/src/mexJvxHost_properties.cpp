@@ -992,121 +992,33 @@ mexJvxHost::get_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 			{
 				jvx_initPropertyReferenceTriple(&theTriple);
 				jvx_getReferencePropertiesObject(involvedHost.hHost, &theTriple, tpAll[tpC]);
-
-				if(theTriple.theProps)
+				
+				if (theTriple.theProps)
 				{
-					// Map given unique id to one specific property. We need the format and other infos before accessing the content
-					idProp.descriptor = descString.c_str();
-					res = theTriple.theProps->description_property(callGate, descr, idProp);
-
-				       if(res == JVX_NO_ERROR && (callGate.access_protocol == JVX_ACCESS_PROTOCOL_OK))
+					// This
+					if (nlhs > 1)
 					{
-						switch(descr.format)
+						std::string errMessOnReturn;
+						res = mexGetPropertyCore(plhs[1], theTriple, descString, offset, errMessOnReturn);
+						if (res == JVX_NO_ERROR)
 						{
-						case JVX_DATAFORMAT_8BIT:
-						case JVX_DATAFORMAT_16BIT_LE:
-						case JVX_DATAFORMAT_32BIT_LE:
-						case JVX_DATAFORMAT_64BIT_LE:
-						case JVX_DATAFORMAT_U8BIT:
-						case JVX_DATAFORMAT_U16BIT_LE:
-						case JVX_DATAFORMAT_U32BIT_LE:
-						case JVX_DATAFORMAT_U64BIT_LE:
-						case JVX_DATAFORMAT_DATA:
-							
-							if(nlhs > 1)
-							{
-								resL = mexReturnPropertyNumerical(plhs[1], descr.format, descr.num, descString.c_str(), theTriple, offset);
-							}
-							if (resL == JVX_NO_ERROR)
-							{
-								if (nlhs > 0)
-								{
-									this->mexReturnBool(plhs[0], true);
-								}
-							}
-							else
-							{
-								if (nlhs > 0)
-								{
-									this->mexReturnBool(plhs[0], false);
-								}
-								this->mexReturnAnswerNegativeResult(plhs[1], internalErrorMessage + "Component request returned error message <" +
-									jvxErrorType_descr(resL) + ">.", res);
-							}
-							fillEmptyCnt = 2;
-							break;
-						case JVX_DATAFORMAT_SIZE:
-							
-							if (nlhs > 1)
-							{
-								resL = mexReturnPropertyNumericalSize(plhs[1], descr.format, descr.num, descString.c_str(), theTriple, offset);
-							}
-							if (resL == JVX_NO_ERROR)
-							{
-								if (nlhs > 0)
-								{
-									this->mexReturnBool(plhs[0], true);
-								}
-							}
-							else
-							{
-								if (nlhs > 0)
-								{
-									this->mexReturnBool(plhs[0], false);
-								}
-								this->mexReturnAnswerNegativeResult(plhs[1], internalErrorMessage + "Component request returned error message <" +
-									jvxErrorType_descr(resL) + ">.", res);
-							}
-							fillEmptyCnt = 2;
-							break;
-						case JVX_DATAFORMAT_SELECTION_LIST:
-						case JVX_DATAFORMAT_STRING:
-						case JVX_DATAFORMAT_STRING_LIST:
-						case JVX_DATAFORMAT_VALUE_IN_RANGE:
-							
-							if(nlhs > 1)
-							{
-								resL = this->mexReturnPropertyOthers(plhs[1], descr.format, descr.num, descString.c_str(), theTriple, offset);
-							}
-							if (resL == JVX_NO_ERROR)
-							{
-								if (nlhs > 0)
-								{
-									this->mexReturnBool(plhs[0], true);
-								}
-							}
-							else
-							{
-								if (nlhs > 0)
-								{
-									this->mexReturnBool(plhs[0], false);
-								}
-								this->mexReturnAnswerNegativeResult(plhs[1], internalErrorMessage + "Component request returned error message <" +
-									jvxErrorType_descr(resL) + ">.", res);
-							}
-							fillEmptyCnt = 2;
-							break;
-						default:
-							if(nlhs > 0)
-							{
-								this->mexReturnBool(plhs[0], false);
-							}
-							if(nlhs > 1)
-							{
-								this->mexReturnAnswerNegativeResult(plhs[1], internalErrorMessage + "Request for unsupported property type.", JVX_ERROR_UNSUPPORTED);
-							}
-							fillEmptyCnt = 2;
+							this->mexReturnBool(plhs[0], true);							
 						}
+						else
+						{
+							assert(plhs[0] == nullptr);
+							this->mexReturnBool(plhs[0], false);
+							this->mexReturnAnswerNegativeResult(plhs[1], errMessOnReturn, res );
+						}
+						fillEmptyCnt = 2;
 					}
 					else
 					{
-						if(nlhs > 0)
-							this->mexReturnBool(plhs[0], false);
-						if(nlhs > 1)
+						if (nlhs > 0)
 						{
-							this->mexReturnAnswerNegativeResult(plhs[1], internalErrorMessage + "Did not find property with specified descriptor tag.", JVX_ERROR_ELEMENT_NOT_FOUND);
+							// Not enough output args
+							this->mexReturnBool(plhs[0], false);
 						}
-						fillEmptyCnt = 2;
 					}
 					jvx_returnReferencePropertiesObject(involvedHost.hHost, &theTriple, tpAll[tpC]);
 				}
