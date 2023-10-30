@@ -18,7 +18,7 @@
 #endif
 
 #include "CjvxPropertiesToMatlabConverter.h"
-#include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
+#include "CjvxCToMatlabConverter.h"
 
 #define ERROR_MESSAGE_REPORT(fct) ((std::string)"Internal error when using CjvxPropertiesToMatlabConverter, member function " + fct + (std::string)", reason: ")
 

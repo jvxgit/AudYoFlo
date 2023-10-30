@@ -5,12 +5,12 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${JVX_BASE_ROOT}/software/codeFragments/matlab_c
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
   )
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexConfigWriter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../target/entryMex.cpp
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.cpp
   )
 
 link_directories(
@@ -23,6 +23,7 @@ set(LOCAL_LIBS jvxTconfigProcessor_static)
 set(BUILD_MEX_MATLAB TRUE)
 
 set(INSTALL_TARGET_NAME_MATLAB "jvxConfigWrite")
+set(LOCAL_MAT_LIBS ayf-mex-connect_m_static)
 set(LOCAL_START_SCRIPT_MATLAB ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/${JVX_OS}/startConfigWriter_mat)
 set(LOCAL_START_SCRIPT_MATLAB_SCRIPT_NAME jvx-cfgw-mat)
 install(PROGRAMS ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/scripts/m-files/jvx_start_rtproc.m DESTINATION ${INSTALL_PATH_SCRIPTS} COMPONENT "release")

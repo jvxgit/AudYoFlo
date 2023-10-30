@@ -14,7 +14,7 @@
 
 #include "mex.h"
 #include "jvx.h"
-#include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
+#include "CjvxCToMatlabConverter.h"
 #include "common/CjvxObject.h"
 
 #include <list>

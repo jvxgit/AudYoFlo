@@ -4,13 +4,12 @@ include(${JVX_CMAKE_DIR}/common_local_mex_head.cmake)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogReader
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
   )
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexFileReader.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../target/entryMex.cpp
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.cpp
   )
 
 link_directories(
@@ -24,6 +23,7 @@ set(LOCAL_LIBS jvxTDataLogReader_static)
 set(BUILD_MEX_MATLAB TRUE)
 
 set(LOCAL_M_FILES_SOURCE_DIR "../../m-files")
+set(LOCAL_MAT_LIBS ayf-mex-connect_m_static)
 set(INSTALL_TARGET_NAME_MATLAB "jvxLogRead")
 set(LOCAL_START_SCRIPT_MATLAB "../../scripts/${JVX_OS}/startLogReader_mat")
 set(LOCAL_START_SCRIPT_OCTAVE "../../scripts/${JVX_OS}/startLogReader_oct")

@@ -38,7 +38,7 @@ extern "C"
 #define SZ_MAT_TYPE int
 #endif
 
-#include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
+#include "CjvxCToMatlabConverter.h"
 
 #define CLIP_VALUE 0.99
 #define SMOOTH_LEVELS 0.995

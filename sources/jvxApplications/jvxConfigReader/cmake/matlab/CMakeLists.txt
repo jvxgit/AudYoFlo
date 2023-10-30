@@ -9,12 +9,12 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${JVX_BASE_ROOT}/software/codeFragments/matlab_c
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
   )
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexConfigReader.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../target/entryMex.cpp
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.cpp
   )
 
 set(LOCAL_M_FILES_SOURCE_DIR "../../m-files/matlab;${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/m-files/mex")
@@ -26,7 +26,7 @@ link_directories(
 set(LOCAL_LIBS jvxTconfigProcessor_static)
 
 set(BUILD_MEX_MATLAB TRUE)
-
+set(LOCAL_MAT_LIBS ayf-mex-connect_m_static)
 set(INSTALL_TARGET_NAME_MATLAB "jvxConfigRead")
 set(LOCAL_START_SCRIPT_MATLAB ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/${JVX_OS}/startConfigReader_mat)
 set(LOCAL_START_SCRIPT_MATLAB_SCRIPT_NAME jvx-cfgr-mat)

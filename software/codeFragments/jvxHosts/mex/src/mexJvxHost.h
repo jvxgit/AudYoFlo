@@ -11,8 +11,8 @@
 
 #include <vector>
 #include "jvx.h"
-#include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
-#include "codeFragments/matlab_c/CjvxPropertiesToMatlabConverter.h"
+#include "CjvxCToMatlabConverter.h"
+#include "CjvxPropertiesToMatlabConverter.h"
 #include "commandline/CjvxCommandLine.h"
 #include "common/CjvxRealtimeViewer.h"
 #include "typedefs/tools/TjvxExternalCall.h"

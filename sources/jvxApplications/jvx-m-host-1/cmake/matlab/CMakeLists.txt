@@ -26,6 +26,7 @@ include_directories(
 
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-app-host/include
    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include
+   ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
   )
 
 set(LOCAL_SOURCES
@@ -38,16 +39,14 @@ set(LOCAL_SOURCES
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src/mexJvxHost_properties.cpp
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/target/entryMex.cpp
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common/realtimeViewer_helpers.cpp
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.cpp
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxPropertiesToMatlabConverter.cpp
   
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexJvxHost_specific.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexJvxHost_hooks.cpp
 
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src/mexJvxHost.h
 
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.h
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxPropertiesToMatlabConverter.h
+  # ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.h
+  # ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxPropertiesToMatlabConverter.h
 
    ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src/mexCmdMapperJvxHost.h
 
@@ -98,6 +97,8 @@ if(JVX_USE_PART_ALSA)
 endif()
 
 set(BUILD_MEX_MATLAB TRUE)
+set(LOCAL_MAT_LIBS ayf-mex-connect_m_static)
+
 set(LOCAL_M_FILES_SOURCE_DIR "../../m-files/matlab;${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/m-files/mex")
 # set(INSTALL_TARGET_NAME_MATLAB "jvxHostRt")
 set(JVX_RENAME_RELEASE "jvxHostRt")

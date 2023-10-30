@@ -2,7 +2,7 @@
 #define __JVXCTOMATLABCONVERTER_H__
 
 #include "jvx.h"
-#include "codeFragments/matlab_c/HjvxMex2CConverter.h"
+#include "HjvxMex2CConverter.h"
 
 #define FLD_NAME_ERROR_DESCRIPTION_STRING "DESCRIPTION_STRING"
 #define FLD_NAME_ERROR_ID_INT32 "ERRORID_INT32"

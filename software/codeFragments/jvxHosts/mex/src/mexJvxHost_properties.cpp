@@ -1,6 +1,6 @@
 #include "mexJvxHost.h"
 #include "realtimeViewer_helpers.h"
-#include "codeFragments/matlab_c/HjvxMex2CConverter.h"
+#include "HjvxMex2CConverter.h"
 
 jvxErrorType 
 mexJvxHost::info_properties(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])

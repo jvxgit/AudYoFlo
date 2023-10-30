@@ -1,6 +1,6 @@
 #include "mexJvxHost.h"
 #include "mexCmdMapperJvxHost.h"
-#include "codeFragments/matlab_c/HjvxMex2CConverter.h"
+#include "HjvxMex2CConverter.h"
 #include "CjvxJson.h"
 
 void

@@ -17,8 +17,8 @@
 #define SZ_MAT_TYPE int
 #endif
 
-#include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
-#include "codeFragments/matlab_c/HjvxMex2CConverter.h"
+#include "CjvxCToMatlabConverter.h"
+#include "HjvxMex2CConverter.h"
 
 //======================================================================
 //======================================================================

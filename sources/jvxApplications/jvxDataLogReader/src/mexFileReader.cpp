@@ -13,7 +13,7 @@
 
 #include "mexFileReader.h"
 #include "mexCommandsFileReader.h"
-#include "codeFragments/matlab_c/HjvxMex2CConverter.h"
+#include "HjvxMex2CConverter.h"
 #include "jvx-helpers.h"
 #include "CjvxCToMatlabConverter.h"
 

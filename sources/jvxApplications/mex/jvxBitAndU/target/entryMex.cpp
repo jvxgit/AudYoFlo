@@ -34,7 +34,7 @@
 #define SZ_MAT_TYPE int
 #endif
 
-#include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
+#include "CjvxCToMatlabConverter.h"
 
 /**
  * C-style entry from MATLAB to MEX component.

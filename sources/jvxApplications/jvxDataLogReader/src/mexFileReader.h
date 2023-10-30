@@ -19,7 +19,7 @@
 
 #include <vector>
 #include "jvx.h"
-#include "codeFragments/matlab_c/CjvxCToMatlabConverter.h"
+#include "CjvxCToMatlabConverter.h"
 /**
  * Object to wrap the fileReading functionality. This class dispatches 
  * MEX functioncalls to the underlying library component for fileReading

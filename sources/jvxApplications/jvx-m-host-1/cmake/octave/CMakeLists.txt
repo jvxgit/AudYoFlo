@@ -38,7 +38,6 @@ set(LOCAL_SOURCES
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/src/mexJvxHost_properties.cpp
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/mex/target/entryMex.cpp
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common/realtimeViewer_helpers.cpp
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.cpp
   
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexJvxHost_specific.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/mexJvxHost_hooks.cpp
@@ -89,6 +88,7 @@ if(JVX_USE_PART_ALSA)
 endif()
 
 set(BUILD_MEX_OCTAVE TRUE)
+set(LOCAL_OCT_LIBS ayf-mex-connect_o_static)
 set(LOCAL_M_FILES_SOURCE_DIR "../../m-files/octave;${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/m-files/mex")
 set(JVX_RENAME_RELEASE "jvxHostRt")
 set(LOCAL_COMPILE_DEFINITIONS "CONFIG_COMPILE_FOR_OCTAVE;JVX_MATLAB_RT_AUDIO")
