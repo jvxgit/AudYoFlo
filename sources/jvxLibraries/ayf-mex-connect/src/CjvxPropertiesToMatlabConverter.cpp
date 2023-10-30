@@ -2195,10 +2195,7 @@ CjvxPropertiesToMatlabConverter::mexSetPropertyCore(mxArray*& arrOut,
 			res = copyDataToComponentNumerical(prhs[nrhs_off], theTriple, descr.format, descr.num, descString.c_str(), offset, &callGate.access_protocol);
 			if (JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, descString, theTriple.theProps))
 			{
-				if(arrOut)
-				{
-					converter->mexReturnBool(arrOut, true);
-				}
+				converter->mexReturnBool(arrOut, true);
 			}
 			else
 			{
@@ -2219,10 +2216,7 @@ CjvxPropertiesToMatlabConverter::mexSetPropertyCore(mxArray*& arrOut,
 			res = copyDataToComponentOthers(&prhs[nrhs_off], nrhs - nrhs_off, theTriple, descr.format, descr.num, descString.c_str(), offset, &callGate.access_protocol);
 			if (JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, descString, theTriple.theProps))
 			{
-				if (arrOut)
-				{
-					converter->mexReturnBool(arrOut, true);
-				}
+				converter->mexReturnBool(arrOut, true);
 			}
 			else
 			{
