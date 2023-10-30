@@ -672,6 +672,1405 @@ CjvxPropertiesToMatlabConverter::mexReturnPropertyOthers(mxArray*& plhs, jvxData
 	return res;
 }
 
+// ===================================================================================
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxPropertyCategoryType cat, jvxDataFormat format,
+	jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt)
+{
+	/* For numeric properties, expect a simple buffer of values */
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxHandle* data = NULL;
+	jvxCallManagerProperties callGate;
+	numTypeConvert inputConvert = { 0 };
+
+	switch (format)
+	{
+	case JVX_DATAFORMAT_DATA:
+		if (mxIsData(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_64BIT_LE:
+		if (mxIsInt64(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_32BIT_LE:
+		if (mxIsInt32(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_16BIT_LE:
+		if (mxIsInt16(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_8BIT:
+		if (mxIsInt8(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_U64BIT_LE:
+		if (mxIsUint64(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_U32BIT_LE:
+		if (mxIsUint32(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_U16BIT_LE:
+		if (mxIsUint16(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_U8BIT:
+		if (mxIsUint8(prhs))
+		{
+			if (mxGetM(prhs) == 1)
+			{
+				if (mxGetN(prhs) == numElms)
+				{
+					data = mxGetData(prhs);
+				}
+			}
+		}
+		break;
+	}
+
+	if (!data)
+	{
+		/*
+		jvxData singleDat = 0;
+		jvxInt8 singleInt8 = 0;
+		jvxInt16 singleInt16 = 0;
+		jvxInt32 singleInt32 = 0;
+		jvxInt64 singleInt64 = 0;
+		jvxInt8 singleInt8 = 0;
+		jvxUInt16 singleUInt16 = 0;
+		jvxUInt32 singleUInt32 = 0;
+		jvxUInt64 singleUInt64 = 0;
+		*/
+		if (numElms == 1)
+		{
+			if (convertSingleNumericalUnion(format, inputConvert, prhs) == JVX_NO_ERROR)
+			{
+				data = &inputConvert;
+			}
+		}
+	}
+
+	if (data)
+	{
+		jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(uniqueId, cat);
+		jvx::propertyDetail::CjvxTranferDetail trans(true);
+
+		res = theTriple.theProps->set_property(callGate,
+			jPRG(data, numElms, format), ident, trans);
+		if (accProt)
+			*accProt = callGate.access_protocol;
+	}
+	else
+	{
+		res = JVX_ERROR_INVALID_ARGUMENT;
+	}
+	return(res);
+}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::copyDataToComponentNumericalSize(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxPropertyCategoryType cat,
+	jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt)
+{
+	/* For numeric properties, expect a simple buffer of values */
+	jvxSize i;
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxHandle* data = NULL;
+	jvxSize* dataSz = NULL;
+	jvxCallManagerProperties callGate;
+	assert(format == JVX_DATAFORMAT_SIZE);
+	if (mxIsInt32(prhs))
+	{
+		if (mxGetM(prhs) == 1)
+		{
+			if (mxGetN(prhs) == numElms)
+			{
+				data = mxGetData(prhs);
+				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(dataSz, jvxSize, numElms);
+				for (i = 0; i < numElms; i++)
+				{
+					dataSz[i] = JVX_INT_SIZE(((jvxInt32*)data)[i]);
+				}
+			}
+		}
+	}
+
+	if (dataSz)
+	{
+		jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(uniqueId, cat);
+		jvx::propertyDetail::CjvxTranferDetail trans(true);
+
+
+		res = theTriple.theProps->set_property(callGate,
+			jPRG(dataSz, numElms, format), ident, trans);
+		if (accProt)
+			*accProt = callGate.access_protocol;
+		JVX_DSP_SAFE_DELETE_FIELD(dataSz);
+	}
+	else
+	{
+		res = JVX_ERROR_INVALID_ARGUMENT;
+	}
+	return(res);
+}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format, jvxSize numElms,
+	const char* descr, jvxSize offset, jvxAccessProtocol* accProt)
+{
+	/* For numeric properties, expect a simple buffer of values */
+
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxHandle* data = NULL;
+	jvxCallManagerProperties callGate;
+	jvxData* data_dat = NULL;
+	jvxSize* data_sz = NULL;
+	jvxInt64* data_int64 = NULL;
+	jvxInt32* data_int32 = NULL;
+	jvxInt16* data_int16 = NULL;
+	jvxInt8* data_int8 = NULL;
+	jvxUInt64* data_uint64 = NULL;
+	jvxUInt32* data_uint32 = NULL;
+	jvxUInt16* data_uint16 = NULL;
+	jvxUInt8* data_uint8 = NULL;
+	jvxBool formatFits = false;
+	jvxHandle* data_setprop = NULL;
+
+	if (mxGetM(prhs) == 1)
+	{
+		if (mxGetN(prhs) == numElms)
+		{
+			formatFits = true;
+		}
+	}
+
+	if (formatFits)
+	{
+		switch (format)
+		{
+		case JVX_DATAFORMAT_DATA:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_dat, jvxData, numElms);
+			data_setprop = data_dat;
+			break;
+		case JVX_DATAFORMAT_SIZE:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_sz, jvxSize, numElms);
+			data_setprop = data_sz;
+			break;
+		case JVX_DATAFORMAT_64BIT_LE:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int64, jvxInt64, numElms);
+			data_setprop = data_int64;
+			break;
+		case JVX_DATAFORMAT_32BIT_LE:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int32, jvxInt32, numElms);
+			data_setprop = data_int32;
+			break;
+		case JVX_DATAFORMAT_16BIT_LE:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int16, jvxInt16, numElms);
+			data_setprop = data_int16;
+			break;
+		case JVX_DATAFORMAT_8BIT:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int8, jvxInt8, numElms);
+			data_setprop = data_int8;
+			break;
+		case JVX_DATAFORMAT_U64BIT_LE:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint64, jvxUInt64, numElms);
+			data_setprop = data_uint64;
+			break;
+		case JVX_DATAFORMAT_U32BIT_LE:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint32, jvxUInt32, numElms);
+			data_setprop = data_uint32;
+			break;
+		case JVX_DATAFORMAT_U16BIT_LE:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint16, jvxUInt16, numElms);
+			data_setprop = data_uint16;
+			break;
+		case JVX_DATAFORMAT_U8BIT:
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint8, jvxUInt8, numElms);
+			data_setprop = data_uint8;
+			break;
+		}
+
+		convert_mat_buf_c_buf_1_x_N(data_setprop, format, numElms, prhs);
+
+		if (data_setprop)
+		{
+			res = jvx_set_property(theTriple.theProps, data_setprop, offset, numElms, format, true, descr, callGate);
+			if (accProt)
+				*accProt = callGate.access_protocol;
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_ARGUMENT;
+		}
+
+		switch (format)
+		{
+		case JVX_DATAFORMAT_DATA:
+			JVX_DSP_SAFE_DELETE_FIELD(data_dat);
+			break;
+		case JVX_DATAFORMAT_SIZE:
+			JVX_DSP_SAFE_DELETE_FIELD(data_sz);
+			break;
+		case JVX_DATAFORMAT_64BIT_LE:
+			JVX_DSP_SAFE_DELETE_FIELD(data_int64);
+			break;
+		case JVX_DATAFORMAT_32BIT_LE:
+			JVX_DSP_SAFE_DELETE_FIELD(data_int32);
+			break;
+		case JVX_DATAFORMAT_16BIT_LE:
+			JVX_DSP_SAFE_DELETE_FIELD(data_int16);
+			break;
+		case JVX_DATAFORMAT_8BIT:
+			JVX_DSP_SAFE_DELETE_FIELD(data_int8);
+			break;
+		case JVX_DATAFORMAT_U64BIT_LE:
+			JVX_DSP_SAFE_DELETE_FIELD(data_uint64);
+			break;
+		case JVX_DATAFORMAT_U32BIT_LE:
+			JVX_DSP_SAFE_DELETE_FIELD(data_uint32);
+			break;
+		case JVX_DATAFORMAT_U16BIT_LE:
+			JVX_DSP_SAFE_DELETE_FIELD(data_uint16);
+			break;
+		case JVX_DATAFORMAT_U8BIT:
+			JVX_DSP_SAFE_DELETE_FIELD(data_uint8);
+			break;
+		}
+	}
+	return(res);
+}
+
+#define JVX_CONVERSION_LOOP(failedTransfer, dat_src, jvx_dest, N, TPConvert, FConvert ) \
+	if (dat_src) \
+	{ \
+		jvxSize i; \
+		failedTransfer = false; \
+		for (i = 0; i < N; i++) \
+		{ \
+			TPConvert tmp = (TPConvert)dat_src[i]; \
+			jvx_dest[i] = FConvert(tmp); \
+		} \
+	}
+
+#define JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_src, jvx_dest, N, TPConvert, FConvert, LMax, LMin ) \
+	if (dat_src) \
+	{ \
+		jvxSize i; \
+		failedTransfer = false; \
+		for (i = 0; i < N; i++) \
+		{ \
+			TPConvert tmp = (TPConvert)dat_src[i]; \
+			tmp = JVX_MIN(tmp, LMax); \
+			tmp = JVX_MAX(tmp, LMin); \
+			jvx_dest[i] = FConvert(tmp); \
+		} \
+	}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jvxDataFormat format, jvxSize N, const mxArray* prhs)
+{
+	double* dat_dbl = NULL;
+	float* dat_flt = NULL;
+
+	jvxInt64* dat_int64 = NULL;
+	jvxInt32* dat_int32 = NULL;
+	jvxInt16* dat_int16 = NULL;
+	jvxInt8* dat_int8 = NULL;
+	jvxUInt64* dat_uint64 = NULL;
+	jvxUInt32* dat_uint32 = NULL;
+	jvxUInt16* dat_uint16 = NULL;
+	jvxUInt8* dat_uint8 = NULL;
+
+	jvxData* jvx_data = NULL;
+	jvxInt64* jvx_int64 = NULL;
+	jvxInt32* jvx_int32 = NULL;
+	jvxInt16* jvx_int16 = NULL;
+	jvxInt8* jvx_int8 = NULL;
+	jvxUInt64* jvx_uint64 = NULL;
+	jvxUInt32* jvx_uint32 = NULL;
+	jvxUInt16* jvx_uint16 = NULL;
+	jvxUInt8* jvx_uint8 = NULL;
+	jvxSize* jvx_sz = NULL;
+
+	jvxSize i;
+
+	if (mxIsDouble(prhs))
+	{
+		dat_dbl = (double*)mxGetData(prhs);
+	}
+	else if (mxIsSingle(prhs))
+	{
+		dat_flt = (float*)mxGetData(prhs);
+	}
+	else if (mxIsInt64(prhs))
+	{
+		dat_int64 = (jvxInt64*)mxGetData(prhs);
+	}
+	else if (mxIsInt32(prhs))
+	{
+		dat_int32 = (jvxInt32*)mxGetData(prhs);
+	}
+	else if (mxIsInt16(prhs))
+	{
+		dat_int16 = (jvxInt16*)mxGetData(prhs);
+	}
+	else if (mxIsInt8(prhs))
+	{
+		dat_int8 = (jvxInt8*)mxGetData(prhs);
+	}
+	else if (mxIsUint64(prhs))
+	{
+		dat_uint64 = (jvxUInt64*)mxGetData(prhs);
+	}
+	else if (mxIsUint32(prhs))
+	{
+		dat_uint32 = (jvxUInt32*)mxGetData(prhs);
+	}
+	else if (mxIsUint16(prhs))
+	{
+		dat_uint16 = (jvxUInt16*)mxGetData(prhs);
+	}
+	else if (mxIsUint8(prhs))
+	{
+		dat_uint8 = (jvxUInt8*)mxGetData(prhs);
+	}
+
+	// Now, convert
+	switch (format)
+	{
+	case JVX_DATAFORMAT_DATA:
+		jvx_data = (jvxData*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_64BIT_LE:
+		jvx_int64 = (jvxInt64*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_32BIT_LE:
+		jvx_int32 = (jvxInt32*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_16BIT_LE:
+		jvx_int16 = (jvxInt16*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_8BIT:
+		jvx_int8 = (jvxInt8*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U64BIT_LE:
+		jvx_uint64 = (jvxUInt64*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U32BIT_LE:
+		jvx_uint32 = (jvxUInt32*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U16BIT_LE:
+		jvx_uint16 = (jvxUInt16*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U8BIT:
+		jvx_uint8 = (jvxUInt8*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_SIZE:
+		jvx_sz = (jvxSize*)data_setprops;
+		break;
+	}
+
+	jvxBool failedTransfer = true;
+
+	if (jvx_data)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_data, N, double, (jvxData));
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_data, N, jvxData, );
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_data, N, jvxData, );
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_data, N, jvxData, );
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_data, N, jvxData, );
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_data, N, jvxData, );
+		}
+	}
+	else if (jvx_sz)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+	}
+	else if (jvx_int64)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_int64, N, jvxInt64, );
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+	}
+	else if (jvx_int32)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_int32, N, jvxInt32, );
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+	}
+	else if (jvx_int16)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_int16, N, jvxInt16, );
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int16, N, jvxData, JVX_DATA2INT16);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint16, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int16, N, jvxData, JVX_DATA2INT16);
+		}
+	}
+	else if (jvx_int8)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int16, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int8, N, jvxInt8, );
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint16, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint8, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+	}
+
+	else if (jvx_uint64)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_uint64, N, jvxUInt64, );
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+	}
+	else if (jvx_uint32)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int8, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_uint32, N, jvxUInt32, );
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
+		}
+	}
+	else if (jvx_int16)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int16, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_uint16, N, jvxData, JVX_DATA2UINT16);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint16, N, jvxUInt16, );
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint16, N, jvxData, JVX_DATA2UINT16);
+		}
+	}
+	else if (jvx_uint8)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int16, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int8, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint16, jvx_uint8, N, jvxData, JVX_DATA2INT8, 0xFF, 0);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint8, N, jvxUInt8, );
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::copyDataToComponentNumericalSize(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format,
+	jvxSize numElms, const char* descr, jvxSize offset, jvxAccessProtocol* accProt)
+{
+	/* For numeric properties, expect a simple buffer of values */
+	jvxSize i;
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxHandle* data = NULL;
+	jvxSize* dataSz = NULL;
+	jvxCallManagerProperties callGate;
+	assert(format == JVX_DATAFORMAT_SIZE);
+	if (mxIsInt32(prhs))
+	{
+		if (mxGetM(prhs) == 1)
+		{
+			if (mxGetN(prhs) == numElms)
+			{
+				data = mxGetData(prhs);
+				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(dataSz, jvxSize, numElms);
+				for (i = 0; i < numElms; i++)
+				{
+					dataSz[i] = JVX_INT_SIZE(((jvxInt32*)data)[i]);
+				}
+			}
+		}
+	}
+
+	if (dataSz)
+	{
+		res = jvx_set_property(theTriple.theProps, dataSz, offset, numElms, format, true, descr, callGate);
+		if (accProt)
+		{
+			*accProt = callGate.access_protocol;
+		}
+
+		JVX_DSP_SAFE_DELETE_FIELD(dataSz);
+	}
+	else
+	{
+		res = JVX_ERROR_INVALID_ARGUMENT;
+	}
+	return(res);
+}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple,
+	jvxPropertyCategoryType cat, jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt)
+{
+	/* For numeric properties, expect a simple buffer of values */
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxHandle* data = NULL;
+	jvxCallManagerProperties callGate;
+	jvxApiString fldStr;
+	std::string token;
+	std::vector<std::string> tokenLst;
+	jvxSize numEntries = 0;
+	const mxArray* arr = NULL;
+	bool errorDetected = false;
+	jvxApiStringList fldStrLst;
+	jvxSelectionList selList;
+	jvxInt64 valI64 = 0;
+	jvxData valD;
+	jvxValueInRange valR;
+
+	jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(uniqueId, cat);
+	jvx::propertyDetail::CjvxTranferDetail trans(true);
+
+	switch (format)
+	{
+	case JVX_DATAFORMAT_STRING:
+		if (mxIsChar(prhs[0]))
+		{
+			token = jvx_mex_2_cstring(prhs[0]);
+			fldStr.assign_const(token.c_str(), token.size());
+			res = theTriple.theProps->set_property(callGate,
+				jPRG(&fldStr, 1, format), ident, trans);
+			if (accProt)
+			{
+				*accProt = callGate.access_protocol;
+			}
+
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_ARGUMENT;
+		}
+		break;
+	case JVX_DATAFORMAT_STRING_LIST:
+		res = mexArgument2String(tokenLst, numElms, prhs, 0, 1);
+		if (res == JVX_NO_ERROR)
+		{
+			fldStrLst.assign(tokenLst);
+			res = theTriple.theProps->set_property(callGate,
+				jPRG(&fldStrLst, 1, format), ident, trans);
+			if (accProt)
+			{
+				*accProt = callGate.access_protocol;
+			}
+
+		}
+		break;
+	case JVX_DATAFORMAT_SELECTION_LIST:
+
+		res = mexArgument2String(token, prhs, 0, nrhs);
+		if (res == JVX_NO_ERROR)
+		{
+			jvxBool err = false;
+			selList.bitFieldSelected() = jvx_string2BitField(token, err);
+			if (err)
+			{
+				res = JVX_ERROR_PARSE_ERROR;
+			}
+			else
+			{
+				res = mexArgument2String(token, prhs, 1, nrhs);
+			}
+			if (res == JVX_NO_ERROR)
+			{
+				err = false;
+				selList.bitFieldExclusive = jvx_string2BitField(token, err);
+				if (err)
+				{
+					res = JVX_ERROR_PARSE_ERROR;
+				}
+				else
+				{
+					res = mexArgument2StringList(tokenLst, prhs, 2, nrhs);
+				}
+				if (res == JVX_NO_ERROR)
+				{
+					selList.strList.assign(tokenLst);
+					trans.contentOnly = false;
+					res = theTriple.theProps->set_property(callGate,
+						jPRG(&selList, 1, format), ident, trans);
+					if (accProt)
+					{
+						*accProt = callGate.access_protocol;
+					}
+
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+			}
+			else
+			{
+				res = theTriple.theProps->set_property(callGate,
+					jPRG(&selList, 1, format), ident, trans);
+				if (accProt)
+				{
+					*accProt = callGate.access_protocol;
+				}
+
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_VALUE_IN_RANGE:
+		res = mexArgument2Index<jvxData>(valD, prhs, 0, nrhs);
+		if (res == JVX_NO_ERROR)
+		{
+			valR.val() = valD;
+			res = mexArgument2Index<jvxData>(valD, prhs, 1, nrhs);
+			if (res == JVX_NO_ERROR)
+			{
+				valR.minVal = valD;
+				res = mexArgument2Index<jvxData>(valD, prhs, 2, nrhs);
+				if (res == JVX_NO_ERROR)
+				{
+					valR.maxVal = valD;
+					trans.contentOnly = false;
+					res = theTriple.theProps->set_property(callGate,
+						jPRG(&valR, 1, format),
+						ident, trans);
+					if (accProt)
+					{
+						*accProt = callGate.access_protocol;
+					}
+
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+			}
+			else
+			{
+				res = theTriple.theProps->set_property(callGate,
+					jPRG(&valR, 1, format), ident, trans);
+				if (accProt)
+				{
+					*accProt = callGate.access_protocol;
+				}
+
+			}
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_ARGUMENT;
+		}
+		break;
+	}
+	return(res);
+}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format, jvxSize numElms,
+	const char* descr, jvxSize offset, jvxAccessProtocol* accProt)
+{
+	/* For numeric properties, expect a simple buffer of values */
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxHandle* data = NULL;
+	jvxCallManagerProperties callGate;
+	jvxBitField btfld;
+	jvxApiString fldStr;
+	std::string token;
+	std::vector<std::string> tokenLst;
+	jvxSize numEntries = 0;
+	const mxArray* arr = NULL;
+	bool errorDetected = false;
+	jvxApiStringList fldStrLst;
+	jvxSelectionList selList;
+	jvxInt64 valI64 = 0;
+	jvxData valD;
+	jvxValueInRange valR;
+
+	switch (format)
+	{
+	case JVX_DATAFORMAT_STRING:
+		if (mxIsChar(prhs[0]))
+		{
+			token = jvx_mex_2_cstring(prhs[0]);
+			fldStr.assign_const(token.c_str(), token.size());
+			res = jvx_set_property(theTriple.theProps, &fldStr, offset, 1, format, true, descr, callGate);
+			if (accProt)
+			{
+				*accProt = callGate.access_protocol;
+			}
+
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_ARGUMENT;
+		}
+		break;
+	case JVX_DATAFORMAT_STRING_LIST:
+		res = mexArgument2String(tokenLst, numElms, prhs, 0, 1);
+		if (res == JVX_NO_ERROR)
+		{
+			fldStrLst.assign(tokenLst);
+			res = jvx_set_property(theTriple.theProps, &fldStrLst, offset, 1, format, true, descr, callGate);
+			if (accProt)
+			{
+				*accProt = callGate.access_protocol;
+			}
+
+		}
+		break;
+	case JVX_DATAFORMAT_SELECTION_LIST:
+		res = mexArgument2String(token, prhs, 0, nrhs);
+		if (res == JVX_NO_ERROR)
+		{
+			jvxBool err = false;
+			btfld = jvx_string2BitField(token, err);
+			if (err)
+			{
+				res = JVX_ERROR_PARSE_ERROR;
+			}
+		}
+		else
+		{
+			res = mexArgument2Index<jvxInt64>(valI64, prhs, 0, nrhs);
+			btfld = (jvxBitField)valI64;
+		}
+		selList.bitFieldSelected() = btfld;
+		if (res == JVX_NO_ERROR)
+		{
+			res = mexArgument2String(token, prhs, 1, nrhs);
+			if (res == JVX_NO_ERROR)
+			{
+				jvxBool err = false;
+				btfld = jvx_string2BitField(token, err);
+				if (err)
+				{
+					res = JVX_ERROR_PARSE_ERROR;
+				}
+			}
+			else
+			{
+				res = mexArgument2Index<jvxInt64>(valI64, prhs, 1, nrhs);
+				btfld = (jvxBitField)valI64;
+			}
+			selList.bitFieldExclusive = btfld;
+
+			if (res == JVX_NO_ERROR)
+			{
+				res = mexArgument2StringList(tokenLst, prhs, 2, nrhs);
+				if (res == JVX_NO_ERROR)
+				{
+					selList.strList.assign(tokenLst);
+					res = jvx_set_property(theTriple.theProps, &selList, offset, 1, format, false, descr, callGate);
+					if (accProt)
+					{
+						*accProt = callGate.access_protocol;
+					}
+
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+			}
+			else
+			{
+				res = jvx_set_property(theTriple.theProps, &selList, offset, 1, format, true, descr, callGate);
+				if (accProt)
+				{
+					*accProt = callGate.access_protocol;
+				}
+
+			}
+		}
+		break;
+	case JVX_DATAFORMAT_VALUE_IN_RANGE:
+		res = mexArgument2Index<jvxData>(valD, prhs, 0, nrhs);
+		if (res == JVX_NO_ERROR)
+		{
+			valR.val() = valD;
+			res = mexArgument2Index<jvxData>(valD, prhs, 1, nrhs);
+			if (res == JVX_NO_ERROR)
+			{
+				valR.minVal = valD;
+				res = mexArgument2Index<jvxData>(valD, prhs, 2, nrhs);
+				if (res == JVX_NO_ERROR)
+				{
+					valR.maxVal = valD;
+					res = jvx_set_property(theTriple.theProps, &valR, offset, 1, format, false, descr, callGate);
+					if (accProt)
+					{
+						*accProt = callGate.access_protocol;
+					}
+
+				}
+				else
+				{
+					res = JVX_ERROR_INVALID_ARGUMENT;
+				}
+			}
+			else
+			{
+				res = jvx_set_property(theTriple.theProps, &valR, offset, 1, format, true, descr, callGate);
+				if (accProt)
+				{
+					*accProt = callGate.access_protocol;
+				}
+			}
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_ARGUMENT;
+		}
+		break;
+	}
+	return(res);
+}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::convertSingleNumericalUnion(jvxDataFormat format, numTypeConvert& inputConvert, const mxArray* prhs)
+{
+	jvxErrorType res = JVX_ERROR_INVALID_FORMAT;
+	void* data = mxGetData(prhs);
+	if ((mxGetM(prhs) == 1) && (mxGetN(prhs) == 1))
+	{
+		res = JVX_NO_ERROR;
+		switch (format)
+		{
+		case JVX_DATAFORMAT_DATA:
+			if (mxIsData(prhs)) inputConvert.singleDat = (jvxData) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleDat = (jvxData) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleDat = (jvxData) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+
+		case JVX_DATAFORMAT_8BIT:
+			if (mxIsData(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt8 = (jvxInt8) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_16BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt16 = (jvxInt16) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_32BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt32 = (jvxInt32) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_64BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleInt64 = (jvxInt64) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+
+		case JVX_DATAFORMAT_U8BIT:
+			if (mxIsData(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt8 = (jvxUInt8) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_U16BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt16 = (jvxUInt16) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_U32BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt32 = (jvxUInt32) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+		case JVX_DATAFORMAT_U64BIT_LE:
+			if (mxIsData(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxData*)data;
+			else if (mxIsInt8(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt8*)data;
+			else if (mxIsInt16(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt16*)data;
+			else if (mxIsInt32(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt32*)data;
+			else if (mxIsInt64(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxInt64*)data;
+			else if (mxIsUint8(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt8*)data;
+			else if (mxIsUint16(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt16*)data;
+			else if (mxIsUint32(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt32*)data;
+			else if (mxIsUint64(prhs)) inputConvert.singleUInt64 = (jvxUInt64) * (jvxUInt64*)data;
+			else res = JVX_ERROR_INVALID_ARGUMENT;
+			break;
+
+		default:
+			return JVX_ERROR_INVALID_ARGUMENT;
+
+		}
+	}
+	return res;
+}
+
+
+
+
 
 
 jvxErrorType
@@ -679,7 +2078,6 @@ CjvxPropertiesToMatlabConverter::mexGetPropertyCore(mxArray*& arr,
 	jvx_propertyReferenceTriple& theTriple, const std::string& descString,
 	jvxSize offset, std::string& errMessOnReturn)
 {
-	std::string internalErrorMessage = ERROR_MESSAGE_REPORT("CjvxPropertiesToMatlabConverter::mexGetPropertyCore");
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxCallManagerProperties callGate;
 	errMessOnReturn.clear();
@@ -706,7 +2104,10 @@ CjvxPropertiesToMatlabConverter::mexGetPropertyCore(mxArray*& arr,
 			res = mexReturnPropertyNumerical(arr, descr.format, descr.num, descString.c_str(), theTriple, offset);
 			if (res != JVX_NO_ERROR)
 			{
-				errMessOnReturn = internalErrorMessage + "Component request returned error message <" + jvxErrorType_descr(res) + ">.";
+				errMessOnReturn = __FUNCTION__;
+				errMessOnReturn += "Error: Component request returned error message <"; 
+				errMessOnReturn += jvxErrorType_descr(res);
+				errMessOnReturn += ">.";
 			}
 			break;
 		case JVX_DATAFORMAT_SIZE:
@@ -714,7 +2115,10 @@ CjvxPropertiesToMatlabConverter::mexGetPropertyCore(mxArray*& arr,
 			res = mexReturnPropertyNumericalSize(arr, descr.format, descr.num, descString.c_str(), theTriple, offset);
 			if (res != JVX_NO_ERROR)
 			{
-				errMessOnReturn = internalErrorMessage + "Component request returned error message <" + jvxErrorType_descr(res) + ">.";
+				errMessOnReturn = __FUNCTION__;
+				errMessOnReturn += "Component request returned error message <";
+				errMessOnReturn += jvxErrorType_descr(res);
+				errMessOnReturn += ">.";
 			}
 			break;
 		case JVX_DATAFORMAT_SELECTION_LIST:
@@ -725,7 +2129,10 @@ CjvxPropertiesToMatlabConverter::mexGetPropertyCore(mxArray*& arr,
 			res = this->mexReturnPropertyOthers(arr, descr.format, descr.num, descString.c_str(), theTriple, offset);			
 			if (res != JVX_NO_ERROR)
 			{
-				errMessOnReturn = internalErrorMessage + "Component request returned error message <" + jvxErrorType_descr(res) + ">.";
+				errMessOnReturn = __FUNCTION__;
+				errMessOnReturn += "Component request returned error message <";
+				errMessOnReturn += jvxErrorType_descr(res);
+				errMessOnReturn += ">.";
 			}
 			break;
 		default:
@@ -735,8 +2142,115 @@ CjvxPropertiesToMatlabConverter::mexGetPropertyCore(mxArray*& arr,
 	}
 	else
 	{
-		errMessOnReturn = internalErrorMessage + "Did not find property with specified descriptor tag.";
+		errMessOnReturn = __FUNCTION__;
+		errMessOnReturn += "Did not find property with specified descriptor tag.";
 		res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxPropertiesToMatlabConverter::mexSetPropertyCore(mxArray*& arrOut, 
+	const mxArray* prhs[], int nrhs_off, int nrhs,
+	jvx_propertyReferenceTriple& theTriple, const std::string& descString, std::string& errMessOnReturn)
+{
+	jvxSize offset = 0;
+	jvxErrorType res = JVX_NO_ERROR;
+	jvx::propertyDescriptor::CjvxPropertyDescriptorCore descr;
+	jvx::propertyAddress::CjvxPropertyAddressDescriptor idProp(nullptr);
+	jvxCallManagerProperties callGate;
+
+	// Map given unique id to one specific property. We need the format and other infos before accessing the content
+	idProp.descriptor = descString.c_str();
+	res = theTriple.theProps->description_property(callGate, descr, idProp);
+
+	std::string valS;
+	jvxInt32 valI;
+	if (
+		(mexArgument2String(valS, prhs, nrhs_off + 1, nrhs) == JVX_NO_ERROR) &&
+		(mexArgument2Index<jvxInt32>(valI, prhs, nrhs_off + 2, nrhs) == JVX_NO_ERROR))
+	{
+		if (valS == "offset")
+		{
+			nrhs_off += 2;
+			offset = (jvxSize)valI;
+		}
+	}
+
+	if (res == JVX_NO_ERROR && (callGate.access_protocol == JVX_ACCESS_PROTOCOL_OK))
+	{
+
+		switch (descr.format)
+		{
+		case JVX_DATAFORMAT_8BIT:
+		case JVX_DATAFORMAT_16BIT_LE:
+		case JVX_DATAFORMAT_32BIT_LE:
+		case JVX_DATAFORMAT_64BIT_LE:
+		case JVX_DATAFORMAT_U8BIT:
+		case JVX_DATAFORMAT_U16BIT_LE:
+		case JVX_DATAFORMAT_U32BIT_LE:
+		case JVX_DATAFORMAT_U64BIT_LE:
+		case JVX_DATAFORMAT_DATA:
+		case JVX_DATAFORMAT_SIZE:
+			res = copyDataToComponentNumerical(prhs[nrhs_off], theTriple, descr.format, descr.num, descString.c_str(), offset, &callGate.access_protocol);
+			if (JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, descString, theTriple.theProps))
+			{
+				if(arrOut)
+				{
+					converter->mexReturnBool(arrOut, true);
+				}
+			}
+			else
+			{
+				errMessOnReturn = __FUNCTION__;
+				errMessOnReturn += "Failed to copy property data to property <";
+				errMessOnReturn += descString;
+				errMessOnReturn += ">.";
+				if (res == JVX_NO_ERROR)
+				{
+					res = JVX_ERROR_INVALID_SETTING;
+				}
+			}
+			break;
+		case JVX_DATAFORMAT_SELECTION_LIST:
+		case JVX_DATAFORMAT_STRING:
+		case JVX_DATAFORMAT_STRING_LIST:
+		case JVX_DATAFORMAT_VALUE_IN_RANGE:
+			res = copyDataToComponentOthers(&prhs[nrhs_off], nrhs - nrhs_off, theTriple, descr.format, descr.num, descString.c_str(), offset, &callGate.access_protocol);
+			if (JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, descString, theTriple.theProps))
+			{
+				if (arrOut)
+				{
+					converter->mexReturnBool(arrOut, true);
+				}
+			}
+			else
+			{
+				errMessOnReturn = __FUNCTION__;
+				errMessOnReturn += "Failed to copy property data to property <";
+				errMessOnReturn += descString;
+				errMessOnReturn += ">.";
+				if (res == JVX_NO_ERROR)
+				{
+					res = JVX_ERROR_INVALID_SETTING;
+				}
+			}
+			break;
+		default:
+			errMessOnReturn = __FUNCTION__;
+			errMessOnReturn += "Request for unsupported property <";
+			errMessOnReturn += descString;
+			errMessOnReturn += "> which is of type <";
+			errMessOnReturn += jvxDataFormat_txt(descr.format);
+			errMessOnReturn += ">.";
+		}
+	}
+	else
+	{
+		errMessOnReturn = __FUNCTION__;
+		errMessOnReturn += "Request for property <";
+		errMessOnReturn += descString;
+		errMessOnReturn += "> which does not exist.";
 	}
 	return res;
 }

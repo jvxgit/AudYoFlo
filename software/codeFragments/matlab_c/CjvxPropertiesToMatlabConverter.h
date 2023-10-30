@@ -31,6 +31,19 @@ class CjvxPropertiesToMatlabConverter
 protected:
 	CjvxCToMatlabConverter* converter = nullptr;
 
+	union numTypeConvert
+	{
+		jvxData singleDat;
+		jvxInt8 singleInt8;
+		jvxInt16 singleInt16;
+		jvxInt32 singleInt32;
+		jvxInt64 singleInt64;
+		jvxInt8 singleUInt8;
+		jvxUInt16 singleUInt16;
+		jvxUInt32 singleUInt32;
+		jvxUInt64 singleUInt64;
+	};
+
 public:
 
 	void mexReturnStructProperties(mxArray*& plhs, jvx_propertyReferenceTriple& theTriple);
@@ -39,7 +52,18 @@ public:
 		jvxPropertyContext context, const std::string& name, const std::string& description, const std::string& descriptor,
 		jvxBool isValid, jvxFlagTag accessFlags);
 
+	/**
+	 * Function to return value of the specified propery. The returned value in Matlab format is given in <arr>. 
+	 * If the function fails, arr is still a nullptr and the return value describes the reason for the fail.
+	 */
 	jvxErrorType mexGetPropertyCore(mxArray*& arr, jvx_propertyReferenceTriple& theTriple, const std::string& descString, jvxSize offset, std::string& errMessOnReturn);
+	
+	/** This function expects all input arguments with an offset. Then, the property content will be set according to the passed arguments
+	 * The function expects only one return value which is non-null only if the return value indicates that there was no error (JVX_NO_ERROR)
+	 */
+	jvxErrorType mexSetPropertyCore(mxArray*& arrOut, const mxArray* prhs[], int nrhs_off, int nrhs,
+		jvx_propertyReferenceTriple& theTriple, const std::string& descString,
+		std::string& errMessOnReturn);
 
 	jvxErrorType mexReturnPropertyNumerical(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms,
 		jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
@@ -50,7 +74,20 @@ public:
 	jvxErrorType mexReturnPropertyOthers(mxArray*& plhs, jvxSize hdlIdx, jvxPropertyCategoryType catTp, jvxDataFormat format, jvxSize numElms, jvxPropertyDecoderHintType decHtTp, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
 	jvxErrorType mexReturnPropertyOthers(mxArray*& plhs, jvxDataFormat format, jvxSize numElms, const char* descr, jvx_propertyReferenceTriple& theTriple, jvxSize offset);
 
-
+	jvxErrorType copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple,
+		jvxPropertyCategoryType cat, jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);
+	jvxErrorType copyDataToComponentNumericalSize(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxPropertyCategoryType cat,
+		jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);
+	jvxErrorType copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format, jvxSize numElms,
+		const char* descr, jvxSize offset, jvxAccessProtocol* accProt);
+	jvxErrorType copyDataToComponentNumericalSize(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple,
+		jvxDataFormat format, jvxSize numElms, const char* descr, jvxSize offset, jvxAccessProtocol* accProt);
+	jvxErrorType copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple, jvxPropertyCategoryType cat,
+		jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);
+	jvxErrorType copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format,
+		jvxSize numElms, const char* descr, jvxSize offset, jvxAccessProtocol* accProt);
+	jvxErrorType convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jvxDataFormat format, jvxSize numElms, const mxArray* prhs);
+	jvxErrorType convertSingleNumericalUnion(jvxDataFormat format, numTypeConvert& inputConvert, const mxArray* prhs);
 };
 
 #endif

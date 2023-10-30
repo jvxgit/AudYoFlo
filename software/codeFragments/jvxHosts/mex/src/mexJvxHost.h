@@ -55,18 +55,7 @@ class mexJvxHost: public CjvxCToMatlabConverter, public CjvxPropertiesToMatlabCo
 		IjvxToolsHost* hTools;
 	} jvxhost;
 	*/
-	union numTypeConvert 
-	{
-		jvxData singleDat;
-		jvxInt8 singleInt8;
-		jvxInt16 singleInt16;
-		jvxInt32 singleInt32;
-		jvxInt64 singleInt64;
-		jvxInt8 singleUInt8;
-		jvxUInt16 singleUInt16;
-		jvxUInt32 singleUInt32;
-		jvxUInt64 singleUInt64;
-	};
+	
 
 	struct
 	{
@@ -309,8 +298,6 @@ public:
 	void mexReturnOutputConnector(mxArray*& plhs, IjvxOutputConnector* theOCon);
 	void mexReturnInputConnector(mxArray*& plhs, IjvxInputConnector* theICon);
 
-	jvxErrorType convertSingleNumericalUnion(jvxDataFormat format, numTypeConvert& inputConvert, const mxArray* prhs);
-
 	/*void mexReturnConnectionRuleMaster(mxArray*& plhs, const jvxComponentIdentification& cpId,
 		const std::string& selFac, const std::string& selMasCon);
 	void mexReturnConnectionRuleBridges(mxArray*& plhs, IjvxDataConnectionRule* theConRul);
@@ -319,26 +306,9 @@ public:
 
 	void mexReturnSequencerStatus(mxArray*& plhs, jvxSequencerStatus status, jvxSize idxSeq, jvxSequencerQueueType qTp, jvxSize idxStep, jvxBool loopEn);
 
-
-	jvxErrorType copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, 
-		jvxPropertyCategoryType cat, jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);
-	jvxErrorType copyDataToComponentNumericalSize(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxPropertyCategoryType cat, 
-		jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);
-	jvxErrorType copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format, jvxSize numElms, 
-		const char* descr, jvxSize offset, jvxAccessProtocol* accProt);
-	jvxErrorType copyDataToComponentNumericalSize(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, 
-		jvxDataFormat format, jvxSize numElms, const char* descr, jvxSize offset, jvxAccessProtocol* accProt);
-
-	jvxErrorType copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple, jvxPropertyCategoryType cat, 
-		jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);
-	jvxErrorType copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple,  jvxDataFormat format, 
-		jvxSize numElms, const char* descr, jvxSize offset, jvxAccessProtocol* accProt);
-
 	// Read and write configfiles
 	jvxErrorType configurationFromFile(std::string fName, IjvxHost* theHost,IjvxToolsHost* theTools, IjvxReport* theReport);
 	jvxErrorType configurationToFile(std::string& fName, IjvxHost* theHost, IjvxToolsHost* theTools, IjvxReport* theReport);
-
-	jvxErrorType convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jvxDataFormat format, jvxSize numElms, const mxArray* prhs);
 
 	/* INTERFACE IjvxReport */
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_simple_text_message(const char* txt, jvxReportPriority prio)override;
