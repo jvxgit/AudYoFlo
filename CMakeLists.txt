@@ -560,12 +560,14 @@ endif()
 	
 	if(JVX_USE_PART_MATLAB)
 		set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-mex-connect/cmake/matlab)
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-mex-connect/cmake/matlab
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-mex-tinyhost/cmake/matlab)
 	endif()
 	
 	if(JVX_USE_PART_OCTAVE)
 		set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
-			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-mex-connect/cmake/octave)
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-mex-connect/cmake/octave
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-mex-tinyhost/cmake/octave)
 	endif()
 
 	include(${JVX_CMAKE_DIR}/fragments/thrdparty.cmake)
