@@ -11,6 +11,7 @@ enum class jvxPropertyExtenderType
 #if defined JVX_PRODUCT_PROPERTY_EXTENDER_TYPES
 	JVX_PRODUCT_PROPERTY_EXTENDER_TYPES
 #endif
+	, JVX_PROPERTY_EXTENDER_LIMIT
 };
 
 #endif

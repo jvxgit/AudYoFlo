@@ -66,7 +66,7 @@ public:
 
 	// ==============================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION prop_extender_type(jvxPropertyExtenderType* tp) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION supports_prop_extender_type(jvxPropertyExtenderType tp) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp) override;
 	
 	// ==============================================================================

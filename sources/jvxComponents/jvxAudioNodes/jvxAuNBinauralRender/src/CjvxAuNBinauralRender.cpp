@@ -322,11 +322,11 @@ CjvxAuNPlayChannelId::test_set_output_parameters()
 */
 
 jvxErrorType 
-CjvxAuNBinauralRender::prop_extender_type(jvxPropertyExtenderType* tp)
+CjvxAuNBinauralRender::supports_prop_extender_type(jvxPropertyExtenderType tp)
 {
-	if (tp)
+	if (tp == jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_SPATIAL_POSITION_DIRECT)
 	{
-		*tp = jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_SPATIAL_POSITION_DIRECT;
+		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_UNSUPPORTED;
 }

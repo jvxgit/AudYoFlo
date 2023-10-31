@@ -19,6 +19,7 @@
 #include "interfaces/property-extender/IjvxPropertyExtenderHrtfDispenser.h"
 #include "interfaces/property-extender/IjvxPropertyExtenderChainControl.h"
 #include "interfaces/property-extender/IjvxPropertyExtenderHeadTrackerProvider.h"
+#include "interfaces/property-extender/IjvxPropertyExtenderNftfProvider.h"
 #include "interfaces/property-extender/IjvxPropertyExtenderSpatialDirectionDirect.h"
 
 #include "interfaces/jvxCommunication/IjvxAudioEncoder.h"

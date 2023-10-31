@@ -14,13 +14,13 @@ ayfHrtfDispenser::~ayfHrtfDispenser()
 // IjvxPropertyExtender
 // ==============================================================================
 
-jvxErrorType ayfHrtfDispenser::prop_extender_type(jvxPropertyExtenderType* tp)
+jvxErrorType ayfHrtfDispenser::supports_prop_extender_type(jvxPropertyExtenderType tp)
 {
-	if (tp)
+	if (tp == jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_HRTF_DISPENSER)
 	{
-		*tp = jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_HRTF_DISPENSER;
+		return JVX_NO_ERROR;
 	}
-	return JVX_NO_ERROR;
+	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType 

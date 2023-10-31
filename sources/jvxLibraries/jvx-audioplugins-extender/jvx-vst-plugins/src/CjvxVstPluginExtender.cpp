@@ -109,13 +109,13 @@ CjvxVstPluginExtender::process_output_parameters()
 // =====================================================================
 
 jvxErrorType 
-CjvxVstPluginExtender::prop_extender_type(jvxPropertyExtenderType* tp) 
+CjvxVstPluginExtender::supports_prop_extender_type(jvxPropertyExtenderType tp) 
 {
-	if (tp)
+	if (tp == jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_PROPERTY_STREAM_AUDIO_PLUGIN)
 	{
-		*tp = jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_PROPERTY_STREAM_AUDIO_PLUGIN;
+		return JVX_NO_ERROR;
 	}
-	return JVX_NO_ERROR;
+	return JVX_ERROR_UNSUPPORTED;
 }
 
 jvxErrorType 

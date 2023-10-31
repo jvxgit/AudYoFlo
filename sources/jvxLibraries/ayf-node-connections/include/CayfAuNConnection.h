@@ -34,13 +34,13 @@ namespace AyfConnection
 			return JVX_NO_ERROR;
 		};
 
-		virtual jvxErrorType JVX_CALLINGCONVENTION prop_extender_type(jvxPropertyExtenderType* tp) override
+		virtual jvxErrorType JVX_CALLINGCONVENTION supports_prop_extender_type(jvxPropertyExtenderType tp) override
 		{
-			if (tp)
+			if (tp == jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_CHAIN_CONTROL)
 			{
-				*tp = jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_CHAIN_CONTROL;
+				return JVX_NO_ERROR;
 			}
-			return JVX_NO_ERROR;
+			return JVX_ERROR_UNSUPPORTED;
 		};
 
 		virtual jvxErrorType JVX_CALLINGCONVENTION prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp) override			

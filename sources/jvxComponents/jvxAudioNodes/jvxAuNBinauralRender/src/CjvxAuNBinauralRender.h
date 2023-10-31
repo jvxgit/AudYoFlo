@@ -125,7 +125,7 @@ public:
 	// IjvxPropertyExtenderHrtfDispenser_report
 	virtual jvxErrorType report_database_changed() override;
 	// =========================================================================================================
-	jvxErrorType prop_extender_type(jvxPropertyExtenderType* tp) override;
+	jvxErrorType supports_prop_extender_type(jvxPropertyExtenderType tp) override;
 	jvxErrorType prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp)override;
 
 	jvxErrorType set_spatial_position(jvxData valueAzimuth, jvxData valueInclination) override;

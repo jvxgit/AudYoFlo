@@ -63,6 +63,11 @@
 	{ \
 		pExt->prop_extender_specialization(reinterpret_cast<jvxHandle**>(&ptrRet), \
 			jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_HEADTRACKER_PROVIDER); \
+	} \
+	else if (std::is_same < T, IjvxPropertyExtenderNftfProvider>::value) \
+	{ \
+		pExt->prop_extender_specialization(reinterpret_cast<jvxHandle**>(&ptrRet), \
+			jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_NFTF_PROVIDER); \
 	}
 
 #endif
