@@ -429,6 +429,12 @@ CayfHdf5Io::openScanHdf5File(const std::string& fName)
 	 */
 	((CayfHdf5Io_prv*)hdf5Private)->file = H5Fopen(fName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
 
+	if (((CayfHdf5Io_prv*)hdf5Private)->file < 0)
+	{
+		((CayfHdf5Io_prv*)hdf5Private)->file = 0;
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+
 	// Get the root info object
 	if (H5Oget_info_by_name3(((CayfHdf5Io_prv*)hdf5Private)->file, "/", &oi, H5O_INFO_BASIC, H5P_DEFAULT) < 0)
 	{

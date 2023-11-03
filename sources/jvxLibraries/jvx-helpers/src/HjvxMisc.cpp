@@ -5516,6 +5516,30 @@ std::string jvx_data2NumericExpressionString(std::vector<std::vector<jvxData> > 
 	return(txt);
 }
 
+std::string jvx_data2NumericExpressionString(jvxData** lst, jvxSize N, jvxSize M, int numDigs)
+{
+	std::string txt;
+	jvxSize i, j;
+	txt = "[";
+	for (i = 0; i < N; i++)
+	{
+		if (i > 0)
+		{
+			txt += ";";
+		}
+		for (j = 0; j < M; j++)
+		{
+			if (j > 0)
+			{
+				txt += ",";
+			}
+			txt += jvx_data2String(lst[i][j], numDigs);
+		}
+	}
+	txt += "]";
+	return(txt);
+}
+
 std::string jvx_data2CsvExpressionString(std::vector<jvxData>& lst, int numDigs)
 {
 	std::string txt;

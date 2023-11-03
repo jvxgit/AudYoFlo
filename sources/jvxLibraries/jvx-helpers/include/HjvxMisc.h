@@ -1046,6 +1046,7 @@ std::vector<jvxData> jvx_parseCsvExpression(std::string txt, jvxBool& err, char 
 std::vector<std::string> jvx_parseCsvStringExpression(std::string txt, jvxBool& err);
 
 std::string jvx_data2NumericExpressionString(std::vector<std::vector<jvxData> > & lst, int numDigs);
+std::string jvx_data2NumericExpressionString(jvxData** lst, jvxSize N, jvxSize M, int numDigs);
 std::string jvx_data2CsvExpressionString(std::vector<jvxData>& lst, int numDigs);
 std::string jvx_string2CsvExpressionString(std::vector<std::string>& lst);
 std::string jvx_stringNumericExpression(std::vector<jvxData> & lst, int numDigs);
