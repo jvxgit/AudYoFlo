@@ -597,6 +597,9 @@ jvx_fileNameFromFilePath(std::string path);
 void
 jvx_composePathExpr(std::vector<std::string>& lst, std::string& path, jvxSize idx);
 
+std::string
+jvx_popBackPathExpr(const std::string& pathExpr);
+
 void
 jvx_decomposePathExpr(std::string path, std::vector<std::string>& lst);
 

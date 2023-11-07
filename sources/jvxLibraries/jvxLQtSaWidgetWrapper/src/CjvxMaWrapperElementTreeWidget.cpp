@@ -67,6 +67,7 @@ CjvxMaWrapperElementTreeWidget::initializeUiElement(jvxPropertyCallContext ccont
 		uiRefTp->setContextMenuPolicy(Qt::CustomContextMenu);
 		uiRefTp->expandAll();
 
+		// Try to find the "show" option when crating		
 		jvxSize numTLItems = uiRefTp->topLevelItemCount();
 		for (i = 0; i < numTLItems; i++)
 		{
@@ -274,7 +275,14 @@ CjvxMaWrapperElementTreeWidget::processLeefs(QTreeWidgetItem *theItem, int cnt, 
 							if (resP == JVX_NO_ERROR)
 							{
 								newDescriptor = theDescr.descriptor.std_str();
+								jvxBool showThis = false;
+
 								if (jvx_compareStringsWildcard(getSetTag, newDescriptor))
+								{
+									showThis = true;									
+								}
+
+								if(showThis)
 								{
 									// Wildcard match, add an element here
 									newItem = NULL;
@@ -482,6 +490,12 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(jvxPropertyCallContext cco
 	if (qV.isValid())
 	{
 		token_search = qV.toString().toLatin1().data();
+	}	
+
+	qV = uiRefTp->property("show-hidden");
+	if (qV.isValid())
+	{
+		showHidden = qV.toBool();
 	}
 
 	for (i = 0; i < numTLItems; i++)
@@ -671,6 +685,15 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 					}
 				}
 			}
+
+			if (!showHidden)
+			{
+				if (jvx_compareStringsWildcard("_*", jvx_popBackPathExpr(propD.descriptor.std_str())))
+				{
+					theItem->setHidden(true);
+				}
+			}
+
 			if (call_periodic_update && !myBasePropIs.updateRt)
 			{
 				showThis = false;

@@ -98,6 +98,7 @@ private:
 
 public slots:
 	void changed_selection_propref(int sel);
+	void changed_selection_hidden(bool isHidden);
 	void changed_activate_latest(bool sel);
 	void new_token_search(QString);
 };

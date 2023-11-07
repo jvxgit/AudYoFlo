@@ -14,6 +14,7 @@ private:
 	jvxSize numEntries = 0;
 	jvxSize numEntriesRTUpdate = 0;
 	std::string token_search;
+	bool showHidden = true;
 	/*
 	typedef enum
 	{

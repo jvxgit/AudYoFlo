@@ -3350,6 +3350,17 @@ jvx_composePathExpr(std::vector<std::string>& lst, std::string& path, jvxSize id
 	path = jvx_makePathExpr(path, "", true); // force leading /
 }
 
+std::string jvx_popBackPathExpr(const std::string& pathExpr)
+{
+	std::string out = pathExpr;
+	size_t posLast = pathExpr.find_last_of('/');
+	if (posLast != std::string::npos)
+	{
+		out = pathExpr.substr(posLast + 1);
+	}
+	return(out);
+}
+
 void
 jvx_decomposePathExpr(std::string path, std::vector<std::string>& lst)
 {

@@ -375,6 +375,13 @@ jvx_property_tree_widget::new_token_search(QString txt)
 	widget_wrapper->trigger_updateWindow(tag_name);
 }
 
+void
+jvx_property_tree_widget::changed_selection_hidden(bool isHidden)
+{
+	treeWidget_props->setProperty("show-hidden", QVariant(isHidden));
+	widget_wrapper->trigger_updateWindow(tag_name);
+}
+
 void 
 jvx_property_tree_widget::fwd_command_request(const CjvxReportCommandRequest& req)
 {
