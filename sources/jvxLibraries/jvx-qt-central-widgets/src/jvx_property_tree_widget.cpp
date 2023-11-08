@@ -155,7 +155,7 @@ jvx_property_tree_widget::processing_stopped()
 }
 	
 void 
-jvx_property_tree_widget::update_window(jvxCBitField prio)
+jvx_property_tree_widget::update_window(jvxCBitField prio, const char* propLst)
 {
 	if(propRefSelect)
 	{
@@ -379,6 +379,13 @@ void
 jvx_property_tree_widget::changed_selection_hidden(bool isHidden)
 {
 	treeWidget_props->setProperty("show-hidden", QVariant(isHidden));
+	widget_wrapper->trigger_updateWindow(tag_name);
+}
+
+void
+jvx_property_tree_widget::changed_selection_shorten(bool showShort)
+{
+	treeWidget_props->setProperty("show-short", QVariant(showShort));
 	widget_wrapper->trigger_updateWindow(tag_name);
 }
 

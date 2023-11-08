@@ -110,13 +110,13 @@ public:
 	virtual void deactivate()override;
 	virtual void processing_started() override;
 	virtual void processing_stopped()override;
-	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT) override;
+	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT, const char* propLst = nullptr) override;
 	virtual void update_window_periodic() override;
 
 	virtual jvxErrorType check_connections_ready(jvxApiString* astr_ready) override;
 	// ==========================================================
 
-	void update_window_core(jvxBitField  oper);
+	void update_window_core(jvxBitField  oper, const char* propLst = nullptr);
 	void ui_redraw_process_list();
 	void ui_get_reference_process(IjvxDataConnectionProcess** theProcess_select, IjvxDataConnectionGroup** theGroup_select, jvxSize* select_id_proc);
 	void ui_refine_process_list(jvxSize);

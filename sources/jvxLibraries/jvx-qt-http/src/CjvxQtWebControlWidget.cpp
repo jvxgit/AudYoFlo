@@ -192,7 +192,7 @@ CjvxQtWebControlWidget::webcontrol_report_error()
 }
 
 void
-CjvxQtWebControlWidget::update_window(jvxCBitField prio)
+CjvxQtWebControlWidget::update_window(jvxCBitField prio, const char* propLst )
 {
 	webcontrol_update_window();
 }

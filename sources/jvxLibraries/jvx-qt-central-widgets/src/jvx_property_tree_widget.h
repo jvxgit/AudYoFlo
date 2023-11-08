@@ -63,7 +63,7 @@ public:
 	virtual void deactivate()override;
 	virtual void processing_started() override;
 	virtual void processing_stopped()override;
-	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT) override;
+	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT, const char* propLst = nullptr) override;
 	virtual void update_window_periodic() override;
 
 	virtual jvxErrorType request_sub_interface(jvxQtInterfaceType, jvxHandle**) override;
@@ -99,6 +99,7 @@ private:
 public slots:
 	void changed_selection_propref(int sel);
 	void changed_selection_hidden(bool isHidden);
+	void changed_selection_shorten(bool showShort);
 	void changed_activate_latest(bool sel);
 	void new_token_search(QString);
 };

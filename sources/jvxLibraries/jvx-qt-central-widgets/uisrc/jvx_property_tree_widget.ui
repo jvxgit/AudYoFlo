@@ -6,14 +6,47 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
-    <height>494</height>
+    <width>1266</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1,1,1,1,0">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1,1,1,1,1,1,1">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Select Property</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QCheckBox" name="checkBox_hidden">
+     <property name="text">
+      <string>Hidden</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8">
+    <widget class="QLineEdit" name="lineEdit_search"/>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="comboBox_component_ref"/>
+   </item>
+   <item row="0" column="7">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Search Expression</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="4">
     <widget class="QCheckBox" name="checkBox_actlatest">
      <property name="text">
@@ -21,7 +54,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="7">
+   <item row="1" column="0" colspan="9">
     <widget class="QTreeWidget" name="treeWidget_props">
      <property name="accessibleDescription">
       <string>jvx_properties</string>
@@ -65,9 +98,6 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QComboBox" name="comboBox_component_ref"/>
-   </item>
    <item row="0" column="3">
     <widget class="QLabel" name="label_component_id">
      <property name="text">
@@ -76,19 +106,9 @@
     </widget>
    </item>
    <item row="0" column="6">
-    <widget class="QLineEdit" name="lineEdit_search"/>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
+    <widget class="QCheckBox" name="checkBox">
      <property name="text">
-      <string>Select Property</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5">
-    <widget class="QCheckBox" name="checkBox_hidden">
-     <property name="text">
-      <string>Hidden</string>
+      <string>Shorten Text</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -111,7 +131,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>368</x>
-     <y>-8</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -122,7 +142,7 @@
    <slot>changed_activate_latest(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>454</x>
+     <x>696</x>
      <y>26</y>
     </hint>
     <hint type="destinationlabel">
@@ -138,12 +158,12 @@
    <slot>new_token_search(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>617</x>
-     <y>16</y>
+     <x>1256</x>
+     <y>25</y>
     </hint>
     <hint type="destinationlabel">
      <x>605</x>
-     <y>-13</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -154,12 +174,28 @@
    <slot>changed_selection_hidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>470</x>
-     <y>17</y>
+     <x>836</x>
+     <y>26</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
-     <y>-8</y>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>jvx_property_tree</receiver>
+   <slot>changed_selection_shorten(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>895</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>916</x>
+     <y>-15</y>
     </hint>
    </hints>
   </connection>
@@ -169,5 +205,6 @@
   <slot>changed_activate_latest(bool)</slot>
   <slot>new_token_search(QString)</slot>
   <slot>changed_selection_hidden(bool)</slot>
+  <slot>changed_selection_shorten(bool)</slot>
  </slots>
 </ui>

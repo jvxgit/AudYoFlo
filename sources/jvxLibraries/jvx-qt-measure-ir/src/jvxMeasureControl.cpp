@@ -142,7 +142,7 @@ jvxMeasureControl::processing_stopped()
 }
 
 void
-jvxMeasureControl::update_window(jvxCBitField prio)
+jvxMeasureControl::update_window(jvxCBitField prio, const char* propLst )
 {
 	myWidgetWrapper.trigger_updateWindow("measure");
 	myWidgetWrapper.trigger_updateWindow("measure_rep");

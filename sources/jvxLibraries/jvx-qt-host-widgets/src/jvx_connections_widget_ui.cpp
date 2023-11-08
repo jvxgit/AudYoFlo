@@ -1584,7 +1584,7 @@ jvx_connections_widget::ui_update_work_buttons(IjvxDataConnectionProcess* thePro
 }
 
 void
-jvx_connections_widget::update_window_core(jvxBitField oper)
+jvx_connections_widget::update_window_core(jvxBitField oper, const char* propLst )
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	std::string tooltip = "--";

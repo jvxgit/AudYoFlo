@@ -152,7 +152,7 @@ jvx_connections_widget::processing_stopped()
 }
 
 void
-jvx_connections_widget::update_window(jvxCBitField prio)
+jvx_connections_widget::update_window(jvxCBitField prio, const char* propLst)
 {
 	jvxBitField btf;
 	jvx_cleanup_candidates_dropzone(theDataConnections);

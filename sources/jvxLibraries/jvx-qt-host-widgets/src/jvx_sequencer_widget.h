@@ -96,7 +96,7 @@ public:
 	virtual void deactivate()override;
 	virtual void processing_started() override;
 	virtual void processing_stopped()override;
-	virtual void update_window(jvxCBitField prio) override;
+	virtual void update_window(jvxCBitField prio, const char* propLst = nullptr) override;
 	virtual void update_window_periodic() override;
 
 	virtual void update_window_rebuild() override;

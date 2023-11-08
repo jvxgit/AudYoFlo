@@ -384,7 +384,7 @@ jvxAcousticMeasure::processing_stopped()
 }
 
 void 
-jvxAcousticMeasure::update_window(jvxCBitField prio)
+jvxAcousticMeasure::update_window(jvxCBitField prio, const char* propLst )
 {
 	lineEdit_dataTag->setText(dataTag.c_str());
 	

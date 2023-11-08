@@ -253,7 +253,7 @@ public:
 
 	virtual void processing_stopped() override;
 
-	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT) override;
+	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT, const char* propLst = nullptr) override;
 
 	virtual void update_window_periodic() override;
 

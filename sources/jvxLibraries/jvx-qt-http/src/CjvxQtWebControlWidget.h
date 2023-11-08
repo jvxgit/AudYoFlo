@@ -25,7 +25,7 @@ private:
 	virtual void deactivate() override;
 	virtual void processing_started() override;
 	virtual void processing_stopped() override;
-	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT) override;
+	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT, const char* propLst = nullptr) override;
 	virtual void update_window_periodic() override;
 
 	virtual void webcontrol_update_window() override;

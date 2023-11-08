@@ -498,6 +498,12 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(jvxPropertyCallContext cco
 		showHidden = qV.toBool();
 	}
 
+	qV = uiRefTp->property("show-short");
+	if (qV.isValid())
+	{
+		showShort = qV.toBool();
+	}
+
 	for (i = 0; i < numTLItems; i++)
 	{
 		QTreeWidgetItem *theTLItem = uiRefTp->topLevelItem((int)i);
@@ -997,8 +1003,16 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											}
 											break;
 										case JVX_DATAFORMAT_STRING:
-											txtShow = "-none-error-";
-											txtShow = fldStr.std_str();
+											//txtShow = "-none-error-";
+											//txtShow = fldStr.std_str();
+											if (showShort)
+											{
+												txtShow = jvx_shortenStringName(64, fldStr.std_str());
+											}
+											else
+											{
+												txtShow = fldStr.std_str();
+											}
 											break;
 										case JVX_DATAFORMAT_STRING_LIST:
 											if (selLst.strList.ll() == 0)

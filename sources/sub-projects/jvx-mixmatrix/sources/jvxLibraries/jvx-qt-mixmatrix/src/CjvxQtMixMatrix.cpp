@@ -208,7 +208,7 @@ CjvxQtMixMatrix::processing_stopped()
 }
 
 void
-CjvxQtMixMatrix::update_window(jvxCBitField prio )
+CjvxQtMixMatrix::update_window(jvxCBitField prio, const char* propLst )
 {
 	jvxSelectionList selList;
 	jvxErrorType res = JVX_NO_ERROR;

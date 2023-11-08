@@ -113,7 +113,7 @@ jvx_sequencer_widget::processing_stopped()
 }
 
 void 
-jvx_sequencer_widget::update_window(jvxCBitField prio)
+jvx_sequencer_widget::update_window(jvxCBitField prio, const char* propLst)
 {
 	//verifySetting();
 	jvxBitField btf;

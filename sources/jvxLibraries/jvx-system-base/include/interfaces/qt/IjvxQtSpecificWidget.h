@@ -42,8 +42,8 @@ public:
 	virtual void deactivate() = 0;
 	virtual void processing_started() = 0;
 	virtual void processing_stopped() = 0;
-	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT) = 0;
-	virtual void update_window_periodic() = 0;	
+	virtual void update_window(jvxCBitField prio = JVX_REPORT_REQUEST_UPDATE_DEFAULT, const char* propLst = nullptr) = 0;
+	virtual void update_window_periodic() = 0;
 };
 // ====================================================================================================
 // ====================================================================================================

@@ -3400,6 +3400,10 @@ CjvxProperties::add_property_report_collect(const std::string& propDescr, jvxBoo
 		propPrefix = CjvxProperties::property_changed_descriptor_tag_add(propPrefix);
 	}
 	_lock_properties_local();
+
+	// If we want to report, we should modify the revision
+	_common_set_properties.propSetRevision++;
+
 	if (_common_set_property_report.startCntStack > 0)
 	{
 		auto elm = std::find(_common_set_property_report.collectedProps.begin(), _common_set_property_report.collectedProps.end(), propPrefix);
@@ -3439,6 +3443,9 @@ CjvxProperties::add_properties_report_collect(const std::list<std::string>& prop
 	jvxBool reportImmediate = true;
 	std::string repToken;
 	_lock_properties_local();
+
+	// If we want to report, we should modify the revision
+	_common_set_properties.propSetRevision++;
 
 	// Check if we arrive here within a property set function run
 	if (_common_set_property_report.startCntStack > 0)

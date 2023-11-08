@@ -61,6 +61,13 @@
 #define JVX_MAIN_CENTRAL_TREE_WIDGET_UPDATE_WINDOW(propertyTreeWidget, prio) \
 	propertyTreeWidget.widget->update_window(prio);
 
+#define JVX_MAIN_CENTRAL_TREE_WIDGET_UPDATE_WINDOW_LST(propertyTreeWidget, argLst) \
+	{ \
+		jvxCBitField prio; \
+		jvx_bitZSet(prio, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT); \
+		propertyTreeWidget.widget->update_window(prio, argLst); \
+	}
+
 #define JVX_MAIN_CENTRAL_TREE_WIDGET_UPDATE_WINDOW_PERIODIC(propertyTreeWidget) \
 	propertyTreeWidget.widget->update_window_periodic();
 	
