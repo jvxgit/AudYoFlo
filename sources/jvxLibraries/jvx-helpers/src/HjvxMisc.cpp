@@ -1669,7 +1669,7 @@ jvx_selectionProp2String_stop(jvxPropertyContainerSingle<jvxSelectionList_cpp>& 
 			idSel = 0;
 		}
 	}
-	if (JVX_CHECK_SIZE_UNSELECTED(idSel))
+	if (JVX_CHECK_SIZE_SELECTED(idSel))
 	{
 		jvx_bitZSet(selLstProp.value.selection(idxEntry), idSel);
 	}

@@ -133,6 +133,7 @@ initProperty(onePropertyDefinition& oneProperty)
 	oneProperty.id = -1;
 	oneProperty.numElements = 1;
 	oneProperty.onlySelectionToConfig = false;
+	oneProperty.allowOptionsConfigIfNotFound = false;
 	oneProperty.accessType = JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE;
 	oneProperty.generateConfigFileEntry = false;
 	oneProperty.generateLinkObjectEntry = false;
@@ -1789,6 +1790,28 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 				{
 					newProp.onlySelectionToConfig = false;
 				}
+
+
+				oneentry = "no";
+				res = HjvxConfigProcessor_readEntry_assignmentString(theReader, theSubContent, ALLOW_OPTIONS_ON_CONFIG_IF_NO_FOUND, &oneentry); 
+				if(res == JVX_ERROR_WRONG_SECTION_TYPE) 
+				{
+					std::string fName; 
+					jvxInt32 lineno;
+					HjvxConfigProcessor_readEntry_originEntry(theReader, theSubContent, ALLOW_OPTIONS_ON_CONFIG_IF_NO_FOUND, fName, lineno); 
+					std::cerr << fName << "(" << jvx_int2String(lineno) << "): Warning: Entry " << ALLOW_OPTIONS_ON_CONFIG_IF_NO_FOUND << " is associated to wrong type." << std::endl;
+				}
+				
+				if(oneentry == "yes")
+				{
+					newProp.allowOptionsConfigIfNotFound = true;
+				}
+				else
+				{
+					newProp.allowOptionsConfigIfNotFound = false;
+				}
+
+
 
 				if(HjvxConfigProcessor_readEntry_assignmentString(theReader, theSubContent, READ_ONLY, &oneentry) == JVX_NO_ERROR)
 				{

@@ -650,17 +650,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 			basePropInfos myBasePropIs;
 			jvxBool typeNothandled = false;
 			jvxBool showThis = true;
-			jvxSize idxArray = 0;
-
-			auto varRef = uiRefTp->property("JVX_THE_SUBWIDGET");
-			if (varRef.isValid())
-			{
-				CjvxQtSaWidgetWrapper_elementbase* openWidget = varRef.value<CjvxQtSaWidgetWrapper_elementbase*>();
-				if (openWidget)
-				{
-					openWidget->update_window();
-				}
-			}
+			jvxSize idxArray = 0;		
 
 			everythingOk = getAllTagInformation(theItem, compTag, propName, lst, propD, myBasePropIs, idxArray);
 
@@ -714,6 +704,20 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 					callGate.on_get.prop_access_type = &accTp;
 
 					jvx::propertyAddress::CjvxPropertyAddressGlobalId identId(propD.globalIdx, propD.category);
+
+					// If a subwidget is active, update this on the fly
+					auto varRef = uiRefTp->property("JVX_THE_SUBWIDGET");
+					if (varRef.isValid())
+					{
+						CjvxQtSaWidgetWrapper_elementbase* openWidget = varRef.value<CjvxQtSaWidgetWrapper_elementbase*>();
+						if (openWidget)
+						{
+							if (openWidget->propertyName() == propName)
+							{
+								openWidget->update_window();
+							}
+						}
+					}
 
 					ident.reset(getSetTag.c_str());
 					trans.reset(false, 0, JVX_PROPERTY_DECODER_NONE);

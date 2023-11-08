@@ -330,15 +330,18 @@ jvx_message_queue_initialize(jvxHandle** hdlOnReturn, jvxMessageQueueObjectStrat
 		JVX_INITIALIZE_MUTEX(theQueue->stateSync);
 		theQueue->queueIsReady = false;
 
-		theQueue->messages = new oneMessageInQueue[theQueue->numElementsInQueueMax];
-		for(i = 0; i < theQueue->numElementsInQueueMax; i++)
+		if (theQueue->numElementsInQueueMax)
 		{
-			memset(&theQueue->messages[i], 0, sizeof(oneMessageInQueue));
-			if(theQueue->type == JVX_MESSAGE_QUEUE_STATIC_OBJECTS)
+			theQueue->messages = new oneMessageInQueue[theQueue->numElementsInQueueMax];
+			for (i = 0; i < theQueue->numElementsInQueueMax; i++)
 			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(theQueue->messages[i].data.fld, jvxByte, theQueue->maxSizeContainerMessage);
-				theQueue->messages[i].data.fldSize = theQueue->maxSizeContainerMessage;
-				memset(theQueue->messages[i].data.fld, 0, theQueue->maxSizeContainerMessage);
+				memset(&theQueue->messages[i], 0, sizeof(oneMessageInQueue));
+				if (theQueue->type == JVX_MESSAGE_QUEUE_STATIC_OBJECTS)
+				{
+					JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(theQueue->messages[i].data.fld, jvxByte, theQueue->maxSizeContainerMessage);
+					theQueue->messages[i].data.fldSize = theQueue->maxSizeContainerMessage;
+					memset(theQueue->messages[i].data.fld, 0, theQueue->maxSizeContainerMessage);
+				}
 			}
 		}
 		theQueue->state = JVX_STATE_ACTIVE;

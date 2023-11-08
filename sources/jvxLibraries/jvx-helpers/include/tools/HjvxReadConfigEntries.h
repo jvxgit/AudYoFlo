@@ -485,7 +485,8 @@ HjvxConfigProcessor_readEntry_assignmentStringList(IjvxConfigProcessor* theReade
  jvxErrorType
 HjvxConfigProcessor_readEntry_assignmentSelectionList(IjvxConfigProcessor* theReader, jvxConfigData* theSection, 
 	std::string nmToken, jvxSelectionList_cpp* entries, bool onlySelectionToConfig = false, jvxBool ignoreProblems = true,
-	jvxAccessRightFlags_rwcd* acc_flags = NULL, jvxConfigModeFlags* cfg_flags = NULL, jvxCBitField whattodo = JVX_PROPERTY_FLAGTAG_OPERATE_READ_CONTENT);
+	jvxAccessRightFlags_rwcd* acc_flags = NULL, jvxConfigModeFlags* cfg_flags = NULL, jvxCBitField whattodo = JVX_PROPERTY_FLAGTAG_OPERATE_READ_CONTENT,
+	std::vector<std::string>* entriesOnReturnIfNotAssigned = nullptr);
 
 jvxErrorType
 HjvxConfigProcessor_readEntry_assignmentString(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string nmToken, std::string* entry, 

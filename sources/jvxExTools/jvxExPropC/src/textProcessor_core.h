@@ -171,6 +171,7 @@ struct onePropertyDefinition
 	bool associateNumberEntries = true;
 
 	bool onlySelectionToConfig;
+	bool allowOptionsConfigIfNotFound;
 	//bool readonly;
 	jvxPropertyAccessType accessType;
 	bool generateConfigFileEntry;
@@ -372,6 +373,7 @@ public:
 			std::vector<std::string>& lstRegisterFunctions,
 			std::vector<std::string>& lstUnregisterFunctions,
 			std::vector<std::string>& lstPutConfigFunctions,
+			std::vector<std::vector<std::string> >& lstPutConfigFunctionArgs,
 			std::vector<std::string>& lstGetConfigFunctions,
 			std::vector<std::string>& lstTagUpdateFunctions,
 		std::map<jvxInt32, oneAudioPluginEntry>& collectAudioPluginsIds,

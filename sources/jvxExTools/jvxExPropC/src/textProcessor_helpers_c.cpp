@@ -2546,6 +2546,8 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 	std::string addArgument = "";
 	std::string argReconfigure = "";
 	std::string commandReadTypecast = "";
+	std::string endArgument = "";
+	
 	if(elm.generateConfigFileEntry)
 	{
 		switch(elm.format)
@@ -2628,6 +2630,13 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 			if(elm.ignoreproblemsconfig)
 			{
 				addArgument += ", true"; 
+				if(elm.allowOptionsConfigIfNotFound)
+				{
+					endArgument += ", ";
+					endArgument += propertySectionName;
+					endArgument += "_";
+					endArgument += elm.name;
+				}
 			}
 			else
 			{
@@ -2671,7 +2680,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 				out << "\t\t\ttoken = jvx_replaceStrInStr(token, *replace_this, *replace_by_this);" << std::endl;
 				out << "\t\t}" << std::endl;
 				out << "\t\t" << commandReadConfigSingle << "(theReader, ir, token.c_str(), &" << propertySectionName << "." << elm.name << ".value" << addArgument
-					<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+					<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 				out << "\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();" << std::endl;
 				out << "\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2683,7 +2692,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 					<< ", " <<
 					"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 					"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-					"whattodo);" << std::endl;
+					"whattodo" << endArgument << ");" << std::endl;
 #endif
 				break;
 			default:
@@ -2702,7 +2711,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t}" << std::endl;
 						out << "\t\t\t" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 							propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();" << std::endl;
 						out << "\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2714,7 +2723,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							elm.name << ".num, " <<
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo);" << std::endl;
+							"whattodo" << endArgument << ");" << std::endl;
 #endif
 					}
 					else
@@ -2727,7 +2736,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t}" << std::endl;
 						out << "\t\t\tif(" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 							propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo) != JVX_NO_ERROR)" << std::endl;
+							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();" << std::endl;
 						out << "\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2739,7 +2748,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							elm.name << ".num, " <<
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo) != JVX_NO_ERROR)" << std::endl;
+							"whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #endif
 						out << "\t\t\t{" << std::endl;
 #ifdef JVX_STORE_CONFIG_NAME
@@ -2781,7 +2790,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							out << "\t\t\t}" << std::endl;
 							out << "\t\t\t" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 								propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-								elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+								elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 							out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();" << std::endl;
 							out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2793,7 +2802,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 								elm.name << ".num, " <<
 								"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 								"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-								"whattodo);" << std::endl;
+								"whattodo" << endArgument << ");" << std::endl;
 #endif
 						}
 						else
@@ -2806,7 +2815,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							out << "\t\t\t}" << std::endl;
 							out << "\t\t\tif(" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 								propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-								elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags,  whattodo) != JVX_NO_ERROR)" << std::endl;
+								elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags,  whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #else
 							out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();" << std::endl;
 							out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2818,7 +2827,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 								elm.name << ".num, " <<
 								"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 								"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-								"whattodo) != JVX_NO_ERROR)" << std::endl;
+								"whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #endif
 							out << "\t\t\t{" << std::endl;
 
@@ -2846,7 +2855,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							out << "\t\t\t\ttoken = jvx_replaceStrInStr(token, *replace_this, *replace_by_this);" << std::endl;
 							out << "\t\t\t}" << std::endl;
 							out << "\t\t\t" << commandReadConfigSingle << "(theReader, ir, token.c_str(), " << propertySectionName << "." << elm.name << ".ptr" << addArgument
-								<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+								<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 							out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();" << std::endl;
 							out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2856,7 +2865,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							out << "\t\t\t" << commandReadConfigSingle << "(theReader, ir, token.c_str(), " << commandReadTypecast << propertySectionName << "." << elm.name << ".ptr" << addArgument << ", " <<
 								"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 								"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-								"whattodo);" << std::endl;
+								"whattodo" << endArgument << ");" << std::endl;
 #endif
 						}
 						else
@@ -2868,7 +2877,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							out << "\t\t\t\ttoken = jvx_replaceStrInStr(token, *replace_this, *replace_by_this);" << std::endl;
 							out << "\t\t\t}" << std::endl;
 							out << "\t\t\tif(" << commandReadConfigSingle << "(theReader, ir, token.c_str(), " << propertySectionName << "." << elm.name << ".ptr"
-								<< addArgument << ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo) != JVX_NO_ERROR)" << std::endl;
+								<< addArgument << ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #else
 							out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();" << std::endl;
 							out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2878,7 +2887,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							out << "\t\t\tif(" << commandReadConfigSingle << "(theReader, ir, token.c_str(), " << commandReadTypecast << propertySectionName << "." << elm.name << ".ptr" << addArgument << ", " <<
 								"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 								"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-								"whattodo) != JVX_NO_ERROR)" << std::endl;
+								"whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #endif
 							out << "\t\t\t{" << std::endl;
 #ifdef JVX_STORE_CONFIG_NAME
@@ -2936,7 +2945,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\t}" << std::endl;
 						out << "\t\t\t" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 							propertySectionName << "." << elm.name << ".ptr, " << propertySectionName  << "." <<
-							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2948,7 +2957,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							elm.name << ".num, " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo);" << std::endl;
+							"whattodo" << endArgument << ");" << std::endl;
 #endif
 					}
 					else
@@ -2961,7 +2970,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\t}" << std::endl;
 						out << "\t\t\tif(" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 							propertySectionName << "." << elm.name << ".ptr, " << propertySectionName  << "." <<
-							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo) != JVX_NO_ERROR)" << std::endl;
+							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -2973,7 +2982,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							elm.name << ".num, " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo) != JVX_NO_ERROR)" << std::endl;
+							"whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #endif
 						out << "\t\t\t{" << std::endl;
 #ifdef JVX_STORE_CONFIG_NAME
@@ -3000,7 +3009,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\t\ttoken = jvx_replaceStrInStr(token, *replace_this, *replace_by_this);" << std::endl;
 						out << "\t\t\t}" << std::endl;
 						out << "\t\t\t" << commandReadConfigSingle << "(theReader, ir, token.c_str(), " << propertySectionName << "." << elm.name 
-							<< ".ptr" << addArgument << ", " << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+							<< ".ptr" << addArgument << ", " << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -3011,7 +3020,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							".ptr" << addArgument << ", " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo);" << std::endl;
+							"whattodo" << endArgument << ");" << std::endl;
 #endif
 					}
 					else
@@ -3023,7 +3032,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\t\ttoken = jvx_replaceStrInStr(token, *replace_this, *replace_by_this);" << std::endl;
 						out << "\t\t\t}" << std::endl;
 						out << "\t\t\tif(" << commandReadConfigSingle << "(theReader, ir, token.c_str(), " << propertySectionName << "." << elm.name << ".ptr" 
-							<< addArgument << ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo) != JVX_NO_ERROR)" << std::endl;
+							<< addArgument << ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -3034,7 +3043,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							elm.name << ".ptr" << addArgument << ", " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo) != JVX_NO_ERROR)" << std::endl;
+							"whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #endif
 						out << "\t\t\t{" << std::endl;
 
@@ -3066,7 +3075,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\t}" << std::endl;
 						out << "\t\t\t" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 							propertySectionName << "." << elm.name << ".ptr, " << propertySectionName  << "." <<
-							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -3078,7 +3087,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							elm.name << ".num, " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo);" << std::endl;
+							"whattodo" << endArgument << ");" << std::endl;
 #endif
 					}
 					else
@@ -3091,7 +3100,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\t}" << std::endl;
 						out << "\t\t\tif(" << commandReadConfigMultiple << "(theReader, ir, token.c_str(), " <<
 							propertySectionName << "." << elm.name << ".ptr, " << propertySectionName  << "." <<
-							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo) != JVX_NO_ERROR)" << std::endl;
+							elm.name << ".num, &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #else
 						out << "\t\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -3103,7 +3112,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							elm.name << ".num, " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo) != JVX_NO_ERROR)" << std::endl;
+							"whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #endif
 						out << "\t\t\t{" << std::endl;
 
@@ -3130,7 +3139,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\ttoken = jvx_replaceStrInStr(token, *replace_this, *replace_by_this);" << std::endl;
 						out << "\t\t}" << std::endl;
 						out << "\t\t" << commandReadConfigSingle << "(theReader, ir, token.c_str(), &" << propertySectionName << "." << elm.name << ".value" << addArgument 
-							<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo);" << std::endl;
+							<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags, whattodo" << endArgument << ");" << std::endl;
 #else
 						out << "\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -3142,7 +3151,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							<< ", " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo);" << std::endl;
+							"whattodo" << endArgument << ");" << std::endl;
 #endif
 					}
 					else
@@ -3154,7 +3163,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 						out << "\t\t\ttoken = jvx_replaceStrInStr(token, *replace_this, *replace_by_this);" << std::endl;
 						out << "\t\t}" << std::endl;
 						out << "\t\tif(" << commandReadConfigSingle << "(theReader, ir, token.c_str(), &" << propertySectionName << "." << elm.name << ".value" << addArgument 
-							<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags,whattodo) != JVX_NO_ERROR)" << std::endl;
+							<< ", &" << propertySectionName << "." << elm.name << ".configModeFlags,whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #else
 						out << "\t\ttoken = " << propertySectionName << "." << elm.name << ".descriptor.std_str();"  << std::endl;
 						out << "\t\tif(replace_this && replace_by_this)" << std::endl;
@@ -3165,7 +3174,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 							<< ", " << 
 							"&" << propertySectionName << "." << elm.name << ".accessFlags, " <<
 							"&" << propertySectionName << "." << elm.name << ".configModeFlags, " <<
-							"whattodo) != JVX_NO_ERROR)" << std::endl;
+							"whattodo" << endArgument << ") != JVX_NO_ERROR)" << std::endl;
 #endif
 						out << "\t\t{" << std::endl;
 
@@ -3597,6 +3606,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			std::vector<std::string>& lstRegisterFunctions,
 			std::vector<std::string>& lstUnregisterFunctions,
 			std::vector<std::string>& lstPutConfigFunctions,
+			std::vector<std::vector<std::string> >& lstPutConfigFunctionArgs,
 			std::vector<std::string>& lstGetConfigFunctions,
 			std::vector<std::string>& lstupdTagFunctions,
 	std::map<jvxInt32, oneAudioPluginEntry>& collectAudioPluginsIds,
@@ -3637,6 +3647,7 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 				lstRegisterFunctions,
 				lstUnregisterFunctions,
 				lstPutConfigFunctions,
+				lstPutConfigFunctionArgs,
 				lstGetConfigFunctions,
 				lstupdTagFunctions,
 				collectAudioPluginsIds,
@@ -3650,6 +3661,34 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 		std::string propertySectionName = theElm.thePropertySection.name;
 		std::string funcSectionName = theElm.thePropertySection.name;
 		std::vector<std::string> locPrefixList = theElm.thePropertySection.prefixPathList;
+		std::vector<std::string> locPropReturnSelLst;
+		
+		for(j = 0; j < theElm.thePropertySection.properties.size(); j++)
+		{
+			onePropertyDefinition& elm = theElm.thePropertySection.properties[j];
+			if(elm.generateConfigFileEntry)
+			{
+				switch(elm.format)
+				{
+				case JVX_DATAFORMAT_SELECTION_LIST:
+				
+					// This must conclude the same as in function <produceOutput_c_readconfig>
+					if(elm.ignoreproblemsconfig)
+					{
+						if(elm.allowOptionsConfigIfNotFound)
+						{
+							
+							std::string arg = propertySectionName;
+							arg += "_";
+							arg += elm.name;
+							locPropReturnSelLst.push_back(arg);
+						}
+					}
+					break;
+				}
+			}
+		}
+		
 		/*
 		if (!theElm.thePropertySection.myLocalPrefix.empty())
 		{
@@ -3704,13 +3743,20 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 		
 		streamReadConfig << "\t// Comment: " << theElm.thePropertySection.comment << std::endl;
 		streamReadConfig << "\tinline void put_configuration__" << funcSectionName 
-			<< "(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, std::vector<std::string>* warnings_properties = nullptr, const std::string* replace_this = nullptr, const std::string* replace_by_this = nullptr)" << std::endl;
+			<< "(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, std::vector<std::string>* warnings_properties = nullptr, const std::string* replace_this = nullptr, const std::string* replace_by_this = nullptr" << std::flush;
+		for(auto elm: locPropReturnSelLst)
+		{
+			streamReadConfig << ", std::vector<std::string>* " << elm << " = nullptr" << std::flush;
+		}
+		streamReadConfig << ")" << std::endl;
+		
 		streamReadConfig << "\t{" << std::endl;
 		streamReadConfig << "\t\t// Put configuration to initialize the properties." << std::endl;
 		streamReadConfig << "\t\tjvxCBitField whattodo = JVX_PROPERTY_FLAGTAG_OPERATE_DO_NOTHING;" << std::endl;
 		streamReadConfig << "\t\tstd::string token;" << std::endl;
 
 		lstPutConfigFunctions.push_back("put_configuration__" + funcSectionName);
+		lstPutConfigFunctionArgs.push_back(locPropReturnSelLst);
 
 		streamWriteConfig << "\t// Comment: " << theElm.thePropertySection.comment << std::endl;
 		streamWriteConfig << "\tinline void get_configuration__" << funcSectionName << "(jvxCallManagerConfiguration* callConf, "
@@ -4395,6 +4441,7 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 	std::vector<std::string> lstRegisterFunctions;
 	std::vector<std::string> lstUnregisterFunctions;
 	std::vector<std::string> lstPutConfigFunctions;
+	std::vector<std::vector<std::string> > lstPutConfigFunctionArgs;
 	std::vector<std::string> lstGetConfigFunctions;
 	std::vector<std::string> lstTagUpdateFunctions;
 
@@ -4429,7 +4476,8 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 			streamReadConfig, streamWriteConfig,
 			streamAssociateFunctions, streamDeassociateFunctions, streamTranslations, streamTagUpdate, 0, "", "", "",
 			lstInitFunctions, lstAllocateFunctions, lstDeallocateFunctions, lstRegisterFunctions, 
-			lstUnregisterFunctions, lstPutConfigFunctions, lstGetConfigFunctions, lstTagUpdateFunctions,
+			lstUnregisterFunctions, lstPutConfigFunctions, lstPutConfigFunctionArgs,
+			lstGetConfigFunctions, lstTagUpdateFunctions,
 			audioPluginsIds,
 			collectInvalidAudioPluginsIds);
 	}
@@ -4642,11 +4690,39 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 
 	// Put config
 	osOutFileH << "\t// All functions called at once." << std::endl;
-	osOutFileH << "\tinline void put_configuration_all(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, std::vector<std::string>* warnings_properties = nullptr)" << std::endl;
+	osOutFileH << "\tinline void put_configuration_all(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, std::vector<std::string>* warnings_properties = nullptr" << std::flush;
+	/*
+	for(auto elmOuter: lstPutConfigFunctionArgs)
+	{
+		for(auto elmIn: elmOuter)
+		{
+			osOutFileH << ", std::vector<std::string>* " << elmIn << " = nullptr" << std::flush;
+		}
+	}
+	*/
+	osOutFileH << ")" << std::endl;
 	osOutFileH << "\t{" << std::endl;
+	
 	for(i = 0; i < lstRegisterFunctions.size(); i++)
 	{
-		osOutFileH << "\t\t" << lstPutConfigFunctions[i] << "(callConf, theReader, ir, warnings_properties);" << std::endl;
+		osOutFileH << "\t\t" << lstPutConfigFunctions[i] << "(callConf, theReader, ir, warnings_properties" << std::flush; 
+		/*
+		 * Do not add these arguments here - the developer needs to adress the put_config function separately due to the
+		 * two replace arguments!!
+		if(i < lstPutConfigFunctionArgs.size())
+		{
+			if( lstPutConfigFunctionArgs[i].size())
+			{
+				// The replace parameters!!
+				osOutFileH << ", nullptr, nullptr" << std::flush;
+				for(auto elmIn: lstPutConfigFunctionArgs[i])
+				{
+					osOutFileH << ", " << elmIn <<std::flush;
+				}
+			}
+		}
+		*/
+		osOutFileH << ");" << std::endl;
 	}
 	osOutFileH << "\t};" << std::endl;
 

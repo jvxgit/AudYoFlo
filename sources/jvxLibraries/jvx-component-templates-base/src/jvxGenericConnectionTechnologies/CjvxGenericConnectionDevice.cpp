@@ -138,6 +138,10 @@ CjvxGenericConnectionDevice::activate()
 	jvxErrorType res = _activate();
 	if (res == JVX_NO_ERROR)
 	{
+		CjvxGenericConnectionDevice_pcg::init_all();
+		CjvxGenericConnectionDevice_pcg::allocate_all();
+		CjvxGenericConnectionDevice_pcg::register_all(this);
+
 		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
 		{
 			jvx_lock_text_log(jvxrtst_bkp);
@@ -293,6 +297,9 @@ CjvxGenericConnectionDevice::deactivate()
 				_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
 			}
 		}
+		
+		CjvxGenericConnectionDevice_pcg::unregister_all(this);
+		CjvxGenericConnectionDevice_pcg::deallocate_all();
 	}
 	return(res);
 }

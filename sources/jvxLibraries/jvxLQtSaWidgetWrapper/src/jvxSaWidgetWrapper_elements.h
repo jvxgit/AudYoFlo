@@ -41,6 +41,7 @@ protected:
 public:
 	QWidget* getMyWidget() { return(theWidget);}
 	virtual bool update_window() = 0;
+	std::string propertyName() { return propName; };
 };
 
 // ======================================================================
