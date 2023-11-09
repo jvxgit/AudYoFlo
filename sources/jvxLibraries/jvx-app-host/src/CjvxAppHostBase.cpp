@@ -614,17 +614,13 @@ JVX_APPHOST_CLASSNAME::on_components_configured()
 {
 	//=================================================================
 	// Activate default components
+	// If a configure file was involved, this must be done in the middle of the overall process to
+	// take care of the connection rules etc.
 	//=================================================================
 	if (confHostFeatures)
 	{
 		// Activate all default components if required
 		activate_default_components_host(confHostFeatures->lst_ModulesOnStart, involvedHost.hHost, false, confHostFeatures->verbose_ModulesOnStart);
-
-		jvxErrorType res = involvedComponents.theHost.hFHost->system_ready();
-		if (res != JVX_NO_ERROR)
-		{
-			std::cout << "System was started but host reported to be not ready, error reason: <" << jvxErrorType_descr(res) << ">." << std::endl;
-		}
 	}
 	onComponentsConfigured = true;
 
@@ -712,6 +708,11 @@ JVX_APPHOST_CLASSNAME::boot_prepare_host_stop()
 		this->on_connections_started();
 	}
 
+	jvxErrorType res = involvedComponents.theHost.hFHost->system_ready();
+	if (res != JVX_NO_ERROR)
+	{
+		std::cout << "System was started but host reported to be not ready, error reason: <" << jvxErrorType_descr(res) << ">." << std::endl;
+	}
 	// involvedHost.hHost->report_boot_complete(true); <- this was moved to <on_components_configured>	
 }
 

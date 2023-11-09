@@ -271,7 +271,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureComplete()
 	{
 		cfg->done_configuration();
 		this->involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_DONE, (jvxHandle*)cfg);
-	}
+	}	
 	return JVX_NO_ERROR;
 }
 

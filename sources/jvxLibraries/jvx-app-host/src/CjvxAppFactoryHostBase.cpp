@@ -958,7 +958,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 		}
 
 		// ============================================================================================
-
+		jvxBool configLoadSuccess = false;
 		if (!_command_line_parameters.configFilename.empty())
 		{
 			// At first try to read config file from user path
@@ -971,6 +971,11 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 				std::string cfg_filename_from_sys = jvx_makeFilePath(_command_line_parameters.systemPath, _command_line_parameters.configFilename);
 				resL = configureFromFile(&callConf, cfg_filename_from_sys, _command_line_parameters.configDirectories, context);
 			}		
+
+			if (resL == JVX_NO_ERROR)
+			{
+				configLoadSuccess = true;
+			}
 		}		
 
 		if (!_command_line_parameters.configFilename_ovlay.empty())
@@ -983,10 +988,18 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 				std::string cfg_filename_from_sys = jvx_makeFilePath(_command_line_parameters.systemPath, _command_line_parameters.configFilename);
 				resL = configureFromFile(&callConf, cfg_filename_from_sys, _command_line_parameters.configDirectories, context);
 			}
+			if (resL == JVX_NO_ERROR)
+			{
+				configLoadSuccess = true;
+			}
 		}
 
 		// Configuration complete will be reported even if the configuration file does not exist
-		configureComplete();
+		if (configLoadSuccess)
+		{
+			// Configure complete only involved if we successfully loaded a config file
+			configureComplete();
+		}
 
 		// ============================================================================================
 		
