@@ -1343,6 +1343,7 @@ namespace jvx {
 				jvxSize offsetStart,
 				jvxCBitField fineTuningParams)
 			{
+				jvxBool alreadyConverted = false;
 				// Number elements is INHERENT to passed string expression !!
 				jvxErrorType res = JVX_NO_ERROR;
 				jvxBool propAccessible = false;
@@ -1405,6 +1406,7 @@ namespace jvx {
 							{
 								res = jvx_string2ValueList(loadTarget, ptrVal, theDescr.format, theDescr.num, &numValuesPassed);
 							}
+							alreadyConverted = true;
 							break;
 						case JVX_DATAFORMAT_VALUE_IN_RANGE:
 							ptrVal = &valR;
@@ -1515,8 +1517,12 @@ namespace jvx {
 
 				if (res == JVX_NO_ERROR)
 				{
-					// Fill in field from string, temp field always starts with first element
-					res = fromString(ptrVal, 0, numValuesPassed, theDescr.format, contentOnly, theDescr.decTp, loadTarget, loadTargetPP, fineTuningParams, szSel);
+					// if a single value is transferred but to configure an entry in a field, we have covered this in the list convert before
+					if (!alreadyConverted)
+					{
+						// Fill in field from string, temp field always starts with first element
+						res = fromString(ptrVal, 0, numValuesPassed, theDescr.format, contentOnly, theDescr.decTp, loadTarget, loadTargetPP, fineTuningParams, szSel);
+					}
 				}
 
 				if (res == JVX_NO_ERROR)

@@ -78,7 +78,7 @@ extern "C"
 		std::string loadDllNameEmbHost = EMB_HOST_DLL_NAME;
 		std::string argsExp; 
 		std::vector<std::string> lstArgs;
-		std::string modulePath = JVX_GET_CURRENT_MODULE_PATH(ayf_embedding_proxy_init);
+		std::string modulePath = JVX_GET_CURRENT_MODULE_PATH((void*)ayf_embedding_proxy_init);
 
 		// std::string loadDllNameFullHost = ""; // This one should not be loaded, it should be there already
 		// std::string loadDllName = loadDllNameMinHost;
