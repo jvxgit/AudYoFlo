@@ -339,11 +339,13 @@ extern "C"
 
 				if (consoleAttached)
 				{
+#ifdef JVX_OS_WINDOWS
 					BOOL freeResult = FreeConsole();
 					if (!freeResult)
 					{
 						DWORD lErr = GetLastError();
 					}					
+#endif
 				}
 				consoleAttached = false;
 			}
