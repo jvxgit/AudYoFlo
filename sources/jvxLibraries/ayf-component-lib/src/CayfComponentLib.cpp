@@ -9,7 +9,7 @@
 
 #define Q(x) #x
 #define Quotes(x) Q(x)
-#define SET_DLL_REFERENCE(ret, entry) ret. ## entry ## _call = (entry) JVX_GETPROCADDRESS(proxyLibHandleGlobal, Quotes(entry))
+#define SET_DLL_REFERENCE(ret, entry) ret.entry ## _call = (entry) JVX_GETPROCADDRESS(proxyLibHandleGlobal, Quotes(entry))
 
 // Create a local data connections object if required
 class myLocalHost : public IjvxDataConnections, public CjvxDataConnections, public IjvxHiddenInterface

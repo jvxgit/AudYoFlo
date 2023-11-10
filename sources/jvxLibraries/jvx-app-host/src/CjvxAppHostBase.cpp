@@ -707,13 +707,6 @@ JVX_APPHOST_CLASSNAME::boot_prepare_host_stop()
 	{
 		this->on_connections_started();
 	}
-
-	jvxErrorType res = involvedComponents.theHost.hFHost->system_ready();
-	if (res != JVX_NO_ERROR)
-	{
-		std::cout << "System was started but host reported to be not ready, error reason: <" << jvxErrorType_descr(res) << ">." << std::endl;
-	}
-	// involvedHost.hHost->report_boot_complete(true); <- this was moved to <on_components_configured>	
 }
 
 jvxErrorType 

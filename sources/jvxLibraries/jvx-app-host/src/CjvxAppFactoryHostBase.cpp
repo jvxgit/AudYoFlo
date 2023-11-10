@@ -1008,7 +1008,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 		
 		// Trigger all external factories here!!
 		involvedComponents.theHost.hFHost->trigger_external_factory(nullptr, true);
-
+		
 		res = boot_prepare_specific(&errLoc); // postbootup_specific();
 		if (res == JVX_NO_ERROR)
 		{
@@ -1021,6 +1021,14 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 				errorMessage->assign("Specific <boot_run> was not successful: " + errLoc.std_str());
 			}
 		}
+
+		// At this point the system is ready! Report this to all involved components!!
+		jvxErrorType res = involvedComponents.theHost.hFHost->system_ready();
+		if (res != JVX_NO_ERROR)
+		{
+			std::cout << "System was started but host reported to be not ready, error reason: <" << jvxErrorType_descr(res) << ">." << std::endl;
+		}
+
 		return res;
 	}
 	else
