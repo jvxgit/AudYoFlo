@@ -15,6 +15,8 @@
 #define JVX_USER_ROLE_TREEWIDGET_PROPERTY_PARAM_BASE (Qt::UserRole + 6)
 #define JVX_USER_ROLE_TREEWIDGET_PROPERTY_ADDED_ON_ASSOCIATE (Qt::UserRole + 7)
 #define JVX_USER_ROLE_TREEWIDGET_PROPERTY_ID_ARRAY (Qt::UserRole + 8)
+#define JVX_USER_ROLE_TREEWIDGET_PROPERTY_CLIPBOARD_TXT (Qt::UserRole + 9)
+
 #define JVX_USER_ROLE_TREEWIDGET_SUBWIDGET 1
 
 Q_DECLARE_METATYPE(jvxPropertyDescriptor);
@@ -863,6 +865,8 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 							{
 								if (!typeNothandled)
 								{
+									std::string txtCb;
+
 									ident.reset(getSetTag.c_str());
 									trans.reset(false, offsetStart, JVX_PROPERTY_DECODER_NONE);
 									resP = propRef->get_property(callGate, jPRG( ptrVal, 1, propD.format), ident, trans );
@@ -880,6 +884,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											{
 												txtShow = "unselected";
 											}
+											txtCb = txtShow;
 											break;
 
 										case JVX_DATAFORMAT_DATA:
@@ -899,6 +904,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											valD = transformTo(valD, transtp, transformScale);
 											getDisplayUnitToken(transtp, unit);
 											txtShow = jvx_data2String(valD, numDigits) + " " + unit;
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_16BIT_LE:
 											if (propD.decTp == JVX_PROPERTY_DECODER_SIMPLE_ONOFF)
@@ -936,6 +942,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											{
 												txtShow = jvx_int2String(valI16);
 											}
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_U16BIT_LE:
 											if (propD.decTp == JVX_PROPERTY_DECODER_SIMPLE_ONOFF)
@@ -958,12 +965,15 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											{
 												txtShow = jvx_int2String(valUI16);
 											}
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_8BIT:
 											txtShow = jvx_int2String(valI8);
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_U8BIT:
 											txtShow = jvx_int2String(valUI8);
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_32BIT_LE:
 											if (propD.decTp == JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE)
@@ -981,15 +991,19 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											{
 												txtShow = jvx_int2String(valI32);
 											}
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_U32BIT_LE:
-											txtShow = jvx_int2String(valUI32);											
+											txtShow = jvx_int2String(valUI32);	
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_64BIT_LE:
 											txtShow = jvx_int642String(valI64);
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_U64BIT_LE:
 											txtShow = jvx_uint642String(valUI64);
+											txtCb = txtShow; 
 											break;
 										case JVX_DATAFORMAT_SELECTION_LIST:
 											txtShow = "-none-error-";
@@ -1001,6 +1015,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 													break;
 												}
 											}
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_STRING:
 											//txtShow = "-none-error-";
@@ -1013,6 +1028,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											{
 												txtShow = fldStr.std_str();
 											}
+											txtCb = fldStr.std_str();
 											break;
 										case JVX_DATAFORMAT_STRING_LIST:
 											if (selLst.strList.ll() == 0)
@@ -1032,6 +1048,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 												}
 												txtShow += selLst.strList.std_str_at(i);
 											}
+											txtCb = txtShow;
 											break;
 										case JVX_DATAFORMAT_VALUE_IN_RANGE:
 											backwardRef->keymaps.slpba.parseEntryList(fldStr.std_str(), getSetTag);
@@ -1045,16 +1062,18 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											valD = transformTo(valR.val(), transtp, transformScale);
 											getDisplayUnitToken(transtp, unit);
 											txtShow = jvx_data2String(valD, numDigits) + " " + unit;
+											txtCb = txtShow;
 											break;
 										default:
 											assert(0);
 										}
 
+										theItem->setData(1, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CLIPBOARD_TXT, txtCb.c_str());
 
 										resP = propRef->get_descriptor_property(callGate, descrLoc, identId);
 										propRef->get_reference_component_description(&loc_descror, &loc_descrion, &loc_mdule, &loc_cpid);
 										ttiptext = loc_descror.std_str() + ":" + jvxComponentIdentification_txt(loc_cpid) + ":" + getSetTag;
-										
+																				
 										theItem->setText(1, txtShow.c_str());
 										QFont ft = theItem->font(1);
 										ft.setItalic(false);
@@ -1331,6 +1350,11 @@ CjvxMaWrapperElementTreeWidget::treeWidgetContextMenuRequest(const QPoint& pos)
 		if (column == 1)
 		{
 			txtClip = nd->text(column).toLatin1().constData();
+			auto vv = nd->data(1, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CLIPBOARD_TXT);
+			if (vv.isValid())
+			{
+				txtClip = vv.toString().toLatin1().constData();
+			}
 		}
 		else
 		{

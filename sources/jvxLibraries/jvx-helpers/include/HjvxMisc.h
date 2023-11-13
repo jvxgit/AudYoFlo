@@ -428,7 +428,7 @@ jvxUInt16
 jvx_string2UInt16(const std::string& in, jvxBool& err);
 
 std::string
-jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSize num, jvxSize numDigits, const std::string& sep = ",");
+jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSize num, jvxSize numDigits, const std::string& sep = ",", const std::string& startToken = "[", const std::string& stopToken = "]");
 
 jvxErrorType
 jvx_string2ValueList(const std::string& input, jvxHandle* ptrVal, jvxDataFormat format, jvxSize num, jvxSize* numUsed = NULL);

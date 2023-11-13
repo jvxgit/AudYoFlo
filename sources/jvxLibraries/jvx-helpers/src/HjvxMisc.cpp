@@ -686,7 +686,7 @@ jvxErrorType jvx_static_try_lock(jvxHandle* priv)
 }
 
 
-std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSize num, jvxSize numDigits, const std::string& sep)
+std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSize num, jvxSize numDigits, const std::string& sep, const std::string& startToken, const std::string& stopToken)
 {
 	std::string ret;
 	jvxSize i;
@@ -705,7 +705,7 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 	{
 	case JVX_DATAFORMAT_DATA:
 		ptrData = (jvxData*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -718,12 +718,12 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			// and another format which I do not understand anymore :-)
 			ret += jvx_data2String(ptrData[i], (int)numDigits);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 
 	case JVX_DATAFORMAT_16BIT_LE:
 		ptrI16 = (jvxInt16*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -732,11 +732,11 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_int2String((int)ptrI16[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 	case JVX_DATAFORMAT_32BIT_LE:
 		ptrI32 = (jvxInt32*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -745,11 +745,11 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_int322String((int)ptrI32[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 	case JVX_DATAFORMAT_64BIT_LE:
 		ptrI64 = (jvxInt64*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -758,11 +758,11 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_int642String(ptrI64[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 	case JVX_DATAFORMAT_8BIT:
 		ptrI8 = (jvxInt8*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -771,12 +771,12 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_int2String(ptrI8[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 
 	case JVX_DATAFORMAT_U16BIT_LE:
 		ptrUI16 = (jvxUInt16*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -785,11 +785,11 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_uint322Hexstring((jvxUInt32)ptrUI16[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 	case JVX_DATAFORMAT_U32BIT_LE:
 		ptrUI32 = (jvxUInt32*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -798,11 +798,11 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_uint322Hexstring(ptrUI32[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 	case JVX_DATAFORMAT_U64BIT_LE:
 		ptrUI64 = (jvxUInt64*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -811,11 +811,11 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_uint642Hexstring(ptrUI64[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 	case JVX_DATAFORMAT_U8BIT:
 		ptrUI8 = (jvxUInt8*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -824,12 +824,12 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_uint322Hexstring((jvxUInt32)ptrUI8[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 
 	case JVX_DATAFORMAT_SIZE:
 		ptrS = (jvxSize*)ptrVal;
-		ret = "[";
+		ret = startToken;
 		for (i = 0; i < num; i++)
 		{
 			if (i != 0)
@@ -838,7 +838,7 @@ std::string jvx_valueList2String(jvxHandle* ptrVal, jvxDataFormat format, jvxSiz
 			}
 			ret += jvx_size2String(ptrS[i]);
 		}
-		ret += "]";
+		ret += stopToken;
 		break;
 	}
 	return ret;
