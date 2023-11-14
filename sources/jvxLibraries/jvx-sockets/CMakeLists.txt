@@ -20,6 +20,14 @@ include_directories(
   set(LOCAL_COMPILE_DEFINITIONS "JVX_WITH_PCAP")
 endif()
 
+# There is a windows implementation of the tcp/udp loop. The difference is that the linux loop 
+# can be stopped by shutting down the socket but this seems to not work under certain conditions in Windows.
+# I do not exactly know when the linux version works for Windows and when not.
+# However, I switch on the Windows implementation as the windows default now since it works in a more reliable way!
+if(JVX_OS MATCHES "windows")
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_WINDOWS_SOCKET_IMPL")
+endif()
+
 set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSocketsCommon.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSocketsServer.cpp
