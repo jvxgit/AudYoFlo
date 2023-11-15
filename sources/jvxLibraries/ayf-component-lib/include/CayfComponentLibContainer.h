@@ -19,6 +19,8 @@ private:
 	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
 	int passthroughMode = 0;
 	std::string regName;
+	jvxSize desiredSlotId = JVX_SIZE_DONTCARE;
+
 public:
 
 	CayfComponentLib* processorRef = nullptr;	
@@ -34,7 +36,7 @@ public:
 	void lock();
 	void unlock();
 
-	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod);
+	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod, jvxSize desSlotId = JVX_SIZE_DONTCARE);
 	jvxErrorType stopBinding();
 
 	jvxErrorType startBindingInner(IjvxHost* hostRef = nullptr);

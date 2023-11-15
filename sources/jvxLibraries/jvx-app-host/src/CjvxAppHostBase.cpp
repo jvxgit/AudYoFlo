@@ -367,14 +367,33 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 		// Verify the integrity of the system: the component list must be properly filled.
 		// If we crash here, the definition in TjvxTypes.cpp, line 5, is broken since we 
 		// added or removed a component type. Please check that position
+
+		// Type association check
+		jvxBool integrityOk = true;
+		for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
+		{
+			if (theClassAssociation[i].comp_class != jvxComponentType_class((jvxComponentType)i))
+			{
+				integrityOk = false;
+			}
+
+		}
+
 		if (
 			(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_class != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) ||
+			(jvxComponentType_class(JVX_COMPONENT_ALL_LIMIT) != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) ||
 			(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_sec_type != JVX_COMPONENT_ALL_LIMIT))
+		{
+			integrityOk = false;
+		}
+
+		if(!integrityOk)
 		{
 			std::cout << __FUNCTION__ << ": Fatal error: the component settings are broken due to a malfunctioning system setup at compile time." << std::endl;
 			assert(0);
 			exit(0);
 		}
+
 		// ========================================================================================================
 
 		for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)

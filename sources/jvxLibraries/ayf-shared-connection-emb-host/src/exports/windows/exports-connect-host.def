@@ -5,4 +5,6 @@ EXPORTS
 
 		ayf_load_config_content_factory_host
 		ayf_release_config_content_factory_host
+
+		ayf_forward_text_command
 		

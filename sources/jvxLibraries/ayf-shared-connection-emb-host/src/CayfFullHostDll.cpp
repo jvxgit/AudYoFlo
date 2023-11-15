@@ -75,6 +75,11 @@ extern "C"
 	{
 		return globalHostInstance.release_config_content(priIf, datOnReturn);
 	}
+
+	jvxErrorType ayf_forward_text_command(const char* command, IjvxObject* priObj, jvxApiString& astr)
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
 }
 
 extern "C"

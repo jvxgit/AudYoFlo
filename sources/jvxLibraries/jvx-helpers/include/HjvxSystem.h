@@ -6,6 +6,8 @@ const char* jvxComponentType_txt(jvxSize id);
 const char* jvxComponentType_txtf(jvxSize id);
 jvxErrorType jvxComponentType_decode(jvxComponentType* tp, const std::string & cpName);
 
+jvxComponentTypeClass jvxComponentType_class(jvxComponentType tp);
+
 jvxTextHelpers* jvxComponentTypeClass_str();
 const char* jvxComponentTypeClass_txt(jvxComponentTypeClass cls);
 const char* jvxComponentTypeClass_txtf(jvxComponentTypeClass cls);

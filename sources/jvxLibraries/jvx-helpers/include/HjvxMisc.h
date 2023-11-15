@@ -639,6 +639,7 @@ namespace jvx {
 		void genericDataBufferDeallocate(jvxHandle*& buf, jvxDataFormat form);
 
 		jvxErrorType genericDataBufferConvert(jvxHandle** bufsIn, jvxDataFormat formIn, jvxHandle** bufsOut, jvxDataFormat formOut, jvxSize nChans, jvxSize numElms);
+		jvxBool checkAllowTypeChange(jvxComponentType tpOld, jvxComponentType tpNew);
 	}
 
 	namespace align {

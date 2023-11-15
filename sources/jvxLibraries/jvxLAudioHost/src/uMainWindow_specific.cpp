@@ -120,6 +120,8 @@ uMainWindow_specific::bootup_negotiate_specific()
 		parentRef->_command_line_parameters_hosttype.num_slots_max, 
 		parentRef->_command_line_parameters_hosttype.num_subslots_max);
 
+	// Verify here
+	
 	//parentRef->theHostFeatures.nameDefaultAlgorithm = NULL;
 	//parentRef->theHostFeatures.if_autoconnect = static_cast<IjvxAutoDataConnect*>(this);
 

@@ -55,7 +55,14 @@ public:
 	};
 };
 
-class ayfHostBindingReferencesMinHost: public ayfHostBindingReferences
+class ayfHostBindingReferencesTxtCommand
+{
+public:
+	// Forward a text token to the host from where the appropriate action is taken
+	ayf_forward_text_command ayf_forward_text_command_call = nullptr;
+};
+
+class ayfHostBindingReferencesMinHost: public ayfHostBindingReferences, public ayfHostBindingReferencesTxtCommand
 {
 public:
 	// ==============================================================
@@ -80,9 +87,6 @@ public:
 	// Detach the previously attached component
 	ayf_detach_component_module ayf_detach_component_module_call = nullptr;
 
-	// Forward a text token to the host from where the appropriate action is taken
-	ayf_forward_text_command ayf_forward_text_command_call = nullptr;
-
 	virtual jvxErrorType request_specialization(jvxHandle** ptrOnReturn, ayfHostBindingType checkMe) override
 	{
 		if (ptrOnReturn)
@@ -102,7 +106,7 @@ public:
 	}
 };
 
-class ayfHostBindingReferencesEmbHost: public ayfHostBindingReferences
+class ayfHostBindingReferencesEmbHost: public ayfHostBindingReferences, public ayfHostBindingReferencesTxtCommand
 {
 public:
 	jvxApiStringList argsFullHost;

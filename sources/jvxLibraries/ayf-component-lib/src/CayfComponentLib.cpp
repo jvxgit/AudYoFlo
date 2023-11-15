@@ -151,9 +151,17 @@ CayfComponentLib::CayfComponentLib(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, Cayf
 		break;
 	case ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST:
 		bindingGlobal->request_specialization(reinterpret_cast<jvxHandle**>(&bindingMinHost), bindingGlobal->bindType);
+		if (bindingMinHost)
+		{
+			bindingTxtCmdHost = static_cast<ayfHostBindingReferencesTxtCommand*>(bindingMinHost);
+		}
 		break;
 	case ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST:
 		bindingGlobal->request_specialization(reinterpret_cast<jvxHandle**>(&bindingEmbHost), bindingGlobal->bindType);
+		if (bindingEmbHost)
+		{
+			bindingTxtCmdHost = static_cast<ayfHostBindingReferencesTxtCommand*>(bindingEmbHost);
+		}
 		break;
 	default: 
 		assert(0);
@@ -345,7 +353,7 @@ CayfComponentLib::activate()
 
 			if (resC == JVX_NO_ERROR)
 			{
-				this->mainNode->set_location_info(jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
+				this->mainNode->set_location_info(jvxComponentIdentification(JVX_COMPONENT_EXTERNAL_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
 				
 				resC = this->mainNode->select(nullptr);
 
@@ -673,9 +681,9 @@ CayfComponentLib::new_text_message_status(int value, char* fldRespond, jvxSize s
 		{
 			// txtMessageResponse = txtMessageCollect;
 			jvxApiString astr;
-			if (bindingMinHost)
+			if (bindingTxtCmdHost)
 			{
-				bindingMinHost->ayf_forward_text_command_call(txtMessageCollect.c_str(), this, astr);
+				bindingTxtCmdHost->ayf_forward_text_command_call(txtMessageCollect.c_str(), this, astr);
 			}
 			txtMessageResponse = astr.std_str();
 			txtMessageStatus = ayfTextIoStatus::AYF_TEXT_IO_STATUS_RESPONDING;

@@ -133,6 +133,17 @@ jvxErrorType
 CjvxObject::_set_location_info(const jvxComponentIdentification& tp)
 {
 	// This function may set the slotid but it does never change the type!
+	// Correction HK, 15.11.2023: It may also accept other types
+	if (tp.tp != JVX_COMPONENT_UNKNOWN)
+	{
+		if (_common_set.theComponentType.tp != tp.tp)
+		{
+			if (jvxComponentType_class(_common_set.theComponentType.tp) == jvxComponentType_class(tp.tp))
+			{
+				_common_set.theComponentType.tp = tp.tp;
+			}
+		}
+	}
 	_common_set.theComponentType.slotid = tp.slotid;
 	_common_set.theComponentType.slotsubid = tp.slotsubid;
 	_common_set.theComponentType.uId = tp.uId;

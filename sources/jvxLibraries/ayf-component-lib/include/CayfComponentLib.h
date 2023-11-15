@@ -158,6 +158,7 @@ protected:
 	ayfHostBindingReferences* binding = nullptr;
 	ayfHostBindingReferencesMinHost* bindingMinHost = nullptr;
 	ayfHostBindingReferencesEmbHost* bindingEmbHost = nullptr;
+	ayfHostBindingReferencesTxtCommand* bindingTxtCmdHost = nullptr;
 
 private:
 	

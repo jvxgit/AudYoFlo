@@ -36,6 +36,7 @@ static void registerEmbHost(ayfHostBindingReferencesEmbHost* retReferences, JVX_
 {
 	SET_DLL_REFERENCE(retReferences, ayf_register_factory_host);
 	SET_DLL_REFERENCE(retReferences, ayf_unregister_factory_host);
+	SET_DLL_REFERENCE(retReferences, ayf_forward_text_command);
 	SET_DLL_REFERENCE(retReferences, ayf_load_config_content_factory_host);
 	SET_DLL_REFERENCE(retReferences, ayf_release_config_content_factory_host);
 	retReferences->bindType = ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST;
@@ -64,6 +65,7 @@ void reset_entries(ayfHostBindingReferencesEmbHost* retReferences)
 
 	retReferences->ayf_load_config_content_factory_host_call = nullptr;
 	retReferences->ayf_register_factory_host_call = nullptr;
+	retReferences->ayf_forward_text_command_call = nullptr;
 	retReferences->ayf_release_config_content_factory_host_call = nullptr;
 	retReferences->ayf_unregister_factory_host_call = nullptr;
 }

@@ -191,7 +191,7 @@ CjvxFullHost::myRegisteredHostId()
 }
 
 jvxErrorType 
-CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, jvxBool regConnFactory, jvxBool noCfgSave)
+CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, jvxBool regConnFactory, jvxBool noCfgSave, jvxSize desiredSlotId, jvxSize desiredSlotSubId)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxHandle* refSpec = nullptr;
@@ -216,7 +216,7 @@ CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* mo
 	{
 		jvxBool extend_if_necessary = true;
 		tp.slotsubid = 0;
-		tp.slotid = JVX_SIZE_DONTCARE;
+		tp.slotid = desiredSlotId;
 		res = JVX_ERROR_ELEMENT_NOT_FOUND;
 		auto elmIt_ep = jvx_findItemSelectorInList_one<oneObjType<IjvxNode>, jvxComponentType>(_common_set_types.registeredNodeTypes, tp.tp, 0);
 		if (elmIt_ep != _common_set_types.registeredNodeTypes.end())
