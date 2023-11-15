@@ -143,7 +143,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 		if (hostExt)
 		{
-			hostExt->attach_external_component(deviceEntryObject, regName.c_str(), true, true, desiredSlotId);
+			hostExt->attach_external_component(deviceEntryObject, regName.c_str(), true, true, desiredSlotIdDev);
 		}
 	}
 
@@ -199,7 +199,7 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 }
 
 jvxErrorType
-CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, int passthroughModeArg, jvxSize desSlotId)
+CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, int passthroughModeArg, int* ayfIdentsPtr, int ayfIdentsNum)
 {
 	jvxApiString realRegName;
 
@@ -211,8 +211,16 @@ CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numIn
 	format = JVX_DATAFORMAT_DATA;
 	formGroup = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
 	passthroughMode = passthroughModeArg;
-	desiredSlotId = desSlotId;
-
+	desiredSlotIdNode = JVX_SIZE_DONTCARE;
+	desiredSlotIdDev = JVX_SIZE_DONTCARE;
+	if (ayfIdentsNum > 0)
+	{
+		desiredSlotIdNode = ayfIdentsPtr[0];
+	}
+	if (ayfIdentsNum > 1)
+	{
+		desiredSlotIdDev = ayfIdentsPtr[1];
+	}
 	if (bindRefsEmbHost)
 	{
 		jvxSize i;

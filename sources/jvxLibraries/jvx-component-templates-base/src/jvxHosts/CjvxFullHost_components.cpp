@@ -223,163 +223,215 @@ CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* mo
 		{
 			oneExternalObj<IjvxNode> newElm;
 			newElm.theHandle_single = node;
-			newElm.moduleName = modStr.std_str();
-			jvxBool alreadyThere = false;
+			newElm.moduleName = modStr.std_str();			
 			res = JVX_ERROR_DUPLICATE_ENTRY;
-			for (auto& elm : elmIt_ep->instances.externalEndpoints)
+			
+			// Attach a number to the object if the name was already in use
+			std::string originElmName = newElm.moduleName;
+			jvxSize cnt = 0;
+			while (1)
 			{
-				if (elm.moduleName == newElm.moduleName)
+				jvxBool alreadyThere = false;
+				if (cnt > 0)
 				{
-					alreadyThere = true;
+					newElm.moduleName = originElmName + "_" + jvx_size2String(cnt);
+				}
+				for (auto& elm : elmIt_ep->instances.externalEndpoints)
+				{
+					if (elm.moduleName == newElm.moduleName)
+					{
+						alreadyThere = true;
+						break;
+					}
+				}
+				if (alreadyThere)
+				{
+					cnt++;
+				}
+				else
+				{
 					break;
 				}
 			}
-			if (!alreadyThere)
+
+			elmIt_ep->instances.externalEndpoints.push_back(newElm);
+
+			// Now, add the external component to the grid
+			res = JVX_NO_ERROR;
+			auto oldList = elmIt_ep->instances.theHandle_shortcut;
+
+			if (JVX_CHECK_SIZE_SELECTED(tp.slotid))
 			{
-				elmIt_ep->instances.externalEndpoints.push_back(newElm);
-
-				// Now, add the external component to the grid
-				res = JVX_NO_ERROR;
-				auto oldList = elmIt_ep->instances.theHandle_shortcut;
-				
-				// =========================================================================
-				// Lookout the next available slot
-				if (tp.slotid == JVX_SIZE_DONTCARE)
-				{
-					for (h = 0; h < elmIt_ep->instances.theHandle_shortcut.size(); h++)
-					{
-						if (elmIt_ep->instances.theHandle_shortcut[h].obj == NULL)
-						{
-							tp.slotid = h;
-							break;
-						}
-					}
-				}
-
-				// If we still have not found an empty container, try to allocate new instance
-				if (tp.slotid == JVX_SIZE_DONTCARE)
-				{
-					tp.slotid = elmIt_ep->instances.theHandle_shortcut.size();
-				}
-				// =======================================================================
-
-
 				if (tp.slotid >= elmIt_ep->instances.theHandle_shortcut.size())
 				{
-					if (
-						(tp.slotid < elmIt_ep->instances.numSlotsMax) ||
-						extend_if_necessary)
+					// Ok, we may use the id as it is
+				}
+				else
+				{
+					if (elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj == nullptr)
 					{
-						// If we do not have enough slots, expand!
-						for (h = elmIt_ep->instances.theHandle_shortcut.size(); h <= tp.slotid; h++)
-						{
-							oneSelectedObj<IjvxNode> oneElm;
-							oneElm.obj = NULL;
-							oneElm.cfac = NULL;
-							oneElm.mfac = NULL;
-							oneElm.uid = JVX_SIZE_UNSELECTED;
-							oneElm.idSel = JVX_SIZE_UNSELECTED; 
-
-							// oneElm.theHandle_shortcut_dev.clear();
-							elmIt_ep->instances.theHandle_shortcut.push_back(oneElm);
-						}
+						// Ok, we may use the id as it is
 					}
 					else
 					{
-						res = JVX_ERROR_BUFFER_OVERFLOW;
+						// The requested id is already in use..
+						// Let the system select an alternative id
+						std::cout << __FUNCTION__ << ": Warning: Desired slotid <" << tp.slotid << "> is already in use. Switching to next available slotid as given by the system." << std::endl;
+						tp.slotid = JVX_SIZE_DONTCARE;
 					}
 				}
-
-				if (res == JVX_NO_ERROR)
+			}
+			else
+			{
+				if (tp.slotid == JVX_SIZE_DONTCARE)
 				{
-					if (elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj == NULL)
+					// This case is ok, system will select the id
+				}
+				else
+				{
+					// This is a regular case. However, we will not add the component
+					return JVX_NO_ERROR;
+				}
+			}
+
+			// =========================================================================
+			// Lookout the next available slot
+			if (tp.slotid == JVX_SIZE_DONTCARE)
+			{
+				for (h = 0; h < elmIt_ep->instances.theHandle_shortcut.size(); h++)
+				{
+					if (elmIt_ep->instances.theHandle_shortcut[h].obj == NULL)
 					{
-						jvxState stat = JVX_STATE_NONE;
-						jvxErrorType resL = JVX_NO_ERROR;
-						jvxSize uid = 0;
+						tp.slotid = h;
+						break;
+					}
+				}
+			}
 
-						elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj = node;
-						elmIt_ep->instances.theHandle_shortcut[tp.slotid].nmExternal = modStr.std_str();
-						elmIt_ep->instances.theHandle_shortcut[tp.slotid].noCfgSave = noCfgSave; 
-						std::string nm = jvxComponentIdentification_txt(tp);
-						if (uIdInst)
-							uIdInst->obtain_unique_id(&uid, nm.c_str());
-						tp.uId = uid;
+			// If we still have not found an empty container, try to allocate new instance
+			if (tp.slotid == JVX_SIZE_DONTCARE)
+			{
+				tp.slotid = elmIt_ep->instances.theHandle_shortcut.size();
+			}
+			// =======================================================================
 
+
+			if (tp.slotid >= elmIt_ep->instances.theHandle_shortcut.size())
+			{
+				if (
+					(tp.slotid < elmIt_ep->instances.numSlotsMax) ||
+					extend_if_necessary)
+				{
+					// If we do not have enough slots, expand!
+					for (h = elmIt_ep->instances.theHandle_shortcut.size(); h <= tp.slotid; h++)
+					{
+						oneSelectedObj<IjvxNode> oneElm;
+						oneElm.obj = NULL;
+						oneElm.cfac = NULL;
+						oneElm.mfac = NULL;
+						oneElm.uid = JVX_SIZE_UNSELECTED;
+						oneElm.idSel = JVX_SIZE_UNSELECTED;
+
+						// oneElm.theHandle_shortcut_dev.clear();
+						elmIt_ep->instances.theHandle_shortcut.push_back(oneElm);
+					}
+				}
+				else
+				{
+					res = JVX_ERROR_BUFFER_OVERFLOW;
+				}
+			}
+
+			if (res == JVX_NO_ERROR)
+			{
+				if (elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj == NULL)
+				{
+					jvxState stat = JVX_STATE_NONE;
+					jvxErrorType resL = JVX_NO_ERROR;
+					jvxSize uid = 0;
+
+					elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj = node;
+					elmIt_ep->instances.theHandle_shortcut[tp.slotid].nmExternal = modStr.std_str();
+					elmIt_ep->instances.theHandle_shortcut[tp.slotid].noCfgSave = noCfgSave;
+					std::string nm = jvxComponentIdentification_txt(tp);
+					if (uIdInst)
+						uIdInst->obtain_unique_id(&uid, nm.c_str());
+					tp.uId = uid;
+
+					// ===============================================================
+					// Select or indicate select to host
+					// ===============================================================
+					elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->state(&stat);
+					prerun_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
+					if (stat == JVX_STATE_NONE)
+					{
+						resL = elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->select();
+					}
+					elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->set_location_info(tp);
+
+					if (resL == JVX_NO_ERROR)
+					{
+						elmIt_ep->instances.theHandle_shortcut[tp.slotid].uid = uid;
+						elmIt_ep->instances.theHandle_shortcut[tp.slotid].idSel = JVX_SIZE_SLOT_OFF_SYSTEM;
+					}
+					else
+					{
+						res = JVX_ERROR_INTERNAL;
+					}
+					postrun_stateswitch(JVX_STATE_SWITCH_SELECT, tp, resL);
+
+					if (res == JVX_NO_ERROR)
+					{
 						// ===============================================================
-						// Select or indicate select to host
+						// Activate or indicate activate to host
 						// ===============================================================
 						elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->state(&stat);
-						prerun_stateswitch(JVX_STATE_SWITCH_SELECT, tp);
-						if (stat == JVX_STATE_NONE)
+						prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
+						if (stat == JVX_STATE_SELECTED)
 						{
-							resL = elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->select();
+							resL = elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->activate();
 						}
-						elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->set_location_info(tp);
-
-						if (resL == JVX_NO_ERROR)
+						postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, resL);
+						if (resL != JVX_NO_ERROR)
 						{
-							elmIt_ep->instances.theHandle_shortcut[tp.slotid].uid = uid;
-							elmIt_ep->instances.theHandle_shortcut[tp.slotid].idSel = JVX_SIZE_SLOT_OFF_SYSTEM;
+							jvxApiError theErr;
+							jvxApiString theName;
+							elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->description(&theName);
+							elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->lasterror(&theErr);
+
+							reportErrorDescription((std::string)"Failed to activate node type <" + elmIt_ep->description + ">, node <" +
+								theName.std_str() + ">, reason: " + theErr.errorDescription.std_str());
+							res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
 						}
 						else
 						{
-							res = JVX_ERROR_INTERNAL;
-						}
-						postrun_stateswitch(JVX_STATE_SWITCH_SELECT, tp, resL);
+							if (regConnFactory)
+							{
+								elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
+									JVX_INTERFACE_CONNECTOR_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ep->instances.theHandle_shortcut[tp.slotid].cfac));
+								elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
+									JVX_INTERFACE_CONNECTOR_MASTER_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ep->instances.theHandle_shortcut[tp.slotid].mfac));
 
-						if (res == JVX_NO_ERROR)
-						{
-							// ===============================================================
-							// Activate or indicate activate to host
-							// ===============================================================
-							elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->state(&stat);
-							prerun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp);
-							if (stat == JVX_STATE_SELECTED)
-							{
-								resL = elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->activate();
-							}
-							postrun_stateswitch(JVX_STATE_SWITCH_ACTIVATE, tp, resL);
-							if (resL != JVX_NO_ERROR)
-							{
-								jvxApiError theErr;
-								jvxApiString theName;
-								elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->description(&theName);
-								elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->lasterror(&theErr);
-
-								reportErrorDescription((std::string)"Failed to activate node type <" + elmIt_ep->description + ">, node <" +
-									theName.std_str() + ">, reason: " + theErr.errorDescription.std_str());
-								res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
-							}
-							else
-							{
-								if (regConnFactory)
+								resL = this->connection_factory_to_be_added(
+									tp,
+									elmIt_ep->instances.theHandle_shortcut[tp.slotid].cfac,
+									elmIt_ep->instances.theHandle_shortcut[tp.slotid].mfac);
+								if (resL != JVX_NO_ERROR)
 								{
-									elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
-										JVX_INTERFACE_CONNECTOR_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ep->instances.theHandle_shortcut[tp.slotid].cfac));
-									elmIt_ep->instances.theHandle_shortcut[tp.slotid].obj->request_hidden_interface(
-										JVX_INTERFACE_CONNECTOR_MASTER_FACTORY, reinterpret_cast<jvxHandle**>(&elmIt_ep->instances.theHandle_shortcut[tp.slotid].mfac));
-
-									resL = this->connection_factory_to_be_added(
-										tp,
-										elmIt_ep->instances.theHandle_shortcut[tp.slotid].cfac,
-										elmIt_ep->instances.theHandle_shortcut[tp.slotid].mfac);
-									if (resL != JVX_NO_ERROR)
-									{
-										reportErrorDescription("Failed to add connector and/or connector master factory for node", true);
-									}
+									reportErrorDescription("Failed to add connector and/or connector master factory for node", true);
 								}
 							}
 						}
 					}
-					else
-					{
-						res = JVX_ERROR_WRONG_STATE_SUBMODULE;
-					}
+				}
+				else
+				{
+					res = JVX_ERROR_WRONG_STATE_SUBMODULE;
 				}
 			}
 		}
 	}
+
 	if (res == JVX_NO_ERROR)
 	{
 		if (moduleGroup)

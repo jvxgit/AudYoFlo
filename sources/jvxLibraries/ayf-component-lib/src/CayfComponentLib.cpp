@@ -366,7 +366,7 @@ CayfComponentLib::activate()
 			{
 				resC = on_main_node_selected();
 			}
-
+			
 			resC = this->mainNode->activate();
 			if (resC == JVX_NO_ERROR)
 			{
@@ -377,7 +377,7 @@ CayfComponentLib::activate()
 				hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 				if (hostExt)
 				{
-					hostExt->attach_external_component(mainNode, regName.c_str(), true);
+					hostExt->attach_external_component(mainNode, regName.c_str(), true, true, parent->desiredSlotIdNode);
 				}
 				else
 				{

@@ -9,6 +9,7 @@
 
 class CayfComponentLibContainer: public IjvxExternalModuleFactory
 {
+	friend class CayfComponentLib;
 private:
 	JVX_MUTEX_HANDLE safeAccess;
 	jvxSize numInChans = 0;
@@ -19,7 +20,8 @@ private:
 	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
 	int passthroughMode = 0;
 	std::string regName;
-	jvxSize desiredSlotId = JVX_SIZE_DONTCARE;
+	jvxSize desiredSlotIdDev = JVX_SIZE_DONTCARE;
+	jvxSize desiredSlotIdNode = JVX_SIZE_DONTCARE;
 
 public:
 
@@ -36,7 +38,7 @@ public:
 	void lock();
 	void unlock();
 
-	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod, jvxSize desSlotId = JVX_SIZE_DONTCARE);
+	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod, int* ayfIdentsPtr = nullptr, int ayfIdentsNum = 0);
 	jvxErrorType stopBinding();
 
 	jvxErrorType startBindingInner(IjvxHost* hostRef = nullptr);
