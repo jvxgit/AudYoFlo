@@ -172,7 +172,8 @@ CayfFullHostClass::mainThreadLoop()
 		}
 	}
 
-	jvx_core_host_loop(argc, (char**)argv);
+	IjvxEventLoop_frontend_ctrl* addFe = static_cast<IjvxEventLoop_frontend_ctrl*>(this);
+	jvx_core_host_loop(argc, (char**)argv, &addFe, 1);
 	return JVX_THREAD_EXIT_NORMAL;
 }
 
@@ -354,7 +355,57 @@ CayfFullHostClass::invite_external_components(IjvxHiddenInterface* hostRef, jvxB
 jvxErrorType
 CayfFullHostClass::forward_text_command(const char* command, IjvxObject* priObj, jvxApiString& astr)
 {
-	astr = "Passing a text message currently unsupported!";
+	// oneThreadReturnType myPrivateMemReturn;
+	jvxApiString cmd = command;
+	JVX_LOCK_MUTEX(safeAccess);
+	if (evLoop && priBeHandle)
+	{
+		TjvxEventLoopElement elm;
+
+		//myPrivateMemReturn.res_mthread = JVX_ERROR_UNSUPPORTED;
+		//myPrivateMemReturn.ret_mthread = "";
+		evLoop->reserve_message_id(&messageId);		
+
+		// Transfer command to the primary backend
+
+		elm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);
+		elm.priv_fe = NULL;
+		elm.target_be = priBeHandle;
+		elm.priv_be = NULL;
+
+		elm.param = (jvxHandle*)(&cmd);
+		elm.paramType = JVX_EVENTLOOP_DATAFORMAT_JVXAPISTRING;
+
+		elm.eventType = JVX_EVENTLOOP_EVENT_TEXT_INPUT;
+		elm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
+		elm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
+		elm.delta_t = JVX_SIZE_UNSELECTED;
+		elm.autoDeleteOnProcess = c_false;
+
+		jvxErrorType res = evLoop->event_schedule(&elm, NULL, nullptr);
+		switch (res)
+		{
+		case JVX_ERROR_END_OF_FILE:
+			std::cout << "Disconnected websocket not reported since host shutdown deadline was missed!" << std::endl;
+			break;
+		case JVX_ERROR_ABORT:
+			std::cout << "Disconnected websocket not reported since host does not accept events from this frontend currently!" << std::endl;
+			break;
+		case JVX_NO_ERROR:
+
+			// Copy the output all back
+			astr = tmpOutputOnCommand;
+			break;
+		default:
+			assert(0);
+		}
+	}	
+	else
+	{
+		astr = "Invalid call";
+	}
+	JVX_UNLOCK_MUTEX(safeAccess);
+
 	return JVX_NO_ERROR;
 
 }

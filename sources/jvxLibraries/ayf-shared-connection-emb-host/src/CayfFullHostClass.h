@@ -26,6 +26,14 @@ private:
 	JVX_THREAD_ID requestThread = JVX_THREAD_ID_INVALID;
 
 	IjvxHiddenInterface* hHost = nullptr;
+
+	// Member variables for additional frontend functionality
+	// JVX_MUTEX_HANDLE safeAccessFrontend; <- re-use the safeAccess mutex as it separates main event loop and external thread
+	IjvxEventLoop* evLoop = nullptr;
+	IjvxEventLoop_backend_ctrl* priBeHandle = nullptr;
+	std::string tmpOutputOnCommand;
+	jvxSize messageId = JVX_SIZE_UNSELECTED;
+
 public:
 
 	jvxBool hostStarted = false;
@@ -95,27 +103,58 @@ public:
 	jvxErrorType forward_text_command(const char* command, IjvxObject* priObj, jvxApiString& astr);
 
 	// ===============================================================================================
-
+	// Interface to act as an additional frontend
+	// ===============================================================================================
+	
+	// Here, we can add and obtain command line arguments
+	//! Register additional command line arguments 
 	jvxErrorType report_register_fe_commandline(IjvxCommandLine* comLine) override;
+
+	//! Read out those command line arguments
 	jvxErrorType report_readout_fe_commandline(IjvxCommandLine* comLine) override;
+
+	//! This indicates an incoming request from the event loop. Backends can trigger calls to frontends.
 	jvxErrorType report_process_event(TjvxEventLoopElement* theQueueElement) override;
+
+	//! This indicates a cancelled request from the event loop. 
 	jvxErrorType report_cancel_event(TjvxEventLoopElement* theQueueElement) override;
+
+	//! Here, an output from a request is associated. Different types of outputs are possible. The output caused by one frontend will be 
+	//! forwarded to all frontends. Make sure you grab only the output for this frontend if you are not the primary frontend 
 	jvxErrorType report_assign_output(TjvxEventLoopElement* theQueueElement, jvxErrorType sucOperation, jvxHandle* priv) override;
+
+	//! Report any kind of special event
 	jvxErrorType report_special_event(TjvxEventLoopElement* theQueueElement, jvxHandle* priv) override;
+
 	jvxErrorType report_want_to_shutdown_ext(jvxBool restart) override;
 	jvxErrorType query_property(jvxFrontendSupportQueryType tp, jvxHandle* load) override;
 	jvxErrorType trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load, jvxBool blockedRun) override;
+
+	//! We may assign an interface to forward system mesages from the primary backend. This would allow to forward CjvxCommandRequest events to this frontend - which we do not need here!
 	jvxErrorType request_if_command_forward(IjvxReportSystemForward** fwdCalls) override;
 
-	jvxErrorType add_reference_event_loop(IjvxEventLoopObject* eventLoop) override;
-	jvxErrorType clear_reference_event_loop(IjvxEventLoopObject* eventLoop) override;
+	//! Set the reference to the primary backend. All input address the primary backend
 	jvxErrorType set_pri_reference_event_backend(IjvxEventLoop_backend_ctrl* theBackend) override;
+
+	//! Reset the reference to the primary backend. 
 	jvxErrorType clear_pri_reference_event_backend(IjvxEventLoop_backend_ctrl* theBackend) override;
 	jvxErrorType add_sec_reference_event_backend(IjvxEventLoop_backend* theBackend) override;
 	jvxErrorType clear_sec_reference_event_backend(IjvxEventLoop_backend* theBackend) override;
 	jvxErrorType returns_from_start(jvxBool* doesReturn) override;
+	
+	//! Reference to event loop passed to frontend. We may trigger calls whenever we got the event loop
+	jvxErrorType add_reference_event_loop(IjvxEventLoopObject* eventLoop) override;
+
+	//! Opposite of the function to add the event loop
+	jvxErrorType clear_reference_event_loop(IjvxEventLoopObject* eventLoop) override;
+
+	//! Frontend functionality started 
 	jvxErrorType start(int argc, char* argv[]) override;
+	
+	//! Frontend functionality stopped
 	jvxErrorType stop() override;
+
+	//! Check if this frontend wants a restart
 	jvxErrorType wants_restart(jvxBool* wantsRestart) override;
 
 };

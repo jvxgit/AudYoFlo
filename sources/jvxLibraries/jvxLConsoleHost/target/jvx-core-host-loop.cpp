@@ -177,21 +177,23 @@ extern "C"
 // ===================================================================================
 // ===================================================================================
 
-typedef struct
+struct oneFrontendStruct
 {
-	IjvxEventLoop_frontend_ctrl* ref;
-	jvxSize cnt;
-	jvxBool returnsFromStart;
-} oneFrontendStruct;
+	IjvxEventLoop_frontend_ctrl* ref = nullptr;
+	jvxSize cnt = JVX_SIZE_UNSELECTED;
+	jvxBool returnsFromStart = false;
+	jvxBool fromCb = true;
+} ;
 
-typedef struct
+struct oneBackendStruct
 {
-	IjvxEventLoop_backend_ctrl* ref;
-	jvxSize cnt;
-} oneBackendStruct;
+	IjvxEventLoop_backend_ctrl* ref = nullptr;
+	jvxSize cnt = JVX_SIZE_UNSELECTED;
+} ;
 
 
 IjvxEventLoop_frontend_ctrl* primaryFrontend = nullptr;
+IjvxEventLoop_backend_ctrl* primaryBackend = nullptr;
 
 jvxErrorType
 jvx_core_host_loop_stop()
@@ -228,7 +230,7 @@ jvx_core_host_loop_trigger_uninvite(IjvxExternalModuleFactory* trig_this, jvxBoo
 
 // ===================================================================================
 void
-jvx_core_host_loop(int argc, char* argv[])
+jvx_core_host_loop(int argc, char* argv[], IjvxEventLoop_frontend_ctrl** fldAddFes, jvxSize numAddFes)
 {
 	jvxSize i, j;
 	jvxErrorType res = JVX_NO_ERROR, resL;
@@ -288,6 +290,10 @@ jvx_core_host_loop(int argc, char* argv[])
 				jvx_manage_backends(&theNewBackend.ref, cnt, c_true);
 				if (theNewBackend.ref)
 				{
+					if (primaryBackend == nullptr)
+					{
+						primaryBackend = theNewBackend.ref;
+					}
 					theBackends.push_back(theNewBackend);
 				}
 				else
@@ -305,6 +311,7 @@ jvx_core_host_loop(int argc, char* argv[])
 				theNewFrontend.ref = NULL;
 				theNewFrontend.returnsFromStart = false;
 				theNewFrontend.cnt = cnt;
+				theNewFrontend.fromCb = true;
 
 				resL = jvx_manage_frontends(&theNewFrontend.ref, cnt, c_true);
 				if (resL == JVX_NO_ERROR)
@@ -325,6 +332,26 @@ jvx_core_host_loop(int argc, char* argv[])
 					break;
 				}
 				cnt++;
+			}
+
+			for (i = 0; i < numAddFes; i++)
+			{
+				oneFrontendStruct theNewFrontend;
+				theNewFrontend.ref = fldAddFes[i];
+				theNewFrontend.returnsFromStart = false;
+				theNewFrontend.cnt = cnt;
+				theNewFrontend.fromCb = false;
+
+				if (primaryFrontend == nullptr)
+				{
+					primaryFrontend = theNewFrontend.ref;
+				}
+				theNewFrontend.ref->returns_from_start(&theNewFrontend.returnsFromStart);
+				if (!theNewFrontend.returnsFromStart)
+				{
+					numNoReturnStart++;
+				}
+				theFrontends.push_back(theNewFrontend);
 			}
 
 			if (numNoReturnStart != 1)
@@ -353,6 +380,31 @@ jvx_core_host_loop(int argc, char* argv[])
 
 			// Call this function to create cross references
 			jvx_link_frontends_backends(true);
+
+			// Here, the cross references for the additional frontends
+			for (auto& elm : theFrontends)
+			{
+				if (elm.fromCb == false)
+				{
+					// First element should be the primary frontend, 
+					elm.ref->set_pri_reference_event_backend(primaryBackend);
+					
+					// then all secondary backend
+					for (auto& elmB : theBackends)
+					{
+						if (elmB.ref != primaryBackend)
+						{
+							elm.ref->add_sec_reference_event_backend(elmB.ref);
+						}
+					}
+
+					// Add the external frontend to become a linked frontend
+					for (auto& elmB : theBackends)
+					{
+						elmB.ref->add_sec_reference_frontend(elm.ref);
+					}
+				}
+			}
 
 			// Initialize event loop
 			res = eLoop_hdl->initialize(
@@ -469,12 +521,41 @@ jvx_core_host_loop(int argc, char* argv[])
 			res = eLoop_hdl->terminate();
 			assert(res == JVX_NO_ERROR);
 
+			// Here, the cross references for the additional frontends
+			for (auto& elm : theFrontends)
+			{
+				if (elm.fromCb == false)
+				{
+
+					// Add the external frontend to become a linked frontend
+					for (auto& elmB : theBackends)
+					{
+						elmB.ref->clear_sec_reference_frontend(elm.ref);
+					}
+
+					for (auto& elmB : theBackends)
+					{
+						if (elmB.ref != primaryBackend)
+						{
+							elm.ref->clear_sec_reference_event_backend(elmB.ref);
+						}
+					}
+
+					elm.ref->clear_pri_reference_event_backend(primaryBackend);
+				}
+			}
+
 			// Call this function to create cross references
 			jvx_link_frontends_backends(false);
 
-			for (i = 0; i < theBackends.size(); i++)
+			for (auto& elm: theFrontends)
 			{
-				resL = theBackends[i].ref->clear_reference_event_loop(eLoop_hdl);
+				resL = elm.ref->clear_reference_event_loop(eLoop_hdl);
+			}			
+
+			for (auto& elm: theBackends)
+			{
+				resL = elm.ref->clear_reference_event_loop(eLoop_hdl);
 			}
 
 			// Now, delete the instances
