@@ -555,60 +555,63 @@ CayfComponentLib::deactivate()
 	resC = _pre_check_deactivate();
 	if (resC == JVX_NO_ERROR)
 	{
-		if (theConnections)
+		if (this->mainNode)
 		{
-			resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
-			
-			// The process might have been removed already if we use the embedded or full host: 
-			// As soon as we unregister the connector factory and/or the master factory, the process will be cleared by
-			// the host. This is ok, however.
-			if (resC == JVX_NO_ERROR)
+			// Only if there is a mainNode
+			if (theConnections)
 			{
+				resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
 
-				resC = theProc->disconnect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-				assert(resC == JVX_NO_ERROR);
-
-				theConnections->return_reference_connection_process(theProc);
-
-				if (JVX_CHECK_SIZE_SELECTED(uId_process))
+				// The process might have been removed already if we use the embedded or full host: 
+				// As soon as we unregister the connector factory and/or the master factory, the process will be cleared by
+				// the host. This is ok, however.
+				if (resC == JVX_NO_ERROR)
 				{
-					resC = theConnections->remove_connection_process(uId_process);
+
+					resC = theProc->disconnect_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 					assert(resC == JVX_NO_ERROR);
+
+					theConnections->return_reference_connection_process(theProc);
+
+					if (JVX_CHECK_SIZE_SELECTED(uId_process))
+					{
+						resC = theConnections->remove_connection_process(uId_process);
+						assert(resC == JVX_NO_ERROR);
+					}
+				}
+				resC = JVX_NO_ERROR;
+				uId_process = JVX_SIZE_UNSELECTED;
+				retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+			}
+			theConnections = nullptr;
+
+			IjvxComponentHostExt* hostExt = nullptr;
+			hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+			if (hostExt)
+			{
+				resC = hostExt->detach_external_component(this->mainNode, regName.c_str(), JVX_STATE_ACTIVE);
+			}
+			else
+			{
+				if (bindingMinHost)
+				{
+					resC = bindingMinHost->ayf_detach_component_module_call(mainNodeName.c_str(), this);
 				}
 			}
-			resC = JVX_NO_ERROR;
-			uId_process = JVX_SIZE_UNSELECTED;
-			retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+			assert(resC == JVX_NO_ERROR);
+
+			resC = this->mainNode->deactivate();
+			assert(resC == JVX_NO_ERROR);
+
+			resC = before_main_node_unselect();
+			assert(resC == JVX_NO_ERROR);
+
+			resC = this->mainNode->unselect();
+			assert(resC == JVX_NO_ERROR);
+
+			resC = this->mainNode->terminate();
+			assert(resC == JVX_NO_ERROR);
 		}
-		theConnections = nullptr;
-
-		IjvxComponentHostExt* hostExt = nullptr;
-		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
-		if (hostExt)
-		{
-			resC = hostExt->detach_external_component(this->mainNode, regName.c_str(), JVX_STATE_ACTIVE);
-		}
-		else
-		{
-			if (bindingMinHost)
-			{
-				resC = bindingMinHost->ayf_detach_component_module_call(mainNodeName.c_str(), this);
-			}
-		}
-		assert(resC == JVX_NO_ERROR);
-
-		resC = this->mainNode->deactivate();
-		assert(resC == JVX_NO_ERROR);
-
-		resC = before_main_node_unselect();
-		assert(resC == JVX_NO_ERROR);
-
-		resC = this->mainNode->unselect();
-		assert(resC == JVX_NO_ERROR);
-
-		resC = this->mainNode->terminate();
-		assert(resC == JVX_NO_ERROR);
-
 		deallocate_main_node();
 		this->mainObj = nullptr;
 		this->mainNode = nullptr;

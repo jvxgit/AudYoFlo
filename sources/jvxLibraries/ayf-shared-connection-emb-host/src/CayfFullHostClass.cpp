@@ -351,6 +351,13 @@ CayfFullHostClass::invite_external_components(IjvxHiddenInterface* hostRef, jvxB
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CayfFullHostClass::forward_text_command(const char* command, IjvxObject* priObj, jvxApiString& astr)
+{
+	astr = "Passing a text message currently unsupported!";
+	return JVX_NO_ERROR;
+
+}
 /*
 std::string
 CayfFullHostClass::processTextMessage(std::string txt, oneEntryHostList& entry)

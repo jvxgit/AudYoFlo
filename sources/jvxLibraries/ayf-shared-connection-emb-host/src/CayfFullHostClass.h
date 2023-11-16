@@ -5,7 +5,7 @@
 #include "CjvxHostJsonCommandsProperties.h"
 #include "CjvxHostJsonCommandsConfigShow.h"
 
-class CayfFullHostClass : public CjvxHostJsonCommandsProperties, public IjvxExternalModuleFactory
+class CayfFullHostClass : public CjvxHostJsonCommandsProperties, public IjvxExternalModuleFactory, public IjvxEventLoop_frontend_ctrl
 {
 private:
 
@@ -91,6 +91,33 @@ public:
 
 	jvxErrorType invite_external_components(IjvxHiddenInterface* hostRef, jvxBool isInvite) override;
 	void setHost(IjvxHiddenInterface* hHostArg) { hHost = hHostArg; };
+
+	jvxErrorType forward_text_command(const char* command, IjvxObject* priObj, jvxApiString& astr);
+
+	// ===============================================================================================
+
+	jvxErrorType report_register_fe_commandline(IjvxCommandLine* comLine) override;
+	jvxErrorType report_readout_fe_commandline(IjvxCommandLine* comLine) override;
+	jvxErrorType report_process_event(TjvxEventLoopElement* theQueueElement) override;
+	jvxErrorType report_cancel_event(TjvxEventLoopElement* theQueueElement) override;
+	jvxErrorType report_assign_output(TjvxEventLoopElement* theQueueElement, jvxErrorType sucOperation, jvxHandle* priv) override;
+	jvxErrorType report_special_event(TjvxEventLoopElement* theQueueElement, jvxHandle* priv) override;
+	jvxErrorType report_want_to_shutdown_ext(jvxBool restart) override;
+	jvxErrorType query_property(jvxFrontendSupportQueryType tp, jvxHandle* load) override;
+	jvxErrorType trigger_sync(jvxFrontendTriggerType tp, jvxHandle* load, jvxBool blockedRun) override;
+	jvxErrorType request_if_command_forward(IjvxReportSystemForward** fwdCalls) override;
+
+	jvxErrorType add_reference_event_loop(IjvxEventLoopObject* eventLoop) override;
+	jvxErrorType clear_reference_event_loop(IjvxEventLoopObject* eventLoop) override;
+	jvxErrorType set_pri_reference_event_backend(IjvxEventLoop_backend_ctrl* theBackend) override;
+	jvxErrorType clear_pri_reference_event_backend(IjvxEventLoop_backend_ctrl* theBackend) override;
+	jvxErrorType add_sec_reference_event_backend(IjvxEventLoop_backend* theBackend) override;
+	jvxErrorType clear_sec_reference_event_backend(IjvxEventLoop_backend* theBackend) override;
+	jvxErrorType returns_from_start(jvxBool* doesReturn) override;
+	jvxErrorType start(int argc, char* argv[]) override;
+	jvxErrorType stop() override;
+	jvxErrorType wants_restart(jvxBool* wantsRestart) override;
+
 };
 
 #endif

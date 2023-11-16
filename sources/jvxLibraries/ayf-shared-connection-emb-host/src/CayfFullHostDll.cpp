@@ -78,7 +78,7 @@ extern "C"
 
 	jvxErrorType ayf_forward_text_command(const char* command, IjvxObject* priObj, jvxApiString& astr)
 	{
-		return JVX_ERROR_UNSUPPORTED;
+		return globalHostInstance.forward_text_command(command, priObj, astr);		
 	}
 }
 

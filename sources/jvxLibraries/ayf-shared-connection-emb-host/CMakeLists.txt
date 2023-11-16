@@ -21,6 +21,7 @@ set(LOCAL_SOURCES
   
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostClass.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostClass.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfFullHostClass_fe.cpp
 
   # ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-connect-host.def
 )
