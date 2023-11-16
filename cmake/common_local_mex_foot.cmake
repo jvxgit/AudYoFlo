@@ -28,7 +28,7 @@ if(BUILD_MEX_OCTAVE)
   # link_directories(${OCTAVE_PATH_LIB})
   add_library(${JVX_TARGET_NAME} SHARED ${LOCAL_SOURCES})
   target_include_directories(${JVX_TARGET_NAME} PUBLIC
-                           $<BUILD_INTERFACE:${OCTAVE_INCLUDE_PATH}>
+                           $<BUILD_INTERFACE:${Octave_INCLUDE_DIRS}>
                            $<INSTALL_INTERFACE:${OCTAVE_INCLUDE_PATH}>)
 						   
   target_compile_definitions(${JVX_TARGET_NAME} PRIVATE ${LOCAL_COMPILE_DEFINITIONS} ${GLOBAL_COMPILE_DEFINITIONS})

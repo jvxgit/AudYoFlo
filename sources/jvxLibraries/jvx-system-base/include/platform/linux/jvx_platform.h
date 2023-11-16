@@ -51,6 +51,7 @@
 #include <signal.h>
 #include <memory>
 #include <sys/wait.h>
+#include <spawn.h>
 
 // Make sure that threads behave as desired
 #define JVX_DEBUG_THREADS
@@ -257,22 +258,26 @@ JVX_STATIC_INLINE void* JVX_LOADLIBRARY_PATH(std::string fName, std::string dir)
 
 #define JVX_UNLOADLIBRARY(a) dlclose(a)
 
+#define JVX_CREATE_PROCESS_RESULT int
 
 #define JVX_CREATE_PROCESS_HANDLE pid_t
-#define JVX_CREATE_PROCESS(procHandle, cmdLine) posix_spawn(&procHandle, cmdLine, NULL, NULL, NULL, NULL);
+JVX_STATIC_INLINE  JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS(JVX_CREATE_PROCESS_HANDLE& procHandle, const char* cmdLine)
+{
+  char *argV[] = {(char *)cmdLine, (char *) NULL};
+  return posix_spawn(&procHandle, cmdLine, NULL, NULL, argV, NULL);
+}
+
 #define JVX_TERMINATE_PROCESS(procHandle, exitCode) kill(procHandle, SIGKILL)
-JVX_STATIC_INLINE void JVX_WAIT_FOR_PROCESS_COMPLETE(JVX_CREATE_PROCESS_HANDLE hdlProc) 
+JVX_STATIC_INLINE JVX_WAIT_RESULT JVX_WAIT_FOR_PROCESS_COMPLETE(JVX_CREATE_PROCESS_HANDLE hdlProc) 
 {
 	int status = 0;
 	
 	// Wait for process to complete
-	waitpid(hdlProc, &status, 0);
+	return waitpid(hdlProc, &status, 0);
 	
 	// https://linux.die.net/man/2/waitid
 	// WIFEXITED(status);
 }
-
-#define JVX_CREATE_PROCESS_RESULT int
 
 // Error indicated by errno error code
 #define JVX_CREATE_PROCESS_FAILED 1 

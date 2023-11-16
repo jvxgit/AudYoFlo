@@ -14,7 +14,6 @@ include_directories(
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxMatlabCall.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../target/componentEntry.cpp
-  ${JVX_BASE_ROOT}/software/codeFragments/matlab_c/CjvxCToMatlabConverter.cpp
   )
 
 link_directories(${OCTAVE_PATH_LIB})

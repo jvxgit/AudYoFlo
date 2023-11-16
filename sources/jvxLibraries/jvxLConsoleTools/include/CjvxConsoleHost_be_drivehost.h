@@ -133,7 +133,7 @@ private:
 	jvxBool startAppRunning = false;
 	jvxBool observerThreadRunning = false;
 	JVX_THREAD_ID startAppObserveThreadId = 0;
-	JVX_THREAD_HANDLE startAppObserveThread = JVX_INVALID_HANDLE_VALUE;
+	JVX_THREAD_HANDLE startAppObserveThread = JVX_NULLTHREAD;
 
 public:
 	CjvxConsoleHost_be_drivehost();

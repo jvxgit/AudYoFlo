@@ -37,7 +37,7 @@ private:
 public:
 
 	jvxBool hostStarted = false;
-	JVX_THREAD_HANDLE hdlHostThread = JVX_INVALID_HANDLE_VALUE;
+	JVX_THREAD_HANDLE hdlHostThread = JVX_NULLTHREAD;
 	JVX_THREAD_ID idHostThread = 0;
 
 	jvxApiStringList astrlArgv;

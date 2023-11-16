@@ -7,7 +7,7 @@ include_directories(
 
   ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
 	
-  ${Matlab_INCLUDE_DIRS}
+  ${Octave_INCLUDE_DIRS}
   
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor/
   )

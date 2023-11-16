@@ -262,7 +262,7 @@ CjvxConsoleHost_be_drivehost::boot_prepare_specific(jvxApiString* errloc)
 			JVX_PRINTOUT_UI_STARTED;
 			startAppRunning = true;
 			observerThreadRunning = true;
-			JVX_CREATE_THREAD(startAppObserveThread, observeProcess, this, startAppObserveThreadId)
+			JVX_CREATE_THREAD(startAppObserveThread, observeProcess, this, startAppObserveThreadId);
 		}
 		else
 		{
