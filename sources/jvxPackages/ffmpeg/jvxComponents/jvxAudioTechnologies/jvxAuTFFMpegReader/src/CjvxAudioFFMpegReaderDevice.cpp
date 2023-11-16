@@ -34,6 +34,9 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 	int ret = 0;
 	jvxErrorType res = JVX_NO_ERROR;
 	AVDictionary* format_opts = nullptr, * codec_opts = nullptr, *filtered_opts = nullptr;
+	AVDictionary** opts = nullptr;
+	int orig_nb_streams = 0;
+	  
 	parentTech = par;	
 	_common_set_device.report = par;
 
@@ -65,8 +68,8 @@ CjvxAudioFFMpegReaderDevice::init_from_filename(const std::string& fnameArg, Cjv
 
 	// ============================================================
 	// This code returns the codec options for the detected type
-	AVDictionary** opts = setup_find_stream_info_opts(fParams.ic, codec_opts);
-	int orig_nb_streams = fParams.ic->nb_streams;
+	opts = setup_find_stream_info_opts(fParams.ic, codec_opts);
+	orig_nb_streams = fParams.ic->nb_streams;
 
 	/*
 	* We could set the buffersize here: this influences the sizes of the first buffers to be 

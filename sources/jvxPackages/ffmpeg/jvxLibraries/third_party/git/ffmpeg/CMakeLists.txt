@@ -86,8 +86,7 @@ elseif(${JVX_OS} MATCHES "linux")
 	
 	set(JVX_FFMPEG_INCLUDE_DIR 
 		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}"	
-		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/compat/atomics/win32" CACHE INTERNAL "ffmpeg include path (windows)")
+		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/include" CACHE INTERNAL "ffmpeg include path (windows)")
 		
 	set(JVX_FFMPEG_LIBS 
 		${JVX_FFMPEG_LIB_AVCODEC}

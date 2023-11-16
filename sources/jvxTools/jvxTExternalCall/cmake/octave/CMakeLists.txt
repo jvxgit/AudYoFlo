@@ -8,6 +8,7 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${Octave_INCLUDE_DIRS}
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
   )
 
 
@@ -23,6 +24,7 @@ set(LOCAL_COMPILE_DEFINITIONS CONFIG_COMPILE_FOR_OCTAVE)
 set(LOCAL_LIBS ${JVX_SYSTEM_OCTAVE_MEX_LIBRARIES})
 
 set(IS_JVX_COMPONENT TRUE)
+set(LOCAL_LIBS ayf-mex-connect_o_static)
 set(JVX_COMPONENT_ONLY_STATIC TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

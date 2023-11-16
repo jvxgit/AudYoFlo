@@ -29,7 +29,7 @@ if(BUILD_MEX_OCTAVE)
   add_library(${JVX_TARGET_NAME} SHARED ${LOCAL_SOURCES})
   target_include_directories(${JVX_TARGET_NAME} PUBLIC
                            $<BUILD_INTERFACE:${Octave_INCLUDE_DIRS}>
-                           $<INSTALL_INTERFACE:${OCTAVE_INCLUDE_PATH}>)
+                           $<INSTALL_INTERFACE:${Octave_INCLUDE_DIRS}>)
 						   
   target_compile_definitions(${JVX_TARGET_NAME} PRIVATE ${LOCAL_COMPILE_DEFINITIONS} ${GLOBAL_COMPILE_DEFINITIONS})
   set_target_properties(${JVX_TARGET_NAME} PROPERTIES

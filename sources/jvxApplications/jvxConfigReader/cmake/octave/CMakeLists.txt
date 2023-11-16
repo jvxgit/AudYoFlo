@@ -5,6 +5,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${JVX_BASE_ROOT}/software/codeFragments/matlab_c
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
   )
 
 set(LOCAL_SOURCES
@@ -24,6 +25,7 @@ set(BUILD_MEX_OCTAVE TRUE)
 
 set(INSTALL_TARGET_NAME_OCTAVE "jvxConfigRead")
 set(LOCAL_START_SCRIPT startConfigReader_oct)
+set(LOCAL_OCT_LIBS ayf-mex-connect_o_static)
 install(PROGRAMS ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/scripts/m-files/jvx_start_rtproc.m DESTINATION ${INSTALL_PATH_SCRIPTS} COMPONENT "release")
 
 include(${JVX_CMAKE_DIR}/common_local_mex_foot.cmake)

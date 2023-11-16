@@ -26,6 +26,7 @@ include_directories(
 
    ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-app-host/include
    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-app-host/include
+    ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
   )
 
 set(LOCAL_SOURCES

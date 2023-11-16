@@ -1,4 +1,4 @@
-#include "CjvxAudioFFMPegReaderTechnology.h"
+#include "CjvxAudioFFMpegReaderTechnology.h"
 
 #define COMPONENT_DESCRIPTION "JVX FFMpeg Reader Audio Technology"
 #define COMPONENT_TYPE CjvxAudioFFMpegReaderTechnology
