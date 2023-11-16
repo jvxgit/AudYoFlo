@@ -89,7 +89,7 @@ public:
 		IjvxExternalModuleFactory* regMe,
 		int argc, const char* argv[]);
 	jvxErrorType unregister_factory_host( IjvxExternalModuleFactory* regMe);
-	int mainThreadLoop();
+	JVX_THREAD_EXIT_CODE mainThreadLoop();
 
 	virtual jvxErrorType requestReferencePropertiesObject(jvx_propertyReferenceTriple& theTriple, const jvxComponentIdentification& tp) override;
 	virtual jvxErrorType returnReferencePropertiesObject(jvx_propertyReferenceTriple& theTriple, const jvxComponentIdentification& tp) override;

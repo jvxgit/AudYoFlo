@@ -156,7 +156,7 @@ CayfFullHostClass::unregister_factory_host(IjvxExternalModuleFactory* regMe)
 	return res;
 }
 
-int
+JVX_THREAD_EXIT_CODE
 CayfFullHostClass::mainThreadLoop()
 {
 	const char** argv = nullptr;

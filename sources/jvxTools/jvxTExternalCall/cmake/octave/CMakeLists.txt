@@ -7,7 +7,7 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
-  ${OCTAVE_INCLUDE_PATH}
+  ${Octave_INCLUDE_DIRS}
   )
 
 
