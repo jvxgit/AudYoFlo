@@ -71,6 +71,10 @@ else()
 	set(CMAKE_CXX_STANDARD 17)
 endif()
 
+if(JVX_FORCE_C_11)
+	set(CMAKE_C_STANDARD 11)
+endif()
+
 ## https://stackoverflow.com/questions/45957830/gdipluspath-throws-ambiguous-byte-for-cstddef-and-rpcndr-h
 set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};_HAS_STD_BYTE=0")
 
