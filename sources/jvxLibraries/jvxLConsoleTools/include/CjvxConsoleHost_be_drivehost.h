@@ -135,6 +135,10 @@ private:
 	JVX_THREAD_ID startAppObserveThreadId = 0;
 	JVX_THREAD_HANDLE startAppObserveThread = JVX_NULLTHREAD;
 
+	// Commando arguments for external UI viewer
+	std::list<std::string> args;
+	std::string cmd;
+
 public:
 	CjvxConsoleHost_be_drivehost();
 	~CjvxConsoleHost_be_drivehost();

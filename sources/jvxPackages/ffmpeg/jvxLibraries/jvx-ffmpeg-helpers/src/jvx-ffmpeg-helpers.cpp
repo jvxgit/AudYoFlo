@@ -363,7 +363,7 @@ jvxErrorType jvx_ffmpeg_codec_token_2_parameter(const char* tokenArg, jvxFfmpegA
 				res = JVX_NO_ERROR;
 				std::vector<std::string> args;
 				// token2 = arams.codecTypeTag + ":" + params.fFormatTag + ":" + params.codecIdTag;
-				jvx_parseStringListIntoTokens(token2, args, ':');
+				jvx::helper::parseStringListIntoTokens(token2, args, ':');
 				if (args.size() == 3)
 				{
 					derived.codecTypeTag = args[0];

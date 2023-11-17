@@ -77,7 +77,7 @@ CjvxSaWrapperElementLabel::initializeUiElement(jvxPropertyCallContext ccontext)
 		{
 			std::vector<std::string> lst;
 			// std::cout << "Color names = <" << colorNames << ">." << std::endl;
-			jvx_parseStringListIntoTokens(colorNames, lst, '-');
+			jvx::helper::parseStringListIntoTokens(colorNames, lst, '-');
 			for (i = 0; i < lst.size(); i++)
 			{
 				jvxBool foundit = false;

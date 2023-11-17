@@ -2762,183 +2762,6 @@ jvxErrorType jvx_parseStrArrayIntoTokens(std::string expr, std::list<std::string
 }
 */
 
-
-// template <class T>
-jvxErrorType jvx_parseStringListIntoTokens(std::string expr, std::vector<std::string>& args, char sep_token)
-{
-	char bc = 0;
-	jvxSize i;
-	int state = 0;
-	std::list<int> stacks;
-	std::list<int>::reverse_iterator elmr;
-	char oneChar;
-	jvxErrorType res = JVX_NO_ERROR;
-
-	std::string tok_taken;
-	std::list<char> waitforcharclose;
-	std::list<char>::iterator elm;
-	args.clear();
-	for (i = 0; i < expr.size(); i++)
-	{
-		oneChar = expr[i];
-		switch (state)
-		{
-		case 0:
-			if (oneChar == sep_token)
-			{
-				//tok_taken += oneChar;
-				tok_taken = jvx_removeSpacesLR(tok_taken);
-				args.push_back(tok_taken);
-				tok_taken.clear();
-			}
-			else
-			{
-				switch (oneChar)
-				{
-				case '"':
-					stacks.push_back(0);
-					state = 1;
-					break;
-				case '\\':
-					stacks.push_back(0);
-					state = 5;
-					break;
-
-				default:
-					bc = findBraceInList(oneChar);
-					if (bc != 0)
-					{
-						waitforcharclose.push_back(bc);
-						elm = waitforcharclose.begin();
-						state = 4;
-					}
-					tok_taken += oneChar;
-					break;
-				}
-			}
-			break;
-		case 1:
-			switch (oneChar)
-			{
-			case '"':
-				elmr = stacks.rbegin();
-				assert(elmr != stacks.rend());
-				state = *elmr;
-				stacks.pop_back(); //old_state;
-				break;
-			case '\\':
-				stacks.push_back(1);
-				state = 5;
-				break;
-				/*case '\\':
-					state = 2;
-					break;*/
-			default:
-				tok_taken += oneChar;
-				break;
-			}
-			break;
-		case 2:
-			assert(0);
-			break;
-		case 3:
-			assert(0);
-			/*
-			switch(oneChar)
-			{
-			case ' ':
-			case '\t':
-				break;
-			case ',':
-				tok_taken = jvx_removeSpacesLR(tok_taken);
-				args.push_back(tok_taken);
-				tok_taken.clear();
-				state = 0;
-				break;
-			default:
-				res = JVX_ERROR_PARSE_ERROR;
-			}*/
-			break;
-		case 4:
-
-			if (oneChar == *elm)
-			{
-				waitforcharclose.erase(elm);
-				if (waitforcharclose.empty())
-				{
-					state = 0;
-				}
-				else
-				{
-					elm = waitforcharclose.end();
-					elm--;
-				}
-			}
-			else
-			{
-				bc = findBraceInList(oneChar);
-				if (bc != 0)
-				{
-					waitforcharclose.push_back(bc);
-					elm = waitforcharclose.end();
-					elm--;
-				}
-			}
-			tok_taken += oneChar;
-			break;
-		case 5:
-			switch (oneChar)
-			{
-			case 't':
-				tok_taken += '\t';
-				break;
-			case 'r':
-				tok_taken += '\r';
-				break;
-			case 'n':
-				tok_taken += '\n';
-				break;
-			default:
-
-				// All other cases: use the character as it came in
-				tok_taken += oneChar;
-			}
-			elmr = stacks.rbegin();
-			assert(elmr != stacks.rend());
-			state = *elmr;
-			stacks.pop_back(); //old_state;
-			break;
-
-		}
-		if (res != JVX_NO_ERROR)
-		{
-			break;
-		}
-	}
-	//if(!tok_taken.empty())
-	//{
-	switch (state)
-	{
-	case 5:
-		// Expression ended with "\\"
-		tok_taken += "\\";
-		// no break here, fall through and add "\\"
-
-	case 0:
-
-		tok_taken = jvx_removeSpacesLR(tok_taken);
-		args.push_back(tok_taken);
-		tok_taken.clear();
-		break;
-
-	default:
-		// Parsing ended in braces
-		res = JVX_ERROR_PARSE_ERROR;
-	}
-	return res;
-}
-
-
 void jvx_tokenRemoveCharLeftRight(
 	std::string& oneToken, 
 	char removeit, 
@@ -3832,8 +3655,193 @@ jvxBool jvx_compareStringsWildcard(std::string compareme_wc, std::string tome)
 	return(matches);
 }
 
+template <class T>
+jvxErrorType parseStringListIntoTokensT(std::string expr, T& args, char sep_token = ',')
+{
+	char bc = 0;
+	jvxSize i;
+	int state = 0;
+	std::list<int> stacks;
+	std::list<int>::reverse_iterator elmr;
+	char oneChar;
+	jvxErrorType res = JVX_NO_ERROR;
+
+	std::string tok_taken;
+	std::list<char> waitforcharclose;
+	std::list<char>::iterator elm;
+	args.clear();
+	for (i = 0; i < expr.size(); i++)
+	{
+		oneChar = expr[i];
+		switch (state)
+		{
+		case 0:
+			if (oneChar == sep_token)
+			{
+				//tok_taken += oneChar;
+				tok_taken = jvx_removeSpacesLR(tok_taken);
+				args.push_back(tok_taken);
+				tok_taken.clear();
+			}
+			else
+			{
+				switch (oneChar)
+				{
+				case '"':
+					stacks.push_back(0);
+					state = 1;
+					break;
+				case '\\':
+					stacks.push_back(0);
+					state = 5;
+					break;
+
+				default:
+					bc = findBraceInList(oneChar);
+					if (bc != 0)
+					{
+						waitforcharclose.push_back(bc);
+						elm = waitforcharclose.begin();
+						state = 4;
+					}
+					tok_taken += oneChar;
+					break;
+				}
+			}
+			break;
+		case 1:
+			switch (oneChar)
+			{
+			case '"':
+				elmr = stacks.rbegin();
+				assert(elmr != stacks.rend());
+				state = *elmr;
+				stacks.pop_back(); //old_state;
+				break;
+			case '\\':
+				stacks.push_back(1);
+				state = 5;
+				break;
+				/*case '\\':
+					state = 2;
+					break;*/
+			default:
+				tok_taken += oneChar;
+				break;
+			}
+			break;
+		case 2:
+			assert(0);
+			break;
+		case 3:
+			assert(0);
+			/*
+			switch(oneChar)
+			{
+			case ' ':
+			case '\t':
+				break;
+			case ',':
+				tok_taken = jvx_removeSpacesLR(tok_taken);
+				args.push_back(tok_taken);
+				tok_taken.clear();
+				state = 0;
+				break;
+			default:
+				res = JVX_ERROR_PARSE_ERROR;
+			}*/
+			break;
+		case 4:
+
+			if (oneChar == *elm)
+			{
+				waitforcharclose.erase(elm);
+				if (waitforcharclose.empty())
+				{
+					state = 0;
+				}
+				else
+				{
+					elm = waitforcharclose.end();
+					elm--;
+				}
+			}
+			else
+			{
+				bc = findBraceInList(oneChar);
+				if (bc != 0)
+				{
+					waitforcharclose.push_back(bc);
+					elm = waitforcharclose.end();
+					elm--;
+				}
+			}
+			tok_taken += oneChar;
+			break;
+		case 5:
+			switch (oneChar)
+			{
+			case 't':
+				tok_taken += '\t';
+				break;
+			case 'r':
+				tok_taken += '\r';
+				break;
+			case 'n':
+				tok_taken += '\n';
+				break;
+			default:
+
+				// All other cases: use the character as it came in
+				tok_taken += oneChar;
+			}
+			elmr = stacks.rbegin();
+			assert(elmr != stacks.rend());
+			state = *elmr;
+			stacks.pop_back(); //old_state;
+			break;
+
+		}
+		if (res != JVX_NO_ERROR)
+		{
+			break;
+		}
+	}
+	//if(!tok_taken.empty())
+	//{
+	switch (state)
+	{
+	case 5:
+		// Expression ended with "\\"
+		tok_taken += "\\";
+		// no break here, fall through and add "\\"
+
+	case 0:
+
+		tok_taken = jvx_removeSpacesLR(tok_taken);
+		args.push_back(tok_taken);
+		tok_taken.clear();
+		break;
+
+	default:
+		// Parsing ended in braces
+		res = JVX_ERROR_PARSE_ERROR;
+	}
+	return res;
+};
+
 namespace jvx {
 	namespace helper {
+
+		jvxErrorType parseStringListIntoTokens(std::string expr, std::list<std::string>& args, char sep_token)
+		{
+			return parseStringListIntoTokensT<std::list<std::string>>(expr, args, sep_token);
+		};
+
+		jvxErrorType parseStringListIntoTokens(std::string expr, std::vector<std::string>& args, char sep_token)
+		{
+			return parseStringListIntoTokensT<std::vector<std::string>>(expr, args, sep_token);
+		};
 
 		std::string filterEscapes(const std::string& in, jvxBool allowSomeEscapes )
 		{

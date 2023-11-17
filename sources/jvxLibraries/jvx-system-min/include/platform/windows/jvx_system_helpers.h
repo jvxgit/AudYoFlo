@@ -25,9 +25,12 @@
 #define JVX_PRINTF_CAST_TICK_HEX JVX_PRINTF_CAST_INT64_HEX // <- so defined in jvx_system_time.h
 /* from https://stackoverflow.com/questions/2125845/platform-independent-size-t-format-specifiers-in-c/22114959#22114959 */
 
+/*
 #define JVX_MAKE_DIRECTORY_RETVAL int
 #define JVX_MAKE_DIRECTORY_POS 0
-#define JVX_MAKE_DIRECTORY(DIRNAME) _mkdir(DIRNAME)
+#define JVX_MAKE_DIRECTORY(DIRNAME, ACCESS) _mkdir(DIRNAME)
+#define JVX_MAKE_DIRECTORY_DEFAULT_ACCESS 0777
+*/
 
 // Fopen must be an fopen_s in Windows!
 #define JVX_FOPEN(fHdl, fName, howtoopen) fopen_s(&fHdl, fName, howtoopen)
@@ -56,7 +59,10 @@ https://stackoverflow.com/questions/4387288/convert-stdwstring-to-const-char-in-
 #define JVX_CREATE_DIRECTORY_RESULT BOOL 
 #define JVX_CREATE_DIRECTORY_SUCCESS TRUE
 #define JVX_CREATE_DIRECTORY_FAILED FALSE
+#define JVX_CREATE_DIRECTORY_DEFAULT_FLAGS 0777
 #define JVX_CREATE_DIRECTORY(path) CreateDirectoryA(path, NULL)
+#define JVX_CREATE_DIRECTORY_MODE(path, flags) CreateDirectoryA(path, NULL)
+
 
 #ifndef __cplusplus
 // It seems that defining this macro causes many problems in C++

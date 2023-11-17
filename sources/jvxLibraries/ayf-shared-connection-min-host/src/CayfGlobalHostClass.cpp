@@ -564,7 +564,7 @@ CayfGlobalHostClass::processTextMessage(std::string txt, oneEntryHostList& entry
 				{
 					if (argtoken.size())
 					{
-						jvx_parseStringListIntoTokens(argtoken, args);
+						jvx::helper::parseStringListIntoTokens(argtoken, args);
 					}
 					std::string arg1, arg2;
 					if (args.size() > 0)
@@ -590,7 +590,7 @@ CayfGlobalHostClass::processTextMessage(std::string txt, oneEntryHostList& entry
 					std::vector<std::string> args;
 					if (argtoken.size())
 					{
-						jvx_parseStringListIntoTokens(argtoken, args);
+						jvx::helper::parseStringListIntoTokens(argtoken, args);
 					}
 					if (args.size() > 0)
 					{
@@ -613,7 +613,7 @@ CayfGlobalHostClass::processTextMessage(std::string txt, oneEntryHostList& entry
 					std::vector<std::string> args;
 					if (argtoken.size())
 					{
-						jvx_parseStringListIntoTokens(argtoken, args);
+						jvx::helper::parseStringListIntoTokens(argtoken, args);
 					}
 					if (args.size() > 1)
 					{

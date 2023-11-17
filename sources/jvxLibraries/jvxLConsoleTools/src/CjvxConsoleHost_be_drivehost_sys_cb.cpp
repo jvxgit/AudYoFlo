@@ -254,9 +254,15 @@ CjvxConsoleHost_be_drivehost::boot_prepare_specific(jvxApiString* errloc)
 
 	if (!startAppExe.empty())
 	{		
+		char bufWdir[JVX_MAXSTRING] = { 0 };
+		jvxErrorType resParse = jvx::helper::parseStringListIntoTokens(startAppArgs, args, ' ');
 		JVX_CREATE_PROCESS_RESULT resP = JVX_CREATE_PROCESS_FAILED;
-		std::string cmdLine = startAppExe + " " + startAppArgs;		
-		resP = JVX_CREATE_PROCESS(hdlProc, (char*)(cmdLine.c_str()));
+		JVX_GETCURRENTDIRECTORY(bufWdir, JVX_MAXSTRING);
+		std::string cwdStr = bufWdir;
+		cmd = cwdStr + JVX_SEPARATOR_DIR + startAppExe;
+		
+		std::string cmdLine = cmd + " " + startAppArgs;
+		resP = JVX_CREATE_PROCESS_WITH_ARGS(hdlProc, cmd, args);
 		if (resP == JVX_CREATE_PROCESS_SUCCESS)
 		{
 			JVX_PRINTOUT_UI_STARTED;
@@ -589,8 +595,8 @@ CjvxConsoleHost_be_drivehost::observeThreadLoop()
 		if (observerThreadRunning)
 		{
 			JVX_CREATE_PROCESS_RESULT resP = JVX_CREATE_PROCESS_FAILED;
-			std::string cmdLine = startAppExe + " " + startAppArgs;			
-			resP = JVX_CREATE_PROCESS(hdlProc, (char*)(cmdLine.c_str()));
+			std::string cmdLine = cmd + " " + startAppArgs;
+			resP = JVX_CREATE_PROCESS_WITH_ARGS(hdlProc, cmd, args);
 			if (resP == JVX_CREATE_PROCESS_SUCCESS)
 			{
 				JVX_PRINTOUT_UI_STARTED;

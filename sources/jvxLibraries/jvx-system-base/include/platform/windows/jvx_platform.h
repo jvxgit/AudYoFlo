@@ -114,6 +114,10 @@ JVX_HMODULE JVX_LOADLIBRARY_PATH(std::string fName, std::string dir);
 #define JVX_UNLOADLIBRARY(hMod) FreeLibrary(hMod)
 
 // ============================ Processes =============================================
+#define JVX_CREATE_PROCESS_RESULT BOOL
+#define JVX_CREATE_PROCESS_FAILED FALSE
+#define JVX_CREATE_PROCESS_SUCCESS TRUE
+
 struct JVX_CREATE_PROCESS_HANDLE
 {
 	STARTUPINFO info = { sizeof(info) };
@@ -121,13 +125,11 @@ struct JVX_CREATE_PROCESS_HANDLE
 };
 
 // https://learn.microsoft.com/de-de/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa
-#define JVX_CREATE_PROCESS(procHandle, cmdLine) CreateProcess(NULL, cmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo)
+JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE& procHandle, const std::string& cmdLine, const std::list<std::string>& args); 
+
 #define JVX_TERMINATE_PROCESS(procHandle, exitCode) TerminateProcess(procHandle.processInfo.hProcess, exitCode)
 #define JVX_WAIT_FOR_PROCESS_COMPLETE(hdlProc) WaitForSingleObject(hdlProc.processInfo.hProcess, JVX_INFINITE_MS)
 
-#define JVX_CREATE_PROCESS_RESULT BOOL
-#define JVX_CREATE_PROCESS_FAILED FALSE
-#define JVX_CREATE_PROCESS_SUCCESS TRUE
 
 //===============================================
 // Everything for network stuff

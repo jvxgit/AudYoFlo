@@ -35,13 +35,13 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 	CjvxAudioFFMpegWriterTechnology* par)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	JVX_MAKE_DIRECTORY_RETVAL retVal = JVX_MAKE_DIRECTORY_POS;
+	JVX_CREATE_DIRECTORY_RESULT retVal = JVX_CREATE_DIRECTORY_SUCCESS;
 	if (JVX_DIRECTORY_EXISTS(folder.c_str()) == c_false)
 	{
-	  retVal = JVX_MAKE_DIRECTORY(folder.c_str(), 0700);
+	  retVal = JVX_CREATE_DIRECTORY(folder.c_str(), JVX_MAKE_DIRECTORY_DEFAULT_ACCESS);
 	}
 	
-	if(retVal == JVX_MAKE_DIRECTORY_POS)
+	if(retVal == JVX_CREATE_DIRECTORY_SUCCESS)
 	{
 		foldername = folder;
 		fileprefix = prefix;

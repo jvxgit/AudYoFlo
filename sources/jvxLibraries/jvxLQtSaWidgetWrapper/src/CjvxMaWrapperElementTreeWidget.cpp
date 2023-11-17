@@ -666,7 +666,7 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 			if (!token_search.empty())
 			{
 				std::vector<std::string> allStrs;
-				jvx_parseStringListIntoTokens(token_search, allStrs, ' ');
+				jvx::helper::parseStringListIntoTokens(token_search, allStrs, ' ');
 				theItem->setHidden(true);
 				for (auto elm : allStrs)
 				{

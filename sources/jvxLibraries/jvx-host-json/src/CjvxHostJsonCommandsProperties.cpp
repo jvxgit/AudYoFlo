@@ -45,7 +45,7 @@ CjvxHostJsonCommandsProperties::show_property_list(jvxComponentIdentification tp
 			else
 			{
 				filter_exprs.clear();
-				jvx_parseStringListIntoTokens(propBr, filter_exprs);
+				jvx::helper::parseStringListIntoTokens(propBr, filter_exprs);
 			}
 		}
 
@@ -102,7 +102,7 @@ CjvxHostJsonCommandsProperties::show_property_list(jvxComponentIdentification tp
 				jvx::propertyDescriptor::CjvxPropertyDescriptorFull* dfull = nullptr;
 				jvx::propertyDescriptor::CjvxPropertyDescriptorFullPlus* dfullp = nullptr;
 
-				jvx_parseStringListIntoTokens(filter_purpose, locArgs, '|');
+				jvx::helper::parseStringListIntoTokens(filter_purpose, locArgs, '|');
 
 				for (ii = 0; ii < locArgs.size(); ii++)
 				{
@@ -523,7 +523,7 @@ CjvxHostJsonCommandsProperties::show_property_component(
 
 							if (!noEntry)
 							{
-								jvx_parseStringListIntoTokens(valuePP, elms);
+								jvx::helper::parseStringListIntoTokens(valuePP, elms);
 								for (auto elm : elms)
 								{
 									jelml_arr.makeString(elm);
@@ -598,7 +598,7 @@ CjvxHostJsonCommandsProperties::show_property_component(
 							// between "" and empty
 							if (!noEntry)
 							{
-								jvx_parseStringListIntoTokens(valuePP, elms);
+								jvx::helper::parseStringListIntoTokens(valuePP, elms);
 								for (auto elm : elms)
 								{
 									jelml_arr.makeString(elm);
@@ -662,7 +662,7 @@ CjvxHostJsonCommandsProperties::show_property_component_list(
 	CjvxJsonElementList jelmret_local;
 	CjvxJsonElement jelm_entry;
 	std::vector<std::string> tokens;
-	jvx_parseStringListIntoTokens(args, tokens); // , ';');
+	jvx::helper::parseStringListIntoTokens(args, tokens); // , ';');
 	for (auto elm : tokens)
 	{
 		std::string addElement = elm;
@@ -706,7 +706,7 @@ CjvxHostJsonCommandsProperties::show_property_component_list(
 		}
 		else
 		{
-			jvx_parseStringListIntoTokens(argsBr, argsIn);
+			jvx::helper::parseStringListIntoTokens(argsBr, argsIn);
 			std::string idTarget = "";
 			if (argsIn.size() > 0)
 			{
@@ -854,7 +854,7 @@ CjvxHostJsonCommandsProperties::act_set_property_component_list(
 	CjvxJsonArray jsonArr;
 
 	std::vector<std::string> args;
-	jvxErrorType resL = jvx_parseStringListIntoTokens(props, args, ',');
+	jvxErrorType resL = jvx::helper::parseStringListIntoTokens(props, args, ',');
 	for (auto str : args)
 	{
 		CjvxJsonArrayElement arr;
@@ -868,7 +868,7 @@ CjvxHostJsonCommandsProperties::act_set_property_component_list(
 		std::string idTarget = propsBraces;
 		std::string load = loadTarget;
 		std::string offs;
-		resL = jvx_parseStringListIntoTokens(propsBraces, elms, ',');
+		resL = jvx::helper::parseStringListIntoTokens(propsBraces, elms, ',');
 		if (elms.size() > 0)
 		{
 			idTarget = elms[0];

@@ -3376,7 +3376,7 @@ std::string&
 CjvxProperties::property_changed_descriptor_tag_add(std::string& descriptor)
 {
 	std::vector<std::string> lst;
-	jvx_parseStringListIntoTokens(descriptor, lst);
+	jvx::helper::parseStringListIntoTokens(descriptor, lst);
 	descriptor.clear();
 	for (auto& elm : lst)
 	{

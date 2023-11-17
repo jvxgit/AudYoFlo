@@ -58,7 +58,7 @@ CjvxCuTGpsDevice::convert_nmea_gpvtg(const std::string& token)
 	jvxSize i;
 	jvxBool err = false;
 	std::vector<std::string> paramLst;
-	jvx_parseStringListIntoTokens(token, paramLst);
+	jvx::helper::parseStringListIntoTokens(token, paramLst);
 
 	/*
 		Track Made Good and Ground Speed.
@@ -118,7 +118,7 @@ CjvxCuTGpsDevice::convert_nmea_gpgga(const std::string& token)
 	jvxSize i;
 
 	std::vector<std::string> paramLst;
-	jvx_parseStringListIntoTokens(token, paramLst);
+	jvx::helper::parseStringListIntoTokens(token, paramLst);
 
 	/*
 	$GPGGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx*hh
@@ -245,7 +245,7 @@ void
 CjvxCuTGpsDevice::convert_nmea_gpgsa(const std::string& token)
 {
 	std::vector<std::string> paramLst;
-	jvx_parseStringListIntoTokens(token, paramLst);
+	jvx::helper::parseStringListIntoTokens(token, paramLst);
 
 }
 
@@ -255,7 +255,7 @@ CjvxCuTGpsDevice::convert_nmea_gpgll(const std::string& token)
 	jvxSize i;
 	jvxBool err = false;
 	std::vector<std::string> paramLst;
-	jvx_parseStringListIntoTokens(token, paramLst);
+	jvx::helper::parseStringListIntoTokens(token, paramLst);
 
 	/*
 		Geographic Position, Latitude / Longitude and time.
@@ -331,7 +331,7 @@ void
 CjvxCuTGpsDevice::convert_nmea_gprmc(const std::string& token)
 {
 	std::vector<std::string> paramLst;
-	jvx_parseStringListIntoTokens(token, paramLst);
+	jvx::helper::parseStringListIntoTokens(token, paramLst);
 
 }
 
@@ -339,6 +339,6 @@ void
 CjvxCuTGpsDevice::convert_nmea_gpgsv(const std::string& token)
 {
 	std::vector<std::string> paramLst;
-	jvx_parseStringListIntoTokens(token, paramLst);
+	jvx::helper::parseStringListIntoTokens(token, paramLst);
 
 }

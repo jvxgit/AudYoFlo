@@ -545,8 +545,8 @@ jvxErrorType
 jvx_parseStrArrayIntoTokens(std::string expr, std::list<std::string>& args, char sepTok = ',');
 */
 
-jvxErrorType 
-jvx_parseStringListIntoTokens(std::string expr, std::vector<std::string>& args, char sep_token = ',');
+//jvxErrorType 
+//jvx_parseStringListIntoTokens(std::string expr, std::vector<std::string>& args, char sep_token = ',');
 
 void
 jvx_tokenRemoveCharLeftRight(
@@ -626,6 +626,10 @@ jvx_compareStringsWildcard(std::string compareme_wc, std::string tome);
 
 namespace jvx {
 	namespace helper {
+
+		jvxErrorType parseStringListIntoTokens(std::string expr, std::list<std::string>& args, char sep_token = ',');
+		jvxErrorType parseStringListIntoTokens(std::string expr, std::vector<std::string>& args, char sep_token = ',');
+
 		std::string filterEscapes(const std::string& in, jvxBool allowSomeEscapes = false);
 		std::string asciToUtf8(const std::string& in);
 		std::string utf82Ascii(const std::string& in);

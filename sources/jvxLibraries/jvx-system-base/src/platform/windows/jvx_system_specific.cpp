@@ -1,6 +1,18 @@
 #include "jvx_platform.h"
 #include "jvx.h"
 
+JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE& procHandle, const std::string& cmdLine, const std::list<std::string>& args) 
+{
+	std::string cmdWithArgs = cmdLine;
+	for (auto elm : args)
+	{
+		cmdWithArgs += " ";
+		cmdWithArgs += elm;
+	}
+
+	return CreateProcess(NULL, (char*)cmdWithArgs.c_str(), NULL, NULL, TRUE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo);
+}
+
 std::string JVX_GET_CURRENT_MODULE_PATH(void* ptrIdentify)
 {
 	HMODULE mod;

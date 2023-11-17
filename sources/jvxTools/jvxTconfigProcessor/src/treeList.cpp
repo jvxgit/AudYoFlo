@@ -408,7 +408,7 @@ void
 treeListElement::setPriSecFlags(const std::string& bf)
 {
 	std::vector<std::string> lst;
-	jvx_parseStringListIntoTokens(bf, lst);
+	jvx::helper::parseStringListIntoTokens(bf, lst);
 	jvxBool err = false;
 	this->acc_flags = 0;
 	this->acc_flags_set = false;
