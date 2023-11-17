@@ -98,22 +98,33 @@ elseif(${JVX_OS} MATCHES "linux")
 		${JVX_FFMPEG_LIB_SWSCALE}
 		CACHE INTERNAL "ffmpeg libs (glnx)")	
 	
+	# find_library(LIBATOMIC_LIBRARIES NAMES libatomic.so libatomic.so.1 REQUIRED)
+	# find_package(PkgConfig)
+	# pkg_check_modules(FFTF fftw3f REQUIRED)
+	find_package(ATOMIC REQUIRED)
+	find_package(XCB Components XCB shm REQUIRED)
+	find_package(X11 Components X11 Xv Xext REQUIRED)
+	find_package(ALSA REQUIRED)
+	find_package(SoundIO REQUIRED)
+	find_package(ZLIB REQUIRED)
+	find_package(LZMA REQUIRED)
+	
 	# Libs as taken from ffbuild/config.mak
 	set(JVX_FFMPEG_SYS_LIBS
 		${JVX_FFMPEG_LIBS}
-		atomic
-		xcb
-		xcb-shm
-		asound
-		SDL2
-		sndio
-		Xv
-		X11
-		Xext
-		z
-		lzma
-		X11
+		${LIBATOMIC_LIBRARIES}
+		${XCB_LIBRARIES}
+		${XCB_shm_LIBRARIES}
+		${ALSA_LIBRARIES}
+		${SDL_LIBRARY}
+		${SoundIO_LIBRARIES}
+		${X11_LIBRARIES}
+		${X11_Xv_LIBRARIES}
+		${X11_Xext_LIBRARIES}
+		${ZLIB_LIBRARIES}
+		${LZMA_LIBRARIES}	
 		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")
-
+		
+	
 endif()
 
