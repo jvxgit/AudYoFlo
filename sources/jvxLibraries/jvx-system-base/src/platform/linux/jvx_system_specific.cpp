@@ -3,21 +3,21 @@
 
 #include <pwd.h>
 
-JVX_CREATE_PROCESS_RESULT RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE& procHandle, const std::string& cmd, const std::list<std::string>& args) 
+JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE& procHandle, const std::string& cmd, const std::list<std::string>& args) 
 {
 	jvxSize cnt = 0;
 	char** argV = nullptr;
 	JVX_SAFE_ALLOCATE_FIELD(argV, char*, args.size()+2);
 	
-	argV[cnt] = cmd.c_str();
+	argV[cnt] = (char*)cmd.c_str();
 	cnt++;
 	for(auto elm: args)
 	{
-		argV[cnt] = elm.c_str();
+	  argV[cnt] = (char*)elm.c_str();
 		cnt++;
 	}
 	argV[cnt] = nullptr;		
-	return posix_spawn(&procHandle, cmd, NULL, NULL, argV, NULL);
+	return posix_spawn(&procHandle, (char*)cmd.c_str(), NULL, NULL, argV, NULL);
 }
 
 std::string JVX_GET_CURRENT_MODULE_PATH(void* ptrIdentify)

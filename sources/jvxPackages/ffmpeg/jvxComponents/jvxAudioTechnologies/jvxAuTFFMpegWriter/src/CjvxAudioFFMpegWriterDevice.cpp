@@ -38,7 +38,7 @@ CjvxAudioFFMpegWriterDevice::init_parameters(
 	JVX_CREATE_DIRECTORY_RESULT retVal = JVX_CREATE_DIRECTORY_SUCCESS;
 	if (JVX_DIRECTORY_EXISTS(folder.c_str()) == c_false)
 	{
-	  retVal = JVX_CREATE_DIRECTORY(folder.c_str(), JVX_MAKE_DIRECTORY_DEFAULT_ACCESS);
+	  retVal = JVX_CREATE_DIRECTORY(folder.c_str());
 	}
 	
 	if(retVal == JVX_CREATE_DIRECTORY_SUCCESS)

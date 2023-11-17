@@ -96,20 +96,24 @@ elseif(${JVX_OS} MATCHES "linux")
 		${JVX_FFMPEG_LIB_AVUTIL}
 		${JVX_FFMPEG_LIB_SWRESAMPLE}
 		${JVX_FFMPEG_LIB_SWSCALE}
-		CACHE INTERNAL "ffmpeg libs (glnx)")
-		
-	set(JVX_FFMPEG_SYS_LIBS_NO_SMIIDS
-		psapi.lib uuid.lib shlwapi.lib 
-		vfw32.lib  secur32.lib 
-		mfuuid.lib bcrypt.lib  
-		# ole32.lib shell32.lib user32.lib gdi32.lib oleaut32.lib 
+		CACHE INTERNAL "ffmpeg libs (glnx)")	
+	
+	# Libs as taken from ffbuild/config.mak
+	set(JVX_FFMPEG_SYS_LIBS
+		${JVX_FFMPEG_LIBS}
+		atomic
+		xcb
+		xcb-shm
+		asound
+		SDL2
+		sndio
+		Xv
+		X11
+		Xext
+		z
+		lzma
+		X11
 		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")
 
-	set(JVX_FFMPEG_SYS_LIB_SMIIDS strmiids.lib 
-		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")
-		
-	set(JVX_FFMPEG_SYS_LIBS
-		${JVX_FFMPEG_SYS_LIBS_NO_SMIIDS} ${JVX_FFMPEG_SYS_LIB_SMIIDS}
-		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")		
 endif()
 
