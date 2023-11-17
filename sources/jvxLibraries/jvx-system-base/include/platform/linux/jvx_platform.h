@@ -261,11 +261,7 @@ JVX_STATIC_INLINE void* JVX_LOADLIBRARY_PATH(std::string fName, std::string dir)
 #define JVX_CREATE_PROCESS_RESULT int
 
 #define JVX_CREATE_PROCESS_HANDLE pid_t
-JVX_STATIC_INLINE  JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS(JVX_CREATE_PROCESS_HANDLE& procHandle, const char* cmdLine)
-{
-  char *argV[] = {(char *)cmdLine, (char *) NULL};
-  return posix_spawn(&procHandle, cmdLine, NULL, NULL, argV, NULL);
-}
+JVX_CREATE_PROCESS_RESULT RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE& procHandle, const std::string& cmd, const std::list<std::string>& args) 
 
 #define JVX_TERMINATE_PROCESS(procHandle, exitCode) kill(procHandle, SIGKILL)
 JVX_STATIC_INLINE JVX_WAIT_RESULT JVX_WAIT_FOR_PROCESS_COMPLETE(JVX_CREATE_PROCESS_HANDLE hdlProc) 
