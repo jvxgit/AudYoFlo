@@ -23,7 +23,7 @@ set(LOCAL_SOURCES
 include_directories(
 	${JVX_FFMPEG_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../ffmpeg/fftools
-	${SDL_LIBRARY_PATH}
+	${SDL_INCLUDE_PATH}
   )
 
 if(JVX_OS MATCHES "macosx")

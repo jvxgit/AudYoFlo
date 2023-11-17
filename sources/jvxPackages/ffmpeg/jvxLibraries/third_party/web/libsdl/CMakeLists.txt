@@ -9,7 +9,8 @@ if(${JVX_OS} MATCHES "windows")
 		message("libsdl installation complete.")
 	endif()
 	
-	set(SDL_LIBRARY_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/libsdl/SDL2-2.26.3/include" CACHE INTERNAL "libsdl lib path (windows)")
+	set(SDL_LIBRARY_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/libsdl/SDL2-2.26.3" CACHE INTERNAL "libsdl lib path (windows)")
+	set(SDL_INCLUDE_PATH  "${SDL_LIBRARY_PATH}/include" CACHE INTERNAL "libsdl lib path (windows)")
 	if(JVX_PLATFORM MATCHES "32bit")
 		set(SDL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/libsdl/SDL2-2.26.3/lib/x86/SDL2.lib" CACHE INTERNAL "libsdl lib (windows)")
 	else()
@@ -19,7 +20,7 @@ if(${JVX_OS} MATCHES "windows")
 elseif(${JVX_OS} MATCHES "linux")
 	
 	find_package(SDL2 REQUIRED)
-	set(SDL_LIBRARY_PATH  "${SDL2_INCLUDE_DIRS}" CACHE INTERNAL "libsdl lib path (linux)")
+	set(SDL_INCLUDE_PATH  "${SDL2_INCLUDE_DIRS}" CACHE INTERNAL "libsdl lib path (linux)")
 	set(SDL_LIBRARY "${SDL2_LIBRARIES}" CACHE INTERNAL "libsdl lib (linux)")
 
 	# message(FATAL_ERROR "SDL_LIBRARY_PATH = ${SDL_LIBRARY_PATH}")
