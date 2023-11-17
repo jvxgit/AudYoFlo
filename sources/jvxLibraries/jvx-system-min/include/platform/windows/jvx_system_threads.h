@@ -15,7 +15,7 @@
 #define JVX_THREAD_RETURN_TYPE DWORD
 #define JVX_COMPARE_THREADS(a,b) (a == b)
 #define JVX_THREAD_ENTRY_FUNCTION(fName,param) static JVX_THREAD_RETURN_TYPE WINAPI fName(LPVOID param)
-#define JVX_CREATE_THREAD(hdl, entry, param, id) hdl = CreateThread(NULL, 0, entry, param, 0, &id);
+#define JVX_CREATE_THREAD(hdl, entry, param, id) hdl = CreateThread(NULL, 0, entry, param, 0, &id)
 #define JVX_WAIT_TIMEOUT DWORD
 #define JVX_NOTIFY_HANDLE HANDLE
 #define JVX_NOTIFY_HANDLE_DECLARE(notification) JVX_NOTIFY_HANDLE notification = JVX_INVALID_HANDLE_VALUE
