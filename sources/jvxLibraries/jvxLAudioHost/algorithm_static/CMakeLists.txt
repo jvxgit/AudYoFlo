@@ -108,6 +108,7 @@ set(LOCAL_LIBS
   qwt_static
   jvx-app-host-static_static
   jvx-qt-host-widgets_static
+  jvx-qt-component-widgets_static
   jvx-qt-helpers_static
   )
 

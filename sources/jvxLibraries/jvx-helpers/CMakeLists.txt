@@ -79,6 +79,7 @@ set(LOCAL_LIBS
   jvx-dsp-base_static
   jvx-system-base_static
   jvx-system-min_static
+  jvx-callprot_static
   )
 
 set(BUILD_STATIC TRUE)

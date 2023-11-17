@@ -98,31 +98,64 @@ elseif(${JVX_OS} MATCHES "linux")
 		${JVX_FFMPEG_LIB_SWSCALE}
 		CACHE INTERNAL "ffmpeg libs (glnx)")	
 	
-	# find_library(LIBATOMIC_LIBRARIES NAMES libatomic.so libatomic.so.1 REQUIRED)
-	# find_package(PkgConfig)
+	find_package(PkgConfig)
+	
+	pkg_check_modules(XCB xcb REQUIRED)
+	message("Lib xcb: ${XCB_LIBRARIES}")
+	
+	pkg_check_modules(XCBSHM xcb-shm REQUIRED)
+	message("Lib xcb-shm: ${XCBSHM_LIBRARIES}")
+
+	find_library(LIBATOMIC_LIBRARIES NAMES libatomic.so libatomic.so.1 REQUIRED)
+	message("Lib atomic: ${LIBATOMIC_LIBRARIES}")
+	
 	# pkg_check_modules(FFTF fftw3f REQUIRED)
-	find_package(ATOMIC REQUIRED)
-	find_package(XCB Components XCB shm REQUIRED)
-	find_package(X11 Components X11 Xv Xext REQUIRED)
-	find_package(ALSA REQUIRED)
-	find_package(SoundIO REQUIRED)
-	find_package(ZLIB REQUIRED)
-	find_package(LZMA REQUIRED)
+	# find_package(ATOMIC REQUIRED)
+	# find_package(XCB::shm REQUIRED)
+
+	pkg_check_modules(X11 x11 REQUIRED)
+	message("Lib x11: ${X11_LIBRARIES}")
+
+	pkg_check_modules(XV xv REQUIRED)
+	message("Lib xv: ${XV_LIBRARIES}")
+
+	pkg_check_modules(ALSA alsa REQUIRED)
+	message("Lib alsa: ${ALSA_LIBRARIES}")
+
+	pkg_check_modules(ZLIB zlib REQUIRED)
+	message("Lib zlib: ${ZLIB_LIBRARIES}")
+
+	pkg_check_modules(LZMA liblzma REQUIRED)
+	message("Lib lzma: ${LZMA_LIBRARIES}")
+
+	pkg_check_modules(SNDIO sndio REQUIRED)
+	message("Lib sndio: ${SNDIO_LIBRARIES}")
+
+	pkg_check_modules(XEXT xext REQUIRED)
+	message("Lib xext: ${XEXT_LIBRARIES}")
+
+	# find_package(X11 REQUIRED)
+	# find_package(X11::Xv X11::Xext REQUIRED)
+	# find_package(ALSA REQUIRED)
+	# find_package(SoundIO REQUIRED)
+	# find_package(ZLIB REQUIRED)
+	# find_package(LZMA REQUIRED)
 	
 	# Libs as taken from ffbuild/config.mak
 	set(JVX_FFMPEG_SYS_LIBS
 		${JVX_FFMPEG_LIBS}
 		${LIBATOMIC_LIBRARIES}
 		${XCB_LIBRARIES}
-		${XCB_shm_LIBRARIES}
+		${XCBSHM_LIBRARIES}
 		${ALSA_LIBRARIES}
 		${SDL_LIBRARY}
-		${SoundIO_LIBRARIES}
 		${X11_LIBRARIES}
-		${X11_Xv_LIBRARIES}
-		${X11_Xext_LIBRARIES}
+		${XV_LIBRARIES}
 		${ZLIB_LIBRARIES}
 		${LZMA_LIBRARIES}	
+		${SNDIO_LIBRARIES}
+		${XEXT_LIBRARIES}
+		
 		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")
 		
 	

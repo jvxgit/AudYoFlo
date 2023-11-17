@@ -33,8 +33,8 @@ if [ -d $folder ]; then
 	echo "Checking for existence of subfolder lib"
 	if [ ! -d "lib" ]; then
 		
-		echo ./configure --prefix=./
-		./configure --prefix=./
+		echo ./configure --enable-pic --prefix=./
+		./configure --enable-pic --prefix=./
 		
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
