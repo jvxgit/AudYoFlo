@@ -1,0 +1,10 @@
+--- vst3sdk.orig/public.sdk/source/vst/moduleinfo/moduleinfoparser.cpp	2023-11-19 15:30:18.136761000 +0100
++++ vst3sdk/public.sdk/source/vst/moduleinfo/moduleinfoparser.cpp	2023-11-19 14:16:48.251101000 +0100
+@@ -39,6 +39,7 @@
+ #include "jsoncxx.h"
+ #include "pluginterfaces/base/ipluginbase.h"
+ #include <stdexcept>
++#include <limits>
+ 
+ //------------------------------------------------------------------------
+ namespace Steinberg::ModuleInfoLib {
