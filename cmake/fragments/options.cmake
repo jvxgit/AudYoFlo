@@ -60,6 +60,7 @@ option(JVX_INSTALL_QT_ON_BUILD "Download and install QT on first build" ON)
 option(JVX_INSTALL_FLUTTER_ON_BUILD "Download and install Flutter on first build" ON)
 option(JVX_ENGAGE_TEST_EXAMPLES "Engage test example applications" OFF)
 option(JVX_TRACK_MEMORY_LEAKS "Better track memory leaks - mainly in windows." OFF)
+option(JVX_GCC_LINKER_SYMBOLIC "Activate symbolic link option for gcc - required by ffmpeg in linux." OFF)
 
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")

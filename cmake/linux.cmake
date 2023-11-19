@@ -51,9 +51,11 @@ set(JVX_CMAKE_C_FLAGS_SHARED "${JVX_COMPILE_FLAGS_GENERAL}")
 set(JVX_CMAKE_CXX_FLAGS_SHARED "${JVX_COMPILE_FLAGS_GENERAL}")
 set(JVX_CMAKE_LINKER_FLAGS_SHARED "-Wl,--no-undefined -shared ${JVX_COMPILE_FLAGS_GENERAL}")
 
-# The following line to allow -fPIC linkage of ffmpeg
-# https://github.com/microsoft/vcpkg/issues/17292
-set(JVX_CMAKE_LINKER_FLAGS_SHARED "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,-Bsymbolic")
+if(JVX_GCC_LINKER_SYMBOLIC)
+	# The following line to allow -fPIC linkage of ffmpeg
+	# https://github.com/microsoft/vcpkg/issues/17292
+	set(JVX_CMAKE_LINKER_FLAGS_SHARED "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,-Bsymbolic")
+endif(JVX_GCC_LINKER_SYMBOLIC)
 
 # Flags for shared objects with export file list
 set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_COMPONENTS "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,--retain-symbols-file=${JVX_BASE_ROOT}/software/exports/components/linux/exports.def")
