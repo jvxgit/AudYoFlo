@@ -1,10 +1,9 @@
-if(DEFINED JVX_SDK_PATH)
-	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
-endif(DEFINED JVX_SDK_PATH)
-
 # Some common include files
 set(PROJECT_NAME jvxMeasureIr)
 include(${JVX_CMAKE_DIR}/common_local_exe_head.cmake)
+
+# Decide which host library to link with
+set(JVX_LINK_WITH_AUDIO_HOST TRUE)
 
 # Source code files
 set(LOCAL_SOURCES
@@ -18,8 +17,37 @@ include_directories(
  )
 
 
+# Link against either audio host lib or develop host lib
+if(JVX_LINK_WITH_AUDIO_HOST)
+
+	# Link with audio host
+	set(LOCAL_LIBS ${LOCAL_LIBS}
+		jvxLAudioHost__algostatic_static
+		)
+
+	# In case of standalone builds, we need to pull in some other libraries
+	if(DEFINED JVX_SDK_PATH)
+		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.audiohost.cmake)
+		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.network.cmake)
+	endif()
+else()
+
+	# Link with develop host
+	set(LOCAL_LIBS ${LOCAL_LIBS}
+		jvxLDevelopHost_static
+		)
+	# In case of standalone builds, we need to pull in some other libraries
+	if(DEFINED JVX_SDK_PATH)
+		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.develophost.cmake)
+		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.network.cmake)
+	endif()
+
+endif()
+
+set(LOCAL_LIBS_COMMON ${LOCAL_LIBS})
+
 # Add algorithm specific library
-set(LOCAL_LIBS
+set(LOCAL_LIBS ${LOCAL_LIBS_COMMON}
 	jvx-qt-measure-ir-1dev-app-lib_static
 	jvxSpNSpeakerEqualizer_static
 	)
@@ -40,7 +68,7 @@ include(${JVX_CMAKE_DIR}/common_local_exe_foot.cmake)
 # Here, the version for 2 devices
 set(JVX_TARGET_NAME ${PROJECT_NAME}2Dev)
 set(JVX_TARGET_NAME_STATIC ${PROJECT_NAME}2Dev)
-set(LOCAL_LIBS
+set(LOCAL_LIBS ${LOCAL_LIBS_COMMON}
 	jvx-qt-measure-ir-2dev-app-lib_static
 	jvxSpNSpeakerEqualizer_static
 	)

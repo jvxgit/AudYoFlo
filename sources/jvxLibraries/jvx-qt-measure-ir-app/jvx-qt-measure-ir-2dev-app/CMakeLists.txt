@@ -1,13 +1,6 @@
-if(DEFINED JVX_SDK_PATH)
-	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
-endif(DEFINED JVX_SDK_PATH)
-
 # Some common include files
 set(PROJECT_NAME jvx-qt-measure-ir-2dev-app-lib)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
-
-# Decide which host library to link with
-set(JVX_LINK_WITH_AUDIO_HOST TRUE)
 
 # Add mainWidget and other ui files
 set(LOCAL_UI_SOURCES
@@ -121,33 +114,6 @@ if(${JVX_OS} MATCHES "windows")
 	  jvxTMswText2Speech_static)
 endif()
 
-# Link against either audio host lib or develop host lib
-if(JVX_LINK_WITH_AUDIO_HOST)
-
-	# Link with audio host
-	set(LOCAL_LIBS ${LOCAL_LIBS}
-		jvxLAudioHost__algostatic_static
-		)
-
-	# In case of standalone builds, we need to pull in some other libraries
-	if(DEFINED JVX_SDK_PATH)
-		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.audiohost.cmake)
-		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.network.cmake)
-	endif()
-else()
-
-	# Link with develop host
-	set(LOCAL_LIBS ${LOCAL_LIBS}
-		jvxLDevelopHost_static
-		)
-	# In case of standalone builds, we need to pull in some other libraries
-	if(DEFINED JVX_SDK_PATH)
-		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.develophost.cmake)
-		include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.network.cmake)
-	endif()
-
-endif()
-
 ## ======================================================================
 ## The audio libs
 # Pull in all audio components
@@ -156,7 +122,8 @@ include(${JVX_CMAKE_DIR}/packages/cmake-audio-components.cmake)
 
 # Some compile defines
 #set(LOCAL_COMPILE_DEFINITIONS "JVX_ADD_HOST_WEBSERVER;JVX_PROJECT_NAMESPACE=JVX_MY_HOST;JVX_NO_SEQUENCER;JVX_NO_RTVIEWER;JVX_NO_MESSAGES")
-set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_PROJECT_NAMESPACE=JVX_MY_HOST;JVX_ADD_WIDGET_WRAPPER")
+# set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_PROJECT_NAMESPACE=JVX_MY_HOST;JVX_ADD_WIDGET_WRAPPER")
+set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_ADD_WIDGET_WRAPPER")
 
 # Macos x specific configurations
 if(JVX_OS MATCHES "macosx")

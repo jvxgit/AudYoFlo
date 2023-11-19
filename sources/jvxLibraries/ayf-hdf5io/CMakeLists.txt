@@ -12,10 +12,11 @@ set(LOCAL_SOURCES
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfHdf5Io.cpp
   )
 
-
 set(LOCAL_LIBS	
 	${AYF_HDF5_LIBRARIES}
 	 )
 
+# link_directories(${AYF_HDF5_LIBRARY_DIR})
+# message(FATAL_ERROR "-> ${AYF_HDF5_LIBRARY_DIR}")
 set(BUILD_STATIC TRUE)
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

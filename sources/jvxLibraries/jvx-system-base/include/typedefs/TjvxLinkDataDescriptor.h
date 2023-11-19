@@ -165,7 +165,7 @@ public:
 	};
 
 	jvxSize numLost = 0;
-	virtual jvxHandle* if_specific(jvxLinkDataAttachedType tpArg) 
+	virtual jvxHandle* if_specific(jvxLinkDataAttachedType tpArg) override
 	{ 
 		if(tpArg == JVX_LINKDATA_ATTACHED_REPORT_UPDATE_NUMBER_LOST_FRAMES)
 		{

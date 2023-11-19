@@ -38,6 +38,29 @@ if(${JVX_OS} MATCHES "windows")
 	# DLL linkage does not work since a few important symbols are defined only in the "static" lib part
 	# set(AYF_HDF5_SHARED_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/bin/hdf5_D.dll" CACHE INTERNAL "hdf5 shared library references")
 	set(AYF_HDF5_ZLIB_SHARED_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/../../platform-packages/msvc/zlib/msvc2017_${archtoken}/lib/zlib/zlib.dll" CACHE INTERNAL "zlib for hdf5 shared library references")
+
+elseif(${JVX_OS} MATCHES "linux")
+	## Install <sudo apt-get install libhdf5-dev>
+	#find_package(PkgConfig)
+	
+	#pkg_check_modules(HDF5 hdf5 REQUIRED)
+	#message("Lib hdf5: ${HDF5_LIBRARIES}")
+	
+	#set(AYF_HDF5_INCLUDE_DIR ${HDF5_INCLUDE_DIRS} CACHE INTERNAL "hdf5 include references")
+	#set(AYF_HDF5_LIBRARIES ${HDF5_LIBRARIES} CACHE INTERNAL "hdf5 library references" )
+
+	#set(AYF_HDF5_LIBRARY_DIR ${HDF5_LIBRARY_DIRS} CACHE INTERNAL "hdf5 library folder")
+	## message(FATAL_ERROR "Hier ${AYF_HDF5_INCLUDE_DIR} -- ${AYF_HDF5_LIBRARIES} -- ${AYF_HDF5_LIBRARY_DIR}")
+	
+	set(targetfolder hdf5-1.14.2)
+	set(archtoken glnx)
+	
+	message("hdf5 sub project not available. Starting script to download it.") 
+	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
+	message("hdf5 installation complete.")
+	
+	set(AYF_HDF5_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/include" CACHE INTERNAL "hdf5 include references")
+	set(AYF_HDF5_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/libhdf5_debug.so;${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/libhdf5_tools_debug.so" CACHE INTERNAL "hdf5 library references")	
 endif()
 
-# message(FATAL_ERROR "Hier -- ${ZLIB_DIR}")
+# message(FATAL_ERROR "Hier -- ")
