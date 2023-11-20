@@ -30,6 +30,7 @@ public:
 	struct sockaddr_in6 targetServer_ip6;
 	jvxBool targetServerSet = false;
 	jvxSize timeout_msecs = 5000;
+	jvxBool allowReuseSocketUdp = false;
 
 	std::string targetName = "localhost";
 	int remotePort = 45657;
@@ -46,6 +47,7 @@ public:
 		jvxSocketsFamily family = jvxSocketsFamily::JVX_SOCKET_IP_V4,
 		jvxSize timeout_msecs = 5000);
 	
+	virtual jvxErrorType set_opts_socket() override;
 	virtual jvxErrorType pre_start_socket() override;
 	virtual jvxErrorType start_socket()override;
 	virtual jvxErrorType connect_socket() override;

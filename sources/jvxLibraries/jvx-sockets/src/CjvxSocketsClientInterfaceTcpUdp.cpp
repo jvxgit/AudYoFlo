@@ -51,6 +51,69 @@ CjvxSocketsClientInterfaceTcpUdp::pre_start_socket()
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType 
+CjvxSocketsClientInterfaceTcpUdp::set_opts_socket()
+{
+	int flag = 1;
+	int errCode = 0;
+	jvxErrorType res = JVX_NO_ERROR;
+	if (socketType == jvxSocketsConnectionType::JVX_SOCKET_TYPE_UDP)
+	{
+		if (allowReuseSocketUdp)
+		{
+#ifdef JVX_OS_WINDOWS
+			flag = 1;
+			errCode = setsockopt(theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&flag, sizeof(int));
+			if (errCode != 0)
+			{
+				res = JVX_ERROR_INTERNAL;
+				errCode = WSAGetLastError();
+				switch (errCode)
+				{
+				case WSANOTINITIALISED:
+					last_error = "A successful WSAStartup call must occur before using this function.";
+					break;
+				case WSAENETDOWN:
+					last_error = "The network subsystem has failed.";
+					break;
+				case WSAEFAULT:
+					last_error = "The buffer pointed to by the optval parameter is not in a valid part of the process address space or the optlen parameter is too small.";
+					break;
+				case WSAEINPROGRESS:
+					last_error = "A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function.";
+					break;
+				case WSAEINVAL:
+					last_error = "The level parameter is not valid, or the information in the buffer pointed to by the optval parameter is not valid.";
+					break;
+				case WSAENETRESET:
+					last_error = "The connection has timed out when SO_KEEPALIVE is set.";
+					break;
+				case WSAENOPROTOOPT:
+					last_error = "The option is unknown or unsupported for the specified provider or socket (see SO_GROUP_PRIORITY limitations).";
+					break;
+				case WSAENOTCONN:
+					last_error = "The connection has been reset when SO_KEEPALIVE is set.";
+					break;
+				case WSAENOTSOCK:
+					last_error = "The descriptor is not a socket.";
+					break;
+				}
+			}
+
+#else
+			flag = 1;
+			errCode = setsockopt(theSocket, IPPROTO_UDP, SO_REUSEADDR, (char*)&flag, sizeof(int));    /* length of option value */
+			if (errCode < 0)
+			{
+				res = JVX_ERROR_INTERNAL;
+				last_error = (std::string)"Was not able to set socket options, Error: " + strerror(errno);
+			}
+#endif
+
+		}
+	}
+	return res;
+}
 jvxErrorType
 CjvxSocketsClientInterfaceTcpUdp::start_socket()
 {
@@ -256,8 +319,18 @@ CjvxSocketsClientInterfaceTcpUdp::start_connection_loop()
 jvxErrorType
 CjvxSocketsClientInterfaceTcpUdp::stop_connection_loop()
 {
+#if 0
+	if (socketStartComplete)
+	{
+		// If the thread was started in the main thread, close sockets here, otherwise this will happen in worker thread
+		JVX_SHUTDOWN_SOCKET(theSocket, JVX_SOCKET_SD_BOTH);
+		JVX_CLOSE_SOCKET(theSocket);
+	}
+	#endif
+
 	JVX_SHUTDOWN_SOCKET(theSocket, JVX_SOCKET_SD_BOTH);
 	JVX_CLOSE_SOCKET(theSocket);
+
 	JVX_WAIT_FOR_THREAD_TERMINATE_INF(theThreadHdl);
 	return JVX_NO_ERROR;
 }

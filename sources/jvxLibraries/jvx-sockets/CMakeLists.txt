@@ -24,9 +24,14 @@ endif()
 # can be stopped by shutting down the socket but this seems to not work under certain conditions in Windows.
 # I do not exactly know when the linux version works for Windows and when not.
 # However, I switch on the Windows implementation as the windows default now since it works in a more reliable way!
-if(JVX_OS MATCHES "windows")
-	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_WINDOWS_SOCKET_IMPL")
-endif()
+# I finally found that the non-closing socket was due to a process I attached to the web host - which I started with
+# option "inherit":
+# https://stackoverflow.com/questions/58813349/createprocess-occupies-socket-port-only-one-usage-of-each-socket-address-permit
+# Nevertheless, threading is an issue in WIndows, let us see what s next.
+
+#if(JVX_OS MATCHES "windows")
+#	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_WINDOWS_SOCKET_IMPL")
+#endif()
 
 set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSocketsCommon.cpp

@@ -31,6 +31,13 @@ protected:
 
 	JVX_MUTEX_HANDLE safeAccessConnection;
 
+	// I have really been searching why the socket would not close when using UDP in windows. In order to test 
+	// all options, I moved all socket functions into the worker thread. To review the open sockets I ran the
+	// command "netstat -an" and saw that closing the socket did not really have an impact.
+	// Finally I found that it was the process which I created in addition was created with flags "inherit=true".
+	// This then explained the open socket.
+	// jvxBool startSocketInWorker = true;
+	// jvxBool socketStartComplete = false;
 public:
 
 	CjvxSocketsClientInterface(jvxSocketsConnectionType socketType
@@ -49,6 +56,8 @@ public:
 
 	virtual jvxErrorType stop_connection_loop() = 0;
 	virtual jvxErrorType stop_socket() = 0;
+
+	jvxErrorType create_connect_socket();
 };
 
 #endif

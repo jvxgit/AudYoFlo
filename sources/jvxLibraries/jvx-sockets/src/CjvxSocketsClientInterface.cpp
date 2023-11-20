@@ -107,28 +107,22 @@ CjvxSocketsClientInterface::start(IjvxSocketsClient_report* theReportClientArg)
 		}
 		theReportClient = theReportClientArg;
 
-		// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		// Create socket
-		// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		res = pre_start_socket();
-		if (res != JVX_NO_ERROR)
+#if 0
+		socketStartComplete = false;
+		if (!startSocketInWorker)
 		{
-			return res;
+			res = create_connect_socket();
+			socketStartComplete = true;
 		}
-
-		res = start_socket();
-		if (res != JVX_NO_ERROR)
+		else
 		{
-			goto exit_fail_II;
+			// Postpone socket
+			res = JVX_NO_ERROR;
 		}
+#else
+		res = create_connect_socket();
+#endif
 
-		res = set_opts_socket();
-		if (res != JVX_NO_ERROR)
-		{
-			goto exit_fail_I;
-		}
-
-		res = connect_socket();
 		if (res == JVX_NO_ERROR)
 		{
 			theState = jvxSocketsConnectionState::JVX_STATE_CONNECTION_CONNECTED;
@@ -148,11 +142,48 @@ exit_fail_I:
 	stop_socket();
 	theReportClient = NULL;
 	theState = jvxSocketsConnectionState::JVX_STATE_CONNECTION_STARTED;
-
 exit_fail_II:
 	return res;
 }
 
+jvxErrorType
+CjvxSocketsClientInterface::create_connect_socket()
+{
+	// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+	// Create socket
+	// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+	jvxErrorType res = pre_start_socket();
+	if (res != JVX_NO_ERROR)
+	{
+		return res;
+	}
+
+	res = start_socket();
+	if (res != JVX_NO_ERROR)
+	{
+		goto exit_fail_II;
+	}
+
+	res = set_opts_socket();
+	if (res != JVX_NO_ERROR)
+	{
+		goto exit_fail_I;
+	}
+
+	res = connect_socket();
+	return res;
+
+	// Error cases
+exit_fail_I:
+
+	stop_socket();
+	theReportClient = NULL;
+	theState = jvxSocketsConnectionState::JVX_STATE_CONNECTION_STARTED;
+
+exit_fail_II:
+
+	return res;
+}
 jvxErrorType
 CjvxSocketsClientInterface::stop()
 {

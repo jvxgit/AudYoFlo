@@ -10,7 +10,13 @@ JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE
 		cmdWithArgs += elm;
 	}
 
-	return CreateProcess(NULL, (char*)cmdWithArgs.c_str(), NULL, NULL, TRUE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo);
+	// return CreateProcess(NULL, (char*)cmdWithArgs.c_str(), NULL, NULL, TRUE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo);
+
+	// If I run the process with inherit = true, sockets can not be closed properly. It seems that this issue was also
+	// reason for this post:
+	// https://stackoverflow.com/questions/58813349/createprocess-occupies-socket-port-only-one-usage-of-each-socket-address-permit
+	// I did not expect it to come from this side..
+	return CreateProcess(NULL, (char*)cmdWithArgs.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo);
 }
 
 std::string JVX_GET_CURRENT_MODULE_PATH(void* ptrIdentify)

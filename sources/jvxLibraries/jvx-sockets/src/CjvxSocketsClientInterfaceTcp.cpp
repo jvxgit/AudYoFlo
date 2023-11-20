@@ -51,7 +51,10 @@ CjvxSocketsClientInterfaceTcp::set_opts_socket()
 		{
 #ifdef JVX_OS_WINDOWS
 			flag = 1;
-			errCode = setsockopt(theSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+
+			// I learned that SOL_SOCKET seems to be kind of an auto mode..
+			// errCode = setsockopt(theSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+			errCode = setsockopt(theSocket, SOL_SOCKET, TCP_NODELAY, (char*)&flag, sizeof(int));
 			if (errCode != 0)
 			{
 				res = JVX_ERROR_INTERNAL;
@@ -99,6 +102,10 @@ CjvxSocketsClientInterfaceTcp::set_opts_socket()
 #endif
 
 		}
+	}
+	else
+	{
+		res = CjvxSocketsClientInterfaceTcpUdp::set_opts_socket();
 	}
 	return res;
 }
@@ -312,8 +319,18 @@ CjvxSocketsClientInterfaceTcp::stop_connection_loop()
 void
 CjvxSocketsClientInterfaceTcp::ic_connect_loop_tcp_poll()
 {
+#if 0
+	jvxBool closeSocketHere = false;
+#endif
 	CjvxSocketsConnectionTcp* theConnectionTcp = NULL;
-
+	
+#if 0
+	if (!socketStartComplete)
+	{
+		create_connect_socket();
+		closeSocketHere = true;
+	}
+#endif
 	JVX_DSP_SAFE_ALLOCATE_OBJECT(theConnectionTcp, CjvxSocketsConnectionTcp);
 	theConnection = static_cast<CjvxSocketsConnection*>(theConnectionTcp);
 	
@@ -325,6 +342,14 @@ CjvxSocketsClientInterfaceTcp::ic_connect_loop_tcp_poll()
 	}
 
 	theConnection->main_loop();
+
+#if 0
+	if (closeSocketHere)
+	{
+		JVX_SHUTDOWN_SOCKET(theSocket, JVX_SOCKET_SD_BOTH);
+		JVX_CLOSE_SOCKET(theSocket);
+	}
+#endif
 
 	if (theReportClient)
 	{
@@ -463,6 +488,7 @@ CjvxSocketsConnectionTcp::main_loop()
 	int activity = 0;
 	char oneChar;
 
+	
 #ifdef JVX_WINDOWS_SOCKET_IMPL
 	/*
 	 * The started socket connections all live in a dedicated thread.
