@@ -25,6 +25,8 @@ hsize_t     offset[H5S_MAX_RANK];
 hsize_t     size[H5S_MAX_RANK];
 hsize_t     maxsize[H5S_MAX_RANK];
 
+#define h5true (htri_t)1
+
 // Suport only a subset of entries
 static jvxDataFormat
 hdf5ToAyfDataType(hid_t tp)
@@ -33,26 +35,26 @@ hdf5ToAyfDataType(hid_t tp)
 	H5T_class_t ctp = H5Tget_class(tp);
 	switch (ctp) {
 	case H5T_INTEGER:
-		if (H5Tequal(tp, H5T_STD_I8LE) == true)
+		if (H5Tequal(tp, H5T_STD_I8LE) == h5true)
 			retVal = JVX_DATAFORMAT_8BIT;
-		else if (H5Tequal(tp, H5T_STD_I16LE) == true)
+		else if (H5Tequal(tp, H5T_STD_I16LE) == h5true)
 			retVal = JVX_DATAFORMAT_16BIT_LE;
-		else if (H5Tequal(tp, H5T_STD_I32LE) == true)
+		else if (H5Tequal(tp, H5T_STD_I32LE) == h5true)
 			retVal = JVX_DATAFORMAT_32BIT_LE;
-		else if (H5Tequal(tp, H5T_STD_I64LE) == true)
+		else if (H5Tequal(tp, H5T_STD_I64LE) == h5true)
 			retVal = JVX_DATAFORMAT_64BIT_LE;
-		else if (H5Tequal(tp, H5T_STD_U8LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U8LE) == h5true)
 			retVal = JVX_DATAFORMAT_U8BIT;
-		else if (H5Tequal(tp, H5T_STD_U16LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U16LE) == h5true)
 			retVal = JVX_DATAFORMAT_U16BIT_LE;
-		else if (H5Tequal(tp, H5T_STD_U32LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U32LE) == h5true)
 			retVal = JVX_DATAFORMAT_U32BIT_LE;
-		else if (H5Tequal(tp, H5T_STD_U64LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U64LE) == h5true)
 			retVal = JVX_DATAFORMAT_U64BIT_LE;
 		break;
 
 	case H5T_FLOAT:
-		if (H5Tequal(tp, H5T_IEEE_F32LE) == true)
+		if (H5Tequal(tp, H5T_IEEE_F32LE) == h5true)
 		{
 #ifdef JVX_DATA_FORMAT_DOUBLE
 			retVal = JVX_DATAFORMAT_FLOAT;
@@ -60,7 +62,7 @@ hdf5ToAyfDataType(hid_t tp)
 			retVal = JVX_DATAFORMAT_DATA;
 #endif
 		}
-		else if (H5Tequal(tp, H5T_IEEE_F64LE) == true)
+		else if (H5Tequal(tp, H5T_IEEE_F64LE) == h5true)
 		{
 #ifdef JVX_DATA_FORMAT_DOUBLE
 			retVal = JVX_DATAFORMAT_DATA;
@@ -83,57 +85,57 @@ printInfoDSet(hid_t tp, hid_t space)
 
 	switch (ctp) {
 	case H5T_INTEGER:
-		if (H5Tequal(tp, H5T_STD_I8BE) == true)
+		if (H5Tequal(tp, H5T_STD_I8BE) == h5true)
 			std::cout << "H5T_STD_I8BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_I8LE) == true)
+		else if (H5Tequal(tp, H5T_STD_I8LE) == h5true)
 			std::cout << "H5T_STD_I8LE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_I16BE) == true)
+		else if (H5Tequal(tp, H5T_STD_I16BE) == h5true)
 			std::cout << "H5T_STD_I16BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_I16LE) == true)
+		else if (H5Tequal(tp, H5T_STD_I16LE) == h5true)
 			std::cout << "H5T_STD_I16LE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_I32BE) == true)
+		else if (H5Tequal(tp, H5T_STD_I32BE) == h5true)
 			std::cout << "H5T_STD_I32BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_I32LE) == true)
+		else if (H5Tequal(tp, H5T_STD_I32LE) == h5true)
 			std::cout << "H5T_STD_I32LE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_I64BE) == true)
+		else if (H5Tequal(tp, H5T_STD_I64BE) == h5true)
 			std::cout << "H5T_STD_I64BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_I64LE) == true)
+		else if (H5Tequal(tp, H5T_STD_I64LE) == h5true)
 			std::cout << "H5T_STD_I64LE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U8BE) == true)
+		else if (H5Tequal(tp, H5T_STD_U8BE) == h5true)
 			std::cout << "H5T_STD_U8BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U8LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U8LE) == h5true)
 			std::cout << "H5T_STD_U8LE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U16BE) == true)
+		else if (H5Tequal(tp, H5T_STD_U16BE) == h5true)
 			std::cout << "H5T_STD_U16BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U16LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U16LE) == h5true)
 			std::cout << "H5T_STD_U16LE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U32BE) == true)
+		else if (H5Tequal(tp, H5T_STD_U32BE) == h5true)
 			std::cout << "H5T_STD_U32BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U32LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U32LE) == h5true)
 			std::cout << "H5T_STD_U32LE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U64BE) == true)
+		else if (H5Tequal(tp, H5T_STD_U64BE) == h5true)
 			std::cout << "H5T_STD_U64BE" << std::endl;
-		else if (H5Tequal(tp, H5T_STD_U64LE) == true)
+		else if (H5Tequal(tp, H5T_STD_U64LE) == h5true)
 			std::cout << "H5T_STD_U64LE" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_SCHAR) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_SCHAR) == h5true)
 			std::cout << "H5T_NATIVE_SCHAR" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_UCHAR) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_UCHAR) == h5true)
 			std::cout << "H5T_NATIVE_UCHAR" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_SHORT) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_SHORT) == h5true)
 			std::cout << "H5T_NATIVE_SHORT" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_USHORT) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_USHORT) == h5true)
 			std::cout << "H5T_NATIVE_USHORT" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_INT) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_INT) == h5true)
 			std::cout << "H5T_NATIVE_INT" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_UINT) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_UINT) == h5true)
 			std::cout << "H5T_NATIVE_UINT" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_LONG) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_LONG) == h5true)
 			std::cout << "H5T_NATIVE_LONG" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_ULONG) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_ULONG) == h5true)
 			std::cout << "H5T_NATIVE_ULONG" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_LLONG) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_LLONG) == h5true)
 			std::cout << "H5T_NATIVE_LLONG" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_ULLONG) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_ULLONG) == h5true)
 			std::cout << "H5T_NATIVE_ULLONG" << std::endl;
 		else {
 			std::cout << "H5T_NATIVE_INT_UNKNWON-" << std::flush;
@@ -176,21 +178,21 @@ printInfoDSet(hid_t tp, hid_t space)
 		break;
 
 	case H5T_FLOAT:
-		if (H5Tequal(tp, H5T_IEEE_F32BE) == true)
+		if (H5Tequal(tp, H5T_IEEE_F32BE) == h5true)
 			std::cout << "H5T_IEEE_F32BE" << std::endl;
-		else if (H5Tequal(tp, H5T_IEEE_F32LE) == true)
+		else if (H5Tequal(tp, H5T_IEEE_F32LE) == h5true)
 			std::cout << "H5T_IEEE_F32LE" << std::endl;
-		else if (H5Tequal(tp, H5T_IEEE_F64BE) == true)
+		else if (H5Tequal(tp, H5T_IEEE_F64BE) == h5true)
 			std::cout << "H5T_IEEE_F64BE" << std::endl;
-		else if (H5Tequal(tp, H5T_IEEE_F64LE) == true)
+		else if (H5Tequal(tp, H5T_IEEE_F64LE) == h5true)
 			std::cout << "H5T_IEEE_F64LE" << std::endl;
-		else if (H5Tequal(tp, H5T_VAX_F32) == true)
+		else if (H5Tequal(tp, H5T_VAX_F32) == h5true)
 			std::cout << "H5T_VAX_F32" << std::endl;
-		else if (H5Tequal(tp, H5T_VAX_F64) == true)
+		else if (H5Tequal(tp, H5T_VAX_F64) == h5true)
 			std::cout << "H5T_VAX_F64" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_FLOAT) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_FLOAT) == h5true)
 			std::cout << "H5T_NATIVE_FLOAT" << std::endl;
-		else if (H5Tequal(tp, H5T_NATIVE_DOUBLE) == true)
+		else if (H5Tequal(tp, H5T_NATIVE_DOUBLE) == h5true)
 			std::cout << "H5T_NATIVE_DOUBLE" << std::endl;
 		else {
 			std::cout << "H5T_NATIVE_UNKNWON" << std::endl;
