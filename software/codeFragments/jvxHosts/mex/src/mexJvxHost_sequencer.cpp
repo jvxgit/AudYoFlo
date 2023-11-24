@@ -1,6 +1,6 @@
 #include "mexJvxHost.h"
 #include "realtimeViewer_helpers.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 
 jvxErrorType 
 	mexJvxHost::info_sequencer(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
@@ -74,7 +74,7 @@ jvxErrorType
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2String(description, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(description, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_description", paramId, "string");
@@ -82,7 +82,7 @@ jvxErrorType
 			}
 
 			paramId = 2;
-			res = mexArgument2String(label, prhs, paramId, nrhs);		
+			res = CjvxMatlabToCConverter::mexArgument2String(label, prhs, paramId, nrhs);
 
 			if(parametersOk)
 			{
@@ -190,7 +190,7 @@ mexJvxHost::mark_sequence_default(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2String(description, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(description, prhs, paramId, nrhs);
 			if (res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_description", paramId, "string");
@@ -322,7 +322,7 @@ jvxErrorType
 
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxSequence = valI;
@@ -535,7 +535,7 @@ jvxErrorType
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxSequence = valI;
@@ -547,7 +547,7 @@ jvxErrorType
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				if((valI >= 0) && (valI < JVX_SEQUENCER_TYPE_COMMAND_LIMIT))
@@ -562,7 +562,7 @@ jvxErrorType
 			}
 			else
 			{
-				res = mexArgument2String(nm, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2String(nm, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					res = jvxSequencerElementType_decode(sTp, nm);
@@ -580,7 +580,7 @@ jvxErrorType
 			}
 
 			paramId = 3;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				if((valI >= 0) && (valI < JVX_SEQUENCER_QUEUE_TYPE_LIMIT))
@@ -595,7 +595,7 @@ jvxErrorType
 			}
 			else
 			{
-				res = mexArgument2String(nm, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2String(nm, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					res = jvxSequencerQueueType_decode(qTp, nm);
@@ -613,7 +613,7 @@ jvxErrorType
 			}
 
 			paramId = 4;
-			res = mexArgument2ComponentIdentification(tpC, prhs, paramId, nrhs); 
+			res = CjvxMatlabToCConverter::mexArgument2ComponentIdentification(tpC, prhs, paramId, nrhs);
 			
 			switch (res)
 			{
@@ -643,7 +643,7 @@ jvxErrorType
 			}
 	
 			paramId = 5;
-			res = mexArgument2String(description, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(description, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_description", paramId, "string");
@@ -651,7 +651,7 @@ jvxErrorType
 			}
 
 			paramId = 6;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				funcId = (jvxSize) valI;
@@ -663,7 +663,7 @@ jvxErrorType
 			}
 
 			paramId = 7;
-			res = mexArgument2Index<jvxInt64>(timeout_ms, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt64>(timeout_ms, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_timeout_ms", paramId, "numeric");
@@ -671,7 +671,7 @@ jvxErrorType
 			}
 
 			paramId = 8;
-			res = mexArgument2String(label, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(label, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_label", paramId, "string");
@@ -680,7 +680,7 @@ jvxErrorType
 	
 
 			paramId = 9;
-			res = mexArgument2String(label_true, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(label_true, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_label_true", paramId, "string");
@@ -688,7 +688,7 @@ jvxErrorType
 			}
 
 			paramId = 10;
-			res = mexArgument2String(label_false, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(label_false, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_label_false", paramId, "string");
@@ -696,7 +696,7 @@ jvxErrorType
 			}
 
 			paramId = 11;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				posi = (jvxSize) valI;
@@ -708,14 +708,14 @@ jvxErrorType
 			}
 
 			paramId = 12;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				tpC.slotid = JVX_INT_SIZE(valI);
 			}
 			
 			paramId = 13;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				tpC.slotsubid = JVX_INT_SIZE(valI);
@@ -846,7 +846,7 @@ jvxErrorType
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxSequence = valI;
@@ -858,7 +858,7 @@ jvxErrorType
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				sTp = (jvxSequencerElementType) valI;
@@ -870,7 +870,7 @@ jvxErrorType
 			}
 
 			paramId = 3;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				qTp = (jvxSequencerQueueType) valI;
@@ -882,7 +882,7 @@ jvxErrorType
 			}
 
 			paramId = 4;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				tpC = (jvxComponentType) valI;
@@ -894,7 +894,7 @@ jvxErrorType
 			}
 			
 			paramId = 5;
-			res = mexArgument2String(description, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(description, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_description", paramId, "string");
@@ -902,7 +902,7 @@ jvxErrorType
 			}
 
 			paramId = 6;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				funcId = (jvxSize) valI;
@@ -914,7 +914,7 @@ jvxErrorType
 			}
 
 			paramId = 7;
-			res = mexArgument2Index<jvxInt64>(timeout_ms, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt64>(timeout_ms, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_timeout_ms", paramId, "numeric");
@@ -922,7 +922,7 @@ jvxErrorType
 			}
 
 			paramId = 8;
-			res = mexArgument2String(label, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(label, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_label", paramId, "string");
@@ -931,7 +931,7 @@ jvxErrorType
 	
 
 			paramId = 9;
-			res = mexArgument2String(label_true, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(label_true, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_label_true", paramId, "string");
@@ -939,7 +939,7 @@ jvxErrorType
 			}
 
 			paramId = 10;
-			res = mexArgument2String(label_false, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(label_false, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("sequence_step_label_false", paramId, "string");
@@ -947,7 +947,7 @@ jvxErrorType
 			}
 
 			paramId = 11;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				posi = (jvxSize) valI;
@@ -959,13 +959,13 @@ jvxErrorType
 			}
 
 			paramId = 12;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				slotid = JVX_INT_SIZE(valI);
 			}
 			paramId = 13;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				slotsubid = JVX_INT_SIZE(valI);
@@ -1092,7 +1092,7 @@ jvxErrorType
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxSequence = valI;
@@ -1104,7 +1104,7 @@ jvxErrorType
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				qTp = (jvxSequencerQueueType) valI;
@@ -1116,7 +1116,7 @@ jvxErrorType
 			}
 
 			paramId = 3;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				posi = (jvxSize)valI;
@@ -1238,7 +1238,7 @@ jvxErrorType
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxSequence = valI;
@@ -1250,7 +1250,7 @@ jvxErrorType
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				qTp = (jvxSequencerQueueType) valI;
@@ -1262,7 +1262,7 @@ jvxErrorType
 			}
 
 			paramId = 3;
-			res = mexArgument2Index<jvxInt32>(valI,prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI,prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				posi1 = (jvxSize)valI;
@@ -1274,7 +1274,7 @@ jvxErrorType
 			}
 
 			paramId = 4;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				posi2 = (jvxSize)valI;
@@ -1395,7 +1395,7 @@ jvxErrorType
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxSequence = valI;
@@ -1407,7 +1407,7 @@ jvxErrorType
 			}
 
 			paramId = 2;
-			res = mexArgument2Bool(runnit, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Bool(runnit, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("activation", paramId, "bool");
@@ -1524,7 +1524,7 @@ jvxErrorType
 
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt64>(eventMask, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt64>(eventMask, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("event_mask", paramId, "numeric");
@@ -1532,7 +1532,7 @@ jvxErrorType
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(granStateReport, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(granStateReport, prhs, paramId, nrhs);
 			if (res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("gran_state_report", paramId, "numeric");
@@ -2020,7 +2020,7 @@ jvxErrorType
 
 
 			paramId = 1;
-			res = mexArgument2Index<jvxInt64>(tStamp_us, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt64>(tStamp_us, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("timestamp_us", paramId, "numeric");

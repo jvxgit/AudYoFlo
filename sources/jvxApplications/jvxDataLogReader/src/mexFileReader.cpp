@@ -13,7 +13,7 @@
 
 #include "mexFileReader.h"
 #include "mexCommandsFileReader.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 #include "jvx-helpers.h"
 #include "CjvxCToMatlabConverter.h"
 
@@ -132,7 +132,7 @@ mexFileReader::parseInput(int nlhs, mxArray *plhs[],
 		}
 		else if(mxIsChar(arr))
 		{
-			std::string token = jvx_mex_2_cstring(arr);
+			std::string token = CjvxMatlabToCConverter::jvx_mex_2_cstring(arr);
 			bool foundit = false;
 			for(i = 0; i < JVX_FIO_COMMAND_LIMIT; i++)
 			{
@@ -680,7 +680,7 @@ mexFileReader::returnTagsSession(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 	if(nrhs > 1)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -746,7 +746,7 @@ mexFileReader::returnNumberDataSetsSession(int nlhs, mxArray* plhs[], int nrhs, 
 	if(nrhs > 1)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -799,7 +799,7 @@ mexFileReader::returnNumberDataChunksSession(int nlhs, mxArray* plhs[], int nrhs
 	if(nrhs > 1)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -852,7 +852,7 @@ mexFileReader::returnNumberDataChunksSessionOneSet(int nlhs, mxArray* plhs[], in
 	if(nrhs > 2)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -865,7 +865,7 @@ mexFileReader::returnNumberDataChunksSessionOneSet(int nlhs, mxArray* plhs[], in
 		}
 		
 		arr = prhs[2];
-		res = mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -920,7 +920,7 @@ mexFileReader::returnDataSetSession(int nlhs, mxArray* plhs[], int nrhs, const m
 	if(nrhs > 2)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -934,7 +934,7 @@ mexFileReader::returnDataSetSession(int nlhs, mxArray* plhs[], int nrhs, const m
 		}
 		
 		arr = prhs[2];
-		res = mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 
@@ -1003,7 +1003,7 @@ mexFileReader::returnNextDatachunkSession(int nlhs, mxArray* plhs[], int nrhs, c
 	if(nrhs > 1)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1101,7 +1101,7 @@ mexFileReader::returnNextDatachunkSessionOneSetConstantSize(int nlhs, mxArray* p
 	if(nrhs > 3)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1112,7 +1112,7 @@ mexFileReader::returnNextDatachunkSessionOneSetConstantSize(int nlhs, mxArray* p
 		}
 		
 		arr = prhs[2];
-		res = mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1124,7 +1124,7 @@ mexFileReader::returnNextDatachunkSessionOneSetConstantSize(int nlhs, mxArray* p
 
 
 		arr = prhs[3];
-		res = mexArgument2Index<jvxInt32>(numChunksAtOnce, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(numChunksAtOnce, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1144,12 +1144,12 @@ mexFileReader::returnNextDatachunkSessionOneSetConstantSize(int nlhs, mxArray* p
 		if(nrhs > 4)
 		{
 			arr = prhs[4];
-			res = mexArgument2Index<jvxInt32>(valI, &arr, 0, 1);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, &arr, 0, 1);
 			if(res != JVX_NO_ERROR)
 			{
 		
 				jvxSize i;
-				std::string token = jvx_mex_2_cstring(arr);
+				std::string token = CjvxMatlabToCConverter::jvx_mex_2_cstring(arr);
 				bool foundit = false;
 				for(i = 0; i < JVX_FIO_COPY_LIMIT; i++)
 				{
@@ -1628,7 +1628,7 @@ mexFileReader::returnNextDatachunkSessionOneSet(int nlhs, mxArray* plhs[], int n
 	if(nrhs > 2)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1639,7 +1639,7 @@ mexFileReader::returnNextDatachunkSessionOneSet(int nlhs, mxArray* plhs[], int n
 		}
 		
 		arr = prhs[2];
-		res = mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1705,7 +1705,7 @@ mexFileReader::rewindSession(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 	if(nrhs > 1)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1755,7 +1755,7 @@ mexFileReader::rewindSessionOneSet(int nlhs, mxArray* plhs[], int nrhs, const mx
 	if(nrhs > 2)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1765,7 +1765,7 @@ mexFileReader::rewindSessionOneSet(int nlhs, mxArray* plhs[], int nrhs, const mx
 			return(JVX_NO_ERROR);
 		}
 		arr = prhs[2];
-		res = mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1814,7 +1814,7 @@ mexFileReader::returnProgressSession(int nlhs, mxArray* plhs[], int nrhs, const 
 	if(nrhs > 1)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1865,7 +1865,7 @@ mexFileReader::returnProgressSessionOneSet(int nlhs, mxArray* plhs[], int nrhs, 
 	if(nrhs > 2)
 	{
 		const mxArray* arr = prhs[1];
-		res = mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSess, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)
@@ -1875,7 +1875,7 @@ mexFileReader::returnProgressSessionOneSet(int nlhs, mxArray* plhs[], int nrhs, 
 			return(JVX_NO_ERROR);
 		}
 		arr = prhs[2];
-		res = mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idSet, &arr, 0, 1);
 		if(res != JVX_NO_ERROR)
 		{
 			if(nlhs > 0)

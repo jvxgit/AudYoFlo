@@ -5,7 +5,7 @@
 
 #include "mexJvxHost.h"
 #include "mexCmdMapperJvxHost.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 #include "jvx-helpers.h"
 #include "realtimeViewer_helpers.h"
 extern "C"
@@ -161,7 +161,7 @@ mexJvxHost::parseInput(int nlhs, mxArray *plhs[],
 		}
 		else if(mxIsChar(arr))
 		{
-			std::string token = jvx_mex_2_cstring(arr);
+			std::string token = CjvxMatlabToCConverter::jvx_mex_2_cstring(arr);
 			bool foundit = false;
 			for(i = 0; i < JVX_HOST_COMMAND_LIMIT; i++)
 			{
@@ -601,7 +601,7 @@ mexJvxHost::initialize(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[
 			const mxArray* arr = prhs[i + 1];
 			if (mxIsChar(arr))
 			{
-				strList.push_back(jvx_mex_2_cstring(arr));
+				strList.push_back(CjvxMatlabToCConverter::jvx_mex_2_cstring(arr));
 			}
 			else if (mxIsStruct(arr))
 			{
@@ -613,7 +613,7 @@ mexJvxHost::initialize(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[
 					mxArray* arrWork = mxGetFieldByNumber(arr, 0, ii);
 					if (!mxIsChar(arrWork))
 					{
-						strList.push_back(jvx_mex_2_cstring(arrWork));
+						strList.push_back(CjvxMatlabToCConverter::jvx_mex_2_cstring(arrWork));
 					}
 				}
 			}
@@ -951,7 +951,7 @@ mexJvxHost::write_config(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prh
 
 			if(nrhs >= 2)
 			{
-				res = mexArgument2String(fName, prhs, 1, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2String(fName, prhs, 1, nrhs);
 			}
 
 			if(res == JVX_NO_ERROR)
@@ -1290,7 +1290,7 @@ mexJvxHost::lookup_type_id__name(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 	{
 		return_options_lookup = false;
 
-		res = mexArgument2String(type_category, prhs, paramId, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2String(type_category, prhs, paramId, nrhs);
 		if (res != JVX_NO_ERROR)
 		{
 			parametersOk = false;
@@ -1300,7 +1300,7 @@ mexJvxHost::lookup_type_id__name(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 		{
 			return_options_names = false;
 			paramId = 2;
-			res = mexArgument2String(type_name, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(type_name, prhs, paramId, nrhs);
 			if (res != JVX_NO_ERROR)
 			{
 				parametersOk = false;
@@ -1929,21 +1929,21 @@ mexJvxHost::lookup_type_name__value(int nlhs, mxArray* plhs[], int nrhs, const m
 	jvxBitField valC;
 	jvxBitField cmpBtfld;
 
-	res = mexArgument2String(type_category, prhs, paramId, nrhs);
+	res = CjvxMatlabToCConverter::mexArgument2String(type_category, prhs, paramId, nrhs);
 	if (res != JVX_NO_ERROR)
 	{
 		parametersOk = false;
 	}
 
 	paramId = 2;
-	res = mexArgument2Index(id, prhs, paramId, nrhs);
+	res = CjvxMatlabToCConverter::mexArgument2Index(id, prhs, paramId, nrhs);
 	if (res == JVX_NO_ERROR)
 	{
 		inputIsSize = true;
 	}
 	else
 	{
-		res = mexArgument2String(bfld, prhs, paramId, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2String(bfld, prhs, paramId, nrhs);
 		{
 			if (res == JVX_NO_ERROR)
 			{
@@ -2387,7 +2387,7 @@ mexJvxHost::lookup_const__name(int nlhs, mxArray* plhs[], int nrhs, const mxArra
 	}
 	else
 	{
-		res = mexArgument2String(type_category, prhs, paramId, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2String(type_category, prhs, paramId, nrhs);
 		if (res != JVX_NO_ERROR)
 		{
 			parametersOk = false;
@@ -2471,7 +2471,7 @@ mexJvxHost::set_callback_msgq(int nlhs, mxArray* plhs[], int nrhs, const mxArray
 	{
 		if(mxIsChar(prhs[1]))
 		{
-			this->msg_queue.callback_prefix = jvx_mex_2_cstring(prhs[1]);
+			this->msg_queue.callback_prefix = CjvxMatlabToCConverter::jvx_mex_2_cstring(prhs[1]);
 			if(nlhs > 0)
 			{
 				this->mexReturnBool(plhs[0], true);

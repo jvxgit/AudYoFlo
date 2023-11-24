@@ -1,5 +1,6 @@
 #include "jvx.h"
 #include "jvxFileReader.h"
+#include "CjvxMatlabToCConverter.h"
 
 extern "C"
 {
@@ -87,7 +88,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		std::string fName;
 		if (nrhs >= 1)
 		{
-			jvxErrorType res = mexArgument2String(fName, prhs, 0, 1);
+			jvxErrorType res = CjvxMatlabToCConverter::mexArgument2String(fName, prhs, 0, 1);
 			if(res == JVX_NO_ERROR)
 			{
 				jvxFileReader fReader;

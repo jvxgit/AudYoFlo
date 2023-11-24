@@ -1,5 +1,6 @@
 #include "mexJvxHost.h"
 #include "jvxHost_config.h"
+#include "CjvxMatlabToCConverter.h"
 #include "realtimeViewer_helpers.h"
 
 jvxErrorType 
@@ -265,17 +266,17 @@ mexJvxHost::set_config_entry(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			paramId = 1;
 			if(mxIsChar(prhs[paramId]))
 			{
-				 entryname = jvx_mex_2_cstring(prhs[paramId]);
+				 entryname = CjvxMatlabToCConverter::jvx_mex_2_cstring(prhs[paramId]);
 
 				 paramId++;
-				 resL = mexArgument2String(content, prhs, paramId,nrhs);
+				 resL = CjvxMatlabToCConverter::mexArgument2String(content, prhs, paramId,nrhs);
 				 if(resL == JVX_NO_ERROR)
 				 {
 					 tp = JVX_CONFIG_SECTION_TYPE_ASSIGNMENTSTRING;
 				 }
 				 else
 				 {
-					 resL = mexArgument2StringList(content_list, prhs, paramId,nrhs);
+					 resL = CjvxMatlabToCConverter::mexArgument2StringList(content_list, prhs, paramId,nrhs);
 					 if(resL == JVX_NO_ERROR)
 					 {
 						 tp = JVX_CONFIG_SECTION_TYPE_STRINGLIST;
@@ -509,7 +510,7 @@ mexJvxHost::get_config_entry(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			paramId = 1;
 			if(mxIsChar(prhs[paramId]))
 			{
-				entryname = jvx_mex_2_cstring(prhs[paramId]);
+				entryname = CjvxMatlabToCConverter::jvx_mex_2_cstring(prhs[paramId]);
 				tp = JVX_CONFIG_SECTION_TYPE_UNKNOWN;
 
 				res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_EXTENDER, (jvxHandle**)&cfgExt);
@@ -720,7 +721,7 @@ mexJvxHost::export_config_struct(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -900,7 +901,7 @@ mexJvxHost::export_config_string(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -1078,7 +1079,7 @@ mexJvxHost::convert_string_config_struct(int nlhs, mxArray* plhs[], int nrhs, co
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2String(configStr, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(configStr, prhs, paramId, nrhs);
 			if (res != JVX_NO_ERROR)
 			{
 				parametersOk = false;

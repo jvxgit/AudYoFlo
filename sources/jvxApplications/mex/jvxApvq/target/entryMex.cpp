@@ -35,6 +35,7 @@
 #endif
 
 #include "CjvxCToMatlabConverter.h"
+#include "CjvxMatlabToCConverter.h"
 #include "jvx-apvq.h"
 
 typedef struct
@@ -59,7 +60,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	{
 		if (mxIsChar(prhs[0]))
 		{
-			std::string token = jvx_mex_2_cstring(prhs[0]);
+			std::string token = CjvxMatlabToCConverter::jvx_mex_2_cstring(prhs[0]);
 			if (token == "init")
 			{
 				jvxApvq hdl;

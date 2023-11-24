@@ -1,6 +1,6 @@
 #include "mexJvxHost.h"
 #include "realtimeViewer_helpers.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 
 jvxErrorType 
 mexJvxHost::info_properties(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
@@ -22,7 +22,7 @@ mexJvxHost::info_properties(int nlhs, mxArray* plhs[], int nrhs, const mxArray* 
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -141,7 +141,7 @@ jvxErrorType
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2String(cpString, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(cpString, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				for(i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
@@ -391,7 +391,7 @@ mexJvxHost::get_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -414,7 +414,7 @@ mexJvxHost::get_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxProp = (jvxSize) valI;
@@ -428,7 +428,7 @@ mexJvxHost::get_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			if (spec_offset)
 			{
 				paramId = 3;
-				res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					offset = (jvxSize)valI;
@@ -652,7 +652,7 @@ mexJvxHost::get_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -675,7 +675,7 @@ mexJvxHost::get_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				catProperty_user = (jvxPropertyCategoryType) valI;
@@ -687,7 +687,7 @@ mexJvxHost::get_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			}
 
 			paramId = 3;
-			res = mexArgument2Index<jvxInt32>(valI,prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI,prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				hdlIdx_user = (jvxSize) valI;
@@ -701,7 +701,7 @@ mexJvxHost::get_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			if (spec_offset)
 			{
 				paramId = 4;
-				res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					offset = (jvxSize)valI;
@@ -944,7 +944,7 @@ mexJvxHost::get_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -967,7 +967,7 @@ mexJvxHost::get_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 			}
 
 			paramId = 2;
-			res = mexArgument2String(descString, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(descString, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{				
 				MEX_PARAMETER_ERROR("descriptor", paramId, "string");
@@ -977,7 +977,7 @@ mexJvxHost::get_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 			if (spec_offset)
 			{
 				paramId = 3;
-				res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					offset = (jvxSize)valI;
@@ -1101,7 +1101,7 @@ mexJvxHost::set_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -1124,7 +1124,7 @@ mexJvxHost::set_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				idxProp = (jvxSize) valI;
@@ -1138,7 +1138,7 @@ mexJvxHost::set_property_idx(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			if (spec_offset)
 			{
 				paramId = 3;
-				res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					offset = (jvxSize)valI;
@@ -1426,7 +1426,7 @@ mexJvxHost::set_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -1449,7 +1449,7 @@ mexJvxHost::set_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				catProperty_user = (jvxPropertyCategoryType) valI;
@@ -1461,7 +1461,7 @@ mexJvxHost::set_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			}
 
 			paramId = 3;
-			res = mexArgument2Index<jvxInt32>(valI,prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI,prhs, paramId, nrhs);
 			if(res == JVX_NO_ERROR)
 			{
 				hdlIdx_user = (jvxSize) valI;
@@ -1475,7 +1475,7 @@ mexJvxHost::set_property_uniqueid(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			if (spec_offset)
 			{
 				paramId = 4;
-				res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					offset = (jvxSize)valI;
@@ -1766,7 +1766,7 @@ mexJvxHost::set_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -1789,7 +1789,7 @@ mexJvxHost::set_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 			}
 
 			paramId = 2;
-			res = mexArgument2String(descString, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(descString, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{				
 				MEX_PARAMETER_ERROR("category", paramId, "numeric");
@@ -1799,7 +1799,7 @@ mexJvxHost::set_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 			if (spec_offset)
 			{
 				paramId = 3;
-				res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					offset = (jvxSize)valI;
@@ -2089,7 +2089,7 @@ mexJvxHost::start_property_group(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -2235,7 +2235,7 @@ mexJvxHost::stop_property_group(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -2380,7 +2380,7 @@ mexJvxHost::status_property_group(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			jvxSize  startCnt = JVX_SIZE_UNSELECTED;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:

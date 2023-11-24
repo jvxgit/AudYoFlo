@@ -2,7 +2,6 @@
 #define _CJVXPROPERTIESTOMATLABCONVERTER_H__
 
 #include "jvx.h"
-#include "HjvxMex2CConverter.h"
 
 #define PREFIX_ONE_PROPERTY "PROPERTY"
 #define FLD_NAME_PROPERTY_NAME_STRING "NAME_STRING"

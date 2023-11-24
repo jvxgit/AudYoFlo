@@ -1,24 +1,9 @@
 // Need to include jvx.h here since the order of inclusion matters!
 #include "jvx.h"
 
-#if _MATLAB_MEXVERSION < 500
-#if (_MSC_VER >= 1600)
-#include <yvals.h>
-#define __STDC_UTF_16__
-#endif
-#endif
-#include "mex.h"
-
-#include <iostream>
-
-#if _MATLAB_MEXVERSION >= 100
-#define SZ_MAT_TYPE mwSize
-#else
-#define SZ_MAT_TYPE int
-#endif
-
+#include "localMexIncludes.h"
 #include "CjvxCToMatlabConverter.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 
 //======================================================================
 //======================================================================

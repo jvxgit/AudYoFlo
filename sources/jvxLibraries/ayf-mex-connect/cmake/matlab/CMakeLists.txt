@@ -12,11 +12,12 @@ set(LOCAL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../include/CjvxCToMatlabConverter.h
 	${CMAKE_CURRENT_SOURCE_DIR}/../../include/CjvxPropertiesToMatlabConverter.h
-	${CMAKE_CURRENT_SOURCE_DIR}/../../include/HjvxMex2CConverter.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../../include/CjvxMatlabToCConverter.h
 	${CMAKE_CURRENT_SOURCE_DIR}/../../include/localMexIncludes.h
 	
 	${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxCToMatlabConverter.cpp  
-	${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxPropertiesToMatlabConverter.cpp	
+	${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxPropertiesToMatlabConverter.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxMatlabToCConverter.cpp
 )
 
 set(BUILD_STATIC TRUE)

@@ -4,6 +4,7 @@
 
 #include "localMexIncludes.h"
 #include "CjvxCToMatlabConverter.h"
+#include "CjvxMatlabToCConverter.h"
 #include "CjvxPropertiesToMatlabConverter.h"
 
 class CayfTinyMexComponentHost : 

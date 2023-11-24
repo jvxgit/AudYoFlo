@@ -1,6 +1,6 @@
 #include "mexJvxHost.h"
 #include "realtimeViewer_helpers.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 
 jvxErrorType
 mexJvxHost::select_component(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
@@ -23,7 +23,7 @@ mexJvxHost::select_component(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 
 			paramId = 1;
 
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -46,7 +46,7 @@ mexJvxHost::select_component(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			}
 
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(idx, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(idx, prhs, paramId, nrhs);
 			if(res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("component_index", paramId, "numeric");
@@ -133,7 +133,7 @@ mexJvxHost::activate_component(int nlhs, mxArray* plhs[], int nrhs, const mxArra
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -236,7 +236,7 @@ mexJvxHost::isready_component(int nlhs, mxArray* plhs[], int nrhs, const mxArray
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -327,7 +327,7 @@ mexJvxHost::status_component(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -418,7 +418,7 @@ mexJvxHost::commands_component(int nlhs, mxArray* plhs[], int nrhs, const mxArra
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -509,7 +509,7 @@ mexJvxHost::conditions_component(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -600,7 +600,7 @@ mexJvxHost::rel_jumps_component(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -692,7 +692,7 @@ mexJvxHost::deactivate_component(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -795,7 +795,7 @@ mexJvxHost::unselect_component(int nlhs, mxArray* plhs[], int nrhs, const mxArra
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
+			res = CjvxMatlabToCConverter::mexArgument2Type<jvxComponentType>(tpC, prhs, paramId, nrhs, JVX_COMPONENT_UNKNOWN, JVX_COMPONENT_ALL_LIMIT, jvxComponentType_str());
 			switch (res)
 			{
 			case JVX_NO_ERROR:

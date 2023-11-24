@@ -1,40 +1,8 @@
 #include "jvx.h"
 #include "jvxFileWriter.h"
 
-#if _MATLAB_MEXVERSION < 500
-#if (_MSC_VER >= 1600)
-#include <yvals.h>
-#define __STDC_UTF_16__
-#endif
-#endif
-#include <mex.h>
-
-/*
-#pragma comment ( lib, "libmx")
-#pragma comment ( lib, "libmex")
-#pragma comment ( lib, "libeng")
-#pragma comment ( lib, "libmat")*/
-//#pragma comment ( lib, "libmatlb") 
-
-//#define DLL_EXPORT __declspec(dllexport)
-
-#include <stdio.h>
-#include <string>
-#include <vector>
-
-#if _MATLAB_MEXVERSION < 500
-#if (_MSC_VER >= 1600)
-#include <yvals.h>
-#define __STDC_UTF_16__
-#endif
-#endif
-
-#if _MATLAB_MEXVERSION >= 100
-#define SZ_MAT_TYPE mwSize
-#else
-#define SZ_MAT_TYPE int
-#endif
-
+#include "localMexIncludes.h"
+#include "CjvxMatlabToCConverter.h"
 #include "CjvxCToMatlabConverter.h"
 
 #define CLIP_VALUE 0.99
@@ -80,14 +48,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 		if (nrhs >= 2)
 		{
-			jvxErrorType res = mexArgument2String(fName, prhs, 0, nrhs);
+			jvxErrorType res = CjvxMatlabToCConverter::mexArgument2String(fName, prhs, 0, nrhs);
 			jvxSize numChans = mxGetM(prhs[1]);
 			jvxSize numSamples = mxGetN(prhs[1]);
 			jvxData* ptrRead = reinterpret_cast<jvxData*>(mxGetData(prhs[1]));
 			
 			if (nrhs >= 3)
 			{
-				res = mexArgument2Index<jvxSize>(rate, prhs, 2, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(rate, prhs, 2, nrhs);
 			}
 			if(res == JVX_NO_ERROR)
 			{

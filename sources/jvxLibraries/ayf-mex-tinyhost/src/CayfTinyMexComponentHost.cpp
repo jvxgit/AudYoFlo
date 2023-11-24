@@ -182,7 +182,7 @@ CayfTinyMexComponentHost::command(int nlhs, mxArray* plhs[], int nrhs, const mxA
 		const mxArray* arr = prhs[0];
 		if (mxIsChar(arr))
 		{
-			std::string token = jvx_mex_2_cstring(arr);
+			std::string token = CjvxMatlabToCConverter::jvx_mex_2_cstring(arr);
 			if (token == "init")
 			{
 				res = this->init_component(nlhs, plhs, nrhs, prhs, dedicatedReturn, 1, 0);
@@ -387,12 +387,12 @@ CayfTinyMexComponentHost::get_props_component(int nlhs, mxArray* plhs[], int nrh
 		jvxSize paramId = 1;
 		jvxInt32 valI;
 		jvxSize offset = 0;
-		res = mexArgument2String(descriptor, prhs, paramId, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2String(descriptor, prhs, paramId, nrhs);
 		if (res == JVX_NO_ERROR)
 		{
 			jvxSize fillEmptyCnt = 0;
 			paramId = 2;
-			res = mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, paramId, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				offset = (jvxSize)valI;
@@ -443,7 +443,7 @@ CayfTinyMexComponentHost::get_props_component(int nlhs, mxArray* plhs[], int nrh
 			jvxSize paramId = 1;
 			jvxInt32 valI;
 			jvxSize offset = 0;
-			res = mexArgument2String(descriptor, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(descriptor, prhs, paramId, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				jvxSize fillEmptyCnt = 0;

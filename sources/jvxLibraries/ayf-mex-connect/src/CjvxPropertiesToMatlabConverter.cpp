@@ -1,24 +1,10 @@
 // Need to include jvx.h here since the order of inclusion matters!
 #include "jvx.h"
 
-#if _MATLAB_MEXVERSION < 500
-#if (_MSC_VER >= 1600)
-#include <yvals.h>
-#define __STDC_UTF_16__
-#endif
-#endif
-#include "mex.h"
-
-#include <iostream>
-
-#if _MATLAB_MEXVERSION >= 100
-#define SZ_MAT_TYPE mwSize
-#else
-#define SZ_MAT_TYPE int
-#endif
-
+#include "localMexIncludes.h"
 #include "CjvxPropertiesToMatlabConverter.h"
 #include "CjvxCToMatlabConverter.h"
+#include "CjvxMatlabToCConverter.h"
 
 #define ERROR_MESSAGE_REPORT(fct) ((std::string)"Internal error when using CjvxPropertiesToMatlabConverter, member function " + fct + (std::string)", reason: ")
 
@@ -1645,7 +1631,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 	case JVX_DATAFORMAT_STRING:
 		if (mxIsChar(prhs[0]))
 		{
-			token = jvx_mex_2_cstring(prhs[0]);
+			token = CjvxMatlabToCConverter::jvx_mex_2_cstring(prhs[0]);
 			fldStr.assign_const(token.c_str(), token.size());
 			res = theTriple.theProps->set_property(callGate,
 				jPRG(&fldStr, 1, format), ident, trans);
@@ -1661,7 +1647,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 		}
 		break;
 	case JVX_DATAFORMAT_STRING_LIST:
-		res = mexArgument2String(tokenLst, numElms, prhs, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2String(tokenLst, numElms, prhs, 0, 1);
 		if (res == JVX_NO_ERROR)
 		{
 			fldStrLst.assign(tokenLst);
@@ -1676,7 +1662,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 		break;
 	case JVX_DATAFORMAT_SELECTION_LIST:
 
-		res = mexArgument2String(token, prhs, 0, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2String(token, prhs, 0, nrhs);
 		if (res == JVX_NO_ERROR)
 		{
 			jvxBool err = false;
@@ -1687,7 +1673,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 			}
 			else
 			{
-				res = mexArgument2String(token, prhs, 1, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2String(token, prhs, 1, nrhs);
 			}
 			if (res == JVX_NO_ERROR)
 			{
@@ -1699,7 +1685,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 				}
 				else
 				{
-					res = mexArgument2StringList(tokenLst, prhs, 2, nrhs);
+					res = CjvxMatlabToCConverter::mexArgument2StringList(tokenLst, prhs, 2, nrhs);
 				}
 				if (res == JVX_NO_ERROR)
 				{
@@ -1731,15 +1717,15 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 		}
 		break;
 	case JVX_DATAFORMAT_VALUE_IN_RANGE:
-		res = mexArgument2Index<jvxData>(valD, prhs, 0, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxData>(valD, prhs, 0, nrhs);
 		if (res == JVX_NO_ERROR)
 		{
 			valR.val() = valD;
-			res = mexArgument2Index<jvxData>(valD, prhs, 1, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxData>(valD, prhs, 1, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				valR.minVal = valD;
-				res = mexArgument2Index<jvxData>(valD, prhs, 2, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxData>(valD, prhs, 2, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					valR.maxVal = valD;
@@ -1804,7 +1790,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 	case JVX_DATAFORMAT_STRING:
 		if (mxIsChar(prhs[0]))
 		{
-			token = jvx_mex_2_cstring(prhs[0]);
+			token = CjvxMatlabToCConverter::jvx_mex_2_cstring(prhs[0]);
 			fldStr.assign_const(token.c_str(), token.size());
 			res = jvx_set_property(theTriple.theProps, &fldStr, offset, 1, format, true, descr, callGate);
 			if (accProt)
@@ -1819,7 +1805,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 		}
 		break;
 	case JVX_DATAFORMAT_STRING_LIST:
-		res = mexArgument2String(tokenLst, numElms, prhs, 0, 1);
+		res = CjvxMatlabToCConverter::mexArgument2String(tokenLst, numElms, prhs, 0, 1);
 		if (res == JVX_NO_ERROR)
 		{
 			fldStrLst.assign(tokenLst);
@@ -1832,7 +1818,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 		}
 		break;
 	case JVX_DATAFORMAT_SELECTION_LIST:
-		res = mexArgument2String(token, prhs, 0, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2String(token, prhs, 0, nrhs);
 		if (res == JVX_NO_ERROR)
 		{
 			jvxBool err = false;
@@ -1844,13 +1830,13 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 		}
 		else
 		{
-			res = mexArgument2Index<jvxInt64>(valI64, prhs, 0, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt64>(valI64, prhs, 0, nrhs);
 			btfld = (jvxBitField)valI64;
 		}
 		selList.bitFieldSelected() = btfld;
 		if (res == JVX_NO_ERROR)
 		{
-			res = mexArgument2String(token, prhs, 1, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(token, prhs, 1, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				jvxBool err = false;
@@ -1862,14 +1848,14 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 			}
 			else
 			{
-				res = mexArgument2Index<jvxInt64>(valI64, prhs, 1, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxInt64>(valI64, prhs, 1, nrhs);
 				btfld = (jvxBitField)valI64;
 			}
 			selList.bitFieldExclusive = btfld;
 
 			if (res == JVX_NO_ERROR)
 			{
-				res = mexArgument2StringList(tokenLst, prhs, 2, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2StringList(tokenLst, prhs, 2, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					selList.strList.assign(tokenLst);
@@ -1897,15 +1883,15 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentOthers(const mxArray** prhs,
 		}
 		break;
 	case JVX_DATAFORMAT_VALUE_IN_RANGE:
-		res = mexArgument2Index<jvxData>(valD, prhs, 0, nrhs);
+		res = CjvxMatlabToCConverter::mexArgument2Index<jvxData>(valD, prhs, 0, nrhs);
 		if (res == JVX_NO_ERROR)
 		{
 			valR.val() = valD;
-			res = mexArgument2Index<jvxData>(valD, prhs, 1, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxData>(valD, prhs, 1, nrhs);
 			if (res == JVX_NO_ERROR)
 			{
 				valR.minVal = valD;
-				res = mexArgument2Index<jvxData>(valD, prhs, 2, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxData>(valD, prhs, 2, nrhs);
 				if (res == JVX_NO_ERROR)
 				{
 					valR.maxVal = valD;
@@ -2167,8 +2153,8 @@ CjvxPropertiesToMatlabConverter::mexSetPropertyCore(mxArray*& arrOut,
 	std::string valS;
 	jvxInt32 valI;
 	if (
-		(mexArgument2String(valS, prhs, nrhs_off + 1, nrhs) == JVX_NO_ERROR) &&
-		(mexArgument2Index<jvxInt32>(valI, prhs, nrhs_off + 2, nrhs) == JVX_NO_ERROR))
+		(CjvxMatlabToCConverter::mexArgument2String(valS, prhs, nrhs_off + 1, nrhs) == JVX_NO_ERROR) &&
+		(CjvxMatlabToCConverter::mexArgument2Index<jvxInt32>(valI, prhs, nrhs_off + 2, nrhs) == JVX_NO_ERROR))
 	{
 		if (valS == "offset")
 		{

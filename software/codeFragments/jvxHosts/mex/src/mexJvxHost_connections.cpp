@@ -1,6 +1,6 @@
 #include "mexJvxHost.h"
 #include "realtimeViewer_helpers.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 #include <sstream>
 
 jvxErrorType
@@ -25,7 +25,7 @@ mexJvxHost::list_connection_rules(int nlhs, mxArray* plhs[], int nrhs, const mxA
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2String(nmRule, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(nmRule, prhs, paramId, nrhs);
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -34,7 +34,7 @@ mexJvxHost::list_connection_rules(int nlhs, mxArray* plhs[], int nrhs, const mxA
 				parametersOk = true;
 				break;
 			case JVX_ERROR_INVALID_ARGUMENT:
-				res = mexArgument2Index<jvxSize>(idRule, prhs, paramId, nrhs); 
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idRule, prhs, paramId, nrhs);
 				if (res != JVX_NO_ERROR)
 				{
 					MEX_PARAMETER_ERROR("connection rule id", paramId, "numeric");
@@ -121,7 +121,7 @@ mexJvxHost::list_connections(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2String(nmConnection, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(nmConnection, prhs, paramId, nrhs);
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -130,7 +130,7 @@ mexJvxHost::list_connections(int nlhs, mxArray* plhs[], int nrhs, const mxArray*
 				parametersOk = true;
 				break;
 			case JVX_ERROR_INVALID_ARGUMENT:
-				res = mexArgument2Index<jvxSize>(idConnection, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idConnection, prhs, paramId, nrhs);
 				if (res != JVX_NO_ERROR)
 				{
 					MEX_PARAMETER_ERROR("connection id", paramId, "numeric");
@@ -232,7 +232,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 				// Read in name of new rule
 				// ==============================
 				paramId = 1;
-				res = mexArgument2String(nmRule, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2String(nmRule, prhs, paramId, nrhs);
 				switch (res)
 				{
 				case JVX_NO_ERROR:
@@ -252,7 +252,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 				// Read in master component id
 				paramId++;
-				res = mexArgument2ComponentIdentification(cpTp0, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2ComponentIdentification(cpTp0, prhs, paramId, nrhs);
 				switch (res)
 				{
 				case JVX_NO_ERROR:
@@ -272,7 +272,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 				// Read in master factory wildcard
 				paramId++;
-				res = mexArgument2String(par1, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2String(par1, prhs, paramId, nrhs);
 				switch (res)
 				{
 				case JVX_NO_ERROR:
@@ -292,7 +292,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 				// Read in master wildcard
 				paramId++;
-				res = mexArgument2String(par2, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2String(par2, prhs, paramId, nrhs);
 				switch (res)
 				{
 				case JVX_NO_ERROR:
@@ -324,7 +324,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 						// Read in bridge name
 						paramId++;
-						res = mexArgument2String(par1, prhs, paramId, nrhs);
+						res = CjvxMatlabToCConverter::mexArgument2String(par1, prhs, paramId, nrhs);
 						switch (res)
 						{
 						case JVX_NO_ERROR:
@@ -355,7 +355,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 						// Read in from component id
 						paramId++;
-						res = mexArgument2ComponentIdentification(cpTp0, prhs, paramId, nrhs);
+						res = CjvxMatlabToCConverter::mexArgument2ComponentIdentification(cpTp0, prhs, paramId, nrhs);
 						switch (res)
 						{
 						case JVX_NO_ERROR:
@@ -375,7 +375,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 						// Read in from factory wildcard
 						paramId++;
-						res = mexArgument2String(par1, prhs, paramId, nrhs);
+						res = CjvxMatlabToCConverter::mexArgument2String(par1, prhs, paramId, nrhs);
 						switch (res)
 						{
 						case JVX_NO_ERROR:
@@ -395,7 +395,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 						// Read in from wildcard
 						paramId++;
-						res = mexArgument2String(par2, prhs, paramId, nrhs);
+						res = CjvxMatlabToCConverter::mexArgument2String(par2, prhs, paramId, nrhs);
 						switch (res)
 						{
 						case JVX_NO_ERROR:
@@ -428,7 +428,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 						// Read in to component id
 						paramId++;
-						res = mexArgument2ComponentIdentification(cpTp0, prhs, paramId, nrhs);
+						res = CjvxMatlabToCConverter::mexArgument2ComponentIdentification(cpTp0, prhs, paramId, nrhs);
 						switch (res)
 						{
 						case JVX_NO_ERROR:
@@ -448,7 +448,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 						// Read in to factory wildcard
 						paramId++;
-						res = mexArgument2String(par1, prhs, paramId, nrhs);
+						res = CjvxMatlabToCConverter::mexArgument2String(par1, prhs, paramId, nrhs);
 						switch (res)
 						{
 						case JVX_NO_ERROR:
@@ -468,7 +468,7 @@ mexJvxHost::add_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 
 						// Read in to wildcard
 						paramId++;
-						res = mexArgument2String(par2, prhs, paramId, nrhs);
+						res = CjvxMatlabToCConverter::mexArgument2String(par2, prhs, paramId, nrhs);
 						switch (res)
 						{
 						case JVX_NO_ERROR:
@@ -597,7 +597,7 @@ mexJvxHost::rem_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 			jvxInt32 paramId = 0;
 
 			paramId = 1;
-			res = mexArgument2String(nmRule, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2String(nmRule, prhs, paramId, nrhs);
 			switch (res)
 			{
 			case JVX_NO_ERROR:
@@ -606,7 +606,7 @@ mexJvxHost::rem_connection_rule(int nlhs, mxArray* plhs[], int nrhs, const mxArr
 				parametersOk = true;
 				break;
 			case JVX_ERROR_INVALID_ARGUMENT:
-				res = mexArgument2Index<jvxSize>(idRule, prhs, paramId, nrhs);
+				res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(idRule, prhs, paramId, nrhs);
 				if (res != JVX_NO_ERROR)
 				{
 					MEX_PARAMETER_ERROR("connection rule id", paramId, "numeric");
@@ -762,7 +762,7 @@ mexJvxHost::return_result_chain_master(int nlhs, mxArray* plhs[], int nrhs, cons
 			jvxSize uidProcess = JVX_SIZE_UNSELECTED;
 			jvxApiString errMess;
 			paramId = 1;
-			res = mexArgument2Index<jvxSize>(uidProcess, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(uidProcess, prhs, paramId, nrhs);
 			if (res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("process id", paramId, "numeric");
@@ -906,7 +906,7 @@ mexJvxHost::test_chain_master(int nlhs, mxArray* plhs[], int nrhs, const mxArray
 			jvxSize uidProcess = JVX_SIZE_UNSELECTED;
 			jvxApiString errMess;
 			paramId = 1;
-			res = mexArgument2Index<jvxSize>(uidProcess, prhs, paramId, nrhs);
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxSize>(uidProcess, prhs, paramId, nrhs);
 			if (res != JVX_NO_ERROR)
 			{
 				MEX_PARAMETER_ERROR("process id", paramId, "numeric");

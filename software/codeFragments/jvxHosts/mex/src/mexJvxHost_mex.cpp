@@ -1,6 +1,6 @@
 #include "mexJvxHost.h"
 #include "mexCmdMapperJvxHost.h"
-#include "HjvxMex2CConverter.h"
+#include "CjvxMatlabToCConverter.h"
 #include "CjvxJson.h"
 
 void
@@ -13,7 +13,7 @@ mexJvxHost::mexCellContentToStringList(const mxArray* arr, std::vector<std::stri
 		mxArray* arrWork = mxGetCell(arr, ii);
 		if(mxIsChar(arrWork))
 		{
-			strList.push_back(jvx_mex_2_cstring(arrWork));
+			strList.push_back(CjvxMatlabToCConverter::jvx_mex_2_cstring(arrWork));
 		}
 		else if(mxIsCell(arrWork))
 		{
