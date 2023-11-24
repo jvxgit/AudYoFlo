@@ -183,6 +183,8 @@ public:
 		return(res);
 	};
 
+	static jvxErrorType convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jvxDataFormat format, jvxSize N, const mxArray* prhs);
+
 	static std::string jvx_mex_2_cstring(const mxArray* phs);
 	static std::vector<jvxValue> jvx_mex_2_numeric(const mxArray* phs, jvxSize lineNo = 0);
 	static const mxArray* jvx_mex_lookup_strfield_core(const mxArray* strEntry, const std::string& key, jvxSize curLevel, int levelMax, jvxBool& moreLevels);

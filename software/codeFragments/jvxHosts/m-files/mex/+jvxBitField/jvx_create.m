@@ -1,6 +1,9 @@
 function [selection] = jvx_create(posiBitSet, allSetUpToPosition)
     if(nargin < 2)
 		allSetUpToPosition = false;
+    end
+    if(nargin < 1)
+		posiBitSet = -1;
 	end
 	selection = '';
     if(posiBitSet < 0)

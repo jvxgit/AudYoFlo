@@ -84,8 +84,7 @@ public:
 	jvxErrorType copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple, jvxPropertyCategoryType cat,
 		jvxDataFormat format, jvxSize numElms, jvxSize uniqueId, jvxSize offset, jvxAccessProtocol* accProt);
 	jvxErrorType copyDataToComponentOthers(const mxArray** prhs, int nrhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format,
-		jvxSize numElms, const char* descr, jvxSize offset, jvxAccessProtocol* accProt);
-	jvxErrorType convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jvxDataFormat format, jvxSize numElms, const mxArray* prhs);
+		jvxSize numElms, const char* descr, jvxSize offset, jvxAccessProtocol* accProt);	
 	jvxErrorType convertSingleNumericalUnion(jvxDataFormat format, numTypeConvert& inputConvert, const mxArray* prhs);
 };
 

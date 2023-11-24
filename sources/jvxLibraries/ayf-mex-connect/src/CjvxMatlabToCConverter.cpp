@@ -1,7 +1,573 @@
 #include "CjvxMatlabToCConverter.h"
 #include "localMexIncludes.h"
 
-jvxErrorType 
+#define JVX_CONVERSION_LOOP(failedTransfer, dat_src, jvx_dest, N, TPConvert, FConvert ) \
+	if (dat_src) \
+	{ \
+		jvxSize i; \
+		failedTransfer = false; \
+		for (i = 0; i < N; i++) \
+		{ \
+			TPConvert tmp = (TPConvert)dat_src[i]; \
+			jvx_dest[i] = FConvert(tmp); \
+		} \
+	}
+
+#define JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_src, jvx_dest, N, TPConvert, FConvert, LMax, LMin ) \
+	if (dat_src) \
+	{ \
+		jvxSize i; \
+		failedTransfer = false; \
+		for (i = 0; i < N; i++) \
+		{ \
+			TPConvert tmp = (TPConvert)dat_src[i]; \
+			tmp = JVX_MIN(tmp, LMax); \
+			tmp = JVX_MAX(tmp, LMin); \
+			jvx_dest[i] = FConvert(tmp); \
+		} \
+	}
+
+jvxErrorType
+CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jvxDataFormat format, jvxSize N, const mxArray* prhs)
+{
+	double* dat_dbl = NULL;
+	float* dat_flt = NULL;
+
+	jvxInt64* dat_int64 = NULL;
+	jvxInt32* dat_int32 = NULL;
+	jvxInt16* dat_int16 = NULL;
+	jvxInt8* dat_int8 = NULL;
+	jvxUInt64* dat_uint64 = NULL;
+	jvxUInt32* dat_uint32 = NULL;
+	jvxUInt16* dat_uint16 = NULL;
+	jvxUInt8* dat_uint8 = NULL;
+
+	jvxData* jvx_data = NULL;
+	jvxInt64* jvx_int64 = NULL;
+	jvxInt32* jvx_int32 = NULL;
+	jvxInt16* jvx_int16 = NULL;
+	jvxInt8* jvx_int8 = NULL;
+	jvxUInt64* jvx_uint64 = NULL;
+	jvxUInt32* jvx_uint32 = NULL;
+	jvxUInt16* jvx_uint16 = NULL;
+	jvxUInt8* jvx_uint8 = NULL;
+	jvxSize* jvx_sz = NULL;
+
+	jvxSize i;
+
+	if (mxIsDouble(prhs))
+	{
+		dat_dbl = (double*)mxGetData(prhs);
+	}
+	else if (mxIsSingle(prhs))
+	{
+		dat_flt = (float*)mxGetData(prhs);
+	}
+	else if (mxIsInt64(prhs))
+	{
+		dat_int64 = (jvxInt64*)mxGetData(prhs);
+	}
+	else if (mxIsInt32(prhs))
+	{
+		dat_int32 = (jvxInt32*)mxGetData(prhs);
+	}
+	else if (mxIsInt16(prhs))
+	{
+		dat_int16 = (jvxInt16*)mxGetData(prhs);
+	}
+	else if (mxIsInt8(prhs))
+	{
+		dat_int8 = (jvxInt8*)mxGetData(prhs);
+	}
+	else if (mxIsUint64(prhs))
+	{
+		dat_uint64 = (jvxUInt64*)mxGetData(prhs);
+	}
+	else if (mxIsUint32(prhs))
+	{
+		dat_uint32 = (jvxUInt32*)mxGetData(prhs);
+	}
+	else if (mxIsUint16(prhs))
+	{
+		dat_uint16 = (jvxUInt16*)mxGetData(prhs);
+	}
+	else if (mxIsUint8(prhs))
+	{
+		dat_uint8 = (jvxUInt8*)mxGetData(prhs);
+	}
+
+	// Now, convert
+	switch (format)
+	{
+	case JVX_DATAFORMAT_DATA:
+		jvx_data = (jvxData*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_64BIT_LE:
+		jvx_int64 = (jvxInt64*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_32BIT_LE:
+		jvx_int32 = (jvxInt32*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_16BIT_LE:
+		jvx_int16 = (jvxInt16*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_8BIT:
+		jvx_int8 = (jvxInt8*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U64BIT_LE:
+		jvx_uint64 = (jvxUInt64*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U32BIT_LE:
+		jvx_uint32 = (jvxUInt32*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U16BIT_LE:
+		jvx_uint16 = (jvxUInt16*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_U8BIT:
+		jvx_uint8 = (jvxUInt8*)data_setprops;
+		break;
+	case JVX_DATAFORMAT_SIZE:
+		jvx_sz = (jvxSize*)data_setprops;
+		break;
+	}
+
+	jvxBool failedTransfer = true;
+
+	if (jvx_data)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_data, N, double, (jvxData));
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_data, N, jvxData, );
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_data, N, jvxData, );
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_data, N, jvxData, );
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_data, N, jvxData, );
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_data, N, jvxData, );
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_data, N, jvxData, );
+		}
+	}
+	else if (jvx_sz)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+	}
+	else if (jvx_int64)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_int64, N, jvxInt64, );
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int64, N, jvxData, JVX_DATA2INT64);
+		}
+	}
+	else if (jvx_int32)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_int32, N, jvxInt32, );
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_int32, N, jvxData, JVX_DATA2INT32, 0x7FFFFFFF, -0x7FFFFFFF);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+	}
+	else if (jvx_int16)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_int16, N, jvxInt16, );
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int16, N, jvxData, JVX_DATA2INT16);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint16, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int16, N, jvxData, JVX_DATA2INT16);
+		}
+	}
+	else if (jvx_int8)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int16, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_int8, N, jvxInt8, );
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint16, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint8, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+	}
+
+	else if (jvx_uint64)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_dbl, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_flt, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int64, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int32, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint64, jvx_uint64, N, jvxUInt64, );
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
+		}
+	}
+	else if (jvx_uint32)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int16, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int8, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_uint32, N, jvxData, JVX_DATA2UINT32, 0xFFFFFFFF, 0);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_uint32, N, jvxUInt32, );
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
+		}
+	}
+	else if (jvx_uint16)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int16, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_int8, jvx_uint16, N, jvxData, JVX_DATA2UINT16);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint16, N, jvxUInt16, );
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint16, N, jvxData, JVX_DATA2UINT16);
+		}
+	}
+	else if (jvx_uint8)
+	{
+		if (dat_dbl)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_dbl, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_flt)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_flt, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int64, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int32, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int16, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_int8)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_int8, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_uint64)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint64, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_uint32)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_uint16)
+		{
+			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint16, jvx_uint8, N, jvxData, JVX_DATA2INT8, 0xFF, 0);
+		}
+		else if (dat_uint8)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint8, N, jvxUInt8, );
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
 CjvxMatlabToCConverter::mexArgument2Bool(bool& value, const mxArray** thePointer, jvxSize idx, jvxSize numEntries)
 {
 	jvxErrorType res = JVX_NO_ERROR;
