@@ -14,7 +14,7 @@ function [] = jvx_display_error(origFile, errCode, errOperation, errDescr, error
 % origFile, errCode, errOperation, errTxt, errorsAsWarnings
 global jvx_host_call_global;
 
-if(nargin <= 3)
+if(nargin <= 4)
     errorsAsWarnings = false;
 end
 

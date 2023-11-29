@@ -280,10 +280,12 @@ CjvxExternalCall::postMessageExternal(const char* message, bool isError)
 		if(isError)
 		{
 			//mexErrMsgTxt(message);
-			mexPrintf(((std::string)"error: " + message).c_str());
+			//mexPrintf
+			mexWarnMsgTxt(((std::string)" --> Error: " + message).c_str());
 		}
 		else
 		{
+			
 			mexPrintf(message);
 		}
 		return(JVX_NO_ERROR);
@@ -1073,57 +1075,65 @@ CjvxExternalCall::~CjvxExternalCall()
 }
 
 jvxErrorType
-CjvxExternalCall::executeExternalCommand(const char* evalString)
+CjvxExternalCall::executeExternalCommand(const char* evalString, jvxBool catchAllExceptions)
 {
 	std::string errText;
 	if(this->checkThread())
 	{
-#ifdef CONFIG_COMPILE_FOR_OCTAVE
-		int returnVal = mexEvalString(evalString);
-		if(returnVal != 0)
+		jvxErrorType res = JVX_NO_ERROR;
+		try
 		{
-			errText = "Unknown";
-			_common_set.theErrordescr = errText;
-			return(JVX_ERROR_SYSTEMCALL_FAILED);
-		}
+#ifdef CONFIG_COMPILE_FOR_OCTAVE
+			int returnVal = mexEvalString(evalString);
+			if (returnVal != 0)
+			{
+				errText = "Unknown";
+				_common_set.theErrordescr = errText;
+				return(JVX_ERROR_SYSTEMCALL_FAILED);
+			}
 #elif defined CONFIG_COMPILE_FOR_MATLAB
 #if _MATLAB_MEXVERSION >= 250
-		mxArray* ptrMex = mexEvalStringWithTrap(evalString);
-		if(ptrMex != 0)
-		{
-			mxArray* ptrReport;
-			mxArray* ptrMEX2 = mexCallMATLABWithTrap(1,&ptrReport,1,&ptrMex, "getReport");
-			errText = "Unknown";
-			if(ptrReport)
+			mxArray* ptrMex = mexEvalStringWithTrap(evalString);
+			if (ptrMex != 0)
 			{
-				if(mxIsChar(ptrReport))
+				mxArray* ptrReport;
+				mxArray* ptrMEX2 = mexCallMATLABWithTrap(1, &ptrReport, 1, &ptrMex, "getReport");
+				errText = "Unknown";
+				if (ptrReport)
 				{
-					int strLen = (int)mxGetN(ptrReport)+1;
-					char* fld = new char[strLen+1];
-					memset(fld, 0, sizeof(char) * strLen);
-					mxGetString(ptrReport, fld, strLen);
-					errText = fld;
-					delete[](fld);
+					if (mxIsChar(ptrReport))
+					{
+						int strLen = (int)mxGetN(ptrReport) + 1;
+						char* fld = new char[strLen + 1];
+						memset(fld, 0, sizeof(char) * strLen);
+						mxGetString(ptrReport, fld, strLen);
+						errText = fld;
+						delete[](fld);
+					}
 				}
-			}
 
-			_common_set.theErrordescr = errText;
-			return(JVX_ERROR_SYSTEMCALL_FAILED);
-		}
+				_common_set.theErrordescr = errText;
+				return(JVX_ERROR_SYSTEMCALL_FAILED);
+			}
 #else
-		int returnVal = mexEvalString(evalString);
-		if(returnVal != 0)
-		{
-			errText = "Unknown";
-			_common_set.theErrordescr  = errText;
-			return JVX_ERROR_UNKNOWN;
-		}
+			int returnVal = mexEvalString(evalString);
+			if (returnVal != 0)
+			{
+				errText = "Unknown";
+				_common_set.theErrordescr = errText;
+				return JVX_ERROR_UNKNOWN;
+			}
 #endif
 #else
 #error "Must define CONFIG_COMPILE_FOR_MATLAB or CONFIG_COMPILE_FOR_OCTAVE"
 #endif
-
-		return(JVX_NO_ERROR);
+		}
+		catch (...)
+		{
+			_common_set.theErrordescr = "Call to Matlab command raised an exception. This typically happens if debugging was stopped.";
+			res = JVX_ERROR_STANDARD_EXCEPTION;
+		}
+		return(res);
 	}
 	_common_set.theErrordescr = ERROR_THREAD_ID("executeExternalCommand");
 	return(JVX_ERROR_THREADING_MISMATCH);

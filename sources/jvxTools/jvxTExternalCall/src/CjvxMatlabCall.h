@@ -134,7 +134,7 @@ public:
 		jvxExternalDataType** data)override;
 
 	//! Execute a command in the externally connected interpreter
-	virtual jvxErrorType JVX_CALLINGCONVENTION executeExternalCommand(const char* evalString)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION executeExternalCommand(const char* evalString, jvxBool catchAllExceptions = true)override;
 
 	//! Post a message to the external viewer canvas/commandwindow/whatever
 	virtual jvxErrorType JVX_CALLINGCONVENTION postMessageExternal(const char* message, bool isError = true) override;

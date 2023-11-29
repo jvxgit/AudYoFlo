@@ -2017,6 +2017,7 @@ jvxErrorType
 
 			bool parametersOk = true;
 			jvxInt32 paramId = 0;
+			jvxCBool forceStop = false;
 
 
 			paramId = 1;
@@ -2027,11 +2028,15 @@ jvxErrorType
 				parametersOk = false;
 			}
 
+			// Optional argument
+			paramId = 2;
+			res = CjvxMatlabToCConverter::mexArgument2Index<jvxCBool>(forceStop, prhs, paramId, nrhs);			
+
 			involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_SEQUENCER, reinterpret_cast<jvxHandle**>(&theSequencer));
 
 			if(theSequencer)
 			{
-				jvxErrorType res = theSequencer->trigger_step_process_extern(tStamp_us, &last_step_type);
+				jvxErrorType res = theSequencer->trigger_step_process_extern(tStamp_us, &last_step_type, forceStop);
 				involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_SEQUENCER, reinterpret_cast<jvxHandle*>(theSequencer));
 
 				if((res == JVX_NO_ERROR) || (res == JVX_ERROR_ABORT) || (res == JVX_ERROR_PROCESS_COMPLETE))

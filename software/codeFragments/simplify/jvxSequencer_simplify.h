@@ -194,9 +194,9 @@
 	};
 
 	//! External trigger of sequencer if externally triggered
-	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave)override
+	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave, jvxBool forceStop)override
 	{
-		return(_trigger_step_process_extern(timestamp_us, sequencer_element_type_on_leave));
+		return(_trigger_step_process_extern(timestamp_us, sequencer_element_type_on_leave, forceStop));
 	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_complete_process_extern(jvxInt64 timestamp_us)override

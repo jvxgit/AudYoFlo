@@ -695,7 +695,7 @@ CjvxSequencer::_run_process(IjvxSequencer_report* report, jvxHandle* privateData
 
 
 jvxErrorType
-CjvxSequencer::_trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave)
+CjvxSequencer::_trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave, jvxBool forceRun)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
@@ -716,6 +716,16 @@ CjvxSequencer::_trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerE
 			while (res == JVX_ERROR_REQUEST_CALL_AGAIN)
 			{
 				res = sequencer_step(timestamp_us, NULL);
+				if (res == JVX_ERROR_COMPONENT_BUSY)
+				{
+					if (forceRun)
+					{
+						// If the sequencer was somehow left during a call, the sequence may be in processing state even though it should not.
+						// Then we should be able to oberride that,
+						_common_set_sequencer.in_processing = false;
+						res = JVX_ERROR_REQUEST_CALL_AGAIN;
+					}
+				}
 			}
 		}
 		else if (_common_set_sequencer.inOperation->theSeqState == JVX_SEQUENCER_STATUS_SHUTDOWN_COMPLETE)

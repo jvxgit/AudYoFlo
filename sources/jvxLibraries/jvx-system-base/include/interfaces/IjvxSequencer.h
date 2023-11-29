@@ -183,7 +183,7 @@ public:
 	// Functions specific to external trigger mode
 
 	// If externally triggered, procede with next step
-	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave = NULL) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave = NULL, jvxBool forceRun = false) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION trigger_complete_process_extern(jvxInt64 timestamp_us) = 0;
 

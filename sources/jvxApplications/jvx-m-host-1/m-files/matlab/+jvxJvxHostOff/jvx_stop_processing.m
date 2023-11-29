@@ -19,7 +19,7 @@ function [hObject, handles] = jvx_stop_processing(hObject, handles, skip_shutdow
 			
         else
             
-             jvxJvxHost.jvx_display_error(mfilename, 16, 'jvx_stop_processing', stat_sequencer.DESCRIPTION_STRING); 
+             jvxJvxHost.jvx_display_error(mfilename, 16, 'jvx_stop_processing #0', stat_sequencer.DESCRIPTION_STRING, true); 
              %% origFile, errCode, errOperation, errDescr, errorsAsWarnings
          end
     end
@@ -31,7 +31,7 @@ function [hObject, handles] = jvx_stop_processing(hObject, handles, skip_shutdow
     % Wait for completion
      [a b] = handles.hostcall('wait_completion_process', 0);
      if(~a)
-         jvxJvxHost.jvx_display_error(17, mfilename, b.DESCRIPTION_STRING); 
+         jvxJvxHost.jvx_display_error(mfilename, 17, 'jvx_stop_processing #1', b.DESCRIPTION_STRING, true); 
      end
      
      % Callback for project specific actions

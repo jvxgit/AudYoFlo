@@ -233,7 +233,7 @@ public:
 		jvxSize run_granularity_report_state_wait /*= JVX_SIZE_UNSELECTED*/);
 
 
-	virtual jvxErrorType _trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave);
+	virtual jvxErrorType _trigger_step_process_extern(jvxInt64 timestamp_us, jvxSequencerElementType* sequencer_element_type_on_leave, jvxBool forceStop);
 
 	virtual jvxErrorType _trigger_complete_process_extern(jvxInt64 timestamp_us);
 

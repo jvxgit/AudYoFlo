@@ -1521,7 +1521,7 @@ function [handles] = jvxHost_off_remote_run_core(hObject, handles)
         
         skip_save_data = true;
         [status_seq, hObject, handles] = jvxJvxHostOff.jvx_start_processing(hObject, handles);
-        
+                
         if(status_seq == statRunning)
             [hObject, handles] = jvxJvxHostOff.jvx_core_processing(hObject, handles);
             skip_save_data = false;
