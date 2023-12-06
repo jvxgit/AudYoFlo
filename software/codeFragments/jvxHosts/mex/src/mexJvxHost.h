@@ -59,12 +59,13 @@ class mexJvxHost: public CjvxCToMatlabConverter, public CjvxPropertiesToMatlabCo
 
 	struct
 	{
-		IjvxObject* theObj;
-		IjvxGlobalInstance* theGLobal;
+		IjvxObject* theObj = nullptr;
+		IjvxGlobalInstance* theGLobal = nullptr;
 		struct
 		{
-			IjvxObject* theObj;
-			IjvxExternalCall* theHdl;
+			IjvxObject* theObj = nullptr;
+			IjvxExternalCall* theHdl = nullptr;
+			jvxSize idRef = JVX_SIZE_UNSELECTED;
 		} fromHost;
 	} externalCall;
 

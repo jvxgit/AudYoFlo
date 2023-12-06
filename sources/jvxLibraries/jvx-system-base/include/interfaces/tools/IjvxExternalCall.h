@@ -28,6 +28,9 @@ public:
 	//! Function to unregister a new callback
 	virtual jvxErrorType JVX_CALLINGCONVENTION unregisterFunction(jvxExternalFunction fPtr) = 0;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION obtain_reference(jvxSize* idRef) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION release_reference(jvxSize idRef) = 0;
+
 	// =================================================================================
 
 	//! External C conversion functions, dimY x dimX matrix of different RTProc dataformat

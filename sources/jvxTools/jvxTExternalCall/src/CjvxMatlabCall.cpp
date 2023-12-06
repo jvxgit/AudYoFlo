@@ -272,6 +272,36 @@ CjvxExternalCall::unregisterFunction(jvxExternalFunction fPtr)
 	return(JVX_ERROR_ELEMENT_NOT_FOUND);
 }
 
+jvxErrorType 
+CjvxExternalCall::obtain_reference(jvxSize* idRef)
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxExternalCall::release_reference(jvxSize idRef) 
+{
+	if (_lst_functions.size())
+	{
+		std::string outTxt = __FUNCTION__;
+		outTxt += ": Not all functions were unregistered, unregistering by host to protect system state!!";
+		mexWarnMsgTxt(outTxt.c_str());
+		for (auto elm : _lst_functions)
+		{
+			outTxt = "--> ";
+			outTxt += elm.objectName;
+			outTxt += "::";
+			outTxt += elm.fName;
+
+			mexWarnMsgTxt(outTxt.c_str());
+		}
+		_lst_functions.clear();
+	}
+
+	return JVX_NO_ERROR;
+}
+
+
 jvxErrorType
 CjvxExternalCall::postMessageExternal(const char* message, bool isError)
 {

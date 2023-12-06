@@ -89,6 +89,12 @@ textProcessor_core::generateCode(const std::string& outFilenameH, const std::str
 	}
 	//streamH << "static IrtpMatlabCall* " << THE_EXTERNAL_CALL_HANDLER << " = NULL;" << std::endl;
 
+	streamH << "static " << MACRO_FUNCTION_RETURN_CALLCONVENTION << " requestExternalCallRegisterName(std::string& nmRegNameOnReturn)" << std::endl;
+	streamH << "{" << std::endl;
+	streamH << "\tnmRegNameOnReturn = \"" << allFs.friendlyNameReferenceClass << "\";" << std::endl;
+	streamH << "\t return JVX_NO_ERROR;" << std::endl;
+	streamH << "};" << std::endl;
+	streamH << std::endl;
 	streamH << "static " << MACRO_FUNCTION_RETURN_CALLCONVENTION << " requestExternalCallHandle(IjvxHiddenInterface* theHost, IjvxExternalCall** thePtr, jvxSize idx = 0, const char* filter_descriptor = NULL)" << std::endl;
 	streamH << "{" << std::endl;
 	streamH << "\t IjvxToolsHost* theTools = NULL;" << std::endl;

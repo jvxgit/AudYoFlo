@@ -1113,7 +1113,7 @@ mexJvxHost::deactivate(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[
 	std::string internalErrorMessage = ERROR_MESSAGE_REPORT("jvxJvxHost::deactivate");
 	jvxApiString errMess;
 
-	shutdown_deactivate(&errMess, NULL);
+	shutdown_deactivate(&errMess, NULL);	
 	if(res == JVX_NO_ERROR)
 	{
 		if (nlhs > 0)
@@ -3001,6 +3001,10 @@ mexJvxHost::boot_activate_specific(jvxApiString* errloc)
 			externalCall.fromHost.theObj = NULL;
 			externalCall.fromHost.theHdl = NULL;
 		}
+		else
+		{
+			externalCall.fromHost.theHdl->obtain_reference(&externalCall.fromHost.idRef);
+		}
 	}
 
 	return JVX_NO_ERROR;
@@ -3059,6 +3063,7 @@ mexJvxHost::shutdown_deactivate_specific(jvxApiString* errloc)
 	// Obtain referecne to external call tool for Testing
 	if(externalCall.fromHost.theHdl)
 	{
+		externalCall.fromHost.theHdl->release_reference(externalCall.fromHost.idRef);
 		 involvedComponents.theTools.hTools->return_reference_tool(JVX_COMPONENT_EXTERNAL_CALL, externalCall.fromHost.theObj);
 	}
 	externalCall.fromHost.theObj = NULL;
