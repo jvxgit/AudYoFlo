@@ -260,6 +260,8 @@ jvxDspBaseErrorType jvx_circbuffer_filter_cascade_1can_inv(jvx_circbuffer* hdl, 
 jvxDspBaseErrorType jvx_circbuffer_filter_cascade_2can_cb(jvx_circbuffer* hdl, jvxData* a, jvxData *b, jvxData** inout, jvxSize nSections, jvxSize order, jvxSize buffersize);
 jvxDspBaseErrorType jvx_circbuffer_filter_cascade_2can_cb_inv(jvx_circbuffer* hdl, jvxData* a, jvxData *b, jvxData** inout, jvxSize nSections, jvxSize order, jvxSize buffersize);
 
+jvxDspBaseErrorType jvx_circbuffer_energy(jvx_circbuffer* hdl, jvxData* energyOut, jvxCBool update);
+
 JVX_DSP_LIB_END
 
 #endif

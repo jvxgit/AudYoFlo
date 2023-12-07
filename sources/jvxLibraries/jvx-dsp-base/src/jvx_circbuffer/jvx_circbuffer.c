@@ -1262,7 +1262,6 @@ jvx_circbuffer_write_update_1chan(jvx_circbuffer* hdl,
 	return jvx_circbuffer_write_update(hdl, &fieldFill, numberValuesFill);
 }
 
-
 jvxDspBaseErrorType
 jvx_circbuffer_read_update_1chan(jvx_circbuffer* hdl,
 	jvxData* fieldRead,
@@ -1892,4 +1891,26 @@ jvx_circbuffer_filter_cascade_2can_cb_inv(jvx_circbuffer* hdl, jvxData* a, jvxDa
 	}
 	hdl->idxRead = off;
 	return JVX_DSP_NO_ERROR;
+}
+
+jvxDspBaseErrorType
+jvx_circbuffer_energy(jvx_circbuffer* hdl, jvxData* energyOut, jvxCBool update)
+{
+	jvxSize i, c;
+	for (c = 0; c < hdl->channels; c++)
+	{
+		jvxData accu = 0.0;
+		jvxData* ptrData = hdl->ram.field[c];
+		for (i = 0; i < hdl->length; i++)
+		{
+			accu += ptrData[i] * ptrData[i];
+		}
+		energyOut[c] = accu;
+	}
+	if (update)
+	{
+		hdl->idxRead = (hdl->idxRead + hdl->fHeight) % hdl->length;
+		hdl->fHeight = 0;
+	}
+	return JVX_NO_ERROR;
 }
