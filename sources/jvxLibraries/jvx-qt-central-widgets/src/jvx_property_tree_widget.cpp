@@ -172,8 +172,7 @@ jvx_property_tree_widget::update_window(jvxCBitField prio, const char* propLst)
 			}
 			last_revision = rev;
 		}
-		update_window_core(prio);
-
+		update_window_core(prio);				
 	}
 }
 	
@@ -227,6 +226,8 @@ jvx_property_tree_widget::reportPropertySpecific(jvxSaWidgetWrapperspecificRepor
 void
 jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 {	
+	jvxSize i;
+
 	std::map< IjvxAccessProperties*, oneEntryProp>::iterator elm;
 	jvxSize cnt = 0;
 	jvxSize selCnt = JVX_SIZE_UNSELECTED;
@@ -267,6 +268,12 @@ jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 	{
 		treeWidget_props->setProperty("search-tree", QVariant(token_search.c_str()));
 		widget_wrapper->trigger_updateWindow(tag_name);
+	}
+
+	cnt = treeWidget_props->columnCount();
+	for (i = 0; i < cnt; i++)
+	{
+		treeWidget_props->resizeColumnToContents(i);
 	}
 }
 
@@ -386,6 +393,13 @@ void
 jvx_property_tree_widget::changed_selection_shorten(bool showShort)
 {
 	treeWidget_props->setProperty("show-short", QVariant(showShort));
+	widget_wrapper->trigger_updateWindow(tag_name);
+}
+
+void 
+jvx_property_tree_widget::changed_selection_show(bool showDescriptor)
+{
+	treeWidget_props->setProperty("show-descriptor", QVariant(showDescriptor));
 	widget_wrapper->trigger_updateWindow(tag_name);
 }
 

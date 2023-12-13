@@ -506,6 +506,12 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(jvxPropertyCallContext cco
 		showShort = qV.toBool();
 	}
 
+	qV = uiRefTp->property("show-descriptor");
+	if (qV.isValid())
+	{
+		showDescriptor = qV.toBool();
+	}
+
 	for (i = 0; i < numTLItems; i++)
 	{
 		QTreeWidgetItem *theTLItem = uiRefTp->topLevelItem((int)i);
@@ -674,7 +680,15 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 					{
 						std::string tokenWC = jvx_toUpper(elm);
 						tokenWC = "*" + tokenWC + "*";
-						std::string cmp = jvx_toUpper(propD.description.std_str());
+						std::string cmp;
+						if (showDescriptor)
+						{
+							cmp = jvx_toUpper(propD.descriptor.std_str());
+						}
+						else
+						{
+							cmp = jvx_toUpper(propD.description.std_str());
+						}
 						if (jvx_compareStringsWildcard(tokenWC, cmp))
 						{
 							theItem->setHidden(false);
@@ -695,6 +709,16 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 			if (call_periodic_update && !myBasePropIs.updateRt)
 			{
 				showThis = false;
+			}
+
+			// Show the property field
+			if (showDescriptor)
+			{
+				theItem->setText(0, propD.descriptor.c_str());
+			}
+			else
+			{
+				theItem->setText(0, propD.description.c_str());
 			}
 
 			if (everythingOk)

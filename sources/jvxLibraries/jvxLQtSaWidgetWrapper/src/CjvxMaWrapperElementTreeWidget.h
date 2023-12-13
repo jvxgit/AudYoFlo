@@ -16,6 +16,8 @@ private:
 	std::string token_search;
 	bool showHidden = true;
 	bool showShort = true;
+	bool showDescriptor = false;
+
 	/*
 	typedef enum
 	{

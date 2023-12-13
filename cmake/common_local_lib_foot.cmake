@@ -83,6 +83,7 @@ if(LOCAL_PCG_FILES)
   endforeach()
  
   set(PCG_SOURCES  ${ADDITIONAL_PCG_FILE_DEPENDS_LST})
+  # message("      PCG_SOURCES: ${PCG_SOURCES}")
   message("      Build Options: ${LOCAL_PCG_FILE_OPTIONS}")
 endif()
 

@@ -100,6 +100,7 @@ public slots:
 	void changed_selection_propref(int sel);
 	void changed_selection_hidden(bool isHidden);
 	void changed_selection_shorten(bool showShort);
+	void changed_selection_show(bool showDescriptor);
 	void changed_activate_latest(bool sel);
 	void new_token_search(QString);
 };
