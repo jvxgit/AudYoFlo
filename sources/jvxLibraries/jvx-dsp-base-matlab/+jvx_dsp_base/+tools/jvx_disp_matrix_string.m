@@ -1,6 +1,12 @@
-function [] = dispMatrixString(mat, outFormatArg)
+function [] = jvx_disp_matrix_string(mat, outFormatArg, toClipboardArg)
 
-    outFormat = '%.20e ';
+    toClipboard = false;
+    outFormat = '%g ';
+    
+    if(nargin > 2)
+        toClipboard = toClipboardArg;
+    end
+    
     if(nargin > 1)
         outFormat = outFormatArg;
     end
@@ -13,4 +19,9 @@ function [] = dispMatrixString(mat, outFormatArg)
         out = [out sprintf(outFormat, vv)];
     end
     out = [out ']'];
-    disp(out);
+    if(toClipboard)
+        clipboard('copy',out);
+        disp('Content copied to clipboard!');
+    else
+        disp(out);
+    end
