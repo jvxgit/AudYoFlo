@@ -94,6 +94,22 @@ jvxDataCplx JVX_STATIC_INLINE jvx_complex_div_i(jvxDataCplx in1, jvxDataCplx in2
 	return out;
 }
 
+jvxData JVX_STATIC_INLINE jvx_complex_abs_i(jvxDataCplx in)
+{
+	jvxData out;
+	out = in.re * in.re;
+	out += in.im * in.im;
+	out = sqrt(out);
+	return out;
+}
+
+jvxData JVX_STATIC_INLINE jvx_complex_abs2_i(jvxDataCplx in)
+{
+	jvxData out;
+	out = in.re * in.re;
+	out += in.im * in.im;	
+	return out;
+}
 JVX_DSP_LIB_END
 
 #endif
