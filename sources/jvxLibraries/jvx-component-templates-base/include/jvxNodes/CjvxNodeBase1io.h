@@ -25,7 +25,7 @@ protected:
 	CjvxSimplePropsPars node_inout;
 
 	// jvxCommonSetNodeParams _common_set_node_params_1io;
-	jvxBool zeroCopyBuffering_rt;
+	jvxBool zeroCopyBuffering_rt = false;
 
 	CjvxNegotiate_input neg_input;
 

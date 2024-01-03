@@ -168,6 +168,12 @@ CjvxAuNCaptureFile::put_configuration(jvxCallManagerConfiguration* callMan,
 			{
 				std::cout << __FUNCTION__ << ": Warning: " << warns[i] << std::endl;
 			}
+
+			capture_output.set_fname_prefix(genCaptureFile_node::capture.prefix.value);
+			if (genCaptureFile_node::capture.toggle.value == c_true)
+			{
+				capture_output.trigger_start();
+			}
 		}
 	}
 	return res;
