@@ -40,6 +40,7 @@ textProcessor_core::generateCode_oneElement_mat(onePropertyElement& theElm, cons
 	{
 		std::vector<std::string> locPrefixList = theElm.thePropertySection.prefixPathList;
 		std::string prefix = prefixListToString(locPrefixList, "/");
+		std::string prefix_func = prefixListToString(locPrefixList, "_");
 		for(j = 0; j < theElm.thePropertySection.properties.size(); j++)
 		{
 			funcName_get = "";
@@ -52,13 +53,13 @@ textProcessor_core::generateCode_oneElement_mat(onePropertyElement& theElm, cons
 
 			if(Cppf.empty())
 			{
-				funcName_get = "get_" JVX_PRODUCT_CODEGEN_TAG + tag + funcPrefix + theElm.thePropertySection.properties[j].name;
-				funcName_set = "set_" JVX_PRODUCT_CODEGEN_TAG + tag + funcPrefix + theElm.thePropertySection.properties[j].name;
+				funcName_get = "get_" JVX_PRODUCT_CODEGEN_TAG + tag + funcPrefix + prefix_func + theElm.thePropertySection.properties[j].name;
+				funcName_set = "set_" JVX_PRODUCT_CODEGEN_TAG + tag + funcPrefix + prefix_func + theElm.thePropertySection.properties[j].name;
 			}
 			else
 			{
-				funcName_get = "get_" JVX_PRODUCT_CODEGEN_TAG  + Cppf + "_" + tag + funcPrefix + theElm.thePropertySection.properties[j].name;
-				funcName_set = "set_" JVX_PRODUCT_CODEGEN_TAG  + Cppf + "_" + tag + funcPrefix + theElm.thePropertySection.properties[j].name;
+				funcName_get = "get_" JVX_PRODUCT_CODEGEN_TAG  + Cppf + "_" + tag + funcPrefix + prefix_func + theElm.thePropertySection.properties[j].name;
+				funcName_set = "set_" JVX_PRODUCT_CODEGEN_TAG  + Cppf + "_" + tag + funcPrefix + prefix_func + theElm.thePropertySection.properties[j].name;
 			}
 
 			// Function to GET property

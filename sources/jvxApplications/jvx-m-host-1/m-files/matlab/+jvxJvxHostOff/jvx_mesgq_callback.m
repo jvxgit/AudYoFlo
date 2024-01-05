@@ -24,8 +24,12 @@ if(bitand(eventmask, bitshift(1, vUpdateWindow)))
     hObject = jvx_global_control.tasks.msgq.context.userdata;
     handles = guidata(hObject);
     
+    % Refresh what you want to show!
+    [hObject, handles] = jvxJvxHostOff.jvx_refresh_props(hObject, handles);
+    
     % Show current status
     [hObject, handles] = jvxJvxHostOff.jvx_update_ui(hObject, handles);
+    
     guidata(hObject, handles);
 
 end
