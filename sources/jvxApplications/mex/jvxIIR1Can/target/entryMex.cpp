@@ -178,11 +178,16 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 
 			jvxData* in = (jvxData*)mxGetData(arrIn);
-			jvx_circbuffer_iir_1can_1io(theCircBuffer, fCoeffsNum, fCoeffsDen, &in, lenSig);
+
+			// Important: we must not run in-place: this breaks the variable in Matlab!!
+			jvxData* out = nullptr;
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(out, jvxData, lenSig);
+
+			jvx_circbuffer_iir_1can_2io(theCircBuffer, fCoeffsNum, fCoeffsDen, &in, &out, lenSig);
 
 			if (nlhs >= 1)
 			{
-				CjvxCToMatlabConverter::mexReturnDataList(plhs[0], in, lenSig);
+				CjvxCToMatlabConverter::mexReturnDataList(plhs[0], out, lenSig);
 			}
 			if (nlhs >= 2)
 			{
@@ -190,6 +195,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 
 			// Clear data 
+			JVX_DSP_SAFE_DELETE_FIELD(out);
 			jvx_circbuffer_deallocate(theCircBuffer);
 			JVX_DSP_SAFE_DELETE_FIELD(fCoeffsNum);
 			JVX_DSP_SAFE_DELETE_FIELD(fCoeffsDen);

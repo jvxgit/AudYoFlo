@@ -163,6 +163,24 @@ CjvxCToMatlabConverter::mexReturnDataList(mxArray*& plhs, const jvxData* valueLi
 	}
 }
 
+void
+CjvxCToMatlabConverter::mexCreateDataList(mxArray*& plhs, jvxData** valueListRet, size_t numberVals)
+{
+	if ((valueListRet == NULL) || (numberVals == 0))
+	{
+		plhs = NULL;
+
+	}
+	else
+	{
+		SZ_MAT_TYPE ndim = 2;
+		SZ_MAT_TYPE dims[2] = { 1, 1 };
+		dims[1] = (int)numberVals;
+
+		plhs = mxCreateNumericArray(ndim, dims, JVX_DATA_MEX_CONVERT, mxREAL);
+		*valueListRet = (jvxData*)mxGetData(plhs);
+	}
+}
 /**
  * Return a short data in MEX format.
  *///===========================================================================

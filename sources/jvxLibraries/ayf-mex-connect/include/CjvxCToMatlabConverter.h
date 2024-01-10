@@ -65,6 +65,8 @@ public:
 	//! Translate data in C to MEX type
 	static void mexReturnDataList(mxArray*& plhs, const jvxData* value, jvxSize numberValues);
 
+	static void mexCreateDataList(mxArray*& plhs, jvxData** valueListRet, size_t numberVals);
+
 #ifdef JVX_DSP_DATA_FORMAT_DOUBLE
 	static void mexReturnFloatList(mxArray*& plhs, const float* ptrField, jvxSize numElements);
 #else
