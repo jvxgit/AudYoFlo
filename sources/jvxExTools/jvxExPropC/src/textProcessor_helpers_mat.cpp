@@ -40,7 +40,13 @@ textProcessor_core::generateCode_oneElement_mat(onePropertyElement& theElm, cons
 	{
 		std::vector<std::string> locPrefixList = theElm.thePropertySection.prefixPathList;
 		std::string prefix = prefixListToString(locPrefixList, "/");
-		std::string prefix_func = prefixListToString(locPrefixList, "_");
+		// std::string prefix_func = prefixListToString(locPrefixList, "_");
+		std::string prefix_func;
+		if(!theElm.thePropertySection.myLocalPrefix.empty())
+		{
+			prefix_func = theElm.thePropertySection.myLocalPrefix + "_";
+		}
+		
 		for(j = 0; j < theElm.thePropertySection.properties.size(); j++)
 		{
 			funcName_get = "";
