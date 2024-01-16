@@ -135,7 +135,7 @@ jvxData jvx_erfc(jvxData x);
 
 
 //! Uniform random noise generator, idum should be initialized with negative long integer
-jvxData jvx_rand_uniform(long *idum);
+jvxData jvx_rand_uniform(jvxInt32* idum);
 
 
 //! Gaussian random noise generator, idum should be initialized with negative long integer

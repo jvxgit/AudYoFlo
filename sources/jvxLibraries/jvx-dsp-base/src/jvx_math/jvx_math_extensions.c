@@ -777,7 +777,7 @@ jvxData jvx_erfc(jvxData x)
 // Random noise generators
 
 // idum initialized with negative long integer
-jvxData jvx_rand_uniform(long *idum)
+jvxData jvx_rand_uniform(jvxInt32 *idum)
 {
 #define IM1 2147483563
 #define IM2 2147483399
@@ -793,11 +793,11 @@ jvxData jvx_rand_uniform(long *idum)
 #define NDIV (1+IMM1/NTAB)
 #define EPS 1.2e-7
 #define RNMX (1.0-EPS)
-	long j;
-	long k;
-	static long idum2=123456789;
-	static long iy=0;
-	static long iv[NTAB];
+	jvxInt32 j;
+	jvxInt32 k;
+	static jvxInt32 idum2=123456789;
+	static jvxInt32 iy=0;
+	static jvxInt32 iv[NTAB];
 	jvxData temp;
 	if (*idum <= 0) // Initialize
 	{
