@@ -66,6 +66,7 @@ set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACH
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")
 
 set(JVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD 16 CACHE STRING "Number of 32 bit tokens in bitfields")
+set(JVX_MAX_PATH_PROP_MAT 63 CACHE STRING "Number of characters when generating Matlab property access functions")
 set(JVX_DEFAULT_NUMBER_OF_POSTPONE_ATTEMPTS_TEST 10 CACHE STRING "Number of reattempts if chain element returns a POSTPONE")
 set(JVX_COMMAND_LINE_TOKENS_BUILDIN "--textlog --verbose_dll --textloglev 10" CACHE STRING "Pre-compiled builtin command args")
 set(JVX_QT_SPLASH_TEXT_COLOR "Qt::gray" CACHE STRING "Default color for QT apps splash screen text")

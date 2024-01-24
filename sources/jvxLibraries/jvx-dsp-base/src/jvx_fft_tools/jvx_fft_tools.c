@@ -2846,3 +2846,30 @@ jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSi
 	outFld = NULL;
 	return JVX_DSP_NO_ERROR;
 }
+
+jvxDspBaseErrorType
+jvx_fft_crotate_time(jvxDataCplx* bufIn, jvxDataCplx* bufOut, jvxData fftScale, jvxSize numValuesRotate, jvxSize idxOffsIn, jvxSize idxOffsOut, jvxSize numVals)
+{
+	jvxSize i;
+	jvxDataCplx* inPtr = bufIn + idxOffsIn;
+	jvxDataCplx* outPtr = bufOut + idxOffsIn;
+	for (i = 0; i < numVals; i++)
+	{
+		// f = numValuesRotate * [0:1 / FFTL : 1 / 2];
+		jvxData f = numValuesRotate * (jvxData)idxOffsIn * fftScale;
+		jvxData arg = 2 * M_PI * f;
+		jvxData rrot = cos(arg);
+		jvxData irot = sin(arg);
+
+		outPtr->re = inPtr->re * rrot - inPtr->im * irot;
+		outPtr->im = inPtr->re * irot + inPtr->im * rrot;
+
+		inPtr++;
+		outPtr++;
+		idxOffsIn++;
+
+		// 1) abs(bufIn) and abs(bufOut) should be identical
+		// 2) angle(bufIn) + arg should be angle(bufsOut) - but modulo pi
+	}
+	return JVX_DSP_NO_ERROR;
+}

@@ -379,10 +379,11 @@ public:
 		std::map<jvxInt32, oneAudioPluginEntry>& collectAudioPluginsIds,
 		std::list<oneAudioPluginEntry>& collectInvaidAudioPluginsIds);
 
-	void generateCode_mat(const std::string& outDir, std::string& Cptp, std::string& Cppf);
+	void generateCode_mat(const std::string& outDir, std::string& Cptp, std::string& Cppf, jvxSize numCharsParts);
 
 	void generateCode_oneElement_mat(onePropertyElement& theElm, const std::string& outDir, 
-		std::string& Cptp, std::string& Cppf, std::string funcPrefix, std::string propPrefix);
+		std::string& Cptp, std::string& Cppf, std::string funcPrefix, std::string propPrefix,
+		jvxSize maxNumberCharacters);
 
 
 	// helpers:

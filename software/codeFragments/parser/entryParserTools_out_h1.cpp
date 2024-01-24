@@ -10,7 +10,9 @@
 #include "textProcessor_core.h"
 
 #ifdef JVX_PROP_MATLAB_OUTPUT
-void parseInput(char* argv[], int argc, std::string& inputFName, std::string& outDir, std::string& outCompText, std::string& outCompPrefix, std::vector<std::string>& includePaths, jvxBool& dependencyMode, std::vector<std::string>& ifdefs)
+void parseInput(char* argv[], int argc, std::string& inputFName, std::string& outDir, std::string& outCompText, 
+		std::string& outCompPrefix, std::vector<std::string>& includePaths, 
+		jvxBool& dependencyMode, std::vector<std::string>& ifdefs, jvxSize& maxLength)
 {
 	int cnt = 0;
 	bool cont = true;
@@ -19,6 +21,8 @@ void parseInput(char* argv[], int argc, std::string& inputFName, std::string& ou
 	outDir = "";
 	outCompText = "";
 	outCompPrefix = "";
+
+	maxLength = JVX_SIZE_UNSELECTED;
 
 	//std::cerr << "Hallo!" << std::endl;
 	while(cont && (cnt < argc))
@@ -52,6 +56,22 @@ void parseInput(char* argv[], int argc, std::string& inputFName, std::string& ou
 			if(cnt < argc)
 			{
 				outCompPrefix = argv[cnt++];
+			}
+
+		}
+		else if(nextToken == "-maxl")
+		{
+			tmp = "";
+			if(cnt < argc)
+			{
+				jvxBool err = false;
+				maxLength = jvx_string2Size(argv[cnt], err);
+				if(err != false)
+				{
+					std::cout << __FUNCTION__ << ": Warning: Failed to read option <maxl> which should be followed by a number. Instead, I found <" << argv[cnt] << ">." << std::endl;
+					maxLength = JVX_SIZE_UNSELECTED;
+				}
+				cnt++;
 			}
 
 		}
@@ -187,13 +207,14 @@ main(int argc, char** argv)
 	std::string inputFName;
 	std::vector<std::string> includePaths;
 	std::vector<std::string> ifdefs;
+	jvxSize maxLength = JVX_SIZE_UNSELECTED;
 
 #ifdef JVX_PROP_MATLAB_OUTPUT
 	std::string outDir;
 	std::string outCptp;
 	std::string outCppf;
 
-	parseInput(&argv[1], argc-1, inputFName, outDir, outCptp, outCppf, includePaths, dependencyMode, ifdefs);
+	parseInput(&argv[1], argc-1, inputFName, outDir, outCptp, outCppf, includePaths, dependencyMode, ifdefs, maxLength);
 
 	//================================================================
 	// Determine the name of the file to generate source code to
@@ -339,7 +360,7 @@ main(int argc, char** argv)
 			{
 #ifdef JVX_PROP_MATLAB_OUTPUT
 				//std::cerr << "-->" << outDir << std::endl;
-				textProcessor.generateCode_mat(outDir, outCptp, outCppf);
+				textProcessor.generateCode_mat(outDir, outCptp, outCppf, maxLength);
 #else
 				textProcessor.generateCode_c(outFilenameH/*outFilename*/, generateLineInfo);
 #endif

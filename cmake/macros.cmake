@@ -81,6 +81,10 @@ macro(jvx_genMatProperties targetname componenttype componentprefix localfilelis
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked})
   foreach(PCGFILE ${localfilelist})
 	string(REPLACE ";" " " localoptionsstr "${localoptions}")
+	if(JVX_MAX_PATH_PROP_MAT)
+		set(localoptionsstr "${localoptionsstr} -maxl ${JVX_MAX_PATH_PROP_MAT}")
+	endif()
+	
 	message("    > PCG MAT Generator: ${PCGFILE} for component of type ${componenttype}, generator prefix ${componentprefix}, local options = ${localoptionsstr}")
 	# message("exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
 	# pcg_mat_opts "${localoptions}")

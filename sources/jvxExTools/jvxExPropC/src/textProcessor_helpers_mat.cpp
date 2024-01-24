@@ -4,6 +4,8 @@
 #include <fstream>
 #include <sstream>
 
+// static int cntGen = 1;
+
 static std::string prefixListToString(std::vector<std::string> lst, std::string sep)
 {
 	std::string ret;
@@ -17,7 +19,7 @@ static std::string prefixListToString(std::vector<std::string> lst, std::string 
 
 void
 textProcessor_core::generateCode_oneElement_mat(onePropertyElement& theElm, const std::string& outDir, std::string& Cptp, std::string& Cppf, 
-	std::string funcPrefix, std::string propPrefix)
+	std::string funcPrefix, std::string propPrefix, jvxSize maxNumberCharacters)
 {
 	jvxSize j,k,l;
 	std::string tag;
@@ -33,7 +35,7 @@ textProcessor_core::generateCode_oneElement_mat(onePropertyElement& theElm, cons
 
 		for(l = 0; l < theElm.thePropertyGroup.thePropertyElements.size(); l++)
 		{
-			generateCode_oneElement_mat(theElm.thePropertyGroup.thePropertyElements[l], outDir, Cptp, Cppf, funcPrefix, propPrefix);
+			generateCode_oneElement_mat(theElm.thePropertyGroup.thePropertyElements[l], outDir, Cptp, Cppf, funcPrefix, propPrefix, maxNumberCharacters);
 		}
 	}
 	else
@@ -68,6 +70,40 @@ textProcessor_core::generateCode_oneElement_mat(onePropertyElement& theElm, cons
 				funcName_set = "set_" JVX_PRODUCT_CODEGEN_TAG  + Cppf + "_" + tag + funcPrefix + prefix_func + theElm.thePropertySection.properties[j].name;
 			}
 
+			if(JVX_CHECK_SIZE_SELECTED(maxNumberCharacters))
+			{
+				jvxBool doneShorten = false;
+				// Remove 6 cars in the middle
+				if(maxNumberCharacters > 8)
+				{
+					jvxSize numCharsOrig = funcName_get.size();
+					jvxSize numCharsParts = (maxNumberCharacters - 6)/2;
+					if(numCharsOrig > maxNumberCharacters) 
+					{
+						std::string fNameGetNewFirst = funcName_get.substr(0, numCharsParts);
+						std::string fNameGetNewSecond = funcName_get.substr(funcName_get.size() - numCharsParts);
+						funcName_get = fNameGetNewFirst + "_" + jvx_size2String(numCharsOrig - fNameGetNewFirst.size() - fNameGetNewSecond.size()) + "_" + fNameGetNewSecond;
+						doneShorten = true;
+					}				
+
+					numCharsOrig = funcName_set.size();
+					numCharsParts = (maxNumberCharacters - 6)/2;
+					if(numCharsOrig > maxNumberCharacters)
+					{
+						std::string fNameSetNewFirst = funcName_set.substr(0, numCharsParts);
+						std::string fNameCut = funcName_get.substr(numCharsParts, funcName_get.size() - 2 * numCharsParts);
+						std::string fNameSetNewSecond = funcName_set.substr(funcName_set.size() - numCharsParts);
+						funcName_set = fNameSetNewFirst + "_" + jvx_size2String(numCharsOrig - fNameSetNewFirst.size() - fNameSetNewSecond.size()) + "_" + fNameSetNewSecond;
+						doneShorten = true;
+					}
+				}
+				if(doneShorten)
+				{
+					// cntGen++;
+				}
+			}
+			
+				
 			// Function to GET property
 			fileName = outDir + JVX_SEPARATOR_DIR + funcName_get + ".m";
 			//std::cout << "-XXXX-> " << fileName << "::" <<  tag << "::" <<  funcPrefix << std::endl;
@@ -239,12 +275,12 @@ textProcessor_core::generateCode_oneElement_mat(onePropertyElement& theElm, cons
 }
 
 void
-textProcessor_core::generateCode_mat(const std::string& outDir, std::string& Cptp, std::string& Cppf)
+textProcessor_core::generateCode_mat(const std::string& outDir, std::string& Cptp, std::string& Cppf, jvxSize numCharsParts)
 {
 	int i;
 
 	for(i = 0; i < intermediateStruct.thePropertyElements.size(); i++)
 	{
-		generateCode_oneElement_mat(intermediateStruct.thePropertyElements[i], outDir, Cptp, Cppf, "", "");
+		generateCode_oneElement_mat(intermediateStruct.thePropertyElements[i], outDir, Cptp, Cppf, "", "", numCharsParts);
 	}
 }
