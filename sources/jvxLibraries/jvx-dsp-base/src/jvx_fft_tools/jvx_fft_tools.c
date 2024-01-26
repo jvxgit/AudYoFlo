@@ -2848,11 +2848,11 @@ jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSi
 }
 
 jvxDspBaseErrorType
-jvx_fft_crotate_time(jvxDataCplx* bufIn, jvxDataCplx* bufOut, jvxData fftScale, jvxSize numValuesRotate, jvxSize idxOffsIn, jvxSize idxOffsOut, jvxSize numVals)
+jvx_fft_crotate_time(jvxDataCplx* bufIn, jvxDataCplx* bufOut, jvxData fftScale, jvxData numValuesRotate, jvxSize idxOffsIn, jvxSize idxOffsOut, jvxSize numVals)
 {
 	jvxSize i;
 	jvxDataCplx* inPtr = bufIn + idxOffsIn;
-	jvxDataCplx* outPtr = bufOut + idxOffsIn;
+	jvxDataCplx* outPtr = bufOut + idxOffsOut;
 	for (i = 0; i < numVals; i++)
 	{
 		// f = numValuesRotate * [0:1 / FFTL : 1 / 2];
