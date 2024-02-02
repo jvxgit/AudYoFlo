@@ -16,7 +16,10 @@ public:
 		res = T::select(theOwner);
 		if (res == JVX_NO_ERROR)
 		{
+			// Run the class specific initialization
 			initExternalCall();
+
+			// Run mex call base classes function to init matlab call handles
 			res = CjvxMexCalls::select(_common_set_min.theHostRef, static_cast<CjvxProperties*>(this), "",
 				_theExtCallObjectName.c_str());
 		}
@@ -26,13 +29,22 @@ public:
 	jvxErrorType unselect() override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		res = T::unselect(); \
-			if (res == JVX_NO_ERROR)
-			{
-				res = CjvxMexCalls::unselect();
-				terminateExternalCall();
-				_theExtCallObjectName = "";
-			}
+		res = T::unselect();
+		if (res == JVX_NO_ERROR)
+		{
+			// Run the class specific implementation
+			terminateExternalCall();
+			res = CjvxMexCalls::unselect();
+
+			/*
+			* Should have been removed already in <CjvxMexCalls::unselect>
+			returnExternalCallHandle(_common_set_min.theHostRef, parent._theExtCallHandler);
+			parent._theExtCallHandler = NULL;
+			parent._theExtCallObjectName = "";
+			*/
+
+			_theExtCallObjectName = "";
+		}
 		return(res);
 	};
 

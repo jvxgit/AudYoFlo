@@ -29,13 +29,19 @@ CjvxMexCalls_prv::select(IjvxHiddenInterface* theHost, CjvxProperties* theProps,
 {
 #ifdef JVX_EXTERNAL_CALL_ENABLED
 
-	if (componentName)
-		parent._theExtCallObjectName = componentName;
+	if (parent._theExtCallObjectName.empty())
+	{
+		if (componentName)
+			parent._theExtCallObjectName = componentName;
+	}
 
-	parent._theExtCallHandler = NULL;
-	requestExternalCallHandle(theHost, &parent._theExtCallHandler);
+	if (parent._theExtCallHandler == nullptr)
+	{
+		requestExternalCallHandle(theHost, &parent._theExtCallHandler);
+	}
+	
 	if (!parent._theExtCallHandler)
-		std::cerr << "[CjvxMexCalls_prv] WARNING: could not obtain mex call handler, disabling external call interface" << std::endl;
+		std::cerr << "[CjvxMexCalls_prv] WARNING: could not obtain mex call handler, disabling external call interface." << std::endl;
 	initExternalCallhandler(parent._theExtCallHandler, static_cast<IjvxExternalCallTarget*>(this), parent._theExtCallObjectName);
 	runtime.idThread = JVX_GET_CURRENT_THREAD_ID();
 
@@ -54,8 +60,18 @@ jvxErrorType
 CjvxMexCalls_prv::unselect()
 {
 #ifdef JVX_EXTERNAL_CALL_ENABLED
-	terminateExternalCallhandler(parent._theExtCallHandler);
-	returnExternalCallHandle(theHostRef, parent._theExtCallHandler);
+
+	if (parent._theExtCallHandler)
+	{
+
+		terminateExternalCallhandler(parent._theExtCallHandler);
+		returnExternalCallHandle(theHostRef, parent._theExtCallHandler);
+	}
+	else
+	{
+		std::cerr << "[CjvxMexCalls_prv] WARNING: mex call handler removed to early, I am not able to de-regsiter the callbacks as required!" << std::endl;
+	}
+
 	parent._theExtCallHandler = NULL;
 	parent._theExtCallObjectName = "";
 
