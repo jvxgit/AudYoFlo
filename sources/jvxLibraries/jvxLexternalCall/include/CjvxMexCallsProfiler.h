@@ -10,6 +10,14 @@ class CjvxMexCallsProfiler: public CjvxMexCallsMin
 {
 protected:
 	std::string varNameHdlMatlab = "hdl_profile_data";
+
+	std::string commandProfileConfig = "jvxProfileConfig";
+	std::string commandProfileStart = "jvxProfileStart";
+	std::string commandProfileStep = "jvxProfileStep";
+	std::string commandProfileStop = "jvxProfileStop";
+
+	jvxBool debugStartDone = false;
+
 public:
 	std::map<std::string, jvx_profiler_data_entry*> registeredProfilerData;
 	jvxErrorType register_profiling_data(jvx_profiler_data_entry*, const std::string& nm);
@@ -17,6 +25,11 @@ public:
 	jvxErrorType provideDataMexCall();
 	static jvxErrorType jvx_register_entry_profiling_data_cb(jvx_profiler_data_entry* dat, const char* name, jvxHandle* inst);
 	static jvxErrorType jvx_unregister_entry_profiling_data_cb(const char* name, jvxHandle* inst);
+	
+	jvxErrorType profile_start_in_process();
+	jvxErrorType profile_step_in_process();
+	jvxErrorType profile_config_on_prepare();
+	jvxErrorType profile_stop_on_postprocess();
 };
 
 #endif

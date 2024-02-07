@@ -83,4 +83,76 @@ CjvxMexCallsProfiler::jvx_unregister_entry_profiling_data_cb(const char* name, j
 	return JVX_ERROR_INVALID_ARGUMENT;
 }
 
+jvxErrorType
+CjvxMexCallsProfiler::profile_start_in_process()
+{
+	if (!debugStartDone)
+	{
+		std::string command = "global " + CjvxMexCallsProfiler::varNameHdlMatlab + "; " + CjvxMexCallsProfiler::varNameHdlMatlab +
+			" = " + CjvxMexCallsProfiler::commandProfileStart + "(" + CjvxMexCallsProfiler::varNameHdlMatlab + "); ";
+		jvxErrorType resM = _theExtCallHandler->executeExternalCommand(command.c_str());
+		if (resM != JVX_NO_ERROR)
+		{
+			jvxApiString astr;
+			_theExtCallHandler->getLastErrorReason(&astr);
+			_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+		}
+		debugStartDone = true;
+	}
+	return JVX_NO_ERROR;
+}
 
+jvxErrorType
+CjvxMexCallsProfiler::profile_step_in_process()
+{
+
+	std::string command = "global " + CjvxMexCallsProfiler::varNameHdlMatlab +
+		"; [" + CjvxMexCallsProfiler::varNameHdlMatlab + "] = " + CjvxMexCallsProfiler::commandProfileStep + "(" + CjvxMexCallsProfiler::varNameHdlMatlab + "); ";
+	jvxErrorType resM = _theExtCallHandler->executeExternalCommand(command.c_str());
+
+	if (resM != JVX_NO_ERROR)
+	{
+		jvxApiString astr;
+		_theExtCallHandler->getLastErrorReason(&astr);
+		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxMexCallsProfiler::profile_config_on_prepare()
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxErrorType resM = JVX_NO_ERROR;
+	debugStartDone = false;
+	std::string command = "global " + CjvxMexCallsProfiler::varNameHdlMatlab + "; " + CjvxMexCallsProfiler::varNameHdlMatlab + " = " + CjvxMexCallsProfiler::commandProfileConfig + "(); ";
+	resM = _theExtCallHandler->executeExternalCommand(command.c_str());
+	if (resM != JVX_NO_ERROR)
+	{
+		jvxApiString astr;
+		_theExtCallHandler->getLastErrorReason(&astr);
+		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+
+		// Standard exception indicates that the debugger was detached!!
+		if (resM == JVX_ERROR_STANDARD_EXCEPTION)
+		{
+			res = resM;
+		}
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxMexCallsProfiler::profile_stop_on_postprocess()
+{
+	std::string command = "global " + CjvxMexCallsProfiler::varNameHdlMatlab + " ; " + CjvxMexCallsProfiler::commandProfileStop + "(" + CjvxMexCallsProfiler::varNameHdlMatlab + "); ";
+	jvxErrorType resM = _theExtCallHandler->executeExternalCommand(command.c_str());
+	if (resM != JVX_NO_ERROR)
+	{
+		jvxApiString astr;
+		_theExtCallHandler->getLastErrorReason(&astr);
+		_theExtCallHandler->postMessageExternal(("Last operation failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+	}
+	debugStartDone = false;
+	return JVX_NO_ERROR;
+}
