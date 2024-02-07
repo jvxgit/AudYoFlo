@@ -9,6 +9,7 @@ include_directories(
 set(LOCAL_SOURCES
 	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCalls.h
 	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCallsTpl.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCallsProfiler.h
 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMexCalls.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMexCalls_prv.cpp
@@ -23,7 +24,9 @@ set(LOCAL_MCG_FILES
   )
 
 set(LOCAL_SOURCES
+	${LOCAL_SOURCES}
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMexCalls.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMexCallsProfiler.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMexCalls_prv.cpp
 	 ${LOCAL_MCG_FILES}
 	 ${LOCAL_PCG_FILES}

@@ -3,26 +3,14 @@
 
 #include "jvx.h"
 #include "common/CjvxProperties.h"
+#include "CjvxMexCallsProfiler.h"
 
-/**
- * Class to share external call handler instance between component and core mexcall handler
- *///===============================================================================
-
-class CjvxMexCallsMin
-{
-public:
-	// Reference to matlab call handler to be used throughout the components life time
-	// Shared between inernal and external use
-	IjvxExternalCall* _theExtCallHandler = nullptr;
-	std::string _theExtCallObjectName;
-
-};
 
 /**
  * Class to encapsulate mexcall functoionality for integration in various classes
  *///===============================================================================
 
-class CjvxMexCalls: public IjvxExternalCallTarget, public CjvxMexCallsMin
+class CjvxMexCalls: public IjvxExternalCallTarget, public CjvxMexCallsProfiler
 {
 
 private:

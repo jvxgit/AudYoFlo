@@ -22,6 +22,13 @@
 #define JVX_DSP_DATA_FORMAT_DOUBLE 
 #endif
 
+//! Shortcut for complex datatypes, actually defined to support fftw
+typedef struct
+{
+	jvxData re;
+	jvxData im;
+} jvxDataCplx;
+
 #define jvxDspBaseErrorType jvxErrorType
 
 #define JVX_DSP_NO_ERROR JVX_NO_ERROR
@@ -75,12 +82,5 @@
 #define JVX_DSP_UPDATE_USER_OFFSET JVX_LIB_UPDATE_USER_OFFSET
 #define JVX_DSP_UPDATE_ALL16  JVX_LIB_UPDATE_ALL16
 #define JVX_DSP_UPDATE_ALL32  JVX_LIB_UPDATE_ALL32
-
-//! Shortcut for complex datatypes, actually defined to support fftw
-typedef struct
-{
-	jvxData re;
-	jvxData im;
-} jvxDataCplx;
 
 #endif
