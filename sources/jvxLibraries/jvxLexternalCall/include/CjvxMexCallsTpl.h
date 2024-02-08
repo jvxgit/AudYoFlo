@@ -91,7 +91,7 @@ public:
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		onPrepareConnectMexCalls();
+		// onPrepareConnectMexCalls();
 
 		CjvxMexCalls::prepare_sender_to_receiver(_common_set_icon.theData_in);
 		res = T::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -172,7 +172,7 @@ public:
 	// ==========================================================================================
 	virtual void initExternalCall() = 0;
 	virtual void terminateExternalCall() = 0;
-	virtual void onPrepareConnectMexCalls() = 0;
+	// virtual void onPrepareConnectMexCalls() = 0;
 };
 
 #endif

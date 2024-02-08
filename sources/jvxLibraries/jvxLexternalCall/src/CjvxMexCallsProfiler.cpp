@@ -151,7 +151,7 @@ CjvxMexCallsProfiler::profile_stop_on_postprocess()
 	{
 		jvxApiString astr;
 		_theExtCallHandler->getLastErrorReason(&astr);
-		_theExtCallHandler->postMessageExternal(("Last operation failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
 	}
 	debugStartDone = false;
 	return JVX_NO_ERROR;
