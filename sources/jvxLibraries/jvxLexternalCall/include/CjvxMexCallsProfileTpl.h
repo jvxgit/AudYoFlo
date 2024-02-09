@@ -4,6 +4,8 @@
 #include "CjvxMexCallsProfileInterfacing.h"
 #include "CjvxMexCallsTpl.h"
 
+// ================================================================================================
+
 template <class T>
 class CjvxMexCallsProfileTpl : public CjvxMexCallsTpl<T>, public CjvxMexCallsProfileInterfacing
 {

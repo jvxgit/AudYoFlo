@@ -16,6 +16,7 @@ set(LOCAL_SOURCES
 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCallsProfileInterfacing.h
 	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCallsProfileTpl.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/include/CjvxMexCallsProfileNoMexTpl.h
   )
 
 set(LOCAL_PCG_FILES
