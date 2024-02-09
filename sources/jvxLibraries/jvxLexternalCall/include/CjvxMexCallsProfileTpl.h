@@ -89,11 +89,16 @@ public:
 			res = local_deallocate_profiling();
 		}
 
+		CjvxMexCalls::postprocess_connect_icon_enter(_common_set_icon.theData_in);
+
 		JVX_SAFE_DELETE_2DFIELD(dbgFldCopyInputs, _common_set_icon.theData_in->con_params.number_channels);
 
 		// Ignore all return values - if these functions fail we have a more severe problem!!
-		res = T::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
 		res = local_postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
+		res = T::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
 		res = CjvxMexCalls::postprocess_connect_icon_leave(_common_set_icon.theData_in);
 		
 		return res;
