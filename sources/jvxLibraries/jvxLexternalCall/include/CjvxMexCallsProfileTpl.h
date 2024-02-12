@@ -51,25 +51,28 @@ public:
 		// =============================================================================================
 		if (res == JVX_NO_ERROR)
 		{
-			// Matlab initialization is complete here
-			CjvxMexCalls::prepare_connect_icon_leave(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
-
 			// Here, run the c code initialization!
 			res = local_prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-
-			if (res == JVX_NO_ERROR)
-			{
-				JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(dbgFldCopyInputs,
-					jvxData,
-					_common_set_icon.theData_in->con_params.number_channels,
-					_common_set_icon.theData_in->con_params.buffersize);
-
-				if (config.matlab_debug_enabled && config.matlab_profiling_enabled)
-				{
-					res = local_allocate_profiling();
-				}
-			}
 		}
+		
+		if (res == JVX_NO_ERROR)
+		{
+			// Matlab initialization is complete here
+			res = CjvxMexCalls::prepare_connect_icon_leave(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+		}
+
+		if (res == JVX_NO_ERROR)
+		{
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(dbgFldCopyInputs,
+				jvxData,
+				_common_set_icon.theData_in->con_params.number_channels,
+				_common_set_icon.theData_in->con_params.buffersize);
+
+			if (config.matlab_debug_enabled && config.matlab_profiling_enabled)
+			{
+				res = local_allocate_profiling();
+			}
+		}		
 
 		if (res != JVX_NO_ERROR)
 		{

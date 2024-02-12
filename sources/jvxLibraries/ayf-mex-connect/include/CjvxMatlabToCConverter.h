@@ -26,8 +26,15 @@
 		res = JVX_ERROR_ELEMENT_NOT_FOUND; \
 		if (val = CjvxMatlabToCConverter::jvx_mex_read_single_reference(curPtr, token)) \
 		{ \
-			value.assign(CjvxMatlabToCConverter::jvx_mex_2_cstring(val)); \
-			res = JVX_NO_ERROR; \
+			if(mxIsChar(val)) \
+			{ \
+				value.assign(CjvxMatlabToCConverter::jvx_mex_2_cstring(val)); \
+				res = JVX_NO_ERROR; \
+			} \
+			else \
+			{ \
+				res = JVX_ERROR_INVALID_SETTING; \
+			} \
 		} \
 	}
 
@@ -36,6 +43,12 @@
 		jvxBool err = false; \
 		jvxApiString astr; \
 		JVX_MEX_READ_STRING_FROM_STRUCT(res, token, curPtr, astr); \
+		if(res != JVX_NO_ERROR) \
+		{ \
+			std::string tokenP = token; \
+			tokenP += "/jvxSelection_value"; \
+			JVX_MEX_READ_STRING_FROM_STRUCT(res, tokenP, curPtr, astr); \
+		} \
 		if(res == JVX_NO_ERROR) \
 		{ \
 			jvxBitField bf = jvx_string2BitField(astr.std_str(), err); \
