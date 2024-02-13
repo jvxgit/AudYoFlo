@@ -1,9 +1,14 @@
-function [rtproc] = jvx_start_rtproc(pathCComponents, pathMatlabSources, namesDemo, startPath, commandsDemo)
+function [rtproc] = jvx_start_rtproc(pathCComponents, pathMatlabSources, namesDemo, startPath, commandsDemo, commandScripting)
 
     % Handle case if someone calls this function without any start
     % information
     this_path = fileparts(mfilename('fullpath'));
     
+    rtproc.scriptingCommand = '';
+    if(nargin >= 6)
+		rtproc.scriptingCommand = commandScripting;
+    end
+
     if(nargin < 5)
         commandsDemo = {};
     end
@@ -27,6 +32,7 @@ function [rtproc] = jvx_start_rtproc(pathCComponents, pathMatlabSources, namesDe
         pathMatlabSources = {...
             [startPath '/matlab/m-files'],...
             [startPath '/matlab/m-files/subprojects-audionode'],...
+			[startPath '/matlab/m-files/profiling'],...
             [startPath '/matlab/m-files/audioProperties']...
             };       
     end
