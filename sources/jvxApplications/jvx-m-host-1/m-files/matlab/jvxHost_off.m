@@ -63,6 +63,7 @@ jvxHost_off_remote.jvx_set_samplerate = @jvxHost_off_remote_set_samplerate;
 jvxHost_off_remote.jvx_set_buffersize = @jvxHost_off_remote_set_buffersize;
 jvxHost_off_remote.jvx_set_engage_matlab = @jvxHost_off_remote_set_engage_matlab;
 jvxHost_off_remote.jvx_mesgq_immediate = @jvxHost_off_remote_trigger_mesgq_immediately;
+jvxHost_off_remote.jvx_export_signal = @jvxHost_off_remote_export_signal_wav;
 
 % Set callback for all host system calls
 global jvx_host_call_global;
@@ -1917,5 +1918,24 @@ function [res] = jvxHost_off_remote_selection_in_variable(name_var,rate)
          [handles]  =  jvxHost_off_remote_offline_set_engage_matlab_core(jvxHost_off_remote.hObject, handles, doEngageI16);
          guidata(jvxHost_off_remote.hObject, handles);
      
-
+     function [res] = jvxHost_off_remote_export_signal_wav(exportOutput, exportId, fname)
+             res = true;
+             global jvxHost_off_remote;
+             handles = guidata(jvxHost_off_remote.hObject);
+             
+             if(exportOutput)
+                 sigs = handles.jvx_struct.data.output.data;
+                 rate = handles.jvx_struct.data.output.rate;
+             else
+                 sigs = handles.jvx_struct.data.input.data;
+                 rate = handles.jvx_struct.data.input.rate;
+             end
+             
+             if(exportId <= size(sigs,1))
+                 oneBuf = sigs(exportId,:);
+                 audiowrite(fname, oneBuf, rate);
+                 disp(['Wrote file <' fname '>.']);
+             else
+                 disp('Export Id is outside range of channels in data.');
+             end
 

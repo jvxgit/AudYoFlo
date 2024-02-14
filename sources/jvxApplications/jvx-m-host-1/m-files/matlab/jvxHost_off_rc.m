@@ -137,6 +137,50 @@ if(nargin > 0)
                     res = false;
                     errMsg = ['No entry point <jvx_input_var>.'];
                 end
+                
+            elseif(strcmp(whattodo, 'jvx_export_output_signal'))
+                                
+                if(isfield(jvxHost_off_remote, 'jvx_export_signal'))
+                    try
+                        exportId = 1;
+                        fname = 'data_exported.wav';
+                        if(size(varargin,2) > 1)
+                            exportId = varargin{2};
+                        end
+                        if(size(varargin,2) > 2)
+                            fname = varargin{3};
+                        end
+                        res = jvxHost_off_remote.jvx_export_signal(true, exportId, fname);
+                    catch ME
+                        res = false;
+                        errMsg = ME.message;
+                    end
+                else
+                    res = false;
+                    errMsg = ['No entry point <jvx_export_signal>.'];
+                end
+                
+                elseif(strcmp(whattodo, 'jvx_export_input_signal'))
+                                
+                if(isfield(jvxHost_off_remote, 'jvx_export_signal'))
+                    try
+                        exportId = 1;
+                        fname = 'data_exported.wav';
+                        if(size(varargin,2) > 1)
+                            exportId = varargin{2};
+                        end
+                        if(size(varargin,2) > 2)
+                            fname = varargin{3};
+                        end
+                        res = jvxHost_off_remote.jvx_export_signal(false, exportId, fname);
+                    catch ME
+                        res = false;
+                        errMsg = ME.message;
+                    end
+                else
+                    res = false;
+                    errMsg = ['No entry point <jvx_export_signal>.'];
+                end
             else
                 res = false;
                 errMsg = ['Remote call <' whattodo ' is not a valid entry point.'];

@@ -1,5 +1,6 @@
 function [passed] = jvx_compare_wavs(file1, file2, maxDeviation, plotit, ignoreDifferentSizes)
-    
+  
+passed = false;
 if(nargin < 4)
     plotit = true;
 end
@@ -50,6 +51,8 @@ end
 if(plotit)
     figure;    
 end
+
+passed = true;
 for(ind = 1:size(sig1, 1))
     
     diff = sig1(ind,:) - sig2(ind,:);
