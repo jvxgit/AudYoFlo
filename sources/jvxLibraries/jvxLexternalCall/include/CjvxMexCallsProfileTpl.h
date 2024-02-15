@@ -120,6 +120,7 @@ public:
 		// Pass control to Matlab processing	
 
 		// Check if checkbox in Matlab processing was checked
+		// The checkbox can be activated/deactivated while processing!!
 		if (_theExtCallHandler)
 		{
 			CjvxMexCalls::is_matlab_processing_engaged(&engaged);
