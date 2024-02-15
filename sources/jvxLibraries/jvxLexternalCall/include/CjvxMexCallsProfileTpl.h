@@ -184,11 +184,14 @@ public:
 			// Run core algorithm in C
 			res = local_process_buffers_icon(mt_mask, idx_stage);
 
-			// Providing data only if c code is operated
-			CjvxMexCallsProfiler::provideDataMexCall();
+			if (engaged)
+			{
+				// Providing data only if c code is operated
+				CjvxMexCallsProfiler::provideDataMexCall();
+			}
 		}
 
-		if (config.matlab_debug_enabled && config.matlab_profiling_enabled)
+		if (engaged && config.matlab_debug_enabled && config.matlab_profiling_enabled)
 		{
 			// Profiler step not necessary requires c code execution
 			CjvxMexCallsProfiler::profile_step_in_process();
