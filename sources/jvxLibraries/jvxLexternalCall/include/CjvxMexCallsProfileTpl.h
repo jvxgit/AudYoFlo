@@ -13,7 +13,7 @@ protected:
 	struct
 	{
 		jvxBool matlab_debug_enabled = false; // <- this means: allow matlab and c code operated in parallel - required for verification
-		jvxBool skipInvolveCCode = false;
+		jvxCBool skipInvolveCCode = c_false;
 		jvxBool matlab_profiling_enabled = false;		
 	} config;	
 
@@ -142,18 +142,20 @@ public:
 					CjvxMexCallsProfiler::profile_start_in_process();
 				}
 
-				// Copy input data for later usage
-				for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
-				{
-					jvxData* ptrTo = dbgFldCopyInputs[i];
-					jvxData* ptrFrom = (jvxData*)buffers_in[i];
-					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
-				}
-
-
 				if (config.skipInvolveCCode)
 				{
 					skipCCode = true;
+				}
+
+				if (!skipCCode)
+				{
+					// Copy input data for later usage
+					for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
+					{
+						jvxData* ptrTo = dbgFldCopyInputs[i];
+						jvxData* ptrFrom = (jvxData*)buffers_in[i];
+						memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
+					}
 				}
 
 				// This lets Matlab run one frame of processing
