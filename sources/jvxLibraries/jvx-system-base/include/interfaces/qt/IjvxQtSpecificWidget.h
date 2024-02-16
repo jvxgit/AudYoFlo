@@ -89,6 +89,15 @@ public:
 // ====================================================================================================
 // ====================================================================================================
 
+JVX_INTERFACE IjvxQtSpecificHWidgetSeqCb : public IjvxQtSpecificHWidget
+{
+public:
+
+	virtual ~IjvxQtSpecificHWidgetSeqCb() {};
+	virtual jvxErrorType sequencer_callback(jvxSize functionId) = 0;
+
+};
+
 /*
 JVX_INTERFACE IjvxQtSpecificHWidget_config : public IjvxQtSpecificHWidget
 {
