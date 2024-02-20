@@ -80,6 +80,10 @@ CjvxSaWrapperElementBase::CjvxSaWrapperElementBase(QWidget* uiRefLoc,
 	isUnchecked = true;
 	jvx_initPropertyDescription(thePropDescriptor);
 	resetBasePropInfos(myBaseProps);
+	if (verboseLoc)
+	{
+		myBaseProps.verbose_out = verboseLoc;
+	}
 	assoc_id = uId;
 	delayedActionOperations = 0;
 	delayedActionPending = 0;
@@ -248,7 +252,11 @@ CjvxSaWrapperElementBase::initParameters_getMin(keyValueList* theLst, std::vecto
 			myBaseProps.group_id_emit = intVal;
 		}
 		theLst->getValueForKey("RTUPDATE", &myBaseProps.updateRt, JVX_WW_KEY_VALUE_TYPE_BOOL);
-		theLst->getValueForKey("VERBOSE", &myBaseProps.verbose_out, JVX_WW_KEY_VALUE_TYPE_BOOL);
+
+		if (!myBaseProps.verbose_out)
+		{
+			theLst->getValueForKey("VERBOSE", &myBaseProps.verbose_out, JVX_WW_KEY_VALUE_TYPE_BOOL);
+		}
 
 		foundit = false;
 		myBaseProps.dbgLevel = 0;
