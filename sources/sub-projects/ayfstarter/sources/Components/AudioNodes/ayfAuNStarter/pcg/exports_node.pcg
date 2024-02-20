@@ -1,0 +1,11 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genStarter_node";
+
+	SECTION properties
+	{
+		DESCRIPTION = "Properties of the audio node";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";
+		include "ayfstarterlib.pcgf"; 
+	};
+};

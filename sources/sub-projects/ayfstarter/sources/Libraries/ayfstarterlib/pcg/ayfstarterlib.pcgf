@@ -1,0 +1,8 @@
+CALLBACKS = {"async_starterlib_set"};
+SECTION volume
+{
+	DESCRIPTION = "Volume for all channels";
+	TYPE = "JVX_DATAFORMAT_DATA";			
+	ASSOCIATE_EXTERNAL = "yes";
+	CALLBACK_SET_POSTHOOK = "async_starterlib_set";
+};  
