@@ -27,6 +27,37 @@ set(LOCAL_LIBS
 	
 set(IS_JVX_COMPONENT TRUE)
 
+#================================= Step IV =================================
+set(LOCAL_COMPILE_DEFINITIONS_COPY "${LOCAL_COMPILE_DEFINITIONS}")
+set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS_COPY};JVX_PROJECT_NAMESPACE=AYFSTARTER")
+
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+#================================= Step IV =================================
+if(JVX_USE_PART_MATLAB)
+	
+	# Setup namespaces
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS_COPY};JVX_PROJECT_NAMESPACE=AYFSTARTERM")
+
+	# Run the Matlab property code generator
+	if(JVX_MATLAB_PROPERTY_GENERATOR)
+		jvx_genMatProperties(${JVX_TARGET_NAME} "JVX_COMPONENT_AUDIO_NODE" "node" "${LOCAL_PCG_FILES}" "${LOCAL_PCG_FILE_OPTIONS}")
+	endif()
+
+	# Install Matlab minimal framework
+	set(JVX_INSTALL_MATLAB_MINIMAL_FRAMEWORK TRUE)
+
+	## Generate startscript
+
+	# Add a path to start script
+	set(JVX_MATLAB_ORIGIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../jvxLibraries/jvx-matlab-testscripts")
+	
+	# set the origin of the template
+	set(LOCAL_START_SCRIPT_MATLAB_SCRIPT_NAME "ayfStarter-mat")
+	set(LOCAL_START_SCRIPT_MATLAB ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${JVX_OS}/start_mat)
+
+	# Activate the secondary Matlab project
+	JVX_ACTIVATE_VERSION_MATLAB(${PROJECT_NAME} JVX_EXTERNAL_CALL_ENABLED)
+endif()
 
 

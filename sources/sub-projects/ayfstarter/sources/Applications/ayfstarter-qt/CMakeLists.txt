@@ -1,5 +1,5 @@
 # Some common include files
-set(PROJECT_NAME ayfstarterQt)
+set(PROJECT_NAME ayfStarterQt)
 include(${JVX_CMAKE_DIR}/common_local_head.cmake)
 
 # Decide which host library to link with

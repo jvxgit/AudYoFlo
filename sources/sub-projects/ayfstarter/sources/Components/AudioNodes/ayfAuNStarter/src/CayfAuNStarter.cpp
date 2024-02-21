@@ -1,6 +1,10 @@
 #include "jvx.h"
 #include "CayfAuNStarter.h"
 
+#ifdef JVX_PROJECT_NAMESPACE
+namespace JVX_PROJECT_NAMESPACE {
+#endif
+	
 CayfAuNStarter::CayfAuNStarter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	AYF_AUDIO_NODE_BASE_CLASS(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
@@ -108,3 +112,8 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CayfAuNStarter, cb_async_set)
 	}
 	return JVX_NO_ERROR;
 }
+
+#ifdef JVX_PROJECT_NAMESPACE
+}
+#endif
+

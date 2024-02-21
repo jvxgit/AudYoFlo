@@ -18,6 +18,10 @@ extern "C"
 
 #include "pcg_exports_node.h"
 
+#ifdef JVX_PROJECT_NAMESPACE
+namespace JVX_PROJECT_NAMESPACE {
+#endif
+
 class CayfAuNStarter: public AYF_AUDIO_NODE_BASE_CLASS, public genStarter_node
 {	
 protected:
@@ -40,5 +44,9 @@ public:
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_async_set);
 
 };
+
+#ifdef JVX_PROJECT_NAMESPACE
+}
+#endif
 
 #endif
