@@ -466,7 +466,7 @@ endif()
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLsockets_st
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base-cpp
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base
-	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-mex
+	# ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-mex
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLexternalCall
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLTextDeviceControl
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-host-json
