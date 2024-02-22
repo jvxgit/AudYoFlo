@@ -8,6 +8,9 @@ include_directories(
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
   ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
   ${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/ayfstarterlib/include
+
+  # Step IV
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-mex/include
   )
 
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
@@ -36,6 +39,9 @@ include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
 #================================= Step IV =================================
 if(JVX_USE_PART_MATLAB)
 	
+	# Add all Matlab specific extensions
+	set(LOCAL_SOURCES ${LOCAL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAuNStarter_mex.cpp)
+
 	# Setup namespaces
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS_COPY};JVX_PROJECT_NAMESPACE=AYFSTARTERM")
 

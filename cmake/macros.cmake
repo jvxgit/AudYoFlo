@@ -354,16 +354,10 @@ macro(JVX_ACTIVATE_VERSION_MATLAB project_name local_project_options)
 		set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};${local_project_options}")
 		include_directories(${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLexternalCall/include)
 		if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/codeGen/export_project.mcg)
-			set(LOCAL_MCG_FILES
-				${CMAKE_CURRENT_SOURCE_DIR}/codeGen/export_project.mcg
-				)
-			set(LOCAL_LIBS ${LOCAL_LIBS}
-				jvxLexternalCall_static
-				)
-			set(LOCAL_SOURCES ${LOCAL_SOURCES}
-				${LOCAL_MCG_FILES}
-				)
-		endif()
+			set(LOCAL_MCG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/codeGen/export_project.mcg)				
+			set(LOCAL_SOURCES ${LOCAL_SOURCES} ${LOCAL_MCG_FILES})
+		endif()	
+		set(LOCAL_LIBS ${LOCAL_LIBS} jvxLexternalCall_static)		
 	endif()
 
 	include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

@@ -5,4 +5,4 @@ global inProcessing; % <- access to the current processing data struct, frame co
 global jvx_host_call_global; % <- access to the underlying AudYoFlo host
 
 % Realize talkthrough
-jvx_out_frame = jvx_in_frame;
+jvx_out_frame = jvx_in_frame * jvx_handle.volume;

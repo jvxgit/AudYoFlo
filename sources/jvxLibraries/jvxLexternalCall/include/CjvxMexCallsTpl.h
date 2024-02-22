@@ -170,8 +170,8 @@ public:
 	};
 
 	// ==========================================================================================
-	virtual void initExternalCall() = 0;
-	virtual void terminateExternalCall() = 0;
+	virtual void initExternalCall() {};
+	virtual void terminateExternalCall() {};
 	// virtual void onPrepareConnectMexCalls() = 0;
 };
 

@@ -5,11 +5,24 @@
 
 #ifdef AYF_INVOLVE_CHANNEL_REARRANGE
 #include "jvxNodes/CjvxBareNode1ioRearrange.h"
-#define AYF_AUDIO_NODE_BASE_CLASS CjvxBareNode1ioRearrange
 #else
 #include "jvxNodes/CjvxBareNode1io.h"
-#define AYF_AUDIO_NODE_BASE_CLASS CjvxBareNode1io
 #endif
+
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+#include "CjvxMexCallsProfileTpl.h"
+#define AYF_TEMPLATE_PARENT_CLASS CjvxMexCallsProfileTpl
+#else
+#include "CjvxMexCallsProfileNoMexTpl.h"
+#define AYF_TEMPLATE_PARENT_CLASS CjvxMexCallsProfileNoMexTpl
+#endif
+
+#ifdef AYF_INVOLVE_CHANNEL_REARRANGE
+#define AYF_AUDIO_NODE_NODE_CLASS CjvxBareNode1ioRearrange
+#else
+#define AYF_AUDIO_NODE_NODE_CLASS CjvxBareNode1io
+#endif
+#define AYF_AUDIO_NODE_BASE_CLASS AYF_TEMPLATE_PARENT_CLASS<AYF_AUDIO_NODE_NODE_CLASS>
 
 extern "C"
 {
@@ -36,9 +49,10 @@ public:
 	jvxErrorType deactivate() override;
 
 	// Step II: Add prepare, postprocess and process function
-	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
-	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	// STep IV: rename the main processing functions
+	jvxErrorType local_process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
+	jvxErrorType local_prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType local_postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
 	// Step III: Define a property-set callback
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_async_set);

@@ -33,5 +33,6 @@ function [ jvx_handle ] = jvxStartOffline_local( ...
         
     jvx_handle.jvx_add_hints = jvx_add_hints;
     
-	% Restore private data in global data struct
-	inProcessing.jvx_handle = jvx_handle;
+    % Initialize volume level
+    jvx_handle.volume = 0.1;
+    

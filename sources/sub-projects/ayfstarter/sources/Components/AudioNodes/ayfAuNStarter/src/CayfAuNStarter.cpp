@@ -63,12 +63,12 @@ CayfAuNStarter::deactivate()
  * during processing until postprocessing is run.
  */
 jvxErrorType
-CayfAuNStarter::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CayfAuNStarter::local_prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = AYF_AUDIO_NODE_BASE_CLASS::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-	if (res != JVX_NO_ERROR) return res;
-	ayf_starter_prepare(&processing_lib);
-	return res;
+	// jvxErrorType res = AYF_AUDIO_NODE_NODE_CLASS::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	// if (res != JVX_NO_ERROR) return res; 
+	// <- no longer in use as this call is in template class already
+	return ayf_starter_prepare(&processing_lib);
 }
 
 /**
@@ -78,30 +78,30 @@ CayfAuNStarter::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
  * producing the output data.
  */
 jvxErrorType
-CayfAuNStarter::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
+CayfAuNStarter::local_process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
 	jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 	jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 
 	// Involve the c-library for processing
-	ayf_starter_process(&processing_lib, buffers_in, buffers_out, 
+	return ayf_starter_process(&processing_lib, buffers_in, buffers_out, 
 		_common_set_icon.theData_in->con_params.number_channels, 
 		_common_set_ocon.theData_out.con_params.number_channels,
 		_common_set_icon.theData_in->con_params.buffersize);
-
-	return fwd_process_buffers_icon(mt_mask, idx_stage);
+	
+	// return fwd_process_buffers_icon(mt_mask, idx_stage); <- no longer in use as this call is in template class already
 }
 
 /**
  * Run the post processing, that is, deallocate all buffers and required structures which we allocated on prepare.
  */
 jvxErrorType
-CayfAuNStarter::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CayfAuNStarter::local_postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = AYF_AUDIO_NODE_BASE_CLASS::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-	if (res != JVX_NO_ERROR) return res;
-	ayf_starter_postprocess(&processing_lib);
-	return res;
+	// jvxErrorType res = AYF_AUDIO_NODE_NODE_CLASS::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	// if (res != JVX_NO_ERROR) return res; 
+	// <-no longer in use as this call is in template class already
+	return ayf_starter_postprocess(&processing_lib);
 }
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CayfAuNStarter, cb_async_set)

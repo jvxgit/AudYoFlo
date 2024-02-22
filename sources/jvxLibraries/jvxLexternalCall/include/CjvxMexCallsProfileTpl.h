@@ -12,7 +12,6 @@ class CjvxMexCallsProfileTpl : public CjvxMexCallsTpl<T>, public CjvxMexCallsPro
 protected:
 	struct
 	{
-		jvxBool matlab_debug_enabled = false; // <- this means: allow matlab and c code operated in parallel - required for verification
 		jvxCBool skipInvolveCCode = c_false;
 		jvxBool matlab_profiling_enabled = false;		
 	} config;	
@@ -26,8 +25,8 @@ public:
 		CjvxMexCallsTpl<T>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL) {};
 
 	// Some callbacks
-	virtual jvxErrorType local_allocate_profiling() = 0;
-	virtual jvxErrorType local_deallocate_profiling() = 0;
+	virtual jvxErrorType local_allocate_profiling() { return JVX_NO_ERROR; };
+	virtual jvxErrorType local_deallocate_profiling() { return JVX_NO_ERROR; };
 	
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
@@ -40,7 +39,7 @@ public:
 		{
 			// We need to run this BEFORE we run any prepare call to obtain the
 			// modified parameter settings in the Matlab startup
-			if (config.matlab_debug_enabled && config.matlab_profiling_enabled)
+			if (config.matlab_profiling_enabled)
 			{
 				res = CjvxMexCallsProfiler::profile_config_on_prepare();
 			}
@@ -68,7 +67,7 @@ public:
 				_common_set_icon.theData_in->con_params.number_channels,
 				_common_set_icon.theData_in->con_params.buffersize);
 
-			if (config.matlab_debug_enabled && config.matlab_profiling_enabled)
+			if (config.matlab_profiling_enabled)
 			{
 				res = local_allocate_profiling();
 			}
@@ -87,7 +86,7 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		jvxErrorType resL = JVX_NO_ERROR;
 
-		if (config.matlab_debug_enabled && config.matlab_profiling_enabled)
+		if (config.matlab_profiling_enabled)
 		{
 			// Stop the profiler
 			CjvxMexCallsProfiler::profile_stop_on_postprocess();
@@ -131,52 +130,45 @@ public:
 			jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 			jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 		
-			if (config.matlab_debug_enabled)
+			// ===================================================
+			// This case to run Matlab and C code in parallel
+			// ===================================================
+
+			if (config.matlab_profiling_enabled)
 			{
-				// ===================================================
-				// This case to run Matlab and C code in parallel
-				// ===================================================
+				// Run this command only once!! Need to put it here since processing information is not available in "prepare"!!
+				CjvxMexCallsProfiler::profile_start_in_process();
+			}
 
-				if (config.matlab_profiling_enabled)
+			if (config.skipInvolveCCode)
+			{
+				skipCCode = true;
+			}
+
+			if (!skipCCode)
+			{
+				// Copy input data for later usage
+				for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
 				{
-					// Run this command only once!! Need to put it here since processing information is not available in "prepare"!!
-					CjvxMexCallsProfiler::profile_start_in_process();
-				}
-
-				if (config.skipInvolveCCode)
-				{
-					skipCCode = true;
-				}
-
-				if (!skipCCode)
-				{
-					// Copy input data for later usage
-					for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
-					{
-						jvxData* ptrTo = dbgFldCopyInputs[i];
-						jvxData* ptrFrom = (jvxData*)buffers_in[i];
-						memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
-					}
-				}
-
-				// This lets Matlab run one frame of processing
-				// ======================================================================================
-				res = CjvxMexCalls::process_buffers_icon(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
-				// ======================================================================================
-
-				if (!skipCCode)
-				{
-					for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
-					{
-						jvxData* ptrFrom = dbgFldCopyInputs[i];
-						jvxData* ptrTo = (jvxData*)buffers_in[i];
-						memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
-					}
+					jvxData* ptrTo = dbgFldCopyInputs[i];
+					jvxData* ptrFrom = (jvxData*)buffers_in[i];
+					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
 				}
 			}
-			else
+
+			// This lets Matlab run one frame of processing
+			// ======================================================================================
+			res = CjvxMexCalls::process_buffers_icon(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+			// ======================================================================================
+
+			if (!skipCCode)
 			{
-				return res;
+				for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
+				{
+					jvxData* ptrFrom = dbgFldCopyInputs[i];
+					jvxData* ptrTo = (jvxData*)buffers_in[i];
+					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
+				}
 			}
 		}
 
@@ -192,7 +184,7 @@ public:
 			}
 		}
 
-		if (engaged && config.matlab_debug_enabled && config.matlab_profiling_enabled)
+		if (engaged && config.matlab_profiling_enabled)
 		{
 			// Profiler step not necessary requires c code execution
 			CjvxMexCallsProfiler::profile_step_in_process();
