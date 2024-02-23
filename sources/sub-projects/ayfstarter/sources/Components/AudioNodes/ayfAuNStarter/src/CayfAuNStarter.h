@@ -57,6 +57,13 @@ public:
 	// Step III: Define a property-set callback
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_async_set);
 
+
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+#include "mcg_exports_project_prototypes.h"	
+	void initExternalCall();
+	void terminateExternalCall();
+#endif
+
 };
 
 #ifdef JVX_PROJECT_NAMESPACE

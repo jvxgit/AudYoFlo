@@ -1,8 +1,13 @@
-function [jvx_handle, jvx_out_frame] =jvxProcessOffline_local(jvx_handle, jvx_in_frame)
+function [jvx_handle, jvx_out_frame_m] =jvxProcessOffline_local(jvx_handle, jvx_in_frame)
     
-% Obtain processing handle
-global inProcessing; % <- access to the current processing data struct, frame counter etc.
-global jvx_host_call_global; % <- access to the underlying AudYoFlo host
+% Access to the host
+global jvx_host_call_global; 
 
 % Realize talkthrough
-jvx_out_frame = jvx_in_frame * jvx_handle.volume;
+% Version I: C function version
+[a, jvx_out_frame_c] = jvx_host_call_global('external_call', 'CayfAuNStarter', 'ayf_starter_lib_process', jvx_in_frame);
+
+% Version II: Matlab version
+jvx_out_frame_m = jvx_in_frame * jvx_handle.volume;
+
+% Optional: compare both outputs!

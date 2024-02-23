@@ -62,8 +62,12 @@ if(JVX_USE_PART_MATLAB)
 	set(LOCAL_START_SCRIPT_MATLAB_SCRIPT_NAME "ayfStarter-mat")
 	set(LOCAL_START_SCRIPT_MATLAB ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${JVX_OS}/start_mat)
 
+	set(JVX_MCG_LOCAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mcg/exports_project.mcg)
+
 	# Activate the secondary Matlab project
 	JVX_ACTIVATE_VERSION_MATLAB(${PROJECT_NAME} JVX_EXTERNAL_CALL_ENABLED)
+
+	# message(FATAL_ERROR "Hier")
 endif()
 
 
