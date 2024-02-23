@@ -45,6 +45,10 @@ class CayfAuNStarter: public AYF_AUDIO_NODE_BASE_CLASS, public genStarter_node
 protected:
 	struct ayf_starter processing_lib;
 
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+	struct ayf_starter_data_debug* processing_lib_dbg = nullptr;
+#endif
+
 public:
 	JVX_CALLINGCONVENTION CayfAuNStarter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CayfAuNStarter();	
@@ -64,9 +68,13 @@ public:
 
 
 #ifdef JVX_EXTERNAL_CALL_ENABLED
+
 #include "mcg_exports_project_prototypes.h"	
-	void initExternalCall();
-	void terminateExternalCall();
+	void initExternalCall() override;
+	void terminateExternalCall() override;
+	
+	jvxErrorType local_allocate_profiling() override;
+	jvxErrorType local_deallocate_profiling() override;
 #endif
 
 };

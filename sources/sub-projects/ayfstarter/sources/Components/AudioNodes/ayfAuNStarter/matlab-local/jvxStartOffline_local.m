@@ -34,5 +34,5 @@ function [ jvx_handle ] = jvxStartOffline_local( ...
     jvx_handle.jvx_add_hints = jvx_add_hints;
     
     % Initialize volume level
-    jvx_handle.volume = 0.1;
+    jvx_handle.volume = 1.0;
     

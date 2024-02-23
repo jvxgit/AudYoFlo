@@ -23,6 +23,9 @@ include_directories(
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/ayfstarterlib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarterlib.c
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/ayfstarterlib_debug.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarterlib_debug.c
   )
 
 set(LOCAL_LIBS jvx-dsp-base_static)
@@ -33,4 +36,10 @@ set(BUILD_STATIC TRUE)
 set(IS_C_LIB TRUE)
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
 
+include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+# Version with testpoints
+set(JVX_TARGET_NAME ${PROJECT_NAME}tp_static)
+set(JVX_TARGET_NAME_STATIC ${PROJECT_NAME}tp_static)
+set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_ALLOW_PROFILER_DATA_MACROS")
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

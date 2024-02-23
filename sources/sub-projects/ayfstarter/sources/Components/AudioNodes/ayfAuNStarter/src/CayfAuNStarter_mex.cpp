@@ -6,8 +6,7 @@ namespace JVX_PROJECT_NAMESPACE {
 
 #include "mcg_exports_project.h"
 
-	void
-		CayfAuNStarter::initExternalCall()
+	void CayfAuNStarter::initExternalCall()
 	{
 		std::string nameRegComponent;
 
@@ -24,8 +23,7 @@ namespace JVX_PROJECT_NAMESPACE {
 		initExternalCallhandler(_theExtCallHandler, static_cast<IjvxExternalCallTarget*>(this), _theExtCallObjectName);
 	}
 
-	void
-		CayfAuNStarter::terminateExternalCall()
+	void CayfAuNStarter::terminateExternalCall()
 	{
 		// Unregister all local functions
 		terminateExternalCallhandler(_theExtCallHandler);
@@ -46,7 +44,7 @@ namespace JVX_PROJECT_NAMESPACE {
 			return JVX_ERROR_INVALID_SETTING;
 		}
 
-		ayf_starter_init(&handle);
+		ayf_starter_init(&handle, dimInX0);
 		
 		handle.prmAsync.volume = processing_lib.prmAsync.volume;
 
@@ -55,6 +53,40 @@ namespace JVX_PROJECT_NAMESPACE {
 		ayf_starter_process(&handle, paramIn0, paramOut0, dimInY0, dimOutY0, dimInX0);
 
 		ayf_starter_postprocess(&handle);
+
+		return JVX_NO_ERROR;
+	}
+
+	jvxErrorType CayfAuNStarter::local_allocate_profiling()
+	{
+		jvxSize i;
+		jvxCBitField spec = 0;
+		jvx_bitFClear(spec);
+
+		for (i = 0; i < genStarter_node::develop.config.testpoints.value.entries.size(); i++)
+		{
+			if (jvx_bitTest(genStarter_node::develop.config.testpoints.value.selection(), i))
+			{
+				jvx_bitSet(spec, i);
+			}
+		}
+
+		JVX_SAFE_ALLOCATE_OBJECT_CPP_Z(processing_lib_dbg, struct ayf_starter_data_debug);
+		processing_lib.develop.dbgHandler = processing_lib_dbg;
+
+		ayf_starter_data_debug_prepare(processing_lib.develop.dbgHandler, &processing_lib, spec,
+			CjvxMexCallsProfiler::jvx_register_entry_profiling_data_cb, reinterpret_cast<jvxHandle*>(static_cast<CjvxMexCallsProfiler*>(this)));
+
+		return JVX_NO_ERROR;
+	}
+
+	jvxErrorType CayfAuNStarter::local_deallocate_profiling()
+	{
+		ayf_starter_data_debug_postprocess(processing_lib.develop.dbgHandler,
+			CjvxMexCallsProfiler::jvx_unregister_entry_profiling_data_cb, reinterpret_cast<jvxHandle*>(static_cast<CjvxMexCallsProfiler*>(this)));
+		JVX_SAFE_DELETE_OBJECT(processing_lib_dbg);
+
+		processing_lib.develop.dbgHandler = nullptr;
 
 		return JVX_NO_ERROR;
 	}

@@ -26,7 +26,7 @@ CayfAuNStarter::activate()
 	jvxErrorType res = AYF_AUDIO_NODE_BASE_CLASS::activate();
 	if (res == JVX_NO_ERROR)
 	{
-		ayf_starter_init(&processing_lib);
+		ayf_starter_init(&processing_lib, 128);
 
 		// Added for step III
 		genStarter_node::init_all();
@@ -41,7 +41,8 @@ CayfAuNStarter::activate()
 #ifdef JVX_EXTERNAL_CALL_ENABLED
 		genStarter_node::associate__develop__config(static_cast<CjvxProperties*>(this), 
 			&config.skip_involve_ccode, 1,
-			&config.matlab_profiling_enabled, 1);
+			&config.matlab_profiling_enabled, 1,
+			&processing_lib.prmInit.bsize, 1);
 #endif
 
 	}
@@ -78,6 +79,7 @@ CayfAuNStarter::local_prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// jvxErrorType res = AYF_AUDIO_NODE_NODE_CLASS::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	// if (res != JVX_NO_ERROR) return res; 
 	// <- no longer in use as this call is in template class already
+	processing_lib.prmInit.bsize = _common_set_icon.theData_in->con_params.buffersize;
 	return ayf_starter_prepare(&processing_lib);
 }
 

@@ -6,8 +6,15 @@ global jvx_host_call_global;
 % Realize talkthrough
 % Version I: C function version
 [a, jvx_out_frame_c] = jvx_host_call_global('external_call', 'CayfAuNStarter', 'ayf_starter_lib_process', jvx_in_frame);
-
+       
 % Version II: Matlab version
 jvx_out_frame_m = jvx_in_frame * jvx_handle.volume;
 
-% Optional: compare both outputs!
+% Obtain profiling handle
+global hdl_profile_data;
+if(~isempty(hdl_profile_data) && isfield(hdl_profile_data, 'tp'))
+    if(jvxBitField.jvx_test(hdl_profile_data.tp.tokenTp, 0))
+        hdl_profile_data.tp.starter_tp0_m = jvx_out_frame_m(1,:);
+    end
+end
+

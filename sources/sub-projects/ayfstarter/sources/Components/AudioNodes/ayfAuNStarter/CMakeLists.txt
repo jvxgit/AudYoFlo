@@ -22,12 +22,13 @@ set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
 set(LOCAL_PCG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/pcg/exports_node.pcg)
 set(LOCAL_PCG_FILE_OPTIONS -I ${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}//ayfstarterlib/pcg) 
 
-set(LOCAL_LIBS 
-	jvx-dsp_static
-	ayfstarterlib_static
+set(LOCAL_LIBS_COMMON 
+	jvx-dsp_static	
 	jvx-component-templates-base_static
 	)
 	
+set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlib_static)
+
 set(IS_JVX_COMPONENT TRUE)
 
 #================================= Step IV =================================
@@ -68,6 +69,9 @@ if(JVX_USE_PART_MATLAB)
 	set(LOCAL_START_SCRIPT_MATLAB ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${JVX_OS}/start_mat)
 
 	set(JVX_MCG_LOCAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mcg/exports_project.mcg)
+
+	# Add the version with testpoints
+	set(LOCAL_LIBS ${LOCAL_LIBS_COMMON} ayfstarterlibtp_static)
 
 	# Activate the secondary Matlab project
 	JVX_ACTIVATE_VERSION_MATLAB(${PROJECT_NAME} JVX_EXTERNAL_CALL_ENABLED)

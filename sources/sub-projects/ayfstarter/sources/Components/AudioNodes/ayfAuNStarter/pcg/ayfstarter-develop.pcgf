@@ -22,5 +22,22 @@ GROUP develop
 			ASSOCIATE_EXTERNAL = "yes";
 			INIT_SET = 0;
 		};
+
+		SECTION testpoints
+		{
+			DESCRIPTION = "Definition of testpoints";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"TP0 - output"};
+			SELECTION_LIST_SELECTED = {"no"};
+			SELECTION_LIST_EXCLUSIVE = {"no"}; 
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};  
+		SECTION bsizeSignal
+		{
+			DESCRIPTION = "Expose buffersize for data debugging";
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			ASSOCIATE_EXTERNAL = "yes";
+			INIT_SET = 0;
+		};
 	};
 };
