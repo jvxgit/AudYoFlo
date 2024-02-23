@@ -191,7 +191,7 @@ public:
 		}
 
 		// Forward calling chain
-		return fwd_process_buffers_icon(mt_mask, idx_stage);
+		return T::fwd_process_buffers_icon(mt_mask, idx_stage);
 	};
 };
 
