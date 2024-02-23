@@ -29,7 +29,12 @@ extern "C"
 #include "ayfstarterlib.h"
 }
 
+// Different pcg files for regular and matlab version of audio node
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+#include "pcg_exports_nodem.h"
+#else
 #include "pcg_exports_node.h"
+#endif
 
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {

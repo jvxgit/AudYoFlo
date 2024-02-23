@@ -42,6 +42,11 @@ if(JVX_USE_PART_MATLAB)
 	# Add all Matlab specific extensions
 	set(LOCAL_SOURCES ${LOCAL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAuNStarter_mex.cpp)
 
+	# Create a dedicated property header and add develop options
+	set(PCGPOSTFIX "m")
+	set(LOCAL_PCG_FILE_OPTIONS ${LOCAL_PCG_FILE_OPTIONS} -D JVX_COMPILE_FOR_DEVELOP) 
+
+
 	# Setup namespaces
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS_COPY};JVX_PROJECT_NAMESPACE=AYFSTARTERM")
 

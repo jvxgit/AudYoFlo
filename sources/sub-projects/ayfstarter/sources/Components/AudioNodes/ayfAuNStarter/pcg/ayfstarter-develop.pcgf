@@ -1,0 +1,19 @@
+// ayfstarter-develop.pcgf
+GROUP develop
+{
+	SECTION config
+	{
+		DESCRIPTION = "Properties for development";			
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};			
+
+		SECTION skipInvolveCCode
+		{
+			DESCRIPTION = "Option to skip the c-code implementation in Matlab test runs";
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			ASSOCIATE_EXTERNAL = "yes";
+			INIT_SET = 0;
+		};
+	};
+};

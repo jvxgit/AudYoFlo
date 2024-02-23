@@ -37,6 +37,11 @@ CayfAuNStarter::activate()
 			&processing_lib.prmAsync.volume, 1);
 
 		genStarter_node::register_callbacks(static_cast<CjvxProperties*>(this), cb_async_set, this);
+
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+		genStarter_node::associate__develop__config(static_cast<CjvxProperties*>(this), &config.skipInvolveCCode, 1);
+#endif
+
 	}
 	return res;
 }
@@ -47,6 +52,9 @@ CayfAuNStarter::deactivate()
 	jvxErrorType res = AYF_AUDIO_NODE_BASE_CLASS::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+		genStarter_node::deassociate__develop__config(static_cast<CjvxProperties*>(this));
+#endif
 		// Added for step III
 		genStarter_node::unregister_callbacks(static_cast<CjvxProperties*>(this));
 		genStarter_node::deassociate__properties(static_cast<CjvxProperties*>(this));

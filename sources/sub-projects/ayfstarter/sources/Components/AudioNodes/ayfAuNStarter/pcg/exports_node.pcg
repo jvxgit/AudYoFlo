@@ -8,4 +8,9 @@ SECTION PROPERTIES
 		GENERATE_ENTRIES_CONFIG_FILE = "yes";
 		include "ayfstarterlib.pcgf"; 
 	};
+
+	
+	ifdef JVX_COMPILE_FOR_DEVELOP
+		include "ayfstarter-develop.pcgf";
+	endif
 };
