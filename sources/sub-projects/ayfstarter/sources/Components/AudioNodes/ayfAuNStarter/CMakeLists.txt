@@ -61,7 +61,7 @@ if(JVX_USE_PART_MATLAB)
 	## Generate startscript
 
 	# Add a path to start script
-	set(JVX_MATLAB_ORIGIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../jvxLibraries/jvx-matlab-testscripts")
+	set(JVX_MATLAB_ORIGIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Libraries/ayfstarter-matlab-testscripts")
 	
 	# set the origin of the template
 	set(LOCAL_START_SCRIPT_MATLAB_SCRIPT_NAME "ayfStarter-mat")

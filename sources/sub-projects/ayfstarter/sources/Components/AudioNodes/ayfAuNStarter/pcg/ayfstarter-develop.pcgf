@@ -15,5 +15,12 @@ GROUP develop
 			ASSOCIATE_EXTERNAL = "yes";
 			INIT_SET = 0;
 		};
+		SECTION involveProfiling
+		{
+			DESCRIPTION = "Option to involve profiling in Matlab";
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			ASSOCIATE_EXTERNAL = "yes";
+			INIT_SET = 0;
+		};
 	};
 };

@@ -39,7 +39,9 @@ CayfAuNStarter::activate()
 		genStarter_node::register_callbacks(static_cast<CjvxProperties*>(this), cb_async_set, this);
 
 #ifdef JVX_EXTERNAL_CALL_ENABLED
-		genStarter_node::associate__develop__config(static_cast<CjvxProperties*>(this), &config.skipInvolveCCode, 1);
+		genStarter_node::associate__develop__config(static_cast<CjvxProperties*>(this), 
+			&config.skip_involve_ccode, 1,
+			&config.matlab_profiling_enabled, 1);
 #endif
 
 	}
