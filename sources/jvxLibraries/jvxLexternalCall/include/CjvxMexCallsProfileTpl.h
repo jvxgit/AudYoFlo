@@ -12,8 +12,8 @@ class CjvxMexCallsProfileTpl : public CjvxMexCallsTpl<T>, public CjvxMexCallsPro
 protected:
 	struct
 	{
-		jvxCBool skipInvolveCCode = c_false;
-		jvxBool matlab_profiling_enabled = false;		
+		jvxCBool skip_involve_ccode = c_false;
+		jvxCBool matlab_profiling_enabled = c_false;		
 	} config;	
 
 	//! temporary fields for parallel processing C and Matlab
@@ -116,6 +116,11 @@ public:
 		jvxBool engaged = false;
 		jvxBool skipCCode = false;
 
+		if (config.skip_involve_ccode)
+		{
+			skipCCode = true;
+		}
+
 		// Pass control to Matlab processing	
 
 		// Check if checkbox in Matlab processing was checked
@@ -138,12 +143,7 @@ public:
 			{
 				// Run this command only once!! Need to put it here since processing information is not available in "prepare"!!
 				CjvxMexCallsProfiler::profile_start_in_process();
-			}
-
-			if (config.skipInvolveCCode)
-			{
-				skipCCode = true;
-			}
+			}			
 
 			if (!skipCCode)
 			{

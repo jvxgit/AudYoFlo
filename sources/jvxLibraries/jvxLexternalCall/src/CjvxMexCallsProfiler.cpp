@@ -125,7 +125,9 @@ CjvxMexCallsProfiler::profile_config_on_prepare()
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resM = JVX_NO_ERROR;
 	debugStartDone = false;
-	std::string command = "global " + CjvxMexCallsProfiler::varNameHdlMatlab + "; " + CjvxMexCallsProfiler::varNameHdlMatlab + " = " + CjvxMexCallsProfiler::commandProfileConfig + "(); ";
+	std::string command = "global " + CjvxMexCallsProfiler::varNameHdlMatlab + "; " + 
+		CjvxMexCallsProfiler::varNameHdlMatlab + " = " + 
+		CjvxMexCallsProfiler::commandProfileConfig + "(" + CjvxMexCallsProfiler::varNameHdlMatlab + "); ";
 	resM = _theExtCallHandler->executeExternalCommand(command.c_str());
 	if (resM != JVX_NO_ERROR)
 	{

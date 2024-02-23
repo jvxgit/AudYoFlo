@@ -1,4 +1,4 @@
-function [hdl_profile_data] = jvxProfileNeleStart(hdl_profile_data)
+function [hdl] = jvxProfileStart(hdl)
 
 	global inProcessing;
 	hdl.nFrames = inProcessing.in_frames;

@@ -41,6 +41,7 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 	jvxUInt32* dat_uint32 = NULL;
 	jvxUInt16* dat_uint16 = NULL;
 	jvxUInt8* dat_uint8 = NULL;
+	mxLogical* dat_logical = NULL;
 
 	jvxData* jvx_data = NULL;
 	jvxInt64* jvx_int64 = NULL;
@@ -94,6 +95,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 	else if (mxIsUint8(prhs))
 	{
 		dat_uint8 = (jvxUInt8*)mxGetData(prhs);
+	}
+	else if (mxIsLogical(prhs))
+	{		
+		dat_logical = (mxLogical*)mxGetData(prhs);
 	}
 
 	// Now, convert
@@ -167,6 +172,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_data, N, jvxData, );
 		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_data, N, jvxData, );
+		}
 		else if (dat_uint16)
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_data, N, jvxData, );
@@ -209,6 +218,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		else if (dat_uint32)
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint32, jvx_sz, N, jvxData, JVX_DATA2SIZE);
+		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_sz, N, jvxSize, );
 		}
 		else if (dat_uint16)
 		{
@@ -257,6 +270,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_int64, N, jvxData, JVX_DATA2INT64);
 		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_int64, N, jvxInt64, );
+		}
 		else if (dat_uint8)
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int64, N, jvxData, JVX_DATA2INT64);
@@ -299,6 +316,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		else if (dat_uint16)
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_int32, N, jvxData, JVX_DATA2INT32);
+		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_int32, N, jvxInt32, );
 		}
 		else if (dat_uint8)
 		{
@@ -343,6 +364,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		{
 			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint16, jvx_int16, N, jvxData, JVX_DATA2INT16, 0x7FFF, -0x7FFF);
 		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_int16, N, jvxInt16, );
+		}
 		else if (dat_uint8)
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_int16, N, jvxData, JVX_DATA2INT16);
@@ -381,6 +406,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		else if (dat_uint32)
 		{
 			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_int8, N, jvxData, JVX_DATA2INT8, 0x7F, -0x7F);
+		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_int8, N, jvxInt8, );
 		}
 		else if (dat_uint16)
 		{
@@ -430,6 +459,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
 		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_uint64, N, jvxUInt64, );
+		}
 		else if (dat_uint8)
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint64, N, jvxData, JVX_DATA2UINT64);
@@ -473,6 +506,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint16, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
 		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_uint32, N, jvxUInt32, );
+		}
 		else if (dat_uint8)
 		{
 			JVX_CONVERSION_LOOP(failedTransfer, dat_uint8, jvx_uint32, N, jvxData, JVX_DATA2UINT32);
@@ -511,6 +548,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		else if (dat_uint32)
 		{
 			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_uint16, N, jvxData, JVX_DATA2UINT16, 0xFFFF, 0);
+		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_uint16, N, jvxUInt16, );
 		}
 		else if (dat_uint16)
 		{
@@ -554,6 +595,10 @@ CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jv
 		else if (dat_uint32)
 		{
 			JVX_CONVERSION_LOOP_LIM(failedTransfer, dat_uint32, jvx_uint8, N, jvxData, JVX_DATA2UINT8, 0xFF, 0);
+		}
+		else if (dat_logical)
+		{
+			JVX_CONVERSION_LOOP(failedTransfer, dat_logical, jvx_uint8, N, jvxUInt8, );
 		}
 		else if (dat_uint16)
 		{

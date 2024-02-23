@@ -1,4 +1,4 @@
-function jvxProfileNeleStop(hdl_profile_data)
+function jvxProfileStop(hdl)
 
 	runAnyway = false;
 	if(hdl.hooks.inUse == true)

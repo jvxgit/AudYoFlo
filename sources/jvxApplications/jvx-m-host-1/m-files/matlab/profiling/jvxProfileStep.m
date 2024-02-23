@@ -1,4 +1,4 @@
-function [hdl_profile_data] = jvxProfileNeleStep(hdl_profile_data)
+function [hdl] = jvxProfileStep(hdl)
 
 	% Get the frame count
 	global inProcessing;
