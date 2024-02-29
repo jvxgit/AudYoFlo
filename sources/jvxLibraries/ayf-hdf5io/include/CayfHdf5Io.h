@@ -46,6 +46,7 @@ public:
 
 	jvxErrorType readDataFromDataSet(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize& numElements);
 	jvxErrorType readDataFromDataSet1Line(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize& numElements, jvxSize idx);
+	jvxErrorType readDataFromDataSetFull(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize& numElements);
 	jvxErrorType readStringFromDataSet(const std::string& dataSet, std::string& onRet);
 
 	jvxErrorType writeDataToDataSet(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize numElements);

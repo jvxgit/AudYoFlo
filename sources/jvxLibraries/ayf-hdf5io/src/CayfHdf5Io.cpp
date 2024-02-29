@@ -23,6 +23,7 @@ public:
 
 hsize_t     offset[H5S_MAX_RANK];
 hsize_t     size[H5S_MAX_RANK];
+hsize_t     sizef[H5S_MAX_RANK];
 hsize_t     maxsize[H5S_MAX_RANK];
 
 #define h5true (htri_t)1
@@ -661,6 +662,108 @@ CayfHdf5Io::readDataFromDataSet1Line(const std::string& dataSet, jvxHandle* bufA
 
 			// Now finalize the hyperslab structs
 			H5Sselect_hyperslab(f_space, H5S_SELECT_SET, offset, nullptr, size, nullptr);
+			H5Sselect_hyperslab(sm_space, H5S_SELECT_SET, offset, nullptr, size, nullptr);
+			H5Dread(dset,
+				mem_type_id, // single element memory type
+				sm_space /*H5S_ALL*/, // memory space output buffer
+				f_space/*H5S_ALL*/, // Memory space file
+				H5P_DEFAULT, bufCopy);
+
+			//hid_t p_type = H5Tget_native_type(f_type, H5T_DIR_DEFAULT);
+			// sndims = H5Sget_simple_extent_ndims(f_space);
+			// H5Sget_simple_extent_dims(f_space, total_size, NULL);
+			//H5S_class_t space_type = H5Sget_simple_extent_type(f_space);
+			// if (space_type == H5S_SIMPLE || space_type == H5S_SCALAR) {
+			H5Tclose(mem_type_id);
+			H5Tclose(f_type);
+			H5Sclose(f_space);
+			H5Sclose(sm_space);
+			H5Dclose(dset);
+
+			if (conversionReq)
+			{
+				jvx::helper::genericDataBufferConvert(&bufCopy, elm->second->format, &bufArg, form, 1, numElements);
+				jvx::helper::genericDataBufferDeallocate(bufCopy, elm->second->format);
+			}
+		}
+		bufCopy = nullptr;
+	}
+	return res;
+
+exit_error:
+	return res;
+}
+
+jvxErrorType
+CayfHdf5Io::readDataFromDataSetFull(const std::string& dataSet, jvxHandle* bufArg, jvxDataFormat form, jvxSize& numElements)
+{
+	jvxSize i;
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	auto elm = toc.find(dataSet);
+	if (elm != toc.end())
+	{
+		jvxHandle* bufCopy = bufArg;
+		jvxBool conversionReq = false;
+		res = JVX_ERROR_INVALID_ARGUMENT;
+		if (form != elm->second->format)
+		{
+			conversionReq = true;
+			bufCopy = jvx::helper::genericDataBufferAllocate1D(elm->second->format, numElements);
+		}
+
+		if (bufCopy)
+		{
+			// Constraint: the format must match!!
+
+			res = JVX_ERROR_OPEN_FILE_FAILED;
+
+			// Open the dataset
+			hid_t dset = H5Dopen(((CayfHdf5Io_prv*)hdf5Private)->file,
+				dataSet.c_str(), 0);
+			if (dset < 0)
+			{
+				goto exit_error;
+			}
+			res = JVX_NO_ERROR;
+
+			// Specify to copy elements of the native type!
+			hid_t f_type = H5Dget_type(dset);
+			hid_t mem_type_id = H5Tget_native_type(f_type, H5T_DIR_DEFAULT);
+
+			// Allocate full range file space
+			hid_t f_space = H5Dget_space(dset);
+
+			// And it should be a simple type!!
+			H5S_class_t space_type = H5Sget_simple_extent_type(f_space);
+
+			// Prepare the space to copy all elements
+			int dims = H5Sget_simple_extent_dims(f_space, size, NULL);
+			int numAll = 1;
+			for (i = 0; i < dims; i++)
+			{
+				numAll *= size[i];
+			}
+
+			if (numAll != numElements)
+			{
+				res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+				H5Tclose(mem_type_id);
+				H5Tclose(f_type);
+				H5Sclose(f_space);
+				H5Dclose(dset);
+				goto exit_error;
+			}
+
+			// Here, specify the line!! Copy just that one line!
+			offset[1] = 0;
+
+			// Create a simple linear space
+			hsize_t sm_nelmts = numElements;
+			hid_t sm_space = H5Screate_simple(1, &sm_nelmts, NULL);
+
+			// Now finalize the hyperslab structs
+			H5Sselect_hyperslab(f_space, H5S_SELECT_SET, offset, nullptr, size, nullptr);
+			size[0] = sm_nelmts;
 			H5Sselect_hyperslab(sm_space, H5S_SELECT_SET, offset, nullptr, size, nullptr);
 			H5Dread(dset,
 				mem_type_id, // single element memory type
