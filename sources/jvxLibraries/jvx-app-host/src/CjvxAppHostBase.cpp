@@ -183,7 +183,42 @@ JVX_APPHOST_CLASSNAME::shutdownHostFactory(jvxApiString* errorMessage, jvxHandle
 	// HINT HK 21.04.2023: Changed this part: it browsed through all components previously but
 	// it is better to handle the automation components after all the others!!!
 	
-	for (i = JVX_COMPONENT_UNKNOWN + 1; i < JVX_MAIN_COMPONENT_LIMIT; i++)
+	for (i = JVX_COMPONENT_UNKNOWN + 1; i < JVX_MAIN_COMPONENT_LIMIT; i++) // Modification -> JVX_COMPONENT_ALL_LIMIT to also take down the automation as last
+	{
+		jvxSize j, k;
+		jvxSize szSlots = 0;
+		jvxSize szSubSlots = 0;
+		jvxComponentType tpParent = JVX_COMPONENT_UNKNOWN;
+		jvxState stat = JVX_STATE_NONE;
+		jvxComponentIdentification tpLoc((jvxComponentType)i, 0, 0);
+
+		this->involvedHost.hHost->number_slots_component_system(tpLoc, &szSlots, NULL, nullptr, nullptr);
+		for (j = 0; j < szSlots; j++)
+		{
+			jvxSize szSubSlots = 0;
+			tpLoc.slotid = j;
+			this->involvedHost.hHost->number_slots_component_system(tpLoc, NULL, &szSubSlots, nullptr, nullptr);
+			for (k = 0; k < szSubSlots; k++)
+			{
+				tpLoc.slotsubid = k;
+				this->involvedHost.hHost->state_selected_component(tpLoc, &stat);
+				if (stat == JVX_STATE_ACTIVE)
+				{
+					this->involvedHost.hHost->deactivate_selected_component(tpLoc);
+					//subWidgets.main.theWidget->inform_inactive(tpLoc);
+				}
+
+				this->involvedHost.hHost->state_selected_component(tpLoc, &stat);
+				if (stat == JVX_STATE_SELECTED)
+				{
+					this->involvedHost.hHost->unselect_selected_component(tpLoc);
+				}
+			}
+		}
+	}
+
+	// Modification HK, 01.03.2024 ->  Run the deactivation also for the system components in reverse order!!
+	for (i = JVX_COMPONENT_ALL_LIMIT-1; i >= JVX_MAIN_COMPONENT_LIMIT; i--) 
 	{
 		jvxSize j, k;
 		jvxSize szSlots = 0;
@@ -237,7 +272,7 @@ JVX_APPHOST_CLASSNAME::shutdownHostFactory(jvxApiString* errorMessage, jvxHandle
 				IjvxSimpleComponent* automation = nullptr;
 				jvxComponentIdentification tp = JVX_COMPONENT_SYSTEM_AUTOMATION;
 				tp.slotid = JVX_SIZE_UNSELECTED;
-				refComp< IjvxSimpleComponent> elmRet = reqRefTool<IjvxSimpleComponent>(tools, tp, JVX_SIZE_UNSELECTED, confHostFeatures->automation.mod_selection);
+				refComp< IjvxSimpleComponent> elmRet = reqRefTool<IjvxSimpleComponent>(tools, tp, JVX_SIZE_UNSELECTED, modSelectionStringAutomate.c_str());
 				automation = elmRet.cpPtr;
 				involvedHost.hHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, tools);
 				if (automation)
@@ -565,11 +600,28 @@ JVX_APPHOST_CLASSNAME::on_components_before_configure()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (confHostFeatures)
-	{
+	{		
 		// Here we have the chance to load the automation references from a compnent of type JVX_COMPONENT_SYSTEM_AUTOMATE.
 		// The interfaces must then be accepted.	
 		// HK 19.01.2022: Changed the order: need automation already before starting to load the components
 		if (confHostFeatures->automation.mod_selection)
+		{
+			modSelectionStringAutomate = confHostFeatures->automation.mod_selection;
+			std::cout << __FUNCTION__ << " -- Accepted automation <" << modSelectionStringAutomate << "> from host config feature struct." << std::endl;
+		}
+		else
+		{
+			const char** ptrComp = confHostFeatures->lst_ModulesOnStart[JVX_COMPONENT_SYSTEM_AUTOMATION];
+			if (ptrComp)
+			{
+				if (ptrComp[0] != nullptr)
+				{
+					modSelectionStringAutomate = ptrComp[0];
+					std::cout << __FUNCTION__ << " -- Accepted automation <" << modSelectionStringAutomate << "> from list of modules on start." << std::endl;
+				}
+			}
+		}
+		if(!modSelectionStringAutomate.empty())
 		{
 			IjvxToolsHost* tools = nullptr;
 			involvedHost.hHost->request_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle**>(&tools));
@@ -578,7 +630,7 @@ JVX_APPHOST_CLASSNAME::on_components_before_configure()
 				IjvxSimpleComponent* automation = nullptr;
 				jvxComponentIdentification tp = JVX_COMPONENT_SYSTEM_AUTOMATION;
 				tp.slotid = JVX_SIZE_UNSELECTED;
-				refComp< IjvxSimpleComponent> elmRet = reqRefTool<IjvxSimpleComponent>(tools, tp, JVX_SIZE_UNSELECTED, confHostFeatures->automation.mod_selection);
+				refComp< IjvxSimpleComponent> elmRet = reqRefTool<IjvxSimpleComponent>(tools, tp, JVX_SIZE_UNSELECTED, modSelectionStringAutomate.c_str());
 				automation = elmRet.cpPtr;
 				involvedHost.hHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, tools);
 				if (automation)

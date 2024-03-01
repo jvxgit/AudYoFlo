@@ -39,6 +39,8 @@ protected:
 	IjvxReportSystem* if_report_automate_ = nullptr;
 	IjvxAutoDataConnect* if_autoconnect_ = nullptr;	
 
+	std::string modSelectionStringAutomate;
+
 public:
 	JVX_APPHOST_CLASSNAME();
 	~JVX_APPHOST_CLASSNAME();
