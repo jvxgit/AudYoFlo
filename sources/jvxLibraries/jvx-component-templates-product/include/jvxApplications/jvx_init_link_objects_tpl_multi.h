@@ -49,6 +49,10 @@ extern "C"
 		{
 		case JVX_COMPONENT_AUDIO_TECHNOLOGY:
 
+#ifdef JVX_AUDIO_TECHNOLOGIES_PRE_DEFINE
+			JVX_AUDIO_TECHNOLOGIES_PRE_DEFINE
+#endif
+
 #ifdef JVX_USE_PORTAUDIO
 			if (id == cnt)
 			{

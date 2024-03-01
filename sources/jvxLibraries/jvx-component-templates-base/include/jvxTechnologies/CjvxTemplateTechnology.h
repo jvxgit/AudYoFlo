@@ -64,7 +64,7 @@ protected:
 	 * This must be false in all cases other than 2). 
 	 */
 	jvxBool allowMultipleInstances = false;
-	
+
 public:
 
 	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
@@ -111,6 +111,9 @@ public:
 					JVX_COMPONENT_ACCESS_SUB_COMPONENT,
 					(jvxComponentType)(_common_set.theComponentType.tp + 1),
 					"", NULL);
+				
+				// Run init function for device
+				local_init(newDevice);
 
 				// Whatever to be done for initialization
 				oneDeviceWrapper elm;
@@ -163,6 +166,9 @@ public:
 				T* newDevice = new T(deviceName.c_str(), false, _common_set.theDescriptor.c_str(), _common_set.theFeatureClass,
 					_common_set.theModuleName.c_str(), JVX_COMPONENT_ACCESS_SUB_COMPONENT,
 					(jvxComponentType)(_common_set.theComponentType.tp + 1), "", NULL);
+
+				// Run init function for device
+				local_init(newDevice);
 
 				// Store in list for requested devices
 				newElm.new_dev = newDevice;
@@ -285,6 +291,10 @@ public:
 		return res;
 	};	
 
+	virtual void local_init(T* newDevice) 
+	{
+	};
+
 #include "codeFragments/simplify/jvxProperties_simplify.h"
 
 #define JVX_STATE_MACHINE_DEFINE_PREPAREPOSTPROCESS_UNSUPPORTED
@@ -308,6 +318,27 @@ public:
 
 	// ===========================================================================================
 	// ===========================================================================================
+};
+
+#ifdef JVX_AUDIO_TECHNOLOGY_GENERIC_INIT_PTR 
+JVX_AUDIO_TECHNOLOGY_GENERIC_INIT_PTR parentPointerDevice = nullptr;
+#endif
+
+template <class T, class S> class CjvxTemplateTechnologyInit : public CjvxTemplateTechnology<T>
+{
+protected:
+	S passThisInit = nullptr;
+
+public:
+
+	JVX_CALLINGCONVENTION CjvxTemplateTechnologyInit(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+		CjvxTemplateTechnology<T>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	{};
+
+	virtual void local_init(T* newDevice) override
+	{
+		newDevice->init(passThisInit);
+	};
 };
 
 #endif

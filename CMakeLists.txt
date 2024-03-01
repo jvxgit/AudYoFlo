@@ -585,6 +585,7 @@ endif()
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/network/jvxAuTNetwork_slave
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFileReader
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFileWriter
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTSyncClock
 		)
 		
   if(JVX_USE_PART_ASIO)
