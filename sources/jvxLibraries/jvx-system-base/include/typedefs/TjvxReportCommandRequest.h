@@ -264,6 +264,7 @@ public:
 
 class CjvxReportCommandRequest_ss : public CjvxReportCommandRequest
 {
+protected:
 	jvxStateSwitch sswitch_value = JVX_STATE_SWITCH_NONE;
 
 public:
@@ -311,6 +312,67 @@ public:
 		if (ssRet)
 		{
 			*ssRet = sswitch_value;
+		}
+	};
+};
+
+class CjvxReportCommandRequest_ss_id : public CjvxReportCommandRequest_ss
+{
+	 std::string ident_str;
+
+public:
+
+	CjvxReportCommandRequest_ss_id(jvxReportCommandRequest reqArg, jvxComponentIdentification cpArg, jvxStateSwitch ssArg,
+		const char* ident = nullptr,
+		jvxReportCommandBroadcastType broadArg = jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_NO_FURTHER,
+		jvxHandle* userDataArg = NULL) :
+		CjvxReportCommandRequest_ss(reqArg, cpArg, ssArg, broadArg, userDataArg)
+	{
+		type = jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID;
+		if (ident)
+		{
+			ident_str = ident;
+		}
+	};
+
+	~CjvxReportCommandRequest_ss_id()
+	{
+	};
+
+
+	CjvxReportCommandRequest_ss_id(const CjvxReportCommandRequest& inst) :
+		CjvxReportCommandRequest_ss(inst)
+	{
+		const CjvxReportCommandRequest_ss_id* spec = NULL;
+		inst.specialization(reinterpret_cast<const jvxHandle**>(&spec),
+			jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID);
+		if (spec)
+		{
+			jvxApiString astr;
+			spec->ident(&astr);
+			ident_str = astr.std_str();
+
+			spec->sswitch(&sswitch_value);
+		}
+	}
+	virtual jvxErrorType specialization(const jvxHandle** dat, jvxReportCommandDataType tp) const override
+	{
+		if (tp == jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID)
+		{
+			if (dat)
+			{
+				*dat = static_cast<const CjvxReportCommandRequest_ss_id*>(this);
+			}
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_UNSUPPORTED;
+	};
+
+	virtual void ident(jvxApiString* astr) const
+	{
+		if (astr)
+		{
+			astr->assign(ident_str);
 		}
 	};
 };

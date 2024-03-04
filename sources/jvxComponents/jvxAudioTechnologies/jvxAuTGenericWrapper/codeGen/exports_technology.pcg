@@ -305,7 +305,14 @@ SECTION PROPERTIES
 			DESCRIPTOR = "JVX_GENW_NUM_OUTPUT_DUMMIES";
 			GENERATE_ENTRY_CONFIG_FILE = "yes";
 			INIT_SET = 0;
-		};			
+		};	
+
+		SECTION triggerActivateDefaultDevice
+		{
+			DESCRIPTION = "Trigger activation of default device at startup";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+		};		
 		
 	};
 		

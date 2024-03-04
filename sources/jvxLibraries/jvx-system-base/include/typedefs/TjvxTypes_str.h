@@ -897,7 +897,8 @@ static jvxTextHelpers jvxReportCommandRequest_str[(int)jvxReportCommandRequest::
 	{"cmdreq-proc-dis-cmplt", "JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_DISCONNECT_COMPLETE"},
 	{"cmdreq-req-upd-prop", "JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY"},
 	{"cmdreq-proc-test", "JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS"},
-	{"cmdreq-req-test-chain-run", "JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN"}
+	{"cmdreq-req-test-chain-run", "JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN"},
+	{"cmdreq-cp-sswitch", "JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH"}
 };
 	
 inline const char* jvxReportCommandRequest_txt(jvxReportCommandRequest coReq)
@@ -915,7 +916,8 @@ static jvxTextHelpers jvxReportCommandDataType_str[(int)jvxReportCommandDataType
 	{"cmdreqtp-ident", "JVX_REPORT_COMMAND_TYPE_IDENT"},
 	{"cmdreqtp-uid", "JVX_REPORT_COMMAND_TYPE_UID"},
 	{"cmdreqtp-ss", "JVX_REPORT_COMMAND_TYPE_SS"},
-	{"cmdreqtp-seq", "JVX_REPORT_COMMAND_TYPE_SEQ"}
+	{"cmdreqtp-seq", "JVX_REPORT_COMMAND_TYPE_SEQ"},
+	{"cmdreqtp-ss-id", "JVX_REPORT_COMMAND_TYPE_SS_ID"}
 };
 
 inline const char* jvxReportCommandDataType_txt(jvxReportCommandDataType coTp)

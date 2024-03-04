@@ -6981,6 +6981,9 @@ CjvxReportCommandRequest* jvx_command_request_copy_alloc(const CjvxReportCommand
 	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS:
 		JVX_DSP_SAFE_ALLOCATE_OBJECT(ret, CjvxReportCommandRequest_ss(in));
 		break;
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID:
+		JVX_DSP_SAFE_ALLOCATE_OBJECT(ret, CjvxReportCommandRequest_ss_id(in));
+		break;
 	default:
 		JVX_DSP_SAFE_ALLOCATE_OBJECT(ret, CjvxReportCommandRequest(in));
 	}

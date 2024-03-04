@@ -1236,6 +1236,82 @@ CjvxGenericWrapperTechnology::get_configuration(jvxCallManagerConfiguration* cal
 }
 
 jvxErrorType
+CjvxGenericWrapperTechnology::system_ready()
+{
+	jvxBool anySelected = false;
+
+	if (genGenericWrapper_technology::properties_selected_active.triggerActivateDefaultDevice.value == c_true)
+	{
+		for (auto& elm : _common_tech_set.lstDevices)
+		{
+			jvxState stat = JVX_STATE_NONE;
+			elm.hdlDev->state(&stat);
+			if (stat > JVX_STATE_NONE)
+			{
+				anySelected = true;
+				break;
+			}
+		}
+
+		if (!anySelected)
+		{
+			jvxBool doneSelect = false;
+			jvxSize checkCapsDevices[2] =
+			{
+				(jvxSize)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_DUPLEX_SHIFT,
+				(jvxSize)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_OUTPUT_SHIFT
+			};
+			for (int i = 0; i < 2; i++)
+			{
+				for (auto& elm : _common_tech_set.lstDevices)
+				{
+					jvxDeviceCapabilities caps;
+					elm.hdlDev->capabilities_device(caps);
+					if (jvx_bitTest(caps.capsFlags, checkCapsDevices[i]))
+					{
+						if (jvx_bitTest(caps.flags, (int)jvxDeviceCapabilityFlagsShift::JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT))
+						{
+							jvxApiString nm;
+							jvxComponentIdentification id;
+							elm.hdlDev->name(&nm);
+							elm.hdlDev->request_specialization(nullptr, &id, nullptr);
+							id.slotid = _common_set.theComponentType.slotid;
+							CjvxReportCommandRequest_ss_id req(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH, id, jvxStateSwitch::JVX_STATE_SWITCH_SELECT, nm.c_str());
+							_request_command(req);
+							doneSelect = true;
+							break;
+						}
+					}
+				}
+				if (doneSelect)
+				{
+					break;
+				}
+			}
+
+			if (!doneSelect)
+			{
+				for (auto& elm : _common_tech_set.lstDevices)
+				{
+					jvxDeviceCapabilities caps;
+					elm.hdlDev->capabilities_device(caps);
+					if (jvx_bitTest(caps.flags, (int)jvxDeviceCapabilityFlagsShift::JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT))
+					{
+						jvxApiString nm;
+						elm.hdlDev->name(&nm);
+						CjvxReportCommandRequest_ss_id req(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH, _common_set.theComponentType, jvxStateSwitch::JVX_STATE_SWITCH_SELECT, nm.c_str());
+						_request_command(req);
+						doneSelect = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+	return(JVX_NO_ERROR);
+}
+
+jvxErrorType
 CjvxGenericWrapperTechnology::set_property(
 	jvxCallManagerProperties& callGate,
 	const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,

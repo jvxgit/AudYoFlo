@@ -6,7 +6,7 @@
 
 class CjvxAudioSyncClockTechnology;
 
-class CjvxAudioSyncClockDevice : public CjvxAudioDevice, 	
+class CjvxAudioSyncClockDevice : public CjvxAudioDevice, public IjvxConfigurationDone,
 #ifndef JVX_SYNCED_CLOCK_WINDOWS
 	public IjvxThreads_report,
 #endif
@@ -73,6 +73,10 @@ public:
 		JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
 	// ===================================================================================
+	
+	virtual jvxErrorType JVX_CALLINGCONVENTION done_configuration() override;
+
+	// ===================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_start_icon(
 	    jvxSize pipeline_offset , jvxSize* idx_stage,
@@ -98,6 +102,15 @@ public:
 	jvxErrorType wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
 	jvxErrorType stopped(jvxInt64 timestamp_us) override;
 #endif
+
+
+#define JVX_INTERFACE_SUPPORT_CONFIGURATION_DONE
+#define JVX_INTERFACE_SUPPORT_BASE_CLASS CjvxAudioDevice
+
+#include "codeFragments/simplify/jvxHiddenInterface_simplify.h"
+
+#undef JVX_INTERFACE_SUPPORT_CONFIGURATION_DONE
+#undef JVX_INTERFACE_SUPPORT_BASE_CLASS
 };
 
 #endif

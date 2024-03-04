@@ -160,6 +160,8 @@ public:
 	void start_timer();
 	void stop_timer();
 
+	void trigger_select_device(jvxComponentIdentification id, const std::string& ident);
+
 protected:
 
 	uMainWindow* myParent;

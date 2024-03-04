@@ -185,7 +185,7 @@ CjvxAppHost::attach_configuration_submodule(const char* prefix, IjvxConfiguratio
 }
 
 jvxErrorType
-CjvxAppHost::JVX_CALLINGCONVENTION detach_configuration_submodule(IjvxConfiguration* cfg)
+CjvxAppHost::detach_configuration_submodule(IjvxConfiguration* cfg)
 {
 	auto elm = std::find_if(registeredConfigSubmodules.begin(), registeredConfigSubmodules.end(), [&](const CjvxConfigurationSubModule& elm)
 		{ return elm.cfgRef == cfg; });

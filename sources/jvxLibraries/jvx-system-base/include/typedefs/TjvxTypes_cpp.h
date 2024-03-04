@@ -310,6 +310,7 @@ enum class jvxReportCommandDataType
 	JVX_REPORT_COMMAND_TYPE_UID, // IjvxReportCommandRequest_uid
 	JVX_REPORT_COMMAND_TYPE_SS, // IjvxReportCommandRequest_ss
 	JVX_REPORT_COMMAND_TYPE_SEQ, // IjvxReportCommandRequest_seq
+	JVX_REPORT_COMMAND_TYPE_SS_ID, // IjvxReportCommandRequest_ss_id
 	JVX_REPORT_COMMAND_TYPE_LIMIT
 };
 
@@ -350,6 +351,8 @@ enum class jvxReportCommandRequest
 	JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS, // IjvxReportCommandRequest_uid - contains tested process uid
 
 	JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN,
+
+	JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH, // JVX_REPORT_COMMAND_TYPE_SS
 
 	JVX_REPORT_COMMAND_REQUEST_LIMIT
 };

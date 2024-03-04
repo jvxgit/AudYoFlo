@@ -259,6 +259,7 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 	jvxComponentIdentification cpId = request->origin();
 	jvxSize schedId = JVX_SIZE_UNSELECTED;
 	jvxErrorType resL = JVX_NO_ERROR;
+	jvxBool reqHandled = false;
 
 	// Pass this to the main widget
 	if (request && subWidgets.main.theWidget)
@@ -266,87 +267,49 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 		resL = subWidgets.main.theWidget->report_command_request(*request);
 	}
 
-#if 1
-	reqHandle.request_command_in_main_thread(request);
-
-#else
-
-	switch (tp)
+	// ==========================================================================
+	// Commands which address the UI must be handled here
+	switch (request->datatype())
 	{
-	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_BASE:
-		switch(req)
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID:
+		switch (req)
 		{
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
-			cp = request->origin();
-			if (subWidgets.bridgeMenuComponents)
+		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH:
+		{
+			auto ptrReqSsId = castCommandRequest<CjvxReportCommandRequest_ss_id>(*request);
+			jvxStateSwitch ss = jvxStateSwitch::JVX_STATE_SWITCH_NONE;
+			jvxComponentIdentification id = ptrReqSsId->origin();
+			ptrReqSsId->sswitch(&ss);
+			jvxSize num = 0;
+			jvxApiString astr;
+			jvxApiString nmDev;
+			ptrReqSsId->ident(&astr);
+			switch (ss)
 			{
-				subWidgets.bridgeMenuComponents->updateWindowSingle(cpId);
-			}
-			break;
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
-			cp = request->origin();
-			subWidgets.main.theWidget->inform_update_properties(cp);
-			break;
-		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
+			case JVX_STATE_SWITCH_SELECT:
 
-			jvx_bitZSet(prio, JVX_REPORT_REQUEST_UPDATE_WINDOW_SHIFT);
-			this->updateWindow(prio);
-			break;
-		}
-		break;
-	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
-		request->specialization(reinterpret_cast<const jvxHandle**>(&iface_rm), tp);
-		if (iface_rm)
-		{
-			jvxHandle* userData = request->user_data();
-			schedId = iface_rm->schedule_id();
-			if (involvedHost.hHost)
-			{
-				involvedHost.hHost->request_object_selected_component(cpId, &theObj);
-				if (theObj)
-				{
-					theObj->interface_factory(&theFac);
-					if (theFac)
-					{
-						IjvxSchedule* theSchedule = NULL;
-						theFac->request_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle**>(&theSchedule));
-						if (theSchedule)
-						{
-							theSchedule->schedule_main_loop(schedId, userData);
-							theFac->return_hidden_interface(JVX_INTERFACE_SCHEDULE, reinterpret_cast<jvxHandle*>(theSchedule));
-						}
-						else
-						{
-							jvxApiString astr;
-							theObj->description(&astr);
-							std::cout << __FUNCTION__ << " : Request to re-schedule in main thread failed for object <" << astr.std_str() << ">, reason: JVX_INTERFACE_SCHEDULE not supported." << std::endl;
-						}
-					}
-					involvedHost.hHost->return_object_selected_component(cpId, theObj);
-				}
+				subWidgets.theAudioDialog->trigger_select_device(id, astr.std_str());
+				reqHandled = true;
+				break;
+			default:
+				// Currently not supported!!
+				break;
 			}
 		}
 		break;
-	
-	default:
-		break;
-	}
-
-	if (this->theHostFeatures.automation.if_report_automate)
-	{
-		jvxErrorType resL = JVX_NO_ERROR;
-		jvxReportCommandBroadcastType broad = request->broadcast();
-		switch (broad)
-		{
-		case jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_AUTOMATION:
-			resL = this->theHostFeatures.automation.if_report_automate->request_command(*request);
-			break;
 		}
 	}
 
-	//delete request;
-	jvx_command_request_copy_dealloc(request);
-#endif
+	// ==========================================================================
+	// If not handled before, the command is forwarded to the sub system
+	if (!reqHandled)
+	{
+		reqHandle.request_command_in_main_thread(request);
+	}
+
+	// ==========================================================================
+	// ==========================================================================
+
 }
 
 // ============================================================================

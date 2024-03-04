@@ -28,7 +28,8 @@ enum class jvxWavFileType
 
 // class CjvxGenericWrapperDevice;
 
-class CjvxGenericWrapperTechnology: public JVX_MY_BASE_CLASS_T, public IjvxConfiguration, public IjvxExternalAudioChannels, public genGenericWrapper_technology
+class CjvxGenericWrapperTechnology: public JVX_MY_BASE_CLASS_T, public IjvxConfiguration, 
+	public IjvxExternalAudioChannels, public genGenericWrapper_technology
 {
 	friend CjvxGenericWrapperTechnology_hostRelocator;
 	friend CjvxGenericWrapperDevice;
@@ -84,6 +85,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callConf,
 		IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections)override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION system_ready() override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION register_one_set(jvxBool is_input, jvxSize num_channels, jvxInt32 sRate, jvxSize* register_id, IjvxExternalAudioChannels_data* ref, const char*)override;
 

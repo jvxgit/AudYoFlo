@@ -93,6 +93,11 @@ CjvxAudioSyncClockDevice::init(CjvxAudioSyncClockTechnology* ptr)
 	numInChannelsMax = ptr->genSyncClock_technology::config_select.init_number_in_channels_max.value;
 	numOutChannelsMax = ptr->genSyncClock_technology::config_select.init_number_out_channels_max.value;
 
+	// Set the device capabilities
+	jvx_bitZSet(_common_set_device.caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_DUPLEX_SHIFT);
+	jvx_bitZSet<jvxCBitField16>(_common_set_device.caps.flags, (int)jvxDeviceCapabilityFlagsShift::JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT);
+	_common_set_device.report = static_cast<IjvxDevice_report*>(parentTech);
+
 }
 
 jvxErrorType 
@@ -282,7 +287,11 @@ CjvxAudioSyncClockDevice::core_buffer_run()
 	assert(res == JVX_NO_ERROR);
 }
 
-
+jvxErrorType 
+CjvxAudioSyncClockDevice::done_configuration()
+{
+	return JVX_NO_ERROR;
+}
 
 void
 CjvxAudioSyncClockDevice::timerCallback()

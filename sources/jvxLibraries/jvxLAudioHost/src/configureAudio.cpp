@@ -4559,3 +4559,27 @@ configureAudio::post_allow_timer()
 	preAllowedTimer = false;
 	stop_timer();
 }
+
+
+void 
+configureAudio::trigger_select_device(jvxComponentIdentification id, const std::string& ident)
+{
+	jvxSize num = 0;
+	jvxApiString nmDev;
+
+	tpAll[id.tp].slotid = id.slotid;
+	myParent->involvedHost.hHost->number_components_system(tpAll[id.tp], &num);
+	for (int i = 0; i < num; i++)
+	{
+		myParent->involvedHost.hHost->name_component_system(tpAll[id.tp], i, &nmDev);
+		if (jvx_compareStringsWildcard(ident, nmDev.std_str()))
+		{
+			jvxErrorType res = myParent->involvedHost.hHost->select_component(tpAll[id.tp], i);
+			if (res == JVX_NO_ERROR)
+			{
+				select_device(i);
+			}
+			break;
+		}
+	}
+}

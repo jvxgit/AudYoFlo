@@ -250,6 +250,10 @@ const T* castCommandRequest(const CjvxReportCommandRequest& in)
 	{
 		tp = jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS;
 	}
+	else if (std::is_same<T, CjvxReportCommandRequest_ss_id>::value)
+	{
+		tp = jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID;
+	}
 	in.specialization(reinterpret_cast<const jvxHandle**>(&ret), tp);
 	return ret;
 }
