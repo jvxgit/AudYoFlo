@@ -34,7 +34,19 @@ set(LOCAL_LIBS
 	jvx-helpers-product_static
 
 	jvx-audiocodec-helpers_static
+	
   )
+
+# Special rule for Windows here - the thread timer accuracy is a problem.
+# However, we have an alternative approach to define timers with timerSetEvent
+# For more info, comments are provided at the beginng of <CjvxAudiSyncClockDevice.cpp 
+if(${JVX_OS} MATCHES "windows")
+	set(LOCAL_LIBS ${LOCAL_LIBS}
+		${JVX_SYSTEM_LIBRARIES_WIN_MM} # only for Windows, shpuld be empty otherwise
+	)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_SYNCED_CLOCK_WINDOWS") 
+endif()
+
 
 # set(LOCAL_PCG_FILE_OPTIONS 
 # 	-I ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers/pcg)
