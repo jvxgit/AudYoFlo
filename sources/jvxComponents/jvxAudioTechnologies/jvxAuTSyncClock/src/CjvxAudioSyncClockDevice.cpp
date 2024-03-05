@@ -180,6 +180,7 @@ CjvxAudioSyncClockDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 #ifdef JVX_SYNCED_CLOCK_WINDOWS
+// typedef void (CALLBACK TIMECALLBACK)(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
 void myCallback(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1,DWORD_PTR dw2)
 {
 	CjvxAudioSyncClockDevice* this_pointer = (CjvxAudioSyncClockDevice*)dwUser;
@@ -217,7 +218,7 @@ CjvxAudioSyncClockDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		// Start the time - note that we are allowed to use a maximum of 16 timers according to
 		// https://stackoverflow.com/questions/18637470/how-to-replace-timesetevent-function-without-losing-functionality
 		// in windows!
-		timerId = timeSetEvent(timeOutBuffer_msecs_floor, 0, myCallback, (DWORD_PTR)this, TIME_PERIODIC);
+		timerId = timeSetEvent(timeOutBuffer_msecs_floor, 0, (LPTIMECALLBACK)myCallback, (DWORD_PTR)this, TIME_PERIODIC);
 #else
 		threads.cpPtr->start(timeOutBuffer_msecs_floor, true, true);
 #endif
