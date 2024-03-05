@@ -1622,6 +1622,13 @@ CjvxGenericWrapperDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 			updateDependentVariables_lock(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.globalIdx,
 				CjvxAudioDevice_genpcg::properties_active.inputchannelselection.category, false,
 				JVX_PROPERTY_CALL_PURPOSE_INTERNAL_PASS);
+
+			// Add this code extract here to transfer the new channel selection also to wrapped device!!
+			this->lock_settings();
+			rearrangeChannelMapper_noLock();
+			updateChannelInternal_nolock();
+			this->unlock_settings();
+
 		}
 		else
 		{

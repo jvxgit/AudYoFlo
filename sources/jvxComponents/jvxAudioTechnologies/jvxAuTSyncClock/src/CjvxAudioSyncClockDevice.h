@@ -91,6 +91,17 @@ public:
 	    callback_process_stop_in_lock clbk,
 	    jvxHandle* priv_ptr)override;
 
+	// ===================================================================================
+
+	jvxErrorType set_property(jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
+		const jvx::propertyAddress::IjvxPropertyAddress& ident,
+		const jvx::propertyDetail::CjvxTranferDetail& trans);
+
+	void updateDependentProperties();
+
+	// ===================================================================================
+
 	void core_buffer_run();
 
 	void timerCallback();

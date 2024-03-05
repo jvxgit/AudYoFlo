@@ -110,22 +110,24 @@ CjvxAudioSyncClockDevice::activate()
 	{
 		// Should all be zeroed
 		jvx_bitFClear(bf);
-		for (i = 0; i < 2; i++)
+		for (i = 0; i < numInChannelsMax; i++)
 		{
 			std::string nmToken = "Input Channel #" + jvx_size2String(i);
 			CjvxAudioDevice::properties_active.inputchannelselection.value.entries.push_back(nmToken.c_str());
 			jvx_bitSet(bf, i);
 		}
 		CjvxAudioDevice::properties_active.inputchannelselection.value.selection() = bf;
-		
+		CjvxAudioDevice::properties_active.numberinputchannels.value = numInChannelsMax;
+
 		jvx_bitFClear(bf);
-		for (i = 0; i < 2; i++)
+		for (i = 0; i < numOutChannelsMax; i++)
 		{
 			std::string nmToken = "Output Channel #" + jvx_size2String(i);
 			CjvxAudioDevice::properties_active.outputchannelselection.value.entries.push_back(nmToken.c_str());
 			jvx_bitSet(bf, i);
 		}
 		CjvxAudioDevice::properties_active.outputchannelselection.value.selection() = bf;
+		CjvxAudioDevice::properties_active.numberoutputchannels.value = numOutChannelsMax;
 
 		CjvxAudioDevice::properties_active.samplerate.value = 48000;
 		CjvxAudioDevice::properties_active.buffersize.value = 1024;
@@ -135,6 +137,7 @@ CjvxAudioSyncClockDevice::activate()
 		assert(threads.cpPtr);
 		threads.cpPtr->initialize(this);
 #endif
+			
 		return JVX_NO_ERROR;
 	}
 	return res;
@@ -164,6 +167,28 @@ CjvxAudioSyncClockDevice::deactivate()
 		res = CjvxAudioDevice::deactivate();
 	}
 	return res;
+}
+
+// ==========================================================================
+
+jvxErrorType
+CjvxAudioSyncClockDevice::set_property(jvxCallManagerProperties& callGate,
+	const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
+	const jvx::propertyAddress::IjvxPropertyAddress& ident,
+	const jvx::propertyDetail::CjvxTranferDetail& trans)
+{
+	jvxBool report_update = false;
+
+	jvxErrorType res = CjvxAudioDevice::set_property(callGate, rawPtr, ident, trans);
+	if (res == JVX_NO_ERROR)
+	{
+		JVX_TRANSLATE_PROP_ADDRESS_IDX_CAT(ident, propId, category);
+
+		// Update the properties in the base class
+		updateDependentVariables_lock(propId, category, false);
+		
+	}
+	return(res);
 }
 
 // ==========================================================================
