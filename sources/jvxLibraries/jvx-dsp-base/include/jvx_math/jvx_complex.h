@@ -85,10 +85,10 @@ jvxDataCplx JVX_STATIC_INLINE jvx_complex_sub_i(jvxDataCplx in1, jvxDataCplx in2
 }
 
 // https://mathworld.wolfram.com/ComplexDivision.html
-jvxDataCplx JVX_STATIC_INLINE jvx_complex_div_i(jvxDataCplx in1, jvxDataCplx in2)
+jvxDataCplx JVX_STATIC_INLINE jvx_complex_div_i(jvxDataCplx in1, jvxDataCplx in2, jvxData epsAdd)
 {
 	jvxDataCplx out;
-	jvxData den = in2.re * in2.re + in2.im * in2.im;
+	jvxData den = in2.re * in2.re + in2.im * in2.im + epsAdd;
 	out.re = (in1.re * in2.re + in1.im * in2.im) / den;
 	out.im = (in1.im * in2.re - in1.re * in2.im) / den;
 	return out;
