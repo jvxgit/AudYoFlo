@@ -137,6 +137,7 @@ CjvxAudioSyncClockDevice::activate()
 		assert(threads.cpPtr);
 		threads.cpPtr->initialize(this);
 #endif
+		CjvxAudioDevice::properties_active.allow_operate_zero_channels.value = c_true;
 			
 		return JVX_NO_ERROR;
 	}

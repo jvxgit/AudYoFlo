@@ -1098,7 +1098,7 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 				{
 					out << "\t\tmemset(" << propertySectionName  << "." << elm.name << ".ptr, " << "0, sizeof(" << elm.tokenType << "));" << std::endl;
 					if(elm.init_set.filename_set)
-					{
+					{						
 						out << "\t\t*(" << propertySectionName  << "." << elm.name << ".ptr = " << std::endl;
 						out << "#include \"" << elm.init_set.string << "\"" << std::endl;
 						out << "\t\t;" << std::endl;
@@ -1373,9 +1373,27 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 				{
 					if(elm.init_set.filename_set)
 					{
-						out << "\t\t" << propertySectionName  << "." << elm.name << ".value = " << std::endl;
-						out << "#include \"" << elm.init_set.string << "\"" << std::endl;
-						out << "\t\t;" << std::endl;
+						if(
+							(elm.format == JVX_DATAFORMAT_DATA) && 
+							(
+								(elm.init_set.string == "JVX_DATA_EPS_DOUBLE") ||
+								(elm.init_set.string == "JVX_DATA_EPS_FLOAT") ||
+								(elm.init_set.string == "JVX_DATA_EPS") ||								
+								(elm.init_set.string == "JVX_DATA_MAX_POS DBL_MAX") ||
+								(elm.init_set.string == "JVX_DATA_MAX_NEG") ||
+								(elm.init_set.string == "JVX_DATA_MIN DBL_MIN") ||
+								(elm.init_set.string == "JVX_DATA_MIN_UNDERFLOW_PREVENT")
+							)
+						)
+						{
+							out << "\t\t" << propertySectionName  << "." << elm.name << ".value = " << elm.init_set.string << ";" << std::endl;
+						}
+						else
+						{
+							out << "\t\t" << propertySectionName  << "." << elm.name << ".value = " << std::endl;
+							out << "#include \"" << elm.init_set.string << "\"" << std::endl;
+							out << "\t\t;" << std::endl;
+						}
 					}
 					else
 					{

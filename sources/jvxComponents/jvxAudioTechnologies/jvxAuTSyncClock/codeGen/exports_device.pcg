@@ -1,6 +1,5 @@
 SECTION PROPERTIES
 {
 	OUTPUTFILE_NAME = "genSyncClock_device";
-	CALLBACKS = {"set_config", "trigger_command"};
-
+	CALLBACKS = {"set_config", "trigger_command"};	
 };
