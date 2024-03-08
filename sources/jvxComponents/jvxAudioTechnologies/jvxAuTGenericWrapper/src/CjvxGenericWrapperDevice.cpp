@@ -1110,6 +1110,7 @@ CjvxGenericWrapperDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		updateSWSamplerateAndBuffersize_nolock(NULL, NULL JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		res = CjvxAudioDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	}
+
 	return res;
 }
 
@@ -1342,6 +1343,7 @@ CjvxGenericWrapperDevice::test_connect_icon_core(JVX_CONNECTION_FEEDBACK_TYPE(fd
 					updateDependentVariables_lock(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.globalIdx,
 						CjvxAudioDevice_genpcg::properties_active.outputchannelselection.category, false,
 						JVX_PROPERTY_CALL_PURPOSE_INTERNAL_PASS);
+
 					res = JVX_NO_ERROR;
 				}
 				else
@@ -1491,7 +1493,19 @@ CjvxGenericWrapperDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 		// Consider channels separately
 		if (theLocDescr->con_params.number_channels <= runtime.channelMappings.inputChannelMapper.size())
 		{
-		  int delta = JVX_SIZE_INT32(params.chans_in) - JVX_SIZE_INT32(theLocDescr->con_params.number_channels);
+			if (lastOperationSetup == jvxLastOperationChannels::JVXLASTOPERATIONCHANNELS_INPUT)
+			{
+				std::string txt = __FUNCTION__;
+				txt += ": ";
+				txt += ": Not willing to allow ";
+				txt += jvx_size2String(theLocDescr->con_params.number_channels);
+				txt += " input channels. The value of ";
+				txt += jvx_size2String(runtime.channelMappings.inputChannelMapper.size());
+				txt += " channels has recently been specified.";
+				JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, txt.c_str(), JVX_ERROR_INVALID_SETTING);
+				return JVX_ERROR_COMPROMISE;
+			}
+			int delta = JVX_SIZE_INT32(params.chans_in) - JVX_SIZE_INT32(theLocDescr->con_params.number_channels);
 
 			while (delta < 0)
 			{

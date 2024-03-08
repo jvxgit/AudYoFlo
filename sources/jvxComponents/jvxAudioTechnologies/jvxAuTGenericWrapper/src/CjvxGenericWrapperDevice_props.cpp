@@ -1636,6 +1636,7 @@ CjvxGenericWrapperDevice::set_property(jvxCallManagerProperties& callGate,
 						elm->lastModCnt = runtime.channelMappings.modifyWeightCnt++;
 					}
 				}
+				lastOperationSetup = jvxLastOperationChannels::JVXLASTOPERATIONCHANNELS_INPUT;
 			}
 		}
 
@@ -1657,6 +1658,7 @@ CjvxGenericWrapperDevice::set_property(jvxCallManagerProperties& callGate,
 						elm->lastModCnt = runtime.channelMappings.modifyWeightCnt++;
 					}
 				}
+				lastOperationSetup = jvxLastOperationChannels::JVXLASTOPERATIONCHANNELS_OUTPUT;
 			}
 		}
 

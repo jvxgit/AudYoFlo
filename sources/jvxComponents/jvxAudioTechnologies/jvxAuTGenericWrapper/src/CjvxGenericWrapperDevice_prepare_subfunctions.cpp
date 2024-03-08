@@ -668,14 +668,28 @@ jvxErrorType
 CjvxGenericWrapperDevice::prepare_detectmode()
 {
 	jvxErrorType res = JVX_NO_ERROR;
-
+	jvxCBool allowOperateZeroChannels = c_false;
+	if (onInit.connectedDevice)
+	{
+		IjvxProperties* props = reqInterface<IjvxProperties>(onInit.connectedDevice);
+		if (props)
+		{
+			jvxCallManagerProperties callGate;
+			jPAD ident("/allow_operate_zero_channels");
+			props->get_property(callGate, jPRIO<jvxCBool>(allowOperateZeroChannels), ident);
+			retInterface<IjvxProperties>(onInit.connectedDevice, props);
+			props = nullptr;
+		}
+	}
 	// =========================================================================
 	// Determine the operation modes
 	// =========================================================================
 	if(res == JVX_NO_ERROR)
 	{
 		// INPUT
-		if(processingControl.inProc.params_fixed_runtime.chanshw_in == 0)
+		if(
+			(processingControl.inProc.params_fixed_runtime.chanshw_in == 0) &&
+			!allowOperateZeroChannels)			
 		{
 			proc_fields.seq_operation_in = NOTHING;
 		}

@@ -59,6 +59,12 @@ private:
 	} oneDbgMeasureEvent;
 #endif
 
+	enum class jvxLastOperationChannels
+	{
+		JVXLASTOPERATIONCHANNELS_OUTPUT,
+		JVXLASTOPERATIONCHANNELS_INPUT
+	};
+
 	enum class jvxStatePrepapration
 	{
 		JVX_GENERIC_WRAPPER_PREPARE_STATUS_INIT_BF = 0x1,
@@ -149,6 +155,8 @@ private:
 		CjvxGenericWrapperExtReferences theExt;
 		CjvxGenericWrapperDummyChannels theDummy;
 	} dummyRefs;
+
+	jvxLastOperationChannels lastOperationSetup = jvxLastOperationChannels::JVXLASTOPERATIONCHANNELS_OUTPUT;
 
 	struct
 	{
