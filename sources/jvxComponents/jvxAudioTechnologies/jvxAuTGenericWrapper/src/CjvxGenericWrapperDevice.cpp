@@ -1338,8 +1338,13 @@ CjvxGenericWrapperDevice::test_connect_icon_core(JVX_CONNECTION_FEEDBACK_TYPE(fd
 
 					assert(delta == 0);
 
-					// Show channels as newly selected
+					// Pass the new selection to the connect device
+					pass_channelsetup_nolock(false, true);
+
+					// Update external exposure
 					updateChannelExposure_nolock();
+
+					// Update the output channel count - dependent properties
 					updateDependentVariables_lock(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.globalIdx,
 						CjvxAudioDevice_genpcg::properties_active.outputchannelselection.category, false,
 						JVX_PROPERTY_CALL_PURPOSE_INTERNAL_PASS);
@@ -1631,17 +1636,23 @@ CjvxGenericWrapperDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 
 			assert(delta == 0);
 
-			// Show channels as newly selected
+			// Pass the new selection to the connect device
+			pass_channelsetup_nolock(true, false);
+
+			// Update channel exposure
 			updateChannelExposure_nolock();
+
+			// Derive dependent properties
 			updateDependentVariables_lock(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.globalIdx,
 				CjvxAudioDevice_genpcg::properties_active.inputchannelselection.category, false,
 				JVX_PROPERTY_CALL_PURPOSE_INTERNAL_PASS);
 
-			// Add this code extract here to transfer the new channel selection also to wrapped device!!
+/*			// Add this code extract here to transfer the new channel selection also to wrapped device!!
 			this->lock_settings();
 			rearrangeChannelMapper_noLock();
 			updateChannelInternal_nolock();
 			this->unlock_settings();
+*/
 
 		}
 		else

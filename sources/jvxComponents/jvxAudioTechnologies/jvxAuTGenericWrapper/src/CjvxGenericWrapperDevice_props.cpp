@@ -500,17 +500,6 @@ CjvxGenericWrapperDevice::updateChannelExposure_nolock()
 			jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), i);
 		}
 	}
-
-/*
-	// Now update the second version of channels
-	genGenericWrapper_device::properties_active.inputchannelselection_order.value.entries = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries;
-	genGenericWrapper_device::properties_active.inputchannelselection_order.value.selection() = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection;
-	genGenericWrapper_device::properties_active.inputchannelselection_order.value.exclusive = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.exclusive;
-
-	genGenericWrapper_device::properties_active.outputchannelselection_order.value.entries = CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries;
-	genGenericWrapper_device::properties_active.outputchannelselection_order.value.selection() = CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection;
-	genGenericWrapper_device::properties_active.outputchannelselection_order.value.exclusive = CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.exclusive;
-	*/
 }
 
 jvxErrorType
@@ -693,7 +682,7 @@ CjvxGenericWrapperDevice::pushProperties_lock()
 
 
 void
-CjvxGenericWrapperDevice::pass_channelsetup_nolock()
+CjvxGenericWrapperDevice::pass_channelsetup_nolock(jvxBool inputChannels, jvxBool outputChannels)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -712,74 +701,77 @@ CjvxGenericWrapperDevice::pass_channelsetup_nolock()
 		jvxCallManagerProperties callGate;
 		callGate.call_purpose = JVX_PROPERTY_CALL_PURPOSE_INTERNAL_PASS;
 
-		if(jvx_findPropertyDescriptor("jvx_selection_input_channels_sellist", &idx, &format, &num, &decHtTp))
+		if (inputChannels)
 		{
-			fldSelList.bitFieldSelected() = 0;
-			for(i = 0; i < runtime.channelMappings.inputChannelMapper.size(); i++)
+			if (jvx_findPropertyDescriptor("jvx_selection_input_channels_sellist", &idx, &format, &num, &decHtTp))
 			{
-				if(
-					(runtime.channelMappings.inputChannelMapper[i].theChannelType == JVX_GENERIC_WRAPPER_CHANNEL_TYPE_DEVICE) &&
-					(runtime.channelMappings.inputChannelMapper[i].isSelected == true))
+				fldSelList.bitFieldSelected() = 0;
+				for (i = 0; i < runtime.channelMappings.inputChannelMapper.size(); i++)
 				{
-					jvx_bitSet(fldSelList.bitFieldSelected(), runtime.channelMappings.inputChannelMapper[i].toHwFile.pointsToIdAllThisDevice);
+					if (
+						(runtime.channelMappings.inputChannelMapper[i].theChannelType == JVX_GENERIC_WRAPPER_CHANNEL_TYPE_DEVICE) &&
+						(runtime.channelMappings.inputChannelMapper[i].isSelected == true))
+					{
+						jvx_bitSet(fldSelList.bitFieldSelected(), runtime.channelMappings.inputChannelMapper[i].toHwFile.pointsToIdAllThisDevice);
+					}
 				}
-			}
 
-			// If we end up in "report_properties", we should not procede any modification!
-			this->runtime.lockParams.allParamsLocked = true;
-			if(runtime.theProps)
-			{
-				jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(idx, JVX_PROPERTY_CATEGORY_PREDEFINED);
-				jvx::propertyDetail::CjvxTranferDetail trans(true);
-
-				res = runtime.theProps->set_property(callGate, jPRG(&fldSelList, 1, JVX_DATAFORMAT_SELECTION_LIST), ident, trans);
-			}
-			this->runtime.lockParams.allParamsLocked = false;
-			assert(res == JVX_NO_ERROR);
-		}
-		else
-		{
-			assert(0);
-		}
-
-		idx = 0;
-		format = JVX_DATAFORMAT_NONE;
-		num = 0;
-		decHtTp = JVX_PROPERTY_DECODER_NONE;
-		isValid = false;
-		accessType = JVX_PROPERTY_ACCESS_READ_ONLY;
-
-		if(jvx_findPropertyDescriptor("jvx_selection_output_channels_sellist", &idx, &format, &num, &decHtTp))
-		{
-			fldSelList.bitFieldSelected() = 0;
-			for(i = 0; i < runtime.channelMappings.outputChannelMapper.size(); i++)
-			{
-				if(
-					(runtime.channelMappings.outputChannelMapper[i].theChannelType == JVX_GENERIC_WRAPPER_CHANNEL_TYPE_DEVICE) &&
-					(runtime.channelMappings.outputChannelMapper[i].isSelected == true))
+				// If we end up in "report_properties", we should not procede any modification!
+				this->runtime.lockParams.allParamsLocked = true;
+				if (runtime.theProps)
 				{
-					jvx_bitSet(fldSelList.bitFieldSelected(), runtime.channelMappings.outputChannelMapper[i].toHwFile.pointsToIdAllThisDevice);
+					jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(idx, JVX_PROPERTY_CATEGORY_PREDEFINED);
+					jvx::propertyDetail::CjvxTranferDetail trans(true);
+					res = runtime.theProps->set_property(callGate, jPRG(&fldSelList, 1, JVX_DATAFORMAT_SELECTION_LIST), ident, trans);
 				}
+				this->runtime.lockParams.allParamsLocked = false;
+				assert(res == JVX_NO_ERROR);
 			}
-			// If we end up in "report_properties", we should not procede any modification!
-			this->runtime.lockParams.allParamsLocked = true;
-			if(runtime.theProps)
+			else
 			{
-				jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(idx, JVX_PROPERTY_CATEGORY_PREDEFINED);
-				jvx::propertyDetail::CjvxTranferDetail trans(true);
-
-				res = runtime.theProps->set_property(callGate, jPRG(&fldSelList, 1, JVX_DATAFORMAT_SELECTION_LIST), 
-					ident, trans);
+				assert(0);
 			}
-			this->runtime.lockParams.allParamsLocked = false;
-			assert(res == JVX_NO_ERROR);
-		}
-		else
-		{
-			assert(0);
 		}
 
-		//onInit.connectedDevice->prepare(XX, YY);
+		if (outputChannels)
+		{
+			idx = 0;
+			format = JVX_DATAFORMAT_NONE;
+			num = 0;
+			decHtTp = JVX_PROPERTY_DECODER_NONE;
+			isValid = false;
+			accessType = JVX_PROPERTY_ACCESS_READ_ONLY;
+
+			if (jvx_findPropertyDescriptor("jvx_selection_output_channels_sellist", &idx, &format, &num, &decHtTp))
+			{
+				fldSelList.bitFieldSelected() = 0;
+				for (i = 0; i < runtime.channelMappings.outputChannelMapper.size(); i++)
+				{
+					if (
+						(runtime.channelMappings.outputChannelMapper[i].theChannelType == JVX_GENERIC_WRAPPER_CHANNEL_TYPE_DEVICE) &&
+						(runtime.channelMappings.outputChannelMapper[i].isSelected == true))
+					{
+						jvx_bitSet(fldSelList.bitFieldSelected(), runtime.channelMappings.outputChannelMapper[i].toHwFile.pointsToIdAllThisDevice);
+					}
+				}
+				// If we end up in "report_properties", we should not procede any modification!
+				this->runtime.lockParams.allParamsLocked = true;
+				if (runtime.theProps)
+				{
+					jvx::propertyAddress::CjvxPropertyAddressGlobalId ident(idx, JVX_PROPERTY_CATEGORY_PREDEFINED);
+					jvx::propertyDetail::CjvxTranferDetail trans(true);
+
+					res = runtime.theProps->set_property(callGate, jPRG(&fldSelList, 1, JVX_DATAFORMAT_SELECTION_LIST),
+						ident, trans);
+				}
+				this->runtime.lockParams.allParamsLocked = false;
+				assert(res == JVX_NO_ERROR);
+			}
+			else
+			{
+				assert(0);
+			}
+		}
 	}
 }
 

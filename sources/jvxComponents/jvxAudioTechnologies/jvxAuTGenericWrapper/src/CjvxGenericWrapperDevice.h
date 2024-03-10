@@ -739,7 +739,7 @@ public:
 	void updateDependentVariables_lock(jvxSize propId, jvxPropertyCategoryType category, jvxBool updateAll, jvxPropertyCallPurpose callPurpose = JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC);
 
 	void updateSWSamplerateAndBuffersize_nolock(jvxLinkDataDescriptor* fromDevice, jvxLinkDataDescriptor* toDevice JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
-	void pass_channelsetup_nolock();
+	void pass_channelsetup_nolock(jvxBool inputChannels = true, jvxBool outputChannels = true);
 
 	void numberActiveHardwareChannelsInput(jvxInt32& num);
 	void numberActiveHardwareChannelsOutput(jvxInt32& num);
