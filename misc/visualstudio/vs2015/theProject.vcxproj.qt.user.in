@@ -1,7 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>-platformpluginpath @JVX_REPLACE_ME_QT_PATH@/plugins/platforms -platformpluginpath @JVX_REPLACE_ME_QT_PATH@/plugins --jvxdir jvxComponents --config $(TargetName)@JVX_REPLACE_ME_CONFIG_EXT@.jvx --textlog --verbose_dll --textloglev 10</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>@JVX_REPLACE_ME_COMMAND_ARGS@</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
+    <LocalDebuggerCommand_old>@JVX_REPLACE_ME@\bin\$(TargetName).exe</LocalDebuggerCommand_old>
+    <LocalDebuggerWorkingDirectory>@JVX_REPLACE_ME@</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerEnvironment>PATH=@JVX_REPLACE_ME@\bin;%GLUT_LIBRARY_PATH%/bin/x64;%GLEW_LIBRARY_PATH%/bin/Release/x64;%OPENCV_LIBRARY_PATH%/bin;%PATH%</LocalDebuggerEnvironment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>@JVX_REPLACE_ME_COMMAND_ARGS@</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
     <LocalDebuggerCommand_old>@JVX_REPLACE_ME@\bin\$(TargetName).exe</LocalDebuggerCommand_old>
@@ -9,11 +17,20 @@
     <LocalDebuggerEnvironment>PATH=@JVX_REPLACE_ME@\bin;%GLUT_LIBRARY_PATH%/bin/x64;%GLEW_LIBRARY_PATH%/bin/Release/x64;%OPENCV_LIBRARY_PATH%/bin;%PATH%</LocalDebuggerEnvironment>
   </PropertyGroup>
    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-   <LocalDebuggerCommandArguments>-platformpluginpath @JVX_REPLACE_ME_QT_PATH@/plugins/platforms -platformpluginpath @JVX_REPLACE_ME_QT_PATH@/plugins --jvxdir jvxComponents --config $(TargetName)@JVX_REPLACE_ME_CONFIG_EXT@.jvx --textlog --verbose_dll --textloglev 10</LocalDebuggerCommandArguments>
+   <LocalDebuggerCommandArguments>@JVX_REPLACE_ME_COMMAND_ARGS@</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
     <LocalDebuggerCommand_old>@JVX_REPLACE_ME@\bin\$(TargetName).exe</LocalDebuggerCommand_old>
     <LocalDebuggerWorkingDirectory>@JVX_REPLACE_ME@</LocalDebuggerWorkingDirectory>
     <LocalDebuggerEnvironment>PATH=@JVX_REPLACE_ME@\bin;%GLUT_LIBRARY_PATH%/bin;%GLEW_LIBRARY_PATH%/bin/Release/Win32;%OPENCV_LIBRARY_PATH%/bin;%PATH%</LocalDebuggerEnvironment>
   </PropertyGroup>
+     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+   <LocalDebuggerCommandArguments>@JVX_REPLACE_ME_COMMAND_ARGS@</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
+    <LocalDebuggerCommand_old>@JVX_REPLACE_ME@\bin\$(TargetName).exe</LocalDebuggerCommand_old>
+    <LocalDebuggerWorkingDirectory>@JVX_REPLACE_ME@</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerEnvironment>PATH=@JVX_REPLACE_ME@\bin;%GLUT_LIBRARY_PATH%/bin;%GLEW_LIBRARY_PATH%/bin/Release/Win32;%OPENCV_LIBRARY_PATH%/bin;%PATH%</LocalDebuggerEnvironment>
+  </PropertyGroup>
+
 </Project>
