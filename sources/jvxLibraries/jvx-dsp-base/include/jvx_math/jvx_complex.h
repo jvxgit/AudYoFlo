@@ -29,6 +29,7 @@
 #define __JVX_COMPLEX_H__
 
 #include "jvx_dsp_base.h"
+#include "math.h"
 
 JVX_DSP_LIB_BEGIN
 
