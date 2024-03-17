@@ -81,7 +81,7 @@ typedef struct
 	jvx_generator_wave_noise_parameter_runtime_async runtime_parameters_async_intern;
 	struct
 	{
-		long seed;
+		jvxInt32 seed;
 	} runtime;
 } jvx_generator_wave_noise_parameter_runtime_private;
 

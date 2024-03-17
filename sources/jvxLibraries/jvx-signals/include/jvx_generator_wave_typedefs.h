@@ -178,7 +178,7 @@ typedef struct
 typedef struct
 {
 	jvx_generator_wave_common_parameter_init common;
-	unsigned long seed;
+	jvxInt32 seed;
 } jvx_generator_wave_noise_parameter_init;
 
 typedef struct
