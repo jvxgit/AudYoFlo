@@ -1,0 +1,24 @@
+From 3e258378e3d1a9c10d71319a8f0ef31c372b3c64 Mon Sep 17 00:00:00 2001
+From: Bernd Geiser <bg@ferncast.de>
+Date: Tue, 19 Mar 2024 17:20:46 +0100
+Subject: [PATCH] include cstdint
+
+---
+ source/vst/moduleinfo/moduleinfo.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/source/vst/moduleinfo/moduleinfo.h b/source/vst/moduleinfo/moduleinfo.h
+index e5cd584..fab376a 100644
+--- a/vst3sdk/public.sdk/source/vst/moduleinfo/moduleinfo.h
++++ b/vst3sdk/public.sdk/source/vst/moduleinfo/moduleinfo.h
+@@ -40,6 +40,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ //------------------------------------------------------------------------
+ namespace Steinberg {
+-- 
+2.40.1
+
