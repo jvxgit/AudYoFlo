@@ -12,7 +12,7 @@ set(LOCAL_C_STANDARD 99)
 
 set(LOCAL_SOURCES
 
-	${JVX_FFMPEG_SOURCE_DIR}/share/ffmpeg/examples/mux.c
+	${JVX_FFMPEG_SOURCE_DIR}/doc/examples/mux.c
  )
 
 # set_source_files_properties(${LOCAL_SOURCES} PROPERTIES LANGUAGE CXX )
@@ -29,11 +29,11 @@ else(JVX_OS MATCHES "macosx")
   set(CONFIGURE_LOCAL_START_SCRIPT TRUE)
 endif(JVX_OS MATCHES "macosx")
 
-set(LOCAL_LIBS 
+set(LOCAL_LIBS
 		${JVX_FFMPEG_LIBS}
 		${JVX_SOCKET_LIBRARIES}
 		${JVX_FFMPEG_SYS_LIBS}
-		${SDL_LIBRARY}		
+		${SDL_LIBRARY}
 		)
 
 force_console_app()
@@ -44,4 +44,3 @@ include(${JVX_CMAKE_DIR}/common_local_exe_foot.cmake)
 # Command: $(TargetPath)
 # Command Argument: "E:\jvxrt\audio\release\runtime\wavs\music_stereo_48000Hz.wav"
 # Working Directory: ""..\..\..\..\..\..\release\runtime\bin""
-
