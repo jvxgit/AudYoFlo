@@ -41,9 +41,9 @@ if(${JVX_OS} MATCHES "windows")
 
 elseif(${JVX_OS} MATCHES "linux")
 	## Install <sudo apt-get install libhdf5-dev>
-	#find_package(PkgConfig)
+	find_package(PkgConfig)
 	
-	#pkg_check_modules(HDF5 hdf5 REQUIRED)
+	pkg_check_modules(ZLIB zlib REQUIRED)
 	#message("Lib hdf5: ${HDF5_LIBRARIES}")
 	
 	#set(AYF_HDF5_INCLUDE_DIR ${HDF5_INCLUDE_DIRS} CACHE INTERNAL "hdf5 include references")
@@ -60,7 +60,7 @@ elseif(${JVX_OS} MATCHES "linux")
 	message("hdf5 installation complete.")
 	
 	set(AYF_HDF5_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/include" CACHE INTERNAL "hdf5 include references")
-	set(AYF_HDF5_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/libhdf5_debug.so;${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/libhdf5_tools_debug.so" CACHE INTERNAL "hdf5 library references")	
+	set(AYF_HDF5_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/libhdf5_debug.a;${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/libhdf5_tools_debug.a;${ZLIB_LIBRARIES}" CACHE INTERNAL "hdf5 library references")	
 endif()
 
 # message(FATAL_ERROR "Hier -- ")
