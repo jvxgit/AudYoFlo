@@ -23,15 +23,16 @@
 				${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-json/include
 				${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-app-host/include)
 				
-			if(JVX_LINK_WITH_CONSOLE_HOST_FRONTEND_BACKEND_LIB)
-				set(LOCAL_LIBS ${LOCAL_LIBS} jvx-link-frontend_static)
-			endif()
-
 			# Link with console host
 			set(LOCAL_LIBS ${LOCAL_LIBS}				
 				jvxLConsoleHostApp-static_static
 				jvxLWebConsoleTools_static
 				)
+				
+			if(JVX_LINK_WITH_CONSOLE_HOST_FRONTEND_BACKEND_LIB)
+				set(LOCAL_LIBS ${LOCAL_LIBS} jvx-link-frontend_static)
+			endif()
+
 			# In case of standalone builds, we need to pull in some other libraries
 			if(DEFINED JVX_SDK_PATH)
 				include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.consolehost.cmake)
