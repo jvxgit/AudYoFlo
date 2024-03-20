@@ -27,6 +27,6 @@ set(LOCAL_LIBS ${LOCAL_LIBS}
 	)
 	
 set(BUILD_STATIC TRUE)
-set(CREATE_OBJECT_LIBRARY TRUE)
+# set(CREATE_OBJECT_LIBRARY TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

@@ -51,6 +51,9 @@ set(JVX_CMAKE_C_FLAGS_SHARED "${JVX_COMPILE_FLAGS_GENERAL}")
 set(JVX_CMAKE_CXX_FLAGS_SHARED "${JVX_COMPILE_FLAGS_GENERAL}")
 set(JVX_CMAKE_LINKER_FLAGS_SHARED "-Wl,--no-undefined -shared ${JVX_COMPILE_FLAGS_GENERAL}")
 
+set(WHOLE_ARCHIVE "-Wl,--whole-archive")
+set(NO_WHOLE_ARCHIVE "-Wl,--no-whole-archive")
+
 if(JVX_GCC_LINKER_SYMBOLIC)
 	# The following line to allow -fPIC linkage of ffmpeg
 	# https://github.com/microsoft/vcpkg/issues/17292
