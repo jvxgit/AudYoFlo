@@ -4,7 +4,7 @@
 #include "realtimeViewer_helpers.h"
 #include <QtCore/QTimer>
 
-realtimeViewer::realtimeViewer(QWidget* parent, jvxRealtimeViewerType cfg, jvxComponentIdentification* tpAllI): 
+CrealtimeViewer::CrealtimeViewer(QWidget* parent, jvxRealtimeViewerType cfg, jvxComponentIdentification* tpAllI):
 	QWidget(parent), CjvxRealtimeViewer(static_allocateData, static_deallocateData, static_copyData), tpAll(tpAllI)
 {
 	selectionUser.description = "Bdx Realtime Viewer";
@@ -19,8 +19,8 @@ realtimeViewer::realtimeViewer(QWidget* parent, jvxRealtimeViewerType cfg, jvxCo
 
 }
 
-void 
-realtimeViewer::setPeriod_ms(jvxInt32 period_ms_in)
+void
+CrealtimeViewer::setPeriod_ms(jvxInt32 period_ms_in)
 {
 	period_ms = period_ms_in;
 	if(myTimer->isActive())
@@ -31,12 +31,12 @@ realtimeViewer::setPeriod_ms(jvxInt32 period_ms_in)
 }
 
 void
-realtimeViewer::toggledAutoStart(bool tog)
+CrealtimeViewer::toggledAutoStart(bool tog)
 {
 	autoStart = tog;
 }
 
-realtimeViewer::~realtimeViewer()
+CrealtimeViewer::~CrealtimeViewer()
 {
 	int i;
 	for(i = 0; i < tabWidget_propsandplots->count(); i++)
@@ -54,8 +54,8 @@ realtimeViewer::~realtimeViewer()
 	}
 }
 
-void 
-realtimeViewer::init()
+void
+CrealtimeViewer::init()
 {
 	this->setupUi(this);
 	myTimer = new QTimer(this);
@@ -66,15 +66,15 @@ realtimeViewer::init()
 // ============================================================================================
 // ============================================================================================
 
-void 
-realtimeViewer::setHostRef(IjvxHost* theHostRef, IjvxReport* report)
+void
+CrealtimeViewer::setHostRef(IjvxHost* theHostRef, IjvxReport* report)
 {
 	references.theHostRef = theHostRef;
 	references.report = report;
 }
 
-void 
-realtimeViewer::newSelectionButton_addView()
+void
+CrealtimeViewer::newSelectionButton_addView()
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize num = 0;
@@ -98,9 +98,9 @@ realtimeViewer::newSelectionButton_addView()
 	// Rebuild the widgets
 	updateWindow_rebuild(selectionUser.idSelectTab+1);
 }
- 
-void 
-realtimeViewer::newSelectionButton_remove()
+
+void
+CrealtimeViewer::newSelectionButton_remove()
 {
 	jvxSize i;
 	jvxSize num = 0;
@@ -131,8 +131,8 @@ realtimeViewer::newSelectionButton_remove()
 	}
 }
 
-void 
-realtimeViewer::newSelectionButton_start()
+void
+CrealtimeViewer::newSelectionButton_start()
 {
 	timing.deltaT_period = 0;
 	timing.deltaT_run = 0;
@@ -146,8 +146,8 @@ realtimeViewer::newSelectionButton_start()
 	this->updateWindow();
 }
 
-void 
-realtimeViewer::newSelectionButton_stop()
+void
+CrealtimeViewer::newSelectionButton_stop()
 {
 	myTimer->stop();
 	_stop_viewer();
@@ -155,8 +155,8 @@ realtimeViewer::newSelectionButton_stop()
 	this->updateWindow();
 }
 
-void 
-realtimeViewer::newSelectionTab(int id)
+void
+CrealtimeViewer::newSelectionTab(int id)
 {
 	jvxSize i;
 	jvxSize num = 0;
@@ -179,8 +179,8 @@ realtimeViewer::newSelectionTab(int id)
 // =====================================================================================
 
 /*
-void 
-realtimeViewer::updateWindow_insertTab(jvxRealtimeViewerType tp, int idInsert)
+void
+CrealtimeViewer::updateWindow_insertTab(jvxRealtimeViewerType tp, int idInsert)
 {
 	realtimeViewerPlots* theNewPlot = NULL;
 	realtimeViewerProperties* theNewProperties = NULL;
@@ -206,14 +206,14 @@ realtimeViewer::updateWindow_insertTab(jvxRealtimeViewerType tp, int idInsert)
 	this->updateWindow();
 }
 
-void 
-realtimeViewer::updateWindow_removeTab(int idRemove)
+void
+CrealtimeViewer::updateWindow_removeTab(int idRemove)
 {
 	QWidget* theWidget = tabWidget_propsandplots->widget(idRemove);
-	
+
 	// Remove widget from tabwidget
 	tabWidget_propsandplots->removeTab(idRemove);
-	
+
 	// Delete the corresponding widget
 	delete(theWidget);
 
@@ -228,8 +228,8 @@ realtimeViewer::updateWindow_removeTab(int idRemove)
 	this->updateWindow();
 }
 */
-void 
-realtimeViewer::updateWindow()
+void
+CrealtimeViewer::updateWindow()
 {
 	if(JVX_CHECK_SIZE_SELECTED(selectionUser.idSelectTab))
 	{
@@ -248,8 +248,8 @@ realtimeViewer::updateWindow()
 }
 
 
-void 
-realtimeViewer::timerExpired()
+void
+CrealtimeViewer::timerExpired()
 {
 	timing.timeStamp_enter = JVX_GET_TICKCOUNT_US_GET_CURRENT(&timing.timeBase);
 	timing.deltaT_period = timing.timeStamp_enter - timing.timeStamp_leave;
@@ -258,48 +258,8 @@ realtimeViewer::timerExpired()
 	timing.deltaT_run = timing.timeStamp_leave - timing.timeStamp_enter;
 }
 
-void 
-realtimeViewer::createAllWidgetsFromConfiguration()
-{
-	realtimeViewerPlots* theNewPlot = NULL;
-	realtimeViewerProperties* theNewProperties = NULL;
-	jvxSize numS = 0;
-
-	if (selectionUser.idSelectTab == JVX_SIZE_UNSELECTED)
-	{
-		selectionUser.idSelectTab = tabWidget_propsandplots->currentIndex();
-	}
-	updateWindow_destroy();
-
-	updateWindow_rebuild(JVX_SIZE_UNSELECTED);
-
-/*	this->_number_sections(&numS);
-
-	for(i = 0; i < numS; i++)
-	{
-		this->_description_section(i, tp,selectionUser.description);
-
-		switch(tp)
-		{
-		case JVX_REALTIME_VIEWER_VIEW_PROPERTIES:
-			theNewProperties = new realtimeViewerProperties(this, static_cast<CjvxRealtimeViewer*>(this), references.theHostRef, selectionUser.description, i, references.report);
-			theNewProperties->init();
-			theNewProperties->updateWindow();
-			tabWidget_propsandplots->insertTab(i, theNewProperties, selectionUser.description.c_str());
-			break;
-		case JVX_REALTIME_VIEWER_VIEW_PLOTS:
-			theNewPlot = new realtimeViewerPlots(this, static_cast<CjvxRealtimeViewer*>(this));
-			theNewPlot->init();
-			theNewPlot->updateWindow();
-			tabWidget_propsandplots->insertTab(i, theNewPlot, selectionUser.description.c_str());
-			break;
-		}
-	}
-	this->updateWindow();*/
-}
-
-void 
-realtimeViewer::updateAllWidgetsOnStateChange()
+void
+CrealtimeViewer::createAllWidgetsFromConfiguration()
 {
 	realtimeViewerPlots* theNewPlot = NULL;
 	realtimeViewerProperties* theNewProperties = NULL;
@@ -339,7 +299,47 @@ realtimeViewer::updateAllWidgetsOnStateChange()
 }
 
 void
-realtimeViewer::updateWindow_destroy()
+CrealtimeViewer::updateAllWidgetsOnStateChange()
+{
+	realtimeViewerPlots* theNewPlot = NULL;
+	realtimeViewerProperties* theNewProperties = NULL;
+	jvxSize numS = 0;
+
+	if (selectionUser.idSelectTab == JVX_SIZE_UNSELECTED)
+	{
+		selectionUser.idSelectTab = tabWidget_propsandplots->currentIndex();
+	}
+	updateWindow_destroy();
+
+	updateWindow_rebuild(JVX_SIZE_UNSELECTED);
+
+/*	this->_number_sections(&numS);
+
+	for(i = 0; i < numS; i++)
+	{
+		this->_description_section(i, tp,selectionUser.description);
+
+		switch(tp)
+		{
+		case JVX_REALTIME_VIEWER_VIEW_PROPERTIES:
+			theNewProperties = new realtimeViewerProperties(this, static_cast<CjvxRealtimeViewer*>(this), references.theHostRef, selectionUser.description, i, references.report);
+			theNewProperties->init();
+			theNewProperties->updateWindow();
+			tabWidget_propsandplots->insertTab(i, theNewProperties, selectionUser.description.c_str());
+			break;
+		case JVX_REALTIME_VIEWER_VIEW_PLOTS:
+			theNewPlot = new realtimeViewerPlots(this, static_cast<CjvxRealtimeViewer*>(this));
+			theNewPlot->init();
+			theNewPlot->updateWindow();
+			tabWidget_propsandplots->insertTab(i, theNewPlot, selectionUser.description.c_str());
+			break;
+		}
+	}
+	this->updateWindow();*/
+}
+
+void
+CrealtimeViewer::updateWindow_destroy()
 {
 	// First, remove all tabs
 	while(tabWidget_propsandplots->count())
@@ -355,7 +355,7 @@ realtimeViewer::updateWindow_destroy()
 }
 
 void
-realtimeViewer::updateWindow_update(jvxBool fullUpdate)
+CrealtimeViewer::updateWindow_update(jvxBool fullUpdate)
 {
 	jvxSize i;
 	QVariant theMainClassV;
@@ -394,8 +394,8 @@ realtimeViewer::updateWindow_update(jvxBool fullUpdate)
 	}
 }
 
-void 
-realtimeViewer::updateWindow_rebuild(jvxSize selectAfterRefresh)
+void
+CrealtimeViewer::updateWindow_rebuild(jvxSize selectAfterRefresh)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -416,7 +416,7 @@ realtimeViewer::updateWindow_rebuild(jvxSize selectAfterRefresh)
 		case JVX_REALTIME_VIEWER_VIEW_PROPERTIES:
 
 			theNewProperties = new realtimeViewerProperties(this, static_cast<CjvxRealtimeViewer*>(this), references.theHostRef, descr, i, references.report, tpAll);
-			
+
 			{
 				QVariant var = static_cast<QWidget*>(theNewProperties)->property("BASE_REALTIMEVIEWER");
 				if(var.isValid())
@@ -453,8 +453,8 @@ realtimeViewer::updateWindow_rebuild(jvxSize selectAfterRefresh)
 	this->updateWindow();
 }
 
-void 
-realtimeViewer::updateWindow_content()
+void
+CrealtimeViewer::updateWindow_content()
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -484,8 +484,8 @@ realtimeViewer::updateWindow_content()
 	}
 }
 
-void 
-realtimeViewer::newText_name()
+void
+CrealtimeViewer::newText_name()
 {
 	realtimeViewerPlots* thePlot = NULL;
 	realtimeViewerProperties* theProperties = NULL;
@@ -502,13 +502,13 @@ realtimeViewer::newText_name()
 		{
 			CjvxRealtimeViewer::_set_description_section(idTab, name.toLatin1().constData());
 		}
-		
+
 		tabWidget_propsandplots->setTabText(idTab, name);
 	}
 }
 
-jvxErrorType 
-realtimeViewer::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, IjvxHost* theHost)
+jvxErrorType
+CrealtimeViewer::get_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, IjvxHost* theHost)
 {
 	std::string postfix = "";
 	switch (this->configurationType)
@@ -528,8 +528,8 @@ realtimeViewer::get_configuration(jvxCallManagerConfiguration* callConf, IjvxCon
 	return(_get_configuration(callConf, theReader, ir, theHost, static_getConfiguration, postfix));
 };
 
-jvxErrorType 
-realtimeViewer::put_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, IjvxHost* theHost, const char* fName, int lineno, std::vector<std::string>& warnings)
+jvxErrorType
+CrealtimeViewer::put_configuration(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theReader, jvxHandle* ir, IjvxHost* theHost, const char* fName, int lineno, std::vector<std::string>& warnings)
 {
 	std::string postfix = "";
 	switch (this->configurationType)

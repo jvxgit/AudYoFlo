@@ -243,7 +243,7 @@ uMainWindow::setup_dock_widgets()
 
 	subWidgets.realtimeViewer.props.theWidgetD = new QDockWidget_ext("RT Viewer Properties", this, &subWidgets.realtimeViewer.props.added, JVX_QT_POSITION_REALTIMEVIEWER_DOCK_WIDGET);
 	subWidgets.realtimeViewer.props.theWidgetD->setAllowedAreas(JVX_QT_POSITION_REALTIMEVIEWER_DOCK_WIDGET);
-	subWidgets.realtimeViewer.props.theWidget = new realtimeViewer(subWidgets.realtimeViewer.props.theWidgetD, JVX_REALTIME_VIEWER_VIEW_PROPERTIES, tpAll);
+	subWidgets.realtimeViewer.props.theWidget = new CrealtimeViewer(subWidgets.realtimeViewer.props.theWidgetD, JVX_REALTIME_VIEWER_VIEW_PROPERTIES, tpAll);
 	subWidgets.realtimeViewer.props.theWidget->init();
 	subWidgets.realtimeViewer.props.theWidgetD->setWidget(subWidgets.realtimeViewer.props.theWidget);
 	subWidgets.realtimeViewer.props.added = true;
@@ -251,7 +251,7 @@ uMainWindow::setup_dock_widgets()
 
 	subWidgets.realtimeViewer.plots.theWidgetD = new QDockWidget_ext("RT Viewer Plots", this, &subWidgets.realtimeViewer.plots.added, JVX_QT_POSITION_REALTIMEVIEWER_DOCK_WIDGET);
 	subWidgets.realtimeViewer.plots.theWidgetD->setAllowedAreas(JVX_QT_POSITION_REALTIMEVIEWER_DOCK_WIDGET);
-	subWidgets.realtimeViewer.plots.theWidget = new realtimeViewer(subWidgets.realtimeViewer.plots.theWidgetD, JVX_REALTIME_VIEWER_VIEW_PLOTS, tpAll);
+	subWidgets.realtimeViewer.plots.theWidget = new CrealtimeViewer(subWidgets.realtimeViewer.plots.theWidgetD, JVX_REALTIME_VIEWER_VIEW_PLOTS, tpAll);
 	subWidgets.realtimeViewer.plots.theWidget->init();
 	subWidgets.realtimeViewer.plots.theWidgetD->setWidget(subWidgets.realtimeViewer.plots.theWidget);
 	subWidgets.realtimeViewer.plots.added = true;

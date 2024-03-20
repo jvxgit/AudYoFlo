@@ -11,7 +11,7 @@
 
 #include "realtimeViewer_helpers.h"
 
-class realtimeViewer: public QWidget, public Ui::Form_realtimeViewer, public CjvxRealtimeViewer
+class CrealtimeViewer: public QWidget, public Ui::Form_realtimeViewer, public CjvxRealtimeViewer
 {
 
 private:
@@ -51,8 +51,8 @@ private:
 
 public:
 	
-	realtimeViewer(QWidget* parent, jvxRealtimeViewerType cfg, jvxComponentIdentification* tpAll);
-	~realtimeViewer();
+	CrealtimeViewer(QWidget* parent, jvxRealtimeViewerType cfg, jvxComponentIdentification* tpAll);
+	~CrealtimeViewer();
 
 	void setPeriod_ms(jvxInt32 period_ms);
 

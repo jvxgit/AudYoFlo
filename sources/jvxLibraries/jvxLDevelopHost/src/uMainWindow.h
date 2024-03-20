@@ -55,14 +55,14 @@ private:
 			struct
 			{
 				QDockWidget_ext* theWidgetD;
-				realtimeViewer* theWidget;
+				CrealtimeViewer* theWidget;
 				bool added;
 			} props;
 
 			struct
 			{
 				QDockWidget_ext* theWidgetD;
-				realtimeViewer* theWidget;
+				CrealtimeViewer* theWidget;
 				bool added;
 			} plots;
 		} realtimeViewer;
