@@ -29,8 +29,9 @@
 				jvxLWebConsoleTools_static
 				)
 				
+			# We need to add this library with special magic to override the weak symbols in GCC
 			if(JVX_LINK_WITH_CONSOLE_HOST_FRONTEND_BACKEND_LIB)
-				set(LOCAL_LIBS ${LOCAL_LIBS} jvx-link-frontend_static)
+				set(LOCAL_LIBS ${LOCAL_LIBS} ${WHOLE_ARCHIVE} jvx-link-frontend_static  ${NO_WHOLE_ARCHIVE})
 			endif()
 
 			# In case of standalone builds, we need to pull in some other libraries
