@@ -23,7 +23,6 @@ include_directories(
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/ayfstarterlib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarterlib.c
-
   ${CMAKE_CURRENT_SOURCE_DIR}/include/ayfstarterlib_debug.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarterlib_debug.c
   )

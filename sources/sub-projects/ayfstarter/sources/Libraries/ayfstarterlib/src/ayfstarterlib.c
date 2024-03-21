@@ -60,10 +60,10 @@ jvxDspBaseErrorType ayf_starter_process(struct ayf_starter* hdl, jvxData** input
 					}
 				}
 			}
-			
+
 		}
 		return JVX_NO_ERROR;
-	
+
 	}
 	return JVX_ERROR_WRONG_STATE;
 }
@@ -75,7 +75,7 @@ jvxDspBaseErrorType ayf_starter_postprocess(struct ayf_starter* hdl)
 		struct ayf_starter_prv* ptr = (struct ayf_starter_prv*)hdl->prv;
 		JVX_SAFE_DELETE_OBJECT(ptr);
 		hdl->prv = NULL;
-		
+
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_WRONG_STATE;
