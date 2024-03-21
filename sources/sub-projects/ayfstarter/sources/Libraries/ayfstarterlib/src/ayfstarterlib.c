@@ -1,7 +1,4 @@
 #include "ayfstarterlib.h"
-#ifdef USE_ORC
-#include "orc/orc.h"
-#endif
 
 struct ayf_starter_prv
 {
