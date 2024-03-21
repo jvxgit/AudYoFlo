@@ -121,3 +121,8 @@ if(JVX_USE_HDF5)
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/hdf5)
 endif()
+
+if(JVX_USE_ORC)
+  set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
+    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/orc/)
+endif()

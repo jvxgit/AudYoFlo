@@ -29,6 +29,13 @@ set(LOCAL_SOURCES
 
 set(LOCAL_LIBS jvx-dsp-base_static)
 
+if(${JVX_USE_ORC})
+  include_directories(${ORC_INCLUDE_DIR})
+  set(LOCAL_LIBS "${LOCAL_LIBS};${ORC_LIBRARIES}")
+  add_compile_definitions(USE_ORC)
+endif()
+
+
 set(LOCAL_COMPILE_DEFINITIONS "${FFT_COMPILE_DEFINITIONS}")
 
 set(BUILD_STATIC TRUE)
