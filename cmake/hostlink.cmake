@@ -30,6 +30,11 @@
 				)
 				
 			# We need to add this library with special magic to override the weak symbols in GCC
+			# In linux, the WHOLE_ARCHIVE/NO_WHOLE_ARCHIVE options resolve to --whole-archive 
+			# and --no-whole-archive. That means that the symbols from the jvx-link-frontend_static library may override 
+			# the weak symbols. Alternatively, the library could be defined as an OBJECT LIBRARY by setting the flag
+			# set(CREATE_OBJECT_LIBRARY TRUE)
+			# Haven't tested, I assume that this option will not allow to link with the SDK since the library is just missing.
 			if(JVX_LINK_WITH_CONSOLE_HOST_FRONTEND_BACKEND_LIB)
 				set(LOCAL_LIBS ${LOCAL_LIBS} ${WHOLE_ARCHIVE} jvx-link-frontend_static ${NO_WHOLE_ARCHIVE})
 			endif()
