@@ -133,7 +133,15 @@ CjvxCommandLine::parse_command_line(jvxSize* idErrToken, jvxApiString* descr, jv
 			case JVX_COMMANDLINE_STATUS_START:
 				status = JVX_COMMANDLINE_STATUS_TOKEN;
 
+				// Fallthrough with intention here				
+
 			case JVX_COMMANDLINE_STATUS_TOKEN:
+
+				if (copiedargv[i] == "--help")
+				{
+
+					return JVX_ERROR_ABORT;
+				}
 
 				elm = registered_options.find(copiedargv[i]);
 				if (elm == registered_options.end())

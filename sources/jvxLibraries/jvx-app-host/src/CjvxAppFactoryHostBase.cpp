@@ -304,11 +304,14 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_configure(jvxApiString* errorMessage, IjvxC
 					errTxtLoc += retStr.std_str();
 				}
 				errTxtLoc += "\n";
-				errTxtLoc += "Error parsing command line options: entry ";
-				errTxtLoc += jvx_size2String(errId);
-				errTxtLoc += " is incorrect, reason: ";
-				errTxtLoc += errTxt.std_str();
-				errTxtLoc += "\n";
+				if (res != JVX_ERROR_ABORT)
+				{
+					errTxtLoc += "Error parsing command line options: entry ";
+					errTxtLoc += jvx_size2String(errId);
+					errTxtLoc += " is incorrect, reason: ";
+					errTxtLoc += errTxt.std_str();
+					errTxtLoc += "\n";
+				}
 				retStr.clear();
 				commLine->printUsage(&retStr);
 				errTxtLoc += retStr.std_str();

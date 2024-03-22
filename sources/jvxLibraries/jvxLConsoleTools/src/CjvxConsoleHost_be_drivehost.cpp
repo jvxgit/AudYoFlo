@@ -88,7 +88,12 @@ CjvxConsoleHost_be_drivehost::process_init(IjvxCommandLine* comLine)
 		static_cast<IjvxReportStateSwitch*>(this), static_cast<IjvxReport*>(this));
 	if (resL != JVX_NO_ERROR)
 	{
-		this->fatalStop("Fatal Error", errMess.c_str());
+		std::string txtMsg;
+		if (resL != JVX_ERROR_ABORT)
+		{
+			txtMsg = "Fatal Error";
+		}
+		this->fatalStop(txtMsg, errMess.c_str());
 	}
 
 	// ======================================================================
