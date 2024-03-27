@@ -25,6 +25,8 @@ public:
 		jvxComponentTypeClass classType, jvxSize numSlotsMax = 1, jvxSize numSubSlotsMax = 1, 
 		jvxComponentTypeClass childClassType = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE) = 0;
 
+	virtual jvxErrorType add_numsubslots_type_host(const jvxComponentIdentification& tp, jvxSize numSubSlotsMax) = 0;
+
 	//! Number of different supported types
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_types_host(jvxSize* num, jvxComponentTypeClass classType) = 0;
 

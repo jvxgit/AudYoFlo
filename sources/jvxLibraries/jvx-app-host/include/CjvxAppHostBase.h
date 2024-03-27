@@ -53,7 +53,7 @@ public:
 	virtual void register_command_line_parameters(IjvxCommandLine* commLine)override;
 	virtual void read_command_line_parameters(IjvxCommandLine* commLine)override;
 
-	virtual jvxErrorType boot_initialize_base(jvxSize* numSlots);
+	virtual jvxErrorType boot_initialize_base(jvxSize* numSlots, const std::map<jvxComponentIdentification, jvxSize>& specSubSlots);
 	virtual jvxErrorType boot_initialize_product() = 0;
 
 	virtual void boot_prepare_host_start() override;

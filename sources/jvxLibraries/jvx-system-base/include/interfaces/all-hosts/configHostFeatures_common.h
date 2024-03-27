@@ -79,6 +79,8 @@ public:
 	const char** lst_ModulesOnStart[JVX_COMPONENT_ALL_LIMIT];
 	jvxBool verbose_ModulesOnStart = false;
 
+	std::map<jvxComponentIdentification, jvxSize> mapSpecSubSlots;
+
 	jvxHandle* prv_features = nullptr;
 	IjvxReport* if_report = nullptr;
 

@@ -135,7 +135,8 @@ configureAudio::acceptSlotConfiguration()
 	jvxSize szSlots = 0, szSubSlots = 0;
 	jvxSize szSlotsMax = 0, szSubSlotsMax = 0;
 
-	myParent->involvedHost.hHost->number_slots_component_system(JVX_COMPONENT_AUDIO_TECHNOLOGY, &szSlots, &szSubSlots, &szSlotsMax, &szSubSlotsMax);
+	// JVX_COMPONENT_AUDIO_TECHNOLOGY
+	myParent->involvedHost.hHost->number_slots_component_system(tpAll[JVX_COMPONENT_AUDIO_TECHNOLOGY], &szSlots, &szSubSlots, &szSlotsMax, &szSubSlotsMax);
 	runtime.id_technology.resize(szSlotsMax);
 	for (i = 0; i < runtime.id_technology.size(); i++)
 	{
@@ -4398,6 +4399,8 @@ configureAudio::new_tech_slot(int id)
 
 	//checkMode(tpIdT);
 	tpAll[JVX_COMPONENT_AUDIO_TECHNOLOGY].slotid = id;
+
+	acceptSlotConfiguration();
 
 	activate_slot(tpAll[JVX_COMPONENT_AUDIO_TECHNOLOGY], tpAll[JVX_COMPONENT_AUDIO_DEVICE]);
 	activate_slot(tpAll[JVX_COMPONENT_AUDIO_DEVICE], tpS);

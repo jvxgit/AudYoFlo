@@ -557,7 +557,7 @@ CjvxHostTypeHandler::_add_type_host(IjvxObject* theObj, jvxComponentType* tp, jv
 						//newElm_tech.technologyInstances.selTech.theHandle_shortcut_dev = NULL;
 						//newElm_tech.technologyInstances.selTech.theHandle_shortcut_tech = NULL;
 						newElm_tech.technologyInstances.numSlotsMax = numSlotsMax;
-						newElm_tech.technologyInstances.numSubSlotsMax = numSubSlotsMax;
+						newElm_tech.technologyInstances.numSubSlotsMaxDefault = numSubSlotsMax;
 
 						//newElm_tech.technologyInstances.selTech.numSubSlotsMax = numSubSlotsMax;
 						_common_set_types.registeredTechnologyTypes.push_back(newElm_tech);
@@ -610,6 +610,26 @@ CjvxHostTypeHandler::_add_type_host(IjvxObject* theObj, jvxComponentType* tp, jv
 	}
 	return(res);
 
+}
+
+jvxErrorType
+CjvxHostTypeHandler::_add_numsubslots_type_host(const jvxComponentIdentification& tp,
+	jvxSize numSubSlotsMax)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	auto elm_tech = _common_set_types.registeredTechnologyTypes.begin();
+	elm_tech = jvx_findItemSelectorInList_one<oneTechnologyType, jvxComponentType>(_common_set_types.registeredTechnologyTypes, tp.tp, 0);
+	if (elm_tech != _common_set_types.registeredTechnologyTypes.end())
+	{
+		res = JVX_ERROR_DUPLICATE_ENTRY;
+		auto elm = elm_tech->technologyInstances.numSubSlotsMax_spec.find(tp.slotid);
+		if (elm == elm_tech->technologyInstances.numSubSlotsMax_spec.end())
+		{
+			elm_tech->technologyInstances.numSubSlotsMax_spec[tp.slotid] = numSubSlotsMax;
+			res = JVX_NO_ERROR;
+		}
+	}
+	return res;
 }
 
 jvxErrorType

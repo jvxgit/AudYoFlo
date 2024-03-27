@@ -865,7 +865,17 @@ CjvxComponentHost::_number_slots_component_system(const jvxComponentIdentificati
 		}
 		if (szSubSlots_max)
 		{
-			*szSubSlots_max = elmIt_tech->technologyInstances.numSubSlotsMax; // Number of subslots is specified here and within the device!! 
+			*szSubSlots_max = elmIt_tech->technologyInstances.numSubSlotsMaxDefault; // Number of subslots is specified here and within the device!! 
+
+			for (auto elmH = elmIt_tech->technologyInstances.numSubSlotsMax_spec.begin(); elmH != elmIt_tech->technologyInstances.numSubSlotsMax_spec.end(); elmH++)
+			{
+				if (
+					(elmH->first == tp.slotid))
+				{
+					*szSubSlots_max = elmH->second;
+					break;
+				}
+			}
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
@@ -887,7 +897,7 @@ CjvxComponentHost::_number_slots_component_system(const jvxComponentIdentificati
 
 			if (szSubSlots_max)
 			{
-				*szSubSlots_max = elmIt_dev->technologyInstances.numSubSlotsMax;
+				*szSubSlots_max = elmIt_dev->technologyInstances.numSubSlotsMaxDefault;
 			}
 
 			if (tp.slotid < elmIt_dev->technologyInstances.selTech.size())
@@ -1818,7 +1828,9 @@ CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx
 						for (h = elmIt_tech->technologyInstances.selTech.size(); h <= tp.slotid; h++)
 						{
 							oneSelectedTechnology oneElm;
-							oneElm.numSubSlotsMax = elmIt_tech->technologyInstances.numSubSlotsMax;
+
+							// Set the default value!!
+							oneElm.numSubSlotsMax = elmIt_tech->technologyInstances.numSubSlotsMaxDefault;
 							oneElm.theHandle_shortcut_tech = NULL;
 							// oneElm.theHandle_shortcut_dev.clear();
 							elmIt_tech->technologyInstances.selTech.push_back(oneElm);
@@ -1881,6 +1893,17 @@ CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx
 										elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech = theTech;
 										elmIt_tech->technologyInstances.selTech[tp.slotid].idSel = idx;
 										elmIt_tech->technologyInstances.selTech[tp.slotid].uid = uid;
+
+										// Override number of 
+										for (auto elmH = elmIt_tech->technologyInstances.numSubSlotsMax_spec.begin(); elmH != elmIt_tech->technologyInstances.numSubSlotsMax_spec.end(); elmH++)
+										{
+											if (
+												(elmH->first == tp.slotid))
+											{
+												elmIt_tech->technologyInstances.selTech[tp.slotid].numSubSlotsMax = elmH->second;
+												break;
+											}
+										}
 									}
 									else
 									{

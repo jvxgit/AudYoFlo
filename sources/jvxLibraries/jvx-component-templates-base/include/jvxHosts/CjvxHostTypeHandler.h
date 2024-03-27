@@ -61,11 +61,15 @@
 		std::vector<oneExternalTechnology> externalTechnologies;
 		std::vector<oneSelectedTechnology> selTech;
 		jvxSize numSlotsMax;
-		jvxSize numSubSlotsMax;
+		jvxSize numSubSlotsMaxDefault;
+
+		// For slotId a number of subslots!
+		// This field will be cleared when the hosttype handler is reallocated
+		std::map<jvxSize, jvxSize> numSubSlotsMax_spec;
 		technologiesT()
 		{
 			numSlotsMax = 0;
-			numSubSlotsMax = 0;
+			numSubSlotsMaxDefault = 0;
 		};
 	};
 
@@ -148,6 +152,8 @@ public:
 		jvxSize numtp, jvxComponentTypeClass classType);
 
 	jvxErrorType _remove_all_host_types();
+
+	jvxErrorType _add_numsubslots_type_host(const jvxComponentIdentification& tp, jvxSize numSubSlotsMax);
 
 };
 

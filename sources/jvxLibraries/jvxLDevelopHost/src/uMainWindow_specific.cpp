@@ -27,7 +27,7 @@ uMainWindow::boot_negotiate_specific()
 	
 	jvx_configure_factoryhost_features(static_cast<configureFactoryHost_features*>(&theHostFeatures));
 
-	boot_initialize_base(theHostFeatures.numSlotsComponents);
+	boot_initialize_base(theHostFeatures.numSlotsComponents, theHostFeatures.mapSpecSubSlots);
 
 	// 1
 		// Open all tool components

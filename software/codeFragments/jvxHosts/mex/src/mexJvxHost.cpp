@@ -2920,7 +2920,7 @@ mexJvxHost::boot_initialize_specific(jvxApiString* errloc)
 	jvx_configure_factoryhost_features(&theHostFeatures);
 
 	// Project specific initialization via base init
-	res = CjvxAppHostProduct::boot_initialize_base(theHostFeatures.numSlotsComponents);
+	res = CjvxAppHostProduct::boot_initialize_base(theHostFeatures.numSlotsComponents, theHostFeatures.mapSpecSubSlots);
 	assert(res == JVX_NO_ERROR);
 
 	res = this->initialize_specific(); 

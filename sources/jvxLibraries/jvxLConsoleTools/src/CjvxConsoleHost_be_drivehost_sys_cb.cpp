@@ -115,7 +115,7 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 	theHostFeatures.cb_loadfilter = NULL;
 	theHostFeatures.cb_loadfilter_priv = NULL;
 #endif
-	boot_initialize_base(theHostFeatures.numSlotsComponents);
+	boot_initialize_base(theHostFeatures.numSlotsComponents, theHostFeatures.mapSpecSubSlots);
 
 	// Open all tool components
 	LOAD_ONE_MODULE_LIB_FULL(jvxTSystemTextLog_init, jvxTSystemTextLog_terminate, "Text Log", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);

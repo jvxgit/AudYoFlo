@@ -135,7 +135,7 @@ uMainWindow_specific::bootup_negotiate_specific()
 	// =======================================================================
 	jvx_configure_factoryhost_features(static_cast<configureFactoryHost_features*>(&parentRef->theHostFeatures));
 
-	parentRef->boot_initialize_base(parentRef->theHostFeatures.numSlotsComponents);
+	parentRef->boot_initialize_base(parentRef->theHostFeatures.numSlotsComponents, parentRef->theHostFeatures.mapSpecSubSlots);
 
 	//=================================================================
 	// Open all static libraries and add to host

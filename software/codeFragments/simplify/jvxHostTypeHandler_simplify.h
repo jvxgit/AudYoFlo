@@ -3,6 +3,11 @@
 		return this->_component_class(tp, tpCls);
 	};
 
+	jvxErrorType add_numsubslots_type_host(const jvxComponentIdentification& tp, jvxSize numSubSlotsMax) override
+	{
+		return this->_add_numsubslots_type_host(tp, numSubSlotsMax);
+	};
+
 	jvxErrorType add_type_host(jvxComponentType* tp, jvxSize numtp, const char* description, const char* tokenConfig, 
 		jvxComponentTypeClass classType, 
 		jvxSize numSlotsMax, jvxSize numSubslotsMax, jvxComponentTypeClass childClassType) override

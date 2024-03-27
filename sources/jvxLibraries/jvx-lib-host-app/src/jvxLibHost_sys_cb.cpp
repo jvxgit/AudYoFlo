@@ -112,7 +112,7 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	jvx_configure_factoryhost_features(static_cast<configureFactoryHost_features*>(&theHostFeatures));
 
 	// Here, start the "real" initialization
-	boot_initialize_base(theHostFeatures.numSlotsComponents);
+	boot_initialize_base(theHostFeatures.numSlotsComponents, theHostFeatures.mapSpecSubSlots);
 
 	/*
 	 *============================================================================================================== =

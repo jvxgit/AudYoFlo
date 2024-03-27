@@ -384,7 +384,7 @@ JVX_APPHOST_CLASSNAME::read_command_line_parameters(IjvxCommandLine* commLine)
 
 
 jvxErrorType
-JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
+JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots, const std::map<jvxComponentIdentification, jvxSize>& specSubSlots)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -470,6 +470,15 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots)
 						numSlots[i],
 						numSlots[theClassAssociation[i].comp_sec_type], 
 						theClassAssociation[i].comp_child_class);
+
+					for (auto elm = specSubSlots.begin(); elm != specSubSlots.end(); elm++)
+					{
+						if (elm->first.tp == i)
+						{
+							theTypeHandler->add_numsubslots_type_host(elm->first, elm->second);
+							// Multiple entries may occur here!
+						}
+					}
 					assert(res == JVX_NO_ERROR);
 				}
 				break;
