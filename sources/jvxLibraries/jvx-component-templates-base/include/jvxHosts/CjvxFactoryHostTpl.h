@@ -135,6 +135,7 @@ public:
 					std::cout << " --> Internal cbuf buffersize = " << CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferRW.value << std::endl;
 					std::cout << " --> File transfer size = " << CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile.value << std::endl;
 					std::cout << " --> Debug level = " << CjvxHost_genpcg::properties_selected.textLog_dbglevel.value << std::endl;
+					std::cout << " --> Log output cout = " << CjvxHost_genpcg::properties_selected.textLog_dbgCout.value << std::endl;
 
 					T::jvxrtst_bkp.theTextLogger_hdl->initialize(
 						static_cast<IjvxHiddenInterface*>(this),
@@ -142,7 +143,8 @@ public:
 						CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile.value,
 						CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile.value,
 						CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferRW.value,
-						CjvxHost_genpcg::properties_selected.textLog_dbglevel.value);
+						CjvxHost_genpcg::properties_selected.textLog_dbglevel.value,
+						CjvxHost_genpcg::properties_selected.textLog_dbgCout.value);
 
 					std::cout << " --> Module selection expression = " << std::endl;
 					for (i = 0; i < CjvxHost_genpcg::properties_selected.textLog_expressions.value.size(); i++)

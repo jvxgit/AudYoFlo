@@ -90,6 +90,9 @@ namespace CayfAutomationModules
 		}
 		else
 		{
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			log << "Trying to activate all submodules for autoconnect purpose id <" << purposeId << "> component location <" << jvxComponentIdentification_txt(tp_activated) << ">: connection not allowed." << std::endl;
+			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 			return res;
 		}
 
@@ -125,6 +128,7 @@ namespace CayfAutomationModules
 
 		if (res == JVX_NO_ERROR)
 		{
+			// New module has been activated!!
 			jvxBool established = false;
 			ayfEstablishedProcessesSyncio realizeChain(cpElm);
 			realizeChain.supportNodeRuntime.states.subModulesActive = true;
@@ -137,7 +141,7 @@ namespace CayfAutomationModules
 			lockOperation = true;
 			try_connect(tp_activated, established);
 			lockOperation = false;
-			
+
 			if (!established)
 			{
 				if (!allowPostPonedConnect)
@@ -147,15 +151,15 @@ namespace CayfAutomationModules
 					res = JVX_ERROR_INVALID_SETTING;
 				}
 			}
-		}
 
-		if (res != JVX_NO_ERROR)
-		{
-			// Here we end up in error case!
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-			log << "On error, deactivating  module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
-			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
-			jvxErrorType resL = jvx_deactivateObjectInModule(refHostRefPtr, cpElm.cpId);
+			if (res != JVX_NO_ERROR)
+			{
+				// Here we end up in error case!
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				log << "On error, deactivating  module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+				jvxErrorType resL = jvx_deactivateObjectInModule(refHostRefPtr, cpElm.cpId);
+			}
 		}
 		// Here we can do the important stuff!
 		
@@ -416,7 +420,7 @@ namespace CayfAutomationModules
 						bridgename = "bridge_" + jvx_size2String(cnt);
 
 						res = theDataConnectionDefRuleHdl->add_bridge_specification(
-							config.connectTo,
+							config.connectFrom,
 							"*", elm->second.supportNodeRuntime.driveTargetCompChain.oconNmConnect.c_str(),
 							elm->second.supportNodeRuntime.cpId,
 							"*", elm->second.supportNodeRuntime.driveTargetCompChain.iconMasterNm.c_str(), bridgename.c_str(), false, false);

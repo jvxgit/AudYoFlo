@@ -7,11 +7,11 @@ public:
 	virtual JVX_CALLINGCONVENTION ~IjvxTextLog(){};
   
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef, const char* strFileName,
-		jvxSize loclBuffer, jvxSize writeAtOnce, jvxSize circBufferSize, jvxSize dbgLevel) = 0;
+		jvxSize loclBuffer, jvxSize writeAtOnce, jvxSize circBufferSize, jvxSize dbgLevel, jvxBool dbgOutCout) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION addTextLogExpression(const char* oneExppression) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog, jvxBool* dbgOutCout) = 0;
 
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate() = 0;

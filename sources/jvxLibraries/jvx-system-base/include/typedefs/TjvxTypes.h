@@ -80,7 +80,8 @@ enum class jvxComponentTypeClass
 /*
  * If we modify anything here, make sure to update also 
  * 1) theClassAssociation (file TjvxTypes.cpp, line 4)
- * 2) 
+ * 2) jvxComponentType_str_ (file HjvxSystem.cpp, line 7)
+ * 3) jvxComponentClassTypeAssoc (file HjvxSystem.cpp, line 124)
  */
 typedef enum
 {
@@ -103,6 +104,7 @@ typedef enum
 	JVX_COMPONENT_EXTERNAL_TECHNOLOGY,
 	JVX_COMPONENT_EXTERNAL_DEVICE,
 	JVX_COMPONENT_EXTERNAL_NODE,
+	JVX_COMPONENT_DYNAMIC_NODE,
 	JVX_COMPONENT_PACKAGE,
 	JVX_COMPONENT_MIN_HOST, 
 	JVX_COMPONENT_FACTORY_HOST,

@@ -25,6 +25,7 @@ static jvxTextHelpers jvxComponentType_str_[JVX_COMPONENT_ALL_LIMIT] =
 	{"extern technology", "JVX_COMPONENT_EXTERNAL_TECHNOLOGY" },
 	{"extern device", "JVX_COMPONENT_EXTERNAL_DEVICE" },
 	{"extern node", "JVX_COMPONENT_EXTERNAL_NODE" },
+	{"dynamic node", "JVX_COMPONENT_DYNAMIC_NODE" },
 	{"package", "JVX_COMPONENT_PACKAGE" },
 	{"min host", "JVX_COMPONENT_MIN_HOST"},
 	{"factory host", "JVX_COMPONENT_FACTORY_HOST" },
@@ -147,6 +148,8 @@ static jvxComponentTypeClass jvxComponentClassTypeAssoc[JVX_COMPONENT_ALL_LIMIT 
 	jvxComponentTypeClass::JVX_COMPONENT_TYPE_TECHNOLOGY, // JVX_COMPONENT_EXTERNAL_TECHNOLOGY
 	jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE, // JVX_COMPONENT_EXTERNAL_DEVICE
 	jvxComponentTypeClass::JVX_COMPONENT_TYPE_NODE, // JVX_COMPONENT_EXTERNAL_NODE
+
+	jvxComponentTypeClass::JVX_COMPONENT_TYPE_NODE, // JVX_COMPONENT_DYNAMIC_NODE
 
 	jvxComponentTypeClass::JVX_COMPONENT_TYPE_PACKAGE, // JVX_COMPONENT_PACKAGE
 

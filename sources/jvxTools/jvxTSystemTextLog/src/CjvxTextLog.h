@@ -58,7 +58,9 @@ class CjvxTextLog: public IjvxTextLog, public CjvxObject
 	jvx_thread_handler myThreadHandler;
 	JVX_THREADS_FORWARD_C_CALLBACK_DECLARE_ALL
 
-	jvxSize dbgLevel;
+	jvxSize dbgLevel = 0;
+	jvxBool dbgOutCout = false;
+
 	std::vector<std::string> moduleFilterExpression;
 
 	std::map<std::string, jvxSize> reg_modules;
@@ -72,7 +74,7 @@ public:
 	~CjvxTextLog();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef, const char* strFileName, 
-		jvxSize loclBuffer, jvxSize writeAtOnce, jvxSize circBufferSize, jvxSize dbgLevel) override;
+		jvxSize loclBuffer, jvxSize writeAtOnce, jvxSize circBufferSize, jvxSize dbgLevel, jvxBool dbgOutCout) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION addTextLogExpression(const char* oneExpr) override;
 
@@ -81,7 +83,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION start() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop() override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog, jvxBool* dbgOutCout) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_direct(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) override;

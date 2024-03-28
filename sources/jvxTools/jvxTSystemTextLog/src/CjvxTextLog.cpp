@@ -27,6 +27,9 @@ CjvxTextLog::CjvxTextLog(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE): CjvxObject(JV
 	threadHdl = NULL;
 	JVX_THREADS_FORWARD_C_CALLBACK_ASSIGN(myThreadHandler, CjvxTextLog, started, stopped, expired, wokeup);
 
+	dbgLevel = 0;
+	dbgOutCout = false;
+
 	// Start some mutexes
 	JVX_INITIALIZE_MUTEX(this->mutexFBuffer);
 	JVX_INITIALIZE_MUTEX(this->mutexCBuffer);
@@ -56,7 +59,7 @@ CjvxTextLog::~CjvxTextLog()
  *///===================================================
 jvxErrorType
 CjvxTextLog::initialize(IjvxHiddenInterface* hostRef, const char* strFileName, jvxSize bytesFilelBuffer, jvxSize bytesFileWriteAtOnce, jvxSize bytesCircularBuffer, 
-	jvxSize dbgL)
+	jvxSize dbgL, jvxBool dbgOutCoutArg)
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	if(logFileState == RTP_LOGFILE_NOTINIT)
@@ -105,7 +108,8 @@ CjvxTextLog::initialize(IjvxHiddenInterface* hostRef, const char* strFileName, j
 			memset(cbuffer.characterBuffer, 0, sizeof(char)*cbuffer.lBuffer);
 
 			dbgLevel = dbgL;
-			
+			dbgOutCout = dbgOutCoutArg;
+
 			logFileState = RTP_LOGFILE_INIT;
 			return JVX_NO_ERROR;
 		}
@@ -595,11 +599,16 @@ CjvxTextLog::addEntry_buffered_nb(const char* txt, const char* moduleName, jvxCB
 // ========================================================================
 
 jvxErrorType
-CjvxTextLog::debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog)
+CjvxTextLog::debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog, jvxBool* outCout)
 {
 	jvxSize i;
 	if (level)
 		*level = dbgLevel;
+
+	if (outCout)
+	{
+		*outCout = dbgOutCout;
+	}
 	if (moduleTextLog)
 	{
 		*moduleTextLog = false;

@@ -233,6 +233,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_configure(jvxApiString* errorMessage, IjvxC
 	jvxApiString opt_text;
 	jvxSize opt_sz = 0;
 	jvxSize i;
+	jvxCBool opt_bool = false;
 	std::string errTxtLoc;
 
 	if (bootState == JVX_STATE_NONE)
@@ -256,6 +257,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_configure(jvxApiString* errorMessage, IjvxC
 		_command_line_parameters.textLog_sizeInternBufferFile = 8192;
 		_command_line_parameters.textLog_sizeInternBufferRW = 8192;
 		_command_line_parameters.textLog_dbglevel = 0;
+		_command_line_parameters.textLog_outCout = 0;
 		_command_line_parameters.dllsDirectories.clear();
 		_command_line_parameters.configDirectories.clear();
 		_command_line_parameters.systemPath = "";
@@ -285,6 +287,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_configure(jvxApiString* errorMessage, IjvxC
 			commLine->register_option("--textlogszrw", "", "Specify size of chunks to be written to text log file [in Bytes]", "8192", true, JVX_DATAFORMAT_SIZE);
 			commLine->register_option("--textloglev", "", "Specify log level [0: no log, 10: all log file entries]", "0", true, JVX_DATAFORMAT_SIZE);
 			commLine->register_option("--textlogexpr", "", "Specify log level expression to limit log file output to specific modules", "", true, JVX_DATAFORMAT_STRING, JVX_SIZE_UNSELECTED);
+			commLine->register_option("--textlogcout", "", "Redirect log output to cout");
 			
 			jvx_command_line_specify(commLine);
 
@@ -449,6 +452,13 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_configure(jvxApiString* errorMessage, IjvxC
 				if (resL == JVX_NO_ERROR)
 				{
 					_command_line_parameters.textLog_dbglevel = opt_sz;
+				}
+
+				opt_bool = c_false;	
+				resL = commLine->content_entry_option("--textlogcout", 0, &opt_bool, JVX_DATAFORMAT_BOOL);
+				if (resL == JVX_NO_ERROR)
+				{
+					_command_line_parameters.textLog_outCout = opt_bool;
 				}
 
 				numEntries = 0;
@@ -637,6 +647,9 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_initialize(jvxApiString* errorMessage, jvxH
 		assert(res == JVX_NO_ERROR);
 
 		res = jvx_set_property(theProps, &_command_line_parameters.textLog_dbglevel, 0, 1, JVX_DATAFORMAT_SIZE, false, "/textLog_dbglevel", callGate);
+		assert(res == JVX_NO_ERROR);
+
+		res = jvx_set_property(theProps, &_command_line_parameters.textLog_outCout, 0, 1, JVX_DATAFORMAT_BOOL, false, "/textLog_dbgCout", callGate);
 		assert(res == JVX_NO_ERROR);
 
 		res = jvx_set_property(theProps, &_command_line_parameters.textLog_sizeInternBufferFile, 0, 1, JVX_DATAFORMAT_SIZE, false, "/textLog_sizeInternBufferFile", callGate);

@@ -1254,17 +1254,22 @@ public:
 
 class jvxrtst_backup
 {
+
 public:
 	IjvxToolsHost* theToolsHost = nullptr;
 	IjvxObject* theTextLogger_obj = nullptr;
 	IjvxTextLog* theTextLogger_hdl = nullptr;
-	jvxSize dbgLevel = 0;
 	std::string theModuleName;
 	jvxBool dbgModule = false;
+	jvxBool dbgOutputCout = false;
 	jvxostream jvxos;
 	char* jvxlst_buf = nullptr;
 	jvxSize jvxlst_buf_sz = 0;
 
+//private:
+	jvxSize dbgLevel = 0;
+
+public:
 	jvxrtst_backup()
 	{
 		theTextLogger_hdl = NULL;
@@ -1319,12 +1324,18 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 #define JVX_START_LOCK_LOG_REF(ptr, LEVEL) \
 	if (ptr && ptr->jvxrtst_bkp.dbgModule && ptr->jvxrtst_bkp.dbgLevel > jvxLogLevel2Id(LEVEL)) \
 	{ \
-		std::ostream& log = ptr->jvxrtst; \
+		std::ostream* logptr = &ptr->jvxrtst; \
+		if(ptr->jvxrtst_bkp.dbgOutputCout) \
+			logptr = &std::cout; \
+		std::ostream& log = *logptr; \
 		jvx_lock_text_log(ptr->jvxrtst_bkp);
 
 #define JVX_STOP_LOCK_LOG_REF(ptr) \
 		jvx_unlock_text_log(ptr->jvxrtst_bkp); \
 	}
+
+#define TL3 JVX_START_LOCK_LOG_REF(this, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
+#define TL JVX_STOP_LOCK_LOG_REF(this)
 
 #endif // #idef _CPLUSPLUS
 

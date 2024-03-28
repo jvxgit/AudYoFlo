@@ -110,6 +110,12 @@ SECTION PROPERTIES
 			TYPE = "JVX_DATAFORMAT_SIZE";
 			INIT_SET = 0; // No debugging
 		};
+		SECTION textLog_dbgCout
+		{
+			DESCRIPTION = "Debug out to cout";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0; // Output to logfile
+		};
 		SECTION textLog_expressions
 		{
 			DESCRIPTION = "Text log component selection string";	  // Defaults to NAME if not present

@@ -383,7 +383,7 @@ CjvxCommandLine::content_entry_option(const char* scan_token, jvxSize id, jvxHan
 			}
 			else
 			{
-				if (form == JVX_DATAFORMAT_16BIT_LE)
+				if (form == JVX_DATAFORMAT_U16BIT_LE)
 				{
 					if (elm->second.num_specified)
 					{
@@ -391,7 +391,7 @@ CjvxCommandLine::content_entry_option(const char* scan_token, jvxSize id, jvxHan
 					}
 					else
 					{
-						*(jvxUInt16*)fld = true;
+						*(jvxUInt16*)fld = false;
 					}
 					return JVX_NO_ERROR;
 				}

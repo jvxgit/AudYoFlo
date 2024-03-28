@@ -113,6 +113,7 @@ namespace CayfAutomationModules
 		// This is what we want to connect the input (tp trigger) to. The support node helps to synchronize and
 		// adapt the processing formats (B.1)
 		jvxComponentIdentification connectTo = JVX_COMPONENT_UNKNOWN;
+		jvxComponentIdentification connectFrom = JVX_COMPONENT_UNKNOWN;
 
 		ayfConnectConfigSyncIo(
 
@@ -122,6 +123,7 @@ namespace CayfAutomationModules
 			const std::string& oconMasterArg = "default",
 			const std::string& iconMasterArg = "default",
 			jvxComponentIdentification connectToArg = JVX_COMPONENT_UNKNOWN,
+			jvxComponentIdentification connectFromArg = JVX_COMPONENT_UNKNOWN,
 			const std::string& iconConnectArg = "default",
 			const std::string& oconConnectArg = "default",
 
@@ -133,7 +135,7 @@ namespace CayfAutomationModules
 			driveTargetCompChain(chainNamePrefixArg, masterNmArg,
 				oconMasterArg, iconMasterArg,
 				iconConnectArg, oconConnectArg,
-				connectionCategoryArg, dbgOutArg), connectTo(connectToArg),
+				connectionCategoryArg, dbgOutArg), connectTo(connectToArg), connectFrom(connectFromArg),
 			driveSupportNodeChain(supportNodeArg){};
 	};
 

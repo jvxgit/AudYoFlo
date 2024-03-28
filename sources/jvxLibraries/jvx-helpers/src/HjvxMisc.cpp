@@ -6908,7 +6908,7 @@ jvx_request_text_log(jvxrtst_backup& bkp)
 
 	if (bkp.theTextLogger_hdl)
 	{
-		bkp.theTextLogger_hdl->debug_config(&bkp.dbgLevel, bkp.theModuleName.c_str(), &bkp.dbgModule);
+		bkp.theTextLogger_hdl->debug_config(&bkp.dbgLevel, bkp.theModuleName.c_str(), &bkp.dbgModule, &bkp.dbgOutputCout);
 
 		if (!bkp.dbgModule)
 		{

@@ -29,6 +29,7 @@ protected:
 		jvxSize textLog_sizeInternBufferFile;
 		jvxSize textLog_sizeInternBufferRW;
 		jvxSize textLog_dbglevel;
+		jvxCBool textLog_outCout;
 		jvxBool out_cout;
 		jvxBool verbose_dll;
 		jvxBool verbose_slots;
