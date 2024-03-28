@@ -82,6 +82,8 @@ enum class jvxComponentTypeClass
  * 1) theClassAssociation (file TjvxTypes.cpp, line 4)
  * 2) jvxComponentType_str_ (file HjvxSystem.cpp, line 7)
  * 3) jvxComponentClassTypeAssoc (file HjvxSystem.cpp, line 124)
+ * 
+ * 4) In case flutter is in use: JvxComponentTypeEnum in file "AudYoFlo/flutter/ayf_pack/lib/constants/ayf_constants_audio.dart
  */
 typedef enum
 {
