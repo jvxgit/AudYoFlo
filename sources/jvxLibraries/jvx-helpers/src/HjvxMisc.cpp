@@ -5018,7 +5018,7 @@ jvx_activateObjectInModule(
 		res = hHostRef->select_component(tp, id, theOwner, extend_if_necessary, cpRemap);
 		if (res == JVX_NO_ERROR)
 		{
-			if (!attach_name.empty())
+			if (!attach_name.empty() || attachUId)
 			{
 				IjvxObject* obj = nullptr;
 				IjvxManipulate* man = nullptr;

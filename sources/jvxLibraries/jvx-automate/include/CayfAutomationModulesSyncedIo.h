@@ -18,6 +18,31 @@ namespace CayfAutomationModules
 			jvxComponentIdentification tpIdTrigger) = 0;
 	};
 
+	class ayfConnectConfigMiscArgs
+	{
+	public:
+		jvxSize connectionCategory = JVX_SIZE_UNSELECTED;
+
+		jvxBool dbgOut = false;
+
+		// This is how the support node is remapped
+		jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
+
+		// This flag activates to attach uid to component description via IjvxManipulate - to distinguish between components of the same type
+		jvxBool attachUi = false;
+
+		ayfConnectConfigMiscArgs(
+			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED,
+			jvxBool dbgOutArg = false,
+			jvxComponentType tpRemapArg = JVX_COMPONENT_UNKNOWN,
+			jvxBool attachUiArg = false) :
+			connectionCategory(connectionCategoryArg),
+			dbgOut(dbgOutArg),
+			tpRemap(tpRemapArg),
+			attachUi(attachUiArg) {};
+
+	};
+
 	// This component describes the connection of the support node which is used in the secondary chain
 	class ayfConnectConfigCpEntrySyncIoCommon
 	{
@@ -73,11 +98,8 @@ namespace CayfAutomationModules
 		// A way to parameterize the component name
 		std::string manSuffix;
 
-		jvxBool attachUi = false;
-
-		// This is how the support node is remapped
-		jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
-
+		ayfConnectConfigMiscArgs misc;
+		
 	public:
 
 		// 
@@ -90,14 +112,26 @@ namespace CayfAutomationModules
 			const std::string& oconMasterNmArg = "default", const std::string& iconMasterNmArg = "default",
 			const std::string& iconNmConnectArg = "default", const std::string& oconNmConnectArg = "default",
 
-			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED, jvxBool dbgOutArg = false,
-			jvxComponentType tpRemapArg = JVX_COMPONENT_UNKNOWN) : ayfConnectConfigCpEntrySyncIoCommon(
+			const ayfConnectConfigMiscArgs& miscArgs = ayfConnectConfigMiscArgs()) : ayfConnectConfigCpEntrySyncIoCommon(
 				chainNamePrefixArg, masterNmArg, 
 				oconMasterNmArg, iconMasterNmArg,
 				iconNmConnectArg, oconNmConnectArg,
-				connectionCategoryArg, dbgOutArg),
-			cpTp(cpTpArg), modName(modNameArg), tpRemap(tpRemapArg)
-			{};
+				miscArgs.connectionCategory, miscArgs.dbgOut),
+			cpTp(cpTpArg), modName(modNameArg),misc(miscArgs){};
+	};
+
+	class ayfConnectConfigCpConInChain
+	{
+	public:
+		jvxComponentIdentification connectCp = JVX_COMPONENT_UNKNOWN;
+		std::string connectCon = "default";
+		jvxSize connectLinkId = JVX_SIZE_UNSELECTED;
+
+		ayfConnectConfigCpConInChain(
+			jvxComponentIdentification connectCpArg = JVX_COMPONENT_UNKNOWN,
+			const std::string& connectConArg = "default",
+			jvxSize connectLinkIdArg = JVX_SIZE_UNSELECTED) :
+			connectCp(connectCpArg), connectCon(connectConArg), connectLinkId(connectLinkIdArg) {};
 	};
 
 	// A)
@@ -118,8 +152,14 @@ namespace CayfAutomationModules
 
 		// This is what we want to connect the input (tp trigger) to. The support node helps to synchronize and
 		// adapt the processing formats (B.1)
-		jvxComponentIdentification connectTo = JVX_COMPONENT_UNKNOWN;
-		jvxComponentIdentification connectFrom = JVX_COMPONENT_UNKNOWN;
+		// jvxComponentIdentification connectTo = JVX_COMPONENT_UNKNOWN;
+		//jvxComponentIdentification connectFrom = JVX_COMPONENT_UNKNOWN;
+
+		// jvxSize connectToLinkId = JVX_SIZE_UNSELECTED;
+		//jvxSize connectFromLinkId = JVX_SIZE_UNSELECTED;
+
+		ayfConnectConfigCpConInChain cpTo;
+		ayfConnectConfigCpConInChain cpFrom;
 
 		ayfConnectConfigSyncIo(
 
@@ -128,11 +168,9 @@ namespace CayfAutomationModules
 			const std::string& masterNmArg = "default",
 			const std::string& oconMasterArg = "default",
 			const std::string& iconMasterArg = "default",
-			jvxComponentIdentification connectToArg = JVX_COMPONENT_UNKNOWN,
-			jvxComponentIdentification connectFromArg = JVX_COMPONENT_UNKNOWN,
-			const std::string& iconConnectArg = "default",
-			const std::string& oconConnectArg = "default",
-
+			const ayfConnectConfigCpConInChain& cpToArg = ayfConnectConfigCpConInChain(),
+			const ayfConnectConfigCpConInChain& cpFromArg = ayfConnectConfigCpConInChain(),
+			
 			// This is for chain A
 			const ayfConnectConfigCpEntrySyncIo& supportNodeArg = ayfConnectConfigCpEntrySyncIo(),
 
@@ -140,8 +178,11 @@ namespace CayfAutomationModules
 			jvxBool dbgOutArg = false) :
 			driveTargetCompChain(chainNamePrefixArg, masterNmArg,
 				oconMasterArg, iconMasterArg,
-				iconConnectArg, oconConnectArg,
-				connectionCategoryArg, dbgOutArg), connectTo(connectToArg), connectFrom(connectFromArg),
+				cpToArg.connectCon/*iconConnectArg*/, 
+				cpFromArg.connectCon,
+				connectionCategoryArg, dbgOutArg), // connectTo(connectToArg), 
+			cpTo(cpToArg),
+			cpFrom(cpFromArg),
 			driveSupportNodeChain(supportNodeArg){};
 	};
 

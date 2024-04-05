@@ -145,13 +145,17 @@ CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, 
 }
 
 jvxErrorType 
-CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requesTestChain)
+CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requesTestChain, jvxBool allowLowerNumberChannels)
 {
 	// We only accept ONE setting!!
 	neg_input._update_parameters_fixed(params.number_channels,
 		params.buffersize, params.rate,
 		params.format, params.format_group,
 		JVX_DATAFLOW_PUSH_ON_PULL, nullptr);
+	if (allowLowerNumberChannels)
+	{
+		neg_input.preferred.number_channels.min = 0;
+	}
 	return JVX_NO_ERROR;
 }
 
@@ -291,9 +295,11 @@ CjvxSingleInputConnector::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 	{
 		idx_stage_local = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
 	}
-	buffers_in = _common_set_icon.theData_in->con_data.buffers[idx_stage_local];
-	// jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-
+	if (_common_set_icon.theData_in->con_params.number_channels > 0)
+	{
+		buffers_in = _common_set_icon.theData_in->con_data.buffers[idx_stage_local];
+		// jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+	}
 	if (buffers_in) // <- buffers may be nullptr if the input side is only a "trigger"
 	{
 		if (report)

@@ -830,7 +830,12 @@ JVX_ASYNCIO_CLASSNAME::transfer_backward_ocon_ntask(jvxLinkDataTransferType tp, 
 							newPtr))
 						{
 							inProcessing.cntLost = numLostNow;
-							theData_out->con_data.attached_buffer_single[*theData_out->con_pipeline.idx_stage_ptr] = newPtr;
+
+							// Note: theData_in->con_data.attached_buffer_single might be nullptr!!
+							if (theData_out->con_data.attached_buffer_single)
+							{
+								theData_out->con_data.attached_buffer_single[*theData_out->con_pipeline.idx_stage_ptr] = newPtr;
+							}
 						}
 					}
 					if (theData_out->con_link.connect_to)
@@ -1220,7 +1225,9 @@ JVX_ASYNCIO_CLASSNAME::process_buffers_icon_ntask(jvxLinkDataDescriptor* theData
 		{
 			idx_stage_in = *theData_in->con_pipeline.idx_stage_ptr;
 		}
-		if (theData_in->con_data.attached_buffer_single[idx_stage_in])
+
+		// Note: theData_in->con_data.attached_buffer_single might be nullptr!!
+		if (theData_in->con_data.attached_buffer_single && theData_in->con_data.attached_buffer_single[idx_stage_in])
 		{
 			jvxLinkDataAttachedChain* ptr = theData_in->con_data.attached_buffer_single[idx_stage_in];
 			jvxLinkDataAttachedBuffer* ptrBuf = ptr->if_buffer();

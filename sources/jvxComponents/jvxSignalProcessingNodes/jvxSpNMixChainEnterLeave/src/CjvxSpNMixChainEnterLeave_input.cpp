@@ -19,7 +19,7 @@ CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleInputConnector* i
 		params.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
 
 		// Pass it to the connector but do not request a test of the chain - it is in build status anyway
-		iconn->updateFixedProcessingArgs(params, false);
+		iconn->updateFixedProcessingArgs(params, false, true);
 	}
 	return JVX_NO_ERROR;
 }
@@ -58,14 +58,16 @@ CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleInputConnector* icon
 	
 	assert(JVX_CHECK_SIZE_SELECTED(idxBufferProcess));
 	assert(params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
-	assert(params.number_channels == szExtraBuffersChannels);
+	// assert(params.number_channels == szExtraBuffersChannels);
 	assert(params.format == _common_set_ocon.theData_out.con_params.format);
+	
+	jvxSize numChannels = JVX_MIN(params.number_channels, szExtraBuffersChannels);
 	
 	// The pointers are a shortcut!!
 	jvxData** bufsOut = (jvxData**)bufsSideChannel[idxBufferProcess];
 	jvxData** bufsFrom = (jvxData**)bufferPtrs;
 
-	for (i = 0; i < szExtraBuffersChannels; i++)
+	for (i = 0; i < numChannels; i++)
 	{
 		jvx_mixSamples_flp(bufsFrom[i], bufsOut[i], params.buffersize);
 		//memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);

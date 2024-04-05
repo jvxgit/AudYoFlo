@@ -78,12 +78,18 @@ enum class jvxComponentTypeClass
 };
 
 /*
- * If we modify anything here, make sure to update also 
+ * If we modify anything here, make sure to update also
+ *
  * 1) theClassAssociation (file TjvxTypes.cpp, line 4)
  * 2) jvxComponentType_str_ (file HjvxSystem.cpp, line 7)
  * 3) jvxComponentClassTypeAssoc (file HjvxSystem.cpp, line 124)
  * 
- * 4) In case flutter is in use: JvxComponentTypeEnum in file "AudYoFlo/flutter/ayf_pack/lib/constants/ayf_constants_audio.dart
+ * 4) In file <AudYoFlo>/sources/jvxLibraries/jvx-helpers/src/HjvxHostsAndProperties.cpp and in included header, e.g.,
+ *    in <AudYoFlo>/software/codeFragments/components/Hjvx_caseStatement_nodes.h -> add case statement if required.
+ * 5) In file <AudYoFlo>/sources/jvxLibraries/jvx-system-base/include/helpers/HjvxCastProduct.h -> add entry in case statement, e.g., in line 50 for DYNAMIC NODE
+ * 
+ * 6) In case flutter is in use: JvxComponentTypeEnum in file "AudYoFlo/flutter/ayf_pack/lib/constants/ayf_constants_audio.dart
+ * 
  */
 typedef enum
 {

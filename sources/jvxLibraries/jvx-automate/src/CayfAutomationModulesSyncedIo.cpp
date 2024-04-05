@@ -111,7 +111,8 @@ namespace CayfAutomationModules
 		ayfConnectConfigCpEntrySyncIoRuntime cpElm(config);
 
 		cpElm.cpId = cpElm.driveSupportNodeChain.cpTp;
-		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.manSuffix, cpElm.driveSupportNodeChain.attachUi, cpElm.driveSupportNodeChain.tpRemap);
+		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.manSuffix, 
+			cpElm.driveSupportNodeChain.misc.attachUi, cpElm.driveSupportNodeChain.misc.tpRemap);
 
 		if (res == JVX_NO_ERROR)
 		{
@@ -412,18 +413,20 @@ namespace CayfAutomationModules
 						res = theDataConnectionDefRuleHdl->add_bridge_specification(
 							elm->second.supportNodeRuntime.cpId,
 							"*", elm->second.supportNodeRuntime.driveTargetCompChain.oconMasterNm.c_str(),
-							config.connectTo,
-							"*", elm->second.supportNodeRuntime.driveTargetCompChain.iconNmConnect.c_str(), bridgename.c_str(), false, false);
+							config.cpTo.connectCp,
+							"*", elm->second.supportNodeRuntime.driveTargetCompChain.iconNmConnect.c_str(), 
+							bridgename.c_str(), false, false, JVX_SIZE_UNSELECTED, config.cpTo.connectLinkId);
 						assert(res == JVX_NO_ERROR);
 
 						cnt++;
 						bridgename = "bridge_" + jvx_size2String(cnt);
 
 						res = theDataConnectionDefRuleHdl->add_bridge_specification(
-							config.connectFrom,
+							config.cpFrom.connectCp,
 							"*", elm->second.supportNodeRuntime.driveTargetCompChain.oconNmConnect.c_str(),
 							elm->second.supportNodeRuntime.cpId,
-							"*", elm->second.supportNodeRuntime.driveTargetCompChain.iconMasterNm.c_str(), bridgename.c_str(), false, false);
+							"*", elm->second.supportNodeRuntime.driveTargetCompChain.iconMasterNm.c_str(), 
+							bridgename.c_str(), false, false, config.cpFrom.connectLinkId, JVX_SIZE_UNSELECTED);
 						assert(res == JVX_NO_ERROR);
 						theDataConnectionDefRuleHdl->mark_rule_default();
 
