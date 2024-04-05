@@ -126,9 +126,9 @@ feature_class_selected_component(const jvxComponentIdentification& tp, jvxBitFie
  */
 jvxErrorType
 select_component(jvxComponentIdentification& tp, jvxSize idx,
-	IjvxObject* theOwner, jvxBool extend_if_necessary)
+	IjvxObject* theOwner, jvxBool extend_if_necessary, jvxComponentType tpRemap)
 {
-	return this->_select_component(tp, idx, theOwner, extend_if_necessary);
+	return this->_select_component(tp, idx, theOwner, extend_if_necessary, tpRemap);
 }
 
 /**

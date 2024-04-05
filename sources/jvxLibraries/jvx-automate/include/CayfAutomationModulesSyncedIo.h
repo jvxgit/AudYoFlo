@@ -73,6 +73,11 @@ namespace CayfAutomationModules
 		// A way to parameterize the component name
 		std::string manSuffix;
 
+		jvxBool attachUi = false;
+
+		// This is how the support node is remapped
+		jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
+
 	public:
 
 		// 
@@ -85,12 +90,13 @@ namespace CayfAutomationModules
 			const std::string& oconMasterNmArg = "default", const std::string& iconMasterNmArg = "default",
 			const std::string& iconNmConnectArg = "default", const std::string& oconNmConnectArg = "default",
 
-			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED, jvxBool dbgOutArg = false) : ayfConnectConfigCpEntrySyncIoCommon(
+			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED, jvxBool dbgOutArg = false,
+			jvxComponentType tpRemapArg = JVX_COMPONENT_UNKNOWN) : ayfConnectConfigCpEntrySyncIoCommon(
 				chainNamePrefixArg, masterNmArg, 
 				oconMasterNmArg, iconMasterNmArg,
 				iconNmConnectArg, oconNmConnectArg,
 				connectionCategoryArg, dbgOutArg),
-			cpTp(cpTpArg), modName(modNameArg)
+			cpTp(cpTpArg), modName(modNameArg), tpRemap(tpRemapArg)
 			{};
 	};
 
@@ -188,7 +194,11 @@ namespace CayfAutomationModules
 		// Configuration template
 		ayfConnectConfigSyncIo config;		
 
+		// Allow that a secondary connection can be connected lateron
 		jvxBool allowPostPonedConnect = true;
+
+		// This flag constellation defines what to achieve when connecting.
+		// Some connections require multiple connections (-> 0x3)
 		jvxCBitField targetFlagsConnection = 0x1;
 
 		// ayfConnectDerivedSrc2Snk derived;

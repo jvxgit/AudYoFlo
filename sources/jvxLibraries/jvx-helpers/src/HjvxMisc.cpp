@@ -4991,7 +4991,8 @@ jvx_activateObjectInModule(
 	IjvxObject* theOwner, 
 	jvxBool extend_if_necessary,
 	const std::string& attach_name,
-	jvxBool attachUId)
+	jvxBool attachUId, 
+	jvxComponentType cpRemap)
 {
 	jvxSize id = JVX_SIZE_UNSELECTED;
 	jvxSize i;
@@ -5014,7 +5015,7 @@ jvx_activateObjectInModule(
 	if (JVX_CHECK_SIZE_SELECTED(id))
 	{
 		tp.slotid = JVX_SIZE_DONTCARE;
-		res = hHostRef->select_component(tp, id, theOwner, extend_if_necessary);
+		res = hHostRef->select_component(tp, id, theOwner, extend_if_necessary, cpRemap);
 		if (res == JVX_NO_ERROR)
 		{
 			if (!attach_name.empty())

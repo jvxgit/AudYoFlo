@@ -853,7 +853,8 @@ jvxErrorType jvx_activateObjectInModule(
 	IjvxObject* theOwner = nullptr,
 	jvxBool extend_if_necessary = false,
 	const std::string& attach_name = "",
-	jvxBool attachUId = false);
+	jvxBool attachUId = false,
+	jvxComponentType cpRemap = JVX_COMPONENT_UNKNOWN);
 jvxErrorType jvx_deactivateObjectInModule(IjvxHost* hHostRef, jvxComponentIdentification& tp);
 
 JVX_STATIC_INLINE jvxErrorType jvx_errc(jvxDspBaseErrorType errin)

@@ -111,7 +111,7 @@ namespace CayfAutomationModules
 		ayfConnectConfigCpEntrySyncIoRuntime cpElm(config);
 
 		cpElm.cpId = cpElm.driveSupportNodeChain.cpTp;
-		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.manSuffix);
+		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.manSuffix, cpElm.driveSupportNodeChain.attachUi, cpElm.driveSupportNodeChain.tpRemap);
 
 		if (res == JVX_NO_ERROR)
 		{
@@ -251,7 +251,7 @@ namespace CayfAutomationModules
 		jvxBool rep_global = false;
 		jvxSize bridgeId = 0;
 
-		fullyEstablished = true;
+		fullyEstablished = false;
 		jvxBool establishedLoc = false;
 
 		// Here, the audio device has been activated.

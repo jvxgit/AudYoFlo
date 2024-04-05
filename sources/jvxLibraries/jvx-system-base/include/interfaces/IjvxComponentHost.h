@@ -35,7 +35,7 @@ public:
 	// Access and control components in slots
 
 	// Note that we pass non-const references to set slot id or sub id on exit
-	virtual jvxErrorType JVX_CALLINGCONVENTION select_component(jvxComponentIdentification&, jvxSize, IjvxObject* owner = NULL, jvxBool extend_if_necessary = false) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION select_component(jvxComponentIdentification&, jvxSize, IjvxObject* owner = NULL, jvxBool extend_if_necessary = false, jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION selection_component(const jvxComponentIdentification&, jvxSize*, jvxApiString* modNmRet = nullptr) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate_selected_component(const jvxComponentIdentification&) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION is_ready_selected_component(const jvxComponentIdentification&, jvxBool* ready, jvxApiString* reasonIfNot) = 0;

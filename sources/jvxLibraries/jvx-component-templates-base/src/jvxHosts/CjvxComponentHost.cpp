@@ -24,7 +24,7 @@ CjvxComponentHost::static_local_select(IjvxHiddenInterface* theHinterface,
 jvxErrorType
 CjvxComponentHost::static_local_unselect(IjvxHiddenInterface* theHinterface,
 	IjvxObject* theObject, const jvxComponentIdentification& tpIdOld,
-	IjvxCoreStateMachine* theObjectSm)
+	IjvxCoreStateMachine* theObjectSm, jvxComponentType tpRemapped)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	assert(theObjectSm);
@@ -34,6 +34,11 @@ CjvxComponentHost::static_local_unselect(IjvxHiddenInterface* theHinterface,
 	jvx::align::resetComponentIdOnUnset(tpId);
 
 	res = theObjectSm->unselect();
+
+	if (tpRemapped != JVX_COMPONENT_UNKNOWN)
+	{
+		tpId.tp = tpRemapped;
+	}
 	res = theObject->set_location_info(tpId);
 
 	return res;
@@ -1798,7 +1803,7 @@ CjvxComponentHost::_feature_class_selected_component(const jvxComponentIdentific
  */
 jvxErrorType
 CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx,
-	IjvxObject* theOwner, jvxBool extend_if_necessary)
+	IjvxObject* theOwner, jvxBool extend_if_necessary, jvxComponentType tpRemap)
 {
 	jvxSize h;
 
@@ -2085,8 +2090,17 @@ CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx
 		}
 		if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
 		{
-			res = t_select_component<IjvxNode>(_common_set_types.registeredNodeTypes, tp,
-				idx, theOwner, extend_if_necessary);
+/*
+			if (isDynNode)
+			{
+				select_dyn_component(_common_set_types.registeredNodeTypes, tp,
+					idx, theOwner, _common_set_types.storedDynNode, _common_set_types.dynNodesMapping);
+			}
+			else
+			{ */
+				res = t_select_component<IjvxNode>(_common_set_types.registeredNodeTypes, tp,
+					idx, theOwner, extend_if_necessary, tpRemap);
+			//}
 		}// 
 
 		if (res == JVX_ERROR_ELEMENT_NOT_FOUND)

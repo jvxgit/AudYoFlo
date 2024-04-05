@@ -32,6 +32,7 @@ public:
 	T* obj = nullptr;
 	jvxSize idSel = JVX_SIZE_UNSELECTED;
 	jvxSize uid = JVX_SIZE_UNSELECTED;
+	jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
 	jvxBool noCfgSave = false;
 	std::string nmExternal;
 	IjvxConnectorFactory* cfac = nullptr;

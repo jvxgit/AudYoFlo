@@ -104,11 +104,21 @@ protected:
 		std::string tokenInConfigFile;
 	} oneTechnologyType;
 
+	struct dynOrigin
+	{
+		jvxComponentType tp = JVX_COMPONENT_UNKNOWN;
+		jvxSize idx = JVX_SIZE_UNSELECTED;
+	};
+
 	struct
 	{
 		std::vector<oneTechnologyType> registeredTechnologyTypes;
 		std::vector<oneObjType<IjvxNode>> registeredNodeTypes;
 		std::vector<oneObjType<IjvxSimpleComponent>> registeredSimpleTypes;
+		
+		// Extra node list for dynamic objects
+		oneObjType<IjvxNode> storedDynNode;
+		std::map<IjvxNode*, dynOrigin> dynNodesMapping;
 	} _common_set_types;
 
 	std::map<std::string, oneDynExtModule> extModuleDefinitions;

@@ -51,7 +51,7 @@ public:
 	jvxErrorType _feature_class_selected_component(const jvxComponentIdentification& tp, jvxBitField* ft);
 
 	jvxErrorType _select_component(jvxComponentIdentification& tp, jvxSize idx,
-			IjvxObject* theOwner, jvxBool extend_if_necessary);
+			IjvxObject* theOwner, jvxBool extend_if_necessary, jvxComponentType tpRemap);
 
 	jvxErrorType _selection_component(const jvxComponentIdentification& tp, jvxSize* idRet, jvxApiString* modNmRet);
 	jvxErrorType _activate_selected_component(const jvxComponentIdentification& tp);
@@ -91,11 +91,10 @@ public:
 	virtual jvxErrorType map_return_reference_tool(const jvxComponentIdentification&, 
 		IjvxObject* theObject) = 0;
 
-
 	// File CjvxHost_components-tpl.cpp
 	template <class T> jvxErrorType t_select_component(std::vector<oneObjType<T>>& registeredObjs,
 		jvxComponentIdentification& tp, jvxSize idx,
-		IjvxObject* theOwner, jvxBool extend_if_necessary);
+		IjvxObject* theOwner, jvxBool extend_if_necessary, jvxComponentType tp_store_type = JVX_COMPONENT_UNKNOWN);
 
 	template <class T> jvxErrorType t_activate_component(std::vector<oneObjType<T>>& registeredObjs,
 		const jvxComponentIdentification& tp);
@@ -114,7 +113,7 @@ public:
 
 	static jvxErrorType static_local_unselect(IjvxHiddenInterface* theHinterface,
 		IjvxObject* theObject, const jvxComponentIdentification& tpIdOld,
-		IjvxCoreStateMachine* theObjectSm);
+		IjvxCoreStateMachine* theObjectSm, jvxComponentType tpRemapped = JVX_COMPONENT_UNKNOWN);
 };
 
 #endif
