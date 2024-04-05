@@ -112,7 +112,7 @@ namespace CayfAutomationModules
 
 		cpElm.cpId = cpElm.driveSupportNodeChain.cpTp;
 		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.manSuffix, 
-			cpElm.driveSupportNodeChain.misc.attachUi, cpElm.driveSupportNodeChain.misc.tpRemap);
+			cpElm.driveSupportNodeChain.cpManipulate.attachUi, cpElm.driveSupportNodeChain.cpManipulate.tpRemap);
 
 		if (res == JVX_NO_ERROR)
 		{
@@ -270,7 +270,7 @@ namespace CayfAutomationModules
 			auto elm = module_connections.find(tp_reg);
 			assert(elm != module_connections.end());
 
-			jvxDataConnectionRuleParameters params(false, false, true, elm->second.supportNodeRuntime.driveSupportNodeChain.dbgOut, true);
+			jvxDataConnectionRuleParameters params(false, false, true, elm->second.supportNodeRuntime.driveSupportNodeChain.misc.dbgOut, true);
 			params.preventStoreConfig = true;
 
 			// Check if this part must be connected!!
@@ -280,7 +280,7 @@ namespace CayfAutomationModules
 				std::string chainName = elm->second.supportNodeRuntime.driveSupportNodeChain.chainNamePrefix +
 					jvx_size2String(tp_reg.slotid) + "-" + jvx_size2String(tp_reg.slotsubid);
 				res = con->create_connection_rule(chainName.c_str(), &theDataConnectionDefRule_id,
-					&params, elm->second.supportNodeRuntime.driveSupportNodeChain.connectionCategory);
+					&params, elm->second.supportNodeRuntime.driveSupportNodeChain.misc.connectionCategory);
 				if (res == JVX_NO_ERROR)
 				{
 					jvxSize cnt = 0;
@@ -372,13 +372,13 @@ namespace CayfAutomationModules
 			}
 
 			// =================================================================================================================
-			params.dbg_output = elm->second.supportNodeRuntime.driveTargetCompChain.dbgOut;
+			params.dbg_output = elm->second.supportNodeRuntime.driveTargetCompChain.misc.dbgOut;
 			params.preventStoreConfig = true;
 
 			if (!jvx_bitTest(elm->second.supportNodeRuntime.states.connectionsEstablishFlags, 1))
 			{
 				std::string chainName = elm->second.supportNodeRuntime.driveTargetCompChain.chainNamePrefix + jvx_size2String(tp_reg.slotid) + "-" + jvx_size2String(tp_reg.slotsubid);
-				res = con->create_connection_rule(chainName.c_str(), &theDataConnectionDefRule_id, &params, elm->second.supportNodeRuntime.driveTargetCompChain.connectionCategory);
+				res = con->create_connection_rule(chainName.c_str(), &theDataConnectionDefRule_id, &params, elm->second.supportNodeRuntime.driveTargetCompChain.misc.connectionCategory);
 				if (res == JVX_NO_ERROR)
 				{
 					jvxSize cnt = 0;
