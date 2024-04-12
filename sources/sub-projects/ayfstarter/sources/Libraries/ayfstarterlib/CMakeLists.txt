@@ -27,6 +27,10 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarterlib_debug.c
   )
 
+set(LOCAL_ORC_SCRIPTS
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/volume.orc
+)
+
 set(LOCAL_LIBS jvx-dsp-base_static)
 
 if(${JVX_USE_ORC})
