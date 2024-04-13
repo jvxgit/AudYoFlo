@@ -246,6 +246,7 @@ CjvxWebControl_fe::report_process_event(TjvxEventLoopElement* theQueueElement)
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resL = JVX_NO_ERROR;
+	jvxErrorType resStart = JVX_NO_ERROR;
 	oneThreadReturnType* myPrivateMem = NULL;
 	jvxWebContext* ctxt = NULL;
 	
@@ -301,8 +302,7 @@ CjvxWebControl_fe::report_process_event(TjvxEventLoopElement* theQueueElement)
 		}
 
 		assert(myWebServer.hdl);
-		resL = start_webserver(myWebServer.hdl, myHostRef, static_cast<IjvxWebServerHost_hooks*>(this));
-		assert(resL == JVX_NO_ERROR);
+		resStart = start_webserver(myWebServer.hdl, myHostRef, static_cast<IjvxWebServerHost_hooks*>(this));
 
 		// Request log file stream
 		jvx_init_text_log(jvxrtst_bkp);
@@ -320,6 +320,12 @@ CjvxWebControl_fe::report_process_event(TjvxEventLoopElement* theQueueElement)
 		if ((res == JVX_NO_ERROR) && config.hostRefConfigExtender)
 		{
 			res = config.hostRefConfigExtender->register_extension(static_cast<IjvxConfigurationExtender_report*>(this), JVX_WEBCONTROL_SECTION);
+		}
+
+		// Report the failed startup to caller
+		if (resStart != JVX_NO_ERROR)
+		{
+			res =JVX_ERROR_INVALID_SETTING;
 		}
 
 		break;

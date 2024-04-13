@@ -342,7 +342,12 @@ CjvxConsoleHost_be_drivehost::boot_activate_specific(jvxApiString* errloc)
 			}
 			else
 			{
-				assert(0);
+				// Startup error code - print on every line
+				startupErrorCode = resL;
+				std::string token = jvxErrorType_descr(startupErrorCode);
+				linestart = token + linestart;
+				elm->st = JVX_STATE_ACTIVE;
+				// assert(0);
 			}
 		}
 	}

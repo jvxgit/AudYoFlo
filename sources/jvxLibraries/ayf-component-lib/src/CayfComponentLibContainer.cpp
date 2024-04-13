@@ -264,7 +264,7 @@ CayfComponentLibContainer::stopBinding()
 jvxErrorType
 CayfComponentLibContainer::invite_external_components(IjvxHiddenInterface* hostRefIf, jvxBool inviteToJoin)
 {
-	IjvxHost* hostRef = reqInterface<IjvxHost>(hostRefIf);
+ 	IjvxHost* hostRef = reqInterface<IjvxHost>(hostRefIf);
 	if (hostRef)
 	{
 		if (inviteToJoin)

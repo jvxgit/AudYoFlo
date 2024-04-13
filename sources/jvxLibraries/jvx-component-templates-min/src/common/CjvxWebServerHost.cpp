@@ -221,6 +221,17 @@ CjvxWebServerHost::start_webserver(IjvxWebServer* server, IjvxHost* hostRef,
 			right_before_start();
 
 			resL = hdl->start();
+			if (resL != JVX_NO_ERROR)
+			{
+				std::cout << "FATAL ERROR: Failed to start web server!!" << std::endl;
+				JVX_SLEEP_S(5);
+#ifdef JVX_DEBUG
+				// assert(0);
+				return JVX_ERROR_INVALID_SETTING;
+#else
+				exit(0);
+#endif
+			}
 		}
 	}
 	return resL;

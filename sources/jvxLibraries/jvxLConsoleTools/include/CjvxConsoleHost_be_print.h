@@ -48,7 +48,7 @@ protected:
 
 	jvxBool config_noquit = false;
 
-
+	jvxErrorType startupErrorCode = JVX_NO_ERROR;
 public:
 
 	CjvxConsoleHost_be_print();

@@ -71,7 +71,7 @@ void reset_entries(ayfHostBindingReferencesEmbHost* retReferences)
 }
 extern "C"
 {
-	jvxErrorType ayf_embedding_proxy_init(const char* nm, jvxSize* idRegistered, ayfHostBindingReferences** retReferences, const char* fNameIniPath)
+	jvxErrorType ayf_embedding_proxy_init(const char* nm, jvxSize* idRegistered, ayfHostBindingReferences** retReferences, const char* fNameIniPath, const char* fNameIniDirect)
 	{
 		std::list<std::string> messagesConsole;
 
@@ -101,6 +101,11 @@ extern "C"
 				std::string fNameIni = fNameIniPath;
 				fNameIni += JVX_SEPARATOR_DIR;
 				fNameIni += "ayf-proxy.ini";
+
+				if (fNameIniDirect != nullptr)
+				{
+					fNameIni = fNameIniDirect;
+				}
 
 #ifdef JVX_OS_WINDOWS
 				fNameIni = jvx_replaceDirectorySeparators_toWindows(fNameIni, JVX_SEPARATOR_DIR_CHAR, JVX_SEPARATOR_DIR_CHAR_THE_OTHER);

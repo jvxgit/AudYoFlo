@@ -133,9 +133,26 @@ CjvxWebServer::start()
 		}
 		options[i] = NULL;
 
-		myServer = NULL;
-		JVX_SAFE_NEW_OBJ(myServer, CivetServer(options));
-		assert(myServer);
+		myServer = nullptr;
+
+		try
+		{
+			JVX_SAFE_NEW_OBJ(myServer, CivetServer(options));
+		}
+		catch (CivetException exc)
+		{
+			std::cout << "Exception when activating webserver: " << exc.what() << std::endl;
+			std::cout << "Web server started with arguments: " << std::endl;
+			for (auto& elm : lst)
+			{
+				std::cout << " --> " << elm << std::endl;
+			}
+		}
+
+		if (myServer == nullptr)
+		{
+			return JVX_ERROR_INTERNAL;
+		}
 
 		for(i = 0; i < coendpoints.size(); i++)
 		{

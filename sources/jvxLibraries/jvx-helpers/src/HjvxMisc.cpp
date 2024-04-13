@@ -6109,7 +6109,13 @@ jvxComponentIdentification_decode(jvxComponentIdentification& cpTp, const std::s
 	tp = in.substr(0, pos);
 	token = in.substr(pos + 1, std::string::npos);
 
+	// There might be a , or a - between slotid and slotsubid
 	pos = token.find(",");
+	if (pos == std::string::npos)
+	{
+		pos = token.find("-");
+	}
+
 	if (pos != std::string::npos)
 	{
 		sslotid = token.substr(0, pos);

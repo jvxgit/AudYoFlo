@@ -260,6 +260,10 @@ if(JVX_NO_SYSTEM_EXTENSIONS)
   set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_NO_SYSTEM_EXTENSIONS")
 endif()
 
+if(${CMAKE_BUILD_TYPE} MATCHES "^(Debug)$")
+  set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_DEBUG")
+endif()
+  
 # path to binaries for adding dependencies later
 set(JVX_PCG ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropC${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox PCG binary (external path for cross-compilation)")
 set(JVX_PCG_MATLAB ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropMat${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox PCG Mat binary (external path for cross-compilation)")

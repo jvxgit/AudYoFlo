@@ -75,11 +75,23 @@ jvxSize idRegisterGlobal = 0;
 jvxSize refCntGlobal = 0;
 
 jvxErrorType
-CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn)
+CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect)
 {
 	if (proxyLibHandleGlobal == JVX_HMODULE_INVALID)
 	{
 		std::string fNameDll = AYF_EMBEDDING_PROXY_HOST;
+		std::string fNameIni;
+		const char* fNameIniPtr = nullptr;
+
+		if (fNameIniDirect)
+		{
+			fNameIni = fNameIniDirect;
+			if (!fNameIni.empty())
+			{
+				fNameIniPtr = fNameIni.c_str();
+			}
+
+		}
 		proxyLibHandleGlobal = JVX_LOADLIBRARY(fNameDll.c_str());
 		if (proxyLibHandleGlobal != JVX_HMODULE_INVALID)
 		{
@@ -89,7 +101,8 @@ CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const s
 
 		if (proxyReferencesGlobal.ayf_embedding_proxy_init_call)
 		{
-			proxyReferencesGlobal.ayf_embedding_proxy_init_call(myRegisterName.c_str(), &idRegisterGlobal, &bindingGlobal, rootPath.c_str());
+
+			proxyReferencesGlobal.ayf_embedding_proxy_init_call(myRegisterName.c_str(), &idRegisterGlobal, &bindingGlobal, rootPath.c_str(), fNameIniPtr);
 		}
 
 		refCntGlobal = 1;
