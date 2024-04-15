@@ -40,7 +40,7 @@ elseif(${JVX_OS} MATCHES "linux")
 
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}")	  	
 	  message("orc sub project not available. Starting script to download it.")
-	  execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}; exit")
+	  execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken} ${archtoken}; exit")
 	  message("orc installation complete.")
 	endif()
 
