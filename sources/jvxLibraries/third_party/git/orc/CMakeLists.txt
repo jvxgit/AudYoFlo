@@ -34,16 +34,21 @@ if(${JVX_OS} MATCHES "windows")
 	
 elseif(${JVX_OS} MATCHES "linux")
 
-	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/orc)
-		message("orc sub project not available. Starting script to download it.")
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
-		message("orc installation complete.")
+  	set(targetfolder orc)
+	set(archtoken glnx)
+
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}")	  	
+	  message("orc sub project not available. Starting script to download it.")
+	  execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}; exit")
+	  message("orc installation complete.")
 	endif()
 
-	set(PROJECT_NAME orc)
-	include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
-	set(ORC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/orc/install/include/orc-0.4" CACHE INTERNAL "orc include directory")
-	set(ORC_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/orc/install/lib/x86_64-linux-gnu/liborc-0.4.a" CACHE INTERNAL "orc libraries")
-	set(ORCC "${CMAKE_SOURCE_DIR}/sources/jvxLibraries/third_party/git/orc/orc/install/bin/orcc" CACHE INTERNAL "orc compiler")
+#		set(PROJECT_NAME orc)
+#		include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
+	set(ORC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/orc/glnx/include/orc-0.4" CACHE INTERNAL "orc include directory")
+	set(ORC_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/orc/glnx/lib/x86_64-linux-gnu/liborc-0.4.a" CACHE INTERNAL "orc libraries")
+	set(ORCC "${CMAKE_SOURCE_DIR}/sources/jvxLibraries/third_party/git/orc/orc/glnx/bin/orcc" CACHE INTERNAL "orc compiler")
 endif()
+
+## message(FATAL_ERROR "Hier")
 
