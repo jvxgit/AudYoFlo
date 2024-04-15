@@ -52,4 +52,9 @@ include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
 set(JVX_TARGET_NAME ${PROJECT_NAME}tp_static)
 set(JVX_TARGET_NAME_STATIC ${PROJECT_NAME}tp_static)
 set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_ALLOW_PROFILER_DATA_MACROS")
+
+if(ORC_DLL_INSTALLER_TARGET)
+    jvx_install_dedicated_file(${ORC_DLL_INSTALLER_TARGET} ${INSTALL_PATH_BIN})
+endif()
+
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
