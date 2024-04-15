@@ -6,7 +6,7 @@ if(${JVX_OS} MATCHES "windows")
 		set(archtoken x86)
 	endif()
 	
-	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}")
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib")
 		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
 			message("orc sub project not available. Starting script to download it.") 
 			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
@@ -21,15 +21,16 @@ if(${JVX_OS} MATCHES "windows")
 		# 2) Need to run another cmake process in a cmake process. Therefore, I map the batch file to
 		#    run secondary cmake. Fortunately, bat files inherit the environment :-)
 		file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}")
-		execute_process(COMMAND cmd /c "prepareModules-win.bat ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		execute_process(COMMAND cmd /c "prepareModules-win.bat ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken} ${archtoken}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 		# file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
 		
 	endif()
 
 	set(ORC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/include/orc-0.4" CACHE INTERNAL "orc include directory")
-	set(ORC_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/orc-0.4.lib" CACHE INTERNAL "orc libraries")
+	set(ORC_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/liborc-0.4.a" CACHE INTERNAL "orc libraries")
+	set(ORC_COMPILE_DEFINITIONS "ORC_STATIC_COMPILATION" CACHE INTERNAL "orc compile definitions")
 	# set(ORC_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/liborc-0.4.a" CACHE INTERNAL "orc libraries")
-	set(ORC_DLL_INSTALLER_TARGET "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/bin/orc-0.4-0.dll" CACHE INTERNAL "orc runtime library")
+	# set(ORC_DLL_INSTALLER_TARGET "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/bin/orc-0.4-0.dll" CACHE INTERNAL "orc runtime library")
 	set(ORCC ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/bin/orcc.exe CACHE INTERNAL "orc compiler")
 	
 elseif(${JVX_OS} MATCHES "linux")
@@ -50,5 +51,4 @@ elseif(${JVX_OS} MATCHES "linux")
 	set(ORCC "${CMAKE_SOURCE_DIR}/sources/jvxLibraries/third_party/git/orc/orc/glnx/bin/orcc" CACHE INTERNAL "orc compiler")
 endif()
 
-## message(FATAL_ERROR "Hier")
-
+## message(FATAL_ERROR "Stop here!")
