@@ -27,7 +27,18 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarterlib_debug.c
   )
 
+set(LOCAL_ORC_SCRIPTS
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/volume.orc
+)
+
 set(LOCAL_LIBS jvx-dsp-base_static)
+
+if(${JVX_USE_ORC})
+  include_directories(${ORC_INCLUDE_DIR})
+  set(LOCAL_LIBS "${LOCAL_LIBS};${ORC_LIBRARIES}")
+  add_compile_definitions(USE_ORC)
+endif()
+
 
 set(LOCAL_COMPILE_DEFINITIONS "${FFT_COMPILE_DEFINITIONS}")
 

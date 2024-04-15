@@ -1,0 +1,10 @@
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/orc)
+  message("orc sub project not available. Starting script to download it.")
+  execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
+  message("orc installation complete.")
+endif()
+
+set(PROJECT_NAME orc)
+include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
+set(ORC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/orc/install/include/orc-0.4" CACHE INTERNAL "orc include directory")
+set(ORC_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/orc/install/lib/x86_64-linux-gnu/liborc-0.4.a" CACHE INTERNAL "orc libraries")
