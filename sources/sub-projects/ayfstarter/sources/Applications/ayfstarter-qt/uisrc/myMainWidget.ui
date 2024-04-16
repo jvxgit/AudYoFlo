@@ -89,6 +89,22 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="geometry">
+        <rect>
+         <x>540</x>
+         <y>330</y>
+         <width>91</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="accessibleDescription">
+        <string>audio_node:/runorc:VERBOSE=no</string>
+       </property>
+       <property name="text">
+        <string>Involve ORC</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

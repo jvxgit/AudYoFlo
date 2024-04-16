@@ -6,3 +6,11 @@ SECTION volume
 	ASSOCIATE_EXTERNAL = "yes";
 	CALLBACK_SET_POSTHOOK = "async_starterlib_set";
 };  
+
+SECTION runorc
+{
+	DESCRIPTION = "Flag to involve ORC";
+	TYPE = "JVX_DATAFORMAT_BOOL";			
+	ASSOCIATE_EXTERNAL = "yes";
+	CALLBACK_SET_POSTHOOK = "async_starterlib_set";
+};  

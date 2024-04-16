@@ -14,6 +14,7 @@ struct ayf_starter_init
 struct ayf_starter_async
 {
 	jvxData volume;
+	jvxCBool runorc;
 };
 
 struct ayf_starter

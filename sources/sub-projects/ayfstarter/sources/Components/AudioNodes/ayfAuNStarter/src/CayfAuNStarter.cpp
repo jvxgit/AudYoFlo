@@ -34,7 +34,9 @@ CayfAuNStarter::activate()
 		genStarter_node::register_all(static_cast<CjvxProperties*>(this));
 
 		genStarter_node::associate__properties(static_cast<CjvxProperties*>(this),
-			&processing_lib.prmAsync.volume, 1);
+			&processing_lib.prmAsync.volume, 1,
+			&processing_lib.prmAsync.runorc, 1
+		);
 
 		genStarter_node::register_callbacks(static_cast<CjvxProperties*>(this), cb_async_set, this);
 

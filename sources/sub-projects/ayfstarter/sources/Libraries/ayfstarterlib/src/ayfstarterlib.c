@@ -16,6 +16,7 @@ jvxDspBaseErrorType ayf_starter_init(struct ayf_starter* hdl, jvxSize bsize)
 	{
 		hdl->prmInit.bsize = bsize;
 		hdl->prmAsync.volume = 1.0;
+		hdl->prmAsync.runorc = c_true;
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_WRONG_STATE;
@@ -48,33 +49,38 @@ jvxDspBaseErrorType ayf_starter_process(struct ayf_starter* hdl, jvxData** input
 		if ((numChannelsIn > 0) && (numChannelsOut > 0))
 		{
 #ifdef USE_ORC
-			if(inputs == outputs && numChannelsOut <= numChannelsIn) // in-place
+			if (hdlLocal->prmAsyncCopy.runorc == c_true)
 			{
-				for (jvxSize channelIdx = 0; channelIdx < numChannelsOut; channelIdx++)
+				if (inputs == outputs && numChannelsOut <= numChannelsIn) // in-place
 				{
+					for (jvxSize channelIdx = 0; channelIdx < numChannelsOut; channelIdx++)
+					{
 #ifdef JVX_DATA_FORMAT_FLOAT
-					volume_orc_float_ip (inputs[channelIdx], hdlLocal->prmAsyncCopy.volume, bufferSize);
+						volume_orc_float_ip(inputs[channelIdx], hdlLocal->prmAsyncCopy.volume, bufferSize);
 #elif defined JVX_DATA_FORMAT_DOUBLE
-					volume_orc_double_ip (inputs[channelIdx], hdlLocal->prmAsyncCopy.volume, bufferSize);
+						volume_orc_double_ip(inputs[channelIdx], hdlLocal->prmAsyncCopy.volume, bufferSize);
 #else
 #error ayf_starter_process: no orc support implemented for current data format
 #endif
+					}
+				}
+				else
+				{
+					for (jvxSize channelIdxOut = 0; channelIdxOut < numChannelsOut; channelIdxOut++)
+					{
+						jvxSize channelIdxIn = channelIdxOut % numChannelsIn;
+#ifdef JVX_DATA_FORMAT_FLOAT
+						volume_orc_float(outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prmAsyncCopy.volume, bufferSize);
+#elif defined JVX_DATA_FORMAT_DOUBLE
+						volume_orc_double(outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prmAsyncCopy.volume, bufferSize);
+#else
+#error ayf_starter_process: no orc support implemented for current data format
+#endif
+					}
 				}
 			}
 			else
 			{
-				for (jvxSize channelIdxOut = 0; channelIdxOut < numChannelsOut; channelIdxOut++)
-				{
-					jvxSize channelIdxIn = channelIdxOut % numChannelsIn;
-#ifdef JVX_DATA_FORMAT_FLOAT
-					volume_orc_float (outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prmAsyncCopy.volume, bufferSize);
-#elif defined JVX_DATA_FORMAT_DOUBLE
-					volume_orc_double (outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prmAsyncCopy.volume, bufferSize);
-#else
-#error ayf_starter_process: no orc support implemented for current data format
-#endif
-				}
-			}
 #else // USE_ORC
 			for (jvxSize j = 0; j < bufferSize; j++)
 			{
@@ -94,6 +100,9 @@ jvxDspBaseErrorType ayf_starter_process(struct ayf_starter* hdl, jvxData** input
 				}
 			}
 #endif // USE_ORC
+#ifdef USE_ORC
+			}
+#endif			
 		}
 		return JVX_NO_ERROR;
 
