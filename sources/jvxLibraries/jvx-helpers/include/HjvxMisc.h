@@ -607,7 +607,7 @@ bool
 jvx_findPathExprEntry_idx(std::string path, std::string& theEntry, jvxSize idx);
 
 jvxErrorType 
-jvx_parseCommandLineOneToken(std::string in, std::vector<std::string>& out, char sep = ' ');
+jvx_parseCommandLineOneToken(std::string in, std::vector<std::string>& out, char sep = ' ', jvxSize numMax = JVX_SIZE_UNSELECTED);
 
 std::string
 jvx_charReplace(std::string input, char* replaceChar_from,  const char** replaceChar_to, jvxSize numReplace);

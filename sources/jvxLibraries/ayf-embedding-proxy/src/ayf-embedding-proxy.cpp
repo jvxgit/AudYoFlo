@@ -131,7 +131,7 @@ extern "C"
 							if (commandText.size() && commandText[0] != '#')
 							{
 								std::vector<std::string> lstStr;
-								jvx_parseCommandLineOneToken(commandText, lstStr, '=');
+								jvx_parseCommandLineOneToken(commandText, lstStr, '=', 1); // Find the first =
 								if (lstStr.size() >= 2)
 								{
 									std::string assToken = lstStr[0];

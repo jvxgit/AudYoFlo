@@ -128,7 +128,7 @@ private:
 	JVX_PROPERTIES_CALLBACK_DECLARE(cb_xchg_property);
 	
 	std::string startAppExe;
-	std::string startAppArgs;
+	std::list<std::string> startAppArgs;
 	JVX_CREATE_PROCESS_HANDLE hdlProc;
 	jvxBool startAppRunning = false;
 	jvxBool observerThreadRunning = false;

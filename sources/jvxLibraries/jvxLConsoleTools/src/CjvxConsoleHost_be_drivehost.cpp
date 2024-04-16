@@ -385,7 +385,7 @@ CjvxConsoleHost_be_drivehost::report_register_be_commandline(IjvxCommandLine* co
 	if (res == JVX_NO_ERROR)
 	{
 		comLine->register_option("--startExe", "", "Pass execuitable to be started at startup to connect UI.", "", true, JVX_DATAFORMAT_STRING);
-		comLine->register_option("--startArgs", "", "Pass exectutable start args.","", true, JVX_DATAFORMAT_STRING);
+		comLine->register_option("--startArgs", "", "Pass exectutable start args.","", true, JVX_DATAFORMAT_STRING, JVX_SIZE_UNSELECTED);
 	}
 	return res;
 }
@@ -409,10 +409,10 @@ CjvxConsoleHost_be_drivehost::report_readout_be_commandline(IjvxCommandLine* com
 		num = 0;
 		astr.clear();
 		comLine->number_entries_option("--startArgs", &num);
-		if (num)
+		for (jvxSize i = 0; i< num; i++)
 		{
-			comLine->content_entry_option("--startArgs", 0, &astr, JVX_DATAFORMAT_STRING);
-			startAppArgs = astr.std_str();
+			comLine->content_entry_option("--startArgs", i, &astr, JVX_DATAFORMAT_STRING);
+			startAppArgs.push_back(astr.std_str());
 		}
 	}
 	return res;

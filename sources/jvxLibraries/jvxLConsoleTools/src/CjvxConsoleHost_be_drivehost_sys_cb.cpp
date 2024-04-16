@@ -14,9 +14,6 @@
 #include "jvxTDataConverter.h"
 #include "jvxTResampler.h"
 
-#define JVX_PRINTOUT_UI_STARTED std::cout << "UI thread started with cmdline <" << cmdLine << std::endl
-#define JVX_PRINTOUT_UI_FAILED std::cout << "Failed to start UI thread with cmdline <" << cmdLine << std::endl
-
 JVX_THREAD_ENTRY_FUNCTION(observeProcess, param)
 {
 	CjvxConsoleHost_be_drivehost* this_pointer = reinterpret_cast<CjvxConsoleHost_be_drivehost*> (param);
@@ -255,24 +252,16 @@ CjvxConsoleHost_be_drivehost::boot_prepare_specific(jvxApiString* errloc)
 	if (!startAppExe.empty())
 	{		
 		char bufWdir[JVX_MAXSTRING] = { 0 };
-		jvxErrorType resParse = jvx::helper::parseStringListIntoTokens(startAppArgs, args, ' ');
 		JVX_CREATE_PROCESS_RESULT resP = JVX_CREATE_PROCESS_FAILED;
 		JVX_GETCURRENTDIRECTORY(bufWdir, JVX_MAXSTRING);
 		std::string cwdStr = bufWdir;
-		cmd = cwdStr + JVX_SEPARATOR_DIR + startAppExe;
-		
-		std::string cmdLine = cmd + " " + startAppArgs;
-		resP = JVX_CREATE_PROCESS_WITH_ARGS(hdlProc, cmd, args);
+		cmd = cwdStr + JVX_SEPARATOR_DIR + startAppExe;			
+		resP = JVX_CREATE_PROCESS_WITH_ARGS(hdlProc, cmd, startAppArgs);
 		if (resP == JVX_CREATE_PROCESS_SUCCESS)
-		{
-			JVX_PRINTOUT_UI_STARTED;
+		{			
 			startAppRunning = true;
 			observerThreadRunning = true;
 			JVX_CREATE_THREAD(startAppObserveThread, observeProcess, this, startAppObserveThreadId);
-		}
-		else
-		{
-			JVX_PRINTOUT_UI_FAILED;
 		}
 	}
 
@@ -600,16 +589,14 @@ CjvxConsoleHost_be_drivehost::observeThreadLoop()
 		if (observerThreadRunning)
 		{
 			JVX_CREATE_PROCESS_RESULT resP = JVX_CREATE_PROCESS_FAILED;
-			std::string cmdLine = cmd + " " + startAppArgs;
-			resP = JVX_CREATE_PROCESS_WITH_ARGS(hdlProc, cmd, args);
+			std::string cmdLine = cmd;			
+			resP = JVX_CREATE_PROCESS_WITH_ARGS(hdlProc, cmd, startAppArgs);
 			if (resP == JVX_CREATE_PROCESS_SUCCESS)
 			{
-				JVX_PRINTOUT_UI_STARTED;
 				startAppRunning = true;
 			}
 			else
 			{
-				JVX_PRINTOUT_UI_FAILED;
 				break;
 			}
 		}

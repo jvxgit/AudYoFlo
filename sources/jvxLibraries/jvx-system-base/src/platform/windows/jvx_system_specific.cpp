@@ -16,7 +16,16 @@ JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE
 	// reason for this post:
 	// https://stackoverflow.com/questions/58813349/createprocess-occupies-socket-port-only-one-usage-of-each-socket-address-permit
 	// I did not expect it to come from this side..
-	return CreateProcess(NULL, (char*)cmdWithArgs.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo);
+	JVX_CREATE_PROCESS_RESULT res = CreateProcess(NULL, (char*)cmdWithArgs.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &procHandle.info, &procHandle.processInfo);
+	if (res == JVX_CREATE_PROCESS_SUCCESS)
+	{	
+		std::cout << "External process successfully started with command line <" << cmdWithArgs << ">" << std::endl;
+	}
+	else
+	{
+		std::cout << "Faiuled to start external process with command line <" << cmdWithArgs << ">" << std::endl;
+	}
+	return res;
 }
 
 std::string JVX_GET_CURRENT_MODULE_PATH(void* ptrIdentify)

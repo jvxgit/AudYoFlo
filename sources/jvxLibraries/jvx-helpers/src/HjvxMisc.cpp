@@ -3256,11 +3256,11 @@ jvx_findPathExprEntry_idx(std::string path, std::string& theEntry, jvxSize idx)
 	return false;
 }
 
-jvxErrorType jvx_parseCommandLineOneToken(std::string in, std::vector<std::string>& out, char sep )
+jvxErrorType jvx_parseCommandLineOneToken(std::string in, std::vector<std::string>& out, char sep, jvxSize numMax )
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
-
+	jvxSize cnt = 0;
 	int state = 0; // 0: SEP, 1: normal, 2: "
 	std::string oneToken = "";
 	jvxSize pos = std::string::npos;
@@ -3284,8 +3284,11 @@ jvxErrorType jvx_parseCommandLineOneToken(std::string in, std::vector<std::strin
 			}
 			// no break here
 		case 1:
-			if (in[i] == sep)
+			if (
+				(in[i] == sep) &&
+				(cnt < numMax))
 			{
+				cnt++;
 				if (oneToken.size())
 				{
 					out.push_back(oneToken);
