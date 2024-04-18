@@ -18,6 +18,8 @@
 #include <QDir>
 #include <QTime>
 
+#include "jvx_system.h"
+
 #ifdef JVX_MAIN_APPLICATION_CATCH_EVENTS
 #include "CjvxApplication.h"
 //
