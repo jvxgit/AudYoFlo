@@ -40,6 +40,7 @@
 #include "../common_ux/jvx_system_threads_ux.h"
 #include "../common_ux/jvx_system_mutex_ux.h"
 #include "../common_ux/jvx_system_compute_ux.h"
+#include "../common_ux/jvx_system_misc_ux.h"
 
 #include "../../jvx_system_includes.h"
 
