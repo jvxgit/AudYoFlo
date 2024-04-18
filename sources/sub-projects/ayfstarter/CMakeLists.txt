@@ -8,6 +8,11 @@ else()
 	include(${JVX_SUBPRODUCT_ROOT}/cmake/cmake-sdk/paths.sdk.${JVX_PRODUCT}.cmake)
 endif()
 
+if(JVX_USE_ORC)
+    set(AYFSTARTER_SUB_PROJECT_COMPILE_DEFINITIONS "USE_ORC" CACHE INTERNAL "local project compile options")
+	set(AYFSTARTER_SUB_PROJECT_PCG_FLAGS "-D;JVX_ORC_PROPERTIES" CACHE INTERNAL "local project PCG file options")
+endif()
+
 set(AYF_STARTER_STATIC_LIBS
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib
   )
@@ -17,7 +22,7 @@ set(AYF_STARTER_AUDIONODE
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Components/AudioNodes/ayfAuNStarter
   )
 jvx_addSubdirs("Configuring shared library for ayfstarter audio node" "${AYF_STARTER_AUDIONODE}" "${JVX_FOLDER_HIERARCHIE_BASE}/AudioNode")
-
+	
 if(NOT JVX_RELEASE_SDK)
 	set(AYF_STARTER_APPLICATION "")
 	if(JVX_USE_PART_WEBSERVER)

@@ -4,6 +4,8 @@
 #include "volume.orc.h"
 #endif
 
+#include "jvx_system.h"
+
 struct ayf_starter_prv
 {
 	struct ayf_starter_init prmInitCopy;
@@ -17,6 +19,11 @@ jvxDspBaseErrorType ayf_starter_init(struct ayf_starter* hdl, jvxSize bsize)
 		hdl->prmInit.bsize = bsize;
 		hdl->prmAsync.volume = 1.0;
 		hdl->prmAsync.runorc = c_true;
+
+		hdl->prmAsync.orcTokenBackend_ip = NULL;
+		hdl->prmAsync.orcTokenBackend_op = NULL;
+		hdl->prmAsync.orcTokenDebug = NULL;
+
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_WRONG_STATE;
@@ -32,6 +39,27 @@ jvxDspBaseErrorType ayf_starter_prepare(struct ayf_starter* hdl)
 
 		ptr->prmAsyncCopy = hdl->prmAsync;
 		ptr->prmInitCopy = hdl->prmInit;
+
+#ifdef USE_ORC
+		if (hdl->prmAsync.orcTokenDebug)
+		{
+			JVX_SETENVIRONMENTVARIABLE("ORC_DEBUG", hdl->prmAsync.orcTokenDebug, "DUMMY");
+		}
+
+		// Initialize the first call - the backend is fixed after that
+		if (hdl->prmAsync.orcTokenBackend_ip)
+		{
+			// Initialize backend - will only work at the first time
+			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prmAsync.orcTokenBackend_ip, "DUMMY");
+		}
+		volume_orc_double_ip(NULL, 1.0, 0);
+
+		if (hdl->prmAsync.orcTokenBackend_op)
+		{
+			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prmAsync.orcTokenBackend_op, "DUMMY");
+		}
+		volume_orc_double(NULL, NULL,  1.0, 0);
+#endif
 
 		hdl->prv = ptr;
 		return JVX_NO_ERROR;

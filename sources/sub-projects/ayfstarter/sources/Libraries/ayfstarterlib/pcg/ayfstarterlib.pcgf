@@ -7,6 +7,9 @@ SECTION volume
 	CALLBACK_SET_POSTHOOK = "async_starterlib_set";
 };  
 
+
+ifdef JVX_ORC_PROPERTIES
+
 SECTION runorc
 {
 	DESCRIPTION = "Flag to involve ORC";
@@ -14,3 +17,26 @@ SECTION runorc
 	ASSOCIATE_EXTERNAL = "yes";
 	CALLBACK_SET_POSTHOOK = "async_starterlib_set";
 };  
+
+SECTION orcBackendIp
+{
+	DESCRIPTION = "Backend specification ip";
+	TYPE = "JVX_DATAFORMAT_STRING";			
+	INIT_SET = "avx";
+};  
+
+SECTION orcBackendOp
+{
+	DESCRIPTION = "Backend specification op";
+	TYPE = "JVX_DATAFORMAT_STRING";			
+	INIT_SET = "avx";
+};  
+
+SECTION orcDebugLevel
+{
+	DESCRIPTION = "Debug level for orc";
+	TYPE = "JVX_DATAFORMAT_STRING";			
+	INIT_SET = "0";
+};  
+
+endif

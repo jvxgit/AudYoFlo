@@ -199,10 +199,6 @@ JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE
 // Everything for environment variables
 //===============================================
 
-#define JVX_GETENVIRONMENTVARIABLE(a,b,c) GetEnvironmentVariableA(a, b, c)
-
-#define JVX_SETENVIRONMENTVARIABLE(a, b, overwrite_not_in_mswin) SetEnvironmentVariableA(a, b)
-
 #define JVX_PASTE_ENV_VARIABLE_ATT(a, b, c) (std::string)a + JVX_SEPARATOR_DIR + c + ";" + b;
 
 #define JVX_PASTE_ENV_VARIABLE_ADD_PATH_FRONT(a, b) (std::string)b + ";" + a;

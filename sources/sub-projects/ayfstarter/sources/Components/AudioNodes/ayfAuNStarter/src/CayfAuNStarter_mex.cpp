@@ -48,7 +48,7 @@ namespace JVX_PROJECT_NAMESPACE {
 		
 		handle.prmAsync.volume = processing_lib.prmAsync.volume;
 
-		ayf_starter_prepare(&handle);
+		ayf_starter_prepare(&handle, "avx");
 
 		ayf_starter_process(&handle, paramIn0, paramOut0, dimInY0, dimOutY0, dimInX0);
 

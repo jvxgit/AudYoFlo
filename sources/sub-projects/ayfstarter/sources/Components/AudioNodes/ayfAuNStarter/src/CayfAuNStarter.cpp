@@ -34,8 +34,11 @@ CayfAuNStarter::activate()
 		genStarter_node::register_all(static_cast<CjvxProperties*>(this));
 
 		genStarter_node::associate__properties(static_cast<CjvxProperties*>(this),
-			&processing_lib.prmAsync.volume, 1,
-			&processing_lib.prmAsync.runorc, 1
+			&processing_lib.prmAsync.volume, 1
+
+#ifdef USE_ORC
+			,&processing_lib.prmAsync.runorc, 1
+#endif
 		);
 
 		genStarter_node::register_callbacks(static_cast<CjvxProperties*>(this), cb_async_set, this);
@@ -82,6 +85,13 @@ CayfAuNStarter::local_prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// if (res != JVX_NO_ERROR) return res; 
 	// <- no longer in use as this call is in template class already
 	processing_lib.prmInit.bsize = _common_set_icon.theData_in->con_params.buffersize;
+
+#ifdef USE_ORC
+	processing_lib.prmAsync.orcTokenBackend_ip = genStarter_node::properties.orcBackendIp.value.c_str();
+	processing_lib.prmAsync.orcTokenBackend_op = genStarter_node::properties.orcBackendOp.value.c_str();
+	processing_lib.prmAsync.orcTokenDebug = genStarter_node::properties.orcDebugLevel.value.c_str();
+#endif
+
 	return ayf_starter_prepare(&processing_lib);
 }
 

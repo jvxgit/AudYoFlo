@@ -14,7 +14,13 @@ struct ayf_starter_init
 struct ayf_starter_async
 {
 	jvxData volume;
+
+	// Orc arguments only useful if USE_ORC. Hoiwever we do not ifdef these variables as we 
+	// should not ifdef in header files to prevent undesired seg faults!!!
 	jvxCBool runorc;
+	const char* orcTokenBackend_ip;
+	const char* orcTokenBackend_op;
+	const char* orcTokenDebug;
 };
 
 struct ayf_starter

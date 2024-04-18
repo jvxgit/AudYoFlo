@@ -21,6 +21,7 @@
 #include "jvx_system_threads.h"
 #include "jvx_system_mutex.h"
 #include "jvx_system_compute.h"
+#include "jvx_system_misc.h"
 
 #include "../../jvx_system_includes.h"
 
