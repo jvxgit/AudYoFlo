@@ -48,7 +48,12 @@ namespace JVX_PROJECT_NAMESPACE {
 		
 		handle.prmAsync.volume = processing_lib.prmAsync.volume;
 
-		ayf_starter_prepare(&handle, "avx");
+#ifdef USE_ORC
+		processing_lib.prmAsync.orcTokenBackend_ip = genStarter_node::properties.orcBackendIp.value.c_str();
+		processing_lib.prmAsync.orcTokenBackend_op = genStarter_node::properties.orcBackendOp.value.c_str();
+		processing_lib.prmAsync.orcTokenDebug = genStarter_node::properties.orcDebugLevel.value.c_str();
+#endif
+		ayf_starter_prepare(&handle);
 
 		ayf_starter_process(&handle, paramIn0, paramOut0, dimInY0, dimOutY0, dimInX0);
 
