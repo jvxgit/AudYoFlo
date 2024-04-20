@@ -908,12 +908,22 @@ else(JVX_COMPILE_BUILDTOOLS)
 
     set(JVX_MEX_FOLDER_HIERARCHIE "${JVX_FOLDER_HIERARCHIE_BASE}/apps")
     add_subdirectory(${JVX_BASE_ROOT}/sources/jvxApplications/mex)
-
+	
   endif()
 
   if(JVX_USE_PART_MATLAB)
     set(JVX_BASE_APPS ${JVX_BASE_APPS} ${JVX_BASE_ROOT}/sources/jvxApplications/mexex)
   endif()
+  
+  if(JVX_USE_PART_MATLAB)
+  	if(JVX_USE_SIMULINK)
+		if(JVX_USE_DSPACE)
+			# set(JVX_MEX_SIMULINK_FOLDER_HIERARCHIE "${JVX_FOLDER_HIERARCHIE_BASE}/models")
+			# add_subdirectory(${JVX_BASE_ROOT}/dspace/dspace-anc)
+		endif()
+	endif()
+  endif()
+
 
   # ===========================================================================
   # Flutter project code
@@ -1149,6 +1159,10 @@ else(JVX_COMPILE_BUILDTOOLS)
     set(JVX_FOLDER_HIERARCHIE "matlab-octave")
     jvx_addSubdirs("Installation for all Matlab/Octave library files" "${JVX_MATLAB_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/matlab-octave")
   endif(JVX_DEPLOY_LIBRARY_DSP_MATLAB)
+
+  ## Add subprojects from folder others
+  jvx_addSubdirs("All other projects" "${JVX_BASE_ROOT}/others" "${JVX_FOLDER_HIERARCHIE_BASE}/others")
+  # add_subdirectory(${JVX_BASE_ROOT}/others)
 
   include(${JVX_CMAKE_DIR}/fragments/submodules.cmake)
 

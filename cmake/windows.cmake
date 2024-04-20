@@ -298,6 +298,16 @@ macro (find_matlab arg1)
 	set(JVX_SYSTEM_MATLAB_MEXEX_LIBRARIES "${MATLAB_PATH_LIB}/libmx.lib" "${MATLAB_PATH_LIB}/libmat.lib")
     set(JVX_CMAKE_LINKER_FLAGS_MATLAB_MEX "\"/DEF:${JVX_BASE_ROOT}/software/exports/components/windows/exports-mex.def\"")
 	set(Matlab_MAIN_PROGRAM "${MATLAB_PATH}/bin/matlab.exe")
+	
+	if(JVX_USE_SIMULINK)
+		if(IS_DIRECTORY "${MATLAB_PATH}/simulink/include")
+			message("--> Configuring for Simulink on top of Matlab")
+			set(Simulink_INCLUDE_DIRS ${MATLAB_PATH}/simulink/include)
+		else()
+			message(FATAL_ERROR "Activated simulink in project configuration but Simulink seems to not be available in <${MATLAB_PATH}/simulink/include>!")
+		endif()
+	endif()
+	
   else(IS_DIRECTORY "${MATLAB_PATH}")
     if(${arg1} MATCHES "FATAL")
 		message(FATAL_ERROR "XX> could not find Matlab, option must be deactivated manually to procede.")
@@ -306,6 +316,8 @@ macro (find_matlab arg1)
 	endif()
     set(JVX_USE_PART_MATLAB OFF)
   endif(IS_DIRECTORY "${MATLAB_PATH}")
+  
+  ## message(FATAL_ERROR "Hier")
 endmacro (find_matlab)
 
 # Octave path specifications
