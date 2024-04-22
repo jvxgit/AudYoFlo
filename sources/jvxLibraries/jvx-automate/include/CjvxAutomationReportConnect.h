@@ -12,7 +12,6 @@ class CjvxAutomationReportConnect :
 {
 protected:
 
-	IjvxReport* reportRef = nullptr;
 	std::string nmComponent = "CjvxAutomationSimple";
 	
 	jvxCallManagerProperties callGate;

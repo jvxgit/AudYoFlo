@@ -1315,7 +1315,10 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 #define JVX_START_LOCK_LOG(LEVEL) \
 	if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > jvxLogLevel2Id(LEVEL)) \
 	{ \
-		std::ostream& log = jvxrtst; \
+		std::ostream* logptr = &jvxrtst; \
+		if(jvxrtst_bkp.dbgOutputCout) \
+			logptr = &std::cout; \
+		std::ostream& log = *logptr; \
 		jvx_lock_text_log(jvxrtst_bkp);
 
 #define JVX_STOP_LOCK_LOG \

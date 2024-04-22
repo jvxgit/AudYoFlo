@@ -198,8 +198,13 @@ typedef enum
 	JVX_INTERFACE_CONNECTOR_MASTER_FACTORY,
 	JVX_INTERFACE_CONFIGURATION,
 	JVX_INTERFACE_TOOLS_HOST,
+
+	// Report interface is more than IjvxReport as it holds the old report functions
 	JVX_INTERFACE_REPORT,
+
+	// ReportSystem interface is the "new" interface for system report messages
 	JVX_INTERFACE_REPORT_SYSTEM,
+
 	JVX_INTERFACE_PROPERTIES,
 	JVX_INTERFACE_SEQUENCERCONTROL,
 	JVX_INTERFACE_SEQUENCER,

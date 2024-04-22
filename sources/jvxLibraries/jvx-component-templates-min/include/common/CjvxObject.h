@@ -57,7 +57,7 @@ protected:
 		jvxInt32 theErrorlevel = -1; // -1 = no info
 		std::string theErrordescr;
 
-		//IjvxHost* theHostRef;		
+		// The following references are typically set in the objects activate function, CjvxObject.cpp, CjvxObject::_activate()
 		IjvxToolsHost* theToolsHost = nullptr;	
 		IjvxUniqueId* theUniqueId = nullptr;
 		IjvxReport* theReport = nullptr;
