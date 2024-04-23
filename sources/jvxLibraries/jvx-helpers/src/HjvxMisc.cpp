@@ -5092,6 +5092,8 @@ jvx_parseNumericExpression(std::string txt, jvxBool& err, std::vector<std::vecto
 	std::string oneToken;
 	jvxData val;
 	err = false;
+	jvxBool leadingBraces = false;
+
 	for (i = 0; i < txt.size(); i++)
 	{
 		char oneChar = txt[i];
@@ -5102,14 +5104,16 @@ jvx_parseNumericExpression(std::string txt, jvxBool& err, std::vector<std::vecto
 			if (
 				(oneChar != ' ') && (oneChar != '\t'))
 			{
+				state = 1;
+				oneToken = "";
 				if (oneChar == '[')
 				{
-					state = 1;
-					oneToken = "";
+					leadingBraces = true;
 				}
 				else
 				{
-					state = -1;
+					i--;
+					leadingBraces = false;
 				}
 			}
 			break;
@@ -5201,7 +5205,31 @@ jvx_parseNumericExpression(std::string txt, jvxBool& err, std::vector<std::vecto
 			}
 			break;
 		}
-	}	
+	}// for (i = 0; i < txt.size(); i++)
+	if (!leadingBraces)
+	{
+		if (!oneToken.empty())
+		{
+			jvxBool errL = false;
+			if (
+				(oneToken.size() >= 2) &&
+				((oneToken.substr(0, 2) == "0x") || (oneToken.substr(0, 2) == "0X")))
+			{
+				val = (jvxData)jvx_string2Int64(oneToken, errL);
+			}
+			else
+			{
+				val = jvx_string2Data(oneToken, errL);
+			}
+			if (errL)
+				err = true;
+			myRow.push_back(val);
+		}
+		if (!myRow.empty())
+		{
+			returnMe.push_back(myRow);
+		}
+	}
 }
 
 void
