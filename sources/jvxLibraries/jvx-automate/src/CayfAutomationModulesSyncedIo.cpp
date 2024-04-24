@@ -111,19 +111,19 @@ namespace CayfAutomationModules
 		ayfConnectConfigCpEntrySyncIoRuntime cpElm(config);
 
 		cpElm.cpId = cpElm.driveSupportNodeChain.cpTp;
-		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.manSuffix, 
+		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.cpManipulate.manSuffix, 
 			cpElm.driveSupportNodeChain.cpManipulate.attachUi, cpElm.driveSupportNodeChain.cpManipulate.tpRemap);
 
 		if (res == JVX_NO_ERROR)
 		{
 			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-			log << "Activated module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+			log << "Activated module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);			
 		}
 		else
 		{
 			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-			log << "Failed to activate module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+			log << "Failed to activate module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 		}
 
@@ -157,7 +157,7 @@ namespace CayfAutomationModules
 			{
 				// Here we end up in error case!
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-				log << "On error, deactivating  module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				log << "On error, deactivating  module <" << cpElm.driveSupportNodeChain.modName << "> with suffix <" << cpElm.driveSupportNodeChain.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 				jvxErrorType resL = jvx_deactivateObjectInModule(refHostRefPtr, cpElm.cpId);
 			}
@@ -178,7 +178,7 @@ namespace CayfAutomationModules
 
 			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 			log << "Deactivating  module <" << elm->second.supportNodeRuntime.driveSupportNodeChain.modName << "> with suffix <" <<
-				elm->second.supportNodeRuntime.driveSupportNodeChain.manSuffix << "> in location <" << jvxComponentIdentification_txt(elm->second.supportNodeRuntime.cpId) << ">." << std::endl;
+				elm->second.supportNodeRuntime.driveSupportNodeChain.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(elm->second.supportNodeRuntime.cpId) << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
 			jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, elm->second.supportNodeRuntime.cpId);

@@ -27,8 +27,11 @@ namespace CayfAutomationModules
 		// This flag activates to attach uid to component description via IjvxManipulate - to distinguish between components of the same type
 		jvxBool attachUi = false;
 
+		// A way to parameterize the component name
+		std::string manSuffix;
+
 		ayfConnectConfigCpManipulate(jvxComponentType tpRemapArg = JVX_COMPONENT_UNKNOWN,
-			jvxBool attachUiArg = false) : tpRemap(tpRemapArg), attachUi(attachUiArg) {};
+			jvxBool attachUiArg = false, const std::string& manSuffixArg = "") : tpRemap(tpRemapArg), attachUi(attachUiArg), manSuffix(manSuffixArg) {};
 	};
 
 	class ayfConnectConfigConMiscArgs
@@ -104,10 +107,7 @@ namespace CayfAutomationModules
 		jvxComponentType cpTp = JVX_COMPONENT_UNKNOWN;
 
 		// This is how the support node is found: the module name
-		std::string modName;
-
-		// A way to parameterize the component name
-		std::string manSuffix;
+		std::string modName;		
 
 		ayfConnectConfigCpManipulate cpManipulate;
 
@@ -119,7 +119,7 @@ namespace CayfAutomationModules
 		ayfConnectConfigCpEntrySyncIo(
 
 			// Identify the required support node
-			jvxComponentType cpTpArg = JVX_COMPONENT_UNKNOWN, const std::string& modNameArg = "notFound", const std::string& manSuffixArg = "",
+			jvxComponentType cpTpArg = JVX_COMPONENT_UNKNOWN, const std::string& modNameArg = "notFound", 
 
 			const std::string& chainNamePrefixArg = "default", const std::string& masterNmArg = "default",
 			const std::string& oconMasterNmArg = "default", const std::string& iconMasterNmArg = "default",
