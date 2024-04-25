@@ -1289,6 +1289,45 @@ public:
 	};
 } ;
 
+template <class T> 
+class jvxLockWithVariable
+{
+public:
+	T v;
+	JVX_MUTEX_HANDLE lockHdl;
+
+	jvxLockWithVariable()
+	{
+		JVX_INITIALIZE_MUTEX(lockHdl);
+	};
+
+	~jvxLockWithVariable()
+	{
+		JVX_TERMINATE_MUTEX(lockHdl);
+	};
+
+	void lock()
+	{
+		JVX_LOCK_MUTEX(lockHdl);
+	}
+
+	void unlock()
+	{
+		JVX_UNLOCK_MUTEX(lockHdl);
+	}
+
+	jvxBool try_lock()
+	{
+		JVX_TRY_LOCK_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
+		JVX_TRY_LOCK_MUTEX(res, lockHdl);
+		if (res == JVX_TRY_LOCK_MUTEX_SUCCESS)
+		{
+			return true;
+		}
+		return false;
+	}
+};
+
 #define JVX_DEFINE_RT_ST_INSTANCES \
 	jvxrtst_backup jvxrtst_bkp; \
 	std::ostream jvxrtst;
