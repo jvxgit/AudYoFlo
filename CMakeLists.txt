@@ -907,7 +907,8 @@ else(JVX_COMPILE_BUILDTOOLS)
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvx-m-host-1/cmake/octave)
     endif(JVX_USE_PART_OCTAVE)
 
-    set(JVX_MEX_FOLDER_HIERARCHIE "${JVX_FOLDER_HIERARCHIE_BASE}/apps")
+    set(JVX_MEX_FOLDER_HIERARCHIE_DEFAULT "${JVX_FOLDER_HIERARCHIE_BASE}/matlab")
+    set(JVX_MEX_SIMULINK_FOLDER_HIERARCHIE_DEFAULT "${JVX_FOLDER_HIERARCHIE_BASE}/matlab")
     add_subdirectory(${JVX_BASE_ROOT}/sources/jvxApplications/mex)
 	
   endif()

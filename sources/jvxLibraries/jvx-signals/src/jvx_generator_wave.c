@@ -1183,16 +1183,26 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				(fPtr || gPtr )
 				&& (newHdl->runtime_parameters_sync_intern.itCount == 0));
 
-		ll_start = JVX_MAX(0, (int)newHdl->runtime.start_position_sweep - (int)newHdl->runtime.position);
+		jvxSize startPosiSegment = 0;
+		startPosiSegment = JVX_MAX(newHdl->runtime.position, startPosiSegment);
+		// ll_start = JVX_MAX(0, (int)newHdl->runtime.start_position_sweep - (int)newHdl->runtime.position);
+		ll_start = JVX_MAX(0, (int)newHdl->runtime.start_position_sweep - (int)startPosiSegment);
 		ll_start = JVX_MIN(ll_start, (int)lField);
 		lField -= ll_start;
 
-		ll_proc = JVX_MAX(0, (int)newHdl->runtime.stop_position_sweep - (int)newHdl->runtime.position);
+		startPosiSegment = newHdl->runtime.start_position_sweep;
+		startPosiSegment = JVX_MAX(newHdl->runtime.position, startPosiSegment);
+		// ll_proc = JVX_MAX(0, (int)newHdl->runtime.stop_position_sweep - (int)newHdl->runtime.position);
+		ll_proc = JVX_MAX(0, (int)newHdl->runtime.stop_position_sweep - (int)startPosiSegment);
 		ll_proc = JVX_MIN(ll_proc, (int)lField);
 		lField -= ll_proc;
 
-		ll_stop = JVX_MAX(0, (int)newHdl->runtime_parameters_sync_intern.unbuffered.length - (int)newHdl->runtime.position);
+		startPosiSegment = newHdl->runtime.stop_position_sweep;
+		startPosiSegment = JVX_MAX(newHdl->runtime.position, startPosiSegment);
+		// ll_stop = JVX_MAX(0, (int)newHdl->runtime_parameters_sync_intern.unbuffered.length - (int)newHdl->runtime.position);
+		ll_stop = JVX_MAX(0, (int)newHdl->runtime_parameters_sync_intern.unbuffered.length - (int)startPosiSegment);
 		ll_stop = JVX_MIN(ll_stop, (int)lField);
+		lField -= ll_stop;
 
 		// Zero padding at the beginning
 		for(i = 0; i < ll_start; i++)
@@ -1295,17 +1305,26 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 		}
 
 		numSamplesAll = (ll_start + ll_proc + ll_stop);
-		if(numSamplesAll < lField)
+		newHdl->runtime.position += (ll_start + ll_proc + ll_stop);
+		if (written)
 		{
+			*written = (ll_start + ll_proc + ll_stop);
+		}
+
+		if(newHdl->runtime.position == newHdl->runtime_parameters_sync_intern.unbuffered.length)
+		{
+			// Try wrap-around of sweep if end is reached
 			newHdl->runtime_parameters_sync_intern.itCount++;
 			if(newHdl->runtime_parameters_sync_intern.itCount < newHdl->runtime_parameters_async_intern.loopCount)
 			{
+				// Here comes the wrap-around
 				newHdl->runtime.phase = 0;
 				newHdl->runtime.position = 0;
 				newHdl->runtime.oldVal = -1;
 				newHdl->runtime.gain = 0;
 				newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
-				jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill, (lField - numSamplesAll), &written2);
+
+				jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill, lField, &written2); // buffer and lField have been adapted when computing the segment counts
 				if(written)
 				{
 					*written += written2;
@@ -1317,12 +1336,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_COMPLETE;
 			}
 		}
-
-		newHdl->runtime.position += (ll_start + ll_proc + ll_stop);
-		if(written)
-		{
-			*written = (ll_start + ll_proc + ll_stop);
-		}
+		
 		return(JVX_DSP_NO_ERROR);
 	}
 	return(JVX_DSP_ERROR_INVALID_ARGUMENT);
