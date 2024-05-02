@@ -768,9 +768,7 @@ jvx_generator_wave_start_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl
 	size_t lengthSamplesBrutto = 0;
 	jvxData durationSecs = 0.0;
 
-	jvx_generator_wave_linlogsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_linlogsweep_parameter_runtime_private*) hdl->prv;
-	newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_STARTED;
-	newHdl->common_data.runtime.samples_produced = 0;
+	jvx_generator_wave_linlogsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_linlogsweep_parameter_runtime_private*) hdl->prv;	
 
 	// =================================================================
 	// Produce linlog sweep here...
@@ -788,34 +786,40 @@ jvx_generator_wave_start_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl
 
 	durationSecs = (jvxData)newHdl->runtime_parameters_async_intern.lengthSeconds;
 
-	newHdl->runtime.oldVal = -1;
-	newHdl->runtime.gain = 0;
-
 	switch(newHdl->common_data.tpWave)
 	{
 	case JVX_GENERATOR_WAVE_LINEARSWEEP:
 		newHdl->runtime.linlogFreqMax = (double)newHdl->init_parameters_intern.common.samplerate/2.0;
 		newHdl->runtime.linlogFreqMin = 1.0;
-		newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
 		break;
 	case JVX_GENERATOR_WAVE_LOGSWEEP:
 		newHdl->runtime.linlogFreqMax = log((double)newHdl->init_parameters_intern.common.samplerate/2.0);
 		newHdl->runtime.linlogFreqMin = log(1.0);
-		newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
 		break;
 	}
 
 	newHdl->runtime.freq_increment = (newHdl->runtime.linlogFreqMax - newHdl->runtime.linlogFreqMin)/((double)lengthSamplesNetto-1);
-	newHdl->runtime.phase = 0;
-	newHdl->runtime.position = 0;
+
 	newHdl->runtime.start_position_sweep = silenceStart;
 	newHdl->runtime.stop_position_sweep = silenceStart + lengthSamplesNetto;
 	newHdl->runtime.div_samplerate = 1.0/(double)newHdl->init_parameters_intern.common.samplerate;
-	newHdl->runtime_parameters_sync_intern.itCount = 0;
 
 	newHdl->runtime_parameters_sync_intern.unbuffered.length = lengthSamplesBrutto;
-	newHdl->runtime_parameters_sync_intern.unbuffered.progress = 0.0;
 	newHdl->runtime_parameters_sync_intern.unbuffered.freq_ptr = NULL;
+
+	jvx_generator_wave_restart_generator_unbuffered_linlogsweep(hdl);
+	/*
+	newHdl->common_data.runtime.samples_produced = 0;
+	newHdl->runtime_parameters_sync_intern.unbuffered.progress = 0.0;
+	newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
+	newHdl->runtime.oldVal = -1;
+	newHdl->runtime.gain = 0;
+	newHdl->runtime.phase = 0;
+	newHdl->runtime.position = 0;
+	newHdl->runtime_parameters_sync_intern.itCount = 0;
+	newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_STARTED;
+	*/
+
 	return JVX_DSP_NO_ERROR;
 }
 
@@ -1534,6 +1538,124 @@ jvx_generatorwave_postprocess(jvx_generatorWave* hdl)
 	return(res);
 }
 
+// ================================================================================
+// ================================================================================
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_sine(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_sine_parameter_runtime_private* newHdl = (jvx_generator_wave_sine_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_rect(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_rect_parameter_runtime_private* newHdl = (jvx_generator_wave_rect_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_ramp(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_ramp_parameter_runtime_private* newHdl = (jvx_generator_wave_ramp_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_noise(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_noise_parameter_runtime_private* newHdl = (jvx_generator_wave_noise_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+#ifdef JVX_FFT_PRESENT
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_perfectsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_perfectsweep_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+#endif
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_buffered_wavplayer(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_wavplayer_parameter_runtime_private* newHdl = (jvx_generator_wave_wavplayer_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
+	jvx_generator_wave_linlogsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_linlogsweep_parameter_runtime_private*)hdl->prv;
+
+	newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
+	newHdl->runtime_parameters_sync_intern.unbuffered.progress = 0.0; 
+	newHdl->common_data.runtime.samples_produced = 0;
+	newHdl->runtime.oldVal = -1;
+	newHdl->runtime.gain = 0;
+	newHdl->runtime.phase = 0;
+	newHdl->runtime.position = 0;
+	newHdl->runtime_parameters_sync_intern.itCount = 0;
+	newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_STARTED;
+
+	return(res);
+}
+
+jvxDspBaseErrorType 
+jvx_generatorwave_restart(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+
+	if (hdl == NULL)
+	{
+		return JVX_DSP_ERROR_INVALID_ARGUMENT;
+	}
+	switch (hdl->tpWave)
+	{
+	case JVX_GENERATOR_WAVE_SINE_UNBUFFERED:
+		res = jvx_generator_wave_restart_generator_unbuffered_sine(hdl);
+		break;
+
+	case JVX_GENERATOR_WAVE_RECT_UNBUFFERED:
+		res = jvx_generator_wave_restart_generator_unbuffered_rect(hdl);
+		break;
+
+	case JVX_GENERATOR_WAVE_RAMP_UNBUFFERED:
+		res = jvx_generator_wave_restart_generator_unbuffered_ramp(hdl);
+		break;
+
+	case JVX_GENERATOR_WAVE_NOISE_UNBUFFERED:
+		res = jvx_generator_wave_restart_generator_unbuffered_noise(hdl);
+		break;
+
+#ifdef JVX_FFT_PRESENT
+	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
+		res = jvx_generator_wave_restart_generator_buffered_perfectsweep(hdl);
+		break;
+#endif
+
+	case JVX_GENERATOR_WAVE_WAVPLAYER_BUFFERED:
+		res = jvx_generator_wave_restart_generator_buffered_wavplayer(hdl);
+		break;
+
+	case JVX_GENERATOR_WAVE_LOGSWEEP:
+	case JVX_GENERATOR_WAVE_LINEARSWEEP:
+		res = jvx_generator_wave_restart_generator_unbuffered_linlogsweep(hdl);
+		break;
+
+	}
+
+	return(res);
+}
 
 // ================================================================================
 // Deactivate module
