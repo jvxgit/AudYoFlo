@@ -6,6 +6,13 @@
 
 #define JVX_RESTRICT /*__restrict*/
 #define STATIC_INLINE static inline 
+#if defined(__GNUC__) || defined(__clang__)
+#define JVX_FORCE_INLINE __attribute__((always_inline))
+#elif defined(_MSC_VER)
+#define JVX_FORCE_INLINE __forceinline
+#else
+#define JVX_FORCE_INLINE
+#endif
 
 #define JVX_PRINTF_S printf_s
 #define JVX_SPRINTF_S sprintf_s
