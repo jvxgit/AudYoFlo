@@ -126,3 +126,9 @@ if(JVX_USE_ORC)
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/orc/)
 endif()
+
+if(JVX_USE_KISSFFT)
+  # This part here only when downloading HDF5	 i windows
+  set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
+    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/kissfft)
+endif()

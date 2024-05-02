@@ -4,7 +4,7 @@
 #include "jvx_math/jvx_math_extensions.h"
 #include <assert.h>
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 #include "jvx_fft_tools/jvx_fft_core.h"
 #endif
 
@@ -85,7 +85,7 @@ typedef struct
 	} runtime;
 } jvx_generator_wave_noise_parameter_runtime_private;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 
 //! Struct for perfectsweep waves
 typedef struct
@@ -316,7 +316,7 @@ jvx_generatorwave_initConfig(jvx_generatorWave* hdl)
 		res = JVX_DSP_NO_ERROR;
 		break;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
 		jvx_generator_wave_init_config_generator_buffered_perfectsweep(hdl);
 		res = JVX_DSP_NO_ERROR;
@@ -435,7 +435,7 @@ jvx_generator_wave_init_generator_unbuffered_noise(jvx_generatorWave* hdl)
 	return JVX_DSP_NO_ERROR;
 }
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 
 jvxDspBaseErrorType 
 jvx_generator_wave_init_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
@@ -552,7 +552,7 @@ jvx_generatorwave_activate(jvx_generatorWave* hdl)
 		res = jvx_generator_wave_init_generator_unbuffered_noise(hdl);
 		break;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
 		res = jvx_generator_wave_init_generator_buffered_perfectsweep(hdl);
 		break;
@@ -624,7 +624,7 @@ jvx_generator_wave_start_generator_unbuffered_noise(jvx_generatorWave* hdl)
 	return JVX_DSP_NO_ERROR;
 }
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 
 jvxDspBaseErrorType
 jvx_generator_wave_start_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
@@ -850,7 +850,7 @@ jvx_generatorwave_prepare(jvx_generatorWave* hdl)
 		res = jvx_generator_wave_start_generator_unbuffered_noise(hdl);
 		break;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
 		res = jvx_generator_wave_start_generator_buffered_perfectsweep(hdl);
 		break;
@@ -1032,7 +1032,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_noise(jvx_generatorWav
 	return(JVX_DSP_ERROR_INVALID_ARGUMENT);
 }
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 
 //! Fill one buffer with signal
 jvxDspBaseErrorType jvx_generator_wave_process_buffered_perfectsweep(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written)
@@ -1373,7 +1373,7 @@ jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lF
 		res = jvx_generator_wave_process_unbuffered_noise(hdl, bufferFill,  lField, written);
 		break;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
 		res = jvx_generator_wave_process_buffered_perfectsweep(hdl, bufferFill,  lField, written);
 		break;
@@ -1430,7 +1430,7 @@ jvx_generator_wave_stop_generator_unbuffered_noise(jvx_generatorWave* hdl)
 	return(JVX_DSP_NO_ERROR);
 }
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 jvxDspBaseErrorType
 jvx_generator_wave_stop_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
 {
@@ -1514,7 +1514,7 @@ jvx_generatorwave_postprocess(jvx_generatorWave* hdl)
 		res = jvx_generator_wave_stop_generator_unbuffered_noise(hdl);
 		break;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
 		res = jvx_generator_wave_stop_generator_buffered_perfectsweep(hdl);
 		break;
@@ -1584,7 +1584,7 @@ jvx_generator_wave_terminate_generator_unbuffered_noise(jvx_generatorWave* hdl)
 	return(JVX_DSP_NO_ERROR);
 }
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 
 jvxDspBaseErrorType 
 jvx_generator_wave_terminate_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
@@ -1647,7 +1647,7 @@ jvxDspBaseErrorType jvx_generatorwave_deactivate(jvx_generatorWave* hdl)
 		res = jvx_generator_wave_terminate_generator_unbuffered_noise(hdl);
 		break;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
 		res = jvx_generator_wave_terminate_generator_buffered_perfectsweep(hdl);
 		break;
@@ -1864,7 +1864,7 @@ jvxDspBaseErrorType jvx_generator_wave_update_unbuffered_noise(jvx_generatorWave
 }
 
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 
 jvxDspBaseErrorType jvx_generator_wave_update_buffered_perfectsweep(jvx_generatorWave* hdl, jvxUInt16 whatToUpdate, jvxCBool do_set)
 {
@@ -2066,7 +2066,7 @@ jvx_generatorwave_update(jvx_generatorWave* hdl, jvxUInt16 whatToUpdate, jvxCBoo
 		res = jvx_generator_wave_update_unbuffered_noise(hdl, whatToUpdate, do_set);
 		break;
 
-#ifndef DO_NOT_COMPILE_PERFECT_SWEEP
+#ifdef JVX_FFT_PRESENT
 	case JVX_GENERATOR_WAVE_PERFECTSWEEP_BUFFERED:
 		res = jvx_generator_wave_update_buffered_perfectsweep(hdl, whatToUpdate, do_set);
 		break;

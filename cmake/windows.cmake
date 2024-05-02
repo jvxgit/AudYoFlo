@@ -266,6 +266,10 @@ macro (find_fft)
     message("    include path: ${FFT_INCLUDEDIR}")
     message("    compile definitions: ${FFT_COMPILE_DEFINITIONS}")
     message("    lib: ${FFT_LIBRARIES}")
+	
+	# This should be a global variable
+	set(JVX_FFT_PRESENT true)
+	set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_FFT_PRESENT")
   else()
     message(FATAL_ERROR "could not find fftw library")
   endif()

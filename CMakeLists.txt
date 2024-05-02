@@ -187,6 +187,8 @@ set(JVX_BASE_LIBS_MATOCT_GEN_LIB "${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-
 set(JVX_BASE_BINARY_INCLUDE_PATH "${JVX_BASE_BINARY_DIR}/sources/jvxLibraries")
 set(JVX_SUBPRODUCT_BINARY_INCLUDE_PATH "${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxLibraries")
 
+set(JVX_FFT_PRESENT false CACHE BOOL "Indicator if an FFT implementation was found")
+
 ###
 # support for different platforms
 ###
