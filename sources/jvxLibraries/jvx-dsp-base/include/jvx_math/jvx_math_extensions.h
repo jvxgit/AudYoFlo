@@ -139,7 +139,7 @@ jvxData jvx_rand_uniform(jvxInt32* idum);
 
 
 //! Gaussian random noise generator, idum should be initialized with negative long integer
-jvxData jvx_rand_normal(long *idum);
+jvxData jvx_rand_normal(jvxInt32 *idum);
 
 //! Computes the square of the argument
 jvxData jvx_sqr(jvxData x);

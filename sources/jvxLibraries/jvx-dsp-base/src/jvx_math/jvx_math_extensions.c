@@ -869,7 +869,7 @@ jvxData jvx_rand_uniform(jvxInt32 *idum)
 }
 
 
-jvxData jvx_rand_normal(long *idum)
+jvxData jvx_rand_normal(jvxInt32 *idum)
 {
 	static int iset=0;
 	static jvxData gset;

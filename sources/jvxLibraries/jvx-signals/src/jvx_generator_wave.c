@@ -573,6 +573,79 @@ jvx_generatorwave_activate(jvx_generatorWave* hdl)
 }
 
 // ================================================================================
+// Restart module
+// ================================================================================
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_sine(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_sine_parameter_runtime_private* newHdl = (jvx_generator_wave_sine_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_rect(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_rect_parameter_runtime_private* newHdl = (jvx_generator_wave_rect_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_ramp(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_ramp_parameter_runtime_private* newHdl = (jvx_generator_wave_ramp_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_noise(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_noise_parameter_runtime_private* newHdl = (jvx_generator_wave_noise_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+#ifdef JVX_FFT_PRESENT
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_perfectsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_perfectsweep_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+#endif
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_buffered_wavplayer(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
+	jvx_generator_wave_wavplayer_parameter_runtime_private* newHdl = (jvx_generator_wave_wavplayer_parameter_runtime_private*)hdl->prv;
+	return(res);
+}
+
+jvxDspBaseErrorType
+jvx_generator_wave_restart_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl)
+{
+	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
+	jvx_generator_wave_linlogsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_linlogsweep_parameter_runtime_private*)hdl->prv;
+
+	newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
+	newHdl->runtime_parameters_sync_intern.unbuffered.progress = 0.0;
+	newHdl->common_data.runtime.samples_produced = 0;
+	newHdl->runtime.oldVal = -1;
+	newHdl->runtime.gain = 0;
+	newHdl->runtime.phase = 0;
+	newHdl->runtime.position = 0;
+	newHdl->runtime_parameters_sync_intern.itCount = 0;
+	newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_STARTED;
+
+	return(res);
+}
+
+// ================================================================================
 // Start module
 // ================================================================================
 
@@ -1541,74 +1614,6 @@ jvx_generatorwave_postprocess(jvx_generatorWave* hdl)
 // ================================================================================
 // ================================================================================
 
-jvxDspBaseErrorType
-jvx_generator_wave_restart_generator_unbuffered_sine(jvx_generatorWave* hdl)
-{
-	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
-	jvx_generator_wave_sine_parameter_runtime_private* newHdl = (jvx_generator_wave_sine_parameter_runtime_private*)hdl->prv;
-	return(res);
-}
-
-jvxDspBaseErrorType
-jvx_generator_wave_restart_generator_unbuffered_rect(jvx_generatorWave* hdl)
-{
-	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
-	jvx_generator_wave_rect_parameter_runtime_private* newHdl = (jvx_generator_wave_rect_parameter_runtime_private*)hdl->prv;
-	return(res);
-}
-
-jvxDspBaseErrorType
-jvx_generator_wave_restart_generator_unbuffered_ramp(jvx_generatorWave* hdl)
-{
-	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
-	jvx_generator_wave_ramp_parameter_runtime_private* newHdl = (jvx_generator_wave_ramp_parameter_runtime_private*)hdl->prv;
-	return(res);
-}
-
-jvxDspBaseErrorType
-jvx_generator_wave_restart_generator_unbuffered_noise(jvx_generatorWave* hdl)
-{
-	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
-	jvx_generator_wave_noise_parameter_runtime_private* newHdl = (jvx_generator_wave_noise_parameter_runtime_private*)hdl->prv;
-	return(res);
-}
-
-#ifdef JVX_FFT_PRESENT
-jvxDspBaseErrorType
-jvx_generator_wave_restart_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
-{
-	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
-	jvx_generator_wave_perfectsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_perfectsweep_parameter_runtime_private*)hdl->prv;
-	return(res);
-}
-#endif
-
-jvxDspBaseErrorType
-jvx_generator_wave_restart_generator_buffered_wavplayer(jvx_generatorWave* hdl)
-{
-	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
-	jvx_generator_wave_wavplayer_parameter_runtime_private* newHdl = (jvx_generator_wave_wavplayer_parameter_runtime_private*)hdl->prv;
-	return(res);
-}
-
-jvxDspBaseErrorType
-jvx_generator_wave_restart_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl)
-{
-	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
-	jvx_generator_wave_linlogsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_linlogsweep_parameter_runtime_private*)hdl->prv;
-
-	newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
-	newHdl->runtime_parameters_sync_intern.unbuffered.progress = 0.0; 
-	newHdl->common_data.runtime.samples_produced = 0;
-	newHdl->runtime.oldVal = -1;
-	newHdl->runtime.gain = 0;
-	newHdl->runtime.phase = 0;
-	newHdl->runtime.position = 0;
-	newHdl->runtime_parameters_sync_intern.itCount = 0;
-	newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_STARTED;
-
-	return(res);
-}
 
 jvxDspBaseErrorType 
 jvx_generatorwave_restart(jvx_generatorWave* hdl)
