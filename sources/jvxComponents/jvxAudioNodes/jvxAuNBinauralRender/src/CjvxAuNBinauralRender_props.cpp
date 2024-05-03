@@ -54,37 +54,39 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, set_extend
 }
 
 jvxErrorType
-CjvxAuNBinauralRender::report_database_changed()
+CjvxAuNBinauralRender::report_database_changed(jvxSize slotId)
 {	
-	// Here, we need to be careful: the fftw does not allow threaded creation of plans,
-	//
-	// https://www.fftw.org/fftw3_doc/Thread-safety.html
-	//
-	// The consequence is that we are not allowed to allocate fftws in parallel threads.
-	// Therefore, all fftw allocation must be in the main thread.
-	// The update of the position, in contrast, is relocated into another thread since this 
-	// update may occur in the main thread but also in the processing thread for high speed 
-	// modification.
-
-	jvxBool triggerThread = false;
-	JVX_LOCK_MUTEX(safeAccessUpdateBgrd);
-
-	// Cancel all current position updates
-	updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
-
-	// jvxOneRenderCore* removedThis = render_sec;
-
-	if (render_sec)
+	// Only if our slot is in use
+	if (slotId == slotIdHrtfs)
 	{
-		deallocate_renderer(render_sec);
+		// Here, we need to be careful: the fftw does not allow threaded creation of plans,
+		//
+		// https://www.fftw.org/fftw3_doc/Thread-safety.html
+		//
+		// The consequence is that we are not allowed to allocate fftws in parallel threads.
+		// Therefore, all fftw allocation must be in the main thread.
+		// The update of the position, in contrast, is relocated into another thread since this 
+		// update may occur in the main thread but also in the processing thread for high speed 
+		// modification.
+		jvxBool triggerThread = false;
+		JVX_LOCK_MUTEX(safeAccessUpdateBgrd);
+
+		// Cancel all current position updates
+		updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
+
+		// jvxOneRenderCore* removedThis = render_sec;
+
+		if (render_sec)
+		{
+			deallocate_renderer(render_sec);
+		}
+
+		// Allocate new renderer but as "secondary" renderer for now
+		render_sec = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
+			this->source_direction_angles_deg_inuse[0], this->source_direction_angles_deg_inuse[1]);
+		updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY;
+		JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
 	}
-
-	// Allocate new renderer but as "secondary" renderer for now
-	render_sec = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
-		this->source_direction_angles_deg_inuse[0], this->source_direction_angles_deg_inuse[1]);
-	updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY;
-	JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
-
 	return JVX_NO_ERROR;
 }
 

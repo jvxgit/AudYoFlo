@@ -149,7 +149,7 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// _common_set_icon.theData_in->con_params
 
 	jvxSize samplerate = _common_set_icon.theData_in->con_params.rate;
-	theHrtfDispenser->init(&samplerate); // Check result in the future
+	theHrtfDispenser->init(&samplerate, 1); // Check result in the future - number of slots provided here!
 
 	// Allocate renderer
 	render_pri = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
@@ -280,12 +280,12 @@ CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_
 	this->source_direction_angles_deg_inuse[1] = inclination_deg;
 
 	jvxSize length_hrir;
-	this->theHrtfDispenser->get_length_hrir(length_hrir, &loadId);
+	this->theHrtfDispenser->get_length_hrir(length_hrir, &loadId, slotIdHrtfs);
 	if (renderer->loadId == loadId)
 	{
 		jvxErrorType res = this->theHrtfDispenser->copy_closest_hrir_pair(azimuth_deg, inclination_deg,
 			renderer->buffer_hrir_left, renderer->buffer_hrir_right, renderer->length_buffer_hrir,
-			renderer->loadId);
+			renderer->loadId, slotIdHrtfs);
 		if (res != JVX_NO_ERROR)
 		{
 			std::cout << __FUNCTION__ << " Warning: on update of position, the request to return hrir buffers failed with error <" << 
@@ -409,7 +409,7 @@ CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData
 	jvxOneRenderCore* render_inst = nullptr;
 	JVX_SAFE_ALLOCATE_OBJECT(render_inst, jvxOneRenderCore);
 
-	jvxErrorType res = theHrtfDispenser->get_length_hrir(render_inst->length_buffer_hrir, &render_inst->loadId);
+	jvxErrorType res = theHrtfDispenser->get_length_hrir(render_inst->length_buffer_hrir, &render_inst->loadId, slotIdHrtfs);
 	assert(res == JVX_NO_ERROR);
 
 	// Allocate the hrir buffers

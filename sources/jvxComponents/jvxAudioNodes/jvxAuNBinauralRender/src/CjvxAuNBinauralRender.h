@@ -67,7 +67,7 @@ private:
 	jvxRenderingUpdateStatus updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
 
 	jvxSize missedUpdatesPosition = 0;
-
+	jvxSize slotIdHrtfs = 0;
 
 public:
 
@@ -123,7 +123,7 @@ public:
 
 	// =========================================================================================================
 	// IjvxPropertyExtenderHrtfDispenser_report
-	virtual jvxErrorType report_database_changed() override;
+	virtual jvxErrorType report_database_changed(jvxSize slotId) override;
 	// =========================================================================================================
 	jvxErrorType supports_prop_extender_type(jvxPropertyExtenderType tp) override;
 	jvxErrorType prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp)override;

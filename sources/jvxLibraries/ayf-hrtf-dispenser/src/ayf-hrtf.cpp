@@ -44,32 +44,39 @@ ayfHrtfDispenser::prop_extender_specialization(jvxHandle** prop_extender, jvxPro
 
 
 jvxErrorType 
-ayfHrtfDispenser::get_length_hrir(jvxSize& length_hrir, jvxSize* loadIdArg)
+ayfHrtfDispenser::get_length_hrir(jvxSize& length_hrir, jvxSize* loadIdArg, jvxSize slotId)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	if (this->activeDatabase) 
+	if (slotId < dataBaseSlots.size())
 	{
-		length_hrir = this->activeDatabase->length_hrir;
-		if (loadIdArg)
+		if (dataBaseSlots[slotId].activeDatabase)
 		{
-			*loadIdArg = this->activeDatabase->loadId;
+			length_hrir = dataBaseSlots[slotId].activeDatabase->length_hrir;
+			if (loadIdArg)
+			{
+				*loadIdArg = dataBaseSlots[slotId].activeDatabase->loadId;
+			}
+		}
+		else
+		{
+			length_hrir = JVX_SIZE_UNSELECTED;
+			if (loadIdArg)
+			{
+				*loadIdArg = JVX_SIZE_UNSELECTED;
+			}
+			res = JVX_ERROR_NOT_READY;
 		}
 	}
-	else 
+	else
 	{
-		length_hrir = JVX_SIZE_UNSELECTED;
-		if (loadIdArg)
-		{
-			*loadIdArg = JVX_SIZE_UNSELECTED;
-		}
-		res = JVX_ERROR_NOT_READY;
+		res = JVX_ERROR_ID_OUT_OF_BOUNDS;
 	}
 	return res;
 }
 
 
 jvxErrorType
-ayfHrtfDispenser::init(jvxSize* samplerateArg)
+ayfHrtfDispenser::init(jvxSize* samplerateArg, jvxSize numSlots)
 {
 	if (this->is_initialized)
 	{
@@ -88,8 +95,16 @@ ayfHrtfDispenser::init(jvxSize* samplerateArg)
 	if (!samplerateArg) return JVX_ERROR_INVALID_ARGUMENT;
 
 	this->samplerate = *samplerateArg;
-	jvxErrorType res = this->load_selected_database(activeDatabase);
-	assert(res == JVX_NO_ERROR);
+	dataBaseSlots.resize(numSlots);
+	jvxSize cnt = 0;
+
+	jvxErrorType res = JVX_NO_ERROR;
+	for (auto& elm : dataBaseSlots)
+	{
+		elm.idx = cnt++;
+		jvxErrorType resL = this->load_selected_database(elm.activeDatabase, elm.idx);
+		assert(res == JVX_NO_ERROR);
+	}
 	
 	this->is_initialized = true;
 	return res;
@@ -97,7 +112,7 @@ ayfHrtfDispenser::init(jvxSize* samplerateArg)
 
 jvxErrorType
 ayfHrtfDispenser::copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclination_deg, 
-	jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir, jvxSize dataBaseId)
+	jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir, jvxSize dataBaseId, jvxSize slotId)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
@@ -107,37 +122,46 @@ ayfHrtfDispenser::copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclinatio
 
 	if (resW == JVX_TRY_LOCK_MUTEX_SUCCESS)
 	{
-		if (dataBaseId == this->activeDatabase->loadId)
+		if (slotId < dataBaseSlots.size())
 		{
-			if (hrir_left && hrir_right)
+			if (dataBaseId == dataBaseSlots[slotId].activeDatabase->loadId)
 			{
-				assert(length_hrir == this->activeDatabase->length_hrir);
-				assert(length_hrir == this->length_buffer_hrir);
-				float hrir_delay_left = 0;          // unit is samples
-				float hrir_delay_right = 0;         // unit is samples
-				float const elevation_deg = -inclination_deg + 90.0;
-				float source_coordinates[3] = { static_cast<float>(azimuth_deg) , static_cast<float>(elevation_deg), (jvxData)2 };
-				mysofa_s2c(source_coordinates);
-				mysofa_getfilter_float_nointerp(this->activeDatabase->mysofa_db, source_coordinates[0], source_coordinates[1], source_coordinates[2], this->buffer_hrir_left, this->buffer_hrir_right, &hrir_delay_left, &hrir_delay_right);
+				if (hrir_left && hrir_right)
+				{
+					assert(length_hrir == dataBaseSlots[slotId].activeDatabase->length_hrir);
+					assert(length_hrir == dataBaseSlots[slotId].length_buffer_hrir);
+					float hrir_delay_left = 0;          // unit is samples
+					float hrir_delay_right = 0;         // unit is samples
+					float const elevation_deg = -inclination_deg + 90.0;
+					float source_coordinates[3] = { static_cast<float>(azimuth_deg) , static_cast<float>(elevation_deg), (jvxData)2 };
+					mysofa_s2c(source_coordinates);
+					mysofa_getfilter_float_nointerp(dataBaseSlots[slotId].activeDatabase->mysofa_db, source_coordinates[0], 
+						source_coordinates[1], source_coordinates[2], dataBaseSlots[slotId].buffer_hrir_left, 
+						dataBaseSlots[slotId].buffer_hrir_right, &hrir_delay_left, &hrir_delay_right);
 
-				// Databases which return delayed HRIRs are not supported.
-				if (hrir_delay_left != 0.0 || hrir_delay_right != 0.0) 
-				{
-					res = JVX_ERROR_UNSUPPORTED;
-				}
-				else
-				{
-					for (int idx_sample = 0; idx_sample < this->activeDatabase->length_hrir; idx_sample++)
+					// Databases which return delayed HRIRs are not supported.
+					if (hrir_delay_left != 0.0 || hrir_delay_right != 0.0)
 					{
-						hrir_left[idx_sample] = (jvxData)this->buffer_hrir_left[idx_sample];
-						hrir_right[idx_sample] = (jvxData)this->buffer_hrir_right[idx_sample];
+						res = JVX_ERROR_UNSUPPORTED;
+					}
+					else
+					{
+						for (int idx_sample = 0; idx_sample < dataBaseSlots[slotId].activeDatabase->length_hrir; idx_sample++)
+						{
+							hrir_left[idx_sample] = (jvxData)dataBaseSlots[slotId].buffer_hrir_left[idx_sample];
+							hrir_right[idx_sample] = (jvxData)dataBaseSlots[slotId].buffer_hrir_right[idx_sample];
+						}
 					}
 				}
+			}
+			else
+			{
+				res = JVX_ERROR_INVALID_SETTING;
 			}
 		}
 		else
 		{
-			res = JVX_ERROR_INVALID_SETTING;
+			res = JVX_ERROR_ID_OUT_OF_BOUNDS;
 		}
 		JVX_UNLOCK_MUTEX(safeAccess);
 	}
@@ -150,7 +174,7 @@ ayfHrtfDispenser::copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclinatio
 }
 
 jvxErrorType
-ayfHrtfDispenser::get_closest_direction(jvxData& azimuth_deg, jvxData& inclination_deg)
+ayfHrtfDispenser::get_closest_direction(jvxData& azimuth_deg, jvxData& inclination_deg, jvxSize slotId)
 {
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resW = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
@@ -225,7 +249,10 @@ ayfHrtfDispenser::start(const std::string& directory)
 		auto elm = sofaDataBases.begin();
 		if (elm != sofaDataBases.end())
 		{
-			select_database(0);
+			for (auto& elm : dataBaseSlots)
+			{
+				select_database(0, elm.idx);
+			}
 		}
 		started = true;
 		return JVX_NO_ERROR;
@@ -240,14 +267,17 @@ ayfHrtfDispenser::stop()
 	{
 		JVX_LOCK_MUTEX(safeAccess);
 		
-		for (auto sofa_database : sofaDataBases)
+		for (auto& sofa_database : sofaDataBases)
 		{
-			if (activeDatabase->is_open) {
+			if (sofa_database->is_open) {
 				sofa_database->close();
 			}
 		}
 
-		activeDatabase = nullptr;
+		for (auto& elm : dataBaseSlots)
+		{
+			elm.activeDatabase = nullptr;
+		}
 		JVX_UNLOCK_MUTEX(safeAccess);
 
 		for (auto sofa_database : sofaDataBases)
@@ -256,8 +286,11 @@ ayfHrtfDispenser::stop()
 		}
 		sofaDataBases.clear();
 		
-		JVX_SAFE_DELETE_FIELD(this->buffer_hrir_left);
-		JVX_SAFE_DELETE_FIELD(this->buffer_hrir_right);
+		for (auto& elm : dataBaseSlots)
+		{
+			JVX_SAFE_DELETE_FIELD(elm.buffer_hrir_left);
+			JVX_SAFE_DELETE_FIELD(elm.buffer_hrir_right);
+		}
 
 		started = false;
 	}
@@ -289,7 +322,7 @@ ayfHrtfDispenser::name_sofa_file(jvxSize idx, std::string& name)
 
 
 jvxErrorType
-ayfHrtfDispenser::load_selected_database(oneSofaDataBase* dbase) 
+ayfHrtfDispenser::load_selected_database(oneSofaDataBase* dbase, jvxSize slotId) 
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
@@ -304,7 +337,7 @@ ayfHrtfDispenser::load_selected_database(oneSofaDataBase* dbase)
 		assert(res == JVX_NO_ERROR);
 	}
 
-	this->allocate_hrir_buffers(dbase);
+	this->allocate_hrir_buffers(dbase, slotId);
 
 	JVX_UNLOCK_MUTEX(safeAccess);
 
@@ -312,26 +345,28 @@ ayfHrtfDispenser::load_selected_database(oneSofaDataBase* dbase)
 }
 
 void
-ayfHrtfDispenser::allocate_hrir_buffers(oneSofaDataBase* dbase)
+ayfHrtfDispenser::allocate_hrir_buffers(oneSofaDataBase* dbase, jvxSize slotId)
 {
-	JVX_SAFE_DELETE_FIELD(this->buffer_hrir_left);
-	JVX_SAFE_DELETE_FIELD(this->buffer_hrir_right);
-	this->length_buffer_hrir = 0;
+	assert(slotId < dataBaseSlots.size());
+	JVX_SAFE_DELETE_FIELD(dataBaseSlots[slotId].buffer_hrir_left);
+	JVX_SAFE_DELETE_FIELD(dataBaseSlots[slotId].buffer_hrir_right);
+	dataBaseSlots[slotId].length_buffer_hrir = 0;
 
-	this->length_buffer_hrir = dbase->length_hrir;
-	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(this->buffer_hrir_left, float, this->length_buffer_hrir);
-	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(this->buffer_hrir_right, float, this->length_buffer_hrir);
+	dataBaseSlots[slotId].length_buffer_hrir = dbase->length_hrir;
+	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(dataBaseSlots[slotId].buffer_hrir_left, float, dataBaseSlots[slotId].length_buffer_hrir);
+	JVX_SAFE_ALLOCATE_FIELD_CPP_Z(dataBaseSlots[slotId].buffer_hrir_right, float, dataBaseSlots[slotId].length_buffer_hrir);
 }
 
 
 jvxErrorType 
-ayfHrtfDispenser::select_database(jvxSize idx_database)
+ayfHrtfDispenser::select_database(jvxSize idx_database, jvxSize slotId)
 {
+	assert(slotId < dataBaseSlots.size());
 	if (idx_database >= sofaDataBases.size()) return JVX_ERROR_ID_OUT_OF_BOUNDS;
 
 	auto sofa_database = sofaDataBases.begin();
 	std::advance(sofa_database, idx_database);
-	if (*sofa_database != this->activeDatabase)
+	if (*sofa_database != dataBaseSlots[slotId].activeDatabase)
 	{
 		JVX_LOCK_MUTEX(safeAccess);
 
@@ -342,21 +377,21 @@ ayfHrtfDispenser::select_database(jvxSize idx_database)
 		if (!selectMe->is_open) 
 		{
 			if (this->samplerate != JVX_SIZE_UNSELECTED) {
-				this->load_selected_database(selectMe);
+				this->load_selected_database(selectMe, slotId);
 			}
 		}
 
 		// Here, the database is updated		
-		if (this->length_buffer_hrir != selectMe->length_hrir) {
-			this->allocate_hrir_buffers(selectMe);
+		if (dataBaseSlots[slotId].length_buffer_hrir != selectMe->length_hrir) {
+			this->allocate_hrir_buffers(selectMe, slotId);
 		}
 
-		this->activeDatabase = selectMe;
-		std::cout << __FUNCTION__ << ": Sofa database " << activeDatabase->fName << " selected." << std::endl;
+		dataBaseSlots[slotId].activeDatabase = selectMe;
+		std::cout << __FUNCTION__ << ": Sofa database " << dataBaseSlots[slotId].activeDatabase->fName << " selected." << std::endl;
 
 		// inform BinauralRender modules
 		for (auto elm : this->registeredListeners) {
-			elm->report_database_changed();
+			elm->report_database_changed(slotId);
 		}
 
 		JVX_UNLOCK_MUTEX(safeAccess);
@@ -366,12 +401,13 @@ ayfHrtfDispenser::select_database(jvxSize idx_database)
 
 
 jvxSize
-ayfHrtfDispenser::selected_database()
+ayfHrtfDispenser::selected_database(jvxSize slotId)
 {
 	jvxSize cnt = 0;
+	assert(slotId < dataBaseSlots.size());
 	for (auto sofa_database : sofaDataBases)
 	{
-		if (sofa_database == activeDatabase)
+		if (sofa_database == dataBaseSlots[slotId].activeDatabase)
 		{
 			return cnt;
 		}
@@ -456,16 +492,29 @@ ayfHrtfDispenser::unregister_change_listener(IjvxPropertyExtenderHrtfDispenser_r
 jvxErrorType 
 ayfHrtfDispenser::is_ready(jvxBool* isReady, jvxApiString* reason)
 {
-	if (activeDatabase == nullptr)
+	jvxBool isReadyLocal = true;
+	std::string errDescr;
+
+	if (dataBaseSlots.size() == 0)
 	{
-		if (isReady)
+		isReadyLocal = false;
+		errDescr = "No slots declared for HRTF dispenser.";
+	}
+	else
+	{
+		if (dataBaseSlots[0].activeDatabase == nullptr)
 		{
-			*isReady = false;
+			isReadyLocal = false;
+			errDescr = "No active HRTF database in folder <" + curWorkingDir + ">.";
 		}
-		if (reason)
-		{
-			*reason = "No active HRTF database in folder <" + curWorkingDir + ">.";
-		}
+	}
+	if (isReady)
+	{
+		*isReady = isReadyLocal;
+	}
+	if (reason)
+	{
+		*reason = errDescr;
 	}
 	return JVX_NO_ERROR;
 }

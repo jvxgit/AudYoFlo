@@ -37,6 +37,14 @@ public:
 	jvxErrorType close();
 };
 
+struct oneDBaslot
+{
+	oneSofaDataBase* activeDatabase = nullptr;
+	float* buffer_hrir_left = nullptr;
+	float* buffer_hrir_right = nullptr;
+	jvxSize length_buffer_hrir = JVX_SIZE_UNSELECTED;
+	jvxSize idx = JVX_SIZE_UNSELECTED;
+};
 
 class ayfHrtfDispenser : public IjvxPropertyExtender, public IjvxPropertyExtenderHrtfDispenser
 {
@@ -50,15 +58,11 @@ private:
 	std::string pathName = "./";
 	std::list<oneSofaDataBase*> sofaDataBases;
 	
-	oneSofaDataBase* activeDatabase = nullptr;
 	jvxSize samplerate = JVX_SIZE_UNSELECTED;
 	JVX_MUTEX_HANDLE safeAccess;
 	
-	float *buffer_hrir_left = nullptr;
-	float *buffer_hrir_right = nullptr;
-	jvxSize length_buffer_hrir = JVX_SIZE_UNSELECTED;
-
 	std::list<IjvxPropertyExtenderHrtfDispenser_report*> registeredListeners;
+	std::vector<oneDBaslot> dataBaseSlots;
 
 public: 
 	ayfHrtfDispenser();
@@ -71,11 +75,11 @@ public:
 	
 	// ==============================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION init(jvxSize* samplerate) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_length_hrir(jvxSize& length_hrir, jvxSize* loadId) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION init(jvxSize* samplerate, jvxSize numSlots) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_length_hrir(jvxSize& length_hrir, jvxSize* loadId, jvxSize slotId) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclination_deg, 
-		jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir, jvxSize dataBaseId) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_closest_direction(jvxData& azimuth_deg, jvxData& inclination_deg) override;
+		jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir, jvxSize dataBaseId, jvxSize slotId) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_closest_direction(jvxData& azimuth_deg, jvxData& inclination_deg, jvxSize slotId) override;
 
 	// ==============================================================================
 
@@ -93,15 +97,15 @@ public:
 	jvxErrorType name_sofa_file(jvxSize idx, std::string& name);
 
 	// Select SOFA database without loading it.
-	jvxErrorType select_database(jvxSize idx_database);
+	jvxErrorType select_database(jvxSize idx_database, jvxSize slotId);
 
 	// Load the selected SOFA database.
-	jvxErrorType load_selected_database(oneSofaDataBase* dbase);
+	jvxErrorType load_selected_database(oneSofaDataBase* dbase, jvxSize slotId);
 
 	// Return list index of selected SOFA database.
-	jvxSize selected_database();
+	jvxSize selected_database(jvxSize slotId);
 
-	void allocate_hrir_buffers(oneSofaDataBase* dbase);
+	void allocate_hrir_buffers(oneSofaDataBase* dbase, jvxSize slotId);
 
 };
 
