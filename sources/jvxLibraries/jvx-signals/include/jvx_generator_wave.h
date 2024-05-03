@@ -73,6 +73,8 @@ jvxDspBaseErrorType jvx_generatorwave_prepare(jvx_generatorWave* hdl);
 
 jvxDspBaseErrorType jvx_generatorwave_update(jvx_generatorWave* hdl, jvxUInt16 whatToSet, jvxCBool do_set);
 
+jvxDspBaseErrorType jvx_generatorwave_restart(jvx_generatorWave* hdl);
+
 jvxDspBaseErrorType jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written);
 
 jvxDspBaseErrorType jvx_generatorwave_postprocess(jvx_generatorWave* hdl);
