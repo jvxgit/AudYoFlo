@@ -6,5 +6,5 @@
 # aqt list-qt linux desktop --arch 5.15.2
 if [ ! -d "qt/$1/$2" ]; then
 	echo aqt install-qt linux desktop $1 $2 -O qt
-	aqt install-qt linux desktop $1 $2 -O qt
+	python3 -m aqt install-qt linux desktop $1 $2 -O qt
 fi
