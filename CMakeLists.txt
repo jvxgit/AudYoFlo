@@ -633,12 +633,23 @@ else(JVX_COMPILE_BUILDTOOLS)
       ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfOpenGL)
   endif()
 
+  ###
+  # build custom technology components
+  ###
   set(JVX_BASE_CUSTOM_TECHNOLOGIES
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxCustomTechnologies/jvxCuTDefault
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxCustomTechnologies/jvxCuTNTask
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxCustomTechnologies/jvxCuTGps
   )
 
+  ###
+  # build custom node components
+  ###
+  set(JVX_BASE_CUSTOM_NODES
+	${JVX_BASE_ROOT}/sources/jvxComponents/CustomNodes/CuNDefault
+	${JVX_BASE_ROOT}/sources/jvxComponents/CustomNodes/CuNHrtfDispenser
+	)
+	
   ###
   # build signal processing technology components
   ###
@@ -1099,6 +1110,8 @@ else(JVX_COMPILE_BUILDTOOLS)
   jvx_addSubdirs("Configuring all audio technology components" "${JVX_BASE_AUDIO_TECHNOLOGIES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/audio-technology-components")
   jvx_addSubdirs("Configuring all video technology components" "${JVX_BASE_VIDEO_TECHNOLOGIES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/video-technology-components")
   jvx_addSubdirs("Configuring all custom technology components" "${JVX_BASE_CUSTOM_TECHNOLOGIES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/custom-technology-components")
+  jvx_addSubdirs("Configuring all custom node components" "${JVX_BASE_CUSTOM_NODES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/custom-node-components")
+  
   jvx_addSubdirs("Configuring all signal processing technology components" "${JVX_BASE_SIGNAL_PROCESSING_TECHNOLOGIES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/signalprocessing-technology-components")
   jvx_addSubdirs("Configuring all external controller technology components" "${JVX_BASE_APPLICATION_CONTROLLER_TECHNOLOGIES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/application-controller-components")
   jvx_addSubdirs("Configuring all external controller node components" "${JVX_BASE_APPLICATION_CONTROLLER_NODES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/application-controller-nodes")

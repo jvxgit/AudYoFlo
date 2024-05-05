@@ -16,7 +16,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxCompNode1io.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxBareNode1io.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase1io.cpp
-
+${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxBareNode1ioRearrange.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBaseNtask.cpp
@@ -29,6 +29,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxDevices/CjvxMaster_Ntask.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvxNodes/CjvxCompNode1io.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvxNodes/CjvxBareNode1io.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvxNodes/CjvxNodeBase1io.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvxNodes/CjvxNodeBase.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/jvxNodes/CjvxBareNode1ioRearrange.h
  

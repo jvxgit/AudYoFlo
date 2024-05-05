@@ -49,7 +49,7 @@ CjvxAuNBinauralRender::select(IjvxObject* owner)
 		genBinauralRender_node::register__global__if_ext(static_cast<CjvxProperties*>(this));
 
 		genBinauralRender_node::register_callbacks(static_cast<CjvxProperties*>(this),
-			set_extend_ifx_reference, update_source_direction,
+			set_extend_ifx_reference, update_source_direction, update_active_slot,
 			reinterpret_cast<jvxHandle*>(this), NULL);
 
 		genBinauralRender_node::global.if_ext.interf_position_direct.ptr = static_cast<IjvxPropertyExtender*>(this);
@@ -149,7 +149,7 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// _common_set_icon.theData_in->con_params
 
 	jvxSize samplerate = _common_set_icon.theData_in->con_params.rate;
-	theHrtfDispenser->init(&samplerate, 1); // Check result in the future - number of slots provided here!
+	theHrtfDispenser->bind(&samplerate, 0); 
 
 	// Allocate renderer
 	render_pri = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
@@ -272,6 +272,8 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 void
 CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_deg, jvxData inclination_deg) 
 {
+	jvxSize slotIdHrtfs = jvx_bitfieldSelection2Id(genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf);
+
 	jvxSize loadId = JVX_SIZE_UNSELECTED;
 	// std::cout << "New angles: azimuth: " << azimuth_deg << ", inclination: " << inclination_deg << std::endl;
 
@@ -279,23 +281,29 @@ CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_
 	this->source_direction_angles_deg_inuse[0] = azimuth_deg;
 	this->source_direction_angles_deg_inuse[1] = inclination_deg;
 
-	jvxSize length_hrir;
-	this->theHrtfDispenser->get_length_hrir(length_hrir, &loadId, slotIdHrtfs);
-	if (renderer->loadId == loadId)
+	if (JVX_CHECK_SIZE_SELECTED(slotIdHrtfs))
 	{
-		jvxErrorType res = this->theHrtfDispenser->copy_closest_hrir_pair(azimuth_deg, inclination_deg,
-			renderer->buffer_hrir_left, renderer->buffer_hrir_right, renderer->length_buffer_hrir,
-			renderer->loadId, slotIdHrtfs);
-		if (res != JVX_NO_ERROR)
+		jvxSize length_hrir;
+		this->theHrtfDispenser->get_length_hrir(length_hrir, &loadId, slotIdHrtfs);
+		if (renderer->loadId == loadId)
 		{
-			std::cout << __FUNCTION__ << " Warning: on update of position, the request to return hrir buffers failed with error <" << 
-				jvxErrorType_descr(res) << ">." << std::endl;
+			jvxErrorType res = this->theHrtfDispenser->copy_closest_hrir_pair(azimuth_deg, inclination_deg,
+				renderer->buffer_hrir_left, renderer->buffer_hrir_right, renderer->length_buffer_hrir, slotIdHrtfs);
+			if (res != JVX_NO_ERROR)
+			{
+				std::cout << __FUNCTION__ << " Warning: on update of position, the request to return hrir buffers failed with error <" <<
+					jvxErrorType_descr(res) << ">." << std::endl;
+			}
+		}
+		else
+		{
+			std::cout << __FUNCTION__ << " Warning: on update of position, the renderer is linked to database id #" <<
+				renderer->loadId << " whereas the currently active database id is #" << loadId << std::endl;
 		}
 	}
 	else
-	{
-		std::cout << __FUNCTION__ << " Warning: on update of position, the renderer is linked to database id #" <<
-			renderer->loadId << " whereas the currently active database id is #" << loadId << std::endl;
+	{ 
+		std::cout << __FUNCTION__ << " Warning: No valid slot configured for HRTF request." << std::endl;
 	}
 }
 
@@ -408,6 +416,9 @@ CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData
 {
 	jvxOneRenderCore* render_inst = nullptr;
 	JVX_SAFE_ALLOCATE_OBJECT(render_inst, jvxOneRenderCore);
+
+	jvxSize slotIdHrtfs = jvx_bitfieldSelection2Id(genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf);
+	assert(JVX_CHECK_SIZE_SELECTED(slotIdHrtfs));
 
 	jvxErrorType res = theHrtfDispenser->get_length_hrir(render_inst->length_buffer_hrir, &render_inst->loadId, slotIdHrtfs);
 	assert(res == JVX_NO_ERROR);

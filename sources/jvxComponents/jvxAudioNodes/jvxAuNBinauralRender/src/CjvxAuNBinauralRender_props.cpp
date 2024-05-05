@@ -37,6 +37,17 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, set_extend
 				if (theHrtfDispenser)
 				{
 					theHrtfDispenser->register_change_listener(static_cast<IjvxPropertyExtenderHrtfDispenser_report*>(this));
+					jvxSize numSlots = 0;
+					theHrtfDispenser->number_slots(numSlots);
+					genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.entries.clear();
+					for (jvxSize i = 0; i < numSlots; i++)
+					{
+						jvxApiString astr;
+						theHrtfDispenser->slot_descrption(i, astr);
+						genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.entries.push_back(astr.std_str());
+					}
+					assert(numSlots > 0);
+					jvx_bitZSet(genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.selection(0), 0);
 				}
 			}
 			else
@@ -47,15 +58,26 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, set_extend
 
 				}
 				theHrtfDispenser = nullptr;
+				genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.entries.clear();
 			}
 		}
 	}
 	return JVX_NO_ERROR;
 }
 
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, update_active_slot)
+{
+	jvxSize slotIdHrtfs = jvx_bitfieldSelection2Id(genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf);
+	report_database_changed(slotIdHrtfs);
+	return JVX_NO_ERROR;
+}
+
+
 jvxErrorType
 CjvxAuNBinauralRender::report_database_changed(jvxSize slotId)
 {	
+	jvxSize slotIdHrtfs = jvx_bitfieldSelection2Id(genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf);
+
 	// Only if our slot is in use
 	if (slotId == slotIdHrtfs)
 	{

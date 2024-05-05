@@ -66,8 +66,7 @@ private:
 
 	jvxRenderingUpdateStatus updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_OFF;
 
-	jvxSize missedUpdatesPosition = 0;
-	jvxSize slotIdHrtfs = 0;
+	jvxSize missedUpdatesPosition = 0;	
 
 public:
 
@@ -120,6 +119,7 @@ public:
 
 	// Callback is triggered to indicate updated direction in property input_source_direction_angles_deg.
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(update_source_direction);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(update_active_slot);
 
 	// =========================================================================================================
 	// IjvxPropertyExtenderHrtfDispenser_report

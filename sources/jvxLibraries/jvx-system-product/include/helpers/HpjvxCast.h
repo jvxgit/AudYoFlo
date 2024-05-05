@@ -44,7 +44,7 @@
 		pExt->prop_extender_specialization(reinterpret_cast<jvxHandle**>(&ptrRet), \
 		jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_CHAIN_CONTROL); \
 	} \
-	else if (std::is_same < T, IjvxPropertyExtenderHrtfDispenser>::value) \
+	else if (std::is_same < T, IjvxPropertyExtenderStreamAudioPlugin>::value) \
 	{ \
 		pExt->prop_extender_specialization(reinterpret_cast<jvxHandle**>(&ptrRet), \
 		jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_PROPERTY_STREAM_AUDIO_PLUGIN); \
