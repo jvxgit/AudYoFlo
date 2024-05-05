@@ -44,6 +44,7 @@ struct oneDBaslot
 	float* buffer_hrir_right = nullptr;
 	jvxSize length_buffer_hrir = JVX_SIZE_UNSELECTED;
 	jvxSize idx = JVX_SIZE_UNSELECTED;
+	std::string description;
 };
 
 class ayfHrtfDispenser : public IjvxPropertyExtender, public IjvxPropertyExtenderHrtfDispenser
@@ -51,8 +52,13 @@ class ayfHrtfDispenser : public IjvxPropertyExtender, public IjvxPropertyExtende
 private:
 
 	jvxSize loadIdCnt = 1;
+
+	jvxState statDispenser = jvxState::JVX_STATE_NONE;
+
+	/*
 	jvxBool is_initialized = false;
 	jvxBool started = false;
+	*/
 
 	std::string curWorkingDir;
 	std::string pathName = "./";
@@ -70,28 +76,34 @@ public:
 
 	// ==============================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION supports_prop_extender_type(jvxPropertyExtenderType tp) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp) override;
+	jvxErrorType supports_prop_extender_type(jvxPropertyExtenderType tp) override;
+	jvxErrorType prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp) override;
 	
 	// ==============================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION init(jvxSize* samplerate, jvxSize numSlots) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_length_hrir(jvxSize& length_hrir, jvxSize* loadId, jvxSize slotId) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclination_deg, 
-		jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir, jvxSize dataBaseId, jvxSize slotId) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION get_closest_direction(jvxData& azimuth_deg, jvxData& inclination_deg, jvxSize slotId) override;
+	jvxErrorType number_slots(jvxSize& num) override;
+	jvxErrorType slot_descrption(jvxSize idx, jvxApiString& description)override;
+	jvxErrorType bind(jvxSize* samplerate, jvxSize slotId) override;
 
 	// ==============================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION register_change_listener(IjvxPropertyExtenderHrtfDispenser_report* ref) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION unregister_change_listener(IjvxPropertyExtenderHrtfDispenser_report* ref) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION is_ready(jvxBool* isReady, jvxApiString* reason) override;
+	jvxErrorType get_length_hrir(jvxSize& length_hrir, jvxSize* loadId, jvxSize slotId) override;
+	jvxErrorType copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclination_deg, 
+		jvxData* hrir_left, jvxData* hrir_right, jvxSize length_hrir, jvxSize slotId) override;
+	jvxErrorType get_closest_direction(jvxData& azimuth_deg, jvxData& inclination_deg, jvxSize slotId) override;
 
 	// ==============================================================================
 
-	jvxErrorType start(const std::string& directory);
+	jvxErrorType register_change_listener(IjvxPropertyExtenderHrtfDispenser_report* ref) override;
+	jvxErrorType unregister_change_listener(IjvxPropertyExtenderHrtfDispenser_report* ref) override;
+
+	jvxErrorType is_ready(jvxBool* isReady, jvxApiString* reason) override;
+
+	// ==============================================================================
+
+	jvxErrorType start(const std::string& directory, jvxSize numSlots);
 	jvxErrorType stop();
+
 
 	jvxSize num_sofa_files();
 	jvxErrorType name_sofa_file(jvxSize idx, std::string& name);
@@ -100,12 +112,12 @@ public:
 	jvxErrorType select_database(jvxSize idx_database, jvxSize slotId);
 
 	// Load the selected SOFA database.
-	jvxErrorType load_selected_database(oneSofaDataBase* dbase, jvxSize slotId);
+	jvxErrorType load_selected_database_inlock(oneSofaDataBase* dbase, jvxSize slotId);
 
 	// Return list index of selected SOFA database.
 	jvxSize selected_database(jvxSize slotId);
 
-	void allocate_hrir_buffers(oneSofaDataBase* dbase, jvxSize slotId);
+	void allocate_hrir_buffers_inlock(oneSofaDataBase* dbase, jvxSize slotId);
 
 };
 

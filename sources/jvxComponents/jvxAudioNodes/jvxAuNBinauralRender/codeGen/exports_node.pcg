@@ -47,5 +47,22 @@ SECTION PROPERTIES
 				ASSOCIATE_EXTERNAL = "yes";
 			};  
 		};
+
+		SECTION hrtf_rendering
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			CALLBACKS = {"update_active_slot"};
+
+			SECTION active_slot_hrtf
+			{						
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";					
+				SELECTION_LIST_NAMES = {"none"};
+				SELECTION_LIST_SELECTED = {"yes"};
+				SELECTION_LIST_EXCLUSIVE = {"no"}; 
+				READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";			
+			}; 
+		};
 	};
 };
