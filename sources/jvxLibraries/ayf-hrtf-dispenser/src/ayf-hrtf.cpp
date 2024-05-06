@@ -237,7 +237,7 @@ ayfHrtfDispenser::get_closest_direction(jvxData& azimuth_deg, jvxData& inclinati
 // ==============================================================================
 
 jvxErrorType 
-ayfHrtfDispenser::start(const std::string& directory, jvxSize numSlots)
+ayfHrtfDispenser::start(const std::string& directory, jvxSize numSlots, const char** slotNames)
 {
 	char bufRet[MAX_PATH] = { 0 };
 	if (statDispenser == jvxState::JVX_STATE_NONE)
@@ -287,7 +287,15 @@ ayfHrtfDispenser::start(const std::string& directory, jvxSize numSlots)
 		dataBaseSlots.resize(numSlots);
 		for (auto& elm : dataBaseSlots)
 		{
-			elm.idx = cnt++;
+			if (slotNames)
+			{
+				elm.description = slotNames[cnt];
+			}
+			else
+			{
+				elm.description = "hrtf-slot #" + jvx_size2String(cnt);
+			}
+			elm.idx = cnt++;			
 			select_database(0, elm.idx);
 		}
 		statDispenser = jvxState::JVX_STATE_INIT;

@@ -36,7 +36,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, set_extend
 				ptr->prop_extender_specialization(reinterpret_cast<jvxHandle**>(&theHrtfDispenser), jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_HRTF_DISPENSER);
 				if (theHrtfDispenser)
 				{
-					theHrtfDispenser->register_change_listener(static_cast<IjvxPropertyExtenderHrtfDispenser_report*>(this));
+					theHrtfDispenser->register_change_listener(static_cast<IjvxPropertyExtenderHrtfDispenser_report*>(this));					
 					jvxSize numSlots = 0;
 					theHrtfDispenser->number_slots(numSlots);
 					genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.entries.clear();
@@ -47,7 +47,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNBinauralRender, set_extend
 						genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.entries.push_back(astr.std_str());
 					}
 					assert(numSlots > 0);
-					jvx_bitZSet(genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.selection(0), 0);
+					jvx_bitZSet(genBinauralRender_node::local.hrtf_rendering.active_slot_hrtf.value.selection(0), 0);				
 				}
 			}
 			else

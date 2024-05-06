@@ -6,6 +6,7 @@ SECTION PROPERTIES
 	{
 		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"select_hrtf_slot"};
 
 		SECTION sofa_directory
 		{
@@ -17,11 +18,12 @@ SECTION PROPERTIES
 		SECTION slot_definition
 		{						
 			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";					
-			SELECTION_LIST_NAMES = {"default"};
-			SELECTION_LIST_SELECTED = {"yes"};
-			SELECTION_LIST_EXCLUSIVE = {"no"}; 
+			SELECTION_LIST_NAMES = {"default1", "default2"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"no", "no"}; 
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
 			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";			
+			CALLBACK_SET_POSTHOOK = "select_hrtf_slot";
 		};  
 	};
 

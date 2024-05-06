@@ -21,7 +21,19 @@ public:
 	jvxErrorType supports_prop_extender_type(jvxPropertyExtenderType tp) override;
 	jvxErrorType prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp) override;
 
+	jvxErrorType put_configuration(
+		jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionToContainAllSubsectionsForMe,
+		const char* filename,
+		jvxInt32 lineno) override;
+	jvxErrorType get_configuration(
+		jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionWhereToAddAllSubsections)override;
+
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(select_sofa_file);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(select_hrtf_slot);
 
 protected:
 	ayfHrtfDispenser* theDispenser = nullptr;
