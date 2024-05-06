@@ -101,7 +101,7 @@ public:
 
 	// ==============================================================================
 
-	jvxErrorType start(const std::string& directory, jvxSize numSlots);
+	jvxErrorType start(const std::string& directory, jvxSize numSlots, const char** slotNames);
 	jvxErrorType stop();
 
 
