@@ -12,6 +12,7 @@
 		jvxTrtAudioFileReader_static
 		jvxTrtAudioFileWriter_static
 		jvxAuTGenericWrapper_static
+		jvxTLogRemoteHandler_static
 		jvx-qt-helpers_static
 		jvx-remote-call_static
 		jvx-crc_static
@@ -28,15 +29,15 @@
 		set(LOCAL_LIBS ${LOCAL_LIBS}
 			jvx-app-host-shared_static
 			jvxTThreads_static
-			jvxHJvx_static
-			jvxFHDefault_static
+			jvxHAppHost_static
+			jvxFHAppFactoryHost_static
 			)
 	else()
 		set(LOCAL_LIBS ${LOCAL_LIBS}
 			jvx-app-host-static_static
 			jvxTThreads_static
-			jvxHJvx_static_nd
-			jvxFHDefault_static_nd
+			jvxHAppHost_static_nd
+			jvxFHAppFactoryHost_static_nd
 			)
 	endif()
 	
