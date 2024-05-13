@@ -33,6 +33,21 @@ if(${JVX_OS} MATCHES "windows")
 	# set(ORC_DLL_INSTALLER_TARGET "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/bin/orc-0.4-0.dll" CACHE INTERNAL "orc runtime library")
 	set(ORCC ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/bin/orcc.exe CACHE INTERNAL "orc compiler")
 	
+	if(JVX_RELEASE_SDK)
+		set(ORCC_EXECUTABLE_SDK "orcc.exe" CACHE INTERNAL "Global values orcc")
+		get_filename_component(tmp_nm ${ORC_LIBRARIES} NAME)
+		set(ORCC_LIB_SDK ${tmp_nm} CACHE INTERNAL "Global values orcc liobs")
+		set(ORC_COMPILE_DEFINITIONS_SDK ${ORC_COMPILE_DEFINITIONS} CACHE INTERNAL "Global values orcc flags")
+		
+		install(FILES ${ORCC} DESTINATION ${INSTALL_PATH_BIN})
+		install(FILES ${ORC_LIBRARIES} DESTINATION ${INSTALL_PATH_LIB_STATIC})
+		install(DIRECTORY orc/orc DESTINATION ${INSTALL_PATH_INCLUDE_STATIC})
+
+	endif()
+	
+	add_library(orcImport STATIC IMPORTED GLOBAL)
+	set_property(TARGET orcImport PROPERTY IMPORTED_LOCATION "${ORC_LIBRARIES}")
+
 elseif(${JVX_OS} MATCHES "linux")
 
   	set(targetfolder orc)

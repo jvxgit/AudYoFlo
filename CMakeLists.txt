@@ -359,6 +359,13 @@ if(JVX_COMPILE_BUILDTOOLS)
 
 else(JVX_COMPILE_BUILDTOOLS)
 
+	if(JVX_RELEASE_SDK)
+		set(ORCC_EXECUTABLE_SDK "no-orc.exe" CACHE INTERNAL "Global values orcc")
+		set(ORCC_LIB_SDK "no-orc.lib" CACHE INTERNAL "Global values orcc liobs")
+		set(ORC_COMPILE_DEFINITIONS_SDK "" CACHE INTERNAL "Global values orcc flags")
+		# message(FATAL_ERROR "1")
+	endif()
+	
   # Run early projects - before all checks - to install required components
   include(${JVX_CMAKE_DIR}/fragments/thrdparty-early.cmake)
   jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early")
@@ -1237,7 +1244,8 @@ else(JVX_COMPILE_BUILDTOOLS)
     endif()
 
   else(NOT JVX_RELEASE_SDK)
-    configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake)
+	# set(ORCC_EXECUTABLE_SDK "...${AYF_CURRENT_SDK_DIR}/bin/${ORCC_EXECUTABLE_SDK}..." )
+    configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake @ONLY)	
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
     install(DIRECTORY ${JVX_BASE_ROOT}/cmake-sdk DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake FILES_MATCHING PATTERN "*.cmake")
     install(DIRECTORY ${JVX_SUBPRODUCT_ROOT}/cmake-sdk DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake FILES_MATCHING PATTERN "*.cmake")
