@@ -8,7 +8,7 @@
 			include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.develophost.cmake)
 			include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.network.cmake)
 		endif()
-	else(JVX_LINK_WITH_DEVELOP_HOST)
+	else()
 		if(JVX_LINK_WITH_CONSOLE_HOST)
 		
 			include_directories(
@@ -45,5 +45,5 @@
 				include(${JVX_CMAKE_DIR}/cmake-sdk/cmake-lib-packages.network.cmake)
 			endif()
 			force_console_app()
-		endif(JVX_LINK_WITH_CONSOLE_HOST)
-	endif(JVX_LINK_WITH_DEVELOP_HOST)
+		endif()
+	endif()

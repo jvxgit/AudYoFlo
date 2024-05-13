@@ -147,13 +147,13 @@ if(NOT JVX_RELEASE_SDK) # fixme: this should be handled via install components
 			set(JVX_RTPROC_APPS ${JVX_RTPROC_APPS}
 				sources/jvxApplications/jvx-qt-host-1
 				)
-		else(JVX_USE_QWT AND JVX_USE_QWT_POLAR)
+		else()
 			message("XX> host jvx-qt-host-1 disabled (QWT and/or QWT-Polar disabled)")
-		endif(JVX_USE_QWT AND JVX_USE_QWT_POLAR)
-	else(JVX_USE_QT)
+		endif()
+	else()
 
 			message("XX> all hosts with qt support disabled")
-	endif(JVX_USE_QT)
+	endif()
 
 	# ======================================================
 	
@@ -183,31 +183,31 @@ if(NOT JVX_RELEASE_SDK) # fixme: this should be handled via install components
 			if(${JVX_OS} MATCHES "windows")
 				if(JVX_USE_QWT)
 					#set(JVX_RTPROC_APPS ${JVX_RTPROC_APPS} sources/jvxApplications/jvxMerConcept)
-				else(JVX_USE_QWT)
+				else()
 					message("XX> host jvxMerConcept disabled (QWT is disabled)")
-				endif(JVX_USE_QWT)
-			else(${JVX_OS} MATCHES "windows")
+				endif()
+			else()
 				message("XX> host jvxMerConcept disabled (Windows only)")
-			endif(${JVX_OS} MATCHES "windows")
+			endif()
 		
-		else(JVX_USE_QT)
+		else()
 
 			message("XX> all hosts with qt support disabled")
 
-		endif(JVX_USE_QT)
+		endif()
 	endif()
 
 	if(JVX_USE_PART_MATLAB)
 		set(JVX_RTPROC_APPS ${JVX_RTPROC_APPS} sources/jvxApplications/jvx-m-host-1/cmake/matlab)
-	else(JVX_USE_PART_MATLAB)
+	else()
 		message("XX> matlab host disabled")
-	endif(JVX_USE_PART_MATLAB)
+	endif()
 
 	if(JVX_USE_PART_OCTAVE)
 		set(JVX_RTPROC_APPS ${JVX_RTPROC_APPS} sources/jvxApplications/jvx-m-host-1/cmake/octave)
-	else(JVX_USE_PART_OCTAVE)
+	else()
 		message("XX> octave host disabled")
-	endif(JVX_USE_PART_OCTAVE)
+	endif()
 
 	jvx_addSubdirs("Configuring all host components" "${JVX_RTPROC_APPS}" "${JVX_FOLDER_HIERARCHIE_BASE}/apps")
   
@@ -215,9 +215,9 @@ if(NOT JVX_RELEASE_SDK) # fixme: this should be handled via install components
 	# add_subdirectory(sources/jvxApplications/mex)
 
   
-else(NOT JVX_RELEASE_SDK)
+else()
     message("XX> no audio hosts are built (SDK build) #FIXME: to be handles via install components")
-endif(NOT JVX_RELEASE_SDK)
+endif()
 
 # if(NOT JVX_RELEASE_SDK) # fixme: this should be handled via install components
 	

@@ -601,7 +601,7 @@ set(CMAKE_SHARED_LIBRARY_SONAME_C_FLAG "-install_name")
 # before, Alex.
 if(NOT DEFINED CMAKE_INSTALL_NAME_TOOL)
   find_program(CMAKE_INSTALL_NAME_TOOL install_name_tool)
-endif(NOT DEFINED CMAKE_INSTALL_NAME_TOOL)
+endif()
 
 # Set the find root to the iOS developer roots and to user defined paths.
 set(CMAKE_FIND_ROOT_PATH ${CMAKE_DEVELOPER_ROOT} ${CMAKE_OSX_SYSROOT_INT}

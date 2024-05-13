@@ -49,10 +49,10 @@ if(JVX_USE_QT)
   if(JVX_USE_QWT)
     # set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qwt-${JVX_QWT_VERSION}/cmake)
     set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/qwt)
-  endif(JVX_USE_QWT)
+  endif()
   if(JVX_USE_QWT_POLAR)
     # set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qwtPolar-${JVX_QWT_POLAR_VERSION}/cmake)
-  endif(JVX_USE_QWT_POLAR)
+  endif()
 
   # set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qcustomplot-wrapper/cmake )
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qcustomplot)
@@ -70,13 +70,13 @@ if(JVX_USE_PART_PAUDIO)
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
     find_package(portaudio)
   endif()
-endif(JVX_USE_PART_PAUDIO)
+endif()
 
 if(JVX_USE_PART_CMINPACK)
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/cminpack
   )
-endif(JVX_USE_PART_CMINPACK)
+endif()
 
 if(JVX_INCLUDE_EBUR128)
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
