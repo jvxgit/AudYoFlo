@@ -516,6 +516,9 @@ else(JVX_COMPILE_BUILDTOOLS)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-component-lib
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-embedding-proxy
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-link-frontend
+	
+	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-mex
+
   )
 
   if(JVX_USE_PART_WEBSERVER)

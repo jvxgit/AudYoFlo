@@ -14,6 +14,7 @@ protected:
 		IjvxHiddenInterface* theHostRef = nullptr;
 	};
 	commonSetTypeMin _common_set_min;
+
 public:
 
 	CjvxObjectMin(const std::string& theDescription = "no description");

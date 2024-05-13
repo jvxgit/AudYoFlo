@@ -534,7 +534,8 @@ typedef void(*jvxLoadModuleFilterCallback)(jvxBool* doNotLoad, const char* modul
 #define JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE const char* description, bool multipleObjects, \
 	const char* descriptor, jvxBitField featureClass, \
 	const char* module_name, jvxComponentAccessType acTp, \
-	jvxComponentType tpComp, const char* descrComp, IjvxObject* templ
+	jvxComponentType tpComp, const char* descrComp, \
+	IjvxObject* templ
 
 #define JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL description, multipleObjects, descriptor, featureClass, module_name, acTp, tpComp, descrComp, templ
 
