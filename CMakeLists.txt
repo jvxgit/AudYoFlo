@@ -363,6 +363,9 @@ else(JVX_COMPILE_BUILDTOOLS)
 		set(ORCC_EXECUTABLE_SDK "no-orc.exe" CACHE INTERNAL "Global values orcc")
 		set(ORCC_LIB_SDK "no-orc.lib" CACHE INTERNAL "Global values orcc liobs")
 		set(ORC_COMPILE_DEFINITIONS_SDK "" CACHE INTERNAL "Global values orcc flags")
+		
+		set(PCAP_LIB_SDK "no-pcap.lib" CACHE INTERNAL "Global values pcap lib")
+		set(PCAPPA_LIB_SDK "no-pcappa.lib" CACHE INTERNAL "Global values pcappa lib")
 		# message(FATAL_ERROR "1")
 	endif()
 	
@@ -1105,10 +1108,10 @@ else(JVX_COMPILE_BUILDTOOLS)
   endif()
 
   # configure pcap
-  if(JVX_USE_PCAP)
-    find_pcap("FATAL")
+  # if(JVX_USE_PCAP)
+  #  find_pcap("FATAL")
     # message(FATAL_ERROR "Error")
-  endif()
+  # endif()
 
   # ===========================================================================
 
@@ -1244,13 +1247,6 @@ else(JVX_COMPILE_BUILDTOOLS)
     endif()
 
   else(NOT JVX_RELEASE_SDK)
-	if(JVX_USE_PCAP)
-		get_filename_component(tmp_nm ${PCAP_LIBRARIES} NAME)
-		set(PCAP_LIBRARY_SDK ${tmp_nm})
-		get_filename_component(tmp_nm ${PCAPPA_LIBRARIES} NAME)
-		set(PCAPPA_LIBRARY_SDK ${tmp_nm})
-	endif()
-	# message(FATAL_ERROR "-> ${PCAP_LIBRARIES} -- ${PCAPPA_LIBRARIES}")
     configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake @ONLY)	
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
     install(DIRECTORY ${JVX_BASE_ROOT}/cmake-sdk DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake FILES_MATCHING PATTERN "*.cmake")

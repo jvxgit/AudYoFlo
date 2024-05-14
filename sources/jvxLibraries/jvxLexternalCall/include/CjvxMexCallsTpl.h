@@ -143,7 +143,6 @@ public:
 			const char* filename,
 			jvxInt32 lineno)
 	{
-		jvxSize i;
 		jvxErrorType res = T::put_configuration(callConf,
 			processor,
 			sectionToContainAllSubsectionsForMe,
