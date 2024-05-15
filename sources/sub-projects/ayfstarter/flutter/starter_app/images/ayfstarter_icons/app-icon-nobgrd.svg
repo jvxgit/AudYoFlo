@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generiert durch Microsoft Visio, SVG Export app-icon-nobgrd.svg Zeichenblatt-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="3.12853in" height="3.12853in"
+		viewBox="0 0 225.254 225.254" xml:space="preserve" color-interpolation-filters="sRGB" class="st5">
+	<v:documentProperties v:langID="1031" v:metric="true" v:viewMarkup="false"/>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#ffffff;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st2 {fill:none;stroke:#e38d3b;stroke-linecap:round;stroke-linejoin:round;stroke-width:10}
+		.st3 {fill:none;stroke:#e38d3b;stroke-linecap:round;stroke-linejoin:round;stroke-width:5.5}
+		.st4 {fill:none;stroke:#e38d3b;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.25}
+		.st5 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
+		<title>Zeichenblatt-1</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<g id="shape269-1" v:mID="269" v:groupContext="shape" transform="translate(0.375,-0.375)">
+			<title>Tabelle.269</title>
+			<rect x="0" y="0.749999" width="224.504" height="224.504" class="st1"/>
+		</g>
+		<g id="shape263-3" v:mID="263" v:groupContext="shape" transform="translate(49.6663,-99.7245)">
+			<title>Tabelle.263</title>
+			<ellipse cx="31.8898" cy="193.228" rx="31.8898" ry="32.026" class="st2"/>
+		</g>
+		<g id="shape264-5" v:mID="264" v:groupContext="shape" transform="translate(29.3514,-79.997)">
+			<title>Tabelle.264</title>
+			<ellipse cx="52.3622" cy="172.97" rx="52.3622" ry="52.2835" class="st3"/>
+		</g>
+		<g id="shape265-7" v:mID="265" v:groupContext="shape" transform="translate(11.7136,-61.5718)">
+			<title>Tabelle.265</title>
+			<ellipse cx="69.4488" cy="155.096" rx="69.4488" ry="70.1575" class="st4"/>
+		</g>
+		<g id="shape266-9" v:mID="266" v:groupContext="shape" transform="translate(114.863,-100.039)">
+			<title>Tabelle.266</title>
+			<ellipse cx="31.8898" cy="193.228" rx="31.8898" ry="32.026" class="st2"/>
+		</g>
+		<g id="shape267-11" v:mID="267" v:groupContext="shape" transform="translate(94.5482,-80.312)">
+			<title>Tabelle.267</title>
+			<ellipse cx="52.3622" cy="172.97" rx="52.3622" ry="52.2835" class="st3"/>
+		</g>
+		<g id="shape268-13" v:mID="268" v:groupContext="shape" transform="translate(76.9104,-61.8868)">
+			<title>Tabelle.268</title>
+			<ellipse cx="69.4488" cy="155.096" rx="69.4488" ry="70.1575" class="st4"/>
+		</g>
+	</g>
+</svg>

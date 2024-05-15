@@ -1,3 +1,5 @@
+option(AYFSTARTER_SIMPLE_INSTALLER "Build a simple installer (zip) for flutter code" ON)
+
 if(NOT JVX_USES_SDK)
 	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/paths.local.cmake)
 	include(${JVX_BASE_CMAKE_DIR}/paths.cmake)
@@ -38,5 +40,32 @@ if(NOT JVX_RELEASE_SDK)
 			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-qt)
 				
 	endif()	
-	jvx_addSubdirs("Configuring application ayfstarter " "${AYF_STARTER_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Application")
+
+	if(JVX_FLUTTER_UI)
+		if(AYFSTARTER_SIMPLE_INSTALLER)
+			message("Preparing post_install script in folder <${CMAKE_CURRENT_SOURCE_DIR}/post_install>")
+			if(${JVX_OS} MATCHES "windows")
+				# if(NOT ${CMAKE_BUILD_TYPE} MATCHES "^(Release)$")
+				#	message("WARNING: building flutter installer in debug mode: ffi dll will not work without VS installed")
+				#endif()
+			endif()
+			add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/post_install)
+		endif()
+	endif()	
+else()
+	
+	if(JVX_FLUTTER_UI)
+		set(AYFSTARTER_HOSTCONF_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/ayfstarter-native-config_import.dll")
+		set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/jvx-flutter-native-shared_import.dll")
+		set(AYFSTARTER_FFI_PRELOAD_DLLS "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/zlib.dll,${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libfftw3-3.dll")
+		# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ayfbinrender/.ayfbinrender.env.in ${CMAKE_CURRENT_SOURCE_DIR}/ayfbinrender/.ayfbinrender.env @ONLY)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/example/.starter_app.env.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/example/.starter_app.env @ONLY)
+
+		set(AYF_FLUTTER_WORKDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RUNTIME})
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json @ONLY)	
+	endif()
 endif()
+
+set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} ${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-native-config)
+jvx_addSubdirs("Configuring application ayfstarter " "${AYF_STARTER_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Application")
+

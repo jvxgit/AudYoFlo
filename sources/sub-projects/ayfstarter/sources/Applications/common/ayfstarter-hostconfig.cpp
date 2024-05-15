@@ -29,6 +29,10 @@ extern "C"
 		{
 			features->request_specialization(reinterpret_cast<jvxHandle**>(&theFeaturesH), JVX_HOST_IMPLEMENTATION_HOST);
 		}
+		if (theFeaturesH == nullptr)
+		{
+			features->request_specialization(reinterpret_cast<jvxHandle**>(&theFeaturesH), JVX_HOST_IMPLEMENTATION_LIB_HOST);
+		}
 		if (theFeaturesH)
 		{
 			theFeaturesH->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_NODE] = true;
