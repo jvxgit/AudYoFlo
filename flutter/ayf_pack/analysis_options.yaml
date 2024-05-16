@@ -1,0 +1,10 @@
+include: package:flutter_lints/flutter.yaml
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+
+## The class hierarchie with mixins by default has limits. This is eplained here!
+## https://amandeepkochhar.medium.com/flutter-dart-the-class-cant-be-used-as-a-mixin-because-it-extends-a-class-other-than-object-a53eb5f214b0
+analyzer:
+  errors:
+    mixin_inherits_from_not_object: ignore

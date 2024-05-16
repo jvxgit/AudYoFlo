@@ -1,0 +1,281 @@
+@override
+  void createTabsAndViews() {
+    theAllocatedTabs.clear();
+    theAllocatedTabViews.clear();
+    // Alternative: Icon
+    // import 'dart:io';
+    // ImageIcon(FileImage(File(
+    //'O:/jvx-projects/fernlive/images/fernlive_icons/fernlive-mixer.png'))),
+    //width: 50,
+    //height: 50),
+	
+	
+	import 'package:ayf_pack/main-widgets/ayf_mixer_widget.dart';
+    if (entryMixer) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(imageNameMixer,
+                filterQuality: FilterQuality.medium,
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(textMixer)
+          ])));
+
+      theAllocatedTabViews.add(AudYoFloMixerWidget(imageNameMixerCore));
+      // 'images/fernlive_icons/fernlive-mixer.png'
+    }
+
+
+
+
+	AudYoFloOneUiSection streaming = AudYoFloOneUiSection(
+      true, 'packages/ayf_pack/images/ayf_icons/ayf-stream.png', 'Stream');
+
+    if (streaming.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(streaming.imageName,
+                filterQuality: FilterQuality.medium,
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(streaming.textShow)
+          ])));
+
+      theAllocatedTabViews.add(Container(
+        color: Colors.orange,
+      ));
+    }
+
+
+
+
+	AudYoFloOneUiSection sip = AudYoFloOneUiSection(
+      true, 'packages/ayf_pack/images/ayf_icons/ayf-sip.png', 'Sip-Phone');
+    if (sip.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(sip.imageName,
+                filterQuality: FilterQuality.medium,
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(sip.textShow)
+          ])));
+
+      theAllocatedTabViews.add(Container(
+        color: Colors.orange,
+      ));
+    }
+
+
+	AudYoFloOneUiSection webrtc = AudYoFloOneUiSection(
+      true, 'packages/ayf_pack/images/ayf_icons/ayf-webrtc.png', 'Web RTC');
+
+    if (webrtc.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(webrtc.imageName,
+                filterQuality: FilterQuality.medium,
+                fit: BoxFit.fill,
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(webrtc.textShow)
+          ])));
+
+      theAllocatedTabViews.add(Container(
+        color: Colors.green,
+      ));
+    }
+
+
+
+	AudYoFloOneUiSection hdrive = AudYoFloOneUiSection(
+      true, 'packages/ayf_pack/images/ayf_icons/ayf-hdrive.png', 'File I/O');
+
+    if (hdrive.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(hdrive.imageName,
+                filterQuality: FilterQuality.medium,
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(hdrive.textShow)
+          ])));
+
+      theAllocatedTabViews.add(Container(
+          color: Colors.blue,
+          child: TextFormField(
+            initialValue: 'Hallo',
+          )));
+    }
+
+  AudYoFloOneUiSection remote = AudYoFloOneUiSection(true,
+      'packages/ayf_pack/images/ayf_icons/ayf-remote.png', 'Remote Control');
+
+    if (remote.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(remote.imageName,
+                filterQuality: FilterQuality.medium,
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(remote.textShow)
+          ])));
+
+      theAllocatedTabViews.add(Container(
+          color: Colors.blue,
+          child: TextFormField(
+            initialValue: 'Hallo',
+          )));
+    }
+
+    if (binauralRenderer.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(binauralRenderer.imageName,
+                filterQuality: FilterQuality.medium,
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(binauralRenderer.textShow)
+          ])));
+
+      theAllocatedTabViews.add(AudYoFloBinRenderWidget());
+    }
+
+
+
+
+String imageNameAudioIoPri =
+        'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
+    String textAudioIoPri = 'ASIO I/O';
+    JvxComponentIdentification cpTpPriTech = JvxComponentIdentification(
+        cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
+        slotid: 0,
+        slotsubid: 0);
+    JvxComponentIdentification cpTpPriDev = JvxComponentIdentification(
+        cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
+        slotid: 0,
+        slotsubid: 0);
+
+    theAllocatedTabs.add(RotatedBox(
+        quarterTurns: -1,
+        child: Column(children: [
+          Image.asset(imageNameAudioIoPri,
+              filterQuality: FilterQuality.medium,
+              //'images/fernlive_icons/fernlive-mixer.png',
+              width: navButtonSizeMain,
+              height: navButtonSizeMain),
+          Text(textAudioIoPri)
+        ])));
+
+    theAllocatedTabViews
+        .add(AudYoFloAudioSettingsWidget(cpTpPriTech, cpTpPriDev));
+
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(imageNameAudioIoPri,
+                filterQuality: FilterQuality.medium,
+                //'images/fernlive_icons/fernlive-mixer.png',
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(textAudioIoPri)
+          ])));
+
+      theAllocatedTabViews
+          .add(AudYoFloAudioSettingsWidget(cpTpPriTech, cpTpPriDev));
+    
+
+
+
+
+String imageNameAudioIoSec =
+        'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
+    String textAudioIoSec = 'WASAPI I/O';
+    JvxComponentIdentification cpTpSecTech = JvxComponentIdentification(
+        cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
+        slotid: 3,
+        slotsubid: 0);
+    JvxComponentIdentification cpTpSecDev = JvxComponentIdentification(
+        cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
+        slotid: 3,
+        slotsubid: 0);
+    if (entryAudioIoSec) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(imageNameAudioIoSec,
+                filterQuality: FilterQuality.medium,
+                //'images/fernlive_icons/fernlive-mixer.png',
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(textAudioIoSec)
+          ])));
+
+      theAllocatedTabViews
+          .add(AudYoFloAudioSettingsWidget(cpTpSecTech, cpTpSecDev));
+    }
+
+
+
+
+
+  AudYoFloOneUiSection plotter = AudYoFloOneUiSection(true,
+      'packages/ayf_pack/images/ayf_icons/ayf-plot.png', 'Signal Plotter');
+
+
+    if (plotter.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(plotter.imageName,
+                filterQuality: FilterQuality.medium,
+                //'images/fernlive_icons/fernlive-mixer.png',
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(plotter.textShow)
+          ])));
+
+      theAllocatedTabViews.add(Container(
+          color: Colors.blue,
+          child: TextFormField(
+            initialValue: 'Plot here',
+          )));
+    }
+
+    if (debug.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(debug.imageName,
+                filterQuality: FilterQuality.medium,
+                //'images/fernlive_icons/fernlive-mixer.png',
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(debug.textShow)
+          ])));
+
+      theAllocatedTabViews.add(AudYoFloDebugWidget());
+    }
+
+    if (components.show) {
+      theAllocatedTabs.add(RotatedBox(
+          quarterTurns: -1,
+          child: Column(children: [
+            Image.asset(components.imageName,
+                filterQuality: FilterQuality.medium,
+                //'images/fernlive_icons/fernlive-mixer.png',
+                width: navButtonSizeMain,
+                height: navButtonSizeMain),
+            Text(components.textShow)
+          ])));
+
+      theAllocatedTabViews.add(AudYoFloComponentWidget());
+    }
+  }
