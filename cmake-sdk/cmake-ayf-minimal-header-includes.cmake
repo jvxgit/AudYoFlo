@@ -1,7 +1,6 @@
 list(APPEND AYF_MINIMAL_SDK_HEADER_INCLUDE_LIST
 	"${AYF_SDK_PATH}/include/include"
 	"${AYF_SDK_PATH}/include/jvx-system-min/include"
-	"${AYF_SDK_PATH}/include/ayfbinrender-native-config/include"
 	"${AYF_SDK_PATH}/include/jvx-system-min/include/platform/windows"
 	"${AYF_SDK_PATH}/include/jvx-system-base/include"
 	"${AYF_SDK_PATH}/include/jvx-system-base/include/platform/windows"

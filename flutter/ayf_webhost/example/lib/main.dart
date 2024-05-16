@@ -9,8 +9,8 @@ import '/models/ayf_ui_specific_widgets.dart';
 import 'models/ayf_be_specific.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 
-import 'package:ayf_webhost/ayf_web_backend_host.dart'
-    if (dart.library.html) 'package:ayf_webhost/ayf_web_backend_host.dart';
+import 'package:ayf_webhost/ayf_webhost.dart'
+    if (dart.library.html) 'package:ayf_webhost/ayf_webhost.dart';
 
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 

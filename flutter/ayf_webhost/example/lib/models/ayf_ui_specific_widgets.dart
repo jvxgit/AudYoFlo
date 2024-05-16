@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 import 'ayf_ui_specific.dart';
 
-import 'package:ayfbinrender/ayf_binrender_widget.dart';
 import 'package:ayf_pack/main-widgets/ayf_audio_settings_widget.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -70,31 +69,6 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     // Add the Binaural rendering widget
     // ======================================================================
 
-    JvxComponentIdentification cpBin = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_NODE,
-            slotid: 0,
-            slotsubid: 0),
-        'binrender');
-    theAllocatedTabs.add(RotatedBox(
-        quarterTurns: -1,
-        child: Tooltip(
-          message: cpBin.txt,
-          child: Column(children: [
-            Image.asset(binauralRenderer.imageName,
-                filterQuality: FilterQuality.medium,
-                width: navButtonSizeMain,
-                height: navButtonSizeMain),
-            GestureDetector(
-              onSecondaryLongPress: () {
-                // print('Hello'); to be filled later
-              },
-              child: Text(binauralRenderer.textShow),
-            ) // <- maybe, make this switchable by right click?
-          ]),
-        )));
-    theAllocatedTabViews.add(AudYoFloBinRenderWidget(cpBin));
     // ======================================================================
     // Add the primary audio device widget
     // ======================================================================

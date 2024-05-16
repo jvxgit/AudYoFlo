@@ -21,9 +21,6 @@ dependencies:
   ayf_pack:    
     path: ../../ayf_pack
 
-  ayfbinrender:    
-    path: ../../ayfbinrender/ayfbinrender
-
   ayf_webhost:
     path: '..'
     # path: '../../ayf_ffihost'

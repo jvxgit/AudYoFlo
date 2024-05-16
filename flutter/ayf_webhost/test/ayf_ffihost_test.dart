@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:ayf_webhost/ayf_web_backend_host.dart';
+import 'package:ayf_webhost/ayf_webhost.dart';
 
 void main() {
   test('adds one to input values', () {

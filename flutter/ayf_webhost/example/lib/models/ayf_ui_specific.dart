@@ -5,22 +5,10 @@ import 'package:ayf_pack_native/ayf_pack_native.dart'
 
 // import '../ayfpacks/ayf_pack.dart';
 
-import 'package:ayfbinrender/ayf_binrender_widget.dart';
 import 'package:ayf_pack/main-widgets/ayf_audio_settings_widget.dart';
 
 class AudYoFloUiModelSpecific extends AudYoFloUiModel
     with AudYoFloUiElementsTabBar {
-  // ==========================================================================
-  // We define the ui modeling parameters for the binaural rendering widget here.
-  // Note that this instance also defines a local property shown in the settings
-  // ==========================================================================
-  AudYoFloBinauralRendererSection binauralRenderer =
-      AudYoFloBinauralRendererSection(true,
-          'packages/ayf_pack/images/ayf_icons/ayf-brender.png', 'Bin. Renderer',
-          imageNameIcon: 'packages/ayf_pack/images/ayf_icons/ayf-micsrc.png',
-          height: 70,
-          width: 70);
-
   // ==========================================================================
   // We define some rendering parameters for the audio io widget.
   // We use package specific icons here.
@@ -47,7 +35,6 @@ class AudYoFloUiModelSpecific extends AudYoFloUiModel
     imageNameApp = 'images/ayfbinrender_icons/ayfbinrender-logo.png';
 
     // Define some specific configuration entities
-    widgetSpecificConfigurations['binauralRenderer'] = binauralRenderer;
     widgetSpecificConfigurations['soundIo'] = soundIo;
     widgetSpecificConfigurations['headtracker'] = headtracker;
     widgetSpecificConfigurations['fileinput'] = fileinput;
@@ -67,31 +54,6 @@ class AudYoFloUiModelSpecific extends AudYoFloUiModel
 
     oneSection = AudYoFloSettingsConfigurationSection();
     oneSection.nameEntry = 'Application';
-
-    // =======================================================================
-    // Initialize the local property at this position
-    // =======================================================================
-    binauralRenderer.propIconSize.selection
-        .initialize(flags.compileNum32BitBitfield);
-    binauralRenderer.propIconSize.selection.bitZSet(0);
-    AudYoFloOneComponentSettingsLocal addThisLoUi =
-        AudYoFloOneComponentSettingsLocal('Ui Properties', [
-      binauralRenderer.propIconSize,
-      binauralRenderer.propSpread,
-      fastRefreshPerMsecs,
-      slowRefreshPerMsecs
-    ], propTags: [
-      'Binaural Render Icon Size',
-      'Spread Azimuth Angle',
-      'Fast callback period',
-      'Slow callback period',
-    ], propTooltips: [
-      'Specify the size of the binaural render icon.',
-      'Setup the maximum spread angle in case of icon spread button',
-      ' Specify the period for the fast timer',
-      ' Specify the period for the slow timer',
-    ]);
-    oneSection.addEntry(addThisLoUi);
 
     AudYoFloOneComponentSettingsBackend addThisBeHost =
         AudYoFloOneComponentSettingsBackend(
@@ -186,25 +148,6 @@ class AudYoFloUiModelSpecific extends AudYoFloUiModel
     bool notifyThis = false;
     if (prop.descriptor == "/settings/testme") {
       return jvxErrorType.JVX_NO_ERROR;
-    }
-
-    if (prop.descriptor == binauralRenderer.propIconSize.descriptor) {
-      if (binauralRenderer.propIconSize.selection.bitTest(0)) {
-        binauralRenderer.height = 40;
-        binauralRenderer.width = 40;
-      } else if (binauralRenderer.propIconSize.selection.bitTest(1)) {
-        binauralRenderer.height = 70;
-        binauralRenderer.width = 70;
-      } else if (binauralRenderer.propIconSize.selection.bitTest(2)) {
-        binauralRenderer.height = 100;
-        binauralRenderer.width = 100;
-      }
-      notifyThis = true;
-    }
-
-    if (prop.descriptor == binauralRenderer.propSpread.descriptor) {
-      binauralRenderer.spreadAngle = binauralRenderer.propSpread.value;
-      notifyThis = true;
     }
 
     if (notifyThis) {
