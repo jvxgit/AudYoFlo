@@ -30,7 +30,7 @@ dependencies:
     path: '../../../../../../flutter/ayf_pack_native'
 
   ayfcorepack:
-    path: '../../starter_core_pack'
+    path: '../../ayf_starter_corepack'
 
   ayfstarter:
     path: '../' 

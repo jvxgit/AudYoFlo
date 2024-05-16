@@ -9,11 +9,14 @@ include_directories(
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/include
  )
 
+# Involving the template files for the native config lib
+configure_file(${JVX_BASE_ROOT}/software/codeFragments/jvxApplications/native-config/include/generic-native-config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/ayfstarter-native-config.h)
+configure_file(${JVX_BASE_ROOT}/software/codeFragments/jvxApplications/native-config/src/generic-config-hook.cpp.in ${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarter-config-hook.cpp)
 
   # Add local sources (header files only for project workspace generation!) 
 set(LOCAL_SOURCES 	
 
-	${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports-flutter-native-config.def
+	${JVX_BASE_ROOT}/software/codeFragments/jvxApplications/native-config/exports/${JVX_OS}/exports-flutter-native-config.def
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarter-config-hook.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/ayfstarter-native-config.h

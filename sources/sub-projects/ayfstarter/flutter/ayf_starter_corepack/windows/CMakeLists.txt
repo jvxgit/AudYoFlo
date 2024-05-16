@@ -42,7 +42,7 @@ list(APPEND PLUGIN_SOURCES
   "ayfcorepack_plugin.cpp"
   "ayfcorepack_plugin.h"
   "ayf-sdk-local-headers.h"
-  "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/exports/windows/exports-flutter-native-config.def"
+  "${AYF_SDK_PATH}/software/codeFragments/jvxApplications/native-config/exports/windows/exports-flutter-native-config.def"
   "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include/ayfstarter-native-config.h"
 
 )
