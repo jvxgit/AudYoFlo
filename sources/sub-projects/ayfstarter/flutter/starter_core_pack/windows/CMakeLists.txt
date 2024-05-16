@@ -10,7 +10,7 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 
 set(AYF_VERBOSE_INFO TRUE)
 set(AYF_CORE_PACK_LIB ayfstarter-native-config_import)
-
+set(AYF_CORE_PACK_INCLUDE ayfstarter-native-config)
 # This value is used when generating builds using this plugin, so it must
 # not be changed
 set(PLUGIN_NAME "ayfcorepack_plugin")
@@ -42,8 +42,8 @@ list(APPEND PLUGIN_SOURCES
   "ayfcorepack_plugin.cpp"
   "ayfcorepack_plugin.h"
   "ayf-sdk-local-headers.h"
-  "${AYF_SDK_PATH}/include/ayfbinrender-native-config/exports/windows/exports-flutter-native-config.def"
-  "${AYF_SDK_PATH}/include/ayfbinrender-native-config/include/ayfbinrender-native-config.h"
+  "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/exports/windows/exports-flutter-native-config.def"
+  "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include/ayfstarter-native-config.h"
 
 )
 
@@ -82,6 +82,7 @@ endif()
 
 target_include_directories(${PLUGIN_NAME} PRIVATE
 	${AYF_MINIMAL_SDK_HEADER_INCLUDES}
+	${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include
 )
 
 target_link_directories(${PLUGIN_NAME} PRIVATE 

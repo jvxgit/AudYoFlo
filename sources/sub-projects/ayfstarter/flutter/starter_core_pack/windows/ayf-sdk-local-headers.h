@@ -5,6 +5,6 @@
 #include "jvx_sdk.h"
 #include "jvx.h"
 #include "flutter_native_host_config.h"
-#include "ayfbinrender-native-config.h"
+#include "ayfstarter-native-config.h"
 
 #endif
