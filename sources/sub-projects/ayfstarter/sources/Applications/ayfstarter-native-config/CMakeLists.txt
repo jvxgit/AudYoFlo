@@ -38,7 +38,6 @@ set(BUILD_SHARED TRUE)
 set(BUILD_STATIC TRUE)
 
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
-set(INSTALL_DEDICATED_EXPORT_TREE TRUE)
 
 # this changes the name of the output to be followed by "_import"
 # It does NOT produce an import lib in the SDK for all projects which
