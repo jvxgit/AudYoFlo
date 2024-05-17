@@ -35,7 +35,7 @@ set(LOCAL_LIBS ${LOCAL_LIBS}
 
 if(JVX_USES_SDK)
 	set(LOCAL_LIBS ${LOCAL_LIBS} jvxLQtMaWidgets_static)
-endif(JVX_USES_SDK)
+endif()
 
 # Pull in all audio components
 include(${JVX_CMAKE_DIR}/packages/cmake-audio-components.cmake)
@@ -43,8 +43,8 @@ include(${JVX_CMAKE_DIR}/packages/cmake-audio-components.cmake)
 # Macos x specific configurations
 if(JVX_OS MATCHES "macosx")
   set(JVX_MAC_OS_CREATE_BUNDLE TRUE)
-else(JVX_OS MATCHES "macosx")
+else()
   set(CONFIGURE_LOCAL_START_SCRIPT TRUE)
-endif(JVX_OS MATCHES "macosx")
+endif()
 
 set(JVX_PREPARE_QT_WORKSPACE_VS TRUE)

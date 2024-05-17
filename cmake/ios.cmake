@@ -32,12 +32,12 @@ set(JVX_CROSS_COMPILE TRUE)
 find_library(ACCELERATE Accelerate)
 if (NOT ACCELERATE)
     message(FATAL_ERROR "Accelerate not found")
-endif(NOT ACCELERATE)
+endif()
 
 find_library(AUDIOUNIT AudioUnit)
 if (NOT AUDIOUNIT)
     message(FATAL_ERROR "AudioUnit not found")
-endif(NOT AUDIOUNIT)
+endif()
 
 # pre-/suffixes
 set(JVX_SHARED_EXTENSION dylib)

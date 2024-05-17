@@ -196,7 +196,7 @@ macro(find_qt)
 			set(JVX_QT_SVG_LIB Qt6::Svg)
 		endif()
 		
-	else(JVX_QT_VERSION_6)
+	else()
 	
 		find_package(Qt5Core)
 
