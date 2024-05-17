@@ -37,6 +37,7 @@ endif()
 set(BUILD_SHARED TRUE)
 set(BUILD_STATIC TRUE)
 
+# We need to install the generated header to the SDK - to add it in the flutter build file
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
 
 # this changes the name of the output to be followed by "_import"
