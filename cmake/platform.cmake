@@ -101,5 +101,9 @@ if(JVX_TRACK_MEMORY_LEAKS)
 	set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_TRACK_MEMORY_LEAKS")
 endif()
 
+if(JVX_USE_AVX)
+	include(${JVX_CMAKE_DIR}/fragments/avx.cmake)
+endif()
+
 # include platform specific stuff
 include(${JVX_CMAKE_DIR}/${JVX_OS}.cmake)
