@@ -69,3 +69,4 @@ endif()
 set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} ${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-native-config)
 jvx_addSubdirs("Configuring application ayfstarter " "${AYF_STARTER_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Application")
 
+# message(FATAL_ERROR "Hier -- JVX_FLUTTER_UI = ${JVX_FLUTTER_UI} -- AYFSTARTER_SIMPLE_INSTALLER = ${AYFSTARTER_SIMPLE_INSTALLER}")
