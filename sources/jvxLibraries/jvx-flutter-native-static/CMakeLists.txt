@@ -70,31 +70,8 @@ set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_HOST_USE_ONLY_ST
 set(LOCAL_LIBS 
 	jvx-lib-host-app-binary-static_static)
 
-include_directories(
-	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPortAudio/
-	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa/
-	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTCoreAudio/
-	${JVX_BINARY_DIR}/base/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAsio/
-	)
-
 ## ======================================================================
 ## The audio libs
-if(JVX_USE_PART_PAUDIO)
-	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_PORTAUDIO")
-	set(LOCAL_LIBS ${LOCAL_LIBS} jvxAuTPortAudio_static)
-endif()
-
-if(JVX_USE_PART_ASIO)
-  set(LOCAL_LIBS ${LOCAL_LIBS} jvxAuTAsio_static)
-endif()
-
-if(JVX_USE_PART_COREAUDIO)
-  set(LOCAL_LIBS ${LOCAL_LIBS} jvxAuTCoreAudio_static ${COREAUDIO} ${COREFOUNDATION} ${AUDIOUNIT} ${COREAUDIOKIT} ${AUDIOTOOLBOX} ${CORESERVICES})
-endif()
-
-if(JVX_USE_PART_ALSA)
-  set(LOCAL_LIBS ${LOCAL_LIBS} jvxAuTAlsa_static asound)
-endif()
 ## ======================================================================
 
 set(BUILD_STATIC TRUE)
