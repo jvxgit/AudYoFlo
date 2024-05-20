@@ -1,0 +1,102 @@
+ffi_allocate_backend_handle
+ffi_deallocate_backend_handle
+
+ffi_host_initialize
+ffi_host_terminate
+		
+; ==========================================================================
+ffi_req_command_decode_origin
+ffi_req_command_decode_uid
+ffi_req_command_decode_sswitch
+ffi_req_command_decode_broadcast
+ffi_req_command_decode_request_type
+ffi_req_command_decode_ident_allocate_char_array
+ffi_req_command_decode_sequencer_event
+
+; ==========================================================================
+ffi_periodic_trigger
+
+; ==========================================================================
+ffi_properties_request_handle
+ffi_properties_return_handle
+ffi_properties_number_properties
+ffi_properties_descriptor_property_lin
+ffi_properties_descriptor_property_descr
+ffi_properties_string_to_array
+
+ffi_properties_get_string_list
+ffi_properties_get_selection_list
+ffi_properties_get_content_property_fld
+ffi_properties_get_string
+ffi_properties_get_value_in_range
+
+ffi_properties_set_content_property_fld
+ffi_properties_set_selection_list
+ffi_properties_set_single_string
+ffi_properties_set_value_range
+
+ffi_properties_set_collect_start
+ffi_properties_set_collect_stop
+
+; ==========================================================================
+ffi_process_handle_for_uid				
+ffi_process_decode_iterator_context
+ffi_process_iterator_next
+
+ffi_process_decode_iterator_component
+ffi_process_decode_iterator_module
+ffi_process_decode_iterator_connector
+		
+ffi_process_system_ready
+
+; ==========================================================================
+ffi_config_save
+
+; ==========================================================================
+
+ffi_sequencer_status
+ffi_sequencer_start
+ffi_sequencer_stop
+ffi_sequencer_ack_stop
+ffi_sequencer_trigger
+
+; ==========================================================================
+ffi_component_description
+
+ffi_component_number_components
+ffi_component_number_devices
+ffi_component_capabilities_device
+ffi_component_selection_option
+ffi_component_slot_allocation
+
+ffi_select_component
+ffi_activate_selected_component
+ffi_deactivate_selected_component
+ffi_unselect_selected_component
+
+; ==========================================================================
+; ==========================================================================
+
+ffi_transfer_command
+
+ffi_translate_enum_string
+ffi_lookup_component_class
+ffi_get_compile_flags
+ffi_set_operation_flags
+
+; ffi_get_native_config_parameters
+; ffi_set_native_config_parameters
+
+ffi_encode_component_identification
+
+ffi_host_request_command_fwd
+ffi_host_request_command_reschedule
+
+ffi_simple_call
+ffi_host_delete
+
+ffi_last_error
+ffi_preload_dll
+
+InitDartApiDL
+

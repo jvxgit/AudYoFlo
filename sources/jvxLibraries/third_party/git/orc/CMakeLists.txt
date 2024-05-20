@@ -45,9 +45,6 @@ if(${JVX_OS} MATCHES "windows")
 
 	endif()
 	
-	add_library(orcImport STATIC IMPORTED GLOBAL)
-	set_property(TARGET orcImport PROPERTY IMPORTED_LOCATION "${ORC_LIBRARIES}")
-
 elseif(${JVX_OS} MATCHES "linux")
 
   	set(targetfolder orc)
@@ -64,6 +61,10 @@ elseif(${JVX_OS} MATCHES "linux")
 	set(ORC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/orc/glnx/include/orc-0.4" CACHE INTERNAL "orc include directory")
 	set(ORC_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/orc/glnx/lib/x86_64-linux-gnu/liborc-0.4.a" CACHE INTERNAL "orc libraries")
 	set(ORCC "${CMAKE_SOURCE_DIR}/sources/jvxLibraries/third_party/git/orc/orc/glnx/bin/orcc" CACHE INTERNAL "orc compiler")
+	
 endif()
+
+add_library(orcImport STATIC IMPORTED GLOBAL)
+set_property(TARGET orcImport PROPERTY IMPORTED_LOCATION "${ORC_LIBRARIES}")
 
 ## message(FATAL_ERROR "Stop here!")

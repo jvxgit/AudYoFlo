@@ -211,7 +211,7 @@ int ffi_host_initialize(void* opaque_hdl, const char** argv, int argc, func_poin
 
 	if (ll)
 	{
-		std::string alternativePath = JVX_GET_CURRENT_MODULE_PATH(&ffi_host_initialize); // JVX_GET_MODULE_FILENAME((LPCSTR)&ffi_host_initialize);
+	  std::string alternativePath = JVX_GET_CURRENT_MODULE_PATH((void*)&ffi_host_initialize); // JVX_GET_MODULE_FILENAME((LPCSTR)&ffi_host_initialize);
 		if (!alternativePath.empty())
 		{
 			if (argc >= 1)

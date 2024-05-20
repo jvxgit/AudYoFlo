@@ -1,5 +1,0 @@
-ffi_allocate_backend_handle
-ffi_deallocate_backend_handle
-ffi_host_initialize
-ffi_host_terminate
-
