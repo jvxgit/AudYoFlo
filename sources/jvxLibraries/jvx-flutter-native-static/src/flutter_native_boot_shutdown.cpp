@@ -113,6 +113,8 @@ jvxErrorType send_sync_dart(report_callback* cbk)
 	va_end(nums);
 */
 
+// JVX_GET_CURRENT_MODULE_PATH
+/* <- i think, this function is no longer in use!
 std::string JVX_GET_MODULE_FILENAME(LPCSTR func)
 {
 	std::string retVal;
@@ -140,6 +142,7 @@ std::string JVX_GET_MODULE_FILENAME(LPCSTR func)
 	retVal = path;
 	return retVal;
 }
+*/
 
 int ffi_host_initialize(void* opaque_hdl, const char** argv, int argc, func_pointers* funcs, signed long long dart_port, int executableInBinFolder)
 {
