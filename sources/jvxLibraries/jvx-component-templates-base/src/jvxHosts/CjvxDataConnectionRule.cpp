@@ -725,31 +725,42 @@ CjvxDataConnectionRule::_try_auto_connect_bridge_part(IjvxDataConnections* allCo
 									{
 										IjvxDataConnectionCommon* ref = NULL;
 										IjvxOutputConnector* ocon = theOcon_F->reference_ocon();
-										if (ocon && (ocon->available_to_connect_ocon() == JVX_NO_ERROR))
+										if (ocon)
 										{
-											theBridge.from.connector_name = strOc_F.std_str();
-
-											if (params_init.dbg_output)
+											if (ocon->available_to_connect_ocon() == JVX_NO_ERROR)
 											{
-												JVX_OUTPUT_REPORT_DEBUG_COUT_START(rep)
+												theBridge.from.connector_name = strOc_F.std_str();
 
-												JVX_OUTPUT_REPORT_DEBUG_COUT_REF << "-->" << __FUNCTION__ << ": Found output connector, component identification = <" <<
-													jvxComponentIdentification_txt(theBridge.from.tp) <<
-													">, connector factory <" << theBridge.from.connector_factory_name << ">" <<
-													", connector <" << theBridge.from.connector_name << ">." << std::flush;
+												if (params_init.dbg_output)
+												{
+													JVX_OUTPUT_REPORT_DEBUG_COUT_START(rep)
 
-												JVX_OUTPUT_REPORT_DEBUG_COUT_STOP(rep);
+														JVX_OUTPUT_REPORT_DEBUG_COUT_REF << "-->" << __FUNCTION__ << ": Found output connector, component identification = <" <<
+														jvxComponentIdentification_txt(theBridge.from.tp) <<
+														">, connector factory <" << theBridge.from.connector_factory_name << ">" <<
+														", connector <" << theBridge.from.connector_name << ">." << std::flush;
+
+													JVX_OUTPUT_REPORT_DEBUG_COUT_STOP(rep);
+												}
+
+												bridgeCreated = _try_auto_connect_bridge_part_finalize(
+													allConnections,
+													theNewConnection,
+													theHost,
+													elmB,
+													theBridge,
+													rep);
+											} // if (ocon->available_to_connect_ocon() == JVX_NO_ERROR)
+											else
+											{
+												if (params_init.dbg_output)
+												{
+													JVX_OUTPUT_REPORT_DEBUG_COUT_START(rep);
+													JVX_OUTPUT_REPORT_DEBUG_COUT_REF << "-->" << __FUNCTION__ << ": Connector not available." << std::flush;
+													JVX_OUTPUT_REPORT_DEBUG_COUT_STOP(rep);
+												}
 											}
-
-											bridgeCreated = _try_auto_connect_bridge_part_finalize(
-												allConnections,
-												theNewConnection,
-												theHost,
-												elmB,
-												theBridge,
-												rep);
-
-										} // if (ref == NULL)
+										} // if (ocon)
 									} // if (jvx_compareStringsWildcard(elmB->conn_from.sel_expression_macon, strOc_F.std_str()))
 									else
 									{

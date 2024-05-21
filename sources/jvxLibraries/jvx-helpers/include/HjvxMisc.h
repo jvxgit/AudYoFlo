@@ -1328,6 +1328,81 @@ public:
 	}
 };
 
+template <class T>
+class jvxRWLockWithVariable
+{
+public:
+	enum class jvxRwLockFunction
+	{
+		JVX_RW_LOCK_SHARED,
+		JVX_RW_LOCK_EXCLUSIVE
+	} ;
+
+	T v;
+	JVX_RW_MUTEX_HANDLE lockHdl;
+
+	jvxRWLockWithVariable()
+	{
+		JVX_INITIALIZE_RW_MUTEX(lockHdl);
+	};
+
+	~jvxRWLockWithVariable()
+	{
+		JVX_TERMINATE_RW_MUTEX(lockHdl);
+	};
+
+	void lock(jvxRwLockFunction func = jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE)
+	{
+		switch (func)
+		{
+		case jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE:
+			JVX_LOCK_RW_MUTEX_EXCLUSIVE(lockHdl);
+			break;
+		case jvxRwLockFunction::JVX_RW_LOCK_SHARED:
+			JVX_LOCK_RW_MUTEX_SHARED(lockHdl);
+			break;
+		default:
+			assert(0);
+		}
+	}
+	void unlock(jvxRwLockFunction func = jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE)
+	{
+		switch (func)
+		{
+		case jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE:
+			JVX_UNLOCK_RW_MUTEX_EXCLUSIVE(lockHdl);
+			break;
+		case jvxRwLockFunction::JVX_RW_LOCK_SHARED:
+			JVX_UNLOCK_RW_MUTEX_SHARED(lockHdl);
+			break;
+		default:
+			assert(0);
+		}
+	}
+
+	jvxBool try_lock(jvxRwLockFunction func = jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE)
+	{
+		JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_RW_MUTEX_NO_SUCCESS;
+
+		switch (func)
+		{
+		case jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE:
+			JVX_TRY_LOCK_RW_MUTEX_EXCLUSIVE(res, lockHdl);
+			break;
+		case jvxRwLockFunction::JVX_RW_LOCK_SHARED:
+			JVX_TRY_LOCK_RW_MUTEX_SHARED(res, lockHdl);
+			break;
+		default:
+			assert(0);
+		}
+		if (res == JVX_TRY_LOCK_RW_MUTEX_SUCCESS)
+		{
+			return true;
+		}
+		return false;
+	}
+};
+
 #define JVX_DEFINE_RT_ST_INSTANCES \
 	jvxrtst_backup jvxrtst_bkp; \
 	std::ostream jvxrtst;

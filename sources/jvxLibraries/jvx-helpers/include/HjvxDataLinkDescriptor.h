@@ -42,6 +42,9 @@ jvxErrorType jvx_deallocateDataLinkSync(jvxLinkDataDescriptor* theData);
 
 jvxErrorType jvx_cinitDataLinkDescriptor(jvxLinkDataDescriptor* descr);
 
+void jvx_presetMasterOnPrepare(jvxLinkDataDescriptor& datOut);
+void jvx_constrainIconOnPrepare(jvxLinkDataDescriptor* datIn, jvxBool clearFlagsBuffer, jvxSize num_additional_pipleline_stages = 0, jvxSize num_min_buffers_in = 1, jvxLinkDataDescriptor* datOut = nullptr);
+
 void jvx_neutralDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool sender);
 void jvx_neutralDataLinkDescriptor_mem(jvxLinkDataDescriptor* theData, jvxBool sender);
 void jvx_neutralDataLinkDescriptor_pipeline(jvxLinkDataDescriptor_con_pipeline* thePipeline);

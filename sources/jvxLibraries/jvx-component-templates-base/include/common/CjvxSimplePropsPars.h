@@ -78,4 +78,23 @@ public:
 	}
 };
 
+// Some helper macros
+#define JVX_LINKDATA_LOAD_FROM(to, from, flow) \
+	(to)->con_params.buffersize = from.buffersize; \
+	(to)->con_params.rate = from.samplerate; \
+	(to)->con_params.data_flow = flow; \
+	(to)->con_params.number_channels = from.number_channels; \
+	(to)->con_params.format = (jvxDataFormat)from.format; \
+	(to)->con_params.format_group = (jvxDataFormatGroup)from.subformat; \
+	(to)->con_params.segmentation.x = from.segmentation.x; \
+	(to)->con_params.segmentation.y = from.segmentation.y; 
+
+#define JVX_LINKDATA_LOAD_TO(to, from) \
+	to.buffersize = (from)->con_params.buffersize; \
+	to.samplerate = (from)->con_params.rate; \
+	to.number_channels = (from)->con_params.number_channels; \
+	to.format = (from)->con_params.format; \
+	to.subformat = (from)->con_params.format_group; \
+	to.segmentation.x = (from)->con_params.segmentation.x; \
+	to.segmentation.y = (from)->con_params.segmentation.y; 
 #endif

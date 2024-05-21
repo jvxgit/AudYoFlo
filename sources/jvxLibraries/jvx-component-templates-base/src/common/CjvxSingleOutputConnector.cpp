@@ -35,7 +35,7 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 		break;
 	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_PREPARE:
 		if (bwdRef)
-		{			
+		{						
 			res = bwdRef->prepare_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
 		break;

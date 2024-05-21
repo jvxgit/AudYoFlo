@@ -75,6 +75,7 @@ TryAcquireSRWLockShared
 #define JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE jvxCBool
 
 #define JVX_TRY_LOCK_RW_MUTEX_SUCCESS true
+#define JVX_TRY_LOCK_RW_MUTEX_NO_SUCCESS false
 
 typedef struct
 {

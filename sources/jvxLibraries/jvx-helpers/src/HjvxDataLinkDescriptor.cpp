@@ -1056,6 +1056,51 @@ jvxLinkDataAttachedLostFrames_updateComplete(
 
 // =================================================================================================
 
+void
+jvx_presetMasterOnPrepare(jvxLinkDataDescriptor& datOut)
+{
+	// Prepare processing parameters
+	datOut.con_data.number_buffers = JVX_MAX(datOut.con_data.number_buffers, 1);
+	jvx_bitZSet(datOut.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_IS_ZEROCOPY_CHAIN_SHIFT);
+	jvx_bitSet(datOut.con_data.alloc_flags, (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
+}
+
+void
+jvx_constrainIconOnPrepare(jvxLinkDataDescriptor* datIn, jvxBool clearFlagsBuffer, jvxSize num_additional_pipleline_stages, jvxSize num_min_buffers_in, jvxLinkDataDescriptor* datOut)
+{
+	// The number of pipeline stages may be increased from element to element
+	datIn->con_pipeline.num_additional_pipleline_stages = JVX_MAX(
+		datIn->con_pipeline.num_additional_pipleline_stages,
+		num_additional_pipleline_stages);
+
+	// The number of buffers is always lower bounded by the add pipeline stages
+	datIn->con_data.number_buffers = JVX_MAX(
+		datIn->con_data.number_buffers,
+		1 + datIn->con_pipeline.num_additional_pipleline_stages);
+
+	// We might specify another additional lower limit for the buffers
+	datIn->con_data.number_buffers = JVX_MAX(
+		datIn->con_data.number_buffers,
+		num_min_buffers_in);
+
+	if (datOut)
+	{
+		// Set the number of buffers as desired
+		datOut->con_data.number_buffers = datIn->con_data.number_buffers;
+		datOut->con_data.alloc_flags = datIn->con_data.alloc_flags;
+	}
+
+	if (clearFlagsBuffer)
+	{
+		jvx_bitClear(datIn->con_data.alloc_flags,
+			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NO_ZEROCOPY_SHIFT);
+		jvx_bitClear(datIn->con_data.alloc_flags,
+			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_USE_PASSED_SHIFT);
+	}
+}
+
+// =================================================================================================
+
 jvxErrorType 
 jvx_shift_buffer_pipeline_idx_on_start(
 	jvxLinkDataDescriptor* theData, jvxSize runtmeId,

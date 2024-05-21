@@ -76,7 +76,7 @@ CjvxSingleInputConnector::connect_connect_icon(jvxLinkDataDescriptor* theData JV
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	_connect_connect_icon(theData, false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	_connect_connect_icon(theData, false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));	
 
 	// If we have set a trigger forward, follow it but ONLY with the link data type for linkage!!
 	if (
@@ -189,6 +189,9 @@ CjvxSingleInputConnector::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	jvxErrorType res = _prepare_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res == JVX_NO_ERROR)
 	{
+		// Set the minimum number of buffers and clear the relevant flags to disable all zerocopy processing
+		jvx_constrainIconOnPrepare(_common_set_icon.theData_in, true);
+
 		res = jvx_allocate_pipeline_and_buffers_prepare_to(_common_set_icon.theData_in
 #ifdef JVX_GLOBAL_BUFFERING_VERBOSE
 			, _common_set_ldslave.descriptor.c_str()
