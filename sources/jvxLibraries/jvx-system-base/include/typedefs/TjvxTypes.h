@@ -87,8 +87,9 @@ enum class jvxComponentTypeClass
  * 4) In file <AudYoFlo>/sources/jvxLibraries/jvx-helpers/src/HjvxHostsAndProperties.cpp and in included header, e.g.,
  *    in <AudYoFlo>/software/codeFragments/components/Hjvx_caseStatement_nodes.h -> add case statement if required.
  * 5) In file <AudYoFlo>/sources/jvxLibraries/jvx-system-base/include/helpers/HjvxCastProduct.h -> add entry in case statement, e.g., in line 50 for DYNAMIC NODE
+ * 6) In file TjvxTypes.h (here), line 169, add an entry in macro JVX_START_SLOTS_BASE
  * 
- * 6) In case flutter is in use: JvxComponentTypeEnum in file "AudYoFlo/flutter/ayf_pack/lib/constants/ayf_constants_audio.dart
+ * 7) In case flutter is in use: JvxComponentTypeEnum in file "AudYoFlo/flutter/ayf_pack/lib/constants/ayf_constants_audio.dart
  * 
  */
 typedef enum
@@ -184,6 +185,7 @@ extern jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT+
 	arr[JVX_COMPONENT_SIGNAL_PROCESSING_TECHNOLOGY] = slots_max; \
 	arr[JVX_COMPONENT_SIGNAL_PROCESSING_DEVICE] = subslots_max; \
 	arr[JVX_COMPONENT_SIGNAL_PROCESSING_NODE] = slots_max; \
+	arr[JVX_COMPONENT_DYNAMIC_NODE] = JVX_SIZE_UNSELECTED; \
 	arr[JVX_COMPONENT_SYSTEM_AUTOMATION] = slots_max;
 
 

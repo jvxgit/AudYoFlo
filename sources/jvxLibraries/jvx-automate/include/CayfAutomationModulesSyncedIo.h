@@ -18,40 +18,6 @@ namespace CayfAutomationModules
 			jvxComponentIdentification tpIdTrigger) = 0;
 	};
 
-	class ayfConnectConfigCpManipulate
-	{
-	public:
-		// This is how the support node is remapped
-		jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
-
-		// This flag activates to attach uid to component description via IjvxManipulate - to distinguish between components of the same type
-		jvxBool attachUi = false;
-
-		// A way to parameterize the component name
-		std::string manSuffix;
-
-		ayfConnectConfigCpManipulate(jvxComponentType tpRemapArg = JVX_COMPONENT_UNKNOWN,
-			jvxBool attachUiArg = false, const std::string& manSuffixArg = "") : tpRemap(tpRemapArg), attachUi(attachUiArg), manSuffix(manSuffixArg) {};
-	};
-
-	class ayfConnectConfigConMiscArgs
-	{
-	public:
-
-		// Connection specific arguments
-		jvxSize connectionCategory = JVX_SIZE_UNSELECTED;
-
-		// Debug output
-		jvxBool dbgOut = false;
-		
-		ayfConnectConfigConMiscArgs(
-			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED,
-			jvxBool dbgOutArg = false) :
-			connectionCategory(connectionCategoryArg),
-			dbgOut(dbgOutArg) {};
-
-	};
-
 	// This component describes the connection of the support node which is used in the secondary chain
 	class ayfConnectConfigCpEntrySyncIoCommon
 	{
@@ -230,7 +196,17 @@ namespace CayfAutomationModules
 		ayfEstablishedProcessesSyncio(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg = ayfConnectConfigCpEntrySyncIoRuntime()) : supportNodeRuntime(supportNodeArg) {};
 	};
 
-	class CayfAutomationModulesSyncedIo: public CayfAutomationModulesCommon, public CayfAutomationModuleHandlerIf
+	class CayfAutomationModulesSyncedIoPrimary : public CayfAutomationModulesCommon
+	{
+	protected:
+		void try_connect(
+			IjvxDataConnections* con,
+			jvxComponentIdentification tp_reg, 
+			ayfConnectConfigCpEntrySyncIoRuntime& supportNodeRuntime, 
+			std::list<ayfOneConnectedProcess>& connectedProcesses);
+	};
+
+	class CayfAutomationModulesSyncedIo: public CayfAutomationModulesSyncedIoPrimary, public CayfAutomationModuleHandlerIf
 	{
 	
 	public:

@@ -19,6 +19,40 @@ namespace CayfAutomationModules
 			IjvxProperties* props) = 0;
 	};
 
+	class ayfConnectConfigCpManipulate
+	{
+	public:
+		// This is how the support node is remapped
+		jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
+
+		// This flag activates to attach uid to component description via IjvxManipulate - to distinguish between components of the same type
+		jvxBool attachUi = false;
+
+		// A way to parameterize the component name
+		std::string manSuffix;
+
+		ayfConnectConfigCpManipulate(jvxComponentType tpRemapArg = JVX_COMPONENT_UNKNOWN,
+			jvxBool attachUiArg = false, const std::string& manSuffixArg = "") : tpRemap(tpRemapArg), attachUi(attachUiArg), manSuffix(manSuffixArg) {};
+	};
+
+	class ayfConnectConfigConMiscArgs
+	{
+	public:
+
+		// Connection specific arguments
+		jvxSize connectionCategory = JVX_SIZE_UNSELECTED;
+
+		// Debug output
+		jvxBool dbgOut = false;
+
+		ayfConnectConfigConMiscArgs(
+			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED,
+			jvxBool dbgOutArg = false) :
+			connectionCategory(connectionCategoryArg),
+			dbgOut(dbgOutArg) {};
+
+	};
+
 	class CayfAutomationModulesCommon
 	{
 	protected:
@@ -48,12 +82,11 @@ namespace CayfAutomationModules
 			const std::string& oconNmArg = "",
 			const std::string& iconNmArg = "",
 			jvxSize assSegmentIdArg = 0,
-			const std::string& manSuffixArg = "",
-			jvxBool addUniqueIdArg = false,
+			const ayfConnectConfigCpManipulate& cpManArg = ayfConnectConfigCpManipulate(),
 			jvxSize idOconRefTriggerConnectorArg = JVX_SIZE_UNSELECTED,
 			jvxSize idIconRefTriggerConnectorArg = JVX_SIZE_UNSELECTED) :
 			cpTp(cpTpArg), modName(modNameArg), oconNm(oconNmArg),
-			iconNm(iconNmArg), manSuffix(manSuffixArg), addUniqueId(addUniqueIdArg),
+			iconNm(iconNmArg), cpManipulate(cpManArg),
 			assSegmentId(assSegmentIdArg),
 			idOconRefTriggerConnector(idOconRefTriggerConnectorArg), idIconRefTriggerConnector(idIconRefTriggerConnectorArg)
 		{
@@ -63,9 +96,8 @@ namespace CayfAutomationModules
 		std::string modName;
 		std::string oconNm;
 		std::string iconNm;
-		std::string manSuffix;
+		ayfConnectConfigCpManipulate cpManipulate;
 		jvxSize assSegmentId = 0;
-		jvxBool addUniqueId = true;
 		jvxSize idOconRefTriggerConnector = JVX_SIZE_UNSELECTED;
 		jvxSize idIconRefTriggerConnector = JVX_SIZE_UNSELECTED;
 	};	

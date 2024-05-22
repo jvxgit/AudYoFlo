@@ -69,10 +69,11 @@ namespace CayfAutomationModules
 	class ayfConnectConfigCpEntryRuntime : public ayfConnectConfigCpEntry
 	{
 	public:
+
+		// Add a component identification to identify allocated component
 		jvxComponentIdentification cpId = JVX_COMPONENT_UNKNOWN;
-		jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
 		ayfConnectConfigCpEntryRuntime(const ayfConnectConfigCpEntry& cp) :
-			ayfConnectConfigCpEntry(cp), cpId(JVX_COMPONENT_UNKNOWN), tpRemap(JVX_COMPONENT_UNKNOWN){};
+			ayfConnectConfigCpEntry(cp){};
 	};		
 
 	class ayfEstablishedProcesses

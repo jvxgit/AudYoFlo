@@ -40,6 +40,9 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSrc2SnkPreChain.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSrc2SnkPreChain.cpp  
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSrc2SnkPreChainPriChain.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSrc2SnkPreChainPriChain.cpp  
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSyncedIo.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSyncedIo.cpp  
 

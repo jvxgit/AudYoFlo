@@ -43,8 +43,13 @@ namespace CayfAutomationModules
 		CayfAutomationModulesSrc2SnkPreChain::deriveArguments(
 			ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated)
 	{
+		// This is the sink of the post chain
 		derivedArgs.tpSink = tp_activated;
+
+		// This is the source of the post chain
 		derivedArgs.tpSrc = config.tpInvolved;
+
+		// The master comes from the pre-chain
 		derivedArgs.tpMaster = tp_activated;
 	}
 	

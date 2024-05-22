@@ -268,12 +268,12 @@ namespace CayfAutomationModules
 			ayfConnectConfigCpEntryRuntime cpElm(elmM);
 
 			cpElm.cpId = cpElm.cpTp;
-			res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.modName, obj_dev, true, cpElm.manSuffix, cpElm.addUniqueId, cpElm.tpRemap);
+			res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.modName, obj_dev, true, cpElm.cpManipulate.manSuffix, cpElm.cpManipulate.attachUi, cpElm.cpManipulate.tpRemap);
 
 			if(res == JVX_NO_ERROR)
 			{
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-				log << "Activated module <" << cpElm.modName << "> with suffix <" << cpElm.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				log << "Activated module <" << cpElm.modName << "> with suffix <" << cpElm.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
 				realizeChain.lstEntries.push_back(cpElm);
@@ -281,7 +281,7 @@ namespace CayfAutomationModules
 			else
 			{
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-				log << "Failed to activate module <" << cpElm.modName << "> with suffix <" << cpElm.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				log << "Failed to activate module <" << cpElm.modName << "> with suffix <" << cpElm.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 				break;
 			}
@@ -308,7 +308,7 @@ namespace CayfAutomationModules
 			{
 				// On this list, we only see the active nodes!
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-				log << "On error, deactivating  module <" << elmI.modName << "> with suffix <" << elmI.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
+				log << "On error, deactivating  module <" << elmI.modName << "> with suffix <" << elmI.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
 				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
 				jvxErrorType resL = jvx_deactivateObjectInModule(refHostRefPtr, elmI.cpId);
@@ -327,7 +327,7 @@ namespace CayfAutomationModules
 			for (auto elmI : elm->second.lstEntries)
 			{
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-				log << "Deactivating  module <" << elmI.modName << "> with suffix <" << elmI.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
+				log << "Deactivating  module <" << elmI.modName << "> with suffix <" << elmI.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
 				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
 				jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, elmI.cpId);
