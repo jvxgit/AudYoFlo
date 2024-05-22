@@ -22,6 +22,9 @@ enum class jvxSynchronizeBufferMode
 	JVX_SYNCHRONIZE_BUFFERED
 };
 
+// Forward declaration
+class CjvxSpNSynchronize;
+
 class CjvxSpNSynchronize_sec: 
 	public CjvxSingleInputConnector, public CjvxSingleOutputConnector,
 	public CjvxSingleConnector_report<CjvxSingleInputConnector>,
