@@ -63,6 +63,7 @@ option(JVX_ENGAGE_TEST_EXAMPLES "Engage test example applications" OFF)
 option(JVX_TRACK_MEMORY_LEAKS "Better track memory leaks - mainly in windows." OFF)
 option(JVX_GCC_LINKER_SYMBOLIC "Activate symbolic link option for gcc - required by ffmpeg in linux." OFF)
 option(JVX_USE_SIMULINK "Activate Simulink (Matlab) projects." OFF)
+option(JVX_BUILD_FOR_WINDOWS_XP "Activate defines for Windows XP." OFF)
 
 
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")

@@ -28,12 +28,15 @@
 
 
 // ==============================================================
-#ifdef WINDOWS7_NEWER
+#ifndef OLDER_THAN_WINDOWS7
 // ==============================================================
 
 #define JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE BOOL
 
-#define JVX_TRY_LOCK_RW_MUTEX_SUCCESS TRUE
+#define JVX_TRY_LOCK_RW_MUTEX_INIT_SUCCESS TRUE
+#define JVX_TRY_LOCK_RW_MUTEX_INIT_NO_SUCCESS FALSE
+
+#define JVX_TRY_LOCK_RW_MUTEX_CHECK_SUCCESS(val) (val == JVX_TRY_LOCK_RW_MUTEX_INIT_SUCCESS)
 
 #define JVX_RW_MUTEX_HANDLE SRWLOCK
 
@@ -74,8 +77,10 @@ TryAcquireSRWLockShared
 
 #define JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE jvxCBool
 
-#define JVX_TRY_LOCK_RW_MUTEX_SUCCESS true
-#define JVX_TRY_LOCK_RW_MUTEX_NO_SUCCESS false
+#define JVX_TRY_LOCK_RW_MUTEX_INIT_SUCCESS true
+#define JVX_TRY_LOCK_RW_MUTEX_INIT_NO_SUCCESS false
+
+#define JVX_TRY_LOCK_RW_MUTEX_CHECK_SUCCESS(val) (val == JVX_TRY_LOCK_RW_MUTEX_INIT_SUCCESS)
 
 typedef struct
 {

@@ -1382,7 +1382,7 @@ public:
 
 	jvxBool try_lock(jvxRwLockFunction func = jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE)
 	{
-		JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_RW_MUTEX_NO_SUCCESS;
+		JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_RW_MUTEX_INIT_NO_SUCCESS;
 
 		switch (func)
 		{
@@ -1395,7 +1395,7 @@ public:
 		default:
 			assert(0);
 		}
-		if (res == JVX_TRY_LOCK_RW_MUTEX_SUCCESS)
+		if (JVX_TRY_LOCK_RW_MUTEX_CHECK_SUCCESS(res))
 		{
 			return true;
 		}

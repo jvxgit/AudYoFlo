@@ -44,6 +44,7 @@ jvxCBool JVX_DIRECTORY_EXISTS(const char* absolutePath)
 	return false;
 }
 
+#ifdef OLDER_THAN_WINDOWS7
 void
 jvx_initialize_rw_mutex_l(JVX_RW_MUTEX_HANDLE* a)
 {
@@ -170,3 +171,4 @@ jvx_try_lock_rw_mutex_exclusive_l(JVX_RW_MUTEX_HANDLE* b)
 	}
 	return res;
 }
+#endif
