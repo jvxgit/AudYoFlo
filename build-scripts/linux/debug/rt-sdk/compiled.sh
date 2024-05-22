@@ -42,7 +42,7 @@
 
 JVX_RELEASE_TYPE=Debug
 JVX_SRC_PATH=$PWD/..
-export FLUTTER_SDK_PATH=${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/flutter-3.7.4
+export FLUTTER_SDK_PATH=${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4
 ## QT_PATH_64=${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64
 ## AQT install path
 
