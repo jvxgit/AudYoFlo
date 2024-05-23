@@ -66,6 +66,9 @@ namespace CayfAutomationModules
 			auto elm = module_connections.find(tp_reg);
 			assert(elm != module_connections.end());
 
+			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
+			IayfEstablishedProcessesSrc2Snk& sglElm = *sglElmPtr->src2SnkRef();
+
 			jvxDataConnectionRuleParameters params(false, false, true, config.dbgOut, true);
 			std::string chainName = config.chainNamePrefix + jvx_size2String(derived.tpSrc.slotsubid);
 
@@ -87,7 +90,7 @@ namespace CayfAutomationModules
 				{	
 					newProcess.chainName = chainName;
 					newProcess.processUid = JVX_SIZE_UNSELECTED; // process not connected!
-					elm->second.connectedProcesses.push_back(newProcess);					
+					sglElmPtr->connectedProcesses().push_back(newProcess);
 
 					// Connection: 
 					// <NEW COMPONENT MASTER SOURCE> -> MODULES -> <SINK>
@@ -103,7 +106,7 @@ namespace CayfAutomationModules
 					assert(res == JVX_NO_ERROR);
 
 					this->create_bridges(theDataConnectionDefRuleHdl, derived.tpSrc,
-						derived.tpSink, elm->second.lstEntries, 
+						derived.tpSink, sglElm.lstEntries,
 						config.oconNmSource, config.iconNmSink, bridgeId, 0, config.oconIdTrigger, config.iconIdTrigger);
 
 					resC = theDataConnectionDefRuleHdl->try_connect_direct(
@@ -125,11 +128,11 @@ namespace CayfAutomationModules
 					else
 					{
 						// Remove the previously added process
-						for (auto elmP = elm->second.connectedProcesses.begin(); elmP != elm->second.connectedProcesses.end(); elmP++)
+						for (auto elmP = sglElmPtr->connectedProcesses().begin(); elmP != sglElmPtr->connectedProcesses().end(); elmP++)
 						{
 							if (elmP->chainName == chainName)
 							{
-								elm->second.connectedProcesses.erase(elmP);
+								sglElmPtr->connectedProcesses().erase(elmP);
 								break;
 							}
 						}
@@ -262,7 +265,14 @@ namespace CayfAutomationModules
 		IjvxObject* obj_dev = nullptr;
 		refHostRefPtr->request_object_selected_component(tp_activated, &obj_dev);
 		
-		ayfEstablishedProcesses realizeChain;
+		IayfEstablishedProcessesCommon* realizeChainPtr = allocate_chain_realization();
+		IayfEstablishedProcessesSrc2Snk& realizeChain = *(realizeChainPtr->src2SnkRef());
+		// ========================================================================
+		
+		this->pre_connect_support_components(obj_dev, realizeChainPtr);
+
+		// ========================================================================
+
 		for (auto& elmM : config.connectedNodes)
 		{
 			ayfConnectConfigCpEntryRuntime cpElm(elmM);
@@ -290,14 +300,16 @@ namespace CayfAutomationModules
 		if (res == JVX_NO_ERROR)
 		{
 			jvxBool established = false;
-			module_connections[tp_activated] = realizeChain;
+			module_connections[tp_activated] = realizeChainPtr;
 			try_connect(tp_activated, established);
 
 			if(!established)
 			{
-				// If we do not establish the connection we can deactivate the added objects
-				module_connections.erase(tp_activated);
-				res = JVX_ERROR_INVALID_SETTING;
+				res = this->on_connection_not_established(tp_activated, realizeChainPtr);
+				if (res != JVX_NO_ERROR)
+				{
+					return res;
+				}
 			}
 		}
 
@@ -318,13 +330,24 @@ namespace CayfAutomationModules
 		return res;
 	}
 
+	jvxErrorType 
+		CayfAutomationModulesSrc2Snk::on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr)
+	{
+		// If we do not establish the connection we can deactivate the added objects
+		module_connections.erase(tp_activated);
+		this->deallocate_chain_realization(realizeChainPtr);
+		return JVX_ERROR_INVALID_SETTING;
+	}
+
 	jvxErrorType
 		CayfAutomationModulesSrc2Snk::deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated)
 	{
 		auto elm = module_connections.find(tp_deactivated);
 		if (elm != module_connections.end())
 		{
-			for (auto elmI : elm->second.lstEntries)
+			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
+			IayfEstablishedProcessesSrc2Snk& sglElm = *sglElmPtr->src2SnkRef();
+			for (auto elmI : sglElm.lstEntries)
 			{
 				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 				log << "Deactivating  module <" << elmI.modName << "> with suffix <" << elmI.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
@@ -334,6 +357,7 @@ namespace CayfAutomationModules
 				assert(res == JVX_NO_ERROR);
 			}
 			module_connections.erase(elm);
+			this->deallocate_chain_realization(sglElmPtr);
 			return JVX_NO_ERROR;
 		}
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -345,7 +369,9 @@ namespace CayfAutomationModules
 	{
 		for (auto& elm : module_connections)
 		{
-			for (auto& elmP : elm.second.connectedProcesses)
+			IayfEstablishedProcessesCommon* sglElmPtr = elm.second;
+			IayfEstablishedProcessesSrc2Snk& sglElm = *sglElmPtr->src2SnkRef();
+			for (auto& elmP : sglElmPtr->connectedProcesses())
 			{
 				if (nmChain == elmP.chainName)
 				{
@@ -377,8 +403,10 @@ namespace CayfAutomationModules
 		ayfOneConnectedProcess theProc;
 		for (; elm != module_connections.end(); elm++)
 		{
-			auto elmP = elm->second.connectedProcesses.begin();
-			for (; elmP != elm->second.connectedProcesses.end(); elmP++)
+			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
+			IayfEstablishedProcessesSrc2Snk& sglElm = *sglElmPtr->src2SnkRef();
+			auto elmP = sglElmPtr->connectedProcesses().begin();
+			for (; elmP != sglElmPtr->connectedProcesses().end(); elmP++)
 			{
 				if (elmP->processUid == uIdProc)
 				{
@@ -488,4 +516,23 @@ namespace CayfAutomationModules
 		CayfAutomationModulesSrc2Snk::postponed_try_connect()
 	{
 	}
+
+	IayfEstablishedProcessesCommon* 
+		CayfAutomationModulesSrc2Snk::allocate_chain_realization(jvxHandle* cpElm)
+	{
+		CayfEstablishedProcessesSrc2Snk* newChainRealization = nullptr;
+		JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSrc2Snk);
+		return newChainRealization;
+	}
+
+	void CayfAutomationModulesSrc2Snk::deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) 
+	{
+		JVX_SAFE_DELETE_OBJECT(deallocMe);
+	}
+
+	void 
+	CayfAutomationModulesSrc2Snk::pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) 
+	{
+		// Do nothing here!
+	};
 }

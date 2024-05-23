@@ -76,11 +76,27 @@ namespace CayfAutomationModules
 			ayfConnectConfigCpEntry(cp){};
 	};		
 
-	class ayfEstablishedProcesses
-	{
+	class IayfEstablishedProcessesSrc2Snk 	{
 	public:
-		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;
-		std::list<ayfOneConnectedProcess> connectedProcesses;
+		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;		
+	};
+
+	class CayfEstablishedProcessesSrc2Snk: public IayfEstablishedProcessesCommon, public IayfEstablishedProcessesSrc2Snk, public CayfEstablishedProcessesMixin
+	{
+		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() override
+		{
+			return this;
+		};
+
+		virtual IayfEstablishedProcessesSyncio* syncIoRefRef() override
+		{
+			return nullptr;
+		};
+
+		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() override
+		{
+			return _connectedProcesses();
+		}
 	};
 		
 	class CayfAutomationModulesSrc2Snk: public CayfAutomationModulesCommon, public CayfAutomationModuleHandlerIf
@@ -98,8 +114,6 @@ namespace CayfAutomationModules
 
 	protected:
 
-		// For each master, store the connected modules
-		std::map<ayfOneModuleChainDefinition, ayfEstablishedProcesses> module_connections;
 		ayfAutoConnectSrc2Snk_callbacks* cbPtr = nullptr;
 		ayfConnectConfigSrc2Snk config;
 		ayfConnectDerivedSrc2Snk derived;
@@ -147,6 +161,12 @@ namespace CayfAutomationModules
 
 		// Depending on the use-case, derive the sinks and sources
 		virtual void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated);
+
+		virtual IayfEstablishedProcessesCommon* allocate_chain_realization(jvxHandle* cpElm = nullptr) override;
+		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
+
+		virtual void pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain);
+		virtual jvxErrorType on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr);
 
 		virtual void print(std::ostream& out);
 		void print(std::ostream& out, jvxSize& segId);

@@ -183,17 +183,38 @@ namespace CayfAutomationModules
 			ayfConnectConfigSyncIo(cp), cpId(JVX_COMPONENT_UNKNOWN) {};
 	};
 
-	class ayfEstablishedProcessesSyncio
+	class ayfEstablishedProcessesSrc2Snk;
+
+	class IayfEstablishedProcessesSyncio
 	{
 	public:
 
 		// The extended version of the config struct
 		ayfConnectConfigCpEntrySyncIoRuntime supportNodeRuntime;
 
-		// The connected processes - should be two in the end
-		std::list<ayfOneConnectedProcess> connectedProcesses;
+		IayfEstablishedProcessesSyncio(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg = ayfConnectConfigCpEntrySyncIoRuntime()) : supportNodeRuntime(supportNodeArg) {};
 
-		ayfEstablishedProcessesSyncio(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg = ayfConnectConfigCpEntrySyncIoRuntime()) : supportNodeRuntime(supportNodeArg) {};
+	};
+
+	class CayfEstablishedProcessesSyncio : public IayfEstablishedProcessesCommon, public IayfEstablishedProcessesSyncio, public CayfEstablishedProcessesMixin
+	{
+	public:
+		CayfEstablishedProcessesSyncio(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg = ayfConnectConfigCpEntrySyncIoRuntime()) : IayfEstablishedProcessesSyncio(supportNodeArg) {};
+
+		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() override
+		{
+			return nullptr;
+		};
+
+		virtual IayfEstablishedProcessesSyncio* syncIoRefRef() override
+		{
+			return this;
+		};
+
+		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() override
+		{
+			return _connectedProcesses();
+		}
 	};
 
 	class CayfAutomationModulesSyncedIoPrimary : public CayfAutomationModulesCommon
@@ -206,27 +227,18 @@ namespace CayfAutomationModules
 			std::list<ayfOneConnectedProcess>& connectedProcesses);
 	};
 
-	class CayfAutomationModulesSyncedIo: public CayfAutomationModulesSyncedIoPrimary, public CayfAutomationModuleHandlerIf
+	class CayfAutomationModulesSyncedIo: public CayfAutomationModulesSyncedIoPrimary, 
+		public ayfConnectMultiConnectionsRuntime, public CayfAutomationModuleHandlerIf
 	{
 	
 	public:
 	protected:
-
-		// Allocated and operated syncio structures
-		std::map<ayfOneModuleChainDefinition, ayfEstablishedProcessesSyncio> module_connections;
 		
 		// Callback to interact
 		ayfAutoConnectSyncedIo_callbacks* cbPtr = nullptr;
 
 		// Configuration template
 		ayfConnectConfigSyncIo config;		
-
-		// Allow that a secondary connection can be connected lateron
-		jvxBool allowPostPonedConnect = true;
-
-		// This flag constellation defines what to achieve when connecting.
-		// Some connections require multiple connections (-> 0x3)
-		jvxCBitField targetFlagsConnection = 0x1;
 
 		// ayfConnectDerivedSrc2Snk derived;
 	public:
@@ -255,6 +267,10 @@ namespace CayfAutomationModules
 
 		virtual void postponed_try_connect() override;
 		void try_connect(jvxComponentIdentification tp_reg, jvxBool& established);
+
+		virtual IayfEstablishedProcessesCommon* allocate_chain_realization(jvxHandle* cpElm) override;
+		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
+		
 		/*
 	
 

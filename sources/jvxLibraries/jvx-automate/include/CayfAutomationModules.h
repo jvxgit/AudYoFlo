@@ -17,6 +17,25 @@ namespace CayfAutomationModules
 			const std::string& description,
 			jvxReportCommandRequest req,
 			IjvxProperties* props) = 0;
+	};	
+
+	class ayfOneConnectedProcess
+	{
+	public:
+		jvxSize processUid = JVX_SIZE_UNSELECTED;
+		std::string chainName;
+	};
+
+	// Variable class
+	class IayfEstablishedProcessesSyncio;
+	class IayfEstablishedProcessesSrc2Snk;
+	JVX_INTERFACE IayfEstablishedProcessesCommon
+	{
+	public:
+		virtual ~IayfEstablishedProcessesCommon() {};
+		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() = 0;
+		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() = 0;
+		virtual IayfEstablishedProcessesSyncio* syncIoRefRef() = 0;
 	};
 
 	class ayfConnectConfigCpManipulate
@@ -53,6 +72,25 @@ namespace CayfAutomationModules
 
 	};
 
+	class ayfOneModuleChainDefinition
+	{
+	public:
+		ayfOneModuleChainDefinition(const jvxComponentIdentification& cpIdArg) :
+			cpId(cpIdArg)
+		{
+
+		}
+		jvxComponentIdentification cpId;
+		bool operator < (const ayfOneModuleChainDefinition& elm) const
+		{
+			if (cpId < elm.cpId)
+			{
+				return true;
+			}
+			return false;
+		}
+	};
+
 	class CayfAutomationModulesCommon
 	{
 	protected:
@@ -61,6 +99,9 @@ namespace CayfAutomationModules
 		CjvxObjectLog* objLogRefPtr = nullptr;
 		jvxSize purposeId = JVX_SIZE_UNSELECTED;
 		jvxBool lockOperation = false;
+
+		std::map<ayfOneModuleChainDefinition, IayfEstablishedProcessesCommon*> module_connections;
+
 	public:
 		CayfAutomationModulesCommon() ;
 
@@ -70,6 +111,9 @@ namespace CayfAutomationModules
 			CjvxObjectLog* ptrLog);
 
 		jvxErrorType deactivate();
+
+		virtual IayfEstablishedProcessesCommon* allocate_chain_realization(jvxHandle* cpElm = nullptr) = 0;
+		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) = 0;
 	};
 
 	class ayfConnectConfigCpEntry
@@ -100,32 +144,29 @@ namespace CayfAutomationModules
 		jvxSize assSegmentId = 0;
 		jvxSize idOconRefTriggerConnector = JVX_SIZE_UNSELECTED;
 		jvxSize idIconRefTriggerConnector = JVX_SIZE_UNSELECTED;
-	};	
-
-	class ayfOneModuleChainDefinition
+	};		
+	
+	class CayfEstablishedProcessesMixin
 	{
-	public:
-		ayfOneModuleChainDefinition(const jvxComponentIdentification& cpIdArg) :
-			cpId(cpIdArg)
-		{
+	private:
+		std::list<ayfOneConnectedProcess> connectedProcessesInstance;
 
-		}
-		jvxComponentIdentification cpId;
-		bool operator < (const ayfOneModuleChainDefinition& elm) const
+	public:
+		virtual std::list<ayfOneConnectedProcess>& _connectedProcesses() 
 		{
-			if (cpId < elm.cpId)
-			{
-				return true;
-			}
-			return false;
+			return connectedProcessesInstance;
 		}
 	};
 
-	class ayfOneConnectedProcess
+	class ayfConnectMultiConnectionsRuntime
 	{
 	public:
-		jvxSize processUid = JVX_SIZE_UNSELECTED;
-		std::string chainName;
+		// Allow that a secondary connection can be connected lateron
+		jvxBool allowPostPonedConnect = true;
+
+		// This flag constellation defines what to achieve when connecting.
+		// Some connections require multiple connections (-> 0x3)
+		jvxCBitField targetFlagsConnection = 0x1;
 	};
 };
 #endif

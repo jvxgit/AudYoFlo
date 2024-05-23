@@ -33,7 +33,9 @@ namespace CayfAutomationModules
 	{
 		for (auto& elm : module_connections)
 		{
-			for (auto& elmP : elm.second.connectedProcesses)
+			IayfEstablishedProcessesCommon* sglElmPtr = elm.second;
+			
+			for (auto& elmP : sglElmPtr->connectedProcesses())
 			{
 				if (nmChain == elmP.chainName)
 				{
@@ -50,11 +52,12 @@ namespace CayfAutomationModules
 	{
 		for (auto& elm : module_connections)
 		{
-			for (auto elmP = elm.second.connectedProcesses.begin(); elmP != elm.second.connectedProcesses.end(); elmP++)
+			IayfEstablishedProcessesCommon* sglElmPtr = elm.second;
+			for (auto elmP = sglElmPtr->connectedProcesses().begin(); elmP != sglElmPtr->connectedProcesses().end(); elmP++)
 			{
 				if (uIdProcess == elmP->processUid)
 				{
-					elm.second.connectedProcesses.erase(elmP);
+					sglElmPtr->connectedProcesses().erase(elmP);
 					return JVX_NO_ERROR;
 				}
 			}
@@ -131,12 +134,15 @@ namespace CayfAutomationModules
 		{
 			// New module has been activated!!
 			jvxBool established = false;
-			ayfEstablishedProcessesSyncio realizeChain(cpElm);
+
+			IayfEstablishedProcessesCommon* realizeChainPtr = this->allocate_chain_realization((jvxHandle*)&cpElm);
+
+			IayfEstablishedProcessesSyncio& realizeChain = *(realizeChainPtr->syncIoRefRef());
 			realizeChain.supportNodeRuntime.states.subModulesActive = true;
 			realizeChain.supportNodeRuntime.states.connectionsEstablishFlags = 0x0;
 			realizeChain.supportNodeRuntime.derivedConfig.allowPostPonedConnect = this->allowPostPonedConnect;
 			realizeChain.supportNodeRuntime.derivedConfig.targetFlagsConnection = this->targetFlagsConnection;
-			module_connections[tp_activated] = realizeChain;
+			module_connections[tp_activated] = realizeChainPtr;
 
 			// We need to lock the rule to avoid that we re issue anything with this rule while running the rule!!
 			lockOperation = true;
@@ -149,6 +155,7 @@ namespace CayfAutomationModules
 				{
 					// If we do not establish the connection we can deactivate the added objects
 					module_connections.erase(tp_activated);
+					this->deallocate_chain_realization(realizeChainPtr);
 					res = JVX_ERROR_INVALID_SETTING;
 				}
 			}
@@ -173,17 +180,20 @@ namespace CayfAutomationModules
 		auto elm = module_connections.find(tp_deactivated);
 		if (elm != module_connections.end())
 		{
+			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
+			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
 			// Check that audio devices are no longer there!
-			assert(elm->second.connectedProcesses.size() == 0);
+			assert(sglElmPtr->connectedProcesses().size() == 0);
 
 			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-			log << "Deactivating  module <" << elm->second.supportNodeRuntime.driveSupportNodeChain.modName << "> with suffix <" <<
-				elm->second.supportNodeRuntime.driveSupportNodeChain.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(elm->second.supportNodeRuntime.cpId) << ">." << std::endl;
+			log << "Deactivating  module <" << sglElm.supportNodeRuntime.driveSupportNodeChain.modName << "> with suffix <" <<
+				sglElm.supportNodeRuntime.driveSupportNodeChain.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(sglElm.supportNodeRuntime.cpId) << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
-			jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, elm->second.supportNodeRuntime.cpId);
+			jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, sglElm.supportNodeRuntime.cpId);
 			assert(res == JVX_NO_ERROR);
 			module_connections.erase(elm);
+			this->deallocate_chain_realization(sglElmPtr);
 			return JVX_NO_ERROR;
 		}
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -200,8 +210,10 @@ namespace CayfAutomationModules
 		ayfOneConnectedProcess theProc;
 		for (; elm != module_connections.end(); elm++)
 		{
-			auto elmP = elm->second.connectedProcesses.begin();
-			for (; elmP != elm->second.connectedProcesses.end(); elmP++)
+			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
+			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+			auto elmP = sglElmPtr->connectedProcesses().begin();
+			for (; elmP != sglElmPtr->connectedProcesses().end(); elmP++)
 			{
 				if (elmP->processUid == uIdProc)
 				{
@@ -270,26 +282,27 @@ namespace CayfAutomationModules
 			auto elm = module_connections.find(tp_reg);
 			assert(elm != module_connections.end());
 
-			jvxDataConnectionRuleParameters params(false, false, true, elm->second.supportNodeRuntime.driveSupportNodeChain.misc.dbgOut, true);
-			params.preventStoreConfig = true;
+			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
+			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
 
 			// Check if this part must be connected!!
 
 			// =================================================================================================================
 			// Connect the primary chain
 			// =================================================================================================================
-			CayfAutomationModulesSyncedIoPrimary::try_connect(con, tp_reg, elm->second.supportNodeRuntime, elm->second.connectedProcesses);
+			CayfAutomationModulesSyncedIoPrimary::try_connect(con, tp_reg, sglElm.supportNodeRuntime, sglElmPtr->connectedProcesses());
 
 			// =================================================================================================================
 			// Connect the secondary chain
 			// =================================================================================================================
-			params.dbg_output = elm->second.supportNodeRuntime.driveTargetCompChain.misc.dbgOut;
-			params.preventStoreConfig = true;
-
-			if (!jvx_bitTest(elm->second.supportNodeRuntime.states.connectionsEstablishFlags, 1))
+			
+			if (!jvx_bitTest(sglElm.supportNodeRuntime.states.connectionsEstablishFlags, 1))
 			{
-				std::string chainName = elm->second.supportNodeRuntime.driveTargetCompChain.chainNamePrefix + jvx_size2String(tp_reg.slotid) + "-" + jvx_size2String(tp_reg.slotsubid);
-				res = con->create_connection_rule(chainName.c_str(), &theDataConnectionDefRule_id, &params, elm->second.supportNodeRuntime.driveTargetCompChain.misc.connectionCategory);
+				jvxDataConnectionRuleParameters params(false, false, true, sglElm.supportNodeRuntime.driveTargetCompChain.misc.dbgOut, true);
+				params.preventStoreConfig = true;
+
+				std::string chainName = sglElm.supportNodeRuntime.driveTargetCompChain.chainNamePrefix + jvx_size2String(tp_reg.slotid) + "-" + jvx_size2String(tp_reg.slotsubid);
+				res = con->create_connection_rule(chainName.c_str(), &theDataConnectionDefRule_id, &params, sglElm.supportNodeRuntime.driveTargetCompChain.misc.connectionCategory);
 				if (res == JVX_NO_ERROR)
 				{
 					jvxSize cnt = 0;
@@ -315,17 +328,17 @@ namespace CayfAutomationModules
 
 						newProcess.chainName = chainName;
 						newProcess.processUid = JVX_SIZE_UNSELECTED; // process not connected!
-						elm->second.connectedProcesses.push_back(newProcess);
+						sglElmPtr->connectedProcesses().push_back(newProcess);
 
-						res = theDataConnectionDefRuleHdl->specify_master(elm->second.supportNodeRuntime.cpId,
-							"*", elm->second.supportNodeRuntime.driveTargetCompChain.masterNm.c_str());
+						res = theDataConnectionDefRuleHdl->specify_master(sglElm.supportNodeRuntime.cpId,
+							"*", sglElm.supportNodeRuntime.driveTargetCompChain.masterNm.c_str());
 						assert(res == JVX_NO_ERROR);
 
 						res = theDataConnectionDefRuleHdl->add_bridge_specification(
-							elm->second.supportNodeRuntime.cpId,
-							"*", elm->second.supportNodeRuntime.driveTargetCompChain.oconMasterNm.c_str(),
+							sglElm.supportNodeRuntime.cpId,
+							"*", sglElm.supportNodeRuntime.driveTargetCompChain.oconMasterNm.c_str(),
 							config.cpTo.connectCp,
-							"*", elm->second.supportNodeRuntime.driveTargetCompChain.iconNmConnect.c_str(), 
+							"*", sglElm.supportNodeRuntime.driveTargetCompChain.iconNmConnect.c_str(),
 							bridgename.c_str(), false, false, JVX_SIZE_UNSELECTED, config.cpTo.connectLinkId);
 						assert(res == JVX_NO_ERROR);
 
@@ -334,9 +347,9 @@ namespace CayfAutomationModules
 
 						res = theDataConnectionDefRuleHdl->add_bridge_specification(
 							config.cpFrom.connectCp,
-							"*", elm->second.supportNodeRuntime.driveTargetCompChain.oconNmConnect.c_str(),
-							elm->second.supportNodeRuntime.cpId,
-							"*", elm->second.supportNodeRuntime.driveTargetCompChain.iconMasterNm.c_str(), 
+							"*", sglElm.supportNodeRuntime.driveTargetCompChain.oconNmConnect.c_str(),
+							sglElm.supportNodeRuntime.cpId,
+							"*", sglElm.supportNodeRuntime.driveTargetCompChain.iconMasterNm.c_str(),
 							bridgename.c_str(), false, false, config.cpFrom.connectLinkId, JVX_SIZE_UNSELECTED);
 						assert(res == JVX_NO_ERROR);
 						theDataConnectionDefRuleHdl->mark_rule_default();
@@ -360,16 +373,16 @@ namespace CayfAutomationModules
 							log << "Successfully connected chain <" << chainName << ">" << std::endl;
 							JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
-							jvx_bitSet(elm->second.supportNodeRuntime.states.connectionsEstablishFlags, 1);
+							jvx_bitSet(sglElm.supportNodeRuntime.states.connectionsEstablishFlags, 1);
 						}
 						else
 						{
 							// Remove the previously added process
-							for (auto elmP = elm->second.connectedProcesses.begin(); elmP != elm->second.connectedProcesses.end(); elmP++)
+							for (auto elmP = sglElmPtr->connectedProcesses().begin(); elmP != sglElmPtr->connectedProcesses().end(); elmP++)
 							{
 								if (elmP->chainName == chainName)
 								{
-									elm->second.connectedProcesses.erase(elmP);
+									sglElmPtr->connectedProcesses().erase(elmP);
 									break;
 								}
 							}
@@ -383,7 +396,7 @@ namespace CayfAutomationModules
 					theDataConnectionDefRule_id = JVX_SIZE_UNSELECTED;
 				}
 			}
-			if (elm->second.supportNodeRuntime.states.connectionsEstablishFlags == elm->second.supportNodeRuntime.derivedConfig.targetFlagsConnection)
+			if (sglElm.supportNodeRuntime.states.connectionsEstablishFlags == sglElm.supportNodeRuntime.derivedConfig.targetFlagsConnection)
 			{
 				fullyEstablished = true;
 			}
@@ -396,12 +409,14 @@ namespace CayfAutomationModules
 	{
 		for (auto& elm : module_connections)
 		{
-			if (elm.second.supportNodeRuntime.derivedConfig.allowPostPonedConnect)
+			IayfEstablishedProcessesCommon* sglElmPtr = elm.second;
+			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+			if (sglElm.supportNodeRuntime.derivedConfig.allowPostPonedConnect)
 			{
 				jvxBool established = false;
 				if (
-					(elm.second.supportNodeRuntime.states.subModulesActive) &&
-					(elm.second.supportNodeRuntime.states.connectionsEstablishFlags != elm.second.supportNodeRuntime.derivedConfig.targetFlagsConnection))
+					(sglElm.supportNodeRuntime.states.subModulesActive) &&
+					(sglElm.supportNodeRuntime.states.connectionsEstablishFlags != sglElm.supportNodeRuntime.derivedConfig.targetFlagsConnection))
 				{
 					lockOperation = true;
 					try_connect(elm.first.cpId, established);
@@ -527,4 +542,28 @@ namespace CayfAutomationModules
 			}
 		}
 	}
-};
+
+
+	IayfEstablishedProcessesCommon* 
+		CayfAutomationModulesSyncedIo::allocate_chain_realization(jvxHandle* cpElm)
+	{
+		ayfConnectConfigCpEntrySyncIoRuntime* ptrCpElm = (ayfConnectConfigCpEntrySyncIoRuntime*)cpElm;
+		CayfEstablishedProcessesSyncio* newChainRealization = nullptr;
+		if (ptrCpElm)
+		{
+			JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSyncio(*ptrCpElm));
+		}
+		else
+		{
+			JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSyncio);
+		}
+		return newChainRealization;
+	}
+	
+	void 
+		CayfAutomationModulesSyncedIo::deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe)
+	{
+
+		JVX_SAFE_DELETE_OBJECT(deallocMe);
+	}
+	};
