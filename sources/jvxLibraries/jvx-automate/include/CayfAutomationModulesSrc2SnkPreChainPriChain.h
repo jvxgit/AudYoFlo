@@ -30,7 +30,7 @@ namespace CayfAutomationModules
 	{
 	protected:
 		
-		ayfConnectConfigSyncIo config;
+		ayfConnectConfigSyncIo config_syncio;
 		ayfConnectConfigCpEntrySyncIoRuntime supportNodeRuntime;
 
 		// std::map<ayfOneModuleChainDefinition, ayfEstablishedProcessesCommon*> module_connections;
@@ -44,15 +44,17 @@ namespace CayfAutomationModules
 
 		jvxErrorType activate(IjvxReport* report,
 			IjvxHost* host,
-			ayfAutoConnectSrc2Snk_callbacks* cb,
+			ayfAutoConnect_callbacks* cb,
 			jvxSize purpId,
 			const ayfConnectConfigCpEntrySyncIo& cfgPriChain,
 			const ayfConnectConfigSrc2SnkPreChain& cfgSecChain,
 			CjvxObjectLog* ptrLog = nullptr);
 
+		void try_connect(jvxComponentIdentification tp_reg, jvxBool& fullyEstablished)override;
+
 		jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated);
 
-		IayfEstablishedProcessesCommon* allocate_chain_realization(jvxHandle* cpElm = nullptr)override;
+		IayfEstablishedProcessesCommon* allocate_chain_realization()override;
 		// void deallocate_chain_realization(IayfEstablishedProcessesCommon* deleteMe)override; <- take from base class
 		void pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
 		jvxErrorType on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr)override;

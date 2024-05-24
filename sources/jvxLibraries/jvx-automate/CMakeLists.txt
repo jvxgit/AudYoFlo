@@ -46,6 +46,9 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSyncedIo.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSyncedIo.cpp  
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesSyncedIoMixIn.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModulesSyncedIoMixIn.cpp  
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModuleHandler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModuleHandler.cpp
   )

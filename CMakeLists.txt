@@ -659,10 +659,15 @@ else(JVX_COMPILE_BUILDTOOLS)
   # build custom node components
   ###
   set(JVX_BASE_CUSTOM_NODES
-	${JVX_BASE_ROOT}/sources/jvxComponents/CustomNodes/CuNDefault
-	${JVX_BASE_ROOT}/sources/jvxComponents/CustomNodes/CuNHrtfDispenser
+	${JVX_BASE_ROOT}/sources/jvxComponents/CustomNodes/CuNDefault	
 	)
 	
+  if (JVX_USE_LIBMYSOFA)
+	set(JVX_BASE_CUSTOM_NODES ${JVX_BASE_CUSTOM_NODES}
+		${JVX_BASE_ROOT}/sources/jvxComponents/CustomNodes/CuNHrtfDispenser
+		)
+  endif()
+  
   ###
   # build signal processing technology components
   ###
@@ -941,7 +946,9 @@ else(JVX_COMPILE_BUILDTOOLS)
   endif()
 
   if(JVX_USE_PART_MATLAB)
-    set(JVX_BASE_APPS ${JVX_BASE_APPS} ${JVX_BASE_ROOT}/sources/jvxApplications/mexex)
+	if(JVX_USE_CONSOLE_APPS)
+		set(JVX_BASE_APPS ${JVX_BASE_APPS} ${JVX_BASE_ROOT}/sources/jvxApplications/mexex)
+	endif()
   endif()
   
   if(JVX_USE_PART_MATLAB)

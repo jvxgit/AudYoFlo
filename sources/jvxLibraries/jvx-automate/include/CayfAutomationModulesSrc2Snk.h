@@ -9,20 +9,6 @@ class CjvxObjectLog;
 
 namespace CayfAutomationModules
 {
-	JVX_INTERFACE ayfAutoConnectSrc2Snk_callbacks : public ayfAutoConnect_callbacks
-	{
-	public:
-		virtual ~ayfAutoConnectSrc2Snk_callbacks() {};
-		virtual jvxErrorType allow_master_connect(
-			jvxSize purposeId,
-			jvxComponentIdentification tpIdTrigger,
-			jvxComponentIdentification& cpIdSrc,
-			jvxComponentIdentification& cpIdSink,
-			std::string& oconConnectorName,
-			std::string& iconConnectorName) = 0;
-
-	};
-
 	/*
 	* This class allows to costruct a chain composed of the following parts:
 	* SRC ->  <MOD1> -> <MOD2> -> .. -> <MODN> -> SNK
@@ -37,14 +23,26 @@ namespace CayfAutomationModules
 	{
 	public:
 		std::list<ayfConnectConfigCpEntry> connectedNodes;
+
+		// This defines the Src side: master and output connector
 		std::string nmMaster;
 		std::string oconNmSource;
+
+		// This defines the sink side: input connector
 		std::string iconNmSink;
+
+		// Chain prefix name
 		std::string chainNamePrefix = "myChainCfgName";
-		jvxSize connectionCategory = JVX_SIZE_UNSELECTED;
-		// jvxComponentIdentification tpSrc = JVX_COMPONENT_UNKNOWN;
-		jvxComponentIdentification tpInvolved = JVX_COMPONENT_UNKNOWN;
-		jvxBool dbgOut = false;
+		
+		// More general variable:
+		// Typically, tpInvolved is going to be 
+		// - the SNK in case of the use-case <Src2Snk> and
+		// - the SRC in case of the use-case <Src2SnkPreChain>
+		// -> deriveArguments
+		jvxComponentIdentification tpAssign = JVX_COMPONENT_UNKNOWN;
+
+		CayfAutomationModules::ayfConnectConfigConMiscArgs miscArgs;
+
 		jvxSize oconIdTrigger = JVX_SIZE_UNSELECTED;
 		jvxSize iconIdTrigger = JVX_SIZE_UNSELECTED;
 		
@@ -55,13 +53,12 @@ namespace CayfAutomationModules
 			const std::string& oconNmSourceArg = "default",
 			const std::string& iconNmSinkArg = "",
 			jvxComponentIdentification tpInvolvedArg = JVX_COMPONENT_UNKNOWN,
-			jvxSize connectionCategoryArg = JVX_SIZE_UNSELECTED,
-			jvxBool dbgOutArg = false,
+			const CayfAutomationModules::ayfConnectConfigConMiscArgs& miscArgsArg = CayfAutomationModules::ayfConnectConfigConMiscArgs(),
 			jvxSize oconTriggerIdArg = JVX_SIZE_UNSELECTED,
 			jvxSize iconTriggerIdArg = JVX_SIZE_UNSELECTED) :
 			chainNamePrefix(chainName), connectedNodes(connectedNodesArg),
 			nmMaster(nmMasterArg), oconNmSource(oconNmSourceArg), iconNmSink(iconNmSinkArg),
-			connectionCategory(connectionCategoryArg), tpInvolved(tpInvolvedArg), dbgOut(dbgOutArg),
+			miscArgs(miscArgsArg), tpAssign(tpInvolvedArg),
 			oconIdTrigger(oconTriggerIdArg), iconIdTrigger(iconTriggerIdArg)
 		{};
 	};
@@ -114,7 +111,7 @@ namespace CayfAutomationModules
 
 	protected:
 
-		ayfAutoConnectSrc2Snk_callbacks* cbPtr = nullptr;
+		ayfAutoConnect_callbacks* cbPtr = nullptr;
 		ayfConnectConfigSrc2Snk config;
 		ayfConnectDerivedSrc2Snk derived;
 
@@ -126,12 +123,17 @@ namespace CayfAutomationModules
 
 		jvxErrorType activate(IjvxReport* report,
 			IjvxHost* host,
-			ayfAutoConnectSrc2Snk_callbacks* cb,
+			ayfAutoConnect_callbacks* cb,
 			jvxSize purpId,
 			const ayfConnectConfigSrc2Snk& cfg,
 			CjvxObjectLog* ptrLog = nullptr);
 		jvxErrorType deactivate();
 
+		/* Build the chain as follows:
+		 * derived.tpMaster
+		 *     derived.tpSrc -> create_bridges -> derived.tpSink
+		 * 
+		 */
 		virtual void try_connect(
 			jvxComponentIdentification tp_ident,
 			jvxBool& established);
@@ -162,7 +164,7 @@ namespace CayfAutomationModules
 		// Depending on the use-case, derive the sinks and sources
 		virtual void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated);
 
-		virtual IayfEstablishedProcessesCommon* allocate_chain_realization(jvxHandle* cpElm = nullptr) override;
+		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() override;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
 
 		virtual void pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain);

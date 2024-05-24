@@ -11,7 +11,7 @@ namespace CayfAutomationModules
 	CayfAutomationModulesSrc2SnkPreChainPriChain::activate(
 			IjvxReport* report,
 			IjvxHost* host,
-			ayfAutoConnectSrc2Snk_callbacks* cb,
+			ayfAutoConnect_callbacks* cb,
 			jvxSize purpId,
 			const ayfConnectConfigCpEntrySyncIo& cfgPriChain,
 			const ayfConnectConfigSrc2SnkPreChain& cfgSecChain,
@@ -24,7 +24,7 @@ namespace CayfAutomationModules
 			cfgSecChain, ptrLog);
 		
 		// Setup a dummy configuration
-		config = ayfConnectConfigSyncIo(
+		config_syncio = ayfConnectConfigSyncIo(
 			"", "default",
 			"default", "default", CayfAutomationModules::ayfConnectConfigCpConInChain(),
 			CayfAutomationModules::ayfConnectConfigCpConInChain(),
@@ -34,6 +34,59 @@ namespace CayfAutomationModules
 		return res;
 	}
 
+	void
+		CayfAutomationModulesSrc2SnkPreChainPriChain::try_connect(jvxComponentIdentification tp_reg, jvxBool& fullyEstablished)
+	{
+		// Here, the audio device has been activated.
+		jvxSize proc_id = JVX_SIZE_UNSELECTED;
+		jvxBool rep_global = false;
+		jvxSize bridgeId = 0;
+
+		fullyEstablished = false;
+		jvxBool establishedLoc = false;
+
+		// Here, the audio device has been activated.
+		// At this point, we need to run the connection
+
+		jvxErrorType res = JVX_NO_ERROR;
+		jvxSize theDataConnectionDefRule_id = JVX_SIZE_UNSELECTED;
+		IjvxDataConnections* con = nullptr;
+
+		jvxErrorType resC = JVX_NO_ERROR;
+		con = reqInterface<IjvxDataConnections>(refHostRefPtr);
+		if (con)
+		{
+			// Get the creation rule!
+			auto elm = module_connections.find(tp_reg);
+			assert(elm != module_connections.end());
+
+			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
+			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+
+			// Check if this part must be connected!!
+
+			// =================================================================================================================
+			// Connect the primary chain
+			// =================================================================================================================
+			CayfAutomationModulesSyncedIoPrimaryMixIn::try_connect(con, tp_reg, sglElm.supportNodeRuntime, sglElmPtr->connectedProcesses(), *this);
+
+			// =================================================================================================================
+			// Connect the secondary chain
+			// =================================================================================================================
+
+			if (!jvx_bitTest(sglElm.supportNodeRuntime.states.connectionsEstablishFlags, 1))
+			{
+				// Allocate the secondary connections
+				jvxBool established = false;
+				
+				// derived.
+				CayfAutomationModulesSrc2Snk::try_connect(tp_reg, established);
+				//CayfAutomationModulesSrc2Snk::try_connect(sglElm.supportNodeRuntime.cpId, &established);
+			}
+		}
+	}
+
+
 	jvxErrorType 
 	CayfAutomationModulesSrc2SnkPreChainPriChain::activate_all_submodules(const jvxComponentIdentification& tp_activated)
 	{
@@ -42,7 +95,7 @@ namespace CayfAutomationModules
 	}
 
 	IayfEstablishedProcessesCommon* 
-	CayfAutomationModulesSrc2SnkPreChainPriChain::allocate_chain_realization(jvxHandle* cpElm)
+	CayfAutomationModulesSrc2SnkPreChainPriChain::allocate_chain_realization()
 	{
 		CayfEstablishedProcessesSrc2SnkPriChain* newChainRealization = nullptr;
 		JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSrc2SnkPriChain);
@@ -53,7 +106,7 @@ namespace CayfAutomationModules
 	CayfAutomationModulesSrc2SnkPreChainPriChain::pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChainArg)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		ayfConnectConfigCpEntrySyncIoRuntime cpElm(config);
+		ayfConnectConfigCpEntrySyncIoRuntime cpElm(config_syncio);
 
 		IayfEstablishedProcessesSyncio& realizeChain = *(realizeChainArg->syncIoRefRef());
 
@@ -78,11 +131,20 @@ namespace CayfAutomationModules
 		{
 			// New module has been activated!!
 			jvxBool established = false;
+			
+			// Slightly postponed
+			realizeChain.preset(cpElm);
+
 			realizeChain.supportNodeRuntime.states.subModulesActive = true;
 			realizeChain.supportNodeRuntime.states.connectionsEstablishFlags = 0x0;
 			realizeChain.supportNodeRuntime.derivedConfig.allowPostPonedConnect = this->allowPostPonedConnect;
 			realizeChain.supportNodeRuntime.derivedConfig.targetFlagsConnection = this->targetFlagsConnection;
 		}
+
+		// Preset the derived configuration
+		derived.tpMaster = cpElm.cpId;
+		derived.tpSink = cpElm.cpId;
+		derived.tpSrc = CayfAutomationModulesSrc2Snk::config.tpAssign;
 	}
 
 	jvxErrorType

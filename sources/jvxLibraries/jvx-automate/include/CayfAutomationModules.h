@@ -10,6 +10,7 @@ namespace CayfAutomationModules
 	{
 	public:
 		virtual ~ayfAutoConnect_callbacks() {};
+
 		virtual jvxErrorType adapt_single_property_on_event(
 			jvxSize purposeId,
 			const std::string& nmChain,
@@ -17,6 +18,9 @@ namespace CayfAutomationModules
 			const std::string& description,
 			jvxReportCommandRequest req,
 			IjvxProperties* props) = 0;
+		
+		virtual jvxErrorType allow_master_connect(
+			jvxSize purposeId, jvxComponentIdentification tpIdTrigger) = 0;
 	};	
 
 	class ayfOneConnectedProcess
@@ -93,7 +97,7 @@ namespace CayfAutomationModules
 
 	class CayfAutomationModulesCommon
 	{
-	protected:
+	public:
 		IjvxReport* reportRefPtr = nullptr;
 		IjvxHost* refHostRefPtr = nullptr;
 		CjvxObjectLog* objLogRefPtr = nullptr;
@@ -112,7 +116,7 @@ namespace CayfAutomationModules
 
 		jvxErrorType deactivate();
 
-		virtual IayfEstablishedProcessesCommon* allocate_chain_realization(jvxHandle* cpElm = nullptr) = 0;
+		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() = 0;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) = 0;
 	};
 

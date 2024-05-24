@@ -66,7 +66,6 @@ CjvxSpNSynchronize::activate()
 
 		genSynchronize::translate__config_general__mode_to(bufferMode);
 		CjvxProperties::_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genSynchronize::config_general.mode);
-
 	}
 	return res;
 }
@@ -100,6 +99,7 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 	jvxErrorType res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	jvxConstraintSetResult resS = jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE;
 	jvxBool triggerUpdate = false;
+	jvxDataflow flow_sec = JVX_DATAFLOW_PUSH_ACTIVE;
 	if (res == JVX_NO_ERROR)
 	{
 		switch (bufferMode)
@@ -107,8 +107,8 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL:
 		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED:
 
-			node_inout._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
+			node_inout._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 
 			// Update the processing parameters on the synchronized side
 			resS = sec_master.neg_output._update_parameters_fixed(
@@ -117,21 +117,27 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 				node_inout._common_set_node_params_a_1io.samplerate,
 				(jvxDataFormat)node_inout._common_set_node_params_a_1io.format,
 				(jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat,
-				(jvxDataflow)node_inout._common_set_node_params_a_1io.data_flow);
+				JVX_DATAFLOW_PUSH_ACTIVE);
 			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
+
+			if (bufferMode == jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL)
+			{
+				flow_sec = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
+			}
 			resS = sec_master.neg_input._update_parameters_fixed(
 				node_output._common_set_node_params_a_1io.number_channels,
 				node_output._common_set_node_params_a_1io.buffersize,
 				node_output._common_set_node_params_a_1io.samplerate,
 				(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
 				(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
-				(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
+				flow_sec);
+			//(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
 			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
 			break;
 		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_BUFFERED:
 
-			node_inout._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
-			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
+			node_inout._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
+			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 
 			// Update the processing parameters on the synchronized side
 			resS = sec_master.neg_output._update_parameters_fixed(

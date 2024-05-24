@@ -299,7 +299,13 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 				break;
-			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE:
+				// Output format
+				// Variable segment sizes are possible
+				jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
+					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_ALLOW_FHEIGHT_INFO_SHIFT);
+				break;
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_PASSIVE:
 				// Output format
 				// Variable segment sizes are possible
 				jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
@@ -340,7 +346,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			switch (buffermode)
 			{
-			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE:
 
 				// Clear this bit
 				jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
@@ -643,7 +649,7 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		// If we are in OUTPUT_BUFFER MODE we will trigger the output thread. The clock in this case is on the
 		// input side. When the thread is awake it check if it can deliver enough audio samples and acts only if so.
 		// Check function <write_samples_from_buffer>
-		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT)
+		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE)
 		{
 			if (
 				(res == JVX_NO_ERROR) || 
@@ -935,7 +941,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 		}
 		
 		break;
-	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE:
 		if (node_output._common_set_node_params_a_1io.buffersize != preferredByOutput->con_params.buffersize)
 		{
 			res = JVX_ERROR_UNSUPPORTED;

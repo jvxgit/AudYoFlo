@@ -6,7 +6,7 @@ namespace CayfAutomationModules
 	jvxErrorType 
 		CayfAutomationModulesSrc2Snk::activate(IjvxReport* report,
 		IjvxHost* host,
-			ayfAutoConnectSrc2Snk_callbacks* cb,
+			ayfAutoConnect_callbacks* cb,
 		jvxSize purpId,
 		const ayfConnectConfigSrc2Snk& cfg,
 		CjvxObjectLog* ptrLog)
@@ -69,12 +69,12 @@ namespace CayfAutomationModules
 			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
 			IayfEstablishedProcessesSrc2Snk& sglElm = *sglElmPtr->src2SnkRef();
 
-			jvxDataConnectionRuleParameters params(false, false, true, config.dbgOut, true);
+			jvxDataConnectionRuleParameters params(false, false, true, config.miscArgs.dbgOut, true);
 			std::string chainName = config.chainNamePrefix + jvx_size2String(derived.tpSrc.slotsubid);
 
 
 			res = con->create_connection_rule(chainName.c_str(),
-				&theDataConnectionDefRule_id, &params, config.connectionCategory);
+				&theDataConnectionDefRule_id, &params, config.miscArgs.connectionCategory);
 			if (res == JVX_NO_ERROR)
 			{
 				ayfOneConnectedProcess newProcess;
@@ -105,6 +105,10 @@ namespace CayfAutomationModules
 						"*", config.nmMaster.c_str());
 					assert(res == JVX_NO_ERROR);
 
+					// This call defines the definition of the second part!!
+					// <SOMETHING> --derived.tpSrc -> <modules[id=1]> -> derived.tpSink
+					// Then, in the next step, the prechain will run from 
+					// SOMETHING => derived.tpSink -> <modules[id=0] -> derived.tpSrc
 					this->create_bridges(theDataConnectionDefRuleHdl, derived.tpSrc,
 						derived.tpSink, sglElm.lstEntries,
 						config.oconNmSource, config.iconNmSink, bridgeId, 0, config.oconIdTrigger, config.iconIdTrigger);
@@ -112,13 +116,13 @@ namespace CayfAutomationModules
 					resC = theDataConnectionDefRuleHdl->try_connect_direct(
 						con, refHostRefPtr,
 						&established,
-						reportRefPtr,
+						nullptr, //reportRefPtr,
 						&proc_id,
 						&rep_global);
 				
 					// If we manage to connect the chain, the bool "established" is true.
 					// resC only observes general functionality. It should always be JVX_NO_ERROR!
-					assert(resC == JVX_NO_ERROR);
+ 					assert(resC == JVX_NO_ERROR);
 					if (established)
 					{
 						JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
@@ -240,8 +244,7 @@ namespace CayfAutomationModules
 		deriveArguments(derivedArgs, tp_activated);
 
 		// We decide if this rule applies in this function
-		jvxErrorType res = cbPtr->allow_master_connect(purposeId, tp_activated,
-			derivedArgs.tpSrc, derivedArgs.tpSink, config.oconNmSource, config.iconNmSink);
+		jvxErrorType res = cbPtr->allow_master_connect(purposeId, tp_activated);
 		if (res == JVX_NO_ERROR)
 		{
 			// Here we copy the args
@@ -453,7 +456,7 @@ namespace CayfAutomationModules
 		CayfAutomationModulesSrc2Snk::deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated)
 	{
 		derivedArgs.tpSrc = tp_activated;
-		derivedArgs.tpSink = config.tpInvolved;
+		derivedArgs.tpSink = config.tpAssign;
 		derivedArgs.tpMaster = tp_activated;
 	}
 
@@ -485,7 +488,7 @@ namespace CayfAutomationModules
 		{
 			refIdIn = "[" + jvx_size2String(config.iconIdTrigger) + "]";
 		}
-		out << "-->" << jvxComponentIdentification_txt(config.tpInvolved) << "+" << config.iconNmSink << refIdIn << "*||" << std::flush;
+		out << "-->" << jvxComponentIdentification_txt(config.tpAssign) << "+" << config.iconNmSink << refIdIn << "*||" << std::flush;
 	}
 
 	void
@@ -518,7 +521,7 @@ namespace CayfAutomationModules
 	}
 
 	IayfEstablishedProcessesCommon* 
-		CayfAutomationModulesSrc2Snk::allocate_chain_realization(jvxHandle* cpElm)
+		CayfAutomationModulesSrc2Snk::allocate_chain_realization()
 	{
 		CayfEstablishedProcessesSrc2Snk* newChainRealization = nullptr;
 		JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSrc2Snk);

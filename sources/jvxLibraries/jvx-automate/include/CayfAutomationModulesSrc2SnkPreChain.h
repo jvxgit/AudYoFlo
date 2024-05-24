@@ -54,7 +54,7 @@ namespace CayfAutomationModules
 
 		jvxErrorType activate(IjvxReport* report,
 			IjvxHost* host,
-			ayfAutoConnectSrc2Snk_callbacks* cb,
+			ayfAutoConnect_callbacks* cb,
 			jvxSize purpId,
 			const ayfConnectConfigSrc2SnkPreChain& cfg,
 			CjvxObjectLog* ptrLog = nullptr);

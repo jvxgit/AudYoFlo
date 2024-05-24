@@ -4,20 +4,12 @@
 #include "jvx.h"
 #include "CayfAutomationModules.h"
 #include "CayfAutomationModuleHandler.h"
+#include "CayfAutomationModulesSyncedIoMixIn.h"
 
 class CjvxObjectLog;
 
 namespace CayfAutomationModules
-{
-	JVX_INTERFACE ayfAutoConnectSyncedIo_callbacks: public ayfAutoConnect_callbacks
-	{
-	public:
-		virtual ~ayfAutoConnectSyncedIo_callbacks() {};
-		virtual jvxErrorType allow_master_connect(
-			jvxSize purposeId,
-			jvxComponentIdentification tpIdTrigger) = 0;
-	};
-
+{	
 	// This component describes the connection of the support node which is used in the secondary chain
 	class ayfConnectConfigCpEntrySyncIoCommon
 	{
@@ -194,6 +186,10 @@ namespace CayfAutomationModules
 
 		IayfEstablishedProcessesSyncio(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg = ayfConnectConfigCpEntrySyncIoRuntime()) : supportNodeRuntime(supportNodeArg) {};
 
+		void preset(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg)
+		{
+			supportNodeRuntime = supportNodeArg;
+		}
 	};
 
 	class CayfEstablishedProcessesSyncio : public IayfEstablishedProcessesCommon, public IayfEstablishedProcessesSyncio, public CayfEstablishedProcessesMixin
@@ -201,6 +197,10 @@ namespace CayfAutomationModules
 	public:
 		CayfEstablishedProcessesSyncio(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg = ayfConnectConfigCpEntrySyncIoRuntime()) : IayfEstablishedProcessesSyncio(supportNodeArg) {};
 
+		void preset(const ayfConnectConfigCpEntrySyncIoRuntime& supportNodeArg)
+		{
+			IayfEstablishedProcessesSyncio::preset(supportNodeArg);
+		}
 		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() override
 		{
 			return nullptr;
@@ -217,17 +217,9 @@ namespace CayfAutomationModules
 		}
 	};
 
-	class CayfAutomationModulesSyncedIoPrimary : public CayfAutomationModulesCommon
-	{
-	protected:
-		void try_connect(
-			IjvxDataConnections* con,
-			jvxComponentIdentification tp_reg, 
-			ayfConnectConfigCpEntrySyncIoRuntime& supportNodeRuntime, 
-			std::list<ayfOneConnectedProcess>& connectedProcesses);
-	};
-
-	class CayfAutomationModulesSyncedIo: public CayfAutomationModulesSyncedIoPrimary, 
+	
+	class CayfAutomationModulesSyncedIo: public CayfAutomationModulesSyncedIoPrimaryMixIn, 
+		public CayfAutomationModulesCommon,
 		public ayfConnectMultiConnectionsRuntime, public CayfAutomationModuleHandlerIf
 	{
 	
@@ -235,7 +227,7 @@ namespace CayfAutomationModules
 	protected:
 		
 		// Callback to interact
-		ayfAutoConnectSyncedIo_callbacks* cbPtr = nullptr;
+		ayfAutoConnect_callbacks* cbPtr = nullptr;
 
 		// Configuration template
 		ayfConnectConfigSyncIo config;		
@@ -249,7 +241,7 @@ namespace CayfAutomationModules
 
 		jvxErrorType activate(IjvxReport* report,
 			IjvxHost* host,
-			ayfAutoConnectSyncedIo_callbacks* cb,
+			ayfAutoConnect_callbacks* cb,
 			jvxSize purpId,
 			const ayfConnectConfigSyncIo& cfgArg,
 			jvxBool allowPostConnection = true,
@@ -268,7 +260,7 @@ namespace CayfAutomationModules
 		virtual void postponed_try_connect() override;
 		void try_connect(jvxComponentIdentification tp_reg, jvxBool& established);
 
-		virtual IayfEstablishedProcessesCommon* allocate_chain_realization(jvxHandle* cpElm) override;
+		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() override;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
 		
 		/*

@@ -12,7 +12,7 @@ namespace CayfAutomationModules
 	jvxErrorType 
 		CayfAutomationModulesSrc2SnkPreChain::activate(IjvxReport* report,
 		IjvxHost* host,
-			ayfAutoConnectSrc2Snk_callbacks* cb,
+			ayfAutoConnect_callbacks* cb,
 		jvxSize purpId,
 		const ayfConnectConfigSrc2SnkPreChain& cfg,
 		CjvxObjectLog* ptrLog)
@@ -33,7 +33,7 @@ namespace CayfAutomationModules
 			
 			if (tpEnter.tp == JVX_COMPONENT_UNKNOWN)
 			{
-				tpEnter = cfg.tpInvolved;
+				tpEnter = cfg.tpAssign;
 			}
 		}
 		return res;
@@ -47,7 +47,7 @@ namespace CayfAutomationModules
 		derivedArgs.tpSink = tp_activated;
 
 		// This is the source of the post chain
-		derivedArgs.tpSrc = config.tpInvolved;
+		derivedArgs.tpSrc = config.tpAssign;
 
 		// The master comes from the pre-chain
 		derivedArgs.tpMaster = tp_activated;
@@ -120,7 +120,7 @@ namespace CayfAutomationModules
 		{
 			refIdOut = "[" + jvx_size2String(config.oconIdTrigger) + "]";
 		}
-		out << "-|*" << "<" << jvxComponentIdentification_txt(config.tpInvolved) << "+" << config.oconNmSource << refIdOut << std::endl;
+		out << "-|*" << "<" << jvxComponentIdentification_txt(config.tpAssign) << "+" << config.oconNmSource << refIdOut << std::endl;
 
 		printList(out, segId, config.connectedNodes);
 		if (JVX_CHECK_SIZE_SELECTED(config.iconIdTrigger))
