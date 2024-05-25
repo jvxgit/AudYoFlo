@@ -165,7 +165,13 @@ namespace CayfAutomationModules
 		jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, sglElm.supportNodeRuntime.cpId);
 		assert(res == JVX_NO_ERROR);
 
-		assert(sglElm.supportNodeRuntime.states.connectionsEstablishFlags == 0);
+		if (sglElm.supportNodeRuntime.states.connectionsEstablishFlags != 0)
+		{
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_0_NORMAL_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			log << "WARNING: The status of the established connectons is not 0 when all connections related to module <" << 
+				sglElm.supportNodeRuntime.driveSupportNodeChain.modName << "> are closed. This typically happens if the automation component does not forward the process disconnect message." << std::endl;
+			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+		}
 		sglElm.supportNodeRuntime.states.subModulesActive = false;
 
 		return CayfAutomationModulesSrc2SnkPreChain::post_run_chain_prepare(sglElmPtr);
