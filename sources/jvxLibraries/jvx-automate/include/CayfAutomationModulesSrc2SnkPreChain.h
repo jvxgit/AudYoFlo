@@ -5,34 +5,7 @@
 
 namespace CayfAutomationModules
 {
-	class IayfEstablishedProcessesSrc2SnkPreChain : public IayfEstablishedProcessesSrc2Snk
-	{
-	public:
-		std::list<ayfConnectConfigCpEntryRuntime> lstEntries_prechain;
-	};
-
-	class CayfEstablishedProcessesSrc2SnkPreChain : public IayfEstablishedProcessesCommon, public IayfEstablishedProcessesSrc2SnkPreChain, public CayfEstablishedProcessesMixin
-	{
-		virtual jvxHandle* specificType(ayfEstablishedProcessType tp) override
-		{
-			switch (tp)
-			{
-			case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK:
-				return reinterpret_cast<jvxHandle*>(static_cast<IayfEstablishedProcessesSrc2Snk*>(this));
-				break;
-			case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNKPRECHAIN:
-				return reinterpret_cast<jvxHandle*>(static_cast<IayfEstablishedProcessesSrc2SnkPreChain*>(this));
-				break;
-			}
-			return nullptr;
-		}
-
-		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() override
-		{
-			return _connectedProcesses();
-		}
-	};
-
+	
 	/* These classes extend the base functionality to add a pre-chain. The diagram is as follows 
 	* [SNK -> <MOD1.1> <MOD1.2> -> ENTER ->] <-ALTERNATIVE LINK-> [->SRC ->  <MOD1> -> <MOD2> -> .. -> <MODN> -> SNK]
 	* The first part is the pre-chain, the second part a "normal" Src2Snk chain.
@@ -51,13 +24,12 @@ namespace CayfAutomationModules
 		jvxSize iconIdTriggerPreChain = JVX_SIZE_UNSELECTED;
 
 		ayfConnectConfigSrc2SnkPreChain(
-			const ayfConnectConfigSrc2Snk& cfg,
-
 			// Name of the output 
-			const std::string& oconNmSrcPreChainArg = "default",
-			const std::list<ayfConnectConfigCpEntry>& connectedNodesArg = {},
-			const std::string& iconNmTriggerArg = "default",
-			const jvxComponentIdentification& cpEnterArg = JVX_COMPONENT_UNKNOWN,
+			const std::string& oconNmSrcPreChainArg,
+			const std::list<ayfConnectConfigCpEntry>& connectedNodesArg,
+			const std::string& iconNmTriggerArg,
+			const jvxComponentIdentification& cpEnterArg,
+			const ayfConnectConfigSrc2Snk& cfg,
 			jvxSize oconIdTriggerPreChainArg = JVX_SIZE_UNSELECTED,
 			jvxSize iconIdTriggerPreChainArg = JVX_SIZE_UNSELECTED) : ayfConnectConfigSrc2Snk(cfg),
 			oconNmSrcPreChain(oconNmSrcPreChainArg), 

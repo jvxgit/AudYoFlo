@@ -3,7 +3,7 @@
 
 namespace CayfAutomationModules
 {
-
+#if 0
 	jvxErrorType CayfAutomationModulesSyncedIo::activate(IjvxReport* report,
 		IjvxHost* host,
 		ayfAutoConnect_callbacks* cb,
@@ -464,4 +464,5 @@ namespace CayfAutomationModules
 		CayfAutomationModulesSyncedIo::report_to_be_disconnected(jvxSize uidProcess)
 	{
 	}
+#endif
 };

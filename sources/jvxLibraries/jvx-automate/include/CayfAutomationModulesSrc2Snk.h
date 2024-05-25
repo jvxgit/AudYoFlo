@@ -47,11 +47,11 @@ namespace CayfAutomationModules
 		jvxSize iconIdTrigger = JVX_SIZE_UNSELECTED;
 		
 		ayfConnectConfigSrc2Snk() {};
-		ayfConnectConfigSrc2Snk(const std::string& chainName,
+		ayfConnectConfigSrc2Snk(const std::string& chainName,			
+			const std::string& nmMasterArg,
+			const std::string& oconNmSourceArg,
 			const std::list<ayfConnectConfigCpEntry>& connectedNodesArg,
-			const std::string& nmMasterArg = "default",
-			const std::string& oconNmSourceArg = "default",
-			const std::string& iconNmSinkArg = "",
+			const std::string& iconNmSinkArg,
 			jvxComponentIdentification tpInvolvedArg = JVX_COMPONENT_UNKNOWN,
 			const CayfAutomationModules::ayfConnectConfigConMiscArgs& miscArgsArg = CayfAutomationModules::ayfConnectConfigConMiscArgs(),
 			jvxSize oconTriggerIdArg = JVX_SIZE_UNSELECTED,
