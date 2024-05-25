@@ -82,5 +82,14 @@ namespace CayfAutomationModules
 			elm->postponed_try_connect();
 		}
 	}
+
+	void
+		CayfAutomationModuleHandler::report_to_be_disconnected(jvxSize uid)
+	{
+		for (auto& elm : registeredEntries)
+		{
+			elm->report_to_be_disconnected(uid);
+		}
+	}
 };
 

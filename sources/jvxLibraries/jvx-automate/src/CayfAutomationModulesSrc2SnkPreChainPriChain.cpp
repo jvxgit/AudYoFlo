@@ -34,6 +34,7 @@ namespace CayfAutomationModules
 		return res;
 	}
 
+#if 0
 	void
 		CayfAutomationModulesSrc2SnkPreChainPriChain::try_connect(jvxComponentIdentification tp_reg, jvxBool& fullyEstablished)
 	{
@@ -85,22 +86,27 @@ namespace CayfAutomationModules
 			}
 		}
 	}
-
+#endif
 
 	jvxErrorType 
 	CayfAutomationModulesSrc2SnkPreChainPriChain::activate_all_submodules(const jvxComponentIdentification& tp_activated)
-	{
-		
+	{		
 		return CayfAutomationModulesSrc2SnkPreChain::activate_all_submodules(tp_activated);
 	}
 
 	IayfEstablishedProcessesCommon* 
 	CayfAutomationModulesSrc2SnkPreChainPriChain::allocate_chain_realization()
 	{
-		CayfEstablishedProcessesSrc2SnkPriChain* newChainRealization = nullptr;
-		JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSrc2SnkPriChain);
+		CayfEstablishedProcessesSrc2SnkPreChainPriChain* newChainRealization = nullptr;
+		JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSrc2SnkPreChainPriChain);
 		return newChainRealization;
 	}	
+
+	void 		
+	CayfAutomationModulesSrc2SnkPreChainPriChain::deallocate_chain_realization(IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		return CayfAutomationModulesSrc2SnkPreChain::deallocate_chain_realization(sglElmPtr);
+	}
 
 	jvxErrorType
 	CayfAutomationModulesSrc2SnkPreChainPriChain::pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChainArg)
@@ -108,7 +114,7 @@ namespace CayfAutomationModules
 		jvxErrorType res = JVX_NO_ERROR;
 		ayfConnectConfigCpEntrySyncIoRuntime cpElm(config_syncio);
 
-		IayfEstablishedProcessesSyncio& realizeChain = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(realizeChainArg->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
+		IayfEstablishedProcessesSrc2SnkPreChainPriChain& realizeChain = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(realizeChainArg);
 
 		cpElm.cpId = cpElm.driveSupportNodeChain.cpTp;
 		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.cpManipulate.manSuffix,
@@ -139,13 +145,57 @@ namespace CayfAutomationModules
 			realizeChain.supportNodeRuntime.states.connectionsEstablishFlags = 0x0;
 			realizeChain.supportNodeRuntime.derivedConfig.allowPostPonedConnect = this->allowPostPonedConnect;
 			realizeChain.supportNodeRuntime.derivedConfig.targetFlagsConnection = this->targetFlagsConnection;
-		}
 
-		// Preset the derived configuration
-		derived.tpMaster = cpElm.cpId;
-		derived.tpSink = cpElm.cpId;
-		derived.tpSrc = CayfAutomationModulesSrc2Snk::config.tpAssign;
+			res = CayfAutomationModulesSrc2SnkPreChain::pre_run_chain_prepare(obj_dev, realizeChainArg);
+		}		
+
 		return res;
+	}
+
+	jvxErrorType 
+	CayfAutomationModulesSrc2SnkPreChainPriChain::post_run_chain_prepare(IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);
+
+		JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+		log << "Deactivating  module <" << sglElm.supportNodeRuntime.driveSupportNodeChain.modName << "> with suffix <" <<
+			sglElm.supportNodeRuntime.driveSupportNodeChain.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(sglElm.supportNodeRuntime.cpId) << ">." << std::endl;
+		JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+
+		jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, sglElm.supportNodeRuntime.cpId);
+		assert(res == JVX_NO_ERROR);
+
+		assert(sglElm.supportNodeRuntime.states.connectionsEstablishFlags == 0);
+		sglElm.supportNodeRuntime.states.subModulesActive = false;
+
+		return CayfAutomationModulesSrc2SnkPreChain::post_run_chain_prepare(sglElmPtr);
+	}
+
+	void
+		CayfAutomationModulesSrc2SnkPreChainPriChain::pre_run_chain_connect(
+			jvxComponentIdentification tp_reg,
+			IjvxDataConnections* con, 
+			IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);
+		// =================================================================================================================
+		// Connect the primary chain
+		// =================================================================================================================
+		CayfAutomationModulesSyncedIoPrimaryMixIn::try_connect(con, tp_reg, sglElm.supportNodeRuntime, sglElmPtr->connectedProcesses(), *this, 
+			static_cast<CayfAutomationModuleReportConnection*>(this), sglElmPtr);
+	}
+
+	void 
+		CayfAutomationModulesSrc2SnkPreChainPriChain::deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, 
+			const jvxComponentIdentification& tp_activated, 
+			IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		// Preset the derived configuration
+		IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);
+		
+		derived.tpMaster = sglElm.supportNodeRuntime.cpId; // cpElm.cpId;
+		derived.tpSink = sglElm.supportNodeRuntime.cpId;
+		derived.tpSrc = CayfAutomationModulesSrc2Snk::config.tpAssign;
 	}
 
 	jvxErrorType
@@ -160,6 +210,40 @@ namespace CayfAutomationModules
 			res = JVX_ERROR_INVALID_SETTING;
 		}
 		return res;
+	}
+
+	void 
+		CayfAutomationModulesSrc2SnkPreChainPriChain::report_connection_established(jvxSize proId, ayfEstablishedProcessType tp, IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);
+		switch (tp)
+		{
+		case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNKPRECHAINPRICHAIN:
+			jvx_bitSet(sglElm.supportNodeRuntime.states.connectionsEstablishFlags, 0);
+			sglElm.supportNodeRuntime.states.uidProcesses[0] = proId;
+			break;
+		case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK:
+			jvx_bitSet(sglElm.supportNodeRuntime.states.connectionsEstablishFlags, 1);
+			sglElm.supportNodeRuntime.states.uidProcesses[1] = proId;
+			break;
+		}
+	}
+
+	void
+		CayfAutomationModulesSrc2SnkPreChainPriChain::report_to_be_disconnected(jvxSize uidProcess, IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);
+		if (uidProcess == sglElm.supportNodeRuntime.states.uidProcesses[0])
+		{
+			jvx_bitClear(sglElm.supportNodeRuntime.states.connectionsEstablishFlags, 0);
+			sglElm.supportNodeRuntime.states.uidProcesses[0] = JVX_SIZE_UNSELECTED;
+		}
+		if (uidProcess == sglElm.supportNodeRuntime.states.uidProcesses[1])
+		{
+			jvx_bitClear(sglElm.supportNodeRuntime.states.connectionsEstablishFlags, 1);
+			sglElm.supportNodeRuntime.states.uidProcesses[1] = JVX_SIZE_UNSELECTED;
+		}
+
 	}
 }
 

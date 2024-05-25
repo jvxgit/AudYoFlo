@@ -4,6 +4,9 @@
 #include "jvx.h"
 class CjvxObjectLog;
 
+#include "CayfAutomationModulesTypes.h"
+#include "CayfAutomationModuleHandler.h"
+
 namespace CayfAutomationModules
 {	
 	JVX_INTERFACE ayfAutoConnect_callbacks
@@ -28,14 +31,6 @@ namespace CayfAutomationModules
 	public:
 		jvxSize processUid = JVX_SIZE_UNSELECTED;
 		std::string chainName;
-	};
-
-	enum class ayfEstablishedProcessType
-	{
-		AYF_ESTABLISHED_PROCESS_UNKNOWN,
-		AYF_ESTABLISHED_PROCESS_SRC2SNK,
-		AYF_ESTABLISHED_PROCESS_SRC2SNKPRECHAIN,
-		AYF_ESTABLISHED_PROCESS_SYNCIO
 	};
 
 	JVX_INTERFACE IayfEstablishedProcessesCommon
@@ -123,6 +118,9 @@ namespace CayfAutomationModules
 		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() = 0;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) = 0;
 		virtual jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) = 0;
+		virtual void pre_run_chain_connect(jvxComponentIdentification tp_reg, 
+			IjvxDataConnections* con, IayfEstablishedProcessesCommon* realizeChain) = 0;
+
 		virtual jvxErrorType post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain) = 0;
 	};
 
@@ -135,13 +133,11 @@ namespace CayfAutomationModules
 			const std::string& modNameArg = "",
 			const std::string& oconNmArg = "",
 			const std::string& iconNmArg = "",
-			jvxSize assSegmentIdArg = 0,
 			const ayfConnectConfigCpManipulate& cpManArg = ayfConnectConfigCpManipulate(),
 			jvxSize idOconRefTriggerConnectorArg = JVX_SIZE_UNSELECTED,
 			jvxSize idIconRefTriggerConnectorArg = JVX_SIZE_UNSELECTED) :
 			cpTp(cpTpArg), modName(modNameArg), oconNm(oconNmArg),
 			iconNm(iconNmArg), cpManipulate(cpManArg),
-			assSegmentId(assSegmentIdArg),
 			idOconRefTriggerConnector(idOconRefTriggerConnectorArg), idIconRefTriggerConnector(idIconRefTriggerConnectorArg)
 		{
 		};
@@ -160,7 +156,6 @@ namespace CayfAutomationModules
 	{
 	private:
 		std::list<ayfOneConnectedProcess> connectedProcessesInstance;
-
 	public:
 		virtual std::list<ayfOneConnectedProcess>& _connectedProcesses() 
 		{

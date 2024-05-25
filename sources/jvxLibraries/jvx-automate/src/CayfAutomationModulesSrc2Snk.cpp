@@ -69,6 +69,8 @@ namespace CayfAutomationModules
 			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
 			IayfEstablishedProcessesSrc2Snk& sglElm = *(reinterpret_cast<IayfEstablishedProcessesSrc2Snk*>(sglElmPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK)));
 
+			this->pre_run_chain_connect(tp_reg, con, sglElmPtr);
+
 			jvxDataConnectionRuleParameters params(false, false, true, config.miscArgs.dbgOut, true);
 			std::string chainName = config.chainNamePrefix + jvx_size2String(derived.tpSrc.slotsubid);
 
@@ -111,7 +113,7 @@ namespace CayfAutomationModules
 					// SOMETHING => derived.tpSink -> <modules[id=0] -> derived.tpSrc
 					this->create_bridges(theDataConnectionDefRuleHdl, derived.tpSrc,
 						derived.tpSink, sglElm.lstEntries, sglElmPtr,
-						config.oconNmSource, config.iconNmSink, bridgeId, 0, 
+						config.oconNmSource, config.iconNmSink, bridgeId, 
 						config.oconIdTrigger, config.iconIdTrigger);
 
 					resC = theDataConnectionDefRuleHdl->try_connect_direct(
@@ -126,6 +128,7 @@ namespace CayfAutomationModules
  					assert(resC == JVX_NO_ERROR);
 					if (established)
 					{
+						report_connection_established(proc_id, ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK, sglElmPtr);
 						JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
 						log << "Successfully connected chain <" << chainName << ">" << std::endl;
 						JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
@@ -162,7 +165,6 @@ namespace CayfAutomationModules
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,
 			jvxSize& bridgeId,
-			jvxSize segId, 
 			jvxSize oconIdTrigger, 
 			jvxSize iconIdTrigger)
 	{
@@ -175,30 +177,28 @@ namespace CayfAutomationModules
 		
 		for (auto& elmC : elm)
 		{
-			if (elmC.assSegmentId == segId)
-			{
-				// ==================================================================================
-				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-				log << "Connect from <" << jvxComponentIdentification_txt(tpOld) <<
-					"> , connector <" << oconName << "> to <" << jvxComponentIdentification_txt(elmC.cpId) <<
-					"> , connector <" << elmC.iconNm << ">." << std::endl;
-				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+			// ==================================================================================
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			log << "Connect from <" << jvxComponentIdentification_txt(tpOld) <<
+				"> , connector <" << oconName << "> to <" << jvxComponentIdentification_txt(elmC.cpId) <<
+				"> , connector <" << elmC.iconNm << ">." << std::endl;
+			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
-				res = theDataConnectionDefRuleHdl->add_bridge_specification(
-					tpOld,
-					"*", oconName.c_str(),
-					elmC.cpId,
-					"*", elmC.iconNm.c_str(),
-					("Bridge_" + jvx_size2String(bridgeId)).c_str(), false, false, 
-					oconIdTrigger, elmC.idIconRefTriggerConnector);
-				assert(res == JVX_NO_ERROR);
-				// ==================================================================================
+			res = theDataConnectionDefRuleHdl->add_bridge_specification(
+				tpOld,
+				"*", oconName.c_str(),
+				elmC.cpId,
+				"*", elmC.iconNm.c_str(),
+				("Bridge_" + jvx_size2String(bridgeId)).c_str(), false, false,
+				oconIdTrigger, elmC.idIconRefTriggerConnector);
+			assert(res == JVX_NO_ERROR);
+			// ==================================================================================
 
-				tpOld = elmC.cpId;
-				oconName = elmC.oconNm;
-				oconIdTrigger = elmC.idOconRefTriggerConnector;
-				bridgeId++;
-			}
+			tpOld = elmC.cpId;
+			oconName = elmC.oconNm;
+			oconIdTrigger = elmC.idOconRefTriggerConnector;
+			bridgeId++;
+
 		}
 
 		// ==================================================================================
@@ -282,15 +282,14 @@ namespace CayfAutomationModules
 
 			// Here we copy the args for the connection
 			// Use tempory derivative		
-			deriveArguments(derived, tp_activated);			
+			deriveArguments(derived, tp_activated, realizeChainPtr);
 
 			// Run the connection code
 			try_connect(tp_activated, established);
 
 			if(!established)
 			{
-				res = this->on_connection_not_established(tp_activated, realizeChainPtr);
-				realizeChainPtr = nullptr;
+				res = this->on_connection_not_established(tp_activated, realizeChainPtr);				
 				if (res != JVX_NO_ERROR)
 				{
 					return res;
@@ -428,7 +427,9 @@ namespace CayfAutomationModules
 	}
 
 	void
-		CayfAutomationModulesSrc2Snk::deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated)
+		CayfAutomationModulesSrc2Snk::deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, 
+			const jvxComponentIdentification& tp_activated,
+			IayfEstablishedProcessesCommon* realizeChainArg)
 	{
 		derivedArgs.tpSrc = tp_activated;
 		derivedArgs.tpSink = config.tpAssign;
@@ -541,6 +542,15 @@ namespace CayfAutomationModules
 		return res;
 	};
 
+	void 
+		CayfAutomationModulesSrc2Snk::pre_run_chain_connect(
+			jvxComponentIdentification tp_reg,
+			IjvxDataConnections* con,
+			IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		// Do nothing here!!
+	}
+
 	jvxErrorType
 	CayfAutomationModulesSrc2Snk::post_run_chain_prepare(IayfEstablishedProcessesCommon* sglElmPtr)
 	{
@@ -559,4 +569,19 @@ namespace CayfAutomationModules
 		sglElm.lstEntries.clear();
 		return res;
 	};
+
+	void 
+	CayfAutomationModulesSrc2Snk::report_connection_established(jvxSize proId, ayfEstablishedProcessType, IayfEstablishedProcessesCommon* realizeChainPtr)
+	{		
+	}
+
+	void 
+	CayfAutomationModulesSrc2Snk::report_to_be_disconnected(jvxSize uidProcess)
+	{
+		// We do not know where this process belongs to - pass it to all listeners!
+		for (auto elm : module_connections)
+		{
+			this->report_to_be_disconnected(uidProcess, elm.second);
+		}
+	}
 }

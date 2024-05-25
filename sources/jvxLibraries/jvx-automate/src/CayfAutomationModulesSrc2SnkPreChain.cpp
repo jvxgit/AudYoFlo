@@ -42,7 +42,9 @@ namespace CayfAutomationModules
 
 	void
 		CayfAutomationModulesSrc2SnkPreChain::deriveArguments(
-			ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated)
+			ayfConnectDerivedSrc2Snk& derivedArgs, 
+			const jvxComponentIdentification& tp_activated,
+			IayfEstablishedProcessesCommon* realizeChainArg)
 	{
 		// This is the sink of the post chain
 		derivedArgs.tpSink = tp_activated;
@@ -63,35 +65,31 @@ namespace CayfAutomationModules
 			IayfEstablishedProcessesCommon* sglElmPtr,
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,
-			jvxSize& bridgeId,
-			jvxSize segId,
+			jvxSize& bridgeId,			
 			jvxSize oconIdTrigger,
 			jvxSize iconIdTrigger)
 	{
-		if (segId == 0)
-		{
-			// ==================================================================================
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-			log << "Connect from <" << jvxComponentIdentification_txt(tp_sink) <<
-				"> , connector <" << oconNmSrcPreChain << "> to <" << jvxComponentIdentification_txt(tpEnter) <<
-				"> , connector <" << iconNmEnterPreChain << ">." << std::endl;
-			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
-			
-			IayfEstablishedProcessesSrc2SnkPreChain& sglElm = castEstablishProcess<IayfEstablishedProcessesSrc2SnkPreChain>(sglElmPtr);
-			
-			// First part of the connections  the prechain!!
-			CayfAutomationModulesSrc2Snk::create_bridges(
-				theDataConnectionDefRuleHdl, tp_sink, tpEnter, sglElm.lstEntries_prechain,
-				sglElmPtr, oconNmSrcPreChain, iconNmEnterPreChain, bridgeId, 0, oconIdTriggerPreChain, iconIdTriggerPreChain);
+		// ==================================================================================
+		JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+		log << "Connect from <" << jvxComponentIdentification_txt(tp_sink) <<
+			"> , connector <" << oconNmSrcPreChain << "> to <" << jvxComponentIdentification_txt(tpEnter) <<
+			"> , connector <" << iconNmEnterPreChain << ">." << std::endl;
+		JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+
+		IayfEstablishedProcessesSrc2SnkPreChain& sglElm = castEstablishProcess<IayfEstablishedProcessesSrc2SnkPreChain>(sglElmPtr);
+
+		// First part of the connections  the prechain!!
+		CayfAutomationModulesSrc2Snk::create_bridges(
+			theDataConnectionDefRuleHdl, tp_sink, tpEnter, sglElm.lstEntries_prechain,
+			sglElmPtr, oconNmSrcPreChain, iconNmEnterPreChain, bridgeId,  oconIdTriggerPreChain, iconIdTriggerPreChain);
 
 
-			// ==================================================================================
-			// Forward all next stages
-			// ==================================================================================
-			CayfAutomationModulesSrc2Snk::create_bridges(
-				theDataConnectionDefRuleHdl, tp_src, tp_sink, elm, sglElmPtr, 
-				config.oconNmSource, config.iconNmSink, bridgeId, 1, oconIdTrigger, iconIdTrigger);
-		}
+		// ==================================================================================
+		// Forward all next stages
+		// ==================================================================================
+		CayfAutomationModulesSrc2Snk::create_bridges(
+			theDataConnectionDefRuleHdl, tp_src, tp_sink, elm, sglElmPtr,
+			config.oconNmSource, config.iconNmSink, bridgeId, oconIdTrigger, iconIdTrigger);
 	}
 
 	void 

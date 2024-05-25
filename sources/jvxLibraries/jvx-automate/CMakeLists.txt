@@ -25,6 +25,9 @@ include_directories(
   )
 
 set(LOCAL_SOURCES
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesTypes.h
+
   ${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModules.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModules.cpp
 

@@ -291,7 +291,7 @@ namespace CayfAutomationModules
 			// =================================================================================================================
 			// Connect the primary chain
 			// =================================================================================================================
-			CayfAutomationModulesSyncedIoPrimaryMixIn::try_connect(con, tp_reg, sglElm.supportNodeRuntime, sglElmPtr->connectedProcesses(), *this);
+			CayfAutomationModulesSyncedIoPrimaryMixIn::try_connect(con, tp_reg, sglElm.supportNodeRuntime, sglElmPtr->connectedProcesses(), *this, nullptr, nullptr);
 
 			// =================================================================================================================
 			// Connect the secondary chain
@@ -452,5 +452,16 @@ namespace CayfAutomationModules
 		CayfAutomationModulesSyncedIo::post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain)
 	{
 		return JVX_NO_ERROR;
+	}
+
+	void 
+		CayfAutomationModulesSyncedIo::pre_run_chain_connect(jvxComponentIdentification tp_reg,
+			IjvxDataConnections* con, IayfEstablishedProcessesCommon* realizeChain)
+	{
+	}
+
+	void 
+		CayfAutomationModulesSyncedIo::report_to_be_disconnected(jvxSize uidProcess)
+	{
 	}
 };

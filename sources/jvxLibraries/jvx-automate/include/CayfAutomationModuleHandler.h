@@ -2,9 +2,19 @@
 #define __CAYFAUTOMATIONMODULEHANDLER_H__
 
 #include "jvx.h"
+#include "CayfAutomationModulesTypes.h"
 
 namespace CayfAutomationModules
 {
+	JVX_INTERFACE IayfEstablishedProcessesCommon;
+	JVX_INTERFACE CayfAutomationModuleReportConnection
+	{
+	public:
+		virtual ~CayfAutomationModuleReportConnection() {};
+
+		virtual void report_connection_established(jvxSize proId, ayfEstablishedProcessType reportLevel, IayfEstablishedProcessesCommon* realizeChainPtr) = 0;
+	};
+
 	JVX_INTERFACE CayfAutomationModuleHandlerIf
 	{
 	public:
@@ -23,6 +33,9 @@ namespace CayfAutomationModules
 		virtual jvxErrorType deassociate_process(jvxSize uIdProcess) = 0;
 
 		virtual void postponed_try_connect() = 0;
+
+		// Report that a process was disconnected
+		virtual void report_to_be_disconnected(jvxSize uidProcess) = 0;
 	};
 
 	// =============================================================
@@ -63,6 +76,8 @@ namespace CayfAutomationModules
 			const jvxComponentIdentification& tpCp, jvxReportCommandRequest req);
 
 		void report_configuration_done();
+
+		void report_to_be_disconnected(jvxSize uid);
 	};
 }
 

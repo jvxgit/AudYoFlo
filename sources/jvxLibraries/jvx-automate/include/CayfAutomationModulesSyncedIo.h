@@ -162,6 +162,11 @@ namespace CayfAutomationModules
 		{
 			jvxBool subModulesActive = false;
 			jvxCBitField connectionsEstablishFlags = 0;
+			jvxSize uidProcesses[2] =
+			{
+				JVX_SIZE_UNSELECTED,
+				JVX_SIZE_UNSELECTED
+			};
 		} states;
 
 		struct
@@ -260,12 +265,17 @@ namespace CayfAutomationModules
 			const jvxComponentIdentification& tp_activated, jvxReportCommandRequest req) override;
 
 		virtual void postponed_try_connect() override;
+		void report_to_be_disconnected(jvxSize uidProcess) override;
+
 		void try_connect(jvxComponentIdentification tp_reg, jvxBool& established);
 
 		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() override;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
 		virtual jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
 		virtual jvxErrorType post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain) override;
+		void pre_run_chain_connect(jvxComponentIdentification tp_reg,
+			IjvxDataConnections* con, IayfEstablishedProcessesCommon* realizeChain) override;
+		
 		/*
 	
 

@@ -105,11 +105,10 @@ namespace CayfAutomationModules
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,
 			jvxSize& bridgeId,
-			jvxSize segId,
 			jvxSize oconIdTrigger,
 			jvxSize iconIdTrigger) override;
 
-		void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated) override;
+		void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated, IayfEstablishedProcessesCommon* realizeChainArg) override;
 
 		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() override;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* ptr) override;

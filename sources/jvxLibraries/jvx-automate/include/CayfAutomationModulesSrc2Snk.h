@@ -99,7 +99,7 @@ namespace CayfAutomationModules
 	};
 		
 
-	class CayfAutomationModulesSrc2Snk: public CayfAutomationModulesCommon, public CayfAutomationModuleHandlerIf
+	class CayfAutomationModulesSrc2Snk: public CayfAutomationModulesCommon, public CayfAutomationModuleReportConnection, public CayfAutomationModuleHandlerIf
 	{
 	
 	public:
@@ -148,7 +148,11 @@ namespace CayfAutomationModules
 		jvxErrorType deactivate_all_submodules(const jvxComponentIdentification& tp_deactivated) override;
 		jvxErrorType adapt_all_submodules(jvxSize uIdProc, const std::string& modName, const std::string& description,
 			const jvxComponentIdentification& tp_activated, jvxReportCommandRequest req) override;
-		void postponed_try_connect();
+		
+		// External functions
+		void postponed_try_connect() override;
+		void report_to_be_disconnected(jvxSize uidProcess) override;
+		virtual void report_to_be_disconnected(jvxSize uidProcess, IayfEstablishedProcessesCommon* realizeChainPtr) {};
 
 		virtual void create_bridges(
 			IjvxDataConnectionRule* theDataConnectionDefRuleHdl, 
@@ -159,19 +163,25 @@ namespace CayfAutomationModules
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,			
 			jvxSize& bridgeId,
-			jvxSize segId,
 			jvxSize oconIdTrigger,
 			jvxSize iconIdTrigger);
 
 		// Functions to be called in the connection rule creation to adapt to use case
 
+		void pre_run_chain_connect(
+			jvxComponentIdentification tp_reg,
+			IjvxDataConnections* con,
+			IayfEstablishedProcessesCommon* sglElmPtr) override;
+
 		// Depending on the use-case, derive the sinks and sources
-		virtual void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated);
+		virtual void deriveArguments(ayfConnectDerivedSrc2Snk& derivedArgs, const jvxComponentIdentification& tp_activated, IayfEstablishedProcessesCommon* realizeChainArg);
 
 		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() override;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
 		virtual jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
 		virtual jvxErrorType post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain) override;
+
+		virtual void report_connection_established(jvxSize proId, ayfEstablishedProcessType, IayfEstablishedProcessesCommon* realizeChainPtr) override;
 
 		virtual jvxErrorType on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr);
 
