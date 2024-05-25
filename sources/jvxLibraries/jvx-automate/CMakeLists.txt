@@ -51,6 +51,8 @@ set(LOCAL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModuleHandler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfAutomationModuleHandler.cpp
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfAutomationModulesCast.h
   )
 
 set(BUILD_STATIC TRUE)

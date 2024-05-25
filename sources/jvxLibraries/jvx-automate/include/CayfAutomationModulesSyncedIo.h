@@ -201,15 +201,17 @@ namespace CayfAutomationModules
 		{
 			IayfEstablishedProcessesSyncio::preset(supportNodeArg);
 		}
-		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() override
-		{
-			return nullptr;
-		};
 
-		virtual IayfEstablishedProcessesSyncio* syncIoRefRef() override
+		jvxHandle* specificType(ayfEstablishedProcessType tp)
 		{
-			return this;
-		};
+			switch (tp)
+			{
+			case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO:
+				return reinterpret_cast<jvxHandle*>(static_cast<IayfEstablishedProcessesSyncio*>(this));
+				break;
+			}
+			return nullptr;
+		}
 
 		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() override
 		{
@@ -262,7 +264,8 @@ namespace CayfAutomationModules
 
 		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() override;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
-		
+		virtual jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
+		virtual jvxErrorType post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain) override;
 		/*
 	
 

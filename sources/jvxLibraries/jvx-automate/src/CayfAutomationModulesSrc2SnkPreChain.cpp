@@ -1,4 +1,4 @@
-#include "CayfAutomationModulesSrc2SnkPreChain.h"
+#include "CayfAutomationModulesCast.h"
 #include "common/CjvxObjectLog.h"
 
 namespace CayfAutomationModules
@@ -30,6 +30,7 @@ namespace CayfAutomationModules
 			this->oconIdTriggerPreChain = cfg.oconIdTriggerPreChain;
 			this->iconIdTriggerPreChain = cfg.iconIdTriggerPreChain;
 			this->tpEnter = cfg.tpEnter;
+			config_prechain.connectedNodes = cfg.connectedNodes_prechain;
 			
 			if (tpEnter.tp == JVX_COMPONENT_UNKNOWN)
 			{
@@ -59,6 +60,7 @@ namespace CayfAutomationModules
 			jvxComponentIdentification tp_src,
 			jvxComponentIdentification tp_sink,
 			std::list<ayfConnectConfigCpEntryRuntime>& elm,
+			IayfEstablishedProcessesCommon* sglElmPtr,
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,
 			jvxSize& bridgeId,
@@ -74,19 +76,21 @@ namespace CayfAutomationModules
 				"> , connector <" << oconNmSrcPreChain << "> to <" << jvxComponentIdentification_txt(tpEnter) <<
 				"> , connector <" << iconNmEnterPreChain << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
-
+			
+			IayfEstablishedProcessesSrc2SnkPreChain& sglElm = castEstablishProcess<IayfEstablishedProcessesSrc2SnkPreChain>(sglElmPtr);
+			
 			// First part of the connections  the prechain!!
 			CayfAutomationModulesSrc2Snk::create_bridges(
-				theDataConnectionDefRuleHdl, tp_sink, tpEnter, elm,
-				oconNmSrcPreChain, iconNmEnterPreChain, bridgeId, 0, oconIdTriggerPreChain, iconIdTriggerPreChain);
+				theDataConnectionDefRuleHdl, tp_sink, tpEnter, sglElm.lstEntries_prechain,
+				sglElmPtr, oconNmSrcPreChain, iconNmEnterPreChain, bridgeId, 0, oconIdTriggerPreChain, iconIdTriggerPreChain);
 
 
 			// ==================================================================================
 			// Forward all next stages
 			// ==================================================================================
 			CayfAutomationModulesSrc2Snk::create_bridges(
-				theDataConnectionDefRuleHdl, tp_src, tp_sink, elm, config.oconNmSource,
-				config.iconNmSink, bridgeId, 1, oconIdTrigger, iconIdTrigger);
+				theDataConnectionDefRuleHdl, tp_src, tp_sink, elm, sglElmPtr, 
+				config.oconNmSource, config.iconNmSink, bridgeId, 1, oconIdTrigger, iconIdTrigger);
 		}
 	}
 
@@ -128,6 +132,81 @@ namespace CayfAutomationModules
 			refIdIn = "[" + jvx_size2String(config.iconIdTrigger) + "]";
 		}
 		out << "-->" << "TRIGGER" << "+" << config.iconNmSink << refIdIn << "*||" << std::flush;
+	}
+
+	IayfEstablishedProcessesCommon* 
+	CayfAutomationModulesSrc2SnkPreChain::allocate_chain_realization()
+	{
+		CayfEstablishedProcessesSrc2SnkPreChain* newChainRealization = nullptr;
+		JVX_DSP_SAFE_ALLOCATE_OBJECT(newChainRealization, CayfEstablishedProcessesSrc2SnkPreChain);
+		return newChainRealization;
+	}
+	void 
+		CayfAutomationModulesSrc2SnkPreChain::deallocate_chain_realization(IayfEstablishedProcessesCommon* ptr)
+	{
+		CayfAutomationModulesSrc2Snk::deallocate_chain_realization(ptr);
+	}
+
+	jvxErrorType
+		CayfAutomationModulesSrc2SnkPreChain::pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		jvxErrorType res = JVX_NO_ERROR;
+
+		IayfEstablishedProcessesSrc2SnkPreChain& sglElm = castEstablishProcess<IayfEstablishedProcessesSrc2SnkPreChain>(sglElmPtr);
+		// Do nothing here!
+
+		for (auto& elmM : config_prechain.connectedNodes)
+		{
+			ayfConnectConfigCpEntryRuntime cpElm(elmM);
+
+			cpElm.cpId = cpElm.cpTp;
+			res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.modName, obj_dev, true, cpElm.cpManipulate.manSuffix, cpElm.cpManipulate.attachUi, cpElm.cpManipulate.tpRemap);
+
+			if (res == JVX_NO_ERROR)
+			{
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				log << "Activated module <" << cpElm.modName << "> with suffix <" << cpElm.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+
+				sglElm.lstEntries_prechain.push_back(cpElm);
+			}
+			else
+			{
+				JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				log << "Failed to activate module <" << cpElm.modName << "> with suffix <" << cpElm.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+				break;
+			}
+		}
+
+		if (res == JVX_NO_ERROR)
+		{
+			res = CayfAutomationModulesSrc2Snk::pre_run_chain_prepare(obj_dev, sglElmPtr);
+		}
+		return res;
+	};
+
+	jvxErrorType
+		CayfAutomationModulesSrc2SnkPreChain::post_run_chain_prepare(IayfEstablishedProcessesCommon* sglElmPtr)
+	{
+		IayfEstablishedProcessesSrc2SnkPreChain& sglElm = castEstablishProcess<IayfEstablishedProcessesSrc2SnkPreChain>(sglElmPtr);
+		/* 
+		*(reinterpret_cast<IayfEstablishedProcessesSrc2SnkPreChain*>(
+			sglElmPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNKPRECHAIN)));
+		*/
+		for (auto elmI : sglElm.lstEntries_prechain)
+		{
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			log << "Deactivating  module <" << elmI.modName << "> with suffix <" << elmI.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(elmI.cpId) << ">." << std::endl;
+			JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
+
+			jvxErrorType res = jvx_deactivateObjectInModule(refHostRefPtr, elmI.cpId);
+			assert(res == JVX_NO_ERROR);
+		}
+		sglElm.lstEntries_prechain.clear();
+
+		CayfAutomationModulesSrc2Snk::post_run_chain_prepare(sglElmPtr);
+		return JVX_NO_ERROR;
 	}
 }
 

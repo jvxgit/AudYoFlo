@@ -73,22 +73,24 @@ namespace CayfAutomationModules
 			ayfConnectConfigCpEntry(cp){};
 	};		
 
-	class IayfEstablishedProcessesSrc2Snk 	{
+	class IayfEstablishedProcessesSrc2Snk 	
+	{
 	public:
 		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;		
 	};
 
 	class CayfEstablishedProcessesSrc2Snk: public IayfEstablishedProcessesCommon, public IayfEstablishedProcessesSrc2Snk, public CayfEstablishedProcessesMixin
 	{
-		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() override
+		virtual jvxHandle* specificType(ayfEstablishedProcessType tp) override
 		{
-			return this;
-		};
-
-		virtual IayfEstablishedProcessesSyncio* syncIoRefRef() override
-		{
+			switch (tp)
+			{
+			case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK:
+				return reinterpret_cast<jvxHandle*>(static_cast<IayfEstablishedProcessesSrc2Snk*>(this));
+				break;
+			}
 			return nullptr;
-		};
+		}
 
 		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() override
 		{
@@ -96,6 +98,7 @@ namespace CayfAutomationModules
 		}
 	};
 		
+
 	class CayfAutomationModulesSrc2Snk: public CayfAutomationModulesCommon, public CayfAutomationModuleHandlerIf
 	{
 	
@@ -152,6 +155,7 @@ namespace CayfAutomationModules
 			jvxComponentIdentification tp_src,
 			jvxComponentIdentification tp_sink,
 			std::list<ayfConnectConfigCpEntryRuntime>& elm,
+			IayfEstablishedProcessesCommon* sglElmPtr,
 			const std::string& oconNameSrc,
 			const std::string& iconNameSink,			
 			jvxSize& bridgeId,
@@ -166,8 +170,9 @@ namespace CayfAutomationModules
 
 		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() override;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) override;
+		virtual jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
+		virtual jvxErrorType post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain) override;
 
-		virtual void pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain);
 		virtual jvxErrorType on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr);
 
 		virtual void print(std::ostream& out);

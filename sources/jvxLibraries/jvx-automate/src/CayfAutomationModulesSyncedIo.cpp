@@ -136,7 +136,7 @@ namespace CayfAutomationModules
 			jvxBool established = false;
 
 			IayfEstablishedProcessesCommon* realizeChainPtr = this->allocate_chain_realization();
-			IayfEstablishedProcessesSyncio& realizeChain = *(realizeChainPtr->syncIoRefRef());
+			IayfEstablishedProcessesSyncio& realizeChain = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(realizeChainPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
 			realizeChain.preset(cpElm);
 
 			realizeChain.supportNodeRuntime.states.subModulesActive = true;
@@ -182,7 +182,7 @@ namespace CayfAutomationModules
 		if (elm != module_connections.end())
 		{
 			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
-			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+			IayfEstablishedProcessesSyncio& sglElm = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(sglElmPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
 			// Check that audio devices are no longer there!
 			assert(sglElmPtr->connectedProcesses().size() == 0);
 
@@ -212,7 +212,7 @@ namespace CayfAutomationModules
 		for (; elm != module_connections.end(); elm++)
 		{
 			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
-			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+			IayfEstablishedProcessesSyncio& sglElm = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(sglElmPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
 			auto elmP = sglElmPtr->connectedProcesses().begin();
 			for (; elmP != sglElmPtr->connectedProcesses().end(); elmP++)
 			{
@@ -284,7 +284,7 @@ namespace CayfAutomationModules
 			assert(elm != module_connections.end());
 
 			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
-			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+			IayfEstablishedProcessesSyncio& sglElm = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(sglElmPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
 
 			// Check if this part must be connected!!
 
@@ -411,7 +411,7 @@ namespace CayfAutomationModules
 		for (auto& elm : module_connections)
 		{
 			IayfEstablishedProcessesCommon* sglElmPtr = elm.second;
-			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+			IayfEstablishedProcessesSyncio& sglElm = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(sglElmPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
 			if (sglElm.supportNodeRuntime.derivedConfig.allowPostPonedConnect)
 			{
 				jvxBool established = false;
@@ -441,7 +441,16 @@ namespace CayfAutomationModules
 	void 
 		CayfAutomationModulesSyncedIo::deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe)
 	{
-
 		JVX_SAFE_DELETE_OBJECT(deallocMe);
 	}
-	};
+	jvxErrorType 
+		CayfAutomationModulesSyncedIo::pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain)
+	{
+		return JVX_NO_ERROR;
+	}
+	jvxErrorType
+		CayfAutomationModulesSyncedIo::post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain)
+	{
+		return JVX_NO_ERROR;
+	}
+};

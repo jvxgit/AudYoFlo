@@ -11,15 +11,20 @@ namespace CayfAutomationModules
 		public CayfEstablishedProcessesMixin
 	{
 	public:
-		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() override
+		virtual jvxHandle* specificType(ayfEstablishedProcessType tp) override
 		{
-			return this;
+			switch (tp)
+			{
+			case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK:
+				return reinterpret_cast<jvxHandle*>(static_cast<IayfEstablishedProcessesSrc2Snk*>(this));
+				break;
+			case ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO:
+				return reinterpret_cast<jvxHandle*>(static_cast<IayfEstablishedProcessesSyncio*>(this));
+				break;
+			}
+			return nullptr;
 		};
 
-		virtual IayfEstablishedProcessesSyncio* syncIoRefRef() override
-		{
-			return this;
-		};
 		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() override
 		{
 			return _connectedProcesses();
@@ -56,7 +61,7 @@ namespace CayfAutomationModules
 
 		IayfEstablishedProcessesCommon* allocate_chain_realization()override;
 		// void deallocate_chain_realization(IayfEstablishedProcessesCommon* deleteMe)override; <- take from base class
-		void pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
+		jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
 		jvxErrorType on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr)override;
 	};
 }

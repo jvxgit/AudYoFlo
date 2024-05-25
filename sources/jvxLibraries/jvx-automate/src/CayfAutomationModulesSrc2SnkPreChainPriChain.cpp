@@ -1,4 +1,4 @@
-#include "CayfAutomationModulesSrc2SnkPreChainPriChain.h"
+#include "CayfAutomationModulesCast.h"
 #include "common/CjvxObjectLog.h"
 
 namespace CayfAutomationModules
@@ -61,7 +61,7 @@ namespace CayfAutomationModules
 			assert(elm != module_connections.end());
 
 			IayfEstablishedProcessesCommon* sglElmPtr = elm->second;
-			IayfEstablishedProcessesSyncio& sglElm = *sglElmPtr->syncIoRefRef();
+			IayfEstablishedProcessesSyncio& sglElm = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(sglElmPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
 
 			// Check if this part must be connected!!
 
@@ -102,13 +102,13 @@ namespace CayfAutomationModules
 		return newChainRealization;
 	}	
 
-	void 
-	CayfAutomationModulesSrc2SnkPreChainPriChain::pre_connect_support_components(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChainArg)
+	jvxErrorType
+	CayfAutomationModulesSrc2SnkPreChainPriChain::pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChainArg)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		ayfConnectConfigCpEntrySyncIoRuntime cpElm(config_syncio);
 
-		IayfEstablishedProcessesSyncio& realizeChain = *(realizeChainArg->syncIoRefRef());
+		IayfEstablishedProcessesSyncio& realizeChain = *(reinterpret_cast<IayfEstablishedProcessesSyncio*>(realizeChainArg->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SYNCIO)));
 
 		cpElm.cpId = cpElm.driveSupportNodeChain.cpTp;
 		res = jvx_activateObjectInModule(refHostRefPtr, cpElm.cpId, cpElm.driveSupportNodeChain.modName, obj_dev, true, cpElm.driveSupportNodeChain.cpManipulate.manSuffix,
@@ -145,6 +145,7 @@ namespace CayfAutomationModules
 		derived.tpMaster = cpElm.cpId;
 		derived.tpSink = cpElm.cpId;
 		derived.tpSrc = CayfAutomationModulesSrc2Snk::config.tpAssign;
+		return res;
 	}
 
 	jvxErrorType

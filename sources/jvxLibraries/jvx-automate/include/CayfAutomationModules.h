@@ -30,16 +30,20 @@ namespace CayfAutomationModules
 		std::string chainName;
 	};
 
-	// Variable class
-	class IayfEstablishedProcessesSyncio;
-	class IayfEstablishedProcessesSrc2Snk;
+	enum class ayfEstablishedProcessType
+	{
+		AYF_ESTABLISHED_PROCESS_UNKNOWN,
+		AYF_ESTABLISHED_PROCESS_SRC2SNK,
+		AYF_ESTABLISHED_PROCESS_SRC2SNKPRECHAIN,
+		AYF_ESTABLISHED_PROCESS_SYNCIO
+	};
+
 	JVX_INTERFACE IayfEstablishedProcessesCommon
 	{
 	public:
 		virtual ~IayfEstablishedProcessesCommon() {};
 		virtual std::list<ayfOneConnectedProcess>& connectedProcesses() = 0;
-		virtual IayfEstablishedProcessesSrc2Snk* src2SnkRef() = 0;
-		virtual IayfEstablishedProcessesSyncio* syncIoRefRef() = 0;
+		virtual jvxHandle* specificType(ayfEstablishedProcessType tp) = 0;		
 	};
 
 	class ayfConnectConfigCpManipulate
@@ -118,6 +122,8 @@ namespace CayfAutomationModules
 
 		virtual IayfEstablishedProcessesCommon* allocate_chain_realization() = 0;
 		virtual void deallocate_chain_realization(IayfEstablishedProcessesCommon* deallocMe) = 0;
+		virtual jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) = 0;
+		virtual jvxErrorType post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain) = 0;
 	};
 
 	class ayfConnectConfigCpEntry
@@ -171,6 +177,6 @@ namespace CayfAutomationModules
 		// This flag constellation defines what to achieve when connecting.
 		// Some connections require multiple connections (-> 0x3)
 		jvxCBitField targetFlagsConnection = 0x1;
-	};
+	};	
 };
 #endif
