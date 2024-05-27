@@ -1,0 +1,5 @@
+1) Renamed folder "ayf_starter_corpack" to "ayfcorepack".
+2) Ran "flutter create --template=plugin --platforms=linux"
+3) Copied file "CMakeLists.txt" from "templates" to "linux" 
+4) Renamed "ayfcorepack" to "ayf_starter_corpack"
+

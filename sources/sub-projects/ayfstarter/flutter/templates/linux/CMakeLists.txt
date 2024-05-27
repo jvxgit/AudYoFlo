@@ -81,7 +81,6 @@ endif()
 target_include_directories(${PLUGIN_NAME} PRIVATE
 	${AYF_MINIMAL_SDK_HEADER_INCLUDES}
 	${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include
-	../common
 )
 
 target_link_directories(${PLUGIN_NAME} PRIVATE 

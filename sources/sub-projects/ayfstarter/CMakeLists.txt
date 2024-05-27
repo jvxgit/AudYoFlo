@@ -25,6 +25,7 @@ set(AYF_STARTER_AUDIONODE
   )
 jvx_addSubdirs("Configuring shared library for ayfstarter audio node" "${AYF_STARTER_AUDIONODE}" "${JVX_FOLDER_HIERARCHIE_BASE}/AudioNode")
 	
+
 if(NOT JVX_RELEASE_SDK)
 	set(AYF_STARTER_APPLICATION "")
 	if(JVX_USE_PART_WEBSERVER)
@@ -53,16 +54,28 @@ if(NOT JVX_RELEASE_SDK)
 		endif()
 	endif()	
 else()
-	
+		
 	if(JVX_FLUTTER_UI)
-		set(AYFSTARTER_HOSTCONF_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/ayfstarter-native-config_import.dll")
-		set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/jvx-flutter-native-shared_import.dll")
-		set(AYFSTARTER_FFI_PRELOAD_DLLS "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/zlib.dll,${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libfftw3-3.dll")
-		# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ayfbinrender/.ayfbinrender.env.in ${CMAKE_CURRENT_SOURCE_DIR}/ayfbinrender/.ayfbinrender.env @ONLY)
+		
+		if(${JVX_OS} MATCHES "windows")
+			message("Flutter code generation for Windows")
+			set(AYFSTARTER_HOSTCONF_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/ayfstarter-native-config_import.dll")
+			set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/jvx-flutter-native-shared_import.dll")
+			set(AYFSTARTER_FFI_PRELOAD_DLLS "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/zlib.dll,${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libfftw3-3.dll")		
+		elseif(${JVX_OS} MATCHES "linux")
+			message("Flutter code generation for linux")
+			set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libjvx-flutter-native-shared_import.so")
+			set(AYFSTARTER_FFI_PRELOAD_DLLS "")		
+		else()
+			message(FATAL_ERROR "Error: Platform ${JVX_OS} currently not supported!")
+		endif()
+		
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/example/.starter_app.env.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/example/.starter_app.env @ONLY)
-
+		message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/example/.starter_app.env.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/example/.starter_app.env")
+		
 		set(AYF_FLUTTER_WORKDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RUNTIME})
-		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json @ONLY)	
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json @ONLY)
+		message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json")	
 	endif()
 endif()
 

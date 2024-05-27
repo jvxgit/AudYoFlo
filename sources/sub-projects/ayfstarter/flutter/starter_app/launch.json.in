@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "starter_app (debug)",
+            "name": "starter_app (debug;windows)",
             "request": "launch",
             "type": "dart",
             "program": "example/lib/main.dart",
@@ -46,14 +46,34 @@
             // "cwd": "C:\\jvxrt\\build.audio.all\\release\\runtime", <- this does not work since the interpreter can not find the main.dart script
             "flutterMode": "debug",
         },
-        {
-            "name": "fernlive (profile mode)",
+         {
+            "name": "starter_app (debug;linux)",
             "request": "launch",
             "type": "dart",
+            "program": "example/lib/main.dart",
+            "deviceId": "linux",
+
+            // https://stackoverflow.com/questions/55004302/how-do-you-pass-arguments-from-command-line-to-main-in-flutter-dart
+            // https://dartcode.org/docs/launch-configuration/
             "args": [
-                "--dart-define", "MY_VAR=foo"
+                // Make sure that the sofa folder is in the runtime or the sdk folder - it often is the SDK output folder!!
+                "--dart-entrypoint-args", "--workdir",
+                "--dart-entrypoint-args", "@AYF_FLUTTER_WORKDIR@",
+                 "--dart-entrypoint-args", "--preload",
+                "--dart-entrypoint-args", "@AYF_FLUTTER_WORKDIR@/bin/zlib.dll",
+                "--dart-entrypoint-args", "--preload",
+                "--dart-entrypoint-args", "@AYF_FLUTTER_WORKDIR@/bin/libfftw3-3.dll",
+                "--dart-entrypoint-args", "--jvxdir",
+                "--dart-entrypoint-args", "jvxComponents",
+                "--dart-entrypoint-args", "--config", 
+                "--dart-entrypoint-args", "ayfstarter.jvx",
+                "--dart-entrypoint-args", "--textlog",
+                "--dart-entrypoint-args", "--verbose_dll",
+                "--dart-entrypoint-args", "--textloglev",
+                "--dart-entrypoint-args", "10"
             ],
-            "flutterMode": "profile"
-        }
-    ]
+            // "cwd": "C:\\jvxrt\\build.audio.all\\release\\runtime", <- this does not work since the interpreter can not find the main.dart script
+            "flutterMode": "debug",
+        },
+   ]
 }
