@@ -1,4 +1,4 @@
-#include "ayf-sdk-local-headers.h"
+#include "../common/ayf-sdk-local-headers.h"
 #include "include/ayfcorepack/ayfcorepack_plugin_c_api.h"
 
 #include <flutter/plugin_registrar_windows.h>

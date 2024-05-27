@@ -1,7 +1,7 @@
 #ifndef FLUTTER_PLUGIN_AYFCOREPACK_PLUGIN_H_
 #define FLUTTER_PLUGIN_AYFCOREPACK_PLUGIN_H_
 
-#include "ayf-sdk-local-headers.h"
+#include "../common/ayf-sdk-local-headers.h"
 
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>

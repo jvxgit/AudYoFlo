@@ -41,7 +41,7 @@ endif()
 list(APPEND PLUGIN_SOURCES
   "ayfcorepack_plugin.cpp"
   "ayfcorepack_plugin.h"
-  "ayf-sdk-local-headers.h"
+  "../common/ayf-sdk-local-headers.h"
   "${AYF_SDK_PATH}/software/codeFragments/jvxApplications/native-config/exports/windows/exports-flutter-native-config.def"
   "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include/ayfstarter-native-config.h"
 
@@ -70,7 +70,8 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 # Source include directories and library dependencies. Add any plugin-specific
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 # target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 
