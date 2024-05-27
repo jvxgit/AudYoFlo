@@ -74,7 +74,7 @@ set(JVX_MAX_PATH_PROP_MAT 63 CACHE STRING "Number of characters when generating 
 set(JVX_DEFAULT_NUMBER_OF_POSTPONE_ATTEMPTS_TEST 10 CACHE STRING "Number of reattempts if chain element returns a POSTPONE")
 set(JVX_COMMAND_LINE_TOKENS_BUILDIN "--textlog --verbose_dll --textloglev 10" CACHE STRING "Pre-compiled builtin command args")
 set(JVX_QT_SPLASH_TEXT_COLOR "Qt::gray" CACHE STRING "Default color for QT apps splash screen text")
-set(JVX_SUBMODULE_PASS_EXPRS "default;pass0;pass1" CACHE STRING "Submodule pass expression list.")
+set(JVX_SUBMODULE_PASS_EXPRS "default;pass0;pass1;pass2" CACHE STRING "Submodule pass expression list.")
 
 # set(AYF_WASM_INSTALL_FOLDER "" CACHE STRING "Wasm install folder")
 

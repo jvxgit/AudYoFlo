@@ -30,7 +30,7 @@ class AudYoFloUiModelSpecific extends AudYoFloUiModel
   AudYoFloPropertyStringLocal propTestme = AudYoFloPropertyStringLocal(
       'Hallo Test', "/settings/testme", "Description");
 
-  AudYoFloUiModelSpecific() {
+  AudYoFloUiModelSpecific(String routeInit) : super(routeInit) {
     textApp = 'ayfbinrender';
     imageNameApp = 'images/ayfbinrender_icons/ayfbinrender-logo.png';
 

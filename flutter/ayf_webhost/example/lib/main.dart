@@ -9,8 +9,7 @@ import '/models/ayf_ui_specific_widgets.dart';
 import 'models/ayf_be_specific.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 
-import 'package:ayf_webhost/ayf_webhost.dart'
-    if (dart.library.html) 'package:ayf_webhost/ayf_webhost.dart';
+import 'package:ayf_pack/ayf_init_host_web.dart';
 
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -43,7 +42,15 @@ void main(List<String> arguments) {
   // 2) Web browser - this will run in the web browser and not have the desktop specific features
   AudYoFloPlatformSpecific platformSpec = allocatePlatformSpecific();
   Map<String, dynamic> configArgs = {};
-  configArgs['host'] = ayfhost;
+
+// We can initialioze the corepack here
+  // ===========================================================================
+  // Optins for the host
+  // ===========================================================================
+  // ===========================================================================
+
+  // Currently, ffihost limited to windows
+  String initRoute = ayf_init_host_options(configArgs);
   configArgs['cmdArgs'] = arguments;
   platformSpec.configureSubSystem(configArgs);
 
@@ -55,7 +62,7 @@ void main(List<String> arguments) {
         ChangeNotifierProvider<AudYoFloBackendCache>(
             create: (_) => AudYoFloBackendCacheSpecific()),
         ChangeNotifierProvider<AudYoFloUiModel>(
-            create: (_) => AudYoFloUiModelSpecificWithWidget()),
+            create: (_) => AudYoFloUiModelSpecificWithWidget(initRoute)),
         ChangeNotifierProvider<AudYoFloDebugModel>(
             create: (_) => AudYoFloDebugModel()),
         /*ChangeNotifierProvider<FernliveCacheModel>(

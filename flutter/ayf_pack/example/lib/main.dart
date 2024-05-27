@@ -2,7 +2,6 @@
 https://medium.com/nonstopio/flutter-best-practices-c3db1c3cd694
 */
 
-import 'package:ayfcorepack/ayfcorepack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +9,9 @@ import '/models/ayf_ui_specific_widgets.dart';
 import 'models/ayf_be_specific.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 
-import 'package:ayf_ffihost/ayf_ffihost.dart'
-    if (dart.library.html) 'package:ayf_webhost/ayf_webhost.dart';
+import 'package:ayfcorepack/ayfcorepack.dart' as corepack;
+import 'package:ayf_pack/ayf_init_host_native.dart'
+    if (dart.library.html) 'package:ayf_pack/ayf_init_host_web.dart';
 
 // import 'package:ayf_webhost/ayf_webhost.dart';
 
@@ -44,9 +44,21 @@ void main(List<String> arguments) {
   AudYoFloPlatformSpecific platformSpec = allocatePlatformSpecific();
   Map<String, dynamic> configArgs = {};
 
-  // The core pack allows to configure the ffi backend. It pre-loads dlls and the actual host
-  configArgs['corePack'] = ayfcore;
-  configArgs['host'] = ayfhost;
+  dynamic corePack;
+
+// ===========================================================================
+  // Optins for the host
+  // ===========================================================================
+  bool forceWebHost = false;
+  if (!forceWebHost) {
+    corePack = corepack.ayfcore;
+  }
+  // ===========================================================================
+
+  // Currently, ffihost limited to windows
+  String initRoute = ayf_init_host_options(configArgs,
+      forceWebHost: forceWebHost, corePack: corePack);
+
   configArgs['cmdArgs'] = arguments;
   platformSpec.configureSubSystem(configArgs);
 
@@ -58,7 +70,7 @@ void main(List<String> arguments) {
         ChangeNotifierProvider<AudYoFloBackendCache>(
             create: (_) => AudYoFloBackendCacheSpecific()),
         ChangeNotifierProvider<AudYoFloUiModel>(
-            create: (_) => AudYoFloUiModelSpecificWithWidget()),
+            create: (_) => AudYoFloUiModelSpecificWithWidget(initRoute)),
         ChangeNotifierProvider<AudYoFloDebugModel>(
             create: (_) => AudYoFloDebugModel()),
         /*ChangeNotifierProvider<FernliveCacheModel>(

@@ -111,7 +111,7 @@ abstract class AudYoFloUiModel
   AudYoFloUiHttpConnect httpConnect = AudYoFloUiHttpConnect();
 
   // We initialize the platform specific part of the application.
-  AudYoFloUiModel() {}
+  AudYoFloUiModel(this.initRoute) {}
 
   // Pre-configure some default values
   void configureSystemParameters(AudYoFloCompileFlags flags) {

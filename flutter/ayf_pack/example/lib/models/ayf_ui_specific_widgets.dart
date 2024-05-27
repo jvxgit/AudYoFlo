@@ -51,7 +51,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
   // only the debug output and the component property viewer widget.
   // ==========================================================================
 
-  AudYoFloUiModelSpecificWithWidget() : super() {
+  AudYoFloUiModelSpecificWithWidget(String routeInit) : super(routeInit) {
     allocateBottomAppBar = allocatorBottomAppBar;
   }
 

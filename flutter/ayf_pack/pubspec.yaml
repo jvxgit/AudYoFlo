@@ -28,6 +28,12 @@ dependencies:
   ayf_pack_native:
     path: ../ayf_pack_native
 
+  ayf_ffihost:
+    path: '../ayf_ffihost'
+
+  ayf_webhost:
+    path: '../ayf_webhost'
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
