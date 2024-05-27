@@ -56,8 +56,6 @@ export 'helpers/ayf_translate_from_string.dart';
 export 'devices/ayf_devicelist_from_json.dart';
 export 'sequencer/ayf_sequencer_status_from_json.dart';
 
-export 'component-grid-widget/ayf_prop_list_combobox.dart';
-export 'component-grid-widget/ayf_prop_textfield.dart';
 export 'component-grid-widget/ayf_property_gridview.dart';
 
 export 'dialogs/ayf_settings.dart';
@@ -65,6 +63,8 @@ export 'settings/ayf_settings_property_list.dart';
 export 'settings/ayf_settings_property_list_content.dart';
 
 export 'simple-widgets/ayf_progress_property.dart';
+export 'simple-widgets/ayf_prop_list_combobox.dart';
+export 'simple-widgets/ayf_prop_textfield.dart';
 
 // =============================================================================
 // Sub widgets
