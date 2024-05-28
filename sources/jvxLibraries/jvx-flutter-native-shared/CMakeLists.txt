@@ -26,9 +26,13 @@ set(LOCAL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx-flutter-native.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-flutter-forward.cpp
-	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/exports/${JVX_OS}/exports-flutter-native.def
+	
   )
 
+# Add the shared object export definition
+add_export_definition_linker(LOCAL_SOURCES LOCAL_LINKER_FLAGS ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/exports/${JVX_OS}/exports-flutter-native.def)
+
+# message(FATAL_ERROR "XYX -> ${LOCAL_SOURCES}")
 set(LOCAL_LIBS jvx-flutter-native-static_static)
 
 ## ======================================================================

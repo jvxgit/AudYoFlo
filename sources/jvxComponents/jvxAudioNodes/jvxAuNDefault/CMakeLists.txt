@@ -19,3 +19,5 @@ set(LOCAL_LIBS jvx-component-templates-base_static)
 set(IS_JVX_COMPONENT TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+# message(FATAL_ERROR "Hier")

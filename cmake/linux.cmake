@@ -61,8 +61,10 @@ if(JVX_GCC_LINKER_SYMBOLIC)
 endif()
 
 # Flags for shared objects with export file list
-set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_COMPONENTS "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,--retain-symbols-file=${JVX_BASE_ROOT}/software/exports/components/linux/exports.def")
-set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_LOCAL "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,--retain-symbols-file=${JVX_BASE_ROOT}/software/exports/components/linux/exports.def")
+#set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_COMPONENTS "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,--retain-symbols-file=${JVX_BASE_ROOT}/software/exports/components/linux/exports.def")
+#set(JVX_CMAKE_LINKER_FLAGS_SHARED_EXPORT_LOCAL "${JVX_CMAKE_LINKER_FLAGS_SHARED} -Wl,--retain-symbols-file=${JVX_BASE_ROOT}/software/exports/components/linux/exports.def")
+set(JVX_EXPORTS_SHARED_COMPONENT "${JVX_BASE_ROOT}/software/exports/components/${JVX_OS}/exports.def")
+# set(JVX_EXPORTS_SHARED_LOCAL "${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports.def")
 
 # Flags for static libraries
 
@@ -118,6 +120,15 @@ set(JVX_PRE_EXIT_MATLAB_HOOK "pause(1);")
 ###
 # macros
 ###
+
+function(add_export_definition_linker sourceslst linkerflags fileName)
+
+	# In linux, export files are added as linker options
+	set(linkerflags "${linkerflags} -Wl,--retain-symbols-file=${fileName}")
+	
+	# We add this def file anyway to show up in project tables
+	set(sourceslst "${sourceslst} ${fileName}")
+endfunction(add_export_definition_linker)
 
 # configure FFT library
 macro (find_fft)

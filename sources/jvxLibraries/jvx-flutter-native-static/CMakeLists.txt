@@ -28,9 +28,11 @@ include_directories(
   # Add local sources (header files only for project workspace generation!) 
 set(LOCAL_SOURCES 
 	
-	${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports-flutter-native.def 
+	# We do not need this here!
+	# ${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports-flutter-native.def 
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_local.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_macros.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_api.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_host_config.h
 

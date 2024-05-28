@@ -14,8 +14,9 @@ set(LOCAL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/ayf-embedding-proxy-entries.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/${JVX_OS}/ayf-embedding-libs.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ayf-embedding-proxy.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-embedding-proxy.def)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ayf-embedding-proxy.cpp)
+
+add_export_definition_linker(LOCAL_SOURCES LOCAL_LINKER_FLAGS ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-embedding-proxy.def)
 
 set(BUILD_SHARED TRUE)
 
