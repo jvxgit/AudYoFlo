@@ -397,7 +397,7 @@ JVX_STATIC_INLINE int jvx_wait_for_notification_ii_clear_l(JVX_NOTIFY_HANDLE* hd
 JVX_STATIC_INLINE int jvx_wait_for_notification_ii_ms_l(JVX_NOTIFY_HANDLE* hdl, jvxSize timeoutmsec)
 {
 	struct timespec tt;
-	struct timeval tp;
+	// struct timeval tp;
 
 	int res = clock_gettime(JVX_GLOBAL_CLOCK_SOURCE/*CLOCK_MONOTONIC*//*CLOCK_PROCESS_CPUTIME_ID*/, &tt);
 

@@ -178,7 +178,7 @@
 
 JVX_STATIC_INLINE void JVX_INIT_LOCALE(const char* newL)
 {
-  char *oldLocale = setlocale(LC_NUMERIC, NULL);
+  // char *oldLocale = setlocale(LC_NUMERIC, NULL);
   char *locale = setlocale(LC_NUMERIC, newL);
   std::cout << "Set LC_NUMERIC to " << locale << std::endl;
 }
@@ -294,7 +294,7 @@ JVX_FINDFIRSTFILE_WC(JVX_HANDLE_DIR dirH, const char* dirName, const char* fName
                 else
                 {
                     // This rule for files without any extension
-                    if(fNameExt == "")
+                    if((std::string)"" == fNameExt)
                     {
                         break;
                     }
@@ -377,7 +377,7 @@ JVX_FINDNEXTFILE(DIR*& dirH, JVX_DIR_FIND_DATA& fData, const char* fNameExt)
                 else
                 {
                     // This rule for files without any extension
-                    if(fNameExt == "")
+                    if((std::string)"" == fNameExt)
                     {
                         found = true;
                         break;

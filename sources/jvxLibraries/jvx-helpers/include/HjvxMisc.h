@@ -1019,11 +1019,11 @@ typename std::vector<T>::iterator jvx_findItemSelectorInList_one(std::vector<T>&
 template<typename T, typename T_sel0, typename T_sel1>
 typename std::vector<T>::iterator jvx_findItemSelectorInList_two(std::vector<T>& lst, const T_sel0& selection0, const T_sel1& selection1)
 {
-	jvxSize i;
+	// jvxSize i;
 	typename std::vector<T>::iterator elm = lst.begin();
 	for (; elm != lst.end(); elm++)
 	{
-		jvxBool foundit = false;
+		// jvxBool foundit = false;
 		if (
 			(elm->selector0 == selection0) &&
 			(elm->selector1 == selection1))

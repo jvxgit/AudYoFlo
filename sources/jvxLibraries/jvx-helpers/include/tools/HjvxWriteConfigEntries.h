@@ -17,7 +17,7 @@ HjvxConfigProcessor_writeEntry_assignment(IjvxConfigProcessor* theReader,
 	jvxErrorType res = JVX_NO_ERROR;
 
 	jvxConfigData* datTmp = NULL;
-	jvxData valD = 0;
+	// jvxData valD = 0;
 
 	jvxAccessRightFlags_rwcd* acc_flags_ptr = NULL;
 	jvxConfigModeFlags* cfg_flags_ptr = NULL;
@@ -72,7 +72,7 @@ HjvxConfigProcessor_writeEntry_1dList(IjvxConfigProcessor* theReader, jvxConfigD
 
 	jvxConfigData* datTmp = NULL;
 
-	jvxSize num = 0;
+	// jvxSize num = 0;
 //	jvxDataList* lst = NULL;
 
 	jvxAccessRightFlags_rwcd* acc_flags_ptr = NULL;
@@ -125,7 +125,7 @@ HjvxConfigProcessor_writeEntry_1dList(IjvxConfigProcessor* theReader, jvxConfigD
 		jvxErrorType res = JVX_NO_ERROR;
 
 		jvxConfigData* datTmp = NULL;
-		jvxSize num = 0;
+		// jvxSize num = 0;
 //		jvxDataList* lst = NULL;
 
 		jvxAccessRightFlags_rwcd* acc_flags_ptr = NULL;
