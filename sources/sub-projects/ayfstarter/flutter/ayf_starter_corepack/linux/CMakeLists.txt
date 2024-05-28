@@ -96,6 +96,12 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 	${AYF_CORE_PACK_LIB}
 	)
 
+target_compile_features(${PLUGIN_NAME} PRIVATE cxx_std_17)
+
+target_compile_options(${PLUGIN_NAME} PRIVATE "-Wno-error")
+target_compile_options(${PLUGIN_NAME} PRIVATE "-Wno-unused-variable")
+target_compile_options(${PLUGIN_NAME} PRIVATE "-Wno-unused-function")
+
 set(AYF_COPY_DLLS 
 	"${AYF_SDK_PATH}/bin/${AYF_CORE_PACK_LIB}"
 	)

@@ -8,6 +8,9 @@
 
 #include <cstring>
 
+#include <string>
+extern std::string fileNameModule;
+
 #define AYFCOREPACK_PLUGIN(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), ayfcorepack_plugin_get_type(), \
                               AyfcorepackPlugin))
@@ -41,6 +44,8 @@ static void ayfcorepack_plugin_handle_method_call(
     g_autoptr(FlValue) mapReturn = fl_value_new_map();
 		//flutter::EncodableMap retMap;    
 		
+    std::string fNameModule = fileNameModule;
+
     fl_value_set(mapReturn, fl_value_new_string("loadedModule"),
                    fl_value_new_string("123"));//ayfcorepack::AyfcorepackPlugin::fileNameModule.c_str()));
     // retMap[flutter::EncodableValue("loadedModule")] = flutter::EncodableValue(ayfcorepack::AyfcorepackPlugin::fileNameModule);		

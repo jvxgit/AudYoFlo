@@ -2,6 +2,7 @@
 #define FLUTTER_PLUGIN_AYFCOREPACK_PLUGIN_H_
 
 #include <flutter_linux/flutter_linux.h>
+#include <string>
 
 G_BEGIN_DECLS
 
@@ -10,6 +11,8 @@ G_BEGIN_DECLS
 #else
 #define FLUTTER_PLUGIN_EXPORT
 #endif
+
+std::string fileNameModule = "not-set";
 
 typedef struct _AyfcorepackPlugin AyfcorepackPlugin;
 typedef struct {
