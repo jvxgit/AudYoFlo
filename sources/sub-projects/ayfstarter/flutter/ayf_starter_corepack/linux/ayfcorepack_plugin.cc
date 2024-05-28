@@ -35,6 +35,9 @@ static void ayfcorepack_plugin_handle_method_call(
   } 
   else if (strcmp(method, "getEntryPoints") == 0)
   {
+    // https://levelup.gitconnected.com/writing-plugins-for-linux-in-flutter-38e46bd7872f
+    // https://api.flutter.dev/linux-embedder/fl__value_8h.html
+
     g_autoptr(FlValue) mapReturn = fl_value_new_map();
 		//flutter::EncodableMap retMap;    
 		
