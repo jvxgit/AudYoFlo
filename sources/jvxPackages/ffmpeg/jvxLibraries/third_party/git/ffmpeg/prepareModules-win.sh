@@ -10,46 +10,29 @@
 
 folder="ffmpeg-$postfix"
 
+# Activate the verbose mode!!
+set -x
+
 echo "Checking for existence of folder $folder"
 if [ ! -d $folder ]; then
 	
 	# Commit id = 05438db02437e241a418e266a354bf4e7be7ac59
-	echo git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
-	git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+	git  clone https://github.com/FFmpeg/FFmpeg.git ffmpeg
 	cd ffmpeg
 	git checkout 05438db02437e241a418e266a354bf4e7be7ac59
 	cd ..
 	
-	echo patch -R -p0 --binary < ffmpeg-fft-oc.patch
 	patch -R -p0 --binary < ffmpeg-fft-oc.patch
-
-	echo patch -R -p0 --binary <  ffmpeg-dbg-ffprobe.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-ffprobe.patch
-
-	echo patch -R -p0 --binary <  ffmpeg-dbg-fdctdsp.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-fdctdsp.patch
-
-	echo patch -R -p0 --binary <  ffmpeg-dbg-hevcdsp.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-hevcdsp.patch
-
-	echo patch -R -p0 --binary  <  ffmpeg-dbg-v210i.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-v210i.patch
-
-	echo patch -R -p0 --binary < ffmpeg-dbg-v210enci.patch
 	patch -R -p0 --binary < ffmpeg-dbg-v210enci.patch
-
-	echo patch -R -p0 --binary <  ffmpeg-dbg-vs1dsp.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-vs1dsp.patch
-
-	echo patch -R -p0 --binary < ffmpeg-dbg-vf-convi.patch
 	patch -R -p0 --binary < ffmpeg-dbg-vf-convi.patch
-
-	echo patch -R -p0 --binary <  ffmpeg-dbg-vf-gbluri.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-vf-gbluri.patch
-
-	echo patch -R -p0 --binary <  ffmpeg-dbg-rtmp.patch
 	patch -R -p0 --binary <  ffmpeg-dbg-rtmp.patch
-	
+
 	mv ffmpeg $folder
 else
 	echo "Folder $folder already exists"
@@ -57,14 +40,12 @@ fi
 
 if [ -d $folder ]; then
 	
-	echo cd $folder
 	cd $folder
 	
 	echo "Checking for existence of subfolder lib"
 	if [ ! -d "lib" ]; then
 		
-		echo ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --prefix=./
-		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --prefix=./
+		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --prefix=./ --disable-htmlpages --disable-manpages
 		
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
