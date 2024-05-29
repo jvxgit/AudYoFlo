@@ -121,13 +121,18 @@ set(JVX_PRE_EXIT_MATLAB_HOOK "pause(1);")
 # macros
 ###
 
-function(add_export_definition_linker sourceslst linkerflags fileName)
+function(add_export_definition_linker varNameSourcesLst varNameLinkerflags varNameFile)
 
-	# In linux, export files are added as linker options
-	set(linkerflags "${linkerflags} -Wl,--retain-symbols-file=${fileName}")
+	message("===add_export_definition_linker===> Enter with arguments - ${varNameSourcesLst} ${varNameLinkerflags} ${varNameFile}")
 	
 	# We add this def file anyway to show up in project tables
-	set(sourceslst "${sourceslst} ${fileName}")
+	set(${varNameSourcesLst} ${varNameFile} PARENT_SCOPE)
+	
+	# In linux, export files are added as linker options
+	set(${varNameLinkerflags} "-Wl,--retain-symbols-file=${varNameFile}" PARENT_SCOPE)
+		
+	# message(FATAL_ERROR "===add_export_definition_linker===> Sources with added entry, ${varNameSourcesLst} = ${${varNameSourcesLst}}")
+	
 endfunction(add_export_definition_linker)
 
 # configure FFT library
