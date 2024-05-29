@@ -25,24 +25,31 @@ echo "Making zip release in folder $pwdvar"
 export PATH=$PATH:$pwdvar/../../../../bin/tools
 echo "Running zip release with path=$PATH"
 
-echo "flutter build $2"
-flutter build $2
+echo "flutter build $2 $6"
+flutter build $2 $6
+
+if [[ "$6" == "--debug" ]]
+then
+	subfolder=Debug
+else
+	subfolder=Release
+fi
 
 if [[ "$2" == "web" ]]
 then
 	# What to do here??
 	echo "Compiling for target web"
 else
-	echo cp $1/.$3.env build/$sysfolder/runner/Release/data/flutter_assets
-	cp $1/.$3.env build/$sysfolder/runner/Release/data/flutter_assets
+	echo cp $1/.$3.env build/$sysfolder/runner/$subfolder/data/flutter_assets
+	cp $1/.$3.env build/$sysfolder/runner/$subfolder/data/flutter_assets
 
 	if [ -d "$4/$3" ]; then
 		echo "rm -rf $4/$3"
 		rm -rf $4/$3
 	fi
 
-	echo "mv build/$sysfolder/runner/Release $4/$3"
-	mv build/$sysfolder/runner/Release $4/$3
+	echo "mv build/$sysfolder/runner/$subfolder $4/$3"
+	mv build/$sysfolder/runner/$subfolder $4/$3
 fi
 
 echo "Flutter app preparation completed!"

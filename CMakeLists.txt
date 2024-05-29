@@ -1255,6 +1255,14 @@ else(JVX_COMPILE_BUILDTOOLS)
     endif()
 
   else(NOT JVX_RELEASE_SDK)
+  
+	if(${CMAKE_BUILD_TYPE} MATCHES "^(Debug)$")
+		FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/.bv "DEBUG")
+	else()
+		FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/.bv "RELEASE")
+	endif()
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/.bv DESTINATION ${INSTALL_PATH_RELEASE_ROOT})
+	
     configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake @ONLY)	
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
     install(DIRECTORY ${JVX_BASE_ROOT}/cmake-sdk DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake FILES_MATCHING PATTERN "*.cmake")
