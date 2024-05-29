@@ -94,6 +94,7 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 
 	# This is the minimum package libs aggregation: 
 	${AYF_CORE_PACK_LIB}
+	jvx-system-base_static
 	)
 
 target_compile_features(${PLUGIN_NAME} PRIVATE cxx_std_17)

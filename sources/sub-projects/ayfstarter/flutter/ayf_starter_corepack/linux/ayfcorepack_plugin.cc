@@ -1,5 +1,3 @@
-#include "ayf-sdk-local-headers.h"
-
 #include "include/ayfcorepack/ayfcorepack_plugin.h"
 
 #include <flutter_linux/flutter_linux.h>
@@ -9,7 +7,8 @@
 #include <cstring>
 
 #include <string>
-extern std::string fileNameModule;
+#include "../common/ayf-sdk-local-headers.h"
+#include "jvx_platform.h"
 
 #define AYFCOREPACK_PLUGIN(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), ayfcorepack_plugin_get_type(), \
@@ -44,10 +43,10 @@ static void ayfcorepack_plugin_handle_method_call(
     g_autoptr(FlValue) mapReturn = fl_value_new_map();
 		//flutter::EncodableMap retMap;    
 		
-    std::string fNameModule = fileNameModule;
-
+    std::string externalAccessModuleName = JVX_GET_CURRENT_MODULE_PATH((void*)flutter_config_open);
     fl_value_set(mapReturn, fl_value_new_string("loadedModule"),
-                   fl_value_new_string("123"));//ayfcorepack::AyfcorepackPlugin::fileNameModule.c_str()));
+                   fl_value_new_string(externalAccessModuleName.c_str()));
+    //ayfcorepack::AyfcorepackPlugin::fileNameModule.c_str()));
     // retMap[flutter::EncodableValue("loadedModule")] = flutter::EncodableValue(ayfcorepack::AyfcorepackPlugin::fileNameModule);		
 
     fl_value_set(mapReturn, fl_value_new_string("moduleEntryAddress"), fl_value_new_int((intptr_t)flutter_config_open)); 

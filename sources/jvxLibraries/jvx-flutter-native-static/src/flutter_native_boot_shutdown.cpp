@@ -41,6 +41,7 @@ DartApiEntry_function FindFunctionPointer(const DartApiEntry* entries,
 	return NULL;
 }
 
+JVX_FLUTTER_LIB_BEGIN
 void InitDartApiDL(void* data)
 {
 	DartApi* dart_api_data = (DartApi*)data;
@@ -73,6 +74,7 @@ void InitDartApiDL(void* data)
 		const DartApiEntry* it = dart_api_function_pointers;
 
 }
+JVX_FLUTTER_LIB_END
 
 // =========================================================================
 
