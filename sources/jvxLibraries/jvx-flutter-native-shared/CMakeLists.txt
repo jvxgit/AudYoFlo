@@ -30,9 +30,9 @@ set(LOCAL_SOURCES
   )
 
 # Add the shared object export definition
-add_export_definition_linker(LOCAL_SOURCES LOCAL_LINKER_FLAGS ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/exports/${JVX_OS}/exports-flutter-native.def)
-
-# message(FATAL_ERROR "XYX -> ${LOCAL_SOURCES}")
+add_export_definition_linker(EXPORT_SOURCES EXPORT_LINKER_FLAGS ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/exports/${JVX_OS}/exports-flutter-native.def)
+set(LOCAL_SOURCES ${LOCAL_SOURCES} ${EXPORT_SOURCES})
+set(LOCAL_LINKER_FLAGS ${LOCAL_LINKER_FLAGS} ${EXPORT_LINKER_FLAGS})
 set(LOCAL_LIBS jvx-flutter-native-static_static)
 
 ## ======================================================================
@@ -56,8 +56,11 @@ if(JVX_OS MATCHES "windows")
 	include(InstallRequiredSystemLibraries)
 endif()
 
+# message(FATAL_ERROR "XYX -> LOCAL_SOURCES = ${LOCAL_SOURCES} -- LOCAL_LINKER_FLAGS = ${LOCAL_LINKER_FLAGS}")
+
 # 
 # Befehl				=	O:\ayfdevelop\AudYoFlo\flutter\ayfbinrender\ayfbinrender\build\windows\runner\Debug\ayfBinRender.exe
 # Befehlsargumente		=   --workdir C:\jvxrt\audio-sdk\release\sdk --preload C:\jvxrt\audio-sdk\release\sdk\bin\zlib.dll --preload C:\jvxrt\audio-sdk\release\sdk\bin\libfftw3-3.dll --jvxdir jvxComponents --config ayfbinrender.jvx --textlog --verbose_dll --textloglev 10
 # Arbeitsverzeichnis	=   C:\jvxrt\audio-sdk\release\sdk
 #
+
