@@ -55,7 +55,8 @@ void AyfcorepackPlugin::HandleMethodCall(
     else if (method_call.method_name().compare("getEntryPoints") == 0)
   {
 		flutter::EncodableMap retMap;
-		retMap[flutter::EncodableValue("loadedModule")] = flutter::EncodableValue(ayfcorepack::AyfcorepackPlugin::fileNameModule);		
+    std::string externalAccessModuleName = JVX_GET_CURRENT_MODULE_PATH(flutter_config_open);
+		retMap[flutter::EncodableValue("loadedModule")] = flutter::EncodableValue(externalAccessModuleName);
 		/*
          * Do not activatze this part since it requires extra libs to be included
         retMap[flutter::EncodableValue("loadedModuleShort")] = flutter::EncodableValue(

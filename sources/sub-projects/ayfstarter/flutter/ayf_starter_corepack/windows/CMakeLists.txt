@@ -97,6 +97,9 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 	# This is the minimum package libs aggregation: 
 	${AYF_CORE_PACK_LIB}
 		
+	# We need this lib to derive the module name
+	jvx-system-base_static.lib
+
 	# These packages would be necessary otherwise
 	# jvx-helpers_static.lib
 	# jvx-system-min_static.lib
