@@ -1,14 +1,12 @@
 #ifndef __FLUTTER_NATIVE_MACROS_H__
 #define __FLUTTER_NATIVE_MACROS_H__
 
-#ifdef JVX_DEFINE_EXTERN_C_API
-#define JVX_OPTIONAL_EXTERN_C_START extern "C" {}
-#define JVX_OPTIONAL_EXTERN_C_STOP }
-
+#ifdef __cplusplus
+#define JVX_FLUTTER_LIB_BEGIN extern "C" {
+#define JVX_FLUTTER_LIB_END }
 #else
-
-#define JVX_OPTIONAL_EXTERN_C_START
-#define JVX_OPTIONAL_EXTERN_C_STOP
+#define JVX_FLUTTER_LIB_BEGIN
+#define JVX_FLUTTER_LIB_END
 #endif
 
 #endif

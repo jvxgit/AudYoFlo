@@ -1,9 +1,5 @@
 #include "flutter_native_local.h"
 
-extern int ffi_host_allocate_char_array(const std::string& txt, char** txtOnReturn);
-extern void ffi_host_allocate_process_handle(struct one_process** ptrRet);
-extern int ffi_host_delete(void* ptr, ffiDeleteDatatype tp);
-
 struct one_process* ffi_process_handle_for_uid(void* opaque_hdl, int uId)
 {
 	struct one_process* retPtr = nullptr;

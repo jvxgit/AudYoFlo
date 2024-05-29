@@ -3,7 +3,7 @@
 
 #include "flutter_native_macros.h"
 
-JVX_OPTIONAL_EXTERN_C_START
+JVX_FLUTTER_LIB_BEGIN
 
 #include "flutter_native_types.h"
 
@@ -75,7 +75,7 @@ JVX_OPTIONAL_EXTERN_C_START
 	// We might change this in the future
 	// void InitDartApiDL(void* data);
 
-JVX_OPTIONAL_EXTERN_C_STOP
+	JVX_FLUTTER_LIB_END
 
 //! Dll main default implementation
 #define NATIVE_DLL_DEFINE_DLL_MAIN \

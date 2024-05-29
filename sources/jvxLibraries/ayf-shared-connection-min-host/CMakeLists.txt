@@ -20,7 +20,9 @@ set(LOCAL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfGlobalHostClass.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CayfConnectionHostDll.cpp)
   
-add_export_definition_linker(LOCAL_SOURCES LOCAL_LINKER_FLAGS ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-connect-host.def)
+add_export_definition_file(EXPORT_SOURCES EXPORT_LINKER_FLAGS ${CMAKE_CURRENT_SOURCE_DIR}/src/exports/${JVX_OS}/exports-connect-host.def)
+set(LOCAL_SOURCES ${LOCAL_SOURCES} ${EXPORT_SOURCES})
+set(LOCAL_LINKER_FLAGS ${LOCAL_LINKER_FLAGS} ${EXPORT_LINKER_FLAGS})
 
 set(BUILD_SHARED TRUE)
 

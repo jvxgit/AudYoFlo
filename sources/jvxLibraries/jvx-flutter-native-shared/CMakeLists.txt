@@ -30,9 +30,10 @@ set(LOCAL_SOURCES
   )
 
 # Add the shared object export definition
-add_export_definition_linker(EXPORT_SOURCES EXPORT_LINKER_FLAGS ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/exports/${JVX_OS}/exports-flutter-native.def)
+add_export_definition_file(EXPORT_SOURCES EXPORT_LINKER_FLAGS ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-flutter-native-static/exports/${JVX_OS}/exports-flutter-native.def)
 set(LOCAL_SOURCES ${LOCAL_SOURCES} ${EXPORT_SOURCES})
 set(LOCAL_LINKER_FLAGS ${LOCAL_LINKER_FLAGS} ${EXPORT_LINKER_FLAGS})
+
 set(LOCAL_LIBS jvx-flutter-native-static_static)
 
 ## ======================================================================

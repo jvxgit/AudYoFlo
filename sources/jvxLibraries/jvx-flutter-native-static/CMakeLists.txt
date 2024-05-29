@@ -78,6 +78,7 @@ set(LOCAL_LIBS
 
 set(BUILD_STATIC TRUE)
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
+set(CREATE_OBJECT_LIBRARY TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
 

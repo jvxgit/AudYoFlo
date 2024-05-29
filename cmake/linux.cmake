@@ -121,9 +121,9 @@ set(JVX_PRE_EXIT_MATLAB_HOOK "pause(1);")
 # macros
 ###
 
-function(add_export_definition_linker varNameSourcesLst varNameLinkerflags varNameFile)
+function(add_export_definition_file varNameSourcesLst varNameLinkerflags varNameFile)
 
-	message("===add_export_definition_linker===> Enter with arguments - ${varNameSourcesLst} ${varNameLinkerflags} ${varNameFile}")
+	# message("===add_export_definition_linker===> Enter with arguments - ${varNameSourcesLst} ${varNameLinkerflags} ${varNameFile}")
 	
 	# We add this def file anyway to show up in project tables
 	set(${varNameSourcesLst} ${varNameFile} PARENT_SCOPE)
@@ -133,7 +133,7 @@ function(add_export_definition_linker varNameSourcesLst varNameLinkerflags varNa
 		
 	# message(FATAL_ERROR "===add_export_definition_linker===> Sources with added entry, ${varNameSourcesLst} = ${${varNameSourcesLst}}")
 	
-endfunction(add_export_definition_linker)
+endfunction(add_export_definition_file)
 
 # configure FFT library
 macro (find_fft)

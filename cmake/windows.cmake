@@ -237,16 +237,16 @@ endif()
 
 include(${JVX_CMAKE_DIR}/install-libs.cmake)
 
-function(add_export_definition_linker varNameSourcesLst varNameLinkerflags varNameFile)
+function(add_export_definition_file varNameSourcesLst varNameLinkerflags varNameFile)
 
 	# message("===add_export_definition_linker===> Enter with arguments - ${varNameSourcesLst} ${varNameLinkerflags} ${varNameFile}")
 	
-	# In windows, export files are added as source files. DO NOT USE /"
-	set(${varNameSourcesLst} ${${varNameSourcesLst}} ${varNameFile} PARENT_SCOPE)
+	# We add this def file anyway to show up in project tables
+	set(${varNameSourcesLst} ${varNameFile} PARENT_SCOPE)
+			
+	# message(FATAL_ERROR "===add_export_definition_linker===> Sources with added entry, ${varNameSourcesLst} = ${${varNameSourcesLst}}")
 	
-	# message("===add_export_definition_linker===> Sources with added entry, ${varNameSourcesLst} = ${${varNameSourcesLst}}")
-	
-endfunction(add_export_definition_linker)
+endfunction(add_export_definition_file)
 
 # configure FFT library
 macro (find_fft)

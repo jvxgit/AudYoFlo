@@ -1,11 +1,5 @@
 #include "flutter_native_local.h"
 
-jvxErrorType ffi_properties_descriptor_property_core(
-    struct one_property_full_plus*& propRef,
-    IjvxProperties* props, jvxCallManagerProperties& callGate,
-    jvx::propertyAddress::IjvxPropertyAddress& ident,
-    int descr_depth);
-
 struct one_property_comp* ffi_properties_request_handle(void* opaque_hdl, struct component_ident* cpIdArg)
 {
     struct one_property_comp* retPtr = nullptr;

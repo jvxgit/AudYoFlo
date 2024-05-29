@@ -4,10 +4,9 @@
 #include "jvxLibHost.h"
 #include "flutter_native_host_config.h"
 
-extern "C"
-{
 #include "flutter_native_api.h"
-}
+
+JVX_FLUTTER_LIB_BEGIN
 
 void ffi_get_libhost_pointer(void* opaque_hdl, jvxLibHost*& ll);
 void assign_report_functions(callbacks_capi* capi);
@@ -34,6 +33,19 @@ void ffi_host_allocate_ss_list(
 	jvxSize sz, jvxBool isDevice);
 
 void ffi_host_allocate_component_ident(struct component_ident** ptrRet, const jvxComponentIdentification& cpId);
+
+// For local use in flutter_native_processes.cpp
+int ffi_host_allocate_char_array(const std::string& txt, char** txtOnReturn);
+void ffi_host_allocate_process_handle(struct one_process** ptrRet);
+int ffi_host_delete(void* ptr, ffiDeleteDatatype tp);
+
+// For local use in flutter_native_properties.cpp
+jvxErrorType ffi_properties_descriptor_property_core(
+	struct one_property_full_plus*& propRef,
+	IjvxProperties* props, jvxCallManagerProperties& callGate,
+	jvx::propertyAddress::IjvxPropertyAddress& ident,
+	int descr_depth);
+JVX_FLUTTER_LIB_END
 
 extern jvxErrorType __last_error;
 #define JRE __last_error = JVX_NO_ERROR
