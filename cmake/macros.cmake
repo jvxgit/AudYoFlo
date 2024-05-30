@@ -92,7 +92,8 @@ macro(jvx_genMatProperties targetname componenttype componentprefix localfilelis
 			# pcg_mat_opts "${localoptions}")
 			# message("--> 1 ${localoptions} 2")	
 			# Added some quotes for systems with spaces in path
-			install(CODE "exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
+			# install(CODE "exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
+			install(CODE "execute_process(COMMAND \"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
 		endforeach()
 		install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked} DESTINATION ${INSTALL_PATH_MATLAB_SUBPROJECT})
 	endif()
