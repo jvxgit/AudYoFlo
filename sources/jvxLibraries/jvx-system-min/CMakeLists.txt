@@ -6,7 +6,7 @@ set(PROJECT_NAME jvx-system-min)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 if(JVX_GENERATE_VERSION_TAG_DUMMY)
-	configure_file(include/jvx_system_config_dummy.h ${CMAKE_CURRENT_BINARY_DIR}/jvx_system_config.h)
+	configure_file(include/jvx_system_config_dummy.h.in ${CMAKE_CURRENT_BINARY_DIR}/jvx_system_config.h)
 else()
 	if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/jvx_system_config.h" OR JVX_FORCE_GENERATE_NEW_VERSION_TAG)
 		message("${CMAKE_CURRENT_BINARY_DIR}/jvx_system_config.h generated since tags have changed.")
