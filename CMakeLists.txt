@@ -446,6 +446,10 @@ else(JVX_COMPILE_BUILDTOOLS)
     if(NOT EXISTS ${FLUTTER_SDK_PATH})
       message(FATAL_ERROR "The environment variable <FLUTTER_SDK_PATH> must be set if compiling Flutter support - it is <${FLUTTER_SDK_PATH}> but that folder seems to not exist.")
     endif()
+	
+	# Run install commands in flutter subfolder
+	add_subdirectory(./flutter)
+	
   endif()
 
   if(NOT ${JVX_OS} MATCHES "windows")
