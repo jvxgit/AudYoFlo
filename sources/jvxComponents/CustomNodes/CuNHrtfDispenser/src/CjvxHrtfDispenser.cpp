@@ -97,8 +97,13 @@ CjvxHrtfDispenser::activate()
 		}
 		jvxSize slotId = jvx_bitfieldSelection2Id(genHrtfDispenser_node::binaural_rendering_select.slot_definition);
 		jvxSize selDatabase = theDispenser->selected_database(slotId);
+
 		jvx_bitZSet(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.selection(0), selDatabase);
 
+		genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.resize(genHrtfDispenser_node::binaural_rendering_select.slot_definition.value.entries.size());
+		CjvxProperties::_update_property_size(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.num, 
+			genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.category, genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.globalIdx, false);
+		structToProperty();
 	}
 	return res;
 }
@@ -307,20 +312,34 @@ CjvxHrtfDispenser::get_configuration(
 	return res;
 }
 
+void
+CjvxHrtfDispenser::structToProperty()
+{
+	jvxSize i;
+	jvxSize num = 0;
+	theDispenser->number_slots(num);
+	for(i = 0; i < num; i++)
+	{ 
+		jvxSize slotId = theDispenser->selected_database(i);
+		if (i < genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.num)
+		{
+			jvx_bitZSet(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.selection(i), slotId);
+		}
+	}
+}
+
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHrtfDispenser, select_sofa_file)
 {
-	jvxSize newIdx = jvx_bitfieldSelection2Id(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db);
-	jvxSize slotId = jvx_bitfieldSelection2Id(genHrtfDispenser_node::binaural_rendering_select.slot_definition);
-
+	jvxSize newIdx = jvx_bitfieldSelection2Id(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db, tune.offsetStart);
 	if (JVX_CHECK_SIZE_SELECTED(newIdx))
 	{
-		theDispenser->select_database(newIdx, slotId);
+		theDispenser->select_database(newIdx, tune.offsetStart);
 		/*
 	 		jvxSize idxDB = theDispenser->selected_database(slotId);
 			jvx_bitZSet(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.selection(), idxDB);
 			CjvxProperties::add_property_report_collect(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.descriptor.c_str());
 		*/
-
+		structToProperty();
 	}
 	return JVX_NO_ERROR;
 }
@@ -328,6 +347,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHrtfDispenser, select_sofa_fi
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHrtfDispenser, select_hrtf_slot)
 {
+	/*
 	jvxSize newIdx = jvx_bitfieldSelection2Id(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db);
 	jvxSize slotId = jvx_bitfieldSelection2Id(genHrtfDispenser_node::binaural_rendering_select.slot_definition);
 
@@ -337,6 +357,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxHrtfDispenser, select_hrtf_sl
 		jvx_bitZSet(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.selection(), idxDB);
 		CjvxProperties::add_property_report_collect(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.descriptor.c_str());
 	}
+	*/
 	return JVX_NO_ERROR;
 }
 

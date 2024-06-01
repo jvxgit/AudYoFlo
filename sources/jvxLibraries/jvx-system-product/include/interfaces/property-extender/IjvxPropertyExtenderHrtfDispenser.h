@@ -17,7 +17,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION slot_descrption(jvxSize idx, jvxApiString& description) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION bind(jvxSize* samplerate, jvxSize slotId) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION bind(jvxSize* samplerate) = 0;
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_length_hrir(jvxSize& length_hrir, jvxSize* loadId, jvxSize slotId) = 0;
 	/* Get HRIR pair from SOFA database. 

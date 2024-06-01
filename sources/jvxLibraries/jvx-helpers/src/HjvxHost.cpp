@@ -165,63 +165,93 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 					for (j = 0; j < cntRequired; j++)
 					{
 						assert(ptrComp[j]); // <- this was counted before
-
-						if (verboseOutput)
+						if (ptrComp[j] != (std::string)"__skip__")
 						{
-							std::cout << "==== ==== " << __FUNCTION__ << ": Activating component < " << ptrComp[j] << ">." << std::endl;
-						}
 
-						stat = JVX_STATE_NONE;
-						jvxBool runme = true;
-						jvxSize numC = 0;
-						tpIdN.slotid = j;
-						while (runme)
-						{
-							res = hHost->state_selected_component(tpIdN, &stat);
-							switch (stat)
+							if (verboseOutput)
 							{
-							case JVX_STATE_NONE:
-								res = hHost->number_components_system(tpIdN, &numC);
-								for (k = 0; k < numC; k++)
-								{
-									jvxComponentAccessType accTp = JVX_COMPONENT_ACCESS_UNKNOWN;;
-									res = hHost->module_reference_component_system(tpIdN, k, &astr, &accTp);
-									// std::cout << __FUNCTION__ << ": Checking module <" << astr.std_str() << "> vs <" << ptrComp[j] << ">." << std::endl;
-									if (astr.std_str() == ptrComp[j])
-									{
-										res = hHost->state_selected_component(tpIdN, &stat);
-										assert(res == JVX_NO_ERROR);
+								std::cout << "==== ==== " << __FUNCTION__ << ": Activating component < " << ptrComp[j] << ">." << std::endl;
+							}
 
-										res = hHost->select_component(tpIdN, k);
-										assert(res == JVX_NO_ERROR);
-										
+							stat = JVX_STATE_NONE;
+							jvxBool runme = true;
+							jvxSize numC = 0;
+							tpIdN.slotid = j;
+							while (runme)
+							{
+								elm_notfound = "";
+								res = hHost->state_selected_component(tpIdN, &stat);
+								switch (stat)
+								{
+								case JVX_STATE_NONE:
+									res = hHost->number_components_system(tpIdN, &numC);
+									{
+										for (k = 0; k < numC; k++)
+										{
+											jvxComponentAccessType accTp = JVX_COMPONENT_ACCESS_UNKNOWN;;
+											res = hHost->module_reference_component_system(tpIdN, k, &astr, &accTp);
+											// std::cout << __FUNCTION__ << ": Checking module <" << astr.std_str() << "> vs <" << ptrComp[j] << ">." << std::endl;
+											if (astr.std_str() == ptrComp[j])
+											{
+												res = hHost->state_selected_component(tpIdN, &stat);
+												assert(res == JVX_NO_ERROR);
+
+												res = hHost->select_component(tpIdN, k);
+												assert(res == JVX_NO_ERROR);
+
+												break;
+											}
+										}
+										res = hHost->state_selected_component(tpIdN, &stat);
+										if (stat == JVX_STATE_NONE)
+										{
+											// Problem: module not found
+											res = JVX_ERROR_ELEMENT_NOT_FOUND;
+											elm_notfound = ptrComp[j];
+											runme = false;
+										}
+										break;
+								case JVX_STATE_SELECTED:
+									res = hHost->activate_selected_component(tpIdN);
+									if (res != JVX_NO_ERROR)
+									{
+										elm_notfound = ptrComp[j];
+										runme = false;
 										break;
 									}
-								}
-								res = hHost->state_selected_component(tpIdN, &stat);
-								if (stat == JVX_STATE_NONE)
-								{
-									// Problem: module not found
-									res = JVX_ERROR_ELEMENT_NOT_FOUND;
-									elm_notfound = ptrComp[j];
-									runme = false;
-								}
-								break;
-							case JVX_STATE_SELECTED:
-								res = hHost->activate_selected_component(tpIdN);
-								if (res != JVX_NO_ERROR)
-								{
-									elm_notfound = ptrComp[j];
+									res = hHost->state_selected_component(tpIdN, &stat);
+									break;
+								case JVX_STATE_ACTIVE:
 									runme = false;
 									break;
+								default:
+									assert(0);
+									}
 								}
-								res = hHost->state_selected_component(tpIdN, &stat);
-								break;
-							case JVX_STATE_ACTIVE:
-								runme = false;
-								break;
-							default:
-								assert(0);
+
+								
+								switch (res)
+									{
+									case JVX_ERROR_ELEMENT_NOT_FOUND:
+										std::cout << jvx::coutColor(jvx::coutColor::cc::FG_RED) << "#### " << __FUNCTION__ << ": During default activation of modules for component type "
+											<< jvxComponentIdentification_txt(tpIdN) << ": Activation of module " << elm_notfound << " failed: " << jvxErrorType_descr(res) << "."
+											<< jvx::coutColor(jvx::coutColor::cc::FG_DEFAULT) << std::endl;
+										// jvx::coutColor(jvx::coutColor::cc::BG_RED)   jvx::coutColor()
+										// assert(0);
+										break;
+									case JVX_ERROR_INVALID_SETTING:
+										std::cout << "#### " << __FUNCTION__ << ": During default activation of modules for component type " << jvxComponentIdentification_txt(tpIdN) << ": Not enough slots available to activate all required modules." << std::endl;
+										// assert(0); 
+										break;
+									default:
+										if (res != JVX_NO_ERROR)
+										{
+											std::cout << "#### " << __FUNCTION__ << ": During default activation of modules for component type " << jvxComponentIdentification_txt(tpIdN) << ": Error <" << jvxErrorType_descr(res) << "> on activation of required modules." << std::endl;
+											// assert(0); 
+										}
+										break;
+									}
+								
 							}
 						}
 					} // for (j = 0; j < cntRequired; j++)
@@ -239,24 +269,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 
 			//if (verboseOutput)
 			//{
-				switch (res)
-				{
-				case JVX_ERROR_ELEMENT_NOT_FOUND:
-				  std::cout << "#### " <<  __FUNCTION__ << ": During default activation of modules for component type " << jvxComponentIdentification_txt(tpIdN) << ": Activation of module " << elm_notfound << " failed." << std::endl;
-					// assert(0);
-					break;
-				case JVX_ERROR_INVALID_SETTING:
-					std::cout << "#### " << __FUNCTION__ << ": During default activation of modules for component type " << jvxComponentIdentification_txt(tpIdN) << ": Not enough slots available to activate all required modules." << std::endl;
-					// assert(0); 
-					break;
-				default:
-					if (res != JVX_NO_ERROR)
-					{
-					  std::cout << "#### " << __FUNCTION__ << ": During default activation of modules for component type " << jvxComponentIdentification_txt(tpIdN) << ": Error <" << jvxErrorType_descr(res) << "> on activation of required modules." << std::endl;
-						// assert(0); 
-					}
-					break;
-				}
+				
 			//}
 		} // if (ptrComp)
 

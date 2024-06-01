@@ -22,7 +22,7 @@ class CjvxQtSaWidgetWrapper_elementbase
 protected:
 	QWidget* theWidget;
 
-	CjvxQtSaWidgetWrapper_elementbase(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, jvxBool allowRead, jvxBool allowWrite);
+	CjvxQtSaWidgetWrapper_elementbase(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, jvxBool allowRead, jvxBool allowWrite, jvxSize offsetArg = 0);
 
 	CjvxMaWrapperElementTreeWidget* cbk;
 	jvxPropertyDescriptor connectedProp;
@@ -34,7 +34,7 @@ protected:
 	CjvxQtSaWidgetWrapper* myBackwardRef;
 	jvxBool allowRead;
 	jvxBool allowWrite;
-
+	jvxSize idxOffset = 0;
 	jvx::propertyAddress::CjvxPropertyAddressDescriptor ident;
 	jvx::propertyDetail::CjvxTranferDetail trans;
 
@@ -52,7 +52,7 @@ class QComboBox_fdb : public QComboBox, public CjvxQtSaWidgetWrapper_elementbase
 
 public:
 
-	QComboBox_fdb(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxBool allowRead, jvxBool allowWrite);
+	QComboBox_fdb(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxBool allowRead, jvxBool allowWrite, jvxSize idxOffset = 0);
 	virtual bool update_window();
 	virtual void focusInEvent(QFocusEvent* e);
 	virtual void focusOutEvent(QFocusEvent* e);
@@ -83,7 +83,6 @@ public slots:
 	void newSliderPosition();
 };
 
-
 class QLineEdit_fdb : public QLineEdit, public CjvxQtSaWidgetWrapper_elementbase
 {
 	Q_OBJECT
@@ -95,6 +94,20 @@ public:
 	virtual bool update_window();
 	virtual void focusInEvent(QFocusEvent* e);
 	virtual void focusOutEvent(QFocusEvent* e);
+
+public slots:
+	virtual void newText();
+};
+
+class QLineEdit_fdb_slot : public QLineEdit_fdb
+{
+	Q_OBJECT
+	jvxSize offsetStart = 0;
+
+public:
+
+	QLineEdit_fdb_slot(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxSize offsetStart);
+	virtual bool update_window() override;
 
 public slots:
 	void newText();

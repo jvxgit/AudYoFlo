@@ -76,7 +76,7 @@ ayfHrtfDispenser::get_length_hrir(jvxSize& length_hrir, jvxSize* loadIdArg, jvxS
 
 
 jvxErrorType
-ayfHrtfDispenser::bind(jvxSize* samplerateArg, jvxSize slotId)
+ayfHrtfDispenser::bind(jvxSize* samplerateArg)
 {
 	if (statDispenser >= jvxState::JVX_STATE_INIT)
 	{
@@ -100,16 +100,19 @@ ayfHrtfDispenser::bind(jvxSize* samplerateArg, jvxSize slotId)
 		if (!samplerateArg) return JVX_ERROR_INVALID_ARGUMENT;
 
 		this->samplerate = *samplerateArg;
-		if (slotId < dataBaseSlots.size())
+		//if (slotId < dataBaseSlots.size())
+		for(auto& elm: dataBaseSlots)
 		{
 			JVX_LOCK_MUTEX(safeAccess);
-			load_selected_database_inlock(dataBaseSlots[slotId].activeDatabase, slotId);
+			load_selected_database_inlock(elm.activeDatabase, elm.idx);
 			JVX_UNLOCK_MUTEX(safeAccess);
 		}
+		/*
 		else
 		{
 			return JVX_ERROR_ID_OUT_OF_BOUNDS;
 		}
+		*/
 		statDispenser = jvxState::JVX_STATE_ACTIVE;
 		return JVX_NO_ERROR;
 	}

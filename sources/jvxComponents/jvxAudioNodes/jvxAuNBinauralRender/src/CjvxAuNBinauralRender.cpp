@@ -48,6 +48,10 @@ CjvxAuNBinauralRender::select(IjvxObject* owner)
 		genBinauralRender_node::allocate__global__if_ext();
 		genBinauralRender_node::register__global__if_ext(static_cast<CjvxProperties*>(this));
 
+		genBinauralRender_node::init__local__hrtf_rendering();
+		genBinauralRender_node::allocate__local__hrtf_rendering();
+		genBinauralRender_node::register__local__hrtf_rendering(static_cast<CjvxProperties*>(this));
+
 		genBinauralRender_node::register_callbacks(static_cast<CjvxProperties*>(this),
 			set_extend_ifx_reference, update_source_direction, update_active_slot,
 			reinterpret_cast<jvxHandle*>(this), NULL);
@@ -64,8 +68,12 @@ CjvxAuNBinauralRender::unselect()
 	if (res == JVX_NO_ERROR)
 	{
 		genBinauralRender_node::unregister_callbacks(static_cast<CjvxProperties*>(this), nullptr);
-		genBinauralRender_node::unregister_all(static_cast<CjvxProperties*>(this));
-		genBinauralRender_node::deallocate_all();
+		
+		genBinauralRender_node::unregister__local__hrtf_rendering(static_cast<CjvxProperties*>(this));
+		genBinauralRender_node::deallocate__local__hrtf_rendering();
+
+		genBinauralRender_node::unregister__global__if_ext(static_cast<CjvxProperties*>(this));
+		genBinauralRender_node::deallocate__global__if_ext();
 
 		res = CjvxBareNode1ioRearrange::unselect();
 	}
@@ -111,7 +119,7 @@ CjvxAuNBinauralRender::deactivate()
 			threads.cpPtr->terminate();
 		}
 		retInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS, threads);
-
+		
 		genBinauralRender_node::deassociate__local__source_direction(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::unregister__local__source_direction(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::deallocate__local__source_direction();
@@ -149,7 +157,7 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// _common_set_icon.theData_in->con_params
 
 	jvxSize samplerate = _common_set_icon.theData_in->con_params.rate;
-	theHrtfDispenser->bind(&samplerate, 0); 
+	theHrtfDispenser->bind(&samplerate); 
 
 	// Allocate renderer
 	render_pri = allocate_renderer(_common_set_icon.theData_in->con_params.buffersize,
@@ -284,6 +292,8 @@ CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_
 	if (JVX_CHECK_SIZE_SELECTED(slotIdHrtfs))
 	{
 		jvxSize length_hrir;
+
+		// If the update is ongoing, there might be a moment 
 		this->theHrtfDispenser->get_length_hrir(length_hrir, &loadId, slotIdHrtfs);
 		if (renderer->loadId == loadId)
 		{

@@ -83,7 +83,7 @@ public:
 
 	jvxErrorType number_slots(jvxSize& num) override;
 	jvxErrorType slot_descrption(jvxSize idx, jvxApiString& description)override;
-	jvxErrorType bind(jvxSize* samplerate, jvxSize slotId) override;
+	jvxErrorType bind(jvxSize* samplerate) override;
 
 	// ==============================================================================
 

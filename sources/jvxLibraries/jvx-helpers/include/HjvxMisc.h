@@ -650,6 +650,36 @@ namespace jvx {
 
 		void resetComponentIdOnUnset(jvxComponentIdentification& tp);
 	}
+
+	// The following code from here:
+	// https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
+	class coutColor 
+	{
+	public:
+		enum class cc
+		{
+			FG_RED = 31,
+			FG_GREEN = 32,
+			FG_BLUE = 34,
+			FG_DEFAULT = 39,
+			BG_RED = 41,
+			BG_GREEN = 42,
+			BG_BLUE = 44,
+			BG_DEFAULT = 49
+		};
+
+		cc code = cc::BG_DEFAULT;
+	public:
+		coutColor(cc pCode = cc::BG_DEFAULT) : code(pCode)
+		{
+		};
+
+		friend std::ostream&
+			operator<<(std::ostream& os, const coutColor& mod) {
+			return os << "\033[1;" << (int)mod.code << "m";
+		}
+	};
+
 }
 
 void 

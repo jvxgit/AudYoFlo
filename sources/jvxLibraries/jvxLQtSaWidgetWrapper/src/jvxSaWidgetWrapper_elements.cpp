@@ -2,7 +2,14 @@
 #include "CjvxMaWrapperElementTreeWidget.h"
 #include "CjvxQtSaWidgetWrapper.h"
 
-CjvxQtSaWidgetWrapper_elementbase::CjvxQtSaWidgetWrapper_elementbase(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, jvxBool allowReadArg, jvxBool allowWriteArg) :
+#define JVX_USER_ROLE_TREEWIDGET_PROPERTY_PARAM_BASE (Qt::UserRole + 6)
+#define JVX_USER_ROLE_TREEWIDGET_PROPERTY_DESCR (Qt::UserRole + 5)
+#define JVX_USER_ROLE_TREEWIDGET_PROPERTY_ID_ARRAY (Qt::UserRole + 8)
+Q_DECLARE_METATYPE(basePropInfos);
+Q_DECLARE_METATYPE(jvxPropertyDescriptor);
+Q_DECLARE_METATYPE(QTreeWidgetItem*);
+
+CjvxQtSaWidgetWrapper_elementbase::CjvxQtSaWidgetWrapper_elementbase(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, jvxBool allowReadArg, jvxBool allowWriteArg, jvxSize offsetArg) :
 	cbk(cb), it(assoc), theWidget(NULL)
 {
 	jvxSize idxArray = 0;
@@ -10,10 +17,11 @@ CjvxQtSaWidgetWrapper_elementbase::CjvxQtSaWidgetWrapper_elementbase(QTreeWidget
 	myBackwardRef = cbk->getBackwardReference();
 	allowRead = allowReadArg;
 	allowWrite = allowWriteArg;
+	idxOffset = offsetArg;
 };
 
-QComboBox_fdb::QComboBox_fdb(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxBool allowReadArg, jvxBool allowWriteArg) :
-	QComboBox(parent), CjvxQtSaWidgetWrapper_elementbase(assoc, cb, allowReadArg, allowWriteArg)
+QComboBox_fdb::QComboBox_fdb(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxBool allowReadArg, jvxBool allowWriteArg, jvxSize idxOffset) :
+	QComboBox(parent), CjvxQtSaWidgetWrapper_elementbase(assoc, cb, allowReadArg, allowWriteArg, idxOffset)
 {
   connect(this, SIGNAL(activated(int)), this, SLOT(newSelection(int)));
 
@@ -45,7 +53,7 @@ QComboBox_fdb::update_window()
 				{
 					token = connectedProp.descriptor.std_str();
 					ident.reset(token.c_str());
-					trans.reset(false, 0, connectedProp.decTp);
+					trans.reset(false, idxOffset, connectedProp.decTp);
 					res = propRefLoc->get_property(callGate, jPRG( 
 						&selLst, 1, connectedProp.format), 
 						ident, trans);
@@ -188,6 +196,9 @@ QComboBox_fdb::newSelection(int sel)
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxCallManagerProperties callGate;
 	std::string token;
+	QVariant varI = this->getMyWidget()->property("JVX_MY_TREEWIDGET_ITEM");
+	QTreeWidgetItem* theItem = NULL;
+
 	if (cbk)
 	{
 		cbk->propertyReference(&propRefLoc);
@@ -200,7 +211,7 @@ QComboBox_fdb::newSelection(int sel)
 				{
 					token = connectedProp.descriptor.std_str();
 					ident.reset(token.c_str());
-					trans.reset(true, 0, connectedProp.decTp);
+					trans.reset(true, idxOffset, connectedProp.decTp);
 					res = propRefLoc->get_property(callGate, jPRG(&selLst, 1, connectedProp.format), ident, trans);
 					switch (connectedProp.decTp)
 					{
@@ -223,7 +234,7 @@ QComboBox_fdb::newSelection(int sel)
 					}
 					token = connectedProp.descriptor.std_str();
 					ident.reset(token.c_str());
-					trans.reset(true, 0, connectedProp.decTp, false);
+					trans.reset(true, idxOffset, connectedProp.decTp, false);
 					res = propRefLoc->set_property(callGate, 
 						jPRG(&selLst, 1, connectedProp.format),
 						ident, trans);
@@ -715,6 +726,48 @@ QLineEdit_fdb::newText()
 		cbk->editingCompleted(static_cast<CjvxQtSaWidgetWrapper_elementbase*>(this));
 	}
 };
+
+// =========================================================================================
+// =========================================================================================
+
+QLineEdit_fdb_slot::QLineEdit_fdb_slot(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxSize offsetStartArg) :
+	QLineEdit_fdb(assoc, cb, parent, true, true), offsetStart(offsetStartArg)
+{	
+};
+
+bool 
+QLineEdit_fdb_slot::update_window()
+{
+	this->setText(jvx_size2String(offsetStart).c_str());
+	return true;
+}
+
+void 
+QLineEdit_fdb_slot::newText()
+{
+	int newOffset = this->text().toInt();
+
+	QVariant varOffset = this->getMyWidget()->property("JVX_MY_TREEWIDGET_ITEM_OFFSET");
+	QTreeWidgetItem* theItem = NULL;
+
+	if (varOffset.isValid())
+	{
+		theItem = varOffset.value<QTreeWidgetItem*>();
+		if (theItem)
+		{
+			QVariant var2 = theItem->data(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_DESCR);
+			if (var2.isValid())
+			{
+				jvxPropertyDescriptor propD = var2.value<jvxPropertyDescriptor>();				
+				if (newOffset < propD.num)
+				{
+					theItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_ID_ARRAY, QVariant::fromValue(newOffset));
+				}
+			}			
+		}
+	}
+	cbk->editingCompleted(static_cast<CjvxQtSaWidgetWrapper_elementbase*>(this));
+}
 
 // =========================================================================================
 // =========================================================================================

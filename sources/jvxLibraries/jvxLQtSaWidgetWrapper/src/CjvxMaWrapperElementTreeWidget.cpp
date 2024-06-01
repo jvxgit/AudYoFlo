@@ -1402,6 +1402,8 @@ CjvxMaWrapperElementTreeWidget::treeWidgetItemDblClicked(QTreeWidgetItem* theIte
 	QComboBox_fdb* newCB = NULL;
 	QCheckBox_fdb* newCE = NULL; 
 	QLineEdit_fdb* newLE = NULL;
+	QLineEdit_fdb* newLEOffset = nullptr;
+
 	QSlider_fdb* newSL = NULL;
 	std::string compTag, propName;
 	std::vector<std::string> lst;
@@ -1561,13 +1563,28 @@ CjvxMaWrapperElementTreeWidget::treeWidgetItemDblClicked(QTreeWidgetItem* theIte
 					}
 					break;
 				case JVX_DATAFORMAT_SELECTION_LIST:
-					if (allowRead || allowWrite)
+
+					if (col == 4)
 					{
-						newCB = new QComboBox_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
-						uiRefTp->setItemWidget(theItem, 1, newCB);
-						newCB->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
-						newCB->update_window();
-						newWidget = newCB;
+						if (propD.num > 1)
+						{
+							// if(myBaseProps)
+							newLEOffset = new QLineEdit_fdb_slot(theItem, this, uiRefTp, idxArray);
+							uiRefTp->setItemWidget(theItem, 4, newLEOffset);
+							newLEOffset->setProperty("JVX_MY_TREEWIDGET_ITEM_OFFSET", QVariant::fromValue<QTreeWidgetItem*>(theItem));
+							newLEOffset->update_window();
+						}
+					}
+					else
+					{
+						if (allowRead || allowWrite)
+						{
+							newCB = new QComboBox_fdb(theItem, this, uiRefTp, allowRead, allowWrite, idxArray);
+							uiRefTp->setItemWidget(theItem, 1, newCB);
+							newCB->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
+							newCB->update_window();
+							newWidget = newCB;
+						}
 					}
 					break;
 				case JVX_DATAFORMAT_STRING_LIST:
@@ -1593,20 +1610,42 @@ CjvxMaWrapperElementTreeWidget::treeWidgetItemDblClicked(QTreeWidgetItem* theIte
 void 
 CjvxMaWrapperElementTreeWidget::editingCompleted(CjvxQtSaWidgetWrapper_elementbase* theWidgetToClose)
 {
-	QVariant var = theWidgetToClose->getMyWidget()->property("JVX_MY_TREEWIDGET_ITEM");
-	QTreeWidgetItem* theItem = NULL;
-	if (var.isValid())
+	QVariant varOffset = theWidgetToClose->getMyWidget()->property("JVX_MY_TREEWIDGET_ITEM_OFFSET");
+	QTreeWidgetItem* theItem = NULL; 
+	
+	if (varOffset.isValid())
 	{
-		theItem = var.value<QTreeWidgetItem*>();
-	}
-	removeCurrentWidget(theWidgetToClose);
-	if (theItem)
-	{
-		updateWindowUiElement(theItem, 1, false);
+		theItem = varOffset.value<QTreeWidgetItem*>();
+		if (theItem)
+		{
+			removeCurrentWidget(theWidgetToClose);
+		}
+		if (theItem)
+		{
+			updateWindowUiElement(theItem, 1, false);
+		}
+		else
+		{
+			updateWindow_core();
+		}
 	}
 	else
 	{
-		updateWindow_core();
+		QVariant var = theWidgetToClose->getMyWidget()->property("JVX_MY_TREEWIDGET_ITEM");
+		
+		if (var.isValid())
+		{
+			theItem = var.value<QTreeWidgetItem*>();
+		}
+		removeCurrentWidget(theWidgetToClose);
+		if (theItem)
+		{
+			updateWindowUiElement(theItem, 1, false);
+		}
+		else
+		{
+			updateWindow_core();
+		}
 	}
 }
 
@@ -1625,14 +1664,21 @@ CjvxMaWrapperElementTreeWidget::removeCurrentWidget(CjvxQtSaWidgetWrapper_elemen
 	QVariant var;
 	if (oldWidget)
 	{
+		jvxSize colIdx = 1;
 		var = oldWidget->getMyWidget()->property("JVX_MY_TREEWIDGET_ITEM");
+		if (!var.isValid())
+		{
+			var = oldWidget->getMyWidget()->property("JVX_MY_TREEWIDGET_ITEM_OFFSET");
+			colIdx = 4;
+		}
+
 		if (var.isValid())
 		{
 			QTreeWidgetItem* oldItem = var.value<QTreeWidgetItem*>();
 			if (oldItem)
 			{
 				// We need to set the reference manually, otherwise the app will crash on shutdown..
-				uiRefTp->setItemWidget(oldItem, 1, NULL);
+				uiRefTp->setItemWidget(oldItem, colIdx, NULL);
 			}
 		}
 		if (forceImmediate)

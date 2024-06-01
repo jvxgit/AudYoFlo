@@ -78,6 +78,11 @@
        <string>Property Group ID</string>
       </property>
      </column>
+     <column>
+      <property name="text">
+       <string>Offset</string>
+      </property>
+     </column>
      <item>
       <property name="text">
        <string>PLACEHOLDER_PROP_NAME</string>

@@ -37,6 +37,9 @@ public:
 
 protected:
 	ayfHrtfDispenser* theDispenser = nullptr;
+
+private:
+	void structToProperty();
 };
 
 #endif
