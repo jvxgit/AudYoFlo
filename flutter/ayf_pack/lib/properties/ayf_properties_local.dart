@@ -41,6 +41,8 @@ class AudYoFloPropertyContainer {
   // Descriptor to address
   String descriptor;
 
+  Map<String, dynamic> attachedSpecific = {};
+
   AudYoFloPropertyContainer(
       this.jvxFormat, this.num, this.descriptor, this.description);
 

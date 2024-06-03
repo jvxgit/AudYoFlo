@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
@@ -203,6 +204,15 @@ class _AudYoFloPropertySingleWidgetState
 }
 
 // =============================================================
+class ayfSelListNOpts {
+  int selIdx = 0;
+  bool modeShowOffset = false;
+}
+
+enum ayfSpecificOperation {
+  AYF_SPECIFIC_PROPERTY_SELECTIONLIST_NONE,
+  AYF_SPECIFIC_PROPERTY_SELECTIONLIST_NOPTS
+}
 
 class AudYoFloPropertyShow extends StatefulWidget {
   final AudYoFloPropertyContainer? propDescr;
@@ -245,11 +255,12 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
         if (widget.propDescr is AudYoFloPropertyContentBackend) {
           AudYoFloPropertyContentBackend propNat =
               widget.propDescr! as AudYoFloPropertyContentBackend;
-          ttip = propNat.descriptor +
-              '-' +
-              propNat.toHelperString() +
-              ': ' +
-              propNat.origin;
+          String helpText = propNat.toHelperString();
+          ttip = propNat.descriptor;
+          if (helpText.isNotEmpty) {
+            ttip += ' -- $helpText';
+          }
+          ttip += ': ${propNat.origin}';
 
           if (requirePropUpdate) {
             AudYoFloBackendCache theBeCache =
@@ -266,6 +277,8 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
       }
 
       Widget contentWidget = Text(currentValueText);
+      ayfSpecificOperation specOper =
+          ayfSpecificOperation.AYF_SPECIFIC_PROPERTY_SELECTIONLIST_NONE;
 
       if (widget.propDescr != null) {
         switch (widget.propDescr!.jvxFormat) {
@@ -273,13 +286,80 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
             if (widget.propDescr! is AudYoFloPropertySelectionListBackend) {
               AudYoFloPropertySelectionListBackend selLst =
                   widget.propDescr! as AudYoFloPropertySelectionListBackend;
-              if (selLst.parpropms.num == 1) {
-                contentWidget = AudYoFloPropListComboBoxWidget(
-                    selLstBe: selLst, height: 40);
-              } else {
-                contentWidget = AudYoFloSimpleTextField(
-                    propBe: selLst.parpropms, height: 40);
+
+              ayfSelListNOpts nOpts = ayfSelListNOpts();
+
+              // If we see a selection with multiple options, we
+              // need to allow to select the options in UI as well.
+              // For this purpose, we can add additional data in the property given the
+              // map for specific options. Here, we can load and store the data as required.
+              // The map will be deleted if the property descriptor is reported to be updated
+              if (selLst.parpropms.num > 1) {
+                specOper = ayfSpecificOperation
+                    .AYF_SPECIFIC_PROPERTY_SELECTIONLIST_NOPTS;
+
+                // Check if an offset was stored before
+                var attMap = widget.propDescr?.attachedSpecific;
+                if (attMap != null) {
+                  var attMapEntry = attMap.entries.firstWhereOrNull(
+                      (element) => element.key == 'gridWidgetSelLstNOpts');
+                  if (attMapEntry != null) {
+                    if (attMapEntry.value is ayfSelListNOpts) {
+                      nOpts = attMapEntry.value as ayfSelListNOpts;
+                    }
+                  }
+                }
+                if (nOpts.selIdx >= selLst.parpropms.num) {
+                  nOpts.selIdx = 0;
+                }
               }
+              // ============================================================
+
+              Widget? newWidget;
+              if (nOpts.modeShowOffset && selLst.parpropms.num > 1) {
+                contentWidget = AudYoFloActiveTextField(
+                  onEditingComplete: (String val) {
+                    // ============================================================
+                    // This callback is reached if we have edited a new offset value in case of a
+                    // selection list with multiple options
+                    int? selIdx = int.tryParse(val);
+                    if (selIdx != null) {
+                      setState(() {
+                        var attMap = widget.propDescr?.attachedSpecific;
+                        if (attMap != null) {
+                          ayfSelListNOpts nOpts = ayfSelListNOpts();
+                          var attMapEntry = attMap.entries.firstWhereOrNull(
+                              (element) =>
+                                  element.key == 'gridWidgetSelLstNOpts');
+                          if (attMapEntry != null) {
+                            if (attMapEntry.value is ayfSelListNOpts) {
+                              nOpts = attMapEntry.value as ayfSelListNOpts;
+                            }
+                          }
+                          nOpts.modeShowOffset = false;
+                          nOpts.selIdx = selIdx;
+                          attMap['gridWidgetSelLstNOpts'] = nOpts;
+                        }
+                      });
+                    }
+                    // ============================================================
+                  },
+                  showTextOnBuild: nOpts.selIdx.toString(),
+                  haveCommandHistory: false,
+                );
+              } else {
+                newWidget = AudYoFloPropListComboBoxWidget(
+                  selLstBe: selLst,
+                  height: 40,
+                  offset: nOpts.selIdx,
+                );
+
+                contentWidget = newWidget;
+              }
+              // else {
+              // contentWidget = AudYoFloSimpleTextField(
+              //    propBe: selLst.parpropms, height: 40);
+              //}
             }
             break;
 
@@ -323,6 +403,30 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
           }
           FlutterClipboard.copy(txt)
               .then((value) => print('Copied $txt to clipboard'));
+        },
+        onSecondaryLongPress: () {
+          // ============================================================
+          // We add a callbacl in case a long press has occurred. Then, we can configure specific
+          // aspects
+          if (specOper ==
+              ayfSpecificOperation.AYF_SPECIFIC_PROPERTY_SELECTIONLIST_NOPTS) {
+            // Toggle mode
+            setState(() {
+              var attMap = widget.propDescr?.attachedSpecific;
+              if (attMap != null) {
+                ayfSelListNOpts nOpts = ayfSelListNOpts();
+                var attMapEntry = attMap.entries.firstWhereOrNull(
+                    (element) => element.key == 'gridWidgetSelLstNOpts');
+                if (attMapEntry != null) {
+                  if (attMapEntry.value is ayfSelListNOpts) {
+                    nOpts = attMapEntry.value as ayfSelListNOpts;
+                  }
+                }
+                nOpts.modeShowOffset = !nOpts.modeShowOffset;
+                attMap['gridWidgetSelLstNOpts'] = nOpts;
+              }
+            });
+          }
         },
         onDoubleTap: () {
           String txt = '';

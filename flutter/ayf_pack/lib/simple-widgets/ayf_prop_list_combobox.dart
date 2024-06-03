@@ -16,7 +16,7 @@ class AudYoFloPropLstSelEntry {
 // The set-operation may report change of property OR change of component
 // in backend cache.
 // ===========================================================================
-class AudYoFloPropListComboBoxWidget extends StatefulWidget {
+class AudYoFloPropListComboBoxWidget extends StatelessWidget {
   final AudYoFloPropertySelectionListBackend? selLstBe;
   final AudYoFloPropertyMultiStringBackend? strLstBe;
   final AudYoFloPropertySelectionListLocal? selLstLo;
@@ -25,6 +25,7 @@ class AudYoFloPropListComboBoxWidget extends StatefulWidget {
   final double height;
   final int numCharsMax = 25;
   final String prefix;
+  final int offset;
 
   /* This combobox can be used to control backend and local 
     properties. There should always be either selLstBe or 
@@ -39,20 +40,8 @@ class AudYoFloPropListComboBoxWidget extends StatefulWidget {
           AyfPropertyReportLevel.AYF_BACKEND_REPORT_COMPONENT_PROPERTY_COLLECT,
       this.invalidatePropOnSet = true,
       this.height = 40,
-      this.prefix = ' '});
-
-  @override
-  State<StatefulWidget> createState() {
-    return _AudYoFloPropSelectionListComboBox();
-  }
-}
-
-// ===========================================================================
-
-class _AudYoFloPropSelectionListComboBox
-    extends State<AudYoFloPropListComboBoxWidget> {
-  AudYoFloBackendCache? theBeCache;
-  AudYoFloUiModel? theUiModel;
+      this.prefix = ' ',
+      this.offset = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -63,52 +52,46 @@ class _AudYoFloPropSelectionListComboBox
     List<AudYoFloPropLstSelEntry> entriesCombo = [];
     AudYoFloPropLstSelEntry? sel;
 
+    AudYoFloBackendCache? theBeCache;
+    AudYoFloUiModel? theUiModel;
     // Get model contexts
     theBeCache = Provider.of<AudYoFloBackendCache>(context, listen: false);
     theUiModel = Provider.of<AudYoFloUiModel>(context, listen: false);
 
-    String noSelectionHint = 'No Select';
-
-    if (widget.selLstBe != null) {
+    if (selLstBe != null) {
       // Backend property
-      for (var sgl in widget.selLstBe!.parpropms.entries) {
+      for (var sgl in selLstBe!.parpropms.entries) {
         AudYoFloPropLstSelEntry newEntry = AudYoFloPropLstSelEntry();
         newEntry.txt = sgl;
         newEntry.posi = posi;
-        newEntry.isSel = widget.selLstBe!.selection.bitTest(posi);
+        newEntry.isSel = selLstBe!.selection.bitTest(posi, offset: offset);
         if (newEntry.isSel) {
-          if (sel == null) {
-            sel = newEntry;
-          }
+          sel ??= newEntry;
         }
         entriesCombo.add(newEntry);
         posi++;
       }
-    } else if (widget.selLstLo != null) {
+    } else if (selLstLo != null) {
       // Frontend property
-      for (var sgl in widget.selLstLo!.entries) {
+      for (var sgl in selLstLo!.entries) {
         AudYoFloPropLstSelEntry newEntry = AudYoFloPropLstSelEntry();
         newEntry.txt = sgl;
         newEntry.posi = posi;
-        newEntry.isSel = widget.selLstLo!.selection.bitTest(posi);
+        newEntry.isSel = selLstLo!.selection.bitTest(posi, offset: offset);
         if (newEntry.isSel) {
-          if (sel == null) {
-            sel = newEntry;
-          }
+          sel ??= newEntry;
         }
         entriesCombo.add(newEntry);
         posi++;
       }
-    } else if (widget.strLstBe != null) {
+    } else if (strLstBe != null) {
       // Frontend property
-      for (var sgl in widget.strLstBe!.entries) {
+      for (var sgl in strLstBe!.entries) {
         AudYoFloPropLstSelEntry newEntry = AudYoFloPropLstSelEntry();
         newEntry.txt = sgl;
         newEntry.posi = posi;
         newEntry.isSel = false;
-        if (sel == null) {
-          sel = newEntry;
-        }
+        sel ??= newEntry;
         entriesCombo.add(newEntry);
         posi++;
       }
@@ -118,14 +101,14 @@ class _AudYoFloPropSelectionListComboBox
     }
 
     return SizedBox(
-      height: widget.height,
+      height: height,
       child: Container(
-          height: widget.height,
+          height: height,
           decoration: BoxDecoration(
             border: Border.all(
               color: Colors.black,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
 
@@ -136,12 +119,12 @@ class _AudYoFloPropSelectionListComboBox
                     .map<DropdownMenuItem<AudYoFloPropLstSelEntry>>(
                         (AudYoFloPropLstSelEntry value) {
                   String txt = value.txt;
-                  txt = limitString(txt, widget.numCharsMax);
-                  txt = widget.prefix + txt;
+                  txt = limitString(txt, numCharsMax);
+                  txt = prefix + txt;
                   Widget cW = Text(txt);
                   if (value.isSel) {
                     cW = Text(txt,
-                        style: TextStyle(fontWeight: FontWeight.bold));
+                        style: const TextStyle(fontWeight: FontWeight.bold));
                   }
                   return DropdownMenuItem<AudYoFloPropLstSelEntry>(
                     value: value,
@@ -172,28 +155,29 @@ class _AudYoFloPropSelectionListComboBox
                       AudYoFloPropLstSelEntry? entry = entriesCombo
                           .firstWhereOrNull((element) => element == newValue);
                       if (entry != null) {
-                        if (widget.selLstBe != null) {
+                        if (selLstBe != null) {
                           // Run and apply user input
                           applyChangeSelectionList(
-                              widget.selLstBe!.selection,
+                              selLstBe!.selection,
                               newValue.posi,
-                              widget.selLstBe!.parpropms.decoderHintType);
+                              selLstBe!.parpropms.decoderHintType,
+                              offset: offset);
 
                           JvxComponentIdentification cpId =
-                              widget.selLstBe!.parpropms.assCpIdent;
+                              selLstBe!.parpropms.assCpIdent;
                           List<String> propContents = [
-                            widget.selLstBe!.parpropms.descriptor
+                            selLstBe!.parpropms.descriptor
                           ];
 
                           // We need to propagate the updated property to the
                           // higher level widget to refresh the property in cache
                           theBeCache!.triggerSetProperties(cpId, propContents,
-                              report: widget.reportSet,
-                              invalidateProperty: widget.invalidatePropOnSet);
-                        } else if (widget.selLstLo != null) {
-                          applyChangeSelectionList(widget.selLstLo!.selection,
-                              newValue.posi, widget.selLstLo!.decTp);
-                          theUiModel!.reportSetProperty(widget.selLstLo!);
+                              report: reportSet,
+                              invalidateProperty: invalidatePropOnSet);
+                        } else if (selLstLo != null) {
+                          applyChangeSelectionList(selLstLo!.selection,
+                              newValue.posi, selLstLo!.decTp);
+                          theUiModel!.reportSetProperty(selLstLo!);
                         }
                       }
                     }

@@ -260,6 +260,10 @@ abstract class AudYoFloBackendCache
                 .JVX_PROPERTY_DESCRIPTOR_VALID.index);
             propContent.cache_status.bitSet(jvxPropertyCacheStatusFlagShifts
                 .JVX_PROPERTY_DESCRIPTOR_INVALID.index);
+
+            // If we update the property descriptor, it is like a new property.
+            // Dismiss all attached data
+            propContent.attachedSpecific.clear();
           }
           propContent.cache_status.bitClear(jvxPropertyCacheStatusFlagShifts
               .JVX_PROPERTY_CONTENT_VALID.index);
