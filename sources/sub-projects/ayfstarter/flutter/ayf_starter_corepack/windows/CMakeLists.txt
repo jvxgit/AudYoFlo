@@ -8,9 +8,11 @@ cmake_minimum_required(VERSION 3.14)
 set(PROJECT_NAME "ayfcorepack")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
+set(AYF_PROJECT ayfstarter-native-config)
 set(AYF_VERBOSE_INFO TRUE)
-set(AYF_CORE_PACK_LIB ayfstarter-native-config_import)
-set(AYF_CORE_PACK_INCLUDE ayfstarter-native-config)
+set(AYF_CORE_PACK_LIB ${AYF_PROJECT}_import)
+
+
 # This value is used when generating builds using this plugin, so it must
 # not be changed
 set(PLUGIN_NAME "ayfcorepack_plugin")
@@ -19,7 +21,7 @@ set(PLUGIN_NAME "ayfcorepack_plugin")
 # Link to ayf sdk
 # =======================================================
 if(AYF_VERBOSE_INFO)
-	message("Module <${PROJECT_NAME}> in folder ${CMAKE_CURRENT_SOURCE_DIR}")
+	message("Module <${PROJECT_NAME}>:")
 endif()
 
 if(NOT DEFINED ENV{AYF_SDK_PATH})
@@ -39,20 +41,22 @@ endif()
 
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
-  "ayfcorepack_plugin.cpp"
-  "ayfcorepack_plugin.h"
-  "../common/ayf-sdk-local-headers.h"
+  "${AYF_SDK_PATH}/flutter/project_templates/windows/ayfcorepack/ayfcorepack_plugin.cpp"
+  "${AYF_SDK_PATH}/flutter/project_templates/windows/ayfcorepack/ayfcorepack_plugin.h"
+  "${AYF_SDK_PATH}/flutter/project_templates/common/ayf-sdk-local-headers.h"
   "${AYF_SDK_PATH}/software/codeFragments/jvxApplications/native-config/exports/windows/exports-flutter-native-config.def"
-  "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include/ayfstarter-native-config.h"
+  "${AYF_SDK_PATH}/include/${AYF_PROJECT}/include/${AYF_PROJECT}.h"
 
 )
+
+configure_file(${AYF_SDK_PATH}/flutter/project_templates/windows/ayfcorepack/include/ayfcorepack/ayfcorepack_plugin_c_api.h.in "${CMAKE_CURRENT_SOURCE_DIR}/include/ayfcorepack/ayfcorepack_plugin_c_api.h" @ONLY)
 
 # Define the plugin library target. Its name must not be changed (see comment
 # on PLUGIN_NAME above).
 add_library(${PLUGIN_NAME} SHARED
-  "include/ayfcorepack/ayfcorepack_plugin_c_api.h"
-  "ayfcorepack_plugin_c_api.cpp"
-  ${PLUGIN_SOURCES}
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/ayfcorepack/ayfcorepack_plugin_c_api.h"
+  	"${AYF_SDK_PATH}/flutter/project_templates/windows/ayfcorepack/ayfcorepack_plugin_c_api.cpp"
+  	${PLUGIN_SOURCES}
 )
 
 # Apply a standard set of build settings that are configured in the
@@ -65,13 +69,13 @@ apply_standard_settings(${PLUGIN_NAME})
 # exported should be explicitly exported with the FLUTTER_PLUGIN_EXPORT macro.
 set_target_properties(${PLUGIN_NAME} PROPERTIES
   CXX_VISIBILITY_PRESET hidden)
-target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
+# target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
+target_compile_definitions(${PLUGIN_NAME} PRIVATE "FLUTTER_PLUGIN_IMPL;AYF_PROJECT=${AYF_PROJECT}")
 
 # Source include directories and library dependencies. Add any plugin-specific
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include"
-  "${CMAKE_CURRENT_SOURCE_DIR}/")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 
@@ -83,7 +87,9 @@ endif()
 
 target_include_directories(${PLUGIN_NAME} PRIVATE
 	${AYF_MINIMAL_SDK_HEADER_INCLUDES}
-	${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include
+	"${AYF_SDK_PATH}/flutter/project_templates/common"
+	"${AYF_SDK_PATH}/flutter/project_templates/windows/ayfcorepack"
+	"${AYF_SDK_PATH}/include/${AYF_PROJECT}/include"
 )
 
 target_link_directories(${PLUGIN_NAME} PRIVATE 
@@ -97,9 +103,7 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 	# This is the minimum package libs aggregation: 
 	${AYF_CORE_PACK_LIB}
 		
-	# We need this lib to derive the module name
-	jvx-system-base_static.lib
-
+	jvx-system-base_static
 	# These packages would be necessary otherwise
 	# jvx-helpers_static.lib
 	# jvx-system-min_static.lib
