@@ -38,12 +38,14 @@ else()
 endif()
 
 list(APPEND PLUGIN_SOURCES
-  "ayfcorepack_plugin.cc"
-  "include/ayfcorepack/ayfcorepack_plugin.h"
-  "../common/ayf-sdk-local-headers.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/ayfcorepack/ayfcorepack_plugin.h"
+  "${AYF_SDK_PATH}/flutter/project_templates/linux/ayfcorepack/ayfcorepack_plugin.cc"
+  "${AYF_SDK_PATH}/flutter/project_templates/common/ayf-sdk-local-headers.h"
   "${AYF_SDK_PATH}/software/codeFragments/jvxApplications/native-config/exports/windows/exports-flutter-native-config.def"
-  "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include/ayfstarter-native-config.h"
+  "${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include/${AYF_PROJECT}.h"
 )
+
+configure_file(${AYF_SDK_PATH}/flutter/project_templates/linux/ayfcorepack/include/ayfcorepack/ayfcorepack_plugin.h.in "${CMAKE_CURRENT_SOURCE_DIR}/include/ayfcorepack/ayfcorepack_plugin.h" @ONLY)
 
 # Define the plugin library target. Its name must not be changed (see comment
 # on PLUGIN_NAME above).
@@ -80,8 +82,10 @@ endif()
 
 target_include_directories(${PLUGIN_NAME} PRIVATE
 	${AYF_MINIMAL_SDK_HEADER_INCLUDES}
-	${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include
-	../common
+	"${AYF_SDK_PATH}/include/${AYF_CORE_PACK_INCLUDE}/include"
+	"${AYF_SDK_PATH}/flutter/project_templates/common"
+	"${CMAKE_CURRENT_SOURCE_DIR}"
+	# "${AYF_SDK_PATH}/flutter/project_templates/linux/ayfcorepack"
 )
 
 target_link_directories(${PLUGIN_NAME} PRIVATE 
@@ -102,6 +106,7 @@ target_compile_features(${PLUGIN_NAME} PRIVATE cxx_std_17)
 target_compile_options(${PLUGIN_NAME} PRIVATE "-Wno-error")
 target_compile_options(${PLUGIN_NAME} PRIVATE "-Wno-unused-variable")
 target_compile_options(${PLUGIN_NAME} PRIVATE "-Wno-unused-function")
+target_compile_definitions(${PLUGIN_NAME} PRIVATE "AYF_PROJECT=${AYF_PROJECT}")
 
 set(AYF_COPY_DLLS 
 	"${AYF_SDK_PATH}/bin/${AYF_CORE_PACK_LIB}"

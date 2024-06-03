@@ -7,7 +7,11 @@ cmake_minimum_required(VERSION 3.10)
 set(PROJECT_NAME "ayfcorepack")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
-set(AYF_PROJECT ayfbinrender-native-config)
+## ========================================================
+## Replace the config library at the following position!!!
+## ========================================================
+set(AYF_PROJECT ayfMYSPECIFICLIBRARY-native-config)
+
 set(AYF_VERBOSE_INFO TRUE)
 set(AYF_CORE_PACK_LIB lib${AYF_PROJECT}_import.so)
 set(AYF_CORE_PACK_INCLUDE ${AYF_PROJECT})
