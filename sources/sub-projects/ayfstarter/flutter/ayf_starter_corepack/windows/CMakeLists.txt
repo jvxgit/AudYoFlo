@@ -75,7 +75,8 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE "FLUTTER_PLUGIN_IMPL;AYF_PROJE
 # Source include directories and library dependencies. Add any plugin-specific
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include")
+	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+	)
 
 # target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 
@@ -90,6 +91,7 @@ target_include_directories(${PLUGIN_NAME} PRIVATE
 	"${AYF_SDK_PATH}/flutter/project_templates/common"
 	"${AYF_SDK_PATH}/flutter/project_templates/windows/ayfcorepack"
 	"${AYF_SDK_PATH}/include/${AYF_PROJECT}/include"
+	"${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 target_link_directories(${PLUGIN_NAME} PRIVATE 

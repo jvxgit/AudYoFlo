@@ -257,16 +257,34 @@ void decodeDeviceChannel(
   }
 }
 
-String limitString(String txt, int numCharsMax) {
+enum ayfShortenTextOption {
+  AYF_SHORTEN_TEXT_FRONT,
+  AYF_SHORTEN_TEXT_BACK,
+  AYF_SHORTEN_TEXT_MIDDLE
+}
+
+String limitString(String txt, int numCharsMax,
+    {ayfShortenTextOption shortenOption =
+        ayfShortenTextOption.AYF_SHORTEN_TEXT_MIDDLE}) {
   String retVal = txt;
   int numCharsUse = numCharsMax - 4;
   numCharsUse = max(2, numCharsUse);
   int numCharsStart = numCharsUse ~/ 2;
+  switch (shortenOption) {
+    case ayfShortenTextOption.AYF_SHORTEN_TEXT_FRONT:
+      numCharsStart = 1;
+      break;
+    case ayfShortenTextOption.AYF_SHORTEN_TEXT_BACK:
+      numCharsStart = numCharsUse;
+      break;
+    default:
+      break;
+  }
   int numCharsStop = numCharsUse - numCharsStart;
+
   if (txt.length > numCharsMax) {
-    retVal = txt.substring(0, numCharsStart - 1) +
-        "...." +
-        txt.substring(txt.length - numCharsStop - 1);
+    retVal =
+        "${txt.substring(0, numCharsStart - 1)}....${txt.substring(txt.length - numCharsStop - 1)}";
   }
 
   return retVal;

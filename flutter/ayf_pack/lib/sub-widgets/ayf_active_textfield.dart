@@ -70,7 +70,17 @@ class _AudYoFloActiveTextFieldStates extends State<AudYoFloActiveTextField> {
         onTap: () {
           //myNode.requestFocus();
         },
-        decoration: const InputDecoration(border: OutlineInputBorder()),
+        decoration: InputDecoration(
+          // Here I have tested a lot. If the text is too wide, it disappears!
+          // We can avoid this by re-defining the default EdgeInsets. We need the left border inset however, to look nice.
+          // isDense: true,
+          contentPadding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+              gapPadding: 12, borderRadius: BorderRadius.circular(12)),
+        ),
+        //decoration: const InputDecoration(border: OutlineInputBorder()),
       ),
       onFocusChange: (value) {
         if (!value) {

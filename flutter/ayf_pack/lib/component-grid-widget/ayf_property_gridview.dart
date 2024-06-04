@@ -352,6 +352,7 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
                   selLstBe: selLst,
                   height: 40,
                   offset: nOpts.selIdx,
+                  numCharsMax: 20,
                 );
 
                 contentWidget = newWidget;

@@ -90,6 +90,7 @@ target_include_directories(${PLUGIN_NAME} PRIVATE
 	"${AYF_SDK_PATH}/flutter/project_templates/common"
 	"${AYF_SDK_PATH}/flutter/project_templates/windows/ayfcorepack"
 	"${AYF_SDK_PATH}/include/${AYF_PROJECT}/include"
+	"${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 target_link_directories(${PLUGIN_NAME} PRIVATE 

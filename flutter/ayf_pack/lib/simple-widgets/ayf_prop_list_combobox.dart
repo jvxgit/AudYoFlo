@@ -23,16 +23,17 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
   final AyfPropertyReportLevel reportSet;
   final bool invalidatePropOnSet;
   final double height;
-  final int numCharsMax = 25;
+  final int numCharsMax;
   final String prefix;
   final int offset;
+  final ayfShortenTextOption textOpt;
 
   /* This combobox can be used to control backend and local 
     properties. There should always be either selLstBe or 
     selLstLo. It constructs the combobox with all options and
     then waits for a selection.
     In  reportSet the report type is specified.*/
-  AudYoFloPropListComboBoxWidget(
+  const AudYoFloPropListComboBoxWidget(
       {this.selLstBe,
       this.selLstLo,
       this.strLstBe,
@@ -41,7 +42,9 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
       this.invalidatePropOnSet = true,
       this.height = 40,
       this.prefix = ' ',
-      this.offset = 0});
+      this.offset = 0,
+      this.numCharsMax = 20,
+      this.textOpt = ayfShortenTextOption.AYF_SHORTEN_TEXT_FRONT});
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +122,7 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
                     .map<DropdownMenuItem<AudYoFloPropLstSelEntry>>(
                         (AudYoFloPropLstSelEntry value) {
                   String txt = value.txt;
-                  txt = limitString(txt, numCharsMax);
+                  txt = limitString(txt, numCharsMax, shortenOption: textOpt);
                   txt = prefix + txt;
                   Widget cW = Text(txt);
                   if (value.isSel) {
@@ -171,12 +174,14 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
 
                           // We need to propagate the updated property to the
                           // higher level widget to refresh the property in cache
-                          theBeCache!.triggerSetProperties(cpId, propContents,
+                          theBeCache.triggerSetProperties(cpId, propContents,
                               report: reportSet,
-                              invalidateProperty: invalidatePropOnSet);
+                              invalidateProperty: invalidatePropOnSet,
+                              offset: offset);
                         } else if (selLstLo != null) {
                           applyChangeSelectionList(selLstLo!.selection,
-                              newValue.posi, selLstLo!.decTp);
+                              newValue.posi, selLstLo!.decTp,
+                              offset: offset);
                           theUiModel!.reportSetProperty(selLstLo!);
                         }
                       }
