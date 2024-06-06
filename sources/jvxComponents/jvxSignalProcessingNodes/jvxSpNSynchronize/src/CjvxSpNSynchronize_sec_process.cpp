@@ -561,7 +561,7 @@ CjvxSpNSynchronize_sec::trigger_process_immediate(jvxLinkDataDescriptor* datIn, 
 		_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
 
 		// Request data from output side of secondary chain
-		if (referencePtr->bufferMode == jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL)
+		if (referencePtr->bufferMode == jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PUSH)
 		{
 			if (_common_set_icon.theData_in)
 			{
@@ -588,3 +588,30 @@ void
 CjvxSpNSynchronize_sec::trigger_process_pull()
 {
 }
+
+
+jvxErrorType 
+CjvxSpNSynchronize_sec::process_start_icon(
+	jvxSize pipeline_offset,
+	jvxSize* idx_stage,
+	jvxSize tobeAccessedByStage,
+	callback_process_start_in_lock clbk ,
+	jvxHandle* priv_ptr ) 
+{
+	return CjvxSingleInputConnector::process_start_icon(
+		pipeline_offset, idx_stage, tobeAccessedByStage,
+		clbk, priv_ptr);
+}
+
+jvxErrorType 
+CjvxSpNSynchronize_sec::process_stop_icon(jvxSize idx_stage,
+	jvxBool shift_fwd,
+	jvxSize tobeAccessedByStage,
+	callback_process_stop_in_lock clbk,
+	jvxHandle* priv_ptr)
+{
+	return CjvxSingleInputConnector::process_stop_icon(
+		idx_stage, shift_fwd, tobeAccessedByStage,
+		clbk, priv_ptr);
+}
+

@@ -99,13 +99,12 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 	jvxErrorType res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	jvxConstraintSetResult resS = jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE;
 	jvxBool triggerUpdate = false;
-	jvxDataflow flow_sec = JVX_DATAFLOW_PUSH_ACTIVE;
+	jvxDataflow flow_sec = JVX_DATAFLOW_PUSH_ON_PULL;
 	if (res == JVX_NO_ERROR)
 	{
 		switch (bufferMode)
 		{
-		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL:
-		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED:
+		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PUSH:
 
 			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 			node_inout._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
@@ -119,11 +118,7 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 				(jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat,
 				JVX_DATAFLOW_PUSH_ACTIVE);
 			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
-
-			if (bufferMode == jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL)
-			{
-				flow_sec = jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL;
-			}
+			
 			resS = sec_master.neg_input._update_parameters_fixed(
 				node_output._common_set_node_params_a_1io.number_channels,
 				node_output._common_set_node_params_a_1io.buffersize,
@@ -134,10 +129,10 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 			//(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
 			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
 			break;
-		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_BUFFERED:
+		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_BUFFERED_PULL:
 
-			node_inout._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
-			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
+			node_inout._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ASYNC;
+			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
 
 			// Update the processing parameters on the synchronized side
 			resS = sec_master.neg_output._update_parameters_fixed(
@@ -194,12 +189,13 @@ CjvxSpNSynchronize::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxErrorType res = JVX_NO_ERROR;
 	switch (bufferMode)
 	{
-	case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED:
-	case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL:
+	case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PUSH:
 		sec_master.trigger_process_immediate(_common_set_icon.theData_in, idx_stage, & _common_set_ocon.theData_out);
 		break;
-	case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_BUFFERED:
-		sec_master.audio_primary(_common_set_icon.theData_in, idx_stage, &_common_set_ocon.theData_out);
+	case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_BUFFERED_PULL:
+
+		assert(0);
+		// sec_master.audio_primary(_common_set_icon.theData_in, idx_stage, &_common_set_ocon.theData_out);
 		break;
 	}	
 	return fwd_process_buffers_icon(mt_mask, idx_stage);
@@ -249,6 +245,22 @@ CjvxSpNSynchronize::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 	return(res);
 }
 
+void 
+CjvxSpNSynchronize::fwd_report_process_buffers(jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
+{
+	jvxSize i;
+	jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
+	
+	assert(_common_set_ocon.theData_out.con_params.buffersize == params.buffersize);
+	assert(_common_set_ocon.theData_out.con_params.rate == params.rate);
+	assert(_common_set_ocon.theData_out.con_params.number_channels == params.number_channels);
+	assert(_common_set_ocon.theData_out.con_params.format == params.format);
+
+	for (i = 0; i < params.number_channels; i++)
+	{
+		memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);
+	}
+}
 /*
 jvxErrorType 
 CjvxSpNMixChainEnterLeave::select(IjvxObject* owner)

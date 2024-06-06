@@ -1,6 +1,8 @@
 #include "CjvxAuNForwardBuffer.h"
 #include "jvx-helpers-cpp.h"
 
+#define ALPHA_SMOOTH 0.95
+
 CjvxAuNForwardBuffer::CjvxAuNForwardBuffer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
@@ -388,7 +390,8 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				bs,
 				node_output._common_set_node_params_a_1io.number_channels,
 				(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
-				false, withStartThreshold);
+				genForwardBuffer_node::config.enable_buffer_profiling.value, 
+				withStartThreshold);
 
 			assert(node_inout._common_set_node_params_a_1io.buffersize == _common_set_icon.theData_in->con_params.buffersize);
 			assert(node_output._common_set_node_params_a_1io.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
@@ -401,9 +404,9 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
 			{
-				if (_common_set_icon.theData_in->con_params.data_flow == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
+				if (dataFlowOperation_input == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 				{
-					// Start the secondary thread
+					// Start the secondary thread to collect data on input side
 					resL = refThreads.cpPtr->initialize(
 						static_cast<IjvxThreads_report*>(this));
 					assert(resL == JVX_NO_ERROR);
@@ -411,10 +414,13 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			}
 			else
 			{
-				// Start the secondary thread
-				resL = refThreads.cpPtr->initialize(
-					static_cast<IjvxThreads_report*>(this));
-				assert(resL == JVX_NO_ERROR);
+				if (dataFlowOperation_output == JVX_DATAFLOW_PUSH_ASYNC)
+				{
+					// Start the secondary thread for output
+					resL = refThreads.cpPtr->initialize(
+						static_cast<IjvxThreads_report*>(this));
+					assert(resL == JVX_NO_ERROR);
+				}
 			}
 		}
 		else
@@ -513,8 +519,13 @@ CjvxAuNForwardBuffer::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 	}
 
-	genForwardBuffer_node::monitor.buffer_underflow.value = 0;
-	genForwardBuffer_node::monitor.buffer_overflow.value = 0;
+	genForwardBuffer_node::monitor.number_overflows.value = 0;
+	genForwardBuffer_node::monitor.number_underflows.value = 0;
+	genForwardBuffer_node::monitor.number_aborts.value = 0;
+	genForwardBuffer_node::monitor.fillheight_avrg.value = 0;
+	genForwardBuffer_node::monitor.fillheight_min.value = 0;
+	genForwardBuffer_node::monitor.fillheight_max.value = 0;
+	
 	return res;
 }
 
@@ -658,9 +669,25 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			0, nullptr, nullptr,
 			nullptr, nullptr);
 
-		if (res != JVX_NO_ERROR)
+		if (res == JVX_NO_ERROR)
 		{
-			genForwardBuffer_node::monitor.buffer_overflow.value++;
+			if (fHeightEstimator)
+			{
+				jvxData out_average = 0;
+				jvxData out_min = 0;
+				jvxData out_max = 0;
+				jvx_audio_stack_sample_dispenser_update_fillheight(
+					&myAudioDispenser, 0,  &out_average,
+					&out_min, &out_max, NULL, NULL, NULL);
+
+				genForwardBuffer_node::monitor.fillheight_avrg.value = genForwardBuffer_node::monitor.fillheight_avrg.value * ALPHA_SMOOTH + out_average * (1 - ALPHA_SMOOTH);
+				genForwardBuffer_node::monitor.fillheight_min.value = out_min;
+				genForwardBuffer_node::monitor.fillheight_max.value = out_max;
+			}
+		}
+		else
+		{
+			genForwardBuffer_node::monitor.number_overflows.value++;
 		}
 
 		// ========================================================================================================
@@ -670,7 +697,7 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		// Check function <write_samples_from_buffer>
 		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT)
 		{
-			if (_common_set_ocon.theData_out.con_params.data_flow == JVX_DATAFLOW_PUSH_ASYNC)
+			if (dataFlowOperation_output == JVX_DATAFLOW_PUSH_ASYNC)
 			{
 				if (
 					(res == JVX_NO_ERROR) ||
@@ -760,7 +787,7 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 				if (dataFlowOperation_output == JVX_DATAFLOW_PUSH_ON_PULL)
 				{
 					// Immediate write
-					res = push_on_pull_one_buffer(data, false, false);
+					res = push_on_pull_one_buffer(data, true, false);
 				}
 
 				// else: this call should not occur in case of a JVX_DATAFLOW_PUSH_ASYNC or JVX_DATAFLOW_PUSH
@@ -830,7 +857,7 @@ CjvxAuNForwardBuffer::push_on_pull_one_buffer(jvxHandle* data, jvxBool runStartS
 			break;
 		case JVX_DSP_ERROR_BUFFER_OVERFLOW:
 			// Count the underflow events - even if the chan -- but not if not yet ready.
-			genForwardBuffer_node::monitor.buffer_underflow.value++;
+			genForwardBuffer_node::monitor.number_overflows.value++;
 
 			[[fallthrough]];
 
@@ -1304,6 +1331,12 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNForwardBuffer, set_buffer_
 
 CjvxAudioStackBuffer::CjvxAudioStackBuffer()
 {
+	// Provide a default setup for the fillheight estimator
+	numberEventsConsidered_perMinMaxSection = 10;
+	num_MinMaxSections = 5;
+	recSmoothFactor = 0.95;
+	numOperations = 0;
+
 	JVX_INITIALIZE_MUTEX(safeAccess_lock);
 }
 
@@ -1414,7 +1447,7 @@ CjvxAudioStackBuffer::start_audiostack(
 		NULL, NULL);
 	assert(resL == JVX_DSP_NO_ERROR);
 
-	jvx_audio_stack_sample_dispenser_cont_prepare(&myAudioDispenser, nullptr);
+	jvx_audio_stack_sample_dispenser_cont_prepare(&myAudioDispenser, fHeightEstimator);
 	assert(resL == JVX_DSP_NO_ERROR);
 }
 
@@ -1449,6 +1482,7 @@ CjvxAudioStackBuffer::stop_audiostack()
 	{
 		resL = jvx_estimate_buffer_fillheight_terminate(fHeightEstimator);
 		assert(resL == JVX_DSP_NO_ERROR);
+		fHeightEstimator = nullptr;
 	}
 }
 

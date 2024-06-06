@@ -59,5 +59,8 @@ CjvxSpNSynchronize_sec::report_stopped_connector(CjvxSingleInputConnector* iconn
 
 void CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
 {
-	
+	if (referencePtr)
+	{
+		referencePtr->fwd_report_process_buffers(bufferPtrs, params);
+	}
 }

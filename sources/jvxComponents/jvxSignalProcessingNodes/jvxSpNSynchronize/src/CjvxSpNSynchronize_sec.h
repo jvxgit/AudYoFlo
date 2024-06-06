@@ -17,9 +17,8 @@ extern "C"
 
 enum class jvxSynchronizeBufferMode
 {
-	JVX_SYNCHRONIZE_UNBUFFERED_PULL,
-	JVX_SYNCHRONIZE_UNBUFFERED,
-	JVX_SYNCHRONIZE_BUFFERED
+	JVX_SYNCHRONIZE_UNBUFFERED_PUSH,
+	JVX_SYNCHRONIZE_BUFFERED_PULL
 };
 
 // Forward declaration
@@ -186,8 +185,22 @@ public:
 	jvxErrorType transfer_chain_forward_master(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;	
 	jvxErrorType test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-
 	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+
+
+	// ===============================================================================================
+	virtual jvxErrorType process_start_icon(
+		jvxSize pipeline_offset,
+		jvxSize* idx_stage,
+		jvxSize tobeAccessedByStage,
+		callback_process_start_in_lock clbk = NULL,
+		jvxHandle* priv_ptr = NULL) override;
+
+	virtual jvxErrorType process_stop_icon(jvxSize idx_stage,
+		jvxBool shift_fwd,
+		jvxSize tobeAccessedByStage,
+		callback_process_stop_in_lock clbk,
+		jvxHandle* priv_ptr)override;
 
 	// ===============================================================================================
 	// The reference request interface

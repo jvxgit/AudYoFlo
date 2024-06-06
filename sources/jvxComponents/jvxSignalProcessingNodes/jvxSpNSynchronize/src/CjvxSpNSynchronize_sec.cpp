@@ -204,8 +204,18 @@ CjvxSpNSynchronize_sec::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 
 	// Copy the current parameter from primary chain
-	JVX_LINKDATA_LOAD_FROM(& _common_set_ocon.theData_out, referencePtr->node_inout._common_set_node_params_a_1io, JVX_DATAFLOW_PUSH_ON_PULL);
-
+	switch (referencePtr->bufferMode)
+	{
+	case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PUSH:
+		JVX_LINKDATA_LOAD_FROM(&_common_set_ocon.theData_out, referencePtr->node_inout._common_set_node_params_a_1io, JVX_DATAFLOW_PUSH_ACTIVE);
+		break;
+	case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_BUFFERED_PULL:
+		JVX_LINKDATA_LOAD_FROM(&_common_set_ocon.theData_out, referencePtr->node_inout._common_set_node_params_a_1io, JVX_DATAFLOW_PUSH_ON_PULL);
+		break;
+	default:
+		assert(0);
+		break;
+	}
 	res = _test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
 	if (res == JVX_NO_ERROR)

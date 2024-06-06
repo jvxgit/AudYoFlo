@@ -12,7 +12,7 @@ class CjvxSpNSynchronize : public CjvxBareNode1ioRearrange, public genSynchroniz
 protected:
 
 	CjvxSpNSynchronize_sec sec_master;
-	jvxSynchronizeBufferMode bufferMode = jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL;
+	jvxSynchronizeBufferMode bufferMode = jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PUSH;
 
 public:
 	JVX_CALLINGCONVENTION CjvxSpNSynchronize(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -41,6 +41,7 @@ public:
 	jvxErrorType stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
+	void fwd_report_process_buffers(jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params);
 	/*
 
 

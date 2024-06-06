@@ -168,7 +168,10 @@ CjvxAuNConvert::adapt_output_parameters_forward()
 	neg_output._update_parameters_fixed(
 		JVX_SIZE_UNSELECTED,
 		node_output._common_set_node_params_a_1io.buffersize,
-		node_output._common_set_node_params_a_1io.samplerate);
+		node_output._common_set_node_params_a_1io.samplerate,
+		(jvxDataFormat)node_output._common_set_node_params_a_1io.format, 
+		(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
+		(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
 }
 
 void
@@ -190,7 +193,14 @@ CjvxAuNConvert::adapt_output_parameters_backward(jvxSize numChannelsOutDesired, 
 jvxErrorType 
 CjvxAuNConvert::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	return CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	// This function involves the default implementation but should end up in <accept_negotiate_output>
+	// by inheritance
+	jvxErrorType res = CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	if (res != JVX_NO_ERROR)
+	{
+		
+	}
+	return res;
 }
 
 jvxErrorType
