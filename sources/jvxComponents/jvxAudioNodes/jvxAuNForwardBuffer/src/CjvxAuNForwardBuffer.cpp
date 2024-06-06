@@ -166,6 +166,10 @@ CjvxAuNForwardBuffer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				genForwardBuffer_node::associate__convert(static_cast<CjvxProperties*>(this), reRouting.selChannels, reRouting.numChannels);
 			}
 		}
+
+		// Store the dataflow argument
+		dataFlowOperation_output = _common_set_ocon.theData_out.con_params.data_flow;
+		dataFlowOperation_input = _common_set_icon.theData_in->con_params.data_flow;
 	}
 	return res;
 }
@@ -199,6 +203,26 @@ CjvxAuNForwardBuffer::from_input_to_output()
 		node_output._common_set_node_params_a_1io.segmentation.x = node_inout._common_set_node_params_a_1io.segmentation.x;
 	}
 
+	switch (buffermode)
+	{
+	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT:
+
+		// Always involve PUSH_ON_PULL on output side in case of an input buffer
+		if (node_output._common_set_node_params_a_1io.data_flow == JVX_DATAFLOW_DONT_CARE)
+		{
+			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
+		}
+		break;
+	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+	
+		if (node_output._common_set_node_params_a_1io.data_flow == JVX_DATAFLOW_DONT_CARE)
+		{
+			node_output._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ASYNC;
+		}
+		break;
+	default:
+		break;
+	}
 	update_output_params();
 }
 
@@ -299,18 +323,12 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT);
 				break;
-			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE:
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
 				// Output format
 				// Variable segment sizes are possible
 				jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
 					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_ALLOW_FHEIGHT_INFO_SHIFT);
-				break;
-			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_PASSIVE:
-				// Output format
-				// Variable segment sizes are possible
-				jvx_bitSet(_common_set_ocon.theData_out.con_data.alloc_flags,
-					(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_ALLOW_FHEIGHT_INFO_SHIFT);
-				break;
+				break;			
 			}
 			_common_set_ocon.theData_out.con_pipeline.num_additional_pipleline_stages = 0;
 
@@ -346,7 +364,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			switch (buffermode)
 			{
-			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE:
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
 
 				// Clear this bit
 				jvx_bitClear(_common_set_ocon.theData_out.con_data.alloc_flags,
@@ -404,6 +422,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			res = JVX_ERROR_WRONG_STATE;
 		}
 	}
+	
 	return res;
 }
 
@@ -649,13 +668,16 @@ CjvxAuNForwardBuffer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		// If we are in OUTPUT_BUFFER MODE we will trigger the output thread. The clock in this case is on the
 		// input side. When the thread is awake it check if it can deliver enough audio samples and acts only if so.
 		// Check function <write_samples_from_buffer>
-		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE)
+		if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT)
 		{
-			if (
-				(res == JVX_NO_ERROR) || 
-				(res == JVX_ERROR_BUFFER_OVERFLOW))
+			if (_common_set_ocon.theData_out.con_params.data_flow == JVX_DATAFLOW_PUSH_ASYNC)
 			{
-				refThreads.cpPtr->trigger_wakeup();
+				if (
+					(res == JVX_NO_ERROR) ||
+					(res == JVX_ERROR_BUFFER_OVERFLOW))
+				{
+					refThreads.cpPtr->trigger_wakeup();
+				}
 			}
 		}
 
@@ -725,79 +747,26 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 		}
 		else
 		{
-			if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
+			switch (buffermode)
 			{
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT:
+			
 				if (_common_set_ocon.theData_out.con_link.connect_to)
 				{
-					res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
-					if (res == JVX_NO_ERROR)
-					{
-						// We may limit the number of samples to a lower value
-						jvxSize numSamplesRequest = _common_set_ocon.theData_out.con_params.buffersize;
-						if (data != nullptr)
-						{
-							jvxSize* overrideNum = (jvxSize*)data;
-							numSamplesRequest = JVX_MIN(numSamplesRequest, *overrideNum);
-						}
-
-						assert(node_output._common_set_node_params_a_1io.number_channels == 
-							_common_set_ocon.theData_out.con_params.number_channels);
-						assert(node_output._common_set_node_params_a_1io.buffersize ==
-							_common_set_ocon.theData_out.con_params.buffersize);
-
-						// Get new audio data here
-						jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
-						jvxSize fHeight = 0;
-						jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
-							&myAudioDispenser,
-							(jvxHandle**)bufsOut, 0,
-							nullptr, 0, numSamplesRequest, 0, nullptr, NULL, NULL, NULL);
-
-						// This call returns:
-						// 1) JVX_DSP_ERROR_ABORT if the buffer was not yet accessed on the input side
-						// 2) JVX_DSP_ERROR_BUFFER_OVERFLOW if the buffer has been accessed on the input side but there are not enough samples in the buffer
-						// 3) JVX_DSP_NO_ERROR if samples were read from the buffer
-						switch (resL)
-						{
-						case JVX_DSP_NO_ERROR:
-							jvx_audio_stack_sample_dispenser_buffer_status(
-								&myAudioDispenser,
-								&fHeight, nullptr);
-							if (fHeight < myAudioDispenser.start_threshold)
-							{
-								refThreads.cpPtr->trigger_wakeup();
-							}
-
-							res = JVX_NO_ERROR;
-							break;
-						case JVX_DSP_ERROR_BUFFER_OVERFLOW:		
-							// Count the underflow events - even if the chan -- but not if not yet ready.
-							genForwardBuffer_node::monitor.buffer_underflow.value++;
-
-							[[fallthrough]];
-
-						case JVX_DSP_ERROR_ABORT:
-
-
-							// No output from buffer, copy silence
-							for (i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
-							{
-								memset(bufsOut[i], 0, (_common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format]));
-							}
-							
-							// If the sample buffer does not deliver we need to wakeup the thread!!
-							refThreads.cpPtr->trigger_wakeup();
-							res = JVX_NO_ERROR;
-							break;
-
-						default:
-							break;
-						}
-
-						_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
-						_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
-					}
+					res = push_on_pull_one_buffer(data, true, (dataFlowOperation_input == JVX_DATAFLOW_PUSH_ON_PULL));
 				}
+				break;
+			case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+				if (dataFlowOperation_output == JVX_DATAFLOW_PUSH_ON_PULL)
+				{
+					// Immediate write
+					res = push_on_pull_one_buffer(data, false, false);
+				}
+
+				// else: this call should not occur in case of a JVX_DATAFLOW_PUSH_ASYNC or JVX_DATAFLOW_PUSH
+				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -808,11 +777,101 @@ CjvxAuNForwardBuffer::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 }
 
 jvxErrorType
+CjvxAuNForwardBuffer::push_on_pull_one_buffer(jvxHandle* data, jvxBool runStartStop, jvxBool awakeThreadInputSide)
+{
+	jvxSize i;
+	jvxErrorType res = JVX_NO_ERROR;
+	if (runStartStop)
+	{
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
+	}
+
+	if (res == JVX_NO_ERROR)
+	{
+		// We may limit the number of samples to a lower value
+		jvxSize numSamplesRequest = _common_set_ocon.theData_out.con_params.buffersize;
+		if (data != nullptr)
+		{
+			jvxSize* overrideNum = (jvxSize*)data;
+			numSamplesRequest = JVX_MIN(numSamplesRequest, *overrideNum);
+		}
+
+		assert(node_output._common_set_node_params_a_1io.number_channels ==
+			_common_set_ocon.theData_out.con_params.number_channels);
+		assert(node_output._common_set_node_params_a_1io.buffersize ==
+			_common_set_ocon.theData_out.con_params.buffersize);
+
+		// Get new audio data here
+		jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
+		jvxSize fHeight = 0;
+		jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
+			&myAudioDispenser,
+			(jvxHandle**)bufsOut, 0,
+			nullptr, 0, numSamplesRequest, 0, nullptr, NULL, NULL, NULL);
+
+		// This call returns:
+		// 1) JVX_DSP_ERROR_ABORT if the buffer was not yet accessed on the input side
+		// 2) JVX_DSP_ERROR_BUFFER_OVERFLOW if the buffer has been accessed on the input side but there are not enough samples in the buffer
+		// 3) JVX_DSP_NO_ERROR if samples were read from the buffer
+		switch (resL)
+		{
+		case JVX_DSP_NO_ERROR:
+			if (awakeThreadInputSide)
+			{
+				jvx_audio_stack_sample_dispenser_buffer_status(
+					&myAudioDispenser,
+					&fHeight, nullptr);
+				if (fHeight < myAudioDispenser.start_threshold)
+				{
+					refThreads.cpPtr->trigger_wakeup();
+				}
+			}
+			res = JVX_NO_ERROR;
+			break;
+		case JVX_DSP_ERROR_BUFFER_OVERFLOW:
+			// Count the underflow events - even if the chan -- but not if not yet ready.
+			genForwardBuffer_node::monitor.buffer_underflow.value++;
+
+			[[fallthrough]];
+
+		case JVX_DSP_ERROR_ABORT:
+
+
+			// No output from buffer, copy silence
+			for (i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
+			{
+				memset(bufsOut[i], 0, (_common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format]));
+			}
+
+			if (awakeThreadInputSide)
+			{
+				// If the sample buffer does not deliver we need to wakeup the thread!!
+				refThreads.cpPtr->trigger_wakeup();
+			}
+			res = JVX_NO_ERROR;
+			break;
+
+		default:
+			break;
+		}
+
+		_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+
+		if (runStartStop)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
+		}
+	}
+	return res;
+}
+
+jvxErrorType
 CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 	jvxCBitField checkFlags = 0;
 	jvxLinkDataDescriptor ld_try;
+	jvxBool updateOut = false;
 
 	switch(buffermode)
 	{
@@ -941,23 +1000,48 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 		}
 		
 		break;
-	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE:
-		if (node_output._common_set_node_params_a_1io.buffersize != preferredByOutput->con_params.buffersize)
+	case jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_OUTPUT:
+		
+		// Only option to negotiate: buffersize
+		jvxCBitField checkFlags = 0;
+		jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
+		jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
+		jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
+		jvx_bitInvert(checkFlags);
+
+		// Check if switching dataflow and buffersize may help!
+		if (!jvx_evalBool(jvx_check_differences(_common_set_icon.theData_in->con_params,
+			preferredByOutput->con_params, checkFlags)))
 		{
-			res = JVX_ERROR_UNSUPPORTED;
+			bool noError = true;
 
-			// Only option to negotiate: buffersize
-			jvxCBitField checkFlags = 0;
-			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
-			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
-			jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
-			jvx_bitInvert(checkFlags);
-
-			// Check if from the previous component only the samplerate or the number of channels deviate
-			if (!jvx_evalBool(jvx_check_differences(_common_set_icon.theData_in->con_params,
-				preferredByOutput->con_params, checkFlags)))
+			if (noError)
 			{
-				node_output._common_set_node_params_a_1io.buffersize = preferredByOutput->con_params.buffersize;
+				// To change the dataflow type is well possible!!
+				if (node_output._common_set_node_params_a_1io.data_flow != preferredByOutput->con_params.data_flow)
+				{
+					switch (preferredByOutput->con_params.data_flow)
+					{
+					case JVX_DATAFLOW_PUSH_ON_PULL:
+					case JVX_DATAFLOW_PUSH_ASYNC:
+						node_output._common_set_node_params_a_1io.data_flow = preferredByOutput->con_params.data_flow;
+						break;
+					default:
+						noError = false;
+					}
+				}
+			}
+
+			if (noError)
+			{
+				if (node_output._common_set_node_params_a_1io.buffersize != preferredByOutput->con_params.buffersize)
+				{
+					node_output._common_set_node_params_a_1io.buffersize = preferredByOutput->con_params.buffersize;
+				}
+			}
+
+			if (noError)
+			{
 				test_set_output_parameters();
 				res = JVX_NO_ERROR;
 			}
@@ -1115,56 +1199,69 @@ CjvxAuNForwardBuffer::read_samples_to_buffer()
 }
 
 void
-CjvxAuNForwardBuffer::write_samples_to_output()
+CjvxAuNForwardBuffer::write_samples_to_output(jvxBool runStartStopBuffer)
 {
 	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
-		while(1)
+		jvxErrorType res = JVX_NO_ERROR;
+		while(res == JVX_NO_ERROR)
 		{
-			jvxSize fHeight = 0;
-			jvx_audio_stack_sample_dispenser_buffer_status(
-				&myAudioDispenser,
-				&fHeight, nullptr);
-			if (fHeight >= _common_set_ocon.theData_out.con_params.buffersize)
-			{
-				jvxErrorType res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
-				if (res == JVX_NO_ERROR)
-				{
-					// Get new audio data here
-					jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
-					jvxSize numRead = _common_set_ocon.theData_out.con_params.buffersize;
-					jvxSize idxStage = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
-
-					if (_common_set_ocon.theData_out.con_data.fHeights)
-					{
-						if (JVX_CHECK_SIZE_SELECTED(_common_set_ocon.theData_out.con_data.fHeights[idxStage].x))
-						{
-							numRead = JVX_MIN(numRead, _common_set_ocon.theData_out.con_data.fHeights[idxStage].x);
-						}
-					}
-					assert(node_output._common_set_node_params_a_1io.buffersize == 
-						_common_set_ocon.theData_out.con_params.buffersize);
-
-					jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
-						&myAudioDispenser,
-						(jvxHandle**)bufsOut, 0,
-						nullptr, 0, numRead, 0, nullptr, NULL, NULL, NULL);
-					assert(resL == JVX_NO_ERROR);
-
-					_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
-					_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
-				}
-				else
-				{
-					break;
-				}
-			}
-			else
-			{
-				break;
-			}
+			res = write_samples_to_output_one_buf(runStartStopBuffer);
 		}
 	}
+}
+
+jvxErrorType
+CjvxAuNForwardBuffer::write_samples_to_output_one_buf(jvxBool runStartStopBuffer)
+{
+	jvxErrorType res = JVX_ERROR_NOT_ENOUGH_INPUT_DATA;
+	jvxSize fHeight = 0;
+	jvx_audio_stack_sample_dispenser_buffer_status(
+		&myAudioDispenser,
+		&fHeight, nullptr);
+	if (fHeight >= _common_set_ocon.theData_out.con_params.buffersize)
+	{
+		res = JVX_NO_ERROR;
+		if (runStartStopBuffer)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
+		}
+		if (res == JVX_NO_ERROR)
+		{
+			// Get new audio data here
+			jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
+			jvxSize numRead = _common_set_ocon.theData_out.con_params.buffersize;
+			jvxSize idxStage = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+
+			if (_common_set_ocon.theData_out.con_data.fHeights)
+			{
+				if (JVX_CHECK_SIZE_SELECTED(_common_set_ocon.theData_out.con_data.fHeights[idxStage].x))
+				{
+					numRead = JVX_MIN(numRead, _common_set_ocon.theData_out.con_data.fHeights[idxStage].x);
+				}
+			}
+			assert(node_output._common_set_node_params_a_1io.buffersize ==
+				_common_set_ocon.theData_out.con_params.buffersize);
+
+			jvxErrorType resL = jvx_audio_stack_sample_dispenser_cont_internal_copy(
+				&myAudioDispenser,
+				(jvxHandle**)bufsOut, 0,
+				nullptr, 0, numRead, 0, nullptr, NULL, NULL, NULL);
+			assert(resL == JVX_NO_ERROR);
+
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+
+			if (runStartStopBuffer)
+			{
+				_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
+			}
+		}
+		else
+		{
+			res = JVX_ERROR_NOT_READY;
+		}
+	}
+	return res;
 }
 
 void 

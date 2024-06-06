@@ -7,8 +7,7 @@
 enum class jvxOperationMode
 {
 	JVX_FORWARDBUFFER_BUFFER_INPUT,
-	JVX_FORWARDBUFFER_BUFFER_OUTPUT_ACTIVE,
-	JVX_FORWARDBUFFER_BUFFER_OUTPUT_PASSIVE
+	JVX_FORWARDBUFFER_BUFFER_OUTPUT
 };
 
 #include "pcg_exports_node.h"
@@ -101,6 +100,9 @@ protected:
 
 	jvxBool runInitInThread = false;
 
+	jvxDataflow dataFlowOperation_output = JVX_DATAFLOW_DONT_CARE;
+	jvxDataflow dataFlowOperation_input = JVX_DATAFLOW_DONT_CARE;
+
 public:
 
 	JVX_CALLINGCONVENTION CjvxAuNForwardBuffer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -159,8 +161,12 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION expired(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stopped(jvxInt64 timestamp_us) override;
+
+	jvxErrorType push_on_pull_one_buffer(jvxHandle* data, jvxBool runStartStop, jvxBool awakeThreadInputSide);
+
 	void read_samples_to_buffer();
-	void write_samples_to_output();
+	void write_samples_to_output(jvxBool runStartStopBuffer = true);
+	jvxErrorType write_samples_to_output_one_buf(jvxBool runStartStopBuffer);
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)override;
 

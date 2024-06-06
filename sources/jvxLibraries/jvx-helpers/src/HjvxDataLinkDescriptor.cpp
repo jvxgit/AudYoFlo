@@ -1434,10 +1434,18 @@ jvxErrorType jvx_check_valid(jvxLinkDataDescriptor_con_params& params, std::stri
 	}
 	if (params.format == JVX_DATAFORMAT_NONE)
 	{
-		errReason = "Invalid format specified.";
-		goto fail;
+		if (params.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
+		{
+			errReason = "Invalid format specified.";
+			goto fail;
+		}
 	}
 	if (params.format_group == JVX_DATAFORMAT_GROUP_NONE)
+	{
+		errReason = "Invalid format group specified.";
+		goto fail;
+	}
+	if (params.data_flow == JVX_DATAFLOW_DONT_CARE)
 	{
 		errReason = "Invalid format group specified.";
 		goto fail;

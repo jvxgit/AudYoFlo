@@ -19,7 +19,7 @@ CjvxAuCFfmpegAudioDecoder::set_configure_token(const char* tokenArg)
 			JVX_SIZE_DONTCARE,
 			JVX_DATAFORMAT_POINTER,
 			JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
-			JVX_DATAFLOW_NONE,
+			JVX_DATAFLOW_DONT_CARE,
 			JVX_SIZE_UNSELECTED, 1); // <- number_channels and segment are different arguments here
 
 		neg_output._set_parameters_fixed(

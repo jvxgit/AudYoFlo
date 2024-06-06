@@ -28,6 +28,7 @@ public:
 	
 	virtual jvxErrorType link_connect_tcon(IjvxTriggerInputConnector* otcon) = 0;
 	virtual jvxErrorType unlink_connect_tcon(IjvxTriggerInputConnector* otcon) = 0;
+	virtual jvxErrorType latest_result_data() = 0;
 };
 
 #endif

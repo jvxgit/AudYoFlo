@@ -347,18 +347,19 @@ static inline jvxSize jvxDataFormatGroup_getsize(jvxSize idx)
 
 typedef enum
 {
-	JVX_DATAFLOW_NONE,
 	JVX_DATAFLOW_PUSH_ACTIVE, // Devices and nodes push data forward by calling process function of subsequent linked component
 	JVX_DATAFLOW_PUSH_ON_PULL, // Devices and nodes are triggered from subsequent element and call process function within this "pull"
+	JVX_DATAFLOW_PUSH_ASYNC, // Devices and nodes push data forward by calling process function of subsequent linked component
+	JVX_DATAFLOW_DONT_CARE, // All dataflows are accepted, this indicates that the value from input is used on output side in 1-to-1 connections
 	JVX_DATAFLOW_LIMIT
 } jvxDataflow;
 
 static jvxTextHelpers jvxDataflow_str[JVX_DATAFLOW_LIMIT] =
 {
-	{"none", "JVX_DATAFLOW_NONE"},
-
 	{"push", "JVX_DATAFLOW_PUSH_ACTIVE" },
-	{"pull", "JVX_DATAFLOW_PUSH_ON_PULL"}
+	{"pull", "JVX_DATAFLOW_PUSH_ON_PULL"},
+	{"async", "JVX_DATAFLOW_PUSH_ASYNC"},
+	{"dontcare", "JVX_DATAFLOW_DONT_CARE"}
 };
 
 static inline const char* jvxDataflow_txt(jvxSize id)
@@ -370,7 +371,7 @@ static inline const char* jvxDataflow_txt(jvxSize id)
 static inline jvxDataflow jvxDataflow_decode(const char* token)
 {
 	jvxSize i;
-	jvxDataflow res = JVX_DATAFLOW_NONE;
+	jvxDataflow res = JVX_DATAFLOW_DONT_CARE;
 	for (i = 0; i < JVX_DATAFORMAT_GROUP_LIMIT; i++)
 	{
 		if (!strcmp(jvxDataflow_str[i].friendly, token))

@@ -66,14 +66,14 @@ protected:
 		jvxSize rate = JVX_SIZE_UNSELECTED;
 		jvxDataFormat format = JVX_DATAFORMAT_NONE;
 		jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
-		jvxDataflow data_flow = JVX_DATAFLOW_NONE;
+		jvxDataflow data_flow = JVX_DATAFLOW_DONT_CARE;
 		void clear()
 		{
 			bsize = JVX_SIZE_UNSELECTED;
 			rate = JVX_SIZE_UNSELECTED;
 			format = JVX_DATAFORMAT_NONE;
 			format_group = JVX_DATAFORMAT_GROUP_NONE;
-			data_flow = JVX_DATAFLOW_NONE;
+			data_flow = JVX_DATAFLOW_DONT_CARE;
 		};
 	};
 

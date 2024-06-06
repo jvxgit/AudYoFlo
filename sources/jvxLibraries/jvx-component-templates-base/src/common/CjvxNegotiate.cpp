@@ -229,7 +229,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 			datOut->con_params.format_group = sub_format;
 	}	
 
-	if (datflow != jvxDataflow::JVX_DATAFLOW_NONE)
+	if (datflow != jvxDataflow::JVX_DATAFLOW_DONT_CARE)
 	{
 		SET_OTHER(res, preferred, data_flow, datflow);
 		if (datOut)
@@ -301,7 +301,7 @@ CjvxNegotiate_common::_clear_parameters_fixed(
 	}
 	if (datflow)
 	{
-		SET_OTHER(res, preferred, data_flow, jvxDataflow::JVX_DATAFLOW_NONE);
+		SET_OTHER(res, preferred, data_flow, jvxDataflow::JVX_DATAFLOW_DONT_CARE);
 	}
 	
 	return res;
@@ -322,7 +322,7 @@ CjvxNegotiate_common::derive(jvxLinkDataDescriptor_con_params* params)
 	SET_DEFAULT_PARAM_ENUM(params, preferred, format, format, JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_DATA);
 	SET_DEFAULT_PARAM_ENUM(params, preferred, format_group, subformat, JVX_DATAFORMAT_GROUP_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED);
 	
-	SET_DEFAULT_PARAM_ENUM(params, preferred, data_flow, data_flow, jvxDataflow::JVX_DATAFLOW_NONE, 
+	SET_DEFAULT_PARAM_ENUM(params, preferred, data_flow, data_flow, jvxDataflow::JVX_DATAFLOW_DONT_CARE,
 		jvxDataflow::JVX_DATAFLOW_PUSH_ACTIVE);
 	return JVX_NO_ERROR;
 }
@@ -502,107 +502,31 @@ CjvxNegotiate_common::compare_core(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDesc
 {
 	thereismismatch = false;
 
+	// In the first part, check the data connection main topics.
+	
 	// ================================================================================
-	// Number output channels
-	// ================================================================================
-	if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.min))
-	{
-		if (ld_cp->con_params.number_channels < preferred.number_channels.min)
-		{
-			thereismismatch = true;
-			if (ld_fix)
-			{
-				ld_fix->con_params.number_channels = preferred.number_channels.min;
-			}
-		}
-	}
-	if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.max))
-	{
-		if (ld_cp->con_params.number_channels > preferred.number_channels.max)
-		{
-			thereismismatch = true;
-			if(ld_fix)
-			{
-				ld_fix->con_params.number_channels = preferred.number_channels.max;
-			}
-		}
-	}
-
-	// ================================================================================
-	// Buffersize
+	// Dataflow
 	// ================================================================================
 
-	if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.min))
+	if (preferred.data_flow.min != jvxDataflow::JVX_DATAFLOW_DONT_CARE)
 	{
-		if (ld_cp->con_params.buffersize < preferred.buffersize.min)
-		{
-			thereismismatch = true;
-			if(ld_fix)
-			{
-				ld_fix->con_params.buffersize = preferred.buffersize.min;
-			}
-		}
-	}
-	if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.max))
-	{
-		if (ld_cp->con_params.buffersize > preferred.buffersize.max)
+		if (ld_cp->con_params.data_flow < preferred.data_flow.min)
 		{
 			thereismismatch = true;
 			if (ld_fix)
 			{
-				ld_fix->con_params.buffersize = preferred.buffersize.max;
+				ld_fix->con_params.data_flow = preferred.data_flow.min;
 			}
 		}
 	}
-
-	// ================================================================================
-	// Samplerate
-	// ================================================================================
-	if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.min))
+	if (preferred.data_flow.max != jvxDataflow::JVX_DATAFLOW_DONT_CARE)
 	{
-		if (ld_cp->con_params.rate < preferred.samplerate.min)
+		if (ld_cp->con_params.data_flow > preferred.data_flow.max)
 		{
 			thereismismatch = true;
 			if (ld_fix)
 			{
-				ld_fix->con_params.rate = preferred.samplerate.min;
-			}
-		}
-	}
-	if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.max))
-	{
-		if (ld_cp->con_params.rate > preferred.samplerate.max)
-		{
-			thereismismatch = true;
-			if (ld_fix)
-			{
-				ld_fix->con_params.rate = preferred.samplerate.max;
-			}
-		}
-	}
-
-	// ================================================================================
-	// Format
-	// ================================================================================
-	if (preferred.format.min != JVX_DATAFORMAT_NONE)
-	{
-		if (ld_cp->con_params.format < preferred.format.min)
-		{
-			thereismismatch = true;
-			if (ld_fix)
-			{
-				ld_fix->con_params.format = preferred.format.min;
-			}
-		}
-	}
-	if (preferred.format.max != JVX_DATAFORMAT_NONE)
-	{
-		if (ld_cp->con_params.format > preferred.format.max)
-		{
-			thereismismatch = true;
-			if (ld_fix)
-			{
-				ld_fix->con_params.format = preferred.format.max;
+				ld_fix->con_params.data_flow = preferred.data_flow.max;
 			}
 		}
 	}
@@ -634,86 +558,170 @@ CjvxNegotiate_common::compare_core(jvxLinkDataDescriptor* ld_cp, jvxLinkDataDesc
 		}
 	}
 
-	// ================================================================================
-	// Dataflow
-	// ================================================================================
-
-	if (preferred.data_flow.min != jvxDataflow::JVX_DATAFLOW_NONE)
+	// In the second part, check the data connection topics for "real" data
+	
+	// All other parameters are not relevant from here on if trigger only
+	if (ld_cp->con_params.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
 	{
-		if (ld_cp->con_params.data_flow < preferred.data_flow.min)
+		// ================================================================================
+		// Number output channels
+		// ================================================================================
+		if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.min))
 		{
-			thereismismatch = true;
-			if (ld_fix)
-			{
-				ld_fix->con_params.data_flow = preferred.data_flow.min;
-			}
-		}
-	}
-	if (preferred.data_flow.max != jvxDataflow::JVX_DATAFLOW_NONE)
-	{
-		if (ld_cp->con_params.data_flow > preferred.data_flow.max)
-		{
-			thereismismatch = true;
-			if (ld_fix)
-			{
-				ld_fix->con_params.data_flow = preferred.data_flow.max;
-			}
-		}
-	}
-
-	// ================================================================================
-	// DimX
-	// ================================================================================
-	if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation.x))
-	{
-		if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.min))
-		{
-			if (ld_cp->con_params.segmentation.x < preferred.dimX.min)
+			if (ld_cp->con_params.number_channels < preferred.number_channels.min)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation.x = preferred.dimX.min;
+					ld_fix->con_params.number_channels = preferred.number_channels.min;
 				}
 			}
 		}
-		if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.max))
+		if (JVX_CHECK_SIZE_SELECTED(preferred.number_channels.max))
 		{
-			if (ld_cp->con_params.segmentation.x > preferred.dimX.max)
+			if (ld_cp->con_params.number_channels > preferred.number_channels.max)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation.x = preferred.dimX.max;
+					ld_fix->con_params.number_channels = preferred.number_channels.max;
 				}
 			}
 		}
-	}
 
-	// ================================================================================
-	// DimY
-	// ================================================================================
-	if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation.y))
-	{
-		if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.min))
+		// ================================================================================
+		// Buffersize
+		// ================================================================================
+
+		if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.min))
 		{
-			if (ld_cp->con_params.segmentation.y < preferred.dimY.min)
+			if (ld_cp->con_params.buffersize < preferred.buffersize.min)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation.y = preferred.dimY.min;
+					ld_fix->con_params.buffersize = preferred.buffersize.min;
 				}
 			}
 		}
-		if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.max))
+		if (JVX_CHECK_SIZE_SELECTED(preferred.buffersize.max))
 		{
-			if (ld_cp->con_params.segmentation.y > preferred.dimY.max)
+			if (ld_cp->con_params.buffersize > preferred.buffersize.max)
 			{
 				thereismismatch = true;
 				if (ld_fix)
 				{
-					ld_fix->con_params.segmentation.y = preferred.dimY.max;
+					ld_fix->con_params.buffersize = preferred.buffersize.max;
+				}
+			}
+		}
+
+		// ================================================================================
+		// Samplerate
+		// ================================================================================
+		if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.min))
+		{
+			if (ld_cp->con_params.rate < preferred.samplerate.min)
+			{
+				thereismismatch = true;
+				if (ld_fix)
+				{
+					ld_fix->con_params.rate = preferred.samplerate.min;
+				}
+			}
+		}
+		if (JVX_CHECK_SIZE_SELECTED(preferred.samplerate.max))
+		{
+			if (ld_cp->con_params.rate > preferred.samplerate.max)
+			{
+				thereismismatch = true;
+				if (ld_fix)
+				{
+					ld_fix->con_params.rate = preferred.samplerate.max;
+				}
+			}
+		}
+
+		// ================================================================================
+		// Format
+		// ================================================================================
+		if (preferred.format.min != JVX_DATAFORMAT_NONE)
+		{
+			if (ld_cp->con_params.format < preferred.format.min)
+			{
+				thereismismatch = true;
+				if (ld_fix)
+				{
+					ld_fix->con_params.format = preferred.format.min;
+				}
+			}
+		}
+		if (preferred.format.max != JVX_DATAFORMAT_NONE)
+		{
+			if (ld_cp->con_params.format > preferred.format.max)
+			{
+				thereismismatch = true;
+				if (ld_fix)
+				{
+					ld_fix->con_params.format = preferred.format.max;
+				}
+			}
+		}
+
+		// ================================================================================
+		// DimX
+		// ================================================================================
+		if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation.x))
+		{
+			if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.min))
+			{
+				if (ld_cp->con_params.segmentation.x < preferred.dimX.min)
+				{
+					thereismismatch = true;
+					if (ld_fix)
+					{
+						ld_fix->con_params.segmentation.x = preferred.dimX.min;
+					}
+				}
+			}
+			if (JVX_CHECK_SIZE_SELECTED(preferred.dimX.max))
+			{
+				if (ld_cp->con_params.segmentation.x > preferred.dimX.max)
+				{
+					thereismismatch = true;
+					if (ld_fix)
+					{
+						ld_fix->con_params.segmentation.x = preferred.dimX.max;
+					}
+				}
+			}
+		}
+
+		// ================================================================================
+		// DimY
+		// ================================================================================
+		if (JVX_CHECK_SIZE_SELECTED(ld_cp->con_params.segmentation.y))
+		{
+			if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.min))
+			{
+				if (ld_cp->con_params.segmentation.y < preferred.dimY.min)
+				{
+					thereismismatch = true;
+					if (ld_fix)
+					{
+						ld_fix->con_params.segmentation.y = preferred.dimY.min;
+					}
+				}
+			}
+			if (JVX_CHECK_SIZE_SELECTED(preferred.dimY.max))
+			{
+				if (ld_cp->con_params.segmentation.y > preferred.dimY.max)
+				{
+					thereismismatch = true;
+					if (ld_fix)
+					{
+						ld_fix->con_params.segmentation.y = preferred.dimY.max;
+					}
 				}
 			}
 		}
@@ -763,8 +771,8 @@ CjvxNegotiate_common::_constrain_ldesc(jvxLinkDataDescriptor* theData) const
 
 	// ===================================================================
 	// Prefer min format
-	JVX_MAX_NEG_SET_LDAT_CMP(preferred.data_flow, theData->con_params.data_flow, JVX_DATAFLOW_NONE);
-	JVX_MIN_NEG_SET_LDAT_CMP(preferred.data_flow, theData->con_params.data_flow, JVX_DATAFLOW_NONE);
+	JVX_MAX_NEG_SET_LDAT_CMP(preferred.data_flow, theData->con_params.data_flow, JVX_DATAFLOW_DONT_CARE);
+	JVX_MIN_NEG_SET_LDAT_CMP(preferred.data_flow, theData->con_params.data_flow, JVX_DATAFLOW_DONT_CARE);
 }
 
 // ===================================================================

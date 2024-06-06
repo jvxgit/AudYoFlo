@@ -233,9 +233,7 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 			update_output_params_from_input_params();
 			adapt_output_parameters_forward();
 			test_set_output_parameters();
-
-			// This I need to find an example for
-			assert(0);
+			
 			break;
 		case JVX_ERROR_COMPROMISE:
 

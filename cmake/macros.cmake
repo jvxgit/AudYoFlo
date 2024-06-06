@@ -83,19 +83,40 @@ macro(jvx_genMatProperties targetname componenttype componentprefix localfilelis
 		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked})
 		foreach(PCGFILE ${localfilelist})
 			string(REPLACE ";" " " localoptionsstr "${localoptions}")
+			
+			# Example how to set localoptions
+			# set(localoptionsstr a b)
+		
 			if(JVX_MAX_PATH_PROP_MAT)
-				set(localoptionsstr "${localoptionsstr} -maxl ${JVX_MAX_PATH_PROP_MAT}")
+				set(localoptionsstr ${localoptionsstr} -maxl ${JVX_MAX_PATH_PROP_MAT})
 			endif()
-	
-			message("    > PCG MAT Generator: ${PCGFILE} for component of type ${componenttype}, generator prefix ${componentprefix}, local options = ${localoptionsstr}")
-			# message("exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
-			# pcg_mat_opts "${localoptions}")
-			# message("--> 1 ${localoptions} 2")	
-			# Added some quotes for systems with spaces in path
-			# install(CODE "exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
-			install(CODE "execute_process(COMMAND \"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
+			
+			string(REPLACE ";" " " localoptionsstr "${localoptionsstr}")
+			
+			message("    > PCG MAT Generator: ${PCGFILE} for component of type ${componenttype}, generator prefix ${componentprefix}, local options = ${localoptionsstr} to be installed in ${INSTALL_PATH_MATLAB_SUBPROJECT}/+${targetname_tweaked}")
+
+			# This is the old version with exec_programm - which works. I was not able to transform this into a version
+			# a) with exec_process
+			# b) with additional arguments in localoptionsstr
+			# c) in an INSTALL clause.
+			# In all attempts, CMake has done weird stuff. The problem is that in exec_process, we need to pass all 
+			# arguments separately. This could not be achieved in this combination of a-c.
+			install(CODE "exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
+			
+			# Here is my last attempt - which is close but not really functional 
+			#install(CODE "string(REPLACE \";\" \" \" localoptionsstri \"${localoptionsstr}\")
+			#	execute_process(COMMAND \"${JVX_PCG_MATLAB}\" \"${PCGFILE}\" \"-o\" \"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\" \"-ctp\" \"${componenttype}\" \$\{localoptionsstri\} 
+			#	COMMAND_ECHO STDOUT RESULT_VARIABLE status)")
+			
+			# The following command works but only if not in INSTALL clause!!
+			#execute_process(COMMAND "${JVX_PCG_MATLAB}" "${PCGFILE}" "-o" "${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}" "-ctp" "${componenttype}" ${localoptionsstr} 
+			#	COMMAND_ECHO STDOUT RESULT_VARIABLE status)			
+				
+					
 		endforeach()
 		install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked} DESTINATION ${INSTALL_PATH_MATLAB_SUBPROJECT})
+		# message(FATAL_ERROR "Hier")
+		
 	endif()
 endmacro(jvx_genMatProperties)
 

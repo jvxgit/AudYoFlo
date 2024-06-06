@@ -361,7 +361,7 @@ struct jvxLinkDataDescriptor_con_params
 	jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
 
 	// Dataflow capability
-	jvxDataflow data_flow = JVX_DATAFLOW_NONE;
+	jvxDataflow data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 
 	// A buffer of size buffersize is segmented into x and y according to:
 	// -------- segmentation_x -------->

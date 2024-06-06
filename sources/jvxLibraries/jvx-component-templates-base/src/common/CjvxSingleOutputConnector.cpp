@@ -235,6 +235,20 @@ CjvxSingleOutputConnector::available_to_connect_ocon()
 {
 	return JVX_ERROR_UNSUPPORTED;
 }
+
+jvxErrorType 
+CjvxSingleOutputConnector::resultFromInputConnector()
+{
+	jvxErrorType res = JVX_ERROR_UNKNOWN;
+	if (trig_con)
+	{
+		if (trig_con->linked_ref)
+		{
+			res = trig_con->linked_ref->latest_result_data();
+		}
+	}
+	return res;
+}
 // =================================================================================
 
 jvxErrorType

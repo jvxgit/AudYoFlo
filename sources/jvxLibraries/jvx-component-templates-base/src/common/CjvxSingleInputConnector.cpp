@@ -17,6 +17,17 @@ CjvxSingleInputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHan
 	return res;
 }
 
+jvxErrorType
+CjvxSingleInputTriggerConnector::latest_result_data()
+{
+	if (bwdRef)
+	{
+		jvxErrorType res = bwdRef->resLatestGetData;
+		bwdRef->resLatestGetData = JVX_ERROR_UNKNOWN;
+		return res;
+	}
+	return JVX_ERROR_UNKNOWN;
+}
 
 // =====================================================================================
 
@@ -249,6 +260,7 @@ CjvxSingleInputConnector::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_START, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
+	resLatestGetData = JVX_ERROR_UNKNOWN;
 	return res;
 }
 
@@ -258,6 +270,8 @@ CjvxSingleInputConnector::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	if (res == JVX_NO_ERROR)
 	{
+		resLatestGetData = JVX_ERROR_UNKNOWN;
+
 		if (trig_con &&
 			trig_con->linked_ref)
 		{
@@ -344,6 +358,12 @@ jvxErrorType
 CjvxSingleInputConnector::available_to_connect_icon()
 {
 	return JVX_ERROR_UNSUPPORTED;
+}
+
+void 
+CjvxSingleInputConnector::setLatestResultGetData(jvxErrorType resLatestGetDataArg)
+{
+	resLatestGetData = resLatestGetDataArg;
 }
 
 // ===============================================================================================

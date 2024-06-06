@@ -563,11 +563,11 @@ CjvxSpNSynchronize_sec::trigger_process_immediate(jvxLinkDataDescriptor* datIn, 
 		// Request data from output side of secondary chain
 		if (referencePtr->bufferMode == jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_UNBUFFERED_PULL)
 		{
-			if (datOut)
+			if (_common_set_icon.theData_in)
 			{
-				if (datOut->con_link.connect_from)
+				if (_common_set_icon.theData_in->con_link.connect_from)
 				{
-					datOut->con_link.connect_from->transfer_backward_ocon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+					_common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 				}
 			}
 		}

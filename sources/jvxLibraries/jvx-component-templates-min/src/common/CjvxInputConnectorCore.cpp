@@ -61,7 +61,7 @@ CjvxInputConnectorCore::_supports_connector_class_icon(
 			return JVX_ERROR_UNSUPPORTED;
 		}
 	}
-	if (_common_set_icon.caps_in.data_flow != JVX_DATAFLOW_NONE)
+	if (_common_set_icon.caps_in.data_flow != JVX_DATAFLOW_DONT_CARE)
 	{
 		if (_common_set_icon.caps_in.data_flow != data_flow)
 		{

@@ -53,6 +53,8 @@ public:
 
 	jvxErrorType available_to_connect_ocon() override;
 
+	jvxErrorType resultFromInputConnector();
+
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr

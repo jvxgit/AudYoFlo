@@ -17,6 +17,7 @@ public:
 	CjvxSingleInputConnector* bwdRef = nullptr;
 public:
 	virtual jvxErrorType trigger(jvxTriggerConnectorPurpose purp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+	virtual jvxErrorType latest_result_data() override;
 };
 
 class CjvxSingleInputConnector: public IjvxInputConnector, public CjvxConnector<CjvxInputConnectorLink, CjvxSingleInputTriggerConnector>
@@ -27,6 +28,7 @@ protected:
 
 	CjvxSingleConnector_report<CjvxSingleInputConnector>* report = nullptr;
 	CjvxNegotiate_input neg_input;
+	jvxErrorType resLatestGetData = JVX_ERROR_UNKNOWN;
 
 public:
 	CjvxSingleInputConnector(jvxBool withTriggerConnectorArg);
@@ -62,6 +64,8 @@ public:
 
 	virtual jvxErrorType request_trigger_otcon(IjvxTriggerOutputConnector** otcon) override;
 	virtual jvxErrorType return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
+
+	void setLatestResultGetData(jvxErrorType resLatestGetData);
 
 	// =======================================================================================
 

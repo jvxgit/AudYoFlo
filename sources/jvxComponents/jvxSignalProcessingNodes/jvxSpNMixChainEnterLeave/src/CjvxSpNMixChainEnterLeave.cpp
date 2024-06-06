@@ -459,7 +459,7 @@ CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		lock();		
 		for (auto& elm : CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::processingConnectors)
 		{
-			elm.second.ioconn->trigger_get_data();
+			elm.second.ioconn->setLatestResultGetData(elm.second.ioconn->trigger_get_data());
 		}
 		unlock();
 		break;
@@ -473,7 +473,11 @@ CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		lock();
 		for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
 		{
-			elm.second.ioconn->trigger_put_data();
+			jvxErrorType resOther = elm.second.ioconn->resultFromInputConnector();
+			if(
+				(resOther == JVX_ERROR_UNKNOWN) || 
+				resOther == JVX_NO_ERROR)
+				elm.second.ioconn->trigger_put_data();
 		}
 		unlock();
 		break;

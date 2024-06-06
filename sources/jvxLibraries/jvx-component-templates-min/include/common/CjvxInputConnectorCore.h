@@ -22,7 +22,7 @@ public:
 		struct
 		{
 			jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
-			jvxDataflow data_flow = JVX_DATAFLOW_NONE;
+			jvxDataflow data_flow = JVX_DATAFLOW_DONT_CARE;
 		} caps_in;
 	};
 

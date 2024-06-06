@@ -17,7 +17,7 @@ public:
 		jvxInt32 samplerate = JVX_SIZE_UNSELECTED_INT32;
 		jvxInt16 format = JVX_DATAFORMAT_NONE;
 		jvxInt16 subformat = JVX_DATAFORMAT_GROUP_NONE;
-		jvxInt16 data_flow = jvxDataflow::JVX_DATAFLOW_NONE;
+		jvxInt16 data_flow = jvxDataflow::JVX_DATAFLOW_DONT_CARE;
 		std::string format_spec;
 		struct
 		{
@@ -32,7 +32,7 @@ public:
 			samplerate = JVX_SIZE_UNSELECTED_INT32;
 			format = JVX_DATAFORMAT_NONE;
 			subformat = JVX_DATAFORMAT_GROUP_NONE;
-			data_flow = jvxDataflow::JVX_DATAFLOW_NONE;
+			data_flow = jvxDataflow::JVX_DATAFLOW_DONT_CARE;
 			segmentation.x = JVX_SIZE_UNSELECTED_INT32;
 			segmentation.y = JVX_SIZE_UNSELECTED_INT32;
 			format_spec.clear();

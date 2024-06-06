@@ -90,7 +90,7 @@ CjvxInputConnectorNVtask::supports_connector_class_icon(
 			return JVX_ERROR_UNSUPPORTED;
 		}
 	}
-	if (_common_set_icon_nvtask.caps_in.data_flow != JVX_DATAFLOW_NONE)
+	if (_common_set_icon_nvtask.caps_in.data_flow != JVX_DATAFLOW_DONT_CARE)
 	{
 		if (_common_set_icon_nvtask.caps_in.data_flow != data_flow)
 		{
@@ -151,7 +151,7 @@ CjvxOutputConnectorNVtask::supports_connector_class_ocon(
 			return JVX_ERROR_UNSUPPORTED;
 		}
 	}
-	if (_common_set_ocon_nvtask.caps_out.data_flow != JVX_DATAFLOW_NONE)
+	if (_common_set_ocon_nvtask.caps_out.data_flow != JVX_DATAFLOW_DONT_CARE)
 	{
 		if (_common_set_ocon_nvtask.caps_out.data_flow != data_flow)
 		{
