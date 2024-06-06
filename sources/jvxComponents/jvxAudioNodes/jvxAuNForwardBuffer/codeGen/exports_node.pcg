@@ -59,8 +59,7 @@ SECTION PROPERTIES
 		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
 		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
-		CALLBACKS = {"get_processing_monitor"};
-		CALLBACK_GET_PREHOOK = "get_processing_monitor"; 
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
 		
 		SECTION number_overflows
 		{
@@ -98,6 +97,12 @@ SECTION PROPERTIES
 			DESCRIPTION = "Current max fill height";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_DATA";	
 			INIT_SET = 0;
+		}; 
+		SECTION size_buffer
+		{
+			DESCRIPTION = "Size of the involved buffer [samples]";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 0;				
 		}; 
 	};
 

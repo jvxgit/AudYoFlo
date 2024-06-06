@@ -34,6 +34,9 @@ jvxErrorType jvx_getReferencePropertiesObject(IjvxHost* theHost, jvx_propertyRef
 			case JVX_COMPONENT_PROCESSING_GROUP:
 				resL = ((IjvxDataConnectionGroup*)theTriple->theHdl)->request_hidden_interface(JVX_INTERFACE_PROPERTIES, reinterpret_cast<jvxHandle**>(&theTriple->theProps));
 				break;
+			case JVX_COMPONENT_SYSTEM_AUTOMATION:
+				resL = ((IjvxSimpleComponent*)theTriple->theHdl)->request_hidden_interface(JVX_INTERFACE_PROPERTIES, reinterpret_cast<jvxHandle**>(&theTriple->theProps));
+				break;
 			default:
 				resL = JVX_ERROR_ELEMENT_NOT_FOUND;
 				break;
@@ -91,7 +94,12 @@ jvxErrorType jvx_returnReferencePropertiesObject(IjvxHost* theHost, jvx_property
 					break;
 				case JVX_COMPONENT_PROCESSING_GROUP:
 					res = ((IjvxDataConnectionGroup*)theTriple->theHdl)->return_hidden_interface(JVX_INTERFACE_PROPERTIES, reinterpret_cast<jvxHandle*>(theTriple->theProps));
-				break;				default:
+				break;				
+				case JVX_COMPONENT_SYSTEM_AUTOMATION:
+					res = ((IjvxSimpleComponent*)theTriple->theHdl)->return_hidden_interface(JVX_INTERFACE_PROPERTIES, reinterpret_cast<jvxHandle*>(theTriple->theProps));
+					break;
+
+				default:
 					res = JVX_ERROR_ELEMENT_NOT_FOUND;
 				}
 			}

@@ -141,7 +141,6 @@ public:
 
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_processing_monitor);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_bypass_buffer);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_buffer_mode);
 

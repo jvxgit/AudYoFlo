@@ -60,7 +60,7 @@ CjvxAuNForwardBuffer::activate()
 		genForwardBuffer_node::register_all(static_cast<CjvxProperties*>(this));
 
 		genForwardBuffer_node::register_callbacks(static_cast<CjvxProperties*>(this),
-			set_bypass_buffer, set_buffer_mode, get_processing_monitor, this, nullptr);
+			set_bypass_buffer, set_buffer_mode, this, nullptr);
 		// Obtain the thread handle here
 		refThreads = reqInstTool<IjvxThreads>(
 			_common_set.theToolsHost,
@@ -386,6 +386,10 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				JVX_MAX(node_inout._common_set_node_params_a_1io.buffersize, node_output._common_set_node_params_a_1io.buffersize) * 4, bs);
 				*/
 			bs = JVX_MAX(node_inout._common_set_node_params_a_1io.buffersize + node_output._common_set_node_params_a_1io.buffersize, bs);
+
+			// View buffersize in samples
+			genForwardBuffer_node::monitor.size_buffer.value = bs;
+
 			start_audiostack(
 				bs,
 				node_output._common_set_node_params_a_1io.number_channels,
@@ -1303,11 +1307,6 @@ CjvxAuNForwardBuffer::update_output_params()
 }
 
 // =================================================================================
-
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNForwardBuffer, get_processing_monitor)
-{
-	return JVX_NO_ERROR;
-}
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNForwardBuffer, set_bypass_buffer)
 {
