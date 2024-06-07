@@ -32,10 +32,10 @@ public:
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 
-		CjvxMexCalls::prepare_connect_icon_enter(_common_set_icon.theData_in);
+		CjvxMexCalls::prepare_connect_icon_enter(this->_common_set_icon.theData_in);
 
 		// Run this code before actually preparing this component to allow pre-run configuration in jvxDebugConfigAec
-		if (_theExtCallHandler)
+		if (this->_theExtCallHandler)
 		{
 			// We need to run this BEFORE we run any prepare call to obtain the
 			// modified parameter settings in the Matlab startup
@@ -57,15 +57,15 @@ public:
 		if (res == JVX_NO_ERROR)
 		{
 			// Matlab initialization is complete here
-			res = CjvxMexCalls::prepare_connect_icon_leave(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+			res = CjvxMexCalls::prepare_connect_icon_leave(this->_common_set_icon.theData_in, &this->_common_set_ocon.theData_out);
 		}
 
 		if (res == JVX_NO_ERROR)
 		{
 			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(dbgFldCopyInputs,
 				jvxData,
-				_common_set_icon.theData_in->con_params.number_channels,
-				_common_set_icon.theData_in->con_params.buffersize);
+				this->_common_set_icon.theData_in->con_params.number_channels,
+				this->_common_set_icon.theData_in->con_params.buffersize);
 
 			if (config.matlab_profiling_enabled)
 			{
@@ -93,9 +93,9 @@ public:
 			res = local_deallocate_profiling();
 		}
 
-		CjvxMexCalls::postprocess_connect_icon_enter(_common_set_icon.theData_in);
+		CjvxMexCalls::postprocess_connect_icon_enter(this->_common_set_icon.theData_in);
 
-		JVX_SAFE_DELETE_2DFIELD(dbgFldCopyInputs, _common_set_icon.theData_in->con_params.number_channels);
+		JVX_SAFE_DELETE_2DFIELD(dbgFldCopyInputs, this->_common_set_icon.theData_in->con_params.number_channels);
 
 		// Ignore all return values - if these functions fail we have a more severe problem!!
 
@@ -103,7 +103,7 @@ public:
 
 		res = T::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
-		res = CjvxMexCalls::postprocess_connect_icon_leave(_common_set_icon.theData_in);
+		res = CjvxMexCalls::postprocess_connect_icon_leave(this->_common_set_icon.theData_in);
 		
 		return res;
 	};
@@ -125,15 +125,15 @@ public:
 
 		// Check if checkbox in Matlab processing was checked
 		// The checkbox can be activated/deactivated while processing!!
-		if (_theExtCallHandler)
+		if (this->_theExtCallHandler)
 		{
 			CjvxMexCalls::is_matlab_processing_engaged(&engaged);
 		}
 
 		if(engaged)
 		{
-			jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-			jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
+			jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(this->_common_set_icon.theData_in, idx_stage);
+			jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(this->_common_set_ocon.theData_out);
 		
 			// ===================================================
 			// This case to run Matlab and C code in parallel
@@ -148,26 +148,26 @@ public:
 			if (!skipCCode)
 			{
 				// Copy input data for later usage
-				for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
+				for (i = 0; i < this->_common_set_icon.theData_in->con_params.number_channels; i++)
 				{
 					jvxData* ptrTo = dbgFldCopyInputs[i];
 					jvxData* ptrFrom = (jvxData*)buffers_in[i];
-					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
+					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * this->_common_set_icon.theData_in->con_params.buffersize);
 				}
 			}
 
 			// This lets Matlab run one frame of processing
 			// ======================================================================================
-			res = CjvxMexCalls::process_buffers_icon(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+			res = CjvxMexCalls::process_buffers_icon(this->_common_set_icon.theData_in, &this->_common_set_ocon.theData_out);
 			// ======================================================================================
 
 			if (!skipCCode)
 			{
-				for (i = 0; i < _common_set_icon.theData_in->con_params.number_channels; i++)
+				for (i = 0; i < this->_common_set_icon.theData_in->con_params.number_channels; i++)
 				{
 					jvxData* ptrFrom = dbgFldCopyInputs[i];
 					jvxData* ptrTo = (jvxData*)buffers_in[i];
-					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * _common_set_icon.theData_in->con_params.buffersize);
+					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * this->_common_set_icon.theData_in->con_params.buffersize);
 				}
 			}
 		}
