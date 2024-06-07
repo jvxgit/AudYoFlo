@@ -25,7 +25,7 @@ protected:
 	 * Mostly identical means that all parameters are identical except for the number of channels
 	 * on the input and output side.
 	 */
-	jvxBool checkInputOutputMostlyIdentical = true;
+	jvxBool allowZeroCopyOnCondition = true;
 
 private:
 
@@ -117,6 +117,7 @@ public:
 	void start_autostart();
 	void stop_autostart();
 
+	virtual bool check_positive_zero_copy();
 };
 
 #endif

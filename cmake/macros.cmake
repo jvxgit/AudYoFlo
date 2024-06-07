@@ -101,12 +101,13 @@ macro(jvx_genMatProperties targetname componenttype componentprefix localfilelis
 			# c) in an INSTALL clause.
 			# In all attempts, CMake has done weird stuff. The problem is that in exec_process, we need to pass all 
 			# arguments separately. This could not be achieved in this combination of a-c.
-			install(CODE "exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
+			# install(CODE "exec_program(\"${JVX_PCG_MATLAB} \\\"${PCGFILE}\\\" -o \\\"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\\\" -ctp ${componenttype} -cpf ${componentprefix} ${localoptionsstr}\")")
 			
 			# Here is my last attempt - which is close but not really functional 
-			#install(CODE "string(REPLACE \";\" \" \" localoptionsstri \"${localoptionsstr}\")
-			#	execute_process(COMMAND \"${JVX_PCG_MATLAB}\" \"${PCGFILE}\" \"-o\" \"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\" \"-ctp\" \"${componenttype}\" \$\{localoptionsstri\} 
-			#	COMMAND_ECHO STDOUT RESULT_VARIABLE status)")
+			# string(REPLACE \";\" \" \" localoptionsstri \"${localoptionsstr}\")
+			install(CODE "separate_arguments(localoptionsstri NATIVE_COMMAND \"${localoptionsstr}\")
+							execute_process(COMMAND \"${JVX_PCG_MATLAB}\" \"${PCGFILE}\" \"-o\" \"${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}\" \"-ctp\" \"${componenttype}\" \$\{localoptionsstri\} 
+									COMMAND_ECHO STDOUT RESULT_VARIABLE status)")
 			
 			# The following command works but only if not in INSTALL clause!!
 			#execute_process(COMMAND "${JVX_PCG_MATLAB}" "${PCGFILE}" "-o" "${CMAKE_CURRENT_BINARY_DIR}/m-files/+${targetname_tweaked}" "-ctp" "${componenttype}" ${localoptionsstr} 

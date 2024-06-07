@@ -15,6 +15,11 @@ enum class jvxOperationModeMixChain
 
 #include "pcg_exports_node.h"
 
+class chanOffsetAndMaxChans
+{
+	jvxSize idxOffset = 0;
+	jvxSize channel_num = 2;
+};
 
 class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, 
 	public CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>,
@@ -35,6 +40,8 @@ class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange,
 	jvxSize szChannelRoutes = 0;
 
 	std::vector<jvxSize> oldRouting;
+
+	std::map<jvxComponentIdentification, chanOffsetAndMaxChans> presets_channel_routing;
 
 	/*
 	struct
@@ -97,6 +104,8 @@ public:
 	virtual void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
 
 	static void correct_order_channel_route(jvxSize* ptrChannelRoutes, jvxSize szChannelRoutes);
+
+	bool check_positive_zero_copy()override;
 };
 
 	// ============================================================================

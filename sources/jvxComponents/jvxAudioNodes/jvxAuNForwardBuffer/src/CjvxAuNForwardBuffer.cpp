@@ -275,7 +275,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		genForwardBuffer_node::config_select.bypass_buffer);
 	if (!bypass_buffer_mode)
 	{
-		checkInputOutputMostlyIdentical = false; // This prevents also the zerocopy mode
+		allowZeroCopyOnCondition = false; // This prevents also the zerocopy mode
 	}
 
 	// ================================================================
@@ -389,7 +389,8 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 			// View buffersize in samples
 			genForwardBuffer_node::monitor.size_buffer.value = bs;
-
+			
+			// We use the number of output channels and allow copy of input channels for a re-routing
 			start_audiostack(
 				bs,
 				node_output._common_set_node_params_a_1io.number_channels,
@@ -1038,6 +1039,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 		jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
 		jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
 		jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
+		jvx_bitSet(checkFlags, (jvxCBitField)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
 		jvx_bitInvert(checkFlags);
 
 		// Check if switching dataflow and buffersize may help!
@@ -1060,6 +1062,15 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 					default:
 						noError = false;
 					}
+				}
+			}
+
+			if (noError)
+			{
+				// To change the dataflow type is well possible!!
+				if (node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels)
+				{
+					node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
 				}
 			}
 

@@ -667,4 +667,12 @@ CjvxSpNMixChainEnterLeave::return_hidden_interface(jvxInterfaceType tp, jvxHandl
 	return CjvxBareNode1ioRearrange::return_hidden_interface(tp, hdl);
 }
 
-
+bool 
+CjvxSpNMixChainEnterLeave::check_positive_zero_copy()
+{
+	return (
+		(_common_set_ocon.theData_out.con_params.buffersize == node_inout._common_set_node_params_a_1io.buffersize) &&
+		(_common_set_ocon.theData_out.con_params.format == node_inout._common_set_node_params_a_1io.format) &&
+		(_common_set_ocon.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate));// &&
+		//(_common_set_ocon.theData_out.con_params.number_channels == node_inout._common_set_node_params_a_1io.number_channels));
+}

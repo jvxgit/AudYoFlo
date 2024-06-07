@@ -261,6 +261,13 @@ CjvxSpNSynchronize::fwd_report_process_buffers(jvxHandle** bufferPtrs, const jvx
 		memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);
 	}
 }
+
+jvxErrorType 
+CjvxSpNSynchronize::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	return CjvxBareNode1ioRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+}
+
 /*
 jvxErrorType 
 CjvxSpNMixChainEnterLeave::select(IjvxObject* owner)

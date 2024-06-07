@@ -69,6 +69,7 @@ protected:
 	jvxOperationMode mode =
 		jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT;
 		*/
+	/*
 	class proc_params
 	{
 	public:
@@ -77,6 +78,7 @@ protected:
 		jvxSize samplerate = JVX_SIZE_UNSELECTED;
 		jvxDataFormat format = JVX_DATAFORMAT_NONE;
 	};
+	*/
 
 	refComp<IjvxThreads> refThreads;
 
@@ -102,6 +104,11 @@ protected:
 
 	jvxDataflow dataFlowOperation_output = JVX_DATAFLOW_DONT_CARE;
 	jvxDataflow dataFlowOperation_input = JVX_DATAFLOW_DONT_CARE;
+
+	struct
+	{
+		jvxSize numChannels = 0;
+	} inProc;
 
 public:
 

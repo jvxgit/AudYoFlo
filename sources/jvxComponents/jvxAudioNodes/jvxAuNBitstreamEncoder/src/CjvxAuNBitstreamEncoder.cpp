@@ -7,7 +7,7 @@ CjvxAuNBitstreamEncoder::CjvxAuNBitstreamEncoder(JVX_CONSTRUCTOR_ARGUMENTS_MACRO
 	_common_set.theComponentType.unselected(JVX_NODE_TYPE_SPECIFIER_TYPE);
 	_common_set.theComponentSubTypeDescriptor = JVX_NODE_TYPE_SPECIFIER_DESCRIPTOR;
 
-	checkInputOutputMostlyIdentical = false;
+	allowZeroCopyOnCondition = false;
 	/*
 	_common_set_node_base_1io.num_iochans = JVX_SIZE_UNSELECTED;
 	_common_set_1io_zerocopy.bsize_io = JVX_SIZE_UNSELECTED;

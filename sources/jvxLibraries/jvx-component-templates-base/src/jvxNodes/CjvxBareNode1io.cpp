@@ -23,7 +23,7 @@ CjvxBareNode1io::CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	impPrepareOnChainPrepare = false;
 	impStartOnChainStart = false;
 
-	checkInputOutputMostlyIdentical = true;
+	allowZeroCopyOnCondition = true;
 }
 
 jvxErrorType
@@ -60,14 +60,10 @@ CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		assert(node_inout._common_set_node_params_a_1io.format == _common_set_icon.theData_in->con_params.format);
 		assert(_common_set_ocon.theData_out.con_data.buffers == NULL);
 
-		// Prepare next processing stage processing
-		// The only deviation from the input side may be the number of output channels - which is taken from the node parameter set
-		if (checkInputOutputMostlyIdentical)
+		
+		if (allowZeroCopyOnCondition)
 		{
-			if (
-				(_common_set_ocon.theData_out.con_params.buffersize == node_inout._common_set_node_params_a_1io.buffersize) &&
-				(_common_set_ocon.theData_out.con_params.format == node_inout._common_set_node_params_a_1io.format) &&
-				(_common_set_ocon.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate))
+			if (check_positive_zero_copy())
 			{
 				zeroCopyBuffering_rt = _common_set_ldslave.zeroCopyBuffering_cfg;
 			}
@@ -459,3 +455,16 @@ CjvxBareNode1io::disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONN
 	}
 	return res;
 };
+
+// We check if zerocopy mode is allowed! Typically, input and output must be identical.
+// ORIGINAL COMMENT: The only deviation from the input side may be the number of output channels - which is taken from the node parameter set
+// EXTENSION HK, 07.06.2024: I can not remember why a different number of output channels was meant to be accepted before. 		
+// Components may re-define this check if they want to do whatever
+bool CjvxBareNode1io::check_positive_zero_copy()
+{
+	return (
+		(_common_set_ocon.theData_out.con_params.buffersize == node_inout._common_set_node_params_a_1io.buffersize) &&
+		(_common_set_ocon.theData_out.con_params.format == node_inout._common_set_node_params_a_1io.format) &&
+		(_common_set_ocon.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate) &&
+		(_common_set_ocon.theData_out.con_params.number_channels == node_inout._common_set_node_params_a_1io.number_channels));
+}
