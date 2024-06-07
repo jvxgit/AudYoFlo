@@ -33,7 +33,13 @@ CjvxSpNMixChainEnterLeave::select(IjvxObject* owner)
 		genMixChain::allocate__config();
 		genMixChain::register__config(this);
 
-		genMixChain::register_callbacks(this, set_on_config, this);
+		genMixChain::init__sources_channel_routing();
+		genMixChain::allocate__sources_channel_routing();
+		genMixChain::register__sources_channel_routing(this);
+		
+		genMixChain::sources_channel_routing.all_definitions.value.entries.clear();
+
+		genMixChain::register_callbacks(this, set_on_config, specify_one_definition, remove_one_definition, this);
 		
 		operationMode = genMixChain::translate__config__operation_mode_from();
 	}
@@ -47,7 +53,11 @@ CjvxSpNMixChainEnterLeave::unselect()
 	if (res == JVX_NO_ERROR)
 	{
 		genMixChain::unregister_callbacks(this);
-		genMixChain::unregister__config(this); 
+
+		genMixChain::unregister__sources_channel_routing(this);
+		genMixChain::deallocate__sources_channel_routing();
+
+		genMixChain::unregister__config(this);
 		genMixChain::deallocate__config();
 		
 		CjvxBareNode1ioRearrange::unselect();
@@ -67,6 +77,8 @@ CjvxSpNMixChainEnterLeave::activate()
 
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.number_channels_side);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.operation_mode);
+
+		offset_channels_to_property();
 
 		switch (operationMode)
 		{
@@ -487,43 +499,6 @@ CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 	return res;
 }
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, set_on_config)
-{
-	jvxBool triggerTest = false;
-	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genMixChain::config.number_channels_side))
-	{
-		// New number of channels, run the test function
-		triggerTest = true;
-	}
-	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genMixChain::config.operation_mode))
-	{
-		operationMode = genMixChain::translate__config__operation_mode_from();
-		triggerTest = true;
-	}
-
-	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genMixChain::config.channel_routing))
-	{
-		// Correct channel order
-		correct_order_channel_route(ptrChannelRoutes, szChannelRoutes);
-		
-		// Update channel routings
-		if (szChannelRoutes)
-		{
-			memcpy(oldRouting.data(), ptrChannelRoutes, szChannelRoutes * sizeof(jvxSize));
-		}
-
-		operationMode = genMixChain::translate__config__operation_mode_from();
-		triggerTest = true;
-	}
-
-	if (triggerTest)
-	{
-		this->inform_chain_test();
-	}
-
-	return JVX_NO_ERROR;
-}
-
 void 
 CjvxSpNMixChainEnterLeave::correct_order_channel_route(jvxSize* ptrChannelRoutes, jvxSize szChannelRoutes)
 {
@@ -667,12 +642,14 @@ CjvxSpNMixChainEnterLeave::return_hidden_interface(jvxInterfaceType tp, jvxHandl
 	return CjvxBareNode1ioRearrange::return_hidden_interface(tp, hdl);
 }
 
+
 bool 
 CjvxSpNMixChainEnterLeave::check_positive_zero_copy()
 {
 	return (
 		(_common_set_ocon.theData_out.con_params.buffersize == node_inout._common_set_node_params_a_1io.buffersize) &&
 		(_common_set_ocon.theData_out.con_params.format == node_inout._common_set_node_params_a_1io.format) &&
-		(_common_set_ocon.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate));// &&
-		//(_common_set_ocon.theData_out.con_params.number_channels == node_inout._common_set_node_params_a_1io.number_channels));
+		(_common_set_ocon.theData_out.con_params.rate == node_inout._common_set_node_params_a_1io.samplerate));
+
+	// Here is the trick: we accept zero-copy even if the number of channels does not really fit and CORRECT that afterwards!!
 }

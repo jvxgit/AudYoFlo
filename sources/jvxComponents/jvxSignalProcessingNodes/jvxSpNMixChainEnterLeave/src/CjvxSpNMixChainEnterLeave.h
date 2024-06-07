@@ -17,6 +17,8 @@ enum class jvxOperationModeMixChain
 
 class chanOffsetAndMaxChans
 {
+public:
+	jvxComponentIdentification cpId;
 	jvxSize idxOffset = 0;
 	jvxSize channel_num = 2;
 };
@@ -41,6 +43,8 @@ class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange,
 
 	std::vector<jvxSize> oldRouting;
 
+	// Add entries via properties:
+	// <component identification>, <offset>, <max_chans>
 	std::map<jvxComponentIdentification, chanOffsetAndMaxChans> presets_channel_routing;
 
 	/*
@@ -90,6 +94,8 @@ public:
 		jvxHandle* sectionWhereToAddAllSubsections)override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_on_config);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(specify_one_definition);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(remove_one_definition);
 
 	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn) override;
 	void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) override;
@@ -106,6 +112,8 @@ public:
 	static void correct_order_channel_route(jvxSize* ptrChannelRoutes, jvxSize szChannelRoutes);
 
 	bool check_positive_zero_copy()override;
+
+	void offset_channels_to_property();
 };
 
 	// ============================================================================

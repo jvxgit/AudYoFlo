@@ -21,6 +21,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterLeave_output.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterLeave_config.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNMixChainEnterLeave_props.cpp
    )
 
 set(LOCAL_LIBS 
