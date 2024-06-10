@@ -28,8 +28,7 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 		break;
 	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_TEST:
 		if (bwdRef)
-		{
-			bwdRef->neg_output._constrain_ldesc(&bwdRef->_common_set_ocon.theData_out);
+		{			
 			res = bwdRef->test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
 		break;
@@ -141,6 +140,27 @@ CjvxSingleOutputConnector::deactivate()
 }
 
 jvxErrorType 
+CjvxSingleOutputConnector::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) 
+{
+	// JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, this);
+	if (report)
+	{
+		report->report_test_connector(this  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		jvxSize chanMax = chanSetting.channel_num;
+		chanMax = JVX_MIN(chanMax, channelWidthMax - chanSetting.idxOffset);		
+		neg_output.preferred.number_channels.max = chanMax;
+		neg_output.preferred.number_channels.min = chanMax;
+	}
+
+	neg_output._constrain_ldesc(&_common_set_ocon.theData_out);
+
+	// this->test_set_output_parameters();
+
+	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O(fdb, (&_common_set_ocon.theData_out));
+	return _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+};
+
+jvxErrorType 
 CjvxSingleOutputConnector::start_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	// Request a unique pipeline id
@@ -174,13 +194,18 @@ CjvxSingleOutputConnector::stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType
-CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requesTestChain)
+CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params)
 {
 	// We only accept ONE setting!! Dataflow is forward
 	neg_output._update_parameters_fixed(params.number_channels,
 		params.buffersize, params.rate,
 		params.format, params.format_group,
 		JVX_DATAFLOW_PUSH_ACTIVE, nullptr);
+	
+	// Not activated on the output side, otherwise, we will only see 0 channels!!
+	// It always outputs the maximim number of channels!!
+	// neg_output.preferred.number_channels.min = 0;
+	channelWidthMax = params.number_channels;	
 	return JVX_NO_ERROR;
 }
 

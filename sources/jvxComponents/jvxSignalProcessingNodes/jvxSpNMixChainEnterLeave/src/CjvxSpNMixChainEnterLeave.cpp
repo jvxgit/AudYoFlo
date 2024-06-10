@@ -653,3 +653,30 @@ CjvxSpNMixChainEnterLeave::check_positive_zero_copy()
 
 	// Here is the trick: we accept zero-copy even if the number of channels does not really fit and CORRECT that afterwards!!
 }
+
+jvxErrorType
+CjvxSpNMixChainEnterLeave::check_preset_channels(CjvxConnectorOffsetAndMaxChans& conParams, jvxComponentIdentification cpId)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	for (auto& elm : presets_channel_routing)
+	{
+		if (elm.first.tp == cpId.tp)
+		{
+			if (
+				(elm.first.slotid == JVX_SIZE_DONTCARE) ||
+				(elm.first.slotid == cpId.slotid))
+			{
+				if (
+					(elm.first.slotsubid == JVX_SIZE_DONTCARE) ||
+					(elm.first.slotsubid == cpId.slotsubid))
+				{
+					conParams = elm.second;
+					res = JVX_NO_ERROR;
+					break;
+				}
+			}
+		}
+	}
+	return res;
+
+}

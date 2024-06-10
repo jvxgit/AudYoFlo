@@ -72,7 +72,8 @@ namespace CayfAutomationModules
 			this->pre_run_chain_connect(tp_reg, con, sglElmPtr);
 
 			jvxDataConnectionRuleParameters params(false, false, true, config.miscArgs.dbgOut, true);
-			std::string chainName = config.chainNamePrefix + jvx_size2String(derived.tpSrc.slotsubid);
+			std::string chainName = CayfAutomationModules::CayfAutomationModulesHelper::chainPrefixToChain(config.chainNamePrefix, tp_reg);
+			// jvx_size2String(derived.tpSrc.slotsubid);
 
 
 			res = con->create_connection_rule(chainName.c_str(),

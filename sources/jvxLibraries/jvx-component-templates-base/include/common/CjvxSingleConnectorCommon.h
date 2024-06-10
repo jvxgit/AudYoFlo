@@ -1,6 +1,13 @@
 #ifndef __CJVXSINGLECONNECTORCOMMON_H__
 #define __CJVXSINGLECONNECTORCOMMON_H__
 
+class CjvxConnectorOffsetAndMaxChans
+{
+public:
+	jvxSize idxOffset = 0;
+	jvxSize channel_num = JVX_SIZE_UNSELECTED;
+};
+
 template <class T1, class T2> 
 class CjvxConnectorMulti: public T2
 {
@@ -24,6 +31,8 @@ public:
 	T2* trig_con = nullptr;
 	jvxBool withTriggerConnector = false;
 	jvxSize conId = 0;
+	CjvxConnectorOffsetAndMaxChans chanSetting;
+	jvxSize channelWidthMax = JVX_SIZE_UNSELECTED;
 
 public:
 	CjvxConnector(jvxBool withTriggerConnectorArg) : withTriggerConnector(withTriggerConnectorArg)

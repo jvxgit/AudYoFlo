@@ -151,12 +151,11 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 				(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
 				(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
 			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
+
 			break;
 		}
-		if (triggerUpdate)
-		{
-			sec_master.trigger_request_secondary_chain();
-		}
+
+		sec_master.updateFixedProcessingArgsInOut(triggerUpdate); 
 	}
 	return res;
 }

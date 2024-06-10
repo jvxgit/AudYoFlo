@@ -56,7 +56,14 @@ CjvxSpNSynchronize_sec::report_stopped_connector(CjvxSingleOutputConnector* icon
 	return JVX_NO_ERROR;
 }
 
-void CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleOutputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
+jvxErrorType 
+CjvxSpNSynchronize_sec::report_test_connector(CjvxSingleOutputConnector* iconn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	return JVX_NO_ERROR;
+}
+
+void 
+CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleOutputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
 {
 
 }

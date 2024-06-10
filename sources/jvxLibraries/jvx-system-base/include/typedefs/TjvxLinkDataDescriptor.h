@@ -225,7 +225,7 @@ struct jvxLinkDataDescriptor_con_link
 	IjvxInputConnector* connect_to = nullptr;
 	IjvxOutputConnector* connect_from = nullptr;
 	IjvxConnectionMaster* master = nullptr;
-	jvxComponentIdentification tp_master = JVX_COMPONENT_UNKNOWN;
+	// jvxComponentIdentification tp_master = JVX_COMPONENT_UNKNOWN;
 	//jvxDataLinkDescriptorAddressFlags address_flags;
 	jvxBool allows_mt = false;
 	jvxLinkDataAttachedChain* attached_chain_single_pass = nullptr; // We may attach information to the chain. This info will not be associated to a buffer but to a chain and will be reported as processed once completed

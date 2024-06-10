@@ -125,6 +125,7 @@ public:
 	jvxErrorType prepare_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType postprocess_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
 	// ================================================================================
 	// Callbacks for input connector
@@ -137,6 +138,9 @@ public:
 	jvxErrorType report_stopped_connector(CjvxSingleInputConnector* iconn) override;
 	void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) override;
 	jvxErrorType report_unselected_connector(CjvxSingleInputConnector* iconn) override;
+
+	jvxErrorType report_test_connector(CjvxSingleOutputConnector* iconn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
+	jvxErrorType report_test_connector(CjvxSingleInputConnector* iconn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
 	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
 
@@ -214,6 +218,8 @@ public:
 	static jvxErrorType unlock_sync_threads_cb(jvxHandle* prv);
 	jvxErrorType lock_sync_threads_ic();
 	jvxErrorType unlock_sync_threads_ic();
+
+	void updateFixedProcessingArgsInOut(jvxBool triggerTestChain);
 };
 
 #endif

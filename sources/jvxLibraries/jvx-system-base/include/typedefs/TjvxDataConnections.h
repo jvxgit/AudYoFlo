@@ -46,6 +46,7 @@ typedef enum
 	JVX_LINKDATA_TRANSFER_TRIGGER_REPORT_SINGLE_MISSED_FRAME, /* No argument, always one missed frame reported at the moment of the arrival! */
 	JVX_LINKDATA_TRANSFER_CONFIG_TOKEN, /* jvxDataConnectionsTransferConfigToken* */
 	JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES, /* jvx::propertyCallCompactList* */
+	JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER, /* jvxComponentIdentification* */
 
 	/**
 	 * The INIT_PRERUN and the TERM_POSTRUN runs must be within the processing loop BUT BEFORE and after all buffers to be processed.

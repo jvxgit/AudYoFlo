@@ -8,6 +8,7 @@ public:
 	virtual ~CjvxSingleConnector_report() {};
 
 	virtual jvxErrorType report_selected_connector(T* iconn) = 0;
+	virtual jvxErrorType report_test_connector(T* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) = 0;
 	virtual void request_unique_id_start(T* iconn, jvxSize* uId) = 0;
 	virtual jvxErrorType report_started_connector(T* iconn) = 0;
 

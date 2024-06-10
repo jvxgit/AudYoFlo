@@ -26,8 +26,9 @@ namespace CayfAutomationModules
 		{
 			jvxDataConnectionRuleParameters params(false, false, true, supportNodeRuntime.misc.dbgOut, true);
 			params.preventStoreConfig = true;
-			std::string chainName = supportNodeRuntime.chainNamePrefix +
-				jvx_size2String(tp_reg.slotid) + "-" + jvx_size2String(tp_reg.slotsubid);
+			std::string chainName = CayfAutomationModules::CayfAutomationModulesHelper::chainPrefixToChain(supportNodeRuntime.chainNamePrefix, tp_reg);
+				//jvx_size2String(tp_reg.slotid) + "-" + jvx_size2String(tp_reg.slotsubid);
+
 			res = con->create_connection_rule(chainName.c_str(), &theDataConnectionDefRule_id,
 				&params, supportNodeRuntime.misc.connectionCategory);
 			if (res == JVX_NO_ERROR)

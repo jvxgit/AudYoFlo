@@ -125,23 +125,26 @@ CjvxAuNForwardBuffer::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			// We have N channels but allow an extraposition to allow all input channels and "silence"
 			for (i = 0; i < node_output._common_set_node_params_a_1io.number_channels; i++)
 			{
-				// Circular routing of input to output
-				jvxSize idxIn = i % node_inout._common_set_node_params_a_1io.number_channels;
-				jvx_bitZSet(newSelChannels[i], idxIn);
-
-				// Here we try to copy the previous channel idx
-				if (i < reRouting.numChannels)
+				if (node_inout._common_set_node_params_a_1io.number_channels > 0)
 				{
-					jvxSize idSel = jvx_bitfieldSelection2Id(reRouting.selChannels[i], reRouting.numChannels + 1);
-					if (idSel < node_inout._common_set_node_params_a_1io.number_channels)
+					// Circular routing of input to output
+					jvxSize idxIn = i % node_inout._common_set_node_params_a_1io.number_channels;
+					jvx_bitZSet(newSelChannels[i], idxIn);
+
+					// Here we try to copy the previous channel idx
+					if (i < reRouting.numChannels)
 					{
-						// Select previous channel selection
-						jvx_bitZSet(newSelChannels[i], idSel);
-					}
-					else
-					{
-						// Select silence also
-						jvx_bitZSet(newSelChannels[i], node_inout._common_set_node_params_a_1io.number_channels);
+						jvxSize idSel = jvx_bitfieldSelection2Id(reRouting.selChannels[i], reRouting.numChannels + 1);
+						if (idSel < node_inout._common_set_node_params_a_1io.number_channels)
+						{
+							// Select previous channel selection
+							jvx_bitZSet(newSelChannels[i], idSel);
+						}
+						else
+						{
+							// Select silence also
+							jvx_bitZSet(newSelChannels[i], node_inout._common_set_node_params_a_1io.number_channels);
+						}
 					}
 				}
 			}

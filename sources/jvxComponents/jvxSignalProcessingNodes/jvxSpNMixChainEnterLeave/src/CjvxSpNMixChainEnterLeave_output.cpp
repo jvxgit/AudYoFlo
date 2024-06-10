@@ -18,7 +18,7 @@ CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleOutputConnector* 
 		params.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
 
 		// Pass it to the connector but do not request a test of the chain - it is in build status anyway
-		oconn->updateFixedProcessingArgs(params, false);
+		oconn->updateFixedProcessingArgs(params);
 	}
 	return JVX_NO_ERROR;
 }
@@ -47,6 +47,24 @@ CjvxSpNMixChainEnterLeave::release_unique_id_stop(CjvxSingleOutputConnector* oco
 			_common_set.theUniqueId->release_unique_id(uId);
 		}
 	}
+}
+
+jvxErrorType
+CjvxSpNMixChainEnterLeave::report_test_connector(CjvxSingleOutputConnector* oconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxComponentIdentification cpId;
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	if (oconn->_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		if (oconn->_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			if (oconn->_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER, &cpId  JVX_CONNECTION_FEEDBACK_CALL_A(fdb)) == JVX_NO_ERROR)
+			{
+				res = check_preset_channels(oconn->chanSetting, cpId);
+			}
+		}
+	}
+	return res;
 }
 
 // This function is called for each single connection. We may search for the entry in the map

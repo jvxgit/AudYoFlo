@@ -40,7 +40,7 @@ public:
 	jvxErrorType start_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	jvxErrorType stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
-	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requestTestChain);
+	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params);
 
 	jvxErrorType trigger_put_data();
 
@@ -55,12 +55,15 @@ public:
 
 	jvxErrorType resultFromInputConnector();
 
+	jvxErrorType test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr
 #define JVX_SUPPRESS_AUTO_READY_CHECK_ICON
 #define JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 #define JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
+#define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_OCON
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
 #include "codeFragments/simplify/jvxOutputConnector_simplify.h"
 #include "codeFragments/simplify/jvxConnectorCommon_simplify.h"
@@ -70,6 +73,7 @@ public:
 #undef JVX_SUPPRESS_AUTO_READY_CHECK_ICON
 #undef JVX_INPUT_OUTPUT_SUPPRESS_TRIGGER_CONNECTOR
 #undef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
+#undef JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_OCON
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
 };
 

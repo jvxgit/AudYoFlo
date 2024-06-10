@@ -96,7 +96,7 @@ CjvxSingleInputConnector::connect_connect_icon(jvxLinkDataDescriptor* theData JV
 	{
 		jvxChainConnectArguments args;
 		args.theMaster = theData->con_link.master;
-		args.uIdConnection = theData->con_link.uIdConn;
+		args.uIdConnection = theData->con_link.uIdConn;		
 		res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_CONNECT, &args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	return res;
@@ -156,17 +156,15 @@ CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, 
 }
 
 jvxErrorType 
-CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool requesTestChain, jvxBool allowLowerNumberChannels)
+CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params)
 {
 	// We only accept ONE setting!!
 	neg_input._update_parameters_fixed(params.number_channels,
 		params.buffersize, params.rate,
 		params.format, params.format_group,
 		JVX_DATAFLOW_PUSH_ON_PULL, nullptr);
-	if (allowLowerNumberChannels)
-	{
-		neg_input.preferred.number_channels.min = 0;
-	}
+	channelWidthMax = params.number_channels;
+	neg_input.preferred.number_channels.min = 0;
 	return JVX_NO_ERROR;
 }
 
@@ -176,6 +174,14 @@ CjvxSingleInputConnector::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	if (_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
 	{
+		if (report)
+		{
+			report->report_test_connector(this  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			jvxSize chanMax = chanSetting.channel_num;
+			chanMax = JVX_MIN(chanMax, channelWidthMax - chanSetting.idxOffset);
+			neg_input.preferred.number_channels.max = chanMax;
+		}
+
 		res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in, nullptr, "none" JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	if (res == JVX_NO_ERROR)

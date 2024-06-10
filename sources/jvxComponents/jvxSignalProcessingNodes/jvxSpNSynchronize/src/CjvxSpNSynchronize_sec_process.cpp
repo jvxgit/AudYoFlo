@@ -79,68 +79,139 @@ CjvxSpNSynchronize_sec::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 jvxErrorType
 CjvxSpNSynchronize_sec::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	auto res = CjvxSingleOutputConnector::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-	if (res == JVX_NO_ERROR)
+	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+	jvxComponentIdentification* cpId = (jvxComponentIdentification*)data;
+
+	switch (tp)
 	{
-		switch (tp)
+	case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
+
+		// Make sure the access to the secondary link is fully setup before actually using it
+		safeAccessRWConnectionStatus.lock(jvxRWLockWithVariable<jvxCBitField>::jvxRwLockFunction::JVX_RW_LOCK_SHARED); // or better: try_lock?
+		if (safeAccessRWConnectionStatus.v == 0xF)
 		{
-		case JVX_LINKDATA_TRANSFER_REQUEST_DATA:
-
-			// Make sure the access to the secondary link is fully setup before actually using it
-			safeAccessRWConnectionStatus.lock(jvxRWLockWithVariable<jvxCBitField>::jvxRwLockFunction::JVX_RW_LOCK_SHARED); // or better: try_lock?
-			if (safeAccessRWConnectionStatus.v == 0xF)
+			if (_common_set_ocon.theData_out.con_link.connect_to)
 			{
-				if (_common_set_ocon.theData_out.con_link.connect_to)
+				_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
+				jvxSize numLostNow = referencePtr->genSynchronize::rt_info.output.number_aborts.value +
+					referencePtr->genSynchronize::rt_info.output.number_overflows.value +
+					referencePtr->genSynchronize::rt_info.output.number_underflows.value;
+				if (numLostNow != inProcessing.cntLost)
 				{
-					_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
-					jvxSize numLostNow = referencePtr->genSynchronize::rt_info.output.number_aborts.value +
-						referencePtr->genSynchronize::rt_info.output.number_overflows.value +
-						referencePtr->genSynchronize::rt_info.output.number_underflows.value;
-					if (numLostNow != inProcessing.cntLost)
+					jvxLinkDataAttachedLostFrames* newPtr = NULL;
+					if (jvxLinkDataAttachedLostFrames_updatePrepare(
+						inProcessing.attachedData,
+						numLostNow,
+						newPtr))
 					{
-						jvxLinkDataAttachedLostFrames* newPtr = NULL;
-						if (jvxLinkDataAttachedLostFrames_updatePrepare(
-							inProcessing.attachedData,
-							numLostNow,
-							newPtr))
-						{
-							inProcessing.cntLost = numLostNow;
+						inProcessing.cntLost = numLostNow;
 
-							// Note: theData_in->con_data.attached_buffer_single might be nullptr!!
-							if (_common_set_ocon.theData_out.con_data.attached_buffer_single)
+						// Note: theData_in->con_data.attached_buffer_single might be nullptr!!
+						if (_common_set_ocon.theData_out.con_data.attached_buffer_single)
+						{
+							_common_set_ocon.theData_out.con_data.attached_buffer_single[*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr] = newPtr;
+						}
+					}
+				}
+
+				_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+
+				jvxHandle** buf_to_secondary = NULL;
+				jvxHandle** buf_from_secondary = NULL;
+				if (_common_set_ocon.theData_out.con_data.buffers)
+				{
+					buf_to_secondary = _common_set_ocon.theData_out.con_data.buffers[*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr];
+				}
+				if (_common_set_icon.theData_in->con_data.buffers)
+				{
+					buf_from_secondary = _common_set_icon.theData_in->con_data.buffers[
+						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr];
+				}
+
+				res = audio_secondary(_common_set_icon.theData_in,
+					*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr,
+					&_common_set_ocon.theData_out);
+
+				_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
+			}
+		}
+		safeAccessRWConnectionStatus.unlock(jvxRWLockWithVariable<jvxCBitField>::jvxRwLockFunction::JVX_RW_LOCK_SHARED);
+
+		break;
+	case jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER:
+		if (cpId)
+		{
+			*cpId = referencePtr->_common_set.theComponentType;
+			if (referencePtr)
+			{
+				if (referencePtr->_common_set_icon.theData_in)
+				{
+					if (referencePtr->_common_set_icon.theData_in->con_link.master)
+					{
+						IjvxConnectionMasterFactory* masFac = nullptr;
+						referencePtr->_common_set_icon.theData_in->con_link.master->parent_master_factory(&masFac);
+						if (masFac)
+						{
+							IjvxObject* obj = nullptr;
+							masFac->request_reference_object(&obj);
+							if (obj)
 							{
-								_common_set_ocon.theData_out.con_data.attached_buffer_single[*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr] = newPtr;
+								obj->location_info(*cpId);
+								masFac->return_reference_object(obj);
 							}
 						}
 					}
-
-					_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
-
-					jvxHandle** buf_to_secondary = NULL;
-					jvxHandle** buf_from_secondary = NULL;
-					if (_common_set_ocon.theData_out.con_data.buffers)
-					{
-						buf_to_secondary = _common_set_ocon.theData_out.con_data.buffers[*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr];
-					}
-					if (_common_set_icon.theData_in->con_data.buffers)
-					{
-						buf_from_secondary = _common_set_icon.theData_in->con_data.buffers[
-							*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr];
-					}
-
-					res = audio_secondary(_common_set_icon.theData_in, 
-						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr,
-						&_common_set_ocon.theData_out);
-						
-					_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
 				}
 			}
-			safeAccessRWConnectionStatus.unlock(jvxRWLockWithVariable<jvxCBitField>::jvxRwLockFunction::JVX_RW_LOCK_SHARED);
-			break;
-		default:
-			// What to do here?
-			break;
-		}		
+		}
+		res = JVX_NO_ERROR;
+		break;
+	default:
+		// What to do here?
+		res = CjvxSingleOutputConnector::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		break;
+	}
+
+	return res;
+}
+
+jvxErrorType 
+CjvxSpNSynchronize_sec::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxComponentIdentification* cpId = (jvxComponentIdentification*)data;
+	
+	switch(tp)
+	{
+	case jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER:
+		if (cpId)
+		{
+			*cpId = referencePtr->_common_set.theComponentType;
+			if (referencePtr)
+			{
+				if (referencePtr->_common_set_ocon.theData_out.con_link.master)
+				{
+					IjvxConnectionMasterFactory* masFac = nullptr;
+					referencePtr->_common_set_icon.theData_in->con_link.master->parent_master_factory(&masFac);
+					if (masFac)
+					{
+						IjvxObject* obj = nullptr;
+						masFac->request_reference_object(&obj);
+						if (obj)
+						{
+							obj->location_info(*cpId);
+							masFac->return_reference_object(obj);
+						}
+					}
+				}
+			}
+		}
+		res = JVX_NO_ERROR;
+		break;
+	default:
+		// What to do here?
+		res = CjvxSingleInputConnector::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		break;
 	}
 	return res;
 }

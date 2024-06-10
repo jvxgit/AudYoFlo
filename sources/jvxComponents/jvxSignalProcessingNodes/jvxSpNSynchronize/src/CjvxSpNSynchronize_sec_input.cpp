@@ -57,6 +57,12 @@ CjvxSpNSynchronize_sec::report_stopped_connector(CjvxSingleInputConnector* iconn
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CjvxSpNSynchronize_sec::report_test_connector(CjvxSingleInputConnector* iconn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	return JVX_NO_ERROR;
+}
+
 void CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
 {
 	if (referencePtr)

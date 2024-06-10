@@ -15,7 +15,7 @@ enum class jvxOperationModeMixChain
 
 #include "pcg_exports_node.h"
 
-class chanOffsetAndMaxChans
+class chanOffsetAndMaxChans: public CjvxConnectorOffsetAndMaxChans
 {
 public:
 	jvxComponentIdentification cpId;
@@ -98,6 +98,8 @@ public:
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(remove_one_definition);
 
 	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn) override;
+	jvxErrorType report_test_connector(CjvxSingleInputConnector* oconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+
 	void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) override;
 	void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) override;
 	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
@@ -105,6 +107,8 @@ public:
 	// =============================================================================
 
 	jvxErrorType report_selected_connector(CjvxSingleOutputConnector* iconn) override;
+	jvxErrorType report_test_connector(CjvxSingleOutputConnector* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+
 	void request_unique_id_start(CjvxSingleOutputConnector* iconn, jvxSize* uId) override;
 	void release_unique_id_stop(CjvxSingleOutputConnector* iconn, jvxSize uId) override;
 	virtual void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
@@ -114,6 +118,7 @@ public:
 	bool check_positive_zero_copy()override;
 
 	void offset_channels_to_property();
+	jvxErrorType check_preset_channels(CjvxConnectorOffsetAndMaxChans& conParams, jvxComponentIdentification cpId);
 };
 
 	// ============================================================================

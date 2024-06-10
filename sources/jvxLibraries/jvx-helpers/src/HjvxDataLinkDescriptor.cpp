@@ -14,7 +14,6 @@ jvx_initDataLinkDescriptor(jvxLinkDataDescriptor* theData)
 		theData->con_link.master = NULL;
 		theData->con_link.connect_to = NULL;
 		theData->con_link.connect_from = NULL;
-		theData->con_link.tp_master.reset();
 
 		// theData->con_link.address_flags = JVX_LINKDATA_ADDRESS_FLAGS_NONE;
 		//theData->link.allows_mt = false;
@@ -61,7 +60,6 @@ jvx_terminateDataLinkDescriptor(jvxLinkDataDescriptor* theData)
 
 		// theData->con_link.address_flags = JVX_LINKDATA_ADDRESS_FLAGS_NONE;
 		//theData->link.allows_mt = false;
-		theData->con_link.tp_master.reset();
 
 #ifndef JVX_COMPILE_SMALL
 		theData->con_pipeline.do_lock = NULL;

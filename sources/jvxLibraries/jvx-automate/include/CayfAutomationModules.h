@@ -5,6 +5,7 @@
 class CjvxObjectLog;
 
 #include "CayfAutomationModulesTypes.h"
+#include "CayfAutomationModulesHelper.h"
 #include "CayfAutomationModuleHandler.h"
 
 namespace CayfAutomationModules

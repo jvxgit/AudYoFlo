@@ -234,3 +234,13 @@ CjvxSpNSynchronize_sec::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	return res;
 }
 
+void 
+CjvxSpNSynchronize_sec::updateFixedProcessingArgsInOut(jvxBool triggerTestChain)
+{
+	CjvxSingleInputConnector::updateFixedProcessingArgs(referencePtr->_common_set_ocon.theData_out.con_params);
+	CjvxSingleOutputConnector::updateFixedProcessingArgs(referencePtr->_common_set_icon.theData_in->con_params); 
+	if (triggerTestChain)
+	{
+		trigger_request_secondary_chain();
+	}
+}

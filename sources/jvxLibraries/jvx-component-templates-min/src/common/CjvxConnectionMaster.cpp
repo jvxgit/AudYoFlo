@@ -643,6 +643,7 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 					{
 						break;
 					}
+					cnt++;
 				}
 				if (res == JVX_ERROR_POSTPONE)
 				{
