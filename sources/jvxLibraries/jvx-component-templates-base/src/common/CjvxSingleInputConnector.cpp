@@ -314,20 +314,13 @@ CjvxSingleInputConnector::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stag
 {
 	jvxHandle** buffers_in = nullptr; 
 	jvxSize idx_stage_local = idx_stage;
-	if (JVX_CHECK_SIZE_UNSELECTED(idx_stage_local))
+	
+	if (report)
 	{
-		idx_stage_local = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
-	}
-	if (_common_set_icon.theData_in->con_params.number_channels > 0)
-	{
-		buffers_in = _common_set_icon.theData_in->con_data.buffers[idx_stage_local];
-		// jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-	}
-	if (buffers_in) // <- buffers may be nullptr if the input side is only a "trigger"
-	{
-		if (report)
+		// Some devices may not have any input. Those are "trigger only" devices with no valid processing parameters!!
+		if (_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_TRIGGER_ONLY)
 		{
-			report->report_process_buffers(this, buffers_in, _common_set_icon.theData_in->con_params);
+			report->report_process_buffers(this, *_common_set_icon.theData_in, idx_stage);
 		}
 	}
 

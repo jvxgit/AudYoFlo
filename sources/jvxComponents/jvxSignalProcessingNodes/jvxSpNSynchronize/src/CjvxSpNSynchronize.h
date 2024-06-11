@@ -41,7 +41,7 @@ public:
 	jvxErrorType stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
-	void fwd_report_process_buffers(jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params);
+	void fwd_report_process_buffers(jvxLinkDataDescriptor& datLink, jvxSize idx);
 
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	/*

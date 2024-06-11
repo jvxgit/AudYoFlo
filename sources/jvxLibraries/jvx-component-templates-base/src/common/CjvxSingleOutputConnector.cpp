@@ -214,14 +214,10 @@ CjvxSingleOutputConnector::trigger_put_data()
 {
 	jvxErrorType res = _common_set_ocon.ocon->process_start_ocon(0, NULL, 0, NULL, NULL);
 	if (res == JVX_NO_ERROR)
-	{
-		jvxHandle** buffers_out = nullptr;
-		jvxSize idx_stage_local = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;;
-		buffers_out = _common_set_ocon.theData_out.con_data.buffers[idx_stage_local];
-
+	{		
 		if (report)
 		{
-			report->report_process_buffers(this, buffers_out, _common_set_ocon.theData_out.con_params);
+			report->report_process_buffers(this, _common_set_ocon.theData_out, JVX_SIZE_UNSELECTED);
 		}
 
 		_common_set_ocon.ocon->process_buffers_ocon(JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);

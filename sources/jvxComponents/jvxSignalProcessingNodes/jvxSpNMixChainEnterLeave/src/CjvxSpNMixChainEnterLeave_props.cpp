@@ -59,7 +59,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, specif
 {
 	std::vector<std::string> lst;
 	jvx_parseCommandLineOneToken(genMixChain::sources_channel_routing.one_new_entry.value, lst, ',');
-	if (lst.size() == 3)
+	if (lst.size() >= 3)
 	{
 		chanOffsetAndMaxChans newElm;
 		bool err = false;
@@ -77,6 +77,14 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, specif
 		if (!err)
 		{
 			newElm.channel_num = jvx_string2Size(lst[2], err);
+		}
+
+		if (!err)
+		{
+			if (lst.size() > 3)
+			{
+				newElm.deviceChannelPrefix = lst[3];
+			}
 		}
 
 		if (!err)

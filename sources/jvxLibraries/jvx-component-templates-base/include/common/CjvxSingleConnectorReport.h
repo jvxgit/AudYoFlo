@@ -16,7 +16,7 @@ public:
 	virtual void release_unique_id_stop(T* iconn, jvxSize uId) = 0;
 	virtual jvxErrorType report_unselected_connector(T* iconn) = 0;
 
-	virtual void report_process_buffers(T* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) = 0;
+	virtual void report_process_buffers(T* iconn, jvxLinkDataDescriptor& datThisConnector, jvxSize idx_stage) = 0;
 };
 
 #endif

@@ -63,10 +63,11 @@ CjvxSpNSynchronize_sec::report_test_connector(CjvxSingleInputConnector* iconn  J
 	return JVX_NO_ERROR;
 }
 
-void CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
+void 
+CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleInputConnector* iconn, jvxLinkDataDescriptor& datLink, jvxSize idx)
 {
 	if (referencePtr)
 	{
-		referencePtr->fwd_report_process_buffers(bufferPtrs, params);
+		referencePtr->fwd_report_process_buffers(datLink, idx);
 	}
 }

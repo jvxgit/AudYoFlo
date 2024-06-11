@@ -245,19 +245,20 @@ CjvxSpNSynchronize::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 }
 
 void 
-CjvxSpNSynchronize::fwd_report_process_buffers(jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
+CjvxSpNSynchronize::fwd_report_process_buffers(jvxLinkDataDescriptor& datLink, jvxSize idx)
 {
 	jvxSize i;
+	jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(&datLink, idx);
 	jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 	
-	assert(_common_set_ocon.theData_out.con_params.buffersize == params.buffersize);
-	assert(_common_set_ocon.theData_out.con_params.rate == params.rate);
-	assert(_common_set_ocon.theData_out.con_params.number_channels == params.number_channels);
-	assert(_common_set_ocon.theData_out.con_params.format == params.format);
+	assert(_common_set_ocon.theData_out.con_params.buffersize == datLink.con_params.buffersize);
+	assert(_common_set_ocon.theData_out.con_params.rate == datLink.con_params.rate);
+	assert(_common_set_ocon.theData_out.con_params.number_channels == datLink.con_params.number_channels);
+	assert(_common_set_ocon.theData_out.con_params.format == datLink.con_params.format);
 
-	for (i = 0; i < params.number_channels; i++)
+	for (i = 0; i < datLink.con_params.number_channels; i++)
 	{
-		memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);
+		memcpy(bufsOut[i], bufsIn[i], jvxDataFormat_getsize(datLink.con_params.format) * datLink.con_params.buffersize);
 	}
 }
 

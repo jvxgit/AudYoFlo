@@ -19,8 +19,7 @@ class chanOffsetAndMaxChans: public CjvxConnectorOffsetAndMaxChans
 {
 public:
 	jvxComponentIdentification cpId;
-	jvxSize idxOffset = 0;
-	jvxSize channel_num = 2;
+	std::string deviceChannelPrefix = "Channel";
 };
 
 class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, 
@@ -102,7 +101,7 @@ public:
 
 	void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) override;
 	void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) override;
-	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
+	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxLinkDataDescriptor& datOutThisConnector, jvxSize idxStage) override;
 
 	// =============================================================================
 
@@ -111,7 +110,7 @@ public:
 
 	void request_unique_id_start(CjvxSingleOutputConnector* iconn, jvxSize* uId) override;
 	void release_unique_id_stop(CjvxSingleOutputConnector* iconn, jvxSize uId) override;
-	virtual void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
+	virtual void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxLinkDataDescriptor& datOutThisConnector, jvxSize idxStage = JVX_SIZE_UNSELECTED) override;
 
 	static void correct_order_channel_route(jvxSize* ptrChannelRoutes, jvxSize szChannelRoutes);
 

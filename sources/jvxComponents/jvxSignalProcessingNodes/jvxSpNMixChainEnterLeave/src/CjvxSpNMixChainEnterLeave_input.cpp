@@ -71,24 +71,27 @@ CjvxSpNMixChainEnterLeave::report_test_connector(CjvxSingleInputConnector* iconn
 
 // This function is called for each single connection. We may search for the entry in the map
 void 
-CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
+CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleInputConnector* iconn, jvxLinkDataDescriptor& datThisConnector, jvxSize idx_stage)
 {
 	jvxSize i;
 	
 	assert(JVX_CHECK_SIZE_SELECTED(idxBufferProcess));
-	assert(params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
-	// assert(params.number_channels == szExtraBuffersChannels);
-	assert(params.format == _common_set_ocon.theData_out.con_params.format);
-	
-	jvxSize numChannels = JVX_MIN(params.number_channels, szExtraBuffersChannels);
-	
+
+	assert(datThisConnector.con_params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
+	assert(datThisConnector.con_params.format == _common_set_ocon.theData_out.con_params.format);
+	assert(datThisConnector.con_params.rate== _common_set_ocon.theData_out.con_params.rate);
+
+	jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(&datThisConnector, idx_stage);
+
+	jvxSize numChannels = szExtraBuffersChannels - iconn->chanSetting.idxOffset;
+	numChannels = JVX_MIN(numChannels, iconn->chanSetting.channel_num);
+	numChannels = JVX_MIN(numChannels, datThisConnector.con_params.number_channels);
+
 	// The pointers are a shortcut!!
 	jvxData** bufsOut = (jvxData**)bufsSideChannel[idxBufferProcess];
-	jvxData** bufsFrom = (jvxData**)bufferPtrs;
 
 	for (i = 0; i < numChannels; i++)
 	{
-		jvx_mixSamples_flp(bufsFrom[i], bufsOut[i], params.buffersize);
-		//memcpy(bufsOut[i], bufferPtrs[i], jvxDataFormat_getsize(params.format) * params.buffersize);
+		jvx_mixSamples_flp(bufsIn[i], bufsOut[iconn->chanSetting.idxOffset + i], _common_set_ocon.theData_out.con_params.buffersize);
 	}
 }

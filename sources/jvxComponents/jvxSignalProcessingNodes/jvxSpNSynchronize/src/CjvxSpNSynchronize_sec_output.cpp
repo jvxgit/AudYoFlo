@@ -63,7 +63,7 @@ CjvxSpNSynchronize_sec::report_test_connector(CjvxSingleOutputConnector* iconn  
 }
 
 void 
-CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleOutputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
+CjvxSpNSynchronize_sec::report_process_buffers(CjvxSingleOutputConnector* iconn, jvxLinkDataDescriptor& datLink, jvxSize idx)
 {
 
 }

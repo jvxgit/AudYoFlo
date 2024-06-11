@@ -142,7 +142,7 @@ public:
 	jvxErrorType report_test_connector(CjvxSingleOutputConnector* iconn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 	jvxErrorType report_test_connector(CjvxSingleInputConnector* iconn  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
-	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
+	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxLinkDataDescriptor& datLink, jvxSize idx_select) override;
 
 	// ================================================================================
 	// Callbacks for output connector
@@ -156,7 +156,7 @@ public:
 	void release_unique_id_stop(CjvxSingleOutputConnector* oconn, jvxSize uId) override;
 	jvxErrorType report_unselected_connector(CjvxSingleOutputConnector* oconn) override;
 
-	void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params) override;
+	void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxLinkDataDescriptor& datLink, jvxSize idx_select) override;
 
 	// =====================================================================
 	// Link to default master factory and master implementations

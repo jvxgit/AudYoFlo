@@ -67,22 +67,40 @@ CjvxSpNMixChainEnterLeave::report_test_connector(CjvxSingleOutputConnector* ocon
 	return res;
 }
 
-// This function is called for each single connection. We may search for the entry in the map
+// This function is called for each single connection. We may search for the entry in the map.
+// The output field is passed in bufferPtrs and the corresponding parameters in params.
 void
-CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleOutputConnector* oconn, jvxHandle** bufferPtrs, const jvxLinkDataDescriptor_con_params& params)
+CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleOutputConnector* oconn, jvxLinkDataDescriptor& datOutThisConnector, jvxSize idxStage)
 {
 	jvxSize i;
 
+	jvxHandle** bufferPtrs = nullptr;
+	// const jvxLinkDataDescriptor_con_params& params
+
+	jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(datOutThisConnector);
+
 	assert(JVX_CHECK_SIZE_SELECTED(idxBufferProcess));
-	assert(params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
-	assert(params.number_channels == szExtraBuffersChannels);
-	assert(params.format == _common_set_ocon.theData_out.con_params.format);
+
+	// Check that the buffersize matches: secondary output connector and primary output buffers
+	assert(datOutThisConnector.con_params.buffersize == _common_set_ocon.theData_out.con_params.buffersize);
+	// assert(params.number_channels == szExtraBuffersChannels);
+	
+	// Check that the format matches, secondary output connector and primary output buffers
+	assert(datOutThisConnector.con_params.format == _common_set_ocon.theData_out.con_params.format);
+
+	// Check that the rate matches, secondary output connector and primary output buffers
+	assert(datOutThisConnector.con_params.rate == _common_set_ocon.theData_out.con_params.rate);
 
 	// The pointers are a shortcut!!
-	jvxData** bufsOut = (jvxData**)bufsSideChannel[idxBufferProcess];
+	jvxData** bufsIn= (jvxData**)bufsSideChannel[idxBufferProcess];
 
-	for (i = 0; i < szExtraBuffersChannels; i++)
+	jvxSize numChannels = szExtraBuffersChannels - oconn->chanSetting.idxOffset;
+	numChannels = JVX_MIN(numChannels, oconn->chanSetting.channel_num);
+	numChannels = JVX_MIN(numChannels, datOutThisConnector.con_params.number_channels);
+	for (i = 0; i < numChannels; i++)
 	{
-		memcpy(bufferPtrs[i], bufsOut[i], jvxDataFormat_getsize(params.format) * params.buffersize);
+		// bufsOut: Channel selection in mix channel space
+		// bufferPtrs: Target buffers as 
+		memcpy(bufsOut[i], bufsIn[i + oconn->chanSetting.idxOffset], jvxDataFormat_getsize(datOutThisConnector.con_params.format) * datOutThisConnector.con_params.buffersize);
 	}
 }
