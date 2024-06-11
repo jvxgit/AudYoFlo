@@ -81,7 +81,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, specif
 
 		if (!err)
 		{
-			auto& elmI = presets_channel_routing.find(newElm.cpId);
+			auto elmI = presets_channel_routing.find(newElm.cpId);
 			if (elmI == presets_channel_routing.end())
 			{
 				presets_channel_routing[newElm.cpId] = newElm;
