@@ -237,7 +237,7 @@ CjvxSpNSynchronize_sec::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 void 
 CjvxSpNSynchronize_sec::updateFixedProcessingArgsInOut(jvxBool triggerTestChain)
 {
-	CjvxSingleInputConnector::updateFixedProcessingArgs(referencePtr->_common_set_ocon.theData_out.con_params);
+	CjvxSingleInputConnector::updateFixedProcessingArgs(referencePtr->_common_set_ocon.theData_out.con_params, false);
 	CjvxSingleOutputConnector::updateFixedProcessingArgs(referencePtr->_common_set_icon.theData_in->con_params); 
 	if (triggerTestChain)
 	{

@@ -156,7 +156,7 @@ CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, 
 }
 
 jvxErrorType 
-CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params)
+CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool acceptSmallerNumberChannels)
 {
 	// We only accept ONE setting!!
 	neg_input._update_parameters_fixed(params.number_channels,
@@ -164,7 +164,10 @@ CjvxSingleInputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_
 		params.format, params.format_group,
 		JVX_DATAFLOW_PUSH_ON_PULL, nullptr);
 	channelWidthMax = params.number_channels;
-	neg_input.preferred.number_channels.min = 0;
+	if (acceptSmallerNumberChannels)
+	{
+		neg_input.preferred.number_channels.min = 0;
+	}
 	return JVX_NO_ERROR;
 }
 

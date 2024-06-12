@@ -654,6 +654,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 	jvxSize idx_stage_local = jvx_process_icon_extract_stage(_common_set_icon.theData_in, idx_stage);
 
+
 	// The algorithm becomes a little complicated if the output buffersize does not fit into the 
 	// provides buffer due to fractional relation
 	if (runtime.requiresRebuffering)
@@ -666,6 +667,10 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		jvxSize cnt = 0;
 		jvxSize splCnt = 0;
 		jvxSize loopNum = 0; 
+		jvxSize numOutChannels = _common_set_ocon.theData_out.con_params.number_channels;
+		jvxData** bufsOutChannels = bufsOut;
+		jvxSize numInChannels = _common_set_icon.theData_in->con_params.number_channels;
+		jvxData** bufsInChannels = bufsIn;
 
 		// Obtain the (optional) number of input samples. Buffersize may only be lower!!
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_icon.theData_in->con_data.fHeights[idx_stage_local].x))
@@ -683,15 +688,23 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			// runtime.nCFieldRebuffer is allocated to hold the OUTPUT channels!
 			// We will loop over max of input and output buffers but we will only
 			// resample over the output channels
-			loopNum = JVX_MAX(runtime.nCFieldRebuffer,
-				_common_set_icon.theData_in->con_params.number_channels);
 
+			// Channel conversion with different targets for resampling or no resampling			
+			if (runtime.active_resampling)
+			{
+				numOutChannels = runtime.nCFieldRebuffer;
+				bufsOutChannels = (jvxData**)runtime.ptrFieldBuffer;
+			}
+
+			loopNum = JVX_MAX(numOutChannels,
+				_common_set_icon.theData_in->con_params.number_channels);
+			
 			// ===========================================================
 			// First, set the output buffers all to 0
 			// ===========================================================
-			for (cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
+			for (cnt = 0; cnt < numOutChannels; cnt++)
 			{
-				jvxData* targetIn = (jvxData*)runtime.ptrFieldBuffer[cnt];
+				jvxData* targetIn = (jvxData*)bufsOutChannels[cnt];
 				targetIn += runtime.fFieldRebuffer;
 
 				jvxSize splCnt = 0;
@@ -708,11 +721,11 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			{
 				// Channel wrap around for in and out
 				jvxSize inCnt = cnt % _common_set_icon.theData_in->con_params.number_channels;
-				jvxSize outCnt = cnt % runtime.nCFieldRebuffer;
+				jvxSize outCnt = cnt % numOutChannels;
 
 				// From input to rebuffer buffers
 				jvxData* sourceIn = (jvxData*)bufsIn[inCnt];
-				jvxData* targetIn = (jvxData*)runtime.ptrFieldBuffer[outCnt];
+				jvxData* targetIn = (jvxData*)bufsOutChannels[outCnt];
 				
 				// Target may have an offset due to stored samples
 				targetIn += runtime.fFieldRebuffer;
@@ -725,52 +738,57 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				}
 			}
 
-			// Update the fillheight
-			runtime.fFieldRebuffer += numInputSamples;
+			// ====================================================================
 
-			// =============================================================
-			// Approaching the resampling next!
-			// =============================================================
-
-			// Number samples on the input side - we trunc the samples according to downsampling factor to find the number of input samples that fit with the 
-			numResamplerIn = runtime.fFieldRebuffer / resampling.cc.downsamplingFactor * resampling.cc.downsamplingFactor; // Find multiples of input granularity
-			
-			// Compute the number of output samples
-			numResamplerOut = numResamplerIn * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
-			assert(numResamplerOut <= _common_set_ocon.theData_out.con_params.buffersize);
-
-			// Run the actual resamplers, produce a variable output size
-			for (i = 0; i < runtime.numResampler; i++)
+			if (runtime.active_resampling)
 			{
-				fixed_resample_variable_out varOut;
-				varOut.bsizeIn = numResamplerIn;
-				varOut.numOut = numResamplerOut;
+				// Update the fillheight
+				runtime.fFieldRebuffer += numInputSamples;
 
-				// Important: use the "new" input buffer
-				jvx_fixed_resampler_process(&runtime.fldResampler[i], runtime.ptrFieldBuffer[i], bufsOut[i], &varOut); // Full size resampling
-			}
+				// =============================================================
+				// Approaching the resampling next!
+				// =============================================================
 
-			// Now approach the output side and set the variable output buffersize
-			idx_stage_local = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
-			_common_set_ocon.theData_out.con_data.fHeights[idx_stage_local].x = numResamplerOut;
+				// Number samples on the input side - we trunc the samples according to downsampling factor to find the number of input samples that fit with the 
+				numResamplerIn = runtime.fFieldRebuffer / resampling.cc.downsamplingFactor * resampling.cc.downsamplingFactor; // Find multiples of input granularity
 
-			// Housekeeping: update intermediate buffer by sample move. It is typically only very few samples to move.
-			numCopyNextFrame = runtime.fFieldRebuffer - numResamplerIn;
-			for (cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
-			{
-				jvxData* cpyTo = (jvxData*)runtime.ptrFieldBuffer[cnt];
-				jvxData* cpyFrom = cpyTo + numResamplerIn;
+				// Compute the number of output samples
+				numResamplerOut = numResamplerIn * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
+				assert(numResamplerOut <= _common_set_ocon.theData_out.con_params.buffersize);
 
-				for (splCnt = 0; splCnt < numCopyNextFrame; splCnt++)
+				// Run the actual resamplers, produce a variable output size
+				for (i = 0; i < runtime.numResampler; i++)
 				{
-					*cpyTo = *cpyFrom;
-					cpyTo++;
-					cpyFrom++;
-				}
-			}
+					fixed_resample_variable_out varOut;
+					varOut.bsizeIn = numResamplerIn;
+					varOut.numOut = numResamplerOut;
 
-			// Finally, update fill height for next frame
-			runtime.fFieldRebuffer -= numResamplerIn;
+					// Important: use the "new" input buffer
+					jvx_fixed_resampler_process(&runtime.fldResampler[i], runtime.ptrFieldBuffer[i], bufsOut[i], &varOut); // Full size resampling
+				}
+
+				// Now approach the output side and set the variable output buffersize
+				idx_stage_local = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+				_common_set_ocon.theData_out.con_data.fHeights[idx_stage_local].x = numResamplerOut;
+
+				// Housekeeping: update intermediate buffer by sample move. It is typically only very few samples to move.
+				numCopyNextFrame = runtime.fFieldRebuffer - numResamplerIn;
+				for (cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
+				{
+					jvxData* cpyTo = (jvxData*)runtime.ptrFieldBuffer[cnt];
+					jvxData* cpyFrom = cpyTo + numResamplerIn;
+
+					for (splCnt = 0; splCnt < numCopyNextFrame; splCnt++)
+					{
+						*cpyTo = *cpyFrom;
+						cpyTo++;
+						cpyFrom++;
+					}
+				}
+
+				// Finally, update fill height for next frame
+				runtime.fFieldRebuffer -= numResamplerIn;
+			}
 			break;
 		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
 
@@ -780,7 +798,13 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			// runtime.nCFieldRebuffer is allocated to hold the INPUT channels!
 			// We will loop over max of input and output buffers but we will only
 			// resample over the output channels
-			loopNum = JVX_MAX(runtime.nCFieldRebuffer,
+			if (runtime.active_resampling)
+			{
+				numInChannels = runtime.nCFieldRebuffer;
+				bufsInChannels = (jvxData**)runtime.ptrFieldBuffer;
+			}
+
+			loopNum = JVX_MAX(numInChannels,
 				_common_set_ocon.theData_out.con_params.number_channels);
 			
 			// Compute the number of samples available
@@ -792,27 +816,30 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			// Some checks to make sure the samples fit into our internal buffer
 			assert(runtime.fFieldRebuffer + numResamplerOut <= runtime.lFieldRebuffer);
 
-			// Resample the input to the internal buffer. The buffer can be variably filled but we must
-			// make sure that we will have enough samples to forward with the fixed buffersize!
-			for (i = 0; i < runtime.numResampler; i++)
+			if (runtime.active_resampling)
 			{
-				// Target field is the intermediate buffer
-				jvxData* targetOut = (jvxData*)runtime.ptrFieldBuffer[i];
+				// Resample the input to the internal buffer. The buffer can be variably filled but we must
+				// make sure that we will have enough samples to forward with the fixed buffersize!
+				for (i = 0; i < runtime.numResampler; i++)
+				{
+					// Target field is the intermediate buffer
+					jvxData* targetOut = (jvxData*)runtime.ptrFieldBuffer[i];
 
-				// But we will fill up from the fHeight offset to hiold old samples
-				targetOut += runtime.fFieldRebuffer;
+					// But we will fill up from the fHeight offset to hiold old samples
+					targetOut += runtime.fFieldRebuffer;
 
-				// Core resampling
-				fixed_resample_variable_out varOut;
-				varOut.bsizeIn = numInputSamples;
-				varOut.numOut = numResamplerOut;
+					// Core resampling
+					fixed_resample_variable_out varOut;
+					varOut.bsizeIn = numInputSamples;
+					varOut.numOut = numResamplerOut;
 
-				// Important: use the "new" input buffer with index shift (targetOut)
-				jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsIn[i], targetOut, &varOut); // Full size resampling
+					// Important: use the "new" input buffer with index shift (targetOut)
+					jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsIn[i], targetOut, &varOut); // Full size resampling
+				}
+
+				// Update fillheight
+				runtime.fFieldRebuffer += numResamplerOut;
 			}
-
-			// Update fillheight
-			runtime.fFieldRebuffer += numResamplerOut;
 
 			// Now, preset the output buffer to 0
 			for (cnt = 0; cnt < node_output._common_set_node_params_a_1io.number_channels; cnt++)
@@ -830,11 +857,11 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			for (cnt = 0; cnt < loopNum; cnt++)
 			{
 				// Channel wrap around for downmix or circular extend
-				jvxSize inCnt = cnt % runtime.nCFieldRebuffer;
+				jvxSize inCnt = cnt % numInChannels;
 				jvxSize outCnt = cnt % _common_set_ocon.theData_out.con_params.number_channels;
 
 				// Straight copy front to back
-				jvxData* sourceOut = (jvxData*)runtime.ptrFieldBuffer[inCnt];
+				jvxData* sourceOut = (jvxData*)bufsInChannels[inCnt];
 				jvxData* targetOut = (jvxData*)bufsOut[outCnt];
 
 				// Add the output from channels in case of downmix
@@ -845,27 +872,28 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				}
 			}
 
-			// Check that we do not fail into wrong buffer part
-			assert((runtime.fFieldRebuffer - numOutSamples) >= 0);
-
-			// Copy the samples that are left over this frame to the first ones in the next frame!!
-			for(cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
+			if (runtime.active_resampling)
 			{
-				jvxData* targetOut = (jvxData*)runtime.ptrFieldBuffer[cnt];
-				jvxData* sourceOut = (jvxData*)runtime.ptrFieldBuffer[cnt];
-				sourceOut += numOutSamples;
-				for (splCnt = 0; splCnt < (runtime.fFieldRebuffer - numOutSamples); splCnt++)
+				// Check that we do not fail into wrong buffer part
+				assert((runtime.fFieldRebuffer - numOutSamples) >= 0);
+
+				// Copy the samples that are left over this frame to the first ones in the next frame!!
+				for (cnt = 0; cnt < runtime.nCFieldRebuffer; cnt++)
 				{
-					jvxData sampleOut = sourceOut[splCnt];
-					targetOut[splCnt] = sampleOut;
+					jvxData* targetOut = (jvxData*)runtime.ptrFieldBuffer[cnt];
+					jvxData* sourceOut = (jvxData*)runtime.ptrFieldBuffer[cnt];
+					sourceOut += numOutSamples;
+					for (splCnt = 0; splCnt < (runtime.fFieldRebuffer - numOutSamples); splCnt++)
+					{
+						jvxData sampleOut = sourceOut[splCnt];
+						targetOut[splCnt] = sampleOut;
+					}
 				}
+
+				// update the fillheight
+				runtime.fFieldRebuffer -= numOutSamples;
+				assert(runtime.fFieldRebuffer >= 0);
 			}
-
-			// update the fillheight
-			runtime.fFieldRebuffer -= numOutSamples;
-
-			assert(runtime.fFieldRebuffer >= 0);
-
 			break;
 		}
 	}

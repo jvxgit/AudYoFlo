@@ -57,7 +57,7 @@ public:
 
 	jvxErrorType available_to_connect_icon() override;
 
-	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params);
+	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params, jvxBool acceptSmallerNumberChannels = true);
 
 	// Request for a PUSH from the connected async connection!!
 	jvxErrorType trigger_get_data();
