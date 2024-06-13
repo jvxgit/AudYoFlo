@@ -231,8 +231,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
   }
 
   @override
-  int translateEnumString(String selection, String formatName,
-      AudYoFloCompileFlags flags) {
+  int translateEnumString(
+      String selection, String formatName, AudYoFloCompileFlags flags) {
     Pointer<Utf8> selPtr = selection.toNativeUtf8();
     Pointer<Utf8> formPtr = formatName.toNativeUtf8();
     return natLib.ffi_translate_enum_string(
@@ -758,7 +758,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
               if (propUpdate != null) {
                 if (propUpdate is AudYoFloPropertyContentBackend) {
                   AudYoFloPropertyContentFromJson
-                      .updatePropertyContentFromJsonMap(propUpdate, valueMap, this);
+                      .updatePropertyContentFromJsonMap(
+                          propUpdate, valueMap, this);
                 }
               }
             }
@@ -779,7 +780,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
   Future<int> triggerGetPropertyDescriptionComponent(
       JvxComponentIdentification cpId, List<String> propDescrLst,
       {AyfPropertyReportLevel reportArg =
-          AyfPropertyReportLevel.AYF_FRONTEND_REPORT_NO_REPORT, int numDigits = 2}) async {
+          AyfPropertyReportLevel.AYF_FRONTEND_REPORT_NO_REPORT,
+      int numDigits = 2}) async {
     int errCode = jvxErrorType.JVX_NO_ERROR;
 
     errCode = await Future.delayed(Duration.zero, () async {
@@ -889,8 +891,15 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
                   if (propFromCache is AudYoFloPropertyContentBackend) {
                     // An element already exists: update the property content
                     int resL = AudYoFloPropertyContentFromJson
-                        .updatePropertyDescriptionFromJson(cpId, this,
-                            propFromCache, elmS, subSubSec, flags, true, numDigits);
+                        .updatePropertyDescriptionFromJson(
+                            cpId,
+                            this,
+                            propFromCache,
+                            elmS,
+                            subSubSec,
+                            flags,
+                            true,
+                            numDigits);
                     assert(resL == jvxErrorType.JVX_NO_ERROR);
                   } else {
                     assert(false);
@@ -1137,7 +1146,6 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
                     propFromCache.setInProgress =
                         jvxPropertyProgressStates.JVX_PROPERTY_PROGRESS_NONE;
                   }
-                  
                 } else {
                   assert(false);
                 }
@@ -1147,10 +1155,10 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
             }
 
 // If we use reportPropertyOnSet this will not be required
-                  if (invalidateProperty) {
-                    theBeCacheNative.invalidatePropertiesComponent(
-                        cpId, propContents, true);
-                  }
+            if (invalidateProperty) {
+              theBeCacheNative.invalidatePropertiesComponent(
+                  cpId, propContents, true);
+            }
             if (reportArg ==
                 AyfPropertyReportLevel
                     .AYF_BACKEND_REPORT_COMPONENT_PROPERTY_COLLECT) {
@@ -1552,5 +1560,24 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
     if (shutdown != null) {
       await shutdown!();
     }
+  }
+
+  @override
+  Future<int> triggerStartPropertyStream(
+      List<AudYoFloPropertyStreamDefintion> propDescriptions,
+      void Function(
+              JvxComponentIdentification,
+              JvxPropertyStreamMessageType msgT,
+              String propertyDescriptor,
+              dynamic data,
+              int offset)
+          cb,
+      {int desired_timeout_msec = 1000,
+      int desired_ping_granularity = 10}) async {
+    return jvxErrorType.JVX_ERROR_UNSUPPORTED;
+  }
+
+  Future<int> triggerStopPropertyStream() async {
+    return jvxErrorType.JVX_ERROR_UNSUPPORTED;
   }
 }

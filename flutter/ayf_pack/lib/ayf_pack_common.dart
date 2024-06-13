@@ -23,6 +23,7 @@ export 'systemstate/ayf_connected_processes.dart';
 
 export 'types/ayf_components.dart';
 export 'types/ayf_types.dart';
+export 'types/ayf_prop_streams.dart';
 export 'types/ayf_cache_types.dart';
 export 'types/ayf_model_types.dart';
 

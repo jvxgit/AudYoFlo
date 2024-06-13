@@ -145,6 +145,8 @@ class AudYoFloWebBackendHelpers {
         return JvxComponentTypeEnum.JVX_COMPONENT_EXTERNAL_DEVICE;
       case "extern node":
         return JvxComponentTypeEnum.JVX_COMPONENT_EXTERNAL_NODE;
+      case "dynamic node":
+        return JvxComponentTypeEnum.JVX_COMPONENT_DYNAMIC_NODE;
       case "package":
         return JvxComponentTypeEnum.JVX_COMPONENT_PACKAGE;
       case "min host":

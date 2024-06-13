@@ -259,9 +259,9 @@ class AudYoFloWebStateProcessor {
           var reqStr = extractStringFromJson(jsonResponse, "req");
           if (reqStr != null) {
             // This message is a command request message!!
-            jvxReportCommandRequestEnum reqTp =
-                jvxReportCommandRequestEEnum.fromInt(parentRef!
-                    .translateEnumString(reqStr, "jvxReportCommandRequest", flags));
+            jvxReportCommandRequestEnum reqTp = jvxReportCommandRequestEEnum
+                .fromInt(parentRef!.translateEnumString(
+                    reqStr, "jvxReportCommandRequest", flags));
             var typeStr = extractStringFromJson(jsonResponse, "type");
             var mapOrigin = getMapValueMap(jsonResponse, "origin");
             var mapSpecific = getMapValueMap(jsonResponse, "specific");
@@ -305,7 +305,8 @@ class AudYoFloWebStateProcessor {
                           extractStringFromJson(mapSpecific, "sswitch");
                       if (ssStr != null) {
                         ssTp = jvxStateSwitchEEnum.fromInt(parentRef!
-                            .translateEnumString(ssStr, "jvxStateSwitch", flags));
+                            .translateEnumString(
+                                ssStr, "jvxStateSwitch", flags));
                       }
                       specTxt = ssTp.toString();
                       specTxt = "sswitch: $specTxt";
@@ -517,8 +518,8 @@ class AudYoFloWebStateProcessor {
                           ev.sequenceId = seqId;
                           ev.stepId = stpId;
                           ev.setp = jvxSequencerElementTypeEEnum.fromInt(
-                              parentRef!.translateEnumString(
-                                  seqETypePtr, 'jvxSequencerElementType', flags));
+                              parentRef!.translateEnumString(seqETypePtr,
+                                  'jvxSequencerElementType', flags));
                         }
 
                         parentRef!.theBeCache!

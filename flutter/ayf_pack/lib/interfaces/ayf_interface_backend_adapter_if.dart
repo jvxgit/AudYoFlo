@@ -1,17 +1,16 @@
 import '../ayf_pack_local.dart';
 
 abstract class AudYoFloBackendTranslator {
-    //String translateComponent(jvxComponentIdentification elm);
+  //String translateComponent(jvxComponentIdentification elm);
   // Translate an enum string into an int (and from there into a real enum).
   // We indeed involve the backend for this since the lookup is stored in the
   // backend. However, in the future the enum lookup should NOT involve a web
   // connection if using a web control.
-  int translateEnumString(String selection, String formatName,
-      AudYoFloCompileFlags flags);
+  int translateEnumString(
+      String selection, String formatName, AudYoFloCompileFlags flags);
 
   // Obtain compile falgs
   AudYoFloCompileFlags compileFlags();
-
 }
 
 /*
@@ -146,6 +145,20 @@ abstract class AudYoFloBackendAdapterIf extends AudYoFloBackendTranslator {
       JvxComponentIdentification cpId,
       {AyfPropertyReportLevel reportArg =
           AyfPropertyReportLevel.AYF_FRONTEND_REPORT_COMPONENT_PROPERTY});
+
+  Future<int> triggerStartPropertyStream(
+      List<AudYoFloPropertyStreamDefintion> propDescriptions,
+      void Function(
+              JvxComponentIdentification,
+              JvxPropertyStreamMessageType msgT,
+              String propertyDescriptor,
+              dynamic data,
+              int offset)
+          cb,
+      {int desired_timeout_msec = 1000,
+      int desired_ping_granularity = 10});
+
+  Future<int> triggerStopPropertyStream();
 
   String get lastError;
 }

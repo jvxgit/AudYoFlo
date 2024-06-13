@@ -1,12 +1,11 @@
 //import 'dart:html';
-import 'package:fixnum/fixnum.dart' as fn;
-import 'package:flutter/cupertino.dart';
+import 'dart:typed_data';
 import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:ayf_pack/ayf_pack.dart';
-import 'package:http/http.dart' as http;
 import '../ayf_web_backend_constants.dart';
 import '../ayf_web_backend_typedefs.dart';
+import 'ayf_web_backend_propstream.dart';
 import 'ayf_web_backend_message_processor.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -14,7 +13,6 @@ import '../ayf_web_backend_helpers.dart';
 import './ayf_web_backend_anomalies.dart';
 
 import 'dart:async';
-import 'dart:io';
 
 // ===========================================================================
 // ===========================================================================
@@ -106,8 +104,7 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
 
   Completer<void>? completeWebSocketTransaction;
 
-  WebSocketChannel? channel;
-
+  WebSocketChannel? channelText;
   int msgId = 1;
 
   String contextPending = '';
@@ -118,6 +115,9 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
   AudYoFloDebugModel? dbgModel;
   bool dbgOut = true;
   AudYoFloBackendCache? theBeCache;
+
+  final AudYoFloWebPropertyStream propStream = AudYoFloWebPropertyStream();
+
   // ==============================================================
   // ========================================================================
   // ========================================================================
@@ -200,13 +200,13 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
         wsTarget = 'ws://' + addrTo + ':' + portId.toString();
         address = '/jvx/host/ws/';
         try {
-          channel = WebSocketChannel.connect(Uri.parse(wsTarget + address));
+          channelText = WebSocketChannel.connect(Uri.parse(wsTarget + address));
         } catch (exc) {
           print('$exc');
         }
 
-        channel!.stream.listen(onMessage,
-            onDone: onConnectionDone, onError: onConnectionError);
+        channelText!.stream.listen(onMessageText,
+            onDone: onConnectionDoneText, onError: onConnectionErrorText);
 
         /*
        * Create your own Future to map callbacks into await statements:
@@ -221,9 +221,21 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
         }
 
         completeWebSocketTransaction = Completer<void>();
-        channel!.sink.add(handshake);
+        channelText!.sink.add(handshake);
       }
       await completeWebSocketTransaction!.future;
+
+      propStream.initializePropStream(wsTarget, report);
+
+      // Run the property init code
+      /*
+      List<AudYoFloPropertyStreamDefintion> props = [];
+      AudYoFloPropertyStreamDefintion newElm =
+          AudYoFloPropertyStreamDefintion();
+      newElm.propertyDescriptor = '/my_property_registered';
+      props.add(newElm);
+      await triggerStartPropertyStream(props);
+      */
     }
     return retVal;
   }
@@ -237,7 +249,7 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     }
   }
 
-  void onMessage(dynamic body) async {
+  void onMessageText(dynamic body) async {
     String retBody = body;
     ExtractedFromJson extracted = ExtractedFromJson();
     // print('onMessage: $retBody');
@@ -257,13 +269,13 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     }
   }
 
-  void onConnectionDone() {
+  void onConnectionDoneText() {
     print(
         'Ws connection reports a disconnect. Informing app to switch to disconnect status.');
     report!.reportStatusDisconnect(0, 0, 'Websocket disconnected');
   }
 
-  void onConnectionError(error) {
+  void onConnectionErrorText(error) {
     print('Ws connection reports a connection error, reason:  <$error>');
     report!.reportStatusDisconnect(1, 0, error);
   }
@@ -608,7 +620,6 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     errCode = await webRequestHttpGet(url, urlRequest);
     latestError = urlRequest.lastError;
     if (errCode == jvxErrorType.JVX_NO_ERROR) {
-
       var lstOptions = getListValueMap(urlRequest.jsonMap, 'options');
       if (lstOptions != null) {
         for (var oneOption in lstOptions) {
@@ -758,7 +769,8 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
             if (propUpdate != null) {
               if (propUpdate is AudYoFloPropertyContentBackend) {
                 int resL = AudYoFloPropertyContentFromJson
-                    .updatePropertyContentFromJsonMap(propUpdate, subSubSec, theBeCache!.backendAdapterIf!);
+                    .updatePropertyContentFromJsonMap(
+                        propUpdate, subSubSec, theBeCache!.backendAdapterIf!);
               }
             } else {
               // Whatever the reason is to end up here..
@@ -779,7 +791,8 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
   Future<int> triggerGetPropertyDescriptionComponent(
       JvxComponentIdentification cpId, List<String> propDescrLst,
       {AyfPropertyReportLevel reportArg =
-          AyfPropertyReportLevel.AYF_FRONTEND_REPORT_NO_REPORT, int numDigits = 2}) async {
+          AyfPropertyReportLevel.AYF_FRONTEND_REPORT_NO_REPORT,
+      int numDigits = 2}) async {
     int retVal = jvxErrorType.JVX_NO_ERROR;
     // The update property list in cache is typically executed with a delay
     // since here is the point where we have to request each single property.
@@ -962,8 +975,12 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
         var valTxt = '';
         var valTxtPtr =
             AudYoFloPropertyContentToString.convertPropertyContentToString(
-                propFromCache, true, offset: offset, num: num,
-                precision: 4, );
+          propFromCache,
+          true,
+          offset: offset,
+          num: num,
+          precision: 4,
+        );
         if (valTxtPtr != null) {
           valTxt = valTxtPtr;
         }
@@ -1021,23 +1038,22 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
       if (preventCallMultipleTimes) {
         for (var propDescr in propContentsArg) {
           AudYoFloPropertyContainer? propFromCache =
-            theBeCache!.referencePropertyInCache(cpId, propDescr);
-            if(propFromCache != null) {
-              if (propFromCache is AudYoFloPropertyContentBackend) {
+              theBeCache!.referencePropertyInCache(cpId, propDescr);
+          if (propFromCache != null) {
+            if (propFromCache is AudYoFloPropertyContentBackend) {
               if (propFromCache!.setInProgress ==
-                      jvxPropertyProgressStates.JVX_PROPERTY_PROGRESS_WAIT) {
-                    propFromCache.setInProgress =
-                        jvxPropertyProgressStates.JVX_PROPERTY_PROGRESS_NONE;
-                  }
-        }
+                  jvxPropertyProgressStates.JVX_PROPERTY_PROGRESS_WAIT) {
+                propFromCache.setInProgress =
+                    jvxPropertyProgressStates.JVX_PROPERTY_PROGRESS_NONE;
+              }
             }
+          }
         }
       }
       // If we use reportPropertyOnSet this will not be required
-                  if (invalidateProperty) {
-                    theBeCache!.invalidatePropertiesComponent(
-                        cpId, propContents, true);
-                  }
+      if (invalidateProperty) {
+        theBeCache!.invalidatePropertiesComponent(cpId, propContents, true);
+      }
       if (reportArg !=
           AyfPropertyReportLevel.AYF_BACKEND_REPORT_COMPONENT_PROPERTY) {
         // If we use reportPropertyOnSet this will not be required
@@ -1192,6 +1208,28 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     if (shutdown != null) {
       await shutdown!();
     }
+  }
+
+  @override
+  Future<int> triggerStartPropertyStream(
+      List<AudYoFloPropertyStreamDefintion> propDescriptions,
+      void Function(
+              JvxComponentIdentification,
+              JvxPropertyStreamMessageType msgT,
+              String propertyDescriptor,
+              dynamic data,
+              int offsel)
+          cb,
+      {int desired_timeout_msec = 1000,
+      int desired_ping_granularity = 10}) {
+    return propStream.triggerStartPropertyStream(propDescriptions, cb,
+        desired_timeout_msec: desired_timeout_msec,
+        desired_ping_granularity: desired_ping_granularity);
+  }
+
+  @override
+  Future<int> triggerStopPropertyStream() {
+    return propStream.triggerStopPropertyStream();
   }
 
   @override

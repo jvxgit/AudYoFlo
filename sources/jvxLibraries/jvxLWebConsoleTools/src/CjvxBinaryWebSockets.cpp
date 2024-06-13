@@ -1346,6 +1346,8 @@ CjvxBinaryWebSockets::timeout_reconfigure(jvxHandle* param, jvxSize paramType)
 	TjvxEventLoopElement evLElm;
 	jvxPropertyConfigurePropertySend_response theRespC;
 
+	memset(&theRespC, 0, sizeof(jvxPropertyConfigurePropertySend_response));
+
 	assert(paramType == JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC + 3);
 	jvxPropertyConfigurePropertySend* passed = (jvxPropertyConfigurePropertySend*)param;
 	webSocketPeriodic.timeout_msec = passed->tick_msec;
