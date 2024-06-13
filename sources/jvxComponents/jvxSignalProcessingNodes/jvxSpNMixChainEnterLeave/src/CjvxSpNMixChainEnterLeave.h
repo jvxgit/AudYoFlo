@@ -118,6 +118,10 @@ public:
 
 	void offset_channels_to_property();
 	jvxErrorType check_preset_channels(CjvxConnectorOffsetAndMaxChans& conParams, jvxComponentIdentification cpId);
+
+	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
+
 };
 
 	// ============================================================================

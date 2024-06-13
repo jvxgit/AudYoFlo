@@ -75,10 +75,6 @@ CjvxSpNMixChainEnterLeave::activate()
 		CjvxConnectorFactory::oneInputConnectorElement elmIn;
 		CjvxConnectorFactory::oneOutputConnectorElement elmOut;
 
-		genMixChain::init__display();
-		genMixChain::allocate__display();
-		genMixChain::register__display(this);
-
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.number_channels_side);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, genMixChain::config.operation_mode);
 
@@ -87,6 +83,10 @@ CjvxSpNMixChainEnterLeave::activate()
 		switch (operationMode)
 		{
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
+			genMixChain::init__display_input();
+			genMixChain::allocate__display_input();
+			genMixChain::register__display_input(this);
+
 			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName = "mix-in";
 			JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen), 
 				CjvxSingleInputConnectorMulti(true));
@@ -98,6 +98,10 @@ CjvxSpNMixChainEnterLeave::activate()
 			_common_set_conn_factory.input_connectors[CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen] = elmIn;
 			break;
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+			genMixChain::init__display_output();
+			genMixChain::allocate__display_output();
+			genMixChain::register__display_output(this);
+
 			CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::conName = "mix-out";
 			JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen), CjvxSingleOutputConnectorMulti(true));
 			CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen->activate(this, this, 
@@ -132,6 +136,9 @@ CjvxSpNMixChainEnterLeave::deactivate()
 
 			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen->deactivate();
 			JVX_SAFE_DELETE_OBJECT((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen));
+
+			genMixChain::unregister__display_input(this);
+			genMixChain::deallocate__display_input();
 			break;
 
 		case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
@@ -145,13 +152,13 @@ CjvxSpNMixChainEnterLeave::deactivate()
 
 			CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen->deactivate();
 			JVX_SAFE_DELETE_OBJECT((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen));
+
+			genMixChain::unregister__display_output(this);
+			genMixChain::deallocate__display_output();
 			break;
 		}
 		_undo_update_property_access_type(genMixChain::config.number_channels_side);
 		_undo_update_property_access_type(genMixChain::config.operation_mode);
-
-		genMixChain::unregister__display(this);
-		genMixChain::deallocate__display();
 
 		res = CjvxBareNode1ioRearrange::deactivate();
 	}
@@ -169,6 +176,7 @@ CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			node_inout._common_set_node_params_a_1io.number_channels);
 		if (numChansMax != szChannelRoutes)
 		{
+			jvxSize cnt = 0;
 			jvxSize i;
 			jvxSize* fldNew = nullptr;
 			jvxSize fldNewSz = numChansMax;
@@ -229,18 +237,24 @@ CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			genMixChain::associate__config(this, ptrChannelRoutes, szChannelRoutes);
 
 
-			genMixChain::display.channel_names.value.entries.clear();
 			switch (operationMode)
 			{
 			case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
+				genMixChain::display_input.channel_names.value.entries.clear();
+				jvx_bitFClear(genMixChain::display_input.channel_names.value.selection(0));
+				cnt = 0;
 				for (i = 0; i < node_inout._common_set_node_params_a_1io.number_channels; i++)
 				{
-					genMixChain::display.channel_names.value.entries.push_back("Primary Input #" + jvx_size2String(i));
+					genMixChain::display_input.channel_names.value.entries.push_back("Primary Input #" + jvx_size2String(i));
+					jvx_bitSet(genMixChain::display_input.channel_names.value.selection(0), cnt);
+					cnt++;
 				}
 
 				for (i = 0; i < genMixChain::config.number_channels_side.value; i++)
 				{
-					genMixChain::display.channel_names.value.entries.push_back("Secondary Input #" + jvx_size2String(i));
+					genMixChain::display_input.channel_names.value.entries.push_back("Secondary Input #" + jvx_size2String(i));
+					jvx_bitSet(genMixChain::display_input.channel_names.value.selection(0), cnt);
+					cnt++;
 				}
 
 				for (auto& elm : presets_channel_routing)
@@ -248,21 +262,28 @@ CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					for (i = 0; i < elm.second.channel_num; i++)
 					{
 						jvxSize posi = node_inout._common_set_node_params_a_1io.number_channels + elm.second.idxOffset + i;
-						if (posi < genMixChain::display.channel_names.value.entries.size())
+						if (posi < genMixChain::display_input.channel_names.value.entries.size())
 						{
-							genMixChain::display.channel_names.value.entries[posi] = elm.second.deviceChannelPrefix + jvx_size2String(i);
+							genMixChain::display_input.channel_names.value.entries[posi] = elm.second.deviceChannelPrefix + jvx_size2String(i);
 						}
 					}
 				}
 				break;
 			case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT:
+				genMixChain::display_output.channel_names.value.entries.clear();
+				jvx_bitFClear(genMixChain::display_output.channel_names.value.selection(0));
+				cnt = 0;
 				for (i = 0; i < node_output._common_set_node_params_a_1io.number_channels; i++)
 				{
-					genMixChain::display.channel_names.value.entries.push_back("Primary Output #" + jvx_size2String(i));
+					genMixChain::display_output.channel_names.value.entries.push_back("Primary Output #" + jvx_size2String(i));
+					jvx_bitSet(genMixChain::display_output.channel_names.value.selection(0), cnt);
+					cnt++;
 				}
 				for (i = 0; i < genMixChain::config.number_channels_side.value; i++)
 				{
-					genMixChain::display.channel_names.value.entries.push_back("Secondary Output #" + jvx_size2String(i));
+					genMixChain::display_output.channel_names.value.entries.push_back("Secondary Output #" + jvx_size2String(i));
+					jvx_bitSet(genMixChain::display_output.channel_names.value.selection(0), cnt);
+					cnt++;
 				}
 
 				for (auto& elm : presets_channel_routing)
@@ -270,9 +291,9 @@ CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					for (i = 0; i < elm.second.channel_num; i++)
 					{
 						jvxSize posi = node_output._common_set_node_params_a_1io.number_channels + elm.second.idxOffset + i;
-						if (posi < genMixChain::display.channel_names.value.entries.size())
+						if (posi < genMixChain::display_output.channel_names.value.entries.size())
 						{
-							genMixChain::display.channel_names.value.entries[posi] = elm.second.deviceChannelPrefix + jvx_size2String(i);
+							genMixChain::display_output.channel_names.value.entries[posi] = elm.second.deviceChannelPrefix + jvx_size2String(i);
 						}
 					}
 				}

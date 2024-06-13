@@ -126,37 +126,30 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 					i = 0;
 
 					// Check current input channel selection
-					jvx::propertyCallCompactList cptTrans;
+					jvx::propertyCallCompactRefList cptTrans;
 
-					jvxCallManagerProperties callManChans;
-					callManChans.access_protocol = jvxAccessProtocol::JVX_ACCESS_PROTOCOL_NO_CALL;
 					jvxSelectionList selLst;
-					jPRG rawPtrChans = jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxSelectionList>(selLst);
-					jPAD identChans("/system/sel_input_channels");
-					jPD detailChans;
-					jvx::propertyCallCompactElement cptElmChans(callManChans, rawPtrChans, identChans, detailChans);
+					jvx::propertyCallCompactElement<jPRG, jPAD, jPD> cptElmChans(
+						jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxSelectionList>(selLst), 
+						jPAD ("/system/sel_input_channels"), jPD());
 
-					cptTrans.propReqs.push_back(&cptElmChans);
+					cptTrans.propReqs.push_back(cptElmChans.toRefElement());
 
-					jvxCallManagerProperties callManSrc;
-					callManSrc.access_protocol = jvxAccessProtocol::JVX_ACCESS_PROTOCOL_NO_CALL;
-					jvxApiString srcName;
-					jPRG rawPtrSrc = jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxApiString>(srcName);
-					jPAD identSrc("/system/src_name");
-					jPD detailSrc;
-					jvx::propertyCallCompactElement cptElmSrc(callManSrc, rawPtrSrc, identSrc, detailSrc);
-					cptTrans.propReqs.push_back(&cptElmSrc);
+					jvxApiString srcName;										
+					jvx::propertyCallCompactElement< jPRG, jPAD, jPD> cptElmSrc(
+						jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxApiString>(srcName), jPAD("/system/src_name"), jPD());
+					cptTrans.propReqs.push_back(cptElmSrc.toRefElement());
 					jvxBool channelsFound = false;
 
 					jvxErrorType resL = datIn->con_link.connect_from->transfer_backward_ocon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES,
 						reinterpret_cast<jvxHandle*>(&cptTrans) JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 					if (resL == JVX_NO_ERROR)
 					{
-						if ((cptElmSrc.resCall == JVX_NO_ERROR) && (callManSrc.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
+						if ((cptElmSrc.resCall == JVX_NO_ERROR) && (cptElmSrc.callMan.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
 						{
 							nmMaster = srcName.std_str();
 						}
-						if ((cptElmSrc.resCall == JVX_NO_ERROR) && (callManChans.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
+						if ((cptElmSrc.resCall == JVX_NO_ERROR) && (cptElmChans.callMan.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
 						{
 							for (i = 0; i < selLst.strList.ll(); i++)
 							{
@@ -264,35 +257,29 @@ CjvxAuN2AudioMixer::update_channels_on_test(const jvxLinkDataDescriptor* datIn, 
 					i = 0;
 
 					// Check current input channel selection
-					jvx::propertyCallCompactList cptTrans;
+					jvx::propertyCallCompactRefList cptTrans;
 
-					jvxCallManagerProperties callManChans;
-					callManChans.access_protocol = jvxAccessProtocol::JVX_ACCESS_PROTOCOL_NO_CALL;
 					jvxSelectionList selLst;
-					jPRG rawPtrChans = jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxSelectionList>(selLst);
-					jPAD identChans("/system/sel_output_channels");
-					jPD detailChans;
-					jvx::propertyCallCompactElement cptElmChans(callManChans, rawPtrChans, identChans, detailChans);
+					jvx::propertyCallCompactElement< jPRG, jPAD, jPD> cptElmChans( 
+						jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxSelectionList>(selLst), 
+						jPAD("/system/sel_output_channels"), jPD());
 
-					cptTrans.propReqs.push_back(&cptElmChans);
+					cptTrans.propReqs.push_back(cptElmChans.toRefElement());
 
-					jvxCallManagerProperties callManSrc;
-					callManSrc.access_protocol = jvxAccessProtocol::JVX_ACCESS_PROTOCOL_NO_CALL;
 					jvxApiString srcName;
-					jPRG rawPtrSrc = jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxApiString>(srcName);
-					jPAD identSrc("/system/snk_name");
-					jPD detailSrc;
-					jvx::propertyCallCompactElement cptElmSrc(callManSrc, rawPtrSrc, identSrc, detailSrc);
-					cptTrans.propReqs.push_back(&cptElmSrc);
+					jvx::propertyCallCompactElement< jPRG, jPAD, jPD> cptElmSrc( 
+						jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxApiString>(srcName), 
+						jPAD("/system/snk_name"), jPD());
+					cptTrans.propReqs.push_back(cptElmSrc.toRefElement());
 
 					jvxErrorType resL = datOut->con_link.connect_to->transfer_forward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES,
 						reinterpret_cast<jvxHandle*>(&cptTrans) JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
-					if ((cptElmSrc.resCall == JVX_NO_ERROR) && (callManSrc.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
+					if ((cptElmSrc.resCall == JVX_NO_ERROR) && (cptElmSrc.callMan.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
 					{
 						nmMaster = srcName.std_str();
 					}
 
-					if ((cptElmSrc.resCall == JVX_NO_ERROR) && (callManChans.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
+					if ((cptElmSrc.resCall == JVX_NO_ERROR) && (cptElmChans.callMan.access_protocol == jvxAccessProtocol::JVX_ACCESS_PROTOCOL_OK))
 					{
 						for (i = 0; i < selLst.strList.ll(); i++)
 						{

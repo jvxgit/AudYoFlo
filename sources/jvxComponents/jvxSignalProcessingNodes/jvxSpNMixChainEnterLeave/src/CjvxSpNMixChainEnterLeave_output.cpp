@@ -104,3 +104,33 @@ CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleOutputConnector* oco
 		memcpy(bufsOut[i], bufsIn[i + oconn->chanSetting.idxOffset], jvxDataFormat_getsize(datOutThisConnector.con_params.format) * datOutThisConnector.con_params.buffersize);
 	}
 }
+
+jvxErrorType 
+CjvxSpNMixChainEnterLeave::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{	
+	if (
+		(tp == JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES) && 
+		(operationMode == jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT))
+	{
+		if (!jvx::helper::translate_transfer_chain_get_properties((jvx::propertyCallCompactRefList*)data, this))
+		{
+			return JVX_NO_ERROR;
+		}
+	}
+	return CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+}
+
+jvxErrorType 
+CjvxSpNMixChainEnterLeave::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	if (
+		(tp == JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES) &&
+		(operationMode == jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_OUTPUT))
+	{
+		if (!jvx::helper::translate_transfer_chain_get_properties((jvx::propertyCallCompactRefList*)data, this))
+		{
+			return JVX_NO_ERROR;
+		}
+	}
+	return CjvxBareNode1ioRearrange::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+}

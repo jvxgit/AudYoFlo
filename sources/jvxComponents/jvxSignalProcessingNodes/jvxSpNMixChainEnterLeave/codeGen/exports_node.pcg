@@ -43,6 +43,7 @@ SECTION PROPERTIES
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
 			ASSOCIATE_EXTERNAL = "yes";
 		};
+
 	};
 
 	SECTION sources_channel_routing
@@ -93,19 +94,27 @@ SECTION PROPERTIES
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
 	};
-	SECTION display
+
+	SECTION display_input
 	{
 		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
 		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};					
 
 		SECTION channel_names
 		{
-			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
-			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
-			ONLY_SELECTION_TO_CONFIG = "yes";
-			SELECTION_LIST_NAMES = {"to-be-filled"};
-			SELECTION_LIST_SELECTED = {"yes"};
-			SELECTION_LIST_EXCLUSIVE = {"yes"}; 	
+			ID = "jvx_selection_output_channels_sellist";			
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+	};
+
+	SECTION display_output
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};					
+
+		SECTION channel_names
+		{
+			ID = "jvx_selection_input_channels_sellist";
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};
 	};

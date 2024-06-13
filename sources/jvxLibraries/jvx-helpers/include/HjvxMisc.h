@@ -644,6 +644,8 @@ namespace jvx {
 
 		jvxErrorType genericDataBufferConvert(jvxHandle** bufsIn, jvxDataFormat formIn, jvxHandle** bufsOut, jvxDataFormat formOut, jvxSize nChans, jvxSize numElms);
 		jvxBool checkAllowTypeChange(jvxComponentType tpOld, jvxComponentType tpNew);
+
+		jvxBool translate_transfer_chain_get_properties(jvx::propertyCallCompactRefList* propCallCompact, IjvxProperties* prop_ptr);
 	}
 
 	namespace align {

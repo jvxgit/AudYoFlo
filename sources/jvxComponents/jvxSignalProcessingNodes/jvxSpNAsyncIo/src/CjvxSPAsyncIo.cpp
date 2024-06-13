@@ -742,25 +742,25 @@ JVX_ASYNCIO_CLASSNAME::transfer_backward_ocon_ntask(jvxLinkDataTransferType tp, 
 	{
 		jvxLinkDataDescriptor* ld = (jvxLinkDataDescriptor*)data;
 		jvxBool thereismismatch = false;
-		jvx::propertyCallCompactList* propCallCompact = nullptr; 
+		jvx::propertyCallCompactRefList* propCallCompact = nullptr; 
 		std::string txt;
 
 		switch (tp)
 		{
 		case JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES:
 
-			propCallCompact = (jvx::propertyCallCompactList*)data;
+			propCallCompact = (jvx::propertyCallCompactRefList*)data;
 			if (propCallCompact)
 			{
 				jvxBool forwardChain = false;
 				for (auto& elm : propCallCompact->propReqs)
 				{
-					if (elm->resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
+					if (elm.resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
 					{
-						elm->resCall = this->get_property((elm->callMan), elm->rawPtr,
-							elm->ident, elm->detail);
+						elm.resCall = this->get_property((elm.callMan), elm.rawPtr,
+							elm.ident, elm.detail);
 					}
-					if (elm->resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
+					if (elm.resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
 					{
 						forwardChain = true;
 					}
@@ -892,24 +892,24 @@ JVX_ASYNCIO_CLASSNAME::transfer_forward_icon_ntask(jvxLinkDataTransferType tp, j
 	{
 		if (idCtxt == JVX_DEFAULT_CON_VAR_OFF)
 		{
-			jvx::propertyCallCompactList* propCallCompact = nullptr;
+			jvx::propertyCallCompactRefList* propCallCompact = nullptr;
 
 			switch (tp)
 			{
 			case JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES:
 
-				propCallCompact = (jvx::propertyCallCompactList*)data;
+				propCallCompact = (jvx::propertyCallCompactRefList*)data;
 				if (propCallCompact)
 				{
 					jvxBool forwardChain = false;
 					for (auto& elm : propCallCompact->propReqs)
 					{
-						if (elm->resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
+						if (elm.resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
 						{
-							elm->resCall = this->get_property((elm->callMan), elm->rawPtr,
-								elm->ident, elm->detail);
+							elm.resCall = this->get_property((elm.callMan), elm.rawPtr,
+								elm.ident, elm.detail);
 						}
-						if (elm->resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
+						if (elm.resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
 						{
 							forwardChain = true;
 						}

@@ -4819,7 +4819,31 @@ namespace jvx {
 				break;
 			}
 			return res;
-		}		
+		}	
+
+		jvxBool translate_transfer_chain_get_properties(jvx::propertyCallCompactRefList* propCallCompact, IjvxProperties* prop_ptr)
+		{
+			jvxBool atLeastOnePropertyIsOpen = false;
+
+			// propCallCompact = (jvx::propertyCallCompactList*)data;
+			if (propCallCompact)
+			{
+
+				for (auto& elm : propCallCompact->propReqs)
+				{
+					if (elm.resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
+					{
+						elm.resCall = prop_ptr->get_property((elm.callMan), elm.rawPtr,
+							elm.ident, elm.detail);
+					}
+					if (elm.resCall == JVX_ERROR_ELEMENT_NOT_FOUND)
+					{
+						atLeastOnePropertyIsOpen = true;
+					}
+				}
+			}
+			return atLeastOnePropertyIsOpen;
+		}
 	}
 
 	namespace align {

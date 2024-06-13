@@ -1434,7 +1434,7 @@ CjvxGenericWrapperDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxLinkDataDescriptor* theLocDescr = NULL;
-	jvx::propertyCallCompactList* propCallCompact = nullptr;
+	jvx::propertyCallCompactRefList* propCallCompact = nullptr;
 	jvxSize idx = 0;
 	local_proc_params params;
 	switch (tp)
