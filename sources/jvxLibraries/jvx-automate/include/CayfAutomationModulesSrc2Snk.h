@@ -73,10 +73,19 @@ namespace CayfAutomationModules
 			ayfConnectConfigCpEntry(cp){};
 	};		
 
+	class ayfConnectDerivedSrc2Snk
+	{
+	public:
+		jvxComponentIdentification tpSrc = JVX_COMPONENT_UNKNOWN;
+		jvxComponentIdentification tpSink = JVX_COMPONENT_UNKNOWN;
+		jvxComponentIdentification tpMaster = JVX_COMPONENT_UNKNOWN;
+	};
+
 	class IayfEstablishedProcessesSrc2Snk 	
 	{
 	public:
 		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;		
+		ayfConnectDerivedSrc2Snk derived;
 	};
 
 	class CayfEstablishedProcessesSrc2Snk: public IayfEstablishedProcessesCommon, public IayfEstablishedProcessesSrc2Snk, public CayfEstablishedProcessesMixin
@@ -104,19 +113,11 @@ namespace CayfAutomationModules
 	
 	public:
 
-		class ayfConnectDerivedSrc2Snk
-		{
-		public:
-			jvxComponentIdentification tpSrc = JVX_COMPONENT_UNKNOWN;
-			jvxComponentIdentification tpSink = JVX_COMPONENT_UNKNOWN;
-			jvxComponentIdentification tpMaster = JVX_COMPONENT_UNKNOWN;
-		};
-
 	protected:
 
 		ayfAutoConnect_callbacks* cbPtr = nullptr;
 		ayfConnectConfigSrc2Snk config;
-		ayfConnectDerivedSrc2Snk derived;
+		// ayfConnectDerivedSrc2Snk derived;
 
 	public:
 

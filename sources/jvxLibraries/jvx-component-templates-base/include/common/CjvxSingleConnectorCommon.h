@@ -32,6 +32,8 @@ public:
 	jvxBool withTriggerConnector = false;
 	jvxSize conId = 0;
 	CjvxConnectorOffsetAndMaxChans chanSetting;
+	
+	// Physically the largest number of channels to be accepted
 	jvxSize channelWidthMax = JVX_SIZE_UNSELECTED;
 
 public:

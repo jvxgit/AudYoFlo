@@ -49,6 +49,8 @@ namespace CayfAutomationModules
 		virtual void report_connection_established(jvxSize proId, ayfEstablishedProcessType, IayfEstablishedProcessesCommon* realizeChainPtr) override;
 
 		jvxErrorType on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr)override;
+
+		void postponed_try_connect() override;
 	};
 }
 

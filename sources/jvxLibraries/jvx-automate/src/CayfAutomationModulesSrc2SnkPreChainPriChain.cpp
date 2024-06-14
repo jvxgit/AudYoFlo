@@ -5,6 +5,9 @@ namespace CayfAutomationModules
 {
 	CayfAutomationModulesSrc2SnkPreChainPriChain::CayfAutomationModulesSrc2SnkPreChainPriChain() : CayfAutomationModulesSrc2SnkPreChain()
 	{
+		// Specific setup here: allow postconnect and setup targetconnection flags to 0x3
+		allowPostPonedConnect = true;
+		targetFlagsConnection = 0x3;
 	}
 
 	jvxErrorType
@@ -193,9 +196,9 @@ namespace CayfAutomationModules
 		// Preset the derived configuration
 		IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);
 		
-		derived.tpMaster = sglElm.supportNodeRuntime.cpId; // cpElm.cpId;
-		derived.tpSink = sglElm.supportNodeRuntime.cpId;
-		derived.tpSrc = CayfAutomationModulesSrc2Snk::config.tpAssign;
+		derivedArgs.tpMaster = sglElm.supportNodeRuntime.cpId; // cpElm.cpId;
+		derivedArgs.tpSink = sglElm.supportNodeRuntime.cpId;
+		derivedArgs.tpSrc = CayfAutomationModulesSrc2Snk::config.tpAssign;
 	}
 
 	jvxErrorType
@@ -244,6 +247,28 @@ namespace CayfAutomationModules
 			sglElm.supportNodeRuntime.states.uidProcesses[1] = JVX_SIZE_UNSELECTED;
 		}
 
+	}
+
+	void
+		CayfAutomationModulesSrc2SnkPreChainPriChain::postponed_try_connect()
+	{
+		for (auto& elm : module_connections)
+		{
+			IayfEstablishedProcessesCommon* sglElmPtr = elm.second;
+			IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);;
+			if (sglElm.supportNodeRuntime.derivedConfig.allowPostPonedConnect)
+			{
+				jvxBool established = false;
+				if (
+					(sglElm.supportNodeRuntime.states.subModulesActive) &&
+					(sglElm.supportNodeRuntime.states.connectionsEstablishFlags != sglElm.supportNodeRuntime.derivedConfig.targetFlagsConnection))
+				{
+					lockOperation = true;
+					try_connect(elm.first.cpId, established);
+					lockOperation = false;
+				}
+			}
+		}		
 	}
 }
 

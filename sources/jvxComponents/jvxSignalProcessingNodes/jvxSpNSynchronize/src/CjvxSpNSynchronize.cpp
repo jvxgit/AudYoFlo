@@ -117,7 +117,7 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 				(jvxDataFormat)node_inout._common_set_node_params_a_1io.format,
 				(jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat,
 				JVX_DATAFLOW_PUSH_ACTIVE);
-			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
+			triggerUpdate = (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE) || triggerUpdate;
 			
 			resS = sec_master.neg_input._update_parameters_fixed(
 				node_output._common_set_node_params_a_1io.number_channels,
@@ -127,7 +127,7 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 				(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
 				flow_sec);
 			//(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
-			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
+			triggerUpdate = (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE) || triggerUpdate;
 			break;
 		case jvxSynchronizeBufferMode::JVX_SYNCHRONIZE_BUFFERED_PULL:
 
@@ -142,7 +142,8 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 				(jvxDataFormat)node_inout._common_set_node_params_a_1io.format,
 				(jvxDataFormatGroup)node_inout._common_set_node_params_a_1io.subformat,
 				(jvxDataflow)node_inout._common_set_node_params_a_1io.data_flow);
-			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
+			triggerUpdate = (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE) || triggerUpdate;
+
 			resS = sec_master.neg_input._update_parameters_fixed(
 				node_output._common_set_node_params_a_1io.number_channels,
 				node_output._common_set_node_params_a_1io.buffersize,
@@ -150,7 +151,7 @@ jvxErrorType CjvxSpNSynchronize::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 				(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
 				(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
 				(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
-			triggerUpdate &= (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE);
+			triggerUpdate = (resS == jvxConstraintSetResult::JVX_NEGOTIATE_CONSTRAINT_CHANGE) || triggerUpdate;
 
 			break;
 		}

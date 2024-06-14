@@ -438,6 +438,18 @@ CjvxDataConnectionRule::try_connect_direct(
 								theNewConnection.master_name.clear();
 
 							} // if (proc == NULL)
+							else
+							{
+								if (params_init.dbg_output)
+								{
+									jvxApiString strProc;
+									proc->descriptor(&strProc);
+
+									JVX_OUTPUT_REPORT_DEBUG_COUT_START(rep);
+									JVX_OUTPUT_REPORT_DEBUG_COUT_REF << "-->" << __FUNCTION__ << ": Master is already in use in connection with descriptor <" << strProc.std_str() << ">." << std::flush;
+									JVX_OUTPUT_REPORT_DEBUG_COUT_STOP(rep);
+								}
+							}
 						}// if (jvx_compareStringsWildcard(theMaster.sel_expression_macon, strCM.std_str()))
 						else
 						{

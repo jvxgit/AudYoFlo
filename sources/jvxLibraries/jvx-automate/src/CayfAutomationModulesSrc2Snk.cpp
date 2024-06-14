@@ -99,12 +99,12 @@ namespace CayfAutomationModules
 					// <NEW COMPONENT MASTER SOURCE> -> MODULES -> <SINK>
 
 					JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
-					log << "Specifying master component <" << jvxComponentIdentification_txt(derived.tpMaster) <<
+					log << "Specifying master component <" << jvxComponentIdentification_txt(sglElm.derived.tpMaster) <<
 						">, master <" << config.nmMaster << ">." << std::endl;
 					JVX_STOP_LOCK_LOG_REF(objLogRefPtr);
 
 					res = theDataConnectionDefRuleHdl->specify_master(
-						derived.tpMaster,
+						sglElm.derived.tpMaster,
 						"*", config.nmMaster.c_str());
 					assert(res == JVX_NO_ERROR);
 
@@ -112,8 +112,8 @@ namespace CayfAutomationModules
 					// <SOMETHING> --derived.tpSrc -> <modules[id=1]> -> derived.tpSink
 					// Then, in the next step, the prechain will run from 
 					// SOMETHING => derived.tpSink -> <modules[id=0] -> derived.tpSrc
-					this->create_bridges(theDataConnectionDefRuleHdl, derived.tpSrc,
-						derived.tpSink, sglElm.lstEntries, sglElmPtr,
+					this->create_bridges(theDataConnectionDefRuleHdl, sglElm.derived.tpSrc,
+						sglElm.derived.tpSink, sglElm.lstEntries, sglElmPtr,
 						config.oconNmSource, config.iconNmSink, bridgeId, 
 						config.oconIdTrigger, config.iconIdTrigger);
 
@@ -266,6 +266,8 @@ namespace CayfAutomationModules
 		refHostRefPtr->request_object_selected_component(tp_activated, &obj_dev);
 		
 		IayfEstablishedProcessesCommon* realizeChainPtr = allocate_chain_realization();
+		IayfEstablishedProcessesSrc2Snk& sglElm = *(reinterpret_cast<IayfEstablishedProcessesSrc2Snk*>(realizeChainPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK)));
+
 		// IayfEstablishedProcessesSrc2Snk& realizeChain = *(reinterpret_cast<IayfEstablishedProcessesSrc2Snk*>(realizeChainPtr->specificType(CayfAutomationModules::ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNK)));
 		// ========================================================================
 		
@@ -283,7 +285,7 @@ namespace CayfAutomationModules
 
 			// Here we copy the args for the connection
 			// Use tempory derivative		
-			deriveArguments(derived, tp_activated, realizeChainPtr);
+			deriveArguments(sglElm.derived, tp_activated, realizeChainPtr);
 
 			// Run the connection code
 			try_connect(tp_activated, established);

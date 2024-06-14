@@ -83,15 +83,34 @@ CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleInputConnector* icon
 
 	jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(&datThisConnector, idx_stage);
 
-	jvxSize numChannels = szExtraBuffersChannels - iconn->chanSetting.idxOffset;
-	numChannels = JVX_MIN(numChannels, iconn->chanSetting.channel_num);
-	numChannels = JVX_MIN(numChannels, datThisConnector.con_params.number_channels);
+	// Maximum number output channels as field allows
+	jvxSize numChannelsOut = szExtraBuffersChannels - iconn->chanSetting.idxOffset;
 
-	// The pointers are a shortcut!!
-	jvxData** bufsOut = (jvxData**)bufsSideChannel[idxBufferProcess];
-
-	for (i = 0; i < numChannels; i++)
+	// Maximum number input channel as field allows
+	jvxSize numChannelsIn = datThisConnector.con_params.number_channels;
+	
+	if (numChannelsIn)
 	{
-		jvx_mixSamples_flp(bufsIn[i], bufsOut[iconn->chanSetting.idxOffset + i], _common_set_ocon.theData_out.con_params.buffersize);
+		// Devices may also deliver no channels! Then, do nothing
+		if (JVX_CHECK_SIZE_SELECTED(iconn->chanSetting.channel_num))
+		{
+			// If there is another information, limit number of output channels
+			numChannelsOut = JVX_MIN(numChannelsOut, iconn->chanSetting.channel_num);
+		}
+		else
+		{
+			// If there is no additional width information, copy "what is there"
+			numChannelsOut = JVX_MIN(numChannelsOut, numChannelsIn);
+		}
+
+		// The pointers are a shortcut!!
+		jvxData** bufsOut = (jvxData**)bufsSideChannel[idxBufferProcess];
+
+		for (i = 0; i < numChannelsOut; i++)
+		{
+			// Extend buffers to maximum channel width
+			jvxSize idxIn = i % numChannelsIn;
+			jvx_mixSamples_flp(bufsIn[idxIn], bufsOut[iconn->chanSetting.idxOffset + i], _common_set_ocon.theData_out.con_params.buffersize);
+		}
 	}
 }
