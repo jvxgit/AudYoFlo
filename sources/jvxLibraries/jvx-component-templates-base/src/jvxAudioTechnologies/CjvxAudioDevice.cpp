@@ -981,6 +981,8 @@ CjvxAudioDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* d
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxLinkDataDescriptor* tryThis = reinterpret_cast<jvxLinkDataDescriptor*>(data);
+	jvxComponentIdentification* cpId = reinterpret_cast<jvxComponentIdentification*>(data);
+
 	jvx::propertyCallCompactRefList* propCallCompact = nullptr;
 	switch (tp)
 	{	
@@ -1000,6 +1002,13 @@ CjvxAudioDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* d
 			return JVX_NO_ERROR;
 		}
 		break;
+	case JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER:
+		if (cpId)
+		{
+			*cpId = _common_set.theComponentType;
+		}
+		return JVX_NO_ERROR;
+		break;
 	}
 	return CjvxSimpleMasterDevice::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
@@ -1009,6 +1018,7 @@ CjvxAudioDevice::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* da
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvx::propertyCallCompactRefList* propCallCompact = nullptr;
+	jvxComponentIdentification* cpId = reinterpret_cast<jvxComponentIdentification*>(data);
 
 	switch (tp)
 	{
@@ -1027,6 +1037,13 @@ CjvxAudioDevice::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* da
 			}
 			return JVX_NO_ERROR;
 		}
+		break;
+	case JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER:
+		if (cpId)
+		{
+			*cpId = _common_set.theComponentType;
+		}
+		return JVX_NO_ERROR;
 		break;
 	}
 	return CjvxSimpleMasterDevice::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));

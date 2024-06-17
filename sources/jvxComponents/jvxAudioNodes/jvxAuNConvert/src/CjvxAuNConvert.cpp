@@ -479,6 +479,8 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	res = CjvxBareNode1ioRearrange::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
+		jvxSize numBuffersIntermediate = 0;
+
 		if (runtime.active_resampling)
 		{
 			jvxDataFormat formOut = (jvxDataFormat)node_inout._common_set_node_params_a_1io.format;
@@ -490,6 +492,7 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				break;
 			case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
 				runtime.numResampler = node_inout._common_set_node_params_a_1io.number_channels;
+				numBuffersIntermediate = runtime.numResampler;
 				break;
 			}
 
@@ -533,8 +536,9 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				}
 			}
 
+			// The number of resamplers may be higher than the number of output buffers if we need an addional rebuffering
 			runtime.fFieldRebuffer = 0;
-			runtime.nCFieldRebuffer = node_output._common_set_node_params_a_1io.number_channels;
+			runtime.nCFieldRebuffer = JVX_MAX(numBuffersIntermediate, node_output._common_set_node_params_a_1io.number_channels);
 			runtime.ptrFieldBuffer = nullptr;
 			runtime.lFieldRebufferChannel = runtime.lFieldRebuffer * jvxDataFormat_getsize(node_output._common_set_node_params_a_1io.format);
 			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.ptrFieldBuffer, jvxHandle*, runtime.nCFieldRebuffer);
