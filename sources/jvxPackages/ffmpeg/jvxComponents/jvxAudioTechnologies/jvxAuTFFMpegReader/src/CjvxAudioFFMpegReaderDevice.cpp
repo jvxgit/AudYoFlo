@@ -749,6 +749,7 @@ CjvxAudioFFMpegReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, 
 {
 	jvxLinkDataDescriptor* ld_cp = nullptr;
 	jvxErrorType res = JVX_NO_ERROR;
+	jvxComponentIdentification* cpId = reinterpret_cast<jvxComponentIdentification*>(data);
 
 	switch (tp)
 	{
@@ -767,6 +768,13 @@ CjvxAudioFFMpegReaderDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, 
 		}
 
 		return res;
+
+	case JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER:
+		if (cpId)
+		{
+			*cpId = _common_set.theComponentType;
+		}
+		return JVX_NO_ERROR;
 	default:
 		CjvxAudioDevice::transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}

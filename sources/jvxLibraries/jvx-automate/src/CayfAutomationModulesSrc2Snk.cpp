@@ -256,6 +256,7 @@ namespace CayfAutomationModules
 		auto elm = module_connections.find(tp_activated);
 		if (elm != module_connections.end())
 		{
+			lockOperation = false;
 			return JVX_ERROR_ALREADY_IN_USE;
 		}
 
@@ -295,6 +296,7 @@ namespace CayfAutomationModules
 				res = this->on_connection_not_established(tp_activated, realizeChainPtr);				
 				if (res != JVX_NO_ERROR)
 				{
+					lockOperation = false;
 					return res;
 				}
 			}
