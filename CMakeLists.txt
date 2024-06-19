@@ -56,6 +56,8 @@ endif()
 ###
 
 
+cmake_host_system_information(RESULT host_identification QUERY HOSTNAME)
+message("Running on host ${host_identification}")
 
 # Set target subdirectories for install mechanism
 if(JVX_RELEASE_SDK)
