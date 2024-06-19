@@ -5200,28 +5200,39 @@ jvx_parseNumericExpression(std::string txt, jvxBool& err, std::vector<std::vecto
 			}
 			else if (oneChar == ']')
 			{
-				if (!oneToken.empty())
+				if (leadingBraces)
 				{
-					jvxBool errL = false;
-					if (
-						(oneToken.size() >= 2) &&
-						((oneToken.substr(0, 2) == "0x") || (oneToken.substr(0, 2) == "0X")))
+					if (!oneToken.empty())
 					{
-						val = (jvxData)jvx_string2Int64(oneToken, errL);
+						jvxBool errL = false;
+						if (
+							(oneToken.size() >= 2) &&
+							((oneToken.substr(0, 2) == "0x") || (oneToken.substr(0, 2) == "0X")))
+						{
+							val = (jvxData)jvx_string2Int64(oneToken, errL);
+						}
+						else
+						{
+							val = jvx_string2Data(oneToken, errL);
+						}
+						if (errL)
+							err = true;
+						myRow.push_back(val);
 					}
-					else
+					if (!myRow.empty())
 					{
-						val = jvx_string2Data(oneToken, errL);
+						returnMe.push_back(myRow);
+						myRow.clear();
 					}
-					if (errL)
-						err = true;
-					myRow.push_back(val);
+					state = 0;
+
+					// The ] terminates the parser..
+					break;
 				}
-				if (!myRow.empty())
+				else
 				{
-					returnMe.push_back(myRow);
+					err = true;
 				}
-				state = 0;
 			}
 			else
 			{
