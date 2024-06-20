@@ -20,7 +20,7 @@ public:
 			initExternalCall();
 
 			// Run mex call base classes function to init matlab call handles
-			res = CjvxMexCalls::select(_common_set_min.theHostRef, static_cast<CjvxProperties*>(this), "",
+			res = CjvxMexCalls::select(this->_common_set_min.theHostRef, static_cast<CjvxProperties*>(this), "",
 				_theExtCallObjectName.c_str());
 		}
 		return(res);
@@ -93,15 +93,15 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		// onPrepareConnectMexCalls();
 
-		CjvxMexCalls::prepare_sender_to_receiver(_common_set_icon.theData_in);
+		CjvxMexCalls::prepare_sender_to_receiver(this->_common_set_icon.theData_in);
 		res = T::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res == JVX_NO_ERROR)
 		{
-			CjvxMexCalls::prepare_complete_receiver_to_sender(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+			CjvxMexCalls::prepare_complete_receiver_to_sender(this->_common_set_icon.theData_in, &this->_common_set_ocon.theData_out);
 		}
 		else
 		{
-			CjvxMexCalls::postprocess_sender_to_receiver(_common_set_icon.theData_in);
+			CjvxMexCalls::postprocess_sender_to_receiver(this->_common_set_icon.theData_in);
 		}
 		return res;
 	};
@@ -109,9 +109,9 @@ public:
 	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		CjvxMexCalls::before_postprocess_receiver_to_sender(_common_set_icon.theData_in);
+		CjvxMexCalls::before_postprocess_receiver_to_sender(this->_common_set_icon.theData_in);
 		res = T::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-		CjvxMexCalls::postprocess_sender_to_receiver(_common_set_icon.theData_in);
+		CjvxMexCalls::postprocess_sender_to_receiver(this->_common_set_icon.theData_in);
 		return res;
 	};
 
@@ -129,7 +129,7 @@ public:
 
 			// This lets Matlab run one frame of processing
 			// ======================================================================================
-			res = CjvxMexCalls::process_buffers_icon(_common_set_icon.theData_in, &_common_set_ocon.theData_out);
+			res = CjvxMexCalls::process_buffers_icon(this->_common_set_icon.theData_in, &this->_common_set_ocon.theData_out);
 			// ======================================================================================
 
 			return T::fwd_process_buffers_icon(mt_mask, idx_stage);
