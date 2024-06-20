@@ -21,7 +21,7 @@ int ffi_host_request_command_reschedule(void* request)
 	if (ptr->immediate())
 	{
 		CjvxReportCommandRequest* copy = jvx_command_request_copy_alloc(*ptr);
-		copy->modify_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
+		copy->set_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
 		return request_command(*copy, true, nullptr);
 		jvx_command_request_copy_dealloc(copy);
 	}

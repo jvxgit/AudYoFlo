@@ -110,6 +110,8 @@ uMainWindow::trigger_immediate_sequencerStep()
 jvxErrorType 
 uMainWindow::trigger_threadChange_forward(CjvxReportCommandRequest* ptr)
 {
+	// Whenever this command request arrives, the pointer is already a copy of the original object
+	// that can be deleted in the other thread context!!
 	emit emit_request_command(ptr);
 	return JVX_NO_ERROR;
 }
@@ -145,6 +147,18 @@ uMainWindow::run_mainthread_updateSystemStatus()
 void 
 uMainWindow::run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request)
 {
+	// Modification of behavior: start thread change and reallocate the request object.
+	// Immediate requests will still be marked as immediate but with the broadcast as JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED
+	// HK, 20.06.2024
+	auto ptr = jvx_command_request_copy_alloc(request);
+	ptr->set_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
+	emit emit_request_command(ptr);
+	/*
+	if (subWidgets.main.theWidget)
+	{
+		subWidgets.main.theWidget->run_immediate_rescheduleRequest(request);
+	}
+	*/
 }
 
 void 
@@ -290,6 +304,10 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 
 				subWidgets.theAudioDialog->trigger_select_device(id, astr.std_str());
 				reqHandled = true;
+
+				// Remove the element to avoid memory leakage
+				jvx_command_request_copy_dealloc(request);
+				request = nullptr;
 				break;
 			default:
 				// Currently not supported!!
@@ -304,6 +322,7 @@ uMainWindow::request_command_inThread(CjvxReportCommandRequest* request)
 	// If not handled before, the command is forwarded to the sub system
 	if (!reqHandled)
 	{
+		// There is a delete in the function request_command_in_main_thread
 		reqHandle.request_command_in_main_thread(request);
 	}
 

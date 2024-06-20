@@ -136,7 +136,7 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 		}
 
 		if (fwd_request && fwdRequestAllowed)
-		{
+		{			
 			fwd_request->run_immediate_rescheduleRequest(request);
 		}
 		else

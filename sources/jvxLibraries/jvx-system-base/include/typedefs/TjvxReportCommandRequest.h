@@ -58,11 +58,6 @@ public:
 		return broad;
 	}
 
-	virtual void modify_broadcast(jvxReportCommandBroadcastType broadArg) 
-	{
-		broad = broadArg;
-	}
-
 	virtual jvxReportCommandDataType datatype() const
 	{
 		return type;
@@ -79,6 +74,13 @@ public:
 	{
 		return JVX_ERROR_UNSUPPORTED;
 	};
+
+	/*
+	virtual void modify_broadcast(jvxReportCommandBroadcastType broadArg)
+	{
+		broad = broadArg;
+	}
+	*/
 
 	virtual void set_broadcast(jvxReportCommandBroadcastType broadArg)
 	{

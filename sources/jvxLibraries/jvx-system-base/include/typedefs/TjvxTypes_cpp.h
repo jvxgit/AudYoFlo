@@ -332,8 +332,8 @@ enum class jvxReportCommandRequest
 	JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_COMPONENT, // IjvxReportCommandRequest_id
 	JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_COMPONENT, // IjvxReportCommandRequest_id
 
-	JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED, // IjvxReportCommandRequest_uid
-	JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED, // IjvxReportCommandRequest_uid
+	JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED, // IjvxReportCommandRequest_uid -- typically reported immediately
+	JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED, // IjvxReportCommandRequest_uid -- typically reported immediately
 
 	JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN, // IjvxReportCommandRequest_uid
 

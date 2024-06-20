@@ -15,6 +15,14 @@ private:
 
 	Q_OBJECT
 
+	class oneProcess
+	{
+	public:
+		jvxSize uid;
+		std::string description;
+		std::list<jvxComponentIdentification> involved;
+	};
+
 	class oneEntryProp
 	{
 	public:
@@ -32,7 +40,11 @@ private:
 		};
 	};
 
-	std::map< IjvxAccessProperties*, oneEntryProp> mapAllProps;
+	std::map< IjvxAccessProperties*, oneEntryProp> mapAllPropsStore;
+	std::map< std::string, oneEntryProp> mapAllPropsShow;
+
+	std::map<jvxSize, oneProcess> mapAllProcesses;
+
 	IjvxAccessProperties* propRefSelect;
 	//std::string token1Copy;
 	//std::string token2Copy;
@@ -44,11 +56,15 @@ private:
 	IjvxQtSaWidgetWrapper_report* widget_wrapper_report;
 	std::string tag_name;
 
-	jvxBool always_activate_latest = true;
+	jvxBool always_activate_latest = false;
 	jvxSize last_revision = JVX_SIZE_UNSELECTED;
 	oneEntryProp latestSelection;
 
 	std::string token_search;
+
+	IjvxHost* theHostRef = nullptr;
+	jvxSize selProcess = JVX_SIZE_DONTCARE;
+
 public:
 
 	jvx_property_tree_widget(QWidget* parent);
@@ -86,6 +102,7 @@ public:
 	virtual jvxErrorType reportPropertySpecific(jvxSaWidgetWrapperspecificReport, jvxHandle* props) override;
 
 	virtual void fwd_command_request(const CjvxReportCommandRequest& req) override;
+	void reconstructShowRefs();
 
 private:
 	void select_new_prop_ref(const oneEntryProp& prop);
@@ -96,8 +113,10 @@ private:
 
 	void update_window_core(jvxCBitField prio);
 
+	void fillProcessRecursively(oneProcess& theProc, IjvxConnectionIterator* it);
 public slots:
 	void changed_selection_propref(int sel);
+	void changed_selection_process(int selProp);
 	void changed_selection_hidden(bool isHidden);
 	void changed_selection_shorten(bool showShort);
 	void changed_selection_show(bool showDescriptor);

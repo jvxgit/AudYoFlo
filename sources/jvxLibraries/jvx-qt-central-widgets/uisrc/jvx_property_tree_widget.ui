@@ -6,48 +6,207 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1266</width>
-    <height>687</height>
+    <width>1424</width>
+    <height>906</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1,1,1,1,1,1,1,0">
-   <item row="0" column="9">
-    <widget class="QLineEdit" name="lineEdit_search"/>
-   </item>
-   <item row="0" column="8">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Search Expression</string>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0,0,0,0,0,0,0,0,0,0">
+   <item row="0" column="0">
+    <widget class="QFrame" name="frame_3">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>175</red>
+           <green>175</green>
+           <blue>175</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>175</red>
+           <green>175</green>
+           <blue>175</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>175</red>
+           <green>175</green>
+           <blue>175</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>175</red>
+           <green>175</green>
+           <blue>175</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="QCheckBox" name="checkBox_actlatest">
-     <property name="text">
-      <string>Activate Latest</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QComboBox" name="comboBox_component_ref"/>
-   </item>
-   <item row="0" column="6">
-    <widget class="QCheckBox" name="checkBox">
-     <property name="text">
-      <string>Shorten Text</string>
-     </property>
-     <property name="checked">
+     <property name="autoFillBackground">
       <bool>true</bool>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="10,1">
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QFrame" name="frame_2">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,10,1">
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_processes"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Select Property</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Select Process</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_component_id">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBox_component_ref"/>
+         </item>
+         <item row="1" column="2">
+          <widget class="QCheckBox" name="checkBox_actlatest">
+           <property name="text">
+            <string>Activate Latest</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="checkBox_2">
+           <property name="text">
+            <string>Show Descriptor</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBox_hidden">
+           <property name="text">
+            <string>Hidden</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="checkBox">
+           <property name="text">
+            <string>Shorten Text</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Search Expression</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLineEdit" name="lineEdit_search"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="10">
+   <item row="2" column="0">
     <widget class="QTreeWidget" name="treeWidget_props">
      <property name="accessibleDescription">
       <string>jvx_properties</string>
@@ -99,40 +258,6 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Select Property</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5">
-    <widget class="QCheckBox" name="checkBox_hidden">
-     <property name="text">
-      <string>Hidden</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QLabel" name="label_component_id">
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="7">
-    <widget class="QCheckBox" name="checkBox_2">
-     <property name="text">
-      <string>Show Descriptor</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
@@ -144,8 +269,8 @@
    <slot>changed_selection_propref(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>265</x>
-     <y>28</y>
+     <x>390</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel">
      <x>368</x>
@@ -160,8 +285,8 @@
    <slot>changed_activate_latest(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>612</x>
-     <y>32</y>
+     <x>1060</x>
+     <y>70</y>
     </hint>
     <hint type="destinationlabel">
      <x>697</x>
@@ -176,8 +301,8 @@
    <slot>new_token_search(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1254</x>
-     <y>34</y>
+     <x>1388</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>605</x>
@@ -192,8 +317,8 @@
    <slot>changed_selection_hidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
-     <y>32</y>
+     <x>1179</x>
+     <y>42</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -208,12 +333,12 @@
    <slot>changed_selection_shorten(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>859</x>
-     <y>26</y>
+     <x>1276</x>
+     <y>42</y>
     </hint>
     <hint type="destinationlabel">
      <x>916</x>
-     <y>-15</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -224,12 +349,28 @@
    <slot>changed_selection_show(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>879</x>
-     <y>18</y>
+     <x>1388</x>
+     <y>42</y>
     </hint>
     <hint type="destinationlabel">
      <x>1116</x>
-     <y>-10</y>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_processes</sender>
+   <signal>activated(int)</signal>
+   <receiver>jvx_property_tree</receiver>
+   <slot>changed_selection_process(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1427</x>
+     <y>255</y>
     </hint>
    </hints>
   </connection>
@@ -241,5 +382,6 @@
   <slot>changed_selection_hidden(bool)</slot>
   <slot>changed_selection_shorten(bool)</slot>
   <slot>changed_selection_show(bool)</slot>
+  <slot>changed_selection_process(int)</slot>
  </slots>
 </ui>

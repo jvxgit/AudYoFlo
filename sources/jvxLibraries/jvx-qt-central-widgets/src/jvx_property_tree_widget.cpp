@@ -37,6 +37,8 @@ jvx_property_tree_widget::init(IjvxHost* theHost, jvxCBitField mode, jvxHandle* 
 		treeWidget_props->setAccessibleDescription(txt.c_str());
 	}
 	restore_column_expressions_neutral(true);
+
+	theHostRef = theHost;
 }
 
 void 
@@ -65,8 +67,8 @@ jvx_property_tree_widget::return_sub_interface(jvxQtInterfaceType, jvxHandle*)
 jvxErrorType 
 jvx_property_tree_widget::addPropertyReference(IjvxAccessProperties* propRef, const std::string& prefixArg, const std::string& identArg)
 {
-	auto elm = mapAllProps.find(propRef);
-	if (elm == mapAllProps.end())
+	auto elm = mapAllPropsStore.find(propRef);
+	if (elm == mapAllPropsStore.end())
 	{
 		oneEntryProp newElm;
 		
@@ -75,20 +77,24 @@ jvx_property_tree_widget::addPropertyReference(IjvxAccessProperties* propRef, co
 		newElm.propRef = propRef;
 		propRef->get_reference_component_description(nullptr, nullptr, nullptr, &newElm.cpId);
 
-		mapAllProps[propRef] = newElm;
+		mapAllPropsStore[propRef] = newElm;
+		reconstructShowRefs();
+
+		if (selProcess == JVX_SIZE_DONTCARE)
+		{
+			if (propRefSelect && always_activate_latest)
+			{
+				unselect_prop_ref();
+			}
+			if ((propRefSelect == NULL) || always_activate_latest)
+			{
+				select_new_prop_ref(newElm);
+			}
+		}
 
 		jvxCBitField prio = 0;
 		jvx_bitSet(prio, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
 		update_window_core(prio);
-
-		if (propRefSelect && always_activate_latest)
-		{
-			unselect_prop_ref();
-		}
-		if ((propRefSelect == NULL)|| always_activate_latest)
-		{
-			select_new_prop_ref(newElm);
-		}
 
 		return JVX_NO_ERROR;
 	}
@@ -100,27 +106,31 @@ jvx_property_tree_widget::addPropertyReference(IjvxAccessProperties* propRef, co
 jvxErrorType
 jvx_property_tree_widget::removePropertyReference(IjvxAccessProperties* propRef)
 {
-	auto elm = mapAllProps.find(propRef);
-	if (elm != mapAllProps.end())
+	auto elm = mapAllPropsStore.find(propRef);
+	if (elm != mapAllPropsStore.end())
 	{
 		if (propRefSelect == propRef)
 		{
 			unselect_prop_ref();
 		}
-		mapAllProps.erase(elm);
+		mapAllPropsStore.erase(elm);
+
+		reconstructShowRefs();
+
+		if (propRefSelect == NULL)
+		{
+			if (mapAllPropsStore.size())
+			{
+				elm = mapAllPropsStore.begin();
+				select_new_prop_ref(elm->second);
+			}
+		}
+
 
 		jvxCBitField prio = 0;
 		jvx_bitSet(prio, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
 		update_window_core(prio);
 
-		if (propRefSelect == NULL)
-		{
-			if (mapAllProps.size())
-			{
-				elm = mapAllProps.begin();
-				select_new_prop_ref(elm->second);
-			}
-		}
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -228,7 +238,7 @@ jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 {	
 	jvxSize i;
 
-	std::map< IjvxAccessProperties*, oneEntryProp>::iterator elm;
+	std::map< std::string, oneEntryProp>::iterator elm;
 	jvxSize cnt = 0;
 	jvxSize selCnt = JVX_SIZE_UNSELECTED;
 	std::string txt = "--";
@@ -237,15 +247,16 @@ jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 	{
 		comboBox_component_ref->clear();
 
-		elm = mapAllProps.begin();
-		for (; elm != mapAllProps.end(); elm++)
+		elm = mapAllPropsShow.begin();
+		for (; elm != mapAllPropsShow.end(); elm++)
 		{
-			comboBox_component_ref->addItem(elm->second.ident.c_str());
+			//comboBox_component_ref->addItem(elm->second.ident.c_str());
+			comboBox_component_ref->addItem(elm->first.c_str());
 		}
 	}
 
-	elm = mapAllProps.begin();
-	for (; elm != mapAllProps.end(); elm++)
+	elm = mapAllPropsShow.begin();	
+	for (; elm != mapAllPropsShow.end(); elm++)
 	{
 		if (elm->second.propRef == propRefSelect)
 		{
@@ -275,6 +286,15 @@ jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 	{
 		treeWidget_props->resizeColumnToContents(i);
 	}
+
+	comboBox_processes->clear();
+	comboBox_processes->addItem("Show All Components");
+	comboBox_processes->addItem("Show Non-process Components");
+	for (auto& elmP : mapAllProcesses)
+	{
+		comboBox_processes->addItem(elmP.second.description.c_str());;
+	}
+	comboBox_processes->setCurrentIndex((int)selProcess + 2);
 }
 
 void
@@ -354,9 +374,9 @@ jvx_property_tree_widget::setup_column_expressions_active(const std::string& exp
 void 
 jvx_property_tree_widget::changed_selection_propref(int sel)
 {
-	if (sel < mapAllProps.size())
+	if (sel < mapAllPropsShow.size())
 	{
-		auto elm = mapAllProps.begin();
+		auto elm = mapAllPropsShow.begin();
 		std::advance(elm, sel);
 		if (propRefSelect != elm->second.propRef)
 		{
@@ -410,7 +430,8 @@ jvx_property_tree_widget::fwd_command_request(const CjvxReportCommandRequest& re
 	auto ptrIf = castCommandRequest<CjvxReportCommandRequest_id>(req);
 	auto reqTp = req.request();
 	auto dtTp = req.datatype();
-	auto elm = mapAllProps.end();
+	auto elm = mapAllPropsStore.end();
+	jvxBool updateUi = false;
 	jvxApiString astr;
 	switch (dtTp)
 	{
@@ -420,8 +441,8 @@ jvx_property_tree_widget::fwd_command_request(const CjvxReportCommandRequest& re
 		case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
 			assert(ptrIf);
 			ptrIf->ident(&astr);
-			elm = mapAllProps.find(propRefSelect);
-			if (elm != mapAllProps.end())
+			elm = mapAllPropsStore.find(propRefSelect);
+			if (elm != mapAllPropsStore.end())
 			{
 				if (elm->second.cpId == orig)
 				{
@@ -436,4 +457,237 @@ jvx_property_tree_widget::fwd_command_request(const CjvxReportCommandRequest& re
 			break;
 		}
 	}
+
+	switch (req.request())
+	{
+	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED:
+	{
+		jvxSize uidLoc = JVX_SIZE_UNSELECTED;
+		const CjvxReportCommandRequest_uid* uid = castCommandRequest<CjvxReportCommandRequest_uid>(req);
+		if (uid)
+		{
+			uid->uid(&uidLoc);
+			auto dataProc = reqInterface<IjvxDataConnections>(theHostRef);
+			if (dataProc)
+			{
+				IjvxDataConnectionProcess* proc = nullptr;
+				dataProc->reference_connection_process_uid(uidLoc, &proc);
+				if (proc)
+				{
+					oneProcess theProc;
+					theProc.uid = uidLoc;
+					proc->description(&astr);
+					theProc.description = astr.std_str();
+
+					IjvxConnectionIterator* it = nullptr;
+					proc->iterator_chain(&it);
+					fillProcessRecursively(theProc, it);
+
+					auto elm = mapAllProcesses.find(uidLoc);
+					if(elm == mapAllProcesses.end())
+					{
+						mapAllProcesses[uidLoc] = theProc;
+					}	
+					dataProc->return_reference_connection_process(proc);
+				}
+			}
+		}
+		updateUi = true;
+		// std::cout << "Process CONNECTED, uid = <" << uidLoc << ">." << std::endl;
+	}
+	break;
+	case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED:
+	{
+		jvxSize uidLoc = JVX_SIZE_UNSELECTED;
+		const CjvxReportCommandRequest_uid* uid = castCommandRequest<CjvxReportCommandRequest_uid>(req);
+		if (uid)
+		{
+			uid->uid(&uidLoc);
+			// std::cout << "Process to be DISCONNECTED, uid = <" << uidLoc << ">." << std::endl;
+
+			jvxSize uidShow = JVX_SIZE_UNSELECTED;
+			auto elm = mapAllProcesses.begin();
+			if (JVX_CHECK_SIZE_SELECTED(selProcess))
+			{				
+				std::advance(elm, selProcess);
+				uidShow = elm->second.uid;
+			}
+				
+			elm = mapAllProcesses.find(uidLoc);
+			if (elm != mapAllProcesses.end())
+			{
+				mapAllProcesses.erase(elm);
+			}
+			if (uidShow == uidLoc)
+			{
+				selProcess = JVX_SIZE_DONTCARE;
+			}
+			updateUi = true;
+		}
+	}
+	break;
+	}
+
+	if (updateUi)
+	{
+		reconstructShowRefs();
+		jvxCBitField prio = 0;
+		jvx_bitSet(prio, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
+		update_window_core(prio);
+	}
+
+}
+
+void
+jvx_property_tree_widget::fillProcessRecursively(oneProcess& theProc, IjvxConnectionIterator* it)
+{
+	jvxSize i = 0;
+	jvxSize num = 0; 
+	
+	jvxComponentIdentification cpId;
+	it->reference_component(&cpId, nullptr, nullptr, nullptr);
+	theProc.involved.push_back(cpId);
+	
+	it->number_next(&num);
+	for (i = 0; i < num; i++)
+	{
+		IjvxConnectionIterator* itN = nullptr;
+		it->reference_next(i, &itN);
+		if (itN)
+		{
+			fillProcessRecursively(theProc, itN);
+		}
+	}
+}
+
+void
+jvx_property_tree_widget::reconstructShowRefs()
+{
+	mapAllPropsShow.clear();
+	oneProcess* theProc = nullptr;
+	
+	if (JVX_CHECK_SIZE_SELECTED(selProcess))
+	{
+		if (selProcess < mapAllProcesses.size())
+		{
+			auto elmP = mapAllProcesses.begin();
+			std::advance(elmP, selProcess);
+			{
+				theProc = &elmP->second;
+			}
+		}
+	}
+
+	if (theProc)
+	{
+		jvxSize cnt = 0;
+		jvxData numMax = log10(theProc->involved.size());
+		jvxSize numDigs = ceil(numMax);
+
+		for (auto& ll : theProc->involved)
+		{
+			for (auto elmLL = mapAllPropsStore.begin(); elmLL != mapAllPropsStore.end(); elmLL++)
+			{
+				if (elmLL->second.cpId == ll)
+				{
+					jvxSize i;
+					std::string txt = jvx_size2String(cnt);
+					cnt++;
+					for (i = txt.size(); i < numDigs; i++)
+					{
+						txt = "0" + txt;
+					}
+
+					txt += " -- " + elmLL->second.ident;
+
+					mapAllPropsShow[txt] = elmLL->second;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+			// Show all
+		for (auto elm : mapAllPropsStore)
+		{
+			jvxComponentIdentification cpId = elm.second.cpId;
+			jvxBool addThis = true;
+			if (selProcess == JVX_SIZE_UNSELECTED)
+			{
+				for (auto& elmLL : mapAllProcesses)
+				{
+					for (auto& elmLLL : elmLL.second.involved)
+					{
+						if (cpId == elmLLL)
+						{
+							addThis = false;
+							break;
+						}
+					}
+					if (addThis == false)
+					{
+						break;
+					}
+				}
+			}
+			if (addThis)
+			{
+				std::string nm = elm.second.ident;
+				jvxSize cnt = 0;
+				while (1)
+				{
+					std::string nm_cnt = nm;
+					if (cnt > 0)
+					{
+						nm_cnt = nm + "_" + jvx_size2String(cnt);
+					}
+
+					cnt++;
+
+					auto elmNewList = mapAllPropsShow.find(nm_cnt);
+					if (elmNewList == mapAllPropsShow.end())
+					{
+						mapAllPropsShow[nm] = elm.second;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// Update the selected property reference
+	jvxBool foundPrevPropRef = false;
+	for (auto& elm : mapAllPropsShow)
+	{
+		if (elm.second.propRef == propRefSelect)
+		{
+			foundPrevPropRef = true;
+		}
+	}
+
+	// The previous property reference is not in the list, unselect and select one from the list
+	if (!foundPrevPropRef)
+	{
+		unselect_prop_ref();
+	}
+
+	if (propRefSelect == nullptr)
+	{
+		auto elm = mapAllPropsShow.begin();
+		if (elm != mapAllPropsShow.end())
+		{
+			select_new_prop_ref(elm->second);
+		}
+	}
+}
+
+void 
+jvx_property_tree_widget::changed_selection_process(int selProp)
+{
+	jvxCBitField prio = 0;
+	jvx_bitSet(prio, JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
+	selProcess = (jvxSize)(selProp - 2);	
+	reconstructShowRefs();
+	update_window_core(prio);
 }

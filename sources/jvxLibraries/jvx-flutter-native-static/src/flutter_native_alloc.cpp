@@ -538,7 +538,7 @@ void
 jvxRequestCommandHandlerLocal::run_immediate_rescheduleRequest(const CjvxReportCommandRequest& request)
 {
 	CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(request);
-	ptr->modify_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
+	ptr->set_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
 
 	report_callback* cbk = nullptr;
 	JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(cbk, struct report_callback);

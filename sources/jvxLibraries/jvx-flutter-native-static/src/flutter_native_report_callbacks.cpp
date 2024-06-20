@@ -155,7 +155,7 @@ jvxErrorType request_command(const CjvxReportCommandRequest& request, jvxBool fo
 					// requests towards automation
 					CjvxReportCommandRequest* ptr = jvx_command_request_copy_alloc(request);
 					// assert(0); // need to fix this
-					ptr->modify_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
+					ptr->set_broadcast(jvxReportCommandBroadcastType::JVX_REPORT_COMMAND_BROADCAST_RESCHEDULED);
 					res = request_command(*ptr, true, backRef);
 					jvx_command_request_copy_dealloc(ptr);
 					return res;
