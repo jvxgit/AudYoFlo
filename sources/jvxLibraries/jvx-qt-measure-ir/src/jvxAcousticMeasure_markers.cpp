@@ -728,7 +728,7 @@ jvxAcousticMeasure::marker_export_fd()
 					cfgDat = nullptr;
 
 				}
-				retRefTool<IjvxConfigProcessor>(toolsHostRef, JVX_COMPONENT_CONFIG_PROCESSOR, refInst);
+				retRefTool<IjvxConfigProcessor>(toolsHostRef, refInst, JVX_COMPONENT_CONFIG_PROCESSOR);
 			}
 			retInterface< IjvxToolsHost>(theHostRef, toolsHostRef);
 		}
@@ -826,7 +826,7 @@ jvxAcousticMeasure::marker_export_td()
 					cfgDat = nullptr;
 
 				}
-				retRefTool<IjvxConfigProcessor>(toolsHostRef, JVX_COMPONENT_CONFIG_PROCESSOR, refInst);
+				retRefTool<IjvxConfigProcessor>(toolsHostRef, refInst, JVX_COMPONENT_CONFIG_PROCESSOR);
 			}
 			retInterface< IjvxToolsHost>(theHostRef, toolsHostRef);
 		}
@@ -959,7 +959,7 @@ jvxAcousticMeasure::marker_import_fd()
 					cfgDat = nullptr;
 				}
 			}
-			retRefTool<IjvxConfigProcessor>(toolsHostRef, JVX_COMPONENT_CONFIG_PROCESSOR, refInst);
+			retRefTool<IjvxConfigProcessor>(toolsHostRef, refInst, JVX_COMPONENT_CONFIG_PROCESSOR);
 		}
 		retInterface< IjvxToolsHost>(theHostRef, toolsHostRef);
 
@@ -1098,7 +1098,7 @@ jvxAcousticMeasure::marker_import_td()
 					cfgDat = nullptr;
 				}
 			}
-			retRefTool<IjvxConfigProcessor>(toolsHostRef, JVX_COMPONENT_CONFIG_PROCESSOR, refInst);
+			retRefTool<IjvxConfigProcessor>(toolsHostRef, refInst, JVX_COMPONENT_CONFIG_PROCESSOR);
 		}
 		retInterface< IjvxToolsHost>(theHostRef, toolsHostRef);
 

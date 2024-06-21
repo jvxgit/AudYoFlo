@@ -663,7 +663,7 @@ CjvxPluginProcessor::getConfiguration(std::string& txtOut)
 			txtOut = astr.std_str();
 		}
 	}
-	retRefTool<IjvxConfigProcessor>(tHost, JVX_COMPONENT_CONFIG_PROCESSOR, cfg);
+	retRefTool<IjvxConfigProcessor>(tHost, cfg, JVX_COMPONENT_CONFIG_PROCESSOR);
 	return JVX_NO_ERROR;
 }
 
@@ -712,7 +712,7 @@ CjvxPluginProcessor::putConfiguration(const std::string& txtOut)
 		}
 		unlock_processing();
 	}
-	retRefTool<IjvxConfigProcessor>(tHost, JVX_COMPONENT_CONFIG_PROCESSOR, cfg);
+	retRefTool<IjvxConfigProcessor>(tHost, cfg, JVX_COMPONENT_CONFIG_PROCESSOR);
 	return JVX_NO_ERROR;
 }
 // ===========================================================================

@@ -567,6 +567,24 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
           theBeAdapter.reportPropertyListSetBackend(cpId, propLst);
         }
         break;
+      case jvxReportCommandRequestEnum
+          .JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH:
+        ffi.Pointer<ffi.Int8> ptrIdent =
+            natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
+        if (ptrIdent.address != 0) {
+          ffi.Pointer<Utf8> ptrU8 = ptrIdent.cast<Utf8>();
+          String compName = ptrU8.toDartString();
+          natLib!.ffi_host_delete(ptrIdent.cast<ffi.Void>(),
+              ffiDeleteDatatype.JVX_DELETE_DATATYPE_CHAR_ARRAY);
+          ss = decodeSswitch(natLib!, load_fld);
+          theBeAdapter.triggerComponentStateSwitch(ss, compName, cpId);
+          // theBeAdapter.triggerActivateComponent(cpId, id, select)
+          // cpId
+
+          dbgPrint('Tracked request to switch state');
+        }
+
+        break;
     }
   }
 

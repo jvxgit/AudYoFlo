@@ -1580,4 +1580,40 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
   Future<int> triggerStopPropertyStream() async {
     return jvxErrorType.JVX_ERROR_UNSUPPORTED;
   }
+
+  void triggerComponentStateSwitch(jvxStateSwitchEnum ss, String compName,
+      JvxComponentIdentification cpId) async {
+    if (ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_SELECT) {
+      JvxComponentIdentification cpIdUse =
+          JvxComponentIdentification.from(cpId);
+
+      // cpIdUse.slotsubid = 0;
+
+      jvxComponentTypeClassEnum cpClass = lookupComponentClass(cpIdUse.cpTp);
+      if (cpClass == jvxComponentTypeClassEnum.JVX_COMPONENT_TYPE_DEVICE) {
+        // We need to transform a device into a technology to list all devices
+        cpIdUse.cpTp = JvxComponentTypeEEnum.fromInt(cpIdUse.cpTp.index - 1);
+
+        // Return the name of available devices
+        var devLst = theBeCache.referenceDeviceListInCache(cpIdUse);
+        if (devLst == null) {
+          int result = await triggerUpdateDeviceList(cpIdUse);
+          if (result == jvxErrorType.JVX_NO_ERROR) {
+            devLst = theBeCache.referenceDeviceListInCache(cpIdUse);
+          }
+        }
+
+        // In the list check for the right names
+        if (devLst != null) {
+          var elm = devLst
+              .firstWhereOrNull((element) => element.description == compName);
+          if (elm == null) {
+            dbgPrint('Unable to activate device with ident <$compName>.');
+          } else {
+            triggerActivateComponent(cpId, elm.optionIdx, true);
+          }
+        }
+      }
+    }
+  }
 }

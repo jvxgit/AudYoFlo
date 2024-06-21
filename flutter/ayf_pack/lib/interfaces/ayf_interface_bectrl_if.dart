@@ -127,6 +127,12 @@ abstract class AudYoFloBackendCacheBectrlIf {
   int updateDeviceListCacheCompleteNotify(JvxComponentIdentification cpId,
       List<AudYoFloOneDeviceSelectionOption> options);
 
+  // I added this function today: we need to get reference to the list of
+  // devices also from the backend adapter if, e.g., a technology requests
+  // default activation of a specific device
+  List<AudYoFloOneDeviceSelectionOption>? referenceDeviceListInCache(
+      JvxComponentIdentification cpId);
+
   // Function to update the list of selectable components and notify the
   // listeners. The list of components depends on the component type for
   // technologies and nodes and on the slotid for the device components.

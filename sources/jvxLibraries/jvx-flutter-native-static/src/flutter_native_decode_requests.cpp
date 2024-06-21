@@ -35,6 +35,7 @@ int ffi_req_command_decode_sswitch(void* hdl_class, int* sswitchRet)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	const CjvxReportCommandRequest_ss* ssptr = nullptr;
+	const CjvxReportCommandRequest_ss_id* ssidptr = nullptr;
 	const CjvxReportCommandRequest* req = (CjvxReportCommandRequest*)hdl_class;
 	if (sswitchRet)
 	{
@@ -47,6 +48,21 @@ int ffi_req_command_decode_sswitch(void* hdl_class, int* sswitchRet)
 		{
 			jvxStateSwitch sswitch = JVX_STATE_SWITCH_NONE;
 			ssptr->sswitch(&sswitch);
+			if (sswitchRet)
+				*sswitchRet = (int)sswitch;
+		}
+		else
+		{
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+	}
+	else if (req->datatype() == jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID)
+	{
+		req->specialization(reinterpret_cast<const jvxHandle**>(&ssidptr), jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID);
+		if (ssidptr)
+		{
+			jvxStateSwitch sswitch = JVX_STATE_SWITCH_NONE;
+			ssidptr->sswitch(&sswitch);
 			if (sswitchRet)
 				*sswitchRet = (int)sswitch;
 		}
@@ -113,6 +129,7 @@ char* ffi_req_command_decode_ident_allocate_char_array(void* hdl_class)
 	char* ptrRet = nullptr;
 	jvxErrorType res = JVX_NO_ERROR;
 	const CjvxReportCommandRequest_id* idptr = nullptr;
+	const CjvxReportCommandRequest_ss_id* ssidptr = nullptr;
 	const CjvxReportCommandRequest* req = (const CjvxReportCommandRequest*)hdl_class;
 	if (req->datatype() == jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_IDENT)
 	{
@@ -124,6 +141,21 @@ char* ffi_req_command_decode_ident_allocate_char_array(void* hdl_class)
 			std::string txt = astr.std_str();
 			ffi_host_allocate_char_array(txt, &ptrRet);
 		}
+	}
+	else if (req->datatype() == jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID)
+	{
+		req->specialization(reinterpret_cast<const jvxHandle**>(&ssidptr), jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID);
+		if (ssidptr)
+		{
+			jvxApiString astr;
+			ssidptr->ident(&astr);
+			std::string txt = astr.std_str();
+			ffi_host_allocate_char_array(txt, &ptrRet);
+		}
+	}
+	else
+	{
+		res = JVX_ERROR_INVALID_ARGUMENT;
 	}
 	return ptrRet;
 }

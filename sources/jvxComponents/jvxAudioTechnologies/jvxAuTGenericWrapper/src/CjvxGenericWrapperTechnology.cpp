@@ -1276,6 +1276,7 @@ CjvxGenericWrapperTechnology::system_ready()
 							elm.hdlDev->name(&nm);
 							elm.hdlDev->request_specialization(nullptr, &id, nullptr);
 							id.slotid = _common_set.theComponentType.slotid;
+							id.slotsubid = 0; // <- use subslotid 0
 							CjvxReportCommandRequest_ss_id req(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH, id, jvxStateSwitch::JVX_STATE_SWITCH_SELECT, nm.c_str());
 							_request_command(req);
 							doneSelect = true;
@@ -1298,8 +1299,12 @@ CjvxGenericWrapperTechnology::system_ready()
 					if (jvx_bitTest(caps.flags, (int)jvxDeviceCapabilityFlagsShift::JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT))
 					{
 						jvxApiString nm;
+						jvxComponentIdentification id;
 						elm.hdlDev->name(&nm);
-						CjvxReportCommandRequest_ss_id req(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH, _common_set.theComponentType, jvxStateSwitch::JVX_STATE_SWITCH_SELECT, nm.c_str());
+						elm.hdlDev->request_specialization(nullptr, &id, nullptr);
+						id.slotid = _common_set.theComponentType.slotid;
+						id.slotsubid = 0; // <- use subslotid 0
+						CjvxReportCommandRequest_ss_id req(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH, id, jvxStateSwitch::JVX_STATE_SWITCH_SELECT, nm.c_str());
 						_request_command(req);
 						doneSelect = true;
 						break;

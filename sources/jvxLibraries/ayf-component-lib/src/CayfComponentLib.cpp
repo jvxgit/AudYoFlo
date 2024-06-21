@@ -258,7 +258,7 @@ CayfComponentLib::terminate()
 	IjvxToolsHost* toolsHost = reqInterface<IjvxToolsHost>(hostRefLoc);
 	if (toolsHost)
 	{
-		retRefTool<IjvxConfigProcessor>(toolsHost, embHost.tp.tp, embHost.retCfgProc);
+		retRefTool<IjvxConfigProcessor>(toolsHost, embHost.retCfgProc, embHost.tp.tp);
 		retInterface<IjvxToolsHost>(embHost.hostRef, toolsHost);
 	}
 	retInterface<IjvxHost>(hostRefLoc, embHost.hostRef);

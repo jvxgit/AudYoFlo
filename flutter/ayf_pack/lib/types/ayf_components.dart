@@ -5,6 +5,16 @@ class JvxComponentIdentification {
   int slotid; // = -1;
   int slotsubid; // = -1;
   int uid; // = -1;
+
+  static JvxComponentIdentification from(JvxComponentIdentification cpFrom) {
+    JvxComponentIdentification returnme = JvxComponentIdentification();
+    returnme.cpTp = cpFrom.cpTp;
+    returnme.slotid = cpFrom.slotid;
+    returnme.slotsubid = cpFrom.slotsubid;
+    returnme.uid = cpFrom.slotsubid;
+    return returnme;
+  }
+
   JvxComponentIdentification(
       {this.cpTp = JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN,
       this.slotid = -1,

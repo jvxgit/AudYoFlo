@@ -630,7 +630,7 @@ CjvxFullHost::load_config_content_module(const char* modName, jvxConfigData** cf
 					cfg.cpPtr->getConfigurationHandle(cfgData);
 				}
 			}
-			retRefTool<IjvxConfigProcessor>(this, tpCfg.tp, cfg);			
+			retRefTool<IjvxConfigProcessor>(this, cfg, tpCfg.tp);
 		}
 		res = JVX_NO_ERROR;
 	}

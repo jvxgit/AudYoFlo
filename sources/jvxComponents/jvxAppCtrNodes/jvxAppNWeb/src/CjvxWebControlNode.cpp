@@ -167,7 +167,7 @@ restart_end_loop_conn:
 		}
 		if (webServ.cpPtr)
 		{
-			retRefTool<IjvxWebServer>(_common_set.theToolsHost, JVX_COMPONENT_WEBSERVER, webServ);
+			retRefTool<IjvxWebServer>(_common_set.theToolsHost, webServ, JVX_COMPONENT_WEBSERVER);
 		}
 		if (hostRef)
 		{

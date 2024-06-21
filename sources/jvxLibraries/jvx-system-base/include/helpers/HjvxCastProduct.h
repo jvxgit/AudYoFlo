@@ -4,7 +4,7 @@
 #include "helpers/HpjvxCast.h"
 
 template <typename T>
-jvxBool checkComponentType(jvxComponentType tp)
+jvxBool checkComponentType(jvxComponentType tp, jvxBool skipAssert = false)
 {
 	jvxBool result = false;
 	switch (tp)
@@ -197,7 +197,10 @@ jvxBool checkComponentType(jvxComponentType tp)
 		break;
 		
 	default:
-		assert(0);
+		if (!skipAssert)
+		{
+			assert(0);
+		}
 	}
 	return result;
 }
@@ -210,17 +213,32 @@ struct refComp
 };
 
 template <typename T>
-refComp<T> reqRefTool(IjvxToolsHost* tHost, const jvxComponentIdentification& tp, jvxSize fId = 0, const char* fTag = nullptr, 
+refComp<T> reqRefTool(IjvxToolsHost* tHost, const jvxComponentIdentification& tp = jvxComponentIdentification(), jvxSize fId = 0, const char* fTag = nullptr,
 	jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE, 
 	IjvxReferenceSelector* decider = nullptr)
 {
 	refComp<T> inst;
+	jvxComponentIdentification cpTpCopy = tp;
 	if (tHost)
 	{
-		// Note: we can only check here since multiple types are linked to identical type
-		if (checkComponentType<T>(tp.tp))
+		if (cpTpCopy.tp == JVX_COMPONENT_UNKNOWN)
 		{
-			tHost->reference_tool(tp, &inst.objPtr, fId, fTag, filter_stateMask, decider);
+			for (jvxSize idCheck = JVX_COMPONENT_UNKNOWN + 1; idCheck < JVX_COMPONENT_ALL_LIMIT; idCheck++)
+			{
+				cpTpCopy.tp = (jvxComponentType)idCheck;
+				if (checkComponentType<T>(cpTpCopy.tp, true))
+				{
+					break;
+				}
+			}
+			cpTpCopy.slotid = JVX_SIZE_SLOT_OFF_SYSTEM;
+			cpTpCopy.slotsubid = JVX_SIZE_SLOT_OFF_SYSTEM;
+		}
+
+		// Note: we can only check here since multiple types are linked to identical type
+		if (checkComponentType<T>(cpTpCopy.tp))
+		{
+			tHost->reference_tool(cpTpCopy, &inst.objPtr, fId, fTag, filter_stateMask, decider);
 			if (inst.objPtr)
 			{
 				inst.objPtr->request_specialization(reinterpret_cast<jvxHandle**>(&inst.cpPtr), nullptr, nullptr);
@@ -231,14 +249,26 @@ refComp<T> reqRefTool(IjvxToolsHost* tHost, const jvxComponentIdentification& tp
 }
 
 template <typename T>
-void retRefTool(IjvxToolsHost* tHost, jvxComponentType tp, refComp<T>& inst)
+void retRefTool(IjvxToolsHost* tHost, refComp<T>& inst, jvxComponentType tp = JVX_COMPONENT_UNKNOWN)
 {
+	jvxComponentType cpTpCopy = tp;
 	if (tHost)
 	{
-		// Note: we can only check here since multiple types are linked to identical type
-		if (checkComponentType<T>(tp))
+		if (cpTpCopy == JVX_COMPONENT_UNKNOWN)
 		{
-			tHost->return_reference_tool(tp, inst.objPtr);	
+			for (jvxSize idCheck = JVX_COMPONENT_UNKNOWN + 1; idCheck < JVX_COMPONENT_ALL_LIMIT; idCheck++)
+			{
+				cpTpCopy = (jvxComponentType)idCheck;
+				if (checkComponentType<T>(cpTpCopy, true))
+				{
+					break;
+				}
+			}
+		}
+		// Note: we can only check here since multiple types are linked to identical type
+		if (checkComponentType<T>(cpTpCopy))
+		{
+			tHost->return_reference_tool(cpTpCopy, inst.objPtr);
 			inst.objPtr = nullptr;
 			inst.cpPtr = nullptr;
 		}

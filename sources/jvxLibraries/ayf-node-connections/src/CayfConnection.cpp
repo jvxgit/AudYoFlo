@@ -217,7 +217,7 @@ namespace AyfConnection
 								unregister_node(oPtr);
 								refComp<IjvxNode> ptrStrNode;
 								ptrStrNode.objPtr = oPtr;
-								retRefTool<IjvxNode>(theToolsHost, cpTp.tp, ptrStrNode);
+								retRefTool<IjvxNode>(theToolsHost, ptrStrNode, cpTp.tp);
 								foundOne = true;
 								if (activatedInSystem)
 								{

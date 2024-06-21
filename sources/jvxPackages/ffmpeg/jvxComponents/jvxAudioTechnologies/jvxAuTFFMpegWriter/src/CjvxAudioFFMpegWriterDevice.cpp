@@ -339,7 +339,7 @@ CjvxAudioFFMpegWriterDevice::activate()
 						cfg.cpPtr->removeHandle(datSec);
 					}
 				}
-				retRefTool<IjvxConfigProcessor>(_common_set.theToolsHost, JVX_COMPONENT_CONFIG_PROCESSOR, cfg);
+				retRefTool<IjvxConfigProcessor>(_common_set.theToolsHost, cfg, JVX_COMPONENT_CONFIG_PROCESSOR);
 			}
 		}
 	}
