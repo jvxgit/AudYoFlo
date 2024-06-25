@@ -1,8 +1,4 @@
-if(DEFINED JVX_SDK_PATH)
-	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
-endif(DEFINED JVX_SDK_PATH)
-
-set(PROJECT_NAME jvxSpNLevelMeter)
+set(PROJECT_NAME jvxSpNLevelControl)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 include_directories(
@@ -17,8 +13,8 @@ include_directories(
 
 set(LOCAL_SOURCES 
 	${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNLevelMeter.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNLevelMeter.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNLevelControl.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNLevelControl.h
   )
 
 set(LOCAL_PCG_FILES

@@ -1,18 +1,18 @@
-#include "CjvxSpNLevelMeter.h"
+#include "CjvxSpNLevelControl.h"
 #include "jvx-helpers-cpp.h"
 
-CjvxSpNLevelMeter::CjvxSpNLevelMeter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
+CjvxSpNLevelControl::CjvxSpNLevelControl(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	forward_complain = true;
 }
 
-CjvxSpNLevelMeter::~CjvxSpNLevelMeter()
+CjvxSpNLevelControl::~CjvxSpNLevelControl()
 {	
 }
 
 jvxErrorType
-CjvxSpNLevelMeter::activate()
+CjvxSpNLevelControl::activate()
 {
 	jvxErrorType res = CjvxBareNode1io::activate();
 	if (res == JVX_NO_ERROR)
@@ -25,7 +25,7 @@ CjvxSpNLevelMeter::activate()
 }
 
 jvxErrorType
-CjvxSpNLevelMeter::deactivate()
+CjvxSpNLevelControl::deactivate()
 {
 	jvxErrorType res = CjvxBareNode1io::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
@@ -42,7 +42,7 @@ CjvxSpNLevelMeter::deactivate()
 // ===================================================================
 
 jvxErrorType
-CjvxSpNLevelMeter::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxSpNLevelControl::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxSize i;
 	jvxErrorType res = CjvxBareNode1io::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -75,7 +75,7 @@ CjvxSpNLevelMeter::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 // void copy_measurement(jvxSize cnt, jvxData* ptr);
 
 jvxErrorType
-CjvxSpNLevelMeter::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxSpNLevelControl::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxSize i;
 	jvxErrorType res = CjvxBareNode1io::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
@@ -92,7 +92,7 @@ CjvxSpNLevelMeter::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType
-CjvxSpNLevelMeter::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
+CjvxSpNLevelControl::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
@@ -128,7 +128,7 @@ CjvxSpNLevelMeter::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 // =====================================================================================
 
 jvxErrorType 
-CjvxSpNLevelMeter::put_configuration(jvxCallManagerConfiguration* callMan,
+CjvxSpNLevelControl::put_configuration(jvxCallManagerConfiguration* callMan,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionToContainAllSubsectionsForMe,
 	const char* filename,
@@ -157,7 +157,7 @@ CjvxSpNLevelMeter::put_configuration(jvxCallManagerConfiguration* callMan,
 }
 
 jvxErrorType 
-CjvxSpNLevelMeter::get_configuration(jvxCallManagerConfiguration* callMan,
+CjvxSpNLevelControl::get_configuration(jvxCallManagerConfiguration* callMan,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionWhereToAddAllSubsections)
 {

@@ -1368,8 +1368,13 @@ public:
 	{
 		JVX_RW_LOCK_SHARED,
 		JVX_RW_LOCK_EXCLUSIVE
-	} ;
+	};
 
+private:
+
+	jvxSize lockStat[2] = { 0, 0 };
+
+public:
 	T v;
 	JVX_RW_MUTEX_HANDLE lockHdl;
 
@@ -1380,6 +1385,9 @@ public:
 
 	~jvxRWLockWithVariable()
 	{
+		assert(lockStat[0] == 0);
+		assert(lockStat[1] == 0);
+
 		JVX_TERMINATE_RW_MUTEX(lockHdl);
 	};
 
@@ -1388,7 +1396,7 @@ public:
 		switch (func)
 		{
 		case jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE:
-			JVX_LOCK_RW_MUTEX_EXCLUSIVE(lockHdl);
+			JVX_LOCK_RW_MUTEX_EXCLUSIVE(lockHdl);			
 			break;
 		case jvxRwLockFunction::JVX_RW_LOCK_SHARED:
 			JVX_LOCK_RW_MUTEX_SHARED(lockHdl);
@@ -1396,9 +1404,15 @@ public:
 		default:
 			assert(0);
 		}
+
+		// We hold the lock here. Here, the type should fit
+		lockStat[(int)func]++;
 	}
 	void unlock(jvxRwLockFunction func = jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE)
 	{
+		assert(lockStat[(int)func]);
+		lockStat[(int)func]--;
+
 		switch (func)
 		{
 		case jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE:
@@ -1415,7 +1429,7 @@ public:
 	jvxBool try_lock(jvxRwLockFunction func = jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE)
 	{
 		JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_RW_MUTEX_INIT_NO_SUCCESS;
-
+		assert(lockStat == jvxRwLockFunction::JVX_RW_LOCK_NO_LOCK);
 		switch (func)
 		{
 		case jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE:
@@ -1429,6 +1443,7 @@ public:
 		}
 		if (JVX_TRY_LOCK_RW_MUTEX_CHECK_SUCCESS(res))
 		{
+			lockStat = func;
 			return true;
 		}
 		return false;

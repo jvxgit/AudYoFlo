@@ -747,7 +747,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNMeasureIr
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNSpeakerEqualizer
-    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNLevelMeter
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNLevelControl
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNSpeaker2Binaural
   )
 

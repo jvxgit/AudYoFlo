@@ -2,7 +2,7 @@
 #include "jvxNodes/CjvxBareNode1io.h"
 #include "pcg_exports_node.h"
 
-class CjvxSpNLevelMeter : public CjvxBareNode1io, public genLevelMeter_node
+class CjvxSpNLevelControl : public CjvxBareNode1io, public genLevelMeter_node
 {
 
 private:
@@ -13,8 +13,8 @@ private:
 
 public:
 
-	JVX_CALLINGCONVENTION CjvxSpNLevelMeter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-	~CjvxSpNLevelMeter();
+	JVX_CALLINGCONVENTION CjvxSpNLevelControl(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	~CjvxSpNLevelControl();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
