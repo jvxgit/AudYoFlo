@@ -62,6 +62,7 @@ private:
 	CjvxGenericWrapperExtReferences theExtReferences;
 	CjvxGenericWrapperDummyChannels theDummyChannels;
 
+	jvxBool skipConfigAudioTech = false;
 
 	JVX_MUTEX_HANDLE safeFilesReferences;
 
@@ -139,6 +140,8 @@ public:
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_prop_selected_output_file_set);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_prop_selected_output_file_set_pre);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_prop_selected_output_file_get);
+
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_prop_selected_technology_set);
 
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 };

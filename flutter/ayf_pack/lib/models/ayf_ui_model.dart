@@ -27,9 +27,9 @@ abstract class AudYoFloUiElementsTabBar {
 
 class AudYoFloOneUiSection {
   bool show;
-  String imageName;
+  String imageNameIcon;
   String textShow;
-  AudYoFloOneUiSection(this.show, this.imageName, this.textShow);
+  AudYoFloOneUiSection(this.show, this.imageNameIcon, this.textShow);
 }
 
 abstract class AudYoFloUiModel
@@ -154,7 +154,7 @@ abstract class AudYoFloUiModel
       theAllocatedTabs.add(RotatedBox(
           quarterTurns: -1,
           child: Column(children: [
-            Image.asset(debug.imageName,
+            Image.asset(debug.imageNameIcon,
                 filterQuality: FilterQuality.medium,
                 //'images/fernlive_icons/fernlive-mixer.png',
                 width: navButtonSizeMain,
@@ -169,7 +169,7 @@ abstract class AudYoFloUiModel
       theAllocatedTabs.add(RotatedBox(
           quarterTurns: -1,
           child: Column(children: [
-            Image.asset(components.imageName,
+            Image.asset(components.imageNameIcon,
                 filterQuality: FilterQuality.medium,
                 //'images/fernlive_icons/fernlive-mixer.png',
                 width: navButtonSizeMain,

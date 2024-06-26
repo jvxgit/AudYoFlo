@@ -70,6 +70,7 @@ CjvxGenericWrapperTechnology::select(IjvxObject* theOwner)
 
 
 		this->genGenericWrapper_technology::register_callbacks(static_cast<CjvxProperties*>(this),
+			cb_prop_selected_technology_set,
 			cb_prop_selected_input_file_set, 
 			cb_prop_selected_input_file_set_pre,
 			cb_prop_selected_input_file_get,
@@ -750,17 +751,25 @@ CjvxGenericWrapperTechnology::put_configuration(jvxCallManagerConfiguration* cal
     {
 		jvxPropertyContainerSingle<jvxSelectionList_cpp> technologies_copy = genGenericWrapper_technology::properties_selected.technologies;
 
-        // Read in the properties in state SELECTED
-
-		// New: select technology based on the name!
-        genGenericWrapper_technology::put_configuration__properties_selected(callConf, processor, sectionToContainAllSubsectionsForMe, &warn);
-        for(i = 0; i < warn.size(); i++)
-        {
-            _report_text_message(("put configuration: warning #" + jvx_size2String(i) + ": " + warn[i]).c_str(), JVX_REPORT_PRIORITY_WARNING);
-        }
 		idSelTech = jvx_bitfieldSelection2Id(genGenericWrapper_technology::properties_selected.technologies.value.selection(),
 			genGenericWrapper_technology::properties_selected.technologies.value.entries.size());
-		if(JVX_CHECK_SIZE_SELECTED(idSelTech ))
+
+		if (!skipConfigAudioTech || (JVX_CHECK_SIZE_UNSELECTED(idSelTech)))
+		{
+			// Read in the properties in state SELECTED
+
+			// New: select technology based on the name!
+			genGenericWrapper_technology::put_configuration__properties_selected(callConf, processor, sectionToContainAllSubsectionsForMe, &warn);
+			for (i = 0; i < warn.size(); i++)
+			{
+				_report_text_message(("put configuration: warning #" + jvx_size2String(i) + ": " + warn[i]).c_str(), JVX_REPORT_PRIORITY_WARNING);
+			}
+	
+			idSelTech = jvx_bitfieldSelection2Id(genGenericWrapper_technology::properties_selected.technologies.value.selection(),
+				genGenericWrapper_technology::properties_selected.technologies.value.entries.size());
+		}
+		
+		if (JVX_CHECK_SIZE_SELECTED(idSelTech))
 		{
 			nm_tech = genGenericWrapper_technology::properties_selected.technologies.value.entries[idSelTech];
 		}

@@ -98,6 +98,12 @@ CjvxHrtfDispenser::activate()
 		jvxSize slotId = jvx_bitfieldSelection2Id(genHrtfDispenser_node::binaural_rendering_select.slot_definition);
 		jvxSize selDatabase = theDispenser->selected_database(slotId);
 
+		if (JVX_CHECK_SIZE_UNSELECTED(selDatabase))
+		{
+			std::cout << "Internal error: unable to find a single sofa file database!" << std::endl;
+			assert(0);
+		}
+
 		jvx_bitZSet(genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.selection(0), selDatabase);
 
 		genHrtfDispenser_node::binaural_rendering_active.select_sofa_db.value.resize(genHrtfDispenser_node::binaural_rendering_select.slot_definition.value.entries.size());

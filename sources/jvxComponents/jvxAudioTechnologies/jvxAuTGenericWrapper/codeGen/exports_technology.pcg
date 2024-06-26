@@ -10,7 +10,8 @@ SECTION PROPERTIES
 		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
 		COMMENT = " ---- Properties in state selected ---";      // default in description if not specified
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE"};
-					
+		CALLBACKS = {"prop_selected_technology_set"};
+		
 		SECTION technologies
 		{
 			NAME = "technologies";
@@ -19,6 +20,7 @@ SECTION PROPERTIES
 			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
 			DESCRIPTOR = "JVX_GENW_TECHNOLOGIES";
 			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			CALLBACK_SET_POSTHOOK = "prop_selected_technology_set";
 			// ONLY_CONTENT_TO_CONFIG = "yes";
 		}; 
 	};

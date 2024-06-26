@@ -649,3 +649,9 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericWrapperTechnology, cb_
 	}
 	return JVX_NO_ERROR;
 }
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxGenericWrapperTechnology, cb_prop_selected_technology_set)
+{
+	skipConfigAudioTech = true;
+	return JVX_NO_ERROR;
+}
