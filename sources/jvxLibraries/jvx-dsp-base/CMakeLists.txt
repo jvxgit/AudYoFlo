@@ -54,6 +54,7 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_matrix/jvx_matrix.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_matrix/jvx_matrix_mult.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_matrix/jvx_matrix_rot.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_vector/jvx_vector.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_profiler/jvx_profiler_data_entry.c
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_conv/jvx_conv.c
@@ -63,7 +64,7 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_matrix/jvx_matrix.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_matrix/jvx_matrix_mult.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_matrix/jvx_matrix_rot.h
-
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_vector/jvx_vector.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_windows/jvx_windows.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_math/jvx_complex.h
 )

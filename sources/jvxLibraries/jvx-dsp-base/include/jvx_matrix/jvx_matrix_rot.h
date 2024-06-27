@@ -8,9 +8,30 @@
 
 JVX_DSP_LIB_BEGIN
 
+// This computes a rotation matrix Rx * Ry * Rz. That is, it runs rotation 
+// along z-axis first, then along y-axis and finally along x-axis
 
+/* Test totation
+* 
+jvxData tmp1[3] = { 0 };
+jvxData tmp2[3] = { 0 };
+jvxData rrp_rho_delta[3] = { 0,0,0 };
+
+tmp1[0] = 1;
+tmp1[1] = 0;
+tmp1[2] = 0;
+rrp_rho_delta[0] = 90;
+rrp_rho_delta[1] = 90;
+rrp_rho_delta[2] = 90;
+
+// z: [1 0 0] -> [0 1 0] -- y: [0 1 0] -> [0 1 0] -- x: [0 1 0] -> [0 0 1]
+jvx_matrix_process_rotmatrix_xyz_real(&rotMat, rrp_rho_delta);
+
+jvx_matrix_process_rotmatrix_xyz_vec_real(&rotMat, tmp1, tmp2);
+*/
 
 jvxErrorType jvx_matrix_process_rotmatrix_xyz_real(jvx_matrix* mat, jvxData* rotxyz_deg);
+
 jvxErrorType jvx_matrix_process_rotmatrix_xyz_vec_real(jvx_matrix* mat, jvxData* xyz_in, jvxData* out);
 
 JVX_DSP_LIB_END
