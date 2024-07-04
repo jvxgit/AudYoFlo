@@ -44,18 +44,20 @@ class AudYoFloOneComponentInProcessNative
       ret.slotid = cpIdRef.slotid;
       ret.slotsubid = cpIdRef.slotsubid;
       ret.uid = cpIdRef.uId;
-      spec.natLib.ffi_host_delete(idPtr.cast<Void>(),
-          ffiDeleteDatatype.JVX_DELETE_DATATYPE_ONE_COMPONENT_IDENT);
 
+      // Delete moved to later (line 58) since we still need the component_ident
       cpId = ret;
 
+      // Get the component description
       Pointer<Int8> descrPtr =
           spec.natLib.ffi_component_description(spec.opaque_hdl, idPtr);
       if (descrPtr != nullptr) {
-        nameComponent = (descrPtr.cast<Utf8>()).toDartString();
+        descriptionComponent = (descrPtr.cast<Utf8>()).toDartString();
         spec.natLib.ffi_host_delete(descrPtr.cast<Void>(),
             ffiDeleteDatatype.JVX_DELETE_DATATYPE_CHAR_ARRAY);
       }
+      spec.natLib.ffi_host_delete(idPtr.cast<Void>(),
+          ffiDeleteDatatype.JVX_DELETE_DATATYPE_ONE_COMPONENT_IDENT);
     }
 
     for (int ii = 0; ii < numBranches; ii++) {

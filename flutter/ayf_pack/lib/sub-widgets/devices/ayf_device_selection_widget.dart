@@ -12,7 +12,7 @@ class AudYoFloDeviceSelectionWidget extends StatefulWidget {
   final Widget? Function(JvxComponentIdentification selCpId)
       callbackDeviceWidget;
   final Widget? Function(
-      AudYoFloOneSelectionOptionWithId option,
+      AudYoFloOneDeviceSelectionOptionWithId option,
       bool fromActiveList,
       AudYoFloSingleSelectionComponent?) callbackActiveInactiveDeviceSliver;
 

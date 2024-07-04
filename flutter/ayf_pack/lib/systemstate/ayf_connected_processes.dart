@@ -11,11 +11,11 @@ class AudYoFloOneConnectedProcess {
   String debugPrintOneIterator(
       AudYoFloOneComponentInProcess involved, String tab) {
     String ret = '';
-    var name = involved.nameComponent;
+    var description = involved.descriptionComponent;
     var mod = involved.nameModule;
     var cname = involved.nameConnector;
     var cpIdName = involved.cpId.txt;
-    ret = '$tab -> $name -> $mod -> $cpIdName -> $cname\n';
+    ret = '$tab -> $description -> $mod -> $cpIdName -> $cname\n';
     tab = tab + '\t';
     for (int ii = 0; ii < involved.next.length; ii++) {
       ret += '$tab -> Branch: $ii\n';
@@ -36,7 +36,7 @@ class AudYoFloOneConnectedProcess {
 abstract class AudYoFloOneComponentInProcess {
   JvxComponentIdentification cpId = JvxComponentIdentification();
   List<AudYoFloOneComponentInProcess> next = [];
-  String nameComponent = '';
+  String descriptionComponent = '';
   String nameModule = '';
   String nameConnector = '';
 
@@ -63,8 +63,21 @@ abstract class AudYoFloOneComponentInProcess {
     return overallResult;
   }
 
+  bool findProcessMatchComponent(JvxComponentIdentification cpIdArg) {
+    bool foundit = false;
+    if (cpId == cpIdArg) {
+      foundit = true;
+    } else {
+      for (var invElm in next) {
+        foundit = foundit || invElm.findProcessMatchComponent(cpIdArg);
+      }
+    }
+    return foundit;
+  }
+
   void findComponentsMatch(List<JvxComponentIdentification> lst,
-      Map<JvxComponentIdentification, AudYoFloOneSelectedComponent> allCps) {
+      Map<JvxComponentIdentification, AudYoFloOneSelectedComponent> allCps,
+      {List<String> lstCheck = const [], List<String>? lstDescriptors}) {
     var entry =
         allCps.entries.firstWhereOrNull((element) => (cpId == element.key));
     if (entry != null) {
@@ -75,12 +88,29 @@ abstract class AudYoFloOneComponentInProcess {
           break;
         }
       }
+      if (lstCheck.isNotEmpty) {
+        addElement = false;
+        for (var elm in lstCheck) {
+          // String txt = r'(\w+)';
+          RegExp exp = RegExp(elm);
+          RegExpMatch? match = exp.firstMatch(descriptionComponent);
+          if (match != null) {
+            addElement = true;
+            break;
+          }
+        }
+      }
+
       if (addElement) {
         lst.add(cpId);
+        if (lstDescriptors != null) {
+          lstDescriptors.add(descriptionComponent);
+        }
       }
     }
     for (var elm in next) {
-      elm.findComponentsMatch(lst, allCps);
+      elm.findComponentsMatch(lst, allCps,
+          lstCheck: lstCheck, lstDescriptors: lstDescriptors);
     }
   }
 }

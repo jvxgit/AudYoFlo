@@ -41,7 +41,7 @@ class AudYoFloDeviceActiveInactiveWidget extends StatefulWidget {
   final AudYoFloSingleSelectionComponent? reportWidget;
   final String tagDevices;
   final Widget? Function(
-      AudYoFloOneSelectionOptionWithId option,
+      AudYoFloOneDeviceSelectionOptionWithId option,
       bool fromActiveList,
       AudYoFloSingleSelectionComponent?) callbackActiveInactiveDeviceSliver;
   AudYoFloDeviceActiveInactiveWidget(this.pContent, this.cpId, this.tagDevices,
@@ -54,18 +54,12 @@ class AudYoFloDeviceActiveInactiveWidget extends StatefulWidget {
   }
 }
 
-class AudYoFloOneSelectionOptionWithId {
-  AudYoFloOneDeviceSelectionOption option;
-  int idx;
-  AudYoFloOneSelectionOptionWithId(this.option, this.idx);
-}
-
 class _AudYoFloDeviceActiveInactiveWidgetStates
     extends State<AudYoFloDeviceActiveInactiveWidget> {
   ScrollController _controllerL = ScrollController();
   ScrollController _controllerR = ScrollController();
-  List<AudYoFloOneSelectionOptionWithId> inactiveDevices = [];
-  List<AudYoFloOneSelectionOptionWithId> activeDevices = [];
+  List<AudYoFloOneDeviceSelectionOptionWithId> inactiveDevices = [];
+  List<AudYoFloOneDeviceSelectionOptionWithId> activeDevices = [];
 
   void createActiveInactiveLists() {
     inactiveDevices.clear();
@@ -73,12 +67,13 @@ class _AudYoFloDeviceActiveInactiveWidgetStates
     if (widget.pContent != null) {
       for (var elm in widget.pContent!) {
         if (elm.devIdent.slotsubid >= 0) {
-          AudYoFloOneSelectionOptionWithId newContent =
-              AudYoFloOneSelectionOptionWithId(elm, activeDevices.length);
+          AudYoFloOneDeviceSelectionOptionWithId newContent =
+              AudYoFloOneDeviceSelectionOptionWithId(elm, activeDevices.length);
           activeDevices.add(newContent);
         } else {
-          AudYoFloOneSelectionOptionWithId newContent =
-              AudYoFloOneSelectionOptionWithId(elm, inactiveDevices.length);
+          AudYoFloOneDeviceSelectionOptionWithId newContent =
+              AudYoFloOneDeviceSelectionOptionWithId(
+                  elm, inactiveDevices.length);
           inactiveDevices.add(newContent);
         }
       }
@@ -126,7 +121,8 @@ class _AudYoFloDeviceActiveInactiveWidgetStates
               // We then get the index in device option list (active AND inactive)
               // in <selId.option.optionIdx>
               // The "target" slot is DONTCARE which means "next available"
-              AudYoFloOneSelectionOptionWithId selId = activeDevices[data.id];
+              AudYoFloOneDeviceSelectionOptionWithId selId =
+                  activeDevices[data.id];
               JvxComponentIdentification cpDeactivate = selId.option.devIdent;
               theBeCache.triggerDeactivateComponent(cpDeactivate);
             }),
@@ -168,7 +164,8 @@ class _AudYoFloDeviceActiveInactiveWidgetStates
               // We then get the index in device option list (active AND inactive)
               // in <selId.option.optionIdx>
               // The "target" slot is DONTCARE which means "next available"
-              AudYoFloOneSelectionOptionWithId selId = inactiveDevices[data.id];
+              AudYoFloOneDeviceSelectionOptionWithId selId =
+                  inactiveDevices[data.id];
               JvxComponentIdentification cpActivate = selId.option.devIdent;
               cpActivate.slotsubid = jvxSize.JVX_SIZE_DONTCARE;
               theBeCache.triggerActivateComponent(

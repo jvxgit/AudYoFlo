@@ -65,7 +65,7 @@ class AudYoFloComponentSelectionMapCache {
 }
 
 // System cache
-class AudYoFloProcessesCache {
+class AudYoFloProcessesCache extends AudYoFloStateCache {
   // Here, we store all processes
   AudYoFloConnectedProcesses theRegisteredProcesses =
       AudYoFloConnectedProcesses();

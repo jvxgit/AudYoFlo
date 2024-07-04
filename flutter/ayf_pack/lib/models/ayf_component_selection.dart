@@ -19,6 +19,12 @@ class AudYoFloOneDeviceSelectionOption extends AudYoFloOneSelectionOptionBase {
   bool singleton = false;
 }
 
+class AudYoFloOneDeviceSelectionOptionWithId {
+  AudYoFloOneDeviceSelectionOption option;
+  int idx;
+  AudYoFloOneDeviceSelectionOptionWithId(this.option, this.idx);
+}
+
 class AudYoFloOneComponentSelectionOption
     extends AudYoFloOneSelectionOptionBase {
   List<int> sids = [];

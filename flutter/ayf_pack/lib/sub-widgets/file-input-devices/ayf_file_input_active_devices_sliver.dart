@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 
 class AudYoFloOneFileDeviceSliver extends StatelessWidget
     with AudYoFloOneComponentPropertyOnChange, AudYoFloPropertyOnChangeGroups {
-  final AudYoFloOneSelectionOptionWithId option;
+  final AudYoFloOneDeviceSelectionOptionWithId option;
   final JvxComponentIdentification cpIdConf;
   final AudYoFloSingleSelectionComponent? reportTarget;
   AudYoFloBackendCache? theBeCache;
@@ -204,7 +204,8 @@ class AudYoFloOneFileDeviceSliver extends StatelessWidget
                               backgroundColor: Colors.black,
                               child: Icon(Icons.delete, size: iconSize)))),
                 ]),
-                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     //mainAxisAlignment: MainAxisAlignment.start, children: [
 
                     children: [

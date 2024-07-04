@@ -48,6 +48,7 @@ class AudYoFloOneDevice {
 // whenever the component has changed - e.g. if switching the state
 class AudYoFloOneSelectedComponent {
   String description = 'Unknown';
+  String moduleName = 'unknwon';
   AudYoFloDirectPropertiesIf? directPropRef;
   int ssThisComponent = 0;
   //jvxAccessProperties_flutter? propRef;

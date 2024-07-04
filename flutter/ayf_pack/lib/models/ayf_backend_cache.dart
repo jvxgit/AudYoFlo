@@ -435,14 +435,16 @@ abstract class AudYoFloBackendCache
   @override
   void addProcess(int uId) {
     processSection.theRegisteredProcesses.addProcess(uId);
-    componentSection.ssUpdateId++;
+    //componentSection.ssUpdateId++;
+    processSection.ssUpdateId++;
     triggerNotify();
   }
 
   @override
   void remProcess(int uId) {
     processSection.theRegisteredProcesses.removeProcess(uId);
-    componentSection.ssUpdateId++;
+    //componentSection.ssUpdateId++;
+    processSection.ssUpdateId++;
     triggerNotify();
   }
 
@@ -652,43 +654,87 @@ abstract class AudYoFloBackendCache
   }
 
   @override
-  void findComponentsMatch(
-      List<JvxComponentIdentification> lst, int processId) {
-    // Collect all data from active components
-    if (processId >= 0) {
-      if (processId <
-          processSection
-              .theRegisteredProcesses.reportedProcesses.entries.length) {
-        var entry = processSection
-            .theRegisteredProcesses.reportedProcesses.entries
-            .elementAt(processId);
-        AudYoFloOneConnectedProcess con = entry.value;
-        con.involved?.findComponentsMatch(
-            lst, componentSection.theSelectedComponents.selectedComponents);
-      } else {
-        processId = -1;
+  List<int> findProcessesMatchComponent(JvxComponentIdentification cpId,
+      {List<int>? lstIn}) {
+    List<int> lst = [];
+    if (lstIn != null) {
+      lst = List.from(lstIn);
+    }
+    for (var elm
+        in processSection.theRegisteredProcesses.reportedProcesses.entries) {
+      AudYoFloOneConnectedProcess con = elm.value;
+      var involvedElementStart = con.involved;
+      bool foundElm = false;
+      if (involvedElementStart != null) {
+        foundElm = involvedElementStart.findProcessMatchComponent(cpId);
+      }
+      if (foundElm) {
+        lst.add(con.uId);
       }
     }
-    if (processId == -1) {
-      componentSection.theSelectedComponents.selectedComponents.forEach((k, v) {
-        bool addElement = true;
-        JvxComponentIdentification cpId = k;
-        for (var elm in lst) {
-          if (elm == cpId) {
-            addElement = false;
-            break;
-          }
-        }
-
-        if (addElement) {
-          lst.add(cpId);
-        }
-      });
-    }
+    // con.involved!.next;
+    return lst;
   }
 
   @override
-  void availProcessDescriptions(List<String> lst) {
+  List<JvxComponentIdentification> findComponentsMatchProcess(int processId,
+      {List<JvxComponentIdentification>? lstIn,
+      bool processIdLinearAddress = true,
+      List<String> lstRegExprMatch = const [],
+      List<String>? lstDescriptionsReturn}) {
+    List<JvxComponentIdentification> lst = [];
+    if (lstIn != null) {
+      lst = List.from(lstIn);
+    }
+    // Collect all data from active components
+    if (processIdLinearAddress) {
+      if (processId >= 0) {
+        if (processId <
+            processSection
+                .theRegisteredProcesses.reportedProcesses.entries.length) {
+          var entry = processSection
+              .theRegisteredProcesses.reportedProcesses.entries
+              .elementAt(processId);
+          AudYoFloOneConnectedProcess con = entry.value;
+          con.involved?.findComponentsMatch(
+              lst, componentSection.theSelectedComponents.selectedComponents,
+              lstCheck: lstRegExprMatch, lstDescriptors: lstDescriptionsReturn);
+        } else {
+          processId = -1;
+        }
+      }
+      if (processId == -1) {
+        componentSection.theSelectedComponents.selectedComponents
+            .forEach((k, v) {
+          bool addElement = true;
+          JvxComponentIdentification cpId = k;
+          for (var elm in lst) {
+            if (elm == cpId) {
+              addElement = false;
+              break;
+            }
+          }
+
+          if (addElement) {
+            lst.add(cpId);
+          }
+        });
+      }
+    } else {
+      var elmP = processSection.theRegisteredProcesses.reportedProcesses.entries
+          .firstWhereOrNull((element) => element.key == processId);
+      if (elmP != null) {
+        AudYoFloOneConnectedProcess con = elmP.value;
+        con.involved?.findComponentsMatch(
+            lst, componentSection.theSelectedComponents.selectedComponents,
+            lstCheck: lstRegExprMatch, lstDescriptors: lstDescriptionsReturn);
+      }
+    }
+    return lst;
+  }
+
+  @override
+  List<String> availProcessDescriptions({List<String> lst = const []}) {
     processSection.theRegisteredProcesses.reportedProcesses.forEach((k, v) {
       AudYoFloOneConnectedProcess vProc = v;
       String oneEntry = '';
@@ -699,6 +745,7 @@ abstract class AudYoFloBackendCache
       oneEntry += '[$catId]';
       lst.add(oneEntry);
     });
+    return lst;
   }
 
   @override
@@ -707,6 +754,16 @@ abstract class AudYoFloBackendCache
     AudYoFloOneSelectedComponent? comp = findSelectedComponent(cpTp);
     if (comp != null) {
       retVal = comp.description;
+    }
+    return retVal;
+  }
+
+  @override
+  String moduleNameComponent(JvxComponentIdentification cpTp) {
+    String retVal = 'Unknown';
+    AudYoFloOneSelectedComponent? comp = findSelectedComponent(cpTp);
+    if (comp != null) {
+      retVal = comp.moduleName;
     }
     return retVal;
   }

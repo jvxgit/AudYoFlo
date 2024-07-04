@@ -24,8 +24,8 @@ class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
     // =====================================================
     // Find the list of processes to be exposed in combo box
     // =====================================================
-    List<String>? entriesProcs = ['None'];
-    theBeCache.availProcessDescriptions(entriesProcs);
+    List<String> entriesProcs =
+        theBeCache.availProcessDescriptions(lst: ['None']);
     //dropdownValueProcess = 'None';
     dropdownValueProcess = entriesProcs.elementAt(theDbgModel.idSelectProc + 1);
 
@@ -129,7 +129,9 @@ class _AudYoFloDropdownWidgetStates extends State<AudYoFloDropdownComponents> {
 
     // Add the "none" component
     lstComponents.add(JvxComponentIdentification());
-    theBeCache.findComponentsMatch(lstComponents, theDbgModel.idSelectProc);
+    lstComponents = theBeCache.findComponentsMatchProcess(
+        theDbgModel.idSelectProc,
+        lstIn: lstComponents);
 
     // If the component selected before is no longer available, here we have a mismatch
     // Therefore, we check and correct the slection before we show it

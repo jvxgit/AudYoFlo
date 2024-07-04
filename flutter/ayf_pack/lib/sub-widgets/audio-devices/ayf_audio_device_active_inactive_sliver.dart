@@ -16,7 +16,7 @@ class AudYoFloAudioDeviceRenderSection {
 }
 
 class AudYoFloOneDeviceSliver extends StatelessWidget {
-  final AudYoFloOneSelectionOptionWithId option;
+  final AudYoFloOneDeviceSelectionOptionWithId option;
   final bool fromActiveList;
   final AudYoFloSingleSelectionComponent? reportTarget;
 

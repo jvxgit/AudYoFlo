@@ -53,7 +53,7 @@ class AudYoFloOneComponentInProcessWeb extends AudYoFloOneComponentInProcess {
         (cpNameStr != null) &&
         (connNmStr != null)) {
       cpId = helper.translateStringComponentIdentification(cpIdStr, uid);
-      nameComponent = cpNameStr;
+      descriptionComponent = cpNameStr;
       nameModule = modNameStr;
       nameConnector = connNmStr;
       if (nextMap != null) {

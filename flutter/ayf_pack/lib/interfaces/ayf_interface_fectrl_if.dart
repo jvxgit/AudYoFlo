@@ -57,11 +57,20 @@ abstract class AudYoFloBackendCacheFectrlIf {
 
   // ================================================================
   // HELPER FUNCTIONS
-  void findComponentsMatch(List<JvxComponentIdentification> lst, int processId);
+  List<JvxComponentIdentification> findComponentsMatchProcess(int processId,
+      {List<JvxComponentIdentification>? lstIn,
+      bool processIdLinearAddress = true,
+      List<String> lstRegExprMatch = const [],
+      List<String>? lstDescriptionsReturn});
 
-  void availProcessDescriptions(List<String> lst);
+  List<int> findProcessesMatchComponent(JvxComponentIdentification cpId,
+      {List<int>? lstIn});
+
+  List<String> availProcessDescriptions({List<String> lst});
 
   String descriptionComponent(JvxComponentIdentification cpTp);
+
+  String moduleNameComponent(JvxComponentIdentification cpTp);
 
   // =======================================================================
   // Activate a new component specified by the id.

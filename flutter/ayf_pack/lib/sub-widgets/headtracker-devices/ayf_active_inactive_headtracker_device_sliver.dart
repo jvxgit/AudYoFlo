@@ -11,7 +11,7 @@ class AudYoFloHeadtrackerDeviceRenderSection {
 }
 
 class AudYoFloOneHeadtrackerDeviceSliver extends StatelessWidget {
-  final AudYoFloOneSelectionOptionWithId option;
+  final AudYoFloOneDeviceSelectionOptionWithId option;
   final bool fromActiveList;
   final AudYoFloSingleSelectionComponent? reportTarget;
 

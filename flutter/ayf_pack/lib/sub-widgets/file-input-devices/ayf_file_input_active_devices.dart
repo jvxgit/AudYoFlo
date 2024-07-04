@@ -31,12 +31,12 @@ class _AudYoFloFileInputActiveDevicesWidgetState
 
   @override
   Widget innerWidget(BuildContext context) {
-    List<AudYoFloOneSelectionOptionWithId> activeDevices = [];
+    List<AudYoFloOneDeviceSelectionOptionWithId> activeDevices = [];
     if (devLst != null) {
       for (var elm in devLst!) {
         if (elm.devIdent.slotsubid >= 0) {
-          AudYoFloOneSelectionOptionWithId newContent =
-              AudYoFloOneSelectionOptionWithId(elm, activeDevices.length);
+          AudYoFloOneDeviceSelectionOptionWithId newContent =
+              AudYoFloOneDeviceSelectionOptionWithId(elm, activeDevices.length);
           activeDevices.add(newContent);
         }
       }

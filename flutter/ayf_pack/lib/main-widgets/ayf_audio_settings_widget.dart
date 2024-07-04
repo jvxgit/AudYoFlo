@@ -20,7 +20,7 @@ class AudYoFloAudioSettingsWidget extends StatefulWidget {
   final Widget? Function(JvxComponentIdentification selCpId)
       callbackDeviceWidget;
   final Widget? Function(
-      AudYoFloOneSelectionOptionWithId option,
+      AudYoFloOneDeviceSelectionOptionWithId option,
       bool fromActiveList,
       AudYoFloSingleSelectionComponent?) callbackActiveInactiveDeviceSliver;
   @override
@@ -50,7 +50,7 @@ class _AudYoFloAudioSettingsWidgetState
           if (theUiModel!.showAudioDevTech) {
             // ================================================================
             return Container(
-                color: Colors.white,
+                color: Colors.red,
                 child: Column(children: [
                   Flexible(
                       flex: 0,

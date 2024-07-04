@@ -19,6 +19,12 @@ class AudYoFloOneComponentSelectionOptions {
   AudYoFloOneComponentSelectionOptions({required this.cpIdDependsOn});
 }
 
+class AudYoFloOneComponentWithDetail {
+  JvxComponentIdentification cpId = JvxComponentIdentification();
+  String description = '';
+  String moduleName = '';
+}
+
 class AudYoFloStringWithId {
   String name = 'Unknown';
   int id = -1;
