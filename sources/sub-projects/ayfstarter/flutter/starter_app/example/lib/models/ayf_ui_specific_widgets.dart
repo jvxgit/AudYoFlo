@@ -7,15 +7,17 @@ import 'package:ayf_pack/main-widgets/ayf_audio_settings_widget.dart';
 // ============================================================================
 // Callback to allocate an audio device sliver in the list of active/inactive
 // devices lists
-Widget? allocateAudioDeviceSliver(AudYoFloOneSelectionOptionWithId option,
+Widget? allocateAudioDeviceSliver(AudYoFloOneDeviceSelectionOptionWithId option,
         bool fromActiveList, AudYoFloSingleSelectionComponent? reportW) =>
     AudYoFloOneDeviceSliver(option, fromActiveList, reportW);
 
 // ============================================================================
 // Callback to allocate a headtracker device sliver in the list of active/
 // inactibe devices list
-Widget? allocateHeadtrackerDeviceSliver(AudYoFloOneSelectionOptionWithId option,
-        bool fromActiveList, AudYoFloSingleSelectionComponent? reportW) =>
+Widget? allocateHeadtrackerDeviceSliver(
+        AudYoFloOneDeviceSelectionOptionWithId option,
+        bool fromActiveList,
+        AudYoFloSingleSelectionComponent? reportW) =>
     AudYoFloOneHeadtrackerDeviceSliver(option, fromActiveList, reportW);
 
 BottomAppBar? allocatorBottomAppBar() {
