@@ -553,3 +553,27 @@ JvxComponentIdentification widgetConfigCpId(
   }
   return defCp;
 }
+
+class AudYoFloMixerLevelHelper {
+  double dbShiftGain = 50;
+  double indexUnmapDb(double idxValdB) {
+    double valdB = idxValdB + dbShiftGain;
+    valdB -= 100;
+    return valdB;
+  }
+
+  double gain2IndexDb(double gainVal) {
+    double valDB = 20 * log(gainVal + 1e-5) / log(10); // 0..1 in area -100..0
+    double idxVal = valDB + 100;
+    idxVal -= dbShiftGain;
+    idxVal = max(idxVal, 0);
+    idxVal = min(idxVal, 100);
+    return idxVal;
+  }
+
+  double index2GainDb(double idxValdB) {
+    double valdB = indexUnmapDb(idxValdB);
+    num gainVal = pow(10.0, valdB / 20.0);
+    return gainVal.toDouble();
+  }
+}
