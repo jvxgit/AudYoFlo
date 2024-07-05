@@ -655,7 +655,7 @@ abstract class AudYoFloBackendCache
 
   @override
   List<int> findProcessesMatchComponent(JvxComponentIdentification cpId,
-      {List<int>? lstIn}) {
+      {List<int>? lstIn, bool asFirstElement = false}) {
     List<int> lst = [];
     if (lstIn != null) {
       lst = List.from(lstIn);
@@ -666,7 +666,13 @@ abstract class AudYoFloBackendCache
       var involvedElementStart = con.involved;
       bool foundElm = false;
       if (involvedElementStart != null) {
-        foundElm = involvedElementStart.findProcessMatchComponent(cpId);
+        if (asFirstElement) {
+          if (cpId == involvedElementStart.cpId) {
+            foundElm = true;
+          }
+        } else {
+          foundElm = involvedElementStart.findProcessMatchComponent(cpId);
+        }
       }
       if (foundElm) {
         lst.add(con.uId);

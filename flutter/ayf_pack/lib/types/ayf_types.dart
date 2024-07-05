@@ -55,9 +55,9 @@ class AudYoFloCallByReference<T> {
 // This class defines a callback that reports the selection (=clicked) of a
 // specific component. Currently, it is used to select a device within the list of active
 // devices
-abstract class AudYoFloSingleSelectionComponent {
+abstract class AudYoFloSelectionComponentUi {
   // End up in this callback in case a selection was chosen (=clicked)
-  void reportSelectionComponent(JvxComponentIdentification cpId);
+  void reportSelectionComponentUi(JvxComponentIdentification cpId);
 }
 
 class AudYoFloCompileFlags {

@@ -13,7 +13,7 @@ class AudYoFloHeadtrackerDeviceRenderSection {
 class AudYoFloOneHeadtrackerDeviceSliver extends StatelessWidget {
   final AudYoFloOneDeviceSelectionOptionWithId option;
   final bool fromActiveList;
-  final AudYoFloSingleSelectionComponent? reportTarget;
+  final AudYoFloSelectionComponentUi? reportTarget;
 
   AudYoFloOneHeadtrackerDeviceSliver(
       this.option, this.fromActiveList, this.reportTarget);
@@ -94,7 +94,7 @@ class AudYoFloOneHeadtrackerDeviceSliver extends StatelessWidget {
         // here, we run a callback to the next higher layer in the widget hierarchy to
         // update the widget which is in parallel to the device selection construct
         if (reportTarget != null) {
-          reportTarget!.reportSelectionComponent(option.option.devIdent);
+          reportTarget!.reportSelectionComponentUi(option.option.devIdent);
         }
       },
       child: Card(

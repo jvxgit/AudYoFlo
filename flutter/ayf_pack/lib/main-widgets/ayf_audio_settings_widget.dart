@@ -22,7 +22,7 @@ class AudYoFloAudioSettingsWidget extends StatefulWidget {
   final Widget? Function(
       AudYoFloOneDeviceSelectionOptionWithId option,
       bool fromActiveList,
-      AudYoFloSingleSelectionComponent?) callbackActiveInactiveDeviceSliver;
+      AudYoFloSelectionComponentUi?) callbackActiveInactiveDeviceSliver;
   @override
   _AudYoFloAudioSettingsWidgetState createState() =>
       _AudYoFloAudioSettingsWidgetState();

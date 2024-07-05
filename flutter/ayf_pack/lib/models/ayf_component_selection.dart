@@ -25,6 +25,15 @@ class AudYoFloOneDeviceSelectionOptionWithId {
   AudYoFloOneDeviceSelectionOptionWithId(this.option, this.idx);
 }
 
+class AudYoFloOneDeviceSelectionOptionWithIdAndProcess
+    extends AudYoFloOneDeviceSelectionOptionWithId {
+  AudYoFloOneConnectedProcess? proc;
+  List<AudYoFloOneComponentWithDetail> relChainComponents = [];
+  AudYoFloOneDeviceSelectionOptionWithIdAndProcess(
+      AudYoFloOneDeviceSelectionOption option, int idx)
+      : super(option, idx) {}
+}
+
 class AudYoFloOneComponentSelectionOption
     extends AudYoFloOneSelectionOptionBase {
   List<int> sids = [];

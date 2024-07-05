@@ -18,7 +18,7 @@ class AudYoFloAudioDeviceRenderSection {
 class AudYoFloOneDeviceSliver extends StatelessWidget {
   final AudYoFloOneDeviceSelectionOptionWithId option;
   final bool fromActiveList;
-  final AudYoFloSingleSelectionComponent? reportTarget;
+  final AudYoFloSelectionComponentUi? reportTarget;
 
   AudYoFloOneDeviceSliver(this.option, this.fromActiveList, this.reportTarget);
 
@@ -147,7 +147,7 @@ class AudYoFloOneDeviceSliver extends StatelessWidget {
         // update the widget which is in parallel to the device selection construct
 
         if (reportTarget != null) {
-          reportTarget!.reportSelectionComponent(option.option.devIdent);
+          reportTarget!.reportSelectionComponentUi(option.option.devIdent);
         }
       },
       child: Card(

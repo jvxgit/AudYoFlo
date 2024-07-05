@@ -14,7 +14,7 @@ class AudYoFloDeviceSelectionWidget extends StatefulWidget {
   final Widget? Function(
       AudYoFloOneDeviceSelectionOptionWithId option,
       bool fromActiveList,
-      AudYoFloSingleSelectionComponent?) callbackActiveInactiveDeviceSliver;
+      AudYoFloSelectionComponentUi?) callbackActiveInactiveDeviceSliver;
 
   AudYoFloDeviceSelectionWidget(this.identT, this.tagDevices,
       this.callbackDeviceWidget, this.callbackActiveInactiveDeviceSliver);
@@ -26,9 +26,7 @@ class AudYoFloDeviceSelectionWidget extends StatefulWidget {
 
 class _AudYoFloDeviceSelectionWidgetStates
     extends State<AudYoFloDeviceSelectionWidget>
-    with
-        AudYoFloSingleSelectionComponent,
-        AudYoFloOneTechnologyDevicesOnChange {
+    with AudYoFloSelectionComponentUi, AudYoFloOneTechnologyDevicesOnChange {
   List<AudYoFloOneDeviceSelectionOption>? pContent;
   JvxComponentIdentification selCpId = JvxComponentIdentification(
       cpTp: JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN);
@@ -38,7 +36,7 @@ class _AudYoFloDeviceSelectionWidgetStates
   // At the moment, this callback is called if a device was chosen in the list
   // of active devices.
   @override
-  void reportSelectionComponent(JvxComponentIdentification cpId) {
+  void reportSelectionComponentUi(JvxComponentIdentification cpId) {
     setState(() {
       selCpId = cpId;
     });

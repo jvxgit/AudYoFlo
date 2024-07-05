@@ -11,7 +11,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 // Callback to allocate an audio device sliver in the list of active/inactive
 // devices lists
 Widget? allocateAudioDeviceSliver(AudYoFloOneDeviceSelectionOptionWithId option,
-        bool fromActiveList, AudYoFloSingleSelectionComponent? reportW) =>
+        bool fromActiveList, AudYoFloSelectionComponentUi? reportW) =>
     AudYoFloOneDeviceSliver(option, fromActiveList, reportW);
 
 // ============================================================================
@@ -20,7 +20,7 @@ Widget? allocateAudioDeviceSliver(AudYoFloOneDeviceSelectionOptionWithId option,
 Widget? allocateHeadtrackerDeviceSliver(
         AudYoFloOneDeviceSelectionOptionWithId option,
         bool fromActiveList,
-        AudYoFloSingleSelectionComponent? reportW) =>
+        AudYoFloSelectionComponentUi? reportW) =>
     AudYoFloOneHeadtrackerDeviceSliver(option, fromActiveList, reportW);
 
 BottomAppBar? allocatorBottomAppBar() {

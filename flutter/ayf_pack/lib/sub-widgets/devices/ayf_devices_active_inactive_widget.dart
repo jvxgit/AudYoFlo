@@ -38,12 +38,12 @@ class deviceSelectionDragData {
 class AudYoFloDeviceActiveInactiveWidget extends StatefulWidget {
   final List<AudYoFloOneDeviceSelectionOption>? pContent;
   final JvxComponentIdentification cpId;
-  final AudYoFloSingleSelectionComponent? reportWidget;
+  final AudYoFloSelectionComponentUi? reportWidget;
   final String tagDevices;
   final Widget? Function(
       AudYoFloOneDeviceSelectionOptionWithId option,
       bool fromActiveList,
-      AudYoFloSingleSelectionComponent?) callbackActiveInactiveDeviceSliver;
+      AudYoFloSelectionComponentUi?) callbackActiveInactiveDeviceSliver;
   AudYoFloDeviceActiveInactiveWidget(this.pContent, this.cpId, this.tagDevices,
       this.callbackActiveInactiveDeviceSliver,
       {this.reportWidget});

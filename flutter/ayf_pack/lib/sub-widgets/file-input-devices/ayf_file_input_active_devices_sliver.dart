@@ -7,7 +7,7 @@ class AudYoFloOneFileDeviceSliver extends StatelessWidget
     with AudYoFloOneComponentPropertyOnChange, AudYoFloPropertyOnChangeGroups {
   final AudYoFloOneDeviceSelectionOptionWithId option;
   final JvxComponentIdentification cpIdConf;
-  final AudYoFloSingleSelectionComponent? reportTarget;
+  final AudYoFloSelectionComponentUi? reportTarget;
   AudYoFloBackendCache? theBeCache;
 
   AudYoFloPropertyOnChangeOneGroup oneGroupThisWidget =
@@ -170,7 +170,7 @@ class AudYoFloOneFileDeviceSliver extends StatelessWidget
     return GestureDetector(
       onTap: () {
         if (reportTarget != null) {
-          reportTarget!.reportSelectionComponent(option.option.devIdent);
+          reportTarget!.reportSelectionComponentUi(option.option.devIdent);
         }
       },
       child: Padding(
