@@ -24,6 +24,19 @@ SECTION PROPERTIES
 
 	};
 
+	SECTION level_control
+	{
+		CALLBACKS = {"update_level_set", "update_level_get"};
+
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+
+		define def_input_channels
+		define def_invalidate_on_state_switch
+		include "jvx-level-control.pcgf";
+	};
+
+	/*
 	SECTION monitor
 	{
 		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
@@ -31,6 +44,7 @@ SECTION PROPERTIES
 
 		SECTION level_linear_squared
 		{
+			PROPERTY_INVALIDATE_STATE_SWITCH = "JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT";
 			TYPE = "JVX_DATAFORMAT_DATA";	
 			ASSOCIATE_EXTERNAL = "yes";
 		};
@@ -51,4 +65,5 @@ SECTION PROPERTIES
 			ASSOCIATE_EXTERNAL = "yes";
 		};
 	};
+	*/
 };

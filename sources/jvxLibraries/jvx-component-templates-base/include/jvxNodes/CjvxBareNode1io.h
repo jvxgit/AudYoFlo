@@ -12,7 +12,9 @@ protected:
 		jvxBool prepareOnChainPrepare = true;
 
 		//! Setup if start is invoked automatically on start_chain_icon
-		jvxBool startOnChainStart = true;		
+		jvxBool startOnChainStart = true;	
+
+		jvxBool involveStateSwitchHost = false;
 	};
 	
 	/**

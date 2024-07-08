@@ -472,7 +472,17 @@ abstract class AudYoFloBackendCache
 
     // If a component is activated, load the component selection lists
     // that depends on this component
+    /* old: only on state switch ACTIVATE and DEACTIVATE
     if ((ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_ACTIVATE) ||
+        (ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_DEACTIVATE)) {
+    * In the following the new implementation: accept all state switches higher
+    * than select!! Modified by HK 07-07-2024
+    */
+    if ((ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_ACTIVATE) ||
+        (ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_PREPARE) ||
+        (ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_START) ||
+        (ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_STOP) ||
+        (ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_POSTPROCESS) ||
         (ss == jvxStateSwitchEnum.JVX_STATE_SWITCH_DEACTIVATE)) {
       AudYoFloOneSelectedComponent? theComponentHere =
           findSelectedComponent(cpId);
@@ -492,6 +502,12 @@ abstract class AudYoFloBackendCache
             }
           }
         }
+
+        // We tag this component such that it should be updated
+        // Modified by HK 07-07-2024
+        theComponentHere.propertyCache.ssPropertyCache =
+            theComponentHere.propertyCache.ssPropertyCache + 1;
+        // theComponentHere.ssThisComponent
       }
 
       triggerNotify();

@@ -396,8 +396,23 @@ CjvxBareNode1io::prepare_autostart()
 	{
 		if (_common_set_min.theState == JVX_STATE_ACTIVE)
 		{
-			// Call of implicit prepare
-			this->prepare();
+			if (_common_set_node_base_1io.involveStateSwitchHost)
+			{
+				IjvxHost* hh = reqInterface<IjvxHost>(_common_set_min.theHostRef);
+				if (hh)
+				{
+					hh->switch_state_component(_common_set.theComponentType, JVX_STATE_SWITCH_PREPARE);
+				}
+				else
+				{
+					prepare();
+				}
+			}
+			else
+			{
+				// Call of implicit prepare - simple
+				this->prepare();
+			}
 			impPrepareOnChainPrepare = true;
 		}
 	}
@@ -410,8 +425,23 @@ CjvxBareNode1io::postprocess_autostart()
 	{
 		if (_common_set_min.theState == JVX_STATE_PREPARED)
 		{
-			// Call of implicit prepare
-			this->postprocess();
+			if (_common_set_node_base_1io.involveStateSwitchHost)
+			{
+				IjvxHost* hh = reqInterface<IjvxHost>(_common_set_min.theHostRef);
+				if (hh)
+				{
+					hh->switch_state_component(_common_set.theComponentType, JVX_STATE_SWITCH_POSTPROCESS);
+				}
+				else
+				{
+					postprocess();
+				}
+			}
+			else
+			{
+				// Call of implicit postprocess
+				this->postprocess();
+			}
 		}
 	}
 	impPrepareOnChainPrepare = false;
@@ -425,8 +455,23 @@ CjvxBareNode1io::start_autostart()
 	{
 		if (_common_set_min.theState == JVX_STATE_PREPARED)
 		{
-			// Call of implicit prepare
-			this->start();
+			if (_common_set_node_base_1io.involveStateSwitchHost)
+			{
+				IjvxHost* hh = reqInterface<IjvxHost>(_common_set_min.theHostRef);
+				if (hh)
+				{
+					hh->switch_state_component(_common_set.theComponentType, JVX_STATE_SWITCH_START);
+				}
+				else
+				{
+					start();
+				}
+			}
+			else
+			{
+				// Call of implicit start
+				this->start();
+			}
 			impStartOnChainStart = true;
 		}
 	}
@@ -439,7 +484,22 @@ CjvxBareNode1io::stop_autostart()
 	{
 		if (_common_set_min.theState == JVX_STATE_PROCESSING)
 		{
-			this->stop();
+			if (_common_set_node_base_1io.involveStateSwitchHost)
+			{
+				IjvxHost* hh = reqInterface<IjvxHost>(_common_set_min.theHostRef);
+				if (hh)
+				{
+					hh->switch_state_component(_common_set.theComponentType, JVX_STATE_SWITCH_STOP);
+				}
+				else
+				{
+					stop();
+				}
+			}
+			else
+			{
+				this->stop();
+			}
 		}
 	}
 	impStartOnChainStart = false;

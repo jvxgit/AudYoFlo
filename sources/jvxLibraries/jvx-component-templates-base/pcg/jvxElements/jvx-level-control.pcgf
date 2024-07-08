@@ -1,0 +1,87 @@
+SECTION level_gain
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Gain factor [linear] for each input channel";			
+		else
+			DESCRIPTION = "Gain factor [linear] for each output channel";			
+		endif
+		TYPE = "JVX_DATAFORMAT_VALUE_IN_RANGE";	
+		VALUE_IN_RANGE_MIN_VALUE = 0;
+		VALUE_IN_RANGE_MAX_VALUE = 10;
+		CALLBACK_SET_POSTHOOK = "update_level_set";
+		ASSOCIATE_EXTERNAL = "yes";
+
+		ifdef def_invalidate_on_state_switch
+			PROPERTY_INVALIDATE_STATE_SWITCH = "JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT";
+		endif
+	}; 
+
+	SECTION level_mute
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Mute flag for each input channel";
+		else
+			DESCRIPTION = "Mute flag for each output channel";
+		endif
+		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		CALLBACK_SET_POSTHOOK = "update_level_set";
+		SELECTION_LIST_NAMES = {"Off", "On"};
+		SELECTION_LIST_SELECTED = {"yes", "no"};
+		SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+		ASSOCIATE_EXTERNAL = "yes"; 
+
+		ifdef def_invalidate_on_state_switch
+			PROPERTY_INVALIDATE_STATE_SWITCH = "JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT";
+		endif	
+	}; 
+
+	SECTION level_clip
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Clip flag for each input channel";
+		else
+			DESCRIPTION = "Clip flag for each output channel";
+		endif
+
+		TYPE = "JVX_DATAFORMAT_BOOL";	
+		CALLBACK_GET_PREHOOK = "update_level_get";
+		CALLBACK_SET_POSTHOOK = "update_level_set";
+		ASSOCIATE_EXTERNAL = "yes";
+		
+		ifdef def_invalidate_on_state_switch
+			PROPERTY_INVALIDATE_STATE_SWITCH = "JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT";
+		endif
+	}; 
+
+	SECTION level_avrg
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Current level average input channel";
+		else
+			DESCRIPTION = "Current level average output channel";
+		endif
+		TYPE = "JVX_DATAFORMAT_DATA";	
+		CALLBACK_GET_PREHOOK = "update_level_get";
+		ASSOCIATE_EXTERNAL = "yes";
+
+		ifdef def_invalidate_on_state_switch
+			PROPERTY_INVALIDATE_STATE_SWITCH = "JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT";
+		endif
+	}; 
+
+	SECTION level_max
+	{
+		ifdef def_input_channels
+			DESCRIPTION = "Current level max input channel";
+		else
+			DESCRIPTION = "Current level max output channel";
+		endif
+		TYPE = "JVX_DATAFORMAT_DATA";	
+		CALLBACK_GET_PREHOOK = "update_level_get";
+		ASSOCIATE_EXTERNAL = "yes";
+
+		ifdef def_invalidate_on_state_switch
+			PROPERTY_INVALIDATE_STATE_SWITCH = "JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT";
+		endif
+	}; 

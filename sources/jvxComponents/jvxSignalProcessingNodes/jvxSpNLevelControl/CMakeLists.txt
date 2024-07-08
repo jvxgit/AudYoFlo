@@ -21,6 +21,8 @@ set(LOCAL_PCG_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_node.pcg
   )
 
+set(LOCAL_PCG_FILE_OPTIONS -I ${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-component-templates-base/pcg/jvxElements)
+
 set(LOCAL_LIBS 
   jvx-component-templates-base_static
   )
