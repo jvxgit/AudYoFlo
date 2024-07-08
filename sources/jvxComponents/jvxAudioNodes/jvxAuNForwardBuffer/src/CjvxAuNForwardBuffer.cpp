@@ -866,12 +866,11 @@ CjvxAuNForwardBuffer::push_on_pull_one_buffer(jvxHandle* data, jvxBool runStartS
 		case JVX_DSP_ERROR_BUFFER_OVERFLOW:
 			// Count the underflow events - even if the chan -- but not if not yet ready.
 			genForwardBuffer_node::monitor.number_overflows.value++;
-
 			[[fallthrough]];
 
 		case JVX_DSP_ERROR_ABORT:
 
-
+			res = resL;
 			// No output from buffer, copy silence
 			for (i = 0; i < _common_set_ocon.theData_out.con_params.number_channels; i++)
 			{
@@ -883,14 +882,27 @@ CjvxAuNForwardBuffer::push_on_pull_one_buffer(jvxHandle* data, jvxBool runStartS
 				// If the sample buffer does not deliver we need to wakeup the thread!!
 				refThreads.cpPtr->trigger_wakeup();
 			}
-			res = JVX_NO_ERROR;
+
+			if (genForwardBuffer_node::config.out_fail_no_report.value)
+			{
+				// We see an error at this place, and here, we do not report this error
+				res = JVX_NO_ERROR;
+			}
+			else
+			{
+				// We see an error at this place, and here, we report this error
+				// res = JVX_NO_ERROR;				
+			}
 			break;
 
 		default:
 			break;
 		}
 
-		_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+		if (res == JVX_NO_ERROR)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+		}
 
 		if (runStartStop)
 		{

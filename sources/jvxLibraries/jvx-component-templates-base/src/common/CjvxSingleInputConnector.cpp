@@ -22,8 +22,12 @@ CjvxSingleInputTriggerConnector::latest_result_data()
 {
 	if (bwdRef)
 	{
-		jvxErrorType res = bwdRef->resLatestGetData;
-		bwdRef->resLatestGetData = JVX_ERROR_UNKNOWN;
+		jvxErrorType res = JVX_NO_ERROR;
+		if (bwdRef->linkageIoActive)
+		{
+			res = bwdRef->resLatestGetData;
+			bwdRef->resLatestGetData = JVX_ERROR_UNKNOWN;
+		}
 		return res;
 	}
 	return JVX_ERROR_UNKNOWN;

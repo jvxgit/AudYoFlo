@@ -60,7 +60,7 @@ CjvxSpNMixChainEnterLeave::report_test_connector(CjvxSingleOutputConnector* ocon
 		{
 			if (oconn->_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER, &cpId  JVX_CONNECTION_FEEDBACK_CALL_A(fdb)) == JVX_NO_ERROR)
 			{
-				res = check_preset_channels(oconn->chanSetting, cpId);
+				res = check_preset_channels(oconn->chanSetting, oconn->linkageIoActive, cpId);
 			}
 		}
 	}

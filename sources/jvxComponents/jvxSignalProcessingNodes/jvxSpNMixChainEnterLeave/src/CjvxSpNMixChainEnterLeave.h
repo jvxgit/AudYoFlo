@@ -20,6 +20,7 @@ class chanOffsetAndMaxChans: public CjvxConnectorOffsetAndMaxChans
 public:
 	jvxComponentIdentification cpId;
 	std::string deviceChannelPrefix = "Channel";
+	jvxBool linkIo = false;
 };
 
 class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange, 
@@ -44,7 +45,8 @@ class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange,
 
 	// Add entries via properties:
 	// <component identification>, <offset>, <max_chans>
-	std::map<jvxComponentIdentification, chanOffsetAndMaxChans> presets_channel_routing;
+	std::map<jvxComponentIdentification, chanOffsetAndMaxChans> presets_io_routing;
+	// std::map<jvxComponentIdentification, jvxBool> presets_inout_coupling;
 
 	/*
 	struct
@@ -117,7 +119,8 @@ public:
 	bool check_positive_zero_copy()override;
 
 	void offset_channels_to_property();
-	jvxErrorType check_preset_channels(CjvxConnectorOffsetAndMaxChans& conParams, jvxComponentIdentification cpId);
+	jvxErrorType check_preset_channels(CjvxConnectorOffsetAndMaxChans& conParams, jvxBool& linkIoActive, jvxComponentIdentification cpId);
+	// jvxErrorType check_linkage_sources(jvxBool& linkInOut, jvxComponentIdentification cpId);
 
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;

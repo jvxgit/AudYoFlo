@@ -6,11 +6,19 @@ CjvxSpNMixChainEnterLeave::offset_channels_to_property()
 	genMixChain::sources_channel_routing.all_definitions.value.entries.clear();
 	jvx_bitFClear(genMixChain::sources_channel_routing.all_definitions.value.selection(0));
 
-	for (auto& elm : presets_channel_routing)
+	for (auto& elm : presets_io_routing)
 	{
-		genMixChain::sources_channel_routing.all_definitions.value.entries.push_back(jvxComponentIdentification_txt(elm.first));
+		std::string str = jvxComponentIdentification_txt(elm.first);
+		str += "--" + elm.second.deviceChannelPrefix;
+		str += "--[" + jvx_size2String(elm.second.idxOffset);
+		str += "->" + jvx_size2String(elm.second.idxOffset+elm.second.channel_num-1) + "]";
+		if (elm.second.linkIo)
+		{
+			str += "::i/o";
+		}
+		genMixChain::sources_channel_routing.all_definitions.value.entries.push_back(str);
 	}
-	if (presets_channel_routing.size())
+	if (presets_io_routing.size())
 	{
 		jvx_bitZSet(genMixChain::sources_channel_routing.all_definitions.value.selection(0), 0);
 	}
@@ -63,6 +71,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, specif
 	{
 		chanOffsetAndMaxChans newElm;
 		bool err = false;
+		jvxBool inoutCoupling = false;
 		auto res = jvxComponentIdentification_decode(newElm.cpId, lst[0]);
 		if (res != JVX_NO_ERROR)
 		{
@@ -89,10 +98,18 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, specif
 
 		if (!err)
 		{
-			auto elmI = presets_channel_routing.find(newElm.cpId);
-			if (elmI == presets_channel_routing.end())
+			if (lst.size() > 4)
 			{
-				presets_channel_routing[newElm.cpId] = newElm;
+				newElm.linkIo = (lst[4] == "yes");
+			}
+		}
+
+		if (!err)
+		{
+			auto elmI = presets_io_routing.find(newElm.cpId);
+			if (elmI == presets_io_routing.end())
+			{
+				presets_io_routing[newElm.cpId] = newElm;
 				genMixChain::sources_channel_routing.last_error.value = jvxErrorType_txt(JVX_NO_ERROR);
 				offset_channels_to_property();				
 			}
@@ -119,12 +136,12 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMixChainEnterLeave, remove
 	jvxSize idx = jvx_bitfieldSelection2Id(genMixChain::sources_channel_routing.all_definitions);
 	if (JVX_CHECK_SIZE_SELECTED(idx))
 	{
-		if (idx < presets_channel_routing.size())
+		if (idx < presets_io_routing.size())
 		{
-			auto itElm = presets_channel_routing.begin();
+			auto itElm = presets_io_routing.begin();
 			std::advance(itElm, idx);
 
-			presets_channel_routing.erase(itElm);
+			presets_io_routing.erase(itElm);
 			genMixChain::sources_channel_routing.last_error.value = jvxErrorType_txt(JVX_NO_ERROR);
 			CjvxProperties::add_property_report_collect(genMixChain::sources_channel_routing.last_error.descriptor.std_str(), false);
 

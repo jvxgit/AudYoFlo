@@ -33,6 +33,10 @@ CjvxSpNMixChainEnterLeave::select(IjvxObject* owner)
 		genMixChain::allocate__config();
 		genMixChain::register__config(this);
 
+		genMixChain::init__monitor();
+		genMixChain::allocate__monitor();
+		genMixChain::register__monitor(this);
+
 		genMixChain::init__sources_channel_routing();
 		genMixChain::allocate__sources_channel_routing();
 		genMixChain::register__sources_channel_routing(this);
@@ -56,6 +60,9 @@ CjvxSpNMixChainEnterLeave::unselect()
 
 		genMixChain::unregister__sources_channel_routing(this);
 		genMixChain::deallocate__sources_channel_routing();
+
+		genMixChain::unregister__monitor(this);
+		genMixChain::deallocate__monitor();
 
 		genMixChain::unregister__config(this);
 		genMixChain::deallocate__config();
@@ -257,7 +264,7 @@ CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					cnt++;
 				}
 
-				for (auto& elm : presets_channel_routing)
+				for (auto& elm : presets_io_routing)
 				{
 					for (i = 0; i < elm.second.channel_num; i++)
 					{
@@ -286,7 +293,7 @@ CjvxSpNMixChainEnterLeave::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					cnt++;
 				}
 
-				for (auto& elm : presets_channel_routing)
+				for (auto& elm : presets_io_routing)
 				{
 					for (i = 0; i < elm.second.channel_num; i++)
 					{
@@ -367,6 +374,8 @@ CjvxSpNMixChainEnterLeave::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	{
 		// Lock some of the properties
 		_update_properties_on_start();
+
+		genMixChain::monitor.ioLinkActiveCnt.value = 0;
 
 		if (operationMode != jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_TALKTHROUGH)
 		{
@@ -564,11 +573,17 @@ CjvxSpNMixChainEnterLeave::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 		lock();
 		for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
 		{
-			jvxErrorType resOther = elm.second.ioconn->resultFromInputConnector();
-			if(
-				(resOther == JVX_ERROR_UNKNOWN) || 
+			jvxErrorType resOther = resOther = elm.second.ioconn->resultFromInputConnector();			
+			if (
+				(resOther == JVX_ERROR_UNKNOWN) ||
 				resOther == JVX_NO_ERROR)
+			{
 				elm.second.ioconn->trigger_put_data();
+			}
+			else
+			{
+				genMixChain::monitor.ioLinkActiveCnt.value++;
+			}
 		}
 		unlock();
 		break;
@@ -734,10 +749,10 @@ CjvxSpNMixChainEnterLeave::check_positive_zero_copy()
 }
 
 jvxErrorType
-CjvxSpNMixChainEnterLeave::check_preset_channels(CjvxConnectorOffsetAndMaxChans& conParams, jvxComponentIdentification cpId)
+CjvxSpNMixChainEnterLeave::check_preset_channels(CjvxConnectorOffsetAndMaxChans& conParams, jvxBool& linkIoActive, jvxComponentIdentification cpId)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
-	for (auto& elm : presets_channel_routing)
+	for (auto& elm : presets_io_routing)
 	{
 		if (elm.first.tp == cpId.tp)
 		{
@@ -750,6 +765,7 @@ CjvxSpNMixChainEnterLeave::check_preset_channels(CjvxConnectorOffsetAndMaxChans&
 					(elm.first.slotsubid == cpId.slotsubid))
 				{
 					conParams = static_cast<CjvxConnectorOffsetAndMaxChans> (elm.second);
+					linkIoActive = elm.second.linkIo;
 					res = JVX_NO_ERROR;
 					break;
 				}
