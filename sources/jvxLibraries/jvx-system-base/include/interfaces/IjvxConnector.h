@@ -72,6 +72,13 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
+
+	//! Start processing a single frame. We may use the parameters to influence behavior:
+	//! 1) idx_stage: Stage id for releasing. If JVX_SIZE_UNSELECTED, use the id as given by link data struct
+	//! 2) operate_first_call: Bool to forward buffer index increment
+	//! 3) tobeAccessedByStage: holds the process step Id related to the stage
+	//! 4) callback_process_stop_in_lock: safe passing lock function
+	//! 5) priv_data for 4)
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_start_icon(
 		jvxSize pipeline_offset = 0,
 		jvxSize* idx_stage = NULL, 
@@ -80,6 +87,13 @@ public:
 		jvxHandle* priv_ptr = NULL) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask = JVX_SIZE_UNSELECTED, jvxSize idx_stage = JVX_SIZE_UNSELECTED) = 0;
+
+	//! Stop processing a single frame. We may use the parameters to influence behavior:
+	//! 1) idx_stage: Stage id for releasing. If JVX_SIZE_UNSELECTED, use the id as given by link data struct
+	//! 2) operate_first_call: Bool to forward buffer index increment
+	//! 3) tobeAccessedByStage: holds the process step Id related to the stage
+	//! 4) callback_process_stop_in_lock: safe passing lock function
+	//! 5) priv_data for 4)
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_stop_icon(jvxSize idx_stage = JVX_SIZE_UNSELECTED, 
 		jvxBool operate_first_call = true, 
 		jvxSize tobeAccessedByStage = 0,
