@@ -61,8 +61,8 @@ SECTION PROPERTIES
 			DESCRIPTION = "Activate/Deactivate load of dedicated part of the configuration";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
 			GENERATE_ENTRY_CONFIG_FILE = "no";
-			SELECTION_LIST_NAMES = {"Configure Technologies", "Configure Nodes"};
-			SELECTION_LIST_SELECTED = {"yes", "yes"};
+			SELECTION_LIST_NAMES = {"Configure Technologies", "Configure Nodes", "Configure Automation"};
+			SELECTION_LIST_SELECTED = {"yes", "yes", "yes"};
 		};
 
 		SECTION host_output_cout

@@ -275,6 +275,52 @@ CjvxAppHost::put_configuration(jvxCallManagerConfiguration* callConf,
 				}
 			}
 
+			if (jvx_bitTest(CjvxHost_genpcg::properties_selected.configure_parts.value.selection(), 2))
+			{
+				for (i = 0; i < _common_set_types.registeredSimpleTypes.size(); i++)
+				{
+					numSlots = 1;
+
+					processor->getReferenceEntryCurrentSection_name(datTmp, &theSlotNum,
+						(SECTIONNAME_NUMSLOTS_SIMPLETYPE_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile).c_str());
+
+					if (theSlotNum)
+					{
+						processor->getAssignmentValue(theSlotNum, &val);
+						val.toContent(&numSlots);
+					}
+
+					slottoken = "";
+					for (h = 0; h < numSlots; h++)
+					{
+						if (numSlots > 1)
+						{
+							// Default case for multiple slots: add a slot postfix 
+							slottoken = "_slot_" + jvx_size2String(h);
+						}
+						slotid = h;
+						slotsubid = 0;
+						jvxComponentIdentification idTp(_common_set_types.registeredSimpleTypes[i].selector[0], slotid, slotsubid);
+						jvxCBitField whatToDo = 0;
+						jvxSize l;
+						for (l = 0; l < JVX_PUT_CONFIGURATION_COMPONENT_NUMBER_ITERATIONS_NODES; l++)
+						{
+							jvx_bitZSet(whatToDo, l);
+							put_configuration_component_node<objT<IjvxSimpleComponent>, std::vector<oneObj<IjvxSimpleComponent>> >(callConf,
+								_common_set_types.registeredSimpleTypes[i].instances,
+								_common_set_types.registeredSimpleTypes[i].instances.availableEndpoints,
+								processor, datTmp, filename, lineno,
+								SECTIONNAME_STATE_SIMPLETYPE_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile + slottoken,
+								SECTIONNAME_NAME_SIMPLETYPE_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile + slottoken,
+								SECTIONNAME_SUBSECTION_SIMPLETYPE_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile + slottoken,
+								idTp,
+								"[" + _common_set_types.registeredSimpleTypes[i].description + "]<simplecomponent>",
+								this->_common_set_host.reportUnit, this->_common_set_host.reportOnConfig, static_cast<IjvxHost*>(this),
+								whatToDo);
+						}
+					}
+				}
+			}
 			/*
 			put_configuration_technology<technologiesT, std::vector<oneTechnology>>(_common_set_host.scannerTechnologies,
 				_common_set_host.scannerTechnologies.availableTechnologies, processor,
@@ -481,6 +527,40 @@ CjvxAppHost::get_configuration(jvxCallManagerConfiguration* callConf,
 				}
 			}
 		}
+
+		if (jvx_bitTest(CjvxHost_genpcg::properties_selected.configure_parts.value.selection(), 2))
+		{
+			for (i = 0; i < _common_set_types.registeredSimpleTypes.size(); i++)
+			{
+				numSlots = _common_set_types.registeredSimpleTypes[i].instances.theHandle_shortcut.size();
+				if (numSlots > 1)
+				{
+					//Write te config section specifically for the slots
+					processor->createAssignmentValue(&theSlotNum,
+						(SECTIONNAME_NUMSLOTS_ENDPOINT_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile).c_str(),
+						numSlots);
+					processor->addSubsectionToSection(datTmp, theSlotNum);
+				}
+				for (h = 0; h < _common_set_types.registeredSimpleTypes[i].instances.theHandle_shortcut.size(); h++)
+				{
+					slottoken = "";
+					if (numSlots > 1)
+					{
+						slottoken = "_slot_" + jvx_size2String(h);
+					}
+					// Components
+					get_configuration_component_node<objT<IjvxSimpleComponent>>(callConf,
+						_common_set_types.registeredSimpleTypes[i].instances,
+						processor,
+						datTmp,
+						SECTIONNAME_STATE_SIMPLETYPE_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile + slottoken,
+						SECTIONNAME_NAME_SIMPLETYPE_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile + slottoken,
+						SECTIONNAME_SUBSECTION_SIMPLETYPE_PREFIX + _common_set_types.registeredSimpleTypes[i].tokenInConfigFile + slottoken,
+						h);
+				}
+			}
+		}
+
 /*		// Technologies
 		get_configuration_technology<technologiesT>(_common_set_host.scannerTechnologies, processor,
 			datTmp, SECTIONNAME_STATE_SCANNER_TECHNOLOGY, SECTIONNAME_STATE_SCANNER_DEVICE,

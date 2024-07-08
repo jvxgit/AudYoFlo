@@ -20,6 +20,12 @@
 #define SECTIONNAME_SUBSECTION_ENDPOINT_PREFIX "host_subsection_endpoint_"
 #define SECTIONNAME_NAME_ENDPOINT_PREFIX "host_name_endpoint_"
 
+#define SECTIONNAME_NUMSLOTS_SIMPLETYPE_PREFIX "host_slotnum_simpletype_"
+#define SECTIONNAME_STATE_SIMPLETYPE_PREFIX "host_state_simpletype_"
+#define SECTIONNAME_SUBSECTION_SIMPLETYPE_PREFIX "host_subsection_simpletype_"
+#define SECTIONNAME_NAME_SIMPLETYPE_PREFIX "host_name_simpletype_"
+
+
 // SCANNER TECHNOLOGIES
 
 #define SECTIONNAME_NAME_SCANNER_TECHNOLOGY "host_name_scannertechnology"
