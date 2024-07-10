@@ -75,19 +75,19 @@ SECTION PROPERTIES
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
 		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
 		
-		SECTION number_overflows
+		SECTION input_overflows
 		{
-			DESCRIPTION = "Number of overflows";	  // Defaults to NAME if not present
+			DESCRIPTION = "Number of input overflows";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_SIZE";	
 			INIT_SET = 0;				
 		}; 
-		SECTION number_underflows
+		SECTION output_underflows
 		{
-			DESCRIPTION = "Number of overflows";	  // Defaults to NAME if not present
+			DESCRIPTION = "Number of output underflows";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_SIZE";	
 			INIT_SET = 0; 
 		}; 
-		SECTION number_aborts
+		SECTION output_aborts
 		{
 			DESCRIPTION = "Number of aborts";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_SIZE";	
