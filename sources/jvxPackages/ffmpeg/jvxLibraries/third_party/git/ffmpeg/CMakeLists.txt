@@ -8,13 +8,19 @@ if(${JVX_OS} MATCHES "windows")
 		set(JVX_FFMPEG_POSTFIX "x64")
 	endif()
 	
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(JVX_COMPILE_EXTRA_CFLAGS "-MDd")
+	else()
+		set(JVX_COMPILE_EXTRA_CFLAGS "-MD")
+	endif()
+	
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX})
 
 		FIND_PROGRAM(msys2 "msys2_shell.cmd" REQUIRED)
 		message("ffmpeg sub project not available. Starting script to download it.") 
 		message("This is going to take a while..") 
-		message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX}") 
-		execute_process(COMMAND ${msys2} -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX}")
+		message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}") 
+		execute_process(COMMAND ${msys2} -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}")
 		message("ffmpeg installation complete.")
 	endif()
 
@@ -27,7 +33,12 @@ if(${JVX_OS} MATCHES "windows")
 	set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavutil.a")
 	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswresample.a")
 	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswscale.a")
+	set(JVX_FFMPEG_LIB_POSTPROC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libpostproc.a")
 
+	set(JVX_LIB_X264 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x264/install-${CMAKE_BUILD_TYPE}/lib/libx264.lib")
+	set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x265_git/build/msys-cl/install-${CMAKE_BUILD_TYPE}/lib/x265-static.lib")
+	# set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x265_git/build/msys-cl/install/lib/x265-static.lib")
+	
 	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}" CACHE INTERNAL "ffmpeg source code path (windows)")
 	
 	set(JVX_FFMPEG_INCLUDE_DIR 
@@ -43,6 +54,9 @@ if(${JVX_OS} MATCHES "windows")
 		${JVX_FFMPEG_LIB_AVUTIL}
 		${JVX_FFMPEG_LIB_SWRESAMPLE}
 		${JVX_FFMPEG_LIB_SWSCALE}
+		${JVX_FFMPEG_LIB_POSTPROC}
+		${JVX_LIB_X264}
+		${JVX_LIB_X265}
 		CACHE INTERNAL "ffmpeg libs (windows)")
 		
 	set(JVX_FFMPEG_SYS_LIBS_NO_SMIIDS
