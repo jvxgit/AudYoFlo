@@ -21,7 +21,13 @@ if(${JVX_OS} MATCHES "windows")
 		message("This is going to take a while..") 
 		message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}") 
 		execute_process(COMMAND ${msys2} -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}")
-		message("ffmpeg installation complete.")
+		
+		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib)
+			message(FATAL_ERROR "ffmpeg installation failed.")
+		else()
+			message("ffmpeg installation complete.")
+		endif()
+		
 	endif()
 
 	## message(FATAL_ERROR "Wait here!")
