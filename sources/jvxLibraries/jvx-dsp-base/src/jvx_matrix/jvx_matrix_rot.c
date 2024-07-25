@@ -233,7 +233,7 @@ jvx_matrix_process_quat_2rotmatrix(jvxData* qIn, jvx_matrix* rMOut)
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType jvx_matrix_process_quat_2_euler(
+jvxErrorType jvx_matrix_process_quat_2_euler_deg(
 	const jvxData* qIn, jvxData* euler3Out,
 	jvxCBool extrinsic, jvxSize ii, jvxSize jj, jvxSize kk,
 	jvxCBool outputDegree, jvxCBool* gymLock)
@@ -378,5 +378,94 @@ jvxErrorType jvx_matrix_process_quat_2_euler(
 		}
 	}
 
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType jvx_matrix_process_rotmat_2_euler_xyz_deg(jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1)
+{
+
+	// Implementation according to
+	// https://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+	// However, started for Rx* Ry* Rz -> case 'xyz'
+	memset(out_euler_0, 0, sizeof(jvxData) * 3);
+	memset(out_euler_1, 0, sizeof(jvxData) * 3);
+
+	jvxData ff = 360 / (2 * M_PI);
+	jvxData** mat = (jvxData**)rMIn->prmSync.theMat;
+	// This is the case "xyz"
+
+	// Element right upper corner : rotMat(1, 3)->sin(roty)
+	if ((abs(abs(mat[0][2]) - 1)) > JVX_DATA_EPS)
+	{
+		jvxData roty_1 = asin(mat[0][2]);// asin(rotMat(1, 3));
+		jvxData roty_2 = M_PI - roty_1;
+
+		// Solution for roty and (pi - roty)
+
+	// Elements:
+	// a) right column, middle: rotMat(2, 3) -> - sin_rotx * cos_roty
+	// b) right column, lower: rotMat(3, 3)->cos_rotx* cos_roty
+	// ->rotMat(2, 3) / rotMat(3, 3) -> - tan_rotx
+		jvxData rotx_1 = atan2(-mat[1][2] / cos(roty_1), mat[2][2] / cos(roty_1));
+		// atan2(-rotMat(2, 3) / cos(roty_1), rotMat(3, 3) / cos(roty_1));
+		jvxData rotx_2 = atan2(-mat[1][2] / cos(roty_2), mat[2][2] / cos(roty_2));
+		// atan2(-rotMat(2, 3) / cos(roty_2), rotMat(3, 3) / cos(roty_2));
+
+	// Elements:
+	// a) left column, upper: rotMat(1, 1)->cos_rotz* cos_roty
+	// b) middle column, upper: rotMat(1, 2) -> - sin_rotz * cos_roty
+	// ->rotMat(1, 2) / rotMat(1, 1) -> - tan_rotz
+		jvxData rotz_1 = atan2(-mat[0][1] / cos(roty_1), mat[0][0] / cos(roty_1));
+		// atan2(-rotMat(1, 2) / cos(roty_1), rotMat(1, 1) / cos(roty_1));
+		jvxData rotz_2 = atan2(-mat[0][1] / cos(roty_2), mat[0][0] / cos(roty_2));
+		// atan2(-rotMat(1, 2) / cos(roty_2), rotMat(1, 1) / cos(roty_2));
+
+		out_euler_0[0] = rotx_1 * ff;
+		out_euler_0[1] = roty_1 * ff;
+		out_euler_0[2] = rotz_1 * ff;
+		// rot1 = [rotx_1 * ff, roty_1 * ff, rotz_1 * ff];
+		out_euler_1[0] = rotx_2 * ff;
+		out_euler_1[1] = roty_2 * ff;
+		out_euler_1[2] = rotz_2 * ff;
+		// rot2 = [rotx_2 * ff, roty_2 * ff, rotz_2 * ff];
+	}
+	else
+	{
+		// Here, we have a problem since cos(roty_.) = 0
+		if (mat[0][2] > 0)
+		{
+			jvxData roty = M_PI / 2;
+			jvxData rotx = 0;
+			jvxData rotz = atan2(mat[1][0], -mat[2][0]) - rotx;
+			// atan2(rotMat(2, 1), -rotMat(3, 1)) - rotx;
+
+			out_euler_0[0] = rotx * ff;
+			out_euler_0[1] = roty * ff;
+			out_euler_0[2] = rotz * ff;
+			// rot1 = [rotx * ff, roty * ff, rotz * ff];
+
+			out_euler_1[0] = out_euler_0[0];
+			out_euler_1[1] = out_euler_0[1];
+			out_euler_1[2] = out_euler_0[2];
+			// rot2 = rot1;
+		}
+		else
+		{
+			jvxData roty = -M_PI / 2;
+			jvxData rotx = 0;
+			jvxData rotz = rotx - atan2(-mat[1][0], mat[2][0]);
+			// rotz = rotx - atan2(-rotMat(2, 1), rotMat(3, 1));
+
+			out_euler_0[0] = rotx * ff;
+			out_euler_0[1] = roty * ff;
+			out_euler_0[2] = rotz * ff;
+			// rot1 = [rotx * ff, roty * ff, rotz * ff];
+
+			out_euler_1[0] = out_euler_0[0];
+			out_euler_1[1] = out_euler_0[1];
+			out_euler_1[2] = out_euler_0[2];
+			// rot2 = rot1;
+		}
+	}
 	return JVX_NO_ERROR;
 }
