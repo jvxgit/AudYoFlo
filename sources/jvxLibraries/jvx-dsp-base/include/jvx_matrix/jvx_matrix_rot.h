@@ -34,6 +34,13 @@ jvxErrorType jvx_matrix_process_rotmatrix_xyz_real(jvx_matrix* mat, jvxData* rot
 
 jvxErrorType jvx_matrix_process_rotmatrix_xyz_vec_real(jvx_matrix* mat, jvxData* xyz_in, jvxData* out);
 
+jvxErrorType jvx_matrix_process_rotmatrix_2_quat(jvx_matrix* rotmat, jvxData* qOut);
+
+jvxErrorType jvx_matrix_process_quat_2rotmatrix(jvxData* q, jvx_matrix* rMOut);
+
+jvxErrorType jvx_matrix_process_quat_2_euler( const jvxData* qIn, jvxData* euler3Out,
+	jvxCBool extrinsic, jvxSize ii, jvxSize jj, jvxSize kk, jvxCBool outputDegree, jvxCBool* gymLock);
+
 JVX_DSP_LIB_END
 
 #endif
