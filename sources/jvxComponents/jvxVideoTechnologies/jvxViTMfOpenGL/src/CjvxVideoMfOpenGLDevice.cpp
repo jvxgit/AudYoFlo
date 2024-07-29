@@ -267,6 +267,16 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.convertOnRead.bufRead, jvxByte, runtime.convertOnRead.lField);
 		runtime.convertOnRead.segWidth = lstModes[idModeSelect].width;
 		runtime.convertOnRead.segHeight = lstModes[idModeSelect].height;		
+		switch (runtime.convertOnRead.form_hw)
+		{
+		case JVX_DATAFORMAT_GROUP_VIDEO_NV12:
+			runtime.convertOnRead.plane1_Sz = runtime.convertOnRead.segWidth * runtime.convertOnRead.segHeight;
+			runtime.convertOnRead.plane2_Sz = runtime.convertOnRead.lField - runtime.convertOnRead.plane1_Sz;
+			break;
+		default:
+			assert(0);
+		}
+
 	}
 
 	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));

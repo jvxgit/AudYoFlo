@@ -4,6 +4,8 @@
 #include <objbase.h> // IID_PPV_ARGS and friends
 //#include <dshow.h> // IAMVideoProcAmp and friends
 
+#include <opencv2/imgproc.hpp>
+
 // ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
 // Conversion code taken from here:
@@ -38,6 +40,9 @@
 		} \
 		out = clampVal; \
 	}
+//
+// --> CONCLUSION HERE: Use openCV:  cv::COLOR_YUV2RGB_NV12
+// 
 
 // IUnknown methods
 STDMETHODIMP 
@@ -149,7 +154,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 					jvxSize incrementFwd = 1;
 
 					//std::cout << "Start capture buffer " << theData.pipeline.idx_stage << std::endl;
-					jvxByte* dest = (jvxByte*)_common_set_ocon.theData_out.con_data.buffers[
+					jvxUInt8* dest = (jvxUInt8*)_common_set_ocon.theData_out.con_data.buffers[
 						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][0];
 
 						m2DBuffer->Lock2D(&src, &stride);
@@ -157,55 +162,47 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 						if (runtime.convertOnRead.inConvertBufferInUse)
 						{
 							jvxSize j;
-							jvxUInt8* ptrReadY = nullptr;
-							jvxInt8* ptrReadU = nullptr;
-							jvxInt8* ptrReadV = nullptr;
-
+							
 							switch (runtime.convertOnRead.form_hw)
 							{
 							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_NV12:
-
-								assert(stride == runtime.convertOnRead.segWidth);
-								ptrReadY = (jvxUInt8*)src;
-								ptrReadU = (jvxInt8*)ptrReadY + (runtime.convertOnRead.segHeight * runtime.convertOnRead.segWidth);
-								ptrReadV = ptrReadU + 1;
+							{
+								// If we involve an NV12 mapping, we need to use openCV
+								// In openCV we need to involve the cv data structs. I have just 
+								// been rather robust in involving the Mat structs with raw memory without really taking into account
+								// the openCVmatrix memory model with channels. However, it works!!
 								
-								for (i = 0; i < runtime.convertOnRead.segHeight; i++)
+								// This pointer points to a field of bytes that contains Y in the first part and UV in the second part
+								// We will need to make 2 planes out of that: 
+								// - First plane, 1 channel: Y - size if h x w
+								// - Second plane: 2 channels: U/V - size os h/2 x w/2
+								jvxUInt8* ptrRead = (jvxUInt8*)src;
+								auto planeY = cv::Mat(runtime.convertOnRead.segHeight, runtime.convertOnRead.segWidth, CV_8UC1, ptrRead);
+								auto planeUV = cv::Mat(runtime.convertOnRead.segHeight/2, runtime.convertOnRead.segWidth/2, CV_8UC2, ptrRead + runtime.convertOnRead.plane1_Sz);
+
+								// The output is a bufer containing h x w RGB entries. The RGB is handled in a three channel model.
+								// WHAT IS NOT GOOD: The output buffer is always created by the cv library. There seems to be no 
+								// option to provide memory space to directly render here. Therefore, we need to copy around the data :-(
+								cv::Mat out;
+
+								// Actually run the converter
+								cv::cvtColorTwoPlane(planeY, planeUV, out, cv::COLOR_YUV2RGB_NV12);
+
+								// This is suboptimal: we need to copy the allocated memory. Hopefully, cv uses pre-allocated memory internally for higher efficiency!!
+								memcpy(dest, out.data, runtime.szRaw);
+								
+								// Following lines for a color check. This indicates that my GL renderer mixes blue and red!!
+								/*
+								for (i = 0; i < runtime.szRaw / 3; i++)
 								{
-									jvxInt8* ptrReadUSS = ptrReadU;
-									jvxInt8* ptrReadVSS = ptrReadV;
-
-									for (j = 0; j < runtime.convertOnRead.segWidth; j++)
-									{
-										jvxData r, g, b;
-										jvxData y, u, v;
-										y = (jvxData)*ptrReadY++;
-										u = (jvxData)*ptrReadUSS;
-										v = (jvxData)*ptrReadVSS;
-										YUV2RGB_INT_VARIANT0(r, g, b, y, u, v);
-
-										PIXEL_CLAMP(*dest, r);
-										dest++;
-										PIXEL_CLAMP(*dest, g);
-										dest++;
-										PIXEL_CLAMP(*dest, b);
-										dest++;
-
-										// Subsampling of UV in x-direction
-										if (j % 2)
-										{
-											ptrReadUSS += 2;
-											ptrReadVSS += 2;
-										}
-									}
-									// ptrReadY += stride;		
-									if (j % 2 == 0)
-									{
-										ptrReadUSS = ptrReadU;
-										ptrReadVSS = ptrReadV;
-									}
+									dest[3*i+1] = 0;
+									dest[3 * i + 0] = 0;
 								}
+								*/
+								// std::cout << "Hier - " << out.channels() << std::endl;
+
 								break;
+							}
 							default:
 								break;
 							}

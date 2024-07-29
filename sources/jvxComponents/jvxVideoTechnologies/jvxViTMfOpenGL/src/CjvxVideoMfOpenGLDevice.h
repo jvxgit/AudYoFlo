@@ -86,6 +86,9 @@ private:
 			jvxByte* bufRead = nullptr;
 			jvxSize segWidth = 0;
 			jvxSize segHeight = 0;
+			jvxSize plane1_Sz = 0;
+			jvxSize plane2_offset = 0;
+			jvxSize plane2_Sz = 0;
 		} convertOnRead;
 	} runtime;
 

@@ -23,8 +23,9 @@ endif()
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads/include
-	 ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
-  ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
+	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
+	${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
+	${OPENCV_LIBRARY_PATH}
   )
 
 if(JVX_USE_OPENGL_X11)
@@ -60,6 +61,7 @@ set(LOCAL_LIBS
 	mfreadwrite
 	mfuuid
 	shlwapi
+	${OPENCV_LIBRARIES}
 	)
 
 if(JVX_USE_OPENGL_X11)

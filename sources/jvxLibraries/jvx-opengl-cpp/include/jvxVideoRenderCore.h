@@ -70,14 +70,18 @@ static const char* fragment_shader_code_view_rgb24 = \
 	"												\n" \
 	"uniform sampler2D texture;						\n" \
 	"												\n" \
-	"varying mediump vec2 texcoord;							\n" \
+	"varying mediump vec2 texcoord;					\n" \
 	"												\n" \
 	"void main()									\n" \
 	"{												\n" \
 	"	gl_FragColor =								\n" \
 	"		texture2D(texture, texcoord);			\n" \
 	"}												\n";
-	
+
+// Show only the red part:
+//"	gl_FragColor[1] = 0;						\n" \
+//"	gl_FragColor[2] = 0;						\n" \
+
 // No longer in use: 
 // "#version 110									\n" \
 
@@ -440,7 +444,7 @@ public:
 				GL_TEXTURE_2D, 0,           /* target, level of detail */
 				GL_RGB8,                    /* internal format */
 				(GLsizei)myWidth, (GLsizei)myHeight, 0,           /* width, height, border */
-				GL_BGR, GL_UNSIGNED_BYTE,   /* external format, type */
+				GL_RGB, GL_UNSIGNED_BYTE,   /* external format, type */
 				buf[0]                     /* pixels */
 			);
 		}
