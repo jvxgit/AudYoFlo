@@ -63,6 +63,8 @@ public:
 	virtual jvxErrorType shutdown_terminate_product() = 0;
 	jvxErrorType shutdown_terminate_base();
 
+	jvxBool check_system_build_integrity();
+
 	jvxErrorType reference_properties(const jvxComponentIdentification& tpId, IjvxAccessProperties** accProps);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION on_connection_rules_started()  override;

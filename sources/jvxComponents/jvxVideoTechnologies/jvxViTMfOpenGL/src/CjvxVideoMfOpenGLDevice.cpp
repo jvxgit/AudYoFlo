@@ -234,16 +234,16 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	GUID nativeSubGuid = { 0 };
 	hr = type->GetGUID(MF_MT_SUBTYPE, &nativeSubGuid);
 
-	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxVideoDevice_genpcg::video.format.value;
+	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)lstModes[idModeSelect].form;
 	_common_set_ocon.theData_out.con_data.number_buffers = genMf_device::systemex.number_buffers.value;
 	_common_set_ocon.theData_out.con_data.number_buffers = JVX_MAX(_common_set_ocon.theData_out.con_data.number_buffers, 2);
 	_common_set_ocon.theData_out.con_params.number_channels = 1;
-	_common_set_ocon.theData_out.con_params.rate = CjvxVideoDevice_genpcg::video.framerate.value;
+	_common_set_ocon.theData_out.con_params.rate = lstModes[idModeSelect].fps;
 	_common_set_ocon.theData_out.con_data.buffers = NULL;
 	_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
-	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
-	_common_set_ocon.theData_out.con_params.segmentation.x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
-	_common_set_ocon.theData_out.con_params.segmentation.y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
+	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)lstModes[idModeSelect].subform_sw;
+	_common_set_ocon.theData_out.con_params.segmentation.x = lstModes[idModeSelect].width;
+	_common_set_ocon.theData_out.con_params.segmentation.y = lstModes[idModeSelect].height;
 	_common_set_ocon.theData_out.con_params.additional_flags = 0;
 
 	runtime.szElement = jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] *
@@ -251,6 +251,23 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	runtime.szLine = _common_set_ocon.theData_out.con_params.segmentation.x * runtime.szElement;
 	runtime.szRaw = _common_set_ocon.theData_out.con_params.segmentation.y * runtime.szLine;
 	_common_set_ocon.theData_out.con_params.buffersize = runtime.szRaw;
+
+	if (lstModes[idModeSelect].subform_hw != lstModes[idModeSelect].subform_sw)
+	{
+		runtime.convertOnRead.inConvertBufferInUse = true;
+
+		// Allocate the proper conversion buffer!!
+		runtime.convertOnRead.form_hw = lstModes[idModeSelect].subform_hw;
+		runtime.convertOnRead.szElement = (jvxData)jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format];
+		runtime.convertOnRead.szElement *= (jvxData)jvxDataFormatGroup_size[runtime.convertOnRead.form_hw];
+		runtime.convertOnRead.szElement /= (jvxData)jvxDataFormatGroup_size_div[runtime.convertOnRead.form_hw];
+		jvxData ll = runtime.convertOnRead.szElement * lstModes[idModeSelect].width * lstModes[idModeSelect].height;
+		runtime.convertOnRead.lField = JVX_DATA2SIZE(ll);
+		assert(ll == (jvxData)runtime.convertOnRead.lField);
+		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.convertOnRead.bufRead, jvxByte, runtime.convertOnRead.lField);
+		runtime.convertOnRead.segWidth = lstModes[idModeSelect].width;
+		runtime.convertOnRead.segHeight = lstModes[idModeSelect].height;		
+	}
 
 	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res != JVX_NO_ERROR)
@@ -318,7 +335,13 @@ CjvxVideoMfOpenGLDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 	runtime.szLine = 0;
 	runtime.szRaw = 0;
 
-
+	if (runtime.convertOnRead.inConvertBufferInUse)
+	{
+		JVX_DSP_SAFE_DELETE_FIELD(runtime.convertOnRead.bufRead);
+		runtime.convertOnRead.inConvertBufferInUse = false;
+		runtime.convertOnRead.szElement = 0;
+		runtime.convertOnRead.lField = 0;
+	}
 	// This little trick is required to switch the camera LED off after usage ;-)
 	shutdown_camera();
 	bootup_camera();
@@ -513,7 +536,7 @@ CjvxVideoMfOpenGLDevice::updateDependentVariables_nolock()
 		CjvxVideoDevice_genpcg::video.segmentsize_y.value = lstModes[idSel].height;
 		CjvxVideoDevice_genpcg::video.framesize.value = lstModes[idSel].width * lstModes[idSel].height;
 		CjvxVideoDevice_genpcg::video.format.value = lstModes[idSel].form;
-		CjvxVideoDevice_genpcg::video.subformat.value = lstModes[idSel].subform;
+		CjvxVideoDevice_genpcg::video.subformat.value = lstModes[idSel].subform_sw;
 
 		// External data visualization interface must be aligned with 
 		genMf_device::expose_visual_if.visual_data_video.format.value = CjvxVideoDevice_genpcg::video.format.value;
@@ -576,7 +599,7 @@ CjvxVideoMfOpenGLDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
 		if (
-			(ld_con->con_params.format_group != lstModes[idSel].subform) ||
+			(ld_con->con_params.format_group != lstModes[idSel].subform_sw) ||
 			(ld_con->con_params.rate != (jvxInt32)lstModes[idSel].fps) ||
 			(ld_con->con_params.format != lstModes[idSel].form))
 		{

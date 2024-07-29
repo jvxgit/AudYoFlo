@@ -123,7 +123,7 @@ typedef enum
 		JVX_DATAFORMAT_LIMIT
 } jvxDataFormat; 
 
-static jvxTextHelpers jvxDataFormat_str[JVX_DATAFORMAT_LIMIT] =
+static jvxTextHelpers jvxDataFormat_str[JVX_DATAFORMAT_LIMIT + 1] =
 {
 	{"none", "JVX_DATAFORMAT_NONE"},
 	{"jvxData(" JVX_DATA_DESCRIPTOR ")", "JVX_DATAFORMAT_DATA" },
@@ -156,7 +156,9 @@ static jvxTextHelpers jvxDataFormat_str[JVX_DATAFORMAT_LIMIT] =
 	{"handle", "JVX_DATAFORMAT_HANDLE" },
 	{"pointer", "JVX_DATAFORMAT_POINTER"},
 	{"callback", "JVX_DATAFORMAT_CALLBACK" },
-	{"interface", "JVX_DATAFORMAT_INTERFACE"}
+	{"interface", "JVX_DATAFORMAT_INTERFACE"},
+
+	{NULL, NULL},
 };
 
 static inline const char* jvxDataFormat_txt(jvxSize id)
@@ -186,7 +188,7 @@ static inline jvxDataFormat jvxDataFormat_decode(const char * token)
 }
 
 //! Typedef enum for sampleformat
-static jvxSize jvxDataFormat_size[JVX_DATAFORMAT_LIMIT] =
+static jvxSize jvxDataFormat_size[JVX_DATAFORMAT_LIMIT + 1] =
 {
 	0,					// JVX_DATAFORMAT_NONE
 	sizeof(jvxData),    // JVX_DATAFORMAT_DATA
@@ -213,7 +215,8 @@ static jvxSize jvxDataFormat_size[JVX_DATAFORMAT_LIMIT] =
 	0,					// JVX_DATAFORMAT_HANDLE
 	sizeof(jvxHandle*),	// JVX_DATAFORMAT_POINTER
 	0,					// JVX_DATAFORMAT_CALLBACK
-	0					// JVX_DATAFORMAT_INTERFACE
+	0,					// JVX_DATAFORMAT_INTERFACE
+	JVX_DATAFORMAT_LIMIT
 } ;
 
 static inline jvxSize jvxDataFormat_getsize(jvxSize idx)
@@ -238,6 +241,7 @@ typedef enum
 		JVX_DATAFORMAT_GROUP_FFT_C2C,
 
 		JVX_DATAFORMAT_GROUP_VIDEO_RGB24,		
+		JVX_DATAFORMAT_GROUP_VIDEO_NV12,
 		JVX_DATAFORMAT_GROUP_VIDEO_SINGLE8,
 		JVX_DATAFORMAT_GROUP_VIDEO_MONO,
 
@@ -256,7 +260,7 @@ typedef enum
 		,JVX_DATAFORMAT_GROUP_LIMIT
 } jvxDataFormatGroup; 
 
-static jvxTextHelpers jvxDataFormatGroup_str[JVX_DATAFORMAT_GROUP_LIMIT] =
+static jvxTextHelpers jvxDataFormatGroup_str[JVX_DATAFORMAT_GROUP_LIMIT + 1] =
 {
 	{"none", "JVX_DATAFORMAT_NONE"},
 
@@ -267,6 +271,7 @@ static jvxTextHelpers jvxDataFormatGroup_str[JVX_DATAFORMAT_GROUP_LIMIT] =
 	{"fft complex2complex", "JVX_DATAFORMAT_GROUP_FFT_C2C"},
 
 	{"rgb24", "JVX_DATAFORMAT_GROUP_VIDEO_RGB24" },
+	{"nv12", "JVX_DATAFORMAT_GROUP_VIDEO_NV12" },
 	{ "single8", "JVX_DATAFORMAT_GROUP_VIDEO_SINGLE8" },
 	{ "mono", "JVX_DATAFORMAT_GROUP_VIDEO_MONO" },
 	
@@ -282,6 +287,8 @@ static jvxTextHelpers jvxDataFormatGroup_str[JVX_DATAFORMAT_GROUP_LIMIT] =
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 	JVX_DATAFORMAT_GROUP_STRINGS_PRODUCT
 #endif
+
+	, {NULL, NULL}
 };
 
 static inline const char* jvxDataFormatGroup_txt(jvxSize id)
@@ -311,7 +318,7 @@ static inline jvxDataFormatGroup jvxDataFormatGroup_decode(const char * token)
 }
 
 //! Typedef enum for sampleformat
-static jvxSize jvxDataFormatGroup_size[JVX_DATAFORMAT_GROUP_LIMIT] =
+static jvxSize jvxDataFormatGroup_size[JVX_DATAFORMAT_GROUP_LIMIT + 1] =
 {
 	0, // JVX_DATAFORMAT_GROUP_NONE
 
@@ -322,18 +329,54 @@ static jvxSize jvxDataFormatGroup_size[JVX_DATAFORMAT_GROUP_LIMIT] =
 	0, // JVX_DATAFORMAT_GROUP_FFT_C2C
 
 	(jvxSize)3, // JVX_DATAFORMAT_GROUP_VIDEO_RGB24	
+	(jvxSize)3, // JVX_DATAFORMAT_GROUP_VIDEO_NV12	
 	0, // JVX_DATAFORMAT_GROUP_VIDEO_SINGLE8
 	0, // JVX_DATAFORMAT_GROUP_VIDEO_MONO
 
 	0, // JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED
 	0, // JVX_DATAFORMAT_GROUP_GENERIC_NON_INTERLEAVED
 
-	1 // JVX_DATAFORMAT_GROUP_GENERIC_PCM
+	1, // JVX_DATAFORMAT_GROUP_GENERIC
+	0, // JVX_DATAFORMAT_GROUP_TRIGGER_ONLY,
+
+	1, //JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
+	1 // JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD
+
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 	JVX_DATAFORMAT_GROUP_SIZES_PRODUCT
 #endif
+	, JVX_DATAFORMAT_GROUP_LIMIT // <- this one for a generic test of number of entries
+};
 
+static jvxSize jvxDataFormatGroup_size_div[JVX_DATAFORMAT_GROUP_LIMIT + 1] =
+{
+	1, // JVX_DATAFORMAT_GROUP_NONE
+
+	1, // JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED
+	1, // JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED
+
+	1, // JVX_DATAFORMAT_GROUP_FFT_R2C
+	1, // JVX_DATAFORMAT_GROUP_FFT_C2C
+
+	(jvxSize)1, // JVX_DATAFORMAT_GROUP_VIDEO_RGB24	
+	(jvxSize)2, // JVX_DATAFORMAT_GROUP_VIDEO_NV12	
+	1, // JVX_DATAFORMAT_GROUP_VIDEO_SINGLE8
+	1, // JVX_DATAFORMAT_GROUP_VIDEO_MONO
+
+	1, // JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED
+	1, // JVX_DATAFORMAT_GROUP_GENERIC_NON_INTERLEAVED
+
+	1, // JVX_DATAFORMAT_GROUP_GENERIC
+	1, // JVX_DATAFORMAT_GROUP_TRIGGER_ONLY,
+
+	1, //JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
+	1 // JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD
+
+#ifndef JVX_NO_SYSTEM_EXTENSIONS
+	JVX_DATAFORMAT_GROUP_SIZES_DIV_PRODUCT
+#endif
+	, JVX_DATAFORMAT_GROUP_LIMIT // <- this one for a generic test of number of entries
 };
 
 // I added an underscore since the completion always uses this function instead on jvxDataFormat_getsize
@@ -343,6 +386,11 @@ static inline jvxSize jvxDataFormatGroup_getsize(jvxSize idx)
 	return(jvxDataFormatGroup_size[idx]);
 }
 
+static inline jvxSize jvxDataFormatGroup_getsize_div(jvxSize idx)
+{
+	assert(idx < JVX_DATAFORMAT_GROUP_LIMIT);
+	return(jvxDataFormatGroup_size_div[idx]);
+}
 // ====================================================================		
 
 typedef enum

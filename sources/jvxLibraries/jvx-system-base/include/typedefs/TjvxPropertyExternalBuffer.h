@@ -81,7 +81,7 @@ namespace jvx
 		jvxDataFormat formFld;
 		jvxDataFormatGroup subFormFld;
 		jvxSize szFld;
-		jvxSize szElmFld;
+		jvxData szElmFld;
 		jvxSize numElmFldOneChanOneBuf;
 		jvxSize numElmFldOneBuf;
 		jvxSize numElmFld;

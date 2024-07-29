@@ -6,6 +6,39 @@
 
 // ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
+// Conversion code taken from here:
+// https://fourcc.org/fccyvrgb.php
+// https://react-native-vision-camera.com/docs/guides/pixel-formats
+
+#define YUV2RGB_INT_VARIANT0(R, G, B, Y, U, V) \
+	B = Y; \
+	G = Y; \
+	R = Y;
+
+#define YUV2RGB_INT_VARIANT1(R, G, B, Y, U, V) \
+	B = 1.164*(Y - 16) + 2.018*(U - 128); \
+	G = 1.164*(Y - 16) - 0.813*(V - 128) - 0.391*(U - 128); \
+	R = 1.164*(Y - 16) + 1.596*(V - 128) ;
+
+#define YUV2RGB_FLT_VARIANT2(R, G, B, Y, U, V) \
+	R = Y + 1.403 * V; \
+	G = Y - 0.344 * U - 0.714 * V; \
+	B = Y + 1.770 * U;
+
+#define PIXEL_CLAMP(out, p) \
+	{ \
+		int clampVal = JVX_DATA2UINT8(p); \
+		if (clampVal < 0) \
+		{ \
+			clampVal = 0; \
+		} \
+		if (clampVal > 255) \
+		{ \
+			clampVal = 255; \
+		} \
+		out = clampVal; \
+	}
+
 // IUnknown methods
 STDMETHODIMP 
 CjvxVideoMfOpenGLDevice::QueryInterface(REFIID aRiid, void** aPpv)
@@ -97,6 +130,8 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 			if (mediabuffer)
 			{
 				// Access buffer
+				DWORD ll = 0;
+				mediabuffer->GetCurrentLength(&ll);
 
 				// Query for the 2-D buffer interface. 
 				mediabuffer->QueryInterface(IID_PPV_ARGS(&m2DBuffer));
@@ -111,26 +146,89 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 					jvxSize i;
 					BYTE* src = NULL;
 					LONG stride = 0;
+					jvxSize incrementFwd = 1;
+
 					//std::cout << "Start capture buffer " << theData.pipeline.idx_stage << std::endl;
 					jvxByte* dest = (jvxByte*)_common_set_ocon.theData_out.con_data.buffers[
 						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][0];
+
 						m2DBuffer->Lock2D(&src, &stride);
 
-						// If source is browsed from toe to the head, we do the same for the
-						// texture target buffer
-						if (stride < 0)
+						if (runtime.convertOnRead.inConvertBufferInUse)
 						{
-							dest += (_common_set_ocon.theData_out.con_params.segmentation.y - 1)* runtime.szLine;
-						}
+							jvxSize j;
+							jvxUInt8* ptrReadY = nullptr;
+							jvxInt8* ptrReadU = nullptr;
+							jvxInt8* ptrReadV = nullptr;
 
-						// This copies the lines in target buffer: from 
-						// - .. higher lines to lower lines in target buffer
-						// - .. from end to beginning in src buffer
-						for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
+							switch (runtime.convertOnRead.form_hw)
+							{
+							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_NV12:
+
+								assert(stride == runtime.convertOnRead.segWidth);
+								ptrReadY = (jvxUInt8*)src;
+								ptrReadU = (jvxInt8*)ptrReadY + (runtime.convertOnRead.segHeight * runtime.convertOnRead.segWidth);
+								ptrReadV = ptrReadU + 1;
+								
+								for (i = 0; i < runtime.convertOnRead.segHeight; i++)
+								{
+									jvxInt8* ptrReadUSS = ptrReadU;
+									jvxInt8* ptrReadVSS = ptrReadV;
+
+									for (j = 0; j < runtime.convertOnRead.segWidth; j++)
+									{
+										jvxData r, g, b;
+										jvxData y, u, v;
+										y = (jvxData)*ptrReadY++;
+										u = (jvxData)*ptrReadUSS;
+										v = (jvxData)*ptrReadVSS;
+										YUV2RGB_INT_VARIANT0(r, g, b, y, u, v);
+
+										PIXEL_CLAMP(*dest, r);
+										dest++;
+										PIXEL_CLAMP(*dest, g);
+										dest++;
+										PIXEL_CLAMP(*dest, b);
+										dest++;
+
+										// Subsampling of UV in x-direction
+										if (j % 2)
+										{
+											ptrReadUSS += 2;
+											ptrReadVSS += 2;
+										}
+									}
+									// ptrReadY += stride;		
+									if (j % 2 == 0)
+									{
+										ptrReadUSS = ptrReadU;
+										ptrReadVSS = ptrReadV;
+									}
+								}
+								break;
+							default:
+								break;
+							}
+						}
+						else
 						{
-							memcpy(dest, src, runtime.szLine);
-							src += stride;
-							dest -= runtime.szLine;
+							// If source is browsed from toe to the head, we do the same for the
+							// texture target buffer
+							if (stride < 0)
+							{
+								dest += (_common_set_ocon.theData_out.con_params.segmentation.y - 1) * runtime.szLine;
+								incrementFwd = -1;
+							}
+
+							// This copies the lines in target buffer: from 
+							// - .. higher lines to lower lines in target buffer
+							// - .. from end to beginning in src buffer
+							for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
+							{
+								memcpy(dest, src, runtime.szLine);
+								src += stride;
+								dest += runtime.szLine * incrementFwd;
+							}
 						}
 						m2DBuffer->Unlock2D();
 						//std::cout << "Stop capture buffer " << theData.pipeline.idx_stage << std::endl;

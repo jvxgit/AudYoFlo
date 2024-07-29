@@ -117,7 +117,7 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
 				{
 					_common_set_icon.theData_in->con_data.buffers[i][j] = ptr;
-					ptr += (ptrExt->numElmFldOneChanOneBuf * ptrExt->szElmFld);
+					ptr += JVX_DATA2SIZE(ptrExt->numElmFldOneChanOneBuf * ptrExt->szElmFld);
 				}
 			}
 			break;

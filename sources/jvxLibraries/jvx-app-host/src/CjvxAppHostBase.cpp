@@ -382,7 +382,6 @@ JVX_APPHOST_CLASSNAME::read_command_line_parameters(IjvxCommandLine* commLine)
 
 }
 
-
 jvxErrorType
 JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots, const std::map<jvxComponentIdentification, jvxSize>& specSubSlots)
 {
@@ -414,13 +413,7 @@ JVX_APPHOST_CLASSNAME::boot_initialize_base(jvxSize* numSlots, const std::map<jv
 
 		}
 
-		if (
-			(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_class != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) ||
-			(jvxComponentType_class(JVX_COMPONENT_ALL_LIMIT) != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) ||
-			(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_sec_type != JVX_COMPONENT_ALL_LIMIT))
-		{
-			integrityOk = false;
-		}
+		integrityOk = check_system_build_integrity();
 
 		if(!integrityOk)
 		{
@@ -885,4 +878,27 @@ JVX_APPHOST_CLASSNAME::shutdown_postprocess_host()
 	on_components_stop();
 
 	on_connectionrules_stop();
+}
+
+// =======================================================================================
+// =======================================================================================
+
+jvxBool
+JVX_APPHOST_CLASSNAME::check_system_build_integrity()
+{
+	jvxBool integrityOk = true;
+	if (
+		(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_class != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) ||
+		(jvxComponentType_class(JVX_COMPONENT_ALL_LIMIT) != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) ||
+		(theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_sec_type != JVX_COMPONENT_ALL_LIMIT) ||
+		(jvxDataFormatGroup_size[JVX_DATAFORMAT_GROUP_LIMIT] != JVX_DATAFORMAT_GROUP_LIMIT) ||
+		(jvxDataFormatGroup_size_div[JVX_DATAFORMAT_GROUP_LIMIT] != JVX_DATAFORMAT_GROUP_LIMIT) ||
+		(jvxDataFormatGroup_str[JVX_DATAFORMAT_GROUP_LIMIT].friendly != NULL) ||
+		(jvxDataFormat_size[JVX_DATAFORMAT_LIMIT] != JVX_DATAFORMAT_LIMIT) ||
+		(jvxDataFormat_str[JVX_DATAFORMAT_LIMIT].friendly != NULL))
+	{
+		integrityOk = false;
+	}
+
+	return integrityOk;
 }

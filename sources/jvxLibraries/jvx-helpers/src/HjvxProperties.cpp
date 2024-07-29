@@ -406,12 +406,22 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_full(jvxSize bLength,
 	theNewHeader->formFld = form;
 	theNewHeader->subFormFld = subform;
 	theNewHeader->ptrFld = NULL;
-	theNewHeader->szElmFld = jvxDataFormat_getsize(theNewHeader->formFld)*jvxDataFormatGroup_getsize(theNewHeader->subFormFld);
-	assert(theNewHeader->szElmFld);
+	theNewHeader->szElmFld = (jvxData)jvxDataFormat_getsize(theNewHeader->formFld)* (jvxData)jvxDataFormatGroup_getsize(theNewHeader->subFormFld);
+	
+	// Take into account the divisor
+	assert(jvxDataFormatGroup_getsize_div(theNewHeader->subFormFld));
+	theNewHeader->szElmFld /= (jvxData)jvxDataFormatGroup_getsize_div(theNewHeader->subFormFld);
+
+	// There should be something else that 0!!!
+	assert(theNewHeader->szElmFld != 0);
+
 	theNewHeader->numElmFldOneChanOneBuf = theNewHeader->length;
 	theNewHeader->numElmFldOneBuf = theNewHeader->numElmFldOneChanOneBuf * theNewHeader->number_channels;
 	theNewHeader->numElmFld = theNewHeader->numElmFldOneBuf * theNewHeader->specific.the2DFieldBuffer_full.common.number_buffers;
-	theNewHeader->szFld = theNewHeader->szElmFld * theNewHeader->numElmFld;
+	
+	jvxData szFldLoc = theNewHeader->szElmFld * theNewHeader->numElmFld;
+	theNewHeader->szFld = (jvxSize)(szFldLoc);
+	assert((jvxData)theNewHeader->szFld == szFldLoc);
 
 	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(theNewHeader->ptrFld, jvxByte, theNewHeader->szFld);
 	if (szFld)
