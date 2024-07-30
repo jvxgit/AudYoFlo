@@ -76,7 +76,7 @@ static const char* fragment_shader_code_view_rgb24 = \
 	"void main()									\n" \
 	"{												\n" \
 	"	mediump vec2 coord = texcoord; \n" \
-	"	if(invert_y) coord.y = 1 - coord.y; \n" \
+	"	if(invert_y != 0) coord.y = 1.0 - coord.y; \n" \
 	"	gl_FragColor =								\n" \
 	"		texture2D(texture, coord);			\n" \
 	"}												\n";

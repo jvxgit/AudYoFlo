@@ -162,7 +162,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 						if (runtime.convertOnRead.inConvertBufferInUse)
 						{
 							jvxSize j;
-							
+
 							switch (runtime.convertOnRead.form_hw)
 							{
 							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_NV12:
@@ -171,7 +171,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 								// In openCV we need to involve the cv data structs. I have just 
 								// been rather robust in involving the Mat structs with raw memory without really taking into account
 								// the openCVmatrix memory model with channels. However, it works!!
-								
+
 								// This pointer points to a field of bytes that contains Y in the first part and UV in the second part
 								// We will need to make 2 planes out of that: 
 								// - First plane, 1 channel: Y - size if h x w
@@ -227,8 +227,8 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 							// texture target buffer
 							if (stride < 0)
 							{
-								dest += (_common_set_ocon.theData_out.con_params.segmentation.y - 1) * runtime.szLine;
-								incrementFwd = -1;
+								//dest += (_common_set_ocon.theData_out.con_params.segmentation.y - 1) * runtime.szLine;
+								//incrementFwd = -1;
 							}
 
 							// This copies the lines in target buffer: from 
@@ -236,9 +236,26 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 							// - .. from end to beginning in src buffer
 							for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
 							{
-								memcpy(dest, src, runtime.szLine);
+								if (stride > 0)
+								{
+									memcpy(dest, src, runtime.szLine);
+								}
+								else
+								{
+									jvxSize j;
+									jvxUInt8* ptrFrom = src + runtime.szLine;
+									jvxUInt8* ptrTo = dest;
+
+									// Backward copy
+									for (j = 0; j < runtime.szLine; j++)
+									{
+										--ptrFrom;
+										*ptrTo = *ptrFrom;
+										ptrTo++;
+									}
+								}
 								src += stride;
-								dest += runtime.szLine * incrementFwd;
+								dest += runtime.szLine;
 							}
 						}
 						m2DBuffer->Unlock2D();
