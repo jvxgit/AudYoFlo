@@ -191,6 +191,20 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 								// This is suboptimal: we need to copy the allocated memory. Hopefully, cv uses pre-allocated memory internally for higher efficiency!!
 								memcpy(dest, out.data, runtime.szRaw);
 								
+								/*
+								 * Test code to set values to 0
+								jvxUInt8* setZero = dest;
+								for (i = 0; i < 20; i++)
+								{
+									setZero += runtime.szLine;
+								}
+								for (i = 0; i < 200; i++)
+								{
+									memset(setZero, 0xFF, runtime.szLine);
+									setZero += runtime.szLine;
+								}
+
+								*/
 								// Following lines for a color check. This indicates that my GL renderer mixes blue and red!!
 								/*
 								for (i = 0; i < runtime.szRaw / 3; i++)

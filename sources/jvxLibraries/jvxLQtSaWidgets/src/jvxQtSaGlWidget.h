@@ -99,6 +99,8 @@ class CjvxMyGlWidget: public QOpenGLWidget, protected jvxVideoRenderCore_bc
 	jPAD ident;
 	jPD trans;
 
+	cfgRenderStraight myVar_straightPaint;
+
 public:
 
 	CjvxMyGlWidget(QWidget* parent);
@@ -127,7 +129,9 @@ private:
 		const char*	fragment_shader_code,
 		jvxOpenGlRendering myRenderOperation,
 		GLint* position, GLint* texture,
-		GLint* border_x, GLint* border_y, GLint* offset_x) override;
+		GLint* border_x, GLint* border_y, 
+		GLint* offset_x, GLint* invert_y) override;
+
 	jvxErrorType release_programm_unassign() override;
 
 	jvxErrorType start_rendering_program() override;

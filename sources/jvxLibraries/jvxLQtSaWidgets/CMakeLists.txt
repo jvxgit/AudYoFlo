@@ -46,6 +46,7 @@ set(LOCAL_SOURCES
 
 	set(LOCAL_SOURCES ${LOCAL_SOURCES}
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvxQtSaGlWidget.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvxQtSaGlWidget.H
 		)
 set(LOCAL_LIBS
   qwt_static

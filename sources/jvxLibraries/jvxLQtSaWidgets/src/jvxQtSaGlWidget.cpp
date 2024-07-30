@@ -144,6 +144,7 @@ CjvxMyGlWidget::CjvxMyGlWidget(QWidget* parent): QOpenGLWidget(parent)
 	postpone.renderOperation = JVX_GL_RENDER_STRAIGHT;
 	postpone.cfgRender = NULL;
 
+	myVar_straightPaint.invert_y = c_true;
 	m_program = NULL;
 }
 
@@ -340,7 +341,8 @@ CjvxMyGlWidget::create_programm_assign(
 	const char*	fragment_shader_code,
 	jvxOpenGlRendering myRenderOperation, 
 	GLint* position, GLint* texture,
-	GLint* border_x, GLint* border_y, GLint* offset_x)
+	GLint* border_x, GLint* border_y, 
+	GLint* offset_x, GLint* invert_y)
 {
 	QString log;
 	m_program = new QOpenGLShaderProgram(this);
@@ -375,6 +377,9 @@ CjvxMyGlWidget::create_programm_assign(
 		*border_x = m_program->uniformLocation("border_x");
 		*border_y = m_program->uniformLocation("border_y");
 		*offset_x = m_program->uniformLocation("offset_x");
+		break;
+	case JVX_GL_RENDER_STRAIGHT:
+		*invert_y = m_program->uniformLocation("invert_y");
 		break;
 	}
 	*texture = m_program->uniformLocation("texture");
@@ -475,7 +480,8 @@ CjvxMyGlWidget::paintGL()
 	jvxSize iW = 0;
 	jvxSize ll1 = 0;
 	jvxSize ll2 = 0;
-	cfgRotateAngleOffsetFollow myVar;
+	cfgRotateAngleOffsetFollow myVar_rotatePaint;
+	
 	//std::cout << "Paint" << std::endl;
 	if (jvx_bitTest(status_gl, 0))
 	{
@@ -485,9 +491,9 @@ CjvxMyGlWidget::paintGL()
 			{
 			case jvx::JVX_EXTERNAL_BUFFER_SUB_2D_FULL:
 				if (external_link.mySwitchBuffer->fill_height > 0)
-				{
+				{					
 					// ## std::cout << "Start render buffer " << external_link.mySwitchBuffer->idx_read << std::endl;
-					prepare_render((const jvxByte**)gl.bufs[external_link.mySwitchBuffer->idx_read]);
+					prepare_render((const jvxByte**)gl.bufs[external_link.mySwitchBuffer->idx_read], &myVar_straightPaint);
 					// ## std::cout << "Stop render buffer " << external_link.mySwitchBuffer->idx_read << std::endl;
 
 					external_link.mySwitchBuffer->safe_access.lockf(external_link.mySwitchBuffer->safe_access.priv);
@@ -519,26 +525,26 @@ CjvxMyGlWidget::paintGL()
 					ll1 = JVX_MIN(fH, external_link.mySwitchBuffer->specific.the2DFieldBuffer_inc.common.seg_y - iR);
 					ll2 = fH - ll1;
 					iW = (iR + fH) % external_link.mySwitchBuffer->specific.the2DFieldBuffer_inc.common.seg_y;
-					myVar.border_x = 0.05;
-					myVar.border_y = 0.1;
+					myVar_rotatePaint.border_x = 0.05;
+					myVar_rotatePaint.border_y = 0.1;
 					iW = iR;
 					if (ll1)
 					{
 						iW += ll1;
-						myVar.offset_x = (jvxData)iW / (jvxData)external_link.mySwitchBuffer->specific.the2DFieldBuffer_inc.common.seg_y;
-						myVar.update_offset_y = iR;
-						myVar.update_num_y = ll1;
-						prepare_render((const jvxByte**)gl.bufs[0], &myVar);
+						myVar_rotatePaint.offset_x = (jvxData)iW / (jvxData)external_link.mySwitchBuffer->specific.the2DFieldBuffer_inc.common.seg_y;
+						myVar_rotatePaint.update_offset_y = iR;
+						myVar_rotatePaint.update_num_y = ll1;
+						prepare_render((const jvxByte**)gl.bufs[0], &myVar_rotatePaint);
 						iR += ll1;
 					}
 					if (ll2)
 					{
 						iR = 0;
 						iW += ll2;
-						myVar.offset_x = (jvxData)iW / (jvxData)external_link.mySwitchBuffer->specific.the2DFieldBuffer_inc.common.seg_y;
-						myVar.update_offset_y = iR;
-						myVar.update_num_y = ll2;
-						prepare_render((const jvxByte**)gl.bufs[0], &myVar);
+						myVar_rotatePaint.offset_x = (jvxData)iW / (jvxData)external_link.mySwitchBuffer->specific.the2DFieldBuffer_inc.common.seg_y;
+						myVar_rotatePaint.update_offset_y = iR;
+						myVar_rotatePaint.update_num_y = ll2;
+						prepare_render((const jvxByte**)gl.bufs[0], &myVar_rotatePaint);
 					}
 
 					external_link.mySwitchBuffer->safe_access.lockf(external_link.mySwitchBuffer->safe_access.priv);

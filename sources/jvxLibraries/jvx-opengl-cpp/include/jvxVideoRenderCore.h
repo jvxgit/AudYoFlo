@@ -69,13 +69,16 @@ static const char* vertex_shader_code_rgb24 = \
 static const char* fragment_shader_code_view_rgb24 = \
 	"												\n" \
 	"uniform sampler2D texture;						\n" \
+	"uniform mediump int invert_y;						\n" \
 	"												\n" \
 	"varying mediump vec2 texcoord;					\n" \
 	"												\n" \
 	"void main()									\n" \
 	"{												\n" \
+	"	mediump vec2 coord = texcoord; \n" \
+	"	if(invert_y) coord.y = 1 - coord.y; \n" \
 	"	gl_FragColor =								\n" \
-	"		texture2D(texture, texcoord);			\n" \
+	"		texture2D(texture, coord);			\n" \
 	"}												\n";
 
 // Show only the red part:
@@ -144,15 +147,20 @@ typedef enum
 	JVX_GL_RENDER_ROTATE_ANGLE_OFFSET_FOLLOW
 } jvxOpenGlRendering;
 
-typedef struct
+struct cfgRotateAngleOffsetFollow
 {
 	jvxData border_x;
 	jvxData border_y;
 	jvxData offset_x;
 	jvxSize update_offset_y;
 	jvxSize update_num_y;
-} cfgRotateAngleOffsetFollow;
-;
+} ;
+
+struct cfgRenderStraight
+{
+	jvxCBool invert_y = false;
+};
+
 //"	vec2 coord = vec2((texcoord.x + 0.1) * 0.9/1.1, texcoord.y + 0.1 * 0.9/1.1); \n" \
 //"	coord = vec2((texcoord.x - 0.5) * (Resolution.x / Resolution.y), texcoord.y - 0.5) * mat2(cos_factor, sin_factor, -sin_factor, cos_factor);
 
@@ -183,6 +191,8 @@ private:
 			GLint border_x;
 			GLint border_y;
 			GLint offset_x;
+
+			GLint invert_y;
 		} uniforms;
 
 		struct
@@ -193,6 +203,7 @@ private:
 		GLfloat border_x;
 		GLfloat border_y;
 		GLfloat offset_x;
+		GLint invert_y;
 
 	} g_resources;
 
@@ -353,6 +364,7 @@ public:
 		g_resources.uniforms.border_x = 0;
 		g_resources.uniforms.border_y = 0;
 		g_resources.uniforms.offset_x = 0;	
+		g_resources.uniforms.invert_y = 0;
 		g_resources.uniforms.texture = 0;
 		g_resources.attributes.position = 0;
 
@@ -408,6 +420,15 @@ public:
 
 			//std::cout << "Offset x: " << g_resources.offset_x << std::endl;
 			glUniform1f(g_resources.uniforms.offset_x, g_resources.offset_x);
+			break;
+		case JVX_GL_RENDER_STRAIGHT:
+			g_resources.invert_y = 0;
+			if (cfgSpecific)
+			{
+				cfgRenderStraight* optVar = (cfgRenderStraight*)cfgSpecific;
+				g_resources.invert_y = optVar->invert_y;
+			}
+			glUniform1i(g_resources.uniforms.invert_y, g_resources.invert_y);
 			break;
 		default:
 		  break;
@@ -499,7 +520,8 @@ public:
 		const char*	fragment_shader_code,
 		jvxOpenGlRendering myRenderOperation,
 		GLint* position, GLint* texture,
-		GLint* border_x, GLint* border_y, GLint* offset_x) = 0;
+		GLint* border_x, GLint* border_y, 
+		GLint* offset_x, GLint* invert_y) = 0;
 	virtual jvxErrorType release_programm_unassign() = 0;
 	virtual jvxErrorType start_rendering_program() = 0;
 	virtual jvxErrorType stop_rendering_program() = 0;
@@ -713,7 +735,8 @@ private:
 
 			&g_resources.uniforms.border_x,
 			&g_resources.uniforms.border_y,
-			&g_resources.uniforms.offset_x
+			&g_resources.uniforms.offset_x,
+			&g_resources.uniforms.invert_y
 		);
 		if (errProg == JVX_ERROR_UNSUPPORTED)
 		{
@@ -742,6 +765,9 @@ private:
 				g_resources.uniforms.offset_x
 					= glGetUniformLocation(g_resources.program, "offset_x");
 				break;
+			case JVX_GL_RENDER_STRAIGHT:
+				g_resources.uniforms.invert_y
+					= glGetUniformLocation(g_resources.program, "invert_y");
 			default:
 			  break;
 			}
