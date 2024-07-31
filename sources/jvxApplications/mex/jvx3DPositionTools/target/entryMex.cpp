@@ -424,11 +424,11 @@ void mexFunction(int nlhs, mxArray* plhs[],
 							plhs[1] = arr;
 						}
 
-						res = jvx_matrix_process_rotmat_2_euler_xyz_deg(&rotMat, out_1, out_2);
+						res = jvx_matrix_process_rotmat_2_euler_deg(&rotMat, out_1, out_2, JVX_EULER_CONVERT_XYZ);
 
 						if (res != JVX_NO_ERROR)
 						{
-							std::string txt = "Call to C core function <jvx_matrix_process_rotmat_2_euler_xyz_deg> failed, error code: ";
+							std::string txt = "Call to C core function <jvx_matrix_process_rotmat_2_euler_deg> failed, error code: ";
 							txt += jvxErrorType_descr(res);
 							txt += ".";
 							mexWarnMsgTxt(txt.c_str());

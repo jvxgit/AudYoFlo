@@ -29,6 +29,11 @@ jvx_matrix_process_rotmatrix_xyz_real(&rotMat, rrp_rho_delta);
 
 jvx_matrix_process_rotmatrix_xyz_vec_real(&rotMat, tmp1, tmp2);
 */
+enum jvxRotMatEulerConversionType
+{
+	JVX_EULER_CONVERT_XYZ,
+	JVX_EULER_CONVERT_ZYX
+};
 
 jvxErrorType jvx_matrix_process_rotmatrix_xyz_real(jvx_matrix* mat, jvxData* rotxyz_deg);
 
@@ -41,7 +46,7 @@ jvxErrorType jvx_matrix_process_quat_2rotmatrix(jvxData* q, jvx_matrix* rMOut);
 jvxErrorType jvx_matrix_process_quat_2_euler_deg( const jvxData* qIn, jvxData* euler3Out,
 	jvxCBool extrinsic, jvxSize ii, jvxSize jj, jvxSize kk, jvxCBool outputDegree, jvxCBool* gymLock);
 
-jvxErrorType jvx_matrix_process_rotmat_2_euler_xyz_deg(jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1);
+jvxErrorType jvx_matrix_process_rotmat_2_euler_deg(jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1, enum jvxRotMatEulerConversionType tp);
 
 
 JVX_DSP_LIB_END
