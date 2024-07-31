@@ -38,9 +38,9 @@ extern "C"
 #  include <GL/glew.h>
 #  include <glut.h>
 #else
-#include <glew.h>
-#  include <glut.h>
-#  include <freeglut.h>
+#include <GL/glew.h>
+//#include <glut.h>
+#include <GL/freeglut.h>
 #endif
 
 #include <iostream>
@@ -51,9 +51,12 @@ extern "C"
 // No longer in use: 
 // 	"#version 110										\n" \
 
+//#define JVX_PRECISION_QUALIFIER_MEDIUMP  "mediump"
+#define JVX_PRECISION_QUALIFIER_MEDIUMP  
+
 static const char* vertex_shader_code_rgb24 = \
 	"													\n" \
-	"attribute mediump vec2 position;							\n" \
+	"attribute " JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 position;							\n" \
 	"													\n" \
 	"varying vec2 texcoord;								\n" \
 	"													\n" \
@@ -69,13 +72,13 @@ static const char* vertex_shader_code_rgb24 = \
 static const char* fragment_shader_code_view_rgb24 = \
 	"												\n" \
 	"uniform sampler2D texture;						\n" \
-	"uniform mediump int invert_y;						\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " int invert_y;						\n" \
 	"												\n" \
-	"varying mediump vec2 texcoord;					\n" \
+	"varying " JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 texcoord;					\n" \
 	"												\n" \
 	"void main()									\n" \
 	"{												\n" \
-	"	mediump vec2 coord = texcoord; \n" \
+	"	" JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 coord = texcoord; \n" \
 	"	if(invert_y != 0) coord.y = 1.0 - coord.y; \n" \
 	"	gl_FragColor =								\n" \
 	"		texture2D(texture, coord);			\n" \
@@ -91,15 +94,15 @@ static const char* fragment_shader_code_view_rgb24 = \
 static const char* fragment_shader_code_rotate_rgb24 = \
 "												\n" \
 "uniform sampler2D texture;						\n" \
-"uniform mediump float border_x;						\n" \
-"uniform mediump float border_y;						\n" \
-"uniform mediump float offset_x;						\n" \
+"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " float border_x;						\n" \
+"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " float border_y;						\n" \
+"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " float offset_x;						\n" \
 "												\n" \
-"varying mediump vec2 texcoord;							\n" \
+"varying " JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 texcoord;							\n" \
 "												\n" \
 "void main()									\n" \
 "{												\n" \
-"	mediump vec2 coord = texcoord; \n" \
+"	" JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 coord = texcoord; \n" \
 "	if( 										\n" \
 "		(coord.x < border_x) || (coord.x > (1.0-border_x))	||	\n" \
 "		(coord.y < border_y) || (coord.y > (1.0-border_y)))		\n" \

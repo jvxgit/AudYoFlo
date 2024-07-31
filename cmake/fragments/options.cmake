@@ -22,7 +22,7 @@ option(JVX_RELEASE_C674X "Compile c674x DSP applications (requires CCS and DSP/B
 option(JVX_RELEASE_ARMCORTEXA8 "Compile ARM Cortex A8 applications (requires CCS and ARM-GCC)" OFF)
 option(JVX_RELEASE_ARMCORTEXM4 "Compile ARM Cortex M4 applications (requires NXP MCUXpresso)" OFF)
 option(JVX_USE_OPENGL "Compile applications and components using opengl in combination with x11 (freeglut and glew)" OFF)
-option(JVX_USE_OPENGL_X11 "Compile applications and components using opengl in combination with x11 (freeglut and glew)" OFF)
+# option(JVX_USE_OPENGL_X11 "Compile applications and components using opengl in combination with x11 (freeglut and glew)" OFF)
 option(JVX_USE_OPENCV "Compile applications and components using opencv" OFF)
 option(JVX_USE_BOOST "Find boost - compilation is not required since it is a header lib" OFF)
 option(JVX_USE_EIGEN "Find Eigen - compilation is not required since it is a header lib" OFF)
@@ -66,6 +66,8 @@ option(JVX_USE_SIMULINK "Activate Simulink (Matlab) projects." OFF)
 option(JVX_BUILD_FOR_WINDOWS_XP "Activate defines for Windows XP." OFF)
 option(JVX_GENERATE_VERSION_TAG_DUMMY "Activate using a dummy version tag for development to prevent full rebuilds" OFF)
 option(JVX_ALLOW_FLUTTER_SIMPLE_INSTALLERS "Activate using a dummy version tag for development to prevent full rebuilds" OFF)
+option(JVX_USE_GLEW_GLUT "Activate build of glew and freeglut lib." OFF)
+
 
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")

@@ -23,6 +23,7 @@ JVXVIDEORENDERCORE::system_initialize(const char* txtToShow)
 	char** argv = NULL;
 
 	glutInit(&argc, argv);
+	// glutInitContextVersion(2, 0);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(400, 300);
 	glutCreateWindow(txtToShow);

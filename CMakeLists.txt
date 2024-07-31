@@ -406,10 +406,8 @@ else(JVX_COMPILE_BUILDTOOLS)
     find_mcuxpresso()
   endif()
 
-  if(JVX_USE_OPENGL_X11)
-    find_all_opengl_x11()
-  elseif(JVX_USE_OPENGL)
-    find_gl()
+  if(JVX_USE_OPENGL)
+    find_gl() 
   endif()
 
   # BOOST and EIGEN to be handled lateron

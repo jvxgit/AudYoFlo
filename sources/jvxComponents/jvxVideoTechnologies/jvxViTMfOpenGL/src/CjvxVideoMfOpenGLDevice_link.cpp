@@ -1,6 +1,6 @@
 #include "CjvxVideoMfOpenGLDevice.h"
 
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 JVX_THREAD_ENTRY_FUNCTION(my_local_thread_entry, pp)
 {
 	if (pp)
@@ -53,8 +53,8 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			nativeGl.renderingTarget = JVX_GL_DO_NOT_RENDER;
 		}
-#ifdef JVX_USE_OPENGL_X11
-		else if (jvx_bitTest(genMf_device::configuration_mf.rendering_mode.value.selection, 2))
+#ifdef JVX_USE_GLEW_GLUT
+		else if (jvx_bitTest(genMf_device::configuration_mf.rendering_mode.value.selection(), 2))
 		{
 			nativeGl.renderingTarget = JVX_GL_RENDER_NATIVE;
 		}
@@ -64,7 +64,7 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			nativeGl.renderingTarget = JVX_GL_RENDER_EXTERNAL;
 		}
 
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 		if (
 			(nativeGl.renderingTarget == JVX_GL_RENDER_EXTERNAL) &&
 			(genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr == NULL))
@@ -78,14 +78,14 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		switch (nativeGl.renderingTarget)
 		{
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 		case JVX_GL_RENDER_NATIVE:
 			nativeGl.threadIsInitialized = false;
 
 			nativeGl.form = _common_set_icon.theData_in->con_params.format;
 			nativeGl.subform = _common_set_icon.theData_in->con_params.format_group;
-			nativeGl.height = _common_set_icon.theData_in->con_params.segmentation_y;
-			nativeGl.width = _common_set_icon.theData_in->con_params.segmentation_x;
+			nativeGl.height = _common_set_icon.theData_in->con_params.segmentation.y;
+			nativeGl.width = _common_set_icon.theData_in->con_params.segmentation.x;
 			nativeGl.numBufs = _common_set_icon.theData_in->con_data.number_buffers;
 			nativeGl.numChannels = _common_set_icon.theData_in->con_params.number_channels;
 			nativeGl.hdlThread = JVX_INVALID_HANDLE_VALUE;
@@ -165,7 +165,7 @@ CjvxVideoMfOpenGLDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(f
 
 		switch (nativeGl.renderingTarget)
 		{
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 		case JVX_GL_RENDER_NATIVE:
 			// Deallocation handled in stopped thread.
 			break;
@@ -337,7 +337,7 @@ CjvxVideoMfOpenGLDevice::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 // ======================================================================================
 
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 void
 CjvxVideoMfOpenGLDevice::run_native_gl()
 {
@@ -366,7 +366,9 @@ CjvxVideoMfOpenGLDevice::do_rendering_gl()
 {
 	if (nativeGl.idxBuf_Fheight > 0)
 	{
-		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)_common_set_icon.theData_in->con_data.buffers[nativeGl.idxBuf_Read]);
+		cfgRenderStraight cfg; 
+		cfg.invert_y = 1;
+		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)_common_set_icon.theData_in->con_data.buffers[nativeGl.idxBuf_Read], &cfg);
 		JVX_LOCK_MUTEX(nativeGl.safeAccessBuffer);
 		nativeGl.idxBuf_Read = (nativeGl.idxBuf_Read + 1) % nativeGl.numBufs;
 		nativeGl.idxBuf_Fheight--;

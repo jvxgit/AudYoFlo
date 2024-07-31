@@ -557,6 +557,10 @@ macro(find_all_opengl_x11)
 	#message("Open CV lib: ${OpenCV_LIBRARY_DIRS})
 endmacro(find_all_opengl_x11)
 
+macro(find_gl)
+	find_package(OpenGL REQUIRED)
+endmacro(find_gl)
+
 macro(find_pybind)
 
 	

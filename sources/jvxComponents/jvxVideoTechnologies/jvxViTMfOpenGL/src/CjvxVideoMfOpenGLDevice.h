@@ -3,7 +3,7 @@
 
 #include "jvxVideoTechnologies/CjvxVideoDevice.h"
 
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 #include "jvxVideoRenderCore.h"
 #endif
 
@@ -22,7 +22,7 @@ class CjvxVideoMfOpenGLTechnology;
 
 class CjvxVideoMfOpenGLDevice: public CjvxVideoDevice,  
 	public IMFSourceReaderCallback, 
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 	public jvxVideoRenderCore_nobc,
 #endif
 	public genMf_device
@@ -47,7 +47,7 @@ private:
 	{
 		JVX_GL_DO_NOT_RENDER = 0,
 		JVX_GL_RENDER_EXTERNAL = 1
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 		, JVX_GL_RENDER_NATIVE = 2
 #endif
 
@@ -189,7 +189,7 @@ public:
 		const jvx::propertyRawPointerType::IjvxRawPointerType& ptrRaw,
 		const jvx::propertyAddress::IjvxPropertyAddress& ident)override;
 
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 	void run_native_gl();
 	void do_rendering_gl();
 	void do_idle_gl();

@@ -1,0 +1,53 @@
+set(PROJECT_NAME freeglut)
+include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
+
+if(${JVX_OS} MATCHES "windows")
+	set(targetfolder freeglut)
+	set(archtoken x64)
+	if(${JVX_PLATFORM} MATCHES "32bit")
+		set(archtoken x86)
+	endif()	
+	
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}")
+	
+		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}> does not exist!")
+		
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+			message("${targetfolder} sub project not available. Starting script to download it.") 
+			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+			message("${targetfolder} installation complete.")
+		endif()
+	
+		# Uhrg, that was kind of a mess. Batch scripts are always pain in the ass.
+		# I create dedicated build folders and run a cmake-ninja build within the build folder.
+		# Then, I remove the build folders.
+		# Workarounds:
+		# 1) Somehow rmdir does not remove the build folder -> remove in cmake
+		# 2) Need to run another cmake process in a cmake process. Therefore, I map the batch file to
+		#    run secondary cmake. Fortunately, bat files inherit the environment :-)
+		execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		# execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${targetfolder} ${dataformattoken}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		# file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
+	endif()
+	
+	set(GLUT_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/include	CACHE INTERNAL "glut include references")
+	set(GLUT_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/freeglutd.lib	CACHE INTERNAL "glut libraries")
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/bin/ DESTINATION ${INSTALL_PATH_LIB_SHARED} FILES_MATCHING COMPONENT freeglut PATTERN "*.dll")
+	
+elseif(${JVX_OS} MATCHES "linux")
+	## Install <sudo apt-get install libhdf5-dev>
+	find_package(PkgConfig)
+	
+	set(targetfolder opencv)
+	set(archtoken glnx)
+	
+	message("opencv sub project not available. Starting script to download it.") 
+	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
+	message("opencv installation complete.")
+	
+	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}" CACHE INTERNAL "opencv include references")
+	set(OPENCV_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/kissfft.lib" CACHE INTERNAL "kissfft library references")
+endif()
+
+# message(FATAL_ERROR "Hier [${PROJECT_NAME}]")
+

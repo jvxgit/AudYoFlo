@@ -51,7 +51,7 @@ SECTION PROPERTIES
 			UPDATE_CONTEXT_TOKEN = "mf_device:mode_selection";
 		};
 			
-		ifdef JVX_USE_OPENGL_X11
+		ifdef JVX_USE_GLEW_GLUT
 		SECTION rendering_mode
 		{
 			DESCRIPTION = "Activate rendering on output side";	  // Defaults to NAME if not present

@@ -321,7 +321,7 @@ CjvxVideoMfOpenGLDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 
 	switch (nativeGl.renderingTarget)
 	{
-#ifdef JVX_USE_OPENGL_X11
+#ifdef JVX_USE_GLEW_GLUT
 	case JVX_GL_RENDER_NATIVE:
 		nativeGl.requestStop = true;
 

@@ -2,7 +2,7 @@ if(DEFINED JVX_SDK_PATH)
 	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
 endif(DEFINED JVX_SDK_PATH)
 
-if(JVX_USE_OPENGL_X11)
+if(JVX_USE_GLEW_GLUT)
 
 	set(PROJECT_NAME jvx-opengl-cpp)
 	include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
