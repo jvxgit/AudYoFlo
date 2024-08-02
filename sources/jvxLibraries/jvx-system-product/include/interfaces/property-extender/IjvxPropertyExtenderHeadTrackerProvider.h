@@ -1,13 +1,20 @@
 #ifndef _IJVXPROPERTYEXTENDERHEADTRACKERPROVIDER_H_
 #define _IJVXPROPERTYEXTENDERHEADTRACKERPROVIDER_H_
 
+enum class jvxHeadtrackerDataType
+{
+	JVX_ROTATION_FORMAT_QUAT_NONE,
+	// This is data from an X->Y->Z headtracker with X as the axis in direction of look and y to the left, z upwards
+	JVX_ROTATION_FORMAT_QUAT_SYSTEM_XYZ
+};
+
 JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider;
 
 JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider_report
 {
 public:
 	virtual ~IjvxPropertyExtenderHeadTrackerProvider_report() {};
-	virtual jvxErrorType report_rotation_angle(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxData newValDegree) = 0;
+	virtual jvxErrorType report_rotation_angle(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxHandle* current_rotation_data, jvxHeadtrackerDataType data_format) = 0;
 	virtual jvxErrorType report_quality(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxRemoteConnectionQuality qual, jvxData qualValue = -1) = 0;
 };
 

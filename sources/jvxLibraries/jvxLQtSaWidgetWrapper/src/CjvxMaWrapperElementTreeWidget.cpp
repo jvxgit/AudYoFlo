@@ -1481,38 +1481,29 @@ CjvxMaWrapperElementTreeWidget::treeWidgetItemDblClicked(QTreeWidgetItem* theIte
 				case JVX_DATAFORMAT_SIZE:
 				case JVX_DATAFORMAT_STRING:
 				case JVX_DATAFORMAT_VALUE_IN_RANGE:
-					if (allowWrite)
+					newLE = new QLineEdit_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
+					uiRefTp->setItemWidget(theItem, 1, newLE);
+					newLE->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
+					newLE->update_window();
+					newWidget = newLE;
+					break;
+				case JVX_DATAFORMAT_16BIT_LE:
+					if (propD.decTp == JVX_PROPERTY_DECODER_FORMAT_IDX)
+					{
+						newCB = new QComboBox_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
+						uiRefTp->setItemWidget(theItem, 1, newCB);
+						newCB->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
+						newCB->update_window();
+						newWidget = newCB;
+						break;
+					}
+					else
 					{
 						newLE = new QLineEdit_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
 						uiRefTp->setItemWidget(theItem, 1, newLE);
 						newLE->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
 						newLE->update_window();
 						newWidget = newLE;
-					}
-					break;
-				case JVX_DATAFORMAT_16BIT_LE:
-					if (propD.decTp == JVX_PROPERTY_DECODER_FORMAT_IDX)
-					{
-						if (allowWrite)
-						{
-							newCB = new QComboBox_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
-							uiRefTp->setItemWidget(theItem, 1, newCB);
-							newCB->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
-							newCB->update_window();
-							newWidget = newCB;
-						}
-						break;
-					}
-					else
-					{
-						if (allowWrite)
-						{
-							newLE = new QLineEdit_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
-							uiRefTp->setItemWidget(theItem, 1, newLE);
-							newLE->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
-							newLE->update_window();
-							newWidget = newLE;
-						}
 					}
 					break;
 
@@ -1552,14 +1543,11 @@ CjvxMaWrapperElementTreeWidget::treeWidgetItemDblClicked(QTreeWidgetItem* theIte
 					}
 					else
 					{
-						if (allowWrite)
-						{
-							newLE = new QLineEdit_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
-							uiRefTp->setItemWidget(theItem, 1, newLE);
-							newLE->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
-							newLE->update_window();
-							newWidget = newLE;
-						}
+						newLE = new QLineEdit_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
+						uiRefTp->setItemWidget(theItem, 1, newLE);
+						newLE->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
+						newLE->update_window();
+						newWidget = newLE;
 					}
 					break;
 				case JVX_DATAFORMAT_SELECTION_LIST:
@@ -1577,25 +1565,19 @@ CjvxMaWrapperElementTreeWidget::treeWidgetItemDblClicked(QTreeWidgetItem* theIte
 					}
 					else
 					{
-						if (allowRead || allowWrite)
-						{
-							newCB = new QComboBox_fdb(theItem, this, uiRefTp, allowRead, allowWrite, idxArray);
-							uiRefTp->setItemWidget(theItem, 1, newCB);
-							newCB->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
-							newCB->update_window();
-							newWidget = newCB;
-						}
+						newCB = new QComboBox_fdb(theItem, this, uiRefTp, allowRead, allowWrite, idxArray);
+						uiRefTp->setItemWidget(theItem, 1, newCB);
+						newCB->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
+						newCB->update_window();
+						newWidget = newCB;
 					}
 					break;
 				case JVX_DATAFORMAT_STRING_LIST:
-					if (allowWrite)
-					{
-						newSL = new QSlider_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
-						uiRefTp->setItemWidget(theItem, 1, newSL);
-						newSL->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
-						newSL->update_window();
-						newWidget = newSL;
-					}
+					newSL = new QSlider_fdb(theItem, this, uiRefTp, allowRead, allowWrite);
+					uiRefTp->setItemWidget(theItem, 1, newSL);
+					newSL->setProperty("JVX_MY_TREEWIDGET_ITEM", QVariant::fromValue<QTreeWidgetItem*>(theItem));
+					newSL->update_window();
+					newWidget = newSL;
 					break;
 				}
 

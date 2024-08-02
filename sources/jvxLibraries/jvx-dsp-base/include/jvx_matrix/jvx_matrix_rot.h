@@ -3,6 +3,7 @@
 
 #include "jvx_dsp_base.h"
 #include "jvx_matrix/jvx_matrix.h"
+#include "jvx_quat/jvx_quat.h"
 
 #include <math.h>
 
@@ -35,18 +36,18 @@ enum jvxRotMatEulerConversionType
 	JVX_EULER_CONVERT_ZYX
 };
 
-jvxErrorType jvx_matrix_process_rotmatrix_xyz_real(jvx_matrix* mat, jvxData* rotxyz_deg);
+jvxErrorType jvx_matrix_euler_deg_2_rotmatrix_extrinsic(const jvxData* rot_deg, jvx_matrix* mat, enum jvxRotMatEulerConversionType tp);
 
-jvxErrorType jvx_matrix_process_rotmatrix_xyz_vec_real(jvx_matrix* mat, jvxData* xyz_in, jvxData* out);
+jvxErrorType jvx_matrix_process_rotmatrix_vec(jvx_matrix* mat, jvxData* xyz_in, jvxData* out);
 
-jvxErrorType jvx_matrix_process_rotmatrix_2_quat(jvx_matrix* rotmat, jvxData* qOut);
+jvxErrorType jvx_matrix_rotmatrix_2_quat(const jvx_matrix* rotmat, struct jvx_quat* qOut);
 
-jvxErrorType jvx_matrix_process_quat_2rotmatrix(jvxData* q, jvx_matrix* rMOut);
+jvxErrorType jvx_matrix_quat_2rotmatrix(const struct jvx_quat* q, jvx_matrix* rMOut);
 
-jvxErrorType jvx_matrix_process_quat_2_euler_deg( const jvxData* qIn, jvxData* euler3Out,
+jvxErrorType jvx_matrix_process_quat_2_euler_deg( const struct jvx_quat* qIn, jvxData* euler3Out,
 	jvxCBool extrinsic, jvxSize ii, jvxSize jj, jvxSize kk, jvxCBool outputDegree, jvxCBool* gymLock);
 
-jvxErrorType jvx_matrix_process_rotmat_2_euler_deg(jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1, enum jvxRotMatEulerConversionType tp);
+jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1, enum jvxRotMatEulerConversionType tp);
 
 
 JVX_DSP_LIB_END

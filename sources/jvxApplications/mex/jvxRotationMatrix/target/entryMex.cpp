@@ -89,7 +89,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 					rotMat.prmInit.intern_alloc_cont = c_true;
 
 					jvx_matrix_prepare(&rotMat);
-					jvx_matrix_process_rotmatrix_xyz_real(&rotMat, rotxyz);
+					jvx_matrix_euler_deg_2_rotmatrix_extrinsic(rotxyz , &rotMat, JVX_EULER_CONVERT_XYZ);
 
 					if (nrhs == 1)
 					{
@@ -123,7 +123,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 							jvxData* out = (jvxData*)mxGetData(arr);
 							memset(out, 0, sizeof(jvxData) * 1 * 3);
 
-							jvx_matrix_process_rotmatrix_xyz_vec_real(&rotMat, inxyz, out);
+							jvx_matrix_process_rotmatrix_vec(&rotMat, inxyz, out);
 							plhs[0] = arr;
 						} // if ((numN == 1) && (numM == 3))
 						else

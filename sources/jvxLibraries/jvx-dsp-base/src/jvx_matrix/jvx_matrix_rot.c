@@ -3,7 +3,7 @@
 #include "jvx_matrix/jvx_matrix_prv.h"
 #include "jvx_matrix/jvx_matrix_rot.h"
 
-jvxErrorType jvx_matrix_process_rotmatrix_xyz_real(jvx_matrix* mat, jvxData* rotxyz_deg)
+jvxErrorType jvx_matrix_euler_deg_2_rotmatrix_extrinsic(const jvxData* rotxyz_deg, jvx_matrix* mat, enum jvxRotMatEulerConversionType tp)
 {
 	jvxData tmp1, tmp2, tmp3;
 	jvxSize i;
@@ -34,41 +34,80 @@ jvxErrorType jvx_matrix_process_rotmatrix_xyz_real(jvx_matrix* mat, jvxData* rot
 
 			jvxData** R = (jvxData**)mat->prmSync.theMat;
 
-			// Matrix rotx filled
-			R[0][0] = 1;
-			R[0][1] = 0;
-			R[0][2] = 0;
-			R[1][0] = 0;
-			R[1][1] = cos_rotx;
-			R[1][2] = -sin_rotx;
-			R[2][0] = 0;
-			R[2][1] = sin_rotx;
-			R[2][2] = cos_rotx;
-
-
-			// Involve matrix roty
-			for (i = 0; i < 3; i++)
+			switch(tp)
 			{
-				tmp1 = R[i][0];
-				tmp2 = R[i][1];
-				tmp3 = R[i][2];
+				case JVX_EULER_CONVERT_XYZ:
 
-				R[i][0] = tmp1 * cos_roty + tmp2 * 0 - tmp3 * sin_roty;
-				R[i][1] = tmp1 * 0 + tmp2 * 1 + tmp3 * 0;
-				R[i][2] = tmp1 * sin_roty + tmp2 * 0 + tmp3 * cos_roty;
-			}
+					// Result as found in the direct computation for a faster algorithm
+					R[0][0] = cos_roty * cos_rotz;
+					R[0][1] = -sin_rotz * cos_roty;
+					R[0][2] = sin_roty;
+
+					R[1][0] = sin_rotx * sin_roty * cos_rotz + cos_rotx * sin_rotz;
+					R[1][1] = cos_rotx * cos_rotz - sin_rotx * sin_roty * sin_rotz;
+					R[1][2] = -sin_rotx * cos_roty;
+						
+					R[2][0] = sin_rotx * sin_rotz - cos_rotx * sin_roty * cos_rotz;
+					R[2][1] = cos_rotx * sin_roty * sin_rotz + sin_rotx * cos_rotz;
+					R[2][2] = cos_rotx * cos_roty;
+
+					/* *****
+					// Matrix rotx filled
+					R[0][0] = 1;
+					R[0][1] = 0;
+					R[0][2] = 0;
+					R[1][0] = 0;
+					R[1][1] = cos_rotx;
+					R[1][2] = -sin_rotx;
+					R[2][0] = 0;
+					R[2][1] = sin_rotx;
+					R[2][2] = cos_rotx;
 
 
-			// Involve matrix roty
-			for (i = 0; i < 3; i++)
-			{
-				tmp1 = R[i][0];
-				tmp2 = R[i][1];
-				tmp3 = R[i][2];
+					// Involve matrix roty
+					for (i = 0; i < 3; i++)
+					{
+						tmp1 = R[i][0];
+						tmp2 = R[i][1];
+						tmp3 = R[i][2];
 
-				R[i][0] = tmp1 * cos_rotz + tmp2 * sin_rotz + tmp3 * 0;
-				R[i][1] = -tmp1 * sin_rotz + tmp2 * cos_rotz + tmp3 * 0;
-				R[i][2] = tmp1 * 0 + tmp2 * 0 + tmp3;
+						R[i][0] = tmp1 * cos_roty + tmp2 * 0 - tmp3 * sin_roty;
+						R[i][1] = tmp1 * 0 + tmp2 * 1 + tmp3 * 0;
+						R[i][2] = tmp1 * sin_roty + tmp2 * 0 + tmp3 * cos_roty;
+					}
+
+
+					// Involve matrix roty
+					for (i = 0; i < 3; i++)
+					{
+						tmp1 = R[i][0];
+						tmp2 = R[i][1];
+						tmp3 = R[i][2];
+
+						R[i][0] = tmp1 * cos_rotz + tmp2 * sin_rotz + tmp3 * 0;
+						R[i][1] = -tmp1 * sin_rotz + tmp2 * cos_rotz + tmp3 * 0;
+						R[i][2] = tmp1 * 0 + tmp2 * 0 + tmp3;
+					}
+					* ****/
+					break;
+
+				case JVX_EULER_CONVERT_ZYX:
+
+					R[0][0] = cos_roty * cos_rotz;
+					R[0][1] = cos_rotz* sin_rotx* sin_roty - sin_rotz * cos_rotx;
+					R[0][2] = sin_rotx* sin_rotz + cos_rotx * cos_rotz * sin_roty;
+
+					R[1][0] = sin_rotz * cos_roty;
+					R[1][1] = cos_rotz* cos_rotx + sin_rotx * sin_roty * sin_rotz;
+					R[1][2] = cos_rotx* sin_rotz* sin_roty - sin_rotx * cos_rotz; 
+
+					R[2][0] = -sin_roty;
+					R[2][1] = sin_rotx * cos_roty;
+					R[2][2] = cos_rotx * cos_roty;
+					break;
+
+				default:
+					break;
 			}
 
 			/*
@@ -86,7 +125,7 @@ jvxErrorType jvx_matrix_process_rotmatrix_xyz_real(jvx_matrix* mat, jvxData* rot
 	return JVX_ERROR_NOT_READY;
 }
 
-jvxErrorType jvx_matrix_process_rotmatrix_xyz_vec_real(jvx_matrix* mat, jvxData* xyz_in, jvxData* out)
+jvxErrorType jvx_matrix_process_rotmatrix_vec(jvx_matrix* mat, jvxData* xyz_in, jvxData* out)
 {
 
 	jvxData tmp1, tmp2, tmp3;
@@ -117,12 +156,10 @@ jvxErrorType jvx_matrix_process_rotmatrix_xyz_vec_real(jvx_matrix* mat, jvxData*
 }
 
 
-
-
 // The rotmat should be of size 3x3, the output qOut should be a field with 4 elements.
 // The output produced q = [qx qy qz qw]
 jvxErrorType
-jvx_matrix_process_rotmatrix_2_quat(jvx_matrix* rotmat, jvxData* qOut)
+jvx_matrix_rotmatrix_2_quat(const jvx_matrix* rotmat, struct jvx_quat* qOut)
 {
 	//  This code outputs [qx qy qz qw]
 
@@ -185,15 +222,15 @@ jvx_matrix_process_rotmatrix_2_quat(jvx_matrix* rotmat, jvxData* qOut)
 		qz = 0.25 * S;
 	}
 
-	qOut[0] = qx;
-	qOut[1] = qy;
-	qOut[2] = qz;
-	qOut[3] = qw;
+	qOut->x = qx;
+	qOut->y = qy;
+	qOut->z = qz;
+	qOut->w = qw;
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-jvx_matrix_process_quat_2rotmatrix(jvxData* qIn, jvx_matrix* rMOut)
+jvx_matrix_quat_2rotmatrix(const struct jvx_quat* qIn, jvx_matrix* rMOut)
 {
 	// This function reads q = [qx, qy, qz, qw];
 
@@ -206,10 +243,10 @@ jvx_matrix_process_quat_2rotmatrix(jvxData* qIn, jvx_matrix* rMOut)
 	assert(rMOut->prmSync.theMat);
 	jvxData** rM = (jvxData **)rMOut->prmSync.theMat;
 
-	jvxData qx = qIn[0];//(1);
-	jvxData qy = qIn[1];//(2);
-	jvxData qz = qIn[2];//(3);
-	jvxData qw = qIn[3];//(4);
+	jvxData qx = qIn->x;//(1);
+	jvxData qy = qIn->y;//(2);
+	jvxData qz = qIn->z;//(3);
+	jvxData qw = qIn->w;//(4);
 
 	rM[0][0] = 2 * (qw * qw + qx * qx) - 1;
 	rM[1][0] = 2 * (qx * qy + qw * qz);
@@ -235,10 +272,11 @@ jvx_matrix_process_quat_2rotmatrix(jvxData* qIn, jvx_matrix* rMOut)
 }
 
 jvxErrorType jvx_matrix_process_quat_2_euler_deg(
-	const jvxData* qIn, jvxData* euler3Out,
+	const struct jvx_quat* qInStr, jvxData* euler3Out,
 	jvxCBool extrinsic, jvxSize ii, jvxSize jj, jvxSize kk,
 	jvxCBool outputDegree, jvxCBool* gymLock)
 {
+	const jvxData* qIn = (const jvxData*)qInStr;
 	if (gymLock)
 	{
 		*gymLock = false;
@@ -382,7 +420,7 @@ jvxErrorType jvx_matrix_process_quat_2_euler_deg(
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType jvx_matrix_process_rotmat_2_euler_deg(jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1, enum jvxRotMatEulerConversionType tp)
+jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1, enum jvxRotMatEulerConversionType tp)
 {
 
 	// Implementation according to
@@ -539,3 +577,7 @@ jvxErrorType jvx_matrix_process_rotmat_2_euler_deg(jvx_matrix* rMIn, jvxData* ou
 	}
 	return JVX_NO_ERROR;
 }
+
+
+
+

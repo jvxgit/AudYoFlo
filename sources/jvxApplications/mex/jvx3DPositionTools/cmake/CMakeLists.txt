@@ -7,6 +7,7 @@ include(${JVX_CMAKE_DIR}/common_local_mex_head.cmake)
 
 include_directories(
 	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
+	${EIGEN_INCLUDEDIR}
 	)
 
 set(LOCAL_SOURCES
