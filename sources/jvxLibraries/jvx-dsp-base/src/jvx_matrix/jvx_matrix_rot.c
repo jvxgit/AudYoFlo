@@ -420,14 +420,14 @@ jvxErrorType jvx_matrix_process_quat_2_euler_deg(
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1, enum jvxRotMatEulerConversionType tp)
+jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvxData* out_euler_0, jvxData* out_euler_1ornull, enum jvxRotMatEulerConversionType tp)
 {
 
 	// Implementation according to
 	// https://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
 	// However, started for Rx* Ry* Rz -> case 'xyz'
 	memset(out_euler_0, 0, sizeof(jvxData) * 3);
-	memset(out_euler_1, 0, sizeof(jvxData) * 3);
+	if(out_euler_1ornull) memset(out_euler_1ornull, 0, sizeof(jvxData) * 3);
 
 	jvxData ff = 360 / (2 * M_PI);
 	jvxData** mat = (jvxData**)rMIn->prmSync.theMat;
@@ -466,9 +466,12 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 			out_euler_0[1] = roty_1 * ff;
 			out_euler_0[2] = rotz_1 * ff;
 			// rot1 = [rotx_1 * ff, roty_1 * ff, rotz_1 * ff];
-			out_euler_1[0] = rotx_2 * ff;
-			out_euler_1[1] = roty_2 * ff;
-			out_euler_1[2] = rotz_2 * ff;
+			if (out_euler_1ornull)
+			{
+				out_euler_1ornull[0] = rotx_2 * ff;
+				out_euler_1ornull[1] = roty_2 * ff;
+				out_euler_1ornull[2] = rotz_2 * ff;
+			}
 			// rot2 = [rotx_2 * ff, roty_2 * ff, rotz_2 * ff];
 		}
 		else
@@ -485,10 +488,12 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 				out_euler_0[1] = roty * ff;
 				out_euler_0[2] = rotz * ff;
 				// rot1 = [rotx * ff, roty * ff, rotz * ff];
-
-				out_euler_1[0] = out_euler_0[0];
-				out_euler_1[1] = out_euler_0[1];
-				out_euler_1[2] = out_euler_0[2];
+				if (out_euler_1ornull)
+				{
+					out_euler_1ornull[0] = out_euler_0[0];
+					out_euler_1ornull[1] = out_euler_0[1];
+					out_euler_1ornull[2] = out_euler_0[2];
+				}
 				// rot2 = rot1;
 			}
 			else
@@ -502,10 +507,12 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 				out_euler_0[1] = roty * ff;
 				out_euler_0[2] = rotz * ff;
 				// rot1 = [rotx * ff, roty * ff, rotz * ff];
-
-				out_euler_1[0] = out_euler_0[0];
-				out_euler_1[1] = out_euler_0[1];
-				out_euler_1[2] = out_euler_0[2];
+				if (out_euler_1ornull)
+				{
+					out_euler_1ornull[0] = out_euler_0[0];
+					out_euler_1ornull[1] = out_euler_0[1];
+					out_euler_1ornull[2] = out_euler_0[2];
+				}
 				// rot2 = rot1;
 			}
 		}
@@ -528,9 +535,12 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 			out_euler_0[1] = roty_1 * ff;
 			out_euler_0[2] = rotz_1 * ff;
 
-			out_euler_1[0] = rotx_2 * ff;
-			out_euler_1[1] = roty_2 * ff;
-			out_euler_1[2] = rotz_2 * ff;
+			if (out_euler_1ornull)
+			{
+				out_euler_1ornull[0] = rotx_2 * ff;
+				out_euler_1ornull[1] = roty_2 * ff;
+				out_euler_1ornull[2] = rotz_2 * ff;
+			}
 		}
 		else
 		{
@@ -547,9 +557,12 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 				out_euler_0[2] = rotz * ff;
 				// rot1 = [rotx * ff, roty * ff, rotz * ff];
 
-				out_euler_1[0] = out_euler_0[0];
-				out_euler_1[1] = out_euler_0[1];
-				out_euler_1[2] = out_euler_0[2];
+				if (out_euler_1ornull)
+				{
+					out_euler_1ornull[0] = out_euler_0[0];
+					out_euler_1ornull[1] = out_euler_0[1];
+					out_euler_1ornull[2] = out_euler_0[2];
+				}
 				// rot2 = rot1;
 			}
 			else
@@ -564,9 +577,12 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 				out_euler_0[2] = rotz * ff;
 				// rot1 = [rotx * ff, roty * ff, rotz * ff];
 
-				out_euler_1[0] = out_euler_0[0];
-				out_euler_1[1] = out_euler_0[1];
-				out_euler_1[2] = out_euler_0[2];
+				if (out_euler_1ornull)
+				{
+					out_euler_1ornull[0] = out_euler_0[0];
+					out_euler_1ornull[1] = out_euler_0[1];
+					out_euler_1ornull[2] = out_euler_0[2];
+				}
 				// rot2 = rot1;
 			}
 		}

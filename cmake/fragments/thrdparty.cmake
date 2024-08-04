@@ -98,24 +98,6 @@ if (JVX_USE_LIBMYSOFA)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/mysofa)
 endif()
 
-if(JVX_USE_BOOST)
-  if(JVX_INSTALL_EXTERNAL_LIBS)
-    # This part here only when downloading BOOST - find_boost will run in main CMakeLists file
-    # This option is true if the instal-libs.cmake file is invluded in the platform cmake file
-    set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
-      ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/boost)
-  endif()
-endif()
-
-if(JVX_USE_EIGEN)
-  if(JVX_INSTALL_EXTERNAL_LIBS)
-    # This part here only when downloading EIGEN - find_boost will run in main CMakeLists file
-    # This option is true if the instal-libs.cmake file is invluded in the platform cmake file
-    set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
-      ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/eigen)
-  endif()
-endif()
-
 if(JVX_USE_HDF5)
   # This part here only when downloading HDF5	 i windows
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}

@@ -3,10 +3,8 @@
 #include "jvx_matrix/jvx_matrix_rot.h"
 #include "jvx_quat/jvx_quat.h"
 
-#define USE_EIGEN
-
-#ifdef USE_EIGEN
-#include <Geometry>
+#ifdef JVX_USE_EIGEN
+#include <Eigen/Geometry>
 #endif
 
 #if _MATLAB_MEXVERSION < 500
@@ -161,7 +159,7 @@ void mexFunction(int nlhs, mxArray* plhs[],
 							struct jvx_quat* Q = nullptr;
 							jvxData* rMat = (jvxData*)mxGetData(prhs[1]);
 							
-#ifdef USE_EIGEN
+#ifdef JVX_USE_EIGEN
 
 							Eigen::Matrix<jvxData, 3, 3> R;
 							for (i = 0; i < 3; i++)
@@ -201,7 +199,7 @@ void mexFunction(int nlhs, mxArray* plhs[],
 							arr = mxCreateNumericArray(ndim, dims, mxDATA_CLASS, mxREAL);
 							Q = (struct jvx_quat*)mxGetData(arr);
 
-#ifdef USE_EIGEN
+#ifdef JVX_USE_EIGEN
 							Q->x = q.x();
 							Q->y = q.y();
 							Q->z = q.z();

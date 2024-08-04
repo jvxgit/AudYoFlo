@@ -235,7 +235,8 @@ endif()
 # macros
 ###
 
-include(${JVX_CMAKE_DIR}/install-libs.cmake)
+# This file does no longer exist since eigen and boost are downloaded via AudYoFlo third-party lib handling 
+# include(${JVX_CMAKE_DIR}/install-libs.cmake)
 
 function(add_export_definition_file varNameSourcesLst varNameLinkerflags varNameFile)
 

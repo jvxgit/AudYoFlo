@@ -676,7 +676,8 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 					//out << "\t\tmemset(" << propertySectionName  << "." << elm.name << ".fld, 0, sizeof(" << tokenTypeName << ") * " << szToken << ");" << std::endl;
 					out << "\t\t" << propertySectionName << "." << elm.name << ".num = " << szToken << ";" << std::endl;
 					out << "\t\t" << propertySectionName << "." << elm.name << ".ptr = " << propertySectionName << "." << elm.name << "_fld;" << std::endl;
-					out << "\t\tmemset(" << propertySectionName << "." << elm.name << "_fld, 0, sizeof(" << elm.tokenTypeName << ") * " << szToken << ");" << std::endl;
+					out << "\t\tmemset(" << propertySectionName << "." << elm.name << "_fld, 0, sizeof(" << elm.tokenType << ") * " << 
+						propertySectionName << "." << elm.name << ".num);" << std::endl;
 
 					out << "\t\t" << propertySectionName << "." << elm.name << ".accessFlags = JVX_COMBINE_FLAGS_RCWD(" <<
 						elm.access_rights_read << "," <<
@@ -1021,7 +1022,7 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 			{
 				// Allocation and initialization function
 				out << "\t\t" << propertySectionName  << "." << elm.name << ".num = " <<  szToken << ";" << std::endl;
-				out << "\t\t" << propertySectionName  << "." << elm.name << ".ptr = new " << elm.tokenType << "[" <<  szToken << "];" << std::endl;
+				out << "\t\t" << propertySectionName  << "." << elm.name << ".ptr = new " << elm.tokenType << "[" <<  propertySectionName  << "." << elm.name << ".num];" << std::endl;
 				out << "\t\tmemset(" << propertySectionName  << "." << elm.name << ".ptr, " << "0, sizeof(" << elm.tokenType << ") * " << propertySectionName  << "." << elm.name << ".num);" << std::endl;
 				if(elm.init_set.filename_set)
 				{

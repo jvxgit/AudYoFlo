@@ -6,8 +6,7 @@ set(PROJECT_NAME jvx3DPositionTools)
 include(${JVX_CMAKE_DIR}/common_local_mex_head.cmake)
 
 include_directories(
-	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include
-	${EIGEN_INCLUDEDIR}
+	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-mex-connect/include	
 	)
 
 set(LOCAL_SOURCES
@@ -16,6 +15,12 @@ set(LOCAL_SOURCES
 
 set(JVX_RENAME_RELEASE "${PROJECT_NAME}")
 
+if(JVX_USE_EIGEN)
+	include_directories(${EIGEN_INCLUDEDIR})
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_EIGEN")
+endif()
+
+# message(FATAL_ERROR "->${EIGEN_INCLUDEDIR}")
 if(JVX_USE_PART_MATLAB)
 	set(JVX_TARGET_NAME "${PROJECT_NAME}_m")
 	set(LOCAL_MAT_LIBS ayf-mex-connect_m_static)

@@ -11,4 +11,5 @@ if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/eigen)
 	message("eigen installation complete.")
 endif()
 
-set(EIGEN_LIBRARY_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/eigen" CACHE INTERNAL "eigen lib path (windows)")
+set(EIGEN_INCLUDEDIR  "${CMAKE_CURRENT_SOURCE_DIR}/eigen" CACHE INTERNAL "eigen lib path (windows)")
+# message(FATAL_ERROR "HH ->${EIGEN_INCLUDEDIR}")

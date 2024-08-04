@@ -13,4 +13,4 @@ if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/boost)
 	message("boost installation complete.")
 endif()
 
-set(BOOST_LIBRARY_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/boost" CACHE INTERNAL "boost lib path (windows)")
+set(BOOST_INCLUDEDIR  "${CMAKE_CURRENT_SOURCE_DIR}/boost" CACHE INTERNAL "boost lib path (windows)")
