@@ -125,7 +125,7 @@ jvxErrorType jvx_matrix_euler_deg_2_rotmatrix_extrinsic(const jvxData* rotxyz_de
 	return JVX_ERROR_NOT_READY;
 }
 
-jvxErrorType jvx_matrix_process_rotmatrix_vec(jvx_matrix* mat, jvxData* xyz_in, jvxData* out)
+jvxErrorType jvx_matrix_process_rotmatrix_vec(jvx_matrix* mat,  const jvxData* xyz_in, jvxData* out)
 {
 
 	jvxData tmp1, tmp2, tmp3;

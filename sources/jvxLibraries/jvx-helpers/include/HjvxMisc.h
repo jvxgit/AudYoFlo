@@ -1368,6 +1368,7 @@ public:
 	{
 		JVX_RW_LOCK_SHARED,
 		JVX_RW_LOCK_EXCLUSIVE
+		//, JVX_RW_LOCK_NO_LOCK // <- this to ensure proper use!
 	};
 
 private:
@@ -1429,7 +1430,7 @@ public:
 	jvxBool try_lock(jvxRwLockFunction func = jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE)
 	{
 		JVX_TRY_LOCK_RW_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_RW_MUTEX_INIT_NO_SUCCESS;
-		assert(lockStat == jvxRwLockFunction::JVX_RW_LOCK_NO_LOCK);
+		// assert(lockStat == jvxRwLockFunction::JVX_RW_LOCK_NO_LOCK);
 		switch (func)
 		{
 		case jvxRwLockFunction::JVX_RW_LOCK_EXCLUSIVE:
@@ -1443,7 +1444,8 @@ public:
 		}
 		if (JVX_TRY_LOCK_RW_MUTEX_CHECK_SUCCESS(res))
 		{
-			lockStat = func;
+			// lockStat = func;
+			lockStat[(int)func]++;
 			return true;
 		}
 		return false;

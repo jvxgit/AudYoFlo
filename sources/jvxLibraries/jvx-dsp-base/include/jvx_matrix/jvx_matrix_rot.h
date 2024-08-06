@@ -38,7 +38,7 @@ enum jvxRotMatEulerConversionType
 
 jvxErrorType jvx_matrix_euler_deg_2_rotmatrix_extrinsic(const jvxData* rot_deg, jvx_matrix* mat, enum jvxRotMatEulerConversionType tp);
 
-jvxErrorType jvx_matrix_process_rotmatrix_vec(jvx_matrix* mat, jvxData* xyz_in, jvxData* out);
+jvxErrorType jvx_matrix_process_rotmatrix_vec(jvx_matrix* mat, const jvxData* xyz_in , jvxData* out);
 
 jvxErrorType jvx_matrix_rotmatrix_2_quat(const jvx_matrix* rotmat, struct jvx_quat* qOut);
 
