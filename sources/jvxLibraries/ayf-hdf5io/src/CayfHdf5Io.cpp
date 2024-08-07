@@ -981,7 +981,7 @@ CayfHdf5Io::createDataSet(const std::string& dataSet, jvxDataFormat form, jvxSiz
 }
 
 jvxErrorType
-CayfHdf5Io::writeDataToDataSet(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize numElements)
+CayfHdf5Io::writeDataToDataSet(const std::string& dataSet, const jvxHandle* buf, jvxDataFormat form, jvxSize numElements)
 {
 	jvxErrorType res = createDataSet(dataSet, form, numElements, 1);
 	if(res == JVX_NO_ERROR)
@@ -997,9 +997,9 @@ CayfHdf5Io::writeDataToDataSet(const std::string& dataSet, jvxHandle* buf, jvxDa
 }
 
 jvxErrorType 
-CayfHdf5Io::writeStringToDataSet(const std::string& dataSet, std::string& txt)
+CayfHdf5Io::writeStringToDataSet(const std::string& dataSet, const std::string& txt)
 {
-	return writeDataToDataSet(dataSet, (jvxHandle*)txt.c_str(), JVX_DATAFORMAT_U8BIT, txt.size());
+	return writeDataToDataSet(dataSet, (const jvxHandle*)txt.c_str(), JVX_DATAFORMAT_U8BIT, txt.size());
 }
 
 jvxErrorType 

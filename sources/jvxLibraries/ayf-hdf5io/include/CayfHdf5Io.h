@@ -49,10 +49,10 @@ public:
 	jvxErrorType readDataFromDataSetFull(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize& numElements);
 	jvxErrorType readStringFromDataSet(const std::string& dataSet, std::string& onRet);
 
-	jvxErrorType writeDataToDataSet(const std::string& dataSet, jvxHandle* buf, jvxDataFormat form, jvxSize numElements);
+	jvxErrorType writeDataToDataSet(const std::string& dataSet, const jvxHandle* buf, jvxDataFormat form, jvxSize numElements);
 	jvxErrorType createDataSet(const std::string& dataSet, jvxDataFormat form, jvxSize numElements1, jvxSize numElements2);
 	jvxErrorType writeLineToDataSet(jvxHandle* buf, jvxSize idx);
-	jvxErrorType writeStringToDataSet(const std::string& dataSet, std::string& txt);
+	jvxErrorType writeStringToDataSet(const std::string& dataSet, const std::string& txt);
 	jvxErrorType closeDataSet();
 
 
