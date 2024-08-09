@@ -323,7 +323,9 @@ QSlider_fdb::focusOutEvent(QFocusEvent* e)
 QLineEdit_fdb::QLineEdit_fdb(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxBool allowReadArg, jvxBool allowWriteArg):
 	QLineEdit(parent), CjvxQtSaWidgetWrapper_elementbase(assoc, cb, allowReadArg, allowWriteArg)
 {
-  connect(this, SIGNAL(editingFinished()), this, SLOT(newText()));
+  connect(this, SIGNAL(editingFinished()), this, SLOT(editDone()));
+  connect(this, SIGNAL(returnPressed()), this, SLOT(returnDone()));
+
   theWidget = static_cast<QWidget*>(this);
 };
 
@@ -530,17 +532,34 @@ QLineEdit_fdb::focusInEvent(QFocusEvent* e)
 void 
 QLineEdit_fdb::focusOutEvent(QFocusEvent* e)
 {
-	if (cbk)
+	if (connectedProp.num <= 1)
 	{
-		cbk->editingCompleted(static_cast<CjvxQtSaWidgetWrapper_elementbase*>(this));
+		if (cbk)
+		{
+			cbk->editingCompleted(static_cast<CjvxQtSaWidgetWrapper_elementbase*>(this));
+		}
 	}
 
 	// You might also call the parent method.
 	QLineEdit::focusOutEvent(e);
 };
 
+void
+QLineEdit_fdb::editDone()
+{
+	if (connectedProp.num <= 1)
+	{
+		newText();
+	}
+}
 
-void 
+void
+QLineEdit_fdb::returnDone()
+{
+	newText();
+}
+
+void
 QLineEdit_fdb::newText()
 {
 	QString txt = this->text();

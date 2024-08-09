@@ -95,8 +95,11 @@ public:
 	virtual void focusInEvent(QFocusEvent* e);
 	virtual void focusOutEvent(QFocusEvent* e);
 
+	void newText();
+
 public slots:
-	virtual void newText();
+	virtual void editDone();
+	virtual void returnDone();
 };
 
 class QLineEdit_fdb_slot : public QLineEdit_fdb
