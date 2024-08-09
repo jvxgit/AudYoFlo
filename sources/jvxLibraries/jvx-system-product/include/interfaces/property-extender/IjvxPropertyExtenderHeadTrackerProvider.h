@@ -14,8 +14,8 @@ JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider_report
 {
 public:
 	virtual ~IjvxPropertyExtenderHeadTrackerProvider_report() {};
-	virtual jvxErrorType report_rotation_angle(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxHandle* current_rotation_data, jvxHeadtrackerDataType data_format) = 0;
-	virtual jvxErrorType report_quality(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxRemoteConnectionQuality qual, jvxData qualValue = -1) = 0;
+	virtual jvxErrorType report_rotation_angle(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxHandle* current_rotation_data, jvxHeadtrackerDataType data_format, jvxSize slotId = 0) = 0;
+	virtual jvxErrorType report_quality(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxRemoteConnectionQuality qual, jvxData qualValue = -1, jvxSize slotId = 0) = 0;
 };
 
 JVX_INTERFACE IjvxPropertyExtenderHeadTrackerProvider
