@@ -1109,7 +1109,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
                           sizeOf<Uint32>();
                       targetPtr = Pointer<Uint32>.fromAddress(address);
 
-                      int numLocal = sel.numEntries;
+                      int numLocal =
+                          (sel.numEntries - offset); // Corrected by HK
                       if (num > 0) {
                         numLocal = min(num, numLocal);
                       }

@@ -19,24 +19,29 @@ class AudYoFloPropertyContentToString {
   }
 
   static String convertPropSelectionListToString(
-      AudYoFloPropertySelectionListBackend prop, bool contentOnly) {
+      AudYoFloPropertySelectionListBackend prop, bool contentOnly,
+      {int offset = 0, int num = -1}) {
     String retVal = '';
     bool multiCont = false;
     if (prop.selection is AudYoFloBitFieldBackend) {
       AudYoFloBitFieldBackend sel = prop.selection as AudYoFloBitFieldBackend;
-      multiCont = (sel.numEntries > 1);
+      int numLocal = (sel.numEntries - offset);
+      if (num > 0) {
+        numLocal = min(numLocal, num);
+      }
+      multiCont = (numLocal > 1);
       if (multiCont) {
         retVal += '[';
       }
       String oneEntry = '';
-      for (var idx = 0; idx < sel.numEntries; idx++) {
-        if(idx > 0) {
-        retVal += ",";
-      }
+      for (var idx = 0; idx < numLocal; idx++) {
+        if (idx > 0) {
+          retVal += ",";
+        }
         for (var idxi = 0; idxi < sel.compileNum32BitBitfield; idxi++) {
-          
           // For multi selections, consider the offset!!
-          int idxO = idx * sel.compileNum32BitBitfield + idxi;
+          int idxL = idx + offset;
+          int idxO = idxL * sel.compileNum32BitBitfield + idxi;
           if ((sel.bitfield![idxO] != 0) ||
               (idxi == sel.compileNum32BitBitfield - 1)) {
             // Make sure you see 8 digits per token!!
@@ -47,10 +52,10 @@ class AudYoFloPropertyContentToString {
             oneEntry += tok;
           }
         }
-      
-      oneEntry = '0x' + oneEntry;
-      retVal += oneEntry;
-      oneEntry = '';
+
+        oneEntry = '0x' + oneEntry;
+        retVal += oneEntry;
+        oneEntry = '';
       }
       if (multiCont) {
         retVal += ']';
@@ -115,7 +120,8 @@ class AudYoFloPropertyContentToString {
     return retVal;
   }
 
-  static String? convertPropMultiContentLst(dynamic lst, {int offset = 0, int num = -1, int precision = 4}) {
+  static String? convertPropMultiContentLst(dynamic lst,
+      {int offset = 0, int num = -1, int precision = 4}) {
     String retVal = '';
     bool multiCont = false;
     if (lst is List) {
@@ -125,26 +131,25 @@ class AudYoFloPropertyContentToString {
       retVal = '[';
     }
 
-    int numCopy = lst.length - offset; 
-    if(num >= 0)
-    {
+    int numCopy = lst.length - offset;
+    if (num >= 0) {
       numCopy = min(numCopy, num);
     }
 
-    if (lst is Float64List) {      
-        for (var i=0;i<numCopy; i++) {
-          if(i != 0) retVal += ',';
-        retVal += lst[i+offset].toStringAsPrecision(precision);
+    if (lst is Float64List) {
+      for (var i = 0; i < numCopy; i++) {
+        if (i != 0) retVal += ',';
+        retVal += lst[i + offset].toStringAsPrecision(precision);
       }
     } else if (lst is Float32List) {
-              for (var i=0;i<numCopy; i++) {
-          if(i != 0) retVal += ',';
-          retVal += lst[i+offset].toStringAsPrecision(precision);
+      for (var i = 0; i < numCopy; i++) {
+        if (i != 0) retVal += ',';
+        retVal += lst[i + offset].toStringAsPrecision(precision);
       }
     } else {
-       for (var i=0;i<numCopy; i++) {
-        if(i != 0) retVal += ',';
-        retVal += lst[i+offset].toString();
+      for (var i = 0; i < numCopy; i++) {
+        if (i != 0) retVal += ',';
+        retVal += lst[i + offset].toString();
       }
     }
 
@@ -156,7 +161,7 @@ class AudYoFloPropertyContentToString {
 
   static String? convertPropertyContentToString(
       AudYoFloPropertyContainer prop, bool contentOnly,
-      {int offset = 0, int num = -1, int precision = 4 }) {
+      {int offset = 0, int num = -1, int precision = 4}) {
     String? retVal;
 
     switch (prop.jvxFormat) {
@@ -177,7 +182,8 @@ class AudYoFloPropertyContentToString {
         if (prop is AudYoFloPropertySelectionListBackend) {
           AudYoFloPropertySelectionListBackend propSpec =
               prop as AudYoFloPropertySelectionListBackend;
-          retVal = convertPropSelectionListToString(propSpec, contentOnly);
+          retVal = convertPropSelectionListToString(propSpec, contentOnly,
+              offset: offset);
         }
         break;
 
@@ -203,8 +209,8 @@ class AudYoFloPropertyContentToString {
         if (prop is AudYoFloPropertyMultiContentBackend) {
           AudYoFloPropertyMultiContentBackend propSpec =
               prop as AudYoFloPropertyMultiContentBackend;
-          retVal =
-              convertPropMultiContentLst(propSpec.fld, offset: offset, num:num, precision: precision);
+          retVal = convertPropMultiContentLst(propSpec.fld,
+              offset: offset, num: num, precision: precision);
         }
         break;
     }
