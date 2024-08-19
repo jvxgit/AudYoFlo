@@ -16,7 +16,8 @@ class AudYoFloPropertyContentFromJson {
       AudYoFloBackendAdapterIf ref,
       String descriptor,
       Map jsonMap,
-      AudYoFloCompileFlags flags, int numDigits) {
+      AudYoFloCompileFlags flags,
+      int numDigits) {
     // ===================================================
     // Start to read format and size to allocate variable
     bool error = false;
@@ -25,8 +26,7 @@ class AudYoFloPropertyContentFromJson {
     String? typeStr = extractStringFromJson(jsonMap, "format");
     if (typeStr != null) {
       format = jvxDataFormatEEnum.fromInt(ref.translateEnumString(
-          typeStr, jvxDataFormatEEnum.formatName,
-          flags));
+          typeStr, jvxDataFormatEEnum.formatName, flags));
     } else {
       error = true;
     }
@@ -79,8 +79,8 @@ class AudYoFloPropertyContentFromJson {
       jvxDataFormatEnum format = jvxDataFormatEnum.JVX_DATAFORMAT_NONE;
       String? typeStr = extractStringFromJson(jsonMap, "format");
       if (typeStr != null) {
-        format = jvxDataFormatEEnum.fromInt(
-            ref.translateEnumString(typeStr, jvxDataFormatEEnum.formatName, flags));
+        format = jvxDataFormatEEnum.fromInt(ref.translateEnumString(
+            typeStr, jvxDataFormatEEnum.formatName, flags));
       } else {
         prop.last_error = jvxErrorType.JVX_ERROR_PARSE_ERROR;
       }
@@ -132,8 +132,9 @@ class AudYoFloPropertyContentFromJson {
 
     typeStr = extractStringFromJson(jsonMap, "access_type");
     if (typeStr != null) {
-      prop.accessType = jvxPropertyAccessTypeEEnum.fromInt(ref
-          .translateEnumString(typeStr, jvxPropertyAccessTypeEEnum.formatName, flags));
+      prop.accessType = jvxPropertyAccessTypeEEnum.fromInt(
+          ref.translateEnumString(
+              typeStr, jvxPropertyAccessTypeEEnum.formatName, flags));
     } else {
       prop.last_error = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
       prop.cache_status.bitZSet(
@@ -343,15 +344,17 @@ class AudYoFloPropertyContentFromJson {
   // valid container for the property and fills in whatever comes in.
   // ===========================================================
   static int updatePropertyContentFromJsonMap(
-      AudYoFloPropertyContentBackend prop, Map newValues, AudYoFloBackendTranslator trans) {
+      AudYoFloPropertyContentBackend prop,
+      Map newValues,
+      AudYoFloBackendTranslator trans) {
     int errCode = jvxErrorType.JVX_NO_ERROR;
+
+    // Set the status from invalid to something else - the status must not be invalid after this call!!
+    prop.cache_status.bitClear(
+        jvxPropertyCacheStatusFlagShifts.JVX_PROPERTY_CONTENT_INVALID.index);
 
     if (prop.cache_status.bitTest(
         jvxPropertyCacheStatusFlagShifts.JVX_PROPERTY_DESCRIPTOR_VALID.index)) {
-      // Set the status from invalid to something else
-      prop.cache_status.bitClear(
-          jvxPropertyCacheStatusFlagShifts.JVX_PROPERTY_CONTENT_INVALID.index);
-
       switch (prop.jvxFormat) {
         // STRINGLIST
         case jvxDataFormatEnum.JVX_DATAFORMAT_STRING_LIST:
@@ -449,7 +452,8 @@ class AudYoFloPropertyContentFromJson {
         case jvxDataFormatEnum.JVX_DATAFORMAT_8BIT:
         case jvxDataFormatEnum.JVX_DATAFORMAT_U8BIT:
         case jvxDataFormatEnum.JVX_DATAFORMAT_DATA:
-          errCode = updatePropertyContentFromJsonMap_fields(prop, newValues, trans);
+          errCode =
+              updatePropertyContentFromJsonMap_fields(prop, newValues, trans);
           break;
 
         default:
@@ -464,9 +468,12 @@ class AudYoFloPropertyContentFromJson {
     prop.last_error = errCode;
     if (errCode == jvxErrorType.JVX_NO_ERROR) {
       prop.ssUpdateId++;
+
+      // Next status: valid
       prop.cache_status.bitSet(
           jvxPropertyCacheStatusFlagShifts.JVX_PROPERTY_CONTENT_VALID.index);
     } else {
+      // Next status: error
       prop.cache_status.bitSet(
           jvxPropertyCacheStatusFlagShifts.JVX_PROPERTY_CONTENT_ERROR.index);
       prop.ssUpdateId++;
@@ -562,8 +569,7 @@ class AudYoFloPropertyContentFromJson {
                 valFldFlt.fld!, idx, valueLst[idx]);
         if (errCodeLoc != jvxErrorType.JVX_NO_ERROR) errCode = errCodeLoc;
       }
-    }
-    else if (valFld is AudYoFloPropertyMultiContentBackend<Float32List>) {
+    } else if (valFld is AudYoFloPropertyMultiContentBackend<Float32List>) {
       var valFldFlt =
           valFld as AudYoFloPropertyMultiContentBackend<Float32List>;
 
@@ -593,41 +599,36 @@ class AudYoFloPropertyContentFromJson {
     return lst;
   }
 
-  static int convertTextToField<T1 extends List>(T1? fldData, int fldSz,
-      Map newValues, jvxPropertyDecoderHintTypeEnum decHtTp, AudYoFloBackendTranslator trans) {
+  static int convertTextToField<T1 extends List>(
+      T1? fldData,
+      int fldSz,
+      Map newValues,
+      jvxPropertyDecoderHintTypeEnum decHtTp,
+      AudYoFloBackendTranslator trans) {
     int errCode = jvxErrorType.JVX_NO_ERROR;
     // Get the content
     String? base64Str = extractStringFromJson(newValues, 'property_fld');
     if (base64Str != null) {
       // Coming as a base64 string
       var lst64 = base64Decode(base64Str);
-      if(fldData is Float32List)
-      {
+      if (fldData is Float32List) {
         Float32List tLst = lst64.buffer.asFloat32List();
-        for(var i = 0; i < fldData.length; i++)
-        {
-          if(i < tLst.length) {
+        for (var i = 0; i < fldData.length; i++) {
+          if (i < tLst.length) {
             fldData[i] = tLst[i];
-          }
-          else 
-          { 
+          } else {
             // report error!
           }
-        } 
-      }
-      else if(fldData is Float64List)
-      {
+        }
+      } else if (fldData is Float64List) {
         Float64List tLst = lst64.buffer.asFloat64List();
-        for(var i = 0; i < fldData.length; i++)
-        {
-          if(i < tLst.length) {
+        for (var i = 0; i < fldData.length; i++) {
+          if (i < tLst.length) {
             fldData[i] = tLst[i];
-          }
-          else 
-          { 
+          } else {
             // report error!
           }
-        } 
+        }
       }
       errCode = jvxErrorType.JVX_NO_ERROR;
     } else {
@@ -678,13 +679,17 @@ class AudYoFloPropertyContentFromJson {
                     } else {
                       if (T1 == Int16List) {
                         errCode = AudYoFloPropertyContentFromString
-                            .convertElementFldListInt16(
-                                fldData as Int16List, idx, token, decHtTp, trans);
+                            .convertElementFldListInt16(fldData as Int16List,
+                                idx, token, decHtTp, trans);
                       } else {
                         if (T1 == Uint16List) {
                           errCode = AudYoFloPropertyContentFromString
                               .convertElementFldListUint16(
-                                  fldData as Uint16List, idx, token, decHtTp, trans);
+                                  fldData as Uint16List,
+                                  idx,
+                                  token,
+                                  decHtTp,
+                                  trans);
                         } else {
                           if (T1 == Int8List) {
                             errCode = AudYoFloPropertyContentFromString

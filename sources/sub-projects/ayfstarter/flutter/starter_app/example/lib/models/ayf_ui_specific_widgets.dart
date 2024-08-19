@@ -43,6 +43,9 @@ class AudYoFloPlayConnectBottomAppBar extends BottomAppBar {
 // configuration entries.
 // ============================================================================
 class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
+  JvxComponentIdentification cpTpPriTech = JvxComponentIdentification();
+  JvxComponentIdentification cpTpPriDev = JvxComponentIdentification();
+
   // ==========================================================================
   // Define the core widget composition here: The function configures all application
   // specific widgets here. Then, if all specific widgets were added, the base class
@@ -59,24 +62,29 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     // ======================================================================
     // Add the primary audio device widget
     // ======================================================================
+
     String imageNameAudioIoPri =
         'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
     String textAudioIoPri = 'ASIO I/O';
-    JvxComponentIdentification cpTpPriTech = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
-            slotid: 0,
-            slotsubid: 0),
-        'priaudiot');
+    if (cpTpPriTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpPriTech = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
+              slotid: 0,
+              slotsubid: 0),
+          'priaudiot');
+    }
 
-    JvxComponentIdentification cpTpPriDev = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
-            slotid: cpTpPriTech.slotid,
-            slotsubid: 0),
-        'priaudiod');
+    if (cpTpPriDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpPriDev = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
+              slotid: cpTpPriTech.slotid,
+              slotsubid: 0),
+          'priaudiod');
+    }
 
     theAllocatedTabs.add(RotatedBox(
         quarterTurns: -1,

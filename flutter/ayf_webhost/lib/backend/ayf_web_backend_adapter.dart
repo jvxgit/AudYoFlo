@@ -827,7 +827,24 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
             // This case happens if the property does not exist!
             // We will not add the property to the list.
 
-            //
+            // HK, 19.08.2024: yes, we will add an invalid property here!!!
+            AudYoFloPropertyContentBackend retVal =
+                AudYoFloPropertyContentBackend(cpId, descriptor: elmS);
+
+            // Error on getting the descriptor
+            retVal.cache_status.bitClear(jvxPropertyCacheStatusFlagShifts
+                .JVX_PROPERTY_DESCRIPTOR_INVALID.index);
+
+            retVal.cache_status.bitSet(jvxPropertyCacheStatusFlagShifts
+                .JVX_PROPERTY_DESCRIPTOR_ERROR.index);
+
+            // ==================================================
+            // Here, we add the property to the cache!
+            // ==================================================
+            int resL = theBeCache!.updateEntrySinglePropertyCache(cpId, retVal);
+            if (resL != jvxErrorType.JVX_NO_ERROR) {
+              assert(false);
+            }
           } else {
             // ==================================================
             // Find out if property is already in the cache

@@ -170,6 +170,20 @@ abstract class AudYoFloMultiComponentsPropertyOnChange {
               }
             }
 
+            for (var elmL in latestResult) {
+              if (elmL is AudYoFloMultiComponentsPropertyOnChangeEntryBackend) {
+                if (elmL.bprops != null) {
+                  for (var elmP in elmL.bprops!) {
+                    if (!elmP.checkValidContent()) {
+                      var token1 = elmP.assCpIdent.toString();
+                      var token2 = elmP.descriptor;
+                      dbgPrint(
+                          'Warning: For component <$token1>, property <$token2> is returned as invalid.');
+                    }
+                  }
+                }
+              }
+            }
             return errCode;
           }
 

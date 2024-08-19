@@ -53,6 +53,20 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
   // only the debug output and the component property viewer widget.
   // ==========================================================================
 
+  JvxComponentIdentification cpTpPriTech = JvxComponentIdentification();
+  JvxComponentIdentification cpTpPriDev = JvxComponentIdentification();
+
+  JvxComponentIdentification cpTpSecTech = JvxComponentIdentification();
+  JvxComponentIdentification cpTpSecDev = JvxComponentIdentification();
+
+  JvxComponentIdentification cpTpHtPriTech = JvxComponentIdentification();
+  JvxComponentIdentification cpTpHtPriDev = JvxComponentIdentification();
+
+  JvxComponentIdentification cpTpHtSecTech = JvxComponentIdentification();
+  JvxComponentIdentification cpTpHtSecDev = JvxComponentIdentification();
+
+  JvxComponentIdentification cpTpFIoTech = JvxComponentIdentification();
+
   AudYoFloUiModelSpecificWithWidget(String routeInit) : super(routeInit) {
     allocateBottomAppBar = allocatorBottomAppBar;
   }
@@ -65,22 +79,25 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     String imageNameAudioIoPri =
         'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
     String textAudioIoPri = 'ASIO I/O';
-    JvxComponentIdentification cpTpPriTech = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
-            slotid: 0,
-            slotsubid: 0),
-        'priaudiot');
+    if (cpTpPriTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpPriTech = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
+              slotid: 0,
+              slotsubid: 0),
+          'priaudiot');
+    }
 
-    JvxComponentIdentification cpTpPriDev = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
-            slotid: cpTpPriTech.slotid,
-            slotsubid: 0),
-        'priaudiod');
-
+    if (cpTpPriDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpPriDev = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
+              slotid: cpTpPriTech.slotid,
+              slotsubid: 0),
+          'priaudiod');
+    }
     theAllocatedTabs.add(RotatedBox(
         quarterTurns: -1,
         child: Tooltip(
@@ -109,21 +126,25 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     String imageNameAudioIoSec =
         'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
     String textAudioIoSec = 'WASAPI I/O';
-    JvxComponentIdentification cpTpSecTech = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
-            slotid: 3,
-            slotsubid: 0),
-        'secaudiot');
+    if (cpTpSecTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpSecTech = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
+              slotid: 3,
+              slotsubid: 0),
+          'secaudiot');
+    }
 
-    JvxComponentIdentification cpTpSecDev = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
-            slotid: cpTpSecTech.slotid,
-            slotsubid: 0),
-        'secaudiod');
+    if (cpTpSecDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpSecDev = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
+              slotid: cpTpSecTech.slotid,
+              slotsubid: 0),
+          'secaudiod');
+    }
 
     theAllocatedTabs.add(RotatedBox(
         quarterTurns: -1,
@@ -153,25 +174,30 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     String imageNameHeadTracker =
         'packages/ayf_pack/images/ayf_icons/ayf-headtracker-settings.png';
     String textAudioIoHt = 'H-Tracker Rs232';
-    JvxComponentIdentification cpTpHtTech = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_TECHNOLOGY,
-            slotid: 0,
-            slotsubid: 0),
-        'headtrackrs232t');
-    JvxComponentIdentification cpTpHtDev = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_DEVICE,
-            slotid: cpTpHtTech.slotid,
-            slotsubid: 0),
-        'headtrackrs232d');
-    ;
+
+    if (cpTpHtPriTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpHtPriTech = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_TECHNOLOGY,
+              slotid: 0,
+              slotsubid: 0),
+          'headtrackrs232t');
+    }
+
+    if (cpTpHtPriDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpHtPriDev = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_DEVICE,
+              slotid: cpTpHtPriTech.slotid,
+              slotsubid: 0),
+          'headtrackrs232d');
+    }
     theAllocatedTabs.add(RotatedBox(
         quarterTurns: -1,
         child: Tooltip(
-            message: '${cpTpHtTech.txt}--${cpTpHtTech.txt}',
+            message: '${cpTpHtPriTech.txt}--${cpTpHtPriTech.txt}',
             child: Column(children: [
               Image.asset(imageNameHeadTracker,
                   filterQuality: FilterQuality.medium,
@@ -181,9 +207,9 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
               Text(textAudioIoHt)
             ]))));
     theAllocatedTabViews.add(AudYoFloAudioSettingsWidget(
-        cpTpHtTech,
+        cpTpHtPriTech,
         'Head Tracker Technologies',
-        cpTpHtDev,
+        cpTpHtPriDev,
         'Rs232 Head Tracker Devices',
         'headtracker',
         (JvxComponentIdentification selCpId) => null,
@@ -193,24 +219,29 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     // Add the headtracker device widget [ART-UDP]
     // ======================================================================
     textAudioIoHt = 'ART Tracker';
-    cpTpHtTech = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_TECHNOLOGY,
-            slotid: 1,
-            slotsubid: 0),
-        'headtrackartt');
-    cpTpHtDev = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_DEVICE,
-            slotid: cpTpHtTech.slotid,
-            slotsubid: 0),
-        'headtrackartd');
+    if (cpTpHtSecTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpHtSecTech = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_TECHNOLOGY,
+              slotid: 1,
+              slotsubid: 0),
+          'headtrackartt');
+    }
+
+    if (cpTpHtSecDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpHtSecDev = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_DEVICE,
+              slotid: cpTpHtSecTech.slotid,
+              slotsubid: 0),
+          'headtrackartd');
+    }
     theAllocatedTabs.add(RotatedBox(
         quarterTurns: -1,
         child: Tooltip(
-            message: '${cpTpHtTech.txt}--${cpTpHtTech.txt}',
+            message: '${cpTpHtSecTech.txt}--${cpTpHtSecTech.txt}',
             child: Column(children: [
               Image.asset(imageNameHeadTracker,
                   filterQuality: FilterQuality.medium,
@@ -220,9 +251,9 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
               Text(textAudioIoHt)
             ]))));
     theAllocatedTabViews.add(AudYoFloAudioSettingsWidget(
-        cpTpHtTech,
+        cpTpHtSecTech,
         'Head Tracker Technologies',
-        cpTpHtDev,
+        cpTpHtSecDev,
         'ART Head Tracker Devices',
         'headtracker',
         (JvxComponentIdentification selCpId) => null,
@@ -235,17 +266,19 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
         'packages/ayf_pack/images/ayf_icons/ayf-file-input.png';
     String textFileIo = 'File Input';
 
-    JvxComponentIdentification cpTpFIoTech = widgetConfigCpId(
-        entriesCfgWidgets,
-        JvxComponentIdentification(
-            cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
-            slotid: 1,
-            slotsubid: 0),
-        'fileiot');
+    if (cpTpFIoTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      cpTpFIoTech = widgetConfigCpId(
+          entriesCfgWidgets,
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
+              slotid: 1,
+              slotsubid: 0),
+          'fileiot');
+    }
     theAllocatedTabs.add(RotatedBox(
         quarterTurns: -1,
         child: Tooltip(
-            message: cpTpHtTech.txt,
+            message: cpTpFIoTech.txt,
             child: Column(children: [
               Image.asset(imageNameFileIO,
                   filterQuality: FilterQuality.medium,
