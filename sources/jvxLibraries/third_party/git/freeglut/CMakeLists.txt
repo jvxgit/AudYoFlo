@@ -38,15 +38,16 @@ elseif(${JVX_OS} MATCHES "linux")
 	## Install <sudo apt-get install libhdf5-dev>
 	find_package(PkgConfig)
 	
-	set(targetfolder opencv)
+	set(targetfolder freeglut)
 	set(archtoken glnx)
+	set(buildtype ${CMAKE_BUILD_TYPE})
 	
-	message("opencv sub project not available. Starting script to download it.") 
-	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
-	message("opencv installation complete.")
+	message("freeglut sub project not available. Starting script to download it.") 
+	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
+	message("freeglut installation complete.")
 	
-	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}" CACHE INTERNAL "opencv include references")
-	set(OPENCV_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/kissfft.lib" CACHE INTERNAL "kissfft library references")
+	set(GLUT_INCLUDEDIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}" CACHE INTERNAL "freglut include references")
+	set(GLUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/glut" CACHE INTERNAL "freeglut library references")
 endif()
 
 # message(FATAL_ERROR "Hier [${PROJECT_NAME}]")

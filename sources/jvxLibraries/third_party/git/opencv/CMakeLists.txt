@@ -66,13 +66,31 @@ elseif(${JVX_OS} MATCHES "linux")
 	
 	set(targetfolder opencv)
 	set(archtoken glnx)
+	set(buildtype ${CMAKE_BUILD_TYPE})
 	
 	message("opencv sub project not available. Starting script to download it.") 
-	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
+	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
 	message("opencv installation complete.")
 	
-	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}" CACHE INTERNAL "opencv include references")
-	set(OPENCV_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/kissfft.lib" CACHE INTERNAL "kissfft library references")
+	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/include" CACHE INTERNAL "opencv include references")
+	set(OPENCV_LIBRARIES 
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_core
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_features2d
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_gapi
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_imgcodecs
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_ml
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_photo
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_video
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_calib3d
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_dnn
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_flann
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_highgui
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_imgproc
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_objdetect
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_stitching
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_videoio
+		CACHE INTERNAL "opencv library references")
+		
 endif()
 
 # message(FATAL_ERROR "Hier [${PROJECT_NAME}]")

@@ -1,11 +1,12 @@
 #!/bin/bash  
 
 arch=$1
-hdfdir=$2
+opencvdir=$2
+buildtype=$3
 generatortoken="-G Ninja"
 
 rm -rf CMakeCache.txt
-echo cmake $generatortoken -DCMAKE_INSTALL_PREFIX="../$hdfdir/$arch" -DCMAKE_BUILD_TYPE=Debug ../$hdfdir
-cmake $generatortoken -DCMAKE_INSTALL_PREFIX="../$hdfdir/$arch" -DCMAKE_BUILD_TYPE=Debug ../$hdfdir
+echo cmake $generatortoken -DCMAKE_INSTALL_PREFIX=../$opencvdir/$arch -DBUILD_SHARED_LIBS=FALSE -DCMAKE_BUILD_TYPE=$buildtype ../$opencvdir
+cmake $generatortoken -DCMAKE_INSTALL_PREFIX=../$opencvdir/$arch -DBUILD_SHARED_LIBS=FALSE -DCMAKE_BUILD_TYPE=$buildtype ../$opencvdir
 
 ninja install

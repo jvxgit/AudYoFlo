@@ -46,11 +46,24 @@ if(${JVX_OS} MATCHES "windows")
 	set(GLEW_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/include CACHE INTERNAL "glew include references")
 	set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/glew32d.lib CACHE INTERNAL "glew include references")
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/bin/ DESTINATION ${INSTALL_PATH_LIB_SHARED} FILES_MATCHING COMPONENT glew PATTERN "*.dll")
-else()
-	# Linux
-	message(FATAL_ERROR "--> Looking for libpcap in linux - needs to be implemented!")
-	if(NOT PCAP_LIBRARY_PATH)
-		set(PCAP_LIBRARY_PATH $ENV{PCAP_LIBRARY_PATH})
-	endif()
+	
+elseif(${JVX_OS} MATCHES "linux")
+	## Install <sudo apt-get install libhdf5-dev>
+	
+	set(targetfolder glew)
+	set(archtoken glnx)
+	set(buildtype ${CMAKE_BUILD_TYPE})
+	
+	message("glew sub project not available. Starting script to download it.") 
+	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
+	message("glew installation complete.")
+	
+	set(GLEW_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/include CACHE INTERNAL "glew include references")
+	set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/libGLEWd.lib CACHE INTERNAL "glew include references")
+	
+else()	
+	
+	message(FATAL_ERROR "--> Looking for glew in linux - needs to be implemented!")
+	
 endif()
 # message(FATAL_ERROR "--> Stop in glew build!")
