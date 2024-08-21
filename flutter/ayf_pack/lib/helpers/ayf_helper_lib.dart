@@ -541,6 +541,23 @@ void dbgPrint(String output, {String intro = '', int stackTraceLevel = 1}) {
   debugPrint('$introtoken $output');
 }
 
+class AudYoFloConfigComponentForWidgetStartup {
+  JvxComponentIdentification cpId;
+  bool showWidget = true;
+  bool initialized = false;
+  String token;
+  AudYoFloConfigComponentForWidgetStartup(this.cpId, this.token);
+}
+
+class AudYoFloConfigComponentForWidgetStartupTD
+    extends AudYoFloConfigComponentForWidgetStartup {
+  JvxComponentIdentification cpIdDev;
+  String tokenDev;
+  AudYoFloConfigComponentForWidgetStartupTD(JvxComponentIdentification cpId,
+      String token, this.cpIdDev, this.tokenDev)
+      : super(cpId, token);
+}
+
 JvxComponentIdentification widgetConfigCpId(
     Map<String, String> entriesCfgWidgets,
     JvxComponentIdentification defCp,
@@ -552,6 +569,50 @@ JvxComponentIdentification widgetConfigCpId(
         elmBinW.value);
   }
   return defCp;
+}
+
+void widgetConfigCpIdShow(Map<String, String> entriesCfgWidgets,
+    AudYoFloConfigComponentForWidgetStartup cfgInOut) {
+  if (!cfgInOut.initialized) {
+    cfgInOut.showWidget = true;
+    cfgInOut.initialized = true;
+
+    var elmBinW = entriesCfgWidgets.entries
+        .firstWhereOrNull((element) => element.key == cfgInOut.token);
+    if (elmBinW != null) {
+      if (elmBinW.value == 'off') {
+        cfgInOut.showWidget = false;
+      } else {
+        cfgInOut.cpId =
+            AudYoFloStringTranslator.componentIdentificationFromString(
+                elmBinW.value);
+      }
+    }
+  }
+}
+
+void widgetConfigCpIdShowTD(Map<String, String> entriesCfgWidgets,
+    AudYoFloConfigComponentForWidgetStartupTD cfgInOut) {
+  if (!cfgInOut.initialized) {
+    cfgInOut.showWidget = true;
+    cfgInOut.initialized = true;
+
+    var elmBinWT = entriesCfgWidgets.entries
+        .firstWhereOrNull((element) => element.key == cfgInOut.token);
+    if (elmBinWT != null) {
+      if (elmBinWT.value == 'off') {
+        cfgInOut.showWidget = false;
+      } else {
+        var elmBinWD = entriesCfgWidgets.entries
+            .firstWhereOrNull((element) => element.key == cfgInOut.tokenDev);
+        if (elmBinWD != null) {
+          cfgInOut.cpIdDev =
+              AudYoFloStringTranslator.componentIdentificationFromString(
+                  elmBinWD.value);
+        }
+      }
+    }
+  }
 }
 
 class AudYoFloMixerLevelHelper {
