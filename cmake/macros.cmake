@@ -642,9 +642,12 @@ macro(jvx_single_platform jvx_platform)
 	endif()
 endmacro(jvx_single_platform)
 
-macro(windows_to_shell_path WIN_PATH OUTDIR)
-cmake_path(CONVERT ${WIN_PATH} TO_CMAKE_PATH_LIST PATH)
-string(REGEX REPLACE "^([a-zA-Z]):" "/\\1" ${OUTDIR} "${PATH}")
+macro(windows_to_shell_path WIN_PATH OUTDIR)	
+	# Is the following required?
+	# string(REPLACE "\\" "/" SDK_FOLDER_SLASHES ${SDK_FOLDER})
+	
+	cmake_path(CONVERT ${WIN_PATH} TO_CMAKE_PATH_LIST PATH)
+	string(REGEX REPLACE "^([a-zA-Z]):" "/\\1" ${OUTDIR} "${PATH}")
 endmacro()
 
 
