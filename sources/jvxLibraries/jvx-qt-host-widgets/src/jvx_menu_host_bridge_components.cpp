@@ -938,6 +938,7 @@ jvx_menu_host_bridge_components::action_int_selection_slot()
 							case jvxComponentTypeClass::JVX_COMPONENT_TYPE_DEVICE:
 								tpAll_ref[id].slotsubid = JVX_SIZE_DONTCARE;
 								break;
+							case jvxComponentTypeClass::JVX_COMPONENT_TYPE_TECHNOLOGY:
 							case jvxComponentTypeClass::JVX_COMPONENT_TYPE_NODE:
 								tpAll_ref[id].slotid = JVX_SIZE_DONTCARE;
 								tpAll_ref[id].slotsubid = 0;

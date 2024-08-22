@@ -1,7 +1,3 @@
-#ifdef JVX_USE_ASIO
-#include "jvxAuTAsio.h"
-#endif
-
 #ifdef JVX_OS_LINUX
 #include "jvxAuTAlsa.h"
 #endif
@@ -10,13 +6,24 @@
 #include "jvxAuTCoreAudio.h"
 #endif
 
+#ifdef JVX_OS_WINDOWS
+	#ifdef JVX_USE_WASAPI
+		#include "jvxAuTWindows.h"
+	#endif
+	#ifdef JVX_USE_MFVIDEO
+		#include "jvxViTMfOpenGL.h"
+	#endif
+#endif
+
 #ifdef JVX_USE_PORTAUDIO
 #include "jvxAuTPortAudio.h"
 #endif
 
-#ifdef JVX_USE_WASAPI
-#include "jvxAuTWindows.h"
+#ifdef JVX_USE_ASIO
+#include "jvxAuTAsio.h"
 #endif
+
+// ===========================================================
 
 #ifdef JVX_HOST_USE_REMOTE_CALL
 #include "jvxTRemoteCall.h"
@@ -106,11 +113,26 @@ extern "C"
 			JVX_ADDITIONAL_AUDIO_TECHNOLOGIES
 #endif
 
-#ifdef JVX_ADDITIONAL_TECHNOLOGIES
-				xyz
-#endif
-
 			break;
+
+		case JVX_COMPONENT_VIDEO_TECHNOLOGY:
+
+#ifdef JVX_USE_MFVIDEO
+			if (id == cnt)
+			{
+				adescr->assign("Mf Video");
+				*funcInit = jvxViTMfOpenGL_init;
+				*funcTerm = jvxViTMfOpenGL_terminate;
+				return(JVX_NO_ERROR);
+			}
+			cnt++;
+#endif
+			break;
+
+#ifdef JVX_ADDITIONAL_TECHNOLOGIES
+			JVX_ADDITIONAL_TECHNOLOGIES
+#endif
+			
 
 #ifdef JVX_ALL_AUDIONODE_CASES
 		case JVX_COMPONENT_AUDIO_NODE:

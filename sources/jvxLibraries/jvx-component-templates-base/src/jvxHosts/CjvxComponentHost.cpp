@@ -1824,6 +1824,28 @@ CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx
 			}
 			else
 			{
+				// =========================================================================
+					// Use the next valid slot - find empty container first
+				if (tp.slotid == JVX_SIZE_DONTCARE)
+				{
+					for (h = 0; h < elmIt_tech->technologyInstances.selTech.size(); h++)
+					{
+						if (elmIt_tech->technologyInstances.selTech[h].theHandle_shortcut_tech == NULL)
+						{
+							tp.slotid = h;
+							break;
+						}
+					}
+				}
+
+				// If we still have not found an empty container, try to allocate new instance
+				if (tp.slotid == JVX_SIZE_DONTCARE)
+				{
+					tp.slotid = elmIt_tech->technologyInstances.selTech.size();
+				}
+				// =========================================================================
+
+
 				if (tp.slotid >= elmIt_tech->technologyInstances.selTech.size())
 				{
 

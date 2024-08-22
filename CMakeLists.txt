@@ -450,6 +450,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 
   if(NOT ${JVX_OS} MATCHES "windows")
     set(JVX_USE_PART_WASAPI FALSE)
+	set(JVX_USE_MFVIDEO FALSE)
   endif()
   if(NOT ${JVX_OS} MATCHES "linux")
     set(JVX_USE_PART_ALSA FALSE)
@@ -642,8 +643,10 @@ else(JVX_COMPILE_BUILDTOOLS)
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTDefault
   )
   if(JVX_OS MATCHES "windows")
-    set(JVX_BASE_VIDEO_TECHNOLOGIES ${JVX_BASE_VIDEO_TECHNOLOGIES}
-      ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfOpenGL)
+	if(JVX_USE_MFVIDEO)
+		set(JVX_BASE_VIDEO_TECHNOLOGIES ${JVX_BASE_VIDEO_TECHNOLOGIES}
+			${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfOpenGL)
+	endif()
   endif()
 
   ###
