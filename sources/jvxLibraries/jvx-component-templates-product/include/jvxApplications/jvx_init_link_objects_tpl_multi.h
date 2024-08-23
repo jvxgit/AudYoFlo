@@ -147,6 +147,19 @@ extern "C"
 			break;
 #endif
 
+#ifdef JVX_ALL_VIDEONODE_CASES
+		case JVX_COMPONENT_VIDEO_NODE:
+			switch (id)
+			{
+
+				JVX_ALL_VIDEONODE_CASES
+
+			default:
+				break;
+			}
+			break;
+#endif
+
 #ifdef JVX_ALL_SPNODE_CASES
 		case JVX_COMPONENT_SIGNAL_PROCESSING_NODE:
 			switch (id)

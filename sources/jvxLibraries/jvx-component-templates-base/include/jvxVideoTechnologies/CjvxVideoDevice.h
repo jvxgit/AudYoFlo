@@ -34,15 +34,6 @@ protected:
 
 	struct
 	{
-		/*
-		jvxInt32 samplerate;
-		jvxInt32 buffersize;
-		jvx_oneSelectionOption_cpp inputchannels;
-		jvx_oneSelectionOption_cpp outputchannels;
-		*/
-		IjvxInputConnector* link_video_node;
-		IjvxDataProcessor* link_video_proc;
-
 		std::vector<jvxDataFormat> formats;
 		std::vector<jvxDataFormatGroup> subformats;
 	} _common_set_video_device;

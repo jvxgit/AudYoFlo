@@ -10,8 +10,7 @@ CjvxVideoDevice::CjvxVideoDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	_common_set.theComponentType.unselected(JVX_COMPONENT_VIDEO_DEVICE);
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxDevice*>(this));
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
-	this->_common_set_video_device.link_video_node = NULL;
-	this->_common_set_video_device.link_video_proc = NULL;
+	_common_set.theInterfaceFactory = static_cast<IjvxInterfaceFactory*>(this);
 }
 
 CjvxVideoDevice::~CjvxVideoDevice()

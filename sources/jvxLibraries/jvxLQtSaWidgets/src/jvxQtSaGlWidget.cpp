@@ -337,8 +337,8 @@ CjvxMyGlWidget::inform_stopped()
 
 jvxErrorType
 CjvxMyGlWidget::create_programm_assign(
-	const char* vertex_shader_code, 
-	const char*	fragment_shader_code,
+	const std::string& vertex_shader_code, 
+	const std::string& fragment_shader_code,
 	jvxOpenGlRendering myRenderOperation, 
 	GLint* position, GLint* texture,
 	GLint* border_x, GLint* border_y, 
@@ -347,7 +347,7 @@ CjvxMyGlWidget::create_programm_assign(
 	QString log;
 	m_program = new QOpenGLShaderProgram(this);
 	
-	bool cSuc = m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_shader_code);
+	bool cSuc = m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_shader_code.c_str());
 	if (!cSuc)
 	{
 		log = m_program->log();
@@ -355,7 +355,7 @@ CjvxMyGlWidget::create_programm_assign(
 		assert(0);
 	}
 
-	cSuc = m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragment_shader_code);
+	cSuc = m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragment_shader_code.c_str());
 	if (!cSuc)
 	{
 		log = m_program->log();

@@ -125,8 +125,8 @@ private:
 	void paintGL() override;
 
 	jvxErrorType create_programm_assign(
-		const char* vertex_shader_code,
-		const char*	fragment_shader_code,
+		const std::string& vertex_shader_code,
+		const std::string& fragment_shader_code,
 		jvxOpenGlRendering myRenderOperation,
 		GLint* position, GLint* texture,
 		GLint* border_x, GLint* border_y, 

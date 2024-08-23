@@ -124,6 +124,9 @@ public:
 
 	virtual JVX_CALLINGCONVENTION ~CjvxVideoMfOpenGLDevice();
 
+	jvxErrorType select(IjvxObject* owner) override;
+	jvxErrorType unselect() override;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
 
@@ -209,8 +212,10 @@ public:
 	//void updateDependentVariables(jvxSize propId, jvxPropertyCategoryType category, jvxBool updateAll, jvxPropertyCallPurpose callPurp = JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC);
 	void updateDependentVariables_nolock();
 
-	jvxErrorType init(CjvxVideoMfOpenGLTechnology* par, IMFActivate* inPtr);
+	jvxErrorType init(CjvxVideoMfOpenGLTechnology* par, IMFActivate* inPtr, jvxBool isDefaultDevice);
 	void scanProperties(IMFSourceReader* reader);
+
+	jvxErrorType prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
 	// ====================================================================
 	STDMETHODIMP QueryInterface(REFIID aRiid, void** aPpv);

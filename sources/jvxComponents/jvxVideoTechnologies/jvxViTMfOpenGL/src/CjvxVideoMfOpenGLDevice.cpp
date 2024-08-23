@@ -25,10 +25,18 @@ CjvxVideoMfOpenGLDevice::~CjvxVideoMfOpenGLDevice()
 }
 
 jvxErrorType 
-CjvxVideoMfOpenGLDevice::init(CjvxVideoMfOpenGLTechnology* par, IMFActivate* inPtr)
+CjvxVideoMfOpenGLDevice::init(CjvxVideoMfOpenGLTechnology* parentTech, IMFActivate* inPtr, jvxBool isDefaultDevice)
 {
-	myParent = par;
+	myParent = parentTech;
 	thisisme = inPtr;
+
+	jvx_bitZSet(_common_set_device.caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_DUPLEX_SHIFT);
+
+	if (isDefaultDevice)
+	{
+		jvx_bitZSet<jvxCBitField16>(_common_set_device.caps.flags, (int)jvxDeviceCapabilityFlagsShift::JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT);
+	}
+	_common_set_device.report = static_cast<IjvxDevice_report*>(parentTech);
 
 	return JVX_NO_ERROR;
 }
@@ -54,6 +62,36 @@ CjvxVideoMfOpenGLDevice::unselect()
 	return(res);
 }
 #endif
+
+jvxErrorType
+CjvxVideoMfOpenGLDevice::select(IjvxObject* owner)
+{
+	jvxErrorType res = CjvxVideoDevice::select(owner);
+	if (res == JVX_NO_ERROR)
+	{
+		_common_set_device.caps.selectable = false;
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxVideoMfOpenGLDevice::unselect()
+{
+	jvxErrorType res = CjvxVideoDevice::unselect();
+	if (res == JVX_NO_ERROR)
+	{
+		_common_set_device.caps.selectable = true;
+		if (_common_set_device.report)
+		{
+			_common_set_device.report->on_device_caps_changed(static_cast<IjvxDevice*>(this));
+		}
+	}
+	return res;
+}
 
 jvxErrorType
 CjvxVideoMfOpenGLDevice::activate()
@@ -212,17 +250,17 @@ CjvxVideoMfOpenGLDevice::prepare()
 	return(res);
 }
 
-jvxErrorType
-CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+jvxErrorType 
+CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;
-	jvxSize idModeSelect;
-	idModeSelect = jvx_bitfieldSelection2Id(
+	jvxSize idModeSelect = jvx_bitfieldSelection2Id(
 		genMf_device::configuration_mf.mode_selection.value.selection(),
 		genMf_device::configuration_mf.mode_selection.value.entries.size());
 
-	IMFMediaType* type = NULL;
 	JVX_ASSERT_X("Check for at least 1 mode", 0, JVX_CHECK_SIZE_SELECTED(idModeSelect));
+
+	IMFMediaType* type = NULL;
 
 	HRESULT hr = readPtr->GetNativeMediaType((DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM, (DWORD)lstModes[idModeSelect].id, &type);
 	JVX_ASSERT_X("GetNativeMediaType failed", 0, (hr == S_OK));
@@ -235,70 +273,84 @@ CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	hr = type->GetGUID(MF_MT_SUBTYPE, &nativeSubGuid);
 
 	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)lstModes[idModeSelect].form;
-	_common_set_ocon.theData_out.con_data.number_buffers = genMf_device::systemex.number_buffers.value;
-	_common_set_ocon.theData_out.con_data.number_buffers = JVX_MAX(_common_set_ocon.theData_out.con_data.number_buffers, 2);
 	_common_set_ocon.theData_out.con_params.number_channels = 1;
 	_common_set_ocon.theData_out.con_params.rate = lstModes[idModeSelect].fps;
-	_common_set_ocon.theData_out.con_data.buffers = NULL;
-	_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
 	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)lstModes[idModeSelect].subform_sw;
 	_common_set_ocon.theData_out.con_params.segmentation.x = lstModes[idModeSelect].width;
 	_common_set_ocon.theData_out.con_params.segmentation.y = lstModes[idModeSelect].height;
-	_common_set_ocon.theData_out.con_params.additional_flags = 0;
 
-	runtime.szElement = jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] *
+	jvxSize szElement = jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] *
 		jvxDataFormatGroup_size[_common_set_ocon.theData_out.con_params.format_group];
-	runtime.szLine = _common_set_ocon.theData_out.con_params.segmentation.x * runtime.szElement;
-	runtime.szRaw = _common_set_ocon.theData_out.con_params.segmentation.y * runtime.szLine;
-	_common_set_ocon.theData_out.con_params.buffersize = runtime.szRaw;
+	jvxSize szLine = _common_set_ocon.theData_out.con_params.segmentation.x * szElement;
+	jvxSize szRaw = _common_set_ocon.theData_out.con_params.segmentation.y * szLine;
+	_common_set_ocon.theData_out.con_params.buffersize = szRaw;
 
-	if (lstModes[idModeSelect].subform_hw != lstModes[idModeSelect].subform_sw)
+	if (runPrepare)
 	{
-		runtime.convertOnRead.inConvertBufferInUse = true;
+		_common_set_ocon.theData_out.con_data.buffers = NULL;
+		_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
+		_common_set_ocon.theData_out.con_data.number_buffers = genMf_device::systemex.number_buffers.value;
+		_common_set_ocon.theData_out.con_data.number_buffers = JVX_MAX(_common_set_ocon.theData_out.con_data.number_buffers, 2);
+		_common_set_ocon.theData_out.con_params.additional_flags = 0;
 
-		// Allocate the proper conversion buffer!!
-		runtime.convertOnRead.form_hw = lstModes[idModeSelect].subform_hw;
-		runtime.convertOnRead.szElement = (jvxData)jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format];
-		runtime.convertOnRead.szElement *= (jvxData)jvxDataFormatGroup_size[runtime.convertOnRead.form_hw];
-		runtime.convertOnRead.szElement /= (jvxData)jvxDataFormatGroup_size_div[runtime.convertOnRead.form_hw];
-		jvxData ll = runtime.convertOnRead.szElement * lstModes[idModeSelect].width * lstModes[idModeSelect].height;
-		runtime.convertOnRead.lField = JVX_DATA2SIZE(ll);
-		assert(ll == (jvxData)runtime.convertOnRead.lField);
-		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.convertOnRead.bufRead, jvxByte, runtime.convertOnRead.lField);
-		runtime.convertOnRead.segWidth = lstModes[idModeSelect].width;
-		runtime.convertOnRead.segHeight = lstModes[idModeSelect].height;		
-		switch (runtime.convertOnRead.form_hw)
+		runtime.szElement = szElement;
+		runtime.szLine = szLine;
+		runtime.szRaw = szRaw;
+
+		if (lstModes[idModeSelect].subform_hw != lstModes[idModeSelect].subform_sw)
 		{
-		case JVX_DATAFORMAT_GROUP_VIDEO_NV12:
-			runtime.convertOnRead.plane1_Sz = runtime.convertOnRead.segWidth * runtime.convertOnRead.segHeight;
-			runtime.convertOnRead.plane2_Sz = runtime.convertOnRead.lField - runtime.convertOnRead.plane1_Sz;
-			break;
-		default:
-			assert(0);
+			runtime.convertOnRead.inConvertBufferInUse = true;
+
+			// Allocate the proper conversion buffer!!
+			runtime.convertOnRead.form_hw = lstModes[idModeSelect].subform_hw;
+			runtime.convertOnRead.szElement = (jvxData)jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format];
+			runtime.convertOnRead.szElement *= (jvxData)jvxDataFormatGroup_size[runtime.convertOnRead.form_hw];
+			runtime.convertOnRead.szElement /= (jvxData)jvxDataFormatGroup_size_div[runtime.convertOnRead.form_hw];
+			jvxData ll = runtime.convertOnRead.szElement * lstModes[idModeSelect].width * lstModes[idModeSelect].height;
+			runtime.convertOnRead.lField = JVX_DATA2SIZE(ll);
+			assert(ll == (jvxData)runtime.convertOnRead.lField);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.convertOnRead.bufRead, jvxByte, runtime.convertOnRead.lField);
+			runtime.convertOnRead.segWidth = lstModes[idModeSelect].width;
+			runtime.convertOnRead.segHeight = lstModes[idModeSelect].height;
+			switch (runtime.convertOnRead.form_hw)
+			{
+			case JVX_DATAFORMAT_GROUP_VIDEO_NV12:
+				runtime.convertOnRead.plane1_Sz = runtime.convertOnRead.segWidth * runtime.convertOnRead.segHeight;
+				runtime.convertOnRead.plane2_Sz = runtime.convertOnRead.lField - runtime.convertOnRead.plane1_Sz;
+				break;
+			default:
+				assert(0);
+			}
+
 		}
 
+		res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		if (res != JVX_NO_ERROR)
+		{
+			resL = _postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			assert(resL == JVX_NO_ERROR);
+			goto leave_error;
+		}
+
+		runtime.stride = 0;
+
+		LONG stride = 0;
+		hr = MFGetStrideForBitmapInfoHeader(nativeSubGuid.Data1, (DWORD)_common_set_ocon.theData_out.con_params.segmentation.x, &stride);
+		JVX_ASSERT_X("MFGetStrideForBitmapInfoHeader failed", 0, (hr == S_OK));
+		runtime.stride = stride;
 	}
-
-	res = _prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-	if (res != JVX_NO_ERROR)
-	{
-		resL = _postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-		assert(resL == JVX_NO_ERROR);
-		goto leave_error;
-	}
-
-	runtime.stride = 0;
-
-	LONG stride = 0;
-	hr = MFGetStrideForBitmapInfoHeader(nativeSubGuid.Data1, (DWORD)_common_set_ocon.theData_out.con_params.segmentation.x, &stride);
-	JVX_ASSERT_X("MFGetStrideForBitmapInfoHeader failed", 0, (hr == S_OK));
-	runtime.stride = stride;
-
 	type->Release();
 	return JVX_NO_ERROR;
 
 leave_error:
 	return(res);
+	
+}
+
+jvxErrorType
+CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	return prepare_data(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
 jvxErrorType
@@ -575,14 +627,22 @@ CjvxVideoMfOpenGLDevice::updateDependentVariables_nolock()
 jvxErrorType
 CjvxVideoMfOpenGLDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
+	jvxErrorType res = prepare_data(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	/*
 	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxVideoDevice_genpcg::video.format.value;
 	_common_set_ocon.theData_out.con_params.number_channels = 1;
 	_common_set_ocon.theData_out.con_params.rate = CjvxVideoDevice_genpcg::video.framerate.value;
 	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.subformat.value;
 	_common_set_ocon.theData_out.con_params.segmentation.x = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_x.value;
 	_common_set_ocon.theData_out.con_params.segmentation.y = (jvxDataFormatGroup)CjvxVideoDevice_genpcg::video.segmentsize_y.value;
+	_common_set_ocon.theData_out.con_params.buffersize = _common_set_ocon.theData_out.con_params.segmentation.x * _common_set_ocon.theData_out.con_params.segmentation.y * jvxDataFormatGroup_getsize()
+	*/
 
-	return CjvxVideoDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	if (res == JVX_NO_ERROR)
+	{
+		res = CjvxVideoDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	}
+	return res;
 }
 
 jvxErrorType

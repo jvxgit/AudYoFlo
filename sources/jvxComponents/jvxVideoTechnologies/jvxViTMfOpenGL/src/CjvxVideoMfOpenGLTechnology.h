@@ -7,10 +7,10 @@
 #include <mfidl.h>
 #include <mfreadwrite.h>
 
-#include "jvxVideoTechnologies/CjvxVideoTechnology.h"
+#include "jvxTechnologies/CjvxTemplateTechnology.h"
 #include "CjvxVideoMfOpenGLDevice.h"
 
-class CjvxVideoMfOpenGLTechnology: public CjvxVideoTechnology
+class CjvxVideoMfOpenGLTechnology: public CjvxTemplateTechnology<CjvxVideoMfOpenGLDevice>
 {
 	IMFActivate** lstDevices;
 	UINT32 numDevices;

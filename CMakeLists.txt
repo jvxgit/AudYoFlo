@@ -748,16 +748,18 @@ else(JVX_COMPILE_BUILDTOOLS)
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNSpeaker2Binaural
   )
 
+    set(JVX_BASE_VIDEO_NODES 
+		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNDefault
+		)
 
-  if(JVX_USE_OPENGL_X11)
+  if(JVX_USE_GLEW_GLUT)
 
     ###
     # build audio nodes
     ###
-    set(JVX_BASE_VIDEO_NODES
-      ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNDefault
-      ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNopenGLViewer
-    )
+    #set(JVX_BASE_VIDEO_NODES ${JVX_BASE_VIDEO_NODES}      
+    #  ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNopenGLViewer
+    #)
   endif()
 
   ###

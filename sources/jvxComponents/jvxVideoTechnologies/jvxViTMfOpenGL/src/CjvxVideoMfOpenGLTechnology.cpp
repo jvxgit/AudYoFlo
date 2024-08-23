@@ -2,8 +2,10 @@
 #include <ROApi.h>
 
 CjvxVideoMfOpenGLTechnology::CjvxVideoMfOpenGLTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
-	CjvxVideoTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+	CjvxTemplateTechnology<CjvxVideoMfOpenGLDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
+	this->numberDevicesInit = 0;
+	this->deviceNamePrefix = "VideoDevice";
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxTechnology*>(this));
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
 }
@@ -11,7 +13,7 @@ CjvxVideoMfOpenGLTechnology::CjvxVideoMfOpenGLTechnology(JVX_CONSTRUCTOR_ARGUMEN
 jvxErrorType
 CjvxVideoMfOpenGLTechnology::activate()
 {
-	jvxErrorType res = CjvxVideoTechnology::activate();
+	jvxErrorType res = CjvxTemplateTechnology<CjvxVideoMfOpenGLDevice>::activate();
 
 	if(res == JVX_NO_ERROR)
 	{
@@ -87,7 +89,7 @@ CjvxVideoMfOpenGLTechnology::activate()
 			CjvxVideoMfOpenGLDevice* newDevice = new CjvxVideoMfOpenGLDevice(nm.c_str(), false, _common_set.theDescriptor.c_str(), _common_set.theFeatureClass,
 				_common_set.theModuleName.c_str(), JVX_COMPONENT_ACCESS_SUB_COMPONENT, JVX_COMPONENT_VIDEO_DEVICE, "device/video_device", NULL);
 
-			newDevice->init(this, lstDevices[i]);
+			newDevice->init(this, lstDevices[i], (i == 0));
 
 			// Whatever to be done for initialization
 			oneDeviceWrapper elm;

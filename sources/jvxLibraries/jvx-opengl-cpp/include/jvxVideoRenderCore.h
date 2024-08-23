@@ -519,8 +519,8 @@ public:
 	virtual jvxErrorType system_passcontrol() = 0;
 
 	virtual jvxErrorType create_programm_assign(
-		const char* vertex_shader_code,
-		const char*	fragment_shader_code,
+		const std::string& vertex_shader_code,
+		const std::string& fragment_shader_code,
 		jvxOpenGlRendering myRenderOperation,
 		GLint* position, GLint* texture,
 		GLint* border_x, GLint* border_y, 
@@ -643,11 +643,12 @@ private:
       }
   };
   
-	GLuint make_shader(GLenum type, GLchar *source)
+	GLuint make_shader(GLenum type, const std::string& sourceStr)
 	{
-		GLint length = -1;
 		GLuint shader;
 		GLint shader_ok;
+		GLchar* source = (GLchar*)sourceStr.c_str();
+		GLint length = sourceStr.size();
 
 		// type = GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
 		shader = glCreateShader(type);
@@ -696,7 +697,7 @@ private:
 
 	// ==========================================================================
 	int make_resources(jvxSize width, jvxSize height, jvxByte****ptr, jvxSize* szFld, jvxSize numChannels, jvxSize numBufs, 
-		jvxDataFormat form, jvxDataFormatGroup subform, const char* vertex_shader_code, const char* fragment_shader_code,
+		jvxDataFormat form, jvxDataFormatGroup subform, const std::string& vertex_shader_code, const std::string& fragment_shader_code,
 		jvxByte* extPtr, jvxSize szExt)
 	{
 #if defined(JVX_VIDEO_RENDER_CORE_CLASS)
@@ -746,11 +747,11 @@ private:
 #endif
 
 			/* make buffers and textures ... */
-			g_resources.vertex_shader = make_shader(GL_VERTEX_SHADER, (GLchar*)vertex_shader_code);
+			g_resources.vertex_shader = make_shader(GL_VERTEX_SHADER, vertex_shader_code);
 			if (g_resources.vertex_shader == 0)
 				return 0;
 
-			g_resources.fragment_shader = make_shader(GL_FRAGMENT_SHADER, (GLchar*)fragment_shader_code);
+			g_resources.fragment_shader = make_shader(GL_FRAGMENT_SHADER, fragment_shader_code);
 			if (g_resources.fragment_shader == 0)
 				return 0;
 
