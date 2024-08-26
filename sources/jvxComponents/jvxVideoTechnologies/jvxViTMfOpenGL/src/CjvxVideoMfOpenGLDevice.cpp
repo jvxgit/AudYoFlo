@@ -8,9 +8,7 @@ CjvxVideoMfOpenGLDevice::CjvxVideoMfOpenGLDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO
 	CjvxVideoDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxDevice*>(this));
-
 	_common_set.thisisme = static_cast<IjvxObject*>(this);
-
 	_common_set_properties.reportIfNoChange = true;
 
 	//dataProcessorAndPurpose theSelector;
@@ -18,7 +16,6 @@ CjvxVideoMfOpenGLDevice::CjvxVideoMfOpenGLDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO
 	//_common_set_dataprocessor_selector.entries.push_back(theSelector);
 
 }
-
 
 CjvxVideoMfOpenGLDevice::~CjvxVideoMfOpenGLDevice()
 {
@@ -40,28 +37,6 @@ CjvxVideoMfOpenGLDevice::init(CjvxVideoMfOpenGLTechnology* parentTech, IMFActiva
 
 	return JVX_NO_ERROR;
 }
-
-#if 0
-jvxErrorType
-CjvxVideoMfOpenGLDevice::select()
-{
-	jvxErrorType res = CjvxAudioDevice::select();
-	if(res == JVX_NO_ERROR)
-	{
-	}
-	return(res);
-}
-
-jvxErrorType
-CjvxVideoMfOpenGLDevice::unselect()
-{
-	jvxErrorType res = CjvxAudioDevice::unselect();
-	if(res == JVX_NO_ERROR)
-	{
-	}
-	return(res);
-}
-#endif
 
 jvxErrorType
 CjvxVideoMfOpenGLDevice::select(IjvxObject* owner)
