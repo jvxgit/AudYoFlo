@@ -118,6 +118,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION set_manipulate_value(jvxSize id, jvxVariant* varray) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_manipulate_value(jvxSize id, jvxVariant* varray) override;
 
+	virtual void activate_connectors();
+	virtual void deactivate_connectors();
 };
 
 #define JVX_OS_REACT_INTERFACE_PARAMETERS_DECLARE \

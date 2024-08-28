@@ -7,6 +7,10 @@ namespace JVX_PROJECT_NAMESPACE {
 
 CjvxVideoNode::CjvxVideoNode(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE): CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
+	if (tpComp == JVX_COMPONENT_UNKNOWN)
+	{
+		tpComp = JVX_COMPONENT_VIDEO_NODE;
+	}
 	_common_set.theComponentType.unselected(tpComp);
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
 	_common_set.thisisme = static_cast<IjvxObject*>(this);

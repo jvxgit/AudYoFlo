@@ -26,8 +26,7 @@ CjvxNodeBase1io::activate()
 	{
 		node_inout.initialize(this, prefix_descriptor_properties);
 		node_inout.updtag_all(prefix_description_properties);
-		JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this),
-			"default", NULL, _common_set.theModuleName.c_str());
+		activate_connectors();
 	}
 	return(res);
 };
@@ -40,7 +39,7 @@ CjvxNodeBase1io::deactivate()
 	if (res == JVX_NO_ERROR)
 	{
 		node_inout.terminate();
-		JVX_DEACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS();
+		deactivate_connectors();
 	}
 	return(res);
 };
@@ -548,4 +547,33 @@ CjvxNodeBase1io::get_manipulate_value(jvxSize id, jvxVariant* varray)
 		res = JVX_ERROR_UNSUPPORTED;
 	}
 	return res;
+}
+
+void
+CjvxNodeBase1io::activate_connectors()
+{
+	JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this),
+		"default", NULL, _common_set.theModuleName.c_str());
+
+/*
+#define JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS((1), (2), (3), (4), (5)) \
+	{ 
+		oneOutputConnectorElement newElmOut; 
+		newElmOut.theConnector = static_cast<IjvxOutputConnectorSelect*>(this); 		
+		_common_set_conn_factory.input_connectors[newElmIn.theConnector] = newElmIn; 
+		_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut; 
+		CjvxInputOutputConnector::lds_activate((1), (2), 
+			static_cast<IjvxConnectorFactory*>(this), (4), 
+			(3), static_cast<IjvxInputConnector*>(this), 
+			static_cast<IjvxOutputConnector*>(this)); 
+		CjvxConnectorFactory::_activate_factory((2)); 
+	}
+#endif
+*/
+}
+
+void
+CjvxNodeBase1io::deactivate_connectors()
+{
+	JVX_DEACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS();
 }

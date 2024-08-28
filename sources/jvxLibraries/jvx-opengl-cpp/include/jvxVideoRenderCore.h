@@ -458,7 +458,7 @@ public:
 				0,
 				(GLint)offset_y,
 				(GLsizei)myWidth, (GLsizei)num_values,
-				GL_BGR, GL_UNSIGNED_BYTE,   /* external format, type */
+				GL_BGRA, GL_UNSIGNED_BYTE,   /* external format, type */
 				buf[0] + pixOffset                  /* pixels */
 			);
 			break;
@@ -468,7 +468,7 @@ public:
 				GL_TEXTURE_2D, 0,           /* target, level of detail */
 				GL_RGB8,                    /* internal format */
 				(GLsizei)myWidth, (GLsizei)myHeight, 0,           /* width, height, border */
-				GL_RGB, GL_UNSIGNED_BYTE,   /* external format, type */
+				GL_RGBA, GL_UNSIGNED_BYTE,   /* external format, type */
 				buf[0]                     /* pixels */
 			);
 		}

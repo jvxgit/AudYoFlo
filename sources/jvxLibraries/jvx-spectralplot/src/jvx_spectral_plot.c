@@ -218,7 +218,7 @@ jvxDspBaseErrorType jvx_spectral_plot_process(jvxSpectralPlot* hdl, jvxData* in,
 
 				tmp = (tmp - theObj->initPrm.lowdB) / (theObj->initPrm.highdB - theObj->initPrm.lowdB);
 				jvx_compute_color_map(tmp, (jvxUInt8*)out_rgb_ptr);
-				out_rgb_ptr += 3; // RGB
+				out_rgb_ptr += 4; // RGBA
 			}
 			return JVX_DSP_NO_ERROR;
 		}

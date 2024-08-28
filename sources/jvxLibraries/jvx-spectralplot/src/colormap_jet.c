@@ -9,7 +9,7 @@ jvxDspBaseErrorType jvx_compute_color_map(jvxData percent, jvxUInt8* out)
 	//check vars
 	if (!out || percent < 0.0 || percent > 1.0) return JVX_DSP_ERROR_INVALID_ARGUMENT;
 	
-	jvxUInt8 r, g, b;
+	jvxUInt8 r, g, b, a = 255;
 
 	if (percent < 0.122)
 	{
@@ -45,6 +45,7 @@ jvxDspBaseErrorType jvx_compute_color_map(jvxData percent, jvxUInt8* out)
 	out[0] = b;
 	out[1] = g;
 	out[2] = r;
+	out[3] = a;
 
 	return JVX_DSP_NO_ERROR;
 }

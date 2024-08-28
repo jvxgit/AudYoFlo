@@ -363,6 +363,14 @@ CjvxSingleInputConnector::return_trigger_otcon(IjvxTriggerOutputConnector* otcon
 jvxErrorType 
 CjvxSingleInputConnector::available_to_connect_icon()
 {
+	if (allowSingleConnect)
+	{
+		if (_common_set_icon.theCommon_to == NULL)
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_ALREADY_IN_USE;
+	}
 	return JVX_ERROR_UNSUPPORTED;
 }
 

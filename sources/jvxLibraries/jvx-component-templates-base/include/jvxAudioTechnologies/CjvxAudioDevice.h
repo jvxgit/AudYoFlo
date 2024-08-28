@@ -154,7 +154,8 @@ public:
 	jvxErrorType transfer_backward_ocon_match_setting(jvxLinkDataTransferType tp, jvxHandle* data, jvxPropertyContainerSingle<jvxSelectionList_cpp>* rateselection,
 		jvxPropertyContainerSingle<jvxSelectionList_cpp>* sizeselection JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
-
+	virtual void activate_connectors_master();
+	virtual void deactivate_connectors_master();
 
 };
 

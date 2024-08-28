@@ -188,6 +188,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleOutputConnector.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxSingleOutputConnector.cpp
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxConnectorCollection.h
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleMaster.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxSingleMaster.cpp
+
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxDataChainInterceptor.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxDataChainInterceptor.cpp
 
@@ -205,6 +210,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxTemplateTechnology.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxTemplateTechnologyVD.h
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxAudioWithVideoDevice.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxTechnologies/CjvxAudioWithVideoDevice.cpp
+	
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxNodes/CjvxNVTasks.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNVTasks.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNVTasks_establish.cpp

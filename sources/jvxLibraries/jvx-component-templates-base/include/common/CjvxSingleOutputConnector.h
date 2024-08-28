@@ -21,7 +21,7 @@ class CjvxSingleOutputConnector : public IjvxOutputConnector, public IjvxConnect
 {
 	friend class CjvxSingleOutputTriggerConnector;
 
-protected:
+public:
 
 	CjvxSingleConnector_report< CjvxSingleOutputConnector>* report = nullptr;
 	CjvxNegotiate_output neg_output;

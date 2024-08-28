@@ -186,7 +186,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 								cv::Mat out;
 
 								// Actually run the converter
-								cv::cvtColorTwoPlane(planeY, planeUV, out, cv::COLOR_YUV2RGB_NV12);
+								cv::cvtColorTwoPlane(planeY, planeUV, out, cv::COLOR_YUV2RGBA_NV12);
 
 								// This is suboptimal: we need to copy the allocated memory. Hopefully, cv uses pre-allocated memory internally for higher efficiency!!
 								memcpy(dest, out.data, runtime.szRaw);
@@ -218,6 +218,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 								break;
 							}
 							default:
+								assert(0);
 								break;
 							}
 						}

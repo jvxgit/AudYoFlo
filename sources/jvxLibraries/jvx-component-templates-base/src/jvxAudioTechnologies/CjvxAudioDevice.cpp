@@ -68,10 +68,7 @@ CjvxAudioDevice::activate()
 		last_user_interaction.last_selection_user_input_channels = JVX_SIZE_UNSELECTED;
 		last_user_interaction.last_selection_user_output_channels = JVX_SIZE_UNSELECTED;
 
-
-		JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this), "default", 
-			static_cast<IjvxConnectionMaster*>(this), _common_set.theModuleName.c_str());
-		JVX_ACTIVATE_DEFAULT_ONE_CONNECTOR_MASTER(static_cast<CjvxObject*>(this), "default");
+		activate_connectors_master();
 
 		init__properties_active();
 		allocate__properties_active();
@@ -115,9 +112,7 @@ CjvxAudioDevice::activate_lock()
 	res = _activate_lock();
 	if(res == JVX_NO_ERROR)
 	{
-		JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this), "default", 
-			static_cast<IjvxConnectionMaster*>(this), _common_set.theModuleName.c_str());
-		JVX_ACTIVATE_DEFAULT_ONE_CONNECTOR_MASTER(static_cast<CjvxObject*>(this), "default");
+		deactivate_connectors_master();
 
 		init__properties_active();
 		allocate__properties_active();
@@ -1047,6 +1042,22 @@ CjvxAudioDevice::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* da
 		break;
 	}
 	return CjvxSimpleMasterDevice::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+}
+
+void
+CjvxAudioDevice::activate_connectors_master()
+{
+	JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this), "default",
+		static_cast<IjvxConnectionMaster*>(this), _common_set.theModuleName.c_str());
+	JVX_ACTIVATE_DEFAULT_ONE_CONNECTOR_MASTER(static_cast<CjvxObject*>(this), "default");
+}
+
+void
+CjvxAudioDevice::deactivate_connectors_master()
+{
+	JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this), "default",
+		static_cast<IjvxConnectionMaster*>(this), _common_set.theModuleName.c_str());
+	JVX_ACTIVATE_DEFAULT_ONE_CONNECTOR_MASTER(static_cast<CjvxObject*>(this), "default");
 }
 
 /*

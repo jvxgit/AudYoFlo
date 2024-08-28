@@ -158,8 +158,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 #ifdef VERBOSE_2
 			std::cout << "--> Media Subtype RGB, 24 bpp" << std::endl;
 #endif
-			oneForm.form = JVX_DATAFORMAT_BYTE;
-			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGB24;
+			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
 			oneForm.subform_hw = JVX_DATAFORMAT_GROUP_VIDEO_RGB24;
 		}
 		else if (nativeSubGuid == MFVideoFormat_RGB32)
@@ -167,6 +166,9 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 #ifdef VERBOSE_2
 			std::cout << "--> Media Subtype RGB, 32 bpp" << std::endl;
 #endif
+			oneForm.form = JVX_DATAFORMAT_BYTE;
+			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
+			oneForm.subform_hw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
 		}
 		else if(nativeSubGuid == MFVideoFormat_ARGB32)
 		{
@@ -224,7 +226,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 			std::cout << "--> Media Subtype NV12	4:2:0	Planar	8" << std::endl;
 #endif
 			oneForm.form = JVX_DATAFORMAT_BYTE;
-			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGB24;
+			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
 			oneForm.subform_hw = JVX_DATAFORMAT_GROUP_VIDEO_NV12;
 		}
 		else if (nativeSubGuid == MFVideoFormat_UYVY)

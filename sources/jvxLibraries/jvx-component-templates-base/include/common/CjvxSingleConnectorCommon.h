@@ -36,6 +36,7 @@ public:
 	
 	// Physically the largest number of channels to be accepted
 	jvxSize channelWidthMax = JVX_SIZE_UNSELECTED;
+	jvxBool allowSingleConnect = false;
 
 public:
 	CjvxConnector(jvxBool withTriggerConnectorArg) : withTriggerConnector(withTriggerConnectorArg)

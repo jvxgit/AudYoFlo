@@ -4,6 +4,7 @@
 #include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "common/CjvxSingleInputConnector.h"
 #include "common/CjvxSingleOutputConnector.h"
+#include "common/CjvxConnectorCollection.h"
 #include "CjvxSpNMixChainEnterLeave_common.h"
 
 enum class jvxOperationModeMixChain
