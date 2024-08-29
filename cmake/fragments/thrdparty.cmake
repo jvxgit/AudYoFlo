@@ -125,3 +125,9 @@ if(JVX_USE_GLEW_GLUT)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/glew/
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/freeglut/)
 endif()
+
+if(JVX_USE_CBMP)
+  set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
+    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/cbmp)
+endif()
+

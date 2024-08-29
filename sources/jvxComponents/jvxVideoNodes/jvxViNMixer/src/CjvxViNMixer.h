@@ -19,13 +19,33 @@ class CjvxViNMixer: public CjvxVideoNode,
 {
 private:
 protected:
+
+	struct
+	{
+		CjvxSimplePropsPars node;
+	} video_input;
+
+	struct
+	{
+		CjvxSimplePropsPars node;
+	} video_output;
+
+	struct
+	{
+
+		jvxByte* bufRGBA32 = nullptr;
+		jvxSize szBufRGBA32 = 0;
+	} test;
+
 public:
 
 	// ===================================================================================================
 	// ===================================================================================================
 	JVX_CALLINGCONVENTION CjvxViNMixer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-
 	virtual JVX_CALLINGCONVENTION ~CjvxViNMixer();
+
+	jvxErrorType activate() override;
+	jvxErrorType deactivate() override;
 
 	// ===========================================================================================
 

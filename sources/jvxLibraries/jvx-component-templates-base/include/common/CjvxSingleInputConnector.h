@@ -24,7 +24,7 @@ class CjvxSingleInputConnector: public IjvxInputConnector, public CjvxConnector<
 {
 	friend class CjvxSingleInputTriggerConnector;
 
-protected:
+public:
 
 	CjvxSingleConnector_report<CjvxSingleInputConnector>* report = nullptr;
 	CjvxNegotiate_input neg_input;

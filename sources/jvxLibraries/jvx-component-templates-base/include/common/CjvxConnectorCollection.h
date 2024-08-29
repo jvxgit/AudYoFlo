@@ -5,8 +5,8 @@ JVX_INTERFACE CjvxConnectorCollection_bwd
 {
 public:
 	virtual ~CjvxConnectorCollection_bwd() {};
-	virtual void lock() = 0;
-	virtual void unlock() = 0;
+	virtual void lock(jvxSize idLock = JVX_SIZE_UNSELECTED) = 0;
+	virtual void unlock(jvxSize idLock = JVX_SIZE_UNSELECTED) = 0;
 };
 
 template <class T> class oneConnectorPlusName
@@ -28,14 +28,16 @@ public:
 
 	CjvxConnectorCollection_bwd* cbRef = nullptr;
 
+	jvxSize lockId = JVX_SIZE_UNSELECTED;
+
 	jvxErrorType report_stopped_connector(T1* iconn)
 	{
 		// This list must be protected
-		cbRef->lock();
+		cbRef->lock(lockId);
 		auto elm = processingConnectors.find(iconn);
 		assert(elm != processingConnectors.end());
 		processingConnectors.erase(elm);
-		cbRef->unlock();
+		cbRef->unlock(lockId);
 
 		auto elmS = selectedConnectors.find(iconn);
 		assert(elmS != selectedConnectors.end());
@@ -51,10 +53,10 @@ public:
 		elm->second.inProcessing = true;
 
 		// The list of processing connectors is to be protected as this list is operated in different threads
-		cbRef->lock();
+		cbRef->lock(lockId);
 		// Copy to the list of active connections
 		processingConnectors[iconn] = elm->second;
-		cbRef->unlock();
+		cbRef->unlock(lockId);
 
 		return JVX_NO_ERROR;
 	};

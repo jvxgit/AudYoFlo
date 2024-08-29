@@ -185,8 +185,11 @@ CjvxSingleInputConnector::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			report->report_test_connector(this  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			jvxSize chanMax = chanSetting.channel_num;
-			chanMax = JVX_MIN(chanMax, channelWidthMax - chanSetting.idxOffset);
-			neg_input.preferred.number_channels.max = chanMax;
+			if (JVX_CHECK_SIZE_SELECTED(chanMax))
+			{
+				chanMax = JVX_MIN(chanMax, channelWidthMax - chanSetting.idxOffset);
+				neg_input.preferred.number_channels.max = chanMax;
+			}
 		}
 
 		res = neg_input._negotiate_connect_icon(_common_set_icon.theData_in, nullptr, "none" JVX_CONNECTION_FEEDBACK_CALL_A(fdb));

@@ -147,9 +147,12 @@ CjvxSingleOutputConnector::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		report->report_test_connector(this  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		jvxSize chanMax = chanSetting.channel_num;
-		chanMax = JVX_MIN(chanMax, channelWidthMax - chanSetting.idxOffset);		
-		neg_output.preferred.number_channels.max = chanMax;
-		neg_output.preferred.number_channels.min = chanMax;
+		if (JVX_CHECK_SIZE_SELECTED(chanMax))
+		{
+			chanMax = JVX_MIN(chanMax, channelWidthMax - chanSetting.idxOffset);
+			neg_output.preferred.number_channels.max = chanMax;
+			neg_output.preferred.number_channels.min = chanMax;
+		}
 	}
 
 	neg_output._constrain_ldesc(&_common_set_ocon.theData_out);

@@ -16,12 +16,12 @@ public:
 	{
 		JVX_TERMINATE_MUTEX(safeAccessInputsOutputs);
 	}
-	void lock() 
+	void lock(jvxSize idLock = JVX_SIZE_UNSELECTED) 
 	{
 		JVX_LOCK_MUTEX(safeAccessInputsOutputs);
 	}
 
-	void unlock() 
+	void unlock(jvxSize idLock = JVX_SIZE_UNSELECTED)
 	{
 		JVX_UNLOCK_MUTEX(safeAccessInputsOutputs);
 	}

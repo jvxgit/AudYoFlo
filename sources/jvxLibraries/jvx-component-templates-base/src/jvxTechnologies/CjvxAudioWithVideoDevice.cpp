@@ -34,7 +34,7 @@ CjvxAudioWithVideoDevice::activate_connectors_master()
 	_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut;
 
 	plusVideo.ocon.activate(this, this, "video", this, 1);
-	//plusVideo.ocon._common_set_io_common.theMaster = &plusVideo.mas;
+	//plusVideo.ocon._common_set_io_common.theMaster = &plusVideo.mas;	
 	plusVideo.ocon._common_set_io_common.myRuntimeId = 1;
 
 	newElmOut.theConnector = static_cast<IjvxOutputConnectorSelect*>(&plusVideo.ocon);

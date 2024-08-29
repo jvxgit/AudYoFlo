@@ -76,6 +76,29 @@ public:
 		CjvxNodeAss_genpcg::deallocate_all();
 		assProps = nullptr;
 	}
+
+	void derive_buffersize()
+	{
+		jvxSize szElement = jvxDataFormat_size[_common_set_node_params_a_1io.format] *
+			jvxDataFormatGroup_size[_common_set_node_params_a_1io.subformat];
+		jvxSize szLine = _common_set_node_params_a_1io.segmentation.x * szElement;
+		jvxSize szRaw = _common_set_node_params_a_1io.segmentation.y * szLine;
+		_common_set_node_params_a_1io.buffersize = szRaw;
+
+	}
+	void prepare_negotiate(CjvxNegotiate_common& neg)
+	{
+		neg.negBehavior = CjvxNegotiate_output::negBehaviorType::JVX_BEHAVIOR_VIDEO;
+		neg._set_parameters_fixed(
+			_common_set_node_params_a_1io.number_channels,
+			_common_set_node_params_a_1io.buffersize, 
+			_common_set_node_params_a_1io.samplerate,
+			(jvxDataFormat)_common_set_node_params_a_1io.format,
+			(jvxDataFormatGroup)_common_set_node_params_a_1io.subformat,
+			(jvxDataflow)_common_set_node_params_a_1io.data_flow,
+			_common_set_node_params_a_1io.segmentation.x,
+			_common_set_node_params_a_1io.segmentation.y);
+	}
 };
 
 // Some helper macros
