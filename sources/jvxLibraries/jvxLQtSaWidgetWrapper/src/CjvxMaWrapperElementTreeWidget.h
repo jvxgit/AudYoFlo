@@ -87,6 +87,7 @@ public:
 	bool matchesWildcard(QTreeWidgetItem *theTLItem, const std::string& wildcard, jvxSize groupid, jvxWwMatchIdType matchIdType);
 	bool matchesWildcardCore(QTreeWidgetItem *theItem, const std::string& wildcard, jvxSize groupid, jvxWwMatchIdType matchIdType);
 
+	std::string property2Text(const jvxPropertyDescriptor connectedProp, const std::string& paramlst);
 public slots:
 	void treeWidgetItemDblClicked(QTreeWidgetItem*, int);
 	void treeWidgetContextMenuRequest(const QPoint& pos);

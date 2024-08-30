@@ -1092,6 +1092,24 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											assert(0);
 										}
 
+										if(propD.num > 1) 
+										{
+											switch (propD.format)
+											{
+											case JVX_DATAFORMAT_DATA:
+											case JVX_DATAFORMAT_16BIT_LE:
+											case JVX_DATAFORMAT_U16BIT_LE:
+											case JVX_DATAFORMAT_32BIT_LE:
+											case JVX_DATAFORMAT_U32BIT_LE:
+											case JVX_DATAFORMAT_64BIT_LE:
+											case JVX_DATAFORMAT_U64BIT_LE:
+											case JVX_DATAFORMAT_8BIT:
+											case JVX_DATAFORMAT_U8BIT:
+
+												txtCb = property2Text(propD, fldStr.std_str());
+												break;
+											}
+										}
 										theItem->setData(1, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CLIPBOARD_TXT, txtCb.c_str());
 
 										resP = propRef->get_descriptor_property(callGate, descrLoc, identId);
@@ -1375,6 +1393,7 @@ CjvxMaWrapperElementTreeWidget::treeWidgetContextMenuRequest(const QPoint& pos)
 		{
 			txtClip = nd->text(column).toLatin1().constData();
 			auto vv = nd->data(1, JVX_USER_ROLE_TREEWIDGET_PROPERTY_CLIPBOARD_TXT);
+			
 			if (vv.isValid())
 			{
 				txtClip = vv.toString().toLatin1().constData();
@@ -1639,6 +1658,213 @@ CjvxMaWrapperElementTreeWidget::propertyReference(IjvxAccessProperties** propRef
 		*propRefLoc = propRef;
 	}
 }
+
+std::string
+CjvxMaWrapperElementTreeWidget::property2Text(const jvxPropertyDescriptor connectedProp, const std::string& paramlst)
+{
+	IjvxAccessProperties* propRefLoc = NULL;
+
+	jvxHandle* ptrVal = NULL;
+	jvxData valD = 0;
+	jvxInt16 valI16 = 0;
+	jvxInt8 valI8 = 0;
+	jvxInt32 valI32 = 0;
+	jvxInt64 valI64 = 0;
+	jvxSize valS = 0;
+	jvxCBool valB = false;
+	jvxSelectionList selLst;
+	jvxApiString fldStr;
+	jvxApiStringList fldStrLst;
+	jvxValueInRange valR;
+	jvxErrorType resP = JVX_NO_ERROR;
+	jvxWwTransformValueType transtp = JVX_WW_SHOW_DIRECT;
+	std::string unit;
+	std::string txtShow;
+	int numDigits = 4;
+	jvxInt32 intVal;
+	jvxData minVal = JVX_DATA_MAX_NEG;
+	jvxData maxVal = JVX_DATA_MAX_POS;
+	jvxData transformScale;
+	jvxBool foundit;
+	jvxCallManagerProperties callGate;
+	std::string token;
+	std::string textReturn;
+	propertyReference(&propRefLoc);
+	if (propRefLoc)
+	{
+		if (connectedProp.num == 1)
+		{
+			// Currently, only single elements are supported
+			switch (connectedProp.format)
+			{
+			case JVX_DATAFORMAT_SIZE:
+				ptrVal = &valS;
+				break;
+			case JVX_DATAFORMAT_DATA:
+				ptrVal = &valD;
+				break;
+			case JVX_DATAFORMAT_16BIT_LE:
+				ptrVal = &valI16;
+				break;
+			case JVX_DATAFORMAT_8BIT:
+				ptrVal = &valI8;
+				break;
+			case JVX_DATAFORMAT_32BIT_LE:
+				ptrVal = &valI32;
+				break;
+			case JVX_DATAFORMAT_64BIT_LE:
+				ptrVal = &valI64;
+				break;
+			case JVX_DATAFORMAT_STRING:
+				ptrVal = &fldStr;
+				break;
+			case JVX_DATAFORMAT_VALUE_IN_RANGE:
+				ptrVal = &valR;
+				break;
+			case JVX_DATAFORMAT_STRING_LIST:
+				ptrVal = &fldStrLst;
+				break;
+			case JVX_DATAFORMAT_SELECTION_LIST:
+				ptrVal = &selLst;
+				break;
+			default:
+				assert(0);
+			}
+			token = connectedProp.descriptor.std_str();
+			ident.reset(token.c_str());
+			trans.reset(false, 0, connectedProp.decTp);
+			resP = propRefLoc->get_property(callGate, jPRG(ptrVal, 1, connectedProp.format), ident, trans);
+			if (resP == JVX_NO_ERROR)
+			{
+				switch (connectedProp.format)
+				{
+				case JVX_DATAFORMAT_SIZE:
+					txtShow = jvx_size2String(valS);
+					break;
+
+				case JVX_DATAFORMAT_DATA:
+
+					backwardRef->keymaps.le.parseEntryList(paramlst, "");
+					backwardRef->keymaps.le.getValueForKey("NUMDIGITS", &numDigits, JVX_WW_KEY_VALUE_TYPE_INT32);
+					backwardRef->keymaps.le.getValueForKey("SCALEFAC", &transformScale, JVX_WW_KEY_VALUE_TYPE_DATA);
+					backwardRef->keymaps.le.getValueForKey("LABELTRANSFORM", &intVal, JVX_WW_KEY_VALUE_TYPE_ENUM, &foundit);
+					if (foundit)
+					{
+						transtp = (jvxWwTransformValueType)intVal;
+					}
+					backwardRef->keymaps.le.getValueForKey("MINVAL", &minVal, JVX_WW_KEY_VALUE_TYPE_DATA);
+					backwardRef->keymaps.le.getValueForKey("MAXVAL", &maxVal, JVX_WW_KEY_VALUE_TYPE_DATA);
+					backwardRef->keymaps.le.getValueForKey("LABELUNIT", &unit, JVX_WW_KEY_VALUE_TYPE_STRING);
+
+					valD = CjvxSaWrapperElementBase::transformTo(valD, transtp, transformScale);
+					CjvxSaWrapperElementBase::getDisplayUnitToken(transtp, unit);
+					valD = JVX_MAX(valD, minVal);
+					valD = JVX_MIN(valD, maxVal);
+					txtShow = jvx_data2String(valD, numDigits) + " " + unit;
+
+					//valD = cbk->transformTo(valD, transtp, unit);
+					// txtShow = jvx_data2String(valD, numDigits);
+					break;
+				case JVX_DATAFORMAT_VALUE_IN_RANGE:
+
+					backwardRef->keymaps.le.parseEntryList(paramlst, "");
+					backwardRef->keymaps.le.getValueForKey("NUMDIGITS", &numDigits, JVX_WW_KEY_VALUE_TYPE_INT32);
+					backwardRef->keymaps.le.getValueForKey("SCALEFAC", &transformScale, JVX_WW_KEY_VALUE_TYPE_DATA);
+					backwardRef->keymaps.le.getValueForKey("LABELTRANSFORM", &intVal, JVX_WW_KEY_VALUE_TYPE_ENUM, &foundit);
+					if (foundit)
+					{
+						transtp = (jvxWwTransformValueType)intVal;
+					}
+					backwardRef->keymaps.le.getValueForKey("MINVAL", &minVal, JVX_WW_KEY_VALUE_TYPE_DATA);
+					backwardRef->keymaps.le.getValueForKey("MAXVAL", &maxVal, JVX_WW_KEY_VALUE_TYPE_DATA);
+					backwardRef->keymaps.le.getValueForKey("LABELUNIT", &unit, JVX_WW_KEY_VALUE_TYPE_STRING);
+
+					valD = CjvxSaWrapperElementBase::transformTo(valR.val(), transtp, transformScale);
+					CjvxSaWrapperElementBase::getDisplayUnitToken(transtp, unit);
+					valD = JVX_MAX(valD, minVal);
+					valD = JVX_MIN(valD, maxVal);
+					txtShow = jvx_data2String(valD, numDigits) + " " + unit;
+
+					//valD = cbk->transformTo(valD, transtp, unit);
+					// txtShow = jvx_data2String(valD, numDigits);
+					break;
+
+				case JVX_DATAFORMAT_16BIT_LE:
+					if (connectedProp.decTp == JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE)
+					{
+						if (valI16 < 0)
+						{
+							txtShow = "dontcare";
+						}
+						else
+						{
+							txtShow = jvx_int2String(valI16);
+						}
+					}
+					else if (connectedProp.decTp == JVX_PROPERTY_DECODER_FORMAT_IDX)
+					{
+						txtShow = jvxDataFormat_txt(valI16);
+					}
+					else
+					{
+						txtShow = jvx_int2String(valI16);
+					}
+					break;
+				case JVX_DATAFORMAT_8BIT:
+					txtShow = jvx_int2String(valI8);
+					break;
+				case JVX_DATAFORMAT_32BIT_LE:
+					if (connectedProp.decTp == JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE)
+					{
+						if (valI32 < 0)
+						{
+							txtShow = "dontcare";
+						}
+						else
+						{
+							txtShow = jvx_int2String(valI32);
+						}
+					}
+					else
+					{
+						txtShow = jvx_int2String(valI32);
+					}
+					break;
+				case JVX_DATAFORMAT_64BIT_LE:
+					txtShow = jvx_int642String(valI64);
+					break;
+				case JVX_DATAFORMAT_STRING:
+					txtShow = "-none-error-";
+					txtShow = fldStr.std_str();
+					break;
+				case JVX_DATAFORMAT_STRING_LIST:
+					txtShow = "";
+					for (int i = 0; i < fldStrLst.ll(); i++)
+					{
+						if (i != 0)
+						{
+							txtShow += " -- ";
+						}
+						txtShow += fldStrLst.std_str_at(i);
+					}					
+					break;
+				case JVX_DATAFORMAT_SELECTION_LIST:
+				default:
+					assert(0);
+				}
+				textReturn = txtShow;
+			}
+		}
+		else
+		{
+			std::string txtShowPP;
+			jvx::helper::properties::toString(propRefLoc, callGate, connectedProp, txtShow, txtShowPP, numDigits, false);// no need to use txtShowPP since binList is false
+			textReturn = txtShow;
+		}
+	}
+	return textReturn;
+}
+
 
 void
 CjvxMaWrapperElementTreeWidget::removeCurrentWidget(CjvxQtSaWidgetWrapper_elementbase* oldWidget, bool forceImmediate)
