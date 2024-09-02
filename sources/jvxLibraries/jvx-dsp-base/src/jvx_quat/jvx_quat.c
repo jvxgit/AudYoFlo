@@ -1,7 +1,7 @@
 #include "jvx_dsp_base.h"
 #include "jvx_quat/jvx_quat.h"
 
-void jvx_quat_mult(const struct jvx_quat* qxyzw1, const struct jvx_quat* qxyzw2, struct jvx_quat* qxyzw3)
+void jvx_quat_mult_core(const struct jvx_quat* qxyzw1, const struct jvx_quat* qxyzw2, struct jvx_quat* qxyzw3)
 {
 	jvxData x1 = qxyzw1->x;
 	jvxData x2 = qxyzw1->y;
@@ -23,6 +23,11 @@ void jvx_quat_mult(const struct jvx_quat* qxyzw1, const struct jvx_quat* qxyzw2,
 	qxyzw3->y = z2;
 	qxyzw3->z = z3;
 	qxyzw3->w = z0;
+}
+
+void jvx_quat_combine_rot(const struct jvx_quat* rot_first, const struct jvx_quat* rot_second, struct jvx_quat* rot_combined)
+{
+	jvx_quat_mult_core(rot_second, rot_first, rot_combined);
 }
 
 void jvx_quat_inv(const struct jvx_quat* qin, struct jvx_quat* qout)

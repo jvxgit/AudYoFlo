@@ -88,6 +88,7 @@ protected:
 	public:
 		std::map<std::string, std::list<oneEntryChannel> > inputChannelsInStorage;
 		std::map<std::string, std::list<oneEntryChannel> > outputChannelsInStorage;
+		jvxBool storeInConfigFile = true;
 	};
 
 	// These two lists must be secured by the lock "_common_set_nv_proc.safeAcces_proc_tasks" since channels 
@@ -152,6 +153,8 @@ protected:
 	// add a mixbuffer with a new connection OR use the lock <_common_set_nv_proc::safeAcces_proc_tasks>
 	// from base class <CjvxNVTasks> when extending the mixbuffer list!
 	std::map<jvxSize, oneBufferDefinition> mixBuffers;
+
+	jvxSize numberProfilePresets = 0;
 
 private:
 
@@ -289,6 +292,9 @@ public:
 	// =============================================================================
 
 	void recursive_vtask_processing();
+
+	virtual std::string profile_preset_name(jvxSize cnt);
+	virtual void realize_preset_profile(jvxSize cnt);
 
 	// =============================================================================
 	// =============================================================================

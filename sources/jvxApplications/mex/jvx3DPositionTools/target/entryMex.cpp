@@ -508,7 +508,7 @@ void mexFunction(int nlhs, mxArray* plhs[],
 							jvx_quat* qout = (jvx_quat*)mxGetData(arr);
 							plhs[0] = arr;
 
-							jvx_quat_mult(q1, q2, qout);
+							jvx_quat_mult_core(q1, q2, qout);
 						}
 						else
 						{

@@ -204,7 +204,7 @@ CjvxAuN2AudioMixer::put_configuration(jvxCallManagerConfiguration* callConf, Ijv
 			}
 			update_profile_list_properties();
 
-			gen2AudioMixer_node::put_configuration__profiles(callConf, processor, sectionToContainAllSubsectionsForMe, &warns);
+			// gen2AudioMixer_node::put_configuration__profiles(callConf, processor, sectionToContainAllSubsectionsForMe, &warns);
 		}
 	}
 	return(res);
@@ -321,19 +321,22 @@ CjvxAuN2AudioMixer::get_configuration(jvxCallManagerConfiguration* callConf, Ijv
 
 			for (auto& elmPro : profileList)
 			{
-
-				// Store all storage to config file
-				processor->createEmptySection(&datSecStorage, ("AYF_CHANNELS_PROFILE_" + jvx_size2String(cnt)).c_str());
-				processor->createAssignmentString(&datSecStorageName, "AYF_CHANNELS_PROFILE_NAME", elmPro.first.c_str());
-				processor->addSubsectionToSection(datSecStorage, datSecStorageName);
-				if (datSecStorage)
+				if (elmPro.second.storeInConfigFile)
 				{
-					addChannelsStorageConfig(processor, datSecStorage, "AYF_INPUT_CHANNELS_STORAGE_", elmPro.second.inputChannelsInStorage, true);
-					addChannelsStorageConfig(processor, datSecStorage, "AYF_OUTPUT_CHANNELS_STORAGE_", elmPro.second.outputChannelsInStorage, false);
-					processor->addSubsectionToSection(sectionWhereToAddAllSubsections, datSecStorage);
-				}
+
+					// Store all storage to config file
+					processor->createEmptySection(&datSecStorage, ("AYF_CHANNELS_PROFILE_" + jvx_size2String(cnt)).c_str());
+					processor->createAssignmentString(&datSecStorageName, "AYF_CHANNELS_PROFILE_NAME", elmPro.first.c_str());
+					processor->addSubsectionToSection(datSecStorage, datSecStorageName);
+					if (datSecStorage)
+					{
+						addChannelsStorageConfig(processor, datSecStorage, "AYF_INPUT_CHANNELS_STORAGE_", elmPro.second.inputChannelsInStorage, true);
+						addChannelsStorageConfig(processor, datSecStorage, "AYF_OUTPUT_CHANNELS_STORAGE_", elmPro.second.outputChannelsInStorage, false);
+						processor->addSubsectionToSection(sectionWhereToAddAllSubsections, datSecStorage);
+					}
 					datSecStorage = nullptr;
-				cnt++;
+					cnt++;
+				}
 			}
 		}
 		if (_common_set_min.theState >= JVX_STATE_ACTIVE)

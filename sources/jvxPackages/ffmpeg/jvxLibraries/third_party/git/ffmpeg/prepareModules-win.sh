@@ -64,7 +64,7 @@ if [ -d $folder ]; then
 		
 			# The following line can be modified to run directly
 			# ./make-Makefiles-64bit.sh
-			cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=$release_mode -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -W4 -GR -EHsc" -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -W4 $compile_flags"  ../../source -DCMAKE_INSTALL_PREFIX=./install-$release_mode
+			cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=$release_mode -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -W4 -GR -EHsc $compile_flags" -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -W4 $compile_flags"  ../../source -DCMAKE_INSTALL_PREFIX=./install-$release_mode
 			nmake 
 			nmake install
 		
@@ -81,7 +81,7 @@ if [ -d $folder ]; then
 		# H264 -> 
 		# https://stackoverflow.com/questions/50693934/different-h264-encoders-in-ffmpeg
 		# https://superuser.com/questions/512368/unknown-encoder-libx264-on-windows
-		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags=-MDd --prefix=./ --disable-htmlpages --disable-manpages
+		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags=$compile_flags --prefix=./ --disable-htmlpages --disable-manpages
 		
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./

@@ -20,6 +20,7 @@ public:
 	virtual ~IjvxPropertyExtenderHeadTrackerProvider() {};
 	virtual jvxErrorType register_listener(IjvxPropertyExtenderHeadTrackerProvider_report* ptr, const char* tag) = 0;
 	virtual jvxErrorType unregister_listener(IjvxPropertyExtenderHeadTrackerProvider_report* ptr) = 0;
+	virtual jvxErrorType request_trigger_zero_calibration(jvxBool reset = false) = 0;
 };
 
 #endif

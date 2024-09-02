@@ -247,8 +247,89 @@ CjvxRs232::start_port(jvxSize idPort, jvxHandle* cfgIn, jvxConnectionPrivateType
 						rs232SetupElement.fParity = SPACEPARITY;
 						break;
 					}
+
 					//Setup the flow control 
 					rs232SetupElement.fDsrSensitivity = 0;
+					rs232SetupElement.fDtrControl = DTR_CONTROL_ENABLE;
+
+					/*
+					Code taken from putty and aligned 02.08.2024:
+
+						if (GetCommState(serport, &dcb)) {
+						const char *str;
+
+						/ *
+						 * Boilerplate.
+						 * /
+						dcb.fBinary = true;
+						dcb.fDtrControl = DTR_CONTROL_ENABLE;
+						dcb.fDsrSensitivity = false;
+						dcb.fTXContinueOnXoff = false;
+						dcb.fOutX = false;
+						dcb.fInX = false;
+						dcb.fErrorChar = false;
+						dcb.fNull = false;
+						dcb.fRtsControl = RTS_CONTROL_ENABLE;
+						dcb.fAbortOnError = false;
+						dcb.fOutxCtsFlow = false;
+						dcb.fOutxDsrFlow = false;
+		
+						/ *
+						  * Configurable parameters.
+						  * /
+					dcb.BaudRate = conf_get_int(conf, CONF_serspeed);
+					logeventf(serial->logctx, "Configuring baud rate %lu",
+						(unsigned long)dcb.BaudRate);
+
+					dcb.ByteSize = conf_get_int(conf, CONF_serdatabits);
+					logeventf(serial->logctx, "Configuring %u data bits",
+						(unsigned)dcb.ByteSize);
+
+					switch (conf_get_int(conf, CONF_serstopbits)) {
+					case 2: dcb.StopBits = ONESTOPBIT; str = "1 stop bit"; break;
+					case 3: dcb.StopBits = ONE5STOPBITS; str = "1.5 stop bits"; break;
+					case 4: dcb.StopBits = TWOSTOPBITS; str = "2 stop bits"; break;
+					default: return dupstr("Invalid number of stop bits "
+						"(need 1, 1.5 or 2)");
+					}
+					logeventf(serial->logctx, "Configuring %s", str);
+
+					switch (conf_get_int(conf, CONF_serparity)) {
+					case SER_PAR_NONE: dcb.Parity = NOPARITY; str = "no"; break;
+					case SER_PAR_ODD: dcb.Parity = ODDPARITY; str = "odd"; break;
+					case SER_PAR_EVEN: dcb.Parity = EVENPARITY; str = "even"; break;
+					case SER_PAR_MARK: dcb.Parity = MARKPARITY; str = "mark"; break;
+					case SER_PAR_SPACE: dcb.Parity = SPACEPARITY; str = "space"; break;
+					}
+					logeventf(serial->logctx, "Configuring %s parity", str);
+
+					switch (conf_get_int(conf, CONF_serflow)) {
+					case SER_FLOW_NONE:
+						str = "no";
+						break;
+					case SER_FLOW_XONXOFF:
+						dcb.fOutX = dcb.fInX = true;
+						str = "XON/XOFF";
+						break;
+					case SER_FLOW_RTSCTS:
+						dcb.fRtsControl = RTS_CONTROL_HANDSHAKE;
+						dcb.fOutxCtsFlow = true;
+						str = "RTS/CTS";
+						break;
+					case SER_FLOW_DSRDTR:
+						dcb.fDtrControl = DTR_CONTROL_HANDSHAKE;
+						dcb.fOutxDsrFlow = true;
+						str = "DSR/DTR";
+						break;
+					}
+					logeventf(serial->logctx, "Configuring %s flow control", str);
+
+					if (!SetCommState(serport, &dcb))
+						return dupprintf("Configuring serial port: %s",
+							win_strerror(GetLastError()));
+
+					 */
+
 
 					switch (cfg->enFlow)
 					{
@@ -291,10 +372,12 @@ CjvxRs232::start_port(jvxSize idPort, jvxHandle* cfgIn, jvxConnectionPrivateType
 						rs232SetupElement.fOutxDsrFlow = FALSE;
 						rs232SetupElement.fOutX = TRUE;
 						rs232SetupElement.fInX = TRUE;
+						/*
 						rs232SetupElement.XonChar = 0x11;
 						rs232SetupElement.XoffChar = 0x13;
 						rs232SetupElement.XoffLim = 100;
 						rs232SetupElement.XonLim = 100;
+						*/
 						break;
 					}
 

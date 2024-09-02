@@ -558,54 +558,61 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, address_profi
 			gen2AudioMixer_node::profiles.profile_list.value.entries.size());
 		if (JVX_CHECK_SIZE_SELECTED(selId))
 		{
-			std::string entry = gen2AudioMixer_node::profiles.profile_list.value.entries[selId];
-
-			const auto& elmP = profileList.find(entry);
-			
-			// Load profile entries
-			jvxSize cntChan = 0;
-			for (auto& set : registeredChannelListInput)
+			if (selId >= this->numberProfilePresets)
 			{
-				std::string masName = set.second.masName;
-				for (auto& elmC : set.second.channels)
-				{
-					updateChannelFromStorage((*elmP).second.inputChannelsInStorage, elmC, masName, true);
-					mixer_input.fldGain[cntChan] = elmC.gain;
-					jvx_bitZSet(mixer_input.fldMute[cntChan], 0);
-					if (elmC.mute)
-					{
-						jvx_bitZSet(mixer_input.fldMute[cntChan], 1);
-					}
+				std::string entry = gen2AudioMixer_node::profiles.profile_list.value.entries[selId];
 
-					if (extender)
+				const auto& elmP = profileList.find(entry);
+
+				// Load profile entries
+				jvxSize cntChan = 0;
+				for (auto& set : registeredChannelListInput)
+				{
+					std::string masName = set.second.masName;
+					for (auto& elmC : set.second.channels)
 					{
-						extender->fillLinearFields(true, cntChan, elmC.attSpecificPtr);
+						updateChannelFromStorage((*elmP).second.inputChannelsInStorage, elmC, masName, true);
+						mixer_input.fldGain[cntChan] = elmC.gain;
+						jvx_bitZSet(mixer_input.fldMute[cntChan], 0);
+						if (elmC.mute)
+						{
+							jvx_bitZSet(mixer_input.fldMute[cntChan], 1);
+						}
+
+						if (extender)
+						{
+							extender->fillLinearFields(true, cntChan, elmC.attSpecificPtr);
+						}
+
+						cntChan++;
 					}
-					
-					cntChan++;
+				}
+
+				cntChan = 0;
+				for (auto& set : registeredChannelListOutput)
+				{
+					std::string masName = set.second.masName;
+					for (auto& elmC : set.second.channels)
+					{
+						updateChannelFromStorage((*elmP).second.outputChannelsInStorage, elmC, masName, false);
+
+						mixer_output.fldGain[cntChan] = elmC.gain;
+						jvx_bitZSet(mixer_output.fldMute[cntChan], 0);
+						if (elmC.mute)
+						{
+							jvx_bitZSet(mixer_output.fldMute[cntChan], 1);
+						}
+						if (extender)
+						{
+							extender->fillLinearFields(false, cntChan, elmC.attSpecificPtr);
+						}
+						cntChan++;
+					}
 				}
 			}
-
-			cntChan = 0;
-			for (auto& set : registeredChannelListOutput)
+			else
 			{
-				std::string masName = set.second.masName;
-				for (auto& elmC : set.second.channels)
-				{
-					updateChannelFromStorage((*elmP).second.outputChannelsInStorage, elmC, masName, false);
-
-					mixer_output.fldGain[cntChan] = elmC.gain;
-					jvx_bitZSet(mixer_output.fldMute[cntChan], 0);
-					if (elmC.mute)
-					{
-						jvx_bitZSet(mixer_output.fldMute[cntChan], 1);
-					}
-					if (extender)
-					{
-						extender->fillLinearFields(false, cntChan, elmC.attSpecificPtr);
-					}
-					cntChan++;
-				}				
+				realize_preset_profile(selId);				
 			}
 
 			CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_gain.descriptor.std_str());
@@ -657,6 +664,16 @@ CjvxAuN2AudioMixer::update_profile_list_properties(const std::string& activateTh
 	gen2AudioMixer_node::profiles.profile_list.value.entries.clear();
 	jvx_bitFClear(gen2AudioMixer_node::profiles.profile_list.value.selection());
 
+	for (cnt = 0; cnt < numberProfilePresets; cnt++)
+	{
+		std::string token = profile_preset_name(cnt);
+		if (token == actProf)
+		{
+			idNew = cnt;
+		}
+		gen2AudioMixer_node::profiles.profile_list.value.entries.push_back(token);
+	}
+
 	for (auto elm : profileList)
 	{
 		if (elm.first == actProf)
@@ -680,3 +697,15 @@ CjvxAuN2AudioMixer::update_profile_list_properties(const std::string& activateTh
 	}
 }
 
+std::string 
+CjvxAuN2AudioMixer::profile_preset_name(jvxSize cnt)
+{
+	std::string token = "Profile #" + jvx_size2String(cnt);
+	return token;
+}
+
+void
+CjvxAuN2AudioMixer::realize_preset_profile(jvxSize cnt)
+{
+
+}

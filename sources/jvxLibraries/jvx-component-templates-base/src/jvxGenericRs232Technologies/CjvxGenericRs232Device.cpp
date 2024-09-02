@@ -228,7 +228,8 @@ CjvxGenericRs232Device::activate_connection_port()
 		jvx_unlock_text_log(jvxrtst_bkp);
 	}
 
-	cfg.enFlow = JVX_RS232_NO_FLOWCONTROL;
+	// Read flow control setting from configuration property
+	cfg.enFlow = CjvxGenericRs232Device_pcg::translate__rs232_settings__flowControl_from(); //JVX_RS232_NO_FLOWCONTROL;
 
 	cfg.boostPrio = false;
 
