@@ -8,7 +8,9 @@ if(${JVX_OS} MATCHES "windows")
 		set(JVX_FFMPEG_POSTFIX "x64")
 	endif()
 	
-	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(JVX_FFMPEG_POSTFIX "${JVX_FFMPEG_POSTFIX}-${CMAKE_BUILD_TYPE}")
+	
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
 		set(JVX_COMPILE_EXTRA_CFLAGS "-MDd")
 	else()
 		set(JVX_COMPILE_EXTRA_CFLAGS "-MD")
@@ -181,3 +183,4 @@ elseif(${JVX_OS} MATCHES "linux")
 	
 endif()
 
+## message(FATAL_ERROR "Debug CMAKE stop in project ffmpeg!!")

@@ -6,6 +6,8 @@ if(${JVX_OS} MATCHES "windows")
 		set(archtoken x86)
 	endif()
 	
+	set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}")
+	
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		set(JVX_METHOD_OPTION_BVSCRT "mdd")
 	else()
@@ -26,7 +28,7 @@ if(${JVX_OS} MATCHES "windows")
 		# 2) Need to run another cmake process in a cmake process. Therefore, I map the batch file to
 		#    run secondary cmake. Fortunately, bat files inherit the environment :-)
 		file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/${JVX_METHOD_OPTION_BVSCRT}")
-		execute_process(COMMAND cmd /c "prepareModules-win.bat ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/${JVX_METHOD_OPTION_BVSCRT} ${archtoken} ${JVX_METHOD_OPTION_BVSCRT}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		execute_process(COMMAND cmd /c "prepareModules-win.bat ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/${JVX_METHOD_OPTION_BVSCRT} ${archtoken} ${JVX_METHOD_OPTION_BVSCRT} ${CMAKE_BUILD_TYPE}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 		# file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
 		
 	endif()

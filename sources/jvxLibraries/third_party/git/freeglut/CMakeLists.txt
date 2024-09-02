@@ -8,6 +8,12 @@ if(${JVX_OS} MATCHES "windows")
 		set(archtoken x86)
 	endif()	
 	
+	set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}")
+	set(libpostfix "")
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
+		set(libpostfix "d")
+	endif()
+	
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}")
 	
 		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}> does not exist!")
@@ -31,7 +37,7 @@ if(${JVX_OS} MATCHES "windows")
 	endif()
 	
 	set(GLUT_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/include	CACHE INTERNAL "glut include references")
-	set(GLUT_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/freeglutd.lib	CACHE INTERNAL "glut libraries")
+	set(GLUT_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/freeglut${libpostfix}.lib	CACHE INTERNAL "glut libraries")
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/bin/ DESTINATION ${INSTALL_PATH_LIB_SHARED} FILES_MATCHING COMPONENT freeglut PATTERN "*.dll")
 	
 elseif(${JVX_OS} MATCHES "linux")

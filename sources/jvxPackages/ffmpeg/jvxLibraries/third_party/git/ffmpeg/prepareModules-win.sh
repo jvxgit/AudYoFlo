@@ -64,7 +64,7 @@ if [ -d $folder ]; then
 		
 			# The following line can be modified to run directly
 			# ./make-Makefiles-64bit.sh
-			cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -W4 -GR -EHsc" -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -W4 $compile_flags"  ../../source -DCMAKE_INSTALL_PREFIX=./install-$release_mode
+			cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=$release_mode -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -W4 -GR -EHsc" -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -W4 $compile_flags"  ../../source -DCMAKE_INSTALL_PREFIX=./install-$release_mode
 			nmake 
 			nmake install
 		
