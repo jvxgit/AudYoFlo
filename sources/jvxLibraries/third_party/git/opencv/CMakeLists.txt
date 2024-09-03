@@ -32,9 +32,9 @@ if(${JVX_OS} MATCHES "windows")
 	#endif()
 	
 	# if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/opencv")
-	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}")
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
 	
-		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}> does not exist!")
+		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
 		
 		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
 			message("opencv sub project not available. Starting script to download it.") 
@@ -54,13 +54,13 @@ if(${JVX_OS} MATCHES "windows")
 		# file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
 	endif()
 
-	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}/${targetfolder}/include" CACHE INTERNAL "opencv include references")
+	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include" CACHE INTERNAL "opencv include references")
 	set(OPENCV_LIBRARIES 
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}/${targetfolder}/${archtoken_simple}/vc17/staticlib/opencv_imgproc4100${libpostfix}.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}/${targetfolder}/${archtoken_simple}/vc17/staticlib/opencv_core4100${libpostfix}.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}/${targetfolder}/${archtoken_simple}/vc17/staticlib/ippicvmt.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}/${targetfolder}/${archtoken_simple}/vc17/staticlib/ippiw${libpostfix}.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv_${archtoken}/${targetfolder}/${archtoken_simple}/vc17/staticlib/ittnotify${libpostfix}.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/opencv_imgproc4100${libpostfix}.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/opencv_core4100${libpostfix}.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/ippicvmt.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/ippiw${libpostfix}.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/ittnotify${libpostfix}.lib
 		CACHE INTERNAL "opencv library references")	
 		
 #		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/${archtoken}/vc17/staticlib/opencv_highgui4100d.lib
