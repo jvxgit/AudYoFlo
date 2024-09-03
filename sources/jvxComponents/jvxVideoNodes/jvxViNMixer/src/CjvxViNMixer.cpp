@@ -5,6 +5,9 @@
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
+#define JVX_LOCK_ID_INPUT 1
+#define JVX_LOCK_ID_OUTPUT 2
+
 	CjvxViNMixer::CjvxViNMixer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 		CjvxVideoNode(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
@@ -26,6 +29,16 @@ namespace JVX_PROJECT_NAMESPACE {
 		video_output.node._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 		video_output.node._common_set_node_params_a_1io.samplerate = 30;
 		video_output.node.derive_buffersize();
+
+		CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::cbRef = this;
+		CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId = JVX_LOCK_ID_INPUT;
+
+		CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::cbRef = this;
+		CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId = JVX_LOCK_ID_OUTPUT;
+
+		JVX_INITIALIZE_RW_MUTEX(safeCall);
+
+#ifdef JVX_OPEN_BMP_FOR_TEXT
 
 		test.szBufRGBA32 = (video_output.node._common_set_node_params_a_1io.segmentation.x *
 			video_output.node._common_set_node_params_a_1io.segmentation.y) *
@@ -68,13 +81,19 @@ namespace JVX_PROJECT_NAMESPACE {
 			}
 			bclose(BF);
 		}
+#endif
 	}
 
 CjvxViNMixer::~CjvxViNMixer()
 {
+#ifdef JVX_OPEN_BMP_FOR_TEXT
+
 	JVX_SAFE_DELETE_FIELD(test.bufRGBA32);
 	test.bufRGBA32 = nullptr;
 	test.szBufRGBA32 = 0;
+#endif
+	JVX_TERMINATE_RW_MUTEX(safeCall);
+
 }
 
 //  ===================================================================================================
@@ -269,6 +288,78 @@ CjvxViNMixer::activate_connectors()
 	{
 	}
 
+	jvxErrorType
+	CjvxViNMixer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
+	{
+		jvxErrorType res = JVX_NO_ERROR;
+
+#ifdef JVX_OPEN_BMP_FOR_TEXT
+		if (CjvxViNMixer_genpcg::config.replace_video_image.value)
+		{
+			jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(_common_set_ocon.theData_out);
+			jvxSize minCpy = _common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format);
+			minCpy = JVX_MIN(test.szBufRGBA32, minCpy);
+
+			memcpy(bufsOut[0], test.bufRGBA32, minCpy);
+
+		}
+#endif
+		this->lock(false, JVX_LOCK_ID_INPUT);
+		for (auto& elm : CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::processingConnectors)
+		{
+			elm.second.ioconn->transfer_backward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+		}
+		this->unlock(false, JVX_LOCK_ID_INPUT);
+
+		// Forward to next chain
+		return fwd_process_buffers_icon(mt_mask, idx_stage);
+};
+
+	void 
+	CjvxViNMixer::lock(jvxBool rwExclusive, jvxSize idLock)
+	{
+		if (rwExclusive)
+		{
+			JVX_LOCK_RW_MUTEX_EXCLUSIVE(safeCall);
+		}
+		else
+		{
+			JVX_LOCK_RW_MUTEX_SHARED(safeCall);
+		}
+	}
+	
+	void 
+		CjvxViNMixer::unlock(jvxBool rwExclusive, jvxSize idLock)
+	{
+		if (rwExclusive)
+		{
+			JVX_UNLOCK_RW_MUTEX_EXCLUSIVE(safeCall);
+		}
+		else
+		{
+			JVX_UNLOCK_RW_MUTEX_SHARED(safeCall);
+		}
+	}
+
+	void
+	CjvxViNMixer::report_proc_connector_started_in_lock(CjvxSingleInputConnector* iconnPlus)
+	{
+	}
+
+	void 
+	CjvxViNMixer::report_proc_connector_before_stop_in_lock(CjvxSingleInputConnector* iconnPlus)
+	{
+	}
+
+	void 
+	CjvxViNMixer::report_proc_connector_started_in_lock(CjvxSingleOutputConnector* oconnPlus)
+	{
+	}
+
+	void 
+		CjvxViNMixer::report_proc_connector_before_stop_in_lock(CjvxSingleOutputConnector* oconnPlus)
+	{
+	}
 
 #ifdef JVX_PROJECT_NAMESPACE
 }

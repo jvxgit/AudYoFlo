@@ -27,6 +27,10 @@ set(LOCAL_LIBS
   cbmp_static
   )
   
+if(JVX_USE_CBMP)
+set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_OPEN_BMP_FOR_TEXT")	
+endif()
+
 set(IS_JVX_COMPONENT TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

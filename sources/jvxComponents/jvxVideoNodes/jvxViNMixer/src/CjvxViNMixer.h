@@ -15,6 +15,9 @@ namespace JVX_PROJECT_NAMESPACE {
 class CjvxViNMixer: public CjvxVideoNode, 
 	public CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>,
 	public CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>, 
+	public CjvxConnectorCollection_startstop<CjvxSingleInputConnector>,
+	public CjvxConnectorCollection_startstop<CjvxSingleOutputConnector>,
+	public CjvxConnectorCollection_bwd,
 	public CjvxViNMixer_genpcg
 {
 private:
@@ -30,12 +33,18 @@ protected:
 		CjvxSimplePropsPars node;
 	} video_output;
 
+	
+	JVX_RW_MUTEX_HANDLE safeCall;
+
+#ifdef JVX_OPEN_BMP_FOR_TEXT
+
 	struct
 	{
 
 		jvxByte* bufRGBA32 = nullptr;
 		jvxSize szBufRGBA32 = 0;
 	} test;
+#endif
 
 public:
 
@@ -46,6 +55,10 @@ public:
 
 	jvxErrorType activate() override;
 	jvxErrorType deactivate() override;
+
+	// ===========================================================================================
+
+	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage) override;
 
 	// ===========================================================================================
 
@@ -75,6 +88,16 @@ public:
 
 	void activate_connectors() override;
 	void deactivate_connectors() override;
+
+	virtual void lock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) override;
+	virtual void unlock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) override;
+
+	virtual void report_proc_connector_started_in_lock(CjvxSingleInputConnector* iconnPlus) override;
+	virtual void report_proc_connector_before_stop_in_lock(CjvxSingleInputConnector* iconnPlus) override;
+
+	virtual void report_proc_connector_started_in_lock(CjvxSingleOutputConnector* oconnPlus) override;
+	virtual void report_proc_connector_before_stop_in_lock(CjvxSingleOutputConnector* oconnPlus) override;
+
 };
 
 #ifdef JVX_PROJECT_NAMESPACE
