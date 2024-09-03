@@ -42,6 +42,7 @@ CjvxAuN2AudioMixer::activate()
 			reinterpret_cast<jvxHandle*>(this),
 			nullptr);
 
+		update_profile_list_properties();
 	}
 	return(res);
 };

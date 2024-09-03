@@ -1,7 +1,7 @@
 #ifndef __CJVXAUDIOWITHVIDEODEVICE_H__
 #define __CJVXAUDIOWITHVIDEODEVICE_H__
 
-#include "jvxAudiotechnologies/CjvxAudioDevice.h"
+#include "jvxAudioTechnologies/CjvxAudioDevice.h"
 #include "common/CjvxSingleInputConnector.h"
 #include "common/CjvxSingleOutputConnector.h"
 #include "common/CjvxSingleMaster.h"
