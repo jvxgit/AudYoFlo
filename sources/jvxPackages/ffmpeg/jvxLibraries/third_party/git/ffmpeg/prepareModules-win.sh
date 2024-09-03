@@ -52,6 +52,7 @@ if [ -d $folder ]; then
 			CC=cl ./configure --enable-static --extra-cflags=$compile_flags --prefix=${PWD}/install-$release_mode
 			make 
 			make install
+			make clean
 			popd
 		fi
 		
@@ -67,6 +68,7 @@ if [ -d $folder ]; then
 			cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=$release_mode -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -W4 -GR -EHsc $compile_flags" -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -W4 $compile_flags"  ../../source -DCMAKE_INSTALL_PREFIX=./install-$release_mode
 			nmake 
 			nmake install
+			nmake clean
 		
 			cp install-$release_mode/lib/libx265.lib install-$release_mode/lib/x265.lib
 			popd
@@ -105,11 +107,14 @@ if [ -d $folder ]; then
 		# We can remove this warning by removing the "für" in config.h, assignment CC_IDENT
 		#
 		
-		echo make
+		echo make -j8
 		make -j8
 	
 		echo make install
 		make install
+		
+		echo make clean
+		make clean
 	else
 		echo "Subfolder lib already exists"
 	fi
