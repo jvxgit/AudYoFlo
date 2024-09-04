@@ -5,8 +5,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/target
    ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
   ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
-
-  ${JVX_BASE_LIBS_LIB_PATH}/third_party/git/cbmp/cbmp
   )
 
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
@@ -24,11 +22,13 @@ set(LOCAL_PCG_FILE_OPTIONS
 
 set(LOCAL_LIBS 
   jvx-component-templates-base_static
-  cbmp_static
+  
   )
   
 if(JVX_USE_CBMP)
-set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_OPEN_BMP_FOR_TEXT")	
+	include_directories(${JVX_BASE_LIBS_LIB_PATH}/third_party/git/cbmp/cbmp)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_OPEN_BMP_FOR_TEXT")	
+	set(LOCAL_LIBS ${LOCAL_LIBS} cbmp_static)
 endif()
 
 set(IS_JVX_COMPONENT TRUE)
