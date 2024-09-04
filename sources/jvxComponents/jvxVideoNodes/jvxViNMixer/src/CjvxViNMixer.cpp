@@ -1,5 +1,8 @@
 #include "CjvxViNMixer.h"
+
+#ifdef JVX_OPEN_BMP_FOR_TEXT
 #include "cbmp.h"
+#endif
 
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
