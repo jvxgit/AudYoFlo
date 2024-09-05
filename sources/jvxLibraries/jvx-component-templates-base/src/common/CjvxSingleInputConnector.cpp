@@ -9,7 +9,8 @@ CjvxSingleInputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHan
 
 	switch (purp)
 	{
-	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_BACKWARD:
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_BACKWARD_:
+		// not in use!!
 		break;
 	default:
 		res = JVX_ERROR_UNSUPPORTED;
@@ -382,6 +383,17 @@ CjvxSingleInputConnector::setLatestResultGetData(jvxErrorType resLatestGetDataAr
 {
 	resLatestGetData = resLatestGetDataArg;
 }
+
+jvxErrorType 
+CjvxSingleInputConnector::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) 
+{
+	if (report_trans)
+	{
+		return report_trans->report_transfer_connector(this, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
+	return JVX_ERROR_UNSUPPORTED;
+};
+
 
 // ===============================================================================================
 // ===============================================================================================

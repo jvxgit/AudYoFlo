@@ -102,8 +102,6 @@ public:
 	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn) override;
 	jvxErrorType report_test_connector(CjvxSingleInputConnector* oconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
-	void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) override;
-	void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) override;
 	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxLinkDataDescriptor& datOutThisConnector, jvxSize idxStage) override;
 
 	// =============================================================================
@@ -111,8 +109,17 @@ public:
 	jvxErrorType report_selected_connector(CjvxSingleOutputConnector* iconn) override;
 	jvxErrorType report_test_connector(CjvxSingleOutputConnector* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
+
+	/*
+	 * 
+	 * Just moved the following member functions into the <CjvxConnectorCollection> base class 
+	 * 
+	void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) override;
+	void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) override;
 	void request_unique_id_start(CjvxSingleOutputConnector* iconn, jvxSize* uId) override;
 	void release_unique_id_stop(CjvxSingleOutputConnector* iconn, jvxSize uId) override;
+	*/
+
 	virtual void report_process_buffers(CjvxSingleOutputConnector* oconn, jvxLinkDataDescriptor& datOutThisConnector, jvxSize idxStage = JVX_SIZE_UNSELECTED) override;
 
 	static void correct_order_channel_route(jvxSize* ptrChannelRoutes, jvxSize szChannelRoutes);

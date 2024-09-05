@@ -1,7 +1,7 @@
 #ifndef __CJVXSPNMIXCHAINENTERLEAVE_COMMON_H__
 #define __CJVXSPNMIXCHAINENTERLEAVE_COMMON_H__
 
-class CjvxSpNMixChainEnterLeaveCommon: public CjvxConnectorCollection_bwd
+class CjvxSpNMixChainEnterLeaveCommon: public CjvxConnectorCollection_lock
 {
 	JVX_MUTEX_HANDLE safeAccessInputsOutputs;
 

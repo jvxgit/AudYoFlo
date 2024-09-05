@@ -111,6 +111,8 @@ CjvxViNMixer::activate_connectors()
 	_common_set_conn_factory.input_connectors[newElmIn.theConnector] = newElmIn;
 
 	CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName = "mix-in";
+	CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::cbStartStop = this;
+	CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::theUniqueId = _common_set.theUniqueId;
 	JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen),
 		CjvxSingleInputConnectorMulti(true));
 	CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen->activate(this, this,
@@ -128,6 +130,8 @@ CjvxViNMixer::activate_connectors()
 	_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut;
 
 	CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::conName = "mix-out";
+	CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::cbStartStop = this; 
+	CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::theUniqueId = _common_set.theUniqueId;
 	JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen), CjvxSingleOutputConnectorMulti(true));
 	CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen->activate(this, this,
 		CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::conName, this, 0);
@@ -199,55 +203,152 @@ CjvxViNMixer::activate_connectors()
 	jvxErrorType
 	CjvxViNMixer::report_selected_connector(CjvxSingleInputConnector* iconn)
 	{
+		oneConnectorPlusName<CjvxSingleInputConnector> addme;
+
+		oneConnectorPrivateData* newPrivateData = nullptr;
+		JVX_SAFE_ALLOCATE_OBJECT(newPrivateData, oneConnectorPrivateData);
+
+		jvxSize cnt = 0;
+		jvxBool foundId = true;
+		while(foundId)
+		{ 
+			foundId = false;
+			for (auto& elm : CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors)
+			{
+				oneConnectorPrivateData* dat = (oneConnectorPrivateData*)elm.second.privData;
+				if (dat->uId == cnt)
+				{
+					foundId = true;
+					cnt++;
+					break;
+				}
+			}
+		}
+		newPrivateData->uId = cnt;
+		
+		// Add another entry in list of selected connectors
+		addme.ioconn = iconn;
+		addme.nmUnique = _common_set_min.theDescription + "-" +
+			CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName + "_" + jvx_size2String(uIdGen++);
+		addme.privData = newPrivateData;
+
+		CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors[iconn] = addme;
+		if (_common_set_icon.theData_in)
+		{
+			// All parameters as desired
+			// jvxLinkDataDescriptor_con_params params = _common_set_icon.theData_in->con_params;
+
+			// Pass it to the connector but do not request a test of the chain - it is in build status anyway
+			// iconn->updateFixedProcessingArgs(params);
+		}
 		return JVX_NO_ERROR;
 	}
 
 	jvxErrorType
 	CjvxViNMixer::report_test_connector(CjvxSingleInputConnector* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 	{
+		// Directly run the connector test function here!!
 		video_input.node.prepare_negotiate(iconn->neg_input);
 		return JVX_NO_ERROR;
-	}
-
-	void
-	CjvxViNMixer::request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId)
-	{
-	}
-
-	jvxErrorType
-	CjvxViNMixer::report_started_connector(CjvxSingleInputConnector* iconn)
-	{
-		return JVX_NO_ERROR;
-	}
-
-
-	jvxErrorType
-	CjvxViNMixer::report_stopped_connector(CjvxSingleInputConnector* iconn)
-	{
-		return JVX_NO_ERROR;
-	}
-
-	void
-	CjvxViNMixer::release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId)
-	{
 	}
 
 	jvxErrorType
 	CjvxViNMixer::report_unselected_connector(CjvxSingleInputConnector* iconn)
 	{
-		return JVX_NO_ERROR;
+		auto elm = CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.find(iconn);
+		if (elm != CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.end())
+		{
+			oneConnectorPrivateData* newPrivateData = reinterpret_cast<oneConnectorPrivateData*>(elm->second.privData);
+			if (newPrivateData)
+			{
+				JVX_SAFE_DELETE_OBJ(newPrivateData);
+			}
+			CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.erase(elm);
+			return JVX_NO_ERROR;
+		}
+
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+
+	void
+	CjvxViNMixer::report_started_connector_in_lock(CjvxSingleInputConnector* iconnPlus, jvxHandle* priv)
+	{
+		oneConnectorPrivateData* myPrivateData = reinterpret_cast<oneConnectorPrivateData*>(priv);
+		if(myPrivateData)
+		{
+			myPrivateData->szFldRgba32 = (video_input.node._common_set_node_params_a_1io.segmentation.x *
+			video_input.node._common_set_node_params_a_1io.segmentation.y) *
+			jvxDataFormat_getsize(video_input.node._common_set_node_params_a_1io.format) *
+			jvxDataFormatGroup_getsize(video_input.node._common_set_node_params_a_1io.subformat);
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(myPrivateData->fldRgba32, jvxByte, myPrivateData->szFldRgba32);
+		}
+	}
+
+	void
+	CjvxViNMixer::report_before_stop_connector_in_lock(CjvxSingleInputConnector* iconnPlus, jvxHandle* priv)
+	{
+		oneConnectorPrivateData* myPrivateData = reinterpret_cast<oneConnectorPrivateData*>(priv);
+		if (myPrivateData)
+		{
+			JVX_SAFE_DELETE_FIELD(myPrivateData->fldRgba32);
+			myPrivateData->szFldRgba32 = 0;			
+		}
 	}
 
 	void
 	CjvxViNMixer::report_process_buffers(CjvxSingleInputConnector* iconn, jvxLinkDataDescriptor& datThisConnector, jvxSize idx_stage)
 	{
+		// Here, we can receive the input data
+		jvxByte** imageDataFrom = jvx_process_icon_extract_output_buffers<jvxByte>(datThisConnector);
+
+		// Lock the list of active connections
+		this->lock(false, CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+		auto elm = CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.find(iconn);
+		if (elm != CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.end())
+		{
+			oneConnectorPrivateData* localData = (oneConnectorPrivateData*)elm->second.privData;
+			if (localData)
+			{
+				if (localData->szFldRgba32 == datThisConnector.con_params.buffersize)
+				{
+					memcpy(localData->fldRgba32, imageDataFrom[0], localData->szFldRgba32);
+				}
+			}
+		}
+		this->unlock(false, CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+
+		if (_common_set_ocon.theData_out.con_params.buffersize == datThisConnector.con_params.buffersize)
+		{
+			jvxByte** imageDataTo = jvx_process_icon_extract_output_buffers<jvxByte>(_common_set_ocon.theData_out);
+			memcpy(imageDataTo[0], imageDataFrom[0], _common_set_ocon.theData_out.con_params.buffersize);
+		}
 	}
 
 	// ===========================================================================================
 
 	jvxErrorType
-	CjvxViNMixer::report_selected_connector(CjvxSingleOutputConnector* iconn)
+	CjvxViNMixer::report_selected_connector(CjvxSingleOutputConnector* oconn)
 	{
+		oneConnectorPlusName<CjvxSingleOutputConnector> addme;
+
+		oneConnectorPrivateData* newPrivateData = nullptr;
+		JVX_SAFE_ALLOCATE_OBJECT(newPrivateData, oneConnectorPrivateData);
+
+		// Add another entry in list of selected connectors
+		addme.ioconn = oconn;
+		addme.nmUnique = _common_set_min.theDescription + "-" +
+			CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName + "_" + jvx_size2String(uIdGen++);
+		addme.privData = newPrivateData;
+
+		CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::selectedConnectors[oconn] = addme;
+		if (_common_set_icon.theData_in)
+		{
+			// All parameters as desired
+			// jvxLinkDataDescriptor_con_params params = _common_set_icon.theData_in->con_params;
+
+			// Pass it to the connector but do not request a test of the chain - it is in build status anyway
+			// iconn->updateFixedProcessingArgs(params);
+		}		
 		return JVX_NO_ERROR;
 	}
 
@@ -256,28 +357,6 @@ CjvxViNMixer::activate_connectors()
 	{
 		video_output.node.prepare_negotiate(oconn->neg_output);
 		return JVX_NO_ERROR;
-	}
-
-	void
-	CjvxViNMixer::request_unique_id_start(CjvxSingleOutputConnector* iconn, jvxSize* uId)
-	{
-	}
-
-	jvxErrorType
-	CjvxViNMixer::report_started_connector(CjvxSingleOutputConnector* iconn)
-	{
-		return JVX_NO_ERROR;
-	}
-
-	jvxErrorType
-	CjvxViNMixer::report_stopped_connector(CjvxSingleOutputConnector* iconn)
-	{
-		return JVX_NO_ERROR;
-	}
-
-	void
-	CjvxViNMixer::release_unique_id_stop(CjvxSingleOutputConnector* iconn, jvxSize uId)
-	{
 	}
 
 	jvxErrorType
@@ -295,11 +374,14 @@ CjvxViNMixer::activate_connectors()
 	CjvxViNMixer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
+		
+		jvxByte** bufsIn = jvx_process_icon_extract_input_buffers<jvxByte>(_common_set_icon.theData_in, idx_stage);
+
+		jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(_common_set_ocon.theData_out);
 
 #ifdef JVX_OPEN_BMP_FOR_TEXT
 		if (CjvxViNMixer_genpcg::config.replace_video_image.value)
 		{
-			jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(_common_set_ocon.theData_out);
 			jvxSize minCpy = _common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format);
 			minCpy = JVX_MIN(test.szBufRGBA32, minCpy);
 
@@ -307,12 +389,35 @@ CjvxViNMixer::activate_connectors()
 
 		}
 #endif
-		this->lock(false, JVX_LOCK_ID_INPUT);
+		this->lock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
+		for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
+		{
+			// All connected outputs should have been "buffer started"
+			if (elm.second.ioconn->_common_set_ocon.theData_out.con_params.buffersize == _common_set_icon.theData_in->con_params.buffersize)
+			{
+				jvxByte** bufsOutLoc = jvx_process_icon_extract_output_buffers<jvxByte>(elm.second.ioconn->_common_set_ocon.theData_out);
+				memcpy(bufsOutLoc[0], bufsIn[0], elm.second.ioconn->_common_set_ocon.theData_out.con_params.buffersize);
+			}
+		}
+		this->unlock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
+
+		this->lock(false, CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
 		for (auto& elm : CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::processingConnectors)
 		{
 			elm.second.ioconn->transfer_backward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_DATA, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 		}
-		this->unlock(false, JVX_LOCK_ID_INPUT);
+		this->unlock(false, CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+
+		// Forward the input video to the output connections
+		this->lock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
+		for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
+		{
+			if (elm.second.ioconn->_common_set_ocon.theData_out.con_link.connect_to)
+			{
+				elm.second.ioconn->_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+			}
+		}
+		this->unlock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
 
 		// Forward to next chain
 		return fwd_process_buffers_icon(mt_mask, idx_stage);
@@ -344,25 +449,18 @@ CjvxViNMixer::activate_connectors()
 		}
 	}
 
-	void
-	CjvxViNMixer::report_proc_connector_started_in_lock(CjvxSingleInputConnector* iconnPlus)
+	
+
+	void 
+	CjvxViNMixer::report_started_connector_in_lock(CjvxSingleOutputConnector* oconnPlus, jvxHandle* priv)
 	{
 	}
 
 	void 
-	CjvxViNMixer::report_proc_connector_before_stop_in_lock(CjvxSingleInputConnector* iconnPlus)
+		CjvxViNMixer::report_before_stop_connector_in_lock(CjvxSingleOutputConnector* oconnPlus, jvxHandle* priv)
 	{
 	}
 
-	void 
-	CjvxViNMixer::report_proc_connector_started_in_lock(CjvxSingleOutputConnector* oconnPlus)
-	{
-	}
-
-	void 
-		CjvxViNMixer::report_proc_connector_before_stop_in_lock(CjvxSingleOutputConnector* oconnPlus)
-	{
-	}
 
 #ifdef JVX_PROJECT_NAMESPACE
 }

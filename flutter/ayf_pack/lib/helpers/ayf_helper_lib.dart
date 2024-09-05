@@ -331,6 +331,34 @@ bool setSinglePropertyValueMulti<T>(
   return retVal;
 }
 
+bool setAllPropertyValueMulti<T>(AudYoFloPropertyContainer mc, T val) {
+  bool retVal = false;
+  if (mc is AudYoFloPropertyMultiContentBackend<Float64List>) {
+    AudYoFloPropertyMultiContentBackend<Float64List> pp =
+        mc as AudYoFloPropertyMultiContentBackend<Float64List>;
+    if (pp.fld != null) {
+      for (int posi = 0; posi < pp.fldSz; posi++) {
+        if (val is double) {
+          pp.fld![posi] = val;
+          retVal = true;
+        }
+      }
+    }
+  } else if (mc is AudYoFloPropertyMultiContentBackend<Float32List>) {
+    AudYoFloPropertyMultiContentBackend<Float32List> pp =
+        mc as AudYoFloPropertyMultiContentBackend<Float32List>;
+    if (pp.fld != null) {
+      for (int posi = 0; posi < pp.fldSz; posi++) {
+        if (val is double) {
+          pp.fld![posi] = val;
+          retVal = true;
+        }
+      }
+    }
+  }
+  return retVal;
+}
+
 // Return a value from a property list (call by reference,
 // check the AudYoFloValRef type)
 bool getSinglePropertyValueMulti<T>(

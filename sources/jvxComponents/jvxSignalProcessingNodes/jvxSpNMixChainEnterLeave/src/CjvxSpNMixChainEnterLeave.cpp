@@ -95,6 +95,7 @@ CjvxSpNMixChainEnterLeave::activate()
 			genMixChain::register__display_input(this);
 
 			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName = "mix-in";
+			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::theUniqueId = _common_set.theUniqueId;
 			JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen), 
 				CjvxSingleInputConnectorMulti(true));
 			CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::extra_iocon_gen->activate(this, this, 
@@ -110,6 +111,7 @@ CjvxSpNMixChainEnterLeave::activate()
 			genMixChain::register__display_output(this);
 
 			CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::conName = "mix-out";
+			CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::theUniqueId = _common_set.theUniqueId;
 			JVX_SAFE_ALLOCATE_OBJECT((CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen), CjvxSingleOutputConnectorMulti(true));
 			CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::extra_iocon_gen->activate(this, this, 
 				CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::conName, this, 0);

@@ -56,6 +56,10 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 			res = bwdRef->stop_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
 		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_FORWARD_:
+
+		// not in use!!
+		break;
 	default:
 		res = JVX_ERROR_UNSUPPORTED;
 	}
@@ -281,6 +285,17 @@ CjvxSingleOutputConnector::resultFromInputConnector()
 	}
 	return res;
 }
+
+jvxErrorType
+CjvxSingleOutputConnector::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	if (report_trans)
+	{
+		return report_trans->report_transfer_connector(this, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	}
+	return JVX_ERROR_UNSUPPORTED;
+}
+
 // =================================================================================
 
 jvxErrorType
@@ -357,3 +372,4 @@ CjvxSingleOutputConnectorMulti::unselect_connect_ocon(IjvxConnectorBridge* obj,
 	}
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
+

@@ -15,13 +15,21 @@ namespace JVX_PROJECT_NAMESPACE {
 class CjvxViNMixer: public CjvxVideoNode, 
 	public CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>,
 	public CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>, 
-	public CjvxConnectorCollection_startstop<CjvxSingleInputConnector>,
-	public CjvxConnectorCollection_startstop<CjvxSingleOutputConnector>,
-	public CjvxConnectorCollection_bwd,
+	public CjvxConnectorCollection_fwd_in_lock<CjvxSingleInputConnector>,
+	public CjvxConnectorCollection_fwd_in_lock<CjvxSingleOutputConnector>,
+	public CjvxConnectorCollection_lock,
 	public CjvxViNMixer_genpcg
 {
 private:
 protected:
+
+	class oneConnectorPrivateData
+	{
+	public:
+		jvxByte* fldRgba32 = nullptr;
+		jvxSize szFldRgba32 = 0;
+		jvxSize uId = JVX_SIZE_UNSELECTED;
+	};
 
 	struct
 	{
@@ -46,6 +54,8 @@ protected:
 	} test;
 #endif
 
+	jvxSize uIdGen = 1;
+
 public:
 
 	// ===================================================================================================
@@ -62,42 +72,60 @@ public:
 
 	// ===========================================================================================
 
+	// This function MUST be implemented here since in <CjvxConnectorCollection>, this call is not implemented.
+	// We need this call here to set the processing arguments
 	jvxErrorType report_selected_connector(CjvxSingleInputConnector* iconn) override;
-	jvxErrorType report_test_connector(CjvxSingleInputConnector* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	void request_unique_id_start(CjvxSingleInputConnector* iconn, jvxSize* uId) override;
-	jvxErrorType report_started_connector(CjvxSingleInputConnector* iconn) override;
 
-	jvxErrorType report_stopped_connector(CjvxSingleInputConnector* iconn) override;
-	void release_unique_id_stop(CjvxSingleInputConnector* iconn, jvxSize uId) override;
+	jvxErrorType report_test_connector(CjvxSingleInputConnector* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+
+	// The following two functions can be used to extend the implementation in the <CjvxConnectorCollection> class.
+	// There, we should always refer the base class implementation as well to use the given functionality.
+	// I will not implement these functions here but, instead, install the interface to do things "in the lock"
+	// -> jvxErrorType report_started_connector(CjvxSingleInputConnector* iconn) override;
+	//-> jvxErrorType report_stopped_connector(CjvxSingleInputConnector* iconn) override;
+
 	jvxErrorType report_unselected_connector(CjvxSingleInputConnector* iconn) override;
 
 	void report_process_buffers(CjvxSingleInputConnector* iconn, jvxLinkDataDescriptor& datThisConnector, jvxSize idx_stage) override;
 
 	// ===========================================================================================
 
+	// This function MUST be implemented here since in <CjvxConnectorCollection>, this call is not implemented.
+	// We need this call here to set the processing arguments
 	jvxErrorType report_selected_connector(CjvxSingleOutputConnector* iconn) override;
 	jvxErrorType report_test_connector(CjvxSingleOutputConnector* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
-	void request_unique_id_start(CjvxSingleOutputConnector* iconn, jvxSize* uId) override;
-	jvxErrorType report_started_connector(CjvxSingleOutputConnector* iconn) override;
+	
+	// The following two functions can be used to extend the implementation in the <CjvxConnectorCollection> class.
+	// There, we should always refer the base class implementation as well to use the given functionality.
+	// I will not implement these functions here but, instead, install the interface to do things "in the lock"
+	// -> jvxErrorType report_started_connector(CjvxSingleOutputConnector* iconn) override;
+	// -> jvxErrorType report_stopped_connector(CjvxSingleOutputConnector* iconn) override;
 
-	jvxErrorType report_stopped_connector(CjvxSingleOutputConnector* iconn) override;
-	void release_unique_id_stop(CjvxSingleOutputConnector* iconn, jvxSize uId) override;
 	jvxErrorType report_unselected_connector(CjvxSingleOutputConnector* iconn) override;
 
 	void report_process_buffers(CjvxSingleOutputConnector* iconn, jvxLinkDataDescriptor& datThisConnector, jvxSize idx_stage) override;
 
+
+	//=======================================================================================================
+	
 	void activate_connectors() override;
 	void deactivate_connectors() override;
 
+	// ===============================================================================================
+	// ===============================================================================================
+	// FORWARD INTERFACES FORWARD INTERFACES FORWARD INTERFACES FORWARD INTERFACES FORWARD INTERFACES
+	// ===============================================================================================
+	// ===============================================================================================
+
 	virtual void lock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) override;
 	virtual void unlock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) override;
+	
+	virtual void report_started_connector_in_lock(CjvxSingleInputConnector* iconnPlus, jvxHandle* priv) override;
+	virtual void report_before_stop_connector_in_lock(CjvxSingleInputConnector* iconnPlus, jvxHandle* priv) override;
 
-	virtual void report_proc_connector_started_in_lock(CjvxSingleInputConnector* iconnPlus) override;
-	virtual void report_proc_connector_before_stop_in_lock(CjvxSingleInputConnector* iconnPlus) override;
-
-	virtual void report_proc_connector_started_in_lock(CjvxSingleOutputConnector* oconnPlus) override;
-	virtual void report_proc_connector_before_stop_in_lock(CjvxSingleOutputConnector* oconnPlus) override;
-
+	virtual void report_started_connector_in_lock(CjvxSingleOutputConnector* oconnPlus, jvxHandle* priv) override;
+	virtual void report_before_stop_connector_in_lock(CjvxSingleOutputConnector* oconnPlus, jvxHandle* priv) override;
+	
 };
 
 #ifdef JVX_PROJECT_NAMESPACE

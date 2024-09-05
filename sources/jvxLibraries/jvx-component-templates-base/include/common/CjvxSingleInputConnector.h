@@ -27,6 +27,7 @@ class CjvxSingleInputConnector: public IjvxInputConnector, public CjvxConnector<
 public:
 
 	CjvxSingleConnector_report<CjvxSingleInputConnector>* report = nullptr;
+	CjvxSingleConnectorTransfer_report<CjvxSingleInputConnector>* report_trans = nullptr;
 	CjvxNegotiate_input neg_input;
 	jvxErrorType resLatestGetData = JVX_ERROR_UNKNOWN;
 
@@ -67,12 +68,14 @@ public:
 
 	void setLatestResultGetData(jvxErrorType resLatestGetData);
 
+	 jvxErrorType  transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+
 	// =======================================================================================
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr
-#define JVX_SUPPRESS_AUTO_READY_CHECK_ICON
+#define JVX_CONNECTION_MASTER_SKIP_TRANSFER_FORWARD_ICON
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
 #define JVX_INPUT_OUTPUT_SUPPRESS_START_STOP_TO
 #define JVX_INPUT_OUTPUT_SUPPRESS_PROCESS_BUFFERS_TO
@@ -85,7 +88,7 @@ public:
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #undef JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #undef JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE
-#undef JVX_SUPPRESS_AUTO_READY_CHECK_ICON
+#undef JVX_CONNECTION_MASTER_SKIP_TRANSFER_FORWARD_ICON
 #undef JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
 #undef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP_TO
 #undef JVX_INPUT_OUTPUT_SUPPRESS_PROCESS_BUFFERS_TO

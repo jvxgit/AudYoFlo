@@ -28,6 +28,8 @@ public:
 class CjvxAudioWithVideoDevice: public CjvxAudioDevice,
 	public CjvxSingleConnector_report<CjvxSingleOutputConnector>,
 	public CjvxSingleConnector_report<CjvxSingleInputConnector>,
+	public CjvxSingleConnectorTransfer_report<CjvxSingleOutputConnector>,
+	public CjvxSingleConnectorTransfer_report<CjvxSingleInputConnector>,
 	public CjvxSingleMaster_report
 {
 protected:

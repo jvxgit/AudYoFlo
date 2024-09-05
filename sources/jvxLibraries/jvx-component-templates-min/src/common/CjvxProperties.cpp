@@ -1088,7 +1088,7 @@ CjvxProperties::_set_property(
 
 		if (res == JVX_NO_ERROR)
 		{
-			if (callGate.on_set.report_set)
+			if (callGate.on_set.report_set || _common_set_properties.allSetWithReport)
 			{
 				jvxErrorType resL = add_property_report_collect(selection->propDescriptor->descriptor.std_str());
 				// What to do with resL??

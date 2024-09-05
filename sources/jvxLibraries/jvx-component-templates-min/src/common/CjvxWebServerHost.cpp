@@ -1321,6 +1321,9 @@ CjvxWebServerHost::report_event_request_translate(
 
 	case JVX_WEB_SERVER_URI_PUT_HANDLER_PURP:
 
+		/*
+		 * NOTE: PUT is only a subset of the POST command. Every user should just use the POST!! 
+		 */
 		resL = JVX_NO_ERROR;
 		while (resL == JVX_NO_ERROR)
 		{

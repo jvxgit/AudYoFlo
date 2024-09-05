@@ -22,7 +22,9 @@ CjvxAudioWithVideoDevice::activate_connectors_master()
 	plusVideo.icon.activate(this, this,"video", this, 1);
 	//plusVideo.icon._common_set_io_common.theMaster = &plusVideo.mas;
 	//plusVideo.icon._common_set_io_common.myRuntimeId = 1;
-	
+	plusVideo.icon.report = this;
+	plusVideo.icon.report_trans = this;
+
 	newElmIn.theConnector = static_cast<IjvxInputConnectorSelect*>(&plusVideo.icon);
 	_common_set_conn_factory.input_connectors[newElmIn.theConnector] = newElmIn;
 
@@ -36,6 +38,9 @@ CjvxAudioWithVideoDevice::activate_connectors_master()
 	plusVideo.ocon.activate(this, this, "video", this, 1);
 	//plusVideo.ocon._common_set_io_common.theMaster = &plusVideo.mas;	
 	plusVideo.ocon._common_set_io_common.myRuntimeId = 1;
+
+	plusVideo.ocon.report = this;
+	plusVideo.ocon.report_trans = this;
 
 	newElmOut.theConnector = static_cast<IjvxOutputConnectorSelect*>(&plusVideo.ocon);
 	_common_set_conn_factory.output_connectors[newElmOut.theConnector] = newElmOut;

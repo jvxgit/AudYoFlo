@@ -257,7 +257,8 @@ protected:
 		jvxBool reportIfNoChange = false;
 		jvxSize inPropertyGroupCnt = 0;
 		std::string moduleReference;
-		jvxBool reportMissedCallbacks = false;		
+		jvxBool reportMissedCallbacks = false;	
+		jvxBool allSetWithReport = false;
 	};
 	_common_set_properties_t _common_set_properties;
 
@@ -275,6 +276,8 @@ protected:
 
 	std::map<jvxSize, std::string> tableGroupIdTranslations;
 	CjvxPropertiesTypeConvert convert;
+	
+	
 
 public:
 

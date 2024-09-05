@@ -23,32 +23,6 @@ CjvxSpNMixChainEnterLeave::report_selected_connector(CjvxSingleOutputConnector* 
 	return JVX_NO_ERROR;
 }
 
-void
-CjvxSpNMixChainEnterLeave::request_unique_id_start(CjvxSingleOutputConnector* oconn, jvxSize* uId)
-{
-	auto elm = CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::selectedConnectors.find(oconn);
-	if (elm != CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::selectedConnectors.end())
-	{
-		if (_common_set.theUniqueId)
-		{
-			_common_set.theUniqueId->obtain_unique_id(uId, elm->second.nmUnique.c_str());
-		}
-	}
-}
-
-void
-CjvxSpNMixChainEnterLeave::release_unique_id_stop(CjvxSingleOutputConnector* oconn, jvxSize uId)
-{
-	auto elm = CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors.find(oconn);
-	if (elm != CjvxConnectorCollection < CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors.end())
-	{
-		if (_common_set.theUniqueId)
-		{
-			_common_set.theUniqueId->release_unique_id(uId);
-		}
-	}
-}
-
 jvxErrorType
 CjvxSpNMixChainEnterLeave::report_test_connector(CjvxSingleOutputConnector* oconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {

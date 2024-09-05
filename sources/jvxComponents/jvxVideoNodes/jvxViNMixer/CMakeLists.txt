@@ -32,5 +32,6 @@ if(JVX_USE_CBMP)
 endif()
 
 set(IS_JVX_COMPONENT TRUE)
+set(JVX_FORCE_INSTALL_PROJECT_SDK TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

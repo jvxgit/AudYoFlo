@@ -24,6 +24,7 @@ class CjvxSingleOutputConnector : public IjvxOutputConnector, public IjvxConnect
 public:
 
 	CjvxSingleConnector_report< CjvxSingleOutputConnector>* report = nullptr;
+	CjvxSingleConnectorTransfer_report< CjvxSingleOutputConnector>* report_trans = nullptr;
 	CjvxNegotiate_output neg_output;
 
 public:
@@ -56,7 +57,9 @@ public:
 	jvxErrorType resultFromInputConnector();
 
 	jvxErrorType test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	
+
+	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+		
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr
@@ -65,8 +68,10 @@ public:
 #define JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_OCON
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
+#define JVX_CONNECTION_MASTER_SKIP_TRANSFER_BACKWARD_OCON
 #include "codeFragments/simplify/jvxOutputConnector_simplify.h"
 #include "codeFragments/simplify/jvxConnectorCommon_simplify.h"
+#undef JVX_CONNECTION_MASTER_SKIP_TRANSFER_BACKWARD_OCON
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #undef JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #undef JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE

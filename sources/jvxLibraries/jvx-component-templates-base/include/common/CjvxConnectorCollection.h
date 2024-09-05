@@ -1,10 +1,10 @@
 #ifndef __CJVXCONNECTORCOLLECTION_H__
 #define __CJVXCONNECTORCOLLECTION_H__
 
-JVX_INTERFACE CjvxConnectorCollection_bwd
+JVX_INTERFACE CjvxConnectorCollection_lock
 {
 public:
-	virtual ~CjvxConnectorCollection_bwd() {};
+	virtual ~CjvxConnectorCollection_lock() {};
 	virtual void lock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) = 0;
 	virtual void unlock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) = 0;
 };
@@ -19,26 +19,33 @@ public:
 };
 
 template <class T1>
-JVX_INTERFACE CjvxConnectorCollection_startstop
+JVX_INTERFACE CjvxConnectorCollection_fwd_in_lock
 {
-	virtual ~CjvxConnectorCollection_startstop() {};
-	virtual void report_proc_connector_started_in_lock(T1* connPlus) = 0;
-	virtual void report_proc_connector_before_stop_in_lock(T1* connPlus) = 0;
+public:
+	virtual ~CjvxConnectorCollection_fwd_in_lock() {};
+	virtual void report_started_connector_in_lock(T1* connPlus, jvxHandle* priv) = 0;
+	virtual void report_before_stop_connector_in_lock(T1* connPlus, jvxHandle* priv) = 0;
 };
 
 template <class T1, class T2>
-class CjvxConnectorCollection: public CjvxSingleConnector_report<T1>
+class CjvxConnectorCollection: public CjvxSingleConnector_report<T1>, public CjvxSingleConnectorTransfer_report<T1>
 {
 public:
 	T2* extra_iocon_gen = nullptr;
 	std::string conName;
+
+	// 
 	std::map<T1*, oneConnectorPlusName<T1> > selectedConnectors;
 	std::map<T1*, oneConnectorPlusName<T1> > processingConnectors;
 
-	CjvxConnectorCollection_bwd* cbRef = nullptr;
-	CjvxConnectorCollection_startstop<T1>* cbStartStop = nullptr;
+	CjvxConnectorCollection_lock* cbRef = nullptr;
+	CjvxConnectorCollection_fwd_in_lock<T1>* cbStartStop = nullptr;
+	IjvxUniqueId* theUniqueId = nullptr;
 
 	jvxSize lockId = JVX_SIZE_UNSELECTED;
+
+	// Function < report_selected_connector> typically is not implemented in this class since
+	// other arguments need to be set, e.g., processing arguments etc.
 
 	jvxErrorType report_stopped_connector(T1* ioconn)
 	{
@@ -49,9 +56,8 @@ public:
 
 		if (cbStartStop)
 		{
-			cbStartStop->report_proc_connector_before_stop_in_lock(ioconn);
-		}
-
+			cbStartStop->report_before_stop_connector_in_lock(ioconn, elm->second.privData);
+		}		
 		processingConnectors.erase(elm);
 		cbRef->unlock(lockId);
 
@@ -73,10 +79,10 @@ public:
 
 		// Copy to the list of active connections
 		processingConnectors[ioconn] = elm->second;
-
+		
 		if (cbStartStop)
 		{
-			cbStartStop->report_proc_connector_started_in_lock(ioconn);
+			cbStartStop->report_started_connector_in_lock(ioconn, elm->second.privData);
 		}
 
 		cbRef->unlock(lockId);
@@ -94,6 +100,37 @@ public:
 		}
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	};
+
+	void request_unique_id_start(T1* iconn, jvxSize* uId) override 
+	{
+		auto elm =selectedConnectors.find(iconn);
+		if (elm != selectedConnectors.end())
+		{
+			// Request a iniqueId from host
+			if (theUniqueId)
+			{
+				theUniqueId->obtain_unique_id(uId, elm->second.nmUnique.c_str());
+			}
+		}
+
+	}
+	void release_unique_id_stop(T1* iconn, jvxSize uId) override
+	{
+		auto elm = selectedConnectors.find(iconn);
+		if (elm != selectedConnectors.end())
+		{
+			// Request a iniqueId from host
+			if (theUniqueId)
+			{
+				theUniqueId->release_unique_id(uId);
+			}
+		}
+	}
+
+	jvxErrorType report_transfer_connector(T1* ioconn, jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override
+	{
+		return JVX_ERROR_UNSUPPORTED;
+	}
 };
 
 #endif
