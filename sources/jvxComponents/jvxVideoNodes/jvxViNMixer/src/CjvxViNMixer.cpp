@@ -39,7 +39,11 @@ namespace JVX_PROJECT_NAMESPACE {
 		CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::cbRef = this;
 		CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId = JVX_LOCK_ID_OUTPUT;
 
+#ifdef RW_MUTEX
 		JVX_INITIALIZE_RW_MUTEX(safeCall);
+#else
+		JVX_INITIALIZE_MUTEX(safeCall);
+#endif
 
 #ifdef JVX_OPEN_BMP_FOR_TEXT
 
@@ -428,11 +432,20 @@ CjvxViNMixer::activate_connectors()
 	{
 		if (rwExclusive)
 		{
+#ifdef RW_MUTEX
 			JVX_LOCK_RW_MUTEX_EXCLUSIVE(safeCall);
+#else
+			JVX_LOCK_MUTEX(safeCall);
+#endif
+
 		}
 		else
 		{
+#ifdef RW_MUTEX
 			JVX_LOCK_RW_MUTEX_SHARED(safeCall);
+#else
+			JVX_LOCK_MUTEX(safeCall);
+#endif
 		}
 	}
 	
@@ -441,11 +454,19 @@ CjvxViNMixer::activate_connectors()
 	{
 		if (rwExclusive)
 		{
+#ifdef RW_MUTEX
 			JVX_UNLOCK_RW_MUTEX_EXCLUSIVE(safeCall);
+#else
+			JVX_UNLOCK_MUTEX(safeCall);
+#endif
 		}
 		else
 		{
+#ifdef RW_MUTEX
 			JVX_UNLOCK_RW_MUTEX_SHARED(safeCall);
+#else
+			JVX_UNLOCK_MUTEX(safeCall);
+#endif
 		}
 	}
 

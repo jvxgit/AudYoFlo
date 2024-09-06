@@ -8,6 +8,9 @@
 
 #include "pcg_exports_node.h"
 
+// There was a problem with the RW locks at the beginning. However, this was fixed and there should no longer be a problem
+#define RW_MUTEX
+
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
 #endif
@@ -41,8 +44,12 @@ protected:
 		CjvxSimplePropsPars node;
 	} video_output;
 
-	
+#ifdef RW_MUTEX
 	JVX_RW_MUTEX_HANDLE safeCall;
+#else
+	JVX_MUTEX_HANDLE safeCall;
+#endif
+
 
 #ifdef JVX_OPEN_BMP_FOR_TEXT
 

@@ -5,8 +5,8 @@ JVX_INTERFACE CjvxConnectorCollection_lock
 {
 public:
 	virtual ~CjvxConnectorCollection_lock() {};
-	virtual void lock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) = 0;
-	virtual void unlock(jvxBool rwExclusive = true, jvxSize idLock = JVX_SIZE_UNSELECTED) = 0;
+	virtual void lock(jvxBool rwExclusive, jvxSize idLock) = 0; // Default will be: true,  JVX_SIZE_UNSELECTED
+	virtual void unlock(jvxBool rwExclusive, jvxSize idLock) = 0;
 };
 
 template <class T> class oneConnectorPlusName
@@ -50,7 +50,7 @@ public:
 	jvxErrorType report_stopped_connector(T1* ioconn)
 	{
 		// This list must be protected
-		cbRef->lock(lockId);
+		cbRef->lock(true, lockId);
 		auto elm = processingConnectors.find(ioconn);
 		assert(elm != processingConnectors.end());
 
@@ -59,7 +59,7 @@ public:
 			cbStartStop->report_before_stop_connector_in_lock(ioconn, elm->second.privData);
 		}		
 		processingConnectors.erase(elm);
-		cbRef->unlock(lockId);
+		cbRef->unlock(true, lockId);
 
 		auto elmS = selectedConnectors.find(ioconn);
 		assert(elmS != selectedConnectors.end());
@@ -75,7 +75,7 @@ public:
 		elm->second.inProcessing = true;
 
 		// The list of processing connectors is to be protected as this list is operated in different threads
-		cbRef->lock(lockId);
+		cbRef->lock(true, lockId);
 
 		// Copy to the list of active connections
 		processingConnectors[ioconn] = elm->second;
@@ -85,7 +85,7 @@ public:
 			cbStartStop->report_started_connector_in_lock(ioconn, elm->second.privData);
 		}
 
-		cbRef->unlock(lockId);
+		cbRef->unlock(true, lockId);
 
 		return JVX_NO_ERROR;
 	};
