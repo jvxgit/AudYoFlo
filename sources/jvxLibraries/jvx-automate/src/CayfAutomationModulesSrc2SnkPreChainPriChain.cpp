@@ -6,7 +6,7 @@ namespace CayfAutomationModules
 	CayfAutomationModulesSrc2SnkPreChainPriChain::CayfAutomationModulesSrc2SnkPreChainPriChain() : CayfAutomationModulesSrc2SnkPreChain()
 	{
 		// Specific setup here: allow postconnect and setup targetconnection flags to 0x3
-		allowPostPonedConnect = true;
+		// allowPostPonedConnect = true;
 		targetFlagsConnection = 0x3;
 	}
 
@@ -140,7 +140,7 @@ namespace CayfAutomationModules
 
 			realizeChain.supportNodeRuntime.states.subModulesActive = true;
 			realizeChain.supportNodeRuntime.states.connectionsEstablishFlags = 0x0;
-			realizeChain.supportNodeRuntime.derivedConfig.allowPostPonedConnect = this->allowPostPonedConnect;
+			realizeChain.supportNodeRuntime.derivedConfig.allowPostPonedConnect = config.allowLateConnect;// this->allowPostPonedConnect;
 			realizeChain.supportNodeRuntime.derivedConfig.targetFlagsConnection = this->targetFlagsConnection;
 
 			res = CayfAutomationModulesSrc2SnkPreChain::pre_run_chain_prepare(obj_dev, realizeChainArg);
@@ -205,7 +205,7 @@ namespace CayfAutomationModules
 		CayfAutomationModulesSrc2SnkPreChainPriChain::on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
-		if (!allowPostPonedConnect)
+		if (!config.allowLateConnect/* allowPostPonedConnect */)
 		{
 			// If we do not establish the connection we can deactivate the added objects
 			module_connections.erase(tp_activated);

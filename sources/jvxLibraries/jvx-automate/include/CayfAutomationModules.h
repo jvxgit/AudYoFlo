@@ -168,7 +168,7 @@ namespace CayfAutomationModules
 	{
 	public:
 		// Allow that a secondary connection can be connected lateron
-		jvxBool allowPostPonedConnect = true;
+		// jvxBool allowPostPonedConnect = true;
 
 		// This flag constellation defines what to achieve when connecting.
 		// Some connections require multiple connections (-> 0x3)

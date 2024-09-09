@@ -46,6 +46,8 @@ namespace CayfAutomationModules
 		jvxSize oconIdTrigger = JVX_SIZE_UNSELECTED;
 		jvxSize iconIdTrigger = JVX_SIZE_UNSELECTED;
 		
+		bool allowLateConnect = true;
+
 		ayfConnectConfigSrc2Snk() {};
 		ayfConnectConfigSrc2Snk(const std::string& chainName,			
 			const std::string& nmMasterArg,
@@ -55,11 +57,13 @@ namespace CayfAutomationModules
 			jvxComponentIdentification tpInvolvedArg = JVX_COMPONENT_UNKNOWN,
 			const CayfAutomationModules::ayfConnectConfigConMiscArgs& miscArgsArg = CayfAutomationModules::ayfConnectConfigConMiscArgs(),
 			jvxSize oconTriggerIdArg = JVX_SIZE_UNSELECTED,
-			jvxSize iconTriggerIdArg = JVX_SIZE_UNSELECTED) :
+			jvxSize iconTriggerIdArg = JVX_SIZE_UNSELECTED,
+			bool allowLateConnectArg = true) :
 			chainNamePrefix(chainName), connectedNodes(connectedNodesArg),
 			nmMaster(nmMasterArg), oconNmSource(oconNmSourceArg), iconNmSink(iconNmSinkArg),
 			miscArgs(miscArgsArg), tpAssign(tpInvolvedArg),
-			oconIdTrigger(oconTriggerIdArg), iconIdTrigger(iconTriggerIdArg)
+			oconIdTrigger(oconTriggerIdArg), iconIdTrigger(iconTriggerIdArg),
+			allowLateConnect(allowLateConnectArg)
 		{};
 	};
 
@@ -86,6 +90,7 @@ namespace CayfAutomationModules
 	public:
 		std::list<ayfConnectConfigCpEntryRuntime> lstEntries;		
 		ayfConnectDerivedSrc2Snk derived;
+		jvxBool established = false;
 	};
 
 	class CayfEstablishedProcessesSrc2Snk: public IayfEstablishedProcessesCommon, public IayfEstablishedProcessesSrc2Snk, public CayfEstablishedProcessesMixin
@@ -117,6 +122,8 @@ namespace CayfAutomationModules
 
 		ayfAutoConnect_callbacks* cbPtr = nullptr;
 		ayfConnectConfigSrc2Snk config;
+		std::vector<jvxComponentIdentification> nonConnectedAttempts;
+
 		// ayfConnectDerivedSrc2Snk derived;
 
 	public:

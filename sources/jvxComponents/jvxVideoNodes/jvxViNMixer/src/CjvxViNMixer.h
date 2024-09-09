@@ -46,6 +46,8 @@ protected:
 
 #ifdef RW_MUTEX
 	JVX_RW_MUTEX_HANDLE safeCall;
+	JVX_THREAD_ID tIdEx = 0;
+	JVX_THREAD_ID tIdSh = 0;
 #else
 	JVX_MUTEX_HANDLE safeCall;
 #endif

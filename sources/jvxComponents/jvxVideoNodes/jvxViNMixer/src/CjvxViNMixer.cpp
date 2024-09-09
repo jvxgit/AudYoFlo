@@ -306,7 +306,10 @@ CjvxViNMixer::activate_connectors()
 		jvxByte** imageDataFrom = jvx_process_icon_extract_output_buffers<jvxByte>(datThisConnector);
 
 		// Lock the list of active connections
-		this->lock(false, CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+		
+		// this->lock(false, CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+		/* <-we must not hold the lock here!If we come along here, the mixer has triggered the data within the lock!! */
+		
 		auto elm = CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.find(iconn);
 		if (elm != CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.end())
 		{
@@ -319,7 +322,9 @@ CjvxViNMixer::activate_connectors()
 				}
 			}
 		}
-		this->unlock(false, CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+
+		// this->unlock(false, CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+		/* <-we must not hold the lock here!If we come along here, the mixer has triggered the data within the lock!! */
 
 		if (_common_set_ocon.theData_out.con_params.buffersize == datThisConnector.con_params.buffersize)
 		{
@@ -434,6 +439,7 @@ CjvxViNMixer::activate_connectors()
 		{
 #ifdef RW_MUTEX
 			JVX_LOCK_RW_MUTEX_EXCLUSIVE(safeCall);
+			tIdEx = JVX_GET_CURRENT_THREAD_ID();
 #else
 			JVX_LOCK_MUTEX(safeCall);
 #endif
@@ -443,18 +449,22 @@ CjvxViNMixer::activate_connectors()
 		{
 #ifdef RW_MUTEX
 			JVX_LOCK_RW_MUTEX_SHARED(safeCall);
+			tIdSh = JVX_GET_CURRENT_THREAD_ID();
 #else
 			JVX_LOCK_MUTEX(safeCall);
 #endif
 		}
+		
 	}
 	
 	void 
 		CjvxViNMixer::unlock(jvxBool rwExclusive, jvxSize idLock)
 	{
+
 		if (rwExclusive)
 		{
 #ifdef RW_MUTEX
+			tIdEx = 0;
 			JVX_UNLOCK_RW_MUTEX_EXCLUSIVE(safeCall);
 #else
 			JVX_UNLOCK_MUTEX(safeCall);
@@ -463,6 +473,7 @@ CjvxViNMixer::activate_connectors()
 		else
 		{
 #ifdef RW_MUTEX
+			tIdSh = 0;
 			JVX_UNLOCK_RW_MUTEX_SHARED(safeCall);
 #else
 			JVX_UNLOCK_MUTEX(safeCall);

@@ -289,9 +289,9 @@ namespace CayfAutomationModules
 			deriveArguments(sglElm.derived, tp_activated, realizeChainPtr);
 
 			// Run the connection code
-			try_connect(tp_activated, established);
+			try_connect(tp_activated, sglElm.established);
 
-			if(!established)
+			if(!sglElm.established)
 			{
 				res = this->on_connection_not_established(tp_activated, realizeChainPtr);				
 				if (res != JVX_NO_ERROR)
@@ -324,9 +324,16 @@ namespace CayfAutomationModules
 	jvxErrorType 
 		CayfAutomationModulesSrc2Snk::on_connection_not_established(jvxComponentIdentification tp_activated, IayfEstablishedProcessesCommon* realizeChainPtr)
 	{
-		// If we do not establish the connection we can deactivate the added objects
-		deactivate_all_submodules(tp_activated);
-		return JVX_ERROR_INVALID_SETTING;
+		jvxErrorType res = JVX_NO_ERROR;		
+		if (!config.allowLateConnect)
+		{
+			// If we do not establish the connection we can deactivate the added objects
+			deactivate_all_submodules(tp_activated);
+			module_connections.erase(tp_activated);
+			this->deallocate_chain_realization(realizeChainPtr);
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		return res;
 	}
 
 	jvxErrorType
@@ -498,7 +505,24 @@ namespace CayfAutomationModules
 
 	void 
 		CayfAutomationModulesSrc2Snk::postponed_try_connect()
-	{
+	{	
+		if (config.allowLateConnect)
+		{
+			for (auto& elm : module_connections)
+			{
+				IayfEstablishedProcessesCommon* sglElmPtr = elm.second;
+				IayfEstablishedProcessesSrc2Snk& sglElm = castEstablishProcess<IayfEstablishedProcessesSrc2Snk>(sglElmPtr);
+				// Here we copy the args for the connection
+			
+				if (!sglElm.established)
+				{
+					deriveArguments(sglElm.derived, elm.first.cpId, sglElmPtr);
+
+					// Run the connection code				
+					try_connect(elm.first.cpId, sglElm.established);
+				}
+			}
+		}
 	}
 
 	IayfEstablishedProcessesCommon* 
