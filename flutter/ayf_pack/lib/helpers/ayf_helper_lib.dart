@@ -153,6 +153,24 @@ void applyChangeSelectionList(
   }
 }
 
+void setValueSelectionList(AudYoFloBitField selection, int posi,
+    jvxPropertyDecoderHintTypeEnum decTp, bool setValue,
+    {int offset = 0}) {
+  switch (decTp) {
+    case jvxPropertyDecoderHintTypeEnum.JVX_PROPERTY_DECODER_MULTI_SELECTION:
+    case jvxPropertyDecoderHintTypeEnum
+        .JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER:
+      if (selection.bitTest(posi, offset: offset)) {
+        selection.bitClear(posi, offset: offset);
+      } else {
+        selection.bitSet(posi, offset: offset);
+      }
+      break;
+    default:
+      selection.bitZSet(posi, offset: offset);
+  }
+}
+
 void incrementSelectionList(AudYoFloBitField selection, int numOptions,
     jvxPropertyDecoderHintTypeEnum decTp,
     {int offset = 0}) {
