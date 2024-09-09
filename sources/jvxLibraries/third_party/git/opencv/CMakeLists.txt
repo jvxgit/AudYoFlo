@@ -34,7 +34,7 @@ if(${JVX_OS} MATCHES "windows")
 	# if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/opencv")
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
 		message("opencv sub project not available. Starting script to download it.") 
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
 		message("opencv installation complete.")
 	endif()
 		
@@ -84,7 +84,7 @@ elseif(${JVX_OS} MATCHES "linux")
 	
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
 		message("opencv sub project not available. Starting script to download it.") 
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
 		message("opencv installation complete.")
 	endif()
 	
