@@ -32,15 +32,17 @@ if(${JVX_OS} MATCHES "windows")
 	#endif()
 	
 	# if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/opencv")
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+		message("opencv sub project not available. Starting script to download it.") 
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+		message("opencv installation complete.")
+	endif()
+		
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
 	
 		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
 		
-		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
-			message("opencv sub project not available. Starting script to download it.") 
-			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
-			message("opencv installation complete.")
-		endif()
+		
 	
 		# Uhrg, that was kind of a mess. Batch scripts are always pain in the ass.
 		# I create dedicated build folders and run a cmake-ninja build within the build folder.
@@ -69,34 +71,54 @@ if(${JVX_OS} MATCHES "windows")
 		
 	
 elseif(${JVX_OS} MATCHES "linux")
-	## Install <sudo apt-get install libhdf5-dev>
-	find_package(PkgConfig)
-	
+
 	set(targetfolder opencv)
 	set(archtoken glnx)
-	set(buildtype ${CMAKE_BUILD_TYPE})
 	
-	message("opencv sub project not available. Starting script to download it.") 
-	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
-	message("opencv installation complete.")
+	set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}")
 	
-	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/include" CACHE INTERNAL "opencv include references")
+	set(libpostfix "")
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
+		set(libpostfix "d")
+	endif()
+	
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+		message("opencv sub project not available. Starting script to download it.") 
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+		message("opencv installation complete.")
+	endif()
+	
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
+	
+		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}")
+		
+	endif()
+	
+	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include/opencv4" CACHE INTERNAL "opencv include references")
 	set(OPENCV_LIBRARIES 
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_core
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_features2d
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_gapi
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_imgcodecs
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_ml
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_photo
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_video
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_calib3d
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_dnn
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_flann
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_highgui
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_imgproc
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_objdetect
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_stitching
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/opencv_videoio
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_features2d.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_gapi.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_imgcodecs.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_ml.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_photo.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_video.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_calib3d.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_dnn.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_flann.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_highgui.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_imgproc.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_objdetect.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_stitching.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_videoio.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_core.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libade.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippiw.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libittnotify.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibprotobuf.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibwebp.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippicv.a
 		CACHE INTERNAL "opencv library references")
 		
 endif()

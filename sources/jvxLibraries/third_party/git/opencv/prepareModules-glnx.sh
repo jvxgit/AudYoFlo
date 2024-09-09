@@ -1,25 +1,24 @@
 #!/bin/bash  
 
-if [ ! -d "$2" ]; then
+echo "Script prepareModules-glnx.sh with arguments $1 $2 $3"
 
-	git clone https://github.com/opencv/opencv.git
-	cd opencv
-		git checkout 1ca526dcdb9c30600c70537e279f0c672057a1b9
-	cd ..
-fi
+# $1: archtoken
+# $2 target folder
+# $3: build option
 
-if [ ! -d "build-$1" ]; then
+if [ ! -d "$2/build-$1" ]; then
 
-    echo "Create build folder <build/compile.sh>"
-    mkdir build-$1
+    echo "Create build folder <$2/build-$1>"
+    mkdir $2/build-$1
 	
-    cp build/compile.sh build-$1
-    chmod +x build/compile.sh 
+    cp build/compile.sh $2/build-$1
+    chmod +x $2/build-$1/compile.sh 
 fi
 
-if [ ! -d "$2/$1" ]; then
-   cd build-$1
+if [ ! -d "$2/$2-$3" ]; then
+   cd $2/build-$1
    ./compile.sh $1 $2 $3
+   rm -rf $2/build-$1
 fi
 
 
