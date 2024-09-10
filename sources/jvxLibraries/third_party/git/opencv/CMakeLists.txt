@@ -51,11 +51,12 @@ if(${JVX_OS} MATCHES "windows")
 		# 1) Somehow rmdir does not remove the build folder -> remove in cmake
 		# 2) Need to run another cmake process in a cmake process. Therefore, I map the batch file to
 		#    run secondary cmake. Fortunately, bat files inherit the environment :-)
-		execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-		# execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${targetfolder} ${dataformattoken}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-		# file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
+		execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})		
+		file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}")
 	endif()
-
+	
+	## message("--> ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}")
+	
 	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include" CACHE INTERNAL "opencv include references")
 	set(OPENCV_LIBRARIES 
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/opencv_imgproc4100${libpostfix}.lib
