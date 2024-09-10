@@ -160,14 +160,18 @@ void setValueSelectionList(AudYoFloBitField selection, int posi,
     case jvxPropertyDecoderHintTypeEnum.JVX_PROPERTY_DECODER_MULTI_SELECTION:
     case jvxPropertyDecoderHintTypeEnum
         .JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER:
-      if (selection.bitTest(posi, offset: offset)) {
-        selection.bitClear(posi, offset: offset);
-      } else {
+      if (setValue) {
         selection.bitSet(posi, offset: offset);
+      } else {
+        selection.bitClear(posi, offset: offset);
       }
       break;
     default:
-      selection.bitZSet(posi, offset: offset);
+      if (setValue) {
+        selection.bitZSet(posi, offset: offset);
+      } else {
+        selection.bitClear(posi, offset: offset);
+      }
   }
 }
 
