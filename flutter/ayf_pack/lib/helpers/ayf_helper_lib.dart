@@ -665,6 +665,83 @@ void widgetConfigCpIdShowTD(Map<String, String> entriesCfgWidgets,
   }
 }
 
+List<double> propertyMultiContentToDoubleList(
+    AudYoFloPropertyMultiContentBackend pp) {
+  List<double> retVal = [];
+  if (pp is AudYoFloPropertyMultiContentBackend<Float64List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Float32List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Int64List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Int32List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Int16List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Int8List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Uint64List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Uint32List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Uint16List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  } else if (pp is AudYoFloPropertyMultiContentBackend<Uint8List>) {
+    if (pp.fld != null) {
+      retVal = List<double>.filled(pp.fldSz, 0);
+      for (int cnt = 0; cnt < pp.fldSz; cnt++) {
+        retVal[cnt] = pp.fld![cnt].toDouble();
+      }
+    }
+  }
+  return retVal!;
+}
+
 class AudYoFloMixerLevelHelper {
   double dbShiftGain = 50;
   double indexUnmapDb(double idxValdB) {
