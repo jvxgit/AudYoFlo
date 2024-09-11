@@ -43,34 +43,44 @@ SECTION PROPERTIES
 		};
 	};
 
-	SECTION profiles
+	SECTION custom_profiles
 	{
 		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
-		CALLBACKS = {"address_profiles"};
-		SECTION profile_list
+		CALLBACKS = {"address_custom_profiles"};
+		SECTION custom_profile_list
 		{
 			GENERATE_ENTRY_CONFIG_FILE = "yes";
 			DESCRIPTION = "Select one among the stored profiles.";
-			// SELECTION_LIST_NAMES = {"PCM @ 16 bit", "PCM @ 8 bit"}; empty on start
-			// SELECTION_LIST_SELECTED = {"yes", "no"}; empty on start
-			// SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; empty on start
 			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
 			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
-			CALLBACK_SET_POSTHOOK = "address_profiles";			
+			CALLBACK_SET_POSTHOOK = "address_custom_profiles";			
 		};
-		SECTION profile_add
+		SECTION custom_profile_add
 		{
 			DESCRIPTION = "Add a new profile with the given name.";
 			TYPE = "JVX_DATAFORMAT_STRING";
 			INIT = "";
-			CALLBACK_SET_POSTHOOK = "address_profiles";			
+			CALLBACK_SET_POSTHOOK = "address_custom_profiles";			
 		};
-		SECTION clear_profile
+		SECTION custom_clear_profile
 		{
 			DESCRIPTION = "Clear the selected profile.";
 			TYPE = "JVX_DATAFORMAT_BOOL";			
-			CALLBACK_SET_POSTHOOK = "address_profiles";			
+			CALLBACK_SET_POSTHOOK = "address_custom_profiles";			
 		};
+	};
 
+	SECTION generic_profiles
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"address_generic_profiles"};
+		SECTION generic_profile_list
+		{
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			DESCRIPTION = "Select one among the generic profiles.";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			CALLBACK_SET_POSTHOOK = "address_generic_profiles";			
+		};
 	};
 };

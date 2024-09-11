@@ -493,14 +493,14 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, clear_storage
 	return JVX_NO_ERROR;
 }
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, address_profiles)
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, address_custom_profiles)
 {
 	jvxBool lstRefresh = false;
 	std::string propsReport;
 	std::string activateName;
-	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, gen2AudioMixer_node::profiles.profile_add))
+	if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, gen2AudioMixer_node::custom_profiles.custom_profile_add))
 	{
-		std::string addme = gen2AudioMixer_node::profiles.profile_add.value;
+		std::string addme = gen2AudioMixer_node::custom_profiles.custom_profile_add.value;
 
 		// Add current setup to profile list
 		auto elmP = profileList.find(addme);
@@ -527,20 +527,20 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, address_profi
 		lstRefresh = true;
 		activateName = addme;
 		
-		gen2AudioMixer_node::profiles.profile_add.value.clear();
+		gen2AudioMixer_node::custom_profiles.custom_profile_add.value.clear();
 		
 	}
-	else if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, gen2AudioMixer_node::profiles.clear_profile))
+	else if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, gen2AudioMixer_node::custom_profiles.custom_clear_profile))
 	{
-		if (gen2AudioMixer_node::profiles.clear_profile.value == c_true)
+		if (gen2AudioMixer_node::custom_profiles.custom_clear_profile.value == c_true)
 		{
 			// remove the currently selected profile
 			jvxSize selId = jvx_bitfieldSelection2Id(
-				gen2AudioMixer_node::profiles.profile_list.value.selection(),
-				gen2AudioMixer_node::profiles.profile_list.value.entries.size());
+				gen2AudioMixer_node::custom_profiles.custom_profile_list.value.selection(),
+				gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries.size());
 			if (JVX_CHECK_SIZE_SELECTED(selId))
 			{
-				std::string txt = gen2AudioMixer_node::profiles.profile_list.value.entries[selId];
+				std::string txt = gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries[selId];
 				auto elmP = profileList.find(txt);
 				if (elmP != profileList.end())
 				{
@@ -548,72 +548,66 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, address_profi
 				}
 				lstRefresh = true;
 			}
-			gen2AudioMixer_node::profiles.clear_profile.value = c_false;
+			gen2AudioMixer_node::custom_profiles.custom_clear_profile.value = c_false;
 		}
 	}
-	else if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, gen2AudioMixer_node::profiles.profile_list))
+	else if (JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, gen2AudioMixer_node::custom_profiles.custom_profile_list))
 	{
 		jvxSize selId = jvx_bitfieldSelection2Id(
-			gen2AudioMixer_node::profiles.profile_list.value.selection(),
-			gen2AudioMixer_node::profiles.profile_list.value.entries.size());
+			gen2AudioMixer_node::custom_profiles.custom_profile_list.value.selection(),
+			gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries.size());
 		if (JVX_CHECK_SIZE_SELECTED(selId))
 		{
-			if (selId >= this->numberProfilePresets)
+			std::string entry = gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries[selId];
+
+			const auto& elmP = profileList.find(entry);
+
+			// Load profile entries
+			jvxSize cntChan = 0;
+			for (auto& set : registeredChannelListInput)
 			{
-				std::string entry = gen2AudioMixer_node::profiles.profile_list.value.entries[selId];
-
-				const auto& elmP = profileList.find(entry);
-
-				// Load profile entries
-				jvxSize cntChan = 0;
-				for (auto& set : registeredChannelListInput)
+				std::string masName = set.second.masName;
+				for (auto& elmC : set.second.channels)
 				{
-					std::string masName = set.second.masName;
-					for (auto& elmC : set.second.channels)
+					updateChannelFromStorage((*elmP).second.inputChannelsInStorage, elmC, masName, true);
+					mixer_input.fldGain[cntChan] = elmC.gain;
+					jvx_bitZSet(mixer_input.fldMute[cntChan], 0);
+					if (elmC.mute)
 					{
-						updateChannelFromStorage((*elmP).second.inputChannelsInStorage, elmC, masName, true);
-						mixer_input.fldGain[cntChan] = elmC.gain;
-						jvx_bitZSet(mixer_input.fldMute[cntChan], 0);
-						if (elmC.mute)
-						{
-							jvx_bitZSet(mixer_input.fldMute[cntChan], 1);
-						}
-
-						if (extender)
-						{
-							extender->fillLinearFields(true, cntChan, elmC.attSpecificPtr);
-						}
-
-						cntChan++;
+						jvx_bitZSet(mixer_input.fldMute[cntChan], 1);
 					}
-				}
 
-				cntChan = 0;
-				for (auto& set : registeredChannelListOutput)
-				{
-					std::string masName = set.second.masName;
-					for (auto& elmC : set.second.channels)
+					if (extender)
 					{
-						updateChannelFromStorage((*elmP).second.outputChannelsInStorage, elmC, masName, false);
-
-						mixer_output.fldGain[cntChan] = elmC.gain;
-						jvx_bitZSet(mixer_output.fldMute[cntChan], 0);
-						if (elmC.mute)
-						{
-							jvx_bitZSet(mixer_output.fldMute[cntChan], 1);
-						}
-						if (extender)
-						{
-							extender->fillLinearFields(false, cntChan, elmC.attSpecificPtr);
-						}
-						cntChan++;
+						extender->fillLinearFields(true, cntChan, elmC.attSpecificPtr);
 					}
+
+					cntChan++;
 				}
 			}
-			else
+
+			cntChan = 0;
+			for (auto& set : registeredChannelListOutput)
 			{
-				realize_preset_profile(selId);				
+				std::string masName = set.second.masName;
+				for (auto& elmC : set.second.channels)
+				{
+					updateChannelFromStorage((*elmP).second.outputChannelsInStorage, elmC, masName, false);
+
+					mixer_output.fldGain[cntChan] = elmC.gain;
+					jvx_bitZSet(mixer_output.fldMute[cntChan], 0);
+					if (elmC.mute)
+					{
+						jvx_bitZSet(mixer_output.fldMute[cntChan], 1);
+					}
+					if (extender)
+					{
+						extender->fillLinearFields(false, cntChan, elmC.attSpecificPtr);
+					}
+					cntChan++;
+				}
 			}
+		
 
 			CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_gain.descriptor.std_str());
 			CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_mute.descriptor.std_str());
@@ -631,9 +625,33 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, address_profi
 	{
 		update_profile_list_properties(activateName);
 		CjvxProperties::add_property_report_collect(
-			gen2AudioMixer_node::profiles.profile_list.descriptor.std_str(),
+			gen2AudioMixer_node::custom_profiles.custom_profile_list.descriptor.std_str(),
 			true);
 	}	
+
+	return JVX_NO_ERROR;
+}
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuN2AudioMixer, address_generic_profiles)
+{
+	jvxSize idSel = jvx_bitfieldSelection2Id(
+		gen2AudioMixer_node::generic_profiles.generic_profile_list.value.selection(),
+		gen2AudioMixer_node::generic_profiles.generic_profile_list.value.entries.size());
+
+	if (idSel < numberGenericPresetProfiles)
+	{
+		realize_preset_profile(idSel);	
+
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_gain.descriptor.std_str());
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_input.mixer_control.level_mute.descriptor.std_str());
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.level_gain.descriptor.std_str());
+		CjvxProperties::add_property_report_collect(gen2AudioMixer_node::mixer_output.mixer_control.level_mute.descriptor.std_str());
+		if (extender)
+		{
+			extender->reportPropertyUpdateChannels(true);
+			extender->reportPropertyUpdateChannels(false);
+		}
+	}
 
 	return JVX_NO_ERROR;
 }
@@ -653,26 +671,16 @@ CjvxAuN2AudioMixer::update_profile_list_properties(const std::string& activateTh
 	else
 	{
 		jvxSize idBefore = jvx_bitfieldSelection2Id(
-			gen2AudioMixer_node::profiles.profile_list.value.selection(),
-			gen2AudioMixer_node::profiles.profile_list.value.entries.size());
-		if (idBefore < gen2AudioMixer_node::profiles.profile_list.value.entries.size())
+			gen2AudioMixer_node::custom_profiles.custom_profile_list.value.selection(),
+			gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries.size());
+		if (idBefore < gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries.size())
 		{
-			actProf = gen2AudioMixer_node::profiles.profile_list.value.entries[idBefore];
+			actProf = gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries[idBefore];
 		}
 	}
 
-	gen2AudioMixer_node::profiles.profile_list.value.entries.clear();
-	jvx_bitFClear(gen2AudioMixer_node::profiles.profile_list.value.selection());
-
-	for (cnt = 0; cnt < numberProfilePresets; cnt++)
-	{
-		std::string token = profile_preset_name(cnt);
-		if (token == actProf)
-		{
-			idNew = cnt;
-		}
-		gen2AudioMixer_node::profiles.profile_list.value.entries.push_back(token);
-	}
+	gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries.clear();
+	jvx_bitFClear(gen2AudioMixer_node::custom_profiles.custom_profile_list.value.selection());
 
 	for (auto elm : profileList)
 	{
@@ -681,7 +689,7 @@ CjvxAuN2AudioMixer::update_profile_list_properties(const std::string& activateTh
 			idNew = cnt;
 		}
 		cnt++;
-		gen2AudioMixer_node::profiles.profile_list.value.entries.push_back(elm.first);
+		gen2AudioMixer_node::custom_profiles.custom_profile_list.value.entries.push_back(elm.first);
 	}
 
 	if (JVX_CHECK_SIZE_UNSELECTED(idNew))
@@ -693,12 +701,12 @@ CjvxAuN2AudioMixer::update_profile_list_properties(const std::string& activateTh
 	}
 	if (JVX_CHECK_SIZE_SELECTED(idNew))
 	{
-		jvx_bitZSet(gen2AudioMixer_node::profiles.profile_list.value.selection(), idNew);
+		jvx_bitZSet(gen2AudioMixer_node::custom_profiles.custom_profile_list.value.selection(), idNew);
 	}
 }
 
-std::string 
-CjvxAuN2AudioMixer::profile_preset_name(jvxSize cnt)
+std::string
+CjvxAuN2AudioMixer::generic_preset_profile_name(jvxSize cnt)
 {
 	std::string token = "Profile #" + jvx_size2String(cnt);
 	return token;
@@ -707,5 +715,5 @@ CjvxAuN2AudioMixer::profile_preset_name(jvxSize cnt)
 void
 CjvxAuN2AudioMixer::realize_preset_profile(jvxSize cnt)
 {
-
+	// Do nothing here, to be used in base class
 }

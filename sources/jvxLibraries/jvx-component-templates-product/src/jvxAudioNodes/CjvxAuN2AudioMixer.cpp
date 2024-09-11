@@ -38,11 +38,22 @@ CjvxAuN2AudioMixer::activate()
 			set_extend_ifx_reference, 
 			update_level_get, update_level_set,
 			update_level_get, update_level_set,
-			clear_storage, address_profiles,
+			clear_storage, address_custom_profiles,
+			address_generic_profiles,
 			reinterpret_cast<jvxHandle*>(this),
 			nullptr);
 
 		update_profile_list_properties();
+
+		for (jvxSize cnt = 0; cnt < numberGenericPresetProfiles; cnt++)
+		{
+			std::string token = generic_preset_profile_name(cnt);
+			gen2AudioMixer_node::generic_profiles.generic_profile_list.value.entries.push_back(token);
+		}
+		if (numberGenericPresetProfiles)
+		{
+			jvx_bitZSet(gen2AudioMixer_node::generic_profiles.generic_profile_list.value.selection(), 0);
+		}
 	}
 	return(res);
 };

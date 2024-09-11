@@ -341,7 +341,7 @@ CjvxAuN2AudioMixer::get_configuration(jvxCallManagerConfiguration* callConf, Ijv
 		}
 		if (_common_set_min.theState >= JVX_STATE_ACTIVE)
 		{
-			gen2AudioMixer_node::get_configuration__profiles(callConf,
+			gen2AudioMixer_node::get_configuration__custom_profiles(callConf,
 				processor, sectionWhereToAddAllSubsections);
 		}
 	}

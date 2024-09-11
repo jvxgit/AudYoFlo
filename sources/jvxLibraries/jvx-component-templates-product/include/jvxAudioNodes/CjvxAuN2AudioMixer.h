@@ -154,7 +154,7 @@ protected:
 	// from base class <CjvxNVTasks> when extending the mixbuffer list!
 	std::map<jvxSize, oneBufferDefinition> mixBuffers;
 
-	jvxSize numberProfilePresets = 0;
+	jvxSize numberGenericPresetProfiles = 0;
 
 private:
 
@@ -293,8 +293,11 @@ public:
 
 	void recursive_vtask_processing();
 
-	virtual std::string profile_preset_name(jvxSize cnt);
+	virtual std::string generic_preset_profile_name(jvxSize cnt);
 	virtual void realize_preset_profile(jvxSize cnt);
+
+	//virtual std::string profile_preset_name(jvxSize cnt);
+	//virtual void realize_preset_profile(jvxSize cnt);
 
 	// =============================================================================
 	// =============================================================================
@@ -305,7 +308,8 @@ public:
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(update_level_get);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(update_level_set);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(clear_storage);
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(address_profiles);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(address_custom_profiles);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(address_generic_profiles);
 
 };
 
