@@ -1,4 +1,5 @@
 option(AYFSTARTER_SIMPLE_INSTALLER "Build a simple installer (zip) for flutter code" ON)
+option(AYFSTARTER_USE_RUST_LIBS "Build rust libs instead of C libs where possible" OFF)
 
 if(NOT JVX_USES_SDK)
 	include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/paths.local.cmake)
@@ -15,9 +16,15 @@ if(JVX_USE_ORC)
 	set(AYFSTARTER_SUB_PROJECT_PCG_FLAGS "-D;JVX_ORC_PROPERTIES" CACHE INTERNAL "local project PCG file options")
 endif()
 
-set(AYF_STARTER_STATIC_LIBS
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib
-  )
+if(AYFSTARTER_USE_RUST_LIBS)
+  set(AYF_STARTER_STATIC_LIBS
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib-rust
+    )
+else()
+  set(AYF_STARTER_STATIC_LIBS
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib
+    )
+endif()
 jvx_addSubdirs("Configuring static library for ayfstarter core functionality" "${AYF_STARTER_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Library")
 
 set(AYF_STARTER_AUDIONODE
