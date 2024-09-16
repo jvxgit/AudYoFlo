@@ -19,6 +19,10 @@ native_host_configure_func_pointers* func_pointer_reference = &func_pointer_obje
 JVX_HMODULE dllHandleConfig = JVX_HMODULE_INVALID; 
 flutter_config_open_ptr fptrConfig = nullptr;
 
+std::string dllPixBufSystem = "";
+JVX_HMODULE dllHandlePixBuf = JVX_HMODULE_INVALID;
+pixbuffer_render_callback fptrPixBuf = nullptr;
+
 // ========================================================================
 // ========================================================================
 
@@ -137,6 +141,14 @@ int ffi_deallocate_backend_handle(void* opaque_hdl)
 		JVX_UNLOADLIBRARY(dllHandleConfig);
 		dllHandleConfig = JVX_HMODULE_INVALID;
 		dllConfigSystem.clear();
+	}
+
+	if (dllHandlePixBuf != JVX_HMODULE_INVALID)
+	{
+		fptrPixBuf = nullptr;
+		JVX_UNLOADLIBRARY(dllHandlePixBuf);
+		dllHandlePixBuf = JVX_HMODULE_INVALID;
+		dllPixBufSystem.clear();
 	}
 	return res;
 }
@@ -423,12 +435,15 @@ void ffi_host_allocate_ss_list(
 		
 extern "C"
 {
+
 	void jvx_command_line_specify(IjvxCommandLine* cmdLine)
 	{
 		if (cmdLine)
 		{
 			cmdLine->register_option("--natconfm", "", "Specifc the configuration lib to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
 			cmdLine->register_option("--natconfs", "", "Specifc the symbol to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
+			cmdLine->register_option("--pixbufm", "", "Specifc the pixbuffer lib to register rendering callbacks.", "", true, JVX_DATAFORMAT_STRING);
+			cmdLine->register_option("--pixbufs", "", "Specifc the pixbuffer entry symbol to register rendering callbacks.", "", true, JVX_DATAFORMAT_STRING);
 		}
 	}
 
@@ -471,6 +486,41 @@ extern "C"
 					{
 						JVX_UNLOADLIBRARY(dllHandleConfig);
 						dllHandleConfig = JVX_HMODULE_INVALID;
+					}
+				}
+				else
+				{
+					std::cout << "Error during access to runtime library <" << dllConfigSystem
+						<< ">: Could not open module." << std::endl;
+				}
+			}
+		}
+	
+		entry.clear();
+		if (cmdLine->content_entry_option("--pixbufm", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+		{
+			dllPixBufSystem = entry.std_str();
+			std::string symbPixBufSystemName = FLUTTER_PIXBUF_OPEN_FUNCTION_NAME;
+			if (cmdLine->content_entry_option("--pixbufs", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+			{
+				symbPixBufSystemName = entry.std_str();
+			}
+
+			if (!dllPixBufSystem.empty())
+			{
+				std::cout << "Opening runtime library <" << dllPixBufSystem << "> for pixbuf cross referencing." << std::endl;
+				dllHandlePixBuf = JVX_LOADLIBRARY(dllPixBufSystem.c_str());
+				if (dllHandlePixBuf != JVX_HMODULE_INVALID)
+				{
+					fptrPixBuf = (pixbuffer_render_callback)JVX_GETPROCADDRESS(dllHandlePixBuf, symbPixBufSystemName.c_str());
+					if (fptrPixBuf)
+					{
+						fptrPixBuf(pixbuffer_local_create_cb, pixbuffer_local_destroy_cb, nullptr);
+					}
+					if (fptrPixBuf == nullptr)
+					{
+						JVX_UNLOADLIBRARY(dllHandlePixBuf);
+						dllHandlePixBuf = JVX_HMODULE_INVALID;
 					}
 				}
 				else

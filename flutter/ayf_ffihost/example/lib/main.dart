@@ -11,6 +11,9 @@ import 'package:ayf_pack/ayf_pack.dart';
 
 import 'package:ayfcorepack/ayfcorepack.dart' as corepack;
 
+import 'package:pixel_buffer_texture/pixel_buffer_renderer.dart' as pixbuf;
+// import 'package:pixel_buffer_texture/pixel_buffer_texture_platform_interface.dart';
+
 import 'package:ayf_pack/ayf_init_host_native.dart'
     if (dart.library.html) 'package:ayf_pack/ayf_init_host_web.dart';
 
@@ -45,6 +48,7 @@ void main(List<String> arguments) {
 
   // We can initialioze the corepack here
   dynamic corePack;
+  dynamic pixBufInst;
 
   // ===========================================================================
   // Optins for the host
@@ -52,12 +56,15 @@ void main(List<String> arguments) {
   bool forceWebHost = false;
   if (!forceWebHost) {
     corePack = corepack.ayfcore;
+    pixBufInst = pixbuf.ayfpixbuf;
+    // PixelBufferTexturePlatform.instance.getEntryPoints();
+    // pixBufInst = pixbuf.
   }
   // ===========================================================================
 
   // Currently, ffihost limited to windows
   String initRoute = ayf_init_host_options(configArgs,
-      forceWebHost: forceWebHost, corePack: corePack);
+      forceWebHost: forceWebHost, corePack: corePack, pixBuf: pixBufInst);
 
   configArgs['cmdArgs'] = arguments;
   platformSpec.configureSubSystem(configArgs);
