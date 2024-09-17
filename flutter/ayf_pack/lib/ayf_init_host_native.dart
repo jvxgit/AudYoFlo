@@ -4,7 +4,10 @@ import 'package:ayf_ffihost/ayf_ffihost.dart' as ffihost;
 // Platform.isWindows
 
 String ayf_init_host_options(Map<String, dynamic> configArgs,
-    {bool forceFfiHost = false, bool forceWebHost = false, dynamic corePack}) {
+    {bool forceFfiHost = false,
+    bool forceWebHost = false,
+    dynamic corePack,
+    dynamic pixBuf}) {
   String initRoute = '/';
   bool ffiHost = Platform.isWindows || Platform.isLinux;
   if (forceWebHost) {
@@ -21,6 +24,9 @@ String ayf_init_host_options(Map<String, dynamic> configArgs,
   }
   if (corePack != null) {
     configArgs['corePack'] = corePack;
+  }
+  if (pixBuf != null) {
+    configArgs['pixBuf'] = pixBuf;
   }
   return initRoute;
 }

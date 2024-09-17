@@ -6,6 +6,8 @@
 
 #include "flutter_native_api.h"
 
+#include "flutter_native_pixbuf.h"
+
 JVX_FLUTTER_LIB_BEGIN
 
 void ffi_get_libhost_pointer(void* opaque_hdl, jvxLibHost*& ll);
@@ -45,6 +47,15 @@ jvxErrorType ffi_properties_descriptor_property_core(
 	IjvxProperties* props, jvxCallManagerProperties& callGate,
 	jvx::propertyAddress::IjvxPropertyAddress& ident,
 	int descr_depth);
+
+void pixbuffer_local_create_cb(
+	int64_t texture_id,
+	uint8_t** buffer, uint32_t width, uint32_t height,
+	const char* id, const char* arg,
+	PixelBufferTexturePluginFrameAvailableCallback frame_available_cb,
+	PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data);
+void pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data);
+
 JVX_FLUTTER_LIB_END
 
 extern jvxErrorType __last_error;

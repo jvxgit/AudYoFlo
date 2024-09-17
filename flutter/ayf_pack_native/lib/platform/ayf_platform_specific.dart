@@ -85,6 +85,7 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
 
 class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
   AyfCorePackIf? theCorePack;
+  AyfCorePackIf? thePixBuf;
   bool nativeHostConnect = false;
 
   @override
@@ -102,6 +103,13 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
       if (elm != null) {
         if (elm.value is AyfCorePackIf) {
           theCorePack = elm.value;
+        }
+      }
+
+      elm = cfg.entries.firstWhereOrNull((element) => element.key == 'pixBuf');
+      if (elm != null) {
+        if (elm.value is AyfCorePackIf) {
+          thePixBuf = elm.value;
         }
       }
 
@@ -128,7 +136,11 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           (notifierDbgModel != null) &&
           (theBeAdapter != null)) {
         // Get the cross link references to the corepack dll
-        final entryPoints = await theCorePack!.getEntryPoints();
+        final entryPointsCorePack = await theCorePack!.getEntryPoints();
+        Map<dynamic, dynamic>? entryPointsPixBuf;
+        if (thePixBuf != null) {
+          entryPointsPixBuf = await thePixBuf!.getEntryPoints();
+        }
 
         // This will delay the initialization to happen AFTER every state has been created
         //Future.delayed(Duration(milliseconds: 1), () {
@@ -140,9 +152,13 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         String appNameToken = tokens[0].toLowerCase();
         String hostConfigPath = '';
         String hostConfigSymbol = '';
-        bool loadEnvSuccess = true;
-
         int hostConfigAddr = 0;
+
+        String pixBufConfigPath = '';
+        String pixBufConfigSymbol = '';
+        int pixBufConfigAddr = 0;
+
+        bool loadEnvSuccess = true;
 
         String envFileName = "." + appNameToken + ".env";
 
@@ -164,8 +180,8 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
               fallback: libraryPath);
         }
 
-        if (entryPoints is Map<dynamic, dynamic>) {
-          Map<dynamic, dynamic> entryPointsMap = entryPoints;
+        if (entryPointsCorePack is Map<dynamic, dynamic>) {
+          Map<dynamic, dynamic> entryPointsMap = entryPointsCorePack;
 
           // Extract hostConfig module path
           hostConfigPath = entryPointsMap.entries.firstWhereOrNull((element) {
@@ -191,39 +207,78 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           })?.value;
         }
 
-        if (cmdArgs != null) {
-          List<String> cmdArgsAdd = List.from(cmdArgs!);
+        // ===============================================================
 
-          // Check for host config dll
-          if (hostConfigPath.isNotEmpty) {
-            cmdArgsAdd.add('--natconfm');
-            cmdArgsAdd.add(hostConfigPath);
-          }
+        if (entryPointsPixBuf != null) {
+          Map<dynamic, dynamic> entryPointsMap = entryPointsPixBuf;
 
-          if (hostConfigSymbol.isNotEmpty) {
-            cmdArgsAdd.add('--natconfs');
-            cmdArgsAdd.add(hostConfigSymbol);
-          }
-
-          if (loadEnvSuccess) {
-            executableInBinFolderStr = dotenv.get(
-                'AYF_BACKEND_EXECUTABLE_IN_BINFOLDER',
-                fallback: executableInBinFolderStr);
-            if (executableInBinFolderStr == "yes") {
-              executableInBinFolder = 1;
+          // Extract hostConfig module path
+          pixBufConfigPath = entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'loadedModule');
             }
-          }
-          if (theBeAdapter != null) {
-            Map<String, dynamic> args = {};
-            args['cmdArgs'] = cmdArgsAdd;
-            args['libPath'] = libraryPath;
-            args['exeInBin'] = executableInBinFolder;
+            return false;
+          })?.value;
 
-            retVal = await theBeAdapter!
-                .initialize(notifierBeCache, notifierDbgModel, args);
+          // Extract hostConfig module path
+          pixBufConfigSymbol =
+              entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'moduleEntrySymbol');
+            }
+            return false;
+          })?.value;
 
-            uiModel!.configureSystemParameters(theBeAdapter!.compFlags);
+          pixBufConfigAddr = entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'moduleEntryAddress');
+            }
+            return false;
+          })?.value;
+        }
+
+        // ===================================================================
+        List<String> cmdArgsAdd = List.from(cmdArgs!);
+
+        // Check for host config dll
+        if (hostConfigPath.isNotEmpty) {
+          cmdArgsAdd.add('--natconfm');
+          cmdArgsAdd.add(hostConfigPath);
+        }
+
+        if (hostConfigSymbol.isNotEmpty) {
+          cmdArgsAdd.add('--natconfs');
+          cmdArgsAdd.add(hostConfigSymbol);
+        }
+
+        if (pixBufConfigPath.isNotEmpty) {
+          cmdArgsAdd.add('--pixbufm');
+          cmdArgsAdd.add(pixBufConfigPath);
+        }
+
+        if (hostConfigSymbol.isNotEmpty) {
+          cmdArgsAdd.add('--pixbufs');
+          cmdArgsAdd.add(pixBufConfigSymbol);
+        }
+
+        if (loadEnvSuccess) {
+          executableInBinFolderStr = dotenv.get(
+              'AYF_BACKEND_EXECUTABLE_IN_BINFOLDER',
+              fallback: executableInBinFolderStr);
+          if (executableInBinFolderStr == "yes") {
+            executableInBinFolder = 1;
           }
+        }
+        if (theBeAdapter != null) {
+          Map<String, dynamic> args = {};
+          args['cmdArgs'] = cmdArgsAdd;
+          args['libPath'] = libraryPath;
+          args['exeInBin'] = executableInBinFolder;
+
+          retVal = await theBeAdapter!
+              .initialize(notifierBeCache, notifierDbgModel, args);
+
+          uiModel!.configureSystemParameters(theBeAdapter!.compFlags);
         }
       }
     } else {

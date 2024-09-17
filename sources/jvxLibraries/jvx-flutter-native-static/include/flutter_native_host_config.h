@@ -16,4 +16,6 @@ typedef jvxErrorType(*flutter_config_open_ptr)(native_host_configure_func_pointe
 
 #define FLUTTER_CONFIG_OPEN_FUNCTION_NAME "flutter_config_open"
 
+#define FLUTTER_PIXBUF_OPEN_FUNCTION_NAME "xyz"
+
 #endif
