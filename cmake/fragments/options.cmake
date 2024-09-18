@@ -69,6 +69,7 @@ option(JVX_ALLOW_FLUTTER_SIMPLE_INSTALLERS "Activate using a dummy version tag f
 option(JVX_USE_GLEW_GLUT "Activate build of glew and freeglut lib." OFF)
 option(JVX_USE_MFVIDEO "Compile with support for Windows MF Video - Windows only)" OFF)
 option(JVX_USE_CBMT "Use c-bitmap library" OFF)
+option(JVX_USE_RUST "Use code in Rust" OFF)
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")
 

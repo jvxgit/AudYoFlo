@@ -28,7 +28,11 @@ set(LOCAL_LIBS_COMMON
 	jvx-component-templates-base_static
 	)
 	
-set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlib_static)
+if(AYFSTARTER_USE_RUST_LIBS)
+	set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibrs_static)
+else()
+	set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlib_static)
+endif()
 
 set(IS_JVX_COMPONENT TRUE)
 
@@ -80,7 +84,7 @@ if(JVX_USE_PART_MATLAB)
 	# Activate the secondary Matlab project
 	JVX_ACTIVATE_VERSION_MATLAB(${PROJECT_NAME} JVX_EXTERNAL_CALL_ENABLED)
 
-	# message(FATAL_ERROR "Hier")
+	
 endif()
-
+# message(FATAL_ERROR "Hier")
 

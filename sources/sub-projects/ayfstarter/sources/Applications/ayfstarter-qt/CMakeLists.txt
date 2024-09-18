@@ -33,16 +33,8 @@ include_directories(
 # Add algorithm specific library
 set(LOCAL_LIBS
   ayfAuNStarter_static
-  jvx-qt-app-templates_static
+  jvx-qt-app-templates_static  
 )
-if(${JVX_OS} MATCHES "windows")
-  set(LOCAL_LIBS
-    ${LOCAL_LIBS}
-    Ws2_32.Lib
-    ntdll.lib
-    Userenv.lib
-  )
-endif()
 
 include(../common/local_config.cmake)
 

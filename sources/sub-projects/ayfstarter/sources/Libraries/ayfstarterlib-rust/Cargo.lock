@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "ayfstarterlib"
+name = "ayfstarterlibrs"
 version = "0.0.0"
 dependencies = [
  "jvx_dsp",

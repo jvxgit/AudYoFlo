@@ -32,6 +32,7 @@ endif()
 
 add_library(${JVX_TARGET_NAME_STATIC} STATIC IMPORTED GLOBAL)
 set_target_properties(${JVX_TARGET_NAME_STATIC} PROPERTIES IMPORTED_LOCATION "${RUST_STATIC_LIB_PATH}")
+target_link_libraries(${JVX_TARGET_NAME_STATIC} INTERFACE ${JVX_RUST_ADDITIONAL_LIBS})
 
 add_custom_target(
   cargo_build

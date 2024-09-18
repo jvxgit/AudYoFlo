@@ -111,6 +111,8 @@ set(JVX_CMAKE_LINKER_FLAGS_EXEC "${JVX_LINKER_DISABLE_WARNING}")
 set(JVX_SYSTEM_LIBRARIES "")
 set(JVX_SOCKET_LIBRARIES "ws2_32;wsock32")
 
+set(JVX_RUST_ADDITIONAL_LIBS "Ws2_32.Lib;ntdll.lib;Userenv.lib")
+
 # Add OS specific category libraries
 set(JVX_SYSTEM_LIBRARIES_WIN_MM "Winmm")
 

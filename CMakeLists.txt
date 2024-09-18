@@ -410,6 +410,11 @@ else(JVX_COMPILE_BUILDTOOLS)
     find_gl() 
   endif()
 
+  if(JVX_USE_RUST)
+	message("Looking for Rust toolset")
+    find_program(JVX_CARGO_EXECUTABLE cargo REQUIRED)
+  endif()
+  
   # BOOST and EIGEN to be handled lateron
 
   # include platform specific stuff

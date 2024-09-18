@@ -20,11 +20,11 @@ if(AYFSTARTER_USE_RUST_LIBS)
   set(AYF_STARTER_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib-rust
     )
-else()
-  set(AYF_STARTER_STATIC_LIBS
+endif()
+  set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS}
     ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib
     )
-endif()
+
 jvx_addSubdirs("Configuring static library for ayfstarter core functionality" "${AYF_STARTER_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Library")
 
 set(AYF_STARTER_AUDIONODE
