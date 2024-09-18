@@ -34,6 +34,9 @@ include_directories(
 set(LOCAL_LIBS
   ayfAuNStarter_static
   jvx-qt-app-templates_static
+  Ws2_32.Lib
+  ntdll.lib
+  Userenv.lib
 )
 
 include(../common/local_config.cmake)

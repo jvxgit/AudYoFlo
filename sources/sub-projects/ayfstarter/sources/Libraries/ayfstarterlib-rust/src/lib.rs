@@ -90,7 +90,7 @@ pub fn ayf_starter_process(hdl: *mut ayf_starter, inputs: *const *const JvxData,
         return JvxDspBaseErrorType::JVX_NO_ERROR;
 
     }
-    JvxDspBaseErrorType::JVX_ERROR_WRONG_STATE
+    JvxDspBaseErrorType::JVX_ERROR_WRONG_STATE 
 }
 
 #[no_mangle]

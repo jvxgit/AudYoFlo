@@ -1,10 +1,18 @@
 set(CARGO_TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(RUST_STATIC_LIB_PATH "${CARGO_TARGET_DIR}/debug/lib${PROJECT_NAME}.${JVX_STATIC_EXTENSION}")
+	if(${JVX_OS} MATCHES "windows")
+		set(RUST_STATIC_LIB_PATH "${CARGO_TARGET_DIR}/debug/${PROJECT_NAME}.${JVX_STATIC_EXTENSION}")
+	else()
+		set(RUST_STATIC_LIB_PATH "${CARGO_TARGET_DIR}/debug/lib${PROJECT_NAME}.${JVX_STATIC_EXTENSION}")
+	endif()
   set(CARGO_BUILD_OPTIONS "")
 else()
-  set(RUST_STATIC_LIB_PATH "${CARGO_TARGET_DIR}/release/lib${PROJECT_NAME}.${JVX_STATIC_EXTENSION}")
+	if(${JVX_OS} MATCHES "windows")
+		set(RUST_STATIC_LIB_PATH "${CARGO_TARGET_DIR}/release/${PROJECT_NAME}.${JVX_STATIC_EXTENSION}")
+	else()
+		set(RUST_STATIC_LIB_PATH "${CARGO_TARGET_DIR}/release/lib${PROJECT_NAME}.${JVX_STATIC_EXTENSION}")
+	endif()
   set(CARGO_BUILD_OPTIONS "-r")
 endif()
 
@@ -33,4 +41,14 @@ add_custom_target(
   COMMENT "Build STATIC Rust Library ${JVX_TARGET_NAME_STATIC} with options: ${CARGO_BUILD_OPTIONS}"
 )
 
+file(GLOB_RECURSE RUST_SOURCES 
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/*.rs"       
+)
+
+source_group("Rust sources" FILES ${RUST_SOURCES})
+
+set_source_files_properties(${RUST_SOURCES} PROPERTIES HEADER_FILE_ONLY ON)
+target_sources(${JVX_TARGET_NAME_STATIC} INTERFACE ${RUST_SOURCES})
+
 add_dependencies(${JVX_TARGET_NAME_STATIC} cargo_build)
+
