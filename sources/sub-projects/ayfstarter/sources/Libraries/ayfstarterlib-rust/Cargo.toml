@@ -1,0 +1,14 @@
+[package]
+name = "ayfstarterlib"
+publish = false
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+
+[features]                                                                                                  
+default = []
+jvx-system-use-data-format-float = ["jvx_dsp/jvx-system-use-data-format-float"]
+
+[dependencies]
+jvx_dsp = { path = "../../../../../jvxLibraries/jvx-dsp-rust" }

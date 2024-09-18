@@ -1,0 +1,10 @@
+[package]
+name = "jvx_dsp"
+publish = false
+edition = "2021"
+
+[features]
+default = []
+jvx-system-use-data-format-float = []
+
+[dependencies]
