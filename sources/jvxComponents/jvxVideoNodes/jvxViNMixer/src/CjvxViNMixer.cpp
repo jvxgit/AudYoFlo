@@ -171,15 +171,77 @@ CjvxViNMixer::activate_connectors()
 	//  ===================================================================================================
 	//  ===================================================================================================
 
+	jvxErrorType 
+		CjvxViNMixer::select(IjvxObject* owner)
+	{
+
+		jvxErrorType res = CjvxVideoNode::select(owner);
+		if (res == JVX_NO_ERROR)
+		{
+			CjvxViNMixer_selected::init_all();
+			CjvxViNMixer_selected::allocate_all();
+			CjvxViNMixer_selected::register_all(this);
+
+			// Set the default arguments
+			CjvxViNMixer_selected::video_parameter.visual_data_video.format.value = (jvxInt16)JVX_DATAFORMAT_BYTE;
+			CjvxViNMixer_selected::video_parameter.visual_data_video.subformat.value = (jvxInt16)JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
+			CjvxViNMixer_selected::video_parameter.visual_data_video.number_buffers.value = 2;
+			CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_x.value = 640;
+			CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_y.value = 480;
+			jvx_bitZSet(CjvxViNMixer_selected::video_parameter.visual_data_video.operation_mode.value.selection(), 0);
+
+		}
+		return res;
+	}
+	
+	jvxErrorType 
+		CjvxViNMixer::unselect()
+	{
+		jvxErrorType res = CjvxVideoNode::unselect();
+		if (res == JVX_NO_ERROR)
+		{
+			CjvxViNMixer_selected::unregister_all(this);
+			CjvxViNMixer_selected::deallocate_all();
+		}
+		return res;
+	}
+
+	//  ===================================================================================================
+	//  ===================================================================================================
+	//  ===================================================================================================
+
 	jvxErrorType
 		CjvxViNMixer::activate()
 	{
 		jvxErrorType res = CjvxVideoNode::activate();
 		if (res == JVX_NO_ERROR)
 		{
+			
+			// Currently, this is all fixed. We may allow different settngs lateron
+			video_input.node._common_set_node_params_a_1io.number_channels = 1;
+			video_input.node._common_set_node_params_a_1io.segmentation.x = CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_x.value; //  640;
+			video_input.node._common_set_node_params_a_1io.segmentation.y = CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_y.value; // 480;
+			video_input.node._common_set_node_params_a_1io.format = CjvxViNMixer_selected::video_parameter.visual_data_video.format.value; // JVX_DATAFORMAT_BYTE;
+			video_input.node._common_set_node_params_a_1io.subformat = CjvxViNMixer_selected::video_parameter.visual_data_video.subformat.value; // JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
+			video_input.node._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
+			video_input.node._common_set_node_params_a_1io.samplerate = 30;
+			video_input.node.derive_buffersize();
+
+			video_output.node._common_set_node_params_a_1io.number_channels = 1;
+			video_output.node._common_set_node_params_a_1io.segmentation.x = CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_x.value; //  640;
+			video_output.node._common_set_node_params_a_1io.segmentation.y = CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_y.value; // 480;
+			video_output.node._common_set_node_params_a_1io.format = CjvxViNMixer_selected::video_parameter.visual_data_video.format.value; // JVX_DATAFORMAT_BYTE;
+			video_output.node._common_set_node_params_a_1io.subformat = CjvxViNMixer_selected::video_parameter.visual_data_video.subformat.value; // JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
+			video_output.node._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
+			video_output.node._common_set_node_params_a_1io.samplerate = 30;
+			video_output.node.derive_buffersize();
+
+			CjvxProperties::_update_property_access_type_all(JVX_PROPERTY_ACCESS_READ_ONLY);
+
 			CjvxViNMixer_genpcg::init_all();
 			CjvxViNMixer_genpcg::allocate_all();
 			CjvxViNMixer_genpcg::register_all(this);
+
 
 			video_output.node.initialize(this, "video_out", false);
 			video_input.node.initialize(this, "video_in", true);
@@ -197,6 +259,8 @@ CjvxViNMixer::activate_connectors()
 			video_input.node.terminate();
 			CjvxViNMixer_genpcg::unregister_all(this);
 			CjvxViNMixer_genpcg::deallocate_all();
+
+			CjvxProperties::_undo_update_property_access_type_all();
 		}
 		return res;
 	}

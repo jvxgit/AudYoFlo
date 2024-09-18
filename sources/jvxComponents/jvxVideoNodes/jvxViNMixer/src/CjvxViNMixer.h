@@ -7,6 +7,7 @@
 #include "common/CjvxConnectorCollection.h"
 
 #include "pcg_exports_node.h"
+#include "pcg_exports_node_selected.h"
 
 // There was a problem with the RW locks at the beginning. However, this was fixed and there should no longer be a problem
 #define RW_MUTEX
@@ -21,7 +22,7 @@ class CjvxViNMixer: public CjvxVideoNode,
 	public CjvxConnectorCollection_fwd_in_lock<CjvxSingleInputConnector>,
 	public CjvxConnectorCollection_fwd_in_lock<CjvxSingleOutputConnector>,
 	public CjvxConnectorCollection_lock,
-	public CjvxViNMixer_genpcg
+	public CjvxViNMixer_genpcg, CjvxViNMixer_selected
 {
 private:
 protected:
@@ -71,6 +72,11 @@ public:
 	// ===================================================================================================
 	JVX_CALLINGCONVENTION CjvxViNMixer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxViNMixer();
+
+	jvxErrorType select(IjvxObject* owner) override;
+	jvxErrorType unselect() override;
+
+	// ===========================================================================================
 
 	jvxErrorType activate() override;
 	jvxErrorType deactivate() override;

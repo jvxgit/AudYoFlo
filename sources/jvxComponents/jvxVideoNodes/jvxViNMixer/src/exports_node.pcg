@@ -1,7 +1,7 @@
 SECTION PROPERTIES
 {	
 	OUTPUTFILE_NAME = "CjvxViNMixer_genpcg";
-
+	 
 	SECTION config
 	{
 		// Properties to address a video camera		

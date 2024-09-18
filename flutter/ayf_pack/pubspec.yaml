@@ -67,6 +67,7 @@ flutter:
     - images/ayf_icons/ayf-stream.png
     - images/ayf_icons/ayf-audio-settings.png
     - images/ayf_icons/ayf-video-settings.png
+    - images/ayf_icons/ayf-video-render.png
     - images/ayf_icons/ayf-headtracker-settings.png
     - images/ayf_icons/ayf-sip.png
     - images/ayf_icons/ayf-webrtc.png

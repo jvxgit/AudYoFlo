@@ -14,10 +14,12 @@ set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
 
 set(LOCAL_PCG_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/exports_node.pcg
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/exports_node_selected.pcg
   )
   
 set(LOCAL_PCG_FILE_OPTIONS 
 	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg
+	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg/jvxVisualDisplay
 	)
 
 set(LOCAL_LIBS 
