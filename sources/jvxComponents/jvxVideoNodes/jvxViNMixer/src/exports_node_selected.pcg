@@ -1,7 +1,7 @@
 SECTION PROPERTIES
 {
-	OUTPUTFILE_NAME = "CjvxViNMixer_selected"; 
-		
+	OUTPUTFILE_NAME = "CjvxViNMixer_selected";
+
 	GROUP video_parameter
 	{
 		include "visual-data-video.pcgf";

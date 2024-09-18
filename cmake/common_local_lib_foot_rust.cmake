@@ -41,8 +41,8 @@ add_custom_target(
   COMMENT "Build STATIC Rust Library ${JVX_TARGET_NAME_STATIC} with options: ${CARGO_BUILD_OPTIONS}"
 )
 
-file(GLOB_RECURSE RUST_SOURCES 
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/*.rs"       
+file(GLOB_RECURSE RUST_SOURCES
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/*.rs"
 )
 
 source_group("Rust sources" FILES ${RUST_SOURCES})
