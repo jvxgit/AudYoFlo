@@ -289,6 +289,8 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_configure(jvxApiString* errorMessage, IjvxC
 			commLine->register_option("--textlogexpr", "", "Specify log level expression to limit log file output to specific modules", "", true, JVX_DATAFORMAT_STRING, JVX_SIZE_UNSELECTED);
 			commLine->register_option("--textlogcout", "", "Redirect log output to cout");
 			
+			command_line_specify_specific(commLine);
+
 			jvx_command_line_specify(commLine);
 
 			res = commLine->parse_command_line(&errId, &errTxt, true);
@@ -396,6 +398,8 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_configure(jvxApiString* errorMessage, IjvxC
 					_command_line_parameters.userPath = opt_text.std_str();
 				}
 				
+				command_line_read_specific(commLine);
+
 				read_command_line_parameters(commLine);
 
 				numEntries = 0;
@@ -1373,3 +1377,14 @@ JVX_APP_FACTORY_HOST_CLASSNAME::static_unload_loop()
 	}
 	involvedComponents.addedStaticObjects.clear();
 }
+
+void 
+JVX_APP_FACTORY_HOST_CLASSNAME::command_line_specify_specific(IjvxCommandLine* cmdLine)
+{
+}
+
+void 
+JVX_APP_FACTORY_HOST_CLASSNAME::command_line_read_specific(IjvxCommandLine* cmdLine)
+{
+}
+

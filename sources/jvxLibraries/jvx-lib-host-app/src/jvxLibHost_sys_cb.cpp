@@ -170,6 +170,41 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	// Only host to blacklist
 	involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_HOST);
 
+	if (!extPixBuffer.dllPixBufSystem.empty())
+	{
+		std::cout << "Opening runtime library <" << extPixBuffer.dllPixBufSystem << "> for pixbuf cross referencing." << std::endl;
+		extPixBuffer.dllHandlePixBuf = JVX_LOADLIBRARY(extPixBuffer.dllPixBufSystem.c_str());
+		if (extPixBuffer.dllHandlePixBuf != JVX_HMODULE_INVALID)
+		{
+			std::vector<std::string> out;
+			jvx_parseCommandLineOneToken(extPixBuffer.symbPixBufSystemName, out, ';');
+
+			assert(out.size() == 2);
+
+			std::string setCbName = out[0];
+			std::string resetCbName = out[1];
+
+			extPixBuffer.fptrPixBufSet = (pixbuffer_render_set_callback)JVX_GETPROCADDRESS(extPixBuffer.dllHandlePixBuf, setCbName.c_str());
+			extPixBuffer.fptrPixBufReset = (pixbuffer_render_reset_callback)JVX_GETPROCADDRESS(extPixBuffer.dllHandlePixBuf, resetCbName.c_str());
+			
+			if (extPixBuffer.fptrPixBufSet && extPixBuffer.fptrPixBufReset)
+			{
+				extPixBuffer.fptrPixBufSet(pixbuffer_local_create_cb, pixbuffer_local_destroy_cb, reinterpret_cast<jvxHandle*>(this));
+			}
+			else
+			{
+				extPixBuffer.fptrPixBufSet = nullptr;
+				extPixBuffer.fptrPixBufReset = nullptr;
+				JVX_UNLOADLIBRARY(extPixBuffer.dllHandlePixBuf);
+				extPixBuffer.dllHandlePixBuf = JVX_HMODULE_INVALID;
+			}
+		}
+		else
+		{
+			std::cout << "Error during access to runtime library <" << extPixBuffer.dllPixBufSystem
+				<< ">: Could not open module." << std::endl;
+		}
+	}
 	/*
 	 *============================================================================================================== =
 	 *STEP VI : Request the application specific component library in this callback
@@ -347,6 +382,18 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 	involvedComponents.theHost.hFHost->remove_component_load_blacklist(JVX_COMPONENT_HOST);
 
 	static_unload_loop();
+
+	if (extPixBuffer.dllHandlePixBuf != JVX_HMODULE_INVALID)
+	{
+		// This will run the destroy callbacks!!
+		extPixBuffer.fptrPixBufReset();
+
+		extPixBuffer.fptrPixBufReset = nullptr;
+		extPixBuffer.fptrPixBufSet = nullptr;
+		JVX_UNLOADLIBRARY(extPixBuffer.dllHandlePixBuf);
+		extPixBuffer.dllHandlePixBuf = JVX_HMODULE_INVALID;
+		extPixBuffer.dllPixBufSystem.clear();
+	}
 
 	shutdown_terminate_base();
 	

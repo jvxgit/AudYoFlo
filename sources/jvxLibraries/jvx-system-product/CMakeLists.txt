@@ -46,7 +46,9 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxTypes_errorcodes.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxTypes_interfaces.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxTypes_linkdata.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxTypes_linkdata.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxTypes_tools.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxPixBuffer.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/property-extender/TpjvxPropertyExtender.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/jvxTools/TjvxAudioFileIo.h

@@ -3,8 +3,11 @@
 #include "CjvxAppHostProduct.h"
 #include "common/CjvxProperties.h"
 #include "pcg_exports_lib.h"
+#include "typedefs/TpjvxPixBuffer.h"
 
 #define JVX_NEW_COMMAND_HANDLING
+
+#define FLUTTER_PIXBUF_OPEN_FUNCTION_NAME "openPixBuffer"
 
 class CjvxHostJsonCommandsActShow;
 class jvxLibHost;
@@ -73,6 +76,15 @@ private:
 	std::list< IjvxReportSystem*> subReports;
 
 	// =====================================================================
+
+	struct
+	{
+		std::string dllPixBufSystem = "";
+		JVX_HMODULE dllHandlePixBuf = JVX_HMODULE_INVALID;
+		pixbuffer_render_set_callback fptrPixBufSet = nullptr;
+		pixbuffer_render_reset_callback fptrPixBufReset = nullptr;
+		std::string symbPixBufSystemName = FLUTTER_PIXBUF_OPEN_FUNCTION_NAME;
+	} extPixBuffer;
 
 	/*
 	class systemParamsType
@@ -317,6 +329,21 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_properties_modified(const char* props_set) override;
 
+	// ================================================================================================
+
+	virtual void command_line_specify_specific(IjvxCommandLine* cmdLine) override;
+	virtual void command_line_read_specific(IjvxCommandLine* cmdLine) override;	
+
+	// ================================================================================================
+	static void pixbuffer_local_create_cb(
+		int64_t texture_id,
+		uint8_t** buffer, uint32_t width, uint32_t height,
+		const char* id, const char* arg,
+		PixelBufferTexturePluginFrameAvailableCallback frame_available_cb,
+		PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data);
+	static void pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data);
+
+	// ================================================================================================
 #define JVX_OBJECT_ZERO_REFERENCE
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 #undef JVX_OBJECT_ZERO_REFERENCE

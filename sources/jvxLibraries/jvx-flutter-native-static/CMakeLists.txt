@@ -48,7 +48,6 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_api_config.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_types.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_type_translator.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/flutter_native_pixbuf.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_boot_shutdown.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_decode_requests.cpp
@@ -62,7 +61,6 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_sequencer.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_report_callbacks.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_async_report.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_pixbuf.cpp
 
 	# ${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports-flutter-native.def
   )

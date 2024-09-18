@@ -290,6 +290,28 @@ jvxLibHost::get_configuration_specific_ext(
 }
 
 void 
+jvxLibHost::command_line_specify_specific(IjvxCommandLine* cmdLine)
+{
+	cmdLine->register_option("--pixbufm", "", "Specifc the pixbuffer lib to register rendering callbacks.", "", true, JVX_DATAFORMAT_STRING);
+	cmdLine->register_option("--pixbufs", "", "Specifc the pixbuffer entry symbol to register rendering callbacks.", "", true, JVX_DATAFORMAT_STRING);
+}
+
+void 
+jvxLibHost::command_line_read_specific(IjvxCommandLine* cmdLine)
+{
+	jvxApiString entry;
+	if (cmdLine->content_entry_option("--pixbufm", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+	{
+		extPixBuffer.dllPixBufSystem = entry.std_str();
+		extPixBuffer.symbPixBufSystemName = FLUTTER_PIXBUF_OPEN_FUNCTION_NAME;
+		if (cmdLine->content_entry_option("--pixbufs", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+		{
+			extPixBuffer.symbPixBufSystemName = entry.std_str();
+		}
+	}
+}
+
+void 
 jvxLibHost::get_configuration_specific(jvxCallManagerConfiguration* callConf,
 	IjvxConfigProcessor* cfg, jvxConfigData* data)
 {

@@ -1,5 +1,5 @@
-#ifndef _JVX_FLUTTER_NATIVE_PIXBUF___
-#define _JVX_FLUTTER_NATIVE_PIXBUF___
+#ifndef __TPJVX_PIXBUFFER_H__
+#define __TPJVX_PIXBUFFER_H__
 
 typedef bool (*PixelBufferTexturePluginFrameAvailableCallback)(int64_t texture_id, void* priv_data);
 typedef bool (*PixelBufferTexturePluginNotifyCallback)(int64_t texture_id, void* priv_data);
@@ -12,8 +12,10 @@ typedef void (*PixelBufferTexturePluginCreateRendererCallback)(
 typedef void (*PixelBufferTexturePluginDestroyRendererCallback)(int64_t texture_id, void* priv_data);
 
 // Entry function as provided by the system
-typedef void (*pixbuffer_render_callback)(
+typedef void (*pixbuffer_render_set_callback)(
     PixelBufferTexturePluginCreateRendererCallback create_cb,
     PixelBufferTexturePluginDestroyRendererCallback destroy_cb, void* privdata);
+
+typedef void (*pixbuffer_render_reset_callback)();
 
 #endif

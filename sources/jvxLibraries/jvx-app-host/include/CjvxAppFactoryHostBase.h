@@ -96,6 +96,10 @@ public:
 	virtual jvxErrorType shutdownHostFactory(jvxApiString* errorMessage, jvxHandle* context);
 
 	// Entries for higher level functions
+
+	virtual void command_line_specify_specific(IjvxCommandLine* cmdLine);	
+	virtual void command_line_read_specific(IjvxCommandLine* cmdLine);
+
 	virtual jvxErrorType boot_initialize_specific(jvxApiString* errloc) = 0;
 	virtual jvxErrorType boot_specify_slots_specific() = 0;
 	virtual jvxErrorType boot_prepare_specific(jvxApiString* errloc) = 0;

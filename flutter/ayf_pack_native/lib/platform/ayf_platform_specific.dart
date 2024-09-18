@@ -155,8 +155,9 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         int hostConfigAddr = 0;
 
         String pixBufConfigPath = '';
-        String pixBufConfigSymbol = '';
-        int pixBufConfigAddr = 0;
+        String pixBufConfigSymbolList = '';
+        int pixBufConfigAddrSet = 0;
+        int pixBufConfigAddrReset = 0;
 
         bool loadEnvSuccess = true;
 
@@ -221,7 +222,7 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           })?.value;
 
           // Extract hostConfig module path
-          pixBufConfigSymbol =
+          pixBufConfigSymbolList =
               entryPointsMap.entries.firstWhereOrNull((element) {
             if (element.key is String) {
               return (element.key == 'moduleEntrySymbol');
@@ -229,9 +230,18 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
             return false;
           })?.value;
 
-          pixBufConfigAddr = entryPointsMap.entries.firstWhereOrNull((element) {
+          pixBufConfigAddrSet =
+              entryPointsMap.entries.firstWhereOrNull((element) {
             if (element.key is String) {
-              return (element.key == 'moduleEntryAddress');
+              return (element.key == 'moduleEntryAddressSet');
+            }
+            return false;
+          })?.value;
+
+          pixBufConfigAddrReset =
+              entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'moduleEntryAddressReset');
             }
             return false;
           })?.value;
@@ -258,7 +268,7 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
 
         if (hostConfigSymbol.isNotEmpty) {
           cmdArgsAdd.add('--pixbufs');
-          cmdArgsAdd.add(pixBufConfigSymbol);
+          cmdArgsAdd.add(pixBufConfigSymbolList);
         }
 
         if (loadEnvSuccess) {
