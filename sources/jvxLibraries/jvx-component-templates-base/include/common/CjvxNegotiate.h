@@ -130,6 +130,8 @@ public:
 		jvxSize segment_x = JVX_SIZE_UNSELECTED,
 		jvxSize segment_y = JVX_SIZE_UNSELECTED);
 
+	void _set_parameters_fixed(const jvxLinkDataDescriptor_con_params& params);
+
 	/** This function updates the preferred settings. When invoking with no argument or with the default arg,
 	 * no constraint will be set.
 	 *///======================================================================================================

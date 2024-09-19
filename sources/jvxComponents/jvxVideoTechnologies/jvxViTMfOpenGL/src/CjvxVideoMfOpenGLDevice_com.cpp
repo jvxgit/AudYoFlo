@@ -154,8 +154,12 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 					jvxSize incrementFwd = 1;
 
 					//std::cout << "Start capture buffer " << theData.pipeline.idx_stage << std::endl;
+					jvxByte** ptrBytes = jvx_process_icon_extract_output_buffers<jvxByte>(_common_set_ocon.theData_out);
+					jvxUInt8* dest = (jvxUInt8*)ptrBytes[0]; // <- channel #0
+					/*
 					jvxUInt8* dest = (jvxUInt8*)_common_set_ocon.theData_out.con_data.buffers[
 						*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][0];
+					*/
 
 						m2DBuffer->Lock2D(&src, &stride);
 

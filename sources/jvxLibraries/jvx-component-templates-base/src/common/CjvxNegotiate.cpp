@@ -103,6 +103,20 @@ CjvxNegotiate_common::CjvxNegotiate_common()
 }
 
 void
+CjvxNegotiate_common::_set_parameters_fixed(const jvxLinkDataDescriptor_con_params& params)
+{
+	_set_parameters_fixed(
+		params.number_channels,
+		params.buffersize,
+		params.rate,
+		params.format,
+		params.format_group,
+		params.data_flow,
+		params.segmentation.x,
+		params.segmentation.y);
+}
+
+void
 CjvxNegotiate_common::_set_parameters_fixed(
 	jvxSize num_channels,
 	jvxSize bsize,

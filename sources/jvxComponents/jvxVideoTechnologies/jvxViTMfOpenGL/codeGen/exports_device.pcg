@@ -1,7 +1,7 @@
 SECTION PROPERTIES
 {
 	OUTPUTFILE_NAME = "genMf_device";
-
+	CALLBACKS = {"on_mode_select"};
 	SECTION systemex 
 	{
 		PREFIX = "systemex";
@@ -49,6 +49,7 @@ SECTION PROPERTIES
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
 			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
 			UPDATE_CONTEXT_TOKEN = "mf_device:mode_selection";
+			CALLBACK_SET_POSTHOOK = "on_mode_select";
 		};
 			
 		ifdef JVX_USE_GLEW_GLUT

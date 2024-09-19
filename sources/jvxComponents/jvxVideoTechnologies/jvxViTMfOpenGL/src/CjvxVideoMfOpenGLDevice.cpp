@@ -90,7 +90,8 @@ CjvxVideoMfOpenGLDevice::activate()
 		}
 
 		genMf_device::register_all(static_cast<CjvxProperties*>(this));
-
+		genMf_device::register_callbacks(static_cast<CjvxProperties*>(this), on_mode_selected, this);
+		
 		this->_lock_properties_local();
 
 		// The properties in the base class from here on are only for reading, not for editiing
@@ -144,6 +145,8 @@ CjvxVideoMfOpenGLDevice::deactivate()
 	jvxErrorType res = CjvxVideoDevice::deactivate();
 	if (res == JVX_NO_ERROR)
 	{
+		genMf_device::unregister_callbacks(static_cast<CjvxProperties*>(this));
+
 		genMf_device::unregister_all(static_cast<CjvxProperties*>(this));
 		genMf_device::deallocate_all();
 
@@ -259,6 +262,7 @@ CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK
 	jvxSize szLine = _common_set_ocon.theData_out.con_params.segmentation.x * szElement;
 	jvxSize szRaw = _common_set_ocon.theData_out.con_params.segmentation.y * szLine;
 	_common_set_ocon.theData_out.con_params.buffersize = szRaw;
+	_common_set_ocon.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ACTIVE;
 
 	if (runPrepare)
 	{
@@ -617,6 +621,21 @@ CjvxVideoMfOpenGLDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		res = CjvxVideoDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	}
+
+	if (res == JVX_NO_ERROR)
+	{
+		CjvxVideoDevice_genpcg::video.framerate.value = _common_set_ocon.theData_out.con_params.rate;
+		CjvxVideoDevice_genpcg::video.segmentsize_x.value = _common_set_ocon.theData_out.con_params.segmentation.x;
+		CjvxVideoDevice_genpcg::video.segmentsize_y.value = _common_set_ocon.theData_out.con_params.segmentation.y;
+		CjvxVideoDevice_genpcg::video.framesize.value = _common_set_ocon.theData_out.con_params.buffersize;
+		CjvxVideoDevice_genpcg::video.format.value = _common_set_ocon.theData_out.con_params.format;
+		CjvxVideoDevice_genpcg::video.subformat.value = _common_set_ocon.theData_out.con_params.format_group;
+
+		genMf_device::expose_visual_if.visual_data_video.format.value = (jvxInt16)CjvxVideoDevice_genpcg::video.format.value;
+		genMf_device::expose_visual_if.visual_data_video.segmentsize_x.value = CjvxVideoDevice_genpcg::video.segmentsize_x.value;
+		genMf_device::expose_visual_if.visual_data_video.segmentsize_y.value = CjvxVideoDevice_genpcg::video.segmentsize_y.value;
+		genMf_device::expose_visual_if.visual_data_video.subformat.value = CjvxVideoDevice_genpcg::video.subformat.value;
+	}
 	return res;
 }
 
@@ -672,9 +691,13 @@ CjvxVideoMfOpenGLDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 				return JVX_ERROR_INVALID_SETTING;
 			}
 
-			_common_set_ocon.theData_out.con_params.segmentation.x = lstModes[idxmin].width;
-			_common_set_ocon.theData_out.con_params.segmentation.y = lstModes[idxmin].height;
 			jvx_bitZSet(genMf_device::configuration_mf.mode_selection.value.selection(), idxmin);
+			prepare_data(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));			
+			if (weightmin == 0)
+			{
+				return JVX_NO_ERROR;
+			}
+
 			return JVX_ERROR_COMPROMISE;
 		}
 	}

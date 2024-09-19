@@ -577,3 +577,16 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 		count++;
 	}
 }
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxVideoMfOpenGLDevice, on_mode_selected)
+{
+	// If we changed the mode, we need to run the test again
+	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genMf_device::configuration_mf.mode_selection))
+	{
+		if (JVX_CHECK_SIZE_SELECTED(_common_set_ocon.theData_out.con_link.uIdConn))
+		{
+			_request_test_chain_master(_common_set_ocon.theData_out.con_link.uIdConn);
+		}
+	}
+	return JVX_NO_ERROR;
+}

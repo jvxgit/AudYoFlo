@@ -223,7 +223,7 @@ CjvxViNMixer::activate_connectors()
 			video_input.node._common_set_node_params_a_1io.segmentation.y = CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_y.value; // 480;
 			video_input.node._common_set_node_params_a_1io.format = CjvxViNMixer_selected::video_parameter.visual_data_video.format.value; // JVX_DATAFORMAT_BYTE;
 			video_input.node._common_set_node_params_a_1io.subformat = CjvxViNMixer_selected::video_parameter.visual_data_video.subformat.value; // JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
-			video_input.node._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ON_PULL;
+			video_input.node._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 			video_input.node._common_set_node_params_a_1io.samplerate = 30;
 			video_input.node.derive_buffersize();
 
@@ -235,6 +235,17 @@ CjvxViNMixer::activate_connectors()
 			video_output.node._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
 			video_output.node._common_set_node_params_a_1io.samplerate = 30;
 			video_output.node.derive_buffersize();
+
+			// Here we setup the input and the output format
+			neg_input._set_parameters_fixed(
+				video_input.node._common_set_node_params_a_1io.number_channels,
+				video_input.node._common_set_node_params_a_1io.buffersize,
+				video_input.node._common_set_node_params_a_1io.samplerate,
+				(jvxDataFormat)video_input.node._common_set_node_params_a_1io.format,
+				(jvxDataFormatGroup)video_input.node._common_set_node_params_a_1io.subformat,
+				(jvxDataflow)video_input.node._common_set_node_params_a_1io.data_flow,
+				video_input.node._common_set_node_params_a_1io.segmentation.x,
+				video_input.node._common_set_node_params_a_1io.segmentation.y);
 
 			CjvxProperties::_update_property_access_type_all(JVX_PROPERTY_ACCESS_READ_ONLY);
 
@@ -315,8 +326,13 @@ CjvxViNMixer::activate_connectors()
 	jvxErrorType
 	CjvxViNMixer::report_test_connector(CjvxSingleInputConnector* iconn JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 	{
-		// Directly run the connector test function here!!
+		// We derive the settings from the main line settings. However, not all parameters match, therefore ...
 		video_input.node.prepare_negotiate(iconn->neg_input);
+
+		// .. compared to the main input parameters, on the side channel input, we need a PUSH_ON_PULL to specify the dataflow
+		iconn->neg_input._update_parameters_fixed(JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED,
+			JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_NONE,
+			JVX_DATAFLOW_PUSH_ON_PULL);
 		return JVX_NO_ERROR;
 	}
 

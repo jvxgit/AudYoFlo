@@ -192,6 +192,8 @@ public:
 		const jvx::propertyRawPointerType::IjvxRawPointerType& ptrRaw,
 		const jvx::propertyAddress::IjvxPropertyAddress& ident)override;
 
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(on_mode_selected);
+
 #ifdef JVX_USE_GLEW_GLUT
 	void run_native_gl();
 	void do_rendering_gl();
