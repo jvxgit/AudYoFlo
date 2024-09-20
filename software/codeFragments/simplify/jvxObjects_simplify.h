@@ -38,9 +38,9 @@ virtual jvxErrorType JVX_CALLINGCONVENTION unlock_state()override
 	return(CjvxObject::_unlock_state());
 };
 
-virtual jvxErrorType JVX_CALLINGCONVENTION name(jvxApiString* str)override
+virtual jvxErrorType JVX_CALLINGCONVENTION name(jvxApiString* name, jvxApiString* fName)override
 {
-	return(CjvxObject::_name(str));
+	return(CjvxObject::_name(name, fName));
 };
 
 virtual jvxErrorType JVX_CALLINGCONVENTION description(jvxApiString* str)override

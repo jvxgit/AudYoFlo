@@ -17,6 +17,7 @@ public:
 		jvxUInt32 vUI32;
 		jvxInt64 vI64;
 		jvxUInt64 vUI64;
+		jvxSize vSize;
 	} v;
 
 	CjvxPropertiesTypeConvert();

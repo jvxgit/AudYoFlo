@@ -162,10 +162,10 @@ CjvxMyGlWidget::getWidgetReferences(QWidget** myWidgetRef)
 }
 
 void 
-CjvxMyGlWidget::setConnectLinks(IjvxAccessProperties* propRefIn, std::string prefix, jvx::externalBufferSubType myOperationMode)
+CjvxMyGlWidget::setConnectLinks(IjvxAccessProperties* propRefIn, CjvxMyGlWidget_config* cfgArg, jvx::externalBufferSubType myOperationMode)
 {
 	propRef = propRefIn;
-	myPrefix = prefix;
+	cfg = cfgArg;
 	operation_mode = myOperationMode;
 }
 
@@ -173,7 +173,7 @@ void
 CjvxMyGlWidget::clearConnectLinks()
 {
 	propRef = NULL;
-	myPrefix = "";
+	cfg = nullptr;
 }
 
 
@@ -193,41 +193,65 @@ CjvxMyGlWidget::inform_about_to_start()
 	jvxSelectionList selLst;
 	jvxCallManagerProperties callGate;	
 
-	propStr = "/segmentsize_x";
-	propStr = jvx_makePathExpr(myPrefix, propStr);
+	assert(cfg);
+	assert(cfg->prop_frmt);
+	assert(cfg->prop_nbufs);
+	assert(cfg->prop_omode);
+	assert(cfg->prop_rtrgt);
+	assert(cfg->prop_segx);
+	assert(cfg->prop_segy);
+	assert(cfg->prop_sfrmt);
+
+	propStr = cfg->prop_segx;
+	if (cfg->prop_cp_prefix)
+	{
+		propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+	}
 	ident.reset(propStr.c_str());
 	trans.reset(true, 0);
-	res = propRef->get_property(callGate, jPRG( &seg_x, 1, JVX_DATAFORMAT_SIZE), ident, trans);
+	res = propRef->get_property(callGate, jPRIO<jvxSize>(seg_x), ident, trans);
 	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, propStr);
 
-	propStr = "/segmentsize_y";
-	propStr = jvx_makePathExpr(myPrefix, propStr);
+	propStr = cfg->prop_segy;
+	if (cfg->prop_cp_prefix)
+	{
+		propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+	}
 	ident.reset(propStr.c_str());
 	trans.reset(true, 0);
-	res = propRef->get_property(callGate, jPRG( &seg_y, 1, JVX_DATAFORMAT_SIZE), ident, trans);
+	res = propRef->get_property(callGate, jPRIO<jvxSize>(seg_y), ident, trans);
 	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, propStr);
 
 	fsize = seg_x * seg_y;
 
-	propStr = "/format";
-	propStr = jvx_makePathExpr(myPrefix, propStr);
+	propStr = cfg->prop_frmt;
+	if (cfg->prop_cp_prefix)
+	{
+		propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+	}
 	ident.reset(propStr.c_str());
 	trans.reset(true, 0);
-	res = propRef->get_property(callGate, jPRG( &form, 1, JVX_DATAFORMAT_16BIT_LE), ident, trans);
+	res = propRef->get_property(callGate, jPRG(&form, 1, JVX_DATAFORMAT_16BIT_LE), ident, trans);
 	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, propStr);
 
-	propStr = "/subformat";
-	propStr = jvx_makePathExpr(myPrefix, propStr);
+	propStr = cfg->prop_sfrmt;
+	if (cfg->prop_cp_prefix)
+	{
+		propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+	}
 	ident.reset(propStr.c_str());
 	trans.reset(true, 0);
-	res = propRef->get_property(callGate, jPRG( &subform, 1, JVX_DATAFORMAT_16BIT_LE), ident, trans);
+	res = propRef->get_property(callGate, jPRG(&subform, 1, JVX_DATAFORMAT_16BIT_LE), ident, trans);
 	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, propStr);
 
-	propStr = "/operation_mode";
-	propStr = jvx_makePathExpr(myPrefix, propStr);
+	propStr = cfg->prop_omode;
+	if (cfg->prop_cp_prefix)
+	{
+		propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+	}
 	ident.reset(propStr.c_str());
 	trans.reset(true, 0);
-	res = propRef->get_property(callGate, jPRG( &selLst, 1, JVX_DATAFORMAT_SELECTION_LIST), ident, trans);
+	res = propRef->get_property(callGate, jPRG(&selLst, 1, JVX_DATAFORMAT_SELECTION_LIST), ident, trans);
 	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, propStr);
 
 	numBuffers = 1;
@@ -238,18 +262,21 @@ CjvxMyGlWidget::inform_about_to_start()
 		if (jvx_bitTest(selLst.bitFieldSelected(), 0))
 		{
 			// Triggered Multibuffer Mode
-			propStr = "/number_buffers";
-			propStr = jvx_makePathExpr(myPrefix, propStr);
+			propStr = cfg->prop_nbufs;
+			if (cfg->prop_cp_prefix)
+			{
+				propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+			}
 			ident.reset(propStr.c_str());
 			trans.reset(true, 0);
-			res = propRef->get_property(callGate, jPRG( &numBuffers, 1, JVX_DATAFORMAT_SIZE), ident, trans);
+			res = propRef->get_property(callGate, jPRG(&numBuffers, 1, JVX_DATAFORMAT_SIZE), ident, trans);
 			JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, propStr);
 
 			// Check settings!
-			external_link.mySwitchBuffer = jvx_allocate2DFieldExternalBuffer_full(fsize, 1, (jvxDataFormat)form, (jvxDataFormatGroup)subform, 
+			external_link.mySwitchBuffer = jvx_allocate2DFieldExternalBuffer_full(fsize, 1, (jvxDataFormat)form, (jvxDataFormatGroup)subform,
 				jvx_static_lock, jvx_static_try_lock, jvx_static_unlock,
 				&szBuf, numBuffers, seg_x, seg_y);
-			reinitGL(seg_x, seg_y, numBuffers, 1, (jvxDataFormat)form, (jvxDataFormatGroup)subform, 
+			reinitGL(seg_x, seg_y, numBuffers, 1, (jvxDataFormat)form, (jvxDataFormatGroup)subform,
 				external_link.mySwitchBuffer->ptrFld, szBuf);
 
 			external_link.mySwitchBuffer->specific.the2DFieldBuffer_full.report_triggerf = static_report_bufferswitch_trigger;
@@ -277,14 +304,16 @@ CjvxMyGlWidget::inform_about_to_start()
 			res = JVX_ERROR_INVALID_SETTING;
 		}
 		break;
-	default: 
+	default:
 		assert(0);
 	}
 
-	propStr = "/rendering_target";
-	propStr = jvx_makePathExpr(myPrefix, propStr);
-
-	jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<jvxExternalBuffer> ptrRaw(external_link.mySwitchBuffer, &external_link.mySwitchBufferIsValid, 
+	propStr = cfg->prop_rtrgt;
+	if (cfg->prop_cp_prefix)
+	{
+		propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+	}
+	jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<jvxExternalBuffer> ptrRaw(external_link.mySwitchBuffer, &external_link.mySwitchBufferIsValid,
 		external_link.mySwitchBuffer->formFld);
 	ident.reset(propStr.c_str());
 
@@ -309,8 +338,11 @@ CjvxMyGlWidget::inform_stopped()
 	std::string propStr;
 	jvxCallManagerProperties callGate;
 	jvxErrorType res = JVX_NO_ERROR;
-	propStr = "/rendering_target";
-	propStr = jvx_makePathExpr(myPrefix, propStr);
+	propStr = cfg->prop_rtrgt;
+	if (cfg->prop_cp_prefix)
+	{
+		propStr = jvx_makePathExpr(cfg->prop_cp_prefix, propStr);
+	}
 
 	jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<jvxExternalBuffer> ptrRaw(
 		external_link.mySwitchBuffer, 

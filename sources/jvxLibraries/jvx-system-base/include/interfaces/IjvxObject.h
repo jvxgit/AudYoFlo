@@ -32,7 +32,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION unlock_state() = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION name(jvxApiString*) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION name(jvxApiString* name, jvxApiString* fName = nullptr) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION description(jvxApiString*) = 0;
 

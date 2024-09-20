@@ -72,6 +72,9 @@ private:
 	CjvxMyGlWidget *openGLWidget;
 	IjvxAccessProperties* thePropRef_aun;
 	IjvxAccessProperties* thePropRef_vin;
+
+	CjvxMyGlWidget_config glCfg;
+
 	Q_OBJECT
 
 public:
@@ -81,6 +84,13 @@ public:
 		openGLWidget = NULL;
 		thePropRef_aun = NULL;
 		thePropRef_vin = NULL;
+		glCfg.prop_segx = "/system/segmentsizex";
+		glCfg.prop_segy = "/system/segmentsizey";
+		glCfg.prop_frmt = "/system/dataformat";
+		glCfg.prop_sfrmt = "/system/datasubformat";
+		glCfg.prop_omode = "/expose_visual_if/operation_mode";
+		glCfg.prop_nbufs = "/expose_visual_if/number_buffers";
+		glCfg.prop_rtrgt = "/expose_visual_if/rendering_target";
 	};
 	~myCentralWidget(){};
 

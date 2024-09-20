@@ -43,6 +43,7 @@ protected:
 	{		
 		std::string theName;
 		std::string theDescriptor;
+		std::string theFriendlyName;
 		std::string theModuleName;
 		jvxComponentAccessType theComponentAccessTp = JVX_COMPONENT_ACCESS_UNKNOWN;
 		jvxBitField theFeatureClass;
@@ -113,7 +114,7 @@ public:
 
 	jvxErrorType _set_location_info(const jvxComponentIdentification& tp);
 	jvxErrorType _location_info(jvxComponentIdentification& tp);
-	jvxErrorType _name(jvxApiString*);
+	jvxErrorType _name(jvxApiString* name, jvxApiString* fName);
 	jvxErrorType _description(jvxApiString* str);
 	jvxErrorType _module_reference(jvxApiString* str, jvxComponentAccessType* acTp);
 	 jvxErrorType _feature_class(jvxBitField* ft);

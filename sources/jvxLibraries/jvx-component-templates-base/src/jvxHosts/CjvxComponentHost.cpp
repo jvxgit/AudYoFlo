@@ -120,7 +120,7 @@ CjvxComponentHost::_number_components_system(const jvxComponentIdentification& t
  * Return the names of components of a specific type
  */
 jvxErrorType
-CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str)
+CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* name, jvxApiString* fName)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 
@@ -131,14 +131,14 @@ CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, 
 		res = JVX_NO_ERROR;
 		if (idx < elmIt_tech->technologyInstances.availableTechnologies.size())
 		{
-			res = elmIt_tech->technologyInstances.availableTechnologies[idx].theHandle_single->name(str);
+			res = elmIt_tech->technologyInstances.availableTechnologies[idx].theHandle_single->name(name, fName);
 		}
 		else
 		{
 			jvxSize idxOff = idx - elmIt_tech->technologyInstances.availableTechnologies.size();
 			if (idxOff < elmIt_tech->technologyInstances.externalTechnologies.size())
 			{
-				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->name(str);
+				res = elmIt_tech->technologyInstances.externalTechnologies[idxOff].theHandle_single->name(name, fName);
 			}
 			else
 			{
@@ -157,7 +157,7 @@ CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, 
 			{
 				if (elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech)
 				{
-					res = elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->name_device(idx, str);
+					res = elmIt_dev->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech->name_device(idx, name, fName);
 				}
 				else
 				{
@@ -180,14 +180,14 @@ CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, 
 			res = JVX_NO_ERROR;
 			if (idx < elmIt_ep->instances.availableEndpoints.size())
 			{
-				res = elmIt_ep->instances.availableEndpoints[idx].theHandle_single->name(str);
+				res = elmIt_ep->instances.availableEndpoints[idx].theHandle_single->name(name, fName);
 			}
 			else
 			{
 				jvxSize idxOff = idx - elmIt_ep->instances.availableEndpoints.size();
 				if (idxOff < elmIt_ep->instances.externalEndpoints.size())
 				{
-					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->name(str);
+					res = elmIt_ep->instances.externalEndpoints[idxOff].theHandle_single->name(name, fName);
 				}
 				else
 				{
@@ -206,7 +206,7 @@ CjvxComponentHost::_name_component_system(const jvxComponentIdentification& tp, 
 			res = JVX_NO_ERROR;
 			if (idx < elmIt_si->instances.availableEndpoints.size())
 			{
-				res = elmIt_si->instances.availableEndpoints[idx].theHandle_single->name(str);
+				res = elmIt_si->instances.availableEndpoints[idx].theHandle_single->name(name, fName);
 			}
 			else
 			{

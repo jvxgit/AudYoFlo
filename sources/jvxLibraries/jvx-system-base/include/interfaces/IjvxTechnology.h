@@ -21,7 +21,7 @@ public:
 	// main thread
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_devices(jvxSize*) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION name_device(jvxSize, jvxApiString*) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION name_device(jvxSize, jvxApiString* name, jvxApiString* fName = nullptr) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION description_device(jvxSize, jvxApiString*) = 0;
 

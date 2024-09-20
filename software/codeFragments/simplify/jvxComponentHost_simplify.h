@@ -8,9 +8,9 @@ number_components_system(const jvxComponentIdentification& tp, jvxSize* numPtr)
  * Return the names of components of a specific type
  */
 jvxErrorType
-name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str)
+name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* name, jvxApiString* fName)
 {
-	return this->_name_component_system(tp, idx, str);
+	return this->_name_component_system(tp, idx, name, fName);
 }
 
 /*

@@ -60,6 +60,7 @@ CjvxObject::CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : CjvxObjectCore
 	}
 	
 	_common_set.theName = description;
+	_common_set.theFriendlyName = _common_set.theName;
 	_common_set.theModuleName = module_name;
 	_common_set.theComponentAccessTp = acTp;
 	_common_set.theFeatureClass = featureClass;
@@ -158,11 +159,15 @@ CjvxObject::_location_info(jvxComponentIdentification& tp)
 }
 
 jvxErrorType
-CjvxObject::_name(jvxApiString* str)
+CjvxObject::_name(jvxApiString* str, jvxApiString* fName)
 {
 	if (str)
 	{
 		str->assign(_common_set.theName);
+	}
+	if (fName)
+	{
+		fName->assign(_common_set.theFriendlyName);
 	}
 	return(JVX_NO_ERROR);
 	//HjvxObject_produceString(str, _common_set_min.theDescription);

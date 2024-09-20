@@ -26,7 +26,7 @@ CjvxTechnology::_number_devices(jvxSize* num)
 }
 
 jvxErrorType
-CjvxTechnology::_name_device(jvxSize idx, jvxApiString* fldStr)
+CjvxTechnology::_name_device(jvxSize idx, jvxApiString* name, jvxApiString* fName)
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	std::string nm;
@@ -36,7 +36,7 @@ CjvxTechnology::_name_device(jvxSize idx, jvxApiString* fldStr)
 		{
 			auto elm = _common_tech_set.lstDevices.begin();
 			std::advance(elm, idx);
-			elm->hdlDev->name(fldStr);
+			elm->hdlDev->name(name, fName);
 			res = JVX_NO_ERROR;
 		}
 		else

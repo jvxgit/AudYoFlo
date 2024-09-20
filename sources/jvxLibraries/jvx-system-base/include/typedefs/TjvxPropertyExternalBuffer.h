@@ -68,24 +68,25 @@ namespace jvx
 
 	struct externalBuffer
 	{
-		externalBufferType tp;
-		externalBufferSubType subTp;
-		jvxSize length;
-		jvxSize number_channels;
-		jvxSize idx_read;
-		jvxSize fill_height;
+		externalBufferType tp = externalBufferType::JVX_EXTERNAL_BUFFER_NONE;
+		externalBufferSubType subTp = externalBufferSubType::JVX_EXTERNAL_BUFFER_SUB_NONE;
+		jvxSize length = 0;
+		jvxSize number_channels = 0;
+		jvxSize idx_read = 0;
+		jvxSize fill_height = 0;
 		safeAccessBufferHdl safe_access;
 
-		jvxByte* ptrFld;
+		jvxByte* ptrFld = nullptr;
 
-		jvxDataFormat formFld;
-		jvxDataFormatGroup subFormFld;
-		jvxSize szFld;
-		jvxData szElmFld;
-		jvxSize numElmFldOneChanOneBuf;
-		jvxSize numElmFldOneBuf;
-		jvxSize numElmFld;
+		jvxDataFormat formFld = jvxDataFormat::JVX_DATAFORMAT_NONE;
+		jvxDataFormatGroup subFormFld = jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_NONE;
+		jvxSize szFld = 0;
+		jvxData szElmFld = 0;
+		jvxSize numElmFldOneChanOneBuf = 0;
+		jvxSize numElmFldOneBuf = 0;
+		jvxSize numElmFld = 0;
 
+		const char* associationHint = nullptr;
 		union
 		{
 			multichannel1DCircBufferHeader the1DCircBuffer;

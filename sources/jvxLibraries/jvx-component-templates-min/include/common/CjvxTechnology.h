@@ -37,7 +37,7 @@ public:
 
 	jvxErrorType _number_devices(jvxSize* num);
 
-	jvxErrorType _name_device(jvxSize idx, jvxApiString* fldStr);
+	jvxErrorType _name_device(jvxSize idx, jvxApiString* name, jvxApiString* fName);
 
 	jvxErrorType _description_device(jvxSize idx, jvxApiString* fldStr);
 

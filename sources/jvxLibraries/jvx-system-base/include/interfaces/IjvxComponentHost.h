@@ -9,7 +9,7 @@ public:
 
 	// List the components which are available in system
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_components_system(const jvxComponentIdentification&, jvxSize* num) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION name_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION name_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*name, jvxApiString* fName = nullptr) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION description_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*, jvxApiString* substr = NULL) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION module_reference_component_system(const jvxComponentIdentification&, jvxSize idx, jvxApiString*, jvxComponentAccessType* acTp) = 0;

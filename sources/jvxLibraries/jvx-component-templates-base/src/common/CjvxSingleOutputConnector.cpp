@@ -164,7 +164,30 @@ CjvxSingleOutputConnector::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// this->test_set_output_parameters();
 
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O(fdb, (&_common_set_ocon.theData_out));
-	return _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	jvxErrorType res = _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
+	if (res == JVX_NO_ERROR)
+	{
+		if (this->request_real_master)
+		{
+			// Only if it is not known
+			if (cpIdFrom.tp == JVX_COMPONENT_UNKNOWN)
+			{
+				if (res == JVX_NO_ERROR)
+				{
+					if (_common_set_ocon.theData_out.con_link.connect_to)
+					{
+						if (_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER,
+							&cpIdFrom  JVX_CONNECTION_FEEDBACK_CALL_A(fdb)) == JVX_NO_ERROR)
+						{
+							// What to do here?
+						}
+					}
+				}
+			}
+		}
+	}
+	return res;
 };
 
 jvxErrorType 
@@ -289,11 +312,16 @@ CjvxSingleOutputConnector::resultFromInputConnector()
 jvxErrorType
 CjvxSingleOutputConnector::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
+	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+	
+	res = _transfer(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+
 	if (report_trans)
 	{
 		return report_trans->report_transfer_connector(this, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
-	return JVX_ERROR_UNSUPPORTED;
+
+	return res;
 }
 
 // =================================================================================

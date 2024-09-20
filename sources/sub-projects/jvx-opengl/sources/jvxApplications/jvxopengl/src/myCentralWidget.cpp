@@ -35,7 +35,7 @@ myCentralWidget::inform_active(const jvxComponentIdentification& tp, IjvxAccessP
 		break;
 	case JVX_COMPONENT_VIDEO_DEVICE:
 		thePropRef_vin = theProps;
-		openGLWidget->setConnectLinks(thePropRef_vin, "expose_visual_if", jvx::JVX_EXTERNAL_BUFFER_SUB_2D_FULL);
+		openGLWidget->setConnectLinks(thePropRef_vin, &glCfg, jvx::JVX_EXTERNAL_BUFFER_SUB_2D_FULL);
 		break;
 	default:
 		break;

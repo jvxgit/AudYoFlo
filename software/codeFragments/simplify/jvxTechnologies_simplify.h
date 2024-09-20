@@ -3,9 +3,9 @@
 		return(CjvxTechnology::_number_devices(num));
 	};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION name_device(jvxSize idx, jvxApiString* str) override
+	virtual jvxErrorType JVX_CALLINGCONVENTION name_device(jvxSize idx, jvxApiString* name, jvxApiString* fName) override
 	{
-		return(CjvxTechnology::_name_device(idx, str));
+		return(CjvxTechnology::_name_device(idx, name, fName));
 	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION description_device(jvxSize idx, jvxApiString* str) override

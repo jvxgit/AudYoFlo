@@ -37,6 +37,19 @@
 //{
 //
 //};
+class CjvxMyGlWidget_config
+{
+public:
+	const char* prop_segx = nullptr; // "/system/segmentsizex"
+	const char* prop_segy = nullptr; // "/system/segmentsizey"
+	const char* prop_frmt = nullptr; // "/system/dataformat"
+	const char* prop_sfrmt = nullptr; //  "/system/datasubformat"
+	const char* prop_omode = nullptr; // "/expose_visual_if/operation_mode"
+	const char* prop_nbufs = nullptr;// "/expose_visual_if/number_buffers"
+	const char* prop_rtrgt = nullptr;// "/expose_visual_if/rendering_target"
+
+	const char* prop_cp_prefix = nullptr;
+};
 
 class CjvxMyGlWidget: public QOpenGLWidget, protected jvxVideoRenderCore_bc
 {
@@ -89,7 +102,6 @@ class CjvxMyGlWidget: public QOpenGLWidget, protected jvxVideoRenderCore_bc
 
 	IjvxAccessProperties* propRef;
 	
-	std::string myPrefix;
 	jvx::externalBufferSubType operation_mode;
 	//jvxBool glInitializeWasCalled;
 	jvxCBitField status_gl;
@@ -101,6 +113,8 @@ class CjvxMyGlWidget: public QOpenGLWidget, protected jvxVideoRenderCore_bc
 
 	cfgRenderStraight myVar_straightPaint;
 
+	CjvxMyGlWidget_config* cfg = nullptr;
+
 public:
 
 	CjvxMyGlWidget(QWidget* parent);
@@ -108,7 +122,7 @@ public:
 
 	void getWidgetReferences(QWidget** myWidgetRef);
 
-	void setConnectLinks(IjvxAccessProperties* propRefIn, std::string prefix, jvx::externalBufferSubType my_operation);
+	void setConnectLinks(IjvxAccessProperties* propRefIn, CjvxMyGlWidget_config* cfgArg, jvx::externalBufferSubType my_operation);
 	void clearConnectLinks();
 
 	jvxErrorType inform_about_to_start();

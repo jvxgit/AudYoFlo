@@ -38,6 +38,10 @@ public:
 	jvxSize channelWidthMax = JVX_SIZE_UNSELECTED;
 	jvxBool allowSingleConnect = false;
 
+	// Find out the real master if desired
+	jvxBool request_real_master = false;
+	jvxComponentIdentification cpIdFrom;
+
 public:
 	CjvxConnector(jvxBool withTriggerConnectorArg) : withTriggerConnector(withTriggerConnectorArg)
 	{
@@ -53,6 +57,29 @@ public:
 		{
 			JVX_SAFE_DELETE_OBJECT(trig_con);
 		}
+	};
+
+	jvxErrorType _transfer(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+	{
+		jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+
+		// This part here to be run "by default"
+		jvxComponentIdentification* cpId = reinterpret_cast<jvxComponentIdentification*>(data);
+		switch (tp)
+		{
+		case jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER:
+			if (cpId)
+			{
+				cpId->reset();
+			}
+			if (_common_set_io_common.object)
+			{
+				_common_set_io_common.object->location_info(*cpId);
+			}
+			res = JVX_NO_ERROR;
+			break;
+		}		
+		return res;
 	};
 
 	jvxErrorType _reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)

@@ -88,9 +88,9 @@
 	delete openGLWidget; \
 	openGLWidget = NULL;
 	
-#define JVX_MAIN_CENTRAL_ACTIVATE_HOA_DIRECTIVITY_WIDGET(openGLWidget, tab_glw, thePropRef_loc) \
+#define JVX_MAIN_CENTRAL_ACTIVATE_HOA_DIRECTIVITY_WIDGET(openGLWidget, tab_glw, thePropRef_loc, glCfg) \
 	myWidgetWrapper.associateAutoWidgets(tab_glw, thePropRef_loc, static_cast<IjvxQtSaWidgetWrapper_report*>(this), "locNode"); \
-	openGLWidget->setConnectLinks(thePropRef_loc, "expose_plot_if", jvx::JVX_EXTERNAL_BUFFER_SUB_2D_FULL);
+	openGLWidget->setConnectLinks(thePropRef_loc, &glCfg, jvx::JVX_EXTERNAL_BUFFER_SUB_2D_FULL);
 	
 #define JVX_MAIN_CENTRAL_DEACTIVATE_HOA_DIRECTIVITY_WIDGET(openGLWidget) \
 	openGLWidget->clearConnectLinks(); \

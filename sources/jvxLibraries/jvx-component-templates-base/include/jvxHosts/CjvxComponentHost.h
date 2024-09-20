@@ -21,7 +21,7 @@ public:
 
 	jvxErrorType _number_components_system(const jvxComponentIdentification& tp, jvxSize* numPtr);
 
-	jvxErrorType _name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str);
+	jvxErrorType _name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* name, jvxApiString* fName);
 
 	jvxErrorType _description_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str);
 

@@ -304,7 +304,10 @@ CjvxViNMixer::activate_connectors()
 			}
 		}
 		newPrivateData->uId = cnt;
-		
+
+		// Activate part to request real master on input side
+		iconn->request_real_master = true;
+
 		// Add another entry in list of selected connectors
 		addme.ioconn = iconn;
 		addme.nmUnique = _common_set_min.theDescription + "-" +
