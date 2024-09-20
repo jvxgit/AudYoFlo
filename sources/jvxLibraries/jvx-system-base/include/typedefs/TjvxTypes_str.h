@@ -345,7 +345,8 @@ static jvxTextHelpers jvxInterfaceType_str[JVX_INTERFACE_LIMIT] =
 	{"prop_attach", "JVX_INTERFACE_PROPERTY_ATTACH"},
 	{"config_attach", "JVX_INTERFACE_CONFIGURATION_ATTACH"},
 	{"package", "JVX_INTERFACE_PACKAGE"},
-	{"component host ext", "JVX_INTERFACE_COMPONENT_HOST_EXT"}
+	{"component host ext", "JVX_INTERFACE_COMPONENT_HOST_EXT"},
+	{"component host", "JVX_INTERFACE_COMPONENT_HOST"}
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 #include "extensions/EpjvxTypes_interfaces.h"

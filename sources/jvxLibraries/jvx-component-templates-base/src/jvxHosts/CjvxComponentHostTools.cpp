@@ -215,7 +215,25 @@ CjvxComponentHostTools::_reference_tool(const jvxComponentIdentification& tp,
 						}
 						else
 						{
-							res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+							if (filter_id == JVX_SIZE_SLOT_RETAIN)
+							{
+								if (tp.slotsubid < _common_set_types.registeredTechnologyTypes[idxSelect].technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev.size())
+								{
+									if (theObject)
+									{
+										*theObject = _common_set_types.registeredTechnologyTypes[idxSelect].technologyInstances.selTech[tp.slotid].theHandle_shortcut_dev[tp.slotsubid].dev;
+									}
+									res = JVX_NO_ERROR;
+								}
+								else
+								{
+									res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+								}
+							}
+							else
+							{
+								res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+							}
 						}
 					}
 					else
@@ -320,7 +338,7 @@ CjvxComponentHostTools::_reference_tool(const jvxComponentIdentification& tp,
 					}
 					else
 					{
-						res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+						res = JVX_ERROR_ID_OUT_OF_BOUNDS;						
 					}
 				}
 				else

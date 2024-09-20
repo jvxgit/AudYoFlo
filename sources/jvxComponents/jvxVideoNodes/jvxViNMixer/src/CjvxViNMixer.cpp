@@ -312,6 +312,8 @@ CjvxViNMixer::activate_connectors()
 		addme.ioconn = iconn;
 		addme.nmUnique = _common_set_min.theDescription + "-" +
 			CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::conName + "_" + jvx_size2String(uIdGen++);
+
+		newPrivateData->reset();
 		addme.privData = newPrivateData;
 
 		CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors[iconn] = addme;
@@ -351,6 +353,9 @@ CjvxViNMixer::activate_connectors()
 				JVX_SAFE_DELETE_OBJ(newPrivateData);
 			}
 			CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.erase(elm);
+
+			updateExposedProperties();
+
 			return JVX_NO_ERROR;
 		}
 
@@ -576,6 +581,68 @@ CjvxViNMixer::activate_connectors()
 	{
 	}
 
+	void 
+	CjvxViNMixer::report_real_master_connect(CjvxSingleInputConnector* ioconn)
+	{
+		std::string newName = "";		
+		IjvxComponentHost* hh = nullptr;
+		
+		auto var = reqRefTool<IjvxDevice>(_common_set.theToolsHost, ioconn->cpIdRealMaster, JVX_SIZE_SLOT_RETAIN);
+		if (var.objPtr)
+		{
+			jvxApiString fName;
+			var.objPtr->name(nullptr, &fName);		
+			auto elm = CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.find(ioconn);
+			oneConnectorPrivateData* privateData = reinterpret_cast<oneConnectorPrivateData * >(elm->second.privData);
+			if (privateData)
+			{
+				privateData->nameInput = fName.std_str();
+			}
+
+			updateExposedProperties();
+		}
+	}
+
+	void
+		CjvxViNMixer::report_real_master_disconnect(CjvxSingleInputConnector* ioconn)
+	{
+		std::string newName = "";
+		IjvxComponentHost* hh = nullptr;
+
+		auto var = reqRefTool<IjvxDevice>(_common_set.theToolsHost, ioconn->cpIdRealMaster, JVX_SIZE_SLOT_RETAIN);
+		if (var.objPtr)
+		{
+			auto elm = CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors.find(ioconn);
+			oneConnectorPrivateData* privateData = reinterpret_cast<oneConnectorPrivateData*>(elm->second.privData);
+			if (privateData)
+			{
+				privateData->reset();
+			}
+
+			updateExposedProperties();
+		}
+	}
+
+	void
+	CjvxViNMixer::updateExposedProperties()
+	{
+		// _lock_properties_local(); <- locks not required, all happening in the main thread!!
+		CjvxViNMixer_genpcg::config.current_inputs.value.entries.clear();
+		CjvxViNMixer_genpcg::config.current_inputs.value.entries.push_back("Local");
+		for (auto& elm : CjvxConnectorCollection < CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors)
+		{
+			std::string nm = "unknown";
+			oneConnectorPrivateData* privateData = reinterpret_cast<oneConnectorPrivateData*>(elm.second.privData);
+			if (privateData)
+			{
+				nm = privateData->nameInput;
+			}
+			CjvxViNMixer_genpcg::config.current_inputs.value.entries.push_back(nm);
+		}
+		jvx_bitZSet(CjvxViNMixer_genpcg::config.current_inputs.value.selection(), 0);
+		// _unlock_properties_local();
+		CjvxProperties::add_property_report_collect(CjvxViNMixer_genpcg::config.current_inputs.descriptor.c_str());
+	}
 
 #ifdef JVX_PROJECT_NAMESPACE
 }

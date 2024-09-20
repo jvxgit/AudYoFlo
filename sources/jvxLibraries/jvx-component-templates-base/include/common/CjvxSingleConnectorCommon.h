@@ -40,7 +40,7 @@ public:
 
 	// Find out the real master if desired
 	jvxBool request_real_master = false;
-	jvxComponentIdentification cpIdFrom;
+	jvxComponentIdentification cpIdRealMaster;
 
 public:
 	CjvxConnector(jvxBool withTriggerConnectorArg) : withTriggerConnector(withTriggerConnectorArg)
@@ -72,9 +72,9 @@ public:
 			{
 				cpId->reset();
 			}
-			if (_common_set_io_common.object)
+			if (T1::_common_set_io_common_ptr->_common_set_io_common.object)
 			{
-				_common_set_io_common.object->location_info(*cpId);
+				T1::_common_set_io_common_ptr->_common_set_io_common.object->location_info(*cpId);
 			}
 			res = JVX_NO_ERROR;
 			break;

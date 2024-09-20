@@ -17,6 +17,10 @@ public:
 	virtual jvxErrorType report_unselected_connector(T* ioconn) = 0;
 
 	virtual void report_process_buffers(T* ioconn, jvxLinkDataDescriptor& datThisConnector, jvxSize idx_stage) = 0;
+
+	// In most cases not required
+	virtual void report_real_master_connect(T* ioconn) {};
+	virtual void report_real_master_disconnect(T* ioconn) {};
 };
 
 template <class T>

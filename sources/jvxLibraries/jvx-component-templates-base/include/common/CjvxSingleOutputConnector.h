@@ -31,6 +31,9 @@ public:
 	CjvxSingleOutputConnector(jvxBool withTriggerConnectorArg);
 	~CjvxSingleOutputConnector();
 
+	jvxErrorType connect_connect_ocon(const jvxChainConnectArguments& args  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+	jvxErrorType disconnect_connect_ocon(const jvxChainConnectArguments& args  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+
 	jvxErrorType activate(IjvxObject* theObj, IjvxConnectorFactory* conFac, const std::string& nm, 
 		CjvxSingleConnector_report<CjvxSingleOutputConnector>* reportArg, jvxSize conIdArg);
 	jvxErrorType deactivate();
@@ -69,8 +72,12 @@ public:
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_OCON
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
 #define JVX_CONNECTION_MASTER_SKIP_TRANSFER_BACKWARD_OCON
+#define JVX_CONNECTION_MASTER_SKIP_CONNECT_CONNECT_OCON
+#define JVX_CONNECTION_MASTER_SKIP_DISCONNECT_CONNECT_OCON
 #include "codeFragments/simplify/jvxOutputConnector_simplify.h"
 #include "codeFragments/simplify/jvxConnectorCommon_simplify.h"
+#undef JVX_CONNECTION_MASTER_SKIP_CONNECT_CONNECT_OCON
+#undef JVX_CONNECTION_MASTER_SKIP_DISCONNECT_CONNECT_OCON
 #undef JVX_CONNECTION_MASTER_SKIP_TRANSFER_BACKWARD_OCON
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #undef JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT

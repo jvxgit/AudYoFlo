@@ -553,6 +553,13 @@ CjvxFullHost::request_hidden_interface(jvxInterfaceType tp, jvxHandle** hdl)
 			}
 			break;
 
+		case JVX_INTERFACE_COMPONENT_HOST:
+			if (hdl)
+			{
+				*hdl = static_cast<IjvxComponentHost*>(this);
+			}
+			break;
+
 		default:
 
 			res = CjvxComConHostTpl< CjvxInterfaceHostTplConnections<IjvxHost, CjvxComponentHostTools>>::request_hidden_interface(tp, hdl);
@@ -590,6 +597,17 @@ CjvxFullHost::return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
 
 		case JVX_INTERFACE_COMPONENT_HOST_EXT:
 			if (hdl == static_cast<IjvxComponentHostExt*>(this))
+			{
+				res = JVX_NO_ERROR;
+			}
+			else
+			{
+				res = JVX_ERROR_INVALID_ARGUMENT;
+			}
+			break;
+
+		case JVX_INTERFACE_COMPONENT_HOST:
+			if (hdl == static_cast<IjvxComponentHost*>(this))
 			{
 				res = JVX_NO_ERROR;
 			}

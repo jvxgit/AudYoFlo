@@ -33,8 +33,13 @@ protected:
 		jvxByte* fldRgba32 = nullptr;
 		jvxSize szFldRgba32 = 0;
 		jvxSize uId = JVX_SIZE_UNSELECTED;
+		std::string nameInput;
+		void reset()
+		{
+			nameInput = "not-connected";
+		}
 	};
-
+	
 	struct
 	{
 		CjvxSimplePropsPars node;
@@ -120,6 +125,8 @@ public:
 
 	void report_process_buffers(CjvxSingleOutputConnector* iconn, jvxLinkDataDescriptor& datThisConnector, jvxSize idx_stage) override;
 
+	void report_real_master_connect(CjvxSingleInputConnector* ioconn) override;
+	void report_real_master_disconnect(CjvxSingleInputConnector* ioconn) override;
 
 	//=======================================================================================================
 	
@@ -140,6 +147,8 @@ public:
 
 	virtual void report_started_connector_in_lock(CjvxSingleOutputConnector* oconnPlus, jvxHandle* priv) override;
 	virtual void report_before_stop_connector_in_lock(CjvxSingleOutputConnector* oconnPlus, jvxHandle* priv) override;
+
+	void updateExposedProperties();
 	
 };
 

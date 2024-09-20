@@ -110,6 +110,44 @@ CjvxSingleOutputConnector::reference_component(jvxComponentIdentification* cpId,
 	return _reference_component(cpId, modName, description, linkName);
 }
 
+jvxErrorType 
+CjvxSingleOutputConnector::connect_connect_ocon(const jvxChainConnectArguments& args  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = CjvxConnector<CjvxOutputConnectorLink, CjvxSingleOutputTriggerConnector>::_connect_connect_ocon(args  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	if (res == JVX_NO_ERROR)
+	{
+		if (this->request_real_master)
+		{
+			if (_common_set_ocon.theData_out.con_link.connect_to)
+			{
+				_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER, &cpIdRealMaster  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			}
+			if (report)
+			{
+				report->report_real_master_connect(this);
+			}
+		}
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxSingleOutputConnector::disconnect_connect_ocon(const jvxChainConnectArguments& args  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) 
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	
+	if (this->request_real_master)
+	{
+		if (report)
+		{
+			report->report_real_master_connect(this);
+		}
+	}
+
+	res = CjvxConnector<CjvxOutputConnectorLink, CjvxSingleOutputTriggerConnector>::_disconnect_connect_ocon(args  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	return res;
+}
+
 jvxErrorType
 CjvxSingleOutputConnector::activate(IjvxObject* theObj,
 	IjvxConnectorFactory* conFac, const std::string& nm,
@@ -165,28 +203,7 @@ CjvxSingleOutputConnector::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O(fdb, (&_common_set_ocon.theData_out));
 	jvxErrorType res = _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-
-	if (res == JVX_NO_ERROR)
-	{
-		if (this->request_real_master)
-		{
-			// Only if it is not known
-			if (cpIdFrom.tp == JVX_COMPONENT_UNKNOWN)
-			{
-				if (res == JVX_NO_ERROR)
-				{
-					if (_common_set_ocon.theData_out.con_link.connect_to)
-					{
-						if (_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER,
-							&cpIdFrom  JVX_CONNECTION_FEEDBACK_CALL_A(fdb)) == JVX_NO_ERROR)
-						{
-							// What to do here?
-						}
-					}
-				}
-			}
-		}
-	}
+	
 	return res;
 };
 
@@ -367,6 +384,7 @@ CjvxSingleOutputConnectorMulti::select_connect_ocon(IjvxConnectorBridge* obj, Ij
 		{
 			report->report_selected_connector(newConnector);
 		}
+
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_ELEMENT_NOT_FOUND;

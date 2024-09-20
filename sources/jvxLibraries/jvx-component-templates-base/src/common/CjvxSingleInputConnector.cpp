@@ -104,6 +104,18 @@ CjvxSingleInputConnector::connect_connect_icon(jvxLinkDataDescriptor* theData JV
 		args.uIdConnection = theData->con_link.uIdConn;		
 		res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_CONNECT, &args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
+
+	if (this->request_real_master)
+	{
+		if (_common_set_icon.theData_in->con_link.connect_from)
+		{
+			_common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER, &cpIdRealMaster  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		if (report)
+		{
+			report->report_real_master_connect(this);
+		}
+	}
 	return res;
 };
 
@@ -111,6 +123,15 @@ jvxErrorType
 CjvxSingleInputConnector::disconnect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
+
+	if (this->request_real_master)
+	{
+		if (report)
+		{
+			report->report_real_master_disconnect(this);
+		}
+		cpIdRealMaster.reset();
+	};
 
 	// If we have set a trigger forward, follow it but ONLY with the link data type for linkage!!
 	if (
@@ -204,26 +225,7 @@ CjvxSingleInputConnector::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			trig_con->linked_ref)
 		{
 			res = trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_TEST, nullptr JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		}
-
-		if (this->request_real_master)
-		{
-			// Only if it is not known
-			if (cpIdFrom.tp == JVX_COMPONENT_UNKNOWN)
-			{
-				if (res == JVX_NO_ERROR)
-				{
-					if (_common_set_icon.theData_in->con_link.connect_from)
-					{
-						if (_common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER,
-							&cpIdFrom  JVX_CONNECTION_FEEDBACK_CALL_A(fdb)) == JVX_NO_ERROR)
-						{
-							// What to do here?
-						}
-					}
-				}
-			}
-		}
+		}		
 	}
 	return res;
 }
