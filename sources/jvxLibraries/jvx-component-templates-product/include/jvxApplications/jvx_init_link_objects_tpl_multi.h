@@ -1,5 +1,8 @@
 #ifdef JVX_OS_LINUX
 #include "jvxAuTAlsa.h"
+	#ifdef JVX_USE_V4L2VIDEO
+		#include "jvxViTV4L2.h"
+	#endif
 #endif
 
 #ifdef JVX_OS_MACOSX
@@ -123,6 +126,17 @@ extern "C"
 				adescr->assign("Mf Video");
 				*funcInit = jvxViTMfWindows_init;
 				*funcTerm = jvxViTMfWindows_terminate;
+				return(JVX_NO_ERROR);
+			}
+			cnt++;
+#endif
+
+#ifdef JVX_USE_V4L2VIDEO
+			if (id == cnt)
+			{
+				adescr->assign("V4L2 Video");
+				*funcInit = jvxViTV4L2_init;
+				*funcTerm = jvxViTV4L2_terminate;
 				return(JVX_NO_ERROR);
 			}
 			cnt++;

@@ -653,6 +653,12 @@ else(JVX_COMPILE_BUILDTOOLS)
 			${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfWindows)
 	endif()
   endif()
+  if(JVX_OS MATCHES "linux")
+	if(JVX_USE_V4L2VIDEO)
+		set(JVX_BASE_VIDEO_TECHNOLOGIES ${JVX_BASE_VIDEO_TECHNOLOGIES}
+			${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTV4L2)
+	endif()
+  endif()
 
   ###
   # build custom technology components

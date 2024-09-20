@@ -1,0 +1,38 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genV4L2_device";
+	CALLBACKS = {"on_mode_select"};
+
+	SECTION configuration_mf
+	{
+		DESCRIPTION = "Specific V4L2 camera properties";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+
+		SECTION rates_min
+		{
+			DESCRIPTION = "Minimum framrate in current mode";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+		SECTION rates_max
+		{
+			DESCRIPTION = "Maximum framrate in current mode";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+
+		SECTION mode_selection
+		{
+			DESCRIPTION = "Selection of camera mode";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			UPDATE_CONTEXT_TOKEN = "mf_device:mode_selection";
+			CALLBACK_SET_POSTHOOK = "on_mode_select";
+		};
+	};
+};
