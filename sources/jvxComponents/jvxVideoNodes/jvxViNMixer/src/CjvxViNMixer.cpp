@@ -185,10 +185,11 @@ CjvxViNMixer::activate_connectors()
 			// Set the default arguments
 			CjvxViNMixer_selected::video_parameter.visual_data_video.format.value = (jvxInt16)JVX_DATAFORMAT_BYTE;
 			CjvxViNMixer_selected::video_parameter.visual_data_video.subformat.value = (jvxInt16)JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
-			CjvxViNMixer_selected::video_parameter.visual_data_video.number_buffers.value = 2;
 			CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_x.value = 640;
 			CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_y.value = 480;
+
 			jvx_bitZSet(CjvxViNMixer_selected::video_parameter.visual_data_video.operation_mode.value.selection(), 0);
+			CjvxViNMixer_selected::video_parameter.visual_data_video.number_buffers.value = 2;
 
 		}
 		return res;
@@ -247,7 +248,9 @@ CjvxViNMixer::activate_connectors()
 				video_input.node._common_set_node_params_a_1io.segmentation.x,
 				video_input.node._common_set_node_params_a_1io.segmentation.y);
 
-			CjvxProperties::_update_property_access_type_all(JVX_PROPERTY_ACCESS_READ_ONLY);
+			// Let us try to fully hide the "selected" properties
+			CjvxViNMixer_selected::unregister_all(this);
+			// CjvxProperties::_update_property_access_type_all(JVX_PROPERTY_ACCESS_READ_ONLY);
 
 			CjvxViNMixer_genpcg::init_all();
 			CjvxViNMixer_genpcg::allocate_all();
@@ -271,7 +274,9 @@ CjvxViNMixer::activate_connectors()
 			CjvxViNMixer_genpcg::unregister_all(this);
 			CjvxViNMixer_genpcg::deallocate_all();
 
-			CjvxProperties::_undo_update_property_access_type_all();
+			// Let us try to fully hide the "selected" properties
+			CjvxViNMixer_selected::register_all(this);
+			// CjvxProperties::_undo_update_property_access_type_all();
 		}
 		return res;
 	}

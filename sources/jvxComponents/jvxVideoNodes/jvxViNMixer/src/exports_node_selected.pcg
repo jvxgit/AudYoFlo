@@ -1,6 +1,7 @@
 SECTION PROPERTIES
 {
 	OUTPUTFILE_NAME = "CjvxViNMixer_selected";
+	ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED"};
 
 	GROUP video_parameter
 	{

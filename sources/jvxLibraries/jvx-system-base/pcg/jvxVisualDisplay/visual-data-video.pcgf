@@ -6,7 +6,10 @@
 		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
 		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
 		
-		include "visual-data-common.pcgf";
+		ifdef JVX_SKIP_VISUAL_DATA_PROPS
+		else
+			include "visual-data-common.pcgf";
+		endif
 
 		SECTION operation_mode
 		{

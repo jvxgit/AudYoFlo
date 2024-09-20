@@ -19,7 +19,7 @@ set(LOCAL_PCG_FILES
   
 set(LOCAL_PCG_FILE_OPTIONS 
 	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg
-	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg/jvxVisualDisplay
+	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg/jvxVisualDisplay	
 	)
 
 set(LOCAL_LIBS 
