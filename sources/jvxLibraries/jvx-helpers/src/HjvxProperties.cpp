@@ -386,7 +386,7 @@ jvx_pullPropertyString(std::string& entry,  IjvxObject* obj, IjvxProperties* pro
 jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_full(jvxSize bLength,
 	jvxSize numChannels, jvxDataFormat form, jvxDataFormatGroup subform,
 	jvx_lock_buffer lockf, jvx_try_lock_buffer try_lockf, jvx_unlock_buffer unlockf,
-	jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y)
+	jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y, jvxHandle* lock_prv)
 {
 	jvxExternalBuffer* theNewHeader = NULL;
 
@@ -406,8 +406,8 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_full(jvxSize bLength,
 	theNewHeader->formFld = form;
 	theNewHeader->subFormFld = subform;
 	theNewHeader->ptrFld = NULL;
-	theNewHeader->szElmFld = (jvxData)jvxDataFormat_getsize(theNewHeader->formFld)* (jvxData)jvxDataFormatGroup_getsize(theNewHeader->subFormFld);
-	
+	theNewHeader->szElmFld = (jvxData)jvxDataFormat_getsize(theNewHeader->formFld)* (jvxData)jvxDataFormatGroup_getsize_mult(theNewHeader->subFormFld);
+
 	// Take into account the divisor
 	assert(jvxDataFormatGroup_getsize_div(theNewHeader->subFormFld));
 	theNewHeader->szElmFld /= (jvxData)jvxDataFormatGroup_getsize_div(theNewHeader->subFormFld);
@@ -419,6 +419,8 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_full(jvxSize bLength,
 	theNewHeader->numElmFldOneBuf = theNewHeader->numElmFldOneChanOneBuf * theNewHeader->number_channels;
 	theNewHeader->numElmFld = theNewHeader->numElmFldOneBuf * theNewHeader->specific.the2DFieldBuffer_full.common.number_buffers;
 	
+	theNewHeader->specific.the2DFieldBuffer_full.common.szFldOneBuf = theNewHeader->szElmFld * theNewHeader->numElmFldOneBuf;
+
 	jvxData szFldLoc = theNewHeader->szElmFld * theNewHeader->numElmFld;
 	theNewHeader->szFld = (jvxSize)(szFldLoc);
 	assert((jvxData)theNewHeader->szFld == szFldLoc);
@@ -429,10 +431,17 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_full(jvxSize bLength,
 		*szFld = theNewHeader->szFld;
 	}
 
-	JVX_MUTEX_HANDLE* mutHdl = NULL;
-	JVX_SAFE_NEW_OBJ(mutHdl, JVX_MUTEX_HANDLE);
-	JVX_INITIALIZE_MUTEX(*mutHdl);
-	theNewHeader->safe_access.priv = (jvxHandle*)mutHdl;
+	if (lock_prv)
+	{
+		theNewHeader->safe_access.priv = lock_prv;
+	}
+	else
+	{
+		JVX_MUTEX_HANDLE* mutHdl = NULL;
+		JVX_SAFE_NEW_OBJ(mutHdl, JVX_MUTEX_HANDLE);
+		JVX_INITIALIZE_MUTEX(*mutHdl);
+		theNewHeader->safe_access.priv = (jvxHandle*)mutHdl;
+	}
 	theNewHeader->safe_access.lockf = lockf;
 	theNewHeader->safe_access.unlockf = unlockf;
 	theNewHeader->safe_access.try_lockf = try_lockf;
@@ -457,7 +466,7 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_full(jvxSize bLength,
 jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_inc(jvxSize bLength,
 	jvxSize numChannels, jvxDataFormat form, jvxDataFormatGroup subform,
 	jvx_lock_buffer lockf, jvx_try_lock_buffer try_lockf, jvx_unlock_buffer unlockf,
-	jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y)
+	jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y, jvxHandle* lock_prv)
 {
 	jvxExternalBuffer* theNewHeader = NULL;
 
@@ -477,7 +486,8 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_inc(jvxSize bLength,
 	theNewHeader->formFld = form;
 	theNewHeader->subFormFld = subform;
 	theNewHeader->ptrFld = NULL;
-	theNewHeader->szElmFld = jvxDataFormat_getsize(theNewHeader->formFld)*jvxDataFormatGroup_getsize(theNewHeader->subFormFld);
+	theNewHeader->szElmFld = jvxDataFormat_getsize(theNewHeader->formFld)*jvxDataFormatGroup_getsize_mult(theNewHeader->subFormFld);
+	theNewHeader->szElmFld /= jvxDataFormatGroup_getsize_div(theNewHeader->subFormFld);
 	assert(theNewHeader->szElmFld);
 	theNewHeader->numElmFldOneChanOneBuf = theNewHeader->length;
 	theNewHeader->numElmFldOneBuf = theNewHeader->numElmFldOneChanOneBuf * theNewHeader->number_channels;
@@ -490,10 +500,17 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_inc(jvxSize bLength,
 		*szFld = theNewHeader->szFld;
 	}
 
-	JVX_MUTEX_HANDLE* mutHdl = NULL;
-	JVX_SAFE_NEW_OBJ(mutHdl, JVX_MUTEX_HANDLE);
-	JVX_INITIALIZE_MUTEX(*mutHdl);
-	theNewHeader->safe_access.priv = (jvxHandle*)mutHdl;
+	if (lock_prv)
+	{
+		theNewHeader->safe_access.priv = lock_prv;
+	}
+	else
+	{
+		JVX_MUTEX_HANDLE* mutHdl = NULL;
+		JVX_SAFE_NEW_OBJ(mutHdl, JVX_MUTEX_HANDLE);
+		JVX_INITIALIZE_MUTEX(*mutHdl);
+		theNewHeader->safe_access.priv = (jvxHandle*)mutHdl;
+	}
 	theNewHeader->safe_access.lockf = lockf;
 	theNewHeader->safe_access.unlockf = unlockf;
 	theNewHeader->safe_access.try_lockf = try_lockf;
@@ -515,7 +532,7 @@ jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_inc(jvxSize bLength,
 jvxExternalBuffer* jvx_allocate1DCircExternalBuffer(jvxSize bLength, 
 	jvxSize numChannels, jvxDataFormat form, jvxDataFormatGroup subform,
 	jvx_lock_buffer lockf, jvx_try_lock_buffer try_lockf, jvx_unlock_buffer unlockf,
-	jvxSize* szFld)
+	jvxSize* szFld, jvxHandle* lock_prv)
 {
 	jvxExternalBuffer* theNewHeader = NULL;
 
@@ -531,7 +548,8 @@ jvxExternalBuffer* jvx_allocate1DCircExternalBuffer(jvxSize bLength,
 	theNewHeader->formFld = form;
 	theNewHeader->subFormFld = subform;
 	theNewHeader->ptrFld = NULL;
-	theNewHeader->szElmFld = jvxDataFormat_getsize(theNewHeader->formFld) * jvxDataFormatGroup_getsize(theNewHeader->subFormFld);
+	theNewHeader->szElmFld = jvxDataFormat_getsize(theNewHeader->formFld) * jvxDataFormatGroup_getsize_mult(theNewHeader->subFormFld);
+	theNewHeader->szElmFld /= jvxDataFormatGroup_getsize_div(theNewHeader->subFormFld);
 	assert(theNewHeader->szElmFld);
 	theNewHeader->numElmFldOneChanOneBuf = theNewHeader->length;
 	theNewHeader->numElmFldOneBuf = theNewHeader->length* theNewHeader->number_channels;
@@ -544,10 +562,17 @@ jvxExternalBuffer* jvx_allocate1DCircExternalBuffer(jvxSize bLength,
 		*szFld = theNewHeader->szFld;
 	}
 
-	JVX_MUTEX_HANDLE* mutHdl = NULL;
-	JVX_SAFE_NEW_OBJ(mutHdl, JVX_MUTEX_HANDLE);
-	JVX_INITIALIZE_MUTEX(*mutHdl);
-	theNewHeader->safe_access.priv = (jvxHandle*)mutHdl;
+	if (lock_prv)
+	{
+		theNewHeader->safe_access.priv = lock_prv;
+	}
+	else
+	{
+		JVX_MUTEX_HANDLE* mutHdl = NULL;
+		JVX_SAFE_NEW_OBJ(mutHdl, JVX_MUTEX_HANDLE);
+		JVX_INITIALIZE_MUTEX(*mutHdl);
+		theNewHeader->safe_access.priv = (jvxHandle*)mutHdl;
+	}
 	theNewHeader->safe_access.lockf = lockf;
 	theNewHeader->safe_access.unlockf = unlockf;
 	theNewHeader->safe_access.try_lockf = try_lockf;
@@ -559,12 +584,14 @@ jvxExternalBuffer* jvx_allocate1DCircExternalBuffer(jvxSize bLength,
 }
 
 void 
-jvx_deallocateExternalBuffer(jvxExternalBuffer* header)
+jvx_deallocateExternalBuffer(jvxExternalBuffer* header, jvxHandle* lock_prv)
 {
-	JVX_MUTEX_HANDLE* mutHdl = (JVX_MUTEX_HANDLE*)header->safe_access.priv;
-	JVX_TERMINATE_MUTEX(*mutHdl);
-	JVX_SAFE_DELETE_OBJ(mutHdl);
-
+	if (lock_prv == nullptr)
+	{
+		JVX_MUTEX_HANDLE* mutHdl = (JVX_MUTEX_HANDLE*)header->safe_access.priv;
+		JVX_TERMINATE_MUTEX(*mutHdl);
+		JVX_SAFE_DELETE_OBJ(mutHdl);
+	}
 	JVX_DSP_SAFE_DELETE_FIELD(header->ptrFld);
 	header->ptrFld = NULL;
 

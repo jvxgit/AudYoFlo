@@ -38,6 +38,22 @@ CjvxPropertiesTypeConvert::convertFilterStart(jvxHandle*& fldin, jvxDataFormat f
 			fldInStore = fldin;
 			fldin = &v;
 			break;
+
+		case JVX_DATAFORMAT_32BIT_LE:
+			v.vI16 = *(jvxInt32*)fldin;
+			formInStore = formIn;
+			formIn = JVX_DATAFORMAT_16BIT_LE;
+			fldInStore = fldin;
+			fldin = &v;
+			break;
+
+		case JVX_DATAFORMAT_U32BIT_LE:
+			v.vI16 = *(jvxUInt32*)fldin;
+			formInStore = formIn;
+			formIn = JVX_DATAFORMAT_16BIT_LE;
+			fldInStore = fldin;
+			fldin = &v;
+			break;
 		}
 		break;
 	case JVX_DATAFORMAT_U16BIT_LE:
@@ -204,6 +220,31 @@ CjvxPropertiesTypeConvert::convertFilterStop(jvxHandle*& fldin, jvxDataFormat fo
 			formInStore = JVX_DATAFORMAT_NONE;
 			fldin = fldInStore;
 			fldInStore = nullptr;
+			break;
+
+		case JVX_DATAFORMAT_32BIT_LE:
+			if (convert && fldInStore)
+			{
+				*(jvxInt32*)fldInStore = v.vI16;
+			}
+
+			formIn = formInStore;
+			formInStore = JVX_DATAFORMAT_NONE;
+			fldin = fldInStore;
+			fldInStore = nullptr;
+			break;
+
+		case JVX_DATAFORMAT_U32BIT_LE:
+			if (convert && fldInStore)
+			{
+				*(jvxUInt32*)fldInStore = v.vI16;
+			}
+
+			formIn = formInStore;
+			formInStore = JVX_DATAFORMAT_NONE;
+			fldin = fldInStore;
+			fldInStore = nullptr;
+			break;
 		}
 		break;
 	case JVX_DATAFORMAT_U16BIT_LE:

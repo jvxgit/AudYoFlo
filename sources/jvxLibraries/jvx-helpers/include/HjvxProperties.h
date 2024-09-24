@@ -95,19 +95,19 @@ jvx_pullPropertyString(std::string& entry,  IjvxObject* obj, IjvxProperties* pro
  jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_full(jvxSize bLength,
 	 jvxSize numChannels, jvxDataFormat form, jvxDataFormatGroup subform,
 	 jvx_lock_buffer lockf, jvx_try_lock_buffer try_lockf, jvx_unlock_buffer unlockf,
-	 jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y);
+	 jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y, jvxHandle* lock_prv = nullptr);
 
  jvxExternalBuffer* jvx_allocate2DFieldExternalBuffer_inc(jvxSize bLength,
 	 jvxSize numChannels, jvxDataFormat form, jvxDataFormatGroup subform,
 	 jvx_lock_buffer lockf, jvx_try_lock_buffer try_lockf, jvx_unlock_buffer unlockf,
-	 jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y);
+	 jvxSize* szFld, jvxSize numBuffers, jvxSize seg_x, jvxSize seg_y, jvxHandle* lock_prv = nullptr);
 
  jvxExternalBuffer* jvx_allocate1DCircExternalBuffer(jvxSize bLength,
 	 jvxSize numChannels, jvxDataFormat form, jvxDataFormatGroup subform,
 	 jvx_lock_buffer lockf, jvx_try_lock_buffer try_lockf, jvx_unlock_buffer unlockf,
-	 jvxSize* szFld);
+	 jvxSize* szFld, jvxHandle* lock_prv = nullptr);
 
- void jvx_deallocateExternalBuffer(jvxExternalBuffer* header);
+ void jvx_deallocateExternalBuffer(jvxExternalBuffer* header, jvxHandle* lock_prv = nullptr);
 
  void jvx_valuesToValueInRange(jvxValueInRange& theObj, jvxData minV = 0.0, jvxData maxV = 1.0, jvxData val = 0.0);
 

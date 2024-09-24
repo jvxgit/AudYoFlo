@@ -59,7 +59,7 @@ protected:
 #endif
 
 
-#ifdef JVX_OPEN_BMP_FOR_TEXT
+#ifdef JVX_OPEN_BMP_FOR_TEST
 
 	struct
 	{
@@ -70,6 +70,11 @@ protected:
 #endif
 
 	jvxSize uIdGen = 1;
+
+	// Protected by lock for properties 
+	std::map<std::string, jvxExternalBuffer*> ptrsFromExternal;
+
+	jvxExternalBuffer* ptrsFromExternal_local = nullptr;
 
 public:
 
@@ -85,6 +90,11 @@ public:
 
 	jvxErrorType activate() override;
 	jvxErrorType deactivate() override;
+
+	// ===========================================================================================
+
+	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
 	// ===========================================================================================
 
@@ -150,6 +160,9 @@ public:
 
 	void updateExposedProperties();
 	
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(interface_pass);
+
+	void addOneImageToExchangeBuffer_inLock(jvxExternalBuffer* buf, jvxByte* fldFromRGBA32, jvxSize szFromRGBA32);
 };
 
 #ifdef JVX_PROJECT_NAMESPACE

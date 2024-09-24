@@ -69,6 +69,8 @@ include_directories(
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTThreads/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTLogRemoteHandler/
+
+  ${OPENCV_LIBRARY_PATH}
   )
 
 #if(JVX_OS MATCHES "windows")#
@@ -85,6 +87,7 @@ set(LOCAL_LIBS
 	jvxTLogRemoteHandler_static
 	jvx-host-json_static
 	jvx-app-host-static_static
+	${OPENCV_LIBRARIES}
 	)
 
 include (${JVX_INTEGRATE_SOURCES_PATH}/cmake/specific.cmake)

@@ -112,3 +112,6 @@ sources/jvxLibraries/third_party/git/orc/orc
 /sources/jvxLibraries/third_party/web/hdf5/build-glnx/
 /sources/jvxPackages/ffmpeg/jvxLibraries/third_party/git/ffmpeg/ffmpeg-glnx/
 /sources/jvxLibraries/third_party/git/orc/orc/
+/flutter/ayf_webhost/pubspec.yaml
+/flutter/ayf_webhost/.vscode/launch.json
+/flutter/ayf_webhost/example/.ayf_webhost_example.env

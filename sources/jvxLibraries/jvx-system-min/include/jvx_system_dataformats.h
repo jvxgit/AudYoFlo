@@ -384,7 +384,7 @@ static jvxSize jvxDataFormatGroup_size_div[JVX_DATAFORMAT_GROUP_LIMIT + 1] =
 };
 
 // I added an underscore since the completion always uses this function instead on jvxDataFormat_getsize
-static inline jvxSize jvxDataFormatGroup_getsize(jvxSize idx)
+static inline jvxSize jvxDataFormatGroup_getsize_mult(jvxSize idx)
 {
 	assert(idx < JVX_DATAFORMAT_GROUP_LIMIT);
 	return(jvxDataFormatGroup_size[idx]);

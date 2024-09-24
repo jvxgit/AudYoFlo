@@ -5,6 +5,13 @@ SECTION PROPERTIES
 
 	GROUP video_parameter
 	{
-		include "visual-data-video.pcgf";
+		SECTION visual_data_video
+		{
+			DESCRIPTION = "Video properties";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present		
+			ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED"};
+			
+			include "visual-data-parameter.pcgf";
+		};
 	};
 };

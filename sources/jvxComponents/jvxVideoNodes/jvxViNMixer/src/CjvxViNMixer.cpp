@@ -1,6 +1,6 @@
 #include "CjvxViNMixer.h"
 
-#ifdef JVX_OPEN_BMP_FOR_TEXT
+#ifdef JVX_OPEN_BMP_FOR_TEST
 #include "cbmp.h"
 #endif
 
@@ -45,12 +45,13 @@ namespace JVX_PROJECT_NAMESPACE {
 		JVX_INITIALIZE_MUTEX(safeCall);
 #endif
 
-#ifdef JVX_OPEN_BMP_FOR_TEXT
+#ifdef JVX_OPEN_BMP_FOR_TEST
 
 		test.szBufRGBA32 = (video_output.node._common_set_node_params_a_1io.segmentation.x *
 			video_output.node._common_set_node_params_a_1io.segmentation.y) *
 			jvxDataFormat_getsize(video_output.node._common_set_node_params_a_1io.format)*
-			jvxDataFormatGroup_getsize(video_output.node._common_set_node_params_a_1io.subformat);
+			jvxDataFormatGroup_getsize_mult(video_output.node._common_set_node_params_a_1io.subformat);
+		test.szBufRGBA32 /= jvxDataFormatGroup_getsize_div(video_output.node._common_set_node_params_a_1io.subformat);
 		JVX_SAFE_ALLOCATE_FIELD_CPP_Z(test.bufRGBA32, jvxByte, test.szBufRGBA32);
 
 		BMP* BF = bopen("vimix-demo.bmp");
@@ -59,14 +60,19 @@ namespace JVX_PROJECT_NAMESPACE {
 		{
 			for (jvxSize iy = 0; iy < video_output.node._common_set_node_params_a_1io.segmentation.y; iy++)
 			{
-				if (iy < get_height(BF))
+				jvxSize ht = get_height(BF);
+				if (iy < ht)
 				{
 					for (jvxSize ix = 0; ix < video_output.node._common_set_node_params_a_1io.segmentation.x; ix++)
 					{
 						if (ix < get_width(BF))
 						{
 							unsigned char r, g, b;
-							get_pixel_rgb(BF, ix, iy, &r, &g, &b);
+
+							// jvxSize y_used = iy;
+							// Turn around the image !!
+							jvxSize y_used = ht - iy;
+							get_pixel_rgb(BF, ix, y_used, &r, &g, &b);
 							*ptr++ = r; // R
 							*ptr++ = g; // G
 							*ptr++ = b; // B
@@ -93,7 +99,7 @@ namespace JVX_PROJECT_NAMESPACE {
 
 CjvxViNMixer::~CjvxViNMixer()
 {
-#ifdef JVX_OPEN_BMP_FOR_TEXT
+#ifdef JVX_OPEN_BMP_FOR_TEST
 
 	JVX_SAFE_DELETE_FIELD(test.bufRGBA32);
 	test.bufRGBA32 = nullptr;
@@ -188,8 +194,10 @@ CjvxViNMixer::activate_connectors()
 			CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_x.value = 640;
 			CjvxViNMixer_selected::video_parameter.visual_data_video.segmentsize_y.value = 480;
 
+			/*
 			jvx_bitZSet(CjvxViNMixer_selected::video_parameter.visual_data_video.operation_mode.value.selection(), 0);
 			CjvxViNMixer_selected::video_parameter.visual_data_video.number_buffers.value = 2;
+			*/
 
 		}
 		return res;
@@ -256,9 +264,13 @@ CjvxViNMixer::activate_connectors()
 			CjvxViNMixer_genpcg::allocate_all();
 			CjvxViNMixer_genpcg::register_all(this);
 
+			CjvxViNMixer_genpcg::register_callbacks(this, interface_pass, this);
 
 			video_output.node.initialize(this, "video_out", false);
 			video_input.node.initialize(this, "video_in", true);
+
+			// Expose video frames
+			updateExposedProperties();
 		}
 		return res;
 	}
@@ -376,7 +388,8 @@ CjvxViNMixer::activate_connectors()
 			myPrivateData->szFldRgba32 = (video_input.node._common_set_node_params_a_1io.segmentation.x *
 			video_input.node._common_set_node_params_a_1io.segmentation.y) *
 			jvxDataFormat_getsize(video_input.node._common_set_node_params_a_1io.format) *
-			jvxDataFormatGroup_getsize(video_input.node._common_set_node_params_a_1io.subformat);
+			jvxDataFormatGroup_getsize_mult(video_input.node._common_set_node_params_a_1io.subformat);
+			myPrivateData->szFldRgba32 /= jvxDataFormatGroup_getsize_div(video_input.node._common_set_node_params_a_1io.subformat);
 			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(myPrivateData->fldRgba32, jvxByte, myPrivateData->szFldRgba32);
 		}
 	}
@@ -473,15 +486,47 @@ CjvxViNMixer::activate_connectors()
 	}
 
 	jvxErrorType
+		CjvxViNMixer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+	{
+		jvxErrorType res = CjvxVideoNode::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		if (res == JVX_NO_ERROR)
+		{
+			CjvxViNMixer_genpcg::expose.lost_frames.value = 0;
+		}
+		return res;
+	}
+
+	jvxErrorType
+		CjvxViNMixer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) 
+	{
+		jvxErrorType res = CjvxVideoNode::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		if (res == JVX_NO_ERROR)
+		{
+#ifdef JVX_OPEN_BMP_FOR_TEST
+			addOneImageToExchangeBuffer_inLock(ptrsFromExternal_local, test.bufRGBA32, test.szBufRGBA32);
+#endif
+		}
+		return res;
+	}
+
+	// ===============================================================================================
+
+	jvxErrorType
 	CjvxViNMixer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		
 		jvxByte** bufsIn = jvx_process_icon_extract_input_buffers<jvxByte>(_common_set_icon.theData_in, idx_stage);
-
 		jvxByte** bufsOut = jvx_process_icon_extract_output_buffers<jvxByte>(_common_set_ocon.theData_out);
 
-#ifdef JVX_OPEN_BMP_FOR_TEXT
+		_lock_properties_local();
+		if (ptrsFromExternal_local)
+		{
+			addOneImageToExchangeBuffer_inLock(ptrsFromExternal_local, bufsIn[0], _common_set_icon.theData_in->con_params.buffersize);
+		}
+		_unlock_properties_local();
+
+#ifdef JVX_OPEN_BMP_FOR_TEST
 		if (CjvxViNMixer_genpcg::config.replace_video_image.value)
 		{
 			jvxSize minCpy = _common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format);
@@ -647,6 +692,123 @@ CjvxViNMixer::activate_connectors()
 		jvx_bitZSet(CjvxViNMixer_genpcg::config.current_inputs.value.selection(), 0);
 		// _unlock_properties_local();
 		CjvxProperties::add_property_report_collect(CjvxViNMixer_genpcg::config.current_inputs.descriptor.c_str());
+	}
+
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxViNMixer, interface_pass)
+	{
+		switch (purp)
+		{
+		case jvxPropertyCallbackPurpose::JVX_PROPERTY_CALLBACK_INSTALL_POSTHOOK:
+			if (CjvxViNMixer_genpcg::expose.rendering_target.ptr)
+			{
+				// Start the video exposure
+				// If we are here, we can move the externalBuffer forward
+				std::string location;
+				if (CjvxViNMixer_genpcg::expose.rendering_target.ptr->associationHint)
+				{
+					location = CjvxViNMixer_genpcg::expose.rendering_target.ptr->associationHint;
+					ptrsFromExternal[location] = CjvxViNMixer_genpcg::expose.rendering_target.ptr;
+					if (location == "Local")
+					{
+						ptrsFromExternal_local = CjvxViNMixer_genpcg::expose.rendering_target.ptr;
+
+#ifdef JVX_OPEN_BMP_FOR_TEST
+						addOneImageToExchangeBuffer_inLock(ptrsFromExternal_local, test.bufRGBA32, test.szBufRGBA32);				
+#endif
+
+					}
+					CjvxViNMixer_genpcg::expose.rendering_target.ptr = nullptr;
+				}
+			}
+			break;
+		case jvxPropertyCallbackPurpose::JVX_PROPERTY_CALLBACK_UNINSTALL_PREHOOK:
+			if (CjvxViNMixer_genpcg::expose.rendering_target.ptr == nullptr)
+			{
+				jvxBool foundit = false;
+				jvxExternalBuffer* ptrFound = nullptr;
+				for (auto& elm : ptrsFromExternal)
+				{
+					const jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<jvxExternalBuffer>* ptrRawToInstall =
+						castPropRawPointer<const  jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<jvxExternalBuffer> >(
+							rawPtr, elm.second->formFld);
+					if (ptrRawToInstall)
+					{
+						ptrFound = ptrRawToInstall->typedPointer();
+						if ((std::string)elm.second->associationHint == (std::string)ptrFound->associationHint)
+						{
+							break;
+						}
+						else
+						{
+							ptrFound = nullptr;
+						}
+					}
+				}
+
+				if (ptrFound)
+				{
+					std::string location = ptrFound->associationHint;
+					if (location == "Local")
+					{						
+						ptrsFromExternal_local = nullptr;						
+					}
+					auto elm = ptrsFromExternal.find(location);
+					if (elm != ptrsFromExternal.end())
+					{
+						CjvxViNMixer_genpcg::expose.rendering_target.ptr = elm->second;
+					}
+				}
+				else
+				{
+					std::cout << __FUNCTION__ << "Error: Unable to identify uninstall reference." << std::endl;
+				}
+			}
+			
+			// Video exposure stopped
+			break;			
+		}
+		return JVX_NO_ERROR;
+	}
+
+	void
+	CjvxViNMixer::addOneImageToExchangeBuffer_inLock(jvxExternalBuffer* buf, jvxByte* fldFromRGBA32, jvxSize szFromRGBA32)
+	{
+		if(buf)
+		{
+			switch (buf->subTp)
+			{
+			case jvx::externalBufferSubType::JVX_EXTERNAL_BUFFER_SUB_2D_FULL:
+			{
+				// Not in protected area since we only read - we have a one-read-one-write constellation
+				if (buf->fill_height < buf->specific.the2DFieldBuffer_full.common.number_buffers)
+				{
+					// Check buffer match size!!
+					assert(buf->specific.the2DFieldBuffer_full.common.szFldOneBuf == szFromRGBA32);
+
+					buf->safe_access.lockf(buf->safe_access.priv);
+					jvxSize idx_write = (buf->idx_read + buf->fill_height) % buf->specific.the2DFieldBuffer_full.common.number_buffers;
+					buf->safe_access.unlockf(buf->safe_access.priv);
+
+					jvxByte* ptrWrite = buf->ptrFld;
+					ptrWrite += idx_write * buf->numElmFldOneBuf;
+					memcpy(ptrWrite, fldFromRGBA32, buf->specific.the2DFieldBuffer_full.common.szFldOneBuf);
+
+					buf->safe_access.lockf(buf->safe_access.priv);
+					buf->fill_height++;
+					buf->safe_access.unlockf(buf->safe_access.priv);
+				}
+				else
+				{
+					CjvxViNMixer_genpcg::expose.lost_frames.value++;
+				}
+			}
+			break;
+			default:
+
+				// Do nothing here!!
+				break;
+			}
+		}
 	}
 
 #ifdef JVX_PROJECT_NAMESPACE

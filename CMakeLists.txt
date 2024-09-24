@@ -755,6 +755,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 
     set(JVX_BASE_VIDEO_NODES 
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNDefault
+		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNCameraConvert
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNMixer
 		)
 

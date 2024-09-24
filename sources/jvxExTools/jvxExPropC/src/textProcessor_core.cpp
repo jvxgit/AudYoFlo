@@ -727,14 +727,22 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 		}
 
 		oneSection.callback_set = "";
-		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_SET_POSTHOOK, &oneSection.callback_set), MACRO_CALLBACK_SET_POSTHOOK, theContent);
+		res = HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_POSTHOOK, &oneSection.callback_set_pre); 
+		if(res != JVX_NO_ERROR) 
+		{ 	
+			SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_SET_POSTHOOK, &oneSection.callback_set), MACRO_CALLBACK_SET_POSTHOOK, theContent);
+		}
 				
 		oneSection.callback_get = "";
 		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_GET_PREHOOK, &oneSection.callback_get), MACRO_CALLBACK_GET_PREHOOK, theContent);
 
 		oneSection.callback_set_pre = "";
-		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_SET_PREHOOK, &oneSection.callback_set_pre), MACRO_CALLBACK_SET_PREHOOK, theContent);
-				
+		res = HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_PREHOOK, &oneSection.callback_set_pre); 
+		if(res != JVX_NO_ERROR) 
+		{ 			
+			SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_SET_PREHOOK, &oneSection.callback_set_pre), MACRO_CALLBACK_SET_PREHOOK, theContent);
+		}
+
 		oneSection.callback_get_post = "";
 		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_CALLBACK_GET_POSTHOOK, &oneSection.callback_get_post), MACRO_CALLBACK_GET_POSTHOOK, theContent);
 

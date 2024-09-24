@@ -22,6 +22,7 @@ include_directories(
 	${FLUTTER_SDK_PATH}/bin/cache/dart-sdk/include
 
 	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxLibraries/jvx-lib-host-app/generated
+	
   )
 
 

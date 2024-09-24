@@ -20,6 +20,7 @@ set(LOCAL_PCG_FILES
 set(LOCAL_PCG_FILE_OPTIONS 
 	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg
 	-I ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/pcg/jvxVisualDisplay	
+	-D JVX_DECLARE_PROP_REF_INSTALL_CALLBACK
 	)
 
 set(LOCAL_LIBS 
@@ -29,7 +30,7 @@ set(LOCAL_LIBS
   
 if(JVX_USE_CBMP)
 	include_directories(${JVX_BASE_LIBS_LIB_PATH}/third_party/git/cbmp/cbmp)
-	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_OPEN_BMP_FOR_TEXT")	
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_OPEN_BMP_FOR_TEST")	
 	set(LOCAL_LIBS ${LOCAL_LIBS} cbmp_static)
 endif()
 

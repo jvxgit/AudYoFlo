@@ -47,6 +47,7 @@ namespace jvx
 		jvxSize number_buffers;
 		jvxSize seg_x;
 		jvxSize seg_y;
+		jvxSize szFldOneBuf;
 	};
 
 	struct multichannel2DFieldBufferHeader_full

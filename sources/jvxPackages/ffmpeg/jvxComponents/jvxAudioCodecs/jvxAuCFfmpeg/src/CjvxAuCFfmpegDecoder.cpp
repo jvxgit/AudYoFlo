@@ -287,7 +287,8 @@ CjvxAuCFfmpegAudioDecoder::process_buffers_icon(jvxSize mt_mask, jvxSize idx_sta
 			}
 			for (i = 0; i < cParams.nChans; i++)
 			{
-				memset(bufsOutData[i], 0, cParams.frame->nb_samples* jvxDataFormatGroup_getsize(_common_set_ocon.theData_out.con_params.format));
+				//memset(bufsOutData[i], 0, cParams.frame->nb_samples* jvxDataFormatGroup_getsize(_common_set_ocon.theData_out.con_params.format));
+				memset(bufsOutData[i], 0, cParams.frame->nb_samples* jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format));
 			}
 			break;
 

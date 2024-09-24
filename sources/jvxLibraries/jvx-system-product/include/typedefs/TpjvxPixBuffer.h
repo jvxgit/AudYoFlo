@@ -1,8 +1,8 @@
 #ifndef __TPJVX_PIXBUFFER_H__
 #define __TPJVX_PIXBUFFER_H__
 
-typedef bool (*PixelBufferTexturePluginFrameAvailableCallback)(int64_t texture_id, void* priv_data);
-typedef bool (*PixelBufferTexturePluginNotifyCallback)(int64_t texture_id, void* priv_data);
+typedef bool (*PixelBufferTexturePluginFrameAvailableCallback)(int64_t texture_id, bool reqSwap);
+typedef bool (*PixelBufferTexturePluginNotifyCallback)(int64_t texture_id);
 typedef void (*PixelBufferTexturePluginCreateRendererCallback)(
     int64_t texture_id,
     uint8_t **buffer, uint32_t width, uint32_t height,

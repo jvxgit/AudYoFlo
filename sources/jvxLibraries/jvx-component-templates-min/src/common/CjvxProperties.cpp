@@ -1825,7 +1825,7 @@ CjvxProperties::_install_property_reference(
 		res = _run_hook(selection->callbacks.callback_set_prehook,
 			selection->propDescriptor->name.std_str(),
 			callGate, ptrRaw, identHook, tune,
-			JVX_PROPERTY_CALLBACK_INSTALL);
+			JVX_PROPERTY_CALLBACK_INSTALL_PREHOOK);
 		if (res != JVX_NO_ERROR)
 		{
 			if (res == JVX_ERROR_ABORT)
@@ -1907,7 +1907,7 @@ CjvxProperties::_install_property_reference(
 			res = _run_hook(selection->callbacks.callback_set_posthook,
 				selection->propDescriptor->name.std_str(),
 				callGate, ptrRaw, identHook, tune,
-				JVX_PROPERTY_CALLBACK_INSTALL);
+				JVX_PROPERTY_CALLBACK_INSTALL_POSTHOOK);
 		}
 	} // if (selection != _common_set_properties.registeredProperties.end())
 	else
@@ -1991,7 +1991,7 @@ CjvxProperties::_uninstall_property_reference(
 		res = _run_hook(selection->callbacks.callback_set_prehook,
 			selection->propDescriptor->name.std_str(),
 			callGate, ptrRaw, identHook, tune,
-			JVX_PROPERTY_CALLBACK_INSTALL);
+			JVX_PROPERTY_CALLBACK_UNINSTALL_PREHOOK);
 		if (res != JVX_NO_ERROR)
 		{
 			if (res == JVX_ERROR_ABORT)
@@ -2065,7 +2065,7 @@ CjvxProperties::_uninstall_property_reference(
 			res = _run_hook(selection->callbacks.callback_set_posthook,
 				selection->propDescriptor->name.std_str(),
 				callGate, ptrRaw, identHook, tune,
-				JVX_PROPERTY_CALLBACK_UNINSTALL);
+				JVX_PROPERTY_CALLBACK_UNINSTALL_POSTHOOK);
 		}
 	}
 	else
@@ -3678,12 +3678,15 @@ CjvxProperties::_install_match_external_buffer(
 				}
 				if (tpLook == extBufPtrFromRawToInstall->tp)
 				{
+					jvxSize szLoc = jvxDataFormat_getsize(extBufPtrFromRawToInstall->formFld) * jvxDataFormatGroup_getsize_mult(extBufPtrFromRawToInstall->subFormFld);
+					szLoc /= jvxDataFormatGroup_getsize_div(extBufPtrFromRawToInstall->subFormFld);
+
 					switch (tpLook)
 					{
 						// Check that size secification is consistent
 					case jvx::JVX_EXTERNAL_BUFFER_1D_CIRCULAR_BUFFER:
 						if (
-							(extBufPtrFromRawToInstall->szElmFld != (jvxDataFormat_getsize(extBufPtrFromRawToInstall->formFld) * jvxDataFormatGroup_getsize(extBufPtrFromRawToInstall->subFormFld))) ||
+							(extBufPtrFromRawToInstall->szElmFld != szLoc) ||
 							(extBufPtrFromRawToInstall->numElmFld != (extBufPtrFromRawToInstall->length * extBufPtrFromRawToInstall->number_channels)) ||
 							(extBufPtrFromRawToInstall->szFld != (extBufPtrFromRawToInstall->szElmFld * extBufPtrFromRawToInstall->numElmFld)))
 						{
@@ -3692,7 +3695,7 @@ CjvxProperties::_install_match_external_buffer(
 						break;
 					case jvx::JVX_EXTERNAL_BUFFER_2D_FIELD_BUFFER:
 						if (
-							(extBufPtrFromRawToInstall->szElmFld != (jvxDataFormat_getsize(extBufPtrFromRawToInstall->formFld) * jvxDataFormatGroup_getsize(extBufPtrFromRawToInstall->subFormFld))) ||
+							(extBufPtrFromRawToInstall->szElmFld != szLoc) ||
 							(extBufPtrFromRawToInstall->numElmFld != (extBufPtrFromRawToInstall->length * extBufPtrFromRawToInstall->number_channels * extBufPtrFromRawToInstall->specific.the2DFieldBuffer_full.common.number_buffers)) ||
 							(extBufPtrFromRawToInstall->szFld != (extBufPtrFromRawToInstall->szElmFld * extBufPtrFromRawToInstall->numElmFld)))
 						{
