@@ -54,6 +54,20 @@ jobs:
         python3-opencv
         libpcap-dev
         ninja-build
+        yasm
+        libsdl2-dev 
+        libsqlite3-dev 
+        libgtkmm-3.0-dev 
+        libpango1.0-dev 
+        libgtkmm-3.0-dev 
+        libpango1.0-dev 
+        pangocairo 
+        pangoft2 
+        libcairo-dev 
+        libxkbcommon-x11-dev 
+        libxcb-keysyms1-dev 
+        libxcb-cursor-dev 
+        libxcb-util-dev
 
     - name: Install Aqt
       run: pip install aqtinstall
