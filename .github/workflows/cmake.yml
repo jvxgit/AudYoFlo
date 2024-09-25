@@ -61,8 +61,6 @@ jobs:
         libpango1.0-dev 
         libgtkmm-3.0-dev 
         libpango1.0-dev 
-        pangocairo 
-        pangoft2 
         libcairo-dev 
         libxkbcommon-x11-dev 
         libxcb-keysyms1-dev 
