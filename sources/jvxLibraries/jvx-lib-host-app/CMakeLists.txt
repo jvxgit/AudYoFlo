@@ -29,10 +29,15 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_components.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_async_forward.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_show.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_pixbuf.cpp
+  
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_hosthooks.cpp
   )
+
+if(JVX_USE_OPENCV)
+	set(LOCAL_SOURCES ${LOCAL_SOURCES}
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_pixbuf.cpp)
+endif()
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${JVX_CMAKE_C_FLAGS_EXEC} ${JVX_PLATFORM_FLAGS}")
 
@@ -70,8 +75,11 @@ include_directories(
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTLogRemoteHandler/
 
-  ${OPENCV_LIBRARY_PATH}
   )
+
+if(JVX_USE_OPENCV)
+	include_directories(${OPENCV_LIBRARY_PATH})
+endif()
 
 #if(JVX_OS MATCHES "windows")#
 #	if(NOT JVX_USE_CONSOLE_APPS)
@@ -87,8 +95,12 @@ set(LOCAL_LIBS
 	jvxTLogRemoteHandler_static
 	jvx-host-json_static
 	jvx-app-host-static_static
-	${OPENCV_LIBRARIES}
 	)
+
+if(JVX_USE_OPENCV)
+	set(LOCAL_LIBS ${LOCAL_LIBS} ${OPENCV_LIBRARIES})
+endif()
+
 
 include (${JVX_INTEGRATE_SOURCES_PATH}/cmake/specific.cmake)
 set(LOCAL_LIBS_ALL ${LOCAL_LIBS})
@@ -101,6 +113,10 @@ set(LOCAL_LIBS_ALL ${LOCAL_LIBS})
 set(LOCAL_PCG_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_lib.pcg
   )
+
+if(JVX_USE_OPENCV)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_ENABLE_PIXBUFFER")
+endif()
 
 set(LOCAL_COMPILE_DEFINITIONS_COMMON "${LOCAL_COMPILE_DEFINITIONS}")
 set(BUILD_STATIC TRUE)

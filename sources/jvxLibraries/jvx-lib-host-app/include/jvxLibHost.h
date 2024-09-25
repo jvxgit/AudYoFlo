@@ -335,6 +335,8 @@ public:
 	virtual void command_line_read_specific(IjvxCommandLine* cmdLine) override;	
 
 	// ================================================================================================
+
+#ifdef JVX_ENABLE_PIXBUFFER
 	static void pixbuffer_local_create_cb(
 		int64_t texture_id,
 		uint8_t** buffer, uint32_t width, uint32_t height,
@@ -342,6 +344,7 @@ public:
 		PixelBufferTexturePluginFrameAvailableCallback frame_available_cb,
 		PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data);
 	static void pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data);
+#endif
 
 	// ================================================================================================
 #define JVX_OBJECT_ZERO_REFERENCE
