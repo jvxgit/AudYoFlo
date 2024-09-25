@@ -46,12 +46,12 @@ namespace JVX_PROJECT_NAMESPACE {
 
 		ayf_starter_init(&handle, dimInX0);
 		
-		handle.prmAsync.volume = processing_lib.prmAsync.volume;
+		handle.prm_async.volume = processing_lib.prm_async.volume;
 
 #ifdef USE_ORC
-		processing_lib.prmAsync.orcTokenBackend_ip = genStarter_node::properties.orcBackendIp.value.c_str();
-		processing_lib.prmAsync.orcTokenBackend_op = genStarter_node::properties.orcBackendOp.value.c_str();
-		processing_lib.prmAsync.orcTokenDebug = genStarter_node::properties.orcDebugLevel.value.c_str();
+		processing_lib.prm_async.orc_token_backend_ip = genStarter_node::properties.orcBackendIp.value.c_str();
+		processing_lib.prm_async.orc_token_backend_op = genStarter_node::properties.orcBackendOp.value.c_str();
+		processing_lib.prm_async.orc_token_debug = genStarter_node::properties.orcDebugLevel.value.c_str();
 #endif
 		ayf_starter_prepare(&handle);
 
@@ -77,9 +77,9 @@ namespace JVX_PROJECT_NAMESPACE {
 		}
 
 		JVX_SAFE_ALLOCATE_OBJECT_CPP_Z(processing_lib_dbg, struct ayf_starter_data_debug);
-		processing_lib.develop.dbgHandler = processing_lib_dbg;
+		processing_lib.develop.dbg_handler = processing_lib_dbg;
 
-		ayf_starter_data_debug_prepare(processing_lib.develop.dbgHandler, &processing_lib, spec,
+		ayf_starter_data_debug_prepare(processing_lib.develop.dbg_handler, &processing_lib, spec,
 			CjvxMexCallsProfiler::jvx_register_entry_profiling_data_cb, reinterpret_cast<jvxHandle*>(static_cast<CjvxMexCallsProfiler*>(this)));
 
 		return JVX_NO_ERROR;
@@ -87,11 +87,11 @@ namespace JVX_PROJECT_NAMESPACE {
 
 	jvxErrorType CayfAuNStarter::local_deallocate_profiling()
 	{
-		ayf_starter_data_debug_postprocess(processing_lib.develop.dbgHandler,
+		ayf_starter_data_debug_postprocess(processing_lib.develop.dbg_handler,
 			CjvxMexCallsProfiler::jvx_unregister_entry_profiling_data_cb, reinterpret_cast<jvxHandle*>(static_cast<CjvxMexCallsProfiler*>(this)));
 		JVX_SAFE_DELETE_OBJECT(processing_lib_dbg);
 
-		processing_lib.develop.dbgHandler = nullptr;
+		processing_lib.develop.dbg_handler = nullptr;
 
 		return JVX_NO_ERROR;
 	}

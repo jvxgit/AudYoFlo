@@ -27,7 +27,11 @@
 extern "C"
 {
 #ifdef JVX_USE_RUST_CORE_LIB
+#include "ayfstarterlibrs_common.h"
 #include "ayfstarterlibrs.h"
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+#include "ayfstarterlibdbgrs.h"
+#endif
 #else
 #include "ayfstarterlib.h"
 #endif

@@ -88,7 +88,17 @@ if(JVX_USE_PART_MATLAB)
 	set(JVX_MCG_LOCAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mcg/exports_project.mcg)
 
 	# Add the version with testpoints
-	set(LOCAL_LIBS ${LOCAL_LIBS_COMMON} ayfstarterlibtp_static)
+	# set(LOCAL_LIBS ${LOCAL_LIBS_COMMON} ayfstarterlibtp_static)
+
+	if(AYFSTARTER_USE_RUST_LIB_LOCAL)		
+		include_directories(
+			${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-rust/include
+			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/ayfstarterlib_debug-rust)
+		set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibdbgrs_static ayfstarterlibrs_static)
+	else()
+		# include_directories(${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/ayfstarterlib/include)
+		set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibtp_static)
+	endif()
 
 	# Activate the secondary Matlab project
 	JVX_ACTIVATE_VERSION_MATLAB(${PROJECT_NAME} JVX_EXTERNAL_CALL_ENABLED)

@@ -35,7 +35,7 @@ set_target_properties(${JVX_TARGET_NAME_STATIC} PROPERTIES IMPORTED_LOCATION "${
 target_link_libraries(${JVX_TARGET_NAME_STATIC} INTERFACE ${JVX_RUST_ADDITIONAL_LIBS})
 
 add_custom_target(
-  cargo_build
+  cargo_build__${PROJECT_NAME}
   BYPRODUCTS ${RUST_STATIC_LIB_PATH}
   COMMAND cargo build --target-dir ${CARGO_TARGET_DIR} --lib ${CARGO_BUILD_OPTIONS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -44,7 +44,7 @@ add_custom_target(
 
 # Generate the C header bindings
 add_custom_target(
-  cargo_cbindgen
+  cargo_cbindgen__${PROJECT_NAME}
   BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h
   COMMAND cbindgen --crate ${PROJECT_NAME} --lang c --quiet --output ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -58,8 +58,18 @@ file(GLOB_RECURSE RUST_SOURCES
 source_group("Rust sources" FILES ${RUST_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h)
 
 set_source_files_properties(${RUST_SOURCES} PROPERTIES HEADER_FILE_ONLY ON)
-target_sources(${JVX_TARGET_NAME_STATIC} INTERFACE ${RUST_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h)
+if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h)
+	set(RUST_SOURCES ${RUST_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h)
+endif()
 
-add_dependencies(${JVX_TARGET_NAME_STATIC} cargo_build)
-add_dependencies(${JVX_TARGET_NAME_STATIC} cargo_cbindgen)
+target_sources(${JVX_TARGET_NAME_STATIC} INTERFACE ${RUST_SOURCES})
+
+add_dependencies(${JVX_TARGET_NAME_STATIC} cargo_build__${PROJECT_NAME})
+add_dependencies(${JVX_TARGET_NAME_STATIC} cargo_cbindgen__${PROJECT_NAME})
+
+foreach(ONE_ADDITIONAL_TARGET ${JVX_CBINDGEN_ADDITIONAL_TARGETS})
+	message("Rust adding additional cbindgen target ${ONE_ADDITIONAL_TARGET}")
+	add_dependencies(${JVX_TARGET_NAME_STATIC} ${ONE_ADDITIONAL_TARGET})
+endforeach()
+	
 

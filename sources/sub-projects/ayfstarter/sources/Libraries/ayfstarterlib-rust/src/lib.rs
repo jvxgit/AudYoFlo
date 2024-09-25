@@ -1,48 +1,5 @@
 use jvx_dsp::*;
-
-// Declare sructs in C style data layout
-#[repr(C)]
-
-
-#[derive(Clone)]
-pub struct ayf_starter_init {
-    pub bsize: JvxSize,
-}
-
-#[repr(C)]
-#[derive(Clone)]
-pub struct ayf_starter_async 
-{
-    pub volume: JvxData,
-    // the unused ones below are still required for ABI compatibility
-    pub runorc: JvxCBool,
-    pub orc_token_backend_ip: *const std::os::raw::c_char,
-    pub orc_token_backend_op: *const std::os::raw::c_char,
-    pub orc_token_debug: *const std::os::raw::c_char,
-}
-
-#[repr(C)]
-struct develop 
-{
-    dbg_handler: *mut std::ffi::c_void,
-}
-
-#[repr(C)]
-pub struct ayf_starter
-{
-    pub prm_async: ayf_starter_async,
-    pub prm_init: ayf_starter_init,
-
-    develop: develop,
-    prv: Option<Box<ayf_starter_prv>>, // NOTE should have the same memory layout as `*mut JvxHandle`
-}
-
-#[repr(C)]
-struct ayf_starter_prv 
-{
-    pub prm_init_copy: ayf_starter_init,
-    pub prm_async_copy: ayf_starter_async,
-}
+use ayfstarterlibrs_common::*;
 
 #[no_mangle]
 pub extern "C" fn ayf_starter_init(hdl: *mut ayf_starter, bsize: JvxSize) -> JvxDspBaseErrorType 

@@ -88,6 +88,19 @@ pub type JvxData = f64;
 pub type JvxDspBaseErrorType = JvxErrorType;
 pub type JvxSize = usize;
 pub type JvxCBool = u16;
+pub type JvxCBitField = u64;
 
 pub const C_TRUE : u16 = 1 as u16;
 pub const C_FALSE : u16 = 0 as u16;
+
+#[repr(C)]
+#[derive(Clone)]
+pub struct jvx_profiler_data_entry
+{
+	pub sz: JvxSize,
+    pub fld: *mut std::ffi::c_void,
+	pub cplx: JvxCBool 
+}
+
+pub type jvx_register_entry_profiling_data_c = extern fn (dat: jvx_profiler_data_entry, name: *const std::os::raw::c_char, inst: *mut std::ffi::c_void);
+pub type jvx_unregister_entry_profiling_data_c = extern fn(name: *const std::os::raw::c_char, inst: *mut std::ffi::c_void);

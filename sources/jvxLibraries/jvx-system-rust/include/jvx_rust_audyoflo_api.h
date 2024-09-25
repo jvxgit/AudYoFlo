@@ -5,5 +5,8 @@ typedef jvxData JvxData;
 typedef jvxSize JvxSize;
 typedef jvxDspBaseErrorType JvxDspBaseErrorType;
 typedef jvxCBool JvxCBool;
+typedef jvxCBitField JvxCBitField;
+
+#include "jvx_profiler/jvx_profiler_data_entry.h"
 
 #endif

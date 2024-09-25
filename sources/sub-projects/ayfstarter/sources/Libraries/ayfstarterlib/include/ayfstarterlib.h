@@ -30,7 +30,7 @@ struct ayf_starter
 
 	struct
 	{
-		struct ayf_starter_data_debug* dbgHandler;
+		struct ayf_starter_data_debug* dbg_handler;
 	} develop;
 	jvxHandle* prv;
 };
