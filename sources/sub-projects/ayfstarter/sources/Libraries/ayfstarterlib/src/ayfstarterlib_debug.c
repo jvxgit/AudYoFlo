@@ -16,7 +16,7 @@ jvxDspBaseErrorType ayf_starter_data_debug_prepare(
 	// All pointers are initialized to 0 from outside (memset(0))	
 	if(hdlDbg->specData & ((jvxCBitField)1 << JVX_STARTER_DATA_DEBUG_TP0_SHIFT))
 	{
-		jvx_profiler_allocate_single_entry(&hdlDbg->TP0, hdlStarter->prmInit.bsize, false);
+		jvx_profiler_allocate_single_entry(&hdlDbg->TP0, hdlStarter->prm_init.bsize, false);
 		if(cb) cb(&hdlDbg->TP0, "starter_tp0_c", inst);
 	}
 #endif

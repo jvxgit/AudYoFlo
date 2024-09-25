@@ -8,21 +8,21 @@
 
 struct ayf_starter_prv
 {
-	struct ayf_starter_init prmInitCopy;
-	struct ayf_starter_async prmAsyncCopy;
+	struct ayf_starter_init prm_initCopy;
+	struct ayf_starter_async prm_asyncCopy;
 };
 
 jvxDspBaseErrorType ayf_starter_init(struct ayf_starter* hdl, jvxSize bsize)
 {
 	if (hdl->prv == NULL)
 	{
-		hdl->prmInit.bsize = bsize;
-		hdl->prmAsync.volume = 1.0;
-		hdl->prmAsync.runorc = c_true;
+		hdl->prm_init.bsize = bsize;
+		hdl->prm_async.volume = 1.0;
+		hdl->prm_async.runorc = c_true;
 
-		hdl->prmAsync.orcTokenBackend_ip = NULL;
-		hdl->prmAsync.orcTokenBackend_op = NULL;
-		hdl->prmAsync.orcTokenDebug = NULL;
+		hdl->prm_async.orc_token_backend_ip = NULL;
+		hdl->prm_async.orc_token_backend_op = NULL;
+		hdl->prm_async.orc_token_debug = NULL;
 
 		return JVX_NO_ERROR;
 	}
@@ -37,26 +37,26 @@ jvxDspBaseErrorType ayf_starter_prepare(struct ayf_starter* hdl)
 		struct ayf_starter_prv* ptr = NULL;
 		JVX_SAFE_ALLOCATE_OBJECT_Z(ptr, struct ayf_starter_prv);
 
-		ptr->prmAsyncCopy = hdl->prmAsync;
-		ptr->prmInitCopy = hdl->prmInit;
+		ptr->prm_asyncCopy = hdl->prm_async;
+		ptr->prm_initCopy = hdl->prm_init;
 
 #ifdef USE_ORC
-		if (hdl->prmAsync.orcTokenDebug)
+		if (hdl->prm_async.orc_token_debug)
 		{
-			JVX_SETENVIRONMENTVARIABLE("ORC_DEBUG", hdl->prmAsync.orcTokenDebug, "DUMMY");
+			JVX_SETENVIRONMENTVARIABLE("ORC_DEBUG", hdl->prm_async.orc_token_debug, "DUMMY");
 		}
 
 		// Initialize the first call - the backend is fixed after that
-		if (hdl->prmAsync.orcTokenBackend_ip)
+		if (hdl->prm_async.orc_token_backend_ip)
 		{
 			// Initialize backend - will only work at the first time
-			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prmAsync.orcTokenBackend_ip, "DUMMY");
+			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prm_async.orc_token_backend_ip, "DUMMY");
 		}
 		volume_orc_double_ip(NULL, 1.0, 0);
 
-		if (hdl->prmAsync.orcTokenBackend_op)
+		if (hdl->prm_async.orc_token_backend_op)
 		{
-			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prmAsync.orcTokenBackend_op, "DUMMY");
+			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prm_async.orc_token_backend_op, "DUMMY");
 		}
 		volume_orc_double(NULL, NULL,  1.0, 0);
 #endif
@@ -77,16 +77,16 @@ jvxDspBaseErrorType ayf_starter_process(struct ayf_starter* hdl, jvxData** input
 		if ((numChannelsIn > 0) && (numChannelsOut > 0))
 		{
 #ifdef USE_ORC
-			if (hdlLocal->prmAsyncCopy.runorc == c_true)
+			if (hdlLocal->prm_asyncCopy.runorc == c_true)
 			{
 				if (inputs == outputs && numChannelsOut <= numChannelsIn) // in-place
 				{
 					for (jvxSize channelIdx = 0; channelIdx < numChannelsOut; channelIdx++)
 					{
 #ifdef JVX_DATA_FORMAT_FLOAT
-						volume_orc_float_ip(inputs[channelIdx], hdlLocal->prmAsyncCopy.volume, bufferSize);
+						volume_orc_float_ip(inputs[channelIdx], hdlLocal->prm_asyncCopy.volume, bufferSize);
 #elif defined JVX_DATA_FORMAT_DOUBLE
-						volume_orc_double_ip(inputs[channelIdx], hdlLocal->prmAsyncCopy.volume, bufferSize);
+						volume_orc_double_ip(inputs[channelIdx], hdlLocal->prm_asyncCopy.volume, bufferSize);
 #else
 #error ayf_starter_process: no orc support implemented for current data format
 #endif
@@ -98,9 +98,9 @@ jvxDspBaseErrorType ayf_starter_process(struct ayf_starter* hdl, jvxData** input
 					{
 						jvxSize channelIdxIn = channelIdxOut % numChannelsIn;
 #ifdef JVX_DATA_FORMAT_FLOAT
-						volume_orc_float(outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prmAsyncCopy.volume, bufferSize);
+						volume_orc_float(outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prm_asyncCopy.volume, bufferSize);
 #elif defined JVX_DATA_FORMAT_DOUBLE
-						volume_orc_double(outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prmAsyncCopy.volume, bufferSize);
+						volume_orc_double(outputs[channelIdxOut], inputs[channelIdxIn], hdlLocal->prm_asyncCopy.volume, bufferSize);
 #else
 #error ayf_starter_process: no orc support implemented for current data format
 #endif
@@ -117,12 +117,12 @@ jvxDspBaseErrorType ayf_starter_process(struct ayf_starter* hdl, jvxData** input
 					jvxSize channelIdxIn = channelIdxOut % numChannelsIn;
 
 					// We move from start to end within the buffer - it is all fine even if we run in-place
-					outputs[channelIdxOut][j] = inputs[channelIdxIn][j] * hdlLocal->prmAsyncCopy.volume;
+					outputs[channelIdxOut][j] = inputs[channelIdxIn][j] * hdlLocal->prm_asyncCopy.volume;
 					if (channelIdxOut == 0)
 					{
 						// Add profiling data
 						JVX_DATA_OUT_DBG_TP_STR(hdl->develop.dbgHandler, prv, JVX_STARTER_DATA_DEBUG_TP0_SHIFT,
-							TP0, outputs[channelIdxOut], hdlLocal->prmInitCopy.bsize);
+							TP0, outputs[channelIdxOut], hdlLocal->prm_initCopy.bsize);
 
 					}
 				}
@@ -161,11 +161,11 @@ jvxDspBaseErrorType ayf_starter_update(struct ayf_starter* hdl, jvxUInt16 operat
 		{
 			if (wantToSet)
 			{
-				ptr->prmAsyncCopy = hdl->prmAsync;
+				ptr->prm_asyncCopy = hdl->prm_async;
 			}
 			else
 			{
-				hdl->prmAsync = ptr->prmAsyncCopy;
+				hdl->prm_async = ptr->prm_asyncCopy;
 			}
 		}
 

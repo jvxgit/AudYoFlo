@@ -2,12 +2,16 @@ set(PROJECT_NAME ayfAuNStarter)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
+set(AYFSTARTER_USE_RUST_LIB_LOCAL FALSE)
+if(AYFSTARTER_USE_RUST_LIBS)
+	set(AYFSTARTER_USE_RUST_LIB_LOCAL FALSE)
+endif()
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/target
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
   ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
-  ${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/ayfstarterlib/include
 
   # Step IV
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-mex/include
@@ -28,16 +32,21 @@ set(LOCAL_LIBS_COMMON
 	jvx-component-templates-base_static
 	)
 	
-if(AYFSTARTER_USE_RUST_LIBS)
+if(AYFSTARTER_USE_RUST_LIB_LOCAL)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_RUST_CORE_LIB")	
+	include_directories(
+			${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-rust/include
+			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/ayfstarterlib-rust)
 	set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibrs_static)
 else()
+	include_directories(${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/ayfstarterlib/include)
 	set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlib_static)
 endif()
 
 set(IS_JVX_COMPONENT TRUE)
 
 #================================= Step IV =================================
-set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS_COPY};JVX_PROJECT_NAMESPACE=AYFSTARTER")
+set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_PROJECT_NAMESPACE=AYFSTARTER")
 set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};${AYFSTARTER_SUB_PROJECT_COMPILE_DEFINITIONS}")
 set(LOCAL_COMPILE_DEFINITIONS_COPY "${LOCAL_COMPILE_DEFINITIONS}")
 

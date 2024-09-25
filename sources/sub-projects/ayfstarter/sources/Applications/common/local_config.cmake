@@ -8,7 +8,7 @@ set(LOCAL_SOURCES ${LOCAL_SOURCES}
 	
 include_directories(
 
-	${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/sources/Components/AudioNodes/ayfAuNStarter/    
+	${SUBPRODUCT_AYFSTARTER_COMPONENTS_BINARY_DIR}/AudioNodes/ayfAuNStarter/    
 
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-product/include
 	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-product/generated

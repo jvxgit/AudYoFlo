@@ -42,14 +42,24 @@ add_custom_target(
   COMMENT "Build STATIC Rust Library ${JVX_TARGET_NAME_STATIC} with options: ${CARGO_BUILD_OPTIONS}"
 )
 
+# Generate the C header bindings
+add_custom_target(
+  cargo_cbindgen
+  BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h
+  COMMAND cbindgen --crate ${PROJECT_NAME} --lang c --quiet --output ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMENT "Generating header file for Rust Library ${JVX_TARGET_NAME_STATIC}"
+)
+
 file(GLOB_RECURSE RUST_SOURCES
   "${CMAKE_CURRENT_SOURCE_DIR}/src/*.rs"
 )
 
-source_group("Rust sources" FILES ${RUST_SOURCES})
+source_group("Rust sources" FILES ${RUST_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h)
 
 set_source_files_properties(${RUST_SOURCES} PROPERTIES HEADER_FILE_ONLY ON)
-target_sources(${JVX_TARGET_NAME_STATIC} INTERFACE ${RUST_SOURCES})
+target_sources(${JVX_TARGET_NAME_STATIC} INTERFACE ${RUST_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h)
 
 add_dependencies(${JVX_TARGET_NAME_STATIC} cargo_build)
+add_dependencies(${JVX_TARGET_NAME_STATIC} cargo_cbindgen)
 

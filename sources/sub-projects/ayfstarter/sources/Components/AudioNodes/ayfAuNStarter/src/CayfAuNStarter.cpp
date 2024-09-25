@@ -5,6 +5,15 @@
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 	
+	/* Print out during debugging which version of */
+#ifdef JVX_USE_RUST_CORE_LIB
+#pragma message("info: [Involving Rust Core Library]")
+#else 
+#pragma message("info: [Involving C Core Library]")
+#endif
+
+// #pragma message(__FILE__ "(" _CRT_STRINGIZE(__LINE__) ")" ": info: [Involving Rust Core Library]")
+
 CayfAuNStarter::CayfAuNStarter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	AYF_AUDIO_NODE_BASE_CLASS(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
@@ -34,10 +43,10 @@ CayfAuNStarter::activate()
 		genStarter_node::register_all(static_cast<CjvxProperties*>(this));
 
 		genStarter_node::associate__properties(static_cast<CjvxProperties*>(this),
-			&processing_lib.prmAsync.volume, 1
+			&processing_lib.prm_async.volume, 1
 
 #ifdef USE_ORC
-			,&processing_lib.prmAsync.runorc, 1
+			,&processing_lib.prm_async.runorc, 1
 #endif
 		);
 
@@ -47,7 +56,7 @@ CayfAuNStarter::activate()
 		genStarter_node::associate__develop__config(static_cast<CjvxProperties*>(this), 
 			&config.skip_involve_ccode, 1,
 			&config.matlab_profiling_enabled, 1,
-			&processing_lib.prmInit.bsize, 1);
+			&processing_lib.prm_init.bsize, 1);
 #endif
 
 	}
@@ -84,12 +93,12 @@ CayfAuNStarter::local_prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// jvxErrorType res = AYF_AUDIO_NODE_NODE_CLASS::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	// if (res != JVX_NO_ERROR) return res; 
 	// <- no longer in use as this call is in template class already
-	processing_lib.prmInit.bsize = _common_set_icon.theData_in->con_params.buffersize;
+	processing_lib.prm_init.bsize = _common_set_icon.theData_in->con_params.buffersize;
 
 #ifdef USE_ORC
-	processing_lib.prmAsync.orcTokenBackend_ip = genStarter_node::properties.orcBackendIp.value.c_str();
-	processing_lib.prmAsync.orcTokenBackend_op = genStarter_node::properties.orcBackendOp.value.c_str();
-	processing_lib.prmAsync.orcTokenDebug = genStarter_node::properties.orcDebugLevel.value.c_str();
+	processing_lib.prm_async.orc_token_backend_ip = genStarter_node::properties.orcBackendIp.value.c_str();
+	processing_lib.prm_async.orc_token_backend_op = genStarter_node::properties.orcBackendOp.value.c_str();
+	processing_lib.prm_async.orc_token_debug = genStarter_node::properties.orcDebugLevel.value.c_str();
 #endif
 
 	return ayf_starter_prepare(&processing_lib);

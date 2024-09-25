@@ -87,3 +87,7 @@ pub type JvxData = f64;
 
 pub type JvxDspBaseErrorType = JvxErrorType;
 pub type JvxSize = usize;
+pub type JvxCBool = u16;
+
+pub const C_TRUE : u16 = 1 as u16;
+pub const C_FALSE : u16 = 0 as u16;

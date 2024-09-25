@@ -18,15 +18,15 @@ struct ayf_starter_async
 	// Orc arguments only useful if USE_ORC. Hoiwever we do not ifdef these variables as we 
 	// should not ifdef in header files to prevent undesired seg faults!!!
 	jvxCBool runorc;
-	const char* orcTokenBackend_ip;
-	const char* orcTokenBackend_op;
-	const char* orcTokenDebug;
+	const char* orc_token_backend_ip;
+	const char* orc_token_backend_op;
+	const char* orc_token_debug;
 };
 
 struct ayf_starter
 {
-	struct ayf_starter_async prmAsync;
-	struct ayf_starter_init prmInit;
+	struct ayf_starter_async prm_async;
+	struct ayf_starter_init prm_init;
 
 	struct
 	{

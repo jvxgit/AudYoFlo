@@ -26,7 +26,11 @@
 
 extern "C"
 {
+#ifdef JVX_USE_RUST_CORE_LIB
+#include "ayfstarterlibrs.h"
+#else
 #include "ayfstarterlib.h"
+#endif
 }
 
 // Different pcg files for regular and matlab version of audio node
