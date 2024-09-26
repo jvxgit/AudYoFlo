@@ -1,0 +1,10 @@
+[package]
+name = "ayfstarterlibrs_common"
+publish = false
+edition = "2021"
+
+[features]
+default = []
+
+[dependencies]
+jvx_dsp = { path = "../../../../../jvxLibraries/jvx-dsp-rust" }

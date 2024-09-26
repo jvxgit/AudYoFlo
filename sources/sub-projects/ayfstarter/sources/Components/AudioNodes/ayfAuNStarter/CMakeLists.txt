@@ -4,7 +4,7 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 set(AYFSTARTER_USE_RUST_LIB_LOCAL FALSE)
 if(AYFSTARTER_USE_RUST_LIBS)
-	set(AYFSTARTER_USE_RUST_LIB_LOCAL FALSE)
+	set(AYFSTARTER_USE_RUST_LIB_LOCAL TRUE)
 endif()
 
 include_directories(
