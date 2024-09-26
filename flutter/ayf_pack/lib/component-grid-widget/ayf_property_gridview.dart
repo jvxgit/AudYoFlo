@@ -136,7 +136,7 @@ class _AudYoFloPropertyGridWidgetStates
                           return GridView.builder(
                               //scrollDirection: Axis.vertical,
                               gridDelegate:
-                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
                                       maxCrossAxisExtent: 350,
                                       mainAxisExtent: 100,
                                       crossAxisSpacing: 20,

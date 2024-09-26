@@ -49,9 +49,9 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	nativeGl.szFld = 0;
 	if (_common_set_icon.theData_in->con_params.number_channels >= 1)
 	{
-		if (jvx_bitTest(genMf_device::configuration_mf.rendering_mode.value.selection(), 0))
+		if (jvx_bitTest(genMf_device::configuration_mf.rendering_mode.value.selection(), 1))
 		{
-			nativeGl.renderingTarget = JVX_GL_DO_NOT_RENDER;
+			nativeGl.renderingTarget = JVX_GL_RENDER_EXTERNAL;
 		}
 #ifdef JVX_USE_GLEW_GLUT
 		else if (jvx_bitTest(genMf_device::configuration_mf.rendering_mode.value.selection(), 2))
@@ -61,7 +61,7 @@ CjvxVideoMfOpenGLDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 #endif
 		else
 		{
-			nativeGl.renderingTarget = JVX_GL_RENDER_EXTERNAL;
+			nativeGl.renderingTarget = JVX_GL_DO_NOT_RENDER;
 		}
 
 #ifdef JVX_USE_GLEW_GLUT
