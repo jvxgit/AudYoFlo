@@ -102,5 +102,18 @@ pub struct jvx_profiler_data_entry
 	pub cplx: JvxCBool 
 }
 
-pub type jvx_register_entry_profiling_data_c = extern fn (dat: jvx_profiler_data_entry, name: *const std::os::raw::c_char, inst: *mut std::ffi::c_void);
+extern "C" {
+    pub fn jvx_profiler_allocate_single_entry(
+        entry: *mut jvx_profiler_data_entry, 
+        szFld: JvxSize, 
+        cplxFld: JvxCBool);
+
+    pub fn jvx_profiler_deallocate_single_entry(
+        entry: *mut jvx_profiler_data_entry);
+}
+
+pub type jvx_register_entry_profiling_data_c = extern fn (dat: *mut jvx_profiler_data_entry, name: *const std::os::raw::c_char, inst: *mut std::ffi::c_void);
+pub type RegisterCallbackFunction = Option<jvx_register_entry_profiling_data_c>;
+
 pub type jvx_unregister_entry_profiling_data_c = extern fn(name: *const std::os::raw::c_char, inst: *mut std::ffi::c_void);
+pub type UnregisterCallbackFunction = Option<jvx_unregister_entry_profiling_data_c>;

@@ -12,3 +12,6 @@ pragma_once = true
 # A list of headers to #include (with quotes)
 # default: []
 includes = ["jvx_rust_audyoflo_api.h"]
+
+# Add the keyword "struct"
+style = "tag"

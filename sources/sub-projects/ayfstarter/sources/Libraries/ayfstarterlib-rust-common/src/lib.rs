@@ -1,6 +1,8 @@
 #![allow(non_camel_case_types)]
 use jvx_dsp::*;
 
+pub const JVX_STARTER_DATA_DEBUG_TP0_SHIFT: u8 = 0;
+
 // Declare sructs in C style data layout
 #[repr(C)]
 #[derive(Clone)]
@@ -43,11 +45,6 @@ pub struct ayf_starter_prv
     pub prm_init_copy: ayf_starter_init,
     pub prm_async_copy: ayf_starter_async,
 }
-
-#[repr(C)]
-pub enum JvxStarterDataDebugSpec {
-    JVX_STARTER_DATA_DEBUG_TP0_SHIFT = 0
-    }
 
 // Declare sructs in C style data layout
 #[repr(C)]

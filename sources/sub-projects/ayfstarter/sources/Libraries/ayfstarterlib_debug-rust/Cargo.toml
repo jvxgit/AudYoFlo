@@ -9,6 +9,7 @@ crate-type = ["staticlib"]
 [features]                                                                                                  
 default = []
 jvx-system-use-data-format-float = ["jvx_dsp/jvx-system-use-data-format-float"]
+jvx-allow-profiler-data-macros = []
 
 [dependencies]
 jvx_dsp = { path = "../../../../../jvxLibraries/jvx-dsp-rust" }
