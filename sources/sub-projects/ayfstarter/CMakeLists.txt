@@ -18,8 +18,8 @@ endif()
 
 if(AYFSTARTER_USE_RUST_LIBS)
   set(AYF_STARTER_STATIC_LIBS
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib-rust
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib_debug-rust
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib_debug
     )
 endif()
   set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS}

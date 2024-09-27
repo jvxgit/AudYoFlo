@@ -24,7 +24,7 @@ set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
 
 # Add the pcg file build steps
 set(LOCAL_PCG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/pcg/exports_node.pcg)
-set(LOCAL_PCG_FILE_OPTIONS "${AYFSTARTER_SUB_PROJECT_PCG_FLAGS};-I;${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}//ayfstarterlib/pcg") 
+set(LOCAL_PCG_FILE_OPTIONS "${AYFSTARTER_SUB_PROJECT_PCG_FLAGS};-I;${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/pcg") 
 # message(FATAL_ERROR "-->  ${AYFSTARTER_SUB_PROJECT_PCG_FLAGS} -- ${LOCAL_PCG_FILE_OPTIONS}")
 
 set(LOCAL_LIBS_COMMON 
@@ -36,7 +36,7 @@ if(AYFSTARTER_USE_RUST_LIB_LOCAL)
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_RUST_CORE_LIB")	
 	include_directories(
 			${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-rust/include
-			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/rust/ayfstarterlib-rust)
+			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/rust/ayfstarterlib)
 	set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibrs_static)
 else()
 	include_directories(${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/c/ayfstarterlib/include)
@@ -93,7 +93,7 @@ if(JVX_USE_PART_MATLAB)
 	if(AYFSTARTER_USE_RUST_LIB_LOCAL)		
 		include_directories(
 			${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-rust/include
-			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/rust/ayfstarterlib_debug-rust)
+			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/rust/ayfstarterlib_debug)
 		set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibdbgrs_static ayfstarterlibrs_static)
 	else()
 		# include_directories(${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/ayfstarterlib/include)
