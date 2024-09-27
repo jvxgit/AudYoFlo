@@ -7,4 +7,4 @@ edition = "2021"
 default = []
 
 [dependencies]
-jvx_dsp = { path = "../../../../../jvxLibraries/jvx-dsp-rust" }
+jvx_dsp = { path = "../../../../../../jvxLibraries/jvx-dsp-rust" }

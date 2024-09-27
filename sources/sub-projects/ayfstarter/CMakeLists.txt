@@ -18,12 +18,12 @@ endif()
 
 if(AYFSTARTER_USE_RUST_LIBS)
   set(AYF_STARTER_STATIC_LIBS
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib-rust
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib_debug-rust
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib-rust
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib_debug-rust
     )
 endif()
   set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/ayfstarterlib
+    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/c/ayfstarterlib
     )
 
 jvx_addSubdirs("Configuring static library for ayfstarter core functionality" "${AYF_STARTER_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Library")

@@ -36,10 +36,10 @@ if(AYFSTARTER_USE_RUST_LIB_LOCAL)
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_RUST_CORE_LIB")	
 	include_directories(
 			${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-rust/include
-			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/ayfstarterlib-rust)
+			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/rust/ayfstarterlib-rust)
 	set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibrs_static)
 else()
-	include_directories(${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/ayfstarterlib/include)
+	include_directories(${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/c/ayfstarterlib/include)
 	set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlib_static)
 endif()
 
@@ -79,7 +79,7 @@ if(JVX_USE_PART_MATLAB)
 	## Generate startscript
 
 	# Add a path to start script
-	set(JVX_MATLAB_ORIGIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Libraries/ayfstarter-matlab-testscripts")
+	set(JVX_MATLAB_ORIGIN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Libraries/matlab/ayfstarter-matlab-testscripts")
 	
 	# set the origin of the template
 	set(LOCAL_START_SCRIPT_MATLAB_SCRIPT_NAME "ayfStarter-mat")
@@ -93,7 +93,7 @@ if(JVX_USE_PART_MATLAB)
 	if(AYFSTARTER_USE_RUST_LIB_LOCAL)		
 		include_directories(
 			${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-rust/include
-			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/ayfstarterlib_debug-rust)
+			${SUBPRODUCT_AYFSTARTER_LIBS_BINARY_DIR}/rust/ayfstarterlib_debug-rust)
 		set(LOCAL_LIBS  ${LOCAL_LIBS_COMMON} ayfstarterlibdbgrs_static ayfstarterlibrs_static)
 	else()
 		# include_directories(${SUBPRODUCT_AYFSTARTER_LIBS_INCLUDE_PATH}/ayfstarterlib/include)

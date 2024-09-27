@@ -1,5 +1,5 @@
 [package]
-name = "ayfstarterlibrs"
+name = "ayfstarterlibdbgrs"
 publish = false
 edition = "2021"
 
@@ -9,8 +9,8 @@ crate-type = ["staticlib"]
 [features]                                                                                                  
 default = []
 jvx-system-use-data-format-float = ["jvx_dsp/jvx-system-use-data-format-float"]
+jvx-allow-profiler-data-macros = []
 
 [dependencies]
-jvx_dsp = { path = "../../../../../jvxLibraries/jvx-dsp-rust" }
+jvx_dsp = { path = "../../../../../../jvxLibraries/jvx-dsp-rust" }
 ayfstarterlibrs_common = { path = "../ayfstarterlib-rust-common" }
-
