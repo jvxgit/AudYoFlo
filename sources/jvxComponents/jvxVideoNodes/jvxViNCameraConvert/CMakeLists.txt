@@ -1,4 +1,4 @@
-set(PROJECT_NAME jvxViNCameraConvert)
+set(PROJECT_NAME ayfViNCameraConvert)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -7,7 +7,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
   ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
   )
 
-set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
+set(LOCAL_SOURCES 
+	${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfViNCameraConvert.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfViNCameraConvert.h
   )
 
 set(LOCAL_LIBS 
