@@ -122,16 +122,17 @@ public:
 	virtual void deactivate_connectors();
 };
 
+/*
 #define JVX_OS_REACT_INTERFACE_PARAMETERS_DECLARE \
 	jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))override; \
 	jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override; \
 	void update_interfaces();
 
-#define JVX_OS_REACT_INTERFACE_PARAMETERS_DEFINE(classname) \
+#define JVX_OS_REACT_INTERFACE_PARAMETERS_DEFINE(classname, baseclass) \
 jvxErrorType classname::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var)) \
 { \
 	jvxErrorType res = JVX_NO_ERROR; \
-	CjvxNodeBase1io::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(var)); \
+	baseclass::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(var)); \
 	if (res == JVX_NO_ERROR) \
 	{ \
 		update_interfaces(); \
@@ -149,5 +150,5 @@ jvxErrorType classname::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHa
 	return res; \
 } \
 void classname::update_interfaces() 
-
+*/
 #endif

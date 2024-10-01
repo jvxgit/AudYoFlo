@@ -12,7 +12,7 @@ namespace JVX_PROJECT_NAMESPACE {
 #define JVX_LOCK_ID_OUTPUT 2
 
 	CjvxViNMixer::CjvxViNMixer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-		CjvxVideoNode(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+		CjvxVideoNodeTpl<CjvxBareNode1io>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
 		// Currently, this is all fixed. We may allow different settngs lateron
 		video_input.node._common_set_node_params_a_1io.number_channels = 1;
@@ -181,7 +181,7 @@ CjvxViNMixer::activate_connectors()
 		CjvxViNMixer::select(IjvxObject* owner)
 	{
 
-		jvxErrorType res = CjvxVideoNode::select(owner);
+		jvxErrorType res = CjvxVideoNodeTpl<CjvxBareNode1io>::select(owner);
 		if (res == JVX_NO_ERROR)
 		{
 			CjvxViNMixer_selected::init_all();
@@ -206,7 +206,7 @@ CjvxViNMixer::activate_connectors()
 	jvxErrorType 
 		CjvxViNMixer::unselect()
 	{
-		jvxErrorType res = CjvxVideoNode::unselect();
+		jvxErrorType res = CjvxVideoNodeTpl<CjvxBareNode1io>::unselect();
 		if (res == JVX_NO_ERROR)
 		{
 			CjvxViNMixer_selected::unregister_all(this);
@@ -222,7 +222,7 @@ CjvxViNMixer::activate_connectors()
 	jvxErrorType
 		CjvxViNMixer::activate()
 	{
-		jvxErrorType res = CjvxVideoNode::activate();
+		jvxErrorType res = CjvxVideoNodeTpl<CjvxBareNode1io>::activate();
 		if (res == JVX_NO_ERROR)
 		{
 			
@@ -278,7 +278,7 @@ CjvxViNMixer::activate_connectors()
 	jvxErrorType
 		CjvxViNMixer::deactivate()
 	{
-		jvxErrorType res = CjvxVideoNode::deactivate();
+		jvxErrorType res = CjvxVideoNodeTpl<CjvxBareNode1io>::deactivate();
 		if (res == JVX_NO_ERROR)
 		{
 			video_output.node.terminate();
@@ -488,7 +488,7 @@ CjvxViNMixer::activate_connectors()
 	jvxErrorType
 		CjvxViNMixer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
-		jvxErrorType res = CjvxVideoNode::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		jvxErrorType res = CjvxVideoNodeTpl<CjvxBareNode1io>::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res == JVX_NO_ERROR)
 		{
 			CjvxViNMixer_genpcg::expose.lost_frames.value = 0;
@@ -499,7 +499,7 @@ CjvxViNMixer::activate_connectors()
 	jvxErrorType
 		CjvxViNMixer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) 
 	{
-		jvxErrorType res = CjvxVideoNode::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		jvxErrorType res = CjvxVideoNodeTpl<CjvxBareNode1io>::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res == JVX_NO_ERROR)
 		{
 #ifdef JVX_OPEN_BMP_FOR_TEST

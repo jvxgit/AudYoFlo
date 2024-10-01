@@ -79,10 +79,11 @@ public:
 
 	void derive_buffersize()
 	{
-		jvxSize szElement = jvxDataFormat_size[_common_set_node_params_a_1io.format] *
-			jvxDataFormatGroup_size[_common_set_node_params_a_1io.subformat];
+		// Buffersize is in elements of tyoe format!!
+		jvxSize szElement = jvxDataFormatGroup_getsize_mult(_common_set_node_params_a_1io.subformat);
 		jvxSize szLine = _common_set_node_params_a_1io.segmentation.x * szElement;
 		jvxSize szRaw = _common_set_node_params_a_1io.segmentation.y * szLine;
+		szRaw = szRaw / jvxDataFormatGroup_getsize_div(_common_set_node_params_a_1io.subformat);
 		_common_set_node_params_a_1io.buffersize = szRaw;
 
 	}

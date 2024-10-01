@@ -345,7 +345,10 @@ struct jvxLinkDataDescriptor_con_compat
 
 struct jvxLinkDataDescriptor_con_params
 {
-	//! Size of the (maximum buffer). Typically the buffer is fully filled but it may be filled to a degree specified by segmentation_x and segmentation_y
+	/*** 
+	 * Size of the buffer in elements of type format (maximum buffer size). Typically the buffer is fully filled but it may be filled to a degree specified by segmentation_x and segmentation_y.
+	 * The size in bytes can typically be computed as ( buffersize * jvxDataFormat_getSize(format) * jvxDataFormatGroup_getsize_mult(format_group) / jvxDataFormatGroup_getsize_div(format_group) 
+	 **/
 	jvxSize buffersize = 0;
 
 	//! Rate of the sample arrival if operated at a fixed rate

@@ -88,8 +88,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxSignalProcessingNodes/CjvxSignalProcessingNode.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxSignalProcessingNodes/CjvxSignalProcessingNode.h
 
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxVideoNodes/CjvxVideoNode.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxVideoNodes/CjvxVideoNode.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxVideoNodes/CjvxVideoNodeTpl.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxVideoTechnologies/CjvxVideoDevice.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxVideoTechnologies/CjvxVideoDevice.h

@@ -881,11 +881,16 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 		}
 		else
 		{
-			if ((ld_cp.con_params.segmentation.y * ld_cp.con_params.segmentation.x) != ld_cp.con_params.buffersize)
+			jvxSize szElement = jvxDataFormatGroup_getsize_mult(theData_in->con_params.format_group);
+			jvxSize szLine = theData_in->con_params.segmentation.x * szElement;
+			jvxSize szRaw = theData_in->con_params.segmentation.y * szLine;
+			jvxSize bsize = szRaw / jvxDataFormatGroup_getsize_div(theData_in->con_params.format_group);
+
+			if (bsize != ld_cp.con_params.buffersize)
 			{
 				std::cout << __FUNCTION__ << ": " << __LINE__ << ": Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
 				std::cout << " Seg X x Seg Y = " << ld_cp.con_params.segmentation.x << " X " << 
-					ld_cp.con_params.segmentation.x << " = " << ld_cp.con_params.buffersize << "." << std::endl;
+					ld_cp.con_params.segmentation.x << "(" << jvxDataFormatGroup_txt(theData_in->con_params.format_group) << ") = " << bsize << "." << std::endl;
 			}
 		}
 

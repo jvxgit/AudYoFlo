@@ -3,26 +3,13 @@
 CjvxBareNode1ioRearrange::CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxBareNode1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
+	// Do not accept zerocopy - we need to rearrange!!!
 	_common_set_ldslave.zeroCopyBuffering_cfg = false;
 
-	_common_set_node_base_1io.prepareOnChainPrepare = true;
-	_common_set_node_base_1io.startOnChainStart = true;
-
-	neg_input._set_parameters_fixed(
-		JVX_SIZE_UNSELECTED, 
-		JVX_SIZE_UNSELECTED,
-		JVX_SIZE_UNSELECTED, 
-		JVX_DATAFORMAT_NONE,
-		JVX_DATAFORMAT_GROUP_NONE);
-
-	neg_output._set_parameters_fixed(
-		JVX_SIZE_UNSELECTED,
-		JVX_SIZE_UNSELECTED,
-		JVX_SIZE_UNSELECTED,
-		JVX_DATAFORMAT_NONE,
-		JVX_DATAFORMAT_GROUP_NONE);
-	
+	// No forward complaining by default
 	forward_complain = false;
+
+	// Attach log object
 	neg_output.logObj = this;
 
 	prefix_descriptor_properties = "input";

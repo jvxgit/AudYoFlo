@@ -1,7 +1,8 @@
 #ifndef __CJVXVINMIXER_H__
 #define __CJVXVINMIXER_H__
 
-#include "jvxVideoNodes/CjvxVideoNode.h"
+#include "jvxNodes/CjvxBareNode1io.h"
+#include "jvxVideoNodes/CjvxVideoNodeTpl.h"
 #include "common/CjvxSingleInputConnector.h"
 #include "common/CjvxSingleOutputConnector.h"
 #include "common/CjvxConnectorCollection.h"
@@ -16,7 +17,7 @@
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
-class CjvxViNMixer: public CjvxVideoNode, 
+class CjvxViNMixer: public CjvxVideoNodeTpl<CjvxBareNode1io>,
 	public CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>,
 	public CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>, 
 	public CjvxConnectorCollection_fwd_in_lock<CjvxSingleInputConnector>,
