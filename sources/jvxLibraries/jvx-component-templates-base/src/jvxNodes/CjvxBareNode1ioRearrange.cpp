@@ -146,6 +146,11 @@ CjvxBareNode1ioRearrange::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 			*/
 			test_set_output_parameters();
 			break;
+		case JVX_ERROR_ABORT:
+
+			// The postpone indicates that negotiation was solved outside
+			res = JVX_NO_ERROR;
+			break;
 		default:
 			break;
 		}

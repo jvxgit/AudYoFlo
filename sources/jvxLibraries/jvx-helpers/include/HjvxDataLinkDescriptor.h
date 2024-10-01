@@ -61,6 +61,8 @@ jvxErrorType jvx_copyDataLinkDescriptorSync(jvxLinkDataDescriptor* copyFrom, jvx
 #define JVX_CHECK_PARAM_SEGMENTATION_X_SHIFT 4
 #define JVX_CHECK_PARAM_SEGMENTATION_Y_SHIFT 5
 #define JVX_CHECK_PARAM_SUBFORMAT_SHIFT 6
+#define JVX_CHECK_PARAM_DATAFLOW_SHIFT 7
+#define JVX_CHECK_PARAM_ALL 0xFF
 
 jvxBool jvx_check_in_out_params_match_test(jvxLinkDataDescriptor* cp_this, jvxLinkDataDescriptor* cp_that, jvxCBitField bfld);
 jvxBool jvx_check_in_out_params_match_test_err(jvxLinkDataDescriptor* cp_this, jvxLinkDataDescriptor* cp_that, jvxCBitField bfld, std::string& errStr);

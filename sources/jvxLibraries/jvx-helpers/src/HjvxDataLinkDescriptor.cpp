@@ -831,14 +831,6 @@ jvx_neutralDataLinkDescriptor_pipeline(jvxLinkDataDescriptor_con_pipeline* thePi
 	thePipeline->idx_stage_ptr = NULL;
 }
 
-#define JVX_CHECK_PARAM_BUFFERSIZE_SHIFT 0
-#define JVX_CHECK_PARAM_SAMPLERATE_SHIFT 1
-#define JVX_CHECK_PARAM_FORMAT_SHIFT 2
-#define JVX_CHECK_PARAM_NUM_CHANNELS_SHIFT 3
-#define JVX_CHECK_PARAM_SEGMENTATION_X_SHIFT 4
-#define JVX_CHECK_PARAM_SEGMENTATION_Y_SHIFT 5
-#define JVX_CHECK_PARAM_SUBFORMAT_SHIFT 6
-
 jvxBool
 jvx_check_in_out_params_match_test(jvxLinkDataDescriptor* cp_this, jvxLinkDataDescriptor* cp_that, jvxCBitField bfld)
 {
@@ -866,6 +858,10 @@ jvx_check_in_out_params_match_test(jvxLinkDataDescriptor* cp_this, jvxLinkDataDe
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SEGMENTATION_Y_SHIFT))
 	{
 		retVal = retVal && (cp_this->con_params.segmentation.y == cp_that->con_params.segmentation.y);
+	}
+	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_DATAFLOW_SHIFT))
+	{
+		retVal = retVal && (cp_this->con_params.data_flow == cp_that->con_params.data_flow);
 	}
 	if (jvx_bitTest(bfld, JVX_CHECK_PARAM_SUBFORMAT_SHIFT))
 	{
