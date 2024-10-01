@@ -193,7 +193,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 								cv::cvtColorTwoPlane(planeY, planeUV, out, cv::COLOR_YUV2RGBA_NV12);
 
 								// This is suboptimal: we need to copy the allocated memory. Hopefully, cv uses pre-allocated memory internally for higher efficiency!!
-								memcpy(dest, out.data, runtime.szRaw);
+								memcpy(dest, out.data, runtime.params_sw.szElementsField);
 								
 								/*
 								 * Test code to set values to 0
@@ -221,6 +221,61 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 
 								break;
 							}
+							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_RGB24:
+							{
+								// Future: use COLOR_RGB2RGBA
+								for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
+								{
+									jvxSize j;
+									jvxUInt8* ptrFrom = src;
+									jvxUInt8* ptrTo = dest;
+
+									if (stride > 0)
+									{
+										for (j = 0; j < runtime.params_sw.szElementsLine; j+=4)
+										{		
+											// This for RGB in RGBA
+											for (jvxSize k = 0; k < 3; k++)
+											{
+												*ptrTo = *ptrFrom;
+												ptrFrom++;
+												ptrTo++;
+											}
+
+											// This for "A" in RGBA
+											*ptrTo = 255;
+										}
+									}
+									else
+									{
+										// To last element
+										ptrFrom -= stride;
+										j = 0;
+
+										while(ptrFrom > src)
+										{
+
+											// Backward copy		
+											
+											// This for RGB in RGBA
+											for (jvxSize k = 0; k < 3; k++)
+											{
+												--ptrFrom;
+												*ptrTo = *ptrFrom;
+												ptrTo++;
+											}
+											// This for "A" in RGBA
+											*ptrTo = 255;
+											ptrTo++;
+											j += 4;
+										}
+										assert(j == runtime.params_sw.szElementsLine);
+									}
+									src += stride;
+									dest += runtime.params_sw.szElementsLine;
+								}
+								break;
+							}
 							default:
 								assert(0);
 								break;
@@ -243,16 +298,16 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 							{
 								if (stride > 0)
 								{
-									memcpy(dest, src, runtime.szLine);
+									memcpy(dest, src, runtime.params_sw.szElementsLine);
 								}
 								else
 								{
 									jvxSize j;
-									jvxUInt8* ptrFrom = src + runtime.szLine;
+									jvxUInt8* ptrFrom = src + runtime.params_sw.szElementsLine;
 									jvxUInt8* ptrTo = dest;
 
 									// Backward copy
-									for (j = 0; j < runtime.szLine; j++)
+									for (j = 0; j < runtime.params_sw.szElementsLine; j++)
 									{
 										--ptrFrom;
 										*ptrTo = *ptrFrom;
@@ -260,7 +315,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 									}
 								}
 								src += stride;
-								dest += runtime.szLine;
+								dest += runtime.params_sw.szElementsLine;
 							}
 						}
 						m2DBuffer->Unlock2D();
@@ -287,9 +342,9 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 						jvxSize i;
 						for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
 						{
-							memcpy(dest, src, runtime.szLine);
-							src += runtime.szLine;
-							dest += runtime.szLine;
+							memcpy(dest, src, runtime.params_sw.szElementsLine);
+							src += runtime.params_sw.szElementsLine;
+							dest += runtime.params_sw.szElementsLine;
 						}
 						//runtime.stride
 					}

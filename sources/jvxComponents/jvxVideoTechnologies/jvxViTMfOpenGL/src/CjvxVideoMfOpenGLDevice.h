@@ -65,9 +65,6 @@ private:
 	struct
 	{
 		jvxInt32 stride; // Stride may be negative!!
-		jvxSize szElement;
-		jvxSize szLine;
-		jvxSize szRaw;
 		jvxData curRate;
 		jvxInt64 lastTime;
 		jvxData avrgT;
@@ -76,6 +73,13 @@ private:
 		//jvxSize numBuffers;
 		//jvxSize idxBuffer;
 		jvxState streamState;
+
+		struct
+		{
+			jvxSize szElement = 0;
+			jvxSize szElementsLine = 0;
+			jvxSize szElementsField = 0;
+		} params_sw;
 
 		struct
 		{

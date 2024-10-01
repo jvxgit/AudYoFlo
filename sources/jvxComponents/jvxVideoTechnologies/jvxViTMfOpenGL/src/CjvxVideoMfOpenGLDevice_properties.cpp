@@ -158,6 +158,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 #ifdef VERBOSE_2
 			std::cout << "--> Media Subtype RGB, 24 bpp" << std::endl;
 #endif
+			oneForm.form = JVX_DATAFORMAT_BYTE;
 			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
 			oneForm.subform_hw = JVX_DATAFORMAT_GROUP_VIDEO_RGB24;
 		}

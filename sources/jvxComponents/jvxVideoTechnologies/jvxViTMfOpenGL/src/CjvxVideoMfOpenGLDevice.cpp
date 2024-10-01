@@ -257,11 +257,11 @@ CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK
 	_common_set_ocon.theData_out.con_params.segmentation.x = lstModes[idModeSelect].width;
 	_common_set_ocon.theData_out.con_params.segmentation.y = lstModes[idModeSelect].height;
 
-	jvxSize szElement = jvxDataFormat_size[_common_set_ocon.theData_out.con_params.format] *
-		jvxDataFormatGroup_size[_common_set_ocon.theData_out.con_params.format_group];
-	jvxSize szLine = _common_set_ocon.theData_out.con_params.segmentation.x * szElement;
-	jvxSize szRaw = _common_set_ocon.theData_out.con_params.segmentation.y * szLine;
-	_common_set_ocon.theData_out.con_params.buffersize = szRaw;
+	// Buffersize is in elements of type as described in <jvxDataFormat>
+	jvxSize szElement = jvxDataFormatGroup_getsize_mult(_common_set_ocon.theData_out.con_params.format_group);
+	jvxSize szElementsLine = _common_set_ocon.theData_out.con_params.segmentation.x * szElement;
+	jvxSize szElementsField = _common_set_ocon.theData_out.con_params.segmentation.y * szElementsLine;
+	_common_set_ocon.theData_out.con_params.buffersize = szElementsField / jvxDataFormatGroup_getsize_div(_common_set_ocon.theData_out.con_params.format_group);
 	_common_set_ocon.theData_out.con_params.data_flow = jvxDataflow::JVX_DATAFLOW_PUSH_ACTIVE;
 
 	if (runPrepare)
@@ -272,9 +272,9 @@ CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK
 		_common_set_ocon.theData_out.con_data.number_buffers = JVX_MAX(_common_set_ocon.theData_out.con_data.number_buffers, 2);
 		_common_set_ocon.theData_out.con_params.additional_flags = 0;
 
-		runtime.szElement = szElement;
-		runtime.szLine = szLine;
-		runtime.szRaw = szRaw;
+		runtime.params_sw.szElement = szElement;
+		runtime.params_sw.szElementsLine = szElementsLine;
+		runtime.params_sw.szElementsField = szElementsField;
 
 		if (lstModes[idModeSelect].subform_hw != lstModes[idModeSelect].subform_sw)
 		{
@@ -296,6 +296,8 @@ CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK
 			case JVX_DATAFORMAT_GROUP_VIDEO_NV12:
 				runtime.convertOnRead.plane1_Sz = runtime.convertOnRead.segWidth * runtime.convertOnRead.segHeight;
 				runtime.convertOnRead.plane2_Sz = runtime.convertOnRead.lField - runtime.convertOnRead.plane1_Sz;
+				break;
+			case JVX_DATAFORMAT_GROUP_VIDEO_RGB24:
 				break;
 			default:
 				assert(0);
@@ -372,9 +374,9 @@ CjvxVideoMfOpenGLDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 	assert(res == JVX_NO_ERROR);
 
 	runtime.stride = 0;
-	runtime.szElement = 0;
-	runtime.szLine = 0;
-	runtime.szRaw = 0;
+	runtime.params_sw.szElement = 0;
+	runtime.params_sw.szElementsLine = 0;
+	runtime.params_sw.szElementsField = 0;
 
 	if (runtime.convertOnRead.inConvertBufferInUse)
 	{
