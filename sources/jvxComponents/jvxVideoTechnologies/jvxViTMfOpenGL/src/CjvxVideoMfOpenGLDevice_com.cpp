@@ -244,6 +244,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 
 											// This for "A" in RGBA
 											*ptrTo = 255;
+											ptrTo++;
 										}
 									}
 									else
