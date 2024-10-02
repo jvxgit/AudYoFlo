@@ -511,3 +511,21 @@ macro(find_eigen)
   message("    lib: ${EIGEN_LIBRARIES}")
 
 endmacro (find_eigen)
+
+macro(JVX_SHELL_SIMPLE command name)
+
+	message("${name} not available. Starting script to download it.") 
+	set(cmd "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ${command} ; read varname")
+	execute_process(COMMAND ${mysh} -c "${cmd}")
+	message("${name} execution of script complete.")
+   
+endmacro(JVX_PREPEND_OUTFILE)
+
+macro(JVX_SHELL_PLUS command name)
+
+	message("${name} not available. Starting script to download it.") 
+	set(cmd "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ${command} ; read varname")
+	execute_process(COMMAND ${mysh} -c "${cmd}")
+	message("${name} execution of script complete.")
+   
+endmacro(JVX_PREPEND_OUTFILE)

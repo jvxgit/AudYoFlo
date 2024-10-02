@@ -124,6 +124,9 @@ set(JVX_OPENGL_LIBS "Opengl32")
 set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};QCUSTOMPLOT_USE_OPENGL")
 set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};NOMINMAX ")
 
+# Note: mysh is found when searching git - check gitversion.cmake
+FIND_PROGRAM(myshplus "msys2_shell.cmd" REQUIRED)
+
 set(JVX_VS_GENERATOR FALSE)
 if("${CMAKE_GENERATOR}" MATCHES "Visual Studio 16 2019" OR "${CMAKE_GENERATOR}" MATCHES "Visual Studio 17 2022"
 	OR "${CMAKE_GENERATOR}" MATCHES "Visual Studio 15 2017" OR "${CMAKE_GENERATOR}" MATCHES "Visual Studio 15 2017 Win64" 
@@ -576,3 +579,21 @@ macro(find_pybind)
 	set(pybind11_DIR ${PYBIND_PATH})
 	find_package(pybind11 CONFIG REQUIRED)
 endmacro(find_pybind)
+
+macro(JVX_SHELL_SIMPLE command name)
+
+	message("${name} not available. Starting script to download it.") 
+	set(cmd "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ${command}")
+	execute_process(COMMAND ${mysh} -c "${cmd}")
+	message("${name} execution of script complete.")
+   
+endmacro(JVX_PREPEND_OUTFILE)
+
+macro(JVX_SHELL_PLUS command name)
+
+	message("${name} not available. Starting script to download it.") 
+	set(cmd "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ${command}")
+	execute_process(COMMAND ${myshplus} -use-full-path -c "${cmd}")
+	message("${name} execution of script complete.")
+   
+endmacro(JVX_PREPEND_OUTFILE)
