@@ -1517,3 +1517,16 @@ jvxCBitField jvx_check_differences(jvxLinkDataDescriptor_con_params& params_one,
 	}
 	return out;
 }
+
+jvxSize jvx_derive_buffersize(jvxLinkDataDescriptor_con_params& params_one)
+{
+	jvxSize res = JVX_SIZE_UNSELECTED;
+	if (params_one.format_group != JVX_DATAFORMAT_GROUP_NONE)
+	{
+		jvxSize szElement = jvxDataFormatGroup_getsize_mult(params_one.format_group);
+		jvxSize szElementsLine = params_one.segmentation.x * szElement;
+		jvxSize szElementsField = params_one.segmentation.y * szElementsLine;
+		res = szElementsField / jvxDataFormatGroup_getsize_div(params_one.format_group);
+	}
+	return res;
+}

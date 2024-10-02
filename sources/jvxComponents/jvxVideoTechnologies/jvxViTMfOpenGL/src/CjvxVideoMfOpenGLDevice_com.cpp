@@ -171,6 +171,9 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 							{
 							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_NV12:
 							{
+								jvxSize sz = _common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format);
+								memcpy(dest, src, sz);
+#if 0
 								// If we involve an NV12 mapping, we need to use openCV
 								// In openCV we need to involve the cv data structs. I have just 
 								// been rather robust in involving the Mat structs with raw memory without really taking into account
@@ -218,7 +221,7 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 								}
 								*/
 								// std::cout << "Hier - " << out.channels() << std::endl;
-
+#endif
 								break;
 							}
 							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_RGB24:

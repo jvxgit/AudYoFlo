@@ -146,6 +146,8 @@ public:
 		jvxSize segment_x = JVX_SIZE_UNSELECTED,
 		jvxSize segment_y = JVX_SIZE_UNSELECTED);
 
+	jvxConstraintSetResult _update_parameter_fixed(jvxAddressLinkDataEntry what, jvxSize newVal, jvxLinkDataDescriptor* datOut = nullptr);
+
 	jvxConstraintSetResult _clear_parameters_fixed(
 		jvxBool numChansIn = false,
 		jvxBool bsize = false,

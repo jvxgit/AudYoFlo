@@ -255,6 +255,106 @@ CjvxNegotiate_common::_update_parameters_fixed(
 }
 
 jvxConstraintSetResult
+CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxSize newVal, jvxLinkDataDescriptor* datOut)
+{
+	jvxConstraintSetResult res = JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE;
+	switch (what)
+	{
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT:
+		if (JVX_CHECK_SIZE_SELECTED(newVal))
+		{
+			SET_OTHER(res, preferred, buffersize, newVal);
+			if (datOut)
+			{
+				datOut->con_params.buffersize = newVal;
+			}
+		}
+		break;
+
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT:
+		if (JVX_CHECK_SIZE_SELECTED(newVal))
+		{
+			SET_OTHER(res, preferred, number_channels, newVal);
+			if (datOut)
+			{
+				datOut->con_params.number_channels = newVal;
+			}
+		}
+		break;
+
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT:
+		if (JVX_CHECK_SIZE_SELECTED(newVal))
+		{
+			SET_OTHER(res, preferred, samplerate, newVal);
+			if (datOut)
+			{
+				datOut->con_params.rate = newVal;
+			}
+		}
+		break;
+
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT:
+		if (newVal != JVX_DATAFORMAT_NONE)
+		{
+			SET_OTHER(res, preferred, format, (jvxDataFormat)newVal);
+			if (datOut)
+			{
+				datOut->con_params.format = (jvxDataFormat)newVal;
+			}
+		}
+		break;
+
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT:
+		if (newVal != JVX_DATAFORMAT_GROUP_NONE)
+		{
+			SET_OTHER(res, preferred, subformat, (jvxDataFormatGroup)newVal);
+			if (datOut)
+			{
+				datOut->con_params.format_group = (jvxDataFormatGroup)newVal;
+			}
+		}
+		break;
+
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT:
+
+		if (newVal != jvxDataflow::JVX_DATAFLOW_DONT_CARE)
+		{
+			SET_OTHER(res, preferred, data_flow, (jvxDataflow)newVal);
+			if (datOut)
+			{
+				datOut->con_params.data_flow = (jvxDataflow)newVal;
+			}
+		}
+		break;
+
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT:
+		if (JVX_CHECK_SIZE_SELECTED(newVal))
+		{
+			SET_OTHER(res, preferred, dimX, newVal);
+			if (datOut)
+			{
+				datOut->con_params.segmentation.x = newVal;
+			}
+		}
+		break;
+
+	case jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT:
+		if (JVX_CHECK_SIZE_SELECTED(newVal))
+		{
+			SET_OTHER(res, preferred, dimY, newVal);
+			if (datOut)
+			{
+				datOut->con_params.segmentation.y = newVal;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+	return res;
+}
+
+jvxConstraintSetResult
 CjvxNegotiate_common::_clear_parameters_fixed(
 	jvxBool numberchannelsset,
 	jvxBool bsizeset,

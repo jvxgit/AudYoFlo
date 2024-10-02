@@ -173,4 +173,6 @@ jvxErrorType jvx_check_valid(jvxLinkDataDescriptor_con_params& params, std::stri
 jvxCBitField jvx_check_differences(jvxLinkDataDescriptor_con_params& params_one, 
 		jvxLinkDataDescriptor_con_params& params_other, jvxCBitField checkThis);
 
+jvxSize jvx_derive_buffersize(jvxLinkDataDescriptor_con_params& params_one);
+
 #endif

@@ -1,0 +1,18 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genCameraConvert_node";
+	 
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_config"};
+		CALLBACK_SET_POSTHOOK = "set_config"; 
+
+		SECTION try_negotiate_input
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";				
+			INIT_SET = 1;
+		};
+	};
+};

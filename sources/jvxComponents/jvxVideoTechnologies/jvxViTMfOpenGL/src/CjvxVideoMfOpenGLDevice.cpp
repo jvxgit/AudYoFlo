@@ -253,7 +253,8 @@ CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK
 	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)lstModes[idModeSelect].form;
 	_common_set_ocon.theData_out.con_params.number_channels = 1;
 	_common_set_ocon.theData_out.con_params.rate = lstModes[idModeSelect].fps;
-	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)lstModes[idModeSelect].subform_sw;
+	// _common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)lstModes[idModeSelect].subform_sw;
+	_common_set_ocon.theData_out.con_params.format_group = (jvxDataFormatGroup)lstModes[idModeSelect].subform_hw;
 	_common_set_ocon.theData_out.con_params.segmentation.x = lstModes[idModeSelect].width;
 	_common_set_ocon.theData_out.con_params.segmentation.y = lstModes[idModeSelect].height;
 
@@ -665,7 +666,7 @@ CjvxVideoMfOpenGLDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxH
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
 		if (
-			(ld_con->con_params.format_group != lstModes[idSel].subform_sw) ||
+			(ld_con->con_params.format_group != lstModes[idSel].subform_hw) ||
 			(ld_con->con_params.rate != (jvxInt32)lstModes[idSel].fps) ||
 			(ld_con->con_params.format != lstModes[idSel].form))
 		{

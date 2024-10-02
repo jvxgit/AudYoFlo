@@ -33,6 +33,8 @@ public:
 	// Copy the link data descriptor parameters from the output parameter properties
 	void update_ldesc_from_output_params_on_test();
 	
+	void update_output_params_from_ldesc_on_test(jvxLinkDataDescriptor* theData = nullptr);
+
 	// I am not sure about these functions..
 	// void update_output_params_on_test();
 	void output_params_from_ldesc_on_test();
