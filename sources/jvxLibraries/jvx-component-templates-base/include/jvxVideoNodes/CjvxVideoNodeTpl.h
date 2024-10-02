@@ -26,17 +26,17 @@ public:
 		{
 			tpComp = JVX_COMPONENT_VIDEO_NODE;
 		}
-		_common_set.theComponentType.unselected(tpComp);
-		_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
-		_common_set.thisisme = static_cast<IjvxObject*>(this);
+		this->_common_set.theComponentType.unselected(tpComp);
+		this->_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxNode*>(this));
+		this->_common_set.thisisme = static_cast<IjvxObject*>(this);
 
-		_common_set.theComponentSubTypeDescriptor = "signal_processing_node/video_node";
+		this->_common_set.theComponentSubTypeDescriptor = "signal_processing_node/video_node";
 
 		// Allow zerocopy passthrough
-		zeroCopyBuffering_rt = true;
+		this->zeroCopyBuffering_rt = true;
 
 		// Preset for video
-		neg_input.negBehavior = CjvxNegotiate_common::negBehaviorType::JVX_BEHAVIOR_VIDEO;
+		this->neg_input.negBehavior = CjvxNegotiate_common::negBehaviorType::JVX_BEHAVIOR_VIDEO;
 	}
 
 	virtual JVX_CALLINGCONVENTION ~CjvxVideoNodeTpl()
