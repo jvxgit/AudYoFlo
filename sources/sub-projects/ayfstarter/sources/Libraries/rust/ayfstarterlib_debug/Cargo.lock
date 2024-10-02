@@ -6,12 +6,12 @@ version = 3
 name = "ayfstarterlibdbgrs"
 version = "0.0.0"
 dependencies = [
- "ayfstarterlibrs_common",
+ "ayfstarterlibrs",
  "jvx_dsp",
 ]
 
 [[package]]
-name = "ayfstarterlibrs_common"
+name = "ayfstarterlibrs"
 version = "0.0.0"
 dependencies = [
  "jvx_dsp",

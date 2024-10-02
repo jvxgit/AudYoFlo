@@ -1,5 +1,5 @@
 use jvx_dsp::*;
-use ayfstarterlibrs_common::*;
+use ayfstarterlibrs::*;
 
 #[cfg(feature = "jvx-allow-profiler-data-macros")]
 const JVX_ALLOW_PROFILER_DATA_MACROS: u8 = 1;
