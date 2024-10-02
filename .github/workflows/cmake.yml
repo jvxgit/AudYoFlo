@@ -50,6 +50,7 @@ jobs:
         liboctave-dev
         libboost-dev
         libeigen3-dev
+        libopenjp2-7-dev
         libopencv-dev
         python3-opencv
         libpcap-dev
@@ -66,6 +67,8 @@ jobs:
         libxcb-keysyms1-dev 
         libxcb-cursor-dev 
         libxcb-util-dev
+        cargo
+        cbindgen
 
     - name: Install Aqt
       run: pip install aqtinstall
