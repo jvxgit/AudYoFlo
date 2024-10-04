@@ -68,7 +68,12 @@ CayfViNCameraConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				break;
 			}
 			case JVX_DATAFORMAT_GROUP_VIDEO_RGB24:
-				assert(0);
+
+				szField = jvx_derive_buffersize(_common_set_icon.theData_in->con_params);
+				assert(szField == _common_set_icon.theData_in->con_params.buffersize);
+				runtime.convert.szFldIn = _common_set_icon.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format);
+				runtime.convert.width = _common_set_icon.theData_in->con_params.segmentation.x;
+				runtime.convert.height = _common_set_icon.theData_in->con_params.segmentation.y; 
 				break;
 
 			default:
@@ -137,8 +142,72 @@ CayfViNCameraConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				break;
 			}
 			case JVX_DATAFORMAT_GROUP_VIDEO_RGB24:
-				assert(0);
+			{
+				jvxUInt8* ptrRead = (jvxUInt8*)bufsIn[0]; // channel 0
+				auto planeRGB = cv::Mat(
+					runtime.convert.height, runtime.convert.width,
+					CV_8UC3, ptrRead);
+				cv::Mat out;
+
+				// Actually run the converter
+				cv::cvtColor(planeRGB, out, cv::COLOR_RGB2RGBA);
+				memcpy(bufsOut[0], out.data, runtime.convert.szFldOut);
+#if 0
+				// Future: use COLOR_RGB2RGBA
+				for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
+				{
+					jvxSize j;
+					jvxUInt8* ptrFrom = src;
+					jvxUInt8* ptrTo = dest;
+
+					if (stride > 0)
+					{
+						for (j = 0; j < runtime.params_sw.szElementsLine; j += 4)
+						{
+							// This for RGB in RGBA
+							for (jvxSize k = 0; k < 3; k++)
+							{
+								*ptrTo = *ptrFrom;
+								ptrFrom++;
+								ptrTo++;
+							}
+
+							// This for "A" in RGBA
+							*ptrTo = 255;
+							ptrTo++;
+						}
+					}
+					else
+					{
+						// To last element
+						ptrFrom -= stride;
+						j = 0;
+
+						while (ptrFrom > src)
+						{
+
+							// Backward copy		
+
+							// This for RGB in RGBA
+							for (jvxSize k = 0; k < 3; k++)
+							{
+								--ptrFrom;
+								*ptrTo = *ptrFrom;
+								ptrTo++;
+							}
+							// This for "A" in RGBA
+							*ptrTo = 255;
+							ptrTo++;
+							j += 4;
+			}
+						assert(j == runtime.params_sw.szElementsLine);
+		}
+					src += stride;
+					dest += runtime.params_sw.szElementsLine;
+	};
+#endif
 				break;
+			}
 			default:
 				assert(0);
 				break;

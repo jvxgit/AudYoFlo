@@ -4,8 +4,6 @@
 #include <objbase.h> // IID_PPV_ARGS and friends
 //#include <dshow.h> // IAMVideoProcAmp and friends
 
-#include <opencv2/imgproc.hpp>
-
 // ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
 // Conversion code taken from here:
@@ -163,165 +161,71 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 
 						m2DBuffer->Lock2D(&src, &stride);
 
-						if (runtime.convertOnRead.inConvertBufferInUse)
+						jvxSize j;
+
+						switch (runtime.convertOnRead.form_hw)
 						{
-							jvxSize j;
-
-							switch (runtime.convertOnRead.form_hw)
-							{
-							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_NV12:
-							{
-								jvxSize sz = _common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format);
-								memcpy(dest, src, sz);
-#if 0
-								// If we involve an NV12 mapping, we need to use openCV
-								// In openCV we need to involve the cv data structs. I have just 
-								// been rather robust in involving the Mat structs with raw memory without really taking into account
-								// the openCVmatrix memory model with channels. However, it works!!
-
-								// This pointer points to a field of bytes that contains Y in the first part and UV in the second part
-								// We will need to make 2 planes out of that: 
-								// - First plane, 1 channel: Y - size if h x w
-								// - Second plane: 2 channels: U/V - size os h/2 x w/2
-								jvxUInt8* ptrRead = (jvxUInt8*)src;
-								auto planeY = cv::Mat(runtime.convertOnRead.segHeight, runtime.convertOnRead.segWidth, CV_8UC1, ptrRead);
-								auto planeUV = cv::Mat(runtime.convertOnRead.segHeight/2, runtime.convertOnRead.segWidth/2, CV_8UC2, ptrRead + runtime.convertOnRead.plane1_Sz);
-
-								// The output is a bufer containing h x w RGB entries. The RGB is handled in a three channel model.
-								// WHAT IS NOT GOOD: The output buffer is always created by the cv library. There seems to be no 
-								// option to provide memory space to directly render here. Therefore, we need to copy around the data :-(
-								cv::Mat out;
-
-								// Actually run the converter
-								cv::cvtColorTwoPlane(planeY, planeUV, out, cv::COLOR_YUV2RGBA_NV12);
-
-								// This is suboptimal: we need to copy the allocated memory. Hopefully, cv uses pre-allocated memory internally for higher efficiency!!
-								memcpy(dest, out.data, runtime.params_sw.szElementsField);
-								
-								/*
-								 * Test code to set values to 0
-								jvxUInt8* setZero = dest;
-								for (i = 0; i < 20; i++)
-								{
-									setZero += runtime.szLine;
-								}
-								for (i = 0; i < 200; i++)
-								{
-									memset(setZero, 0xFF, runtime.szLine);
-									setZero += runtime.szLine;
-								}
-
-								*/
-								// Following lines for a color check. This indicates that my GL renderer mixes blue and red!!
-								/*
-								for (i = 0; i < runtime.szRaw / 3; i++)
-								{
-									dest[3*i+1] = 0;
-									dest[3 * i + 0] = 0;
-								}
-								*/
-								// std::cout << "Hier - " << out.channels() << std::endl;
-#endif
-								break;
-							}
-							case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_RGB24:
-							{
-								// Future: use COLOR_RGB2RGBA
-								for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
-								{
-									jvxSize j;
-									jvxUInt8* ptrFrom = src;
-									jvxUInt8* ptrTo = dest;
-
-									if (stride > 0)
-									{
-										for (j = 0; j < runtime.params_sw.szElementsLine; j+=4)
-										{		
-											// This for RGB in RGBA
-											for (jvxSize k = 0; k < 3; k++)
-											{
-												*ptrTo = *ptrFrom;
-												ptrFrom++;
-												ptrTo++;
-											}
-
-											// This for "A" in RGBA
-											*ptrTo = 255;
-											ptrTo++;
-										}
-									}
-									else
-									{
-										// To last element
-										ptrFrom -= stride;
-										j = 0;
-
-										while(ptrFrom > src)
-										{
-
-											// Backward copy		
-											
-											// This for RGB in RGBA
-											for (jvxSize k = 0; k < 3; k++)
-											{
-												--ptrFrom;
-												*ptrTo = *ptrFrom;
-												ptrTo++;
-											}
-											// This for "A" in RGBA
-											*ptrTo = 255;
-											ptrTo++;
-											j += 4;
-										}
-										assert(j == runtime.params_sw.szElementsLine);
-									}
-									src += stride;
-									dest += runtime.params_sw.szElementsLine;
-								}
-								break;
-							}
-							default:
-								assert(0);
-								break;
-							}
+						case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_NV12:
+						{
+							jvxSize sz = _common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format);
+							memcpy(dest, src, sz);
+							break;
 						}
-						else
+						case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_RGB24:
 						{
-							// If source is browsed from toe to the head, we do the same for the
-							// texture target buffer
-							if (stride < 0)
-							{
-								//dest += (_common_set_ocon.theData_out.con_params.segmentation.y - 1) * runtime.szLine;
-								//incrementFwd = -1;
-							}
-
-							// This copies the lines in target buffer: from 
-							// - .. higher lines to lower lines in target buffer
-							// - .. from end to beginning in src buffer
 							for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
 							{
+								jvxSize j;
+								jvxUInt8* ptrFrom = src;
+								jvxUInt8* ptrTo = dest;
+
 								if (stride > 0)
 								{
-									memcpy(dest, src, runtime.params_sw.szElementsLine);
+									// Pixel for pixel
+									for (j = 0; j < runtime.params_sw.szElementsLine; j += 3)
+									{
+										// This for RGB
+										for (jvxSize k = 0; k < 3; k++)
+										{
+											*ptrTo = *ptrFrom;
+											ptrFrom++;
+											ptrTo++;
+										}
+									}
 								}
 								else
 								{
-									jvxSize j;
-									jvxUInt8* ptrFrom = src + runtime.params_sw.szElementsLine;
-									jvxUInt8* ptrTo = dest;
+									// To last element
+									ptrFrom -= stride;
+									j = 0;
 
-									// Backward copy
-									for (j = 0; j < runtime.params_sw.szElementsLine; j++)
+									while (ptrFrom > src)
 									{
-										--ptrFrom;
-										*ptrTo = *ptrFrom;
-										ptrTo++;
+
+										// Backward copy		
+
+										// This for RGB in RGBA
+										for (jvxSize k = 0; k < 3; k++)
+										{
+											--ptrFrom;
+											*ptrTo = *ptrFrom;
+											ptrTo++;
+										}
+										j += 3;
 									}
+									assert(j == runtime.params_sw.szElementsLine);
 								}
 								src += stride;
 								dest += runtime.params_sw.szElementsLine;
 							}
+							break;
 						}
+						default:
+							assert(0);
+							break;
+						}
+
+						
 						m2DBuffer->Unlock2D();
 						//std::cout << "Stop capture buffer " << theData.pipeline.idx_stage << std::endl;
 

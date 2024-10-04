@@ -15,8 +15,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 	{
 		jvxVideoSetting oneForm;
 		oneForm.form = JVX_DATAFORMAT_NONE;
-		oneForm.subform_sw = JVX_DATAFORMAT_GROUP_NONE;
-		oneForm.subform_hw = JVX_DATAFORMAT_GROUP_NONE;
+		oneForm.subform = JVX_DATAFORMAT_GROUP_NONE;
 		oneForm.height = 0;
 		oneForm.width = 0;
 		oneForm.id = count;
@@ -159,8 +158,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 			std::cout << "--> Media Subtype RGB, 24 bpp" << std::endl;
 #endif
 			oneForm.form = JVX_DATAFORMAT_BYTE;
-			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
-			oneForm.subform_hw = JVX_DATAFORMAT_GROUP_VIDEO_RGB24;
+			oneForm.subform = JVX_DATAFORMAT_GROUP_VIDEO_RGB24;
 		}
 		else if (nativeSubGuid == MFVideoFormat_RGB32)
 		{
@@ -168,8 +166,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 			std::cout << "--> Media Subtype RGB, 32 bpp" << std::endl;
 #endif
 			oneForm.form = JVX_DATAFORMAT_BYTE;
-			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
-			oneForm.subform_hw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
+			oneForm.subform = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
 		}
 		else if(nativeSubGuid == MFVideoFormat_ARGB32)
 		{
@@ -227,8 +224,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 			std::cout << "--> Media Subtype NV12	4:2:0	Planar	8" << std::endl;
 #endif
 			oneForm.form = JVX_DATAFORMAT_BYTE;
-			oneForm.subform_sw = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
-			oneForm.subform_hw = JVX_DATAFORMAT_GROUP_VIDEO_NV12;
+			oneForm.subform = JVX_DATAFORMAT_GROUP_VIDEO_NV12;
 		}
 		else if (nativeSubGuid == MFVideoFormat_UYVY)
 		{
@@ -561,15 +557,11 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 		if (oneForm.form == JVX_DATAFORMAT_BYTE)
 		{
 			oneForm.descriptor = "Mode #" + jvx_size2String(lstModes.size()) + ": " + jvx_size2String(oneForm.width) + "x" + jvx_size2String(oneForm.height) + ", ";
-			oneForm.descriptor += jvxDataFormatGroup_txt(oneForm.subform_sw);
-			oneForm.descriptor += "(sw),";
-			oneForm.descriptor += jvxDataFormatGroup_txt(oneForm.subform_hw);
-			oneForm.descriptor += "(hw)";
+			oneForm.descriptor += jvxDataFormatGroup_txt(oneForm.subform);
 			
 #ifdef VERBOSE_1
 			std::cout << "Mode #" << lstModes.size() << ": " << oneForm.width << "x" << oneForm.height << ", " << std::flush;
-			std::cout << jvxDataFormatGroup_txt(oneForm.subform_sw) << "(sw)" << std::flush;
-			std::cout << jvxDataFormatGroup_txt(oneForm.subform_hw) << "(hw)" << std::flush;
+			std::cout << jvxDataFormatGroup_txt(oneForm.subform) << std::flush;
 			std::cout << "Rate: " << oneForm.fps_min << "::" << oneForm.fps_max << "--" << oneForm.fps << std::endl;
 #endif
 			lstModes.push_back(oneForm);

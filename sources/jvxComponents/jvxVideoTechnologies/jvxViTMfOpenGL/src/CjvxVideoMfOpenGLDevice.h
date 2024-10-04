@@ -33,8 +33,7 @@ class CjvxVideoMfOpenGLDevice: public CjvxVideoDevice,
 		int height;
 		jvxSize id;
 		jvxDataFormat form;
-		jvxDataFormatGroup subform_hw;
-		jvxDataFormatGroup subform_sw;
+		jvxDataFormatGroup subform;
 		jvxData fps_min;
 		jvxData fps_max;
 		jvxData fps;
@@ -83,16 +82,10 @@ private:
 
 		struct
 		{
-			jvxBool inConvertBufferInUse = false;
-			jvxDataFormatGroup form_hw = jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_NONE;
-			jvxData szElement = 0;
-			jvxSize lField = 0;
-			jvxByte* bufRead = nullptr;
 			jvxSize segWidth = 0;
 			jvxSize segHeight = 0;
 			jvxSize plane1_Sz = 0;
-			jvxSize plane2_offset = 0;
-			jvxSize plane2_Sz = 0;
+			jvxDataFormatGroup form_hw = jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_NONE;
 		} convertOnRead;
 	} runtime;
 

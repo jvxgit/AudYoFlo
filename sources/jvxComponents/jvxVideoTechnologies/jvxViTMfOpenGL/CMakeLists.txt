@@ -25,7 +25,7 @@ include_directories(
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads/include
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
 	${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
-	${OPENCV_LIBRARY_PATH}
+	# ${OPENCV_LIBRARY_PATH}
   )
 
 if(JVX_USE_GLEW_GLUT)
@@ -61,7 +61,7 @@ set(LOCAL_LIBS
 	mfreadwrite
 	mfuuid
 	shlwapi
-	${OPENCV_LIBRARIES}
+	# ${OPENCV_LIBRARIES}
 	)
 
 if(JVX_USE_GLEW_GLUT)
