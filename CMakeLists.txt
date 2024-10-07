@@ -757,6 +757,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNDefault
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNCameraConvert
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNMixer
+		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNopenGLViewer
 		)
 
   if(JVX_USE_GLEW_GLUT)

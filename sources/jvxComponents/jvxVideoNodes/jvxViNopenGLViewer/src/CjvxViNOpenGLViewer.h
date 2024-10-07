@@ -1,14 +1,16 @@
 #ifndef __CJVXVINOPENGLVIEWER_H__
 #define __CJVXVINOPENGLVIEWER_H__
 
-#include "jvxVideoNodes/CjvxVideoNode.h"
+#include "jvxNodes/CjvxBareNode1io.h"
+#include "jvxVideoNodes/CjvxVideoNodeTpl.h"
+
 #include "pcg_exports_node.h"
 
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
 #endif
 
-class CjvxViNOpenGLViewer: public CjvxVideoNode, public CjvxViNOpenGLViewer_genpcg
+class CjvxViNOpenGLViewer: public CjvxVideoNodeTpl<CjvxBareNode1io>, public CjvxViNOpenGLViewer_genpcg
 {
 private:
 protected:
