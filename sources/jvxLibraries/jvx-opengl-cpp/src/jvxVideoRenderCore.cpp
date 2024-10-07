@@ -17,7 +17,7 @@ JVXVIDEORENDERCORE::finalize_render()
 };
 
 jvxErrorType 
-JVXVIDEORENDERCORE::system_initialize(const char* txtToShow)
+JVXVIDEORENDERCORE::system_initialize(const char* txtToShow, void (*jvx_ogl_render)(), void (*jvx_ogl_idle)())
 {
 	int argc = 0;
 	char** argv = NULL;
@@ -27,8 +27,8 @@ JVXVIDEORENDERCORE::system_initialize(const char* txtToShow)
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(400, 300);
 	glutCreateWindow(txtToShow);
-	glutDisplayFunc(&jvx_ogl_render);
-	glutIdleFunc(&jvx_ogl_idle);
+	glutDisplayFunc(jvx_ogl_render);
+	glutIdleFunc(jvx_ogl_idle);
 
 	glewInit();
 	if (!GLEW_VERSION_2_0)

@@ -42,16 +42,6 @@ class CjvxVideoMfOpenGLDevice: public CjvxVideoDevice,
 
 private:
 
-	typedef enum
-	{
-		JVX_GL_DO_NOT_RENDER = 0,
-		JVX_GL_RENDER_EXTERNAL = 1
-#ifdef JVX_USE_GLEW_GLUT
-		, JVX_GL_RENDER_NATIVE = 2
-#endif
-
-	}jvxOpenGlRenderTarget;
-
 	CjvxVideoMfOpenGLTechnology* myParent;
 
 	IMFActivate* thisisme;
@@ -91,30 +81,6 @@ private:
 
 	JVX_MUTEX_HANDLE safeAccess;
 	jvxTimeStampData tStamp;
-
-	struct
-	{
-		JVX_THREAD_HANDLE hdlThread;
-		JVX_THREAD_ID idThread;
-
-		jvxSize width;
-		jvxSize height;
-		jvxHandle*** bufs;
-		jvxSize szFld;
-		jvxSize numChannels;
-		jvxSize numBufs;
-		jvxDataFormat form;
-		jvxDataFormatGroup subform;
-
-		jvxBool threadIsInitialized;
-		jvxSize idxBuf_Read;
-		jvxSize idxBuf_Fheight;
-		JVX_MUTEX_HANDLE safeAccessBuffer;
-
-		jvxBool requestStop;
-		jvxOpenGlRenderTarget renderingTarget;
-	} nativeGl;
-
 
 public:
 	JVX_CALLINGCONVENTION CjvxVideoMfOpenGLDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -161,52 +127,10 @@ public:
 	// New linkdata connection interface
 	// ===================================================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_start_icon(
-		jvxSize pipeline_offset, 
-		jvxSize* idx_stage,
-		jvxSize tobeAccessedByStage,
-		callback_process_start_in_lock clbk,
-		jvxHandle* priv_ptr) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION process_stop_icon(
-		jvxSize idx_stage, 
-		jvxBool shift_fwd,
-		jvxSize tobeAccessedByStage,
-		callback_process_stop_in_lock clbk,
-		jvxHandle* priv_ptr) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-
-	// ===================================================================================
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION install_property_reference(jvxCallManagerProperties& callGate,
-			const jvx::propertyRawPointerType::IjvxRawPointerType& ptrRaw,
-		const jvx::propertyAddress::IjvxPropertyAddress& ident)override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION uninstall_property_reference(jvxCallManagerProperties& callGate,
-		const jvx::propertyRawPointerType::IjvxRawPointerType& ptrRaw,
-		const jvx::propertyAddress::IjvxPropertyAddress& ident)override;
-
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(on_mode_selected);
-
-#ifdef JVX_USE_GLEW_GLUT
-	void run_native_gl();
-	void do_rendering_gl();
-	void do_idle_gl();
-#endif
 
 	IMFAttributes * bootup_camera();
 	void shutdown_camera();
-
-#if 0
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION select();
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION unselect();
-
-#endif
 
 	//void updateDependentVariables(jvxSize propId, jvxPropertyCategoryType category, jvxBool updateAll, jvxPropertyCallPurpose callPurp = JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC);
 	void updateDependentVariables_nolock();

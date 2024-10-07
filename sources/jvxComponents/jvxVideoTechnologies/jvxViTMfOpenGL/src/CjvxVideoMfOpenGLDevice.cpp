@@ -126,9 +126,6 @@ CjvxVideoMfOpenGLDevice::activate()
 			jvx_bitZSet(genMf_device::configuration_mf.mode_selection.value.selection(), idSel);
 		}
 
-		// Activate multi buffering rendering
-		jvx_bitZSet(genMf_device::expose_visual_if.visual_data_video.operation_mode.value.selection(), 0);
-
 		this->updateDependentVariables_nolock();
 
 		this->_lock_properties_local();
@@ -336,25 +333,7 @@ jvxErrorType
 CjvxVideoMfOpenGLDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
-	JVX_WAIT_RESULT resW = JVX_WAIT_SUCCESS;
-
-	switch (nativeGl.renderingTarget)
-	{
-#ifdef JVX_USE_GLEW_GLUT
-	case JVX_GL_RENDER_NATIVE:
-		nativeGl.requestStop = true;
-
-		resW = JVX_WAIT_FOR_THREAD_TERMINATE_MS(nativeGl.hdlThread, 50000);
-		if (resW != JVX_WAIT_SUCCESS)
-		{
-			JVX_TERMINATE_THREAD(nativeGl.hdlThread, 0);
-		}
-		break;
-	#endif
-	default:
-		break;
-	}
-
+	
 	// Contact through
 	res = _postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	assert(res == JVX_NO_ERROR);
@@ -466,37 +445,6 @@ CjvxVideoMfOpenGLDevice::set_property(jvxCallManagerProperties& callGate,
 	return(res);
 }
 
-jvxErrorType 
-CjvxVideoMfOpenGLDevice::install_property_reference(jvxCallManagerProperties& callGate,
-	const jvx::propertyRawPointerType::IjvxRawPointerType& ptrRaw,
-	const jvx::propertyAddress::IjvxPropertyAddress& ident)
-{
-	jvxErrorType res = CjvxVideoDevice::install_property_reference(callGate, ptrRaw, ident);
-	if (res == JVX_NO_ERROR)
-	{
-		if (genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr)
-		{
-
-		}
-	}
-	return res;
-}
-
-jvxErrorType
-CjvxVideoMfOpenGLDevice::uninstall_property_reference(jvxCallManagerProperties& callGate,
-	const jvx::propertyRawPointerType::IjvxRawPointerType& ptrRaw,
-	const jvx::propertyAddress::IjvxPropertyAddress& ident)
-{
-	jvxErrorType res = CjvxVideoDevice::uninstall_property_reference(callGate, ptrRaw, ident);
-	if (res == JVX_NO_ERROR)
-	{
-		if (genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr)
-		{
-
-		}
-	}
-	return res;
-}
 jvxErrorType
 CjvxVideoMfOpenGLDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 	IjvxConfigProcessor* processor,
@@ -560,15 +508,6 @@ CjvxVideoMfOpenGLDevice::updateDependentVariables_nolock()
 		CjvxVideoDevice_genpcg::video.format.value = lstModes[idSel].form;
 		CjvxVideoDevice_genpcg::video.subformat.value = lstModes[idSel].subform;
 
-		// External data visualization interface must be aligned with 
-		genMf_device::expose_visual_if.visual_data_video.format.value = CjvxVideoDevice_genpcg::video.format.value;
-		genMf_device::expose_visual_if.visual_data_video.number_buffers.value = genMf_device::systemex.number_buffers.value;
-		// only on init: genMf_device::expose_visual_if.visual_data_video.operation_mode = ...;
-		// only on set_ext_ref: genMf_device::expose_visual_if.visual_data_video.rendering_external = ...;
-		genMf_device::expose_visual_if.visual_data_video.segmentsize_x.value = CjvxVideoDevice_genpcg::video.segmentsize_x.value;
-		genMf_device::expose_visual_if.visual_data_video.segmentsize_y.value = CjvxVideoDevice_genpcg::video.segmentsize_y.value;
-		genMf_device::expose_visual_if.visual_data_video.subformat.value = CjvxVideoDevice_genpcg::video.subformat.value;
-
 	}
 	else
 	{
@@ -612,10 +551,6 @@ CjvxVideoMfOpenGLDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		CjvxVideoDevice_genpcg::video.format.value = _common_set_ocon.theData_out.con_params.format;
 		CjvxVideoDevice_genpcg::video.subformat.value = _common_set_ocon.theData_out.con_params.format_group;
 
-		genMf_device::expose_visual_if.visual_data_video.format.value = (jvxInt16)CjvxVideoDevice_genpcg::video.format.value;
-		genMf_device::expose_visual_if.visual_data_video.segmentsize_x.value = CjvxVideoDevice_genpcg::video.segmentsize_x.value;
-		genMf_device::expose_visual_if.visual_data_video.segmentsize_y.value = CjvxVideoDevice_genpcg::video.segmentsize_y.value;
-		genMf_device::expose_visual_if.visual_data_video.subformat.value = CjvxVideoDevice_genpcg::video.subformat.value;
 	}
 	return res;
 }

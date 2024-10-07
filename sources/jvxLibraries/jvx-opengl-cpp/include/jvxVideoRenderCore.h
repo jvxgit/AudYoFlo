@@ -22,11 +22,6 @@
 // =====================================================================
 
 #if !defined(JVX_VIDEO_RENDER_CORE_CLASS)
-extern "C"
-{
-	extern void jvx_ogl_render();
-	extern void jvx_ogl_idle();
-};
 
 #include "jvx.h"
 
@@ -247,10 +242,11 @@ public:
 	jvxErrorType initialize(int width, int height, jvxByte**** bufs, jvxSize* szFld, jvxSize numChannels,
 		jvxSize numBufs, jvxDataFormat form, jvxDataFormatGroup subform,
 		jvxOpenGlRendering renderOperation, jvxHandle* cfgSpecific,
-		const char* txtToShow, jvxByte* extBuf, jvxSize extSz)
+		const char* txtToShow, jvxByte* extBuf, jvxSize extSz,
+		void (*jvx_ogl_render)() = nullptr, void (*jvx_ogl_idle)() = nullptr)
 	{
 		jvxSize i;
-		jvxErrorType res = system_initialize(txtToShow);
+		jvxErrorType res = system_initialize(txtToShow, jvx_ogl_render, jvx_ogl_idle);
 
 		myWidth = width;
 		myHeight = height;
@@ -509,13 +505,13 @@ public:
 #if !defined(JVX_VIDEO_RENDER_CORE_CLASS)
 	void trigger_render();
 	void finalize_render();
-	jvxErrorType system_initialize(const char* txtToShow);
+	jvxErrorType system_initialize(const char* txtToShow, void (*jvx_ogl_render)(), void (*jvx_ogl_idle)());
 	void system_passcontrol();
 	void system_regaincontrol();
 
 #else
 
-	virtual jvxErrorType system_initialize(const char* txtToShow) = 0;
+	virtual jvxErrorType system_initialize(const char* txtToShow, void(*jvx_ogl_render)(), void (*jvx_ogl_idle)()) = 0;
 	virtual jvxErrorType system_passcontrol() = 0;
 
 	virtual jvxErrorType create_programm_assign(

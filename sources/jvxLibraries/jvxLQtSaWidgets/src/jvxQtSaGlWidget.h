@@ -151,7 +151,7 @@ private:
 	jvxErrorType start_rendering_program() override;
 	jvxErrorType stop_rendering_program() override;
 
-	virtual jvxErrorType system_initialize(const char* txtToShow)override
+	virtual jvxErrorType system_initialize(const char* txtToShow, void (*jvx_ogl_render)(), void (*jvx_ogl_idle)())override
 	{
 		return JVX_NO_ERROR;
 	};
