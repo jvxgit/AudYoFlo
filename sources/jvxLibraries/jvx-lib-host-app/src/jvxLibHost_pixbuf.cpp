@@ -1,140 +1,12 @@
-#include "jvxLibHost.h"
+#include "CjvxPixBufRendering.h"
+
 #include <thread>
 #include <opencv2/imgproc.hpp>
 
-class jvxOneThreadBufferCombo
-{
-public:
-	jvxSize width = 0;
-	jvxSize height = 0;
-	jvxSize bsize = 0;
-	jvxSize numBuffers = 0;
-	jvxDataFormat form = JVX_DATAFORMAT_BYTE;
-	jvxDataFormatGroup sform = JVX_DATAFORMAT_GROUP_VIDEO_RGBA32;
-	jvxExternalBuffer* swb = nullptr;
-	jvxBool swbValid = false;
-};
+#define JVX_ALPHA_SMOOTH 0.9
 
-class threaddata 
-{
-public:
-	jvxInt64 texture_id = JVX_SIZE_UNSELECTED;
-  jvxUInt8 **buffer = nullptr;
-  jvxUInt32 width = 0;
-  jvxUInt32 height = 0;
-  jvxSize szBuf = 0;
-  std::string addressArg;
-  std::string installHint;
-  std::string propInstall;
-  jvxComponentIdentification cpId;   
-  PixelBufferTexturePluginFrameAvailableCallback frame_available_cb = nullptr;
-  PixelBufferTexturePluginNotifyCallback notify_cb = nullptr;
-  bool running = false;
-  std::unique_ptr<std::thread> thread;
-
-  jvxLockWithVariable<jvxOneThreadBufferCombo>* lockHandle = nullptr;
-
-  static void lockf(jvxHandle* priv)
-  {
-	  jvxLockWithVariable<jvxOneThreadBufferCombo>* lockHandle = reinterpret_cast<jvxLockWithVariable<jvxOneThreadBufferCombo>*>(priv);
-	  assert(lockHandle);
-	  lockHandle->lock();
-  }
-
-  static jvxErrorType trylockf(jvxHandle* priv)
-  {
-	  jvxLockWithVariable< jvxOneThreadBufferCombo>* lockHandle = reinterpret_cast<jvxLockWithVariable<jvxOneThreadBufferCombo>*>(priv);
-	  assert(lockHandle);
-	  if (lockHandle->try_lock())
-	  {
-		  return JVX_NO_ERROR;
-	  }
-	  return JVX_ERROR_COMPONENT_BUSY;
-  }
-
-  static void unlockf(jvxHandle* priv)
-  {
-	  jvxLockWithVariable<jvxOneThreadBufferCombo>* lockHandle = reinterpret_cast<jvxLockWithVariable<jvxOneThreadBufferCombo>*>(priv);
-	  assert(lockHandle);
-	  lockHandle->unlock();
-  }
-};
-
-std::unordered_map<int64_t, std::unique_ptr<struct threaddata>> threads;
-
-void f1(threaddata *data) 
-{
-	// This function is in a dedicated thread outside the main thread and the visual data processing thread
-	for (uint32_t i = 0; data->running; i++)
-	{
-		bool favailRep = false;
-#ifdef JVX_INIT_EXAMPLE
-		for (uint32_t j = 0; j < data->width * data->height * 4; j += 4)
-		{
-			(*data->buffer)[j] = (uint8_t)(127.f * (1 + sin(0.1f * i)));
-			(*data->buffer)[j + 1] = (uint8_t)(127.f * (1.f + sin(0.2f * i)));
-			(*data->buffer)[j + 2] = (uint8_t)(127.f * (1.f + sin(0.3f * i)));
-			(*data->buffer)[j + 3] = 255;
-		}
-
-		// This function is synchronized with flutter, hence the maximum unblocked rate is 60 Hz!!
-		data->frame_available_cb(data->texture_id, nullptr);
-#else
-		if (data->buffer)
-		{
-			if (data->lockHandle)
-			{
-				if (data->lockHandle->v.swb) 
-				{
-					if (data->lockHandle->v.swb->fill_height > 0)
-					{
-						// Check buffer match size!!
-						// assert(data->lockHandle->v.swb->specific.the2DFieldBuffer_full.common.szFldOneBuf == data->szBuf);
-						
-						//data->lockHandle->v.swb->safe_access.lockf(data->lockHandle->v.swb->safe_access.priv);
-						jvxSize idx_read = data->lockHandle->v.swb->idx_read;
-						//data->lockHandle->v.swb->safe_access.unlockf(data->lockHandle->v.swb->safe_access.priv);
-						jvxByte* ptrRead = data->lockHandle->v.swb->ptrFld;
-						ptrRead += idx_read * data->lockHandle->v.swb->numElmFldOneBuf;
-
-						if (data->lockHandle->v.swb->specific.the2DFieldBuffer_full.common.szFldOneBuf == data->szBuf)
-						{
-							memcpy(*data->buffer, ptrRead, data->lockHandle->v.swb->specific.the2DFieldBuffer_full.common.szFldOneBuf);
-						}
-						else
-						{
-							
-							// Convert from data->lockHandle->v.swb to data->szBuf
-							cv::Mat imageFrom(data->lockHandle->v.swb->specific.the2DFieldBuffer_full.common.seg_y, 
-								data->lockHandle->v.swb->specific.the2DFieldBuffer_full.common.seg_x, CV_8UC4, ptrRead);
-							cv::Mat resize_down;
-							cv::resize(imageFrom, resize_down, cv::Size(data->width, data->height), cv::INTER_LINEAR);
-							memcpy(*data->buffer, resize_down.data, data->szBuf);
-
-							// https://learnopencv.com/image-resizing-with-opencv/#resize-by-wdith-height
-
-							
-						}
-						
-						data->lockHandle->v.swb->safe_access.lockf(data->lockHandle->v.swb->safe_access.priv);
-						data->lockHandle->v.swb->idx_read = (data->lockHandle->v.swb->idx_read + 1) % data->lockHandle->v.swb->specific.the2DFieldBuffer_full.common.number_buffers;
-						data->lockHandle->v.swb->fill_height--;
-						data->lockHandle->v.swb->safe_access.unlockf(data->lockHandle->v.swb->safe_access.priv);
-						//data->lockHandle->v.swb->safe_access.unlockf(data->lockHandle->v.swb->safe_access.priv);
-
-						favailRep = true;
-						data->frame_available_cb(data->texture_id, true);
-					}
-				}
-			}
-		}
-		if (!favailRep)
-		{
-			data->frame_available_cb(data->texture_id, false);
-		}
-#endif
-	}
-}
+//std::unordered_map<int64_t, std::unique_ptr<struct threaddata>> threads;
+std::unordered_map<int64_t, CjvxPixBufRendering*> threads;
 
 void 
 jvxLibHost::pixbuffer_local_create_cb(
@@ -145,7 +17,10 @@ jvxLibHost::pixbuffer_local_create_cb(
 	PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data)
 {
 	// This function enters the backend within the main thread!!!
-	auto tdg = std::make_unique<struct threaddata>();
+	//auto tdg = std::make_unique<struct threaddata>();
+	CjvxPixBufRendering* tdg = nullptr;
+	JVX_SAFE_ALLOCATE_OBJECT(tdg, CjvxPixBufRendering);
+
 	tdg->texture_id = texture_id;
 	tdg->buffer = buffer;
 	tdg->width = width;
@@ -156,6 +31,15 @@ jvxLibHost::pixbuffer_local_create_cb(
 	tdg->szBuf /= jvxDataFormatGroup_getsize_div(JVX_DATAFORMAT_GROUP_VIDEO_RGBA32);
 
 	jvxLibHost* hostRef = reinterpret_cast<jvxLibHost*>(priv_data);
+	IjvxToolsHost* tools = reqInterface<IjvxToolsHost>(hostRef->involvedHost.hHost);
+
+	if (tools)
+	{
+		 tdg->ref = reqInstTool<IjvxThreads>(tools, JVX_COMPONENT_THREADS);
+
+	}
+
+	retInterface<IjvxToolsHost>(hostRef->involvedHost.hHost, tools);
 
 	tdg->addressArg = arg;
 	std::vector<std::string> args;
@@ -286,7 +170,7 @@ jvxLibHost::pixbuffer_local_create_cb(
 					tdg->lockHandle->v.swb = jvx_allocate2DFieldExternalBuffer_full(
 						(tdg->lockHandle->v.width * tdg->lockHandle->v.height), 1, 
 						tdg->lockHandle->v.form, tdg->lockHandle->v.sform,
-						threaddata::lockf, threaddata::trylockf, threaddata::unlockf, 
+						CjvxPixBufRendering::lockf, CjvxPixBufRendering::trylockf, CjvxPixBufRendering::unlockf,
 						&szBuf, tdg->lockHandle->v.numBuffers, tdg->lockHandle->v.width, 
 						tdg->lockHandle->v.height, tdg->lockHandle);
 
@@ -294,10 +178,10 @@ jvxLibHost::pixbuffer_local_create_cb(
 					tdg->lockHandle->v.swbValid = true;
 					// Check settings!
 
-					/*
-					tdg->lockHandle->v->specific.the2DFieldBuffer_full.report_triggerf = static_report_bufferswitch_trigger;
-					tdg->lockHandle->v->specific.the2DFieldBuffer_full.report_trigger_priv = reinterpret_cast<jvxHandle*>(this);
-					*/
+					
+					tdg->lockHandle->v.swb->specific.the2DFieldBuffer_full.report_triggerf = CjvxPixBufRendering::static_report_bufferswitch_trigger;
+					tdg->lockHandle->v.swb->specific.the2DFieldBuffer_full.report_trigger_priv = reinterpret_cast<jvxHandle*>(tdg);
+					
 					jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<jvxExternalBuffer> ptrRaw(tdg->lockHandle->v.swb, &tdg->lockHandle->v.swbValid,
 						tdg->lockHandle->v.swb->formFld);
 					jvxCallManagerProperties callGate;
@@ -327,9 +211,18 @@ jvxLibHost::pixbuffer_local_create_cb(
 	{
 		std::cout << "Error: Installing a pixbuf external buffer requires an <installation hint> and a <install target property>, both separated by \":\"" << std::endl;
 	}
-	tdg->running = true;
-	tdg->thread = std::make_unique<std::thread>(f1, tdg.get());
-	threads.emplace(texture_id, std::move(tdg));
+
+	JVX_GET_TICKCOUNT_US_SETREF(&tdg->tStamp);
+
+	if (tdg->ref.objPtr)
+	{
+		tdg->ref.cpPtr->initialize(tdg);
+		tdg->ref.cpPtr->start(JVX_SIZE_UNSELECTED, true);
+	}
+
+	//tdg->thread = std::make_unique<std::thread>(f1, tdg.get());
+	//threads.emplace(texture_id, std::move(tdg));
+	threads[texture_id] = tdg;
 	std::cout << "Calling function " << __FUNCTION__ << std::endl;
 }
 
@@ -337,12 +230,27 @@ void
 jvxLibHost::pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data)
 {
 	// This function enters the backend within the main thread!!!
-	auto tdg = threads[texture_id].get();
-	tdg->running = false;
+	auto it = threads.find(texture_id);
+	assert(it!= threads.end());
+
+	auto tdg = it->second;
+
 	tdg->notify_cb(tdg->texture_id);
-	tdg->thread->join();
+	
+	//tdg->thread->join();
+	tdg->ref.cpPtr->stop();
+	tdg->ref.cpPtr->terminate();
 
 	jvxLibHost* hostRef = reinterpret_cast<jvxLibHost*>(priv_data);
+	IjvxToolsHost* tools = reqInterface<IjvxToolsHost>(hostRef->involvedHost.hHost);
+
+	if (tools)
+	{
+		retInstTool<IjvxThreads>(tools, JVX_COMPONENT_THREADS, tdg->ref);
+
+	}
+	retInterface<IjvxToolsHost>(hostRef->involvedHost.hHost, tools);
+
 
 	IjvxObject* theObj = nullptr;
 	hostRef->involvedHost.hHost->request_object_selected_component(tdg->cpId, &theObj);
@@ -372,5 +280,7 @@ jvxLibHost::pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data)
 		tdg->lockHandle = nullptr;
 	}
 
-	threads.erase(texture_id);
+	threads.erase(it);
+	
+	JVX_SAFE_DELETE_OBJECT(tdg);
 }

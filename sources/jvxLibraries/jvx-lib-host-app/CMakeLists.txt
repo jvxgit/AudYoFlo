@@ -29,6 +29,9 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_components.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_async_forward.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_show.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxPixBufRendering.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxPixBufRendering.cpp
   
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_hosthooks.cpp

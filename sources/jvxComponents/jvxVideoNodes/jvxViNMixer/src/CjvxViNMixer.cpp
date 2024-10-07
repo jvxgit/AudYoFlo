@@ -492,6 +492,7 @@ CjvxViNMixer::activate_connectors()
 		if (res == JVX_NO_ERROR)
 		{
 			CjvxViNMixer_genpcg::expose.lost_frames.value = 0;
+			CjvxViNMixer_genpcg::expose.frames_not_lost.value = 0;
 		}
 		return res;
 	}
@@ -790,17 +791,26 @@ CjvxViNMixer::activate_connectors()
 					buf->safe_access.unlockf(buf->safe_access.priv);
 
 					jvxByte* ptrWrite = buf->ptrFld;
-					ptrWrite += idx_write * buf->numElmFldOneBuf;
+					ptrWrite += idx_write * buf->specific.the2DFieldBuffer_full.common.szFldOneBuf;
 					memcpy(ptrWrite, fldFromRGBA32, buf->specific.the2DFieldBuffer_full.common.szFldOneBuf);
 
 					buf->safe_access.lockf(buf->safe_access.priv);
 					buf->fill_height++;
 					buf->safe_access.unlockf(buf->safe_access.priv);
+
+					CjvxViNMixer_genpcg::expose.frames_not_lost.value++;
 				}
 				else
 				{
 					CjvxViNMixer_genpcg::expose.lost_frames.value++;
 				}
+				// Notification to rendering thread
+				// Hint: we hold the property lock here. We need to hold it to not remove the callback while calling.
+				// In the callback, we will render a buffer and finally report to the UI. The UI protects itself with a log.
+				// If UI requests a property and the lock is in the video thread, the UI lock will wait for the propert lock
+				// and the property lock will wait for the UI lock -> DEADLOCK
+				// Therefore, the buffer callback needs to render the video via another thread!
+				buf->specific.the2DFieldBuffer_full.report_triggerf(buf->specific.the2DFieldBuffer_full.report_trigger_priv);
 			}
 			break;
 			default:

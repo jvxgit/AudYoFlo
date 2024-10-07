@@ -1,7 +1,3 @@
-if(DEFINED JVX_SDK_PATH)
-	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
-endif(DEFINED JVX_SDK_PATH)
-
 set(PROJECT_NAME jvxViNOpenGLViewer)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
