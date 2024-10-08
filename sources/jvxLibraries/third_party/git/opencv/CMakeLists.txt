@@ -116,9 +116,9 @@ elseif(${JVX_OS} MATCHES "linux")
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libade.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippiw.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libittnotify.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibprotobuf.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibwebp.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libopenjp2.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libprotobuf.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libwebp.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippicv.a
 		CACHE INTERNAL "opencv library references")
 		
