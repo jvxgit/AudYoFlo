@@ -370,7 +370,7 @@ CjvxViNOpenGLViewer::do_rendering_gl()
 		cfg.invert_y = 1;		
 
 		// idxBuf_Read is not to be protected as it will only be touched here!
-		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)_common_set_icon.theData_in->con_data.buffers[nativeGl.safeAccess.v.idxBuf_Read], &cfg);
+		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)nativeGl.bufs[nativeGl.safeAccess.v.idxBuf_Read], &cfg);
 
 		nativeGl.safeAccess.lock();
 		nativeGl.safeAccess.v.idxBuf_Read = (nativeGl.safeAccess.v.idxBuf_Read + 1) % nativeGl.numBufs;

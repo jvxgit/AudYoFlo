@@ -266,8 +266,7 @@ CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK
 	{
 		_common_set_ocon.theData_out.con_data.buffers = NULL;
 		_common_set_ocon.theData_out.con_user.chain_spec_user_hints = NULL;
-		_common_set_ocon.theData_out.con_data.number_buffers = genMf_device::systemex.number_buffers.value;
-		_common_set_ocon.theData_out.con_data.number_buffers = JVX_MAX(_common_set_ocon.theData_out.con_data.number_buffers, 2);
+		_common_set_ocon.theData_out.con_data.number_buffers = 1;
 		_common_set_ocon.theData_out.con_params.additional_flags = 0;
 
 		runtime.params_sw.szElement = szElement;
@@ -431,16 +430,10 @@ CjvxVideoMfOpenGLDevice::set_property(jvxCallManagerProperties& callGate,
 
 			this->updateDependentVariables_nolock();
 			CjvxVideoDevice::updateDependentVariables_nolock(propId, category, true, callGate.call_purpose);
-			_report_command_request((jvxCBitField)1 << JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
-		}
 
-		if (
-			(category == genMf_device::systemex.number_buffers.category) &&
-			(propId == genMf_device::systemex.number_buffers.globalIdx))
-		{
-			this->updateDependentVariables_nolock();
-			_report_command_request((jvxCBitField)1 << JVX_REPORT_REQUEST_UPDATE_PROPERTY_VIEWER_FULL_SHIFT);
-		}
+			CjvxReportCommandRequest req(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES, _common_set.theComponentType);
+			_request_command(req);
+		}		
 	}
 	return(res);
 }

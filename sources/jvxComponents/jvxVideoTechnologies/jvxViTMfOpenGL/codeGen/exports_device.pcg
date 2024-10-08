@@ -2,24 +2,7 @@ SECTION PROPERTIES
 {
 	OUTPUTFILE_NAME = "genMf_device";
 	CALLBACKS = {"on_mode_select"};
-	SECTION systemex 
-	{
-		PREFIX = "systemex";
-		DESCRIPTION = "Specific Mf camera properties";
-		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
-		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
-		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
-		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
-		
-		SECTION number_buffers
-		{
-			DESCRIPTION = "Number of buffers while operating";	  // Defaults to NAME if not present
-			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
-			TYPE = "JVX_DATAFORMAT_SIZE";
-			INIT_SET = 2;
-		};
-	};
-		
+			
 	SECTION configuration_mf 
 	{
 		DESCRIPTION = "Specific Mf camera properties";
