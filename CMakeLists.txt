@@ -757,7 +757,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNDefault
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNCameraConvert
 		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNMixer
-		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNopenGLViewer
+		${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNOpenGLViewer
 		)
 
   if(JVX_USE_GLEW_GLUT)
@@ -766,7 +766,7 @@ else(JVX_COMPILE_BUILDTOOLS)
     # build audio nodes
     ###
     #set(JVX_BASE_VIDEO_NODES ${JVX_BASE_VIDEO_NODES}      
-    #  ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNopenGLViewer
+    #  ${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoNodes/jvxViNOpenGLViewer
     #)
   endif()
 
