@@ -118,17 +118,17 @@ elseif(${JVX_OS} MATCHES "linux")
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippiw.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libittnotify.a
 		)
-	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libopenjp2.a)
+	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a)
 		set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libopenjp2.a)
+			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a)
 	else()
 		set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-			openjp2)
+			libopenjp2)
 	endif()
 		
 	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libprotobuf.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libwebp.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibprotobuf.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibwebp.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippicv.a)
 		
 	set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES_CANDIDATES}
