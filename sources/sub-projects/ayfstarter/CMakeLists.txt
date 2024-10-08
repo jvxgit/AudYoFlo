@@ -17,14 +17,19 @@ if(JVX_USE_ORC)
 endif()
 
 if(AYFSTARTER_USE_RUST_LIBS)
-  set(AYF_STARTER_STATIC_LIBS
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib_debug
-    )
+	if(JVX_USE_RUST)
+		set(AYF_STARTER_STATIC_LIBS
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/rust/ayfstarterlib_debug
+			)
+	else()
+		message(FATAL_ERROR "Option AYFSTARTER_USE_RUST_LIBS is active but rust is not enabled. Rerun compile script with option JVX_USE_RUST!")
+	endif()
+else()
+	set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS}
+		${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/c/ayfstarterlib
+		)
 endif()
-  set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/c/ayfstarterlib
-    )
 
 jvx_addSubdirs("Configuring static library for ayfstarter core functionality" "${AYF_STARTER_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Library")
 

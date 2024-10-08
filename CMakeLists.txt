@@ -412,7 +412,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 
   if(JVX_USE_RUST)
 	message("Looking for Rust toolset")
-    find_program(JVX_CARGO_EXECUTABLE cargo REQUIRED)
+    find_program(JVX_CARGO_EXECUTABLE "cargo" REQUIRED)
   endif()
   
   # BOOST and EIGEN to be handled lateron
