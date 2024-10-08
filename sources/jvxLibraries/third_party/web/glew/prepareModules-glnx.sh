@@ -8,17 +8,17 @@ if [ ! -d "$2" ]; then
 	rm glew-2.2.0.zip
 fi
 
-if [ ! -d "build-$1" ]; then
+if [ ! -d "$2/build-$1" ]; then
 
-    echo "Create build folder <build/compile.sh>"
-    mkdir build-$1
+    echo "Create build folder <$2/build-$1>"
+    mkdir $2/build-$1
 	
-    cp build/compile.sh build-$1
-    chmod +x build/compile.sh 
+    cp build/compile.sh $2/build-$1
+    chmod +x $2/build-$1/compile.sh 
 fi
 
-if [ ! -d "$2/$1" ]; then
-   cd build-$1
+if [ ! -d "$2/$2-$1" ]; then
+   cd $2/build-$1
    ./compile.sh $1 $2 $3
 fi
 

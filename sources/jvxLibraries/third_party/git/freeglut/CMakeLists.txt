@@ -52,8 +52,8 @@ elseif(${JVX_OS} MATCHES "linux")
 	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
 	message("freeglut installation complete.")
 	
-	set(GLUT_INCLUDEDIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}" CACHE INTERNAL "freglut include references")
-	set(GLUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/glut" CACHE INTERNAL "freeglut library references")
+	set(GLUT_INCLUDEDIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}" CACHE INTERNAL "freglut include references")
+	set(GLUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/lib/libglut.so" CACHE INTERNAL "freeglut library references")
 endif()
 
 # message(FATAL_ERROR "Hier [${PROJECT_NAME}]")

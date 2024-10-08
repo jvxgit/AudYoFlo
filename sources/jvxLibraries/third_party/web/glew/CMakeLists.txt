@@ -58,8 +58,8 @@ elseif(${JVX_OS} MATCHES "linux")
 	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
 	message("glew installation complete.")
 	
-	set(GLEW_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/include CACHE INTERNAL "glew include references")
-	set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/libGLEWd.lib CACHE INTERNAL "glew include references")
+	set(GLEW_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/include CACHE INTERNAL "glew include references")
+	set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/lib/libGLEWd.so CACHE INTERNAL "glew include references")
 	
 else()	
 	
