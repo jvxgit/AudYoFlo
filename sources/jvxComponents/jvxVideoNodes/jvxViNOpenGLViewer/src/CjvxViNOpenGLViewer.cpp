@@ -299,6 +299,7 @@ CjvxViNOpenGLViewer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		// Nothing to be done here
 		break;
 
+#ifdef JVX_USE_GLEW_GLUT
 	case JVX_GL_RENDER_NATIVE:
 
 		// Take the incomingbuffer
@@ -325,6 +326,7 @@ CjvxViNOpenGLViewer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			lostBuffer = true;
 		}
 		break;
+#endif
 	default:
 		assert(0);
 		break;
