@@ -7,7 +7,7 @@ generatortoken="-G Ninja"
 
 set -x
 rm -rf CMakeCache.txt
-cmake $generatortoken -DCMAKE_INSTALL_PREFIX=../$opencvdir-$arch -DBUILD_SHARED_LIBS=FALSE -DCMAKE_BUILD_TYPE=$buildtype ..
+cmake $generatortoken -DCMAKE_INSTALL_PREFIX=../$opencvdir-$arch -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTS=FALSE -DBUILD_PERF_TESTS=FALSE -DCMAKE_BUILD_TYPE=$buildtype ..
 
 ninja install
 
