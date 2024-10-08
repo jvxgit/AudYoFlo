@@ -174,5 +174,8 @@ jvxCBitField jvx_check_differences(jvxLinkDataDescriptor_con_params& params_one,
 		jvxLinkDataDescriptor_con_params& params_other, jvxCBitField checkThis);
 
 jvxSize jvx_derive_buffersize(jvxLinkDataDescriptor_con_params& params_one);
+jvxSize jvx_derive_buffersize_bytes(jvxLinkDataDescriptor_con_params& params_one);
+jvxData jvx_derive_elementsize(jvxDataFormatGroup format_group);
+jvxData jvx_derive_elementsize_byte(jvxDataFormatGroup format_group, jvxDataFormat format);
 
 #endif

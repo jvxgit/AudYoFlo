@@ -1530,3 +1530,25 @@ jvxSize jvx_derive_buffersize(jvxLinkDataDescriptor_con_params& params_one)
 	}
 	return res;
 }
+
+jvxSize jvx_derive_buffersize_bytes(jvxLinkDataDescriptor_con_params& params_one)
+{
+	return jvx_derive_buffersize(params_one) * jvxDataFormat_getsize(params_one.format);
+}
+
+jvxData jvx_derive_elementsize(jvxDataFormatGroup format_group)
+{
+	jvxData res = -1;
+	if (format_group != JVX_DATAFORMAT_GROUP_NONE) 
+	{
+		res = jvxDataFormatGroup_getsize_mult(format_group) / jvxDataFormatGroup_getsize_div(format_group);
+	}
+	return res;
+}
+
+jvxData jvx_derive_elementsize_byte(jvxDataFormatGroup format_group, jvxDataFormat format)
+{
+	return jvx_derive_elementsize(format_group) * jvxDataFormat_getsize(format);
+}
+
+	

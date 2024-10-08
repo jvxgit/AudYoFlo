@@ -97,7 +97,8 @@ elseif(${JVX_OS} MATCHES "linux")
 	endif()
 	
 	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include/opencv4" CACHE INTERNAL "opencv include references")
-	set(OPENCV_LIBRARIES 
+	
+	set(OPENCV_LIBRARIES_CANDIDATES 
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_features2d.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_gapi.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_imgcodecs.a
@@ -116,10 +117,21 @@ elseif(${JVX_OS} MATCHES "linux")
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libade.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippiw.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libittnotify.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libopenjp2.a
+		)
+	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libopenjp2.a)
+		set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
+			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libopenjp2.a)
+	else()
+		set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
+			openjp2)
+	endif()
+		
+	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libprotobuf.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libwebp.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippicv.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippicv.a)
+		
+	set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES_CANDIDATES}
 		CACHE INTERNAL "opencv library references")
 		
 endif()

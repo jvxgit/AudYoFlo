@@ -41,7 +41,6 @@ namespace JVX_PROJECT_NAMESPACE {
 CjvxViNOpenGLViewer::CjvxViNOpenGLViewer(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxVideoNodeTpl<CjvxBareNode1io>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
-	_common_set_ldslave.zeroCopyBuffering_cfg = false;
 }
 
 CjvxViNOpenGLViewer::~CjvxViNOpenGLViewer()
@@ -87,118 +86,86 @@ CjvxViNOpenGLViewer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxByte* ptr;
 	jvxExternalBuffer* ptrExt = NULL;
 
-	// This is the return from the link list
-
-	nativeGl.bufs = NULL;
-	nativeGl.szFld = 0;
-
-	if (_common_set_icon.theData_in->con_params.number_channels >= 1)
+	// This will forward the propcessing pipeline. We shpould use a zero-copy here!!
+	res = CjvxVideoNodeTpl<CjvxBareNode1io>::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	if (res == JVX_NO_ERROR)
 	{
-		if (jvx_bitTest(genOpenGl_node::configuration_mf.rendering_mode.value.selection(), 1))
+		nativeGl.reset();
+
+		if (_common_set_icon.theData_in->con_params.number_channels >= 1)
 		{
-			nativeGl.renderingTarget = JVX_GL_RENDER_EXTERNAL;
-		}
-#ifdef JVX_USE_GLEW_GLUT
-		else if (jvx_bitTest(genOpenGl_node::configuration_mf.rendering_mode.value.selection(), 2))
-		{
-			nativeGl.renderingTarget = JVX_GL_RENDER_NATIVE;
-		}
-#endif
-		else
-		{
-			nativeGl.renderingTarget = JVX_GL_DO_NOT_RENDER;
-		}
 
-#ifdef JVX_USE_GLEW_GLUT
-		if (
-			(nativeGl.renderingTarget == JVX_GL_RENDER_EXTERNAL) &&
-			(genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr == NULL))
-		{
-			_report_text_message("External Render Buffer not present, activating native rendering.", JVX_REPORT_PRIORITY_WARNING);
-			nativeGl.renderingTarget = JVX_GL_RENDER_NATIVE;
-		}
-#endif
-		nativeGl.idxBuf_Read = 0;
-		nativeGl.idxBuf_Fheight = 0;
+			// ========================================================================================
+			// Derive rendering target
+			// ========================================================================================
 
-		switch (nativeGl.renderingTarget)
-		{
-#ifdef JVX_USE_GLEW_GLUT
-		case JVX_GL_RENDER_NATIVE:
-			nativeGl.threadIsInitialized = false;
-
-			nativeGl.form = _common_set_icon.theData_in->con_params.format;
-			nativeGl.subform = _common_set_icon.theData_in->con_params.format_group;
-			nativeGl.height = _common_set_icon.theData_in->con_params.segmentation.y;
-			nativeGl.width = _common_set_icon.theData_in->con_params.segmentation.x;
-			nativeGl.numBufs = _common_set_icon.theData_in->con_data.number_buffers;
-			nativeGl.numChannels = _common_set_icon.theData_in->con_params.number_channels;
-			nativeGl.hdlThread = JVX_INVALID_HANDLE_VALUE;
-			nativeGl.requestStop = false;
-
-
-			JVX_CREATE_THREAD(nativeGl.hdlThread, my_local_thread_entry, reinterpret_cast<jvxHandle*>(this), nativeGl.idThread);
-
-			while (!nativeGl.threadIsInitialized)
+			if (jvx_bitTest(genOpenGl_node::config.rendering_mode.value.selection(), 1))
 			{
-				JVX_SLEEP_MS(100);
+				nativeGl.renderingTarget = JVX_GL_RENDER_EXTERNAL;
 			}
-
-			assert(nativeGl.bufs);
-			assert(nativeGl.szFld == _common_set_icon.theData_in->con_params.buffersize);
-
-			_common_set_icon.theData_in->con_data.buffers = nativeGl.bufs;
-			break;
-#endif
-		case JVX_GL_RENDER_EXTERNAL:
-			ptrExt = genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr;
-			ptr = ptrExt->ptrFld;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers,
-				jvxHandle**, _common_set_icon.theData_in->con_data.number_buffers);
-			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
+#ifdef JVX_USE_GLEW_GLUT
+			else if (jvx_bitTest(genOpenGl_node::config.rendering_mode.value.selection(), 2))
 			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers[i],
-					jvxHandle*, _common_set_icon.theData_in->con_params.number_channels);
-				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
+				nativeGl.renderingTarget = JVX_GL_RENDER_NATIVE;
+			}
+#endif
+			else
+			{
+				nativeGl.renderingTarget = JVX_GL_DO_NOT_RENDER;
+			}
+			// ========================================================================================
+
+			// ========================================================================================
+			// Some error checking
+			// ========================================================================================
+#ifdef JVX_USE_GLEW_GLUT
+			if (
+				(nativeGl.renderingTarget == JVX_GL_RENDER_EXTERNAL) &&
+				(genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr == NULL))
+			{
+				_report_text_message("External Render Buffer not present, activating native rendering.", JVX_REPORT_PRIORITY_WARNING);
+				nativeGl.renderingTarget = JVX_GL_RENDER_NATIVE;
+			}
+#endif
+			// ========================================================================================
+
+			switch (nativeGl.renderingTarget)
+			{
+#ifdef JVX_USE_GLEW_GLUT
+			case JVX_GL_RENDER_NATIVE:
+				nativeGl.threadIsInitialized = false;
+
+				nativeGl.form = _common_set_icon.theData_in->con_params.format;
+				nativeGl.subform = _common_set_icon.theData_in->con_params.format_group;
+				nativeGl.height = _common_set_icon.theData_in->con_params.segmentation.y;
+				nativeGl.width = _common_set_icon.theData_in->con_params.segmentation.x;
+				nativeGl.numBufs = 2;
+				nativeGl.numChannels = _common_set_icon.theData_in->con_params.number_channels;
+				nativeGl.hdlThread = JVX_INVALID_HANDLE_VALUE;
+				nativeGl.requestStop = false;
+
+				// Create thread and allocate memory within this thread
+				JVX_CREATE_THREAD(nativeGl.hdlThread, my_local_thread_entry, reinterpret_cast<jvxHandle*>(this), nativeGl.idThread);
+
+				// Therefore, wait for the allocation to be complete!!
+				while (!nativeGl.threadIsInitialized)
 				{
-					_common_set_icon.theData_in->con_data.buffers[i][j] = ptr;
-					ptr += JVX_DATA2SIZE(ptrExt->numElmFldOneChanOneBuf * ptrExt->szElmFld);
+					JVX_SLEEP_MS(100);
 				}
-			}
-			break;
-		default:
-			// No render but allocate buffers for data flow
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers, jvxHandle**,
-				_common_set_icon.theData_in->con_data.number_buffers);
-			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
-			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers[i], jvxHandle*,
-					_common_set_icon.theData_in->con_params.number_channels);
-				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
-				{
 
-					JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(_common_set_icon.theData_in->con_data.buffers[i][j], jvxByte,
-						_common_set_icon.theData_in->con_params.buffersize);
-				}
-			}
-			break;
-		}
-
-		jvx_allocateDataLinkPipelineControl(_common_set_icon.theData_in
-#ifdef JVX_GLOBAL_BUFFERING_VERBOSE
-			, _common_set.theModuleName.c_str()
+				assert(nativeGl.bufs);
+				assert(nativeGl.szFld == _common_set_icon.theData_in->con_params.buffersize);
+				break;
 #endif
-		);
-		*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr = 0;
-		_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-			*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
-			_common_set_io_common.myRuntimeId;
+			case JVX_GL_RENDER_EXTERNAL:
+				ptrExt = genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr;
+				ptr = ptrExt->ptrFld;
+				break;
+			default:
+				break;
+			}
+		}
 	}
-
-	
-	_common_set_ocon.theData_out.con_data.number_buffers = 1;
-
-	res = CjvxVideoNodeTpl<CjvxBareNode1io>::_prepare_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		
 	return res;
 }
@@ -209,29 +176,28 @@ CjvxViNOpenGLViewer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxSize i, j;
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_WAIT_RESULT resW = JVX_WAIT_SUCCESS;
-	if (_common_set_icon.theData_in->con_params.number_channels >= 1)
+	
+	switch (nativeGl.renderingTarget)
 	{
-		switch (nativeGl.renderingTarget)
-		{
 
 #ifdef JVX_USE_GLEW_GLUT
-		case JVX_GL_RENDER_NATIVE:
-			nativeGl.requestStop = true;
+	case JVX_GL_RENDER_NATIVE:
+		nativeGl.requestStop = true;
 
-			resW = JVX_WAIT_FOR_THREAD_TERMINATE_MS(nativeGl.hdlThread, 50000);
-			if (resW != JVX_WAIT_SUCCESS)
-			{
-				JVX_TERMINATE_THREAD(nativeGl.hdlThread, 0);
-			}
-			break;
-#endif
-		default:
-			break;
+		resW = JVX_WAIT_FOR_THREAD_TERMINATE_MS(nativeGl.hdlThread, 50000);
+		if (resW != JVX_WAIT_SUCCESS)
+		{
+			JVX_TERMINATE_THREAD(nativeGl.hdlThread, 0);
 		}
+		break;
+#endif
+	default:
+		break;
+	}
 
-
-		jvx_deallocateDataLinkPipelineControl(_common_set_icon.theData_in);
-
+	res = CjvxVideoNodeTpl<CjvxBareNode1io>::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	if (res == JVX_NO_ERROR)
+	{
 		switch (nativeGl.renderingTarget)
 		{
 #ifdef JVX_USE_GLEW_GLUT
@@ -240,33 +206,15 @@ CjvxViNOpenGLViewer::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			break;
 #endif
 		case JVX_GL_RENDER_EXTERNAL:
-			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
-			{
-				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
-				{
-					_common_set_icon.theData_in->con_data.buffers[i][j] = NULL;
-				}
-				JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers[i]);
-			}
-			JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers);
-
 			break;
 		case JVX_GL_DO_NOT_RENDER:
-			for (i = 0; i < _common_set_icon.theData_in->con_data.number_buffers; i++)
-			{
-				for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)
-				{
-					JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers[i][j]);
-				}
-				JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers[i]);
-			}
-			JVX_DSP_SAFE_DELETE_FIELD(_common_set_icon.theData_in->con_data.buffers);
+			break;
+		default:
+			assert(0);
 			break;
 		}
-		_common_set_icon.theData_in->con_data.buffers = NULL;
 	}
-	
-	res = CjvxVideoNodeTpl<CjvxBareNode1io>::_postprocess_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
 	return res;
 }
 
@@ -274,107 +222,120 @@ jvxErrorType
 CjvxViNOpenGLViewer::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
 	jvxErrorType res = JVX_NO_ERROR;
-
-	// no idea what mightbe done here. The more important part is the stop function
-	return  CjvxVideoNodeTpl<CjvxBareNode1io>::process_buffers_icon(mt_mask, idx_stage);
-}
-
-jvxErrorType
-CjvxViNOpenGLViewer::process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
-	jvxSize tobeAccessedByStage,
-	callback_process_stop_in_lock clbk,
-	jvxHandle* priv_ptr)
-{
-	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool lostBuffer = false;
 
-	res = CjvxVideoNodeTpl<CjvxBareNode1io>::_process_stop_icon(idx_stage, shift_fwd,
-		tobeAccessedByStage, clbk, priv_ptr);
-	if (res == JVX_NO_ERROR)
+	jvxByte** bufsIn = jvx_process_icon_extract_input_buffers<jvxByte>(_common_set_icon.theData_in, idx_stage);
+	
+	// Input an incoming buffer into the buffer pipeline.
+	switch (nativeGl.renderingTarget)
 	{
-		if (_common_set_icon.theData_in->con_params.number_channels >= 1)
+	case JVX_GL_RENDER_EXTERNAL:
+	{
+		auto buf = genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr;
+		if (buf)
 		{
-			// Input an incoming buffer into the buffer pipeline.
-			switch (nativeGl.renderingTarget)
+			switch (buf->subTp)
 			{
-			case JVX_GL_RENDER_EXTERNAL:
-
-				// Hint: _common_set_icon.theData_in->con_data.number_buffers and 
-				// genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->numElmFld /
-				//	genMf_device::expose_visual_if.visual_data_video.rendering_target.ptr->numElmFldOneBuf
-				// should match!
-
-				// Not in protected area since we only read
-				if (genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->fill_height <
-					_common_set_icon.theData_in->con_data.number_buffers -
-					(_common_set_icon.theData_in->con_pipeline.num_additional_pipleline_stages + 1))
+			case jvx::externalBufferSubType::JVX_EXTERNAL_BUFFER_SUB_2D_FULL:
+			{
+				// Not in protected area since we only read - we have a one-read-one-write constellation
+				if (buf->fill_height < buf->specific.the2DFieldBuffer_full.common.number_buffers)
 				{
-					// Ok, there is some space within the output buffer!
+					assert(_common_set_icon.theData_in->con_params.buffersize == buf->numElmFldOneChanOneBuf);
+					assert(_common_set_icon.theData_in->con_params.number_channels == buf->number_channels);
+					assert(_common_set_icon.theData_in->con_params.format == buf->formFld);
+					assert(_common_set_icon.theData_in->con_params.format_group == buf->subFormFld);
 
-					// Lock the external viewer buffer
-					genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->safe_access.lockf(
-						genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->safe_access.priv);
+					// Check buffer match size!!
+					assert(buf->specific.the2DFieldBuffer_full.common.szFldOneBuf == jvx_derive_buffersize(_common_set_icon.theData_in->con_params));
 
-					// Lock the pipeline access buffer
-					_common_set_icon.theData_in->con_pipeline.do_lock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
-					_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
-						JVX_SIZE_UNSELECTED;
+					buf->safe_access.lockf(buf->safe_access.priv);
+					jvxSize idx_write = (buf->idx_read + buf->fill_height) % buf->specific.the2DFieldBuffer_full.common.number_buffers;
+					buf->safe_access.unlockf(buf->safe_access.priv);
 
-						// Shift the buffer forward
-						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr =
-							(*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr + 1) %
-							_common_set_icon.theData_in->con_data.number_buffers;
+					jvxByte* ptrWrite = buf->ptrFld;
+					ptrWrite += idx_write * buf->specific.the2DFieldBuffer_full.common.szFldOneBuf;
+					for (jvxSize i = 0; i < buf->number_channels; i++)
+					{
+						jvxSize copyNum = buf->numElmFldOneChanOneBuf * jvx_derive_elementsize_byte(buf->subFormFld, buf->formFld);
+						memcpy(ptrWrite, bufsIn[i], copyNum);
+						ptrWrite += copyNum;
+					}
 
-						_common_set_icon.theData_in->con_pipeline.reserve_buffer_pipeline_stage[
-							*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr].idProcess =
-							_common_set_io_common.myRuntimeId;
-
-							// Indicate new buffer available
-							genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->fill_height++;
-
-							// Unlock both
-							_common_set_icon.theData_in->con_pipeline.do_unlock(_common_set_icon.theData_in->con_pipeline.lock_hdl);
-							genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->safe_access.unlockf(
-								genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->safe_access.priv);
-
-							// Inform viewer OUTSIDE the critical sections!
-							assert(genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->specific.the2DFieldBuffer_full.report_triggerf);
-							genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->specific.the2DFieldBuffer_full.report_triggerf(
-								genOpenGl_node::expose_visual_if.visual_data_video.rendering_target.ptr->specific.the2DFieldBuffer_full.report_trigger_priv);
+					buf->safe_access.lockf(buf->safe_access.priv);
+					buf->fill_height++;
+					buf->safe_access.unlockf(buf->safe_access.priv);
 				}
 				else
 				{
 					lostBuffer = true;
 				}
-				break;
+
+				// Notification to rendering thread
+				// Hint: we hold the property lock here. We need to hold it to not remove the callback while calling.
+				// In the callback, we will render a buffer and finally report to the UI. The UI protects itself with a log.
+				// If UI requests a property and the lock is in the video thread, the UI lock will wait for the propert lock
+				// and the property lock will wait for the UI lock -> DEADLOCK
+				// Therefore, the buffer callback needs to render the video via another thread!
+				if (buf->specific.the2DFieldBuffer_full.report_triggerf)
+				{
+					buf->specific.the2DFieldBuffer_full.report_triggerf(buf->specific.the2DFieldBuffer_full.report_trigger_priv);
+				}
+			}
+			break;
 			default:
 
-				// Take the incomingbuffer
-				if (nativeGl.idxBuf_Fheight < nativeGl.numBufs - 1)
-				{
-					JVX_LOCK_MUTEX(nativeGl.safeAccessBuffer);
-					nativeGl.idxBuf_Fheight++;				
-					JVX_UNLOCK_MUTEX(nativeGl.safeAccessBuffer);
-				}
-				else
-				{
-					lostBuffer = true;
-				}
+				// Do nothing here!!
 				break;
 			}
-			/*
-			if (lostBuffer)
-			{
-				CjvxVideoDevice::rt_info_vd.number_lost_frames.value++;
-				// Buffer not yet available, reuse the lastbuffer
-			}
-			*/
 		}
+		else
+		{
+			lostBuffer = true;
+		}
+		break;
 	}
-	return res;
-}
+	case JVX_GL_DO_NOT_RENDER:
+		// Nothing to be done here
+		break;
 
+	case JVX_GL_RENDER_NATIVE:
+
+		// Take the incomingbuffer
+		if (nativeGl.safeAccess.v.idxBuf_Fheight < nativeGl.numBufs)
+		{
+			nativeGl.safeAccess.lock();			
+			jvxSize idxWrite = (nativeGl.safeAccess.v.idxBuf_Read + nativeGl.safeAccess.v.idxBuf_Fheight) % nativeGl.numBufs;
+			nativeGl.safeAccess.unlock();
+
+			jvxByte** bufTo = (jvxByte**)nativeGl.bufs[idxWrite];
+			assert(nativeGl.szFld == jvx_derive_buffersize(_common_set_icon.theData_in->con_params));
+
+			for (jvxSize i = 0; i < nativeGl.numChannels; i++)
+			{
+				memcpy(bufTo[i], bufsIn[i], nativeGl.szFld);
+			}
+
+			nativeGl.safeAccess.lock();
+			nativeGl.safeAccess.v.idxBuf_Fheight++;
+			nativeGl.safeAccess.unlock();
+		}
+		else
+		{
+			lostBuffer = true;
+		}
+		break;
+	default:
+		assert(0);
+		break;
+	}
+
+	if (lostBuffer)
+	{
+		genOpenGl_node::runtime.lost_frames.value++;
+	}
+	return  fwd_process_buffers_icon(mt_mask, idx_stage);
+}
 
 #ifdef JVX_USE_GLEW_GLUT
 void
@@ -395,23 +356,27 @@ CjvxViNOpenGLViewer::run_native_gl()
 	// Here we are about to leave the native GL thread
 	jvxVideoRenderCore_nobc::terminate();
 
-	nativeGl.bufs = NULL;
-	nativeGl.szFld = 0;
+	nativeGl.reset();
+
 	myGlobalNativeGlContext = NULL;
 }
 
 void
 CjvxViNOpenGLViewer::do_rendering_gl()
 {
-	if (nativeGl.idxBuf_Fheight > 0)
+	if (nativeGl.safeAccess.v.idxBuf_Fheight > 0)
 	{
 		cfgRenderStraight cfg;
-		cfg.invert_y = 1;
-		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)_common_set_icon.theData_in->con_data.buffers[nativeGl.idxBuf_Read], &cfg);
-		JVX_LOCK_MUTEX(nativeGl.safeAccessBuffer);
-		nativeGl.idxBuf_Read = (nativeGl.idxBuf_Read + 1) % nativeGl.numBufs;
-		nativeGl.idxBuf_Fheight--;
-		JVX_UNLOCK_MUTEX(nativeGl.safeAccessBuffer);
+		cfg.invert_y = 1;		
+
+		// idxBuf_Read is not to be protected as it will only be touched here!
+		jvxVideoRenderCore_nobc::prepare_render((const jvxByte**)_common_set_icon.theData_in->con_data.buffers[nativeGl.safeAccess.v.idxBuf_Read], &cfg);
+
+		nativeGl.safeAccess.lock();
+		nativeGl.safeAccess.v.idxBuf_Read = (nativeGl.safeAccess.v.idxBuf_Read + 1) % nativeGl.numBufs;
+		nativeGl.safeAccess.v.idxBuf_Fheight--;
+		nativeGl.safeAccess.unlock();
+
 		jvxVideoRenderCore_nobc::finalize_render();
 	}
 }
@@ -419,7 +384,7 @@ CjvxViNOpenGLViewer::do_rendering_gl()
 void
 CjvxViNOpenGLViewer::do_idle_gl()
 {
-	if (nativeGl.idxBuf_Fheight > 0)
+	if (nativeGl.safeAccess.v.idxBuf_Fheight > 0)
 	{
 		jvxVideoRenderCore_nobc::trigger_render();
 	}

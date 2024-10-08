@@ -34,28 +34,56 @@ public:
 
 	}jvxOpenGlRenderTarget;
 
-	struct
+	class bufStatus
 	{
-		JVX_THREAD_HANDLE hdlThread;
-		JVX_THREAD_ID idThread;
+	public:
+		jvxSize idxBuf_Read = 0;
+		jvxSize idxBuf_Fheight = 0;
+	};
 
-		jvxSize width;
-		jvxSize height;
-		jvxHandle*** bufs;
-		jvxSize szFld;
-		jvxSize numChannels;
-		jvxSize numBufs;
-		jvxDataFormat form;
-		jvxDataFormatGroup subform;
+	class renderNative
+	{
+	public:
 
-		jvxBool threadIsInitialized;
-		jvxSize idxBuf_Read;
-		jvxSize idxBuf_Fheight;
-		JVX_MUTEX_HANDLE safeAccessBuffer;
+		JVX_THREAD_HANDLE hdlThread = JVX_INVALID_HANDLE_VALUE;
+		JVX_THREAD_ID idThread = JVX_THREAD_ID_INVALID;
+		jvxSize width = 0;
+		jvxSize height = 0;
+		jvxHandle*** bufs = nullptr;
+		jvxSize szFld = 0;
+		jvxSize numChannels = 0;
+		jvxSize numBufs = 0;
+		jvxDataFormat form = jvxDataFormat::JVX_DATAFORMAT_NONE;
+		jvxDataFormatGroup subform = jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_NONE;
+		jvxBool threadIsInitialized = false;
+		jvxLockWithVariable< bufStatus> safeAccess;
+		jvxBool requestStop = false;
+		jvxOpenGlRenderTarget renderingTarget = jvxOpenGlRenderTarget::JVX_GL_DO_NOT_RENDER;
 
-		jvxBool requestStop;
-		jvxOpenGlRenderTarget renderingTarget;
-	} nativeGl;
+		renderNative()
+		{
+			reset();
+		}
+
+		void reset()
+		{
+			hdlThread = JVX_INVALID_HANDLE_VALUE;
+			idThread = JVX_THREAD_ID_INVALID;
+			width = 0;
+			height = 0;
+			bufs = nullptr;
+			szFld = 0;
+			numChannels = 0;
+			numBufs = 0;
+			form = jvxDataFormat::JVX_DATAFORMAT_NONE;
+			subform = jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_NONE;
+			threadIsInitialized = false;
+			requestStop = false;
+			renderingTarget = jvxOpenGlRenderTarget::JVX_GL_DO_NOT_RENDER;
+		}
+	};
+
+	renderNative nativeGl;
 
 
 	// ===================================================================================================
@@ -68,12 +96,7 @@ public:
 
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage);
-	jvxErrorType process_stop_icon(jvxSize idx_stage, jvxBool shift_fwd,
-			jvxSize tobeAccessedByStage,
-			callback_process_stop_in_lock clbk,
-			jvxHandle* priv_ptr)override;
 
 #ifdef JVX_USE_GLEW_GLUT
 	void run_native_gl();
