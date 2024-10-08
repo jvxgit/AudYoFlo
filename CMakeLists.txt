@@ -650,7 +650,7 @@ else(JVX_COMPILE_BUILDTOOLS)
   if(JVX_OS MATCHES "windows")
 	if(JVX_USE_MFVIDEO)
 		set(JVX_BASE_VIDEO_TECHNOLOGIES ${JVX_BASE_VIDEO_TECHNOLOGIES}
-			${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfOpenGL)
+			${JVX_BASE_ROOT}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfWindows)
 	endif()
   endif()
 

@@ -36,7 +36,7 @@
 #endif
 
 #ifdef JVX_OS_WINDOWS
-#include "jvxViTMfOpenGL.h"
+#include "jvxViTMfWindows.h"
 #endif
 
 extern "C"
@@ -54,8 +54,8 @@ extern "C"
 			{
 			case 0:
 				adescr->assign("MS Video");
-				*funcInit = jvxViTMfOpenGL_init;
-				*funcTerm = jvxViTMfOpenGL_terminate;
+				*funcInit = jvxViTMfWindows_init;
+				*funcTerm = jvxViTMfWindows_terminate;
 				return(JVX_NO_ERROR);
 				break;
 			default:

@@ -11,7 +11,7 @@
 		#include "jvxAuTWindows.h"
 	#endif
 	#ifdef JVX_USE_MFVIDEO
-		#include "jvxViTMfOpenGL.h"
+		#include "jvxViTMfWindows.h"
 	#endif
 #endif
 
@@ -121,8 +121,8 @@ extern "C"
 			if (id == cnt)
 			{
 				adescr->assign("Mf Video");
-				*funcInit = jvxViTMfOpenGL_init;
-				*funcTerm = jvxViTMfOpenGL_terminate;
+				*funcInit = jvxViTMfWindows_init;
+				*funcTerm = jvxViTMfWindows_terminate;
 				return(JVX_NO_ERROR);
 			}
 			cnt++;

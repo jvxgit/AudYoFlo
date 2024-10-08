@@ -1,5 +1,5 @@
-#ifndef __CJVXVIDEOMFOPENGLDEVICE_H__
-#define __CJVXVIDEOMFOPENGLDEVICE_H__
+#ifndef __CJVXVIDEOMFWINDOWSDEVICE_H__
+#define __CJVXVIDEOMFWINDOWSDEVICE_H__
 
 #include "jvxVideoTechnologies/CjvxVideoDevice.h"
 
@@ -18,9 +18,9 @@
 #define ALPHA 0.95
 
 #include "pcg_exports_device.h"
-class CjvxVideoMfOpenGLTechnology;
+class CjvxVideoMfWindowsTechnology;
 
-class CjvxVideoMfOpenGLDevice: public CjvxVideoDevice,  
+class CjvxVideoMfWindowsDevice: public CjvxVideoDevice,  
 	public IMFSourceReaderCallback, 
 #ifdef JVX_USE_GLEW_GLUT
 	public jvxVideoRenderCore_nobc,
@@ -42,7 +42,7 @@ class CjvxVideoMfOpenGLDevice: public CjvxVideoDevice,
 
 private:
 
-	CjvxVideoMfOpenGLTechnology* myParent;
+	CjvxVideoMfWindowsTechnology* myParent;
 
 	IMFActivate* thisisme;
 	IMFMediaSource* srcPtr;
@@ -83,9 +83,9 @@ private:
 	jvxTimeStampData tStamp;
 
 public:
-	JVX_CALLINGCONVENTION CjvxVideoMfOpenGLDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	JVX_CALLINGCONVENTION CjvxVideoMfWindowsDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 
-	virtual JVX_CALLINGCONVENTION ~CjvxVideoMfOpenGLDevice();
+	virtual JVX_CALLINGCONVENTION ~CjvxVideoMfWindowsDevice();
 
 	jvxErrorType select(IjvxObject* owner) override;
 	jvxErrorType unselect() override;
@@ -135,7 +135,7 @@ public:
 	//void updateDependentVariables(jvxSize propId, jvxPropertyCategoryType category, jvxBool updateAll, jvxPropertyCallPurpose callPurp = JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC);
 	void updateDependentVariables_nolock();
 
-	jvxErrorType init(CjvxVideoMfOpenGLTechnology* par, IMFActivate* inPtr, jvxBool isDefaultDevice);
+	jvxErrorType init(CjvxVideoMfWindowsTechnology* par, IMFActivate* inPtr, jvxBool isDefaultDevice);
 	void scanProperties(IMFSourceReader* reader);
 
 	jvxErrorType prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));

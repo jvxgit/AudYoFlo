@@ -1,8 +1,8 @@
-#include "CjvxVideoMfOpenGLTechnology.h"
+#include "CjvxVideoMfWindowsTechnology.h"
 #include <ROApi.h>
 
-CjvxVideoMfOpenGLTechnology::CjvxVideoMfOpenGLTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
-	CjvxTemplateTechnology<CjvxVideoMfOpenGLDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+CjvxVideoMfWindowsTechnology::CjvxVideoMfWindowsTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
+	CjvxTemplateTechnology<CjvxVideoMfWindowsDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	this->numberDevicesInit = 0;
 	this->deviceNamePrefix = "VideoDevice";
@@ -11,9 +11,9 @@ CjvxVideoMfOpenGLTechnology::CjvxVideoMfOpenGLTechnology(JVX_CONSTRUCTOR_ARGUMEN
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLTechnology::activate()
+CjvxVideoMfWindowsTechnology::activate()
 {
-	jvxErrorType res = CjvxTemplateTechnology<CjvxVideoMfOpenGLDevice>::activate();
+	jvxErrorType res = CjvxTemplateTechnology<CjvxVideoMfWindowsDevice>::activate();
 
 	if(res == JVX_NO_ERROR)
 	{
@@ -86,7 +86,7 @@ CjvxVideoMfOpenGLTechnology::activate()
 			}
 
 			// Allocate new device handle in user space
-			CjvxVideoMfOpenGLDevice* newDevice = new CjvxVideoMfOpenGLDevice(nm.c_str(), false, _common_set.theDescriptor.c_str(), _common_set.theFeatureClass,
+			CjvxVideoMfWindowsDevice* newDevice = new CjvxVideoMfWindowsDevice(nm.c_str(), false, _common_set.theDescriptor.c_str(), _common_set.theFeatureClass,
 				_common_set.theModuleName.c_str(), JVX_COMPONENT_ACCESS_SUB_COMPONENT, JVX_COMPONENT_VIDEO_DEVICE, "device/video_device", NULL);
 
 			newDevice->init(this, lstDevices[i], (i == 0));
@@ -110,7 +110,7 @@ CjvxVideoMfOpenGLTechnology::activate()
 
 
 jvxErrorType
-CjvxVideoMfOpenGLTechnology::deactivate()
+CjvxVideoMfWindowsTechnology::deactivate()
 {
 	jvxSize i;
 	jvxErrorType res = _deactivate();

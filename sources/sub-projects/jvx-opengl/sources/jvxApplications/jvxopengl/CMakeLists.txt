@@ -45,7 +45,7 @@ include_directories(
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTCoreAudio/
   ${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAsio/
-   ${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfOpenGL/
+   ${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxVideoTechnologies/jvxViTMfWindows/
 
   ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-product/include
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-product/generated
@@ -124,7 +124,7 @@ if(JVX_USE_PART_ALSA)
 endif()
 
 if(JVX_OS MATCHES "windows")
-  set(LOCAL_LIBS ${LOCAL_LIBS} jvxViTMfOpenGL_static)
+  set(LOCAL_LIBS ${LOCAL_LIBS} jvxViTMfWindows_static)
 endif()
 
 ## ======================================================================

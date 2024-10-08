@@ -1,4 +1,4 @@
-set(PROJECT_NAME jvxViTMfOpenGL)
+set(PROJECT_NAME jvxViTMfWindows)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 set(LOCAL_PCG_FILES
@@ -16,16 +16,16 @@ include_directories(
   )
 
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfOpenGLTechnology.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfOpenGLDevice.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfWindowsTechnology.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfWindowsDevice.cpp
 
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include/jvxVideoTechnologies/CjvxVideoDevice.h
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include/jvxVideoTechnologies/CjvxVideoTechnology.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfOpenGLTechnology.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfOpenGLDevice.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfWindowsTechnology.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfWindowsDevice.h
 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfOpenGLDevice_properties.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfOpenGLDevice_com.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfWindowsDevice_properties.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxVideoMfWindowsDevice_com.cpp
   )
 
 set(IS_JVX_COMPONENT TRUE)

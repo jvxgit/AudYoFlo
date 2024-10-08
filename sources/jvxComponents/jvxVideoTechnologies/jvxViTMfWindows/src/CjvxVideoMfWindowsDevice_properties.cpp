@@ -1,9 +1,9 @@
-#include "CjvxVideoMfOpenGLDevice.h"
+#include "CjvxVideoMfWindowsDevice.h"
 
 // ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
 void 
-CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
+CjvxVideoMfWindowsDevice::scanProperties(IMFSourceReader* reader)
 {
 	HRESULT hr;
 	HRESULT nativeTypeErrorCode = S_OK;
@@ -571,7 +571,7 @@ CjvxVideoMfOpenGLDevice::scanProperties(IMFSourceReader* reader)
 	}
 }
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxVideoMfOpenGLDevice, on_mode_selected)
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxVideoMfWindowsDevice, on_mode_selected)
 {
 	// If we changed the mode, we need to run the test again
 	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(genMf_device::configuration_mf.mode_selection))

@@ -1,10 +1,10 @@
-#include "CjvxVideoMfOpenGLDevice.h"
-#include "CjvxVideoMfOpenGLTechnology.h"
+#include "CjvxVideoMfWindowsDevice.h"
+#include "CjvxVideoMfWindowsTechnology.h"
 
 #define JVX_ALL_PROPERTY_UPDATE_STRING "mf_device:mode_selection"
 
 
-CjvxVideoMfOpenGLDevice::CjvxVideoMfOpenGLDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
+CjvxVideoMfWindowsDevice::CjvxVideoMfWindowsDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxVideoDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxDevice*>(this));
@@ -17,12 +17,12 @@ CjvxVideoMfOpenGLDevice::CjvxVideoMfOpenGLDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO
 
 }
 
-CjvxVideoMfOpenGLDevice::~CjvxVideoMfOpenGLDevice()
+CjvxVideoMfWindowsDevice::~CjvxVideoMfWindowsDevice()
 {
 }
 
 jvxErrorType 
-CjvxVideoMfOpenGLDevice::init(CjvxVideoMfOpenGLTechnology* parentTech, IMFActivate* inPtr, jvxBool isDefaultDevice)
+CjvxVideoMfWindowsDevice::init(CjvxVideoMfWindowsTechnology* parentTech, IMFActivate* inPtr, jvxBool isDefaultDevice)
 {
 	myParent = parentTech;
 	thisisme = inPtr;
@@ -39,7 +39,7 @@ CjvxVideoMfOpenGLDevice::init(CjvxVideoMfOpenGLTechnology* parentTech, IMFActiva
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::select(IjvxObject* owner)
+CjvxVideoMfWindowsDevice::select(IjvxObject* owner)
 {
 	jvxErrorType res = CjvxVideoDevice::select(owner);
 	if (res == JVX_NO_ERROR)
@@ -54,7 +54,7 @@ CjvxVideoMfOpenGLDevice::select(IjvxObject* owner)
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::unselect()
+CjvxVideoMfWindowsDevice::unselect()
 {
 	jvxErrorType res = CjvxVideoDevice::unselect();
 	if (res == JVX_NO_ERROR)
@@ -69,7 +69,7 @@ CjvxVideoMfOpenGLDevice::unselect()
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::activate()
+CjvxVideoMfWindowsDevice::activate()
 {
 	jvxSize i;
 	jvxErrorType res = CjvxVideoDevice::activate();
@@ -137,7 +137,7 @@ CjvxVideoMfOpenGLDevice::activate()
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::deactivate()
+CjvxVideoMfWindowsDevice::deactivate()
 {
 	jvxErrorType res = CjvxVideoDevice::deactivate();
 	if (res == JVX_NO_ERROR)
@@ -173,7 +173,7 @@ CjvxVideoMfOpenGLDevice::deactivate()
 }
 
 IMFAttributes *
-CjvxVideoMfOpenGLDevice::bootup_camera()
+CjvxVideoMfWindowsDevice::bootup_camera()
 {
 	IMFAttributes * attributes = NULL;
 
@@ -200,7 +200,7 @@ CjvxVideoMfOpenGLDevice::bootup_camera()
 }
 
 void 
-CjvxVideoMfOpenGLDevice::shutdown_camera()
+CjvxVideoMfWindowsDevice::shutdown_camera()
 {
 	readPtr->Release();
 	readPtr = NULL;
@@ -213,7 +213,7 @@ CjvxVideoMfOpenGLDevice::shutdown_camera()
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::prepare()
+CjvxVideoMfWindowsDevice::prepare()
 {
 	jvxSize i;
 	jvxErrorType resL = JVX_NO_ERROR;
@@ -226,7 +226,7 @@ CjvxVideoMfOpenGLDevice::prepare()
 }
 
 jvxErrorType 
-CjvxVideoMfOpenGLDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+CjvxVideoMfWindowsDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;
 	jvxSize idModeSelect = jvx_bitfieldSelection2Id(
@@ -311,13 +311,13 @@ leave_error:
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxVideoMfWindowsDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	return prepare_data(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::postprocess()
+CjvxVideoMfWindowsDevice::postprocess()
 {
 	jvxErrorType res = CjvxVideoDevice::postprocess();
 	
@@ -329,7 +329,7 @@ CjvxVideoMfOpenGLDevice::postprocess()
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxVideoMfWindowsDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	
@@ -351,7 +351,7 @@ CjvxVideoMfOpenGLDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(f
 
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxVideoMfWindowsDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;
 	*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr = 0;
@@ -379,7 +379,7 @@ leave_error:
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxVideoMfWindowsDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	runtime.streamState = JVX_STATE_COMPLETE;
@@ -402,7 +402,7 @@ CjvxVideoMfOpenGLDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 // ============================================================================================
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::set_property(jvxCallManagerProperties& callGate, 
+CjvxVideoMfWindowsDevice::set_property(jvxCallManagerProperties& callGate, 
 	const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
 	const jvx::propertyAddress::IjvxPropertyAddress& ident,
 	const jvx::propertyDetail::CjvxTranferDetail& trans)
@@ -439,7 +439,7 @@ CjvxVideoMfOpenGLDevice::set_property(jvxCallManagerProperties& callGate,
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::put_configuration(jvxCallManagerConfiguration* callConf,
+CjvxVideoMfWindowsDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 	IjvxConfigProcessor* processor,
 	jvxHandle* sectionToContainAllSubsectionsForMe, 
 	const char* filename, jvxInt32 lineno)
@@ -471,7 +471,7 @@ CjvxVideoMfOpenGLDevice::put_configuration(jvxCallManagerConfiguration* callConf
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::get_configuration(jvxCallManagerConfiguration* callConf,
+CjvxVideoMfWindowsDevice::get_configuration(jvxCallManagerConfiguration* callConf,
 	IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections)
 {
 	// Write all parameters from base class
@@ -484,7 +484,7 @@ CjvxVideoMfOpenGLDevice::get_configuration(jvxCallManagerConfiguration* callConf
 }
 
 void
-CjvxVideoMfOpenGLDevice::updateDependentVariables_nolock()
+CjvxVideoMfWindowsDevice::updateDependentVariables_nolock()
 {
 	jvxSize idSel = jvx_bitfieldSelection2Id(genMf_device::configuration_mf.mode_selection.value.selection(),
 		genMf_device::configuration_mf.mode_selection.value.entries.size());
@@ -517,7 +517,7 @@ CjvxVideoMfOpenGLDevice::updateDependentVariables_nolock()
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxVideoMfWindowsDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = prepare_data(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	/*
@@ -549,14 +549,14 @@ CjvxVideoMfOpenGLDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))
+CjvxVideoMfWindowsDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))
 {
 	// Actually, we should be able to deal with all settings since input and output are independent.
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CjvxVideoMfOpenGLDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+CjvxVideoMfWindowsDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxLinkDataDescriptor* ld_con = (jvxLinkDataDescriptor*)data;
 	jvxBool foundthis = false;

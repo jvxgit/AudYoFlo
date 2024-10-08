@@ -1,4 +1,4 @@
-#include "CjvxVideoMfOpenGLDevice.h"
+#include "CjvxVideoMfWindowsDevice.h"
 
 #include <shlwapi.h> // QITAB and friends
 #include <objbase.h> // IID_PPV_ARGS and friends
@@ -44,24 +44,24 @@
 
 // IUnknown methods
 STDMETHODIMP 
-CjvxVideoMfOpenGLDevice::QueryInterface(REFIID aRiid, void** aPpv)
+CjvxVideoMfWindowsDevice::QueryInterface(REFIID aRiid, void** aPpv)
 {
 	static const QITAB qit[] =
 	{
-		QITABENT(CjvxVideoMfOpenGLDevice, IMFSourceReaderCallback),
+		QITABENT(CjvxVideoMfWindowsDevice, IMFSourceReaderCallback),
 		{ 0 },
 	};
 	return QISearch(this, qit, aRiid, aPpv);
 }
 
 STDMETHODIMP_(ULONG) 
-CjvxVideoMfOpenGLDevice::AddRef()
+CjvxVideoMfWindowsDevice::AddRef()
 {
 	return InterlockedIncrement(&mRefCount);
 }
 
 STDMETHODIMP_(ULONG) 
-CjvxVideoMfOpenGLDevice::Release()
+CjvxVideoMfWindowsDevice::Release()
 {
 	ULONG count = InterlockedDecrement(&mRefCount);
 	if (count == 0)
@@ -74,7 +74,7 @@ CjvxVideoMfOpenGLDevice::Release()
 
 // IMFSourceReaderCallback methods
 STDMETHODIMP 
-CjvxVideoMfOpenGLDevice::OnReadSample(
+CjvxVideoMfWindowsDevice::OnReadSample(
 	HRESULT aStatus,
 	DWORD aStreamIndex,
 	DWORD aStreamFlags,
@@ -311,13 +311,13 @@ CjvxVideoMfOpenGLDevice::OnReadSample(
 }
 
 STDMETHODIMP 
-CjvxVideoMfOpenGLDevice::OnEvent(DWORD, IMFMediaEvent *)
+CjvxVideoMfWindowsDevice::OnEvent(DWORD, IMFMediaEvent *)
 {
 	return S_OK;
 }
 
 STDMETHODIMP 
-CjvxVideoMfOpenGLDevice::OnFlush(DWORD)
+CjvxVideoMfWindowsDevice::OnFlush(DWORD)
 {
 	return S_OK;
 }

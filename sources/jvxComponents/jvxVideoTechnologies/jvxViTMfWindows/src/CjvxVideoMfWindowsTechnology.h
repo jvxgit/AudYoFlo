@@ -8,17 +8,17 @@
 #include <mfreadwrite.h>
 
 #include "jvxTechnologies/CjvxTemplateTechnology.h"
-#include "CjvxVideoMfOpenGLDevice.h"
+#include "CjvxVideoMfWindowsDevice.h"
 
-class CjvxVideoMfOpenGLTechnology: public CjvxTemplateTechnology<CjvxVideoMfOpenGLDevice>
+class CjvxVideoMfWindowsTechnology: public CjvxTemplateTechnology<CjvxVideoMfWindowsDevice>
 {
 	IMFActivate** lstDevices;
 	UINT32 numDevices;
 	jvxBool requiresComUninitialize;
 
 public:
-	JVX_CALLINGCONVENTION CjvxVideoMfOpenGLTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
-	JVX_CALLINGCONVENTION ~CjvxVideoMfOpenGLTechnology(){};
+	JVX_CALLINGCONVENTION CjvxVideoMfWindowsTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
+	JVX_CALLINGCONVENTION ~CjvxVideoMfWindowsTechnology(){};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate();
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate();
