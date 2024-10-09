@@ -7,6 +7,6 @@ set generatortoken=-G "Ninja"
 del CMakeCache.txt
 
 echo cmake %generatortoken% -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE=Debug ../%opencvdir%
-cmake %generatortoken% -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE=Debug ../opencv
+cmake %generatortoken% -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE=Debug -DBUILD_OPENJPEG=ON ../opencv
 
 ninja install
