@@ -39,7 +39,7 @@ CjvxMexCallsProfiler::provideDataMexCall()
 		if (elm.second->fld)
 		{
 			_theExtCallHandler->convertCToExternal(&passToMatlab, elm.second->fld,
-				elm.second->sz, JVX_DATAFORMAT_DATA, elm.second->cplx);
+				elm.second->sz_elm, JVX_DATAFORMAT_DATA, elm.second->cplx);
 			if (passToMatlab)
 			{
 				_theExtCallHandler->putVariableToExternal("caller", elm.first.c_str(), passToMatlab);

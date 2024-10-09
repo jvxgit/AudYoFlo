@@ -5,7 +5,7 @@
 
 struct jvx_profiler_data_entry
 {
-	jvxSize sz;
+	jvxSize sz_elm;
 	jvxHandle* fld;
 	jvxCBool cplx;
 };
@@ -35,7 +35,7 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 #define JVX_DATA_OUT_DBG_TP_STR(hdl, prv, spec, entryTo, ptrFrom, szFrom) \
 	if (hdl && (hdl->specData & ((jvxCBitField)1 << spec)) &&  hdl->entryTo.fld && ptrFrom) \
 	{ \
-		assert(hdl->entryTo.sz == (szFrom)); \
+		assert(hdl->entryTo.sz_elm == (szFrom)); \
 		if(hdl->entryTo.cplx) \
 		{ \
 			memcpy(hdl->entryTo.fld, ptrFrom, sizeof(jvxDataCplx) * (szFrom)); \
@@ -52,7 +52,7 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 #define JVX_DATA_OUT_DBG_TP_STR_IDX(var, hdl, prv, entryTo, ptrFrom, idx) \
 	if (var && hdl && hdl->entryTo.fld && prv->ptrFrom) \
 	{ \
-		assert(idx < hdl->entryTo.sz); \
+		assert(idx < hdl->entryTo.sz_elm); \
 		if(hdl->entryTo.cplx) \
 		{ \
 			jvxDataCplx* fldOut = (jvxDataCplx*)hdl->entryTo.fld; \
@@ -69,14 +69,14 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 #define JVX_DATA_OUT_DBG_TP_STR_VAL(var, hdl, prv, entryTo, val, tp, idx) \
 	if (var&& hdl && hdl->entryTo.fld) \
 	{ \
-		assert(idx < hdl->entryTo.sz); \
+		assert(idx < hdl->entryTo.sz_elm); \
 		tp* fldOut = (tp*)hdl->entryTo.fld; \
 		fldOut[idx] = (tp)val; \
 	}
 #define JVX_DATA_OUT_DBG_TP_STR_UC(hdl, prv, entryTo, ptrFrom, szFrom) \
 	if (hdl && hdl->specData && hdl->entryTo.fld && prv->ptrFrom) \
 	{ \
-		assert(hdl->entryTo.sz == (szFrom)); \
+		assert(hdl->entryTo.sz_elm == (szFrom)); \
 		if(hdl->entryTo.cplx) \
 		{ \
 			memcpy(hdl->entryTo.fld, prv->ptrFrom, sizeof(jvxDataCplx) * (szFrom)); \

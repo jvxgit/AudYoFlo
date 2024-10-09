@@ -97,7 +97,7 @@ pub const C_FALSE : u16 = 0 as u16;
 #[derive(Clone)]
 pub struct jvx_profiler_data_entry
 {
-	pub sz: JvxSize,
+	pub sz_elm: JvxSize,
     pub fld: *mut std::ffi::c_void,
 	pub cplx: JvxCBool 
 }
