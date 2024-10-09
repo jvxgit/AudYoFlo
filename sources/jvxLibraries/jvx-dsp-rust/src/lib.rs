@@ -118,7 +118,7 @@ pub const C_FALSE : u16 = 0 as u16;
 pub struct jvx_profiler_data_entry
 {
 	pub sz_elm: JvxSize,
-    pub fld: *mut std::ffi::c_void,
+    pub fld: *mut core::ffi::c_void,
 	pub cplx: JvxCBool 
 }
 
@@ -132,8 +132,8 @@ extern "C" {
         entry: *mut jvx_profiler_data_entry);
 }
 
-pub type jvx_register_entry_profiling_data_c = extern fn (dat: *mut jvx_profiler_data_entry, name: *const std::os::raw::c_char, inst: *mut std::ffi::c_void);
+pub type jvx_register_entry_profiling_data_c = extern fn (dat: *mut jvx_profiler_data_entry, name: *const core::ffi::c_char, inst: *mut core::ffi::c_void);
 pub type RegisterCallbackFunction = Option<jvx_register_entry_profiling_data_c>;
 
-pub type jvx_unregister_entry_profiling_data_c = extern fn(name: *const std::os::raw::c_char, inst: *mut std::ffi::c_void);
+pub type jvx_unregister_entry_profiling_data_c = extern fn(name: *const core::ffi::c_char, inst: *mut core::ffi::c_void);
 pub type UnregisterCallbackFunction = Option<jvx_unregister_entry_profiling_data_c>;
