@@ -19,7 +19,7 @@ if(${JVX_OS} MATCHES "windows")
 		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}> does not exist!")
 		
 		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
-			message("${targetfolder} sub project not available. Starting script to download it.") 
+			message("${targetfolder} sub project not available. Starting script to download it.")
 			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
 			message("${targetfolder} installation complete.")
 		endif()
@@ -41,19 +41,24 @@ if(${JVX_OS} MATCHES "windows")
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/bin/ DESTINATION ${INSTALL_PATH_LIB_SHARED} FILES_MATCHING COMPONENT freeglut PATTERN "*.dll")
 	
 elseif(${JVX_OS} MATCHES "linux")
-	## Install <sudo apt-get install libhdf5-dev>
-	find_package(PkgConfig)
-	
-	set(targetfolder freeglut)
-	set(archtoken glnx)
-	set(buildtype ${CMAKE_BUILD_TYPE})
-	
-	message("freeglut sub project not available. Starting script to download it.") 
-	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
-	message("freeglut installation complete.")
-	
-	set(GLUT_INCLUDEDIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}" CACHE INTERNAL "freglut include references")
-	set(GLUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/lib/libglut.so" CACHE INTERNAL "freeglut library references")
+	### Install <sudo apt-get install libhdf5-dev>
+	#find_package(PkgConfig)
+	#
+	#set(targetfolder freeglut)
+	#set(archtoken glnx)
+	#set(buildtype ${CMAKE_BUILD_TYPE})
+	#
+	#message("freeglut sub project not available. Starting script to download it.")
+	#execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
+	#message("freeglut installation complete.")
+	#
+	#set(GLUT_INCLUDEDIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}" CACHE INTERNAL "freglut include references")
+	#set(GLUT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/lib/libglut.a" CACHE INTERNAL "freeglut library references")
+
+	### Install <sudo apt-get install freeglut3-dev>
+	find_package(GLUT REQUIRED)
+	set(GLUT_INCLUDEDIR "${GLUT_INCLUDE_DIRS}" CACHE INTERNAL "freglut include references")
+	set(GLUT_LIBRARIES "${GLUT_LIBRARIES}" CACHE INTERNAL "freeglut library references")
 endif()
 
 # message(FATAL_ERROR "Hier [${PROJECT_NAME}]")

@@ -404,6 +404,10 @@ macro(find_gl)
   #message("    libdirs: ${GL_LIBRARY_DIRS}")
   message("    libdir: ${GL_LIBDIR}")
   message("    lib: ${GL_LIBRARIES}")
+
+  # map to variable names used by FindOpenGL on other platforms
+  set(OPENGL_LIBRARIES "${GL_LIBRARIES}")
+  set(OPENGL_INCLUDE_DIRS "${GL_INCLUDEDIR}")
 endmacro(find_gl)
 
 macro(find_opencv)

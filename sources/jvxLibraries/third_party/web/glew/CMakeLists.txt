@@ -15,7 +15,7 @@ if(${JVX_OS} MATCHES "windows")
 		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}> does not exist!")
 		
 		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
-			message("opencv sub project not available. Starting script to download it.") 
+			message("opencv sub project not available. Starting script to download it.")
 			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
 			message("opencv installation complete.")
 		endif()
@@ -48,22 +48,22 @@ if(${JVX_OS} MATCHES "windows")
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/bin/ DESTINATION ${INSTALL_PATH_LIB_SHARED} FILES_MATCHING COMPONENT glew PATTERN "*.dll")
 	
 elseif(${JVX_OS} MATCHES "linux")
-	## Install <sudo apt-get install libhdf5-dev>
-	
-	set(targetfolder glew)
-	set(archtoken glnx)
-	set(buildtype ${CMAKE_BUILD_TYPE})
-	
-	message("glew sub project not available. Starting script to download it.") 
-	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
-	message("glew installation complete.")
-	
-	set(GLEW_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/include CACHE INTERNAL "glew include references")
-	set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/lib/libGLEWd.so CACHE INTERNAL "glew include references")
-	
-else()	
-	
-	message(FATAL_ERROR "--> Looking for glew in linux - needs to be implemented!")
-	
+	### Install <sudo apt-get install libhdf5-dev>
+	#
+	#set(targetfolder glew)
+	#set(archtoken glnx)
+	#set(buildtype ${CMAKE_BUILD_TYPE})
+	#
+	#message("glew sub project not available. Starting script to download it.")
+	#execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${buildtype}; exit")
+	#message("glew installation complete.")
+	#
+	#set(GLEW_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/include CACHE INTERNAL "glew include references")
+	#set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${targetfolder}-${archtoken}/lib/libGLEWd.a CACHE INTERNAL "glew include references")
+
+	### Install <sudo apt-get install libglew-dev>
+	find_package(GLEW REQUIRED)
+	set(GLEW_INCLUDEDIR "${GLEW_INCLUDE_DIRS}" CACHE INTERNAL "glew include references")
+	set(GLEW_LIBRARIES "${GLEW_SHARED_LIBRARIES}" CACHE INTERNAL "glew include references")
 endif()
 # message(FATAL_ERROR "--> Stop in glew build!")
