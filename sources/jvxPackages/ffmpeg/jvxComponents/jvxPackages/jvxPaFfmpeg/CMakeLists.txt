@@ -44,4 +44,10 @@ set(LOCAL_LIBS
 set(IS_JVX_COMPONENT TRUE)
 set(BUILD_SHARED FALSE)
 
+if(${JVX_OS} MATCHES "linux")
+	# this is a downstream requirement from ffmpeg when building shared objects under linux
+	# using ffmpeg static libs
+	set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-Bsymbolic")
+endif()
+
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
