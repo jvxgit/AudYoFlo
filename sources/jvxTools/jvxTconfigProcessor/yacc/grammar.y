@@ -246,6 +246,28 @@ subsection: t_SECTION t_ANYNAME acc_cfg_flags '{' section '}' ';'
 	}
 	
 }
+| t_ANYNAME acc_cfg_flags '=' '[' valuelist ']' ';'
+{
+	$<list_elm_V>$ = new treeListElement();//IrtpConfigProcessor::JVX_CONFIG_SECTION_TYPE_VALUELIST);
+	$<list_elm_V>$->setOrigin($<Return_String_V>1->filename, $<Return_String_V>1->linenumber);
+	if($<String_V>2)
+	{
+		$<list_elm_V>$->setPriSecFlags(*$<String_V>2);
+		delete $<String_V>2;
+	}
+	
+	if($<Value_Vector_V>5)
+	{
+		std::vector<std::vector<jvxValue> > newLst;
+		newLst.push_back(*$<Value_Vector_V>5);
+		$<list_elm_V>$->setToAssignmentValueList(newLst, $<Return_String_V>1->expression);		
+		delete($<Value_Vector_V>5);
+	}
+	else
+	{
+		$<list_elm_V>$->setToEmptyElement(treeListElement::VALUELIST, $<Return_String_V>1->expression);
+	}
+}
 | t_ANYNAME acc_cfg_flags '=' t_REFERENCE '(' t_REFERENCE_LIST ')' ';'
 {
 	$<list_elm_V>$ = new treeListElement();//IrtpConfigProcessor::JVX_CONFIG_SECTION_TYPE_VALUELIST);
