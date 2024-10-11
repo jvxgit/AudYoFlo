@@ -124,6 +124,15 @@ set(JVX_OPENGL_LIBS "Opengl32")
 set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};QCUSTOMPLOT_USE_OPENGL")
 set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};NOMINMAX ")
 
+if(JVX_USE_RUST)
+	if(JVX_PLATFORM MATCHES "32bit")
+		# Install with "rustup target add i686-pc-windows-msvc"
+		set(CARGO_BUILD_TARGET "i686-pc-windows-msvc")
+	else()
+		set(CARGO_BUILD_TARGET "x86_64-pc-windows-msvc")
+	endif()
+endif()
+	
 # Note: mysh is found when searching git - check gitversion.cmake
 FIND_PROGRAM(myshplus "msys2_shell.cmd" REQUIRED)
 

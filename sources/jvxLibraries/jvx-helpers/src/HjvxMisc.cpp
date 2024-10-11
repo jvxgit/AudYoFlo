@@ -1995,7 +1995,7 @@ jvx_absoluteToRelativePath(std::string path, bool isFile, const char* curPath)
 
 
 std::string
-jvx_extractFileFromFilePath(const std::string fName)
+jvx_extractFileFromFilePath(const std::string& fName)
 {
 	std::string bName = "";
 	size_t pos = std::string::npos;
@@ -2016,7 +2016,7 @@ jvx_extractFileFromFilePath(const std::string fName)
 }
 
 std::string
-jvx_extractDirectoryFromFilePath(const std::string fName)
+jvx_extractDirectoryFromFilePath(const std::string& fName)
 {
 	std::string dName = "";
 	size_t pos = std::string::npos;
@@ -2052,6 +2052,30 @@ jvx_fileBaseName(const std::string& fName)
 	if (pos != std::string::npos)
 	{
 		retStr = fName.substr(0, pos);
+	}
+	return retStr;
+}
+
+
+std::string
+jvx_extractExtensionFromFilePath(const std::string& fName)
+{
+
+	std::string retStr;
+	size_t pos_dot = std::string::npos;
+	pos_dot = fName.rfind('.');
+	size_t pos_sep = std::string::npos;
+	pos_sep = fName.rfind(JVX_SEPARATOR_DIR_CHAR);
+	if (pos_sep == std::string::npos)
+	{
+		pos_sep = fName.rfind(JVX_SEPARATOR_DIR_CHAR_THE_OTHER);
+	}
+
+	if(
+		(pos_dot != std::string::npos) &&
+		(pos_sep < pos_dot))
+	{
+		retStr = fName.substr(pos_dot);
 	}
 	return retStr;
 }
@@ -2805,6 +2829,34 @@ void jvx_tokenRemoveCharLeftRight(
 		}
 		oneToken = oneToken.substr(0, sz2);
 	}
+}
+
+std::string 
+jvx_tokenRemoveChar(const std::string& oneToken, char* removeit)
+{
+	std::string retVal;
+	jvxSize cnt = 0;
+		
+	for (; cnt < oneToken.size(); cnt++)
+	{
+		jvxBool canRemove = false;
+		char* remChars = removeit;
+		while (*remChars != 0)
+		{
+			if (oneToken[cnt] == *remChars)
+			{
+				canRemove = true;
+				break;
+			}
+			remChars++;
+		}
+
+		if (!canRemove)
+		{
+			retVal += oneToken[cnt];
+		}
+	}
+	return retVal;
 }
 
 std::string jvx_constructPropertyLinkDescriptor(std::string tag, std::string propname, std::vector<std::string> paramlst)
@@ -3835,6 +3887,52 @@ jvxErrorType parseStringListIntoTokensT(std::string expr, T& args, char sep_toke
 
 namespace jvx {
 	namespace helper {
+
+		std::string propSelListFirstSelection(const jvxPropertyContainerSingle<jvxSelectionList_cpp>& selLst)
+		{
+			std::string retVal;
+			jvxSize idxSel = jvx_bitfieldSelection2Id(selLst);
+			if (JVX_CHECK_SIZE_SELECTED(idxSel))
+			{
+				retVal = selLst.value.entries[idxSel];
+			}
+			return retVal;
+		};
+
+		std::string popNextElement(std::string& text, const std::list<std::string>& tokens)
+		{
+			std::string retVal;
+			size_t pos_min = std::string::npos;
+			std::string token_min;
+			for (auto& elm : tokens)
+			{
+				size_t pos = text.find(elm);
+				if (pos < pos_min)
+				{
+					pos_min = pos;
+					token_min = elm;
+				}
+				else if (pos == pos_min)
+				{
+					// Second part: involve the longer separator token
+					if (elm.length() > token_min.length())
+					{
+						token_min = elm;
+					}
+				}
+			}
+			if (pos_min == std::string::npos)
+			{
+				retVal = text;
+				text.clear();
+			}
+			else
+			{
+				retVal = text.substr(0, pos_min);
+				text = text.substr(pos_min + token_min.length());
+			}
+			return retVal;
+		};
 
 		jvxErrorType parseStringListIntoTokens(std::string expr, std::list<std::string>& args, char sep_token)
 		{

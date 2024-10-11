@@ -474,10 +474,13 @@ std::string
 jvx_absoluteToRelativePath(std::string path, bool isFile, const char* curPath = NULL);
 
 std::string
-jvx_extractFileFromFilePath(const std::string fName);
+jvx_extractFileFromFilePath(const std::string& fName);
 
 std::string
-jvx_extractDirectoryFromFilePath(const std::string fName);
+jvx_extractDirectoryFromFilePath(const std::string& fName);
+
+std::string
+jvx_extractExtensionFromFilePath(const std::string& fName);
 
 std::string
 jvx_fileBaseName(const std::string& fName);
@@ -555,6 +558,8 @@ jvx_tokenRemoveCharLeftRight(
 	jvxBool removeLeft = true,
 	jvxBool removeRight = true);
 
+std::string jvx_tokenRemoveChar(const std::string& oneToken, char* removeit);
+
 std::string 
 jvx_constructPropertyLinkDescriptor(std::string tag, std::string propname, std::vector<std::string> paramlst);
 
@@ -626,6 +631,9 @@ jvx_compareStringsWildcard(std::string compareme_wc, std::string tome);
 
 namespace jvx {
 	namespace helper {
+
+		std::string propSelListFirstSelection(const jvxPropertyContainerSingle<jvxSelectionList_cpp>& selLst);
+		std::string popNextElement(std::string& text, const std::list<std::string>& tokens);
 
 		jvxErrorType parseStringListIntoTokens(std::string expr, std::list<std::string>& args, char sep_token = ',');
 		jvxErrorType parseStringListIntoTokens(std::string expr, std::vector<std::string>& args, char sep_token = ',');
