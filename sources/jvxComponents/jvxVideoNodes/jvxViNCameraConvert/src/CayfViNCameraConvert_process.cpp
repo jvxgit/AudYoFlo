@@ -129,15 +129,12 @@ CayfViNCameraConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					ptrRead + runtime.convert.NV12.plane1_Sz);
 
 				// The output is a bufer containing h x w RGB entries. The RGB is handled in a three channel model.
-				// WHAT IS NOT GOOD: The output buffer is always created by the cv library. There seems to be no 
-				// option to provide memory space to directly render here. Therefore, we need to copy around the data :-(
-				cv::Mat out;
+				cv::Mat out = cv::Mat(
+					runtime.convert.height, runtime.convert.width,
+					CV_8UC4, bufsOut[0]);
 
 				// Actually run the converter
 				cv::cvtColorTwoPlane(planeY, planeUV, out, cv::COLOR_YUV2RGBA_NV12);
-
-				// This is suboptimal: we need to copy the allocated memory. Hopefully, cv uses pre-allocated memory internally for higher efficiency!!
-				memcpy(bufsOut[0], out.data, runtime.convert.szFldOut);
 
 				break;
 			}
@@ -147,11 +144,12 @@ CayfViNCameraConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				auto planeRGB = cv::Mat(
 					runtime.convert.height, runtime.convert.width,
 					CV_8UC3, ptrRead);
-				cv::Mat out;
+				cv::Mat out = cv::Mat(
+					runtime.convert.height, runtime.convert.width,
+					CV_8UC4, bufsOut[0]);
 
 				// Actually run the converter
 				cv::cvtColor(planeRGB, out, cv::COLOR_RGB2RGBA);
-				memcpy(bufsOut[0], out.data, runtime.convert.szFldOut);
 #if 0
 				// Future: use COLOR_RGB2RGBA
 				for (i = 0; i < _common_set_ocon.theData_out.con_params.segmentation.y; i++)
