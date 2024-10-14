@@ -76,6 +76,17 @@ CayfViNCameraConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				runtime.convert.height = _common_set_icon.theData_in->con_params.segmentation.y; 
 				break;
 
+			case JVX_DATAFORMAT_GROUP_VIDEO_YUYV:
+			{
+				// Compute sizes proper conversion buffers!!
+				szField = jvx_derive_buffersize(_common_set_icon.theData_in->con_params);
+				assert(szField == _common_set_icon.theData_in->con_params.buffersize);
+				runtime.convert.szFldIn = _common_set_icon.theData_in->con_params.buffersize * jvxDataFormat_getsize(_common_set_icon.theData_in->con_params.format);
+
+				runtime.convert.width = _common_set_icon.theData_in->con_params.segmentation.x;
+				runtime.convert.height = _common_set_icon.theData_in->con_params.segmentation.y;
+				break;
+			}
 			default:
 				assert(0);
 			}
@@ -206,6 +217,27 @@ CayfViNCameraConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					dest += runtime.params_sw.szElementsLine;
 	};
 #endif
+				break;
+			}
+			case JVX_DATAFORMAT_GROUP_VIDEO_YUYV:
+			{
+
+				// If we involve an YUYV mapping, we need to use openCV
+
+				// Each pixel is represented by two bytes, where one byte is a Y value, and the second byte contains U and V.
+				// So, every two pixels share a U and V value.
+				jvxUInt8* ptrRead = (jvxUInt8*)bufsIn[0]; // channel 0
+				auto image = cv::Mat(
+					runtime.convert.height, runtime.convert.width,
+					CV_8UC2, ptrRead);
+
+				// The output is a bufer containing h x w RGB entries. The RGB is handled in a three channel model.
+				cv::Mat output = cv::Mat(
+					runtime.convert.height, runtime.convert.width,
+					CV_8UC4, bufsOut[0]);
+
+				cv::cvtColor(image, output, cv::COLOR_YUV2RGBA_YUYV);
+
 				break;
 			}
 			default:
