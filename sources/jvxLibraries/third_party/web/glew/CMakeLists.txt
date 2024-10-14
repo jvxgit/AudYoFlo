@@ -3,12 +3,18 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 if(${JVX_OS} MATCHES "windows")
 	
-	
 	set(targetfolder glew)
 	set(archtoken x64)
 	if(${JVX_PLATFORM} MATCHES "32bit")
 		set(archtoken x86)
 	endif()	
+	
+	set(archtoken "${archtoken_simple}-${CMAKE_BUILD_TYPE}")
+	
+	set(libpostfix "")
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
+		set(libpostfix "d")
+	endif()
 	
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}")
 
@@ -44,7 +50,7 @@ if(${JVX_OS} MATCHES "windows")
 	endif()
 
 	set(GLEW_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/include CACHE INTERNAL "glew include references")
-	set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/glew32d.lib CACHE INTERNAL "glew include references")
+	set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/lib/glew32${libpostfix}.lib CACHE INTERNAL "glew include references")
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/bin/ DESTINATION ${INSTALL_PATH_LIB_SHARED} FILES_MATCHING COMPONENT glew PATTERN "*.dll")
 	
 elseif(${JVX_OS} MATCHES "linux")
