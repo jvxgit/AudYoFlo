@@ -534,7 +534,7 @@ CjvxNegotiate_common::_negotiate_transfer_backward_ocon(
 		{
 			std::cout << __FUNCTION__ << ": " << __LINE__ << "Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
 			std::cout << " Seg X x Seg Y = " << ld->con_params.segmentation.x << " X " <<
-				ld->con_params.segmentation.x << " = " << ld->con_params.buffersize << "." << std::endl;
+				ld->con_params.segmentation.y << " = " << ld->con_params.buffersize << "." << std::endl;
 		}
 
 	}
@@ -990,7 +990,7 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 			{
 				std::cout << __FUNCTION__ << ": " << __LINE__ << ": Warning: Setup of the segmentation is not correct. Expected would be:" << std::endl;
 				std::cout << " Seg X x Seg Y = " << ld_cp.con_params.segmentation.x << " X " << 
-					ld_cp.con_params.segmentation.x << "(" << jvxDataFormatGroup_txt(theData_in->con_params.format_group) << ") = " << bsize << "." << std::endl;
+					ld_cp.con_params.segmentation.y << "(" << jvxDataFormatGroup_txt(theData_in->con_params.format_group) << ") = " << bsize << "." << std::endl;
 			}
 		}
 
