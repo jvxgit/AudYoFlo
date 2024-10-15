@@ -4,9 +4,9 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 if(${JVX_OS} MATCHES "windows")
 	
 	set(targetfolder glew)
-	set(archtoken x64)
+	set(archtoken_simple x64)
 	if(${JVX_PLATFORM} MATCHES "32bit")
-		set(archtoken x86)
+		set(archtoken_simple x86)
 	endif()	
 	
 	set(archtoken "${archtoken_simple}-${CMAKE_BUILD_TYPE}")
