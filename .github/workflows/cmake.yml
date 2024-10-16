@@ -17,6 +17,10 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-20.04
 
+    env:
+      CC: ccache gcc
+      CXX: ccache g++
+
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
@@ -75,8 +79,6 @@ jobs:
       run: |
         ccache --set-config max_size=9000M
         mkdir -p ~/.ccache
-        export CC="ccache gcc"
-        export CXX="ccache g++"
 
     - name: Setup cache
       uses: actions/cache@v2
