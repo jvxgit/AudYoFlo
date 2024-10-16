@@ -61,8 +61,10 @@ jvxHost_off_remote.jvx_input_var = @jvxHost_off_remote_selection_in_variable;
 jvxHost_off_remote.jvx_input_var_direct = @jvxHost_off_remote_selection_in_variable_direct;
 jvxHost_off_remote.jvx_set_samplerate = @jvxHost_off_remote_set_samplerate;
 jvxHost_off_remote.jvx_set_buffersize = @jvxHost_off_remote_set_buffersize;
+jvxHost_off_remote.jvx_set_number_output_channels = @jvxHost_off_remote_set_number_output_channels;
 jvxHost_off_remote.jvx_set_engage_matlab = @jvxHost_off_remote_set_engage_matlab;
 jvxHost_off_remote.jvx_mesgq_immediate = @jvxHost_off_remote_trigger_mesgq_immediately;
+
 jvxHost_off_remote.jvx_export_signal = @jvxHost_off_remote_export_signal_wav;
 
 % Set callback for all host system calls
@@ -1902,7 +1904,31 @@ function [res] = jvxHost_off_remote_selection_in_variable(name_var,rate)
          [handles]  =  jvxHost_off_remote_offline_set_buffersize_core(jvxHost_off_remote.hObject, handles, bsize);
          guidata(jvxHost_off_remote.hObject, handles);
      
-     
+     function [res] = jvxHost_off_remote_set_number_output_channels(numChannels)
+         res = true;
+         global jvxHost_off_remote;
+         handles = guidata(jvxHost_off_remote.hObject);
+                 
+        [a stb]= handles.hostcall('start_property_group', handles.jvx_struct.devices.comp_type);
+        if(~a)
+            % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+            jvxJvxHost.jvx_display_error(mfilename('fullpath'), stb.ERRORID_INT32, 'start_property_group', stb.DESCRIPTION_STRING, false);
+        end
+        
+        [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_out_channels_set, handles.jvx_struct.properties.device.id_out_channels_set,numChannels);
+        if(~a)
+            % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+            jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false); 
+        end
+        
+        [a b]= handles.hostcall('stop_property_group', handles.jvx_struct.devices.comp_type);
+        if(~a)
+            % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+            jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'stop_property_group', b.DESCRIPTION_STRING, false);
+        end
+        guidata(jvxHost_off_remote.hObject, handles);
+         
+         
      function [res] = jvxHost_off_remote_set_engage_matlab(doEngage)
          res = true;
          global jvxHost_off_remote;

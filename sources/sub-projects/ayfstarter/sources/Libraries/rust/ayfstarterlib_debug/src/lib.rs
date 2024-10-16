@@ -51,10 +51,13 @@ pub extern "C" fn ayf_starter_data_debug_postprocess(hdl_dbg: *mut ayf_starter_d
             cb_unregister_f(tag.into_raw(), inst);
         }	
 
-         unsafe 
+		if !hdl_dbg.is_null()
         {
-            jvx_profiler_deallocate_single_entry(&mut hdl_dbg_.tp0);        
-        }
+			unsafe 
+			{
+	            jvx_profiler_deallocate_single_entry(&mut hdl_dbg_.tp0);        
+			}
+		}
 	}
     return JvxDspBaseErrorType::JVX_NO_ERROR;
 }

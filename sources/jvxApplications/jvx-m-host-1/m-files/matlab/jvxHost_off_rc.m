@@ -62,7 +62,36 @@ if(nargin > 0)
                     res = false;
                     errMsg = ['No entry point <jvx_set_buffersize>.'];
                 end
+                
+                elseif(strcmp(whattodo, 'jvx_set_buffersize'))
+                value = varargin{2};
+                if(isfield(jvxHost_off_remote, 'jvx_set_buffersize'))
+                    try
+                        res = jvxHost_off_remote.jvx_set_buffersize(value);
+                    catch ME
+                        res = false;
+                        errMsg = ME.message;
+                    end
+                else
+                    res = false;
+                    errMsg = ['No entry point <jvx_set_buffersize>.'];
+                end
               
+            elseif(strcmp(whattodo, 'jvx_set_number_output_channels'))
+                 value = varargin{2};
+                if(isfield(jvxHost_off_remote, 'jvx_set_number_output_channels'))
+                    try
+                        res = jvxHost_off_remote.jvx_set_number_output_channels(value);
+                    catch ME
+                        res = false;
+                        errMsg = ME.message;
+                    end
+                else
+                    res = false;
+                    errMsg = ['No entry point <jvx_set_number_output_channels>.'];
+                end
+      
+                
             elseif(strcmp(whattodo, 'jvx_mesgq_immediate'))
                 
                 if(isfield(jvxHost_off_remote, 'jvx_mesgq_immediate'))
@@ -76,7 +105,7 @@ if(nargin > 0)
                     res = false;
                     errMsg = ['No entry point <jvx_msgq_immediate>.'];
                 end
-      
+                
             elseif(strcmp(whattodo, 'jvx_input_var'))
                 
                 name_var = varargin{2};
