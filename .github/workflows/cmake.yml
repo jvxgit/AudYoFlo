@@ -71,6 +71,7 @@ jobs:
         libxcb-keysyms1-dev 
         libxcb-cursor-dev 
         libxcb-util-dev
+        libsndio-dev
 
     - name: Install Aqt
       run: pip install aqtinstall
