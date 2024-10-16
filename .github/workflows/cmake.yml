@@ -40,6 +40,7 @@ jobs:
         flex
         bison
         cmake
+        ccache
         portaudio19-dev
         libsndfile1-dev
         libfftw3-3
@@ -69,6 +70,19 @@ jobs:
 
     - name: Install Aqt
       run: pip install aqtinstall
+
+    - name: Configure ccache
+      run: |
+        ccache --set-config max_size=9000M
+        mkdir -p ~/.ccache
+        export CC="ccache gcc"
+        export CXX="ccache g++"
+
+    - name: Setup cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.ccache
+        key: ccache-${{ runner.os }}
 
     - name: Configure buildtools
       run: |
@@ -131,3 +145,6 @@ jobs:
     - name: Build AudYoFlo
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Display ccache stats
+      run: ccache -s
