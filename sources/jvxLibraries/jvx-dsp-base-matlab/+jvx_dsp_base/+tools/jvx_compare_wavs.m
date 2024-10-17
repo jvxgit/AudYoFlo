@@ -1,4 +1,4 @@
-function [passed] = jvx_compare_wavs(file1, file2, maxDeviation, plotit, ignoreDifferentSizes)
+function [passed] = jvx_compare_wavs(file1, file2, maxDeviation, plotit, ignoreDifferentSizes, plotId)
   
 passed = false;
 if(nargin < 4)
@@ -49,7 +49,11 @@ if(fs1 ~= fs2)
 end
 
 if(plotit)
-    figure;    
+    if(nargin > 5)
+        figure(plotId);    
+    else
+        figure;
+    end
 end
 
 passed = true;
