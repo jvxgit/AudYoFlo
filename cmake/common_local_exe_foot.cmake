@@ -23,6 +23,16 @@ if(NOT INSTALL_COMPONENT)
 endif()
 
 ###
+# Tracy Profiler
+###
+if(NOT JVX_COMPILE_BUILDTOOLS)
+  # add it even it JVX_USE_TRACY is not set because
+  # the tracy target is added as interface library
+  # to set the include dirs then
+  set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} tracy)
+endif()
+
+###
 # QT support
 ###
 set(JVX_ENABLE_QT FALSE)
