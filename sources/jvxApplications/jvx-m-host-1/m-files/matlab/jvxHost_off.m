@@ -551,7 +551,14 @@ if(handles.jvx_struct.data.channels.plot.id_user > 0)
         rate = handles.jvx_struct.data.input.rate;
      end
 
-     if( handles.jvx_struct.data.stereo)
+     selection = true;
+     if(handles.jvx_struct.properties.device.id_mat_play_stereo)
+        [a b]= handles.hostcall('get_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_mat_play_stereo, handles.jvx_struct.properties.device.id_mat_play_stereo);
+        if(a)
+            selection = jvxJvxHost.jvx_find_mat_id_single_selection(b.SUBFIELD.SELECTION_BITFIELD);
+        end
+     end
+     if( selection)
         sig = [oneBuf1' oneBuf2'];
      else
          sig = oneBuf1;
