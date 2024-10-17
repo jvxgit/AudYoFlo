@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-if [ ! -d "portaudio" ]; then
+if [ ! -d "cminpack" ]; then
 
 	git clone https://github.com/devernay/cminpack.git
 
