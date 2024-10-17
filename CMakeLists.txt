@@ -18,7 +18,7 @@ else()
 endif()
 
 # Check build type
-if(NOT ${CMAKE_BUILD_TYPE} MATCHES "^(Debug|Release)$")
+if(NOT ${CMAKE_BUILD_TYPE} MATCHES "^(Debug|Release|RelWithDebInfo)$")
   message(FATAL_ERROR "Unknown build type '${CMAKE_BUILD_TYPE}' given")
 endif()
 

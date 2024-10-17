@@ -33,3 +33,15 @@ if(JVX_USE_BOOST)
     set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/web/boost)
 endif()
+
+if(JVX_USE_TRACY)
+  if(NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    message(WARNING "Tracy Profiler should be used with the RelWithDebInfo build profile")
+  endif()
+endif()
+# We download Tracy even if JVX_USE_TRACY is not set so Tracy.hpp is avaible
+# with the empty macros. This avoids all the `#ifdef TRACY_ENABLE .. #endif` blocks.
+# The library is not built or linked in that case. It's only a cmake interface library
+# to set the include directory.
+set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
+  ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/tracy)

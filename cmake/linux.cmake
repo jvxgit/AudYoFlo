@@ -54,6 +54,11 @@ set(JVX_CMAKE_LINKER_FLAGS_SHARED "-Wl,--no-undefined -shared ${JVX_COMPILE_FLAG
 set(WHOLE_ARCHIVE "-Wl,--whole-archive")
 set(NO_WHOLE_ARCHIVE "-Wl,--no-whole-archive")
 
+# set compiler/linker flags for RelWithDebInfo according to Tracy Profiler documentation
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -fno-omit-frame-pointer")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g -fno-omit-frame-pointer")
+set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "-Wl,-O1 -rdynamic")
+
 if(JVX_GCC_LINKER_SYMBOLIC)
   # The following line to allow -fPIC linkage of ffmpeg
   # https://github.com/microsoft/vcpkg/issues/17292

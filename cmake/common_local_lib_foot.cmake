@@ -20,6 +20,16 @@ else()
   set(INSTALL_COMPONENT "release")
 endif()
 
+###
+# Tracy Profiler
+###
+if(NOT JVX_COMPILE_BUILDTOOLS)
+  # add it even it JVX_USE_TRACY is not set because
+  # the tracy target is added as interface library
+  # to set the include dirs then
+  set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} tracy)
+endif()
+
 if(JVX_USE_AVX)
   if(C_AVX_FOUND)
       set(ADDITIONAL_C_FLAGS "${ADDITIONAL_C_FLAGS} ${C_AVX_FLAGS}")
