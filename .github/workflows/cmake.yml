@@ -17,10 +17,6 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-22.04
 
-    #env:
-    #  CC: ccache gcc
-    #  CXX: ccache g++
-
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
@@ -76,16 +72,16 @@ jobs:
     - name: Install Aqt
       run: pip install aqtinstall
 
-    #- name: Configure ccache
-    #  run: |
-    #    ccache --set-config max_size=9000M
-    #    mkdir -p ~/.ccache
+    - name: Configure ccache
+      run: |
+        ccache --set-config max_size=9000M
+        mkdir -p ~/.ccache
 
-    #- name: Setup cache
-    #  uses: actions/cache@v2
-    #  with:
-    #    path: ~/.ccache
-    #    key: ccache-${{ runner.os }}
+    - name: Setup cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.ccache
+        key: ccache-${{ runner.os }}
 
     - name: Configure buildtools
       run: |
@@ -109,6 +105,8 @@ jobs:
     - name: Configure AudYoFlo
       run: |
         cmake -B ${{github.workspace}}/build \
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
           -DCMAKE_INSTALL_PREFIX=release \
           -G Ninja \
@@ -149,5 +147,5 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    #- name: Display ccache stats
-    #  run: ccache -s
+    - name: Display ccache stats
+      run: ccache -s
