@@ -58,7 +58,7 @@ add_custom_target(
   BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h
   COMMAND cbindgen --crate ${PROJECT_NAME} --lang c --quiet --output ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  COMMENT "Generating header file for Rust Library ${JVX_TARGET_NAME_STATIC}"
+  COMMENT "Generating header file ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.h for Rust Library ${JVX_TARGET_NAME_STATIC}"
 )
 
 file(GLOB_RECURSE RUST_SOURCES
