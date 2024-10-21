@@ -1,6 +1,8 @@
 #include "jvx.h"
 #include "CayfAuNStarter.h"
 
+#include <tracy/Tracy.hpp>
+
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
 #endif
@@ -113,15 +115,19 @@ CayfAuNStarter::local_prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 jvxErrorType
 CayfAuNStarter::local_process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
+	ZoneScoped; // Create a scoped zone in the Tracy Profiler
 	jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
 	jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 
+	FrameMarkStart("ayf_starter_process"); // Mark the start of a frame in Tracy Profiler
 	// Involve the c-library for processing
-	return ayf_starter_process(&processing_lib, buffers_in, buffers_out, 
-		_common_set_icon.theData_in->con_params.number_channels, 
+	jvxDspBaseErrorType res = ayf_starter_process(&processing_lib, buffers_in, buffers_out,
+		_common_set_icon.theData_in->con_params.number_channels,
 		_common_set_ocon.theData_out.con_params.number_channels,
 		_common_set_icon.theData_in->con_params.buffersize);
+	FrameMarkEnd("ayf_starter_process"); // Mark the end of a frem in Tracy Profiler
 	
+	return res;
 	// return fwd_process_buffers_icon(mt_mask, idx_stage); <- no longer in use as this call is in template class already
 }
 
