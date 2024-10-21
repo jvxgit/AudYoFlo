@@ -59,6 +59,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	jvxFFTGlobal* glob_fft = nullptr;
 	jvx_circbuffer_fft* sig = nullptr;
 	jvxDataCplx* datCplx = nullptr;
+	jvxSize lengthCplx = 0;
 
 	if((nrhs == 2)&&(nlhs == 1))
 	{
@@ -112,9 +113,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			jvxData fNorm = 1.0 / (jvxData)fftNum;
 			jvx_circbuffer_allocate_global_fft_ifft(&glob_fft, fftSize);
 			jvx_circbuffer_allocate_fft_ifft(
-				&sig, glob_fft, JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL, fftSize, false);
-			jvx_circbuffer_access_cplx_fft_ifft(sig, &datCplx);
-			for (i = 0; i < sig->lengthCplxBuffer; i++)
+				&sig, glob_fft, JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL, fftSize, false, 1);
+			jvx_circbuffer_access_cplx_fft_ifft(sig, &datCplx, &lengthCplx, 0);
+			for (i = 0; i < lengthCplx; i++)
 			{
 				datCplx[i].re = fldDataFrom0[i] * fNorm;
 				datCplx[i].im = fldDataFrom1[i] * fNorm;

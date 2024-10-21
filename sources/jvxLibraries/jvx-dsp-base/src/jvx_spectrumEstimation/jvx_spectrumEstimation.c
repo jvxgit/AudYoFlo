@@ -186,13 +186,16 @@ jvx_spectrumEstimation_process(jvx_spectrumEstimation* hdl,
 	jvx_circbuffer_write_update(&(*prv->cb[channel]).circBuffer, &prv->ram.tmpBuf, hdl->frameSize);
 	jvx_circbuffer_fill(&(*prv->cb[channel]).circBuffer, 0, (jvxInt32)(prv->derived.fftLength - hdl->frameSize));
 	jvx_circbuffer_process_fft_ifft(prv->cb[channel]);
+	
+	jvxDataCplx* cplxBuf = NULL;
+	jvx_circbuffer_access_cplx_fft_ifft(prv->cb[channel], &cplxBuf, NULL, 0);
 
 	switch (hdl->prmSync.method)
 	{
 	case jvx_spectrumEstimation_welchRecursive:
 		for (j = 0; j < prv->derived.spectrumSize; j++)
 		{
-			x = (*prv->cb[channel]).cplxBuf[j].re * (*prv->cb[channel]).cplxBuf[j].re + (*prv->cb[channel]).cplxBuf[j].im * (*prv->cb[channel]).cplxBuf[j].im;
+			x = cplxBuf[j].re * cplxBuf[j].re + cplxBuf[j].im * cplxBuf[j].im;
 			ptr[j] = x + prv->prmSync.alpha * (ptr[j] - x);
 			if (isnan(ptr[j]))
 			{
@@ -205,7 +208,7 @@ jvx_spectrumEstimation_process(jvx_spectrumEstimation* hdl,
 	case jvx_spectrumEstimation_instantaneous:
 		for (j = 0; j < prv->derived.spectrumSize; j++)
 		{
-			ptr[j] = (*prv->cb[channel]).cplxBuf[j].re * (*prv->cb[channel]).cplxBuf[j].re + (*prv->cb[channel]).cplxBuf[j].im * (*prv->cb[channel]).cplxBuf[j].im;
+			ptr[j] = cplxBuf[j].re * cplxBuf[j].re + cplxBuf[j].im * cplxBuf[j].im;
 			if (isnan(ptr[j]))
 			{
 				ptr[j] = 0;
@@ -310,7 +313,7 @@ jvx_spectrumEstimation_update(jvx_spectrumEstimation* hdl,
 			jvx_circbuffer_allocate_fft_ifft(&prv->cb[i], prv->globalFFT,
 				JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX,
 				szFft,
-				true);
+				true, 1);
 			jvx_circbuffer_fill(&(*prv->cb[i]).circBuffer, 0, (jvxInt32)derived->fftLength);
 		}
 

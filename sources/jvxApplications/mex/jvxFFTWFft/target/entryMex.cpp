@@ -60,6 +60,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	jvxFFTGlobal* glob_fft = nullptr;
 	jvx_circbuffer_fft* sig = nullptr;
 	jvxDataCplx* datCplx = nullptr;
+	jvxSize lenCplx = 0;
 
 	if((nrhs == 1)&&(nlhs == 2))
 	{
@@ -107,17 +108,17 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 			jvx_circbuffer_allocate_global_fft_ifft(&glob_fft, fftSize);
 			jvx_circbuffer_allocate_fft_ifft(
-				&sig, glob_fft, JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX, fftSize, false);
-			jvx_circbuffer_access_cplx_fft_ifft(sig, &datCplx);
+				&sig, glob_fft, JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX, fftSize, false, 1);
+			jvx_circbuffer_access_cplx_fft_ifft(sig, &datCplx, &lenCplx, 0);
 			jvx_circbuffer_write_update(&sig->circBuffer, &fldDataFrom, num);
 			jvx_circbuffer_process_fft_ifft(sig);
 
-			dims[1] = (SZ_MAT_TYPE)sig->lengthCplxBuffer;
+			dims[1] = (SZ_MAT_TYPE)lenCplx;
 			arrRe = mxCreateNumericArray(ndim, dims, mxDATA_CLASS, mxREAL);
 			arrIm = mxCreateNumericArray(ndim, dims, mxDATA_CLASS, mxREAL);
 			jvxData* ptrRe = (jvxData*)mxGetData(arrRe);
 			jvxData* ptrIm = (jvxData*)mxGetData(arrIm);
-			for (i = 0; i < sig->lengthCplxBuffer; i++)
+			for (i = 0; i < lenCplx; i++)
 			{
 				ptrRe[i] = datCplx[i].re;
 				ptrIm[i] = datCplx[i].im;

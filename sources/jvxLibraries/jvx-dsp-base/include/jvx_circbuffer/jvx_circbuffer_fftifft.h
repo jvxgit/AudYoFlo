@@ -5,16 +5,23 @@
 #include "jvx_circbuffer/jvx_circbuffer.h"
 #include "jvx_fft_tools/jvx_fft_core.h"
 
+struct jvxFftIfftHandle;
+
 typedef struct
 {
 	jvx_circbuffer circBuffer;
 
 	jvxFftTools_coreFftType fftType;
 	jvxFFTSize fftSize;
+	struct jvxFftIfftHandle* fftifft;
 
-	jvxHandle* coreHdl;
-	jvxDataCplx* cplxBuf;
-	jvxSize lengthCplxBuffer;
+	jvxSize length_cplx;
+
+	struct
+	{
+		jvxDataCplx** field_cplx;
+	} ram;
+
 } jvx_circbuffer_fft;
 
 jvxDspBaseErrorType
@@ -29,7 +36,8 @@ jvx_circbuffer_allocate_fft_ifft(jvx_circbuffer_fft** hdlOnReturn,
 	jvxFFTGlobal* hdl_global_fft,
 				 jvxFftTools_coreFftType fftType,
 				 jvxFFTSize fftSize,
-				 jvxCBool preserveInput);
+				 jvxCBool preserveInput, 
+	jvxSize nChannels);
 
 jvxDspBaseErrorType
 jvx_circbuffer_allocate_fft_ifft_extbuf(jvx_circbuffer_fft** hdlOnReturn,
@@ -46,7 +54,7 @@ jvxDspBaseErrorType
 jvx_circbuffer_deallocate_fft_ifft_extbuf(jvx_circbuffer_fft* hdlReturn);
 
 jvxDspBaseErrorType
-jvx_circbuffer_access_cplx_fft_ifft(jvx_circbuffer_fft* hdl, jvxDataCplx** outPtr);
+jvx_circbuffer_access_cplx_fft_ifft(jvx_circbuffer_fft* hdl, jvxDataCplx** outPtr, jvxSize* outLen, jvxSize idx);
 
 jvxDspBaseErrorType
 jvx_circbuffer_get_read_phase_fft_ifft(jvx_circbuffer_fft* hdl, jvxSize* phase);
