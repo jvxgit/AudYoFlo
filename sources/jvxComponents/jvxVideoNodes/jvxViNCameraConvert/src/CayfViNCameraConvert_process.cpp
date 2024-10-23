@@ -3,6 +3,8 @@
 
 #include <opencv2/imgproc.hpp>
 
+#include <tracy/Tracy.hpp>
+
 jvxErrorType
 CayfViNCameraConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
@@ -102,6 +104,7 @@ CayfViNCameraConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 jvxErrorType
 CayfViNCameraConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 {
+	ZoneScopedN("CameraConvert");
 	if (zeroCopyBuffering_rt)
 	{
 		return fwd_process_buffers_icon(mt_mask, idx_stage);
