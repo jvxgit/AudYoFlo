@@ -4,6 +4,8 @@
 #include "cbmp.h"
 #endif
 
+#include <tracy/Tracy.hpp>
+
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
 #endif
@@ -803,6 +805,7 @@ CjvxViNMixer::activate_connectors()
 				else
 				{
 					CjvxViNMixer_genpcg::expose.lost_frames.value++;
+					TracyMessageLC("CjvxViNMixer: Frame lost", tracy::Color::Red);
 				}
 
 				if (buf->specific.the2DFieldBuffer_full.report_triggerf)
