@@ -110,7 +110,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			jvx_circbuffer_allocate_fft_ifft(
 				&sig, glob_fft, JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX, fftSize, false, 1);
 			jvx_circbuffer_access_cplx_fft_ifft(sig, &datCplx, &lenCplx, 0);
-			jvx_circbuffer_write_update(&sig->circBuffer, &fldDataFrom, num);
+			jvx_circbuffer_write_update(&sig->circBuffer, (const jvxData**) & fldDataFrom, num);
 			jvx_circbuffer_process_fft_ifft(sig);
 
 			dims[1] = (SZ_MAT_TYPE)lenCplx;

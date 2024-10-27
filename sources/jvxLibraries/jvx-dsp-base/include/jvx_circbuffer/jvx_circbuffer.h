@@ -55,11 +55,11 @@ jvxDspBaseErrorType jvx_circbuffer_remove(jvx_circbuffer* hdl,
 	jvxSize numberValuesRemove); 
 
 jvxDspBaseErrorType jvx_circbuffer_write_update(jvx_circbuffer* hdl,
-						jvxData** fieldFill,
+	const jvxData** fieldFill,
 	jvxSize numberValuesFill);
 
 jvxDspBaseErrorType jvx_circbuffer_write_update_wrap(jvx_circbuffer* hdl,
-	jvxData** fieldFill,
+	const jvxData** fieldFill,
 	jvxSize numberValuesFill);
 
 jvxDspBaseErrorType jvx_circbuffer_read_update(jvx_circbuffer* hdl,

@@ -213,7 +213,7 @@ jvx_circbuffer_remove(jvx_circbuffer* hdl,
 
 jvxDspBaseErrorType
 jvx_circbuffer_write_update(jvx_circbuffer* hdl,
-	jvxData** fieldFill,
+	const jvxData** fieldFill,
 	jvxSize numberValuesFill)
 {
 	jvxSize c;
@@ -221,8 +221,8 @@ jvx_circbuffer_write_update(jvx_circbuffer* hdl,
 	if (hdl)
 	{
 		jvxData** ptrField = hdl->ram.field;
-		jvxData* ptrWrite;
-		jvxData* ptrRead;
+		jvxData* ptrWrite = NULL;
+		const jvxData* ptrRead = NULL;
 
 		if (hdl->length - hdl->fHeight >= numberValuesFill)
 		{
@@ -257,7 +257,7 @@ jvx_circbuffer_write_update(jvx_circbuffer* hdl,
 
 jvxDspBaseErrorType
 jvx_circbuffer_write_update_wrap(jvx_circbuffer* hdl,
-	jvxData** fieldFill,
+	const jvxData** fieldFill,
 	jvxSize numberValuesFill)
 {
 	jvxSize c;
@@ -265,8 +265,8 @@ jvx_circbuffer_write_update_wrap(jvx_circbuffer* hdl,
 	if (hdl)
 	{
 		jvxData** ptrField = hdl->ram.field;
-		jvxData* ptrWrite;
-		jvxData* ptrRead;
+		jvxData* ptrWrite = NULL;
+		const jvxData* ptrRead = NULL;
 
 		jvxSize idxWrite = (hdl->idxRead + hdl->fHeight) % hdl->length;
 		jvxSize ll1 = JVX_MIN(numberValuesFill, hdl->length - idxWrite);
