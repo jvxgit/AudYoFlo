@@ -183,7 +183,7 @@ jvx_spectrumEstimation_process(jvx_spectrumEstimation* hdl,
 	for (j = 0; j < hdl->frameSize; j++)
 		prv->ram.tmpBuf[j] = in[j] * prv->derived.window[j] * prv->derived.winNormalize;
 	jvx_circbuffer_remove(&(*prv->cb[channel]).circBuffer, hdl->frameSize);
-	jvx_circbuffer_write_update(&(*prv->cb[channel]).circBuffer, &prv->ram.tmpBuf, hdl->frameSize);
+	jvx_circbuffer_write_update(&(*prv->cb[channel]).circBuffer, (const jvxData**)&prv->ram.tmpBuf, hdl->frameSize);
 	jvx_circbuffer_fill(&(*prv->cb[channel]).circBuffer, 0, (jvxInt32)(prv->derived.fftLength - hdl->frameSize));
 	jvx_circbuffer_process_fft_ifft(prv->cb[channel]);
 	

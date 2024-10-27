@@ -192,7 +192,7 @@ jvxDspBaseErrorType jvx_circbuffer_allocate_1chan(jvx_circbuffer** hdlOnReturn,
 	jvxSize numberElements);
 
 jvxDspBaseErrorType jvx_circbuffer_write_update_1chan(jvx_circbuffer* hdl,
-						      jvxData* fieldFill,
+						     const  jvxData* fieldFill,
 	jvxSize numberValuesFill);
 
 jvxDspBaseErrorType jvx_circbuffer_read_update_1chan(jvx_circbuffer* hdl,

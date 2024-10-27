@@ -1256,7 +1256,7 @@ jvx_circbuffer_allocate_1chan(jvx_circbuffer** hdlOnReturn,
 
 jvxDspBaseErrorType
 jvx_circbuffer_write_update_1chan(jvx_circbuffer* hdl,
-	jvxData* fieldFill,
+	const jvxData* fieldFill,
 	jvxSize numberValuesFill)
 {
 	return jvx_circbuffer_write_update(hdl, &fieldFill, numberValuesFill);

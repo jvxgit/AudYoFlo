@@ -62,7 +62,7 @@ jvx_delay_process(jvx_delay* hdl, jvxData** in, jvxData** out)
 
 	jvx_delay_private* workHdl = (jvx_delay_private * )hdl->prv;
 
-	jvx_circbuffer_write_update(workHdl->nchan_delay_buffer, in, workHdl->prmInit_copy.bSize);
+	jvx_circbuffer_write_update(workHdl->nchan_delay_buffer, (const jvxData**)in, workHdl->prmInit_copy.bSize);
 	delay_val = JVX_MIN(hdl->prmSync.delay_current, workHdl->prmInit_copy.delay_max);
 	delay_val = workHdl->prmInit_copy.delay_max - delay_val;
 	jvx_circbuffer_read_update_offset(workHdl->nchan_delay_buffer, out, workHdl->prmInit_copy.bSize, delay_val);

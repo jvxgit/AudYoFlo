@@ -166,7 +166,7 @@ jvxDspBaseErrorType jvx_spectral_plot_process(jvxSpectralPlot* hdl, jvxData* in,
 		{
 			jvx_spectral_plot_prv* theObj = (jvx_spectral_plot_prv*)hdl->prv;
 
-			res = jvx_circbuffer_write_update_wrap(theObj->buf_circle_in, &in, theObj->initPrm.hopSize);
+			res = jvx_circbuffer_write_update_wrap(theObj->buf_circle_in, (const jvxData**) &in, theObj->initPrm.hopSize);
 
 			jvxSize ll1, ll2;
 			jvxSize idxWrite = (theObj->buf_circle_in->idxRead + theObj->buf_circle_in->fHeight) % theObj->buf_circle_in->length;
@@ -391,7 +391,7 @@ jvxDspBaseErrorType jvx_spectralplot_process(jvxSpectralPlot* hdl,
 	jvxSize i = 0;
 
 	//copy signal into circle buffer
-	res = jvx_circbuffer_write_update(ptrHdl->buf_circle_in, in, ptrHdl->frame_size);
+	res = jvx_circbuffer_write_update(ptrHdl->buf_circle_in, (const jvxData**)in, ptrHdl->frame_size);
 
 	if (res == JVX_DSP_NO_ERROR)
 	{
