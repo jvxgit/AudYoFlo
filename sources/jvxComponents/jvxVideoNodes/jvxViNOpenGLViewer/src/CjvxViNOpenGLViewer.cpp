@@ -141,7 +141,7 @@ CjvxViNOpenGLViewer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				nativeGl.width = _common_set_icon.theData_in->con_params.segmentation.x;
 				nativeGl.numBufs = 2;
 				nativeGl.numChannels = _common_set_icon.theData_in->con_params.number_channels;
-				nativeGl.hdlThread = JVX_INVALID_HANDLE_VALUE;
+				nativeGl.hdlThread = JVX_NULLTHREAD;
 				nativeGl.requestStop = false;
 
 				// Create thread and allocate memory within this thread
