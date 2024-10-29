@@ -695,13 +695,14 @@ CjvxExternalCall::getPropertiesVariable(const jvxExternalDataType* varF, jvxData
 //! Matlab C conversion functions
 jvxErrorType
 CjvxExternalCall::convertExternalToC(jvxHandle** fieldOutput, jvxInt32 dimY, jvxInt32 dimX,
-		jvxDataFormat processingFormat, const jvxExternalDataType* ptrF, const char* nameVar, bool convertFloat)
+		jvxDataFormat processingFormat, const jvxExternalDataType* ptrF, const char* nameVar, jvxBool convertFloat, jvxBool outputComplex)
 {
 	if(this->checkThread())
 	{
 		const mxArray* ptr = (const mxArray*) ptrF;
 
 		jvxData* ptrDouble = NULL;
+		jvxDataCplx* ptrDoubleCplx = NULL;
 		float* ptrFloat = NULL;
 		jvxInt32* ptrInt32 = NULL;
 		jvxInt64* ptrInt64 = NULL;
@@ -733,16 +734,48 @@ CjvxExternalCall::convertExternalToC(jvxHandle** fieldOutput, jvxInt32 dimY, jvx
 		{
 		case JVX_DATAFORMAT_DATA:
 			if(mxIsData(ptr))
-			{
-				ptrDouble = (jvxData*) mxGetData(ptr);
-				for(int i = 0; i < dimX; i++)
+			{				
+				if(outputComplex)
 				{
-					for(int ii = 0; ii < dimY; ii++)
+					if (mxIsComplex(ptr))
 					{
-						((jvxData*)fieldOutput[ii])[i] = ptrDouble[i*dimY + ii];
+						ptrDoubleCplx = (jvxDataCplx*)mxGetData(ptr);
+						for (int i = 0; i < dimX; i++)
+						{
+							for (int ii = 0; ii < dimY; ii++)
+							{
+								((jvxDataCplx*)fieldOutput[ii])[i] = ptrDoubleCplx[i * dimY + ii];
+							}
+						}
+						ptrDoubleCplx = nullptr;
 					}
+					else
+					{
+						ptrDouble = (jvxData*)mxGetData(ptr);
+						for (int i = 0; i < dimX; i++)
+						{
+							for (int ii = 0; ii < dimY; ii++)
+							{
+								((jvxDataCplx*)fieldOutput[ii])[i].re = ptrDouble[i * dimY + ii];
+								((jvxDataCplx*)fieldOutput[ii])[i].im = 0;
+							}
+						}
+						ptrDouble = NULL;
+					}
+					
 				}
-				ptrDouble = NULL;
+				else
+				{
+					ptrDouble = (jvxData*)mxGetData(ptr);
+					for (int i = 0; i < dimX; i++)
+					{
+						for (int ii = 0; ii < dimY; ii++)
+						{
+							((jvxData*)fieldOutput[ii])[i] = ptrDouble[i * dimY + ii];
+						}
+					}
+					ptrDouble = NULL;
+				}
 			}
 			else
 			{
@@ -768,7 +801,7 @@ CjvxExternalCall::convertExternalToC(jvxHandle** fieldOutput, jvxInt32 dimY, jvx
 						{
 							for(int ii = 0; ii < dimY; ii++)
 							{
-								((jvxData*)fieldOutput[ii])[i] = (jvxData)ptrDouble[i*dimY + ii];
+								((jvxData*)fieldOutput[ii])[i] = (jvxData)ptrF[i*dimY + ii];
 							}
 						}
 					}
@@ -1063,9 +1096,9 @@ CjvxExternalCall::convertExternalToC(jvxApiString* textOutput, const jvxExternal
 //! Matlab C conversion functions
 jvxErrorType
 CjvxExternalCall::convertExternalToC(void* fieldOutput, unsigned dimX, jvxDataFormat processingFormat,
-		const jvxExternalDataType* ptr, const char* nameVar, bool convertFloat)
+		const jvxExternalDataType* ptr, const char* nameVar, jvxBool convertFloat, jvxBool outputComplex)
 {
-	return(convertExternalToC(&fieldOutput, 1, dimX, processingFormat, ptr, nameVar, convertFloat));
+	return(convertExternalToC(&fieldOutput, 1, dimX, processingFormat, ptr, nameVar, convertFloat, outputComplex));
 }
 
 

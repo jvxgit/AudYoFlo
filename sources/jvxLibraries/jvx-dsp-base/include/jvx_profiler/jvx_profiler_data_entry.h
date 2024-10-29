@@ -8,6 +8,8 @@ struct jvx_profiler_data_entry
 	jvxSize sz_elm;
 	jvxHandle* fld;
 	jvxCBool cplx;
+	jvxCBool c_to_matlab;
+	jvxCBool valid_content;
 };
 
 typedef jvxErrorType(*jvx_register_entry_profiling_data_c)(struct jvx_profiler_data_entry* dat, const char* name, jvxHandle* inst);
@@ -33,6 +35,21 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 	}
 
 #define JVX_DATA_OUT_DBG_TP_STR(hdl, prv, spec, entryTo, ptrFrom, szFrom) \
+	if (hdl && (hdl->specData & ((jvxCBitField)1 << spec)) &&  hdl->entryTo.fld && ptrFrom) \
+	{ \
+		assert(hdl->entryTo.sz_elm == (szFrom)); \
+		if(hdl->entryTo.cplx) \
+		{ \
+			memcpy(hdl->entryTo.fld, ptrFrom, sizeof(jvxDataCplx) * (szFrom)); \
+		} \
+		else \
+		{ \
+			memcpy(hdl->entryTo.fld, ptrFrom, sizeof(jvxData) * (szFrom)); \
+		} \
+	}
+
+// Output field through Matlab profiling interface directly
+#define JVX_DATA_OUT_DBG_TP_DIRECT(hdl, spec, entryTo, ptrFrom, szFrom) \
 	if (hdl && (hdl->specData & ((jvxCBitField)1 << spec)) &&  hdl->entryTo.fld && ptrFrom) \
 	{ \
 		assert(hdl->entryTo.sz_elm == (szFrom)); \
@@ -89,6 +106,7 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 #else
 	#define JVX_DATA_OUT_DBG_TP(hdl, prv, spec, ptrTo, ptrFrom, szTo, szFrom, cplx)
 	#define JVX_DATA_OUT_DBG_TP_STR(hdl, prv, spec, entryTo, ptrFrom, szFrom) 
+	#define JVX_DATA_OUT_DBG_TP_DIRECT(hdl, spec, entryTo, ptrFrom, szFrom)
 	#define JVX_DATA_OUT_DBG_TP_STR_CHECK(var, hdl, spec, entryTo) 
 	#define JVX_DATA_OUT_DBG_TP_STR_IDX(var, hdl, prv, entryTo, ptrFrom, idx) 
 	#define JVX_DATA_OUT_DBG_TP_STR_VAL(var, hdl, prv, entryTo, val, tp, idx) 

@@ -96,6 +96,9 @@ jvxDspBaseErrorType jvx_circbuffer_read_noupdate(jvx_circbuffer* hdl,
 jvxDspBaseErrorType jvx_circbuffer_advance_read_index(jvx_circbuffer* hdl,
 	jvxSize numberValuesRead);
 
+jvxDspBaseErrorType
+jvx_circbuffer_get_write_phase(jvx_circbuffer* hdl, jvxSize* phase);
+
 jvxDspBaseErrorType jvx_circbuffer_fir_1can_1io(jvx_circbuffer* hdlIn,
 						jvxData* fCoeffs_fw,
 						jvxData** fieldInOut,

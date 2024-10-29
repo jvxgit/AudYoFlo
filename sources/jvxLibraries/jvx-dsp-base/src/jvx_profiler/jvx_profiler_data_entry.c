@@ -4,6 +4,8 @@ void jvx_profiler_allocate_single_entry(struct jvx_profiler_data_entry* entry, j
 {
 	entry->sz_elm = szFld;
 	entry->cplx = cplxFld;
+	entry->c_to_matlab = c_true;
+	entry->valid_content = c_true;
 	assert(entry->fld == NULL);
 	if (entry->cplx)
 	{
@@ -19,5 +21,6 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 {
 	JVX_DSP_SAFE_DELETE_FIELD(entry->fld);
 	entry->sz_elm = 0;
-	entry->cplx = false;
+	entry->cplx = c_false;
+	entry->c_to_matlab = c_false;
 }

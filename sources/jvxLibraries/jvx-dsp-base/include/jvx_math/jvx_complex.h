@@ -43,7 +43,24 @@ void jvx_complex_cart_2_polar(jvxData real_in, jvxData imag_in, jvxData* abs_out
 void jvx_complex_polar_2_cart(jvxData abs_in, jvxData angle_in, jvxData* real_out, jvxData* imag_out);
 
 //! complex multiplication
-void jvx_complex_multiply(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out);
+JVX_STATIC_INLINE void
+jvx_complex_multiply(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out)
+{
+	out->re = in1.re * in2.re - in1.im * in2.im;
+	out->im = in1.im * in2.re + in1.re * in2.im;
+}
+
+JVX_STATIC_INLINE void
+jvx_complex_multiply_n(jvxDataCplx* in1, jvxDataCplx* in2, jvxDataCplx* out, jvxSize n)
+{
+	for (jvxSize i = 0; i < n; i++)
+	{
+		jvx_complex_multiply(*in1, *in2, out);
+		in1++;
+		in2++;
+		out++;
+	}
+}
 
 //! complex multiplication with conjugate first argument
 void jvx_complex_multiply_conj1(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out);

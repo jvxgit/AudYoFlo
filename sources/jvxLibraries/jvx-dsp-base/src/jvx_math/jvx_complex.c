@@ -64,13 +64,6 @@ jvx_complex_polar_2_cart(jvxData abs_in, jvxData angle_in, jvxData* real_out, jv
 }
 
 void
-jvx_complex_multiply(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out)
-{
-	out->re = in1.re * in2.re - in1.im * in2.im;
-	out->im = in1.im * in2.re + in1.re * in2.im;
-}
-
-void
 jvx_complex_multiply_conj1(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out)
 {
 	out->re = in1.re * in2.re + in1.im * in2.im;

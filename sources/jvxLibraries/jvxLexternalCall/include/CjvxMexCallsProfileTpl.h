@@ -174,13 +174,19 @@ public:
 
 		if (!skipCCode)
 		{
+			if (engaged)
+			{
+				// Providing data only if c code is operated
+				CjvxMexCallsProfiler::provideDataMexCall(false);
+			}
+
 			// Run core algorithm in C
 			res = local_process_buffers_icon(mt_mask, idx_stage);
 
 			if (engaged)
 			{
 				// Providing data only if c code is operated
-				CjvxMexCallsProfiler::provideDataMexCall();
+				CjvxMexCallsProfiler::provideDataMexCall(true);
 			}
 		}
 

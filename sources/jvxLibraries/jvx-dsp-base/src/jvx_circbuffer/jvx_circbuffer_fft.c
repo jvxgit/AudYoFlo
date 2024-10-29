@@ -335,8 +335,12 @@ jvx_circbuffer_get_write_phase_fft_ifft(jvx_circbuffer_fft* hdl, jvxSize* phase)
 {
 	if(hdl)
 	{
+		return jvx_circbuffer_get_write_phase(&hdl->circBuffer, phase);		
+
+		/*
 		*phase = (hdl->circBuffer.idxRead + hdl->circBuffer.fHeight) % hdl->circBuffer.length;
 		assert(*phase < hdl->circBuffer.length);
+		*/
 		return JVX_DSP_NO_ERROR;
 	}
 	return JVX_DSP_ERROR_INVALID_ARGUMENT;

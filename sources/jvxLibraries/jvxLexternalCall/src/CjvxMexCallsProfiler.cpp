@@ -31,30 +31,62 @@ CjvxMexCallsProfiler::unregister_profiling_data(const std::string& nm)
 }
 
 jvxErrorType
-CjvxMexCallsProfiler::provideDataMexCall()
+CjvxMexCallsProfiler::provideDataMexCall(jvxBool postRun)
 {
 	jvxExternalDataType* passToMatlab = NULL;
+	jvxExternalDataType* passFromMatlab = NULL;
 	for (auto& elm : registeredProfilerData)
 	{
 		if (elm.second->fld)
 		{
-			_theExtCallHandler->convertCToExternal(&passToMatlab, elm.second->fld,
-				elm.second->sz_elm, JVX_DATAFORMAT_DATA, elm.second->cplx);
-			if (passToMatlab)
+			if (postRun && elm.second->c_to_matlab)
 			{
-				_theExtCallHandler->putVariableToExternal("caller", elm.first.c_str(), passToMatlab);
-				std::string command = "global " + varNameHdlMatlab + "; " + varNameHdlMatlab + ".tp.";
-				command += elm.first;
-				command += " = ";
-				command += elm.first;
-				command += ";";
-				jvxErrorType resCommand = _theExtCallHandler->executeExternalCommand(command.c_str()); 
+				_theExtCallHandler->convertCToExternal(&passToMatlab, elm.second->fld,
+					elm.second->sz_elm, JVX_DATAFORMAT_DATA, elm.second->cplx);
+				if (passToMatlab)
+				{
+					_theExtCallHandler->putVariableToExternal("caller", elm.first.c_str(), passToMatlab);
+					std::string command = "global " + varNameHdlMatlab + "; " + varNameHdlMatlab + ".tp.";
+					command += elm.first;
+					command += " = ";
+					command += elm.first;
+					command += ";";
+					jvxErrorType resCommand = _theExtCallHandler->executeExternalCommand(command.c_str());
 					if (resCommand != JVX_NO_ERROR)
 					{
 						jvxApiString astr;
 						_theExtCallHandler->getLastErrorReason(&astr);
 						_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
 					}
+				}
+			}
+			if (!postRun && !elm.second->c_to_matlab)
+			{
+				std::string command = "global " + varNameHdlMatlab + "; ";
+				command += elm.first;
+				command += " = ";
+				command += varNameHdlMatlab + ".tp.";
+				command += elm.first;
+				command += ";";
+				elm.second->valid_content = c_false;
+				jvxErrorType resCommand = _theExtCallHandler->executeExternalCommand(command.c_str());
+				if (resCommand == JVX_NO_ERROR)
+				{
+					if (_theExtCallHandler->getVariableFromExternal("caller", elm.first.c_str(), &passFromMatlab) == JVX_NO_ERROR)
+					{
+						if (_theExtCallHandler->convertExternalToC((jvxHandle*)elm.second->fld, elm.second->sz_elm, JVX_DATAFORMAT_DATA, passFromMatlab, elm.first.c_str(), false, elm.second->cplx) == JVX_NO_ERROR)
+						{
+							// It is all good
+							elm.second->valid_content = c_true;
+						}
+					}
+				}
+				else
+				{
+					jvxApiString astr;
+					_theExtCallHandler->getLastErrorReason(&astr);
+					_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+				}
 			}
 		}
 	}

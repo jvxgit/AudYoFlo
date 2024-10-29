@@ -675,6 +675,18 @@ jvx_circbuffer_advance_read_index(jvx_circbuffer * hdl,
 
 }
 
+jvxDspBaseErrorType
+jvx_circbuffer_get_write_phase(jvx_circbuffer* hdl, jvxSize* phase)
+{
+	if (hdl)
+	{
+		*phase = (hdl->idxRead + hdl->fHeight) % hdl->length;
+		assert(*phase < hdl->length);
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
 // =====================================================================================
 
 jvxDspBaseErrorType

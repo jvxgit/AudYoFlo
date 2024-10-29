@@ -110,11 +110,11 @@ public:
 	//! Convert external (Matlab) datatype into a C array (which must be allocated before) - here dimY x dimX matrix
 	virtual jvxErrorType JVX_CALLINGCONVENTION convertExternalToC(jvxHandle** fieldOutput, jvxInt32 dimY, jvxInt32 dimX,
 		jvxDataFormat processingFormat, const jvxExternalDataType* ptr, const char* nameVar = "",
-								      jvxBool convertFloat = false)override;
+								      jvxBool convertFloat = false, jvxBool outputComplex = false)override;
 
 	//! Convert external (Matlab) datatype into a C array (which must be allocated before) - here 1 x dimX matrix
 	virtual jvxErrorType JVX_CALLINGCONVENTION convertExternalToC(void* fieldOutput, unsigned dimX, jvxDataFormat processingFormat,
-		const jvxExternalDataType* ptr, const char* nameVar = "", jvxBool convertFloat = false)override;
+		const jvxExternalDataType* ptr, const char* nameVar = "", jvxBool convertFloat = false, jvxBool outputComplex = false)override;
 
 	//! Convert external (Matlab) string into a C string (RTProc string)
 	virtual jvxErrorType JVX_CALLINGCONVENTION convertExternalToC(jvxApiString* textInput, const jvxExternalDataType* ptr, const char* nameVar = "")override;
