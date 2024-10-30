@@ -76,9 +76,27 @@ JVX_SYSTEM_LIB_END
 // In C, 
 #define JVX_SAFE_ALLOCATE_OBJECT_Z(retPtr, dataType) { retPtr = (dataType*)malloc(sizeof(dataType)); memset(retPtr, 0, sizeof(dataType)); }
 #define JVX_SAFE_ALLOCATE_FIELD_Z(retPtr, dataType, numElements) { retPtr = (dataType*)malloc(sizeof(dataType) * (numElements)); memset(retPtr, 0, sizeof(dataType)* (numElements)); }
+#define JVX_SAFE_ALLOCATE_FIELD_2D_Z(retPtr, dataType, dimY, dimX) \
+{ \
+	JVX_SAFE_ALLOCATE_FIELD_Z(retPtr, dataType*, dimY); \
+	for(jvxSize i = 0; i < dimY; i++) \
+	{ \
+		JVX_SAFE_ALLOCATE_FIELD_Z(retPtr[i], dataType, dimX); \
+	} \
+}
+
 //#define JVX_DSP_SAFE_ALLOCATE_FIELD(retPtr, dataType, numElements) { retPtr = (dataType*)malloc(sizeof(dataType) * (numElements)); }
 #define JVX_SAFE_DELETE_OBJECT(ptr) { if(ptr) free(ptr); ptr = NULL; }
 #define JVX_SAFE_DELETE_FIELD(ptr) { if(ptr) free(ptr); ptr = NULL; }
+#define JVX_SAFE_DELETE_FIELD_2D(retPtr, dimY) \
+{ \
+	for(jvxSize i = 0; i < dimY; i++) \
+	{ \
+		JVX_SAFE_DELETE_FIELD(retPtr[i]); \
+	} \
+	JVX_SAFE_DELETE_FIELD(retPtr); \
+}
+
 #define JVX_SAFE_DELETE_FIELD_TYPE(ptr, type) { if(ptr) free((type*)ptr); ptr = NULL; }
 
 #endif

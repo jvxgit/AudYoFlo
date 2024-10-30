@@ -43,14 +43,14 @@ void jvx_complex_cart_2_polar(jvxData real_in, jvxData imag_in, jvxData* abs_out
 void jvx_complex_polar_2_cart(jvxData abs_in, jvxData angle_in, jvxData* real_out, jvxData* imag_out);
 
 //! complex multiplication
-JVX_STATIC_INLINE void
+void JVX_STATIC_INLINE
 jvx_complex_multiply(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out)
 {
 	out->re = in1.re * in2.re - in1.im * in2.im;
 	out->im = in1.im * in2.re + in1.re * in2.im;
 }
 
-JVX_STATIC_INLINE void
+void JVX_STATIC_INLINE
 jvx_complex_multiply_n(jvxDataCplx* in1, jvxDataCplx* in2, jvxDataCplx* out, jvxSize n)
 {
 	for (jvxSize i = 0; i < n; i++)
@@ -62,11 +62,65 @@ jvx_complex_multiply_n(jvxDataCplx* in1, jvxDataCplx* in2, jvxDataCplx* out, jvx
 	}
 }
 
+void JVX_STATIC_INLINE
+jvx_complex_multiply_real_n(jvxDataCplx* inout, jvxData* in2, jvxSize n)
+{
+	for (jvxSize i = 0; i < n; i++)
+	{
+		inout->re *= *in2;
+		inout->im *= *in2;
+		in2++;
+		inout++;
+	}
+}
+
 //! complex multiplication with conjugate first argument
-void jvx_complex_multiply_conj1(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out);
+void JVX_STATIC_INLINE
+jvx_complex_multiply_conj1(jvxDataCplx in1, jvxDataCplx in2, jvxDataCplx* out)
+{
+	out->re = in1.re * in2.re + in1.im * in2.im;
+	out->im = in1.re * in2.im - in1.im * in2.re;
+}
+
+void JVX_STATIC_INLINE
+jvx_complex_multiply_conj1_n(jvxDataCplx* in1, jvxDataCplx* in2, jvxDataCplx* out, jvxSize n)
+{
+	for (jvxSize i = 0; i < n; i++)
+	{
+		jvx_complex_multiply_conj1(*in1, *in2, out);
+		in1++;
+		in2++;
+		out++;
+	}
+}
 
 //! square of magnitude
-void jvx_complex_square_of_magnitude(jvxDataCplx in, jvxData* out);
+void JVX_STATIC_INLINE jvx_complex_square_of_magnitude(jvxDataCplx in, jvxData* out)
+{
+	*out = in.re * in.re + in.im * in.im;
+}
+
+void JVX_STATIC_INLINE jvx_complex_square_of_magnitude_n(jvxDataCplx* in, jvxData* out, jvxSize n)
+{
+	for (jvxSize i = 0; i < n; i++)
+	{
+		jvx_complex_square_of_magnitude(*in, out);
+		in++;
+		out++;
+	}
+}
+
+void JVX_STATIC_INLINE jvx_complex_square_of_magnitude_add_n(jvxDataCplx* in, jvxData* out, jvxSize n)
+{
+	for (jvxSize i = 0; i < n; i++)
+	{
+		jvxData tmp;
+		jvx_complex_square_of_magnitude(*in, &tmp);
+		*out += tmp;
+		in++;
+		out++;
+	}
+}
 
 //! complex multiplication
 jvxDataCplx JVX_STATIC_INLINE jvx_complex_multiply_i(jvxDataCplx in1, jvxDataCplx in2)
