@@ -13,11 +13,12 @@ folder="ffmpeg-$postfix"
 echo "Checking for existence of folder $folder"
 if [ ! -d $folder ]; then
 
-	# Commit id = 05438db02437e241a418e266a354bf4e7be7ac59
+	# FFmpeg 7.1 release
+	# Commit id = 507a51fbe9732f0f6f12f43ce12431e8faa834b7
 	echo git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	cd ffmpeg
-	git checkout 05438db02437e241a418e266a354bf4e7be7ac59
+	git checkout 507a51fbe9732f0f6f12f43ce12431e8faa834b7
 
 	echo "PATCHING"
 	echo "patch -p1 < ../ffmpeg-glnx-mathops.patch"
@@ -38,7 +39,7 @@ if [ -d $folder ]; then
 	if [ ! -d "lib" ]; then
 
 		echo ./configure --disable-bzlib --enable-pic --prefix=./
-		./configure --disable-bzlib --enable-pic --prefix=./
+		./configure --disable-bzlib --enable-pic --disable-libdrm --prefix=./
 
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
