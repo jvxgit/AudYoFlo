@@ -547,7 +547,7 @@ typedef jvxErrorType(*jvx_data_callback)(jvxHandle* priv, struct jvxFloatingPoin
 #define M_PI (jvxData)(3.14159265358979323846264338327950288)
 #endif
 
-#ifdef JVX_DSP_DATA_FORMAT_DOUBLE
+#ifdef JVX_DATA_FORMAT_DOUBLE
 #define mat_epsMin  2.220446049250313100000000000000e-016
 #define mat_epsMax 1.797693134862315700000000000000e+308
 #else

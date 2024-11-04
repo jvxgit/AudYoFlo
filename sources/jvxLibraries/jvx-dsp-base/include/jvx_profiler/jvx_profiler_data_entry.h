@@ -83,7 +83,7 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 			fldOut[idx] = fldIn[idx]; \
 		} \
 	}
-#define JVX_DATA_OUT_DBG_TP_STR_VAL(var, hdl, prv, entryTo, val, tp, idx) \
+#define JVX_DATA_OUT_DBG_TP_STR_VAL(var, hdl, entryTo, val, tp, idx) \
 	if (var&& hdl && hdl->entryTo.fld) \
 	{ \
 		assert(idx < hdl->entryTo.sz_elm); \
