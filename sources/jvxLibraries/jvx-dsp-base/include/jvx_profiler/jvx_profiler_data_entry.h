@@ -109,7 +109,7 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 	#define JVX_DATA_OUT_DBG_TP_DIRECT(hdl, spec, entryTo, ptrFrom, szFrom)
 	#define JVX_DATA_OUT_DBG_TP_STR_CHECK(var, hdl, spec, entryTo) 
 	#define JVX_DATA_OUT_DBG_TP_STR_IDX(var, hdl, prv, entryTo, ptrFrom, idx) 
-	#define JVX_DATA_OUT_DBG_TP_STR_VAL(var, hdl, prv, entryTo, val, tp, idx) 
+	#define JVX_DATA_OUT_DBG_TP_STR_VAL(var, hdl, entryTo, val, tp, idx) 
 	#define JVX_DATA_OUT_DBG_TP_STR_UC(hdl, prv, entryTo, ptrFrom, szFrom) 
 #endif
 
