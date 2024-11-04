@@ -118,6 +118,8 @@ elseif(${JVX_OS} MATCHES "linux")
 		${JVX_FFMPEG_LIB_AVUTIL}
 		${JVX_FFMPEG_LIB_SWRESAMPLE}
 		${JVX_FFMPEG_LIB_SWSCALE}
+		x264
+		x265
 		CACHE INTERNAL "ffmpeg libs (glnx)")	
 	
 	find_package(PkgConfig)
