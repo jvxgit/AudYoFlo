@@ -39,7 +39,7 @@ if [ -d $folder ]; then
 	if [ ! -d "lib" ]; then
 
 		echo ./configure --disable-bzlib --enable-pic --prefix=./
-		./configure --disable-bzlib --enable-pic --disable-libdrm --disable-vulkan --prefix=./
+		./configure --disable-bzlib --enable-pic --disable-libdrm --prefix=./
 
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
