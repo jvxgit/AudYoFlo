@@ -68,6 +68,8 @@ jobs:
         libxcb-cursor-dev 
         libxcb-util-dev
         libsndio-dev
+        libx264-dev
+        libx265-dev
 
     - name: Install Aqt
       run: pip install aqtinstall
