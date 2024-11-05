@@ -103,6 +103,7 @@ elseif(${JVX_OS} MATCHES "linux")
 	set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavutil.a")
 	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswresample.a")
 	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswscale.a")
+	set(JVX_FFMPEG_LIB_POSTPROC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libpostproc.a")
 
 	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}" CACHE INTERNAL "ffmpeg source code path (windows)")
 	
@@ -118,6 +119,7 @@ elseif(${JVX_OS} MATCHES "linux")
 		${JVX_FFMPEG_LIB_AVUTIL}
 		${JVX_FFMPEG_LIB_SWRESAMPLE}
 		${JVX_FFMPEG_LIB_SWSCALE}
+		${JVX_FFMPEG_LIB_POSTPROC}
 		x264
 		x265
 		CACHE INTERNAL "ffmpeg libs (glnx)")	
@@ -180,7 +182,7 @@ elseif(${JVX_OS} MATCHES "linux")
 		${SNDIO_LIBRARIES}
 		${XEXT_LIBRARIES}
 		
-		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")
+		CACHE INTERNAL "ffmpeg sys libs with strmiids (linux)")
 		
 	
 endif()
