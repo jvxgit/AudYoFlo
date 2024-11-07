@@ -33,8 +33,16 @@ set(LOCAL_SOURCES
 include_directories(
 	${JVX_FFMPEG_INCLUDE_DIR}
 	${JVX_FFMPEG_SOURCE_DIR}/fftools
+)
+
+include(CheckIncludeFile)
+check_include_file("stdbit.h" HAVE_STDBIT_H)
+
+if(NOT HAVE_STDBIT_H)
+include_directories(
 	${JVX_FFMPEG_SOURCE_DIR}/compat/stdbit/
 )
+endif()
 
 if(JVX_OS MATCHES "macosx")
   set(JVX_MAC_OS_CREATE_BUNDLE TRUE)

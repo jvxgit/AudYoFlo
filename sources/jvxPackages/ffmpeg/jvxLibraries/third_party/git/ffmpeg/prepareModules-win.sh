@@ -14,10 +14,11 @@ set -x
 echo "Checking for existence of folder $folder"
 if [ ! -d $folder ]; then
 	
-	# Commit id = 05438db02437e241a418e266a354bf4e7be7ac59
+	# FFmpeg 7.1 release
+	# Commit id = 507a51fbe9732f0f6f12f43ce12431e8faa834b7
 	git  clone https://github.com/FFmpeg/FFmpeg.git ffmpeg
 	cd ffmpeg
-	git checkout 05438db02437e241a418e266a354bf4e7be7ac59
+	git checkout 507a51fbe9732f0f6f12f43ce12431e8faa834b7
 	cd ..
 	
 	patch -R -p0 --binary < ffmpeg-fft-oc.patch
