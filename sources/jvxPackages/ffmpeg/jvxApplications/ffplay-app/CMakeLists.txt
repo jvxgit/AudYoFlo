@@ -11,12 +11,11 @@ endif()
 set(LOCAL_C_STANDARD 99)
 
 set(LOCAL_SOURCES
-
-	
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffplay.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffplay_renderer.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/cmdutils.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/opt_common.c
- )
+)
 
 # set_source_files_properties(${LOCAL_SOURCES} PROPERTIES LANGUAGE CXX )
 
