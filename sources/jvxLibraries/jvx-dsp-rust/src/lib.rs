@@ -4,6 +4,7 @@
 extern crate alloc;
 
 pub mod fft;
+pub mod circbuffer;
 
 pub type Error = JvxErrorType;
 pub type Result<T> = core::result::Result<T, Error>;
