@@ -720,6 +720,19 @@ CjvxViNMixer::activate_connectors()
 #endif
 
 					}
+					else
+					{
+						std::cout << "Trying to connect widget for token <" << location << ">." << std::endl;
+						this->lock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
+						for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
+						{
+							if (elm.second.nmUnique == location)
+							{
+								// Store the viewbuffer here!!
+							}
+						}
+						this->unlock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
+					}
 					CjvxViNMixer_genpcg::expose.rendering_target.ptr = nullptr;
 				}
 			}
@@ -754,6 +767,19 @@ CjvxViNMixer::activate_connectors()
 					if (location == "Local")
 					{						
 						ptrsFromExternal_local = nullptr;						
+					}
+					else
+					{
+						std::cout << "Trying to disconnect widget for token <" << location << ">." << std::endl;
+						this->lock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
+						for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
+						{
+							if (elm.second.nmUnique == location)
+							{
+								// SUnstore the viewbuffer here!!
+							}
+						}
+						this->unlock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
 					}
 					auto elm = ptrsFromExternal.find(location);
 					if (elm != ptrsFromExternal.end())
