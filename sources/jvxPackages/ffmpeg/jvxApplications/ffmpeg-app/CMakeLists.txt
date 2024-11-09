@@ -11,32 +11,38 @@ endif()
 set(LOCAL_C_STANDARD 99)
 
 set(LOCAL_SOURCES
-
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_dec.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_demux.c
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_filter.c
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_hw.c
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_mux.c
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_mux_init.c
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_opt.c
-	${JVX_FFMPEG_SOURCE_DIR}/fftools/cmdutils.c
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools/objpool.c
-	${JVX_FFMPEG_SOURCE_DIR}/fftools/opt_common.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_enc.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_filter.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_hw.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_mux.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_mux_init.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_opt.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_sched.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/objpool.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/sync_queue.c
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools/thread_queue.c	# ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg/fftools/fftoolsres.rc
-
-	# Will be required in upcoming versions
-	#${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_enc.c
-	#${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_dec.c
-
- )
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/thread_queue.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/cmdutils.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/opt_common.c
+)
 
 # set_source_files_properties(${LOCAL_SOURCES} PROPERTIES LANGUAGE CXX )
 
 include_directories(
 	${JVX_FFMPEG_INCLUDE_DIR}
-    ${JVX_FFMPEG_SOURCE_DIR}/fftools
-  )
+	${JVX_FFMPEG_SOURCE_DIR}/fftools
+)
+
+include(CheckIncludeFile)
+check_include_file("stdbit.h" HAVE_STDBIT_H)
+
+if(NOT HAVE_STDBIT_H)
+include_directories(
+	${JVX_FFMPEG_SOURCE_DIR}/compat/stdbit/
+)
+endif()
 
 if(JVX_OS MATCHES "macosx")
   set(JVX_MAC_OS_CREATE_BUNDLE TRUE)
