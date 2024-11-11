@@ -5,6 +5,7 @@ edition = "2021"
 
 [features]
 default = []
+testing = []
 jvx-system-use-data-format-float = []
 
 [dependencies]
