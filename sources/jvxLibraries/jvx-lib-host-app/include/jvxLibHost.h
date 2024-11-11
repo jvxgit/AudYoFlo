@@ -340,7 +340,7 @@ public:
 	static void pixbuffer_local_create_cb(
 		int64_t texture_id,
 		uint8_t** buffer, uint32_t width, uint32_t height,
-		const char* id, const char* arg,
+		const char* id, const char* ctxt, const char* arg,
 		PixelBufferTexturePluginFrameAvailableCallback frame_available_cb,
 		PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data);
 	static void pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data);

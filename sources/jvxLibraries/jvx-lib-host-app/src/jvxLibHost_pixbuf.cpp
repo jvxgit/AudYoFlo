@@ -12,14 +12,14 @@ void
 jvxLibHost::pixbuffer_local_create_cb(
 	int64_t texture_id,
 	uint8_t **buffer, uint32_t width, uint32_t height,
-	const char *id, const char *arg,
+	const char *id, const char* ctxt, const char *arg,
 	PixelBufferTexturePluginFrameAvailableCallback frame_available_cb,
 	PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data)
 {
 	// This function enters the backend within the main thread!!!
 	//auto tdg = std::make_unique<struct threaddata>();
 	CjvxPixBufRendering* tdg = nullptr;
-	JVX_SAFE_ALLOCATE_OBJECT(tdg, CjvxPixBufRendering);
+	JVX_SAFE_ALLOCATE_OBJECT(tdg, CjvxPixBufRendering); 
 
 	tdg->texture_id = texture_id;
 	tdg->buffer = buffer;
@@ -42,16 +42,17 @@ jvxLibHost::pixbuffer_local_create_cb(
 	retInterface<IjvxToolsHost>(hostRef->involvedHost.hHost, tools);
 
 	tdg->addressArg = arg;
+	tdg->ctxtArg = ctxt;
 	std::vector<std::string> args;
 	jvx::helper::parseStringListIntoTokens(tdg->addressArg, args, ':');
 
-	if (args.size() >= 2)
+	if (args.size() >= 1)
 	{
-		tdg->installHint = args[0];
-		tdg->propInstall = args[1];
+		tdg->installHint = ctxt;
+		tdg->propInstall = args[0];
 		
 		std::map<std::string, std::string> mapArgs;
-		for (jvxSize i = 2; i < args.size(); i++)
+		for (jvxSize i = 1; i < args.size(); i++)
 		{
 			std::vector<std::string> oneArg;
 			jvx::helper::parseStringListIntoTokens(args[i], oneArg, '=');
@@ -207,9 +208,9 @@ jvxLibHost::pixbuffer_local_create_cb(
 			std::cout << "Error: Installing a pixbuf external buffer requires a valid <install target component>, which <" << id << "> is not!" << std::endl;
 		}
 	}
-	else // if (args.size() == 2)
+	else // if (args.size() == 1)
 	{
-		std::cout << "Error: Installing a pixbuf external buffer requires an <installation hint> and a <install target property>, both separated by \":\"" << std::endl;
+		std::cout << "Error: Installing a pixbuf external buffer requires at least an <install target property>." << std::endl;
 	}
 
 	JVX_GET_TICKCOUNT_US_SETREF(&tdg->tStamp);

@@ -27,6 +27,7 @@ public:
 	jvxSize szBuf = 0;
 	jvxSize frameRate = 0;
 	std::string addressArg;
+	std::string ctxtArg;
 	std::string installHint;
 	std::string propInstall;
 	jvxComponentIdentification cpId;
