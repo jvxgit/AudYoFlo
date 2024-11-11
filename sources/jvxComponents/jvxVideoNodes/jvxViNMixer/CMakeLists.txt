@@ -1,6 +1,8 @@
 set(PROJECT_NAME jvxViNMixer)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
+set(JVX_IMAGE_FROM_TEST_BMP FALSE)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/target
    ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
@@ -29,9 +31,11 @@ set(LOCAL_LIBS
   )
   
 if(JVX_USE_CBMP)
-	include_directories(${JVX_BASE_LIBS_LIB_PATH}/third_party/git/cbmp/cbmp)
-	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_OPEN_BMP_FOR_TEST")	
-	set(LOCAL_LIBS ${LOCAL_LIBS} cbmp_static)
+	if(JVX_IMAGE_FROM_TEST_BMP)
+		include_directories(${JVX_BASE_LIBS_LIB_PATH}/third_party/git/cbmp/cbmp)
+		set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_OPEN_BMP_FOR_TEST")	
+		set(LOCAL_LIBS ${LOCAL_LIBS} cbmp_static)
+	endif()
 endif()
 
 set(IS_JVX_COMPONENT TRUE)

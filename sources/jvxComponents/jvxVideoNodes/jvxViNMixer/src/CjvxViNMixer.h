@@ -35,9 +35,11 @@ protected:
 		jvxSize szFldRgba32 = 0;
 		jvxSize uId = JVX_SIZE_UNSELECTED;
 		std::string nameInput;
+		jvxExternalBuffer* ptrsFromExternal_local = nullptr;
 		void reset()
 		{
 			nameInput = "not-connected";
+			ptrsFromExternal_local = nullptr;
 		}
 	};
 	

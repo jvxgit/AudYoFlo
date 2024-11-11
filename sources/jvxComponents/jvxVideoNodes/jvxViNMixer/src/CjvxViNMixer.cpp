@@ -428,6 +428,12 @@ CjvxViNMixer::activate_connectors()
 				{
 					memcpy(localData->fldRgba32, imageDataFrom[0], localData->szFldRgba32);
 				}
+
+				// Forward the incoming video to the UI
+				if (localData->ptrsFromExternal_local)
+				{
+					addOneImageToExchangeBuffer_inLock(localData->ptrsFromExternal_local, imageDataFrom[0], datThisConnector.con_params.buffersize);
+				}
 			}
 		}
 
@@ -723,12 +729,20 @@ CjvxViNMixer::activate_connectors()
 					else
 					{
 						std::cout << "Trying to connect widget for token <" << location << ">." << std::endl;
-						this->lock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
-						for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
+						this->lock(false, CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+						for (auto& elm : CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors)
 						{
-							if (elm.second.nmUnique == location)
+							oneConnectorPrivateData* privateData = reinterpret_cast<oneConnectorPrivateData*>(elm.second.privData);
+							if (privateData)
 							{
-								// Store the viewbuffer here!!
+								if (privateData->nameInput == location)
+								{
+									// Store the viewbuffer here!!
+									privateData->ptrsFromExternal_local = CjvxViNMixer_genpcg::expose.rendering_target.ptr;
+#ifdef JVX_OPEN_BMP_FOR_TEST
+									addOneImageToExchangeBuffer_inLock(ptrsFromExternal_local, test.bufRGBA32, test.szBufRGBA32);
+#endif
+								}
 							}
 						}
 						this->unlock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
@@ -771,12 +785,17 @@ CjvxViNMixer::activate_connectors()
 					else
 					{
 						std::cout << "Trying to disconnect widget for token <" << location << ">." << std::endl;
-						this->lock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
-						for (auto& elm : CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::processingConnectors)
+						this->lock(false, CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::lockId);
+						for (auto& elm : CjvxConnectorCollection<CjvxSingleInputConnector, CjvxSingleInputConnectorMulti>::selectedConnectors)
 						{
-							if (elm.second.nmUnique == location)
+							oneConnectorPrivateData* privateData = reinterpret_cast<oneConnectorPrivateData*>(elm.second.privData);
+							if (privateData)
 							{
-								// SUnstore the viewbuffer here!!
+								if (privateData->nameInput == location)
+								{
+									// Unstore the viewbuffer here!!
+									privateData->ptrsFromExternal_local = nullptr;
+								}
 							}
 						}
 						this->unlock(false, CjvxConnectorCollection<CjvxSingleOutputConnector, CjvxSingleOutputConnectorMulti>::lockId);
