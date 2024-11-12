@@ -71,12 +71,11 @@ class _AudYoFloSimpleTextFieldStates extends State<AudYoFloSimpleTextField> {
     return SizedBox(
         height: widget.height,
         child: TextFormField(
-          controller: _controllerIn,          
+          controller: _controllerIn,
           keyboardType: TextInputType.text,
           maxLines: 1,
           minLines: 1,
           decoration: InputDecoration(
-
             // Here I have tested a lot. If the text is too wide, it disappears!
             // We can avoid this by re-defining the default EdgeInsets. We need the left border inset however, to look nice.
             // isDense: true,
@@ -98,6 +97,14 @@ class _AudYoFloSimpleTextFieldStates extends State<AudYoFloSimpleTextField> {
                     AudYoFloPropertySingleStringBackend propStr =
                         widget.propBe as AudYoFloPropertySingleStringBackend;
                     propStr.value = _controllerIn.text;
+                    if ((propStr.decoderHintType ==
+                            jvxPropertyDecoderHintTypeEnum
+                                .JVX_PROPERTY_DECODER_FILENAME_OPEN) ||
+                        (propStr.decoderHintType ==
+                            jvxPropertyDecoderHintTypeEnum
+                                .JVX_PROPERTY_DECODER_FILENAME_SAVE)) {
+                      propStr.value = propertyStringBackSlashes(propStr.value);
+                    }
                     triggerSet = true;
                   } else if (widget.propBe
                       is AudYoFloPropertyMultiContentBackend) {

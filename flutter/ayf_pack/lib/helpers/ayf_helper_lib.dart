@@ -742,6 +742,11 @@ List<double> propertyMultiContentToDoubleList(
   return retVal!;
 }
 
+String propertyStringBackSlashes(String inVar) {
+  inVar = inVar.replaceAll(r'\', '\\\\');
+  return inVar;
+}
+
 class AudYoFloMixerLevelHelper {
   double dbShiftGain = 50;
   double indexUnmapDb(double idxValdB) {

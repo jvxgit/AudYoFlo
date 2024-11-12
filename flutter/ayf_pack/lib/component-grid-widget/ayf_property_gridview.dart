@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +9,10 @@ import 'package:fixnum/fixnum.dart' as fn;
 import '../ayf_pack_local.dart';
 
 class AudYoFloPropertyGridWidget extends StatefulWidget {
-  AudYoFloPropertyGridWidget();
+  final bool showDescriptor;
+  final String regExprShow;
+  AudYoFloPropertyGridWidget(
+      {this.showDescriptor = false, this.regExprShow = ''});
 
   @override
   State<StatefulWidget> createState() {
@@ -96,6 +101,31 @@ class _AudYoFloPropertyGridWidgetStates
                         props = theDbgModel.be
                             .referenceValidPropertiesComponents(
                                 theDbgModel.idSelectCp, lst);
+
+                        if (props != null) {
+                          if (widget.regExprShow.isNotEmpty) {
+                            RegExp regExp = RegExp(
+                              widget.regExprShow,
+                              caseSensitive: false,
+                              multiLine: false,
+                            );
+                            List<AudYoFloPropertyContainer> filteredLst = [];
+                            for (var elm in props) {
+                              if (widget.showDescriptor) {
+                                if (regExp.hasMatch(elm.descriptor)) {
+                                  filteredLst.add(elm);
+                                }
+                              } else {
+                                if (regExp.hasMatch(elm.description)) {
+                                  filteredLst.add(elm);
+                                }
+                              }
+                            }
+
+                            props = filteredLst;
+                          }
+                        }
+
                         if (props == null) {
                           errCode = await theDbgModel.be
                               .triggerUpdatePropertiesComponent(
@@ -143,7 +173,10 @@ class _AudYoFloPropertyGridWidgetStates
                                       mainAxisSpacing: 20),
                               itemBuilder: (context, index) {
                                 return AudYoFloPropertySingleWidget(
-                                    pContentShow: allProperties, idProp: index);
+                                  pContentShow: allProperties,
+                                  idProp: index,
+                                  showDescriptor: widget.showDescriptor,
+                                );
                               },
                               itemCount: allProperties.length,
                               controller: _myController,
@@ -178,8 +211,11 @@ class _AudYoFloPropertyGridWidgetStates
 class AudYoFloPropertySingleWidget extends StatefulWidget {
   final List<AudYoFloPropertyContainer?> pContentShow;
   final int idProp;
+  final bool showDescriptor;
   AudYoFloPropertySingleWidget(
-      {required this.pContentShow, required this.idProp});
+      {required this.pContentShow,
+      required this.idProp,
+      required this.showDescriptor});
 
   @override
   State<StatefulWidget> createState() {
@@ -199,7 +235,8 @@ class _AudYoFloPropertySingleWidgetState
         propDescr = ref;
       }
     }
-    return AudYoFloPropertyShow(propDescr: propDescr);
+    return AudYoFloPropertyShow(
+        propDescr: propDescr, showDescriptor: widget.showDescriptor);
   }
 }
 
@@ -216,7 +253,8 @@ enum ayfSpecificOperation {
 
 class AudYoFloPropertyShow extends StatefulWidget {
   final AudYoFloPropertyContainer? propDescr;
-  AudYoFloPropertyShow({required this.propDescr});
+  final bool showDescriptor;
+  AudYoFloPropertyShow({required this.propDescr, this.showDescriptor = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -256,11 +294,11 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
           AudYoFloPropertyContentBackend propNat =
               widget.propDescr! as AudYoFloPropertyContentBackend;
           String helpText = propNat.toHelperString();
-          ttip = propNat.descriptor;
+          ttip = '->';
           if (helpText.isNotEmpty) {
-            ttip += ' -- $helpText';
+            ttip += '$helpText :';
           }
-          ttip += ': ${propNat.origin}';
+          ttip += '${propNat.origin}';
 
           if (requirePropUpdate) {
             AudYoFloBackendCache theBeCache =
@@ -396,6 +434,18 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
         }
       }
 
+      String tooltipShow = '';
+      String whatToShow = '';
+      if (widget.propDescr != null) {
+        tooltipShow = widget.propDescr!.descriptor;
+        whatToShow = description;
+
+        if (widget.showDescriptor) {
+          whatToShow = widget.propDescr!.descriptor;
+          tooltipShow = description;
+        }
+      }
+
       return GestureDetector(
         onSecondaryTap: () {
           String txt = '';
@@ -463,7 +513,11 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Flexible(
-                                          flex: 1, child: Text(description)),
+                                          flex: 1,
+                                          child: Tooltip(
+                                            child: Text(whatToShow),
+                                            message: tooltipShow,
+                                          )), // description
                                       Flexible(flex: 1, child: secondaryWidget!)
                                     ]),
                               ),

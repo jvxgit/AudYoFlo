@@ -12,6 +12,8 @@ class AudYoFloComponentWidget extends StatefulWidget {
 
 class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
   String dropdownValueProcess = 'None';
+  bool showDescriptor = false;
+  String regExpr = '';
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,7 @@ class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
                         children: [
                           Flexible(flex: 1, child: Text('Processes')),
                           Flexible(
-                            flex: 4,
+                            flex: 3,
                             child: DropdownButton<String>(
                               value: dropdownValueProcess,
                               icon: const Icon(Icons.arrow_downward),
@@ -90,10 +92,29 @@ class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
                           Flexible(flex: 1, child: Text('Components')),
                           Flexible(
                               flex: 4, child: AudYoFloDropdownComponents()),
+                          Flexible(
+                              flex: 2,
+                              child: AudYoFloActiveTextField(
+                                  showTextOnBuild: regExpr,
+                                  haveCommandHistory: true,
+                                  onEditingComplete: (String val) {
+                                    setState(() {
+                                      regExpr = val;
+                                    });
+                                  })),
+                          Checkbox(
+                            value: showDescriptor,
+                            onChanged: (value) {
+                              setState(() {
+                                showDescriptor = !showDescriptor;
+                              });
+                            },
+                          ),
                         ])),
                 Flexible(
                   flex: 1,
-                  child: AudYoFloPropertyGridWidget(),
+                  child: AudYoFloPropertyGridWidget(
+                      showDescriptor: showDescriptor, regExprShow: regExpr),
                 )
               ]));
         });
@@ -144,7 +165,7 @@ class _AudYoFloDropdownWidgetStates extends State<AudYoFloDropdownComponents> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Flexible(
-                flex: 4,
+                flex: 3,
                 child: DropdownButton<JvxComponentIdentification>(
                   value: theDbgModel.idSelectCp,
                   icon: const Icon(Icons.arrow_downward),
