@@ -1967,7 +1967,7 @@ mexJvxHost::set_property_descriptor(int nlhs, mxArray* plhs[], int nrhs, const m
 										if (nlhs > 1)
 										{
 											this->mexReturnAnswerNegativeResult(plhs[1], internalErrorMessage + "Tranferring data to componente failed, reason: " +
-												jvxAccessProtocol_txt(callGate.access_protocol), JVX_ERROR_INVALID_ARGUMENT);
+												jvxAccessProtocol_txt(callGate.access_protocol), res);
 										}
 										mexFillEmpty(plhs, nlhs, 2);
 									}
