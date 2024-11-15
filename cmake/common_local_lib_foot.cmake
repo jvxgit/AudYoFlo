@@ -130,7 +130,7 @@ if(LOCAL_MCG_FILES)
     message("      ${MCGTOKEN}")
     add_custom_command(
       COMMAND ${JVX_MCG}
-      ARGS ${MCGDIR}/${MCGTOKEN}.mcg --out-h ${CMAKE_CURRENT_BINARY_DIR}/generated/mcg_${MCGTOKEN}.h --out-hp ${CMAKE_CURRENT_BINARY_DIR}/generated/mcg_${MCGTOKEN}_prototypes.h
+      ARGS ${MCGDIR}/${MCGTOKEN}.mcg --out-h ${CMAKE_CURRENT_BINARY_DIR}/generated/mcg_${MCGTOKEN}.h ${LOCAL_MCG_FILE_OPTIONS} --out-hp ${CMAKE_CURRENT_BINARY_DIR}/generated/mcg_${MCGTOKEN}_prototypes.h
       DEPENDS ${MCGDIR}/${MCGTOKEN}.mcg ${JVX_MCG}
 	  #BYPRODUCTS byproduct_${MCGTOKEN}.txt # explicit byproduct specification
 	  OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/generated/mcg_${MCGTOKEN}.h ${CMAKE_CURRENT_BINARY_DIR}/generated/mcg_${MCGTOKEN}_prototypes.h

@@ -72,6 +72,7 @@ static const char* jvx_external_datatype_lookup_category[] =
 	"jvxState", //12
 	"jvxConfigSectionTypes", //13
 	"jvxErrorType", //14
+	"jvxStateSwitch", //15
 	NULL
 };
 
@@ -1454,6 +1455,15 @@ mexJvxHost::lookup_type_id__name(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 						strLst.push_back(jvxErrorType_str[i].friendly);
 					}
 					break;
+
+				case 15:
+					// jvxStateSwitch
+					for (i = 0; i < JVX_STATE_SWITCH_LIMIT; i++)
+					{
+						strLst.push_back(jvxStateSwitch_str[i].friendly);
+					}
+					break;
+
 				default:
 					resL = lookup_type_id__name_specific(strLst, type_category, type_name, nlhs, plhs, return_options_lookup, return_options_names);
 					if (resL != JVX_NO_ERROR)
@@ -1853,6 +1863,32 @@ mexJvxHost::lookup_type_id__name(int nlhs, mxArray* plhs[], int nrhs, const mxAr
 							this->mexReturnInt32(plhs[1], valI);
 					}
 					break;
+
+				case 15:
+					// "jvxStateSwitch",
+					idx_entry = 0;
+					while (idx_entry < JVX_STATE_SWITCH_LIMIT)
+					{
+						if (
+							(jvxStateSwitch_str[idx_entry].friendly == type_name) ||
+							(jvxStateSwitch_str[idx_entry].full == type_name))
+						{
+							break;
+						}
+						idx_entry++;
+					}
+					if (idx_entry == JVX_STATE_SWITCH_LIMIT)
+					{
+						detected_name_error = true;
+					}
+					else
+					{
+						valI = JVX_SIZE_INT32(idx_entry);
+						if (nlhs > 1)
+							this->mexReturnInt32(plhs[1], valI);
+					}
+					break;
+
 				default:
 					detected_lookup_error = true;
 				}
@@ -2263,6 +2299,25 @@ mexJvxHost::lookup_type_name__value(int nlhs, mxArray* plhs[], int nrhs, const m
 				if (id < JVX_ERROR_LIMIT)
 				{
 					retVal = jvxErrorType_str[id].full;
+				}
+				else
+				{
+					detected_id_error = true;
+				}
+			}
+			else
+			{
+				detected_type_error = true;
+			}
+			break;
+
+		case 15:
+			// "jvxSwitchState"
+			if (inputIsSize)
+			{
+				if (id < JVX_ERROR_LIMIT)
+				{
+					retVal = jvxStateSwitch_str[id].full;
 				}
 				else
 				{
@@ -3151,12 +3206,37 @@ mexJvxHost::report_config_file_read_successful(jvxCallManagerConfiguration* call
 jvxErrorType 
 mexJvxHost::pre_hook_stateswitch(jvxStateSwitch ss, const jvxComponentIdentification& tp)
 {
+	// Forward the state change to the Matlab host
+	if (this->externalCall.fromHost.theHdl)
+	{
+		std::string txt = "jvxJvxHost.jvx_report_state_switch('"; // stateSwitchTxt, componentIdentificationTxt, prePostHookTxt
+		txt += jvxStateSwitch_txt(ss);
+		txt += "', '";
+		txt += jvxComponentIdentification_txt(tp);
+		txt += "', ";
+		txt += "'prehook');";
+		if (this->externalCall.fromHost.theHdl->executeExternalCommand(txt.c_str(), true) != JVX_NO_ERROR)
+		{
+
+		}
+	}
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType 
 mexJvxHost::post_hook_stateswitch(jvxStateSwitch ss, const jvxComponentIdentification& tp, jvxErrorType suc)
 {
+	// Forward the state change to the Matlab host
+	if (this->externalCall.fromHost.theHdl)
+	{
+		std::string txt = "jvxJvxHost.jvx_report_state_switch('"; // stateSwitchTxt, componentIdentificationTxt, prePostHookTxt
+		txt += jvxStateSwitch_txt(ss);
+		txt += "', '";
+		txt += jvxComponentIdentification_txt(tp);
+		txt += "', ";
+		txt += "'posthook');";
+		this->externalCall.fromHost.theHdl->executeExternalCommand(txt.c_str(), true);
+	}
 	return JVX_NO_ERROR;
 }
 
