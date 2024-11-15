@@ -6,12 +6,14 @@ pub type JvxFFT = JvxHandle;
 pub type JvxIFFT = JvxHandle;
 
 #[repr(C)]
+#[derive(Clone)]
 pub enum JvxFftIfftOperate {
     JVX_FFT_IFFT_PRESERVE_INPUT,
     JVX_FFT_IFFT_EFFICIENT,
 }
 
 #[repr(C)]
+#[derive(Clone)]
 pub enum JvxFftRoundType {
     JVX_FFT_ROUND_NEAREST = 0,
     JVX_FFT_ROUND_DOWN = 1,
@@ -19,6 +21,7 @@ pub enum JvxFftRoundType {
 }
 
 //#[repr(C)]
+//#[derive(Clone)]
 //pub enum JvxFftTools_coreFftType {
 //        JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX = 0,
 //        JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX,
@@ -27,6 +30,7 @@ pub enum JvxFftRoundType {
 //}
 
 #[repr(C)]
+#[derive(Clone)]
 pub enum JvxFFTSize {
     JVX_FFT_TOOLS_FFT_SIZE_16 = 0, // <- must be 2^JVX_OFFSET_FFT_TYPE_MIN
     JVX_FFT_TOOLS_FFT_SIZE_32,
