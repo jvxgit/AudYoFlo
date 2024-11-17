@@ -9,7 +9,11 @@
 
 #include "textProcessor_core.h"
 
-void parseInput(char* argv[], int argc, std::string& inputFName, std::string& outFileName_h, std::string& outFileName_hp)
+void parseInput(char* argv[], int argc, 
+	std::string& inputFName, 
+	std::string& outFileName_h, std::string& outFileName_hp,
+	std::vector<std::string>& includePaths,
+	std::vector<std::string>& ifdefs)
 {
 	int cnt = 0;
 	bool cont = true;
@@ -42,6 +46,24 @@ void parseInput(char* argv[], int argc, std::string& inputFName, std::string& ou
 				outFileName_hp = argv[cnt++];
 			}
 		}
+		else if (nextToken == "-I")
+		{
+			tmp = "";
+			if (cnt < argc)
+			{
+				includePaths.push_back(argv[cnt++]);
+			}
+
+		}
+		else if (nextToken == "-D")
+		{
+			tmp = "";
+			if (cnt < argc)
+			{
+				ifdefs.push_back(argv[cnt++]);
+			}
+
+		}
 		else
 		{
 			inputFName = nextToken;
@@ -61,6 +83,7 @@ void parseInput(char* argv[], int argc, std::string& inputFName, std::string& ou
 int
 main(int argc, char** argv)
 {
+	jvxSize i;
 	textProcessor_core textProcessor;
 
 	if(argc < 2)
@@ -70,11 +93,14 @@ main(int argc, char** argv)
 		return(1);
 	}
 
+	std::vector<std::string> includePaths;
+	std::vector<std::string> ifdefs;
+
 	std::string inputFName;
 	std::string outFileName_h;
 	std::string outFileName_hp;
 
-	parseInput(&argv[1], argc-1, inputFName, outFileName_h, outFileName_hp);
+	parseInput(&argv[1], argc-1, inputFName, outFileName_h, outFileName_hp, includePaths, ifdefs);
 
 	//================================================================
 	// Determine the name of the file to generate source code to
@@ -139,6 +165,19 @@ main(int argc, char** argv)
 		exit(0);
 	}
 
+	//================================================================
+	//================================================================
+	for (i = 0; i < includePaths.size(); i++)
+	{
+		theReader->addIncludePath(includePaths[i].c_str());
+	}
+
+	//================================================================
+	//================================================================
+	for (i = 0; i < ifdefs.size(); i++)
+	{
+		theReader->addIfdefToken(ifdefs[i].c_str());
+	}
 
 	//================================================================
 	// Parse input
