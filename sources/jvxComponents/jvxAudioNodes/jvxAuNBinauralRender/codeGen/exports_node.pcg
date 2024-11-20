@@ -65,5 +65,24 @@ SECTION PROPERTIES
 				CALLBACK_SET_POSTHOOK = "update_active_slot";
 			}; 
 		};
+
+		SECTION feedback
+		{
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+			SECTION num_failed_update_hrir
+			{
+				DESCRIPTION = "Number of failed HRIR update.";
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+			};  
+			SECTION num_success_update_hrir
+			{
+				DESCRIPTION = "Number of failed HRIR update.";
+				TYPE = "JVX_DATAFORMAT_SIZE";
+				INIT_SET = 0;
+			};  
+		};
 	};
 };

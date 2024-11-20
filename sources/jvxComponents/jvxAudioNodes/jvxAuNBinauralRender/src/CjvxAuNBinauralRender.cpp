@@ -167,6 +167,9 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 	updateDBase = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 
+	genBinauralRender_node::local.feedback.num_success_update_hrir.value = 0;
+	genBinauralRender_node::local.feedback.num_failed_update_hrir.value = 0;
+
 	threads.cpPtr->start();
 
 	return res;
@@ -299,10 +302,17 @@ CjvxAuNBinauralRender::update_hrirs(jvxOneRenderCore* renderer, jvxData azimuth_
 		{
 			jvxErrorType res = this->theHrtfDispenser->copy_closest_hrir_pair(azimuth_deg, inclination_deg,
 				renderer->buffer_hrir_left, renderer->buffer_hrir_right, renderer->length_buffer_hrir, slotIdHrtfs);
-			if (res != JVX_NO_ERROR)
+			if (res == JVX_NO_ERROR)
 			{
+				genBinauralRender_node::local.feedback.num_success_update_hrir.value++;
+			}
+			else
+			{
+				genBinauralRender_node::local.feedback.num_failed_update_hrir.value++;
+				/*
 				std::cout << __FUNCTION__ << " Warning: on update of position, the request to return hrir buffers failed with error <" <<
 					jvxErrorType_descr(res) << ">." << std::endl;
+					*/
 			}
 		}
 		else

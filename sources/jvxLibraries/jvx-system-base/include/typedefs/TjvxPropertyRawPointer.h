@@ -564,6 +564,7 @@ namespace jvx
 
 typedef jvx::propertyRawPointerType::CjvxRawPointerType jPRG;
 
+typedef jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxApiStringList> jPROSTRL;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeObjectField<jvxSelectionList> jPROSL;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeObjectField<jvxValueInRange> jPROVR;
 typedef jvx::propertyRawPointerType::CjvxRawPointerTypeObject<jvxApiString> jPROS;

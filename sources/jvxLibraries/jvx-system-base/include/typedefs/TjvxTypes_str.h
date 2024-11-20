@@ -968,7 +968,8 @@ static jvxTextHelpers jvxRemoteConnectionQuality_str[(int)jvxRemoteConnectionQua
 	{"weak", "JVX_REMOTE_CONNECTION_QUALITY_WEAK"},
 	{"bad", "JVX_REMOTE_CONNECTION_QUALITY_BAD"},
 	{"nodata", "JVX_REMOTE_CONNECTION_QUALITY_NO_DATA"},
-	{"noconnect", "JVX_REMOTE_CONNECTION_QUALITY_NOT_CONNECTED"}
+	{"noconnect", "JVX_REMOTE_CONNECTION_QUALITY_NOT_CONNECTED"},
+	{"notavail", "JVX_REMOTE_CONNECTION_QUALITY_NOT_AVAILBALE"}
 };
 
 inline const char* jvxRemoteConnectionQuality_txt(jvxRemoteConnectionQuality soTp)
