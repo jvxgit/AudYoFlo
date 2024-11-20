@@ -8,6 +8,59 @@ pub mod fft;
 pub type Error = JvxErrorType;
 pub type Result<T> = core::result::Result<T, Error>;
 
+// > jvx_system_dataformats.h
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub enum JvxDataFormat {
+    JVX_DATAFORMAT_NONE = 0, // Undefined (invalid)
+    JVX_DATAFORMAT_DATA,     // double or float datatype
+    JVX_DATAFORMAT_16BIT_LE, // 16 Bit signed
+    JVX_DATAFORMAT_32BIT_LE, // 32 Bit signed
+    JVX_DATAFORMAT_64BIT_LE, // 64 Bit signed
+    JVX_DATAFORMAT_8BIT,     // 8 Bit
+    JVX_DATAFORMAT_SIZE,
+
+    JVX_DATAFORMAT_STRING,      // String type (character buffers)
+    JVX_DATAFORMAT_STRING_LIST, // String type (character buffers)
+    JVX_DATAFORMAT_SELECTION_LIST,
+    JVX_DATAFORMAT_VALUE_IN_RANGE,
+
+    JVX_DATAFORMAT_U16BIT_LE, // 16 Bit unsigned
+    JVX_DATAFORMAT_U32BIT_LE, // 32 Bit unsigned
+    JVX_DATAFORMAT_U64BIT_LE, // 64 Bit unsigned
+    JVX_DATAFORMAT_U8BIT,     // 8 Bit unsigned
+
+    JVX_DATAFORMAT_FLOAT,  // explicit float for external access
+    JVX_DATAFORMAT_DOUBLE, // explicit double for external access
+    JVX_DATAFORMAT_BYTE,   // Void: Gateway for other datatypes
+
+    /*
+    * The external buffer datatype has a valid value type to identify
+    * if the associated dataformat is correct.
+    * The other "installable" formats are of a dedicated type
+    JVX_DATAFORMAT_EXTERNAL_BUFFER,
+    */
+    JVX_DATAFORMAT_HANDLE,   // Void: Gateway for other datatypes
+    JVX_DATAFORMAT_POINTER,  // Void: Gateway for other datatypes
+    JVX_DATAFORMAT_CALLBACK, // Pointer for callbacks
+    JVX_DATAFORMAT_INTERFACE,
+    JVX_DATAFORMAT_LIMIT,
+}
+
+// > jvx_fft_core.h
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub enum JvxFftToolsCoreFftType {
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX = 0,
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX,
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL,
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX,
+}
+
+// < jvx_fft_core.h
+
+// < jvx_system_dataformats.h
+
 // > jvx_system_common.h
 const JVX_LIB_UPDATE_ASYNC_SHIFT: u8 = 0;
 const JVX_LIB_UPDATE_SYNC_SHIFT: u8 = 1;
@@ -17,6 +70,7 @@ const JVX_LIB_UPDATE_FEEDBACK_SHIFT: u8 = 3;
 const JVX_LIB_UPDATE_USER_OFFSET_SHIFT: u8 = 5;
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub enum JvxParameterUpdateType {
     JVX_LIB_UPDATE_ASYNC = (1 << JVX_LIB_UPDATE_ASYNC_SHIFT), //0x1, // shift 0
     JVX_LIB_UPDATE_SYNC = (1 << JVX_LIB_UPDATE_SYNC_SHIFT),   //  0x2, // shift 1
@@ -44,7 +98,7 @@ pub struct JvxDataCplx {
 
 // jvx_system_error_types.h
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum JvxErrorType {
     JVX_NO_ERROR = 0,
     JVX_ERROR_UNKNOWN,
@@ -110,30 +164,38 @@ pub type JvxSize = usize;
 pub type JvxCBool = u16;
 pub type JvxCBitField = u64;
 
-pub const C_TRUE : u16 = 1 as u16;
-pub const C_FALSE : u16 = 0 as u16;
+pub const JVX_SIZE_UNSELECTED: usize = usize::MAX;
+
+pub const C_TRUE: u16 = 1 as u16;
+pub const C_FALSE: u16 = 0 as u16;
 
 #[repr(C)]
 #[derive(Clone)]
-pub struct jvx_profiler_data_entry
-{
-	pub sz_elm: JvxSize,
+pub struct jvx_profiler_data_entry {
+    pub sz_elm: JvxSize,
     pub fld: *mut core::ffi::c_void,
-	pub cplx: JvxCBool 
+    pub cplx: JvxCBool,
+    pub c_to_matlab: JvxCBool,
+    pub valid_content: JvxCBool,
 }
 
 extern "C" {
     pub fn jvx_profiler_allocate_single_entry(
-        entry: *mut jvx_profiler_data_entry, 
-        szFld: JvxSize, 
-        cplxFld: JvxCBool);
+        entry: *mut jvx_profiler_data_entry,
+        szFld: JvxSize,
+        cplxFld: JvxCBool,
+    );
 
-    pub fn jvx_profiler_deallocate_single_entry(
-        entry: *mut jvx_profiler_data_entry);
+    pub fn jvx_profiler_deallocate_single_entry(entry: *mut jvx_profiler_data_entry);
 }
 
-pub type jvx_register_entry_profiling_data_c = extern fn (dat: *mut jvx_profiler_data_entry, name: *const core::ffi::c_char, inst: *mut core::ffi::c_void);
+pub type jvx_register_entry_profiling_data_c = extern "C" fn(
+    dat: *mut jvx_profiler_data_entry,
+    name: *const core::ffi::c_char,
+    inst: *mut core::ffi::c_void,
+);
 pub type RegisterCallbackFunction = Option<jvx_register_entry_profiling_data_c>;
 
-pub type jvx_unregister_entry_profiling_data_c = extern fn(name: *const core::ffi::c_char, inst: *mut core::ffi::c_void);
+pub type jvx_unregister_entry_profiling_data_c =
+    extern "C" fn(name: *const core::ffi::c_char, inst: *mut core::ffi::c_void);
 pub type UnregisterCallbackFunction = Option<jvx_unregister_entry_profiling_data_c>;

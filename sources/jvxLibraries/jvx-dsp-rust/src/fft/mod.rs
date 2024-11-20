@@ -6,6 +6,34 @@ use alloc::rc::Rc;
 
 pub mod ffi;
 
+#[derive(Clone, Copy)]
+pub enum FftRoundType {
+    Nearest,
+    Down,
+    Up,
+}
+
+impl From<FftRoundType> for ffi::JvxFftRoundType {
+    fn from(item: FftRoundType) -> Self {
+        match item {
+            FftRoundType::Nearest => Self::JVX_FFT_ROUND_NEAREST,
+            FftRoundType::Down => Self::JVX_FFT_ROUND_DOWN,
+            FftRoundType::Up => Self::JVX_FFT_ROUND_UP,
+        }
+    }
+}
+
+impl From<ffi::JvxFftRoundType> for FftRoundType {
+    fn from(item: ffi::JvxFftRoundType) -> Self {
+        match item {
+            ffi::JvxFftRoundType::JVX_FFT_ROUND_NEAREST => Self::Nearest,
+            ffi::JvxFftRoundType::JVX_FFT_ROUND_DOWN => Self::Down,
+            ffi::JvxFftRoundType::JVX_FFT_ROUND_UP => Self::Up,
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
 pub enum FftSize {
     Size16,
     Size32,
@@ -38,6 +66,25 @@ impl From<FftSize> for ffi::JvxFFTSize {
     }
 }
 
+impl From<ffi::JvxFFTSize> for FftSize {
+    fn from(item: ffi::JvxFFTSize) -> Self {
+        match item {
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_16 => Self::Size16,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_32 => Self::Size32,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_64 => Self::Size64,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_128 => Self::Size128,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_256 => Self::Size256,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_512 => Self::Size512,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_1024 => Self::Size1024,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_2048 => Self::Size2048,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_4096 => Self::Size4096,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_8192 => Self::Size8192,
+            ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE => Self::ArbitrarySize(0),
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
 pub enum FftOperate {
     PreserveInput,
     Efficient,
@@ -621,6 +668,15 @@ impl Drop for IfftCplx2Cplx<'_, '_> {
         unsafe {
             ffi::jvx_destroy_ifft(self.hdl);
         }
+    }
+}
+
+pub fn get_nearest_size(n: JvxSize, round_type: FftRoundType) -> Result<(JvxSize, FftSize)> {
+    let mut fft_size: ffi::JvxFFTSize = ffi::JvxFFTSize::JVX_FFT_TOOLS_FFT_SIZE_16;
+    let mut size: JvxSize = 0;
+    match unsafe { ffi::jvx_get_nearest_size_fft(&mut fft_size, n, round_type.into(), &mut size) } {
+        JvxDspBaseErrorType::JVX_NO_ERROR => Ok((size, fft_size.into())),
+        err => Err(err),
     }
 }
 
