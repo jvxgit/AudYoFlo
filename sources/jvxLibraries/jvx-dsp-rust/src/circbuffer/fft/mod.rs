@@ -64,7 +64,7 @@ impl FftFactory {
         self: &Rc<Self>,
         fft_type: JvxFftToolsCoreFftType,
         size: FftSize,
-        preserve_input: JvxCBool,
+        preserve_input: bool,
         n_channels: JvxSize,
     ) -> Result<CircbufferFft> {
         let mut hdl: *mut ffi::JvxCircbufferFft = core::ptr::null_mut();
@@ -74,7 +74,7 @@ impl FftFactory {
                 self.hdl,
                 fft_type,
                 size.into(),
-                preserve_input,
+                preserve_input as JvxCBool,
                 n_channels,
             )
         };

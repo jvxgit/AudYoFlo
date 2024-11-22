@@ -47,19 +47,6 @@ pub enum JvxDataFormat {
     JVX_DATAFORMAT_INTERFACE,
     JVX_DATAFORMAT_LIMIT,
 }
-
-// > jvx_fft_core.h
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub enum JvxFftToolsCoreFftType {
-    JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX = 0,
-    JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX,
-    JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL,
-    JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX,
-}
-
-// < jvx_fft_core.h
-
 // < jvx_system_dataformats.h
 
 // > jvx_system_common.h
@@ -90,7 +77,7 @@ pub const JVX_DSP_UPDATE_USER_OFFSET: u16 =
     JvxParameterUpdateType::JVX_LIB_UPDATE_USER_OFFSET as u16;
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub struct JvxDataCplx {
     pub re: JvxData,
     pub im: JvxData,

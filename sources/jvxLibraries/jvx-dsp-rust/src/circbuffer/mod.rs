@@ -4,7 +4,7 @@ pub mod ffi;
 pub mod fft;
 
 pub struct Circbuffer {
-    hdl: *mut ffi::JvxCircbuffer,
+    pub hdl: *mut ffi::JvxCircbuffer,
 }
 
 impl Circbuffer {

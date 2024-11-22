@@ -5,6 +5,7 @@ use crate::*;
 use alloc::rc::Rc;
 
 pub mod ffi;
+pub use ffi::JvxFftToolsCoreFftType; // TODO TEMP
 
 #[derive(Clone, Copy)]
 pub enum FftRoundType {
@@ -46,6 +47,12 @@ pub enum FftSize {
     Size4096,
     Size8192,
     ArbitrarySize(JvxSize),
+}
+
+impl From<FftSize> for JvxSize {
+    fn from(item: FftSize) -> Self {
+        unsafe { ffi::jvx_get_fft_size(item.into()) }
+    }
 }
 
 impl From<FftSize> for ffi::JvxFFTSize {

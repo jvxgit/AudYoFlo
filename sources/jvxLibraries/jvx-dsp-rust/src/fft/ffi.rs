@@ -20,14 +20,14 @@ pub enum JvxFftRoundType {
     JVX_FFT_ROUND_UP = 2,
 }
 
-//#[repr(C)]
-//#[derive(Clone)]
-//pub enum JvxFftTools_coreFftType {
-//        JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX = 0,
-//        JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX,
-//        JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL,
-//        JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX,
-//}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub enum JvxFftToolsCoreFftType {
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX = 0,
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX,
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL,
+    JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX,
+}
 
 #[repr(C)]
 #[derive(Clone, Copy)]
