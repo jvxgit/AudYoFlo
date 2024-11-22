@@ -47,6 +47,8 @@ jvxDspBaseErrorType jvx_circbuffer_deallocate_extbuf(jvx_circbuffer* hdlReturn);
 
 jvxDspBaseErrorType jvx_circbuffer_reset(jvx_circbuffer* hdl);
 
+jvxDspBaseErrorType jvx_circbuffer_access(jvx_circbuffer* hdl, jvxData** outPtr, jvxSize* outLen, jvxSize idx);
+
 jvxDspBaseErrorType jvx_circbuffer_fill(jvx_circbuffer* hdl,
 					jvxData toFillWith,
 					jvxSize numberValuesFill); 

@@ -17,9 +17,20 @@ impl Circbuffer {
         let res = unsafe {
             ffi::jvx_circbuffer_allocate(&mut hdl, number_elements, number_sections, channels)
         };
-        // TODO maybe fill with 0 to make sure the values are initialized
         match res {
             JvxDspBaseErrorType::JVX_NO_ERROR => Ok(Self { hdl }),
+            err => Err(err),
+        }
+    }
+
+    pub fn access(&self, idx: JvxSize) -> Result<&mut [JvxData]> {
+        let mut out_ptr: *mut JvxData = core::ptr::null_mut();
+        let mut out_len: JvxSize = 0;
+        let res = unsafe {
+            ffi::jvx_circbuffer_access(self.hdl, &mut out_ptr, &mut out_len, idx)
+        };
+        match res {
+            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) }),
             err => Err(err),
         }
     }

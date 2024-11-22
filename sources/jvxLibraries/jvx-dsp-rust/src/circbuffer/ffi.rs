@@ -29,6 +29,13 @@ extern "C" {
 
     pub fn jvx_circbuffer_deallocate(hdlReturn: *mut JvxCircbuffer) -> JvxDspBaseErrorType;
 
+    pub fn jvx_circbuffer_access(
+        hdl: *const JvxCircbuffer,
+        outPtr: *const *mut JvxData,
+        outLen: *mut JvxSize,
+        idx: JvxSize,
+    ) -> JvxDspBaseErrorType;
+
     pub fn jvx_circbuffer_fill(
         hdl: *mut JvxCircbuffer,
         toFillWith: JvxData,

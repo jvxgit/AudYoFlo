@@ -145,6 +145,28 @@ jvx_circbuffer_reset(jvx_circbuffer* hdl)
 }
 
 jvxDspBaseErrorType
+jvx_circbuffer_access(jvx_circbuffer* hdl, jvxData** outPtr, jvxSize* ll, jvxSize idx)
+{
+	if(hdl)
+	{
+		if (idx < hdl->channels)
+		{
+			if (outPtr)
+			{
+				*outPtr = hdl->ram.field[idx];
+			}
+			if (ll)
+			{
+				*ll = hdl->length;
+			}
+			return JVX_DSP_NO_ERROR;
+		}
+		return JVX_DSP_ERROR_ID_OUT_OF_BOUNDS;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
+jvxDspBaseErrorType
 jvx_circbuffer_fill(jvx_circbuffer* hdl,
 	jvxData toFillWith,
 	jvxSize numberValuesFill)

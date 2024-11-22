@@ -1,24 +1,37 @@
 use crate::fft::*;
 use crate::*;
 use alloc::rc::Rc;
-use alloc::vec::Vec;
 
 pub mod ffi;
+use crate::fft::ffi::JvxFftToolsCoreFftType;
 
 pub struct CircbufferFft {
     _global: Rc<FftFactory>,
-    hdl: *mut ffi::JvxCircbufferFft,
+    pub hdl: *mut ffi::JvxCircbufferFft,
 }
 
 impl CircbufferFft {
-    pub fn access_cplx(&self, out: &mut [&mut [JvxDataCplx]], idx: JvxSize) -> Result<JvxSize> {
-        let out_ptrs: Vec<*mut JvxDataCplx> = out.iter_mut().map(|x| x.as_mut_ptr()).collect();
+    pub fn access_cplx(&self, idx: JvxSize) -> Result<&mut [JvxDataCplx]> {
+        let mut out_ptr: *mut JvxDataCplx = core::ptr::null_mut();
         let mut out_len: JvxSize = 0;
         let res = unsafe {
-            ffi::jvx_circbuffer_access_cplx_fft_ifft(self.hdl, out_ptrs.as_ptr(), &mut out_len, idx)
+            ffi::jvx_circbuffer_access_cplx_fft_ifft(self.hdl, &mut out_ptr, &mut out_len, idx)
         };
         match res {
-            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(out_len),
+            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) }),
+            err => Err(err),
+        }
+    }
+
+    pub fn access(&self, idx: JvxSize) -> Result<&mut [JvxData]> {
+        let mut out_ptr: *mut JvxData = core::ptr::null_mut();
+        let mut out_len: JvxSize = 0;
+        let res = unsafe {
+            use crate::circbuffer::ffi::jvx_circbuffer_access;
+            jvx_circbuffer_access(&(*(self.hdl)).circBuffer, &mut out_ptr, &mut out_len, idx)
+        };
+        match res {
+            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) }),
             err => Err(err),
         }
     }
@@ -38,6 +51,10 @@ impl CircbufferFft {
             JvxDspBaseErrorType::JVX_NO_ERROR => Ok(()),
             err => Err(err),
         }
+    }
+
+    pub fn length_cplx(&self) -> JvxSize {
+        unsafe { (*(self.hdl)).length_cplx }
     }
 }
 

@@ -6,18 +6,17 @@ use circbuffer::ffi::*;
 
 #[repr(C)]
 pub struct Ram {
-    field_cplx: *const *mut JvxDataCplx,
+    pub field_cplx: *const *mut JvxDataCplx,
 }
 
 #[repr(C)]
 pub struct JvxCircbufferFft {
-    circBuffer: JvxCircbuffer,
-
-    fftType: JvxFftToolsCoreFftType,
-    fftSize: JvxFFTSize,
-    fftifft: JvxHandle, //struct jvxFftIfftHandle*;
-
-    length_cplx: JvxSize,
+    pub circBuffer: JvxCircbuffer,
+    pub fftType: JvxFftToolsCoreFftType,
+    pub fftSize: JvxFFTSize,
+    pub fftifft: JvxHandle, //struct jvxFftIfftHandle*;
+    pub length_cplx: JvxSize,
+    pub ram: Ram,
 }
 
 extern "C" {
