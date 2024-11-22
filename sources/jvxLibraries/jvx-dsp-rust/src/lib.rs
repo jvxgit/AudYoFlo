@@ -157,6 +157,15 @@ pub const JVX_SIZE_UNSELECTED: usize = usize::MAX;
 pub const C_TRUE: u16 = 1 as u16;
 pub const C_FALSE: u16 = 0 as u16;
 
+#[cfg(feature = "jvx-system-use-data-format-float")]
+pub const MAT_EPS_MIN: JvxData = 1.192092895507812500000000000000e-007;
+#[cfg(feature = "jvx-system-use-data-format-float")]
+pub const MAT_EPS_MAX: JvxData = 3.402823466385288600000000000000e+038;
+#[cfg(not(feature = "jvx-system-use-data-format-float"))]
+pub const MAT_EPS_MIN: JvxData = 2.220446049250313100000000000000e-016;
+#[cfg(not(feature = "jvx-system-use-data-format-float"))]
+pub const MAT_EPS_MAX: JvxData = 1.797693134862315700000000000000e+308;
+
 #[repr(C)]
 #[derive(Clone)]
 pub struct jvx_profiler_data_entry {
