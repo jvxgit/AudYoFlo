@@ -12,8 +12,8 @@ class AudYoFloComponentWidget extends StatefulWidget {
 
 class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
   String dropdownValueProcess = 'None';
-  bool showDescriptor = false;
-  String regExpr = '';
+
+  // String regExpr = '';
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,10 @@ class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
         Provider.of<AudYoFloBackendCache>(context, listen: false);
     AudYoFloDebugModel theDbgModel =
         Provider.of<AudYoFloDebugModel>(context, listen: false);
-    JvxComponentIdentification cpTpSelected = JvxComponentIdentification();
+    // JvxComponentIdentification cpTpSelected = JvxComponentIdentification();
+
+    bool showDescriptor = theDbgModel.getShowDescriptor(theDbgModel.idSelectCp);
+    bool showSelected = theDbgModel.getShowSelected(theDbgModel.idSelectCp);
 
     // =====================================================
     // Find the list of processes to be exposed in combo box
@@ -91,30 +94,58 @@ class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
                           ),
                           Flexible(flex: 1, child: Text('Components')),
                           Flexible(
-                              flex: 4, child: AudYoFloDropdownComponents()),
+                              flex: 4,
+
+                              // We add a callback here to detect the change of the current component to update the regexpr to search
+                              child: AudYoFloDropdownComponents(OnChanged: () {
+                                setState(() {});
+                              })),
                           Flexible(
                               flex: 2,
                               child: AudYoFloActiveTextField(
-                                  showTextOnBuild: regExpr,
+                                  showTextOnBuild:
+                                      theDbgModel.getRegExpressionShow(
+                                          theDbgModel.idSelectCp),
                                   haveCommandHistory: true,
                                   onEditingComplete: (String val) {
                                     setState(() {
-                                      regExpr = val;
+                                      theDbgModel.setRegExpressionShow(
+                                          theDbgModel.idSelectCp, val);
                                     });
                                   })),
-                          Checkbox(
-                            value: showDescriptor,
-                            onChanged: (value) {
-                              setState(() {
-                                showDescriptor = !showDescriptor;
-                              });
-                            },
+                          Tooltip(
+                            message:
+                                'Show and filter descriptor rather than descriptions',
+                            child: Checkbox(
+                              value: showDescriptor,
+                              onChanged: (value) {
+                                setState(() {
+                                  theDbgModel.setShowDescriptor(
+                                      theDbgModel.idSelectCp, !showDescriptor);
+                                });
+                              },
+                            ),
+                          ),
+                          Tooltip(
+                            message: 'Show only the selected properties',
+                            child: Checkbox(
+                              value: showSelected,
+                              onChanged: (value) {
+                                setState(() {
+                                  theDbgModel.setShowSelected(
+                                      theDbgModel.idSelectCp, !showSelected);
+                                });
+                              },
+                            ),
                           ),
                         ])),
                 Flexible(
                   flex: 1,
                   child: AudYoFloPropertyGridWidget(
-                      showDescriptor: showDescriptor, regExprShow: regExpr),
+                    showDescriptor: showDescriptor,
+                    showSelected:
+                        showSelected, /*, regExprShow: regExpr <- uses the regExpr from dbgModel */
+                  ),
                 )
               ]));
         });
@@ -129,7 +160,8 @@ class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
  * we need to trigger an update on itself when clicking another component.
  */
 class AudYoFloDropdownComponents extends StatefulWidget {
-  AudYoFloDropdownComponents();
+  void Function()? OnChanged;
+  AudYoFloDropdownComponents({this.OnChanged});
 
   @override
   State<StatefulWidget> createState() {
@@ -182,6 +214,12 @@ class _AudYoFloDropdownWidgetStates extends State<AudYoFloDropdownComponents> {
                       // The setState is to update this combobox, the operation on the dbgModel
                       // will trigger the provider on the dbgModel to update the grid widget with all
                       // the properties
+
+                      // However, we allow an optional callback in addition to simplify usage
+                      if (widget.OnChanged != null) {
+                        widget.OnChanged!();
+                      }
+
                       setState(() {
                         theDbgModel.selectNewComponent(newValue);
                       });

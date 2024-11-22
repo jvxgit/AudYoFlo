@@ -62,7 +62,7 @@ class AudYoFloUiModelSpecific extends AudYoFloUiModel
                 slotsubid: 0),
             'Host Configuration',
             [
-          '/jvxLibHost/autostart'
+          '/frontend_hooks/autostart'
 
           ///ext_interfaces/application_property_autostart'
         ],

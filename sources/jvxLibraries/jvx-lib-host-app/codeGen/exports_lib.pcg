@@ -15,6 +15,12 @@ SECTION PROPERTIES
 			DESCRIPTION = "Autostart option";
 			INIT_SET = 0; 		
 			TYPE = "JVX_DATAFORMAT_BOOL";
+		};		
+
+		SECTION frontend_config_token
+		{
+			DESCRIPTION = "String token to store frontend configuration";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
 		};
 	};
 };

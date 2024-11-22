@@ -62,9 +62,9 @@ if(${JVX_OS} MATCHES "windows")
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_CONSOLE_KEYMAP_V1")
 endif()
 
-#set(LOCAL_PCG_FILES
-#   ${CMAKE_CURRENT_SOURCE_DIR}/src/exports_mexcall.pcg
-#  )
+set(LOCAL_PCG_FILES
+   ${CMAKE_CURRENT_SOURCE_DIR}/../pcg/exports_lib.pcg
+  )
 
 set(LOCAL_LIBS	
 	jvx-host-json_static

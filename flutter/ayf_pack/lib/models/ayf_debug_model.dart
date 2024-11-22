@@ -1,9 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:stack_trace/stack_trace.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import '../ayf_pack_local.dart';
+
+class AudYoFloAssociatedShowParams {
+  String regExpr = '';
+  bool showDescriptor = false;
+  bool showSelected = false;
+
+  List<String> propsRealtimeUpdate = [];
+  List<String> propsSelected = [];
+}
 
 class AudYoFloDebugModel with ChangeNotifier {
   late AudYoFloBackendCache be;
@@ -21,8 +31,11 @@ class AudYoFloDebugModel with ChangeNotifier {
 
   int idSelectProc = -1;
 
+  Map<JvxComponentIdentification, AudYoFloAssociatedShowParams> regExprMap = {};
+
   void initialize(AudYoFloBackendCache beArg) {
     be = beArg;
+    beArg.dbgModel = this;
   }
 
   void triggerUpdate() {
@@ -96,5 +109,236 @@ class AudYoFloDebugModel with ChangeNotifier {
     idSelectCp = cpId;
     ssUpdateCpId++;
     triggerUpdate();
+  }
+
+  String getRegExpressionShow(JvxComponentIdentification cpId) {
+    String expr = '';
+    var elm =
+        regExprMap.entries.firstWhereOrNull((element) => element.key == cpId);
+    if (elm != null) {
+      expr = elm.value.regExpr;
+    }
+    return expr;
+  }
+
+  void setRegExpressionShow(JvxComponentIdentification cpId, String regExpr) {
+    AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
+    newElm.regExpr = regExpr;
+    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
+        regExprMap, cpId, newElm, (value) {
+      value.regExpr = regExpr;
+      return value;
+    });
+  }
+
+  bool isRealtimeUpdateShow(
+      JvxComponentIdentification cpId, String descriptor) {
+    bool retVal = false;
+    var elm =
+        regExprMap.entries.firstWhereOrNull((element) => element.key == cpId);
+    if (elm != null) {
+      var elmLst = elm.value.propsRealtimeUpdate
+          .firstWhereOrNull((element) => element == descriptor);
+      if (elmLst != null) {
+        retVal = true;
+      }
+    }
+    return retVal;
+  }
+
+  void modifyRealtimeUpdateShow(
+      JvxComponentIdentification cpId, String descriptor, bool doUpdate) {
+    AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
+    if (doUpdate) {
+      newElm.propsRealtimeUpdate.add(descriptor);
+    }
+
+    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
+        regExprMap, cpId, newElm, (value) {
+      var elmIn = value.propsRealtimeUpdate
+          .firstWhereOrNull((element) => (element == descriptor));
+      if (elmIn != null) {
+        value.propsRealtimeUpdate.remove(descriptor);
+      }
+      if (doUpdate) {
+        value.propsRealtimeUpdate.add(descriptor);
+      }
+      return value;
+    });
+  }
+
+  bool isSelectedUpdateShow(
+      JvxComponentIdentification cpId, String descriptor) {
+    bool retVal = false;
+    var elm =
+        regExprMap.entries.firstWhereOrNull((element) => element.key == cpId);
+    if (elm != null) {
+      var elmLst = elm.value.propsSelected
+          .firstWhereOrNull((element) => element == descriptor);
+      if (elmLst != null) {
+        retVal = true;
+      }
+    }
+    return retVal;
+  }
+
+  void toggleSelectProperty(
+      JvxComponentIdentification cpId, String descriptor) {
+    AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
+
+    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
+        regExprMap, cpId, newElm, (value) {
+      var elmIn = value.propsSelected
+          .firstWhereOrNull((element) => (element == descriptor));
+      if (elmIn != null) {
+        value.propsSelected.remove(descriptor);
+      } else {
+        value.propsSelected.add(descriptor);
+      }
+      return value;
+    });
+  }
+
+  // =================================================================================
+
+  void setShowSelected(JvxComponentIdentification cpId, bool showSelect) {
+    AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
+    newElm.showSelected = showSelect;
+    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
+      regExprMap,
+      cpId,
+      newElm,
+      (value) {
+        value.showSelected = showSelect;
+        return value;
+      },
+    );
+  }
+
+  bool getShowSelected(JvxComponentIdentification cpId) {
+    bool retVal = false;
+    var elm =
+        regExprMap.entries.firstWhereOrNull((element) => element.key == cpId);
+    if (elm != null) {
+      retVal = elm.value.showSelected;
+    }
+    return retVal;
+  }
+
+  // =================================================================================
+
+  void setShowDescriptor(JvxComponentIdentification cpId, bool showDescriptor) {
+    AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
+    newElm.showDescriptor = showDescriptor;
+    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
+      regExprMap,
+      cpId,
+      newElm,
+      (value) {
+        value.showDescriptor = showDescriptor;
+        return value;
+      },
+    );
+  }
+
+  bool getShowDescriptor(JvxComponentIdentification cpId) {
+    bool retVal = false;
+    var elm =
+        regExprMap.entries.firstWhereOrNull((element) => element.key == cpId);
+    if (elm != null) {
+      retVal = elm.value.showDescriptor;
+    }
+    return retVal;
+  }
+
+  List<String> cleanupEmpty(List<String> inLst) {
+    List<String> outLst = [];
+    for (var elm in inLst) {
+      if (elm.isNotEmpty) {
+        outLst.add(elm);
+      }
+    }
+    return outLst;
+  }
+
+  void acceptConfigToken(String txt) {
+    var lstEntries = txt.split('#');
+    lstEntries = cleanupEmpty(lstEntries);
+    for (var elm in lstEntries) {
+      AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
+      JvxComponentIdentification cpId = JvxComponentIdentification();
+      var lstOne = elm.split(';');
+      lstOne = cleanupEmpty(lstOne);
+
+      for (var elmI in lstOne) {
+        var lstOneElm = elmI.split('=');
+        if (lstOneElm.length == 2) {
+          if (lstOneElm[0] == 'cp') {
+            cpId = AudYoFloStringTranslator.componentIdentificationFromString(
+                lstOneElm[1]);
+            continue;
+          }
+          if (lstOneElm[0] == 'descr') {
+            if (lstOneElm[1] == 'true') {
+              newElm.showDescriptor = true;
+            }
+            continue;
+          }
+          if (lstOneElm[0] == 'sel') {
+            if (lstOneElm[1] == 'true') {
+              newElm.showSelected = true;
+            }
+            continue;
+          }
+          if (lstOneElm[0] == 'reg') {
+            newElm.regExpr = lstOneElm[1];
+            continue;
+          }
+          if (lstOneElm[0] == 'psel') {
+            var lstEntries = lstOneElm[1].split(':');
+            lstEntries = cleanupEmpty(lstEntries);
+            newElm.propsSelected = lstEntries;
+            continue;
+          }
+          if (lstOneElm[0] == 'prtu') {
+            var lstEntries = lstOneElm[1].split(':');
+            lstEntries = cleanupEmpty(lstEntries);
+            newElm.propsRealtimeUpdate = lstEntries;
+            continue;
+          }
+        }
+      }
+
+      if (cpId.cpTp != JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+        var elmFound = regExprMap.entries.firstWhereOrNull((element) {
+          return element.key == cpId;
+        });
+        if (elmFound == null) {
+          regExprMap[cpId] = newElm;
+        }
+      }
+      // JvxComponentTypeEEnum
+      // JvxComponentIdentification cpId
+    }
+  }
+
+  String provideConfigToken() {
+    String ctxtToken = '';
+    for (var elm in regExprMap.entries) {
+      String oneEntry = 'cp=' + elm.key.txt;
+      oneEntry += ';descr=' + elm.value.showDescriptor.toString();
+      oneEntry += ';sel=' + elm.value.showSelected.toString();
+      oneEntry += ';reg=' + elm.value.regExpr.toString();
+      oneEntry += ';psel=';
+      for (var elmLst in elm.value.propsSelected) {
+        oneEntry += elmLst + ':';
+      }
+      oneEntry += ';prtu=';
+      for (var elmLst in elm.value.propsRealtimeUpdate) {
+        oneEntry += elmLst + ':';
+      }
+      ctxtToken = oneEntry + '#';
+    }
+    return ctxtToken;
   }
 }

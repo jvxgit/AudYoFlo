@@ -10,9 +10,9 @@ import '../ayf_pack_local.dart';
 
 class AudYoFloPropertyGridWidget extends StatefulWidget {
   final bool showDescriptor;
-  final String regExprShow;
+  final bool showSelected;
   AudYoFloPropertyGridWidget(
-      {this.showDescriptor = false, this.regExprShow = ''});
+      {this.showDescriptor = false, this.showSelected = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -48,6 +48,8 @@ class _AudYoFloPropertyGridWidgetStates
 
           // Obtain currently active component
           JvxComponentIdentification cpId = theDbgModel.idSelectCp;
+
+          String regExprShow = theDbgModel.getRegExpressionShow(cpId);
 
           // Inside selector is to be triggered by a state change in the
           // backend cache, e.g., when the component state changed
@@ -101,41 +103,55 @@ class _AudYoFloPropertyGridWidgetStates
                         props = theDbgModel.be
                             .referenceValidPropertiesComponents(
                                 theDbgModel.idSelectCp, lst);
+                      }
 
-                        if (props != null) {
-                          if (widget.regExprShow.isNotEmpty) {
-                            RegExp regExp = RegExp(
-                              widget.regExprShow,
-                              caseSensitive: false,
-                              multiLine: false,
-                            );
-                            List<AudYoFloPropertyContainer> filteredLst = [];
-                            for (var elm in props) {
+                      if (props == null) {
+                        errCode = await theDbgModel.be
+                            .triggerUpdatePropertiesComponent(
+                                theDbgModel.idSelectCp, lst);
+                        if (errCode == jvxErrorType.JVX_NO_ERROR) {
+                          props = theDbgModel.be
+                              .referenceValidPropertiesComponents(
+                                  theDbgModel.idSelectCp, lst);
+                        }
+                      }
+
+                      // We can be sure that we have valid properties at least here!
+                      if (props != null) {
+                        List<AudYoFloPropertyContainer> filteredLst = [];
+                        for (var elm in props) {
+                          bool addThis = true;
+                          if (widget.showSelected) {
+                            if (!theDbgModel.isSelectedUpdateShow(
+                                cpId, elm.descriptor)) {
+                              addThis = false;
+                            }
+                          }
+                          if (addThis) {
+                            if (regExprShow.isNotEmpty) {
+                              addThis = false;
+                              RegExp regExp = RegExp(
+                                regExprShow,
+                                caseSensitive: false,
+                                multiLine: false,
+                              );
                               if (widget.showDescriptor) {
                                 if (regExp.hasMatch(elm.descriptor)) {
-                                  filteredLst.add(elm);
+                                  addThis = true;
                                 }
                               } else {
                                 if (regExp.hasMatch(elm.description)) {
-                                  filteredLst.add(elm);
+                                  addThis = true;
                                 }
                               }
                             }
+                          }
 
-                            props = filteredLst;
+                          if (addThis) {
+                            filteredLst.add(elm);
                           }
                         }
-
-                        if (props == null) {
-                          errCode = await theDbgModel.be
-                              .triggerUpdatePropertiesComponent(
-                                  theDbgModel.idSelectCp, lst);
-                          if (errCode == jvxErrorType.JVX_NO_ERROR) {
-                            props = theDbgModel.be
-                                .referenceValidPropertiesComponents(
-                                    theDbgModel.idSelectCp, lst);
-                          }
-                        }
+                        props = filteredLst;
                       }
                     }
                   }
@@ -263,17 +279,30 @@ class AudYoFloPropertyShow extends StatefulWidget {
 }
 
 class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
-  bool updateRt = false;
+  // bool updateRt = false;
   bool requirePropUpdate = false;
+
   @override
   Widget build(BuildContext context) {
+    AudYoFloDebugModel theDbgModel =
+        Provider.of<AudYoFloDebugModel>(context, listen: false);
+    bool rtUpdate = false;
+    JvxComponentIdentification cpId = JvxComponentIdentification();
+    String descriptor = '';
+    if (widget.propDescr != null) {
+      cpId = widget.propDescr!.assCpIdent;
+      rtUpdate =
+          theDbgModel.isRealtimeUpdateShow(cpId, widget.propDescr!.descriptor);
+      descriptor = widget.propDescr!.descriptor;
+    }
+
     return Selector<AudYoFloPeriodicNotifier, int>(
         selector: (context, periodic) {
       return periodic.cntSlow;
     },
         // Return true if the id is a different one than it was before
         shouldRebuild: (previous, next) {
-      if (((previous != next) && updateRt)) {
+      if (((previous != next) && rtUpdate)) {
         if (!requirePropUpdate) {
           print('Update property with <${widget.propDescr!.descriptor}');
           requirePropUpdate = true;
@@ -283,12 +312,14 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
       return false;
     }, builder: (context, notifier, child) {
       String description = 'not-found';
+      String descriptor = 'not-found';
       String ttip = 'not-found';
       String currentValueText = 'not-found';
       Widget? secondaryWidget;
 
       if (widget.propDescr != null) {
         description = widget.propDescr!.description;
+        descriptor = widget.propDescr!.descriptor;
         currentValueText = widget.propDescr!.toString();
         if (widget.propDescr is AudYoFloPropertyContentBackend) {
           AudYoFloPropertyContentBackend propNat =
@@ -304,11 +335,23 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
             AudYoFloBackendCache theBeCache =
                 Provider.of<AudYoFloBackendCache>(context, listen: false);
 
-            JvxComponentIdentification cpId = widget.propDescr!.assCpIdent;
             List<String> props = [widget.propDescr!.descriptor];
             updateSingleProperty(theBeCache, cpId, props);
           }
-          secondaryWidget = AudYoFloPropertyDetailView(propNat);
+
+          bool isSelected = theDbgModel.isSelectedUpdateShow(cpId, descriptor);
+          secondaryWidget = GestureDetector(
+            child: AudYoFloPropertyDetailView(
+              propNat,
+              isSelected: isSelected,
+            ),
+            onDoubleTap: () {
+              // Activate this property here!!
+              setState(() {
+                theDbgModel.toggleSelectProperty(cpId, descriptor);
+              });
+            },
+          );
         } else {
           assert(false);
         }
@@ -513,7 +556,7 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Flexible(
-                                          flex: 1,
+                                          flex: 2,
                                           child: Tooltip(
                                             child: Text(whatToShow),
                                             message: tooltipShow,
@@ -534,10 +577,15 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
                                       Flexible(
                                           flex: 1,
                                           child: Checkbox(
-                                            value: updateRt,
+                                            value: rtUpdate,
                                             onChanged: (value) {
                                               setState(() {
-                                                updateRt = value!;
+                                                // Toggle state of the property
+                                                theDbgModel
+                                                    .modifyRealtimeUpdateShow(
+                                                        cpId,
+                                                        descriptor,
+                                                        value!);
                                               });
                                             },
                                           ))
@@ -562,8 +610,8 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
 
 class AudYoFloPropertyDetailView extends StatelessWidget {
   final AudYoFloPropertyContentBackend prop;
-
-  AudYoFloPropertyDetailView(this.prop);
+  final bool isSelected;
+  AudYoFloPropertyDetailView(this.prop, {this.isSelected = false});
 
   @override
   Widget build(BuildContext context) {
@@ -624,19 +672,27 @@ class AudYoFloPropertyDetailView extends StatelessWidget {
         txtAccess = "wo";
         break;
     }
-    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-      Flexible(
-          flex: 5,
-          child: Tooltip(
-              message: "Allowed State Mask",
-              child: Container(
-                  color: Colors.green, child: Text(txtAllowedState)))),
-      Spacer(flex: 1),
-      Flexible(
-          flex: 5,
-          child: Tooltip(
-              message: "Property Access Type",
-              child: Container(color: Colors.blue, child: Text(txtAccess))))
-    ]);
+
+    Color col = Colors.grey;
+    if (this.isSelected) {
+      col = Colors.red;
+    }
+    return Container(
+      color: col,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Flexible(
+            flex: 5,
+            child: Tooltip(
+                message: "Allowed State Mask",
+                child: Container(
+                    color: Colors.green, child: Text(txtAllowedState)))),
+        Spacer(flex: 1),
+        Flexible(
+            flex: 5,
+            child: Tooltip(
+                message: "Property Access Type",
+                child: Container(color: Colors.blue, child: Text(txtAccess))))
+      ]),
+    );
   }
 }

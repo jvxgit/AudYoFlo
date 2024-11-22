@@ -128,6 +128,7 @@ SECTION PROPERTIES
 			TYPE = "JVX_DATAFORMAT_BOOL";
 			INIT_SET = 0;
 		};
+		
 	};
 	
 	GROUP ext_interfaces

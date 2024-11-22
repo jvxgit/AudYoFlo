@@ -472,6 +472,11 @@ class AudYoFloStringTranslator {
               .JVX_REPORT_COMMAND_REQUEST_REPORT_COMPONENT_STATESWITCH.index;
           break;
 
+        case 'cmdreq-sys-ready':
+          retVal = jvxReportCommandRequestEnum
+              .JVX_REPORT_COMMAND_REQUEST_REPORT_SYSTEM_READY.index;
+          break;
+
         case 'cmdreq-config-complete':
           retVal = jvxReportCommandRequestEnum
               .JVX_REPORT_COMMAND_REQUEST_REPORT_CONFIGURATION_COMPLETE.index;

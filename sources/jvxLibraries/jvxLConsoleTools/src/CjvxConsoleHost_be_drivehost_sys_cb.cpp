@@ -89,6 +89,37 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 	involvedComponents.theHost.hFHost->add_external_interface(
 		reinterpret_cast<jvxHandle*>(static_cast<IjvxEventLoop*>(evLop)), JVX_INTERFACE_EVENTLOOP);
 
+	// =================================================================================================================
+	
+	// Reserve a space of 20 properties for now
+	_common_set_properties.propIdSpan = 20;
+	_common_set_min.theState = JVX_STATE_ACTIVE;
+
+	genConsoleHost::init_all();
+	genConsoleHost::allocate_all();
+	genConsoleHost::register_all(static_cast<CjvxProperties*>(this));
+	genConsoleHost::register_callbacks(static_cast<CjvxProperties*>(this), cb_set_options, this, nullptr);
+
+	IjvxPropertyAttach* thePropExp = nullptr;
+	resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle**)&thePropExp);
+	if (thePropExp)
+	{
+		thePropExp->attach_property_submodule("frontend_hooks", static_cast<IjvxProperties*>(this));
+		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle*)thePropExp);
+		thePropExp = nullptr;
+	}
+
+	IjvxConfigurationAttach* theCfgAtt = nullptr;
+	resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle**)&theCfgAtt);
+	if (theCfgAtt)
+	{
+		theCfgAtt->attach_configuration_submodule("frontend_hooks", static_cast<IjvxConfiguration*>(this));
+		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle*)theCfgAtt);
+		theCfgAtt = nullptr;
+	}
+
+	// =================================================================================================================
+
 	JVX_START_SLOTS_BASE(theHostFeatures.numSlotsComponents, _command_line_parameters_hosttype.num_slots_max, _command_line_parameters_hosttype.num_subslots_max);
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 	JVX_START_SLOTS_SUBPRODUCT(theHostFeatures.numSlotsComponents, _command_line_parameters_hosttype.num_slots_max, _command_line_parameters_hosttype.num_subslots_max);
@@ -411,6 +442,35 @@ CjvxConsoleHost_be_drivehost::shutdown_terminate_specific(jvxApiString* errloc)
 
 	// Free all host types and data connections
 	shutdown_terminate_base();
+
+	// ===============================================================================================
+
+	IjvxConfigurationAttach* theCfgAtt = nullptr;
+	jvxErrorType resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle**)&theCfgAtt);
+	if (theCfgAtt)
+	{
+		theCfgAtt->detach_configuration_submodule(static_cast<IjvxConfiguration*>(this));
+		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle*)theCfgAtt);
+		theCfgAtt = nullptr;
+	}
+
+
+	IjvxPropertyAttach* thePropExp = nullptr;
+
+	resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle**)&thePropExp);
+	if (thePropExp)
+	{
+		thePropExp->detach_property_submodule(static_cast<IjvxProperties*>(this));
+		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle*)thePropExp);
+		thePropExp = nullptr;
+	}
+
+	genConsoleHost::unregister_all(static_cast<CjvxProperties*>(this));
+	genConsoleHost::deallocate_all();
+	_common_set_min.theState = JVX_STATE_NONE;
+	_common_set_properties.propIdSpan = JVX_SIZE_UNSELECTED;
+
+	// ===============================================================================================
 
 	jvx_invalidate_factoryhost_features(&theHostFeatures);
 

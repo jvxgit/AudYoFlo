@@ -160,5 +160,7 @@ abstract class AudYoFloBackendAdapterIf extends AudYoFloBackendTranslator {
 
   Future<int> triggerStopPropertyStream();
 
+  Future<int> beforeSaveConfig();
+
   String get lastError;
 }

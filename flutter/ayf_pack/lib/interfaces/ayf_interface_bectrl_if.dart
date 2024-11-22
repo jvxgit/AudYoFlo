@@ -166,4 +166,7 @@ abstract class AudYoFloBackendCacheBectrlIf {
 
   // Function to create a string to represent a process.
   String debugPrintProcess(int uId);
+
+  String getFrontendConfigureToken();
+  void setFrontendConfigureToken(String token);
 }

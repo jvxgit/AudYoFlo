@@ -9,6 +9,10 @@
 #include "interfaces/all-hosts/configHostFeatures_common.h"
 #include "CjvxHostJsonCommandsActShow.h"
 
+#include "common/CjvxProperties.h"
+
+#include "pcg_exports_lib.h"
+
 // ==========================================================================================
 
 
@@ -76,7 +80,10 @@ class CjvxConsoleHost_be_drivehost :
 	public IjvxSequencer_report,
 	public IjvxEventLoop_frontend, 
 	public JVX_APPHOST_PRODUCT_CLASSNAME, public CjvxHandleRequestCommands_callbacks,
-	public IjvxConfigurationExtender_report
+	public IjvxConfigurationExtender_report, 
+	public IjvxConfiguration,
+	public IjvxProperties, public CjvxProperties, public CjvxObjectMin,
+	public genConsoleHost
 {
 private:
 
@@ -380,6 +387,22 @@ public:
 	virtual void report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
 
 	void observeThreadLoop();
+
+	// =============================================================================================
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,
+		jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename = "", jvxInt32 lineno = -1) override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections) override;
+
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_set_options);
+
+#define JVX_OBJECT_ZERO_REFERENCE
+#include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
+#undef JVX_OBJECT_ZERO_REFERENCE
+
+#include "codeFragments/simplify/jvxProperties_simplify.h"
 };
 
 #endif

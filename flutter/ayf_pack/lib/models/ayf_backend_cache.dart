@@ -23,6 +23,8 @@ abstract class AudYoFloBackendCache
 
   AudYoFloBackendCacheCallback? requestSystemDisconnect;
 
+  AudYoFloDebugModel? dbgModel;
+
   AudYoFloHttpConnect httpConnect = AudYoFloHttpConnect();
   // ======================================================================
   // Initialization function
@@ -1086,6 +1088,7 @@ abstract class AudYoFloBackendCache
 
   @override
   Future<int> triggerSaveConfig() async {
+    var res = await backendAdapterIf!.beforeSaveConfig();
     return await backendAdapterIf!.triggerSaveConfig();
   }
 
@@ -1113,5 +1116,21 @@ abstract class AudYoFloBackendCache
     ssUpdateId++;
     // Navigator.pushNamed(context, '/second');
     triggerNotify();
+  }
+
+  @override
+  String getFrontendConfigureToken() {
+    String stringConfigureFE = '';
+    if (dbgModel != null) {
+      stringConfigureFE = dbgModel!.provideConfigToken();
+    }
+    return stringConfigureFE;
+  }
+
+  @override
+  void setFrontendConfigureToken(String token) {
+    if (dbgModel != null) {
+      dbgModel!.acceptConfigToken(token);
+    }
   }
 }

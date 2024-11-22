@@ -9,6 +9,7 @@ include_directories(
 	${JVX_BINARY_DIR}/base/sources/jvxEventLoop/CjvxEStandalone
 	${JVX_BINARY_DIR}/base/sources/jvxHosts/jvxHAppHost/
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLConsoleTools/include
+	${JVX_BASE_BINARY_INCLUDE_PATH}/jvxLConsoleTools/components-static/generated
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLWebConsoleTools/include
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-net-helpers/include
 	${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common

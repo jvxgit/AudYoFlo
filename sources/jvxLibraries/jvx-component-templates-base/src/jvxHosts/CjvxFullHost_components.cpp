@@ -62,6 +62,13 @@ CjvxFullHost::system_ready()
 			}
 		}
 	}
+
+	// Report this also to host application
+	if (_common_set_host.reportUnit)
+	{
+		CjvxReportCommandRequest req_config_sys_ready(jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_REPORT_SYSTEM_READY, _common_set.theComponentType);
+		_common_set_host.reportUnit->request_command(req_config_sys_ready);
+	}
 	return JVX_NO_ERROR;
 }
 

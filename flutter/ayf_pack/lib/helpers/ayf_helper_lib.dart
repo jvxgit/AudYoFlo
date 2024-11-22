@@ -770,3 +770,20 @@ class AudYoFloMixerLevelHelper {
     return gainVal.toDouble();
   }
 }
+
+void mapUpdateNoHash<T1, T2>(
+    Map<T1, T2> m, T1 myKey, T2 newVal, T2 Function(T2) update) {
+  // Problem here: the map update function requires a match of hash tags - which is not
+  // given always. The firstWhereOrNull function, in contrast, uses the operator== which
+  // is overloaded for JvxComponentIdentification
+  var elm = m.entries.firstWhereOrNull((element) => (element.key == myKey));
+  if (elm != null) {
+    myKey = elm.key;
+    m.update(myKey, (value) {
+      value = update(value);
+      return value;
+    });
+  } else {
+    m[myKey] = newVal;
+  }
+}

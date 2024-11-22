@@ -66,7 +66,7 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	jvxErrorType resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle**)&thePropExp);
 	if (thePropExp)
 	{
-		thePropExp->attach_property_submodule("jvxLibHost", static_cast<IjvxProperties*>(this));
+		thePropExp->attach_property_submodule("frontend_hooks", static_cast<IjvxProperties*>(this));
 		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle*)thePropExp);
 		thePropExp = nullptr;
 	}
@@ -75,7 +75,7 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle**)&theCfgAtt);
 	if (theCfgAtt)
 	{
-		theCfgAtt->attach_configuration_submodule("jvxLibHost", static_cast<IjvxConfiguration*>(this));
+		theCfgAtt->attach_configuration_submodule("frontend_hooks", static_cast<IjvxConfiguration*>(this));
 		involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle*)theCfgAtt);
 		theCfgAtt = nullptr;
 	}
@@ -420,7 +420,7 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 	genLibHost::deallocate_all();
 	_common_set_min.theState = JVX_STATE_NONE;
 	_common_set_properties.propIdSpan = JVX_SIZE_UNSELECTED;
-
+	
 	return JVX_NO_ERROR;
 }
 

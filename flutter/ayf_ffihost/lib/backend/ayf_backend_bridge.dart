@@ -293,33 +293,6 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
     // WindowsAyfNative.acknowldge_wm_close('wm_close_ok');
   }
 
-  Future<void> runAutoStart() async {
-    String focusProperty = '/jvxLibHost/autostart';
-
-    ///ext_interfaces/application_property_autostart';
-    JvxComponentIdentification cpId = JvxComponentIdentification(
-        cpTp: JvxComponentTypeEnum.JVX_COMPONENT_HOST, slotid: 0, slotsubid: 0);
-    var prop = theBeAdapter.theBeCacheNative
-        .referenceValidPropertiesComponents(cpId, [focusProperty]);
-    if (prop == null) {
-      await theBeAdapter.theBeCacheNative
-          .triggerUpdatePropertiesComponent(cpId, [focusProperty]);
-      prop = theBeAdapter.theBeCacheNative
-          .referenceValidPropertiesComponents(cpId, [focusProperty]);
-    }
-
-    if (prop != null) {
-      if (prop.length == 1) {
-        var propStart = prop[0];
-        if (propStart is AudYoFloPropertyMultiContentNative) {
-          if (propStart.fld[0] != 0) {
-            theBeAdapter.triggerStartSequencer();
-          }
-        }
-      }
-    }
-  }
-
   //========================================================================
   // Overriden callback functions to report messages
   //========================================================================
@@ -494,8 +467,14 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         break;
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_REPORT_CONFIGURATION_COMPLETE:
-        runAutoStart();
+        // theBeAdapter.runOnConfigure(); <- move to SYSTEM READY
         break;
+
+      case jvxReportCommandRequestEnum
+          .JVX_REPORT_COMMAND_REQUEST_REPORT_SYSTEM_READY:
+        theBeAdapter.runOnSystemReady();
+        break;
+
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_EVENT:
         if (opaque_host != ffi.nullptr) {

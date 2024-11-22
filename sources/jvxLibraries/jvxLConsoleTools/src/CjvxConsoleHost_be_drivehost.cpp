@@ -8,7 +8,8 @@
 
 CjvxConsoleHost_be_drivehost::CjvxConsoleHost_be_drivehost(): 
 	CjvxConsoleHost_be_print(),
-	CjvxHostJsonCommandsActShow(involvedHost.hHost)
+	CjvxHostJsonCommandsActShow(involvedHost.hHost),
+	CjvxProperties("jvxConsoleHost", *this)
 {
 	jvxSize i;
 	
@@ -525,4 +526,26 @@ CjvxConsoleHost_be_drivehost::handle_step_process_non_usual_return(IjvxSequencer
 		std::cout << "UNEXPECTED:" << jvxErrorType_descr(res) << std::endl;
 		assert(0);
 	}
+}
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxConsoleHost_be_drivehost, cb_set_options)
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxConsoleHost_be_drivehost::put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,
+	jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename, jvxInt32 lineno)
+{
+	std::vector<std::string> warns;
+	genConsoleHost::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe, &warns);
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxConsoleHost_be_drivehost::get_configuration(jvxCallManagerConfiguration* callMan,
+	IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections)
+{
+	genConsoleHost::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);
+	return JVX_NO_ERROR;
 }

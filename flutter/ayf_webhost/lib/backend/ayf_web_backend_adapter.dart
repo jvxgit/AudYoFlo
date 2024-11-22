@@ -225,9 +225,13 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
       }
       await completeWebSocketTransaction!.future;
 
+      // Get the properties from backend to reconstruct settings in the UI
+
       propStream.initializePropStream(wsTarget, report);
 
       // Run the property init code
+      await runOnSystemReady();
+
       /*
       List<AudYoFloPropertyStreamDefintion> props = [];
       AudYoFloPropertyStreamDefintion newElm =
@@ -1251,4 +1255,73 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
 
   @override
   String get lastError => latestError;
+
+  @override
+  Future<int> beforeSaveConfig() async {
+    int res = jvxErrorType.JVX_NO_ERROR;
+
+    // On save, allow to copy a string expression to the backend
+    String propId = '/frontend_hooks/frontend_config_token';
+    JvxComponentIdentification cpId = JvxComponentIdentification(
+        cpTp: JvxComponentTypeEnum.JVX_COMPONENT_HOST, slotid: 0, slotsubid: 0);
+    AudYoFloPropertyContainer? prop =
+        theBeCache!.referencePropertyInCache(cpId, propId);
+    if (prop == null) {
+      int res =
+          await theBeCache!.triggerUpdatePropertiesComponent(cpId, [propId]);
+      if (res == jvxErrorType.JVX_NO_ERROR) {
+        prop = theBeCache!.referencePropertyInCache(cpId, propId);
+      }
+    }
+
+    if (prop != null) {
+      if (prop is AudYoFloPropertySingleStringBackend) {
+        prop.value = theBeCache!.getFrontendConfigureToken();
+        await triggerSetProperties(cpId, [propId]);
+      }
+    } else {
+      dbgPrint('Failed to access property <$propId>');
+    }
+    return res;
+  }
+
+  Future<void> runOnSystemReady() async {
+    String propAutoStart = '/frontend_hooks/autostart';
+    String propId = '/frontend_hooks/frontend_config_token';
+
+    ///ext_interfaces/application_property_autostart';
+    JvxComponentIdentification cpId = JvxComponentIdentification(
+        cpTp: JvxComponentTypeEnum.JVX_COMPONENT_HOST, slotid: 0, slotsubid: 0);
+    var props = theBeCache!
+        .referenceValidPropertiesComponents(cpId, [propAutoStart, propId]);
+    if (props == null) {
+      var res = await theBeCache!
+          .triggerUpdatePropertiesComponent(cpId, [propAutoStart, propId]);
+      if (res != jvxErrorType.JVX_NO_ERROR) {
+        dbgPrint('Error in <runOnConfigure>.');
+      }
+      props = theBeCache!
+          .referenceValidPropertiesComponents(cpId, [propAutoStart, propId]);
+    }
+
+    if (props != null) {
+      if (props.length == 2) {
+        /* What to do with this property? It will not trigger anything!!
+        var propStart = props[0];
+        if (propStart is AudYoFloPropertyMultiContentNative) {
+          if (propStart.fld[0] != 0) {
+            triggerStartSequencer();
+          }
+        }
+        */
+
+        var propFrontToken = props[1];
+        if (propFrontToken is AudYoFloPropertySingleStringBackend) {
+          String tok = propFrontToken.value;
+          theBeCache!.setFrontendConfigureToken(tok);
+          dbgPrint('Received token <$tok>.');
+        }
+      }
+    }
+  }
 }
