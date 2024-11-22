@@ -5,6 +5,8 @@ extern crate alloc;
 
 pub mod fft;
 pub mod circbuffer;
+pub mod levinson_durbin;
+pub use levinson_durbin::LevinsonDurbin;
 
 pub type Error = JvxErrorType;
 pub type Result<T> = core::result::Result<T, Error>;
