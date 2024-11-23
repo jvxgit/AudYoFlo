@@ -27,3 +27,4 @@ endif()
 if(NOT QT_INSTALL_PATH)
 	set(QT_INSTALL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/qt/${JVX_QT_VERSION}/${JVX_QT_DIR_TOKEN}" CACHE INTERNAL "Set QT_INSTALL_PATH to AQT installation if empty.")
 endif()
+

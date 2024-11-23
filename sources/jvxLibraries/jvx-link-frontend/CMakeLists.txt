@@ -31,3 +31,5 @@ set(BUILD_STATIC TRUE)
 # set(CREATE_OBJECT_LIBRARY TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+add_dependencies(${PROJECT_NAME}_static jvxLConsoleHost-static_static jvxLConsoleHost-shared_static)
