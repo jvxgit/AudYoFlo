@@ -45,7 +45,7 @@ public:
 	{
 	public:
 
-		JVX_THREAD_HANDLE hdlThread = JVX_INVALID_HANDLE_VALUE;
+		JVX_THREAD_HANDLE hdlThread = JVX_NULLTHREAD;
 		JVX_THREAD_ID idThread = JVX_THREAD_ID_INVALID;
 		jvxSize width = 0;
 		jvxSize height = 0;
