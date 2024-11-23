@@ -206,19 +206,32 @@ where
     }
 }
 
-pub struct FftFactory {
-    pub hdl: *const ffi::JvxFFTGlobal,
-}
+// wrapper to hide Rc on the public API
+pub struct FftFactory(Rc<_FftFactory>);
 
 impl FftFactory {
-    pub fn new(size_max: FftSize) -> Result<Rc<Self>> {
+    pub fn new(size_max: FftSize) -> Result<Self> {
         let mut hdl: *const ffi::JvxFFTGlobal = core::ptr::null();
         match unsafe { ffi::jvx_create_fft_ifft_global(&mut hdl, size_max.into()) } {
-            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(Rc::new(Self { hdl })),
+            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(Self(Rc::new(_FftFactory { hdl }))),
             err => Err(err),
         }
     }
+}
 
+impl core::ops::Deref for FftFactory {
+    type Target = Rc<_FftFactory>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+pub struct _FftFactory {
+    pub hdl: *const ffi::JvxFFTGlobal,
+}
+
+impl _FftFactory {
     pub fn new_fft_real_2_complex<'a, 'b>(
         self: &Rc<Self>,
         size: FftSize,
@@ -448,7 +461,7 @@ impl FftFactory {
     }
 }
 
-impl Drop for FftFactory {
+impl Drop for _FftFactory {
     fn drop(&mut self) {
         unsafe {
             ffi::jvx_destroy_fft_ifft_global(self.hdl);
@@ -499,7 +512,7 @@ impl CplxBufferRef<'_> {
 }
 
 pub struct FftReal2Cplx<'a, 'b> {
-    _global: Rc<FftFactory>,
+    _global: Rc<_FftFactory>,
     hdl: *const ffi::JvxFFT,
     n_fft_size: JvxSize,
     input_n: RealBufferRef<'a>,
@@ -544,7 +557,7 @@ impl Drop for FftReal2Cplx<'_, '_> {
 }
 
 pub struct FftCplx2Cplx<'a, 'b> {
-    _global: Rc<FftFactory>,
+    _global: Rc<_FftFactory>,
     hdl: *const ffi::JvxFFT,
     n_fft_size: JvxSize,
     input_n: CplxBufferRef<'a>,
@@ -589,7 +602,7 @@ impl Drop for FftCplx2Cplx<'_, '_> {
 }
 
 pub struct IfftCplx2Real<'a, 'b> {
-    _global: Rc<FftFactory>,
+    _global: Rc<_FftFactory>,
     hdl: *const ffi::JvxIFFT,
     n_fft_size: JvxSize,
     input_2np1: CplxBufferRef<'a>,
@@ -634,7 +647,7 @@ impl Drop for IfftCplx2Real<'_, '_> {
 }
 
 pub struct IfftCplx2Cplx<'a, 'b> {
-    _global: Rc<FftFactory>,
+    _global: Rc<_FftFactory>,
     hdl: *const ffi::JvxIFFT,
     n_fft_size: JvxSize,
     input_2np1: CplxBufferRef<'a>,

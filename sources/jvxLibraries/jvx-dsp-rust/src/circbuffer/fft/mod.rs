@@ -6,7 +6,7 @@ pub mod ffi;
 use crate::fft::ffi::JvxFftToolsCoreFftType;
 
 pub struct CircbufferFft {
-    _global: Rc<FftFactory>,
+    _global: Rc<_FftFactory>,
     pub hdl: *mut ffi::JvxCircbufferFft,
 }
 
@@ -58,7 +58,7 @@ impl CircbufferFft {
     }
 }
 
-impl FftFactory {
+impl _FftFactory {
     // TODO implement external buffer version
     pub fn new_circbuffer_fft(
         self: &Rc<Self>,
