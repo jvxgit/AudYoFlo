@@ -67,7 +67,7 @@ public:
 
 		void reset()
 		{
-			hdlThread = JVX_INVALID_HANDLE_VALUE;
+			hdlThread = JVX_NULLTHREAD;
 			idThread = JVX_THREAD_ID_INVALID;
 			width = 0;
 			height = 0;
