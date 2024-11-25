@@ -17,11 +17,21 @@ impl LevinsonDurbin {
     }
 
     /// returns (e_start, e_stop)
-    pub fn compute(&mut self, r_xx: &[JvxData], alpha: &mut [JvxData]) -> Result<(JvxData, JvxData)> {
+    pub fn compute(
+        &mut self,
+        r_xx: &[JvxData],
+        alpha: &mut [JvxData],
+    ) -> Result<(JvxData, JvxData)> {
         let mut e_start: JvxData = 0.0;
         let mut e_stop: JvxData = 0.0;
         let res = unsafe {
-            ffi::jvx_levinson_durbin_compute(self.hdl, r_xx.as_ptr(), alpha.as_mut_ptr(), &mut e_start, &mut e_stop)
+            ffi::jvx_levinson_durbin_compute(
+                self.hdl,
+                r_xx.as_ptr(),
+                alpha.as_mut_ptr(),
+                &mut e_start,
+                &mut e_stop,
+            )
         };
         match res {
             JvxDspBaseErrorType::JVX_NO_ERROR => Ok((e_start, e_stop)),

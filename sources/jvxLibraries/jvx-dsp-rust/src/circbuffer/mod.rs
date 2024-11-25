@@ -26,11 +26,11 @@ impl Circbuffer {
     pub fn access(&self, idx: JvxSize) -> Result<&mut [JvxData]> {
         let mut out_ptr: *mut JvxData = core::ptr::null_mut();
         let mut out_len: JvxSize = 0;
-        let res = unsafe {
-            ffi::jvx_circbuffer_access(self.hdl, &mut out_ptr, &mut out_len, idx)
-        };
+        let res = unsafe { ffi::jvx_circbuffer_access(self.hdl, &mut out_ptr, &mut out_len, idx) };
         match res {
-            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) }),
+            JvxDspBaseErrorType::JVX_NO_ERROR => {
+                Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) })
+            }
             err => Err(err),
         }
     }
@@ -53,13 +53,13 @@ impl Circbuffer {
         }
     }
 
-    pub fn copy_update_buf2buf(
-        copy_to: &mut Self,
+    pub fn copy_update_from_circbuffer(
+        &mut self,
         copy_from: &Self,
         number_values_fill: JvxSize,
     ) -> Result<()> {
         let res = unsafe {
-            ffi::jvx_circbuffer_copy_update_buf2buf(copy_to.hdl, copy_from.hdl, number_values_fill)
+            ffi::jvx_circbuffer_copy_update_buf2buf(self.hdl, copy_from.hdl, number_values_fill)
         };
         match res {
             JvxDspBaseErrorType::JVX_NO_ERROR => Ok(()),

@@ -3,6 +3,7 @@ use crate::*;
 use alloc::rc::Rc;
 
 pub mod ffi;
+use crate::circbuffer;
 use crate::fft::ffi::JvxFftToolsCoreFftType;
 
 pub struct CircbufferFft {
@@ -18,7 +19,9 @@ impl CircbufferFft {
             ffi::jvx_circbuffer_access_cplx_fft_ifft(self.hdl, &mut out_ptr, &mut out_len, idx)
         };
         match res {
-            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) }),
+            JvxDspBaseErrorType::JVX_NO_ERROR => {
+                Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) })
+            }
             err => Err(err),
         }
     }
@@ -31,7 +34,27 @@ impl CircbufferFft {
             jvx_circbuffer_access(&(*(self.hdl)).circBuffer, &mut out_ptr, &mut out_len, idx)
         };
         match res {
-            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) }),
+            JvxDspBaseErrorType::JVX_NO_ERROR => {
+                Ok(unsafe { core::slice::from_raw_parts_mut(out_ptr, out_len) })
+            }
+            err => Err(err),
+        }
+    }
+
+    pub fn copy_update_from_circbuffer(
+        &mut self,
+        copy_from: &circbuffer::Circbuffer,
+        number_values_fill: JvxSize,
+    ) -> Result<()> {
+        let res = unsafe {
+            circbuffer::ffi::jvx_circbuffer_copy_update_buf2buf(
+                &mut (*(self.hdl)).circBuffer,
+                copy_from.hdl,
+                number_values_fill,
+            )
+        };
+        match res {
+            JvxDspBaseErrorType::JVX_NO_ERROR => Ok(()),
             err => Err(err),
         }
     }

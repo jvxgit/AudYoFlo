@@ -3,8 +3,8 @@
 
 extern crate alloc;
 
-pub mod fft;
 pub mod circbuffer;
+pub mod fft;
 pub mod levinson_durbin;
 pub use levinson_durbin::LevinsonDurbin;
 
