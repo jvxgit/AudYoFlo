@@ -4,7 +4,7 @@
         "workbench.action.tasks.configureTaskRunner",
         "workbench.action.tasks.runTask"
     ],
-    "cmake.buildDirectory": "${workspaceFolder}/../../audyoflo/audio-glnx-vs",
+    "cmake.buildDirectory": "@VSCODE_CMAKE_BUILD_FOLDER@",
     "cmake.buildArgs": [
     ],
     "cmake.configureArgs": [
@@ -48,9 +48,9 @@
         "JVX_USE_OPENGL": true,
         "JVX_USE_GLEW_GLUT": true,
         "JVX_GENERATE_VERSION_TAG_DUMMY": true,
-        "CMAKE_PREFIX_PATH": "${workspaceFolder}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64",
+        "CMAKE_PREFIX_PATH": "@VSCODE_CMAKE_PREFIX_PATH@",
         "AYFBINRENDER_SIMPLE_INSTALLER": false,
-        "FLUTTER_SDK_PATH": "${workspaceFolder}/sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4",
+        "FLUTTER_SDK_PATH": "@VSCODE_FLUTTER_SDK_PATH@",
         "JVX_USE_EAQUAL": false,
         "JVX_INSTALLER_MBC": true, 
         "AYFBINRENDER_FFMPEG_FILE_IO": true,
@@ -62,8 +62,8 @@
         "JVX_USE_HDF5": true,
         "LIBMYSOFA_BUILD_TESTS": false, 
         "JVX_USE_HOA_CIRC_ARRAY": false,
-        "AYF_AWE_SHARED_LIBRARY_TARGET_FOLDER": "${workspaceFolder}/../../audyoflo/audio-glnx-vs",
-        "QT_INSTALL_PATH": "${workspaceFolder}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64",
+        "AYF_AWE_SHARED_LIBRARY_TARGET_FOLDER": "@AYF_AWE_SHARED_LIBRARY_TARGET_FOLDER@",
+        "QT_INSTALL_PATH": "@VSCODE_QT_INSTALL_PATH@@",
         "JVX_GCC_LINKER_SYMBOLIC": true,
         "JVX_USE_CBMP": true, 
         "JVX_USE_RUST": true, 
@@ -72,7 +72,7 @@
         "AYFSTEREOAEC_USE_RUST_LIBS": true,
         "AYFSTEREOAEC_VERIFY_JVX_AEC": true,
         "SMTG_CREATE_PLUGIN_LINK": false,
-        "CMAKE_INSTALL_PREFIX": "release"
+        "CMAKE_INSTALL_PREFIX": "@VSCODE_CMAKE_BUILD_FOLDER@/release"
     },
     "cmake.options.advanced": {
 
