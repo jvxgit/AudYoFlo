@@ -272,10 +272,11 @@ endif()
 # message(FATAL_ERROR " --> ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropC${JVX_EXECUTABLE_EXTENSION_OPERATE}")
 
 # path to binaries for adding dependencies later
-set(JVX_PCG ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropC${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox PCG binary (external path for cross-compilation)")
-set(JVX_PCG_MATLAB ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropMat${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox PCG Mat binary (external path for cross-compilation)")
-set(JVX_MCG ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExMatC${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox MCG binary (external path for cross-compilation)")
+set(JVX_PCG ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropC${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox PCG binary (external path for cross-compilation)")
+set(JVX_PCG_MATLAB ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropMat${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox PCG Mat binary (external path for cross-compilation)")
+set(JVX_MCG ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExMatC${JVX_EXECUTABLE_EXTENSION_OPERATE} CACHE PATH "Set the path to the Javox MCG binary (external path for cross-compilation)")
 
+# message(FATAL_ERROR " --> ${JVX_PCG} -- ${CMAKE_INSTALL_PREFIX} -- ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/bin/jvxExPropC${JVX_EXECUTABLE_EXTENSION_OPERATE}")
 set(JVX_FOLDER_HIERARCHIE_BASE "AudYoFlo")
 
 message("-> ${JVX_SUBPRODUCT_HELPER_PATH}")
@@ -361,6 +362,22 @@ if(JVX_COMPILE_BUILDTOOLS)
   #install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/base/sources/jvxExTools/jvxExPropC/jvxExPropMat DESTINATION ${INSTALL_PATH_BIN})
   #install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/base/sources/jvxExTools/jvxExMatC/jvxExMatC DESTINATION ${INSTALL_PATH_BIN})
 
+	if(AYF_BUILD_VSCODE)
+		if(${JVX_OS} MATCHES "windows")
+			set(VSCODE_CMAKE_BUILD_FOLDER ${CMAKE_BINARY_DIR})
+			set(VSCODE_CMAKE_PREFIX_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64)
+			set(VSCODE_FLUTTER_SDK_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4)
+			set(VSCODE_QT_INSTALL_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64)			
+			configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.windows.in ${JVX_BASE_ROOT}/.vscode/settings.json)
+		endif()
+		if(${JVX_OS} MATCHES "linux")
+			configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.windows.in ${JVX_BASE_ROOT}/.vscode/settings.json)
+		endif()
+		if(${JVX_OS} MATCHES "macosx")
+			configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.macosx.in ${JVX_BASE_ROOT}/.vscode/settings.json)
+		endif()
+	endif()
+		
 else(JVX_COMPILE_BUILDTOOLS)
 
 	if(JVX_RELEASE_SDK)
