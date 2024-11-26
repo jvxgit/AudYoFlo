@@ -44,7 +44,7 @@ extern "C" {
 
     pub fn jvx_circbuffer_write_update(
         hdl: *mut JvxCircbuffer,
-        fieldFill: *const JvxData,
+        fieldFill: *const *const JvxData,
         numberValuesFill: JvxSize,
     ) -> JvxDspBaseErrorType;
 
