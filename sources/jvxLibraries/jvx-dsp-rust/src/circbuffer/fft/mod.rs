@@ -81,6 +81,14 @@ impl CircbufferFft {
     }
 }
 
+impl Drop for CircbufferFft {
+    fn drop(&mut self) {
+        unsafe {
+            ffi::jvx_circbuffer_deallocate_fft_ifft(self.hdl);
+        }
+    }
+}
+
 impl _FftFactory {
     // TODO implement external buffer version
     pub fn new_circbuffer_fft(
