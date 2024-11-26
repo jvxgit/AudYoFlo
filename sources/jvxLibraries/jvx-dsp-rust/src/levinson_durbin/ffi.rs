@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
-use crate::*;
+use jvx_dsp_base::*;
 
 extern "C" {
     pub fn jvx_levinson_durbin_initialize(

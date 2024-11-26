@@ -1,5 +1,5 @@
 #![allow(non_camel_case_types)]
-use jvx_dsp::*;
+use jvx_dsp_base::*;
 
 pub const JVX_STARTER_DATA_DEBUG_TP0_SHIFT: u8 = 0;
 

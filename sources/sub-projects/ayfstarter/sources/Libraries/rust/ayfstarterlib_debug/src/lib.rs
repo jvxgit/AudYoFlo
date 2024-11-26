@@ -1,4 +1,4 @@
-use jvx_dsp::*;
+use jvx_dsp_base::*;
 use ayfstarterlibrs::*;
 
 #[cfg(feature = "jvx-allow-profiler-data-macros")]

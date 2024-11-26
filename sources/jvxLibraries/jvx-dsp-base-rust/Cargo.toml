@@ -1,5 +1,5 @@
 [package]
-name = "jvx_dsp"
+name = "jvx_dsp_base"
 publish = false
 edition = "2021"
 
@@ -9,4 +9,3 @@ testing = []
 jvx-system-use-data-format-float = []
 
 [dependencies]
-jvx_dsp_base = { path = "../jvx-dsp-base-rust" }

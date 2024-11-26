@@ -5,3 +5,10 @@ version = 3
 [[package]]
 name = "jvx_dsp"
 version = "0.0.0"
+dependencies = [
+ "jvx_dsp_base",
+]
+
+[[package]]
+name = "jvx_dsp_base"
+version = "0.0.0"

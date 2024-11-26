@@ -8,7 +8,7 @@ crate-type = ["lib", "staticlib"]
 
 [features]                                                                                                  
 default = []
-jvx-system-use-data-format-float = ["jvx_dsp/jvx-system-use-data-format-float"]
+jvx-system-use-data-format-float = ["jvx_dsp_base/jvx-system-use-data-format-float"]
 
 [dependencies]
-jvx_dsp = { path = "../../../../../../jvxLibraries/jvx-dsp-rust" }
+jvx_dsp_base = { path = "../../../../../../jvxLibraries/jvx-dsp-base-rust" }
