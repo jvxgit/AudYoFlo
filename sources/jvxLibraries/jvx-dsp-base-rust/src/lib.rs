@@ -203,12 +203,12 @@ macro_rules! jvx_data_out_dbg_tp_direct {
     ($hdl:expr, $spec: expr, $entryTo:ident, $ptrFrom: expr, $szFrom: expr) => {
         if !$hdl.is_null() {
             let dbg = unsafe { &*$hdl };
-            if (dbg.specData & ((JvxCBitField)1 << $spec as u8)) && !dbg.$entryTo.fld.is_null() {
+            if (dbg.specData & ((1 as JvxCBitField) << ($spec as u8))) != 0 && !dbg.$entryTo.fld.is_null() {
                 assert_eq!(dbg.$entryTo.sz_elm, $szFrom);
-                if dbg.$entryTo.cplx {
-                    core::ptr::copy($ptrFrom as *JvxDataCplx, dbg.$entryTo.fld, $szFrom);
+                if dbg.$entryTo.cplx != 0 {
+                    unsafe { core::ptr::copy($ptrFrom as *const JvxDataCplx, dbg.$entryTo.fld as *mut JvxDataCplx, $szFrom); }
                 } else {
-                    core::ptr::copy($ptrFrom as JvxData, dbg.$entryTo.fld, $szFrom);
+                    unsafe { core::ptr::copy($ptrFrom as *const JvxData, dbg.$entryTo.fld as *mut JvxData, $szFrom); }
                 }
             }
         }
