@@ -79,8 +79,10 @@ set(LOCAL_LIBS
 	)
 
 if(${JVX_OS} MATCHES "windows")
-	set(LOCAL_LIBS ${LOCAL_LIBS}
-	  jvxTMswText2Speech_static)
+	if(NOT JVX_WINDOWS_EXCLUDE_ATL_PROJECTS)
+			set(LOCAL_LIBS ${LOCAL_LIBS}
+				jvxTMswText2Speech_static)
+		endif()
 endif()
 	
 if(JVX_COMPILE_NTASK_WITH_LOGFILEWRITER)

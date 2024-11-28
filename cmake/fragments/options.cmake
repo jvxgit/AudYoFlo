@@ -72,6 +72,7 @@ option(JVX_USE_V4L2VIDEO "Compile with support for Video4Linux2 - Linux only" OF
 option(JVX_USE_CBMT "Use c-bitmap library" OFF)
 option(JVX_USE_RUST "Use code in Rust" OFF)
 option(JVX_USE_TRACY "Build the Tracy Profiler client into the applications" OFF)
+option(JVX_WINDOWS_EXCLUDE_ATL_PROJECTS "Exclude all projects involving ATL components" OFF)
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")
 

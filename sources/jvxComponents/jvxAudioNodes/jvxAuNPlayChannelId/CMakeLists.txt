@@ -29,8 +29,10 @@ set(LOCAL_LIBS
 
 # Add the text to speech engine
 if(${JVX_OS} MATCHES "windows")
-	set(LOCAL_LIBS ${LOCAL_LIBS}
-	  jvxTMswText2Speech_static)
+	if(NOT JVX_WINDOWS_EXCLUDE_ATL_PROJECTS)
+		set(LOCAL_LIBS ${LOCAL_LIBS}
+			jvxTMswText2Speech_static)
+	endif()
 endif()
 
 set(IS_JVX_COMPONENT TRUE)
