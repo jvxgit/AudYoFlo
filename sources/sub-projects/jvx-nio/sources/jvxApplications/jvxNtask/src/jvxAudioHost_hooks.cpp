@@ -164,7 +164,7 @@ extern "C"
 			break;
 #endif
 
-#if defined(JVX_OS_WINDOWS) && !define(JVX_WINDOWS_EXCLUDE_ATL_PROJECTS)
+#if defined(JVX_OS_WINDOWS) && !defined(JVX_WINDOWS_EXCLUDE_ATL_PROJECTS)
 		case JVX_COMPONENT_TEXT2SPEECH:
 			switch (id)
 			{
