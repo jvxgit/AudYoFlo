@@ -48,7 +48,7 @@ impl Circbuffer {
     pub fn write_update(&mut self, field_fill: &[&[JvxData]]) -> Result<()> {
         let field_fill_c: Vec<_> = field_fill.iter().map(|x| x.as_ptr()).collect();
         let res = unsafe {
-            ffi::jvx_circbuffer_write_update(self.hdl, field_fill_c.as_ptr(), field_fill.len())
+            ffi::jvx_circbuffer_write_update(self.hdl, field_fill_c.as_ptr(), field_fill[0].len())
         };
         match res {
             JvxDspBaseErrorType::JVX_NO_ERROR => Ok(()),
