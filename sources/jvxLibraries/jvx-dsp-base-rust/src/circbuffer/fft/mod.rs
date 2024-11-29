@@ -79,6 +79,14 @@ impl CircbufferFft {
     pub fn length_cplx(&self) -> JvxSize {
         unsafe { (*(self.hdl)).length_cplx }
     }
+
+    pub fn length(&self) -> JvxSize {
+        unsafe { (*(self.hdl)).circBuffer.length }
+    }
+
+    pub fn channels(&self) -> JvxSize {
+        unsafe { (*(self.hdl)).circBuffer.channels }
+    }
 }
 
 impl Drop for CircbufferFft {

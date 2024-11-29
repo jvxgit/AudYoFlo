@@ -86,6 +86,14 @@ impl Circbuffer {
             err => Err(err),
         }
     }
+
+    pub fn length(&self) -> JvxSize {
+        unsafe { (*self.hdl).length }
+    }
+
+    pub fn channels(&self) -> JvxSize {
+        unsafe { (*self.hdl).channels }
+    }
 }
 
 impl Drop for Circbuffer {
