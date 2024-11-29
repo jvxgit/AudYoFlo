@@ -648,6 +648,7 @@ else(JVX_COMPILE_BUILDTOOLS)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTSyncClock
   )
 
+	# WINDOWS
   if(JVX_USE_PART_ASIO)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAsio)
@@ -657,15 +658,18 @@ else(JVX_COMPILE_BUILDTOOLS)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTWindows)
   endif()
-
-  if(JVX_USE_PART_PAUDIO)
-    set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
-      ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPortAudio)
-  endif(JVX_USE_PART_PAUDIO)
+  
+  ## LINUX
   if(JVX_USE_PART_ALSA)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa)
   endif(JVX_USE_PART_ALSA)
+  if(JVX_USE_PART_PIPEWIRE)
+    set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPipewire)
+   endif()
+
+	# MACOSX
   if(JVX_USE_PART_COREAUDIO)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTCoreAudio)
@@ -674,6 +678,12 @@ else(JVX_COMPILE_BUILDTOOLS)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTIos)
   endif(JVX_USE_PART_IOSAUDIO)
+
+	# PLATFORM INDEPENDENT
+  if(JVX_USE_PART_PAUDIO)
+    set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
+      ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPortAudio)
+  endif(JVX_USE_PART_PAUDIO)
 
   ###
   # build video technology components

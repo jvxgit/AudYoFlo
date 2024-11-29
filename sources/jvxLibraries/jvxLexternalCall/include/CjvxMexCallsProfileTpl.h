@@ -172,12 +172,18 @@ public:
 			}
 		}
 
+		if (engaged && config.matlab_profiling_enabled)
+		{
+			// Profiler step not necessary requires c code execution
+			CjvxMexCallsProfiler::profile_pre_step_in_process();
+		}
+
 		if (!skipCCode)
 		{
 			if (engaged)
 			{
 				// Providing data only if c code is operated
-				CjvxMexCallsProfiler::provideDataMexCall(false);
+				CjvxMexCallsProfiler::obtainProvideDataMexCall(false);
 			}
 
 			// Run core algorithm in C
@@ -186,7 +192,7 @@ public:
 			if (engaged)
 			{
 				// Providing data only if c code is operated
-				CjvxMexCallsProfiler::provideDataMexCall(true);
+				CjvxMexCallsProfiler::obtainProvideDataMexCall(true);
 			}
 		}
 

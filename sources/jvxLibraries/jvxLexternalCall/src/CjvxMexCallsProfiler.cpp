@@ -31,7 +31,7 @@ CjvxMexCallsProfiler::unregister_profiling_data(const std::string& nm)
 }
 
 jvxErrorType
-CjvxMexCallsProfiler::provideDataMexCall(jvxBool postRun)
+CjvxMexCallsProfiler::obtainProvideDataMexCall(jvxBool provideData)
 {
 	jvxExternalDataType* passToMatlab = NULL;
 	jvxExternalDataType* passFromMatlab = NULL;
@@ -39,7 +39,7 @@ CjvxMexCallsProfiler::provideDataMexCall(jvxBool postRun)
 	{
 		if (elm.second->fld)
 		{
-			if (postRun && elm.second->c_to_matlab)
+			if (provideData && elm.second->c_to_matlab)
 			{
 				_theExtCallHandler->convertCToExternal(&passToMatlab, elm.second->fld,
 					elm.second->sz_elm, JVX_DATAFORMAT_DATA, elm.second->cplx);
@@ -60,7 +60,7 @@ CjvxMexCallsProfiler::provideDataMexCall(jvxBool postRun)
 					}
 				}
 			}
-			if (!postRun && !elm.second->c_to_matlab)
+			if (!provideData && !elm.second->c_to_matlab)
 			{
 				std::string command = "global " + varNameHdlMatlab + "; ";
 				command += elm.first;
@@ -83,9 +83,17 @@ CjvxMexCallsProfiler::provideDataMexCall(jvxBool postRun)
 				}
 				else
 				{
-					jvxApiString astr;
-					_theExtCallHandler->getLastErrorReason(&astr);
-					_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+					if (reportErrorPreRunMatlabData)
+					{
+						// Report the error only if instructed to report. Not to report an error may be ok on the first frame
+						jvxApiString astr;
+						_theExtCallHandler->getLastErrorReason(&astr);
+						_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+					}
+					else
+					{
+						_theExtCallHandler->postMessageExternal((" ##### >> Command <" + command + "> failed.").c_str(), false);
+					}
 				}
 			}
 		}
@@ -130,6 +138,25 @@ CjvxMexCallsProfiler::profile_start_in_process()
 			_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
 		}
 		debugStartDone = true;
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxMexCallsProfiler::profile_pre_step_in_process()
+{
+	if (!CjvxMexCallsProfiler::commandProfilePreStep.empty())
+	{
+		std::string command = "global " + CjvxMexCallsProfiler::varNameHdlMatlab +
+			"; [" + CjvxMexCallsProfiler::varNameHdlMatlab + "] = " + CjvxMexCallsProfiler::commandProfilePreStep + "(" + CjvxMexCallsProfiler::varNameHdlMatlab + "); ";
+		jvxErrorType resM = _theExtCallHandler->executeExternalCommand(command.c_str());
+
+		if (resM != JVX_NO_ERROR)
+		{
+			jvxApiString astr;
+			_theExtCallHandler->getLastErrorReason(&astr);
+			_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+		}
 	}
 	return JVX_NO_ERROR;
 }

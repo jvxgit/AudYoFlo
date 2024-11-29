@@ -1583,6 +1583,12 @@ jvx_bitfieldSelection2Id(jvxBitField sel, jvxSize numSel)
 	return(retVal);
 }
 
+jvxCBitField
+jvx_bitfield2CBitfield(jvxBitField sel, jvxSize offs, jvxSize* firstPosiNonZero)
+{
+	return sel.toCBitField(offs, firstPosiNonZero);
+}
+
 jvxSize
 jvx_bitfieldSelection2Id(jvxPropertyContainerSingle<jvxSelectionList_cpp> elm, jvxSize entrySel)
 {

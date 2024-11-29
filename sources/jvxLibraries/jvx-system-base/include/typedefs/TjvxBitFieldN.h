@@ -281,16 +281,48 @@ public:
 	{
 		return(listFieldsBits[JVX_NUMBER_32BITS_BITFIELD-1]);
 	};
-
-	jvxCBitField toCBitField()
+	
+	jvxCBitField toCBitField(jvxSize offs = 0, jvxSize *firstPosiNonZero = nullptr)
 	{
 		jvxCBitField val = 0;
 		jvxSize i;
 		jvxSize numTokensCopy = sizeof(jvxCBitField) / sizeof(jvxUInt32);
-		for (i = 0; i < numTokensCopy; i++)
+		
+		// Check if there are values before the offs		
+		/* Do not activate this part: if we use an offset we must be aware that positions below can always be non-zero!
+		if (posiNonZero)
+		{
+			for (i = 0; i < offs; i++)
+			{
+				if (listFieldsBits[JVX_NUMBER_32BITS_BITFIELD - 1 - i] != 0)
+				{
+					*err = true;
+				}
+			}
+		}		
+		*/ 
+
+		// Check that we do not leave the valid area of the bitfield in case we have an offset
+		assert((offs + numTokensCopy - 1) < JVX_NUMBER_32BITS_BITFIELD);
+
+		for (i = offs; i < numTokensCopy; i++)
 		{
 			val |= ((listFieldsBits[JVX_NUMBER_32BITS_BITFIELD - 1 - i] & 0xFFFFFFFF) << (sizeof(jvxUInt32)*i));
 		}
+		
+		if (firstPosiNonZero)
+		{
+			for (; i < JVX_NUMBER_32BITS_BITFIELD; i++)
+			{
+				if (listFieldsBits[JVX_NUMBER_32BITS_BITFIELD - 1 - i] != 0)
+				{
+					// Error here: there is still value in the upper part of the bitfield
+					*firstPosiNonZero = i;
+					break;
+				}
+			}
+		}
+
 		return(val);
 	};
 

@@ -393,6 +393,9 @@ jvx_bitfieldSelection2Id(jvxPropertyContainerSingle<jvxSelectionList_cpp> elm, j
 jvxSize
 jvx_cbitfieldSelection2Id(jvxCBitField sel);
 
+jvxCBitField
+jvx_bitfield2CBitfield(jvxBitField sel, jvxSize offs = 0, jvxSize * firstPosiNonZero = nullptr);
+
 jvxInt32
 jvx_uint642Id(jvxUInt64 sel);
 
