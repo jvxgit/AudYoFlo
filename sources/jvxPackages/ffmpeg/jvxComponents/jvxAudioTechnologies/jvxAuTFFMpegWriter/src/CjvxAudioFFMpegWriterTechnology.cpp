@@ -24,7 +24,6 @@ CjvxAudioFFMpegWriterTechnology::CjvxAudioFFMpegWriterTechnology(JVX_CONSTRUCTOR
 {
 	this->numberDevicesInit = 0;
 	this->deviceNamePrefix = "Output File";
-	allowMultipleInstances = false;
 }
 
 CjvxAudioFFMpegWriterTechnology::~CjvxAudioFFMpegWriterTechnology()

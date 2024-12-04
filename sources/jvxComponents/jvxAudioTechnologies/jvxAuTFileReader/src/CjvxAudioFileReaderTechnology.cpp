@@ -8,7 +8,6 @@ CjvxAudioFileReaderTechnology::CjvxAudioFileReaderTechnology(JVX_CONSTRUCTOR_ARG
 {
 	this->numberDevicesInit = 0;
 	this->deviceNamePrefix = "Input File";
-	allowMultipleInstances = false;
 }
 
 CjvxAudioFileReaderTechnology::~CjvxAudioFileReaderTechnology()

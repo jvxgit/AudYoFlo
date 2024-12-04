@@ -351,6 +351,7 @@ void ffi_host_allocate_device_capabilities(
 		ptr->flags = caps.flags;
 		ptr->flow = (int)caps.flow;
 		ptr->selectable = caps.selectable;
+		ptr->proxy = caps.proxy;
 		ptr->slotsubid = (int)tpId.slotsubid;
 		ptr->stat = stat;
 		*ptrRet = ptr;

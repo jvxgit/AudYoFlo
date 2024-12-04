@@ -16,7 +16,7 @@ class AudYoFloOneDeviceSelectionOption extends AudYoFloOneSelectionOptionBase {
   bool selectable = false;
   JvxComponentIdentification devIdent = JvxComponentIdentification();
   AudYoFloCBitField32 state = AudYoFloCBitField32();
-  bool singleton = false;
+  bool proxy = false;
 }
 
 class AudYoFloOneDeviceSelectionOptionWithId {

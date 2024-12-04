@@ -2995,7 +2995,7 @@ CjvxHostJsonCommandsShow::show_device_capabilities(CjvxJsonElement& jelm_result,
 	jelm.makeAssignmentString("sel", (caps.selectable? JVX_INDICATE_TRUE_SHORT : JVX_INDICATE_FALSE_SHORT));
 	jelm_lst.addConsumeElement(jelm);
 
-	jelm.makeAssignmentString("single", (caps.singleton ? JVX_INDICATE_TRUE_SHORT : JVX_INDICATE_FALSE_SHORT));
+	jelm.makeAssignmentString("proxy", (caps.proxy ? JVX_INDICATE_TRUE_SHORT : JVX_INDICATE_FALSE_SHORT));
 	jelm_lst.addConsumeElement(jelm);
 
 	jelm.makeAssignmentString("flags", jvx_bitfield162String(caps.flags));

@@ -45,6 +45,8 @@ ffigen:
   compiler-opts:
     "-DJVX_REDEFINE_DATATYPES_FFI"
 
+# Run <dart run ffigen> to produce new version from headers
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

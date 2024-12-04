@@ -1,0 +1,44 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genPWire_device";
+
+	SECTION properties_selected
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		
+	};
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_new_rate"};
+
+		
+	};
+
+	SECTION properties_active_higher
+	{
+		NAME = "properties_active_higher";
+		DESCRIPTION = "Properties in state active and higher [%]";
+		COMMENT = " ---- Properties in state active and higher---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION loadpercent
+		{
+			DESCRIPTION = "Current load during processing";	  // Defaults to NAME if not present
+			ID = 5;
+			TYPE = "JVX_DATAFORMAT_DATA";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_PROGRESSBAR";
+		};
+	};
+};

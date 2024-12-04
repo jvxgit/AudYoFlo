@@ -172,6 +172,7 @@ struct device_capabilities
 	int flow;
 	jvxCBitField32 flags;
 	int selectable;
+	int proxy;
 	int slotsubid;
 	int stat;
 };

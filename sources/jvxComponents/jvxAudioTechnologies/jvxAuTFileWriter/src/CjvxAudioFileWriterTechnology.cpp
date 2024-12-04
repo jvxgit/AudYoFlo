@@ -20,8 +20,7 @@ CjvxAudioFileWriterTechnology::CjvxAudioFileWriterTechnology(JVX_CONSTRUCTOR_ARG
 	CjvxTemplateTechnologyVD<CjvxAudioFileWriterDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
 	this->numberDevicesInit = 0;
-	this->deviceNamePrefix = "Output File";
-	allowMultipleInstances = false;
+	this->deviceNamePrefix = "Output File";	
 }
 
 CjvxAudioFileWriterTechnology::~CjvxAudioFileWriterTechnology()

@@ -1653,6 +1653,9 @@ class device_capabilities extends ffi.Struct {
   external int selectable;
 
   @ffi.Int32()
+  external int proxy;
+
+  @ffi.Int32()
   external int slotsubid;
 
   @ffi.Int32()

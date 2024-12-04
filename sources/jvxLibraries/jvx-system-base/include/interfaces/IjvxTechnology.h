@@ -7,8 +7,12 @@ public:
 
 	virtual JVX_CALLINGCONVENTION ~IjvxTechnology(){};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_device(jvxSize, IjvxDevice**) = 0;
+	//! Request a reference to a device. A typical device is handled straight forward. If a proxy device is in use, requesting a device may 
+	//! yield a new instance to allow dynamic devices. 
+	//! We may reference a proxy device directly as well if argument requestFlags contains bit set at jvxRequestDeviceOptions::JVX_REQUEST_REFERENCE_PROXY_SHIFT
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_device(jvxSize idx, IjvxDevice** dev, jvxCBitField requestFlags = 0) = 0;
 
+	//! Return the device
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_device(IjvxDevice*) = 0;
 
 	// This function is used to return the id of a given selected device. We use this

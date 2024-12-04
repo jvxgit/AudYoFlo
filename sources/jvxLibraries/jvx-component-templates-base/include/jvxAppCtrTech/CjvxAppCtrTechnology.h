@@ -27,9 +27,9 @@ public:
 
 	// ======================================================
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_device(jvxSize idx, IjvxDevice** dev)override
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_device(jvxSize idx, IjvxDevice** dev, jvxCBitField requestReferenceProxy)override
   {
-    return(CjvxTechnology::_request_device(idx, dev));
+    return(CjvxTechnology::_request_device(idx, dev, requestReferenceProxy));
   };
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_device(IjvxDevice* dev)override
   {

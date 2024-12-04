@@ -314,7 +314,10 @@ CjvxGenericWrapperTechnology::activate()
 				descror = strL.std_str();
 				descror = "<" + descror + "#" + jvx_size2String(i) + ">";
 
-				runtime.theSelectedTech->request_device(i, &theDevice);
+				jvxCBitField bb = 0;
+				jvx_bitZSet(bb, jvxRequestDeviceOptions::JVX_REQUEST_REFERENCE_PROXY_SHIFT);
+
+				runtime.theSelectedTech->request_device(i, &theDevice, bb);
 
 				// Do whatever is required
 				CjvxGenericWrapperDevice* newDevice = new CjvxGenericWrapperDevice(descrion.c_str(), false, descror.c_str(), _common_set.theFeatureClass, _common_set.theModuleName.c_str(),
@@ -323,11 +326,11 @@ CjvxGenericWrapperTechnology::activate()
 				jvxDeviceCapabilities caps;
 				theDevice->capabilities_device(caps);
 				newDevice->setDeviceReferences(theDevice, this, caps, name);
-
 				
 				// Whatever to be done for initialization
 				oneDeviceWrapper elm;
 				elm.hdlDev= static_cast<IjvxDevice*>(newDevice);
+				elm.actsAsProxy = caps.proxy;
 
 				_common_tech_set.lstDevices.push_back(elm);
 			}
@@ -802,6 +805,9 @@ CjvxGenericWrapperTechnology::put_configuration(jvxCallManagerConfiguration* cal
 
     if(this->_common_set_min.theState == JVX_STATE_ACTIVE)
     {
+		//This must be run BEFORE the submodule is being configured. Then, the submodule will not add proxy instances
+		_put_configuration_active(callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
+
 		if (runtime.theSelectedTech)
 		{
 			IjvxConfiguration* cfg = reqInterfaceObj<IjvxConfiguration>(runtime.theSelectedTech);
@@ -1062,8 +1068,7 @@ CjvxGenericWrapperTechnology::put_configuration(jvxCallManagerConfiguration* cal
 				jvx_bitZSet(genGenericWrapper_technology::select_files.output_file.value.selection(), 0);
 			}
 		}
-
-
+		
         // Lock all aspects
         this->lock_state();
 		_lock_properties_local();
@@ -1218,6 +1223,8 @@ CjvxGenericWrapperTechnology::get_configuration(jvxCallManagerConfiguration* cal
 	{
 		jvx_bitZSet(genGenericWrapper_technology::select_files.output_file.value.selection(), 0);
 	}
+
+	_get_configuration_active(callConf, processor, sectionWhereToAddAllSubsections);
 
 	genGenericWrapper_technology::get_configuration__properties_selected_active(callConf, processor, sectionWhereToAddAllSubsections);
 
@@ -2120,3 +2127,61 @@ CjvxGenericWrapperTechnology::processIssuedStringCommand(std::string command)
 	return(res);
 }
 
+jvxErrorType 
+CjvxGenericWrapperTechnology::request_device(jvxSize idx, IjvxDevice** dev, jvxCBitField requestFlags)
+{
+	jvxErrorType res = JVX_MY_BASE_CLASS_T::request_device(idx, dev, requestFlags);
+	return res;
+}
+
+CjvxGenericWrapperDevice* 
+CjvxGenericWrapperTechnology::local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init)
+{
+	IjvxDevice* theDevice = nullptr;
+	runtime.theSelectedTech->request_device(idx, &theDevice);
+
+	jvxApiString strL;
+	theDevice->name(&strL);
+	strL.assert_valid();
+	std::string name = strL.std_str();
+	name = "<" + name + ">";
+
+	theDevice->description(& strL);
+	strL.assert_valid();
+	std::string descrion = strL.std_str();
+	descrion = "<" + descrion + ">";
+
+	theDevice->descriptor(&strL);
+	strL.assert_valid();
+	std::string descror = strL.std_str();
+	descror = "<" + descror + ">";
+
+	// Do whatever is required
+	CjvxGenericWrapperDevice* newDevice = new CjvxGenericWrapperDevice(descrion.c_str(), false, descror.c_str(), _common_set.theFeatureClass, _common_set.theModuleName.c_str(),
+		JVX_COMPONENT_ACCESS_SUB_COMPONENT, JVX_COMPONENT_AUDIO_DEVICE, "", NULL);
+
+	jvxDeviceCapabilities caps;
+	theDevice->capabilities_device(caps);
+	assert(caps.proxy == false);
+
+	newDevice->setDeviceReferences(theDevice, this, caps, name);
+	return newDevice;
+}
+
+jvxErrorType 
+CjvxGenericWrapperTechnology::local_deallocate_device(CjvxGenericWrapperDevice** elmDev)
+{
+	if (elmDev)
+	{
+		CjvxGenericWrapperDevice* locDevice = *elmDev;
+		IjvxDevice* refDev = nullptr;
+		assert(locDevice);
+		locDevice->deviceReference(&refDev);
+		assert(refDev);
+
+		runtime.theSelectedTech->return_device(refDev);
+		delete* elmDev;
+		*elmDev = nullptr;
+	}
+	return JVX_NO_ERROR;
+}

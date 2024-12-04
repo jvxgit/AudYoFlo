@@ -8,7 +8,6 @@ CjvxAudioFFMpegReaderTechnology::CjvxAudioFFMpegReaderTechnology(JVX_CONSTRUCTOR
 {
 	this->numberDevicesInit = 0;
 	this->deviceNamePrefix = "Input File";
-	allowMultipleInstances = false;
 }
 
 CjvxAudioFFMpegReaderTechnology::~CjvxAudioFFMpegReaderTechnology()

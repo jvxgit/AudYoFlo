@@ -15,6 +15,8 @@ protected:
 	public:
 		IjvxDevice* hdlDev = nullptr;
 		jvxSize refCnt = 0;
+		jvxBool actsAsProxy = false;
+		jvxSize nSubElements = 0;
 	};
 	
 	struct
@@ -45,7 +47,7 @@ public:
 
 	jvxErrorType _module_name_device(jvxSize idx, jvxApiString* fldStr);
 
-	jvxErrorType _request_device(jvxSize idx, IjvxDevice** hdl_onreturn);
+	jvxErrorType _request_device(jvxSize idx, IjvxDevice** hdl_onreturn, jvxCBitField requestFlags);
 
 	jvxErrorType _return_device(IjvxDevice* dev);
 

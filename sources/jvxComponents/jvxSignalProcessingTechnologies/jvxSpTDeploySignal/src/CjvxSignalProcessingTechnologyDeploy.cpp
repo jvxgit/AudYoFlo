@@ -5,7 +5,7 @@ CjvxSignalProcessingTechnologyDeploy::CjvxSignalProcessingTechnologyDeploy(JVX_C
 {
 	this->numberDevicesInit = 1;
 	this->deviceNamePrefix = "Signal Processing Deploy Device";
-	allowMultipleInstances = true;
+	actAsProxy_init = true;
 }
 
 

@@ -46,7 +46,8 @@ class AudYoFloDevicelistFromJson {
           tmp = extractStringFromJson(elmD, 'state');
           if (tmp != null) {
             newDevice.state.fld = fn.Int32(
-                AudYoFloStringTranslator.translateEnumString(tmp, 'jvxState', trans.compileFlags()));
+                AudYoFloStringTranslator.translateEnumString(
+                    tmp, 'jvxState', trans.compileFlags()));
             tmp = null;
           }
 
@@ -61,11 +62,11 @@ class AudYoFloDevicelistFromJson {
               tmp = null;
             }
 
-            newDevice.singleton = false;
-            tmp = extractStringFromJson(subSubSec, 'single');
+            newDevice.proxy = false;
+            tmp = extractStringFromJson(subSubSec, 'proxy');
             if (tmp != null) {
               if (tmp == '*') {
-                newDevice.singleton = true;
+                newDevice.proxy = true;
               }
               tmp = null;
             }

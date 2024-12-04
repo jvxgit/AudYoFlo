@@ -494,7 +494,9 @@ else(JVX_COMPILE_BUILDTOOLS)
   endif()
   if(NOT ${JVX_OS} MATCHES "linux")
     set(JVX_USE_PART_ALSA FALSE)
+    # set(JVX_USE_PART_PIPEWIRE FALSE)
   endif()
+
   if(NOT ${JVX_OS} MATCHES "macosx")
     set(JVX_USE_PART_COREAUDIO FALSE)
   endif()
@@ -665,6 +667,7 @@ else(JVX_COMPILE_BUILDTOOLS)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa)
   endif(JVX_USE_PART_ALSA)
+  
   if(JVX_USE_PART_PIPEWIRE)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPipewire)

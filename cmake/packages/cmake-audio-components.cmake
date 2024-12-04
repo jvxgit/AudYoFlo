@@ -20,10 +20,16 @@ endif()
 
 if(JVX_USE_PART_ALSA)
 	include_directories(${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa)
-		set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_ALSA")
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_ALSA")
 	set(LOCAL_LIBS ${LOCAL_LIBS} jvxAuTAlsa_static asound)
 endif()
 
+if(JVX_USE_PART_PIPEWIRE)
+	include_directories(${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPipewire)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_PIPEWIRE")
+	set(LOCAL_LIBS ${LOCAL_LIBS} jvxAuTPipewire_static)
+endif()
+	
 if(JVX_USE_PART_WASAPI)
 	include_directories(${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTWindows)
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_WASAPI")

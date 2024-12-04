@@ -14,6 +14,10 @@
 #include "jvxAuTPortAudio.h"
 #endif
 
+#ifdef JVX_USE_PIPEWIRE
+#include "jvxAuTPipewire.h"
+#endif
+
 #ifdef JVX_USE_WASAPI
 #include "jvxAuTWindows.h"
 #endif
@@ -99,6 +103,17 @@ jvxErrorType jvx_access_link_objects(
 			*funcTerm = jvxAuTAsio_terminate;
 			return(JVX_NO_ERROR);
 		}
+		cnt++;
+#endif
+
+#if defined JVX_USE_PIPEWIRE
+		if (id == cnt)
+		{
+			adescr->assign("Pipewire Audio");
+			*funcInit = jvxAuTPipewire_init;
+			*funcTerm = jvxAuTPipewire_terminate;
+			return(JVX_NO_ERROR);
+	}
 		cnt++;
 #endif
 		break;

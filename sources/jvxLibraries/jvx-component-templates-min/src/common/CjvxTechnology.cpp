@@ -112,7 +112,7 @@ CjvxTechnology::_module_name_device(jvxSize idx, jvxApiString* fldStr)
 }
 
 jvxErrorType
-CjvxTechnology::_request_device(jvxSize idx, IjvxDevice** hdl_onreturn)
+CjvxTechnology::_request_device(jvxSize idx, IjvxDevice** hdl_onreturn, jvxCBitField requestReferenceProxy)
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if (_common_set_min.theState == JVX_STATE_ACTIVE)

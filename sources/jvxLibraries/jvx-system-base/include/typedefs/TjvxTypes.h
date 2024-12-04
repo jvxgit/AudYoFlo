@@ -297,7 +297,9 @@ class jvxDeviceCapabilities
 public:
 	jvxCBitField capsFlags = ((jvxCBitField)1 << (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_DUPLEX_SHIFT);
 	jvxDeviceDataFlowType flow = jvxDeviceDataFlowType::JVX_DEVICE_DATAFLOW_ACTIVE;
-	jvxBool singleton = true;
+	
+	// This property indicates if the device is a maps to a proxy or to a real device. A proxy is never actibated itself, instead, it exposes another device
+	jvxBool proxy = false;
 	jvxBool selectable = true;
 	jvxCBitField16 flags = 0;
 };
@@ -497,6 +499,11 @@ typedef enum
 typedef jvxCBitField jvxFlagTag;
 
 typedef jvxErrorType(*jvxPropertyCallback)(jvxHandle* priv, jvxFloatingPointer* content);
+
+typedef enum
+{
+	JVX_REQUEST_REFERENCE_PROXY_SHIFT = 0x0
+} jvxRequestDeviceOptions;
 
 namespace
 {

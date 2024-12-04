@@ -74,6 +74,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxAudioDevice.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxAudioTechnologies/CjvxAudioTechnology.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxAudioTechnology.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxMixedDevicesAudioTechnology.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxMixedDevicesAudioDevice.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxCustomTechnologies/CjvxCustomDevice.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxCustomTechnologies/CjvxCustomDevice.h	
@@ -207,7 +209,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxTechnologies/CjvxFullMasterDevice.cpp
 	## ${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxTechnologyDevCaps.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxTemplateTechnology.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxTemplateTechnologyVD.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxTemplateTechnologyVD.h	
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxAudioWithVideoDevice.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxTechnologies/CjvxAudioWithVideoDevice.cpp

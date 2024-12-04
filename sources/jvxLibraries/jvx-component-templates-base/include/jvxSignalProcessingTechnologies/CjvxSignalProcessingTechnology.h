@@ -56,9 +56,15 @@ public:
 		return(JVX_ERROR_UNSUPPORTED);
 	};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION request_device(jvxSize idx, IjvxDevice** dev)override{return(CjvxTechnology::_request_device(idx, dev));};
+	virtual jvxErrorType JVX_CALLINGCONVENTION request_device(jvxSize idx, IjvxDevice** dev, jvxCBitField requestFlags)override
+	{
+		return(CjvxTechnology::_request_device(idx, dev, requestFlags));
+	};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION return_device(IjvxDevice* dev)override{return(CjvxTechnology::_return_device(dev));};
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_device(IjvxDevice* dev)override
+	{
+		return(CjvxTechnology::_return_device(dev));
+	};
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION ident_device(jvxSize* idx, IjvxDevice* dev)override
 	{

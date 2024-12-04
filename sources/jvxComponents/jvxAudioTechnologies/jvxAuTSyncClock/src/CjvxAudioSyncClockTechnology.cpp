@@ -3,8 +3,7 @@
 
 CjvxAudioSyncClockTechnology::CjvxAudioSyncClockTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	LOCAL_TEMPLATE_BASE_CLASS(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
-{
-	allowMultipleInstances = false;
+{	
 	passThisInit = this;
 }
 
