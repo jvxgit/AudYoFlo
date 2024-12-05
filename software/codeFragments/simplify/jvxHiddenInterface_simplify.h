@@ -56,7 +56,7 @@
 #ifdef JVX_INTERFACE_SUPPORT_BASE_CLASS
 			res = JVX_INTERFACE_SUPPORT_BASE_CLASS::request_hidden_interface(tp, hdl);
 #else
-			res = _request_hidden_interface(tp, hdl);
+			res = this->_request_hidden_interface(tp, hdl);
 #endif
 		}
 		return(res);
@@ -176,7 +176,7 @@
 #ifdef JVX_INTERFACE_SUPPORT_BASE_CLASS
 			res = JVX_INTERFACE_SUPPORT_BASE_CLASS::return_hidden_interface(tp, hdl);
 #else
-			res = _return_hidden_interface(tp, hdl);
+			res = this->_return_hidden_interface(tp, hdl);
 #endif
 		}
 		return(res);

@@ -494,7 +494,7 @@ else(JVX_COMPILE_BUILDTOOLS)
   endif()
   if(NOT ${JVX_OS} MATCHES "linux")
     set(JVX_USE_PART_ALSA FALSE)
-    # set(JVX_USE_PART_PIPEWIRE FALSE)
+    set(JVX_USE_PART_PIPEWIRE FALSE)
   endif()
 
   if(NOT ${JVX_OS} MATCHES "macosx")

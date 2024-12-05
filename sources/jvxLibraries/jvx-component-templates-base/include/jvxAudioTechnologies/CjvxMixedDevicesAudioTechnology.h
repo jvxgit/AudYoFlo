@@ -12,9 +12,9 @@ template <class T> class CjvxMixedDevicesAudioTechnology :
 {
 public:
 	JVX_CALLINGCONVENTION CjvxMixedDevicesAudioTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
-		CjvxTemplateTechnologyVD<CjvxAudioPWireDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+		CjvxTemplateTechnologyVD<T>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{
-		actAsProxy_init = true;
+		this->actAsProxy_init = true;
 	};
 
 	JVX_CALLINGCONVENTION ~CjvxMixedDevicesAudioTechnology()
@@ -54,7 +54,7 @@ public:
 	T* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init) override
 	{
 		T* newDev = nullptr;
-		JVX_SAFE_ALLOCATE_OBJECT(newDev, CjvxAudioPWireDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL));
+		JVX_SAFE_ALLOCATE_OBJECT(newDev, T(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL));
 		newDev->initializeDevice(actAsProxy_init, idx);
 		return newDev;
 	};
@@ -75,7 +75,7 @@ public:
 	{
 		jvxSize numDevicesBefore = 0;
 		this->number_devices(&numDevicesBefore);
-		jvxErrorType res = CjvxTemplateTechnologyVD<CjvxAudioPWireDevice>::request_device(idx, dev, requestFlags);
+		jvxErrorType res = CjvxTemplateTechnologyVD<T>::request_device(idx, dev, requestFlags);
 		if (res == JVX_NO_ERROR)
 		{
 			jvxSize numDevicesAfter = 0;
@@ -97,7 +97,7 @@ public:
 	{
 		jvxSize numDevicesBefore = 0;
 		this->number_devices(&numDevicesBefore);
-		jvxErrorType res = CjvxTemplateTechnologyVD<CjvxAudioPWireDevice>::return_device(dev);
+		jvxErrorType res = CjvxTemplateTechnologyVD<T>::return_device(dev);
 		if (res == JVX_NO_ERROR)
 		{
 			jvxSize numDevicesAfter = 0;
@@ -122,9 +122,9 @@ public:
 		const char* filename = "", jvxInt32 lineno = -1)override
 	{
 		std::vector<std::string> warnings;
-		if (_common_set_min.theState == JVX_STATE_ACTIVE)
-		{
-			_put_configuration_active(callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
+		if (this->_common_set_min.theState == JVX_STATE_ACTIVE)
+		  {
+		_put_configuration_active(callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
 		}
 		return JVX_NO_ERROR;
 	};
@@ -132,7 +132,7 @@ public:
 	jvxErrorType get_configuration(jvxCallManagerConfiguration* callConf,
 		IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections)override
 	{
-		_get_configuration_active(callConf, processor, sectionWhereToAddAllSubsections);
+		this->_get_configuration_active(callConf, processor, sectionWhereToAddAllSubsections);
 		return JVX_NO_ERROR;
 	};
 
