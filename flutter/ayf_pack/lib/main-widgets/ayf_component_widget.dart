@@ -189,6 +189,7 @@ class _AudYoFloDropdownWidgetStates extends State<AudYoFloDropdownComponents> {
     // If the component selected before is no longer available, here we have a mismatch
     // Therefore, we check and correct the slection before we show it
     theDbgModel.verifyComponentSelection(lstComponents);
+    String ttipText = theDbgModel.idSelectCp.txt;
 
     return LayoutBuilder(builder: (context, constraints) {
       return SizedBox(
@@ -198,42 +199,45 @@ class _AudYoFloDropdownWidgetStates extends State<AudYoFloDropdownComponents> {
             children: [
               Flexible(
                 flex: 3,
-                child: DropdownButton<JvxComponentIdentification>(
-                  value: theDbgModel.idSelectCp,
-                  icon: const Icon(Icons.arrow_downward),
-                  isExpanded: true,
-                  iconSize: 24,
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (JvxComponentIdentification? newValue) {
-                    if (newValue != null) {
-                      // The setState is to update this combobox, the operation on the dbgModel
-                      // will trigger the provider on the dbgModel to update the grid widget with all
-                      // the properties
+                child: Tooltip(
+                  message: ttipText,
+                  child: DropdownButton<JvxComponentIdentification>(
+                    value: theDbgModel.idSelectCp,
+                    icon: const Icon(Icons.arrow_downward),
+                    isExpanded: true,
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (JvxComponentIdentification? newValue) {
+                      if (newValue != null) {
+                        // The setState is to update this combobox, the operation on the dbgModel
+                        // will trigger the provider on the dbgModel to update the grid widget with all
+                        // the properties
 
-                      // However, we allow an optional callback in addition to simplify usage
-                      if (widget.OnChanged != null) {
-                        widget.OnChanged!();
+                        // However, we allow an optional callback in addition to simplify usage
+                        if (widget.OnChanged != null) {
+                          widget.OnChanged!();
+                        }
+
+                        setState(() {
+                          theDbgModel.selectNewComponent(newValue);
+                        });
                       }
-
-                      setState(() {
-                        theDbgModel.selectNewComponent(newValue);
-                      });
-                    }
-                  },
-                  items: lstComponents
-                      .map<DropdownMenuItem<JvxComponentIdentification>>(
-                          (JvxComponentIdentification value) {
-                    String showText = theBeCache.descriptionComponent(value);
-                    return DropdownMenuItem<JvxComponentIdentification>(
-                      value: value,
-                      child: Text(showText),
-                    );
-                  }).toList(),
+                    },
+                    items: lstComponents
+                        .map<DropdownMenuItem<JvxComponentIdentification>>(
+                            (JvxComponentIdentification value) {
+                      String showText = theBeCache.descriptionComponent(value);
+                      return DropdownMenuItem<JvxComponentIdentification>(
+                        value: value,
+                        child: Text(showText),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
               Flexible(
