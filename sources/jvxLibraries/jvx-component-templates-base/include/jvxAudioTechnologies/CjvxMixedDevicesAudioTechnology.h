@@ -124,7 +124,7 @@ public:
 		std::vector<std::string> warnings;
 		if (this->_common_set_min.theState == JVX_STATE_ACTIVE)
 		  {
-		_put_configuration_active(callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
+		this->_put_configuration_active(callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
 		}
 		return JVX_NO_ERROR;
 	};
