@@ -69,7 +69,7 @@ CjvxAudioPWireTechnology::put_configuration(jvxCallManagerConfiguration* callMan
 		processor, sectionToContainAllSubsectionsForMe, filename, lineno);
 	if (res == JVX_NO_ERROR)
 	{
-		_put_configuration_active(callMan , processor, sectionToContainAllSubsectionsForMe, filename, lineno);
+		genPWire_technology::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe);	
 	}
 	return res;
 }
@@ -78,7 +78,7 @@ jvxErrorType
 CjvxAudioPWireTechnology::get_configuration(jvxCallManagerConfiguration* callMan,
 	IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections)
 {
-	jvxErrorType res = CjvxMixedDevicesAudioTechnology<CjvxAudioPWireDevice>::put_configuration(callMan, processor, sectionWhereToAddAllSubsections);
+	jvxErrorType res = CjvxMixedDevicesAudioTechnology<CjvxAudioPWireDevice>::get_configuration(callMan, processor, sectionWhereToAddAllSubsections);
 	if (res == JVX_NO_ERROR)
 	{
 		genPWire_technology::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);

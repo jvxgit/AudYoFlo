@@ -124,18 +124,7 @@ public:
 		std::vector<std::string> warnings;
 		if (_common_set_min.theState == JVX_STATE_ACTIVE)
 		{
-			// genPWire_technology::put_configuration_all(callConf, processor, sectionToContainAllSubsectionsForMe, &warnings);
-			if (!warnings.empty())
-			{
-				jvxSize i;
-				std::string txt;
-				for (i = 0; i < warnings.size(); i++)
-				{
-					txt = __FUNCTION__;
-					txt += ": Failed to read property " + warnings[i];
-					_report_text_message(txt.c_str(), JVX_REPORT_PRIORITY_WARNING);
-				}
-			}
+			_put_configuration_active(callConf, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
 		}
 		return JVX_NO_ERROR;
 	};
