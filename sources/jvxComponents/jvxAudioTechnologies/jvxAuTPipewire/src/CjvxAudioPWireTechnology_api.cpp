@@ -18,6 +18,7 @@
 // -> pw-metadata -n settings 0 clock.force-quantum <buffersize>
 // Works even with odd numbers like 53 :-)
 //
+// Show all objects in pipewire universe: pw-cli list-objects >> log2.txt
 
 static void on_async_done(void *data, uint32_t id, int seq)
 {
@@ -65,27 +66,8 @@ void
 CjvxAudioPWireTechnology::activate_technology_api()
 {
 	jvxSize i;
-	std::string nmPrefix = "Dummy";
-	for (i = 0; i < 3; i++)
-	{
-		std::string devName = nmPrefix + "_" + jvx_size2String(i);
-
-		// Do whatever is required
-		CjvxAudioPWireDevice* newDevice = local_allocate_device(devName.c_str(), false,
-			_common_set.theDescriptor.c_str(),
-			_common_set.theFeatureClass,
-			_common_set.theModuleName.c_str(),
-			JVX_COMPONENT_ACCESS_SUB_COMPONENT,
-			(jvxComponentType)(_common_set.theComponentType.tp + 1),
-			"", NULL, JVX_SIZE_UNSELECTED, false);
-
-		// Whatever to be done for initialization
-		oneDeviceWrapper elm;
-		elm.hdlDev = static_cast<IjvxDevice*>(newDevice);
-		elm.actsAsProxy = false;
-		_common_tech_set.lstDevices.push_back(elm);
-	}
-
+	
+    // Start Pipewire
     pw_init(&argc, &argv);
 
     std::cout << "Compiled with libpipewire " << pw_get_headers_version() << ", linked with libpipewire " << pw_get_library_version() << std::endl;
@@ -112,7 +94,41 @@ CjvxAudioPWireTechnology::activate_technology_api()
 
     this->async_run_trigger();
 
-    std::cout << __FUNCTION__ << ": Initialization of Pipewire service complete."  << std::endl;
+    // std::cout << __FUNCTION__ << ": Initialization of Pipewire service complete."  << std::endl;
+
+    this->sort_unsorted_devices();
+
+    std::string nmPrefix = "Dummy";
+	while(devices_linked.size())
+	{
+        auto elm = devices_linked.begin();
+        oneDevice* theDev = *elm;
+
+        devices_linked.erase(elm);
+
+		std::string devName = theDev->nick; 
+        if(devName.empty())
+        {
+            devName = theDev->description; 
+        }
+
+		// Do whatever is required
+		CjvxAudioPWireDevice* newDevice = local_allocate_device(devName.c_str(), false,
+			_common_set.theDescriptor.c_str(),
+			_common_set.theFeatureClass,
+			_common_set.theModuleName.c_str(),
+			JVX_COMPONENT_ACCESS_SUB_COMPONENT,
+			(jvxComponentType)(_common_set.theComponentType.tp + 1),
+			"", NULL, JVX_SIZE_UNSELECTED, false);
+
+        newDevice->setReferencesApi(theDev);
+
+		// Whatever to be done for initialization
+		oneDeviceWrapper elmDW;
+		elmDW.hdlDev = static_cast<IjvxDevice*>(newDevice);
+		elmDW.actsAsProxy = false;
+		_common_tech_set.lstDevices.push_back(elmDW);
+	}
 };
 
 void 
@@ -142,9 +158,12 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
                 uint32_t permissions, const char *type, uint32_t version,
                 const struct spa_dict *props)
 {
-    if (strcmp(type, PW_TYPE_INTERFACE_Device) == 0) {
+    printf("object: id:%u type:%s/%d\n", id, type, version);
+
+    if (strcmp(type, PW_TYPE_INTERFACE_Device) == 0) 
+    {
         const char *media_class = spa_dict_lookup(props, "media.class");
-        if (strstr(media_class, "Device") || strstr(media_class, "device")) {
+        if (media_class && (strstr(media_class, "Device") || strstr(media_class, "device"))) {
             const char *nick = spa_dict_lookup(props, "device.nick");
             const char *descr = spa_dict_lookup(props, "device.description");
             const char *api_name = spa_dict_lookup(props, "device.api");
@@ -152,17 +171,18 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
             oneDevice* newDev = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newDev, oneDevice);
             newDev->id = id;
-            newDev->description = descr;
-            newDev->nick = nick;
-            newDev->api_name = api_name;
-            newDev->name = name;
+            if(descr) newDev->description = descr;
+            if(nick) newDev->nick = nick;
+            if(api_name) newDev->api_name = api_name;
+            if(name) newDev->name = name;
 
             devices_unsorted.push_back(newDev);
         }
-
-    if (strcmp(type, PW_TYPE_INTERFACE_Node) == 0) {
+    }
+    if (strcmp(type, PW_TYPE_INTERFACE_Node) == 0) 
+    {
         const char *media_class = spa_dict_lookup(props, "media.class");
-        if (strstr(media_class, "Sink") || strstr(media_class, "sink")) 
+        if (media_class && (strstr(media_class, "Sink") || strstr(media_class, "sink"))) 
         {
             const char *dev_id = spa_dict_lookup(props, "device.id");
             const char *nick = spa_dict_lookup(props, "node.nick");
@@ -172,13 +192,14 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
             oneNode* newNode = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newNode, oneNode);
             newNode->id = id;
-            newNode->ref_device = atoi(dev_id);
-            newNode->description = descr;
-            newNode->nick = nick;
-            newNode->name = name;
+            newNode->isSink = true;
+            if(dev_id) newNode->ref_device = atoi(dev_id);
+            if(descr) newNode->description = descr;
+            if(nick) newNode->nick = nick;
+            if(name) newNode->name = name;
             nodes_unsorted_sinks.push_back(newNode);
         }
-        else if (strstr(media_class, "Source") || strstr(media_class, "source")) 
+        else if (media_class && (strstr(media_class, "Source") || strstr(media_class, "source"))) 
         {
             const char *dev_id = spa_dict_lookup(props, "device.id");
             const char *nick = spa_dict_lookup(props, "node.nick");
@@ -188,114 +209,38 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
             oneNode* newNode = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newNode, oneNode);
             newNode->id = id;
-            newNode->ref_device = atoi(dev_id);
-            newNode->description = descr;
-            newNode->nick = nick;
-            newNode->name = name;
+            newNode->isSink = false;
+            if(dev_id) newNode->ref_device = atoi(dev_id);
+            if(descr) newNode->description = descr;
+            if(nick) newNode->nick = nick;
+            if(name) newNode->name = name;
             nodes_unsorted_sources.push_back(newNode);
         }
     }
 
-    if (strcmp(type, PW_TYPE_INTERFACE_Port) == 0) {
+    if (strcmp(type, PW_TYPE_INTERFACE_Port) == 0) 
+    {
         const char *audio_channel = spa_dict_lookup(props, "audio.channel");
         if (audio_channel) 
         {
             const char *node_id = spa_dict_lookup(props, "node.id");
+            const char *port_id = spa_dict_lookup(props, "port.id");
             const char *nick = spa_dict_lookup(props, "port.nick");
-                        const char *nick = spa_dict_lookup(props, "port.nick");
-            const char *descr = spa_dict_lookup(props, "node.description");
-            const char *name = spa_dict_lookup(props, "node.name");
-            const char *direction = spa_dict_lookup(props, "node.direction");
+            const char *name = spa_dict_lookup(props, "port.name");
+            const char *direction = spa_dict_lookup(props, "port.direction");
+            const char *physical = spa_dict_lookup(props, "port.physical");
 
             onePort* newPort = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newPort, onePort);
             newPort->id = id;
-            newPort->ref_node = atoi(node_id);            
-            newPort->nick = nick;
-            newPort->name = name;
-            newPort->direction = direction;
+            if(node_id) newPort->ref_node = atoi(node_id);
+            if(port_id) newPort->port_id = atoi(port_id);
+            if(nick) newPort->nick = nick;
+            if(name) newPort->name = name;
+            if(direction) newPort->direction = direction;
+            if(physical) newPort->physical = physical;
             ports_unsorted.push_back(newPort);
         }        
-    }
-
-    // printf("object: id:%u type:%s/%d\n", id, type, version);
-
-    // Ausgabe für Audioquellen (sources)
-#if 0
-    if (strcmp(type, PW_TYPE_INTERFACE_Node) == 0) {
-        const char *media_class = spa_dict_lookup(props, "media.class");
-        const char *name = spa_dict_lookup(props, "node.name");
-        
-        if (media_class && name) {
-            if (strstr(media_class, "Source") || strstr(media_class, "source")) 
-            {
-                printf("Audio Source:\n");
-                printf("  ID: %d\n", id);
-                printf("  Name: %s\n", name);
-                printf("  Media Class: %s\n\n", media_class);
-
-                printf("=== Detailed Properties ===\n");
-    
-    // Iterate through all properties
-    for (uint32_t i = 0; i < props->n_items; i++) {
-        const struct spa_dict_item *item = &props->items[i];
-        
-        // Nur nicht-leere Eigenschaften ausgeben
-        if (item->key && item->value) {
-            printf("%s: %s\n", item->key, item->value);
-        }
-    }
-
-                /*
-                const char* channels_str = spa_dict_lookup(props, "audio.channels");
-                if (!channels_str)
-                    channels_str = spa_dict_lookup(props, "node.channel-map");
-                if (!channels_str)
-                    channels_str = spa_dict_lookup(props, "spa.audio.channels");
-
-                if (channels_str) {
-                    printf("  Channels: %s\n", channels_str);
-                } else {
-                    printf("  Channels: Unable to determine\n");
-                }
-
-                const char *sample_rate_str = NULL;
-                sample_rate_str = spa_dict_lookup(props, "audio.rate");
-                if (!sample_rate_str)
-                    sample_rate_str = spa_dict_lookup(props, "spa.audio.rate");
-                if (!sample_rate_str)
-                    sample_rate_str = spa_dict_lookup(props, "device.rate");
-
-                if (sample_rate_str) {
-                    printf("  Sample Rate: %s Hz\n", sample_rate_str);
-                } else {
-                    printf("  Sample Rate: Unable to determine\n");
-                }
-
-                const char *format_str = NULL;
-                sample_rate_str = spa_dict_lookup(props, "audio.format");
-                if (!sample_rate_str)
-                    sample_rate_str = spa_dict_lookup(props, "spa.audio.format");
-                if (!sample_rate_str)
-                    sample_rate_str = spa_dict_lookup(props, "device.format");
-
-                if (format_str) {
-                    printf("  Format: %s \n", format_str);
-                } else {
-                    printf("  Format: Unable to determine\n");
-                }
-                */
-            }
-            
-            if (strstr(media_class, "Sink") || strstr(media_class, "sink")) 
-            {
-                printf("Audio Sink:\n");
-                printf("  ID: %d\n", id);
-                printf("  Name: %s\n", name);
-                printf("  Media Class: %s\n\n", media_class);
-            }
-        }
-        #endif
     }
 }
 
@@ -351,313 +296,159 @@ CjvxAudioPWireTechnology::async_run_cb(jvxUInt32 id, int seq)
         JVX_SET_NOTIFICATION(async_run.notWait);
     }
 }
-#if 0
 
-#include "CjvxAudioWindowsTechnology.h"
-
-#define INITGUID
-#include <MMDeviceAPI.h>
-#include <AudioClient.h>
-#include <AudioPolicy.h>
-#include <functiondiscoverykeys.h>
-#include <mmdeviceapi.h>
-#include <strsafe.h>
-
-// ==========================================================================
-template <class T> void SafeRelease(T** ppT)
+void 
+CjvxAudioPWireTechnology::sort_unsorted_devices()
 {
-    if (*ppT)
+    // Associate the ports to the nodes and the nodes to the devices
+    std::list<onePort*> new_ports_unsorted;
+       
+    while(ports_unsorted.size())
     {
-        (*ppT)->Release();
-        *ppT = NULL;
+        auto elmP = ports_unsorted.begin();
+
+        // Extract one port
+        onePort* thePort = (*elmP);
+        ports_unsorted.erase(elmP);
+
+        jvxSize searchId = thePort->ref_node;
+        jvxBool newParentFound = false;
+        for(auto& elmN: nodes_unsorted_sinks)
+        {
+            if(elmN->id == searchId)
+            {
+                if(thePort->direction == "in")
+                {
+                    elmN->in_ports.push_back(thePort);
+                }
+                else
+                {                
+                    elmN->out_ports.push_back(thePort);                    
+                }
+                newParentFound = true;
+            }
+        }
+        if(!newParentFound)
+        {
+            for (auto &elmN : nodes_unsorted_sources)
+            {
+                if (elmN->id == searchId)
+                {
+                    if (thePort->direction == "in")
+                    {
+                        elmN->in_ports.push_back(thePort);
+                    }
+                    else
+                    {
+                        elmN->out_ports.push_back(thePort);
+                    }
+                    newParentFound = true;
+                }
+            }
+        }
+        if(!newParentFound)
+        {
+            new_ports_unsorted.push_back(thePort);
+        }
     }
+    ports_unsorted = new_ports_unsorted;
+
+    // ============================================================================
+    std::list<oneNode*> new_nodes_unsorted_sinks;
+    while(nodes_unsorted_sinks.size())
+    {
+        auto elmN = nodes_unsorted_sinks.begin();
+
+        // Extract one port
+        oneNode* theNode = (*elmN);
+        nodes_unsorted_sinks.erase(elmN);
+
+        jvxSize searchId = theNode->ref_device;
+        jvxBool newParentFound = false;
+        for(auto& elmD: devices_unsorted)
+        {
+            jvxSize searchId = theNode->ref_device;
+
+            if(elmD->id == searchId)
+            {
+                if(theNode->isSink)
+                {
+                    elmD->sinks.push_back(theNode);
+                }
+                else
+                {                
+                    elmD->sources.push_back(theNode);                    
+                }
+                newParentFound = true;
+            }
+        }
+        if(!newParentFound)
+        {
+            new_nodes_unsorted_sinks.push_back(theNode);
+        }
+    }
+    nodes_unsorted_sinks = new_nodes_unsorted_sinks;
+
+    // ============================================================================
+    std::list<oneNode*> new_nodes_unsorted_sources;
+    while(nodes_unsorted_sources.size())
+    {
+        auto elmN = nodes_unsorted_sources.begin();
+
+        // Extract one port
+        oneNode* theNode = (*elmN);
+        nodes_unsorted_sources.erase(elmN);
+
+        jvxSize searchId = theNode->ref_device;
+        jvxBool newParentFound = false;
+        for(auto& elmD: devices_unsorted)
+        {
+            jvxSize searchId = theNode->ref_device;
+
+            if(elmD->id == searchId)
+            {
+                if(theNode->isSink)
+                {
+                    elmD->sinks.push_back(theNode);
+                }
+                else
+                {                
+                    elmD->sources.push_back(theNode);                    
+                }
+                newParentFound = true;
+            }
+        }
+        if(!newParentFound)
+        {
+            new_nodes_unsorted_sources.push_back(theNode);
+        }
+    }
+    nodes_unsorted_sources = new_nodes_unsorted_sources;
+
+    // Finally, pre-sort the valid devices!
+    std::list<oneDevice*> new_devices_unsorted;
+    while(devices_unsorted.size())
+    {
+        auto elmD = devices_unsorted.begin();
+        oneDevice* newDev = *elmD;
+
+        devices_unsorted.erase(elmD);
+        if(check_device_ready(newDev))
+        {
+            devices_linked.push_back(newDev);
+        }
+        else
+        {
+            new_devices_unsorted.push_back(newDev);
+        }
+    } 
 }
 
-jvxErrorType
-scan_device(IMMDeviceCollection* DeviceCollection, IMMDevice** device, WAVEFORMATEXTENSIBLE* pwex, std::string& retVal, jvxSize DeviceIndex, jvxBool& defDevice, LPWSTR deviceIdDefault)
+jvxBool 
+CjvxAudioPWireTechnology::check_device_ready(oneDevice* theDevice)
 {
-    jvxErrorType res = JVX_NO_ERROR;
-    
-    LPWSTR deviceId;
-    HRESULT hr;
-
-    WAVEFORMATEXTENSIBLE wext = { 0 };
-    WAVEFORMATEX wex = { 0 };
-    if (*device == nullptr)
-    {
-        hr = DeviceCollection->Item(DeviceIndex, device);
-        if (FAILED(hr))
-        {
-            printf("Unable to get device " JVX_PRINTF_CAST_SIZE ": %x\n", DeviceIndex, hr);
-            res = JVX_ERROR_INTERNAL;
-            goto leave_exit_error;
-        }
-    }
-    hr = (*device)->GetId(&deviceId);
-    if (FAILED(hr))
-    {
-        printf("Unable to get device " JVX_PRINTF_CAST_SIZE " id: %x\n", DeviceIndex, hr);
-        res = JVX_ERROR_INTERNAL;
-        goto leave_exit_error;
-    }
-
-    defDevice = false;
-    if (wcscmp(deviceId, deviceIdDefault) == 0)
-    {
-        defDevice = true;
-    }
-
-    IPropertyStore* propertyStore;
-    hr = (*device)->OpenPropertyStore(STGM_READ, &propertyStore);
-    if (FAILED(hr))
-    {
-        printf("Unable to open device " JVX_PRINTF_CAST_SIZE " property store: %x\n", DeviceIndex, hr);
-        res = JVX_ERROR_INTERNAL;
-        goto leave_exit_error;
-    }
-
-    PROPVARIANT friendlyName;
-    PropVariantInit(&friendlyName);
-    hr = propertyStore->GetValue(PKEY_Device_FriendlyName, &friendlyName);
-
-    if (FAILED(hr))
-    {
-        printf("Unable to retrieve friendly name for device " JVX_PRINTF_CAST_SIZE " : %x\n", DeviceIndex, hr);
-        res = JVX_ERROR_INTERNAL;
-        goto leave_exit_error;
-    }
-
-    wchar_t deviceNamew[128] = { 0 };
-    char deviceName[128] = { 0 };
-    switch (friendlyName.vt)
-    {
-    case VT_LPWSTR:
-        hr = StringCbPrintfW(deviceNamew, sizeof(deviceNamew), L"%s", friendlyName.pwszVal);
-        (LONG)WideCharToMultiByte(CP_ACP, 0, (LPWSTR)deviceNamew, -1, deviceName, sizeof(deviceNamew), 0, 0);
-        break;
-    case VT_LPSTR:
-        hr = StringCbPrintfA(deviceName, sizeof(deviceName), "%s", friendlyName.pszVal);
-        break;
-    }
-    if (FAILED(hr))
-    {
-        assert(0);
-    }
-
-    // ======================================================================
-   
-    PROPVARIANT channels;
-    PropVariantInit(&channels);
-    hr = propertyStore->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &channels);
-
-    // =============================================================================
-
-    PROPVARIANT devFormat;
-    PropVariantInit(&devFormat);
-    hr = propertyStore->GetValue(PKEY_AudioEngine_DeviceFormat, &devFormat);
-    if (devFormat.vt == VT_BLOB)
-    {
-        WAVEFORMATEX* wformEx = (WAVEFORMATEX*)devFormat.blob.pBlobData;
-        *((WAVEFORMATEX*)pwex) = *wformEx;
-        WAVEFORMATEXTENSIBLE* wformExt = (WAVEFORMATEXTENSIBLE*)wformEx;
-        if (wformEx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-        {
-            *pwex = *wformExt;
-        }
-    }
-    // =============================================================================
-
-    PropVariantClear(&friendlyName);
-    PropVariantClear(&channels);
-    PropVariantClear(&devFormat);
-    
-    SafeRelease(&propertyStore);
-
-    CoTaskMemFree(deviceId);
-    
-    retVal = deviceName;
-
-    return res;
-leave_exit_error:
-    return res;
+    jvxBool isReady = false;
+    isReady = (theDevice->sinks.size() > 0) ||(theDevice->sources.size() > 0);
+    return isReady;
 }
 
-// ==================================================================
-void
-CjvxAudioWindowsTechnology::activate_windows_audio_technology()
-{
-	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    UINT deviceCount = 0;
-
-	IMMDeviceEnumerator* deviceEnumerator = NULL;
-	IMMDeviceCollection* deviceCollectionInput = NULL;
-    IMMDeviceCollection* deviceCollectionOutput = NULL;
-
-    LPWSTR deviceIdDefault = nullptr;
-    IMMDevice* device = nullptr;
-
-	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&deviceEnumerator));
-	if (FAILED(hr))
-	{
-		assert(0);
-	}
-
-    deviceCount = 0;
-	hr = deviceEnumerator->EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE, &deviceCollectionInput);
-	if (FAILED(hr))
-	{
-		assert(0);
-	}
-	    
-    hr = deviceCollectionInput->GetCount(&deviceCount);
-	if (FAILED(hr))
-	{
-		assert(0);
-	}
-
-    // First, open the default device to identify it
-     device = nullptr;
-    deviceIdDefault = nullptr;
-    deviceEnumerator->GetDefaultAudioEndpoint(eCapture, eCommunications, &device);
-    if (device)
-    {
-        hr = device->GetId(&deviceIdDefault);
-        if (FAILED(hr))
-        {
-            assert(0);
-        }
-        device->Release();
-        device = nullptr;
-    }
-
-
-	for (UINT i = 0; i < deviceCount; i += 1)
-	{
-        device = nullptr;
-		std::string deviceName;
-        jvxBool defDevice = false;
-        WAVEFORMATEXTENSIBLE wext = { 0 };
-        
-        if (scan_device(deviceCollectionInput, &device, &wext, deviceName, i, defDevice, deviceIdDefault) == JVX_NO_ERROR)
-        {
-            std::string txt = _common_set.theComponentSubTypeDescriptor;
-            txt += "/input";
-
-            // Modified HK: According to 
-            // https://learn.microsoft.com/de-de/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdeviceenumerator-getdefaultaudioendpoint
-            // there is no need to add a reference as it holds one if open
-             
-            // Keep this handle on, therefore ref count
-            // device->AddRef();
-
-            // Convert device name to UTF8
-            deviceName = jvx::helper::asciToUtf8(deviceName);
-
-            CjvxAudioWindowsDevice* newDevice = new CjvxAudioWindowsDevice(
-                deviceName.c_str(), false,
-                _common_set.theDescriptor.c_str(),
-                _common_set.theFeatureClass,
-                _common_set.theModuleName.c_str(),
-                JVX_COMPONENT_ACCESS_SUB_COMPONENT,
-                (jvxComponentType)(_common_set.theComponentType.tp + 1),
-                txt.c_str(), NULL);
-            newDevice->setHandle(this, device, &wext, true, defDevice);
-
-            // Whatever to be done for initialization
-            oneDeviceWrapper elm;
-            elm.hdlDev = static_cast<IjvxDevice*>(newDevice);
-            _common_tech_set.lstDevices.push_back(elm);
-        }
-	}
-
-    // ============================================================
-
-    deviceCount = 0;
-    hr = deviceEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &deviceCollectionOutput);
-    if (FAILED(hr))
-    {
-        assert(0);
-    }
-
-    hr = deviceCollectionOutput->GetCount(&deviceCount);
-    if (FAILED(hr))
-    {
-        assert(0);
-    }
-    
-    // First, open the default device to identify it
-    device = nullptr;
-    deviceIdDefault = nullptr;
-    deviceEnumerator->GetDefaultAudioEndpoint(eRender, eCommunications, &device); 
-    if (device)
-    {
-        hr = device->GetId(&deviceIdDefault);
-        if (FAILED(hr))
-        {
-            assert(0);
-        }
-        device->Release();
-        device = nullptr;
-    }
-
-    for (UINT i = 0; i < deviceCount; i += 1)
-    {
-        device = nullptr;
-        std::string deviceName;
-        jvxBool defDevice = false;
-        WAVEFORMATEXTENSIBLE wext = { 0 };
-
-        if (scan_device(deviceCollectionOutput, &device, &wext, deviceName, i, defDevice, deviceIdDefault) == JVX_NO_ERROR)
-        {
-            std::string txt = _common_set.theComponentSubTypeDescriptor;
-            txt += "/output";
-
-            // Modified HK: According to 
-            // https://learn.microsoft.com/de-de/windows/win32/api/mmdeviceapi/nf-mmdeviceapi-immdeviceenumerator-getdefaultaudioendpoint
-            // there is no need to add a reference as it holds one if open
-            
-            // Keep this handle on, therefore ref count
-            // device->AddRef();
-            
-            // Convert device name to UTF8
-            deviceName = jvx::helper::asciToUtf8(deviceName);
-
-            CjvxAudioWindowsDevice* newDevice = new CjvxAudioWindowsDevice(
-                deviceName.c_str(), false,
-                _common_set.theDescriptor.c_str(),
-                _common_set.theFeatureClass,
-                _common_set.theModuleName.c_str(),
-                JVX_COMPONENT_ACCESS_SUB_COMPONENT,
-                (jvxComponentType)(_common_set.theComponentType.tp + 1),
-                txt.c_str(), NULL);
-            newDevice->setHandle(this, device, &wext, false, defDevice);
-
-            // Whatever to be done for initialization
-            oneDeviceWrapper elm;
-            elm.hdlDev = static_cast<IjvxDevice*>(newDevice);
-            _common_tech_set.lstDevices.push_back(elm);
-        }
-    }
-
-    SafeRelease(&deviceCollectionInput);
-    SafeRelease(&deviceCollectionOutput);
-    SafeRelease(&deviceEnumerator);
-
-}
-
-void
-CjvxAudioWindowsTechnology::deactivate_windows_audio_device(IMMDevice* device)
-{
-    if (device)
-    {
-        SafeRelease(&device);
-    }
-}
-
-void
-CjvxAudioWindowsTechnology::deactivate_windows_audio_technology()
-{
-    CoUninitialize();
-}
-
-#endif

@@ -8,13 +8,18 @@
 
 // class CjvxAudioPWireTechnology<CjvxAudioPWireDevice>;
 
+class oneDevice;
 
 class CjvxAudioPWireDevice: public CjvxMixDevicesAudioDevice<CjvxAudioPWireDevice>, public genPWire_device
 {
+protected:
+	oneDevice* theDevicehandle = nullptr;
 
 public:
 	JVX_CALLINGCONVENTION CjvxAudioPWireDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxAudioPWireDevice();
+
+	void setReferencesApi(oneDevice* theDevicehandle);
 };
 
 #endif

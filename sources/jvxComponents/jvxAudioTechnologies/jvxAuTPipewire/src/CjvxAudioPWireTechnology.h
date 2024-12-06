@@ -12,9 +12,11 @@ class onePort
 public:
 	jvxSize id = JVX_SIZE_UNSELECTED;
 	jvxSize ref_node = JVX_SIZE_UNSELECTED;
+	jvxSize port_id = JVX_SIZE_UNSELECTED;
 	std::string name;
 	std::string nick;
 	std::string direction;
+	std::string physical;
 	jvxDataFormat form = JVX_DATAFORMAT_NONE;
 };
 
@@ -28,6 +30,7 @@ public:
 	std::string description;
 	std::string name;
 	std::string nick;
+	jvxBool isSink = false;
 };
 
 class oneDevice
@@ -91,6 +94,8 @@ public:
 	jvxErrorType async_run_trigger();
 	void async_run_cb(jvxUInt32 id, int seq);
 
+	void sort_unsorted_devices();
+	jvxBool  check_device_ready(oneDevice* theDevice);
 
 	jvxErrorType put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,
 		jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename = "", jvxInt32 lineno = -1) override;
