@@ -2,6 +2,23 @@
 
 #define JVX_ASYNC_TIMEOUT 5000
 
+
+// ================================================================================0
+// Some hints about samplerates: https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Guide-Rates
+// -> Command: <pw-metadata -n settings 0 clock.force-rate <samplerate>>
+// -> Make an entry in ~/.config/pipewire/pipewire.conf.d/10-rates.conf  -> 
+// # Adds more common rates
+// context.properties = {
+//     default.clock.allowed-rates = [ 44100 48000 88200 96000 ]
+// }
+
+// How to delete links in helvum: https://gitlab.freedesktop.org/pipewire/helvum/-/issues/50
+// -> same connection as on connect will disconnect
+// Set the buffersize: https://linuxmusicians.com/viewtopic.php?t=25768
+// -> pw-metadata -n settings 0 clock.force-quantum <buffersize>
+// Works even with odd numbers like 53 :-)
+//
+
 static void on_async_done(void *data, uint32_t id, int seq)
 {
     if(data)
@@ -31,14 +48,14 @@ static void registry_event_global(void *data, uint32_t id,
 
 static const struct pw_registry_events registry_events = 
 {
-        PW_VERSION_REGISTRY_EVENTS,
-        .global = registry_event_global,
+    PW_VERSION_REGISTRY_EVENTS,
+    .global = registry_event_global,
 };
 
 static const struct pw_core_events async_events =
-   {
-        PW_VERSION_CORE_EVENTS,
-        .done = on_async_done,
+{
+    PW_VERSION_CORE_EVENTS,
+    .done = on_async_done,
 };
 
 // ========================================================================================
@@ -94,6 +111,8 @@ CjvxAudioPWireTechnology::activate_technology_api()
     pw_thread_loop_start(loop);
 
     this->async_run_trigger();
+
+    std::cout << __FUNCTION__ << ": Initialization of Pipewire service complete."  << std::endl;
 };
 
 void 
@@ -123,7 +142,161 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
                 uint32_t permissions, const char *type, uint32_t version,
                 const struct spa_dict *props)
 {
-    printf("object: id:%u type:%s/%d\n", id, type, version);
+    if (strcmp(type, PW_TYPE_INTERFACE_Device) == 0) {
+        const char *media_class = spa_dict_lookup(props, "media.class");
+        if (strstr(media_class, "Device") || strstr(media_class, "device")) {
+            const char *nick = spa_dict_lookup(props, "device.nick");
+            const char *descr = spa_dict_lookup(props, "device.description");
+            const char *api_name = spa_dict_lookup(props, "device.api");
+            const char *name = spa_dict_lookup(props, "device.name");
+            oneDevice* newDev = nullptr;
+            JVX_SAFE_ALLOCATE_OBJECT(newDev, oneDevice);
+            newDev->id = id;
+            newDev->description = descr;
+            newDev->nick = nick;
+            newDev->api_name = api_name;
+            newDev->name = name;
+
+            devices_unsorted.push_back(newDev);
+        }
+
+    if (strcmp(type, PW_TYPE_INTERFACE_Node) == 0) {
+        const char *media_class = spa_dict_lookup(props, "media.class");
+        if (strstr(media_class, "Sink") || strstr(media_class, "sink")) 
+        {
+            const char *dev_id = spa_dict_lookup(props, "device.id");
+            const char *nick = spa_dict_lookup(props, "node.nick");
+            const char *descr = spa_dict_lookup(props, "node.description");
+            const char *name = spa_dict_lookup(props, "node.name");
+
+            oneNode* newNode = nullptr;
+            JVX_SAFE_ALLOCATE_OBJECT(newNode, oneNode);
+            newNode->id = id;
+            newNode->ref_device = atoi(dev_id);
+            newNode->description = descr;
+            newNode->nick = nick;
+            newNode->name = name;
+            nodes_unsorted_sinks.push_back(newNode);
+        }
+        else if (strstr(media_class, "Source") || strstr(media_class, "source")) 
+        {
+            const char *dev_id = spa_dict_lookup(props, "device.id");
+            const char *nick = spa_dict_lookup(props, "node.nick");
+            const char *descr = spa_dict_lookup(props, "node.description");
+            const char *name = spa_dict_lookup(props, "node.name");
+
+            oneNode* newNode = nullptr;
+            JVX_SAFE_ALLOCATE_OBJECT(newNode, oneNode);
+            newNode->id = id;
+            newNode->ref_device = atoi(dev_id);
+            newNode->description = descr;
+            newNode->nick = nick;
+            newNode->name = name;
+            nodes_unsorted_sources.push_back(newNode);
+        }
+    }
+
+    if (strcmp(type, PW_TYPE_INTERFACE_Port) == 0) {
+        const char *audio_channel = spa_dict_lookup(props, "audio.channel");
+        if (audio_channel) 
+        {
+            const char *node_id = spa_dict_lookup(props, "node.id");
+            const char *nick = spa_dict_lookup(props, "port.nick");
+                        const char *nick = spa_dict_lookup(props, "port.nick");
+            const char *descr = spa_dict_lookup(props, "node.description");
+            const char *name = spa_dict_lookup(props, "node.name");
+            const char *direction = spa_dict_lookup(props, "node.direction");
+
+            onePort* newPort = nullptr;
+            JVX_SAFE_ALLOCATE_OBJECT(newPort, onePort);
+            newPort->id = id;
+            newPort->ref_node = atoi(node_id);            
+            newPort->nick = nick;
+            newPort->name = name;
+            newPort->direction = direction;
+            ports_unsorted.push_back(newPort);
+        }        
+    }
+
+    // printf("object: id:%u type:%s/%d\n", id, type, version);
+
+    // Ausgabe für Audioquellen (sources)
+#if 0
+    if (strcmp(type, PW_TYPE_INTERFACE_Node) == 0) {
+        const char *media_class = spa_dict_lookup(props, "media.class");
+        const char *name = spa_dict_lookup(props, "node.name");
+        
+        if (media_class && name) {
+            if (strstr(media_class, "Source") || strstr(media_class, "source")) 
+            {
+                printf("Audio Source:\n");
+                printf("  ID: %d\n", id);
+                printf("  Name: %s\n", name);
+                printf("  Media Class: %s\n\n", media_class);
+
+                printf("=== Detailed Properties ===\n");
+    
+    // Iterate through all properties
+    for (uint32_t i = 0; i < props->n_items; i++) {
+        const struct spa_dict_item *item = &props->items[i];
+        
+        // Nur nicht-leere Eigenschaften ausgeben
+        if (item->key && item->value) {
+            printf("%s: %s\n", item->key, item->value);
+        }
+    }
+
+                /*
+                const char* channels_str = spa_dict_lookup(props, "audio.channels");
+                if (!channels_str)
+                    channels_str = spa_dict_lookup(props, "node.channel-map");
+                if (!channels_str)
+                    channels_str = spa_dict_lookup(props, "spa.audio.channels");
+
+                if (channels_str) {
+                    printf("  Channels: %s\n", channels_str);
+                } else {
+                    printf("  Channels: Unable to determine\n");
+                }
+
+                const char *sample_rate_str = NULL;
+                sample_rate_str = spa_dict_lookup(props, "audio.rate");
+                if (!sample_rate_str)
+                    sample_rate_str = spa_dict_lookup(props, "spa.audio.rate");
+                if (!sample_rate_str)
+                    sample_rate_str = spa_dict_lookup(props, "device.rate");
+
+                if (sample_rate_str) {
+                    printf("  Sample Rate: %s Hz\n", sample_rate_str);
+                } else {
+                    printf("  Sample Rate: Unable to determine\n");
+                }
+
+                const char *format_str = NULL;
+                sample_rate_str = spa_dict_lookup(props, "audio.format");
+                if (!sample_rate_str)
+                    sample_rate_str = spa_dict_lookup(props, "spa.audio.format");
+                if (!sample_rate_str)
+                    sample_rate_str = spa_dict_lookup(props, "device.format");
+
+                if (format_str) {
+                    printf("  Format: %s \n", format_str);
+                } else {
+                    printf("  Format: Unable to determine\n");
+                }
+                */
+            }
+            
+            if (strstr(media_class, "Sink") || strstr(media_class, "sink")) 
+            {
+                printf("Audio Sink:\n");
+                printf("  ID: %d\n", id);
+                printf("  Name: %s\n", name);
+                printf("  Media Class: %s\n\n", media_class);
+            }
+        }
+        #endif
+    }
 }
 
 // ========================================================================================

@@ -7,9 +7,45 @@
 
 #include <pipewire/pipewire.h>
 
+class onePort
+{
+public:
+	jvxSize id = JVX_SIZE_UNSELECTED;
+	jvxSize ref_node = JVX_SIZE_UNSELECTED;
+	std::string name;
+	std::string nick;
+	std::string direction;
+	jvxDataFormat form = JVX_DATAFORMAT_NONE;
+};
+
+class oneNode
+{
+public:
+	jvxSize id = JVX_SIZE_UNSELECTED;
+	jvxSize ref_device = JVX_SIZE_UNSELECTED;
+	std::list<onePort*> in_ports;
+	std::list<onePort*> out_ports;
+	std::string description;
+	std::string name;
+	std::string nick;
+};
+
+class oneDevice
+{
+public:
+	jvxSize id = JVX_SIZE_UNSELECTED;
+	std::string api_name;
+	std::string description;
+	std::string name;
+	std::string nick;
+	std::list<oneNode*> sources;
+	std::list<oneNode*> sinks;
+};
+
 class CjvxAudioPWireTechnology: public CjvxMixedDevicesAudioTechnology<CjvxAudioPWireDevice>,
 	public genPWire_technology
 {
+
 protected:
 	int argc = 0;
     char** argv = nullptr;
@@ -28,6 +64,13 @@ protected:
 		int idMess_received = 0;
 		JVX_NOTIFY_HANDLE_DECLARE(notWait);
 	} async_run;
+
+	std::list<oneDevice*> devices_unsorted;
+	std::list<oneNode*> nodes_unsorted_sinks;
+	std::list<oneNode*> nodes_unsorted_sources;
+	std::list<onePort*> ports_unsorted;
+
+	std::list<oneDevice*> devices_linked;
 
 public:
 	CjvxAudioPWireTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
