@@ -6,7 +6,15 @@ CjvxAudioPWireTechnology::CjvxAudioPWireTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MAC
 	// Add one proxy device
 	numberDevicesInit = 1;
 	deviceNamePrefix = "generic";
+	JVX_INITIALIZE_NOTIFICATION(async_run.notWait);
 }
+
+CjvxAudioPWireTechnology::~CjvxAudioPWireTechnology()
+{
+	JVX_TERMINATE_NOTIFICATION(async_run.notWait);
+}
+
+// =============================================================================================
 
 jvxErrorType 
 CjvxAudioPWireTechnology::activate()
@@ -20,32 +28,6 @@ CjvxAudioPWireTechnology::activate()
 	}
 	return res;
 }
-
-void 
-CjvxAudioPWireTechnology::activate_technology_api()
-{
-	jvxSize i;
-	std::string nmPrefix = "Dummy";
-	for (i = 0; i < 3; i++)
-	{
-		std::string devName = nmPrefix + "_" + jvx_size2String(i);
-
-		// Do whatever is required
-		CjvxAudioPWireDevice* newDevice = local_allocate_device(devName.c_str(), false,
-			_common_set.theDescriptor.c_str(),
-			_common_set.theFeatureClass,
-			_common_set.theModuleName.c_str(),
-			JVX_COMPONENT_ACCESS_SUB_COMPONENT,
-			(jvxComponentType)(_common_set.theComponentType.tp + 1),
-			"", NULL, JVX_SIZE_UNSELECTED, false);
-
-		// Whatever to be done for initialization
-		oneDeviceWrapper elm;
-		elm.hdlDev = static_cast<IjvxDevice*>(newDevice);
-		elm.actsAsProxy = false;
-		_common_tech_set.lstDevices.push_back(elm);
-	}
-};
 
 jvxErrorType 
 CjvxAudioPWireTechnology::deactivate()
