@@ -72,6 +72,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxAudioTechnologies/CjvxAudioDevice.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxAudioDevice.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxAudioTechnologies/CjvxAudioMasterDevice.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxAudioMasterDevice.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxAudioTechnologies/CjvxAudioTechnology.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxAudioTechnology.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxAudioTechnologies/CjvxMixedDevicesAudioTechnology.h
@@ -247,6 +249,7 @@ set(LOCAL_PCG_FILES
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxAppCtrTech/CjvxAppCtrDevice_pcg.pcg
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxCustomTechnologies/CjvxCustomDevice_pcg.pcg
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxAudioTechnologies/CjvxAudioDevice_pcg.pcg
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxAudioTechnologies/CjvxAudioMasterDevice_pcg.pcg
 	 ## ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxTechnologies/CjvxTechnologyDevCaps_pcg.pcg
 	 ## ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxDevices/CjvxDeviceCaps_pcg.pcg
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxSignalProcessingTechnologies/CjvxSignalProcessingDevice_pcg.pcg
