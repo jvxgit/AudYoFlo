@@ -121,19 +121,50 @@ CjvxAudioPWireTechnology::activate_technology_api()
 			(jvxComponentType)(_common_set.theComponentType.tp + 1),
 			"", NULL, JVX_SIZE_UNSELECTED, false);
 
-        newDevice->setReferencesApi(theDev);
+        newDevice->set_references_api(theDev);
 
 		// Whatever to be done for initialization
 		oneDeviceWrapper elmDW;
 		elmDW.hdlDev = static_cast<IjvxDevice*>(newDevice);
 		elmDW.actsAsProxy = false;
 		_common_tech_set.lstDevices.push_back(elmDW);
+
+        devices_active.push_back(newDevice);
 	}
 };
 
 void 
 CjvxAudioPWireTechnology::deactivate_technology_api()
 {
+    for(auto elm: devices_active)
+    {
+        oneDevice* dev = elm->references_api();
+        JVX_SAFE_DELETE_OBJECT(dev);
+        local_deallocate_device(&elm);
+    }
+
+    for(auto elm: devices_linked)
+    {
+        JVX_SAFE_DELETE_OBJECT(elm);
+    }
+
+    for(auto elm: devices_unsorted)
+    {
+        JVX_SAFE_DELETE_OBJECT(elm);
+    }
+	for(auto elm: nodes_unsorted_sinks)
+    {
+        JVX_SAFE_DELETE_OBJECT(elm);
+    }
+	for(auto elm: nodes_unsorted_sources)
+    {
+        JVX_SAFE_DELETE_OBJECT(elm);
+    }
+	for(auto elm: ports_unsorted)
+    {
+        JVX_SAFE_DELETE_OBJECT(elm);
+    }
+
     this->async_run_stop();
     pw_proxy_destroy((struct pw_proxy *)registry);
     pw_core_disconnect(core);

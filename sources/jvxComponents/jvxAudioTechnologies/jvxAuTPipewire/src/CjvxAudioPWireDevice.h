@@ -19,7 +19,11 @@ public:
 	JVX_CALLINGCONVENTION CjvxAudioPWireDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxAudioPWireDevice();
 
-	void setReferencesApi(oneDevice* theDevicehandle);
+	jvxErrorType  activate_device_api();
+	jvxErrorType  deactivate_device_api();
+
+	void set_references_api(oneDevice* theDevicehandle);
+	oneDevice* references_api();
 };
 
 #endif

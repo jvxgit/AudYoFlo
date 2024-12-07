@@ -14,8 +14,24 @@ static int testSamplerates[] =
 };
 
 void 
-CjvxAudioPWireDevice::setReferencesApi(oneDevice* theDevicehandle)
+CjvxAudioPWireDevice::set_references_api(oneDevice* theDevicehandleArg)
 {
+    assert(theDevicehandle == nullptr);
+    theDevicehandle = theDevicehandleArg;
+}
+
+oneDevice* 
+CjvxAudioPWireDevice::references_api()
+{
+    oneDevice* retVal = theDevicehandle;
+    theDevicehandle = nullptr;
+	return retVal;
+}
+
+jvxErrorType 
+CjvxAudioPWireDevice::activate_device_api()
+{
+    jvxErrorType res = JVX_NO_ERROR;
     /*
     genWindows_device::properties_active.ratesselection.value.entries.clear();
     for (jvxSize entry : supportedRates)
@@ -33,59 +49,58 @@ CjvxAudioPWireDevice::setReferencesApi(oneDevice* theDevicehandle)
     */
 
    CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.clear();
-        
-        auto elmSS = theDevicehandle->sources.begin();
-        oneNode* theNode = *elmSS;
-        jvxSize cnt = 0;     
-        jvxBool foundOne = true;
-        jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection());
-        while(foundOne)
-        {
-            foundOne = false;
-            for(auto elmP: theNode->out_ports)
-            {
-                onePort* thePort = elmP;   
-                if(thePort->physical == "true")
-                {
-                    if(thePort->port_id == cnt)
-                    {
-                        std::string chan_name = thePort->nick;
-                        CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.push_back(chan_name);
-                        jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), cnt);
-                        foundOne = true;
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
 
-        elmSS = theDevicehandle->sinks.begin();
-        theNode = *elmSS;
-        cnt = 0;       
-        foundOne = true;
-        jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection());
-        while(foundOne)
-        {
-            foundOne = false;
-            for(auto elmP: theNode->in_ports)
-            {
-                onePort* thePort = elmP;   
-                if(thePort->physical == "true")
-                {
-                    if(thePort->port_id == cnt)
-                    {
-                        std::string chan_name = thePort->nick;
-                        CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(chan_name);
-                        jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), cnt);
-                        foundOne = true;
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
+   auto elmSS = theDevicehandle->sources.begin();
+   oneNode *theNode = *elmSS;
+   jvxSize cnt = 0;
+   jvxBool foundOne = true;
+   jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection());
+   while (foundOne)
+   {
+       foundOne = false;
+       for (auto elmP : theNode->out_ports)
+       {
+           onePort *thePort = elmP;
+           if (thePort->physical == "true")
+           {
+               if (thePort->port_id == cnt)
+               {
+                   std::string chan_name = thePort->nick;
+                   CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.push_back(chan_name);
+                   jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), cnt);
+                   foundOne = true;
+                   cnt++;
+                   break;
+               }
+           }
+       }
+   }
 
+   elmSS = theDevicehandle->sinks.begin();
+   theNode = *elmSS;
+   cnt = 0;
+   foundOne = true;
+   jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection());
+   while (foundOne)
+   {
+       foundOne = false;
+       for (auto elmP : theNode->in_ports)
+       {
+           onePort *thePort = elmP;
+           if (thePort->physical == "true")
+           {
+               if (thePort->port_id == cnt)
+               {
+                   std::string chan_name = thePort->nick;
+                   CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(chan_name);
+                   jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), cnt);
+                   foundOne = true;
+                   cnt++;
+                   break;
+               }
+           }
+       }
+   }
 
         /*
         for (i = 0; i < this->wext_init.Format.nChannels; i++)
@@ -100,8 +115,15 @@ CjvxAudioPWireDevice::setReferencesApi(oneDevice* theDevicehandle)
     {
 
     }
+    return res;
 }
 
+jvxErrorType 
+CjvxAudioPWireDevice::deactivate_device_api()
+{
+    jvxErrorType res = JVX_NO_ERROR;
+    return res;
+}
 #if 0
 
 #include "CjvxAudioWindowsDevice.h"

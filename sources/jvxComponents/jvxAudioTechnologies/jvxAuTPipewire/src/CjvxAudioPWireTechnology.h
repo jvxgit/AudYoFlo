@@ -10,6 +10,7 @@
 class onePort
 {
 public:
+	~onePort(){};
 	jvxSize id = JVX_SIZE_UNSELECTED;
 	jvxSize ref_node = JVX_SIZE_UNSELECTED;
 	jvxSize port_id = JVX_SIZE_UNSELECTED;
@@ -23,6 +24,20 @@ public:
 class oneNode
 {
 public:
+	~oneNode()
+	{
+		for(auto elm: in_ports)
+		{
+			JVX_SAFE_DELETE_OBJECT(elm);
+		}
+		in_ports.clear();
+		for(auto elm: out_ports)
+		{
+			JVX_SAFE_DELETE_OBJECT(elm);
+		}
+		out_ports.clear();
+	};
+
 	jvxSize id = JVX_SIZE_UNSELECTED;
 	jvxSize ref_device = JVX_SIZE_UNSELECTED;
 	std::list<onePort*> in_ports;
@@ -36,6 +51,20 @@ public:
 class oneDevice
 {
 public:
+	~oneDevice()
+	{
+		for(auto elm: sources)
+		{
+			JVX_SAFE_DELETE_OBJECT(elm);
+		}
+		sources.clear();
+		for(auto elm: sinks)
+		{
+			JVX_SAFE_DELETE_OBJECT(elm);
+		}
+		sinks.clear();
+	};
+
 	jvxSize id = JVX_SIZE_UNSELECTED;
 	std::string api_name;
 	std::string description;
@@ -74,6 +103,8 @@ protected:
 	std::list<onePort*> ports_unsorted;
 
 	std::list<oneDevice*> devices_linked;
+	
+	std::list<CjvxAudioPWireDevice*> devices_active;
 
 public:
 	CjvxAudioPWireTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

@@ -18,6 +18,31 @@ public:
 		this->_common_set_device.caps.proxy = actAsProxy;
 		this->idxProxyOnCreate = idx;
 	}
+
+	virtual jvxErrorType  activate_device_api() = 0;
+	virtual jvxErrorType  deactivate_device_api() = 0;
+
+	jvxErrorType activate()
+ 	{
+		jvxErrorType res = JVX_NO_ERROR;
+		res = CjvxAudioDevice::activate();
+		if(res == JVX_NO_ERROR)
+		{
+			res = activate_device_api();
+		}
+		return res;		
+ 	};
+
+	jvxErrorType deactivate()
+ 	{
+		jvxErrorType res = JVX_NO_ERROR;
+		res = CjvxAudioDevice::deactivate();
+		if(res == JVX_NO_ERROR)
+		{
+			res = deactivate_device_api();
+		}
+		return res;		
+ 	};
 };
 
 #endif
