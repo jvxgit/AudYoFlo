@@ -1,7 +1,9 @@
 #ifndef __CJVXMIXDEVICESAUDIODEVICE_H__
 #define __CJVXMIXDEVICESAUDIODEVICE_H__
 
-template <class T> class CjvxMixDevicesAudioDevice: public CjvxAudioDevice
+#include "jvxAudioTechnologies/CjvxAudioMasterDevice.h"
+
+template <class T> class CjvxMixDevicesAudioDevice: public CjvxAudioMasterDevice
 {
 public:
 	jvxSize idxProxyOnCreate = JVX_SIZE_UNSELECTED;
@@ -10,7 +12,7 @@ protected:
 
 public:
 	CjvxMixDevicesAudioDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
-		CjvxAudioDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
+		CjvxAudioMasterDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{};
 
 	void initializeDevice(jvxBool actAsProxy, jvxSize idx)
@@ -25,7 +27,7 @@ public:
 	jvxErrorType activate()
  	{
 		jvxErrorType res = JVX_NO_ERROR;
-		res = CjvxAudioDevice::activate();
+		res = CjvxAudioMasterDevice::activate();
 		if(res == JVX_NO_ERROR)
 		{
 			res = activate_device_api();
@@ -36,7 +38,7 @@ public:
 	jvxErrorType deactivate()
  	{
 		jvxErrorType res = JVX_NO_ERROR;
-		res = CjvxAudioDevice::deactivate();
+		res = CjvxAudioMasterDevice::deactivate();
 		if(res == JVX_NO_ERROR)
 		{
 			res = deactivate_device_api();

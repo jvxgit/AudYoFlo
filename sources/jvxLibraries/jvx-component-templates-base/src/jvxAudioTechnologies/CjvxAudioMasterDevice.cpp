@@ -18,30 +18,6 @@ CjvxAudioMasterDevice::~CjvxAudioMasterDevice()
 }
 
 jvxErrorType
-CjvxAudioMasterDevice::select(IjvxObject* owner)
-{
-	jvxErrorType res = JVX_NO_ERROR;
-	res = _select(owner);
-	if (res == JVX_NO_ERROR)
-	{
-		// CjvxDeviceCaps_genpcg::device_caps.dev_avail.value = 0;
-	}
-	return res;
-}
-
-jvxErrorType
-CjvxAudioMasterDevice::unselect()
-{
-	jvxErrorType res = JVX_NO_ERROR;
-	res = _unselect();
-	if (res == JVX_NO_ERROR)
-	{
-		// CjvxDeviceCaps_genpcg::device_caps.dev_avail.value = 1;
-	}
-	return res;
-}
-
-jvxErrorType
 CjvxAudioMasterDevice::activate()
 {
 	jvxSize i;

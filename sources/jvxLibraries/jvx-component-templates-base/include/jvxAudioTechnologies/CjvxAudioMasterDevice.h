@@ -42,18 +42,18 @@ public:
 	// =====================================================================
 #define  JVX_STATE_MACHINE_DEFINE_STARTSTOP
 #define  JVX_STATE_MACHINE_DEFINE_READY
-#define JVX_STATEMACHINE_FULL_SKIP_SELECT_UNSELECT
 #include "codeFragments/simplify/jvxStateMachine_simplify.h"
-#undef JVX_STATEMACHINE_FULL_SKIP_SELECT_UNSELECT
 #undef JVX_STATE_MACHINE_DEFINE_READY
 #undef JVX_STATE_MACHINE_DEFINE_STARTSTOP
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION select(IjvxObject* owner)override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION unselect()override;
+	//! Involve specific technology checks and parameters
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
+
+	//! Prepre and postprocess to lock the properties on start!!
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess()override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
+
 	// =====================================================================
 	// =====================================================================
 
