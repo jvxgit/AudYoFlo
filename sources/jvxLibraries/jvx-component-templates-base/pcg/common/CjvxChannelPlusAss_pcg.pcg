@@ -1,0 +1,5 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "CjvxChannelPlusAss_genpcg";
+	include "channel-plus-properties-ass.pcgf";
+}; 

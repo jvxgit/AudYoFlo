@@ -10,8 +10,8 @@ SECTION PROPERTIES
 		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
 		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
 		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"base_params_set_update"};
 
-		/*
 		SECTION lostBuffers
 		{
 			GENERATE_ENTRY_CONFIG_FILE = "no";
@@ -31,7 +31,6 @@ SECTION PROPERTIES
 			INIT_SET = 0.5;
 			ID = "jvx_period_fillup_silence_on_stop_data"; 	
 		};
-		*/		
 		
 		SECTION sourceName
 		{
@@ -49,6 +48,41 @@ SECTION PROPERTIES
 			GENERATE_ENTRY_CONFIG_FILE = "no";	
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
 		};	
+
+		// =========================================================================================
+		// Processing parameters are part of the Associated Props
+		// =========================================================================================
+
+		SECTION inputchannelselection
+		{
+			DESCRIPTION = "Selection of input channels";	  // Defaults to NAME if not present
+			ID = "jvx_selection_input_channels_sellist"; 		
+			ONLY_CONTENT_TO_CONFIG = "yes"; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";			
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			CALLBACK_SET_POSTHOOK = "base_params_set_update";
+		};  
+		SECTION outputchannelselection
+		{
+			DESCRIPTION = "Selection of output channels";
+			ID = "jvx_selection_output_channels_sellist"; 		
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			CALLBACK_SET_POSTHOOK = "base_params_set_update";
+		};
+
+		SECTION formatselection
+		{
+			DESCRIPTION = "Selection of processing formats";
+			ID = "jvx_selection_formats_sellist"; 		
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			IGNORE_CONFIG_PROBLEMS = "no";
+			CALLBACK_SET_POSTHOOK = "base_params_set_update";
+		};
+
 		/*
 		SECTION allow_operate_zero_channels
 		{

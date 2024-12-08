@@ -206,6 +206,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxNegotiate.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSimplePropsPars.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSimplePropsParsPlusOutChannel.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxFullMasterDevice.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxTechnologies/CjvxFullMasterDevice.cpp
@@ -236,7 +237,9 @@ include_directories(
   )
 
 set(LOCAL_PCG_FILES
-	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxNodes/CjvxNodeAss_pcg.pcg
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/common/CjvxSimplePropsAss_pcg.pcg
+	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/common/CjvxChannelPlusAss_pcg.pcg
+
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxNodes/CjvxNode_pcg.pcg
 	 ${CMAKE_CURRENT_SOURCE_DIR}/pcg/jvxNodes/CjvxNode_rearrange_pcg.pcg
 	 #${CMAKE_CURRENT_SOURCE_DIR}/pcg/

@@ -35,8 +35,8 @@ class CjvxSpNSynchronize_sec:
 protected:
 	CjvxSpNSynchronize* referencePtr = nullptr;
 
-	CjvxSimplePropsPars node_output;
-	CjvxSimplePropsPars node_input;
+	CjvxSimplePropsParsNode node_output;
+	CjvxSimplePropsParsNode node_input;
 
 	jvxBool outputConnectorConnected = false;
 	jvxBool inputConnectorConnected = false;

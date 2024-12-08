@@ -5,15 +5,21 @@
 #include "common/CjvxProperties.h"
 #include "common/CjvxSequencerControl.h"
 
-#include "pcg_CjvxAudioDevice_pcg.h"
+#include "pcg_CjvxAudioMasterDevice_pcg.h"
+#include "common/CjvxSimplePropsParsPlusOutChannel.h"
+
 // #include "pcg_CjvxDeviceCaps_pcg.h"
 
 class CjvxAudioMasterDevice : public CjvxSimpleMasterDevice,
 	public IjvxProperties, public CjvxProperties,
 	public IjvxConfiguration,
-	public CjvxAudioDevice_genpcg
+	public CjvxAudioMasterDevice_genpcg
 {
 protected:
+
+	CjvxSimplePropsParsPlusOutChannel inout_params;
+	CjvxNegotiate_input neg_input;
+	CjvxNegotiate_output neg_output;
 
 	struct
 	{
@@ -78,7 +84,6 @@ public:
 	// =====================================================================
 	// =====================================================================
 
-
 	// =======================================================================
 	// Interface IjvxConfiguration
 	// =======================================================================
@@ -124,16 +129,14 @@ public:
 #include "codeFragments/simplify/jvxSystemStatus_simplify.h"
 	// =======================================================================
 	// =======================================================================
-	void updateDependentVariables(jvxSize propId,
-		jvxPropertyCategoryType category,
-		jvxBool updateAll,
-		jvxPropertyCallPurpose callPurpose = JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC,
-		jvxBool suppress_update_chain = false);
+	void updateDependentVariables(jvxBool suppress_update_chain = false);
 
 #if 0
 	virtual jvxErrorType activate_lock();
 	virtual jvxErrorType deactivate_lock();
 #endif
+
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(base_params_set_update);
 
 	jvxErrorType currentSetupAudioParams(jvxAudioParams& params);
 	virtual void updateChainOutputParameter();

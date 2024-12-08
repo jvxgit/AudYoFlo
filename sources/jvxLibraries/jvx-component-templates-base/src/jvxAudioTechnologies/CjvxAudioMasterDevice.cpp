@@ -33,29 +33,19 @@ CjvxAudioMasterDevice::activate()
 		init__properties_active();
 		allocate__properties_active();
 
-		CjvxAudioDevice_genpcg::properties_active.sourceName.value = _common_set.theName;
-		CjvxAudioDevice_genpcg::properties_active.sinkName.value = _common_set.theName;
+		CjvxAudioMasterDevice_genpcg::properties_active.sourceName.value = _common_set.theName;
+		CjvxAudioMasterDevice_genpcg::properties_active.sinkName.value = _common_set.theName;
 
 		register__properties_active(static_cast<CjvxProperties*>(this));
+		CjvxAudioMasterDevice_genpcg::register_callbacks(static_cast<CjvxProperties*>(this), base_params_set_update, this);
 
-		//_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioMasterDevice::properties_active.format.globalIdx);
-
+		assert(_common_set_audio_device.formats.size());
 		for (i = 0; i < _common_set_audio_device.formats.size(); i++)
 		{
 			CjvxAudioMasterDevice::properties_active.formatselection.value.entries.push_back(jvxDataFormat_txt(_common_set_audio_device.formats[i]));
 		}
-		if (_common_set_audio_device.formats.size() > 0)
-		{
-			CjvxAudioMasterDevice::properties_active.format.value = (jvxInt16)_common_set_audio_device.formats[0];
-			CjvxAudioMasterDevice::properties_active.formatselection.value.selection() = ((jvxBitField)1 << 0);
-			CjvxAudioMasterDevice::properties_active.formatselection.value.exclusive = (jvxBitField)-1;
-		}
-		else
-		{
-			CjvxAudioMasterDevice::properties_active.format.value = (jvxInt16)JVX_DATAFORMAT_NONE;
-		}
-
-		this->updateDependentVariables(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
+		jvx_bitZSet(CjvxAudioMasterDevice::properties_active.formatselection.value.selection(), 0); // <- select first option by default
+		this->updateDependentVariables(true); // <- do not cause a chain update as we are in call active - which is followed by an update anyway
 	}
 	return(res);
 }
@@ -81,18 +71,11 @@ CjvxAudioMasterDevice::deactivate()
 		CjvxAudioMasterDevice::properties_active.outputchannelselection.value.selection() = 0;
 		CjvxAudioMasterDevice::properties_active.outputchannelselection.value.exclusive = 0;
 
-		CjvxAudioMasterDevice::properties_active.buffersize.value = 0;
-		CjvxAudioMasterDevice::properties_active.format.value = (jvxInt16)JVX_DATAFORMAT_NONE;
-
 		CjvxAudioMasterDevice::properties_active.formatselection.value.entries.clear();
 		CjvxAudioMasterDevice::properties_active.formatselection.value.selection() = 0;
 		CjvxAudioMasterDevice::properties_active.formatselection.value.exclusive = 0;
-		CjvxAudioMasterDevice::properties_active.format.value = (jvxInt16)JVX_DATAFORMAT_NONE;
 
-		CjvxAudioMasterDevice::properties_active.numberinputchannels.value = 0;
-		CjvxAudioMasterDevice::properties_active.numberoutputchannels.value = 0;
-
-		CjvxAudioMasterDevice::properties_active.samplerate.value = 0;
+		inout_params.reset();
 
 		JVX_DEACTIVATE_DEFAULT_ONE_CONNECTOR_MASTER();
 		JVX_DEACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS();
@@ -100,6 +83,14 @@ CjvxAudioMasterDevice::deactivate()
 	return(res);
 }
 
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAudioMasterDevice, base_params_set_update)
+{
+	// Do not report update of chain in case of INTERNAL_PASS
+	updateDependentVariables(callGate.call_purpose == JVX_PROPERTY_CALL_PURPOSE_INTERNAL_PASS);
+	return JVX_NO_ERROR;
+}
+
+/*
 jvxErrorType
 CjvxAudioMasterDevice::set_property(
 	jvxCallManagerProperties& callGate,
@@ -141,6 +132,7 @@ CjvxAudioMasterDevice::stop_property_group(jvxCallManagerProperties& callGate)
 	}
 	return res;
 }
+*/
 
 jvxErrorType
 CjvxAudioMasterDevice::put_configuration(jvxCallManagerConfiguration* callConf,
@@ -152,7 +144,7 @@ CjvxAudioMasterDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 
 	if (this->_common_set_min.theState == JVX_STATE_ACTIVE)
 	{
-		jvxBitField selFormatOld = CjvxAudioDevice_genpcg::properties_active.formatselection.value.selection();
+		jvxBitField selFormatOld = CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.selection();
 		// Read all parameters from this class
 		CjvxAudioMasterDevice::put_configuration__properties_active(callConf, processor, sectionToContainAllSubsectionsForMe, &warnings);
 		if (!warnings.empty())
@@ -169,14 +161,14 @@ CjvxAudioMasterDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 		}
 
 		// If something goes wrong in the configuration let us define a minimum in selection here!!
-		if (JVX_EVALUATE_BITFIELD(CjvxAudioDevice_genpcg::properties_active.formatselection.value.selection()) == false)
+		if (JVX_EVALUATE_BITFIELD(CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.selection()) == false)
 		{
 			// If there is a wrong format in the config file it might be good to retun to the old value
-			CjvxAudioDevice_genpcg::properties_active.formatselection.value.selection() = selFormatOld;
+			CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.selection() = selFormatOld;
 		}
 
 		// Update all dependant props
-		this->updateDependentVariables(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
+		this->updateDependentVariables(true);  // <- do not cause a chain update as we are in call put_configuration - which is followed by an update anyway
 
 	}
 	return(res);
@@ -196,145 +188,60 @@ CjvxAudioMasterDevice::get_configuration(jvxCallManagerConfiguration* callConf,
 }
 
 void
-CjvxAudioMasterDevice::updateDependentVariables(
-	jvxSize propId, jvxPropertyCategoryType category,
-	jvxBool updateAll, jvxPropertyCallPurpose callPurpose,
-	jvxBool suppress_update_chain)
+CjvxAudioMasterDevice::updateDependentVariables(jvxBool suppress_update_chain)
 {
 	jvxSize i;
 	jvxInt32 newValue = 0;
 	jvxBool updateChain = false;
-	if (category == JVX_PROPERTY_CATEGORY_PREDEFINED)
-	{
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.inputchannelselection.globalIdx) ||
-			(propId == CjvxAudioMasterDevice::properties_active.numberinputchannels.globalIdx) ||
-			updateAll)
+
+	CjvxSimplePropsPars::_common_set_node_params_a_1io_t params_simple_on_enter = inout_params._common_set_node_params_a_1io;
+		CjvxSimplePropsParsPlusOutChannel::_common_set_device_params_t params_simple_channel_on_enter = inout_params._common_set_device_params;
+
+		// inout_params
+		newValue = 0;
+
+		for (i = 0; i < (int)CjvxAudioMasterDevice::properties_active.inputchannelselection.value.entries.size(); i++)
 		{
-			for (i = 0; i < (int)CjvxAudioMasterDevice::properties_active.inputchannelselection.value.entries.size(); i++)
 			{
 				if (jvx_bitTest(CjvxAudioMasterDevice::properties_active.inputchannelselection.value.selection(), i))
 				{
 					newValue++;
 				}
 			}
-			CjvxAudioMasterDevice::properties_active.numberinputchannels.value = newValue;
-			updateChain = true;
 		}
+		inout_params._common_set_node_params_a_1io.number_channels = newValue;
+		
+		newValue = 0;
+		for (i = 0; i < (int)CjvxAudioMasterDevice::properties_active.outputchannelselection.value.entries.size(); i++)
+		{
+			if (jvx_bitTest(CjvxAudioMasterDevice::properties_active.outputchannelselection.value.selection(), i))
+			{
+				newValue++;
+			}
+		}
+		inout_params._common_set_device_params.number_channels_out = newValue;
 
 		// =================================================================================================
-
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.outputchannelselection.globalIdx) ||
-			(propId == CjvxAudioMasterDevice::properties_active.numberoutputchannels.globalIdx) ||
-			updateAll)
+		jvxSize idSel = jvx_bitfieldSelection2Id(CjvxAudioMasterDevice::properties_active.formatselection);
+		if (JVX_CHECK_SIZE_SELECTED(idSel))
 		{
-			newValue = 0;
-			for (i = 0; i < (int)CjvxAudioMasterDevice::properties_active.outputchannelselection.value.entries.size(); i++)
-			{
-				if (jvx_bitTest(CjvxAudioMasterDevice::properties_active.outputchannelselection.value.selection(), i))
-				{
-					newValue++;
-				}
-			}
-			CjvxAudioMasterDevice::properties_active.numberoutputchannels.value = newValue;
-			updateChain = true;
+			assert(idSel < _common_set_audio_device.formats.size());
+			inout_params._common_set_node_params_a_1io.format = _common_set_audio_device.formats[idSel];
 		}
 
-		// =================================================================================================
-
-		jvxBool formatFromSelectionList = false;
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.format.globalIdx) && (!updateAll))
-		{
-			std::string selStr = jvxDataFormat_txt(CjvxAudioMasterDevice::properties_active.format.value);
-			jvxInt32 idxSel = -1;
-
-			for (i = 0; i < CjvxAudioMasterDevice::properties_active.formatselection.value.entries.size(); i++)
-			{
-				if (CjvxAudioMasterDevice::properties_active.formatselection.value.entries[i] == selStr)
-				{
-					idxSel = (jvxInt32)i;
-					break;
-				}
-			}
-
-			if (idxSel >= 0)
-			{
-				CjvxAudioMasterDevice::properties_active.formatselection.value.selection() = (jvxBitField)1 << idxSel;
-				formatFromSelectionList = true;
-			}
-
-			if (formatFromSelectionList)
-			{
-				updateChain = true;
-			}
-			else
-			{
-				/*_report_text_message(("Warning: request to activate format " +
-					selStr + " which is not provided by device.").c_str(), JVX_REPORT_PRIORITY_WARNING);
-					*/
-			}
-		}
-
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.formatselection.globalIdx) ||
-			updateAll || formatFromSelectionList)
-		{
-			std::string selStr = jvxDataFormat_txt(JVX_DATAFORMAT_NONE);
-			for (i = 0; i < CjvxAudioMasterDevice::properties_active.formatselection.value.entries.size(); i++)
-			{
-				if (i < _common_set_audio_device.formats.size())
-				{
-					if (jvx_bitTest(CjvxAudioMasterDevice::properties_active.formatselection.value.selection(), i))
-					{
-						selStr = CjvxAudioMasterDevice::properties_active.formatselection.value.entries[i];
-						break;
-					}
-				}
-			}
-			CjvxAudioMasterDevice::properties_active.format.value = jvxDataFormat_decode(selStr.c_str());			
-			updateChain = true;
-		}
-
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.buffersize.globalIdx) || updateAll)
-		{
-			updateChain = true;
-		}
-
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.samplerate.globalIdx) || updateAll)
-		{
-			updateChain = true;
-		}
-
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.activateSilenceStop.globalIdx) || updateAll)
-		{
-			updateChain = true;
-		}
-
-		if (
-			(propId == CjvxAudioMasterDevice::properties_active.periodSilenceStop.globalIdx) || updateAll)
-		{
-			updateChain = true;
-		}
-	}
+		updateChain = inout_params.check_difference(&params_simple_on_enter, &params_simple_channel_on_enter);
+	
 
 	// ============================================================================================
-	if (!suppress_update_chain && updateChain && (_common_set_properties.inPropertyGroupCnt == 0))
+	if (!suppress_update_chain && updateChain)
 	{
-		if (callPurpose != JVX_PROPERTY_CALL_PURPOSE_INTERNAL_PASS)
-		{
-			jvxSize uId = JVX_SIZE_UNSELECTED;
+		jvxSize uId = JVX_SIZE_UNSELECTED;
 
-			// inform all other devices that property has changed
-			if (_common_set_ld_master.refProc)
-			{
-				_common_set_ld_master.refProc->unique_id_connections(&uId);
-				this->_request_test_chain_master(uId);
-			}
+		// inform all other devices that property has changed
+		if (_common_set_ld_master.refProc)
+		{
+			_common_set_ld_master.refProc->unique_id_connections(&uId);
+			this->_request_test_chain_master(uId);
 		}
 	}
 }
@@ -371,6 +278,7 @@ CjvxAudioMasterDevice::postprocess()
 	return(res);
 }
 
+#if 0
 jvxErrorType
 CjvxAudioMasterDevice::currentSetupAudioParams(jvxAudioParams& params)
 {
@@ -412,6 +320,7 @@ CjvxAudioMasterDevice::currentSetupAudioParams(jvxAudioParams& params)
 	}
 	return JVX_NO_ERROR;
 }
+#endif
 
 void
 CjvxAudioMasterDevice::updateChainOutputParameter()
@@ -523,23 +432,23 @@ CjvxAudioMasterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			if (ld_con.con_params.number_channels != params.numOutputs)
 			{
-				if (ld_con.con_params.number_channels <= CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.size())
+				if (ld_con.con_params.number_channels <= CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.entries.size())
 				{
 					int delta = ld_con.con_params.number_channels - params.numOutputs;
 
 					if (delta != 0)
 					{
-						modProps.push_back(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.descriptor.c_str());
+						modProps.push_back(CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.descriptor.c_str());
 					}
 
 					if (delta < 0)
 					{
 						int ii;
-						for (ii = (int)CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.size() - 1; ii >= 0; ii--)
+						for (ii = (int)CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.entries.size() - 1; ii >= 0; ii--)
 						{
-							if (jvx_bitTest(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii))
+							if (jvx_bitTest(CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii))
 							{
-								jvx_bitClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii);
+								jvx_bitClear(CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii);
 								delta++;
 							}
 							if (delta == 0)
@@ -551,11 +460,11 @@ CjvxAudioMasterDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					if (delta > 0)
 					{
 						int ii;
-						for (ii = 0; ii < CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.size(); ii++)
+						for (ii = 0; ii < CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.entries.size(); ii++)
 						{
-							if (!jvx_bitTest(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii))
+							if (!jvx_bitTest(CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii))
 							{
-								jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii);
+								jvx_bitSet(CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection(), ii);
 								delta--;
 							}
 							if (delta == 0)
@@ -612,12 +521,13 @@ jvxErrorType
 CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferType tp, jvxHandle* data, jvxPropertyContainerSingle<jvxSelectionList_cpp>* rateselection,
 	jvxPropertyContainerSingle<jvxSelectionList_cpp>* sizeselection JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
+	jvxErrorType res = JVX_NO_ERROR;
+#if 0
 	jvxLinkDataDescriptor* ld_con = NULL;
 	jvxBool reportCompromise = false;
 	jvxSize i;
 	jvxBool runAlgoBestMatch = false;
 	jvxAudioParams paramsDevice;
-	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool rateselectionvalid = false;
 	jvxBool sizeselectionvalid = false;
 	jvxSize idxB = JVX_SIZE_UNSELECTED;
@@ -678,19 +588,19 @@ CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferT
 
 	if (ld_con->con_params.format != paramsDevice.format)
 	{
-		if (CjvxAudioDevice_genpcg::properties_active.formatselection.isValid)
+		if (CjvxAudioMasterDevice_genpcg::properties_active.formatselection.isValid)
 		{
-			modProps.push_back(CjvxAudioDevice_genpcg::properties_active.formatselection.descriptor.c_str());
-			for (i = 0; i < CjvxAudioDevice_genpcg::properties_active.formatselection.value.entries.size(); i++)
+			modProps.push_back(CjvxAudioMasterDevice_genpcg::properties_active.formatselection.descriptor.c_str());
+			for (i = 0; i < CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.entries.size(); i++)
 			{
 				jvxBool err = false;
 				jvxDataFormat form = JVX_DATAFORMAT_NONE;
-				form = jvxDataFormat_decode(CjvxAudioDevice_genpcg::properties_active.formatselection.value.entries[i].c_str());
+				form = jvxDataFormat_decode(CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.entries[i].c_str());
 				assert(!err);
 
 				if (form == ld_con->con_params.format)
 				{
-					jvx_bitZSet(CjvxAudioDevice_genpcg::properties_active.formatselection.value.selection(), i);
+					jvx_bitZSet(CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.selection(), i);
 					paramsDevice.format = form;
 					idxF = i;
 					break;
@@ -705,36 +615,36 @@ CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferT
 
 	if (res == JVX_NO_ERROR)
 	{
-		CjvxAudioDevice_genpcg::properties_active.samplerate.value = paramsDevice.samplerate;
-		CjvxAudioDevice_genpcg::properties_active.buffersize.value = paramsDevice.buffersize;
-		CjvxAudioDevice_genpcg::properties_active.format.value = paramsDevice.format;
+		CjvxAudioMasterDevice_genpcg::properties_active.samplerate.value = paramsDevice.samplerate;
+		CjvxAudioMasterDevice_genpcg::properties_active.buffersize.value = paramsDevice.buffersize;
+		CjvxAudioMasterDevice_genpcg::properties_active.format.value = paramsDevice.format;
 
-		modProps.push_back(CjvxAudioDevice_genpcg::properties_active.samplerate.descriptor.c_str());
-		modProps.push_back(CjvxAudioDevice_genpcg::properties_active.buffersize.descriptor.c_str());
-		modProps.push_back(CjvxAudioDevice_genpcg::properties_active.format.descriptor.c_str());
+		modProps.push_back(CjvxAudioMasterDevice_genpcg::properties_active.samplerate.descriptor.c_str());
+		modProps.push_back(CjvxAudioMasterDevice_genpcg::properties_active.buffersize.descriptor.c_str());
+		modProps.push_back(CjvxAudioMasterDevice_genpcg::properties_active.format.descriptor.c_str());
 
 		if (JVX_CHECK_SIZE_SELECTED(idxF))
 		{
 			jvxBool err = false;
-			jvx_bitZSet(CjvxAudioDevice_genpcg::properties_active.formatselection.value.selection(), idxF);
-			CjvxAudioDevice_genpcg::properties_active.format.value = jvxDataFormat_decode(CjvxAudioDevice_genpcg::properties_active.formatselection.value.entries[idxF].c_str());
+			jvx_bitZSet(CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.selection(), idxF);
+			CjvxAudioMasterDevice_genpcg::properties_active.format.value = jvxDataFormat_decode(CjvxAudioMasterDevice_genpcg::properties_active.formatselection.value.entries[idxF].c_str());
 		}
 		if (JVX_CHECK_SIZE_SELECTED(idxR))
 		{
 			jvxBool err = false;
 			jvx_bitZSet(rateselection->value.selection(), idxR);
-			CjvxAudioDevice_genpcg::properties_active.samplerate.value = JVX_SIZE_INT32(jvx_string2Size(rateselection->value.entries[idxR], err));
+			CjvxAudioMasterDevice_genpcg::properties_active.samplerate.value = JVX_SIZE_INT32(jvx_string2Size(rateselection->value.entries[idxR], err));
 		}
 		if (JVX_CHECK_SIZE_SELECTED(idxB))
 		{
 			jvxBool err = false;
 			jvx_bitZSet(sizeselection->value.selection(), idxB);
-			CjvxAudioDevice_genpcg::properties_active.buffersize.value = JVX_SIZE_INT32(jvx_string2Size(sizeselection->value.entries[idxB], err));
+			CjvxAudioMasterDevice_genpcg::properties_active.buffersize.value = JVX_SIZE_INT32(jvx_string2Size(sizeselection->value.entries[idxB], err));
 		}
 
-		_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
-		_common_set_ocon.theData_out.con_params.rate = CjvxAudioDevice_genpcg::properties_active.samplerate.value;
-		_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxAudioDevice_genpcg::properties_active.format.value;
+		_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioMasterDevice_genpcg::properties_active.buffersize.value;
+		_common_set_ocon.theData_out.con_params.rate = CjvxAudioMasterDevice_genpcg::properties_active.samplerate.value;
+		_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxAudioMasterDevice_genpcg::properties_active.format.value;
 
 	}
 	else
@@ -753,18 +663,18 @@ CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferT
 		jvxInt32 delta = ld_con->con_params.number_channels - paramsDevice.numInputs;
 		if (delta != 0)
 		{
-			modProps.push_back(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.descriptor.c_str());
+			modProps.push_back(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.descriptor.c_str());
 		}
 
-		jvxSize idx = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.size() - 1;
-		std::vector<std::string>::reverse_iterator elmbwd = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.rbegin();
-		while (delta < 0 && (elmbwd != CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.rend()))
+		jvxSize idx = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.size() - 1;
+		std::vector<std::string>::reverse_iterator elmbwd = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.rbegin();
+		while (delta < 0 && (elmbwd != CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.rend()))
 		{
 			if (idx != last_user_interaction.last_selection_user_input_channels)
 			{
-				if (jvx_bitTest(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
+				if (jvx_bitTest(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
 				{
-					jvx_bitClear(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
+					jvx_bitClear(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
 					delta++;
 				}
 			}
@@ -772,13 +682,13 @@ CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferT
 			idx--;
 		}
 
-		idx = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.size() - 1;
-		elmbwd = elmbwd = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.rbegin();
-		while (delta < 0 && (elmbwd != CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.rend()))
+		idx = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.size() - 1;
+		elmbwd = elmbwd = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.rbegin();
+		while (delta < 0 && (elmbwd != CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.rend()))
 		{
-			if (jvx_bitTest(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
+			if (jvx_bitTest(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
 			{
-				jvx_bitClear(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
+				jvx_bitClear(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
 				delta++;
 			}
 			elmbwd++;
@@ -786,14 +696,14 @@ CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferT
 
 		// Add channels in forward manner!!
 		idx = 0;
-		std::vector<std::string>::iterator elmfwd = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.begin();
-		while (delta > 0 && (elmfwd != CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.end()))
+		std::vector<std::string>::iterator elmfwd = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.begin();
+		while (delta > 0 && (elmfwd != CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.end()))
 		{
 			if (idx != last_user_interaction.last_selection_user_input_channels)
 			{
-				if (!jvx_bitTest(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
+				if (!jvx_bitTest(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
 				{
-					jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
+					jvx_bitSet(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
 					delta--;
 				}
 			}
@@ -802,12 +712,12 @@ CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferT
 		}
 
 		idx = 0;
-		elmfwd = CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.begin();
-		while (delta > 0 && (elmfwd != CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.end()))
+		elmfwd = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.begin();
+		while (delta > 0 && (elmfwd != CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.end()))
 		{
-			if (!jvx_bitTest(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
+			if (!jvx_bitTest(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx))
 			{
-				jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
+				jvx_bitSet(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), idx);
 				delta--;
 			}
 			elmfwd++;
@@ -833,6 +743,7 @@ CjvxAudioMasterDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferT
 			_common_set_property_report.reportRef->report_properties_modified(props_set.c_str());
 		}
 	}
+#endif
 	return res;
 }
 
@@ -932,17 +843,17 @@ CjvxAudioMasterDevice::adaptNumberInputChannels(jvxSize numChannels)
 {
 	jvxBool modified = false;
 	jvxSize i;
-	if (numChannels  < CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.size())
+	if (numChannels  < CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.size())
 {
-	jvxSize selected = jvx_bitCountFilled(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(0));
+	jvxSize selected = jvx_bitCountFilled(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(0));
 	int deltaChannels = ((int)tryThis->con_params.number_channels - (int)selected);
 	if (deltaChannels > 0)
 	{
-		for (i = 0; i < CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.size(); i++)
+		for (i = 0; i < CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.size(); i++)
 		{
-			if (!jvx_bitTest(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(0), i))
+			if (!jvx_bitTest(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(0), i))
 			{
-				jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(0), i);
+				jvx_bitSet(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(0), i);
 				modified = true;
 				deltaChannels--;
 			}
@@ -974,8 +885,8 @@ CjvxAudioMasterDevice::activate_lock()
 		allocate__properties_active();
 		register__properties_active(static_cast<CjvxProperties*>(this));
 
-		CjvxAudioDevice_genpcg::properties_active.sourceName.value = _common_set.theName;
-		CjvxAudioDevice_genpcg::properties_active.sinkName.value = _common_set.theName;
+		CjvxAudioMasterDevice_genpcg::properties_active.sourceName.value = _common_set.theName;
+		CjvxAudioMasterDevice_genpcg::properties_active.sinkName.value = _common_set.theName;
 
 		//_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, JVX_PROPERTY_CATEGORY_PREDEFINED, CjvxAudioMasterDevice::properties_active.format.globalIdx);
 

@@ -1,5 +1,5 @@
 SECTION PROPERTIES
 {	
-	OUTPUTFILE_NAME = "CjvxNodeAss_genpcg";
+	OUTPUTFILE_NAME = "CjvxSimplePropsAss_genpcg";
 	include "node-properties-ass.pcgf";
 }; 

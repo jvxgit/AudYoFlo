@@ -1,13 +1,13 @@
-#ifndef __CJVXNODESPROPSPARS_H__
-#define __CJVXNODESPROPSPARS_H__
+#ifndef __CJVXSIMPLEPROPSPARSNODE_H__
+#define __CJVXSIMPLEPROPSPARSNODE_H__
 
-#include "pcg_CjvxNodeAss_pcg.h"
+#include "pcg_CjvxSimplePropsAss_pcg.h"
 
 /**
  * This class combines exposed properties and internal property values. In addition, it
  * associates the property containers directly to the actual values.
  */
-class CjvxSimplePropsPars : public CjvxNodeAss_genpcg
+class CjvxSimplePropsPars : public CjvxSimplePropsAss_genpcg
 {
 public: 
 	struct _common_set_node_params_a_1io_t
@@ -48,10 +48,10 @@ public:
 	void initialize(CjvxProperties* theProps, const std::string& prefix = "", jvxBool force_nonsys = false, jvxBool v_register = false)
 	{
 		assProps = theProps;
-		CjvxNodeAss_genpcg::init_all();
-		CjvxNodeAss_genpcg::allocate_all();
-		CjvxNodeAss_genpcg::register_all(assProps, prefix, force_nonsys, v_register);
-		CjvxNodeAss_genpcg::associate__node(assProps,
+		CjvxSimplePropsAss_genpcg::init_all();
+		CjvxSimplePropsAss_genpcg::allocate_all();
+		CjvxSimplePropsAss_genpcg::register_all(assProps, prefix, force_nonsys, v_register);
+		CjvxSimplePropsAss_genpcg::associate__node(assProps,
 			&_common_set_node_params_a_1io.buffersize, 1,
 			&_common_set_node_params_a_1io.samplerate, 1,
 			&_common_set_node_params_a_1io.format, 1,
@@ -71,9 +71,9 @@ public:
 	void terminate()
 	{
 		assert(assProps);
-		CjvxNodeAss_genpcg::deassociate__node(assProps);
-		CjvxNodeAss_genpcg::unregister_all(assProps);
-		CjvxNodeAss_genpcg::deallocate_all();
+		CjvxSimplePropsAss_genpcg::deassociate__node(assProps);
+		CjvxSimplePropsAss_genpcg::unregister_all(assProps);
+		CjvxSimplePropsAss_genpcg::deallocate_all();
 		assProps = nullptr;
 	}
 
@@ -99,6 +99,19 @@ public:
 			(jvxDataflow)_common_set_node_params_a_1io.data_flow,
 			_common_set_node_params_a_1io.segmentation.x,
 			_common_set_node_params_a_1io.segmentation.y);
+	}
+
+	jvxBool check_difference(_common_set_node_params_a_1io_t* params)
+	{
+		jvxBool difference_found = (_common_set_node_params_a_1io.number_channels != params->number_channels);
+		difference_found = difference_found || (_common_set_node_params_a_1io.buffersize != params->buffersize);
+		difference_found = difference_found || (_common_set_node_params_a_1io.samplerate != params->samplerate);
+		difference_found = difference_found || (_common_set_node_params_a_1io.format != params->format);
+		difference_found = difference_found || (_common_set_node_params_a_1io.subformat != params->subformat);
+		difference_found = difference_found || (_common_set_node_params_a_1io.data_flow != params->data_flow);
+		difference_found = difference_found || (_common_set_node_params_a_1io.segmentation.x != params->segmentation.x);
+		difference_found = difference_found || (_common_set_node_params_a_1io.segmentation.y != params->segmentation.y);
+		return difference_found;
 	}
 };
 
