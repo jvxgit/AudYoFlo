@@ -45,12 +45,12 @@ protected:
 	
 	struct
 	{
-		CjvxSimplePropsParsNode node;
+		CjvxSimplePropsPars node;
 	} video_input;
 
 	struct
 	{
-		CjvxSimplePropsParsNode node;
+		CjvxSimplePropsPars node;
 	} video_output;
 
 #ifdef RW_MUTEX
