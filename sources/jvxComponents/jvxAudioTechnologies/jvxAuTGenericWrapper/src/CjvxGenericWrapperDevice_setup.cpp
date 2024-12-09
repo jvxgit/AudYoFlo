@@ -36,9 +36,12 @@ CjvxGenericWrapperDevice::updateSWSamplerateAndBuffersize_nolock(jvxLinkDataDesc
 					(processingControl.computedParameters.form_hw != fromDevice->con_params.format))
 				{
 					jvxLinkDataDescriptor locDescr;
+					locDescr.con_params.segmentation.x = processingControl.computedParameters.bSize_hw;
+					locDescr.con_params.segmentation.y = 1;
 					locDescr.con_params.buffersize = processingControl.computedParameters.bSize_hw;
 					locDescr.con_params.rate = processingControl.computedParameters.sRate_hw;
 					locDescr.con_params.format = processingControl.computedParameters.form_hw;
+					locDescr.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 					locDescr.con_params.number_channels = fromDevice->con_params.number_channels;
 
 					// Try to negotiate

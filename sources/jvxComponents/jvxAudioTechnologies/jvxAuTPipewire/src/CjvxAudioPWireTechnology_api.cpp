@@ -121,7 +121,7 @@ CjvxAudioPWireTechnology::activate_technology_api()
 			(jvxComponentType)(_common_set.theComponentType.tp + 1),
 			"", NULL, JVX_SIZE_UNSELECTED, false);
 
-        newDevice->set_references_api(theDev);
+        newDevice->set_references_api(theDev, this);
 
 		// Whatever to be done for initialization
 		oneDeviceWrapper elmDW;
@@ -138,9 +138,13 @@ CjvxAudioPWireTechnology::deactivate_technology_api()
 {
     for(auto elm: devices_active)
     {
+        // Request specific pointer handle and move to the list of linked devices
         oneDevice* dev = elm->references_api();
-        JVX_SAFE_DELETE_OBJECT(dev);
-        local_deallocate_device(&elm);
+        devices_linked.push_back(dev);
+        
+        // We do not delete the devices here since they will be deleted in base class!!
+        // JVX_SAFE_DELETE_OBJECT(dev);
+        // local_deallocate_device(&elm);
     }
 
     for(auto elm: devices_linked)
@@ -195,6 +199,7 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
     {
         const char *media_class = spa_dict_lookup(props, "media.class");
         if (media_class && (strstr(media_class, "Device") || strstr(media_class, "device"))) {
+            const char* serial =  spa_dict_lookup(props, "object.serial");
             const char *nick = spa_dict_lookup(props, "device.nick");
             const char *descr = spa_dict_lookup(props, "device.description");
             const char *api_name = spa_dict_lookup(props, "device.api");
@@ -202,6 +207,7 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
             oneDevice* newDev = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newDev, oneDevice);
             newDev->id = id;
+            if(serial) newDev->serial = atoi(serial);
             if(descr) newDev->description = descr;
             if(nick) newDev->nick = nick;
             if(api_name) newDev->api_name = api_name;
@@ -215,6 +221,7 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
         const char *media_class = spa_dict_lookup(props, "media.class");
         if (media_class && (strstr(media_class, "Sink") || strstr(media_class, "sink"))) 
         {
+            const char* serial = spa_dict_lookup(props, "object.serial");
             const char *dev_id = spa_dict_lookup(props, "device.id");
             const char *nick = spa_dict_lookup(props, "node.nick");
             const char *descr = spa_dict_lookup(props, "node.description");
@@ -223,6 +230,7 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
             oneNode* newNode = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newNode, oneNode);
             newNode->id = id;
+            if(serial) newNode->serial = atoi(serial);
             newNode->isSink = true;
             if(dev_id) newNode->ref_device = atoi(dev_id);
             if(descr) newNode->description = descr;
@@ -232,6 +240,7 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
         }
         else if (media_class && (strstr(media_class, "Source") || strstr(media_class, "source"))) 
         {
+            const char* serial = spa_dict_lookup(props, "object.serial");
             const char *dev_id = spa_dict_lookup(props, "device.id");
             const char *nick = spa_dict_lookup(props, "node.nick");
             const char *descr = spa_dict_lookup(props, "node.description");
@@ -239,7 +248,9 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
 
             oneNode* newNode = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newNode, oneNode);
+            
             newNode->id = id;
+            if(serial) newNode->serial = atoi(serial);
             newNode->isSink = false;
             if(dev_id) newNode->ref_device = atoi(dev_id);
             if(descr) newNode->description = descr;
@@ -254,6 +265,7 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
         const char *audio_channel = spa_dict_lookup(props, "audio.channel");
         if (audio_channel) 
         {
+            const char *serial = spa_dict_lookup(props, "object.serial");
             const char *node_id = spa_dict_lookup(props, "node.id");
             const char *port_id = spa_dict_lookup(props, "port.id");
             const char *nick = spa_dict_lookup(props, "port.nick");
@@ -264,6 +276,7 @@ CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
             onePort* newPort = nullptr;
             JVX_SAFE_ALLOCATE_OBJECT(newPort, onePort);
             newPort->id = id;
+            if(serial) newPort->serial = atoi(serial);
             if(node_id) newPort->ref_node = atoi(node_id);
             if(port_id) newPort->port_id = atoi(port_id);
             if(nick) newPort->nick = nick;

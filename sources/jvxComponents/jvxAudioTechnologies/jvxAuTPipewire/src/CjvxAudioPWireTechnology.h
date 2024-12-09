@@ -12,6 +12,7 @@ class onePort
 public:
 	~onePort(){};
 	jvxSize id = JVX_SIZE_UNSELECTED;
+	int serial = 0;
 	jvxSize ref_node = JVX_SIZE_UNSELECTED;
 	jvxSize port_id = JVX_SIZE_UNSELECTED;
 	std::string name;
@@ -39,6 +40,7 @@ public:
 	};
 
 	jvxSize id = JVX_SIZE_UNSELECTED;
+	int serial = 0;
 	jvxSize ref_device = JVX_SIZE_UNSELECTED;
 	std::list<onePort*> in_ports;
 	std::list<onePort*> out_ports;
@@ -66,6 +68,7 @@ public:
 	};
 
 	jvxSize id = JVX_SIZE_UNSELECTED;
+	int serial = 0;
 	std::string api_name;
 	std::string description;
 	std::string name;
@@ -77,6 +80,7 @@ public:
 class CjvxAudioPWireTechnology: public CjvxMixedDevicesAudioTechnology<CjvxAudioPWireDevice>,
 	public genPWire_technology
 {
+	friend class CjvxAudioPWireDevice;
 
 protected:
 	int argc = 0;

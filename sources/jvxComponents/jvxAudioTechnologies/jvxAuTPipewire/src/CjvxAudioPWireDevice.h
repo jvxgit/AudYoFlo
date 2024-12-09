@@ -6,15 +6,46 @@
 #include "jvxAudioTechnologies/CjvxMixedDevicesAudioDevice.h"
 #include "pcg_exports_device.h"
 
+#include <pipewire/pipewire.h>
+#include <spa/param/latency-utils.h>
+#include <spa/param/audio/format-utils.h>
+
 // class CjvxAudioPWireTechnology<CjvxAudioPWireDevice>;
 
 class oneDevice;
+class CjvxAudioPWireTechnology;
+
 
 class CjvxAudioPWireDevice: public CjvxMixDevicesAudioDevice<CjvxAudioPWireDevice>, public genPWire_device
 {
 protected:
 	oneDevice* theDevicehandle = nullptr;
+	CjvxAudioPWireTechnology* parent = nullptr;
 
+	struct
+	{
+		struct pw_filter *filter = nullptr;
+    	void**in_ports = nullptr;
+    	void**out_ports = nullptr;
+		float**in_data = nullptr;
+    	float**out_data = nullptr;
+
+		jvxSize numChansInMax = 0;
+		jvxSize numChansOutMax = 0;
+		jvxBitField maskInput = 0;
+		jvxBitField maskOutput = 0;
+	} inProcessing;
+
+	struct spa_process_latency_info lat_info = 
+	{
+        .ns = 10 * SPA_NSEC_PER_MSEC
+	};
+
+	struct spa_audio_info_raw aud_info = {
+                                .format = SPA_AUDIO_FORMAT_S16,
+                                .rate = 48000,
+								.channels = 2                                
+								};
 public:
 	JVX_CALLINGCONVENTION CjvxAudioPWireDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxAudioPWireDevice();
@@ -22,8 +53,23 @@ public:
 	jvxErrorType  activate_device_api();
 	jvxErrorType  deactivate_device_api();
 
-	void set_references_api(oneDevice* theDevicehandle);
+	void set_references_api(oneDevice* theDevicehandle, CjvxAudioPWireTechnology* parentArg);
 	oneDevice* references_api();
+
+	jvxErrorType try_match_settings_backward_ocon(jvxLinkDataDescriptor* ld_con JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
+
+	// Optional: 
+	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+
+	jvxErrorType prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	jvxErrorType postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	jvxErrorType start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	jvxErrorType stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+
+	void process_buffer(struct spa_io_position *position);
 };
 
 #endif

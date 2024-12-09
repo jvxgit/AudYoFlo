@@ -37,7 +37,8 @@ public:
 		jvxErrorType res = CjvxTemplateTechnology<T>::_pre_check_deactivate();
 		if (res == JVX_NO_ERROR)
 		{
-			// deactivate_technology_api(); <- not required since handeld in base class
+			deactivate_technology_api(); 
+			
 			CjvxTemplateTechnology<T>::deactivate();
 		}
 		return res;

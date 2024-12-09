@@ -17,7 +17,7 @@ public:
 		jvxInt32 number_channels_out = JVX_SIZE_UNSELECTED_INT32;
 		void reset()
 		{
-			number_channels_out = JVX_SIZE_UNSELECTED;
+			number_channels_out = JVX_SIZE_UNSELECTED_INT32;
 		}
 	};
 	_common_set_device_params_t _common_set_device_params;

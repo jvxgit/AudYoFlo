@@ -14,10 +14,11 @@ static int testSamplerates[] =
 };
 
 void 
-CjvxAudioPWireDevice::set_references_api(oneDevice* theDevicehandleArg)
+CjvxAudioPWireDevice::set_references_api(oneDevice* theDevicehandleArg, CjvxAudioPWireTechnology* parentArg)
 {
     assert(theDevicehandle == nullptr);
     theDevicehandle = theDevicehandleArg;
+    parent = parentArg;
 }
 
 oneDevice* 
@@ -32,29 +33,24 @@ jvxErrorType
 CjvxAudioPWireDevice::activate_device_api()
 {
     jvxErrorType res = JVX_NO_ERROR;
-    /*
-    genWindows_device::properties_active.ratesselection.value.entries.clear();
-    for (jvxSize entry : supportedRates)
-    {
-        if (entry == defRate)
-        {
-            idDefRate = genWindows_device::properties_active.ratesselection.value.entries.size();
-        }
-        genWindows_device::properties_active.ratesselection.value.entries.push_back(jvx_size2String(entry));
-    }
-    if (JVX_CHECK_SIZE_SELECTED(idDefRate))
-    {
-        jvx_bitZSet(genWindows_device::properties_active.ratesselection.value.selection(), idDefRate);
-    }
-    */
+  
+     inout_params._common_set_node_params_a_1io.samplerate = 48000;
+   inout_params._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
+   inout_params._common_set_node_params_a_1io.segmentation.x = 1024;
+   inout_params._common_set_node_params_a_1io.segmentation.y = 1;
+   inout_params._common_set_node_params_a_1io.subformat = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
-   CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.clear();
+   inout_params._common_set_node_params_a_1io.derive_buffersize();
+
+   CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.clear();
 
    auto elmSS = theDevicehandle->sources.begin();
    oneNode *theNode = *elmSS;
    jvxSize cnt = 0;
    jvxBool foundOne = true;
-   jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection());
+
+   // This is the CAPTURING side!!!
+   jvx_bitFClear(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection());
    while (foundOne)
    {
        foundOne = false;
@@ -66,8 +62,12 @@ CjvxAudioPWireDevice::activate_device_api()
                if (thePort->port_id == cnt)
                {
                    std::string chan_name = thePort->nick;
-                   CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.push_back(chan_name);
-                   jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), cnt);
+                   if(chan_name.empty())
+                   {
+                    chan_name = thePort->name;
+                   }
+                   CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.push_back(chan_name);
+                   jvx_bitSet(CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection(), cnt);
                    foundOne = true;
                    cnt++;
                    break;
@@ -76,11 +76,12 @@ CjvxAudioPWireDevice::activate_device_api()
        }
    }
 
+    // This is the RENDERING side!!!
    elmSS = theDevicehandle->sinks.begin();
    theNode = *elmSS;
    cnt = 0;
    foundOne = true;
-   jvx_bitFClear(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection());
+   jvx_bitFClear(CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection());
    while (foundOne)
    {
        foundOne = false;
@@ -92,8 +93,12 @@ CjvxAudioPWireDevice::activate_device_api()
                if (thePort->port_id == cnt)
                {
                    std::string chan_name = thePort->nick;
-                   CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(chan_name);
-                   jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.selection(), cnt);
+                   if(chan_name.empty())
+                   {
+                    chan_name = thePort->name;
+                   }
+                   CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.entries.push_back(chan_name);
+                   jvx_bitSet(CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection(), cnt);
                    foundOne = true;
                    cnt++;
                    break;
@@ -102,28 +107,63 @@ CjvxAudioPWireDevice::activate_device_api()
        }
    }
 
-        /*
-        for (i = 0; i < this->wext_init.Format.nChannels; i++)
-        {
-            //std::string chan_name = this->_common_set_min.theDescription + " #" + jvx_size2String(i);
-            std::string chan_name = "In #" + jvx_size2String(i);
-            CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.entries.push_back(chan_name);
-            jvx_bitSet(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.value.selection(), i);
-        }
-        */
-    while(testSamplerates[cnt])
-    {
-
-    }
-    return res;
+    // Update denpendent variables but do not request any chain update - we are in activate!!
+   this->updateDependentVariables(true);
+   return res;
 }
 
 jvxErrorType 
 CjvxAudioPWireDevice::deactivate_device_api()
 {
     jvxErrorType res = JVX_NO_ERROR;
+
+    // All clear operations are realized in the base class <CjvxAudioMasterDevice>
     return res;
 }
+
+jvxErrorType
+CjvxAudioPWireDevice::try_match_settings_backward_ocon(jvxLinkDataDescriptor* ld_con JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{ 
+    JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, static_cast<IjvxObject*>(this),
+		_common_set_io_common.descriptor.c_str(), "Entering CjvxAudioPWireDevice default output connector");
+
+    std::list<std::string> modProps;
+    if(        
+        (ld_con->con_params.segmentation.x != inout_params._common_set_node_params_a_1io.segmentation.x) ||
+        (ld_con->con_params.segmentation.y != inout_params._common_set_node_params_a_1io.segmentation.y))
+    {
+        inout_params._common_set_node_params_a_1io.segmentation.x = ld_con->con_params.segmentation.x;
+        inout_params._common_set_node_params_a_1io.segmentation.y = ld_con->con_params.segmentation.y;
+        inout_params.derive_buffersize();
+
+        neg_output._update_parameter_fixed(jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT,
+            inout_params._common_set_node_params_a_1io.segmentation.x , 
+            &_common_set_ocon.theData_out);
+        neg_output._update_parameter_fixed(jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT,
+            inout_params._common_set_node_params_a_1io.segmentation.y, 
+            &_common_set_ocon.theData_out);
+        neg_output._update_parameter_fixed(jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT,
+            inout_params._common_set_node_params_a_1io.buffersize, 
+            &_common_set_ocon.theData_out);
+
+        modProps.push_back(inout_params.node.buffersize.descriptor.c_str());
+        modProps.push_back(inout_params.node.segmentsize_x.descriptor.c_str());
+        modProps.push_back(inout_params.node.segmentsize_y.descriptor.c_str());
+    }
+
+    if(ld_con->con_params.rate != inout_params._common_set_node_params_a_1io.samplerate)
+    {
+        inout_params._common_set_node_params_a_1io.samplerate = ld_con->con_params.rate;
+        modProps.push_back(inout_params.node.samplerate.descriptor.c_str());
+        neg_output._update_parameter_fixed(jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT,
+            inout_params._common_set_node_params_a_1io.samplerate, 
+            &_common_set_ocon.theData_out);
+
+    }
+    
+    return CjvxMixDevicesAudioDevice<CjvxAudioPWireDevice>::try_match_settings_backward_ocon(ld_con JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+}
+
 #if 0
 
 #include "CjvxAudioWindowsDevice.h"

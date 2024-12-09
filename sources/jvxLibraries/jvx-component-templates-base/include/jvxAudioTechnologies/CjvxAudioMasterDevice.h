@@ -18,9 +18,10 @@ class CjvxAudioMasterDevice : public CjvxSimpleMasterDevice,
 protected:
 
 	CjvxSimplePropsParsPlusOutChannel inout_params;
+	
 	CjvxNegotiate_input neg_input;
 	CjvxNegotiate_output neg_output;
-
+	
 	struct
 	{
 		std::vector<jvxDataFormat> formats;
@@ -66,13 +67,13 @@ public:
 	// =======================================================================
 	// Interface properties
 	// =======================================================================
-#define JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
-#define JVX_PROPERTY_SIMPLIFY_OVERWRITE_STOP_GROUP
+//#define JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
+//#define JVX_PROPERTY_SIMPLIFY_OVERWRITE_STOP_GROUP
 #include "codeFragments/simplify/jvxProperties_simplify.h"
-#undef JVX_PROPERTY_SIMPLIFY_OVERWRITE_STOP_GROUP
-#undef JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
+//#undef JVX_PROPERTY_SIMPLIFY_OVERWRITE_STOP_GROUP
+//#undef JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
 
-
+	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION set_property(
 		jvxCallManagerProperties& callGate,
 		const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
@@ -80,6 +81,7 @@ public:
 		const jvx::propertyDetail::CjvxTranferDetail& detail)override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop_property_group(jvxCallManagerProperties& callGate)override;
+	*/
 
 	// =====================================================================
 	// =====================================================================
@@ -105,6 +107,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION try_match_settings_backward_ocon(jvxLinkDataDescriptor* ld_con JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
 	// =====================================================================
 	// Activate the relevant hidden interfaces
@@ -137,14 +140,6 @@ public:
 #endif
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(base_params_set_update);
-
-	jvxErrorType currentSetupAudioParams(jvxAudioParams& params);
-	virtual void updateChainOutputParameter();
-
-	// Special function to react on complain function during test: it should find a good match 
-	// for rate and size. Only to be used in case tp == JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS
-	jvxErrorType transfer_backward_ocon_match_setting(jvxLinkDataTransferType tp, jvxHandle* data, jvxPropertyContainerSingle<jvxSelectionList_cpp>* rateselection,
-		jvxPropertyContainerSingle<jvxSelectionList_cpp>* sizeselection JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
 	virtual void activate_connectors_master();
 	virtual void deactivate_connectors_master();

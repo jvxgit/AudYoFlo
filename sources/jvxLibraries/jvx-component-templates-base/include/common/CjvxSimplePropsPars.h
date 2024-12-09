@@ -36,7 +36,15 @@ public:
 			segmentation.x = JVX_SIZE_UNSELECTED_INT32;
 			segmentation.y = JVX_SIZE_UNSELECTED_INT32;
 			format_spec.clear();
-		}
+		};
+
+		void derive_buffersize()
+		{
+			jvxSize szElement = jvxDataFormatGroup_getsize_mult(subformat);
+			jvxSize szElementsLine = segmentation.x * szElement;
+			jvxSize szElementsField = segmentation.y * szElementsLine;
+			buffersize = szElementsField / jvxDataFormatGroup_getsize_div(subformat);
+		};
 	};
 	_common_set_node_params_a_1io_t _common_set_node_params_a_1io;
 
