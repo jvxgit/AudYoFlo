@@ -7,6 +7,19 @@
 
 #include <pipewire/pipewire.h>
 
+enum class operationModeTechnology
+{
+	AYF_PIPEWIRE_OPERATION_DSP_FILTER,
+	AYF_PIPEWIRE_OPERATION_INPUT_OUTPUT
+};
+
+enum class operationModeDevice
+{
+	AYF_PIPEWIRE_OPERATION_DEVICE_INPUT,
+	AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT,
+	AYF_PIPEWIRE_OPERATION_DEVICE_DUPLEX
+};
+
 class onePort
 {
 public:
@@ -20,6 +33,21 @@ public:
 	std::string direction;
 	std::string physical;
 	jvxDataFormat form = JVX_DATAFORMAT_NONE;
+	onePort* copy()
+	{
+		onePort* newPort = nullptr;
+		JVX_SAFE_ALLOCATE_OBJECT(newPort, onePort);
+		newPort->id = id;
+		newPort->serial = serial;
+		newPort->ref_node = ref_node;
+		newPort->port_id = port_id;
+		newPort->name = name;
+		newPort->nick = nick;
+		newPort->direction = direction;
+		newPort->physical = physical;
+		newPort->form = form;
+		return newPort;
+	};
 };
 
 class oneNode
@@ -48,6 +76,27 @@ public:
 	std::string name;
 	std::string nick;
 	jvxBool isSink = false;
+	oneNode* copy()
+	{
+		oneNode* newNode = nullptr;
+		JVX_SAFE_ALLOCATE_OBJECT(newNode, oneNode);
+		newNode->id = id;
+		newNode->serial = serial;
+		newNode->ref_device = ref_device;
+		newNode->description = description;
+		newNode->name = name;
+		newNode->nick = nick;
+		newNode->isSink = isSink;
+		for(auto elm: in_ports)
+		{
+			newNode->in_ports.push_back(elm->copy());
+		}
+		for(auto elm: out_ports)
+		{
+			newNode->out_ports.push_back(elm->copy());
+		}
+		return newNode;
+	}
 };
 
 class oneDevice
@@ -75,6 +124,29 @@ public:
 	std::string nick;
 	std::list<oneNode*> sources;
 	std::list<oneNode*> sinks;
+	operationModeDevice opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_DUPLEX;
+
+	oneDevice* copy()
+	{
+		oneDevice* newDev = nullptr;
+		JVX_SAFE_ALLOCATE_OBJECT(newDev, oneDevice);
+		newDev->id = id;
+		newDev->serial = serial;
+		newDev->api_name = api_name;
+		newDev->description = description;
+		newDev->name = name;
+		newDev->nick = nick;
+		newDev->opMode = opMode;
+		for(auto elm: sources)
+		{
+			newDev->sources.push_back(elm->copy());
+		}
+		for(auto elm: sinks)
+		{
+			newDev->sinks.push_back(elm->copy());
+		}
+		return newDev;
+	}
 };
 
 class CjvxAudioPWireTechnology: public CjvxMixedDevicesAudioTechnology<CjvxAudioPWireDevice>,
@@ -109,6 +181,8 @@ protected:
 	std::list<oneDevice*> devices_linked;
 	
 	std::list<CjvxAudioPWireDevice*> devices_active;
+
+	operationModeTechnology techMode = operationModeTechnology::AYF_PIPEWIRE_OPERATION_INPUT_OUTPUT;
 
 public:
 	CjvxAudioPWireTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);

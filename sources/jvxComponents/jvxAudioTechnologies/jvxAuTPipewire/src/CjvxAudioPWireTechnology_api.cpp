@@ -99,19 +99,50 @@ CjvxAudioPWireTechnology::activate_technology_api()
     this->sort_unsorted_devices();
 
     std::string nmPrefix = "Dummy";
-	while(devices_linked.size())
+
+    if(techMode == operationModeTechnology::AYF_PIPEWIRE_OPERATION_INPUT_OUTPUT)
+    {
+        std::list<oneDevice*> devices_linked_add;
+        for(auto& elm: devices_linked)
+        {
+            oneDevice* newDev = elm->copy();
+            elm->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_INPUT;
+            
+            newDev->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT;
+            devices_linked_add.push_back(newDev);
+        }
+
+        for(auto& elm: devices_linked_add)
+        {
+            devices_linked.push_back(elm);
+        }
+    }
+
+    while(devices_linked.size())
 	{
         auto elm = devices_linked.begin();
-        oneDevice* theDev = *elm;
+        oneDevice *theDev = *elm;
 
         devices_linked.erase(elm);
 
-		std::string devName = theDev->nick; 
+        std::string devName = theDev->nick;
         if(devName.empty())
         {
             devName = theDev->description; 
         }
 
+        switch(theDev->opMode)
+        {
+            case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_INPUT:
+                devName += "-input";
+                break;
+            case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT:
+                devName += "-output";
+                break;
+            default:
+                break;
+        }
+        
 		// Do whatever is required
 		CjvxAudioPWireDevice* newDevice = local_allocate_device(devName.c_str(), false,
 			_common_set.theDescriptor.c_str(),
