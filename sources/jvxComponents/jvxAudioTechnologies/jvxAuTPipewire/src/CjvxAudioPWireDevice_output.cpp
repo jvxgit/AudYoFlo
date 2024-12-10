@@ -55,7 +55,7 @@ CjvxAudioPWireDevice::start_device_output()
 		&output.stream_events,
 		this);
 
-	output.aud_info.format = SPA_AUDIO_FORMAT_F64_LE; // SPA_AUDIO_FORMAT_S16; 
+	output.aud_info.format = SPA_AUDIO_FORMAT_S16; // SPA_AUDIO_FORMAT_F64_LE; // 
 	output.aud_info.rate = 48000;
 	output.aud_info.channels = 2;
 
