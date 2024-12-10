@@ -53,7 +53,8 @@ CjvxAudioPWireDevice::start_device_input()
 		&input.stream_events,
 		this);
 
-	params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &input.aud_info);
+	
+	params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &common.aud_info);
 
 	int conn_result = pw_stream_connect(input.stream,
 					  PW_DIRECTION_INPUT,

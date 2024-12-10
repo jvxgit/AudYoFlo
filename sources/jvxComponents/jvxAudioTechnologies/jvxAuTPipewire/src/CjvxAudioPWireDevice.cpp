@@ -31,7 +31,7 @@ CjvxAudioPWireDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	
 jvxErrorType 
 CjvxAudioPWireDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
-{
+{	
 	return CjvxMixDevicesAudioDevice<CjvxAudioPWireDevice>::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
 	
@@ -77,7 +77,26 @@ CjvxAudioPWireDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	// https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/4410
 
 	common.numChansInMax = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.size();
-	common.numChansOutMax = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.size();
+	common.numChansOutMax = CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.entries.size();
+
+	common.format = (jvxDataFormat)inout_params._common_set_node_params_a_1io.format;	
+	switch(common.format)
+	{
+		case JVX_DATAFORMAT_DATA:
+#ifdef JVX_DATA_FORMAT_FLOAT
+			common.aud_info.format = SPA_AUDIO_FORMAT_F32_LE; 
+#else
+			common.aud_info.format = SPA_AUDIO_FORMAT_F64_LE; 
+#endif
+			break;
+		default:
+			assert(0);
+	}
+	
+	common.rate = inout_params._common_set_node_params_a_1io.samplerate;
+	common.bsize = inout_params._common_set_node_params_a_1io.buffersize;
+	
+	common.aud_info.rate = common.rate;
 
 	switch(theDevicehandle->opMode)
 	{
@@ -85,7 +104,7 @@ CjvxAudioPWireDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			res = start_device_duplex();
 			break;
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT:
-			res = start_device_output();
+			res = start_device_output_pw();
 			break;
 		default:
 			res = start_device_input();
@@ -107,10 +126,29 @@ CjvxAudioPWireDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			assert(0);
 			break;
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT:
-			res = stop_device_output();
+			res = stop_device_output_pw();
 			break;
 		default:
 			res = stop_device_input();
+			break;
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxAudioPWireDevice::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage) 
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	switch(theDevicehandle->opMode)
+	{
+		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_DUPLEX:
+			//res = start_device_duplex();
+			break;
+		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT:
+			res = process_buffer_icon_output(mt_mask, idx_stage);
+			break;
+		default:
+			//res = start_device_input();
 			break;
 	}
 	return res;

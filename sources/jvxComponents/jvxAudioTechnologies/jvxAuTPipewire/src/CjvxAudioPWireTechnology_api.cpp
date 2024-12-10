@@ -19,6 +19,9 @@
 // Set the buffersize: https://linuxmusicians.com/viewtopic.php?t=25768
 // -> pw-metadata -n settings 0 clock.force-quantum <buffersize>
 // -> pw-metadata -n settings 0 clock.quantum <buffersize>
+// Resetting the force-constraints
+// -> pw-metadata -n settings 0 clock.force-rate 0
+// -> pw-metadata -n settings 0 clock.force-quantum 0
 // The "force" option will trigger a modification of buffersize while in operation
 // Works even with odd numbers like 53 :-)
 //

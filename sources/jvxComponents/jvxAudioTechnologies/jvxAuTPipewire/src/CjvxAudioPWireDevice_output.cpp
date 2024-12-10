@@ -11,14 +11,14 @@ static void process_output(void *userdata)
 	CjvxAudioPWireDevice* this_pointer = (CjvxAudioPWireDevice*)userdata;
 	if(this_pointer)
 	{
-		this_pointer->process_buffer_output();
+		this_pointer->process_buffer_output_pw();
 	}
 };
 
 // ============================================================================
 
 jvxErrorType 
-CjvxAudioPWireDevice::start_device_output()
+CjvxAudioPWireDevice::start_device_output_pw()
 {
 	std::string str = _common_set.theName + "-src";
 
@@ -55,12 +55,27 @@ CjvxAudioPWireDevice::start_device_output()
 		&output.stream_events,
 		this);
 
-	output.aud_info.format = SPA_AUDIO_FORMAT_S16; // SPA_AUDIO_FORMAT_F64_LE; // 
-	output.aud_info.rate = 48000;
-	output.aud_info.channels = 2;
+	// Other formats specified in common code
+	common.aud_info.channels = common.numChansOutMax;
 
-	params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &output.aud_info);
+	params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &common.aud_info);
+	
+	/*
+	 * Setting any of the following options does not have any impact..
+	 int interleave = 0;
+	params[1] = (const spa_pod*)spa_pod_builder_add_object(&b,
+                SPA_TYPE_OBJECT_Format, SPA_PARAM_EnumFormat,
+                SPA_FORMAT_AUDIO_interleave, SPA_POD_OPT_Int(0),
 
+				);
+	
+	params[2] = spa_pod_builder_add_object(&b,
+		SPA_TYPE_OBJECT_ParamBuffers, SPA_PARAM_Buffers,
+		SPA_PARAM_BUFFERS_buffers, SPA_POD_CHOICE_RANGE_Int(4, 2, 10),
+		SPA_PARAM_BUFFERS_blocks,  SPA_POD_Int(1),
+		SPA_PARAM_BUFFERS_size,    SPA_POD_Int(2048),
+		SPA_PARAM_BUFFERS_stride,  SPA_POD_Int(data->stride));
+		*/
 	int conn_result = pw_stream_connect(output.stream,
 					  PW_DIRECTION_OUTPUT,
 					  idConnect,
@@ -80,53 +95,112 @@ error:
 }
 
 jvxErrorType 
-CjvxAudioPWireDevice::stop_device_output()
+CjvxAudioPWireDevice::stop_device_output_pw()
 {
  	pw_stream_destroy(output.stream);
  	return JVX_NO_ERROR;
 }
 
 void 
-CjvxAudioPWireDevice::process_buffer_output()
+CjvxAudioPWireDevice::process_buffer_output_pw()
 {
         struct pw_buffer *b;
         struct spa_buffer *buf;
-        int i, c, n_frames, stride;
-        int16_t *dst, val;
- 
+        int i, c, n_frames_max, stride; 
+		jvxSize n_frames = 0;
+		jvxSize elmSize = jvxDataFormat_getsize(common.format);
+
         if ((b = pw_stream_dequeue_buffer(output.stream)) == NULL) {
                 pw_log_warn("out of buffers: %m");
                 return;
         }
  
-        buf = b->buffer;
-        if ((dst = (int16_t*)buf->datas[0].data) == NULL)
-                return;
+ 		buf = b->buffer;
+ 		stride = elmSize * common.numChansOutMax;
+		n_frames_max = buf->datas[0].maxsize / stride;
+		assert(n_frames_max >= b->requested);
+		
+		if(b->requested == common.bsize)		
+		{
+			n_frames = b->requested;
+			
+			// I am the master. I will start the chain here!
+    		if (_common_set_ocon.theData_out.con_link.connect_to)
+    		{
+        		_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
+    		}			
+
+        	// Here, we do NOT fill in any data!!
+
+			// We copy the pointer to the pw buffer though
+			switch(common.format)
+			{
+			case JVX_DATAFORMAT_DATA:
+				output.dst_data = (jvxData *)buf->datas[0].data;
+				break;
+			default:
+				assert(0);
+				break;
+			}
+
+			// We drive the buffer through the chain!
+    		if (_common_set_ocon.theData_out.con_link.connect_to)
+    		{
+        		_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+    		}
+
+			// Set the target buffer to nullptr to prevent any problem to occur
+			output.dst_data = nullptr;
  
-        stride = sizeof(int16_t) * 2;
-        n_frames = buf->datas[0].maxsize / stride;
-        if (b->requested)
-                n_frames = SPA_MIN(b->requested, n_frames);
- 
-        for (i = 0; i < n_frames; i++) {
-                output.accumulator += M_PI_M2 * 440 / 48000;
-                if (output.accumulator >= M_PI_M2)
-                        output.accumulator -= M_PI_M2;
- 
-                /* sin() gives a value between -1.0 and 1.0, we first apply
-                 * the volume and then scale with 32767.0 to get a 16 bits value
-                 * between [-32767 32767].
-                 * Another common method to convert a double to
-                 * 16 bits is to multiple by 32768.0 and then clamp to
-                 * [-32768 32767] to get the full 16 bits range. */
-                val = sin(output.accumulator) * 1 * 32767.0;
-                for (c = 0; c < 2; c++)
-                        *dst++ = val;
-        }
- 
-        buf->datas[0].chunk->offset = 0;
-        buf->datas[0].chunk->stride = stride;
-        buf->datas[0].chunk->size = n_frames * stride;
- 
-        pw_stream_queue_buffer(output.stream, b);
+			// Finish buffer processing
+ 			if (_common_set_ocon.theData_out.con_link.connect_to)
+			{
+				_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
+			}
+
+			// Finalize the output buffer
+        	buf->datas[0].chunk->offset = 0;
+        	buf->datas[0].chunk->stride = stride;
+        	buf->datas[0].chunk->size = n_frames * stride;
+        	pw_stream_queue_buffer(output.stream, b);
+		}	
+		else
+		{
+			std::cout << __FUNCTION__ << ": Framesize mismatch!" << std::endl;
+		}
 }
+
+jvxErrorType 
+CjvxAudioPWireDevice::process_buffer_icon_output(jvxSize mt_mask, jvxSize idx_stage)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxSize i;
+
+	// This is the endpoint on the processing chain. We take the data that comes in and copy that to the
+	// pw buffer reference!
+	switch(common.format)
+	{
+	case JVX_DATAFORMAT_DATA:
+	{
+		jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+		if(output.dst_data)
+		{
+			for (i = 0; i < common.numChansOutMax; i++)
+			{
+				jvx_convertSamples_from_to<jvxData>(bufsIn[i],
+													output.dst_data,
+													common.bsize,
+													0, 1,
+													i, common.numChansOutMax);
+			}
+		}
+		else
+		{
+			std::cout << __FUNCTION__ << ": Request to process buffer with nullptr target location!" << std::endl;
+		}
+		break;
+	}
+	}
+	return res;
+}
+	

@@ -1,18 +1,6 @@
 #include "CjvxAudioPWireDevice.h"
 #include "CjvxAudioPWireTechnology.h"
 
-static int testSamplerates[] =
-{
-    8000,
-    11025,
-    16000,
-    22050,
-    32000,
-    44100,
-    48000,
-    0
-};
-
 void 
 CjvxAudioPWireDevice::set_references_api(oneDevice* theDevicehandleArg, CjvxAudioPWireTechnology* parentArg)
 {
@@ -43,10 +31,21 @@ CjvxAudioPWireDevice::activate_device_api()
 {
     jvxErrorType res = JVX_NO_ERROR;
   
-    
-     inout_params._common_set_node_params_a_1io.samplerate = 48000;
+    jvxSize samplerate = parent->system.samplerate_force;
+    if(samplerate == 0)
+    {
+        samplerate = parent->system.samplerate;
+    }
+
+    jvxSize buffersize = parent->system.buffersize_force;
+    if(buffersize == 0)
+    {
+        buffersize = parent->system.buffersize;
+    }
+
+    inout_params._common_set_node_params_a_1io.samplerate = samplerate;
    inout_params._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
-   inout_params._common_set_node_params_a_1io.segmentation.x = 1024;
+   inout_params._common_set_node_params_a_1io.segmentation.x = buffersize;
    inout_params._common_set_node_params_a_1io.segmentation.y = 1;
    inout_params._common_set_node_params_a_1io.subformat = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
