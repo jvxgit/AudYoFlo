@@ -23,6 +23,9 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioPWireTechnology_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioPWireDevice.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioPWireDevice_api.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioPWireDevice_input.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioPWireDevice_output.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioPWireDevice_duplex.cpp
 
 	# JVX_CALLINGCONVENTION CjvxMixedMasterTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	# CjvxTemplateTechnologyVD<CjvxAudioPWireDevice>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)

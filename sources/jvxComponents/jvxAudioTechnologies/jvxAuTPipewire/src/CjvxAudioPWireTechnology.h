@@ -6,6 +6,7 @@
 #include "pcg_exports_technology.h"
 
 #include <pipewire/pipewire.h>
+#include <pipewire/extensions/metadata.h>
 
 enum class operationModeTechnology
 {
@@ -155,16 +156,32 @@ class CjvxAudioPWireTechnology: public CjvxMixedDevicesAudioTechnology<CjvxAudio
 	friend class CjvxAudioPWireDevice;
 
 protected:
+
+
+	struct  
+	{
+		const char *opt_remote;
+		const char *opt_name;
+		bool opt_monitor;
+		bool opt_delete;
+		uint32_t opt_id;
+		const char *opt_key;
+		const char *opt_value;
+		const char *opt_type;
+
+	} data;
+
 	int argc = 0;
     char** argv = nullptr;
 
-    pw_thread_loop* loop = nullptr;
+    pw_thread_loop* loop_tech = nullptr;
     struct pw_context *context = nullptr;
     struct pw_core *core = nullptr;
     struct pw_registry *registry = nullptr;
     struct spa_hook registry_listener;
-
 	struct spa_hook async_listener;
+	struct pw_metadata *metadata;
+	struct spa_hook metadata_listener;
 
 	struct
 	{
@@ -183,6 +200,15 @@ protected:
 	std::list<CjvxAudioPWireDevice*> devices_active;
 
 	operationModeTechnology techMode = operationModeTechnology::AYF_PIPEWIRE_OPERATION_INPUT_OUTPUT;
+
+	struct
+	{
+		jvxSize buffersize_force = 0;
+	    jvxSize buffersize = 0;
+		jvxSize samplerate = 0;
+		jvxSize samplerate_force = 0;
+		jvxState sysState = JVX_STATE_NONE;
+	} system;
 
 public:
 	CjvxAudioPWireTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
@@ -210,6 +236,8 @@ public:
 		jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename = "", jvxInt32 lineno = -1) override;
 	jvxErrorType get_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections) override;
+
+	void metadata_property_report(uint32_t id, const char *key, const char *type, const char *value);
 
 };
 

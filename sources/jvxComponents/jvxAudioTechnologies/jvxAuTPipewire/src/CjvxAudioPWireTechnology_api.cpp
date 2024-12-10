@@ -5,7 +5,9 @@
 
 // ================================================================================0
 // Some hints about samplerates: https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Guide-Rates
+// -> Command: <pw-metadata -n settings 0 clock.rate <samplerate>>
 // -> Command: <pw-metadata -n settings 0 clock.force-rate <samplerate>>
+// The "force" option will trigger a modification of buffersize while in operation
 // -> Make an entry in ~/.config/pipewire/pipewire.conf.d/10-rates.conf  -> 
 // # Adds more common rates
 // context.properties = {
@@ -16,6 +18,8 @@
 // -> same connection as on connect will disconnect
 // Set the buffersize: https://linuxmusicians.com/viewtopic.php?t=25768
 // -> pw-metadata -n settings 0 clock.force-quantum <buffersize>
+// -> pw-metadata -n settings 0 clock.quantum <buffersize>
+// The "force" option will trigger a modification of buffersize while in operation
 // Works even with odd numbers like 53 :-)
 //
 // Show all objects in pipewire universe: pw-cli list-objects >> log2.txt
@@ -69,11 +73,13 @@ CjvxAudioPWireTechnology::activate_technology_api()
 	
     // Start Pipewire
     pw_init(&argc, &argv);
+    
+    data.opt_name = "settings";
 
     std::cout << "Compiled with libpipewire " << pw_get_headers_version() << ", linked with libpipewire " << pw_get_library_version() << std::endl;
 
-    loop = pw_thread_loop_new("The Technology Loop", NULL /* properties */);
-    context = pw_context_new(pw_thread_loop_get_loop(loop),
+    loop_tech = pw_thread_loop_new("The Technology Loop", NULL /* properties */);
+    context = pw_context_new(pw_thread_loop_get_loop(loop_tech),
                              NULL /* properties */,
                              0 /* user_data size */);
 
@@ -90,16 +96,32 @@ CjvxAudioPWireTechnology::activate_technology_api()
 
     this->async_run_start();
 
-    pw_thread_loop_start(loop);
+    // Start the actual thread
+    pw_thread_loop_start(loop_tech);
 
+    // First round to connect objects
     this->async_run_trigger();
 
-    // std::cout << __FUNCTION__ << ": Initialization of Pipewire service complete."  << std::endl;
+    // Second round to receive metadata
+    this->async_run_trigger();
 
-    this->sort_unsorted_devices();
+    std::cout << __FUNCTION__ << ": Initialization of Pipewire service complete."  << std::endl;
+    std::cout << __FUNCTION__ << "System rate: " << system.samplerate << std::endl;
+    std::cout << __FUNCTION__ << "System rate (force): " << system.samplerate_force << std::endl;
+    std::cout << __FUNCTION__ << "System buffersize: " << system.buffersize << std::endl;
+    std::cout << __FUNCTION__ << "System buffersize (force): " << system.buffersize_force << std::endl;
+
+    // There should be initial values, let us take these as startup condition
+    pw_thread_loop_lock(loop_tech);    
+     this->sort_unsorted_devices();
 
     std::string nmPrefix = "Dummy";
 
+    // https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/8030a9f36098e442e1659014b8cdc0e41c77388d/src/tools/pw-metadata.c
+
+    // ==============================================================================
+    // If we are in IN-OUT MODE, we declare input and out streams
+    // ==============================================================================
     if(techMode == operationModeTechnology::AYF_PIPEWIRE_OPERATION_INPUT_OUTPUT)
     {
         std::list<oneDevice*> devices_linked_add;
@@ -117,6 +139,10 @@ CjvxAudioPWireTechnology::activate_technology_api()
             devices_linked.push_back(elm);
         }
     }
+
+    // ==============================================================================
+    // Construct the devices
+    // ==============================================================================
 
     while(devices_linked.size())
 	{
@@ -162,6 +188,10 @@ CjvxAudioPWireTechnology::activate_technology_api()
 
         devices_active.push_back(newDevice);
 	}
+
+    system.sysState = JVX_STATE_INIT;
+    pw_thread_loop_unlock(loop_tech);    
+
 };
 
 void 
@@ -201,15 +231,31 @@ CjvxAudioPWireTechnology::deactivate_technology_api()
     }
 
     this->async_run_stop();
+
+    pw_thread_loop_lock(loop_tech); 
+    if (metadata)
+	{
+    	spa_hook_remove(&metadata_listener);
+        pw_proxy_destroy((struct pw_proxy*)metadata);
+    }
+    metadata = nullptr;
+
+	spa_hook_remove(&registry_listener);
     pw_proxy_destroy((struct pw_proxy *)registry);
+    registry = nullptr;
+	// spa_hook_remove(&data.core_listener);
     pw_core_disconnect(core);
     pw_context_destroy(context);
-    pw_thread_loop_destroy(loop);
+    pw_thread_loop_unlock(loop_tech);
+
+    pw_thread_loop_stop(loop_tech);
+    pw_thread_loop_destroy(loop_tech);
+
     pw_deinit();
 
     argc = 0;
     argv = nullptr;
-    loop = nullptr;
+    loop_tech = nullptr;
     context = nullptr;
     core = nullptr;
     registry = nullptr;
@@ -219,12 +265,153 @@ CjvxAudioPWireTechnology::deactivate_technology_api()
 // ========================================================================================
 // ========================================================================================
 
+// All code related to rate and buffersize was taken from here:
+// https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/8030a9f36098e442e1659014b8cdc0e41c77388d/src/tools/pw-metadata.c
+// 
+static int metadata_property(void *data, uint32_t id,
+		const char *key, const char *type, const char *value)
+{
+	
+    CjvxAudioPWireTechnology* this_pointer = (CjvxAudioPWireTechnology*)data;
+    if(this_pointer)
+    {
+        this_pointer->metadata_property_report(id, key, type, value);
+    }
+	return 0;
+}
+
+void 
+CjvxAudioPWireTechnology::metadata_property_report(uint32_t id,
+		const char *key, const char *type, const char *value)
+{
+	if ((data.opt_id == SPA_ID_INVALID || data.opt_id == id) &&
+	    (data.opt_key == NULL || spa_streq(data.opt_key, key))) 
+    {
+		if (key == NULL) 
+        {
+			printf("remove: id:%u all keys\n", id);
+		} 
+        else if (value == NULL) 
+        {
+			printf("remove: id:%u key:'%s'\n", id, key);
+		} 
+        else 
+        {
+			printf("update: id:%u key:'%s' value:'%s' type:'%s'\n", id, key, value, type);
+            if(id == 0)
+            {
+                if(strcmp(key, "clock.force-quantum"))
+                {
+                    if(value)
+                    {
+                        system.buffersize_force = atoi(value);
+                    }
+                }
+                if(strcmp(key, "clock.quantum"))
+                {
+                    if(value)
+                    {
+                        system.buffersize = atoi(value);
+                    }
+                }
+                if(strcmp(key, "clock.rate"))
+                {
+                    if(value)
+                    {
+                        system.samplerate = atoi(value);
+                    }
+                }
+                if(strcmp(key, "clock.force-rate"))
+                {
+                    if(value)
+                    {
+                        system.samplerate_force = atoi(value);
+                    }
+                }
+            }
+		}
+	}
+}
+
+
+static const struct pw_metadata_events metadata_events = {
+	PW_VERSION_METADATA_EVENTS,
+	.property = metadata_property
+};
+
+
 void 
 CjvxAudioPWireTechnology::event_global_callback(uint32_t id,
                 uint32_t permissions, const char *type, uint32_t version,
                 const struct spa_dict *props)
 {
     printf("object: id:%u type:%s/%d\n", id, type, version);
+
+#if 0
+    if (strcmp(type, PW_TYPE_INTERFACE_Metadata) == 0) 
+    {
+    	const char *str;
+    	if (props != NULL &&
+	        (str = spa_dict_lookup(props, PW_KEY_METADATA_NAME)) != NULL &&
+	        !spa_streq(str, data.opt_name))
+		    return;
+
+	    if (metadata != NULL) 
+        {
+    		pw_log_warn("Multiple metadata: ignoring metadata %d", id);
+		    return;
+	    }
+
+	    printf("Found \"%s\" metadata %d\n", data.opt_name, id);
+	    metadata = (pw_metadata*)pw_registry_bind(registry,
+			    id, type, PW_VERSION_METADATA, 0);
+
+	    if (data.opt_delete) 
+        {
+		    if (data.opt_id != SPA_ID_INVALID) 
+            {
+			    if (data.opt_key != NULL)
+				    printf("delete property: id:%u key:%s\n", data.opt_id, data.opt_key);
+			    else
+    				printf("delete properties: id:%u\n", data.opt_id);
+			    pw_metadata_set_property(metadata, data.opt_id, data.opt_key, NULL, NULL);
+		    } 
+            else 
+            {
+			    printf("delete all properties\n");
+			    pw_metadata_clear(metadata);
+		    }
+	    } 
+        else if (data.opt_id != SPA_ID_INVALID && data.opt_key != NULL && data.opt_value != NULL) 
+        {
+		    printf("set property: id:%u key:%s value:%s type:%s\n",
+				data.opt_id, data.opt_key, data.opt_value, data.opt_type);
+		    pw_metadata_set_property(metadata, data.opt_id, data.opt_key, data.opt_type, data.opt_value);
+	    } 
+        else 
+        {
+            pw_metadata_add_listener(metadata,
+				    &metadata_listener,
+				    &metadata_events, this);        
+	    }
+    }
+#endif
+#if 1
+    if (strcmp(type, PW_TYPE_INTERFACE_Metadata) == 0) 
+    {
+        // Install a listener to the metadata type
+        // Code mainly taken from here
+        // https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/8030a9f36098e442e1659014b8cdc0e41c77388d/src/tools/pw-metadata.c
+        // -- and simplified!
+        const char *metadata_name = spa_dict_lookup(props, "metadata.name");
+        if (metadata_name && (strcmp(metadata_name, "settings") == 0))
+        {
+	        assert (metadata == NULL);
+	        metadata = (pw_metadata*)pw_registry_bind(registry, id, type, PW_VERSION_METADATA, 0);
+            pw_metadata_add_listener(metadata, &metadata_listener, &metadata_events, this);        
+	    }
+    }
+#endif
 
     if (strcmp(type, PW_TYPE_INTERFACE_Device) == 0) 
     {
@@ -349,7 +536,8 @@ CjvxAudioPWireTechnology::async_run_trigger()
 
     if(async_run.idMess_received == async_run.idMess_core )
     {
-        std::cout << __FUNCTION__ << "Async message transfer successfully completed." << std::endl;        
+        std::cout << __FUNCTION__ << "Async message transfer successfully completed." << std::endl;  
+        async_run.idMess_core = 0;      
     }
     else
     {

@@ -21,6 +21,8 @@ class CjvxAudioPWireDevice: public CjvxMixDevicesAudioDevice<CjvxAudioPWireDevic
 protected:
 	oneDevice* theDevicehandle = nullptr;
 	CjvxAudioPWireTechnology* parent = nullptr;
+	jvxBool loopLocal = true;
+    pw_thread_loop* loop_dev = nullptr;
 
 	struct
 	{
@@ -31,11 +33,6 @@ protected:
 			void **out_ports = nullptr;
 			float **in_data = nullptr;
 			float **out_data = nullptr;
-
-			jvxSize numChansInMax = 0;
-			jvxSize numChansOutMax = 0;
-			jvxBitField maskInput = 0;
-			jvxBitField maskOutput = 0;
 		} inProcessing;
 
 		struct spa_process_latency_info lat_info =
@@ -77,6 +74,15 @@ protected:
 		 pw_stream *stream = nullptr;		 
 	} input;
 
+	struct
+	{
+		pw_thread_loop* loop = nullptr;
+		jvxSize numChansInMax = 0;
+		jvxSize numChansOutMax = 0;
+		jvxBitField maskInput = 0;
+		jvxBitField maskOutput = 0;
+	} common;
+	
 public:
 	JVX_CALLINGCONVENTION CjvxAudioPWireDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxAudioPWireDevice();
