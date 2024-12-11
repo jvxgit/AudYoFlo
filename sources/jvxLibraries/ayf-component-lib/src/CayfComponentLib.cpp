@@ -362,6 +362,16 @@ CayfComponentLib::activate()
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
 			this->mainNode = castFromObject<IjvxNode>(this->mainObj);
+
+			jvxState stat = JVX_STATE_NONE;
+			this->mainNode->state(&stat);
+			if (stat != JVX_STATE_NONE)
+			{
+				this->mainNode->name(nullptr, &astr);
+				std::cout << __FUNCTION__ << ": Error when involving the main node from module <" << astr.std_str() << ">: node has been initialized before."
+					<< " This typically indicates that it was tried to involve a second instance of a component that is arealized as a unique instance(no MULT - INSTANCE)." << std::endl;
+				assert(0);
+			}
 			resC = this->mainNode->initialize(this->hostRef);
 
 			if (resC == JVX_NO_ERROR)

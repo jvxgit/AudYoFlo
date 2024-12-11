@@ -232,6 +232,7 @@ class _AudYoFloDropdownWidgetStates extends State<AudYoFloDropdownComponents> {
                         .map<DropdownMenuItem<JvxComponentIdentification>>(
                             (JvxComponentIdentification value) {
                       String showText = theBeCache.descriptionComponent(value);
+                      showText = "${showText}${value.txtshort}";
                       return DropdownMenuItem<JvxComponentIdentification>(
                         value: value,
                         child: Text(showText),

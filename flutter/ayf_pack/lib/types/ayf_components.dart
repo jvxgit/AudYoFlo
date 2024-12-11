@@ -34,6 +34,23 @@ class JvxComponentIdentification {
     return ret;
   }
 
+  String get txtshort {
+    String ret = "";
+    if (slotid > 0) {
+      ret = "<$slotid";
+      if (slotsubid > 0) {
+        ret = "$ret,$slotsubid>";
+      } else {
+        ret = "$ret>";
+      }
+    } else {
+      if (slotsubid > 0) {
+        ret = "<0,$slotsubid>";
+      }
+    }
+    return ret;
+  }
+
   bool operator ==(Object arg) {
     if (arg is JvxComponentIdentification) {
       JvxComponentIdentification argc = arg;

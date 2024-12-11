@@ -74,6 +74,32 @@ CayfFullHostClass::register_factory_host(const char* nm, jvxApiString& nmAsRegis
 	{
 		triggerNew = true;
 	}
+
+	jvxSize cnt = 0;
+	while(1)
+	{
+		std::string searchme = nm;
+		if (cnt != 0)
+		{
+			searchme = searchme + "_" + jvx_size2String(cnt);
+		}
+		jvxBool foundIt = false;
+		for (auto elm : factories_pending)
+		{
+			if (elm.name == searchme)
+			{
+				foundIt = true;
+				break;
+			}
+		}
+		if (!foundIt)
+		{
+			newElm.nameAsRegistered = searchme;
+			break;
+		}
+		cnt++;
+	}
+	nmAsRegistered = newElm.nameAsRegistered;
 	factories_pending.push_back(newElm);
 	JVX_UNLOCK_MUTEX(safeAccess);
 
