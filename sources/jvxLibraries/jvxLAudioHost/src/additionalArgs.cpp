@@ -1509,7 +1509,7 @@ additionalArgsWidget::new_samplerate_hw()
 			ident, trans);
 		bool rr = JVX_CHECK_PROPERTY_ACCESS_OK(res,callGate.access_protocol, "/JVX_GENW/system/rate",
 			myParent->subWidgets.theAudioDialog->currentPropsDev);
-		assert(rr);
+
 		this->myParent->subWidgets.theAudioDialog->updateWindow();
 	}
 }
@@ -1528,7 +1528,7 @@ additionalArgsWidget::new_buffersize_hw(int sel)
 		ident, trans);
 	bool rr = JVX_CHECK_PROPERTY_ACCESS_OK(res,callGate.access_protocol, "/JVX_GENW/system/sel_framesize",
 		myParent->subWidgets.theAudioDialog->currentPropsDev);
-	assert(rr);
+	
 	this->myParent->subWidgets.theAudioDialog->updateWindow();
 }
 

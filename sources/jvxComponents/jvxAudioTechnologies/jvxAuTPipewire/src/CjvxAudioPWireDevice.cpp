@@ -79,6 +79,9 @@ CjvxAudioPWireDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	common.numChansInMax = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.entries.size();
 	common.numChansOutMax = CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.entries.size();
 
+	common.maskInput = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection();
+	common.maskOutput = CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection();
+
 	common.format = (jvxDataFormat)inout_params._common_set_node_params_a_1io.format;	
 	switch(common.format)
 	{
@@ -107,7 +110,7 @@ CjvxAudioPWireDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			res = start_device_output_pw();
 			break;
 		default:
-			res = start_device_input();
+			res = start_device_input_pw();
 	}
 	return res;
 }
@@ -129,7 +132,7 @@ CjvxAudioPWireDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			res = stop_device_output_pw();
 			break;
 		default:
-			res = stop_device_input();
+			res = stop_device_input_pw();
 			break;
 	}
 	return res;

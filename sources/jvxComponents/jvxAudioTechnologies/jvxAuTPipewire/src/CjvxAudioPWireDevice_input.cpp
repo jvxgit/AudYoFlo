@@ -9,14 +9,14 @@ static void process_input(void *userdata)
 	CjvxAudioPWireDevice* this_pointer = (CjvxAudioPWireDevice*)userdata;
 	if(this_pointer)
 	{
-		this_pointer->process_buffer_input();
+		this_pointer->process_buffer_input_pw();
 	}
 };
 
 // ========================================================================
 
 jvxErrorType 
-CjvxAudioPWireDevice::start_device_input()
+CjvxAudioPWireDevice::start_device_input_pw()
 {
 	std::string str = _common_set.theName + "-sink";
 
@@ -53,7 +53,7 @@ CjvxAudioPWireDevice::start_device_input()
 		&input.stream_events,
 		this);
 
-	
+	common.aud_info.channels = common.numChansInMax;
 	params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &common.aud_info);
 
 	int conn_result = pw_stream_connect(input.stream,
@@ -75,15 +75,19 @@ error:
 }
 
 jvxErrorType 
-CjvxAudioPWireDevice::stop_device_input()
+CjvxAudioPWireDevice::stop_device_input_pw()
 {
+	pw_thread_loop_lock(common.loop);
+	pw_stream_disconnect(input.stream);
  	pw_stream_destroy(input.stream);
+	pw_thread_loop_unlock(common.loop);
  	return JVX_NO_ERROR;
 }
 
 void 
-CjvxAudioPWireDevice::process_buffer_input()
+CjvxAudioPWireDevice::process_buffer_input_pw()
 {
+#if 0
         struct pw_buffer *b;
         struct spa_buffer *buf;
         int i, c, n_frames, stride;
@@ -103,26 +107,81 @@ CjvxAudioPWireDevice::process_buffer_input()
         if (b->requested)
                 n_frames = SPA_MIN(b->requested, n_frames);
  
-#if 0
-		for (i = 0; i < n_frames; i++) {
-                output.accumulator += M_PI_M2 * 440 / 48000;
-                if (output.accumulator >= M_PI_M2)
-                        output.accumulator -= M_PI_M2;
- 
-                /* sin() gives a value between -1.0 and 1.0, we first apply
-                 * the volume and then scale with 32767.0 to get a 16 bits value
-                 * between [-32767 32767].
-                 * Another common method to convert a double to
-                 * 16 bits is to multiple by 32768.0 and then clamp to
-                 * [-32768 32767] to get the full 16 bits range. */
-                val = sin(output.accumulator) * 1 * 32767.0;
-                for (c = 0; c < 2; c++)
-                        *dst++ = val;
-        }
-#endif 
         buf->datas[0].chunk->offset = 0;
         buf->datas[0].chunk->stride = stride;
         buf->datas[0].chunk->size = n_frames * stride;
  
         pw_stream_queue_buffer(input.stream, b);
+
+#endif
+
+	struct pw_buffer *b;
+	struct spa_buffer *buf;
+	int i, c, n_frames_max, stride;
+	jvxSize n_frames = 0;
+	jvxSize elmSize = jvxDataFormat_getsize(common.format);
+
+	if ((b = pw_stream_dequeue_buffer(input.stream)) == NULL)
+	{
+		pw_log_warn("out of buffers: %m");
+		return;
+	}
+
+	buf = b->buffer;
+	stride = elmSize * common.numChansInMax;
+	n_frames_max = buf->datas[0].maxsize / stride;
+	n_frames = buf->datas[0].chunk->size / stride;
+
+	if (n_frames == common.bsize)
+	{
+		// I am the master. I will start the chain here!
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
+		}
+
+		jvxSize cnt = 0;
+		switch(common.format)
+		{
+		case JVX_DATAFORMAT_DATA:
+		{
+			input.src_data = (jvxData *)buf->datas[0].data;
+			jvxData **bufsOut = (jvxData **)jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
+			for (i = 0; i < common.numChansInMax; i++)
+			{
+				if (jvx_bitTest(common.maskInput, i))
+				{
+					assert(cnt <= _common_set_ocon.theData_out.con_params.number_channels);
+					jvx_convertSamples_from_to<jvxData>(input.src_data,
+														bufsOut[cnt],
+														common.bsize,
+														i, common.numChansInMax,
+														0, 1);
+					cnt++;
+				}
+			}
+			break;
+		}
+		default:
+			assert(0);
+		}
+
+		// We drive the buffer through the chain!
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+		}
+
+		// Finish buffer processing
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
+		}
+	}
+	else
+	{
+		// std::cout << __FUNCTION__ << ": Framesize mismatch!" << std::endl;
+		genPWire_device::properties_active_higher.num_lost_buffers.value++;
+	}
+	pw_stream_queue_buffer(input.stream, b);
 }

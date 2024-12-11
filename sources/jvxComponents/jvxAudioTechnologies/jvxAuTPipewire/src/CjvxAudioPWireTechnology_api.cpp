@@ -210,28 +210,37 @@ CjvxAudioPWireTechnology::deactivate_technology_api()
         // JVX_SAFE_DELETE_OBJECT(dev);
         // local_deallocate_device(&elm);
     }
+    devices_active.clear();
 
     for(auto elm: devices_linked)
     {
         JVX_SAFE_DELETE_OBJECT(elm);
     }
+    devices_linked.clear();
 
     for(auto elm: devices_unsorted)
     {
         JVX_SAFE_DELETE_OBJECT(elm);
     }
+    devices_unsorted.clear();
+
 	for(auto elm: nodes_unsorted_sinks)
     {
         JVX_SAFE_DELETE_OBJECT(elm);
     }
+    nodes_unsorted_sinks.clear();
+
 	for(auto elm: nodes_unsorted_sources)
     {
         JVX_SAFE_DELETE_OBJECT(elm);
     }
+    nodes_unsorted_sources.clear();
+
 	for(auto elm: ports_unsorted)
     {
         JVX_SAFE_DELETE_OBJECT(elm);
     }
+    ports_unsorted.clear();
 
     this->async_run_stop();
 

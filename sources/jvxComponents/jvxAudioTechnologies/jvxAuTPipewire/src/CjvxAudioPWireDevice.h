@@ -59,7 +59,8 @@ protected:
 			PW_VERSION_STREAM_EVENTS,
 			.process = nullptr,
 		};
-		 pw_stream *stream = nullptr;		 
+		 pw_stream *stream = nullptr;	
+		 jvxData *src_data = nullptr;	 
 	} input;
 
 	struct
@@ -108,9 +109,9 @@ public:
 	jvxErrorType start_device_duplex();
 	void process_buffer_duplex(struct spa_io_position *position);
 
-	jvxErrorType start_device_input();
-	jvxErrorType stop_device_input();
-	void process_buffer_input();
+	jvxErrorType start_device_input_pw();
+	jvxErrorType stop_device_input_pw();
+	void process_buffer_input_pw();
 
 	// Simple output device
 	jvxErrorType start_device_output_pw();

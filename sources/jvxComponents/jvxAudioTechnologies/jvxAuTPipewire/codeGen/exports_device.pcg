@@ -40,5 +40,13 @@ SECTION PROPERTIES
 			GENERATE_ENTRY_CONFIG_FILE = "no";
 			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_PROGRESSBAR";
 		};
+
+		SECTION num_lost_buffers
+		{
+			DESCRIPTION = "Number of lost buffers";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+			GENERATE_ENTRY_CONFIG_FILE = "no";			
+		};
 	};
 };

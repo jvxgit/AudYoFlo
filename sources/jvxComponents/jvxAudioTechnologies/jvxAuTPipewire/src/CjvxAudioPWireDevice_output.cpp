@@ -97,77 +97,83 @@ error:
 jvxErrorType 
 CjvxAudioPWireDevice::stop_device_output_pw()
 {
+	pw_thread_loop_lock(common.loop);
+	pw_stream_disconnect(output.stream);
  	pw_stream_destroy(output.stream);
+	pw_thread_loop_unlock(common.loop);
  	return JVX_NO_ERROR;
 }
 
 void 
 CjvxAudioPWireDevice::process_buffer_output_pw()
 {
-        struct pw_buffer *b;
-        struct spa_buffer *buf;
-        int i, c, n_frames_max, stride; 
-		jvxSize n_frames = 0;
-		jvxSize elmSize = jvxDataFormat_getsize(common.format);
+	struct pw_buffer *b;
+	struct spa_buffer *buf;
+	int i, c, n_frames_max, stride;
+	jvxSize n_frames = 0;
+	jvxSize elmSize = jvxDataFormat_getsize(common.format);
 
-        if ((b = pw_stream_dequeue_buffer(output.stream)) == NULL) {
-                pw_log_warn("out of buffers: %m");
-                return;
-        }
- 
- 		buf = b->buffer;
- 		stride = elmSize * common.numChansOutMax;
-		n_frames_max = buf->datas[0].maxsize / stride;
-		assert(n_frames_max >= b->requested);
-		
-		if(b->requested == common.bsize)		
+	if ((b = pw_stream_dequeue_buffer(output.stream)) == NULL)
+	{
+		pw_log_warn("out of buffers: %m");
+		return;
+	}
+
+	buf = b->buffer;
+	stride = elmSize * common.numChansOutMax;
+	n_frames_max = buf->datas[0].maxsize / stride;
+	assert(n_frames_max >= b->requested);
+
+	if (b->requested == common.bsize)
+	{
+		n_frames = b->requested;
+
+		// I am the master. I will start the chain here!
+		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			n_frames = b->requested;
-			
-			// I am the master. I will start the chain here!
-    		if (_common_set_ocon.theData_out.con_link.connect_to)
-    		{
-        		_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
-    		}			
-
-        	// Here, we do NOT fill in any data!!
-
-			// We copy the pointer to the pw buffer though
-			switch(common.format)
-			{
-			case JVX_DATAFORMAT_DATA:
-				output.dst_data = (jvxData *)buf->datas[0].data;
-				break;
-			default:
-				assert(0);
-				break;
-			}
-
-			// We drive the buffer through the chain!
-    		if (_common_set_ocon.theData_out.con_link.connect_to)
-    		{
-        		_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
-    		}
-
-			// Set the target buffer to nullptr to prevent any problem to occur
-			output.dst_data = nullptr;
- 
-			// Finish buffer processing
- 			if (_common_set_ocon.theData_out.con_link.connect_to)
-			{
-				_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
-			}
-
-			// Finalize the output buffer
-        	buf->datas[0].chunk->offset = 0;
-        	buf->datas[0].chunk->stride = stride;
-        	buf->datas[0].chunk->size = n_frames * stride;
-        	pw_stream_queue_buffer(output.stream, b);
-		}	
-		else
-		{
-			std::cout << __FUNCTION__ << ": Framesize mismatch!" << std::endl;
+			_common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
 		}
+
+		// Here, we do NOT fill in any data!!
+
+		// We copy the pointer to the pw buffer though
+		switch (common.format)
+		{
+		case JVX_DATAFORMAT_DATA:
+			output.dst_data = (jvxData *)buf->datas[0].data;
+			break;
+		default:
+			assert(0);
+			break;
+		}
+
+		// We drive the buffer through the chain!
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+		}
+
+		// Set the target buffer to nullptr to prevent any problem to occur
+		output.dst_data = nullptr;
+
+		// Finish buffer processing
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			_common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
+		}
+
+	}
+	else
+	{
+		// std::cout << __FUNCTION__ << ": Framesize mismatch!" << std::endl;
+		genPWire_device::properties_active_higher.num_lost_buffers.value++;
+
+	}
+	// Finalize the output buffer
+	buf->datas[0].chunk->offset = 0;
+	buf->datas[0].chunk->stride = stride;
+	buf->datas[0].chunk->size = n_frames * stride;
+	pw_stream_queue_buffer(output.stream, b);
 }
 
 jvxErrorType 
@@ -175,6 +181,7 @@ CjvxAudioPWireDevice::process_buffer_icon_output(jvxSize mt_mask, jvxSize idx_st
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize i;
+	jvxSize cnt = 0;
 
 	// This is the endpoint on the processing chain. We take the data that comes in and copy that to the
 	// pw buffer reference!
@@ -187,11 +194,16 @@ CjvxAudioPWireDevice::process_buffer_icon_output(jvxSize mt_mask, jvxSize idx_st
 		{
 			for (i = 0; i < common.numChansOutMax; i++)
 			{
-				jvx_convertSamples_from_to<jvxData>(bufsIn[i],
+				if(jvx_bitTest(common.maskOutput, i))
+				{
+					assert(cnt <= _common_set_icon.theData_in->con_params.number_channels);
+					jvx_convertSamples_from_to<jvxData>(bufsIn[cnt],
 													output.dst_data,
 													common.bsize,
 													0, 1,
 													i, common.numChansOutMax);
+													cnt++;
+				}
 			}
 		}
 		else
