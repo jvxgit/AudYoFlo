@@ -52,7 +52,7 @@ public:
 	{
 	};
 
-	T* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init) override
+	T* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init, jvxHandle* fwd_arg = nullptr) override
 	{
 		T* newDev = nullptr;
 		JVX_SAFE_ALLOCATE_OBJECT(newDev, T(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL));
@@ -60,7 +60,7 @@ public:
 		return newDev;
 	};
 
-	jvxErrorType local_deallocate_device(T** elmDev)override
+	jvxErrorType local_deallocate_device(T** elmDev, jvxHandle* fwd_arg = nullptr)override
 	{
 		if (elmDev)
 		{

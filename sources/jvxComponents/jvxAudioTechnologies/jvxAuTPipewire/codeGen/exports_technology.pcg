@@ -9,4 +9,30 @@ SECTION PROPERTIES
 		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
 		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};		
 	};
+
+	SECTION properties_active
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};		
+
+		SECTION num_input_channels_generic_device
+		{
+			DESCRIPTION = "Number of lost buffers";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";			
+		};
+
+		SECTION num_output_channels_generic_device
+		{
+			DESCRIPTION = "Number of lost buffers";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";			
+		};
+	};
 };

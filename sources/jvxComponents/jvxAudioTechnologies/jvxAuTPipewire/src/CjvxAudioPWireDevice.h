@@ -70,6 +70,8 @@ protected:
 		jvxSize numChansOutMax = 0;
 		jvxBitField maskInput = 0;
 		jvxBitField maskOutput = 0;
+		jvxSize numChansInUsed = 0;
+		jvxSize numChansOutUsed = 0;
 		jvxDataFormat format = JVX_DATAFORMAT_NONE;
 		jvxSize rate = 48000;
 		jvxSize bsize = 1024;
@@ -106,8 +108,10 @@ public:
 
 	jvxErrorType process_buffers_icon(jvxSize mt_mask = JVX_SIZE_UNSELECTED, jvxSize idx_stage = JVX_SIZE_UNSELECTED) override;
 
-	jvxErrorType start_device_duplex();
-	void process_buffer_duplex(struct spa_io_position *position);
+	jvxErrorType start_device_duplex_pw();
+	jvxErrorType stop_device_duplex_pw();
+	void process_buffer_duplex_pw(struct spa_io_position *position);
+	jvxErrorType process_buffer_icon_duplex(jvxSize mt_mask, jvxSize idx_stage);
 
 	jvxErrorType start_device_input_pw();
 	jvxErrorType stop_device_input_pw();

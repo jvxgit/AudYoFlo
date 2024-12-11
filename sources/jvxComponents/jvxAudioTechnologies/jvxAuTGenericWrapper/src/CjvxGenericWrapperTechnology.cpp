@@ -2135,7 +2135,7 @@ CjvxGenericWrapperTechnology::request_device(jvxSize idx, IjvxDevice** dev, jvxC
 }
 
 CjvxGenericWrapperDevice* 
-CjvxGenericWrapperTechnology::local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init)
+CjvxGenericWrapperTechnology::local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init, jvxHandle* fwd_arg)
 {
 	IjvxDevice* theDevice = nullptr;
 	runtime.theSelectedTech->request_device(idx, &theDevice);
@@ -2169,7 +2169,7 @@ CjvxGenericWrapperTechnology::local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MA
 }
 
 jvxErrorType 
-CjvxGenericWrapperTechnology::local_deallocate_device(CjvxGenericWrapperDevice** elmDev)
+CjvxGenericWrapperTechnology::local_deallocate_device(CjvxGenericWrapperDevice** elmDev, jvxHandle* fwd_args)
 {
 	if (elmDev)
 	{

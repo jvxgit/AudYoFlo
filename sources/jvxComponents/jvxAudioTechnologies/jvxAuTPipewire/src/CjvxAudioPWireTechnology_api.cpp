@@ -172,16 +172,18 @@ CjvxAudioPWireTechnology::activate_technology_api()
                 break;
         }
         
+        initializeDeviceParams args;
+        args.theDevicehandle = theDev;
+
 		// Do whatever is required
-		CjvxAudioPWireDevice* newDevice = local_allocate_device(devName.c_str(), false,
+		CjvxAudioPWireDevice* newDevice = local_allocate_device(
+            devName.c_str(), false,
 			_common_set.theDescriptor.c_str(),
 			_common_set.theFeatureClass,
 			_common_set.theModuleName.c_str(),
 			JVX_COMPONENT_ACCESS_SUB_COMPONENT,
 			(jvxComponentType)(_common_set.theComponentType.tp + 1),
-			"", NULL, JVX_SIZE_UNSELECTED, false);
-
-        newDevice->set_references_api(theDev, this);
+			"", NULL, JVX_SIZE_UNSELECTED, false, &args);       
 
 		// Whatever to be done for initialization
 		oneDeviceWrapper elmDW;
@@ -543,7 +545,11 @@ CjvxAudioPWireTechnology::async_run_trigger()
     }
     JVX_WAIT_FOR_NOTIFICATION_I(async_run.notWait);
     async_run.idMess_received = 0;
+
+    pw_thread_loop_lock(loop_tech);    
     async_run.idMess_core = pw_core_sync(core, PW_ID_CORE, 0);
+    pw_thread_loop_unlock(loop_tech);    
+    
     JVX_WAIT_FOR_NOTIFICATION_II_MS(async_run.notWait, JVX_ASYNC_TIMEOUT);
 
     if(async_run.idMess_received == async_run.idMess_core )

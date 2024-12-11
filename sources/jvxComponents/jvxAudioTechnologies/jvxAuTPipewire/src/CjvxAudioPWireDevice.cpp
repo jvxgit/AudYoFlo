@@ -82,6 +82,9 @@ CjvxAudioPWireDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	common.maskInput = CjvxAudioMasterDevice_genpcg::properties_active.inputchannelselection.value.selection();
 	common.maskOutput = CjvxAudioMasterDevice_genpcg::properties_active.outputchannelselection.value.selection();
 
+	common.numChansInUsed = jvx_bitNumSelections(common.maskInput) ;
+	common.numChansOutUsed = jvx_bitNumSelections(common.maskOutput) ;
+
 	common.format = (jvxDataFormat)inout_params._common_set_node_params_a_1io.format;	
 	switch(common.format)
 	{
@@ -104,7 +107,7 @@ CjvxAudioPWireDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	switch(theDevicehandle->opMode)
 	{
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_DUPLEX:
-			res = start_device_duplex();
+			res = start_device_duplex_pw();
 			break;
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT:
 			res = start_device_output_pw();
@@ -126,7 +129,7 @@ CjvxAudioPWireDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	switch(theDevicehandle->opMode)
 	{
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_DUPLEX:
-			assert(0);
+			res = stop_device_duplex_pw();
 			break;
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT:
 			res = stop_device_output_pw();
@@ -145,13 +148,13 @@ CjvxAudioPWireDevice::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	switch(theDevicehandle->opMode)
 	{
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_DUPLEX:
-			//res = start_device_duplex();
+			res = process_buffer_icon_duplex(mt_mask, idx_stage);
 			break;
 		case operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT:
 			res = process_buffer_icon_output(mt_mask, idx_stage);
 			break;
 		default:
-			//res = start_device_input();
+			res = CjvxMixDevicesAudioDevice<CjvxAudioPWireDevice>::process_buffers_icon(mt_mask, idx_stage) ;
 			break;
 	}
 	return res;

@@ -135,8 +135,8 @@ public:
 
 	jvxErrorType request_device(jvxSize idx, IjvxDevice** dev, jvxCBitField requestFlags)override;
 
-	CjvxGenericWrapperDevice* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init) override;
-	jvxErrorType local_deallocate_device(CjvxGenericWrapperDevice** elmDev)override;
+	CjvxGenericWrapperDevice* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init, jvxHandle* fwd_arg) override;
+	jvxErrorType local_deallocate_device(CjvxGenericWrapperDevice** elmDev, jvxHandle* fwd_arg)override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_prop_selected_input_file_set);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_prop_selected_input_file_set_pre);

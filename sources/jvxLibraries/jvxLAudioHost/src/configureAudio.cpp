@@ -923,7 +923,11 @@ configureAudio::updateWindow()
 					QIcon icon;
 					jvxDeviceCapabilities caps;
 					res = theHost->capabilities_devices_component_system(tpIdT, i, caps);
-					if (
+					if (jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_PROXY_SHIFT))
+					{
+						icon.addFile(QString::fromUtf8(":/himages/images/icons8-mic-audio-50.png"), QSize(), QIcon::Normal, QIcon::Off);
+					}
+					else if (
 						(
 							(jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_INPUT_SHIFT)) &&
 							(jvx_bitTest(caps.capsFlags, (int)jvxDeviceCapabilityTypeShift::JVX_DEVICE_CAPABILITY_OUTPUT_SHIFT))) ||

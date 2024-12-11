@@ -116,7 +116,7 @@ public:
 					_common_set.theModuleName.c_str(),
 					JVX_COMPONENT_ACCESS_SUB_COMPONENT,
 					(jvxComponentType)(_common_set.theComponentType.tp + 1),
-					"", NULL, JVX_SIZE_UNSELECTED, actAsProxy_init);
+					"", NULL, JVX_SIZE_UNSELECTED, actAsProxy_init, NULL);
 				if (newDevice == nullptr)
 				{
 					newDevice = new T(deviceNamePrefix.c_str(), false,
@@ -188,7 +188,7 @@ public:
 
 				T* newDevice = local_allocate_device(deviceName.c_str(), false, _common_set.theDescriptor.c_str(), _common_set.theFeatureClass,
 					_common_set.theModuleName.c_str(), JVX_COMPONENT_ACCESS_SUB_COMPONENT,
-					(jvxComponentType)(_common_set.theComponentType.tp + 1), "", NULL, idx, false);
+					(jvxComponentType)(_common_set.theComponentType.tp + 1), "", NULL, idx, false, nullptr);
 
 				if (newDevice == nullptr)
 				{
@@ -281,7 +281,7 @@ public:
 		{
 			parentRef = static_cast<IjvxDevice*>(elm->second.parent);
 			foundLookup = true;
-			local_deallocate_device(&elm->second.new_dev);
+			local_deallocate_device(&elm->second.new_dev, nullptr);
 			if (elm->second.new_dev)
 			{
 				JVX_SAFE_DELETE_OBJECT(elm->second.new_dev);
@@ -487,7 +487,10 @@ public:
 		return JVX_NO_ERROR;
 	};
 
-	virtual T* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx /* = JVX_SIZE_UNSELECTED*/, jvxBool actAsProxy_init /*= false*/)
+	virtual T* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, 
+		jvxSize idx /* = JVX_SIZE_UNSELECTED*/, 
+		jvxBool actAsProxy_init /*= false*/,
+		jvxHandle* fwd_arg /*= nullptr*/)
 	{
 		// No specific allocation function as the default
 		return nullptr;
@@ -495,7 +498,7 @@ public:
 
 	// This function is always called for a proxy device as it requires a specific device pointer handle
 	// Otherwise, the default deallocation is used
-	virtual jvxErrorType local_deallocate_device(T** elmDev)
+	virtual jvxErrorType local_deallocate_device(T** elmDev, jvxHandle* fwd_args)
 	{
 		return JVX_ERROR_NOT_IMPLEMENTED;
 	}
@@ -684,7 +687,7 @@ public:
 		return newDev;
 	}
 
-	jvxErrorType local_deallocate_device(T** elmDev)
+	jvxErrorType local_deallocate_device(T** elmDev, jvxHandle* fwd_args)
 	{
 		assert(0);
 		return JVX_ERROR_NOT_IMPLEMENTED;

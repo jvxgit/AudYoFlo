@@ -155,6 +155,13 @@ class CjvxAudioPWireTechnology: public CjvxMixedDevicesAudioTechnology<CjvxAudio
 {
 	friend class CjvxAudioPWireDevice;
 
+public:
+	class initializeDeviceParams
+	{
+	public:
+		oneDevice* theDevicehandle = nullptr;
+	};
+
 protected:
 
 
@@ -239,6 +246,8 @@ public:
 
 	void metadata_property_report(uint32_t id, const char *key, const char *type, const char *value);
 
+	CjvxAudioPWireDevice* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init, jvxHandle* fwd_arg) override;
+	jvxErrorType local_deallocate_device(CjvxAudioPWireDevice** elmDev, jvxHandle* fwd_arg)override;
 };
 
 #endif

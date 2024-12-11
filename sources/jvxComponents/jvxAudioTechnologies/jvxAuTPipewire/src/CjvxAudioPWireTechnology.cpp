@@ -67,3 +67,79 @@ CjvxAudioPWireTechnology::get_configuration(jvxCallManagerConfiguration* callMan
 	}
 	return res;
 }
+
+CjvxAudioPWireDevice* 
+CjvxAudioPWireTechnology::local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init, jvxHandle* fwd_arg)
+{
+	CjvxAudioPWireDevice* newDevice = CjvxMixedDevicesAudioTechnology<CjvxAudioPWireDevice>::local_allocate_device(
+		JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL,  idx, actAsProxy_init,  fwd_arg);
+	
+	oneDevice* devRef = nullptr;
+	 if(fwd_arg)
+	{
+		initializeDeviceParams* args = (initializeDeviceParams*)fwd_arg;		
+		devRef = args->theDevicehandle;
+	}
+	else
+	{
+		if(!actAsProxy_init)
+		{
+			jvxSize i;
+			oneDevice* theDev = nullptr;
+			JVX_SAFE_ALLOCATE_OBJECT(theDev, oneDevice);
+			theDev->name = description;
+			theDev->id = JVX_SIZE_UNSELECTED;
+			theDev->opMode == operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_DUPLEX;
+			oneNode* theNode = nullptr;
+			JVX_SAFE_ALLOCATE_OBJECT(theNode, oneNode);
+			theNode->isSink = false;
+			theNode->description = description;
+			theNode->description += "-in";
+			
+			for(i = 0; i < genPWire_technology::properties_active.num_input_channels_generic_device.value; i++)
+			{
+				onePort* thePort = nullptr;
+				JVX_SAFE_ALLOCATE_OBJECT(thePort, onePort);
+				thePort->direction = "input";
+				thePort->physical = "true";
+				thePort->name = description;
+				thePort->name += "-in" + jvx_size2String(i);
+				thePort->port_id = i;
+				theNode->out_ports.push_back(thePort);				
+			}
+			theDev->sources.push_back(theNode);
+			
+			theNode = nullptr;
+			JVX_SAFE_ALLOCATE_OBJECT(theNode, oneNode);
+			theNode->isSink = true;
+			theNode->description = description;
+			theNode->description += "-output";
+			for(i = 0; i < genPWire_technology::properties_active.num_output_channels_generic_device.value; i++)
+			{
+				onePort* thePort = nullptr;
+				JVX_SAFE_ALLOCATE_OBJECT(thePort, onePort);
+				thePort->direction = "output";
+				thePort->physical = "true";
+				thePort->name = description;
+				thePort->name += "-out" + jvx_size2String(i);
+				thePort->port_id = i;
+				theNode->in_ports.push_back(thePort);				
+			}
+			theDev->sinks.push_back(theNode);
+			devRef = theDev;
+		}
+	}
+	newDevice->set_references_api(devRef, this);
+	return newDevice;
+}
+
+jvxErrorType 
+CjvxAudioPWireTechnology::local_deallocate_device(CjvxAudioPWireDevice** elmDev, jvxHandle* fwd_arg)
+{
+	oneDevice* theDevice = (*elmDev)->references_api();
+	if(JVX_CHECK_SIZE_UNSELECTED(theDevice->id))
+	{
+		JVX_SAFE_DELETE_OBJ(theDevice);
+	}
+	return CjvxMixedDevicesAudioTechnology<CjvxAudioPWireDevice>::local_deallocate_device(elmDev, fwd_arg);
+}
