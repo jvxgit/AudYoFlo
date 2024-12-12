@@ -107,12 +107,15 @@ jvxFileReader::initialize()
 }
 
 jvxErrorType
-jvxFileReader::activate(std::string fName, jvxEndpointClass descrEndpoint, jvxFileDescriptionEndpoint_open* fileDescr)
+jvxFileReader::activate(std::string fName, jvxEndpointClass descrEndpoint, 
+	jvxFileDescriptionEndpoint_open* fileDescr, IjvxThreads* threadHdl)
 {
 	jvxWavReader* hdlReaderW = NULL;
 	jvxErrorType res = JVX_NO_ERROR;
 	int errCode = 0;
+
 	// EVENT AND CRIT SECTION ARE SETUP ALREADY
+	theThread = threadHdl;
 
 	switch(descrEndpoint)
 	{
@@ -174,6 +177,9 @@ jvxFileReader::deactivate()
 		delete hdlReader;
 		hdlReader = NULL;
 	}
+
+	theThread = nullptr;
+
 	return res;
 }
 
@@ -290,8 +296,15 @@ jvxFileReader::reset_bgrd_buffer_lock_stop()
 			buffer_realtime.fHeight = 0;
 			JVX_UNLOCK_MUTEX(protect.accessCircBuffer);
 
-			// Trigger load of next audio samples
-			JVX_SET_NOTIFICATION(thread.readMoreSamples);
+			if (theThread)
+			{
+				theThread->trigger_wakeup();
+			}
+			else
+			{
+				// Trigger load of next audio samples
+				JVX_SET_NOTIFICATION(thread.readMoreSamples);
+			}
 			break;
 		}
 	}
@@ -407,9 +420,14 @@ jvxFileReader::audio_buffer(jvxHandle** buffers, jvxSize numberChannels, jvxSize
 				*progress = (jvxData)(val) / (jvxData)operation.length_file_sample;
 			}
 
-			// Trigger to load nex file content
-			JVX_SET_NOTIFICATION(thread.readMoreSamples);
-
+			if (theThread)
+			{
+				theThread->trigger_wakeup();
+			}
+			else
+			{			// Trigger to load nex file content
+				JVX_SET_NOTIFICATION(thread.readMoreSamples);
+			}
 			break;
 		}
 	}
@@ -470,8 +488,6 @@ JVX_THREAD_RETURN_TYPE
 jvxFileReader::enterClassCallback()
 {
 	JVX_WAIT_RESULT resW;
-	jvxSize samplesWrite;
-	jvxSize idxWrite;
 	jvxErrorType res = JVX_NO_ERROR;
 
 	JVX_WAIT_FOR_NOTIFICATION_I(thread.readMoreSamples);
@@ -487,32 +503,10 @@ jvxFileReader::enterClassCallback()
 		{
 			if (resW == JVX_WAIT_SUCCESS)
 			{
-				while (1)
+				jvxBool want_to_continue = true;
+				while (want_to_continue)
 				{
-					// Set this value as the number of elements to be copied
-					JVX_LOCK_MUTEX(protect.accessCircBuffer);
-					idxWrite = (buffer_realtime.idxRead + buffer_realtime.fHeight) % buffer_realtime.length;
-					samplesWrite = buffer_realtime.length - buffer_realtime.fHeight;
-					JVX_UNLOCK_MUTEX(protect.accessCircBuffer);
-
-					samplesWrite = JVX_MIN(buffer_realtime.framesizeChunks, samplesWrite);
-					if (samplesWrite == 0)
-					{
-						// Buffer completely filled, go leave!
-						operation.underrun_occurred = false;
-						break; // only one condition to stop: if circ buffer is full
-					}
-
-					// This function produces zeros - even if file has ended
-					res = write_to_circ_buffer(samplesWrite, idxWrite);
-
-					if (res == JVX_ERROR_END_OF_FILE)
-					{
-						operation.fileEnded = true;
-					}
-					JVX_LOCK_MUTEX(protect.accessCircBuffer);
-					buffer_realtime.fHeight += samplesWrite;
-					JVX_UNLOCK_MUTEX(protect.accessCircBuffer);
+					want_to_continue = core_read_function();
 				}
 			}
 			else
@@ -673,21 +667,28 @@ jvxFileReader::start()
 
 			if(!operation.fileEnded)
 			{
-
-				//bControl.threadHandle = CreateThread(NULL, 0, readBufferCallbackThrd, (void*)this, 0, NULL);
-				JVX_THREAD_ID idT;
-
-				thread.running = true;
-				JVX_WAIT_FOR_NOTIFICATION_I(thread.started);
-
-				JVX_CREATE_THREAD(thread.hdl, readBufferCallbackThrd, (void*)this, idT);
-				
-				JVX_WAIT_FOR_NOTIFICATION_II_INF(thread.started);
-
-				if(operation.boostPriority)
+				if (theThread)
 				{
-					//SetThreadPriority(bControl.threadHandle, THREAD_PRIORITY_TIME_CRITICAL);
-					JVX_SET_THREAD_PRIORITY(thread.hdl, JVX_THREAD_PRIORITY_REALTIME);
+					theThread->initialize(this);
+					theThread->start(JVX_SIZE_UNSELECTED, operation.boostPriority);
+				}
+				else
+				{
+					//bControl.threadHandle = CreateThread(NULL, 0, readBufferCallbackThrd, (void*)this, 0, NULL);
+					JVX_THREAD_ID idT;
+
+					thread.running = true;
+					JVX_WAIT_FOR_NOTIFICATION_I(thread.started);
+
+					JVX_CREATE_THREAD(thread.hdl, readBufferCallbackThrd, (void*)this, idT);
+
+					JVX_WAIT_FOR_NOTIFICATION_II_INF(thread.started);
+
+					if (operation.boostPriority)
+					{
+						//SetThreadPriority(bControl.threadHandle, THREAD_PRIORITY_TIME_CRITICAL);
+						JVX_SET_THREAD_PRIORITY(thread.hdl, JVX_THREAD_PRIORITY_REALTIME);
+					}
 				}
 			}
 			break;
@@ -709,10 +710,18 @@ jvxFileReader::stop()
 			break;
 		case JVX_FILEOPERATION_REALTIME:
 
-			thread.running = false;
+			if (theThread)
+			{
+				theThread->stop();
+				theThread->terminate();
+			}
+			else
+			{
+				thread.running = false;
 
-			JVX_SET_NOTIFICATION(thread.readMoreSamples);
-			JVX_WAIT_FOR_THREAD_TERMINATE_MS(thread.hdl, WAIT_FOR_CLOSE_MS);
+				JVX_SET_NOTIFICATION(thread.readMoreSamples);
+				JVX_WAIT_FOR_THREAD_TERMINATE_MS(thread.hdl, WAIT_FOR_CLOSE_MS);
+			}
 			break;
 		}
 		res = hdlReader->stop();
@@ -790,5 +799,67 @@ jvxFileReader::evaluate(jvxSize* num_samples_in, jvxSize* num_samples_out, jvxSi
 		*num_elms_fheight_min = eval.min_fheight_on_enter;
 		eval.min_fheight_on_enter = buffer_realtime.length;
 	}
+	return JVX_NO_ERROR;
+}
+
+jvxBool 
+jvxFileReader::core_read_function()
+{
+	jvxSize samplesWrite;
+	jvxSize idxWrite;
+
+	// Set this value as the number of elements to be copied
+	JVX_LOCK_MUTEX(protect.accessCircBuffer);
+	idxWrite = (buffer_realtime.idxRead + buffer_realtime.fHeight) % buffer_realtime.length;
+	samplesWrite = buffer_realtime.length - buffer_realtime.fHeight;
+	JVX_UNLOCK_MUTEX(protect.accessCircBuffer);
+
+	samplesWrite = JVX_MIN(buffer_realtime.framesizeChunks, samplesWrite);
+	if (samplesWrite == 0)
+	{
+		// Buffer completely filled, go leave!
+		operation.underrun_occurred = false;
+		return false; // only one condition to stop: if circ buffer is full
+	}
+
+	// This function produces zeros - even if file has ended
+	jvxErrorType res = write_to_circ_buffer(samplesWrite, idxWrite);
+
+	if (res == JVX_ERROR_END_OF_FILE)
+	{
+		operation.fileEnded = true;
+	}
+	JVX_LOCK_MUTEX(protect.accessCircBuffer);
+	buffer_realtime.fHeight += samplesWrite;
+	JVX_UNLOCK_MUTEX(protect.accessCircBuffer);
+	return true;
+}
+
+jvxErrorType
+jvxFileReader::startup(jvxInt64 timestamp_us)
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+jvxFileReader::expired(jvxInt64 timestamp_us, jvxSize* delta_ms)
+{
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+jvxFileReader::wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms)
+{
+	jvxBool want_to_continue = true;
+	while (want_to_continue)
+	{
+		want_to_continue = core_read_function();
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+jvxFileReader::stopped(jvxInt64 timestamp_us)
+{
 	return JVX_NO_ERROR;
 }

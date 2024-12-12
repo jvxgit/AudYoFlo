@@ -28,7 +28,13 @@ CjvxRtAudioFileWriter::activate(const char* fName, jvxEndpointClass descr,
 			}
 		}
 
-		res = jvxFileWriter::activate(fName, descr, fileDescr);
+		res = _common_set.theToolsHost->instance_tool(JVX_COMPONENT_THREADS, &threads.theObj, 0, NULL);
+		if ((res == JVX_NO_ERROR) && threads.theObj)
+		{
+			threads.theObj->request_specialization(reinterpret_cast<jvxHandle**>(&threads.theHdl), NULL, NULL);
+		}
+
+		res = jvxFileWriter::activate(fName, descr, fileDescr, threads.theHdl);
 		if (res != JVX_NO_ERROR)
 		{
 			// If activation failed, set module into original state
@@ -50,9 +56,16 @@ CjvxRtAudioFileWriter::add_tag(jvxAudioFileTagType tp, const char* val)
 jvxErrorType
 CjvxRtAudioFileWriter::deactivate()
 {
-	jvxErrorType res = _deactivate();
+	jvxErrorType res = _pre_check_deactivate();
 	if(res == JVX_NO_ERROR)
 	{
+		if (threads.theObj)
+		{
+			res = _common_set.theToolsHost->return_instance_tool(JVX_COMPONENT_THREADS, threads.theObj, 0, NULL);
+			threads.theObj = nullptr;
+			threads.theHdl = nullptr;
+		}
+		_deactivate();
 		jvxFileWriter::deactivate();
 	}
 	return(res);

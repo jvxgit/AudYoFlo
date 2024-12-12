@@ -13,7 +13,7 @@
  * and all data is at first stored to this buffer. The stored buffer is then written
  * to harddrive in the background.
  *///=======================================================
-class jvxFileWriter
+class jvxFileWriter: public IjvxThreads_report
 {
 	private:
 
@@ -63,7 +63,8 @@ class jvxFileWriter
 		jvxSize min_space_on_enter;
 	} eval;
 
-	IjvxAudioWriter* hdlWriter;
+	IjvxAudioWriter* hdlWriter = nullptr;
+	IjvxThreads* theThread = nullptr;
 
 public:
 
@@ -75,7 +76,8 @@ public:
 
 	void reset();
 
-	jvxErrorType activate(std::string fName, jvxEndpointClass endpoint, jvxFileDescriptionEndpoint_open* fileDescr);
+	jvxErrorType activate(std::string fName, jvxEndpointClass endpoint, 
+		jvxFileDescriptionEndpoint_open* fileDescr, IjvxThreads* threadHd = nullptr);
 
 	jvxErrorType deactivate();
 
@@ -105,6 +107,13 @@ public:
 
 //! Internal use, looped function to write buffered data to file
 	JVX_THREAD_RETURN_TYPE enterClassCallback();
+
+	jvxBool core_write_function();
+
+	jvxErrorType startup(jvxInt64 timestamp_us) override;
+	jvxErrorType expired(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
+	jvxErrorType wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
+	jvxErrorType stopped(jvxInt64 timestamp_us) override;
 
 };
 

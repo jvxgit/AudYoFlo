@@ -18,7 +18,12 @@ CjvxRtAudioFileReader::activate(const char* fName, jvxEndpointClass descr, jvxFi
 	jvxErrorType res = _activate();
 	if(res == JVX_NO_ERROR)
 	{
-		res = jvxFileReader::activate(fName, descr, fileDescr);
+		res = _common_set.theToolsHost->instance_tool(JVX_COMPONENT_THREADS, &threads.theObj, 0, NULL);
+		if ((res == JVX_NO_ERROR) && threads.theObj)
+		{
+			threads.theObj->request_specialization(reinterpret_cast<jvxHandle**>(&threads.theHdl), NULL, NULL);
+		}
+		res = jvxFileReader::activate(fName, descr, fileDescr, threads.theHdl);
 	}
 	return(res);
 }
@@ -42,9 +47,16 @@ CjvxRtAudioFileReader::get_tag(jvxAudioFileTagType tp, jvxApiString* val)
 jvxErrorType 
 CjvxRtAudioFileReader::deactivate()
 {
-	jvxErrorType res = _deactivate();
+	jvxErrorType res = _pre_check_deactivate();
 	if(res == JVX_NO_ERROR)
 	{
+		if (threads.theObj)
+		{
+			res = _common_set.theToolsHost->return_instance_tool(JVX_COMPONENT_THREADS, threads.theObj, 0, NULL);
+			threads.theObj = nullptr;
+			threads.theHdl = nullptr;
+		}
+		_deactivate();
 		res = jvxFileReader::deactivate();
 	}
 	return(res);

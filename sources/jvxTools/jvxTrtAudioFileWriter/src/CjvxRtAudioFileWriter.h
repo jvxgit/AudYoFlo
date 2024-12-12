@@ -7,6 +7,14 @@
 
 class CjvxRtAudioFileWriter :	public IjvxRtAudioFileWriter, public CjvxObject, private jvxFileWriter
 {
+protected:
+
+	struct 
+	{
+		IjvxObject* theObj = nullptr;
+		IjvxThreads* theHdl = nullptr;
+	} threads;
+	
 public:
 	CjvxRtAudioFileWriter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 

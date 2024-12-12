@@ -8,6 +8,13 @@
 
 class CjvxRtAudioFileReader : public IjvxRtAudioFileReader, public CjvxObject, private jvxFileReader
 {
+protected:
+	struct
+	{
+		IjvxObject* theObj = nullptr;
+		IjvxThreads* theHdl = nullptr;
+	} threads;
+
 public:
 	CjvxRtAudioFileReader(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 

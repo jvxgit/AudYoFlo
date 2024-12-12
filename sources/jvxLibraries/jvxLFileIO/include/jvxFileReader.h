@@ -33,7 +33,7 @@
 /**
  * Class to realize the buffered file reading. Multiple instances should also be ok
  *///=============================================================================
-class jvxFileReader
+class jvxFileReader : public IjvxThreads_report
 {
 
 private:
@@ -88,7 +88,8 @@ private:
 		jvxSize min_fheight_on_enter;
 	} eval;
 
-	IjvxAudioReader* hdlReader;
+	IjvxAudioReader* hdlReader = nullptr;
+	IjvxThreads* theThread = nullptr;
 
 public:
 
@@ -101,7 +102,8 @@ public:
 	void reset();
 
 	//! Open the input file
-	jvxErrorType activate(std::string fName, jvxEndpointClass descrEndpoint, jvxFileDescriptionEndpoint_open* fileDescr);
+	jvxErrorType activate(std::string fName, jvxEndpointClass descrEndpoint, 
+		jvxFileDescriptionEndpoint_open* fileDescr, IjvxThreads* threadHd = nullptr);
 
 	//! Close the input file
 	jvxErrorType deactivate();
@@ -147,6 +149,14 @@ public:
 
 	jvxErrorType reset_bgrd_buffer_lock_start();
 	jvxErrorType reset_bgrd_buffer_lock_stop();
+
+	jvxBool core_read_function();
+
+	jvxErrorType startup(jvxInt64 timestamp_us) override;
+	jvxErrorType expired(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
+	jvxErrorType wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms) override;
+	jvxErrorType stopped(jvxInt64 timestamp_us) override;
+
 
 };
 
