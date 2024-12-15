@@ -7180,5 +7180,31 @@ void jvx_command_request_copy_dealloc(CjvxReportCommandRequest* in)
 	}
 	std::cout << "Number of pointers in list: " << fldPtrs.size() << std::endl;
 	*/
-	JVX_DSP_SAFE_DELETE_OBJECT(in);
+	jvxReportCommandDataType tp = in->datatype();
+	switch (tp)
+	{
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_IDENT:
+		JVX_SAFE_DELETE_OBJ_CVRT(in, CjvxReportCommandRequest_id*);
+		break;
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SCHEDULE:
+		JVX_SAFE_DELETE_OBJ_CVRT(in, CjvxReportCommandRequest_rm*);
+		break;
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_UID:
+		JVX_SAFE_DELETE_OBJ_CVRT(in, CjvxReportCommandRequest_uid*);
+		break;
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SEQ:
+		JVX_SAFE_DELETE_OBJ_CVRT(in, CjvxReportCommandRequest_seq*);
+		break;
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS:
+		JVX_SAFE_DELETE_OBJ_CVRT(in, CjvxReportCommandRequest_ss*);
+		break;
+	case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID:
+		JVX_SAFE_DELETE_OBJ_CVRT(in, CjvxReportCommandRequest_ss_id*);
+		break;
+	default:
+		JVX_SAFE_DELETE_OBJ_CVRT(in, CjvxReportCommandRequest*);
+	}
+
+	// Was before:
+	// JVX_DSP_SAFE_DELETE_OBJECT(in);
 }
