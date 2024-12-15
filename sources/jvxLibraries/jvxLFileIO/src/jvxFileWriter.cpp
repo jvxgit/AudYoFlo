@@ -269,7 +269,7 @@ jvxFileWriter::add_buffer(jvxHandle** buffers, jvxSize numberChannels, jvxSize n
 						assert(ll1 > 0);
 
 						for(i = 0; i < cpChannels; i++)
-						{
+						{							
 							memcpy((jvxByte*)buffer_realtime.intBuffer[i] + (buffer_realtime.szElement * idxWrite * sizeof(jvxByte)),
 								(jvxByte*)buffers[i] + (samplesGone * buffer_realtime.szElement *sizeof(jvxByte)),
 								buffer_realtime.szElement * ll1* sizeof(jvxByte));
@@ -695,6 +695,7 @@ jvxFileWriter::core_write_function()
 		buffer_realtime.idxRead = (buffer_realtime.idxRead + samplesRead) % buffer_realtime.length;
 		JVX_UNLOCK_MUTEX(protect.accessCircBuffer);
 	}
+	return true;
 }
 
 jvxErrorType 
