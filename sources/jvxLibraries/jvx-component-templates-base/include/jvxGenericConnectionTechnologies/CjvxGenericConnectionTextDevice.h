@@ -234,7 +234,7 @@ public:
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" <<
@@ -249,7 +249,7 @@ public:
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid <" <<
@@ -305,7 +305,7 @@ public:
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" << mess->mId <<
@@ -320,7 +320,7 @@ public:
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid >" << mess->mId <<
@@ -349,7 +349,7 @@ public:
 		if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLOUTGOING_SHIFT))
 		{
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
 				jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 				T::jvxrtst << "::" << __FUNCTION__ << "-> sending message direct, uid <" << load_plus->uId << "> - mid <" <<
@@ -518,7 +518,7 @@ public:
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 					T::jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with new input is <" <<
@@ -548,7 +548,7 @@ public:
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 					T::jvxrtst << "::" << __FUNCTION__ << ": Text token to seperator character is <" << jvx_prepareStringForLogfile(token)
@@ -562,7 +562,7 @@ public:
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 					T::jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with removed message is <"
@@ -593,7 +593,7 @@ public:
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
 						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << ": Failed to match message <" <<
@@ -636,7 +636,7 @@ public:
 		if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 		{
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
 				jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 				T::jvxrtst << "::" << __FUNCTION__ << "Clearing input text buffer." << std::endl;
