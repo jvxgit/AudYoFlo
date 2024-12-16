@@ -233,9 +233,10 @@ public:
 			{
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
-					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(T::jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" <<
 							mess->mId << "> to list of pending messages." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -247,9 +248,10 @@ public:
 			{
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
-					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(T::jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid <" <<
 							mess->mId << "> to list of pending messages, a message with the same uid is already pending." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -302,9 +304,10 @@ public:
 			{
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
-					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(T::jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Adding message uid <" << mess->uId << "> - mid <" << mess->mId <<
 							"> to list of pending messages." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -316,9 +319,10 @@ public:
 			{
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
-					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(T::jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << "-> T0 => Failed to add message uid <" << mess->uId << "> - mid >" << mess->mId <<
 							"> to list of pending messages, a message with the same uid is already pending." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -344,9 +348,10 @@ public:
 
 		if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLOUTGOING_SHIFT))
 		{
-			if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(T::jvxrtst_bkp);
+				jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 				T::jvxrtst << "::" << __FUNCTION__ << "-> sending message direct, uid <" << load_plus->uId << "> - mid <" <<
 					load_plus->mId << "> bypassing message queue, context <" << txtOut << ">." << std::endl;
 				jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -512,9 +517,10 @@ public:
 
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(T::jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 					T::jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with new input is <" <<
 						jvx_prepareStringForLogfile(receivedTextBuffer) << ">." << std::endl;
 					jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -541,9 +547,10 @@ public:
 
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(T::jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 					T::jvxrtst << "::" << __FUNCTION__ << ": Text token to seperator character is <" << jvx_prepareStringForLogfile(token)
 						<< ">, sep index is " << posi_sep << "." << std::endl;
 					jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -554,9 +561,10 @@ public:
 
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(T::jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 					T::jvxrtst << "::" << __FUNCTION__ << ": Textbuffer with removed message is <"
 						<< jvx_prepareStringForLogfile(receivedTextBuffer)
 						<< ">." << std::endl;
@@ -584,9 +592,10 @@ public:
 			{
 				if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 				{
-					if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(T::jvxrtst_bkp);
+						jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 						T::jvxrtst << "::" << __FUNCTION__ << ": Failed to match message <" <<
 							jvx_prepareStringForLogfile(token) << "> in submodule, error reason: " << jvxErrorType_txt(res) << "." << std::endl;
 						jvx_unlock_text_log(T::jvxrtst_bkp);
@@ -626,9 +635,10 @@ public:
 	{
 		if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 		{
-			if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(T::jvxrtst_bkp);
+				jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 				T::jvxrtst << "::" << __FUNCTION__ << "Clearing input text buffer." << std::endl;
 				jvx_unlock_text_log(T::jvxrtst_bkp);
 			}

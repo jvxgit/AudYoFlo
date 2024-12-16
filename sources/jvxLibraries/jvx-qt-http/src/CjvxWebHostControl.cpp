@@ -105,9 +105,7 @@ CjvxWebHostControl::deactivate()
 		JVX_DSP_SAFE_DELETE_FIELD(jvxrtst_bkp.jvxlst_buf);
 
 		jvxrtst_bkp.jvxlst_buf = NULL;
-		jvxrtst_bkp.jvxlst_buf_sz = 0;
-		jvxrtst_bkp.dbgModule = false;
-
+		jvxrtst_bkp.jvxlst_buf_sz = 0;		
 		theHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle*>(jvxrtst_bkp.jvxlst_buf));	
 	}
 	jvxrtst_bkp.jvxlst_buf = NULL;
@@ -300,7 +298,8 @@ CjvxWebHostControl::trigger_send_put_request(jvxSize GunId, jvxSize IGunId, Ijvx
 		reply->setProperty(QT_PROP_TAG_REQUEST_TYPE, var);
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr,logLev))
 		{
 			jvxrtst << "Sending HTTP POST request <" << uri << +"--" << put_content << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}
@@ -357,7 +356,8 @@ CjvxWebHostControl::trigger_send_get_request(jvxSize GunId, jvxSize IGunId, Ijvx
 		reply->setProperty(QT_PROP_TAG_REQUEST_TYPE, var);
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
 			jvxrtst << "Sending HTTP GET request <" << uri << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}
@@ -413,7 +413,8 @@ CjvxWebHostControl::trigger_send_post_request(jvxSize GunId, jvxSize IGunId, Ijv
 		reply->setProperty(QT_PROP_TAG_REQUEST_TYPE, var);
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
 			jvxrtst << "Sending HTTP POST request <" << uri << +"--" << put_content << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}
@@ -591,7 +592,8 @@ CjvxWebHostControl::message_complete(QNetworkReply* reply)
 		}
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
 			jvxrtst << "Receivig incoming message: <" << response << ">, G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}

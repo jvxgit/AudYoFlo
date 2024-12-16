@@ -142,9 +142,10 @@ CjvxGenericConnectionDevice::activate()
 		CjvxGenericConnectionDevice_pcg::allocate_all();
 		CjvxGenericConnectionDevice_pcg::register_all(this);
 
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr,logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp);
+			jvx_lock_text_log(jvxrtst_bkp, logLev);
 			jvxrtst << "::" << __FUNCTION__ << ": " << "activate " << _common_set.theDescriptor << " device component" << std::endl;
 			jvx_unlock_text_log(jvxrtst_bkp);
 		}
@@ -181,9 +182,10 @@ CjvxGenericConnectionDevice::activate()
 			message_queue.timeout_messages_in_queue_msec = CjvxGenericConnectionDevice_pcg::mqueue_runtime.timeoutmqueue_msec.value;
 			observer.timeout_message_response = CjvxGenericConnectionDevice_pcg::mqueue_runtime.timeoutresponse_msec.value;
 
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "::" << __FUNCTION__ << ": " << "Starting message queue:" << std::endl;
 				jvxrtst << "-> Number of elements: " << message_queue.sz_mqueue_elements << std::endl;
 				jvxrtst << "-> Timeout messages: " << message_queue.timeout_messages_in_queue_msec << std::endl;
@@ -279,10 +281,10 @@ CjvxGenericConnectionDevice::deactivate()
 
 			resL = deactivate_specific_connection();
 
-
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "::" << __FUNCTION__ << ": " << "deactivate " << _common_set.theDescriptor << " device component" << std::endl;
 				jvx_unlock_text_log(jvxrtst_bkp);
 			}
@@ -339,9 +341,10 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 
 	if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 	{
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp);
+			jvx_lock_text_log(jvxrtst_bkp, logLev);
 			jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port: <" << jvx_prepareStringForLogfile((const char*)ptr) << ">." << std::endl;
 			jvx_unlock_text_log(jvxrtst_bkp);
 		}
@@ -364,9 +367,10 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 			// Need more input
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(jvxrtst_bkp, logLev);
 					jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port, processing postponed." << std::endl;
 					jvx_unlock_text_log(jvxrtst_bkp);
 				}
@@ -381,9 +385,10 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 			// There might be more, hence we will return (no return from while loop)
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(jvxrtst_bkp, logLev);
 					jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port complete, removing id = <" << theMess.uId
 						<< "> from context list." << std::endl;
 					jvx_unlock_text_log(jvxrtst_bkp);
@@ -400,9 +405,10 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 
 				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(jvxrtst_bkp, logLev);
 						jvxrtst << "::" << __FUNCTION__ << ": Message from COM port complete, removed id = <" << theMess.uId << "> from context list."
 							<< std::endl;
 						jvx_unlock_text_log(jvxrtst_bkp);
@@ -424,9 +430,10 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 			// I have no idea when I would enter this rule
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(jvxrtst_bkp, logLev);
 					if (ptr)
 					{
 						jvxrtst << "::" << __FUNCTION__ << ": Incoming generic message with error message in handling, txt = <"
@@ -446,9 +453,10 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 		ptr = NULL;
 		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "::" << __FUNCTION__ << ": Decoding loop will procede into next iteration since there may be more work to do."
 					<< std::endl;
 				jvx_unlock_text_log(jvxrtst_bkp);
@@ -489,9 +497,10 @@ CjvxGenericConnectionDevice::remove_data_from_map(oneMessage_hdr* theMess)
 
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp);
+					jvx_lock_text_log(jvxrtst_bkp, logLev);
 					jvxrtst << "::" << __FUNCTION__ << ": T0 + " << (tstamp - elm->second->timestamp_enter_us) * 0.001 << 
 						" (from enter) msec => Removing message uid <" << elm->second->uId << "> - mid <" << elm->second->mId << 
 						"> from list of pending messages." << std::endl;
@@ -622,9 +631,10 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 					messPtr = elm->second;
 					if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 					{
-						if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+						jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+						if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 						{
-							jvx_lock_text_log(jvxrtst_bkp);
+							jvx_lock_text_log(jvxrtst_bkp, logLev);
 							jvxrtst << "::" << __FUNCTION__ << ": RETRANSMIT #" << elm->second->retrans_cnt << ", T0 + " << 
 								(timestamp_us - messPtr->timestamp_enter_us) * 0.001 << " (from enter) msec => Update message uid <" <<
 								elm->second->uId << "> - mid <" << elm->second->mId << "> to SENT." << std::endl;
@@ -657,9 +667,10 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 	{
 		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLOUTGOING_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "::" << __FUNCTION__ << ": Sending message to COM port: <" << jvx_prepareStringForLogfile(txtMessage) << ">." << std::endl;
 				jvx_unlock_text_log(jvxrtst_bkp);
 			}
@@ -676,9 +687,10 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 			{
 				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(jvxrtst_bkp, logLev);
 							jvxrtst << "::" << __FUNCTION__ << ": T0 + " << (timestamp_us - messPtr->timestamp_enter_us) * 0.001 << " (from enter) msec => Update message uid <" << 
 								elm->second->uId << "> - mid <" << elm->second->mId << "> to SENT." << std::endl;
 							jvx_unlock_text_log(jvxrtst_bkp);
@@ -691,9 +703,10 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 			{
 				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(jvxrtst_bkp);
+						jvx_lock_text_log(jvxrtst_bkp, logLev);
 						jvxrtst << "::" << __FUNCTION__ << ": T0 + " << 
 							(timestamp_us - messPtr->timestamp_enter_us) * 0.001 << " msec => Removing message uid <" << 
 							elm->second->uId << "> - mid <" << elm->second->mId << "> from list of pending events." << std::endl;
@@ -733,9 +746,10 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 	{
 		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "::" << __FUNCTION__ << ": Failed to translate message in submodule." << std::endl;
 				jvx_unlock_text_log(jvxrtst_bkp);
 			}
@@ -825,9 +839,10 @@ CjvxGenericConnectionDevice::callback_thread_timer_expired(jvxInt64 timestamp_us
 					{
 						if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 						{
-							if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+							jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvx_lock_text_log(jvxrtst_bkp);
+								jvx_lock_text_log(jvxrtst_bkp, logLev);
 								jvxrtst << "::" << __FUNCTION__ << ": deltat = " << deltaT_msec << " (from send) msec: Retransmit message uid <" << elm->second->uId <<
 									"> - mid <" << elm->second->mId << "> (RETRANSMISSION #" << elm->second->retrans_cnt << ")." << std::endl;
 								jvx_unlock_text_log(jvxrtst_bkp);
@@ -848,9 +863,10 @@ CjvxGenericConnectionDevice::callback_thread_timer_expired(jvxInt64 timestamp_us
 					{
 						if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 						{
-							if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+							jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvx_lock_text_log(jvxrtst_bkp);
+								jvx_lock_text_log(jvxrtst_bkp, logLev);
 								jvxrtst << "::" << __FUNCTION__ << ": deltat = " << deltaT_msec << " (from send) msec: Remove message uid <" << elm->second->uId <<
 									"> - mid <" << elm->second->mId << "> from message queue due to response timeout." << std::endl;
 								jvx_unlock_text_log(jvxrtst_bkp);
@@ -921,9 +937,10 @@ CjvxGenericConnectionDevice::clear_inout_matching()
 		auto elm = mpMessages.begin();
 		for (; elm != mpMessages.end(); elm++)
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "::" << __FUNCTION__ << ": Remove message uid <" << elm->second->uId <<
 					"> - mid <" << elm->second->mId << "> from message queue due to clear request." << std::endl;
 				jvx_unlock_text_log(jvxrtst_bkp);

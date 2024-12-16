@@ -24,9 +24,10 @@ CjvxNTaskDevice::CjvxNTaskDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	jvxOneConnectorDefine theConnector;
 	jvxOneMasterTask theMasterTask;
 
-	if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp);
+		jvx_lock_text_log(jvxrtst_bkp, logLev);
 		jvxrtst << "::" << __FUNCTION__ << ": " << "constructor of " << _common_set.theDescriptor << " device component" << std::endl;
 		jvx_unlock_text_log(jvxrtst_bkp);
 	}
@@ -67,9 +68,10 @@ CjvxNTaskDevice::activate()
 	jvxErrorType res = CjvxBareDeviceNtask::activate();
 	if (res == JVX_NO_ERROR)
 	{
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp);
+			jvx_lock_text_log(jvxrtst_bkp, logLev);
 			jvxrtst << "::" << __FUNCTION__ << ": " << "Activate " << _common_set.theDescriptor << " device component" << std::endl;
 			jvx_unlock_text_log(jvxrtst_bkp);
 		}
@@ -85,9 +87,10 @@ CjvxNTaskDevice::deactivate()
 	jvxDspBaseErrorType resL;
 	if (res == JVX_NO_ERROR)
 	{
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp);
+			jvx_lock_text_log(jvxrtst_bkp, logLev);
 			jvxrtst << "::" << __FUNCTION__ << ": " << "Deactivate " << _common_set.theDescriptor << " device component" << std::endl;
 			jvx_unlock_text_log(jvxrtst_bkp);
 		}

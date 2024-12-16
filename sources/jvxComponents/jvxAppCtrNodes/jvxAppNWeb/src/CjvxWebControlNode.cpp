@@ -431,9 +431,10 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 {
 	if (jvx_bitTest(purp, JVX_WEB_SERVER_URI_WEBSOCKET_CONNECT_HANDLER_SHIFT))
 	{
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp);
+			jvx_lock_text_log(jvxrtst_bkp, logLev);
 			jvxrtst << "Web socket connected" << std::endl;
 			jvx_unlock_text_log(jvxrtst_bkp);
 		}
@@ -482,7 +483,7 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		ctxt->context_conn = context_conn;
 		ctxt->context_server = context_server;
 
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG))
 		{
 			jvx_lock_text_log(jvxrtst_bkp);
 			jvxrtst << "Web socket ready" << std::endl;
@@ -528,6 +529,7 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		jvxProtocolHeader* protheader = NULL;
 		jvxByte opcode = headerbyte & 0xF;
 		std::map<jvxHandle*, CjvxWebControlNodeWsHandle*>::iterator elm;
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
 		switch (opcode)
 		{
 		case 0x1: // Text message
@@ -582,7 +584,7 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 
 					jvxSize locId = JVX_SIZE_UNSELECTED;
 
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG))
 					{
 						jvx_lock_text_log(jvxrtst_bkp);
 						jvxrtst << "Incoming request web socket configuration:" << std::endl;
@@ -763,11 +765,10 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 #endif
 			break;
 		case 0x8:
-			ptr16 = (jvxUInt16*)payload;
-
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			ptr16 = (jvxUInt16*)payload;			
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "Web Socket Close Event received, load = " << *ptr16 << std::endl;
 				jvx_unlock_text_log(jvxrtst_bkp);
 			}
@@ -781,9 +782,9 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 			// this->webSocketPeriodic.current_ping_count = 0;
 			break;
 		default:
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp);
+				jvx_lock_text_log(jvxrtst_bkp, logLev);
 				jvxrtst << "Unknown Web Socket Data received received" << std::endl;
 				jvx_unlock_text_log(jvxrtst_bkp);
 			}
@@ -802,9 +803,10 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 			wsConnections.erase(elm);
 		}
 		JVX_UNLOCK_RW_MUTEX_EXCLUSIVE(safeAccessWebConnection);
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp);
+			jvx_lock_text_log(jvxrtst_bkp, logLev);
 			jvxrtst << "Web socket closed" << std::endl;
 			jvx_unlock_text_log(jvxrtst_bkp);
 		}

@@ -76,6 +76,9 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef, const char* strFileName, 
 		jvxSize loclBuffer, jvxSize writeAtOnce, jvxSize circBufferSize, jvxSize dbgLevel, jvxBool dbgOutCout) override;
 
+	jvxErrorType modify_debug_config(jvxSize* dbgLevel_internal, jvxBool* dbgOutCout_internal) override;
+	jvxBool check_log_output(const char* modName, jvxSize logLevel, jvxBool* dbgCout) override;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION addTextLogExpression(const char* oneExpr) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate() override;
@@ -83,11 +86,9 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION start() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop() override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog, jvxBool* dbgOutCout) override;
-
-	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_direct(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered_nb(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_direct(const char* txt, const char* moduleName = NULL, jvxSize logLevel = 0, jvxCBitField outEnum = (jvxCBitField)-1) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered(const char* txt, const char* moduleName = NULL, jvxSize logLevel = 0, jvxCBitField outEnum = (jvxCBitField)-1) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered_nb(const char* txt, const char* moduleName = NULL, jvxSize logLevel = 0, jvxCBitField outEnum = (jvxCBitField)-1) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION produceStackframe_direct(const char* description) override;
 

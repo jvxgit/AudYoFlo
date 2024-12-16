@@ -65,9 +65,10 @@ namespace _myJvxTools {
 	jvxErrorType 
 	CjvxLogRemoteHandler::start_lock()
 	{
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > jvxLogLevel2Id(this->lev)) 
+		jvxSize logLev = jvxLogLevel2Id(this->lev);
+		if(jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev, nullptr)) 
 		{
-			jvx_lock_text_log(jvxrtst_bkp);
+			jvx_lock_text_log(jvxrtst_bkp, logLev);
 			isLocked = true;
 			return JVX_NO_ERROR;
 		}
@@ -77,7 +78,10 @@ namespace _myJvxTools {
 	void 
 	CjvxLogRemoteHandler::stop_lock()
 	{
-		isLocked = false;
-		jvx_unlock_text_log(jvxrtst_bkp);
+		if (isLocked)
+		{			
+			jvx_unlock_text_log(jvxrtst_bkp);
+			isLocked = false;
+		}
 	}
 } // namespace

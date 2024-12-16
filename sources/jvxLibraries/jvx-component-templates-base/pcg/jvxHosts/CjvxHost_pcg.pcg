@@ -9,6 +9,7 @@ SECTION PROPERTIES
 		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
 		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE"};
+		CALLBACKS = {"on_change_runtime_properties"};
 
 		SECTION component_path
 		{
@@ -106,25 +107,27 @@ SECTION PROPERTIES
 		};
 		SECTION textLog_dbglevel
 		{
-			DESCRIPTION = "Debug level";	  // Defaults to NAME if not present
+			DESCRIPTION = "Logging Level";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_SIZE";
 			INIT_SET = 0; // No debugging
+			CALLBACK_SET_POSTHOOK = "on_change_runtime_properties";
 		};
 		SECTION textLog_dbgCout
 		{
-			DESCRIPTION = "Debug out to cout";	  // Defaults to NAME if not present
+			DESCRIPTION = "Logging to cout";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_BOOL";
 			INIT_SET = 0; // Output to logfile
+			CALLBACK_SET_POSTHOOK = "on_change_runtime_properties";
 		};
 		SECTION textLog_expressions
 		{
-			DESCRIPTION = "Text log component selection string";	  // Defaults to NAME if not present
+			DESCRIPTION = "Module selection string for logging - only via command line";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_STRING_LIST";
 			INIT_SET = ""; // Debug all levels
 		};
 		SECTION textLog_activate
 		{
-			DESCRIPTION = "Start text log at all";	  // Defaults to NAME if not present
+			DESCRIPTION = "Activate logging - only via command line";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_BOOL";
 			INIT_SET = 0;
 		};

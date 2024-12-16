@@ -343,9 +343,10 @@ public:
 		{
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_SUBMODULE_OFFSET))
 			{
-				if (T::jvxrtst_bkp.dbgModule && T::jvxrtst_bkp.dbgLevel > 3)
+				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+				if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(T::jvxrtst_bkp);
+					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
 					T::jvxrtst << "::SUBMODULE: " << mess << std::endl;
 					jvx_unlock_text_log(T::jvxrtst_bkp);
 				}

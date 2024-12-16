@@ -6865,7 +6865,13 @@ jvxostream::setReference(IjvxTextLog* theRef, char* theBufferP, jvxSize szBufP)
 void
 jvxostream::set_module_name(const std::string& modnm)
 {
-	this->moduleName = modnm;
+	this->moduleName = modnm;	
+}
+
+void
+jvxostream::set_debug_level(jvxSize dbg_lev)
+{
+	this->debugLevel = dbg_lev;
 }
 
 jvxErrorType 
@@ -6913,11 +6919,11 @@ jvxostream::sync()
 			{
 				if (moduleName.size())
 				{
-					theLog->addEntry_buffered(text.c_str(), moduleName.c_str());
+					theLog->addEntry_buffered(text.c_str(), moduleName.c_str(), debugLevel, (jvxCBitField)-1);
 				}
 				else
 				{
-					theLog->addEntry_buffered(text.c_str());
+					theLog->addEntry_buffered(text.c_str(), nullptr, 0, (jvxCBitField)-1);
 				}
 			}
 			else
@@ -7033,8 +7039,6 @@ int jvxLogLevel2Id(jvxLogLevel lev)
 
 void jvx_init_text_log(jvxrtst_backup& bkp)
 {
-	bkp.dbgLevel = 0;
-	bkp.dbgModule = true;
 	bkp.jvxlst_buf = NULL;
 	bkp.jvxlst_buf_sz = 0;
 	bkp.theModuleName = "no-module-name";
@@ -7045,8 +7049,6 @@ void jvx_init_text_log(jvxrtst_backup& bkp)
 
 void jvx_terminate_text_log(jvxrtst_backup& bkp)
 {
-	bkp.dbgLevel = 0;
-	bkp.dbgModule = false;
 	bkp.jvxlst_buf = NULL;
 	bkp.jvxlst_buf_sz = 0;
 	bkp.theModuleName = "no-module-name";
@@ -7085,24 +7087,8 @@ jvx_request_text_log(jvxrtst_backup& bkp)
 
 	if (bkp.theTextLogger_hdl)
 	{
-		bkp.theTextLogger_hdl->debug_config(&bkp.dbgLevel, bkp.theModuleName.c_str(), &bkp.dbgModule, &bkp.dbgOutputCout);
-
-		if (!bkp.dbgModule)
-		{
-			// Only if the options are setup rpoperly, we will hold a nonzero reference
-			resL = bkp.theToolsHost->return_reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, bkp.theTextLogger_obj);
-			bkp.theTextLogger_obj = NULL;
-			bkp.theTextLogger_hdl = NULL;
-			bkp.jvxos.setActive(false);
-		}
-		else
-		{
-			if (bkp.dbgLevel)
-			{
-				bkp.jvxos.setReference(bkp.theTextLogger_hdl, bkp.jvxlst_buf, bkp.jvxlst_buf_sz);
-				bkp.jvxos.set_module_name(bkp.theModuleName);
-			}
-		}
+		bkp.jvxos.setReference(bkp.theTextLogger_hdl, bkp.jvxlst_buf, bkp.jvxlst_buf_sz);
+		bkp.jvxos.set_module_name(bkp.theModuleName);
 	}
 };
 
@@ -7119,14 +7105,20 @@ void jvx_return_text_log(jvxrtst_backup& bkp)
 }
 
 bool 
-jvx_try_lock_text_log(jvxrtst_backup& bkp)
-{
-	return bkp.jvxos.try_lock();
+jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev)
+{	
+	bool res = bkp.jvxos.try_lock();
+	if (res)
+	{
+		bkp.jvxos.set_debug_level(logLev);
+	}
+	return res;
 }
 
 void 
-jvx_lock_text_log(jvxrtst_backup& bkp)
+jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev)
 {
+	bkp.jvxos.set_debug_level(logLev);
 	bkp.jvxos.lock();
 }
 
@@ -7134,6 +7126,7 @@ void
 jvx_unlock_text_log(jvxrtst_backup& bkp)
 {
 	bkp.jvxos.unlock();
+	bkp.jvxos.set_debug_level(0);
 }
 
 //static std::list< CjvxReportCommandRequest*> fldPtrs;

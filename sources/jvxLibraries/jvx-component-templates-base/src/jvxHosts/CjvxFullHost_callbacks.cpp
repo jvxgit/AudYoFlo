@@ -158,6 +158,33 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_pre_get)
 	return res;
 }
 
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, on_change_runtime_properties)
+{
+	jvxSize debug_dbglev_config;
+	jvxSize* debug_dbglev_config_ptr = nullptr;
+	jvxBool debug_cout_config;
+	jvxBool* debug_cout_config_ptr = nullptr;
+
+	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(CjvxHost_genpcg::properties_selected.textLog_dbglevel))
+	{
+		// Modify the debug level at runtime
+		debug_dbglev_config = CjvxHost_genpcg::properties_selected.textLog_dbglevel.value;
+		debug_dbglev_config_ptr = &debug_dbglev_config;
+	}
+	if (JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(CjvxHost_genpcg::properties_selected.textLog_dbgCout))
+	{
+		// Modify the debug level at runtime
+		debug_cout_config = CjvxHost_genpcg::properties_selected.textLog_dbgCout.value;
+		debug_cout_config_ptr = &debug_cout_config;
+	}
+
+	if (jvxrtst_bkp.theTextLogger_hdl && (debug_dbglev_config_ptr || debug_cout_config_ptr))
+	{
+		jvxrtst_bkp.theTextLogger_hdl->modify_debug_config(debug_dbglev_config_ptr, debug_cout_config_ptr);
+	}
+	return JVX_NO_ERROR;
+}
+
 jvxErrorType 
 CjvxFullHost::attach_property_submodule(const char* prefix, IjvxProperties* props)
 {

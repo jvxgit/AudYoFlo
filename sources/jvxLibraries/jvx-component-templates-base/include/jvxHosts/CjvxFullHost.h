@@ -124,6 +124,7 @@ private:
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_command_post_set);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_command_pre_get);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(on_change_runtime_properties);
 
 	
 };

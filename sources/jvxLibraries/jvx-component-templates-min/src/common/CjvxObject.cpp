@@ -944,8 +944,7 @@ void CjvxObject::_return_text_log()
 		JVX_DSP_SAFE_DELETE_FIELD(jvxrtst_bkp.jvxlst_buf);
 	}
 	jvxrtst_bkp.jvxlst_buf = NULL;
-	jvxrtst_bkp.jvxlst_buf_sz = 0;
-	jvxrtst_bkp.dbgModule = false;
+	jvxrtst_bkp.jvxlst_buf_sz = 0;	
 }
 
 

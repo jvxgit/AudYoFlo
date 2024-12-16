@@ -126,7 +126,6 @@ CjvxSaWrapperElementBase::~CjvxSaWrapperElementBase()
 
 		jvxrtst_bkp.jvxlst_buf = NULL;
 		jvxrtst_bkp.jvxlst_buf_sz = 0;
-		jvxrtst_bkp.dbgModule = false;
 
 		theHostRef->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle*>(jvxrtst_bkp.jvxlst_buf));
 	}
@@ -867,8 +866,8 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxBool reportError = false;
-
-	if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
 		jvxrtst << __FUNCTION__ << " entering from " << callEnter << ": Status on Enter: " << getDelayedStatusExpression(delayedActionOperations) << "::" <<
 			getDelayedStatusExpression(delayedActionPending) << std::endl;
@@ -880,7 +879,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 			jvx_bitTest(delayedActionOperations, JVX_WIDGET_RWAPPER_OPERATION_GET_DESCRIPTOR_SHIFT) ||
 			jvx_bitTest(delayedActionOperations, JVX_WIDGET_RWAPPER_OPERATION_GET_EXTENDED_INFO_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
 				jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Request of parameter <" << this->propertyGetSetTag 
 					<< "> not possible due to pending operation " <<
@@ -892,7 +891,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 			jvx_bitTest(delayedActionOperations, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_WINDOW_SHIFT) ||
 			jvx_bitTest(delayedActionOperations, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_STATUS_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
 				jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Request of parameter <" << this->propertyGetSetTag
 					<< "> not possible due to pending operation " <<
@@ -902,7 +901,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_WINDOW_SHIFT)||
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_STATUS_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Added update to be triggered once current operation is complete." << std::endl;
 				}
@@ -916,7 +915,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 			}
 			if (jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_SET_PROPERTY_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Operation to set a value is currently not possible." << std::endl;
 				}
@@ -926,7 +925,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_GET_DESCRIPTOR_SHIFT) ||
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_GET_EXTENDED_INFO_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Operation for initialization is unexpetected." << std::endl;
 				}
@@ -936,7 +935,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 		if (
 			jvx_bitTest(delayedActionOperations, JVX_WIDGET_RWAPPER_OPERATION_SET_PROPERTY_SHIFT))
 		{
-			if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
 				jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Request of parameter <" << this->propertyGetSetTag
 					<< "> not possible due to pending operation " << 
@@ -946,7 +945,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_WINDOW_SHIFT) ||
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_STATUS_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Added update to be triggered once current operation is complete." << std::endl;
 				}
@@ -955,7 +954,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 			}
 			if (jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_SET_PROPERTY_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Operation to set a value is currently not possible." << std::endl;
 				}
@@ -965,7 +964,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_GET_DESCRIPTOR_SHIFT) ||
 				jvx_bitTest(oper, JVX_WIDGET_RWAPPER_OPERATION_GET_EXTENDED_INFO_SHIFT))
 			{
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << "--" << this->propertyGetSetTag << ": Operation for initialization is unexpetected." << std::endl;
 				}
@@ -986,8 +985,8 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 	{
 		delayedActionName = callEnter;
 		delayedActionOperations |= oper;
-
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
 			jvxrtst << __FUNCTION__ << ": Status on Leave: " << getDelayedStatusExpression(delayedActionOperations) << "::" <<
 				getDelayedStatusExpression(delayedActionPending) << std::endl;
@@ -1000,8 +999,8 @@ CjvxSaWrapperElementBase::handleAccessDelayed_start(const char* callEnter, jvxCB
 void
 CjvxSaWrapperElementBase::handleAccessDelayed_stop(const char* callEnter, jvxCBitField oper)
 {
-
-	if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
 		jvxrtst << __FUNCTION__ << " entering from " << callEnter << ": Status on Enter: " << getDelayedStatusExpression(delayedActionOperations) << "::" <<
 			getDelayedStatusExpression(delayedActionPending) << std::endl;
@@ -1011,7 +1010,7 @@ CjvxSaWrapperElementBase::handleAccessDelayed_stop(const char* callEnter, jvxCBi
 	delayedActionOperations &= ~oper;
 
 
-	if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
 		jvxrtst <<  __FUNCTION__ << ": Status on Leave: " << getDelayedStatusExpression(delayedActionOperations) << "::" << 
 			getDelayedStatusExpression(delayedActionPending) << std::endl;
@@ -1052,7 +1051,8 @@ CjvxSaWrapperElementBase::check_start_new_trigger_if_desired(jvxPropertyCallCont
 {
 	if (ccontext == JVX_WIDGET_RWAPPER_UPDATE_DELAYED_RESPONSE)
 	{
-		if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
+		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
 			jvxrtst << __FUNCTION__ << ": Entered since delayed operation is complete, " <<
 				getDelayedStatusExpression(delayedActionOperations) << "::" <<
@@ -1068,9 +1068,9 @@ CjvxSaWrapperElementBase::check_start_new_trigger_if_desired(jvxPropertyCallCont
 				std::cout << ".";
 				std::cout << std::endl;
 #endif
-				loopCheckCnt = 0;
+				loopCheckCnt = 0;				
 				// This moves the calling context from global to local if required
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << ": Pending operation is awaiting service." << std::endl;
 				}
@@ -1081,7 +1081,7 @@ CjvxSaWrapperElementBase::check_start_new_trigger_if_desired(jvxPropertyCallCont
 					std::cout << getDelayedStatusExpression(delayedActionOperations);
 					std::cout << std::endl;
 					*/
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
 						jvxrtst << __FUNCTION__ << " Reentering update window since it was rejected before." << std::endl;
 					}
@@ -1090,14 +1090,14 @@ CjvxSaWrapperElementBase::check_start_new_trigger_if_desired(jvxPropertyCallCont
 				}
 				if (jvx_bitTest(delayedActionPending, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_STATUS_SHIFT))
 				{
-					if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
 						jvxrtst << __FUNCTION__ << " Reentering update status since it was rejected before." << std::endl;
 					}
 					jvx_bitClear(delayedActionPending, JVX_WIDGET_RWAPPER_OPERATION_UPDATE_STATUS_SHIFT);
 					updateStatus_core(JVX_WIDGET_RWAPPER_UPDATE_NORMAL);
 				}
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << ": Pending operation has been triggered." << std::endl;
 				}
@@ -1121,7 +1121,7 @@ CjvxSaWrapperElementBase::check_start_new_trigger_if_desired(jvxPropertyCallCont
 					delayedActionPending = 0;
 					loopCheckCnt = 0;
 				}
-				if (jvxrtst_bkp.dbgModule && jvxrtst_bkp.dbgLevel > 3)
+				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
 					jvxrtst << __FUNCTION__ << ": Pending operation is awaiting service but the channel is curerently not available, loop counter is." << std::endl;
 				}

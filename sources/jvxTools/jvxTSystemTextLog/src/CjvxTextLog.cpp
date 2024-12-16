@@ -119,6 +119,14 @@ CjvxTextLog::initialize(IjvxHiddenInterface* hostRef, const char* strFileName, j
 	return JVX_ERROR_WRONG_STATE;
 }
 
+jvxErrorType 
+CjvxTextLog::modify_debug_config(jvxSize* dbgLevel_internal, jvxBool* dbgOutCout_internal)
+{
+	if(dbgLevel_internal) dbgLevel = *dbgLevel_internal;
+	if(dbgOutCout_internal) dbgOutCout = *dbgOutCout_internal;
+	return JVX_NO_ERROR;
+}
+
 jvxErrorType
 CjvxTextLog::addTextLogExpression(const char* moduleFilterE)
 {
@@ -256,7 +264,7 @@ CjvxTextLog::prefilterEntries(const std::string& strTime, std::string& out, std:
  * written instantaneously and thus may block the caller.
  *///===========================================================
 jvxErrorType
-CjvxTextLog::addEntry_direct(const char* txt, const char* moduleName, jvxCBitField outEnum)
+CjvxTextLog::addEntry_direct(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum)
 {
 	jvxTick timing;
 	std::string txtStr = txt;
@@ -276,7 +284,9 @@ CjvxTextLog::addEntry_direct(const char* txt, const char* moduleName, jvxCBitFie
 			strPrefix += ">";
 		}
 
-		strPrefix += "-D]";
+		strPrefix += "-D";
+		strPrefix += "(" + jvx_size2String(dbgLevel) + ")";
+		strPrefix += "]";
 
 		prefilterEntries(strPrefix, out, txtStr);
 
@@ -308,7 +318,7 @@ CjvxTextLog::addEntry_direct(const char* txt, const char* moduleName, jvxCBitFie
  * written to a large buffer first and to file later in a second low priority thread.
  *///===========================================================
 jvxErrorType
-CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxCBitField outEnum)
+CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum)
 {
 	jvxTick timing;
 	std::string txtStr = txt;
@@ -330,7 +340,9 @@ CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxCBitF
 			strPrefix += ">";
 		}
 
-		strPrefix += "-B]";
+		strPrefix += "-B";
+		strPrefix += "(" + jvx_size2String(dbgLevel) + ")";
+		strPrefix += "]";
 
 		prefilterEntries(strPrefix, out, txtStr);
 
@@ -434,7 +446,7 @@ CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxCBitF
 }
 
 jvxErrorType
-CjvxTextLog::addEntry_buffered_nb(const char* txt, const char* moduleName, jvxCBitField outEnum)
+CjvxTextLog::addEntry_buffered_nb(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum)
 {
 	jvxTick timing;
 	std::string txtStr = txt;
@@ -460,7 +472,9 @@ CjvxTextLog::addEntry_buffered_nb(const char* txt, const char* moduleName, jvxCB
 			strPrefix += ">";
 		}
 
-		strPrefix += "-BNB]";
+		strPrefix += "-BNB";
+		strPrefix += "(" + jvx_size2String(dbgLevel) + ")";
+		strPrefix += "]";
 
 		prefilterEntries(strPrefix, out, txtStr);
 
@@ -598,6 +612,7 @@ CjvxTextLog::addEntry_buffered_nb(const char* txt, const char* moduleName, jvxCB
 
 // ========================================================================
 
+/*
 jvxErrorType
 CjvxTextLog::debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog, jvxBool* outCout)
 {
@@ -652,6 +667,43 @@ CjvxTextLog::debug_config(jvxSize* level, const char* moduleName, jvxBool* modul
 		}
 	}
 	return JVX_NO_ERROR;
+}
+*/
+
+jvxBool 
+CjvxTextLog::check_log_output(const char* modName, jvxSize logLevel, jvxBool* dbgCout)
+{	
+	jvxBool log_output_active = true;
+	if (logLevel > dbgLevel)
+	{
+		log_output_active = log_output_active & false;
+	}
+
+	if (modName)
+	{
+		if (moduleFilterExpression.size())
+		{
+			std::string entry;
+			bool foundit = false;
+			for (auto elm : moduleFilterExpression)
+			{
+				if (jvx_compareStringsWildcard(elm, modName))
+				{
+					foundit = true;
+					break;
+				}
+			}
+			if (!foundit)
+			{
+				log_output_active = log_output_active & false;
+			}
+		}
+	}
+
+	// Copy current setting for cout logging!!
+	if (dbgCout) *dbgCout = dbgOutCout;
+
+	return log_output_active;
 }
 
 #ifdef JVX_OS_WINDOWS

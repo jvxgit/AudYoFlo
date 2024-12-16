@@ -11,17 +11,18 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION addTextLogExpression(const char* oneExppression) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION debug_config(jvxSize* level, const char* moduleName, jvxBool* moduleTextLog, jvxBool* dbgOutCout) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION modify_debug_config(jvxSize* dbgLevel_internal, jvxBool* dbgOutCout_internal) = 0;
 
+	virtual jvxBool JVX_CALLINGCONVENTION check_log_output(const char* modName, jvxSize logLevelVal, jvxBool* dbgCout = nullptr) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION terminate() = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION start() = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop()  = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_direct(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered_nb(const char* txt, const char* moduleName = NULL, jvxCBitField outEnum = (jvxCBitField)-1) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_direct(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum /* = (jvxCBitField)-1*/) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum /*= (jvxCBitField)-1*/) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered_nb(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum /*= (jvxCBitField)-1*/) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION produceStackframe_direct(const char* description) = 0;
 
