@@ -184,7 +184,8 @@ JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE
 #define JVX_FINDFIRSTFILE_S(path, file, handle) FindFirstFile((path + std::string(JVX_SEPARATOR_DIR) + file).c_str(), &handle )
 #define JVX_FINDNEXTFILE(a,b,c) FindNextFile( a, &b )
 
-#define JVX_GETFILENAMEDIR(a) a.cFileName
+#define JVX_GETFILENAMEDIR(searchHdl) searchHdl.cFileName
+#define JVX_TESTFILEATTRIBUTEDIRECTORY(searchHdl) ((searchHdl.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
 
 #define JVX_FINDCLOSE(a) FindClose( a)
 

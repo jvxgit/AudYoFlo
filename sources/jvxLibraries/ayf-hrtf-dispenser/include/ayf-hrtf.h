@@ -119,6 +119,7 @@ public:
 
 	void allocate_hrir_buffers_inlock(oneSofaDataBase* dbase, jvxSize slotId);
 
+	void track_sofa_databases_recursively(const std::string& pathName);
 };
 
 #endif

@@ -397,7 +397,8 @@ JVX_FINDNEXTFILE(DIR*& dirH, JVX_DIR_FIND_DATA& fData, const char* fNameExt)
 	return found;
 }
 
-#define JVX_GETFILENAMEDIR(a) searchResult->d_name
+#define JVX_GETFILENAMEDIR(searchResult) searchResult->d_name
+#define JVX_TESTFILEATTRIBUTEDIRECTORY(searchHdl) ((searchHdl->d_type == DT_DIR) || (searchHdl->d_type == DT_LNK))
 
 #define JVX_FINDCLOSE( a) closedir(a)
 

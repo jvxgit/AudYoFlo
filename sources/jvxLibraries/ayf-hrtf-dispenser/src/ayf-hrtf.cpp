@@ -255,36 +255,8 @@ ayfHrtfDispenser::start(const std::string& directory, jvxSize numSlots, const ch
 		{
 			curWorkingDir = bufRet;
 		}
-		pathName = directory;
-		// Check folder to collect all files
-		JVX_HANDLE_DIR searchHandle;
-		JVX_DIR_FIND_DATA searchResult = INIT_SEARCH_DIR_DEFAULT;;
-		std::string ext = ".sofa";
-		searchHandle = JVX_FINDFIRSTFILE_WC(searchHandle, pathName.c_str(), ext.c_str(), searchResult);
-		bool result = true;
-		bool foundElement = false;
 
-		// If entry exists
-		if (searchHandle != INVALID_HANDLE_VALUE)
-		{
-			// scan for sofa files
-			do
-			{
-				std::string fileName = pathName;
-				fileName += JVX_SEPARATOR_DIR;
-				fileName += JVX_GETFILENAMEDIR(searchResult);//searchResult.cFileName;
-				
-				// Backslash is not wanted
-				fileName = jvx_replaceStrInStr(fileName, "\\", "/");
-				fileName = jvx_absoluteToRelativePath(fileName, true);
-				oneSofaDataBase* newEntry = nullptr;
-				JVX_DSP_SAFE_ALLOCATE_OBJECT(newEntry, oneSofaDataBase);
-				newEntry->fName = fileName;
-				sofaDataBases.push_back(newEntry);
-
-			} while (JVX_FINDNEXTFILE(searchHandle, searchResult, ext.c_str()));//FindNextFile( searchHandle, &searchResult )
-			JVX_FINDCLOSE(searchHandle);//FindClose( searchHandle );
-		}
+		track_sofa_databases_recursively(directory);
 
 		jvxSize cnt = 0;
 		dataBaseSlots.resize(numSlots);
@@ -305,6 +277,67 @@ ayfHrtfDispenser::start(const std::string& directory, jvxSize numSlots, const ch
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_WRONG_STATE;
+}
+
+void
+ayfHrtfDispenser::track_sofa_databases_recursively(const std::string& pathName)
+{	
+	// Check folder to collect all files
+	JVX_HANDLE_DIR searchHandle;
+	JVX_DIR_FIND_DATA searchResult = INIT_SEARCH_DIR_DEFAULT;;
+	std::string ext = ".sofa";
+	searchHandle = JVX_FINDFIRSTFILE_WC(searchHandle, pathName.c_str(), ext.c_str(), searchResult);
+
+	// If entry exists
+	if (searchHandle != INVALID_HANDLE_VALUE)
+	{
+		// scan for sofa files
+		do
+		{
+			// if(searchResult.dwFileAttributes)
+			std::string fileName = pathName;
+			fileName += JVX_SEPARATOR_DIR;
+			fileName += JVX_GETFILENAMEDIR(searchResult);//searchResult.cFileName;
+
+			// Backslash is not wanted
+			fileName = jvx_replaceStrInStr(fileName, "\\", "/");
+			fileName = jvx_absoluteToRelativePath(fileName, true);
+			oneSofaDataBase* newEntry = nullptr;
+			JVX_DSP_SAFE_ALLOCATE_OBJECT(newEntry, oneSofaDataBase);
+			newEntry->fName = fileName;
+			sofaDataBases.push_back(newEntry);
+
+		} while (JVX_FINDNEXTFILE(searchHandle, searchResult, ext.c_str()));//FindNextFile( searchHandle, &searchResult )
+		JVX_FINDCLOSE(searchHandle);//FindClose( searchHandle );
+	}
+
+	// Second step: search all directories
+	ext.clear();
+	searchHandle = JVX_FINDFIRSTFILE_WC(searchHandle, pathName.c_str(), ext.c_str(), searchResult);
+
+	// If entry exists
+	if (searchHandle != INVALID_HANDLE_VALUE)
+	{
+		// scan for sofa files
+		do
+		{
+			if (JVX_TESTFILEATTRIBUTEDIRECTORY(searchResult))
+			{
+				std::string subFolderName = pathName;
+				std::string sfolder = JVX_GETFILENAMEDIR(searchResult);
+				if(
+					(sfolder != ".") && (sfolder != "..")
+					)
+				{
+					subFolderName += JVX_SEPARATOR_DIR;
+					subFolderName += sfolder;//searchResult.cFileName;
+					track_sofa_databases_recursively(subFolderName);
+				}
+			}
+		} while (JVX_FINDNEXTFILE(searchHandle, searchResult, ext.c_str()));//FindNextFile( searchHandle, &searchResult )
+		JVX_FINDCLOSE(searchHandle);//FindClose( searchHandle );
+	}
+
 }
 
 jvxErrorType 
