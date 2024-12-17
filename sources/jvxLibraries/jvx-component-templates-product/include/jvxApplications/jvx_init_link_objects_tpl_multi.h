@@ -22,6 +22,10 @@
 #include "jvxAuTPortAudio.h"
 #endif
 
+#ifdef JVX_USE_PIPEWIRE
+#include "jvxAuTPipewire.h"
+#endif
+
 #ifdef JVX_USE_ASIO
 #include "jvxAuTAsio.h"
 #endif
@@ -69,7 +73,7 @@ extern "C"
 			}
 			cnt++;
 #endif
-#if defined JVX_USE_WASAPI
+#ifdef JVX_USE_WASAPI
 
 			if (id == cnt)
 			{
@@ -79,8 +83,18 @@ extern "C"
 				return(JVX_NO_ERROR);
 			}
 			cnt++;
-
-#elif defined JVX_USE_ALSA
+#endif
+#ifdef JVX_USE_PIPEWIRE
+			if (id == cnt)
+			{
+				adescr->assign("Pipewire Audio");
+				*funcInit = jvxAuTPipewire_init;
+				*funcTerm = jvxAuTPipewire_terminate;
+				return(JVX_NO_ERROR);
+			}
+			cnt++;
+#endif
+#if defined JVX_USE_ALSA
 			if (id == cnt)
 			{
 				adescr->assign("Alsa Audio");
@@ -89,7 +103,8 @@ extern "C"
 				return(JVX_NO_ERROR);
 			}
 			cnt++;
-#elif defined JVX_USE_COREAUDIO
+#endif
+#if defined JVX_USE_COREAUDIO
 
 			if (id == cnt)
 			{
