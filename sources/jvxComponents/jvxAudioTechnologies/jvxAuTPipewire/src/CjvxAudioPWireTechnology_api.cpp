@@ -314,28 +314,28 @@ CjvxAudioPWireTechnology::metadata_property_report(uint32_t id,
 			printf("update: id:%u key:'%s' value:'%s' type:'%s'\n", id, key, value, type);
             if(id == 0)
             {
-                if(strcmp(key, "clock.force-quantum"))
+                if(strcmp(key, "clock.force-quantum")== 0)
                 {
                     if(value)
                     {
                         system.buffersize_force = atoi(value);
                     }
                 }
-                if(strcmp(key, "clock.quantum"))
+                if(strcmp(key, "clock.quantum")== 0)
                 {
                     if(value)
                     {
                         system.buffersize = atoi(value);
                     }
                 }
-                if(strcmp(key, "clock.rate"))
+                if(strcmp(key, "clock.rate") == 0)
                 {
                     if(value)
                     {
                         system.samplerate = atoi(value);
                     }
                 }
-                if(strcmp(key, "clock.force-rate"))
+                if(strcmp(key, "clock.force-rate")== 0)
                 {
                     if(value)
                     {
