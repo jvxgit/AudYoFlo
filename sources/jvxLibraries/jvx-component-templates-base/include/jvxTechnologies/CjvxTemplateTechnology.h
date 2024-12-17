@@ -679,7 +679,7 @@ public:
 		CjvxTemplateTechnology<T>(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 	{};
 
-	T* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init)
+	T* local_allocate_device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxSize idx, jvxBool actAsProxy_init, jvxHandle* fwd_arg) override
 	{
 		T* newDev = nullptr;
 		JVX_SAFE_ALLOCATE_OBJECT(newDev, T(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL));
@@ -687,7 +687,7 @@ public:
 		return newDev;
 	}
 
-	jvxErrorType local_deallocate_device(T** elmDev, jvxHandle* fwd_args)
+	jvxErrorType local_deallocate_device(T** elmDev, jvxHandle* fwd_args) override
 	{
 		assert(0);
 		return JVX_ERROR_NOT_IMPLEMENTED;
