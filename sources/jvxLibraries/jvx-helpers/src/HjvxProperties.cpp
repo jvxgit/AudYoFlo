@@ -2318,8 +2318,13 @@ namespace jvx {
 					res = theTriple.theProps->get_property(callGate, jPRG(
 						ptrVal, numElms, theDescr.format),
 						ident, trans);
-					if (JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, JVX_PROPERTY_DESCRIBE_IDX_CAT(theDescr.globalIdx, theDescr.category),
-						theTriple.theProps))
+					std::string token = JVX_PROPERTY_DESCRIBE_IDX_CAT(theDescr.globalIdx, theDescr.category);
+					const jvx::propertyDescriptor::CjvxPropertyDescriptorFull* ff = ccastPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorFull>(static_cast<const jvx::propertyDescriptor::IjvxPropertyDescriptor*>(&theDescr));
+					if (ff)
+					{
+						token = ff->descriptor.std_str();
+					}
+					if (JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, token, theTriple.theProps))
 					{
 						// Here, we have no more offset since the filled field always starts from zero!!!
 						res = toString(ptrVal, 0, numElms, theDescr.format, contentOnly, theDescr.decTp, retVal, retValPostProcess, numDigits, binList, callGate.context,

@@ -1685,6 +1685,10 @@ CjvxProperties::_get_property(
 									}
 									else
 									{
+										if (localLog == nullptr)
+										{
+											callGate.last_err_hint = "No local log associated.";
+										}
 										res = JVX_ERROR_INTERNAL;
 										goto leave_function_unlock;
 									}
@@ -1766,6 +1770,10 @@ leave_error:
 	if (res != JVX_NO_ERROR)
 	{
 		callGate.access_protocol = JVX_ACCESS_PROTOCOL_ERROR;
+	}
+	else
+	{
+		callGate.last_err_hint.clear();
 	}
 
 	return res;

@@ -163,6 +163,8 @@ namespace jvx
 
 		jvxSize origin_call_id = JVX_SIZE_UNSELECTED;
 
+		jvxApiString last_err_hint;
+
 		struct
 		{
 			jvxAccessProtocol access_protocol = JVX_ACCESS_PROTOCOL_OK;

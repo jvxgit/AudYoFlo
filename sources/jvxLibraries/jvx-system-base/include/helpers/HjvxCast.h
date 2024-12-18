@@ -299,6 +299,48 @@ T* castPropDescriptor(jvx::propertyDescriptor::IjvxPropertyDescriptor* in)
 }
 
 template <typename T>
+const T* ccastPropDescriptor(const jvx::propertyDescriptor::IjvxPropertyDescriptor* in)
+{
+	T* ret = nullptr;
+	if (!in)
+		return ret;
+
+	jvx::propertyDescriptor::descriptorEnum tp = jvx::propertyDescriptor::descriptorEnum::JVX_PROPERTY_DESCRIPTOR_CORE;
+
+	if (std::is_same<T, jvx::propertyDescriptor::CjvxPropertyDescriptorMin>::value)
+	{
+		tp = jvx::propertyDescriptor::descriptorEnum::JVX_PROPERTY_DESCRIPTOR_MIN;
+	}
+	else if (std::is_same<T, jvx::propertyDescriptor::CjvxPropertyDescriptorCore>::value)
+	{
+		tp = jvx::propertyDescriptor::descriptorEnum::JVX_PROPERTY_DESCRIPTOR_CORE;
+	}
+	else if (std::is_same<T, jvx::propertyDescriptor::CjvxPropertyDescriptorControl>::value)
+	{
+		tp = jvx::propertyDescriptor::descriptorEnum::JVX_PROPERTY_DESCRIPTOR_CONTROL;
+	}
+	else if (std::is_same<T, jvx::propertyDescriptor::CjvxPropertyDescriptorFull>::value)
+	{
+		tp = jvx::propertyDescriptor::descriptorEnum::JVX_PROPERTY_DESCRIPTOR_FULL;
+	}
+	else if (std::is_same<T, jvx::propertyDescriptor::CjvxPropertyDescriptorFullPlus>::value)
+	{
+		tp = jvx::propertyDescriptor::descriptorEnum::JVX_PROPERTY_DESCRIPTOR_FULL_PLUS;
+	}
+
+	// This is a dirty hack: discarding const in in pointer and in function argument. However, we 
+	// only want ONE version of function "specialization". As we return the result as a const 
+	// pointer, we can do this without violating any const condition. Note that an "interpret_cast"
+	// can not be used as it does not allow const to non-const conversion.
+	jvxErrorType res = const_cast<jvx::propertyDescriptor::IjvxPropertyDescriptor*>(in)->specialization(reinterpret_cast<jvxHandle**>(const_cast<T**>(&ret)), tp);
+	if (res == JVX_NO_ERROR)
+	{
+		return ret;
+	}
+	return nullptr;
+}
+
+template <typename T>
 T* castPropAddress(const jvx::propertyAddress::IjvxPropertyAddress* in)
 {
 	T* ret = nullptr;
