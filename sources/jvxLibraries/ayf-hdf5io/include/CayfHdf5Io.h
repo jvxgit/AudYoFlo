@@ -31,11 +31,19 @@ public:
 protected:
 	std::map<std::string, oneEntryToc*> toc;
 	jvxHandle* hdf5Private = nullptr;
+
+	static JVX_MUTEX_HANDLE* safeAccess;
+	static jvxSize mutexRefCnt;
+
+	std::string last_error;
 public:
 
 	CayfHdf5Io();
 	~CayfHdf5Io();
 	void clearToc();
+
+	void lock_hdf5();
+	void unlock_hdf5();
 
 	jvxErrorType openScanHdf5File(const std::string& fName);
 	jvxErrorType openCreateHdf5File(const std::string& fName);
@@ -55,5 +63,8 @@ public:
 	jvxErrorType writeStringToDataSet(const std::string& dataSet, const std::string& txt);
 	jvxErrorType closeDataSet();
 
+	std::string get_last_error() {
+		return last_error;
+	};
 
 };

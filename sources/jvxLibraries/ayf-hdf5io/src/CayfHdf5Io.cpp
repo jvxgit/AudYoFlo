@@ -354,9 +354,22 @@ dump_all_cb(hid_t group, const char* name, const H5L_info2_t* linfo, void* op_da
 }
 
 // =======================================================================================================================
+
+JVX_MUTEX_HANDLE* CayfHdf5Io::safeAccess = nullptr;
+jvxSize CayfHdf5Io::mutexRefCnt = 0;
+
 CayfHdf5Io::CayfHdf5Io()
 {
 	JVX_SAFE_ALLOCATE_OBJECT(hdf5Private, CayfHdf5O_prv);
+	if (safeAccess == nullptr)
+	{
+		JVX_SAFE_ALLOCATE_OBJECT(safeAccess, JVX_MUTEX_HANDLE);
+		JVX_INITIALIZE_MUTEX(*safeAccess);
+	}
+	else
+	{
+	}
+	mutexRefCnt++;
 }
 
 CayfHdf5Io::~CayfHdf5Io()
@@ -368,6 +381,13 @@ CayfHdf5Io::~CayfHdf5Io()
 	CayfHdf5O_prv* deleteMe = (CayfHdf5O_prv*)hdf5Private;
 	JVX_SAFE_DELETE_OBJECT(deleteMe);
 	hdf5Private = nullptr;
+
+	mutexRefCnt--;
+	if (mutexRefCnt == 0)
+	{
+		JVX_SAFE_DELETE_OBJECT(safeAccess);
+		safeAccess = nullptr;
+	}
 }
 
 void
@@ -387,6 +407,19 @@ CayfHdf5Io::clearToc()
 			toc.erase(elm);
 		}
 	}
+}
+
+void 
+CayfHdf5Io::lock_hdf5()
+{
+	assert(safeAccess);
+	JVX_LOCK_MUTEX(*safeAccess);
+}
+
+void 
+CayfHdf5Io::unlock_hdf5()
+{
+	JVX_UNLOCK_MUTEX(*safeAccess);
 }
 
 jvxErrorType 
@@ -427,8 +460,11 @@ CayfHdf5Io::openScanHdf5File(const std::string& fName)
 	}
 #endif
 
+	last_error.clear();
+
 	if (((CayfHdf5Io_prv*)hdf5Private)->file)
 	{
+		last_error = "File handle is already in use!";
 		return JVX_ERROR_ALREADY_IN_USE;
 	}
 
@@ -440,13 +476,15 @@ CayfHdf5Io::openScanHdf5File(const std::string& fName)
 	if (((CayfHdf5Io_prv*)hdf5Private)->file < 0)
 	{
 		((CayfHdf5Io_prv*)hdf5Private)->file = 0;
+		last_error = "File <"+ fName + "> could not be opened!";
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	}
 
 	// Get the root info object
 	if (H5Oget_info_by_name3(((CayfHdf5Io_prv*)hdf5Private)->file, "/", &oi, H5O_INFO_BASIC, H5P_DEFAULT) < 0)
 	{
-		assert(false);
+		last_error = "Could not read root info obkect in file <" + fName + ">!";
+		return JVX_ERROR_INTERNAL;
 	}
 
 	// -> oi.fileno
