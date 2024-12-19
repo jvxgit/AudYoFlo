@@ -107,7 +107,7 @@ if [ -d $folder ]; then
 		# Warning: O:\ayfdevelop\AudYoFlo\sources\jvxPackages\ffmpeg\jvxLibraries\third_party\git\ffmpeg\ffmpeg-x64\config.h(1): warning C4828: Die Datei enthält ein Zeichen, das bei Offset 0x20e beginnt. Dieses Zeichen ist im aktuellen Quellzeichensatz (Codepage 65001) unzulässig
 		# We can remove this warning by removing the "für" in config.h, assignment CC_IDENT
 		#
-		
+		sleep 2
 		echo make -j8
 		make -j8
 	

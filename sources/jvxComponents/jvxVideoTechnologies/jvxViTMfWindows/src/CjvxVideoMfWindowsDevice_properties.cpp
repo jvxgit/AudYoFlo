@@ -255,6 +255,8 @@ CjvxVideoMfWindowsDevice::scanProperties(IMFSourceReader* reader)
 #ifdef VERBOSE_2
 			std::cout << "--> Media Subtype YUY2	4:2:2	Packed	8" << std::endl;
 #endif
+			oneForm.form = JVX_DATAFORMAT_BYTE;
+			oneForm.subform = JVX_DATAFORMAT_GROUP_VIDEO_YUYV;
 		}
 		else if (nativeSubGuid == MFVideoFormat_YVU9)
 		{

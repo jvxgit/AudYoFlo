@@ -166,6 +166,7 @@ CjvxVideoMfWindowsDevice::OnReadSample(
 						switch (runtime.convertOnRead.form_hw)
 						{
 						case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_NV12:
+						case jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_VIDEO_YUYV:
 						{
 							jvxSize sz = _common_set_ocon.theData_out.con_params.buffersize * jvxDataFormat_getsize(_common_set_ocon.theData_out.con_params.format);
 							memcpy(dest, src, sz);

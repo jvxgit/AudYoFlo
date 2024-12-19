@@ -279,6 +279,7 @@ CjvxVideoMfWindowsDevice::prepare_data(jvxBool runPrepare JVX_CONNECTION_FEEDBAC
 		switch (runtime.convertOnRead.form_hw)
 		{
 		case JVX_DATAFORMAT_GROUP_VIDEO_NV12:
+		case JVX_DATAFORMAT_GROUP_VIDEO_YUYV:
 			runtime.convertOnRead.plane1_Sz = runtime.convertOnRead.segWidth * runtime.convertOnRead.segHeight;
 			break;
 		case JVX_DATAFORMAT_GROUP_VIDEO_RGB24:

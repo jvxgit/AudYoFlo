@@ -16,7 +16,7 @@ if(${JVX_OS} MATCHES "windows")
 		set(JVX_COMPILE_EXTRA_CFLAGS "-MD")
 	endif()
 	
-	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX})
+	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib)
 
 		FIND_PROGRAM(msys2 "msys2_shell.cmd" REQUIRED)
 		message("ffmpeg sub project not available. Starting script to download it.") 
