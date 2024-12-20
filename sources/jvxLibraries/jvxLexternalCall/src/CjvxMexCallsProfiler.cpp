@@ -92,7 +92,7 @@ CjvxMexCallsProfiler::obtainProvideDataMexCall(jvxBool provideData)
 					}
 					else
 					{
-						_theExtCallHandler->postMessageExternal((" ##### >> Command <" + command + "> failed.").c_str(), false);
+						_theExtCallHandler->postMessageExternal(("!! WARNING !! Command <" + command + "> failed.\n").c_str(), false);
 					}
 				}
 			}
