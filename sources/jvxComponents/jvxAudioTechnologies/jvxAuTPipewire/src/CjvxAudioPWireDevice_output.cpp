@@ -33,7 +33,10 @@ CjvxAudioPWireDevice::start_device_output_pw()
 	if(elmSS != theDevicehandle->sinks.end())
 	{
 		oneNode* theNode = *elmSS;
-		idConnect = theNode->serial;
+
+		// Using the id or the serial? According to latest doc: serial. My tests however seem to indicate id
+		//idConnect = theNode->serial;
+		idConnect = theNode->id;
 	}
 	
 	common.loop = parent->loop_tech;
