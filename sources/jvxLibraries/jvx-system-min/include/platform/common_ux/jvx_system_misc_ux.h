@@ -16,6 +16,9 @@ JVX_STATIC_INLINE int JVX_GETENVIRONMENTVARIABLE(char* var,char* bufRet,int ll)
 	return(0);
 }
 
-#define JVX_SETENVIRONMENTVARIABLE(var, value, set) setenv(var,  value, set)
+#define JVX_SETENV_OVERWRITE 1
+#define JVX_SETENV_NO_OVERWRITE 0
+
+#define JVX_SETENVIRONMENTVARIABLE(var, value, overwrite) setenv(var,  value, overwrite)
 
 #endif
