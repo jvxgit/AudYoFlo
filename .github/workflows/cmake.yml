@@ -15,7 +15,7 @@ jobs:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v3
@@ -34,7 +34,7 @@ jobs:
         libsdl2-dev
         libsdl2-image-dev
         libglm-dev
-        libfreetype6-dev
+        libfreetype-dev
         freeglut3-dev
         libxmu-dev
         flex
@@ -43,12 +43,10 @@ jobs:
         ccache
         portaudio19-dev
         libsndfile1-dev
-        libfftw3-3
         libfftw3-dev
         alsa-utils
         libasound2-dev
-        octave
-        liboctave-dev
+        octave-dev
         libboost-dev
         libeigen3-dev
         libopencv-dev
@@ -62,7 +60,7 @@ jobs:
         libpango1.0-dev 
         libgtkmm-3.0-dev 
         libpango1.0-dev 
-        libcairo-dev 
+        libcairo2-dev
         libxkbcommon-x11-dev 
         libxcb-keysyms1-dev 
         libxcb-cursor-dev 
