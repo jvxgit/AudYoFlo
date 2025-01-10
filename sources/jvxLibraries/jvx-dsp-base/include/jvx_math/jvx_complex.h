@@ -63,6 +63,19 @@ jvx_complex_multiply_n(jvxDataCplx* in1, jvxDataCplx* in2, jvxDataCplx* out, jvx
 }
 
 void JVX_STATIC_INLINE
+jvx_complex_multiply_i_n(jvxDataCplx* inout, jvxDataCplx* mult, jvxSize n)
+{
+	for (jvxSize i = 0; i < n; i++)
+	{
+		jvxDataCplx out;
+		jvx_complex_multiply(*inout, *mult, &out);
+		*inout = out;
+		inout++;
+		mult++;		
+	}
+}
+
+void JVX_STATIC_INLINE
 jvx_complex_multiply_real_n(jvxDataCplx* inout, jvxData* in2, jvxSize n)
 {
 	for (jvxSize i = 0; i < n; i++)
