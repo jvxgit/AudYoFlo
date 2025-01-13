@@ -75,12 +75,19 @@ jvx_compute_window(jvxData* ptrField, jvxInt32 fieldSize,
 			break;
 		case JVX_WINDOW_HAMMING:
 			if(ptrField)
+			{
+				if (fieldSize == 1)
 				{
-					for(i = 0; i < fieldSize; i++)
-						{
-							ptrField[i] = (jvxData)(0.54-0.46 * cos(2*M_PI*(jvxData)i/(jvxData)(fieldSize-1)));
-						}
+					ptrField[0] = 1.0;
 				}
+				else
+				{
+					for (i = 0; i < fieldSize; i++)
+					{
+						ptrField[i] = (jvxData)(0.54 - 0.46 * cos(2 * M_PI * (jvxData)i / (jvxData)(fieldSize - 1)));
+					}
+				}
+			}
 			break;
 		case JVX_WINDOW_BLACKMAN:
 			if(ptrField)
