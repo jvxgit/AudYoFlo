@@ -7,6 +7,7 @@ pub mod circbuffer;
 pub mod fft;
 pub mod math;
 pub mod profiler;
+pub mod windows;
 
 pub use profiler::*;
 
