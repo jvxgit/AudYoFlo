@@ -161,6 +161,19 @@ jvxDataCplx JVX_STATIC_INLINE jvx_complex_add_i(jvxDataCplx in1, jvxDataCplx in2
 	return out;
 }
 
+void JVX_STATIC_INLINE
+jvx_complex_add_n(jvxDataCplx* in1, jvxDataCplx* in2, jvxDataCplx* out, jvxSize n)
+{
+	for (jvxSize i = 0; i < n; i++)
+	{
+		*out = jvx_complex_add_i(*in1, *in2);
+		in1++;
+		in2++;
+		out++;
+	}
+}
+
+
 jvxDataCplx JVX_STATIC_INLINE jvx_complex_sub_i(jvxDataCplx in1, jvxDataCplx in2)
 {
 	jvxDataCplx out;
