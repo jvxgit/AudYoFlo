@@ -39,9 +39,23 @@ impl From<WindowType> for ffi::JvxWindowType {
     }
 }
 
-pub fn compute(ptr_field: &mut [JvxData], field_size: i32, second_arg: JvxData, third_arg: JvxData, win_type: WindowType) -> Result<JvxData> {
+pub fn compute(
+    ptr_field: &mut [JvxData],
+    second_arg: JvxData,
+    third_arg: JvxData,
+    win_type: WindowType,
+) -> Result<JvxData> {
     let mut normalization = 1.0;
-    match unsafe { ffi::jvx_compute_window(ptr_field.as_mut_ptr(), field_size, second_arg, third_arg, win_type.into(), &mut normalization) } {
+    match unsafe {
+        ffi::jvx_compute_window(
+            ptr_field.as_mut_ptr(),
+            ptr_field.len().try_into().unwrap(),
+            second_arg,
+            third_arg,
+            win_type.into(),
+            &mut normalization,
+        )
+    } {
         JvxDspBaseErrorType::JVX_NO_ERROR => Ok(normalization),
         err => Err(err),
     }
