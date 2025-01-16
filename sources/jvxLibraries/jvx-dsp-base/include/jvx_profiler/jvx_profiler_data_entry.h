@@ -63,6 +63,20 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 		} \
 	}
 
+#define JVX_DATA_OUT_DBG_TP_DIRECT_EX(hdl, spec, entryTo, ptrFrom, szFrom, specData) \
+	if (hdl && (hdl->specData & ((jvxCBitField)1 << spec)) &&  hdl->entryTo.fld && ptrFrom) \
+	{ \
+		assert(hdl->entryTo.sz_elm == (szFrom)); \
+		if(hdl->entryTo.cplx) \
+		{ \
+			memcpy(hdl->entryTo.fld, ptrFrom, sizeof(jvxDataCplx) * (szFrom)); \
+		} \
+		else \
+		{ \
+			memcpy(hdl->entryTo.fld, ptrFrom, sizeof(jvxData) * (szFrom)); \
+		} \
+	}
+
 #define JVX_DATA_OUT_DBG_TP_STR_CHECK(var, hdl, spec, entryTo) \
 	var = (hdl && (hdl->specData & ((jvxCBitField)1 << spec)) &&  hdl->entryTo.fld);
 
@@ -107,6 +121,7 @@ void jvx_profiler_deallocate_single_entry(struct jvx_profiler_data_entry* entry)
 	#define JVX_DATA_OUT_DBG_TP(hdl, prv, spec, ptrTo, ptrFrom, szTo, szFrom, cplx)
 	#define JVX_DATA_OUT_DBG_TP_STR(hdl, prv, spec, entryTo, ptrFrom, szFrom) 
 	#define JVX_DATA_OUT_DBG_TP_DIRECT(hdl, spec, entryTo, ptrFrom, szFrom)
+	#define JVX_DATA_OUT_DBG_TP_DIRECT_EX(hdl, spec, entryTo, ptrFrom, szFrom, specData) 
 	#define JVX_DATA_OUT_DBG_TP_STR_CHECK(var, hdl, spec, entryTo) 
 	#define JVX_DATA_OUT_DBG_TP_STR_IDX(var, hdl, prv, entryTo, ptrFrom, idx) 
 	#define JVX_DATA_OUT_DBG_TP_STR_VAL(var, hdl, entryTo, val, tp, idx) 
