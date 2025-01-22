@@ -30,6 +30,7 @@
 #include <sys/mman.h>
 #include <sys/resource.h>
 #include <malloc.h>
+#include <alloca.h>
 #include <netinet/tcp.h>
 #include <sys/poll.h>
 #include <errno.h>
@@ -500,7 +501,7 @@ static void show_new_pagefault_count(const char* logtext,
    
    static void prove_thread_stack_use_is_safe(int stacksize)
    {
-   	volatile char buffer[stacksize];
+   	char* buffer = (char*)alloca(stacksize);
    	int i;
    
    	/* Prove that this thread is behaving well */
