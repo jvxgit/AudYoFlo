@@ -177,7 +177,7 @@ endmacro (find_fft)
 
 # Matlab path specifications
 macro (find_matlab)
-  set(MATLAB_ADDITIONAL_VERSIONS "R2017a=9.2;R2018a=9.4")
+  set(MATLAB_ADDITIONAL_VERSIONS "R2017a=9.2;R2018a=9.4;R2023a=9.14")
 
   find_package(Matlab COMPONENTS MAIN_PROGRAM)
   if(JVX_PLATFORM MATCHES "32bit")
