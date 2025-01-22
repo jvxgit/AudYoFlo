@@ -31,7 +31,7 @@ CjvxMexCallsProfiler::unregister_profiling_data(const std::string& nm)
 }
 
 jvxErrorType
-CjvxMexCallsProfiler::obtainProvideDataMexCall(jvxBool provideData)
+CjvxMexCallsProfiler::obtainProvideDataMexCall(jvxBool provideData, jvxSize phase)
 {
 	jvxExternalDataType* passToMatlab = NULL;
 	jvxExternalDataType* passFromMatlab = NULL;
@@ -60,7 +60,7 @@ CjvxMexCallsProfiler::obtainProvideDataMexCall(jvxBool provideData)
 					}
 				}
 			}
-			if (!provideData && !elm.second->c_to_matlab)
+			if (!provideData && !elm.second->c_to_matlab && (elm.second->phase == phase))
 			{
 				std::string command = "global " + varNameHdlMatlab + "; ";
 				command += elm.first;

@@ -169,6 +169,11 @@ public:
 					jvxData* ptrTo = (jvxData*)buffers_in[i];
 					memcpy(ptrTo, ptrFrom, sizeof(jvxData) * this->_common_set_icon.theData_in->con_params.buffersize);
 				}
+				if (engaged)
+				{
+					// Providing data only if c code is operated
+					CjvxMexCallsProfiler::obtainProvideDataMexCall(true, 0);
+				}
 			}
 		}
 
@@ -183,7 +188,7 @@ public:
 			if (engaged)
 			{
 				// Providing data only if c code is operated
-				CjvxMexCallsProfiler::obtainProvideDataMexCall(false);
+				CjvxMexCallsProfiler::obtainProvideDataMexCall(false, 1);
 			}
 
 			// Run core algorithm in C
@@ -192,7 +197,7 @@ public:
 			if (engaged)
 			{
 				// Providing data only if c code is operated
-				CjvxMexCallsProfiler::obtainProvideDataMexCall(true);
+				CjvxMexCallsProfiler::obtainProvideDataMexCall(true, 1);
 			}
 		}
 

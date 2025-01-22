@@ -6,6 +6,7 @@ void jvx_profiler_allocate_single_entry(struct jvx_profiler_data_entry* entry, j
 	entry->cplx = cplxFld;
 	entry->c_to_matlab = c_true;
 	entry->valid_content = c_true;
+	entry->phase = 1;
 	assert(entry->fld == NULL);
 	if (entry->cplx)
 	{

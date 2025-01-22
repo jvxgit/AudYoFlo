@@ -24,7 +24,7 @@ public:
 	std::map<std::string, jvx_profiler_data_entry*> registeredProfilerData;
 	jvxErrorType register_profiling_data(jvx_profiler_data_entry*, const std::string& nm);
 	jvxErrorType unregister_profiling_data(const std::string& nm);
-	jvxErrorType obtainProvideDataMexCall(jvxBool postRun = true);
+	jvxErrorType obtainProvideDataMexCall(jvxBool postRun = true, jvxSize phase = 1);
 	static jvxErrorType jvx_register_entry_profiling_data_cb(jvx_profiler_data_entry* dat, const char* name, jvxHandle* inst);
 	static jvxErrorType jvx_unregister_entry_profiling_data_cb(const char* name, jvxHandle* inst);
 	

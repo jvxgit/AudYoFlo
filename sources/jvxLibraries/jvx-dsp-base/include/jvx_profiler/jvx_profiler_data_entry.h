@@ -9,6 +9,7 @@ struct jvx_profiler_data_entry
 	jvxHandle* fld;
 	jvxCBool cplx;
 	jvxCBool c_to_matlab;
+	jvxSize phase;
 	jvxCBool valid_content;
 };
 
