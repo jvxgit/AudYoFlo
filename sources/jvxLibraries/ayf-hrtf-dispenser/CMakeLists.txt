@@ -25,7 +25,10 @@ include_directories(
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ayf-hrtf.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ayf-hrtf-tools.cpp
+
   ${CMAKE_CURRENT_SOURCE_DIR}/include/ayf-hrtf.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/ayf-hrtf-tools.h
   )
 
 set(LOCAL_LIBS mysofa-static)
