@@ -148,6 +148,22 @@ if(nargin > 0)
                     errMsg = ['No entry point <jvx_input_var_direct>.'];
                 end   
                 
+           elseif(strcmp(whattodo, 'jvx_input_filename_direct'))
+                
+                name_var = varargin{2};
+
+                if(isfield(jvxHost_off_remote, 'jvx_input_filename_direct'))
+                    try
+                        res = jvxHost_off_remote.jvx_input_filename_direct(name_var);
+                    catch ME
+                        res = false;
+                        errMsg = ME.message;
+                    end
+                else
+                    res = false;
+                    errMsg = ['No entry point <jvx_input_filename_direct>.'];
+                end   
+                           
             elseif(strcmp(whattodo, 'jvx_set_engage_matlab'))
                                 
                 if(isfield(jvxHost_off_remote, 'jvx_set_engage_matlab'))

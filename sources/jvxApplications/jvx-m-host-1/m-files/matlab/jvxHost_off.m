@@ -59,6 +59,7 @@ jvxHost_off_remote.jvx_run = @jvxHost_off_remote_run;
 jvxHost_off_remote.jvx_force_stop = @jvxHost_off_remote_force_stop;
 jvxHost_off_remote.jvx_input_var = @jvxHost_off_remote_selection_in_variable;
 jvxHost_off_remote.jvx_input_var_direct = @jvxHost_off_remote_selection_in_variable_direct;
+jvxHost_off_remote.jvx_input_filename_direct = @jvxHost_off_remote_selection_in_filename_direct;
 jvxHost_off_remote.jvx_set_samplerate = @jvxHost_off_remote_set_samplerate;
 jvxHost_off_remote.jvx_set_buffersize = @jvxHost_off_remote_set_buffersize;
 jvxHost_off_remote.jvx_set_number_output_channels = @jvxHost_off_remote_set_number_output_channels;
@@ -200,62 +201,15 @@ if(ischar(p))
         fname = [p '/' f];
     end
     
-    if(exist(fname, 'file'))
-        
-        [a stb]= handles.hostcall('start_property_group', handles.jvx_struct.devices.comp_type);
-        if(~a)
-            % origFile, errCode, errOperation, errTxt, errorsAsWarnings
-            jvxJvxHost.jvx_display_error(mfilename('fullpath'), stb.ERRORID_INT32, 'start_property_group', stb.DESCRIPTION_STRING, false);
-        end
-        
-        [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_mat_in_text, handles.jvx_struct.properties.device.id_mat_in_text, fname);
-        if(~a)
-            % origFile, errCode, errOperation, errTxt, errorsAsWarnings
-            jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
-        end
-        
-        selection = jvxBitField.jvx_create(0);
-        [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_mat_in_is_file, handles.jvx_struct.properties.device.id_mat_in_is_file, selection);
-        if(~a)
-            % origFile, errCode, errOperation, errTxt, errorsAsWarnings
-            jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
-        end
-        
-        [tt, r] = audioread(fname);
-        
-        handles.jvx_struct.data.input.data = tt';
-        handles.jvx_struct.data.input.rate = r;
-        
-        if(handles.jvx_struct.properties.device.id_srate > 0)
-            [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_srate, handles.jvx_struct.properties.device.id_srate,int32(handles.jvx_struct.data.input.rate));
-            if(~a)
-                % origFile, errCode, errOperation, errTxt, errorsAsWarnings
-                jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
-            end
-        end
-        
-        if(handles.jvx_struct.properties.device.id_in_channels_set > 0)
-            [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_in_channels_set, handles.jvx_struct.properties.device.id_in_channels_set,int32(size(handles.jvx_struct.data.input.data,1)));
-            if(~a)
-                % origFile, errCode, errOperation, errTxt, errorsAsWarnings
-                jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
-            end
-        end
-        
-        [a b]= handles.hostcall('stop_property_group', handles.jvx_struct.devices.comp_type);
-        if(~a)
-            % origFile, errCode, errOperation, errTxt, errorsAsWarnings             
-            jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'stop_property_group', b.DESCRIPTION_STRING, false);
-        end
-        
-        % Obtain references to all relevant properties
-        [hObject, handles] = jvxJvxHostOff.jvx_refresh_props(hObject, handles);
-        
-        % Show current status
-        [hObject, handles] = jvxJvxHostOff.jvx_update_ui(hObject, handles);
-        
-        guidata(hObject, handles);
-    end
+    jvxHost_off_remote_offline_input_filename_direct_core(hObject, handles, fname);
+    
+    % Obtain references to all relevant properties
+    [hObject, handles] = jvxJvxHostOff.jvx_refresh_props(hObject, handles);
+    
+    % Show current status
+    [hObject, handles] = jvxJvxHostOff.jvx_update_ui(hObject, handles);
+    
+    guidata(hObject, handles);    
 end
 
 % --- Executes on selection change in popupmenu_input.
@@ -1778,6 +1732,63 @@ function [handles] = jvxHost_off_remote_offline_set_engage_matlab_core(hObject, 
         % origFile, errCode, errOperation, errTxt, errorsAsWarnings
         jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'stop_property_group', b.DESCRIPTION_STRING, false);
     end
+   
+    
+    function [handles] = jvxHost_off_remote_offline_input_filename_direct_core(hObject, handles, fname)
+    
+        if(exist(fname, 'file'))
+            
+            [a stb]= handles.hostcall('start_property_group', handles.jvx_struct.devices.comp_type);
+            if(~a)
+                % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+                jvxJvxHost.jvx_display_error(mfilename('fullpath'), stb.ERRORID_INT32, 'start_property_group', stb.DESCRIPTION_STRING, false);
+            end
+            
+            [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_mat_in_text, handles.jvx_struct.properties.device.id_mat_in_text, fname);
+            if(~a)
+                % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+                jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
+            end
+            
+            selection = jvxBitField.jvx_create(0);
+            [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_mat_in_is_file, handles.jvx_struct.properties.device.id_mat_in_is_file, selection);
+            if(~a)
+                % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+                jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
+            end
+            
+            [tt, r] = audioread(fname);
+            
+            handles.jvx_struct.data.input.data = tt';
+            handles.jvx_struct.data.input.rate = r;
+            
+            if(handles.jvx_struct.properties.device.id_srate > 0)
+                [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_srate, handles.jvx_struct.properties.device.id_srate,int32(handles.jvx_struct.data.input.rate));
+                if(~a)
+                    % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+                    jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
+                end
+            end
+            
+            if(handles.jvx_struct.properties.device.id_in_channels_set > 0)
+                [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_in_channels_set, handles.jvx_struct.properties.device.id_in_channels_set,int32(size(handles.jvx_struct.data.input.data,1)));
+                if(~a)
+                    % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+                    jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'set_property_uniqueid', b.DESCRIPTION_STRING, false);
+                end
+            end
+            
+            [a b]= handles.hostcall('stop_property_group', handles.jvx_struct.devices.comp_type);
+            if(~a)
+                % origFile, errCode, errOperation, errTxt, errorsAsWarnings
+                jvxJvxHost.jvx_display_error(mfilename('fullpath'), b.ERRORID_INT32, 'stop_property_group', b.DESCRIPTION_STRING, false);
+            end
+        end
+        
+    % #########################################################
+    
+    
+    
     
 % --- Executes on button press in pushbutton14.
 function pushbutton14_Callback(hObject, eventdata, handles)
@@ -1895,6 +1906,30 @@ function [res] = jvxHost_off_remote_selection_in_variable(name_var,rate)
         guidata(jvxHost_off_remote.hObject, handles);
         
         % ======================================================
+        
+   function [res] = jvxHost_off_remote_selection_in_filename_direct(var)
+        res = true;
+        global jvxHost_off_remote;
+        handles = guidata(jvxHost_off_remote.hObject);
+        
+        % Obtain references to all relevant properties
+        [jvxHost_off_remote.hObject, handles] = jvxJvxHostOff.jvx_refresh_props(jvxHost_off_remote.hObject, handles);
+        
+        % Show current status
+        [jvxHost_off_remote.hObject, handles] = jvxJvxHostOff.jvx_update_ui(jvxHost_off_remote.hObject, handles);
+        
+        [handles]  =  jvxHost_off_remote_offline_input_filename_direct_core(jvxHost_off_remote.hObject, handles, var);
+        
+        % Obtain references to all relevant properties
+        [jvxHost_off_remote.hObject, handles] = jvxJvxHostOff.jvx_refresh_props(jvxHost_off_remote.hObject, handles);
+        
+        % Show current status
+        [jvxHost_off_remote.hObject, handles] = jvxJvxHostOff.jvx_update_ui(jvxHost_off_remote.hObject, handles);
+        
+        guidata(jvxHost_off_remote.hObject, handles);
+        
+        % ======================================================
+        
  function [res] = jvxHost_off_remote_set_samplerate(rate)
      res = true;
      global jvxHost_off_remote;

@@ -89,7 +89,8 @@ if(~isempty(txtField))
                 warning('Failed to read property <in_text>.');
             end
             
-            [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_mat_in_is_file, handles.jvx_struct.properties.device.id_mat_in_is_file, 0);
+            bf = jvxBitField.jvx_create();
+            [a b]= handles.hostcall('set_property_uniqueid', handles.jvx_struct.devices.comp_type, handles.jvx_struct.properties.device.cat_mat_in_is_file, handles.jvx_struct.properties.device.id_mat_in_is_file, bf);
             if(~a)
                 warning('Failed to read property <is_in_file>.');
             end
