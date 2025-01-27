@@ -59,20 +59,20 @@ uMainWindow::postMessage_inThread(QString txt, jvxReportPriority prio)
 	switch(prio)
 	{
 	case JVX_REPORT_PRIORITY_ERROR:
-		std::cout << "ERR:" << std::flush;
+		std::cout << jvx::coutColor(jvx::coutColor::cc::FG_RED) << "ERR:" << std::flush;
 		break;
 	case JVX_REPORT_PRIORITY_WARNING:
-		std::cout << "WARN:" << std::flush;
+		std::cout << jvx::coutColor(jvx::coutColor::cc::FG_GREEN) << "WARN:" << std::flush;
 		break;
 	case JVX_REPORT_PRIORITY_INFO:
-		std::cout << "INFO:" << std::flush;
+		std::cout << jvx::coutColor(jvx::coutColor::cc::FG_BLUE) << "INFO:" << std::flush;
 		break;
 	case JVX_REPORT_PRIORITY_SUCCESS:
 		std::cout << "SUCCESS:" << std::flush;
 		break;
 	}
 
-	std::cout << txt.toLatin1().constData() << std::endl;
+	std::cout << txt.toLatin1().constData() << jvx::coutColor(jvx::coutColor::cc::FG_DEFAULT) << std::endl;
 }
 
 jvxErrorType
