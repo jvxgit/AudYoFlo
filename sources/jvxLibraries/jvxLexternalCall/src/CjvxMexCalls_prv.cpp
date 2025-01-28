@@ -206,9 +206,6 @@ CjvxMexCalls_prv::get_configuration(jvxCallManagerConfiguration* callConf,
 	// Write all parameters from this class
 	genMexCall_node::get_configuration__properties_active_higher(callConf, processor, sectionWhereToAddAllSubsections);
 
-	// Write all parameters from this class
-	genMexCall_node::get_configuration__properties_active(callConf, processor, sectionWhereToAddAllSubsections);
-
 	return JVX_NO_ERROR;
 }
 
