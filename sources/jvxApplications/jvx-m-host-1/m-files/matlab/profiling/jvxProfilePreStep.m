@@ -7,7 +7,11 @@ function [hdl] = jvxProfilePreStep(hdl)
 	runAnyway = false;
 
 	if(hdl.hooks.inUse == true)
-		[hdl] = hdl.hooks.init.prestep(hdl);
+        if(isfield(hdl.hooks.init, 'prestep'))
+            if(isa(hdl.hooks.init.prestep, 'function_handle'))
+                [hdl] = hdl.hooks.init.prestep(hdl);
+            end            
+        end
 	else
 		runAnyway = true;
 	end
