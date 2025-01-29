@@ -3,6 +3,7 @@
 
 typedef jvxHandle JvxHandle;
 typedef jvxData JvxData;
+typedef jvxDataCplx JvxDataCplx;
 typedef jvxSize JvxSize;
 typedef jvxDspBaseErrorType JvxDspBaseErrorType;
 typedef jvxCBool JvxCBool;
