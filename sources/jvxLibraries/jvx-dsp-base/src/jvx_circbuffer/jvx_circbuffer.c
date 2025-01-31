@@ -593,6 +593,69 @@ jvx_circbuffer_copy_update_buf2buf(jvx_circbuffer* hdl_copyTo,
 }
 
 jvxDspBaseErrorType
+jvx_circbuffer_copy_update_buf2buf_sec(jvx_circbuffer* hdl_copyTo,
+	jvx_circbuffer* hdl_copyFrom,
+	jvxSize numberValuesFill, jvxData** secCopyTarget)
+{
+	jvxDspBaseErrorType err = JVX_DSP_NO_ERROR;
+	assert(hdl_copyTo[0].nUnits == 1);
+	assert(hdl_copyFrom[0].nUnits == 1);
+	if (hdl_copyTo && hdl_copyFrom)
+	{
+		jvxSize ll1, ll2, ll3, cc;
+		jvxSize c;
+		jvxSize linCnt = 0;
+
+		jvxData** ptrField_from = hdl_copyFrom->ram.field;
+		jvxData* ptrRead_from;
+
+		jvxData** ptrField_to = hdl_copyTo->ram.field;
+		jvxData* ptrWrite_to;
+
+		jvxData* ptrWrite_to_sec = NULL;
+
+		cc = JVX_MIN(hdl_copyTo->channels, hdl_copyFrom->channels);
+
+		if (hdl_copyFrom->fHeight >= numberValuesFill)
+		{
+			if ((hdl_copyTo->length - hdl_copyTo->fHeight) >= numberValuesFill)
+			{
+				while (numberValuesFill > 0)
+				{
+					jvxSize idxWriteTo = (hdl_copyTo->idxRead + hdl_copyTo->fHeight) % hdl_copyTo->length;
+					ll1 = JVX_MIN(numberValuesFill, hdl_copyFrom->length - (int)hdl_copyFrom->idxRead);
+					ll2 = JVX_MIN(numberValuesFill, hdl_copyTo->length - (int)idxWriteTo);
+					ll3 = JVX_MIN(ll1, ll2);
+
+					for (c = 0; c < cc; c++)
+					{
+						ptrRead_from = ptrField_from[c] + hdl_copyFrom->idxRead;
+						ptrWrite_to = ptrField_to[c] + idxWriteTo;
+						ptrWrite_to_sec = secCopyTarget[c] + linCnt;
+						memcpy(ptrWrite_to, ptrRead_from, sizeof(jvxData) * ll3);
+						memcpy(ptrWrite_to_sec, ptrRead_from, sizeof(jvxData) * ll3);
+					}
+
+					hdl_copyTo->fHeight += ll3;
+
+					hdl_copyFrom->idxRead = (hdl_copyFrom->idxRead + ll3) % hdl_copyFrom->length;
+					hdl_copyFrom->fHeight -= ll3;
+
+					numberValuesFill -= ll3;
+					linCnt += ll3;
+				}
+			}
+			else
+			{
+				err = JVX_DSP_ERROR_BUFFER_OVERFLOW;
+			}
+		}
+		return err;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
+jvxDspBaseErrorType
 jvx_circbuffer_read_update_ignore(jvx_circbuffer* hdl,
 	jvxData** fieldRead,
 	jvxSize numberValuesRead)

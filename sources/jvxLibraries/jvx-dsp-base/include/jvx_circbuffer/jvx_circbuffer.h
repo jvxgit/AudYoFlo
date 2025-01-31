@@ -79,8 +79,11 @@ jvxDspBaseErrorType jvx_circbuffer_read_update_conv(jvx_circbuffer* hdl,
 	jvxSize numberValuesRead);
 
 jvxDspBaseErrorType jvx_circbuffer_copy_update_buf2buf(jvx_circbuffer* hdl_copyTo,
-						       jvx_circbuffer* hdl_copyFrom,
-	jvxSize numberValuesFill); 
+	jvx_circbuffer* hdl_copyFrom, jvxSize numberValuesFill); 
+
+jvxDspBaseErrorType jvx_circbuffer_copy_update_buf2buf_sec(jvx_circbuffer* hdl_copyTo,
+	jvx_circbuffer* hdl_copyFrom, jvxSize numberValuesFill, jvxData** secCopyTarget);
+
 
 jvxDspBaseErrorType jvx_circbuffer_write_update_ignore(jvx_circbuffer* hdl,
 						       jvxData** fieldFill,
