@@ -113,6 +113,13 @@ void JVX_STATIC_INLINE jvx_complex_square_of_magnitude(jvxDataCplx in, jvxData* 
 	*out = in.re * in.re + in.im * in.im;
 }
 
+//! square of magnitude
+jvxData JVX_STATIC_INLINE jvx_complex_square_of_magnitude_i(jvxDataCplx in)
+{
+	jvxData out = in.re * in.re + in.im * in.im;
+	return out;
+}
+
 void JVX_STATIC_INLINE jvx_complex_square_of_magnitude_n(jvxDataCplx* in, jvxData* out, jvxSize n)
 {
 	for (jvxSize i = 0; i < n; i++)
@@ -121,6 +128,33 @@ void JVX_STATIC_INLINE jvx_complex_square_of_magnitude_n(jvxDataCplx* in, jvxDat
 		in++;
 		out++;
 	}
+}
+
+jvxData JVX_STATIC_INLINE jvx_complex_square_of_magnitude_sum_n(jvxDataCplx* in, jvxSize n)
+{
+	jvxData out = 0;
+	for (jvxSize i = 0; i < n; i++)
+	{
+		out += jvx_complex_square_of_magnitude_i(*in);
+		in++;
+	}
+	return out;
+}
+
+jvxData JVX_STATIC_INLINE jvx_complex_square_of_magnitude_sum_fft_n(jvxDataCplx* in, jvxSize n, jvxData scaleFac)
+{
+	jvxData out = 0;
+	out += jvx_complex_square_of_magnitude_i(*in);
+	in++;
+	for (jvxSize i = 1; i < n-1; i++)
+	{
+		out += 2* jvx_complex_square_of_magnitude_i(*in);
+		in++;
+	}
+	out += jvx_complex_square_of_magnitude_i(*in);
+	in++;
+	out *= scaleFac;
+	return out;
 }
 
 void JVX_STATIC_INLINE jvx_complex_square_of_magnitude_add_n(jvxDataCplx* in, jvxData* out, jvxSize n)
