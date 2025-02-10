@@ -312,7 +312,7 @@ class _AudYoFloConnectWidgetState extends State<AudYoFloConnectWidget> {
   }
 }
 
-class AudYoFloConnectAppBar extends StatefulWidget with PreferredSizeWidget {
+class AudYoFloConnectAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String titletxt;
   final String logoPath;
   final double widthScale;

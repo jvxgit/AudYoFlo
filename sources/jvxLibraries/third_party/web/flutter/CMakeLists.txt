@@ -1,7 +1,8 @@
 set(PROJECT_NAME flutter)
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
-set(JVX_FLUTTER_VERSION "3.7.5")
+# set(JVX_FLUTTER_VERSION "3.7.5")
+set(JVX_FLUTTER_VERSION "3.27.1")
 
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/flutter-${JVX_FLUTTER_VERSION})
 	message("flutter sub project not available. Starting script to download it.") 

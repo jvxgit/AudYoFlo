@@ -4,13 +4,19 @@ echo "INSTALL FLUTTER APP $3"
 
 # BASEDIR=$(dirname "$0")
 sysfolder=$2
+platform=$7
 
 echo "Running with $# arguments"
 
 if [ $# -ge 5 ]
 then
-	cd $1/../flutter/$3/$5
-	echo "cd $1/../flutter/$3/$5"
+	if [ "$5" = "NONE" ]; then
+		cd $1/../flutter/$3
+		echo "cd $1/../flutter/$3"
+	else
+		cd $1/../flutter/$3/$5
+		echo "cd $1/../flutter/$3/$5"
+	fi
 else
 	cd $1/../flutter/$3
 	echo cd "$1/../flutter/$3"
@@ -40,16 +46,16 @@ then
 	# What to do here??
 	echo "Compiling for target web"
 else
-	echo cp $1/.$3.env build/$sysfolder/runner/$subfolder/data/flutter_assets
-	cp $1/.$3.env build/$sysfolder/runner/$subfolder/data/flutter_assets
+	echo cp $1/.$3.env build/$sysfolder/$platform/runner/$subfolder/data/flutter_assets
+	cp $1/.$3.env build/$sysfolder/$platform/runner/$subfolder/data/flutter_assets
 
 	if [ -d "$4/$3" ]; then
 		echo "rm -rf $4/$3"
 		rm -rf $4/$3
 	fi
 
-	echo "mv build/$sysfolder/runner/$subfolder $4/$3"
-	mv build/$sysfolder/runner/$subfolder $4/$3
+	echo "mv build/$sysfolder/$platform/runner/$subfolder $4/$3"
+	mv build/$sysfolder/$platform/runner/$subfolder $4/$3
 fi
 
 echo "Flutter app preparation completed!"

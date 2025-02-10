@@ -8,7 +8,7 @@ import '../ayf_pack_local.dart';
  * Hint on how to create a "really customized appbar":
  * https://dev.to/pazozzoo/creating-a-custom-appbar-in-flutter-572k
  */
-class AudYoFloAppBar extends StatefulWidget with PreferredSizeWidget {
+class AudYoFloAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String titletxt;
   final String logoPath;
   final double widthScale;

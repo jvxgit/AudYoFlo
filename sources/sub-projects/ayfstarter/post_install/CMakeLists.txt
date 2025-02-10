@@ -10,10 +10,18 @@ if(JVX_ALLOW_FLUTTER_SIMPLE_INSTALLERS)
 			set(tokenBuild "--debug")
 		else()
 			set(tokenBuild "--release")
+		endif()		
+		set(tokenPlatform "x64")
+		
+		install(CODE "message(\"Running flutter build command with option <${tokenBuild}>\")")
+		if(${JVX_OS} MATCHES "windows")
+			# Cmake 3.29 requires to run it in msys2 - dont know why actually
+			install(CODE "execute_process(COMMAND ${myshplus} -use-full-path -c \"${JVX_BASE_ROOT}/software/codeFragments/flutter/install_flutter_app.sh ${CMAKE_CURRENT_SOURCE_DIR} ${JVX_OS} ${PROJECT_PREFIX} ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN} example ${tokenBuild} ${tokenPlatform} ; sleep ${JVX_FLUTTER_BUILD_SLEEP_TIME}\")")
+		else()
+			install(CODE "execute_process(COMMAND ${mysh} -c \"${CMAKE_CURRENT_SOURCE_DIR}/install_flutter_app.sh ${CMAKE_CURRENT_SOURCE_DIR} ${JVX_OS} ${PROJECT_PREFIX} ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN} example ${tokenBuild}; sleep 2\")")
 		endif()
-		message("Runing flutter build command with option <${tokenBuild}>")
-		install(CODE "execute_process(COMMAND ${mysh} -c 
-					\"${CMAKE_CURRENT_SOURCE_DIR}/install_flutter_app.sh ${CMAKE_CURRENT_SOURCE_DIR} ${JVX_OS} ${PROJECT_PREFIX} ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN} example ${tokenBuild}; exit\")")
+		install(CODE "message(\"-- done\")")
+		
 	else()
 		if(${JVX_OS} MATCHES "windows")
 	

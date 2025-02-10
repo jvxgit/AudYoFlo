@@ -83,6 +83,8 @@ set(JVX_COMMAND_LINE_TOKENS_BUILDIN "--textlog --verbose_dll --textloglev 10" CA
 set(JVX_QT_SPLASH_TEXT_COLOR "Qt::gray" CACHE STRING "Default color for QT apps splash screen text")
 set(JVX_SUBMODULE_PASS_EXPRS "default;pass0;pass1;pass2" CACHE STRING "Submodule pass expression list.")
 
+set(JVX_FLUTTER_BUILD_SLEEP_TIME 0 CACHE STRING "Number seconds to wait for review of flutter build script")
+
 # set(AYF_WASM_INSTALL_FOLDER "" CACHE STRING "Wasm install folder")
 
 # Options for the pure audio part
