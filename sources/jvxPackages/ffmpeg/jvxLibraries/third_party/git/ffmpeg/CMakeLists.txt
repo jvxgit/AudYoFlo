@@ -87,7 +87,10 @@ elseif(${JVX_OS} MATCHES "linux")
 
 	if(JVX_LINUX_NATIVE_INSTALLED_LIBS)
 
-		# sudo apt-get install libavdevice-dev - this will also include x264 and x265, I assume
+		# This will also include x264 and x265, I assume
+		# sudo apt-get install libavdevice-dev
+		# sudo apt-get install libavcodec-dev
+		# sudo apt-get install ffmpeg
 
 		pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
 	    		libavdevice
