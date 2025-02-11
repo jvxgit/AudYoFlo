@@ -73,34 +73,43 @@ if(${JVX_OS} MATCHES "windows")
 	
 elseif(${JVX_OS} MATCHES "linux")
 
-	set(targetfolder opencv)
-	set(archtoken glnx)
-	
-	set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}")
-	
-	set(libpostfix "")
-	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
-		set(libpostfix "d")
-	endif()
-	
-	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
-		message("opencv sub project not available. Starting script to download it.") 
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
-		message("opencv installation complete.")
-	endif()
-	
-	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
-	
-		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}")
+	if(JVX_LINUX_NATIVE_INSTALLED_LIBS)
+		find_package(OpenCV REQUIRED)
 		
-	endif()
+		# message(FATAL_ERROR "-> OpenCV -- ${OpenCV_LIBS} -- ${OpenCV_INCLUDE_DIRS}")
+		
+		set(OPENCV_LIBRARY_PATH "${OpenCV_INCLUDE_DIRS}" CACHE INTERNAL "opencv include references")
+		set(OPENCV_LIBRARIES ${OpenCV_LIBS} CACHE INTERNAL "opencv library references")
+	else()
+		set(targetfolder opencv)
 	
-	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include/opencv4" CACHE INTERNAL "opencv include references")
+		set(archtoken glnx)
 	
-	set(OPENCV_LIBRARIES_CANDIDATES 
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_features2d.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_gapi.a
+		set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}")
+	
+		set(libpostfix "")
+		if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
+			set(libpostfix "d")
+		endif()
+	
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+			message("opencv sub project not available. Starting script to download it.") 
+			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
+			message("opencv installation complete.")
+		endif()
+	
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
+	
+			message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
+			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}")
+		
+		endif()
+	
+		set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include/opencv4" CACHE INTERNAL "opencv include references")
+	
+		set(OPENCV_LIBRARIES_CANDIDATES 
+			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_features2d.a
+			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_gapi.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_imgcodecs.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_ml.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/libopencv_photo.a
@@ -118,28 +127,29 @@ elseif(${JVX_OS} MATCHES "linux")
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippiw.a
 		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libittnotify.a
 		)
-	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a)
-		set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a)
-	else()
-		set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-			libopenjp2)
-	endif()
+		if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a)
+			set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
+				${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibopenjp2.a)
+		else()
+			set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
+				libopenjp2)
+		endif()
 		
-	#if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibwebp.a)
-	#	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-	#		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibwebp.a)
-	#else()
-	#	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-	#		liblibwebp)
-	#endif()
+		#if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibwebp.a)
+		#	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
+		#		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibwebp.a)
+		#else()
+		#	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
+		#		liblibwebp)
+		#endif()
 	
-	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibprotobuf.a
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippicv.a)
+		set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES}
+			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/liblibprotobuf.a
+			${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/lib/opencv4/3rdparty/libippicv.a)
 		
-	set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES_CANDIDATES}
-		CACHE INTERNAL "opencv library references")
+		set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES_CANDIDATES}
+			CACHE INTERNAL "opencv library references")
+	endif()
 		
 endif()
 
