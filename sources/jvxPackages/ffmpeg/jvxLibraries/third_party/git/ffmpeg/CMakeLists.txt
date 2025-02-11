@@ -82,49 +82,73 @@ if(${JVX_OS} MATCHES "windows")
 		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")
 
 elseif(${JVX_OS} MATCHES "linux")
-	
-	set(JVX_FFMPEG_POSTFIX "glnx")
-	
-	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX})
 
-		message("ffmpeg sub project not available. Starting script to download it.") 
-		message("This is going to take a while..") 
-		message("${mysh} -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${JVX_FFMPEG_POSTFIX}") 
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${JVX_FFMPEG_POSTFIX}")
-		message("ffmpeg installation complete.")
-	endif()
-
-	## message(FATAL_ERROR "Wait here!")
-	
-	set(JVX_FFMPEG_LIB_AVCODEC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavcodec.a")
-	set(JVX_FFMPEG_LIB_AVDEVICE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavdevice.a")
-	set(JVX_FFMPEG_LIB_AVFILTER "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavfilter.a")
-	set(JVX_FFMPEG_LIB_AVFORMAT "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavformat.a")
-	set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavutil.a")
-	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswresample.a")
-	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswscale.a")
-	set(JVX_FFMPEG_LIB_POSTPROC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libpostproc.a")
-
-	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}" CACHE INTERNAL "ffmpeg source code path (windows)")
-	
-	set(JVX_FFMPEG_INCLUDE_DIR 
-		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}"	
-		"${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/include" CACHE INTERNAL "ffmpeg include path (windows)")
-		
-	set(JVX_FFMPEG_LIBS 
-		${JVX_FFMPEG_LIB_AVCODEC}
-		${JVX_FFMPEG_LIB_AVDEVICE}
-		${JVX_FFMPEG_LIB_AVFILTER}
-		${JVX_FFMPEG_LIB_AVFORMAT}
-		${JVX_FFMPEG_LIB_AVUTIL}
-		${JVX_FFMPEG_LIB_SWRESAMPLE}
-		${JVX_FFMPEG_LIB_SWSCALE}
-		${JVX_FFMPEG_LIB_POSTPROC}
-		x264
-		x265
-		CACHE INTERNAL "ffmpeg libs (glnx)")	
-	
 	find_package(PkgConfig)
+
+	if(JVX_LINUX_NATIVE_INSTALLED_LIBS)
+
+		# sudo apt-get install libavdevice-dev - this will also include x264 and x265, I assume
+
+		pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
+	    		libavdevice
+	    		libavfilter
+    	    		libavformat
+    	    		libavcodec
+    	    		libswresample
+    	    		libswscale
+    	    		libavutil
+			libpostproc
+	    		)
+		pkg_check_modules(X264 REQUIRED IMPORTED_TARGET x264)
+		pkg_check_modules(X265 REQUIRED IMPORTED_TARGET x265)
+
+		set(JVX_FFMPEG_INCLUDE_DIR "${LIBAV_INCLUDE_DIRS} ${X264_INCLUDE_DIRS} ${X265_INCLUDE_DIRS}" CACHE INTERNAL "ffmpeg include path (windows)")
+		set(JVX_FFMPEG_LIBS "${LIBAV_LIBRARIES};${X264_LIBRARIES};${X265_LIBRARIES}" CACHE INTERNAL "ffmpeg libs (glnx)")	
+		# message(FATAL_ERROR "Hier FFMPEG:: ${LIBAV_LIBRARIES} ${X264_LIBRARIES} ${X265_LIBRARIES} -- ${LIBAV_INCLUDE_DIRS} ${X264_INCLUDE_DIRS} ${X265_INCLUDE_DIRS}")
+
+	else()
+		set(JVX_FFMPEG_POSTFIX "glnx")
+	
+		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX})
+
+		       message("ffmpeg sub project not available. Starting script to download it.") 
+		       message("This is going to take a while..") 
+		       message("${mysh} -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${JVX_FFMPEG_POSTFIX}") 
+		       execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${JVX_FFMPEG_POSTFIX}")
+		       message("ffmpeg installation complete.")
+		endif()
+
+		## message(FATAL_ERROR "Wait here!")
+	
+		set(JVX_FFMPEG_LIB_AVCODEC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavcodec.a")
+		set(JVX_FFMPEG_LIB_AVDEVICE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavdevice.a")
+		set(JVX_FFMPEG_LIB_AVFILTER "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavfilter.a")
+		set(JVX_FFMPEG_LIB_AVFORMAT "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavformat.a")
+		set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavutil.a")
+		set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswresample.a")
+		set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswscale.a")
+		set(JVX_FFMPEG_LIB_POSTPROC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libpostproc.a")
+
+		set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}" CACHE INTERNAL "ffmpeg source code path (windows)")
+	
+		set(JVX_FFMPEG_INCLUDE_DIR 
+					   "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}"	
+					   "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/include" CACHE INTERNAL "ffmpeg include path (windows)")
+		
+		set(JVX_FFMPEG_LIBS 
+			${JVX_FFMPEG_LIB_AVCODEC}
+			${JVX_FFMPEG_LIB_AVDEVICE}
+			${JVX_FFMPEG_LIB_AVFILTER}
+			${JVX_FFMPEG_LIB_AVFORMAT}
+			${JVX_FFMPEG_LIB_AVUTIL}
+			${JVX_FFMPEG_LIB_SWRESAMPLE}
+			${JVX_FFMPEG_LIB_SWSCALE}
+			${JVX_FFMPEG_LIB_POSTPROC}
+			x264
+			x265
+			CACHE INTERNAL "ffmpeg libs (glnx)")	
+
+	endif()		
 	
 	pkg_check_modules(XCB xcb REQUIRED)
 	message("Lib xcb: ${XCB_LIBRARIES}")
@@ -182,8 +206,7 @@ elseif(${JVX_OS} MATCHES "linux")
 		${SNDIO_LIBRARIES}
 		${XEXT_LIBRARIES}
 		
-		CACHE INTERNAL "ffmpeg sys libs with strmiids (linux)")
-		
+		CACHE INTERNAL "ffmpeg sys libs with strmiids (linux)")	
 	
 endif()
 
