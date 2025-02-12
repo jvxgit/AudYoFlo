@@ -655,11 +655,12 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 		else
 		{
-			if (ld_con.con_params.number_channels != params.numOutputs)
+			//if (ld_con.con_params.number_channels != params.numOutputs)
+			if(_common_set_icon.theData_in->con_params.number_channels != params.numOutputs)
 			{
-				if (ld_con.con_params.number_channels <= CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.size())
+				if (_common_set_icon.theData_in->con_params.number_channels <= CjvxAudioDevice_genpcg::properties_active.outputchannelselection.value.entries.size())
 				{
-					int delta = ld_con.con_params.number_channels - params.numOutputs;
+					int delta = _common_set_icon.theData_in->con_params.number_channels - params.numOutputs;
 
 					if (delta != 0)
 					{

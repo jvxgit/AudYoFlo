@@ -886,42 +886,42 @@ CjvxGenericWrapperTechnology::put_configuration(jvxCallManagerConfiguration* cal
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.lookahead.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.lookahead.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_input_file_set(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.lookahead.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.lookahead.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_input_file_set_pre(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.boost_prio.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.boost_prio.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_input_file_set(callGate,  
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.boost_prio.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.boost_prio.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_input_file_set_pre(callGate,  
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.loop.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.loop.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_input_file_set(callGate,
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.loop.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.loop.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_input_file_set_pre(callGate,  
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.pause_on_start.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.pause_on_start.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_input_file_set(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_input_file.pause_on_start.globalIdx,
 								genGenericWrapper_technology::properties_selected_input_file.pause_on_start.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							breakme = true;
 						}
 					}
@@ -996,52 +996,52 @@ CjvxGenericWrapperTechnology::put_configuration(jvxCallManagerConfiguration* cal
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.lookahead.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.lookahead.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.lookahead.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.lookahead.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set_pre(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.boost_prio.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.boost_prio.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.boost_prio.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.boost_prio.category),
-								tune,JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set_pre(callGate,
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.samplerate.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.samplerate.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.samplerate.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.samplerate.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set_pre(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.num_channels.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.num_channels.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set(callGate, 
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.num_channels.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.num_channels.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set_pre(callGate,  
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.mode.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.mode.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							ic_cb_prop_selected_output_file_set(callGate,  
 								ptrRaw,
 								jPAGID(genGenericWrapper_technology::properties_selected_output_file.mode.globalIdx,
 								genGenericWrapper_technology::properties_selected_output_file.mode.category),
-								tune, JVX_PROPERTY_CALLBACK_DIRECT);
+								tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 							breakme = true;
 						}
 					}
@@ -1148,23 +1148,23 @@ CjvxGenericWrapperTechnology::get_configuration(jvxCallManagerConfiguration* cal
 			ptrRaw, 
 			jPAGID(genGenericWrapper_technology::properties_selected_input_file.boost_prio.globalIdx,
 			genGenericWrapper_technology::properties_selected_input_file.boost_prio.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 		form = JVX_DATAFORMAT_16BIT_LE;
 		ic_cb_prop_selected_input_file_get(callGate, 
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_input_file.lookahead.globalIdx,
 			genGenericWrapper_technology::properties_selected_input_file.lookahead.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 		ic_cb_prop_selected_input_file_get(callGate, 
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_input_file.loop.globalIdx,
 			genGenericWrapper_technology::properties_selected_input_file.loop.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 		ic_cb_prop_selected_input_file_get(callGate, 
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_input_file.pause_on_start.globalIdx,
 			genGenericWrapper_technology::properties_selected_input_file.pause_on_start.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 
 		genGenericWrapper_technology::get_configuration__properties_selected_input_file(callConf, processor, datSubSec);
 		datSubSubSec = NULL;
@@ -1185,27 +1185,27 @@ CjvxGenericWrapperTechnology::get_configuration(jvxCallManagerConfiguration* cal
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_output_file.boost_prio.globalIdx,
 			genGenericWrapper_technology::properties_selected_output_file.boost_prio.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 		ic_cb_prop_selected_output_file_get(callGate,  
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_output_file.lookahead.globalIdx,
 			genGenericWrapper_technology::properties_selected_output_file.lookahead.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 		ic_cb_prop_selected_output_file_get(callGate, 
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_output_file.num_channels.globalIdx,
 			genGenericWrapper_technology::properties_selected_input_file.num_channels.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 		ic_cb_prop_selected_output_file_get(callGate,  
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_output_file.samplerate.globalIdx,
 			genGenericWrapper_technology::properties_selected_input_file.samplerate.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 		ic_cb_prop_selected_output_file_get(callGate, 
 			ptrRaw,
 			jPAGID(genGenericWrapper_technology::properties_selected_output_file.mode.globalIdx,
 			genGenericWrapper_technology::properties_selected_input_file.mode.category),
-			tune, JVX_PROPERTY_CALLBACK_DIRECT);
+			tune, nullptr, JVX_PROPERTY_CALLBACK_DIRECT);
 
 		genGenericWrapper_technology::get_configuration__properties_selected_output_file(callConf, processor, datSubSec);
 		datSubSubSec = NULL;

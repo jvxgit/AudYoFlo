@@ -20,4 +20,18 @@ SECTION PROPERTIES
 	};
 
 	include "CjvxPassThroughActive.pcgf";
+
+	SECTION mixer
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_current_mixing"};
+		SECTION mix_spec
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = "";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";	
+			CALLBACK_SET_POSTHOOK = "set_current_mixing"; 
+		};
+	};
 };

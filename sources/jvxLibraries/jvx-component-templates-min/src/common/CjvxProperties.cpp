@@ -563,7 +563,7 @@ CjvxProperties::_set_property(
 
 		res = _run_hook(selection->callbacks.callback_set_prehook,
 			selection->propDescriptor->name.std_str(),
-			callGate, rawPtr, identHook, tune,
+			callGate, rawPtr, identHook, tune, &selection->extended_props,
 			JVX_PROPERTY_CALLBACK_SET);
 		if (res != JVX_NO_ERROR)
 		{
@@ -1083,7 +1083,7 @@ CjvxProperties::_set_property(
 		assert(res == JVX_NO_ERROR);
 		res = _run_hook(selection->callbacks.callback_set_posthook,
 			selection->propDescriptor->name.std_str(),
-			callGate, rawPtr, identHook, tune,
+			callGate, rawPtr, identHook, tune, &selection->extended_props,
 			JVX_PROPERTY_CALLBACK_SET);
 
 		if (res == JVX_NO_ERROR)
@@ -1212,7 +1212,7 @@ CjvxProperties::_get_property(
 
 		res = _run_hook(selection->callbacks.callback_get_prehook,
 			selection->propDescriptor->name.std_str(),
-			callGate, rawPtr, identHook, tune,
+			callGate, rawPtr, identHook, tune, &selection->extended_props,
 			JVX_PROPERTY_CALLBACK_GET);
 
 		if (res != JVX_NO_ERROR)
@@ -1743,7 +1743,7 @@ CjvxProperties::_get_property(
 			{
 				res = _run_hook(selection->callbacks.callback_get_posthook,
 					selection->propDescriptor->name.std_str(),
-					callGate, rawPtr, identHook, tune,
+					callGate, rawPtr, identHook, tune, &selection->extended_props,
 					JVX_PROPERTY_CALLBACK_GET);
 			}
 		}
@@ -1832,7 +1832,7 @@ CjvxProperties::_install_property_reference(
 
 		res = _run_hook(selection->callbacks.callback_set_prehook,
 			selection->propDescriptor->name.std_str(),
-			callGate, ptrRaw, identHook, tune,
+			callGate, ptrRaw, identHook, tune, &selection->extended_props,
 			JVX_PROPERTY_CALLBACK_INSTALL_PREHOOK);
 		if (res != JVX_NO_ERROR)
 		{
@@ -1914,7 +1914,7 @@ CjvxProperties::_install_property_reference(
 		{
 			res = _run_hook(selection->callbacks.callback_set_posthook,
 				selection->propDescriptor->name.std_str(),
-				callGate, ptrRaw, identHook, tune,
+				callGate, ptrRaw, identHook, tune, &selection->extended_props,
 				JVX_PROPERTY_CALLBACK_INSTALL_POSTHOOK);
 		}
 	} // if (selection != _common_set_properties.registeredProperties.end())
@@ -1998,7 +1998,7 @@ CjvxProperties::_uninstall_property_reference(
 
 		res = _run_hook(selection->callbacks.callback_set_prehook,
 			selection->propDescriptor->name.std_str(),
-			callGate, ptrRaw, identHook, tune,
+			callGate, ptrRaw, identHook, tune, &selection->extended_props,
 			JVX_PROPERTY_CALLBACK_UNINSTALL_PREHOOK);
 		if (res != JVX_NO_ERROR)
 		{
@@ -2072,7 +2072,7 @@ CjvxProperties::_uninstall_property_reference(
 			// Run the posthook
 			res = _run_hook(selection->callbacks.callback_set_posthook,
 				selection->propDescriptor->name.std_str(),
-				callGate, ptrRaw, identHook, tune,
+				callGate, ptrRaw, identHook, tune, &selection->extended_props,
 				JVX_PROPERTY_CALLBACK_UNINSTALL_POSTHOOK);
 		}
 	}
@@ -3989,7 +3989,7 @@ CjvxProperties::_run_hook(
 	jvxCallManagerProperties& callGate,
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& ptrRaw,
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident,
-	jvx::propertyDetail::CjvxTranferDetail& tune,
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps,
 	jvxPropertyCallbackPurpose purp)
 {
 	jvxErrorType res = JVX_NO_ERROR;
@@ -4001,7 +4001,7 @@ CjvxProperties::_run_hook(
 		{
 			if (selectionC->theCallback)
 			{
-				res = selectionC->theCallback(callGate, ptrRaw, ident, tune, purp, selectionC->priv);
+				res = selectionC->theCallback(callGate, ptrRaw, ident, tune, extProps, purp, selectionC->priv);
 				if (res != JVX_NO_ERROR)
 				{
 					if (_common_set_properties.reportMissedCallbacks)

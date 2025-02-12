@@ -24,7 +24,7 @@ CjvxAuNChannelRearrange::activate()
 		genChannelRearrange_node::allocate_all();
 		genChannelRearrange_node::register_all(this);
 
-		genChannelRearrange_node::register_callbacks(this, get_level_pre, get_level_post, set_passthru, this);
+		genChannelRearrange_node::register_callbacks(this, get_level_pre, get_level_post, set_passthru, set_current_mixing, this);
 	}
 	return res;
 }
@@ -95,20 +95,62 @@ CjvxAuNChannelRearrange::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage
 
 		if (minChans)
 		{
-			for (ii = 0; ii < maxChans; ii++)
+			assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
+			if (mixer.try_lock())
 			{
-				jvxSize idxIn = ii % inChans;
-				jvxSize idxOut = ii % outChans;
+				if (mixer.v.empty())
+				{
+					for (ii = 0; ii < maxChans; ii++)
+					{
+						jvxSize idxIn = ii % inChans;
+						jvxSize idxOut = ii % outChans;
 
-				assert(_common_set_icon.theData_in->con_params.format == _common_set_ocon.theData_out.con_params.format);
-				jvx_convertSamples_memcpy(
-					_common_set_icon.theData_in->con_data.buffers[
-						*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][idxIn],
-							_common_set_ocon.theData_out.con_data.buffers[
-								*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][idxOut],
-									jvxDataFormat_size[_common_set_icon.theData_in->con_params.format],
-									_common_set_icon.theData_in->con_params.buffersize);
+						jvx_convertSamples_memcpy(
+							_common_set_icon.theData_in->con_data.buffers[
+								*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][idxIn],
+									_common_set_ocon.theData_out.con_data.buffers[
+										*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][idxOut],
+											jvxDataFormat_size[_common_set_icon.theData_in->con_params.format],
+											_common_set_icon.theData_in->con_params.buffersize);
+					}
+				}
+				else
+				{
+					auto elm = mixer.v.begin();
+					for (ii = 0; ii < outChans; ii++)
+					{
+						jvxSize idxIn = JVX_SIZE_UNSELECTED;
+						if (elm != mixer.v.end())
+						{
+							idxIn = *elm;
+							if (idxIn >= inChans)
+							{
+								idxIn = JVX_SIZE_UNSELECTED;
+							}
+							elm++;
+						}
+
+						if (JVX_CHECK_SIZE_SELECTED(idxIn))
+						{
+							jvx_convertSamples_memcpy(
+								_common_set_icon.theData_in->con_data.buffers[
+									*_common_set_icon.theData_in->con_pipeline.idx_stage_ptr][idxIn],
+										_common_set_ocon.theData_out.con_data.buffers[
+											*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii],
+												jvxDataFormat_size[_common_set_icon.theData_in->con_params.format],
+												_common_set_icon.theData_in->con_params.buffersize);
+						}
+						else
+						{
+							memset(_common_set_ocon.theData_out.con_data.buffers[
+								*_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr][ii], 0,
+									jvxDataFormat_size[_common_set_icon.theData_in->con_params.format] * _common_set_icon.theData_in->con_params.buffersize);
+						}
+					}
+				}
+				mixer.unlock();
 			}
+
 		}
 		if (passThrough)
 		{
@@ -160,6 +202,9 @@ CjvxAuNChannelRearrange::put_configuration(jvxCallManagerConfiguration* callMan,
 		if (_common_set_min.theState == JVX_STATE_ACTIVE)
 		{
 			genChannelRearrange_node::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe);
+
+			std::string expr = genChannelRearrange_node::mixer.mix_spec.value;
+			takeOverMixing(expr);
 		}
 	}
 	return res;
@@ -196,4 +241,32 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNChannelRearrange, set_pass
 		// Actually, we need not do anything here, this macro is considered only in the procesing function
 	}
 	return JVX_NO_ERROR;
+}
+
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNChannelRearrange, set_current_mixing)
+{
+	mixer.lock();
+	mixer.v.clear();
+	
+	std::string expr = genChannelRearrange_node::mixer.mix_spec.value;
+
+	takeOverMixing(expr);
+
+	return JVX_NO_ERROR;
+}
+
+void 
+CjvxAuNChannelRearrange::takeOverMixing(const std::string& expr)
+{
+	if (!expr.empty())
+	{
+		jvxBool err = false;
+		auto ret = jvx::helper::parseNumericExpression<std::list<jvxSize>>(expr, err);
+		if (!err)
+		{
+			auto elm = ret.begin();
+			mixer.v = *elm;
+		}
+	}
+	mixer.unlock();
 }

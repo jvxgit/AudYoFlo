@@ -309,13 +309,13 @@ baseclass::callbackname( \
 	jvxCallManagerProperties& callGate, \
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& rawPtr, \
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident, \
-	jvx::propertyDetail::CjvxTranferDetail& tune,  \
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps, \
 	jvxPropertyCallbackPurpose purp, jvxHandle* privateData) \
 { \
 	if (privateData) \
 	{ \
 		baseclass* this_pointer = reinterpret_cast<baseclass*>(privateData); \
-		return(this_pointer->ic_ ## callbackname(callGate, rawPtr, ident, tune, purp)); \
+		return(this_pointer->ic_ ## callbackname(callGate, rawPtr, ident, tune, extProps, purp)); \
 	} \
 	return JVX_ERROR_INVALID_ARGUMENT; \
 } \
@@ -323,20 +323,20 @@ jvxErrorType \
 baseclass::ic_ ## callbackname(jvxCallManagerProperties& callGate, \
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& rawPtr, \
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident, \
-	jvx::propertyDetail::CjvxTranferDetail& tune, \
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps, \
 	jvxPropertyCallbackPurpose purp)
 
 #define JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL_H(baseclass, callbackname) static jvxErrorType \
 callbackname(jvxCallManagerProperties& callGate, \
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& rawPtr, \
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident, \
-	jvx::propertyDetail::CjvxTranferDetail& tune, \
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps, \
 	jvxPropertyCallbackPurpose purp, jvxHandle* privateData) \
 { \
 	if (privateData) \
 	{ \
 		baseclass* this_pointer = reinterpret_cast<baseclass*>(privateData); \
-		return(this_pointer->ic_ ## callbackname(callGate, rawPtr, ident, tune, purp)); \
+		return(this_pointer->ic_ ## callbackname(callGate, rawPtr, ident, tune, extProps, purp)); \
 	} \
 	return JVX_ERROR_INVALID_ARGUMENT; \
 } \
@@ -344,7 +344,7 @@ jvxErrorType \
 ic_ ## callbackname(jvxCallManagerProperties& callGate, \
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& rawPtr, \
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident, \
-	jvx::propertyDetail::CjvxTranferDetail& tune, \
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps, \
 	jvxPropertyCallbackPurpose purp)
 
 
@@ -353,13 +353,13 @@ static jvxErrorType \
 callbackname(jvxCallManagerProperties& callGate, \
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& rawPtr, \
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident, \
-	jvx::propertyDetail::CjvxTranferDetail& tune, \
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps, \
 	jvxPropertyCallbackPurpose purp, jvxHandle* privateData); \
 jvxErrorType \
 ic_ ## callbackname(jvxCallManagerProperties& callGate, \
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& rawPtr, \
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident, \
-	jvx::propertyDetail::CjvxTranferDetail& tune, \
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps, \
 	jvxPropertyCallbackPurpose purp)
 
 #define JVX_PROPERTIES_FORWARD_C_CALLBACK_REGISTER(CLASS, mess, ...) CLASS::register_callbacks(static_cast<CjvxProperties*>(this), __VA_ARGS__, reinterpret_cast<jvxHandle*>(this), mess);

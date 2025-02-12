@@ -20,7 +20,7 @@ typedef jvxErrorType (*property_callback)(
 	jvxCallManagerProperties& callGate, 
 	const jvx::propertyRawPointerType::IjvxRawPointerType*& rawPtr,
 	const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident,
-	jvx::propertyDetail::CjvxTranferDetail& tune,
+	jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps,
 	/*
 	jvxSize* offset,
 	jvxSize* number, jvxDataFormat* form, 
@@ -555,7 +555,7 @@ private:
 		jvxCallManagerProperties& callGate,
 		const jvx::propertyRawPointerType::IjvxRawPointerType*& ptrRaw,
 		const jvx::propertyAddress::CjvxPropertyAddressGlobalId& ident,
-		jvx::propertyDetail::CjvxTranferDetail& tune,
+		jvx::propertyDetail::CjvxTranferDetail& tune, jvxExtendedProps* extProps,
 		/*
 		jvxDataFormat* format,
 		jvxSize* offsetStart,

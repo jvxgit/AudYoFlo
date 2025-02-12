@@ -657,6 +657,168 @@ namespace jvx {
 		jvxBool checkAllowTypeChange(jvxComponentType tpOld, jvxComponentType tpNew);
 
 		jvxBool translate_transfer_chain_get_properties(jvx::propertyCallCompactRefList* propCallCompact, IjvxProperties* prop_ptr);
+
+		template <class T>
+		std::list<T> parseNumericExpression(std::string txt, jvxBool& err)
+		{
+			jvxSize i;
+			int state = 0;
+			std::list<T> returnVal;
+			T myRow;
+			std::string oneToken;
+			jvxData val;
+			err = false;
+			jvxBool leadingBraces = false;
+
+			for (i = 0; i < txt.size(); i++)
+			{
+				char oneChar = txt[i];
+
+				switch (state)
+				{
+				case 0:
+					if (
+						(oneChar != ' ') && (oneChar != '\t'))
+					{
+						state = 1;
+						oneToken = "";
+						if (oneChar == '[')
+						{
+							leadingBraces = true;
+						}
+						else
+						{
+							i--;
+							leadingBraces = false;
+						}
+					}
+					break;
+
+				case 1:
+					if (
+						(oneChar != ' ') && (oneChar != '\t'))
+					{
+						state = 2;
+						oneToken = "";
+					}
+					else
+					{
+						break;
+					}
+				case 2:
+					if ((oneChar == ',') || (oneChar == ' ') || (oneChar == '\t'))
+					{
+						jvxBool errL = false;
+						//val = atof(oneToken.c_str());
+						if (
+							(oneToken.size() >= 2) &&
+							((oneToken.substr(0, 2) == "0x") || (oneToken.substr(0, 2) == "0X")))
+						{
+							val = (jvxData)jvx_string2Int64(oneToken, errL);
+						}
+						else
+						{
+							val = jvx_string2Data(oneToken, errL);
+						}
+						if (errL)
+							err = true;
+						myRow.push_back(val);
+						oneToken = "";
+						state = 1;
+					}
+					else if (oneChar == ';')
+					{
+						if (!oneToken.empty())
+						{
+							jvxBool errL = false;
+							if (
+								(oneToken.size() >= 2) &&
+								((oneToken.substr(0, 2) == "0x") || (oneToken.substr(0, 2) == "0X")))
+							{
+								val = (jvxData)jvx_string2Int64(oneToken, errL);
+							}
+							else
+							{
+								val = jvx_string2Data(oneToken, errL);
+							}
+							if (errL)
+								err = true;
+							myRow.push_back(val);
+						}
+						oneToken = "";
+						returnVal.push_back(myRow);
+						myRow.clear();
+						state = 1;
+					}
+					else if (oneChar == ']')
+					{
+						if (leadingBraces)
+						{
+							if (!oneToken.empty())
+							{
+								jvxBool errL = false;
+								if (
+									(oneToken.size() >= 2) &&
+									((oneToken.substr(0, 2) == "0x") || (oneToken.substr(0, 2) == "0X")))
+								{
+									val = (jvxData)jvx_string2Int64(oneToken, errL);
+								}
+								else
+								{
+									val = jvx_string2Data(oneToken, errL);
+								}
+								if (errL)
+									err = true;
+								myRow.push_back(val);
+							}
+							if (!myRow.empty())
+							{
+								returnVal.push_back(myRow);
+								myRow.clear();
+							}
+							state = 0;
+
+							// The ] terminates the parser..
+							break;
+						}
+						else
+						{
+							err = true;
+						}
+					}
+					else
+					{
+						oneToken += oneChar;
+					}
+					break;
+				}
+			}// for (i = 0; i < txt.size(); i++)
+			if (!leadingBraces)
+			{
+				if (!oneToken.empty())
+				{
+					jvxBool errL = false;
+					if (
+						(oneToken.size() >= 2) &&
+						((oneToken.substr(0, 2) == "0x") || (oneToken.substr(0, 2) == "0X")))
+					{
+						val = (jvxData)jvx_string2Int64(oneToken, errL);
+					}
+					else
+					{
+						val = jvx_string2Data(oneToken, errL);
+					}
+					if (errL)
+						err = true;
+					myRow.push_back(val);
+				}
+				if (!myRow.empty())
+				{
+					returnVal.push_back(myRow);
+				}
+			}
+			return returnVal;
+		};
 	}
 
 	namespace align {

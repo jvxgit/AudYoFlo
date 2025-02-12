@@ -11,6 +11,7 @@ class CjvxAuNChannelRearrange: public CjvxBareNode1ioRearrange,
 {
 private:
 
+	jvxLockWithVariable<std::list<jvxSize> > mixer;
 
 public:
 
@@ -44,10 +45,12 @@ public:
 		IjvxConfigProcessor* processor,
 		jvxHandle* sectionWhereToAddAllSubsections)override;
 
+	void takeOverMixing(const std::string& expr);
+
 	// ====================================================================================
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_level_pre);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_level_post);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_passthru);
-
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_current_mixing);
 
 };
