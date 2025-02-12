@@ -37,15 +37,21 @@ flutter build $2 $6
 if [[ "$6" == "--debug" ]]
 then
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-	subfolder=debug/bundle
-    else
-	subfolder=runner/Debug
+		subfolder=debug/bundle
+    elif [[ "$OSTYPE" == "msys"* ]]; then
+		subfolder=runner/Debug
+	else
+		echo "UNKNOWN BUILD SYSTEM"
+		subfolder=runner/Debug
     fi
 else
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-	subfolder=release/bundle    
-    else
-	subfolder=runner/Release
+		subfolder=release/bundle    
+    elif [[ "$OSTYPE" == "msys"* ]]; then
+		subfolder=runner/Release
+	else
+		echo "UNKNOWN BUILD SYSTEM"
+		subfolder=runner/Release
     fi
 fi
 
