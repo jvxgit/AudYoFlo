@@ -1,4 +1,4 @@
-option(AYFSTARTER_SIMPLE_INSTALLER "Build a simple installer (zip) for flutter code" ON)
+option(AYFSTARTER_SIMPLE_INSTALLER "Build a simple installer (zip) for flutter code" OFF)
 option(AYFSTARTER_USE_RUST_LIBS "Build rust libs instead of C libs where possible" OFF)
 
 if(NOT JVX_USES_SDK)

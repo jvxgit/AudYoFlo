@@ -36,9 +36,17 @@ flutter build $2 $6
 
 if [[ "$6" == "--debug" ]]
 then
-	subfolder=Debug
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	subfolder=debug/bundle
+    else
+	subfolder=runner/Debug
+    fi
 else
-	subfolder=Release
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	subfolder=release/bundle    
+    else
+	subfolder=runner/Release
+    fi
 fi
 
 if [[ "$2" == "web" ]]
@@ -46,16 +54,16 @@ then
 	# What to do here??
 	echo "Compiling for target web"
 else
-	echo cp $1/.$3.env build/$sysfolder/$platform/runner/$subfolder/data/flutter_assets
-	cp $1/.$3.env build/$sysfolder/$platform/runner/$subfolder/data/flutter_assets
+	echo cp $1/.$3.env build/$sysfolder/$platform/$subfolder/data/flutter_assets
+	cp $1/.$3.env build/$sysfolder/$platform/$subfolder/data/flutter_assets
 
 	if [ -d "$4/$3" ]; then
 		echo "rm -rf $4/$3"
 		rm -rf $4/$3
 	fi
 
-	echo "mv build/$sysfolder/$platform/runner/$subfolder $4/$3"
-	mv build/$sysfolder/$platform/runner/$subfolder $4/$3
+	echo "mv build/$sysfolder/$platform/$subfolder $4/$3"
+	mv build/$sysfolder/$platform/$subfolder $4/$3
 fi
 
 echo "Flutter app preparation completed!"
