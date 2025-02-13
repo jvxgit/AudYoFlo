@@ -612,15 +612,6 @@ end_of_line		  \n
 	return(t_DOUBLE);
 }
 
-[\+|\-]?{integer}?[\,]?{digit}*[e|E]?[\+|\-]?{integer0}?  {
-#ifdef FLEX_DEBUG
-	// "-"*([0-9]|([1-9][0-9]*))","[0-9]+
-	cout << yytext << endl;
-#endif
-	AssignYYTEXT();
-	return(t_DOUBLE);
-}
-
 {int_hex}  {
 #ifdef FLEX_DEBUG
 	// "-"*([0-9]|([1-9][0-9]*))"."[0-9]+
@@ -663,6 +654,18 @@ end_of_line		  \n
 #endif
 	AssignYYTEXT();
 	return((int)yytext[0]);
+}
+
+[\+|\-]?{integer}?[\,]?{digit}*[e|E]?[\+|\-]?{integer0}?  {
+#ifdef FLEX_DEBUG
+	/* I have added a rule for string with , instead of . to take care of locale. The rule may 
+	 * be interpreted as a single , - threfore it follows the special_character rule.
+     */
+	// "-"*([0-9]|([1-9][0-9]*))"."[0-9]+
+	cout << yytext << endl;
+#endif
+	AssignYYTEXT();
+	return(t_DOUBLE);
 }
 
 \/\* {
