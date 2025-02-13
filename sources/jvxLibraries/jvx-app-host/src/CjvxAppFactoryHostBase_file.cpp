@@ -202,8 +202,9 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureFromFile(jvxCallManagerConfiguration* c
 						report_text_output(("Opening config file <" + fName + "> failed.").c_str(), JVX_REPORT_PRIORITY_ERROR, NULL);
 						break;
 					case JVX_ERROR_PARSE_ERROR:
-						std::cout << __FUNCTION__ << " -- Parse error in config file <" + fName + ">." << std::endl;
-						report_text_output(("Parse error in config file <" + fName + ">.").c_str(), JVX_REPORT_PRIORITY_ERROR, NULL);
+						cfgProc->getParseError(&err);
+						std::cout << __FUNCTION__ << " -- Parse error in config file <" + fName + ">, description: " << err.errorDescription.std_str() << "." << std::endl;
+						report_text_output(("Parse error in config file <" + fName + ">, error: " + err.errorDescription.std_str()).c_str(), JVX_REPORT_PRIORITY_ERROR, NULL);
 						cfgProc->getParseError(&err);
 						report_text_output(err.errorDescription.c_str(), JVX_REPORT_PRIORITY_ERROR, NULL);
 						break;
