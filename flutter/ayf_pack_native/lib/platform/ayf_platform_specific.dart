@@ -168,6 +168,11 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
 
         // Open the dynamic library
         var libraryPath = path.join("library-not-found");
+
+        // We should specify a folder and a filename to allow subfiles to be taken from subfolders
+        //var defaultConfigFName = 'data/flutter_assets/' + appNameToken + ".jvx";
+        var defaultConfigFName = appNameToken + ".jvx";
+
         // Prepare the dynamic libraries
         // Read in the
         try {
@@ -179,6 +184,8 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         if (loadEnvSuccess) {
           libraryPath = dotenv.get('AYF_BACKEND_FFI_SHARED_LIBRARY',
               fallback: libraryPath);
+          defaultConfigFName =dotenv.get('AYF_BACKEND_FFI_DEFAULT_CONFIG_FILENAME',
+              fallback: defaultConfigFName);
         }
 
         if (entryPointsCorePack is Map<dynamic, dynamic>) {
@@ -279,6 +286,24 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
             executableInBinFolder = 1;
           }
         }
+
+        // If we have not specified a config file, we add a default option here:
+        // We should always have a config filename set!!
+        bool cfgFNameSpecified = false;
+        for(var elm in cmdArgsAdd)
+        {
+          if(elm == "--config")
+          {
+            cfgFNameSpecified = true;
+            break;
+          }
+        }
+        if(!cfgFNameSpecified)
+        {
+          cmdArgsAdd.add("--config");
+          cmdArgsAdd.add(defaultConfigFName);
+        }
+
         if (theBeAdapter != null) {
           Map<String, dynamic> args = {};
           args['cmdArgs'] = cmdArgsAdd;
