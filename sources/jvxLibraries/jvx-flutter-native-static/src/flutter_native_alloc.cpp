@@ -86,6 +86,8 @@ struct retOpaqueHandle ffi_allocate_backend_handle()
 
 	jvxLibHost::verify_binary_build();
 
+	JVX_INIT_LOCALE("C");
+
 #ifdef JVX_LIB_SINGLETON
 	newLib = &myLibHost;
 #else

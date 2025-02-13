@@ -606,6 +606,15 @@ end_of_line		  \n
 [\+|\-]?{integer}?[\.]?{digit}*[e|E]?[\+|\-]?{integer0}?  {
 #ifdef FLEX_DEBUG
 	// "-"*([0-9]|([1-9][0-9]*))"."[0-9]+
+
+	// Important hint:
+	// I realized that with specific LOCALE, float values may be converted to strings with ","
+	// instead of a ".". I have added a rule like this with a "," but that one must be right after 
+	// {special_characters}. Otherwise, a single "," may also be hit as a float. This is a problem
+	// as we use "," all the time. No, e.g., also a list of integers would be realized as 0, 1, 2
+	// this would also be tracked as a float! Therefore, I have removed that rule again. Alternatively,
+	// I have now added code to set LOCALE to "C" on init to prevent any other LOCALE
+
 	cout << yytext << endl;
 #endif
 	AssignYYTEXT();
@@ -654,18 +663,6 @@ end_of_line		  \n
 #endif
 	AssignYYTEXT();
 	return((int)yytext[0]);
-}
-
-[\+|\-]?{integer}?[\,]?{digit}*[e|E]?[\+|\-]?{integer0}?  {
-#ifdef FLEX_DEBUG
-	/* I have added a rule for string with , instead of . to take care of locale. The rule may 
-	 * be interpreted as a single , - threfore it follows the special_character rule.
-     */
-	// "-"*([0-9]|([1-9][0-9]*))"."[0-9]+
-	cout << yytext << endl;
-#endif
-	AssignYYTEXT();
-	return(t_DOUBLE);
 }
 
 \/\* {
