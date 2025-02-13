@@ -118,6 +118,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
     theDebugModel = dbgModel;
 
     if (!File(libraryPath).existsSync()) {
+      print('Unable to find library <${libraryPath}>');
       assert(false);
     }
 

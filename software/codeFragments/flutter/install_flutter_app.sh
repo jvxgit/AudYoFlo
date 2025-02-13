@@ -60,8 +60,8 @@ then
 	# What to do here??
 	echo "Compiling for target web"
 else
-	echo cp $1/.$3.env build/$sysfolder/$platform/$subfolder/data/flutter_assets
-	cp $1/.$3.env build/$sysfolder/$platform/$subfolder/data/flutter_assets
+	echo cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
+	cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
 
 	if [ -d "$4/$3" ]; then
 		echo "rm -rf $4/$3"
