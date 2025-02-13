@@ -602,9 +602,19 @@ end_of_line		  \n
 	AssignYYTEXT();
 	return(t_UINT8);
 }
+
 [\+|\-]?{integer}?[\.]?{digit}*[e|E]?[\+|\-]?{integer0}?  {
 #ifdef FLEX_DEBUG
 	// "-"*([0-9]|([1-9][0-9]*))"."[0-9]+
+	cout << yytext << endl;
+#endif
+	AssignYYTEXT();
+	return(t_DOUBLE);
+}
+
+[\+|\-]?{integer}?[\,]?{digit}*[e|E]?[\+|\-]?{integer0}?  {
+#ifdef FLEX_DEBUG
+	// "-"*([0-9]|([1-9][0-9]*))","[0-9]+
 	cout << yytext << endl;
 #endif
 	AssignYYTEXT();
