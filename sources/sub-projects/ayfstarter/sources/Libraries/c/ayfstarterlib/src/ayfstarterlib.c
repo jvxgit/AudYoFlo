@@ -43,20 +43,20 @@ jvxDspBaseErrorType ayf_starter_prepare(struct ayf_starter* hdl)
 #ifdef USE_ORC
 		if (hdl->prm_async.orc_token_debug)
 		{
-			JVX_SETENVIRONMENTVARIABLE("ORC_DEBUG", hdl->prm_async.orc_token_debug, "DUMMY");
+			JVX_SETENVIRONMENTVARIABLE("ORC_DEBUG", hdl->prm_async.orc_token_debug, JVX_SETENV_OVERWRITE);
 		}
 
 		// Initialize the first call - the backend is fixed after that
 		if (hdl->prm_async.orc_token_backend_ip)
 		{
 			// Initialize backend - will only work at the first time
-			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prm_async.orc_token_backend_ip, "DUMMY");
+			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prm_async.orc_token_backend_ip, JVX_SETENV_OVERWRITE);
 		}
 		volume_orc_double_ip(NULL, 1.0, 0);
 
 		if (hdl->prm_async.orc_token_backend_op)
 		{
-			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prm_async.orc_token_backend_op, "DUMMY");
+			JVX_SETENVIRONMENTVARIABLE("ORC_BACKEND", hdl->prm_async.orc_token_backend_op, JVX_SETENV_OVERWRITE);
 		}
 		volume_orc_double(NULL, NULL,  1.0, 0);
 #endif
