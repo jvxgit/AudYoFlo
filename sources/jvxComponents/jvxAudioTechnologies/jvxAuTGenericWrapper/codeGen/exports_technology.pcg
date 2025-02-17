@@ -280,6 +280,14 @@ SECTION PROPERTIES
 			DESCRIPTOR = "JVX_GENW_COMMAND";
 		};		
 
+		SECTION addWavFileName
+		{
+			DESCRIPTION = "Shortcut - property to set input file";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			DESCRIPTOR = "JVX_GENW_FILENAME_IN";
+		};		
+
 		SECTION defaultPathAudioFiles
 		{	 
 			DESCRIPTION = "Default path where to look for wav audio files";	  // Defaults to NAME if not present

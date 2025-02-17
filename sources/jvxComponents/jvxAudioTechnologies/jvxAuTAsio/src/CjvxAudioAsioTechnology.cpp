@@ -192,6 +192,17 @@ CjvxAudioAsioTechnology::initializeAsio()
 	// Start COM subsystem
 	if(_common_tech_set.lstDevices.size())
 	{
+		/*
+		* ASIO und Flutter, Diskussion mit Claude.AI am 17.2.2025:
+		* "Ja, ich stimme Ihnen zu. Wir haben verschiedene Ansätze durchgespielt:
+		*  ASIO-Treiberinitialisierung in verschiedenen Thread-Kontexten
+		*  Versuche der Thread-Synchronisation über Windows Messages
+		*  Alternative Audio-Schnittstellen wie PortAudio und WASAPI
+		*  Verschiedene COM-Initialisierungsstrategien
+		*  Leider scheint die Kombination aus Flutter's Thread-Management und den strikten Thread-Anforderungen von ASIO nicht vereinbar zu sein.
+		*  Da WASAPI zumindest funktioniert, auch wenn es nicht alle gewünschten Funktionen bietet, wäre das vermutlich der pragmatischste Weg vorwärts.
+		*  Danke für die interessante technische Diskussion!
+		*/
 		CoInitialize(0);
 	}
 

@@ -1387,6 +1387,13 @@ CjvxGenericWrapperTechnology::set_property(
 				res = processIssuedStringCommand(genGenericWrapper_technology::properties_selected_active.specifyCommand.value);
 			}
 
+			if (
+				(propId == genGenericWrapper_technology::properties_selected_active.addWavFileName.globalIdx) &&
+				(category == genGenericWrapper_technology::properties_selected_active.addWavFileName.category))
+			{
+				std::string txt = "addInputFile(" + genGenericWrapper_technology::properties_selected_active.addWavFileName.value + ")";
+				res = processIssuedStringCommand(txt);
+			}
 
 			if(
 				(propId == genGenericWrapper_technology::select_files.input_file.globalIdx) &&

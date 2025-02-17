@@ -2,24 +2,22 @@
 
 if [ ! -d "boost" ]; then
 
-	if [ ! -f "7zr.exe" ]; then
-		echo "1) Downloading 7zr.exe"
-		curl -kLSs https://7-zip.org/a/7zr.exe -o 7zr.exe
-	fi
-	
-	if [ ! -f "boost-1.70.0.7z" ]; then
-		echo "2) Downloading boost binary package - this may really take some time!!"
-		curl -kLSs https://boostorg.jfrog.io/artifactory/main/release/1.70.0/binaries/boost_1_70_0-unsupported-bin-msvc-all-32-64.7z -o boost-1.70.0.7z
+	if [ ! -f "boost-1.70.0.zip" ]; then
+		echo "1) Downloading boost binary package - this may really take some time!!"
+		# curl -kLSs https://boostorg.jfrog.io/artifactory/main/release/1.87.0/binaries/boost_1_87_0-unsupported-bin-msvc-all-32-64.7z -o boost-1.87.0.7z
+		wget https://archives.boost.io/release/1.70.0/source/boost_1_70_0.zip
 	fi 
 
-	echo "3) Extracting boost binary package"
-	./7zr.exe x boost-1.70.0.7z
+	echo "2) Extracting boost binary package"
+	unzip -q boost_1_70_0.zip
 	
-	echo "4) Renaming boost folder"
+	pwd 
+	ls
+	
+	echo "3) Renaming boost folder"
 	mv boost_1_70_0 boost
 
-	echo "5) Removing downloaded packages"
-	rm 7zr.exe
-	rm boost-1.70.0.7z
+	echo "4) Removing downloaded packages"
+	rm boost_1_70_0.zip
 	
 fi
