@@ -181,8 +181,8 @@ elseif(${JVX_OS} MATCHES "linux")
 	pkg_check_modules(LZMA liblzma REQUIRED)
 	message("Lib lzma: ${LZMA_LIBRARIES}")
 
-	pkg_check_modules(SNDIO sndio REQUIRED)
-	message("Lib sndio: ${SNDIO_LIBRARIES}")
+	#pkg_check_modules(SNDIO sndio REQUIRED)
+	#message("Lib sndio: ${SNDIO_LIBRARIES}")
 
 	pkg_check_modules(XEXT xext REQUIRED)
 	message("Lib xext: ${XEXT_LIBRARIES}")
