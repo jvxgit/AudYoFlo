@@ -67,6 +67,8 @@ export 'simple-widgets/ayf_progress_property.dart';
 export 'simple-widgets/ayf_prop_list_combobox.dart';
 export 'simple-widgets/ayf_prop_textfield.dart';
 
+export 'plot-widgets/ayf_property_plot_widget.dart';
+
 // =============================================================================
 // Sub widgets
 // =============================================================================

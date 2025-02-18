@@ -34,6 +34,9 @@ dependencies:
   ayf_webhost:
     path: '../ayf_webhost'
 
+  # Plot widgets
+  syncfusion_flutter_charts: ^21.2.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
