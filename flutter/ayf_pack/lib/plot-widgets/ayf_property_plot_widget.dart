@@ -21,6 +21,7 @@ class AudYoFloPropertyPlot extends StatefulWidget {
   final List<String> xShiftPropertiesInit;
   final double maxShow;
   final bool fastSeries;
+  final String chartTitle;
   /*
   final List<double> xValues;
   List<double> xValues = new List<double>.generate(
@@ -34,8 +35,8 @@ class AudYoFloPropertyPlot extends StatefulWidget {
   final double maxY;
   final List<String>? labels;
 
-  AudYoFloPropertyPlot(
-      this.cpId, this.linePropertiesInit, this.lineNamesInit, this.maxShow,
+  const AudYoFloPropertyPlot(
+      this.cpId, this.linePropertiesInit, this.lineNamesInit, this.maxShow, this.chartTitle,
       {this.logarithmicX = false,
       this.logarithmicY = false,
       this.titleXAxis,
@@ -49,7 +50,7 @@ class AudYoFloPropertyPlot extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _AudYoFloPropertyPlotState(linePropertiesInit, lineNamesInit, xShiftPropertiesInit);
+    return _AudYoFloPropertyPlotState(linePropertiesInit, lineNamesInit, xShiftPropertiesInit, chartTitle);
   }
 }
 
@@ -63,6 +64,8 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
   List<String> lineNames;
   List<String> xShiftPropertiesInit;
   String legendPostfix = '';
+  String chartTitle;
+
   // late Timer _timer;
   Map<String, List<ChartData>> _chartData = <String, List<ChartData>>{};
   AudYoFloBackendCache? theBeCache;
@@ -76,7 +79,7 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
           'tagPropertyPlot',
           []);
 
-  _AudYoFloPropertyPlotState(this.lineProperties, this.lineNames, this.xShiftPropertiesInit) {
+  _AudYoFloPropertyPlotState(this.lineProperties, this.lineNames, this.xShiftPropertiesInit, this.chartTitle) {
     // Set required member variable in base class
     /*
     super.cpId = JvxComponentIdentification(
@@ -178,7 +181,7 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
         var ppO = oneGroupPlotWidget!.extractPropMultiContent(propertyOffset);
         AudYoFloPropertyMultiContentBackend? propertyDataOffset;
         if (ppO is AudYoFloPropertyMultiContentBackend<Uint64List>?) {
-          propertyDataOffset = ppO as AudYoFloPropertyMultiContentBackend<Uint64List>?;
+          propertyDataOffset = ppO;
           if(propertyDataOffset != null)
           {
             if(propertyDataOffset.fldSz > 0)
@@ -354,7 +357,7 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
     return Consumer<AudYoFloUiModel>(builder: (context, notifier, child) {
       return SfCartesianChart(
         title: ChartTitle(
-            text: "Ipsilateral CTC transfer function absolute values"),
+            text: chartTitle),
         primaryXAxis: xAxis,
         primaryYAxis: yAxis,
         series: series,
