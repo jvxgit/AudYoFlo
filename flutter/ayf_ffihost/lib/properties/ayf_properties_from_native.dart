@@ -107,7 +107,7 @@ class AudYoFloPropertyContentFromNative {
           String t1 = prop.jvxFormat.toString();
           String t2 = format.toString();
           String t3 = prop.descriptor;
-          print(
+          dbgPrint(
               'Error when rereading property description for property <$t3>: format has changed: old: $t1, new: $t2');
         }
 
@@ -315,13 +315,13 @@ class AudYoFloPropertyContentFromNative {
                 }
               } else {
                 String nm = prop.descriptor;
-                print(
+                dbgPrint(
                     'Property with descriptor $nm: Error reading field for property, field contains nullptr');
                 prop.last_error = jvxErrorType.JVX_ERROR_INVALID_ARGUMENT;
               }
             } else {
               String nm = prop.descriptor;
-              print(
+              dbgPrint(
                   'Property with descriptor $nm: Error reading field for property, field has zero length');
               prop.last_error = jvxErrorType.JVX_ERROR_INVALID_ARGUMENT;
             }
@@ -393,13 +393,13 @@ class AudYoFloPropertyContentFromNative {
                         numEntries);
               } else {
                 String nm = prop.descriptor;
-                print(
+                dbgPrint(
                     'Property with descriptor $nm: Error reading field for property, field contains nullptr');
                 prop.last_error = jvxErrorType.JVX_ERROR_INVALID_ARGUMENT;
               }
             } else {
               String nm = prop.descriptor;
-              print(
+              dbgPrint(
                   'Property with descriptor $nm: Error reading field for property, field has zero length');
               prop.last_error = jvxErrorType.JVX_ERROR_INVALID_ARGUMENT;
             }

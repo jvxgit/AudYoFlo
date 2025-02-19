@@ -329,6 +329,11 @@ QLineEdit_fdb::QLineEdit_fdb(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWid
   theWidget = static_cast<QWidget*>(this);
 };
 
+QLineEdit_fdb::~QLineEdit_fdb()
+{
+	// std::cout << "Widget closed!" << std::endl;
+}
+
 bool
 QLineEdit_fdb::update_window()
 {
@@ -547,7 +552,9 @@ QLineEdit_fdb::focusOutEvent(QFocusEvent* e)
 void
 QLineEdit_fdb::editDone()
 {
-	if (connectedProp.num <= 1)
+	if(!returnDoneStatus)
+	
+	//if (connectedProp.num <= 1)
 	{
 		newText();
 	}
@@ -557,6 +564,7 @@ void
 QLineEdit_fdb::returnDone()
 {
 	newText();
+	returnDoneStatus = true;
 }
 
 void

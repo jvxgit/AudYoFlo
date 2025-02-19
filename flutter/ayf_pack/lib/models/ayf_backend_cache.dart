@@ -489,21 +489,27 @@ abstract class AudYoFloBackendCache
       AudYoFloOneSelectedComponent? theComponentHere =
           findSelectedComponent(cpId);
       if (theComponentHere != null) {
-        bool foundOne = true;
-        while (foundOne) {
-          foundOne = false;
+        List<String> removeThese = [];
+        //bool foundOne = true;
+        //while (foundOne) {
+        //  foundOne = false;
           for (var elm
               in theComponentHere.propertyCache.cachedProperties.entries) {
             // Invalidate
             if (elm.value.invalidateOnStateSwitch(ss)) {
               // If true is returned the single property was also disposed
-              foundOne = true;
-              elm.value.dispose();
-              theComponentHere.propertyCache.cachedProperties.remove(elm.key);
-              break;
+              // foundOne = true;
+              elm.value.dispose(); removeThese.add(elm.key);
+              //theComponentHere.propertyCache.cachedProperties.remove(elm.key);
+              //break;
             }
           }
-        }
+
+          for(var elm in removeThese)
+          {
+            theComponentHere.propertyCache.cachedProperties.remove(elm);
+          }
+        //}
 
         // We tag this component such that it should be updated
         // Modified by HK 07-07-2024

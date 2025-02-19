@@ -87,10 +87,14 @@ class QLineEdit_fdb : public QLineEdit, public CjvxQtSaWidgetWrapper_elementbase
 {
 	Q_OBJECT
 
+	jvxBool returnDoneStatus = false;
+
 public:
 
 
 	QLineEdit_fdb(QTreeWidgetItem* assoc, CjvxMaWrapperElementTreeWidget* cb, QWidget* parent, jvxBool allowRead, jvxBool allowWrite);
+	~QLineEdit_fdb();
+
 	virtual bool update_window();
 	virtual void focusInEvent(QFocusEvent* e);
 	virtual void focusOutEvent(QFocusEvent* e);
