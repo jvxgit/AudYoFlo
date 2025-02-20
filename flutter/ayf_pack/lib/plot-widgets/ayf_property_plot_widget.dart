@@ -33,7 +33,6 @@ class AudYoFloPropertyPlot extends StatefulWidget {
   final bool logarithmicY;
   final double minY;
   final double maxY;
-  final List<String>? labels;
 
   const AudYoFloPropertyPlot(
       this.cpId, this.linePropertiesInit, this.lineNamesInit, this.maxShow, this.chartTitle,
@@ -41,7 +40,6 @@ class AudYoFloPropertyPlot extends StatefulWidget {
       this.logarithmicY = false,
       this.titleXAxis,
       this.titleYAxis,      
-      this.labels,
       this.minY = 0,
       this.maxY = -1,
       this.fastSeries = false,
