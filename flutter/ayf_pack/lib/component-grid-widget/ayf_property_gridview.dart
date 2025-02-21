@@ -487,6 +487,7 @@ class _AudYoFloPropertyShowState extends State<AudYoFloPropertyShow> {
           whatToShow = widget.propDescr!.descriptor;
           tooltipShow = description;
         }
+        tooltipShow = '$tooltipShow --RC: desciptor - DC: content';
       }
 
       return GestureDetector(

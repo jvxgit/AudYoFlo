@@ -49,6 +49,7 @@ export 'models/ayf_ui_model.dart';
 
 export 'helpers/ayf_multi_components_property_on_change.dart';
 export 'helpers/ayf_helper_lib.dart';
+export 'helpers/ayf_property_helper_lib.dart';
 export 'helpers/ayf_component_property_groups.dart';
 export 'helpers/ayf_one_component_property_on_change.dart';
 export 'helpers/ayf_one_technology_devices_on_change.dart';
