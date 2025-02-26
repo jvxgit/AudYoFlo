@@ -135,7 +135,8 @@ class _AudYoFloFileInputCoreWidgetNativeState
                   children: [
                     Tooltip(
                       message: widget.textShowDrag,
-                      child: Icon(Icons.audio_file_outlined,
+                      child: Icon(Icons.headphones_outlined,
+                        /*Icon(Icons.audio_file_outlined,*/
                           size: widget.sizeIcon),
                     ),
                   ],
@@ -143,8 +144,12 @@ class _AudYoFloFileInputCoreWidgetNativeState
               )),
         ),
       ),
+      onLongPress: () {
+        dbgPrint('Drop Target - Long Press');
+      },
       onDoubleTap: () async {
 
+        dbgPrint('Drop Target - Double Tap');
         // We can also open a file dialog here!!
         FilePickerResult? result = await FilePicker.platform.pickFiles();
 

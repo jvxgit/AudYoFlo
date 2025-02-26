@@ -9,6 +9,7 @@ import 'package:collection/collection.dart';
 
 class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
   AyfHost? theBeAdapter;
+  AudYoFloBackendCache? theBeCache;
   @override
   AyfHost? referenceHost() {
     return theBeAdapter;
@@ -20,7 +21,7 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
      * This installs a handler for the "close" event. 
      */
 
-    AudYoFloBackendCache theBeCache =
+    theBeCache =
         Provider.of<AudYoFloBackendCache>(context, listen: false);
 
     FlutterWindowClose.setWindowShouldCloseHandler(() async {
@@ -43,12 +44,19 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
                 ]);
           });
       if (wantClose) {
-        await theBeCache.triggerClose();
+        await theBeCache!.triggerClose();
       }
       return wantClose;
       //return wantToQuit;
     });
   }
+
+@override
+Future<void> triggerClose() async
+{
+   // await theBeCache!.triggerClose();
+   await FlutterWindowClose.closeWindow();
+}
 
   // Allocate and return file drop widget
   @override

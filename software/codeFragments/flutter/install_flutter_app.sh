@@ -31,6 +31,9 @@ echo "Making zip release in folder $pwdvar"
 export PATH=$PATH:$pwdvar/../../../../bin/tools
 echo "Running zip release with path=$PATH"
 
+echo "flutter pub get"
+flutter pub get
+
 echo "flutter build $2 $6"
 flutter build $2 $6
 

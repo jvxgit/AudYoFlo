@@ -8,6 +8,8 @@ abstract class AudYoFloPlatformSpecific {
 
   void prepareClose(BuildContext prepareClose);
 
+  Future<void> triggerClose();
+
   Widget? allocateFileDropWidget(
       JvxComponentIdentification identT, String textShowDrag, double sizeIcon);
 

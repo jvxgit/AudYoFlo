@@ -22,6 +22,9 @@ class AudYoFloPlatformSpecificHtml extends AudYoFloPlatformSpecific {
     // Skip this part: we can not really catch the close button on "web"
   }
 
+  @override
+  Future<void> triggerClose(AudYoFloBackendCache theBeCache) async {}
+
   // Allocate and return file drop widget - there is none at this time..
   @override
   Widget? allocateFileDropWidget(JvxComponentIdentification identT,
