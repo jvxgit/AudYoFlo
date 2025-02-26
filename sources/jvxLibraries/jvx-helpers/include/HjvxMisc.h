@@ -659,7 +659,7 @@ namespace jvx {
 		jvxBool translate_transfer_chain_get_properties(jvx::propertyCallCompactRefList* propCallCompact, IjvxProperties* prop_ptr);
 
 		template <class T>
-		std::list<T> parseNumericExpression(std::string txt, jvxBool& err)
+		std::list<T> parseNumericExpression(const std::string& txt, jvxBool& err)
 		{
 			jvxSize i;
 			int state = 0;

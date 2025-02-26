@@ -35,6 +35,25 @@ else()
   message(FATAL_ERROR "${CMAKE_SYSTEM_NAME}: this os is not supported")
 endif()
 
+message("CMake Processor detection: ${CMAKE_SYSTEM_PROCESSOR}")
+
+# Windows cases
+set(JVX_PROCESSOR "unknown")
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
+	if(JVX_PLATFORM MATCHES "32bit")
+		set(JVX_PROCESSOR "x86")
+	else()
+		set(JVX_PROCESSOR "x64")
+	endif()
+elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+	if(JVX_PLATFORM MATCHES "32bit")
+		set(JVX_PROCESSOR "arm32")
+	else()
+		set(JVX_PROCESSOR "arm64")
+	endif()
+endif()
+# message(FATAL_ERROR "System Processor = ${CMAKE_SYSTEM_PROCESSOR}")
+
 set(JVX_SYSTEM_TOKEN "JVX_SYS")
 
 #if(${UNIX})

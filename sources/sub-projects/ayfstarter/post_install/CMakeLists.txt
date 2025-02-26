@@ -11,7 +11,7 @@ if(JVX_ALLOW_FLUTTER_SIMPLE_INSTALLERS)
 		else()
 			set(tokenBuild "--release")
 		endif()		
-		set(tokenPlatform "x64")
+		set(tokenPlatform "${JVX_PROCESSOR}")
 		
 		set(FINAL_OUTPUT_FOLDER "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/${PROJECT_PREFIX}")		
 		install(CODE "message(\"Project ${PROJECT_PREFIX} -> running flutter build command with option <${tokenBuild}>\")")	
