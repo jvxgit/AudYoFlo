@@ -6,6 +6,8 @@ import 'package:desktop_drop/desktop_drop.dart';
 
 import 'package:collection/collection.dart';
 
+import 'package:file_picker/file_picker.dart';
+
 // =======================================================================
 // =======================================================================
 class AudYoFloFileInputCoreWidgetNative extends StatefulWidget {
@@ -97,48 +99,71 @@ class _AudYoFloFileInputCoreWidgetNativeState
       propsLocal = groupLocalWidget.extractPropString(propName);
     }
 
-    return DropTarget(
-      onDragDone: (detail) {
-        for (var elmF in detail.files) {
-          String fName = elmF.path;
-          List<String> props = [propName];
-          if (propsLocal != null) {
-            propsLocal.value = fName;
-            if (theBeCache != null) {
-              theBeCache!.triggerSetProperties(widget.identT, props);
+    return GestureDetector(
+      child: DropTarget(
+        onDragDone: (detail) {
+          for (var elmF in detail.files) {
+            String fName = elmF.path;
+            List<String> props = [propName];
+            if (propsLocal != null) {
+              propsLocal.value = fName;
+              if (theBeCache != null) {
+                theBeCache!.triggerSetProperties(widget.identT, props);
+              }
+            } else {
+              print('Warning: Failed to set property ');
             }
-          } else {
-            print('Warning: Failed to set property ');
           }
+        },
+        onDragEntered: (detail) {
+          setState(() {
+            _dragging = true;
+          });
+        },
+        onDragExited: (detail) {
+          setState(() {
+            _dragging = false;
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              color: _dragging ? Colors.blue.withOpacity(0.4) : Colors.black26,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Tooltip(
+                      message: widget.textShowDrag,
+                      child: Icon(Icons.audio_file_outlined,
+                          size: widget.sizeIcon),
+                    ),
+                  ],
+                ),
+              )),
+        ),
+      ),
+      onDoubleTap: () async {
+
+        // We can also open a file dialog here!!
+        FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+        if (result != null) {
+          String token = result.files.single.path!;
+          dbgPrint('Picked file <$token>');
+          List<String> props = [propName];
+            if (propsLocal != null) {
+              propsLocal.value = token;
+              if (theBeCache != null) {
+                theBeCache!.triggerSetProperties(widget.identT, props);
+              }
+            } else {
+              print('Warning: Failed to set property ');
+            }
+        } else {
+        // User canceled the picker
         }
       },
-      onDragEntered: (detail) {
-        setState(() {
-          _dragging = true;
-        });
-      },
-      onDragExited: (detail) {
-        setState(() {
-          _dragging = false;
-        });
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-            color: _dragging ? Colors.blue.withOpacity(0.4) : Colors.black26,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Tooltip(
-                    message: widget.textShowDrag,
-                    child:
-                        Icon(Icons.audio_file_outlined, size: widget.sizeIcon),
-                  ),
-                ],
-              ),
-            )),
-      ),
     );
   }
 
