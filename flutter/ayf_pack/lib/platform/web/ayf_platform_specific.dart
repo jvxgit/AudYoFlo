@@ -23,7 +23,7 @@ class AudYoFloPlatformSpecificHtml extends AudYoFloPlatformSpecific {
   }
 
   @override
-  Future<void> triggerClose(AudYoFloBackendCache theBeCache) async {}
+  Future<void> triggerClose() async {}
 
   // Allocate and return file drop widget - there is none at this time..
   @override

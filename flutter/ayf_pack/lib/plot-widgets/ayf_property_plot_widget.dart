@@ -20,7 +20,7 @@ class AudYoFloPropertyPlot extends StatefulWidget {
   final List<String> lineNamesInit;
   final List<String> xShiftPropertiesInit;
   final double maxShow;
-  final bool fastSeries;
+  // final bool fastSeries;
   final String chartTitle;
   /*
   final List<double> xValues;
@@ -34,21 +34,22 @@ class AudYoFloPropertyPlot extends StatefulWidget {
   final double minY;
   final double maxY;
 
-  const AudYoFloPropertyPlot(
-      this.cpId, this.linePropertiesInit, this.lineNamesInit, this.maxShow, this.chartTitle,
+  const AudYoFloPropertyPlot(this.cpId, this.linePropertiesInit,
+      this.lineNamesInit, this.maxShow, this.chartTitle,
       {this.logarithmicX = false,
       this.logarithmicY = false,
       this.titleXAxis,
-      this.titleYAxis,      
+      this.titleYAxis,
       this.minY = 0,
       this.maxY = -1,
-      this.fastSeries = false,
+      // this.fastSeries = true,
       this.xShiftPropertiesInit = const [],
       super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _AudYoFloPropertyPlotState(linePropertiesInit, lineNamesInit, xShiftPropertiesInit, chartTitle);
+    return _AudYoFloPropertyPlotState(
+        linePropertiesInit, lineNamesInit, xShiftPropertiesInit, chartTitle);
   }
 }
 
@@ -77,7 +78,8 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
           'tagPropertyPlot',
           []);
 
-  _AudYoFloPropertyPlotState(this.lineProperties, this.lineNames, this.xShiftPropertiesInit, this.chartTitle) {
+  _AudYoFloPropertyPlotState(this.lineProperties, this.lineNames,
+      this.xShiftPropertiesInit, this.chartTitle) {
     // Set required member variable in base class
     /*
     super.cpId = JvxComponentIdentification(
@@ -88,12 +90,11 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
 
     // If some events do not reach the rebuild function, we can produce some
     // additional output printfs
-    // dbgOutput = true;    
+    // dbgOutput = true;
     List<String> allProperties = List.from(lineProperties);
-    for(var elm in xShiftPropertiesInit)
-    {
-      if(elm.isNotEmpty){
-      allProperties.add(elm);
+    for (var elm in xShiftPropertiesInit) {
+      if (elm.isNotEmpty) {
+        allProperties.add(elm);
       }
     }
     oneGroupPlotWidget = AudYoFloPropertyOnChangeOneGroup(allProperties);
@@ -145,23 +146,20 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
     // If the the size requires an update, update
     if (vecLength != xValues.length) {
       double maxXVal = vecLength.toDouble();
-      if(widget.maxShow > 0)
-      {
+      if (widget.maxShow > 0) {
         maxXVal = widget.maxShow;
       }
-      xValues = new List<double>.generate(
-          vecLength, (i) => i * maxXVal / vecLength);
+      xValues =
+          new List<double>.generate(vecLength, (i) => i * maxXVal / vecLength);
     }
 
     for (int j = 0; j < lineProperties.length; j++) {
       final String property = lineProperties[j];
       String propertyOffset = '';
       int offsetX = 0;
-      if(j < xShiftPropertiesInit.length)
-      {
+      if (j < xShiftPropertiesInit.length) {
         final String entryProp = xShiftPropertiesInit[j];
-        if(entryProp.isNotEmpty)
-        {
+        if (entryProp.isNotEmpty) {
           propertyOffset = entryProp;
         }
       }
@@ -174,16 +172,14 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
         } else if (pp is AudYoFloPropertyMultiContentBackend<Float32List>?) {
           propertyData =
               pp as AudYoFloPropertyMultiContentBackend<Float32List>?;
-        }       
+        }
 
         var ppO = oneGroupPlotWidget!.extractPropMultiContent(propertyOffset);
         AudYoFloPropertyMultiContentBackend? propertyDataOffset;
         if (ppO is AudYoFloPropertyMultiContentBackend<Uint64List>?) {
           propertyDataOffset = ppO;
-          if(propertyDataOffset != null)
-          {
-            if(propertyDataOffset.fldSz > 0)
-            {
+          if (propertyDataOffset != null) {
+            if (propertyDataOffset.fldSz > 0) {
               offsetX = propertyDataOffset.fld[0];
             }
           }
@@ -196,18 +192,15 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
         _chartData.update(nmShow, (data) {
           data.clear();
           for (int i = 0; i < xValues.length; i++) {
-
             double value = 0;
-            if ((propertyData != null) && (i < propertyData.fldSz))
-            {
-            value = propertyData!.fld[i];
+            if ((propertyData != null) && (i < propertyData.fldSz)) {
+              value = propertyData!.fld[i];
             }
             // TODO NaN/Infinite workaround..
-            data.add(ChartData(
-                xValues[i] + offsetX, (value.isNaN || value.isInfinite) ? 0 : value));
+            data.add(ChartData(xValues[i] + offsetX,
+                (value.isNaN || value.isInfinite) ? 0 : value));
           }
-          if(data.isEmpty)
-          {
+          if (data.isEmpty) {
             data.add(ChartData(0, 0));
             legendPostfix = '(no-data)';
           }
@@ -216,16 +209,14 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
           List<ChartData> data = <ChartData>[];
           for (int i = 0; i < xValues.length; i++) {
             double value = 0;
-            if ((propertyData != null) && (i < propertyData.fldSz))
-            {
-            value = propertyData!.fld[i];
+            if ((propertyData != null) && (i < propertyData.fldSz)) {
+              value = propertyData!.fld[i];
             }
             // TODO NaN/Infinite workaround..
-            data.add(ChartData(
-                xValues[i] + offsetX, (value.isNaN || value.isInfinite) ? 0 : value));
+            data.add(ChartData(xValues[i] + offsetX,
+                (value.isNaN || value.isInfinite) ? 0 : value));
           }
-          if(data.isEmpty)
-          {
+          if (data.isEmpty) {
             data.add(ChartData(0, 0));
             legendPostfix = '(no-data)';
           }
@@ -314,16 +305,13 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
         //minorTicksPerInterval: 9, // NOTE minor ticks are logarithmically spaced (in data; so visually linear) unfortunately
       );
     } else {
-      if( widget.maxY > widget.minY)
-      {
+      if (widget.maxY > widget.minY) {
         yAxis = NumericAxis(
           title: AxisTitle(text: this.widget.titleYAxis),
           minimum: widget.minY,
           maximum: widget.maxY,
         );
-      }
-      else
-      {
+      } else {
         yAxis = NumericAxis(title: AxisTitle(text: this.widget.titleYAxis));
       }
     }
@@ -332,32 +320,29 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
     for (final MapEntry<String, List<ChartData>> entry in _chartData.entries) {
       String nameLocal = entry.key;
       nameLocal = nameLocal + legendPostfix;
-      if(widget.fastSeries)
-      {
+      //if (widget.fastSeries) {
       series.add(FastLineSeries<ChartData, double>(
         name: nameLocal,
         dataSource: entry.value,
         xValueMapper: (ChartData data, _) => data.x,
         yValueMapper: (ChartData data, _) => data.y,
       ));
-      }
-      else{
-              series.add(LineSeries<ChartData, double>(
-        name: nameLocal,
-        dataSource: entry.value,
-        xValueMapper: (ChartData data, _) => data.x,
-        yValueMapper: (ChartData data, _) => data.y,
-      ));
-      }
+      //} else {
+      //  series.add(LineSeries<ChartData, double>(
+      //    name: nameLocal,
+      //    dataSource: entry.value,
+      //    xValueMapper: (ChartData data, _) => data.x,
+      //    yValueMapper: (ChartData data, _) => data.y,
+      //  ));
+      //}
     }
 
     // Update this widget if there is a notification in the uiModel
     return Consumer<AudYoFloUiModel>(builder: (context, notifier, child) {
       return SfCartesianChart(
-        title: ChartTitle(
-            text: chartTitle),
-        primaryXAxis: xAxis,
-        primaryYAxis: yAxis,
+        title: ChartTitle(text: chartTitle),
+        primaryXAxis: xAxis!,
+        primaryYAxis: yAxis!,
         series: series,
         legend: Legend(isVisible: true),
       );
