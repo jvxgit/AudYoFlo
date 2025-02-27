@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:path/path.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +10,7 @@ import 'package:desktop_drop/desktop_drop.dart';
 
 import 'package:collection/collection.dart';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:filesystem_picker/filesystem_picker.dart';
 
 // =======================================================================
 // =======================================================================
@@ -34,6 +38,8 @@ class _AudYoFloFileInputCoreWidgetNativeState
   AudYoFloBackendCache? theBeCache;
   late String propName;
   final String groupName = 'fileInput';
+  String? folderLastTime;
+  List<String>? drives;
 
   AudYoFloPropertyOnChangeOneGroup oneGroupTechnology =
       AudYoFloPropertyOnChangeOneGroup(['/open_filename']);
@@ -136,7 +142,7 @@ class _AudYoFloFileInputCoreWidgetNativeState
                     Tooltip(
                       message: widget.textShowDrag,
                       child: Icon(Icons.headphones_outlined,
-                        /*Icon(Icons.audio_file_outlined,*/
+                          /*Icon(Icons.audio_file_outlined,*/
                           size: widget.sizeIcon),
                     ),
                   ],
@@ -144,29 +150,28 @@ class _AudYoFloFileInputCoreWidgetNativeState
               )),
         ),
       ),
-      onLongPress: () {
+      onLongPress: () async {
         dbgPrint('Drop Target - Long Press');
+        // We can also open a file dialog here!!
+
+        var root = findRoot(Directory.current);
+        if (folderLastTime != null) {
+          root = Directory(folderLastTime!);
+        }
+        if (propsLocal != null) {
+          runFilePicker(context, root, propsLocal, true);
+        } else {
+          print('Warning: Failed to set property ');
+        }
       },
       onDoubleTap: () async {
-
-        dbgPrint('Drop Target - Double Tap');
+        dbgPrint('Drop Target - Long Press');
         // We can also open a file dialog here!!
-        FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-        if (result != null) {
-          String token = result.files.single.path!;
-          dbgPrint('Picked file <$token>');
-          List<String> props = [propName];
-            if (propsLocal != null) {
-              propsLocal.value = token;
-              if (theBeCache != null) {
-                theBeCache!.triggerSetProperties(widget.identT, props);
-              }
-            } else {
-              print('Warning: Failed to set property ');
-            }
+        var root = findRoot(Directory.current);
+        if (propsLocal != null) {
+          runFilePicker(context, root, propsLocal, false);
         } else {
-        // User canceled the picker
+          print('Warning: Failed to set property ');
         }
       },
     );
@@ -184,6 +189,87 @@ class _AudYoFloFileInputCoreWidgetNativeState
     }
     return localBuild(context);
   }
+
+  Directory findRoot(FileSystemEntity entity) {
+    final Directory parent = entity.parent;
+    if (parent.path == entity.path) return parent;
+    return findRoot(parent);
+  }
+
+  Future<List<String>> existingDrives() async {
+    List<String> lst = [];
+    List<String> drivesOptions = [];
+    for (int i = 65; i <= 90; i++) {
+      drivesOptions.add(String.fromCharCode(i).toUpperCase() + ':');
+    }
+
+    for (var elm in drivesOptions) {
+      var dir = Directory(elm);
+      var ex = await dir.exists();
+      if (ex) {
+        lst.add(elm);
+      }
+    }
+    return lst;
+  }
+
+  Future<void> runFilePicker(
+      BuildContext context,
+      Directory root,
+      AudYoFloPropertySingleStringBackend propsLocal,
+      bool forceDirectory) async {
+    if (drives == null) {
+      drives = await existingDrives();
+    }
+
+    List<FilesystemPickerShortcut> lstShortcuts = [];
+    if (drives != null) {
+      for (var elm in drives!) {
+        lstShortcuts.add(FilesystemPickerShortcut(
+            name: elm, path: Directory(elm), icon: Icons.folder));
+      }
+
+      String? result;
+      String titleText = 'Select Audio File [wav, mp3, m4a]';
+      if (lstShortcuts.length == 0 || forceDirectory) {
+        result = await FilesystemPicker.openDialog(
+            title: titleText,
+            context: context,
+            rootDirectory: root,
+            allowedExtensions: ['.wav', '.mp3', '.m4a'],
+            showGoUp: true,
+            rootName: 'Root Folder',
+            fileTileSelectMode: FileTileSelectMode.wholeTile);
+      } else {
+        result = await FilesystemPicker.openDialog(
+            title: titleText,
+            context: context,
+            allowedExtensions: ['.wav', '.mp3', '.m4a'],
+            shortcuts: lstShortcuts,
+            showGoUp: true,
+            rootName: 'Computer',
+            fileTileSelectMode: FileTileSelectMode.wholeTile);
+      }
+      // FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+      if (result != null) {
+        String token = result;
+        folderLastTime = dirname(result);
+        dbgPrint('Picked file <$token>');
+        List<String> props = [propName];
+        propsLocal.value = token;
+        if (theBeCache != null) {
+          theBeCache!.triggerSetProperties(widget.identT, props);
+        }
+      } else {
+        // User canceled the picker
+      }
+    }
+  }
 }
 
 // ========================================================================
+
+/*
+
+  */
