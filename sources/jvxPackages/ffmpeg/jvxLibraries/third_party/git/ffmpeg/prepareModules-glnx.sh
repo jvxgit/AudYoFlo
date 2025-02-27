@@ -38,8 +38,8 @@ if [ -d $folder ]; then
 	echo "Checking for existence of subfolder lib"
 	if [ ! -d "lib" ]; then
 
-		echo ./configure --enable-static --disable-bzlib --enable-pic --disable-libdrm --enable-gpl --enable-libx264 --enable-libx265 --prefix=./
-		./configure --enable-static --disable-bzlib --enable-pic --disable-libdrm --enable-gpl --enable-libx264 --enable-libx265 --prefix=./
+		echo ./configure --enable-static --disable-bzlib --enable-pic --disable-libdrm --disable-sndio --enable-gpl --enable-libx264 --enable-libx265 --prefix=./
+		./configure --enable-static --disable-bzlib --enable-pic --disable-libdrm --disable-sndio --enable-gpl --enable-libx264 --enable-libx265 --prefix=./
 
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./

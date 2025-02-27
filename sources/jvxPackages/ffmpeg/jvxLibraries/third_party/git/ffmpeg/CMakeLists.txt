@@ -111,7 +111,8 @@ elseif(${JVX_OS} MATCHES "linux")
 
 	else()
 		set(JVX_FFMPEG_POSTFIX "glnx")
-	
+		
+		message("Checking for pre-compiled ffmpeg library in folder <${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}>.")
 		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX})
 
 		       message("ffmpeg sub project not available. Starting script to download it.") 
@@ -119,6 +120,9 @@ elseif(${JVX_OS} MATCHES "linux")
 		       message("${mysh} -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${JVX_FFMPEG_POSTFIX}") 
 		       execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${JVX_FFMPEG_POSTFIX}")
 		       message("ffmpeg installation complete.")
+		     
+		else()
+		      message("---> Already there.")
 		endif()
 
 		## message(FATAL_ERROR "Wait here!")
@@ -213,4 +217,4 @@ elseif(${JVX_OS} MATCHES "linux")
 	
 endif()
 
-## message(FATAL_ERROR "Debug CMAKE stop in project ffmpeg!!")
+# message(FATAL_ERROR "Debug CMAKE stop in project ffmpeg!!")
