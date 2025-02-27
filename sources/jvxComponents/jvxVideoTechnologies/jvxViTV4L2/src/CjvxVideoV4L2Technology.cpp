@@ -345,7 +345,8 @@ CjvxVideoV4L2Technology::activate()
 #endif
 			
 			//if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
-			if (!(cap.device_caps & V4L2_CAP_VIDEO_CAPTURE))
+			if (!
+			    ((cap.device_caps & V4L2_CAP_VIDEO_CAPTURE) || (cap.device_caps & V4L2_CAP_VIDEO_CAPTURE_MPLANE)))
 			{
 				// Not a video capture device
 #ifdef AYF_VIDEO_DEVICE_VERBOSE
