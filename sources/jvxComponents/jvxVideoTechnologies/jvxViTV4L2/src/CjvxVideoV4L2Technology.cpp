@@ -345,8 +345,14 @@ CjvxVideoV4L2Technology::activate()
 #endif
 			
 			//if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
-			if (!
-			    ((cap.device_caps & V4L2_CAP_VIDEO_CAPTURE) || (cap.device_caps & V4L2_CAP_VIDEO_CAPTURE_MPLANE)))
+			if (
+			    (cap.device_caps & V4L2_CAP_VIDEO_CAPTURE) || (cap.device_caps & V4L2_CAP_VIDEO_CAPTURE_MPLANE))
+			{
+#ifdef AYF_VIDEO_DEVICE_VERBOSE                      
+                               std::cout << __FUNCTION__ << ": --> Found a video capture device." << std::endl;                        
+#endif
+			}
+			else
 			{
 				// Not a video capture device
 #ifdef AYF_VIDEO_DEVICE_VERBOSE
@@ -354,12 +360,6 @@ CjvxVideoV4L2Technology::activate()
 #endif
 				continue;
 			}
-#ifdef AYF_VIDEO_DEVICE_VERBOSE
-			else
-			{
-	  			std::cout << __FUNCTION__ << ": --> Found a video capture device." << std::endl;
-			}
-#endif
 
 			this->numDevices += 1;
 
