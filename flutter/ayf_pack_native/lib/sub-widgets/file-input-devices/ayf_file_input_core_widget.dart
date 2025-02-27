@@ -105,75 +105,80 @@ class _AudYoFloFileInputCoreWidgetNativeState
       propsLocal = groupLocalWidget.extractPropString(propName);
     }
 
-    return GestureDetector(
-      child: DropTarget(
-        onDragDone: (detail) {
-          for (var elmF in detail.files) {
-            String fName = elmF.path;
-            List<String> props = [propName];
-            if (propsLocal != null) {
-              propsLocal.value = fName;
-              if (theBeCache != null) {
-                theBeCache!.triggerSetProperties(widget.identT, props);
+    return Tooltip(
+      message:
+          'Select file in file dialog: long tap: open folder as used before; double-tap: open folder from root of file system',
+      child: GestureDetector(
+        child: DropTarget(
+          onDragDone: (detail) {
+            for (var elmF in detail.files) {
+              String fName = elmF.path;
+              List<String> props = [propName];
+              if (propsLocal != null) {
+                propsLocal.value = fName;
+                if (theBeCache != null) {
+                  theBeCache!.triggerSetProperties(widget.identT, props);
+                }
+              } else {
+                print('Warning: Failed to set property ');
               }
-            } else {
-              print('Warning: Failed to set property ');
             }
+          },
+          onDragEntered: (detail) {
+            setState(() {
+              _dragging = true;
+            });
+          },
+          onDragExited: (detail) {
+            setState(() {
+              _dragging = false;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+                color:
+                    _dragging ? Colors.blue.withOpacity(0.4) : Colors.black26,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Tooltip(
+                        message: widget.textShowDrag,
+                        child: Icon(Icons.headphones_outlined,
+                            /*Icon(Icons.audio_file_outlined,*/
+                            size: widget.sizeIcon),
+                      ),
+                    ],
+                  ),
+                )),
+          ),
+        ),
+        onLongPress: () async {
+          dbgPrint('Drop Target - Long Press');
+          // We can also open a file dialog here!!
+
+          var root = findRoot(Directory.current);
+          if (folderLastTime != null) {
+            root = Directory(folderLastTime!);
+          }
+          if (propsLocal != null) {
+            runFilePicker(context, root, propsLocal, true);
+          } else {
+            print('Warning: Failed to set property ');
           }
         },
-        onDragEntered: (detail) {
-          setState(() {
-            _dragging = true;
-          });
+        onDoubleTap: () async {
+          dbgPrint('Drop Target - Long Press');
+          // We can also open a file dialog here!!
+          var root = findRoot(Directory.current);
+          if (propsLocal != null) {
+            runFilePicker(context, root, propsLocal, false);
+          } else {
+            print('Warning: Failed to set property ');
+          }
         },
-        onDragExited: (detail) {
-          setState(() {
-            _dragging = false;
-          });
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-              color: _dragging ? Colors.blue.withOpacity(0.4) : Colors.black26,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Tooltip(
-                      message: widget.textShowDrag,
-                      child: Icon(Icons.headphones_outlined,
-                          /*Icon(Icons.audio_file_outlined,*/
-                          size: widget.sizeIcon),
-                    ),
-                  ],
-                ),
-              )),
-        ),
       ),
-      onLongPress: () async {
-        dbgPrint('Drop Target - Long Press');
-        // We can also open a file dialog here!!
-
-        var root = findRoot(Directory.current);
-        if (folderLastTime != null) {
-          root = Directory(folderLastTime!);
-        }
-        if (propsLocal != null) {
-          runFilePicker(context, root, propsLocal, true);
-        } else {
-          print('Warning: Failed to set property ');
-        }
-      },
-      onDoubleTap: () async {
-        dbgPrint('Drop Target - Long Press');
-        // We can also open a file dialog here!!
-        var root = findRoot(Directory.current);
-        if (propsLocal != null) {
-          runFilePicker(context, root, propsLocal, false);
-        } else {
-          print('Warning: Failed to set property ');
-        }
-      },
     );
   }
 
