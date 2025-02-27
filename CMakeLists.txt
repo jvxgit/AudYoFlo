@@ -100,11 +100,6 @@ if(JVX_USE_PYTHON)
   set(INSTALL_PATH_PYTHON_RUNTIME "${INSTALL_PATH_PYTHON}/runtime")
 endif()
 
-# Build tools are NEVER Release builds but the path must be set propperly anyway.
-if(JVX_COMPILE_BUILDTOOLS)
-  set(JVX_RELEASE_SDK FALSE)
-endif()
-
 set(INSTALL_PATH_RUNTIME "${INSTALL_PATH_RELEASE_ROOT}")
 set(INSTALL_PATH_BIN "${INSTALL_PATH_RELEASE_ROOT}/bin")
 set(INSTALL_PATH_DOC "${INSTALL_PATH_RELEASE_ROOT}/doc")
@@ -197,6 +192,56 @@ set(JVX_FFT_PRESENT false CACHE BOOL "Indicator if an FFT implementation was fou
 # support for different platforms
 ###
 include(${JVX_CMAKE_DIR}/platform.cmake)
+
+# Build tools are NEVER Release builds but the path must be set propperly anyway.
+if(JVX_COMPILE_BUILDTOOLS)
+
+	# message(FATAL_ERROR "Hier: ${JVX_FLUTTER_VERSION} -- ${JVX_RELEASE_SDK} -- ${JVX_OS}")
+	
+	# We need to run this here as the RELEASE_FLAG will be reset at this place
+	if(${JVX_OS} MATCHES "windows")
+		if(EXISTS ${JVX_BASE_ROOT}/.vscode/settings.json.windows.in)
+			set(VSCODE_CMAKE_BUILD_FOLDER ${CMAKE_BINARY_DIR})
+			if(${JVX_PLATFORM} MATCHES "32bit")
+				set(qt_subfolder msvc2019)
+			else()
+				set(qt_subfolder msvc2019_64)
+			endif()
+			
+			set(VSCODE_CMAKE_PREFIX_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/${qt_subfolder})
+			set(VSCODE_FLUTTER_SDK_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/flutter/flutter-${JVX_FLUTTER_VERSION})
+			set(VSCODE_QT_INSTALL_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/${qt_subfolder})
+			if(JVX_RELEASE_SDK)
+				set(VSCODE_RELEASE_SDK "true")
+			else()
+				set(VSCODE_RELEASE_SDK "false")
+			endif()
+			configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.windows.in ${JVX_BASE_ROOT}/.vscode/settings.json)
+		endif()
+	endif()
+	if(${JVX_OS} MATCHES "linux")
+		if(EXISTS ${JVX_BASE_ROOT}/.vscode/settings.json.linux.in)
+			set(VSCODE_CMAKE_BUILD_FOLDER ${CMAKE_BINARY_DIR})
+			set(VSCODE_CMAKE_PREFIX_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64)
+			set(VSCODE_FLUTTER_SDK_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/flutter/flutter-${JVX_FLUTTER_VERSION})
+			set(VSCODE_QT_INSTALL_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64)			
+			if(JVX_RELEASE_SDK)
+				set(VSCODE_RELEASE_SDK "true")
+			else()
+				set(VSCODE_RELEASE_SDK "false")
+			endif()
+
+			configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.linux.in ${JVX_BASE_ROOT}/.vscode/settings.json @ONLY)
+			configure_file(${JVX_BASE_ROOT}/.vscode/launch.json.linux.in ${JVX_BASE_ROOT}/.vscode/launch.json @ONLY)			
+		endif()
+	endif()
+	if(${JVX_OS} MATCHES "macosx")
+		configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.macosx.in ${JVX_BASE_ROOT}/.vscode/settings.json)
+	endif()
+  set(JVX_RELEASE_SDK FALSE)
+endif()
+
+
 
 # This option is required for qt linkage lateron: other folders for generated output in ninja and VS
 get_property(JVX_IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -362,37 +407,7 @@ if(JVX_COMPILE_BUILDTOOLS)
 
   #install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/base/sources/jvxExTools/jvxExPropC/jvxExPropC DESTINATION ${INSTALL_PATH_BIN})
   #install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/base/sources/jvxExTools/jvxExPropC/jvxExPropMat DESTINATION ${INSTALL_PATH_BIN})
-  #install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/base/sources/jvxExTools/jvxExMatC/jvxExMatC DESTINATION ${INSTALL_PATH_BIN})
-
-	
-	if(${JVX_OS} MATCHES "windows")
-		if(EXISTS ${JVX_BASE_ROOT}/.vscode/settings.json.windows.in)
-			set(VSCODE_CMAKE_BUILD_FOLDER ${CMAKE_BINARY_DIR})
-			if(${JVX_PLATFORM} MATCHES "32bit")
-				set(qt_subfolder msvc2019)
-			else()
-				set(qt_subfolder msvc2019_64)
-			endif()
-			
-			set(VSCODE_CMAKE_PREFIX_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/${qt_subfolder})
-			set(VSCODE_FLUTTER_SDK_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4)
-			set(VSCODE_QT_INSTALL_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/${qt_subfolder})			
-			configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.windows.in ${JVX_BASE_ROOT}/.vscode/settings.json)
-		endif()
-	endif()
-	if(${JVX_OS} MATCHES "linux")
-		if(EXISTS ${JVX_BASE_ROOT}/.vscode/settings.json.linux.in)
-			set(VSCODE_CMAKE_BUILD_FOLDER ${CMAKE_BINARY_DIR})
-			set(VSCODE_CMAKE_PREFIX_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64)
-			set(VSCODE_FLUTTER_SDK_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4)
-			set(VSCODE_QT_INSTALL_PATH ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64)			
-			configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.linux.in ${JVX_BASE_ROOT}/.vscode/settings.json @ONLY)
-			configure_file(${JVX_BASE_ROOT}/.vscode/launch.json.linux.in ${JVX_BASE_ROOT}/.vscode/launch.json @ONLY)
-		endif()
-	endif()
-	if(${JVX_OS} MATCHES "macosx")
-		configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.macosx.in ${JVX_BASE_ROOT}/.vscode/settings.json)
-	endif()
+  #install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/base/sources/jvxExTools/jvxExMatC/jvxExMatC DESTINATION ${INSTALL_PATH_BIN})	
 		
 else(JVX_COMPILE_BUILDTOOLS)
 
