@@ -284,8 +284,15 @@ SECTION PROPERTIES
 		{
 			DESCRIPTION = "Shortcut - property to set input file";
 			TYPE = "JVX_DATAFORMAT_STRING";
-			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
-			DESCRIPTOR = "JVX_GENW_FILENAME_IN";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";			
+		};		
+
+		SECTION remSelectedFile
+		{
+			DESCRIPTION = "Shortcut - property to remove input file";
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";			
 		};		
 
 		SECTION defaultPathAudioFiles

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'dart:typed_data';
 import 'dart:math';
 
@@ -33,6 +34,7 @@ class AudYoFloPropertyPlot extends StatefulWidget {
   final bool logarithmicY;
   final double minY;
   final double maxY;
+  final List<String> channelsSplit;
 
   const AudYoFloPropertyPlot(this.cpId, this.linePropertiesInit,
       this.lineNamesInit, this.maxShow, this.chartTitle,
@@ -42,14 +44,15 @@ class AudYoFloPropertyPlot extends StatefulWidget {
       this.titleYAxis,
       this.minY = 0,
       this.maxY = -1,
+      this.channelsSplit = const [],
       // this.fastSeries = true,
       this.xShiftPropertiesInit = const [],
       super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _AudYoFloPropertyPlotState(
-        linePropertiesInit, lineNamesInit, xShiftPropertiesInit, chartTitle);
+    return _AudYoFloPropertyPlotState(linePropertiesInit, lineNamesInit,
+        xShiftPropertiesInit, chartTitle, channelsSplit);
   }
 }
 
@@ -62,6 +65,7 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
   List<String> lineProperties;
   List<String> lineNames;
   List<String> xShiftPropertiesInit;
+  List<String> channelsSplit;
   String legendPostfix = '';
   String chartTitle;
 
@@ -79,7 +83,7 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
           []);
 
   _AudYoFloPropertyPlotState(this.lineProperties, this.lineNames,
-      this.xShiftPropertiesInit, this.chartTitle) {
+      this.xShiftPropertiesInit, this.chartTitle, this.channelsSplit) {
     // Set required member variable in base class
     /*
     super.cpId = JvxComponentIdentification(
@@ -93,6 +97,11 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
     // dbgOutput = true;
     List<String> allProperties = List.from(lineProperties);
     for (var elm in xShiftPropertiesInit) {
+      if (elm.isNotEmpty) {
+        allProperties.add(elm);
+      }
+    }
+    for (var elm in channelsSplit) {
       if (elm.isNotEmpty) {
         allProperties.add(elm);
       }
@@ -125,6 +134,14 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
     // dbgPrint("Update Char Data");
     legendPostfix = '';
     int vecLength = 0;
+    List<int> numSegments = [];
+    List<String> entryNames = [];
+    int cnt = 0;
+
+    // ======================================================================
+    // Pre-derive lengths and plot descriptions
+    // ======================================================================
+
     for (var prop in lineProperties) {
       var pp = oneGroupPlotWidget!.extractPropMultiContent(prop);
       if (pp != null) {
@@ -137,10 +154,41 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
               pp as AudYoFloPropertyMultiContentBackend<Float32List>?;
         }
 
+        int nSegs = 1;
+        if (cnt < channelsSplit.length) {
+          if (channelsSplit[cnt].isNotEmpty) {
+            var ppSeg =
+                oneGroupPlotWidget!.extractPropMultiContent(channelsSplit[cnt]);
+            if (ppSeg != null) {
+              if (ppSeg.fldSz > 0) {
+                nSegs = ppSeg.fld[0];
+                nSegs = max(nSegs, 1);
+              }
+            }
+          }
+        }
+
+        numSegments.add(nSegs);
+
+        String name = prop;
+        if (cnt < lineNames.length) {
+          name = lineNames[cnt];
+        }
+
+        if (nSegs > 1) {
+          for (int k = 0; k < nSegs; k++) {
+            entryNames.add(name + '#' + k.toString());
+          }
+        } else {
+          entryNames.add(name);
+        }
+
         if (propertyData != null) {
-          vecLength = max(vecLength, propertyData.fldSz);
+          int NSeg = (propertyData.fldSz.toDouble() / nSegs.toDouble()).toInt();
+          vecLength = max(vecLength, NSeg);
         }
       }
+      cnt++;
     }
 
     // If the the size requires an update, update
@@ -153,6 +201,34 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
           new List<double>.generate(vecLength, (i) => i * maxXVal / vecLength);
     }
 
+    // ======================================================================
+    // Check if we need to redraw the plots if entries were added or removed
+    // ======================================================================
+
+    cnt = 0;
+    bool requiresReset = false;
+    if (entryNames.length != _chartData.entries.length) {
+      requiresReset = true;
+    } else {
+      for (var elm in entryNames) {
+        var elmName = _chartData.entries.firstWhereOrNull((element) {
+          return (element.key == elm);
+        });
+        if (elmName == null) {
+          requiresReset = true;
+          break;
+        }
+      }
+    }
+    if (requiresReset) {
+      _chartData.clear();
+    }
+
+    // ======================================================================
+    // Here, we actually draw!
+    // ======================================================================
+
+    cnt = 0;
     for (int j = 0; j < lineProperties.length; j++) {
       final String property = lineProperties[j];
       String propertyOffset = '';
@@ -189,39 +265,62 @@ class _AudYoFloPropertyPlotState extends State<AudYoFloPropertyPlot>
         if (j < lineNames.length) {
           nmShow = lineNames[j];
         }
-        _chartData.update(nmShow, (data) {
-          data.clear();
-          for (int i = 0; i < xValues.length; i++) {
-            double value = 0;
-            if ((propertyData != null) && (i < propertyData.fldSz)) {
-              value = propertyData!.fld[i];
+
+        int nSegs = numSegments[j];
+        int idxStart = 0;
+        int idxStop = 0;
+        int szSeg = 0;
+        if (propertyData != null) {
+          szSeg = (propertyData.fldSz.toDouble() / nSegs.toDouble()).toInt();
+          idxStop = szSeg;
+        }
+        for (var ssegs = 0; ssegs < nSegs; ssegs++) {
+          String nmShowIdx = nmShow;
+          if (nSegs > 1) {
+            nmShowIdx = nmShowIdx + '#' + ssegs.toString();
+          }
+          nmShowIdx = entryNames[cnt];
+          cnt++; // lineNames
+          _chartData.update(nmShowIdx, (data) {
+            data.clear();
+            for (int i = 0; i < xValues.length; i++) {
+              double value = 0;
+              int idxRead = i + idxStart;
+              if ((propertyData != null) &&
+                  (idxRead < idxStop) &&
+                  (idxRead < propertyData.fldSz)) {
+                value = propertyData!.fld[idxRead];
+                // value = (value + ssegs).toDouble();
+              }
+              // TODO NaN/Infinite workaround..
+              data.add(ChartData(xValues[i] + offsetX,
+                  (value.isNaN || value.isInfinite) ? 0 : value));
             }
-            // TODO NaN/Infinite workaround..
-            data.add(ChartData(xValues[i] + offsetX,
-                (value.isNaN || value.isInfinite) ? 0 : value));
-          }
-          if (data.isEmpty) {
-            data.add(ChartData(0, 0));
-            legendPostfix = '(no-data)';
-          }
-          return data;
-        }, ifAbsent: () {
-          List<ChartData> data = <ChartData>[];
-          for (int i = 0; i < xValues.length; i++) {
-            double value = 0;
-            if ((propertyData != null) && (i < propertyData.fldSz)) {
-              value = propertyData!.fld[i];
+            if (data.isEmpty) {
+              data.add(ChartData(0, 0));
+              legendPostfix = '(no-data)';
             }
-            // TODO NaN/Infinite workaround..
-            data.add(ChartData(xValues[i] + offsetX,
-                (value.isNaN || value.isInfinite) ? 0 : value));
-          }
-          if (data.isEmpty) {
-            data.add(ChartData(0, 0));
-            legendPostfix = '(no-data)';
-          }
-          return data;
-        });
+            return data;
+          }, ifAbsent: () {
+            List<ChartData> data = <ChartData>[];
+            for (int i = 0; i < xValues.length; i++) {
+              double value = 0;
+              if ((propertyData != null) && (i < propertyData.fldSz)) {
+                value = propertyData!.fld[i];
+              }
+              // TODO NaN/Infinite workaround..
+              data.add(ChartData(xValues[i] + offsetX,
+                  (value.isNaN || value.isInfinite) ? 0 : value));
+            }
+            if (data.isEmpty) {
+              data.add(ChartData(0, 0));
+              legendPostfix = '(no-data)';
+            }
+            return data;
+          });
+          idxStart = idxStop;
+          idxStop += szSeg;
+        }
       }
     }
   }

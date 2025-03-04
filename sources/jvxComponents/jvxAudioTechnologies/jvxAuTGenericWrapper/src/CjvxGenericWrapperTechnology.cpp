@@ -1395,6 +1395,22 @@ CjvxGenericWrapperTechnology::set_property(
 				res = processIssuedStringCommand(txt);
 			}
 
+			if (
+				(propId == genGenericWrapper_technology::properties_selected_active.remSelectedFile.globalIdx) &&
+				(category == genGenericWrapper_technology::properties_selected_active.remSelectedFile.category))
+			{
+				if (genGenericWrapper_technology::properties_selected_active.remSelectedFile.value)
+				{
+					genGenericWrapper_technology::properties_selected_active.remSelectedFile.value = c_false;
+					jvxSize idSelect = jvx_bitfieldSelection2Id(genGenericWrapper_technology::select_files.input_file);
+					if (JVX_CHECK_SIZE_SELECTED(idSelect))
+					{
+						std::string txt = "remInputFile(" + genGenericWrapper_technology::properties_selected_active.addWavFileName.value + ")";
+						res = processIssuedStringCommand(txt);
+					}
+				}
+			}
+
 			if(
 				(propId == genGenericWrapper_technology::select_files.input_file.globalIdx) &&
 				(category == genGenericWrapper_technology::select_files.input_file.category))
