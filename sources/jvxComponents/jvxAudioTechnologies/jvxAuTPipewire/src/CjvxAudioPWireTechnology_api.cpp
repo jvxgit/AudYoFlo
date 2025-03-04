@@ -130,11 +130,27 @@ CjvxAudioPWireTechnology::activate_technology_api()
         std::list<oneDevice*> devices_linked_add;
         for(auto& elm: devices_linked)
         {
-            oneDevice* newDev = elm->copy();
-            elm->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_INPUT;
-            
-            newDev->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT;
-            devices_linked_add.push_back(newDev);
+            if(elm->sinks.size() == 0)
+            {
+                // Only an input device!!
+                elm->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_INPUT;                
+            }
+            else if(elm->sources.size() == 0)
+            {
+                elm->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT;                
+            }
+            else
+            {
+                // Input & output device
+                oneDevice* newDev = elm->copy();
+
+                // Re-assign as input device
+                elm->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_INPUT;
+                
+                // Allocate new output devce
+                newDev->opMode = operationModeDevice::AYF_PIPEWIRE_OPERATION_DEVICE_OUTPUT;
+                devices_linked_add.push_back(newDev);
+            }
         }
 
         for(auto& elm: devices_linked_add)
