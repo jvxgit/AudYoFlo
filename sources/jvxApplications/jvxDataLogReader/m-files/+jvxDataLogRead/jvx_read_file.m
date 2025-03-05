@@ -58,7 +58,7 @@ if(runtime.help.value > 0)
 end
 
 if(runtime.reset.value)
-    clear jvxLogRead;
+    clear jvxDataLogReader;
 end
 
 if(nargin == 0)
@@ -89,10 +89,10 @@ disp(['Start reading out content in file ' fName '.']);
 %=======================================================
 % Specify input filename
 %=======================================================
-[result1 result2] = jvxLogRead('activate', fName);
+[result1 result2] = jvxDataLogReader('activate', fName);
 if(~result1)
     disp(result2.DESCRIPTION_STRING);
-    clear jvxLogRead;
+    clear jvxDataLogReader;
     return;
 end
 
@@ -100,23 +100,23 @@ end
 % Scan the input file content
 %=======================================================
 disp('Scanning input file..');
-[result1 result2] = jvxLogRead('prepare');
+[result1 result2] = jvxDataLogReader('prepare');
 if(~result1)
     disp(result2.DESCRIPTION_STRING);
-    jvxLogRead('deactivate');
-    clear jvxLogRead;
+    jvxDataLogReader('deactivate');
+    clear jvxDataLogReader;
     return;
 end
 
 %=======================================================
 % Determine the number of sessions
 %=======================================================
-[result1 numberSessions] = jvxLogRead('number_sessions');
+[result1 numberSessions] = jvxDataLogReader('number_sessions');
 if(~result1)
     disp(numberSessions.DESCRIPTION_STRING);
-    jvxLogRead('postprocess');
-    jvxLogRead('deactivate');
-    clear jvxLogRead;
+    jvxDataLogReader('postprocess');
+    jvxDataLogReader('deactivate');
+    clear jvxDataLogReader;
     return;
 end
 
@@ -127,9 +127,9 @@ if(runtime.printnamessessions.value)
     for(ind=1:numberSessions)
         disp(['--> Data session ' num2str(ind)]);
     end
-    jvxLogRead('postprocess');
-    jvxLogRead('deactivate');
-    clear jvxLogRead;
+    jvxDataLogReader('postprocess');
+    jvxDataLogReader('deactivate');
+    clear jvxDataLogReader;
     return;
 end
 
@@ -148,24 +148,24 @@ for(ind = 0:(double(numberSessions)-1))
     
     if(showthis)
         
-         [result1 tags] = jvxLogRead('tags_sessions', ind);
+         [result1 tags] = jvxDataLogReader('tags_sessions', ind);
         if(~result1)
             disp(numberSessions.DESCRIPTION_STRING);
-            jvxLogRead('postprocess');
-            jvxLogRead('deactivate');
-            clear jvxLogRead;
+            jvxDataLogReader('postprocess');
+            jvxDataLogReader('deactivate');
+            clear jvxDataLogReader;
             return;
         end
         
         %=======================================================
         % Obtain the number of datasets
         %=======================================================
-        [result1 numberDatasets] = jvxLogRead('number_datasets_session', ind);
+        [result1 numberDatasets] = jvxDataLogReader('number_datasets_session', ind);
         if(~result1)
             disp(numberSessions.DESCRIPTION_STRING);
-            jvxLogRead('postprocess');
-            jvxLogRead('deactivate');
-            clear jvxLogRead;
+            jvxDataLogReader('postprocess');
+            jvxDataLogReader('deactivate');
+            clear jvxDataLogReader;
             return;
         end
     
@@ -196,12 +196,12 @@ for(ind = 0:(double(numberSessions)-1))
                 %=======================================================
                 % Dataset with given id..
                 %=======================================================
-                [result1, datasetStruct] = jvxLogRead('dataset_session', ind, ind2);
+                [result1, datasetStruct] = jvxDataLogReader('dataset_session', ind, ind2);
                 if(~result1)
                     disp(datasetStruct.DESCRIPTION_STRING);
-                    jvxLogRead('postprocess');
-                    jvxLogRead('deactivate');
-                    clear jvxLogRead;
+                    jvxDataLogReader('postprocess');
+                    jvxDataLogReader('deactivate');
+                    clear jvxDataLogReader;
                     return;
                 end
                 
@@ -213,12 +213,12 @@ for(ind = 0:(double(numberSessions)-1))
                     %=======================================================
                     % Copy the complete data with one function call for speed up
                     %=======================================================
-                    [result1, dt] = jvxLogRead('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_data');
+                    [result1, dt] = jvxDataLogReader('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_data');
                     if(~result1)
                         disp(dt.DESCRIPTION_STRING);
-                        jvxLogRead('postprocess');
-                        jvxLogRead('deactivate');
-                        clear jvxLogRead;
+                        jvxDataLogReader('postprocess');
+                        jvxDataLogReader('deactivate');
+                        clear jvxDataLogReader;
                         return;
                     end
                     
@@ -227,24 +227,24 @@ for(ind = 0:(double(numberSessions)-1))
                     %=======================================================
                     % Rewind file
                     %=======================================================
-                    [result1, result2] = jvxLogRead('rewind_dataset_session', ind, ind2);
+                    [result1, result2] = jvxDataLogReader('rewind_dataset_session', ind, ind2);
                     if(~result1)
                         disp(result2.DESCRIPTION_STRING);
-                        jvxLogRead('postprocess');
-                        jvxLogRead('deactivate');
-                        clear jvxLogRead;
+                        jvxDataLogReader('postprocess');
+                        jvxDataLogReader('deactivate');
+                        clear jvxDataLogReader;
                         return;
                     end
                     
                     %=======================================================
                     % Copy the complete user ids with one function call for speed up
                     %=======================================================
-                    [result1, dt] = jvxLogRead('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_id_user');
+                    [result1, dt] = jvxDataLogReader('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_id_user');
                     if(~result1)
                         disp(dt.DESCRIPTION_STRING);
-                        jvxLogRead('postprocess');
-                        jvxLogRead('deactivate');
-                        clear jvxLogRead;
+                        jvxDataLogReader('postprocess');
+                        jvxDataLogReader('deactivate');
+                        clear jvxDataLogReader;
                         return;
                     end
                     
@@ -253,24 +253,24 @@ for(ind = 0:(double(numberSessions)-1))
                     %=======================================================
                     % Rewind file
                     %=======================================================
-                    [result1, result2] = jvxLogRead('rewind_dataset_session', ind, ind2);
+                    [result1, result2] = jvxDataLogReader('rewind_dataset_session', ind, ind2);
                     if(~result1)
                         disp(result2.DESCRIPTION_STRING);
-                        jvxLogRead('postprocess');
-                        jvxLogRead('deactivate');
-                        clear jvxLogRead;
+                        jvxDataLogReader('postprocess');
+                        jvxDataLogReader('deactivate');
+                        clear jvxDataLogReader;
                         return;
                     end
                     
                     %=======================================================
                     % Copy the complete user sub ids with one function call for speed up
                     %=======================================================
-                    [result1, dt] = jvxLogRead('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_sub_id_user');
+                    [result1, dt] = jvxDataLogReader('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_sub_id_user');
                     if(~result1)
                         disp(dt.DESCRIPTION_STRING);
-                        jvxLogRead('postprocess');
-                        jvxLogRead('deactivate');
-                        clear jvxLogRead;
+                        jvxDataLogReader('postprocess');
+                        jvxDataLogReader('deactivate');
+                        clear jvxDataLogReader;
                         return;
                     end
                     
@@ -279,24 +279,24 @@ for(ind = 0:(double(numberSessions)-1))
                     %=======================================================
                     % Rewind file
                     %=======================================================
-                    [result1, result2] = jvxLogRead('rewind_dataset_session', ind, ind2);
+                    [result1, result2] = jvxDataLogReader('rewind_dataset_session', ind, ind2);
                     if(~result1)
                         disp(result2.DESCRIPTION_STRING);
-                        jvxLogRead('postprocess');
-                        jvxLogRead('deactivate');
-                        clear jvxLogRead;
+                        jvxDataLogReader('postprocess');
+                        jvxDataLogReader('deactivate');
+                        clear jvxDataLogReader;
                         return;
                     end
                     
                     %=======================================================
                     % Copy the complete entries of timestamps with one function call for speed up
                     %=======================================================
-                    [result1, tt] = jvxLogRead('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_timing');
+                    [result1, tt] = jvxDataLogReader('next_datachunk_dataset_session_complete', ind, ind2, -1, 'copy_timing');
                     if(~result1)
                         disp(tt.DESCRIPTION_STRING);
-                        jvxLogRead('postprocess');
-                        jvxLogRead('deactivate');
-                        clear jvxLogRead;
+                        jvxDataLogReader('postprocess');
+                        jvxDataLogReader('deactivate');
+                        clear jvxDataLogReader;
                         return;
                     end
                     dataSession{cntInd2+1}.time_us = tt;
@@ -314,6 +314,6 @@ for(ind = 0:(double(numberSessions)-1))
 end
 
 %==============================================================
- jvxLogRead('postprocess');
- jvxLogRead('deactivate');
-clear jvxLogRead;
+ jvxDataLogReader('postprocess');
+ jvxDataLogReader('deactivate');
+clear jvxDataLogReader;

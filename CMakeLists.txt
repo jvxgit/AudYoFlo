@@ -1006,21 +1006,17 @@ else(JVX_COMPILE_BUILDTOOLS)
       endif()
     endif()
 
+	set(JVX_BASE_APPS 
+		${JVX_BASE_APPS} 
+		${JVX_BASE_ROOT}/sources/jvxApplications/jvxDataLogReader
+		${JVX_BASE_ROOT}/sources/jvxApplications/jvxConfigReader
+		${JVX_BASE_ROOT}/sources/jvxApplications/jvxConfigWriter)
+		
     if(JVX_USE_PART_MATLAB)
-      set(JVX_BASE_APPS ${JVX_BASE_APPS}
-	${JVX_BASE_ROOT}/sources/jvxApplications/jvxDataLogReader/cmake/matlab
-	${JVX_BASE_ROOT}/sources/jvxApplications/jvxConfigReader/cmake/matlab
-	${JVX_BASE_ROOT}/sources/jvxApplications/jvxConfigWriter/cmake/matlab
-
-	${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvx-m-host-1/cmake/matlab)
+      set(JVX_BASE_APPS ${JVX_BASE_APPS} ${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvx-m-host-1/cmake/matlab)
     endif(JVX_USE_PART_MATLAB)
     if(JVX_USE_PART_OCTAVE)
-      set(JVX_BASE_APPS ${JVX_BASE_APPS}
-	${JVX_BASE_ROOT}/sources/jvxApplications/jvxDataLogReader/cmake/octave
-	${JVX_BASE_ROOT}/sources/jvxApplications/jvxConfigReader/cmake/octave
-	${JVX_BASE_ROOT}/sources/jvxApplications/jvxConfigWriter/cmake/octave
-
-	${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvx-m-host-1/cmake/octave)
+      set(JVX_BASE_APPS ${JVX_BASE_APPS} ${JVX_SUBPRODUCT_ROOT}/sources/jvxApplications/jvx-m-host-1/cmake/octave)
     endif(JVX_USE_PART_OCTAVE)
 
     set(JVX_MEX_FOLDER_HIERARCHIE_DEFAULT "${JVX_FOLDER_HIERARCHIE_BASE}/matlab")
