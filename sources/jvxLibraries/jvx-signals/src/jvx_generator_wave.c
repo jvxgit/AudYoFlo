@@ -1333,7 +1333,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				if (instFreq_use > newHdl->runtime_parameters_async_intern.fUp)
 				{
 					// Sign change, we can reset gain
-					newHdl->runtime.gain = 1;
+					newHdl->runtime.gain = 0;
 				}
 			}
 			newHdl->runtime.oldVal = val;
