@@ -18,38 +18,36 @@ typedef struct
 		jvxSize fftSize2_p1;
 		jvxSize fftSize22_p1;
 
-		jvxFFTGlobal* glob_fft;
+		jvxFFTGlobal *glob_fft;
 
-		jvxFFT* fftTestSignal_ir;
-		jvxDataCplx* cplx_TestSignal_ir;
-		jvxData* superposedTestSignal_ir;
+		jvxFFT *fftTestSignal_ir;
+		jvxDataCplx *cplx_TestSignal_ir;
+		jvxData *superposedTestSignal_ir;
 
-		jvxFFT* fftMeasured_ir;
-		jvxDataCplx* cplx_Measured_ir;
-		jvxData* superposedRecording_ir;
+		jvxFFT *fftMeasured_ir;
+		jvxDataCplx *cplx_Measured_ir;
+		jvxData *superposedRecording_ir;
 
+		jvxFFT *fftTestSignal_xc;
+		jvxDataCplx *cplx_TestSignal_xc;
+		jvxData *superposedTestSignal_xc;
 
-		jvxFFT* fftTestSignal_xc;
-		jvxDataCplx* cplx_TestSignal_xc;
-		jvxData* superposedTestSignal_xc;
+		jvxFFT *fftMeasured_xc;
+		jvxDataCplx *cplx_Measured_xc;
+		jvxData *superposedRecording_xc;
 
-		jvxFFT* fftMeasured_xc;
-		jvxDataCplx* cplx_Measured_xc;
-		jvxData* superposedRecording_xc;
+		jvxFFT *ifftIr;
+		jvxDataCplx *cplx_Ir;
 
-
-		jvxFFT* ifftIr;
-		jvxDataCplx* cplx_Ir;
-
-		jvxFFT* ifftCCorr;
-		jvxDataCplx* cplx_CCorr;
+		jvxFFT *ifftCCorr;
+		jvxDataCplx *cplx_CCorr;
 
 	} runtime;
 
 } jvx_measure_ir_private;
 
 jvxDspBaseErrorType
-jvx_measure_ir_initConfig(jvxMeasureIr* handle)
+jvx_measure_ir_initConfig(jvxMeasureIr *handle)
 {
 	handle->prv = NULL;
 
@@ -64,30 +62,30 @@ jvx_measure_ir_initConfig(jvxMeasureIr* handle)
 }
 
 jvxDspBaseErrorType
-jvx_measure_ir_prepare(jvxMeasureIr* handle)
+jvx_measure_ir_prepare(jvxMeasureIr *handle)
 {
 	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
-	jvx_measure_ir_private* newHdl = NULL;
+	jvx_measure_ir_private *newHdl = NULL;
 	jvxSize dummy;
 	JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(newHdl, jvx_measure_ir_private);
 	memset(newHdl, 0, sizeof(jvx_measure_ir_private));
 
 	memcpy(&newHdl->prm_init, &handle->prm_init, sizeof(jvxMeasureIr_init));
 	newHdl->runtime.fftSize = handle->prm_init.szTestsignal_onerep;
-	if(newHdl->runtime.fftSize % 2)
+	if (newHdl->runtime.fftSize % 2)
 	{
-		newHdl->runtime.fftSize ++;
+		newHdl->runtime.fftSize++;
 	}
 
-	newHdl->runtime.fftSize_log2 = (jvxSize) (ceil(log((jvxData)newHdl->runtime.fftSize*2)/log(2.0)));
-	newHdl->runtime.fftSize2_p1 = newHdl->runtime.fftSize/2 + 1;
+	newHdl->runtime.fftSize_log2 = (jvxSize)(ceil(log((jvxData)newHdl->runtime.fftSize * 2) / log(2.0)));
+	newHdl->runtime.fftSize2_p1 = newHdl->runtime.fftSize / 2 + 1;
 	newHdl->runtime.fftSize22_p1 = newHdl->runtime.fftSize + 1;
 	newHdl->prm_sync.offsetXCorr = 0;
 
-	res = jvx_create_fft_ifft_global(&newHdl->runtime.glob_fft, (jvxFFTSize)(newHdl->runtime.fftSize_log2-4));
+	res = jvx_create_fft_ifft_global(&newHdl->runtime.glob_fft, (jvxFFTSize)(newHdl->runtime.fftSize_log2 - 4));
 	assert(res == JVX_DSP_NO_ERROR);
 
-	newHdl->prm_sync.lRecording = newHdl->prm_init.szTestsignal_onerep *newHdl->prm_init.numReps;
+	newHdl->prm_sync.lRecording = newHdl->prm_init.szTestsignal_onerep * newHdl->prm_init.numReps;
 
 	JVX_DSP_SAFE_ALLOCATE_FIELD_Z(newHdl->prm_sync.fldBufferMeasureSignal, jvxData, newHdl->prm_sync.lRecording);
 	memset(newHdl->prm_sync.fldBufferMeasureSignal, 0, sizeof(jvxData) * newHdl->prm_sync.lRecording);
@@ -104,37 +102,37 @@ jvx_measure_ir_prepare(jvxMeasureIr* handle)
 	newHdl->runtime.superposedRecording_ir = NULL;
 	newHdl->runtime.cplx_Measured_ir = NULL;
 
-	if(newHdl->prm_init.computeIr)
+	if (newHdl->prm_init.computeIr)
 	{
 		res = jvx_create_fft_real_2_complex(&newHdl->runtime.fftTestSignal_ir,
-			newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
-			&newHdl->runtime.superposedTestSignal_ir,
-			&newHdl->runtime.cplx_TestSignal_ir,
-			&dummy,
-			JVX_FFT_IFFT_EFFICIENT,
-			NULL, NULL,
-			newHdl->runtime.fftSize);
+											newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
+											&newHdl->runtime.superposedTestSignal_ir,
+											&newHdl->runtime.cplx_TestSignal_ir,
+											&dummy,
+											JVX_FFT_IFFT_EFFICIENT,
+											NULL, NULL,
+											newHdl->runtime.fftSize);
 		assert(res == JVX_DSP_NO_ERROR);
 
 		res = jvx_create_fft_real_2_complex(&newHdl->runtime.fftMeasured_ir,
-			newHdl->runtime.glob_fft,
-			JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
-			&newHdl->runtime.superposedRecording_ir,
-			&newHdl->runtime.cplx_Measured_ir,
-			&dummy,
-			JVX_FFT_IFFT_EFFICIENT,
-			NULL, NULL,
-			newHdl->runtime.fftSize);
+											newHdl->runtime.glob_fft,
+											JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
+											&newHdl->runtime.superposedRecording_ir,
+											&newHdl->runtime.cplx_Measured_ir,
+											&dummy,
+											JVX_FFT_IFFT_EFFICIENT,
+											NULL, NULL,
+											newHdl->runtime.fftSize);
 		assert(res == JVX_DSP_NO_ERROR);
 
 		res = jvx_create_ifft_complex_2_real(&newHdl->runtime.ifftIr,
-			newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
-			&newHdl->runtime.cplx_Ir,
-			&newHdl->prm_sync.fldIResponse,
-			&newHdl->prm_sync.lIResponse,
-			JVX_FFT_IFFT_EFFICIENT,
-			NULL, NULL,
-			newHdl->runtime.fftSize);
+											 newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
+											 &newHdl->runtime.cplx_Ir,
+											 &newHdl->prm_sync.fldIResponse,
+											 &newHdl->prm_sync.lIResponse,
+											 JVX_FFT_IFFT_EFFICIENT,
+											 NULL, NULL,
+											 newHdl->runtime.fftSize);
 		assert(res == JVX_DSP_NO_ERROR);
 	}
 
@@ -151,36 +149,36 @@ jvx_measure_ir_prepare(jvxMeasureIr* handle)
 	newHdl->runtime.superposedRecording_xc = NULL;
 	newHdl->runtime.cplx_Measured_xc = NULL;
 
-	if(newHdl->prm_init.computeXc)
+	if (newHdl->prm_init.computeXc)
 	{
 		res = jvx_create_fft_real_2_complex(&newHdl->runtime.fftTestSignal_xc,
-			newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
-			&newHdl->runtime.superposedTestSignal_xc,
-			&newHdl->runtime.cplx_TestSignal_xc,
-			&dummy,
-			JVX_FFT_IFFT_EFFICIENT,
-			NULL, NULL,
-			newHdl->runtime.fftSize*2);
+											newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
+											&newHdl->runtime.superposedTestSignal_xc,
+											&newHdl->runtime.cplx_TestSignal_xc,
+											&dummy,
+											JVX_FFT_IFFT_EFFICIENT,
+											NULL, NULL,
+											newHdl->runtime.fftSize * 2);
 		assert(res == JVX_DSP_NO_ERROR);
 
 		res = jvx_create_fft_real_2_complex(&newHdl->runtime.fftMeasured_xc,
-			newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
-			&newHdl->runtime.superposedRecording_xc,
-			&newHdl->runtime.cplx_Measured_xc,
-			&dummy,
-			JVX_FFT_IFFT_EFFICIENT,
-			NULL, NULL,
-			newHdl->runtime.fftSize*2);
+											newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
+											&newHdl->runtime.superposedRecording_xc,
+											&newHdl->runtime.cplx_Measured_xc,
+											&dummy,
+											JVX_FFT_IFFT_EFFICIENT,
+											NULL, NULL,
+											newHdl->runtime.fftSize * 2);
 		assert(res == JVX_DSP_NO_ERROR);
 
 		res = jvx_create_ifft_complex_2_real(&newHdl->runtime.ifftCCorr,
-			newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
-			&newHdl->runtime.cplx_CCorr,
-			&newHdl->prm_sync.fldXCorr,
-			&newHdl->prm_sync.lXCorr,
-			JVX_FFT_IFFT_EFFICIENT,
-			NULL, NULL,
-			newHdl->runtime.fftSize*2);
+											 newHdl->runtime.glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
+											 &newHdl->runtime.cplx_CCorr,
+											 &newHdl->prm_sync.fldXCorr,
+											 &newHdl->prm_sync.lXCorr,
+											 JVX_FFT_IFFT_EFFICIENT,
+											 NULL, NULL,
+											 newHdl->runtime.fftSize * 2);
 		assert(res == JVX_DSP_NO_ERROR);
 	}
 	handle->prv = newHdl;
@@ -188,61 +186,62 @@ jvx_measure_ir_prepare(jvxMeasureIr* handle)
 }
 
 jvxDspBaseErrorType
-jvx_measure_ir_update(jvxMeasureIr* handle, jvxUInt16 whatToUpdate, jvxCBool do_set)
+jvx_measure_ir_update(jvxMeasureIr *handle, jvxUInt16 whatToUpdate, jvxCBool do_set)
 {
 	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
-	jvx_measure_ir_private* locHdl = NULL;
-	locHdl = (jvx_measure_ir_private*)handle->prv;
-	switch(whatToUpdate)
+	jvx_measure_ir_private *locHdl = NULL;
+	locHdl = (jvx_measure_ir_private *)handle->prv;
+	switch (whatToUpdate)
 	{
-		case JVX_DSP_UPDATE_SYNC:
-			if(do_set)
-			{
-				locHdl->prm_sync.ext = handle->prm_sync.ext;
-			}
-			else
-			{
-				handle->prm_sync = locHdl->prm_sync;
-			}
-			break;
-		default:
-			res = JVX_DSP_ERROR_UNSUPPORTED;
+	case JVX_DSP_UPDATE_SYNC:
+		if (do_set)
+		{
+			locHdl->prm_sync.ext = handle->prm_sync.ext;
+		}
+		else
+		{
+			handle->prm_sync = locHdl->prm_sync;
+		}
+		break;
+	default:
+		res = JVX_DSP_ERROR_UNSUPPORTED;
 	}
-	return(res);
+	return (res);
 }
 
 jvxDspBaseErrorType
-jvx_measure_ir_process(jvxMeasureIr* handle)
+jvx_measure_ir_process(jvxMeasureIr *handle)
 {
-	jvxSize i,ii, startCnt = 0;
+	jvxSize i, ii, startCnt = 0;
 	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
-	jvx_measure_ir_private* locHdl = NULL;
+	jvx_measure_ir_private *locHdl = NULL;
 	jvxData absVal_num = 0;
 	jvxData angle_num = 0;
 	jvxData absVal_den = 0;
 	jvxData angle_den = 0;
 	jvxData absValResult = 0;
-	jvxData angleResult  = 0;
+	jvxData angleResult = 0;
 	jvxData tmp = 0;
 
-	locHdl = (jvx_measure_ir_private*)handle->prv;
-	startCnt = JVX_MIN(locHdl->prm_init.skipNumber, locHdl->prm_init.numReps-1); ;
+	locHdl = (jvx_measure_ir_private *)handle->prv;
+	startCnt = JVX_MIN(locHdl->prm_init.skipNumber, locHdl->prm_init.numReps - 1);
+	;
 
 	// Prepare the folded signal
-	if(locHdl->prm_init.computeIr)
+	if (locHdl->prm_init.computeIr)
 	{
-		for(i = startCnt; i < locHdl->prm_init.szTestsignal_onerep; i++)
+		for (i = startCnt; i < locHdl->prm_init.szTestsignal_onerep; i++)
 		{
 			locHdl->runtime.superposedRecording_ir[i] = 0.0;
 			locHdl->runtime.superposedTestSignal_ir[i] = 0.0;
 
-			for(ii = 0; ii < locHdl->prm_init.numReps; ii++)
+			for (ii = 0; ii < locHdl->prm_init.numReps; ii++)
 			{
 				locHdl->runtime.superposedRecording_ir[i] += locHdl->prm_sync.fldBufferMeasureSignal[i + ii * locHdl->prm_init.szTestsignal_onerep];
 				locHdl->runtime.superposedTestSignal_ir[i] += locHdl->prm_sync.fldBufferTestSignal[i + ii * locHdl->prm_init.szTestsignal_onerep];
 			}
-			locHdl->runtime.superposedRecording_ir[i] /= (jvxData) (locHdl->prm_init.numReps-startCnt);
-			locHdl->runtime.superposedTestSignal_ir[i] /= (jvxData) (locHdl->prm_init.numReps-startCnt);
+			locHdl->runtime.superposedRecording_ir[i] /= (jvxData)(locHdl->prm_init.numReps - startCnt);
+			locHdl->runtime.superposedTestSignal_ir[i] /= (jvxData)(locHdl->prm_init.numReps - startCnt);
 		}
 
 		if (locHdl->prm_init.storeSuperPosed)
@@ -252,12 +251,12 @@ jvx_measure_ir_process(jvxMeasureIr* handle)
 			memcpy(locHdl->prm_sync.fldSPosedTest, locHdl->runtime.superposedTestSignal_ir, sizeof(jvxData) * locHdl->prm_sync.lIResponse);
 		}
 
-		res = jvx_execute_fft(locHdl->runtime.fftTestSignal_ir);
+		res = jvx_execute_fft(locHdl->runtime.fftTestSignal_ir); // fft(test)
 		assert(res == JVX_DSP_NO_ERROR);
-		res = jvx_execute_fft(locHdl->runtime.fftMeasured_ir);
+		res = jvx_execute_fft(locHdl->runtime.fftMeasured_ir); // fft(out)
 		assert(res == JVX_DSP_NO_ERROR);
 
-		for(ii = 0; ii < locHdl->runtime.fftSize2_p1; ii++)
+		for (ii = 0; ii < locHdl->runtime.fftSize2_p1; ii++)
 		{
 			absVal_num = 0;
 			angle_num = 0;
@@ -267,8 +266,10 @@ jvx_measure_ir_process(jvxMeasureIr* handle)
 			jvx_complex_cart_2_polar(locHdl->runtime.cplx_Measured_ir[ii].re, locHdl->runtime.cplx_Measured_ir[ii].im, &absVal_num, &angle_num);
 			jvx_complex_cart_2_polar(locHdl->runtime.cplx_TestSignal_ir[ii].re, locHdl->runtime.cplx_TestSignal_ir[ii].im, &absVal_den, &angle_den);
 
-			absValResult = absVal_num/absVal_den;
-			angleResult = angle_num-angle_den;
+			// regularize result due to limit in sweep div 0 issue
+			// absValResult = absVal_num / (absVal_den + 1e-6);
+			absValResult = absVal_num / (absVal_den);
+			angleResult = angle_num - angle_den;
 
 			jvx_complex_polar_2_cart(absValResult, angleResult, &locHdl->runtime.cplx_Ir[ii].re, &locHdl->runtime.cplx_Ir[ii].im);
 		}
@@ -281,23 +282,23 @@ jvx_measure_ir_process(jvxMeasureIr* handle)
 			for (i = 0; i < locHdl->prm_sync.ext.freq_gain_len; i++)
 			{
 				if (locHdl->prm_sync.ext.gain_buf[i] != gain)
-				{		
+				{
 					jvxSize binIdxEnd = 0;
 					if (locHdl->prm_sync.ext.gain_buf[i] == 0)
 					{
 						freq = locHdl->prm_sync.ext.freq_buf[i];
 						binIdxEnd = 1;
 					}
-					binIdxEnd += JVX_DATA2SIZE((freq * locHdl->runtime.fftSize)/ (jvxData)locHdl->prm_sync.ext.sRate);
+					binIdxEnd += JVX_DATA2SIZE((freq * locHdl->runtime.fftSize) / (jvxData)locHdl->prm_sync.ext.sRate);
 					assert(binIdxEnd <= locHdl->runtime.fftSize2_p1);
-					//binIdxEnd = JVX_MIN(binIdxEnd, locHdl->runtime.fftSize2_p1);
+					// binIdxEnd = JVX_MIN(binIdxEnd, locHdl->runtime.fftSize2_p1);
 					for (ii = binIdxStart; ii < binIdxEnd; ii++)
 					{
 						locHdl->runtime.cplx_Ir[ii].re *= gain;
 						locHdl->runtime.cplx_Ir[ii].im *= gain;
 					}
 					binIdxStart = binIdxEnd;
-					gain = locHdl->prm_sync.ext.gain_buf[i];					
+					gain = locHdl->prm_sync.ext.gain_buf[i];
 				}
 				freq = locHdl->prm_sync.ext.freq_buf[i];
 			}
@@ -311,28 +312,28 @@ jvx_measure_ir_process(jvxMeasureIr* handle)
 		res = jvx_execute_ifft(locHdl->runtime.ifftIr);
 		assert(res == JVX_DSP_NO_ERROR);
 
-		tmp = 1.0/(jvxData)locHdl->prm_sync.lIResponse;
+		tmp = 1.0 / (jvxData)locHdl->prm_sync.lIResponse;
 
-		for(i = 0; i < locHdl->prm_sync.lIResponse; i++)
+		for (i = 0; i < locHdl->prm_sync.lIResponse; i++)
 		{
 			locHdl->prm_sync.fldIResponse[i] *= tmp;
 		}
 	}
 
-	if(locHdl->prm_init.computeXc)
+	if (locHdl->prm_init.computeXc)
 	{
-		for(i = startCnt; i < locHdl->prm_init.szTestsignal_onerep; i++)
+		for (i = startCnt; i < locHdl->prm_init.szTestsignal_onerep; i++)
 		{
 			locHdl->runtime.superposedRecording_xc[i] = 0.0;
 			locHdl->runtime.superposedTestSignal_xc[i] = 0.0;
 
-			for(ii = 0; ii < locHdl->prm_init.numReps; ii++)
+			for (ii = 0; ii < locHdl->prm_init.numReps; ii++)
 			{
 				locHdl->runtime.superposedRecording_xc[i] += locHdl->prm_sync.fldBufferMeasureSignal[i + ii * locHdl->prm_init.szTestsignal_onerep];
 				locHdl->runtime.superposedTestSignal_xc[i] += locHdl->prm_sync.fldBufferTestSignal[i + ii * locHdl->prm_init.szTestsignal_onerep];
 			}
-			locHdl->runtime.superposedRecording_xc[i] /= (jvxData) (locHdl->prm_init.numReps-startCnt);
-			locHdl->runtime.superposedTestSignal_xc[i] /= (jvxData) (locHdl->prm_init.numReps-startCnt);
+			locHdl->runtime.superposedRecording_xc[i] /= (jvxData)(locHdl->prm_init.numReps - startCnt);
+			locHdl->runtime.superposedTestSignal_xc[i] /= (jvxData)(locHdl->prm_init.numReps - startCnt);
 		}
 
 		res = jvx_execute_fft(locHdl->runtime.fftTestSignal_xc);
@@ -340,10 +341,10 @@ jvx_measure_ir_process(jvxMeasureIr* handle)
 		res = jvx_execute_fft(locHdl->runtime.fftMeasured_xc);
 		assert(res == JVX_DSP_NO_ERROR);
 
-		for(ii = 0; ii < locHdl->runtime.fftSize22_p1; ii++)
+		for (ii = 0; ii < locHdl->runtime.fftSize22_p1; ii++)
 		{
 
-			locHdl->runtime.cplx_CCorr[ii].re = locHdl->runtime.cplx_Measured_xc[ii].re* locHdl->runtime.cplx_TestSignal_xc[ii].re  + locHdl->runtime.cplx_Measured_xc[ii].im * locHdl->runtime.cplx_TestSignal_xc[ii].im;
+			locHdl->runtime.cplx_CCorr[ii].re = locHdl->runtime.cplx_Measured_xc[ii].re * locHdl->runtime.cplx_TestSignal_xc[ii].re + locHdl->runtime.cplx_Measured_xc[ii].im * locHdl->runtime.cplx_TestSignal_xc[ii].im;
 			locHdl->runtime.cplx_CCorr[ii].im = locHdl->runtime.cplx_TestSignal_xc[ii].re * locHdl->runtime.cplx_Measured_xc[ii].im - locHdl->runtime.cplx_TestSignal_xc[ii].im * locHdl->runtime.cplx_Measured_xc[ii].re;
 		}
 
@@ -355,14 +356,14 @@ jvx_measure_ir_process(jvxMeasureIr* handle)
 }
 
 jvxDspBaseErrorType
-jvx_measure_ir_postprocess(jvxMeasureIr* handle)
+jvx_measure_ir_postprocess(jvxMeasureIr *handle)
 {
 	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
-	jvx_measure_ir_private* newHdl = NULL;
+	jvx_measure_ir_private *newHdl = NULL;
 
-	newHdl = (jvx_measure_ir_private*) handle->prv;
+	newHdl = (jvx_measure_ir_private *)handle->prv;
 
-	if(newHdl->prm_init.computeIr)
+	if (newHdl->prm_init.computeIr)
 	{
 		res = jvx_destroy_fft(newHdl->runtime.fftTestSignal_ir);
 		assert(res == JVX_DSP_NO_ERROR);
@@ -380,7 +381,7 @@ jvx_measure_ir_postprocess(jvxMeasureIr* handle)
 		JVX_DSP_SAFE_DELETE_FIELD(newHdl->prm_sync.fldSPosedTest);
 	}
 
-	if(newHdl->prm_init.computeXc)
+	if (newHdl->prm_init.computeXc)
 	{
 
 		res = jvx_destroy_fft(newHdl->runtime.fftTestSignal_xc);
@@ -392,7 +393,6 @@ jvx_measure_ir_postprocess(jvxMeasureIr* handle)
 		res = jvx_destroy_ifft(newHdl->runtime.ifftCCorr);
 		assert(res == JVX_DSP_NO_ERROR);
 	}
-
 
 	JVX_DSP_SAFE_DELETE_FIELD(newHdl->prm_sync.fldBufferMeasureSignal);
 	JVX_DSP_SAFE_DELETE_FIELD(newHdl->prm_sync.fldBufferTestSignal);
@@ -407,7 +407,6 @@ jvx_measure_ir_postprocess(jvxMeasureIr* handle)
 	handle->prv = NULL;
 	return JVX_DSP_NO_ERROR;
 }
-
 
 #if 0
 RTP_API_RETURN_TYPE
