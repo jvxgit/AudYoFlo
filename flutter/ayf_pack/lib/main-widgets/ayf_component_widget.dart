@@ -32,6 +32,10 @@ class _AudYoFloComponentWidgetState extends State<AudYoFloComponentWidget> {
     List<String> entriesProcs =
         theBeCache.availProcessDescriptions(lst: ['None']);
     //dropdownValueProcess = 'None';
+    if(theDbgModel.idSelectProc > entriesProcs.length)
+    {
+      theDbgModel.idSelectProc = -1;
+    }
     dropdownValueProcess = entriesProcs.elementAt(theDbgModel.idSelectProc + 1);
 
     return Selector<AudYoFloBackendCache, int>(
