@@ -983,7 +983,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 		{
 			// At first try to read config file from user path
 			cfg_filename_in_use = jvx_makeFilePath(_command_line_parameters.userPath, _command_line_parameters.configFilename);
-			callConf.configModeFlags = JVX_CONFIG_MODE_FULL;
+			callConf.configModeFlags = JVX_CONFIG_MODE_FULL;			
 			resL = configureFromFile(&callConf, cfg_filename_in_use, _command_line_parameters.configDirectories, context);
 			if (resL != JVX_NO_ERROR)
 			{
@@ -993,7 +993,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::boot_prepare(jvxApiString* errorMessage, jvxHand
 			}		
 
 			if (resL == JVX_NO_ERROR)
-			{
+			{				
 				configLoadSuccess = true;
 			}
 		}		
@@ -1106,6 +1106,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::shutdown_postprocess(jvxApiString* errorMessage,
 				if (cfgProc)
 				{
 					cfgProc->release_section_origin_list(lstSectionsFile);
+					lstSectionsFile = nullptr;
 				}
 				this->involvedComponents.theTools.hTools->return_reference_tool(tpCfg, obj);
 			}

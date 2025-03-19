@@ -17,7 +17,7 @@ uMainWindow::saveConfigFile()
 	{
 		callConf.configModeFlags = JVX_CONFIG_MODE_FULL;
 		callConf.accessFlags = JVX_ACCESS_ROLE_DEFAULT;
-		res = configureToFile(&callConf, cfg_filename_in_use);
+		res = configureToFile(&callConf, cfg_filename_in_use, forceFlatGlobal);
 	}
 }
 
@@ -33,7 +33,10 @@ uMainWindow::saveConfigFileAs()
 		callConf.accessFlags = JVX_ACCESS_ROLE_DEFAULT;
 		std::string cfg_filename_in_use_old = cfg_filename_in_use;
 		cfg_filename_in_use = str.toLatin1().constData();
-		res = configureToFile(&callConf, cfg_filename_in_use, cfg_filename_in_use_old);
+		
+		// If we change the outputfilename, it ill always be a flat export!
+		forceFlatGlobal = true;
+		res = configureToFile(&callConf, cfg_filename_in_use, forceFlatGlobal, cfg_filename_in_use_old);
 	}
 }
 
@@ -229,6 +232,10 @@ uMainWindow::reopen_config()
 	qApp->processEvents();
 
 	res = boot_prepare(&errMess, spl);
+	
+	// New config file - we may export config files non-flat until we select another output file!!
+	forceFlatGlobal = false;
+
 	if (res != JVX_NO_ERROR)
 	{
 		this->fatalStop("Fatal Error", errMess.c_str());

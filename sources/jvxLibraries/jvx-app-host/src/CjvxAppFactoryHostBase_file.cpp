@@ -277,7 +277,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureComplete()
 }
 
 jvxErrorType
-JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* callConf, const std::string& fName, const std::string& fNameOld)
+JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* callConf, const std::string& fName, jvxBool forceFlat, const std::string& fNameOld)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	std::string content;
@@ -307,6 +307,8 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 	{
 		lstSectionsFile->start_collect_file_contents();
 	}
+
+	auto lstSectionsFile_use = lstSectionsFile;
 
 	this->involvedComponents.theTools.hTools->reference_tool(tpCfg, &obj, 0, NULL);
 	if (obj)
@@ -378,7 +380,11 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 
 					get_configuration_specific(callConf, cfgProc, datTmp1);
 
-					res = cfgProc->printConfiguration(datTmp1, &fldStr, JVX_QT_HOST_1_PRINT_COMPACT_FORM, fName.c_str(), lstSectionsFile);
+					if (forceFlat)
+					{
+						lstSectionsFile_use = nullptr;
+					}
+					res = cfgProc->printConfiguration(datTmp1, &fldStr, JVX_QT_HOST_1_PRINT_COMPACT_FORM, fName.c_str(), lstSectionsFile_use);					
 					if (res == JVX_NO_ERROR)
 					{
 						content = fldStr.std_str();
@@ -387,7 +393,10 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 				}
 			} // if (callConf->configModeFlags & JVX_CONFIG_MODE_OVERLAY) -- else
 
-			std::cout << __FUNCTION__ << " Successfully wrote config file <" << fName << ">." << std::endl;
+			if (forceFlat)
+			{
+				std::cout << __FUNCTION__ << " Successfully generated config content in <flat> mode." << std::endl;
+			}			
 		}
 		else
 		{
@@ -406,22 +415,24 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 
 	if (res == JVX_NO_ERROR)
 	{
-		if (lstSectionsFile)
+		if (lstSectionsFile_use)
 		{
 			jvxSize num = 0;
-			lstSectionsFile->number_collected_file_contents(&num);
+			lstSectionsFile_use->number_collected_file_contents(&num);
 			for (int i = 0; i < num; i++)
 			{
 				jvxApiString fNameOne;
 				jvxApiString contentOne;
 				std::string allContents;
 				jvxSize numSections = 0;
-				lstSectionsFile->number_collected_file_idx_number_content(i, &numSections);
+				lstSectionsFile_use->number_collected_file_idx_number_content(i, &numSections);
 				for (int j = 0; j < numSections; j++)
 				{
-					lstSectionsFile->get_collected_file_idx_content_idx(i, &fNameOne, &contentOne, j);
+					lstSectionsFile_use->get_collected_file_idx_content_idx(i, &fNameOne, &contentOne, j);
 					allContents += contentOne.std_str();
 				}
+
+				std::cout << __FUNCTION__ << " Output config content to file <" << fNameOne.std_str() << ">." << std::endl;
 				res = jvx_writeContentToFile(fNameOne.std_str(), allContents);
 				if (res != JVX_NO_ERROR)
 				{
@@ -431,6 +442,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 		}
 		else
 		{
+			std::cout << __FUNCTION__ << " Output config content to file <" << fName << ">." << std::endl;
 			res = jvx_writeContentToFile(fName, content);
 		}
 	}

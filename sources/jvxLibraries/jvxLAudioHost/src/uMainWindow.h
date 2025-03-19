@@ -121,6 +121,8 @@ private:
 	jvxCallbackPrivate theCallback_exchg_property;
 	JVX_PROPERTIES_CALLBACK_DECLARE(cb_xchg_property);
 
+	jvxBool forceFlatGlobal = false;
+
 public:
 	uMainWindow();
 
