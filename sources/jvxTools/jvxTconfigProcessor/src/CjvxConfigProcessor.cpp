@@ -1248,3 +1248,22 @@ CjvxConfigProcessor::garbage_clear_all()
 	garbage.clear();
 }
 
+jvxErrorType
+CjvxConfigProcessor::replaceFileOriginSections(const std::string& fNameNew, const std::string& fNameOld)
+{
+	if (!fNameNew.empty() && !fNameOld.empty())
+	{
+		for (auto& elm : allocated_SectionOrigins)
+		{
+			for (auto& elmelm : elm.second->sectionList)
+			{
+				if (elmelm.second.origin == fNameOld)
+				{
+					elmelm.second.origin = fNameNew;
+				}
+			}
+		}
+	}
+	return(JVX_NO_ERROR);
+}
+

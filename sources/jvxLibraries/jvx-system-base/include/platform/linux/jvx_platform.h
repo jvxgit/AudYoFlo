@@ -412,6 +412,8 @@ JVX_FINDNEXTFILE(DIR*& dirH, JVX_DIR_FIND_DATA& fData, const char* fNameExt)
 
 std::string JVX_GET_CURRENT_MODULE_PATH(void* ptrIdentify);
 std::string JVX_GET_USER_DESKTOP_PATH();
+std::string JVX_FILENAME_FROM_FILE(FILE* hFile) ;
+
 JVX_STATIC_INLINE std::string
 JVX_DISPLAY_LAST_ERROR_LOAD(std::string fName)
 {

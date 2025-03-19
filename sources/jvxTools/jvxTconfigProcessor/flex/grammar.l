@@ -213,7 +213,7 @@ extern CjvxConfigProcessor* procStore;
 	   newElm.theBuf = YY_CURRENT_BUFFER;
 	   newElm.theFptr = currentFileHandle;
 	   newElm.lineNumber = lineNumber;
-	   newElm.currentFilename = currentFilename;
+	   newElm.currentFilename = currentFilename;	   
 	   newElm.ifdefsStack = ifdefsStack;
 
 	   fptrlist.push_front(newElm);
@@ -223,7 +223,12 @@ extern CjvxConfigProcessor* procStore;
 	   buf = yy_create_buffer(NULL, YY_BUF_SIZE);
 	   yypush_buffer_state(buf);
 	   lineNumber = 1;
-	   currentFilename = filename;
+	   currentFilename = JVX_FILENAME_FROM_FILE(currentFileHandle) ;
+	   if(currentFilename.empty())
+	   {
+		   currentFilename = filename;
+	   }
+	   
 	   ifdefsStack.clear();
 		return(1);
 	}

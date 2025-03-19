@@ -689,14 +689,19 @@ treeListElement::outputToString(const std::string& path, const std::string& orig
 	bufOutFwd = &bufOutIn;
 	startedSubSectionToFileHere = false;
 	pathFwd = jvx_makePathExpr(path, this->nameElement);
+	std::cout << "Path = " << pathFwd << " -- " << origin << " ## " << decomposeIntoFiles << "##" << std::endl;
 	originFwd = origin;
 	if (decomposeIntoFiles)
 	{
 		auto elm = decomposeIntoFiles->sectionList.find(pathFwd);
 		if (elm != decomposeIntoFiles->sectionList.end())
 		{
-			// std::cout << "Path = " << pathFwd << " -- " << origin << std::endl;
+			std::cout << "Check in list with <" << pathFwd << "> -- " << origin << std::endl;
 			originFwd = elm->second.origin;
+		}
+		else
+		{
+			std::cout << "Entry <" << pathFwd << " not found -- " << origin << std::endl;
 		}
 	}
 
@@ -1256,6 +1261,10 @@ treeListElement::outputToString(const std::string& path, const std::string& orig
 
 	if (startedSubSectionToFileHere)
 	{
+		char str[JVX_MAXSTRING] = { 0 };
+		JVX_GETCURRENTDIRECTORY(str, JVX_MAXSTRING);
+		originFwd = jvx_absoluteToRelativePath(originFwd, true, str);
+
 		auto elm = decomposeIntoFiles->collections.find(originFwd);
 		if (elm != decomposeIntoFiles->collections.end())
 		{

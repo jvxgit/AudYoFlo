@@ -175,6 +175,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION release_section_origin_list(IjvxSectionOriginList* lst) override;
 
+	jvxErrorType replaceFileOriginSections(const std::string& fName, const std::string& fNameOld) override;
 
 	void addIncludedFile(std::string fName);
 

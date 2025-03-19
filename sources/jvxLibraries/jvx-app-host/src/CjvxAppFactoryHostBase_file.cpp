@@ -277,7 +277,7 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureComplete()
 }
 
 jvxErrorType
-JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* callConf, const std::string& fName)
+JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* callConf, const std::string& fName, const std::string& fNameOld)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	std::string content;
@@ -349,6 +349,10 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 				this->involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION, (jvxHandle**)&cfg);
 				if (cfg)
 				{
+					if (fNameOld != fName)
+					{
+						cfgProc->replaceFileOriginSections(fName, fNameOld);
+					}
 					datTmp1 = NULL;
 					cfgProc->createEmptySection(&datTmp1, JVX_QT_HOST_1_SECTION_MAIN);
 

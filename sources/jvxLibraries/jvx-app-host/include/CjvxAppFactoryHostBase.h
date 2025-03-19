@@ -146,7 +146,7 @@ protected:
 	jvxErrorType configureComplete();
 
 	jvxErrorType configureToFile(jvxCallManagerConfiguration* callConf, 
-		const std::string& fName);
+		const std::string& fName, const std::string& fName_old = "");
 	virtual void resetReferences();
 };
 

@@ -1067,7 +1067,7 @@ template<typename T1, typename T2> static void put_configuration_component_node(
 							res = this_pointer->select_component(tp1, selectme);
 							if (res != JVX_NO_ERROR)
 							{
-								REPORT_ERROR(((std::string)"Unexpected error when selecting component " + cType1 + ".").c_str(), JVX_REPORT_PRIORITY_WARNING);
+								REPORT_ERROR(((std::string)"Error <" + jvxErrorType_descr(res) + "> when selecting component " + cType1 + ".").c_str(), JVX_REPORT_PRIORITY_WARNING);
 								wantToContinue = false;
 							}
 							else
@@ -1156,7 +1156,7 @@ template<typename T1, typename T2> static void put_configuration_component_node(
 						res = this_pointer->activate_selected_component(tp1);
 						if (res != JVX_NO_ERROR)
 						{
-							REPORT_ERROR(((std::string)"Unexpected error when activating component " + cType1 + ".").c_str(), JVX_REPORT_PRIORITY_WARNING);
+							REPORT_ERROR(((std::string)"Error <" + jvxErrorType_descr(res) + "> when activating component " + cType1 + ".").c_str(), JVX_REPORT_PRIORITY_WARNING);
 							wantToContinue = false;
 						}
 						else

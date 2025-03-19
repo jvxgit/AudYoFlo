@@ -57,3 +57,20 @@ JVX_GET_USER_DESKTOP_PATH()
 	return oFolder_user;
 }
 
+std::string JVX_FILENAME_FROM_FILE(FILE* hFile) 
+{
+  int fd;
+  char fd_path[255];
+  std::string retVal;
+  ssize_t n;
+
+  fd = fileno(f);
+  sprintf(fd_path, "/proc/self/fd/%d", fd);
+  n = readlink(fd_path, filename, 255);
+  if (n < 0)
+      return retVal;
+  
+  filename[n] = '\0';
+  retVal = filename;
+  return retVal;
+}
