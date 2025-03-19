@@ -74,6 +74,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
+	virtual void on_test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
+	
 	jvxErrorType reportPreferredParameters(jvxPropertyCategoryType cat, jvxSize propId);
 };
 

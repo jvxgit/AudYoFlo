@@ -513,12 +513,21 @@ jvxErrorType
 CjvxAudioNodeBase::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, static_cast<IjvxObject*>(this));
+
+	on_test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
 	_common_set_ocon.theData_out.con_params.number_channels = CjvxAudioNode_genpcg::properties_parameters.numberoutputchannels.value;
 	_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioNode_genpcg::properties_parameters.buffersize.value;
 	_common_set_ocon.theData_out.con_params.rate = CjvxAudioNode_genpcg::properties_parameters.samplerate.value;
 	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxAudioNode_genpcg::properties_parameters.format.value;
 
 	return _test_connect_ocon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+}
+
+void
+CjvxAudioNodeBase::on_test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+
 }
 
 jvxErrorType
