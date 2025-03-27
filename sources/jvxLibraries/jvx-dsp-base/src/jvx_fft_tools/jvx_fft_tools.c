@@ -1198,7 +1198,7 @@ jvx_fft_tools_init_framework_ifft(jvxIFFTfwk** hdlOut,
 		// Option I: framesize valid values, rest is 0
 		jvx_compute_window(handle->ram.window, handle->common.common.framesize,
 			handle->common.common.framesize, 0,
-			JVX_WINDOW_HALF_HANN, &handle->common.normalization);
+			JVX_WINDOW_HALF_HANN_FALLING, &handle->common.normalization);
 		handle->common.delay = 0;
 
 		handle->common.normalization *= jvxFftTools_ifftNormFactors[hdlCoreFft->fftParameters.fftType];
@@ -1297,7 +1297,7 @@ jvx_fft_tools_init_framework_ifft(jvxIFFTfwk** hdlOut,
 
 		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(handle->ram.window, jvxData, handle->common.common.framesize);
 		jvx_compute_window(handle->ram.window, handle->common.common.framesize, 0, 0,
-			JVX_WINDOW_HALF_HANN, &handle->common.normalization);
+			JVX_WINDOW_HALF_HANN_FALLING, &handle->common.normalization);
 
 		handle->linkedram.ifftInput = ptrCore_ifft_c2c->input;
 		handle->linkedram.ifftOutput = ptrCore_ifft_c2c->output;

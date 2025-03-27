@@ -154,16 +154,30 @@ jvx_compute_window(jvxData* ptrField, jvxInt32 fieldSize,
 						}
 				}
 			break;
-		case JVX_WINDOW_HALF_HANN:
-			if(ptrField)
+		case JVX_WINDOW_HALF_HANN_FALLING:
+			if (ptrField)
+			{
+				// Matlab: LL = 16; in = [0:LL - 1]; vec = (0.5 * (1 - cos(pi * (in + LL - 1) / (LL - 1))));
+				for (i = 0; i < fieldSize; i++)
 				{
-					for(i = 0; i < fieldSize; i++)
-						{
-							ptrField[i] = (jvxData)(0.5*(1-cos(M_PI*(jvxData)(i+fieldSize-1)/(jvxData)(fieldSize-1))));
-							//0.5*(1-cos(2*pi*(n+M-1)/(2*M-2)));
-						}
+					ptrField[i] = (jvxData)(0.5 * (1 - cos(M_PI * (jvxData)(i + fieldSize - 1) / (jvxData)(fieldSize - 1))));
+					//0.5*(1-cos(2*pi*(n+M-1)/(2*M-2)));
 				}
+			}
 			break;
+
+		case JVX_WINDOW_HALF_HANN_RISING:
+			if (ptrField)
+			{
+				// Matlab: LL = 16; in = [0:LL-1]; vec = (0.5 * (1 - cos(pi * (fliplr(in) + LL - 1) / (LL - 1))));
+				for (i = 0; i < fieldSize; i++)
+				{
+					jvxSize idx = fieldSize - i - 1;
+					ptrField[idx] = (jvxData)(0.5 * (1 - cos(M_PI * (jvxData)(i + fieldSize - 1) / (jvxData)(fieldSize - 1))));
+					//0.5*(1-cos(2*pi*(n+M-1)/(2*M-2)));
+				}
+			}
+			break;	
 		case JVX_WINDOW_HALF_LINEAR:
 			if(ptrField)
 				{
@@ -174,24 +188,26 @@ jvx_compute_window(jvxData* ptrField, jvxInt32 fieldSize,
 				}
 			break;
 		case JVX_WINDOW_HALF_HAMMING:
-			if(ptrField)
-				{
-					if(secondArg <= 0.0)
-						{
-							for(i = 0; i < fieldSize; i++)
-								{
-									ptrField[i] = (jvxData)(0.54-0.46 * cos(2*M_PI*(jvxData)i/(2.0*(jvxData)(fieldSize-1))));
-								}
-						}
-					else
-						{
-							// Reverse order for hamming window: the second half of window
-							for(i = 0; i < fieldSize; i++)
-								{
-									ptrField[fieldSize - 1 - i] = (jvxData)(0.54-0.46 * cos(2*M_PI*(jvxData)i/(2.0*(jvxData)(fieldSize-1))));
-								}
-						}
+			if (ptrField)
+			{
+				if (secondArg <= 0.0)
+				{					
+					for (i = 0; i < fieldSize; i++)
+					{
+						// Rising - LL = 16; in = [0:LL-1]; vec =  (0.54 - 0.46 * cos(2 * pi * in / (2.0 * (LL - 1))));
+						ptrField[i] = (jvxData)(0.54 - 0.46 * cos(2 * M_PI * (jvxData)i / (2.0 * (jvxData)(fieldSize - 1))));
+					}
 				}
+				else
+				{
+					// Reverse order for hamming window: the second half of window
+					// Falling - LL = 16; in = [0:LL-1]; vec =  (0.54 - 0.46 * cos(2 * pi * fliplr(in) / (2.0 * (LL - 1))));
+					for (i = 0; i < fieldSize; i++)
+					{
+						ptrField[fieldSize - 1 - i] = (jvxData)(0.54 - 0.46 * cos(2 * M_PI * (jvxData)i / (2.0 * (jvxData)(fieldSize - 1))));
+					}
+				}
+			}
 			break;
 		case JVX_WINDOW_HAMMING_ASYM:
 			if(ptrField)

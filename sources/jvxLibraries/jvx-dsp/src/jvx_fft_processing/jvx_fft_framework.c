@@ -70,7 +70,7 @@ allocate_derived(jvx_fftFramework_cfg_derived *derived,
           JVX_DSP_SAFE_ALLOCATE_FIELD_Z(derived->window_CF, jvxData, derived->fftLength);
           jvx_compute_window(derived->window_CF,
                              hdl->frameSize, 0, 0,
-                             JVX_WINDOW_HALF_HANN, &derived->winNormalize);
+                             JVX_WINDOW_HALF_HANN_FALLING, &derived->winNormalize);
           JVX_DSP_SAFE_ALLOCATE_FIELD_Z(derived->ifftIn_oldWeights, jvxDataCplx, derived->spectrumSize);
         }
       break;

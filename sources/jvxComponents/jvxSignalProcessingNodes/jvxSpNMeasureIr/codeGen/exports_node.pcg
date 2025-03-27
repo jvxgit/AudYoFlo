@@ -111,7 +111,25 @@ SECTION PROPERTIES
 
 		SECTION frequency_up_excitation
 		{
-			DESCRIPTION = "Frequency (low, in case periodic signals)";	  // Defaults to NAME if not present
+			DESCRIPTION = "Frequency (up, in case periodic signals)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 100000.0;
+		};  
+
+		SECTION frequency_low_start_excitation
+		{
+			DESCRIPTION = "Frequency (low, in case periodic signals, start)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0.0;
+		};  
+
+		SECTION frequency_up_stop_excitation
+		{
+			DESCRIPTION = "Frequency (up, in case periodic signals, stop)";	  // Defaults to NAME if not present
 			TYPE = "JVX_DATAFORMAT_DATA";	
 			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 			ASSOCIATE_EXTERNAL = "no";

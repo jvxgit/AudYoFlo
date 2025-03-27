@@ -231,12 +231,12 @@ jvx_measure_ir_process(jvxMeasureIr* handle)
 	// Prepare the folded signal
 	if(locHdl->prm_init.computeIr)
 	{
-		for(i = startCnt; i < locHdl->prm_init.szTestsignal_onerep; i++)
+		for(i = 0; i < locHdl->prm_init.szTestsignal_onerep; i++)
 		{
 			locHdl->runtime.superposedRecording_ir[i] = 0.0;
 			locHdl->runtime.superposedTestSignal_ir[i] = 0.0;
 
-			for(ii = 0; ii < locHdl->prm_init.numReps; ii++)
+			for(ii = startCnt; ii < locHdl->prm_init.numReps; ii++)
 			{
 				locHdl->runtime.superposedRecording_ir[i] += locHdl->prm_sync.fldBufferMeasureSignal[i + ii * locHdl->prm_init.szTestsignal_onerep];
 				locHdl->runtime.superposedTestSignal_ir[i] += locHdl->prm_sync.fldBufferTestSignal[i + ii * locHdl->prm_init.szTestsignal_onerep];

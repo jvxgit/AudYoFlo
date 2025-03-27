@@ -1635,9 +1635,19 @@ void jvx_terminate_text_log(jvxrtst_backup& bkp);
 void jvx_request_text_log(jvxrtst_backup& bkp);
 void jvx_return_text_log(jvxrtst_backup& bkp); 
 
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+#define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT ,((std::string) __FUNCTION__ + jvx_int2String(__LINENO__))
+
+bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin);
+void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin);
+void jvx_unlock_text_log(jvxrtst_backup& bkp, const std::string& tagOrigin);
+#else
+#define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT
+
 bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev);
 void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev);
 void jvx_unlock_text_log(jvxrtst_backup& bkp);
+#endif
 
 int jvxLogLevel2Id(jvxLogLevel lev);
 

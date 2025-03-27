@@ -2,6 +2,7 @@
 #include "jvx_dsp_base.h"
 #include "math.h"
 #include "jvx_math/jvx_math_extensions.h"
+#include "jvx_windows/jvx_windows.h"
 #include <assert.h>
 
 #ifdef JVX_FFT_PRESENT
@@ -158,6 +159,13 @@ typedef struct
 		jvxData div_samplerate;
 		jvxData oldVal;
 		jvxData gain;
+		struct
+		{
+			jvxData* freqBuffer;
+			jvxData* gainBuffer;
+			jvxSize lSeg;
+			jvxSize idxOneSegment;
+		} metaData;
 	} runtime;
 } jvx_generator_wave_linlogsweep_parameter_runtime_private;
 
@@ -260,6 +268,8 @@ jvx_generator_wave_init_config_generator_unbuffered_linlogsweep(jvx_generatorWav
 	hdl->prm_init.linlogSweepWave.common.samplerate = 48000;
 	hdl->prm_async.linlogSweepWave.fLow = 50;
 	hdl->prm_async.linlogSweepWave.fUp = hdl->prm_init.linlogSweepWave.common.samplerate/2;
+	hdl->prm_async.linlogSweepWave.fLowStart = hdl->prm_async.linlogSweepWave.fLow;
+	hdl->prm_async.linlogSweepWave.fUpStop = hdl->prm_async.linlogSweepWave.fUp;
 
 	hdl->prm_async.linlogSweepWave.lengthSeconds = 10;
 	hdl->prm_async.linlogSweepWave.loopCount = -1;
@@ -641,6 +651,7 @@ jvx_generator_wave_restart_generator_unbuffered_linlogsweep(jvx_generatorWave* h
 	newHdl->runtime.position = 0;
 	newHdl->runtime_parameters_sync_intern.itCount = 0;
 	newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_STARTED;
+	newHdl->runtime.metaData.idxOneSegment = 0;
 
 	return(res);
 }
@@ -879,6 +890,114 @@ jvx_generator_wave_start_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl
 
 	newHdl->runtime_parameters_sync_intern.unbuffered.length = lengthSamplesBrutto;
 	newHdl->runtime_parameters_sync_intern.unbuffered.freq_ptr = NULL;
+
+	newHdl->runtime.metaData.lSeg = lengthSamplesNetto;
+	JVX_SAFE_ALLOCATE_FIELD_Z(newHdl->runtime.metaData.gainBuffer, jvxData, newHdl->runtime.metaData.lSeg);
+	JVX_SAFE_ALLOCATE_FIELD_Z(newHdl->runtime.metaData.freqBuffer, jvxData, newHdl->runtime.metaData.lSeg);
+
+	jvxSize idxStartRampUp = JVX_SIZE_UNSELECTED;
+	jvxSize idxStartRampUpDone = JVX_SIZE_UNSELECTED;
+	jvxSize idxStartRampDown = JVX_SIZE_UNSELECTED;
+	jvxSize idxStartRampDownDone = JVX_SIZE_UNSELECTED;
+
+
+	jvxData instFreq = newHdl->runtime.linlogFreqMin;;
+	
+	for (jvxSize i = 0; i < newHdl->runtime.metaData.lSeg; i++)
+	{
+		jvxData instFreq_use = instFreq;
+		if (newHdl->common_data.tpWave == JVX_GENERATOR_WAVE_LOGSWEEP)
+		{
+			instFreq_use = exp(instFreq);
+			instFreq_use = JVX_MIN(instFreq_use, newHdl->init_parameters_intern.common.samplerate / 2);
+		}
+		newHdl->runtime.metaData.freqBuffer[i] = instFreq_use;
+		if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampUp))
+		{
+			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fLowStart)
+			{
+				idxStartRampUp = i;
+			}
+		}
+		if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampUpDone))
+		{
+			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fLow)
+			{
+				idxStartRampUpDone = i;
+			}
+		}
+		if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampDown))
+		{
+			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fUp)
+			{
+				idxStartRampDown = i;
+			}
+		}
+		if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampDownDone))
+		{
+			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fUpStop)
+			{
+				idxStartRampDownDone = i;
+			}
+		}
+
+		instFreq += newHdl->runtime.freq_increment;
+	}
+
+	if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampUpDone))
+	{
+		idxStartRampUpDone = 0;
+	}
+	if (idxStartRampUp > idxStartRampUpDone)
+	{
+		idxStartRampUp = idxStartRampUpDone;
+	}
+
+	if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampDown))
+	{
+		idxStartRampDown = newHdl->runtime.metaData.lSeg - 1;
+	}
+	if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampDownDone))
+	{
+		idxStartRampDownDone = newHdl->runtime.metaData.lSeg - 1;;
+	}
+
+	if (idxStartRampDown > idxStartRampDownDone)
+	{
+		idxStartRampDownDone = idxStartRampDown;
+	}
+
+	for (jvxSize i = 0; i < newHdl->runtime.metaData.lSeg; i++)
+	{
+		newHdl->runtime.metaData.gainBuffer[i] = 0;
+		if ((i >= idxStartRampUpDone) && (i <= idxStartRampDown))
+		{
+			newHdl->runtime.metaData.gainBuffer[i] = 1;
+		}
+	}
+
+	jvxSize lWin = idxStartRampUpDone - idxStartRampUp;
+	if (lWin)
+	{
+		jvx_compute_window(newHdl->runtime.metaData.gainBuffer + idxStartRampUp, lWin, 0, 0, JVX_WINDOW_HALF_HANN_RISING, NULL);
+		/*
+		jvxSize idxStart = idxStartRampUp;
+		jvxSize idxStop = idxStartRampUp + lWin - 1;
+		while(idxStart < idxStop)
+		{
+			jvxData tmp = newHdl->runtime.metaData.gainBuffer[idxStart];
+			newHdl->runtime.metaData.gainBuffer[idxStart] = newHdl->runtime.metaData.gainBuffer[idxStop];
+			newHdl->runtime.metaData.gainBuffer[idxStop] = tmp;
+			idxStart++;
+			idxStop--;
+		}
+		*/
+	}
+	lWin = idxStartRampDownDone - idxStartRampDown;
+	if (lWin)
+	{
+		jvx_compute_window(newHdl->runtime.metaData.gainBuffer + idxStartRampDown, lWin, 0, 0, JVX_WINDOW_HALF_HANN_FALLING, NULL);
+	}
 
 	jvx_generator_wave_restart_generator_unbuffered_linlogsweep(hdl);
 	/*
@@ -1320,6 +1439,11 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				instFreq_use = JVX_MIN(instFreq_use, newHdl->init_parameters_intern.common.samplerate / 2);
 			}
 
+			assert(newHdl->runtime.metaData.idxOneSegment < newHdl->runtime.metaData.lSeg);
+			jvxData instFreq_useBuf = newHdl->runtime.metaData.freqBuffer[newHdl->runtime.metaData.idxOneSegment];
+
+			assert(instFreq_use == instFreq_useBuf);
+
 			jvxData signSign = val * newHdl->runtime.oldVal;
 			signSign = copysign(1.0, signSign);
 
@@ -1338,8 +1462,11 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 			}
 			newHdl->runtime.oldVal = val;
 
-			*bufferFill++ = val * newHdl->runtime.gain;
+			//*bufferFill++ = val * newHdl->runtime.gain;
+			*bufferFill++ = val * newHdl->runtime.metaData.gainBuffer[newHdl->runtime.metaData.idxOneSegment];
 			
+			newHdl->runtime.metaData.idxOneSegment++;
+
 			phase += 2 * M_PI * instFreq_use * newHdl->runtime.div_samplerate;
 			instFreq += newHdl->runtime.freq_increment;
 			
@@ -1399,6 +1526,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				newHdl->runtime.position = 0;
 				newHdl->runtime.oldVal = -1;
 				newHdl->runtime.gain = 0;
+				newHdl->runtime.metaData.idxOneSegment = 0;
 				newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
 
 				jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill, lField, &written2); // buffer and lField have been adapted when computing the segment counts
@@ -1545,6 +1673,9 @@ jvx_generator_wave_stop_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl)
 {
 	jvx_generator_wave_linlogsweep_parameter_runtime_private* newHdl = (jvx_generator_wave_linlogsweep_parameter_runtime_private*) hdl->prv;
 	newHdl->runtime_parameters_async_intern.common.theStatus = JVX_GENERATOR_WAVE_STOPPED;
+
+	JVX_SAFE_DELETE_FIELD(newHdl->runtime.metaData.gainBuffer);
+	JVX_SAFE_DELETE_FIELD(newHdl->runtime.metaData.freqBuffer);
 
 	newHdl->runtime.freq_increment = 0.0;
 	newHdl->runtime.linlogFreqMax = 0.0;
