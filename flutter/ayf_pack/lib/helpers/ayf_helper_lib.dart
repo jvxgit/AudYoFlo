@@ -123,6 +123,43 @@ List<String> str2PropList(String ident) {
   return onRet;
 }
 
+class JvxCpIdPlusProp {
+  String prop = '';
+  JvxComponentIdentification cpId = JvxComponentIdentification();
+}
+
+List<JvxCpIdPlusProp> str2PropListWithComponent(
+    String ident, JvxComponentIdentification cpId) {
+  List<JvxCpIdPlusProp> onRet = [];
+  List<String> parts = ident.split('[');
+  List<String> entriesLocal = [];
+  if (parts.length == 2) {
+    parts = parts[1].split(']');
+    if (parts.length == 2) {
+      entriesLocal = parts[0].split(',');
+      // onRet = parts[0].split(',');
+    }
+  } else {
+    entriesLocal.add(parts[0]);
+    // onRet.add(parts[0]);
+  }
+
+  for (var elm in entriesLocal) {
+    JvxCpIdPlusProp newEntry = JvxCpIdPlusProp();
+    newEntry.cpId = cpId;
+    var lstLoc = elm.split(':');
+    if (lstLoc.length == 1) {
+      newEntry.prop = elm;
+    } else if (lstLoc.length == 2) {
+      // newEntry.cpId =
+      newEntry.cpId = string2CpId(lstLoc[0], 0);
+      newEntry.prop = lstLoc[1];
+    }
+    onRet.add(newEntry);
+  }
+  return onRet;
+}
+
 String intValueList2String(List<int> lst) {
   String txt = '';
   for (int val in lst) {
@@ -141,7 +178,7 @@ void applyChangeSelectionList(
   switch (decTp) {
     case jvxPropertyDecoderHintTypeEnum.JVX_PROPERTY_DECODER_MULTI_SELECTION:
     case jvxPropertyDecoderHintTypeEnum
-        .JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER:
+          .JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER:
       if (selection.bitTest(posi, offset: offset)) {
         selection.bitClear(posi, offset: offset);
       } else {
@@ -159,7 +196,7 @@ void setValueSelectionList(AudYoFloBitField selection, int posi,
   switch (decTp) {
     case jvxPropertyDecoderHintTypeEnum.JVX_PROPERTY_DECODER_MULTI_SELECTION:
     case jvxPropertyDecoderHintTypeEnum
-        .JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER:
+          .JVX_PROPERTY_DECODER_MULTI_SELECTION_CHANGE_ORDER:
       if (setValue) {
         selection.bitSet(posi, offset: offset);
       } else {

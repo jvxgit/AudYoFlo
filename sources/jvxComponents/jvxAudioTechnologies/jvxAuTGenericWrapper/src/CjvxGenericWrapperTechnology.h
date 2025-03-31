@@ -148,6 +148,8 @@ public:
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_prop_selected_technology_set);
 
+	void updatePropertiesInputFile_nolock();
+
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
 };
 

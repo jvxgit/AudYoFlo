@@ -493,22 +493,22 @@ abstract class AudYoFloBackendCache
         //bool foundOne = true;
         //while (foundOne) {
         //  foundOne = false;
-          for (var elm
-              in theComponentHere.propertyCache.cachedProperties.entries) {
-            // Invalidate
-            if (elm.value.invalidateOnStateSwitch(ss)) {
-              // If true is returned the single property was also disposed
-              // foundOne = true;
-              elm.value.dispose(); removeThese.add(elm.key);
-              //theComponentHere.propertyCache.cachedProperties.remove(elm.key);
-              //break;
-            }
+        for (var elm
+            in theComponentHere.propertyCache.cachedProperties.entries) {
+          // Invalidate
+          if (elm.value.invalidateOnStateSwitch(ss)) {
+            // If true is returned the single property was also disposed
+            // foundOne = true;
+            elm.value.dispose();
+            removeThese.add(elm.key);
+            //theComponentHere.propertyCache.cachedProperties.remove(elm.key);
+            //break;
           }
+        }
 
-          for(var elm in removeThese)
-          {
-            theComponentHere.propertyCache.cachedProperties.remove(elm);
-          }
+        for (var elm in removeThese) {
+          theComponentHere.propertyCache.cachedProperties.remove(elm);
+        }
         //}
 
         // We tag this component such that it should be updated
@@ -1103,11 +1103,28 @@ abstract class AudYoFloBackendCache
       JvxComponentIdentification cpId, String propLst) {
     // print('Report property set <$propLst>');
     List<String> props = helpers.str2PropList(propLst);
+    List<JvxCpIdPlusProp> propsCp =
+        helpers.str2PropListWithComponent(propLst, cpId);
+
+    List<JvxComponentIdentification> cpInvolved = [];
 
     // Invalidate properties
-    invalidatePropertiesComponent(cpId, props, true);
-    updatePropertyCacheCompleteNotify(cpId,
-        report: AyfPropertyReportLevel.AYF_FRONTEND_REPORT_COMPONENT_PROPERTY);
+    for (var elm in propsCp) {
+      invalidatePropertiesComponent(elm.cpId, [elm.prop], true);
+      var fdElm = cpInvolved.firstWhereOrNull((element) {
+        return (element == elm.cpId);
+      });
+
+      if (fdElm == null) {
+        cpInvolved.add(elm.cpId);
+      }
+    }
+
+    for (var elmC in cpInvolved) {
+      updatePropertyCacheCompleteNotify(elmC,
+          report:
+              AyfPropertyReportLevel.AYF_FRONTEND_REPORT_COMPONENT_PROPERTY);
+    }
   }
 
   @override

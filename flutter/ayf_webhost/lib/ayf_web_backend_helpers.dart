@@ -107,6 +107,17 @@ class AudYoFloWebBackendHelpers {
   }
 
   JvxComponentTypeEnum translateStringComponentType(String inStr) {
+      JvxComponentTypeEnum retVal = string2CpTp(inStr);
+        if(retVal ==JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN)
+        {
+          if (reportHandler != null) {
+          reportHandler!.reportStatusErrorProtocol(1, 0, inStr);
+        }
+        }
+        return retVal;
+  }
+
+  /*
     switch (inStr) {
       case "signal processing technology":
         return JvxComponentTypeEnum.JVX_COMPONENT_SIGNAL_PROCESSING_TECHNOLOGY;
@@ -220,6 +231,8 @@ class AudYoFloWebBackendHelpers {
           reportHandler!.reportStatusErrorProtocol(1, 0, inStr);
         }
         break;
+*/
+
       /*
     case :
       return JvxComponentTypeEnum.;
@@ -263,9 +276,12 @@ class AudYoFloWebBackendHelpers {
 	{"packet filter rule", "JVX_COMPONENT_PACKETFILTER_RULE" },
 	{"log remote handler", "JVX_COMPONENT_LOGREMOTEHANDLER" }
   */
+
+  /*
     }
     return JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN;
   }
+  */
 
   jvxComponentTypeClassEnum translateStringComponentTypeClass(String inStr) {
     switch (inStr) {
@@ -291,6 +307,19 @@ class AudYoFloWebBackendHelpers {
 
   JvxComponentIdentification translateStringComponentIdentification(
       String cpIdStr, int uid) {
+        JvxComponentIdentification retVal = JvxComponentIdentification();
+        retVal = string2CpId(cpIdStr, uid);
+        if(retVal ==JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN)
+        {
+          if (reportHandler != null) {
+          reportHandler!.reportStatusErrorProtocol(1, 0, cpIdStr);
+        }
+        }
+        return retVal;
+      
+
+        
+/*
     JvxComponentIdentification cpId = JvxComponentIdentification();
     var lst = cpIdStr.split('<');
     cpId.cpTp = translateStringComponentType(lst[0]);
@@ -307,8 +336,9 @@ class AudYoFloWebBackendHelpers {
       }
     }
 
-    cpId.uid = uid;
+    cpId.uid = uid;    
     return cpId;
+    */
   }
 
   int translateStringState(state) {

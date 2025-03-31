@@ -1812,6 +1812,8 @@ CjvxGenericWrapperTechnology::updateAllDevicesOtherThan_lock(CjvxGenericWrapperD
 			{
 				theDevice->updateDependentVariables_lock(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
 			}
+
+			theDevice->addPropertyChanged(this);
 		}
 	}
 	this->unlock_files();
@@ -2008,16 +2010,60 @@ CjvxGenericWrapperTechnology::processIssuedStringCommand(std::string command)
 		if(f_expr == "addInputFile")
 		{
 			assert(args.size() == 1);
-			for(i = 0; i < args.size(); i++)
+			jvxSize selIdx = jvx_bitfieldSelection2Id(genGenericWrapper_technology::select_files.input_file);
+			this->lock_files();
+			
+			std::vector<std::string> warn;			
+			for (i = 0; i < args.size(); i++)
 			{
-				this->lock_files();
-				res = this->addInputFile_nolock(args[i], uId, nChs, descr);
-				this->unlock_files();
-				if(res != JVX_NO_ERROR)
-				{
-					break;
-				}
+
+				// Add the new entries at first
+				genGenericWrapper_technology::select_files.input_file.value.entries.push_back(args[i]);
 			}
+
+			updatePropertyToFileLists_nolock(48000, warn);
+
+			/*
+
+				jvxSize selIdx = genGenericWrapper_technology::select_files.input_file.value.entries.size() - 1;
+				std::vector<std::string> newElms;
+				std::vector<std::string> warn;
+				jvxSize idx = atoi(args[i].c_str());
+
+				jvxSize cntOld = 0;
+				jvxSize cntNew = 0;
+				std::string nmSelect;
+
+				if (JVX_CHECK_SIZE_SELECTED(selIdx))
+				{
+					nmSelect = genGenericWrapper_technology::select_files.input_file.value.entries[selIdx];
+				}
+
+				selIdx = JVX_SIZE_UNSELECTED;
+				for (auto elm : genGenericWrapper_technology::select_files.input_file.value.entries)
+				{
+					if (cntOld != idx)
+					{
+						newElms.push_back(elm);
+						if (nmSelect == elm)
+						{
+							selIdx = cntNew;
+						}
+						cntNew++;
+					}
+					cntOld++;
+				}
+
+
+
+
+				res = this->addInputFile_nolock(args[i], uId, nChs, descr);
+				*/
+
+			// Report that property has changed!
+			CjvxProperties::add_property_report_collect(genGenericWrapper_technology::select_files.input_file.descriptor.c_str());
+
+			this->unlock_files();
 		}
 		else if(f_expr == "remInputFile")
 		{
@@ -2025,7 +2071,58 @@ CjvxGenericWrapperTechnology::processIssuedStringCommand(std::string command)
 			for(i = 0; i < args.size(); i++)
 			{
 				this->lock_files();
-				res = this->removeInputFile_nolock(atoi(args[i].c_str()), uId);
+				std::vector<std::string> newElms;
+				std::vector<std::string> warn;
+				jvxSize idx = atoi(args[i].c_str());
+
+				jvxSize cntOld = 0;
+				jvxSize cntNew = 0;
+				std::string nmSelect;
+
+				jvxSize selIdx = jvx_bitfieldSelection2Id(genGenericWrapper_technology::select_files.input_file);
+				if (JVX_CHECK_SIZE_SELECTED(selIdx))
+				{
+					nmSelect = genGenericWrapper_technology::select_files.input_file.value.entries[selIdx];
+				}
+				
+				selIdx = JVX_SIZE_UNSELECTED;							
+				for(auto elm: genGenericWrapper_technology::select_files.input_file.value.entries)
+				{
+					if (cntOld != idx)
+					{
+						newElms.push_back(elm);
+						if (nmSelect == elm)
+						{
+							selIdx = cntNew;
+						}
+						cntNew++;
+					}			
+					cntOld++;
+				}
+
+				genGenericWrapper_technology::select_files.input_file.value.entries = newElms;
+				jvx_bitFClear(genGenericWrapper_technology::select_files.input_file.value.selection(0));
+
+				if (JVX_CHECK_SIZE_UNSELECTED(selIdx))
+				{
+					if (genGenericWrapper_technology::select_files.input_file.value.entries.size() > 0)
+					{
+						selIdx = 0;
+					}
+				}
+				if (JVX_CHECK_SIZE_SELECTED(selIdx))
+				{
+					jvx_bitZSet(genGenericWrapper_technology::select_files.input_file.value.selection(0), selIdx);
+				}
+
+				// Here, we deallocate file environment
+				updatePropertyToFileLists_nolock(48000, warn);
+
+				// Report that property has changed!
+				CjvxProperties::add_property_report_collect(genGenericWrapper_technology::select_files.input_file.descriptor.c_str());
+
+				// res = this->removeInputFile_nolock(atoi(args[i].c_str()), uId);
+				// updatePropertiesInputFile_nolock();
 				this->unlock_files();
 				if(res != JVX_NO_ERROR)
 				{
@@ -2207,4 +2304,33 @@ CjvxGenericWrapperTechnology::local_deallocate_device(CjvxGenericWrapperDevice**
 		*elmDev = nullptr;
 	}
 	return JVX_NO_ERROR;
+}
+
+void
+CjvxGenericWrapperTechnology::updatePropertiesInputFile_nolock()
+{
+	jvxSize i;
+	std::string selName;
+	for (i = 0; i < genGenericWrapper_technology::select_files.input_file.value.entries.size(); i++)
+	{
+		if (jvx_bitTest(genGenericWrapper_technology::select_files.input_file.value.selection(0), i))
+		{
+			selName = genGenericWrapper_technology::select_files.input_file.value.entries[i];
+			break;
+		}
+	}
+	
+	jvx_bitFClear(genGenericWrapper_technology::select_files.input_file.value.selection(0));
+
+	genGenericWrapper_technology::select_files.input_file.value.entries.clear();
+	for (i = 0; i < this->theFiles.theInputFiles.size(); i++)
+	{
+		std::string nmFile = this->theFiles.theInputFiles[i].common.name;
+		genGenericWrapper_technology::select_files.input_file.value.entries.push_back(nmFile);
+		if (nmFile == selName)
+		{
+			jvx_bitSet(genGenericWrapper_technology::select_files.input_file.value.selection(0), i);
+		}
+	}
+	CjvxProperties::add_property_report_collect(genGenericWrapper_technology::select_files.input_file.descriptor.c_str());
 }

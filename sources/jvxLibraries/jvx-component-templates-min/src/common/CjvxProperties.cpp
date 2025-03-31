@@ -3398,10 +3398,25 @@ CjvxProperties::property_changed_descriptor_tag_add(std::string& descriptor)
 }
 
 jvxErrorType
-CjvxProperties::add_property_report_collect(const std::string& propDescr, jvxBool reportDescriptorChanged)
+CjvxProperties::add_property_report_collect(const std::string& propDescr, 
+	jvxBool reportDescriptorChanged, CjvxProperties* cpReport, jvxComponentIdentification cpTp)
 {
 	jvxBool reportImmediate = true;
-	std::string propPrefix = jvx_makePathExpr(_common_set_property_report.reportPrefix, propDescr);
+	std::string propPrefix = _common_set_property_report.reportPrefix;
+	std::string cpPrefix;
+	if (cpReport)
+	{
+		cpPrefix = jvxComponentIdentification_txt(cpTp);
+		// propPrefix = cpReport->_common_set_properties.
+		propPrefix += cpReport->_common_set_property_report.reportPrefix;
+		
+	}
+	propPrefix = jvx_makePathExpr(propPrefix, propDescr);
+	if (!cpPrefix.empty())
+	{
+		propPrefix = cpPrefix + ":" + propPrefix;
+	}
+
 	std::string propPrefixContent = propPrefix;
 	if (reportDescriptorChanged)
 	{
@@ -3410,7 +3425,14 @@ CjvxProperties::add_property_report_collect(const std::string& propDescr, jvxBoo
 	_lock_properties_local();
 
 	// If we want to report, we should modify the revision
-	_common_set_properties.propSetRevision++;
+	if (cpReport)
+	{
+		cpReport->_common_set_properties.propSetRevision++;
+	}
+	else
+	{
+		_common_set_properties.propSetRevision++;
+	}
 
 	if (_common_set_property_report.startCntStack > 0)
 	{
@@ -3446,7 +3468,10 @@ CjvxProperties::add_property_report_collect(const std::string& propDescr, jvxBoo
 }
 
 jvxErrorType
-CjvxProperties::add_properties_report_collect(const std::list<std::string>& propDescr, jvxBool reportDescriptorChanged)
+CjvxProperties::add_properties_report_collect(
+	const std::list<std::string>& propDescr, 
+	jvxBool reportDescriptorChanged, CjvxProperties* cpReport, 
+	jvxComponentIdentification cpTp)
 {
 	jvxBool reportImmediate = true;
 	std::string repToken;
@@ -3464,13 +3489,38 @@ CjvxProperties::add_properties_report_collect(const std::list<std::string>& prop
 		
 	for (auto elmN : propDescr)
 	{
-		std::string propPrefix = jvx_makePathExpr(_common_set_property_report.reportPrefix, elmN);
+		std::string propPrefix = _common_set_property_report.reportPrefix;
+		std::string cpPrefix;
+		if (cpReport)
+		{
+			cpPrefix = jvxComponentIdentification_txt(cpTp);
+			// propPrefix = cpReport->_common_set_properties.
+			propPrefix += cpReport->_common_set_property_report.reportPrefix;
+
+		}
+		propPrefix = jvx_makePathExpr(propPrefix, elmN);
+		if (!cpPrefix.empty())
+		{
+			propPrefix = cpPrefix + ":" + propPrefix;
+		}
+
 		std::string propPrefixContentOnly = propPrefix;
 		if (reportDescriptorChanged)
 		{
 			propPrefix = CjvxProperties::property_changed_descriptor_tag_add(propPrefix);
 		}
-		
+
+		/*
+
+		propPrefix = jvx_makePathExpr(_common_set_property_report.reportPrefix, elmN);
+		std::string propPrefixContentOnly = propPrefix;
+		if (reportDescriptorChanged)
+		{
+			propPrefix = CjvxProperties::property_changed_descriptor_tag_add(propPrefix);
+		}
+
+		*/
+
 		// Report each property only once! Check if the entry is already in the list. If not, try to find the version without the content flag
 		auto elm = std::find(_common_set_property_report.collectedProps.begin(), _common_set_property_report.collectedProps.end(), propPrefix);
 		if (elm == _common_set_property_report.collectedProps.end())

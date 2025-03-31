@@ -1498,6 +1498,8 @@ CjvxGenericWrapperDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 		// Consider channels separately
 		if (theLocDescr->con_params.number_channels <= runtime.channelMappings.inputChannelMapper.size())
 		{
+			// I remember having added this piece of software BUT I can not remember what was the reason, actually.
+			// If the auto connect does not work properly, always just activate or toggle a channel on the output side.
 			if (lastOperationSetup == jvxLastOperationChannels::JVXLASTOPERATIONCHANNELS_INPUT)
 			{
 				std::string txt = __FUNCTION__;
@@ -1794,3 +1796,12 @@ CjvxGenericWrapperDevice::reference_next_x(jvxSize idx, IjvxConnectionIterator**
 	return _reference_next(idx, next);
 }
 
+void 
+CjvxGenericWrapperDevice::addPropertyChanged(CjvxProperties* props)
+{
+	if (_common_set_min.theState >= JVX_STATE_ACTIVE)
+	{
+		jvxComponentIdentification tp = _common_set.theComponentType;
+		props->add_property_report_collect(CjvxAudioDevice_genpcg::properties_active.inputchannelselection.descriptor.c_str(), false, this, tp);
+	}
+}

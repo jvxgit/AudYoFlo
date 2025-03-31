@@ -800,6 +800,8 @@ public:
 	void deallocateBufferA();
 	void deallocateBufferA_out();
 
+	void addPropertyChanged(CjvxProperties* props);
+
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_channel_gain);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_channel_gain);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_channel_index);

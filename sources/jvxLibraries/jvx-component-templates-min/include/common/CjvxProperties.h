@@ -421,8 +421,10 @@ public:
 
 	 jvxErrorType _stop_property_report_collect(jvxCallManagerProperties& callGate);
 
-	 jvxErrorType add_property_report_collect(const std::string& propDescr, jvxBool reportDescriptorChanged = false);
-	 jvxErrorType add_properties_report_collect(const std::list<std::string>& propDescr, jvxBool reportDescriptorChanged = false);
+	 jvxErrorType add_property_report_collect(const std::string& propDescr, jvxBool reportDescriptorChanged = false, 
+		 CjvxProperties* cpReport = nullptr, jvxComponentIdentification cpTp = jvxComponentIdentification());
+	 jvxErrorType add_properties_report_collect(const std::list<std::string>& propDescr, jvxBool reportDescriptorChanged = false, 
+		 CjvxProperties* cpReport = nullptr, jvxComponentIdentification cpTp = jvxComponentIdentification());
 
 	 static std::string& property_changed_descriptor_tag_add(std::string& descriptor);
 
