@@ -346,9 +346,9 @@ public:
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
 				if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(T::jvxrtst_bkp, logLev);
+					jvx_lock_text_log(T::jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 					T::jvxrtst << "::SUBMODULE: " << mess << std::endl;
-					jvx_unlock_text_log(T::jvxrtst_bkp);
+					jvx_unlock_text_log(T::jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				}
 			}
 		}

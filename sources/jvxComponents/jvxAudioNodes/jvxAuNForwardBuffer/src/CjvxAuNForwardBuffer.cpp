@@ -942,9 +942,9 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 		//
 		// It is used, however, to adapt the buffersize from input to output. Therefore the incoming buffersize
 		// is fully independend from the output buffersize
-		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+		JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 		log << "Entering function " << __FUNCTION__ << ":" << std::endl;
-		JVX_STOP_LOCK_LOG;
+		JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 		res = JVX_ERROR_UNSUPPORTED;
 
@@ -956,7 +956,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 			(node_output._common_set_node_params_a_1io.number_channels != preferredByOutput->con_params.number_channels) ||
 			(node_output._common_set_node_params_a_1io.format != preferredByOutput->con_params.format))
 		{
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 			log << "Condition to negotiate with previous component given." << std::endl;
 			log << "-- Samplerate: " << node_output._common_set_node_params_a_1io.samplerate << " vs. " <<
 				preferredByOutput->con_params.rate << "." << std::endl;
@@ -964,7 +964,7 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 				preferredByOutput->con_params.number_channels << "." << std::endl;
 			log << "-- Format: " << jvxDataFormat_txt(node_output._common_set_node_params_a_1io.format) << " vs. " <<
 				jvxDataFormat_txt(preferredByOutput->con_params.format) << "." << std::endl;
-			JVX_STOP_LOCK_LOG;
+			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 			// Provide the deviations that can be accepted:
 			// 
@@ -1000,18 +1000,18 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 				ld_try.con_params.buffersize = preferredByOutput->con_params.buffersize;
 				ld_try.con_params.segmentation.x = preferredByOutput->con_params.segmentation.x;
 
-				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 				log << "Trying to negotiate modified parameters with successor in chain." << std::endl;
-				JVX_STOP_LOCK_LOG;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 				// We do expect a compromise since a new samplerate will require a new buffersize
 				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 					JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &ld_try JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				if (res == JVX_ERROR_COMPROMISE)
 				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 					log << "Negotiation returned JVX_ERROR_COMPROMISE." << std::endl;
-					JVX_STOP_LOCK_LOG;
+					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 				}
 			}
 		}
@@ -1033,9 +1033,9 @@ CjvxAuNForwardBuffer::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLin
 			if (res == JVX_ERROR_COMPROMISE)
 			{
 				// If we come from this path
-				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 				log << "Returned compromise is acceptable." << std::endl;
-				JVX_STOP_LOCK_LOG;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 			}
 
 			res = JVX_NO_ERROR;

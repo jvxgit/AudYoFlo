@@ -39,9 +39,9 @@ namespace CayfAutomationModules
 				ayfOneConnectedProcess newProcess;
 				// We store this as the target chain name that will be used for verification during connect
 
-				JVX_START_LOCK_LOG_REF(modCommon.objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				JVX_START_LOCK_LOG_REF(modCommon.objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 				log << "Created rule for chain <" << chainName << ">." << std::endl;
-				JVX_STOP_LOCK_LOG_REF(modCommon.objLogRefPtr);
+				JVX_STOP_LOCK_LOG_REF(modCommon.objLogRefPtr, JVX_CREATE_CODE_LOCATION_TAG);
 
 				IjvxDataConnectionRule* theDataConnectionDefRuleHdl = NULL;
 				res = con->reference_connection_rule_uid(theDataConnectionDefRule_id, &theDataConnectionDefRuleHdl);
@@ -98,9 +98,9 @@ namespace CayfAutomationModules
 							report->report_connection_established(proc_id, ayfEstablishedProcessType::AYF_ESTABLISHED_PROCESS_SRC2SNKPRECHAINPRICHAIN, realizeChainPtr);
 						}
 
-						JVX_START_LOCK_LOG_REF(modCommon.objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+						JVX_START_LOCK_LOG_REF(modCommon.objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 						log << "Successfully connected chain <" << chainName << ">" << std::endl;
-						JVX_STOP_LOCK_LOG_REF(modCommon.objLogRefPtr);
+						JVX_STOP_LOCK_LOG_REF(modCommon.objLogRefPtr, JVX_CREATE_CODE_LOCATION_TAG);
 
 						jvx_bitSet(supportNodeRuntime.states.connectionsEstablishFlags, 0);
 					}
@@ -116,9 +116,9 @@ namespace CayfAutomationModules
 							}
 						}
 
-						JVX_START_LOCK_LOG_REF(modCommon.objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+						JVX_START_LOCK_LOG_REF(modCommon.objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 						log << "Failed to connect chain <" << chainName << ">, reason: " << jvxErrorType_descr(res) << "." << std::endl;
-						JVX_STOP_LOCK_LOG_REF(modCommon.objLogRefPtr);
+						JVX_STOP_LOCK_LOG_REF(modCommon.objLogRefPtr, JVX_CREATE_CODE_LOCATION_TAG);
 					}
 				}
 				res = con->remove_connection_rule(theDataConnectionDefRule_id);

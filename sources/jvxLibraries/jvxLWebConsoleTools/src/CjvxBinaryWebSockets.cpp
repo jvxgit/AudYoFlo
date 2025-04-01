@@ -31,9 +31,9 @@ CjvxBinaryWebSockets::register_binary_socket_main_loop(jvxWebContext* ctxt)
 		webSocketPeriodic.local_uri = local_uri.std_str();
 		webSocketPeriodic.url_origin = url_origin.std_str();
 		webSocketPeriodic.user = user.std_str();
-		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 		log << "Web socket connection from " << url_origin.std_str() << ":" << user.std_str() << std::endl;
-		JVX_STOP_LOCK_LOG_REF(hostRef);		
+		JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 	}
 	else
 	{
@@ -980,18 +980,18 @@ CjvxBinaryWebSockets::step_update_properties_websocket(jvxPropertyStreamCondUpda
 	// Do not need to protect list since only read access in main thread
 	elm = lstUpdateProperties.begin();
 
-	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 	log << "Update properties via websocket, reason " << jvxPropertyStreamCondUpdate_txt(theReason) << std::endl;
 	if (!hostRef->config.silent_mode)
 	{
 		std::cout << "Update properties via websocket, reason " << jvxPropertyStreamCondUpdate_txt(theReason) << std::endl;
 	}
-	JVX_STOP_LOCK_LOG_REF(hostRef);
+	JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 
 	cnt = 0;
 	for (; elm != lstUpdateProperties.end(); elm++)
 	{
-		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 		log << "Check #" << cnt << ": " << jvxComponentIdentification_txt(elm->second.cpId) << "::" << elm->second.propertyName << "(" << elm->second.uniqueId << ")" << "--" << "Status: " << jvxState_txt(elm->second.runtime.transferState)
 			<< "--Activate on: " << jvxState_txt(elm->second.state_active) << "--" << jvxPropertyStreamCondUpdate_txt(elm->second.cond_update) << "::" << elm->second.param_cond_update << std::endl;
 		if (!hostRef->config.silent_mode)
@@ -999,7 +999,7 @@ CjvxBinaryWebSockets::step_update_properties_websocket(jvxPropertyStreamCondUpda
 			log << "Check #" << cnt << ": " << jvxComponentIdentification_txt(elm->second.cpId) << "::" << elm->second.propertyName << "(" << elm->second.uniqueId << ")" << "--" << "Status: " << jvxState_txt(elm->second.runtime.transferState)
 				<< "--Activate on: " << jvxState_txt(elm->second.state_active) << "--" << jvxPropertyStreamCondUpdate_txt(elm->second.cond_update) << "::" << elm->second.param_cond_update << std::endl;
 		}
-		JVX_STOP_LOCK_LOG_REF(hostRef);
+		JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 
 		if (elm->second.runtime.transferState == JVX_STATE_NONE)
 		{
@@ -1011,36 +1011,36 @@ CjvxBinaryWebSockets::step_update_properties_websocket(jvxPropertyStreamCondUpda
 			jvxPropertyTransferType doTransfer = check_transfer_property(elm->second, theReason, idCp, cat, propId);
 			if (doTransfer != JVX_PROP_TRANSFER_NONE)
 			{
-				JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+				JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 				log << "--> Property " << elm->second.propertyName << " is requested to be transfered." << std::endl;
 				if (!hostRef->config.silent_mode)
 				{
 					std::cout << "--> Property " << elm->second.propertyName << " is requested to be transfered." << std::endl;
 				}
-				JVX_STOP_LOCK_LOG_REF(hostRef);
+				JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 
 				resL = transfer_activated_property(elm->second, numBytes);
 				if (resL != JVX_NO_ERROR)
 				{
-					JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 					log << "Failed to transfer property " << elm->second.propertyName << ", deactivating" << std::endl;
 					if (!hostRef->config.silent_mode)
 					{
 						std::cout << "Failed to transfer property" << elm->second.propertyName << ", deactivating" << std::endl;
 					}
-					JVX_STOP_LOCK_LOG_REF(hostRef);
+					JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 
 					resL = deactivate_property(elm->second);
 				}
 				else
 				{
-					JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 					log << "--> For property " << elm->second.propertyName << ", " << numBytes << " bytes were successfully transfered." << std::endl;
 					if (!hostRef->config.silent_mode)
 					{
 						std::cout << "--> For property " << elm->second.propertyName << ", " << numBytes << " bytes were successfully transfered." << std::endl;
 					}
-					JVX_STOP_LOCK_LOG_REF(hostRef);
+					JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 					
 				}
 			}
@@ -1059,7 +1059,7 @@ CjvxBinaryWebSockets::add_property_observer_list(jvxHandle* param, jvxSize param
 	assert(paramType == JVX_EVENTLOOP_DATAFORMAT_OFF_SPECIFIC + 2);
 	jvxPropertyPropertyObserveHeader* paddheader = (jvxPropertyPropertyObserveHeader*)param;
 
-	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 	log << "Incoming request web socket property add:" << std::endl;
 	log << "Component identification = " << jvxComponentIdentification_txt(jvxComponentIdentification((jvxComponentType)paddheader->component_type, paddheader->component_slot, paddheader->component_subslot)) << std::endl;
 	log << "Update Condition = " << jvxPropertyStreamCondUpdate_txt(paddheader->cond_update) << std::endl;
@@ -1076,7 +1076,7 @@ CjvxBinaryWebSockets::add_property_observer_list(jvxHandle* param, jvxSize param
 	log << "Port [uint32] = " << paddheader->port << std::endl;
 	log << "Number emit min [uint32] = " << paddheader->num_emit_min << std::endl;
 	log << "Number emit max [uint32] = " << paddheader->num_emit_max << std::endl;
-	JVX_STOP_LOCK_LOG_REF(hostRef);
+	JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 
 	assert(paddheader->component_type < JVX_COMPONENT_ALL_LIMIT);
 	newProp.cpId = jvxComponentIdentification((jvxComponentType)paddheader->component_type, paddheader->component_slot, paddheader->component_subslot);
@@ -1140,7 +1140,7 @@ CjvxBinaryWebSockets::add_property_observer_list(jvxHandle* param, jvxSize param
 
 	lstUpdateProperties[newProp.uniqueId] = newProp;
 
-	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 	log << "Registered property via web socket <" << newProp.uniqueId << ">: " << jvxComponentIdentification_txt(newProp.cpId) << "--" << newProp.propertyName << "||" <<
 		jvxDataFormat_txt(newProp.format_spec) << "--" << jvxPropertyDecoderHintType_txt(newProp.htTp) << "--" << newProp.offset << newProp.numElms_spec << std::flush;
 	switch (newProp.prio)
@@ -1153,7 +1153,7 @@ CjvxBinaryWebSockets::add_property_observer_list(jvxHandle* param, jvxSize param
 		break;
 	}
 	log << std::endl;
-	JVX_STOP_LOCK_LOG_REF(hostRef);
+	JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 
 	// Send response
 	theRespA.loc_header.fam_hdr.proto_family = JVX_PROTOCOL_TYPE_PROPERTY_STREAM;

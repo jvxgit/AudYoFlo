@@ -77,10 +77,10 @@ CjvxGenericSocketDevice::activate_connection_port()
 	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
 	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp, logLev);
+		jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		jvxrtst << "::" << __FUNCTION__ << ": " << "Starting input buffering:" << std::endl;
 		jvxrtst << "-> Size of input buffer: " << runtime.sz_mem_incoming << std::endl;
-		jvx_unlock_text_log(jvxrtst_bkp);
+		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 	}
 
 	// Copy socket configuration
@@ -102,9 +102,9 @@ CjvxGenericSocketDevice::deactivate_connection_port()
 	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
 	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp, logLev);
+		jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		jvxrtst << "::" << __FUNCTION__ << ": " << "stopping connection on COM port <" << idDevice << ">," << std::endl;
-		jvx_unlock_text_log(jvxrtst_bkp);
+		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 	}
 
 

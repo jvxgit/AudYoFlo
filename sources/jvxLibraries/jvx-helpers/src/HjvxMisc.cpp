@@ -6874,6 +6874,44 @@ jvxostream::set_debug_level(jvxSize dbg_lev)
 	this->debugLevel = dbg_lev;
 }
 
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
+void 
+jvxostream::setOriginTag(const std::string& tag, jvxBool acquire)
+{
+	JVX_THREAD_ID id = JVX_GET_CURRENT_THREAD_ID();
+	auto elm = profileDat.find(id);
+	if (elm == profileDat.end())
+	{
+		// Add new entry
+		jvxProfileLock_acquireRelease newEntry;
+		if (acquire)
+		{
+			newEntry.onAcquire.cntOperation = uniqueCnt++;
+			newEntry.onAcquire.tag = tag;
+		}
+		else
+		{
+			newEntry.onRelease.cntOperation = uniqueCnt++;
+			newEntry.onRelease.tag = tag;
+		}
+		profileDat[id] = newEntry;
+	}
+	else
+	{
+		if (acquire)
+		{
+			elm->second.onAcquire.cntOperation = uniqueCnt++;
+			elm->second.onAcquire.tag = tag;
+		}
+		else
+		{
+			elm->second.onRelease.cntOperation = uniqueCnt++;
+			elm->second.onRelease.tag = tag;
+		}
+	}
+}
+#endif
+
 jvxErrorType 
 jvxostream::unsetReference()
 {
@@ -6885,6 +6923,11 @@ jvxostream::unsetReference()
 	theLog = NULL;
 	theBuffer = NULL;
 	theStat = JVX_STATE_NONE;
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
+	profileDat.clear();
+#endif
+
 	return JVX_NO_ERROR;
 }
 
@@ -7104,31 +7147,57 @@ void jvx_return_text_log(jvxrtst_backup& bkp)
 	}
 }
 
-bool 
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+bool
+jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin)
+#else
+bool
 jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev)
+#endif
 {	
 	bool res = bkp.jvxos.try_lock();
 	if (res)
 	{
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
+		bkp.jvxos.setOriginTag(tagOrigin, true);
+#endif
 		bkp.jvxos.set_debug_level(logLev);
 	}
 	return res;
 }
 
-void 
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+void
+jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin)
+#else
+void
 jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev)
+#endif
 {
 	bkp.jvxos.set_debug_level(logLev);
 	bkp.jvxos.lock();
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
+	bkp.jvxos.setOriginTag(tagOrigin, true);
+#endif
 }
 
-void 
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+void
+jvx_unlock_text_log(jvxrtst_backup& bkp, const std::string& tagOrigin)
+#else
+void
 jvx_unlock_text_log(jvxrtst_backup& bkp)
+#endif
 {
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
+	bkp.jvxos.setOriginTag(tagOrigin, false);
+#endif
 	bkp.jvxos.unlock();
 	bkp.jvxos.set_debug_level(0);
 }
 
+// =======================================================================================
+// 
 //static std::list< CjvxReportCommandRequest*> fldPtrs;
 CjvxReportCommandRequest* jvx_command_request_copy_alloc(const CjvxReportCommandRequest& in)
 {

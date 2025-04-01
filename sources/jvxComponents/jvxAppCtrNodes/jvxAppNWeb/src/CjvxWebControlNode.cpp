@@ -434,9 +434,9 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
 		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp, logLev);
+			jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			jvxrtst << "Web socket connected" << std::endl;
-			jvx_unlock_text_log(jvxrtst_bkp);
+			jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		}
 
 		JVX_LOCK_RW_MUTEX_EXCLUSIVE(safeAccessWebConnection);
@@ -768,9 +768,9 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 			ptr16 = (jvxUInt16*)payload;			
 			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev);
+				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				jvxrtst << "Web Socket Close Event received, load = " << *ptr16 << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp);
+				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 			break;
 		case 0x9:
@@ -784,9 +784,9 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		default:
 			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev);
+				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				jvxrtst << "Unknown Web Socket Data received received" << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp);
+				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 			break;
 		}
@@ -806,9 +806,9 @@ CjvxWebControlNode::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
 		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp, logLev);
+			jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			jvxrtst << "Web socket closed" << std::endl;
-			jvx_unlock_text_log(jvxrtst_bkp);
+			jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		}
 
 		/*

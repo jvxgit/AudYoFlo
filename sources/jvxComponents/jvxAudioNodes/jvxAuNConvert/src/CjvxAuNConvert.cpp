@@ -211,14 +211,14 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 	// First, try to activate the setting as is:
 	jvxLinkDataDescriptor tryThis = *_common_set_icon.theData_in;
 
-	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 	log << "Entering function " << __FUNCTION__  << " to negotiate processing parameters." << std::endl;
-	JVX_STOP_LOCK_LOG;
+	JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 	// First, try to just activate the output desire - which typically does not really work
-	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+	JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 	log << "Trying proposed settings being applied directly to successor." << std::endl;
-	JVX_STOP_LOCK_LOG;
+	JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 	tryThis = *preferredByOutput;
 	res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -226,9 +226,9 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 	{
 		case JVX_NO_ERROR:
 
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 			log << "Successor accepted proposed configuration." << std::endl;
-			JVX_STOP_LOCK_LOG;
+			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 			// Reset the resampler to NOT resample
 			resampling.cc.downsamplingFactor = 1;
@@ -247,18 +247,18 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 			break;
 		case JVX_ERROR_COMPROMISE:
 
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 			log << "Successor returned compromise - returned JVX_ERROR_POSTPONE to test the connection again." << std::endl;
-			JVX_STOP_LOCK_LOG;
+			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 			// Too much complexity, we better run the test again!
 			res = JVX_ERROR_POSTPONE;
 			break;
 		default:
 
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 			log << "Successor returned error. We will adapt input/output settings involving resampler." << std::endl;
-			JVX_STOP_LOCK_LOG;
+			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 			// Simple forwarding did not work out, hence, let us find out step by step
 			whatChanged = CjvxNodeBase1io::requires_reconfig(preferredByOutput, checkRequestUpdate);
@@ -273,9 +273,9 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 				// ===========================================================================================
 				if (jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT))
 				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 					log << "Asking successor to adapt number of channels." << std::endl;
-					JVX_STOP_LOCK_LOG;
+					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 					tryThis.con_params = _common_set_icon.theData_in->con_params;
 					tryThis.con_params.number_channels = preferredByOutput->con_params.number_channels;
@@ -289,9 +289,9 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 						break;
 					default:
 
-						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 						log << "Successor could not fulfill requirements." << std::endl;
-						JVX_STOP_LOCK_LOG;
+						JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 						// Override error message - can deal with it
 						res = JVX_NO_ERROR;
@@ -310,9 +310,9 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 				// ===========================================================================================
 				if (jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT))
 				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 					log << "Asking successor to adapt processing format." << std::endl;
-					JVX_STOP_LOCK_LOG;
+					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 					tryThis.con_params = _common_set_icon.theData_in->con_params;
 					tryThis.con_params.format = preferredByOutput->con_params.format;
@@ -328,9 +328,9 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 						break;
 					default:
 
-						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 						log << "Successor could not fulfill requirements." << std::endl;
-						JVX_STOP_LOCK_LOG;
+						JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 						// Override error message - can deal with it
 						res = JVX_NO_ERROR;
@@ -350,9 +350,9 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 					(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT)) ||
 					(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT)))
 				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT);
+					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
 					log << "Adapting conversion parameters to convert samplerate/buffersize." << std::endl;
-					JVX_STOP_LOCK_LOG;
+					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
 
 					// Final attempt without any other components involved: convert resampling options

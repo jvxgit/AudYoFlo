@@ -134,3 +134,7 @@ endif()
 
 # include platform specific stuff
 include(${JVX_CMAKE_DIR}/${JVX_OS}.cmake)
+
+if(JVX_PROFILE_TEXT_LOG_LOCK)
+	set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_PROFILE_TEXT_LOG_LOCK")
+endif()

@@ -62,25 +62,44 @@ namespace _myJvxTools {
 		return &jvxrtst;
 	}
 
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+	jvxErrorType
+	CjvxLogRemoteHandler::start_lock(const std::string& tag)
+#else
 	jvxErrorType 
 	CjvxLogRemoteHandler::start_lock()
+#endif
 	{
 		jvxSize logLev = jvxLogLevel2Id(this->lev);
 		if(jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev, nullptr)) 
 		{
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+			jvx_lock_text_log(jvxrtst_bkp, logLev, tag );
+#else
 			jvx_lock_text_log(jvxrtst_bkp, logLev);
+#endif
 			isLocked = true;
 			return JVX_NO_ERROR;
 		}
 		return JVX_ERROR_INVALID_SETTING;
 	}
 
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+	void
+		CjvxLogRemoteHandler::stop_lock(const std::string& tag)
+#else
 	void 
 	CjvxLogRemoteHandler::stop_lock()
+#endif
 	{
 		if (isLocked)
 		{			
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+			jvx_unlock_text_log(jvxrtst_bkp, tag);
+#else
 			jvx_unlock_text_log(jvxrtst_bkp);
+#endif
 			isLocked = false;
 		}
 	}

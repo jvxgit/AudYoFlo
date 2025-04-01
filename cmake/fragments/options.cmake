@@ -105,5 +105,6 @@ option(JVX_LIBHOST_WITH_JSON_SHOW "Enable json show extensions in lib host" OFF)
 option(JVX_USE_LIBMYSOFA "Compile with libmysofa support" OFF)
 option(JVX_USE_ORC "Find ORC" OFF)
 option(JVX_USE_KISSFFT "Involve kissfft" OFF)
+option(JVX_PROFILE_TEXT_LOG_LOCK "Enable lock profiling for text log" OFF)
 
 option(JVX_LINUX_NATIVE_INSTALLED_LIBS "Link required libraries locally in linux" OFF)

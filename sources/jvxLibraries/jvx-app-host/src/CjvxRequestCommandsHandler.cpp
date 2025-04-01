@@ -28,7 +28,7 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 
 		if (log_stream.hdl)
 		{
-			resLock = log_stream.hdl->start_lock();
+			resLock = log_stream.hdl->start_lock(JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT);
 			if (resLock == JVX_NO_ERROR)
 			{
 				out_stream = log_stream.hdl->log_str();
@@ -48,7 +48,7 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 		{			
 			if (log_stream.hdl)
 			{
-				log_stream.hdl->stop_lock();
+				log_stream.hdl->stop_lock(JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT);
 			}
 		}
 	}
