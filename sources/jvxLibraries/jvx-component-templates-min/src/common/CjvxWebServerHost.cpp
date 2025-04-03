@@ -550,7 +550,7 @@ CjvxWebServerHost::report_event_request_translate(
 	jvxBool strictConstConnection, const char* uriprefix, int header,
 	char* payload_ws, size_t szFld,
 	std::string& command, jvxBool& requiresInterpretation,
-	jvxBool& errorDetected, std::string& errorDescription, std::ostream* os, jvx_lock* jvxlock, jvxBool silentMode)
+	jvxBool& errorDetected, std::string& errorDescription, std::ostream* os, jvx_lock_log* jvxlock, jvxBool silentMode)
 
 {
 	jvxErrorType res = JVX_NO_ERROR, resL = JVX_NO_ERROR;

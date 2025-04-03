@@ -35,13 +35,13 @@ CjvxTextWebSockets::register_text_socket_main_loop(jvxWebContext* ctxt)
 		newConnection.user = user.std_str();
 		newConnection.status = ayfTextWebSocketState::AYF_WEBSOCKET_NONE;
 
-		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 		log << "Web text socket connection from " << url_origin.std_str() << ":" << user.std_str() << std::endl;
 		JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 		connectedTextSockets[newConnection.theCtxt.context_conn] = newConnection;
 		return JVX_NO_ERROR;
 	}
-	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 	log << "Web text socket connection with handle " << newConnection.theCtxt.context_conn << " was already registered before!" << std::endl;
 	JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 	return JVX_ERROR_ALREADY_IN_USE;
@@ -57,13 +57,13 @@ CjvxTextWebSockets::unregister_text_socket_main_loop(jvxHandle* refCtxt)
 	auto elm = connectedTextSockets.find(refCtxt);
 	if (elm != connectedTextSockets.end())
 	{
-		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+		JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 		log << "Connected web text socket connection from " << elm->second.url_origin << ":" << elm->second.user << " successfully disconnected." << std::endl;
 		JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 		connectedTextSockets.erase(elm);
 		return JVX_NO_ERROR;
 	}
-	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+	JVX_START_LOCK_LOG_REF(hostRef, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 	log << "Web text socket connection with handle " << refCtxt << " was not registered before!" << std::endl;
 	JVX_STOP_LOCK_LOG_REF(hostRef, JVX_CREATE_CODE_LOCATION_TAG);
 	return JVX_ERROR_ELEMENT_NOT_FOUND;

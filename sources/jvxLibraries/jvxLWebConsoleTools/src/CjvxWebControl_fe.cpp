@@ -462,7 +462,7 @@ CjvxWebControl_fe::synchronizeWebServerCoEvents(jvxHandle* context_server,
 	report_event_request_translate(
 		context_server, context_conn, purp, uniqueId, strictConstConnection, uriprefix, 0,
 		NULL, 0, command, requiresInterpretation, errorDetected, errorDescription, &jvxrtst, 
-		static_cast<jvx_lock*>(&jvxrtst_bkp.jvxos), (config.silent_mode!= c_false));
+		static_cast<jvx_lock_log*>(&jvxrtst_bkp.jvxos), (config.silent_mode!= c_false));
 
 	// Error priority is higher than the interpretation prio!!
 	if (errorDetected)
@@ -876,7 +876,7 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 			}
 			else
 			{
-				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 				log << "Wrong websocket mode: all binary messages need to be associated to socket </jvx/host/socket>." << std::endl;
 				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 			}
@@ -905,7 +905,7 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 			}
 			else
 			{
-				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 				log << "Wrong websocket mode: all binary messages need to be associated to socket </jvx/host/socket>." << std::endl;
 				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 			}

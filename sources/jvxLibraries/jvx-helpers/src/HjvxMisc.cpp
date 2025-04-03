@@ -6958,6 +6958,8 @@ jvxostream::sync()
 			std::string text(theBuffer, sz);
 			pbump(-((int)sz));
 
+			collectString += text;
+#ifdef JVX_OLD_TEXT_LOG
 			if (theLog)
 			{
 				if (moduleName.size())
@@ -6973,6 +6975,7 @@ jvxostream::sync()
 			{
 				std::cout << text << std::flush;
 			}
+#endif
 			return 0;
 		}
 	}
@@ -7015,11 +7018,19 @@ jvxostream::overflow(int ch)
 }
 
 void 
-jvxostream::lock()
+jvxostream::lock(const char* tag)
 {
 	if (active)
 	{
 		JVX_LOCK_MUTEX(theLock);
+
+		collectString.clear();
+		collectTag.clear();
+		if (tag)
+		{
+			collectTag = tag;
+		}
+
 		if (lockThreadId == 0)
 		{
 			lockThreadId = JVX_GET_CURRENT_THREAD_ID();
@@ -7054,19 +7065,46 @@ jvxostream::unlock()
 		{
 			lockThreadId = 0;
 		}
+
+#ifndef JVX_OLD_TEXT_LOG
+		// collectString
+		if (theLog)
+		{
+			if (moduleName.size())
+			{
+				theLog->addEntry_buffered(collectString.c_str(), moduleName.c_str(), debugLevel, (jvxCBitField)-1, collectTag.c_str());
+			}
+			else
+			{
+				theLog->addEntry_buffered(collectString.c_str(), nullptr, 0, (jvxCBitField)-1, collectTag.c_str());
+			}
+		}
+		else
+		{
+			std::cout << collectString << std::flush;
+		}
+#endif
 		JVX_UNLOCK_MUTEX(theLock);
 	}
 }
 
 bool 
-jvxostream::try_lock()
+jvxostream::try_lock(const char* tag)
 {
 	if (active)
 	{
 		JVX_TRY_LOCK_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 		JVX_TRY_LOCK_MUTEX(res, theLock);
 		if (res == JVX_TRY_LOCK_MUTEX_SUCCESS)
+		{
+			collectString.clear();
+			collectTag.clear();
+			if (tag)
+			{
+				collectTag = tag;
+			}
 			return true;
+		}
 	}
 	return false;	
 }
@@ -7149,13 +7187,13 @@ void jvx_return_text_log(jvxrtst_backup& bkp)
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 bool
-jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin)
+jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag)
 #else
 bool
-jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev)
+jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag)
 #endif
 {	
-	bool res = bkp.jvxos.try_lock();
+	bool res = bkp.jvxos.try_lock(optTag);
 	if (res)
 	{
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
@@ -7168,14 +7206,14 @@ jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev)
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 void
-jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin)
+jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag)
 #else
 void
-jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev)
+jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag)
 #endif
 {
 	bkp.jvxos.set_debug_level(logLev);
-	bkp.jvxos.lock();
+	bkp.jvxos.lock(optTag);
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
 	bkp.jvxos.setOriginTag(tagOrigin, true);
 #endif

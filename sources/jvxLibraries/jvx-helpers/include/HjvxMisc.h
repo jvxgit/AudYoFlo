@@ -1418,14 +1418,14 @@ JVX_STATIC_INLINE void jvx_printJvxString_ind(std::ostream& os, jvxApiString* st
 CjvxReportCommandRequest* jvx_command_request_copy_alloc(const CjvxReportCommandRequest& in);
 void jvx_command_request_copy_dealloc(CjvxReportCommandRequest* in);
 
-JVX_INTERFACE jvx_lock
+JVX_INTERFACE jvx_lock_log
 {
 public:
-	virtual ~jvx_lock() {};
+	virtual ~jvx_lock_log() {};
 
-	virtual void lock() = 0;
+	virtual void lock(const char* tag = nullptr) = 0;
 	virtual void unlock() = 0;
-	virtual bool try_lock() = 0;
+	virtual bool try_lock(const char* tag = nullptr) = 0;
 };
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
@@ -1445,7 +1445,7 @@ public:
 };
 #endif
 
-class jvxostream : public std::streambuf, public jvx_lock
+class jvxostream : public std::streambuf, public jvx_lock_log
 {
 	
 private:
@@ -1459,6 +1459,9 @@ private:
 	JVX_THREAD_ID lockThreadId;
 	jvxSize refCnt;
 	JVX_THREAD_ID threadId_lasttime;
+
+	std::string collectString;
+	std::string collectTag;
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
 	std::map<JVX_THREAD_ID, jvxProfileLock_acquireRelease> profileDat;
@@ -1478,9 +1481,9 @@ public:
 	virtual int sync() override;
 	virtual int overflow(int ch)override;
 
-	virtual void lock() override;
+	virtual void lock(const char* tag = nullptr) override;
 	virtual void unlock() override;
-	virtual bool try_lock() override;
+	virtual bool try_lock(const char* tag = nullptr) override;
 
 	void setActive(jvxBool activeArg);
 };
@@ -1645,6 +1648,14 @@ public:
 	}
 };
 
+class CjvxLogEmbedding
+{
+public:
+	CjvxLogEmbedding() : jvxrtst(&jvxrtst_bkp.jvxos) {};
+	jvxrtst_backup jvxrtst_bkp;
+	std::ostream jvxrtst;
+};
+
 #define JVX_DEFINE_RT_ST_INSTANCES \
 	jvxrtst_backup jvxrtst_bkp; \
 	std::ostream jvxrtst;
@@ -1666,15 +1677,15 @@ void jvx_return_text_log(jvxrtst_backup& bkp);
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT JVX_CREATE_CODE_LOCATION_TAG
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD , JVX_CREATE_CODE_LOCATION_TAG
 
-bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin);
-void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin);
+bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
+void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
 void jvx_unlock_text_log(jvxrtst_backup& bkp, const std::string& tagOrigin);
 #else
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD
 
-bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev);
-void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev);
+bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag = nullptr);
+void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag = nullptr);
 void jvx_unlock_text_log(jvxrtst_backup& bkp);
 #endif
 
@@ -1684,7 +1695,7 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 		std::ostream varos(&varsb); 
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
-#define JVX_START_LOCK_LOG_REF(ptr, LEVEL, TAG) \
+#define JVX_START_LOCK_LOG_REF(ptr, LEVEL, LOCATION, OPT_TAG) \
 	{ \
 		jvxBool __dbgCout = false; \
 		jvxSize __logLevel = jvxLogLevel2Id(LEVEL); \
@@ -1694,14 +1705,14 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 			if(__dbgCout) \
 				logptr = &std::cout; \
 			std::ostream& log = *logptr; \
-			jvx_lock_text_log(ptr->jvxrtst_bkp, __logLevel, TAG);
+			jvx_lock_text_log(ptr->jvxrtst_bkp, __logLevel, LOCATION, OPT_TAG);
 
-#define JVX_STOP_LOCK_LOG_REF(ptr, TAG) \
-			jvx_unlock_text_log(ptr->jvxrtst_bkp, TAG); \
+#define JVX_STOP_LOCK_LOG_REF(ptr, LOCATION) \
+			jvx_unlock_text_log(ptr->jvxrtst_bkp, LOCATION); \
 		} \
 	}
 #else
-#define JVX_START_LOCK_LOG_REF(ptr, LEVEL, TAG) \
+#define JVX_START_LOCK_LOG_REF(ptr, LEVEL, LOCATION, OPT_TAG) \
 	{ \
 		jvxBool __dbgCout = false; \
 		jvxSize __logLevel = jvxLogLevel2Id(LEVEL); \
@@ -1711,16 +1722,16 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 			if(__dbgCout) \
 				logptr = &std::cout; \
 			std::ostream& log = *logptr; \
-			jvx_lock_text_log(ptr->jvxrtst_bkp, __logLevel);
+			jvx_lock_text_log(ptr->jvxrtst_bkp, __logLevel, OPT_TAG);
 
-#define JVX_STOP_LOCK_LOG_REF(ptr, TAG) \
+#define JVX_STOP_LOCK_LOG_REF(ptr, LOCATION) \
 			jvx_unlock_text_log(ptr->jvxrtst_bkp); \
 		} \
 	}
 #endif
 
-#define JVX_START_LOCK_LOG(LEVEL, TAG) JVX_START_LOCK_LOG_REF(this, LEVEL, TAG)
-#define JVX_STOP_LOCK_LOG(TAG) JVX_STOP_LOCK_LOG_REF(this, TAG)
+#define JVX_START_LOCK_LOG(LEVEL, LOCATION, OPT_TAG) JVX_START_LOCK_LOG_REF(this, LEVEL, LOCATION, OPT_TAG)
+#define JVX_STOP_LOCK_LOG(LOCATION) JVX_STOP_LOCK_LOG_REF(this, LOCATION)
 
 #define TL3 JVX_START_LOCK_LOG_REF(this, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT)
 #define TL JVX_STOP_LOCK_LOG_REF(this)

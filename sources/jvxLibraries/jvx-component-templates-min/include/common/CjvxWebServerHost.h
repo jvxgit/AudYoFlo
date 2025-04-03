@@ -140,7 +140,7 @@ public:
 		char *payload_ws, size_t szFld,
 		std::string& command, jvxBool& requiresInterpretation,
 		jvxBool& errorDetected, std::string& errorDescription,
-		std::ostream* os, jvx_lock* jvxlock, jvxBool silentMode);
+		std::ostream* os, jvx_lock_log* jvxlock, jvxBool silentMode);
 
 	// Web socket handling	
 	jvxErrorType hook_wsConnect(jvxHandle* context_server, jvxHandle* context_conn);

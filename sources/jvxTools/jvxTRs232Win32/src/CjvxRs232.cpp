@@ -68,7 +68,7 @@ CjvxRs232::initialize(IjvxHiddenInterface* hostRef, jvxHandle* priv, jvxConnecti
 		{
 			std::string nmComPort = "\\\\.\\COM" + jvx_size2String(jj);
 
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG)
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "")
 			log << "Testing rs-232 port <" << nmComPort << ">" << std::endl;
 			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG)
 
@@ -98,7 +98,7 @@ CjvxRs232::initialize(IjvxHiddenInterface* hostRef, jvxHandle* priv, jvxConnecti
 				elm.dbg.fn = "";
 #endif
 
-				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG)
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "")
 				log << "-> Rs-232 port <" << nmComPort << "> is ready." << std::endl;
 				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG)
 

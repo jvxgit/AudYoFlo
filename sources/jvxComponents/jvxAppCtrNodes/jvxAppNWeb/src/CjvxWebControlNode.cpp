@@ -204,7 +204,7 @@ CjvxWebControlNode::synchronizeWebServerCoEvents(
 	report_event_request_translate(
 		context_server, context_conn, purp, uniqueId, strictConstConnection, uriprefix, 0,
 		NULL, 0, command, requiresInterpretation, errorDetected, errorDescription, &jvxrtst,
-		static_cast<jvx_lock*>(&jvxrtst_bkp.jvxos), silentMode);
+		static_cast<jvx_lock_log*>(&jvxrtst_bkp.jvxos), silentMode);
 	if (errorDetected)
 	{
 		CjvxJsonElementList jsec;

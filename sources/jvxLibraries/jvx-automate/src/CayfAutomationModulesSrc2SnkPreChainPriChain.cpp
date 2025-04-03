@@ -119,13 +119,13 @@ namespace CayfAutomationModules
 
 		if (res == JVX_NO_ERROR)
 		{
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 			log << "Activated module <" << cpElm.modName << "> with suffix <" << cpElm.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr, JVX_CREATE_CODE_LOCATION_TAG);
 		}
 		else
 		{
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 			log << "Failed to activate module <" << cpElm.modName << "> with suffix <" << cpElm.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(cpElm.cpId) << ">." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr, JVX_CREATE_CODE_LOCATION_TAG);
 		}
@@ -154,7 +154,7 @@ namespace CayfAutomationModules
 	{
 		IayfEstablishedProcessesSrc2SnkPreChainPriChain& sglElm = castEstablishProcess< IayfEstablishedProcessesSrc2SnkPreChainPriChain>(sglElmPtr);
 		
-		JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+		JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 		log << "Deactivating  module <" << sglElm.supportNodeRuntime.modName << "> with suffix <" <<
 			sglElm.supportNodeRuntime.cpManipulate.manSuffix << "> in location <" << jvxComponentIdentification_txt(sglElm.supportNodeRuntime.cpId) << ">." << std::endl;
 		JVX_STOP_LOCK_LOG_REF(objLogRefPtr, JVX_CREATE_CODE_LOCATION_TAG);
@@ -164,7 +164,7 @@ namespace CayfAutomationModules
 
 		if (sglElm.supportNodeRuntime.states.connectionsEstablishFlags != 0)
 		{
-			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_0_NORMAL_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG);
+			JVX_START_LOCK_LOG_REF(objLogRefPtr, jvxLogLevel::JVX_LOGLEVEL_0_NORMAL_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
 			log << "WARNING: The status of the established connectons is not 0 when all connections related to module <" << 
 				sglElm.supportNodeRuntime.modName << "> are closed. This typically happens if the automation component does not forward the process disconnect message." << std::endl;
 			JVX_STOP_LOCK_LOG_REF(objLogRefPtr, JVX_CREATE_CODE_LOCATION_TAG);

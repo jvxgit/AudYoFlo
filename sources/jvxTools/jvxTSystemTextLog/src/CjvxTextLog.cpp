@@ -3,6 +3,48 @@
 
 #define TIMEOUT 5000
 
+#define JVX_TEXT_LOG_OUTPUT_JSON
+
+#ifdef JVX_TEXT_LOG_OUTPUT_JSON
+#include "CjvxJson.h"
+#endif
+
+static void prefilterEntriesJson(CjvxJsonElementList& elmLst, std::string& txtStr)
+{
+	CjvxJsonElement elm;
+	CjvxJsonArray elmArr;
+	CjvxJsonArrayElement elmArrElm;
+	while (1)
+	{
+		std::string token;
+		size_t sz = std::string::npos;
+		sz = txtStr.find('\n');
+		if (sz != std::string::npos)
+		{
+			token = txtStr.substr(0, sz);// excluding \n
+			txtStr = txtStr.substr(sz + 1);
+			if (!token.empty())
+			{
+				token = jvx::helper::filterEscapes(jvx::helper::asciToUtf8(token));
+				elmArrElm.makeString(token);
+				elmArr.addConsumeElement(elmArrElm);
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (txtStr.size())
+	{
+		txtStr = jvx::helper::filterEscapes(jvx::helper::asciToUtf8(txtStr));
+		elmArrElm.makeString(txtStr);
+		elmArr.addConsumeElement(elmArrElm);
+	}
+	elm.makeArray("txt", elmArr);
+	elmLst.addConsumeElement(elm);
+}
 
 /**
  * Constructor: Set all variables to zero
@@ -71,6 +113,25 @@ CjvxTextLog::initialize(IjvxHiddenInterface* hostRef, const char* strFileName, j
 			// Set output buffer to be non buffered - we do the buffering ourself
 			setvbuf(file.outFile, NULL, _IONBF, 0);
 
+#ifdef JVX_TEXT_LOG_OUTPUT_JSON
+
+			std::string token;
+			fprintf(file.outFile, "{");
+			CjvxJsonElement elm;			
+			elm.makeAssignmentString("date", JVX_DATE());
+			elm.printString(token, JVX_JSON_PRINT_JSON, 0, "", "", "", false);
+			fprintf(file.outFile, "\t%s,", token.c_str());
+			token.clear();
+			elm.reset();
+
+			elm.makeAssignmentString("start", JVX_TIME());
+			elm.printString(token, JVX_JSON_PRINT_JSON, 0, "", "", "", false);
+			fprintf(file.outFile, "\t%s,", token.c_str());
+			token.clear();
+			elm.reset();
+
+#else
+
 			std::string strPrefix = "[0-D]";
 
 			// Write some initialization lines
@@ -89,6 +150,7 @@ CjvxTextLog::initialize(IjvxHiddenInterface* hostRef, const char* strFileName, j
 
 			fprintf(file.outFile, "%s::=============================\n", strPrefix.c_str());
 			fprintf(file.outFile, "%s::=============================\n", strPrefix.c_str());
+#endif
 
 			// Allocate buffer for non-blocking out
 			buffer.lBuffer = JVX_SIZE_INT32(bytesFilelBuffer);
@@ -167,6 +229,7 @@ CjvxTextLog::terminate()
 	}
 	if(logFileState == RTP_LOGFILE_INIT)
 	{
+
 		delete[](buffer.characterBuffer);
 		buffer.characterBuffer = NULL;
 		buffer.idxWrite = 0;
@@ -178,6 +241,17 @@ CjvxTextLog::terminate()
 		cbuffer.idxWrite = 0;
 		cbuffer.lBuffer = 0;
 		cbuffer.numIterations = 0;
+
+#ifdef JVX_TEXT_LOG_OUTPUT_JSON
+
+		std::string token;
+		CjvxJsonElement elm;
+		elm.makeAssignmentString("stop", JVX_TIME());
+		elm.printString(token, JVX_JSON_PRINT_JSON, 0, "", "", "", false);
+		fprintf(file.outFile, "%s}", token.c_str());
+		token.clear();
+		elm.reset();
+#endif
 
 		fclose(file.outFile);
 		file.outFile = NULL;
@@ -318,7 +392,7 @@ CjvxTextLog::addEntry_direct(const char* txt, const char* moduleName, jvxSize db
  * written to a large buffer first and to file later in a second low priority thread.
  *///===========================================================
 jvxErrorType
-CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum)
+CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxSize dbgLevel, jvxCBitField outEnum, const char* tag)
 {
 	jvxTick timing;
 	std::string txtStr = txt;
@@ -326,10 +400,65 @@ CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxSize 
 	jvxErrorType res = JVX_NO_ERROR;
 	if(logFileState == RTP_LOGFILE_STARTED)
 	{
-		std::string strPrefix = "[";
-
 		timing = JVX_GET_TICKCOUNT_US_GET_CURRENT(&tStampRef);
 		jvxSize usFromStart = (timing - startTimer);
+		jvxSize uIdLoc = 0;
+
+#ifdef JVX_TEXT_LOG_OUTPUT_JSON
+	
+		// uId needs to be locked!!
+		JVX_LOCK_MUTEX(this->mutexModules);
+		uIdLoc = uId++;
+		JVX_UNLOCK_MUTEX(this->mutexModules);
+
+		CjvxJsonElementList elmLst;
+		CjvxJsonElement elm;
+		CjvxJsonArray elmArr;
+		CjvxJsonArrayElement elmArrElm;
+		jvxData timeDat = usFromStart * 0.000001;		
+		elm.makeAssignmentData("time", timeDat, 6);
+		elmLst.addConsumeElement(elm);
+
+		if (moduleName)
+		{
+			elm.makeAssignmentString("module", moduleName);
+			elmLst.addConsumeElement(elm);
+		}
+
+		std::string tagStr;
+		if (tag)
+		{
+			tagStr = tag;
+		}
+			
+		if (!tagStr.empty())
+		{
+			elm.makeAssignmentString("tag", tag);
+			elmLst.addConsumeElement(elm);
+		}
+
+		elm.makeAssignmentSize("dbglev", dbgLevel);
+		elmLst.addConsumeElement(elm);
+
+		elm.makeAssignmentString("type", "txt");
+		elmLst.addConsumeElement(elm);
+
+		prefilterEntriesJson(elmLst, txtStr);
+
+		//elm.makeAssignmentString("message", txt);
+		//elmLst.addConsumeElement(elm);
+
+		std::string msg_with_id = "msg_" + jvx_size2String(uIdLoc);
+
+		elm.makeSection(msg_with_id, elmLst);
+
+		elm.printString(out, JVX_JSON_PRINT_JSON, 0, "", "", "", false);
+		out += ",\n";
+
+#else
+
+		std::string strPrefix = "[";
+
 
 		strPrefix += jvx_size2String(usFromStart);
 
@@ -345,6 +474,8 @@ CjvxTextLog::addEntry_buffered(const char* txt, const char* moduleName, jvxSize 
 		strPrefix += "]";
 
 		prefilterEntries(strPrefix, out, txtStr);
+
+#endif
 
 		if (out.size())
 		{

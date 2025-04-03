@@ -65,6 +65,7 @@ class CjvxTextLog: public IjvxTextLog, public CjvxObject
 
 	std::map<std::string, jvxSize> reg_modules;
 
+	jvxSize uId = 0;
 private:
 	void prefilterEntries(const std::string& strTime, std::string& out, std::string& txtStr);
 
@@ -87,7 +88,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop() override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_direct(const char* txt, const char* moduleName = NULL, jvxSize logLevel = 0, jvxCBitField outEnum = (jvxCBitField)-1) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered(const char* txt, const char* moduleName = NULL, jvxSize logLevel = 0, jvxCBitField outEnum = (jvxCBitField)-1) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered(const char* txt, const char* moduleName = NULL, jvxSize logLevel = 0, jvxCBitField outEnum = (jvxCBitField)-1, const char* tag = nullptr) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION addEntry_buffered_nb(const char* txt, const char* moduleName = NULL, jvxSize logLevel = 0, jvxCBitField outEnum = (jvxCBitField)-1) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION produceStackframe_direct(const char* description) override;
