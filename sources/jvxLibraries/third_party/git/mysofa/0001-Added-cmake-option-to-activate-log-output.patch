@@ -1,12 +1,12 @@
-From ce811166844bbd5feff06aa77400eb19068d266f Mon Sep 17 00:00:00 2001
+From 13e163a1e3cfdd88c6989ce667d6effada1b1ec9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Hauke=20Kr=C3=BCger?= <hk@binauricsaudio.com>
-Date: Fri, 4 Apr 2025 16:41:13 +0200
-Subject: [PATCH] Added cmake option to activate log output
+Date: Fri, 4 Apr 2025 18:11:50 +0200
+Subject: [PATCH] Patchit
 
 ---
  CMakeLists.txt     | 1 +
- src/CMakeLists.txt | 3 +++
- 2 files changed, 4 insertions(+)
+ src/CMakeLists.txt | 4 ++++
+ 2 files changed, 5 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index c0ce279..df65175 100644
@@ -21,19 +21,20 @@ index c0ce279..df65175 100644
  set(CPACK_PACKAGE_DESCRIPTION "SOFA file reader for better HRTFs")
  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 109895e..a0eccb8 100644
+index 109895e..8c82f69 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -96,6 +96,9 @@ install(TARGETS mysofa-static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+@@ -96,6 +96,10 @@ install(TARGETS mysofa-static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
        target_link_libraries(mysofa-static LINK_PUBLIC gcov --coverage)
      endif()
    endif()
 +  if(VDEBUG_LOGGING)
 +	target_compile_definitions(mysofa-static PRIVATE "VDEBUG")
 +  endif()
++  set_property(TARGET mysofa-static PROPERTY POSITION_INDEPENDENT_CODE ON)
  endif()
  
  if(BUILD_SHARED_LIBS)
 -- 
-2.47.1.windows.1
+2.43.0
 
