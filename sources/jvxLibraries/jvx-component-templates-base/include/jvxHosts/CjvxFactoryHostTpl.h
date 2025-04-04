@@ -120,14 +120,14 @@ public:
 				if (T::_common_set.theToolsHost)
 				{
 					jvxErrorType resL = T::_common_set.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG,
-						&T::jvxrtst_bkp.theTextLogger_obj, 0, NULL);
-					if ((resL == JVX_NO_ERROR) && T::jvxrtst_bkp.theTextLogger_obj)
+						&T::embLog.jvxrtst_bkp.theTextLogger_obj, 0, NULL);
+					if ((resL == JVX_NO_ERROR) && T::embLog.jvxrtst_bkp.theTextLogger_obj)
 					{
-						resL = T::jvxrtst_bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(&T::jvxrtst_bkp.theTextLogger_hdl), NULL, NULL);
+						resL = T::embLog.jvxrtst_bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(&T::embLog.jvxrtst_bkp.theTextLogger_hdl), NULL, NULL);
 					}
 				}
 
-				if (T::jvxrtst_bkp.theTextLogger_hdl)
+				if (T::embLog.jvxrtst_bkp.theTextLogger_hdl)
 				{
 					std::cout << "Starting text log file:" << std::endl;
 					std::cout << " --> Filename = " << CjvxHost_genpcg::properties_selected.textLog_filename.value << std::endl;
@@ -137,7 +137,7 @@ public:
 					std::cout << " --> Debug level = " << CjvxHost_genpcg::properties_selected.textLog_dbglevel.value << std::endl;
 					std::cout << " --> Log output cout = " << CjvxHost_genpcg::properties_selected.textLog_dbgCout.value << std::endl;
 
-					T::jvxrtst_bkp.theTextLogger_hdl->initialize(
+					T::embLog.jvxrtst_bkp.theTextLogger_hdl->initialize(
 						static_cast<IjvxHiddenInterface*>(this),
 						CjvxHost_genpcg::properties_selected.textLog_filename.value.c_str(),
 						CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile.value,
@@ -150,10 +150,10 @@ public:
 					for (i = 0; i < CjvxHost_genpcg::properties_selected.textLog_expressions.value.size(); i++)
 					{
 						std::cout << " -->-->" << CjvxHost_genpcg::properties_selected.textLog_expressions.value[i] << std::endl;
-						T::jvxrtst_bkp.theTextLogger_hdl->addTextLogExpression(CjvxHost_genpcg::properties_selected.textLog_expressions.value[i].c_str());
+						T::embLog.jvxrtst_bkp.theTextLogger_hdl->addTextLogExpression(CjvxHost_genpcg::properties_selected.textLog_expressions.value[i].c_str());
 					}
 
-					T::jvxrtst_bkp.theTextLogger_hdl->start();
+					T::embLog.jvxrtst_bkp.theTextLogger_hdl->start();
 				}
 			}
 		}
@@ -174,15 +174,15 @@ public:
 				assert(stat == JVX_STATE_NONE);
 			}
 
-			if (T::jvxrtst_bkp.theTextLogger_hdl)
+			if (T::embLog.jvxrtst_bkp.theTextLogger_hdl)
 			{
-				T::jvxrtst_bkp.theTextLogger_hdl->stop();
-				T::jvxrtst_bkp.theTextLogger_hdl->terminate();
+				T::embLog.jvxrtst_bkp.theTextLogger_hdl->stop();
+				T::embLog.jvxrtst_bkp.theTextLogger_hdl->terminate();
 
 				T::_common_set.theToolsHost->return_reference_tool(jvxComponentIdentification(JVX_COMPONENT_SYSTEM_TEXT_LOG,
-					JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED), T::jvxrtst_bkp.theTextLogger_obj);
-				T::jvxrtst_bkp.theTextLogger_obj = NULL;
-				T::jvxrtst_bkp.theTextLogger_hdl = NULL;
+					JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED), T::embLog.jvxrtst_bkp.theTextLogger_obj);
+				T::embLog.jvxrtst_bkp.theTextLogger_obj = NULL;
+				T::embLog.jvxrtst_bkp.theTextLogger_hdl = NULL;
 			}
 
 			T::_lock_properties_local();

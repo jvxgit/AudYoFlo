@@ -102,7 +102,7 @@ private:
 	IjvxFactoryHost* hFHost = nullptr;
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-	JVX_DEFINE_RT_ST_INSTANCES
+	CjvxLogEmbedding embLog;
 #endif
 
 	jvxErrorType addRequestToGroup(oneAssociatedGroup& entry,

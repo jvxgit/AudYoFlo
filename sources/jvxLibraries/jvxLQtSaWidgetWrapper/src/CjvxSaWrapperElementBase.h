@@ -133,7 +133,7 @@ protected:
 	jvx::propertyDetail::CjvxTranferDetail trans;
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-		JVX_DEFINE_RT_ST_INSTANCES
+	CjvxLogEmbedding embLog;
 #endif
 
 public:

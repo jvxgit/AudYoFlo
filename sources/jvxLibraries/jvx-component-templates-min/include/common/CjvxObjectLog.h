@@ -6,8 +6,8 @@
 class CjvxObjectLog
 {
 public:
-	JVX_DEFINE_RT_ST_INSTANCES
-	CjvxObjectLog() : JVX_INIT_RT_ST_INSTANCES{};
+	CjvxObjectLog() {};
+	CjvxLogEmbedding embLog;
 };
 
 #endif

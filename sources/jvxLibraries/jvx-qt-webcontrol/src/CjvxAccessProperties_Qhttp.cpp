@@ -4,7 +4,7 @@ extern "C"
 #include "jvx-crc.h"
 }
 
-CjvxAccessProperties_Qhttp::CjvxAccessProperties_Qhttp(): QObject(), JVX_INIT_RT_ST_INSTANCES
+CjvxAccessProperties_Qhttp::CjvxAccessProperties_Qhttp(): QObject()
 {
 	myUniqueId_groups = 1;
 	httpRefPtr = NULL;
@@ -56,16 +56,16 @@ CjvxAccessProperties_Qhttp::initialize(IjvxHttpApi* httpRef,
 		if (hFHost)
 		{
 			// Reset the logfile module
-			jvx_init_text_log(jvxrtst_bkp);
+			jvx_init_text_log(embLog);
 
-			jvxrtst_bkp.set_module_name("CjvxAccessProperties_Qhttp");
+			embLog.jvxrtst_bkp.set_module_name("CjvxAccessProperties_Qhttp");
 
-			hFHost->request_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle**>(&jvxrtst_bkp.theToolsHost));
-			if (jvxrtst_bkp.theToolsHost)
+			hFHost->request_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle**>(&embLog.jvxrtst_bkp.theToolsHost));
+			if (embLog.jvxrtst_bkp.theToolsHost)
 			{
-				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(jvxrtst_bkp.jvxlst_buf, char, JVX_COBJECT_OS_BUF_SIZE);
-				jvxrtst_bkp.jvxlst_buf_sz = JVX_COBJECT_OS_BUF_SIZE;
-				jvx_request_text_log(jvxrtst_bkp);
+				JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(embLog.jvxrtst_bkp.jvxlst_buf, char, JVX_COBJECT_OS_BUF_SIZE);
+				embLog.jvxrtst_bkp.jvxlst_buf_sz = JVX_COBJECT_OS_BUF_SIZE;
+				jvx_request_text_log(embLog);
 			}
 		}
 #endif
@@ -82,18 +82,18 @@ CjvxAccessProperties_Qhttp::terminate(IjvxHttpApi** httpRef, jvxComponentIdentif
 	{
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 
-		if (jvxrtst_bkp.theToolsHost)
+		if (embLog.jvxrtst_bkp.theToolsHost)
 		{
-			jvx_return_text_log(jvxrtst_bkp);
-			JVX_DSP_SAFE_DELETE_FIELD(jvxrtst_bkp.jvxlst_buf);
+			jvx_return_text_log(embLog);
+			JVX_DSP_SAFE_DELETE_FIELD(embLog.jvxrtst_bkp.jvxlst_buf);
 
-			jvxrtst_bkp.jvxlst_buf = NULL;
-			jvxrtst_bkp.jvxlst_buf_sz = 0;			
+			embLog.jvxrtst_bkp.jvxlst_buf = NULL;
+			embLog.jvxrtst_bkp.jvxlst_buf_sz = 0;			
 
-			hFHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle*>(jvxrtst_bkp.jvxlst_buf));
+			hFHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle*>(embLog.jvxrtst_bkp.jvxlst_buf));
 		}
-		jvxrtst_bkp.jvxlst_buf = NULL;
-		jvx_terminate_text_log(jvxrtst_bkp);
+		embLog.jvxrtst_bkp.jvxlst_buf = NULL;
+		jvx_terminate_text_log(embLog);
 #endif
 
 		// Cancel all currently running messages
@@ -356,9 +356,9 @@ CjvxAccessProperties_Qhttp::get_property_descriptor__descriptor(jvxPropertyDescr
 				//}
 				if (!foundit)
 				{
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvxrtst << __FUNCTION__ << ": Error: requesting readout for descriptor <" << addrDescr->descriptor << "> which is not available." << std::endl;
+						embLog.jvxrtst << __FUNCTION__ << ": Error: requesting readout for descriptor <" << addrDescr->descriptor << "> which is not available." << std::endl;
 					}
 					std::cout << __FUNCTION__ << ": Error: requesting readout for descriptor <" << addrDescr->descriptor << "> which is not available." << std::endl;
 					return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -374,9 +374,9 @@ CjvxAccessProperties_Qhttp::get_property_descriptor__descriptor(jvxPropertyDescr
 
 				if (allRequestsGone)
 				{
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
+						embLog.jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
 					}
 					thegroups.erase(elm);
 				}
@@ -387,9 +387,9 @@ CjvxAccessProperties_Qhttp::get_property_descriptor__descriptor(jvxPropertyDescr
 		}
 		else
 		{
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
+				embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
 			}
 			std::cout << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
 			return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -555,9 +555,9 @@ CjvxAccessProperties_Qhttp::create_refresh_property_cache(jvxCallManagerProperti
 			}
 			if (!foundit)
 			{
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvxrtst << __FUNCTION__ << ": Error: requesting readout for descriptor <" << descriptor_expr << "> which is not available." << std::endl;
+					embLog.jvxrtst << __FUNCTION__ << ": Error: requesting readout for descriptor <" << descriptor_expr << "> which is not available." << std::endl;
 				}
 
 				std::cout << __FUNCTION__ << ": Error: requesting readout for descriptor <" << descriptor_expr << "> which is not available." << std::endl;
@@ -577,9 +577,9 @@ CjvxAccessProperties_Qhttp::create_refresh_property_cache(jvxCallManagerProperti
 				assert(elm->second.response);
 				elm->second.response->report_nonblocking_delayed_update_terminated(elm->first, elm->second.priv);
 
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
+					embLog.jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
 				}
 				thegroups.erase(elm);
 			}
@@ -590,9 +590,9 @@ CjvxAccessProperties_Qhttp::create_refresh_property_cache(jvxCallManagerProperti
 	}
 	else
 	{
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
+			embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
 		}
 		std::cout << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -650,9 +650,9 @@ CjvxAccessProperties_Qhttp::get_property(
 			{
 			case JVX_ACCESS_PROPERTY_MODE_COLLECT:
 
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvxrtst << __FUNCTION__ << ": Added request id <" << elm->first << "/" << elm->second.myUniqueId_inGroup << ">- " << ptrDescr->descriptor << " to group." << std::endl;
+					embLog.jvxrtst << __FUNCTION__ << ": Added request id <" << elm->first << "/" << elm->second.myUniqueId_inGroup << ">- " << ptrDescr->descriptor << " to group." << std::endl;
 				}
 				res = addRequestToGroup(elm->second, ptrDescr->descriptor, JVX_ACCESS_PROPERTY_OPERATION_PROPERTY_GET_CONTENT, "", trans.contentOnly, callGate.context);
 				if (res == JVX_NO_ERROR)
@@ -685,9 +685,9 @@ CjvxAccessProperties_Qhttp::get_property(
 							res = elmD->second.errRes;
 						}
 						elmD->second.stat = JVX_STATE_NONE;
-						if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+						if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 						{
-							jvxrtst << __FUNCTION__ << ": Removing request id <" << elm->first << "/" << elmD->first << ">-" << ptrDescr->descriptor << " from group." << std::endl;
+							embLog.jvxrtst << __FUNCTION__ << ": Removing request id <" << elm->first << "/" << elmD->first << ">-" << ptrDescr->descriptor << " from group." << std::endl;
 						}
 
 						elm->second.requests.erase(elmD);
@@ -703,9 +703,9 @@ CjvxAccessProperties_Qhttp::get_property(
 					// requests have been blocked. Now, once the secondary update is complete, all properties are read.
 					// Those who were blocked, however, are not available since the trigger did not add those to the 
 					// requested group. Hence, this is not an error but a warning!
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvxrtst << __FUNCTION__ << ": Warning: requesting readout for descriptor <" << ptrDescr->descriptor << "> which is not available." << std::endl;
+						embLog.jvxrtst << __FUNCTION__ << ": Warning: requesting readout for descriptor <" << ptrDescr->descriptor << "> which is not available." << std::endl;
 					}
 					return JVX_ERROR_ELEMENT_NOT_FOUND;
 				}
@@ -723,9 +723,9 @@ CjvxAccessProperties_Qhttp::get_property(
 					assert(elm->second.response);
 					elm->second.response->report_nonblocking_delayed_update_terminated(elm->first, elm->second.priv);
 
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
+						embLog.jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
 					}
 					thegroups.erase(elm);
 				}
@@ -745,9 +745,9 @@ CjvxAccessProperties_Qhttp::get_property(
 			// the property is one of the last in a group, even the complete group id has been removed already
 			// if all requested properties have been handled. In that case, we end up here
 			// This is not an error but a warning!
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvxrtst << __FUNCTION__ << ": Warning: received invalid unique id within group: " << *processId << std::endl;
+				embLog.jvxrtst << __FUNCTION__ << ": Warning: received invalid unique id within group: " << *processId << std::endl;
 			}
 			return JVX_ERROR_ELEMENT_NOT_FOUND;
 		}
@@ -884,9 +884,9 @@ jvxErrorType CjvxAccessProperties_Qhttp::set_property(
 				}
 				if (!foundit)
 				{
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvxrtst << __FUNCTION__ << ": Error: requesting readout for descriptor <" << descriptor << "> which is not available." << std::endl;
+						embLog.jvxrtst << __FUNCTION__ << ": Error: requesting readout for descriptor <" << descriptor << "> which is not available." << std::endl;
 					}
 					std::cout << __FUNCTION__ << ": Error: requesting readout for descriptor <" << descriptor << "> which is not available." << std::endl;
 					return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -904,9 +904,9 @@ jvxErrorType CjvxAccessProperties_Qhttp::set_property(
 				{
 					assert(elm->second.response);
 					elm->second.response->report_nonblocking_delayed_update_terminated(elm->first, elm->second.priv);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
+						embLog.jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
 					}
 					thegroups.erase(elm);
 				}
@@ -917,9 +917,9 @@ jvxErrorType CjvxAccessProperties_Qhttp::set_property(
 		}
 		else
 		{
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
+				embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
 			}
 
 			std::cout << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
@@ -1079,9 +1079,9 @@ CjvxAccessProperties_Qhttp::get_property_extended_info(jvxCallManagerProperties&
 				{
 					assert(elm->second.response);
 					elm->second.response->report_nonblocking_delayed_update_terminated(elm->first, elm->second.priv);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
+						embLog.jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
 					}
 					thegroups.erase(elm);
 				}
@@ -1093,9 +1093,9 @@ CjvxAccessProperties_Qhttp::get_property_extended_info(jvxCallManagerProperties&
 		}
 		else
 		{
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
+				embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
 			}
 
 			std::cout << __FUNCTION__ << ": Error: received invalid unique id within group: " << *processId << std::endl;
@@ -1193,9 +1193,9 @@ CjvxAccessProperties_Qhttp::property_stop_delayed_group(jvxCallManagerProperties
 			if (priv)
 				*priv = elm->second.priv;
 
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
+				embLog.jvxrtst << __FUNCTION__ << " Erasing property group <" << elm->first << ">." << std::endl;
 			}
 			thegroups.erase(elm);
 			return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -1362,17 +1362,17 @@ CjvxAccessProperties_Qhttp::complete_transfer_http(jvxSize uniqueIdGroup, jvxSiz
 			check_for_all_props_complete(uniqueIdGroup);
 			return JVX_NO_ERROR;
 		}
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
+			embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
 		}
 
 		std::cout << __FUNCTION__ << ": Error: received invalid unique id within group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	}
-	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
+		embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
 	}
 	std::cout << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -1397,17 +1397,17 @@ CjvxAccessProperties_Qhttp::failed_transfer_http(jvxSize uniqueIdGroup, jvxSize 
 			check_for_all_props_complete(uniqueIdGroup);
 			return JVX_NO_ERROR;
 		}
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
+			embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id within group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
 		}
 
 		std::cout << __FUNCTION__ << ": Error: received invalid unique id within group: " << uniqueIdGroup << "::" << uniqueId_ingroup << std::endl;
 		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	}
-	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << "::" << uniqueIdGroup << std::endl;
+		embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << "::" << uniqueIdGroup << std::endl;
 	}
 	std::cout << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << "::" << uniqueIdGroup << std::endl;
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -1440,9 +1440,9 @@ CjvxAccessProperties_Qhttp::check_for_all_props_complete(jvxSize uniqueIdGroup)
 	}
 	else
 	{
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << std::endl;
+			embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << std::endl;
 		}
 		std::cout << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << std::endl;		
 	}
@@ -1468,9 +1468,9 @@ CjvxAccessProperties_Qhttp::reschedule_all_props_in(jvxSize uniqueIdGroup)
 	}
 	else
 	{
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << std::endl;
+			embLog.jvxrtst << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << std::endl;
 		}
 
 		std::cout << __FUNCTION__ << ": Error: received invalid unique id for group: " << uniqueIdGroup << std::endl;
@@ -2143,9 +2143,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__extendedInfo(jvxHandle* wh
 						}
 						else
 						{
-							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+							if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvxrtst << __FUNCTION__ << ": Unknown property descriptor <" << descr_string << "> in response for <extendedInfo>." << std::endl;
+								embLog.jvxrtst << __FUNCTION__ << ": Unknown property descriptor <" << descr_string << "> in response for <extendedInfo>." << std::endl;
 							}
 
 							std::cout << __FUNCTION__ << ": Unknown property descriptor <" << descr_string  << "> in response for <extendedInfo>." << std::endl;
@@ -2153,9 +2153,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__extendedInfo(jvxHandle* wh
 					}
 					else
 					{
-						if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+						if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 						{
-							jvxrtst << __FUNCTION__ << ": Property descriptor not found in response for <extendedInfo>." << std::endl;
+							embLog.jvxrtst << __FUNCTION__ << ": Property descriptor not found in response for <extendedInfo>." << std::endl;
 						}
 
 						std::cout << __FUNCTION__ << ": Property descriptor not found in response for <extendedInfo>." << std::endl;
@@ -2493,9 +2493,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 
 								if (crc_prop != crc_prop_local)
 								{
-									if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+									if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 									{
-										jvxrtst << __FUNCTION__ << ": Property descriptor mismatch, crc <" << crc_prop_local << "> vs <" << crc_prop << ">." << std::endl;
+										embLog.jvxrtst << __FUNCTION__ << ": Property descriptor mismatch, crc <" << crc_prop_local << "> vs <" << crc_prop << ">." << std::endl;
 									}
 									std::cout << __FUNCTION__ << ": Property descriptor mismatch, crc <" << crc_prop_local << "> vs <" << crc_prop << ">." << std::endl;
 								}
@@ -2563,9 +2563,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 					{
 						if (offsetStart != offset_local)
 						{
-							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+							if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvxrtst << __FUNCTION__ << ": Property offset mismatch: <" << offsetStart << "> vs <" << offset_local << ">." << std::endl;
+								embLog.jvxrtst << __FUNCTION__ << ": Property offset mismatch: <" << offsetStart << "> vs <" << offset_local << ">." << std::endl;
 							}
 
 							std::cout << __FUNCTION__ << ": Property offset mismatch: <" << offsetStart << "> vs <" << offset_local << ">." << std::endl;
@@ -2576,9 +2576,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 					{
 						if (numElements_local != numElements)
 						{
-							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+							if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvxrtst << __FUNCTION__ << ": Property length mismatch: <" << numElements << "> vs <" << numElements_local << ">." << std::endl;
+								embLog.jvxrtst << __FUNCTION__ << ": Property length mismatch: <" << numElements << "> vs <" << numElements_local << ">." << std::endl;
 							}
 
 							std::cout << __FUNCTION__ << ": Property length mismatch: <" << numElements << "> vs <" << numElements_local << ">." << std::endl;
@@ -2598,9 +2598,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 						{
 							if (format_local != format)
 							{
-								if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+								if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 								{
-									jvxrtst << __FUNCTION__ << ": Property format mismatch between call and arrival: <" << jvxDataFormat_txt(format) << "> vs <" << jvxDataFormat_txt(format_local) << ">." << std::endl;
+									embLog.jvxrtst << __FUNCTION__ << ": Property format mismatch between call and arrival: <" << jvxDataFormat_txt(format) << "> vs <" << jvxDataFormat_txt(format_local) << ">." << std::endl;
 								}
 
 								std::cout << __FUNCTION__ << ": Property format mismatch between call and arrival: <" << jvxDataFormat_txt(format) << "> vs <" << jvxDataFormat_txt(format_local) << ">." << std::endl;
@@ -2609,9 +2609,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 						
 							if (format_local != elm->second.descr.format)
 							{
-								if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+								if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 								{
-									jvxrtst << __FUNCTION__ << ": Property format mismatch between stored and arrival: <" << jvxDataFormat_txt(format) << "> vs <" << jvxDataFormat_txt(elm->second.descr.format) << ">." << std::endl;
+									embLog.jvxrtst << __FUNCTION__ << ": Property format mismatch between stored and arrival: <" << jvxDataFormat_txt(format) << "> vs <" << jvxDataFormat_txt(elm->second.descr.format) << ">." << std::endl;
 								}
 								std::cout << __FUNCTION__ << ": Property format mismatch between stored and arrival: <" << jvxDataFormat_txt(format) << "> vs <" << jvxDataFormat_txt(elm->second.descr.format) << ">." << std::endl;
 								// errDetected = true;
@@ -2622,9 +2622,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 					{
 						if (decoder_local != decTp)
 						{
-							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+							if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvxrtst << __FUNCTION__ << ": Property format mismatch between call and arrival: <" << jvxPropertyDecoderHintType_txt(decoder_local) <<
+								embLog.jvxrtst << __FUNCTION__ << ": Property format mismatch between call and arrival: <" << jvxPropertyDecoderHintType_txt(decoder_local) <<
 									"> vs <" << jvxPropertyDecoderHintType_txt(decTp) << ">." << std::endl;
 							}
 
@@ -2635,9 +2635,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 
 						if (decoder_local != elm->second.descr.decTp)
 						{
-							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+							if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvxrtst << __FUNCTION__ << ": Property format mismatch between stored and arrival: <" << jvxPropertyDecoderHintType_txt(decoder_local) <<
+								embLog.jvxrtst << __FUNCTION__ << ": Property format mismatch between stored and arrival: <" << jvxPropertyDecoderHintType_txt(decoder_local) <<
 									"> vs <" << jvxPropertyDecoderHintType_txt(elm->second.descr.decTp) << ">." << std::endl;
 							}
 
@@ -2664,9 +2664,9 @@ CjvxAccessProperties_Qhttp::convertResponseToContent__get_content(jvxHandle* fld
 					else
 					{
 						// Protocol reports something not ok
-						if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+						if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 						{
-							jvxrtst << "Property <" << descriptor << ">: access protocol indicates <" << jvxAccessProtocol_txt(*accProt) << ">." << std::endl;
+							embLog.jvxrtst << "Property <" << descriptor << ">: access protocol indicates <" << jvxAccessProtocol_txt(*accProt) << ">." << std::endl;
 						}
 
 						std::cout << "Property <" << descriptor << ">: access protocol indicates <" << jvxAccessProtocol_txt(*accProt) << ">." << std::endl;

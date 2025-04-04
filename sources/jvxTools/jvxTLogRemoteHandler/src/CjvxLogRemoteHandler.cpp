@@ -53,13 +53,13 @@ namespace _myJvxTools {
 	CjvxLogRemoteHandler::configure(const char* logTagModule, jvxLogLevel levArg)
 	{
 		logDescriptor = logTagModule;
-		jvxrtst_bkp.set_module_name(logDescriptor);
+		embLog.jvxrtst_bkp.set_module_name(logDescriptor);
 		lev = levArg;
 	}
 
 	std::ostream* CjvxLogRemoteHandler::log_str()
 	{
-		return &jvxrtst;
+		return &embLog.jvxrtst;
 	}
 
 
@@ -72,12 +72,12 @@ namespace _myJvxTools {
 #endif
 	{
 		jvxSize logLev = jvxLogLevel2Id(this->lev);
-		if(jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev, nullptr)) 
+		if(embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev, nullptr))
 		{
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
-			jvx_lock_text_log(jvxrtst_bkp, logLev, tag );
+			jvx_lock_text_log(embLog, logLev, tag );
 #else
-			jvx_lock_text_log(jvxrtst_bkp, logLev);
+			jvx_lock_text_log(embLog, logLev);
 #endif
 			isLocked = true;
 			return JVX_NO_ERROR;
@@ -96,9 +96,9 @@ namespace _myJvxTools {
 		if (isLocked)
 		{			
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
-			jvx_unlock_text_log(jvxrtst_bkp, tag);
+			jvx_unlock_text_log(embLog, tag);
 #else
-			jvx_unlock_text_log(jvxrtst_bkp);
+			jvx_unlock_text_log(embLog);
 #endif
 			isLocked = false;
 		}

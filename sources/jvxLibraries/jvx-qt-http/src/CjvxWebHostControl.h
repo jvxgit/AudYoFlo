@@ -69,7 +69,7 @@ protected:
 	IjvxFactoryHost* theHost;
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-	JVX_DEFINE_RT_ST_INSTANCES
+	CjvxLogEmbedding embLog;
 #endif
 
 private:

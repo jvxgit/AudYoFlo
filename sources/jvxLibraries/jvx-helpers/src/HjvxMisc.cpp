@@ -7118,43 +7118,44 @@ int jvxLogLevel2Id(jvxLogLevel lev)
 
 // Do this before:  jvxrtst(&jvxos)
 
-void jvx_init_text_log(jvxrtst_backup& bkp)
+void jvx_init_text_log(CjvxLogEmbedding& embLog)
 {
-	bkp.jvxlst_buf = NULL;
-	bkp.jvxlst_buf_sz = 0;
-	bkp.theModuleName = "no-module-name";
-	bkp.theTextLogger_hdl = NULL;
-	bkp.theTextLogger_obj = NULL;
-	bkp.theToolsHost = NULL;
+	embLog.jvxrtst_bkp.jvxlst_buf = NULL;
+	embLog.jvxrtst_bkp.jvxlst_buf_sz = 0;
+	embLog.jvxrtst_bkp.theModuleName = "no-module-name";
+	embLog.jvxrtst_bkp.theTextLogger_hdl = NULL;
+	embLog.jvxrtst_bkp.theTextLogger_obj = NULL;
+	embLog.jvxrtst_bkp.theToolsHost = NULL;
 }
 
-void jvx_terminate_text_log(jvxrtst_backup& bkp)
+void jvx_terminate_text_log(CjvxLogEmbedding& embLog)
 {
-	bkp.jvxlst_buf = NULL;
-	bkp.jvxlst_buf_sz = 0;
-	bkp.theModuleName = "no-module-name";
-	bkp.theTextLogger_hdl = NULL;
-	bkp.theTextLogger_obj = NULL;
-	bkp.theToolsHost = NULL;
+	embLog.jvxrtst_bkp.jvxlst_buf = NULL;
+	embLog.jvxrtst_bkp.jvxlst_buf_sz = 0;
+	embLog.jvxrtst_bkp.theModuleName = "no-module-name";
+	embLog.jvxrtst_bkp.theTextLogger_hdl = NULL;
+	embLog.jvxrtst_bkp.theTextLogger_obj = NULL;
+	embLog.jvxrtst_bkp.theToolsHost = NULL;
 }
 
 void 
-jvx_request_text_log(jvxrtst_backup& bkp)
+jvx_request_text_log(CjvxLogEmbedding& embLog)
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 
-	if (bkp.jvxlst_buf_sz == 0)
+	if (embLog.jvxrtst_bkp.jvxlst_buf_sz == 0)
 	{
 		std::cout << "Error: configuration of text log stream with zero character buffer size." << std::endl;
 		return;
 	}
 
-	if (bkp.theToolsHost)
+	if (embLog.jvxrtst_bkp.theToolsHost)
 	{
-		resL = bkp.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, &bkp.theTextLogger_obj, 0, "jvxTSystemTextLog"); // <- main text logger object
-		if ((resL == JVX_NO_ERROR) && bkp.theTextLogger_obj)
+		resL = embLog.jvxrtst_bkp.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, &embLog.jvxrtst_bkp.theTextLogger_obj, 0, "jvxTSystemTextLog"); // <- main text logger object
+		if ((resL == JVX_NO_ERROR) && embLog.jvxrtst_bkp.theTextLogger_obj)
 		{
-			resL = bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(&bkp.theTextLogger_hdl), NULL, NULL);
+			resL = embLog.jvxrtst_bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(
+				&embLog.jvxrtst_bkp.theTextLogger_hdl), NULL, NULL);
 		}
 		else
 		{
@@ -7163,75 +7164,77 @@ jvx_request_text_log(jvxrtst_backup& bkp)
 	}
 	else
 	{
-		std::cout << "Error: Failed to open logger object for component< " << bkp.theModuleName << "> since tools host reference is not vailable." << std::endl;
+		std::cout << "Error: Failed to open logger object for component< " << embLog.jvxrtst_bkp.theModuleName << "> since tools host reference is not vailable." << std::endl;
 	}
 
-	if (bkp.theTextLogger_hdl)
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl)
 	{
-		bkp.jvxos.setReference(bkp.theTextLogger_hdl, bkp.jvxlst_buf, bkp.jvxlst_buf_sz);
-		bkp.jvxos.set_module_name(bkp.theModuleName);
+		embLog.jvxrtst_bkp.jvxos.setReference(embLog.jvxrtst_bkp.theTextLogger_hdl, 
+			embLog.jvxrtst_bkp.jvxlst_buf, embLog.jvxrtst_bkp.jvxlst_buf_sz);
+		embLog.jvxrtst_bkp.jvxos.set_module_name(embLog.jvxrtst_bkp.theModuleName);
 	}
 };
 
-void jvx_return_text_log(jvxrtst_backup& bkp)
+void jvx_return_text_log(CjvxLogEmbedding& embLog)
 {
 	jvxErrorType resL = JVX_NO_ERROR;
-	if (bkp.theTextLogger_hdl)
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl)
 	{
-		bkp.jvxos.unsetReference();
-		resL = bkp.theToolsHost->return_reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, bkp.theTextLogger_obj);
-		bkp.theTextLogger_obj = NULL;
-		bkp.theTextLogger_hdl = NULL;
+		embLog.jvxrtst_bkp.jvxos.unsetReference();
+		resL = embLog.jvxrtst_bkp.theToolsHost->return_reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, 
+			embLog.jvxrtst_bkp.theTextLogger_obj);
+		embLog.jvxrtst_bkp.theTextLogger_obj = NULL;
+		embLog.jvxrtst_bkp.theTextLogger_hdl = NULL;
 	}
 }
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 bool
-jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag)
+jvx_try_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const std::string& tagOrigin, const char* optTag)
 #else
 bool
-jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag)
+jvx_try_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const char* optTag)
 #endif
 {	
-	bool res = bkp.jvxos.try_lock(optTag);
+	bool res = embLog.jvxrtst_bkp.jvxos.try_lock(optTag);
 	if (res)
 	{
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
-		bkp.jvxos.setOriginTag(tagOrigin, true);
+		embLog.jvxrtst_bkp.jvxos.setOriginTag(tagOrigin, true);
 #endif
-		bkp.jvxos.set_debug_level(logLev);
+		embLog.jvxrtst_bkp.jvxos.set_debug_level(logLev);
 	}
 	return res;
 }
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 void
-jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag)
+jvx_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const std::string& tagOrigin, const char* optTag)
 #else
 void
-jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag)
+jvx_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const char* optTag)
 #endif
 {
-	bkp.jvxos.set_debug_level(logLev);
-	bkp.jvxos.lock(optTag);
+	embLog.jvxrtst_bkp.jvxos.set_debug_level(logLev);
+	embLog.jvxrtst_bkp.jvxos.lock(optTag);
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
-	bkp.jvxos.setOriginTag(tagOrigin, true);
+	embLog.jvxrtst_bkp.jvxos.setOriginTag(tagOrigin, true);
 #endif
 }
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 void
-jvx_unlock_text_log(jvxrtst_backup& bkp, const std::string& tagOrigin)
+jvx_unlock_text_log(CjvxLogEmbedding& embLog, const std::string& tagOrigin)
 #else
 void
-jvx_unlock_text_log(jvxrtst_backup& bkp)
+jvx_unlock_text_log(CjvxLogEmbedding& embLog)
 #endif
 {
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
-	bkp.jvxos.setOriginTag(tagOrigin, false);
+	embLog.jvxrtst_bkp.jvxos.setOriginTag(tagOrigin, false);
 #endif
-	bkp.jvxos.unlock();
-	bkp.jvxos.set_debug_level(0);
+	embLog.jvxrtst_bkp.jvxos.unlock();
+	embLog.jvxrtst_bkp.jvxos.set_debug_level(0);
 }
 
 // =======================================================================================

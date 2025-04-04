@@ -1656,19 +1656,11 @@ public:
 	std::ostream jvxrtst;
 };
 
-#define JVX_DEFINE_RT_ST_INSTANCES \
-	jvxrtst_backup jvxrtst_bkp; \
-	std::ostream jvxrtst;
+void jvx_init_text_log(CjvxLogEmbedding& embLog);
+void jvx_terminate_text_log(CjvxLogEmbedding& embLog);
 
-#define JVX_INIT_RT_ST_INSTANCES \
-	jvxrtst(&jvxrtst_bkp.jvxos)
-#define JVX_INIT_RT_ST_INSTANCES_A , JVX_INIT_RT_ST_INSTANCES
-
-void jvx_init_text_log(jvxrtst_backup& bkp);
-void jvx_terminate_text_log(jvxrtst_backup& bkp);
-
-void jvx_request_text_log(jvxrtst_backup& bkp);
-void jvx_return_text_log(jvxrtst_backup& bkp); 
+void jvx_request_text_log(CjvxLogEmbedding& embLog);
+void jvx_return_text_log(CjvxLogEmbedding& embLog);
 
 #define JVX_CREATE_CODE_LOCATION_TAG ((std::string) __FUNCTION__ + ", line #" + jvx_int2String(__LINE__))
 // #define Identity(x) x
@@ -1677,16 +1669,16 @@ void jvx_return_text_log(jvxrtst_backup& bkp);
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT JVX_CREATE_CODE_LOCATION_TAG
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD , JVX_CREATE_CODE_LOCATION_TAG
 
-bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
-void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
-void jvx_unlock_text_log(jvxrtst_backup& bkp, const std::string& tagOrigin);
+bool jvx_try_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
+void jvx_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
+void jvx_unlock_text_log(CjvxLogEmbedding& embLog, const std::string& tagOrigin);
 #else
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD
 
-bool jvx_try_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag = nullptr);
-void jvx_lock_text_log(jvxrtst_backup& bkp, jvxSize logLev, const char* optTag = nullptr);
-void jvx_unlock_text_log(jvxrtst_backup& bkp);
+bool jvx_try_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const char* optTag = nullptr);
+void jvx_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const char* optTag = nullptr);
+void jvx_unlock_text_log(CjvxLogEmbedding& embLog);
 #endif
 
 int jvxLogLevel2Id(jvxLogLevel lev);
@@ -1699,16 +1691,16 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 	{ \
 		jvxBool __dbgCout = false; \
 		jvxSize __logLevel = jvxLogLevel2Id(LEVEL); \
-		if (ptr && ptr->jvxrtst_bkp.theTextLogger_hdl && ptr->jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, __logLevel, &__dbgCout)) \
+		if (ptr && ptr->embLog.jvxrtst_bkp.theTextLogger_hdl && ptr->embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, __logLevel, &__dbgCout)) \
 		{ \
-			std::ostream* logptr = &ptr->jvxrtst; \
+			std::ostream* logptr = &ptr->embLog.jvxrtst; \
 			if(__dbgCout) \
 				logptr = &std::cout; \
 			std::ostream& log = *logptr; \
-			jvx_lock_text_log(ptr->jvxrtst_bkp, __logLevel, LOCATION, OPT_TAG);
+			jvx_lock_text_log(ptr->embLog, __logLevel, LOCATION, OPT_TAG);
 
 #define JVX_STOP_LOCK_LOG_REF(ptr, LOCATION) \
-			jvx_unlock_text_log(ptr->jvxrtst_bkp, LOCATION); \
+			jvx_unlock_text_log(ptr->embLog, LOCATION); \
 		} \
 	}
 #else
@@ -1716,16 +1708,16 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 	{ \
 		jvxBool __dbgCout = false; \
 		jvxSize __logLevel = jvxLogLevel2Id(LEVEL); \
-		if (ptr && ptr->jvxrtst_bkp.theTextLogger_hdl && ptr->jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, __logLevel, &__dbgCout)) \
+		if (ptr && ptr->embLog.jvxrtst_bkp.theTextLogger_hdl && ptr->embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, __logLevel, &__dbgCout)) \
 		{ \
-			std::ostream* logptr = &ptr->jvxrtst; \
+			std::ostream* logptr = &ptr->embLog.jvxrtst; \
 			if(__dbgCout) \
 				logptr = &std::cout; \
 			std::ostream& log = *logptr; \
-			jvx_lock_text_log(ptr->jvxrtst_bkp, __logLevel, OPT_TAG);
+			jvx_lock_text_log(ptr->embLog, __logLevel, OPT_TAG);
 
 #define JVX_STOP_LOCK_LOG_REF(ptr, LOCATION) \
-			jvx_unlock_text_log(ptr->jvxrtst_bkp); \
+			jvx_unlock_text_log(ptr->embLog); \
 		} \
 	}
 #endif

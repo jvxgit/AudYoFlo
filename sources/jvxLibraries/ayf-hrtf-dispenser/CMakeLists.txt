@@ -20,7 +20,8 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/src
-  ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/third_party/git/mysofa/libmysofa/src/hrtf
+  ${MYSOFA_INCLUDES}
+  # ${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/third_party/git/mysofa/libmysofa/src/hrtf
   )
 
 set(LOCAL_SOURCES
@@ -31,19 +32,16 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/ayf-hrtf-tools.h
   )
 
-set(LOCAL_LIBS mysofa-static)
-
+set(LOCAL_LIBS ${MYSOFA_LIBRARY} ${MYSOFA_ZLIB_LIBRARY_STATIC})
+# mysofa-static
 
 set(BUILD_STATIC TRUE)
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
 
 if(${JVX_OS} MATCHES "windows")
 
-	if(${JVX_PLATFORM} MATCHES "64bit")
-		jvx_install_dedicated_file(${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/third_party/git/mysofa/libmysofa/windows/third-party/zlib/msvc2017_64/lib/zlib/zlib.dll ${INSTALL_PATH_BIN})
-	else()
-		jvx_install_dedicated_file(${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/third_party/git/mysofa/libmysofa/windows/third-party/zlib/msvc2017_32/lib/zlib/zlib.dll ${INSTALL_PATH_BIN})
-	endif()
+	jvx_install_dedicated_file(${MYSOFA_ZLIB_LIBRARY_DYNAMIC} ${INSTALL_PATH_BIN})
+
 endif()
 
 # Install sofa source files since they are in install subfolder. This option installs also in

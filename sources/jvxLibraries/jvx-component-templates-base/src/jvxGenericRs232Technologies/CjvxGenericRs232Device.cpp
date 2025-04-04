@@ -42,7 +42,7 @@ static oneLocEntryStopbits stat_lst_stopbits[STAT_LST_STOPBITS_NUM] =
 
 CjvxGenericRs232Device::CjvxGenericRs232Device(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxGenericConnectionDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
-	// , jvxrtst_local(&jvxrtst_bkp_local.jvxos)
+	// , embLog.jvxrtst_local(&embLog.jvxrtst_bkp_local.jvxos)
 {
 }
 
@@ -152,12 +152,12 @@ CjvxGenericRs232Device::activate_connection_port()
 {
 	
 	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-		jvxrtst << "::" << __FUNCTION__ << ": " << "Starting input buffering:" << std::endl;
-		jvxrtst << "-> Size of input buffer: " << runtime.sz_mem_incoming << std::endl;
-		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "Starting input buffering:" << std::endl;
+		embLog.jvxrtst << "-> Size of input buffer: " << runtime.sz_mem_incoming << std::endl;
+		jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 	}
 
 	jvxRs232Config cfg;
@@ -189,43 +189,43 @@ CjvxGenericRs232Device::activate_connection_port()
 	assert(idSel < STAT_LST_PARITY_NUM);
 	cfg.parityEnum = stat_lst_parity[idSel].par;
 
-	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-		jvxrtst << "::" << __FUNCTION__ << ": " << "Starting rs-232 port with settings:" << std::endl;
-		jvxrtst << "-> Baudrate: " << cfg.bRate << std::endl;
-		jvxrtst << "-> Bits 4 bytes: " << cfg.bits4Byte << std::endl;
-		jvxrtst << "-> Stop bits: " << std::flush;
+		jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "Starting rs-232 port with settings:" << std::endl;
+		embLog.jvxrtst << "-> Baudrate: " << cfg.bRate << std::endl;
+		embLog.jvxrtst << "-> Bits 4 bytes: " << cfg.bits4Byte << std::endl;
+		embLog.jvxrtst << "-> Stop bits: " << std::flush;
 		switch (cfg.stopBitsEnum)
 		{
 		case JVX_RS232_STOPBITS_ONE:
-			jvxrtst << "ONESTOPBIT" << std::endl;
+			embLog.jvxrtst << "ONESTOPBIT" << std::endl;
 			break;
 		case JVX_RS232_STOPBITS_ONE5:
-			jvxrtst << "ONE_5_STOPBIT" << std::endl;
+			embLog.jvxrtst << "ONE_5_STOPBIT" << std::endl;
 			break;
 		case JVX_RS232_STOPBITS_TWO:
-			jvxrtst << "TWOSTOPBIT" << std::endl;
+			embLog.jvxrtst << "TWOSTOPBIT" << std::endl;
 			break;
 		}
-		jvxrtst << "-> Parity: " << std::flush;
+		embLog.jvxrtst << "-> Parity: " << std::flush;
 		switch (cfg.parityEnum)
 		{
 		case JVX_RS232_PARITY_EVEN:
-			jvxrtst << "EVENPARITY" << std::endl;
+			embLog.jvxrtst << "EVENPARITY" << std::endl;
 			break;
 		case JVX_RS232_PARITY_ODD:
-			jvxrtst << "ODDPARITY" << std::endl;
+			embLog.jvxrtst << "ODDPARITY" << std::endl;
 			break;
 		case JVX_RS232_PARITY_NO:
-			jvxrtst << "NOPARITY" << std::endl;
+			embLog.jvxrtst << "NOPARITY" << std::endl;
 			break;
 		case JVX_RS232_PARITY_SPACE:
-			jvxrtst << "SPACEPARITY" << std::endl;
+			embLog.jvxrtst << "SPACEPARITY" << std::endl;
 			break;
 		}
 
-		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 	}
 
 	// Read flow control setting from configuration property
@@ -259,11 +259,11 @@ CjvxGenericRs232Device::deactivate_connection_port()
 	this->theConnectionTool->stop_port(idDevice);
 
 	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-		jvxrtst << "::" << __FUNCTION__ << ": " << "stopping connection on COM port <" << idDevice << ">," << std::endl;
-		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "stopping connection on COM port <" << idDevice << ">," << std::endl;
+		jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 	}
 
 

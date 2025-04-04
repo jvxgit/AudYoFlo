@@ -89,8 +89,7 @@ private:
 
 	std::vector<oneAddedStaticComponent> addedStaticObjects;
 	
-
-	JVX_DEFINE_RT_ST_INSTANCES
+	CjvxLogEmbedding embLog;
 
 public:
 

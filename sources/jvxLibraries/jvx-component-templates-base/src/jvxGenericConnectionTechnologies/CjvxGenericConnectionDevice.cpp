@@ -4,7 +4,7 @@
 
 CjvxGenericConnectionDevice::CjvxGenericConnectionDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL), CjvxProperties(module_name, *this)
-	// , jvxrtst_local(&jvxrtst_bkp_local.jvxos)
+	// , embLog.embLog.jvxrtst_local(&embLog.embLog.jvxrtst_bkp_local.jvxos)
 {
 	_common_set.theComponentType.unselected(JVX_COMPONENT_UNKNOWN);
 	_common_set.theObjectSpecialization = reinterpret_cast<jvxHandle*>(static_cast<IjvxDevice*>(this));
@@ -143,11 +143,11 @@ CjvxGenericConnectionDevice::activate()
 		CjvxGenericConnectionDevice_pcg::register_all(this);
 
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr,logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr,logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-			jvxrtst << "::" << __FUNCTION__ << ": " << "activate " << _common_set.theDescriptor << " device component" << std::endl;
-			jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "activate " << _common_set.theDescriptor << " device component" << std::endl;
+			jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		}
 
 		// ==========================================================================================
@@ -183,14 +183,14 @@ CjvxGenericConnectionDevice::activate()
 			observer.timeout_message_response = CjvxGenericConnectionDevice_pcg::mqueue_runtime.timeoutresponse_msec.value;
 
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "::" << __FUNCTION__ << ": " << "Starting message queue:" << std::endl;
-				jvxrtst << "-> Number of elements: " << message_queue.sz_mqueue_elements << std::endl;
-				jvxrtst << "-> Timeout messages: " << message_queue.timeout_messages_in_queue_msec << std::endl;
-				jvxrtst << "-> Size of each element in queue: " << message_queue.sz_mqueue_elements << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "Starting message queue:" << std::endl;
+				embLog.jvxrtst << "-> Number of elements: " << message_queue.sz_mqueue_elements << std::endl;
+				embLog.jvxrtst << "-> Timeout messages: " << message_queue.timeout_messages_in_queue_msec << std::endl;
+				embLog.jvxrtst << "-> Size of each element in queue: " << message_queue.sz_mqueue_elements << std::endl;
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 
 			res = jvx_message_queue_initialize(&theMQueue, JVX_MESSAGE_QUEUE_STATIC_OBJECTS, &theMQueueCallbacks,
@@ -282,11 +282,11 @@ CjvxGenericConnectionDevice::deactivate()
 			resL = deactivate_specific_connection();
 
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "::" << __FUNCTION__ << ": " << "deactivate " << _common_set.theDescriptor << " device component" << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "deactivate " << _common_set.theDescriptor << " device component" << std::endl;
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 
 			channel_fully_locked = false;
@@ -342,11 +342,11 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 	if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 	{
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-			jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port: <" << jvx_prepareStringForLogfile((const char*)ptr) << ">." << std::endl;
-			jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			embLog.jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port: <" << jvx_prepareStringForLogfile((const char*)ptr) << ">." << std::endl;
+			jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		}
 	}
 
@@ -368,11 +368,11 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-					jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port, processing postponed." << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					embLog.jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port, processing postponed." << std::endl;
+					jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				}
 			}
 
@@ -386,12 +386,12 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-					jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port complete, removing id = <" << theMess.uId
+					jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					embLog.jvxrtst << "::" << __FUNCTION__ << ": Incoming message from COM port complete, removing id = <" << theMess.uId
 						<< "> from context list." << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				}
 			}
 
@@ -406,12 +406,12 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-						jvxrtst << "::" << __FUNCTION__ << ": Message from COM port complete, removed id = <" << theMess.uId << "> from context list."
+						jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+						embLog.jvxrtst << "::" << __FUNCTION__ << ": Message from COM port complete, removed id = <" << theMess.uId << "> from context list."
 							<< std::endl;
-						jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+						jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 					}
 				}
 				resL = this->post_message_hook(idIdentify);
@@ -431,19 +431,19 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 					if (ptr)
 					{
-						jvxrtst << "::" << __FUNCTION__ << ": Incoming generic message with error message in handling, txt = <"
+						embLog.jvxrtst << "::" << __FUNCTION__ << ": Incoming generic message with error message in handling, txt = <"
 							<< (const char*)ptr << ">, error code: " << jvxErrorType_txt(resL) << std::endl;
 					}
 					else
 					{
-						jvxrtst << "::" << __FUNCTION__ << ": Subsequent call to message handling returned error, error code: " << jvxErrorType_txt(resL) << std::endl;
+						embLog.jvxrtst << "::" << __FUNCTION__ << ": Subsequent call to message handling returned error, error code: " << jvxErrorType_txt(resL) << std::endl;
 					}
-					jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				}
 			}
 			theMess.tp = JVX_GENERIC_CONNECTION_GENERIC_MESSAGE;
@@ -454,12 +454,12 @@ CjvxGenericConnectionDevice::report_data_and_read(jvxByte* ptr, jvxSize numRead,
 		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLINCOMING_SHIFT))
 		{
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "::" << __FUNCTION__ << ": Decoding loop will procede into next iteration since there may be more work to do."
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "::" << __FUNCTION__ << ": Decoding loop will procede into next iteration since there may be more work to do."
 					<< std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 		}
 	}
@@ -498,13 +498,13 @@ CjvxGenericConnectionDevice::remove_data_from_map(oneMessage_hdr* theMess)
 			if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-					jvxrtst << "::" << __FUNCTION__ << ": T0 + " << (tstamp - elm->second->timestamp_enter_us) * 0.001 << 
+					jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					embLog.jvxrtst << "::" << __FUNCTION__ << ": T0 + " << (tstamp - elm->second->timestamp_enter_us) * 0.001 << 
 						" (from enter) msec => Removing message uid <" << elm->second->uId << "> - mid <" << elm->second->mId << 
 						"> from list of pending messages." << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				}
 			}
 
@@ -632,13 +632,13 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 					if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 					{
 						jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-						if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+						if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 						{
-							jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-							jvxrtst << "::" << __FUNCTION__ << ": RETRANSMIT #" << elm->second->retrans_cnt << ", T0 + " << 
+							jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+							embLog.jvxrtst << "::" << __FUNCTION__ << ": RETRANSMIT #" << elm->second->retrans_cnt << ", T0 + " << 
 								(timestamp_us - messPtr->timestamp_enter_us) * 0.001 << " (from enter) msec => Update message uid <" <<
 								elm->second->uId << "> - mid <" << elm->second->mId << "> to SENT." << std::endl;
-							jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+							jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 						}
 					}
 					elm->second->retrans_cnt++;
@@ -668,11 +668,11 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ALLOUTGOING_SHIFT))
 		{
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "::" << __FUNCTION__ << ": Sending message to COM port: <" << jvx_prepareStringForLogfile(txtMessage) << ">." << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "::" << __FUNCTION__ << ": Sending message to COM port: <" << jvx_prepareStringForLogfile(txtMessage) << ">." << std::endl;
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 		}
 		jvxByte* ptr = (jvxByte*)txtMessage.c_str();
@@ -688,12 +688,12 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-							jvxrtst << "::" << __FUNCTION__ << ": T0 + " << (timestamp_us - messPtr->timestamp_enter_us) * 0.001 << " (from enter) msec => Update message uid <" << 
+						jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+							embLog.jvxrtst << "::" << __FUNCTION__ << ": T0 + " << (timestamp_us - messPtr->timestamp_enter_us) * 0.001 << " (from enter) msec => Update message uid <" << 
 								elm->second->uId << "> - mid <" << elm->second->mId << "> to SENT." << std::endl;
-							jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+							jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 					}
 				}
 				elm->second->stat = JVX_GENERIC_CONNECTION_STATUS_SENT;
@@ -704,13 +704,13 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 				if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 				{
 					jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-					if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+					if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 					{
-						jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-						jvxrtst << "::" << __FUNCTION__ << ": T0 + " << 
+						jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+						embLog.jvxrtst << "::" << __FUNCTION__ << ": T0 + " << 
 							(timestamp_us - messPtr->timestamp_enter_us) * 0.001 << " msec => Removing message uid <" << 
 							elm->second->uId << "> - mid <" << elm->second->mId << "> from list of pending events." << std::endl;
-						jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+						jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 					}
 				}
 
@@ -747,11 +747,11 @@ CjvxGenericConnectionDevice::cb_message_queue_message_in_queue_ready(jvxSize con
 		if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_ERRORS_SHIFT))
 		{
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "::" << __FUNCTION__ << ": Failed to translate message in submodule." << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "::" << __FUNCTION__ << ": Failed to translate message in submodule." << std::endl;
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 		}
 	}
@@ -840,12 +840,12 @@ CjvxGenericConnectionDevice::callback_thread_timer_expired(jvxInt64 timestamp_us
 						if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 						{
 							jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+							if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-								jvxrtst << "::" << __FUNCTION__ << ": deltat = " << deltaT_msec << " (from send) msec: Retransmit message uid <" << elm->second->uId <<
+								jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+								embLog.jvxrtst << "::" << __FUNCTION__ << ": deltat = " << deltaT_msec << " (from send) msec: Retransmit message uid <" << elm->second->uId <<
 									"> - mid <" << elm->second->mId << "> (RETRANSMISSION #" << elm->second->retrans_cnt << ")." << std::endl;
-								jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+								jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 							}
 						}
 
@@ -864,12 +864,12 @@ CjvxGenericConnectionDevice::callback_thread_timer_expired(jvxInt64 timestamp_us
 						if (jvx_bitTest(output_flags, JVX_GENERIC_CONNECTION_OUTPUT_TIMING_SHIFT))
 						{
 							jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-							if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+							if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 							{
-								jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-								jvxrtst << "::" << __FUNCTION__ << ": deltat = " << deltaT_msec << " (from send) msec: Remove message uid <" << elm->second->uId <<
+								jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+								embLog.jvxrtst << "::" << __FUNCTION__ << ": deltat = " << deltaT_msec << " (from send) msec: Remove message uid <" << elm->second->uId <<
 									"> - mid <" << elm->second->mId << "> from message queue due to response timeout." << std::endl;
-								jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+								jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 							}
 						}
 
@@ -938,12 +938,12 @@ CjvxGenericConnectionDevice::clear_inout_matching()
 		for (; elm != mpMessages.end(); elm++)
 		{
 			jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "::" << __FUNCTION__ << ": Remove message uid <" << elm->second->uId <<
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "::" << __FUNCTION__ << ": Remove message uid <" << elm->second->uId <<
 					"> - mid <" << elm->second->mId << "> from message queue due to clear request." << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 			
 

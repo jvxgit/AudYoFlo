@@ -14,7 +14,7 @@
 		lstelmr.addConsumeElement(jelm); \
 	} \
 
-CjvxWebControl_fe::CjvxWebControl_fe(): JVX_INIT_RT_ST_INSTANCES
+CjvxWebControl_fe::CjvxWebControl_fe()
 {
 	  timerCount = 0;
 	JVX_INITIALIZE_MUTEX(safeAccessMemList);
@@ -305,16 +305,16 @@ CjvxWebControl_fe::report_process_event(TjvxEventLoopElement* theQueueElement)
 		resStart = start_webserver(myWebServer.hdl, myHostRef, static_cast<IjvxWebServerHost_hooks*>(this));
 
 		// Request log file stream
-		jvx_init_text_log(jvxrtst_bkp);
-		jvxrtst_bkp.theModuleName = "CjvxWebControl_fe";
-		jvxrtst_bkp.theToolsHost = myToolsHost;
-		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(jvxrtst_bkp.jvxlst_buf, char, JVX_RTST_BUFFER_SIZE);
-		jvxrtst_bkp.jvxlst_buf_sz = JVX_RTST_BUFFER_SIZE;
-		jvx_request_text_log(jvxrtst_bkp);
+		jvx_init_text_log(embLog);
+		embLog.jvxrtst_bkp.theModuleName = "CjvxWebControl_fe";
+		embLog.jvxrtst_bkp.theToolsHost = myToolsHost;
+		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(embLog.jvxrtst_bkp.jvxlst_buf, char, JVX_RTST_BUFFER_SIZE);
+		embLog.jvxrtst_bkp.jvxlst_buf_sz = JVX_RTST_BUFFER_SIZE;
+		jvx_request_text_log(embLog);
 
-		jvx_lock_text_log(jvxrtst_bkp, 0 JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-		jvxrtst << "Started Host." << std::endl;
-		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		jvx_lock_text_log(embLog, 0 JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		embLog.jvxrtst << "Started Host." << std::endl;
+		jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 
 		res = myHostRef->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_EXTENDER, reinterpret_cast<jvxHandle**>(&config.hostRefConfigExtender));
 		if ((res == JVX_NO_ERROR) && config.hostRefConfigExtender)
@@ -338,9 +338,9 @@ CjvxWebControl_fe::report_process_event(TjvxEventLoopElement* theQueueElement)
 		res = myHostRef->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_EXTENDER, reinterpret_cast<jvxHandle*>(config.hostRefConfigExtender));
 		config.hostRefConfigExtender = NULL;
 
-		jvx_return_text_log(jvxrtst_bkp);
-		JVX_DSP_SAFE_DELETE_FIELD(jvxrtst_bkp.jvxlst_buf);
-		jvx_terminate_text_log(jvxrtst_bkp);
+		jvx_return_text_log(embLog);
+		JVX_DSP_SAFE_DELETE_FIELD(embLog.jvxrtst_bkp.jvxlst_buf);
+		jvx_terminate_text_log(embLog);
 
 		// From here, do not accept any events from this frontend
 		evLop->frontend_block(this);
@@ -461,8 +461,8 @@ CjvxWebControl_fe::synchronizeWebServerCoEvents(jvxHandle* context_server,
 	//}
 	report_event_request_translate(
 		context_server, context_conn, purp, uniqueId, strictConstConnection, uriprefix, 0,
-		NULL, 0, command, requiresInterpretation, errorDetected, errorDescription, &jvxrtst, 
-		static_cast<jvx_lock_log*>(&jvxrtst_bkp.jvxos), (config.silent_mode!= c_false));
+		NULL, 0, command, requiresInterpretation, errorDetected, errorDescription, &embLog.jvxrtst,
+		static_cast<jvx_lock_log*>(&embLog.jvxrtst_bkp.jvxos), (config.silent_mode!= c_false));
 
 	// Error priority is higher than the interpretation prio!!
 	if (errorDetected)
@@ -608,14 +608,14 @@ CjvxWebControl_fe::synchronizeWebServerCoEvents(jvxHandle* context_server,
 				jvxSize locId = JVX_SIZE_UNSELECTED;
 
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-					jvxrtst << "Incoming request web socket configuration:" << std::endl;
-					jvxrtst << "Ticktime [msec] = " << pconfheader->tick_msec << std::endl;
-					jvxrtst << "Ping count = " << pconfheader->ping_count << std::endl;
-					jvxrtst << "User [int32] = " << pconfheader->user_specific << std::endl;
-					jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					embLog.jvxrtst << "Incoming request web socket configuration:" << std::endl;
+					embLog.jvxrtst << "Ticktime [msec] = " << pconfheader->tick_msec << std::endl;
+					embLog.jvxrtst << "Ping count = " << pconfheader->ping_count << std::endl;
+					embLog.jvxrtst << "User [int32] = " << pconfheader->user_specific << std::endl;
+					jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				}
 
 				// Schedule removal of timeout thread followed by new timeout thread
@@ -799,11 +799,11 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 	if (jvx_bitTest(purp, JVX_WEB_SERVER_URI_WEBSOCKET_CONNECT_HANDLER_SHIFT))
 	{
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-			jvxrtst << "Web socket connected" << std::endl;
-			jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			embLog.jvxrtst << "Web socket connected" << std::endl;
+			jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		}
 	}
 	else if (jvx_bitTest(purp, JVX_WEB_SERVER_URI_WEBSOCKET_READY_HANDLER_SHIFT))
@@ -816,11 +816,11 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		ctxt->uri = uriprefix;
 
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-			jvxrtst << "Web socket ready" << std::endl;
-			jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			embLog.jvxrtst << "Web socket ready" << std::endl;
+			jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		}
 
 		elm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);
@@ -885,11 +885,11 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		case 0x8:
 			ptr16 = (jvxUInt16*)payload;
 			
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "Web Socket Close Event received, load = " << *ptr16 << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "Web Socket Close Event received, load = " << *ptr16 << std::endl;
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 			break;
 		case 0x9:
@@ -911,11 +911,11 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 			}
 			break;
 		default:
-			if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+			if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 			{
-				jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-				jvxrtst << "Unknown Web Socket Data received received" << std::endl;
-				jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+				embLog.jvxrtst << "Unknown Web Socket Data received received" << std::endl;
+				jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 			}
 			break;
 		}
@@ -925,11 +925,11 @@ CjvxWebControl_fe::synchronizeWebServerWsEvents(jvxHandle* context_server,
 		TjvxEventLoopElement elm;
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
 
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-			jvxrtst << "Web socket closed" << std::endl;
-			jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+			embLog.jvxrtst << "Web socket closed" << std::endl;
+			jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 		}
 
 		elm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);

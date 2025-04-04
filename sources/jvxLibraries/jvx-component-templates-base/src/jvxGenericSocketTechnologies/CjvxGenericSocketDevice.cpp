@@ -7,7 +7,7 @@
 
 CjvxGenericSocketDevice::CjvxGenericSocketDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxGenericConnectionDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
-	// , jvxrtst_local(&jvxrtst_bkp_local.jvxos)
+	// , embLog.jvxrtst_local(&embLog.jvxrtst_bkp_local.jvxos)
 {
 }
 
@@ -75,12 +75,12 @@ CjvxGenericSocketDevice::activate_connection_port()
 {
 	
 	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-		jvxrtst << "::" << __FUNCTION__ << ": " << "Starting input buffering:" << std::endl;
-		jvxrtst << "-> Size of input buffer: " << runtime.sz_mem_incoming << std::endl;
-		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "Starting input buffering:" << std::endl;
+		embLog.jvxrtst << "-> Size of input buffer: " << runtime.sz_mem_incoming << std::endl;
+		jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 	}
 
 	// Copy socket configuration
@@ -100,11 +100,11 @@ CjvxGenericSocketDevice::deactivate_connection_port()
 	this->theConnectionTool->stop_port(idDevice);
 
 	jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-	if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 	{
-		jvx_lock_text_log(jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-		jvxrtst << "::" << __FUNCTION__ << ": " << "stopping connection on COM port <" << idDevice << ">," << std::endl;
-		jvx_unlock_text_log(jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		jvx_lock_text_log(embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+		embLog.jvxrtst << "::" << __FUNCTION__ << ": " << "stopping connection on COM port <" << idDevice << ">," << std::endl;
+		jvx_unlock_text_log(embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 	}
 
 

@@ -178,9 +178,9 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, on_change_runtime_p
 		debug_cout_config_ptr = &debug_cout_config;
 	}
 
-	if (jvxrtst_bkp.theTextLogger_hdl && (debug_dbglev_config_ptr || debug_cout_config_ptr))
+	if (embLog.jvxrtst_bkp.theTextLogger_hdl && (debug_dbglev_config_ptr || debug_cout_config_ptr))
 	{
-		jvxrtst_bkp.theTextLogger_hdl->modify_debug_config(debug_dbglev_config_ptr, debug_cout_config_ptr);
+		embLog.jvxrtst_bkp.theTextLogger_hdl->modify_debug_config(debug_dbglev_config_ptr, debug_cout_config_ptr);
 	}
 	return JVX_NO_ERROR;
 }

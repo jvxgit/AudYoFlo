@@ -109,7 +109,7 @@ CjvxAuNmyNewProject::activate()
 
 		associate__properties_active(static_cast<CjvxProperties*>(this), &(this->myNewProject->myVolume), 1);
 
-		jvxrtst << "Hello World, console" << std::endl;
+		embLog.jvxrtst << "Hello World, console" << std::endl;
 	}
 	return(res);
 };

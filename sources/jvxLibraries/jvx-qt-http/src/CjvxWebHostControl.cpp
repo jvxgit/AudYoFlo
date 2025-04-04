@@ -10,7 +10,7 @@
 Q_DECLARE_METATYPE(IjvxHttpApi_httpreport*);
 Q_DECLARE_METATYPE(IjvxHttpApi_wsreport*);
 
-CjvxWebHostControl::CjvxWebHostControl(QObject* parent): QObject(parent) JVX_INIT_RT_ST_INSTANCES_A
+CjvxWebHostControl::CjvxWebHostControl(QObject* parent): QObject(parent)
 {
 	target = "localhost";
 	port = 8000;
@@ -54,14 +54,14 @@ CjvxWebHostControl::activate()
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 
 	// Reset the logfile module
-	jvx_init_text_log(jvxrtst_bkp);
-	jvxrtst_bkp.set_module_name("CjvxWebHostControl");
-	theHost->request_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle**>(&jvxrtst_bkp.theToolsHost));
-	if (jvxrtst_bkp.theToolsHost)
+	jvx_init_text_log(embLog);
+	embLog.jvxrtst_bkp.set_module_name("CjvxWebHostControl");
+	theHost->request_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle**>(&embLog.jvxrtst_bkp.theToolsHost));
+	if (embLog.jvxrtst_bkp.theToolsHost)
 	{
-		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(jvxrtst_bkp.jvxlst_buf, char, JVX_COBJECT_OS_BUF_SIZE);
-		jvxrtst_bkp.jvxlst_buf_sz = JVX_COBJECT_OS_BUF_SIZE;
-		jvx_request_text_log(jvxrtst_bkp);
+		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(embLog.jvxrtst_bkp.jvxlst_buf, char, JVX_COBJECT_OS_BUF_SIZE);
+		embLog.jvxrtst_bkp.jvxlst_buf_sz = JVX_COBJECT_OS_BUF_SIZE;
+		jvx_request_text_log(embLog);
 	}
 
 #endif
@@ -99,17 +99,17 @@ CjvxWebHostControl::deactivate()
 {
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 
-	if (jvxrtst_bkp.theToolsHost)
+	if (embLog.jvxrtst_bkp.theToolsHost)
 	{
-		jvx_return_text_log(jvxrtst_bkp);
-		JVX_DSP_SAFE_DELETE_FIELD(jvxrtst_bkp.jvxlst_buf);
+		jvx_return_text_log(embLog);
+		JVX_DSP_SAFE_DELETE_FIELD(embLog.jvxrtst_bkp.jvxlst_buf);
 
-		jvxrtst_bkp.jvxlst_buf = NULL;
-		jvxrtst_bkp.jvxlst_buf_sz = 0;		
-		theHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle*>(jvxrtst_bkp.jvxlst_buf));	
+		embLog.jvxrtst_bkp.jvxlst_buf = NULL;
+		embLog.jvxrtst_bkp.jvxlst_buf_sz = 0;		
+		theHost->return_hidden_interface(JVX_INTERFACE_TOOLS_HOST, reinterpret_cast<jvxHandle*>(embLog.jvxrtst_bkp.jvxlst_buf));	
 	}
-	jvxrtst_bkp.jvxlst_buf = NULL;
-	jvx_terminate_text_log(jvxrtst_bkp);
+	embLog.jvxrtst_bkp.jvxlst_buf = NULL;
+	jvx_terminate_text_log(embLog);
 	return JVX_NO_ERROR;
 }
 
@@ -299,9 +299,9 @@ CjvxWebHostControl::trigger_send_put_request(jvxSize GunId, jvxSize IGunId, Ijvx
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr,logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr,logLev))
 		{
-			jvxrtst << "Sending HTTP POST request <" << uri << +"--" << put_content << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
+			embLog.jvxrtst << "Sending HTTP POST request <" << uri << +"--" << put_content << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}
 #endif
 		oneRequestInQueue newElm;
@@ -357,9 +357,9 @@ CjvxWebHostControl::trigger_send_get_request(jvxSize GunId, jvxSize IGunId, Ijvx
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << "Sending HTTP GET request <" << uri << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
+			embLog.jvxrtst << "Sending HTTP GET request <" << uri << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}
 #endif
 		oneRequestInQueue newElm;
@@ -414,9 +414,9 @@ CjvxWebHostControl::trigger_send_post_request(jvxSize GunId, jvxSize IGunId, Ijv
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << "Sending HTTP POST request <" << uri << +"--" << put_content << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
+			embLog.jvxrtst << "Sending HTTP POST request <" << uri << +"--" << put_content << ">,G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}
 #endif
 		oneRequestInQueue newElm;
@@ -593,9 +593,9 @@ CjvxWebHostControl::message_complete(QNetworkReply* reply)
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 		jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-		if (jvxrtst_bkp.theTextLogger_hdl && jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+		if (embLog.jvxrtst_bkp.theTextLogger_hdl && embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 		{
-			jvxrtst << "Receivig incoming message: <" << response << ">, G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
+			embLog.jvxrtst << "Receivig incoming message: <" << response << ">, G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 		}
 #endif
 		if (rep)
@@ -672,7 +672,7 @@ CjvxWebHostControl::message_complete(QNetworkReply* reply)
 		}
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
-		jvxrtst << "Reporting transfer error: <" << errStr << ">, G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
+		embLog.jvxrtst << "Reporting transfer error: <" << errStr << ">, G-ID = " << GunId << ", IG-ID = " << IGunId << std::endl;
 #endif
 		if (rep)
 		{

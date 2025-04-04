@@ -344,11 +344,11 @@ public:
 			if (jvx_bitTest(T::output_flags, JVX_GENERIC_CONNECTION_OUTPUT_SUBMODULE_OFFSET))
 			{
 				jvxSize logLev = jvxLogLevel2Id(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG);
-				if (T::jvxrtst_bkp.theTextLogger_hdl && T::jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
+				if (T::embLog.jvxrtst_bkp.theTextLogger_hdl && T::embLog.jvxrtst_bkp.theTextLogger_hdl->check_log_output(nullptr, logLev))
 				{
-					jvx_lock_text_log(T::jvxrtst_bkp, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
-					T::jvxrtst << "::SUBMODULE: " << mess << std::endl;
-					jvx_unlock_text_log(T::jvxrtst_bkp JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					jvx_lock_text_log(T::embLog, logLev JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
+					T::embLog.jvxrtst << "::SUBMODULE: " << mess << std::endl;
+					jvx_unlock_text_log(T::embLog JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT_ADD);
 				}
 			}
 		}

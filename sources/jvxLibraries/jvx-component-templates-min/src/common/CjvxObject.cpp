@@ -112,13 +112,13 @@ CjvxObject::CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) : CjvxObjectCore
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 
-		jvxrtst_bkp.set_module_name(_common_set.theModuleName);
+	embLog.jvxrtst_bkp.set_module_name(_common_set.theModuleName);
 #endif
 
-		_common_set.stateChecks.prepare_flags = 0;
-		_common_set.stateChecks.start_flags = 0;
+	_common_set.stateChecks.prepare_flags = 0;
+	_common_set.stateChecks.start_flags = 0;
 
-		JVX_INITIALIZE_MUTEX(_common_set._safeAccessStateBound.the_lock);
+	JVX_INITIALIZE_MUTEX(_common_set._safeAccessStateBound.the_lock);
 
 }
 
@@ -922,13 +922,13 @@ CjvxObject::_info_token(jvxSize idx, jvxApiString* fldStr)
 void
 CjvxObject::_request_text_log()
 {
-	jvxrtst_bkp.theToolsHost = _common_set.theToolsHost;
-	if (jvxrtst_bkp.theToolsHost)
+	embLog.jvxrtst_bkp.theToolsHost = _common_set.theToolsHost;
+	if (embLog.jvxrtst_bkp.theToolsHost)
 	{
-		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(jvxrtst_bkp.jvxlst_buf, char, JVX_COBJECT_OS_BUF_SIZE);
-		jvxrtst_bkp.jvxlst_buf_sz = JVX_COBJECT_OS_BUF_SIZE;
+		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(embLog.jvxrtst_bkp.jvxlst_buf, char, JVX_COBJECT_OS_BUF_SIZE);
+		embLog.jvxrtst_bkp.jvxlst_buf_sz = JVX_COBJECT_OS_BUF_SIZE;
 
-		jvx_request_text_log(jvxrtst_bkp);
+		jvx_request_text_log(embLog);
 	}
 	else
 	{
@@ -938,13 +938,13 @@ CjvxObject::_request_text_log()
 
 void CjvxObject::_return_text_log()
 {
-	jvx_return_text_log(jvxrtst_bkp);
-	if (jvxrtst_bkp.jvxlst_buf)
+	jvx_return_text_log(embLog);
+	if (embLog.jvxrtst_bkp.jvxlst_buf)
 	{
-		JVX_DSP_SAFE_DELETE_FIELD(jvxrtst_bkp.jvxlst_buf);
+		JVX_DSP_SAFE_DELETE_FIELD(embLog.jvxrtst_bkp.jvxlst_buf);
 	}
-	jvxrtst_bkp.jvxlst_buf = NULL;
-	jvxrtst_bkp.jvxlst_buf_sz = 0;	
+	embLog.jvxrtst_bkp.jvxlst_buf = NULL;
+	embLog.jvxrtst_bkp.jvxlst_buf_sz = 0;
 }
 
 
