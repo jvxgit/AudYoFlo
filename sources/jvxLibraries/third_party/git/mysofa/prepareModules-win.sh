@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-if [ ! -d "libmysofa_$1" ]; then
+if [ ! -d "libmysofa" ]; then
 	git clone https://github.com/hoene/libmysofa.git libmysofa
 
 	cd libmysofa

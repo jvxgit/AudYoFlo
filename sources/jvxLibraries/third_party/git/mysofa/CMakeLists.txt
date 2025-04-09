@@ -12,7 +12,7 @@ if(${JVX_OS} MATCHES "windows" OR ${JVX_OS} MATCHES "macosx")
 		
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
 		message("Checking if libmysofa project is available.")
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${archtoken_simple}; exit")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
 	endif()
 	     		 
 	# message(FATAL_ERROR "Hier -- prepareModules complete.")
