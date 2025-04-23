@@ -170,6 +170,7 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	// Only host to blacklist
 	involvedComponents.theHost.hFHost->add_component_load_blacklist(JVX_COMPONENT_HOST);
 
+#ifdef JVX_ENABLE_PIXBUFFER
 	if (!extPixBuffer.dllPixBufSystem.empty())
 	{
 		std::cout << "Opening runtime library <" << extPixBuffer.dllPixBufSystem << "> for pixbuf cross referencing." << std::endl;
@@ -205,6 +206,8 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 				<< ">: Could not open module." << std::endl;
 		}
 	}
+#endif
+
 	/*
 	 *============================================================================================================== =
 	 *STEP VI : Request the application specific component library in this callback
@@ -383,6 +386,7 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 
 	static_unload_loop();
 
+#ifdef JVX_ENABLE_PIXBUFFER
 	if (extPixBuffer.dllHandlePixBuf != JVX_HMODULE_INVALID)
 	{
 		// This will run the destroy callbacks!!
@@ -394,6 +398,7 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 		extPixBuffer.dllHandlePixBuf = JVX_HMODULE_INVALID;
 		extPixBuffer.dllPixBufSystem.clear();
 	}
+#endif
 
 	shutdown_terminate_base();
 	
