@@ -52,6 +52,7 @@ initSection(onePropertySection& oneSection)
 	oneSection.default_audioplugin_sync_active = "yes";
 	oneSection.default_audioplugin_stream_in = "yes";
 	oneSection.groupid = JVX_SIZE_UNSELECTED;
+	oneSection.associateVariableClass.clear();
 }
 
 static void 
@@ -155,7 +156,10 @@ initProperty(onePropertyDefinition& oneProperty)
 	oneProperty.selection.varname = "";
 	oneProperty.selection.nummax = "";
 	oneProperty.selection.numprefix = "";
-	
+
+	oneProperty.associateVariableLength = 0;
+	oneProperty.associateVariableName.clear();
+
 	initPropertyAudioPlugin(oneProperty.audioPluginDescr);
 }
 
@@ -233,7 +237,7 @@ textProcessor_core::checkForConsistency()
 
 bool
 textProcessor_core::scanInputFromIr(jvxConfigData* theMainSection, IjvxConfigProcessor* theReader, 
-	std::string& purefilenameOutput, jvxBool pluginSupportMode)
+	std::string& purefilenameOutput, jvxBool pluginSupportMode, const std::string& assocClassName)
 {
 	jvxSize  i;
 	std::vector<std::string> lstPrefixes;
@@ -263,6 +267,9 @@ textProcessor_core::scanInputFromIr(jvxConfigData* theMainSection, IjvxConfigPro
 		// Leave empty elm.thePrefix;
 		intermediateStruct.callbacks.push_back(elm);
 	}
+
+	intermediateStruct.assocClassName = assocClassName;
+	SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theMainSection, ASSOCIATE_VARIABLE_CLASS, &intermediateStruct.assocClassName), ASSOCIATE_VARIABLE_CLASS, theContent);
 
 	intermediateStruct.audio_plugin_register_tag = intermediateStruct.className;
 	SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theMainSection, 		
@@ -799,6 +806,10 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 			HjvxConfigProcessor_readEntry_originEntry(theReader, theContent, GROUP_ID, fName, lineno);
 			std::cerr << fName << "(" << jvx_int2String(lineno) << "): Warning: Entry " << GROUP_ID << " is associated to wrong type." << std::endl;
 		}
+
+		// Take from main section
+		oneSection.associateVariableClass = intermediateStruct.assocClassName;
+		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, ASSOCIATE_VARIABLE_CLASS, &oneSection.associateVariableClass), ASSOCIATE_VARIABLE_CLASS, theContent);
 
 		// Now the properties in this member variable
 		jvxSize numSubSections = 0;
@@ -2310,6 +2321,12 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 					break;
 				}
 				
+				newProp.associateVariableName.clear();
+				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theSubContent, ASSOCIATE_VARIABLE_NAME, &newProp.associateVariableName), ASSOCIATE_VARIABLE_NAME, theContent);
+
+				newProp.associateVariableLength = 0; // is scalar value!!
+				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignment<jvxSize>(theReader, theSubContent, ASSOCIATE_VARIABLE_LENGTH, &newProp.associateVariableLength), ASSOCIATE_VARIABLE_LENGTH, theContent);
+
 				if (pluginSupportMode)
 				{
 					// =================================================================

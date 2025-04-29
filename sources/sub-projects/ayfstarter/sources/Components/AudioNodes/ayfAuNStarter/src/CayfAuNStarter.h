@@ -82,8 +82,11 @@ public:
 	
 	jvxErrorType local_allocate_profiling() override;
 	jvxErrorType local_deallocate_profiling() override;
-#endif
 
+#include "pcg_exports_nodem__assoc__h.h"
+#else
+#include "pcg_exports_node__assoc__h.h"
+#endif
 };
 
 #ifdef JVX_PROJECT_NAMESPACE

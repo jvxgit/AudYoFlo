@@ -5,6 +5,7 @@ SECTION volume
 	TYPE = "JVX_DATAFORMAT_DATA";			
 	ASSOCIATE_EXTERNAL = "yes";
 	CALLBACK_SET_POSTHOOK = "async_starterlib_set";
+	ASSOCIATE_VARIABLE_NAME = "processing_lib.prm_async.volume";
 };  
 
 

@@ -106,7 +106,8 @@ void parseInput(char* argv[], int argc, std::string& inputFName, std::string& ou
 #else
 void parseInput(char* argv[], int argc, std::string& inputFName, std::string& outName, 
 	std::vector<std::string>& includePaths, jvxBool& dependencyMode, 
-	jvxBool& pluginSupport, jvxBool& generateLineInfo, std::vector<std::string>& ifdefs)
+	jvxBool& pluginSupport, jvxBool& generateLineInfo, std::vector<std::string>& ifdefs,
+	std::string& assClassName)
 {
 	int cnt = 0;
 	bool cont = true;
@@ -152,6 +153,14 @@ void parseInput(char* argv[], int argc, std::string& inputFName, std::string& ou
 				ifdefs.push_back(argv[cnt++]);
 			}
 
+		}
+		else if (nextToken == "-C")
+		{
+			tmp = "";
+			if (cnt < argc)
+			{
+				assClassName = argv[cnt++];
+			}
 		}
 		else if (nextToken == "-P")
 		{
@@ -208,6 +217,7 @@ main(int argc, char** argv)
 	std::vector<std::string> includePaths;
 	std::vector<std::string> ifdefs;
 	jvxSize maxLength = JVX_SIZE_UNSELECTED;
+	std::string assClassName;
 
 #ifdef JVX_PROP_MATLAB_OUTPUT
 	std::string outDir;
@@ -243,13 +253,17 @@ main(int argc, char** argv)
 #else
 
 	std::string outFileName_h;
-	parseInput(&argv[1], argc-1, inputFName, outFileName_h, includePaths, dependencyMode, pluginSupportMode, generateLineInfo, ifdefs);
+	parseInput(&argv[1], argc-1, inputFName, outFileName_h, includePaths, dependencyMode, pluginSupportMode, generateLineInfo, ifdefs, assClassName);
 
 	//================================================================
 	// Determine the name of the file to generate source code to
 	//================================================================
 	std::string outFilename = inputFName;
 	std::string outFilenameH;
+#ifndef JVX_PROP_MATLAB_OUTPUT
+	std::string outFilenameDirectCpp;
+	std::string outFilenameDirectH;
+#endif
 	std::string purefilenameOutput = "UNKNOWN";
 
 	std::string::size_type indDot = outFilename.rfind(".");
@@ -275,6 +289,13 @@ main(int argc, char** argv)
 	{
 		outFilenameH = outFileName_h;
 	}
+
+#ifndef JVX_PROP_MATLAB_OUTPUT
+	auto idxBwd = outFilenameH.rfind('.');
+	assert(idxBwd != std::string::npos);
+	outFilenameDirectCpp = outFilenameH.substr(0, idxBwd) + "__assoc_cpp" + POSTFIX_H;
+	outFilenameDirectH = outFilenameH.substr(0, idxBwd) + "__assoc__h" + POSTFIX_H;
+#endif
 
 	//	std::cout << "Outputfile: " << outFilename << std::endl;
 #endif
@@ -341,7 +362,7 @@ main(int argc, char** argv)
 	//std::cout << fldStr->bString << std::endl;
 	// Store all input data in here..
 
-	if(textProcessor.scanInputFromIr(theMainSection, theReader, purefilenameOutput, pluginSupportMode))
+	if(textProcessor.scanInputFromIr(theMainSection, theReader, purefilenameOutput, pluginSupportMode, assClassName))
 	{
 		if(textProcessor.checkForConsistency())
 		{
@@ -362,7 +383,10 @@ main(int argc, char** argv)
 				//std::cerr << "-->" << outDir << std::endl;
 				textProcessor.generateCode_mat(outDir, outCptp, outCppf, maxLength);
 #else
-				textProcessor.generateCode_c(outFilenameH/*outFilename*/, generateLineInfo);
+				textProcessor.generateCode_c(outFilenameH/*outFilename*/, 
+					outFilenameDirectCpp, 
+					outFilenameDirectH, 
+					generateLineInfo);
 #endif
 			}
 			return(0);

@@ -179,6 +179,9 @@ struct onePropertyDefinition
 
 	std::string updateContextToken;
 	onePropertyAudioPluginDesription audioPluginDescr;
+
+	std::string associateVariableName;
+	jvxSize associateVariableLength;
 } ;
 
 struct onePropertySection
@@ -211,6 +214,7 @@ struct onePropertySection
 	std::string default_audioplugin_stream_in;
 	std::string default_audioplugin_message_in;
 	jvxSize groupid = JVX_SIZE_UNSELECTED;
+	std::string associateVariableClass;
 };
 
 struct onePropertyElement;
@@ -334,6 +338,7 @@ private:
 		std::string default_audioplugin_sync_active;
 		std::string default_audioplugin_stream_in;
 		std::string default_audioplugin_message_in;
+		std::string assocClassName;
 	} intermediateStruct;
 
 	std::vector<jvxSize> ids_specific;
@@ -342,13 +347,13 @@ private:
 public:
 
 	textProcessor_core(){};
-	bool scanInputFromIr(jvxConfigData* theMainSection, IjvxConfigProcessor* theReader, std::string& purefilenameOutput, jvxBool pluginSupportMode);
+	bool scanInputFromIr(jvxConfigData* theMainSection, IjvxConfigProcessor* theReader, std::string& purefilenameOutput, jvxBool pluginSupportMode, const std::string& assocClassName);
 	bool processOneGroupSection(jvxConfigData* theContent, std::string prefix, IjvxConfigProcessor* theReader, onePropertyElement& theGroup, 
 		const std::vector<std::string>& lstPrefixes, std::vector<oneCallback>& lstCallbacks, propertiesPassThrough* passthrough,
 		jvxBool pluginSupportMode, jvxSize groupidArg);
 
 	bool checkForConsistency();
-	void generateCode_c(const std::string& outFilenameH, jvxBool generateLineInfo);
+	void generateCode_c(const std::string& outFilenameH, const std::string& outFilenameCpp, const std::string& outFilenameDirectH, jvxBool generateLineInfo);
 
 	void generateCode_oneElement_c(onePropertyElement theElm,
 			std::ostream& streamVariables,
@@ -363,6 +368,9 @@ public:
 			std::ostream& streamDeassociateFunctions,
 			std::ostream& streamTranslations,
 			std::ostream& streamTagUpdate,
+			std::ostream& streamAssociateFunctionsDirectCpp,
+			std::ostream& streamDeassociateFunctionsDirectCpp,
+			std::ostream& streamAssociateFunctionsDirectH,
 			int tabOffset,
 			std::string structToken,
 			std::string funcToken,
@@ -401,9 +409,11 @@ public:
 
 	void produceOutput_c_deallocate(std::ostream& out, onePropertyDefinition& elm, std::string& propertySectionName);
 
-	void produceOutput_c_associate(std::ostream& out, std::ostream& out_inner, bool& isFirstAssociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName);
+	void produceOutput_c_associate(std::ostream& out, std::ostream& out_inner, bool& isFirstAssociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName,
+		std::ostream& out_varAssoc, const std::string& assocClassName, jvxBool& isFirstDirectAssociate, std::ostream& out_varAssoc_h);
 
-	void produceOutput_c_deassociate(std::ostream& out, std::ostream& out_inner, bool& isFirstAssociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName);
+	void produceOutput_c_deassociate(std::ostream& out, std::ostream& out_inner, bool& isFirstAssociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName,
+		std::ostream& out_varAssoc, const std::string& assocClassName, bool& isFirstDirectAssociate, std::ostream& out_varAssoc_h);
 
 	void produceOutput_c_register(std::ostream& out, onePropertyDefinition& elm, std::string& propertySectionName, std::vector<std::string>& prefixList, std::vector<oneCallback>& allCallbacks);
 

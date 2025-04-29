@@ -6,7 +6,13 @@
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
 #endif
-	
+
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+#include "pcg_exports_nodem__assoc_cpp.h"
+#else
+#include "pcg_exports_node__assoc_cpp.h"
+#endif
+
 	/* Print out during debugging which version of */
 #ifdef JVX_USE_RUST_CORE_LIB
 #pragma message("info: [Involving Rust Core Library]")
@@ -44,13 +50,11 @@ CayfAuNStarter::activate()
 		genStarter_node::allocate_all();
 		genStarter_node::register_all(static_cast<CjvxProperties*>(this));
 
-		genStarter_node::associate__properties(static_cast<CjvxProperties*>(this),
-			&processing_lib.prm_async.volume, 1
-
 #ifdef USE_ORC
-			,&processing_lib.prm_async.runorc, 1
+		genStarter_node::associate__properties(static_cast<CjvxProperties*>(this), &processing_lib.prm_async.runorc, 1);
 #endif
-		);
+
+		associate__var__properties(this);
 
 		genStarter_node::register_callbacks(static_cast<CjvxProperties*>(this), cb_async_set, this);
 
@@ -76,7 +80,10 @@ CayfAuNStarter::deactivate()
 #endif
 		// Added for step III
 		genStarter_node::unregister_callbacks(static_cast<CjvxProperties*>(this));
-		genStarter_node::deassociate__properties(static_cast<CjvxProperties*>(this));
+#ifdef USE_ORC
+		genStarter_node::deassociate__properties(static_cast<CjvxProperties*>(this));		
+#endif
+		deassociate__var__properties(this);
 		genStarter_node::unregister_all(static_cast<CjvxProperties*>(this));
 		genStarter_node::deallocate_all();
 			

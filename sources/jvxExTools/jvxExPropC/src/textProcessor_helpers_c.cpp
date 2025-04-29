@@ -1665,127 +1665,281 @@ textProcessor_core::produceOutput_c_deallocate(std::ostream& out, onePropertyDef
 }
 
 void
-textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& out_inner, bool& isFirstAssociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName)
+textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& out_inner, bool& isFirstAssociate, 
+	onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName, 
+	std::ostream& out_varAssoc, const std::string& assocClassName, bool& isFirstDirectAssociate, std::ostream& out_varAssoc_h)
 {	
 	if(
-		!(
-			(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER)||
-			(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_SWITCH_BUFFER)||
-			(elm.decoderType == JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG)||
-			(elm.decoderType == JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE)))
+		(!elm.associateVariableName.empty()) && 
+		(!assocClassName.empty()))
 	{
-		if(
-			(elm.associateExternal) && (!elm.installable))
+		if (
+			!(
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_SWITCH_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE)))
 		{
-			
-			// Association function to provide data from extern
-			if (isFirstAssociate)
+			if (
+				(elm.associateExternal) && (!elm.installable))
 			{
-				out << "\tinline void associate__" << funcSectionName << "(CjvxProperties* theProps, " << std::flush;
-				if (elm.associateNumberEntries)
+				if (isFirstDirectAssociate)
 				{
-					out << elm.tokenTypeAss << "* ptrExt_" << elm.name << ", jvxSize" << " num_" << elm.name << std::flush;
+					out_varAssoc << "// Entry <" << funcSectionName << "> for element <" << propertySectionName << ">." << std::endl;
+					out_varAssoc << "void" << std::endl;
+					out_varAssoc << assocClassName << "::associate__var__" << funcSectionName << "(CjvxProperties* theProps)" << std::endl;
+					out_varAssoc << "{" << std::endl;
+					out_varAssoc << "\ttheProps->_lock_properties_local();" << std::endl;
+
+					out_varAssoc_h << "// Include this file in the header file of class <" << assocClassName << "> to provide associate and deassociate property functions with local varables." << std::endl;
+					out_varAssoc_h << "void associate__var__" << funcSectionName << "(CjvxProperties * theProps);" << std::endl;
+					isFirstDirectAssociate = false;
+				}
+
+				// Association function to provide data from extern
+				if (elm.associateVariableLength == 0)
+				{
+					out_varAssoc << std::endl << "\t// Property with description <" << elm.description << "> linked to variable <" << elm.associateVariableName << ">." << std::endl;
 				}
 				else
 				{
-					out << elm.tokenTypeAss << "* ptrExt_" << elm.name << std::flush;
+					out_varAssoc << std::endl << "\t// Property with description <" << elm.description << "> linked to field <" << elm.associateVariableName << "> with size <" << elm.associateVariableLength << ">." << std::endl;
 				}
-			}
-			else
-			{
-				if (elm.associateNumberEntries)
+
+				if (elm.associateVariableLength == 0)
 				{
-					out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << ", jvxSize" << " num_" << elm.name << std::flush;
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".ptr = &" << elm.associateVariableName << ";" << std::endl;
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".num = 1" << ";" << std::endl;
 				}
 				else
 				{
-					out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << std::flush;
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".ptr = " << elm.associateVariableName << ";" << std::endl;
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".num = " << jvx_size2String(elm.associateVariableLength) << ";" << std::endl;
 				}
-			}
-			out_inner << "\t\t// " << elm.description << std::endl;
-			if (elm.associateNumberEntries)
-			{
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = " " num_" << elm.name << ";" << std::endl;
-			}
-			else
-			{
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 1;" << std::endl;
-			}
-			isFirstAssociate = false;
+				isFirstDirectAssociate = false;
 
-			switch (elm.format)
-			{
-			case JVX_DATAFORMAT_SELECTION_LIST:
-			case JVX_DATAFORMAT_VALUE_IN_RANGE:
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".value.assign(ptrExt_" << elm.name << ", num_" << elm.name << "); " << std::endl;
-				if (elm.updateOnAssociate)
+				switch (elm.format)
 				{
-					out_inner << "\t\ttheProps->_update_property_size(" << propertySectionName << "." <<
-						elm.name << ".num, " 
-						<< propertySectionName << "." << elm.name << ".category, " 
-						<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+				case JVX_DATAFORMAT_SELECTION_LIST:
+				case JVX_DATAFORMAT_VALUE_IN_RANGE:
+					out_varAssoc << "\t\t" << propertySectionName << "." << elm.name << ".value.assign(" << propertySectionName << "." << elm.name << ".ptr, " << 
+						propertySectionName << "." << elm.name << ".num); " << std::endl;
+					if (elm.updateOnAssociate)
+					{
+						out_varAssoc << "\ttheProps->_update_property_size(" << propertySectionName << "." <<
+							elm.name << ".num, "
+							<< propertySectionName << "." << elm.name << ".category, "
+							<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					}
+					break;
+				default:
+					if (elm.updateOnAssociate)
+					{
+						out_varAssoc << "\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
+							elm.name << ".num , "
+							<< propertySectionName << "." << elm.name << ".category, "
+							<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					}
 				}
-				break;
-			default:
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".ptr = ptrExt_" << elm.name << ";" << std::endl;
-				if (elm.updateOnAssociate)
-				{
-					out_inner << "\t\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-						elm.name << ".num , " 
-						<< propertySectionName << "." << elm.name << ".category, "
-						<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
-				}
-			}
 
-			if (elm.validOnInit)
-			{
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".isValid = true;" << std::endl;
+				if (elm.validOnInit)
+				{
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".isValid = true;" << std::endl;
+				}
+				else
+				{
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".isValid = false;" << std::endl;
+				}
 			}
-			else
+		}
+	}
+	else
+	{
+		// ===========================================================================
+		if (
+			!(
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_SWITCH_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE)))
+		{
+			if (
+				(elm.associateExternal) && (!elm.installable))
 			{
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".isValid = false;" << std::endl;
+
+				// Association function to provide data from extern
+				if (isFirstAssociate)
+				{
+					out << "\tinline void associate__" << funcSectionName << "(CjvxProperties* theProps, " << std::flush;
+					if (elm.associateNumberEntries)
+					{
+						out << elm.tokenTypeAss << "* ptrExt_" << elm.name << ", jvxSize" << " num_" << elm.name << std::flush;
+					}
+					else
+					{
+						out << elm.tokenTypeAss << "* ptrExt_" << elm.name << std::flush;
+					}
+				}
+				else
+				{
+					if (elm.associateNumberEntries)
+					{
+						out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << ", jvxSize" << " num_" << elm.name << std::flush;
+					}
+					else
+					{
+						out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << std::flush;
+					}
+				}
+				out_inner << "\t\t// " << elm.description << std::endl;
+				if (elm.associateNumberEntries)
+				{
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = " " num_" << elm.name << ";" << std::endl;
+				}
+				else
+				{
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 1;" << std::endl;
+				}
+				isFirstAssociate = false;
+
+				switch (elm.format)
+				{
+				case JVX_DATAFORMAT_SELECTION_LIST:
+				case JVX_DATAFORMAT_VALUE_IN_RANGE:
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".value.assign(ptrExt_" << elm.name << ", num_" << elm.name << "); " << std::endl;
+					if (elm.updateOnAssociate)
+					{
+						out_inner << "\t\ttheProps->_update_property_size(" << propertySectionName << "." <<
+							elm.name << ".num, "
+							<< propertySectionName << "." << elm.name << ".category, "
+							<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					}
+					break;
+				default:
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".ptr = ptrExt_" << elm.name << ";" << std::endl;
+					if (elm.updateOnAssociate)
+					{
+						out_inner << "\t\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
+							elm.name << ".num , "
+							<< propertySectionName << "." << elm.name << ".category, "
+							<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					}
+				}
+
+				if (elm.validOnInit)
+				{
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".isValid = true;" << std::endl;
+				}
+				else
+				{
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".isValid = false;" << std::endl;
+				}
 			}
 		}
 	}
 }
 
 void
-textProcessor_core::produceOutput_c_deassociate(std::ostream& out, std::ostream& out_inner, bool& isFirstDeassociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName)
+textProcessor_core::produceOutput_c_deassociate(std::ostream& out, std::ostream& out_inner, bool& isFirstDeassociate, onePropertyDefinition& elm, std::string& propertySectionName, std::string& funcSectionName,
+	std::ostream& out_varAssoc, const std::string& assocClassName, bool& isFirstDirectAssociate, std::ostream& out_varAssoc_h)
 {
-	if(
-		!(
-			(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER)||
-			(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_SWITCH_BUFFER)||
-			(elm.decoderType == JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG)||
-			(elm.decoderType == JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE)))
+	if (
+		(!elm.associateVariableName.empty()) &&
+		(!assocClassName.empty()))
 	{
-		if((elm.associateExternal)&&(!elm.installable))
+		if (
+			!(
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_SWITCH_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE)))
 		{
-			if(isFirstDeassociate)
+			if (
+				(elm.associateExternal) && (!elm.installable))
 			{
-				out << "\tinline void deassociate__" << funcSectionName << "(CjvxProperties* theProps" << std::flush;
-				isFirstDeassociate = false;
+				if (isFirstDirectAssociate)
+				{
+					out_varAssoc << "// Entry <" << funcSectionName << "> for element <" << propertySectionName << ">." << std::endl;
+					out_varAssoc << "void" << std::endl;
+					out_varAssoc << assocClassName << "::deassociate__var__" << funcSectionName << "(CjvxProperties* theProps)" << std::endl;
+					out_varAssoc << "{" << std::endl;
+					out_varAssoc << "\ttheProps->_lock_properties_local();" << std::endl;
+
+					out_varAssoc_h << "void deassociate__var__" << funcSectionName << "(CjvxProperties * theProps);" << std::endl;
+					isFirstDirectAssociate = false;
+				}
+
+				// Association function to provide data from extern
+				if (elm.associateVariableLength == 0)
+				{
+					out_varAssoc << std::endl << "\t// Property with description <" << elm.description << "> linked to variable <" << elm.associateVariableName << ">." << std::endl;
+				}
+				else
+				{
+					out_varAssoc << std::endl << "\t// Property with description <" << elm.description << "> linked to field <" << elm.associateVariableName << "> with size <" << elm.associateVariableLength << ">." << std::endl;
+				}
+
+				isFirstDirectAssociate = false;
+
+				switch (elm.format)
+				{
+				case JVX_DATAFORMAT_SELECTION_LIST:
+				case JVX_DATAFORMAT_VALUE_IN_RANGE:
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".value.assign(nullptr, 0); " << std::endl;
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".num = 0;" << std::endl;
+					out_varAssoc << "\ttheProps->_update_property_size(" << propertySectionName << "." <<
+						elm.name << ".num, "
+						<< propertySectionName << "." << elm.name << ".category, "
+						<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					break;
+				default:
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".num = 0;" << std::endl;
+					out_varAssoc << "\t" << propertySectionName << "." << elm.name << ".ptr = NULL;" << std::endl;
+					out_varAssoc << "\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
+							elm.name << ".num , "
+							<< propertySectionName << "." << elm.name << ".category, "
+							<< propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;					
+				}				
 			}
-
-			out_inner << "\t\t// " << elm.description << std::endl;
-			out_inner << "\t\t" << propertySectionName  << "." << elm.name << ".isValid = false;" << std::endl;
-			
-			switch (elm.format)
+		}
+	}
+	else
+	{
+		if (
+			!(
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_MULTI_CHANNEL_SWITCH_BUFFER) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_LOCAL_TEXT_LOG) ||
+				(elm.decoderType == JVX_PROPERTY_DECODER_PROPERTY_EXTENDER_INTERFACE)))
+		{
+			if ((elm.associateExternal) && (!elm.installable))
 			{
-			case JVX_DATAFORMAT_SELECTION_LIST:
-			case JVX_DATAFORMAT_VALUE_IN_RANGE:
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".value.assign(nullptr, 0); " << std::endl;
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 0;" << std::endl;
-				out_inner << "\t\ttheProps->_update_property_size(" << propertySectionName << "." <<
-					elm.name << ".num, " << propertySectionName << "." << elm.name << ".category, " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
-				break;
+				if (isFirstDeassociate)
+				{
+					out << "\tinline void deassociate__" << funcSectionName << "(CjvxProperties* theProps" << std::flush;
+					isFirstDeassociate = false;
+				}
 
-			default:
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 0;" << std::endl;
-				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".ptr = NULL;" << std::endl;
+				out_inner << "\t\t// " << elm.description << std::endl;
+				out_inner << "\t\t" << propertySectionName << "." << elm.name << ".isValid = false;" << std::endl;
 
-				out_inner << "\t\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
-					elm.name << ".num, " << propertySectionName << "." << elm.name << ".category, " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+				switch (elm.format)
+				{
+				case JVX_DATAFORMAT_SELECTION_LIST:
+				case JVX_DATAFORMAT_VALUE_IN_RANGE:
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".value.assign(nullptr, 0); " << std::endl;
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 0;" << std::endl;
+					out_inner << "\t\ttheProps->_update_property_size(" << propertySectionName << "." <<
+						elm.name << ".num, " << propertySectionName << "." << elm.name << ".category, " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+					break;
+
+				default:
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 0;" << std::endl;
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".ptr = NULL;" << std::endl;
+
+					out_inner << "\t\ttheProps->_update_property(" << propertySectionName << "." << elm.name << ".ptr, " << propertySectionName << "." <<
+						elm.name << ".num, " << propertySectionName << "." << elm.name << ".category, " << propertySectionName << "." << elm.name << ".globalIdx, false);" << std::endl;
+				}
 			}
 		}
 	}
@@ -3615,6 +3769,9 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			std::ostream& streamDeassociateFunctions,
 			std::ostream& streamTranslations,
 			std::ostream& streamTagUpdate,
+			std::ostream& streamAssociateFunctionsDirectCpp,
+			std::ostream& streamDeassociateFunctionsDirectCpp,
+			std::ostream& streamAssociateFunctionsDirectH,
 			int tabOffset,
 			std::string structToken,
 			std::string funcToken,
@@ -3656,6 +3813,9 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 				streamDeassociateFunctions,
 				streamTranslations,
 				streamTagUpdate,
+				streamAssociateFunctionsDirectCpp,
+				streamDeassociateFunctionsDirectCpp,
+				streamAssociateFunctionsDirectH,
 				tabOffset + 1,
 				structToken,
 				funcToken,
@@ -3796,6 +3956,8 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 		std::ostringstream streamAssociateFunctions_inner; // seems that a clear is not sufficient here.. Bug?
 		std::ostringstream streamDeassociateFunctions_inner; // seems that a clear is not sufficient here.. Bug?
 		bool isFirstAssociate = true;
+		bool isFirstDirectAssociate = true;
+		bool isFirstDirectDeassociate = true;
 		bool isFirstDeassociate = true;
 
 		for(j = 0; j < theElm.thePropertySection.properties.size(); j++)
@@ -3825,8 +3987,10 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			produceOutput_c_deallocate(streamDeallocate, elm, propertySectionName);
 
 			// produce the variable association function
-			produceOutput_c_associate(streamAssociateFunctions, streamAssociateFunctions_inner, isFirstAssociate, elm, propertySectionName, funcSectionName);
-			produceOutput_c_deassociate(streamDeassociateFunctions, streamDeassociateFunctions_inner, isFirstDeassociate, elm, propertySectionName, funcSectionName);
+			produceOutput_c_associate(streamAssociateFunctions, streamAssociateFunctions_inner, isFirstAssociate, elm, propertySectionName, funcSectionName,
+				streamAssociateFunctionsDirectCpp, theElm.thePropertySection.associateVariableClass, isFirstDirectAssociate, streamAssociateFunctionsDirectH);
+			produceOutput_c_deassociate(streamDeassociateFunctions, streamDeassociateFunctions_inner, isFirstDeassociate, elm, propertySectionName, funcSectionName,
+				streamDeassociateFunctionsDirectCpp, theElm.thePropertySection.associateVariableClass, isFirstDirectDeassociate, streamAssociateFunctionsDirectH);
 
 			// produce the variable registration function			
 			produceOutput_c_register(streamRegister, elm, propertySectionName, locPrefixList, intermediateStruct.callbacks);
@@ -3874,6 +4038,20 @@ textProcessor_core::generateCode_oneElement_c(onePropertyElement theElm,
 			streamDeassociateFunctions << "\t\ttheProps->_unlock_properties_local();" << std::endl;
 			streamDeassociateFunctions << "\t};" << std::endl;
 			streamDeassociateFunctions << std::endl;
+		}
+
+		if (!isFirstDirectAssociate)
+		{
+			streamAssociateFunctionsDirectCpp << std::endl;
+			streamAssociateFunctionsDirectCpp << "\ttheProps->_unlock_properties_local();" << std::endl;
+			streamAssociateFunctionsDirectCpp << "}" << std::endl;
+		}
+
+		if (!isFirstDirectDeassociate)
+		{
+			streamDeassociateFunctionsDirectCpp << std::endl;
+			streamDeassociateFunctionsDirectCpp << "\ttheProps->_unlock_properties_local();" << std::endl;
+			streamDeassociateFunctionsDirectCpp << "}" << std::endl;
 		}
 
 		streamVariables << tabify(1+tabOffset) << "} " << theElm.thePropertySection.name << ";" << std::endl;
@@ -4431,7 +4609,7 @@ textProcessor_core::produceOutput_c_AudioPluginIds(
 }
 
 void
-textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool generateLineInfo)
+textProcessor_core::generateCode_c(const std::string& outFilenameH, const std::string& outFilenameDirectCpp, const std::string& outFilenameDirectH, jvxBool generateLineInfo)
 {
 	jvxSize i,j,l;
 	std::ostringstream streamStartArea;
@@ -4448,7 +4626,10 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 	std::ostringstream streamWriteConfig;
 	std::ostringstream streamTranslations;
 	std::ostringstream streamTagUpdate;
-	
+	std::ostringstream streamAssociateFunctionsDirectCpp;
+	std::ostringstream streamDeassociateFunctionsDirectCpp;
+	std::ostringstream streamAssociateFunctionsDirectH;
+
 	std::ostringstream streamPluginsCalls;
 	std::ostringstream streamPluginsParameters_declare;
 	std::ostringstream streamPluginsParameters_code;
@@ -4493,7 +4674,8 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 		generateCode_oneElement_c(intermediateStruct.thePropertyElements[l],
 			streamVariables, streamInit, streamAllocate, streamDeallocate, streamRegister, streamUnregister, 
 			streamReadConfig, streamWriteConfig,
-			streamAssociateFunctions, streamDeassociateFunctions, streamTranslations, streamTagUpdate, 0, "", "", "",
+			streamAssociateFunctions, streamDeassociateFunctions, streamTranslations, streamTagUpdate, 
+			streamAssociateFunctionsDirectCpp, streamDeassociateFunctionsDirectCpp, streamAssociateFunctionsDirectH, 0, "", "", "",
 			lstInitFunctions, lstAllocateFunctions, lstDeallocateFunctions, lstRegisterFunctions, 
 			lstUnregisterFunctions, lstPutConfigFunctions, lstPutConfigFunctionArgs,
 			lstGetConfigFunctions, lstTagUpdateFunctions,
@@ -4809,5 +4991,35 @@ textProcessor_core::generateCode_c(const std::string& outFilenameH, jvxBool gene
 			osOutFileHPluginsRun << streamPluginsParameters_code.str() << std::endl;
 			osOutFileHPluginsRun << "#endif" << std::endl;
 		}
+	}
+
+	if (
+		(!streamAssociateFunctionsDirectCpp.str().empty()) && (!streamDeassociateFunctionsDirectCpp.str().empty()))
+	{
+		std::ofstream osOutFileCpp;
+		osOutFileCpp.open(outFilenameDirectCpp.c_str(), std::ios_base::out);
+		if (!osOutFileCpp.is_open())
+		{
+			std::cout << "Unable to write to file " << outFilenameDirectCpp << std::endl;
+		}
+		osOutFileCpp << "// =========================================================" << std::endl;
+		osOutFileCpp << "// ASSOCIATE" << std::endl;
+		osOutFileCpp << "// =========================================================" << std::endl;
+		osOutFileCpp << (std::string)streamAssociateFunctionsDirectCpp.str() << std::flush;
+
+		osOutFileCpp << "// =========================================================" << std::endl;
+		osOutFileCpp << "// DEASSOCIATE" << std::endl;
+		osOutFileCpp << "// =========================================================" << std::endl;
+		osOutFileCpp << (std::string)streamDeassociateFunctionsDirectCpp.str() << std::flush;
+	}	
+	if (!streamAssociateFunctionsDirectH.str().empty())
+	{
+		std::ofstream osOutFileH;
+		osOutFileH.open(outFilenameDirectH.c_str(), std::ios_base::out);
+		if (!osOutFileH.is_open())
+		{
+			std::cout << "Unable to write to file " << outFilenameDirectH << std::endl;
+		}
+		osOutFileH << (std::string)streamAssociateFunctionsDirectH.str() << std::flush;
 	}
 }
