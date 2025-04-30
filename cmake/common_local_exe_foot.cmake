@@ -29,7 +29,11 @@ if(NOT JVX_COMPILE_BUILDTOOLS)
   # add it even it JVX_USE_TRACY is not set because
   # the tracy target is added as interface library
   # to set the include dirs then
-  set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} tracy)
+  if(NOT DEFINED JVX_SDK_PATH)
+	
+	# BUT - this only works in runtime build, not in SDK related build since there, the tracy interface lib does not exist
+	set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} tracy)
+  endif()
 endif()
 
 ###
