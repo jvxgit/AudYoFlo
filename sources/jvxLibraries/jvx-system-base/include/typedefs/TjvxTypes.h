@@ -554,7 +554,7 @@ typedef void(*jvxLoadModuleFilterCallback)(jvxBool* doNotLoad, const char* modul
 
 #define JVX_OBJECT_ASSIGN_INTERFACE_FACTORY(ptr) _common_set.theInterfaceFactory = static_cast<IjvxInterfaceFactory*>(ptr)
 
-#if (defined JVX_OS_LINUX) || (defined JVX_OS_MACOSX) || (defined JVX_OS_IOS) || (defined JVX_OS_EMSCRIPTEN)
+#if (defined JVX_OS_LINUX) || (defined JVX_OS_ANDROID) || (defined JVX_OS_MACOSX) || (defined JVX_OS_IOS) || (defined JVX_OS_EMSCRIPTEN)
 #define JVX_SOURCE_CODE_ORIGIN ((std::string)__FUNCTION__ +":" +__FILE__ +":" +Quotes(__LINE__)).c_str()
 #else
 #define JVX_SOURCE_CODE_ORIGIN __FUNCTION__ ":" __FILE__ ":" Quotes(__LINE__)

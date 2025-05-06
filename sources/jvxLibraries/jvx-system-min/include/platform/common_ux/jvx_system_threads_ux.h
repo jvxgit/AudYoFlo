@@ -137,7 +137,7 @@ static int jvx_pthread_join(pthread_t thread, void** value_ptr, jvxSize timeoutm
 }
 #else
 	
-#if defined( JVX_OS_MACOSX) || defined(JVX_OS_IOS) || defined(JVX_OS_EMSCRIPTEN)
+#if defined( JVX_OS_MACOSX) || defined(JVX_OS_IOS) || defined(JVX_OS_EMSCRIPTEN) || defined(JVX_OS_ANDROID)
 
 
 // Following taken from here:
@@ -180,7 +180,16 @@ JVX_STATIC_INLINE int pthread_timedjoin_np(pthread_t td, void **res, struct time
 
     pthread_mutex_unlock(&args.mtx);
 
+#if defined(JVX_OS_ANDROID)
+	
+	// Could not find a good replacement for this function in Android,
+	// https://stackoverflow.com/questions/4610086/pthread-cancel-alternatives-in-android-ndk
+	
+	assert(0);
+#else
     pthread_cancel(tmp);
+#endif
+
     pthread_join(tmp, 0);
 
     pthread_cond_destroy(&args.cond);
@@ -219,7 +228,16 @@ JVX_STATIC_INLINE int jvx_pthread_join(pthread_t thread, void** value_ptr, jvxSi
 #define JVX_WAIT_FOR_THREAD_TERMINATE_INF(a) pthread_join(a, NULL)
 #define JVX_WAIT_FOR_THREAD_TERMINATE_MS(a,b) jvx_pthread_join(a, NULL, b)
 
-#define JVX_TERMINATE_THREAD(arg1, arg2) pthread_cancel(arg1)
+#if defined(JVX_OS_ANDROID)
+
+	// Could not find a good replacement for this function in Android,
+	// https://stackoverflow.com/questions/4610086/pthread-cancel-alternatives-in-android-ndk
+	#define JVX_TERMINATE_THREAD(arg1, arg2) assert(0)
+#else
+
+	#define JVX_TERMINATE_THREAD(arg1, arg2) pthread_cancel(arg1)
+	
+#endif
 
 #define JVX_COMPARE_THREADS(a,b) (pthread_equal(a,b) != 0)
 
@@ -237,7 +255,7 @@ typedef struct
 
 #define JVX_INITIALIZE_NOTIFICATION(hdl)  jvx_initialize_notification_l(&hdl)
 
-#if defined(JVX_OS_LINUX) || defined(JVX_OS_EMSCRIPTEN)
+#if defined(JVX_OS_LINUX) || defined(JVX_OS_EMSCRIPTEN) || defined(JVX_OS_ANDROID)
 
 /* ============= LINUX ================*/
 JVX_STATIC_INLINE int jvx_initialize_notification_l(JVX_NOTIFY_HANDLE* hdl)
@@ -392,7 +410,7 @@ JVX_STATIC_INLINE int jvx_wait_for_notification_ii_clear_l(JVX_NOTIFY_HANDLE* hd
 
 #define JVX_WAIT_FOR_NOTIFICATION_II_MS(hdl, timeoutmsec) jvx_wait_for_notification_ii_ms_l(&hdl, timeoutmsec)
 
-#if defined (JVX_OS_LINUX) || defined(JVX_OS_EMSCRIPTEN)
+#if defined (JVX_OS_LINUX) || defined(JVX_OS_EMSCRIPTEN) || defined(JVX_OS_ANDROID)
 
 JVX_STATIC_INLINE int jvx_wait_for_notification_ii_ms_l(JVX_NOTIFY_HANDLE* hdl, jvxSize timeoutmsec)
 {

@@ -3,7 +3,7 @@
 
 typedef size_t jvxSize;
 
-#ifdef JVX_OS_LINUX
+#if defined(JVX_OS_LINUX) || defined(JVX_OS_ANDROID)
 
 /* 
  * On Mac OS X, the size_t is a specific variable type and
@@ -11,7 +11,7 @@ typedef size_t jvxSize;
  */
  
 //! Size datatype to be used within RTProc
-#if defined(JVX_SYS_LINUX_GNU_32BIT)
+#if defined(JVX_SYS_LINUX_GNU_32BIT) 
 #define JVX_SIZE_IS_UINT32
 #else
 #ifndef __LP64__
