@@ -57,13 +57,3 @@ set(JVX_MYRELEASE_DATE_OLD ${myreleasedate} CACHE INTERNAL "")
 
 # Copy the versio for those projects using the (old) product version
 set(myproductversion ${myversion})
-
-# Add a linux shell - even in Windows
-if(JVX_OS MATCHES "windows")
-		
-	get_filename_component(gitfolder ${GIT_EXECUTABLE} DIRECTORY)
-	find_program(mysh sh PATHS ${gitfolder}/../bin NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_ENVIRONMENT_PATH)
-	get_filename_component(gitfolder ${GIT_EXECUTABLE} DIRECTORY) 
-else()
-	set(mysh bash)
-endif()		

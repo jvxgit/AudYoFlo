@@ -1,5 +1,6 @@
 #!/bin/bash  
 
+echo "Running install for libebur128"
 if [ ! -d "libebur128" ]; then
 	git clone https://github.com/jiixyj/libebur128.git
 

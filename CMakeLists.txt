@@ -285,6 +285,9 @@ include_directories(
 
 include(${JVX_CMAKE_DIR}/fragments/gitversion.cmake)
 
+# Find shortcut for shell progs
+include(${JVX_CMAKE_DIR}/fragments/shell.cmake)
+
 ## =============================================================================
 ## =============================================================================
 
