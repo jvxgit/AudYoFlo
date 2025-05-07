@@ -10,6 +10,6 @@ if(CMAKE_HOST_WIN32)
 	FIND_PROGRAM(myshplus "msys2_shell.cmd" REQUIRED)
 	
 else()
-	set(mysh bashXY)
+	set(mysh bash)
 endif()		
 
