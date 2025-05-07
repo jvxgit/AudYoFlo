@@ -1,5 +1,5 @@
 jvxErrorType
-number_components_system(const jvxComponentIdentification& tp, jvxSize* numPtr)
+number_components_system(const jvxComponentIdentification& tp, jvxSize* numPtr) override
 {
 	return this->_number_components_system(tp, numPtr);
 }
@@ -8,7 +8,7 @@ number_components_system(const jvxComponentIdentification& tp, jvxSize* numPtr)
  * Return the names of components of a specific type
  */
 jvxErrorType
-name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* name, jvxApiString* fName)
+name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* name, jvxApiString* fName) override
 {
 	return this->_name_component_system(tp, idx, name, fName);
 }
@@ -17,7 +17,7 @@ name_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiS
  * Return the names of components of a specific type
  */
 jvxErrorType
-description_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str)
+description_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str) override
 {
 	return this->_description_component_system( tp, idx, str);
 
@@ -27,7 +27,7 @@ description_component_system(const jvxComponentIdentification& tp, jvxSize idx, 
  * Return the names of components of a specific type
  */
 jvxErrorType
-descriptor_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str, jvxApiString* substr)
+descriptor_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str, jvxApiString* substr) override
 {
 	return this->_descriptor_component_system( tp, idx,  str,  substr);
 
@@ -37,7 +37,7 @@ descriptor_component_system(const jvxComponentIdentification& tp, jvxSize idx, j
  * Return the names of components of a specific type
  */
 jvxErrorType
-module_reference_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str, jvxComponentAccessType* acTp)
+module_reference_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* str, jvxComponentAccessType* acTp) override
 {
 	return this->_module_reference_component_system(tp, idx, str, acTp);
 }
@@ -46,12 +46,12 @@ module_reference_component_system(const jvxComponentIdentification& tp, jvxSize 
  * Return feature class identifier
  */
 jvxErrorType
-feature_class_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxBitField* ft)
+feature_class_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxBitField* ft) override
 {
 	return this->_feature_class_component_system( tp, idx,  ft);
 }
 
-jvxErrorType capabilities_devices_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxDeviceCapabilities& caps)
+jvxErrorType capabilities_devices_component_system(const jvxComponentIdentification& tp, jvxSize idx, jvxDeviceCapabilities& caps) override
 {
 	return this->_capabilities_devices_component_system(tp, idx, caps);
 }
@@ -59,21 +59,21 @@ jvxErrorType capabilities_devices_component_system(const jvxComponentIdentificat
 jvxErrorType
 role_component_system(jvxComponentType tp,
 	jvxComponentType* parentTp, jvxComponentType* childTp, 
-	jvxComponentTypeClass* classTp)
+	jvxComponentTypeClass* classTp) override
 {
 	return this->_role_component_system( tp, parentTp,  childTp, classTp);
 }
 
 jvxErrorType 
 number_slots_component_system(const jvxComponentIdentification& tp, jvxSize* szSlots_current,
-	jvxSize* szSubSlots_current, jvxSize* szSlots_max, jvxSize* szSubSlots_max)
+	jvxSize* szSubSlots_current, jvxSize* szSlots_max, jvxSize* szSubSlots_max) override
 {
 	return this->_number_slots_component_system(tp, szSlots_current,
 		szSubSlots_current, szSlots_max, szSubSlots_max);
 }
 
 jvxErrorType 
-set_number_subslots_system(const jvxComponentIdentification& tp, jvxSize newVal)
+set_number_subslots_system(const jvxComponentIdentification& tp, jvxSize newVal) override
 {
 	return this->_set_number_subslots_system(tp, newVal);
 }
@@ -88,7 +88,7 @@ set_number_subslots_system(const jvxComponentIdentification& tp, jvxSize newVal)
  * Return the names of components of a specific type
  */
 jvxErrorType
-module_reference_selected_component(const jvxComponentIdentification& tp, jvxApiString* str, jvxComponentAccessType* acTp)
+module_reference_selected_component(const jvxComponentIdentification& tp, jvxApiString* str, jvxComponentAccessType* acTp) override
 {
 	return this->_module_reference_selected_component(tp, str, acTp);
 }
@@ -97,7 +97,7 @@ module_reference_selected_component(const jvxComponentIdentification& tp, jvxApi
  * Return the names of components of a specific type
  */
 jvxErrorType
-description_selected_component(const jvxComponentIdentification& tp, jvxApiString* str)
+description_selected_component(const jvxComponentIdentification& tp, jvxApiString* str) override
 {
 	return this->_description_selected_component(tp, str);
 }
@@ -107,7 +107,7 @@ description_selected_component(const jvxComponentIdentification& tp, jvxApiStrin
  * Return the names of components of a specific type
  */
 jvxErrorType
-descriptor_selected_component(const jvxComponentIdentification& tp, jvxApiString* str, jvxApiString* substr)
+descriptor_selected_component(const jvxComponentIdentification& tp, jvxApiString* str, jvxApiString* substr) override
 {
 	return this->_descriptor_selected_component(tp, str, substr);
 }
@@ -116,7 +116,7 @@ descriptor_selected_component(const jvxComponentIdentification& tp, jvxApiString
  * Return feature class identifier
  */
 jvxErrorType
-feature_class_selected_component(const jvxComponentIdentification& tp, jvxBitField* ft)
+feature_class_selected_component(const jvxComponentIdentification& tp, jvxBitField* ft) override
 {
 	return this->_feature_class_selected_component(tp, ft);
 }
@@ -126,7 +126,7 @@ feature_class_selected_component(const jvxComponentIdentification& tp, jvxBitFie
  */
 jvxErrorType
 select_component(jvxComponentIdentification& tp, jvxSize idx,
-	IjvxObject* theOwner, jvxBool extend_if_necessary, jvxComponentType tpRemap)
+	IjvxObject* theOwner, jvxBool extend_if_necessary, jvxComponentType tpRemap) override
 {
 	return this->_select_component(tp, idx, theOwner, extend_if_necessary, tpRemap);
 }
@@ -135,7 +135,7 @@ select_component(jvxComponentIdentification& tp, jvxSize idx,
  * Return the idx to identify the currently selected component
  */
 jvxErrorType
-selection_component(const jvxComponentIdentification& tp, jvxSize* idRet, jvxApiString* modNmRet)
+selection_component(const jvxComponentIdentification& tp, jvxSize* idRet, jvxApiString* modNmRet) override
 {
 	return this->_selection_component(tp, idRet, modNmRet);
 }
@@ -144,13 +144,13 @@ selection_component(const jvxComponentIdentification& tp, jvxSize* idRet, jvxApi
  * Activate a component of a specific type as currently selected. 
  */
 jvxErrorType
-activate_selected_component(const jvxComponentIdentification& tp)
+activate_selected_component(const jvxComponentIdentification& tp) override
 {
 	return this->_activate_selected_component(tp);
 }
 
 jvxErrorType
-is_ready_selected_component(const jvxComponentIdentification& tp, jvxBool* ready, jvxApiString* reasonIfNot)
+is_ready_selected_component(const jvxComponentIdentification& tp, jvxBool* ready, jvxApiString* reasonIfNot) override
 {
 	return this->_is_ready_selected_component(tp, ready, reasonIfNot);
 
@@ -160,7 +160,7 @@ is_ready_selected_component(const jvxComponentIdentification& tp, jvxBool* ready
  * Return the state of the component currently selected.
  */
 jvxErrorType
-state_selected_component(const jvxComponentIdentification& tp, jvxState* st)
+state_selected_component(const jvxComponentIdentification& tp, jvxState* st) override
 {
 	return this->_state_selected_component(tp, st);
 }
@@ -169,7 +169,7 @@ state_selected_component(const jvxComponentIdentification& tp, jvxState* st)
  * Deactivate a component of a specific type as currently selected.
  */
 jvxErrorType
-deactivate_selected_component(const jvxComponentIdentification& tp)
+deactivate_selected_component(const jvxComponentIdentification& tp) override
 {
 	return this->_deactivate_selected_component( tp);
 }
@@ -178,31 +178,31 @@ deactivate_selected_component(const jvxComponentIdentification& tp)
  * Unselect a component of a specific type as currently selected.
  */
 jvxErrorType
-unselect_selected_component(jvxComponentIdentification& tp)
+unselect_selected_component(jvxComponentIdentification& tp) override
 {
 	return this->_unselect_selected_component(tp);
 }
 
 jvxErrorType
-unique_id_selected_component(const jvxComponentIdentification& tp, jvxSize* uId)
+unique_id_selected_component(const jvxComponentIdentification& tp, jvxSize* uId) override
 {
 	return this->_unique_id_selected_component(tp, uId);
 }
 
 jvxErrorType
-switch_state_component(const jvxComponentIdentification& cpId, jvxStateSwitch sswitch)
+switch_state_component(const jvxComponentIdentification& cpId, jvxStateSwitch sswitch) override
 {
 	return this->_switch_state_component( cpId, sswitch);
 }
 
 jvxErrorType
-request_hidden_interface_selected_component(const jvxComponentIdentification& tp, jvxInterfaceType ifTp, jvxHandle** iface)
+request_hidden_interface_selected_component(const jvxComponentIdentification& tp, jvxInterfaceType ifTp, jvxHandle** iface) override
 {
 	return this->_request_hidden_interface_selected_component(tp,  ifTp, iface);
 }
 
 jvxErrorType
-return_hidden_interface_selected_component(const jvxComponentIdentification& tp, jvxInterfaceType ifTp, jvxHandle* iface)
+return_hidden_interface_selected_component(const jvxComponentIdentification& tp, jvxInterfaceType ifTp, jvxHandle* iface) override
 {
 	return this->_return_hidden_interface_selected_component(tp, ifTp, iface);
 }
@@ -211,13 +211,13 @@ return_hidden_interface_selected_component(const jvxComponentIdentification& tp,
 // ======================================================================
 
 jvxErrorType
-request_object_selected_component(const jvxComponentIdentification& tp, IjvxObject** theObj)
+request_object_selected_component(const jvxComponentIdentification& tp, IjvxObject** theObj) override
 {
 	return this->_request_object_selected_component(tp, theObj);
 }
 
 jvxErrorType
-return_object_selected_component(const jvxComponentIdentification& tp, IjvxObject* theObj)
+return_object_selected_component(const jvxComponentIdentification& tp, IjvxObject* theObj) override
 {
 	return this->_return_object_selected_component(tp, theObj);
 }

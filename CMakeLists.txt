@@ -351,6 +351,13 @@ find_host_package(Doxygen)
 
 #else(${JVX_OS} MATCHES "Emscripten")
 
+# Run early projects - before all checks - to install required components
+# message(FATAL_ERROR "Early")
+  
+include(${JVX_CMAKE_DIR}/fragments/thrdparty-early.cmake)
+jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early")
+
+
 set(JVX_BASE_SYSTEM_STATIC_LIBS
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base
@@ -421,10 +428,6 @@ else(JVX_COMPILE_BUILDTOOLS)
 		# message(FATAL_ERROR "1")
 	endif()
 	
-  # Run early projects - before all checks - to install required components
-  include(${JVX_CMAKE_DIR}/fragments/thrdparty-early.cmake)
-  jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early")
-
   # configure qt # FIXME: to be moved into macros.cmake?
   if(JVX_USE_QT)
     find_qt()

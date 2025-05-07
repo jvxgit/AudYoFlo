@@ -1,5 +1,5 @@
 jvxErrorType
-number_tools(const jvxComponentIdentification& tp, jvxSize* num)
+number_tools(const jvxComponentIdentification& tp, jvxSize* num) override
 {
 	return this->_number_tools(tp, num);
 }
@@ -7,7 +7,7 @@ number_tools(const jvxComponentIdentification& tp, jvxSize* num)
 jvxErrorType
 identification_tool(const jvxComponentIdentification& tp, 
 	jvxSize idx, jvxApiString* description, jvxApiString* descriptor, 
-	jvxBool* multipleInstances)
+	jvxBool* multipleInstances) override
 {
 	return this->_identification_tool(tp, idx, 
 		description, descriptor,
@@ -30,7 +30,7 @@ reference_tool(const jvxComponentIdentification& tp,
 	IjvxObject** theObject, jvxSize filter_id,
 	const char* filter_descriptor,
 	jvxBitField filter_stateMask,
-	IjvxReferenceSelector* decider)
+	IjvxReferenceSelector* decider) override
 {
 	return this->_reference_tool(tp, theObject, filter_id,
 		filter_descriptor, filter_stateMask,
@@ -38,19 +38,19 @@ reference_tool(const jvxComponentIdentification& tp,
 }
 
 jvxErrorType
-return_reference_tool(const jvxComponentIdentification& tp, IjvxObject* theObject)
+return_reference_tool(const jvxComponentIdentification& tp, IjvxObject* theObject) override
 {
 	return this->_return_reference_tool(tp, theObject);
 }
 
 jvxErrorType
-instance_tool(jvxComponentType tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor)
+instance_tool(jvxComponentType tp, IjvxObject** theObject, jvxSize filter_id, const char* filter_descriptor) override
 {
 	return this->_instance_tool(tp, theObject, filter_id, filter_descriptor);
 }
 
 jvxErrorType
-return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor)
+return_instance_tool(jvxComponentType tp, IjvxObject* theObject, jvxSize filter_id, const char* filter_descriptor) override
 {
 	return this->_return_instance_tool(tp, theObject, filter_id, filter_descriptor);
 }

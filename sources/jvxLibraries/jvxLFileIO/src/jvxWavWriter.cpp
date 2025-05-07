@@ -87,7 +87,15 @@ jvxWavWriter::get_file_properties(jvxSize*  channels, jvxSize* length_samples, j
 
 #define FWRITE_WAV_STR(cptr, LSTR) fwrite((void*)cptr, sizeof(char), LSTR, params_file.fHandle); byteCnt += sizeof(char)*LSTR
 #define FWRITE_WAV_64(i64ptr) fwrite(i64ptr, sizeof(jvxInt64), 1, params_file.fHandle); byteCnt += sizeof(jvxInt64)
-#define FWRITE_WAV_U64(ui64ptr) fwrite(ui64ptr, sizeof(jvxUInt64), 1, params_file.fHandle); byteCnt += sizeof(jvxUInt64)
+
+#ifdef JVX_OS_ANDROID
+	// Completely unclear why the following gives a compiler error
+	// fwrite(ui64ptr, sizeof(jvxUInt32), 2, params_file.fHandle); byteCnt += sizeof(jvxUInt64)
+	#define FWRITE_WAV_U64(ui64ptr) assert(0); 
+#else
+	#define FWRITE_WAV_U64(ui64ptr) fwrite(ui64ptr, sizeof(jvxUInt64), 1, params_file.fHandle); byteCnt += sizeof(jvxUInt64)
+#endif
+
 #define FWRITE_WAV_32(i32ptr) fwrite(i32ptr, sizeof(jvxInt32), 1, params_file.fHandle); byteCnt += sizeof(jvxInt32)
 #define FWRITE_WAV_U32(ui32ptr) fwrite(ui32ptr, sizeof(jvxUInt32), 1, params_file.fHandle); byteCnt += sizeof(jvxUInt32)
 #define FWRITE_WAV_16(i16ptr) fwrite(i16ptr, sizeof(jvxInt16), 1, params_file.fHandle); byteCnt += sizeof(jvxInt16)

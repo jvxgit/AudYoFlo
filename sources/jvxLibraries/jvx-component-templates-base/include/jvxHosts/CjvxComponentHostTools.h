@@ -14,13 +14,14 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION _identification_tool(const jvxComponentIdentification&,
 		jvxSize idx, jvxApiString* description,
 		jvxApiString* descriptor, jvxBool* multipleInstances) override;
+	
 	virtual jvxErrorType JVX_CALLINGCONVENTION _reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id,
 		const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE,
-		IjvxReferenceSelector* decider = nullptr) override;
+		IjvxReferenceSelector* decider = nullptr);
 	virtual jvxErrorType JVX_CALLINGCONVENTION _return_reference_tool(const jvxComponentIdentification&, 
-		IjvxObject* theObject) override;
+		IjvxObject* theObject);
 	virtual jvxErrorType JVX_CALLINGCONVENTION _instance_tool(jvxComponentType, IjvxObject** theObject, 
-		jvxSize filter_id, const char* filter_descriptor);
+		jvxSize filter_id, const char* filter_descriptor) ;
 	virtual jvxErrorType JVX_CALLINGCONVENTION _return_instance_tool(jvxComponentType tp, IjvxObject* theObject, 
 		jvxSize filter_id, const char* filter_descriptor);
 

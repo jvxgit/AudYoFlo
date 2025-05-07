@@ -61,8 +61,15 @@ elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
 	else()
 		set(JVX_PROCESSOR "arm64")
 	endif()
+
+elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv7-a")
+	if(JVX_PLATFORM MATCHES "32bit")
+		set(JVX_PROCESSOR "armv7_32")
+	else()
+		set(JVX_PROCESSOR "armv7_64")
+	endif()
 endif()
-# message(FATAL_ERROR "System Processor = ${CMAKE_SYSTEM_PROCESSOR}")
+# message(FATAL_ERROR "System Processor = ${CMAKE_SYSTEM_PROCESSOR} -- ${JVX_PROCESSOR}")
 
 set(JVX_SYSTEM_TOKEN "JVX_SYS")
 

@@ -11,8 +11,10 @@ jvxConsoleHdl::prepare(int& hdlStop)
 	// get the console handle
 	hstdin = STDIN_FILENO;
 	hstdend = hdlStop;
+#if 1
+#else
 	memset(events, 0, sizeof(struct epoll_event) * 2);
-
+#endif
 	std::cout << __FUNCTION__ << std::endl;
 
 }
@@ -28,7 +30,10 @@ jvxConsoleHdl::postprocess()
 	posi_avail = 0;
 	hstdin = JVX_INVALID_FILE_DESCRIPTOR_VALUE;
 	hstdend = JVX_INVALID_FILE_DESCRIPTOR_VALUE;
+#if 1
+#else
 	epollfd = JVX_INVALID_FILE_DESCRIPTOR_VALUE;
+#endif
 	JVX_POSTPROCESS_UNBUFFERED_CHAR;
 }
 
@@ -44,6 +49,9 @@ jvxConsoleHdl::get_single_console_character()
 	int retC = 0;
 	jvxBool leaveFunc = false;
 	
+#if 1
+	assert(0);
+#else
 	struct epoll_event ev, evdown;
 	int status;
 	int nfds;
@@ -143,6 +151,7 @@ jvxConsoleHdl::get_single_console_character()
 			return retC;
 		}
 	}
+#endif
 	return retC;
 }
 

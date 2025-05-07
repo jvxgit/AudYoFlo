@@ -456,7 +456,7 @@ JVX_STATIC_INLINE int jvx_wait_for_notification_ii_ms_l(JVX_NOTIFY_HANDLE* hdl, 
 #define JVX_NOTIFY_HANDLE_2WAIT_DECLARE(hdl) int hdl
 #define JVX_INVALID_HANDLE_VALUE_2WAIT 0
 
-#if defined(JVX_OS_EMSCRIPTEN)
+#if defined(JVX_OS_EMSCRIPTEN) || defined(JVX_OS_ANDROID) 
 
 // Not supported in emscripten - do not know what to do yet
 #define JVX_INITIALIZE_NOTIFICATION_2WAIT(hdlStop) assert(0);

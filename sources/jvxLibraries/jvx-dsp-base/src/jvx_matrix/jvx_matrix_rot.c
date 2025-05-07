@@ -334,11 +334,11 @@ jvxErrorType jvx_matrix_process_quat_2_euler_deg(
 	euler3Out[1] = 2 * atan2(hypot(c, d), hypot(a, b));
 
 	// ... and check if equal to is 0 or pi, causing a singularity
-	if (abs(euler3Out[1]) <= eps)
+	if (fabs(euler3Out[1]) <= eps)
 	{
 		theCase = 1;
 	}
-	else if (abs(euler3Out[1] - M_PI) <= eps)
+	else if (fabs(euler3Out[1] - M_PI) <= eps)
 	{
 		theCase = 2;
 	}
@@ -437,7 +437,7 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 	{
 	case JVX_EULER_CONVERT_XYZ:
 		// Element right upper corner : rotMat(1, 3)->sin(roty)
-		if ((abs(abs(mat[0][2]) - 1)) > JVX_DATA_EPS)
+		if ((fabs(fabs(mat[0][2]) - 1)) > JVX_DATA_EPS)
 		{
 			jvxData roty_1 = asin(mat[0][2]);// asin(rotMat(1, 3));
 			jvxData roty_2 = M_PI - roty_1;
@@ -520,7 +520,7 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 	case JVX_EULER_CONVERT_ZYX:
 
 		// Element right upper corner : rotMat(1, 3)->sin(roty)
-		if ((abs(abs(mat[2][0]) - 1)) > JVX_DATA_EPS)
+		if ((fabs(fabs(mat[2][0]) - 1)) > JVX_DATA_EPS)
 		{
 			jvxData roty_1 = -asin(mat[2][0]);// asin(rotMat(1, 3));
 			jvxData roty_2 = M_PI - roty_1;

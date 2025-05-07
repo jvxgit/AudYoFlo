@@ -1,7 +1,12 @@
-header_message("Linux specific configuration")
+header_message("Android specific configuration")
 
 # platform specific configuration options
 set(SED "/bin/sed" CACHE PATH "Path to stream editor (sed) TO BE REMOVED")
+
+# Summarize the build options in a single string to pass it forward to third party libraries required to be compiled with cmake
+set(ADDITIONAL_FEATURE_TOKENS_CMAKE_THIRD_PARTY 
+	"-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} -DANDROID_ABI^=${ANDROID_ABI} -DANDROID_NDK^=${ANDROID_NDK} -DANDROID_API_VERSION^=${ANDROID_API_VERSION} -DANDROID_PLATFORM^=${ANDROID_PLATFORM} -DCMAKE_ANDROID_ARCH_ABI=${CMAKE_ANDROID_ARCH_ABI} -DCMAKE_ANDROID_NDK^=${CMAKE_ANDROID_NDK} -DCMAKE_SYSTEM_NAME^=${CMAKE_SYSTEM_NAME} -DCMAKE_SYSTEM_VERSION^=${CMAKE_SYSTEM_VERSION}")
+# message(FATAL_ERROR "-> ${ADDITIONAL_FEATURE_TOKENS_CMAKE_THIRD_PARTY}")
 
 # string(TOUPPER ${ANDROID_PLATFORM} ANDROID_PLATFORM_CAPITAL)
 set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};JVX_ANDROID_API_VERSION=${ANDROID_API_VERSION}")
@@ -18,6 +23,10 @@ endif()
 if (JVX_USE_PART_COREAUDIO)
   message("XX> deactivating core audio support (not supported on Linux)")
   set(JVX_USE_PART_COREAUDIO OFF)
+endif()
+if (JVX_USE_PART_PAUDIO)
+  message("XX> deactivating portaudio support (not supported on Linux)")
+  set(JVX_USE_PART_PAUDIO OFF)
 endif()
 
 # pre-/suffixes
@@ -97,8 +106,10 @@ set(JVX_CMAKE_LINKER_FLAGS_STATIC_PIC "")
 # set(JVX_CMAKE_C_FLAGS_EXEC "--std=gnu99 -fPIC -pthread ${JVX_COMPILE_FLAGS_GENERAL}")
 # set(JVX_CMAKE_CXX_FLAGS_EXEC "--std=c++11 -pthread ${JVX_COMPILE_FLAGS_GENERAL}")
 
-set(JVX_CMAKE_C_FLAGS_EXEC "-fPIC -pthread ${JVX_COMPILE_FLAGS_GENERAL}")
-set(JVX_CMAKE_CXX_FLAGS_EXEC "-pthread ${JVX_COMPILE_FLAGS_GENERAL}")
+# Posix threads not required to be linked explicitley:
+# https://stackoverflow.com/questions/38666609/cant-find-lpthread-when-cross-compile-to-arm
+set(JVX_CMAKE_C_FLAGS_EXEC "-fPIC ${JVX_COMPILE_FLAGS_GENERAL}")
+set(JVX_CMAKE_CXX_FLAGS_EXEC "${JVX_COMPILE_FLAGS_GENERAL}")
 set(JVX_CMAKE_LINKER_FLAGS_EXEC "")
 
 # set(CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
@@ -118,7 +129,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-set(JVX_SYSTEM_LIBRARIES dl pthread m)
+set(JVX_SYSTEM_LIBRARIES dl m)
 set(GCC_COVERAGE_COMPILE_FLAGS "-Wno-psabi")
 
 # It seems that Matlab (2017b) crashes in batch mode due to the "exit" at the end. A pause will help out
@@ -175,7 +186,7 @@ macro (find_fft)
   message("     lib float: ${FFT_LIBRARYF}")
   message("     lib double: ${FFT_LIBRARYD}")
   message("     lib: ${FFT_LIBRARIES}")
-  #  message(FATAL_ERROR ${FFT_LIBRARYD})
+  # message(FATAL_ERROR ${FFT_LIBRARYD})
 endmacro (find_fft)
 
 # Matlab path specifications

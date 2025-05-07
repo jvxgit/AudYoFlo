@@ -36,6 +36,8 @@ sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4
 sources/jvxLibraries/third_party/git/orc/meson
 sources/jvxLibraries/third_party/git/orc/orc
 
+/sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.10
+
 /sources/jvxExTools/jvxExPropC/example/get_audio_D0.m
 /sources/jvxExTools/jvxExPropC/example/get_audio_D1.m
 /sources/jvxExTools/jvxExPropC/example/get_audio_D10.m

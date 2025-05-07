@@ -125,12 +125,20 @@ CjvxSocketsServer::connect_loop_tcp_poll()
 	JVX_FILE_DESCRIPTOR_HANDLE  epollfd = kqueue();
 	struct kevent events[2] = {0};
 	struct kevent monitors[2] = {0};
+
+#elif defined( JVX_OS_ANDROID)
+	
+	// No solution for this code at the moment!!
+	assert(0);
 #else
 
 #error Ended up here for an unknown OS type
 
 #endif
 
+#if defined( JVX_OS_ANDROID)
+	// Do not know hot to replace it at the moment!
+#else 
 	while (running)
 	{
 		nfds = JVX_EVENT_WAIT_2WAIT(epollfd, monitors, 2, events, 2,
@@ -173,6 +181,7 @@ CjvxSocketsServer::connect_loop_tcp_poll()
 			}
 		}
 	}
+#endif
 
 	/*
 	JVX_POLL_SOCKET_STRUCT* fdarray = new JVX_POLL_SOCKET_STRUCT[1];

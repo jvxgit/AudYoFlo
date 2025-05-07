@@ -17,7 +17,7 @@ public:
 	
 	virtual jvxErrorType _reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject,
 			jvxSize filter_id, const char* filter_descriptor, jvxBitField filter_stateMask,
-			IjvxReferenceSelector* decider)
+			IjvxReferenceSelector* decider) 
 	{
 		jvxSize i = 0;
 		jvxSize cnt = 0;
@@ -296,8 +296,8 @@ public:
 		}
 		return(res);
 	}
+	virtual jvxErrorType _identification_tool(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* description, jvxApiString* descriptor, jvxBool* mulInst) 
 
-	virtual jvxErrorType _identification_tool(const jvxComponentIdentification& tp, jvxSize idx, jvxApiString* description, jvxApiString* descriptor, jvxBool* mulInst)
 	{
 		jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
 		int numRet = 0;
