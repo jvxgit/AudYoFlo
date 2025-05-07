@@ -47,8 +47,11 @@ if(CMAKE_HOST_WIN32)
 	
 	# We install the fftw libs in the runtime dll path
 	install(FILES ${FFT_LIBRARIES} DESTINATION ${INSTALL_PATH_LIB_SHARED})
-	
 	## message(FATAL_ERROR "Hier -- ")
+else()	
+
+	message(FATAL_ERROR "Trying to build fftw for Android but running on a non-Windows system. This is not supported!")
+	
 endif()
 
  
