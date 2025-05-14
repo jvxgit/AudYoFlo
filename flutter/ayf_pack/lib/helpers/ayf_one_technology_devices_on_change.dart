@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../ayf_pack_local.dart';
 
-abstract class AudYoFloOneTechnologyDevicesOnChange {
+mixin AudYoFloOneTechnologyDevicesOnChange {
   // ================================================
   // Member variables to configure behavior
   // ================================================

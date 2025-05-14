@@ -672,6 +672,9 @@ class AudYoFloPropertyDetailView extends StatelessWidget {
       case jvxPropertyAccessTypeEnum.JVX_PROPERTY_ACCESS_WRITE_ONLY:
         txtAccess = "wo";
         break;
+      default:
+        dbgPrint(
+            'Unmatched access type in function <>, type = <${prop.accessType.toString()}>.');
     }
 
     Color col = Colors.grey;

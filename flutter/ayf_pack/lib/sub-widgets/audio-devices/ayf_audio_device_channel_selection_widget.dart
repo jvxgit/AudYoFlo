@@ -71,7 +71,7 @@ class AudYoFloChannelSelectionSliverAppBar extends StatelessWidget {
   }
 }
 
-abstract class AudYoFloOneChannelSliverReport {
+mixin AudYoFloOneChannelSliverReport {
   void reportTapChannel(int idChannel, bool isInput);
 }
 

@@ -12,7 +12,7 @@ class AudYoFloHttpConnect {
   bool isConnected = false;
 }
 
-abstract class AudYoFloBackendCacheCallback {
+mixin AudYoFloBackendCacheCallback {
   void reportEvent(String reasonHint);
 }
 

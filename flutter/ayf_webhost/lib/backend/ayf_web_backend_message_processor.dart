@@ -68,7 +68,7 @@ class AudYoFloOneComponentInProcessWeb extends AudYoFloOneComponentInProcess {
   }
 }
 
-class AudYoFloWebStateProcessor {
+mixin AudYoFloWebStateProcessor {
   AudYoFloWebBackendHelpers? helper;
   AudYoFloWebBackendAnomalies? report;
 
@@ -287,7 +287,7 @@ class AudYoFloWebStateProcessor {
                 if (mapSpecific != null) {
                   switch (reqDtTp) {
                     case jvxReportCommandDataTypeEnum
-                        .JVX_REPORT_COMMAND_TYPE_IDENT:
+                          .JVX_REPORT_COMMAND_TYPE_IDENT:
                       identStr = extractStringFromJson(mapSpecific, "ident");
                       if (identStr != null) {
                         ident = identStr;
@@ -295,12 +295,12 @@ class AudYoFloWebStateProcessor {
                       specTxt = "ident: $ident";
                       break;
                     case jvxReportCommandDataTypeEnum
-                        .JVX_REPORT_COMMAND_TYPE_UID:
+                          .JVX_REPORT_COMMAND_TYPE_UID:
                       uidRep = getIntEntryValueMap(mapSpecific, "uid");
                       specTxt = "uId: $uidRep";
                       break;
                     case jvxReportCommandDataTypeEnum
-                        .JVX_REPORT_COMMAND_TYPE_SS:
+                          .JVX_REPORT_COMMAND_TYPE_SS:
                       String? ssStr =
                           extractStringFromJson(mapSpecific, "sswitch");
                       if (ssStr != null) {
@@ -323,16 +323,16 @@ class AudYoFloWebStateProcessor {
                   parentRef!.dbgModel?.addLineOut(txt);
                   switch (reqTp) {
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_UNSPECIFIC:
+                          .JVX_REPORT_COMMAND_REQUEST_UNSPECIFIC:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
+                          .JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT_LIST:
+                          .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT_LIST:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT:
+                          .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel?.addLineOut(
                             'Component <${cpId.txt}> requests to react to new status.');
@@ -340,47 +340,47 @@ class AudYoFloWebStateProcessor {
                       parentRef!.theBeCache!.reportUpdateStatusComponent(cpId);
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
+                          .JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
+                          .JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
+                          .JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_RESCHEDULE_MAIN:
+                          .JVX_REPORT_COMMAND_REQUEST_RESCHEDULE_MAIN:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_SUBDEVICE:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_SUBDEVICE:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel?.addLineOut(
                             'Component was born: $ident component <${cpId.txt}>');
                       }
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_SUBDEVICE:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_SUBDEVICE:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel?.addLineOut(
                             'Component about to die: $ident component <${cpId.txt}>');
                       }
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_COMPONENT:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_COMPONENT:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel?.addLineOut(
                             'Component was born: $ident component <${cpId.txt}>');
                       }
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_COMPONENT:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_COMPONENT:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel?.addLineOut(
                             'Component was born: $ident component <${cpId.txt}>');
                       }
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel
                             ?.addLineOut('Process connected with uid $uidRep');
@@ -417,7 +417,7 @@ class AudYoFloWebStateProcessor {
                       }
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel?.addLineOut(
                             'Process to be disconnected with uid $uidRep');
@@ -425,7 +425,7 @@ class AudYoFloWebStateProcessor {
                       parentRef!.theBeCache!.remProcess(uidRep);
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN:
+                          .JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel
                             ?.addLineOut('Tested chain with uid $uidRep');
@@ -434,11 +434,11 @@ class AudYoFloWebStateProcessor {
                       break;
 
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN:
+                          .JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN:
                       break;
 
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_COMPONENT_STATESWITCH:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_COMPONENT_STATESWITCH:
                       if (parentRef!.dbgOut) {
                         parentRef!.dbgModel?.addLineOut(
                             'Component State Switch -> ${ssTp.txt} component <${cpId.txt}>');
@@ -468,11 +468,11 @@ class AudYoFloWebStateProcessor {
 
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_CONFIGURATION_COMPLETE:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_CONFIGURATION_COMPLETE:
                       // runAutoStart();
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_EVENT:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_EVENT:
                       if (mapSpecific != null) {
                         jvxSequencerEventType ev = jvxSequencerEventType();
                         jvxSequencerStatusEnum seqStat =
@@ -555,20 +555,23 @@ class AudYoFloWebStateProcessor {
                   */
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_CALLBACK:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_CALLBACK:
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_DISCONNECT_COMPLETE:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_DISCONNECT_COMPLETE:
                       parentRef!.theBeCache!.triggerUpdateProcessStatus();
                       break;
 
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
+                          .JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
                       parentRef!.reportPropertyListSetBackend(cpId, ident);
                       break;
                     case jvxReportCommandRequestEnum
-                        .JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS:
+                          .JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS:
                       break;
+                    default:
+                      dbgPrint(
+                          'Unmatched request type in function <>, request enum <${reqTp.toString()}>.');
                   }
                 }
               }

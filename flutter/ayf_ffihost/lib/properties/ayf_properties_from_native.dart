@@ -27,7 +27,7 @@ class AudYoFloPropertyContentFromNative {
         .ffi_properties_descriptor_property_descr(
             propRef.opaqueHost,
             propRef.propRef,
-            descror.cast<Int8>(),
+            descror.cast<Char>(),
             jvxPropertyDescriptorEnum.JVX_PROPERTY_DESCRIPTOR_FULL_PLUS);
 
     // A nullptr indicates an error
@@ -79,7 +79,7 @@ class AudYoFloPropertyContentFromNative {
       propDescrPtr = propRef.natLib.ffi_properties_descriptor_property_descr(
           propRef.opaqueHost,
           propRef.propRef,
-          descror.cast<Int8>(),
+          descror.cast<Char>(),
           jvxPropertyDescriptorEnum.JVX_PROPERTY_DESCRIPTOR_FULL_PLUS);
     }
 
@@ -214,7 +214,7 @@ class AudYoFloPropertyContentFromNative {
                 .ffi_properties_get_string_list(
                     propRef.opaqueHost,
                     propRef.propRef,
-                    prop.descriptor.toNativeUtf8().cast<Int8>(),
+                    prop.descriptor.toNativeUtf8().cast<Char>(),
                     contentOnly,
                     offset);
             if (retVal != nullptr) {
@@ -226,7 +226,7 @@ class AudYoFloPropertyContentFromNative {
 
               // Copy all string from the list
               for (int i = 0; i < retValRef.nEntries; i++) {
-                Pointer<Int8> ptrStr = retValRef.pEntries[i];
+                Pointer<Char> ptrStr = retValRef.pEntries[i];
                 if (ptrStr != nullptr) {
                   propStrLst.entries.add(ptrStr.cast<Utf8>().toDartString());
                 } else {
@@ -278,7 +278,7 @@ class AudYoFloPropertyContentFromNative {
                   retVal = propRef.natLib.ffi_properties_get_selection_list(
                       propRef.opaqueHost,
                       propRef.propRef,
-                      prop.descriptor.toNativeUtf8().cast<Int8>(),
+                      prop.descriptor.toNativeUtf8().cast<Char>(),
                       contentOnly,
                       offset,
                       targetPtr,
@@ -298,7 +298,7 @@ class AudYoFloPropertyContentFromNative {
 
                   // Copy all string from the list
                   for (int i = 0; i < retValRef.nEntries; i++) {
-                    Pointer<Int8> ptrStr = retValRef.pEntries[i];
+                    Pointer<Char> ptrStr = retValRef.pEntries[i];
                     if (ptrStr != nullptr) {
                       propSelLst.parpropms.entries
                           .add(ptrStr.cast<Utf8>().toDartString());
@@ -334,10 +334,10 @@ class AudYoFloPropertyContentFromNative {
             AudYoFloPropertySingleStringBackend propString = prop;
 
             // Return the ffi struct from backend
-            Pointer<Int8> retVal = propRef.natLib.ffi_properties_get_string(
+            Pointer<Char> retVal = propRef.natLib.ffi_properties_get_string(
                 propRef.opaqueHost,
                 propRef.propRef,
-                prop.descriptor.toNativeUtf8().cast<Int8>());
+                prop.descriptor.toNativeUtf8().cast<Char>());
             if (retVal == nullptr) {
               prop.last_error = propRef.natLib.ffi_last_error();
             } else {
@@ -385,7 +385,7 @@ class AudYoFloPropertyContentFromNative {
                     .ffi_properties_get_content_property_fld(
                         propRef.opaqueHost,
                         propRef.propRef,
-                        prop.descriptor.toNativeUtf8().cast<Int8>(),
+                        prop.descriptor.toNativeUtf8().cast<Char>(),
                         contentOnly,
                         offset,
                         targetPtr,
@@ -431,7 +431,7 @@ class AudYoFloPropertyContentFromNative {
                     .ffi_properties_get_value_in_range(
                         propRef.opaqueHost,
                         propRef.propRef,
-                        prop.descriptor.toNativeUtf8().cast<Int8>(),
+                        prop.descriptor.toNativeUtf8().cast<Char>(),
                         contentOnly,
                         offset,
                         targetPtr,

@@ -213,6 +213,9 @@ class AudYoFloPropertyContentToString {
               offset: offset, num: num, precision: precision);
         }
         break;
+      default:
+        dbgPrint(
+            'Unmatched format in function <>, format = < ${prop.jvxFormat.toString()}>.');
     }
 
     return retVal;

@@ -19,7 +19,7 @@ class jvxSequencerEventTypeNative {
     retVal.stepId = ev.stepId;
     retVal.statSeq = jvxSequencerStatusEEnum.fromInt(ev.statSeq);
 
-    Pointer<Int8> dPtr = ev.description;
+    Pointer<Char> dPtr = ev.description;
     Pointer<Utf8> ptrU8 = dPtr.cast<Utf8>();
     retVal.description = ptrU8.toDartString();
 

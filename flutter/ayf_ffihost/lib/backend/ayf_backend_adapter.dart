@@ -5,7 +5,7 @@ import 'package:ayf_pack/ayf_pack.dart';
  * This is the base class for the backend adapter. It realizes the 
  * common functions required for every backend adapter.
  */ //=============================================================
-abstract class AudYoFloBackendAdapter {
+mixin AudYoFloBackendAdapter {
   // ==========================================================
   // Interfaces for inheriting component: MUST BE IMPLEMENTED IN DERIVED CLASS!!
   // ==========================================================

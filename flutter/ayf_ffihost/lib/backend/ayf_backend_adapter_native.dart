@@ -93,8 +93,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
     shutdown = shutdownArg;
 
     // Find out how the backend has been compiled
-    Pointer<Int32> dataFormatSpecPtr = calloc<Int32>();
-    Pointer<Int32> numSFieldsBitFieldPtr = calloc<Int32>();
+    Pointer<Int> dataFormatSpecPtr = calloc<Int>();
+    Pointer<Int> numSFieldsBitFieldPtr = calloc<Int>();
     int res = natLib.ffi_get_compile_flags(
         opaque_host_hdl, dataFormatSpecPtr, numSFieldsBitFieldPtr);
     flags.compileNum32BitBitfield = numSFieldsBitFieldPtr.elementAt(0).value;
@@ -193,8 +193,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
     int arg = 0;
     if (jsonReturn) arg = 1;
     Pointer<Utf8> ptrU8 = textArg.toNativeUtf8();
-    Pointer<Int8> cmd = ptrU8.cast<Int8>();
-    Pointer<Int8> textRet = natLib.ffi_transfer_command(opaque_host, cmd, arg);
+    Pointer<Char> cmd = ptrU8.cast<Char>();
+    Pointer<Char> textRet = natLib.ffi_transfer_command(opaque_host, cmd, arg);
     ptrU8 = textRet.cast<Utf8>();
     if (ptrU8 != null) {
       retStr = ptrU8.toDartString();
@@ -216,7 +216,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
     cpIdRef.slotsubid = elm.slotsubid;
     cpIdRef.uId = elm.uid;
 
-    Pointer<Int8> descrPtr =
+    Pointer<Char> descrPtr =
         natLib.ffi_component_description(opaque_host, cpId);
     if (descrPtr != nullptr) {
       Pointer<Utf8> dPtr = descrPtr.cast<Utf8>();
@@ -236,7 +236,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
     Pointer<Utf8> selPtr = selection.toNativeUtf8();
     Pointer<Utf8> formPtr = formatName.toNativeUtf8();
     return natLib.ffi_translate_enum_string(
-        opaque_host, formPtr.cast<Int8>(), selPtr.cast<Int8>());
+        opaque_host, formPtr.cast<Char>(), selPtr.cast<Char>());
   }
 
   /*
@@ -470,7 +470,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
       // Convert the component identification into a string
       int errCode = jvxErrorType.JVX_NO_ERROR;
       String address = 'unknown';
-      Pointer<Int8> strPtr = natLib.ffi_encode_component_identification(
+      Pointer<Char> strPtr = natLib.ffi_encode_component_identification(
           cpId.cpTp.index, cpId.slotid, cpId.slotsubid);
       if (strPtr.address != 0) {
         Pointer<Utf8> ptrU8 = strPtr.cast<Utf8>();
@@ -575,7 +575,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
       // JSON CONTROL
 
       String address = 'unknown';
-      Pointer<Int8> strPtr = natLib.ffi_encode_component_identification(
+      Pointer<Char> strPtr = natLib.ffi_encode_component_identification(
           cpId.cpTp.index, cpId.slotid, cpId.slotsubid);
       if (strPtr.address != 0) {
         Pointer<Utf8> ptrU8 = strPtr.cast<Utf8>();
@@ -633,7 +633,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
       // JSON CONTROL
       assert(false);
       String address = 'unknown';
-      Pointer<Int8> strPtr = natLib.ffi_encode_component_identification(
+      Pointer<Char> strPtr = natLib.ffi_encode_component_identification(
           cpId.cpTp.index, cpId.slotid, cpId.slotsubid);
       if (strPtr.address != 0) {
         Pointer<Utf8> ptrU8 = strPtr.cast<Utf8>();
@@ -693,7 +693,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
         }
       } else {
         String address = 'unknown';
-        Pointer<Int8> strPtr = natLib.ffi_encode_component_identification(
+        Pointer<Char> strPtr = natLib.ffi_encode_component_identification(
             cpId.cpTp.index, cpId.slotid, cpId.slotsubid);
         if (strPtr.address != 0) {
           Pointer<Utf8> ptrU8 = strPtr.cast<Utf8>();
@@ -839,7 +839,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
       } else {
         String address = 'unknown';
 
-        Pointer<Int8> strPtr = natLib.ffi_encode_component_identification(
+        Pointer<Char> strPtr = natLib.ffi_encode_component_identification(
             cpId.cpTp.index, cpId.slotid, cpId.slotsubid);
         if (strPtr.address != 0) {
           Pointer<Utf8> ptrU8 = strPtr.cast<Utf8>();
@@ -1050,7 +1050,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
                     errCode = natLib.ffi_properties_set_value_range(
                         opaque_host,
                         propRef.propRef,
-                        propFromCache.descriptor.toNativeUtf8().cast<Int8>(),
+                        propFromCache.descriptor.toNativeUtf8().cast<Char>(),
                         1,
                         /* contentOnly */
                         offset,
@@ -1081,7 +1081,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
                       errCode = natLib.ffi_properties_set_content_property_fld(
                           opaque_host,
                           propRef.propRef,
-                          propFromCache.descriptor.toNativeUtf8().cast<Int8>(),
+                          propFromCache.descriptor.toNativeUtf8().cast<Char>(),
                           1,
                           /* contentOnly */
                           offset,
@@ -1118,7 +1118,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
                       errCode = natLib.ffi_properties_set_selection_list(
                           opaque_host,
                           propRef.propRef,
-                          propFromCache.descriptor.toNativeUtf8().cast<Int8>(),
+                          propFromCache.descriptor.toNativeUtf8().cast<Char>(),
                           1,
                           offset,
                           /* the offset may even be beyond 0 if property can deal with it */
@@ -1135,8 +1135,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
                     errCode = natLib.ffi_properties_set_single_string(
                         opaque_host,
                         propRef.propRef,
-                        propFromCache.descriptor.toNativeUtf8().cast<Int8>(),
-                        contStr.value.toNativeUtf8().cast<Int8>(),
+                        propFromCache.descriptor.toNativeUtf8().cast<Char>(),
+                        contStr.value.toNativeUtf8().cast<Char>(),
                         repEnum.index);
                   } else {
                     print(
@@ -1234,7 +1234,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
       } else {
         String address = 'unknown';
 
-        Pointer<Int8> strPtr = natLib.ffi_encode_component_identification(
+        Pointer<Char> strPtr = natLib.ffi_encode_component_identification(
             cpId.cpTp.index, cpId.slotid, cpId.slotsubid);
         if (strPtr.address != 0) {
           Pointer<Utf8> ptrU8 = strPtr.cast<Utf8>();

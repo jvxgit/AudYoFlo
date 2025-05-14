@@ -171,11 +171,11 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
 
     // Copy into ffi C domain
     numEntries = lstArgv.length;
-    ffi.Pointer<ffi.Pointer<ffi.Int8>> lstArgvC =
-        calloc<ffi.Pointer<ffi.Int8>>(numEntries);
+    ffi.Pointer<ffi.Pointer<ffi.Char>> lstArgvC =
+        calloc<ffi.Pointer<ffi.Char>>(numEntries);
     for (var i = 0; i < numEntries; i++) {
       ffi.Pointer<Utf8> ptrU8 = lstArgv[i].toNativeUtf8();
-      lstArgvC[i] = ptrU8.cast<ffi.Int8>();
+      lstArgvC[i] = ptrU8.cast<ffi.Char>();
     }
 
     // Allocate the struct and fill it with synchronous callback references
@@ -357,7 +357,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         break;
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_SUBDEVICE:
-        ffi.Pointer<ffi.Int8> ptrIdent =
+        ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
           ffi.Pointer<Utf8> ptrU8 = ptrIdent.cast<Utf8>();
@@ -372,7 +372,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         break;
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_SUBDEVICE:
-        ffi.Pointer<ffi.Int8> ptrIdent =
+        ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
           ffi.Pointer<Utf8> ptrU8 = ptrIdent.cast<Utf8>();
@@ -387,7 +387,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         break;
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_COMPONENT:
-        ffi.Pointer<ffi.Int8> ptrIdent =
+        ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
           ffi.Pointer<Utf8> ptrU8 = ptrIdent.cast<Utf8>();
@@ -402,7 +402,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         break;
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_COMPONENT:
-        ffi.Pointer<ffi.Int8> ptrIdent =
+        ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
           ffi.Pointer<Utf8> ptrU8 = ptrIdent.cast<Utf8>();
@@ -537,7 +537,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
 
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
-        ffi.Pointer<ffi.Int8> ptrIdent =
+        ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
           ffi.Pointer<Utf8> ptrU8 = ptrIdent.cast<Utf8>();
@@ -549,7 +549,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         break;
       case jvxReportCommandRequestEnum
           .JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH:
-        ffi.Pointer<ffi.Int8> ptrIdent =
+        ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
           ffi.Pointer<Utf8> ptrU8 = ptrIdent.cast<Utf8>();
@@ -565,6 +565,8 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
 
         break;
+      default:
+      dbgPrint('Uncaught command request: <${reqCom.toString()}, no action taken.>'); 
     }
   }
 

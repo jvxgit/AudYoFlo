@@ -28,7 +28,7 @@ abstract class AudioFlowBackendBridgeHelpers {
 
   // Function to decode uId for processes
   int decodeUId(AudioYoFloNative natLib, Pointer<Void> load_fld) {
-    Pointer<Int64> uIdPtr = calloc<Int64>(1);
+    Pointer<Size> uIdPtr = calloc<Size>(1);
     int resLoc = natLib.ffi_req_command_decode_uid(load_fld, uIdPtr);
     int uId = uIdPtr.value;
     calloc.free(uIdPtr);
@@ -38,7 +38,7 @@ abstract class AudioFlowBackendBridgeHelpers {
 // Function to decode state switches
   jvxStateSwitchEnum decodeSswitch(
       AudioYoFloNative natLib, Pointer<Void> load_fld) {
-    Pointer<Int32> ssPtr = calloc<Int32>(1);
+    Pointer<Int> ssPtr = calloc<Int>(1);
     int resLoc = natLib.ffi_req_command_decode_sswitch(load_fld, ssPtr);
     int ssi = ssPtr.value;
     calloc.free(ssPtr);
@@ -48,7 +48,7 @@ abstract class AudioFlowBackendBridgeHelpers {
   // Function to decode state switches
   jvxReportCommandRequestEnum decodeRequestType(
       AudioYoFloNative natLib, Pointer<Void> load_fld) {
-    Pointer<Int32> reqPtr = calloc<Int32>(1);
+    Pointer<Int> reqPtr = calloc<Int>(1);
     int resLoc = natLib.ffi_req_command_decode_request_type(load_fld, reqPtr);
     int reqi = reqPtr.value;
     calloc.free(reqPtr);
@@ -63,7 +63,7 @@ abstract class AudioFlowBackendBridgeHelpers {
   // Function to decode command requests
   jvxReportCommandBroadcastTypeEnum decodeBroadcastType(
       AudioYoFloNative natLib, Pointer<Void> load_fld) {
-    Pointer<Int32> bcPtr = calloc<Int32>(1);
+    Pointer<Int> bcPtr = calloc<Int>(1);
     int resLoc = natLib.ffi_req_command_decode_broadcast(load_fld, bcPtr);
     int bcId = bcPtr.value;
     calloc.free(bcPtr);

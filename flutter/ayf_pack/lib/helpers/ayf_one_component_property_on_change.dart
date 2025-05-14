@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../ayf_pack_local.dart';
 
-abstract class AudYoFloOneComponentPropertyOnChange {
+mixin AudYoFloOneComponentPropertyOnChange {
   // ================================================
   // Member variables to configure behavior
   // ================================================

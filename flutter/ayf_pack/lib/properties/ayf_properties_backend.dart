@@ -189,7 +189,7 @@ class AudYoFloPropertyContentBackend extends AudYoFloPropertyDescriptorBackend {
 
     switch (reqInvalidateOnStateSwitch) {
       case jvxPropertyInvalidateTypeEnum
-          .JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT:
+            .JVX_PROPERTY_INVALIDATE_DESCRIPTOR_CONTENT:
         invalidateDescriptor(false);
         invalidateContent(false); /* invalidate also content */
         break;
@@ -244,7 +244,7 @@ class AudYoFloPropertyContentBackend extends AudYoFloPropertyDescriptorBackend {
 // ==================================================================
 // ==================================================================
 
-abstract class AudYoFloPropertyMultiContentBackend<T2> {
+mixin AudYoFloPropertyMultiContentBackend<T2> {
   T2? fld;
   int fldSz = 0;
   int numDigits = 4;
@@ -320,7 +320,7 @@ class AudYoFloPropertyMultiStringBackend
 
 // ================================================================
 // ================================================================
-abstract class AudYoFloPropertyValueInRangeBackend {
+mixin AudYoFloPropertyValueInRangeBackend {
   double minVal = 0;
   double maxVal = 1;
   AudYoFloPropertyMultiContentBackend get parpropmc;
@@ -329,7 +329,7 @@ abstract class AudYoFloPropertyValueInRangeBackend {
 // ================================================================
 // ================================================================
 
-abstract class AudYoFloPropertySelectionListBackend {
+mixin AudYoFloPropertySelectionListBackend {
   int compileNum32BitBitfield = 0;
   AudYoFloBitField selection = allocateAudYoFloBitfield();
   AudYoFloBitField selectable = allocateAudYoFloBitfield();

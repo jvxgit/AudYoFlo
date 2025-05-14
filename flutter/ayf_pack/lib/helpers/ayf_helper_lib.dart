@@ -784,7 +784,7 @@ String propertyStringBackSlashes(String inVar) {
   return inVar;
 }
 
-class AudYoFloMixerLevelHelper {
+mixin AudYoFloMixerLevelHelper {
   double dbShiftGain = 50;
   double indexUnmapDb(double idxValdB) {
     double valdB = idxValdB + dbShiftGain;

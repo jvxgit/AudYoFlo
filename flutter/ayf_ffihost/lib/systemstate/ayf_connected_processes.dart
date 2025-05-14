@@ -23,9 +23,9 @@ class AudYoFloOneComponentInProcessNative
         .ffi_process_decode_iterator_context(spec.opaque_hdl, spec.itRef);
     Pointer<component_ident> idPtr = spec.natLib
         .ffi_process_decode_iterator_component(spec.opaque_hdl, spec.itRef);
-    Pointer<Int8> modPtr = spec.natLib
+    Pointer<Char> modPtr = spec.natLib
         .ffi_process_decode_iterator_module(spec.opaque_hdl, spec.itRef);
-    Pointer<Int8> cnamePtr = spec.natLib
+    Pointer<Char> cnamePtr = spec.natLib
         .ffi_process_decode_iterator_connector(spec.opaque_hdl, spec.itRef);
 
     if ((idPtr != nullptr) && (modPtr != nullptr)) {
@@ -49,7 +49,7 @@ class AudYoFloOneComponentInProcessNative
       cpId = ret;
 
       // Get the component description
-      Pointer<Int8> descrPtr =
+      Pointer<Char> descrPtr =
           spec.natLib.ffi_component_description(spec.opaque_hdl, idPtr);
       if (descrPtr != nullptr) {
         descriptionComponent = (descrPtr.cast<Utf8>()).toDartString();

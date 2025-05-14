@@ -16,8 +16,8 @@ import 'package:ayf_pack_native/ayf_pack_native.dart';
 // =========================================================================
 // Definition of natove callback for sync messages
 // =========================================================================
-typedef callback_tp = Int32 Function(Pointer<report_callback>);
-typedef callback_report = Int32 Function(Pointer<report_callback>);
+typedef callback_tp = Int Function(Pointer<report_callback>);
+typedef callback_report = Int Function(Pointer<report_callback>);
 
 // =========================================================================
 // Class to concentrate all callbacks in the ferncast native bridge component

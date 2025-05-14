@@ -41,4 +41,15 @@ if(JVX_USE_PART_WASAPI)
 	endif()
 endif()
 
+if(JVX_USE_PART_ANDROIDAUDIO)
+	include_directories(${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAndroidGlEs)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_ANDROID")
+	set(LOCAL_LIBS ${LOCAL_LIBS} jvxAuTAndroidGlEs_static)
+	
+	# Additional dependency for WASAPI projects in SDK build
+	if(JVX_USES_SDK)
+		# set(LOCAL_LIBS ${LOCAL_LIBS} avrt)
+	endif()
+endif()
+
 ## ======================================================================

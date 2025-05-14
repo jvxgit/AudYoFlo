@@ -73,6 +73,7 @@ option(JVX_USE_CBMT "Use c-bitmap library" OFF)
 option(JVX_USE_RUST "Use code in Rust" OFF)
 option(JVX_USE_TRACY "Build the Tracy Profiler client into the applications" OFF)
 option(JVX_WINDOWS_EXCLUDE_ATL_PROJECTS "Exclude all projects involving ATL components" OFF)
+option(JVX_USE_PART_ANDROIDAUDIO "Involve audio engine for Android" OFF)
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")
 

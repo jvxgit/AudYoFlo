@@ -26,7 +26,7 @@ class AudYoFloMultiComponentsPropertyOnChangeEntryLocal
   List<AudYoFloPropertyContentLocal>? lprops;
 }
 
-abstract class AudYoFloMultiComponentsPropertyOnChange {
+mixin AudYoFloMultiComponentsPropertyOnChange {
   // ================================================
   // Member variables to configure behavior
   // ================================================

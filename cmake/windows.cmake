@@ -28,6 +28,11 @@ if (JVX_USE_PART_COREAUDIO)
   message("XX> deactivating core audio support (not supported on Windows)")
   set(JVX_USE_PART_COREAUDIO OFF)
 endif()
+if (JVX_USE_PART_ANDROIDAUDIO)
+  message("XX> deactivating android audio support (not supported on Emscripten)")
+  set(JVX_USE_PART_ANDROIDAUDIO OFF)  
+endif()
+# message(FATAL_ERROR "HIER")
 
 # Set the maximum path length to just less than the allowed 250 due to bug in cmake
 set(CMAKE_OBJECT_PATH_MAX 240)

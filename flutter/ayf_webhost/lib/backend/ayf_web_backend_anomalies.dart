@@ -11,7 +11,7 @@ import '../ayf_web_backend_helpers.dart';
 import 'dart:async';
 import 'dart:io';
 
-class AudYoFloWebBackendAnomalies {
+mixin AudYoFloWebBackendAnomalies {
   void reportStatusDisconnect(int idReason, int subId, String description) {
     print(
         'Status disconnect reported: Id=$idReason - SubId=$subId - reason hint: $description');

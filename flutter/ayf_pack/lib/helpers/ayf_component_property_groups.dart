@@ -87,7 +87,7 @@ class AudYoFloPropertyOnChangeOneGroup {
 }
 
 /* Multiple groups combined **/
-class AudYoFloPropertyOnChangeGroups {
+mixin AudYoFloPropertyOnChangeGroups {
   Map<String, AudYoFloPropertyOnChangeOneGroup> theGroups = {};
   List<String> propsAllGroups = [];
 

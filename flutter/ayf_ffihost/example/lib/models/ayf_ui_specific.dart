@@ -21,7 +21,7 @@ class AudYoFloUiModelSpecific extends AudYoFloUiModel
 
   AudYoFloUiModelSpecific(String routeInit) : super(routeInit) {
     textApp = 'ayf_ffihost_example';
-    imageNameApp = 'images/ayfbinrender_icons/ayfbinrender-logo.png';
+    imageNameApp = 'images/ayfffihost_icons/ayfffihost-logo.png';
 
     // Define some specific configuration entities
     widgetSpecificConfigurations['soundIo'] = soundIo;

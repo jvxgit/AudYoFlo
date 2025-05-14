@@ -670,9 +670,10 @@ else(JVX_COMPILE_BUILDTOOLS)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFileReader
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTFileWriter
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTSyncClock
+
   )
 
-	# WINDOWS
+  # ############################### WINDOWS ###############################
   if(JVX_USE_PART_ASIO)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAsio)
@@ -683,7 +684,7 @@ else(JVX_COMPILE_BUILDTOOLS)
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTWindows)
   endif()
   
-  ## LINUX
+  # ############################### LINUX ###############################
   if(JVX_USE_PART_ALSA)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa)
@@ -694,7 +695,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPipewire)
    endif()
 
-	# MACOSX
+	# ############################### MACOSX ###############################
   if(JVX_USE_PART_COREAUDIO)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTCoreAudio)
@@ -704,7 +705,14 @@ else(JVX_COMPILE_BUILDTOOLS)
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTIos)
   endif(JVX_USE_PART_IOSAUDIO)
 
-	# PLATFORM INDEPENDENT
+	# ############################### ANDROID ###############################
+  ## if(JVX_USE_PART_ANDROIDAUDIO)
+	set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAndroidGlEs)
+  ## endif()
+	
+	# message(FATAL_ERROR "HIER ${JVX_BASE_AUDIO_TECHNOLOGIES}")
+  # ############################### PLATFORM INDEPENDENT ###############################
   if(JVX_USE_PART_PAUDIO)
     set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPortAudio)

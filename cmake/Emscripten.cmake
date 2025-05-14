@@ -5,17 +5,22 @@ set(SED "/bin/sed" CACHE PATH "Path to stream editor (sed) TO BE REMOVED")
 
 # deactivate unsupported stuff
 if (JVX_USE_PART_ASIO)
-  message("XX> deactivating ASIO support (not supported on Linux)")
+  message("XX> deactivating ASIO support (not supported on Emscripten)")
   set(JVX_USE_PART_ASIO OFF)
 endif()
 if (JVX_USE_PART_CORECONTROL)
-  message("XX> deactivating corecontrol support (not supported on Linux)")
+  message("XX> deactivating corecontrol support (not supported on Emscripten)")
   set(JVX_USE_PART_CORECONTROL OFF)
 endif()
 if (JVX_USE_PART_COREAUDIO)
-  message("XX> deactivating core audio support (not supported on Linux)")
+  message("XX> deactivating core audio support (not supported on Emscripten)")
   set(JVX_USE_PART_COREAUDIO OFF)
 endif()
+if (JVX_USE_PART_ANDROIDAUDIO)
+  message("XX> deactivating android audio support (not supported on Emscripten)")
+  set(JVX_USE_PART_ANDROIDAUDIO OFF)
+endif()
+
 
 # pre-/suffixes
 set(JVX_SHARED_EXTENSION so)

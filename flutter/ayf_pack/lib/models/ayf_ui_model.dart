@@ -10,7 +10,7 @@ class AudYoFloUiHttpConnect {
   bool autoConnect = false;
 }
 
-abstract class AudYoFloUiElementsTabBar {
+mixin AudYoFloUiElementsTabBar {
   List<Widget> theAllocatedTabs = [];
   List<Widget> theAllocatedTabViews = [];
 

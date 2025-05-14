@@ -14,7 +14,7 @@ class AudYoFloUrlRequest {
 
 // ===========================================================
 
-class AudYoFloWebBackendHelpers {
+mixin AudYoFloWebBackendHelpers {
   AudYoFloWebBackendAnomalies? reportHandler;
   void initializeHelper(AudYoFloWebBackendAnomalies reportRef) {
     reportHandler = reportRef;
@@ -107,14 +107,13 @@ class AudYoFloWebBackendHelpers {
   }
 
   JvxComponentTypeEnum translateStringComponentType(String inStr) {
-      JvxComponentTypeEnum retVal = string2CpTp(inStr);
-        if(retVal ==JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN)
-        {
-          if (reportHandler != null) {
-          reportHandler!.reportStatusErrorProtocol(1, 0, inStr);
-        }
-        }
-        return retVal;
+    JvxComponentTypeEnum retVal = string2CpTp(inStr);
+    if (retVal == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      if (reportHandler != null) {
+        reportHandler!.reportStatusErrorProtocol(1, 0, inStr);
+      }
+    }
+    return retVal;
   }
 
   /*
@@ -233,7 +232,7 @@ class AudYoFloWebBackendHelpers {
         break;
 */
 
-      /*
+  /*
     case :
       return JvxComponentTypeEnum.;
 	{"event loop", "JVX_COMPONENT_EVENTLOOP" },
@@ -307,18 +306,15 @@ class AudYoFloWebBackendHelpers {
 
   JvxComponentIdentification translateStringComponentIdentification(
       String cpIdStr, int uid) {
-        JvxComponentIdentification retVal = JvxComponentIdentification();
-        retVal = string2CpId(cpIdStr, uid);
-        if(retVal ==JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN)
-        {
-          if (reportHandler != null) {
-          reportHandler!.reportStatusErrorProtocol(1, 0, cpIdStr);
-        }
-        }
-        return retVal;
-      
+    JvxComponentIdentification retVal = JvxComponentIdentification();
+    retVal = string2CpId(cpIdStr, uid);
+    if (retVal == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
+      if (reportHandler != null) {
+        reportHandler!.reportStatusErrorProtocol(1, 0, cpIdStr);
+      }
+    }
+    return retVal;
 
-        
 /*
     JvxComponentIdentification cpId = JvxComponentIdentification();
     var lst = cpIdStr.split('<');
