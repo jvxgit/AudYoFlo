@@ -27,7 +27,9 @@ typedef enum
 	JVX_DELETE_DATATYPE_DEVICE_CAPS = 11,
 	JVX_DELETE_DATATYPE_SELECTION_OPTION = 12,
 	JVX_DELETE_DATATYPE_SS_LIST = 13,
-	JVX_DELETE_DATATYPE_VALUE_IN_RANGE = 14
+	JVX_DELETE_DATATYPE_VALUE_IN_RANGE = 14,
+	JVX_DELETE_DATATYPE_UNKNOWN = 15,
+	JVX_DELETE_DATATYPE_LIMIT
 } ffiDeleteDatatype;
 
 // ================================================================================
@@ -185,9 +187,9 @@ struct selection_option
 
 struct ss_list
 {
-	int* slots;
-	int* subslots;
-	int num;
+	jvxInt32* slots;
+	jvxInt32* subslots;
+	jvxSize num;
 };
 
 struct one_property_value_in_range

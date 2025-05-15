@@ -37,7 +37,7 @@ void ffi_host_allocate_component_ident(struct component_ident** ptrRet, const jv
 // For local use in flutter_native_processes.cpp
 int ffi_host_allocate_char_array(const std::string& txt, char** txtOnReturn);
 void ffi_host_allocate_process_handle(struct one_process** ptrRet);
-int ffi_host_delete(void* ptr, ffiDeleteDatatype tp);
+// int ffi_host_delete(void* ptr, int tpint);
 
 // For local use in flutter_native_properties.cpp
 jvxErrorType ffi_properties_descriptor_property_core(

@@ -2,7 +2,9 @@ if(JVX_RELEASE_SDK)
 	
 	# Produce the right entries in the ffigen code lines
 	set(FFIGEN_HOST_HEADER_PATH "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_INCLUDE_STATIC}/jvx-flutter-native-static/include/flutter_native_api.h")
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pubspec.yaml.in ${CMAKE_CURRENT_SOURCE_DIR}/pubspec.yaml @ONLY)
+	set(FFIGEN_HOST_HEADER_COMPILER_OPTS "-D${JVX_SYSTEM_TOKEN}")
+	
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.yaml.in ${CMAKE_CURRENT_SOURCE_DIR}/config.yaml @ONLY)
 
 	# Configure for all tests
 	set(AYFBINRENDER_HOSTCONF_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/ayfbinrender-native-config_import.dll")

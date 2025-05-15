@@ -3,9 +3,9 @@ description: Bindings to allow access to fernlive native backend.
 output: 'lib/native-ffi/generated/ayf_ffi_gen_bind.dart'
 headers:
   entry-points:
-    - 'O:/audyoflo/audio-win64-sdk/release/sdk/include/jvx-flutter-native-static/include/flutter_native_api.h'
+    - '@FFIGEN_HOST_HEADER_PATH@'
 compiler-opts:
-  "-DJVX_REDEFINE_DATATYPES_FFI -D JVX_SYS_WINDOWS_MSVC_64BIT"
+  "-DJVX_REDEFINE_DATATYPES_FFI @FFIGEN_HOST_HEADER_COMPILER_OPTS@"
 enums:
   as-int:
     include:

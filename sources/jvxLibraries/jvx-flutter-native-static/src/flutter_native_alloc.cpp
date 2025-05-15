@@ -144,9 +144,16 @@ int ffi_deallocate_backend_handle(void* opaque_hdl)
 	return res;
 }
 
-int ffi_host_delete(void* ptr, ffiDeleteDatatype tp)
+int ffi_host_delete(void* ptr, int tpint)
 {
 	jvxSize i;
+	ffiDeleteDatatype tp = ffiDeleteDatatype::JVX_DELETE_DATATYPE_UNKNOWN;
+	
+	if (tpint < ffiDeleteDatatype::JVX_DELETE_DATATYPE_LIMIT)
+	{
+		tp = (ffiDeleteDatatype)tpint;
+	}
+
 	struct one_property_string_list* strLst = nullptr;
 	struct ss_list* ssPtr = nullptr;
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
@@ -243,6 +250,7 @@ int ffi_host_delete(void* ptr, ffiDeleteDatatype tp)
 			res = JVX_NO_ERROR;
 			break;
 		default:
+
 			assert(0);
 		}
 	}

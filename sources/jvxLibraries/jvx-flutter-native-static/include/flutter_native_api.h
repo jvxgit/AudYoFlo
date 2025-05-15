@@ -66,7 +66,7 @@ JVX_FLUTTER_LIB_BEGIN
 	int ffi_last_error();
 
 	//! Delete a buffer. The tp argument specifies the type
-	int ffi_host_delete(void* ptr, ffiDeleteDatatype tp);
+	int ffi_host_delete(void* ptr, int tp);
 
 	//! Test function to run a test command via ffi bridge
 	int ffi_simple_call();

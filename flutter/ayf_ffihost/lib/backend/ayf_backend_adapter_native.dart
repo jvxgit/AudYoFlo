@@ -1427,9 +1427,10 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
           ss_list sslistRef = sslistPtr.ref;
           Int32List? lst;
           if (sslistRef.slots != nullptr) {
-            lst = sslistRef.slots.asTypedList(sslistRef.num);
+            lst = sslistRef.slots.asTypedList(sslistRef.num);            
           }
           if (sslistRef.subslots != nullptr) {
+            
             lst = sslistRef.subslots.asTypedList(sslistRef.num);
           }
           if (lst != null) {
@@ -1682,5 +1683,6 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
         }
       }
     }
-  }
+  }  
 }
+

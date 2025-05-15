@@ -25,27 +25,51 @@ dev_dependencies:
   ffigen: ^18.0.1
 
 # This is the command to specify which file is source for binding generation
-ffigen:
-  name: AudioYoFloNative
-  description: Bindings to allow access to fernlive native backend.
-  output: 'lib/native-ffi/generated/ayf_ffi_gen_bind.dart'
-  headers:
-    entry-points:
-      - '@FFIGEN_HOST_HEADER_PATH@'
+## ============================================================================
+## For ffigen: run command <dart run ffigen --config config.yaml>
+## However, due to an unsufficiency of the code generator, we need to rename some variables starting
+## around line 1401:
+## 
+## typedef jvxSize = ffi.Size;
+# typedef DartjvxSize = int;
+## typedef jvxCBitField64 = ffi.UnsignedLongLong;
+## typedef DartjvxCBitField64 = int;
+## typedef jvxCBitField32 = ffi.UnsignedInt;
+## typedef DartjvxCBitField32 = int;
+## typedef jvxCBitField16 = ffi.UnsignedShort;
+## typedef DartjvxCBitField16 = int;
+## typedef jvxInt64 = ffi.LongLong;
+## typedef DartjvxInt64 = int;
+## typedef jvxUInt64 = ffi.UnsignedLongLong;
+## typedef DartjvxUInt64 = int;
+## typedef jvxInt32 = ffi.Int;
+## typedef DartjvxInt32 = int;
+## typedef jvxUInt32 = ffi.UnsignedInt;
+## typedef DartjvxUInt32 = int;
+## typedef jvxInt16 = ffi.Short;
+## typedef DartjvxInt16 = int;
+## typedef jvxUInt16 = ffi.UnsignedShort;
+## typedef DartjvxUInt16 = int;
 
-  typedef-map: 
-    'size_t': 'Int64'
-    'jvxCBitField': 'Uint64'
-    'jvxCBitField64': 'Uint64'
-    'jvxCBitField32': 'Uint32'
-    'jvxCBitField16': 'Uint16'
-    'jvxSize': 'Uint64'
-    'jvxInt32': 'Int32'
-    'jvxInt64': 'Int64'
-  compiler-opts:
-    "-DJVX_REDEFINE_DATATYPES_FFI"
-
-# Run <dart run ffigen> to produce new version from headers
+## to
+##
+## typedef jvxSize = ffi.Size;
+## typedef jvxCBitField64 = ffi.Uint64;
+## typedef jvxCBitField32 = ffi.Uint32;
+## typedef jvxCBitField16 = ffi.Uint16;
+## typedef jvxInt64 = ffi.Int64;
+## typedef jvxUInt64 = ffi.Uint64;
+## typedef jvxInt32 = ffi.Int32;
+## typedef jvxUInt32 = ffi.Uint32;
+## typedef jvxInt16 = ffi.Int16;
+## typedef jvxUInt16 = ffi.Uint16;
+## Replacement is in file <replace-datatypes.txt>
+##
+## Anomalie/insufficiency of code generator reported here:
+##
+## https://github.com/dart-lang/native/issues/2297
+##
+## ============================================================================
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

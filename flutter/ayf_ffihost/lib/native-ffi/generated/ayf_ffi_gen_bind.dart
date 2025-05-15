@@ -1382,9 +1382,8 @@ class AudioYoFloNative {
   }
 
   late final _ffi_host_deletePtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(
-              ffi.Pointer<ffi.Void>, ffi.UnsignedInt)>>('ffi_host_delete');
+          ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Int)>>(
+      'ffi_host_delete');
   late final _ffi_host_delete = _ffi_host_deletePtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>, int)>();
 
@@ -1399,16 +1398,17 @@ class AudioYoFloNative {
       _ffi_simple_callPtr.asFunction<int Function()>();
 }
 
-typedef jvxCBitField64 = ffi.Uint64;
-//typedef DartjvxCBitField64 = int;
-typedef jvxCBitField32 = ffi.Uint32;
-//typedef DartjvxCBitField32 = int;
 typedef jvxSize = ffi.Size;
-//typedef DartjvxSize = int;
-typedef jvxUInt32 = ffi.Uint32;
-//typedef DartjvxUInt32 = int;
+typedef jvxCBitField64 = ffi.Uint64;
+typedef jvxCBitField32 = ffi.Uint32;
+typedef jvxCBitField16 = ffi.Uint16;
+typedef jvxInt64 = ffi.Int64;
+typedef jvxUInt64 = ffi.Uint64;
 typedef jvxInt32 = ffi.Int32;
-//typedef DartjvxInt32 = int;
+typedef jvxUInt32 = ffi.Uint32;
+typedef jvxInt16 = ffi.Int16;
+typedef jvxUInt16 = ffi.Uint16;
+
 
 sealed class ffiCallbackIds {
   static const JVX_FFI_CALLBACK_ASYNC_REPORT_TEXT = 0;
@@ -1433,6 +1433,8 @@ sealed class ffiDeleteDatatype {
   static const JVX_DELETE_DATATYPE_SELECTION_OPTION = 12;
   static const JVX_DELETE_DATATYPE_SS_LIST = 13;
   static const JVX_DELETE_DATATYPE_VALUE_IN_RANGE = 14;
+  static const JVX_DELETE_DATATYPE_UNKNOWN = 15;
+  static const JVX_DELETE_DATATYPE_LIMIT = 16;
 }
 
 final class one_property_min extends ffi.Struct {
@@ -1674,7 +1676,7 @@ final class ss_list extends ffi.Struct {
 
   external ffi.Pointer<jvxInt32> subslots;
 
-  @ffi.Int()
+  @jvxSize()
   external int num;
 }
 
