@@ -1,0 +1,10 @@
+output: 'out.dart'
+headers:
+  entry-points:
+    - 'my_header.h'
+type-map:
+  'native-types': # Targets native types.
+    'Char':
+      'lib': 'pkg_ffi' # predefined import.
+      'c-type': 'Char'
+      'dart-type': 'int'      

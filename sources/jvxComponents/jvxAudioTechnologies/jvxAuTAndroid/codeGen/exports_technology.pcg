@@ -1,0 +1,35 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genAndroid_technology";
+
+	SECTION config_select
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION number_exposed
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 1;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CALLBACK_SET_POSTHOOK = "modify_fileio";
+		};		
+
+		SECTION init_number_in_channels_max
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 2;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CALLBACK_SET_POSTHOOK = "modify_fileio";
+		};		
+
+		SECTION init_number_out_channels_max
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 2;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+			CALLBACK_SET_POSTHOOK = "modify_fileio";
+		};		
+	};
+};

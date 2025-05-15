@@ -708,7 +708,7 @@ else(JVX_COMPILE_BUILDTOOLS)
 	# ############################### ANDROID ###############################
   ## if(JVX_USE_PART_ANDROIDAUDIO)
 	set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAndroidGlEs)
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAndroid)
   ## endif()
 	
 	# message(FATAL_ERROR "HIER ${JVX_BASE_AUDIO_TECHNOLOGIES}")

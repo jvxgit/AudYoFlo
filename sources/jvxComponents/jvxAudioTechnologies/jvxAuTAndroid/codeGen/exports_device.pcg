@@ -1,0 +1,5 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genAndroid_device";
+	CALLBACKS = {"set_config", "trigger_command"};	
+};
