@@ -34,11 +34,24 @@
             "flutterMode": "debug",
         },
 		{
-            "name": "starter_app (debug-noargs)",
+            "name": "starter_app (debug-noargs,win)",
             "request": "launch",
             "type": "dart",
             "program": "example/lib/main.dart",
             "deviceId": "windows",
+
+            // https://stackoverflow.com/questions/55004302/how-do-you-pass-arguments-from-command-line-to-main-in-flutter-dart
+            // https://dartcode.org/docs/launch-configuration/
+            "args": [],
+            // "cwd": "C:\\jvxrt\\build.audio.all\\release\\runtime", <- this does not work since the interpreter can not find the main.dart script
+            "flutterMode": "debug",
+        },
+        {
+            "name": "starter_app (debug-noargs,android)",
+            "request": "launch",
+            "type": "dart",
+            "program": "example/lib/main.dart",
+            "deviceId": "emulator-5554",
 
             // https://stackoverflow.com/questions/55004302/how-do-you-pass-arguments-from-command-line-to-main-in-flutter-dart
             // https://dartcode.org/docs/launch-configuration/
