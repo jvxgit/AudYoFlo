@@ -5,7 +5,7 @@ headers:
   entry-points:
     - 'O:/audyoflo/audio-win64-sdk/release/sdk/include/jvx-flutter-native-static/include/flutter_native_api.h'
 compiler-opts:
-  "-DJVX_REDEFINE_DATATYPES_FFI -D JVX_SYS_WINDOWS_MSVC_64BIT"
+  "-DJVX_REDEFINE_DATATYPES_FFI -DJVX_SYS_WINDOWS_MSVC_64BIT"
 enums:
   as-int:
     include:

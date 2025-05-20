@@ -9,7 +9,9 @@ String ayf_init_host_options(Map<String, dynamic> configArgs,
     dynamic corePack,
     dynamic pixBuf}) {
   String initRoute = '/';
-  bool ffiHost = Platform.isWindows || Platform.isLinux;
+
+  // Host implementations supported for native ffi: Windows, linux and Android
+  bool ffiHost = Platform.isWindows || Platform.isLinux || Platform.isAndroid;
   if (forceWebHost) {
     ffiHost = false;
   }
