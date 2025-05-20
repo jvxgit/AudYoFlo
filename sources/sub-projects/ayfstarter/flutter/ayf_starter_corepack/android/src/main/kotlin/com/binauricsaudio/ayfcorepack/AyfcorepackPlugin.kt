@@ -24,12 +24,27 @@ class AyfcorepackPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "getPlatformVersion") {
       result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
+    } 
+    else if (call.method == "getEntryPoints") {
+      val entryPoints: Map<String, Any> = getEntryPoints()
+      result.success(entryPoints)      
+    }
+    else {
       result.notImplemented()
     }
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
+  }
+
+  private fun getEntryPoints(): Map<String, Any> {
+        val map = HashMap<String, Any>()
+        map["loadedModule"] = "my_dll.so"
+        map["moduleEntryAddress"] = -1
+        map["moduleEntrySymbol"] = "flutter_config_open"
+        // map[anotherkey] = listOf("item1", "item2")
+        // map["key4"] = mapOf("nestedKey" to "nestedValue")
+        return map
   }
 }
