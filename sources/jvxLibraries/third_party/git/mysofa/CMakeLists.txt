@@ -17,13 +17,13 @@ if(${JVX_OS} MATCHES "windows" OR ${JVX_OS} MATCHES "macosx")
 	     		 
 	# message(FATAL_ERROR "Hier -- prepareModules complete.")
 		
-	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken_simple}/${CMAKE_BUILD_TYPE}")
-		# file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/${CMAKE_BUILD_TYPE}")		
+		file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}")
 		execute_process(COMMAND cmd /c "build_win.bat ${targetfolder} ${CMAKE_BUILD_TYPE} ${archtoken_simple}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 	endif()
 	
-	set(MYSOFA_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build/${archtoken_simple}/${CMAKE_BUILD_TYPE}/include" CACHE INTERNAL "Hint where mysofa library is located in this project")
-    	set(MYSOFA_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build/${archtoken_simple}/${CMAKE_BUILD_TYPE}/lib/mysofa.lib" CACHE INTERNAL "Hint where mysofa and dependent libraries are located in this project")  	
+	set(MYSOFA_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/${CMAKE_BUILD_TYPE}/include" CACHE INTERNAL "Hint where mysofa library is located in this project")
+    	set(MYSOFA_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/${CMAKE_BUILD_TYPE}/lib/mysofa.lib" CACHE INTERNAL "Hint where mysofa and dependent libraries are located in this project")  	
 	set(MYSOFA_ZLIB_LIBRARY_STATIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/${zlib_location}/lib/zlib/zlib.lib" CACHE INTERNAL "Hint where mysofa finds the zlib")
 	set(MYSOFA_ZLIB_LIBRARY_DYNAMIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/${zlib_location}/lib/zlib/zlib.dll" CACHE INTERNAL "Hint where mysofa finds the zlib dll")
 	
@@ -52,5 +52,5 @@ else()
 endif()
 message("libmysofa installation complete.")
 
-# message(FATAL_ERROR "Hier 2 -- ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}_${archtoken_simple}")
+# message(FATAL_ERROR "Hier 2 -- ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}_${archtoken_simple} -- ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken_simple}/${CMAKE_BUILD_TYPE}")
 # add_subdirectory(./libmysofa)
