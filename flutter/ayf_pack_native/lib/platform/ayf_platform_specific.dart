@@ -21,8 +21,7 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
      * This installs a handler for the "close" event. 
      */
 
-    theBeCache =
-        Provider.of<AudYoFloBackendCache>(context, listen: false);
+    theBeCache = Provider.of<AudYoFloBackendCache>(context, listen: false);
 
     FlutterWindowClose.setWindowShouldCloseHandler(() async {
       bool wantClose = false;
@@ -51,12 +50,11 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
     });
   }
 
-@override
-Future<void> triggerClose() async
-{
-   // await theBeCache!.triggerClose();
-   await FlutterWindowClose.closeWindow();
-}
+  @override
+  Future<void> triggerClose() async {
+    // await theBeCache!.triggerClose();
+    await FlutterWindowClose.closeWindow();
+  }
 
   // Allocate and return file drop widget
   @override
@@ -95,6 +93,7 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
   AyfCorePackIf? theCorePack;
   AyfCorePackIf? thePixBuf;
   bool nativeHostConnect = false;
+  String appAlternativeName = '';
 
   @override
   void configureSubSystem(Map<String, dynamic> cfg) {
@@ -124,6 +123,7 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
       // We need the core pack here!!
       assert(theCorePack != null);
     }
+
     elm = cfg.entries.firstWhereOrNull((element) => element.key == 'cmdArgs');
     if (elm != null) {
       if (elm.value is List<String>) {
@@ -132,6 +132,14 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
     }
 
     // cmdArgs miht also be empty
+
+    elm = cfg.entries
+        .firstWhereOrNull((element) => element.key == 'appAlternativeName');
+    if (elm != null) {
+      if (elm.value is String) {
+        appAlternativeName = elm.value;
+      }
+    }
   }
 
   @override
@@ -153,7 +161,11 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         // This will delay the initialization to happen AFTER every state has been created
         //Future.delayed(Duration(milliseconds: 1), () {
         String runExec = Platform.resolvedExecutable;
+        if (appAlternativeName.isNotEmpty) {
+          runExec = appAlternativeName;
+        }
         String sepString = Platform.pathSeparator;
+        String execName = Platform.executable;
         List<String> tokens = runExec.split(sepString);
         String appNameExe = tokens.last;
         tokens = appNameExe.split('.');
@@ -192,7 +204,8 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         if (loadEnvSuccess) {
           libraryPath = dotenv.get('AYF_BACKEND_FFI_SHARED_LIBRARY',
               fallback: libraryPath);
-          defaultConfigFName =dotenv.get('AYF_BACKEND_FFI_DEFAULT_CONFIG_FILENAME',
+          defaultConfigFName = dotenv.get(
+              'AYF_BACKEND_FFI_DEFAULT_CONFIG_FILENAME',
               fallback: defaultConfigFName);
         }
 
@@ -298,16 +311,13 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         // If we have not specified a config file, we add a default option here:
         // We should always have a config filename set!!
         bool cfgFNameSpecified = false;
-        for(var elm in cmdArgsAdd)
-        {
-          if(elm == "--config")
-          {
+        for (var elm in cmdArgsAdd) {
+          if (elm == "--config") {
             cfgFNameSpecified = true;
             break;
           }
         }
-        if(!cfgFNameSpecified)
-        {
+        if (!cfgFNameSpecified) {
           cmdArgsAdd.add("--config");
           cmdArgsAdd.add(defaultConfigFName);
         }

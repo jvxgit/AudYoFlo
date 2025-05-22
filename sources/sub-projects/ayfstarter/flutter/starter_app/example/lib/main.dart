@@ -2,6 +2,8 @@
 https://medium.com/nonstopio/flutter-best-practices-c3db1c3cd694
 */
 // import 'package:dart/foundation.dart'
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +60,11 @@ void main(List<String> arguments) {
       forceWebHost: forceWebHost, corePack: corePack);
 
   configArgs['cmdArgs'] = arguments;
+
+  if (Platform.isAndroid) {
+    configArgs['appAlternativeName'] = 'starter_app';
+  }
+
   platformSpec.configureSubSystem(configArgs);
 
   // ***************************************************
