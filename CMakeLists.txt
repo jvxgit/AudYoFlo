@@ -360,7 +360,6 @@ find_host_package(Doxygen)
 include(${JVX_CMAKE_DIR}/fragments/thrdparty-early.cmake)
 jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early")
 
-
 set(JVX_BASE_SYSTEM_STATIC_LIBS
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base

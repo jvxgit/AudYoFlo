@@ -39,13 +39,13 @@ cd %targetfolder%
 if not exist "%archtoken%" mkdir "%archtoken%"
 cd "%archtoken%"
 	
-echo cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DDISABLE_FORTRAN=TRUE ..
-cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DDISABLE_FORTRAN=TRUE ..
+echo cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DDISABLE_FORTRAN=TRUE .. -DCMAKE_POLICY_DEFAULT_CMP0057=NEW
+cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DDISABLE_FORTRAN=TRUE .. -DCMAKE_POLICY_DEFAULT_CMP0057=NEW
 echo ninja install
 ninja install
 
-echo cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DENABLE_FLOAT=TRUE -DDISABLE_FORTRAN=TRUE ..
-cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DENABLE_FLOAT=TRUE -DDISABLE_FORTRAN=TRUE ..
+echo cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DENABLE_FLOAT=TRUE -DDISABLE_FORTRAN=TRUE .. -DCMAKE_POLICY_DEFAULT_CMP0057=NEW
+cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX=lib %rest% -DCMAKE_BUILD_TYPE=%buildtype% -DENABLE_FLOAT=TRUE -DDISABLE_FORTRAN=TRUE .. -DCMAKE_POLICY_DEFAULT_CMP0057=NEW
 echo ninja install
 ninja install
 
