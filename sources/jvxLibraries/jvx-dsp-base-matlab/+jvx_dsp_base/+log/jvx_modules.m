@@ -15,7 +15,7 @@ function [entries] = jvx_modules(fName)
          if(isfield(obj, 'module'))
              mod = obj.module;
              if(~find_in_entries(entries, mod)) 
-                 entries{cnt} = mod;
+                 entries{cnt, 1} = mod;
                  cnt = cnt +1;
              end
          end
