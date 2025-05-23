@@ -76,7 +76,7 @@ else()
 			
 			install(FILES ${AYFSTARTER_HOSTCONF_DLL} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/local_assets)
 			install(FILES ${AYFSTARTER_FFI_DLL} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/local_assets)
-		elseif(${JVX_OS} MATCHES "linux")
+		elseif(${JVX_OS} MATCHES "linux" OR ${JVX_OS} MATCHES "Android")
 			message("Flutter code generation for linux")
 			set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libjvx-flutter-native-shared_import.so")
 			set(AYFSTARTER_FFI_PRELOAD_DLLS "")		
