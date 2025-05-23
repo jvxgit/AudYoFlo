@@ -95,8 +95,10 @@ else()
 		set(SDK_FOLDER $ENV{AYF_SDK_PATH})
 		
 		# Empty placeholders MATTER!!!
-		set(AYF_FLUTTER_SDK_ASSETS "  - local_assets/${AYFSTARTER_HOSTCONF_DLL_CORE}\n  - local_assets/${AYFSTARTER_FFI_DLL_CORE}")
-		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml)
+		
+		# set(AYF_FLUTTER_SDK_ASSETS "  - local_assets/${AYFSTARTER_HOSTCONF_DLL_CORE}\n  - local_assets/${AYFSTARTER_FFI_DLL_CORE}")
+		# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml)
+		
 		# message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml.new")	
 		
 		if(AYFSTARTER_SIMPLE_INSTALLER)

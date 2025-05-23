@@ -446,8 +446,11 @@ else(JVX_COMPILE_BUILDTOOLS)
      
 	find_qt()
 	
-	# Prepare copy of QT files for bundle lateron
-	include(${JVX_CMAKE_DIR}/${JVX_OS}-qt-copy.cmake)
+	if(EXISTS ${JVX_CMAKE_DIR}/${JVX_OS}-qt-copy.cmake)
+		
+		# Prepare copy of QT files for bundle lateron
+		include(${JVX_CMAKE_DIR}/${JVX_OS}-qt-copy.cmake)
+	endif()
 
     # configure qwt (the lib is built in-tree)
     set(JVX_QCUSTOMPLOT_VERSION "2.0.1") # 2.0.0
