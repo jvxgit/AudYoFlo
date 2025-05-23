@@ -54,6 +54,17 @@ flutter:
       windows:
         pluginClass: AyfcorepackPluginCApi
 
+  assets:
+  - local_assets/ayfstarter-native-config_import.dll
+  - local_assets/jvx-flutter-native-shared_import.dll
+
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # Note that these SDK assets are runtim library which will then be copies to
+  # the subfolder data/... - hence, the runtime libraries will not be found
+  # automatically. We therefore need to add the SDK/bin folder to the system 
+  # variable to allow flutter to find it.
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

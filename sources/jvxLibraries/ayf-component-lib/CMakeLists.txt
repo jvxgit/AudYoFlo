@@ -30,6 +30,8 @@ set(LOCAL_PCG_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/pcg/CayfComponentLib.pcg)
 
 set(LOCAL_LIBS 
+	# We will get this lib via other includes ut it will never be the propper dependency
+	jvx-component-templates-base_static
 
 	# Both libraries loaded at runtime via LOADLIBRARY:
 	# ayf-shared-connection-host_import

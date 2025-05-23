@@ -66,6 +66,14 @@ else
 	echo cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
 	cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
 
+	#if [[ -d build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets ]]; then
+	#	echo ls build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets
+	#	ls build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets
+	
+	#	echo cp build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets/* build/$sysfolder/$platform/$subfolder
+	#	cp build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets/* build/$sysfolder/$platform/$subfolder
+	#fi
+	
 	if [ -d "$4/$3" ]; then
 		echo "rm -rf $4/$3"
 		rm -rf $4/$3

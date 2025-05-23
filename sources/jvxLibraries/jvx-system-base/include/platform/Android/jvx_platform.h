@@ -544,7 +544,7 @@ static void reserve_process_memory(int size)
 
 JVX_STATIC_INLINE void JVX_PREPARE_RT_START(jvxSize pre_allocation_size)
 {
-#if defined(JVX_SYS_EMSCRIPTEN_CLANG_32BIT) || defined(JVX_SYS_ANDROID_CLANG_32BIT)
+#if defined(JVX_SYS_EMSCRIPTEN_CLANG_32BIT) || defined(JVX_SYS_ANDROID_CLANG_32BIT) || defined(JVX_SYS_ANDROID_CLANG_64BIT)
 	assert(0);
 #else
 	std::cout << "Doing some stuff to prepare realtime processing" << std::endl;

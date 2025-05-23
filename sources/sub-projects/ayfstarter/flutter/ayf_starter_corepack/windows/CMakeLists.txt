@@ -11,7 +11,7 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 set(AYF_PROJECT ayfstarter-native-config)
 set(AYF_VERBOSE_INFO TRUE)
 set(AYF_CORE_PACK_LIB ${AYF_PROJECT}_import)
-
+set(AYF_CORE_FLUTTER_LIB jvx-flutter-native-shared_import)
 
 # This value is used when generating builds using this plugin, so it must
 # not be changed
@@ -160,10 +160,12 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 )
 
 set(AYF_COPY_DLLS 
-	"${AYF_SDK_PATH}/bin/${AYF_CORE_PACK_LIB}.dll"
+	${AYF_SDK_PATH}/bin/${AYF_CORE_FLUTTER_LIB}.dll
+	${AYF_SDK_PATH}/bin/${AYF_CORE_PACK_LIB}.dll
 	"${AYF_SDK_PATH}/bin/zlib.dll"
 	"${AYF_SDK_PATH}/bin/libfftw3-3.dll"
 	)
+
 if(AYF_VERBOSE_INFO)
 	message("----> Copying dlls ${AYF_COPY_DLLS}")
 endif()

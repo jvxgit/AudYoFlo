@@ -100,19 +100,38 @@ if(JVX_USE_PYTHON)
   set(INSTALL_PATH_PYTHON_RUNTIME "${INSTALL_PATH_PYTHON}/runtime")
 endif()
 
+# include macros used in build system
+include(${JVX_CMAKE_DIR}/macros.cmake)
+
+###
+# support for different platforms
+###
+include(${JVX_CMAKE_DIR}/platform.cmake)
+
+set(JVX_ABI_SUBFOLDER "")
+if(JVX_RELEASE_SDK)
+	if(${JVX_OS} MATCHES "Android")
+		set(JVX_ABI_SUBFOLDER "${ANDROID_ABI}/")
+	endif()
+endif()
+
+## message(FATAL_ERROR "Hier - ${JVX_OS}")
+
+# ABI specific output - if there is ABI specific
+set(INSTALL_PATH_BIN "${INSTALL_PATH_RELEASE_ROOT}/${JVX_ABI_SUBFOLDER}bin")
+set(INSTALL_PATH_LIB_STATIC "${INSTALL_PATH_RELEASE_ROOT}/${JVX_ABI_SUBFOLDER}lib")
+set(INSTALL_PATH_LIB_IMPORT "${INSTALL_PATH_RELEASE_ROOT}/${JVX_ABI_SUBFOLDER}lib")
+set(INSTALL_PATH_LIB_SHARED "${INSTALL_PATH_RELEASE_ROOT}/${JVX_ABI_SUBFOLDER}bin")
+set(INSTALL_PATH_COMPONENTS_STATIC "${INSTALL_PATH_RELEASE_ROOT}/${JVX_ABI_SUBFOLDER}lib/jvxComponents-static")
+set(INSTALL_PATH_COMPONENTS_SHARED "${INSTALL_PATH_RELEASE_ROOT}/${JVX_ABI_SUBFOLDER}jvxComponents")
+set(INSTALL_PATH_COMPONENTS_IMPORT "${INSTALL_PATH_RELEASE_ROOT}/${JVX_ABI_SUBFOLDER}lib/jvxComponents-import")
+
 set(INSTALL_PATH_RUNTIME "${INSTALL_PATH_RELEASE_ROOT}")
-set(INSTALL_PATH_BIN "${INSTALL_PATH_RELEASE_ROOT}/bin")
 set(INSTALL_PATH_DOC "${INSTALL_PATH_RELEASE_ROOT}/doc")
 set(INSTALL_PATH_IMAGES "${INSTALL_PATH_RELEASE_ROOT}/images")
-set(INSTALL_PATH_LIB_STATIC "${INSTALL_PATH_RELEASE_ROOT}/lib")
-set(INSTALL_PATH_LIB_IMPORT "${INSTALL_PATH_RELEASE_ROOT}/lib")
 set(INSTALL_PATH_INCLUDE_STATIC "${INSTALL_PATH_RELEASE_ROOT}/include")
-set(INSTALL_PATH_COMPONENTS_STATIC "${INSTALL_PATH_RELEASE_ROOT}/lib/jvxComponents-static")
 set(INSTALL_PATH_INCLUDE_COMPONENTS_STATIC "${INSTALL_PATH_RELEASE_ROOT}/include/jvxComponents-static")
-set(INSTALL_PATH_LIB_SHARED "${INSTALL_PATH_RELEASE_ROOT}/bin")
 set(INSTALL_PATH_INCLUDE_SHARED "${INSTALL_PATH_RELEASE_ROOT}/include")
-set(INSTALL_PATH_COMPONENTS_SHARED "${INSTALL_PATH_RELEASE_ROOT}/jvxComponents")
-set(INSTALL_PATH_COMPONENTS_IMPORT "${INSTALL_PATH_RELEASE_ROOT}/lib/jvxComponents-import")
 set(INSTALL_PATH_INCLUDE_COMPONENTS_SHARED "${INSTALL_PATH_RELEASE_ROOT}/include/jvxComponents-shared")
 set(INSTALL_PATH_INCLUDE_COMPONENTS_IMPORT "${INSTALL_PATH_RELEASE_ROOT}/include/jvxComponents-import")
 set(INSTALL_PATH_BIN_WASM "${INSTALL_PATH_RELEASE_ROOT}/wasm")
@@ -146,9 +165,6 @@ if("${CMAKE_GENERATOR}" MATCHES "Visual Studio 17 2022" OR "${CMAKE_GENERATOR}" 
 else()
   message("Not activating VS User template files")
 endif()
-
-# include macros used in build system
-include(${JVX_CMAKE_DIR}/macros.cmake)
 
 # Just a macro for consistence
 set(JVX_BASE_CMAKE_DIR ${JVX_CMAKE_DIR})
@@ -187,11 +203,6 @@ set(JVX_BASE_BINARY_INCLUDE_PATH "${JVX_BASE_BINARY_DIR}/sources/jvxLibraries")
 set(JVX_SUBPRODUCT_BINARY_INCLUDE_PATH "${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxLibraries")
 
 set(JVX_FFT_PRESENT false CACHE BOOL "Indicator if an FFT implementation was found")
-
-###
-# support for different platforms
-###
-include(${JVX_CMAKE_DIR}/platform.cmake)
 
 # Build tools are NEVER Release builds but the path must be set propperly anyway.
 if(JVX_COMPILE_BUILDTOOLS)
@@ -432,7 +443,11 @@ else(JVX_COMPILE_BUILDTOOLS)
 	
   # configure qt # FIXME: to be moved into macros.cmake?
   if(JVX_USE_QT)
-    find_qt()
+     
+	find_qt()
+	
+	# Prepare copy of QT files for bundle lateron
+	include(${JVX_CMAKE_DIR}/${JVX_OS}-qt-copy.cmake)
 
     # configure qwt (the lib is built in-tree)
     set(JVX_QCUSTOMPLOT_VERSION "2.0.1") # 2.0.0

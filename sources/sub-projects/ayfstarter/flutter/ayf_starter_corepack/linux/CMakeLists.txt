@@ -9,7 +9,8 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 
 set(AYF_PROJECT ayfstarter-native-config)
 set(AYF_VERBOSE_INFO TRUE)
-set(AYF_CORE_PACK_LIB lib${AYF_PROJECT}_import.so)
+set(AYF_CORE_PACK_LIB lib${AYF_PROJECT}_import)
+set(AYF_CORE_FLUTTER_LIB libjvx-flutter-native-shared_import)
 set(AYF_CORE_PACK_INCLUDE ${AYF_PROJECT})
 
 # This value is used when generating builds using this plugin, so it must
@@ -109,7 +110,8 @@ target_compile_options(${PLUGIN_NAME} PRIVATE "-Wno-unused-function")
 target_compile_definitions(${PLUGIN_NAME} PRIVATE "AYF_PROJECT=${AYF_PROJECT}")
 
 set(AYF_COPY_DLLS 
-	"${AYF_SDK_PATH}/bin/${AYF_CORE_PACK_LIB}"
+	"${AYF_SDK_PATH}/bin/${AYF_CORE_PACK_LIB}.so"
+	"${AYF_SDK_PATH}/bin/${AYF_CORE_FLUTTER_LIB}.so"
 	)
 if(AYF_VERBOSE_INFO)
 	message("----> Copying dlls ${AYF_COPY_DLLS}")

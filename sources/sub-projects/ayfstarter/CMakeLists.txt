@@ -67,9 +67,15 @@ else()
 		
 		if(${JVX_OS} MATCHES "windows")
 			message("Flutter code generation for Windows")
-			set(AYFSTARTER_HOSTCONF_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/ayfstarter-native-config_import.dll")
-			set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/jvx-flutter-native-shared_import.dll")
+			set(AYFSTARTER_HOSTCONF_DLL_CORE "ayfstarter-native-config_import.dll")
+			set(AYFSTARTER_HOSTCONF_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/${AYFSTARTER_HOSTCONF_DLL_CORE}")
+			set(AYFSTARTER_FFI_DLL_CORE "jvx-flutter-native-shared_import.dll")
+			set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/${AYFSTARTER_FFI_DLL_CORE}")
+			
 			set(AYFSTARTER_FFI_PRELOAD_DLLS "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/zlib.dll,${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libfftw3-3.dll")		
+			
+			install(FILES ${AYFSTARTER_HOSTCONF_DLL} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/local_assets)
+			install(FILES ${AYFSTARTER_FFI_DLL} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/local_assets)
 		elseif(${JVX_OS} MATCHES "linux")
 			message("Flutter code generation for linux")
 			set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libjvx-flutter-native-shared_import.so")
@@ -84,6 +90,14 @@ else()
 		set(AYF_FLUTTER_WORKDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RUNTIME})
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json @ONLY)
 		message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json")	
+		
+		# Prepare installer of config dll or so
+		set(SDK_FOLDER $ENV{AYF_SDK_PATH})
+		
+		# Empty placeholders MATTER!!!
+		set(AYF_FLUTTER_SDK_ASSETS "  - local_assets/${AYFSTARTER_HOSTCONF_DLL_CORE}\n  - local_assets/${AYFSTARTER_FFI_DLL_CORE}")
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml)
+		# message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/pubspec.yaml.new")	
 		
 		if(AYFSTARTER_SIMPLE_INSTALLER)
 			message("Preparing post_install script in folder <${CMAKE_CURRENT_SOURCE_DIR}/post_install>")
