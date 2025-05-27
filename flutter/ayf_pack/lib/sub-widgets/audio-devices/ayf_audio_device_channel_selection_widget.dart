@@ -92,7 +92,8 @@ class AudYoFloOneChannelSliver extends StatelessWidget {
     AudYoFloChannelTypeClass clsOnReturn = AudYoFloChannelTypeClass();
     if (isSelected) col = Colors.yellow;
 
-    decodeInputOutputChannel(channelName, clsOnReturn, idChannel);
+    AudYoFloHelper.decodeInputOutputChannel(
+        channelName, clsOnReturn, idChannel);
     String showChannelName = clsOnReturn.name;
     return GestureDetector(
       onTap: () {

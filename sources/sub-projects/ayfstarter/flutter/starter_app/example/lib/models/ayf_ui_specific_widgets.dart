@@ -67,7 +67,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
         'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
     String textAudioIoPri = 'ASIO I/O';
     if (cpTpPriTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpPriTech = widgetConfigCpId(
+      cpTpPriTech = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
@@ -77,7 +77,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     }
 
     if (cpTpPriDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpPriDev = widgetConfigCpId(
+      cpTpPriDev = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,

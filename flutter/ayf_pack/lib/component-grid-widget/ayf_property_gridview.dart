@@ -673,7 +673,7 @@ class AudYoFloPropertyDetailView extends StatelessWidget {
         txtAccess = "wo";
         break;
       default:
-        dbgPrint(
+        AudYoFloHelper.dbgPrint(
             'Unmatched access type in function <>, type = <${prop.accessType.toString()}>.');
     }
 

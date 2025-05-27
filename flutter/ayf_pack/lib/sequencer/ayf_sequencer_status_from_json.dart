@@ -5,7 +5,8 @@ class AudYoFloSequencerStatusFromJson {
   static int updateSequencerStatus(
       Map<dynamic, dynamic> jsonMap, AudYoFloBackendCacheBectrlIf theBeCache) {
     int retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
-    String? errCodeExprPtr = getStringEntryValueMap(jsonMap, 'return_code');
+    String? errCodeExprPtr =
+        AudYoFloHelper.getStringEntryValueMap(jsonMap, 'return_code');
     if (errCodeExprPtr != null) {
       // Convert error code
       String errCodeExpr = errCodeExprPtr;
@@ -13,8 +14,10 @@ class AudYoFloSequencerStatusFromJson {
     }
 
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
-      var readyForStartPtr = extractStringFromJson(jsonMap, "ready_for_start");
-      var reasonIfNotStr = extractStringFromJson(jsonMap, "reason_if_not");
+      var readyForStartPtr =
+          AudYoFloHelper.extractStringFromJson(jsonMap, "ready_for_start");
+      var reasonIfNotStr =
+          AudYoFloHelper.extractStringFromJson(jsonMap, "reason_if_not");
       if ((readyForStartPtr != null) && (reasonIfNotStr != null)) {
         String readyForStartExpr = readyForStartPtr;
         int readyForStart =

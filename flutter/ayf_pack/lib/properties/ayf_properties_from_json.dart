@@ -23,7 +23,7 @@ class AudYoFloPropertyContentFromJson {
     bool error = false;
     AudYoFloPropertyContentBackend? retVal;
     jvxDataFormatEnum format = jvxDataFormatEnum.JVX_DATAFORMAT_NONE;
-    String? typeStr = extractStringFromJson(jsonMap, "format");
+    String? typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "format");
     if (typeStr != null) {
       format = jvxDataFormatEEnum.fromInt(ref.translateEnumString(
           typeStr, jvxDataFormatEEnum.formatName, flags));
@@ -31,7 +31,7 @@ class AudYoFloPropertyContentFromJson {
       error = true;
     }
 
-    int num = getIntEntryValueMap(jsonMap, "number_elements");
+    int num = AudYoFloHelper.getIntEntryValueMap(jsonMap, "number_elements");
     if (num < 0) {
       error = true;
     }
@@ -77,7 +77,7 @@ class AudYoFloPropertyContentFromJson {
 
     if (checkFormatNum) {
       jvxDataFormatEnum format = jvxDataFormatEnum.JVX_DATAFORMAT_NONE;
-      String? typeStr = extractStringFromJson(jsonMap, "format");
+      String? typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "format");
       if (typeStr != null) {
         format = jvxDataFormatEEnum.fromInt(ref.translateEnumString(
             typeStr, jvxDataFormatEEnum.formatName, flags));
@@ -85,7 +85,7 @@ class AudYoFloPropertyContentFromJson {
         prop.last_error = jvxErrorType.JVX_ERROR_PARSE_ERROR;
       }
 
-      int num = getIntEntryValueMap(jsonMap, "number_elements");
+      int num = AudYoFloHelper.getIntEntryValueMap(jsonMap, "number_elements");
       if (num < 0) {
         return jvxErrorType.JVX_ERROR_PARSE_ERROR;
       }
@@ -99,7 +99,7 @@ class AudYoFloPropertyContentFromJson {
     }
 
     // Simply use the int value
-    prop.globalIdx = getIntEntryValueMap(jsonMap, "global_idx");
+    prop.globalIdx = AudYoFloHelper.getIntEntryValueMap(jsonMap, "global_idx");
     if (prop.globalIdx < 0) {
       prop.last_error = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
       prop.cache_status.bitZSet(
@@ -107,7 +107,7 @@ class AudYoFloPropertyContentFromJson {
     }
 
     // Convert to string and map to enum
-    typeStr = extractStringFromJson(jsonMap, "category");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "category");
     if (typeStr != null) {
       prop.category = jvxPropertyCategoryTypeEEnum.fromInt(
           ref.translateEnumString(
@@ -119,7 +119,7 @@ class AudYoFloPropertyContentFromJson {
     }
 
     // Convert to string and map to enum
-    typeStr = extractStringFromJson(jsonMap, "decoder_type");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "decoder_type");
     if (typeStr != null) {
       prop.decoderHintType = jvxPropertyDecoderHintTypeEEnum.fromInt(
           ref.translateEnumString(
@@ -130,7 +130,7 @@ class AudYoFloPropertyContentFromJson {
           jvxPropertyCacheStatusFlagShifts.JVX_PROPERTY_DESCRIPTOR_ERROR.index);
     }
 
-    typeStr = extractStringFromJson(jsonMap, "access_type");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "access_type");
     if (typeStr != null) {
       prop.accessType = jvxPropertyAccessTypeEEnum.fromInt(
           ref.translateEnumString(
@@ -162,7 +162,7 @@ class AudYoFloPropertyContentFromJson {
         jvxState.JVX_STATE_ACTIVE |
         jvxState.JVX_STATE_PREPARED |
         jvxState.JVX_STATE_PROCESSING);
-    typeStr = extractStringFromJson(jsonMap, "allowed_smask");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "allowed_smask");
     if (typeStr != null) {
       var lst = extractTextToStrList(typeStr);
       prop.allowedStateMask.reset();
@@ -175,7 +175,7 @@ class AudYoFloPropertyContentFromJson {
 
     // Set the default to all threads if not specified
     prop.allowedThreadingMask.fld = fn.Int32(-1);
-    typeStr = extractStringFromJson(jsonMap, "thread_mask");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "thread_mask");
     if (typeStr != null) {
       prop.allowedThreadingMask.fromHexString(typeStr);
     } else {
@@ -184,7 +184,7 @@ class AudYoFloPropertyContentFromJson {
 
     // Property valid
     prop.isValid = false;
-    typeStr = extractStringFromJson(jsonMap, "valid");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "valid");
     if (typeStr != null) {
       prop.isValid = AudYoFloPropertyContentFromString.boolFromString(typeStr);
     } else {
@@ -192,7 +192,7 @@ class AudYoFloPropertyContentFromJson {
     }
 
     prop.installable = false;
-    typeStr = extractStringFromJson(jsonMap, "instable");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "instable");
     if (typeStr != null) {
       prop.installable =
           AudYoFloPropertyContentFromString.boolFromString(typeStr);
@@ -205,7 +205,7 @@ class AudYoFloPropertyContentFromJson {
     prop.reqInvalidateOnTest =
         jvxPropertyInvalidateTypeEnum.JVX_PROPERTY_INVALIDATE_INACTIVE;
 
-    typeStr = extractStringFromJson(jsonMap, "inval_sswitch");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "inval_sswitch");
     if (typeStr != null) {
       if (typeStr == '*') {
         prop.reqInvalidateOnStateSwitch =
@@ -219,7 +219,7 @@ class AudYoFloPropertyContentFromJson {
       controlOk = false;
     }
 
-    typeStr = extractStringFromJson(jsonMap, "inval_test");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "inval_test");
     if (typeStr != null) {
       if (typeStr == '*') {
         prop.reqInvalidateOnTest =
@@ -243,21 +243,21 @@ class AudYoFloPropertyContentFromJson {
 
     bool fullOk = true;
     // All strings
-    typeStr = extractStringFromJson(jsonMap, "descriptor");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "descriptor");
     if (typeStr != null) {
       prop.descriptor = typeStr;
     } else {
       fullOk = false;
     }
 
-    typeStr = extractStringFromJson(jsonMap, "description");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "description");
     if (typeStr != null) {
       prop.description = typeStr;
     } else {
       fullOk = false;
     }
 
-    typeStr = extractStringFromJson(jsonMap, "name");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "name");
     if (typeStr != null) {
       prop.name = typeStr;
     } else {
@@ -271,7 +271,7 @@ class AudYoFloPropertyContentFromJson {
     // ======================================================================
 
     bool fullpOk = true;
-    typeStr = extractStringFromJson(jsonMap, "acc_flags");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "acc_flags");
     if (typeStr != null) {
       int err = prop.accessFlags.fromHexString(typeStr);
       if (err != jvxErrorType.JVX_NO_ERROR) {
@@ -281,7 +281,7 @@ class AudYoFloPropertyContentFromJson {
       fullpOk = false;
     }
 
-    typeStr = extractStringFromJson(jsonMap, "cfg_flags");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "cfg_flags");
     if (typeStr != null) {
       resultParseInt32 ret32 = resultParseInt32();
       int err = prop.configFlags.fromHexString(typeStr);
@@ -296,7 +296,7 @@ class AudYoFloPropertyContentFromJson {
           (1 << jvxPropertyDescriptorEnum.JVX_PROPERTY_DESCRIPTOR_FULL_PLUS);
     }
     // Origin
-    typeStr = extractStringFromJson(jsonMap, "origin");
+    typeStr = AudYoFloHelper.extractStringFromJson(jsonMap, "origin");
     if (typeStr != null) {
       prop.origin = typeStr;
     }
@@ -360,7 +360,8 @@ class AudYoFloPropertyContentFromJson {
         case jvxDataFormatEnum.JVX_DATAFORMAT_STRING_LIST:
           if (prop is AudYoFloPropertyMultiStringBackend) {
             prop.entries.clear();
-            List? lst_fld = getListValueMap(newValues, 'property_fld');
+            List? lst_fld =
+                AudYoFloHelper.getListValueMap(newValues, 'property_fld');
             if (lst_fld != null) {
               prop.entries = lst_fld.cast<String>();
               errCode = jvxErrorType.JVX_NO_ERROR;
@@ -374,7 +375,8 @@ class AudYoFloPropertyContentFromJson {
 
         case jvxDataFormatEnum.JVX_DATAFORMAT_STRING:
           if (prop is AudYoFloPropertySingleStringBackend) {
-            String? txt = getStringEntryValueMap(newValues, 'property');
+            String? txt =
+                AudYoFloHelper.getStringEntryValueMap(newValues, 'property');
             if (txt != null) {
               prop.value = txt;
             } else {
@@ -390,12 +392,14 @@ class AudYoFloPropertyContentFromJson {
             AudYoFloPropertySelectionListBackend propSel =
                 prop as AudYoFloPropertySelectionListBackend;
             propSel.parpropms.entries.clear();
-            List? lst_fld = getListValueMap(newValues, 'property_fld');
+            List? lst_fld =
+                AudYoFloHelper.getListValueMap(newValues, 'property_fld');
             if (lst_fld != null) {
               // Update string list - if it was transferred
               propSel.parpropms.entries = lst_fld.cast<String>();
             }
-            String? txt = getStringEntryValueMap(newValues, 'property');
+            String? txt =
+                AudYoFloHelper.getStringEntryValueMap(newValues, 'property');
             if (txt != null) {
               List<String> lstFld = txt.split('::');
               if (lstFld.length == 4) {
@@ -422,7 +426,8 @@ class AudYoFloPropertyContentFromJson {
             AudYoFloPropertyValueInRangeBackend propVal =
                 prop as AudYoFloPropertyValueInRangeBackend;
 
-            String? txt = getStringEntryValueMap(newValues, 'property');
+            String? txt =
+                AudYoFloHelper.getStringEntryValueMap(newValues, 'property');
             if (txt != null) {
               List<String> lstFld = txt.split('::');
               if (lstFld.length == 3) {
@@ -607,7 +612,8 @@ class AudYoFloPropertyContentFromJson {
       AudYoFloBackendTranslator trans) {
     int errCode = jvxErrorType.JVX_NO_ERROR;
     // Get the content
-    String? base64Str = extractStringFromJson(newValues, 'property_fld');
+    String? base64Str =
+        AudYoFloHelper.extractStringFromJson(newValues, 'property_fld');
     if (base64Str != null) {
       // Coming as a base64 string
       var lst64 = base64Decode(base64Str);
@@ -632,10 +638,12 @@ class AudYoFloPropertyContentFromJson {
       }
       errCode = jvxErrorType.JVX_NO_ERROR;
     } else {
-      String? txt = getStringEntryValueMap(newValues, 'property');
+      String? txt =
+          AudYoFloHelper.getStringEntryValueMap(newValues, 'property');
       if (txt != null) {
-        int numElms = getIntEntryValueMap(newValues, 'number_elements');
-        int offs = getIntEntryValueMap(newValues, 'offset');
+        int numElms =
+            AudYoFloHelper.getIntEntryValueMap(newValues, 'number_elements');
+        int offs = AudYoFloHelper.getIntEntryValueMap(newValues, 'offset');
 
         if (numElms != fldSz) {
           errCode = jvxErrorType.JVX_ERROR_POSTPONE;

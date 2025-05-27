@@ -8,14 +8,15 @@ class AudYoFloDevicelistFromJson {
       AudYoFloBackendCacheBectrlIf theBeCache,
       AudYoFloBackendTranslator trans) {
     int retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
-    String? errCodeExprPtr = getStringEntryValueMap(jsonMap, 'return_code');
+    String? errCodeExprPtr =
+        AudYoFloHelper.getStringEntryValueMap(jsonMap, 'return_code');
     if (errCodeExprPtr != null) {
       // Convert error code
       String errCodeExpr = errCodeExprPtr;
       retVal = jvxErrorTypeEInt.fromStringSingle(errCodeExpr);
     }
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
-      var subSec = getMapValueList(jsonMap, 'devices');
+      var subSec = AudYoFloHelper.getMapValueList(jsonMap, 'devices');
       if (subSec != null) {
         List<AudYoFloOneDeviceSelectionOption> devices = [];
         int idx = 0;
@@ -26,13 +27,14 @@ class AudYoFloDevicelistFromJson {
           newDevice.optionIdx = idx;
           idx++;
 
-          String? tmp = extractStringFromJson(elmD, 'description');
+          String? tmp =
+              AudYoFloHelper.extractStringFromJson(elmD, 'description');
           if (tmp != null) {
             newDevice.description = tmp;
             tmp = null;
           }
 
-          tmp = extractStringFromJson(elmD, 'descriptor');
+          tmp = AudYoFloHelper.extractStringFromJson(elmD, 'descriptor');
           if (tmp != null) {
             newDevice.descriptor = tmp;
             tmp = null;
@@ -43,7 +45,7 @@ class AudYoFloDevicelistFromJson {
           newDevice.devIdent.slotid = cpId.slotid;
           newDevice.devIdent.slotsubid = -1;
 
-          tmp = extractStringFromJson(elmD, 'state');
+          tmp = AudYoFloHelper.extractStringFromJson(elmD, 'state');
           if (tmp != null) {
             newDevice.state.fld = fn.Int32(
                 AudYoFloStringTranslator.translateEnumString(
@@ -51,10 +53,10 @@ class AudYoFloDevicelistFromJson {
             tmp = null;
           }
 
-          var subSubSec = getMapValueMap(elmD, 'device_caps');
+          var subSubSec = AudYoFloHelper.getMapValueMap(elmD, 'device_caps');
           if (subSubSec != null) {
             newDevice.selectable = false;
-            tmp = extractStringFromJson(subSubSec, 'sel');
+            tmp = AudYoFloHelper.extractStringFromJson(subSubSec, 'sel');
             if (tmp != null) {
               if (tmp == '*') {
                 newDevice.selectable = true;
@@ -63,7 +65,7 @@ class AudYoFloDevicelistFromJson {
             }
 
             newDevice.proxy = false;
-            tmp = extractStringFromJson(subSubSec, 'proxy');
+            tmp = AudYoFloHelper.extractStringFromJson(subSubSec, 'proxy');
             if (tmp != null) {
               if (tmp == '*') {
                 newDevice.proxy = true;
@@ -73,7 +75,7 @@ class AudYoFloDevicelistFromJson {
 
             newDevice.flow =
                 jvxDeviceDataFlowTypeEnum.JVX_DEVICE_DATAFLOW_UNKNOWN;
-            tmp = extractStringFromJson(subSubSec, 'flow_type');
+            tmp = AudYoFloHelper.extractStringFromJson(subSubSec, 'flow_type');
             if (tmp != null) {
               newDevice.flow = jvxDeviceDataFlowTypeEEnum.fromInt(
                   AudYoFloStringTranslator.translateEnumString(
@@ -82,7 +84,7 @@ class AudYoFloDevicelistFromJson {
             }
 
             newDevice.caps.fld = fn.Int32(0);
-            tmp = extractStringFromJson(subSubSec, 'caps');
+            tmp = AudYoFloHelper.extractStringFromJson(subSubSec, 'caps');
             if (tmp != null) {
               newDevice.caps.fld = fn.Int32(
                   AudYoFloStringTranslator.translateEnumString(
@@ -90,14 +92,15 @@ class AudYoFloDevicelistFromJson {
               tmp = null;
             }
 
-            tmp = extractStringFromJson(subSubSec, 'flags');
+            tmp = AudYoFloHelper.extractStringFromJson(subSubSec, 'flags');
             if (tmp != null) {
               resultParseInt32 res = resultParseInt32();
-              newDevice.flags.fld = fn.Int32(hexStringToFnInt32(res, tmp));
+              newDevice.flags.fld =
+                  fn.Int32(AudYoFloHelper.hexStringToFnInt32(res, tmp));
               tmp = null;
             }
 
-            var elmSSId = getMapValueList(elmD, 'slots');
+            var elmSSId = AudYoFloHelper.getMapValueList(elmD, 'slots');
             if (elmSSId != null) {
               if (elmSSId.isNotEmpty) {
                 if (elmSSId[0] is int) {

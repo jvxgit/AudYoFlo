@@ -721,16 +721,16 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
           String retText = await transferTextCommand(cmd, true);
           Map valueMap = json.decode(retText);
 
-          String? errStr = getStringEntryValueMap(valueMap, 'return_code');
+          String? errStr = AudYoFloHelper.getStringEntryValueMap(valueMap, 'return_code');
           if (errStr != null) {
             errCode = jvxErrorTypeEInt.fromStringSingle(errStr);
           }
 
-          Map? subSec = getMapValueMap(valueMap, 'properties');
+          Map? subSec = AudYoFloHelper.getMapValueMap(valueMap, 'properties');
           if (subSec != null) {
             // Multiple fields returned
             for (var elmS in propDescrLst) {
-              Map? subSubSec = getMapValueMap(subSec, elmS);
+              Map? subSubSec = AudYoFloHelper.getMapValueMap(subSec, elmS);
               if (subSubSec != null) {
                 // Update the field here!
                 AudYoFloPropertyContainer? propUpdate =
@@ -871,17 +871,17 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
 
           errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
           String? errCodeExprPtr =
-              getStringEntryValueMap(valueMap, 'return_code');
+              AudYoFloHelper.getStringEntryValueMap(valueMap, 'return_code');
           if (errCodeExprPtr != null) {
             // Convert error code
             String errCodeExpr = errCodeExprPtr;
             errCode = jvxErrorTypeEInt.fromStringSingle(errCodeExpr);
           }
 
-          Map? subSec = getMapValueMap(valueMap, 'properties');
+          Map? subSec = AudYoFloHelper.getMapValueMap(valueMap, 'properties');
           if (subSec != null) {
             for (var elmS in propDescrLst) {
-              Map? subSubSec = getMapValueMap(subSec, elmS);
+              Map? subSubSec = AudYoFloHelper.getMapValueMap(subSec, elmS);
               if (subSubSec == null) {
                 assert(false);
               } else {
@@ -1251,14 +1251,14 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
 
         errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
         String? errCodeExprPtr =
-            getStringEntryValueMap(valueMap, 'return_code');
+            AudYoFloHelper.getStringEntryValueMap(valueMap, 'return_code');
         if (errCodeExprPtr != null) {
           // Convert error code
           String errCodeExpr = errCodeExprPtr;
           errCode = jvxErrorTypeEInt.fromStringSingle(errCodeExpr);
         }
         if (errCode == jvxErrorType.JVX_NO_ERROR) {
-          List? subSec = getMapValueList(valueMap, 'properties');
+          List? subSec = AudYoFloHelper.getMapValueList(valueMap, 'properties');
           if (subSec != null) {
             List<String> lstProps = [];
             for (var elmS in subSec) lstProps.add(elmS);
@@ -1427,10 +1427,9 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
           ss_list sslistRef = sslistPtr.ref;
           Int32List? lst;
           if (sslistRef.slots != nullptr) {
-            lst = sslistRef.slots.asTypedList(sslistRef.num);            
+            lst = sslistRef.slots.asTypedList(sslistRef.num);
           }
           if (sslistRef.subslots != nullptr) {
-            
             lst = sslistRef.subslots.asTypedList(sslistRef.num);
           }
           if (lst != null) {
@@ -1610,7 +1609,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
           var elm = devLst
               .firstWhereOrNull((element) => element.description == compName);
           if (elm == null) {
-            dbgPrint('Unable to activate device with ident <$compName>.');
+            AudYoFloHelper.dbgPrint('Unable to activate device with ident <$compName>.');
           } else {
             triggerActivateComponent(cpId, elm.optionIdx, true);
           }
@@ -1643,7 +1642,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
         await triggerSetProperties(cpId, [propId]);
       }
     } else {
-      dbgPrint('Failed to access property <$propId>');
+      AudYoFloHelper.dbgPrint('Failed to access property <$propId>');
     }
     return res;
   }
@@ -1661,7 +1660,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
       var res = await theBeCacheNative
           .triggerUpdatePropertiesComponent(cpId, [propAutoStart, propId]);
       if (res != jvxErrorType.JVX_NO_ERROR) {
-        dbgPrint('Error in <runOnConfigure>.');
+        AudYoFloHelper.dbgPrint('Error in <runOnConfigure>.');
       }
       props = theBeCacheNative
           .referenceValidPropertiesComponents(cpId, [propAutoStart, propId]);
@@ -1679,10 +1678,9 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
         if (propFrontToken is AudYoFloPropertySingleStringBackend) {
           String tok = propFrontToken.value;
           theBeCacheNative.setFrontendConfigureToken(tok);
-          dbgPrint('Received token <$tok>.');
+          AudYoFloHelper.dbgPrint('Received token <$tok>.');
         }
       }
     }
-  }  
+  }
 }
-

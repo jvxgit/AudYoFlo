@@ -309,8 +309,8 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
       retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
-      String? errCodeExprPtr =
-          getStringEntryValueMap(urlRequest.jsonMap, 'return_code');
+      String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+          urlRequest.jsonMap, 'return_code');
       if (errCodeExprPtr != null) {
         // Convert error code
         String errCodeExpr = errCodeExprPtr;
@@ -335,8 +335,8 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
       retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
-      String? errCodeExprPtr =
-          getStringEntryValueMap(urlRequest.jsonMap, 'return_code');
+      String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+          urlRequest.jsonMap, 'return_code');
       if (errCodeExprPtr != null) {
         // Convert error code
         String errCodeExpr = errCodeExprPtr;
@@ -374,8 +374,8 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
       retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
-      String? errCodeExprPtr =
-          getStringEntryValueMap(urlRequest.jsonMap, 'return_code');
+      String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+          urlRequest.jsonMap, 'return_code');
       if (errCodeExprPtr != null) {
         // Convert error code
         String errCodeExpr = errCodeExprPtr;
@@ -590,8 +590,8 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
       retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
-      String? errCodeExprPtr =
-          getStringEntryValueMap(urlRequest.jsonMap, 'return_code');
+      String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+          urlRequest.jsonMap, 'return_code');
       if (errCodeExprPtr != null) {
         // Convert error code
         String errCodeExpr = errCodeExprPtr;
@@ -624,25 +624,29 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     errCode = await webRequestHttpGet(url, urlRequest);
     latestError = urlRequest.lastError;
     if (errCode == jvxErrorType.JVX_NO_ERROR) {
-      var lstOptions = getListValueMap(urlRequest.jsonMap, 'options');
+      var lstOptions =
+          AudYoFloHelper.getListValueMap(urlRequest.jsonMap, 'options');
       if (lstOptions != null) {
         for (var oneOption in lstOptions) {
           bool foundHere = false;
-          var subslotlst = getListValueMap(oneOption, 'subslots');
+          var subslotlst =
+              AudYoFloHelper.getListValueMap(oneOption, 'subslots');
           if (subslotlst != null) {
             for (var oneslotsubid in subslotlst) {
               if (oneslotsubid == cpId.slotsubid) {
-                retVal = extractStringFromJson(oneOption, 'description');
+                retVal = AudYoFloHelper.extractStringFromJson(
+                    oneOption, 'description');
                 foundHere = true;
                 break;
               }
             }
           } else {
-            var slotlst = getListValueMap(oneOption, 'slots');
+            var slotlst = AudYoFloHelper.getListValueMap(oneOption, 'slots');
             if (slotlst != null) {
               for (var oneslotid in slotlst) {
                 if (oneslotid == cpId.slotid) {
-                  retVal = extractStringFromJson(oneOption, 'description');
+                  retVal = AudYoFloHelper.extractStringFromJson(
+                      oneOption, 'description');
                   foundHere = true;
                   break;
                 }
@@ -682,12 +686,12 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     latestError = urlRequest.lastError;
 
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
-      var secConnections =
-          getMapValueList(urlRequest.jsonMap, 'connection_processes');
+      var secConnections = AudYoFloHelper.getMapValueList(
+          urlRequest.jsonMap, 'connection_processes');
       if (secConnections != null) {
         for (var elm in secConnections) {
           Map<String, dynamic> mp = elm;
-          int uid = getIntEntryValueMap(mp, 'uid');
+          int uid = AudYoFloHelper.getIntEntryValueMap(mp, 'uid');
           AudYoFloOneConnectedProcessWeb newProcess =
               AudYoFloOneConnectedProcessWeb(uid, this, report!);
           createPendingProcessFromJson(newProcess, elm);
@@ -761,10 +765,11 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     retVal = await webRequestHttpGet(url, urlRequest);
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
-      Map? subSec = getMapValueMap(urlRequest.jsonMap, 'properties');
+      Map? subSec =
+          AudYoFloHelper.getMapValueMap(urlRequest.jsonMap, 'properties');
       if (subSec != null) {
         for (var elmS in propDescrLst) {
-          Map? subSubSec = getMapValueMap(subSec, elmS);
+          Map? subSubSec = AudYoFloHelper.getMapValueMap(subSec, elmS);
           if (subSubSec == null) {
             // Property was not returned in message - would this really happen?
           } else {
@@ -823,10 +828,11 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     retVal = await webRequestHttpGet(url, urlRequest);
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
-      Map? subSec = getMapValueMap(urlRequest.jsonMap, 'properties');
+      Map? subSec =
+          AudYoFloHelper.getMapValueMap(urlRequest.jsonMap, 'properties');
       if (subSec != null) {
         for (var elmS in propDescrLst) {
-          Map? subSubSec = getMapValueMap(subSec, elmS);
+          Map? subSubSec = AudYoFloHelper.getMapValueMap(subSec, elmS);
           if (subSubSec == null) {
             // This case happens if the property does not exist!
             // We will not add the property to the list.
@@ -1026,12 +1032,14 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     retVal = await webRequestHttpPost(url, multParam, urlRequest);
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
-      var returnedProps = getMapValueList(urlRequest.jsonMap, 'properties');
+      var returnedProps =
+          AudYoFloHelper.getMapValueList(urlRequest.jsonMap, 'properties');
       if (returnedProps != null) {
         for (var elmP in returnedProps) {
-          String? descriptor = extractStringFromJson(elmP, 'descriptor');
-          String? errCodeExprPtr =
-              getStringEntryValueMap(urlRequest.jsonMap, 'return_code');
+          String? descriptor =
+              AudYoFloHelper.extractStringFromJson(elmP, 'descriptor');
+          String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+              urlRequest.jsonMap, 'return_code');
           if ((descriptor != null) && (errCodeExprPtr != null)) {
             bool sucSet = false;
             // Convert error code
@@ -1113,15 +1121,16 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     latestError = urlRequest.lastError;
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
       retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
-      String? errCodeExprPtr =
-          getStringEntryValueMap(urlRequest.jsonMap, 'return_code');
+      String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+          urlRequest.jsonMap, 'return_code');
       if (errCodeExprPtr != null) {
         // Convert error code
         String errCodeExpr = errCodeExprPtr;
         retVal = jvxErrorTypeEInt.fromStringSingle(errCodeExpr);
       }
       if (retVal == jvxErrorType.JVX_NO_ERROR) {
-        var subSec = getMapValueList(urlRequest.jsonMap, 'properties');
+        var subSec =
+            AudYoFloHelper.getMapValueList(urlRequest.jsonMap, 'properties');
         List<String> lstProps = [];
         if (subSec != null) {
           for (var elmS in subSec) {
@@ -1280,7 +1289,7 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
         await triggerSetProperties(cpId, [propId]);
       }
     } else {
-      dbgPrint('Failed to access property <$propId>');
+      AudYoFloHelper.dbgPrint('Failed to access property <$propId>');
     }
     return res;
   }
@@ -1298,7 +1307,7 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
       var res = await theBeCache!
           .triggerUpdatePropertiesComponent(cpId, [propAutoStart, propId]);
       if (res != jvxErrorType.JVX_NO_ERROR) {
-        dbgPrint('Error in <runOnConfigure>.');
+        AudYoFloHelper.dbgPrint('Error in <runOnConfigure>.');
       }
       props = theBeCache!
           .referenceValidPropertiesComponents(cpId, [propAutoStart, propId]);
@@ -1319,7 +1328,7 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
         if (propFrontToken is AudYoFloPropertySingleStringBackend) {
           String tok = propFrontToken.value;
           theBeCache!.setFrontendConfigureToken(tok);
-          dbgPrint('Received token <$tok>.');
+          AudYoFloHelper.dbgPrint('Received token <$tok>.');
         }
       }
     }

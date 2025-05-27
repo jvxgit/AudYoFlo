@@ -561,12 +561,13 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
           // theBeAdapter.triggerActivateComponent(cpId, id, select)
           // cpId
 
-          dbgPrint('Tracked request to switch state');
+          AudYoFloHelper.dbgPrint('Tracked request to switch state');
         }
 
         break;
       default:
-      dbgPrint('Uncaught command request: <${reqCom.toString()}, no action taken.>'); 
+        AudYoFloHelper.dbgPrint(
+            'Uncaught command request: <${reqCom.toString()}, no action taken.>');
     }
   }
 

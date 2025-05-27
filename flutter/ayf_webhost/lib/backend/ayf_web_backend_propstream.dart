@@ -168,7 +168,7 @@ class AudYoFloWebPropertyStream {
         // We might check that all properties have been moved from the one to the other list!!
         propDescriptionListOnInit.clear();
       } else {
-        dbgPrint("Binary Socket Connection failed!");
+        AudYoFloHelper.dbgPrint("Binary Socket Connection failed!");
       }
     }
     return jvxErrorType.JVX_NO_ERROR;

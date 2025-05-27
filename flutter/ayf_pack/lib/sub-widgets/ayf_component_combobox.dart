@@ -62,7 +62,7 @@ class AudYoFloComponentSelectionOption extends StatelessWidget {
                 (AudYoFloOneComponentSelectionOption value) {
           Widget? elementWidget;
           if (value.sids.length > 0) {
-            String slots = intValueList2String(value.sids);
+            String slots = AudYoFloHelper.intValueList2String(value.sids);
             elementWidget = Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -133,7 +133,8 @@ class _AudYoFloComponentSelectionComboBox
           Future<int> triggerSelectionOptionList(
               JvxComponentIdentification tp) async {
             int errCode = jvxErrorType.JVX_NO_ERROR;
-            pContent = await checkAndUpdateComponentOptions(theBeCache, tp);
+            pContent = await AudYoFloHelper.checkAndUpdateComponentOptions(
+                theBeCache, tp);
             return errCode;
           }
 

@@ -14,6 +14,9 @@ class AudYoFloSimpleTextField extends StatefulWidget {
   final double height;
   final int numCharsMax = 32;
   final String hintText;
+  final int idx;
+  final TextAlign tAlign;
+  final List<AudYoFloOneAreaTextInOut> lstAreasToken;
   AudYoFloSimpleTextField(
       {this.propBe,
       this.propLo,
@@ -21,7 +24,10 @@ class AudYoFloSimpleTextField extends StatefulWidget {
           AyfPropertyReportLevel.AYF_BACKEND_REPORT_COMPONENT_PROPERTY_COLLECT,
       this.invalidatePropOnSet = true,
       this.height = 45,
-      this.hintText = ''});
+      this.hintText = '',
+      this.idx = -1,
+      this.tAlign = TextAlign.start,
+      this.lstAreasToken = const []});
   @override
   State<StatefulWidget> createState() {
     return _AudYoFloSimpleTextFieldStates();
@@ -45,7 +51,29 @@ class _AudYoFloSimpleTextFieldStates extends State<AudYoFloSimpleTextField> {
     String textOnCreate = 'not-set';
     if (widget.propBe != null) {
       // Backend property
-      textOnCreate = widget.propBe.toString();
+      String showSingle = '';
+      bool validSingle = false;
+      if (widget.idx >= 0) {
+        if (widget.propBe is AudYoFloPropertyMultiContentBackend) {
+          AudYoFloPropertyMultiContentBackend data =
+              widget.propBe as AudYoFloPropertyMultiContentBackend;
+          if (widget.idx < data.fldSz) {
+            var singleValue = data.fld[widget.idx];
+            showSingle = singleValue.toString();
+            for (var elm in widget.lstAreasToken) {
+              if ((singleValue >= elm.minVal) && (singleValue <= elm.maxVal)) {
+                showSingle = elm.textReplace;
+              }
+            }
+            validSingle = true;
+          }
+        }
+      }
+      if (validSingle) {
+        textOnCreate = showSingle;
+      } else {
+        textOnCreate = widget.propBe.toString();
+      }
     } else if (widget.propLo != null) {
       // local frontend property
       textOnCreate = widget.propLo.toString();
@@ -53,7 +81,7 @@ class _AudYoFloSimpleTextFieldStates extends State<AudYoFloSimpleTextField> {
       // No property
     }
 
-    textOnCreate = limitString(textOnCreate, widget.numCharsMax);
+    textOnCreate = AudYoFloHelper.limitString(textOnCreate, widget.numCharsMax);
 
     _controllerIn.value = TextEditingValue(
         text: textOnCreate,
@@ -75,6 +103,7 @@ class _AudYoFloSimpleTextFieldStates extends State<AudYoFloSimpleTextField> {
           keyboardType: TextInputType.text,
           maxLines: 1,
           minLines: 1,
+          textAlign: widget.tAlign,
           decoration: InputDecoration(
             // Here I have tested a lot. If the text is too wide, it disappears!
             // We can avoid this by re-defining the default EdgeInsets. We need the left border inset however, to look nice.
@@ -103,15 +132,30 @@ class _AudYoFloSimpleTextFieldStates extends State<AudYoFloSimpleTextField> {
                         (propStr.decoderHintType ==
                             jvxPropertyDecoderHintTypeEnum
                                 .JVX_PROPERTY_DECODER_FILENAME_SAVE)) {
-                      propStr.value = propertyStringBackSlashes(propStr.value);
+                      propStr.value = AudYoFloHelper.propertyStringBackSlashes(
+                          propStr.value);
                     }
                     triggerSet = true;
                   } else if (widget.propBe
                       is AudYoFloPropertyMultiContentBackend) {
                     AudYoFloPropertyMultiContentBackend propM =
                         widget.propBe as AudYoFloPropertyMultiContentBackend;
-                    bool suc =
-                        propertyValueMultiFromString(propM, _controllerIn.text);
+
+                    bool validSingle = false;
+                    int offset = 0;
+                    int num = -1;
+                    if (widget.idx >= 0) {
+                      if (widget.idx < propM.fldSz) {
+                        validSingle = true;
+                        offset = widget.idx;
+                        num = 1;
+                      }
+                    }
+                    bool suc = AudYoFloHelper.propertyValueMultiFromString(
+                        propM, _controllerIn.text,
+                        offset: offset,
+                        num: num,
+                        lstText: widget.lstAreasToken);
                     if (suc == true) {
                       triggerSet = true;
                     }

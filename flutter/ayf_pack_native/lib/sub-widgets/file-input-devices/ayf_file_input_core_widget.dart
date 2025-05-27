@@ -155,7 +155,7 @@ class _AudYoFloFileInputCoreWidgetNativeState
           ),
         ),
         onLongPress: () async {
-          dbgPrint('Drop Target - Long Press');
+          AudYoFloHelper.dbgPrint('Drop Target - Long Press');
           // We can also open a file dialog here!!
 
           var root = findRoot(Directory.current);
@@ -169,7 +169,7 @@ class _AudYoFloFileInputCoreWidgetNativeState
           }
         },
         onDoubleTap: () async {
-          dbgPrint('Drop Target - Long Press');
+          AudYoFloHelper.dbgPrint('Drop Target - Long Press');
           // We can also open a file dialog here!!
           var root = findRoot(Directory.current);
           if (propsLocal != null) {
@@ -260,7 +260,7 @@ class _AudYoFloFileInputCoreWidgetNativeState
       if (result != null) {
         String token = result;
         folderLastTime = dirname(result);
-        dbgPrint('Picked file <$token>');
+        AudYoFloHelper.dbgPrint('Picked file <$token>');
         List<String> props = [propName];
         propsLocal.value = token;
         if (theBeCache != null) {

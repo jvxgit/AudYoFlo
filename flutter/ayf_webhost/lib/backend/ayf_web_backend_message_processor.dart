@@ -13,13 +13,13 @@ class AudYoFloOneConnectedProcessWeb extends AudYoFloOneConnectedProcess {
       : super(uId);
   void fill(dynamic arg) {
     Map<String, dynamic> elm = arg as Map<String, dynamic>;
-    String? descrStr = extractStringFromJson(elm, 'descriptor');
+    String? descrStr = AudYoFloHelper.extractStringFromJson(elm, 'descriptor');
     // String? isfromruleStr = extractStringFromJson(elm, 'is_from_rule');
     // String? statusStr = extractStringFromJson(elm, 'status');
     // String? lasttestStr  = extractStringFromJson(elm, 'last_test');
     //String? readyStr = extractStringFromJson(elm, 'ready');
-    var processDetails = getMapValueMap(elm, 'process_path');
-    catId = getIntEntryValueMap(elm, 'category_id');
+    var processDetails = AudYoFloHelper.getMapValueMap(elm, 'process_path');
+    catId = AudYoFloHelper.getIntEntryValueMap(elm, 'category_id');
     if (descrStr != null) {
       nameProcess = descrStr!;
     }
@@ -40,13 +40,13 @@ class AudYoFloOneComponentInProcessWeb extends AudYoFloOneComponentInProcess {
     Map<dynamic, dynamic> jsonMap = arg as Map<dynamic, dynamic>;
 
     String? cpIdStr =
-        extractStringFromJson(jsonMap, 'component_identification');
-    int uid = getIntEntryValueMap(jsonMap, 'uid');
+        AudYoFloHelper.extractStringFromJson(jsonMap, 'component_identification');
+    int uid = AudYoFloHelper.getIntEntryValueMap(jsonMap, 'uid');
     String? modNameStr =
-        extractStringFromJson(jsonMap, 'component_identification');
-    String? cpNameStr = extractStringFromJson(jsonMap, 'description');
-    String? connNmStr = extractStringFromJson(jsonMap, 'context');
-    var nextMap = getMapValueList(jsonMap, 'next');
+        AudYoFloHelper.extractStringFromJson(jsonMap, 'component_identification');
+    String? cpNameStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'description');
+    String? connNmStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'context');
+    var nextMap = AudYoFloHelper.getMapValueList(jsonMap, 'next');
 
     if ((cpIdStr != null) &&
         (modNameStr != null) &&
@@ -115,17 +115,17 @@ mixin AudYoFloWebStateProcessor {
       // This is the processing of the initial connection interaction
       case jvxWebHostConnectionState.JVX_CONECTION_NONE:
         int errCode = jvxErrorType.JVX_NO_ERROR;
-        String? typeStr = extractStringFromJson(jsonResponse, "return_code");
+        String? typeStr = AudYoFloHelper.extractStringFromJson(jsonResponse, "return_code");
         if (typeStr != null) {
           errCode = jvxErrorTypeEInt.fromStringSingle(typeStr);
           if (errCode == jvxErrorType.JVX_NO_ERROR) {
-            var subMap = getMapValueMap(jsonResponse, "version");
+            var subMap = AudYoFloHelper.getMapValueMap(jsonResponse, "version");
             if (subMap != null) {
-              var me_tag = extractStringFromJson(subMap, 'me_tag');
-              var git_tag = extractStringFromJson(subMap, 'git_tag');
-              var date_tag = extractStringFromJson(subMap, 'date_tag');
-              var num32BitField = extractStringFromJson(subMap, 'num32BitFld');
-              var dtTp = extractStringFromJson(subMap, 'dtTp');
+              var me_tag = AudYoFloHelper.extractStringFromJson(subMap, 'me_tag');
+              var git_tag = AudYoFloHelper.extractStringFromJson(subMap, 'git_tag');
+              var date_tag = AudYoFloHelper.extractStringFromJson(subMap, 'date_tag');
+              var num32BitField = AudYoFloHelper.extractStringFromJson(subMap, 'num32BitFld');
+              var dtTp = AudYoFloHelper.extractStringFromJson(subMap, 'dtTp');
               if (me_tag != null) {
                 if (me_tag == 'jvx-rt-750619') {
                   if ((num32BitField != null) && (dtTp != null)) {
@@ -157,12 +157,12 @@ mixin AudYoFloWebStateProcessor {
         // ==============================================================
 
         int errCode = jvxErrorType.JVX_NO_ERROR;
-        String? typeStr = extractStringFromJson(jsonResponse, "return_code");
+        String? typeStr = AudYoFloHelper.extractStringFromJson(jsonResponse, "return_code");
         if (typeStr != null) {
           errCode = jvxErrorTypeEInt.fromStringSingle(typeStr);
         }
         if (extrRet != null) {
-          typeStr = extractStringFromJson(jsonResponse, "call_context");
+          typeStr = AudYoFloHelper.extractStringFromJson(jsonResponse, "call_context");
           if (typeStr != null) {
             extrRet.ctxt = typeStr;
           }
@@ -173,19 +173,19 @@ mixin AudYoFloWebStateProcessor {
         // Extract system status information
         // ==============================================================
 
-        var secSystem = getMapValueMap(jsonResponse, 'system');
+        var secSystem = AudYoFloHelper.getMapValueMap(jsonResponse, 'system');
         if (secSystem != null) {
           // ===================================================================
           // Scan the involved components
           // ===================================================================
 
-          var secComponents = getListValueMap(secSystem, 'components');
+          var secComponents = AudYoFloHelper.getListValueMap(secSystem, 'components');
           if (secComponents != null) {
             // Build up component type class list at first
             for (var elm in secComponents) {
-              var cpTpStr = extractStringFromJson(elm, 'component_type');
+              var cpTpStr = AudYoFloHelper.extractStringFromJson(elm, 'component_type');
               var cpTpClassStr =
-                  extractStringFromJson(elm, 'component_type_class');
+                  AudYoFloHelper.extractStringFromJson(elm, 'component_type_class');
               if ((cpTpStr != null) && (cpTpClassStr != null)) {
                 JvxComponentTypeEnum cpTp =
                     helper!.translateStringComponentType(cpTpStr);
@@ -197,11 +197,11 @@ mixin AudYoFloWebStateProcessor {
 
             // Find the active components
             for (var elm in secComponents) {
-              var cpTpStr = extractStringFromJson(elm, 'component_type');
+              var cpTpStr = AudYoFloHelper.extractStringFromJson(elm, 'component_type');
               if (cpTpStr != null) {
                 JvxComponentTypeEnum cpTp =
                     helper!.translateStringComponentType(cpTpStr);
-                var secActive = getListValueMap(elm, 'active_components');
+                var secActive = AudYoFloHelper.getListValueMap(elm, 'active_components');
                 int slotId = 0;
                 if (secActive != null) {
                   for (var elmA in secActive) {
@@ -211,7 +211,7 @@ mixin AudYoFloWebStateProcessor {
                     if (cpCls ==
                         jvxComponentTypeClassEnum
                             .JVX_COMPONENT_TYPE_TECHNOLOGY) {
-                      var secDevices = getListValueMap(elmA, 'devices');
+                      var secDevices = AudYoFloHelper.getListValueMap(elmA, 'devices');
                       if (secDevices != null) {
                         for (var elmD in secDevices) {
                           reportOneComponent(elmD);
@@ -226,7 +226,7 @@ mixin AudYoFloWebStateProcessor {
 
           // =============================================================
           // =============================================================
-          var secSequencer = getListValueMap(secSystem, 'sequencer');
+          var secSequencer = AudYoFloHelper.getListValueMap(secSystem, 'sequencer');
           if (secSequencer != null) {
             for (var elm in secSequencer) {
               Map<String, dynamic> mp = elm;
@@ -242,11 +242,11 @@ mixin AudYoFloWebStateProcessor {
           // =============================================================
           // =============================================================
           var secConnections =
-              getListValueMap(secSystem, 'connection_processes');
+              AudYoFloHelper.getListValueMap(secSystem, 'connection_processes');
           if (secConnections != null) {
             for (var elm in secConnections) {
               Map<String, dynamic> mp = elm;
-              int uid = getIntEntryValueMap(mp, 'uid');
+              int uid = AudYoFloHelper.getIntEntryValueMap(mp, 'uid');
               AudYoFloOneConnectedProcessWeb newProcess =
                   AudYoFloOneConnectedProcessWeb(uid, helper!, report!);
               createPendingProcessFromJson(newProcess, elm);
@@ -256,19 +256,19 @@ mixin AudYoFloWebStateProcessor {
         break;
       case jvxWebHostConnectionState.JVX_CONECTION_WEBSOCKET_ON:
         if (tp == jvxWebHostOperationResponseType.JVX_MESSAGE_WEBSOCKET) {
-          var reqStr = extractStringFromJson(jsonResponse, "req");
+          var reqStr = AudYoFloHelper.extractStringFromJson(jsonResponse, "req");
           if (reqStr != null) {
             // This message is a command request message!!
             jvxReportCommandRequestEnum reqTp = jvxReportCommandRequestEEnum
                 .fromInt(parentRef!.translateEnumString(
                     reqStr, "jvxReportCommandRequest", flags));
-            var typeStr = extractStringFromJson(jsonResponse, "type");
-            var mapOrigin = getMapValueMap(jsonResponse, "origin");
-            var mapSpecific = getMapValueMap(jsonResponse, "specific");
+            var typeStr = AudYoFloHelper.extractStringFromJson(jsonResponse, "type");
+            var mapOrigin = AudYoFloHelper.getMapValueMap(jsonResponse, "origin");
+            var mapSpecific = AudYoFloHelper.getMapValueMap(jsonResponse, "specific");
             if ((typeStr != null) && (mapOrigin != null)) {
               var cpIdStr =
-                  extractStringFromJson(mapOrigin, "component_identification");
-              var uidCp = getIntEntryValueMap(mapOrigin, "uid");
+                  AudYoFloHelper.extractStringFromJson(mapOrigin, "component_identification");
+              var uidCp = AudYoFloHelper.getIntEntryValueMap(mapOrigin, "uid");
 
               if (cpIdStr != null) {
                 String? identStr;
@@ -288,7 +288,7 @@ mixin AudYoFloWebStateProcessor {
                   switch (reqDtTp) {
                     case jvxReportCommandDataTypeEnum
                           .JVX_REPORT_COMMAND_TYPE_IDENT:
-                      identStr = extractStringFromJson(mapSpecific, "ident");
+                      identStr = AudYoFloHelper.extractStringFromJson(mapSpecific, "ident");
                       if (identStr != null) {
                         ident = identStr;
                       }
@@ -296,13 +296,13 @@ mixin AudYoFloWebStateProcessor {
                       break;
                     case jvxReportCommandDataTypeEnum
                           .JVX_REPORT_COMMAND_TYPE_UID:
-                      uidRep = getIntEntryValueMap(mapSpecific, "uid");
+                      uidRep = AudYoFloHelper.getIntEntryValueMap(mapSpecific, "uid");
                       specTxt = "uId: $uidRep";
                       break;
                     case jvxReportCommandDataTypeEnum
                           .JVX_REPORT_COMMAND_TYPE_SS:
                       String? ssStr =
-                          extractStringFromJson(mapSpecific, "sswitch");
+                          AudYoFloHelper.extractStringFromJson(mapSpecific, "sswitch");
                       if (ssStr != null) {
                         ssTp = jvxStateSwitchEEnum.fromInt(parentRef!
                             .translateEnumString(
@@ -478,25 +478,25 @@ mixin AudYoFloWebStateProcessor {
                         jvxSequencerStatusEnum seqStat =
                             jvxSequencerStatusEnum.JVX_SEQUENCER_STATUS_NONE;
                         String? evDescrPtr =
-                            extractStringFromJson(mapSpecific, 'seqev-descr');
+                            AudYoFloHelper.extractStringFromJson(mapSpecific, 'seqev-descr');
                         String? seqQTypePtr =
-                            extractStringFromJson(mapSpecific, 'seqev-qtp');
+                            AudYoFloHelper.extractStringFromJson(mapSpecific, 'seqev-qtp');
                         String? seqETypePtr =
-                            extractStringFromJson(mapSpecific, 'seqev-etp');
+                            AudYoFloHelper.extractStringFromJson(mapSpecific, 'seqev-etp');
                         int stpId =
-                            getIntEntryValueMap(mapSpecific, 'seqev-stpid');
+                            AudYoFloHelper.getIntEntryValueMap(mapSpecific, 'seqev-stpid');
                         int seqId =
-                            getIntEntryValueMap(mapSpecific, 'seqev-seqid');
+                            AudYoFloHelper.getIntEntryValueMap(mapSpecific, 'seqev-seqid');
                         int stpFId =
-                            getIntEntryValueMap(mapSpecific, 'seqev-stpfid');
+                            AudYoFloHelper.getIntEntryValueMap(mapSpecific, 'seqev-stpfid');
                         String? fErrorPtr =
-                            extractStringFromJson(mapSpecific, 'seqev-ferror');
+                            AudYoFloHelper.extractStringFromJson(mapSpecific, 'seqev-ferror');
                         int seqEvStateId =
-                            getIntEntryValueMap(mapSpecific, 'seqev-state_id');
+                            AudYoFloHelper.getIntEntryValueMap(mapSpecific, 'seqev-state_id');
                         String? evMaskPtr =
-                            extractStringFromJson(mapSpecific, 'seqev-mask');
+                            AudYoFloHelper.extractStringFromJson(mapSpecific, 'seqev-mask');
                         String? seqStatePtr =
-                            extractStringFromJson(mapSpecific, 'seq-state');
+                            AudYoFloHelper.extractStringFromJson(mapSpecific, 'seq-state');
                         if ((evDescrPtr != null) &&
                             (seqQTypePtr != null) &&
                             (seqETypePtr != null) &&
@@ -570,7 +570,7 @@ mixin AudYoFloWebStateProcessor {
                           .JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS:
                       break;
                     default:
-                      dbgPrint(
+                      AudYoFloHelper.dbgPrint(
                           'Unmatched request type in function <>, request enum <${reqTp.toString()}>.');
                   }
                 }
@@ -598,10 +598,10 @@ mixin AudYoFloWebStateProcessor {
   }
 
   void reportOneComponent(Map<dynamic, dynamic> elm) {
-    var cpIdStr = extractStringFromJson(elm, 'component_identification');
-    var descrStr = extractStringFromJson(elm, 'description');
-    var stateStr = extractStringFromJson(elm, 'state');
-    var uidStr = extractStringFromJson(elm, 'uid');
+    var cpIdStr = AudYoFloHelper.extractStringFromJson(elm, 'component_identification');
+    var descrStr = AudYoFloHelper.extractStringFromJson(elm, 'description');
+    var stateStr = AudYoFloHelper.extractStringFromJson(elm, 'state');
+    var uidStr = AudYoFloHelper.extractStringFromJson(elm, 'uid');
     if ((cpIdStr != null) &&
         (descrStr != null) &&
         (stateStr != null) &&

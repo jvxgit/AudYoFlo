@@ -124,8 +124,8 @@ class AudYoFloDebugModel with ChangeNotifier {
   void setRegExpressionShow(JvxComponentIdentification cpId, String regExpr) {
     AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
     newElm.regExpr = regExpr;
-    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
-        regExprMap, cpId, newElm, (value) {
+    AudYoFloHelper.mapUpdateNoHash<JvxComponentIdentification,
+        AudYoFloAssociatedShowParams>(regExprMap, cpId, newElm, (value) {
       value.regExpr = regExpr;
       return value;
     });
@@ -153,8 +153,8 @@ class AudYoFloDebugModel with ChangeNotifier {
       newElm.propsRealtimeUpdate.add(descriptor);
     }
 
-    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
-        regExprMap, cpId, newElm, (value) {
+    AudYoFloHelper.mapUpdateNoHash<JvxComponentIdentification,
+        AudYoFloAssociatedShowParams>(regExprMap, cpId, newElm, (value) {
       var elmIn = value.propsRealtimeUpdate
           .firstWhereOrNull((element) => (element == descriptor));
       if (elmIn != null) {
@@ -186,8 +186,8 @@ class AudYoFloDebugModel with ChangeNotifier {
       JvxComponentIdentification cpId, String descriptor) {
     AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
 
-    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
-        regExprMap, cpId, newElm, (value) {
+    AudYoFloHelper.mapUpdateNoHash<JvxComponentIdentification,
+        AudYoFloAssociatedShowParams>(regExprMap, cpId, newElm, (value) {
       var elmIn = value.propsSelected
           .firstWhereOrNull((element) => (element == descriptor));
       if (elmIn != null) {
@@ -204,7 +204,8 @@ class AudYoFloDebugModel with ChangeNotifier {
   void setShowSelected(JvxComponentIdentification cpId, bool showSelect) {
     AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
     newElm.showSelected = showSelect;
-    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
+    AudYoFloHelper.mapUpdateNoHash<JvxComponentIdentification,
+        AudYoFloAssociatedShowParams>(
       regExprMap,
       cpId,
       newElm,
@@ -230,7 +231,8 @@ class AudYoFloDebugModel with ChangeNotifier {
   void setShowDescriptor(JvxComponentIdentification cpId, bool showDescriptor) {
     AudYoFloAssociatedShowParams newElm = AudYoFloAssociatedShowParams();
     newElm.showDescriptor = showDescriptor;
-    mapUpdateNoHash<JvxComponentIdentification, AudYoFloAssociatedShowParams>(
+    AudYoFloHelper.mapUpdateNoHash<JvxComponentIdentification,
+        AudYoFloAssociatedShowParams>(
       regExprMap,
       cpId,
       newElm,

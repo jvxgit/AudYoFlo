@@ -16,9 +16,7 @@ class AudYoFloPropertyContentFromString {
       Uint64List fld, int idx, String token) {
     int? valI = int.tryParse(token);
     if (valI == null) {
-    
-      if(token == "unselected")
-      {
+      if (token == "unselected") {
         valI = -1;
       }
     }
@@ -62,21 +60,21 @@ class AudYoFloPropertyContentFromString {
       jvxPropertyDecoderHintTypeEnum decHtTp, AudYoFloBackendTranslator trans) {
     int? valI = int.tryParse(token);
     valI ??= decodeTextDecoderTypes(token, decHtTp, trans);
-    
+
     if (valI != null) {
       fld[idx] = valI.toSigned(16);
       return jvxErrorType.JVX_NO_ERROR;
-    } 
+    }
     return jvxErrorType.JVX_ERROR_PARSE_ERROR;
   }
 
-  static int convertElementFldListUint16(
-      Uint16List fld, int idx, String token, jvxPropertyDecoderHintTypeEnum decTp, AudYoFloBackendTranslator trans) {
+  static int convertElementFldListUint16(Uint16List fld, int idx, String token,
+      jvxPropertyDecoderHintTypeEnum decTp, AudYoFloBackendTranslator trans) {
     int? valI = int.tryParse(token);
     valI ??= decodeTextDecoderTypes(token, decTp, trans);
 
     if (valI != null) {
-        fld[idx] = valI.toUnsigned(16);
+      fld[idx] = valI.toUnsigned(16);
       return jvxErrorType.JVX_NO_ERROR;
     }
     return jvxErrorType.JVX_ERROR_PARSE_ERROR;
@@ -171,9 +169,9 @@ class AudYoFloPropertyContentFromString {
     return false;
   }
 
-  static int? decodeTextDecoderTypes(String token, jvxPropertyDecoderHintTypeEnum decTp, AudYoFloBackendTranslator trans)
-{
-  int? valI;
+  static int? decodeTextDecoderTypes(String token,
+      jvxPropertyDecoderHintTypeEnum decTp, AudYoFloBackendTranslator trans) {
+    int? valI;
     switch (decTp) {
       case jvxPropertyDecoderHintTypeEnum.JVX_PROPERTY_DECODER_SIMPLE_ONOFF:
         if (token == "yes") {
@@ -183,14 +181,14 @@ class AudYoFloPropertyContentFromString {
         }
         break;
       case jvxPropertyDecoderHintTypeEnum.JVX_PROPERTY_DECODER_FORMAT_IDX:
-        valI = trans.translateEnumString(token, 'jvxDataFormat', trans.compileFlags() );
+        valI = trans.translateEnumString(
+            token, 'jvxDataFormat', trans.compileFlags());
         break;
       default:
-        dbgPrint(
+        AudYoFloHelper.dbgPrint(
             'Failed to decode text string <$token> for property of type <${decTp.toString()}');
         break;
     }
     return valI;
   }
-
 }

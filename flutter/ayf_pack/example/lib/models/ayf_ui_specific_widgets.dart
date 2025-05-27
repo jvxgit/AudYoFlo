@@ -80,7 +80,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
         'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
     String textAudioIoPri = 'ASIO I/O';
     if (cpTpPriTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpPriTech = widgetConfigCpId(
+      cpTpPriTech = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
@@ -90,7 +90,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     }
 
     if (cpTpPriDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpPriDev = widgetConfigCpId(
+      cpTpPriDev = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
@@ -127,7 +127,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
         'packages/ayf_pack/images/ayf_icons/ayf-audio-settings.png';
     String textAudioIoSec = 'WASAPI I/O';
     if (cpTpSecTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpSecTech = widgetConfigCpId(
+      cpTpSecTech = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
@@ -137,7 +137,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     }
 
     if (cpTpSecDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpSecDev = widgetConfigCpId(
+      cpTpSecDev = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_DEVICE,
@@ -176,7 +176,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     String textAudioIoHt = 'H-Tracker Rs232';
 
     if (cpTpHtPriTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpHtPriTech = widgetConfigCpId(
+      cpTpHtPriTech = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_TECHNOLOGY,
@@ -186,7 +186,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     }
 
     if (cpTpHtPriDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpHtPriDev = widgetConfigCpId(
+      cpTpHtPriDev = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_DEVICE,
@@ -220,7 +220,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     // ======================================================================
     textAudioIoHt = 'ART Tracker';
     if (cpTpHtSecTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpHtSecTech = widgetConfigCpId(
+      cpTpHtSecTech = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_TECHNOLOGY,
@@ -230,7 +230,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     }
 
     if (cpTpHtSecDev.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpHtSecDev = widgetConfigCpId(
+      cpTpHtSecDev = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_CUSTOM_DEVICE,
@@ -267,7 +267,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     String textFileIo = 'File Input';
 
     if (cpTpFIoTech.cpTp == JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {
-      cpTpFIoTech = widgetConfigCpId(
+      cpTpFIoTech = AudYoFloHelper.widgetConfigCpId(
           entriesCfgWidgets,
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,

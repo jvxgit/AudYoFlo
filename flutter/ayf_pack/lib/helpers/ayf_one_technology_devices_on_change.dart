@@ -80,9 +80,10 @@ mixin AudYoFloOneTechnologyDevicesOnChange {
             devs = theBeCache.referenceDeviceListInCache(cpTp);
           } else {
             if (errCode == jvxErrorType.JVX_ERROR_NOT_READY) {
-              dbgPrint('Backend not ready yet, coming back later!');
+              AudYoFloHelper.dbgPrint(
+                  'Backend not ready yet, coming back later!');
             } else {
-              dbgPrint(
+              AudYoFloHelper.dbgPrint(
                   'Backend returns error, deactivating widget main function!');
               cpId.reset();
             }

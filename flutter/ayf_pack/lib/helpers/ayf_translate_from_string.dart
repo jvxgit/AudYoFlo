@@ -857,6 +857,12 @@ class AudYoFloStringTranslator {
   static JvxComponentIdentification componentIdentificationFromString(
       String cpIdStr) {
     JvxComponentIdentification cpId = JvxComponentIdentification();
+
+    // We need to replace the [ by < and ] by > :
+    // < and > can not be set via command line in Flutter/VS code
+    cpIdStr = cpIdStr.replaceAll('[', '<');
+    cpIdStr = cpIdStr.replaceAll(']', '>');
+
     var lst = cpIdStr.split('<');
     cpId.cpTp = componentTypeFromString(lst[0]);
     if (cpId.cpTp != JvxComponentTypeEnum.JVX_COMPONENT_UNKNOWN) {

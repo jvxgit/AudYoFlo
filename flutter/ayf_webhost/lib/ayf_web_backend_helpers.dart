@@ -49,8 +49,8 @@ mixin AudYoFloWebBackendHelpers {
     }
 
     if (retCode == jvxErrorType.JVX_NO_ERROR) {
-      String? errCodeExprPtr =
-          getStringEntryValueMap(resultOnReturn.jsonMap, 'return_code');
+      String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+          resultOnReturn.jsonMap, 'return_code');
       if (errCodeExprPtr != null) {
         // Convert error code
         String errCodeExpr = errCodeExprPtr;
@@ -90,8 +90,8 @@ mixin AudYoFloWebBackendHelpers {
     }
 
     if (retCode == jvxErrorType.JVX_NO_ERROR) {
-      String? errCodeExprPtr =
-          getStringEntryValueMap(resultOnReturn.jsonMap, 'return_code');
+      String? errCodeExprPtr = AudYoFloHelper.getStringEntryValueMap(
+          resultOnReturn.jsonMap, 'return_code');
       if (errCodeExprPtr != null) {
         // Convert error code
         String errCodeExpr = errCodeExprPtr;

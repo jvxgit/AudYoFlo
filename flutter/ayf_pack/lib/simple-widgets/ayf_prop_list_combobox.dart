@@ -122,7 +122,8 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
                     .map<DropdownMenuItem<AudYoFloPropLstSelEntry>>(
                         (AudYoFloPropLstSelEntry value) {
                   String txt = value.txt;
-                  txt = limitString(txt, numCharsMax, shortenOption: textOpt);
+                  txt = AudYoFloHelper.limitString(txt, numCharsMax,
+                      shortenOption: textOpt);
                   txt = prefix + txt;
                   Widget cW = Text(txt);
                   if (value.isSel) {
@@ -160,7 +161,7 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
                       if (entry != null) {
                         if (selLstBe != null) {
                           // Run and apply user input
-                          applyChangeSelectionList(
+                          AudYoFloHelper.applyChangeSelectionList(
                               selLstBe!.selection,
                               newValue.posi,
                               selLstBe!.parpropms.decoderHintType,
@@ -179,8 +180,10 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
                               invalidateProperty: invalidatePropOnSet,
                               offset: offset);
                         } else if (selLstLo != null) {
-                          applyChangeSelectionList(selLstLo!.selection,
-                              newValue.posi, selLstLo!.decTp,
+                          AudYoFloHelper.applyChangeSelectionList(
+                              selLstLo!.selection,
+                              newValue.posi,
+                              selLstLo!.decTp,
                               offset: offset);
                           theUiModel!.reportSetProperty(selLstLo!);
                         }

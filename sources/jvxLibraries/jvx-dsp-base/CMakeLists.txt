@@ -63,6 +63,9 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_conv/jvx_conv.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_conv/jvx_conv.h
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_cart_polar/jvx_cart_polar.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_cart_polar/jvx_cart_polar.h
+
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_resampler/jvx_fixed_resampler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_matrix/jvx_matrix.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_matrix/jvx_matrix_mult.h

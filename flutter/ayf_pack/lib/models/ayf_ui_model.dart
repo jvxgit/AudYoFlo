@@ -112,7 +112,7 @@ abstract class AudYoFloUiModel
 
   // We initialize the platform specific part of the application.
   AudYoFloUiModel(this.initRoute) {
-    dbgPrint('Hello');
+    AudYoFloHelper.dbgPrint('Hello');
   }
 
   // Pre-configure some default values

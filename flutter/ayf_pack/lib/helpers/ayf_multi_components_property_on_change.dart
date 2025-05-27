@@ -177,7 +177,7 @@ mixin AudYoFloMultiComponentsPropertyOnChange {
                     if (!elmP.checkValidContent()) {
                       var token1 = elmP.assCpIdent.toString();
                       var token2 = elmP.descriptor;
-                      dbgPrint(
+                      AudYoFloHelper.dbgPrint(
                           'Warning: For component <$token1>, property <$token2> is returned as invalid.');
                     }
                   }

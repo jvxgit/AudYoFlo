@@ -4,7 +4,9 @@ import 'package:ayf_pack/ayf_pack.dart';
 
 class AudYoFloPropertyContentFromJsonNative {
   static int updatePropertyContentFromJsonMap_field(
-      AudYoFloPropertyContentBackend prop, Map newValues, AudYoFloBackendTranslator trans) {
+      AudYoFloPropertyContentBackend prop,
+      Map newValues,
+      AudYoFloBackendTranslator trans) {
     int errCode = jvxErrorType.JVX_NO_ERROR;
 
     switch (prop.jvxFormat) {
@@ -59,12 +61,11 @@ class AudYoFloPropertyContentFromJsonNative {
         }
         break;
       case jvxDataFormatEnum.JVX_DATAFORMAT_U16BIT_LE:
-        if (prop is AudYoFloPropertyMultiContentNative<Uint16, Uint16List>) {          
+        if (prop is AudYoFloPropertyMultiContentNative<Uint16, Uint16List>) {
           errCode =
               AudYoFloPropertyContentFromJson.convertTextToField<Uint16List>(
-                  prop.fld, prop.fldSz, newValues, prop.decoderHintType, trans);                  
-        }
-        else {
+                  prop.fld, prop.fldSz, newValues, prop.decoderHintType, trans);
+        } else {
           errCode = jvxErrorType.JVX_ERROR_INVALID_FORMAT;
         }
         break;
@@ -109,13 +110,13 @@ class AudYoFloPropertyContentFromJsonNative {
         break;
     }
 
-    if(errCode != jvxErrorType.JVX_NO_ERROR)
-    {
+    if (errCode != jvxErrorType.JVX_NO_ERROR) {
       var str1 = prop.descriptor;
-      var str2 = extractStringFromJson(newValues, 'property');
+      var str2 = AudYoFloHelper.extractStringFromJson(newValues, 'property');
       str2 ??= 'unknown';
       var str3 = jvxErrorTypeEInt.toStringSingle(errCode);
-      dbgPrint('Error converting property <$str1> from <$str2>, reason: $str3');
+      AudYoFloHelper.dbgPrint(
+          'Error converting property <$str1> from <$str2>, reason: $str3');
     }
     return errCode;
   }
@@ -123,8 +124,8 @@ class AudYoFloPropertyContentFromJsonNative {
 
 // This is a global function to drive different host types to different calls: native access here, but
 // there is another call in the web code!!
-int updatePropertyContentFromJsonMap_fields(
-    AudYoFloPropertyContentBackend prop, Map newValues, AudYoFloBackendTranslator trans) {
+int updatePropertyContentFromJsonMap_fields(AudYoFloPropertyContentBackend prop,
+    Map newValues, AudYoFloBackendTranslator trans) {
   return AudYoFloPropertyContentFromJsonNative
       .updatePropertyContentFromJsonMap_field(prop, newValues, trans);
 }

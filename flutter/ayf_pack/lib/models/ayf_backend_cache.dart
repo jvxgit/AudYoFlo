@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ayf_pack/helpers/ayf_helper_lib.dart' as helpers;
+import 'package:ayf_pack/helpers/ayf_helper_lib.dart';
 import '../ayf_pack_local.dart';
 
 // ================================================
@@ -1102,9 +1102,9 @@ abstract class AudYoFloBackendCache
   void reportPropertyListSetBackend(
       JvxComponentIdentification cpId, String propLst) {
     // print('Report property set <$propLst>');
-    List<String> props = helpers.str2PropList(propLst);
+    List<String> props = AudYoFloHelper.str2PropList(propLst);
     List<JvxCpIdPlusProp> propsCp =
-        helpers.str2PropListWithComponent(propLst, cpId);
+        AudYoFloHelper.str2PropListWithComponent(propLst, cpId);
 
     List<JvxComponentIdentification> cpInvolved = [];
 
