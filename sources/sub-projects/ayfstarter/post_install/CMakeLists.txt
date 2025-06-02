@@ -13,17 +13,25 @@ if(JVX_ALLOW_FLUTTER_SIMPLE_INSTALLERS)
 		endif()		
 		set(tokenPlatform "${JVX_PROCESSOR}")
 		
+		set(tokenTarget ${JVX_OS})
+		if(${tokenTarget} MATCHES "Android")
+			set(tokenTarget "apk")
+		endif()
+		
+		# message(FATAL_ERROR "${tokenTarget}")
+		
 		set(FINAL_OUTPUT_FOLDER "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/${PROJECT_PREFIX}")		
 		install(CODE "message(\"Project ${PROJECT_PREFIX} -> running flutter build command with option <${tokenBuild}>\")")	
 		install(CODE "
 			message(\"Removing folder ${FINAL_OUTPUT_FOLDER}\")
 			file(REMOVE_RECURSE \"${FINAL_OUTPUT_FOLDER}\")
 			")		
-		if(${JVX_OS} MATCHES "windows")
+		# if(${JVX_OS} MATCHES "windows")
+		if(CMAKE_HOST_WIN32)
 			# Cmake 3.29 requires to run it in msys2 - dont know why actually
-			install(CODE "execute_process(COMMAND ${myshplus} -use-full-path -c \"${JVX_BASE_ROOT}/software/codeFragments/flutter/install_flutter_app.sh ${CMAKE_CURRENT_SOURCE_DIR} ${JVX_OS} ${PROJECT_PREFIX} ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN} example ${tokenBuild} ${tokenPlatform}; sleep ${JVX_FLUTTER_BUILD_SLEEP_TIME}\")")
+			install(CODE "execute_process(COMMAND ${myshplus} -use-full-path -c \"${JVX_BASE_ROOT}/software/codeFragments/flutter/install_flutter_app.sh ${CMAKE_CURRENT_SOURCE_DIR} ${tokenTarget} ${PROJECT_PREFIX} ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN} example ${tokenBuild} ${tokenPlatform}; sleep ${JVX_FLUTTER_BUILD_SLEEP_TIME}\")")
 		else()
-			install(CODE "execute_process(COMMAND ${mysh} -c \"${JVX_BASE_ROOT}/software/codeFragments/flutter/install_flutter_app.sh ${CMAKE_CURRENT_SOURCE_DIR} ${JVX_OS} ${PROJECT_PREFIX} ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN} example ${tokenBuild} ${tokenPlatform}; sleep ${JVX_FLUTTER_BUILD_SLEEP_TIME}\")")
+			install(CODE "execute_process(COMMAND ${mysh} -c \"${JVX_BASE_ROOT}/software/codeFragments/flutter/install_flutter_app.sh ${CMAKE_CURRENT_SOURCE_DIR} ${tokenTarget} ${PROJECT_PREFIX} ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN} example ${tokenBuild} ${tokenPlatform}; sleep ${JVX_FLUTTER_BUILD_SLEEP_TIME}\")")
 		endif()	
 		install(CODE "
 			if(NOT EXISTS \"${FINAL_OUTPUT_FOLDER}\")
@@ -46,5 +54,6 @@ if(JVX_ALLOW_FLUTTER_SIMPLE_INSTALLERS)
 	endif()
 endif()
 
+# message(FATAL_ERROR "Hier OUT")
 ## install(CODE "execute_process(COMMAND install_flutter_app.sh)")
 

@@ -63,9 +63,10 @@ then
 	# What to do here??
 	echo "Compiling for target web"
 else
-	echo cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
-	cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
-
+	if [[ -d build/$sysfolder/$platform/$subfolder/data/flutter_assets ]]; then
+		echo cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
+		cp $1/.$3.env.$OSTYPE build/$sysfolder/$platform/$subfolder/data/flutter_assets/.$3.env
+	fi 
 	#if [[ -d build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets ]]; then
 	#	echo ls build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets
 	#	ls build/$sysfolder/$platform/$subfolder/data/flutter_assets/packages/ayfcorepack/local_assets
@@ -79,8 +80,10 @@ else
 		rm -rf $4/$3
 	fi
 
-	echo "mv build/$sysfolder/$platform/$subfolder $4/$3"
-	mv build/$sysfolder/$platform/$subfolder $4/$3
+	if [ -d "build/$sysfolder/$platform/$subfolder" ]; then
+		echo "mv build/$sysfolder/$platform/$subfolder $4/$3"
+		mv build/$sysfolder/$platform/$subfolder $4/$3
+	fi
 fi
 
 echo "Flutter app preparation completed!"
