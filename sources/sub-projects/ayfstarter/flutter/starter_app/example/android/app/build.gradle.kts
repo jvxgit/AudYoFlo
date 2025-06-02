@@ -23,6 +23,7 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
+    
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -42,6 +43,24 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    //packaging {
+    //    jniLibs {
+    //        useLegacyPackaging = true
+    //    }
+    //}    
+
+    //packaging {
+    //    resources {
+    //        // Das sorgt dafür, dass .so-Dateien nicht komprimiert werden
+    //        noCompress += "so"
+    //    }
+    //}
+
+    aaptOptions {
+        noCompress += "so"
+    }
+
 }
 
 flutter {
@@ -80,10 +99,12 @@ val copyJniLibs by tasks.registering(Copy::class) {
     into(toPath)    
     include("**/libayfstarter-native-config_import.so")
     include("**/libjvx-flutter-native-shared_import.so")
+    include("**/libfftw3f.so")
+    include("**/libfftw3.so")
 
     // Renaming the so files to be more applicable AND generic at the same time!!
-    rename("libayfstarter-native-config_import.so", "ayfcorepack-starter_app.so")
-    rename("libjvx-flutter-native-shared_import.so", "ayfflutter.so")
+    // rename("libayfstarter-native-config_import.so", "libayfcorepack-starter_app.so")
+    // rename("libjvx-flutter-native-shared_import.so", "libayfflutter.so")
 
     // Define when to skip this in case the target is up-to-date
     outputs.upToDateWhen { false }

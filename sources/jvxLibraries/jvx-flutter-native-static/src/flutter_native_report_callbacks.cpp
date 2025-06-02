@@ -220,10 +220,24 @@ jvxErrorType request_command(const CjvxReportCommandRequest& request, jvxBool fo
 	return JVX_NO_ERROR;
 }
 
+extern jvxNativeHostSysPointers* vm_pointer_reference;
+
+jvxErrorType request_system_specific_handle(jvxNativeHostSysPointers* sys_ptr)
+{
+	if (sys_ptr)
+	{
+		sys_ptr->primary = vm_pointer_reference->primary;
+		sys_ptr->secondary = vm_pointer_reference->secondary;
+		sys_ptr->thread_id = vm_pointer_reference->thread_id;
+	}
+	return JVX_NO_ERROR;
+}
+
 void assign_report_functions(callbacks_capi* capi)
 {
 	capi->async_report_simple_text_message = async_report_simple_text_message;
 	capi->sync_report_internals_have_changed = sync_report_internals_have_changed;
 	capi->async_report_command_request = async_report_command_request;
+	capi->request_system_specific_handle = request_system_specific_handle;
 	// capi->request_command = request_command;
 }

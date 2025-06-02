@@ -4,5 +4,6 @@
 // Refer to file flutter_native_boot_shutdown.cpp
 int ffi_host_initialize(void* opaque_hdl, const char** argv, int argc, struct func_pointers* funcs, signed long long dart_port, int executableInBinFolder);
 int ffi_host_terminate(void* opaque_hdl);
+int ffi_trigger_passthrough_vm(void* opaque_hdl);
 
 #endif

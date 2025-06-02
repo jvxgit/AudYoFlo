@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ffi/ffi.dart';
 import 'dart:ffi' as ffi;
-import 'dart:io' show File, Platform;
+import 'dart:io' show File, Platform, Directory;
 import '../native-ffi/generated/ayf_ffi_gen_bind.dart';
 import 'ayf_backend_bridge_native_callbacks.dart';
 import 'ayf_backend_adapter_native.dart';
@@ -9,6 +9,7 @@ import 'ayf_backend_bridge_native_helpers.dart';
 import '../types/ayf_sequencer_types.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 import 'package:collection/collection.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 
 class AyfNativeAudioHost extends AyfHost {
@@ -117,9 +118,23 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
     //theBackendCache = beCache;
     theDebugModel = dbgModel;
 
-    if (!File(libraryPath).existsSync()) {
-      print('Unable to find library <${libraryPath}>');
-      assert(false);
+    // We can check the path to the main library on desktop platforms only. On Android it seems it is more difficult
+    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+      if (!File(libraryPath).existsSync()) {
+        print('Unable to find library <${libraryPath}>');
+        assert(false);
+      }
+    } else if (Platform.isAndroid) {
+      /*
+       * The following are attempts to find the library. However, none really works..
+      final Directory? dirpath = await getApplicationDocumentsDirectory();
+      String dirname = dirpath!.path;
+      String pathLocal = dirname + '/lib/x64_86/' + libraryPath;
+      if (!File(pathLocal).existsSync()) {
+        print('Unable to find library <${libraryPath}>');
+        assert(false);
+      }
+      */
     }
 
     debugPrint('Loading backend library <$libraryPath>');
@@ -334,29 +349,29 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
       case jvxReportCommandRequestEnum.JVX_REPORT_COMMAND_REQUEST_UNSPECIFIC:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
+            .JVX_REPORT_COMMAND_REQUEST_UPDATE_AVAILABLE_COMPONENT_LIST:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT_LIST:
+            .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT_LIST:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT:
+            .JVX_REPORT_COMMAND_REQUEST_UPDATE_STATUS_COMPONENT:
         theBeAdapter.reportUpdateStatusComponent(cpId);
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
+            .JVX_REPORT_COMMAND_REQUEST_SYSTEM_STATUS_CHANGED:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
+            .JVX_REPORT_COMMAND_REQUEST_TRIGGER_SEQUENCER_IMMEDIATE:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
+            .JVX_REPORT_COMMAND_REQUEST_UPDATE_ALL_PROPERTIES:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_RESCHEDULE_MAIN:
+            .JVX_REPORT_COMMAND_REQUEST_RESCHEDULE_MAIN:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_SUBDEVICE:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_SUBDEVICE:
         ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
@@ -371,7 +386,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_SUBDEVICE:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_SUBDEVICE:
         ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
@@ -386,7 +401,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_COMPONENT:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_BORN_COMPONENT:
         ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
@@ -401,7 +416,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_COMPONENT:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_DIED_COMPONENT:
         ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
@@ -416,7 +431,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_CONNECTED:
         uId = decodeUId(natLib!, load_fld);
         if (dbgOut) {
           theDebugModel?.addLineOut('Process connected with uid ${uId}');
@@ -428,7 +443,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         theDebugModel?.addLineOutConvert(dbgTxt);
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_TO_BE_DISCONNECTED:
         uId = decodeUId(natLib!, load_fld);
         if (dbgOut) {
           theDebugModel
@@ -445,7 +460,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         break;
 
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_COMPONENT_STATESWITCH:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_COMPONENT_STATESWITCH:
         ss = decodeSswitch(natLib!, load_fld);
 
         if (dbgOut) {
@@ -467,17 +482,17 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_CONFIGURATION_COMPLETE:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_CONFIGURATION_COMPLETE:
         // theBeAdapter.runOnConfigure(); <- move to SYSTEM READY
         break;
 
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_SYSTEM_READY:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_SYSTEM_READY:
         theBeAdapter.runOnSystemReady();
         break;
 
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_EVENT:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_EVENT:
         if (opaque_host != ffi.nullptr) {
           var evPtr = natLib!.ffi_req_command_decode_sequencer_event(load_fld);
           int status = natLib!.ffi_sequencer_status(opaque_host);
@@ -528,15 +543,15 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         //theBeAdapter.triggerUpdateProcessStatus();
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_CALLBACK:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_SEQUENCER_CALLBACK:
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_DISCONNECT_COMPLETE:
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_PROCESS_DISCONNECT_COMPLETE:
         theBeAdapter.requestUpdateProcessStatus();
         break;
 
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
+            .JVX_REPORT_COMMAND_REQUEST_UPDATE_PROPERTY:
         ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {
@@ -548,7 +563,7 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
         break;
       case jvxReportCommandRequestEnum
-          .JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH:
+            .JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH:
         ffi.Pointer<ffi.Char> ptrIdent =
             natLib!.ffi_req_command_decode_ident_allocate_char_array(load_fld);
         if (ptrIdent.address != 0) {

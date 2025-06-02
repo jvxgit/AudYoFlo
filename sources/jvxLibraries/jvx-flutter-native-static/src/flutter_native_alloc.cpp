@@ -1,5 +1,18 @@
 #include "flutter_native_local.h"
 
+#ifdef JVX_OS_ANDROID
+
+#include "jni.h"
+#include <android/log.h>
+
+#define LOG_TAG "ayfflutter"
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,  LOG_TAG, __VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
+#endif
+
 #ifdef JVX_LIB_SINGLETON
 jvxLibHost myLibHost;
 #endif
@@ -16,8 +29,13 @@ std::map<void*, jvxLibHost*> lst_active_referenes;
 std::string dllConfigSystem = "";
 native_host_configure_func_pointers func_pointer_object;
 native_host_configure_func_pointers* func_pointer_reference = &func_pointer_object;
-JVX_HMODULE dllHandleConfig = JVX_HMODULE_INVALID; 
+
+jvxNativeHostSysPointers vm_pointer_object;
+jvxNativeHostSysPointers* vm_pointer_reference = &vm_pointer_object;
+
+JVX_HMODULE dllHandleConfig = JVX_HMODULE_INVALID;
 flutter_config_open_ptr fptrConfig = nullptr;
+flutter_vm_open_ptr fptrVm = nullptr;
 
 // ========================================================================
 // ========================================================================
@@ -136,6 +154,8 @@ int ffi_deallocate_backend_handle(void* opaque_hdl)
 	if (dllHandleConfig != JVX_HMODULE_INVALID)
 	{
 		fptrConfig = nullptr;
+		fptrVm = nullptr;
+
 		JVX_UNLOADLIBRARY(dllHandleConfig);
 		dllHandleConfig = JVX_HMODULE_INVALID;
 		dllConfigSystem.clear();
@@ -440,8 +460,9 @@ extern "C"
 	{
 		if (cmdLine)
 		{
-			cmdLine->register_option("--natconfm", "", "Specifc the configuration lib to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
-			cmdLine->register_option("--natconfs", "", "Specifc the symbol to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
+			cmdLine->register_option("--natconfm", "", "Specify the configuration lib to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
+			cmdLine->register_option("--natconfs", "", "Specify the symbol for configuration to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
+			cmdLine->register_option("--natconfv", "", "Specify the symbol for vm access to be loaded before startup.", "", true, JVX_DATAFORMAT_STRING);
 		}
 	}
 
@@ -452,21 +473,49 @@ extern "C"
 		{
 			dllConfigSystem = entry.std_str();
 			std::string symbConfigSystemName = FLUTTER_CONFIG_OPEN_FUNCTION_NAME;
+			std::string symbVmSystemName = "flutter_vmref_open";
+
 			if (cmdLine->content_entry_option("--natconfs", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
 			{
 				symbConfigSystemName = entry.std_str();
 			}
+			entry.clear();
+			if (cmdLine->content_entry_option("--natconfv", 0, &entry, JVX_DATAFORMAT_STRING) == JVX_NO_ERROR)
+			{
+				symbVmSystemName = entry.std_str();
+			}
 
 			if (!dllConfigSystem.empty())
 			{
+#ifdef JVX_OS_ANDROID
+				LOGI("Trying to open runtime library <%s> for host configuration.", dllConfigSystem.c_str());
+#else
 				std::cout << "Opening runtime library <" << dllConfigSystem  << "> for host configuration." << std::endl;
+#endif
 				dllHandleConfig = JVX_LOADLIBRARY(dllConfigSystem.c_str());
 				if (dllHandleConfig != JVX_HMODULE_INVALID)
 				{
+#ifdef JVX_OS_ANDROID
+					LOGI("Opening successful!");
+					LOGI("Trying to get reference to symbol <%s> in open library.", symbConfigSystemName.c_str());
+#endif
 					fptrConfig = (flutter_config_open_ptr)JVX_GETPROCADDRESS(dllHandleConfig, symbConfigSystemName.c_str());
 					if (fptrConfig)
 					{
-						if (fptrConfig(&func_pointer_object) != JVX_NO_ERROR)
+#ifdef JVX_OS_ANDROID
+						LOGI("-> Getting access to function <%s> successful!", symbConfigSystemName.c_str());
+#endif
+						if (fptrConfig(&func_pointer_object) == JVX_NO_ERROR)
+						{
+#ifdef JVX_OS_ANDROID
+							LOGI("-> Function pointer access_link_objects=%p.", func_pointer_object.access_link_objects);
+							LOGI("-> Function pointer configure_factoryhost_features=%p.", func_pointer_object.configure_factoryhost_features);
+							LOGI("-> Function pointer default_connection_rules_add=%p.", func_pointer_object.default_connection_rules_add);
+							LOGI("-> Function pointer default_sequence_add=%p.", func_pointer_object.default_sequence_add);
+							LOGI("-> Function pointer invalidate_factoryhost_features=%p.", func_pointer_object.invalidate_factoryhost_features);
+#endif
+						}
+						else
 						{
 							std::cout << "Error during access to runtime library <" << dllConfigSystem 
 								<< ">: Could not find library entry point <" 
@@ -480,7 +529,35 @@ extern "C"
 							fptrConfig = nullptr;
 						}
 					}
-					if (fptrConfig == nullptr)
+
+#ifdef JVX_OS_ANDROID
+					LOGI("Trying to get reference to symbol <%s> in open library.", symbVmSystemName.c_str());
+#endif
+					fptrVm = (flutter_vm_open_ptr)JVX_GETPROCADDRESS(dllHandleConfig, symbVmSystemName.c_str());
+					if (fptrVm)
+					{
+#ifdef JVX_OS_ANDROID
+						LOGI("-> Getting access to function <%s> successful!", symbConfigSystemName.c_str());
+#endif
+						if (fptrVm(&vm_pointer_object) == JVX_NO_ERROR)
+						{
+#ifdef JVX_OS_ANDROID
+							LOGI("-> Vm pointer primary=%p.", vm_pointer_object.primary);
+							LOGI("-> Vm pointer secondary=%p.", vm_pointer_object.secondary);
+							LOGI("-> Vm thread_id=%li.", vm_pointer_object.thread_id);
+#endif
+						}
+						else
+						{
+							vm_pointer_object.primary = nullptr;
+							vm_pointer_object.secondary = nullptr;
+							vm_pointer_object.thread_id = JVX_THREAD_ID_INVALID;
+							fptrVm = nullptr;
+						}
+					}
+					
+					// fPtrVm is optional whereas fptrConfig is not 
+					if ((fptrConfig == nullptr) && (fptrVm == nullptr))
 					{
 						JVX_UNLOADLIBRARY(dllHandleConfig);
 						dllHandleConfig = JVX_HMODULE_INVALID;

@@ -1,5 +1,42 @@
 #include "jvx.h"
 
+static jvxNativeHostSysPointers theSystemHandles;
+
+#ifdef JVX_OS_ANDROID
+
+#include "jni.h"
+#include <android/log.h>
+
+#define LOG_TAG "ayfstarter"
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,  LOG_TAG, __VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
+	// Initialisierungscode, z.B. Caching von Klassen oder Methoden
+	LOGI("AYF - Entering function <%s>", __FUNCTION__);
+
+	// Return the entries required for access to vm or/and environment
+	theSystemHandles.primary = reinterpret_cast<jvxHandle*>(vm);
+	int getEnvStat = vm->GetEnv((void**)&theSystemHandles.secondary, JNI_VERSION_1_6);
+
+	theSystemHandles.thread_id = JVX_GET_CURRENT_THREAD_ID();
+
+	LOGI("## Obtained reference to vm = %p", theSystemHandles.primary);
+	LOGI("## Obtained reference to env = %p", theSystemHandles.secondary);
+	LOGI("## Returned current thread id = %li", theSystemHandles.thread_id);
+
+	return JNI_VERSION_1_6; // oder eine andere unterstützte Version
+}
+
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
+{
+	LOGI("AYF - Entering function <%s>", __FUNCTION__);
+}
+
+#endif
+
 extern const char* componentsOnLoad_algorithms[];
 extern const char* componentsOnLoad_audiotechnologies[];
 
@@ -59,4 +96,11 @@ extern "C"
 		}
 		return(JVX_NO_ERROR);
 	}
+
+	// Expose this function for cross referencing
+	jvxErrorType flutter_vmref_open(jvxNativeHostSysPointers* refsOnReturn)
+	{
+		if (refsOnReturn) *refsOnReturn = theSystemHandles;
+		return JVX_NO_ERROR;
+	};
 }

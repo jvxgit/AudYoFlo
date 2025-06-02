@@ -1,4 +1,5 @@
 #include "jvx_cart_polar/jvx_cart_polar.h"
+#include <math.h>
 
 jvxErrorType
 jvx_polar_2_cartesion_deg(jvxData* in_azimIncl2, jvxData* out_xyz_vec3)

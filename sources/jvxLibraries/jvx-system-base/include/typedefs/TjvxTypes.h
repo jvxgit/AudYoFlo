@@ -305,6 +305,16 @@ public:
 	jvxCBitField16 flags = 0;
 };
 
+// This class allows to pass around very specific pointers from native systems towards
+// system independent components - so far used only for Android JNI refs
+class jvxNativeHostSysPointers
+{
+public:
+	jvxHandle* primary = nullptr;
+	jvxHandle* secondary = nullptr;
+	JVX_THREAD_ID thread_id = JVX_THREAD_ID_INVALID;
+};
+
 #define JVXFEATURE_CLASS_NUM 5
 
 #define JVX_FEATURE_CLASS_NONE 0x0

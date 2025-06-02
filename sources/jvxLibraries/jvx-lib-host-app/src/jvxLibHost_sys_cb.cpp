@@ -42,6 +42,14 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	jvxCallManagerProperties callGate;
 	oneAddedStaticComponent comp;
 
+	res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
+	if ((res == JVX_NO_ERROR) && theProps)
+	{
+		res = jvx_set_property(theProps, &sysPtrs, 0, 1, JVX_DATAFORMAT_HANDLE, false, "/sys_ptr", callGate);
+		assert(res == JVX_NO_ERROR);
+	}
+	res = involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
+
 	/**
 	 * TODO: We may add an event loop at this point
 	 * involvedComponents.theHost.hFHost->add_external_interface(reinterpret_cast<jvxHandle*>(static_cast<IjvxEventLoop*>(xy)), JVX_INTERFACE_EVENTLOOP);
@@ -374,6 +382,7 @@ jvxErrorType
 jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 {
 	jvxSize i;
+	jvxCallManagerProperties callGate;
 
 #ifdef JVX_LIBHOST_WITH_JSON_SHOW
 	involvedComponents.theHost.hFHost->remove_external_interface(reinterpret_cast<jvxHandle*>(static_cast<IjvxCommandInterpreter*>(this)), JVX_INTERFACE_COMMAND_INTERPRETER);
@@ -423,6 +432,16 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 	}
 	genLibHost::unregister_all(static_cast<CjvxProperties*>(this));
 	genLibHost::deallocate_all();
+
+	IjvxProperties* theProps = nullptr;
+	jvxErrorType res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
+	if ((res == JVX_NO_ERROR) && theProps)
+	{
+		res = jvx_set_property(theProps, nullptr, 0, 1, JVX_DATAFORMAT_HANDLE, false, "/sys_ptr", callGate);
+		assert(res == JVX_NO_ERROR);
+	}
+	res = involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
+
 	_common_set_min.theState = JVX_STATE_NONE;
 	_common_set_properties.propIdSpan = JVX_SIZE_UNSELECTED;
 	

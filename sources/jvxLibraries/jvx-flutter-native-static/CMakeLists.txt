@@ -77,6 +77,12 @@ set(LOCAL_LIBS
 ## The audio libs
 ## ======================================================================
 
+if(${JVX_OS} MATCHES "Android")
+	find_library(jniloglib log REQUIRED)
+	# target_link_libraries(<dein-target> ${log-lib})
+	set(LOCAL_LIBS "${LOCAL_LIBS};${jniloglib}")
+endif()
+
 set(BUILD_STATIC TRUE)
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
 set(CREATE_OBJECT_LIBRARY TRUE)

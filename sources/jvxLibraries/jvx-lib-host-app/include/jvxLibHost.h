@@ -11,6 +11,7 @@
 
 class CjvxHostJsonCommandsActShow;
 class jvxLibHost;
+class jvxNativeHostSysPointers;
 
 class callbacks_capi
 {
@@ -26,6 +27,7 @@ public:
 		jvxHandle* caseSpecificData,
 		jvxSize szSpecificData) = nullptr;
 
+	jvxErrorType(*request_system_specific_handle)(jvxNativeHostSysPointers* ptrsOnReturn) = nullptr;
 	// jvxErrorType(*request_command)(const CjvxReportCommandRequest& request, jvxBool forceAsync, jvxLibHost* backRef) = nullptr;
 };
 
@@ -51,6 +53,7 @@ private:
 	JVX_MUTEX_HANDLE safeAccessEngineThreads;
 	jvxBool init_done = false;
 	callbacks_capi cbks_api;
+	jvxNativeHostSysPointers sysPtrs;
 
 	jvxHandle* showHandle = nullptr;
 

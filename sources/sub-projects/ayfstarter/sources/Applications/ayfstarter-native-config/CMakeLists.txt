@@ -31,6 +31,11 @@ endif()
 #set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_NUMBER_AUDIO_DEVICES_MIX=JVX_SIZE_UNSELECTED")
 ## 
 
+if(${JVX_OS} MATCHES "Android")
+	find_library(jniloglib log REQUIRED)
+	# target_link_libraries(<dein-target> ${log-lib})
+	set(LOCAL_LIBS "${LOCAL_LIBS};${jniloglib}")
+endif()
 
 ## ======================================================================
 # Shared and static libraries here!

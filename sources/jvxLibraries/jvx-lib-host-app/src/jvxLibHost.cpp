@@ -104,6 +104,11 @@ jvxLibHost::initSystem(const char* argv[] , int argc, callbacks_capi* cbks, bool
 			/* Update splash screen  */
 			// "Initializing audio host ..."
 
+			if (cbks_api.request_system_specific_handle)
+			{
+				cbks_api.request_system_specific_handle(&sysPtrs);
+			}
+
 			res = boot_initialize(&errMess, NULL);
 			if (res != JVX_NO_ERROR)
 			{

@@ -40,9 +40,10 @@ class AyfcorepackPlugin: FlutterPlugin, MethodCallHandler {
 
   private fun getEntryPoints(): Map<String, Any> {
         val map = HashMap<String, Any>()
-        map["loadedModule"] = "my_dll.so"
+        map["loadedModule"] = "libayfstarter-native-config_import.so"
         map["moduleEntryAddress"] = -1
         map["moduleEntrySymbol"] = "flutter_config_open"
+        map["requiredOperation"] = "jni_load_dll"
         // map[anotherkey] = listOf("item1", "item2")
         // map["key4"] = mapOf("nestedKey" to "nestedValue")
         return map

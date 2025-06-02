@@ -23,31 +23,34 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
 
     theBeCache = Provider.of<AudYoFloBackendCache>(context, listen: false);
 
-    FlutterWindowClose.setWindowShouldCloseHandler(() async {
-      bool wantClose = false;
-      await showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                title: const Text('Do you really want to quit?'),
-                actions: [
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                        wantClose = true;
-                      },
-                      child: const Text('Yes')),
-                  ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('No')),
-                ]);
-          });
-      if (wantClose) {
-        await theBeCache!.triggerClose();
-      }
-      return wantClose;
-      //return wantToQuit;
-    });
+    // Window Close only on Desktop!
+    if ((Platform.isWindows) || Platform.isLinux || Platform.isMacOS) {
+      FlutterWindowClose.setWindowShouldCloseHandler(() async {
+        bool wantClose = false;
+        await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  title: const Text('Do you really want to quit?'),
+                  actions: [
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                          wantClose = true;
+                        },
+                        child: const Text('Yes')),
+                    ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('No')),
+                  ]);
+            });
+        if (wantClose) {
+          await theBeCache!.triggerClose();
+        }
+        return wantClose;
+        //return wantToQuit;
+      });
+    }
   }
 
   @override
@@ -157,6 +160,8 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         if (thePixBuf != null) {
           entryPointsPixBuf = await thePixBuf!.getEntryPoints();
         }
+
+        // var elmOperation = entryPointsCorePack.entries.firstOrNull();
 
         // This will delay the initialization to happen AFTER every state has been created
         //Future.delayed(Duration(milliseconds: 1), () {

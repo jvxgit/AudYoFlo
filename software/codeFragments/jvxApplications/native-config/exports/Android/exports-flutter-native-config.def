@@ -1,5 +1,3 @@
-ffi_allocate_backend_handle
-ffi_deallocate_backend_handle
-ffi_host_initialize
-ffi_host_terminate
+flutter_config_open
+flutter_vmref_open
 

@@ -67,7 +67,7 @@ if(JVX_RELEASE_SDK)
   set(INSTALL_PATH_RELEASE_ROOT "sdk")
   set(INSTALL_PATH_RELEASE_ROOT_MIN_SLASH "sdk/")
 
-  set(JVX_MATLAB_PROPERTY_GENERATOR FALSE) # Correct some undefined combinations of settings
+  set(JVX_MATLAB_PROPERTY_GENERATOR false) # Correct some undefined combinations of settings
 
   if(JVX_USE_PYTHON)
     set(INSTALL_PATH_PYTHON "${INSTALL_PATH_RELEASE_SDK}/python")

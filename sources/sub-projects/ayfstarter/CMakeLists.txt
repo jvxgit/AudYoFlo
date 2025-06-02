@@ -58,10 +58,12 @@ if(NOT JVX_RELEASE_SDK)
 			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-qt)
 				
 	endif()	
+endif()
 
-	#if(JVX_FLUTTER_UI)
-	#endif()	
-else()
+set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} ${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-native-config)
+jvx_addSubdirs("Configuring application ayfstarter " "${AYF_STARTER_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Application")
+
+if(JVX_RELEASE_SDK)
 		
 	if(JVX_FLUTTER_UI)
 		
@@ -76,9 +78,13 @@ else()
 			
 			install(FILES ${AYFSTARTER_HOSTCONF_DLL} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/local_assets)
 			install(FILES ${AYFSTARTER_FFI_DLL} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/flutter/ayf_starter_corepack/local_assets)
-		elseif(${JVX_OS} MATCHES "linux" OR ${JVX_OS} MATCHES "Android")
+		elseif(${JVX_OS} MATCHES "linux")
 			message("Flutter code generation for linux")
 			set(AYFSTARTER_FFI_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}/libjvx-flutter-native-shared_import.so")
+			set(AYFSTARTER_FFI_PRELOAD_DLLS "")		
+		elseif(${JVX_OS} MATCHES "Android")
+			message("Flutter code generation for linux")
+			set(AYFSTARTER_FFI_DLL "libjvx-flutter-native-shared_import.so")
 			set(AYFSTARTER_FFI_PRELOAD_DLLS "")		
 		else()
 			message(FATAL_ERROR "Error: Platform ${JVX_OS} currently not supported!")
@@ -114,8 +120,5 @@ else()
 	endif()
 		
 endif()
-
-set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} ${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-native-config)
-jvx_addSubdirs("Configuring application ayfstarter " "${AYF_STARTER_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Application")
 
 # message(FATAL_ERROR "Hier -- JVX_FLUTTER_UI = ${JVX_FLUTTER_UI} -- AYFSTARTER_SIMPLE_INSTALLER = ${AYFSTARTER_SIMPLE_INSTALLER}")
