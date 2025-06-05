@@ -37,6 +37,18 @@ android {
     }
 
     buildTypes {
+        //debug {
+        //    doNotStrip.add("**/*.so")
+        //}
+        getByName("debug") {
+            isDebuggable = true
+            ndk {
+                // Keine Strip-Flags setzen
+                // Optional: Proguard für native libs deaktivieren
+                debugSymbolLevel = "FULL"
+            }
+        }
+
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
@@ -137,9 +149,50 @@ val copyJniLibs by tasks.registering(Copy::class) {
     }
 }
 
-// Run this task before all other build tasks
+// ================================================================================
+// Run this task before all other build tasks to pull-in the required NDK libraries
+// ================================================================================
 tasks.named("preBuild") {
     dependsOn("copyJniLibs")
 }
 
+// ================================================================================
+// Here, we exchange the so files within the apk package: The default behavior is to strip
+// all symbols from the so files before packaging. Then, however, we can not debug the ndk libs.
+// What we do here is to "undo" the stripping by copying the so files after stripping from
+// the location where it was actually stored before.
+// ================================================================================
+afterEvaluate {
+    tasks.findByName("stripDebugDebugSymbols")?.let { stripTask ->
+        stripTask.doLast {
+
+            println("### Undoing symbol stripping in so files.")
+            println("### THIS SHOULD ONLY BE DONE IN DEBUG RELEASES.")
+
+            val abis = listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            abis.forEach { abi ->
+                val strippedLibDir = file("$buildDir/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/$abi")
+                val unstrippedLibDir = file("$buildDir/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/$abi")
+                
+                // println("strippedLibDir = $strippedLibDir")
+                // println("unstrippedLibDir = $unstrippedLibDir")
+
+                if (strippedLibDir.exists() && unstrippedLibDir.exists()) {
+
+                    println("### -> EXISTING strippedLibDir = $strippedLibDir")
+                    println("### -> EXISTING unstrippedLibDir = $unstrippedLibDir")
+
+                    strippedLibDir.listFiles()?.forEach { strippedFile ->
+                        val unstrippedFile = File(unstrippedLibDir, strippedFile.name)
+                        if (unstrippedFile.exists()) {
+                            println("### -> Copy from strippedFile = $strippedFile")
+                            println("### -> to unstrippedFile = $unstrippedFile")
+                            strippedFile.writeBytes(unstrippedFile.readBytes())
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
