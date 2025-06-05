@@ -3,10 +3,16 @@ macro(jvx_submodules submodule_path subproject_pathmap pass_expr)
 	# we can also specify as an option.
   set(JVX_SUBMODULE_LIST "" CACHE STRING "Defined submodule list")
   
+  set(JVX_SUBMODULELIST_FILE ${JVX_BINARY_DIR}/submodulelist.txt)
+  if(NOT JVX_SUBMODULELIST_FILENAME STREQUAL "")
+	set(JVX_SUBMODULELIST_FILE ${JVX_SUBMODULELIST_FILENAME})
+  endif()
+  message(" ### Using submodule list file ${JVX_SUBMODULELIST_FILE} ### ")
+	 
   # If provided, load submodule list
-  message("------> ${JVX_BINARY_DIR}/submodulelist.txt")
-  if(EXISTS ${JVX_BINARY_DIR}/submodulelist.txt)
-	include(${JVX_BINARY_DIR}/submodulelist.txt)
+  message("------> ${JVX_SUBMODULELIST_FILE}")
+  if(EXISTS ${JVX_SUBMODULELIST_FILE})
+	include(${JVX_SUBMODULELIST_FILE})
 	message("##> Submodule list: ${mysubmodules}")
   else()
 	set(mysubmodules ${JVX_SUBMODULE_LIST})
