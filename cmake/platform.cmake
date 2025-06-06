@@ -68,7 +68,18 @@ elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv7-a")
 	else()
 		set(JVX_PROCESSOR "armv7_64")
 	endif()
+
+elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686")
+	if(JVX_PLATFORM MATCHES "32bit")
+		set(JVX_PROCESSOR "x86")
+	else()
+		message(FATAL_ERROR "Unhandled system processor detected: ${CMAKE_SYSTEM_PROCESSOR}")
+	endif()
+
+else()
+	message(FATAL_ERROR "Unhandled system processor detected: ${CMAKE_SYSTEM_PROCESSOR}")
 endif()
+
 # message(FATAL_ERROR "System Processor = ${CMAKE_SYSTEM_PROCESSOR} -- ${JVX_PROCESSOR}")
 
 set(JVX_SYSTEM_TOKEN "JVX_SYS")

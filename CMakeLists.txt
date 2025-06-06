@@ -57,7 +57,6 @@ endif()
 # basic stuff
 ###
 
-
 cmake_host_system_information(RESULT host_identification QUERY HOSTNAME)
 message("Running on host ${host_identification}")
 
@@ -111,6 +110,12 @@ include(${JVX_CMAKE_DIR}/platform.cmake)
 set(JVX_ABI_SUBFOLDER "")
 if(JVX_RELEASE_SDK)
 	if(${JVX_OS} MATCHES "Android")
+	
+		message("ANDROID_ABI=${ANDROID_ABI}")
+		message("ANDROID_NDK=${ANDROID_NDK}")
+		message("ANDROID_API_VERSION=${ANDROID_API_VERSION}")
+		message("ANDROID_PLATFORM=${ANDROID_PLATFORM}")
+
 		set(JVX_ABI_SUBFOLDER "${ANDROID_ABI}/")
 	endif()
 endif()

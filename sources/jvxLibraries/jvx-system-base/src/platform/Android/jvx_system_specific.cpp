@@ -20,7 +20,7 @@ JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE
 
 #if defined(JVX_OS_ANDROID)	
 
-	#ifdef JVX_ANDROID_API_VERSION >= 28
+	#if JVX_ANDROID_API_VERSION >= 28
 		return posix_spawn(&procHandle, (char*)cmd.c_str(), NULL, NULL, argV, NULL);
 	#else
 

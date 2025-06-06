@@ -14,7 +14,7 @@ if(CMAKE_HOST_WIN32)
 	#	set(libpostfix "_D")
 	#endif()	
 	
-	message("Trying to build fftw")
+	message("Trying to build fftw, look for folder ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}")
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}")
 		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
 			message("fftw-3.3 sub project not available. Starting script to download it.") 
