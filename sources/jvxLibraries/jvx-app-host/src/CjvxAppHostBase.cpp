@@ -613,12 +613,12 @@ JVX_APPHOST_CLASSNAME::on_components_before_configure()
 		}
 		else
 		{
-			const char** ptrComp = confHostFeatures->lst_ModulesOnStart[JVX_COMPONENT_SYSTEM_AUTOMATION];
+			const jvxModuleOnStart* ptrComp = confHostFeatures->lst_ModulesOnStart[JVX_COMPONENT_SYSTEM_AUTOMATION];
 			if (ptrComp)
 			{
-				if (ptrComp[0] != nullptr)
+				if (ptrComp[0].modName != nullptr)
 				{
-					modSelectionStringAutomate = ptrComp[0];
+					modSelectionStringAutomate = ptrComp[0].modName;
 					std::cout << __FUNCTION__ << " -- Accepted automation <" << modSelectionStringAutomate << "> from list of modules on start." << std::endl;
 				}
 			}
@@ -657,7 +657,7 @@ JVX_APPHOST_CLASSNAME::on_components_before_configure()
 				}
 				else
 				{
-					std::cout << __FUNCTION__ << ": Failed to open Automation module <" << confHostFeatures->automation.mod_selection << ">." << std::endl;
+					std::cout << __FUNCTION__ << ": Failed to open Automation module." << std::endl;
 				}
 			}
 		}

@@ -76,9 +76,9 @@ mainWindow_UiExtension_host_terminate(mainWindow_UiExtension_host* elm)
 	return JVX_NO_ERROR;
 }
 
-const char* componentsOnLoad_audiotechnologies[] =
+const jvxModuleOnStart componentsOnLoad_audiotechnologies[] =
 {
-	"jvxAuTGenericWrapper",
+	{"jvxAuTGenericWrapper"},
 	nullptr
 };
 

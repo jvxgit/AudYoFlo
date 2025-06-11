@@ -14,15 +14,15 @@
 #include "interfaces/all-hosts/configHostFeatures_common.h"
 
 // The positions of the components are stored within these tables
-const char* componentsOnLoad_algorithms[] =
+const jvxModuleOnStart componentsOnLoad_algorithms[] =
 {
-	"ayfAuNMatlab",
+	{"ayfAuNMatlab"},
 	NULL
 };
 
-const char* componentsOnLoad_audiotechnologies[] =
+const jvxModuleOnStart componentsOnLoad_audiotechnologies[] =
 {
-	"jvxAuTGenericWrapper",
+	{"jvxAuTGenericWrapper"},
 	nullptr
 };
 

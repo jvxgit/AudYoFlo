@@ -1,6 +1,6 @@
 #include "jvx-helpers.h"
 
-void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPONENT_ALL_LIMIT], IjvxHost* hHost, jvxBool systemComponent, jvxBool verboseOutput)
+void activate_default_components_host(const jvxModuleOnStart* lst_ModulesOnStart[JVX_COMPONENT_ALL_LIMIT], IjvxHost* hHost, jvxBool systemComponent, jvxBool verboseOutput)
 {
 	jvxState stat = JVX_STATE_NONE;
 	jvxSize num = 0;
@@ -23,7 +23,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 
 	for (i = limitRunStart; i != limitRunStop; i+= mod)
 	{
-		const char** ptrComp = lst_ModulesOnStart[i];
+		const jvxModuleOnStart* ptrComp = lst_ModulesOnStart[i];
 
 		if (ptrComp)
 		{
@@ -58,7 +58,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 
 				while(1)
 				{
-					if (ptrComp[cnt])
+					if (ptrComp[cnt].modName)
 					{
 						cntRequired++;
 						cnt++;
@@ -89,7 +89,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 				for (j = 0; j < szSlots; j++)
 				{
 					tpIdN.slotid = j;
-					if (ptrComp[j] == NULL)
+					if (ptrComp[j].modName == NULL)
 					{
 						if (verboseOutput)
 						{
@@ -107,7 +107,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 						if (verboseOutput)
 						{
 							std::cout << "==== ==== " << __FUNCTION__ << ": Trying to find component with module name <" << 
-								ptrComp[j] << ">." << std::endl;
+								ptrComp[j].modName << ">." << std::endl;
 						}
 
 						jvxSize selId = JVX_SIZE_UNSELECTED;
@@ -125,7 +125,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 							if (res == JVX_NO_ERROR)
 							{
 								// std::cout << __FUNCTION__ << ": Checking module <" << astr.std_str() << "> vs <" << ptrComp[j] << ">." << std::endl;
-								if (astr.std_str() == ptrComp[j])
+								if (astr.std_str() == ptrComp[j].modName)
 								{
 									if (verboseOutput)
 									{
@@ -164,13 +164,13 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 					// Part two: activate all "right" modules
 					for (j = 0; j < cntRequired; j++)
 					{
-						assert(ptrComp[j]); // <- this was counted before
-						if (ptrComp[j] != (std::string)"__skip__")
+						assert(ptrComp[j].modName); // <- this was counted before
+						if (ptrComp[j].modName != (std::string)"__skip__")
 						{
 
 							if (verboseOutput)
 							{
-								std::cout << "==== ==== " << __FUNCTION__ << ": Activating component < " << ptrComp[j] << ">." << std::endl;
+								std::cout << "==== ==== " << __FUNCTION__ << ": Activating component < " << ptrComp[j].modName << ">." << std::endl;
 							}
 
 							stat = JVX_STATE_NONE;
@@ -191,13 +191,24 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 											jvxComponentAccessType accTp = JVX_COMPONENT_ACCESS_UNKNOWN;;
 											res = hHost->module_reference_component_system(tpIdN, k, &astr, &accTp);
 											// std::cout << __FUNCTION__ << ": Checking module <" << astr.std_str() << "> vs <" << ptrComp[j] << ">." << std::endl;
-											if (astr.std_str() == ptrComp[j])
+											if (astr.std_str() == ptrComp[j].modName)
 											{
 												res = hHost->state_selected_component(tpIdN, &stat);
 												assert(res == JVX_NO_ERROR);
 
 												res = hHost->select_component(tpIdN, k);
 												assert(res == JVX_NO_ERROR);
+
+												if (ptrComp[j].theCallback)
+												{
+													IjvxObject* obj = nullptr;
+													res = hHost->request_object_selected_component(tpIdN, &obj);
+													if((res == JVX_NO_ERROR) && obj)
+													{
+														ptrComp[j].theCallback(obj);
+														hHost->return_object_selected_component(tpIdN, obj);
+													}
+												}
 
 												break;
 											}
@@ -207,7 +218,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 										{
 											// Problem: module not found
 											res = JVX_ERROR_ELEMENT_NOT_FOUND;
-											elm_notfound = ptrComp[j];
+											elm_notfound = ptrComp[j].modName;
 											runme = false;
 										}
 										break;
@@ -215,7 +226,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 									res = hHost->activate_selected_component(tpIdN);
 									if (res != JVX_NO_ERROR)
 									{
-										elm_notfound = ptrComp[j];
+										elm_notfound = ptrComp[j].modName;
 										runme = false;
 										break;
 									}
@@ -276,7 +287,7 @@ void activate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPON
 	} // for (i = 1; i < JVX_COMPONENT_LIMIT; i++)
 }
 
-void deactivate_default_components_host(const char** lst_ModulesOnStart[JVX_COMPONENT_ALL_LIMIT], IjvxHost* hHost, jvxBool systemComponent)
+void deactivate_default_components_host(const jvxModuleOnStart* lst_ModulesOnStart[JVX_COMPONENT_ALL_LIMIT], IjvxHost* hHost, jvxBool systemComponent)
 {
 	jvxSize i,j;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -294,7 +305,7 @@ void deactivate_default_components_host(const char** lst_ModulesOnStart[JVX_COMP
 
 	for (i = limitRunStart; i != limitRunStop; i+= mod)	
 	{
-		const char** ptrComp = lst_ModulesOnStart[i];
+		const jvxModuleOnStart* ptrComp = lst_ModulesOnStart[i];
 
 		if (ptrComp)
 		{
@@ -319,7 +330,7 @@ void deactivate_default_components_host(const char** lst_ModulesOnStart[JVX_COMP
 				for (j = 0; j < szSlots; j++)
 				{
 					tpIdN.slotid = j;
-					if (ptrComp[j] == NULL)
+					if (ptrComp[j].modName == NULL)
 					{
 						break;
 					}
@@ -328,14 +339,14 @@ void deactivate_default_components_host(const char** lst_ModulesOnStart[JVX_COMP
 						res = hHost->module_reference_selected_component(tpIdN, &astr, NULL);
 						if (res == JVX_NO_ERROR)
 						{
-							if (astr.std_str() == ptrComp[j])
+							if (astr.std_str() == ptrComp[j].modName)
 							{
 								res = hHost->unselect_selected_component(tpIdN);
 								assert(res == JVX_NO_ERROR);
 							}
 							else
 							{
-								std::cout << __FUNCTION__ << ": Error: Failed to unselect component with module name <" << ptrComp[j] << ">." << std::endl;
+								std::cout << __FUNCTION__ << ": Error: Failed to unselect component with module name <" << ptrComp[j].modName << ">." << std::endl;
 								assert(0);
 							}
 						}

@@ -3,7 +3,7 @@
 
 #include "jvx.h"
 
-#ifndef JVX_USE_PART_ANDROIDAUDIO_NO_GLES
+#ifndef JVX_USE_PART_ANDROIDAUDIO_NO_API
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 #include <android/log.h>

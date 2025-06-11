@@ -32,6 +32,12 @@ reference_tool(const jvxComponentIdentification& tp,
 	jvxBitField filter_stateMask,
 	IjvxReferenceSelector* decider) override
 {
+	if (tp == JVX_COMPONENT_HOST)
+	{
+		if (theObject) *theObject = static_cast<IjvxHost*>(this);
+		return JVX_NO_ERROR;
+	}
+
 	return this->_reference_tool(tp, theObject, filter_id,
 		filter_descriptor, filter_stateMask,
 		decider);
@@ -40,6 +46,14 @@ reference_tool(const jvxComponentIdentification& tp,
 jvxErrorType
 return_reference_tool(const jvxComponentIdentification& tp, IjvxObject* theObject) override
 {
+	if (tp == JVX_COMPONENT_HOST)
+	{
+		if (theObject == static_cast<IjvxHost*>(this))
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_INVALID_ARGUMENT;
+	}
 	return this->_return_reference_tool(tp, theObject);
 }
 

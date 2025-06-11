@@ -76,7 +76,7 @@ public:
 	jvxSize granularity_state_report;
 
 	jvxBool flag_blockModuleEdit[JVX_COMPONENT_ALL_LIMIT];
-	const char** lst_ModulesOnStart[JVX_COMPONENT_ALL_LIMIT];
+	const jvxModuleOnStart* lst_ModulesOnStart[JVX_COMPONENT_ALL_LIMIT];
 	jvxBool verbose_ModulesOnStart = false;
 
 	std::map<jvxComponentIdentification, jvxSize> mapSpecSubSlots;

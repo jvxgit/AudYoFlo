@@ -2,33 +2,33 @@
 #include "interfaces/qt-audio-host/configureQtAudioHost_features.h"
 #include "jvxSpNSpeakerEqualizer.h"
 
-const char* componentsOnLoad_anodes_1dev[] =
+const jvxModuleOnStart componentsOnLoad_anodes_1dev[] =
 {
-	"jvxAuNPlayChannelId",
+	{"jvxAuNPlayChannelId"},
 	NULL
 };
 
-const char* componentsOnLoad_spnodes_1dev[] =
+const jvxModuleOnStart componentsOnLoad_spnodes_1dev[] =
 {
-	"jvxSpNMeasureIr",
-	"jvxSpNSpeakerEqualizer",
+	{"jvxSpNMeasureIr"},
+	{"jvxSpNSpeakerEqualizer"},
 	NULL
 };
 
 // ========================================================================
-const char* componentsOnLoad_anodes_2dev[] =
+const jvxModuleOnStart componentsOnLoad_anodes_2dev[] =
 {
-	"jvxAuNMeasureIr2Dev",
-	"jvxAuNPlayChannelId",
+	{"jvxAuNMeasureIr2Dev"},
+	{"jvxAuNPlayChannelId"},
 	NULL
 };
 
 
-const char* componentsOnLoad_spnodes_2dev[] =
+const jvxModuleOnStart componentsOnLoad_spnodes_2dev[] =
 {
-	"jvxSpNAsyncIo_sm",
-	"jvxSpNMeasureIr",
-	"jvxSpNSpeakerEqualizer",
+	{"jvxSpNAsyncIo_sm"},
+	{"jvxSpNMeasureIr"},
+	{"jvxSpNSpeakerEqualizer"},
 	NULL
 };
 

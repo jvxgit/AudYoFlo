@@ -868,7 +868,8 @@ else(JVX_COMPILE_BUILDTOOLS)
   ###
   set(JVX_BASE_APPLICATION_CONTROLLER_NODES ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAppCtrNodes/jvxAppNWeb)
 
-
+  set(JVX_BASE_AUTOMATION_COMPONENTS ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAutomationComponents/ayfATTypical)
+  
   ###
   # build audio nodes
   ###
@@ -1296,6 +1297,7 @@ else(JVX_COMPILE_BUILDTOOLS)
   jvx_addSubdirs("Configuring all signal processing technology components" "${JVX_BASE_SIGNAL_PROCESSING_TECHNOLOGIES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/signalprocessing-technology-components")
   jvx_addSubdirs("Configuring all external controller technology components" "${JVX_BASE_APPLICATION_CONTROLLER_TECHNOLOGIES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/application-controller-components")
   jvx_addSubdirs("Configuring all external controller node components" "${JVX_BASE_APPLICATION_CONTROLLER_NODES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/application-controller-nodes")
+  jvx_addSubdirs("Configuring all automation components" "${JVX_BASE_AUTOMATION_COMPONENTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/automation-components")
   jvx_addSubdirs("Configuring all audio node components" "${JVX_BASE_AUDIO_NODES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/audio-node-components")
   jvx_addSubdirs("Configuring all video node components" "${JVX_BASE_VIDEO_NODES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/video-node-components")
   jvx_addSubdirs("Configuring all signal processing node components" "${JVX_BASE_SIGNAL_PROCESSING_NODES}" "${JVX_FOLDER_HIERARCHIE_BASE}/components/signalprocessing-node-components")

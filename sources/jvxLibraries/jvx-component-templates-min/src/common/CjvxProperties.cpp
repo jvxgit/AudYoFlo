@@ -621,7 +621,11 @@ CjvxProperties::_set_property(
 
 		if (fld == NULL)
 		{
-			if (selection->propDescriptor->format != JVX_DATAFORMAT_CALLBACK)
+			// A nullptr reference indicates an error in the call - unless we want to really set a nullptr
+			// for properties of format CALLBACK and HANDLE!!
+			if (!
+				((selection->propDescriptor->format == JVX_DATAFORMAT_CALLBACK) ||
+				(selection->propDescriptor->format == JVX_DATAFORMAT_HANDLE)))
 			{
 				res = JVX_ERROR_INVALID_ARGUMENT;
 				goto leave_function_unlock;

@@ -209,6 +209,8 @@ JVX_INTERFACE IjvxGlobalInstance;
 // MORE TYPEDEFS MORE TYPEDEFS MORE TYPEDEFS MORE TYPEDEFS MORE TYPEDEFS
 // =============================================================
 // Access to components and interfaces (must be here as it requires definition on IjvxObject)
+#include "typedefs/TjvxModuleOnStart.h"
+
 #include "typedefs/TjvxAccess.h"
 
 // =============================================================

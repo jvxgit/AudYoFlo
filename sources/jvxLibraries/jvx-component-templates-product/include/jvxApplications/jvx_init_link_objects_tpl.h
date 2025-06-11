@@ -22,6 +22,10 @@
 #include "jvxAuTWindows.h"
 #endif
 
+#ifdef JVX_USE_ANDROID
+#include "jvxAuTAndroid.h"
+#endif
+
 #ifdef JVX_HOST_USE_REMOTE_CALL
 #include "jvxTRemoteCall.h"
 #endif
@@ -51,6 +55,10 @@ jvxErrorType jvx_access_link_objects(
 
 	switch (tp)
 	{
+#ifdef JVX_HOST_AUDIO_TECHNOLOGIES
+		JVX_HOST_AUDIO_TECHNOLOGIES
+#else
+
 	case JVX_COMPONENT_AUDIO_TECHNOLOGY:
 
 #ifdef JVX_USE_PORTAUDIO
@@ -116,7 +124,22 @@ jvxErrorType jvx_access_link_objects(
 	}
 		cnt++;
 #endif
+
+#if defined JVX_USE_ANDROID
+
+		if (id == cnt)
+		{
+			adescr->assign("Android Audio");
+			*funcInit = jvxAuTAndroid_init;
+			*funcTerm = jvxAuTAndroid_terminate;
+			return(JVX_NO_ERROR);
+		}
+		cnt++;
+#endif
+
 		break;
+
+#endif
 
 #ifdef JVX_ALGO_COMPONENT_TYPE
 	case JVX_ALGO_COMPONENT_TYPE:
@@ -178,6 +201,10 @@ jvxErrorType jvx_access_link_objects(
 			break;
 		}
 		break;
+#endif
+
+#ifdef JVX_HOST_AUTOMATION_COMPONENT
+	JVX_HOST_AUTOMATION_COMPONENT
 #endif
 
 	default:

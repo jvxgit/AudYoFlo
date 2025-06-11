@@ -1,4 +1,4 @@
-set(PROJECT_NAME jvxAuTAndroidGlEs)
+set(PROJECT_NAME jvxAuTAndroid)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
@@ -6,8 +6,10 @@ set(LOCAL_PCG_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_technology.pcg
 	${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_device.pcg
 	)
-if(NOT JVX_USE_PART_ANDROIDAUDIO)
-	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_PART_ANDROIDAUDIO_NO_GLES")
+
+# if(NOT JVX_USE_PART_ANDROIDAUDIO)
+if(NOT ${JVX_OS} MATCHES "Android")
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_USE_PART_ANDROIDAUDIO_NO_API")
 endif()
 
 include_directories(

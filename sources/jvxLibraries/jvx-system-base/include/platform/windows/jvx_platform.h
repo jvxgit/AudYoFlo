@@ -25,6 +25,7 @@
 #include <mfreadwrite.h>
 #include <inttypes.h>
 #include <shlobj.h>
+#include <functional>
 
 #include "jvx_system.h"
 #include "../jvx_platform_common.h"
