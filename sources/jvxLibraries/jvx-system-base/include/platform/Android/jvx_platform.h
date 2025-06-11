@@ -53,6 +53,7 @@
 #include <memory>
 #include <sys/wait.h>
 #include <spawn.h>
+#include <functional>
 
 // Make sure that threads behave as desired
 #define JVX_DEBUG_THREADS
