@@ -220,15 +220,15 @@ mainWindow_UiExtension_host_terminate(mainWindow_UiExtension_host* elm)
 // =============================================================
 // Specify some runtime host configurations
 // =============================================================
-const char* componentsOnLoad_algorithms[] =
+const jvxModuleOnStart componentsOnLoad_algorithms[] =
 {
-	"jvxAuNOpenGl",
+	{"jvxAuNOpenGl"},
 	NULL
 };
 
-const char* componentsOnLoad_audiotechnologies[] =
+const jvxModuleOnStart componentsOnLoad_audiotechnologies[] =
 {
-	"jvxAuTGenericWrapper",
+	{"jvxAuTGenericWrapper"},
 	nullptr
 };
 
