@@ -42,7 +42,6 @@ set(AYF_STARTER_AUDIONODE
   )
 jvx_addSubdirs("Configuring shared library for ayfstarter audio node" "${AYF_STARTER_AUDIONODE}" "${JVX_FOLDER_HIERARCHIE_BASE}/AudioNode")
 	
-
 if(NOT JVX_RELEASE_SDK)
 	set(AYF_STARTER_APPLICATION "")
 	if(JVX_USE_PART_WEBSERVER)

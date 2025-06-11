@@ -37,10 +37,17 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
 
 #endif
 
-extern const char* componentsOnLoad_algorithms[];
-extern const char* componentsOnLoad_audiotechnologies[];
+// ========================================================
+// Declare the autostart pre-selections
+// ========================================================
+
+#include "../common/ayfstarter-common.h"
+
+// ========================================================
+// ========================================================
 
 #include "interfaces/qt-audio-host/configureQtAudioHost_features.h"
+
 extern "C"
 {
 	jvxErrorType jvx_configure_factoryhost_features(configureFactoryHost_features* features)
@@ -77,6 +84,9 @@ extern "C"
 
 			theFeaturesH->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_TECHNOLOGY] = true;
 			theFeaturesH->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_TECHNOLOGY] = componentsOnLoad_audiotechnologies;
+
+			theFeaturesH->flag_blockModuleEdit[JVX_COMPONENT_SYSTEM_AUTOMATION] = true;
+			theFeaturesH->lst_ModulesOnStart[JVX_COMPONENT_SYSTEM_AUTOMATION] = componentsOnLoad_automation;
 		}
 
 		return(JVX_NO_ERROR);
