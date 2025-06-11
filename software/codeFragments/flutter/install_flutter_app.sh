@@ -80,6 +80,11 @@ else
 		rm -rf $4/$3
 	fi
 
+	## echo "build/$sysfolder/$platform/$subfolder"
+	# Windows: build/windows/x64/runner/Debug
+	# Linux: build/windows/x64/debug/bundle
+	# Android: build/app/outputs/flutter-apk/app-debug.apk"
+	
 	if [ -d "build/$sysfolder/$platform/$subfolder" ]; then
 		echo "mv build/$sysfolder/$platform/$subfolder $4/$3"
 		mv build/$sysfolder/$platform/$subfolder $4/$3
