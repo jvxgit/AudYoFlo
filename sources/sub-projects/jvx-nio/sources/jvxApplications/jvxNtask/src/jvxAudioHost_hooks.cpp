@@ -339,25 +339,25 @@ mainWindow_UiExtension_host_terminate(mainWindow_UiExtension_host* elm)
 // Specify some runtime host configurations
 // =============================================================
 #ifndef JVX_LINK_VTASK
-const char* componentsOnLoad_algorithms[] =
+const jvxModuleOnStart componentsOnLoad_algorithms[] =
 {
-	"jvxAuNNtask",
+	{"jvxAuNNtask"},
 	NULL
 };
 #endif
 
-const char* componentsOnLoad_spnodes[] =
+const jvxModuleOnStart componentsOnLoad_spnodes[] =
 {
-	"jvxSpNAsyncIo_sm",
+	{"jvxSpNAsyncIo_sm"},
 #ifdef JVX_LINK_VTASK
-	"jvxSpNVtask",
+	{"jvxSpNVtask"},
 #endif
 	NULL
 };
 
-const char* componentsOnLoad_audiotechnologies[] =
+const jvxModuleOnStart componentsOnLoad_audiotechnologies[] =
 {
-	"jvxAuTGenericWrapper",
+	{"jvxAuTGenericWrapper"},
 	nullptr
 };
 
