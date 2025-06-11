@@ -31,15 +31,15 @@ extern "C"
 }
 
 // ===============================================================================
-const char* componentsOnLoad_algorithms[] =
+const jvxModuleOnStart componentsOnLoad_algorithms[] =
 {
-	"myNewRtapAudioNode",
+	{"myNewRtapAudioNode"},
 	NULL
 };
 
-const char* componentsOnLoad_audiotechnologies[] =
+const jvxModuleOnStart componentsOnLoad_audiotechnologies[] =
 {
-	"jvxAuTGenericWrapper",
+	{"jvxAuTGenericWrapper"},
 	nullptr
 };
 
