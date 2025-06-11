@@ -1,0 +1,20 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genATTypical";
+
+	SECTION config_audio
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "audio";
+
+		SECTION primary_audio_tech_lowlevel
+		{
+			DESCRIPTION = "Default Selection of Low Level Audio API";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+	};
+};
