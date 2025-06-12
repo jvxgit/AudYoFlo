@@ -199,13 +199,13 @@ void activate_default_components_host(const jvxModuleOnStart* lst_ModulesOnStart
 												res = hHost->select_component(tpIdN, k);
 												assert(res == JVX_NO_ERROR);
 
-												if (ptrComp[j].theCallback)
+												if (ptrComp[j].onSelect)
 												{
 													IjvxObject* obj = nullptr;
 													res = hHost->request_object_selected_component(tpIdN, &obj);
 													if((res == JVX_NO_ERROR) && obj)
 													{
-														ptrComp[j].theCallback(obj);
+														ptrComp[j].onSelect(obj);
 														hHost->return_object_selected_component(tpIdN, obj);
 													}
 												}
@@ -341,6 +341,17 @@ void deactivate_default_components_host(const jvxModuleOnStart* lst_ModulesOnSta
 						{
 							if (astr.std_str() == ptrComp[j].modName)
 							{
+								if (ptrComp[j].beforeUnselect)
+								{
+									IjvxObject* obj = nullptr;
+									res = hHost->request_object_selected_component(tpIdN, &obj);
+									if ((res == JVX_NO_ERROR) && obj)
+									{
+										ptrComp[j].beforeUnselect(obj);
+										hHost->return_object_selected_component(tpIdN, obj);
+									}
+								}
+
 								res = hHost->unselect_selected_component(tpIdN);
 								assert(res == JVX_NO_ERROR);
 							}
