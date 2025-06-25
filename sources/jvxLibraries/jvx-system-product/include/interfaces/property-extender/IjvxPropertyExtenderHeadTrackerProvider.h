@@ -12,7 +12,7 @@ public:
 	virtual ~IjvxPropertyExtenderHeadTrackerProvider_report() {};	
 
 	// Report a head rotation and a center of head displacement. Displacement may also be nullptr if no displacement is available (pure rotation tracker)
-	virtual jvxErrorType report_rotation_displacement(IjvxPropertyExtenderHeadTrackerProvider* origin, jvx_quat* rot_data, jvxData* center_displacement_3d, jvxSize slotId = 0) = 0;
+	virtual jvxErrorType report_rotation_displacement(IjvxPropertyExtenderHeadTrackerProvider* origin, jvx_quat* rot_data, jvxData* center_displacement_3d, jvxSize slotId = 0, jvxData timestampData_origin = -1.0) = 0;
 	virtual jvxErrorType report_quality(IjvxPropertyExtenderHeadTrackerProvider* origin, jvxRemoteConnectionQuality qual, jvxData qualValue = -1, jvxSize slotId = 0) = 0;
 };
 
