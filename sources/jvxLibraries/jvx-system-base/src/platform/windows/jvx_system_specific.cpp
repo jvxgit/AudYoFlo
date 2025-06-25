@@ -271,3 +271,126 @@ std::string JVX_FILENAME_FROM_FILE(FILE* hFile)
   // return(bSuccess);
   return retVal;
 }
+
+/* This functions reads a presentation of time which may be related to PTP or NTP synchronization 
+ * and returns a unique timestamp given as a float value of seconds during the curent day.
+ * E.g., at time 0:01, this timestamp should be 60.00000.
+ */
+jvxData 
+JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
+{
+	FILETIME ft;
+	GetSystemTimePreciseAsFileTime(&ft);
+
+	// Link regarding PTP clock in Windows 11:
+	// https://www.msxfaq.de/netzwerk/grundlagen/ptp_precision_time_protocol.htm
+
+	// Application PTPSync which seems to work rather well:
+	// https://github.com/GridProtectionAlliance/PTPSync?tab=readme-ov-file
+
+	// Command: "w32tm / query / status / verbose" -> Ausgabe Status Systemclock
+
+	// Commands, um an einen PTP Server zu binden: 
+	// "w32tm /config /manualpeerlist:"<PTP- oder NTP-Server>" /syncfromflags:manual /update
+	// "w32tm / resync"
+	//
+
+	// Commands to activate PTP in registry:
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\PtpClient /v Enabled /t REG_DWORD /d 1 /f
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\PtpClient /v InputProvider /t REG_DWORD /d 1 /f
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\PtpClient /v PtpMasters /t REG_SZ /d "192.168.178.200" /f
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\PtpClient /v DllName /t REG_SZ /d "%systemroot%\system32\ptpprov.dll" /f
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\PtpClient /v AnnouncePollInterval /t REG_DWORD /d 4000 /f
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\PtpClient /v DelayPollInterval /t REG_DWORD /d 16000 /f
+	// 
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpClient /v Enabled /t REG_DWORD /d 0 /f
+	// reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\VMICTimeProvider /t REG_DWORD /v Enabled /d 0 /f
+	// 
+	// net stop w32time
+	// w32tm /unregister
+	// w32tm / register
+	// net start w32time
+
+	// Regedit: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpClient Enabled auf "0"
+
+			// Commands, um Systemfeedback einzuholen:
+	// w32tm /query /status /verbose
+	// w32tm /query /configuration
+
+	// Nach perplexity scheint Ptpclient trotz aller Versprechungen auf meinem System nicht verfügbar zu sein.
+	// "Die native PTP-Unterstützung ist auf Ihrem System aktuell nicht nutzbar."
+
+	// Prüfen der Optionen mittels Netzwerkkarte:
+	// GetInterfaceSupportedTimestampCapabilities 
+	// GetInterfaceActiveTimestampCapabilities 
+
+	// ===================================== SUMMARY ==================================
+	// As of now, I have learned today: 
+	// 1) PTP onboard sync does not work on Windows 11 in a reliable way. Most of the docs explaining how it is done
+	//    seem to repair to older versions of Windows, e.g. Windows 10 etc. The proble is that all PtpClient entries setup
+	//    on a PC will confuse the w32tim service on start such that the service does not run. By unregistering and registering the service,
+	//    the w32time service can be started. hiwever, the PtpClient entries in the registry will be removed in this case.
+	// 2) We can inst PTPSync instead. To do so, we add a configuration with a reference to the existing PTP server,
+	//    e.g., ConnectionString = FileName=ptpd.exe; Arguments={-b {E5B70792-17E9-4122-89D0-0AB1B8C5B4D3} -V -g -u 192.168.178.200}; ForceKillOnDispose=True
+	//    This will output info about received information on the console debug output.
+	// 3) If we run w32time in parallel to PTPSync, the synchronization may be broken since NTP and PTP synchronization are active 
+	//	  at the same time.
+	// 4) We can deactivate w32time service by running <net stop w32time> and restart it later by running <net start w32time>
+	// 5) We can run the MS services app to find out the status of synchronization or <w32tm /query /status>
+
+	// FILETIME in 100-Nanosekunden-Intervallen seit 1601-01-01
+	ULARGE_INTEGER uli;
+	uli.LowPart = ft.dwLowDateTime;
+	uli.HighPart = ft.dwHighDateTime;
+	
+	if (verboseOn)
+	{
+		std::cout << "Timestamp raw data: " << uli.QuadPart << std::endl;
+	}
+
+	SYSTEMTIME sysTime;
+	FileTimeToSystemTime(&ft, &sysTime);
+	jvxSize wYear = sysTime.wYear;
+	jvxSize wMonth = sysTime.wMonth;
+	jvxSize wDay = sysTime.wDay;
+	jvxSize wHour = sysTime.wHour;
+	jvxSize wMin = sysTime.wMinute;
+	jvxSize wSec = sysTime.wSecond;
+	jvxSize wMSecs = sysTime.wMilliseconds;
+
+	FILETIME ft_round;
+	SystemTimeToFileTime(&sysTime, &ft_round);
+
+	ULARGE_INTEGER uli_round;
+	uli_round.LowPart = ft_round.dwLowDateTime;
+	uli_round.HighPart = ft_round.dwHighDateTime;
+	jvxSize nano100 = uli.QuadPart - uli_round.QuadPart;
+	jvxData wMicroSecs = ((jvxData)nano100) * 0.1;
+
+	if (verboseOn)
+	{
+		std::cout << __FUNCTION__ << "Derived current moment in time: " <<
+			"Year: " << wYear << "; " <<
+			"Month: " << wMonth << "; " <<
+			"Day: " << wDay << "; " <<
+			"Hour: " << wHour << "; " <<
+			"Minute: " << wMin << "; " <<
+			"Seconds: " << wSec << "; " <<
+			"Millisecs: " << wMSecs << "; " <<
+			"Micros: " << wMicroSecs << ". " <<
+			std::endl;
+	}
+
+	jvxData millSecsToday = wHour;
+	millSecsToday *= 60;
+	millSecsToday += wMin;
+	millSecsToday *= 60;
+	millSecsToday += wSec;
+	millSecsToday *= 1000;
+	millSecsToday += wMSecs;
+
+	jvxData secsToday = millSecsToday * 0.001;
+	secsToday += wMicroSecs * 0.000001;
+
+	return secsToday;
+}

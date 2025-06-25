@@ -226,6 +226,7 @@ JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE
 std::string JVX_TIME();
 std::string JVX_DATE();
 std::string JVX_FILENAME_FROM_FILE(FILE* hFile);
+jvxData JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn = false);
 
 // Expression for "INFINITE" in maths
 #define JVX_MATH_INFINITE std::numeric_limits<jvxData>::infinity()
