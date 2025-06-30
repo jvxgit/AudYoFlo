@@ -422,6 +422,22 @@ public:
 	virtual void seq_event(TjvxSequencerEvent* ev) = 0;
 };
 */
+
+class jvxSyncTimeStamp_data
+{
+public:
+	jvxData timestamp_device = -1;
+	jvxData timestamp_software = -1;
+	jvxSyncTimeStamp_data(jvxData timestamp_device_arg = -1, jvxData timestamp_software_arg = -1) : timestamp_device(timestamp_device_arg), timestamp_software(timestamp_software_arg)
+	{
+	};
+	void reset() 
+	{
+		timestamp_device = -1;
+		timestamp_software = -1;
+	}
+};
+
 // ===============================================================================
 
 namespace jvx

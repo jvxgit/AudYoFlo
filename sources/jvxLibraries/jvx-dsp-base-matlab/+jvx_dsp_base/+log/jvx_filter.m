@@ -5,7 +5,7 @@ function [str] = jvx_filter(fName, option, specified)
     end
     
     if(nargin < 2)
-        option = 'none';
+        option = 'module';
     end
     
     if(nargin < 3)
@@ -17,7 +17,7 @@ function [str] = jvx_filter(fName, option, specified)
     str = jsondecode(txt);
     
     % Options: 
-    % 'component -> entries for component withname
+    % 'module -> entries for component withname
     % 'field' -> Entries for field name
     if(~isempty(option))
         strFull = str;        
@@ -28,7 +28,7 @@ function [str] = jvx_filter(fName, option, specified)
         cnt = 0;
         for(jj = 1: size(cc_str))
             obj = cc_str{jj};           
-            if(check_filter_match(obj, 'module', specified))
+            if(check_filter_match(obj, option, specified))
                 cnt = cnt + 1;% str
             end
         end
@@ -39,7 +39,7 @@ function [str] = jvx_filter(fName, option, specified)
         cnt = 1;
         for(jj = 1:size(cc_str))
             obj = cc_str{jj};
-            if(check_filter_match(obj, 'module', specified))
+            if(check_filter_match(obj, option, specified))
                 cc_filtered{cnt} = obj;
                 fn_filtered{cnt} = fn_str{jj};
                 cnt = cnt + 1;% str
