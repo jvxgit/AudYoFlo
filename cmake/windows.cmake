@@ -379,6 +379,40 @@ macro (find_ccs)
 	message("--> CCS Installation folder: ${JVX_CCS_INSTALL_FOLDER}")
 endmacro (find_ccs)
 
+macro (find_cces)
+
+	if(NOT DEFINED JVX_CCES_INSTALL_FOLDER)
+		set(JVX_CCES_INSTALL_FOLDER "C:/Analog Devices/CrossCore Embedded Studio 2.12.1")
+	endif()
+
+	if(DEFINED ENV{CCES_INSTALL_PATH})
+		set(JVX_CCES_INSTALL_FOLDER $ENV{CCES_INSTALL_PATH})
+	endif()
+
+	find_program(CCES_ECLIPSE ccesc.exe PATHS ${JVX_CCES_INSTALL_FOLDER}/Eclipse NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_ENVIRONMENT_PATH)
+	find_program(CCES_MAKE make.exe PATHS ${JVX_CCES_INSTALL_FOLDER} NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_ENVIRONMENT_PATH)
+
+	if(CCES_ECLIPSE)
+		set(CCES_CCESC_FOUND TRUE)
+		get_filename_component(var1 ${CCES_ECLIPSE} DIRECTORY)
+		get_filename_component(JVX_CCES_INSTALL_FOLDER "${var1}" DIRECTORY)
+	else()
+		set(CCES_CCESC_FOUND FALSE)
+		message(FATAL_ERROR "    ADI ccesc not found")
+	endif()
+
+	if(CCES_MAKE)
+		set(CCES_CMAKE_FOUND TRUE)
+		get_filename_component(var1 ${CCES_ECLIPSE} DIRECTORY)
+		get_filename_component(JVX_CCES_INSTALL_FOLDER "${var1}" DIRECTORY)
+	else()
+		set(CCES_CMAKE_FOUND FALSE)
+		message(FATAL_ERROR "    ADI make not found")
+	endif()
+
+	message("--> CCES Installation folder: ${JVX_CCES_INSTALL_FOLDER} with application <${CCES_ECLIPSE}> and <${CCES_MAKE}>")
+endmacro (find_cces)
+
 macro (find_mcuxpresso)
 
 	if(NOT DEFINED JVX_MCUXPRESSO_INSTALL_FOLDER)

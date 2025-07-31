@@ -21,6 +21,7 @@ option(JVX_RELEASE_OMAPL137 "Compile omap137 DSP applications (requires CCS and 
 option(JVX_RELEASE_C674X "Compile c674x DSP applications (requires CCS and DSP/BIOS)" false)
 option(JVX_RELEASE_ARMCORTEXA8 "Compile ARM Cortex A8 applications (requires CCS and ARM-GCC)" false)
 option(JVX_RELEASE_ARMCORTEXM4 "Compile ARM Cortex M4 applications (requires NXP MCUXpresso)" false)
+option(JVX_RELEASE_ADIDSP_SC594 "Compile ADI DSP SC594 applications (requires Cces)" false)
 option(JVX_USE_OPENGL "Compile applications and components using opengl in combination with x11 (freeglut and glew)" false)
 # option(JVX_USE_OPENGL_X11 "Compile applications and components using opengl in combination with x11 (freeglut and glew)" false)
 option(JVX_USE_OPENCV "Compile applications and components using opencv" false)

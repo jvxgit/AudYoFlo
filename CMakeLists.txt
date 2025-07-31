@@ -542,6 +542,10 @@ else(JVX_COMPILE_BUILDTOOLS)
 
   if(JVX_RELEASE_OMAPL137 OR JVX_RELEASE_C674X OR JVX_RELEASE_ARMCORTEXA8)
     find_ccs()
+	
+elseif(JVX_RELEASE_ADIDSP_SC594)
+	find_cces()  
+	
   elseif(JVX_RELEASE_ARMCORTEXM4)
     find_mcuxpresso()
   endif()
@@ -1183,27 +1187,39 @@ else(JVX_COMPILE_BUILDTOOLS)
   # Add the omap l137 packages if desired
   set(JVX_PLATFORM_PACKAGES "")
   if(JVX_RELEASE_OMAPL137)
+
     set(JVX_BASE_PLATFORM_PACKAGES ${JVX_BASE_PLATFORM_PACKAGES}
       ${JVX_BASE_ROOT}/platform-packages/omapl137/jvx-remote-call-pkg
       ${JVX_BASE_ROOT}/platform-packages/omapl137/jvx-dsp-base
     )
+
   elseif(JVX_RELEASE_C674X)
+
     set(JVX_BASE_PLATFORM_PACKAGES ${JVX_BASE_PLATFORM_PACKAGES}
       ${JVX_BASE_ROOT}/platform-packages/c674x/jvx-dsp-base
       ${JVX_BASE_ROOT}/platform-packages/c674x/jvx-remote-call-pkg
       ${JVX_BASE_ROOT}/platform-packages/c674x/jvx-audio-stack
     )
+
   elseif(JVX_RELEASE_ARMCORTEXA8)
+
     set(JVX_BASE_PLATFORM_PACKAGES ${JVX_BASE_PLATFORM_PACKAGES}
       ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/platform-packages/arm_cortex_a8/libav_fft
       ${JVX_BASE_ROOT}/platform-packages/arm_cortex_a8/jvx-dsp-base
     )
+
   elseif(JVX_RELEASE_ARMCORTEXM4)
+
     set(JVX_BASE_PLATFORM_PACKAGES ${JVX_BASE_PLATFORM_PACKAGES}
       ${JVX_BASE_ROOT}/platform-packages/arm_cortex_m4/jvx-dsp-base
       ${JVX_BASE_ROOT}/platform-packages/arm_cortex_m4/jvx-system-base
       ${JVX_BASE_ROOT}/platform-packages/arm_cortex_m4/jvx-helpers
     )
+
+  elseif(JVX_RELEASE_ADIDSP_SC594)
+    set(JVX_BASE_PLATFORM_PACKAGES ${JVX_BASE_PLATFORM_PACKAGES}
+      ${JVX_BASE_ROOT}/platform-packages/sc594/jvx-dsp-base
+	  )
   endif()
 
   if(JVX_RELEASE_OMAPL137)
