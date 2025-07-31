@@ -8,15 +8,6 @@
 #include <stdio.h>
 // #include <sys/stat.h>
 
-// ==========================================================
-// On SHARC, the native format of all registers is 32 bits.
-// Therefore, int16_t, int8_t and others are not defined!
-typedef signed char     int8_t;
-typedef unsigned char   uint8_t;
-typedef short           int16_t;
-typedef unsigned short  uint16_t;
-// ==========================================================
-
 //! Size datatype to be used within RTProc
 typedef size_t jvxSize;
 
