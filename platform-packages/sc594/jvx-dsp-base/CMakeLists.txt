@@ -26,10 +26,11 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/../ws)
 		-data "${CMAKE_CURRENT_BINARY_DIR}/../ws" -import ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}
 		COMMAND_ECHO STDOUT)
 		
-	execute_process(
-		COMMAND ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-		-data "${CMAKE_CURRENT_SOURCE_DIR}/../ws" -cleanBuild jvx-dsp-base/Debug
-		COMMAND_ECHO STDOUT)
+	#execute_process(
+	#	COMMAND ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	#	-data "${CMAKE_CURRENT_SOURCE_DIR}/../ws" -cleanBuild jvx-dsp-base/Debug
+	#	COMMAND_ECHO STDOUT)
+	
 endif()
 
 if(JVX_OPTION_MAKEFILE_BUILD)
