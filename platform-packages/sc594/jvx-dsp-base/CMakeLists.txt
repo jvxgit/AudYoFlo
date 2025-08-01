@@ -10,6 +10,8 @@ set(JVX_CMAKE_CCSE_SDK_PATH )
 #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/project/${JVX_PLATFORM_PACKAGE_LIB_NAME}/macros.ini.in 
 	#${CMAKE_CURRENT_SOURCE_DIR}/project/${JVX_PLATFORM_PACKAGE_LIB_NAME}/macros.ini)
 
+set(JVX_OPTION_MAKEFILE_BUILD FALSE)
+set(JVX_OPTION_BUILD_DEBUG TRUE)
 
 # During cmake run phase, create workspace if not available yet
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/../ws)
@@ -30,33 +32,31 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/../ws)
 		COMMAND_ECHO STDOUT)
 endif()
 
-# At build time, run the ccs command script to build release as well as release version of lib
-add_custom_target(${JVX_TARGET_NAME} 
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	COMMAND 	
-	${CCES_MAKE} -C Debug clean && ${CCES_MAKE} -C Debug all)
-	## 
-	
-	#${CCES_ECLIPSE} -noSplash -data ${CMAKE_CURRENT_BINARY_DIR}/ws -application com.ti.ccstudio.apps.projectBuild -ccs.projects 
-	#${JVX_PLATFORM_PACKAGE_LIB_NAME} -ccs.configuration Debug && 
-	#${CCES_ECLIPSE} -noSplash -data ${CMAKE_CURRENT_BINARY_DIR}/ws -application com.ti.ccstudio.apps.projectBuild -ccs.projects 
-	#${JVX_PLATFORM_PACKAGE_LIB_NAME} -ccs.configuration Release &&
-	#${CCES_ECLIPSE} -noSplash -data ${CMAKE_CURRENT_BINARY_DIR}/ws -application com.ti.ccstudio.apps.projectBuild -ccs.projects 
-	#${JVX_PLATFORM_PACKAGE_LIB_NAME} -ccs.configuration Debug-c8 && 
-	#${CCES_ECLIPSE} -noSplash -data ${CMAKE_CURRENT_BINARY_DIR}/ws -application com.ti.ccstudio.apps.projectBuild -ccs.projects 
-	#${JVX_PLATFORM_PACKAGE_LIB_NAME} -ccs.configuration Release-c8)
+if(JVX_OPTION_MAKEFILE_BUILD)
+	# Option #1: Makefile based build
+	# At build time, run the ccs command script to build release as well as release version of lib
+	add_custom_target(${JVX_TARGET_NAME} -make
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		COMMAND 	
+		${CCES_MAKE} -C Debug clean && ${CCES_MAKE} -C Debug all && ${CCES_MAKE} -C Release clean && ${CCES_MAKE} -C Release all)
+else()
+	add_custom_target(${JVX_TARGET_NAME}-headless
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		COMMAND ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_SOURCE_DIR}/../ws" -cleanBuild jvx-dsp-base/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_SOURCE_DIR}/../ws" -cleanBuild jvx-dsp-base/Release)
+endif()
 	
 # Install both libraries
 if(JVX_RELEASE_SDK)
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/project/${JVX_PLATFORM_PACKAGE_LIB_NAME}/Debug/${JVX_PLATFORM_PACKAGE_LIB_NAME}.lib DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Debug)
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/project/${JVX_PLATFORM_PACKAGE_LIB_NAME}/Release/${JVX_PLATFORM_PACKAGE_LIB_NAME}.lib DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Release)
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Debug/${JVX_PLATFORM_PACKAGE_LIB_NAME}.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Debug)
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Release/${JVX_PLATFORM_PACKAGE_LIB_NAME}.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Release)
 	
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/project/${JVX_PLATFORM_PACKAGE_LIB_NAME}/Debug-c8/${JVX_PLATFORM_PACKAGE_LIB_NAME}.lib DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Debug-c8)
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/project/${JVX_PLATFORM_PACKAGE_LIB_NAME}/Release-c8/${JVX_PLATFORM_PACKAGE_LIB_NAME}.lib DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Release-c8)
-	
-	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../compatibility/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
-	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
+	# install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../compatibility/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
+	# install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
 
 endif()
 
