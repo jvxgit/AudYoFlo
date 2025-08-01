@@ -120,6 +120,7 @@
 								<option id="compiler.option.sirevision.393350234" name="-si-revision" superClass="compiler.option.sirevision" useByScannerDiscovery="false" value=" 0.0" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.preprocessdefs.1877473948" name="Preprocessor definitions (-D):" superClass="compiler.option.preprocessdefs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="JVX_NO_SYSTEM_EXTENSIONS"/>
+									<listOptionValue builtIn="false" value="JVX_SYSTEM_USE_DATA_FORMAT_FLOAT"/>
 									<listOptionValue builtIn="false" value="COREnull"/>
 								</option>
 								<option id="compiler.option.coreid.633157845" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" useByScannerDiscovery="false" value="-1" valueType="string"/>
@@ -128,6 +129,7 @@
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-system-min/include"/>
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-dsp-base/include/sc594"/>
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-dsp-base/include"/>
+									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-dsp-base/src"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_CCES_WORKSPACE_FOLDER}\..\..\..\sources\jvxLibraries\jvx-system-min&quot;"/>
 								</option>
 								<inputType id="compiler.inputType.763553020" name="C/C++ Source" superClass="compiler.inputType"/>
