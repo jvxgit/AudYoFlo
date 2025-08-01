@@ -22,6 +22,8 @@
 #define JVX_DSP_DATA_FORMAT_DOUBLE 
 #endif
 
+#define JVX_DECLARE_HYPOT_INLINE \
+
 //! Shortcut for complex datatypes, actually defined to support fftw
 typedef struct
 {

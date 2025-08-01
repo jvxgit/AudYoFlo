@@ -8,6 +8,12 @@
 
 #define JVX_DSP_DATA_FORMAT_FLOAT
 
+#define JVX_DECLARE_HYPOT_INLINE \
+static inline jvxData hypot(jvxData x, jvxData y) \
+{ \
+    return sqrt(x * x + y * y); \
+};
+
 //! Shortcut for complex datatypes, actually defined to support fftw
 typedef struct
 {
@@ -57,4 +63,13 @@ typedef struct
 #define JVX_DSP_SAFE_DELETE_FIELD_TYPE JVX_SAFE_DELETE_FIELD_TYPE
 
 #endif
+
+#define JVX_DSP_UPDATE_ASYNC JVX_LIB_UPDATE_ASYNC
+#define JVX_DSP_UPDATE_SYNC JVX_LIB_UPDATE_SYNC
+#define JVX_DSP_UPDATE_INIT JVX_LIB_UPDATE_INIT
+#define JVX_DSP_UPDATE_FEEDBACK JVX_LIB_UPDATE_FEEDBACK
+#define JVX_DSP_UPDATE_USER_OFFSET JVX_LIB_UPDATE_USER_OFFSET
+#define JVX_DSP_UPDATE_ALL16  JVX_LIB_UPDATE_ALL16
+#define JVX_DSP_UPDATE_ALL32  JVX_LIB_UPDATE_ALL32
+
 #endif

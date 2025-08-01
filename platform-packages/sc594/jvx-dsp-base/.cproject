@@ -39,10 +39,12 @@
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-system-min/include"/>
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-dsp-base/include/sc594"/>
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-dsp-base/include"/>
+									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-dsp-base/src"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_CCES_WORKSPACE_FOLDER}\..\..\..\sources\jvxLibraries\jvx-system-min&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.preprocessdefs.1275766476" name="Preprocessor definitions (-D):" superClass="compiler.option.preprocessdefs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="JVX_NO_SYSTEM_EXTENSIONS"/>
+									<listOptionValue builtIn="false" value="JVX_SYSTEM_USE_DATA_FORMAT_FLOAT"/>
 									<listOptionValue builtIn="false" value="COREnull"/>
 								</option>
 								<option id="compiler.option.proc.968883212" name="-proc" superClass="compiler.option.proc" useByScannerDiscovery="false" value=" ADSP-SC594" valueType="string"/>
@@ -68,7 +70,7 @@
 							<tool id="sharc.toolchain.loader.1912641636" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader">
 								<option id="loader.option.proc.722859623" name="-proc" superClass="loader.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="loader.option.sirevision.1658491818" name="-si-revision" superClass="loader.option.sirevision" value=" 0.0" valueType="string"/>
-								<option id="sharc.loader.option.kernelfile.1732049152" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.12.1\SHARC\ldr\_prom.dxe" valueType="string"/>
+								<option id="sharc.loader.option.kernelfile.1732049152" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.10.0\SHARC\ldr\_prom.dxe" valueType="string"/>
 							</tool>
 							<tool id="sharc.toolchain.deviceprogrammer.2114323745" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer">
 								<option id="deviceprogrammer.option.proc.2060035580" name="-proc" superClass="deviceprogrammer.option.proc" value=" ADSP-SC594" valueType="string"/>
@@ -121,7 +123,7 @@
 									<listOptionValue builtIn="false" value="COREnull"/>
 								</option>
 								<option id="compiler.option.coreid.633157845" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" useByScannerDiscovery="false" value="-1" valueType="string"/>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.additionaldirectories.1996371135" superClass="compiler.option.additionaldirectories" useByScannerDiscovery="false" valueType="includePath">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.additionaldirectories.1996371135" name="Additional include directories (-I):" superClass="compiler.option.additionaldirectories" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-system-min/include/platform/sc594"/>
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-system-min/include"/>
 									<listOptionValue builtIn="false" value="../../../../sources/jvxLibraries/jvx-dsp-base/include/sc594"/>
@@ -150,7 +152,7 @@
 							<tool id="sharc.toolchain.loader.2110531759" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader">
 								<option id="loader.option.proc.392297393" name="-proc" superClass="loader.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="loader.option.sirevision.2141825626" name="-si-revision" superClass="loader.option.sirevision" value=" 0.0" valueType="string"/>
-								<option id="sharc.loader.option.kernelfile.1330821389" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.12.1\SHARC\ldr\_prom.dxe" valueType="string"/>
+								<option id="sharc.loader.option.kernelfile.1330821389" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.10.0\SHARC\ldr\_prom.dxe" valueType="string"/>
 							</tool>
 							<tool id="sharc.toolchain.deviceprogrammer.562403986" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer">
 								<option id="deviceprogrammer.option.proc.8566966" name="-proc" superClass="deviceprogrammer.option.proc" value=" ADSP-SC594" valueType="string"/>

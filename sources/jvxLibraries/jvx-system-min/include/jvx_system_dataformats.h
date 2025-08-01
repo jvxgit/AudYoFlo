@@ -13,7 +13,6 @@
 
 #ifdef JVX_DATA_FORMAT_DOUBLE
 
-
 typedef double jvxData;
 #define JVX_DBL_2_DATA(a) (a)
 #define JVX_DATA_MAX_POS DBL_MAX
@@ -43,7 +42,6 @@ typedef double jvxData;
 #ifdef JVX_DATA_FORMAT_FLOAT
 
 typedef float jvxData;
-
 #define JVX_DBL_2_DATA(a) (float)(a)
 #define JVX_DATA_MAX_POS FLT_MAX
 #define JVX_DATA_MAX_NEG -FLT_MAX

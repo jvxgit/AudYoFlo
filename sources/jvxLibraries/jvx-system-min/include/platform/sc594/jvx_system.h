@@ -6,6 +6,8 @@
 #include <limits.h>
 #include <assert.h>
 #include <stdio.h>
+#include <float.h>
+
 // #include <sys/stat.h>
 
 //! Size datatype to be used within RTProc

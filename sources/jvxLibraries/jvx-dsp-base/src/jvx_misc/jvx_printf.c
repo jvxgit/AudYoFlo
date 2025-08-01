@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <stdarg.h>
 #include "jvx_misc/jvx_printf.h"
 
 typedef struct

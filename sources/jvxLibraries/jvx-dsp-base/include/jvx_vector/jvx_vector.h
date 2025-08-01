@@ -13,3 +13,4 @@ void jvx_vector_mat_comp(jvxData* in, jvxData* out, jvxData** mat, jvxSize n, jv
 JVX_DSP_LIB_END
 
 #endif
+

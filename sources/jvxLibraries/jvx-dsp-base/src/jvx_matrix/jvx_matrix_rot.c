@@ -3,6 +3,8 @@
 #include "jvx_matrix/jvx_matrix_prv.h"
 #include "jvx_matrix/jvx_matrix_rot.h"
 
+JVX_DECLARE_HYPOT_INLINE
+
 jvxErrorType jvx_matrix_euler_deg_2_rotmatrix_extrinsic(const jvxData* rotxyz_deg, jvx_matrix* mat, enum jvxRotMatEulerConversionType tp)
 {
 	jvxData tmp1, tmp2, tmp3;
@@ -593,7 +595,5 @@ jvxErrorType jvx_matrix_rotmat_2_euler_deg_extrensic(const jvx_matrix* rMIn, jvx
 	}
 	return JVX_NO_ERROR;
 }
-
-
 
 

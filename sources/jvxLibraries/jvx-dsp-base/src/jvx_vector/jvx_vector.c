@@ -47,3 +47,4 @@ void jvx_vector_mat_comp(jvxData* in, jvxData* out, jvxData** mat, jvxSize n, jv
 		out[i] = tmp;
 	}
 }
+

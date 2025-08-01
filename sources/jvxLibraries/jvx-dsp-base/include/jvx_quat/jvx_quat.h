@@ -29,3 +29,4 @@ void jvx_quat_reset(struct jvx_quat* q);
 JVX_DSP_LIB_END
 
 #endif
+

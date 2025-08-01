@@ -135,3 +135,4 @@ jvxDspBaseErrorType jvx_matrix_update(jvx_matrix* theMatrix, jvxInt16 whatToUpda
 	}
 	return(JVX_DSP_NO_ERROR);
 }
+

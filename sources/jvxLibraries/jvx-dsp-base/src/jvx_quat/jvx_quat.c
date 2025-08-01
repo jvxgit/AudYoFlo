@@ -63,3 +63,4 @@ void jvx_quat_reset(struct jvx_quat* q)
 	q->y = 0.0;
 	q->z = 0.0;
 }
+

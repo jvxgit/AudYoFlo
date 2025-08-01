@@ -358,3 +358,4 @@ jvx_compute_conv_add(jvxData* inF1, jvxData* inF2, jvxSize ninF, jvxData* inS1, 
 		*out++ = accu;
 	}
 }
+
