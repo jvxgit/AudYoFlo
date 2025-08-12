@@ -2,7 +2,6 @@
 #define __CJVXCONNECTIONMASTER_H__
 
 #include "jvx.h"
-#include "CjvxJson.h"
 
 class CjvxObject;
 class CjvxConnectionMaster;

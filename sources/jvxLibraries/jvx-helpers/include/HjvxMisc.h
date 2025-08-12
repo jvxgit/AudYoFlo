@@ -648,7 +648,9 @@ namespace jvx {
 
 		void debug_out_command_request(const CjvxReportCommandRequest& request, std::ostream& str, const std::string& tag);
 
+#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
 		jvxErrorType scanForFiles(const std::string& pathname, const std::string& ext, std::function< void(const std::string& fNamePath) > lambda, const std::string& wcName  ="*");
+#endif
 		
 		jvxHandle* genericDataBufferAllocate1D(jvxDataFormat form, jvxSize num);
 		void genericDataBufferDeallocate(jvxHandle*& buf, jvxDataFormat form);
@@ -1049,7 +1051,9 @@ typedef struct
 
 #ifdef __cplusplus
 
+#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
 void jvx_runAllActiveMainComponents(IjvxHost* hostRef, std::function<void(IjvxObject* theOwner, IjvxHiddenInterface* iface)> func);
+#endif
 
 jvxErrorType jvx_activateObjectInModule(
 	IjvxHost* hHostRef, 

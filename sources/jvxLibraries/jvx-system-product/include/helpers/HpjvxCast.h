@@ -33,6 +33,13 @@
 			result = true; \
 		} \
 		break; \
+	case JVX_COMPONENT_AUDIO_DECODER: \
+	case JVX_COMPONENT_AUDIO_ENCODER: \
+		if (std::is_same<T, IjvxSimpleNode>::value) \
+		{ \
+			result = true; \
+		} \
+		break; \
 
 #define JVX_COMPONENT_CASE_DEVICE 
 #define JVX_COMPONENT_CASE_TECHNOLOGY 

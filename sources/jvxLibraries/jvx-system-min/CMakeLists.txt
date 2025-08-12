@@ -14,6 +14,13 @@ else()
 	else()
 		message("${CMAKE_CURRENT_BINARY_DIR}/jvx_system_config.h NOT generated to avoid build dependency, use <JVX_FORCE_GENERATE_NEW_VERSION_TAG> to force generation.")
 	endif()
+	
+endif()
+
+# Produce some system definition headers for embedded targets
+if(JVX_RELEASE_ADIDSP_SC594)
+	configure_file(include/platform/sc594/jvx_system_definition.h.in ${CMAKE_CURRENT_BINARY_DIR}/jvx_system_definition_sc594.h)
+	message("Generating file <${CMAKE_CURRENT_BINARY_DIR}/jvx_system_definition_sc594.h> to declare system parameters for SC594 target.")
 endif()
 
 # add a target to generate API documentation with Doxygen

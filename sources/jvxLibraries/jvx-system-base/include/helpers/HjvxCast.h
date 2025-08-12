@@ -88,10 +88,12 @@ jvxInterfaceType getInterfaceType()
 	{
 		tp = JVX_INTERFACE_HOSTTYPEHANDLER;
 	}
+#ifndef JVX_SKIP_EVENT_LOOP
 	else if (std::is_same<T, IjvxEventLoop>::value)
 	{
 		tp = JVX_INTERFACE_EVENTLOOP;
 	}
+#endif
 	else if (std::is_same<T, IjvxPackage>::value)
 	{
 		tp = JVX_INTERFACE_PACKAGE;

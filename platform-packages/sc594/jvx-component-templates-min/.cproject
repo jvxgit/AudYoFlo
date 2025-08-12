@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="sharc.toolchain.configuration.debug.library.1340234441">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="sharc.toolchain.configuration.debug.library.1340234441" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/jvx-component-templates-min"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/jvx-component-templates-min/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="jvx-component-templates-min" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="com.analog.crosscore.managedbuilder.core.errorparser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="dlb" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib,com.analog.crosscore.managedbuilder.buildType=com.analog.crosscore.managedbuilder.buildType.debug" cleanCommand="clean" description="" id="sharc.toolchain.configuration.debug.library.1340234441" name="Debug" parent="sharc.toolchain.configuration.debug.library">
+					<folderInfo id="sharc.toolchain.configuration.debug.library.1340234441." name="/" resourcePath="">
+						<toolChain id="sharc.toolchain.debug.library.707372966" name="CrossCore SHARC Toolchain" superClass="sharc.toolchain.debug.library">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="sharc.platform.1075943550" name="CrossCore SHARC Target Platform" osList="all" superClass="sharc.platform"/>
+							<builder buildPath="${workspace_loc:/jvx-component-templates-min}/Debug" id="sharc.toolchain.builder.315583671" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CrossCore SHARC Builder" superClass="sharc.toolchain.builder"/>
+							<tool id="sharc.toolchain.assembler.652187108" name="CrossCore SHARC Assembler" superClass="sharc.toolchain.assembler">
+								<option id="assembler.option.proc.1106298238" name="-proc" superClass="assembler.option.proc" useByScannerDiscovery="false" value=" ADSP-SC594" valueType="string"/>
+								<option id="assembler.option.debugcode.1255539378" name="Generate debug information (-g)" superClass="assembler.option.debugcode" useByScannerDiscovery="false"/>
+								<inputType id="assembler.input.1482693589" name="Assembler Source" superClass="assembler.input"/>
+							</tool>
+							<tool id="sharc.toolchain.compiler.311661622" name="CrossCore SHARC C/C++ Compiler" superClass="sharc.toolchain.compiler">
+								<option id="compiler.option.proc.968883212" name="-proc" superClass="compiler.option.proc" useByScannerDiscovery="false" value=" ADSP-SC594" valueType="string"/>
+								<option id="compiler.option.optimization.1185329819" name="Enable optimization (-O)" superClass="compiler.option.optimization" useByScannerDiscovery="false"/>
+								<option id="compiler.option.debugcode.1814616596" name="Generate debug information (-g)" superClass="compiler.option.debugcode" useByScannerDiscovery="false"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.additionaldirectories.2145741297" name="Additional include directories (-I):" superClass="compiler.option.additionaldirectories" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/src&#13;&#10;&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-helpers/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include/platform/sc594&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-base/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-base/include/platform/sc594&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-component-templates-min/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-product/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-callprot/include&quot;"/>
+									<listOptionValue builtIn="false" value="${JVX_CCES_WORKSPACE_FOLDER}/../../../sources/jvxLibraries/jvx-system-min"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="compiler.option.preprocessdefs.1895570166" name="Preprocessor definitions (-D):" superClass="compiler.option.preprocessdefs" useByScannerDiscovery="false" valueType="definedSymbols"/>
+								<option id="compiler.option.cpp11.1124444854" name="Compile C++ source files with C++11 feature extensions (-c++11)" superClass="compiler.option.cpp11" value="true" valueType="boolean"/>
+								<inputType id="compiler.inputType.1705456029" name="C/C++ Source" superClass="compiler.inputType"/>
+							</tool>
+							<tool id="sharc.toolchain.linker.516490433" name="CrossCore SHARC Linker" superClass="sharc.toolchain.linker">
+								<option id="linker.option.proc.1184153697" name="-proc" superClass="linker.option.proc" value=" ADSP-SC594" valueType="string"/>
+								<option id="linker.option.individmap.1225264020" name="Individually map functions and data items (-ip)" superClass="linker.option.individmap" value="false" valueType="boolean"/>
+								<option id="linker.option.eliminateunused.1144690917" name="Eliminate unused objects (-e)" superClass="linker.option.eliminateunused"/>
+								<option id="linker.option.usedbglib.1668837002" name="Use Debug System libraries (-add-debug-libpaths)" superClass="linker.option.usedbglib"/>
+							</tool>
+							<tool id="sharc.toolchain.archiver.606409054" name="CrossCore SHARC Archiver" superClass="sharc.toolchain.archiver">
+								<inputType id="archiver.doj.input.1117184268" name="Object Files" superClass="archiver.doj.input"/>
+							</tool>
+							<tool id="sharc.toolchain.loader.1453951417" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader"/>
+							<tool id="sharc.toolchain.deviceprogrammer.1058070343" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer"/>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="sharc.toolchain.configuration.release.library.844633663">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="sharc.toolchain.configuration.release.library.844633663" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/jvx-component-templates-min"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/jvx-component-templates-min/Release"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="jvx-component-templates-min" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="com.analog.crosscore.managedbuilder.core.errorparser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="dlb" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib,com.analog.crosscore.managedbuilder.buildType=com.analog.crosscore.managedbuilder.buildType.release" cleanCommand="clean" description="" id="sharc.toolchain.configuration.release.library.844633663" name="Release" parent="sharc.toolchain.configuration.release.library">
+					<folderInfo id="sharc.toolchain.configuration.release.library.844633663." name="/" resourcePath="">
+						<toolChain id="sharc.toolchain.library.release.902524902" name="CrossCore SHARC Toolchain" superClass="sharc.toolchain.library.release">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="sharc.platform.1015220318" name="CrossCore SHARC Target Platform" osList="all" superClass="sharc.platform"/>
+							<builder buildPath="${workspace_loc:/jvx-component-templates-min}/Release" id="sharc.toolchain.builder.600729966" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CrossCore SHARC Builder" superClass="sharc.toolchain.builder"/>
+							<tool id="sharc.toolchain.assembler.1666343614" name="CrossCore SHARC Assembler" superClass="sharc.toolchain.assembler">
+								<option id="assembler.option.debugcode.1359696535" name="Generate debug information (-g)" superClass="assembler.option.debugcode" value="false" valueType="boolean"/>
+								<inputType id="assembler.input.8084770" name="Assembler Source" superClass="assembler.input"/>
+							</tool>
+							<tool id="sharc.toolchain.compiler.1938260131" name="CrossCore SHARC C/C++ Compiler" superClass="sharc.toolchain.compiler">
+								<option id="compiler.option.optimization.199904188" name="Enable optimization (-O)" superClass="compiler.option.optimization" value="true" valueType="boolean"/>
+								<option id="compiler.option.debugcode.1893462241" name="Generate debug information (-g)" superClass="compiler.option.debugcode" value="false" valueType="boolean"/>
+								<inputType id="compiler.inputType.202907583" name="C/C++ Source" superClass="compiler.inputType"/>
+							</tool>
+							<tool id="sharc.toolchain.linker.99784260" name="CrossCore SHARC Linker" superClass="sharc.toolchain.linker">
+								<option defaultValue="true" id="linker.option.individmap.2039249474" name="Individually map functions and data items (-ip)" superClass="linker.option.individmap" valueType="boolean"/>
+								<option id="linker.option.eliminateunused.1117467918" name="Eliminate unused objects (-e)" superClass="linker.option.eliminateunused" value="true" valueType="boolean"/>
+								<option id="linker.option.usedbglib.1103287244" name="Use Debug System libraries (-add-debug-libpaths)" superClass="linker.option.usedbglib" value="false" valueType="boolean"/>
+							</tool>
+							<tool id="sharc.toolchain.archiver.458377480" name="CrossCore SHARC Archiver" superClass="sharc.toolchain.archiver">
+								<inputType id="archiver.doj.input.647070444" name="Object Files" superClass="archiver.doj.input"/>
+							</tool>
+							<tool id="sharc.toolchain.loader.340047652" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader"/>
+							<tool id="sharc.toolchain.deviceprogrammer.156198857" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer"/>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="jvx-component-templates-min.sharc.projecttype.dlb.1115617861" name="SHARC Static Library Project" projectType="sharc.projecttype.dlb"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/jvx-component-templates-min"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/jvx-component-templates-min"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+</cproject>

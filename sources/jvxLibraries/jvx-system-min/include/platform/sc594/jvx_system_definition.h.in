@@ -1,0 +1,14 @@
+// Some hardcoded like macro specifications for low level system libraries
+#define JVX_NO_SYSTEM_EXTENSIONS
+#define JVX_SYSTEM_USE_DATA_FORMAT_FLOAT
+
+// Some hardcoded like macro specifications for high level system libraries
+// Declare some macros for simplifications of features in the system. These are mainly due to 
+// functionality reduced c++ features
+#define JVX_SKIP_EVENT_JSON
+#define JVX_CPLUSPLUS_NO_STD_FUNCTION
+#define JVX_CPLUSPLUS_NO_CONSTEXPR
+
+// Some definitions of integer values
+#define JVX_DEFAULT_NUMBER_OF_POSTPONE_ATTEMPTS_TEST @JVX_DEFAULT_NUMBER_OF_POSTPONE_ATTEMPTS_TEST@
+#define JVX_NUMBER_32BITS_BITFIELD @JVX_DEFINE_NUMBER_32BIT_TOKENS_BITFIELD@

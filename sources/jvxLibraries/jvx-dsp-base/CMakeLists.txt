@@ -74,6 +74,9 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_vector/jvx_vector.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_windows/jvx_windows.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_math/jvx_complex.h
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fxlms/jvx_fxlms.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fxlms/jvx_fxlms.h
 )
 
 if(JVX_USE_FFTW)

@@ -119,7 +119,11 @@ public:
 		assert(JVX_NUMBER_32BITS_BITFIELD > 1);
 
 		memset(listFieldsBits, 0, sizeof(jvxUInt32)*JVX_NUMBER_32BITS_BITFIELD);
+#ifndef JVX_CPLUSPLUS_NO_CONSTEXPR
 		if constexpr(sizeof(jvxCBitField) == sizeof(jvxUInt64))
+#else
+		if (sizeof(jvxCBitField) == sizeof(jvxUInt64))
+#endif
 		{
 			listFieldsBits[JVX_NUMBER_32BITS_BITFIELD - 1] = initVal & 0xFFFFFFFF;
 			listFieldsBits[JVX_NUMBER_32BITS_BITFIELD - 2] = (initVal >> 32) & 0xFFFFFFFF;
@@ -536,7 +540,8 @@ public:
 			}
 			else if (prefix == "0b")
 			{
-				jvxUInt32 numEntries = (jvxUInt32)ceil(szFld);
+				//jvxUInt32 numEntries = (jvxUInt32)ceil(szFld);
+				jvxUInt32 numEntries = (jvxUInt32)szFld;
 				if (numEntries > JVX_NUMBER_32BITS_BITFIELD * 8)
 				{
 					std::cout << "Warning: Overload in bitfield expression, value is 0b" << str_short << std::endl;

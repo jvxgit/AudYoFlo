@@ -1001,7 +1001,7 @@ inline jvxRemoteConnectionQuality jvxRemoteConnectionQuality_decode(const char* 
 
 // ====================================================================		
 
-inline jvxTextHelpers jvxDataTypeSpec_str[JVX_DATA_TYPE_SPEC_LIMIT] =
+static jvxTextHelpers jvxDataTypeSpec_str[JVX_DATA_TYPE_SPEC_LIMIT] =
 {
 	{"dbl", "JVX_DATA_TYPE_SPEC_DOUBLE"},
 	{"flt", "JVX_DATA_TYPE_SPEC_FLOAT"}

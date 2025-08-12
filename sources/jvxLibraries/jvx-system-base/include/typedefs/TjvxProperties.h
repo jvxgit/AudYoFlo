@@ -245,7 +245,7 @@ namespace jvx
 				jvxPropertyCallPurpose call_purpose = JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC;
 				jvxContext* context = nullptr;
 				jvxPropertyAccessType* prop_access_type = nullptr;
-				jvxBool* is_valid = nullptr;;
+				jvxBool* is_valid = nullptr;
 				jvxBool modification_impact = true;
 			} internal_stack;
 

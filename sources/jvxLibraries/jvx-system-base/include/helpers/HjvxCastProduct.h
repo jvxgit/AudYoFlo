@@ -1,7 +1,9 @@
 #ifndef __JVXCASTPRODUCT_H__
 #define __JVXCASTPRODUCT_H__
 
+#ifndef JVX_NO_SYSTEM_EXTENSIONS
 #include "helpers/HpjvxCast.h"
+#endif
 
 template <typename T>
 jvxBool checkComponentType(jvxComponentType tp, jvxBool skipAssert = false)
@@ -58,15 +60,7 @@ jvxBool checkComponentType(jvxComponentType tp, jvxBool skipAssert = false)
 			result = true;
 		}
 		break;
-
-	case JVX_COMPONENT_AUDIO_DECODER:
-	case JVX_COMPONENT_AUDIO_ENCODER:
-		if (std::is_same<T, IjvxSimpleNode>::value)
-		{
-			result = true;
-		}
-		break;
-
+	
 	case JVX_COMPONENT_MIN_HOST:
 		if (std::is_same<T, IjvxMinHost>::value)
 		{
@@ -320,7 +314,10 @@ T* castPropIfExtender(IjvxPropertyExtender* pExt)
 	}
 
 	// From sub project
+#if defined(JVX_PROPERTY_EXTENDER_CAST_CASES)
 	JVX_PROPERTY_EXTENDER_CAST_CASES
+#endif
+
 	return ptrRet;
 }
 

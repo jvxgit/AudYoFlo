@@ -7,8 +7,10 @@
 #include <assert.h>
 #include <stdio.h>
 #include <float.h>
+#include "jvx_system_definition_sc594.h"
 
 // #include <sys/stat.h>
+#define JVX_OS_BM_ADSP
 
 //! Size datatype to be used within RTProc
 typedef size_t jvxSize;
@@ -56,10 +58,13 @@ typedef uint8_t jvxUInt8;
 #ifdef __cplusplus
 typedef bool jvxBool;
 typedef jvxUInt16 jvxCBool;
+#define JVX_CBOOL_IS_UINT16
 #define c_true 1
 #define c_false 0
+#define JVX_DATAFORMAT_BOOL JVX_DATAFORMAT_U16BIT_LE 
 #else
 typedef jvxUInt16 jvxCBool;
+#define JVX_CBOOL_IS_UINT16
 #define true 1
 #define false 0
 #define c_true 1
@@ -83,6 +88,7 @@ typedef void jvxHandle;
 
 //! Unsigned 64 bit datatype
 typedef uint64_t jvxCBitField;
+
 
 #include "../../jvx_system_common.h"
 #include "jvx_system_helpers.h"

@@ -1,6 +1,9 @@
 #include "common/CjvxInputOutputConnector.h"
 #include "HjvxMisc.h"
+
+#ifndef JVX_SKIP_EVENT_JSON
 #include "CjvxJson.h"
+#endif
 
 CjvxInputOutputConnector::CjvxInputOutputConnector()
 	{
@@ -389,8 +392,11 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		jvxErrorType res = JVX_NO_ERROR;
 		std::string locTxt;
 		jvxApiString* str = (jvxApiString*)data;
+
+#ifndef JVX_SKIP_EVENT_JSON
 		CjvxJsonElementList* jsonLst = (CjvxJsonElementList*)data;
 		CjvxJsonElement jsonElm;
+#endif
 
 		switch (tp)
 		{
@@ -417,6 +423,8 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 
 		case JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON:
 
+#ifndef JVX_SKIP_EVENT_JSON
+
 			if (_common_set_ocon.ocon)
 			{
 				CjvxJsonElementList jsonLstRet;
@@ -431,6 +439,10 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 				}
 				jsonLst->addConsumeElement(jsonElm);
 			}
+#else
+			assert(false);
+#endif
+
 			break;
 
 		case JVX_LINKDATA_TRANSFER_ASK_COMPONENTS_READY:

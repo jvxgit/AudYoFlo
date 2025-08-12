@@ -1,7 +1,10 @@
 #include "common/CjvxInputConnectorCore.h"
-#include "CjvxJson.h"
 #include "HjvxMisc.h"
 #include "common/CjvxInputOutputConnectorCore.h"
+
+#ifndef JVX_SKIP_EVENT_JSON
+#include "CjvxJson.h"
+#endif
 
 CjvxInputConnectorCore::CjvxInputConnectorCore()
 {
@@ -288,8 +291,11 @@ CjvxInputConnectorCore::JVX_CALLINGCONVENTION _transfer_forward_icon(jvxBool for
 	jvxErrorType res = JVX_NO_ERROR;
 	std::string locTxt;
 	jvxApiString* str = (jvxApiString*)data;
+
+#ifndef JVX_SKIP_EVENT_JSON
 	CjvxJsonElementList* jsonLst = (CjvxJsonElementList*)data;
 	CjvxJsonElement jsonElm;
+#endif
 
 	switch (tp)
 	{
@@ -313,6 +319,7 @@ CjvxInputConnectorCore::JVX_CALLINGCONVENTION _transfer_forward_icon(jvxBool for
 
 	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON:
 
+#ifndef JVX_SKIP_EVENT_JSON
 		if (_common_set_icon.icon)
 		{
 			jsonElm.makeAssignmentString("icon", JVX_DISPLAY_CONNECTOR(_common_set_icon.icon));
@@ -328,6 +335,9 @@ CjvxInputConnectorCore::JVX_CALLINGCONVENTION _transfer_forward_icon(jvxBool for
 			jsonElm.makeAssignmentString("connects_end", "here");
 			jsonLst->addConsumeElement(jsonElm);
 		}
+#else
+		assert(false);
+#endif
 		break;
 
 	case JVX_LINKDATA_TRANSFER_ASK_COMPONENTS_READY:

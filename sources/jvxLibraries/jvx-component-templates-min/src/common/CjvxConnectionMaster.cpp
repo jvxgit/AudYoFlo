@@ -1,6 +1,10 @@
 #include "common/CjvxConnectionMaster.h"
 #include "common/CjvxObject.h"
 
+#ifndef JVX_SKIP_EVENT_JSON
+#include "CjvxJson.h"
+#endif
+
 CjvxConnectionMaster::CjvxConnectionMaster()
 	{
 		_common_set_ld_master.object = NULL;
@@ -553,8 +557,11 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 		jvxErrorType res = JVX_NO_ERROR;
 		std::string locTxt;
 		jvxApiString* str = (jvxApiString*)data;
+
+#ifndef JVX_SKIP_EVENT_JSON
 		CjvxJsonElementList* jsonLst = (CjvxJsonElementList*)data;
 		CjvxJsonElement jsonElm;		
+#endif
 
 		switch (tp)
 		{
@@ -582,8 +589,11 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 			}
 			std::cout << "<end>" << std::endl;
 			return JVX_NO_ERROR;
-			break;
+			// break; <- not necessary!
+
 		case  JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON:
+
+#ifndef JVX_SKIP_EVENT_JSON
 			if (!jsonLst)
 			{
 				return JVX_ERROR_INVALID_ARGUMENT;
@@ -604,8 +614,11 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 				}
 				jsonLst->addConsumeElement(jsonElm);
 			}
+#else
+			assert(false);
+#endif
 			return JVX_NO_ERROR;
-			break;
+			// break; <- not necessary!
 		default:
 			if (_common_set_ld_master.oconn)
 			{
