@@ -1,10 +1,15 @@
 #ifndef HJVXNETWORKDEVICES_H__
 #define HJVXNETWORKDEVICES_H__
 
+// only supported in Windows at the moment
 #include "jvx.h"
 
 #ifdef JVX_OS_WINDOWS
 #include "platform/windows/HjvxNetworkDevices_os.h"
+#else
+	typedef jvxHandle* jvxNetDeviceHandle;
+#define jvxNetDeviceHandleInit nullptr
+
 #endif
 
 enum jvxSupportedTimestampType

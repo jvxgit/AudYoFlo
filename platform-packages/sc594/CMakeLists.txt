@@ -51,7 +51,8 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-dsp-base
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
 	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Debug && 
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Release)
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Release
+	JOB_POOL console)
 
 add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
 	ALL 
@@ -62,7 +63,8 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
 	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release)
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release
+	JOB_POOL console)
 	
 	# message(FATAL_ERROR "${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
 	# -data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Debug && 
