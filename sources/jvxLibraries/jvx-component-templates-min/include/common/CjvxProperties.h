@@ -5,6 +5,10 @@
 #include "common/CjvxObject.h"
 #include "common/CjvxPropertiesTypeConvert.h"
 
+// We may replace the submodule lambdas by an old style implementation in C++ without lambdas
+// This is only required for old compilers not supporting fully c++11
+// #define JVX_CPLUSPLUS_NO_STD_FUNCTION
+
 typedef enum
 {
 	JVX_PROPERTY_CALLBACK_SET,
@@ -64,6 +68,81 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION report_properties_modified(const char* props_set) override;
 };
+
+class propDescriptors
+{
+public:
+	// Check the type of output
+	jvx::propertyDescriptor::CjvxPropertyDescriptorFull* dFull = nullptr;
+	jvx::propertyDescriptor::CjvxPropertyDescriptorFullPlus* dFullPlus = nullptr;
+	jvx::propertyDescriptor::CjvxPropertyDescriptorControl* dContr = nullptr;
+	jvx::propertyDescriptor::CjvxPropertyDescriptorCore* dCore = nullptr;
+	jvx::propertyDescriptor::CjvxPropertyDescriptorMin* dMin = nullptr;
+
+	void reset()
+	{
+		dFull = nullptr;
+		dContr = nullptr;
+		dCore = nullptr;
+		dMin = nullptr;
+	}
+
+	void cast(jvx::propertyDescriptor::IjvxPropertyDescriptor* descr)
+	{
+		dFullPlus = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorFullPlus>(descr);
+		dFull = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorFull>(descr);
+		dContr = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorControl>(descr);
+		dCore = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorCore>(descr);
+		dMin = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorMin>(descr);
+	}
+};
+
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+enum class jvxPropertyFwdFuncType
+{
+	JVX_PROPERTY_FUNC_NONE,
+	JVX_PROPERTY_FUNC_DESCRIPTION,	
+	JVX_PROPERTY_FUNC_GET_PROPERTY,
+	JVX_PROPERTY_FUNC_SET_PROPERTY,
+	JVX_PROPERTY_FUNC_INSTALL_PROPERTY,
+	JVX_PROPERTY_FUNC_UNINSTALL_PROPERTY,
+	JVX_PROPERTY_FUNC_GET_EXTENDED_INFO,
+	JVX_PROPERTY_FUNC_GET_META_FLAGS,
+	JVX_PROPERTY_FUNC_SET_META_FLAGS
+};
+
+enum class jvxPropertyFwdFuncPostType
+{
+	JVX_PROPERTY_FUNC_POST_NONE,
+	JVX_PROPERTY_FUNC_POST_DESCRIPTION
+};
+
+struct jvxLambdaPrivate
+{
+	jvxHandle* priv = nullptr;
+};
+
+struct jvxPropertyFwdLambdaPrivate: public jvxLambdaPrivate
+{
+	jvxPropertyFwdFuncType tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_NONE;
+	jvxPropertyFwdFuncPostType tpFuncPost = jvxPropertyFwdFuncPostType::JVX_PROPERTY_FUNC_POST_NONE;
+
+	const jvx::propertyAddress::IjvxPropertyAddress* addr = nullptr;
+	jvxCallManagerProperties* callGate = nullptr;
+	jvx::propertyDescriptor::IjvxPropertyDescriptor* descr = nullptr;
+	propDescriptors* descrs = nullptr;
+	const jvx::propertyRawPointerType::IjvxRawPointerType* rawData = nullptr;
+	const jvx::propertyDetail::CjvxTranferDetail* detail = nullptr;
+	const jvx::propertyAddress::IjvxPropertyAddress* ident = nullptr;
+	jvxHandle* fld = nullptr;
+	jvxSize* requestId = nullptr;
+	jvxAccessRightFlags_rwcd* access_flags = nullptr;
+	jvxConfigModeFlags* mode_flags = nullptr;
+};
+
+typedef jvxErrorType jvxSubModuleFwdFuncPtr(const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule, jvxHandle* lambdaPrivate);
+typedef void jvxSubModuleFwdFuncPostPtr(CjvxPropertySubModule* theSubModule, jvxHandle* lambdaPrivate);
+#endif
 
 class CjvxProperties
 {
@@ -137,35 +216,7 @@ public:
 			}
 			return JVX_ERROR_ELEMENT_NOT_FOUND;
 		}		
-	};
-
-	class propDescriptors
-	{
-	public:
-		// Check the type of output
-		jvx::propertyDescriptor::CjvxPropertyDescriptorFull* dFull = nullptr;
-		jvx::propertyDescriptor::CjvxPropertyDescriptorFullPlus* dFullPlus = nullptr;
-		jvx::propertyDescriptor::CjvxPropertyDescriptorControl* dContr = nullptr;
-		jvx::propertyDescriptor::CjvxPropertyDescriptorCore* dCore = nullptr;
-		jvx::propertyDescriptor::CjvxPropertyDescriptorMin* dMin = nullptr;
-
-		void reset()
-		{
-			dFull = nullptr;
-			dContr = nullptr;
-			dCore = nullptr;
-			dMin = nullptr;
-		}
-		
-		void cast(jvx::propertyDescriptor::IjvxPropertyDescriptor* descr)
-		{
-			dFullPlus = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorFullPlus>(descr);
-			dFull = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorFull>(descr);
-			dContr = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorControl>(descr);
-			dCore = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorCore>(descr);
-			dMin = castPropDescriptor<jvx::propertyDescriptor::CjvxPropertyDescriptorMin>(descr);
-		}
-	};
+	};	
 
 	class pointerReferences
 	{
@@ -549,8 +600,19 @@ private:
 
 	jvxErrorType _forward_submodules(jvxCallManagerProperties& callGate,
 		propAddressing& addresses,
+
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION		
+
+		jvxSubModuleFwdFuncPtr func,
+		jvxHandle* lambdaPriv,
+		jvxSubModuleFwdFuncPostPtr funcPost = nullptr	
+
+
+#else
 		std::function<jvxErrorType(const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)> func,
-		std::function <void(CjvxPropertySubModule* theSubModule)> func_post_success = nullptr);
+		std::function <void(CjvxPropertySubModule* theSubModule)> func_post_success = nullptr
+#endif
+	);
 
 	jvxErrorType _run_hook(const std::string& hookname,
 		const std::string& propname,
@@ -564,8 +626,76 @@ private:
 		jvxSize* numElements,
 		*/
 		jvxPropertyCallbackPurpose purp);
+
 protected:
 
+public:
+
+	jvxErrorType func_local_submodule_description(
+			const jvx::propertyAddress::IjvxPropertyAddress& addr,
+			CjvxPropertySubModule* theSubModule,
+			jvxCallManagerProperties& callGate,
+			jvx::propertyDescriptor::IjvxPropertyDescriptor& descr);
+
+	// =====================================================================
+
+	void func_post_local_submodule_description(		
+		CjvxPropertySubModule* theSubModule,
+		propDescriptors& descrs);
+
+	// =====================================================================
+
+	jvxErrorType func_local_submodule_set_property(
+		const jvx::propertyAddress::IjvxPropertyAddress& addr,
+		CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawData,
+		const jvx::propertyDetail::CjvxTranferDetail& detail);
+	
+	// =====================================================================
+
+	jvxErrorType func_local_submodule_get_property(
+		const jvx::propertyAddress::IjvxPropertyAddress& addr,
+		CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawData,
+		const jvx::propertyDetail::CjvxTranferDetail& detail);
+
+	// =====================================================================
+
+	jvxErrorType func_local_submodule_install_property(
+		const jvx::propertyAddress::IjvxPropertyAddress& addr,
+		CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawData);
+
+	// =====================================================================
+
+	jvxErrorType func_local_submodule_uninstall_property(
+		const jvx::propertyAddress::IjvxPropertyAddress& addr,
+		CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawData);
+
+	// =====================================================================
+	jvxErrorType func_local_submodule_get_property_extended_info(
+		CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+		jvxHandle* fld,
+		jvxSize requestId,
+		const jvx::propertyAddress::IjvxPropertyAddress& ident);
+
+	// =====================================================================
+	jvxErrorType func_local_submodule_get_meta_flags(CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+		jvxAccessRightFlags_rwcd* access_flags,
+		jvxConfigModeFlags* mode_flags, const jvx::propertyAddress::IjvxPropertyAddress& ident);
+	
+	// =====================================================================
+	jvxErrorType func_local_submodule_set_meta_flags(CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+		jvxAccessRightFlags_rwcd* access_flags,
+		jvxConfigModeFlags* mode_flags, const jvx::propertyAddress::IjvxPropertyAddress& ident);
+
+
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+	// Handler for static entry
+	static jvxErrorType func_local_submodule_static(const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule, jvxHandle* lambdaPrivate);
+	static void func_post_local_submodule_static(CjvxPropertySubModule* theSubModule, jvxHandle* lambdaPrivate);
+#endif
 
 };
 

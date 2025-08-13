@@ -129,11 +129,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-component-templates-min/src/common/CjvxProperties.cpp</locationURI>
 		</link>
 		<link>
-			<name>common/CjvxPropertiesP.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-component-templates-min/src/common/CjvxPropertiesP.cpp</locationURI>
-		</link>
-		<link>
 			<name>common/CjvxPropertiesSimple.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-component-templates-min/src/common/CjvxPropertiesSimple.cpp</locationURI>
@@ -177,16 +172,6 @@
 			<name>common/CjvxTechnology.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-component-templates-min/src/common/CjvxTechnology.cpp</locationURI>
-		</link>
-		<link>
-			<name>common/CjvxWebServerHost.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-component-templates-min/src/common/CjvxWebServerHost.cpp</locationURI>
-		</link>
-		<link>
-			<name>common/TjvxWebServerHost.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-component-templates-min/src/common/TjvxWebServerHost.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

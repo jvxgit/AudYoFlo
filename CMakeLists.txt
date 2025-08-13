@@ -1217,9 +1217,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     )
 
   elseif(JVX_RELEASE_ADIDSP_SC594)
-    set(JVX_BASE_PLATFORM_PACKAGES ${JVX_BASE_PLATFORM_PACKAGES}
-      ${JVX_BASE_ROOT}/platform-packages/sc594/jvx-dsp-base
-	  )
+    set(JVX_BASE_PLATFORM_PACKAGES ${JVX_BASE_PLATFORM_PACKAGES} ${JVX_BASE_ROOT}/platform-packages/sc594)
   endif()
 
   if(JVX_RELEASE_OMAPL137)

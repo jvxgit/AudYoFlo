@@ -335,9 +335,9 @@ CjvxPropertiesSimple::CjvxPropertiesSimple()
 	{
 		if(err != JVX_NO_ERROR)
 		{
-			std::cerr << "ERROR: failed to get property '"<<name<<"': " << jvxErrorType_txt(err) << std::endl;
+			std::cout << "ERROR: failed to get property '"<<name<<"': " << jvxErrorType_txt(err) << std::endl;
 			if(info != "")
-				std::cerr << "       "<<info<< std::endl;
+				std::cout << "       "<<info<< std::endl;
 		}
 	}
 
@@ -346,9 +346,9 @@ CjvxPropertiesSimple::CjvxPropertiesSimple()
 	{
 		if(err != JVX_NO_ERROR)
 		{
-			std::cerr << "ERROR: failed to set property '"<<name<<"': " << jvxErrorType_txt(err) << std::endl;
+			std::cout << "ERROR: failed to set property '"<<name<<"': " << jvxErrorType_txt(err) << std::endl;
 			if(info != "")
-				std::cerr << "       "<<info<< std::endl;
+				std::cout << "       "<<info<< std::endl;
 		}
 	}
 

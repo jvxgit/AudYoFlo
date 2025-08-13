@@ -1,6 +1,9 @@
 #include "common/CjvxOutputConnectorCore.h"
-#include "CjvxJson.h"
 #include "common/CjvxInputOutputConnectorCore.h"
+
+#ifndef JVX_SKIP_EVENT_JSON
+#include "CjvxJson.h"
+#endif
 
 CjvxOutputConnectorCore::CjvxOutputConnectorCore()
 {
@@ -225,8 +228,11 @@ CjvxOutputConnectorCore::_transfer_forward_ocon(jvxLinkDataTransferType tp, jvxH
 	jvxErrorType res = JVX_NO_ERROR;
 	std::string locTxt;
 	jvxApiString* str = (jvxApiString*)data;
+
+#ifndef JVX_SKIP_EVENT_JSON
 	CjvxJsonElementList* jsonLst = (CjvxJsonElementList*)data;
 	CjvxJsonElement jsonElm;
+#endif
 
 	switch (tp)
 	{
@@ -258,9 +264,11 @@ CjvxOutputConnectorCore::_transfer_forward_ocon(jvxLinkDataTransferType tp, jvxH
 		locTxt += "-<not_connected>";
 		str->assign(locTxt);
 		return JVX_NO_ERROR;
-		break;
+		// break; <- not necessary
+
 	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON:
 
+#ifndef JVX_SKIP_EVENT_JSON
 		if (!jsonLst)
 		{
 			return JVX_ERROR_INVALID_ARGUMENT;
@@ -285,6 +293,9 @@ CjvxOutputConnectorCore::_transfer_forward_ocon(jvxLinkDataTransferType tp, jvxH
 			}
 		}
 		return JVX_NO_ERROR;
+#else
+		assert(0);
+#endif
 		break;
 	default:
 		if (_common_set_ocon.theData_out.con_link.connect_to)

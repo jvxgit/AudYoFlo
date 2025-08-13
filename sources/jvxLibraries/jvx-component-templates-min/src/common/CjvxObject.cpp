@@ -919,6 +919,7 @@ CjvxObject::_info_token(jvxSize idx, jvxApiString* fldStr)
 	return(JVX_ERROR_ID_OUT_OF_BOUNDS);
 }
 
+#ifdef JVX_OBJECTS_WITH_TEXTLOG
 void
 CjvxObject::_request_text_log()
 {
@@ -947,8 +948,7 @@ void CjvxObject::_return_text_log()
 	embLog.jvxrtst_bkp.jvxlst_buf_sz = 0;
 }
 
-
-
+#endif
 
 jvxErrorType
 CjvxObject::_request_unique_object_id(jvxSize* uId)

@@ -218,9 +218,10 @@ public:
 
 	virtual jvxErrorType _info_token(jvxSize idx, jvxApiString* fldStr);
 
+#ifdef JVX_OBJECTS_WITH_TEXTLOG
 	 void _request_text_log();
-
 	 void _return_text_log();
+#endif
 
 	 void _append_compile_option(const std::string& oneOption);
 

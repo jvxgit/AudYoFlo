@@ -1,5 +1,264 @@
 #include "common/CjvxProperties.h"
 
+// =================================================================================================
+jvxErrorType 
+CjvxProperties::func_local_submodule_description(
+	const jvx::propertyAddress::IjvxPropertyAddress& addr, 
+	CjvxPropertySubModule* theSubModule, 
+	jvxCallManagerProperties& callGate,
+	jvx::propertyDescriptor::IjvxPropertyDescriptor& descr)
+{
+	jvxErrorType resL = JVX_NO_ERROR;
+	resL = theSubModule->propRef->description_property(callGate, descr, addr);
+	return resL;
+}
+
+void
+CjvxProperties::func_post_local_submodule_description(
+	CjvxPropertySubModule* theSubModule, 
+	propDescriptors& descrs)
+{
+	if (descrs.dMin)
+	{
+		descrs.dMin->globalIdx += theSubModule->offsetShift;
+	}
+	if (descrs.dFull)
+	{
+		std::string tag;
+		if (!theSubModule->propDescriptionPrefix.empty())
+		{
+			tag = jvx_makePathExpr(theSubModule->propDescriptorTag,
+				descrs.dFull->descriptor.std_str());
+		}
+		else
+		{
+			tag = descrs.dFull->descriptor.std_str();
+		}
+
+		descrs.dFull->descriptor.assign(tag);
+	}
+}
+
+jvxErrorType
+CjvxProperties::func_local_submodule_set_property(
+	const jvx::propertyAddress::IjvxPropertyAddress& addr, 
+	CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate, 
+	const jvx::propertyRawPointerType::IjvxRawPointerType& rawData,
+	const jvx::propertyDetail::CjvxTranferDetail& detail)
+{
+	jvxErrorType resL = JVX_NO_ERROR;
+	resL = theSubModule->propRef->set_property(
+		callGate,
+		rawData,
+		addr, 
+		detail);
+
+	return resL;
+}
+
+jvxErrorType
+CjvxProperties::func_local_submodule_get_property(
+	const jvx::propertyAddress::IjvxPropertyAddress& addr,
+	CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+	const jvx::propertyRawPointerType::IjvxRawPointerType& rawData,
+	const jvx::propertyDetail::CjvxTranferDetail& detail)
+{
+	jvxErrorType resL = JVX_NO_ERROR;
+	resL = theSubModule->propRef->get_property(
+		callGate,
+		rawData,
+		addr,
+		detail);
+	return resL;
+}
+
+jvxErrorType
+CjvxProperties::func_local_submodule_install_property(
+	const jvx::propertyAddress::IjvxPropertyAddress& addr,
+	CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+	const jvx::propertyRawPointerType::IjvxRawPointerType& rawData)
+{
+
+	jvxErrorType resL = theSubModule->propRef->install_property_reference(
+		callGate,
+		rawData,
+		addr);
+	return resL;
+}
+
+
+jvxErrorType
+CjvxProperties::func_local_submodule_uninstall_property(
+	const jvx::propertyAddress::IjvxPropertyAddress& addr,
+	CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+	const jvx::propertyRawPointerType::IjvxRawPointerType& rawData)
+{
+
+	jvxErrorType resL = theSubModule->propRef->uninstall_property_reference(
+		callGate,
+		rawData,
+		addr);
+	return resL;
+}
+
+jvxErrorType
+CjvxProperties::func_local_submodule_get_property_extended_info(
+	CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+	jvxHandle* fld, jvxSize requestId,
+	const jvx::propertyAddress::IjvxPropertyAddress& ident)
+{
+
+	jvxErrorType resL = JVX_NO_ERROR;
+	resL = theSubModule->propRef->get_property_extended_info(
+		callGate, fld, requestId, ident);
+	return resL;
+}
+
+jvxErrorType
+CjvxProperties::func_local_submodule_get_meta_flags(
+	CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+	jvxAccessRightFlags_rwcd* access_flags,
+	jvxConfigModeFlags* mode_flags, const jvx::propertyAddress::IjvxPropertyAddress& ident)
+{
+	jvxErrorType resL = JVX_NO_ERROR;
+	resL = theSubModule->propRef->get_meta_flags(
+		callGate,
+		access_flags,
+		mode_flags,
+		ident);
+	return resL;
+}
+
+jvxErrorType
+CjvxProperties::func_local_submodule_set_meta_flags(
+	CjvxPropertySubModule* theSubModule, jvxCallManagerProperties& callGate,
+	jvxAccessRightFlags_rwcd* access_flags,
+	jvxConfigModeFlags* mode_flags, const jvx::propertyAddress::IjvxPropertyAddress& ident)
+{
+	jvxErrorType resL = JVX_NO_ERROR;
+	resL = theSubModule->propRef->set_meta_flags(
+		callGate,
+		access_flags,
+		mode_flags,
+		ident);
+	return resL;
+}
+
+
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+
+jvxErrorType
+CjvxProperties::func_local_submodule_static(const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule, jvxHandle* lambdaPrivArg)
+{
+	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+	jvxPropertyFwdLambdaPrivate* lambdaPriv = (jvxPropertyFwdLambdaPrivate*)lambdaPrivArg;
+	assert(lambdaPriv);
+	if (lambdaPriv->priv)
+	{
+		
+		CjvxProperties* this_pointer = reinterpret_cast<CjvxProperties*>(lambdaPriv->priv);
+		switch (lambdaPriv->tpFunc)
+		{
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_DESCRIPTION:
+
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->descr);
+			res = this_pointer->func_local_submodule_description(addr,
+				theSubModule, *lambdaPriv->callGate, *lambdaPriv->descr);
+			break;
+
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_GET_PROPERTY:
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->rawData);
+			assert(lambdaPriv->detail);
+
+			res = this_pointer->func_local_submodule_get_property(addr,
+				theSubModule, *lambdaPriv->callGate,
+				*lambdaPriv->rawData, *lambdaPriv->detail);
+			break;
+
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_SET_PROPERTY:
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->rawData);
+			assert(lambdaPriv->detail);
+
+			res = this_pointer->func_local_submodule_set_property(addr,
+				theSubModule, *lambdaPriv->callGate,
+				*lambdaPriv->rawData, *lambdaPriv->detail);
+			break;
+
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_INSTALL_PROPERTY:
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->rawData);
+
+			res = this_pointer->func_local_submodule_install_property(addr,
+				theSubModule, *lambdaPriv->callGate,
+				*lambdaPriv->rawData);
+			break;
+
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_UNINSTALL_PROPERTY:
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->rawData);
+
+			res = this_pointer->func_local_submodule_uninstall_property(addr,
+				theSubModule, *lambdaPriv->callGate,
+				*lambdaPriv->rawData);
+			break;
+
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_GET_EXTENDED_INFO:
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->ident);
+			res = this_pointer->func_local_submodule_get_property_extended_info(
+				theSubModule, *lambdaPriv->callGate,
+				lambdaPriv->fld, *lambdaPriv->requestId, *lambdaPriv->ident);
+			break;
+
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_GET_META_FLAGS:
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->ident);
+			res = this_pointer->func_local_submodule_get_meta_flags(theSubModule,
+				*lambdaPriv->callGate, lambdaPriv->access_flags, lambdaPriv->mode_flags, *lambdaPriv->ident);
+			break;
+
+		case jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_SET_META_FLAGS:
+			assert(lambdaPriv->callGate);
+			assert(lambdaPriv->ident);
+			res = this_pointer->func_local_submodule_set_meta_flags(theSubModule,
+				*lambdaPriv->callGate, lambdaPriv->access_flags, lambdaPriv->mode_flags, *lambdaPriv->ident);
+			break;
+
+		default:
+			assert(0);
+		}
+	}
+	return res;
+}
+
+void
+CjvxProperties::func_post_local_submodule_static(CjvxPropertySubModule* theSubModule, jvxHandle* lambdaPrivArg)
+{
+	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+	jvxPropertyFwdLambdaPrivate* lambdaPriv = (jvxPropertyFwdLambdaPrivate*)lambdaPrivArg;
+	assert(lambdaPriv);
+	if (lambdaPriv->priv)
+	{
+		CjvxProperties* this_pointer = reinterpret_cast<CjvxProperties*>(lambdaPriv->priv);
+		switch (lambdaPriv->tpFuncPost)
+		{
+		case jvxPropertyFwdFuncPostType::JVX_PROPERTY_FUNC_POST_DESCRIPTION:
+
+			assert(lambdaPriv->descrs);
+			this_pointer->func_post_local_submodule_description(theSubModule, *lambdaPriv->descrs);
+			break;
+		default:
+			assert(0);
+		}
+	}
+}
+#endif
+
+// =================================================================================================
+
 CjvxProperties::CjvxProperties(const std::string& moduleName, CjvxObjectMin& objRef): theObjRef(objRef)
 {
 	JVX_INITIALIZE_MUTEX(_common_set_properties.csec);
@@ -279,32 +538,27 @@ CjvxProperties::_description_property(
 	}
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+
+		jvxPropertyFwdLambdaPrivate refF;
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_DESCRIPTION;
+		refF.tpFuncPost = jvxPropertyFwdFuncPostType::JVX_PROPERTY_FUNC_POST_DESCRIPTION;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.descr = &descr;	
+		refF.descrs = &descrs;
+
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF, func_post_local_submodule_static);
+#else
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
 			{
-				jvxErrorType resL = JVX_NO_ERROR;
-				resL = theSubModule->propRef->description_property(callGate, descr, addr);
-				return resL;
-			}, [&](CjvxPropertySubModule* theSubModule) {
-				if (descrs.dMin)
-				{
-					descrs.dMin->globalIdx += theSubModule->offsetShift;
-				}
-				if (descrs.dFull)
-				{
-					std::string tag;
-					if (!theSubModule->propDescriptionPrefix.empty())
-					{
-						tag = jvx_makePathExpr(theSubModule->propDescriptorTag,
-							descrs.dFull->descriptor.std_str());
-					}
-					else
-					{
-						tag = descrs.dFull->descriptor.std_str();
-					}
+				return func_local_submodule_description(addr, theSubModule, callGate, descr);
 
-					descrs.dFull->descriptor.assign(tag);
-				}
+			}, [&](CjvxPropertySubModule* theSubModule) 
+				{
+				func_post_local_submodule_description(theSubModule, descrs);
 			});
+#endif
 
 #if 0
 		// Assumption: submodule not found
@@ -1102,21 +1356,21 @@ CjvxProperties::_set_property(
 	} // if (selection != _common_set_properties.registeredProperties.end())
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+		jvxPropertyFwdLambdaPrivate refF;		
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_SET_PROPERTY;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.rawData = &rawData;
+		refF.detail = &detail;
+
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF);
+#else
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
 		{
-			jvxErrorType resL = JVX_NO_ERROR;
-			resL = theSubModule->propRef->set_property(
-				callGate,
-				rawData,
-				/*
-				fld,
-				numElementsLocal,
-				formatLocal,
-				*/
-				addr, detail);				
-			return resL;
+				return func_local_submodule_set_property(addr, theSubModule, callGate, rawData, detail);
 		});
-
+#endif
 	} // else :: if (selection != _common_set_properties.registeredProperties.end())
 
 	
@@ -1754,16 +2008,22 @@ CjvxProperties::_get_property(
 	}
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+		jvxPropertyFwdLambdaPrivate refF;
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_GET_PROPERTY;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.rawData = &rawData;
+		refF.detail = &detail;
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF);
+#else
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
 			{
-				jvxErrorType resL = JVX_NO_ERROR;
-				resL = theSubModule->propRef->get_property(
-					callGate,
-					rawData,
-					addr, detail);
-				return resL;
+				return func_local_submodule_get_property(addr, theSubModule, callGate, rawData, detail);
 			});
+#endif
 	}
+
 
 leave_function_unlock:
 
@@ -1924,15 +2184,19 @@ CjvxProperties::_install_property_reference(
 	} // if (selection != _common_set_properties.registeredProperties.end())
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+		jvxPropertyFwdLambdaPrivate refF;
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_INSTALL_PROPERTY;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.rawData = &rawData;
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF);			
+#else
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
 		{
-			 jvxErrorType resL = theSubModule->propRef->install_property_reference(
-				callGate,
-				rawData, 
-				addr);
-			return resL;
+				return func_local_submodule_install_property(addr, theSubModule, callGate, rawData);
 		});
-
+#endif
 	} // else :: if (selection != _common_set_properties.registeredProperties.end())
 
 leave_function_unlock:
@@ -2082,14 +2346,19 @@ CjvxProperties::_uninstall_property_reference(
 	}
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+		jvxPropertyFwdLambdaPrivate refF;
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_UNINSTALL_PROPERTY;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.rawData = &rawData;
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF);
+#else
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
-		{
-			jvxErrorType resL = theSubModule->propRef->uninstall_property_reference(
-				callGate,
-				rawData, 
-				addr);
-			return resL;
-		});
+			{
+				return func_local_submodule_uninstall_property(addr, theSubModule, callGate, rawData);
+			});
+#endif
 
 	} // else :: if (selection != _common_set_properties.registeredProperties.end())
 
@@ -2183,13 +2452,22 @@ CjvxProperties::_get_property_extended_info(jvxCallManagerProperties& callGate,
 	}
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+		jvxPropertyFwdLambdaPrivate refF;
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_GET_EXTENDED_INFO;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.fld = fld;
+		refF.requestId = &requestId;
+		refF.ident = &ident;
+
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF);
+#else
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
 			{
-				jvxErrorType resL = JVX_NO_ERROR;
-				resL = theSubModule->propRef->get_property_extended_info(
-					callGate, fld, requestId, ident);
-				return resL;
+				return func_local_submodule_get_property_extended_info(theSubModule, callGate, fld, requestId, ident);
 			});
+#endif
 	}
 
 leave_error_unlock:
@@ -2257,16 +2535,26 @@ CjvxProperties::_get_meta_flags(jvxCallManagerProperties& callGate,
 	}
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+		jvxPropertyFwdLambdaPrivate refF;
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_GET_META_FLAGS;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.access_flags = access_flags;
+		refF.mode_flags = mode_flags;
+		refF.ident = &ident;
+
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF);
+#else
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
 			{
-				jvxErrorType resL = JVX_NO_ERROR;
-				resL = theSubModule->propRef->get_meta_flags(
+				return func_local_submodule_get_meta_flags(theSubModule,
 					callGate,
 					access_flags,
 					mode_flags,
-					ident);
-				return resL;
+					ident);				
 			});
+#endif
 	}
 
 leave_error_unlock:
@@ -2340,16 +2628,26 @@ CjvxProperties::_set_meta_flags(jvxCallManagerProperties& callGate,
 	}
 	else
 	{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+		jvxPropertyFwdLambdaPrivate refF;
+		refF.tpFunc = jvxPropertyFwdFuncType::JVX_PROPERTY_FUNC_SET_META_FLAGS;
+		refF.priv = this;
+		refF.callGate = &callGate;
+		refF.access_flags = access_flags;
+		refF.mode_flags = mode_flags;
+		refF.ident = &ident;
+		res = _forward_submodules(callGate, addresses, func_local_submodule_static, &refF);
+#else
+
 		res = _forward_submodules(callGate, addresses, [&](const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)
 			{
-				jvxErrorType resL = JVX_NO_ERROR;
-				resL = theSubModule->propRef->set_meta_flags(
+				return func_local_submodule_set_meta_flags(theSubModule,
 					callGate,
 					access_flags,
 					mode_flags,
 					ident);
-				return resL;
 			});
+#endif
 	}
 
 leave_error_unlock:
@@ -3955,11 +4253,22 @@ CjvxProperties::_number_properties_local(jvxCallManagerProperties& callGate, jvx
 	return JVX_NO_ERROR;
 }
 
+
 jvxErrorType
 CjvxProperties::_forward_submodules(jvxCallManagerProperties& callGate,
 	propAddressing& addresses,
+
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+	
+	jvxSubModuleFwdFuncPtr func,
+	jvxHandle* lambdaPrivate,
+	jvxSubModuleFwdFuncPostPtr func_post_success
+
+#else
 	std::function<jvxErrorType(const jvx::propertyAddress::IjvxPropertyAddress& addr, CjvxPropertySubModule* theSubModule)> func,
-	std::function < void(CjvxPropertySubModule* theSubModule)> func_post_success)
+	std::function < void(CjvxPropertySubModule* theSubModule)> func_post_success
+#endif
+)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 	jvxErrorType resL = JVX_NO_ERROR;	
@@ -3976,13 +4285,21 @@ CjvxProperties::_forward_submodules(jvxCallManagerProperties& callGate,
 			resL = addresses.prepLin(addrLinCp, cnt);
 			if (resL == JVX_NO_ERROR)
 			{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+				
+				res = func(addrLinCp, elm, lambdaPrivate);
+#else
 				res = func(addrLinCp, elm);
-
+#endif
 				if (res == JVX_NO_ERROR)
 				{
 					if (func_post_success)
 					{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+						func_post_success(elm, lambdaPrivate);
+#else
 						func_post_success(elm);
+#endif
 					}					
 				}
 			}
@@ -3995,13 +4312,20 @@ CjvxProperties::_forward_submodules(jvxCallManagerProperties& callGate,
 			resL = addresses.prepDescr(addrDescrCp, elm->propDescriptorTag);
 			if (resL == JVX_NO_ERROR)
 			{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION				
+				res = func(addrDescrCp, elm, lambdaPrivate);
+#else
 				res = func(addrDescrCp, elm);
-
+#endif
 				if (res == JVX_NO_ERROR)
 				{
 					if (func_post_success)
 					{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+						func_post_success(elm, lambdaPrivate);
+#else
 						func_post_success(elm);
+#endif
 					}
 
 					break;
@@ -4014,13 +4338,20 @@ CjvxProperties::_forward_submodules(jvxCallManagerProperties& callGate,
 			resL = addresses.prepIdx(addrIdxCp, elm->offsetShift);
 			if (resL == JVX_NO_ERROR)
 			{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+				res = func(addrIdxCp, elm, lambdaPrivate);
+#else
 				res = func(addrIdxCp, elm);
-
+#endif
 				if (res == JVX_NO_ERROR)
 				{
 					if (func_post_success)
 					{
+#ifdef JVX_CPLUSPLUS_NO_STD_FUNCTION
+						func_post_success(elm, lambdaPrivate);
+#else
 						func_post_success(elm);
+#endif
 					}
 					break;
 				}

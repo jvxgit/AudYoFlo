@@ -106,8 +106,6 @@
 								<option id="assembler.option.sirevision.602362545" name="-si-revision" superClass="assembler.option.sirevision" useByScannerDiscovery="false" value=" 0.0" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="assembler.option.preprocessdefs.204461291" name="Preprocessor definitions (-D):" superClass="assembler.option.preprocessdefs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="COREnull"/>
-									<listOptionValue builtIn="false" value="CORE-1"/>
-									<listOptionValue builtIn="false" value="CORE-1"/>
 								</option>
 								<inputType id="assembler.input.1032561782" name="Assembler Source" superClass="assembler.input"/>
 							</tool>
@@ -117,8 +115,6 @@
 								<option id="compiler.option.proc.915139422" name="-proc" superClass="compiler.option.proc" useByScannerDiscovery="false" value=" ADSP-SC594" valueType="string"/>
 								<option id="compiler.option.sirevision.393350234" name="-si-revision" superClass="compiler.option.sirevision" useByScannerDiscovery="false" value=" 0.0" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.preprocessdefs.1877473948" name="Preprocessor definitions (-D):" superClass="compiler.option.preprocessdefs" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="JVX_NO_SYSTEM_EXTENSIONS"/>
-									<listOptionValue builtIn="false" value="JVX_SYSTEM_USE_DATA_FORMAT_FLOAT"/>
 									<listOptionValue builtIn="false" value="COREnull"/>
 								</option>
 								<option id="compiler.option.coreid.633157845" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" useByScannerDiscovery="false" value="-1" valueType="string"/>
@@ -172,5 +168,12 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/jvx-dsp-base"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/jvx-dsp-base"/>
+		</configuration>
+	</storageModule>
 </cproject>

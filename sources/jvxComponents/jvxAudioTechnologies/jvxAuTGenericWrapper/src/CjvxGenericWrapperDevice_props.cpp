@@ -2009,7 +2009,7 @@ CjvxGenericWrapperDevice::forwardPropertyRequest(
 		CjvxProperties::propAddressing addresses;
 		addresses.cast(&idProp);
 
-		CjvxProperties::propDescriptors descrs;
+		propDescriptors descrs;
 		descrs.cast(descr);
 
 		if (addresses.addrDescr)

@@ -4,7 +4,6 @@
 #include "jvx-helpers.h"
 
 #include "typedefs/TjvxSequencer_cpp.h"
-#include "jvx_threads.h"
 
 #define JVX_CONFIG_SEQUENCER_SEQ_SECTION "sequencer_section"
 #define JVX_CONFIG_SEQUENCER_SEQ_SUBSECTION_PREFIX  "sequencer_subsection_"

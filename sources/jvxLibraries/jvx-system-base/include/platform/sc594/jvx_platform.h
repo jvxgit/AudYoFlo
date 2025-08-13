@@ -51,7 +51,7 @@ struct is_same<T, T> {
 
 #define JVX_THREAD_ID int
 #define JVX_THREAD_ID_INVALID 0
-
+#define JVX_NULLTHREAD 0
 #define JVX_INTERFACE struct
 
 #define JVX_CALLINGCONVENTION
