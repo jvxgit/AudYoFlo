@@ -1,6 +1,6 @@
 #include "jvx_fxlms/jvx_fxlms.h"
-
 #include "jvx_circbuffer/jvx_circbuffer.h"
+#include <math.h>
 
 typedef struct
 {
@@ -151,7 +151,7 @@ jvxErrorType jvx_fxlms_feedback_init(struct jvx_fxlms* hdlIn)
 
 		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(theHandle->runtime.selectFrequency_fx.nom, jvxData, 3);
 		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(theHandle->runtime.selectFrequency_fx.den, jvxData, 3);
-		rtp_compute_coeffs_frequency_selection(theHandle->runtime.selectFrequency_fx.nom, theHandle->runtime.selectFrequency_fx.den,
+		jvx_compute_coeffs_frequency_selection(theHandle->runtime.selectFrequency_fx.nom, theHandle->runtime.selectFrequency_fx.den,
 			theHandle->syncCpy.frequencySelectionFilter_fex.omega_freq, theHandle->syncCpy.frequencySelectionFilter_fex.qfactor);
 		jvx_circbuffer_allocate_1chan(&theHandle->runtime.selectFrequency_fx.states, 2);
 
@@ -190,26 +190,26 @@ jvxErrorType jvx_fxlms_feedback_terminate(struct jvx_fxlms* hdlIn)
 	{
 		theHandle->runtime.S_e = 0.0;
 
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.cirbuffer_delay.delay_secpath_real);
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.cirbuffer_delay.delay_secpath_regenerate);
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.cirbuffer_delay.delay_secpath_fxlms);
+		jvx_circbuffer_deallocate(theHandle->runtime.cirbuffer_delay.delay_secpath_real);
+		jvx_circbuffer_deallocate(theHandle->runtime.cirbuffer_delay.delay_secpath_regenerate);
+		jvx_circbuffer_deallocate(theHandle->runtime.cirbuffer_delay.delay_secpath_fxlms);
 
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.circbuffer_states.states_secPath_real);
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.circbuffer_states.states_secPath_fxlms);
+		jvx_circbuffer_deallocate(theHandle->runtime.circbuffer_states.states_secPath_real);
+		jvx_circbuffer_deallocate(theHandle->runtime.circbuffer_states.states_secPath_fxlms);
 
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.circbuffer_states.states_secPath_regenerate);
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.circbuffer_states.lms_update);
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.circbuffer_states.states_adaptive_filter);
+		jvx_circbuffer_deallocate(theHandle->runtime.circbuffer_states.states_secPath_regenerate);
+		jvx_circbuffer_deallocate(theHandle->runtime.circbuffer_states.lms_update);
+		jvx_circbuffer_deallocate(theHandle->runtime.circbuffer_states.states_adaptive_filter);
 
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.selectFrequency_fx.states);
+		jvx_circbuffer_deallocate(theHandle->runtime.selectFrequency_fx.states);
 		JVX_DSP_SAFE_DELETE_FIELD(theHandle->runtime.selectFrequency_fx.nom);
 		JVX_DSP_SAFE_DELETE_FIELD(theHandle->runtime.selectFrequency_fx.den);
 
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.selectFrequency_fe.states);
+		jvx_circbuffer_deallocate(theHandle->runtime.selectFrequency_fe.states);
 		JVX_DSP_SAFE_DELETE_FIELD(theHandle->runtime.selectFrequency_fe.nom);
 		JVX_DSP_SAFE_DELETE_FIELD(theHandle->runtime.selectFrequency_fe.den);
 
-		jvx_circbuffer_deallocate_1chan(&theHandle->runtime.selectFrequency_fxh.states);
+		jvx_circbuffer_deallocate(theHandle->runtime.selectFrequency_fxh.states);
 		JVX_DSP_SAFE_DELETE_FIELD(theHandle->runtime.selectFrequency_fxh.nom);
 		JVX_DSP_SAFE_DELETE_FIELD(theHandle->runtime.selectFrequency_fxh.den);
 
