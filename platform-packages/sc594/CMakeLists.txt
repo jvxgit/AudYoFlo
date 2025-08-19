@@ -17,6 +17,7 @@ set(JVX_OPTION_MAKEFILE_BUILD FALSE)
 set(JVX_OPTION_BUILD_DEBUG TRUE)
 
 # During cmake run phase, create workspace if not available yet
+message("Checking folder <${CMAKE_CURRENT_BINARY_DIR}/ws>.")
 if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/ws)
 	file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/ws)
 
@@ -40,6 +41,16 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/ws)
 		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -import ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}
 		COMMAND_ECHO STDOUT)		
 	
+	set(CMAKE_CURRENT_SOURCE_DIR_PROJECT "${CMAKE_CURRENT_SOURCE_DIR}/jvx-system-min")	
+	cmake_path(NATIVE_PATH CMAKE_CURRENT_SOURCE_DIR_PROJECT CMAKE_CURRENT_SOURCE_DIR_NATIVE)
+	# message(FATAL_ERROR "-> ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}")
+	 
+	# Import the target project <jvx-component-templates-min>
+	execute_process(
+		COMMAND ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -import ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}
+		COMMAND_ECHO STDOUT)		
+
 	 # message(FATAL_ERROR "Creating cces workspace complete.")
 endif()
 
@@ -54,10 +65,22 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-dsp-base
 	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Release
 	JOB_POOL console)
 
-add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
+add_custom_target(${JVX_TARGET_NAME}-jvx-system-min
 	ALL 
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 	DEPENDS ${JVX_TARGET_NAME}-jvx-dsp-base
+	COMMAND 
+	echo "Running sc 594 build step" &&
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
+	JOB_POOL console)
+
+add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
+	ALL 
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DEPENDS ${JVX_TARGET_NAME}-jvx-system-min
 	COMMAND 
 	echo "Running sc 594 build step" &&
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
@@ -88,4 +111,4 @@ if(JVX_RELEASE_SDK)
 
 endif()
 
-## message(FATAL_ERROR "Wait here!")
+# message(FATAL_ERROR "Wait here!")

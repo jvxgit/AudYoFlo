@@ -4,6 +4,8 @@
 
 #include "jvxTconfigProcessor.h"
 
+#define VERBOSE_OUTPUT
+
 static std::string combineWithCwd(const std::string& fName)
 {
 	std::string fNameRet = ".";
@@ -30,6 +32,9 @@ CayfGlobalHostClass::~CayfGlobalHostClass()
 jvxErrorType 
 CayfGlobalHostClass::register_module_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, IjvxMinHost** hostOnReturn, IjvxConfigProcessor** cfgOnReturn)
 {
+#ifdef VERBOSE_OUTPUT
+	std::cout << "Trying to register module <" << nm << ">." << std::endl;
+#endif
 
 	auto elm = registeredModules.find(regMe);
 	if (elm != registeredModules.end())
@@ -70,6 +75,9 @@ CayfGlobalHostClass::register_module_host(const char* nm, jvxApiString& nmAsRegi
 
 	if (globalHostRef == nullptr)
 	{
+#ifdef VERBOSE_OUTPUT
+		std::cout << "Allocating global min host reference." << std::endl;
+#endif
 		// start hostref
 		jvxMHAppMinHostCon_init(&globalHostObj);
 		assert(globalHostObj);
@@ -110,6 +118,10 @@ CayfGlobalHostClass::register_module_host(const char* nm, jvxApiString& nmAsRegi
 		*cfgOnReturn = confProcHdl;
 	}
 
+#ifdef VERBOSE_OUTPUT
+	std::cout << "Module regsitered with name <" << nmAsRegistered.c_str() << ">." << std::endl;
+#endif
+
 	return JVX_NO_ERROR;
 }
 
@@ -117,6 +129,13 @@ jvxErrorType
 CayfGlobalHostClass::unregister_module_host(IjvxObject* regMe)
 {
 	jvxErrorType res = JVX_NO_ERROR;
+
+#ifdef VERBOSE_OUTPUT
+	jvxApiString astr;
+	regMe->name(&astr);
+	std::cout << "Trying to unregister module <" << astr.c_str() << ">." << std::endl;
+#endif
+
 	auto elm = registeredModules.find(regMe);
 	if (elm == registeredModules.end())
 	{
@@ -127,6 +146,10 @@ CayfGlobalHostClass::unregister_module_host(IjvxObject* regMe)
 
 	if (registeredModules.empty())
 	{
+#ifdef VERBOSE_OUTPUT
+		std::cout << "Shutting down host object." << std::endl;
+#endif
+
 		jvxErrorType resC = globalHostRef->deactivate();
 		assert(resC == JVX_NO_ERROR);
 
@@ -153,6 +176,10 @@ CayfGlobalHostClass::unregister_module_host(IjvxObject* regMe)
 jvxErrorType 
 CayfGlobalHostClass::load_config_content(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName)
 {
+#ifdef VERBOSE_OUTPUT
+	if(fName) std::cout << "Passing filename <" << fName << "> for configuration as argument." << std::endl;
+#endif
+
 	auto elm = registeredModules.find(priObj);
 	if (elm != registeredModules.end())
 	{		
@@ -175,12 +202,18 @@ CayfGlobalHostClass::load_config_content(IjvxObject* priObj, jvxConfigData** dat
 
 			std::string fName = combineWithCwd(elm->second.cfgFName);
 			elm->second.errTxt.clear();
+#ifdef VERBOSE_OUTPUT
+			std::cout << "Trying to parse config file <" << elm->second.cfgFName << ">." << std::endl;
+#endif
 			elm->second.resConfig = confProcHdl->parseFile(elm->second.cfgFName.c_str());
 			if (elm->second.resConfig != JVX_NO_ERROR)
 			{
 				jvxApiError err;
 				confProcHdl->getParseError(&err);
 				elm->second.errTxt = err.errorDescription.std_str();
+#ifdef VERBOSE_OUTPUT
+				std::cout << "Parse error: <" << err.errorDescription.c_str() << ">." << std::endl;
+#endif
 			}
 			else
 			{
@@ -226,6 +259,11 @@ jvxErrorType
 CayfGlobalHostClass::attach_component_module(const char* nm, IjvxObject* priObj, IjvxObject* attachMe)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+
+#ifdef VERBOSE_OUTPUT
+	std::cout << "Trying to attach component <" << nm << "> to module." << std::endl;
+#endif
+
 	auto elm = registeredModules.find(priObj);
 	if (elm != registeredModules.end())
 	{
@@ -237,10 +275,14 @@ CayfGlobalHostClass::attach_component_module(const char* nm, IjvxObject* priObj,
 			newElm.nm = nmLnk;
 			newElm.theObj = attachMe;
 			elm->second.attachedModules[nmLnk] = newElm;
+
 			res = JVX_NO_ERROR;
 		}
 		else
 		{
+#ifdef VERBOSE_OUTPUT
+			std::cout << "Component was attached before." << std::endl;
+#endif
 			res = JVX_ERROR_DUPLICATE_ENTRY;
 		}
 	}
@@ -251,6 +293,11 @@ jvxErrorType
 CayfGlobalHostClass::detach_component_module(const char* nm, IjvxObject* priObj)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+
+#ifdef VERBOSE_OUTPUT
+	std::cout << "Trying to detach component <" << nm << "> to module." << std::endl;
+#endif
+
 	auto elm = registeredModules.find(priObj);
 	if (elm != registeredModules.end())
 	{
@@ -273,6 +320,11 @@ jvxErrorType
 CayfGlobalHostClass::forward_text_command(const char* command, IjvxObject* priObj, jvxApiString& astr)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+
+#ifdef VERBOSE_OUTPUT
+	std::cout << "Trying to forward text message <" << command << ">." << std::endl;
+#endif
+
 	auto elm = registeredModules.find(priObj);
 	if (elm != registeredModules.end())
 	{

@@ -25,6 +25,7 @@ set(LOCAL_SOURCES ${LOCAL_SOURCES} ${EXPORT_SOURCES})
 set(LOCAL_LINKER_FLAGS ${LOCAL_LINKER_FLAGS} ${EXPORT_LINKER_FLAGS})
 
 set(BUILD_SHARED TRUE)
+set(BUILD_STATIC TRUE)
 
 # this changes the name of the output to be followed by "_import"
 # It does NOT produce an import lib in the SDK for all projects which

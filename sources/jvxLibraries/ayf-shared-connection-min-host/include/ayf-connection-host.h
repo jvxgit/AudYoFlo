@@ -4,9 +4,9 @@
 
 extern "C"
 {
-	jvxErrorType ayf_register_module_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, 
+	jvxErrorType ayf_register_object_host(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe, 
 		IjvxMinHost** hostOnReturn, IjvxConfigProcessor** confProcReturn);
-	jvxErrorType ayf_unregister_module_host(IjvxObject* regMe);
+	jvxErrorType ayf_unregister_object_host(IjvxObject* regMe);
 
 	jvxErrorType ayf_load_config_content(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName);
 	jvxErrorType ayf_release_config_content(IjvxObject* priObj, jvxConfigData* datOnReturn);

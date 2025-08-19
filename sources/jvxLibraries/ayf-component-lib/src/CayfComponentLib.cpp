@@ -2,8 +2,15 @@
 #include "CayfComponentLibContainer.h"
 #include "common/CjvxConnectorFactory.h"
 
+// #define AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST
+//#define AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST
+
+#ifdef AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST
+#include "ayf-connection-host.h"
+#else
 #include "ayf-embedding-proxy-entries.h"
 #include "ayf-embedding-libs.h"
+#endif
 
 #include "jvxHosts/CjvxDataConnections.h"
 
@@ -68,15 +75,58 @@ extern jvxErrorType unregister_module_host(IjvxObject* regMe);
 // Here, we run the global stuff: opening sub dll once and receiving the binding references
 // ================================================================================================
 
+#ifndef AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB
 JVX_HMODULE proxyLibHandleGlobal = JVX_HMODULE_INVALID;
+#endif
+
 ayfEmbeddingProxyReferences proxyReferencesGlobal;
 ayfHostBindingReferences* bindingGlobal = nullptr;
 jvxSize idRegisterGlobal = 0;
 jvxSize refCntGlobal = 0;
 
 jvxErrorType
-CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect)
+CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect)
 {
+	
+#if defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST) || defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST) 
+
+	if (bindingGlobal == nullptr)
+	{
+#ifdef AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST
+		ayfHostBindingReferences* ptrRet = nullptr;
+		JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferences);
+		ptrRet->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+#endif
+
+#ifdef AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST
+		ayfHostBindingReferencesMinHost* ptrRet = nullptr;
+		JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferencesMinHost);		
+		ptrRet->ayf_register_object_host_call = ayf_register_object_host;
+		ptrRet->ayf_unregister_object_host_call = ayf_unregister_object_host;
+		ptrRet->ayf_load_config_content_call = ayf_load_config_content;
+		ptrRet->ayf_release_config_content_call = ayf_release_config_content;
+		ptrRet->ayf_attach_component_module_call = ayf_attach_component_module;
+		ptrRet->ayf_detach_component_module_call = ayf_detach_component_module;
+		ptrRet->ayf_forward_text_command_call = ayf_forward_text_command;
+		ptrRet->bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST;
+#endif
+
+#ifdef JVX_OS_WINDOWS
+		AllocConsole();
+		freopen("conin$", "r", stdin);
+		freopen("conout$", "w", stdout);
+		freopen("conout$", "w", stderr);
+		printf("Attached Debugging Window:\n");				
+#endif
+
+		bindingGlobal = static_cast<ayfHostBindingReferences*>(ptrRet);
+		refCntGlobal = 1;
+		bindOnReturn = bindingGlobal;
+		return JVX_NO_ERROR;
+	}
+
+#else
+
 	if (proxyLibHandleGlobal == JVX_HMODULE_INVALID)
 	{
 		std::string fNameDll = AYF_EMBEDDING_PROXY_HOST;
@@ -92,6 +142,7 @@ CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const s
 			}
 
 		}
+
 		proxyLibHandleGlobal = JVX_LOADLIBRARY(fNameDll.c_str());
 		if (proxyLibHandleGlobal != JVX_HMODULE_INVALID)
 		{
@@ -101,9 +152,9 @@ CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const s
 
 		if (proxyReferencesGlobal.ayf_embedding_proxy_init_call)
 		{
-
 			proxyReferencesGlobal.ayf_embedding_proxy_init_call(myRegisterName.c_str(), &idRegisterGlobal, &bindingGlobal, rootPath.c_str(), fNameIniPtr);
 		}
+
 
 		refCntGlobal = 1;
 		// Currently just alocal assignemnt
@@ -121,6 +172,7 @@ CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const s
 		bindOnReturn = bindingGlobal;
 		return JVX_NO_ERROR;
 	}
+#endif
 
 	// We need to increment the global ref counter on every single call - to find out when to unload the lib on the last component
 	refCntGlobal++;
@@ -131,11 +183,30 @@ CayfComponentLib::populateBindingRefs(const std::string &myRegisterName, const s
 jvxErrorType
 CayfComponentLib::unpopulateBindingRefs()
 {
+#if defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST) || defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST) 
+
+#else
 	if (proxyLibHandleGlobal)
 	{
+#endif
 		refCntGlobal--;
 		if (refCntGlobal == 0)
 		{
+
+#if defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST) || defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST) 
+			JVX_SAFE_DELETE_OBJECT(bindingGlobal);		
+
+#ifdef JVX_OS_WINDOWS
+			BOOL freeResult = FreeConsole();
+			if (!freeResult)
+			{
+				DWORD lErr = GetLastError();
+			}
+#endif
+
+			return JVX_NO_ERROR;
+#else
+
 			if (proxyReferencesGlobal.ayf_embedding_proxy_terminate_call)
 			{
 				proxyReferencesGlobal.ayf_embedding_proxy_terminate_call(idRegisterGlobal, bindingGlobal);
@@ -143,10 +214,14 @@ CayfComponentLib::unpopulateBindingRefs()
 				JVX_UNLOADLIBRARY(proxyLibHandleGlobal);
 				proxyLibHandleGlobal = JVX_HMODULE_INVALID;				
 			}
+#endif
 		}
 		return JVX_NO_ERROR;
+#if defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST) || defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST) 
+#else
 	}
 	return JVX_ERROR_WRONG_STATE;
+#endif
 }
 
 // ===========================================================================

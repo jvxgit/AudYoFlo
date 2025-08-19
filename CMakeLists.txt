@@ -38,6 +38,12 @@ set(JVX_FULL_SYSTEM_BUILD TRUE)
 
 include(${JVX_CMAKE_DIR}/fragments/options.cmake)
 
+if(${JVX_OS} MATCHES "windows")
+	if(JVX_BUILD_OPTION_ALL_MD)
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+	endif()
+endif()
+	
 if(NOT ${JVX_OS} MATCHES "windows")
   set(JVX_USE_PART_ASIO FALSE)
 endif()

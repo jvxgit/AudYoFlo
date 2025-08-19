@@ -13,8 +13,11 @@ CayfComponentLibContainer::~CayfComponentLibContainer()
 void 
 CayfComponentLibContainer::linkBinding(ayfHostBindingReferences* bindRef)
 {
-	bindRef->request_specialization(reinterpret_cast<jvxHandle**>(&bindRefsMinHost), ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST);
-	bindRef->request_specialization(reinterpret_cast<jvxHandle**>(&bindRefsEmbHost), ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST);
+	if (bindRef)
+	{
+		bindRef->request_specialization(reinterpret_cast<jvxHandle**>(&bindRefsMinHost), ayfHostBindingType::AYF_HOST_BINDING_MIN_HOST);
+		bindRef->request_specialization(reinterpret_cast<jvxHandle**>(&bindRefsEmbHost), ayfHostBindingType::AYF_HOST_BINDING_EMBEDDED_HOST);
+	}
 }
 
 void
