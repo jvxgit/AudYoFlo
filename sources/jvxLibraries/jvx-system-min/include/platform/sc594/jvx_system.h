@@ -91,6 +91,17 @@ typedef uint64_t jvxCBitField;
 
 // We need to define this function as it is not available on ADI DSPs
 float strtof(const char *nptr, char **endptr);
+int fpclassify(float x);
+
+#ifndef FP_NAN
+#define FP_NAN       0
+#define FP_INFINITE  1
+#define FP_ZERO      2
+#define FP_SUBNORMAL 3
+#define FP_NORMAL    4
+#endif
+
+#define JVX_FPCLASSIFY fpclassify
 
 #include "../../jvx_system_common.h"
 #include "jvx_system_helpers.h"

@@ -62,6 +62,7 @@
 //#define JVX_GET_UNBUFFERED_CHAR _getch <- this function is buggy as of current version of Windows SDK (14.11.2018, HK)
 #define JVX_GET_UNBUFFERED_CHAR _getwch
 #define JVX_POSTPROCESS_UNBUFFERED_CHAR
+#define JVX_FPCLASSIFY std::fpclassify
 
 // ===================================================
 

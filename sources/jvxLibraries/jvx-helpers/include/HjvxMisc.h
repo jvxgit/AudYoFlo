@@ -473,14 +473,22 @@ std::string
 jvx_removePathFromFile(const std::string& pathToFile);
 */
 
+#ifndef JVX_SYSTEM_NO_FILE_SYSTEM
+
 std::string
 jvx_absoluteToRelativePath(std::string path, bool isFile, const char* curPath = NULL);
 
 std::string
-jvx_extractFileFromFilePath(const std::string& fName);
+jvx_extractDirectoryFromFilePath(const std::string& fName);
 
 std::string
-jvx_extractDirectoryFromFilePath(const std::string& fName);
+jvx_changeDirectoryPath(const std::string& path, const std::string& path_ext);
+
+#endif
+
+std::string
+jvx_extractFileFromFilePath(const std::string& fName);
+
 
 std::string
 jvx_extractExtensionFromFilePath(const std::string& fName);
@@ -490,9 +498,6 @@ jvx_fileBaseName(const std::string& fName);
 
 std::string
 jvx_changeDirectoryUp(const std::string& path);
-
-std::string 
-jvx_changeDirectoryPath(const std::string& path, const std::string& path_ext);
 
 std::string
 jvx_replaceCharacter(std::string path, char replace, char by);
@@ -648,7 +653,7 @@ namespace jvx {
 
 		void debug_out_command_request(const CjvxReportCommandRequest& request, std::ostream& str, const std::string& tag);
 
-#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
+#if !defined(JVX_CPLUSPLUS_NO_STD_FUNCTION) && !defined(JVX_SYSTEM_NO_FILE_SYSTEM)
 		jvxErrorType scanForFiles(const std::string& pathname, const std::string& ext, std::function< void(const std::string& fNamePath) > lambda, const std::string& wcName  ="*");
 #endif
 		
@@ -865,8 +870,10 @@ jvx_AllocateOneRcParameter(jvxRCOneParameter* ptr, jvxDataFormat form, jvxSize n
 void 
 jvx_DeallocateOneRcParameter(jvxRCOneParameter* ptr);
 
+#ifndef JVX_SYSTEM_NO_FILE_SYSTEM
 bool 
 jvxFileExists(const char *filePath, const char* fileName);
+#endif
 
 jvxErrorType
 jvx_exchange_property_callback_local_pack(jvxPropertyCallback cb, jvxHandle* cb_priv, jvxFloatingPointer_propadmin* constr, const std::string& propDescription, jvxBool do_set);
@@ -1355,7 +1362,9 @@ std::string jvx_date_string();
 
 // =================================================================================
 
+#ifndef JVX_SYSTEM_NO_FILE_SYSTEM
 void jvx_getFilesFolderPath(std::vector<std::string>& lst, const std::string& pathName, const std::string& extension);
+#endif
 
 JVX_STATIC_INLINE std::string JVX_DISPLAY_CONNECTOR(IjvxCommonConnector* ref)
 {

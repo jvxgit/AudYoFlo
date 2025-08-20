@@ -1551,4 +1551,3 @@ jvxData jvx_derive_elementsize_byte(jvxDataFormatGroup format_group, jvxDataForm
 	return jvx_derive_elementsize(format_group) * jvxDataFormat_getsize(format);
 }
 
-	

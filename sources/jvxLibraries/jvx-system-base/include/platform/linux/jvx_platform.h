@@ -105,6 +105,8 @@
 
 #define JVX_INVALID_HANDLE_VALUE INVALID_HANDLE_VALUE
 
+#define JVX_FPCLASSIFY std::fpclassify
+
 //===============================================
 //===============================================
 

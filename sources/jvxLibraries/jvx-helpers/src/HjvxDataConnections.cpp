@@ -1,5 +1,8 @@
 #include "jvx-helpers.h"
+
+#ifndef JVX_SKIP_EVENT_JSON
 #include "CjvxJson.h"
+#endif
 
 jvxErrorType 
 jvx_start_process(IjvxDataConnections* allConnections, 
@@ -10,7 +13,11 @@ jvx_start_process(IjvxDataConnections* allConnections,
 	jvxSize cnt = 0;
 	IjvxDataConnectionProcess* theProcess = NULL;
 	jvxSize the_conn_id = JVX_SIZE_UNSELECTED;
+
+#ifndef JVX_SKIP_EVENT_JSON
 	CjvxJsonElementList jsonElmLst;
+#endif
+
 	jvxErrorType resL = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb_loc);
 	std::string warnMess;
@@ -68,14 +75,23 @@ jvx_start_process(IjvxDataConnections* allConnections,
 		return resL;
 	}
 
+#ifndef JVX_SKIP_EVENT_JSON
 	resL = theProcess->transfer_forward_chain(JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON, &jsonElmLst JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	assert(resL == JVX_NO_ERROR);
+#else
+	assert(0);
+#endif
 
 	resL = allConnections->return_reference_connection_process(theProcess);
 	assert(resL == JVX_NO_ERROR);
 
 	std::string txt;
+#ifndef JVX_SKIP_EVENT_JSON
 	jsonElmLst.printToStringView(txt);
+#else
+	txt = "JSON not compiled for this release!";
+#endif
+
 	std::cout << "Process <" << theContainer.process_name << "> created and connected: " << txt << std::endl;
 	
 	return JVX_NO_ERROR;

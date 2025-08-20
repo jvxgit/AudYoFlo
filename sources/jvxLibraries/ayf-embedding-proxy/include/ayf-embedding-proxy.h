@@ -18,20 +18,20 @@ enum class ayfHostBindingType
 	// AYF_HOST_BINDING_FULL_HOST,
 };
 
-typedef jvxErrorType(*ayf_register_object_host_call)(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe,
+typedef jvxErrorType(*ayf_register_object_host_fptr)(const char* nm, jvxApiString& nmAsRegistered, IjvxObject* regMe,
 	IjvxMinHost** hostOnReturn, IjvxConfigProcessor** cfgOnReturn);
-typedef jvxErrorType(*ayf_unregister_object_host_call)(IjvxObject* regMe);
-typedef jvxErrorType(*ayf_load_config_content_call)(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName);
-typedef jvxErrorType(*ayf_release_config_content_call)(IjvxObject* priObj, jvxConfigData* datOnReturn);
-typedef jvxErrorType(*ayf_attach_component_module_call)(const char* nm, IjvxObject* priObj, IjvxObject* attachMe);
-typedef jvxErrorType(*ayf_detach_component_module_call)(const char* nm, IjvxObject* priObj);
-typedef jvxErrorType(*ayf_forward_text_command_call)(const char* command, IjvxObject* priObj, jvxApiString& astr);
+typedef jvxErrorType(*ayf_unregister_object_host_fptr)(IjvxObject* regMe);
+typedef jvxErrorType(*ayf_load_config_content_fptr)(IjvxObject* priObj, jvxConfigData** datOnReturn, const char* fName);
+typedef jvxErrorType(*ayf_release_config_content_fptr)(IjvxObject* priObj, jvxConfigData* datOnReturn);
+typedef jvxErrorType(*ayf_attach_component_module_fptr)(const char* nm, IjvxObject* priObj, IjvxObject* attachMe);
+typedef jvxErrorType(*ayf_detach_component_module_fptr)(const char* nm, IjvxObject* priObj);
+typedef jvxErrorType(*ayf_forward_text_command_fptr)(const char* command, IjvxObject* priObj, jvxApiString& astr);
 
-typedef jvxErrorType(*ayf_register_factory_host_call)(const char* nm, jvxApiString& nmAsRegistered,
+typedef jvxErrorType(*ayf_register_factory_host_fptr)(const char* nm, jvxApiString& nmAsRegistered,
 	IjvxExternalModuleFactory* regMe, int argc, const char* argv[]);
-typedef jvxErrorType(*ayf_unregister_factory_host_call)(IjvxExternalModuleFactory* regMe);
-typedef jvxErrorType(*ayf_load_config_content_factory_host_call)(IjvxExternalModuleFactory* regObj, jvxConfigData** datOnReturn, const char* fName);
-typedef jvxErrorType(*ayf_release_config_content_factory_host_call)(IjvxExternalModuleFactory* regObj, jvxConfigData* datOnReturn);
+typedef jvxErrorType(*ayf_unregister_factory_host_fptr)(IjvxExternalModuleFactory* regMe);
+typedef jvxErrorType(*ayf_load_config_content_factory_host_fptr)(IjvxExternalModuleFactory* regObj, jvxConfigData** datOnReturn, const char* fName);
+typedef jvxErrorType(*ayf_release_config_content_factory_host_fptr)(IjvxExternalModuleFactory* regObj, jvxConfigData* datOnReturn);
 
 class ayfHostBindingReferences
 {
@@ -59,7 +59,7 @@ class ayfHostBindingReferencesTxtCommand
 {
 public:
 	// Forward a text token to the host from where the appropriate action is taken
-	ayf_forward_text_command_call ayf_forward_text_command_call = nullptr;
+	ayf_forward_text_command_fptr ayf_forward_text_command_call = nullptr;
 };
 
 class ayfHostBindingReferencesMinHost: public ayfHostBindingReferences, public ayfHostBindingReferencesTxtCommand
@@ -70,22 +70,22 @@ public:
 	// ==============================================================
 
 	// An external module is added to host if allowed
-	ayf_register_object_host_call ayf_register_object_host_call = nullptr;
+	ayf_register_object_host_fptr ayf_register_object_host_call = nullptr;
 
 	// Unregister external module
-	ayf_unregister_object_host_call ayf_unregister_object_host_call = nullptr;
+	ayf_unregister_object_host_fptr ayf_unregister_object_host_call = nullptr;
 
 	// Load config content from host - in most cases due to a postponed load of the module/component
-	ayf_load_config_content_call ayf_load_config_content_call = nullptr;
+	ayf_load_config_content_fptr ayf_load_config_content_call = nullptr;
 
 	// Release the config content
-	ayf_release_config_content_call ayf_release_config_content_call = nullptr;
+	ayf_release_config_content_fptr ayf_release_config_content_call = nullptr;
 
 	// Function to attach another component - the secondary component is associated to the first object
-	ayf_attach_component_module_call ayf_attach_component_module_call = nullptr;
+	ayf_attach_component_module_fptr ayf_attach_component_module_call = nullptr;
 
 	// Detach the previously attached component
-	ayf_detach_component_module_call ayf_detach_component_module_call = nullptr;
+	ayf_detach_component_module_fptr ayf_detach_component_module_call = nullptr;
 
 	virtual jvxErrorType request_specialization(jvxHandle** ptrOnReturn, ayfHostBindingType checkMe) override
 	{
@@ -116,16 +116,16 @@ public:
 	// ==============================================================
 
 	// Add an interface to register a factory for component integration
-	ayf_register_factory_host_call ayf_register_factory_host_call = nullptr;
+	ayf_register_factory_host_fptr ayf_register_factory_host_call = nullptr;
 
 	// Add an interface to register a factory for component integration
-	ayf_unregister_factory_host_call ayf_unregister_factory_host_call = nullptr;
+	ayf_unregister_factory_host_fptr ayf_unregister_factory_host_call = nullptr;
 
 	// Load config content from host - in most cases due to a postponed load of the module/component
-	ayf_load_config_content_factory_host_call ayf_load_config_content_factory_host_call = nullptr;
+	ayf_load_config_content_factory_host_fptr ayf_load_config_content_factory_host_call = nullptr;
 
 	// Release the config content
-	ayf_release_config_content_factory_host_call ayf_release_config_content_factory_host_call = nullptr;
+	ayf_release_config_content_factory_host_fptr ayf_release_config_content_factory_host_call = nullptr;
 
 	virtual jvxErrorType request_specialization(jvxHandle** ptrOnReturn, ayfHostBindingType checkMe) override
 	{

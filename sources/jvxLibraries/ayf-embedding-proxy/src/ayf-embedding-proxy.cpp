@@ -18,7 +18,7 @@ jvxBool consoleAttached = false;
 
 #define Q(x) #x
 #define Quotes(x) Q(x)
-#define SET_DLL_REFERENCE(ret, entry) ret->entry ## _call = (entry  ## _call) JVX_GETPROCADDRESS(modHostPart, Quotes(entry))
+#define SET_DLL_REFERENCE(ret, entry) ret->entry ## _call = (entry  ## _fptr) JVX_GETPROCADDRESS(modHostPart, Quotes(entry))
 
 static void registerMinHost(ayfHostBindingReferencesMinHost* retReferences, JVX_HMODULE modHostPart)
 {

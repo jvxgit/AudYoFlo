@@ -70,6 +70,7 @@
 
 #define JVX_ISNEGINF(value) (isinf(value) && (value < 0))
 
+#define JVX_FPCLASSIFY std::fpclassify
 
 #define byte char
 

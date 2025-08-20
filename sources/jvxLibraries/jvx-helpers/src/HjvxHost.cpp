@@ -205,7 +205,12 @@ void activate_default_components_host(const jvxModuleOnStart* lst_ModulesOnStart
 													res = hHost->request_object_selected_component(tpIdN, &obj);
 													if((res == JVX_NO_ERROR) && obj)
 													{
+#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
 														ptrComp[j].onSelect(obj);
+#else
+														assert(0);
+														ptrComp[j].onSelect(obj, ptrComp[j].priv);
+#endif
 														hHost->return_object_selected_component(tpIdN, obj);
 													}
 												}
@@ -347,7 +352,12 @@ void deactivate_default_components_host(const jvxModuleOnStart* lst_ModulesOnSta
 									res = hHost->request_object_selected_component(tpIdN, &obj);
 									if ((res == JVX_NO_ERROR) && obj)
 									{
+#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
 										ptrComp[j].beforeUnselect(obj);
+#else
+										ptrComp[j].beforeUnselect(obj, ptrComp[j].priv);
+#endif
+
 										hHost->return_object_selected_component(tpIdN, obj);
 									}
 								}

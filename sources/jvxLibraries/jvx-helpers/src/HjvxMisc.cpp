@@ -1,5 +1,5 @@
 #include "jvx-helpers.h"
-
+#include "jvx_system.h"
 #include "common/CjvxObject.h"
 
 #define JVX_ONE_BRACE_LIST_NUM 4
@@ -583,7 +583,7 @@ std::string
 jvx_data2String_highPrecision(jvxData convert, jvxSize digits)
 {
 	char str[JVX_MAXSTRING] = { 0 };
-	int cf = std::fpclassify(convert);
+	int cf = JVX_FPCLASSIFY(convert);
 	switch(cf)
 	{
 	case FP_INFINITE:
@@ -1787,6 +1787,7 @@ jvx_replaceCharacter(std::string path, char replaceChar_from, char replaceChar_t
 /**
  * Function to convert a jvxData value into a string.
  *///=======================================================================
+#ifndef JVX_SYSTEM_NO_FILE_SYSTEM
 std::string
 jvx_absoluteToRelativePath(std::string path, bool isFile, const char* curPath)
 {
@@ -1998,29 +1999,6 @@ jvx_absoluteToRelativePath(std::string path, bool isFile, const char* curPath)
 	return(relativePath);
 }
 
-
-
-std::string
-jvx_extractFileFromFilePath(const std::string& fName)
-{
-	std::string bName = "";
-	size_t pos = std::string::npos;
-	pos = fName.rfind(JVX_SEPARATOR_DIR_CHAR);
-	if (pos != std::string::npos)
-	{
-		bName = fName.substr(pos + 1, std::string::npos);
-	}
-	else
-	{
-		pos = fName.rfind(JVX_SEPARATOR_DIR_CHAR_THE_OTHER);
-		if (pos != std::string::npos)
-		{
-			bName = fName.substr(pos + 1, std::string::npos);
-		}
-	}
-	return bName;
-}
-
 std::string
 jvx_extractDirectoryFromFilePath(const std::string& fName)
 {
@@ -2046,6 +2024,39 @@ jvx_extractDirectoryFromFilePath(const std::string& fName)
 	}
 
 	return dName;
+}
+
+std::string jvx_changeDirectoryPath(const std::string& path, const std::string& path_ext)
+{
+	std::string dName = path + JVX_SEPARATOR_DIR + path_ext;
+	if (!JVX_DIRECTORY_EXISTS(dName.c_str()))
+	{
+		dName = path;
+	}
+	return dName;
+}
+
+#endif
+
+std::string
+jvx_extractFileFromFilePath(const std::string& fName)
+{
+	std::string bName = "";
+	size_t pos = std::string::npos;
+	pos = fName.rfind(JVX_SEPARATOR_DIR_CHAR);
+	if (pos != std::string::npos)
+	{
+		bName = fName.substr(pos + 1, std::string::npos);
+	}
+	else
+	{
+		pos = fName.rfind(JVX_SEPARATOR_DIR_CHAR_THE_OTHER);
+		if (pos != std::string::npos)
+		{
+			bName = fName.substr(pos + 1, std::string::npos);
+		}
+	}
+	return bName;
 }
 
 std::string
@@ -2104,17 +2115,6 @@ std::string jvx_changeDirectoryUp(const std::string& path)
 	}
 	return dName;
 }
-
-std::string jvx_changeDirectoryPath(const std::string& path, const std::string& path_ext)
-{
-	std::string dName = path + JVX_SEPARATOR_DIR + path_ext;
-	if (!JVX_DIRECTORY_EXISTS(dName.c_str()))
-	{
-		dName = path;
-	}
-	return dName;
-}
-
 
 std::string
 jvx_replaceStrInStr(std::string strText, const std::string& strLookFor, const std::string& strReplace, jvxSize* numReplaced)
@@ -2337,6 +2337,7 @@ std::string jvx_validStates2String(jvxBitField states)
 	return(out);
 }
 
+#ifndef JVX_SYSTEM_NO_FILE_SYSTEM
 bool jvxFileExists(const char *filePath, const char* fileName)
 {
 	JVX_DIR_FIND_DATA findFileData;
@@ -2351,6 +2352,7 @@ bool jvxFileExists(const char *filePath, const char* fileName)
 	JVX_FINDCLOSE(hFind);
 	return true;
 }
+#endif
 
 // The following two functions allow to exchange properties via a floating pointer reference.
 // This feature was introduced to allow to e.g. configure the autostart feature of the
@@ -4342,6 +4344,7 @@ namespace jvx {
 			str << tag << "---------------------------" << std::endl << std::endl;
 		};
 	
+#ifndef JVX_SYSTEM_NO_FILE_SYSTEM
 		jvxErrorType scanForFiles(const std::string& pathname, const std::string& ext, std::function< void(const std::string& fNamePath) > lambda, const std::string& wcName)
 		{
 			// Check folder to collect all files
@@ -4378,7 +4381,7 @@ namespace jvx {
 			}
 			return JVX_ERROR_ELEMENT_NOT_FOUND;
 		}
-	
+#endif
 		jvxHandle* genericDataBufferAllocate1D(jvxDataFormat form, jvxSize num)
 		{
 			jvxHandle* bufRet = nullptr;
@@ -5003,6 +5006,7 @@ void jvx_DeallocateOneRcParameter(jvxRCOneParameter* ptr)
 	ptr->content = NULL;
 }
 
+#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
 void
 jvx_runAllActiveMainComponents(IjvxHost* hostRef, std::function<void(IjvxObject* theOwner, IjvxHiddenInterface* iface)> func)
 {
@@ -5113,6 +5117,7 @@ jvx_runAllActiveMainComponents(IjvxHost* hostRef, std::function<void(IjvxObject*
 		}
 	}
 }
+#endif
 
 jvxErrorType
 jvx_activateObjectInModule(
@@ -6127,6 +6132,8 @@ std::string jvx_create_text_seq_report(const std::string& intro, jvxSize sequenc
 	txt += description;
 	return txt;
 }
+
+#ifndef JVX_SYSTEM_NO_FILE_SYSTEM
 void jvx_getFilesFolderPath(std::vector<std::string>& lst, const std::string& pathName, const std::string& extension)
 {
 	JVX_HANDLE_DIR searchHandle = INVALID_HANDLE_VALUE;
@@ -6150,6 +6157,7 @@ void jvx_getFilesFolderPath(std::vector<std::string>& lst, const std::string& pa
 		JVX_FINDCLOSE(searchHandle);//FindClose( searchHandle );
 	}
 }
+#endif
 
 std::string jvx_time_string()
 {

@@ -35,6 +35,7 @@ static inline jvxInt64 JVX_GET_TICKCOUNT_CLK_GET2(jvxTimeStampData* refData, jvx
 #include <vector>
 #include <list>
 #include <map>
+#include <limits>
 
 //#include <type_traits>
 namespace std {
@@ -94,6 +95,19 @@ struct is_same<T, T> {
 #define JVX_NOTIFY_HANDLE int
 #define JVX_NOTIFY_HANDLE_DECLARE(var) int var
 
+#define JVX_INFINITE_MS JVX_SIZE_UNSELECTED
+
+#define JVX_ISINF(value) (value == std::numeric_limits<jvxData>::infinity())
+#define JVX_ISNEGINF(value) (value == -std::numeric_limits<jvxData>::infinity())
+
+std::string JVX_DATE();
+std::string JVX_TIME();
+int JVX_GETCURRENTDIRECTORY(char* destBuf, size_t szBytes);
+int JVX_DIRECTORY_EXISTS(const char* dirname);
+
+#define JVX_SEPARATOR_DIR "/"
+#define JVX_SEPARATOR_DIR_CHAR '/'
+#define JVX_SEPARATOR_DIR_CHAR_THE_OTHER '\\'
 
 // ==================================================================
 // Threading
