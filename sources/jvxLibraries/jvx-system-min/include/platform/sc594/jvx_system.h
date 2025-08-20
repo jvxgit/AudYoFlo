@@ -89,6 +89,8 @@ typedef void jvxHandle;
 //! Unsigned 64 bit datatype
 typedef uint64_t jvxCBitField;
 
+// We need to define this function as it is not available on ADI DSPs
+float strtof(const char *nptr, char **endptr);
 
 #include "../../jvx_system_common.h"
 #include "jvx_system_helpers.h"
