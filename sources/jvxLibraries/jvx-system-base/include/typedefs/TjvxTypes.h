@@ -162,6 +162,16 @@ struct jvxComponentClassAssociation
 	const char* config_token = nullptr;
 	const char* description_sec = nullptr;
 	jvxComponentTypeClass comp_child_class = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE;
+
+	jvxComponentClassAssociation(jvxComponentTypeClass comp_class_arg = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE,
+		jvxComponentType comp_sec_type_arg = JVX_COMPONENT_UNKNOWN,
+		const char* description_arg = nullptr,
+		const char* config_token_arg = nullptr,
+		const char* description_sec_arg = nullptr,
+		jvxComponentTypeClass comp_child_class_arg = jvxComponentTypeClass::JVX_COMPONENT_TYPE_NONE):
+			comp_class(comp_class_arg), comp_sec_type(comp_sec_type_arg), description(description_arg),
+			config_token(config_token_arg),  description_sec(description_sec_arg), comp_child_class(comp_child_class_arg)
+		{};
 };
 
 extern jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT+1];

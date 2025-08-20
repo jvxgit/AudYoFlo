@@ -1,6 +1,7 @@
 #include <string>
-#include "typedefs/TjvxTypes.h"
-#include "typedefs/TjvxTypes_cpp.h"
+//#include "typedefs/TjvxTypes.h"
+//#include "typedefs/TjvxTypes_cpp.h"
+#include "jvx.h"
 
 jvxComponentClassAssociation theClassAssociation[JVX_COMPONENT_ALL_LIMIT+1] =
 {
