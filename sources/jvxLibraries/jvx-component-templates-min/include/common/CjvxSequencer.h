@@ -214,7 +214,7 @@ public:
 		const char* in_label_cond_false = "UNKNOWN",
 		jvxBool break_active = false,
 		jvxCBitField assoc_mode = (jvxCBitField)-1,
-		jvxCBitField whatToSet = -1);
+		jvxCBitField whatToSet = (jvxCBitField)-1);
 
 	virtual jvxErrorType _switch_steps_sequence(jvxSize idxsequence, jvxSequencerQueueType tp, jvxSize idx1, jvxSize idx2);
 

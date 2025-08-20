@@ -191,7 +191,7 @@ CjvxPropertiesSimple::CjvxPropertiesSimple()
 			}
 
 			// num == -1 means get all (val must contain enough space)
-			if (num == -1)
+			if (num == (jvxSize)-1)
 				num = theDescr.num;
 
 			if (res != JVX_NO_ERROR)
@@ -310,7 +310,7 @@ CjvxPropertiesSimple::CjvxPropertiesSimple()
 
 		thePropRef = thePropRefLoc;
 
-		savedPropRevision = -1;
+		savedPropRevision = (jvxSize)-1;
 
 		res = refresh_properties();
 
@@ -325,7 +325,7 @@ CjvxPropertiesSimple::CjvxPropertiesSimple()
 
 		thePropRef = NULL;
 
-		savedPropRevision = -1;
+		savedPropRevision = (jvxSize)-1;
 		return(res);
 	}
 

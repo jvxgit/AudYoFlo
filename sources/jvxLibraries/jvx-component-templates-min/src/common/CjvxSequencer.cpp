@@ -1330,7 +1330,7 @@ CjvxSequencer::put_configuration_seq_v1_0(
 							entriesStr[j].c_str(), entriesSizeComm[j],
 							entriesInt64Timeouts[j], entriesStrLab[j].c_str(),
 							entriesStrLabTrue[j].c_str(), entriesStrLabFalse[j].c_str(),
-							b_action, -1);
+							b_action, (jvxSize)-1);
 					}
 				}
 
@@ -1403,7 +1403,7 @@ CjvxSequencer::put_configuration_seq_v1_0(
 							entriesStr[j].c_str(), entriesSizeComm[j],
 							entriesInt64Timeouts[j], entriesStrLab[j].c_str(),
 							entriesStrLabTrue[j].c_str(), entriesStrLabFalse[j].c_str(),
-							b_action, -1);
+							b_action, (jvxSize)-1);
 					}
 				} 	//res = processor->getReferenceEntryCurrentSection_name(datTmp, &datTmp_steps, searchMe.c_str());
 			}// if(HjvxConfigProcessor_readEntry_assignmentString(processor, datTmp, JVX_CONFIG_SEQUENCER_SEQ_NAMES, &entry) == JVX_NO_ERROR)	

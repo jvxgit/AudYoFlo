@@ -1515,7 +1515,7 @@ CjvxRealtimeViewer::~CjvxRealtimeViewer()
 								}
 							}
 
-							res = this->_insert_view_section_after(viewerTp, entry.c_str(), -1, dataSec, szSec, decodeIdSec);
+							res = this->_insert_view_section_after(viewerTp, entry.c_str(), (jvxSize)-1, dataSec, szSec, decodeIdSec);
 							if(res == JVX_NO_ERROR)
 							{
 								res = theReader->getNumberSubsectionsCurrentSection(datTmp2, &numG);
@@ -1629,7 +1629,7 @@ CjvxRealtimeViewer::~CjvxRealtimeViewer()
 
 											this->_number_view_sections(&idAddS);
 											assert(idAddS > 0);
-											res = this->_insert_group_in_section(idAddS-1, -1, group_descr.c_str(), group_tp, data, sz, decodeId);
+											res = this->_insert_group_in_section(idAddS-1, (jvxSize)-1, group_descr.c_str(), group_tp, data, sz, decodeId);
 
 											//
 											if(data)
@@ -1719,7 +1719,7 @@ CjvxRealtimeViewer::~CjvxRealtimeViewer()
 																	{
 																		_number_groups_in_section(idAddS-1, &idAddG);
 																		assert(idAddG > 0);
-																		this->_insert_item_in_group_in_section(idAddS-1, /*j*/ idAddG-1, cTp, l, -1, entries_item_descrs[k], data, sz, decodeId); // <- If groups were not added before, we need to get the next valid id
+																		this->_insert_item_in_group_in_section(idAddS-1, /*j*/ idAddG-1, cTp, l, (jvxSize)-1, entries_item_descrs[k], data, sz, decodeId); // <- If groups were not added before, we need to get the next valid id
 																	}
 																	else
 																	{

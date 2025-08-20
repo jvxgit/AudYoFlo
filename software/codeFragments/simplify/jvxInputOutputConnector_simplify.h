@@ -157,10 +157,12 @@ public:
 		resF = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_icon.theData_in);
 		jvx_neutralDataLinkDescriptor(&_common_set_ocon.theData_out, true);
 
-#endif
+
 		// ################################################################
 
 		return res;
+#endif
+
 	};
 #endif
 
@@ -261,5 +263,3 @@ public:
 #ifdef JVX_INPUTOUTPUT_CONNECTOR_UNDEFINE_OBJECT_REFERENCE
 #undef JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE
 #endif
-
-	

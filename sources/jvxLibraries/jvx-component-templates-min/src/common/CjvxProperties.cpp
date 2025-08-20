@@ -1864,7 +1864,7 @@ CjvxProperties::_get_property(
 						// This is a write only parameter
 						res = JVX_ERROR_NO_ACCESS;
 						goto leave_function_unlock;
-						break;
+						// break; <- not used!
 
 					default:
 						maxSpace = (selection->propDescriptor->num - tune.offsetStart);
@@ -1979,14 +1979,14 @@ CjvxProperties::_get_property(
 						default:
 							res = JVX_ERROR_UNSUPPORTED;
 							goto leave_function_unlock;
-							break;
+							// break; <- not used
 						}
 						break;
 
 					default:
 						res = JVX_ERROR_INVALID_ARGUMENT;
 						goto leave_function_unlock;
-						break;
+						// break; <- not used
 					}
 				}
 				// We may use pre and posthook even with non-registered data!!!
@@ -2880,7 +2880,7 @@ std::string callback_get_posthook
 		case JVX_DATAFORMAT_CALLBACK:
 			elm.references.fld_prop_cb = references.fld_prop_cb;
 			break;
-			break;
+
 		default:
 
 			switch (elm.propDescriptor->decTp)
