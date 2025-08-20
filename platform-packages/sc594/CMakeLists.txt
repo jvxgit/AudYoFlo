@@ -2,6 +2,8 @@ set(JVX_TARGET_NAME "sc594")
 message("--> Configuring ${JVX_TARGET_NAME}")
 project(${JVX_TARGET_NAME})
 
+option(AYF_SC594_SKIP_CCES_BUILD "Skip building cces build for sc594 in the course of the cmake build proces" true)
+
 set(JVX_PLATFORM_PACKAGE_LIB_NAME jvx-dsp-base)
 set(JVX_PLATFORM_NAME "sc594")
 
@@ -51,9 +53,33 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/ws)
 		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -import ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}
 		COMMAND_ECHO STDOUT)		
 
+
+	set(CMAKE_CURRENT_SOURCE_DIR_PROJECT "${CMAKE_CURRENT_SOURCE_DIR}/jvx-system-base")	
+	cmake_path(NATIVE_PATH CMAKE_CURRENT_SOURCE_DIR_PROJECT CMAKE_CURRENT_SOURCE_DIR_NATIVE)
+	# message(FATAL_ERROR "-> ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}")
+	 
+	# Import the target project <jvx-component-templates-min>
+	execute_process(
+		COMMAND ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -import ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}
+		COMMAND_ECHO STDOUT)		
+
+
+	set(CMAKE_CURRENT_SOURCE_DIR_PROJECT "${CMAKE_CURRENT_SOURCE_DIR}/jvx-callprot")	
+	cmake_path(NATIVE_PATH CMAKE_CURRENT_SOURCE_DIR_PROJECT CMAKE_CURRENT_SOURCE_DIR_NATIVE)
+	# message(FATAL_ERROR "-> ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}")
+	 
+	# Import the target project <jvx-component-templates-min>
+	execute_process(
+		COMMAND ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -import ${CMAKE_CURRENT_SOURCE_DIR_NATIVE}
+		COMMAND_ECHO STDOUT)		
+
+
 	 # message(FATAL_ERROR "Creating cces workspace complete.")
 endif()
 
+if(NOT AYF_SC594_SKIP_CCES_BUILD)
 add_custom_target(${JVX_TARGET_NAME}-jvx-dsp-base
 	ALL 
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -77,10 +103,34 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-system-min
 	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
 	JOB_POOL console)
 
+add_custom_target(${JVX_TARGET_NAME}-jvx-system-base
+	ALL 
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DEPENDS ${JVX_TARGET_NAME}-jvx-dsp-min
+	COMMAND 
+	echo "Running sc 594 build step" &&
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
+	JOB_POOL console)
+	
+add_custom_target(${JVX_TARGET_NAME}-jvx-callprot
+	ALL 
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DEPENDS ${JVX_TARGET_NAME}-jvx-system-base
+	COMMAND 
+	echo "Running sc 594 build step" &&
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
+	JOB_POOL console)
+
 add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
 	ALL 
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-system-min
+	DEPENDS ${JVX_TARGET_NAME}-jvx-callprot
 	COMMAND 
 	echo "Running sc 594 build step" &&
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
@@ -97,6 +147,7 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
 	# -data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
 	# ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
 	# -data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release")
+endif()
 	
 # Install both libraries
 if(JVX_RELEASE_SDK)
