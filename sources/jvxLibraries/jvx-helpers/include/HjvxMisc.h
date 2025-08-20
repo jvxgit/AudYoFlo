@@ -1717,6 +1717,8 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 		} \
 	}
 #else
+
+#ifdef JVX_OBJECTS_WITH_TEXTLOG
 #define JVX_START_LOCK_LOG_REF(ptr, LEVEL, LOCATION, OPT_TAG) \
 	{ \
 		jvxBool __dbgCout = false; \
@@ -1733,6 +1735,15 @@ int jvxLogLevel2Id(jvxLogLevel lev);
 			jvx_unlock_text_log(ptr->embLog); \
 		} \
 	}
+#else
+#define JVX_START_LOCK_LOG_REF(ptr, LEVEL, LOCATION, OPT_TAG) \
+	{ \
+		std::ostream& log = std::cout;
+
+#define JVX_STOP_LOCK_LOG_REF(ptr, LOCATION) \
+	}
+#endif
+
 #endif
 
 #define JVX_START_LOCK_LOG(LEVEL, LOCATION, OPT_TAG) JVX_START_LOCK_LOG_REF(this, LEVEL, LOCATION, OPT_TAG)

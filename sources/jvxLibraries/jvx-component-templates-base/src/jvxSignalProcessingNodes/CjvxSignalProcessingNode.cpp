@@ -16,21 +16,21 @@ JVX_PROCESSINGNODE_CLASSNAME::JVX_PROCESSINGNODE_CLASSNAME(JVX_CONSTRUCTOR_ARGUM
 	_common_set_node_params_1io.acceptOnlyExactMatchLinkDataInput = false;
 	_common_set_node_params_1io.acceptOnlyExactMatchLinkDataOutput = false;
 
-	_common_set_node_params_1io.preferred.buffersize.min = -1;
-	_common_set_node_params_1io.preferred.buffersize.max = -1;
-	_common_set_node_params_1io.preferred.number_input_channels.min = -1;
-	_common_set_node_params_1io.preferred.number_input_channels.max = -1;
-	_common_set_node_params_1io.preferred.number_output_channels.min = -1;
-	_common_set_node_params_1io.preferred.number_output_channels.max = -1;
-	_common_set_node_params_1io.preferred.samplerate.min = -1;
-	_common_set_node_params_1io.preferred.samplerate.max = -1;
+	_common_set_node_params_1io.preferred.buffersize.min = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.preferred.buffersize.max = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.preferred.number_input_channels.min = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.preferred.number_input_channels.max = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.preferred.number_output_channels.min = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.preferred.number_output_channels.max = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.preferred.samplerate.min = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.preferred.samplerate.max = JVX_SIZE_UNSELECTED;
 	_common_set_node_params_1io.preferred.format.min = JVX_DATAFORMAT_NONE;
 	_common_set_node_params_1io.preferred.format.max = JVX_DATAFORMAT_NONE;
 
-	_common_set_node_params_1io.processing.buffersize = -1;
-	_common_set_node_params_1io.processing.number_input_channels = -1;
-	_common_set_node_params_1io.processing.number_output_channels = -1;
-	_common_set_node_params_1io.processing.samplerate = -1;
+	_common_set_node_params_1io.processing.buffersize = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.processing.number_input_channels = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.processing.number_output_channels = JVX_SIZE_UNSELECTED;
+	_common_set_node_params_1io.processing.samplerate = JVX_SIZE_UNSELECTED;
 	_common_set_node_params_1io.processing.format = JVX_DATAFORMAT_NONE;
 
 	_common_set.theComponentSubTypeDescriptor = "signal_processing_node/audio_node";
@@ -142,7 +142,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 		requiresCorrection = false;
 
 		tmp32 = -1;
-		if(_common_set_node_params_1io.preferred.buffersize.max >= 0)
+		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.buffersize.value > _common_set_node_params_1io.preferred.buffersize.max)
 			{
@@ -150,7 +150,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 				requiresCorrection = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.buffersize.min >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.buffersize.value < _common_set_node_params_1io.preferred.buffersize.min)
 			{
@@ -175,7 +175,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 		requiresCorrection = false;
 
 		tmp32 = -1;
-		if(_common_set_node_params_1io.preferred.samplerate.max >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.samplerate.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.samplerate.value > _common_set_node_params_1io.preferred.samplerate.max)
 			{
@@ -183,7 +183,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 				requiresCorrection = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.samplerate.min >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.samplerate.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.samplerate.value < _common_set_node_params_1io.preferred.samplerate.min)
 			{
@@ -208,7 +208,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 		requiresCorrection = false;
 
 		tmp32 = -1;
-		if(_common_set_node_params_1io.preferred.number_input_channels.max >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_input_channels.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberinputchannels.value > _common_set_node_params_1io.preferred.number_input_channels.max)
 			{
@@ -216,7 +216,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 				requiresCorrection = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.number_input_channels.min >= 0)
+		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_input_channels.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberinputchannels.value < _common_set_node_params_1io.preferred.number_input_channels.min)
 			{
@@ -242,7 +242,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 		requiresCorrection = false;
 
 		tmp32 = -1;
-		if(_common_set_node_params_1io.preferred.number_output_channels.max >= 0)
+		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_output_channels.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberoutputchannels.value > _common_set_node_params_1io.preferred.number_output_channels.max)
 			{
@@ -250,7 +250,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reportPreferredParameters(jvxPropertyCategoryType 
 				requiresCorrection = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.number_output_channels.min >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_output_channels.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberoutputchannels.value < _common_set_node_params_1io.preferred.number_output_channels.min)
 			{
@@ -320,14 +320,14 @@ JVX_PROCESSINGNODE_CLASSNAME::is_ready(jvxBool* suc, jvxApiString * reasonIfNot)
 		 * CHECK BUFFERSIZE
 		 */
 		isAProblem = false;
-		if(_common_set_node_params_1io.preferred.buffersize.min >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.buffersize.value < _common_set_node_params_1io.preferred.buffersize.min)
 			{
 				isAProblem = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.buffersize.max >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.buffersize.value > _common_set_node_params_1io.preferred.buffersize.max)
 			{
@@ -349,14 +349,14 @@ JVX_PROCESSINGNODE_CLASSNAME::is_ready(jvxBool* suc, jvxApiString * reasonIfNot)
 		 * CHECK SAMPLERATE
 		 */
 		isAProblem = false;
-		if(_common_set_node_params_1io.preferred.samplerate.min >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.samplerate.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.samplerate.value < _common_set_node_params_1io.preferred.samplerate.min)
 			{
 				isAProblem = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.samplerate.max >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.samplerate.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.samplerate.value > _common_set_node_params_1io.preferred.samplerate.max)
 			{
@@ -378,14 +378,14 @@ JVX_PROCESSINGNODE_CLASSNAME::is_ready(jvxBool* suc, jvxApiString * reasonIfNot)
 		 * CHECK NUMBER INPUT CHANNELS
 		 */
 		isAProblem = false;
-		if(_common_set_node_params_1io.preferred.number_input_channels.min >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_input_channels.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberinputchannels.value < _common_set_node_params_1io.preferred.number_input_channels.min)
 			{
 				isAProblem = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.number_input_channels.max >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_input_channels.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberinputchannels.value > _common_set_node_params_1io.preferred.number_input_channels.max)
 			{
@@ -409,14 +409,14 @@ JVX_PROCESSINGNODE_CLASSNAME::is_ready(jvxBool* suc, jvxApiString * reasonIfNot)
 		 */
 		isAProblem = false;
 
-		if(_common_set_node_params_1io.preferred.number_output_channels.min >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_output_channels.min))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberoutputchannels.value < _common_set_node_params_1io.preferred.number_output_channels.min)
 			{
 				isAProblem = true;
 			}
 		}
-		if(_common_set_node_params_1io.preferred.number_output_channels.max >= 0)
+		if(JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.number_output_channels.max))
 		{
 			if(JVX_PROCESSINGNODE_CLASSNAME_GEN::properties_parameters.numberoutputchannels.value > _common_set_node_params_1io.preferred.number_output_channels.max)
 			{

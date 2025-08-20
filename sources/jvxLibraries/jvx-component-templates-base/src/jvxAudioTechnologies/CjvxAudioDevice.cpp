@@ -99,7 +99,7 @@ CjvxAudioDevice::activate()
 			CjvxAudioDevice::properties_active.format.value = (jvxInt16) JVX_DATAFORMAT_NONE;
 		}
 
-		this->updateDependentVariables_lock(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
+		this->updateDependentVariables_lock((jvxSize)-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
 	}
 	return(res);
 }
@@ -137,7 +137,7 @@ CjvxAudioDevice::activate_lock()
 		{
 			CjvxAudioDevice::properties_active.format.value = (jvxInt16) JVX_DATAFORMAT_NONE;
 		}
-		this->updateDependentVariables_lock(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true );
+		this->updateDependentVariables_lock((jvxSize)-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true );
 	}
 	return(res);
 }
@@ -299,7 +299,7 @@ CjvxAudioDevice::put_configuration(jvxCallManagerConfiguration* callConf,
 		}
 
 		// Update all dependant props
-		this->updateDependentVariables_lock(-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
+		this->updateDependentVariables_lock((jvxSize)-1, JVX_PROPERTY_CATEGORY_PREDEFINED, true);
 
 	}
 	return(res);

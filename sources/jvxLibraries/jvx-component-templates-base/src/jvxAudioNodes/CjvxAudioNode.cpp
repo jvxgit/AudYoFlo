@@ -198,9 +198,9 @@ CjvxAudioNode::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
 		res = deallocate_pipeline_and_buffers_postprocess_to();
 
 		_common_set_node_params_1io.processing.format = JVX_DATAFORMAT_NONE;
-		_common_set_node_params_1io.processing.number_input_channels = -1;
-		_common_set_node_params_1io.processing.buffersize = -1;
-		_common_set_node_params_1io.processing.samplerate = -1;
+		_common_set_node_params_1io.processing.number_input_channels = JVX_SIZE_UNSELECTED;
+		_common_set_node_params_1io.processing.buffersize = JVX_SIZE_UNSELECTED;
+		_common_set_node_params_1io.processing.samplerate = JVX_SIZE_UNSELECTED;
 	}
 	return(res);
 };
@@ -217,7 +217,7 @@ CjvxAudioNode::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theD
 		_common_set_node_params_1io.processing.buffersize = theData->con_compat.buffersize;
 		_common_set_node_params_1io.processing.samplerate = theData->con_compat.rate;
 		*/
-		_common_set_node_params_1io.processing.number_output_channels = -1;
+		_common_set_node_params_1io.processing.number_output_channels = JVX_SIZE_UNSELECTED;
 	}
 	else
 	{

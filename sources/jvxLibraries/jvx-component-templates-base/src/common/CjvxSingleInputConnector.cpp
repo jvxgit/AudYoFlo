@@ -495,3 +495,4 @@ CjvxSingleInputConnectorMulti::unselect_connect_icon(IjvxConnectorBridge* obj,
 	}
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
+

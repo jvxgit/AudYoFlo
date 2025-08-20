@@ -38,6 +38,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>sc594</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-system-base/src/platform/sc594</locationURI>
+		</link>
+		<link>
 			<name>typedefs</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-system-base/src/typedefs</locationURI>

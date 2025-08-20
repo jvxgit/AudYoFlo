@@ -1,5 +1,8 @@
 #include "common/CjvxSingleMaster.h"
+
+#ifndef JVX_SKIP_EVENT_JSON
 #include "CjvxJson.h"
+#endif
 
 CjvxSingleMaster::CjvxSingleMaster()
 {
@@ -162,8 +165,11 @@ CjvxSingleMaster::transfer_chain_forward_master(jvxLinkDataTransferType tp, jvxH
 	jvxErrorType res = JVX_NO_ERROR;
 	std::string locTxt;
 	jvxApiString* str = (jvxApiString*)data;
+
+#ifndef JVX_SKIP_EVENT_JSON
 	CjvxJsonElementList* jsonLst = (CjvxJsonElementList*)data;
 	CjvxJsonElement jsonElm;
+#endif
 
 	if (runtime.stat == JVX_STATE_ACTIVE)
 	{
@@ -195,6 +201,8 @@ CjvxSingleMaster::transfer_chain_forward_master(jvxLinkDataTransferType tp, jvxH
 			return JVX_NO_ERROR;
 			break;
 		case  JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON:
+
+#ifndef JVX_SKIP_EVENT_JSON
 			if (!jsonLst)
 			{
 				return JVX_ERROR_INVALID_ARGUMENT;
@@ -215,6 +223,9 @@ CjvxSingleMaster::transfer_chain_forward_master(jvxLinkDataTransferType tp, jvxH
 				}
 				jsonLst->addConsumeElement(jsonElm);
 			}
+#else
+			assert(0);
+#endif
 			return JVX_NO_ERROR;
 			break;
 		default:
