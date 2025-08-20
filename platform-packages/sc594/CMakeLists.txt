@@ -2,8 +2,6 @@ set(JVX_TARGET_NAME "sc594")
 message("--> Configuring ${JVX_TARGET_NAME}")
 project(${JVX_TARGET_NAME})
 
-option(AYF_SC594_SKIP_CCES_BUILD "Skip building cces build for sc594 in the course of the cmake build proces" true)
-
 set(JVX_PLATFORM_PACKAGE_LIB_NAME jvx-dsp-base)
 set(JVX_PLATFORM_NAME "sc594")
 
@@ -80,7 +78,7 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/ws)
 endif()
 
 if(NOT AYF_SC594_SKIP_CCES_BUILD)
-add_custom_target(${JVX_TARGET_NAME}-jvx-dsp-base
+	add_custom_target(${JVX_TARGET_NAME}-jvx-dsp-base
 	ALL 
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 	COMMAND 
