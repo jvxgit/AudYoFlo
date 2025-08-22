@@ -28,7 +28,6 @@
 								<option id="assembler.option.sirevision.1459446011" name="-si-revision" superClass="assembler.option.sirevision" value=" any" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="assembler.option.preprocessdefs.789012904" name="Preprocessor definitions (-D):" superClass="assembler.option.preprocessdefs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="COREnull"/>
-									<listOptionValue builtIn="false" value="CORE1"/>
 								</option>
 								<inputType id="assembler.input.605720679" name="Assembler Source" superClass="assembler.input"/>
 							</tool>
@@ -75,7 +74,7 @@
 							<tool id="sharc.toolchain.loader.382351222" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader">
 								<option id="loader.option.proc.1600723732" name="-proc" superClass="loader.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="loader.option.sirevision.873700520" name="-si-revision" superClass="loader.option.sirevision" value=" any" valueType="string"/>
-								<option id="sharc.loader.option.kernelfile.1880615796" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.12.1\SHARC\ldr\_prom.dxe" valueType="string"/>
+								<option id="sharc.loader.option.kernelfile.1880615796" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\analog\cces\3.0.3\SHARC\ldr\_prom.dxe" valueType="string"/>
 							</tool>
 							<tool id="sharc.toolchain.deviceprogrammer.491824231" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer">
 								<option id="deviceprogrammer.option.proc.364711347" name="-proc" superClass="deviceprogrammer.option.proc" value=" ADSP-SC594" valueType="string"/>
@@ -113,7 +112,6 @@
 								<option id="assembler.option.sirevision.1309137161" name="-si-revision" superClass="assembler.option.sirevision" value=" any" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="assembler.option.preprocessdefs.1653963524" name="Preprocessor definitions (-D):" superClass="assembler.option.preprocessdefs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="COREnull"/>
-									<listOptionValue builtIn="false" value="CORE1"/>
 								</option>
 								<inputType id="assembler.input.1746670396" name="Assembler Source" superClass="assembler.input"/>
 							</tool>
@@ -127,12 +125,18 @@
 								</option>
 								<option id="compiler.option.coreid.1688390854" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" value="1" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.additionaldirectories.827692070" name="Additional include directories (-I):" superClass="compiler.option.additionaldirectories" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include/platform/sc594&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-base/include/platform/sc594&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include/platform/sc594&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-base/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-base/include/platform/sc594&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include/sc594&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-callprot/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-product/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-helpers/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_CCES_WORKSPACE_FOLDER}\..\..\..\sources\jvxLibraries\jvx-system-min&quot;"/>
 								</option>
+								<option id="compiler.option.cpp11.1112397407" name="Compile C++ source files with C++11 feature extensions (-c++11)" superClass="compiler.option.cpp11" value="true" valueType="boolean"/>
 								<inputType id="compiler.inputType.320631625" name="C/C++ Source" superClass="compiler.inputType"/>
 							</tool>
 							<tool id="sharc.toolchain.linker.387807341" name="CrossCore SHARC Linker" superClass="sharc.toolchain.linker">
@@ -154,7 +158,7 @@
 							<tool id="sharc.toolchain.loader.1926676471" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader">
 								<option id="loader.option.proc.1789321832" name="-proc" superClass="loader.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="loader.option.sirevision.1006640873" name="-si-revision" superClass="loader.option.sirevision" value=" any" valueType="string"/>
-								<option id="sharc.loader.option.kernelfile.480860813" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.12.1\SHARC\ldr\_prom.dxe" valueType="string"/>
+								<option id="sharc.loader.option.kernelfile.480860813" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\analog\cces\3.0.3\SHARC\ldr\_prom.dxe" valueType="string"/>
 							</tool>
 							<tool id="sharc.toolchain.deviceprogrammer.1994189414" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer">
 								<option id="deviceprogrammer.option.proc.1844320635" name="-proc" superClass="deviceprogrammer.option.proc" value=" ADSP-SC594" valueType="string"/>
