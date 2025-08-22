@@ -33,8 +33,12 @@
 
 typedef enum
 {
+	// This function expects a symmetric FIR filter
 	JVX_FIRFFT_SYMMETRIC_FIR = 0,
-	JVX_FIRFFT_FLEXIBLE_FIR = 1
+
+	// This function allows all kinds of transfer functions
+	JVX_FIRFFT_FLEXIBLE_FIR = 1,
+
 } jvxFirFftOperType;
 
 typedef struct 
