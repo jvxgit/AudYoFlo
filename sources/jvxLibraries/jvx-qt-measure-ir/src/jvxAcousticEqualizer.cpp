@@ -238,7 +238,7 @@ jvxAcousticEqualizer::compute_equalizer()
 	transfer_desired_dB.resize(fftSz2P1);
 	transfer_desired_f.resize(fftSz2P1);
 
-	jvx_create_fft_ifft_global(&globFft, szFftTypeEq);
+	jvx_create_fft_ifft_global(&globFft, szFftTypeEq, nullptr);
 	jvx_create_ifft_complex_2_real(&myFft, globFft, szFftTypeEq,
 		&inFld, &outFld, &N, JVX_FFT_IFFT_EFFICIENT, NULL, NULL, 0);
 
@@ -383,9 +383,9 @@ jvxAcousticEqualizer::compute_proc_ir()
 	magnitudeIr_x.resize(N2P1);
 	magnitudeIr_y.resize(N2P1);
 
-	jvx_fft_direct_apply_arbitrary_size(irMeasured.data(), magnitudeUnprocessed_y.data(), N, c_true);
-	jvx_fft_direct_apply_arbitrary_size(irProcessed.data(), magnitudeProcessed_y.data(), N, c_true);
-	jvx_fft_direct_apply_arbitrary_size(irModification.data(), magnitudeIr_y.data(), N, c_true);
+	jvx_fft_direct_apply_arbitrary_size(irMeasured.data(), magnitudeUnprocessed_y.data(), N, c_true, nullptr);
+	jvx_fft_direct_apply_arbitrary_size(irProcessed.data(), magnitudeProcessed_y.data(), N, c_true, nullptr);
+	jvx_fft_direct_apply_arbitrary_size(irModification.data(), magnitudeIr_y.data(), N, c_true, nullptr);
 
 	for (i = 0; i < N2P1; i++)
 	{

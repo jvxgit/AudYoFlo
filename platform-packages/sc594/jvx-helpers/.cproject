@@ -63,8 +63,6 @@
 								<option id="linker.option.individmap.535884884" name="Individually map functions and data items (-ip)" superClass="linker.option.individmap" value="false" valueType="boolean"/>
 								<option id="linker.option.eliminateunused.1308939772" name="Eliminate unused objects (-e)" superClass="linker.option.eliminateunused"/>
 								<option id="linker.option.usedbglib.134295820" name="Use Debug System libraries (-add-debug-libpaths)" superClass="linker.option.usedbglib"/>
-								<option id="compiler.option.proc.1780690334" name="-proc" superClass="compiler.option.proc" value=" ADSP-SC594" valueType="string"/>
-								<option id="compiler.option.sirevision.1573999747" name="-si-revision" superClass="compiler.option.sirevision" value=" any" valueType="string"/>
 								<option id="linker.option.proc.1064941893" name="-proc" superClass="linker.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="linker.option.sirevision.537216250" name="-si-revision" superClass="linker.option.sirevision" value=" any" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="linker.option.preprocessdefs.1194243318" name="Preprocessor definitions (-MD)" superClass="linker.option.preprocessdefs" valueType="definedSymbols">
@@ -72,8 +70,6 @@
 								</option>
 							</tool>
 							<tool id="sharc.toolchain.archiver.740463919" name="CrossCore SHARC Archiver" superClass="sharc.toolchain.archiver">
-								<option id="compiler.option.proc.1780690334" name="-proc" superClass="compiler.option.proc" useByScannerDiscovery="false" value=" ADSP-SC594" valueType="string"/>
-								<option id="compiler.option.sirevision.1573999747" name="-si-revision" superClass="compiler.option.sirevision" useByScannerDiscovery="false" value=" any" valueType="string"/>
 								<option id="archiver.option.proc.1133039023" name="-proc" superClass="archiver.option.proc" useByScannerDiscovery="false" value=" ADSP-SC594" valueType="string"/>
 								<option id="archiver.option.sirevision.218074887" name="-si-revision" superClass="archiver.option.sirevision" useByScannerDiscovery="false" value=" any" valueType="string"/>
 								<inputType id="archiver.doj.input.474756134" name="Object Files" superClass="archiver.doj.input"/>
@@ -147,7 +143,7 @@
 									<listOptionValue builtIn="false" value="CORE1"/>
 								</option>
 								<option id="compiler.option.coreid.736453964" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" useByScannerDiscovery="false" value="1" valueType="string"/>
-								<option id="compiler.option.cpp11.1819463722" superClass="compiler.option.cpp11" value="true" valueType="boolean"/>
+								<option id="compiler.option.cpp11.1819463722" name="Compile C++ source files with C++11 feature extensions (-c++11)" superClass="compiler.option.cpp11" value="true" valueType="boolean"/>
 								<inputType id="compiler.inputType.1269107236" name="C/C++ Source" superClass="compiler.inputType"/>
 							</tool>
 							<tool id="sharc.toolchain.linker.399247685" name="CrossCore SHARC Linker" superClass="sharc.toolchain.linker">
@@ -156,7 +152,6 @@
 								<option id="linker.option.usedbglib.1327092500" name="Use Debug System libraries (-add-debug-libpaths)" superClass="linker.option.usedbglib" value="false" valueType="boolean"/>
 								<option id="compiler.option.proc.1780690334" name="-proc" superClass="compiler.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="compiler.option.sirevision.1573999747" name="-si-revision" superClass="compiler.option.sirevision" value=" any" valueType="string"/>
-								<option id="linker.option.proc.127328999" name="-proc" superClass="linker.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="linker.option.sirevision.107642583" name="-si-revision" superClass="linker.option.sirevision" value=" any" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="linker.option.preprocessdefs.1932060125" name="Preprocessor definitions (-MD)" superClass="linker.option.preprocessdefs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="CORE1"/>

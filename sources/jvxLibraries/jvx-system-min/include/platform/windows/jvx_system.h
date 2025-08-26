@@ -13,6 +13,16 @@
 
 #define JVX_OS_WINDOWS
 
+// ============================================================
+// Include another system header to the base of everything
+// ============================================================
+#define INCF(F) INCF_(F)
+#define INCF_(F) #F
+#ifdef JVX_ADDITIONAL_SYSTEM_INCLUDE_HEADER
+#include INCF(JVX_ADDITIONAL_SYSTEM_INCLUDE_HEADER)
+#endif
+// ============================================================
+
 #include "../../jvx_system_defines.h"
 
 #include "jvx_system_types.h"

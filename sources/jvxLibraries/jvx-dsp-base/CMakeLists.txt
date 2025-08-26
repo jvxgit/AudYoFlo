@@ -26,6 +26,9 @@ include_directories(
   ${FFT_INCLUDEDIR}
   )
 
+# Include path for OS builds - Linux, Windows, Apple
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/common)
+
 if(${FFT_COMPILE_DEFINITIONS} MATCHES "JVX_FFT_APPLE")
 
 include_directories(

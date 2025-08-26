@@ -634,7 +634,7 @@ jvxDspBaseErrorType jvx_beampattern_update(jvx_beampattern* hdl, jvxCBool syncUp
 			prv->FFT_global_hdl = NULL;
 		}
 
-		jvx_create_fft_ifft_global(&prv->FFT_global_hdl, szFft);
+		jvx_create_fft_ifft_global(&prv->FFT_global_hdl, szFft, NULL);
 		jvx_create_fft_real_2_complex(&prv->FFT_hdl,
 			prv->FFT_global_hdl,
 			szFft,

@@ -182,7 +182,7 @@ CjvxAudioFixedFftN1Filter::prepare_N1Filter(jvxSize bsize)
 				{
 					proc_variables.theFftFilt[i].init.delayFir = this->delayFir;
 				}
-				resL = jvx_firfft_init(&proc_variables.theFftFilt[i]);
+				resL = jvx_firfft_init(&proc_variables.theFftFilt[i], nullptr);
 				assert(resL == JVX_DSP_NO_ERROR);
 
 				proc_variables.theFftFilt[i].init.fir = NULL; // this is only for initialization and will afterwards not be used

@@ -58,7 +58,7 @@ void* init_processing_dw_ola(int hopsize, int framesize)
     hdl->numSpectrumCoeffs = jvxFFTSize_sizes[hdl->szfft] / 2 + 1;
 
     // Allocate global data for FFT usage (reuse twiddle factors in Mac cases)
-    res = jvx_create_fft_ifft_global(&hdl->globalFft, (jvxFFTSize)JVX_FFT_TOOLS_FFT_SIZE_1024);
+    res = jvx_create_fft_ifft_global(&hdl->globalFft, (jvxFFTSize)JVX_FFT_TOOLS_FFT_SIZE_1024, nullptr);
     assert(res == JVX_DSP_NO_ERROR);
 
     // Input side

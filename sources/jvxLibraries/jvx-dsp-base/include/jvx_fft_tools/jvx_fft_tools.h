@@ -323,10 +323,10 @@ jvxSize
 jvx_fft_tools_compute_num_filter_coeffs_frameworks(jvxSize fftSize, jvxSize hopsize, jvxSize buffersize, jvxFftTools_fwkType fftFrameworkType, jvxSize ifcf_length);
 
 jvxDspBaseErrorType 
-jvx_fft_direct_apply_arbitrary_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxSize n, jvxCBool outlog10);
+jvx_fft_direct_apply_arbitrary_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxSize n, jvxCBool outlog10, jvxHandle* fftCfgHdl);
 
 jvxDspBaseErrorType 
-jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSize szFft, jvxSize n, jvxCBool outlog10);
+jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSize szFft, jvxSize n, jvxCBool outlog10, jvxHandle* fftCfgHdl);
 
 // Rotate the time domain signal in a M2P1 complex buffer by phase modification. fftScale must contain the value 1/fftsize
 jvxDspBaseErrorType jvx_fft_crotate_time(jvxDataCplx* bufIn, jvxDataCplx* bufOut, jvxData fftScale, jvxData numValuesRotate, jvxSize idxOffsIn, jvxSize idxOffsOut, jvxSize numVals);

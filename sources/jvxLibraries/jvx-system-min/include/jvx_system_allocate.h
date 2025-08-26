@@ -12,6 +12,51 @@ void jvx_fp_stat_copy(struct jvxFloatingPointer** ptrOut, struct jvxFloatingPoin
 typedef void(*ldata_allocate)(jvxHandle** ptr, jvxSize szBytes, jvxHandle* priv);
 typedef void(*ldata_deallocate)(jvxHandle** ptr, jvxHandle* priv);
 
+// ===================================================================================
+// Declare some specific allocator functions combined in a struct
+// ===================================================================================
+
+#define JVX_ALLOCATOR_ALLOCATE_FIELD 0x1000
+#define JVX_ALLOCATOR_ALLOCATE_OBJECT 0x2000
+#define JVX_ALLOCATOR_MASK_OUT_JVX 0x0FFF
+
+// Following memory specifications according to AWE
+#ifndef JVX_MEMORY_ALLOCATE_FAST_A
+	#define JVX_MEMORY_ALLOCATE_FAST_A 0
+#endif
+
+#ifndef JVX_MEMORY_ALLOCATE_FAST_B
+	#define JVX_MEMORY_ALLOCATE_FAST_B 1
+#endif
+	
+#ifndef JVX_MEMORY_ALLOCATE_SLOW	
+	#define JVX_MEMORY_ALLOCATE_SLOW 2
+#endif
+	
+#ifndef JVX_MEMORY_ALLOCATE_FAST_SLOW	
+	#define JVX_MEMORY_ALLOCATE_FAST_SLOW 3
+#endif
+	
+#ifndef JVX_MEMORY_ALLOCATE_FAST_FASTB	
+	#define JVX_MEMORY_ALLOCATE_FAST_FASTB 4
+#endif
+	
+#ifndef JVX_MEMORY_ALLOCATE_FAST_FASTB	
+	#define JVX_MEMORY_ALLOCATE_FASTB_FAST 5
+#endif
+
+typedef jvxHandle* (*jvx_allocator)(jvxSize nElements, jvxCBitField purp, jvxSize szElm);
+typedef void (*jvx_deallocator)(jvxHandle** fld, jvxCBitField purp);
+
+struct jvxMemRefs
+{
+	jvx_allocator alloc;
+	jvx_deallocator dealloc;
+};
+
+// ===================================================================================
+// ===================================================================================
+
 JVX_SYSTEM_LIB_END
 
 #ifdef __cplusplus

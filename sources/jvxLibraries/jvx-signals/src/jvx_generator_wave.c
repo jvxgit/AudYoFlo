@@ -756,7 +756,7 @@ jvx_generator_wave_start_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
 
 	fftType_int = (int)(ceil(log((jvxData)lengthSamplesNetto)/log(2.0))) - JVX_OFFSET_FFT_TYPE_MIN;
 
-	res = jvx_create_fft_ifft_global(&glob_fft, (jvxFFTSize) fftType_int);
+	res = jvx_create_fft_ifft_global(&glob_fft, (jvxFFTSize) fftType_int, NULL);
 	assert(res == JVX_DSP_NO_ERROR);
 
 	res = jvx_create_ifft_complex_2_real(&newHdl->generate.theIfft, glob_fft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,

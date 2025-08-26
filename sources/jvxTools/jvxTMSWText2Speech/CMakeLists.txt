@@ -10,6 +10,7 @@ include_directories(
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMSWText2Speech.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_windows_extracted_helpers.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxMSWText2Speech.h
   )

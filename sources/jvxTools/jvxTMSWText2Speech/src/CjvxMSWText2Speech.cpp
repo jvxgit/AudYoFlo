@@ -1,6 +1,8 @@
 #include "jvx.h"
 #include "CjvxMSWText2Speech.h"
 
+extern HRESULT SpConvertStreamFormatEnum_local(SPSTREAMFORMAT eFormat, GUID* pFormatId, WAVEFORMATEX** exForm);
+
 const SPSTREAMFORMAT theStreamFormats[JVX_TEXT2SPEECH_LIMIT] =
 {
 	SPSF_8kHz16BitMono,
@@ -254,7 +256,7 @@ CjvxMSWText2Speech::ic_thread_wokeup(jvxInt64 timestamp_us)
 		hr = CreateStreamOnHGlobal(NULL, TRUE, &cpBaseStream);
 		assert(hr == S_OK);
 
-		hr = SpConvertStreamFormatEnum(theStreamFormats[format], &guidFormat, &pWavFormatEx);
+		hr = SpConvertStreamFormatEnum_local(theStreamFormats[format], &guidFormat, &pWavFormatEx);
 		assert(hr == S_OK);
 
 		hr = cpStream->SetBaseStream(cpBaseStream, guidFormat, pWavFormatEx);

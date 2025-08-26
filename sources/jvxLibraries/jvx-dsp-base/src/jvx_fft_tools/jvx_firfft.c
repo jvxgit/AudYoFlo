@@ -41,6 +41,7 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	init->init.lFft = JVX_SIZE_UNSELECTED;
 	init->init.delayFir = JVX_SIZE_UNSELECTED;
 	init->init.type = JVX_FIRFFT_SYMMETRIC_FIR;
+	init->init.allocators = NULL;
 
 	jvx_firfft_resetDerived(init);
 
@@ -53,7 +54,7 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	return resL;
 }
 
-jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl)
+jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg)
 {
 	if (hdl->prv == NULL)
 	{
@@ -61,13 +62,20 @@ jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl)
 		jvxSize N = 0, i = 0;
 		jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
 
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(nHdl, jvx_firfft_prv);
+		if (hdl->init.allocators)
+		{
+			nHdl = hdl->init.allocators->alloc(sizeof(jvx_firfft_prv), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+		}
+		else
+		{
+			JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(nHdl, jvx_firfft_prv);
+		}
 
 		hdl->prv = nHdl;
 
 		jvx_firfft_update(hdl, JVX_DSP_UPDATE_INIT, true); // this sets all derived values
 
-		resL = jvx_create_fft_ifft_global(&nHdl->ram.fftGlob, nHdl->derived_cpy.szFft);
+		resL = jvx_create_fft_ifft_global(&nHdl->ram.fftGlob, nHdl->derived_cpy.szFft, fftGlobalCfg);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		// Let us allocate input and output
@@ -269,7 +277,14 @@ jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl)
 			JVX_DSP_SAFE_DELETE_FIELD(hdl->sync.firW);
 			hdl->sync.firW = NULL;
 
-			JVX_DSP_SAFE_DELETE_OBJECT(nHdl);
+			if (hdl->init.allocators)
+			{
+				hdl->init.allocators->dealloc((jvxHandle**)&nHdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+			}
+			else
+			{
+				JVX_DSP_SAFE_DELETE_OBJECT(nHdl);
+			}
 			hdl->prv = NULL;
 
 			return JVX_DSP_NO_ERROR;

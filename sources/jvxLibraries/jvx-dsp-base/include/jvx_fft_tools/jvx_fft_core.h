@@ -102,7 +102,7 @@ typedef enum
  * Create global handle for FFT: fftType_max specifies maximal possible length of FFT
  */
 jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** global_hdl,
-					       jvxFFTSize fftType_max);
+					       jvxFFTSize fftType_max, jvxHandle* cfgFftGlobal);
 
 /** 
 * Create handle for real to complex FFT
@@ -186,7 +186,7 @@ void jvx_free_fft_buffer(void* buffer);
 *  @param out output data array of length fft_size.
 *  @return error code.
 */
-jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx* in, jvxData* out);
+jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx* in, jvxData* out, jvxHandle* fftCfgHdl);
 
 
 // =======================================================================================

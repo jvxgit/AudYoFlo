@@ -101,7 +101,7 @@ jvx_firfft_cf_copy_weights(jvx_firfft* hdl, jvxDataCplx* firW, jvxSize lFirW)
 	}
 }
 
-jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl)
+jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 {
 	if (hdl->prv == NULL)
 	{
@@ -115,7 +115,7 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl)
 
 		jvx_firfft_update(hdl, JVX_DSP_UPDATE_INIT, true); // this sets all derived values
 
-		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft);
+		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftCfgHdl);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		// Let us allocate input and output - 2 iffts here

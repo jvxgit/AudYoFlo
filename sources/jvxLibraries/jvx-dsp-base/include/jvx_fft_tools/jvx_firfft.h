@@ -49,6 +49,7 @@ typedef struct
 	jvxData* fir;
 	jvxSize bsize;
 	jvxFirFftOperType type;
+	struct jvxMemRefs* allocators;
 } jvx_firfft_prmInit;
 
 typedef struct
@@ -76,7 +77,7 @@ JVX_DSP_LIB_BEGIN
 
 jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init);
 
-jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl);
+jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg);
 
 jvxDspBaseErrorType jvx_firfft_process(jvx_firfft* hdl, jvxData* in, jvxData* out);
 

@@ -75,13 +75,13 @@ int CjvxFastConvolution::init(jvxSize fir_size, jvxSize b_size)
 	this->hdl_firfft->init.lFft = fir_size;
 	this->hdl_firfft->init.delayFir = 0;
 
-	jvx_firfft_init(this->hdl_firfft);
+	jvx_firfft_init(this->hdl_firfft, nullptr);
 
 	// init fft module for impulse response
 	this->fft_ir_size_enum = this->hdl_firfft->derived.szFft;
 	this->fft_ir_size = jvx_get_fft_size(this->fft_ir_size_enum);
 
-	jvx_create_fft_ifft_global(&this->fft_global, this->fft_ir_size_enum);
+	jvx_create_fft_ifft_global(&this->fft_global, this->fft_ir_size_enum, NULL);
 	const jvxFftIfftOperate fft_operate = JVX_FFT_IFFT_PRESERVE_INPUT;
 	jvxData* input = nullptr;
 	jvxDataCplx* output = nullptr;

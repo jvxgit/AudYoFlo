@@ -361,12 +361,16 @@ include_directories(
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base/include/
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers/include/
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-min/include
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base/include/os-${JVX_OS}
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base/include/common
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-json/include/
   ${JVX_SUBPRODUCT_ROOT}/software
   ${CMAKE_CURRENT_BINARY_DIR}/sources/jvxLibraries/jvx-system-min
 )
 
+if(JVX_ADDITIONAL_SYSTEM_INCLUDE_PATH)
+	include_directories(${JVX_ADDITIONAL_SYSTEM_INCLUDE_PATH})
+endif()
+	
 include(${JVX_CMAKE_DIR}/fragments/gitversion.cmake)
 
 # Find shortcut for shell progs

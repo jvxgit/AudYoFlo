@@ -59,6 +59,8 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_system_error.c
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/platform/${JVX_OS}/jvx_system_assert.c
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/platform/${JVX_OS}/jvx_system.h
 	)
 
 if(${JVX_OS} MATCHES "windows")

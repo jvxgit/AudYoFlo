@@ -136,7 +136,7 @@ CjvxFFTFwk::init_fft_fwk(const mxArray* arrCfg)
 		
 
 		// Allocate global data for FFT usage (reuse twiddle factors in Mac cases)
-		jvxErrorType resL = jvx_create_fft_ifft_global(&global_hdl, (jvxFFTSize)core_inst->cfg.fftType);
+		jvxErrorType resL = jvx_create_fft_ifft_global(&global_hdl, (jvxFFTSize)core_inst->cfg.fftType, nullptr);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		/*

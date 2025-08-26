@@ -2764,7 +2764,7 @@ jvx_fft_tools_compute_num_filter_coeffs_frameworks(jvxSize fftSize, jvxSize hops
 }
 
 jvxDspBaseErrorType 
-jvx_fft_direct_apply_arbitrary_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxSize n, jvxCBool outlog10)
+jvx_fft_direct_apply_arbitrary_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxSize n, jvxCBool outlog10, jvxHandle* fftGlobalCfg)
 {
 	jvxSize i;
 	jvxFFTGlobal* globFft = NULL;
@@ -2778,7 +2778,7 @@ jvx_fft_direct_apply_arbitrary_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxS
 	jvxDspBaseErrorType res = jvx_get_nearest_size_fft(&fftInt, n, JVX_FFT_ROUND_UP, NULL);
 	assert(res == JVX_DSP_NO_ERROR);
 
-	jvx_create_fft_ifft_global(&globFft, fftInt);
+	jvx_create_fft_ifft_global(&globFft, fftInt, fftGlobalCfg);
 	jvx_create_fft_real_2_complex(&myFft, globFft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
 		&inFld, &outFld, &N, JVX_FFT_IFFT_EFFICIENT, NULL, NULL, n);
 	N2 = N / 2;
@@ -2806,7 +2806,7 @@ jvx_fft_direct_apply_arbitrary_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxS
 }
 
 jvxDspBaseErrorType 
-jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSize szFft, jvxSize n, jvxCBool outlog10)
+jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSize szFft, jvxSize n, jvxCBool outlog10, jvxHandle* fftGlobalCfg)
 {
 	jvxSize i;
 	jvxFFTGlobal* globFft = NULL;
@@ -2820,7 +2820,7 @@ jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSi
 	jvxDspBaseErrorType res = jvx_get_nearest_size_fft(&fftInt, n, JVX_FFT_ROUND_UP, NULL);
 	assert(res == JVX_DSP_NO_ERROR);
 
-	jvx_create_fft_ifft_global(&globFft, fftInt);
+	jvx_create_fft_ifft_global(&globFft, fftInt, fftGlobalCfg);
 	jvx_create_fft_real_2_complex(&myFft, globFft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
 		&inFld, &outFld, &N, JVX_FFT_IFFT_EFFICIENT, NULL, NULL, n);
 	N2 = N / 2;

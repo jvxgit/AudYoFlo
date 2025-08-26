@@ -94,7 +94,7 @@ jvxDspBaseErrorType jvx_spectral_plot_init(jvxSpectralPlot* hdl)
 
 			res = jvx_circbuffer_allocate(&newObj->buf_circle_in, newObj->initPrm.bufferSize, 1, 1);
 
-			res = jvx_create_fft_ifft_global(&newObj->fft_gbl, newObj->initPrm.fftSize);
+			res = jvx_create_fft_ifft_global(&newObj->fft_gbl, newObj->initPrm.fftSize, NULL);
 			res = jvx_create_fft_real_2_complex(&newObj->fft_hdl,
 				newObj->fft_gbl,
 				newObj->initPrm.fftSize,

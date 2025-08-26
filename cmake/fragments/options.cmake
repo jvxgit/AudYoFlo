@@ -90,6 +90,8 @@ set(JVX_SUBMODULE_PASS_EXPRS "default;pass0;pass1;pass2" CACHE STRING "Submodule
 
 set(JVX_FLUTTER_BUILD_SLEEP_TIME 0 CACHE STRING "Number seconds to wait for review of flutter build script")
 
+set(JVX_ADDITIONAL_SYSTEM_INCLUDE_HEADER "" CACHE STRING "Single include file to be included in the basis of the c build system")
+set(JVX_ADDITIONAL_SYSTEM_INCLUDE_PATH "" CACHE STRING "Path for single include file to be included in the basis of the c build system")
 # set(AYF_WASM_INSTALL_FOLDER "" CACHE STRING "Wasm install folder")
 
 # Options for the pure audio part

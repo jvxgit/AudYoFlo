@@ -37,6 +37,7 @@
 								<option id="compiler.option.debugcode.1814616596" name="Generate debug information (-g)" superClass="compiler.option.debugcode" useByScannerDiscovery="false"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.additionaldirectories.2145741297" name="Additional include directories (-I):" superClass="compiler.option.additionaldirectories" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include/sc594&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/src&#13;&#10;&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-helpers/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include/platform/sc594&quot;"/>
@@ -76,7 +77,7 @@
 							<tool id="sharc.toolchain.loader.1453951417" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader">
 								<option id="loader.option.proc.709618766" name="-proc" superClass="loader.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="loader.option.sirevision.1080508275" name="-si-revision" superClass="loader.option.sirevision" value=" any" valueType="string"/>
-								<option id="sharc.loader.option.kernelfile.397548336" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.12.1\SHARC\ldr\_prom.dxe" valueType="string"/>
+								<option id="sharc.loader.option.kernelfile.397548336" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\analog\cces\3.0.3\SHARC\ldr\_prom.dxe" valueType="string"/>
 							</tool>
 							<tool id="sharc.toolchain.deviceprogrammer.1058070343" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer">
 								<option id="deviceprogrammer.option.proc.2009364465" name="-proc" superClass="deviceprogrammer.option.proc" value=" ADSP-SC594" valueType="string"/>
@@ -128,12 +129,14 @@
 								<option id="compiler.option.coreid.1689733654" name="Specify the core Id (-DCORE[A|B|0-2])" superClass="compiler.option.coreid" useByScannerDiscovery="false" value="1" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="compiler.option.additionaldirectories.1112607930" name="Additional include directories (-I):" superClass="compiler.option.additionaldirectories" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/src&#13;&#10;&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-helpers/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include/platform/sc594&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-min/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-base/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-base/include/platform/sc594&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/src&#13;&#10;&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include/sc594&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-dsp-base/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-component-templates-min/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-system-product/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${JVX_AUDYOFLO_ROOT_FOLDER}/sources/jvxLibraries/jvx-callprot/include&quot;"/>
@@ -162,7 +165,7 @@
 							<tool id="sharc.toolchain.loader.340047652" name="CrossCore SHARC Loader" superClass="sharc.toolchain.loader">
 								<option id="loader.option.proc.2011239038" name="-proc" superClass="loader.option.proc" value=" ADSP-SC594" valueType="string"/>
 								<option id="loader.option.sirevision.1650980376" name="-si-revision" superClass="loader.option.sirevision" value=" any" valueType="string"/>
-								<option id="sharc.loader.option.kernelfile.1339662919" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\Analog Devices\CrossCore Embedded Studio 2.12.1\SHARC\ldr\_prom.dxe" valueType="string"/>
+								<option id="sharc.loader.option.kernelfile.1339662919" name="Kernel file (-l)" superClass="sharc.loader.option.kernelfile" value="C:\analog\cces\3.0.3\SHARC\ldr\_prom.dxe" valueType="string"/>
 							</tool>
 							<tool id="sharc.toolchain.deviceprogrammer.156198857" name="CrossCore SHARC Device Programmer" superClass="sharc.toolchain.deviceprogrammer">
 								<option id="deviceprogrammer.option.proc.1603093981" name="-proc" superClass="deviceprogrammer.option.proc" value=" ADSP-SC594" valueType="string"/>

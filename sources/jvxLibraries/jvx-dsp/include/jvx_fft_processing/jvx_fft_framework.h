@@ -127,7 +127,7 @@ jvxDspBaseErrorType jvx_fftFramework_configInit(jvx_fftFramework *hdl,
                                                 unsigned int pid);
 
 jvxDspBaseErrorType jvx_fftFramework_init(jvx_fftFramework* hdl,
-                                          int frameSize);
+                                          int frameSize, jvxHandle* fftCfgHdl);
 
 jvxDspBaseErrorType jvx_fftFramework_processFFT(jvx_fftFramework* hdl,
                                                 jvxInt16 fftIdx,

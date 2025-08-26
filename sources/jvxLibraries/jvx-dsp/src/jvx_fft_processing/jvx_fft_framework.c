@@ -298,7 +298,7 @@ jvx_fftFramework_configInit(jvx_fftFramework* hdl,
 
 jvxDspBaseErrorType
 jvx_fftFramework_init(jvx_fftFramework* hdl,
-		      int frameSize)
+		      int frameSize, jvxHandle* fftGlobalCfg)
 {
   jvx_fftFramework_prv* prv = NULL;
 
@@ -315,7 +315,7 @@ jvx_fftFramework_init(jvx_fftFramework* hdl,
   hdl->frameSize = frameSize;
 
   // global allocations
-  jvx_create_fft_ifft_global(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192); // global init with max size
+  jvx_create_fft_ifft_global(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192, NULL); // global init with max size
 
   // trigger parameter update & synchronized reallocations
   jvx_fftFramework_update(hdl, true);

@@ -170,7 +170,7 @@ static jvxDspBaseErrorType jvx_core_fft_init_common(jvx_fft_ifft_core_common* hd
 // =======================================================================================
 
 jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl,
-					       jvxFFTSize fftType_max)
+					       jvxFFTSize fftType_max, jvxHandle* fftGlobCfg)
 {
 	jvx_fft_ifft_core_global_common** global_hdl = (jvx_fft_ifft_core_global_common**)glob_hdl;
 	jvx_fft_ifft_core_global_common* ptr = NULL;
@@ -1111,12 +1111,12 @@ void jvx_free_fft_buffer(void * buffer)
 #endif
 }
 
-jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx * in, jvxData * out)
+jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx * in, jvxData * out, jvxHandle* fftCfgHdl)
 {		
 	jvxSize dummy = 0;
 
 	jvxFFTGlobal* fft_global;
-	jvx_create_fft_ifft_global(&fft_global, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE);
+	jvx_create_fft_ifft_global(&fft_global, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE, fftCfgHdl);
 
 	jvxFFT* fft;
 

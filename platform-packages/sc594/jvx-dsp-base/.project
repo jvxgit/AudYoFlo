@@ -38,6 +38,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>jvx-fft-sharc+</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>jvx_cart_polar</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -49,6 +54,11 @@
 		</link>
 		<link>
 			<name>jvx_conv</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>jvx_fft_tools</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -93,6 +103,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>jvx-fft-sharc+/jvx_fft_core.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-dsp-base/src/jvx-fft-sharc+/jvx_fft_core.c</locationURI>
+		</link>
+		<link>
 			<name>jvx_cart_polar/jvx_cart_polar.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-dsp-base/src/jvx_cart_polar/jvx_cart_polar.c</locationURI>
@@ -111,6 +126,26 @@
 			<name>jvx_conv/jvx_conv.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-dsp-base/src/jvx_conv/jvx_conv.c</locationURI>
+		</link>
+		<link>
+			<name>jvx_fft_tools/jvx_fft_tools.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-dsp-base/src/jvx_fft_tools/jvx_fft_tools.c</locationURI>
+		</link>
+		<link>
+			<name>jvx_fft_tools/jvx_firfft.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-dsp-base/src/jvx_fft_tools/jvx_firfft.c</locationURI>
+		</link>
+		<link>
+			<name>jvx_fft_tools/jvx_firfft_cf.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-dsp-base/src/jvx_fft_tools/jvx_firfft_cf.c</locationURI>
+		</link>
+		<link>
+			<name>jvx_fft_tools/jvx_firfft_prv.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/sources/jvxLibraries/jvx-dsp-base/src/jvx_fft_tools/jvx_firfft_prv.h</locationURI>
 		</link>
 		<link>
 			<name>jvx_math/jvx_complex.c</name>

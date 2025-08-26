@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <float.h>
+#include <stdarg.h>
 #include "jvx_system_definition_sc594.h"
 
 // #include <sys/stat.h>
@@ -102,6 +103,13 @@ int fpclassify(float x);
 #endif
 
 #define JVX_FPCLASSIFY fpclassify
+
+#define INCF(F) INCF_(F)
+#define INCF_(F) #F
+
+#ifdef JVX_ADDITIONAL_SYSTEM_INCLUDE_HEADER
+#include INCF(JVX_ADDITIONAL_SYSTEM_INCLUDE_HEADER)
+#endif
 
 #include "../../jvx_system_common.h"
 #include "jvx_system_helpers.h"

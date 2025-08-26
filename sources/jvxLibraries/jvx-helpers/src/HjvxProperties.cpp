@@ -1290,7 +1290,7 @@ namespace jvx {
 							{
 								if (loadTarget == "dontcare")
 								{
-									*((jvxUInt16*)fld) = -2;
+									*((jvxUInt16*)fld) = (jvxUInt16)(JVX_SIZE_DONTCARE);
 								}
 								else
 								{
@@ -1318,7 +1318,7 @@ namespace jvx {
 							{
 								if (loadTarget == "dontcare")
 								{
-									*((jvxUInt32*)fld) = -2;
+									*((jvxUInt32*)fld) = (jvxUInt32)(JVX_SIZE_DONTCARE);
 								}
 								else
 								{

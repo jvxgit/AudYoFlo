@@ -106,7 +106,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				return;
 			}
 
-			jvx_circbuffer_allocate_global_fft_ifft(&glob_fft, fftSize);
+			jvx_circbuffer_allocate_global_fft_ifft(&glob_fft, fftSize, nullptr);
 			jvx_circbuffer_allocate_fft_ifft(
 				&sig, glob_fft, JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX, fftSize, false, 1);
 			jvx_circbuffer_access_cplx_fft_ifft(sig, &datCplx, &lenCplx, 0);

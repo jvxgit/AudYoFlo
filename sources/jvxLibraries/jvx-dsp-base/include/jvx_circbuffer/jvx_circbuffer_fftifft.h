@@ -26,7 +26,7 @@ typedef struct
 
 jvxDspBaseErrorType
 jvx_circbuffer_allocate_global_fft_ifft(jvxFFTGlobal** global_fft,
-					jvxFFTSize fftType_max);
+					jvxFFTSize fftType_max, jvxHandle* fftGlobalCfg);
 
 jvxDspBaseErrorType
 jvx_circbuffer_destroy_global_fft_ifft(jvxFFTGlobal* global_fft);
