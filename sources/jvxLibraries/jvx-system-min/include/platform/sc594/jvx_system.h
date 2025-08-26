@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <stdarg.h>
+#include <math.h>
 #include "jvx_system_definition_sc594.h"
 
 // #include <sys/stat.h>
