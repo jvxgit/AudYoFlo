@@ -137,7 +137,7 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-helpers
 add_custom_target(${JVX_TARGET_NAME}-jvx-callprot
 	ALL 
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-system-base
+	DEPENDS ${JVX_TARGET_NAME}-jvx-helpers
 	COMMAND 
 	echo "Running sc 594 build step" &&
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
@@ -150,6 +150,18 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
 	ALL 
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 	DEPENDS ${JVX_TARGET_NAME}-jvx-callprot
+	COMMAND 
+	echo "Running sc 594 build step" &&
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
+	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release
+	JOB_POOL console)
+
+add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-base
+	ALL 
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DEPENDS ${JVX_TARGET_NAME}-jvx-component-templates-min
 	COMMAND 
 	echo "Running sc 594 build step" &&
 	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
