@@ -15,10 +15,17 @@ typedef void(*ldata_deallocate)(jvxHandle** ptr, jvxHandle* priv);
 // ===================================================================================
 // Declare some specific allocator functions combined in a struct
 // ===================================================================================
+typedef enum
+{
+	JVX_ALLOCATOR_OBJECT_PURPOSE_UNSPECIFIC,
+	JVX_ALLOCATOR_OBJECT_PURPOSE_TIME_CRITICAL,
+	JVX_ALLOCATOR_OBJECT_PURPOSE_NON_TIME_CRITICAL
+} jvxAllocatorObjectPurpose;
 
 #define JVX_ALLOCATOR_ALLOCATE_FIELD 0x1000
 #define JVX_ALLOCATOR_ALLOCATE_OBJECT 0x2000
 #define JVX_ALLOCATOR_MASK_OUT_JVX 0x0FFF
+#define JVX_ALLOCATOR_MASK_IN_JVX 0xF000
 
 // Following memory specifications according to AWE
 #ifndef JVX_MEMORY_ALLOCATE_FAST_A
@@ -41,17 +48,20 @@ typedef void(*ldata_deallocate)(jvxHandle** ptr, jvxHandle* priv);
 	#define JVX_MEMORY_ALLOCATE_FAST_FASTB 4
 #endif
 	
-#ifndef JVX_MEMORY_ALLOCATE_FAST_FASTB	
+#ifndef JVX_MEMORY_ALLOCATE_FASTB_FAST
 	#define JVX_MEMORY_ALLOCATE_FASTB_FAST 5
 #endif
 
-typedef jvxHandle* (*jvx_allocator)(jvxSize nElements, jvxCBitField purp, jvxSize szElm);
-typedef void (*jvx_deallocator)(jvxHandle** fld, jvxCBitField purp);
+typedef jvxHandle* (*jvx_allocator_fc)(jvxSize nElements, jvxCBitField purp, jvxSize szElm);
+typedef void (*jvx_deallocator_fc)(jvxHandle** fld, jvxCBitField purp);
+// typedef void (*jvx_jumpout_fc)(int id);
 
-struct jvxMemRefs
+struct jvx_allocator_references
 {
-	jvx_allocator alloc;
-	jvx_deallocator dealloc;
+	jvx_allocator_fc alloc;
+	jvx_deallocator_fc dealloc;
+	jvxAllocatorObjectPurpose purpose;
+	// jvx_jumpout_fc jout;
 };
 
 // ===================================================================================

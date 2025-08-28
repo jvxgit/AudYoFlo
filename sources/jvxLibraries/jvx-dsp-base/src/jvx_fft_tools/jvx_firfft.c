@@ -32,6 +32,8 @@
 
 #include "jvx_fft_tools/jvx_firfft_prv.h"	
 
+#include "jvx_allocators/jvx_allocators.h"
+
 jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 {
 	jvxDspBaseErrorType resL = JVX_DSP_ERROR_UNSUPPORTED;
@@ -62,14 +64,7 @@ jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg)
 		jvxSize N = 0, i = 0;
 		jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
 
-		if (hdl->init.allocators)
-		{
-			nHdl = hdl->init.allocators->alloc(sizeof(jvx_firfft_prv), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
-		}
-		else
-		{
-			JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(nHdl, jvx_firfft_prv);
-		}
+		nHdl = jvx_allocator->alloc(sizeof(jvx_firfft_prv), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
 
 		hdl->prv = nHdl;
 
@@ -117,8 +112,8 @@ jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg)
 
 		jvx_execute_fft(nHdl->ram.corefft);
 
-		hdl->sync.firW = NULL;		
-		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(hdl->sync.firW, jvxDataCplx, hdl->derived.lFirW);
+		hdl->sync.firW = NULL;	
+		hdl->sync.firW = jvx_allocator->alloc(sizeof(jvxDataCplx), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_FAST_SLOW), hdl->derived.lFirW);
 		for (i = 0; i < hdl->derived.lFirW; i++)
 		{
 			hdl->sync.firW[i].re = nHdl->ram.spec[i].re;
@@ -274,18 +269,8 @@ jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl)
 			jvx_destroy_fft_ifft_global(nHdl->ram.fftGlob);
 			nHdl->ram.fftGlob = NULL;
 
-			JVX_DSP_SAFE_DELETE_FIELD(hdl->sync.firW);
-			hdl->sync.firW = NULL;
-
-			if (hdl->init.allocators)
-			{
-				hdl->init.allocators->dealloc((jvxHandle**)&nHdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
-			}
-			else
-			{
-				JVX_DSP_SAFE_DELETE_OBJECT(nHdl);
-			}
-			hdl->prv = NULL;
+			jvx_allocator->dealloc(&hdl->sync.firW, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_FAST_SLOW));
+			jvx_allocator->dealloc((jvxHandle**)&hdl->prv, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));			
 
 			return JVX_DSP_NO_ERROR;
 		}

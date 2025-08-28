@@ -62,6 +62,7 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_quat/jvx_quat.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_vector/jvx_vector.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_profiler/jvx_profiler_data_entry.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_allocators/jvx_allocators.c
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_conv/jvx_conv.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_conv/jvx_conv.h
@@ -77,6 +78,7 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_vector/jvx_vector.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_windows/jvx_windows.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_math/jvx_complex.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_allocators/jvx_allocators.h
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fxlms/jvx_fxlms.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fxlms/jvx_fxlms.h

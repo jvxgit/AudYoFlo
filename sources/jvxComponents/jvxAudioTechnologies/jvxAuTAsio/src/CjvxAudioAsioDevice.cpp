@@ -387,6 +387,8 @@ CjvxAudioAsioDevice::activateAsioProperties()
 
 		_common_set.theErrordescr = "Failed in CoCreateInstance, <CjvxAudioAsioDevice::activateAsioProperties>";
 		runtime.available = false;
+		res = JVX_ERROR_INTERNAL;
+		goto exit_error;
 	}
 
 	// First: Init the driver struct
@@ -728,6 +730,8 @@ CjvxAudioAsioDevice::activateAsioProperties()
 	}
 
 	_unlock_properties_local();
+
+exit_error:
 
 	// setupRuntime.formatSelected = defaultSetupForDevices.defaultFormat;
 	return(res);

@@ -34,6 +34,7 @@
 #include "jvx_fft_tools/jvx_fft_tools.h"
 #include "jvx_fft_tools/jvx_fft_core.h"
 #include "jvx_fft_core_typedefs.h"
+#include "jvx_allocators/jvx_allocators.h"
 
 // =============================================================================
 // =============================================================================
@@ -169,19 +170,19 @@ static jvxDspBaseErrorType jvx_core_fft_init_common(jvx_fft_ifft_core_common* hd
 
 // =======================================================================================
 
-jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl,
-					       jvxFFTSize fftType_max, jvxHandle* fftGlobCfg)
+jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSize fftType_max, jvxHandle* fftGlobCfg)
 {
 	jvx_fft_ifft_core_global_common** global_hdl = (jvx_fft_ifft_core_global_common**)glob_hdl;
 	jvx_fft_ifft_core_global_common* ptr = NULL;
 
 	if(!global_hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
-
-	JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_fft_ifft_core_global_common);
+	
+	assert(jvx_allocator != NULL);
+	ptr = jvx_allocator->alloc(sizeof(jvx_fft_ifft_core_global_common), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
 
 	ptr->fftSizeLog = (int)fftType_max + JVX_OFFSET_FFT_TYPE_MIN;
-	ptr->refCount = 0;
+	ptr->refCount = 0;		
 
 	*global_hdl = ptr;
 
@@ -204,15 +205,15 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl,
 // =======================================================================================
 
 jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
-						  jvxFFTGlobal* g_hdl,
-						  jvxFFTSize fftType,
-						  jvxData** in_ptr_fld_N,
-						  jvxDataCplx** out_ptr_fld_N2P1,
-						  jvxSize* NfftSize,
-						  jvxFftIfftOperate operate,
-						  jvxData* input,
-						  jvxDataCplx* output,
-						  jvxSize fftSizeArbitrary)
+	jvxFFTGlobal* g_hdl,
+	jvxFFTSize fftType,
+	jvxData** in_ptr_fld_N,
+	jvxDataCplx** out_ptr_fld_N2P1,
+	jvxSize* NfftSize,
+	jvxFftIfftOperate operate,
+	jvxData* input,
+	jvxDataCplx* output,
+	jvxSize fftSizeArbitrary)
 {
 	jvx_fft_ifft_core_common** hdl = (jvx_fft_ifft_core_common**)hdlRef;
 	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
@@ -230,8 +231,9 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 			}
 		}
 
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_fft_core_real_2_complex);
-		memset(ptr, 0, sizeof(jvx_fft_core_real_2_complex));
+		assert(jvx_allocator != NULL);
+
+		ptr = jvx_allocator->alloc(sizeof(jvx_fft_core_real_2_complex), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);		
 
 		if(ptr)
 		{
@@ -336,16 +338,17 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	return res;
 }
 
-jvxDspBaseErrorType jvx_create_fft_complex_2_complex(jvxFFT** hdlRef,
-						     jvxFFTGlobal* g_hdl,
-						     jvxFFTSize fftType,
-						     jvxDataCplx** in_ptr_fld_N,
-						     jvxDataCplx** out_ptr_fld_N,
-						     jvxSize* NfftSize,
-						     jvxFftIfftOperate operate,
-						     jvxDataCplx* input,
-						     jvxDataCplx* output,
-						     jvxSize fftSizeArbitrary)
+jvxDspBaseErrorType jvx_create_fft_complex_2_complex(
+	jvxFFT** hdlRef,
+	jvxFFTGlobal* g_hdl,
+	jvxFFTSize fftType,
+	jvxDataCplx** in_ptr_fld_N,
+	jvxDataCplx** out_ptr_fld_N,
+	jvxSize* NfftSize,
+	jvxFftIfftOperate operate,
+	jvxDataCplx* input,
+	jvxDataCplx* output,
+	jvxSize fftSizeArbitrary)
 {
 	jvx_fft_ifft_core_common** hdl = (jvx_fft_ifft_core_common**)hdlRef;
 	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
@@ -360,8 +363,9 @@ jvxDspBaseErrorType jvx_create_fft_complex_2_complex(jvxFFT** hdlRef,
 			return(JVX_DSP_ERROR_INVALID_SETTING);
 		}
 
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_fft_core_complex_2_complex);
-		memset(ptr, 0, sizeof(jvx_fft_core_complex_2_complex));
+		assert(jvx_allocator != NULL);
+
+		ptr = jvx_allocator->alloc(sizeof(jvx_fft_core_complex_2_complex), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
 
 		if(ptr)
 		{
@@ -467,14 +471,14 @@ jvxDspBaseErrorType jvx_create_fft_complex_2_complex(jvxFFT** hdlRef,
 }
 
 jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
-						   jvxFFTGlobal* g_hdl,
-						   jvxFFTSize fftType,
-						   jvxDataCplx** in_ptr_fld_N2P1,
-						   jvxData** out_ptr_fld_N, jvxSize* N,
-						   jvxFftIfftOperate operate,
-						   jvxDataCplx* input,
-						   jvxData* output,
-						   jvxSize fftSizeArbitrary)
+	jvxFFTGlobal* g_hdl,
+	jvxFFTSize fftType,
+	jvxDataCplx** in_ptr_fld_N2P1,
+	jvxData** out_ptr_fld_N, jvxSize* N,
+	jvxFftIfftOperate operate,
+	jvxDataCplx* input,
+	jvxData* output,
+	jvxSize fftSizeArbitrary)
 {
 	jvx_fft_ifft_core_common** hdl = (jvx_fft_ifft_core_common**)hdlRef;
 	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
@@ -489,15 +493,15 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 			return(JVX_DSP_ERROR_INVALID_SETTING);
 		}
 
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_ifft_core_complex_2_real);
-		memset(ptr, 0, sizeof(jvx_ifft_core_complex_2_real));
-
+		assert(jvx_allocator != NULL);
+		ptr = jvx_allocator->alloc(sizeof(jvx_ifft_core_complex_2_real), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+		
 		if(ptr)
 		{
 			// Specify purpose of fft transform
 			res = jvx_core_fft_init_common(&ptr->common, JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL, fftType, operate, global_hdl, fftSizeArbitrary);
 			ptr->common.ref_global_hdl = global_hdl;
-			ptr->common.ref_global_hdl->refCount++;
+			ptr->common.ref_global_hdl->refCount++;			
 
 			if(res == JVX_DSP_NO_ERROR)
 			{
@@ -589,15 +593,15 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 }
 
 jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdlRef,
-						      jvxFFTGlobal* g_hdl,
-						      jvxFFTSize fftType,
-						      jvxDataCplx** in_ptr_fld_N,
-						      jvxDataCplx** out_ptr_fld_N,
-						      jvxSize* N,
-						      jvxFftIfftOperate operate,
-						      jvxDataCplx* input,
-						      jvxDataCplx* output,
-						      jvxSize fftSizeArbitrary)
+	jvxFFTGlobal* g_hdl,
+	jvxFFTSize fftType,
+	jvxDataCplx** in_ptr_fld_N,
+	jvxDataCplx** out_ptr_fld_N,
+	jvxSize* N,
+	jvxFftIfftOperate operate,
+	jvxDataCplx* input,
+	jvxDataCplx* output,
+	jvxSize fftSizeArbitrary)
 {
 	jvx_fft_ifft_core_common** hdl = (jvx_fft_ifft_core_common**)hdlRef;
 	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
@@ -612,8 +616,9 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdlRef,
 			return(JVX_DSP_ERROR_INVALID_SETTING);
 		}
 
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_ifft_core_complex_2_complex);
-		memset(ptr, 0, sizeof(jvx_ifft_core_complex_2_complex));
+		assert(jvx_allocator != NULL);
+
+		ptr = jvx_allocator->alloc(sizeof(jvx_ifft_core_complex_2_complex), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
 
 		if(ptr)
 		{
@@ -715,9 +720,9 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdlRef,
 	return res;
 }
 
-
-
-
+// =================================================================================================
+// =================================================================================================
+// =================================================================================================
 
 jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdlRef)
 {
@@ -893,138 +898,138 @@ jvxDspBaseErrorType jvx_destroy_fft(jvxFFT* hdlRef)
 	if(!hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 
-	switch(hdl->fftParameters.coreFftType)
+	switch (hdl->fftParameters.coreFftType)
+	{
+	case JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX:
+		if (hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
 		{
-		case JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX:
-			if(hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
 #ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->input);
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->input);
 #else // JVX_FFT_APPLE
 
-					JVX_FFTW_FREE(hdl_fft_r2c->input);
+			JVX_FFTW_FREE(hdl_fft_r2c->input);
 
 #endif // JVX_FFT_APPLE
-				}
-			if(hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
-#ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->output);
-#else // JVX_FFT_APPLE
-
-					JVX_FFTW_FREE(hdl_fft_r2c->output);
-
-
-#endif // JVX_FFT_APPLE
-
-				}
-
-			hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl_fft_r2c->input = NULL;
-			hdl_fft_r2c->output = NULL;
-
-#ifdef JVX_FFT_APPLE
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->splitComplex.realp);
-			hdl_fft_r2c->splitComplex.realp = NULL;
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->splitComplex.imagp);
-			hdl_fft_r2c->splitComplex.imagp = NULL;
-#endif // JVX_FFT_APPLE
-			break;
-		case JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX:
-			if(hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
-#ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->input);
-#else // JVX_FFT_APPLE
-
-					JVX_FFTW_FREE(hdl_fft_c2c->input);
-
-#endif // JVX_FFT_APPLE
-				}
-			if(hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
-#ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->output);
-#else // JVX_FFT_APPLE
-
-					JVX_FFTW_FREE(hdl_fft_c2c->output);
-
-#endif // JVX_FFT_APPLE
-				}
-			hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl_fft_c2c->input = NULL;
-			hdl_fft_c2c->output = NULL;
-
-#ifdef JVX_FFT_APPLE
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->splitComplex.realp);
-			hdl_fft_c2c->splitComplex.realp = NULL;
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->splitComplex.imagp);
-			hdl_fft_c2c->splitComplex.imagp = NULL;
-#endif // JVX_FFT_APPLE
-			break;
-		case JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL:
-			if(hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
-#ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->input);
-#else // JVX_FFT_APPLE
-					JVX_FFTW_FREE(hdl_ifft_c2r->input);
-#endif // JVX_FFT_APPLE
-				}
-			if(hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
-#ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->output);
-#else // JVX_FFT_APPLE
-					JVX_FFTW_FREE(hdl_ifft_c2r->output);
-#endif // JVX_FFT_APPLE
-				}
-			hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl_ifft_c2r->input = NULL;
-			hdl_ifft_c2r->output = NULL;
-
-#ifdef JVX_FFT_APPLE
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->splitComplex.realp);
-			hdl_ifft_c2r->splitComplex.realp = NULL;
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->splitComplex.imagp);
-			hdl_ifft_c2r->splitComplex.imagp = NULL;
-#endif // JVX_FFT_APPLE
-			break;
-		case JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX:
-			if(hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
-#ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->input);
-#else // JVX_FFT_APPLE
-					JVX_FFTW_FREE(hdl_ifft_c2c->input);
-#endif //JVX_FFT_APPLE
-				}
-			if(hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
-				{
-#ifdef JVX_FFT_APPLE
-					JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->output);
-#else //JVX_FFT_APPLE
-					JVX_FFTW_FREE(hdl_ifft_c2c->output);
-#endif //JVX_FFT_APPLE
-				}
-			hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
-			hdl_ifft_c2c->input = NULL;
-			hdl_ifft_c2c->output = NULL;
-
-#ifdef JVX_FFT_APPLE
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->splitComplex.realp);
-			hdl_ifft_c2c->splitComplex.realp = NULL;
-			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->splitComplex.imagp);
-			hdl_ifft_c2c->splitComplex.imagp = NULL;
-#endif // JVX_FFT_APPLE
-			break;
-		default:
-			assert(0);
 		}
+		if (hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
+		{
+#ifdef JVX_FFT_APPLE
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->output);
+#else // JVX_FFT_APPLE
+
+			JVX_FFTW_FREE(hdl_fft_r2c->output);
+
+
+#endif // JVX_FFT_APPLE
+
+		}
+
+		hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl_fft_r2c->input = NULL;
+		hdl_fft_r2c->output = NULL;
+
+#ifdef JVX_FFT_APPLE
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->splitComplex.realp);
+		hdl_fft_r2c->splitComplex.realp = NULL;
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_r2c->splitComplex.imagp);
+		hdl_fft_r2c->splitComplex.imagp = NULL;
+#endif // JVX_FFT_APPLE
+		break;
+	case JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX:
+		if (hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
+		{
+#ifdef JVX_FFT_APPLE
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->input);
+#else // JVX_FFT_APPLE
+
+			JVX_FFTW_FREE(hdl_fft_c2c->input);
+
+#endif // JVX_FFT_APPLE
+		}
+		if (hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
+		{
+#ifdef JVX_FFT_APPLE
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->output);
+#else // JVX_FFT_APPLE
+
+			JVX_FFTW_FREE(hdl_fft_c2c->output);
+
+#endif // JVX_FFT_APPLE
+		}
+		hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl_fft_c2c->input = NULL;
+		hdl_fft_c2c->output = NULL;
+
+#ifdef JVX_FFT_APPLE
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->splitComplex.realp);
+		hdl_fft_c2c->splitComplex.realp = NULL;
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_fft_c2c->splitComplex.imagp);
+		hdl_fft_c2c->splitComplex.imagp = NULL;
+#endif // JVX_FFT_APPLE
+		break;
+	case JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL:
+		if (hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
+		{
+#ifdef JVX_FFT_APPLE
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->input);
+#else // JVX_FFT_APPLE
+			JVX_FFTW_FREE(hdl_ifft_c2r->input);
+#endif // JVX_FFT_APPLE
+		}
+		if (hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
+		{
+#ifdef JVX_FFT_APPLE
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->output);
+#else // JVX_FFT_APPLE
+			JVX_FFTW_FREE(hdl_ifft_c2r->output);
+#endif // JVX_FFT_APPLE
+		}
+		hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl_ifft_c2r->input = NULL;
+		hdl_ifft_c2r->output = NULL;
+
+#ifdef JVX_FFT_APPLE
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->splitComplex.realp);
+		hdl_ifft_c2r->splitComplex.realp = NULL;
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2r->splitComplex.imagp);
+		hdl_ifft_c2r->splitComplex.imagp = NULL;
+#endif // JVX_FFT_APPLE
+		break;
+	case JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX:
+		if (hdl->inputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
+		{
+#ifdef JVX_FFT_APPLE
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->input);
+#else // JVX_FFT_APPLE
+			JVX_FFTW_FREE(hdl_ifft_c2c->input);
+#endif //JVX_FFT_APPLE
+		}
+		if (hdl->outputOrigin == JVX_FFT_IFFT_BUFFER_ALLOCATED)
+		{
+#ifdef JVX_FFT_APPLE
+			JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->output);
+#else //JVX_FFT_APPLE
+			JVX_FFTW_FREE(hdl_ifft_c2c->output);
+#endif //JVX_FFT_APPLE
+		}
+		hdl->inputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl->outputOrigin = JVX_FFT_IFFT_BUFFER_NOTSET;
+		hdl_ifft_c2c->input = NULL;
+		hdl_ifft_c2c->output = NULL;
+
+#ifdef JVX_FFT_APPLE
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->splitComplex.realp);
+		hdl_ifft_c2c->splitComplex.realp = NULL;
+		JVX_DSP_SAFE_DELETE_FIELD(hdl_ifft_c2c->splitComplex.imagp);
+		hdl_ifft_c2c->splitComplex.imagp = NULL;
+#endif // JVX_FFT_APPLE
+		break;
+	default:
+		assert(0);
+	}
 
 #ifndef JVX_FFT_APPLE
 
@@ -1037,6 +1042,9 @@ jvxDspBaseErrorType jvx_destroy_fft(jvxFFT* hdlRef)
 #endif // JVX_FFT_APPLE
 	hdl->ref_global_hdl->refCount--;
 
+	assert(jvx_allocator != NULL);
+
+	jvx_allocator->dealloc(&hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
 	return res;
 }
 
@@ -1049,25 +1057,25 @@ jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl)
 {
 	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
 
-	if(global_hdl)
-		{
+	if (global_hdl)
+	{
 #ifdef JVX_FFT_APPLE
 
 #ifdef JVX_DSP_DATA_FORMAT_DOUBLE
-			vDSP_destroy_fftsetupD(global_hdl->setupFFT);
+		vDSP_destroy_fftsetupD(global_hdl->setupFFT);
 #else
-			vDSP_destroy_fftsetup(global_hdl->setupFFT);
+		vDSP_destroy_fftsetup(global_hdl->setupFFT);
 #endif
 
 #endif
+		assert(jvx_allocator != NULL);
 
-			// All ffts released?
-			assert(global_hdl->refCount == 0);
+		// All ffts released?
+		assert(global_hdl->refCount == 0);
+		jvx_allocator->dealloc(&global_hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
 
-			JVX_DSP_SAFE_DELETE_OBJECT(global_hdl);
-
-			return JVX_DSP_NO_ERROR;
-		}
+		return JVX_DSP_NO_ERROR;
+	}
 	return JVX_DSP_ERROR_INVALID_ARGUMENT;
 }
 

@@ -70,6 +70,7 @@ typedef struct
 
 	jvxInt32 fftSizeLog;
 	jvxInt32 refCount;
+	jvxCBool allocatedByAllocator;
 } jvx_fft_ifft_core_global_common;
 
 
@@ -118,7 +119,6 @@ typedef struct
 #endif
 
 	jvx_fft_ifft_core_global_common* ref_global_hdl;
-
 } jvx_fft_ifft_core_common;
 
 // ===========================================================================

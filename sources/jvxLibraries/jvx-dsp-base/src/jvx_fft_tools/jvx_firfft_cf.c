@@ -29,8 +29,32 @@
 #include "jvx_fft_tools/jvx_firfft.h"
 #include "jvx_fft_tools/jvx_fft_core.h"
 #include "jvx_dsp_base.h"
+#include "jvx_allocators/jvx_allocators.h"
 
 #include "jvx_fft_tools/jvx_firfft_prv.h"
+
+/*
+ * This function realizes an fft domain based time domain filter. It provides 2 
+ * FFTs and 2 IIFTs:
+ * - fft 1: transform the input signal into the frequency domain
+ * - fft 2: Transform the new filter coefficients into the frequency domain to run with new weights
+ * - ifft 1: Transform to time domain, old weights
+ * - ifft 2: Transform to time domain, new weights
+ * 
+ * NORMAL MODE: jvx_firfft_cf_process
+ * 
+ * in-signal ---> fft ---> x weights ---> ifft  ---> out td
+ * 
+ * FILTER SWITCH MODE: jvx_firfft_cf_process_update_weights
+ * 
+ * in-signal ---> fft ---> x old weights ---> ifft  |
+ *					   |							| crossfade ---> out td
+ *                     |-> x new weights ---> ifft	|
+ *								^
+ *								|
+ * new weights td  -------------
+ * 
+ */
 
 typedef struct
 {
@@ -61,6 +85,7 @@ typedef struct
 		jvxSize idx_cf_from;
 	} ram_cf;
 
+	jvxCBool allocatedViaAllocator;
 } jvx_firfft_cf_prv;
 		
 void 
@@ -109,11 +134,15 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 		jvxSize N = 0, i = 0;
 		jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
 
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(nHdl, jvx_firfft_cf_prv);
+		assert(jvx_allocator != NULL);
 
+		nHdl = (jvx_firfft_cf_prv*)jvx_allocator->alloc(sizeof(jvx_firfft_cf_prv), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+		
 		hdl->prv = nHdl;
 
 		jvx_firfft_update(hdl, JVX_DSP_UPDATE_INIT, true); // this sets all derived values
+
+		jvx_allocator->purpose = JVX_ALLOCATOR_OBJECT_PURPOSE_TIME_CRITICAL;
 
 		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftCfgHdl);
 		assert(resL == JVX_DSP_NO_ERROR);
@@ -172,13 +201,16 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 		jvx_firfft_cf_compute_weights(hdl, nHdl->firfft.init_cpy.fir, nHdl->firfft.init_cpy.lFir);
 
 		hdl->sync.firW = NULL;
-		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(hdl->sync.firW, jvxDataCplx, nHdl->firfft.derived_cpy.lFirW);
+		hdl->sync.firW = jvx_allocator->alloc(sizeof(jvxDataCplx), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), nHdl->firfft.derived_cpy.lFirW);
 		
 		jvx_firfft_cf_copy_weights(hdl, hdl->sync.firW, nHdl->firfft.derived_cpy.lFirW);
 
 		nHdl->firfft.ram.phase = 0;
 		nHdl->firfft.ram.normFactor = 1.0 / (jvxData)nHdl->firfft.derived_cpy.szFftValue;
 		nHdl->ram_cf.cf_inc = 1.0 / hdl->init.bsize;
+
+		jvx_allocator->purpose = JVX_ALLOCATOR_OBJECT_PURPOSE_UNSPECIFIC;
+		
 
 		return JVX_DSP_NO_ERROR;
 	}
@@ -215,14 +247,16 @@ jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl)
 			jvx_destroy_fft_ifft_global(nHdl->firfft.ram.fftGlob);
 			nHdl->firfft.ram.fftGlob = NULL;
 
-			JVX_DSP_SAFE_DELETE_FIELD(hdl->sync.firW);
+			jvx_allocator->dealloc((jvxHandle**)&hdl->sync.firW, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+			
 			hdl->sync.firW = NULL;
 
 			nHdl->firfft.ram.coreifft = NULL;
 			nHdl->firfft.ram.spec = NULL;
 			nHdl->firfft.ram.out = NULL;
 
-			JVX_DSP_SAFE_DELETE_OBJECT(nHdl);
+			jvx_allocator->dealloc((jvxHandle**)&nHdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));			
+
 			hdl->prv = NULL;
 			
 			res = JVX_DSP_NO_ERROR;

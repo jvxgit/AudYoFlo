@@ -101,8 +101,8 @@ typedef enum
 /**
  * Create global handle for FFT: fftType_max specifies maximal possible length of FFT
  */
-jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** global_hdl,
-					       jvxFFTSize fftType_max, jvxHandle* cfgFftGlobal);
+jvxDspBaseErrorType jvx_create_fft_ifft_global(
+	jvxFFTGlobal** global_hdl, jvxFFTSize fftType_max, jvxHandle* cfgFftGlobal);
 
 /** 
 * Create handle for real to complex FFT
@@ -153,17 +153,15 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdl,
 						   jvxSize fftSizeArbitrary);
 
 jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdl,
-						      jvxFFTGlobal* global_hdl,
-						      jvxFFTSize fftType,
-						      jvxDataCplx** in_ptr_fld_N,
-						      jvxDataCplx** out_ptr_fld_N,
-						      jvxSize* NfftSize,
-						      jvxFftIfftOperate operate,
-						      jvxDataCplx* input,
-						      jvxDataCplx* output,
-							  jvxSize fftSizeArbitrary);
-
-
+	jvxFFTGlobal* global_hdl,
+	jvxFFTSize fftType,
+	jvxDataCplx** in_ptr_fld_N,
+	jvxDataCplx** out_ptr_fld_N,
+	jvxSize* NfftSize,
+	jvxFftIfftOperate operate,
+	jvxDataCplx* input,
+	jvxDataCplx* output,
+	jvxSize fftSizeArbitrary);
 
 jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdl);
 jvxDspBaseErrorType jvx_execute_ifft(jvxIFFT* hdl);

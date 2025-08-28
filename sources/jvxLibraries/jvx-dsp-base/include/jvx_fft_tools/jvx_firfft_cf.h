@@ -34,7 +34,7 @@
 
 JVX_DSP_LIB_BEGIN
 
-jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl);
+jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl);
 jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl);
 
 jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxCBool addOnOut);

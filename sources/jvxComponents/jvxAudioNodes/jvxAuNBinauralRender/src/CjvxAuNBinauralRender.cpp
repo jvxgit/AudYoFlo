@@ -460,8 +460,8 @@ CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData
 	render_inst->firfftcf_right.init.lFir = render_inst->length_buffer_hrir;
 	render_inst->firfftcf_right.init.type = JVX_FIRFFT_FLEXIBLE_FIR;
 
-	jvx_firfft_cf_init(&render_inst->firfftcf_left);
-	jvx_firfft_cf_init(&render_inst->firfftcf_right);
+	jvx_firfft_cf_init(&render_inst->firfftcf_left, NULL);
+	jvx_firfft_cf_init(&render_inst->firfftcf_right, NULL);
 
 	render_inst->lUpdatedWeights = render_inst->firfftcf_left.derived.lFirW;
 	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(render_inst->updatedWeightsLeft, jvxDataCplx, render_inst->lUpdatedWeights);
