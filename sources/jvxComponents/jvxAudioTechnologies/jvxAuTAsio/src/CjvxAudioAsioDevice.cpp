@@ -381,7 +381,21 @@ CjvxAudioAsioDevice::activateAsioProperties()
 
 	genAsio_device::properties_active.supportstimeinfo.value.selection() = ((jvxBitField)1<<1); // Expect no timeInfo support
 
-	auto hr = CoCreateInstance(this->my_props.clsid, 0, CLSCTX_INPROC_SERVER, this->my_props.clsid, (LPVOID*)&runtime.ptrToDriver);
+	APTTYPE aptType;
+	APTTYPEQUALIFIER aptQualifier;
+	auto hr = CoGetApartmentType(&aptType, &aptQualifier);
+	if (SUCCEEDED(hr)) 
+	{
+		switch (aptType) 
+		{
+		case APTTYPE_STA: std::cout << "Single-threaded apartment (STA)\n"; break;
+		case APTTYPE_MTA: std::cout << "Multi-threaded apartment (MTA)\n"; break;
+		case APTTYPE_NA:  std::cout << "Neutral apartment (NA)\n"; break;
+		default:          std::cout << "Unbekanntes Apartment\n"; break;
+		}
+	}
+
+	hr = CoCreateInstance(this->my_props.clsid, 0, CLSCTX_INPROC_SERVER, this->my_props.clsid, (LPVOID*)&runtime.ptrToDriver);
 	if(hr != S_OK)
 	{
 
