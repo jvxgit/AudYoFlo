@@ -77,6 +77,8 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 		}
 		theConnections->return_reference_connection_process(theProc);
 		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+
+		this->on_main_node_started();
 	}
 	return JVX_NO_ERROR;
 

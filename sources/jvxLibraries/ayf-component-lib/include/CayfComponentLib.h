@@ -397,6 +397,7 @@ public:
 	virtual jvxErrorType deallocate_main_node() = 0;
 	virtual jvxErrorType on_main_node_selected() { return JVX_NO_ERROR; };
 	virtual jvxErrorType before_main_node_unselect() { return JVX_NO_ERROR; };
+	virtual jvxErrorType on_main_node_started() { return JVX_NO_ERROR; };
 
 	jvxErrorType passConfigSection(IjvxSimpleNode* node, const std::string& moduleName);
 

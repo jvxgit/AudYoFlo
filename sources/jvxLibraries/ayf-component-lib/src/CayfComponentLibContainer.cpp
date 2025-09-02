@@ -150,7 +150,15 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 		}
 	}
 
-	deployProcParametersStartProcessor(deviceEntryObject);
+	jvxErrorType res = deployProcParametersStartProcessor(deviceEntryObject);
+	if (res == JVX_NO_ERROR)
+	{
+		if(ptr_callback_on_start)
+		{ 
+			ptr_callback_on_start(prv_callback_on_start);
+		}
+	}
+
 
 	// This function is inside the lock
 	setReference(deviceEntryObject);
@@ -202,7 +210,9 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 }
 
 jvxErrorType
-CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, int passthroughModeArg, int* ayfIdentsPtr, int ayfIdentsNum)
+CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numInChansArg, int numOutChansArg, 
+	int bSizeArg, int sRateArg, int passthroughModeArg, int* ayfIdentsPtr, int ayfIdentsNum, 
+	void_pvoid_callback ptr_callback_bwd_on_start_arg, void* prv_callback_on_start_arg)
 {
 	jvxApiString realRegName;
 
@@ -216,6 +226,10 @@ CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numIn
 	passthroughMode = passthroughModeArg;
 	desiredSlotIdNode = JVX_SIZE_DONTCARE;
 	desiredSlotIdDev = JVX_SIZE_DONTCARE;
+
+	ptr_callback_on_start = ptr_callback_bwd_on_start_arg;
+	prv_callback_on_start = prv_callback_on_start_arg;
+
 	if (ayfIdentsNum > 0)
 	{
 		desiredSlotIdNode = ayfIdentsPtr[0];
