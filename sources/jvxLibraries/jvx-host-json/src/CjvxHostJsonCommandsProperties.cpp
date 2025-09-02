@@ -824,7 +824,7 @@ CjvxHostJsonCommandsProperties::act_set_property_component_single(
 			if (res != JVX_NO_ERROR)
 			{
 				errTxt = "Failed to convert expression <" + loadTarget + "> into a valid value for property with descriptor <" + identificationTarget + ">  for component <" + 
-					jvxComponentIdentification_txt(theTriple.cpId.tp) + ", reason: ";
+					jvxComponentIdentification_txt(theTriple.cpId.tp) + ">, reason: ";
 				errTxt += jvxErrorType_descr(res);
 			}
 		}

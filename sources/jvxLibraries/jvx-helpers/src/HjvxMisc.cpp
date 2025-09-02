@@ -1370,14 +1370,17 @@ jvx_string2ValueList(const std::string& input, jvxHandle* ptrVal, jvxDataFormat 
 		{
 			return JVX_ERROR_INVALID_SETTING;
 		}
+		/*
 		if (lstData[0].size() > num)
 		{
 			return JVX_ERROR_SIZE_MISMATCH;
 		}
 		else
 		{
-			numCopy = JVX_MIN(lstData[0].size(), num);
-		}
+		*/
+		// if the sizes do not match, we use the minimum in the copy process to skip unused entries
+		numCopy = JVX_MIN(lstData[0].size(), num);
+		//}
 		break;
 
 	case JVX_DATAFORMAT_64BIT_LE:
