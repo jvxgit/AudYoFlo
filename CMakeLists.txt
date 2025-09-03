@@ -38,16 +38,6 @@ set(JVX_FULL_SYSTEM_BUILD TRUE)
 
 include(${JVX_CMAKE_DIR}/fragments/options.cmake)
 
-if(${JVX_OS} MATCHES "windows")
-	if(JVX_BUILD_OPTION_ALL_MD)
-		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-	endif()
-endif()
-	
-if(NOT ${JVX_OS} MATCHES "windows")
-  set(JVX_USE_PART_ASIO FALSE)
-endif()
-
 # IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 #  SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/release CACHE PATH "Set default install path in case we use cmake gui." FORCE)
 # ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -112,6 +102,34 @@ include(${JVX_CMAKE_DIR}/macros.cmake)
 # support for different platforms
 ###
 include(${JVX_CMAKE_DIR}/platform.cmake)
+
+if(${JVX_OS} MATCHES "windows")
+	if(JVX_BUILD_OPTION_ALL_MD)
+		get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+		if(is_multi_config)
+			# message(FATAL_ERROR "Is multi config: ${is_multi_config}")		
+			set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+		else()
+			# message(FATAL_ERROR "Is NOT multi config: ${is_multi_config}")	
+			if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+				set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
+			else()
+				set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+			endif()
+		endif()
+		
+		# message(FATAL_ERROR "Is multi config: ${is_multi_config}")		
+	endif()
+endif()
+	
+get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+# message(FATAL_ERROR "Is multi config: ${is_multi_config} -- ${JVX_BUILD_OPTION_ALL_MD} -- ${CMAKE_MSVC_RUNTIME_LIBRARY}")
+
+if(NOT ${JVX_OS} MATCHES "windows")
+  set(JVX_USE_PART_ASIO FALSE)
+endif()
+
 
 set(JVX_ABI_SUBFOLDER "")
 if(JVX_RELEASE_SDK)
