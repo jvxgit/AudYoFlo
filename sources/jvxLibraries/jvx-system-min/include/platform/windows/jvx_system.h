@@ -10,6 +10,7 @@
 #include <direct.h> 
 #include <inttypes.h>
 #include <assert.h>
+#include <SDKDDKVer.h>
 
 #define JVX_OS_WINDOWS
 
