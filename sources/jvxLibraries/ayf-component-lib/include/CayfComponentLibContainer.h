@@ -6,7 +6,7 @@
 
 #include "ayf-embedding-proxy.h"
 #include "ayf-embedding-proxy-entries.h"
-typedef void (*void_pvoid_callback)(void* priv);
+#include "ayf_component_lib_types.h"
 
 class CayfComponentLibContainer: public IjvxExternalModuleFactory
 {
