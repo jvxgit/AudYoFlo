@@ -24,6 +24,7 @@ include_directories(
 
 set(LOCAL_SOURCES
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/ayf_component_lib_types.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfComponentLib.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfComponentLibContainer.h
 
