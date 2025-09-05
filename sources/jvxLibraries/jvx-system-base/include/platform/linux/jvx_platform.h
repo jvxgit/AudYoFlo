@@ -458,6 +458,13 @@ JVX_STATIC_INLINE std::string JVX_TIME()
 	return strTime;
 }
 
+JVX_STATIC_INLINE jvxData JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn = false)
+{
+	// Not implemented at this time 
+	assert(0);
+	return 0;
+}
+
 // Expression for "INFINITE" in maths
 #define JVX_MATH_INFINITE INFINITY
 //std::numeric_limits<jvxData>::infinity()
