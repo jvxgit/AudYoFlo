@@ -269,7 +269,7 @@ jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl)
 			jvx_destroy_fft_ifft_global(nHdl->ram.fftGlob);
 			nHdl->ram.fftGlob = NULL;
 
-			jvx_allocator->dealloc(&hdl->sync.firW, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_FAST_SLOW));
+			jvx_allocator->dealloc((jvxHandle**)&hdl->sync.firW, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_FAST_SLOW));
 			jvx_allocator->dealloc((jvxHandle**)&hdl->prv, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));			
 
 			return JVX_DSP_NO_ERROR;

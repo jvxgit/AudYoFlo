@@ -1044,7 +1044,7 @@ jvxDspBaseErrorType jvx_destroy_fft(jvxFFT* hdlRef)
 
 	assert(jvx_allocator != NULL);
 
-	jvx_allocator->dealloc(&hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+	jvx_allocator->dealloc((jvxHandle**)&hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
 	return res;
 }
 
@@ -1072,7 +1072,7 @@ jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl)
 
 		// All ffts released?
 		assert(global_hdl->refCount == 0);
-		jvx_allocator->dealloc(&global_hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+		jvx_allocator->dealloc((jvxHandle**)&global_hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
 
 		return JVX_DSP_NO_ERROR;
 	}
