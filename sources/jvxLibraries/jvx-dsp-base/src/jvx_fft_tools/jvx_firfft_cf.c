@@ -147,6 +147,9 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftCfgHdl);
 		assert(resL == JVX_DSP_NO_ERROR);
 
+		// Check if current fft implementation requires normalization
+		nHdl->firfft.ram.normOut = jvx_fft_requires_normalization(nHdl->firfft.ram.fftGlob);
+
 		// Let us allocate input and output - 2 iffts here
 		resL = jvx_create_ifft_complex_2_real(&nHdl->ram_cf.coreifft[0],
 			nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft,
@@ -308,6 +311,18 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 			*ptrIn++ = *in++;
 		}
 
+#if 0
+		/* Add values here to check fundamental functionality of fft */
+		ptrIn = nHdl->firfft.ram.in;
+		for(i = 0; i < nHdl->firfft.derived_cpy.szFftValue; i++)
+		{
+			ptrIn[i] = 0;
+		}
+		ptrIn[1] = 1.0;
+		ptrIn[2] = 1.0;
+		/**/
+#endif
+
 		jvx_execute_fft(nHdl->firfft.ram.corefft);
 
 		spec_out = nHdl->ram_cf.spec[0];
@@ -345,33 +360,74 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 
 			break;
 		}
+
 		jvx_execute_ifft(coreifft);
 
-		if (addOnOut)
+		if (nHdl->firfft.ram.normOut)
 		{
-			for (i = 0; i < ll1; i++)
+			if (addOnOut)
 			{
-				*out++ += *ptrOut++ * nHdl->firfft.ram.normFactor;
-			}
+				for (i = 0; i < ll1; i++)
+				{
+					*out++ += *ptrOut++ * nHdl->firfft.ram.normFactor;
+				}
 
-			ptrOut = out_src;
-			for (i = 0; i < ll2; i++)
+				ptrOut = out_src;
+				for (i = 0; i < ll2; i++)
+				{
+					*out++ += *ptrOut++ * nHdl->firfft.ram.normFactor;
+				}
+
+			}
+			else
 			{
-				*out++ += *ptrOut++ * nHdl->firfft.ram.normFactor;
-			}
+				for (i = 0; i < ll1; i++)
+				{
+					*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
+				}
 
+				ptrOut = out_src;
+				for (i = 0; i < ll2; i++)
+				{
+					*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
+				}
+			}
 		}
 		else
 		{
-			for (i = 0; i < ll1; i++)
+			if (addOnOut)
 			{
-				*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
-			}
+				for (i = 0; i < ll1; i++)
+				{
+					*out++ += *ptrOut++ ;
+				}
 
-			ptrOut = out_src;
-			for (i = 0; i < ll2; i++)
+				ptrOut = out_src;
+				for (i = 0; i < ll2; i++)
+				{
+					*out++ += *ptrOut++;
+				}
+
+			}
+			else
 			{
-				*out++ = *ptrOut++ * nHdl->firfft.ram.normFactor;
+				memcpy(out, ptrOut, ll1 * sizeof(jvxData));
+				/*
+				for (i = 0; i < ll1; i++)
+				{
+					*out++ = *ptrOut++;
+				}
+				*/
+
+				out += ll1;
+				memcpy(out, out_src, sizeof(jvxData)* ll2);
+				/*
+				ptrOut = out_src;
+				for (i = 0; i < ll2; i++)
+				{
+					*out++ = *ptrOut++;
+				}
+				*/
 			}
 		}
 

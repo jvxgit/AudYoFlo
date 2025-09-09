@@ -14,6 +14,7 @@ typedef struct
 		jvxSize phase;
 		jvxSize outoffset;
 		jvxData normFactor;
+		jvxCBool normOut;
 	} ram;
 
 	jvx_firfft_prmInit init_cpy;

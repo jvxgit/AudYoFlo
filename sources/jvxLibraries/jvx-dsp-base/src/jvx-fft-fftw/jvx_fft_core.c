@@ -1079,6 +1079,12 @@ jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl)
 	return JVX_DSP_ERROR_INVALID_ARGUMENT;
 }
 
+jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl)
+{
+	return c_true;
+	// return c_false;
+}
+
 jvxData * jvx_allocate_fft_buffer_real(jvxSize num_elements)
 {
 	jvxData* buffer;

@@ -73,6 +73,8 @@ jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg)
 		resL = jvx_create_fft_ifft_global(&nHdl->ram.fftGlob, nHdl->derived_cpy.szFft, fftGlobalCfg);
 		assert(resL == JVX_DSP_NO_ERROR);
 
+		nHdl->ram.normOut = jvx_fft_requires_normalization(nHdl->ram.fftGlob);
+
 		// Let us allocate input and output
 		resL = jvx_create_ifft_complex_2_real(&nHdl->ram.coreifft,
 			nHdl->ram.fftGlob, nHdl->derived_cpy.szFft,
@@ -236,14 +238,24 @@ jvxDspBaseErrorType jvx_firfft_process(jvx_firfft* hdl, jvxData* inArg, jvxData*
 			break;
 		}
 
-		for (i = 0; i < ll1; i++)
+		// Save normalization if possible
+		if (nHdl->ram.normOut)
 		{
-			*out++ = *ptrOut++ * nHdl->ram.normFactor;
+			for (i = 0; i < ll1; i++)
+			{
+				*out++ = *ptrOut++ * nHdl->ram.normFactor;
+			}
+			ptrOut = nHdl->ram.out;
+			for (i = 0; i < ll2; i++)
+			{
+				*out++ = *ptrOut++ * nHdl->ram.normFactor;
+			}
 		}
-		ptrOut = nHdl->ram.out;
-		for (i = 0; i < ll2; i++)
+		else
 		{
-			*out++ = *ptrOut++ * nHdl->ram.normFactor;
+			memcpy(out, ptrOut, ll1 * sizeof(jvxData));
+			out += ll1;
+			memcpy(out, nHdl->ram.out, ll2* sizeof(jvxData));
 		}
 
 		nHdl->ram.phase = (nHdl->ram.phase + nHdl->init_cpy.bsize) % nHdl->derived_cpy.szFftValue;

@@ -171,6 +171,8 @@ jvxDspBaseErrorType jvx_destroy_ifft(jvxIFFT* hdl);
 
 jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* global_hdl);
 
+jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl);
+
 // =======================================================================================
 
 jvxData* jvx_allocate_fft_buffer_real(jvxSize num_elements);

@@ -13,7 +13,7 @@
 #error "Double-precision is not implemented yet because there is no direct equivalent to TI's DSPF_sp_fftSPxSP single-precision function."
 #endif
 
-
+#define AYF_USE_OPTIMIZED_IFFT_COMPLEX_2_REAL
 
 struct jvx_fft_core_real_2_complex_sc594
 {
@@ -95,6 +95,7 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSi
 {
 	jvx_fft_ifft_core_global_common** global_hdl = (jvx_fft_ifft_core_global_common**)glob_hdl;
 	jvx_fft_ifft_core_global_common* ptr = NULL;
+	jvxCBool onlyFft = c_false;
 
 	// Support only up to FFT size 8192
 	if(fftType_max > MAX_FFT_SIZE_TYPE)
@@ -104,17 +105,11 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSi
 	if(!global_hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 
-	// Check for existing allocators
-	struct jvx_allocator_references* allocators = JVX_GET_GLOBAL_ALLOCATOR_REFERENCE;
-	if (allocators)
-	{
-		ptr = allocators->alloc(sizeof(jvx_fft_ifft_core_global_common),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+	jvx_fft_ifft_core_global_cfg* cfg = (jvx_fft_ifft_core_global_cfg*)fftGlobalPrv;
 
-	}
-	else
-	{
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_fft_ifft_core_global_common);
-	}
+	// Check for existing allocators
+	assert(jvx_allocator);
+	ptr = jvx_allocator->alloc(sizeof(jvx_fft_ifft_core_global_common),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
 
 	ptr->fftSizeLog = (int)fftType_max + JVX_OFFSET_FFT_TYPE_MIN;
 	ptr->refCount = 0;
@@ -130,27 +125,52 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSi
 	// Derive maximum fft associated to global fft handle
 	ptr->max_fft_size = (jvxInt32) 1 << ptr->fftSizeLog;
 
+	ptr->cfg.mode = (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT) | (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_SHIFT);
+
 	// Allocate workbuffer to allow for PRESERVE_INPUT option
-	ptr->work_buffer = NULL;
-	if (allocators)
+	if(cfg)
 	{
-		ptr->work_buffer = allocators->alloc(sizeof(jvxData), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
+		ptr->cfg = *cfg;
+	}
+
+	ptr->work_buffer_common = NULL;
+	ptr->work_buffer_ifft = NULL;
+
+	if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_ONLY_SHIFT))
+	{
+		if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT))
+		{
+			// For FFT in preserve input mode, we need the work buffer
+			ptr->work_buffer_common = jvx_allocator->alloc(sizeof(jvxData), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
+		}
 	}
 	else
 	{
-		JVX_DSP_SAFE_ALLOCATE_FIELD_Z(ptr->work_buffer, jvxData, ptr->max_fft_size);
+		if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT))
+		{
+			// For IFFT in preserve input mode, we need the work buffer
+			ptr->work_buffer_common = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
+		}
+
+		if(ptr->cfg.mode & (1 <<  JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_SHIFT))
+		{
+			// Here, we need a dedicated buffer for complex output
+			ptr->work_buffer_ifft = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
+		}
 	}
 
-	ptr->allocatedAllocator = c_false;
-	if (allocators)
-	{
-		ptr->allocatedAllocator = c_true;
-	}
 
 	*global_hdl = ptr;
 
 	// No global stuff required
 	return JVX_DSP_NO_ERROR;
+}
+
+// =======================================================================================
+
+jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl)
+{
+	return c_false;
 }
 
 // =======================================================================================
@@ -175,15 +195,8 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	if(!hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 
-	struct jvx_allocator_references* allocators = JVX_GET_GLOBAL_ALLOCATOR_REFERENCE;
-	if (allocators)
-	{
-		ptr = allocators->alloc(sizeof(jvx_fft_core_real_2_complex),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
-	}
-	else
-	{
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_fft_core_real_2_complex);
-	}
+	assert(jvx_allocator);
+	ptr = jvx_allocator->alloc(sizeof(jvx_fft_core_real_2_complex),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
 
 	if(!ptr)
 		return JVX_DSP_ERROR_INTERNAL;
@@ -197,6 +210,8 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	if(res != JVX_DSP_NO_ERROR)
 		return JVX_DSP_ERROR_INTERNAL;
 
+	assert(jvx_allocator);
+
 	// Associate input buffers
 	if(input)
 	{
@@ -204,15 +219,8 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	}
 	else
 	{
-		if (allocators)
-		{
-			ptr->input = allocators->alloc(sizeof(jvxData),
-					(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize);
-		}
-		else
-		{
-			JVX_DSP_SAFE_ALLOCATE_FIELD_Z(ptr->input, float, ptr->common.fftParameters.fftSize);
-		}
+		ptr->input = jvx_allocator->alloc(sizeof(jvxData),
+				(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize);
 	}
 
 	// Associate output buffers
@@ -223,15 +231,8 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	else
 	{
 		complex_float* cplx_ptr = NULL;
-		if (allocators)
-		{
-			cplx_ptr = allocators->alloc(sizeof(complex_float),
+		cplx_ptr = jvx_allocator->alloc(sizeof(complex_float),
 					(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize/2+1);
-		}
-		else
-		{
-			JVX_DSP_SAFE_ALLOCATE_FIELD_Z(cplx_ptr, complex_float, ptr->common.fftParameters.fftSize/2+1);
-		}
 		ptr->output = (jvxDataCplx*)cplx_ptr;
 	}
 
@@ -246,12 +247,6 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	if(N)
 	{
 		*N = ptr->common.fftParameters.fftSize;
-	}
-
-	ptr->common.allocatedAllocator = c_false;
-	if (allocators)
-	{
-		ptr->common.allocatedAllocator = c_true;
 	}
 
 	if(res == JVX_DSP_NO_ERROR)
@@ -273,6 +268,7 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 						   jvxSize fftSizeArbitrary)
 {
 	jvx_fft_ifft_core_common** hdl = (jvx_fft_ifft_core_common**)hdlRef;
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
 
 	jvxDspBaseErrorType res = JVX_DSP_NO_ERROR;
 	jvx_ifft_core_complex_2_real* ptr = NULL;
@@ -280,15 +276,8 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	if(!hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 
-	struct jvx_allocator_references* allocators = JVX_GET_GLOBAL_ALLOCATOR_REFERENCE;
-	if (allocators)
-	{
-		ptr = allocators->alloc(sizeof(jvx_ifft_core_complex_2_real),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
-	}
-	else
-	{
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_ifft_core_complex_2_real);
-	}
+	assert(jvx_allocator);
+	ptr = jvx_allocator->alloc(sizeof(jvx_ifft_core_complex_2_real),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
 
 	if(!ptr)
 		return JVX_DSP_ERROR_INTERNAL;
@@ -299,6 +288,7 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 
 	ptr->common.ref_global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
 	ptr->common.ref_global_hdl->refCount++;
+	ptr->common.twStride = global_hdl->twiddle_fft_size / ptr->common.fftParameters.fftSize;
 
 	if(res != JVX_DSP_NO_ERROR)
 		return JVX_DSP_ERROR_INTERNAL;
@@ -311,15 +301,8 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	{
 		// Here, the important issue: the ifft requires full complex input - which is not very clever..
 		complex_float* cplx_ptr = NULL;
-		if (allocators)
-		{
-			cplx_ptr = allocators->alloc(sizeof(complex_float),
+		cplx_ptr = jvx_allocator->alloc(sizeof(complex_float),
 					(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize);
-		}
-		else
-		{
-			JVX_DSP_SAFE_ALLOCATE_FIELD_Z(cplx_ptr, complex_float, ptr->common.fftParameters.fftSize);
-		}
 		ptr->input = (jvxDataCplx*)cplx_ptr;
 	}
 
@@ -329,15 +312,8 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	}
 	else
 	{
-		if (allocators)
-		{
-			ptr->output = allocators->alloc(sizeof(jvxData),
+		ptr->output = jvx_allocator->alloc(sizeof(jvxData),
 								(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize);
-		}
-		else
-		{
-			JVX_DSP_SAFE_ALLOCATE_FIELD_Z(ptr->output, float, ptr->common.fftParameters.fftSize);
-		}
 	}
 
 	if(in_ptr_fld_N2P1)
@@ -351,12 +327,6 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	if(N)
 	{
 		*N = ptr->common.fftParameters.fftSize;
-	}
-
-	ptr->common.allocatedAllocator = c_false;
-	if (allocators)
-	{
-		ptr->common.allocatedAllocator = c_true;
 	}
 
 	if(res == JVX_DSP_NO_ERROR)
@@ -498,11 +468,14 @@ jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdlRef)
 
 	if(hdl->operate==JVX_FFT_IFFT_PRESERVE_INPUT)
 	{
+		// Make sure the fft is properly setup
+		assert(gHdl->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT));
 		// assert(hdl->shadow_buffer!=0);
+
 		if (hdl->fftParameters.coreFftType==JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX)
 		{
 			input =  hdl_fft_r2c->input;
-			inputWork = gHdl->work_buffer;
+			inputWork = (jvxHandle*)gHdl->work_buffer_common;
 			output = hdl_fft_r2c->output;
 			twStride = hdl->twStride;
 		}
@@ -544,6 +517,38 @@ jvxDspBaseErrorType jvx_execute_ifft(jvxIFFT* hdlRef)
 	jvx_fft_ifft_core_common* hdl = (jvx_fft_ifft_core_common*)hdlRef;
 	jvx_ifft_core_complex_2_complex* hdl_ifft_c2c = (jvx_ifft_core_complex_2_complex*)hdl;
 	jvx_ifft_core_complex_2_real* hdl_ifft_c2r = (jvx_ifft_core_complex_2_real*)hdl;
+	jvx_fft_ifft_core_global_common* gHdl = (jvx_fft_ifft_core_global_common* )hdl->glob_ptr;
+
+	complex_float* input = NULL;
+	complex_float* inputWork = NULL;
+	complex_float* output = NULL;
+	float* outreal = NULL;
+
+	int twStride = 1;
+
+	if(hdl->operate==JVX_FFT_IFFT_PRESERVE_INPUT)
+	{
+		// Due to missing complex2real ifft no different cases
+		input = (complex_float*)hdl_ifft_c2r->input;
+		inputWork = gHdl->work_buffer_common;
+		twStride = hdl->twStride;
+		if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL)
+		{
+			output = gHdl->work_buffer_ifft;
+			outreal = hdl_ifft_c2r->output;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		// We need to mirror the complex input spectrum
+		for (int k = 1; k < hdl->fftParameters.fftSize/2; k++)
+		{
+			input[hdl->fftParameters.fftSize-k] = conj(input[k]);
+		}
+	}
+
 
 	if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX)
 	{
@@ -551,7 +556,88 @@ jvxDspBaseErrorType jvx_execute_ifft(jvxIFFT* hdlRef)
 	}
 	else if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL)
 	{
-		assert(0);
+#ifdef AYF_USE_OPTIMIZED_IFFT_COMPLEX_2_REAL
+
+		// Run the efficient ifft complex2real.
+		// This implementation runs the first stage of the ifft taking into account a real valued output
+		// and then an ifft of length hdl->fftParameters.fftSize/2.
+		// Check the reference code in <sources/jvxLibraries/ayf_awe_embedded/ifft_eff.m>
+		int i = 0;
+		int iTw = twStride;
+		int N2 = hdl->fftParameters.fftSize/2;
+
+		complex_float* inPtrFwd = input;
+		complex_float* outPtrFwd = inputWork;
+		complex_float* inPtrBwd = input + N2;
+		complex_float tmp, XO, TW, XOX;
+
+		// XE = Xk(cindex2matindex(idxWrite)) + Xk(cindex2matindex(idxEnd));
+	    // XO = Xk(cindex2matindex(idxWrite)) - Xk(cindex2matindex(idxEnd));
+	    // Xk_fft_all(cindex2matindex(idxWrite)) = 0.5 * (XE + j * XO);
+		tmp.re = 0.5 * (inPtrFwd->re + inPtrBwd->re);
+		tmp.im = 0.5 * (inPtrFwd->re - inPtrBwd->re);
+
+		*outPtrFwd = tmp;
+
+		inPtrFwd++;
+		outPtrFwd++;
+		inPtrBwd--;
+
+		for(i = 1; i < N2; i++)
+		{
+			// XER = real(Xk(cindex2matindex(idxWrite))) + real(Xk(cindex2matindex(idxEnd)));
+			// XEI = imag(Xk(cindex2matindex(idxWrite))) - imag(Xk(cindex2matindex(idxEnd)));
+			tmp.re = inPtrFwd->re + inPtrBwd->re;
+			tmp.im = inPtrFwd->im - inPtrBwd->im;
+
+			// XOR = real(Xk(cindex2matindex(idxWrite))) - real(Xk(cindex2matindex(idxEnd)));
+			// XOI = imag(Xk(cindex2matindex(idxWrite))) + imag(Xk(cindex2matindex(idxEnd)));
+			XO.re = inPtrFwd->re - inPtrBwd->re;
+			XO.im = inPtrFwd->im + inPtrBwd->im;
+
+			TW = gHdl->twiddle_facs[iTw];
+			iTw += twStride;
+
+			// ## XOXR = (XOR*TWR -XOI*TWI);
+			// ## XOXI = (XOR * TWI  + XOI * TWR);
+			// Note that the tw facs are conj as TW is for fft not ifft
+			// XOXR = (XOR*TWR + XOI*TWI_);
+	        // XOXI = (XOI * TWR - XOR * TWI_ );
+			XOX.re = XO.re * TW.re + XO.im * TW.im;
+			XOX.im = XO.im * TW.re - XO.re * TW.im;
+
+			// XAR = XER - XOXI;
+			// XAI = XEI + XOXR;
+			tmp.re -= XOX.im;
+			tmp.im += XOX.re;
+
+			// Add factor 0.5
+			tmp.re *= 0.5;
+			tmp.im *= 0.5;
+
+			// We need to store in a dedicated buffer to not override inPtrBwd
+			*outPtrFwd= tmp;
+			inPtrFwd++;
+			outPtrFwd++;
+			inPtrBwd--;
+		}
+
+		ifft(inputWork, inputWork, (complex_float*)outreal, gHdl->twiddle_facs,
+				 		2*twStride, N2);
+#else
+
+		// ========================================================================
+		ifft(input, inputWork, output, gHdl->twiddle_facs,
+		 		twStride, hdl->fftParameters.fftSize);
+
+		// ifft2048(input, output);
+
+		for(int k = 0; k < hdl->fftParameters.fftSize; k++)
+		{
+			// Extract only the real part, imag part should be all zero!
+			outreal[k] = output[k].re;
+		}
+#endif
 	}
 
 	return JVX_DSP_NO_ERROR;

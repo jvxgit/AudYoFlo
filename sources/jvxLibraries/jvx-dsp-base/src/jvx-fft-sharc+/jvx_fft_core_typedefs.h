@@ -15,6 +15,15 @@
  * inplace currently not an option.
  */
 /* #define JVX_FFT_IFFT_INPLACE */
+#define JVX_FFT_GLOBAL_FFT_ONLY_SHIFT 0x1
+#define JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT 0x2
+#define JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_SHIFT 0x3
+
+typedef struct
+{
+	// Configure FFT for either fft+ifft or fft only. Default case is fft-ifft, onlyFft = false
+	jvxCBitField mode;
+} jvx_fft_ifft_core_global_cfg;
 
 // ===========================================================================
 // Core FFT functionality - global handle
@@ -28,8 +37,14 @@ typedef struct
 	jvxSize twiddle_fft_size;
 
 	jvxSize max_fft_size;
-	jvxData* work_buffer; // There are FFT_SIZE float values forMAX size FFT
-	jvxCBool allocatedAllocator;
+
+	jvx_fft_ifft_core_global_cfg cfg;
+
+	// This buffer may be fft_size float values (fftOnly mode) or fft_size complex_float values (NO fftOnly mode)
+	complex_float* work_buffer_common; // There are FFT_SIZE float values forMAX size FFT
+
+	// This buffer may be not used (fftOnly mode) or filled by FFT_SIZE complex values - as the output from ifft which must then be converted into real values
+	complex_float* work_buffer_ifft;
 
 } jvx_fft_ifft_core_global_common;
 
