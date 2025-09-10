@@ -125,7 +125,8 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSi
 	// Derive maximum fft associated to global fft handle
 	ptr->max_fft_size = (jvxInt32) 1 << ptr->fftSizeLog;
 
-	ptr->cfg.mode = (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT) | (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_SHIFT);
+	// By defaulot: allocate complex2real and real2complex only
+	ptr->cfg.mode = (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT);
 
 	// Allocate workbuffer to allow for PRESERVE_INPUT option
 	if(cfg)
@@ -133,30 +134,20 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSi
 		ptr->cfg = *cfg;
 	}
 
-	ptr->work_buffer_common = NULL;
-	ptr->work_buffer_ifft = NULL;
+	ptr->work_buffer_fld = NULL;
+	ptr->work_buffer_sz = 0;
 
-	if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_ONLY_SHIFT))
+	if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT))
 	{
-		if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT))
-		{
-			// For FFT in preserve input mode, we need the work buffer
-			ptr->work_buffer_common = jvx_allocator->alloc(sizeof(jvxData), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
-		}
+		// For FFT in preserve input mode, we need the work buffer
+		ptr->work_buffer_fld = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size/2+1));
+		ptr->work_buffer_sz = sizeof(complex_float) * (ptr->max_fft_size/2+1);
 	}
 	else
 	{
-		if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT))
-		{
-			// For IFFT in preserve input mode, we need the work buffer
-			ptr->work_buffer_common = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
-		}
-
-		if(ptr->cfg.mode & (1 <<  JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_SHIFT))
-		{
-			// Here, we need a dedicated buffer for complex output
-			ptr->work_buffer_ifft = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
-		}
+		// For FFT in preserve input mode, we need the work buffer
+		ptr->work_buffer_fld = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
+		ptr->work_buffer_sz = sizeof(complex_float) * (ptr->max_fft_size);
 	}
 
 
@@ -282,7 +273,6 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	if(!ptr)
 		return JVX_DSP_ERROR_INTERNAL;
 
-
 	// Specify purpose of fft transform
 	res = jvx_core_fft_init_common(&ptr->common, JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL, fftType, operate, g_hdl, fftSizeArbitrary);
 
@@ -302,7 +292,7 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 		// Here, the important issue: the ifft requires full complex input - which is not very clever..
 		complex_float* cplx_ptr = NULL;
 		cplx_ptr = jvx_allocator->alloc(sizeof(complex_float),
-					(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize);
+					(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->common.fftParameters.fftSize/2+1));
 		ptr->input = (jvxDataCplx*)cplx_ptr;
 	}
 
@@ -361,9 +351,15 @@ jvxDspBaseErrorType jvx_create_fft_complex_2_complex(jvxFFT** hdlRef,
 	if(!hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 
+	if(global_hdl->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT))
+	{
+		return JVX_DSP_ERROR_INVALID_SETTING;
+	}
+
 	JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_fft_core_complex_2_complex);
 	if(!ptr)
 		return JVX_DSP_ERROR_INTERNAL;
+
 
 	// Specify purpose of fft transform
 	res = jvx_core_fft_init_common(&ptr->common, JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX, fftType, operate, global_hdl, fftSizeArbitrary);
@@ -373,7 +369,7 @@ jvxDspBaseErrorType jvx_create_fft_complex_2_complex(jvxFFT** hdlRef,
 	if(res != JVX_DSP_NO_ERROR)
 		return JVX_DSP_ERROR_INTERNAL;
 
-	// Allocate input
+	// Allocate input - not supported at the moment
 	assert(0);
 
 	if(in_ptr_fld_N)
@@ -416,6 +412,11 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdlRef,
 
 	if(!hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
+
+	if(global_hdl->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT))
+	{
+		return JVX_DSP_ERROR_INVALID_SETTING;
+	}
 
 	JVX_DSP_SAFE_ALLOCATE_OBJECT_Z(ptr, jvx_ifft_core_complex_2_complex);
 	if(!ptr)
@@ -468,14 +469,10 @@ jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdlRef)
 
 	if(hdl->operate==JVX_FFT_IFFT_PRESERVE_INPUT)
 	{
-		// Make sure the fft is properly setup
-		assert(gHdl->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_PRESERVE_INPUT_SHIFT));
-		// assert(hdl->shadow_buffer!=0);
-
 		if (hdl->fftParameters.coreFftType==JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX)
 		{
 			input =  hdl_fft_r2c->input;
-			inputWork = (jvxHandle*)gHdl->work_buffer_common;
+			inputWork = (jvxHandle*)gHdl->work_buffer_fld; // FFTSIZE/2+1 instance of complex_float should hold the input signal of FFTSIZE times jvxData
 			output = hdl_fft_r2c->output;
 			twStride = hdl->twStride;
 		}
@@ -488,6 +485,7 @@ jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdlRef)
 	{
 		if (hdl->fftParameters.coreFftType==JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX)
 		{
+			// This will destroy the input buffer
 			input =  hdl_fft_r2c->input;
 			inputWork =  hdl_fft_r2c->input;
 			output = hdl_fft_r2c->output;
@@ -499,14 +497,19 @@ jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdlRef)
 		}
 	}
 
-	if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX)
+	switch(hdl->fftParameters.coreFftType)
 	{
+	case JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_COMPLEX_2_COMPLEX:
+
+		// Not supported currently
 		assert(0);
-	}
-	else if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX)
-	{
+
+	case JVX_FFT_TOOLS_FFT_CORE_TYPE_FFT_REAL_2_COMPLEX:
+
+		// This is the core fft which already works well without adaptation
 		rfft(input, inputWork, (complex_float*)output, gHdl->twiddle_facs,
 		 		twStride, hdl->fftParameters.fftSize);
+		break;
 	}
 
 	return JVX_DSP_NO_ERROR;
@@ -521,123 +524,98 @@ jvxDspBaseErrorType jvx_execute_ifft(jvxIFFT* hdlRef)
 
 	complex_float* input = NULL;
 	complex_float* inputWork = NULL;
-	complex_float* output = NULL;
+
+	complex_float* outcplx = NULL;
 	float* outreal = NULL;
 
 	int twStride = 1;
 
-	if(hdl->operate==JVX_FFT_IFFT_PRESERVE_INPUT)
+	// if(hdl->operate==JVX_FFT_IFFT_PRESERVE_INPUT)
+	// The ifft always preserves the input as we copy the input data for ifft preparation
+
+	// Due to missing complex2real ifft no different cases
+	input = (complex_float*)hdl_ifft_c2r->input;
+
+	// This field
+	inputWork = gHdl->work_buffer_fld;
+	twStride = hdl->twStride;
+	switch(hdl->fftParameters.coreFftType)
 	{
-		// Due to missing complex2real ifft no different cases
-		input = (complex_float*)hdl_ifft_c2r->input;
-		inputWork = gHdl->work_buffer_common;
-		twStride = hdl->twStride;
-		if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL)
+		case JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL:
 		{
-			output = gHdl->work_buffer_ifft;
 			outreal = hdl_ifft_c2r->output;
-		}
-		else
-		{
-			assert(0);
-		}
+			// Run the efficient ifft complex2real.
+			// This implementation runs the first stage of the ifft taking into account a real valued output
+			// and then an ifft of length hdl->fftParameters.fftSize/2.
+			// Check the reference code in <sources/jvxLibraries/ayf_awe_embedded/ifft_eff.m>
+			int i = 0;
+			int iTw = twStride;
+			int N2 = hdl->fftParameters.fftSize/2;
 
-		// We need to mirror the complex input spectrum
-		for (int k = 1; k < hdl->fftParameters.fftSize/2; k++)
-		{
-			input[hdl->fftParameters.fftSize-k] = conj(input[k]);
-		}
-	}
+			complex_float* inPtrFwd = input;
+			complex_float* outPtrFwd = inputWork;
+			complex_float* inPtrBwd = input + N2;
+			complex_float tmp, XO, TW, XOX;
 
+			// XE = Xk(cindex2matindex(idxWrite)) + Xk(cindex2matindex(idxEnd));
+			// XO = Xk(cindex2matindex(idxWrite)) - Xk(cindex2matindex(idxEnd));
+			// Xk_fft_all(cindex2matindex(idxWrite)) = 0.5 * (XE + j * XO);
+			tmp.re = 0.5 * (inPtrFwd->re + inPtrBwd->re);
+			tmp.im = 0.5 * (inPtrFwd->re - inPtrBwd->re);
 
-	if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX)
-	{
-		assert(0);
-	}
-	else if(hdl->fftParameters.coreFftType == JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_REAL)
-	{
-#ifdef AYF_USE_OPTIMIZED_IFFT_COMPLEX_2_REAL
+			*outPtrFwd = tmp;
 
-		// Run the efficient ifft complex2real.
-		// This implementation runs the first stage of the ifft taking into account a real valued output
-		// and then an ifft of length hdl->fftParameters.fftSize/2.
-		// Check the reference code in <sources/jvxLibraries/ayf_awe_embedded/ifft_eff.m>
-		int i = 0;
-		int iTw = twStride;
-		int N2 = hdl->fftParameters.fftSize/2;
-
-		complex_float* inPtrFwd = input;
-		complex_float* outPtrFwd = inputWork;
-		complex_float* inPtrBwd = input + N2;
-		complex_float tmp, XO, TW, XOX;
-
-		// XE = Xk(cindex2matindex(idxWrite)) + Xk(cindex2matindex(idxEnd));
-	    // XO = Xk(cindex2matindex(idxWrite)) - Xk(cindex2matindex(idxEnd));
-	    // Xk_fft_all(cindex2matindex(idxWrite)) = 0.5 * (XE + j * XO);
-		tmp.re = 0.5 * (inPtrFwd->re + inPtrBwd->re);
-		tmp.im = 0.5 * (inPtrFwd->re - inPtrBwd->re);
-
-		*outPtrFwd = tmp;
-
-		inPtrFwd++;
-		outPtrFwd++;
-		inPtrBwd--;
-
-		for(i = 1; i < N2; i++)
-		{
-			// XER = real(Xk(cindex2matindex(idxWrite))) + real(Xk(cindex2matindex(idxEnd)));
-			// XEI = imag(Xk(cindex2matindex(idxWrite))) - imag(Xk(cindex2matindex(idxEnd)));
-			tmp.re = inPtrFwd->re + inPtrBwd->re;
-			tmp.im = inPtrFwd->im - inPtrBwd->im;
-
-			// XOR = real(Xk(cindex2matindex(idxWrite))) - real(Xk(cindex2matindex(idxEnd)));
-			// XOI = imag(Xk(cindex2matindex(idxWrite))) + imag(Xk(cindex2matindex(idxEnd)));
-			XO.re = inPtrFwd->re - inPtrBwd->re;
-			XO.im = inPtrFwd->im + inPtrBwd->im;
-
-			TW = gHdl->twiddle_facs[iTw];
-			iTw += twStride;
-
-			// ## XOXR = (XOR*TWR -XOI*TWI);
-			// ## XOXI = (XOR * TWI  + XOI * TWR);
-			// Note that the tw facs are conj as TW is for fft not ifft
-			// XOXR = (XOR*TWR + XOI*TWI_);
-	        // XOXI = (XOI * TWR - XOR * TWI_ );
-			XOX.re = XO.re * TW.re + XO.im * TW.im;
-			XOX.im = XO.im * TW.re - XO.re * TW.im;
-
-			// XAR = XER - XOXI;
-			// XAI = XEI + XOXR;
-			tmp.re -= XOX.im;
-			tmp.im += XOX.re;
-
-			// Add factor 0.5
-			tmp.re *= 0.5;
-			tmp.im *= 0.5;
-
-			// We need to store in a dedicated buffer to not override inPtrBwd
-			*outPtrFwd= tmp;
 			inPtrFwd++;
 			outPtrFwd++;
 			inPtrBwd--;
+
+			for(i = 1; i < N2; i++)
+			{
+				// XER = real(Xk(cindex2matindex(idxWrite))) + real(Xk(cindex2matindex(idxEnd)));
+				// XEI = imag(Xk(cindex2matindex(idxWrite))) - imag(Xk(cindex2matindex(idxEnd)));
+				tmp.re = inPtrFwd->re + inPtrBwd->re;
+				tmp.im = inPtrFwd->im - inPtrBwd->im;
+
+				// XOR = real(Xk(cindex2matindex(idxWrite))) - real(Xk(cindex2matindex(idxEnd)));
+				// XOI = imag(Xk(cindex2matindex(idxWrite))) + imag(Xk(cindex2matindex(idxEnd)));
+				XO.re = inPtrFwd->re - inPtrBwd->re;
+				XO.im = inPtrFwd->im + inPtrBwd->im;
+
+				TW = gHdl->twiddle_facs[iTw];
+				iTw += twStride;
+
+				// ## XOXR = (XOR*TWR -XOI*TWI);
+				// ## XOXI = (XOR * TWI  + XOI * TWR);
+				// Note that the tw facs are conj as TW is for fft not ifft
+				// XOXR = (XOR*TWR + XOI*TWI_);
+				// XOXI = (XOI * TWR - XOR * TWI_ );
+				XOX.re = XO.re * TW.re + XO.im * TW.im;
+				XOX.im = XO.im * TW.re - XO.re * TW.im;
+
+				// XAR = XER - XOXI;
+				// XAI = XEI + XOXR;
+				tmp.re -= XOX.im;
+				tmp.im += XOX.re;
+
+				// Add factor 0.5
+				tmp.re *= 0.5;
+				tmp.im *= 0.5;
+
+				// We need to store in a dedicated buffer to not override inPtrBwd
+				*outPtrFwd= tmp;
+				inPtrFwd++;
+				outPtrFwd++;
+				inPtrBwd--;
+			}
+
+			// Ifft corrupting the input buffer
+			ifft(inputWork, inputWork, (complex_float*)outreal, gHdl->twiddle_facs,
+					2*twStride, N2);
+
+			break;
 		}
-
-		ifft(inputWork, inputWork, (complex_float*)outreal, gHdl->twiddle_facs,
-				 		2*twStride, N2);
-#else
-
-		// ========================================================================
-		ifft(input, inputWork, output, gHdl->twiddle_facs,
-		 		twStride, hdl->fftParameters.fftSize);
-
-		// ifft2048(input, output);
-
-		for(int k = 0; k < hdl->fftParameters.fftSize; k++)
-		{
-			// Extract only the real part, imag part should be all zero!
-			outreal[k] = output[k].re;
-		}
-#endif
+		case JVX_FFT_TOOLS_FFT_CORE_TYPE_IFFT_COMPLEX_2_COMPLEX:
+			assert(0);
 	}
 
 	return JVX_DSP_NO_ERROR;
