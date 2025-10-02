@@ -1534,12 +1534,12 @@ template <class T>
 class jvxLockWithVariable
 {
 public:
-	T v;
+	T v{};
 	JVX_MUTEX_HANDLE lockHdl;
-
+	
 	jvxLockWithVariable()
 	{
-		JVX_INITIALIZE_MUTEX(lockHdl);
+		JVX_INITIALIZE_MUTEX(lockHdl);		
 	};
 
 	~jvxLockWithVariable()
