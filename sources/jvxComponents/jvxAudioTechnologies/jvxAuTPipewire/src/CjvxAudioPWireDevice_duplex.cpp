@@ -181,7 +181,7 @@ void
 #ifdef JVX_DATA_FORMAT_FLOAT
 				jvx_convertSamples_memcpy(
 					duplex.inProcessing.in_data[i],
-					bufsOut[cnt],
+					bufsOut[i],
 					sizeof(float),
 					common.bsize);
 #else
@@ -238,7 +238,7 @@ CjvxAudioPWireDevice::process_buffer_icon_duplex(jvxSize mt_mask, jvxSize idx_st
 			{
 #ifdef JVX_DATA_FORMAT_FLOAT
 			jvx_convertSamples_memcpy(
-				bufsIn[cnt],
+				bufsIn[i],
 				duplex.inProcessing.out_data[i],
 				sizeof(float),
 				common.bsize);
