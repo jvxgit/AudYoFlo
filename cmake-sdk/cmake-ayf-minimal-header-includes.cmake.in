@@ -8,6 +8,7 @@ list(APPEND AYF_MINIMAL_SDK_HEADER_INCLUDE_LIST
 	"${AYF_SDK_PATH}/include/jvx-callprot/include"
 	"${AYF_SDK_PATH}/software"
 	"${AYF_SDK_PATH}/include/jvx-dsp-base/include"
+	"${AYF_SDK_PATH}/include/jvx-dsp-base/include/common"
 	"${AYF_SDK_PATH}/include/jvx-helpers/include"
 	"${AYF_SDK_PATH}/include/jvx-helpers-product/include"
 	"${AYF_SDK_PATH}/include/jvx-flutter-native-static/include")
