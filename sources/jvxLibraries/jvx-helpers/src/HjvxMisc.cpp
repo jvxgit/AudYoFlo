@@ -383,15 +383,15 @@ jvx_size2String(jvxSize val, jvxSize modeGen)
 #if _MSC_VER >= 1600
 		sprintf_s(str, JVX_MAXSTRING, JVX_PRINTF_CAST_SIZE, val);
 #else
-		sprintf(str, JVX_PRINTF_CAST_INT64, (jvxInt64)val);
+		sprintf(str, JVX_PRINTF_CAST_SIZE, val);
 #endif
 	}
 	else
 	{
 #if _MSC_VER >= 1600
-		sprintf_s(str, JVX_MAXSTRING, "%lu", val);
+		sprintf_s(str, JVX_MAXSTRING, JVX_PRINTF_CAST_SIZE, val);
 #else
-		sprintf(str, "%lu", val);
+		sprintf(str, JVX_PRINTF_CAST_SIZE, val);
 #endif
 	}
 #endif
