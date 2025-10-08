@@ -2,6 +2,7 @@
 extern "C"
 {
 #include "jvx_fft_tools/jvx_firfft.h"
+#include "jvx_fft_tools/jvx_firfft_cf.h"
 }
 
 #if _MATLAB_MEXVERSION < 500
@@ -64,9 +65,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	SZ_MAT_TYPE dims[2] = { 1, 1 };
 	const mxArray* arrIn = NULL;
 	const mxArray* arrNum = NULL;
-	const mxArray* arrDen = NULL;
-	const mxArray* arrStates = NULL;
-
+	jvxSize filterOrder = 1;
 	jvxBool paramsOk = true;
 	if (!
 		((nrhs >= 1) && (nrhs <= 4)))
@@ -84,17 +83,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 	if (!paramsOk)
 	{
-		mexPrintf("Function <jvxIIR1Can> to filter an input with an IIR filter of order M.\n");
+		mexPrintf("Function <jvxFirFftn> to filter an input with an FIR filter of order M by involving FFTs.\n");
 		mexPrintf("Input Argument #1: 1 x N input vector.\n");
-		mexPrintf("Input Argument #2: 1 x (M+1) Numerator vector - double, opt.\n");
-		mexPrintf("Input Argument #3: 1 x (M+1) Denominator vector - double, opt.\n");
-		mexPrintf("Input Argument #4: 1 x M Filter States - double, opt.\n");
+		mexPrintf("Input Argument #2: 1 x M vector of filter coefficients.\n");
 		return;
 	}
 	else
 	{
 		jvxSize lenSig = 0;
-		jvxSize lenBufStates = 0;
 		if (nrhs >= 1)
 		{
 			arrIn = prhs[0];
@@ -113,92 +109,84 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			{
 				if (mxIsData(arrNum))
 				{
-					lenBufStates = JVX_MAX(lenBufStates, mxGetNumberOfElements(arrNum) - 1);
-				}
-			}
-		}
-		if (nrhs >= 3)
-		{
-			arrDen = prhs[2];
-			if (arrDen)
-			{
-				if (mxIsData(arrDen))
-				{
-					lenBufStates = JVX_MAX(lenBufStates, mxGetNumberOfElements(arrDen) - 1);
-				}
-			}
-		}
-		if (nrhs >= 4)
-		{
-			arrStates = prhs[3];
-			if (arrStates)
-			{
-				if (mxIsData(arrStates))
-				{
-					lenBufStates = JVX_MAX(lenBufStates, mxGetNumberOfElements(arrStates));
+					filterOrder = mxGetNumberOfElements(arrNum);
 				}
 			}
 		}
 		if (
-			(lenBufStates > 0) &&
+			(filterOrder > 0) &&
 			(lenSig > 0))
 		{
 			// Now here we go
-			// jvx_circbuffer* theCircBuffer = NULL;
-			// jvx_circbuffer_allocate_1chan(&theCircBuffer, lenBufStates);
-			jvxData* fCoeffsNum = NULL;
-			jvxData* fCoeffsDen = NULL;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(fCoeffsNum, jvxData, (lenBufStates + 1));
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(fCoeffsDen, jvxData, (lenBufStates + 1));
-			if ((arrNum) && mxIsData(arrNum))
-			{
-				jvxData* cpFrom = (jvxData*)mxGetData(arrNum);
-				jvxSize num = mxGetNumberOfElements(arrNum);
-				memcpy(fCoeffsNum, cpFrom, sizeof(jvxData) * num);
-			}
-			else
-			{
-				fCoeffsNum[0] = 1.0;
-			}
-			if (arrDen && mxIsData(arrDen))
-			{
-				jvxData* cpFrom = (jvxData*)mxGetData(arrDen);
-				jvxSize num = mxGetNumberOfElements(arrDen);
-				memcpy(fCoeffsDen, cpFrom, sizeof(jvxData) * num);
-			}
-			else
-			{
-				fCoeffsDen[0] = 1.0;
-			}
-			if (arrStates && mxIsData(arrStates))
-			{
-				jvxData* cpFrom = (jvxData*)mxGetData(arrStates);
-				jvxSize num = mxGetNumberOfElements(arrStates);
-				//memcpy(theCircBuffer->ram.field[0], cpFrom, sizeof(jvxData) * num);
-			}
+			jvx_firfft init;
+			jvx_firfft_initCfg(&init);
 
-			jvxData* in = (jvxData*)mxGetData(arrIn);
+			init.init.bsize = 128;
+			init.init.lFir = filterOrder;
+			init.init.type = JVX_FIRFFT_FLEXIBLE_FIR;
+	
+			jvxData* inFir = (jvxData*)mxGetData(arrNum);
+			init.init.fir = inFir;
+			jvx_firfft_cf_init(&init, nullptr);
 
-			// Important: we must not run in-place: this breaks the variable in Matlab!!
-			jvxData* out = nullptr;
-			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(out, jvxData, lenSig);
+			jvxData* inSig = (jvxData*)mxGetData(arrIn);
+			
+			jvxData* outSig = nullptr;
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(outSig, jvxData, lenSig);
 
-			//jvx_circbuffer_iir_1can_2io(theCircBuffer, fCoeffsNum, fCoeffsDen, &in, &out, lenSig);
+			jvxDataCplx* inFirCplx = nullptr;
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(inFirCplx, jvxDataCplx, init.derived.szFftValue / 2 + 1);
+	
+			jvxData* inSigBuf = nullptr;
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(inSigBuf, jvxData, init.init.bsize);
+
+			jvxData* outSigBuf = nullptr;
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(outSigBuf, jvxData, init.init.bsize);
+			
+			jvxSize cntStart = 0;
+			jvxSize cntStop = JVX_MIN(cntStart + init.init.bsize, lenSig);
+			while (1)
+			{
+				jvxSize nSamples = cntStop - cntStart;
+				jvxBool weightsUpdated = false;
+				if (nSamples > 0)
+				{
+					memset(inSigBuf, 0, sizeof(jvxData) * init.init.bsize);
+					memcpy(inSigBuf, inSig + cntStart, sizeof(jvxData) * nSamples);
+					if (!weightsUpdated)
+					{
+						jvx_firfft_cf_compute_weights(&init, inFir, filterOrder);
+						jvx_firfft_cf_copy_weights(&init, inFirCplx, init.derived.szFftValue / 2 + 1);
+						jvx_firfft_cf_process_update_weights(&init, inSigBuf, outSigBuf, inFirCplx, false);
+						weightsUpdated = true;
+					}
+					else
+					{
+						jvx_firfft_cf_process(&init, inSigBuf, outSigBuf, false);
+					}
+					memcpy(outSig + cntStart, outSigBuf, sizeof(jvxData) * nSamples);
+
+					cntStart = cntStop;
+					cntStop = JVX_MIN(cntStart + init.init.bsize, lenSig);
+				}
+				else
+				{
+					// Loop is done!
+					break;
+				}
+			}
 
 			if (nlhs >= 1)
 			{
-				CjvxCToMatlabConverter::mexReturnDataList(plhs[0], out, lenSig);
-			}
-			if (nlhs >= 2)
-			{
-				//CjvxCToMatlabConverter::mexReturnDataList(plhs[1], theCircBuffer->ram.field[0], lenBufStates);
+				CjvxCToMatlabConverter::mexReturnDataList(plhs[0], outSig, lenSig);
 			}
 
 			// Clear data 
-			JVX_DSP_SAFE_DELETE_FIELD(out);
-			// jvx_circbuffer_deallocate(theCircBuffer);
-			JVX_DSP_SAFE_DELETE_FIELD(fCoeffsNum);
-			JVX_DSP_SAFE_DELETE_FIELD(fCoeffsDen);
+			JVX_DSP_SAFE_DELETE_FIELD(outSig);
+			JVX_DSP_SAFE_DELETE_FIELD(inSigBuf);
+			JVX_DSP_SAFE_DELETE_FIELD(outSigBuf);
+
+			jvx_firfft_cf_terminate(&init);
 
 		} // if ((lenBufStates > 0) &&(lenSig > 0))
 		else
