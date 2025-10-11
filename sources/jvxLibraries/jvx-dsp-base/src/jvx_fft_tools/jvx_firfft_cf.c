@@ -55,39 +55,8 @@
  * new weights td  -------------
  * 
  */
+#include "jvx_firfft_cf_prv.h"
 
-typedef struct
-{
-	// This struct contais all variables required for a "simple" firfft: one fft, one ifft
-	jvx_firfft_prv firfft;	
-
-	struct
-	{
-		// Secondary fft for weight update
-		jvxFFT* corefft;
-
-		// Input buffer to drive the secondary fft
-		jvxData* in_weights;
-
-		// We use 2 iffts to involve old and new weights
-		jvxIFFT* coreifft[2];
-
-		// Corresponding spectrum input buffers, should be the result from different weights
-		jvxDataCplx* spec[2];
-
-		// The two output buffers
-		jvxData* out[2];
-
-		// Cross fade increment value
-		jvxData cf_inc;
-
-		// Index to the OLD weights in case of transition
-		jvxSize idx_cf_from;
-	} ram_cf;
-
-	jvxCBool allocatedViaAllocator;
-} jvx_firfft_cf_prv;
-		
 void 
 jvx_firfft_cf_compute_weights(jvx_firfft* hdl, jvxData* fir, jvxSize lFir)
 {
@@ -121,8 +90,8 @@ jvx_firfft_cf_copy_weights(jvx_firfft* hdl, jvxDataCplx* firW, jvxSize lFirW)
 	assert(lFirW == nHdl->firfft.derived_cpy.lFirW);
 	for (i = 0; i < nHdl->firfft.derived_cpy.szFftValue / 2 + 1; i++)
 	{
-		firW[i].re = nHdl->ram_cf.spec[1][i].re;
-		firW[i].im = nHdl->ram_cf.spec[1][i].im;
+		firW[i].re = nHdl->ram_cf.spec_ifft_in[1][i].re;
+		firW[i].im = nHdl->ram_cf.spec_ifft_in[1][i].im;
 	}
 }
 
@@ -153,20 +122,20 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 		// Let us allocate input and output - 2 iffts here
 		resL = jvx_create_ifft_complex_2_real(&nHdl->ram_cf.coreifft[0],
 			nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft,
-			&nHdl->ram_cf.spec[0], &nHdl->ram_cf.out[0], &N,
+			&nHdl->ram_cf.spec_ifft_in[0], &nHdl->ram_cf.ifft_out[0], &N,
 			JVX_FFT_IFFT_PRESERVE_INPUT,
 			NULL, NULL, 0);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		// Backward compatibility
 		nHdl->firfft.ram.coreifft = nHdl->ram_cf.coreifft[0];
-		nHdl->firfft.ram.spec = nHdl->ram_cf.spec[0];
-		nHdl->firfft.ram.out = nHdl->ram_cf.out[0];
+		nHdl->firfft.ram.spec = nHdl->ram_cf.spec_ifft_in[0];
+		nHdl->firfft.ram.out = nHdl->ram_cf.ifft_out[0];
 
 		// Secondary ifft
 		resL = jvx_create_ifft_complex_2_real(&nHdl->ram_cf.coreifft[1],
 			nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft,
-			&nHdl->ram_cf.spec[1], &nHdl->ram_cf.out[1], &N,
+			&nHdl->ram_cf.spec_ifft_in[1], &nHdl->ram_cf.ifft_out[1], &N,
 			JVX_FFT_IFFT_PRESERVE_INPUT,
 			NULL, NULL, 0);
 		assert(resL == JVX_DSP_NO_ERROR);
@@ -178,7 +147,7 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 			nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft,
 			&nHdl->firfft.ram.in,
 			NULL, &N, JVX_FFT_IFFT_PRESERVE_INPUT,
-			NULL, nHdl->ram_cf.spec[0], 0);
+			NULL, nHdl->ram_cf.spec_ifft_in[0], 0);
 		assert(resL == JVX_DSP_NO_ERROR);
 		//assert(N == nHdl->derived_cpy.szFftValue);
 
@@ -187,7 +156,7 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 			nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft,
 			&nHdl->ram_cf.in_weights,
 			NULL, &N, JVX_FFT_IFFT_PRESERVE_INPUT,
-			NULL, nHdl->ram_cf.spec[1], 0);
+			NULL, nHdl->ram_cf.spec_ifft_in[1], 0);
 		assert(resL == JVX_DSP_NO_ERROR);
 		//assert(N == nHdl->derived_cpy.szFftValue);
 
@@ -239,13 +208,13 @@ jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl)
 
 			jvx_destroy_ifft(nHdl->ram_cf.coreifft[0]);
 			nHdl->ram_cf.coreifft[0] = NULL;
-			nHdl->ram_cf.spec[0] = NULL;
-			nHdl->ram_cf.out[0] = NULL;
+			nHdl->ram_cf.spec_ifft_in[0] = NULL;
+			nHdl->ram_cf.ifft_out[0] = NULL;
 
 			jvx_destroy_ifft(nHdl->ram_cf.coreifft[1]);
 			nHdl->ram_cf.coreifft[1] = NULL;
-			nHdl->ram_cf.spec[1] = NULL;
-			nHdl->ram_cf.out[1] = NULL;
+			nHdl->ram_cf.spec_ifft_in[1] = NULL;
+			nHdl->ram_cf.ifft_out[1] = NULL;
 
 			jvx_destroy_fft_ifft_global(nHdl->firfft.ram.fftGlob);
 			nHdl->firfft.ram.fftGlob = NULL;
@@ -325,10 +294,10 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 
 		jvx_execute_fft(nHdl->firfft.ram.corefft);
 
-		spec_out = nHdl->ram_cf.spec[0];
+		spec_out = nHdl->ram_cf.spec_ifft_in[0];
 		firW = hdl->sync.firW;
 		coreifft = nHdl->ram_cf.coreifft[0];
-		out_src = nHdl->ram_cf.out[0];
+		out_src = nHdl->ram_cf.ifft_out[0];
 
 		ptrOut = out_src;
 		outphase = (nHdl->firfft.ram.phase + nHdl->firfft.derived_cpy.szFftValue - nHdl->firfft.ram.outoffset) %
@@ -341,8 +310,8 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 		case JVX_FIRFFT_SYMMETRIC_FIR:
 			for (i = 0; i < nHdl->firfft.derived_cpy.szFftValue / 2 + 1; i++)
 			{
-				spec_out[i].re *= nHdl->firfft.ram.spec[i].re * firW[i].re;
-				spec_out[i].im *= nHdl->firfft.ram.spec[i].im * firW[i].re;
+				spec_out[i].re *= firW[i].re;
+				spec_out[i].im *= firW[i].re;
 			}
 			ll1 = JVX_MIN(nHdl->firfft.derived_cpy.szFftValue - outphase, nHdl->firfft.init_cpy.bsize);
 			ll2 = nHdl->firfft.init_cpy.bsize - ll1;
@@ -438,7 +407,8 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 	return JVX_DSP_ERROR_WRONG_STATE;
 }
 
-jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxDataCplx* newWeights, jvxCBool addOnOut)
+jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, 
+	jvxDataCplx* newWeights, jvxCBool addOnOut)
 {
 	jvxSize i;
 	jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
@@ -491,15 +461,15 @@ jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxDat
 
 		jvx_execute_fft(nHdl->firfft.ram.corefft);
 
-		spec_out_old = nHdl->ram_cf.spec[0];
+		spec_out_old = nHdl->ram_cf.spec_ifft_in[0];
 		firW_old = hdl->sync.firW;
 		coreifft_old = nHdl->ram_cf.coreifft[0];
-		out_src_old= nHdl->ram_cf.out[0];
+		out_src_old= nHdl->ram_cf.ifft_out[0];
 
-		spec_out_new = nHdl->ram_cf.spec[1];
+		spec_out_new = nHdl->ram_cf.spec_ifft_in[1];
 		firW_new = newWeights;
 		coreifft_new = nHdl->ram_cf.coreifft[1];
-		out_src_new = nHdl->ram_cf.out[1];
+		out_src_new = nHdl->ram_cf.ifft_out[1];
 		
 		ptrOut_old = out_src_old;
 		ptrOut_new = out_src_new;
@@ -515,10 +485,10 @@ jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxDat
 		case JVX_FIRFFT_SYMMETRIC_FIR:
 			for (i = 0; i < nHdl->firfft.derived_cpy.szFftValue / 2 + 1; i++)
 			{
-				spec_out_old[i].re *= nHdl->firfft.ram.spec[i].re * firW_old[i].re;
-				spec_out_new[i].re *= nHdl->firfft.ram.spec[i].re * firW_new[i].re;
-				spec_out_old[i].im *= nHdl->firfft.ram.spec[i].im * firW_old[i].re;
-				spec_out_new[i].im *= nHdl->firfft.ram.spec[i].im * firW_new[i].re;
+				spec_out_old[i].re *= firW_old[i].re;
+				spec_out_new[i].re *= firW_new[i].re;
+				spec_out_old[i].im *= firW_old[i].re;
+				spec_out_new[i].im *= firW_new[i].re;
 				
 				// Take over the new weights
 				firW_old[i].re = firW_new[i].re;

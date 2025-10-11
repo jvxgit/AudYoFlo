@@ -3,6 +3,7 @@ extern "C"
 {
 #include "jvx_fft_tools/jvx_firfft.h"
 #include "jvx_fft_tools/jvx_firfft_cf.h"
+#include "jvx_fft_tools/jvx_firfft_cf_nout.h"
 }
 
 #if _MATLAB_MEXVERSION < 500
@@ -44,6 +45,8 @@ extern "C"
 #define CLIP_VALUE 0.99
 #define SMOOTH_LEVELS 0.995
 
+#define VERSION_NOUT
+
 /**
  * C-style entry from MATLAB to MEX component.
  * All command arguments are passed in the optional arguments for
@@ -66,6 +69,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	const mxArray* arrIn = NULL;
 	const mxArray* arrNum = NULL;
 	jvxSize filterOrder = 1;
+	jvxSize filteredOut = 1;
 	jvxBool paramsOk = true;
 	if (!
 		((nrhs >= 1) && (nrhs <= 4)))
@@ -85,7 +89,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	{
 		mexPrintf("Function <jvxFirFftn> to filter an input with an FIR filter of order M by involving FFTs.\n");
 		mexPrintf("Input Argument #1: 1 x N input vector.\n");
-		mexPrintf("Input Argument #2: 1 x M vector of filter coefficients.\n");
+		mexPrintf("Input Argument #2: P x M vector of filter coefficients.\n");
 		return;
 	}
 	else
@@ -109,7 +113,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			{
 				if (mxIsData(arrNum))
 				{
-					filterOrder = mxGetNumberOfElements(arrNum);
+					filteredOut = mxGetM(arrNum);
+					filterOrder = mxGetN(arrNum);
 				}
 			}
 		}
@@ -118,6 +123,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			(lenSig > 0))
 		{
 			// Now here we go
+			std::string errDescr;
 			jvx_firfft init;
 			jvx_firfft_initCfg(&init);
 
@@ -125,23 +131,32 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			init.init.lFir = filterOrder;
 			init.init.type = JVX_FIRFFT_FLEXIBLE_FIR;
 	
-			jvxData* inFir = (jvxData*)mxGetData(arrNum);
-			init.init.fir = inFir;
-			jvx_firfft_cf_init(&init, nullptr);
+			jvxData** firsIn = nullptr;
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(firsIn, jvxData, filteredOut, filterOrder);
+			CjvxCToMatlabConverter::convertMexToC(reinterpret_cast<jvxHandle**>(firsIn), filteredOut, filterOrder, JVX_DATAFORMAT_DATA, arrNum, "input", false, errDescr);
 
+			if (filteredOut == 1)
+			{
+				init.init.fir = firsIn[0];
+				jvx_firfft_cf_init(&init, nullptr);
+			}
+			else
+			{
+				jvx_firfft_cf_nout_init(&init, nullptr, filteredOut, firsIn);
+			}
 			jvxData* inSig = (jvxData*)mxGetData(arrIn);
 			
-			jvxData* outSig = nullptr;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(outSig, jvxData, lenSig);
+			jvxData** outSig = nullptr;
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(outSig, jvxData, filteredOut, lenSig);
 
-			jvxDataCplx* inFirCplx = nullptr;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(inFirCplx, jvxDataCplx, init.derived.szFftValue / 2 + 1);
+			jvxDataCplx** inFirCplx = nullptr;
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(inFirCplx, jvxDataCplx, filteredOut, init.derived.szFftValue / 2 + 1);
 	
 			jvxData* inSigBuf = nullptr;
 			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(inSigBuf, jvxData, init.init.bsize);
 
-			jvxData* outSigBuf = nullptr;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(outSigBuf, jvxData, init.init.bsize);
+			jvxData** outSigBuf = nullptr;
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(outSigBuf, jvxData, filteredOut, init.init.bsize);
 			
 			jvxSize cntStart = 0;
 			jvxSize cntStop = JVX_MIN(cntStart + init.init.bsize, lenSig);
@@ -155,16 +170,31 @@ void mexFunction( int nlhs, mxArray *plhs[],
 					memcpy(inSigBuf, inSig + cntStart, sizeof(jvxData) * nSamples);
 					if (!weightsUpdated)
 					{
-						jvx_firfft_cf_compute_weights(&init, inFir, filterOrder);
-						jvx_firfft_cf_copy_weights(&init, inFirCplx, init.derived.szFftValue / 2 + 1);
-						jvx_firfft_cf_process_update_weights(&init, inSigBuf, outSigBuf, inFirCplx, false);
+						if (filteredOut == 1)
+						{
+							jvx_firfft_cf_compute_weights(&init, firsIn[0], filterOrder);
+							jvx_firfft_cf_copy_weights(&init, inFirCplx[0], init.derived.szFftValue / 2 + 1);
+							jvx_firfft_cf_process_update_weights(&init, inSigBuf, outSigBuf[0], inFirCplx[0], false);
+						}
+						else
+						{
+							for (i = 0; i < filteredOut; i++)
+							{
+								jvx_firfft_cf_nout_compute_weights(&init, firsIn[i], filterOrder);
+								jvx_firfft_cf_nout_copy_weights(&init, inFirCplx[i], init.derived.szFftValue / 2 + 1);
+							}
+							jvx_firfft_cf_nout_process_update_weights(&init, inSigBuf, outSigBuf, inFirCplx, false);
+						}
 						weightsUpdated = true;
 					}
 					else
 					{
-						jvx_firfft_cf_process(&init, inSigBuf, outSigBuf, false);
+						jvx_firfft_cf_nout_process(&init, inSigBuf, outSigBuf, false);
 					}
-					memcpy(outSig + cntStart, outSigBuf, sizeof(jvxData) * nSamples);
+					for (i = 0; i < filteredOut; i++)
+					{
+						memcpy(outSig[i] + cntStart, outSigBuf[i], sizeof(jvxData) * nSamples);
+					}
 
 					cntStart = cntStop;
 					cntStop = JVX_MIN(cntStart + init.init.bsize, lenSig);
@@ -178,7 +208,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 			if (nlhs >= 1)
 			{
-				CjvxCToMatlabConverter::mexReturnDataList(plhs[0], outSig, lenSig);
+				CjvxCToMatlabConverter::mexReturnGenericNumeric(plhs[0], (const jvxHandle**) outSig, filteredOut, lenSig, JVX_DATAFORMAT_DATA);
 			}
 
 			// Clear data 
@@ -186,8 +216,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			JVX_DSP_SAFE_DELETE_FIELD(inSigBuf);
 			JVX_DSP_SAFE_DELETE_FIELD(outSigBuf);
 
-			jvx_firfft_cf_terminate(&init);
 
+			if (filteredOut == 1)
+			{
+				jvx_firfft_cf_terminate(&init);
+			}
+			else
+			{
+				jvx_firfft_cf_nout_terminate(&init);
+			}
 		} // if ((lenBufStates > 0) &&(lenSig > 0))
 		else
 		{

@@ -40,7 +40,10 @@ jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl);
 jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxCBool addOnOut);
 jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxDataCplx* newWeights, jvxCBool addOnOut);
 
+// Two step update procedure: transform fir vector into fft vector. The output is ifft input buffer spec[1]
 void jvx_firfft_cf_compute_weights(jvx_firfft* hdl, jvxData* fir, jvxSize lFir);
+
+// Copy the internal weights into tzhe complex weight buffer
 void jvx_firfft_cf_copy_weights(jvx_firfft* hdl, jvxDataCplx* firW, jvxSize lFirW);
 
 /*

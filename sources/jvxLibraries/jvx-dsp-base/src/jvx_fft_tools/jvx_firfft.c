@@ -48,6 +48,7 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	jvx_firfft_resetDerived(init);
 
 	init->sync.firW = NULL;
+	init->sync.ext = NULL;
 
 	init->prv = NULL;
 

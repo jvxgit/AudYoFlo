@@ -63,6 +63,7 @@ typedef struct
 typedef struct
 {
 	jvxDataCplx* firW;
+	jvxHandle* ext;
 } jvx_firfft_prmSync;
 
 typedef struct

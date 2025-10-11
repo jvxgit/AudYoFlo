@@ -88,12 +88,14 @@ if(JVX_USE_FFTW)
 	set(LOCAL_SOURCES ${LOCAL_SOURCES}
 		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft.h
 		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf.h
+		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf_nout.h
 
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_prv.h
 
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_fft_tools.c
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft.c
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf_nout.c
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_circbuffer/jvx_circbuffer_fft.c
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_spectrumEstimation/jvx_spectrumEstimation.c
 		)
