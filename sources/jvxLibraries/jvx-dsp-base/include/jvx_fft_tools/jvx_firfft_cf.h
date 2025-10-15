@@ -41,6 +41,10 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData* outArg, jvxDataCplx* newWeights, jvxCBool addOnOut);
 
 // Two step update procedure: transform fir vector into fft vector. The output is ifft input buffer spec[1]
+// This function uses the secondary fft and the secondary ifft buffer. Therefore, one may run
+// jvx_firfft_cf_process in parallel. 
+// The function jvx_firfft_cf_process_update_weights should not be used in parallel since the fft outputbuffer is used
+// in the conversion and in the more complicated process function
 void jvx_firfft_cf_compute_weights(jvx_firfft* hdl, jvxData* fir, jvxSize lFir);
 
 // Copy the internal weights into tzhe complex weight buffer

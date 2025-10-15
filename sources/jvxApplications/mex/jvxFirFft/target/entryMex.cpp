@@ -4,6 +4,7 @@ extern "C"
 #include "jvx_fft_tools/jvx_firfft.h"
 #include "jvx_fft_tools/jvx_firfft_cf.h"
 #include "jvx_fft_tools/jvx_firfft_cf_nout.h"
+#include "jvx_fft_tools/jvx_firfft_cf_cvrt.h"
 }
 
 #if _MATLAB_MEXVERSION < 500
@@ -125,6 +126,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			// Now here we go
 			std::string errDescr;
 			jvx_firfft init;
+			jvxHandle* irft_update = nullptr;
 			jvx_firfft_initCfg(&init);
 
 			init.init.bsize = 128;
@@ -142,7 +144,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 			else
 			{
-				jvx_firfft_cf_nout_init(&init, nullptr, filteredOut, firsIn);
+				jvx_firfft_cf_nout_init(&init, nullptr, filteredOut);
+				jvx_firfft_cf_cvrt_init(&init, nullptr, firsIn, &irft_update);
 			}
 			jvxData* inSig = (jvxData*)mxGetData(arrIn);
 			
@@ -180,8 +183,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 						{
 							for (i = 0; i < filteredOut; i++)
 							{
-								jvx_firfft_cf_nout_compute_weights(&init, firsIn[i], filterOrder);
-								jvx_firfft_cf_nout_copy_weights(&init, inFirCplx[i], init.derived.szFftValue / 2 + 1);
+								jvx_firfft_cf_cvrt_compute_weights_and_copy(irft_update, firsIn[i], filterOrder, inFirCplx[i], init.derived.szFftValue / 2 + 1, c_false);
 							}
 							jvx_firfft_cf_nout_process_update_weights(&init, inSigBuf, outSigBuf, inFirCplx, false);
 						}

@@ -1,6 +1,8 @@
 #include "CjvxAuNBinauralRender.h"
 #include "jvx-helpers-cpp.h"
 #include "jvx_fft_tools/jvx_firfft.h"
+#include "jvx_fft_tools/jvx_firfft_cf_nout.h"
+#include "jvx_fft_tools/jvx_firfft_cf_cvrt.h"
 
 CjvxAuNBinauralRender::CjvxAuNBinauralRender(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
@@ -229,6 +231,11 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxData* out_left = buffers_out[0];
 	jvxData* out_right = buffers_out[1];
 
+#ifdef AYF_CTC_EFFICIENT_FILTER
+	jvxData* outLeftRight[2] = { out_left , out_right };
+	jvxDataCplx* firHLeftRight[2] = { render_pri->updatedWeightsLeft , render_pri->updatedWeightsRight };
+#endif
+
 	const jvxSize num_channels_in = _common_set_icon.theData_in->con_params.number_channels;
 	const jvxSize num_channels_out = _common_set_ocon.theData_out.con_params.number_channels;
 
@@ -256,8 +263,14 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		if (updateHRir == jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY)
 		{
 			runWithUpdate = true;
+
+#ifdef AYF_CTC_EFFICIENT_FILTER
+			
+			jvx_firfft_cf_nout_process_update_weights(&render_pri->firfftcf_left_right, in, outLeftRight, firHLeftRight, false);
+#else
 			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_left, in, out_left, render_pri->updatedWeightsLeft, false);
 			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_right, in, out_right, render_pri->updatedWeightsRight, false);
+#endif
 			updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_ACCEPT_NEW_TASK;
 		}
 		JVX_UNLOCK_MUTEX(safeAccessUpdateBgrd);
@@ -265,8 +278,15 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 	if (!runWithUpdate)
 	{
+
+#ifdef AYF_CTC_EFFICIENT_FILTER
+
+		jvx_firfft_cf_nout_process(&render_pri->firfftcf_left_right, in, outLeftRight, false);
+
+#else
 		jvx_firfft_cf_process(&render_pri->firfftcf_left, in, out_left, false);
 		jvx_firfft_cf_process(&render_pri->firfftcf_right, in, out_right, false);
+#endif
 	}
 
 	
@@ -411,11 +431,24 @@ CjvxAuNBinauralRender::wokeup(jvxInt64 timestamp_us, jvxSize* delta_ms)
 		// be triggered from the main thread as well as from the processing thread.
 		// If triggered from within the process thread, it is dangerous to run the update in
 		// the given thread since it might block the processing for a too long time. Therefore the third thread.
+
+#ifdef AYF_CTC_EFFICIENT_FILTER
+
+		jvx_firfft_cf_cvrt_compute_weights_and_copy(render_pri->firfftcf_cvrt, render_pri->buffer_hrir_left, render_pri->length_buffer_hrir, 
+			render_pri->updatedWeightsLeft, render_pri->lUpdatedWeights, c_false);
+
+		jvx_firfft_cf_cvrt_compute_weights_and_copy(render_pri->firfftcf_cvrt, render_pri->buffer_hrir_right, render_pri->length_buffer_hrir,
+			render_pri->updatedWeightsRight, render_pri->lUpdatedWeights, c_false);
+
+#else
+
+		
 		jvx_firfft_cf_compute_weights(&render_pri->firfftcf_left, render_pri->buffer_hrir_left, render_pri->length_buffer_hrir);
 		jvx_firfft_cf_copy_weights(&render_pri->firfftcf_left, render_pri->updatedWeightsLeft, render_pri->lUpdatedWeights);
 
 		jvx_firfft_cf_compute_weights(&render_pri->firfftcf_right, render_pri->buffer_hrir_right, render_pri->length_buffer_hrir);
 		jvx_firfft_cf_copy_weights(&render_pri->firfftcf_right, render_pri->updatedWeightsRight, render_pri->lUpdatedWeights);
+#endif
 
 		updateHRir = jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY;
 	}
@@ -447,6 +480,28 @@ CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData
 	allocate_hrir_buffers(render_inst);
 	this->update_hrirs(render_inst, startAz, startInc);
 
+#ifdef AYF_CTC_EFFICIENT_FILTER
+	jvx_firfft_initCfg(&render_inst->firfftcf_left_right);
+
+	render_inst->firfftcf_left_right.init.bsize = bsize;	
+	render_inst->firfftcf_left_right.init.lFir = render_inst->length_buffer_hrir;
+	render_inst->firfftcf_left_right.init.type = JVX_FIRFFT_FLEXIBLE_FIR;
+
+	jvxData* hrir_LR[2] = 
+	{
+		render_inst->buffer_hrir_left, render_inst->buffer_hrir_right
+	};
+
+	jvx_firfft_cf_nout_init(&render_inst->firfftcf_left_right, NULL, 2);
+	jvx_firfft_cf_cvrt_init(&render_inst->firfftcf_left_right, NULL, hrir_LR, (jvxHandle**)&render_inst->firfftcf_cvrt);
+
+	// The following buffers for NEW filter coeficients
+	render_inst->lUpdatedWeights = render_inst->firfftcf_left_right.derived.lFirW;
+	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(render_inst->updatedWeightsLeft, jvxDataCplx, render_inst->lUpdatedWeights);
+	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(render_inst->updatedWeightsRight, jvxDataCplx, render_inst->lUpdatedWeights);
+
+#else
+
 	jvx_firfft_initCfg(&render_inst->firfftcf_left);
 	jvx_firfft_initCfg(&render_inst->firfftcf_right);
 
@@ -466,6 +521,8 @@ CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData
 	render_inst->lUpdatedWeights = render_inst->firfftcf_left.derived.lFirW;
 	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(render_inst->updatedWeightsLeft, jvxDataCplx, render_inst->lUpdatedWeights);
 	JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(render_inst->updatedWeightsRight, jvxDataCplx, render_inst->lUpdatedWeights);
+#endif
+
 	return render_inst;
 }
 
@@ -476,8 +533,13 @@ CjvxAuNBinauralRender::deallocate_renderer(jvxOneRenderCore*& render_inst)
 	JVX_DSP_SAFE_DELETE_FIELD(render_inst->updatedWeightsRight);
 	render_inst->lUpdatedWeights = 0;
 
+#ifdef AYF_CTC_EFFICIENT_FILTER
+	jvx_firfft_cf_cvrt_terminate(&render_inst->firfftcf_left_right, &render_inst->firfftcf_cvrt);
+	
+#else
 	jvx_firfft_cf_terminate(&render_inst->firfftcf_left);
 	jvx_firfft_cf_terminate(&render_inst->firfftcf_right);
+#endif
 
 	deallocate_hrir_buffers(render_inst);
 

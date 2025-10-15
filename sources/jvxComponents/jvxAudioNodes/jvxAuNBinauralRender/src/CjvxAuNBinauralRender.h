@@ -9,6 +9,8 @@
 
 #include "jvx_fft_tools/jvx_firfft_cf.h"
 
+#define AYF_CTC_EFFICIENT_FILTER
+
 enum class jvxRenderingUpdateStatus
 {
 	JVX_RENDERING_UPDATE_OFF,
@@ -25,11 +27,20 @@ public:
 	jvxData* buffer_hrir_right = nullptr;
 	jvxSize length_buffer_hrir = JVX_SIZE_UNSELECTED;
 	jvxSize idx_sofa = 0;
+
+#ifdef AYF_CTC_EFFICIENT_FILTER
+	jvx_firfft firfftcf_left_right;
+	jvxHandle* firfftcf_cvrt;
+#else
 	jvx_firfft firfftcf_left;
 	jvx_firfft firfftcf_right;
+#endif
+
+	// These fields are required to feed in new coefficients on filter changes
 	jvxDataCplx* updatedWeightsLeft = nullptr;
 	jvxDataCplx* updatedWeightsRight = nullptr;
 	jvxSize lUpdatedWeights = 0;
+
 	jvxSize loadId = JVX_SIZE_UNSELECTED;
 };
 
