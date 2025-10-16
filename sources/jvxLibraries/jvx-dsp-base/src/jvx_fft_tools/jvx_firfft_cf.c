@@ -33,6 +33,42 @@
 
 #include "jvx_fft_tools/jvx_firfft_prv.h"
 
+ // =====================================================================================
+
+typedef struct
+{
+	// This struct contais all variables required for a "simple" firfft: one fft, one ifft
+	jvx_firfft_prv firfft;
+
+	struct
+	{
+		// Secondary fft for weight update
+		jvxFFT* corefft;
+
+		// Input buffer to drive the secondary fft
+		jvxData* in_weights;
+
+		// We use 2 iffts to involve old and new weights
+		jvxIFFT* coreifft[2];
+
+		// Corresponding spectrum input buffers, should be the result from different weights
+		jvxDataCplx* spec_ifft_in[2];
+
+		// The two output buffers
+		jvxData* ifft_out[2];
+
+		// Cross fade increment value
+		jvxData cf_inc;
+
+		// Index to the OLD weights in case of transition
+		jvxSize idx_cf_from;
+	} ram_cf;
+
+	jvxCBool allocatedViaAllocator;
+} jvx_firfft_cf_prv;
+
+// =====================================================================================
+
 /*
  * This function realizes an fft domain based time domain filter. It provides 2 
  * FFTs and 2 IIFTs:
@@ -55,7 +91,6 @@
  * new weights td  -------------
  * 
  */
-#include "jvx_firfft_cf_prv.h"
 
 void 
 jvx_firfft_cf_compute_weights(jvx_firfft* hdl, jvxData* fir, jvxSize lFir)
@@ -106,7 +141,8 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 		assert(jvx_allocator != NULL);
 
 		nHdl = (jvx_firfft_cf_prv*)jvx_allocator->alloc(sizeof(jvx_firfft_cf_prv), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
-		
+		nHdl->firfft.tp = JVX_FIRFFT_PRV_TYPE_CF;
+
 		hdl->prv = nHdl;
 
 		jvx_firfft_update(hdl, JVX_DSP_UPDATE_INIT, true); // this sets all derived values
@@ -196,6 +232,7 @@ jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl)
 	{
 		res = JVX_DSP_ERROR_WRONG_STATE;
 		jvx_firfft_cf_prv* nHdl = (jvx_firfft_cf_prv*)hdl->prv;
+		assert(nHdl->firfft.tp == JVX_FIRFFT_PRV_TYPE_CF);
 
 		if (nHdl->ram_cf.corefft)
 		{
@@ -263,6 +300,7 @@ jvxDspBaseErrorType jvx_firfft_cf_process(jvx_firfft* hdl, jvxData* inArg, jvxDa
 	if (hdl->prv)
 	{
 		jvx_firfft_cf_prv* nHdl = (jvx_firfft_cf_prv*)hdl->prv;
+		assert(nHdl->firfft.tp == JVX_FIRFFT_PRV_TYPE_CF);
 
 		ll1 = JVX_MIN(nHdl->firfft.derived_cpy.szFftValue - nHdl->firfft.ram.phase, nHdl->firfft.init_cpy.bsize);
 		ll2 = nHdl->firfft.init_cpy.bsize - ll1;
@@ -442,6 +480,7 @@ jvxDspBaseErrorType jvx_firfft_cf_process_update_weights(jvx_firfft* hdl, jvxDat
 	if (hdl->prv)
 	{
 		jvx_firfft_cf_prv* nHdl = (jvx_firfft_cf_prv*)hdl->prv;
+		assert(nHdl->firfft.tp == JVX_FIRFFT_PRV_TYPE_CF);
 
 		ll1 = JVX_MIN(nHdl->firfft.derived_cpy.szFftValue - nHdl->firfft.ram.phase, nHdl->firfft.init_cpy.bsize);
 		ll2 = nHdl->firfft.init_cpy.bsize - ll1;

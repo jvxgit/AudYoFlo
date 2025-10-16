@@ -66,7 +66,7 @@ jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg)
 		jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
 
 		nHdl = jvx_allocator->alloc(sizeof(jvx_firfft_prv), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
-
+		nHdl->tp = JVX_FIRFFT_PRV_TYPE_NONE;
 		hdl->prv = nHdl;
 
 		jvx_firfft_update(hdl, JVX_DSP_UPDATE_INIT, true); // this sets all derived values
@@ -148,6 +148,8 @@ jvxDspBaseErrorType jvx_firfft_process_mix(jvx_firfft* hdl, jvxData* in, jvxData
 	if (hdl->prv)
 	{
 		jvx_firfft_prv* nHdl = (jvx_firfft_prv*)hdl->prv; 
+		assert(nHdl->tp == JVX_FIRFFT_PRV_TYPE_NONE);
+
 		if (isFirst)
 		{
 			memset(out, 0, sizeof(jvxData) * nHdl->init_cpy.bsize);
@@ -187,6 +189,7 @@ jvxDspBaseErrorType jvx_firfft_process(jvx_firfft* hdl, jvxData* inArg, jvxData*
 	if (hdl->prv)
 	{
 		jvx_firfft_prv* nHdl = (jvx_firfft_prv*)hdl->prv;
+		assert(nHdl->tp == JVX_FIRFFT_PRV_TYPE_NONE);
 
 		ll1 = JVX_MIN(nHdl->derived_cpy.szFftValue - nHdl->ram.phase, nHdl->init_cpy.bsize);
 		ll2 = nHdl->init_cpy.bsize - ll1;
@@ -271,6 +274,7 @@ jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl)
 	if (hdl->prv)
 	{
 		jvx_firfft_prv* nHdl = (jvx_firfft_prv*)hdl->prv;
+		assert(nHdl->tp == JVX_FIRFFT_PRV_TYPE_NONE);
 
 		if (nHdl->ram.corefft)
 		{
@@ -330,6 +334,7 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 				}
 			}
 
+			// This is the minimum access function to work in case jvx_firfft, jvx_firfft_cf and jvx_firft_nout
 			if (nHdl)
 			{
 				nHdl->init_cpy = hdl->init;
