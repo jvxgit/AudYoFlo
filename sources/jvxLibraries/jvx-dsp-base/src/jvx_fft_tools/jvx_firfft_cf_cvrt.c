@@ -78,7 +78,7 @@ jvxDspBaseErrorType jvx_firfft_cf_cvrt_init(jvx_firfft* hdl, jvxHandle* fftCfgHd
 	jvx_firfft_cf_nout_prmSync* nChans = (jvx_firfft_cf_nout_prmSync*)hdl->sync.ext;
 	for (i = 0; i < nChans->N; i++)
 	{
-		jvx_firfft_cf_cvrt_compute_weights_and_copy(nHdl, fir[i], nHdl->init_cpy.lFir, nChans->firWN[i], nHdl->derived_cpy.lFirW, false);
+		jvx_firfft_cf_cvrt_compute_weights_and_copy(nHdl, fir[i], nHdl->init_cpy.lFir, nChans->firWN[i], nHdl->derived_cpy.lFirW, c_true);
 	}
 
 	return JVX_DSP_NO_ERROR;

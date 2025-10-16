@@ -387,25 +387,11 @@ jvxDspBaseErrorType jvx_firfft_cf_nout_process_update_weights(jvx_firfft* hdl, j
 	jvxSize ll1 = 0;
 	jvxSize ll2 = 0;
 	jvxData* ptrIn = NULL;
-	jvxData* ptrOut_old_new = NULL;
 	jvxSize outphase = 0;
-
 	jvxData* in = inArg;
-	jvxData accu;
-
-	//jvxDataCplx* spec_out_old_new = NULL;
-
-	jvxDataCplx* firW_old = NULL;
-
-	//jvxIFFT* coreifft_old_new = NULL;
-
-
-	//jvxData* out_src_old_new = NULL;
 
 	jvxSize idxNew = 0;
-	jvxData weightCf_old = 0;
-	jvxData weightCf_new = 0;
-
+	
 	if (hdl->prv)
 	{
 		jvx_firfft_cf_nout_prv* nHdl = (jvx_firfft_cf_nout_prv*)hdl->prv;
@@ -440,7 +426,7 @@ jvxDspBaseErrorType jvx_firfft_cf_nout_process_update_weights(jvx_firfft* hdl, j
 			jvxData* out = outArg[iC];
 
 			jvxDataCplx* firW_new = newWeights[iC];
-			firW_old = nChannels->firWN[iC];
+			jvxDataCplx* firW_old = nChannels->firWN[iC];
 
 			outphase = (nHdl->firfft.ram.phase + nHdl->firfft.derived_cpy.szFftValue - nHdl->firfft.ram.outoffset) %
 				nHdl->firfft.derived_cpy.szFftValue;
@@ -470,7 +456,8 @@ jvxDspBaseErrorType jvx_firfft_cf_nout_process_update_weights(jvx_firfft* hdl, j
 			}			
 
 			jvx_execute_ifft(nHdl->firfft.ram.coreifft);
-			jvx_local_out_old_new(1.0, -nHdl->ram_cf_nout.cf_inc, nHdl->firfft.ram.out, outphase, out, addOnOut, ll1, ll2, nHdl->firfft.ram.normFactor);
+			jvx_local_out_old_new(1.0, -nHdl->ram_cf_nout.cf_inc, nHdl->firfft.ram.out, outphase, out, addOnOut, ll1, ll2, nHdl->firfft.ram.normFactor);	
+
 
 			// Process "new" filtering
 			switch (nHdl->firfft.init_cpy.type)
@@ -493,8 +480,8 @@ jvxDspBaseErrorType jvx_firfft_cf_nout_process_update_weights(jvx_firfft* hdl, j
 			}
 			jvx_execute_ifft(nHdl->firfft.ram.coreifft);
 			jvx_local_out_old_new(0.0, nHdl->ram_cf_nout.cf_inc, nHdl->firfft.ram.out, outphase, out, true, ll1, ll2, nHdl->firfft.ram.normFactor);
-
-			// Take over the new weights
+			
+			// Take over the new weights			
 			for (i = 0; i < nHdl->firfft.derived_cpy.szFftValue / 2 + 1; i++)
 			{
 				firW_old[i].re = firW_new[i].re;
