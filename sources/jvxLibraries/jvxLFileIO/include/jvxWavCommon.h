@@ -207,7 +207,7 @@ public:
 		jvxErrorType res = JVX_NO_ERROR;
 		if(state_object == JVX_STATE_SELECTED)
 		{
-			JVX_FCLOSE(params_file.fHandle);
+			JVX_FCLOSE(params_file.fHandle, fName.c_str());
 			this->reset();
 			state_object = JVX_STATE_INIT;
 		}

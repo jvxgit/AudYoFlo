@@ -20,6 +20,10 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureFromFile(jvxCallManagerConfiguration* c
 	jvxComponentIdentification tpCrypt(JVX_COMPONENT_CRYPT, JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
 
 	std::cout << __FUNCTION__ << " -- Trying to open configuration file  <" << fName << ">." << std::endl;
+	for (auto dirs : filepaths)
+	{
+		std::cout << __FUNCTION__ << " ---- Search in folder <" << dirs << ">" << std::endl;
+	}
 
 	std::string secName;
 	std::vector<std::string> warnings;
@@ -442,8 +446,16 @@ JVX_APP_FACTORY_HOST_CLASSNAME::configureToFile(jvxCallManagerConfiguration* cal
 		}
 		else
 		{
-			std::cout << __FUNCTION__ << " Output config content to file <" << fName << ">." << std::endl;
+			std::cout << __FUNCTION__ << " Output config content to file <" << fName << ">.." << std::flush;
 			res = jvx_writeContentToFile(fName, content);
+			if (res != JVX_NO_ERROR)
+			{
+				std::cout << "-> failed, error: <" << jvxErrorType_descr(res) << ">." << std::endl;
+			}
+			else
+			{
+				std::cout << "-> successful." << std::endl;
+			}
 		}
 	}
 

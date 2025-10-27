@@ -40,12 +40,37 @@
 */
 
 // Fopen must be an fopen_s in Windows!
-#define JVX_FOPEN(fHdl, fName, howtoopen) fopen_s(&fHdl, fName, howtoopen)
+// #define JVX_FOPEN(fHdl, fName, howtoopen) fopen_s(&fHdl, fName, howtoopen)
+
+// =============================================================================
+// =============================================================================
+
+#ifdef JVX_FOPEN_CLOSE_VERBOSE
+#define JVX_FOPEN(fHdl, fName, howtoopen) \
+	printf("JVX_OPEN file <%s>\n", fName); \
+	fopen_s(&fHdl, fName, howtoopen)
+
+#define JVX_FCLOSE(fHdl, fName) \
+	printf("JVX_FCLOSE file <%s>\n", fName); \
+	fclose(fHdl)
+
+#else
+
+#define JVX_FOPEN(fHdl, fName, howtoopen) \
+	fopen_s(&fHdl, fName, howtoopen)
+
+#define JVX_FCLOSE(fHdl, fName) \
+	fclose(fHdl)
+#endif
+
+// =============================================================================
+
 #define JVX_FOPEN_UNBUFFERED(fHdl, fName, howtoopen) \
 	fopen_s(&fHdl, fName, howtoopen); \
 	if(fHdl) {setvbuf(fHdl, NULL, _IONBF, 0);}
 
-#define JVX_FCLOSE(fHdl) fclose(fHdl)
+// #define JVX_FCLOSE(fHdl) fclose(fHdl)
+
 
 #define JVX_STATIC_INLINE static inline
 

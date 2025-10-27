@@ -206,6 +206,7 @@ CayfFullHostClass::mainThreadLoop()
 jvxErrorType 
 CayfFullHostClass::load_config_content(IjvxExternalModuleFactory* priIf, jvxConfigData** datOnReturn, const char* fName)
 {
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 	if (hHost)
 	{
 		auto inst = reqInterface<IjvxComponentHostExt>(hHost);
@@ -236,11 +237,11 @@ CayfFullHostClass::load_config_content(IjvxExternalModuleFactory* priIf, jvxConf
 
 			if (!modName.empty())
 			{
-				inst->load_config_content_module(modName.c_str(), datOnReturn);
+				res = inst->load_config_content_module(modName.c_str(), datOnReturn);
 			}
 		}
 	}
-	return JVX_ERROR_ELEMENT_NOT_FOUND;
+	return res;
 }
 
 jvxErrorType 

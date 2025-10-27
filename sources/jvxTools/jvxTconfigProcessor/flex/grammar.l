@@ -54,6 +54,7 @@ int lineNumber=1;
 string currentFilename;
 string currentToken;
 FILE* currentFileHandle = NULL;
+string currentFileName = "";
 int currentFilenum = 0;
 vector<string> stringListLex;
 string errorToken;
@@ -199,11 +200,7 @@ extern CjvxConfigProcessor* procStore;
 			return(0);
 	   }
 
-#if defined(VC8)  || defined(VC9)
-		fopen_s(&fPtrNew, filename.c_str(), "r");
-#else
-		fPtrNew = fopen(filename.c_str(), "r");
-#endif
+		JVX_FOPEN(fPtrNew, filename.c_str(), "r");
 		if(!fPtrNew)
 		{
 			return(0);
@@ -246,11 +243,7 @@ extern CjvxConfigProcessor* procStore;
 		currentFilenum = 0;
 		lineNumber = 1;
 
-#if defined(VC8)  || defined(VC9)
-		fopen_s(&currentFileHandle, currentFilename.c_str(), "r");
-#else
-		currentFileHandle = fopen(currentFilename.c_str(), "r");
-#endif
+		JVX_FOPEN(currentFileHandle, currentFilename.c_str(), "r");
 		if(!currentFileHandle)
 		{
 			errorMessage = "failed to open file " + currentFilename;
@@ -288,11 +281,7 @@ extern CjvxConfigProcessor* procStore;
 		if(modeUseFiles)
 		{
 			currentFilename = stringListLex[currentFilenum];
-#if defined(VC8)  || defined(VC9)
-			fopen_s(&currentFileHandle, currentFilename.c_str(), "r");
-#else
-			currentFileHandle = fopen(currentFilename.c_str(), "r");
-#endif
+			JVX_FOPEN(currentFileHandle, currentFilename.c_str(), "r");
 			if(!currentFileHandle)
 			{
 				return(0);
@@ -301,6 +290,15 @@ extern CjvxConfigProcessor* procStore;
 			return(1);
 		}
 		return(0);
+	}
+
+	void cleanupParserFiles()
+	{
+		if(currentFileHandle)
+		{
+			JVX_FCLOSE(currentFileHandle, JVX_FILENAME_FROM_FILE(currentFileHandle).c_str());
+		}
+		currentFileHandle = nullptr;
 	}
 
 	int lexAssignTBuffer(std::string fileNameTxt, std::string fName, int lineNo)
@@ -318,11 +316,7 @@ extern CjvxConfigProcessor* procStore;
 		{
 			currentFilename = fileNameTxt;
 			currentFilenum = 0;
-#ifdef VC8
-			fopen_s(&currentFileHandle, currentFilename.c_str(), "r");
-#else
-			currentFileHandle = fopen(currentFilename.c_str(), "r");
-#endif
+			JVX_FOPEN(currentFileHandle, currentFilename.c_str(), "r");
 			if(!currentFileHandle)
 			{
 				return(0);
@@ -913,7 +907,7 @@ end_of_line		  \n
 	if(modeUseFiles)
 	{
 		assert(currentFileHandle);
-		fclose(currentFileHandle);
+		JVX_FCLOSE(currentFileHandle, JVX_FILENAME_FROM_FILE(currentFileHandle).c_str());
 	}
 	currentFileHandle = NULL;
 

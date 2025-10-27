@@ -169,6 +169,8 @@ CjvxAppHost::put_configuration(jvxCallManagerConfiguration* callConf,
 							newElm.fName = fNameAstr.std_str();
 							newElm.lineNo = lineNoCfg;
 							auto exElm = extModulesConfigs.find(newElm.moduleName);
+
+							// We store the external module configuration fragments within this list
 							if (exElm == extModulesConfigs.end())
 							{
 								extModulesConfigs[newElm.moduleName] = newElm;
@@ -642,26 +644,41 @@ CjvxAppHost::get_configuration(jvxCallManagerConfiguration* callConf,
 				datTmpLoc = nullptr;
 				datAdd = nullptr;
 				jvxConfigData* datAddAdd = nullptr;
+
 				processor->createEmptySection(&datTmpLoc, SECTIONNAME_ALL_EXTERNAL_MODULE_ENTRIES);
 				for (auto& elm : extModuleDefinitions)
 				{
 					processor->createEmptySection(&datAdd, elm.second.moduleName.c_str());
+
+					jvxSize cnt = 0;
+
 					for (auto& elmI : elm.second.associatedExternalComponents)
 					{			
 						jvxApiString modAstr;
 						elmI->module_reference(&modAstr, nullptr);
-						auto ifElm = reqInterfaceObj<IjvxConfiguration>(elmI);
-						if(ifElm)
+
+						std::string nmSec = modAstr.c_str();
+						if (cnt > 0)
 						{
-							processor->createEmptySection(&datTmp_add, modAstr.c_str());
+							nmSec += "_";
+							nmSec += jvx_size2String(cnt);
+							//nmSec += "";
+						}
+
+						auto ifElm = reqInterfaceObj<IjvxConfiguration>(elmI);
+
+						if(ifElm)
+						{							
+							processor->createEmptySection(&datTmp_add, nmSec.c_str());
 							ifElm->get_configuration(callConf, processor, datTmp_add);
 						}
 						else
 						{
-							std::string commStr = "No configuration for module reference <" + modAstr.std_str();
+							std::string commStr = "No configuration for module reference <" + nmSec;
 							commStr += ">.";
 							processor->createComment(&datTmp_add, commStr.c_str());
 						}
+						cnt++;
 						processor->addSubsectionToSection(datAdd, datTmp_add);
 						retInterfaceObj<IjvxConfiguration>(elmI, ifElm);
 					}

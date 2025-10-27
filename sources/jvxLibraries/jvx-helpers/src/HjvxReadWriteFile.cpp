@@ -37,7 +37,7 @@ jvx_writeContentToFile(std::string fName,
 		ptrContent = NULL;
 	}
 
-	fclose(fPtr);
+	JVX_FCLOSE(fPtr, fName.c_str());
 
 	if(val != numWrite)
 	{
@@ -56,11 +56,7 @@ jvx_readContentFromFile(std::string fName, std::string& storeContent, IjvxCrypt*
 	jvxErrorType res = JVX_NO_ERROR;
 	int cnt = 0;
 
-#if _MSC_VER >= 1600
-	fopen_s(&fPtr, fName.c_str(),"rb");
-#else
-	fPtr = fopen(fName.c_str(),"rb");
-#endif
+	JVX_FOPEN(fPtr, fName.c_str(),"rb");
 
 	if(!fPtr)
 	{
@@ -80,7 +76,7 @@ jvx_readContentFromFile(std::string fName, std::string& storeContent, IjvxCrypt*
 		}
 		cnt ++;
 	}
-	fclose(fPtr);
+	JVX_FCLOSE(fPtr, fName.c_str());
 
 	if(theCryptor)
 	{

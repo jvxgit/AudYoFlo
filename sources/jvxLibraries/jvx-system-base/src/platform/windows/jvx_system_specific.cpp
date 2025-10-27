@@ -345,7 +345,7 @@ JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
 	
 	if (verboseOn)
 	{
-		std::cout << "Timestamp raw data: " << uli.QuadPart << std::endl;
+		std::cout << __FUNCTION__ << ": Timestamp raw data: " << uli.QuadPart << std::endl;
 	}
 
 	SYSTEMTIME sysTime;
@@ -369,7 +369,7 @@ JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
 
 	if (verboseOn)
 	{
-		std::cout << __FUNCTION__ << "Derived current moment in time: " <<
+		std::cout << __FUNCTION__ << ": Derived current moment in time: " <<
 			"Year: " << wYear << "; " <<
 			"Month: " << wMonth << "; " <<
 			"Day: " << wDay << "; " <<

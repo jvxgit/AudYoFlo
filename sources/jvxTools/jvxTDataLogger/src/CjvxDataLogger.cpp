@@ -195,7 +195,7 @@ CjvxDataLogger::deactivate()
 		if(res == JVX_NO_ERROR)
 		{
 
-			JVX_FCLOSE(fileHandle.fPtr);
+			JVX_FCLOSE(fileHandle.fPtr, fileHandle.fName.c_str());
 			fileHandle.fPtr = NULL;
 			fileHandle.fName = "";
 		}

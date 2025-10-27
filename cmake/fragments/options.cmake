@@ -113,5 +113,6 @@ option(JVX_USE_LIBMYSOFA "Compile with libmysofa support" false)
 option(JVX_USE_ORC "Find ORC" false)
 option(JVX_USE_KISSFFT "Involve kissfft" false)
 option(JVX_PROFILE_TEXT_LOG_LOCK "Enable lock profiling for text log" false)
+option(JVX_FOPEN_CLOSE_VERBOSE "Enable verbose output on fopen/fclose" false)
 
 option(JVX_LINUX_NATIVE_INSTALLED_LIBS "Link required libraries locally in linux" false)

@@ -16,6 +16,7 @@ extern void clearAllIncludePaths();
 extern void setDependencyModus(bool dependencyMode);
 extern int lexAssignIfdefs(const std::list<std::string>& ifdefs);
 extern void checkLocalFlexError(std::string& locErrorMess, int& locLineNo, std::string& locFName);
+extern void cleanupParserFiles();
 
 #ifdef WRITE_PARSE_RESULTS
 FILE* logParseErrors = NULL;
@@ -263,6 +264,7 @@ CjvxConfigProcessor::parseFile(const char* fName, jvxBool clearIncludePathsOnFin
 		yyrestart(NULL);
 		if(yyparse() == 0)
 		{
+			cleanupParserFiles();
 			if (clearIncludePathsOnFinish)
 			{
 				this->clearIncludePaths();
@@ -290,6 +292,7 @@ CjvxConfigProcessor::parseFile(const char* fName, jvxBool clearIncludePathsOnFin
 		}
 		else
 		{
+			cleanupParserFiles();
 			if (clearIncludePathsOnFinish)
 			{
 				this->clearIncludePaths();

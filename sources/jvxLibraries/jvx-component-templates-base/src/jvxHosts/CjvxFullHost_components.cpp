@@ -621,6 +621,8 @@ jvxErrorType
 CjvxFullHost::load_config_content_module(const char* modName, jvxConfigData** cfgData)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+
+	// We try to find config fragments in the section stored for this external module
 	auto inst = extModulesConfigs.find(modName);
 	if (inst != extModulesConfigs.end())
 	{
