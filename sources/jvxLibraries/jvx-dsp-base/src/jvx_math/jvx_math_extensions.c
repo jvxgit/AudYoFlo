@@ -777,6 +777,9 @@ jvxData jvx_erfc(jvxData x)
 // Random noise generators
 
 // idum initialized with negative long integer
+// Function taken from Nunmerical recipes in C,
+// https://www.astro.puc.cl/~rherrera/CNR.pdf
+// Function <float ran2(long *idum)>, page 282
 jvxData jvx_rand_uniform(jvxInt32 *idum)
 {
 #define IM1 2147483563
@@ -868,7 +871,9 @@ jvxData jvx_rand_uniform(jvxInt32 *idum)
 #undef RNMX
 }
 
-
+// Function taken from Nunmerical recipes in C,
+// https://www.astro.puc.cl/~rherrera/CNR.pdf
+// Function <float gasdev(long *idum)>, page 289
 jvxData jvx_rand_normal(jvxInt32 *idum)
 {
 	static int iset=0;
