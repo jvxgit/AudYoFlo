@@ -475,7 +475,7 @@ CayfComponentLib::activate()
 				hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 				if (hostExt)
 				{
-					hostExt->attach_external_component(mainNode, regName.c_str(), true, true, parent->desiredSlotIdNode);
+					hostExt->attach_external_component(mainNode, parent->modName.c_str(), parent->regToken.c_str(), true, true, parent->desiredSlotIdNode);
 				}
 				else
 				{
@@ -687,7 +687,7 @@ CayfComponentLib::deactivate()
 			hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 			if (hostExt)
 			{
-				resC = hostExt->detach_external_component(this->mainNode, regName.c_str(), JVX_STATE_ACTIVE);
+				resC = hostExt->detach_external_component(this->mainNode, parent->modName.c_str(), JVX_STATE_ACTIVE);
 			}
 			else
 			{
@@ -820,18 +820,22 @@ CayfComponentLib::passConfigSection(IjvxSimpleNode* node, const std::string& mod
 	jvxConfigData* datSec = nullptr;
 	if (confProcHdl && cfgDataInit)
 	{
-		confProcHdl->getReferenceEntryCurrentSection_name(cfgDataInit, &datSec, moduleName.c_str());
+		confProcHdl->getReferenceEntryCurrentSection_name(cfgDataInit, &datSec, parent->regToken.c_str());
 		if (datSec)
 		{
-
-			// The passed configuration is a section with the name as it fits. We need not search for any 
-			// sub section to match it properly
-			IjvxConfiguration* cfg = reqInterfaceObj<IjvxConfiguration>(node);
-			if (cfg)
+			jvxConfigData* datSubSec = nullptr;
+			confProcHdl->getReferenceEntryCurrentSection_name(datSec, &datSubSec, moduleName.c_str());
+			if (datSubSec)
 			{
-				jvxCallManagerConfiguration callMan;
-				res = cfg->put_configuration(&callMan, confProcHdl, datSec);
-				retInterfaceObj<IjvxConfiguration>(node, cfg);
+				// The passed configuration is a section with the name as it fits. We need not search for any 
+				// sub section to match it properly
+				IjvxConfiguration* cfg = reqInterfaceObj<IjvxConfiguration>(node);
+				if (cfg)
+				{
+					jvxCallManagerConfiguration callMan;
+					res = cfg->put_configuration(&callMan, confProcHdl, datSubSec);
+					retInterfaceObj<IjvxConfiguration>(node, cfg);
+				}
 			}
 		}
 	}

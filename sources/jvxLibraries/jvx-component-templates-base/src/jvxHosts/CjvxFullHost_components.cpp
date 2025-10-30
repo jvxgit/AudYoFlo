@@ -198,7 +198,7 @@ CjvxFullHost::myRegisteredHostId()
 }
 
 jvxErrorType 
-CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, jvxBool regConnFactory, jvxBool noCfgSave, jvxSize desiredSlotId, jvxSize desiredSlotSubId)
+CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, const char* registerToken, jvxBool regConnFactory, jvxBool noCfgSave, jvxSize desiredSlotId, jvxSize desiredSlotSubId)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxHandle* refSpec = nullptr;
@@ -443,16 +443,24 @@ CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* mo
 	{
 		if (moduleGroup)
 		{
+			CjvxHostTypeHandler::oneExtComponent newElmExt;
+			newElmExt.obj = toBeAttached;
+			newElmExt.registerToken = moduleGroup;
+			if (registerToken)
+			{
+				newElmExt.registerToken = registerToken;
+			}
+
 			std::string modName = moduleGroup;
 			auto elm = extModuleDefinitions.find(modName);
 			if (elm != extModuleDefinitions.end())
 			{
-				elm->second.associatedExternalComponents.push_back(toBeAttached);
+				elm->second.associatedExternalComponents.push_back(newElmExt);
 			}
 			else
 			{
 				CjvxHostTypeHandler::oneDynExtModule newElm;
-				newElm.associatedExternalComponents.push_back(toBeAttached);
+				newElm.associatedExternalComponents.push_back(newElmExt);
 				newElm.moduleName = modName;
 				extModuleDefinitions[modName] = newElm;
 			}
@@ -598,7 +606,7 @@ CjvxFullHost::detach_external_component(IjvxObject* toBeDetached, const char* mo
 				
 				for (; elmI != elm->second.associatedExternalComponents.end(); elmI++)
 				{
-					if (*elmI == toBeDetached)
+					if (elmI->obj == toBeDetached)
 					{
 						elm->second.associatedExternalComponents.erase(elmI);
 						res = JVX_NO_ERROR;

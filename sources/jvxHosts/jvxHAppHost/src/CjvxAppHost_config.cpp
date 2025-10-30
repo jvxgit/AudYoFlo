@@ -155,6 +155,8 @@ CjvxAppHost::put_configuration(jvxCallManagerConfiguration* callConf,
 						processor->getReferenceSubsectionCurrentSection_id(datTmpLoc, &datTmpOut, i);
 						if (datTmpOut)
 						{
+							// We store ALL entries for this module in a separate configuration entry
+							// This will separate the instances lateron
 							jvxApiString modAstr;
 							jvxApiString cfgStr;
 							jvxApiString fNameAstr;
@@ -651,36 +653,40 @@ CjvxAppHost::get_configuration(jvxCallManagerConfiguration* callConf,
 					processor->createEmptySection(&datAdd, elm.second.moduleName.c_str());
 
 					jvxSize cnt = 0;
-
 					for (auto& elmI : elm.second.associatedExternalComponents)
 					{			
-						jvxApiString modAstr;
-						elmI->module_reference(&modAstr, nullptr);
-
-						std::string nmSec = modAstr.c_str();
-						if (cnt > 0)
+						jvxConfigData* datSubSec = nullptr;
+						processor->createEmptySection(&datSubSec, elmI.registerToken.c_str());
+						if (datSubSec)
 						{
-							nmSec += "_";
-							nmSec += jvx_size2String(cnt);
-							//nmSec += "";
-						}
+							jvxApiString modAstr;
+							elmI.obj->module_reference(&modAstr, nullptr);
 
-						auto ifElm = reqInterfaceObj<IjvxConfiguration>(elmI);
+							// Add a hint where the component is in the AudYoFlo hierarchy
+							jvxComponentIdentification cpId;
+							jvxConfigData* cfgCpId = nullptr;
+							elmI.obj->location_info(cpId);
+							processor->createAssignmentString(&cfgCpId, "location", jvxComponentIdentification_txt(cpId).c_str());
+							processor->addSubsectionToSection(datSubSec, cfgCpId);
 
-						if(ifElm)
-						{							
-							processor->createEmptySection(&datTmp_add, nmSec.c_str());
-							ifElm->get_configuration(callConf, processor, datTmp_add);
+							auto ifElm = reqInterfaceObj<IjvxConfiguration>(elmI.obj);
+
+							if (ifElm)
+							{
+								processor->createEmptySection(&datTmp_add, modAstr.c_str());
+								ifElm->get_configuration(callConf, processor, datTmp_add);
+							}
+							else
+							{
+								std::string commStr = "No configuration for module reference <" + modAstr.std_str();
+								commStr += ">.";
+								processor->createComment(&datTmp_add, commStr.c_str());
+							}
+							cnt++;
+							processor->addSubsectionToSection(datSubSec, datTmp_add);
+							retInterfaceObj<IjvxConfiguration>(elmI.obj, ifElm);
 						}
-						else
-						{
-							std::string commStr = "No configuration for module reference <" + nmSec;
-							commStr += ">.";
-							processor->createComment(&datTmp_add, commStr.c_str());
-						}
-						cnt++;
-						processor->addSubsectionToSection(datAdd, datTmp_add);
-						retInterfaceObj<IjvxConfiguration>(elmI, ifElm);
+						processor->addSubsectionToSection(datAdd, datSubSec);
 					}
 					processor->addSubsectionToSection(datTmpLoc, datAdd);
 				}

@@ -11,6 +11,7 @@
 class CayfComponentLibContainer: public IjvxExternalModuleFactory
 {
 	friend class CayfComponentLib;
+
 private:
 	JVX_MUTEX_HANDLE safeAccess;
 	jvxSize numInChans = 0;
@@ -20,7 +21,6 @@ private:
 	jvxDataFormat format = JVX_DATAFORMAT_NONE;
 	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
 	int passthroughMode = 0;
-	std::string regName;
 	jvxSize desiredSlotIdDev = JVX_SIZE_DONTCARE;
 	jvxSize desiredSlotIdNode = JVX_SIZE_DONTCARE;
 
@@ -28,6 +28,9 @@ private:
 	void* prv_callback_on_start = NULL;
 
 public:
+
+	std::string modName;
+	std::string regToken;
 
 	CayfComponentLib* processorRef = nullptr;	
 	ayfHostBindingReferencesMinHost* bindRefsMinHost = nullptr;
@@ -55,7 +58,7 @@ public:
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
 	jvxErrorType stopProcessor(CayfComponentLib* compProc);
 	
-	virtual CayfComponentLib* allocateDeviceObject(int passthroughMode, CayfComponentLibContainer* parent) = 0;
+	virtual CayfComponentLib* allocateDeviceObject(int passthroughMode, CayfComponentLibContainer* parent, const char* regToken) = 0;
 	virtual void deallocateDeviceObject(CayfComponentLib* delMe) = 0;
 
 	//! Callback entry to allocate the objects

@@ -115,24 +115,24 @@ CayfComponentLibContainer::stopProcessor(CayfComponentLib* compProc)
 jvxErrorType
 CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef) 
 {
-	jvxApiString realRegName = regName;
+	jvxApiString realRegName = modName;
 	IjvxMinHost* minHostRef = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
 
-	CayfComponentLib* deviceEntryObject = allocateDeviceObject(passthroughMode, this);
+	CayfComponentLib* deviceEntryObject = allocateDeviceObject(passthroughMode, this, regToken.c_str());
 
 	if (hostRef)
-	{
+	{		
 		deviceEntryObject->initialize(hostRef);
 	}
 	else
 	{		
 		if (bindRefsMinHost)
 		{
-			bindRefsMinHost->ayf_register_object_host_call(regName.c_str(), realRegName, deviceEntryObject, &minHostRef, &confProcHdl);
+			bindRefsMinHost->ayf_register_object_host_call(modName.c_str(), realRegName, deviceEntryObject, &minHostRef, &confProcHdl);
 		}
-		regName = realRegName.std_str();
-		deviceEntryObject->initialize(minHostRef, confProcHdl, regName);
+		modName = realRegName.std_str();
+		deviceEntryObject->initialize(minHostRef, confProcHdl, modName);
 	}
 
 	deviceEntryObject->set_location_info(jvxComponentIdentification(JVX_COMPONENT_EXTERNAL_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
@@ -146,7 +146,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 		if (hostExt)
 		{
-			hostExt->attach_external_component(deviceEntryObject, regName.c_str(), true, true, desiredSlotIdDev);
+			hostExt->attach_external_component(deviceEntryObject, modName.c_str(), regToken.c_str(), true, true, desiredSlotIdDev);
 		}
 	}
 
@@ -184,7 +184,7 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 		if (hostExt)
 		{
-			hostExt->detach_external_component(deviceEntryObject, regName.c_str(), JVX_STATE_ACTIVE);
+			hostExt->detach_external_component(deviceEntryObject, modName.c_str(), JVX_STATE_ACTIVE);
 		}
 	}
 
@@ -210,13 +210,14 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 }
 
 jvxErrorType
-CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numInChansArg, int numOutChansArg, 
+CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numInChansArg, int numOutChansArg, 
 	int bSizeArg, int sRateArg, int passthroughModeArg, int* ayfIdentsPtr, int ayfIdentsNum, 
 	void_pvoid_callback ptr_callback_bwd_on_start_arg, void* prv_callback_on_start_arg)
 {
 	jvxApiString realRegName;
 
-	regName = regNameArg;
+	modName = modNameArg;
+	regToken = modName;
 	numInChans = numInChansArg;
 	numOutChans = numOutChansArg;
 	bSize = bSizeArg;
@@ -251,7 +252,10 @@ CayfComponentLibContainer::startBinding(const std::string& regNameArg, int numIn
 				argv[i] = bindRefsEmbHost->argsFullHost.c_str_at(i);
 			}
 		}
-		bindRefsEmbHost->ayf_register_factory_host_call(regName.c_str(), realRegName, this, argc, argv);
+
+		// If we register multiple factories in the same module, we get different regTokens
+		bindRefsEmbHost->ayf_register_factory_host_call(modName.c_str(), realRegName, this, argc, argv);
+		regToken = realRegName.std_str();
 		if (argc)
 		{
 			JVX_DSP_SAFE_DELETE_FIELD(argv);

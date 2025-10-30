@@ -218,7 +218,8 @@ CayfFullHostClass::load_config_content(IjvxExternalModuleFactory* priIf, jvxConf
 			{
 				if (elm.theFactory == priIf)
 				{
-					modName = elm.nameAsRegistered;
+					//modName = elm.nameAsRegistered;
+					modName = elm.name;
 					break;
 				}
 			}
@@ -228,7 +229,8 @@ CayfFullHostClass::load_config_content(IjvxExternalModuleFactory* priIf, jvxConf
 				{
 					if (elm.theFactory == priIf)
 					{
-						modName = elm.nameAsRegistered;
+						//modName = elm.nameAsRegistered;
+						modName = elm.name;
 						break;
 					}
 				}

@@ -80,7 +80,7 @@ public:
 	// ====================================================================================
 	// Interface: IjvxComponentHostExt
 	// ====================================================================================
-	jvxErrorType attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, jvxBool regConnFactory, jvxBool noCfgSave, jvxSize desiredSlotId, jvxSize desiredSlotSubId) override;
+	jvxErrorType attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, const char* registerToken, jvxBool regConnFactory, jvxBool noCfgSave, jvxSize desiredSlotId, jvxSize desiredSlotSubId) override;
 	jvxErrorType detach_external_component(IjvxObject* toBeDetached, const char* moduleGroup, jvxState statOnLeave) override;
 	jvxErrorType load_config_content_module(const char* modName, jvxConfigData** cfgData) override;
 	jvxErrorType release_config_content_module(const char* modName, jvxConfigData* cfgData) override;

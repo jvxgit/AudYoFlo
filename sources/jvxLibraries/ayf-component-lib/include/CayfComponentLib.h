@@ -138,7 +138,10 @@ public:
 	};
 
 protected:
-	std::string regName = "CayfComponentLib";
+	
+	//std::string modName = "CayfComponentLib";
+	//std::string regToken = "CayfComponentLib";
+
 	std::string chainName = "CayfComponentLibChain";
 	std::string mainNodeName = "CayfComponentLibMainNode";
 	IjvxObject* mainObj = nullptr;

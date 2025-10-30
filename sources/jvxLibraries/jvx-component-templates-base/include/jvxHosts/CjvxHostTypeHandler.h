@@ -76,13 +76,22 @@
 	// >>>>>>>>>>>>>>>>>>>>>>>>
 	// >>>>>>>>>>>>>>>>>>>>>>>>
 
+	// ======================================================================
+
 class CjvxHostTypeHandler: public CjvxHostInteraction
 {
 protected:
+
+	struct oneExtComponent
+	{
+		IjvxObject* obj = nullptr;
+		std::string registerToken;
+	};
+
 	struct oneDynExtModule
 	{
 		std::string moduleName;
-		std::list<IjvxObject*> associatedExternalComponents;
+		std::list<oneExtComponent> associatedExternalComponents;
 	};
 
 	struct oneDynExtCfg
