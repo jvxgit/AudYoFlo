@@ -79,6 +79,8 @@ jvxIosCppHost::bootup_specific()
     // Open all tool components
     LOAD_ONE_MODULE_LIB_FULL(jvxTconfigProcessor_init, jvxTconfigProcessor_terminate, "Config Parser",
                              theSystemRefs.addedStaticObjects, theSystemRefs.hHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTGlobalLock_init, jvxTGlobalLock_terminate, "GlobalLock",
+                             theSystemRefs.addedStaticObjects, theSystemRefs.hHost);
     LOAD_ONE_MODULE_LIB_FULL(jvxTDataConverter_init, jvxTDataConverter_terminate, "Data Converter",
                              theSystemRefs.addedStaticObjects, theSystemRefs.hHost);
     LOAD_ONE_MODULE_LIB_FULL(jvxTDataLogger_init, jvxTDataLogger_terminate, "Data Logger",
@@ -99,7 +101,7 @@ jvxIosCppHost::bootup_specific()
     LOAD_ONE_MODULE_LIB_FULL(JVX_ALGORITHM_INIT, JVX_ALGORITHM_TERMINATE,JVX_ALGORITHM_DESCRIPTION,
                              theSystemRefs.addedStaticObjects, theSystemRefs.hHost);
     
-    //=================================================================
+	//=================================================================
     // Do not allow that host components are loaded via DLL
     //=================================================================
     theSystemRefs.hHost->add_component_load_blacklist(JVX_COMPONENT_HOST);

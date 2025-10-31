@@ -135,6 +135,8 @@ JVX_INTERFACE IjvxGlobalInstance;
 #include "interfaces/tools/IjvxThreads.h"
 #include "interfaces/tools/IjvxSharedMemory.h"
 #include "interfaces/tools/IjvxLogRemoteHandler.h"
+#include "interfaces/tools/IjvxGlobalLock.h"
+
 
 // Dependency for this header: IjvxRemoteCall uses IjvxConnection!!
 #include "interfaces/tools/IjvxRemoteCall.h"

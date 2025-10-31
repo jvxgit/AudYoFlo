@@ -30,6 +30,7 @@ include_directories(
 
 	${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor/
    ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSystemTextLog/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTGlobalLock/
    ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSocket/
    ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
   )
@@ -59,6 +60,7 @@ set(LOCAL_LIBS_ALL
     jvxTSystemTextLog_static
 	jvxTSocket_static
 	jvxTDataLogger_static
+	jvxTGlobalLock_static
 )
 
 set(LOCAL_COMPILE_DEFINITIONS "COMPILE_FOR_CONSOLE")

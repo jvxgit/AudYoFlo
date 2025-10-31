@@ -24,6 +24,7 @@ include_directories(
 
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSystemTextLog/
+    ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTGlobalLock/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTWebServer
   ${JVX_SUBPRODUCT_EXAMPLE_LIBS_BINARY_DIR}/sources/jvxComponents/jvxCustomTechnologies/jvxCuTExample
   )

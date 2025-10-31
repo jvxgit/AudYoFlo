@@ -10,6 +10,7 @@
 #include "jvxTDataLogger.h"
 
 #include "jvxTDataConverter.h"
+#include "jvxTGlobalLock.h"
 #include "jvxTResampler.h"
 #include "jvxTrtAudioFileReader.h"
 #include "jvxTrtAudioFileWriter.h"
@@ -149,6 +150,10 @@ uMainWindow_specific::bootup_negotiate_specific()
 		parentRef->involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTconfigProcessor_init, 
 		jvxTconfigProcessor_terminate, "Config Parser", 
+		parentRef->involvedComponents.addedStaticObjects, 
+		parentRef->involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTGlobalLock_init, 
+		jvxTGlobalLock_terminate, "GlobalLock", 
 		parentRef->involvedComponents.addedStaticObjects, 
 		parentRef->involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTThreads_init,

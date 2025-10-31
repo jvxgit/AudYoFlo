@@ -1018,6 +1018,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     ${JVX_BASE_ROOT}/sources/jvxTools/jvxTThreads
     ${JVX_BASE_ROOT}/sources/jvxTools/jvxTSharedMemory
     ${JVX_BASE_ROOT}/sources/jvxTools/jvxTLogRemoteHandler
+	${JVX_BASE_ROOT}/sources/jvxTools/jvxTGlobalLock
 
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxTools/jvxTResampler
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxTools/jvxTDataConverter

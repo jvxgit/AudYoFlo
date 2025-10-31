@@ -178,6 +178,18 @@ jvxBool checkComponentType(jvxComponentType tp, jvxBool skipAssert = false)
 			result = true;
 		}
 		break;
+	case JVX_COMPONENT_LOGREMOTEHANDLER:
+		if (std::is_same<T, IjvxLogRemoteHandler>::value)
+		{
+			result = true;
+		}
+		break;
+	case JVX_COMPONENT_GLOBAL_LOCK:
+		if (std::is_same<T, IjvxGlobalLock>::value)
+		{
+			result = true;
+		}
+		break;
 
 		// Add all specific component types here
 #ifdef JVX_COMPONENT_CAST_PRODUCT

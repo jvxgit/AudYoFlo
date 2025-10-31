@@ -103,6 +103,7 @@ set(LOCAL_LIBS
 	jvx-qt-component-widgets_static
 	jvx-qt-app-templates_static
 	jvxTDataLogger_static
+	jvxTGlobalLock_static
 	jvxTLocalTextLog_static
 	jvx-qt-central-widgets_static
 	jvx-qt-measure-ir_static

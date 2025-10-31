@@ -54,6 +54,7 @@ include_directories(
 
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSystemTextLog/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTGlobalLock/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTThreads/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTLogRemoteHandler/
@@ -99,6 +100,7 @@ set(LOCAL_LIBS
   jvxTSystemTextLog_static
   jvxTThreads_static
   jvxTDataLogger_static
+  jvxTGlobalLock_static
   jvxTDataConverter_static
   jvxTResampler_static
   jvxTrtAudioFileReader_static

@@ -82,6 +82,7 @@ include_directories(
 
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTconfigProcessor/
    ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSystemTextLog/
+  ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTGlobalLock/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTWebServer/
   ${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTDataLogger/
 

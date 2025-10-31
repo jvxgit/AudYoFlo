@@ -27,6 +27,7 @@ include_directories(
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-app-templates/src
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/include/interfaces/qt
 	${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTSystemTextLog/
+	${JVX_BASE_BINARY_DIR}/sources/jvxTools/jvxTGlobalLock/
 	)
 
 # Source code files

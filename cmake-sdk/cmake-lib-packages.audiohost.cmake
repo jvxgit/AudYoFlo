@@ -3,6 +3,7 @@
 		
 		jvxLthreads_static
 		jvxTconfigProcessor_static
+		jvxTGlobalLock_static
 		jvxTDataConverter_static
 		jvxTDataLogger_static
 		jvxTResampler_static		

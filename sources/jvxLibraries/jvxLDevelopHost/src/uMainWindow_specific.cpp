@@ -7,6 +7,7 @@
 #include "jvxTSystemTextLog.h"
 #include "jvxTThreads.h"
 #include "jvxTDataLogger.h"
+#include "jvxTGlobalLock.h"
 
 #include "jvxTrtAudioFileReader.h"
 #include "jvxTrtAudioFileWriter.h"
@@ -36,6 +37,9 @@ uMainWindow::boot_negotiate_specific()
 		involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTconfigProcessor_init,
 		jvxTconfigProcessor_terminate, "Config Parser",
+		involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTGlobalLock_init,
+		jvxTGlobalLock_terminate, "Global Lock",
 		involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTThreads_init,
 		jvxTThreads_terminate, "Threads",

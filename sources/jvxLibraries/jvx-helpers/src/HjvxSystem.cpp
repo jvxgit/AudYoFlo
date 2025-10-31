@@ -46,7 +46,8 @@ static jvxTextHelpers jvxComponentType_str_[JVX_COMPONENT_ALL_LIMIT] =
 	{"web server", "JVX_COMPONENT_WEBSERVER" },
 	{"remote call", "JVX_COMPONENT_REMOTE_CALL" },
 	{"packet filter rule", "JVX_COMPONENT_PACKETFILTER_RULE" },
-	{"log remote handler", "JVX_COMPONENT_LOGREMOTEHANDLER" }
+	{"log remote handler", "JVX_COMPONENT_LOGREMOTEHANDLER" },
+	{"global lock", "JVX_COMPONENT_GLOBAL_LOCK"}
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 #include "extensions/EpjvxTypes_components.h"
@@ -173,7 +174,8 @@ static jvxComponentTypeClass jvxComponentClassTypeAssoc[JVX_COMPONENT_ALL_LIMIT 
 	jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, /* JVX_COMPONENT_WEBSERVER */
 	jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, /* JVX_COMPONENT_REMOTE_CALL */
 	jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, /* JVX_COMPONENT_PACKETFILTER_RULE */
-	jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL /* JVX_COMPONENT_LOGREMOTEHANDLER */
+	jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL, /* JVX_COMPONENT_LOGREMOTEHANDLER */
+	jvxComponentTypeClass::JVX_COMPONENT_TYPE_TOOL /* JVX_COMPONENT_GLOBAL_LOCK */
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 #define JVX_INCLUDE_CLASSE_ASSOCIATIONS

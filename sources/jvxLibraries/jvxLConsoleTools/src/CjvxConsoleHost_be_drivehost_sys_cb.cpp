@@ -5,6 +5,7 @@
 #include "jvxTSystemTextLog.h"
 #include "jvxTThreads.h"
 #include "jvxTDataLogger.h"
+#include "jvxTGlobalLock.h"
 #include "jvxTSocket.h"
 #include "jvxTLogRemoteHandler.h"
 
@@ -148,6 +149,7 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 	// Open all tool components
 	LOAD_ONE_MODULE_LIB_FULL(jvxTSystemTextLog_init, jvxTSystemTextLog_terminate, "Text Log", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTconfigProcessor_init, jvxTconfigProcessor_terminate, "Config Parser", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTGlobalLock_init, jvxTGlobalLock_terminate, "Gloal Lock", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTThreads_init, jvxTThreads_terminate, "Threads", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTDataLogger_init, jvxTDataLogger_terminate, "Data Logger", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTSocket_init, jvxTSocket_terminate, "Sockets", involvedComponents.addedStaticObjects, involvedComponents.theHost.hFHost);

@@ -4,6 +4,7 @@
 		jvxTconfigProcessor_static
 		jvxTDataConverter_static
 		jvxTDataLogger_static
+		jvxTGlobalLock_static
 		jvxTResampler_static
 		jvxTSocket_static			
 		jvxTRemoteCall_static		

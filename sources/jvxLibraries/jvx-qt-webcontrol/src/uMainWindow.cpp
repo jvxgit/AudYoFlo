@@ -10,6 +10,7 @@
 #include "jvx-qt-helpers.h"
 
 #include "jvxTconfigProcessor.h"
+#include "jvxTGlobalLock.h"
 #include "jvxTSystemTextLog.h"
 #include "jvxTSocket.h"
 #include "jvxTDataLogger.h"
@@ -1111,6 +1112,10 @@ uMainWindow::boot_initialize_specific(jvxApiString* errloc)
 		involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTconfigProcessor_init,
 		jvxTconfigProcessor_terminate, "Config Parser",
+		involvedComponents.addedStaticObjects,
+		involvedComponents.theHost.hFHost);
+	LOAD_ONE_MODULE_LIB_FULL(jvxTGlobalLock_init,
+		jvxTGlobalLock_terminate, "Global Lock",
 		involvedComponents.addedStaticObjects,
 		involvedComponents.theHost.hFHost);
 	LOAD_ONE_MODULE_LIB_FULL(jvxTSocket_init,
