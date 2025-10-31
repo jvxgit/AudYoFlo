@@ -36,6 +36,13 @@
 // =====================================================================
 JVX_DSP_LIB_BEGIN
 
+typedef enum
+{
+	JVX_FFT_IMPLEMENTATION_UNKOWN,
+	JVX_FFT_IMPLEMENTATION_FFTW,
+	JVX_FFT_IMPLEMENTATION_GENERIC
+} jvxFftImplementationType;
+
 typedef jvxHandle jvxFFTGlobal;
 typedef jvxHandle jvxFFT;
 typedef jvxHandle jvxIFFT;
@@ -172,6 +179,8 @@ jvxDspBaseErrorType jvx_destroy_ifft(jvxIFFT* hdl);
 jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* global_hdl);
 
 jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl);
+
+jvxFftImplementationType jvx_fft_ifft_implementation();
 
 // =======================================================================================
 

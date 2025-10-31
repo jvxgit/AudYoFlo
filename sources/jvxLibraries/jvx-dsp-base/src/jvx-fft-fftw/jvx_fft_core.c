@@ -1085,6 +1085,12 @@ jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl)
 	// return c_false;
 }
 
+// Return FFT implementation type - some ffts require special constraints when calling
+jvxFftImplementationType jvx_fft_ifft_implementation()
+{
+	return JVX_FFT_IMPLEMENTATION_FFTW;
+}
+
 jvxData * jvx_allocate_fft_buffer_real(jvxSize num_elements)
 {
 	jvxData* buffer;
