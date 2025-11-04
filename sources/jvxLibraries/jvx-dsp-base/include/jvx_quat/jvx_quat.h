@@ -26,6 +26,8 @@ void jvx_quat_inv(const struct jvx_quat* qin, struct jvx_quat* qout);
 jvxData jvx_quat_abs2(const struct jvx_quat* q);
 void jvx_quat_reset(struct jvx_quat* q);
 
+jvxData jvx_quat_delta_deg(struct jvx_quat* q1, struct jvx_quat* q2, jvx_matrix* workMat);
+
 JVX_DSP_LIB_END
 
 #endif

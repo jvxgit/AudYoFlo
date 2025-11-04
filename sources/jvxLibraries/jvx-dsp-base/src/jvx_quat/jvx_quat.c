@@ -1,5 +1,6 @@
 #include "jvx_dsp_base.h"
 #include "jvx_quat/jvx_quat.h"
+#include "jvx_matrix/jvx_matrix_rot.h"
 
 void jvx_quat_mult_core(const struct jvx_quat* qxyzw1, const struct jvx_quat* qxyzw2, struct jvx_quat* qxyzw3)
 {
@@ -64,3 +65,30 @@ void jvx_quat_reset(struct jvx_quat* q)
 	q->z = 0.0;
 }
 
+jvxData jvx_quat_delta_deg(struct jvx_quat* q1, struct jvx_quat* q2, jvx_matrix* workMat)
+{
+	jvxData deltaAngle = -1;
+	jvxData vecIn[3] = { 1, 0, 0 };
+	
+	jvxData vecOut1[3];
+	jvxData vecOut2[3];
+
+	assert(workMat);
+	assert(workMat->prmInit.N == 3);
+	assert(workMat->prmInit.M == 3);
+	assert(workMat->prmSync.theMat);
+
+	jvx_matrix_quat_2rotmatrix(q1, workMat);
+	jvx_matrix_process_rotmatrix_vec(workMat, vecIn, vecOut1);
+
+	jvx_matrix_quat_2rotmatrix(q2, workMat);
+	jvx_matrix_process_rotmatrix_vec(workMat, vecIn, vecOut2);
+
+	jvxData sumVecProd = vecOut1[0] * vecOut2[0];
+	sumVecProd += vecOut1[1] * vecOut2[1];
+	sumVecProd += vecOut1[2] * vecOut2[2];
+
+	jvxData angleRad = acos(sumVecProd);
+	deltaAngle = angleRad * 180.0 / M_PI;
+	return deltaAngle;
+}
