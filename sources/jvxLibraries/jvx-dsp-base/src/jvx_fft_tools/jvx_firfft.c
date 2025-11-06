@@ -319,12 +319,21 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 			assert(resL == JVX_DSP_NO_ERROR);
 
 			hdl->derived.lFirW = hdl->derived.szFftValue / 2 + 1;
+			hdl->derived.lFirEff = hdl->init.lFir;
+
+			// ========================================================================
 
 			switch (hdl->init.type)
 			{
 			case JVX_FIRFFT_SYMMETRIC_FIR:
-				assert((hdl->init.lFir % 2) == 1);
-				hdl->derived.delay = hdl->init.lFir / 2;
+
+				// Correct also here
+				if (hdl->derived.lFirEff % 2 == 0)
+				{
+					hdl->derived.lFirEff -= 1;
+				}
+				assert((hdl->derived.lFirEff % 2) == 1);
+				hdl->derived.delay = hdl->derived.lFirEff / 2;
 				break;
 			default:
 				hdl->derived.delay = 0;
@@ -354,9 +363,33 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 	return JVX_DSP_NO_ERROR;
 }
 
+jvxSize 
+jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxCBool allowLargerFir)
+{
+	jvxSize fftszmin = (lFirMin + bsize - 1);
+	jvxSize lFir = lFirMin;
+	jvxFFTSize szFft = JVX_FFT_TOOLS_FFT_SIZE_16;
+	jvxSize szFftValue = 16;
+	if (JVX_CHECK_SIZE_SELECTED(lFft))
+	{
+		fftszmin = JVX_MAX(lFft, fftszmin);
+	}
+
+	jvxErrorType resL = jvx_get_nearest_size_fft(&szFft,
+		fftszmin, JVX_FFT_ROUND_UP, &szFftValue);
+	assert(resL == JVX_DSP_NO_ERROR);
+
+	if (allowLargerFir)
+	{
+		lFir = szFftValue - bsize + 1;
+	}
+	return lFir;
+}
+
 void
 jvx_firfft_resetDerived(jvx_firfft* init)
 {
+	init->derived.lFirEff = 0;
 	init->derived.delay = 0;
 	init->derived.szFft = JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE;
 	init->derived.szFftValue = 0;

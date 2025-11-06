@@ -54,6 +54,7 @@ typedef struct
 
 typedef struct
 {
+	jvxSize lFirEff;
 	jvxFFTSize szFft;
 	jvxSize szFftValue;
 	jvxSize delay;
@@ -91,6 +92,9 @@ jvxDspBaseErrorType jvx_firfft_process_mix_iplace(jvx_firfft* hdl, jvxData* in, 
 jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl);
 
 jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jvxCBool do_set);
+
+// Helper
+jvxSize jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxCBool allowLargerFir);
 
 JVX_DSP_LIB_END
 
