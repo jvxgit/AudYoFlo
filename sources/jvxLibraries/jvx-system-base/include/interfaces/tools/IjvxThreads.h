@@ -22,6 +22,8 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION start(jvxSize timeout = JVX_SIZE_UNSELECTED, jvxBool push_prio = false, jvxBool rep_tstamp = false, jvxBool nonblock = false, jvxBool async = false) = 0;
 	
+	virtual jvxErrorType JVX_CALLINGCONVENTION set_thread_prio(jvxBool highPrio) = 0;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION thread_id(JVX_THREAD_ID* t_id) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop(jvxSize timeout_stop_msecs = 5000)  = 0;

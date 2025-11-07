@@ -50,6 +50,24 @@ CjvxThreads::start(jvxSize timeout, jvxBool push_prio, jvxBool rep_tstamp, jvxBo
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType 
+CjvxThreads::set_thread_prio(jvxBool highPrio)
+{
+	jvxErrorType res = JVX_ERROR_WRONG_STATE;
+	if (thread.hdl)
+	{
+		if (highPrio)
+		{
+			res = jvx_thread_set_priority(thread.hdl, JVX_THREAD_PRIORITY_REALTIME);
+		}
+		else
+		{
+			res = jvx_thread_set_priority(thread.hdl, JVX_THREAD_PRIORITY_NORMAL);
+		}
+	}
+	return res;
+}
+
 jvxErrorType
 CjvxThreads::thread_id(JVX_THREAD_ID* t_id)
 {

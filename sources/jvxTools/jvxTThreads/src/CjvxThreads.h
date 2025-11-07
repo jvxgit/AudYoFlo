@@ -16,7 +16,7 @@ public:
 private:
 	struct
 	{
-		jvxHandle* hdl;
+		jvxHandle* hdl = nullptr;
 		jvx_thread_handler cbs;
 	} thread;
 
@@ -38,6 +38,8 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION start(jvxSize timeout, jvxBool push_prio, jvxBool rep_tstamp, jvxBool nonblock, jvxBool async) override;
 	
+	virtual jvxErrorType JVX_CALLINGCONVENTION set_thread_prio(jvxBool highPrio) override;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION thread_id(JVX_THREAD_ID* t_id) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop(jvxSize timeout_stop) override;
