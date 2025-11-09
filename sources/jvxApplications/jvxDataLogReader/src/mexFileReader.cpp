@@ -470,7 +470,7 @@ mexFileReader::parseInput(int nlhs, mxArray *plhs[],
 				this->mexReturnAnswerNegativeResult(plhs[1], "Input argument does not hold a valid ID.", JVX_ERROR_ELEMENT_NOT_FOUND);
 		}
 	}
-	return(JVX_NO_ERROR);
+	return(true);
 }
 
 

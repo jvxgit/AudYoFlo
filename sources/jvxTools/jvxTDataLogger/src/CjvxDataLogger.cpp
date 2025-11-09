@@ -450,15 +450,22 @@ CjvxDataLogger::pass_new(jvxLogFileDataChunkHeader* addData, jvxBool noBlocking)
 
 			jvxByte* ptrFld = (jvxByte*)addData;
 			jvxUInt32 lNewData = addData->szBytes;
-			jvxSize sz = memory.bytesBuffer - memory.fillHeight;
-			jvxInt64 idxWrite = 0;
+			
+			jvxBool triggerWakeup = false;
+			res = JVX_ERROR_COMPONENT_BUSY;
 
 			JVX_TRY_LOCK_MUTEX_RESULT_TYPE resBlock = JVX_TRY_LOCK_MUTEX_SUCCESS;
 			JVX_TRY_LOCK_MUTEX(resBlock, runtime.updateFillHeight);
 			if(resBlock == JVX_TRY_LOCK_MUTEX_SUCCESS)
 			{
+				jvxSize sz = 0;
+				jvxInt64 idxWrite = 0;
+
+				res = JVX_ERROR_BUFFER_OVERFLOW;
 				idxWrite = (memory.idxRead + memory.fillHeight) % memory.bytesBuffer;
-				if((jvxSize)lNewData <= sz)
+				sz = memory.bytesBuffer - memory.fillHeight;
+
+				if ((jvxSize)lNewData <= sz)
 				{
 					jvxSize ll1 = (jvxSize) JVX_MIN(lNewData, memory.bytesBuffer - idxWrite);
 					jvxSize ll2 = (jvxSize)lNewData - ll1;
@@ -473,19 +480,16 @@ CjvxDataLogger::pass_new(jvxLogFileDataChunkHeader* addData, jvxBool noBlocking)
 					}
 
 					memory.fillHeight += lNewData;
-					JVX_UNLOCK_MUTEX(runtime.updateFillHeight);
-
 					runtime.numBytesWrittenToLogger += lNewData;
-
-					jvx_thread_wakeup(runtime.thread_hdl);
-					//JVX_SET_NOTIFICATION(runtime.eventsNotify);
-
+					triggerWakeup = true;
 					res = JVX_NO_ERROR;
 				}
-				else
+				JVX_UNLOCK_MUTEX(runtime.updateFillHeight);
+
+				if (triggerWakeup)
 				{
-					JVX_UNLOCK_MUTEX(runtime.updateFillHeight);
-					res = JVX_ERROR_BUFFER_OVERFLOW;
+					jvx_thread_wakeup(runtime.thread_hdl);
+				
 				}
 			}
 			else
@@ -500,48 +504,46 @@ CjvxDataLogger::pass_new(jvxLogFileDataChunkHeader* addData, jvxBool noBlocking)
 
 			jvxByte* ptrFld = (jvxByte*)addData;
 			jvxUInt32 lNewData = addData->szBytes;
-			jvxSize sz = memory.bytesBuffer - memory.fillHeight;
-			jvxInt64 idxWrite = 0;
-			
-			JVX_LOCK_MUTEX(runtime.updateFillHeight); 
-			idxWrite = (memory.idxRead + memory.fillHeight) % memory.bytesBuffer;
-			JVX_UNLOCK_MUTEX(runtime.updateFillHeight);
 
-			if((jvxSize)lNewData <= sz)
+			jvxBool triggerRead = false;
+			res = JVX_ERROR_BUFFER_OVERFLOW;
+
+			/* We need to lock the full write as writes may be triggered from different threads*/
+			JVX_LOCK_MUTEX(runtime.updateFillHeight); 
+			jvxSize sz = 0;
+			jvxInt64 idxWrite = 0;
+			idxWrite = (memory.idxRead + memory.fillHeight) % memory.bytesBuffer;
+			sz = memory.bytesBuffer - memory.fillHeight;
+			if ((jvxSize)lNewData <= sz)
 			{
-				jvxSize ll1 = (jvxSize) JVX_MIN(lNewData, memory.bytesBuffer - idxWrite);
+				jvxSize ll1 = (jvxSize)JVX_MIN(lNewData, memory.bytesBuffer - idxWrite);
 				jvxSize ll2 = (jvxSize)lNewData - ll1;
 
-				if(ll1)
+				if (ll1)
 				{
 					memcpy(memory.buffer + idxWrite, ptrFld, ll1);
 				}
-				if(ll2)
+				if (ll2)
 				{
 					memcpy(memory.buffer, ptrFld + ll1, ll2);
 				}
 
-				JVX_LOCK_MUTEX(runtime.updateFillHeight);
 				memory.fillHeight += lNewData;
-				JVX_UNLOCK_MUTEX(runtime.updateFillHeight);
-
+				triggerRead = true;
 				runtime.numBytesWrittenToLogger += lNewData;
+				res = JVX_NO_ERROR;
+			}
+			 
+			JVX_UNLOCK_MUTEX(runtime.updateFillHeight);
 
-				/*
-				// Activate these lines if you see that data is lost. It should always just "MATCH"
-				JVX_LOCK_MUTEX(runtime.updateFillHeight);
-				jvxSize statFile = runtime.numBytesWrittenToFile + memory.fillHeight;
-				if (runtime.numBytesWrittenToLogger != statFile)
-				{
-					std::cout << "Mismatch" << std::endl;
-				}
-				JVX_UNLOCK_MUTEX(runtime.updateFillHeight);
-				*/
+			if (triggerRead)
+			{
 				jvx_thread_wakeup(runtime.thread_hdl);
 				//JVX_SET_NOTIFICATION(runtime.eventsNotify);
-
-				return(JVX_NO_ERROR);
 			}
+			
+			return(res);
+			
 		}
 		return(JVX_ERROR_BUFFER_OVERFLOW);
 	}

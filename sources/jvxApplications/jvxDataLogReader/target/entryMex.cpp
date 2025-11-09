@@ -46,7 +46,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	try
 	{
 		// Pass MEX command through to the underlying component
-		instControl.parseInput(nlhs, plhs, nrhs, prhs);
+		jvxBool resB = instControl.parseInput(nlhs, plhs, nrhs, prhs);
 	}
 
 	// Be save for returned exceptions

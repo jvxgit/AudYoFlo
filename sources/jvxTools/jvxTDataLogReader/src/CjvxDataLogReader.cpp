@@ -191,6 +191,9 @@ CjvxDataLogReader::prepare()
 		// Loop to scan through the whole file
 		while(!fileEnded)
 		{
+			jvxSize positionBeforeRead = JVX_FTELL(fileHandle.fPtr);
+			jvxSize numReadSince = 0;
+
 			switch(st)
 			{
 			case BEFORE_START_SESSION:
@@ -202,6 +205,8 @@ CjvxDataLogReader::prepare()
 				// Scan session header first
 				if(fread(&hdrConst, sizeof(hdrConst), 1, fileHandle.fPtr) == 1)
 				{
+					numReadSince += sizeof(hdrConst);
+
 					// Check that header is OK
 					fileHandle.floatingPointId = hdrConst.fldReserved[0];
 					memcpy(oneWord, ((jvxByte*)&hdrConst.fldReserved) + 1, sizeof(jvxByte)*(JVX_HEADER_F_IO_SIZE_HEADER-1));
@@ -240,6 +245,7 @@ CjvxDataLogReader::prepare()
 						memset(readMe, 0, 2*sizeof(char));
 						if(fread(oneWord, sizeof(char), JVX_HEADER_F_IO_SIZE_HEADER, fileHandle.fPtr) == JVX_HEADER_F_IO_SIZE_HEADER)
 						{
+							numReadSince += sizeof(char) * JVX_HEADER_F_IO_SIZE_HEADER;
 							if(oneWord == std::string(JVX_HEADER_F_IO_ONETAG))
 							{
 								if(fread(&valI16, sizeof(jvxUInt16), 1, fileHandle.fPtr) == 1)
@@ -248,6 +254,7 @@ CjvxDataLogReader::prepare()
 									{
 										if(fread(&readMe, sizeof(char), 1, fileHandle.fPtr) == 1)
 										{
+											numReadSince += sizeof(char) * 1;
 											tagName += readMe;
 										}
 										else
@@ -261,10 +268,12 @@ CjvxDataLogReader::prepare()
 								{
 									if(fread(&valI16, sizeof(jvxUInt16), 1, fileHandle.fPtr) == 1)
 									{
+										numReadSince += sizeof(jvxUInt16) * 1;
 										for(j = 0; j < valI16; j++)
 										{
 											if(fread(&readMe, sizeof(char), 1, fileHandle.fPtr) == 1)
 											{
+												numReadSince += sizeof(char) * 1;
 												tagValue += readMe;
 											}
 											else
@@ -317,6 +326,7 @@ CjvxDataLogReader::prepare()
 				// Scan complete dataset
 				if(fread(&scanSet, sizeof(scanSet), 1, fileHandle.fPtr) == 1)
 				{
+					numReadSince += sizeof(scanSet) * 1;
 					// Copy the scanned datasets, allocate memory that can hold also user specific data
 					newSet = (jvxLogFileDataSetHeader*)new jvxByte[(size_t)scanSet.szBytes];
 					memcpy(newSet, &scanSet, sizeof(scanSet));
@@ -332,6 +342,10 @@ CjvxDataLogReader::prepare()
 							fileEnded = true;
 							res = JVX_ERROR_END_OF_FILE;
 							break;
+						}
+						else
+						{
+							numReadSince += sizeof(jvxByte) * szToGo;
 						}
 					}
 
@@ -399,9 +413,10 @@ CjvxDataLogReader::prepare()
 
 				jvxInt64 posid = JVX_FTELL(fileHandle.fPtr);
 				size_t numRead = fread(oneWord, sizeof(jvxByte), JVX_HEADER_F_IO_SIZE_HEADER, fileHandle.fPtr);
-
 				if(numRead == JVX_HEADER_F_IO_SIZE_HEADER)
 				{
+					numReadSince += sizeof(jvxByte) * JVX_HEADER_F_IO_SIZE_HEADER;
+
 					// If end of file, complete this session
 					if((std::string)oneWord == (std::string)JVX_HEADER_F_IO_SESSION_END)
 					{
@@ -430,10 +445,11 @@ CjvxDataLogReader::prepare()
 						// Count datachunks
 						newSessionElm.numDataChunks++;
 						JVX_FSEEK(fileHandle.fPtr, -JVX_HEADER_F_IO_SIZE_HEADER, SEEK_CUR);
-
+						numReadSince -= JVX_HEADER_F_IO_SIZE_HEADER;
 						// Scan datachunk to skip forward until end of datachunk
 						if(fread(&scanChunk, sizeof(scanChunk), 1, fileHandle.fPtr) == 1)
 						{
+							numReadSince += sizeof(scanChunk) * 1;
 							if(scanChunk.idDataChunk < maxIDDataSets)
 							{
 								dataSetIDs[scanChunk.idDataChunk]++;
@@ -441,6 +457,7 @@ CjvxDataLogReader::prepare()
 							int numFwdBytes = (scanChunk.szBytes-sizeof(scanChunk));
 							if(JVX_FSEEK(fileHandle.fPtr, numFwdBytes, SEEK_CUR))
 							{
+								numReadSince += numFwdBytes;
 								// For a datachunk before scanning the whole field the file ended
 								fileEnded = true;
 								res = JVX_ERROR_END_OF_FILE;
