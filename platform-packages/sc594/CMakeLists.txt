@@ -88,87 +88,87 @@ endif()
 
 if(NOT AYF_SC594_SKIP_CCES_BUILD)
 	add_custom_target(${JVX_TARGET_NAME}-jvx-dsp-base
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	COMMAND 
-	echo "Running sc 594 build step" &&
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Debug && 
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Release
-	JOB_POOL console)
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		COMMAND 
+		echo "Running sc 594 build step" &&
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Release
+		JOB_POOL console)
 
-add_custom_target(${JVX_TARGET_NAME}-jvx-system-min
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-dsp-base
-	COMMAND 
-	echo "Running sc 594 build step" &&
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
-	JOB_POOL console)
+	add_custom_target(${JVX_TARGET_NAME}-jvx-system-min
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		DEPENDS ${JVX_TARGET_NAME}-jvx-dsp-base
+		COMMAND 
+		echo "Running sc 594 build step" &&
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
+		JOB_POOL console)
 
-add_custom_target(${JVX_TARGET_NAME}-jvx-system-base
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-system-min
-	COMMAND 
-	echo "Running sc 594 build step" &&
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
-	JOB_POOL console)
+	add_custom_target(${JVX_TARGET_NAME}-jvx-system-base
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		DEPENDS ${JVX_TARGET_NAME}-jvx-system-min
+		COMMAND 
+		echo "Running sc 594 build step" &&
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
+		JOB_POOL console)
+		
+	add_custom_target(${JVX_TARGET_NAME}-jvx-helpers
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		DEPENDS ${JVX_TARGET_NAME}-jvx-system-base
+		COMMAND 
+		echo "Running sc 594 build step" &&
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
+		JOB_POOL console)
+
+	add_custom_target(${JVX_TARGET_NAME}-jvx-callprot
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		DEPENDS ${JVX_TARGET_NAME}-jvx-helpers
+		COMMAND 
+		echo "Running sc 594 build step" &&
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
+		JOB_POOL console)
 	
-add_custom_target(${JVX_TARGET_NAME}-jvx-helpers
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-system-base
-	COMMAND 
-	echo "Running sc 594 build step" &&
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
-	JOB_POOL console)
-
-add_custom_target(${JVX_TARGET_NAME}-jvx-callprot
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-helpers
-	COMMAND 
-	echo "Running sc 594 build step" &&
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Debug && 
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-system-min/Release
-	JOB_POOL console)
-
-add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-callprot
-	COMMAND 
-	echo "Running sc 594 build step" &&
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release
-	JOB_POOL console)
-
-add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-base
-	ALL 
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS ${JVX_TARGET_NAME}-jvx-component-templates-min
-	COMMAND 
-	echo "Running sc 594 build step" &&
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
-	${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
-	-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release
-	JOB_POOL console)
+	add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-min
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		DEPENDS ${JVX_TARGET_NAME}-jvx-callprot
+		COMMAND 
+		echo "Running sc 594 build step" &&
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release
+		JOB_POOL console)
+	
+	add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-base
+		ALL 
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		DEPENDS ${JVX_TARGET_NAME}-jvx-component-templates-min
+		COMMAND 
+		echo "Running sc 594 build step" &&
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
+		${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
+		-data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release
+		JOB_POOL console)
 	
 	# message(FATAL_ERROR "${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
 	# -data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-dsp-base/Debug && 
@@ -178,19 +178,19 @@ add_custom_target(${JVX_TARGET_NAME}-jvx-component-templates-base
 	# -data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Debug && 
 	# ${CCES_ECLIPSE} -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild 
 	# -data "${CMAKE_CURRENT_BINARY_DIR}/ws" -${JVX_LOCAL_BUILD_COMMAND} jvx-component-templates-min/Release")
-endif()
 	
-# Install both libraries
-if(JVX_RELEASE_SDK)
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-component-templates-min/Debug/jvx-component-templates-min.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Debug)
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-component-templates-min/Release/jvx-component-templates-min.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Release)
+	# Install both libraries
+	if(JVX_RELEASE_SDK)
+		install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-component-templates-min/Debug/jvx-component-templates-min.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Debug)
+		install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-component-templates-min/Release/jvx-component-templates-min.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Release)
 
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-dsp-base/Debug/jvx-dsp-base.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Debug)
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-dsp-base/Release/jvx-dsp-base.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Release)
-	
-	# install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../compatibility/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
-	# install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
+		install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-dsp-base/Debug/jvx-dsp-base.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Debug)
+		install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jvx-dsp-base/Release/jvx-dsp-base.dlb DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_LIB_STATIC}/${JVX_PLATFORM_NAME}/Release)
+		
+		# install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../compatibility/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
+		# install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${INSTALL_PATH_PLATFORM_PACKAGE_INCLUDE_STATIC}/${JVX_PLATFORM_NAME} FILES_MATCHING PATTERN "*.h")
 
+	endif()
 endif()
 
 # message(FATAL_ERROR "Wait here!")
