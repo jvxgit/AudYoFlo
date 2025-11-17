@@ -686,6 +686,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-audio-sockets-sm
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-buffer-sync
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection
+	${JVX_BASE_ROOT}/sources/jvxLibraries/ayfmixerlib
     # 	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-automation-modules
     # ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-subqueue
 
@@ -914,16 +915,18 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNmexCall
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNSimple
 
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNPlayChannelId
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNBinauralRender
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNCaptureFile
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNBitstreamDecoder
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNBitstreamEncoder
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNForwardBuffer
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNMeasureIr2Dev
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNChannelRearrange
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNConvert
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioNodes/ayfAuNMatlab
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNPlayChannelId
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNBinauralRender
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNCaptureFile
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNBitstreamDecoder
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNBitstreamEncoder
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNForwardBuffer
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNMeasureIr2Dev
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNChannelRearrange
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/jvxAuNConvert
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/ayfAuNMatlab
+	
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxAudioNodes/ayfAuNMixer
   )
 
   if(JVX_DEPLOY_EXAMPLES)

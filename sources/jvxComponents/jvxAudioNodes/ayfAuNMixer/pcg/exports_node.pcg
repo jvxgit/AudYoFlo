@@ -1,0 +1,46 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genMixer_node";
+
+	SECTION properties
+	{
+		DESCRIPTION = "Properties of the audio node";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";
+		include "ayfmixerlib.pcgf"; 
+	};
+
+	
+	ifdef JVX_COMPILE_FOR_DEVELOP
+		include "ayfmixer-develop.pcgf";
+	endif
+
+	SECTION mixer_config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};					
+		CALLBACKS = {"set_mixing"};
+		SECTION user_input
+		{			
+			// This holds an NxN matrix in Matlab/text format for now!
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "[]"; // Default_ no mixing
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			CALLBACK_SET_POSTHOOK = "set_mixing";
+		};
+		SECTION derived_output
+		{			
+			// This holds an NxN matrix in Matlab/text format for now!
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "[]"; // Default_ no mixing
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+			CALLBACK_SET_POSTHOOK = "set_mixing";
+		};
+		SECTION fillup_mixing
+		{			
+			// This holds an NxN matrix in Matlab/text format for now!
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+	};
+};
