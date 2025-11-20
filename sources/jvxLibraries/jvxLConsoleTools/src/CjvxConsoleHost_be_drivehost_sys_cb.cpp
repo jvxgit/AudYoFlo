@@ -95,11 +95,11 @@ CjvxConsoleHost_be_drivehost::boot_initialize_specific(jvxApiString* errloc)
 	// Reserve a space of 20 properties for now
 	_common_set_properties.propIdSpan = 20;
 	_common_set_min.theState = JVX_STATE_ACTIVE;
+	runtime.myState = JVX_STATE_ACTIVE;
 
 	genConsoleHost::init_all();
 	genConsoleHost::allocate_all();
 	genConsoleHost::register_all(static_cast<CjvxProperties*>(this));
-	genConsoleHost::register_callbacks(static_cast<CjvxProperties*>(this), cb_set_options, this, nullptr);
 
 	IjvxPropertyAttach* thePropExp = nullptr;
 	resL = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle**)&thePropExp);
@@ -262,7 +262,7 @@ CjvxConsoleHost_be_drivehost::boot_prepare_specific(jvxApiString* errloc)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	
-	if (config.auto_start)
+	if (genConsoleHost::libhost.autostart.value || config.cmdline_autostart)
 	{
 		std::string command = "act(sequencer, start);";
 		TjvxEventLoopElement evelm;
@@ -469,6 +469,8 @@ CjvxConsoleHost_be_drivehost::shutdown_terminate_specific(jvxApiString* errloc)
 
 	genConsoleHost::unregister_all(static_cast<CjvxProperties*>(this));
 	genConsoleHost::deallocate_all();
+
+	runtime.myState = JVX_STATE_INIT;
 	_common_set_min.theState = JVX_STATE_NONE;
 	_common_set_properties.propIdSpan = JVX_SIZE_UNSELECTED;
 

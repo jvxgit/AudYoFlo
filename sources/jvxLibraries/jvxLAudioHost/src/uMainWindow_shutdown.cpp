@@ -27,7 +27,13 @@ uMainWindow::closeEvent(QCloseEvent* event)
 	// Shutdown sequencer
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSequencerStatus  seqStat = JVX_SEQUENCER_STATUS_NONE;
-	subWidgets.theSequencerWidget->status_process(&seqStat, NULL);
+
+	// The subwidget might be gone already (??)
+	if (subWidgets.theSequencerWidget)
+	{
+		subWidgets.theSequencerWidget->status_process(&seqStat, NULL);
+	}
+
 	switch(seqStat)
 	{
 	case JVX_SEQUENCER_STATUS_IN_OPERATION:

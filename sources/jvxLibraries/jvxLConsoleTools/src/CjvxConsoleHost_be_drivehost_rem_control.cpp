@@ -48,6 +48,7 @@ JVX_PROPERTIES_CALLBACK_DEFINE(CjvxConsoleHost_be_drivehost, cb_xchg_property)
 	// to pack and unpack.
 	res = jvx_exchange_property_callback_local_unpack(content, adm, cmd, do_set);
 
+	/*
 	if (res == JVX_NO_ERROR)
 	{
 		if (cmd == "autostart")
@@ -63,6 +64,7 @@ JVX_PROPERTIES_CALLBACK_DEFINE(CjvxConsoleHost_be_drivehost, cb_xchg_property)
 			}
 		}
 	}
+	*/
 	return res;
 }
 

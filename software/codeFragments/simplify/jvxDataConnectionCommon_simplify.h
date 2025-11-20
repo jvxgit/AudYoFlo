@@ -13,14 +13,14 @@ virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_connection(jvxApiString* s
 	return _descriptor_connection(str);
 }
 
-virtual jvxErrorType JVX_CALLINGCONVENTION misc_connection_parameters(jvxSize* connRuleId, jvxBool* preventStoredInConfig) override
+virtual jvxErrorType JVX_CALLINGCONVENTION misc_connection_parameters(jvxSize* connRuleId, jvxBool* preventStoredInConfig, jvxBool* allowControlSequencer = nullptr) override
 {
-	return _misc_connection_parameters(connRuleId, preventStoredInConfig);
+	return _misc_connection_parameters(connRuleId, preventStoredInConfig, allowControlSequencer);
 }
 
-virtual jvxErrorType JVX_CALLINGCONVENTION set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoredInConfigArg) override
+virtual jvxErrorType JVX_CALLINGCONVENTION set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoredInConfigArg, jvxBool allowControlSequencer = true) override
 {
-	return _set_misc_connection_parameters(connRuleIdArg, preventStoredInConfigArg);
+	return _set_misc_connection_parameters(connRuleIdArg, preventStoredInConfigArg, allowControlSequencer);
 }
 
 virtual jvxErrorType JVX_CALLINGCONVENTION number_bridges(jvxSize* num) override

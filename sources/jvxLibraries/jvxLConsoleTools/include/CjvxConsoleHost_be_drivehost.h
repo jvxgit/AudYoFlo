@@ -104,9 +104,10 @@ private:
 
 	struct
 	{
-		jvxSize timeout_seq_msec;
-		IjvxConfigurationExtender* hostRefConfigExtender;
-		jvxBool auto_start;
+		jvxSize timeout_seq_msec = 0;
+		IjvxConfigurationExtender* hostRefConfigExtender = nullptr;
+		// jvxBool auto_start;
+		jvxBool cmdline_autostart = false;
 	} config;
 
 	configureHost_features theHostFeatures;	
@@ -303,6 +304,8 @@ public:
 	jvxErrorType shutdown_specific();
 
 	virtual jvxErrorType boot_initialize_product()override;
+	
+	virtual jvxErrorType backend_status(jvxCBitField* curr_status) override;
 
 #ifndef JVX_CONFIGURE_HOST_STATIC_NODE
 
@@ -396,7 +399,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections) override;
 
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_set_options);
+	// JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_set_options);
 
 #define JVX_OBJECT_ZERO_REFERENCE
 #include "codeFragments/simplify/jvxInterfaceReference_simplify.h"

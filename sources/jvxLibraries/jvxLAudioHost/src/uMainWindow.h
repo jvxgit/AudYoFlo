@@ -87,8 +87,6 @@ private:
 
 	struct
 	{
-		jvxBool auto_start;
-		jvxBool auto_stop;
 		jvxBool skipStateSelected;
 	} systemParams;
 

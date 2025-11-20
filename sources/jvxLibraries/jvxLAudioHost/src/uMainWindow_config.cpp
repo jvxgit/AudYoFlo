@@ -301,12 +301,6 @@ uMainWindow::get_configuration_specific_ext(jvxCallManagerConfiguration* callCon
 	val.assign(theHostFeatures.rtv_period_props_ms); 
 	ext->set_configuration_entry(JVX_COMMON_PROPERTIES_HOST_PERIOD_RTVIEWER_PROPS, &val, JVX_CONFIG_SECTION_TYPE_ASSIGNMENTVALUE, 0);
 
-	val.assign(systemParams.auto_start);
-	ext->set_configuration_entry(JVX_COMMON_PROPERTIES_HOST_AUTOSTART, &val, JVX_CONFIG_SECTION_TYPE_ASSIGNMENTVALUE, 0);
-
-	val.assign(systemParams.auto_stop);
-	ext->set_configuration_entry(JVX_COMMON_PROPERTIES_HOST_AUTOSTOP, &val, JVX_CONFIG_SECTION_TYPE_ASSIGNMENTVALUE, 0);
-
 	val.assign(theHostFeatures.timeout_period_seq_ms);
 	ext->set_configuration_entry(JVX_COMMON_PROPERTIES_HOST_PERIOD_SEQ, &val, JVX_CONFIG_SECTION_TYPE_ASSIGNMENTVALUE, 0);
 
@@ -349,20 +343,6 @@ uMainWindow::put_configuration_specific_ext(jvxCallManagerConfiguration* callCon
 	jvxValue val;
 	jvxConfigSectionTypes myCfgTp = JVX_CONFIG_SECTION_TYPE_UNKNOWN;
 	jvxErrorType res = JVX_NO_ERROR;
-
-	myCfgTp = JVX_CONFIG_SECTION_TYPE_ASSIGNMENTVALUE;
-	res = ext->get_configuration_entry(JVX_COMMON_PROPERTIES_HOST_AUTOSTART, &val, &myCfgTp, 0);
-	if (res == JVX_NO_ERROR)
-	{
-		val.toContent(&systemParams.auto_start);
-	}
-
-	myCfgTp = JVX_CONFIG_SECTION_TYPE_ASSIGNMENTVALUE;
-	res = ext->get_configuration_entry(JVX_COMMON_PROPERTIES_HOST_AUTOSTOP, &val, &myCfgTp, 0);
-	if (res == JVX_NO_ERROR)
-	{
-		val.toContent(&systemParams.auto_stop);
-	}
 
 	myCfgTp = JVX_CONFIG_SECTION_TYPE_ASSIGNMENTVALUE;
 	res = ext->get_configuration_entry(JVX_COMMON_PROPERTIES_HOST_PERIOD_SEQ, &val, &myCfgTp, 0);

@@ -26,6 +26,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_post_set
 				}
 			}
 		}
+		/*
 		if (ident.id == CjvxHost_genpcg::ext_interfaces.properties_active.application_property_autostart.globalIdx)
 		{		
 			std::string propDescription = "autostart";
@@ -51,6 +52,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_post_set
 				res = JVX_ERROR_NOT_READY;
 			}
 		}
+		*/
 
 		if (ident.id == CjvxHost_genpcg::ext_interfaces.properties_active.trigger_shutdown.globalIdx)
 		{
@@ -73,7 +75,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_post_set
 					res = JVX_ERROR_NOT_READY;
 				}
 			}
-		}
+		}	
 
 		if (ident.id == CjvxHost_genpcg::ext_interfaces.properties_active.trigger_restart.globalIdx)
 		{
@@ -104,6 +106,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_post_set
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_pre_get)
 {
 	jvxErrorType res = JVX_NO_ERROR;
+	/*
 	if (ident.id == CjvxHost_genpcg::ext_interfaces.properties_active.application_property_autostart.globalIdx)
 	{
 		std::string propDescription = "autostart";
@@ -155,6 +158,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxFullHost, cb_command_pre_get)
 			res = JVX_ERROR_NOT_READY;
 		}
 	}
+	*/
 	return res;
 }
 

@@ -3,11 +3,16 @@
 
 #include <QMainWindow>
 #include "jvx.h"
+#include "common/CjvxProperties.h"
+#include "pcg_exports_host.h"
 
 class uMainWindow;
 class configureHost_features;
 
-class uMainWindow_specific: public QMainWindow// , public IjvxAutoDataConnect
+class uMainWindow_specific: 
+	public QMainWindow, // , public IjvxAutoDataConnect
+	public IjvxProperties, public CjvxProperties, public CjvxObjectMin,
+	public IjvxConfiguration, public genQtAudioHost
 {
 public:
 	uMainWindow_specific();
@@ -29,6 +34,26 @@ private:
 	jvxSize the_bridge_dev2node;
 	jvxSize the_bridge_node2dev;
 	//jvxSize the_bridge_master;
+
+		// To allow properties in this lib
+#define JVX_OBJECT_ZERO_REFERENCE
+#include "codeFragments/simplify/jvxInterfaceReference_simplify.h"
+#undef JVX_OBJECT_ZERO_REFERENCE
+
+#define JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
+#include "codeFragments/simplify/jvxProperties_simplify.h"
+#undef JVX_PROPERTY_SIMPLIFY_OVERWRITE_SET
+
+	jvxErrorType set_property(jvxCallManagerProperties& callGate,
+		const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
+		const jvx::propertyAddress::IjvxPropertyAddress& ident,
+		const jvx::propertyDetail::CjvxTranferDetail& detail)override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,
+		jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename = "", jvxInt32 lineno = -1) override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections) override;
 
 	Q_OBJECT
 

@@ -20,8 +20,7 @@ CjvxConsoleHost_be_drivehost::CjvxConsoleHost_be_drivehost():
 		tpAll[i].reset((jvxComponentType)i, 0, 0);
 	}
 	*/
-	config.timeout_seq_msec = 500;
-	config.auto_start = false;
+	config.timeout_seq_msec = 500;	
 
 	runtime.myState = JVX_STATE_INIT;
 	linestart = JVX_DEFINE_PROCESSING_OFF;
@@ -36,7 +35,8 @@ CjvxConsoleHost_be_drivehost::CjvxConsoleHost_be_drivehost():
 	theCallback_exchg_property.cb_priv = NULL;
 
 	confHostFeatures = static_cast<configureHost_features*>(&theHostFeatures);
-	this->reqHandle.initialize_fwd_link( this);
+	
+	//this->reqHandle.initialize_fwd_link( this); <- moving into the local thread
 }
 
 
@@ -56,6 +56,9 @@ CjvxConsoleHost_be_drivehost::process_init(IjvxCommandLine* comLine)
 	jvxApiString errMess;
 	std::list<jvxOneFrontendAndState>::iterator elm_fe;
 	std::list<jvxOneBackendAndState>::iterator elm_be;
+
+	// Here is now the place to start the request handler
+	this->reqHandle.initialize_fwd_link(this);
 
 	message = jvx_textMessagePrioToString("Configuring console host ...", JVX_REPORT_PRIORITY_INFO);
 	postMessage_inThread(message);
@@ -202,9 +205,7 @@ CjvxConsoleHost_be_drivehost::process_init(IjvxCommandLine* comLine)
 
 	// At this place, the config file is read!
 	initConfigureHost();
-#endif
-
-	runtime.myState = JVX_STATE_ACTIVE;
+#endif	
 }
 
 
@@ -217,12 +218,16 @@ CjvxConsoleHost_be_drivehost::process_shutdown()
 
 	if (runtime.myState == JVX_STATE_PROCESSING)
 	{
-		strResponse = "Unable to stop right now: sequencer still running. Stop it first.";
+		// We trigger the end of sequencer here!!
+		CjvxJsonElementList elm;
+		jvxErrorType res = this->act_stop_sequencer(elm, true);
+		
+		strResponse = "Sequencer is still running, triggering to shut it down.";
 		strResponse += "\n";
 		outputResult(strResponse, "\n\t\t", '\n', '\t');
 
 		// Insert shutdown to message queue and leave
-		return JVX_ERROR_ABORT;
+		return JVX_ERROR_POSTPONE;
 	}
 
 	res = shutdown_postprocess(&errMess, NULL);
@@ -243,6 +248,8 @@ CjvxConsoleHost_be_drivehost::process_shutdown()
 		assert(0);
 	}
 
+	// Undo the 
+	this->reqHandle.initialize_fwd_link(nullptr);
 #if 0	
 	// Inform that the main backend has been shut down - at that time, the host reference becomes invalid
 	// The frontends and backends may not be able to shutdown. In that case, the
@@ -287,8 +294,6 @@ CjvxConsoleHost_be_drivehost::process_shutdown()
 
 	terminateHost();
 #endif
-
-	runtime.myState = JVX_STATE_INIT;
 
 	return JVX_NO_ERROR;
 }
@@ -370,12 +375,19 @@ CjvxConsoleHost_be_drivehost::addDefaultSequence(bool	onlyIfNoSequence, jvxOneSe
 jvxErrorType 
 CjvxConsoleHost_be_drivehost::report_register_fe_commandline(IjvxCommandLine* comLine)
 {
+	if (comLine)
+	{
+	}
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
 CjvxConsoleHost_be_drivehost::report_readout_fe_commandline(IjvxCommandLine* comLine)
 {
+	jvxSize num = 0;
+	if (comLine)
+	{
+	}
 	return JVX_NO_ERROR;
 }
 
@@ -387,6 +399,7 @@ CjvxConsoleHost_be_drivehost::report_register_be_commandline(IjvxCommandLine* co
 	{
 		comLine->register_option("--startExe", "", "Pass execuitable to be started at startup to connect UI.", "", true, JVX_DATAFORMAT_STRING);
 		comLine->register_option("--startArgs", "", "Pass exectutable start args.","", true, JVX_DATAFORMAT_STRING, JVX_SIZE_UNSELECTED);
+		comLine->register_option("--autostart", "", "Start sequencer immediately.");
 	}
 	return res;
 }
@@ -414,6 +427,12 @@ CjvxConsoleHost_be_drivehost::report_readout_be_commandline(IjvxCommandLine* com
 		{
 			comLine->content_entry_option("--startArgs", i, &astr, JVX_DATAFORMAT_STRING);
 			startAppArgs.push_back(astr.std_str());
+		}
+
+		comLine->number_entries_option("--autostart", &num);
+		if (num)
+		{
+			config.cmdline_autostart = true;
 		}
 	}
 	return res;
@@ -528,11 +547,6 @@ CjvxConsoleHost_be_drivehost::handle_step_process_non_usual_return(IjvxSequencer
 	}
 }
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxConsoleHost_be_drivehost, cb_set_options)
-{
-	return JVX_NO_ERROR;
-}
-
 jvxErrorType
 CjvxConsoleHost_be_drivehost::put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,
 	jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename, jvxInt32 lineno)
@@ -549,3 +563,21 @@ CjvxConsoleHost_be_drivehost::get_configuration(jvxCallManagerConfiguration* cal
 	genConsoleHost::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);
 	return JVX_NO_ERROR;
 }
+
+jvxErrorType 
+CjvxConsoleHost_be_drivehost::backend_status(jvxCBitField* curr_status)
+{
+	jvxErrorType res = CjvxConsoleHost_be_print::backend_status(curr_status);
+	if (res == JVX_NO_ERROR)
+	{
+		if (curr_status)
+		{
+			if (runtime.myState == JVX_STATE_PROCESSING)
+			{
+				jvx_bitSet(*curr_status, jvxBackendStatusShiftOptions::JVX_BACKEND_STATUS_SCHEDULER_RUNNING_SHIFT);
+			}
+		}
+	}
+	return res;
+}
+

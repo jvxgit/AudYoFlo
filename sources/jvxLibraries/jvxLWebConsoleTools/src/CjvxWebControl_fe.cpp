@@ -518,6 +518,9 @@ CjvxWebControl_fe::synchronizeWebServerCoEvents(jvxHandle* context_server,
 		case JVX_ERROR_ABORT:
 			std::cout << "Disconnected websocket not reported since host does not accept events from this frontend currently!" << std::endl;
 			break;
+		case JVX_ERROR_WRONG_STATE:
+			std::cout << "Event scheduler currently in wrong state!" << std::endl;
+			break;
 		case JVX_NO_ERROR:
 			break;
 		default:

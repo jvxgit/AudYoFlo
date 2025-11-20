@@ -240,7 +240,8 @@ public:
 		jvxBool interceptors = false,
 		IjvxObject* theOwner = NULL,
 		jvxSize idProcDepends = JVX_SIZE_UNSELECTED,
-		jvxBool fwdTestToDependent = false);
+		jvxBool fwdTestToDependent = false,
+		jvxBool allowSeqCtrl = true);
 	
 	/** Option 2: Activate a micro connection chain
 	 * The href must be a hidden interface exposingat least the interface JVX_INTERFACE_DATA_CONNECTIONS

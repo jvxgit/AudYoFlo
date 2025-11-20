@@ -243,12 +243,14 @@ namespace AyfConnection
 
 	jvxErrorType
 		CayfConnection::init_connect(const CayfConnectionConfig& cfgArg,
-			IayfConnectionStateSwitchNode* cbSs , jvxSize idConnDependsOn, jvxBool fwdTestChain)
+			IayfConnectionStateSwitchNode* cbSs , jvxSize idConnDependsOn, jvxBool fwdTestChain,
+			jvxBool allowSeqCtrlArg)
 	{
 		cfg = cfgArg;
 		ssCb = cbSs;
 		idProcDepends = idConnDependsOn;
 		fwdTestToDepend = fwdTestChain;
+		allowSeqCtrl = allowSeqCtrlArg;
 		jvxErrorType res = JVX_NO_ERROR;
 
 		res = initialize(cfg.hostRef);

@@ -41,8 +41,8 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_connection(jvxApiString* nmRturn) = 0;
 	
-	virtual jvxErrorType JVX_CALLINGCONVENTION misc_connection_parameters(jvxSize* connRuleId, jvxBool* preventStoreConfig) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoreConfigArg) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION misc_connection_parameters(jvxSize* connRuleId, jvxBool* preventStoreConfig, jvxBool* allowControlSequencer = nullptr) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoreConfigArg, jvxBool allowControlSequencerArg = true) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION remove_connection() = 0;
 

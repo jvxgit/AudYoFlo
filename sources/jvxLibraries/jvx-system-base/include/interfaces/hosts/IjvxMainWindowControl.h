@@ -25,7 +25,8 @@ public:
 		jvxHandle* privData,
 		const char* showData,
 		jvxSize* id, jvxBool is_parameter, 
-		jvxMainWindowController_register_separator_ids separator = JVX_REGISTER_FUNCTION_MENU_NO_SEPARATOR) = 0;
+		jvxMainWindowController_register_separator_ids separator = JVX_REGISTER_FUNCTION_MENU_NO_SEPARATOR,
+		jvxValue* ini_val = nullptr) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION unregister_functional_callback(jvxSize id) = 0;
 

@@ -102,8 +102,6 @@ private:
 	// Extending host properties
 	jvxBool supports_shutdown;
 
-	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_set_options);
-
 public:
 	jvxLibHost();
 

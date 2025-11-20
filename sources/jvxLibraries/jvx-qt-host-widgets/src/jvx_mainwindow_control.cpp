@@ -101,7 +101,8 @@ CjvxMainWindowControl::register_functional_callback(
 	jvxHandle* privData,
 	const char* contentData,
 	jvxSize* id, jvxBool is_parameter, 
-	jvxMainWindowController_register_separator_ids sepEnum)
+	jvxMainWindowController_register_separator_ids sepEnum,
+	jvxValue* ini_val)
 {
 	QAction* act = NULL;
 	std::string showTxt = contentData;
@@ -152,6 +153,12 @@ CjvxMainWindowControl::register_functional_callback(
 		act->setProperty("report", QVariant::fromValue(reinterpret_cast<void*>(bwd)));
 		act->setProperty("private", QVariant::fromValue(reinterpret_cast<void*>(privData)));
 		act->setCheckable(true);
+		if (ini_val)
+		{
+			jvxBool valB = false;
+			ini_val->toContent(&valB);
+			act->setChecked(valB);
+		}
 		connect(act, SIGNAL(triggered()), this, SLOT(action_value_selection_slot()));
 		if (is_parameter)
 		{

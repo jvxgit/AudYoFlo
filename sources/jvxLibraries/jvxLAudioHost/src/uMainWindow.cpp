@@ -23,8 +23,8 @@ uMainWindow::uMainWindow() :
 	subWidgets.theSequencerFrame = NULL;
 	subWidgets.theSequencerWidget = NULL;
 	
-	systemParams.auto_start = false;
-	systemParams.auto_stop = false;
+	// systemParams.auto_start = false;
+	// systemParams.auto_stop = false;
 	systemParams.skipStateSelected = true;
 
 	subWidgets.bridgeMenuComponents = NULL;
@@ -907,7 +907,8 @@ uMainWindow::boot_start_specific(jvxApiString* errloc)
 
 	this->bootDelayed_specific();
 
-	if (systemParams.auto_start)
+	// if (systemParams.auto_start)
+ 	if(genQtAudioHost::host_params.autostart.value)
 	{
 		if (allowStart)
 		{

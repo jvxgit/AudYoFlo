@@ -149,11 +149,6 @@ jvxLibHost::stop_property_set_collect(jvxCallManagerProperties& callGate, jvxCom
 	return res;
 }
 
-JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(jvxLibHost, cb_set_options) 
-{
-	return JVX_NO_ERROR;
-}
-
 jvxErrorType
 jvxLibHost::report_properties_modified(const char* props_set)
 {

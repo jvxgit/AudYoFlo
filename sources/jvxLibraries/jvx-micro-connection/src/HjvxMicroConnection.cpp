@@ -230,7 +230,8 @@ HjvxMicroConnection::activate_connection(
 	jvxBool interceptors,
 	IjvxObject* theOwner,
 	jvxSize idProcDepends, 
-	jvxBool fwdTestToDependent)
+	jvxBool fwdTestToDependent,
+	jvxBool allowSeqCtrl)
 {
 	jvxSize num, i, k;
 	jvxApiString str;
@@ -378,7 +379,7 @@ HjvxMicroConnection::activate_connection(
 				theProc->set_forward_test_depend(fwdTestToDependent);
 				
 				// Do not create an entry in the config file by actively preventing it!
-				res = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore);
+				res = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore, allowSeqCtrl);
 				if (res != JVX_NO_ERROR)
 				{
 					goto exit_error;

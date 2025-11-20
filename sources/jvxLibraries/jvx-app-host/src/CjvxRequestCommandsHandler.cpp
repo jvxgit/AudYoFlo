@@ -9,8 +9,14 @@ void
 CjvxRequestCommandsHandler::initialize_fwd_link(CjvxHandleRequestCommands_callbacks* ptr)
 {
 	fwd_request = ptr;
-	mainThreadId = JVX_GET_CURRENT_THREAD_ID();
-	
+	if (fwd_request)
+	{
+		mainThreadId = JVX_GET_CURRENT_THREAD_ID();
+	}
+	else
+	{
+		mainThreadId = JVX_THREAD_ID_INVALID;
+	}	
 }
 
 jvxErrorType

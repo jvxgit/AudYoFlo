@@ -3,6 +3,12 @@
 
 JVX_INTERFACE IjvxEventLoopObject;
 
+typedef enum
+{
+	JVX_BACKEND_STATUS_WANTS_RESTART_SHIFT = 1,
+	JVX_BACKEND_STATUS_SCHEDULER_RUNNING_SHIFT = 2
+} jvxBackendStatusShiftOptions;
+
 JVX_INTERFACE IjvxEventLoop_backend_ctrl: public IjvxEventLoop_backend
 {
 public:
@@ -28,7 +34,10 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION start_receiving() = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop_receiving() = 0;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION wants_restart(jvxBool* wantsRestart) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION backend_status(jvxCBitField* curr_status) = 0;
 
 
 };

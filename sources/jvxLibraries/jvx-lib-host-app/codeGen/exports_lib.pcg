@@ -1,7 +1,6 @@
 SECTION PROPERTIES
 {	
 	OUTPUTFILE_NAME = "genLibHost";
-	CALLBACKS = {"set_options"};
 	SECTION libhost
 	{
 		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
@@ -11,7 +10,6 @@ SECTION PROPERTIES
 
 		SECTION autostart
 		{
-			CALLBACK_SET_POSTHOOK = "set_options";
 			DESCRIPTION = "Autostart option";
 			INIT_SET = 0; 		
 			TYPE = "JVX_DATAFORMAT_BOOL";

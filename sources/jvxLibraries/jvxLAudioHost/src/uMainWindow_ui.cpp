@@ -343,7 +343,7 @@ uMainWindow::updateWindow(jvxCBitField prio)
 	subWidgets.bridgeMenuComponents->updateWindow();
 	subWidgets.bridgeMenuComponents->updateWindow_tools();
 
-	actionAuto_Start->setChecked(systemParams.auto_start);
+	actionAuto_Start->setChecked(genQtAudioHost::host_params.autostart.value);
 }
 
 // Slots for userinteractions

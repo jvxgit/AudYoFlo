@@ -183,6 +183,7 @@ SECTION PROPERTIES
 				TYPE = "JVX_DATAFORMAT_STRING";
 			};
 
+			/*
 			SECTION application_property_autostart
 			{
 				TYPE = "JVX_DATAFORMAT_BOOL";
@@ -198,6 +199,7 @@ SECTION PROPERTIES
 				CALLBACK_SET_POSTHOOK = "command_post_set";
 				CALLBACK_GET_PREHOOK = "command_pre_get";
 			};
+			*/
 		};
 	};
 

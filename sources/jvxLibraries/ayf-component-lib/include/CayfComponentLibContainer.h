@@ -12,17 +12,25 @@ class CayfComponentLibContainer: public IjvxExternalModuleFactory
 {
 	friend class CayfComponentLib;
 
+public:
+	struct audioParams
+	{
+		jvxSize numInChans = 0;
+		jvxSize numOutChans = 0;
+		jvxSize bSize = 0;
+		jvxSize sRate = 0;
+		jvxDataFormat format = JVX_DATAFORMAT_NONE;
+		jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
+		int passthroughMode = 0;
+	};
+
 private:
 	JVX_MUTEX_HANDLE safeAccess;
-	jvxSize numInChans = 0;
-	jvxSize numOutChans = 0;
-	jvxSize bSize = 0;
-	jvxSize sRate = 0;
-	jvxDataFormat format = JVX_DATAFORMAT_NONE;
-	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
-	int passthroughMode = 0;
+	
 	jvxSize desiredSlotIdDev = JVX_SIZE_DONTCARE;
 	jvxSize desiredSlotIdNode = JVX_SIZE_DONTCARE;
+
+	audioParams startParams;
 
 	void_pvoid_callback ptr_callback_on_start = NULL;
 	void* prv_callback_on_start = NULL;
@@ -65,6 +73,11 @@ public:
 	jvxErrorType invite_external_components(IjvxHiddenInterface* hostRef, jvxBool inviteToJoin) override;
 
 	void linkBinding(ayfHostBindingReferences* bindRef);
+
+	audioParams& audio_parameter_on_start() 
+	{
+		return startParams;
+	};
 };
 
 #endif

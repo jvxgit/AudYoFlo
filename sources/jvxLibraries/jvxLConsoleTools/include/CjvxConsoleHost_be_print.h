@@ -76,6 +76,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop_receiving() override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION wants_restart(jvxBool* wantsRestart)override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION backend_status(jvxCBitField* curr_status) override;
+
 	// ==================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_event(

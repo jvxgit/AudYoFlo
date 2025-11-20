@@ -242,14 +242,14 @@ public:
 	// ===============================================================
 	// Interface <IjvxComponentLibCore>
 	// ===============================================================
-	jvxErrorType deployProcParametersStartProcessor(
+	virtual jvxErrorType deployProcParametersStartProcessor(
 		jvxSize numInChans, jvxSize numOutChans, 
 		jvxSize bSize, jvxSize sRate, 
 		jvxDataFormat format, jvxDataFormatGroup formGroup);
-	jvxErrorType process_one_buffer_interleaved(
+	virtual jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn, 
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
-	jvxErrorType stopProcessor();
+	virtual jvxErrorType stopProcessor();
 	
 	// ===============================================================
 	// ===============================================================

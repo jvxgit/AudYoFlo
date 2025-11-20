@@ -292,30 +292,68 @@ void
 CjvxConsoleHost_fe_console::trigger_deactivate()
 {
 	jvxErrorType res = JVX_NO_ERROR;
-
 	TjvxEventLoopElement evLElm;
-	evLElm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);
-	evLElm.priv_fe = NULL;
-	evLElm.target_be = linkedPriBackend.be;
-	evLElm.priv_be = NULL;
+	jvxCBitField whatToDo = (jvxCBitField)-1;
 
-	evLElm.param = NULL;
-	evLElm.paramType = JVX_EVENTLOOP_DATAFORMAT_NONE;
+	while (whatToDo != 0)
+	{
+		// Reset condition
+		whatToDo = 0;
 
-	evLElm.eventType = JVX_EVENTLOOP_EVENT_DEACTIVATE;
-	evLElm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
-	evLElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
-	evLElm.delta_t = JVX_SIZE_UNSELECTED;
-	evLElm.autoDeleteOnProcess = c_false;
-	if (noconsole_restart)
-	{
-		wantsRestart = true;
+		evLElm.origin_fe = static_cast<IjvxEventLoop_frontend*>(this);
+		evLElm.priv_fe = NULL;
+		evLElm.target_be = linkedPriBackend.be;
+		evLElm.priv_be = NULL;
+
+		evLElm.param = &whatToDo;
+		evLElm.paramType = JVX_EVENTLOOP_DATAFORMAT_NONE;
+
+		evLElm.eventType = JVX_EVENTLOOP_EVENT_DEACTIVATE;
+		evLElm.eventClass = JVX_EVENTLOOP_REQUEST_CALL_BLOCKING;
+		evLElm.eventPriority = JVX_EVENTLOOP_PRIORITY_NORMAL;
+		evLElm.delta_t = JVX_SIZE_UNSELECTED;
+		evLElm.autoDeleteOnProcess = c_false;
+		if (noconsole_restart)
+		{
+			wantsRestart = true;
+		}
+		else
+		{
+			wantsRestart = false;
+		}
+
+		res = evLop->event_schedule(&evLElm, NULL, NULL);
+
+		/*
+		if (jvx_bitTest(whatToDo, JVX_EVENT_CONTINUE_WANT_SHUTDOWN_SHIFT))
+		{
+			wantsRestart = false;
+			break;
+		}
+		if (jvx_bitTest(whatToDo, JVX_EVENT_CONTINUE_WANT_SHUTDOWN_RESTART_SHIFT))
+		{
+			wantsRestart = true;
+			break;
+		}
+		*/
+
+		if (jvx_bitTest(whatToDo, JVX_EVENT_CONTINUE_POSTPONE_SHUTDOWN_SHIFT))
+		{
+			JVX_SLEEP_MS(100);
+		}
+
+		if (jvx_bitTest(whatToDo, JVX_EVENT_CONTINUE_WAIT_SCHEDULER_WANT_SHUTDOWN_SHIFT))
+		{
+			jvxBool seqRunning = true;
+			while (seqRunning)
+			{
+				JVX_SLEEP_S(1);
+				jvxCBitField bf = 0;
+				linkedPriBackend.be->backend_status(&bf);
+				seqRunning = jvx_bitTest(bf, jvxBackendStatusShiftOptions::JVX_BACKEND_STATUS_SCHEDULER_RUNNING_SHIFT);
+			}
+		}
 	}
-	else
-	{
-		wantsRestart = false;
-	}
-	res = evLop->event_schedule(&evLElm, NULL, NULL);
 }
 
 jvxErrorType
@@ -543,6 +581,17 @@ CjvxConsoleHost_fe_console::start(int argc, char* argv[])
 						if (jvx_bitTest(whatToDo, JVX_EVENT_CONTINUE_POSTPONE_SHUTDOWN_SHIFT))
 						{
 							JVX_SLEEP_MS(100);
+						}
+						if (jvx_bitTest(whatToDo, JVX_EVENT_CONTINUE_WAIT_SCHEDULER_WANT_SHUTDOWN_SHIFT))
+						{
+							jvxBool seqRunning = true;
+							while (seqRunning)
+							{
+								JVX_SLEEP_S(1);
+								jvxCBitField bf = 0;
+								linkedPriBackend.be->backend_status(&bf);
+								seqRunning = jvx_bitTest(bf, jvxBackendStatusShiftOptions::JVX_BACKEND_STATUS_SCHEDULER_RUNNING_SHIFT);
+							}
 						}
 					}
 					if (whatToDo != 0)

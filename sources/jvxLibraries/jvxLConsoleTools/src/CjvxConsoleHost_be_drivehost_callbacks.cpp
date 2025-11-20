@@ -873,11 +873,6 @@ CjvxConsoleHost_be_drivehost::get_configuration_ext(jvxCallManagerConfiguration*
 		jvxConfigData* datTmp = NULL;
 		jvxConfigData* datSec = NULL;
 
-		val.assign(config.auto_start);
-		processor->createAssignmentValue(&datTmp, JVX_COMMON_PROPERTIES_HOST_AUTOSTART, val);
-		processor->addSubsectionToSection(sectionWhereToAddAllSubsections, datTmp);
-		datTmp = NULL;
-
 		val.assign(config_show.numdigits);
 		processor->createAssignmentValue(&datTmp, "JVX_CONSOLE_HOST_NUM_DIGITS", val);
 		processor->addSubsectionToSection(sectionWhereToAddAllSubsections, datTmp);
@@ -919,13 +914,6 @@ CjvxConsoleHost_be_drivehost::put_configuration_ext(jvxCallManagerConfiguration*
 	jvxErrorType res;
 	if (processor)
 	{
-		res = processor->getReferenceEntryCurrentSection_name(sectionToContainAllSubsectionsForMe, &datTmp, JVX_COMMON_PROPERTIES_HOST_AUTOSTART);
-		if (res == JVX_NO_ERROR)
-		{
-			processor->getAssignmentValue(datTmp, &val);
-			val.toContent(&config.auto_start);
-		}
-
 		res = processor->getReferenceEntryCurrentSection_name(sectionToContainAllSubsectionsForMe, &datTmp, "JVX_CONSOLE_HOST_NUM_DIGITS");
 		if (res == JVX_NO_ERROR)
 		{
@@ -1058,7 +1046,28 @@ CjvxConsoleHost_be_drivehost::report_command_request_inThread(jvxCBitField reque
 void 
 CjvxConsoleHost_be_drivehost::trigger_immediate_sequencerStep()
 {
-	// What to do here?
+	jvxErrorType res = JVX_NO_ERROR;
+	IjvxSequencer* seqPtr = nullptr;
+	if (involvedHost.hHost)
+	{
+		jvxSequencerStatus stat = JVX_SEQUENCER_STATUS_NONE;
+		seqPtr = reqInterface<IjvxSequencer>(involvedHost.hHost);
+		if (seqPtr)
+		{
+			res = JVX_ERROR_WRONG_STATE;
+			seqPtr->status_process(&stat, nullptr, nullptr, nullptr, nullptr);
+			if (stat != JVX_SEQUENCER_STATUS_NONE)
+			{				
+				jvxTick tt = JVX_GET_TICKCOUNT_US_GET_CURRENT(&runtime.myTimerRef);
+				res = seqPtr->trigger_step_process_extern(tt);
+				if ((res == JVX_ERROR_PROCESS_COMPLETE) || (res == JVX_ERROR_ABORT))
+				{
+					seqPtr->trigger_complete_process_extern(tt);
+				}
+			}
+			retInterface<IjvxSequencer>(involvedHost.hHost, seqPtr);
+		}
+	}	
 }
 
 /**

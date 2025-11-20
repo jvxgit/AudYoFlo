@@ -82,6 +82,15 @@ include_directories(
 
 set(LOCAL_COMPILE_DEFINITIONS "COMPILE_FOR_CONSOLE")
 
+# set(LOCAL_PCG_FILE_OPTIONS
+#		-P
+#		-L
+#		-D JVX_WITH_AUDIO_PLUGIN_IF
+#		-I ${JVX_SUBPRODUCT_mbc_LIBS_INCLUDE_PATH}/jvx-mbc/pcg)
+set(LOCAL_PCG_FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/../codeGen/exports_host.pcg
+  )
+
 if(JVX_OS MATCHES "windows")
 	if(NOT JVX_USE_CONSOLE_APPS)
 		set(LOCAL_COMPILE_DEFINITIONS "")

@@ -120,6 +120,9 @@ protected:
 	// A unique id to identify things within the host scope during one session. This id does not 
 	// allow global and infinite identifiation as UUIDs do
 	jvxSize myUniqueIdSelf;
+
+	jvxBool process_to_be_controlled_in_sequencer(IjvxDataConnectionProcess* theProc);
+
 private:
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_command_post_set);

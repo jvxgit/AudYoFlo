@@ -49,6 +49,7 @@ protected:
 	} _common_set_conn_comm;
 
 	jvxBool preventStoredInConfig = false;
+	jvxBool allowControlSequencer = true;
 	jvxSize connRuleId = JVX_SIZE_UNSELECTED;
 
 	CjvxDataConnections* theParent = nullptr;
@@ -79,8 +80,8 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION _unique_id_connections(jvxSize* uid);
 	virtual jvxErrorType JVX_CALLINGCONVENTION _descriptor_connection(jvxApiString* str);
-	virtual jvxErrorType JVX_CALLINGCONVENTION _misc_connection_parameters(jvxSize* connRuleId, jvxBool* preventStoreConfig);
-	virtual jvxErrorType JVX_CALLINGCONVENTION _set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoredInConfigArg);
+	virtual jvxErrorType JVX_CALLINGCONVENTION _misc_connection_parameters(jvxSize* connRuleId, jvxBool* preventStoreConfig, jvxBool* allowControlSequencerArg);
+	virtual jvxErrorType JVX_CALLINGCONVENTION _set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoredInConfigArg, jvxBool allowControlSequencerArg);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION _number_bridges(jvxSize* num);
 	virtual jvxErrorType JVX_CALLINGCONVENTION _reference_bridge(jvxSize idx, IjvxConnectorBridge** theBridge);

@@ -279,7 +279,7 @@ uMainWindow::report_sequencer_stopped()
 	setBackgroundLabelColor(Qt::yellow, label_run3);
 	setBackgroundLabelColor(Qt::yellow, label_run4);
 	setBackgroundLabelColor(Qt::yellow, label_run5);
-	if (systemParams.auto_stop)
+	if (genQtAudioHost::host_params.autostop.value)
 	{
 		emit emit_autoStop();
 	}

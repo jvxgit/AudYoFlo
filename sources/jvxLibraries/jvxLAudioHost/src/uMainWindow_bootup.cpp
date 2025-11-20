@@ -161,6 +161,7 @@ uMainWindow::initSystem(QApplication* hdlApp, char* clStr[], int clNum)
 		this->fatalStop("Fatal Error", errMess.c_str());
 	}
 
+	jvxValue val;
 	theControl.register_functional_callback(JVX_MAINWINDOWCONTROLLER_REGISTER_MENU_ITEM_INT_VALUE,
 		static_cast<IjvxMainWindowController_report*>(this),
 		reinterpret_cast<jvxHandle*>(this),
@@ -174,20 +175,26 @@ uMainWindow::initSystem(QApplication* hdlApp, char* clStr[], int clNum)
 		"Timeout Period Main Central [ms]",
 		&id_rtview_period_maincentral_ms,
 		false, JVX_REGISTER_FUNCTION_MENU_NO_SEPARATOR);
+
+	val.assign(genQtAudioHost::host_params.autostart.value);
 	theControl.register_functional_callback(
 		JVX_MAINWINDOWCONTROLLER_REGISTER_MENU_ITEM_ONOFF,
 		static_cast<IjvxMainWindowController_report*>(this),
 		reinterpret_cast<jvxHandle*>(this),
 		"Auto Start",
 		&id_autostart_id,
-		false, JVX_REGISTER_FUNCTION_MENU_SEPARATOR_IF_NOT_FIRST);
+		false, JVX_REGISTER_FUNCTION_MENU_SEPARATOR_IF_NOT_FIRST,
+		&val);
+
+	val.assign(genQtAudioHost::host_params.autostop.value);
 	theControl.register_functional_callback(
 		JVX_MAINWINDOWCONTROLLER_REGISTER_MENU_ITEM_ONOFF,
 		static_cast<IjvxMainWindowController_report*>(this),
 		reinterpret_cast<jvxHandle*>(this),
 		"Auto Stop",
 		&id_autostop_id,
-		false, JVX_REGISTER_FUNCTION_MENU_NO_SEPARATOR);
+		false, JVX_REGISTER_FUNCTION_MENU_NO_SEPARATOR,
+		&val);
 	
 	/*
 	szz = this->minimumSize();
@@ -344,11 +351,11 @@ uMainWindow::get_variable_edit(jvxHandle* privData, jvxValue& val, jvxSize id)
 	}
 	if (id == id_autostart_id)
 	{
-		val.assign(systemParams.auto_start);
+		val.assign(genQtAudioHost::host_params.autostart.value);
 	}
 	if (id == id_autostop_id)
 	{
-		val.assign(systemParams.auto_stop);
+		val.assign(genQtAudioHost::host_params.autostop.value);
 	}
 	return JVX_NO_ERROR;
 }
@@ -356,6 +363,7 @@ uMainWindow::get_variable_edit(jvxHandle* privData, jvxValue& val, jvxSize id)
 jvxErrorType 
 uMainWindow::set_variable_edit(jvxHandle* privData, jvxValue& val, jvxSize id)
 {
+	jvxBool runUpdate = false;
 	if (id == id_period_seq_ms)
 	{
 		val.toContent(&theHostFeatures.timeout_period_seq_ms);
@@ -366,11 +374,19 @@ uMainWindow::set_variable_edit(jvxHandle* privData, jvxValue& val, jvxSize id)
 	}
 	if (id == id_autostart_id)
 	{
-		systemParams.auto_start = !systemParams.auto_start;
+		runUpdate = true;
+		val.toContent(&genQtAudioHost::host_params.autostart.value);
 	}
 	if (id == id_autostop_id)
 	{
-		systemParams.auto_stop = !systemParams.auto_stop;
+		runUpdate = true;
+		val.toContent(&genQtAudioHost::host_params.autostop.value);
 	}
+
+	if (runUpdate)
+	{
+		this->updateWindow();
+	}
+
 	return JVX_NO_ERROR;
 }

@@ -73,7 +73,7 @@ CjvxDataConnectionCommon::_descriptor_connection(jvxApiString* str)
 }
 
 jvxErrorType
-CjvxDataConnectionCommon::_misc_connection_parameters(jvxSize* connRuleIdPtr, jvxBool* preventStoredInConfigPtr)
+CjvxDataConnectionCommon::_misc_connection_parameters(jvxSize* connRuleIdPtr, jvxBool* preventStoredInConfigPtr, jvxBool* allowControlSequencerPtr)
 {
 	if (connRuleIdPtr)
 	{
@@ -83,13 +83,18 @@ CjvxDataConnectionCommon::_misc_connection_parameters(jvxSize* connRuleIdPtr, jv
 	{
 		*preventStoredInConfigPtr = this->preventStoredInConfig;
 	}
+	if (allowControlSequencerPtr)
+	{
+		*allowControlSequencerPtr = this->allowControlSequencer;
+	}
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CjvxDataConnectionCommon::_set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoredInConfigArg)
+CjvxDataConnectionCommon::_set_misc_connection_parameters(jvxSize connRuleIdArg, jvxBool preventStoredInConfigArg, jvxBool allowControlSequencerArg)
 {
 	this->preventStoredInConfig = preventStoredInConfigArg;
+	this->allowControlSequencer = allowControlSequencerArg;
 	connRuleId = connRuleIdArg;
 	return JVX_NO_ERROR;
 }

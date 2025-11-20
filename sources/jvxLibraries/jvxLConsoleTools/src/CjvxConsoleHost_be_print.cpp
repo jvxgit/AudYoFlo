@@ -362,6 +362,16 @@ CjvxConsoleHost_be_print::wants_restart(jvxBool *wRet)
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType 
+CjvxConsoleHost_be_print::backend_status(jvxCBitField* curr_status)
+{
+	if (curr_status)
+	{
+		jvx_bitFClear(*curr_status);
+	}
+	return JVX_NO_ERROR;
+}
+
 jvxErrorType
 CjvxConsoleHost_be_print::process_event(TjvxEventLoopElement* theQueueElement)
 	/*
@@ -405,8 +415,34 @@ CjvxConsoleHost_be_print::process_event(TjvxEventLoopElement* theQueueElement)
 		this->process_init((IjvxCommandLine*)param);
 		break;
 	case JVX_EVENTLOOP_EVENT_DEACTIVATE:
-		this->process_shutdown();
-		threadIdMainLoop = JVX_THREAD_ID_INVALID;
+
+		whatToDo = (jvxCBitField*)param;
+		assert(whatToDo);
+		*whatToDo = 0;
+		
+		res = this->process_shutdown();
+
+		switch (res)
+		{
+		case JVX_NO_ERROR:
+			threadIdMainLoop = JVX_THREAD_ID_INVALID;
+			jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_WANT_SHUTDOWN_SHIFT);
+			break;
+		case JVX_ERROR_NOT_READY:
+			assert(0);
+			jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_POSTPONE_SHUTDOWN_SHIFT);
+			break;
+		case JVX_ERROR_POSTPONE:
+
+			// if the sequencer is still running, we end up here. However, the process_shutdown call
+			// has triggered a stop for the sequencer. Then, the caller need to wait for a while and rerun the 
+			// last command
+			jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_WAIT_SCHEDULER_WANT_SHUTDOWN_SHIFT);
+			break;
+		default:
+			assert(0);
+		}
+
 		break;
 	case JVX_EVENTLOOP_EVENT_TEXT_SHOW:
 		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_STDSTRING);
@@ -447,21 +483,33 @@ CjvxConsoleHost_be_print::process_event(TjvxEventLoopElement* theQueueElement)
 			{
 				if (!config_noquit)
 				{
-					store_entry_console_list(internaltextbuffer);
 					res = this->process_shutdown();
 
 					switch (res)
 					{
 					case JVX_NO_ERROR:
+						store_entry_console_list(internaltextbuffer);
 						jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_WANT_SHUTDOWN_SHIFT);
 						internaltextbuffer.clear();
 						dontclearline = true;
 						break;
 					case JVX_ERROR_NOT_READY:
+						assert(0);
+						store_entry_console_list(internaltextbuffer);
 						jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_POSTPONE_SHUTDOWN_SHIFT);
 						internaltextbuffer.clear();
 						dontclearline = true;
 						break;
+					case JVX_ERROR_POSTPONE:
+
+						// if the sequencer is still running, we end up here. However, the process_shutdown call
+						// has triggered a stop for the sequencer. Then, the caller need to wait for a while and rerun the 
+						// last command
+						jvx_cbitSet(*whatToDo, JVX_EVENT_CONTINUE_WAIT_SCHEDULER_WANT_SHUTDOWN_SHIFT);
+						dontclearline = true;						
+						break;
+					default:
+						assert(0);
 					}
 				}
 				else

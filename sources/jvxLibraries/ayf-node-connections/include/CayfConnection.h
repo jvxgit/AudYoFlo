@@ -134,7 +134,8 @@ namespace AyfConnection
 		HjvxMicroConnection* microConn = nullptr;
 		IayfConnectionStateSwitchNode* ssCb = nullptr;
 		jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
-		jvxBool fwdTestToDepend = false;	
+		jvxBool fwdTestToDepend = false;
+		jvxBool allowSeqCtrl = true;
 
 	public:
 		CayfConnection();
@@ -157,7 +158,7 @@ namespace AyfConnection
 		jvxErrorType init_connect(const CayfConnectionConfig& cfg,
 			IayfConnectionStateSwitchNode* cbSs = nullptr,
 			jvxSize idConnDependsOn = JVX_SIZE_UNSELECTED, 
-			jvxBool fwdTestChain = false);
+			jvxBool fwdTestChain = false, jvxBool allowSeqCtrlArg = true);
 
 		//! Function to prepare and start the involved subchain. This calls prepare_connection and start_connection.
 		jvxErrorType prepare_start();

@@ -24,12 +24,12 @@ void
 CayfComponentLibContainer::reset()
 {
 	processorRef = nullptr;
-	numInChans = 0;
-	numOutChans = 0;
-	bSize = 0;
-	sRate = 0;
-	format = JVX_DATAFORMAT_NONE;
-	formGroup = JVX_DATAFORMAT_GROUP_NONE;
+	startParams.numInChans = 0;
+	startParams.numOutChans = 0;
+	startParams.bSize = 0;
+	startParams.sRate = 0;
+	startParams.format = JVX_DATAFORMAT_NONE;
+	startParams.formGroup = JVX_DATAFORMAT_GROUP_NONE;
 };
 
 jvxErrorType
@@ -70,12 +70,13 @@ CayfComponentLibContainer::deployProcParametersStartProcessor(CayfComponentLib* 
 	jvxErrorType res = JVX_ERROR_NOT_READY;
 	if (compProc)
 	{
-		res = compProc->deployProcParametersStartProcessor(numInChans,
-			numOutChans,
-			bSize,
-			sRate,
-			format,
-			formGroup);
+		res = compProc->deployProcParametersStartProcessor(
+			startParams.numInChans,
+			startParams.numOutChans,
+			startParams.bSize,
+			startParams.sRate,
+			startParams.format,
+			startParams.formGroup);
 	}
 	return res;
 };
@@ -119,7 +120,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 	IjvxMinHost* minHostRef = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
 
-	CayfComponentLib* deviceEntryObject = allocateDeviceObject(passthroughMode, this, regToken.c_str());
+	CayfComponentLib* deviceEntryObject = allocateDeviceObject(startParams.passthroughMode, this, regToken.c_str());
 
 	if (hostRef)
 	{		
@@ -218,13 +219,13 @@ CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numIn
 
 	modName = modNameArg;
 	regToken = modName;
-	numInChans = numInChansArg;
-	numOutChans = numOutChansArg;
-	bSize = bSizeArg;
-	sRate = sRateArg;
-	format = JVX_DATAFORMAT_DATA;
-	formGroup = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
-	passthroughMode = passthroughModeArg;
+	startParams.numInChans = numInChansArg;
+	startParams.numOutChans = numOutChansArg;
+	startParams.bSize = bSizeArg;
+	startParams.sRate = sRateArg;
+	startParams.format = JVX_DATAFORMAT_DATA;
+	startParams.formGroup = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
+	startParams.passthroughMode = passthroughModeArg;
 	desiredSlotIdNode = JVX_SIZE_DONTCARE;
 	desiredSlotIdDev = JVX_SIZE_DONTCARE;
 

@@ -45,7 +45,7 @@ uMainWindow_specific::myComponentFilterCallback(jvxBool* doNotLoad, const char* 
 }
 #endif
 
-uMainWindow_specific::uMainWindow_specific()
+uMainWindow_specific::uMainWindow_specific() : CjvxProperties("qtAudioHost", *this)
 {
 	jvxSize i;
 	parentRef = NULL;
@@ -71,8 +71,9 @@ uMainWindow_specific::uMainWindow_specific()
 void
 uMainWindow_specific::init_specific(uMainWindow* par)
 {
-	this->parentRef = par;
+	this->parentRef = par;	
 }
+
 // ##################################################################################
 
 /**
@@ -113,6 +114,41 @@ uMainWindow_specific::bootup_negotiate_specific()
 	// Set firwst and afterwards request some additional features from host
 	// =======================================================================
 	parentRef->theHostFeatures.myMainWidget = parentRef->subWidgets.main.theWidget;
+
+	// ============================================================================================
+
+	genQtAudioHost::init_all();
+	genQtAudioHost::allocate_all();
+	genQtAudioHost::register_all(static_cast<CjvxProperties*>(this));
+
+	// We need to prepare the embedding of the very few submodule properties.
+
+	// Rough estimate: maximum of 20 properties in this module
+	_common_set_properties.propIdSpan = 20;
+	
+	// Only allow access in state ACTIVE
+	_common_set_min.theState = JVX_STATE_ACTIVE;
+
+	// ============================================================================================
+	IjvxPropertyAttach* thePropExp = nullptr;
+	resL = parentRef->involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle**)&thePropExp);
+	if (thePropExp)
+	{
+		thePropExp->attach_property_submodule("frontend_hooks", static_cast<IjvxProperties*>(this));
+		parentRef->involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle*)thePropExp);
+		thePropExp = nullptr;
+	}
+
+	IjvxConfigurationAttach* theCfgAtt = nullptr;
+	resL = parentRef->involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle**)&theCfgAtt);
+	if (theCfgAtt)
+	{
+		theCfgAtt->attach_configuration_submodule("frontend_hooks", static_cast<IjvxConfiguration*>(this));
+		parentRef->involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle*)theCfgAtt);
+		theCfgAtt = nullptr;
+	}
+
+	// ========================================================================================
 
 	JVX_START_SLOTS_BASE(parentRef->theHostFeatures.numSlotsComponents, 
 		parentRef->_command_line_parameters_hosttype.num_slots_max, 
@@ -314,6 +350,31 @@ uMainWindow_specific::shutdown_specific()
 	parentRef->static_unload_loop();
 
 	parentRef->shutdown_terminate_base();
+
+	IjvxConfigurationAttach* theCfgAtt = nullptr;
+	jvxErrorType resL = parentRef->involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle**)&theCfgAtt);
+	if (theCfgAtt)
+	{
+		theCfgAtt->detach_configuration_submodule(static_cast<IjvxConfiguration*>(this));
+		parentRef->involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_CONFIGURATION_ATTACH, (jvxHandle*)theCfgAtt);
+		theCfgAtt = nullptr;
+	}
+
+
+	IjvxPropertyAttach* thePropExp = nullptr;
+
+	resL = parentRef->involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle**)&thePropExp);
+	if (thePropExp)
+	{
+		thePropExp->detach_property_submodule(static_cast<IjvxProperties*>(this));
+		parentRef->involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTY_ATTACH, (jvxHandle*)thePropExp);
+		thePropExp = nullptr;
+	}
+	genQtAudioHost::unregister_all(static_cast<CjvxProperties*>(this));
+	genQtAudioHost::deallocate_all();
+
+	_common_set_properties.propIdSpan = JVX_SIZE_UNSELECTED;
+	_common_set_min.theState = JVX_STATE_NONE;
 
 	jvx_invalidate_factoryhost_features(&parentRef->theHostFeatures);
 
@@ -739,6 +800,40 @@ uMainWindow::post_hook_stateswitch(jvxStateSwitch ss, const jvxComponentIdentifi
 	return(JVX_NO_ERROR);
 }
 
+// =============================================================================
+
+jvxErrorType
+uMainWindow_specific::put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,
+	jvxHandle* sectionToContainAllSubsectionsForMe, const char* filename, jvxInt32 lineno)
+{
+	std::vector<std::string> warns;
+	genQtAudioHost::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe, &warns);
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+uMainWindow_specific::get_configuration(jvxCallManagerConfiguration* callMan,
+	IjvxConfigProcessor* processor, jvxHandle* sectionWhereToAddAllSubsections)
+{
+	genQtAudioHost::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+uMainWindow_specific::set_property(
+	jvxCallManagerProperties& callGate,
+	const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
+	const jvx::propertyAddress::IjvxPropertyAddress& ident,
+	const jvx::propertyDetail::CjvxTranferDetail& detail)
+{
+	jvxErrorType res = _set_property(callGate, rawPtr, ident, detail);
+	parentRef->updateWindow();
+	return res;
+}
+
+// ============================================================================
+
+
 JVX_PROPERTIES_CALLBACK_DEFINE(uMainWindow, cb_save_config)
 {
 	jvxErrorType res = JVX_NO_ERROR;
@@ -773,4 +868,3 @@ JVX_PROPERTIES_CALLBACK_DEFINE(uMainWindow, cb_xchg_property)
 	// std::cout << "Callback for XChange Property currently not implemented" << std::endl;
 	return res;
 }
-

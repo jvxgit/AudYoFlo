@@ -61,7 +61,8 @@ public:
 		jvxHandle* privData,
 		const char* contentData,
 		jvxSize* id, jvxBool is_parameter,
-		jvxMainWindowController_register_separator_ids sepEnum = JVX_REGISTER_FUNCTION_MENU_SEPARATOR_IF_NOT_FIRST) override;
+		jvxMainWindowController_register_separator_ids sepEnum = JVX_REGISTER_FUNCTION_MENU_SEPARATOR_IF_NOT_FIRST,
+		jvxValue* ini_val = nullptr) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION unregister_functional_callback(jvxSize id) override;
 

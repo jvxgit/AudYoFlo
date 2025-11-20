@@ -413,9 +413,12 @@ CjvxSpNMixChainEnterLeave::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 			{
 			case jvxOperationModeMixChain::JVX_OPERTION_MODE_MIX_CHAIN_INPUT:
 
+				// Always, there are more output channels than input channels
 				assert(_common_set_icon.theData_in->con_params.number_channels <= _common_set_ocon.theData_out.con_params.number_channels);
 
+				// The difference are the extra channels
 				szExtraBuffersChannels = _common_set_ocon.theData_out.con_params.number_channels - _common_set_icon.theData_in->con_params.number_channels;
+				
 				if (_common_set_icon.theData_in->con_data.number_buffers)
 				{
 					JVX_DSP_SAFE_ALLOCATE_FIELD(bufsSideChannel, jvxHandle**, _common_set_icon.theData_in->con_data.number_buffers);

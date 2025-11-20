@@ -201,6 +201,9 @@ set(JVX_BASE_CMAKE_DIR ${JVX_CMAKE_DIR})
 # Base folder for cmake build files - BINARY FOLDER
 set(JVX_BASE_BINARY_DIR ${JVX_BINARY_DIR})
 
+# Base folder for cmake build files - BINARY FOLDER
+set(JVX_BASE_COMPONENTS_BINARY_DIR ${JVX_BINARY_DIR}/sources/jvxComponents)
+
 # Subproduct root folder may be outside the current build tree
 set(JVX_SUBPRODUCT_ROOT ${JVX_BASE_ROOT})
 

@@ -113,6 +113,9 @@ class _AudYoFloFileInputCoreWidgetNativeState
           onDragDone: (detail) {
             for (var elmF in detail.files) {
               String fName = elmF.path;
+
+              // In order to work properly, we need to extend the backslashes
+              fName = AudYoFloHelper.propertyStringBackSlashes(fName);
               List<String> props = [propName];
               if (propsLocal != null) {
                 propsLocal.value = fName;

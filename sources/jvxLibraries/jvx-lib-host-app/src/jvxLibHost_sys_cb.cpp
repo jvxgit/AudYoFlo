@@ -59,7 +59,6 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	genLibHost::init_all();
 	genLibHost::allocate_all();
 	genLibHost::register_all(static_cast<CjvxProperties*>(this));
-	genLibHost::register_callbacks(static_cast<CjvxProperties*>(this), cb_set_options, this, nullptr);
 
 	_common_set_properties.propIdSpan = 20;
 	_common_set_min.theState = JVX_STATE_ACTIVE;

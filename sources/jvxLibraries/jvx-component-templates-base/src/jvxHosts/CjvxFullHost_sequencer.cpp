@@ -85,6 +85,25 @@ CjvxHostBdx1::prepareCompone(IjvxScannerDevice* theDevice)
 }
 */
 
+jvxBool 
+CjvxFullHost::process_to_be_controlled_in_sequencer(IjvxDataConnectionProcess* theProc)
+{
+	jvxSize theControlUid = JVX_SIZE_UNSELECTED;
+	jvxBool allowSeqCtrl = true;
+	theProc->depends_on_process(&theControlUid);
+	theProc->misc_connection_parameters(nullptr, nullptr, &allowSeqCtrl);
+
+	// Interact with processes that do not depend on another process and allow control
+	if (
+		JVX_CHECK_SIZE_UNSELECTED(theControlUid) &&
+		allowSeqCtrl
+		)
+	{
+		return true;
+	}
+	return false;
+}
+
 jvxErrorType
 CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 {
@@ -1069,11 +1088,7 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 						assert(resL == JVX_NO_ERROR);
 						if (theProc)
 						{
-							jvxSize theControlUid = JVX_SIZE_UNSELECTED;
-							theProc->depends_on_process(&theControlUid);
-
-							// Prepare only process that do not depend on another process
-							if (JVX_CHECK_SIZE_UNSELECTED(theControlUid))
+							if (process_to_be_controlled_in_sequencer(theProc))
 							{
 								jvxBool processMatches = false;
 								jvxState statC = JVX_STATE_NONE;
@@ -1155,11 +1170,7 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 						assert(resL == JVX_NO_ERROR);
 						if (theProc)
 						{
-							jvxSize theControlUid = JVX_SIZE_UNSELECTED;
-							theProc->depends_on_process(&theControlUid);
-
-							// Prepare only process that do not depend on another process
-							if (JVX_CHECK_SIZE_UNSELECTED(theControlUid))
+							if (process_to_be_controlled_in_sequencer(theProc))
 							{
 								jvxBool processMatches = false;
 								jvxState statC = JVX_STATE_NONE;
@@ -1215,11 +1226,7 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 							assert(resL == JVX_NO_ERROR);
 							if (theProc)
 							{
-								jvxSize theControlUid = JVX_SIZE_UNSELECTED;
-								theProc->depends_on_process(&theControlUid);
-
-								// Prepare only process that do not depend on another process
-								if (JVX_CHECK_SIZE_UNSELECTED(theControlUid))
+								if(process_to_be_controlled_in_sequencer(theProc))
 								{
 									jvxBool processMatches = false;
 									jvxState statC = JVX_STATE_NONE;
@@ -1281,11 +1288,7 @@ CjvxFullHost::sequencer_step(jvxInt64 timestamp_us, jvxSize* delta_ms)
 							assert(resL == JVX_NO_ERROR);
 							if (theProc)
 							{
-								jvxSize theControlUid = JVX_SIZE_UNSELECTED;
-								theProc->depends_on_process(&theControlUid);
-
-								// Prepare only process that do not depend on another process
-								if (JVX_CHECK_SIZE_UNSELECTED(theControlUid))
+								if (process_to_be_controlled_in_sequencer(theProc))
 								{
 									jvxBool processMatches = false;
 									jvxState statC = JVX_STATE_NONE;

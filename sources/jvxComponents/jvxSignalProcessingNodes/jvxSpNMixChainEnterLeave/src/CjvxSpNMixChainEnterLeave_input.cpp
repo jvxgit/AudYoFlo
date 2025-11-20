@@ -36,7 +36,15 @@ CjvxSpNMixChainEnterLeave::report_test_connector(CjvxSingleInputConnector* iconn
 			if (iconn->_common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_REAL_MASTER, 
 				&cpId  JVX_CONNECTION_FEEDBACK_CALL_A(fdb)) == JVX_NO_ERROR)
 			{
-				res = check_preset_channels(iconn->chanSetting, iconn->linkageIoActive, cpId);				
+				res = check_preset_channels(iconn->chanSetting, iconn->linkageIoActive, cpId);	
+				
+				// If we have no channel setting, we will map to all output channels
+				if (res == JVX_ERROR_ELEMENT_NOT_FOUND)
+				{
+					iconn->chanSetting.idxOffset = 0;
+					iconn->chanSetting.channel_num= _common_set_ocon.theData_out.con_params.number_channels;
+					res = JVX_NO_ERROR;
+				}
 			}
 		}
 	}

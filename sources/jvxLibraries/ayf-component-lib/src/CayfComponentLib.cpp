@@ -576,7 +576,7 @@ CayfComponentLib::activate()
 						if (resC == JVX_NO_ERROR)
 						{
 							// Do not create an entry in the config file by actively preventing it!
-							resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore);
+							resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore, false);
 						}
 
 						if (resC == JVX_NO_ERROR)
