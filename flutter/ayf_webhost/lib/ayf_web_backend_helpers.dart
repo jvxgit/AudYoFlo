@@ -423,6 +423,10 @@ mixin AudYoFloWebBackendHelpers {
         retVal = 'host';
         break;
 
+      case JvxComponentTypeEnum.JVX_COMPONENT_DYNAMIC_NODE:
+        retVal = 'dynamic_node';
+        break;
+
       /*
   case JvxComponentTypeEnum.JVX_COMPONENT_EVENTLOOP:
     retVal = 'event_loop';

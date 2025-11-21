@@ -148,10 +148,11 @@ class _AudYoFloMixerSliderState extends State<AudYoFloMixerSlider> {
                   color: widget.backgroundColor,
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   border: Border.all(color: Colors.black, width: 2))),
-          Selector<AudYoFloPeriodicNotifier, bool>(
-              selector: (context, perNotify) => perNotify.fast,
+          Selector<AudYoFloPeriodicNotifier, int>(
+              selector: (context, perNotify) => perNotify.cntFast,
               //shouldRebuild: (previous, next) => next ? false : true,
-              shouldRebuild: (previous, next) => next ? true : false,
+              shouldRebuild: (previous, next) =>
+                  (next != previous) ? true : false,
               builder: (context, notifier, child) {
                 if (widget.onUpdatePeriodic != null) {
                   for (int idx = 0; idx < currentAvrgValues.length; idx++) {

@@ -187,7 +187,7 @@ class _AudYoFloMainWidgetStates extends State<AudYoFloMainWidget>
   // ========================================================
   @override
   int reportFast() {
-    notifierPeriodic?.fast = true;
+    // notifierPeriodic?.fast = true;
     notifierPeriodic?.cntFast++;
     notifierPeriodic?.notify();
     return uiModel!.fastRefreshPerMsecs.value.toInt();
@@ -196,7 +196,7 @@ class _AudYoFloMainWidgetStates extends State<AudYoFloMainWidget>
   @override
   int reportSlow() {
     theBeAdapter?.periodicTriggerSlow();
-    notifierPeriodic?.fast = false;
+    // notifierPeriodic?.fast = false;
     notifierPeriodic?.cntSlow++;
     notifierPeriodic?.notify();
     return uiModel!.slowRefreshPerMsecs.value.toInt();

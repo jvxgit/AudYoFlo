@@ -20,11 +20,13 @@ class _AudYoFloProgressIndicatorState extends State<AudYoFloProgressIndicator> {
   int oldHashCode = -1;
   @override
   Widget build(BuildContext context) {
-    return Selector<AudYoFloPeriodicNotifier, bool>(
-        selector: (context, perNotify) => !perNotify.fast,
-        shouldRebuild: (previous, next) {
+    return Selector<AudYoFloPeriodicNotifier, int>(
+        selector: (context, perNotify) => perNotify.cntSlow,
+        shouldRebuild: (previous, next) {          
           if (widget.updateRealtime) {
-            return next ? true : false;
+
+            // modified logic: compare counter instead of fast flag - which may have overwritten to be true while processinf
+            return (next != previous) ? true : false;
           }
           return false;
         },

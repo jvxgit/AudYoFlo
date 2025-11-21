@@ -18,7 +18,7 @@ abstract class AudYoFloPeriodicCallbacks {
 class AudYoFloPeriodicNotifier with ChangeNotifier {
   int cntFast = 0;
   int cntSlow = 0;
-  bool fast = false;
+  // bool fast = false; <- this should be used anymore, check the counters instead!!!
 
   AudYoFloPeriodicNotifier({bool fast = true});
 
