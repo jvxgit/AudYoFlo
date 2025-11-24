@@ -253,7 +253,9 @@ typedef struct
 	jvxData silenceStopSeconds;
 	jvxInt32 loopCount;
 	jvxData fLow;
+	jvxData fLowStart;
 	jvxData fUp;
+	jvxData fUpStop;
 } jvx_generator_wave_linlogsweep_parameter_runtime_async;
 
 
