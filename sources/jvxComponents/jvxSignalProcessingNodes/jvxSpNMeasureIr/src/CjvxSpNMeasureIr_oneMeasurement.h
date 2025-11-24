@@ -114,7 +114,10 @@ public:
 		jvxData silence_start_seconds;
 		jvxData silence_stop_seconds;
 		jvxData freq_low_hz;
+		jvxData freq_low_hz_start;
+
 		jvxData freq_up_hz;
+		jvxData freq_up_hz_stop;
 	} generator;
 
 	struct

@@ -266,8 +266,12 @@ CjvxSpNMeasureIr::generator_from_props(CjvxSpNMeasureIr_oneMeasurement* elm)
 {
 	elm->generator.seed_noise = genMeasureIr_node::generator.seed_excitation.value;
 	elm->generator.amplitude = genMeasureIr_node::generator.amplitude_excitation.value;
+
+	elm->generator.freq_low_hz_start = genMeasureIr_node::generator.frequency_low_start_excitation.value;
+	elm->generator.freq_up_hz_stop = genMeasureIr_node::generator.frequency_up_stop_excitation.value;
 	elm->generator.freq_low_hz = genMeasureIr_node::generator.frequency_low_excitation.value;
 	elm->generator.freq_up_hz = genMeasureIr_node::generator.frequency_up_excitation.value;
+
 	elm->generator.length_seconds = genMeasureIr_node::generator.length_excitation.value;
 	elm->generator.silence_start_seconds = genMeasureIr_node::generator.silence_start_excitation.value;
 	elm->generator.silence_stop_seconds = genMeasureIr_node::generator.silence_stop_excitation.value;

@@ -12,8 +12,10 @@ CjvxSpNMeasureIr_oneMeasurement::CjvxSpNMeasureIr_oneMeasurement()
 	generator.noise_type = JVX_GENERATOR_NOISE_UNIFORM;
 	generator.silence_start_seconds = 1.0;
 	generator.silence_stop_seconds = 1.0;
+	generator.freq_low_hz_start = 0.0;
 	generator.freq_low_hz = 0.0;
 	generator.freq_up_hz = 100000.0;
+	generator.freq_up_hz_stop = 100000.0;
 	generator.length_seconds = 5.0;
 	generator.loop_count = 2;
 
@@ -101,6 +103,8 @@ CjvxSpNMeasureIr_oneMeasurement::allocate_one_measurement(jvxSize rate_measure, 
 		theGenerator.prm_async.linlogSweepWave.silenceStopSeconds = generator.silence_stop_seconds;
 		theGenerator.prm_async.linlogSweepWave.fLow = generator.freq_low_hz;
 		theGenerator.prm_async.linlogSweepWave.fUp = generator.freq_up_hz;
+		theGenerator.prm_async.linlogSweepWave.fLowStart = generator.freq_low_hz_start;
+		theGenerator.prm_async.linlogSweepWave.fUpStop = generator.freq_up_hz_stop;
 		break;
 	default:
 		break;
