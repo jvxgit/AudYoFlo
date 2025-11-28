@@ -1,0 +1,31 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genQtAudioHost";
+	SECTION host_params
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+
+		SECTION autostart
+		{
+			DESCRIPTION = "Option to start sequencer after load";
+			INIT_SET = 0; 		
+			TYPE = "JVX_DATAFORMAT_BOOL";
+		};		
+
+		SECTION autostop
+		{
+			DESCRIPTION = "Option to shutdown sequencer after processing is done";
+			INIT_SET = 0; 		
+			TYPE = "JVX_DATAFORMAT_BOOL";
+		};		
+
+		SECTION frontend_config_token
+		{
+			DESCRIPTION = "String token to store frontend configuration";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";
+		};
+	};
+};
