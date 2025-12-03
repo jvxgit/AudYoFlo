@@ -74,6 +74,7 @@ option(JVX_USE_V4L2VIDEO "Compile with support for Video4Linux2 - Linux only" fa
 option(JVX_USE_CBMT "Use c-bitmap library" false)
 option(JVX_USE_RUST "Use code in Rust" false)
 option(JVX_USE_TRACY "Build the Tracy Profiler client into the applications" false)
+option(JVX_BUILD_BISON "Build the Bison/Flex tools on configure" true)
 option(JVX_WINDOWS_EXCLUDE_ATL_PROJECTS "Exclude all projects involving ATL components" false)
 option(JVX_USE_PART_ANDROIDAUDIO "Involve audio engine for Android" false)
 option(JVX_BUILD_ANDROID "CCompile Android" false)

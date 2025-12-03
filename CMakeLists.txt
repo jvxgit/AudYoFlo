@@ -400,6 +400,9 @@ include(${JVX_CMAKE_DIR}/fragments/shell.cmake)
 ## =============================================================================
 ## =============================================================================
 
+include(${JVX_CMAKE_DIR}/fragments/thrdparty-early-external.cmake)
+jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY_EXTERNAL}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early-external")
+
 # Find all external dependencies
 include(${JVX_CMAKE_DIR}/fragments/external.cmake)
 

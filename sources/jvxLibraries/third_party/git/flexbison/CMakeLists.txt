@@ -1,0 +1,18 @@
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/winflexbison)
+	message("winflexbison sub project not available. Starting script to download it.") 
+	if(${JVX_OS} MATCHES "windows")
+	  execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+	elseif(${JVX_OS} MATCHES "linux")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")	
+	elseif(${JVX_OS} MATCHES "Android")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")	  		
+	elseif(${JVX_OS} MATCHES "macosx")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+	Else()
+		message(FATAL_ERROR "No download script for current option")
+	endif()
+
+	message("winflexbison installation complete.")
+endif()
+
+set(AYF_BISON_FLEX_EXECUTABLE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/winflexbison/bin/Debug" CACHE INTERNAL "bison lib path (windows)")

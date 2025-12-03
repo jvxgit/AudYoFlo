@@ -5,6 +5,11 @@
 header_message("Configuring external tools")
 
 # bison and flex (needed on compiling host)
+if(AYF_BISON_FLEX_EXECUTABLE_PATH)
+	list(APPEND CMAKE_PREFIX_PATH ${AYF_BISON_FLEX_EXECUTABLE_PATH})
+	
+endif()
+
 find_host_package(BISON REQUIRED)
 find_host_package(FLEX REQUIRED)
 
