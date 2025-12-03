@@ -21,8 +21,7 @@ if [ ! -d "$2/$1/bin" ]; then
 	mkdir $2/$1
 	mkdir $2/$1/build
 		
-	pushd 
-	cd $2/$1/build
+	pushd $2/$1/build
 	
 	# pwd
 	
