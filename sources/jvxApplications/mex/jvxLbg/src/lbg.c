@@ -95,11 +95,9 @@ void mexFunction(nlhs, plhs, nrhs, prhs)
   double	energy, old_energy;
   long          it;
   
-  srand((long)time((time_t *)0));
-
    /**** number of input/output variables correct?    ****/
   
-  if(((nrhs!=5)&&(nrhs!=4)&&(nrhs!=3)&&(nrhs!=2))||((nlhs!=1)&&(nlhs!=2)&&(nlhs!=3)&&(nlhs!=4)))        
+  if(((nrhs != 6) && (nrhs!=5)&&(nrhs!=4)&&(nrhs!=3)&&(nrhs!=2))||((nlhs!=1)&&(nlhs!=2)&&(nlhs!=3)&&(nlhs!=4)))
     {
 	  mexErrMsgTxt("Wrong number of input/output arguments\n");
       use();
@@ -117,28 +115,30 @@ void mexFunction(nlhs, plhs, nrhs, prhs)
   plhs[3]=mxCreateDoubleMatrix(1,1,mxREAL);
   
   /**** if no error limits are given                 ****/
-  
-  if((nrhs==2)||(nrhs==3))
-    {
-      energy_limit=0;
-      energy_diff_limit=1e-06;
+  energy_limit = 0;
+  energy_diff_limit = 1e-06;
+
+  if(nrhs > 3)
+   {
+	  energy_limit = *mxGetPr(prhs[3]);
     }
   /**** if one error limit is given                  ****/
-  
-  if(nrhs==4)
+   
+  if (nrhs > 4)
     {
-      energy_limit=*mxGetPr(prhs[3]);
-      energy_diff_limit=1e-06;
-    }
-  
-  /**** if both error limits are given               ****/
-  
-  if(nrhs==5)
-    {
-      energy_limit=*mxGetPr(prhs[3]);
       energy_diff_limit=*mxGetPr(prhs[4]);
     }
    
+  long srand_val = (long)time((time_t*)0);
+  if (nrhs > 5)
+  {
+	  double val = *mxGetPr(prhs[5]);
+	  srand_val = round(val);
+  }
+
+	srand(srand_val);
+  // seed48
+
   /**** if old codebook does not exist                ****/
   
   if((mxGetM(prhs[1])==0)&&(mxGetN(prhs[1])==0))
@@ -308,7 +308,7 @@ void initialise_codebook( y, n_y, dim )
      int		dim;
 {
   int		i, j;
-  double	drand48();
+  // double	drand48();
   
   timeseed();
   
@@ -392,9 +392,6 @@ void adapt_centroids( y, n_y, x, n_x, dim, y_assigned, count )
   int		iy;
   int		k;
   int       count_empty = 0;
-  
-  double	drand48();
-  
   
   /* initialize counters and centroids to zero */
   for( iy=0 ; iy<n_y ; iy++ )
