@@ -1,0 +1,134 @@
+From db92ce69b421b77930c61b4a8bcb62f6d2b952bf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hauke=20Kr=C3=BCger?= <hk@binauricsaudio.com>
+Date: Tue, 6 Jan 2026 12:19:45 +0100
+Subject: [PATCH] Modification Build MSVC with MD
+
+---
+ core/CMakeLists.txt          |  6 +-----
+ core/build/build.py          | 13 +++++++++++--
+ core/build/dependencies.json |  5 +----
+ core/src/core/CMakeLists.txt | 16 +++++++++++-----
+ 4 files changed, 24 insertions(+), 16 deletions(-)
+
+diff --git a/core/CMakeLists.txt b/core/CMakeLists.txt
+index fae8ff8..dd77886 100644
+--- a/core/CMakeLists.txt
++++ b/core/CMakeLists.txt
+@@ -136,11 +136,7 @@ if (IPL_OS_WINDOWS)
+         $<IF:$<CONFIG:Debug>,_DEBUG,NDEBUG>
+     )
+     add_compile_options(
+-        /EHsc /MP /W3 /Zi
+-        $<$<AND:$<CONFIG:Debug>,$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>:/MTd>
+-        $<$<AND:$<CONFIG:Debug>,$<NOT:$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>>:/MDd>
+-        $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>:/MT>
+-        $<$<AND:$<NOT:$<CONFIG:Debug>>,$<NOT:$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>>:/MD>
++        /EHsc /MP /W3 /Zi        
+         $<$<CONFIG:Debug>:/RTC1>
+         $<$<NOT:$<CONFIG:Debug>>:/Ox>
+         $<$<CONFIG:Release>:/GL>
+diff --git a/core/build/build.py b/core/build/build.py
+index 88c2955..6b95fc7 100644
+--- a/core/build/build.py
++++ b/core/build/build.py
+@@ -41,6 +41,7 @@ def parse_command_line(host_system):
+     parser.add_argument('--minimal', action='store_true', help='Use build options that minimize dependencies.')
+     parser.add_argument('--unity', action='store_true', help='Configure a unity build (for improved build performance on CI systems).')
+     parser.add_argument('--parallel', type=int, default=0, help='Number of threads to use when building. 0 = no threading.')
++    parser.add_argument('--sharedcrt', help = "Link to shared C/C++ runtime library. (Windows only)", action='store_true', default=False)
+     args = parser.parse_args()
+     return args
+ 
+@@ -96,7 +97,7 @@ def run_cmake(program_name, args):
+         env['SDKROOT'] = ''
+ 
+     subprocess.check_call([program_name] + args, env=env)
+-
++    
+ # Runs the "generate" step.
+ def cmake_generate(args):
+     cmake_args = ['-G', generator_name(args)]
+@@ -109,6 +110,11 @@ def cmake_generate(args):
+         elif args.architecture == 'arm64':
+             cmake_args += ['-A', 'ARM64']
+ 
++        if not args.sharedcrt:
++            cmake_args += ['-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>']
++        else:
++            cmake_args += ['-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL']
++            
+     elif args.platform == 'linux':
+         cmake_args += ['-DCMAKE_BUILD_TYPE=' + config_name(args)]
+ 
+@@ -168,7 +174,8 @@ def cmake_generate(args):
+         cmake_args += ['-DCMAKE_UNITY_BUILD=TRUE']
+ 
+     cmake_args += ['../..']
+-
++    
++    print('run cmake with arguments: cmake ', ' '.join(cmake_args))
+     run_cmake('cmake', cmake_args)
+ 
+ # Runs the "build" step.
+@@ -309,6 +316,8 @@ elif args.operation == 'build':
+ elif args.operation == 'test':
+     cmake_test(args)
+ elif args.operation == 'install':
++    cmake_generate(args)
++    cmake_build(args)
+     cmake_install(args)
+ elif args.operation == 'package':
+     cmake_package(args)
+diff --git a/core/build/dependencies.json b/core/build/dependencies.json
+index 89a3a70..65a10b4 100644
+--- a/core/build/dependencies.json
++++ b/core/build/dependencies.json
+@@ -328,8 +328,6 @@
+             "cmake": [
+                 {
+                     "flags": [
+-                        "-DEMBREE_STATIC_LIB=ON",
+-                        "-DEMBREE_STATIC_RUNTIME=ON",
+                         "-DEMBREE_ISPC_SUPPORT=ON",
+                         "-DBUILD_TESTING=OFF",
+                         "-DEMBREE_TUTORIALS=OFF",
+@@ -552,8 +550,7 @@
+                     "flags": [
+                         "-DGLFW_BUILD_EXAMPLES=FALSE",
+                         "-DGLFW_BUILD_TESTS=FALSE",
+-                        "-DGLFW_BUILD_DOCS=FALSE",
+-                        "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=FALSE"
++                        "-DGLFW_BUILD_DOCS=FALSE"
+                     ]
+                 }
+             ]
+diff --git a/core/src/core/CMakeLists.txt b/core/src/core/CMakeLists.txt
+index bff7f30..d2d913f 100644
+--- a/core/src/core/CMakeLists.txt
++++ b/core/src/core/CMakeLists.txt
+@@ -1020,11 +1020,17 @@ install(
+ )
+ 
+ if (IPL_OS_WINDOWS AND IPL_CPU_X64)
+-    install(
+-        FILES       ${CMAKE_HOME_DIRECTORY}/deps/trueaudionext/bin/windows-x64/$<LOWER_CASE:$<CONFIG>>/TrueAudioNext.dll
+-                    ${CMAKE_HOME_DIRECTORY}/deps/trueaudionext/bin/windows-x64/$<LOWER_CASE:$<CONFIG>>/GPUUtilities.dll
+-        DESTINATION lib/${IPL_BIN_SUBDIR}
+-    )
++    # install(
++    #    FILES       ${CMAKE_HOME_DIRECTORY}/deps/trueaudionext/bin/windows-x64/$<LOWER_CASE:$<CONFIG>>/GPUUtilities.dll
++    #    DESTINATION lib/${IPL_BIN_SUBDIR}
++    #)
++	
++	if(STEAMAUDIO_ENABLE_TRUEAUDIONEXT)
++		install(
++			FILES       ${CMAKE_HOME_DIRECTORY}/deps/trueaudionext/bin/windows-x64/$<LOWER_CASE:$<CONFIG>>/TrueAudioNext.dll                    
++			DESTINATION lib/${IPL_BIN_SUBDIR}
++			)
++	endif()
+ endif()
+ 
+ include(CMakeListsInternal.txt OPTIONAL)
+-- 
+2.47.1.windows.1
+

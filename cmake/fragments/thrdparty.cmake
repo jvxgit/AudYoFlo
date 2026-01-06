@@ -131,3 +131,7 @@ if(JVX_USE_CBMP)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/cbmp)
 endif()
 
+if(JVX_USE_STEAM_AUDIO)
+  set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
+    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/steam-audio)
+endif()
