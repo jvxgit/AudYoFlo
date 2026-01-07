@@ -17,15 +17,12 @@
 	
 			# execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${targetfolder} ${archtoken} ${CMAKE_BUILD_TYPE}; sleep 10; exit")
 			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${targetfolder} ${archtoken} ${CMAKE_BUILD_TYPE}; exit")
-		
-			set(STEAMAUDIO_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/core/bin/include" CACHE INTERNAL "Hint where steam audio library is located in this project")
-			set(STEAMAUDIO_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/core/bin/lib/${steam_folder_prefix}/phonon.lib" CACHE INTERNAL "Hint where phonon library is located in this project")  	
-			set(STEAMAUDIO_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/core/bin/lib/${steam_folder_prefix}/phonon.dll" CACHE INTERNAL "Hint where phonon runtime library is located in this project")  	
-	
-		else()
-			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
 		endif()
 	
+		set(STEAMAUDIO_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/core/bin/include" CACHE INTERNAL "Hint where steam audio library is located in this project")
+		set(STEAMAUDIO_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/core/bin/lib/${steam_folder_prefix}/phonon.lib" CACHE INTERNAL "Hint where phonon library is located in this project")  	
+		set(STEAMAUDIO_DYNAMIC "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/core/bin/lib/${steam_folder_prefix}/phonon.dll" CACHE INTERNAL "Hint where phonon runtime library is located in this project")  
+
 		message("steam-audio installation complete.")
 		message("STEAMAUDIO_INCLUDES = ${STEAMAUDIO_INCLUDES}.")
 		message("STEAMAUDIO_LIBRARY = ${STEAMAUDIO_LIBRARY}.")
@@ -35,6 +32,7 @@
 		
 	else()
 		message(FATAL_ERROR "Steam Audio not supported in Linux up to now")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
 	endif()
 	
 
