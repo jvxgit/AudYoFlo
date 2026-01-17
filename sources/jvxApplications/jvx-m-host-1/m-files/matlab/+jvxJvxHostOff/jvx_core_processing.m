@@ -78,6 +78,7 @@ end
 txtField = b.SUBFIELD.OPTIONS;
 selection =b.SUBFIELD.SELECTION_BITFIELD;
 inProcessing.out_channels = size(txtField,1);
+inProcessing.out_channels = min(inProcessing.out_channels, jvxBitField.jvx_num_selections(selection));
 
 mask = 1;
 cnt = 1;

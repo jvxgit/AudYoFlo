@@ -61,7 +61,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 {
 	mexConfigWriter theReader;
 	theReader.init();
-	if((nrhs == 2)&&(nlhs == 1))
+	if ((nrhs >= 2) && (nlhs == 1))
 	{
 		std::string fName = "";
 
@@ -71,7 +71,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			fName = createCStringMex(prhs[0]);
 		}
 
-		theReader.produceFile(fName, prhs[1], plhs[0]);
+		std::string fldName = "MAIN_SECTION";
+		if (nrhs > 2)
+		{
+			if (mxIsChar(prhs[2]))
+			{
+				fldName = createCStringMex(prhs[2]);
+			}
+		}
+		theReader.produceFile(fName, prhs[1], plhs[0], fldName);
 	}
 	else
 	{

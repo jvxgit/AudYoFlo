@@ -30,7 +30,7 @@ public:
 
 	jvxErrorType terminate();
 
-	jvxErrorType produceFile(std::string fName, const mxArray* inputStruct, mxArray*& returnStruct);
+	jvxErrorType produceFile(std::string fName, const mxArray* inputStruct, mxArray*& returnStruct, const std::string& fldName = "MAIN_SECTION");
 	
 	jvxErrorType writeStruct(const mxArray* inputStruct, IjvxConfigProcessor* process, jvxConfigData* theSectionAll);
 	

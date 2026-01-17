@@ -81,7 +81,7 @@ mexConfigWriter::terminate()
 // ==================================================================================
 
 jvxErrorType 
-mexConfigWriter::produceFile(std::string fName, const mxArray* inputStruct, mxArray*& returnField)
+mexConfigWriter::produceFile(std::string fName, const mxArray* inputStruct, mxArray*& returnField, const std::string& fldName)
 {
 	bool success = false;
 	jvxErrorType res = JVX_NO_ERROR;
@@ -90,7 +90,7 @@ mexConfigWriter::produceFile(std::string fName, const mxArray* inputStruct, mxAr
 
 	if(theWriter.theHdl)
 	{
-		res = decideType(inputStruct, theWriter.theHdl, theSectionAddTo, "MAIN_SECTION");
+		res = decideType(inputStruct, theWriter.theHdl, theSectionAddTo, fldName);
 		if(res == JVX_NO_ERROR)
 		{
 			jvxApiString fldStr;
