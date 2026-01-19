@@ -11,6 +11,7 @@ if(JVX_USE_STEAM_AUDIO)
 	# Source code files
 	set(LOCAL_SOURCES
 	    ${CMAKE_CURRENT_SOURCE_DIR}/target/main.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/target/dr_wav.h
 	)
 
 	# Link with audio host

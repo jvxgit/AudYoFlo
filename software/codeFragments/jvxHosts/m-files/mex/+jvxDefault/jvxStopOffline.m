@@ -5,7 +5,7 @@ function [ ] = jvxStopOffline( jvx_handle )
 
     close(inProcessing.processing.hdlUi);
     if(jvx_handle.processing.offline)
-        x = [0:inProcessing.sig_length-1] *1/inProcessing.in_rate;
+        x = [0:double(inProcessing.sig_length)-1] *1/double(inProcessing.in_rate);
     
         figure;
         for(ind = 1:inProcessing.out_channels)
