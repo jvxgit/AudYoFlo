@@ -410,7 +410,7 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 	*/
 	if (
 		(elm.format == JVX_DATAFORMAT_SELECTION_LIST) &&
-		(elm.decoderType == JVX_PROPERTY_DECODER_SINGLE_SELECTION) &&
+		((elm.decoderType == JVX_PROPERTY_DECODER_SINGLE_SELECTION) || (elm.decoderType == JVX_PROPERTY_DECODER_MULTI_SELECTION)) &&
 		(
 			(!elm.translations.tpName.empty())||
 			(!elm.selection.extract_string.empty())
@@ -422,80 +422,133 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 		out_translators << "\t" << elm.translations.tpName << " translate__" << fncSectionName << "__" << elm.name << "_from(jvxSize idx = 0)" << std::endl;
 		out_translators << "\t{" << std::endl;
 
-		if (
-			(!elm.selection.varname.empty()) &&
-			(!elm.selection.nummax.empty()))
+		if (elm.decoderType == JVX_PROPERTY_DECODER_SINGLE_SELECTION)
 		{
-			out_translators << "\t\tfor(int i = 0; i < (int)" << elm.selection.numprefix << 
-				elm.selection.nummax << "; i++)" << std::endl;
-			out_translators << "\t\t{" << std::endl;
-			out_translators << "\t\t\t if(jvx_bitTest(" << propertySectionName << "." << elm.name << ".value.selection(idx), i )) return (" << 
-				elm.translations.tpName << ")i;" << std::endl;
-			out_translators << "\t\t}" << std::endl;
-			out_translators << "\t\treturn " << elm.selection.numprefix << elm.selection.nummax << ";" << std::endl;
-		}
-		else
-		{
-			if(!elm.selection.extract_string.empty())
+			if (
+				(!elm.selection.varname.empty()) &&
+				(!elm.selection.nummax.empty()))
 			{
-				out_translators << "\t\t// LOC#1" << std::endl;
-				out_translators << "\t\tjvxSize idSel = jvx_bitfieldSelection2Id(" << propertySectionName << "." << elm.name << ");" << std::endl;
-				out_translators << "\t\tif(JVX_CHECK_SIZE_UNSELECTED(idSel))" << std::endl;
-				out_translators << "\t\t{" << std::endl;									
-				out_translators << "\t\t\t return " << elm.translations.tpName << "::" << elm.selection.extract_string << ";" << std::endl;
-				out_translators << "\t\t}" << std::endl;									
-				out_translators << "\t\treturn (" << elm.translations.tpName << ")idSel;" << std::endl;
+				out_translators << "\t\tfor(int i = 0; i < (int)" << elm.selection.numprefix <<
+					elm.selection.nummax << "; i++)" << std::endl;
+				out_translators << "\t\t{" << std::endl;
+				out_translators << "\t\t\t if(jvx_bitTest(" << propertySectionName << "." << elm.name << ".value.selection(idx), i )) return (" <<
+					elm.translations.tpName << ")i;" << std::endl;
+				out_translators << "\t\t}" << std::endl;
+				out_translators << "\t\treturn " << elm.selection.numprefix << elm.selection.nummax << ";" << std::endl;
 			}
 			else
 			{
-			for (i = 0; i < elm.selection.strings.size(); i++)
-			{
-				if (i == elm.selection.strings.size() - 1)
+				if (!elm.selection.extract_string.empty())
 				{
-					if (i < elm.translations.strings.size())
-					{
-						if (elm.translations.enumClass)
-						{
-							out_translators << "\t\treturn " << elm.translations.tpName << "::" << elm.translations.strings[i] << ";" << std::endl;
-						}
-						else
-						{
-							out_translators << "\t\treturn " << elm.translations.strings[i] << ";" << std::endl;
-						}
-					}
-					else
-					{
-						out_translators << "\t\treturn (" << elm.translations.tpName << ")" << jvx_size2String(i) << ";" << std::endl;
-					}
+					out_translators << "\t\t// LOC#1" << std::endl;
+					out_translators << "\t\tjvxSize idSel = jvx_bitfieldSelection2Id(" << propertySectionName << "." << elm.name << ");" << std::endl;
+					out_translators << "\t\tif(JVX_CHECK_SIZE_UNSELECTED(idSel))" << std::endl;
+					out_translators << "\t\t{" << std::endl;
+					out_translators << "\t\t\t return " << elm.translations.tpName << "::" << elm.selection.extract_string << ";" << std::endl;
+					out_translators << "\t\t}" << std::endl;
+					out_translators << "\t\treturn (" << elm.translations.tpName << ")idSel;" << std::endl;
 				}
 				else
 				{
-					if (i == 0)
+					for (i = 0; i < elm.selection.strings.size(); i++)
 					{
-						out_translators << "\t\t" << std::flush;
-					}
-					else
-					{
-						out_translators << "\t\telse " << std::flush;
-					}
-					out_translators << "if (jvx_bitTest(" << propertySectionName << "." << elm.name << ".value.selection(idx), " << i << "))" << std::endl;
-					if (i < elm.translations.strings.size())
-					{
-						if (elm.translations.enumClass)
+						if (i == elm.selection.strings.size() - 1)
 						{
-							out_translators << "\t\t\treturn " << elm.translations.tpName << "::" << elm.translations.strings[i] << ";" << std::endl;
+							if (i < elm.translations.strings.size())
+							{
+								if (elm.translations.enumClass)
+								{
+									out_translators << "\t\treturn " << elm.translations.tpName << "::" << elm.translations.strings[i] << ";" << std::endl;
+								}
+								else
+								{
+									out_translators << "\t\treturn " << elm.translations.strings[i] << ";" << std::endl;
+								}
+							}
+							else
+							{
+								out_translators << "\t\treturn (" << elm.translations.tpName << ")" << jvx_size2String(i) << ";" << std::endl;
+							}
 						}
 						else
 						{
-							out_translators << "\t\t\treturn " << elm.translations.strings[i] << ";" << std::endl;
+							if (i == 0)
+							{
+								out_translators << "\t\t" << std::flush;
+							}
+							else
+							{
+								out_translators << "\t\telse " << std::flush;
+							}
+							out_translators << "if (jvx_bitTest(" << propertySectionName << "." << elm.name << ".value.selection(idx), " << i << "))" << std::endl;
+							if (i < elm.translations.strings.size())
+							{
+								if (elm.translations.enumClass)
+								{
+									out_translators << "\t\t\treturn " << elm.translations.tpName << "::" << elm.translations.strings[i] << ";" << std::endl;
+								}
+								else
+								{
+									out_translators << "\t\t\treturn " << elm.translations.strings[i] << ";" << std::endl;
+								}
+							}
+							else
+							{
+								out_translators << "\t\t\treturn (" << elm.translations.tpName << ")" << jvx_size2String(i) << ";" << std::endl;
+							}
 						}
-					}
-					else
-					{
-						out_translators << "\t\t\treturn (" << elm.translations.tpName << ")" << jvx_size2String(i) << ";" << std::endl;
 					}
 				}
 			}
+		}
+		else
+		{
+			{
+				if (
+					(!elm.selection.varname.empty()) &&
+					(!elm.selection.nummax.empty()))
+				{
+					out_translators << "\t\tjvxCBitField out = 0;" << std::endl;
+					out_translators << "\t\tfor(int i = 0; i < (int)" << elm.selection.numprefix <<
+						elm.selection.nummax << "; i++)" << std::endl;
+					out_translators << "\t\t{" << std::endl;
+					out_translators << "\t\t\t if(jvx_bitTest(" << propertySectionName << "." << elm.name << ".value.selection(idx), i )) out |= (1 << i);" << std::endl;
+					out_translators << "\t\t}" << std::endl;
+					out_translators << "\t\treturn (" << elm.translations.tpName  << ") out; " << std::endl;
+				}
+				else
+				{
+					if (!elm.selection.extract_string.empty())
+					{
+						out_translators << "\t\t// LOC#1" << std::endl;
+						out_translators << "\t\tjvxSize idSel = jvx_bitfieldSelection2Id(" << propertySectionName << "." << elm.name << ");" << std::endl;
+						out_translators << "\t\tif(JVX_CHECK_SIZE_UNSELECTED(idSel))" << std::endl;
+						out_translators << "\t\t{" << std::endl;
+						out_translators << "\t\t\t return " << elm.translations.tpName << "::" << elm.selection.extract_string << ";" << std::endl;
+						out_translators << "\t\t}" << std::endl;
+						out_translators << "\t\treturn (" << elm.translations.tpName << ")idSel;" << std::endl;
+					}
+					else
+					{
+						out_translators << "\t\tjvxCBitField out = 0;" << std::endl;
+						for (i = 0; i < elm.selection.strings.size(); i++)
+						{
+							out_translators << "\t\tif (jvx_bitTest(" << propertySectionName << "." << elm.name << ".value.selection(idx), " << i << "))" << std::endl;
+							if (i < elm.translations.strings.size())
+							{
+								if (elm.translations.enumClass)
+								{
+									out_translators << "\t\t\tout |= (jvxCBitField)" << elm.translations.tpName << "::" << elm.translations.strings[i] << ";" << std::endl;
+								}
+								else
+								{
+									out_translators << "\t\t\tout |= (jvxCBitField)" << elm.translations.strings[i] << ";" << std::endl;
+								}
+							}
+						}
+						out_translators << "\t\treturn (" << elm.translations.tpName << ") out;" << std::endl;
+					}
+				}
 			}
 		}
 		out_translators << "\t};" << std::endl;
@@ -508,74 +561,119 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 		<< elm.translations.tpName << " val, jvxSize idx = 0)" << std::endl;
 		out_translators << "\t{" << std::endl;
 
-		if (
-			(!elm.selection.varname.empty()) && 
-			(!elm.selection.nummax.empty()))
+		if (elm.decoderType == JVX_PROPERTY_DECODER_SINGLE_SELECTION)
 		{
-			out_translators << "\t\tfor(int i = 0; i < (int)" << elm.selection.numprefix <<
-				elm.selection.nummax << "; i++)" << std::endl;
-			out_translators << "\t\t{" << std::endl;
-			out_translators << "\t\t\t if(val == (" << elm.translations.tpName << ")i) " <<
-				"jvx_bitZSet(" <<
-					propertySectionName << "." << elm.name << ".value.selection(idx), i);" << std::endl;				
-			out_translators << "\t\t}" << std::endl;
-		}
-		else
-		{
-			if(!elm.selection.extract_string.empty())
+			if (
+				(!elm.selection.varname.empty()) &&
+				(!elm.selection.nummax.empty()))
 			{
-				out_translators << "\t\t// LOC#2" << std::endl;
-				out_translators << "\t\tjvx_bitZSet(" <<
-						propertySectionName << "." << elm.name << ".value.selection(idx), (int)val);" << std::endl;
-			}
-			else
-			{
-			if (elm.selection.strings.size() == 1)
-			{
-				out_translators << "\t\tjvx_bitZSet(" <<
-					propertySectionName << "." << elm.name << ".value.selection(idx), " <<
-					jvx_size2String(0) << ");" << std::endl;
-			}
-			else
-			{
-				out_translators << "\t\tswitch(val)" << std::endl;
+				out_translators << "\t\tfor(int i = 0; i < (int)" << elm.selection.numprefix <<
+					elm.selection.nummax << "; i++)" << std::endl;
 				out_translators << "\t\t{" << std::endl;
-				for (i = 0; i < elm.selection.strings.size(); i++)
+				out_translators << "\t\t\t if(val == (" << elm.translations.tpName << ")i) " <<
+					"jvx_bitZSet(" <<
+					propertySectionName << "." << elm.name << ".value.selection(idx), i);" << std::endl;
+				out_translators << "\t\t}" << std::endl;
+			}
+			else
+			{
+				if (!elm.selection.extract_string.empty())
 				{
-					if (i == elm.selection.strings.size() - 1)
+					out_translators << "\t\t// LOC#2" << std::endl;
+					out_translators << "\t\tjvx_bitZSet(" <<
+						propertySectionName << "." << elm.name << ".value.selection(idx), (int)val);" << std::endl;
+				}
+				else
+				{
+					if (elm.selection.strings.size() == 1)
 					{
-						out_translators << "\t\tdefault:" << std::endl;
-						out_translators << "\t\t\tjvx_bitZSet(" <<
+						out_translators << "\t\tjvx_bitZSet(" <<
 							propertySectionName << "." << elm.name << ".value.selection(idx), " <<
-							jvx_size2String(i) << ");" << std::endl;
+							jvx_size2String(0) << ");" << std::endl;
 					}
 					else
 					{
-						out_translators << "\t\tcase " << std::flush;
-
-						if (i < elm.translations.strings.size())
+						out_translators << "\t\tswitch(val)" << std::endl;
+						out_translators << "\t\t{" << std::endl;
+						for (i = 0; i < elm.selection.strings.size(); i++)
 						{
-							if (elm.translations.enumClass)
+							if (i == elm.selection.strings.size() - 1)
 							{
-								out_translators << elm.translations.tpName << "::" << elm.translations.strings[i] << ":" << std::endl;
+								out_translators << "\t\tdefault:" << std::endl;
+								out_translators << "\t\t\tjvx_bitZSet(" <<
+									propertySectionName << "." << elm.name << ".value.selection(idx), " <<
+									jvx_size2String(i) << ");" << std::endl;
 							}
 							else
 							{
-								out_translators << elm.translations.strings[i] << ":" << std::endl;
+								out_translators << "\t\tcase " << std::flush;
+
+								if (i < elm.translations.strings.size())
+								{
+									if (elm.translations.enumClass)
+									{
+										out_translators << elm.translations.tpName << "::" << elm.translations.strings[i] << ":" << std::endl;
+									}
+									else
+									{
+										out_translators << elm.translations.strings[i] << ":" << std::endl;
+									}
+								}
+								else
+								{
+									out_translators << "(" << elm.translations.tpName << ")" << jvx_size2String(i) << ":" << std::endl;
+								}
+								out_translators << "\t\t\tjvx_bitZSet(" << propertySectionName << "." << elm.name << ".value.selection(idx), " << jvx_size2String(i) << ");" << std::endl;
+								out_translators << "\t\t\tbreak;" << std::endl;
 							}
+						}
+						out_translators << "\t\t}" << std::endl;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (
+				(!elm.selection.varname.empty()) &&
+				(!elm.selection.nummax.empty()))
+			{
+				out_translators << "\t\tfor(int i = 0; i < (int)" << elm.selection.numprefix <<
+					elm.selection.nummax << "; i++)" << std::endl;
+				out_translators << "\t\t{" << std::endl;
+				out_translators << "\t\t\t if(val == (" << elm.translations.tpName << ")i) " <<
+					"jvx_bitZSet(" <<
+					propertySectionName << "." << elm.name << ".value.selection(idx), i);" << std::endl;
+				out_translators << "\t\t}" << std::endl;
+			}
+			else
+			{
+				if (!elm.selection.extract_string.empty())
+				{
+					out_translators << "\t\t// LOC#2" << std::endl;
+					out_translators << "\t\tjvx_bitZSet(" <<
+						propertySectionName << "." << elm.name << ".value.selection(idx), (int)val);" << std::endl;
+				}
+				else
+				{
+					out_translators << "\t\tjvxCBitField in = (jvxCBitField)val;" << std::endl;
+					for (i = 0; i < elm.selection.strings.size(); i++)
+					{
+						out_translators << "\t\tif(in & (jvxCBitField)" << std::flush;
+						if (elm.translations.enumClass)
+						{
+							out_translators << elm.translations.tpName << "::" << elm.translations.strings[i] << ")" << std::endl;
 						}
 						else
 						{
-							out_translators << "(" << elm.translations.tpName << ")" << jvx_size2String(i) << ":" << std::endl;
+							out_translators << elm.translations.strings[i] << ")" << std::endl;
 						}
 						out_translators << "\t\t\tjvx_bitZSet(" << propertySectionName << "." << elm.name << ".value.selection(idx), " << jvx_size2String(i) << ");" << std::endl;
-						out_translators << "\t\t\tbreak;" << std::endl;
 					}
 				}
-				out_translators << "\t\t}" << std::endl;
-			}
 			}
 		}
+		
 		out_translators << "\t};" << std::endl;
 		out_translators << std::endl;
 		out_translators << std::endl;

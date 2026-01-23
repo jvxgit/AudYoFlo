@@ -54,6 +54,66 @@ HjvxConfigProcessor_readEntry_originEntry(IjvxConfigProcessor* theReader, jvxCon
 }
 
 jvxErrorType
+HjvxConfigProcessor_readEntries_originEntry(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string nmToken, std::vector<oneOriginCfgEntry>& origins)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	jvxConfigData* datTmp = NULL;
+	jvxApiString fldStr;
+	jvxInt32 valI = 0;
+
+	origins.clear();
+
+	if (theReader && theSection)
+	{
+		jvxSize num = 0;
+		theReader->getNumberEntriesCurrentSection(theSection, &num);
+		for (jvxSize idx = 0; idx < num; idx++)
+		{
+			theReader->getReferenceEntryCurrentSection_id(theSection, &datTmp, idx);
+			if (datTmp)
+			{
+				jvxApiString astr;
+				res = theReader->getNameCurrentEntry(datTmp, &astr);
+				if (res == JVX_NO_ERROR)
+				{
+					if (astr.std_str() == nmToken)
+					{
+						oneOriginCfgEntry newEntry;
+						res = theReader->getOriginSection(datTmp, &fldStr, &newEntry.lineNo);
+						if (res == JVX_NO_ERROR)
+						{
+							newEntry.fName = fldStr.std_str();
+							origins.push_back(newEntry);
+						}
+						else
+						{
+							res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+						}
+					}
+				}
+				else
+				{
+					res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+				}
+			}
+			else
+			{
+				res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+			}
+			if (res != JVX_NO_ERROR)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+	return(res);
+}
+jvxErrorType
 HjvxConfigProcessor_readEntry_originEntry(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string& fileName, jvxInt32& lineno)
 {
 	jvxErrorType res = JVX_NO_ERROR;
@@ -541,6 +601,88 @@ HjvxConfigProcessor_readEntry_assignmentString(IjvxConfigProcessor* theReader, j
 			cfg_flag_ptr = cfg_flags;
 		}
 		theReader->getBitFieldTags(datTmp, acc_flag_ptr, &acc_set, cfg_flag_ptr, &cfg_set);
+	}
+
+	return(res);
+}
+
+jvxErrorType
+HjvxConfigProcessor_readEntries_assignmentStringList(IjvxConfigProcessor* theReader, jvxConfigData* theSection, const std::string& nmToken, std::vector < std::string>& entries,
+	std::vector< oneFlagSetEntry>* flags, jvxCBitField whattodo)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	jvxConfigData* datTmp = NULL;
+	jvxApiString fldStr;
+	entries.clear();
+	if (flags)
+	{
+		flags->clear();
+	}
+
+	if (theReader && theSection)
+	{
+		if (whattodo & JVX_PROPERTY_FLAGTAG_OPERATE_READ_CONTENT)
+		{
+			jvxSize num = 0;
+			theReader->getNumberEntriesCurrentSection(theSection, &num);
+			for (jvxSize idx = 0; idx < num; idx++)
+			{
+				datTmp = nullptr;
+				theReader->getReferenceEntryCurrentSection_id(theSection, &datTmp, idx);
+				if (datTmp)
+				{
+					jvxApiString astr;
+					theReader->getNameCurrentEntry(datTmp, &astr);
+					if (astr.std_str() == nmToken)
+					{
+						jvxSize numStr = 0;
+						res = theReader->getNumberStrings(datTmp, &numStr);
+						if (res == JVX_NO_ERROR)
+						{
+							for (jvxSize idxi = 0; idxi < numStr; idxi++)
+							{
+								theReader->getString_id(datTmp, &fldStr, idxi);
+								entries.push_back(fldStr.std_str());
+
+								if (flags)
+								{
+									oneFlagSetEntry newFlag;
+									jvxAccessRightFlags_rwcd* acc_flag_ptr = NULL;
+									jvxConfigModeFlags* cfg_flag_ptr = NULL;
+									jvxBool acc_set = false;
+									jvxBool cfg_set = false;
+
+									if (whattodo & JVX_PROPERTY_FLAGTAG_OPERATE_READ_ACCESS_RIGHTS)
+									{
+										acc_flag_ptr = &newFlag.acc_flags;
+									}
+									if (whattodo & JVX_PROPERTY_FLAGTAG_OPERATE_READ_CONFIG_MODE)
+									{
+										cfg_flag_ptr = &newFlag.cfg_flags;
+									}
+									theReader->getBitFieldTags(datTmp, acc_flag_ptr, &acc_set, cfg_flag_ptr, &cfg_set);
+									flags->push_back(newFlag);
+								}
+							}
+						}
+						res = JVX_NO_ERROR;
+					}
+				}
+				else
+				{
+					res = JVX_ERROR_ELEMENT_NOT_FOUND;
+				}
+				if (res != JVX_NO_ERROR)
+				{
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		res = JVX_ERROR_INVALID_ARGUMENT;
 	}
 
 	return(res);

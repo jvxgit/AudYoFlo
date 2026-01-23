@@ -1073,7 +1073,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
       ${JVX_BASE_ROOT}/sources/jvxApplications/jvxConsoleApp
       ${JVX_BASE_ROOT}/sources/jvxApplications/jvxSocketTestServer
       ${JVX_BASE_ROOT}/sources/jvxApplications/jvxSCtrl
-	  ${JVX_BASE_ROOT}/sources/jvxApplications/ayfSteamRirGenerator
+	  # ${JVX_BASE_ROOT}/sources/jvxApplications/ayfSteamRirGenerator
     )
 
     if(JVX_DEPLOY_EXAMPLES)

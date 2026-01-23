@@ -259,7 +259,7 @@ textProcessor_core::scanInputFromIr(jvxConfigData* theMainSection, IjvxConfigPro
 	SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theMainSection, CLASSNAME, &intermediateStruct.className), CLASSNAME, theContent);
 
 	intermediateStruct.callbacks.clear();
-	SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theMainSection, MACRO_CALLBACKS, &lstCallbacks), MACRO_CALLBACKS, theMainSection);
+	SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntries_assignmentStringList(theReader, theMainSection, MACRO_CALLBACKS, lstCallbacks), MACRO_CALLBACKS, theMainSection);
 	for (i = 0; i < lstCallbacks.size(); i++)
 	{
 		oneCallback elm;
@@ -454,7 +454,7 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 
 		myPrefix = jvx_makePathExpr(prefix, myPrefix);
 
-		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theContent, MACRO_CALLBACKS, &callbacksLoc), MACRO_CALLBACKS, theContent);
+		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntries_assignmentStringList(theReader, theContent, MACRO_CALLBACKS, callbacksLoc), MACRO_CALLBACKS, theContent);
 		if(!callbacksLoc.empty())
 		{
 			for(j = 0; j < callbacksLoc.size(); j++)
@@ -558,7 +558,7 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 		// Entry to add matlab function tags
 		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MATLAB_SECTION_TAG, &oneSection.mat_tag), MATLAB_SECTION_TAG, theContent);
 
-		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theContent, MACRO_CALLBACKS, &callbacksLoc), MACRO_CALLBACKS, theContent);
+		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntries_assignmentStringList(theReader, theContent, MACRO_CALLBACKS, callbacksLoc), MACRO_CALLBACKS, theContent);
 		if(!callbacksLoc.empty())
 		{
 			for(j = 0; j < callbacksLoc.size(); j++)
@@ -881,7 +881,7 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theSubContent, DESCRIPTOR, &newProp.descriptor), DESCRIPTOR, theSubContent);
 
 				callbacksLoc.clear();
-				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentStringList(theReader, theSubContent, MACRO_CALLBACKS, &callbacksLoc), MACRO_CALLBACKS, theSubContent);
+				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntries_assignmentStringList(theReader, theSubContent, MACRO_CALLBACKS, callbacksLoc), MACRO_CALLBACKS, theSubContent);
 				if(!callbacksLoc.empty())
 				{
 					for(k = 0; k < callbacksLoc.size(); k++)

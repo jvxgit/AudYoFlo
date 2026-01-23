@@ -3,6 +3,18 @@
 
 #include "jvx-helpers.h"
 
+struct oneOriginCfgEntry
+{
+	std::string fName;
+	int lineNo = -1;
+};
+
+struct oneFlagSetEntry
+{
+	jvxAccessRightFlags_rwcd acc_flags = 0;
+	jvxConfigModeFlags cfg_flags = 0;
+};
+
 jvxErrorType
 HjvxConfigProcessor_readEntry_nameEntry(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string& entry);
 
@@ -13,8 +25,15 @@ jvxErrorType
 HjvxConfigProcessor_readEntry_originEntry(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string& fileName, jvxInt32& lineno);
 
 jvxErrorType
+HjvxConfigProcessor_readEntries_originEntry(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string nmToken, std::vector<oneOriginCfgEntry>& origins);
+
+jvxErrorType
 HjvxConfigProcessor_readEntry_references(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string nmToken, std::string& nmKey, 
 	jvxBool* isAbsolute, std::vector<std::string>& lstReference);
+
+jvxErrorType
+HjvxConfigProcessor_readEntries_assignmentStringList(IjvxConfigProcessor* theReader, jvxConfigData* theSection, const std::string& nmToken, std::vector<std::string>& entries,
+	std::vector< oneFlagSetEntry>* flags = nullptr, jvxCBitField whattodo = JVX_PROPERTY_FLAGTAG_OPERATE_READ_CONTENT);
 
 template <typename T> jvxErrorType
 HjvxConfigProcessor_readEntry_assignment(IjvxConfigProcessor* theReader, jvxConfigData* theSection, std::string nmToken, T* entries, 
