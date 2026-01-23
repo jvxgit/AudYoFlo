@@ -58,8 +58,11 @@
 #include        <stdlib.h>
 #include	<math.h>
 #include	<time.h>
+#include <float.h>
+#include "jvx_system.h"
 
 // #define VERBOSE_OUT
+#define HUGE JVX_DATA_MAX_POS
 
 void initialise_codebook();
 void adapt_centroids();
@@ -79,11 +82,7 @@ double drandLoc()
 *  mexFunction : MATLAB interface                                             *
 *******************************************************************************/
 
-void mexFunction(nlhs, plhs, nrhs, prhs)
-     int nlhs;
-     int nrhs;
-     mxArray *plhs[];
-     mxArray *prhs[];
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   
   double	**x=(double**)NULL, **y=(double**)NULL;
