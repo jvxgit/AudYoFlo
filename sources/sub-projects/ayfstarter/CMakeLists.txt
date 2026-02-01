@@ -33,7 +33,8 @@ if(NOT AYFSTARTER_USE_RUST_LIBS)
 		${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/c/ayfstarterlib
 		)
 endif()
-
+	
+set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/connect/ayf_connect-starter)
 
 jvx_addSubdirs("Configuring static library for ayfstarter core functionality" "${AYF_STARTER_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Library")
 
@@ -41,6 +42,14 @@ set(AYF_STARTER_AUDIONODE
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Components/AudioNodes/ayfAuNStarter
   )
 jvx_addSubdirs("Configuring shared library for ayfstarter audio node" "${AYF_STARTER_AUDIONODE}" "${JVX_FOLDER_HIERARCHIE_BASE}/AudioNode")
+
+if(JVX_USE_PYTHON)
+    ##
+    # build python functions
+    ##
+    set(AYF_STARTER_PYTHON_PROJECTS ${AYF_STARTER_PYTHON_PROJECTS} sources/Python)
+	jvx_addSubdirs("Configuring python function for ayfstarter" "${AYF_STARTER_PYTHON_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Python")
+endif()
 	
 if(NOT JVX_RELEASE_SDK)
 	set(AYF_STARTER_APPLICATION "")
