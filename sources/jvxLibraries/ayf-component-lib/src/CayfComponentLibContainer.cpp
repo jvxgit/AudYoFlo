@@ -212,7 +212,7 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 
 jvxErrorType
 CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numInChansArg, int numOutChansArg, 
-	int bSizeArg, int sRateArg, int passthroughModeArg, int* ayfIdentsPtr, int ayfIdentsNum, 
+	int bSizeArg, int sRateArg, int passthroughModeArg, jvxSize* ayfIdentsPtr, int ayfIdentsNum, 
 	void_pvoid_callback ptr_callback_bwd_on_start_arg, void* prv_callback_on_start_arg)
 {
 	jvxApiString realRegName;

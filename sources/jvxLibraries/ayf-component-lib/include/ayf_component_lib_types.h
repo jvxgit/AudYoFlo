@@ -17,4 +17,23 @@ typedef enum
 
 typedef void (*void_pvoid_callback)(ayfVoidPvoidDefinition voidDef, jvxHandle* priv, jvxHandle* purp);
 
+struct ayfInitConnectStruct
+{
+	jvxSize ayfIdentsPtr[2];
+	const char* fNameIniPtr;
+	const char* fNameDllProxr;
+	void_pvoid_callback fptr;
+	void* priv;
+};
+
+struct ayfInitParamStruct
+{
+	int numInChans;
+	int numOutChans;
+	int bSize;
+	int sRate;
+	ayfBufferInterleaveType ilTp;
+	int passthroughMode;
+};
+
 #endif

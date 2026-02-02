@@ -23,14 +23,45 @@
 extern "C" {
 #endif
 
+	JVX_STATIC_INLINE void ayfInitConnectStruct_init(struct ayfInitConnectStruct* initStr, jvxSize ayfIdentSlot_node, jvxSize ayfIdentSlot_dev)
+	{
+		initStr->ayfIdentsPtr[0] = ayfIdentSlot_node;
+		initStr->ayfIdentsPtr[1] = ayfIdentSlot_dev;
+		initStr->fNameDllProxr = NULL;
+		initStr->fNameIniPtr = NULL;
+		initStr->fptr = NULL;
+		initStr->priv = NULL;
+	};
+
+	JVX_STATIC_INLINE void ayfInitParamStruct_init(struct ayfInitParamStruct* paramStr, 
+		int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, ayfBufferInterleaveType ilTpArg, int passthroughModeArg)
+	{
+		paramStr->numInChans = numInChansArg;
+		paramStr->numOutChans = numOutChansArg;
+		paramStr->bSize = bSizeArg;
+		paramStr->sRate = sRateArg;
+		paramStr->ilTp = ilTpArg;
+		paramStr->passthroughMode = passthroughModeArg;
+	}
+
+	/*
+	struct ayfInitConnectStruct
+	{
+		int ayfIdentsPtr[2] = { JVX_SIZE_DONTCARE, JVX_SIZE_DONTCARE };
+		const char* fNameIniPtr = NULL;
+		const char* fNameDllProxr = NULL;
+		void_pvoid_callback fptr = NULL;
+		void* priv = NULL;
+	};
+	*/
+
 	// void AYF_FUNCTIONNAME_REDEFINE(ayf_aw_preinit, AYF_PROJECT_POSTFIX)();
 	// void AYF_FUNCTIONNAME_REDEFINE(ayf_aw_preterminate, AYF_PROJECT_POSTFIX)();
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_preInitModule, AYF_PROJECT_POSTFIX)(
-		jvxHandle** instance, int numInChans, int numOutChans, int bSize, int sRate, ayfBufferInterleaveType ilTp,
-		int passthroughMode, jvxHandle* ptrConstructorFunction, int* ayfIdentsPtr, int ayfIdentsNum,
-		void_pvoid_callback fptr, void* priv);
+		jvxHandle** instance, struct ayfInitParamStruct* paramStr, jvxHandle* ptrConstructorFunction, struct ayfInitConnectStruct* initStr);
 
-	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_delayedInitModule, AYF_PROJECT_POSTFIX)(jvxHandle** instance, jvxHandle** preinstance, const char* fNameIniPtr, const char* fNameDllProxy);
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_delayedInitModule, AYF_PROJECT_POSTFIX)(jvxHandle** instance, 
+		jvxHandle** preinstance, struct ayfInitConnectStruct* str); // const char* fNameIniPtr, const char* fNameDllProxy
 
 	/**
 	 * Init the connected AYF module. The arguments act as follows:
@@ -45,13 +76,8 @@ extern "C" {
 	 
 	 */
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_initModule, AYF_PROJECT_POSTFIX)(
-		void** instance, int numInChans, 
-		int numOutChans, int bSize, int sRate,
-		ayfBufferInterleaveType ilBufferTp,
-		int passthroughMode, jvxHandle* ptrConstructorFunction, 
-		int* ayfIdentsPtr, int ayfIdentsNum, 
-		const char* fNameIniPtr, const char* fNameDllProxy,
-		void_pvoid_callback, void* priv);
+		void** instance, struct ayfInitParamStruct* paramStr, jvxHandle* ptrConstructorFunction, 
+		struct ayfInitConnectStruct* initStr);
 
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_termModule, AYF_PROJECT_POSTFIX)(void* instance);
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_process_il, AYF_PROJECT_POSTFIX)(

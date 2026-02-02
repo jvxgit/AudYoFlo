@@ -7,18 +7,11 @@ std::list<CayfComponentLibContainer*> AYF_FUNCTIONNAME_REDEFINE(lstAllocated, AY
 
 struct preInitModuleData
 {
-	int numInChans = 0;
-	int numOutChans = 0;
-	int bSize = 0;
-	int sRate = 0;
-	int passthroughMode = 0;
+	struct ayfInitParamStruct initParam;
 	jvxHandle* ptrConstructorFunction;
-	int* ayfIdentsPtr = nullptr;
-	int ayfIdentsNum = 0;
-	void_pvoid_callback moduleCbPtr = nullptr;
-	void* moduleCbPriv = nullptr;
-	ayfBufferInterleaveType ilTp = ayfBufferInterleaveType::AYF_BUFFERS_INTERLEAVED;
+	struct ayfInitConnectStruct initStr;
 };
+
 
 extern "C"
 {
@@ -38,38 +31,25 @@ extern "C"
 #endif
 	// ==================================================================================================
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_preInitModule, AYF_PROJECT_POSTFIX)(
-		jvxHandle** instance, int numInChans, int numOutChans, int bSize, int sRate, ayfBufferInterleaveType ilTp,
-		int passthroughMode, jvxHandle* ptrConstructorFunction, int* ayfIdentsPtr, int ayfIdentsNum,
-		void_pvoid_callback fptr, void* priv)
+		jvxHandle** instance, struct ayfInitParamStruct* paramStr, jvxHandle* ptrConstructorFunction, struct ayfInitConnectStruct* str)
 	{
 		preInitModuleData* preInitDataReturn = nullptr;
 		JVX_SAFE_ALLOCATE_OBJECT(preInitDataReturn, preInitModuleData);
-		preInitDataReturn->numInChans = numInChans;
-		preInitDataReturn->numOutChans = numOutChans;
-		preInitDataReturn->bSize = bSize;
-		preInitDataReturn->sRate = sRate;
-		preInitDataReturn->passthroughMode = passthroughMode;
-		preInitDataReturn->ptrConstructorFunction = ptrConstructorFunction;
-		preInitDataReturn->moduleCbPtr = fptr;
-		preInitDataReturn->moduleCbPriv = priv;
-		preInitDataReturn->ilTp = ilTp;
+		preInitDataReturn->initParam = *paramStr;
 
-		if (ayfIdentsNum)
-		{
-			preInitDataReturn->ayfIdentsNum = ayfIdentsNum;
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(preInitDataReturn->ayfIdentsPtr, int, preInitDataReturn->ayfIdentsNum);
-			memcpy(preInitDataReturn->ayfIdentsPtr, ayfIdentsPtr, sizeof(int) * preInitDataReturn->ayfIdentsNum);
-		}		
+		preInitDataReturn->ptrConstructorFunction = ptrConstructorFunction;
+
+		// Copy init data
+		preInitDataReturn->initStr = *str;
+
 		*instance = reinterpret_cast<jvxHandle*>(preInitDataReturn);
 		return JVX_NO_ERROR;
 
 	}
 
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_initModule, AYF_PROJECT_POSTFIX)(
-		jvxHandle** instance, int numInChans, int numOutChans, int bSize, int sRate, ayfBufferInterleaveType ilType,  
-		int passthroughMode, jvxHandle* ptrConstructorFunction, int* ayfIdentsPtr, int ayfIdentsNum, 
-		const char* fNameIniPtr, const char* fNameDllProxy,
-		void_pvoid_callback fptr, void* priv)
+		jvxHandle** instance, struct ayfInitParamStruct* paramStr, 
+		jvxHandle* ptrConstructorFunction, struct ayfInitConnectStruct* str)
 	{
 		jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 		if (instance)
@@ -80,14 +60,14 @@ extern "C"
 			std::string alternativePath = JVX_GET_CURRENT_MODULE_PATH(ptrConstructorFunction);
 			alternativePath = jvx_extractDirectoryFromFilePath(alternativePath);
 
-			jvxErrorType resL = CayfComponentLib::populateBindingRefs(modName, alternativePath, bindOnReturn, fNameIniPtr, fNameDllProxy);
+			jvxErrorType resL = CayfComponentLib::populateBindingRefs(modName, alternativePath, bindOnReturn, str->fNameIniPtr, str->fNameDllProxr);
 			if(resL == JVX_NO_ERROR)
 			{
 				if (bindOnReturn->bindType == ayfHostBindingType::AYF_HOST_BINDING_NONE)
 				{
-					if (fptr)
+					if (str->fptr)
 					{						
-						fptr(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_REPORT_NO_BINDING, priv, nullptr);
+						str->fptr(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_REPORT_NO_BINDING, str->priv, nullptr);
 					}
 				}
 			}
@@ -95,9 +75,10 @@ extern "C"
 			JVX_SAFE_ALLOCATE_OBJECT(libCont, AYF_MODULE_CONTAINER_TYPE);
 			libCont->linkBinding( bindOnReturn);
 
-			libCont->startBinding(modName, numInChans, 
-				numOutChans, bSize, sRate, passthroughMode,
-				ayfIdentsPtr, ayfIdentsNum, fptr, priv);
+			libCont->startBinding(modName, paramStr->numInChans,
+				paramStr->numOutChans, paramStr->bSize, 
+				paramStr->sRate, paramStr->passthroughMode,
+				str->ayfIdentsPtr, 2, str->fptr, str->priv);
 
 			AYF_FUNCTIONNAME_REDEFINE(lstAllocated, AYF_PROJECT_POSTFIX).push_back(libCont);
 
@@ -108,24 +89,20 @@ extern "C"
 		return res;
 	}
 
-	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_delayedInitModule, AYF_PROJECT_POSTFIX)(jvxHandle** instance, jvxHandle** preinstance, const char* fNameIniPtr, const char* fNameDllProxy)
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_delayedInitModule, AYF_PROJECT_POSTFIX)(jvxHandle** instance, jvxHandle** preinstance, struct ayfInitConnectStruct* str)
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		if (preinstance)
 		{
 			preInitModuleData* preInitDataReturn = (preInitModuleData*)*preinstance;
 
-			jvxErrorType res = AYF_FUNCTIONNAME_REDEFINE(ayf_cc_initModule, AYF_PROJECT_POSTFIX)(instance, preInitDataReturn->numInChans, preInitDataReturn->numOutChans,
-				preInitDataReturn->bSize, preInitDataReturn->sRate, preInitDataReturn->ilTp, 
-				preInitDataReturn->passthroughMode, preInitDataReturn->ptrConstructorFunction, preInitDataReturn->ayfIdentsPtr, preInitDataReturn->ayfIdentsNum, 
-				fNameIniPtr, fNameDllProxy,
-				preInitDataReturn->moduleCbPtr, preInitDataReturn->moduleCbPriv);
+			// Copy these arguments
+			preInitDataReturn->initStr.fNameIniPtr = str->fNameIniPtr;
+			preInitDataReturn->initStr.fNameDllProxr = str->fNameDllProxr;
 
-			// Release the pre-allocated fields
-			if (preInitDataReturn->ayfIdentsPtr)
-			{
-				JVX_SAFE_DELETE_FIELD(preInitDataReturn->ayfIdentsPtr);
-			}
+			jvxErrorType res = AYF_FUNCTIONNAME_REDEFINE(ayf_cc_initModule, AYF_PROJECT_POSTFIX)(instance, &preInitDataReturn->initParam, 
+				preInitDataReturn->ptrConstructorFunction, &preInitDataReturn->initStr);
+			
 			JVX_SAFE_DELETE_OBJECT(preInitDataReturn);
 			*preinstance = nullptr;
 		}

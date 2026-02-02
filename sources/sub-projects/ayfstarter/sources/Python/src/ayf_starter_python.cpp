@@ -15,15 +15,19 @@ extern "C"
     void* init_ayf_starter(int nChannelsIn, int nChannelsOut, int fsize, int samplerate, int ayfIdentSlot_node, int ayfIdentSlot_dev, jvxHandle* priv)
     {
         jvxErrorType res = JVX_NO_ERROR;
-        int slotIds[2];
-        slotIds[0] = ayfIdentSlot_node;
-        slotIds[1] = ayfIdentSlot_dev;
+
+        struct ayfInitConnectStruct initStr;
+        ayfInitConnectStruct_init(&initStr, ayfIdentSlot_node, ayfIdentSlot_dev);
+        initStr.fptr = cb_ayf_started;
+        initStr.priv = priv;
+
+        struct ayfInitParamStruct  paramStr;
+        ayfInitParamStruct_init(&paramStr, nChannelsIn,
+            nChannelsOut, fsize, samplerate, ayfBufferInterleaveType::AYF_BUFFERS_NONINTERLEAVED, false);
 
         void* retVal = nullptr;
-        AYF_FUNCTIONNAME_REDEFINE(ayf_cc_initModule, AYF_PROJECT_POSTFIX)(&retVal, nChannelsIn,
-            nChannelsOut, fsize, samplerate, ayfBufferInterleaveType::AYF_BUFFERS_NONINTERLEAVED, false, (jvxHandle*)init_ayf_starter, slotIds, 2, 
-            NULL,NULL,
-            cb_ayf_started, priv);
+        AYF_FUNCTIONNAME_REDEFINE(ayf_cc_initModule, AYF_PROJECT_POSTFIX)(&retVal, &paramStr, (jvxHandle*)init_ayf_starter, &initStr);
+            
 
         return retVal;
     }

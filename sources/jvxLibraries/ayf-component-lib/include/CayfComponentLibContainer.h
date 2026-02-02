@@ -53,7 +53,7 @@ public:
 	void lock();
 	void unlock();
 
-	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod, int* ayfIdentsPtr = nullptr, int ayfIdentsNum = 0, 
+	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod, jvxSize* ayfIdentsPtr = nullptr, int ayfIdentsNum = 0, 
 		void_pvoid_callback ptr_callback_on_start = NULL, void* prv_callback_on_start = NULL);
 	jvxErrorType stopBinding();
 
