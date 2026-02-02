@@ -482,6 +482,8 @@ set(JVX_BASE_SYSTEM_STATIC_LIBS
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-json
   ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/jsmn
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-fileinput
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-ctrl
 )
 
 jvx_addSubdirs("Configuring static system libraries" "${JVX_BASE_SYSTEM_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")

@@ -3,12 +3,18 @@
 
 #include "jvx_system_types.h"
 
-typedef enum
+typedef enum 
+{
+	AYF_BUFFERS_INTERLEAVED,
+	AYF_BUFFERS_NONINTERLEAVED
+} ayfBufferInterleaveType;
+
+typedef enum 
 {
 	AYF_VOID_PVOID_ID_STARTED,
 	AYF_VOID_PVOID_ID_REPORT_NO_BINDING
-}ayfVoidPvoidDefinition;
+} ayfVoidPvoidDefinition;
 
-typedef void (*void_pvoid_callback)(jvxSize id, jvxHandle* priv, jvxHandle* purp);
+typedef void (*void_pvoid_callback)(ayfVoidPvoidDefinition voidDef, jvxHandle* priv, jvxHandle* purp);
 
 #endif

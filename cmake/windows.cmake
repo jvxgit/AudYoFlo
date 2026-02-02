@@ -263,7 +263,7 @@ macro (find_matlab arg1)
     set(JVX_USE_PART_MATLAB OFF)
   endif()
   
-  ## message(FATAL_ERROR "Hier")
+  #  message(FATAL_ERROR "${MATLAB_PATH_32}")
 endmacro (find_matlab)
 
 # Octave path specifications

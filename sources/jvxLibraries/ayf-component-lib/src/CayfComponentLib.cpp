@@ -85,7 +85,7 @@ jvxSize idRegisterGlobal = 0;
 jvxSize refCntGlobal = 0;
 
 jvxErrorType
-CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect)
+CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect, const char* fNameDllProxy)
 {
 	
 #if defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST) || defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST) 
@@ -140,7 +140,12 @@ CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const s
 			{
 				fNameIniPtr = fNameIni.c_str();
 			}
+		}
 
+		// Allow override of fNameDllProxy
+		if (fNameDllProxy)
+		{
+			fNameDll = fNameDllProxy;
 		}
 
 		proxyLibHandleGlobal = JVX_LOADLIBRARY(fNameDll.c_str());
@@ -148,26 +153,21 @@ CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const s
 		{
 			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_init);
 			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_terminate);
-		}
 
-		if (proxyReferencesGlobal.ayf_embedding_proxy_init_call)
+			if (proxyReferencesGlobal.ayf_embedding_proxy_init_call)
+			{
+				proxyReferencesGlobal.ayf_embedding_proxy_init_call(myRegisterName.c_str(), &idRegisterGlobal, &bindingGlobal, rootPath.c_str(), fNameIniPtr);
+			}
+			refCntGlobal = 1;
+		}
+		else
 		{
-			proxyReferencesGlobal.ayf_embedding_proxy_init_call(myRegisterName.c_str(), &idRegisterGlobal, &bindingGlobal, rootPath.c_str(), fNameIniPtr);
+			// No bindngs
+			ayfHostBindingReferences* ptrRet = nullptr;
+			JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferences);
+			ptrRet->bindType = ayfHostBindingType::AYF_HOST_BINDING_NONE;
+			bindingGlobal = static_cast<ayfHostBindingReferences*>(ptrRet);			
 		}
-
-
-		refCntGlobal = 1;
-		// Currently just alocal assignemnt
-		/*
-		binding->bindType = ayfHostBindingType::AYF_HOST_BINDING_MIN;
-		binding->ayf_register_module_host_call = ayf_register_module_host;
-		binding->ayf_unregister_module_host_call = ayf_unregister_module_host;
-		binding->ayf_load_config_content_call = ayf_load_config_content;
-		binding->ayf_release_config_content_call = ayf_release_config_content;
-		binding->ayf_attach_component_module_call = ayf_attach_component_module;
-		binding->ayf_detach_component_module_call = ayf_detach_component_module;
-		binding->ayf_forward_text_command_call = ayf_forward_text_command;
-		*/
 
 		bindOnReturn = bindingGlobal;
 		return JVX_NO_ERROR;
@@ -213,14 +213,17 @@ CayfComponentLib::unpopulateBindingRefs()
 				bindingGlobal = nullptr;
 				JVX_UNLOADLIBRARY(proxyLibHandleGlobal);
 				proxyLibHandleGlobal = JVX_HMODULE_INVALID;				
-			}
+			}			
 #endif
 		}
 		return JVX_NO_ERROR;
 #if defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST) || defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST) 
 #else
 	}
-	return JVX_ERROR_WRONG_STATE;
+
+	// Remove the local handle
+	JVX_SAFE_DELETE_OBJECT(bindingGlobal);
+	return JVX_NO_ERROR;
 #endif
 }
 

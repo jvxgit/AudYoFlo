@@ -222,7 +222,8 @@ public:
 	static jvxErrorType populateBindingRefs(
 		const std::string& myRegisterName, 
 		const std::string& rootPath, 
-		ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect);
+		ayfHostBindingReferences*& bindOnReturn, 
+		const char* fNameIniDirect = nullptr, const char* fNameDllProxy= nullptr);
 	static jvxErrorType unpopulateBindingRefs();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef) override;

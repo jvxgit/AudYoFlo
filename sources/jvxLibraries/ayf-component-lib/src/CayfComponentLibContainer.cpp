@@ -156,7 +156,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 	{
 		if(ptr_callback_on_start)
 		{ 
-			ptr_callback_on_start(AYF_VOID_PVOID_ID_STARTED, prv_callback_on_start, NULL);
+			ptr_callback_on_start(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_STARTED, prv_callback_on_start, NULL);
 		}
 	}
 
