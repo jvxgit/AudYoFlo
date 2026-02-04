@@ -25,6 +25,8 @@ set(LOCAL_LIBS
 	jvx-dsp-cpp_static
 	ayf_connect-starter_static)
 
+set(AYF_PYTHON_PACKAGES "${AYF_PYTHON_PACKAGES_ROOT}")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python/runtime/test-ayf-starter.py.in ${CMAKE_CURRENT_SOURCE_DIR}/python/runtime/test-ayf-starter.py @ONLY)
 set(JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/python/runtime/local.py")
 set(LOCAL_PYTHON_SCRIPT "python/runtime/test-ayf-starter.py")
 

@@ -32,22 +32,32 @@ PYBIND11_MODULE(ayf_starter_python, m) {
         .. autosummary::
            :toctree: _generate
 
-           init_ayf_steam
-           term_ayf_steam
-           run_frame_ayf_steam
+           init_ayf_starter
+           term_ayf_starter
+           run_frame_ayf_starter
     )pbdoc";
 
-    m.def("init_ayf_steam", &init_ayf_starter, R"pbdoc(
-        Initialize the module
-    )pbdoc");
+    m.def("init_ayf_starter", &init_ayf_starter, 
+        py::arg("nChannelsIn"),
+        py::arg("nChannelsOut"), 
+        py::arg("fsize"),
+        py::arg("samplerate"),
+        py::arg("ayfIdentSlot_node"),
+        py::arg("ayfIdentSlot_dev"),
+        R"pbdoc(Initialize the module)pbdoc");
 
-    m.def("term_ayf_steam", &term_ayf_starter, R"pbdoc(
+    m.def("term_ayf_starter", &term_ayf_starter, R"pbdoc(
         Terminate the processing
     )pbdoc");
 
-    m.def("run_frame_ayf_steam", &run_frame_ayf_starter, R"pbdoc(
-        Run the processing
-    )pbdoc");
+    m.def("run_frame_ayf_starter", &run_frame_ayf_starter, 
+        py::arg("hdlArg"), 
+        py::arg("nChannelsIn"), 
+        py::arg("nChannelsOut"), 
+        py::arg("fSize"), 
+        py::arg("ptrsIn"), 
+        py::arg("ptrsOut"),        
+        R"pbdoc(Run the processing)pbdoc");
 
     // =====================================================
 

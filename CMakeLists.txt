@@ -1223,6 +1223,8 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
       sources/python/jvx-dsp-python
       sources/python/jvx-helper-python
     )
+	
+	set(AYF_PYTHON_PACKAGES_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/python/ayf-packages")
   endif()
 
   # ==========================================================================

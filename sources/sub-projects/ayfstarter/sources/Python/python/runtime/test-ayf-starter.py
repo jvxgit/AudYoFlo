@@ -1,6 +1,6 @@
 import sys
 import os
-import numpy
+import numpy as np
 
 # Better use the pylab plot as it shows also in debugger!
 import pylab as plt
@@ -10,34 +10,79 @@ import pylab as plt
 # compared to the "released" version
 import local
 
+sys.path.append('O:/ayfdevelop/AudYoFlo/python/ayf-packages/ayf/audioio')
+
 import ayf_starter_python
+import ayfaudioio as ayfio
+import ayfaudioproc as ayfproc
+import ayfaudiobuf as ayfbuf
+
+## ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
+## This file with the .in extension is the basis for code generation. Therefore the
+## same file without .in extension should not be edited. Otherwise the changes may 
+## be lost in case the C-part is rebuilt!
+## ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
+
+class myProcessor(ayfproc.ayfaudio_processor):
+
+    def __init__(self):
+        self.hdl = None
+
+    def prepare(self, numIn = 1, numOut = 1, bSize = 128, sRate = 48000):
+        self.hdl = ayf_starter_python.init_ayf_starter(numIn, numOut, bSize, sRate, int(-2), int(-2))
+        return 0
+    
+    # @abstractmethod
+    def process(self, inBuf: ayfbuf.ayfaudio_buf, outBuf: ayfbuf.ayfaudio_buf):
+        
+        # Run core function
+        res = ayf_starter_python.run_frame_ayf_starter(self.hdl, inBuf.params.chans, outBuf.params.chans, inBuf.params.bs, inBuf.fld, outBuf.fld)
+        return res
+
+    # @abstractmethod
+    def postprocess(self) :
+        res = ayf_starter_python.term_ayf_starter(self.hdl)
+        return res    
+
+# =================================================================================
+# =================================================================================
 
 if __name__ == "__main__":
 
+    # Declare some processing parameters
     fsize = int(1024)
     nChansIn = int(1)
     nChansOut = int(1)
-    nFrames = 100
+    srate = int(48000)
 
-    # Print out the help text
-    help(ayf_starter_python)
-    
-    # Create a numpy array with increasing float values
-    data = numpy.arange(256*nFrames, dtype=float)
-    out = numpy.zeros(256 * nFrames, dtype=float)
-    oneBuf = numpy.zeros(256, dtype=float)
-    weights = numpy.ones(fft2p1, dtype=complex)
-    cnt = 0
+    # Output the current process id to identify process in VS
+    print("PID:", os.getpid())
 
-    # Run the function for dw_ola
-    hdl = jvx_dsp_python.init_processing_dw_ola(hop_size, fft_size)
-    for j in range(nFrames):
-        oneBuf = data[cnt:cnt+hop_size].copy()
-        res = jvx_dsp_python.run_processing_dw_ola(hdl, oneBuf, weights)
-        out[cnt:cnt+hop_size] = oneBuf
-        cnt += hop_size
+    # Print out the help text    
+    # help(ayf_starter_python)
 
-    res = jvx_dsp_python.term_processing_dw_ola(hdl)
+    ### Convert into interleaved
+    # ininter = np.ascontiguousarray(oneBuf).ravel(order="C")
 
-    plt.plot(data, out)
+    ### From interleaved to no-interleaved
+    # oneBuf = np.ascontiguousarray(outinter.reshape(fsize, nChansOut).T)       
+    fwk = ayfio.ayfaudio(numIn = nChansIn, numOut = nChansOut, bSize = fsize, sRate = srate, operStr = 'INTERLEAVED', format = 'double')
+    pp = myProcessor()
+
+    # Prepare source and sink
+    fwk.prepare(source = 'test.wav', sink = 'out.wav')
+
+    # Framing loop
+    fwk.run(pp)
+
+    # Processing done
+    fwk.postprocess()
+        
+    # Take out the data
+    dat = fwk.output_data()
+
+    # Output result
+    plt.plot(dat)
     plt.show()
+
+    print("Done!")
