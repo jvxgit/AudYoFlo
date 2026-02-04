@@ -121,6 +121,9 @@ sources/jvxLibraries/third_party/git/orc/orc
 /sources/jvxLibraries/third_party/git/tracy
 /bin/tools/sed
 
+platform-packages/sc594/jvx-component-templates-min/Debug
+platform-packages/sc594/jvx-component-templates-min/Release
 
-
+platform-packages/sc594/jvx-system-min/Debug
+platform-packages/sc594/jvx-system-min/Release
 

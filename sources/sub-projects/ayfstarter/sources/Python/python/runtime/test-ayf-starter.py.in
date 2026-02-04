@@ -10,7 +10,7 @@ import pylab as plt
 # compared to the "released" version
 import local
 
-sys.path.append('O:/ayfdevelop/AudYoFlo/python/ayf/audioio')
+sys.path.append('@AYF_PYTHON_PACKAGES@/ayf/audioio')
 
 import ayf_starter_python
 import ayfaudioio as ayfio

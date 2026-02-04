@@ -34,7 +34,10 @@ if(NOT AYFSTARTER_USE_RUST_LIBS)
 		)
 endif()
 	
-set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/connect/ayf_connect-starter)
+set(AYF_STARTER_STATIC_LIBS ${AYF_STARTER_STATIC_LIBS} 
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/connect/ayf_connect-starter
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Libraries/emb/ayf-starter-emb-host
+	)
 
 jvx_addSubdirs("Configuring static library for ayfstarter core functionality" "${AYF_STARTER_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Library")
 

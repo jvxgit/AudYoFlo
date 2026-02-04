@@ -12,7 +12,7 @@ extern "C"
     {
     }
 
-    void* init_ayf_starter(int nChannelsIn, int nChannelsOut, int fsize, int samplerate, int ayfIdentSlot_node, int ayfIdentSlot_dev)
+    void* init_ayf_starter(int nChannelsIn, int nChannelsOut, int fsize, int samplerate, int ayfIdentSlot_node, int ayfIdentSlot_dev, const char* nmIniFile)
     {
         jvxErrorType res = JVX_NO_ERROR;
 
@@ -20,6 +20,7 @@ extern "C"
         ayfInitConnectStruct_init(&initStr, ayfIdentSlot_node, ayfIdentSlot_dev);
         initStr.fptr = cb_ayf_started;
         initStr.priv = nullptr;
+        initStr.fNameIniPtr = nmIniFile;
 
         struct ayfInitParamStruct  paramStr;
         ayfInitParamStruct_init(&paramStr, nChannelsIn,

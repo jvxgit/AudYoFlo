@@ -1,0 +1,13 @@
+# Select host to be loaded
+# EMBEDDED_HOST=MIN
+EMBEDDED_HOST=EMB
+# EMBEDDED_HOST=NONE
+
+# Define the name of the min host to be loaded
+DLL_MIN_HOST=ayf-shared-connection-min-host.dll
+DLL_EMB_HOST=ayf-starter-emb-host.dll
+
+DLL_EMB_ARG=--config,jvxConfig.jvx,--jvxdir,@JVX_COMPONENT_DLLS_PATH@,--textlog,--verbose_dll,--textloglev,10,--no-quit,--startExe,ayf_awe\ayf_awe.exe,--startArgs,--httpAutoConnect
+
+# Attach a new console window to review runtime output
+OPEN_CONSOLE=no

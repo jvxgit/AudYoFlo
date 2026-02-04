@@ -44,6 +44,7 @@ PYBIND11_MODULE(ayf_starter_python, m) {
         py::arg("samplerate"),
         py::arg("ayfIdentSlot_node"),
         py::arg("ayfIdentSlot_dev"),
+        py::arg("nmIniFile"),
         R"pbdoc(Initialize the module)pbdoc");
 
     m.def("term_ayf_starter", &term_ayf_starter, R"pbdoc(

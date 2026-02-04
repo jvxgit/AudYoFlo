@@ -137,9 +137,8 @@ class ayfaudio_inwav(ayfaudio_in):
     def start(self, inBufHdl):
         return math.ceil( self.duration_samples/inBufHdl.params.bs)
 
-    def stop(self):
-        # Do nothing        
-        print("Input processing complete")
+    def stop(self) -> int: ...
+        # Do nothing                
 
     def progress(self, inBufHdl: ayfbuf.ayfaudio_buf):
         return (self.fIdx* inBufHdl.params.bs)/ self.duration_samples

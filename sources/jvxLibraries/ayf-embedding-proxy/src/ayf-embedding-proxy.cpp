@@ -347,11 +347,13 @@ extern "C"
 				if (consoleAttached)
 				{
 #ifdef JVX_OS_WINDOWS
+					/* The following may be dangerous on some systems: all following prints may crash. Therefore it is 
+					 * good to control this via ini file!! */
 					BOOL freeResult = FreeConsole();
 					if (!freeResult)
 					{
 						DWORD lErr = GetLastError();
-					}					
+					}				
 #endif
 				}
 				consoleAttached = false;
