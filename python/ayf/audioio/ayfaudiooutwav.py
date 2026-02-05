@@ -45,8 +45,7 @@ class ayfaudio_outwav:
                 
         # self.buf = np.zeros( * nFrames, dtype=float)
         # Create the space for output buffers
-        print('Hier!')
-
+ 
     def postprocess_single_frame(self, outBufHdl: ayfbuf.ayfaudio_buf):
         match outBufHdl.tp:
             
@@ -91,3 +90,4 @@ class ayfaudio_outwav:
         #print("buf shape:", b.shape, "dtype:", b.dtype)
         #print("sr:", self.params.sr, type(self.params.sr))        
         sf.write(self.fname, data, samplerate= self.params.sr, subtype="PCM_16", format="wav")
+        print("### AYFAUDIOOUTWAV -- Saved data in file {self.fname}")

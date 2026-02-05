@@ -533,6 +533,8 @@ macro(find_pybind)
 	message("--> Using variable PYBIND_PATH=${PYBIND_PATH}")
 	set(pybind11_DIR ${PYBIND_PATH})
 	find_package(pybind11 CONFIG REQUIRED)
+	find_package(Python COMPONENTS Interpreter Development REQUIRED)
+	# message(FATAL_ERROR "PYBIND -- ${pybind11_LIBRARY}")
 endmacro(find_pybind)
 
 macro(JVX_SHELL_SIMPLE command name)

@@ -66,7 +66,7 @@ class ayfaudio:
 
     def prepare(self, source = None, sink = None):
         
-        print("My initialize function")
+        print("### AYFAUDIOIO -- Running Prepare Function")
         
         # Input side
         if(isinstance(source, str) == True):
@@ -104,7 +104,7 @@ class ayfaudio:
         self.obuf.allocate(self.operation, self.outChans, self.fsize, self.sRate, self.arith)
     
     def run(self, processor):
-        print('Run')
+        print('### AYFAUDIOIO -- Staring Run Loop')
         nFrames = self.corein.start(self.ibuf)
         self.coreout.start(self.arith, nFrames, self.obuf)
         frameIdx = 0
@@ -141,6 +141,8 @@ class ayfaudio:
             
     def postprocess(self):
         
+        print("### AYFAUDIOIO -- Running Postprocess Function")
+
         self.ibuf.deallocate()
         self.obuf.deallocate()
         self.corein.clear_data()

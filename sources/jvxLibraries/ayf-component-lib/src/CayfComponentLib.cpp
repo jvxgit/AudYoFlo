@@ -148,9 +148,12 @@ CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const s
 			fNameDll = fNameDllProxy;
 		}
 
+		std::cout << "Trying to open dynamic library <" << fNameDll << ">." << std::flush;
+
 		proxyLibHandleGlobal = JVX_LOADLIBRARY(fNameDll.c_str());
 		if (proxyLibHandleGlobal != JVX_HMODULE_INVALID)
 		{
+			std::cout << " --> Success!" << std::endl;
 			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_init);
 			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_terminate);
 
@@ -162,6 +165,7 @@ CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const s
 		}
 		else
 		{
+			std::cout << " --> Failed!" << std::endl;
 			// No bindngs
 			ayfHostBindingReferences* ptrRet = nullptr;
 			JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferences);

@@ -39,6 +39,9 @@ class ayfaudio_inwav(ayfaudio_in):
         self.fIdx = 0
         self.buf = None
         path_input = pathlib.Path(self.fname)
+
+        print("### AYFAUDIOINWAV -- Opening File <", path_input, ">.")
+
         self.buf,  self.data.sampling_rate = af.read(str(path_input))        
         szArr = self.buf.shape
         if(len(szArr) == 2):
@@ -116,10 +119,6 @@ class ayfaudio_inwav(ayfaudio_in):
     
     def prepare_single_frame(self, inBufHdl, frameIdx):
         match inBufHdl.tp:
-            case ayfbuf.ProcessingType.UNDEFINED:
-                print('Error')
-                assert(0)
-
             case ayfbuf.ProcessingType.NOI_SINGLEBUF:
                 retVal = self.prepare_oneBuf_noi_singlebuf(inBufHdl) # No frameindex required as it handles that internally
 
@@ -128,6 +127,9 @@ class ayfaudio_inwav(ayfaudio_in):
 
             case ayfbuf.ProcessingType.I_SINGLEBUF:
                 retVal = self.prepare_oneBuf_i_singlebuf(inBufHdl) # No frameindex required as it handles that internally
+            case _:
+                print('Error')
+                assert(0)
 
         if(retVal == True):
             inBufHdl.fIdx = self.fIdx
