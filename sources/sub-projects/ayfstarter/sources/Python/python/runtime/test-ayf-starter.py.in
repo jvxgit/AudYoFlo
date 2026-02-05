@@ -28,8 +28,27 @@ class myProcessor(ayfproc.ayfaudio_processor):
     def __init__(self):
         self.hdl = None
 
+    def cb_before_start(self, purposeOfCall, hdlToProcess) -> None:
+        
+        # Options:
+        # AYF_VOID_PVOID_ID_STARTED -> 0
+        # AYF_VOID_PVOID_ID_REPORT_NO_BINDING -> 1
+        # AYF_VOID_PVOID_ID_BEFORE_START -> 2
+        # AYF_VOID_PVOID_ID_BEFORE_STOP -> 3
+        # AYF_VOID_PVOID_ID_STOPPED -> 4
+        # AYF_VOID_PVOID_ID_TERMINATE -> 5
+
+        if(purposeOfCall == 2):
+            # Option AYF_VOID_PVOID_ID_BEFORE_START
+            # We end up here once the component has been activated 
+            # but it has not been started yet. Here would the place 
+            # to set the required properties
+            print("Callback")
+
     def prepare(self, numIn = 1, numOut = 1, bSize = 128, sRate = 48000):
-        self.hdl = ayf_starter_python.init_ayf_starter(numIn, numOut, bSize, sRate, int(-2), int(-2), "ayf-proxy.ini")
+
+        # Specify processing parameters, component ident, embedding ini file and callback to configure component before actually starting
+        self.hdl = ayf_starter_python.init_ayf_starter(numIn, numOut, bSize, sRate, int(-2), int(-2), "ayf-proxy.ini", self.cb_before_start)
         return 0
     
     # @abstractmethod

@@ -223,7 +223,8 @@ public:
 		const std::string& myRegisterName, 
 		const std::string& rootPath, 
 		ayfHostBindingReferences*& bindOnReturn, 
-		const char* fNameIniDirect = nullptr, const char* fNameDllProxy= nullptr);
+		const char* fNameIniDirect = nullptr, const char* fNameDllProxy= nullptr,
+		jvxBool doNotLoadProxy = false);
 	static jvxErrorType unpopulateBindingRefs();
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxHiddenInterface* hostRef) override;
@@ -246,11 +247,12 @@ public:
 	virtual jvxErrorType deployProcParametersStartProcessor(
 		jvxSize numInChans, jvxSize numOutChans, 
 		jvxSize bSize, jvxSize sRate, 
-		jvxDataFormat format, jvxDataFormatGroup formGroup);
+		jvxDataFormat format, jvxDataFormatGroup formGroup,
+		std::function<void(IjvxDataConnectionProcess* pExt)> cbBeforeStart = nullptr);
 	virtual jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn, 
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
-	virtual jvxErrorType stopProcessor();
+	virtual jvxErrorType stopProcessor(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped);
 	
 	// ===============================================================
 	// ===============================================================

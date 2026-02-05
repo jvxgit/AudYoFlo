@@ -18,6 +18,8 @@
 #define Quotes(x) Q(x)
 #define SET_DLL_REFERENCE(ret, entry) ret.entry ## _call = (entry) JVX_GETPROCADDRESS(proxyLibHandleGlobal, Quotes(entry))
 
+#define VERBOSEOUT
+
 // Create a local data connections object if required
 class myLocalHost : public IjvxDataConnections, public CjvxDataConnections, public IjvxHiddenInterface
 {
@@ -85,7 +87,7 @@ jvxSize idRegisterGlobal = 0;
 jvxSize refCntGlobal = 0;
 
 jvxErrorType
-CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect, const char* fNameDllProxy)
+CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const std::string& rootPath, ayfHostBindingReferences*& bindOnReturn, const char* fNameIniDirect, const char* fNameDllProxy, jvxBool doNotLoadProxy)
 {
 	
 #if defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_NO_HOST) || defined(AYF_COMPONENT_LIB_WITHOUT_DYN_PROXYLIB_MIN_HOST) 
@@ -148,12 +150,24 @@ CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const s
 			fNameDll = fNameDllProxy;
 		}
 
-		std::cout << "Trying to open dynamic library <" << fNameDll << ">." << std::flush;
-
-		proxyLibHandleGlobal = JVX_LOADLIBRARY(fNameDll.c_str());
+		if (!doNotLoadProxy)
+		{
+#ifdef VERBOSEOUT
+			std::cout << "Trying to open dynamic library <" << fNameDll << ">." << std::flush;
+#endif
+			proxyLibHandleGlobal = JVX_LOADLIBRARY(fNameDll.c_str());
+		}
+		else
+		{
+#ifdef VERBOSEOUT
+			std::cout << "Open dynamic library <" << fNameDll << "> is suppressed." << std::flush;
+#endif
+		}
 		if (proxyLibHandleGlobal != JVX_HMODULE_INVALID)
 		{
+#ifdef VERBOSEOUT
 			std::cout << " --> Success!" << std::endl;
+#endif
 			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_init);
 			SET_DLL_REFERENCE(proxyReferencesGlobal, ayf_embedding_proxy_terminate);
 
@@ -165,7 +179,12 @@ CayfComponentLib::populateBindingRefs(const std::string& myRegisterName, const s
 		}
 		else
 		{
-			std::cout << " --> Failed!" << std::endl;
+			if (!doNotLoadProxy)
+			{
+#ifdef VERBOSEOUT
+				std::cout << " --> Failed!" << std::endl;
+#endif
+			}
 			// No bindngs
 			ayfHostBindingReferences* ptrRet = nullptr;
 			JVX_SAFE_ALLOCATE_OBJECT(ptrRet, ayfHostBindingReferences);

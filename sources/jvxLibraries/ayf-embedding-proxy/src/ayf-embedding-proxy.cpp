@@ -201,10 +201,25 @@ extern "C"
 			{
 #ifdef JVX_OS_WINDOWS
 				AllocConsole();
+				
+				// Re-route normal outputs
 				freopen("conin$", "r", stdin);
 				freopen("conout$", "w", stdout);
 				freopen("conout$", "w", stderr);
 				printf("Attached Debugging Window:\n");
+
+				// Reroutes std::cin etc
+				std::cout.clear();
+				std::cerr.clear();
+				std::cin.clear();
+
+				// Optional: sicherstellen, dass iostreams mit stdio synchron sind
+				std::ios::sync_with_stdio(true);
+
+				// Optional: unbuffered (sofortige Ausgabe)
+				setvbuf(stdout, nullptr, _IONBF, 0);
+				setvbuf(stderr, nullptr, _IONBF, 0);
+
 				for (auto elm : messagesConsole)
 				{
 					std::cout << elm << std::endl;

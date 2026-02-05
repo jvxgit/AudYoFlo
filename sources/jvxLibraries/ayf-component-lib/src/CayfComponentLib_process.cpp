@@ -1,8 +1,10 @@
 #include "CayfComponentLib.h"
 
 jvxErrorType
-CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize numOutChans, jvxSize bSize, jvxSize sRate,
-	jvxDataFormat format, jvxDataFormatGroup formGroup)
+CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, 
+	jvxSize numOutChans, jvxSize bSize, jvxSize sRate,
+	jvxDataFormat format, jvxDataFormatGroup formGroup,
+	std::function<void(IjvxDataConnectionProcess* pExt)> cbBeforeStart)
 {
 	jvxErrorType resC = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
@@ -58,6 +60,17 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, jvxSize
 		else
 		{
 			std::cout << "Subsystem ready for processing!" << std::endl;
+		}
+
+		if (cbBeforeStart)
+		{
+			IjvxDataConnectionProcess* proc = nullptr;
+			theConnections->reference_connection_process_uid(uId_process, &proc);
+			if (proc)
+			{
+				cbBeforeStart(proc);
+				theConnections->return_reference_connection_process(proc);
+			}
 		}
 
 		resC = this->prepare();
@@ -141,7 +154,7 @@ CayfComponentLib::process_one_buffer_interleaved(
 }
 
 jvxErrorType
-CayfComponentLib::stopProcessor()
+CayfComponentLib::stopProcessor(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped)
 {
 	jvxErrorType resC = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
@@ -174,9 +187,17 @@ CayfComponentLib::stopProcessor()
 			resC = this->postprocess();
 			assert(resC == JVX_NO_ERROR);
 		}
+
+		if (cbStopped)
+		{
+			cbStopped(theProc);
+		}
+
 		theConnections->return_reference_connection_process(theProc);
 		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 		procParams.reset();
+
+		
 	}
 	return JVX_NO_ERROR;
 }

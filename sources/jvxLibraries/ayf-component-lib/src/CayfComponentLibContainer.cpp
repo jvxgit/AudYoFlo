@@ -76,7 +76,13 @@ CayfComponentLibContainer::deployProcParametersStartProcessor(CayfComponentLib* 
 			startParams.bSize,
 			startParams.sRate,
 			startParams.format,
-			startParams.formGroup);
+			startParams.formGroup,
+			[&](IjvxDataConnectionProcess* process) {
+				if (ptr_callback_multipurpose)
+				{
+					ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_BEFORE_START, prv_callback_multipurpose, process);
+				}
+			});
 	}
 	return res;
 };
@@ -108,7 +114,12 @@ CayfComponentLibContainer::stopProcessor(CayfComponentLib* compProc)
 	jvxErrorType res = JVX_ERROR_NOT_READY;
 	if (compProc)
 	{
-		res = compProc->stopProcessor();
+		res = compProc->stopProcessor(
+			[&](IjvxDataConnectionProcess* process) {
+				if (ptr_callback_multipurpose)
+				{
+					ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_STOPPED, prv_callback_multipurpose, process);
+				}});
 	}
 	return res;
 };
@@ -154,9 +165,9 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 	jvxErrorType res = deployProcParametersStartProcessor(deviceEntryObject);
 	if (res == JVX_NO_ERROR)
 	{
-		if(ptr_callback_on_start)
+		if(ptr_callback_multipurpose)
 		{ 
-			ptr_callback_on_start(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_STARTED, prv_callback_on_start, NULL);
+			ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_STARTED, prv_callback_multipurpose, NULL);
 		}
 	}
 
@@ -175,6 +186,11 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 
 	// This removes the processing reference for procesing loop in a lock!!
 	unsetReference();
+
+	if (ptr_callback_multipurpose)
+	{
+		ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_BEFORE_STOP, prv_callback_multipurpose, nullptr);
+	}
 
 	stopProcessor(deviceEntryObject);
 
@@ -213,7 +229,7 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 jvxErrorType
 CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numInChansArg, int numOutChansArg, 
 	int bSizeArg, int sRateArg, int passthroughModeArg, jvxSize* ayfIdentsPtr, int ayfIdentsNum, 
-	void_pvoid_callback ptr_callback_bwd_on_start_arg, void* prv_callback_on_start_arg)
+	void_pvoid_callback ptr_callback_bwd_arg, void* prv_callback_arg)
 {
 	jvxApiString realRegName;
 
@@ -229,8 +245,9 @@ CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numIn
 	desiredSlotIdNode = JVX_SIZE_DONTCARE;
 	desiredSlotIdDev = JVX_SIZE_DONTCARE;
 
-	ptr_callback_on_start = ptr_callback_bwd_on_start_arg;
-	prv_callback_on_start = prv_callback_on_start_arg;
+	// Copy callback references
+	ptr_callback_multipurpose = ptr_callback_bwd_arg;
+	prv_callback_multipurpose = prv_callback_arg;
 
 	if (ayfIdentsNum > 0)
 	{
@@ -280,6 +297,15 @@ CayfComponentLibContainer::stopBinding()
 	{
 		stopBindingInner();
 	}
+
+	if (ptr_callback_multipurpose)
+	{
+		ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_TERMINATE, prv_callback_multipurpose, nullptr);
+	}
+
+	ptr_callback_multipurpose = nullptr;
+	prv_callback_multipurpose = nullptr;
+
 	return JVX_NO_ERROR;
 }
 

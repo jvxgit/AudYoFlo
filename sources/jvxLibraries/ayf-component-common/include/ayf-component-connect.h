@@ -29,8 +29,9 @@ extern "C" {
 		initStr->ayfIdentsPtr[1] = ayfIdentSlot_dev;
 		initStr->fNameDllProxr = NULL;
 		initStr->fNameIniPtr = NULL;
-		initStr->fptr = NULL;
+		initStr->fptr_multi_purpose = NULL;
 		initStr->priv = NULL;
+		initStr->doNotLoadProxy = false;
 	};
 
 	JVX_STATIC_INLINE void ayfInitParamStruct_init(struct ayfInitParamStruct* paramStr, 

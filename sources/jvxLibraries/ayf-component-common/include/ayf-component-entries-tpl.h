@@ -60,14 +60,15 @@ extern "C"
 			std::string alternativePath = JVX_GET_CURRENT_MODULE_PATH(ptrConstructorFunction);
 			alternativePath = jvx_extractDirectoryFromFilePath(alternativePath);
 
-			jvxErrorType resL = CayfComponentLib::populateBindingRefs(modName, alternativePath, bindOnReturn, str->fNameIniPtr, str->fNameDllProxr);
+			jvxErrorType resL = CayfComponentLib::populateBindingRefs(modName, alternativePath, bindOnReturn, 
+				str->fNameIniPtr, str->fNameDllProxr, str->doNotLoadProxy);
 			if(resL == JVX_NO_ERROR)
 			{
 				if (bindOnReturn->bindType == ayfHostBindingType::AYF_HOST_BINDING_NONE)
 				{
-					if (str->fptr)
+					if (str->fptr_multi_purpose)
 					{						
-						str->fptr(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_REPORT_NO_BINDING, str->priv, nullptr);
+						str->fptr_multi_purpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_REPORT_NO_BINDING, str->priv, nullptr);
 					}
 				}
 			}
@@ -78,7 +79,7 @@ extern "C"
 			libCont->startBinding(modName, paramStr->numInChans,
 				paramStr->numOutChans, paramStr->bSize, 
 				paramStr->sRate, paramStr->passthroughMode,
-				str->ayfIdentsPtr, 2, str->fptr, str->priv);
+				str->ayfIdentsPtr, 2, str->fptr_multi_purpose, str->priv);
 
 			AYF_FUNCTIONNAME_REDEFINE(lstAllocated, AYF_PROJECT_POSTFIX).push_back(libCont);
 

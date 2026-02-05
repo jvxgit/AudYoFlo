@@ -32,8 +32,9 @@ private:
 
 	audioParams startParams;
 
-	void_pvoid_callback ptr_callback_on_start = NULL;
-	void* prv_callback_on_start = NULL;
+	// We copy this from init situation
+	void_pvoid_callback ptr_callback_multipurpose = NULL;
+	void* prv_callback_multipurpose = NULL;
 
 public:
 
