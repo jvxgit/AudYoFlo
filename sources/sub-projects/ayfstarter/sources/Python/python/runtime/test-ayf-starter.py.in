@@ -56,6 +56,10 @@ class myProcessor(ayfproc.ayfaudio_processor):
         
         # Run core function
         res = ayf_starter_python.run_frame_ayf_starter(self.hdl, inBuf.params.chans, outBuf.params.chans, inBuf.params.bs, inBuf.fld, outBuf.fld)
+
+        # Copy frame id
+        outBuf.fIdx = inBuf.fIdx
+        
         return res
 
     # @abstractmethod

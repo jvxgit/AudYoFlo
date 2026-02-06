@@ -8,28 +8,7 @@ import ayfaudioio as ayfio
 import ayfaudiobuf as ayfbuf
 
 # ========================================================================
-
-class ayfaudio_inwav(ayfif.ayfaudio_in):
-
-    def __init__(self, fName):
-        self.fname = fName
-        self.data = ayfbuf.ayfaudio_data()
-        self.duration_samples = 0
-        self.fIdx = 0
-        self.buf = None
-        path_input = pathlib.Path(self.fname)
-
-        print("### AYFAUDIOINWAV -- Opening File <", path_input, ">.")
-
-        self.buf,  self.data.sampling_rate = af.read(str(path_input))        
-        szArr = self.buf.shape
-        if(len(szArr) == 2):
-
-            self.duration_samples = szArr[1]
-            self.data.nChans = szArr[0]
-        else:
-            self.duration_samples = szArr[0]
-            self.data.nChans = 1
+class ayfaudio_inbuffered(ayfif.ayfaudio_in):
 
     def prepare_data(self, formatSystem):
             
@@ -79,12 +58,12 @@ class ayfaudio_inwav(ayfif.ayfaudio_in):
         nSamples = inBufHdl.params.bs * inBufHdl.params.chans
         
         # Only full frames. We need samples from frame 0 to frame 1 - therefore "+1"
-        if((inBufHdl.fIdx + 1) * nSamples >= self.duration_samples):
+        if((self.fIdx + 1) * nSamples >= self.duration_samples):
             return False
         
         # Extract buffer here!
-        idxStart = inBufHdl.fIdx * nSamples
-        idxStop =  (inBufHdl.fIdx+1) * nSamples
+        idxStart = self.fIdx * nSamples
+        idxStop =  (self.fIdx+1) * nSamples
         idxStop = min(idxStop, (self.duration_samples * inBufHdl.params.chans)) 
         nSamples = idxStop - idxStart
                 
@@ -93,7 +72,9 @@ class ayfaudio_inwav(ayfif.ayfaudio_in):
         if(len(self.buf) == 2):
             firstBuf = self.buf[0]
 
-        inBufHdl.fld[0:nSamples] = firstBuf[idxStart:idxStop]        
+        # Copy content and the frame
+        inBufHdl.fld[0:nSamples] = firstBuf[idxStart:idxStop]  
+        inBufHdl.fIdx = self.fIdx
         return True
     
     def prepare_single_frame(self, inBufHdl, frameIdx):
@@ -123,6 +104,44 @@ class ayfaudio_inwav(ayfif.ayfaudio_in):
 
     def progress(self, inBufHdl: ayfbuf.ayfaudio_buf):
         return (self.fIdx* inBufHdl.params.bs)/ self.duration_samples
+    
+# ===========================================================================
+# ===========================================================================
+
+class ayfaudio_inpulse(ayfaudio_inbuffered):
+
+    def __init__(self, duration_secs = 10, samplerate = 48000, nChans = 1, format = 'double'):
+
+        self.data = ayfbuf.ayfaudio_data()
+        self.data.sampling_rate = samplerate
+        self.duration_samples = duration_secs * self.data.sampling_rate 
+        self.fIdx = 0
+        self.buf = None
+
+        print("### AYFAUDIOINPULSE -- Creating pulse input.")
+
+        if(format == "single"):
+            self.buf = np.zeros(nChans * self.duration_samples, dtype="float32") 
+
+        elif(format == "double"):
+            
+        # self.buf = np.float64(self.buf)
+            self.buf = np.zeros(nChans * self.duration_samples, dtype="float64")
+        else:
+            assert(False)
+
+        # Fill very first sample to realize the pulse
+        for idxChan in range(0, nChans):
+            self.buf[idxChan] = 1.0
+                    
+        szArr = self.buf.shape
+        if(len(szArr) == 2):
+
+            self.duration_samples = szArr[1]
+            self.data.nChans = szArr[0]
+        else:
+            self.duration_samples = szArr[0]
+            self.data.nChans = 1
 
 # ==========================================================================
 # ==========================================================================

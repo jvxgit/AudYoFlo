@@ -5,9 +5,10 @@ import numpy as np
 import pathlib
 from enum import Enum
 import math
-import ayfaudioproc
+import ayfaudioif as ayfif
 import ayfaudiooutwav as ayfoutwav
 import ayfaudioinwav as ayfinwav
+import ayfaudioinpulse as ayfinpls
 import ayfaudiobuf as ayfbuf
 
 # ==========================================================
@@ -61,7 +62,7 @@ class ayfaudio:
 
         self.ibuf = ayfbuf.ayfaudio_buf()
         self.obuf = ayfbuf.ayfaudio_buf()
-        self.progressStep = 0.25
+        self.progressStep = 0.05
         self.progressShowNext = 0.0
 
     def prepare(self, source = None, sink = None):
@@ -70,9 +71,13 @@ class ayfaudio:
         
         # Input side
         if(isinstance(source, str) == True):
-            self.corein = ayfinwav.ayfaudio_inwav(source)
 
-        elif(isinstance(source, ayfinwav.ayfaudio_inwav) == True):
+            if(source == "pulse"):
+                self.corein = ayfinpls.ayfaudio_inpulse(duration_secs = 10, samplerate =  self.sRate, nChans = self.inChans, format = self.format )
+            else :
+                self.corein = ayfinwav.ayfaudio_inwav(source)
+
+        else: 
             self.corein = source
         
         # Run the core allocation
@@ -119,6 +124,7 @@ class ayfaudio:
                 if(progress > self.progressShowNext ):
                     # processor.progress_step(progress)
                     self.progressShowNext = self.progressShowNext + self.progressStep
+                    print("\rProgress: ", math.floor(progress*100 + 0.5), "%", end='')
 
                 # Unset frame Idx - we may set it in the process function OR right after it
                 self.obuf.fIdx = -1
@@ -130,6 +136,7 @@ class ayfaudio:
                     self.obuf.fIdx =  self.ibuf.fIdx
 
                 self.coreout.postprocess_single_frame( self.obuf)
+                frameIdx += 1
             else:
                 break
 

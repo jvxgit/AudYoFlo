@@ -28,9 +28,10 @@ namespace jvx
 		T2 identt1;
 		T3 detailt1;
 		jvxErrorType resCall = JVX_ERROR_ELEMENT_NOT_FOUND;
+		jvxApiString* target_hint = nullptr;
 
-		propertyCallCompactElement(const T1& rawPtr, const T2& ident, const T3& detail) :
-			rawPtrt1(rawPtr), identt1(ident), detailt1(detail) 
+		propertyCallCompactElement(const T1& rawPtr, const T2& ident, const T3& detail, jvxApiString* target_hint_arg = nullptr) :
+			rawPtrt1(rawPtr), identt1(ident), detailt1(detail), target_hint(target_hint_arg)
 		{
 			callMan.access_protocol = jvxAccessProtocol::JVX_ACCESS_PROTOCOL_NO_CALL;
 		};
