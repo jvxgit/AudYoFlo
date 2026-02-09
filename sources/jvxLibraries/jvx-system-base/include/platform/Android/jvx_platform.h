@@ -105,6 +105,8 @@
 
 #define JVX_INVALID_HANDLE_VALUE INVALID_HANDLE_VALUE
 
+#define JVX_FPCLASSIFY std::fpclassify
+
 //===============================================
 //===============================================
 
@@ -240,6 +242,8 @@ JVX_STATIC_INLINE void* JVX_LOADLIBRARY_PATH(std::string fName, std::string dir)
 
 #define JVX_CREATE_PROCESS_HANDLE pid_t
 JVX_CREATE_PROCESS_RESULT JVX_CREATE_PROCESS_WITH_ARGS(JVX_CREATE_PROCESS_HANDLE& procHandle, const std::string& cmd, const std::list<std::string>& args); 
+
+jvxData JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn = false);
 
 #define JVX_TERMINATE_PROCESS(procHandle, exitCode) kill(procHandle, SIGKILL)
 JVX_STATIC_INLINE JVX_WAIT_RESULT JVX_WAIT_FOR_PROCESS_COMPLETE(JVX_CREATE_PROCESS_HANDLE hdlProc) 

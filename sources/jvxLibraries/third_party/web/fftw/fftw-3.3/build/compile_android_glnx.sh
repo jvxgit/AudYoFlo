@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "HALLO"
+
+sleep 10
 # -DCMAKE_TOOLCHAIN_FILE=/home/hauke/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake -DANDROID_ABI^=x86_64 -DANDROID_NDK^=/home/hauke/Android/Sdk/ndk/27.0.12077973 -DANDROID_API_VERSION^=28 -DANDROID_PLATFORM^=android-28 -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_ANDROID_NDK^=/home/hauke/Android/Sdk/ndk/27.0.12077973 -DCMAKE_SYSTEM_NAME^=Android -DCMAKE_SYSTEM_VERSION^=1
 
 archtoken=x64-Debug

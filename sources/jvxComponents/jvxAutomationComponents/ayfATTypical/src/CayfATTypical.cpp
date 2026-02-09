@@ -98,7 +98,7 @@ CayfATTypical::handle_report_ss(
 				}
 #elif defined JVX_OS_MACOSX
 				searchToken = "*CoreAudio*";
-#elif JVX_OS_ANDROID
+#elif defined JVX_OS_ANDROID
 				searchToken = "*Android*";
 #endif
 

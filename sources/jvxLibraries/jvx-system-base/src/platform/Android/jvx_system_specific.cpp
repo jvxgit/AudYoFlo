@@ -89,3 +89,13 @@ std::string JVX_FILENAME_FROM_FILE(FILE* hFile)
   retVal = filename;
   return retVal;
 }
+
+/* This functions reads a presentation of time which may be related to PTP or NTP synchronization 
+ * and returns a unique timestamp given as a float value of seconds during the curent day.
+ * E.g., at time 0:01, this timestamp should be 60.00000.
+ */
+jvxData 
+JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
+{
+	return 0;
+}
