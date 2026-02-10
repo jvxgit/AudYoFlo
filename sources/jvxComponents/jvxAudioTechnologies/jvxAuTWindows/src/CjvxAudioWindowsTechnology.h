@@ -11,6 +11,8 @@ class CjvxAudioWindowsTechnology : public CjvxTemplateTechnology<CjvxAudioWindow
 {
 private:
 	JVX_MUTEX_HANDLE safeAccessConnections;
+	jvxBool comNeedsUninitialize = false;
+
 public:
 	JVX_CALLINGCONVENTION CjvxAudioWindowsTechnology(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	JVX_CALLINGCONVENTION ~CjvxAudioWindowsTechnology();

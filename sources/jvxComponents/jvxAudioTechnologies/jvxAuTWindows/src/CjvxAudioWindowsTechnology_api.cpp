@@ -131,7 +131,12 @@ leave_exit_error:
 void
 CjvxAudioWindowsTechnology::activate_windows_audio_technology()
 {
+    comNeedsUninitialize = false;
 	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (hr == S_OK)
+    {
+        comNeedsUninitialize = true;
+    }
     UINT deviceCount = 0;
 
 	IMMDeviceEnumerator* deviceEnumerator = NULL;
@@ -302,5 +307,9 @@ CjvxAudioWindowsTechnology::deactivate_windows_audio_device(IMMDevice* device)
 void
 CjvxAudioWindowsTechnology::deactivate_windows_audio_technology()
 {
-    CoUninitialize();
+    // It may not be a good idea to call this since it breaks some of the UI functions
+    if (comNeedsUninitialize)
+    {
+        CoUninitialize();
+    }
 }
