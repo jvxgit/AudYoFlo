@@ -714,14 +714,15 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-embedding-proxy
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-link-frontend
 	
-	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-mex
-	
-	# The connect libraries
-	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-fileinput
-	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-ctrl
-
-
+	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-mex	
   )
+
+	set(JVX_BASE_STATIC_CONNECT_LIBS
+		# The connect libraries
+		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-fileinput
+		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-fileoutput
+		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-ctrl
+		)
 
   if(JVX_USE_PART_WEBSERVER)
     set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
@@ -1344,6 +1345,8 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
   # ===========================================================================
 
   jvx_addSubdirs("Configuring all static libraries" "${JVX_BASE_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
+  jvx_addSubdirs("Configuring all static connect libraries" "${JVX_BASE_STATIC_CONNECT_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/connect")
+  
   jvx_addSubdirs("Configuring all static QT libraries" "${JVX_BASE_STATIC_QT_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/qt")
 
   jvx_addSubdirs("Configuring all shared libraries" "${JVX_BASE_SHARED_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/shared-libs")
