@@ -10,3 +10,16 @@ sys.path.append('@JVX_PYTHON_PATH_RELEASE_LIB@')
 # -> https://stackoverflow.com/questions/39734176/load-a-dll-with-dependencies-in-python
 os.add_dll_directory('@JVX_PYTHON_PATH_RELEASE_DLL@')
 #os.add_dll_directory('../../bin')
+
+from sys import platform
+if platform == "win32":
+# Add path where to look for the pybind library
+    sys.path.append('/home/hauke/audyoflo/audio-glnx/release/runtime/python/library')
+    # sys.path.append('../library')
+    os.add_dll_directory('/home/hauke/audyoflo/audio-glnx/release/runtime/bin')
+    # platform == "linux" or platform == "linux2":
+    # linux
+
+elif  platform == "linux":
+    os.environ["LD_LIBRARY_PATH"] = "/home/hauke/audyoflo/audio-glnx/release/runtime/python/library:" + os.environ.get("LD_LIBRARY_PATH", "")
+

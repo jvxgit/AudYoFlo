@@ -270,6 +270,21 @@ macro (find_octave)
   endif()
 endmacro (find_octave)
 
+macro(find_pybind)
+
+	
+	message("--> Looking for Python/pybind11. You may use the environment variable PYBIND_PATH to link, e.g., PYBIND_PATH=C:\\python-packages\\site-packages\\pybind11\\share\\cmake\\pybind11")
+	set(PYBIND_PATH "" CACHE STRING "Pybind find path")
+	if(NOT EXISTS ${PYBIND_PATH})
+		set(PYBIND_PATH $ENV{PYBIND_PATH})
+	endif()
+	message("--> Using variable PYBIND_PATH=${PYBIND_PATH}")
+	set(pybind11_DIR ${PYBIND_PATH})
+	find_package(pybind11 CONFIG REQUIRED)
+	find_package(Python COMPONENTS Interpreter Development REQUIRED)
+	# message(FATAL_ERROR "PYBIND -- ${pybind11_LIBRARY}")
+endmacro(find_pybind)
+
 macro (find_pcap)
   message("--> Looking for libpcap")
   if(JVX_CROSS_COMPILE)
