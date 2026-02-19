@@ -88,6 +88,10 @@ jvxData jvx_quat_delta_deg(struct jvx_quat* q1, struct jvx_quat* q2, jvx_matrix*
 	sumVecProd += vecOut1[1] * vecOut2[1];
 	sumVecProd += vecOut1[2] * vecOut2[2];
 
+	// I have seen cases where numerical issues caused this to be greater than 1 or smaller than -1!
+	sumVecProd = JVX_MIN(sumVecProd, 1.0);
+	sumVecProd = JVX_MAX(sumVecProd, -1.0);
+
 	jvxData angleRad = acos(sumVecProd);
 	deltaAngle = angleRad * 180.0 / M_PI;
 	return deltaAngle;
