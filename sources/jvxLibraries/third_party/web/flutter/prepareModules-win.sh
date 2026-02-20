@@ -32,5 +32,5 @@ if [ ! -d "flutter-${JVX_FLUTTER_VERSION}" ]; then
 		fi
 	done
 	
-	rm flutter.zip
+	rm flutter_windows_${JVX_FLUTTER_VERSION}-stable.zip
 fi

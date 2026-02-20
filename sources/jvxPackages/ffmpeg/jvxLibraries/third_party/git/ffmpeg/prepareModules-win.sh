@@ -11,6 +11,11 @@ folder="ffmpeg-$postfix"
 # Activate the verbose mode!!
 set -x
 
+# Reconstruct the WINDOWS path at first by prepending the ORIGINAL_PATH
+WINPATH="$(cygpath -p "$ORIGINAL_PATH")"
+export PATH="$WINPATH:$PATH"
+
+
 echo "Checking for existence of folder $folder"
 if [ ! -d $folder ]; then
 	
@@ -66,6 +71,11 @@ if [ -d $folder ]; then
 		
 			# The following line can be modified to run directly
 			# ./make-Makefiles-64bit.sh
+			
+			## Here is another hint if the x265 does not build: we MUST use the cmake version from Visual Studio.
+			## Otherwise, the option for nmake will not be detected.
+			## If you install cmake in the msys2 environment it will shadow VS cake as the local folders precede the inherited options in the 
+			## PATH variable
 			cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=$release_mode -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -W4 -GR -EHsc $compile_flags" -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -W4 $compile_flags"  ../../source -DCMAKE_INSTALL_PREFIX=./install-$release_mode
 			nmake 
 			nmake install
