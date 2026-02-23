@@ -1,0 +1,24 @@
+From f921d990c4f29410396ba6c1580ff531b7bc1d9b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hauke=20Kr=C3=BCger?= <hk@binauricsaudio.com>
+Date: Mon, 23 Feb 2026 08:41:34 +0100
+Subject: [PATCH] Changed link lib since only libx265 is installed in Windows
+
+---
+ source/x265.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/source/x265.pc.in b/source/x265.pc.in
+index 0bf99e938..7b1a0550e 100644
+--- a/source/x265.pc.in
++++ b/source/x265.pc.in
+@@ -6,6 +6,6 @@ includedir=${prefix}/include
+ Name: @CMAKE_PROJECT_NAME@
+ Description: H.265/HEVC video encoder
+ Version: @X265_LATEST_TAG@
+-Libs: -L${libdir} -lx265
++Libs: -L${libdir} -llibx265
+ Libs.private: @PRIVATE_LIBS@
+ Cflags: -I${includedir}
+-- 
+2.47.1.windows.1
+

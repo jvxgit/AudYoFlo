@@ -16,13 +16,28 @@ if(${JVX_OS} MATCHES "windows")
 		set(JVX_COMPILE_EXTRA_CFLAGS "-MD")
 	endif()
 	
+	# H265 lib has been built within cmake configure run. It should be located at the given location which must be passed to the ffmpeg build in the 
+	# following
+	set(JVX_H265_LIB_PATH "../x265_git_${JVX_FFMPEG_POSTFIX}/build/msys-cl/install-${JVX_FFMPEG_POSTFIX}/lib")
+	
+	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/x265_git_${JVX_FFMPEG_POSTFIX})
+
+		message("x265 sub project not available. Starting script to download it.") 
+		message("This is going to take a while..") 
+		
+		# message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-x265-win.bat ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}") 
+		execute_process(COMMAND cmd /c "prepareModules-x265-win.bat ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		
+	endif()
+	
+	message("Checking for ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib")
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib)
 
 		FIND_PROGRAM(msys2 "msys2_shell.cmd" REQUIRED)
 		message("ffmpeg sub project not available. Starting script to download it.") 
 		message("This is going to take a while..") 
-		message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}") 
-		execute_process(COMMAND ${msys2} -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS}")
+		message("${msys2} -use-full-path -c cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS} ${JVX_H265_LIB_PATH}") 
+		execute_process(COMMAND ${msys2} -use-full-path -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh ${JVX_FFMPEG_POSTFIX} ${CMAKE_BUILD_TYPE} ${JVX_COMPILE_EXTRA_CFLAGS} ${JVX_H265_LIB_PATH}")
 		
 		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib)
 			message(FATAL_ERROR "ffmpeg installation failed.")
@@ -31,8 +46,6 @@ if(${JVX_OS} MATCHES "windows")
 		endif()
 		
 	endif()
-
-	## message(FATAL_ERROR "Wait here!")
 	
 	set(JVX_FFMPEG_LIB_AVCODEC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavcodec.a")
 	set(JVX_FFMPEG_LIB_AVDEVICE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavdevice.a")
@@ -44,7 +57,7 @@ if(${JVX_OS} MATCHES "windows")
 	set(JVX_FFMPEG_LIB_POSTPROC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libpostproc.a")
 
 	set(JVX_LIB_X264 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x264/install-${CMAKE_BUILD_TYPE}/lib/libx264.lib")
-	set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x265_git/build/msys-cl/install-${CMAKE_BUILD_TYPE}/lib/x265-static.lib")
+	set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/x265_git_${JVX_FFMPEG_POSTFIX}/build/msys-cl/install-${JVX_FFMPEG_POSTFIX}/lib/x265-static.lib")
 	# set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x265_git/build/msys-cl/install/lib/x265-static.lib")
 	
 	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}" CACHE INTERNAL "ffmpeg source code path (windows)")
