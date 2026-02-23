@@ -14,9 +14,29 @@ if [ ! -d "boost" ]; then
 	pwd 
 	ls
 	
-	echo "3) Renaming boost folder"
-	mv boost_1_70_0 boost
+	echo "3) Renaming boost folder - multiple attempts"
+	max=10
+	source="boost_1_70_0"
+	target="boost"
 
+	for ((i=1; i<=max; i++)); do
+		if [ -d "$target" ]; then
+			echo "Target '$target' already exists; done."
+			break
+		fi
+
+		echo "Trying to $source -> $target, mv -T "$source" "$target"  run <$i>"
+
+		if mv -T "$source" "$target" 2>/dev/null; then
+			echo "Rename succeeded."
+			break
+		else
+			# optional: Fehlermeldung anzeigen
+			echo "mv failed (run <$i>), retrying..." >&2
+			sleep 5
+		fi
+	done
+	
 	echo "4) Removing downloaded packages"
 	rm boost_1_70_0.zip
 	

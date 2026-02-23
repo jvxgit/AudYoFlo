@@ -6,11 +6,15 @@
 postfix=$1
 release_mode=$2
 compile_flags=$3
-h265_path=$4
 folder="ffmpeg-$postfix"
 
 # Activate the verbose mode!!
-# set -x
+set -x
+
+# Reconstruct the WINDOWS path at first by prepending the ORIGINAL_PATH
+WINPATH="$(cygpath -p "$ORIGINAL_PATH")"
+export PATH="$WINPATH:$PATH"
+
 
 echo "Checking for existence of folder $folder"
 if [ ! -d $folder ]; then
@@ -60,19 +64,33 @@ if [ -d $folder ]; then
 		
 		export PKG_CONFIG_PATH=${PWD}/x264/install-$release_mode/lib/pkgconfig:$PKG_CONFIG_PATH
 		 
-		# New logic for x265: The x265 librry must be built in Windows in advance as it requires Windows cmake version
-		# Then, we pass the relevant path to find x265 also in ffmpeg. Note: The windows version does not install x665.lib, therefore,
-		# the pc file temüplate must be patched in x265!!
+		if [ ! -d "x265_git/build/msys-cl/install-$release_mode" ]; then
+			git clone https://bitbucket.org/multicoreware/x265_git.git
+			pushd .
+			cd x265_git/build/msys-cl
 		
-		echo "H265-Path: $h265_path"
-		export PKG_CONFIG_PATH=${PWD}/$h265_path/pkgconfig:$PKG_CONFIG_PATH
-		echo PKG_CONFIG_PATH = $PKG_CONFIG_PATH
+			# The following line can be modified to run directly
+			# ./make-Makefiles-64bit.sh
+			
+			## Here is another hint if the x265 does not build: we MUST use the cmake version from Visual Studio.
+			## Otherwise, the option for nmake will not be detected.
+			## If you install cmake in the msys2 environment it will shadow VS cake as the local folders precede the inherited options in the 
+			## PATH variable
+			cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=$release_mode -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -W4 -GR -EHsc $compile_flags" -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -W4 $compile_flags"  ../../source -DCMAKE_INSTALL_PREFIX=./install-$release_mode
+			nmake 
+			nmake install
+			nmake clean
 		
-		# Output all pkg-config findings for special features
-		pkg-config --libs x264
-		pkg-config --libs x265
+			cp install-$release_mode/lib/libx265.lib install-$release_mode/lib/x265.lib
+			popd
+		fi
 
-		
+		export PKG_CONFIG_PATH=${PWD}/x265_git/build/msys-cl/install-$release_mode/lib/pkgconfig:$PKG_CONFIG_PATH
+		echo PKG_CONFIG_PATH = $PKG_CONFIG_PATH
+	    
+		## Test pkf-config of a problem is reported
+		## pkg-config --debug x264
+
 		# H264 -> 
 		# https://stackoverflow.com/questions/50693934/different-h264-encoders-in-ffmpeg
 		# https://superuser.com/questions/512368/unknown-encoder-libx264-on-windows
