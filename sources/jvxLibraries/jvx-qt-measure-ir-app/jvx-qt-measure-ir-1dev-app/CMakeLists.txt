@@ -23,6 +23,8 @@ if(NOT JVX_USES_SDK)
 	#include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/paths.local.cmake)
 	include(${JVX_CMAKE_DIR}/paths.cmake)
 	include(${JVX_SUBPRODUCT_ROOT}/cmake/paths.${JVX_PRODUCT}.cmake)
+	
+	message("${JVX_SUBPRODUCT_ROOT}/cmake/paths.${JVX_PRODUCT}.cmake")
 else()
 	#include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/paths.sdk.local.cmake)
 	include(${JVX_BASE_ROOT}/cmake/cmake-sdk/paths.sdk.cmake)
@@ -63,6 +65,8 @@ include_directories(
 
   	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/network/jvxAuTNetwork_master/
 	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/network/jvxAuTNetwork_slave/
+	
+	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa/
 
 	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNMeasureIr
  
@@ -135,3 +139,5 @@ set(JVX_AUTOGEN_REPLACEMENT "qt_generated")
 
 # Some common include files
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+

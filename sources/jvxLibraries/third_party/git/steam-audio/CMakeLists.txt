@@ -59,7 +59,9 @@
 		message("STEAMAUDIO_INCLUDES = ${STEAMAUDIO_INCLUDES}.")
 		message("STEAMAUDIO_LIBRARY = ${STEAMAUDIO_LIBRARY}.")
 		message("STEAMAUDIO_SHARED = ${STEAMAUDIO_SHARED}.")
-		
+
+		# message(FATAL_ERROR "Steam Audio Pause")
+
 	else()
 	
 	

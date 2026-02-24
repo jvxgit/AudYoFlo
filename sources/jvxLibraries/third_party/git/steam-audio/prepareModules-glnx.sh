@@ -7,7 +7,7 @@
 
 if [ ! -d "$1" ]; then
 	git clone https://github.com/ValveSoftware/steam-audio.git
-	Sleep 4
+	sleep 4
 	
 	mv steam-audio $1
 	pushd $1
