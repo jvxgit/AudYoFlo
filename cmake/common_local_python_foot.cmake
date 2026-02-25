@@ -55,7 +55,11 @@ message("    > Python Module")
   if(JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE)
 	set(JVX_PYTHON_PATH_RELEASE_LIB "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_PYTHON_LIBRARY}") # C:\\jvxrt\\build.audio.allp\\release\\runtime\\python\\library
 	set(JVX_PYTHON_PATH_RELEASE_DLL "${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_BIN}") # C:\\jvxrt\\build.audio.allp\\release\\runtime\\bin
-	configure_file(${JVX_BASE_ROOT}/software/codeFragments/python/local.py.in ${JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE})		
+	if(JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE_SOURCE)
+		configure_file(${JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE_SOURCE} ${JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE})
+	else()
+		configure_file(${JVX_BASE_ROOT}/software/codeFragments/python/local.py.in ${JVX_LOCAL_PYTHON_CONFIGURATION_TEMPLATE})
+	endif()
   endif()
 
 		if(LOCAL_PYTHON_SCRIPT)
