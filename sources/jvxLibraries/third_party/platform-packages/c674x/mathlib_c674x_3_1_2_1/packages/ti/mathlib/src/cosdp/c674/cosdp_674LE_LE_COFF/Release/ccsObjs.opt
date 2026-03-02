@@ -1,1 +1,0 @@
-"./drvdp.obj" "./driver.obj" "./cosdp_d.obj" "C:/nightlybuilds/mathlib/ti/mathlib/src/common/c674/lnk.cmd" -l"libc.a" 
