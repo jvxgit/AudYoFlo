@@ -196,10 +196,92 @@ public:
 		return(res);
 	};
 
+
+	template<typename T> static T* mexArgumentToBufPtr(jvxDataFormat* format, jvxSize* N, jvxSize* M, const mxArray* prhs)
+	{
+		if (N)
+		{
+			*N = mxGetN(prhs);
+		}
+
+		if (M)
+		{
+			*M = mxGetM(prhs);
+		}
+
+		if (format)
+		{
+			if (mxIsDouble(prhs))
+			{
+#ifdef JVX_DATAFORMAT_DOUBLE
+				* format = JVX_DATAFORMAT_DATA;
+#else
+				* format = JVX_DATAFORMAT_DOUBLE;
+#endif 
+			}
+			else if (mxIsSingle(prhs))
+			{
+#ifdef JVX_DATAFORMAT_DOUBLE
+				* format = JVX_DATAFORMAT_DOUBLE;
+#else
+				* format = JVX_DATAFORMAT_DATA;
+#endif 
+			}
+			else if (mxIsInt64(prhs))
+			{
+				*format = JVX_DATAFORMAT_64BIT_LE;
+			}
+
+			else if (mxIsInt32(prhs))
+			{
+				*format = JVX_DATAFORMAT_32BIT_LE;
+			}
+
+			else if (mxIsInt16(prhs))
+			{
+				*format = JVX_DATAFORMAT_16BIT_LE;
+			}
+
+			else if (mxIsInt8(prhs))
+			{
+				*format = JVX_DATAFORMAT_8BIT;
+			}
+
+			else if (mxIsUint64(prhs))
+			{
+				*format = JVX_DATAFORMAT_U64BIT_LE;
+			}
+
+			else if (mxIsUint32(prhs))
+			{
+				*format = JVX_DATAFORMAT_U32BIT_LE;
+			}
+
+			else if (mxIsUint16(prhs))
+			{
+				*format = JVX_DATAFORMAT_U16BIT_LE;
+			}
+
+			else if (mxIsUint8(prhs))
+			{
+				*format = JVX_DATAFORMAT_U8BIT;
+			}
+
+			else
+			{
+				*format = JVX_DATAFORMAT_NONE;
+				return nullptr;
+			}
+		}
+
+		return (T*)mxGetData(prhs);
+	};
+
 	static jvxErrorType convert_mat_buf_c_buf_1_x_N(jvxHandle* data_setprops, jvxDataFormat format, jvxSize N, const mxArray* prhs);
 
 	static std::string jvx_mex_2_cstring(const mxArray* phs);
 	static std::vector<jvxValue> jvx_mex_2_numeric(const mxArray* phs, jvxSize lineNo = 0);
+	static void* jvx_mex_2_intptr(const mxArray* phs);
 	static const mxArray* jvx_mex_lookup_strfield_core(const mxArray* strEntry, const std::string& key, jvxSize curLevel, int levelMax, jvxBool& moreLevels);
 	static const mxArray* jvx_mex_lookup_strfield(const mxArray* strEntry, const std::string& key, jvxSize levelMax = JVX_SIZE_UNSELECTED);
 	static const mxArray* jvx_mex_read_single_reference(const mxArray* fld, const std::string& expr);

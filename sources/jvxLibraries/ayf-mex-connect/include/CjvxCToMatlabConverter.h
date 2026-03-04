@@ -44,7 +44,8 @@ public:
 
 	static void mexReturnUInt64(mxArray*& plhs, const jvxUInt64& value);
 
-    
+	static void mexReturnIntPtr(mxArray*& plhs, const void* valueptr);
+
     //! Translate data in C to MEX type
 	static void mexReturnInt8List(mxArray*& plhs, const jvxInt8* value, jvxSize numberValues);
 

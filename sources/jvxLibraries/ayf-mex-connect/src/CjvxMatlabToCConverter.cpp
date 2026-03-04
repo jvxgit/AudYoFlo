@@ -894,6 +894,39 @@ CjvxMatlabToCConverter::jvx_mex_2_cstring(const mxArray* phs)
 	return(str);
 }
 
+void*
+CjvxMatlabToCConverter::jvx_mex_2_intptr(const mxArray* phs)
+{
+	void* retVal = nullptr;
+	jvxSize M = mxGetM(phs);
+	jvxSize N = mxGetN(phs);
+
+	if ((N == 1) && (M == 1))
+	{
+		if (sizeof(intptr_t) == sizeof(jvxUInt64))
+		{
+			if (mxIsUint64(phs))
+			{
+				jvxUInt64* ptrA = (jvxUInt64*)mxGetData(phs);
+				retVal = (void*)(*ptrA);
+				return retVal;
+			}
+		}
+		else if (sizeof(intptr_t) == sizeof(jvxUInt32))
+		{
+			if (mxIsUint32(phs))
+			{
+				jvxUInt32* ptrA = (jvxUInt32*)mxGetData(phs);
+
+				// Read 
+				retVal = (void*)(*ptrA);
+				return retVal;
+			}
+		}
+	}
+	return retVal;
+}
+
 std::vector<jvxValue> 
 CjvxMatlabToCConverter::jvx_mex_2_numeric(const mxArray* phs, jvxSize lineNo)
 {

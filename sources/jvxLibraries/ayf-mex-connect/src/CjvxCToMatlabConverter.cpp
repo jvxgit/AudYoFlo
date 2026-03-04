@@ -57,6 +57,29 @@ CjvxCToMatlabConverter::mexReturnInt32(mxArray*& plhs, const jvxInt32& value)
 }
 
 void
+CjvxCToMatlabConverter::mexReturnIntPtr(mxArray*& plhs, const void* valueptr)
+{
+	SZ_MAT_TYPE ndim = 2;
+	SZ_MAT_TYPE dims[2] = { 1, 1 };
+
+	if (sizeof(intptr_t) == sizeof(jvxUInt64))
+	{
+		plhs = mxCreateNumericArray(ndim, dims, mxUINT64_CLASS, mxREAL);
+		jvxUInt64* ptrWrite = (jvxUInt64*)mxGetData(plhs);
+		*ptrWrite = (intptr_t)valueptr;
+		return;
+	}
+	else if (sizeof(intptr_t) == sizeof(jvxUInt32))
+	{
+		plhs = mxCreateNumericArray(ndim, dims, mxUINT32_CLASS, mxREAL);
+		jvxUInt32* ptrWrite = (jvxUInt32*)mxGetData(plhs);
+		*ptrWrite = (intptr_t)valueptr;
+		return;
+	}
+}
+
+
+void
 CjvxCToMatlabConverter::mexReturnUInt32(mxArray*& plhs, const jvxUInt32& value)
 {
 	SZ_MAT_TYPE ndim = 2;
