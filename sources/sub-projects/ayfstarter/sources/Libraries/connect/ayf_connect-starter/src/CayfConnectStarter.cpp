@@ -60,27 +60,3 @@ CayfConnectStarter::deallocate_main_node()
 	return ayfAuNStarter_terminate(this->mainObj);
 }
 
-jvxErrorType
-CayfConnectStarter::on_main_node_selected()
-{
-	IjvxProperties* props = nullptr;
-	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-	if (props)
-	{
-	}
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CayfConnectStarter::before_main_node_unselect()
-{
-	IjvxProperties* props = nullptr;
-	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-	if (props)
-	{
-	}
-	return JVX_NO_ERROR;
-}
-

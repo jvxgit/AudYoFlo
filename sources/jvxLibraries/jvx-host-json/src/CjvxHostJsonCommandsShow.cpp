@@ -147,91 +147,99 @@ CjvxHostJsonCommandsShow::create_active_component_one_type(jvxComponentType tpel
 		{
 			anyElementAdded = true;
 			tp.slotid = j;
-			JVX_CREATE_COMPONENT_IDENTIFICATION(jelml, jvxComponentIdentification_txt(tp));
-			//values.clear();
 
-			jelmlstl.addConsumeElement(jelml);
 			hHost->selection_component(tp, &idS);
-			fldDescr.assign("--");
-			fldDescror.assign("--");			
+
+			// Is there any selection?? Slots might be empty as well. We will not return empty slots here!
 			if (JVX_CHECK_SIZE_SELECTED(idS) || (idS == JVX_SIZE_SLOT_OFF_SYSTEM))
 			{
+				JVX_CREATE_COMPONENT_IDENTIFICATION(jelml, jvxComponentIdentification_txt(tp));
+				//values.clear();
+
+				jelmlstl.addConsumeElement(jelml);
+
+				/*
+				fldDescr.assign("--");
+				fldDescror.assign("--");
+				*/
+
 				hHost->description_selected_component(tp, &fldDescr);
 				hHost->descriptor_selected_component(tp, &fldDescror);
 				hHost->state_selected_component(tp, &stat);
-			}
-			JVX_CREATE_COMPONENT_DESCRIPTION(jelml, fldDescr.std_str());
-			jelmlstl.addConsumeElement(jelml);
-			
-			JVX_CREATE_COMPONENT_DESCRIPTOR(jelml, fldDescror.std_str());
-			jelmlstl.addConsumeElement(jelml);
-			
-			JVX_CREATE_COMPONENT_STATE(jelml, jvxState_txt(stat));
-			jelmlstl.addConsumeElement(jelml);
 
-			hHost->unique_id_selected_component(tp, &uId);
-			JVX_CREATE_COMPONENT_UID(jelml, jvx_size2String(uId));
-			jelmlstl.addConsumeElement(jelml);
+				JVX_CREATE_COMPONENT_DESCRIPTION(jelml, fldDescr.std_str());
+				jelmlstl.addConsumeElement(jelml);
 
-			if (childTp != JVX_COMPONENT_UNKNOWN)
-			{
-				CjvxJsonArray jarr_dev;
-				jvxComponentIdentification tpC = tp;
-				tpC.tp = childTp;
-				tpC.slotid = j;
-				resL = hHost->number_slots_component_system(tpC, NULL, &szSubSlots, nullptr, nullptr);
-				if (resL == JVX_NO_ERROR)
+				JVX_CREATE_COMPONENT_DESCRIPTOR(jelml, fldDescror.std_str());
+				jelmlstl.addConsumeElement(jelml);
+
+				JVX_CREATE_COMPONENT_STATE(jelml, jvxState_txt(stat));
+				jelmlstl.addConsumeElement(jelml);
+
+				hHost->unique_id_selected_component(tp, &uId);
+				JVX_CREATE_COMPONENT_UID(jelml, jvx_size2String(uId));
+				jelmlstl.addConsumeElement(jelml);
+
+				if (childTp != JVX_COMPONENT_UNKNOWN)
 				{
-					CjvxJsonArrayElement jarr_dev_elm;
-					CjvxJsonElementList jarr_dev_elm_lst;
-					CjvxJsonElement jarr_dev_elm_lst_elm;
-					for (k = 0; k < szSubSlots; k++)
+					CjvxJsonArray jarr_dev;
+					jvxComponentIdentification tpC = tp;
+					tpC.tp = childTp;
+					tpC.slotid = j;
+					resL = hHost->number_slots_component_system(tpC, NULL, &szSubSlots, nullptr, nullptr);
+					if (resL == JVX_NO_ERROR)
 					{
-						// jarr_dev_elm.makeSection()
-						tpC.slotsubid = k;
-						JVX_CREATE_COMPONENT_IDENTIFICATION(jarr_dev_elm_lst_elm, jvxComponentIdentification_txt(tpC));
-
-						jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
-						hHost->selection_component(tpC, &idS);
-						fldDescr.assign("--");
-						fldDescror.assign("--");
-						if (JVX_CHECK_SIZE_SELECTED(idS))
+						CjvxJsonArrayElement jarr_dev_elm;
+						CjvxJsonElementList jarr_dev_elm_lst;
+						CjvxJsonElement jarr_dev_elm_lst_elm;
+						for (k = 0; k < szSubSlots; k++)
 						{
-							hHost->description_selected_component(tpC, &fldDescr);
-							hHost->descriptor_selected_component(tpC, &fldDescror);
-							hHost->state_selected_component(tpC, &stat);
+							// jarr_dev_elm.makeSection()
+							tpC.slotsubid = k;
+							JVX_CREATE_COMPONENT_IDENTIFICATION(jarr_dev_elm_lst_elm, jvxComponentIdentification_txt(tpC));
+
+							jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
+							hHost->selection_component(tpC, &idS);
+							fldDescr.assign("--");
+							fldDescror.assign("--");
+							if (JVX_CHECK_SIZE_SELECTED(idS))
+							{
+								hHost->description_selected_component(tpC, &fldDescr);
+								hHost->descriptor_selected_component(tpC, &fldDescror);
+								hHost->state_selected_component(tpC, &stat);
+							}
+
+							JVX_CREATE_COMPONENT_DESCRIPTION(jarr_dev_elm_lst_elm, fldDescr.std_str());
+							jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
+
+							JVX_CREATE_COMPONENT_DESCRIPTOR(jarr_dev_elm_lst_elm, fldDescror.std_str());
+							jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
+
+							JVX_CREATE_COMPONENT_STATE(jarr_dev_elm_lst_elm, jvxState_txt(stat));
+							jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
+
+							hHost->unique_id_selected_component(tpC, &uId);
+							JVX_CREATE_COMPONENT_UID(jarr_dev_elm_lst_elm, jvx_size2String(uId));
+							jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
+							jvx_cbitSet(pMode, JVX_JSON_PRINT_MODE_COMPACT_SHIFT);
+							jarr_dev_elm_lst.setPrintMode(pMode);
+
+							jarr_dev_elm.makeSection(jarr_dev_elm_lst);
+							jarr_dev.addConsumeElement(jarr_dev_elm);
 						}
-						
-						JVX_CREATE_COMPONENT_DESCRIPTION(jarr_dev_elm_lst_elm, fldDescr.std_str());
-						jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
-						
-						JVX_CREATE_COMPONENT_DESCRIPTOR(jarr_dev_elm_lst_elm, fldDescror.std_str());
-						jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
-						
-						JVX_CREATE_COMPONENT_STATE(jarr_dev_elm_lst_elm, jvxState_txt(stat));
-						jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
 
-						hHost->unique_id_selected_component(tpC, &uId);
-						JVX_CREATE_COMPONENT_UID(jarr_dev_elm_lst_elm, jvx_size2String(uId));
-						jarr_dev_elm_lst.addConsumeElement(jarr_dev_elm_lst_elm);
-						jvx_cbitSet(pMode, JVX_JSON_PRINT_MODE_COMPACT_SHIFT);
-						jarr_dev_elm_lst.setPrintMode(pMode);
+						jelml.makeArray("devices", jarr_dev);
+						jelmlstl.addConsumeElement(jelml);
 
-						jarr_dev_elm.makeSection(jarr_dev_elm_lst);
-						jarr_dev.addConsumeElement(jarr_dev_elm);
 					}
-
-					jelml.makeArray("devices", jarr_dev);
-					jelmlstl.addConsumeElement(jelml);
-
 				}
-			}
-			
-			jvx_cbitSet(pMode, JVX_JSON_PRINT_MODE_COMPACT_SHIFT);
-			jelmlstl.setPrintMode(pMode);
 
-			jarrelm.makeSection(jelmlstl);
-			jarr.addConsumeElement(jarrelm);
+				jvx_cbitSet(pMode, JVX_JSON_PRINT_MODE_COMPACT_SHIFT);
+				jelmlstl.setPrintMode(pMode);
+
+				jarrelm.makeSection(jelmlstl);
+				jarr.addConsumeElement(jarrelm);
+			}
 		}
 	}
 	

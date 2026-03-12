@@ -10,6 +10,7 @@
 
 #define AYF_MODULE_NAME_HELPER(prefix, middle, postfix) prefix ## middle ## postfix
 #define AYF_MODULE_NAME(prefix, middle, postfix) AYF_MODULE_NAME_HELPER(prefix, middle, postfix)
+#define AYF_FPTR_NAME(prefix, middle, postfix) AYF_MODULE_NAME_HELPER(prefix, middle, postfix)
 
 #define AYF_MASK_NAME_HELPER(middle, var) MASK_Binaurics ## middle ## _ ## var
 #define AYF_MASK_NAME(middle, var) AYF_MASK_NAME_HELPER(middle, var)

@@ -146,6 +146,8 @@ protected:
 	std::string mainNodeName = "CayfComponentLibMainNode";
 	IjvxObject* mainObj = nullptr;
 
+	std::list< IjvxObject*> subsequentComponents;
+
 	CayfComponentLibContainer* parent = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
 	jvxConfigData* cfgDataInit = nullptr;
@@ -156,8 +158,36 @@ protected:
 	
 	std::string conToName = "default";
 	std::string conFromName = "default";
+
+	class oneNodeSequence
+	{
+	public:
+		IjvxNode* nodePtr = nullptr;
+		jvxState nodeStat = JVX_STATE_NONE;
+		jvxBool nodeReady = false;
+		jvxSize nodeBridgeId = JVX_SIZE_UNSELECTED;		
+		IjvxConnectorFactory* iFac = nullptr;
+		IjvxInputConnectorSelect* icon = nullptr;
+		IjvxOutputConnectorSelect* ocon = nullptr;
+		jvxBool isEntryNode = false;
+		void reset()
+		{
+			nodePtr = nullptr;
+			nodeStat = JVX_STATE_NONE;
+			nodeReady = false;
+			nodeBridgeId = JVX_SIZE_UNSELECTED;
+			iFac = nullptr;
+			icon = nullptr;
+			ocon = nullptr;
+			isEntryNode = false;
+		};
+	};
+
 protected:
-	IjvxNode* mainNode = nullptr;
+
+	// IjvxNode* mainNode = nullptr;
+	std::list<oneNodeSequence> mainNodes;
+
 	ayfHostBindingReferences* binding = nullptr;
 	ayfHostBindingReferencesMinHost* bindingMinHost = nullptr;
 	ayfHostBindingReferencesEmbHost* bindingEmbHost = nullptr;
@@ -259,6 +289,9 @@ public:
 
 	jvxErrorType add_text_message_token(const std::string& txtIn);
 	jvxErrorType new_text_message_status(int value, char* fldRespond, jvxSize szRespond, int* newStatOnReturn);
+
+	jvxErrorType post_allocate_one_main_node(IjvxNode* mainNode);
+	jvxErrorType pre_deallocate_one_main_node(IjvxNode* mainNode);
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
@@ -401,8 +434,8 @@ public:
 	// Interface function to involve a node in this chain
 	virtual jvxErrorType allocate_main_node() = 0;
 	virtual jvxErrorType deallocate_main_node() = 0;
-	virtual jvxErrorType on_main_node_selected() { return JVX_NO_ERROR; };
-	virtual jvxErrorType before_main_node_unselect() { return JVX_NO_ERROR; };
+	virtual jvxErrorType on_main_node_selected(IjvxNode* node);
+	virtual jvxErrorType before_main_node_unselect(IjvxNode* node);
 	virtual jvxErrorType on_main_node_started() { return JVX_NO_ERROR; };
 
 	jvxErrorType passConfigSection(IjvxSimpleNode* node, const std::string& moduleName);

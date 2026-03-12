@@ -10,13 +10,14 @@ const char* fileFormatPostfixTranslator[] =
 	nullptr
 };
 
+// There must be no "," in the types, otherwise, the list can not be returned as string list with "," separator!!
 const char* optionsWav[] =
 {
-	"16Bit,signed",
-	"32Bit,signed",
-	"32Bit,float",
-	"64Bit,signed",
-	"64Bit,float",
+	"16Bit-signed",
+	"32Bit-signed",
+	"32Bit-float",
+	"64Bit-signed",
+	"64Bit-float",
 	nullptr
 };
 

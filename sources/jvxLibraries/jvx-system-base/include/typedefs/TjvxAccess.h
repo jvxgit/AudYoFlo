@@ -35,8 +35,8 @@ struct jvxOneComponentModuleWrap
 		std::string dllPath;
 		IjvxPackage* packPtr = nullptr;
 		jvxSize packIdx = JVX_SIZE_UNSELECTED;
-		jvxInitObject_tp funcInit;
-		jvxTerminateObject_tp funcTerm;
+		jvxInitObject_tp funcInit = nullptr;
+		jvxTerminateObject_tp funcTerm = nullptr;
 	} linkage;
 	jvxOneComponentModuleWrap()
 	{

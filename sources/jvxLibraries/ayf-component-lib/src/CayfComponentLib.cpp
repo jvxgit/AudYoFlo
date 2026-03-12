@@ -460,167 +460,217 @@ CayfComponentLib::activate()
 
 		// Allocate the single main node for processing 
 		resC = allocate_main_node(); 
+		
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
-			this->mainNode = castFromObject<IjvxNode>(this->mainObj);
-
-			jvxState stat = JVX_STATE_NONE;
-			this->mainNode->state(&stat);
-			if (stat != JVX_STATE_NONE)
+			oneNodeSequence oneNodeSeq;
+			if (mainObj)
 			{
-				this->mainNode->name(nullptr, &astr);
-				std::cout << __FUNCTION__ << ": Error when involving the main node from module <" << astr.std_str() << ">: node has been initialized before."
-					<< " This typically indicates that it was tried to involve a second instance of a component that is arealized as a unique instance(no MULT - INSTANCE)." << std::endl;
-				assert(0);
+				oneNodeSeq.nodePtr = castFromObject<IjvxNode>(this->mainObj);
+				oneNodeSeq.nodeStat = JVX_STATE_NONE;
+				oneNodeSeq.isEntryNode = true;
+				mainNodes.push_back(oneNodeSeq);
 			}
-			resC = this->mainNode->initialize(this->hostRef);
-
-			if (resC == JVX_NO_ERROR)
+			for (auto& elm : subsequentComponents)
 			{
-				this->mainNode->set_location_info(jvxComponentIdentification(JVX_COMPONENT_EXTERNAL_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
-				
-				resC = this->mainNode->select(nullptr);
-
-				this->mainNode->module_reference(&astr, nullptr);
-
-				passConfigSection(this->mainNode, astr.std_str());
-
+				oneNodeSeq.nodePtr = castFromObject<IjvxNode>(elm);
+				oneNodeSeq.nodeStat = JVX_STATE_NONE;
+				oneNodeSeq.isEntryNode = false;
+				mainNodes.push_back(oneNodeSeq);
 			}
-			if (resC == JVX_NO_ERROR)
-			{
-				resC = on_main_node_selected();
-			}
-			
-			resC = this->mainNode->activate();
-			if (resC == JVX_NO_ERROR)
-			{
-				passConfigSection(this->mainNode, astr.std_str());
 
-				// Attach main node to host control - if embedded in full host
-				IjvxComponentHostExt* hostExt = nullptr;
-				hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
-				if (hostExt)
+			jvxSize desiredSlot = parent->desiredSlotIdNode;
+			for(auto& elm : mainNodes)
+			{
+				resC = post_allocate_one_main_node(elm.nodePtr);
+				elm.nodePtr->state(&elm.nodeStat);
+				if (resC == JVX_NO_ERROR)
 				{
-					hostExt->attach_external_component(mainNode, parent->modName.c_str(), parent->regToken.c_str(), true, true, parent->desiredSlotIdNode);
-				}
-				else
-				{
-					if (bindingMinHost)
+					passConfigSection(elm.nodePtr, astr.std_str());
+					// Attach main node to host control - if embedded in full host
+					IjvxComponentHostExt* hostExt = nullptr;
+					hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+					if (hostExt)
 					{
-						resC = bindingMinHost->ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+						hostExt->attach_external_component(elm.nodePtr, parent->modName.c_str(), parent->regToken.c_str(), true, true, desiredSlot);
 					}
+					else
+					{
+						if (bindingMinHost)
+						{
+							resC = bindingMinHost->ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+						}
+					}
+					elm.nodeReady = true;
+					desiredSlot++;
 				}
+			}
+		}
 
+		if((resC != JVX_NO_ERROR))
+		{
+			// Remove all mainNodes
+		}
+		else
+		{
+			uId_process = JVX_SIZE_UNSELECTED;
+			if ((mainNodes.size()))
+			{
 				// Create simple connection
 				theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
 				assert(theConnections);
 
 				std::string nmprocess = chainName;
+
 				jvxSize cnt = 1;
 				jvxBool interceptors = false;
 				jvxSize idProcDepends = JVX_SIZE_UNSELECTED;
 				jvxBool preventStore = true;
-				IjvxConnectorFactory* iFac = nullptr;
-				IjvxInputConnectorSelect* icon = nullptr;
-				IjvxOutputConnectorSelect* ocon = nullptr;
-				jvxSize uId_bridge_dev_node = JVX_SIZE_UNSELECTED;
 				jvxSize uId_bridge_node_dev = JVX_SIZE_UNSELECTED;
-				iFac = reqInterfaceObj< IjvxConnectorFactory>(this->mainNode);
-				if (iFac)
+
+				// Find a name with a generic number extension
+				resC = JVX_ERROR_DUPLICATE_ENTRY;
+				while (1)
 				{
-					jvxSize numIcons = 0;
-					jvxSize numOcons = 0;
-					iFac->number_input_connectors(&numIcons);
-					iFac->number_output_connectors(&numOcons);
-					for (i = 0; i < numIcons; i++)
+
+					resC = theConnections->create_connection_process(nmprocess.c_str(), &uId_process, interceptors, false, false, false, idProcDepends);
+					if (resC == JVX_NO_ERROR)
 					{
-						jvxApiString conName;
-						iFac->reference_input_connector(i, &icon);
-						if (icon)
+						break;
+					}
+					nmprocess = chainName + "(" + jvx_size2String(cnt) + ")";
+					cnt++;
+
+					if (cnt >= 10)
+					{
+						break;
+					}
+				}
+
+				if (resC == JVX_NO_ERROR)
+				{
+					resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
+				}
+
+				if (resC == JVX_NO_ERROR)
+				{
+					resC = theProc->set_connection_context(theConnections);
+				}
+
+				if (resC == JVX_NO_ERROR)
+				{
+					// Do not create an entry in the config file by actively preventing it!
+					resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore, false);
+				}
+
+				if (resC == JVX_NO_ERROR)
+				{
+					// We need to specify this object as the owener, otherwise, the connection will
+					// be removed before the "deactivate" member function is called
+					resC = theProc->associate_master(static_cast<IjvxConnectionMaster*>(this), nullptr);
+				}
+
+				// Create all bridges
+				if (resC == JVX_NO_ERROR)
+				{
+					jvxSize cntB = 0;
+					IjvxOutputConnectorSelect* outConnector = static_cast<IjvxOutputConnector*>(this);
+					std::string bridgeName = "Device to node bridge";
+
+					for (auto& elm : mainNodes)
+					{
+						elm.iFac = reqInterfaceObj< IjvxConnectorFactory>(elm.nodePtr);
+						if (elm.iFac)
 						{
-							icon->descriptor_connector(&conName);
-							if (conName.std_str() == conToName)
+							jvxSize numIcons = 0;
+							jvxSize numOcons = 0;
+							elm.iFac->number_input_connectors(&numIcons);
+							elm.iFac->number_output_connectors(&numOcons);
+							for (i = 0; i < numIcons; i++)
 							{
-								break;
+								jvxApiString conName;
+								elm.iFac->reference_input_connector(i, &elm.icon);
+								if (elm.icon)
+								{
+									elm.icon->descriptor_connector(&conName);
+									if (conName.std_str() == conToName)
+									{
+										break;
+									}
+									else
+									{
+										elm.iFac->return_reference_input_connector(elm.icon);
+										elm.icon = nullptr;
+									}
+								}
+							}
+
+							for (i = 0; i < numOcons; i++)
+							{
+								jvxApiString conName;
+								elm.iFac->reference_output_connector(i, &elm.ocon);
+								if (elm.ocon)
+								{
+									elm.ocon->descriptor_connector(&conName);
+									if (conName.std_str() == conFromName)
+									{
+										break;
+									}
+									else
+									{
+										elm.iFac->return_reference_output_connector(elm.ocon);
+										elm.ocon = nullptr;
+									}
+								}
+							}
+
+							// Two connector objects, prepare connect
+							if (elm.icon && elm.ocon)
+							{
+								resC = theProc->create_bridge(outConnector, elm.icon, bridgeName.c_str(), &elm.nodeBridgeId, false, false);
+								outConnector = elm.ocon;
+								bridgeName = "Bridge #" + jvx_size2String(cntB);
+								cntB++;
 							}
 							else
 							{
-								iFac->return_reference_input_connector(icon);
-								icon = nullptr;
+								resC = JVX_ERROR_ELEMENT_NOT_FOUND;
+								std::cout << "Unable to find connectors for from and to connection." << std::endl;
 							}
+						}
+					} // for (auto& elm : mainNodes)
+
+					// Still the output bridge
+					theProc->create_bridge(outConnector, static_cast<IjvxInputConnector*>(this), "Last Node to Device Bridge", &uId_bridge_node_dev, false, false);
+				}
+
+				if (resC == JVX_NO_ERROR)
+				{
+					// Nevertheless, return all references
+					// Release all references as used before
+					for (auto& elm : mainNodes)
+					{
+						if (elm.iFac)
+						{
+							if (elm.icon)
+							{
+								elm.iFac->return_reference_input_connector(elm.icon);
+								elm.icon = nullptr;
+							}
+							if (elm.ocon)
+							{
+								elm.iFac->return_reference_output_connector(elm.ocon);
+								elm.ocon = nullptr;
+							}
+
+							retInterfaceObj< IjvxConnectorFactory>(elm.nodePtr, elm.iFac);
+							elm.iFac = nullptr;
 						}
 					}
 
-					for (i = 0; i < numOcons; i++)
+					// Here, finalze the connection
+					if (resC == JVX_NO_ERROR)
 					{
-						jvxApiString conName;
-						iFac->reference_output_connector(i, &ocon);
-						if (ocon)
-						{
-							ocon->descriptor_connector(&conName);
-							if (conName.std_str() == conFromName)
-							{
-								break;
-							}
-							else
-							{
-								iFac->return_reference_output_connector(ocon);
-								ocon = nullptr;
-							}
-						}
-					}
-					if (icon && ocon)
-					{
-						resC = JVX_ERROR_DUPLICATE_ENTRY;
-						while (1)
-						{
-
-							resC = theConnections->create_connection_process(nmprocess.c_str(), &uId_process, interceptors, false, false, false, idProcDepends);
-							if (resC == JVX_NO_ERROR)
-							{
-								break;
-							}
-							nmprocess = chainName + "(" + jvx_size2String(cnt) + ")";
-							cnt++;
-
-							if (cnt >= 10)
-							{
-								break;
-							}
-						}
-
-						if (resC == JVX_NO_ERROR)
-						{
-							resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
-						}
-
-						if (resC == JVX_NO_ERROR)
-						{
-							resC = theProc->set_connection_context(theConnections);
-						}
-
-						if (resC == JVX_NO_ERROR)
-						{
-							// Do not create an entry in the config file by actively preventing it!
-							resC = theProc->set_misc_connection_parameters(JVX_SIZE_UNSELECTED, preventStore, false);
-						}
-
-						if (resC == JVX_NO_ERROR)
-						{
-							// We need to specify this object as the owener, otherwise, the connection will
-							// be removed before the "deactivate" member function is called
-							resC = theProc->associate_master(static_cast<IjvxConnectionMaster*>(this), nullptr);
-						}
-
-						if (resC == JVX_NO_ERROR)
-						{
-							resC = theProc->create_bridge(static_cast<IjvxOutputConnector*>(this), icon, "Device to node bridge", &uId_bridge_dev_node, false, false);
-						}
-
-						if (resC == JVX_NO_ERROR)
-						{
-							resC = theProc->create_bridge(ocon, static_cast<IjvxInputConnector*>(this), "Node to device bridge", &uId_bridge_node_dev, false, false);
-						}
 
 						// Prevent that we run the test function immediately after connect
 						theProc->set_test_on_connect(false);
@@ -632,19 +682,20 @@ CayfComponentLib::activate()
 
 						theConnections->return_reference_connection_process(theProc);
 						theProc = nullptr;
-					}
-					else
-					{
-						std::cout << "Unable to find connectors for from and to connection." << std::endl;
-					}
-					retInterfaceObj< IjvxConnectorFactory>(this->mainNode, iFac);
-					iFac = nullptr;
-				}
-				retInterface<IjvxDataConnections>(this->hostRef, theConnections);
-				theConnections = nullptr;
 
-			} // resC = this->mainNode->activate(); if (resC == JVX_NO_ERROR)
-		}
+					}
+					retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+					theConnections = nullptr;
+
+				} // if ((mainNodes.size()))
+			}
+			else
+			{
+				// We need to undo all which was before to deal with a possible error
+			}
+
+		} // resC = this->mainNode->activate(); if (resC == JVX_NO_ERROR)
+
 	}
 	if (resC != JVX_NO_ERROR)
 	{
@@ -679,7 +730,8 @@ CayfComponentLib::deactivate()
 	resC = _pre_check_deactivate();
 	if (resC == JVX_NO_ERROR)
 	{
-		if (this->mainNode)
+		// No process would also be an option..
+		if (JVX_CHECK_SIZE_SELECTED(uId_process))
 		{
 			// Only if there is a mainNode
 			if (theConnections)
@@ -708,38 +760,41 @@ CayfComponentLib::deactivate()
 				retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 			}
 			theConnections = nullptr;
-
-			IjvxComponentHostExt* hostExt = nullptr;
-			hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
-			if (hostExt)
-			{
-				resC = hostExt->detach_external_component(this->mainNode, parent->modName.c_str(), JVX_STATE_ACTIVE);
-			}
-			else
-			{
-				if (bindingMinHost)
-				{
-					resC = bindingMinHost->ayf_detach_component_module_call(mainNodeName.c_str(), this);
-				}
-			}
-			assert(resC == JVX_NO_ERROR);
-
-			resC = this->mainNode->deactivate();
-			assert(resC == JVX_NO_ERROR);
-
-			resC = before_main_node_unselect();
-			assert(resC == JVX_NO_ERROR);
-
-			resC = this->mainNode->unselect();
-			assert(resC == JVX_NO_ERROR);
-
-			resC = this->mainNode->terminate();
-			assert(resC == JVX_NO_ERROR);
 		}
+		for (auto& elm : mainNodes)
+		{
+			if (elm.nodeReady)
+			{
+				IjvxComponentHostExt* hostExt = nullptr;
+				hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+				if (hostExt)
+				{
+					resC = hostExt->detach_external_component(elm.nodePtr, parent->modName.c_str(), JVX_STATE_ACTIVE);
+				}
+				else
+				{
+					if (bindingMinHost)
+					{
+						resC = bindingMinHost->ayf_detach_component_module_call(mainNodeName.c_str(), this);
+					}
+				}
+
+				elm.nodeReady = false;
+				elm.nodeBridgeId = JVX_SIZE_UNSELECTED;
+				
+				assert(resC == JVX_NO_ERROR);
+				this->pre_deallocate_one_main_node(elm.nodePtr);
+				
+				elm.nodePtr->state(&elm.nodeStat);
+				elm.isEntryNode = false;
+			}
+		}
+
+		mainNodes.clear();
+
 		deallocate_main_node();
 		this->mainObj = nullptr;
-		this->mainNode = nullptr;
-		
+
 		if (optMasFactory)
 		{			
 			optMasFactory->deactivate();
@@ -882,3 +937,87 @@ CayfComponentLib::system_about_to_shutdown()
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CayfComponentLib::on_main_node_selected(IjvxNode* node)
+{
+	IjvxProperties* props = nullptr;
+	// Add the sub components
+	props = reqInterfaceObj<IjvxProperties>(node);
+	if (props)
+	{
+		retInterfaceObj<IjvxProperties>(node, props);
+	}
+	return JVX_NO_ERROR;
+}
+
+
+jvxErrorType
+CayfComponentLib::before_main_node_unselect(IjvxNode* node)
+{
+	IjvxProperties* props = nullptr;
+	// Add the sub components
+	props = reqInterfaceObj<IjvxProperties>(node);
+	if (props)
+	{
+		retInterfaceObj<IjvxProperties>(node, props);
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
+{
+	jvxApiString astr;
+	jvxErrorType resC = JVX_NO_ERROR;
+	jvxState stat = JVX_STATE_NONE;
+	mainNode->state(&stat);
+	if (stat != JVX_STATE_NONE)
+	{
+		mainNode->name(nullptr, &astr);
+		std::cout << __FUNCTION__ << ": Error when involving the main node from module <" << astr.std_str() << ">: node has been initialized before."
+			<< " This typically indicates that it was tried to involve a second instance of a component that is arealized as a unique instance(no MULT - INSTANCE)." << std::endl;
+		assert(0);
+	}
+	resC = mainNode->initialize(hostRef);
+
+	if (resC == JVX_NO_ERROR)
+	{
+		mainNode->set_location_info(jvxComponentIdentification(JVX_COMPONENT_EXTERNAL_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
+
+		resC = mainNode->select(nullptr);
+
+		mainNode->module_reference(&astr, nullptr);
+
+		passConfigSection(mainNode, astr.std_str());
+
+	}
+	if (resC == JVX_NO_ERROR)
+	{
+		resC = on_main_node_selected(mainNode);
+	}
+
+	if (resC == JVX_NO_ERROR)
+	{
+		resC = mainNode->activate();
+		passConfigSection(mainNode, astr.std_str());
+	}
+
+	return resC;
+}
+
+jvxErrorType
+CayfComponentLib::pre_deallocate_one_main_node(IjvxNode* mainNode)
+{
+	jvxErrorType resC = mainNode->deactivate();
+	assert(resC == JVX_NO_ERROR);
+
+	resC = before_main_node_unselect(mainNode);
+	assert(resC == JVX_NO_ERROR);
+
+	resC = mainNode->unselect();
+	assert(resC == JVX_NO_ERROR);
+
+	resC = mainNode->terminate();
+	assert(resC == JVX_NO_ERROR);
+	return resC;
+}

@@ -62,7 +62,7 @@ CayfConnectFileInput::deallocate_main_node()
 }
 
 jvxErrorType
-CayfConnectFileInput::on_main_node_selected()
+CayfConnectFileInput::on_main_node_selected(IjvxNode* node)
 {
 	IjvxProperties* props = nullptr;
 	IjvxManipulate* manIf = nullptr;
@@ -76,21 +76,21 @@ CayfConnectFileInput::on_main_node_selected()
 
 	// Get the number of output channels
 	jvxSize numChannels = parent->audio_parameter_on_start().numOutChans;
-
+	
 	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-	manIf = reqInterfaceObj<IjvxManipulate>(this->mainNode);
+	props = reqInterfaceObj<IjvxProperties>(node);
+	manIf = reqInterfaceObj<IjvxManipulate>(node);
+
+	// This is the MixChain input component - in this lib, there is only one option!
+	if (manIf)
+	{
+		astr = "MixChain - File Input";
+		val.assign(&astr);
+		resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+	}
 
 	if (props)
 	{
-		// This is the MixChain input component!
-		if (manIf)
-		{
-			astr = "MixChain - File Input";
-			val.assign(&astr);
-			resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
-		}
-
 		ident.reset("/number_channels_side");
 		resL = props->set_property(callGate, jPRIO<jvxSize>(numChannels), ident);
 		if (resL != JVX_NO_ERROR)
@@ -119,15 +119,5 @@ CayfConnectFileInput::on_main_node_selected()
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType
-CayfConnectFileInput::before_main_node_unselect()
-{
-	IjvxProperties* props = nullptr;
-	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-	if (props)
-	{
-	}
-	return JVX_NO_ERROR;
-}
+
 

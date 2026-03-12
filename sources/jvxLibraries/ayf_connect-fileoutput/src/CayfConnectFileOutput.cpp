@@ -52,17 +52,26 @@ CayfConnectFileOutput::CayfConnectFileOutput(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DEC
 jvxErrorType
 CayfConnectFileOutput::allocate_main_node()
 {
-	return jvxSpNMixChainEnterLeave_init(&this->mainObj);
+	jvxSpNMixChainEnterLeave_init(&priObj);
+	this->mainObj = priObj;
+	jvxSpNMixChainEnterLeave_init(&secObj);
+	this->subsequentComponents.push_back(secObj);
+	return JVX_NO_ERROR;
+
 }
 
 jvxErrorType
 CayfConnectFileOutput::deallocate_main_node()
 {
-	return jvxSpNMixChainEnterLeave_terminate(this->mainObj);
+	jvxSpNMixChainEnterLeave_terminate(priObj);
+	this->mainObj = nullptr;
+	jvxSpNMixChainEnterLeave_terminate(secObj);
+	subsequentComponents.clear();
+	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CayfConnectFileOutput::on_main_node_selected()
+CayfConnectFileOutput::on_main_node_selected(IjvxNode* node)
 {
 	IjvxProperties* props = nullptr;
 	IjvxManipulate* manIf = nullptr;
@@ -74,60 +83,48 @@ CayfConnectFileOutput::on_main_node_selected()
 	jvxErrorType resL = JVX_NO_ERROR;
 	jvxCallManagerProperties callGate;
 
-	// Get the number of output channels
-	jvxSize numChannels = parent->audio_parameter_on_start().numOutChans;
+	// Get the number of output channels towards file output
+	jvxSize numChannelsToFileOutput = parent->audio_parameter_on_start().numInChans;
+	jvxSize numChannelsFromDevice = 0;
 
 	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-	manIf = reqInterfaceObj<IjvxManipulate>(this->mainNode);
+	props = reqInterfaceObj<IjvxProperties>(node);
+	manIf = reqInterfaceObj<IjvxManipulate>(node);
 
-	if (props)
+	assert(props);
+	assert(manIf);
+	
+	if(node == priObj)
 	{
-		// This is the MixChain input component!
-		if (manIf)
-		{
-			astr = "MixChain - File Output";
-			val.assign(&astr);
-			resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
-		}
-
+		astr = "MixChain - File Output - mix-in";
+		val.assign(&astr);
+		resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+	
 		ident.reset("/number_channels_side");
-		resL = props->set_property(callGate, jPRIO<jvxSize>(numChannels), ident);
-		if (resL != JVX_NO_ERROR)
-		{
-			/*
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-			log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the number channels to " <<
-				astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
-			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-			*/
-		}
+		resL = props->set_property(callGate, jPRIO<jvxSize>(numChannelsFromDevice), ident);
+		assert(resL == JVX_NO_ERROR);
 
 		jvx_bitZSet(sel.bitFieldSelected(), 0); // <- Input
 		ident.reset("/operation_mode");
 		resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
-		if (resL != JVX_NO_ERROR)
-		{
-			/*
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-			log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the operation mode to " <<
-				astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
-			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-			*/
-		}
+		assert(resL == JVX_NO_ERROR);
 	}
-	return JVX_NO_ERROR;
-}
 
-jvxErrorType
-CayfConnectFileOutput::before_main_node_unselect()
-{
-	IjvxProperties* props = nullptr;
-	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(this->mainNode);
-	if (props)
+	if (node == secObj)
 	{
+		astr = "MixChain - File Output - mix-out";
+		val.assign(&astr);
+		resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+
+		ident.reset("/number_channels_side");
+		resL = props->set_property(callGate, jPRIO<jvxSize>(numChannelsToFileOutput), ident);
+		assert(resL == JVX_NO_ERROR);
+
+		jvx_bitZSet(sel.bitFieldSelected(), 1); // <- Output
+		ident.reset("/operation_mode");
+		resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
+		assert(resL == JVX_NO_ERROR);
 	}
+
 	return JVX_NO_ERROR;
 }
-
