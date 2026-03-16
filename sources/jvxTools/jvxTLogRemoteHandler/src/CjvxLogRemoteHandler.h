@@ -34,6 +34,7 @@ public:
 	virtual std::ostream* log_str() override;
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 	virtual jvxErrorType start_lock(const std::string& tag) override;
+	virtual jvxErrorType add_tag_lock(const std::string& tag) override;
 	virtual void stop_lock(const std::string& tag) override;
 #else
 	virtual jvxErrorType start_lock() override;

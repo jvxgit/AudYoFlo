@@ -1456,6 +1456,7 @@ class jvxProfileLock_acquireRelease
 public:
 	jvxProfileLock_entry onAcquire;
 	jvxProfileLock_entry onRelease;
+	std::list<std::string> addTags;
 };
 #endif
 
@@ -1487,8 +1488,10 @@ public:
 	~jvxostream();
 	void set_module_name(const std::string& modName);
 	void set_debug_level(jvxSize dbgLev);
+
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
 	void setOriginTag(const std::string& tag, jvxBool acquire);
+	void addTag(const std::string& tagOrigin);
 #endif
 	jvxErrorType setReference(IjvxTextLog* theRef, char* theBufferP, jvxSize szBufP);
 	jvxErrorType unsetReference();
@@ -1541,6 +1544,14 @@ public:
 	jvxLockWithVariable()
 	{
 		JVX_INITIALIZE_MUTEX(lockHdl);		
+	};
+
+	jvxLockWithVariable(const jvxLockWithVariable& constructFrom)
+	{
+		// We need to provide this constructor to allocate a new mutex. 
+		// constructFrom typically has a valid one which will, nevertheless be deallocated by
+		// the destructor right after this constructor
+		JVX_INITIALIZE_MUTEX(lockHdl);
 	};
 
 	~jvxLockWithVariable()
@@ -1685,6 +1696,7 @@ void jvx_return_text_log(CjvxLogEmbedding& embLog);
 
 bool jvx_try_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
 void jvx_lock_text_log(CjvxLogEmbedding& embLog, jvxSize logLev, const std::string& tagOrigin, const char* optTag = nullptr);
+void jvx_lock_text_log_add_tag(CjvxLogEmbedding& embLog, const std::string& tagOrigin);
 void jvx_unlock_text_log(CjvxLogEmbedding& embLog, const std::string& tagOrigin);
 #else
 #define JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT

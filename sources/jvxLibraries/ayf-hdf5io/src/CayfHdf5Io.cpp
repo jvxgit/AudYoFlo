@@ -355,6 +355,7 @@ dump_all_cb(hid_t group, const char* name, const H5L_info2_t* linfo, void* op_da
 
 // =======================================================================================================================
 
+// One global critical section to ensure hdf5 operations are atomic
 JVX_MUTEX_HANDLE* CayfHdf5Io::safeAccess = nullptr;
 jvxSize CayfHdf5Io::mutexRefCnt = 0;
 
@@ -385,6 +386,7 @@ CayfHdf5Io::~CayfHdf5Io()
 	mutexRefCnt--;
 	if (mutexRefCnt == 0)
 	{
+		JVX_TERMINATE_MUTEX(*safeAccess);
 		JVX_SAFE_DELETE_OBJECT(safeAccess);
 		safeAccess = nullptr;
 	}

@@ -86,6 +86,17 @@ namespace _myJvxTools {
 	}
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+	
+	jvxErrorType
+	CjvxLogRemoteHandler::add_tag_lock(const std::string& tag)
+	{
+		jvx_lock_text_log_add_tag(embLog, tag);
+		return JVX_NO_ERROR;
+	}
+
+#endif
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 	void
 		CjvxLogRemoteHandler::stop_lock(const std::string& tag)
 #else

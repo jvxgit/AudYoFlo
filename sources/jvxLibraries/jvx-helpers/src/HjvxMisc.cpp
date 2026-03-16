@@ -6945,6 +6945,18 @@ jvxostream::setOriginTag(const std::string& tag, jvxBool acquire)
 		}
 	}
 }
+
+void
+jvxostream::addTag(const std::string& tagOrigin)
+{
+	JVX_THREAD_ID id = JVX_GET_CURRENT_THREAD_ID();
+	auto elm = profileDat.find(id);
+	if (elm != profileDat.end())
+	{
+		elm->second.addTags.push_back(tagOrigin);
+	}
+}
+
 #endif
 
 jvxErrorType 
@@ -7095,11 +7107,23 @@ jvxostream::unlock()
 		{
 			std::cout << "Invalid thread unlock operation, thread id is " << JVX_GET_CURRENT_THREAD_ID() << " but it should be " << threadId_lasttime << std::endl;
 		}
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
+		
+		auto elm = profileDat.find(lockThreadId);
+		if (elm != profileDat.end())
+		{
+			elm->second.addTags.clear();
+		}
+
+#endif
+
 		refCnt--;
 		if (refCnt == 0)
 		{
 			lockThreadId = 0;
 		}
+
 
 #ifndef JVX_OLD_TEXT_LOG
 		// collectString
@@ -7271,6 +7295,14 @@ jvx_unlock_text_log(CjvxLogEmbedding& embLog)
 	embLog.jvxrtst_bkp.jvxos.unlock();
 	embLog.jvxrtst_bkp.jvxos.set_debug_level(0);
 }
+
+void jvx_lock_text_log_add_tag(CjvxLogEmbedding& embLog, const std::string& tagOrigin)
+{
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+	embLog.jvxrtst_bkp.jvxos.addTag(tagOrigin);
+#endif	
+}
+
 
 // =======================================================================================
 // 

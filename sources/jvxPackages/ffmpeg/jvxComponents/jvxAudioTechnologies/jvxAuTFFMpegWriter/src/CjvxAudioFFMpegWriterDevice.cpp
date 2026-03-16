@@ -315,6 +315,13 @@ CjvxAudioFFMpegWriterDevice::activate()
 		file_props_2_ayf_props();
 
 		std::string iFile = foldername + JVX_SEPARATOR_DIR + fileprefix;
+		/*
+		* Folder is created in init_parameters function
+		if (!JVX_DIRECTORY_EXISTS(foldername.c_str()))
+		{
+			JVX_CREATE_DIRECTORY(foldername.c_str());
+		}
+		*/
 		genFFMpegWriter_device::file.name.value = iFile;
 		if (!config_compact.empty())
 		{

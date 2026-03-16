@@ -328,9 +328,15 @@ CjvxSocketsClientInterfaceTcpUdp::stop_connection_loop()
 	}
 	#endif
 
-	JVX_SHUTDOWN_SOCKET(theSocket, JVX_SOCKET_SD_BOTH);
-	JVX_CLOSE_SOCKET(theSocket);
-
+	// Typically, the socket should have been closed already in the member function <disconnect> of class <CjvxSocketsClientInterfaceTcp>
+	// I do not know when this function would be used to disconnect!
+	if (theSocket != INVALID_SOCKET)
+	{
+		JVX_SHUTDOWN_SOCKET(theSocket, JVX_SOCKET_SD_BOTH);
+		JVX_CLOSE_SOCKET(theSocket);
+		theSocket = INVALID_SOCKET;
+	}
+	
 	JVX_WAIT_FOR_THREAD_TERMINATE_INF(theThreadHdl);
 	return JVX_NO_ERROR;
 }
@@ -376,7 +382,11 @@ CjvxSocketsConnectionTcpUdp::configure(CjvxSocketsClientInterfaceTcpUdp* parArg)
 jvxErrorType
 CjvxSocketsConnectionTcpUdp::disconnect()
 {
-	JVX_CLOSE_SOCKET(parent->theSocket);
+	if (parent->theSocket != INVALID_SOCKET)
+	{
+		JVX_CLOSE_SOCKET(parent->theSocket);
+		parent->theSocket = INVALID_SOCKET;
+	}
 	return JVX_NO_ERROR;
 }
 

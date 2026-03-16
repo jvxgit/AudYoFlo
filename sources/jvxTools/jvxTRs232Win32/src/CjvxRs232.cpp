@@ -15,6 +15,51 @@ JVX_THREAD_ENTRY_FUNCTION(thread_receive, param)
 	return(0);
 }
 
+// ==============================================================================
+// ==============================================================================
+
+// The rs232 object contains a critical section which will be setup immediately
+// If I then add it to a list of objects, the crititcal section will only be 
+// copied. This is ok so far. However, typically, the object will
+// then be deallocated since its visibility
+oneRs232Port::oneRs232Port()
+{
+	initialize();
+}
+
+oneRs232Port::oneRs232Port(const oneRs232Port& other)
+{
+	initialize();
+}
+
+oneRs232Port::~oneRs232Port()
+{
+	terminate();
+}
+
+void
+oneRs232Port::initialize()
+{
+	JVX_INITIALIZE_MUTEX(safeAccessConnection);
+
+#ifdef JVX_RS232_DEBUG
+	JVX_INITIALIZE_MUTEX(dbg.safeAccess);
+	elm.dbg.fn = "";
+#endif
+}
+
+void
+oneRs232Port::terminate()
+{
+	JVX_TERMINATE_MUTEX(safeAccessConnection);
+#ifdef JVX_RS232_DEBUG
+	JVX_TERMINATE_MUTEX(dbg.safeAccess);
+#endif
+}
+
+// ==============================================================================
+// ==============================================================================
+
 CjvxRs232::CjvxRs232(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE): 
 	CjvxObject(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
@@ -92,13 +137,7 @@ CjvxRs232::initialize(IjvxHiddenInterface* hostRef, jvxHandle* priv, jvxConnecti
 
 				CloseHandle(hdl);
 				elm.runtime.hdl = JVX_INVALID_HANDLE_VALUE;
-				elm.runtime.theReport = NULL;
-				JVX_INITIALIZE_MUTEX(elm.safeAccessConnection);
-
-#ifdef JVX_RS232_DEBUG
-				JVX_INITIALIZE_MUTEX(elm.dbg.safeAccess);
-				elm.dbg.fn = "";
-#endif
+				elm.runtime.theReport = NULL;				
 
 				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "")
 				log << "-> Rs-232 port <" << nmComPort << "> is ready." << std::endl;
@@ -920,10 +959,6 @@ CjvxRs232::terminate()
 			for(i = 0; i < _system.thePorts.size(); i++)
 			{
 				this->stop_port(i);
-				JVX_TERMINATE_MUTEX(_system.thePorts[i].safeAccessConnection);
-#ifdef JVX_RS232_DEBUG
-				JVX_TERMINATE_MUTEX(_system.thePorts[i].dbg.safeAccess);
-#endif
 			}
 			_system.thePorts.clear();
 			CjvxObject::_terminate(); // This modifies the state to NONE

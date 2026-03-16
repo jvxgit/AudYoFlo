@@ -10,46 +10,47 @@ class CjvxRs232;
 #define POLL_COM_PORTS_MAX_ID 255
 //#define JVX_RS232_DEBUG
 
-typedef struct
+class threadEntryStruct
 {
-	CjvxRs232* this_pointer;
-	jvxSize portId;
-} threadEntryStruct;
+public:
+	CjvxRs232* this_pointer = nullptr;
+	jvxSize portId = JVX_SIZE_UNSELECTED;
+} ;
 
-typedef struct
+class oneRs232Port 
 {
+public:
 	struct
 	{
 		std::string friendlyName;
 		std::string description;
 		std::string shortcut;
 		std::string location;
-		jvxUInt32 id;
+		jvxUInt32 id = JVX_SIZE_UNSELECTED;
 	} init;
 
 	struct
 	{
 		jvxRs232Config cfg;
-		JVX_RS232_HANDLE hdl;
-		IjvxConnection_report* theReport;
+		JVX_RS232_HANDLE hdl = JVX_INVALID_HANDLE_VALUE;
+		IjvxConnection_report* theReport = nullptr;
 
 		struct
 		{
 			struct
 			{
-
-				jvxSize szfld;
-				jvxByte* fld;
+				jvxSize szfld = 0;
+				jvxByte* fld = nullptr;
 
 			} transmit;
 
 			struct
 			{
 
-				jvxSize szfld;
-				jvxByte* fld;
-				jvxSize offset_read;
-				jvxSize offset_write;
+				jvxSize szfld = 0;
+				jvxByte* fld = nullptr;
+				jvxSize offset_read = 0;
+				jvxSize offset_write = 0;
 			} receive;
 		} sc;
 
@@ -59,7 +60,7 @@ typedef struct
 	{
 		JVX_THREAD_HANDLE hdl;
 		JVX_THREAD_ID id;
-		jvxBool inLoopActive;
+		jvxBool inLoopActive = false;
 		threadEntryStruct enter;
 	} threads;
 
@@ -74,7 +75,14 @@ typedef struct
 		jvxTimeStampData tRef;
 	}dbg;
 #endif
-} oneRs232Port;
+
+	oneRs232Port();
+	~oneRs232Port();
+	oneRs232Port(const oneRs232Port& other);
+	void initialize();
+	void terminate();
+
+} ;
 
 class CjvxRs232: public IjvxConnection, public CjvxObject
 {

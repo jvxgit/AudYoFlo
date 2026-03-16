@@ -53,35 +53,35 @@ typedef enum
     JVX_RS232_CONTROL_SET_MODEM_STATUS
 } jvxRs232ControlCommands;
 
-typedef struct
+class jvxRs232Config
 {
-	int bRate;
-	int bits4Byte;
-	jvxRs232StopbitsEnum stopBitsEnum; 
-	jvxRs232ParityEnum parityEnum;
-	jvxRs232FlowControlEnum enFlow;
-	jvxCBool boostPrio;
-	jvxCBitField reportEnum;
+public:
+	int bRate = 0;
+	int bits4Byte = 0;
+	jvxRs232StopbitsEnum stopBitsEnum = jvxRs232StopbitsEnum::JVX_RS232_STOPBITS_ONE;
+	jvxRs232ParityEnum parityEnum = jvxRs232ParityEnum::JVX_RS232_PARITY_NO;
+	jvxRs232FlowControlEnum enFlow = jvxRs232FlowControlEnum::JVX_RS232_NO_FLOWCONTROL;
+	jvxCBool boostPrio = c_false;
+	jvxCBitField reportEnum = 0;
 
 	struct
 	{
 		struct
 		{
-			jvxCBool active;
-			jvxSize preallocationSize;
+			jvxCBool active = c_false;
+			jvxSize preallocationSize = 0;
 		} transmit;
 		struct
 		{
-			jvxCBool active;
-			jvxSize maxPreReadSize;
+			jvxCBool active = c_false;
+			jvxSize maxPreReadSize = 0;
 		} receive;
 
-		jvxUByte startByte;
-		jvxUByte stopByte;
-		jvxUByte escByte;
+		jvxUByte startByte = 0;
+		jvxUByte stopByte = 0;
+		jvxUByte escByte = 0;
 	} secureChannel;
-
-} jvxRs232Config;
+};
 
 #define JVX_CONNECTION_TAG_RS232 "JVX_RS232_CONNECTION_COMPONENT"
 

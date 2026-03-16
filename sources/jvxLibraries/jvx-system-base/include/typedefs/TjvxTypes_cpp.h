@@ -68,9 +68,9 @@ public:
 class jvxApiStringList
 {
 private:
-	jvxSize lStrings;
-	jvxApiString* bStrings;
-	jvxBool removeOnExit;
+	jvxSize lStrings = 0;
+	jvxApiString* bStrings = nullptr;
+	jvxBool removeOnExit = false;
 
 public:
 	jvxApiStringList();

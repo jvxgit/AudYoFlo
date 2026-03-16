@@ -15,6 +15,7 @@ public:
 	virtual std::ostream* log_str() = 0;
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
 	virtual jvxErrorType start_lock(const std::string& tag) = 0;
+	virtual jvxErrorType add_tag_lock(const std::string& tag) = 0;
 	virtual void stop_lock(const std::string& tag) = 0;
 #else
 	virtual jvxErrorType start_lock() = 0;

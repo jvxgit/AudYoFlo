@@ -313,6 +313,8 @@ CjvxSocketsClientInterfaceTcp::stop_connection_loop()
 		theConnection->disconnect();
 	}
 	JVX_UNLOCK_MUTEX(safeAccessConnection);
+
+	// The same connection loop for TCP and UDP in UDP class
 	return CjvxSocketsClientInterfaceTcpUdp::stop_connection_loop();
 }
 
@@ -401,6 +403,9 @@ CjvxSocketsConnectionTcp::disconnect()
 #else
 	JVX_SHUTDOWN_SOCKET(parent->theSocket, JVX_SOCKET_SD_BOTH);
 	JVX_CLOSE_SOCKET(parent->theSocket);
+	
+	// Get rid of the socket handle to not call this twice
+	parent->theSocket = INVALID_SOCKET;
 #endif
 	return JVX_NO_ERROR;
 }
