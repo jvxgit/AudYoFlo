@@ -27,8 +27,6 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 	const CjvxReportCommandRequest_uid* ptrReq = nullptr;
 	jvxReportCommandRequest reqTpMod = request.request();;
 	
-	static jvxBool lockedOn = false;
-
 	if (verbose)
 	{
 		jvxErrorType resLock = JVX_NO_ERROR;
@@ -39,8 +37,6 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 			resLock = log_stream.hdl->start_lock(JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT);
 			if (resLock == JVX_NO_ERROR)
 			{
-				assert(lockedOn == false);
-				lockedOn = true;
 				out_stream = log_stream.hdl->log_str();
 
 				// The function still may return a NULL-pointer
@@ -48,7 +44,9 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 				{
 					out_stream = &std::cout;
 				}
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
 				log_stream.hdl->add_tag_lock("Position #1");
+#endif
 			}
 		}
 		if (out_stream)
@@ -59,8 +57,9 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 		{			
 			if (log_stream.hdl)
 			{
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
 				log_stream.hdl->add_tag_lock("Position #2");
-				lockedOn = false;
+#endif
 				log_stream.hdl->stop_lock(JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT);				
 			}
 		}
