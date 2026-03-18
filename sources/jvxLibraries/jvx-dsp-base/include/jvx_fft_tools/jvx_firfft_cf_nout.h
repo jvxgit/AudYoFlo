@@ -38,6 +38,7 @@ typedef struct
 {
 	jvxDataCplx** firWN;
 	jvxSize N;
+	jvxSize nW;
 } jvx_firfft_cf_nout_prmSync;
 
 jvxDspBaseErrorType jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nChannels);
