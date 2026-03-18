@@ -53,3 +53,4 @@ jvxDspBaseErrorType jvx_firfft_cf_nout_process_update_weights(jvx_firfft* hdl, j
 JVX_DSP_LIB_END
 
 #endif
+

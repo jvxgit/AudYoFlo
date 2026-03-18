@@ -40,6 +40,15 @@ void ayf_default_deallocator(jvxHandle** ptr, jvxCBitField purp)
 	*ptr = NULL;
 }
 
+jvxSize ayf_default_bytes_allocated()
+{
+	return allocatedMemorySize;
+}
+
+void ayf_default_bytes_increment(size_t nbytes)
+{
+	allocatedMemorySize += nbytes;
+}
 /*
 void ayf_default_jumpout(int id)
 {
@@ -51,6 +60,8 @@ struct jvx_allocator_references default_allocator_ref =
 {
 	ayf_default_allocator,
 	ayf_default_deallocator,
+	ayf_default_bytes_allocated,
+	ayf_default_bytes_increment,
 	JVX_ALLOCATOR_OBJECT_PURPOSE_UNSPECIFIC,
 	//ayf_default_jumpout
 };

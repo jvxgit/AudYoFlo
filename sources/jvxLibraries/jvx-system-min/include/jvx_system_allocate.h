@@ -54,12 +54,17 @@ typedef enum
 
 typedef jvxHandle* (*jvx_allocator_fc)(jvxSize nElements, jvxCBitField purp, jvxSize szElm);
 typedef void (*jvx_deallocator_fc)(jvxHandle** fld, jvxCBitField purp);
+typedef size_t (*jvx_bytes_allocated_fc)();
+typedef void(*jvx_bytes_increment_fc)(size_t inc);
+
 // typedef void (*jvx_jumpout_fc)(int id);
 
 struct jvx_allocator_references
 {
 	jvx_allocator_fc alloc;
 	jvx_deallocator_fc dealloc;
+	jvx_bytes_allocated_fc bytes;
+	jvx_bytes_increment_fc inc;
 	jvxAllocatorObjectPurpose purpose;
 	// jvx_jumpout_fc jout;
 };

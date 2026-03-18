@@ -275,6 +275,7 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 				JVX_FFT_BUFFERS_ALLOCATE(output, outputOrigin, jvxDataCplx, fftwf_complex, (ptr->common.fftParameters.fftSize/2+1));
 #endif
 				JVX_FFT_BUFFERS_ALLOCATE(input, inputOrigin, jvxData, jvxData, ptr->common.fftParameters.fftSize);
+				
 
 
 				// ==============================================================
@@ -300,7 +301,10 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 					assert(0);
 				}
 
-#endif
+#endif // #ifdef JVX_FFT_APPLE
+
+				jvx_allocator->inc(sizeof(jvxDataCplx) * (ptr->common.fftParameters.fftSize / 2 + 1));
+				jvx_allocator->inc(sizeof(jvxData) * ptr->common.fftParameters.fftSize);
 
 				if(in_ptr_fld_N)
 				{
@@ -431,7 +435,11 @@ jvxDspBaseErrorType jvx_create_fft_complex_2_complex(
 				default:
 					assert(0);
 				}
-#endif
+#endif // #ifdef JVX_FFT_APPLE
+
+				jvx_allocator->inc(sizeof(jvxDataCplx) * ptr->common.fftParameters.fftSize);
+				jvx_allocator->inc(sizeof(jvxDataCplx) * ptr->common.fftParameters.fftSize);
+
 
 				if(in_ptr_fld_N)
 				{
@@ -555,6 +563,9 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 				}
 #endif // #ifdef JVX_FFT_APPLE
 
+				jvx_allocator->inc(sizeof(jvxDataCplx) * (ptr->common.fftParameters.fftSize / 2 + 1));
+				jvx_allocator->inc(sizeof(jvxData) * ptr->common.fftParameters.fftSize);
+
 				if(in_ptr_fld_N2P1)
 				{
 					*in_ptr_fld_N2P1 = ptr->input;
@@ -662,6 +673,7 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdlRef,
 				JVX_FFT_BUFFERS_ALLOCATE(output, outputOrigin, jvxDataCplx, fftwf_complex, ptr->common.fftParameters.fftSize);
 #endif
 
+
 				switch(ptr->common.operate)
 				{
 				case JVX_FFT_IFFT_EFFICIENT:
@@ -682,6 +694,9 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdlRef,
 					assert(0);
 				}
 #endif // #ifdef JVX_FFT_APPLE
+	
+				jvx_allocator->inc(sizeof(jvxDataCplx) * ptr->common.fftParameters.fftSize);
+				jvx_allocator->inc(sizeof(jvxDataCplx) * ptr->common.fftParameters.fftSize);
 
 				if(in_ptr_fld_N)
 				{
