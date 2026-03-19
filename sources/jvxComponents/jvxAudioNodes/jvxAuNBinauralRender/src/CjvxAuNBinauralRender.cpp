@@ -281,7 +281,7 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef AYF_CTC_EFFICIENT_FILTER
 
-		jvx_firfft_cf_nout_process(&render_pri->firfftcf_left_right, in, outLeftRight, false);
+		jvx_firfft_cf_nout_process(&render_pri->firfftcf_left_right, &in, outLeftRight, false);
 
 #else
 		jvx_firfft_cf_process(&render_pri->firfftcf_left, in, out_left, false);
@@ -492,7 +492,7 @@ CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData
 		render_inst->buffer_hrir_left, render_inst->buffer_hrir_right
 	};
 
-	jvx_firfft_cf_nout_init(&render_inst->firfftcf_left_right, NULL, 2);
+	jvx_firfft_cf_nout_init(&render_inst->firfftcf_left_right, NULL, 2, 1);
 	jvx_firfft_cf_cvrt_init(&render_inst->firfftcf_left_right, NULL, hrir_LR, (jvxHandle**)&render_inst->firfftcf_cvrt);
 
 	// The following buffers for NEW filter coeficients

@@ -39,15 +39,16 @@ typedef struct
 	jvxDataCplx** firWN;
 	jvxSize N;
 	jvxSize nW;
+	jvxSize stride;
 } jvx_firfft_cf_nout_prmSync;
 
-jvxDspBaseErrorType jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nChannels);
+jvxDspBaseErrorType jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nChannels, jvxSize nChannelsIn);
 jvxDspBaseErrorType jvx_firfft_cf_nout_terminate(jvx_firfft* hdl);
 
 //void jvx_firfft_cf_nout_compute_weights(jvx_firfft* hdl, jvxData* fir, jvxSize lFir);
 //void jvx_firfft_cf_nout_copy_weights(jvx_firfft* hdl, jvxDataCplx* firW, jvxSize lFirW);
 
-jvxDspBaseErrorType jvx_firfft_cf_nout_process(jvx_firfft* hdl, jvxData* inArg, jvxData** outArg, jvxCBool addOnOut);
+jvxDspBaseErrorType jvx_firfft_cf_nout_process(jvx_firfft* hdl, jvxData** inArg, jvxData** outArg, jvxCBool addOnOut);
 jvxDspBaseErrorType jvx_firfft_cf_nout_process_update_weights(jvx_firfft* hdl, jvxData* inArg, jvxData** outArg, jvxDataCplx** newWeights, jvxCBool addOnOut);
 
 JVX_DSP_LIB_END
