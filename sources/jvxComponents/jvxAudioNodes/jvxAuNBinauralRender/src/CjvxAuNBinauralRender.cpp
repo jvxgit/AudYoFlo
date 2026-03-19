@@ -234,6 +234,7 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 #ifdef AYF_CTC_EFFICIENT_FILTER
 	jvxData* outLeftRight[2] = { out_left , out_right };
 	jvxDataCplx* firHLeftRight[2] = { render_pri->updatedWeightsLeft , render_pri->updatedWeightsRight };
+	jvxCBool addLeft[2] = { false, false };
 #endif
 
 	const jvxSize num_channels_in = _common_set_icon.theData_in->con_params.number_channels;
@@ -266,7 +267,7 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 #ifdef AYF_CTC_EFFICIENT_FILTER
 			
-			jvx_firfft_cf_nout_process_update_weights(&render_pri->firfftcf_left_right, in, outLeftRight, firHLeftRight, false);
+			jvx_firfft_cf_nin_nout_process_update_weights(&render_pri->firfftcf_left_right, &in, outLeftRight, firHLeftRight, addLeft);
 #else
 			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_left, in, out_left, render_pri->updatedWeightsLeft, false);
 			jvx_firfft_cf_process_update_weights(&render_pri->firfftcf_right, in, out_right, render_pri->updatedWeightsRight, false);
@@ -280,8 +281,8 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	{
 
 #ifdef AYF_CTC_EFFICIENT_FILTER
-
-		jvx_firfft_cf_nout_process(&render_pri->firfftcf_left_right, &in, outLeftRight, false);
+	
+		jvx_firfft_cf_nin_nout_process(&render_pri->firfftcf_left_right, &in, outLeftRight, addLeft);
 
 #else
 		jvx_firfft_cf_process(&render_pri->firfftcf_left, in, out_left, false);

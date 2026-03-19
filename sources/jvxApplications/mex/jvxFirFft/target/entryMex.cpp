@@ -161,6 +161,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			jvxData** outSigBuf = nullptr;
 			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(outSigBuf, jvxData, filteredOut, init.init.bsize);
 			
+			jvxCBool* addOut = nullptr;
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(addOut, jvxCBool, filteredOut);
+			for (i = 0; i < filteredOut; i++)
+			{
+				addOut[i] = c_false;
+			}
+
 			jvxSize cntStart = 0;
 			jvxSize cntStop = JVX_MIN(cntStart + init.init.bsize, lenSig);
 			while (1)
@@ -185,13 +192,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
 							{
 								jvx_firfft_cf_cvrt_compute_weights_and_copy(irft_update, firsIn[i], filterOrder, inFirCplx[i], init.derived.szFftValue / 2 + 1, c_false);
 							}
-							jvx_firfft_cf_nout_process_update_weights(&init, inSigBuf, outSigBuf, inFirCplx, false);
+							jvx_firfft_cf_nin_nout_process_update_weights(&init, &inSigBuf, outSigBuf, inFirCplx, addOut);
 						}
 						weightsUpdated = true;
 					}
 					else
 					{
-						jvx_firfft_cf_nout_process(&init, &inSigBuf, outSigBuf, false);
+						jvx_firfft_cf_nin_nout_process(&init, &inSigBuf, outSigBuf, addOut);
 					}
 					for (i = 0; i < filteredOut; i++)
 					{
@@ -214,6 +221,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 
 			// Clear data 
+			JVX_DSP_SAFE_DELETE_FIELD(addOut);
 			JVX_DSP_SAFE_DELETE_FIELD(outSig);
 			JVX_DSP_SAFE_DELETE_FIELD(inSigBuf);
 			JVX_DSP_SAFE_DELETE_FIELD(outSigBuf);
