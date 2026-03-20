@@ -52,6 +52,7 @@ typedef enum
 	#define JVX_MEMORY_ALLOCATE_FASTB_FAST 5
 #endif
 
+typedef void (*jvx_reset_fc)();
 typedef jvxHandle* (*jvx_allocator_fc)(jvxSize nElements, jvxCBitField purp, jvxSize szElm);
 typedef void (*jvx_deallocator_fc)(jvxHandle** fld, jvxCBitField purp);
 typedef size_t (*jvx_bytes_allocated_fc)();
@@ -61,6 +62,7 @@ typedef void(*jvx_bytes_increment_fc)(size_t inc);
 
 struct jvx_allocator_references
 {
+	jvx_reset_fc reset;
 	jvx_allocator_fc alloc;
 	jvx_deallocator_fc dealloc;
 	jvx_bytes_allocated_fc bytes;

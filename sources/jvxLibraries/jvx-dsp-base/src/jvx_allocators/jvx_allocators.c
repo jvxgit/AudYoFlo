@@ -5,13 +5,19 @@
 
 static jvxSize allocatedMemorySize = 0;
 
+void ayf_default_allocator_reset()
+{
+	allocatedMemorySize = 0;
+}
+
 // ========================================================================
-jvxHandle* ayf_default_allocator(jvxSize nBytes, jvxCBitField purp, jvxSize szElm)
+jvxHandle* ayf_default_allocator(jvxSize nElm, jvxCBitField purp, jvxSize szElm)
 {
 	jvxHandle* retVal = NULL;
 	int err = 0;
+	jvxSize nBytes = 0;
 	if (szElm > 0)
-		nBytes *= szElm;
+		nBytes = nElm * szElm;
 
 	assert(nBytes > 0);
 
@@ -58,6 +64,7 @@ void ayf_default_jumpout(int id)
 
 struct jvx_allocator_references default_allocator_ref =
 {
+	ayf_default_allocator_reset,
 	ayf_default_allocator,
 	ayf_default_deallocator,
 	ayf_default_bytes_allocated,
