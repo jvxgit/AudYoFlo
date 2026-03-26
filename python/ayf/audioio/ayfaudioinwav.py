@@ -3,9 +3,9 @@ import numpy as np
 import math
 import audiofile as af
 
-import ayfaudioif as ayfif
-import ayfaudioio as ayfio
-import ayfaudiobuf as ayfbuf
+from . import ayfaudioif as ayfif
+from . import ayfaudioio as ayfio
+from . import ayfaudiobuf as ayfbuf
 
 # ========================================================================
 

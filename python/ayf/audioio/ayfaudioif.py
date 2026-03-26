@@ -1,5 +1,5 @@
 import numpy as np
-import ayfaudiobuf as ayfbuf
+from . import ayfaudiobuf as ayfbuf
 
 class ayfaudio_in:
     # @abstractmethod

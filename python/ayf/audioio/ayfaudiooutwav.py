@@ -3,8 +3,8 @@ import numpy as np
 import math
 import soundfile as sf
 
-import ayfaudioio as ayfio
-import ayfaudiobuf as ayfbuf
+from . import ayfaudioio as ayfio
+from . import ayfaudiobuf as ayfbuf
 
 class ayfaudio_outwav:
 

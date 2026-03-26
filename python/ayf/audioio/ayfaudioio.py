@@ -5,11 +5,11 @@ import numpy as np
 import pathlib
 from enum import Enum
 import math
-import ayfaudioif as ayfif
-import ayfaudiooutwav as ayfoutwav
-import ayfaudioinwav as ayfinwav
-import ayfaudioinpulse as ayfinpls
-import ayfaudiobuf as ayfbuf
+from . import ayfaudioif as ayfif
+from . import ayfaudiooutwav as ayfoutwav
+from . import ayfaudioinwav as ayfinwav
+from . import ayfaudioinpulse as ayfinpls
+from . import ayfaudiobuf as ayfbuf
 
 # ==========================================================
 # ==========================================================
