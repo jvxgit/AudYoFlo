@@ -80,6 +80,11 @@ namespace _myJvxTools {
 			jvx_lock_text_log(embLog, logLev);
 #endif
 			isLocked = true;
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+			add_tag_lock(("Position <START_LOCK#0>- isLocked = " + jvx_int2String(isLocked)).c_str());
+#endif
+
 			return JVX_NO_ERROR;
 		}
 		return JVX_ERROR_INVALID_SETTING;
@@ -104,14 +109,20 @@ namespace _myJvxTools {
 	CjvxLogRemoteHandler::stop_lock()
 #endif
 	{
-		if (isLocked)
-		{			
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
-			jvx_unlock_text_log(embLog, tag);
-#else
-			jvx_unlock_text_log(embLog);
+		add_tag_lock(("Position <STOP_LOCK#0>- isLocked = " + jvx_int2String(isLocked)).c_str());
 #endif
-			isLocked = false;
-		}
+		assert(isLocked);
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+		add_tag_lock(("Position <STOP_LOCK#1> - isLocked = " + jvx_int2String(isLocked)).c_str());
+#endif
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK 
+		jvx_unlock_text_log(embLog, tag);
+#else
+		jvx_unlock_text_log(embLog);
+#endif
+		isLocked = false;
+
 	}
 } // namespace

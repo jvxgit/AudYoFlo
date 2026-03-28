@@ -41,6 +41,12 @@ typedef enum
 
 } jvxFirFftOperType;
 
+typedef enum
+{
+	JVX_FIRFFT_IMPLEMENTATION_SIMPLE,
+	JVX_FIRFFT_IMPLEMENTATION_CF
+} jvxFirFftImplementationType;
+
 typedef struct 
 {
 	jvxSize lFir;
@@ -49,6 +55,7 @@ typedef struct
 	jvxData* fir;
 	jvxSize bsize;
 	jvxFirFftOperType type;
+	jvxSize cBufferFadeLength;
 	struct jvxMemRefs* allocators;
 } jvx_firfft_prmInit;
 
@@ -94,7 +101,7 @@ jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl);
 jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jvxCBool do_set);
 
 // Helper
-jvxSize jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxCBool allowLargerFir);
+jvxSize jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxSize cBufferFadeLength, jvxCBool allowLargerFir);
 
 JVX_DSP_LIB_END
 

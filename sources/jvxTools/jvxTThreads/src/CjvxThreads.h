@@ -22,7 +22,7 @@ private:
 
 	JVX_THREADS_FORWARD_C_CALLBACK_DECLARE_ALL;
 	IjvxThreads_report* rep;
-
+	std::string descr; 
 public:
 
 	//! Constructor: Do nothing
@@ -34,7 +34,7 @@ public:
 	// =====================================================================================
 	// Interface API
 	// =====================================================================================
-	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxThreads_report* bwdReport) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxThreads_report* bwdReport, const char* descriptor) override;
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION start(jvxSize timeout, jvxBool push_prio, jvxBool rep_tstamp, jvxBool nonblock, jvxBool async) override;
 	

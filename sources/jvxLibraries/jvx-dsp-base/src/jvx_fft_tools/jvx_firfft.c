@@ -43,6 +43,7 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	init->init.lFft = JVX_SIZE_UNSELECTED;
 	init->init.delayFir = JVX_SIZE_UNSELECTED;
 	init->init.type = JVX_FIRFFT_SYMMETRIC_FIR;
+	init->init.cBufferFadeLength = 0;
 	init->init.allocators = NULL;
 
 	jvx_firfft_resetDerived(init);
@@ -343,6 +344,9 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 				}
 			}
 
+			// If we involve a crossfade, this will add to the delay
+			hdl->derived.delay += hdl->init.cBufferFadeLength;
+
 			// This is the minimum access function to work in case jvx_firfft, jvx_firfft_cf and jvx_firft_nout
 			if (nHdl)
 			{
@@ -364,7 +368,7 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 }
 
 jvxSize 
-jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxCBool allowLargerFir)
+jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxSize cBufferFadeLength, jvxCBool allowLargerFir)
 {
 	jvxSize fftszmin = (lFirMin + bsize - 1);
 	jvxSize lFir = lFirMin;
@@ -381,7 +385,7 @@ jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxCBoo
 
 	if (allowLargerFir)
 	{
-		lFir = szFftValue - bsize + 1;
+		lFir = szFftValue - bsize - cBufferFadeLength + 1;
 	}
 	return lFir;
 }

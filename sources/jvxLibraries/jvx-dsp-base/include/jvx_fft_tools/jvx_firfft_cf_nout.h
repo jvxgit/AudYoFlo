@@ -57,6 +57,9 @@ jvxDspBaseErrorType jvx_firfft_cf_nout_terminate(jvx_firfft* hdl);
 jvxDspBaseErrorType jvx_firfft_cf_nin_nout_process(jvx_firfft* hdl, jvxData** inArg, jvxData** outArg, jvxCBool* addOnOut_nout);
 jvxDspBaseErrorType jvx_firfft_cf_nin_nout_process_update_weights(jvx_firfft* hdl, jvxData** inArg, jvxData** outArg, jvxDataCplx** newWeights, jvxCBool* addOnOut_nout);
 
+// 
+jvxDspBaseErrorType jvx_firfft_cf_nin_nout_process_ifcf(jvx_firfft* hdl, jvxData** inArg, jvxData** outArg, jvxCBool* addOnOut_nout);
+
 JVX_DSP_LIB_END
 
 #endif

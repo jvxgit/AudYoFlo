@@ -217,7 +217,7 @@ jvxLibHost::pixbuffer_local_create_cb(
 
 	if (tdg->ref.objPtr)
 	{
-		tdg->ref.cpPtr->initialize(tdg);
+		AYF_ITHREAD_INITIALIZE(tdg->ref.cpPtr, tdg, "jvxLibHost");
 		tdg->ref.cpPtr->start(JVX_SIZE_UNSELECTED, true);
 	}
 

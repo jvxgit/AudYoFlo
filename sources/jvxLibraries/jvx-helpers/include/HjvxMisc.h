@@ -1442,6 +1442,8 @@ public:
 	virtual bool try_lock(const char* tag = nullptr) = 0;
 };
 
+// #define JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT 8
+
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
 #include <map>
 class jvxProfileLock_entry
@@ -1457,6 +1459,23 @@ public:
 	jvxProfileLock_entry onAcquire;
 	jvxProfileLock_entry onRelease;
 	std::list<std::string> addTags;
+};
+#endif
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT
+class lckPlusEntry
+{
+public:
+	int RecCnt;
+	int operation; // 1: onEnter -- 2: beforeLeave
+	//std::string tag;
+	JVX_THREAD_ID threadid;
+	lckPlusEntry()
+	{
+		RecCnt = 0;
+		operation = 0;
+		threadid = JVX_THREAD_ID_INVALID;
+	}
 };
 #endif
 
@@ -1481,6 +1500,12 @@ private:
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
 	std::map<JVX_THREAD_ID, jvxProfileLock_acquireRelease> profileDat;
 	jvxSize uniqueCnt = 0;
+#endif
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT
+	int lckPlusCnt = 0;
+	int lckPlusNum = JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT;
+	lckPlusEntry lckPlusEntries[JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT];
 #endif
 
 public:

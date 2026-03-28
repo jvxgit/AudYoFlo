@@ -669,7 +669,7 @@ jvxFileReader::start()
 			{
 				if (theThread)
 				{
-					theThread->initialize(this);
+					AYF_ITHREAD_INITIALIZE(theThread, this, "jvxFileReader");
 					theThread->start(JVX_SIZE_UNSELECTED, operation.boostPriority);
 				}
 				else

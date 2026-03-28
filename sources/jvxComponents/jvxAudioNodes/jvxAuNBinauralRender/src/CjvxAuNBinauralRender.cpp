@@ -103,7 +103,7 @@ CjvxAuNBinauralRender::activate()
 		threads = reqInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
 		if (threads.cpPtr)
 		{
-			threads.cpPtr->initialize(this);
+			AYF_ITHREAD_INITIALIZE(threads.cpPtr, this, "CjvxAuNBinauralRender");
 		}
 
 	}

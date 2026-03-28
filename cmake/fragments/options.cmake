@@ -113,7 +113,9 @@ option(JVX_LIBHOST_WITH_JSON_SHOW "Enable json show extensions in lib host" fals
 option(JVX_USE_LIBMYSOFA "Compile with libmysofa support" false)
 option(JVX_USE_ORC "Find ORC" false)
 option(JVX_USE_KISSFFT "Involve kissfft" false)
-option(JVX_PROFILE_TEXT_LOG_LOCK "Enable lock profiling for text log" false)
+option(JVX_PROFILE_TEXT_LOG_LOCK "Enable lock profiling for text log" true)
+set(JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT 0 CACHE STRING "Lock logging helper count")
+
 option(JVX_FOPEN_CLOSE_VERBOSE "Enable verbose output on fopen/fclose" false)
 
 option(JVX_LINUX_NATIVE_INSTALLED_LIBS "Link required libraries locally in linux" false)

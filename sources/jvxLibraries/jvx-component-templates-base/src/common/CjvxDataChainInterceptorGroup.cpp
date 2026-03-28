@@ -229,7 +229,7 @@ CjvxDataChainInterceptorGroup::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 				theThreadObj->request_specialization(reinterpret_cast<jvxHandle**>(&theThreadHandle), NULL, NULL, NULL);
 				assert(theThreadHandle);
 
-				resL = theThreadHandle->initialize(static_cast<IjvxThreads_report*>(this));
+				resL = AYF_ITHREAD_INITIALIZE(theThreadHandle, static_cast<IjvxThreads_report*>(this), "CjvxDataChainInterceptorGroup");
 				assert(resL == JVX_NO_ERROR);
 			}
 		}

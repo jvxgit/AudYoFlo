@@ -168,12 +168,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				addOut[i] = c_false;
 			}
 
+			jvxBool weightsUpdated = false;
 			jvxSize cntStart = 0;
 			jvxSize cntStop = JVX_MIN(cntStart + init.init.bsize, lenSig);
 			while (1)
 			{
 				jvxSize nSamples = cntStop - cntStart;
-				jvxBool weightsUpdated = false;
+				
 				if (nSamples > 0)
 				{
 					memset(inSigBuf, 0, sizeof(jvxData) * init.init.bsize);

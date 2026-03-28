@@ -5,6 +5,7 @@
 
 typedef struct
 {
+	const char* descr;
 	jvxErrorType (*callback_thread_startup)(jvxHandle* privateData_thread, jvxInt64 timestamp_us);
 	jvxErrorType (*callback_thread_timer_expired)(jvxHandle* privateData_thread, jvxInt64 timestamp_us, jvxSize* delta_ms);
 	jvxErrorType (*callback_thread_wokeup)(jvxHandle* privateData_thread, jvxInt64 timestamp_us, jvxSize* delta_ms);
@@ -69,12 +70,14 @@ jvxErrorType jvx_thread_terminate(jvxHandle* hdlLeave);
 	var.callback_thread_wokeup = cname::callback_ ## fname_wokeup; 
 
 #define JVX_THREADS_FORWARD_C_CALLBACK_ASSIGN_D_IC(var) \
+	var.descr = NULL; \
 	var.callback_thread_startup = callback_ ## started; \
 	var.callback_thread_stopped = callback_ ## stopped; \
 	var.callback_thread_timer_expired = callback_ ## expired; \
 	var.callback_thread_wokeup = callback_ ## wokeup; 
 
 #define JVX_THREADS_FORWARD_C_CALLBACK_RESET(var) \
+	var.descr = NULL; \
 	var.callback_thread_startup = NULL; \
 	var.callback_thread_stopped = NULL; \
 	var.callback_thread_timer_expired = NULL; \

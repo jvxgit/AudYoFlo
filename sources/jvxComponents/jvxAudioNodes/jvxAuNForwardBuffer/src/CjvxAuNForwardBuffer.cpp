@@ -415,8 +415,8 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				if (dataFlowOperation_input == jvxDataflow::JVX_DATAFLOW_PUSH_ON_PULL)
 				{
 					// Start the secondary thread to collect data on input side
-					resL = refThreads.cpPtr->initialize(
-						static_cast<IjvxThreads_report*>(this));
+					resL = AYF_ITHREAD_INITIALIZE(refThreads.cpPtr,
+						static_cast<IjvxThreads_report*>(this), "CjvxAuNForwardBuffer#2");
 					assert(resL == JVX_NO_ERROR);
 				}
 			}
@@ -425,8 +425,7 @@ CjvxAuNForwardBuffer::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				if (dataFlowOperation_output == JVX_DATAFLOW_PUSH_ASYNC)
 				{
 					// Start the secondary thread for output
-					resL = refThreads.cpPtr->initialize(
-						static_cast<IjvxThreads_report*>(this));
+					resL = AYF_ITHREAD_INITIALIZE(refThreads.cpPtr, static_cast<IjvxThreads_report*>(this), "CjvxAuNForwardBuffer#1");
 					assert(resL == JVX_NO_ERROR);
 				}
 			}

@@ -45,7 +45,7 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 					out_stream = &std::cout;
 				}
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
-				log_stream.hdl->add_tag_lock("Position #1");
+				log_stream.hdl->add_tag_lock("Position <CjvxRequestCommandsHandler::request_command>#1");
 #endif
 			}
 		}
@@ -58,7 +58,7 @@ CjvxRequestCommandsHandler::request_command(const CjvxReportCommandRequest& requ
 			if (log_stream.hdl)
 			{
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
-				log_stream.hdl->add_tag_lock("Position #2");
+				log_stream.hdl->add_tag_lock("Position <CjvxRequestCommandsHandler::request_command>#2");
 #endif
 				log_stream.hdl->stop_lock(JVX_TEXT_LOG_LOCK_ORIGIN_DEFAULT);				
 			}

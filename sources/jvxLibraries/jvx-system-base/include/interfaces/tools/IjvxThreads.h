@@ -1,6 +1,14 @@
 #ifndef __IJVXTHREADS_H__
 #define __IJVXTHREADS_H__
 
+#define AYF_ADD_THREAD_DESCRIPTOR
+
+#ifdef AYF_ADD_THREAD_DESCRIPTOR
+#define AYF_ITHREAD_INITIALIZE(ptr, report, descriptor) ptr->initialize(report, descriptor)
+#else
+#define AYF_ITHREAD_INITIALIZE(ptr, report, descriptor) ptr->initialize(report, descriptor)
+#endif
+
 JVX_INTERFACE IjvxThreads_report
 {
 public:
@@ -18,7 +26,11 @@ JVX_INTERFACE IjvxThreads: public IjvxObject
 public:
 	virtual ~IjvxThreads(){};
 
+#ifdef AYF_ADD_THREAD_DESCRIPTOR
+	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxThreads_report* bwdReport, const char* threadDescriptor) = 0;
+#else
 	virtual jvxErrorType JVX_CALLINGCONVENTION initialize(IjvxThreads_report* bwdReport) = 0;
+#endif
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION start(jvxSize timeout = JVX_SIZE_UNSELECTED, jvxBool push_prio = false, jvxBool rep_tstamp = false, jvxBool nonblock = false, jvxBool async = false) = 0;
 	

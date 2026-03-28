@@ -470,7 +470,7 @@ jvxFileWriter::start()
 
 			if (theThread)
 			{
-				theThread->initialize(this);
+				AYF_ITHREAD_INITIALIZE(theThread, this, "jvxFileWriter");
 				theThread->start(JVX_SIZE_UNSELECTED, operation.boostPriority);
 			}
 			else

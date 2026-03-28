@@ -25,9 +25,14 @@ CjvxThreads::~CjvxThreads()
 
 	//! Initialize the module, set size of buffer and strategy
 jvxErrorType 
-CjvxThreads::initialize(IjvxThreads_report* bwdReport)
+CjvxThreads::initialize(IjvxThreads_report* bwdReport, const char* descriptor)
 {
 	rep = bwdReport;
+	if (descriptor)
+	{
+		descr = descriptor;
+		thread.cbs.descr = descr.c_str();
+	}
 	return JVX_NO_ERROR;
 }
 
@@ -97,6 +102,7 @@ jvxErrorType
 CjvxThreads::terminate()
 {
 	rep = NULL;
+	thread.cbs.descr = NULL;
 	return JVX_NO_ERROR;
 }
 

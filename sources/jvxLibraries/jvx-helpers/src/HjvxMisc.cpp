@@ -6922,12 +6922,14 @@ jvxostream::setOriginTag(const std::string& tag, jvxBool acquire)
 		if (acquire)
 		{
 			newEntry.onAcquire.cntOperation = uniqueCnt++;
-			newEntry.onAcquire.tag = tag;
+			newEntry.onAcquire.tag = tag;	
+			newEntry.addTags.push_back("NEW ACQUIRE: " + tag);
 		}
 		else
 		{
 			newEntry.onRelease.cntOperation = uniqueCnt++;
 			newEntry.onRelease.tag = tag;
+			newEntry.addTags.push_back("NEW RELEASE: " + tag);
 		}
 		profileDat[id] = newEntry;
 	}
@@ -6937,11 +6939,13 @@ jvxostream::setOriginTag(const std::string& tag, jvxBool acquire)
 		{
 			elm->second.onAcquire.cntOperation = uniqueCnt++;
 			elm->second.onAcquire.tag = tag;
+			elm->second.addTags.push_back("ACQUIRE: " + tag);
 		}
 		else
 		{
 			elm->second.onRelease.cntOperation = uniqueCnt++;
 			elm->second.onRelease.tag = tag;
+			elm->second.addTags.push_back("RELEASE: " + tag);
 		}
 	}
 }
@@ -7071,12 +7075,32 @@ jvxostream::lock(const char* tag)
 	{
 		JVX_LOCK_MUTEX(theLock);
 
-		collectString.clear();
-		collectTag.clear();
+		// Both are cleared on release of lock
+		// 
+		// collectString.clear();
+		// collectTag.clear();
 		if (tag)
 		{
 			collectTag = tag;
 		}
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT
+		
+		lckPlusEntry ee;
+		ee.RecCnt = theLock.RecursionCount;
+		ee.operation = 1;
+		ee.threadid = JVX_GET_CURRENT_THREAD_ID();
+		lckPlusEntries[lckPlusCnt] = ee;
+		lckPlusCnt = (lckPlusCnt + 1) % lckPlusNum;
+		
+#endif
+
+#ifdef JVX_OS_WINDOWS
+		if (theLock.RecursionCount > 1)
+		{
+			std::cout << "Stop condition" << std::endl;
+		}
+#endif
 
 		if (lockThreadId == 0)
 		{
@@ -7093,7 +7117,6 @@ jvxostream::lock(const char* tag)
 			{
 				assert(0); // <- this should never happen!
 			}
-
 		}
 	}
 }
@@ -7103,47 +7126,73 @@ jvxostream::unlock()
 {
 	if (active)
 	{
+		jvxBool logCritSectionDone = false;
 		if (lockThreadId != JVX_GET_CURRENT_THREAD_ID())
 		{
 			std::cout << "Invalid thread unlock operation, thread id is " << JVX_GET_CURRENT_THREAD_ID() << " but it should be " << threadId_lasttime << std::endl;
+			assert(0);
 		}
-
-#ifdef JVX_PROFILE_TEXT_LOG_LOCK
-		
-		auto elm = profileDat.find(lockThreadId);
-		if (elm != profileDat.end())
-		{
-			elm->second.addTags.clear();
-		}
-
-#endif
 
 		refCnt--;
 		if (refCnt == 0)
 		{
-			lockThreadId = 0;
+			logCritSectionDone = true;			
 		}
 
+		if (logCritSectionDone)
+		{
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK
+
+			// Here, the crit section is released. Then, we will release the tags
+			auto elm = profileDat.find(lockThreadId);
+			if (elm != profileDat.end())
+			{
+				elm->second.addTags.clear();
+			}
+#endif
+
+			lockThreadId = 0;
 
 #ifndef JVX_OLD_TEXT_LOG
-		// collectString
-		if (theLog)
-		{
-			if (moduleName.size())
+			// collectString
+			if (theLog)
 			{
-				theLog->addEntry_buffered(collectString.c_str(), moduleName.c_str(), debugLevel, (jvxCBitField)-1, collectTag.c_str());
+				if (moduleName.size())
+				{
+					theLog->addEntry_buffered(collectString.c_str(), moduleName.c_str(), debugLevel, (jvxCBitField)-1, collectTag.c_str());
+				}
+				else
+				{
+					theLog->addEntry_buffered(collectString.c_str(), nullptr, 0, (jvxCBitField)-1, collectTag.c_str());
+				}
 			}
 			else
 			{
-				theLog->addEntry_buffered(collectString.c_str(), nullptr, 0, (jvxCBitField)-1, collectTag.c_str());
+				std::cout << collectString << std::flush;
 			}
-		}
-		else
-		{
-			std::cout << collectString << std::flush;
-		}
+
+			// We release the collect string on last release of lock
+			collectString.clear();
+			collectTag.clear();
 #endif
+		}
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT
+		
+		lckPlusEntry ee;
+		ee.RecCnt = theLock.RecursionCount;
+		ee.operation = 2;
+		ee.threadid = JVX_GET_CURRENT_THREAD_ID();
+		lckPlusEntries[lckPlusCnt] = ee;
+		lckPlusCnt = (lckPlusCnt + 1) % lckPlusNum;
+		
+#endif
+
 		JVX_UNLOCK_MUTEX(theLock);
+	}
+	else
+	{
+		std::cout << "Stop Condition here!" << std::endl;
 	}
 }
 
@@ -7156,11 +7205,45 @@ jvxostream::try_lock(const char* tag)
 		JVX_TRY_LOCK_MUTEX(res, theLock);
 		if (res == JVX_TRY_LOCK_MUTEX_SUCCESS)
 		{
-			collectString.clear();
-			collectTag.clear();
+			// Both released on release of log
+			// 
+			// collectString.clear();
+			// collectTag.clear();
+
 			if (tag)
 			{
 				collectTag = tag;
+			}
+
+#ifdef JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT
+
+			lckPlusEntry ee;
+			ee.RecCnt = theLock.RecursionCount;
+			ee.operation = 1;
+			ee.threadid = JVX_GET_CURRENT_THREAD_ID();
+			lckPlusEntries[lckPlusCnt] = ee;
+			lckPlusCnt = (lckPlusCnt + 1) % lckPlusNum;
+			if (theLock.RecursionCount > 1)
+			{
+				std::cout << "Stop condition" << std::endl;
+			}
+#endif
+
+			if (lockThreadId == 0)
+			{
+				lockThreadId = JVX_GET_CURRENT_THREAD_ID();
+				refCnt = 1;
+			}
+			else
+			{
+				if (lockThreadId == JVX_GET_CURRENT_THREAD_ID())
+				{
+					refCnt++;
+				}
+				else
+				{
+					assert(0); // <- this should never happen!
+				}
 			}
 			return true;
 		}
