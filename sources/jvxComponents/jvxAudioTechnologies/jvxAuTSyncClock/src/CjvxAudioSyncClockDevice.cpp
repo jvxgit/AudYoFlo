@@ -135,7 +135,8 @@ CjvxAudioSyncClockDevice::activate()
 #ifndef JVX_SYNCED_CLOCK_WINDOWS
 		threads = reqInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
 		assert(threads.cpPtr);
-		threads.cpPtr->initialize(this);
+		AYF_ITHREAD_INITIALIZE(threads.cpPtr, this, "CjvxAudioSyncClockDevice");
+		// threads.cpPtr->initialize(this);
 #endif
 		CjvxAudioDevice::properties_active.allow_operate_zero_channels.value = c_true;
 			
