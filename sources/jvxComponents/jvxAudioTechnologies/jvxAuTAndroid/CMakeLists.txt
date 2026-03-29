@@ -35,13 +35,26 @@ set(LOCAL_SOURCES
 
 set(LOCAL_LIBS
 	jvx-component-templates-base_static
-	
+
 	# Helpers to provide some wav string conversions
 	jvx-helpers-product_static
 
 	jvx-audiocodec-helpers_static
-	
-  )
+	)
+
+# On Android, fetch Oboe and link it together with the logging library
+if(${JVX_OS} MATCHES "Android")
+	include(FetchContent)
+	FetchContent_Declare(
+		oboe
+		GIT_REPOSITORY https://github.com/google/oboe.git
+		GIT_TAG        1.9.3
+	)
+	FetchContent_MakeAvailable(oboe)
+
+	list(APPEND LOCAL_LIBS oboe log)
+	include_directories(${oboe_SOURCE_DIR}/include)
+endif()
 
 # set(LOCAL_PCG_FILE_OPTIONS 
 # 	-I ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers/pcg)
