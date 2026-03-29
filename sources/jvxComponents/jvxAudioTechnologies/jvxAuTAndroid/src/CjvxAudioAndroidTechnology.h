@@ -2,17 +2,21 @@
 #define __CJVXAUDIOANDROIDTECHNOLOGY_H__
 
 #include "jvx.h"
-
-#ifndef JVX_USE_PART_ANDROIDAUDIO_NO_API
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
-#include <android/log.h>
-#include <jni.h>
-#endif
+#include <string>
+#include <vector>
 
 #include "jvxTechnologies/CjvxTemplateTechnology.h"
 #include "CjvxAudioAndroidDevice.h"
 #include "pcg_exports_technology.h"
+
+// Describes one hardware audio endpoint discovered at activate() time
+struct JvxAndroidDeviceInfo
+{
+	int         deviceId   = 0;    // Android AudioDeviceInfo.getId() — passed to Oboe setDeviceId()
+	int         deviceType = 0;    // AudioDeviceInfo.getType() constant (e.g. TYPE_BUILTIN_MIC)
+	bool        isInput    = false; // true = capture source, false = playback sink
+	std::string productName;       // AudioDeviceInfo.getProductName() toString
+};
 
 class CjvxAudioAndroidTechnology;
 #define LOCAL_TEMPLATE_BASE_CLASS CjvxTemplateTechnologyInit<CjvxAudioAndroidDevice, CjvxAudioAndroidTechnology*>
@@ -25,6 +29,19 @@ class CjvxAudioAndroidTechnology :
 
 protected:
 	std::map<IjvxDevice*, CjvxAudioAndroidDevice*> lstDevType;
+
+	// Device list built by enumerateAndroidDevices() during activate();
+	// consumed one entry per call to local_allocate_device()
+	std::vector<JvxAndroidDeviceInfo> pendingDevices;
+	jvxSize pendingDeviceIdx = 0;
+
+	// Enumerate all Android audio endpoints into 'out'; returns number found.
+	// Falls back silently to empty list if JNI is unavailable (non-Android builds).
+	jvxSize enumerateAndroidDevices(std::vector<JvxAndroidDeviceInfo>& out);
+
+	CjvxAudioAndroidDevice* local_allocate_device(
+		JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE,
+		jvxSize idx, jvxBool actAsProxy_init, jvxHandle* fwd_arg) override;
 
 public:
 
