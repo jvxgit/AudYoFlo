@@ -157,6 +157,15 @@ textProcessor_core::produceOutput_c_prepare(onePropertyDefinition& elm)
 		elm.validOnInit = false;
 		elm.generateConfigFileEntry = false;
 		break;
+	case JVX_DATAFORMAT_POINTER:
+		elm.tokenType = MACRO_TYPE_HANDLE;
+		elm.tokenTypeName = MACRO_DATATYPE_POINTER;
+		elm.numElements = 1;
+		elm.associateExternal = false;
+		elm.dynamic = false;
+		elm.validOnInit = false;
+		elm.generateConfigFileEntry = false;
+		break;
 	case JVX_DATAFORMAT_CALLBACK:
 		elm.tokenType = MACRO_TYPE_CALLBACK;
 		elm.tokenTypeName = MACRO_DATATYPE_CALLBACK_;
@@ -842,6 +851,7 @@ textProcessor_core::produceOutput_c_init(std::ostream& out,
 						out << "\t\t" << propertySectionName  << "." << elm.name << ".value.minVal = 0;" << std::endl;
 						out << "\t\t" << propertySectionName  << "." << elm.name << ".value.maxVal = 0;" << std::endl;
 						break;
+					case JVX_DATAFORMAT_POINTER:
 					case JVX_DATAFORMAT_HANDLE:
 					case JVX_DATAFORMAT_CALLBACK:
 						out << "\t\t" << propertySectionName << "." << elm.name << ".value = nullptr;" << std::endl;
@@ -1602,6 +1612,7 @@ textProcessor_core::produceOutput_c_allocate(std::ostream& out, onePropertyDefin
 
 						break;
 					case JVX_DATAFORMAT_HANDLE:
+					case JVX_DATAFORMAT_POINTER:
 					case JVX_DATAFORMAT_CALLBACK:
 						out << "\t\t" << propertySectionName << "." << elm.name << ".value = nullptr;" << std::endl;
 						break;
@@ -1753,6 +1764,7 @@ textProcessor_core::produceOutput_c_deallocate(std::ostream& out, onePropertyDef
 						out << "\t\t" << propertySectionName << "." << elm.name << ".value.maxVal = 0;" << std::endl;
 						break;
 					case JVX_DATAFORMAT_HANDLE:
+					case JVX_DATAFORMAT_POINTER:
 						break;
 					}
 				} // else: if((elm.format == JVX_DATAFORMAT_8BIT) ||(elm.format == JVX_DATAFORMAT_16BIT_LE) ||(elm.format == JVX_DATAFORMAT_32BIT_LE) ||(elm.format == JVX_DATAFORMAT_64BIT_LE) ||(elm.format == JVX_DATAFORMAT_DATA) ||(elm.format == JVX_DATAFORMAT_DATA))
@@ -2921,6 +2933,7 @@ textProcessor_core::produceOutput_c_readconfig(std::ostream& out, onePropertyDef
 			addArgument = ", " + propertySectionName + "." + elm.name + ".onlySelectionToFile";
 			break;
 		case JVX_DATAFORMAT_HANDLE:
+		case JVX_DATAFORMAT_POINTER:
 			elm.numElements = 1;
 			elm.associateExternal = false;
 			elm.dynamic = false;
@@ -3555,6 +3568,7 @@ textProcessor_core::produceOutput_c_writeconfig(std::ostream& out, onePropertyDe
 			addArgument = ", " + propertySectionName + "." + elm.name + ".onlySelectionToFile";
 			break;
 		case JVX_DATAFORMAT_HANDLE:
+		case JVX_DATAFORMAT_POINTER:
 			elm.numElements = 1;
 			elm.associateExternal = false;
 			elm.dynamic = false;

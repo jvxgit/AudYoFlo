@@ -921,7 +921,7 @@ CjvxObject::_info_token(jvxSize idx, jvxApiString* fldStr)
 
 #ifdef JVX_OBJECTS_WITH_TEXTLOG
 void
-CjvxObject::_request_text_log()
+CjvxObject::_request_text_log(jvxBool simpleCall)
 {
 	embLog.jvxrtst_bkp.theToolsHost = _common_set.theToolsHost;
 	if (embLog.jvxrtst_bkp.theToolsHost)
@@ -929,7 +929,7 @@ CjvxObject::_request_text_log()
 		JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(embLog.jvxrtst_bkp.jvxlst_buf, char, JVX_COBJECT_OS_BUF_SIZE);
 		embLog.jvxrtst_bkp.jvxlst_buf_sz = JVX_COBJECT_OS_BUF_SIZE;
 
-		jvx_request_text_log(embLog);
+		jvx_request_text_log(embLog, simpleCall);
 	}
 	else
 	{
@@ -937,9 +937,9 @@ CjvxObject::_request_text_log()
 	}
 };
 
-void CjvxObject::_return_text_log()
+void CjvxObject::_return_text_log(jvxBool simpleCall)
 {
-	jvx_return_text_log(embLog);
+	jvx_return_text_log(embLog, simpleCall);
 	if (embLog.jvxrtst_bkp.jvxlst_buf)
 	{
 		JVX_DSP_SAFE_DELETE_FIELD(embLog.jvxrtst_bkp.jvxlst_buf);

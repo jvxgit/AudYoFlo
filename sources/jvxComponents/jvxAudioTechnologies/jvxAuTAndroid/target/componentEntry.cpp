@@ -12,20 +12,4 @@
 // Android: capture the JavaVM pointer when this .so is loaded.
 // The technology uses it to call AudioManager.getDevices() via JNI.
 // =============================================================
-#ifndef JVX_USE_PART_ANDROIDAUDIO_NO_API
-
-#include <jni.h>
-
-JavaVM* g_jvxAuTAndroid_javaVM = nullptr;
-
-extern "C"
-{
-	JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* /*reserved*/)
-	{
-		g_jvxAuTAndroid_javaVM = vm;
-		return JNI_VERSION_1_6;
-	}
-}
-
-#endif // JVX_USE_PART_ANDROIDAUDIO_NO_API
 

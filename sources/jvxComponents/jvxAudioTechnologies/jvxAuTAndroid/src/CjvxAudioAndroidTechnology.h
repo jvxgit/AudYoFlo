@@ -1,6 +1,11 @@
 #ifndef __CJVXAUDIOANDROIDTECHNOLOGY_H__
 #define __CJVXAUDIOANDROIDTECHNOLOGY_H__
 
+#ifndef JVX_USE_PART_ANDROIDAUDIO_NO_API
+#include <jni.h>
+#include <android/log.h>
+#endif
+
 #include "jvx.h"
 #include <string>
 #include <vector>
@@ -33,11 +38,16 @@ protected:
 	// Device list built by enumerateAndroidDevices() during activate();
 	// consumed one entry per call to local_allocate_device()
 	std::vector<JvxAndroidDeviceInfo> pendingDevices;
-	jvxSize pendingDeviceIdx = 0;
+
+	jvxNativeHostSysPointers* sys_pointer = nullptr;
+
+#ifndef JVX_USE_PART_ANDROIDAUDIO_NO_API
+	JavaVM* g_jvxAuTAndroid_javaVM = nullptr;
 
 	// Enumerate all Android audio endpoints into 'out'; returns number found.
 	// Falls back silently to empty list if JNI is unavailable (non-Android builds).
 	jvxSize enumerateAndroidDevices(std::vector<JvxAndroidDeviceInfo>& out);
+#endif
 
 	CjvxAudioAndroidDevice* local_allocate_device(
 		JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE,

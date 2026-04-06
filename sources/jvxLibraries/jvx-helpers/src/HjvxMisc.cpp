@@ -7281,32 +7281,35 @@ void jvx_terminate_text_log(CjvxLogEmbedding& embLog)
 }
 
 void 
-jvx_request_text_log(CjvxLogEmbedding& embLog)
+jvx_request_text_log(CjvxLogEmbedding& embLog, jvxBool simpleCall)
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 
-	if (embLog.jvxrtst_bkp.jvxlst_buf_sz == 0)
+	if (!simpleCall)
 	{
-		std::cout << "Error: configuration of text log stream with zero character buffer size." << std::endl;
-		return;
-	}
-
-	if (embLog.jvxrtst_bkp.theToolsHost)
-	{
-		resL = embLog.jvxrtst_bkp.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, &embLog.jvxrtst_bkp.theTextLogger_obj, 0, "jvxTSystemTextLog"); // <- main text logger object
-		if ((resL == JVX_NO_ERROR) && embLog.jvxrtst_bkp.theTextLogger_obj)
+		if (embLog.jvxrtst_bkp.jvxlst_buf_sz == 0)
 		{
-			resL = embLog.jvxrtst_bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(
-				&embLog.jvxrtst_bkp.theTextLogger_hdl), NULL, NULL);
+			std::cout << "Error: configuration of text log stream with zero character buffer size." << std::endl;
+			return;
+		}
+
+		if (embLog.jvxrtst_bkp.theToolsHost)
+		{
+			resL = embLog.jvxrtst_bkp.theToolsHost->reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, &embLog.jvxrtst_bkp.theTextLogger_obj, 0, "jvxTSystemTextLog"); // <- main text logger object
+			if ((resL == JVX_NO_ERROR) && embLog.jvxrtst_bkp.theTextLogger_obj)
+			{
+				resL = embLog.jvxrtst_bkp.theTextLogger_obj->request_specialization(reinterpret_cast<jvxHandle**>(
+					&embLog.jvxrtst_bkp.theTextLogger_hdl), NULL, NULL);
+			}
+			else
+			{
+				std::cout << "Error: Failed to open logger object, reason: " << jvxErrorType_txt(resL) << std::endl;
+			}
 		}
 		else
 		{
-			std::cout << "Error: Failed to open logger object, reason: " << jvxErrorType_txt(resL) << std::endl;
+			std::cout << "Error: Failed to open logger object for component< " << embLog.jvxrtst_bkp.theModuleName << "> since tools host reference is not vailable." << std::endl;
 		}
-	}
-	else
-	{
-		std::cout << "Error: Failed to open logger object for component< " << embLog.jvxrtst_bkp.theModuleName << "> since tools host reference is not vailable." << std::endl;
 	}
 
 	if (embLog.jvxrtst_bkp.theTextLogger_hdl)
@@ -7317,16 +7320,21 @@ jvx_request_text_log(CjvxLogEmbedding& embLog)
 	}
 };
 
-void jvx_return_text_log(CjvxLogEmbedding& embLog)
+void jvx_return_text_log(CjvxLogEmbedding& embLog, jvxBool simpleCall)
 {
 	jvxErrorType resL = JVX_NO_ERROR;
 	if (embLog.jvxrtst_bkp.theTextLogger_hdl)
 	{
 		embLog.jvxrtst_bkp.jvxos.unsetReference();
-		resL = embLog.jvxrtst_bkp.theToolsHost->return_reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG, 
-			embLog.jvxrtst_bkp.theTextLogger_obj);
-		embLog.jvxrtst_bkp.theTextLogger_obj = NULL;
-		embLog.jvxrtst_bkp.theTextLogger_hdl = NULL;
+		embLog.jvxrtst_bkp.jvxos.set_module_name("");
+
+		if (!simpleCall)
+		{
+			resL = embLog.jvxrtst_bkp.theToolsHost->return_reference_tool(JVX_COMPONENT_SYSTEM_TEXT_LOG,
+				embLog.jvxrtst_bkp.theTextLogger_obj);
+			embLog.jvxrtst_bkp.theTextLogger_obj = NULL;
+			embLog.jvxrtst_bkp.theTextLogger_hdl = NULL;
+		}
 	}
 }
 

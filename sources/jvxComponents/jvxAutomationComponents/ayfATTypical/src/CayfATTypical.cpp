@@ -86,7 +86,7 @@ CayfATTypical::handle_report_ss(
 				else
 				{
 					searchToken = "*Windows*";
-				}
+				}				
 #elif defined JVX_OS_LINUX
 				if (genATTypical::config_audio.primary_audio_tech_lowlevel.value)
 				{

@@ -1,5 +1,5 @@
 #ifndef __CJVXGLOBALLOCK_H__
-#define __CJVXNEWSOCKET_H__
+#define __CJVXGLOBALLOCK_H__
 
 #include "jvx.h"
 #include "common/CjvxObject.h"

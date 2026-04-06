@@ -268,7 +268,7 @@ CjvxSingleOutputConnector::trigger_put_data()
 		}
 
 		_common_set_ocon.ocon->process_buffers_ocon(JVX_SIZE_UNSELECTED, JVX_SIZE_UNSELECTED);
-		_common_set_ocon.ocon->process_stop_ocon(0, NULL, 0, NULL, NULL);
+		_common_set_ocon.ocon->process_stop_ocon(0, false, 0, NULL, NULL);
 	}
 	return JVX_NO_ERROR;
 }

@@ -96,7 +96,7 @@ public:
 
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage);
+	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage) override;
 
 #ifdef JVX_USE_GLEW_GLUT
 	void run_native_gl();

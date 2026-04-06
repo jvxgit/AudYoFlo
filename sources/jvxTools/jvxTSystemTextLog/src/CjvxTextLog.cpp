@@ -833,7 +833,7 @@ CjvxTextLog::check_log_output(const char* modName, jvxSize logLevel, jvxBool* db
 
 	// Copy current setting for cout logging!!
 	if (dbgCout) *dbgCout = dbgOutCout;
-
+	
 	return log_output_active;
 }
 

@@ -1,5 +1,7 @@
 EXPORTS 
 
 		flutter_config_open
+		flutter_vmref_open
+
 
 		

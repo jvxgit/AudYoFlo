@@ -23,6 +23,15 @@ SECTION PROPERTIES
 			CALLBACK_SET_POSTHOOK = "prop_selected_technology_set";
 			// ONLY_CONTENT_TO_CONFIG = "yes";
 		}; 
+
+		SECTION sys_ptr
+		{
+			// System pointer to be forwarded to involved audio technology
+			ID = "jvx_sys_ptr";
+			INIT_SET = 0;
+			//DESCRIPTION = "Sys ptr reference to be used by all components";	  // Defaults to NAME if not present
+			//TYPE = "JVX_DATAFORMAT_POINTER";
+		};		
 	};
 
 	SECTION select_files

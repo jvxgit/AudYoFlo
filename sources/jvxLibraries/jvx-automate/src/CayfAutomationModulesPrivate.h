@@ -39,7 +39,7 @@ namespace CayfAutomationModules
 			IayfEstablishedProcessesSyncio::preset(supportNodeArg);
 		}
 
-		jvxHandle* specificType(ayfEstablishedProcessType tp)
+		jvxHandle* specificType(ayfEstablishedProcessType tp) override
 		{
 			switch (tp)
 			{
@@ -115,7 +115,7 @@ namespace CayfAutomationModules
 			IayfEstablishedProcessesSrc2SnkPreChainPriChain::preset(supportNodeArg);
 		}
 
-		jvxHandle* specificType(ayfEstablishedProcessType tp)
+		jvxHandle* specificType(ayfEstablishedProcessType tp) override
 		{
 			switch (tp)
 			{

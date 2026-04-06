@@ -130,7 +130,6 @@ if(NOT ${JVX_OS} MATCHES "windows")
   set(JVX_USE_PART_ASIO FALSE)
 endif()
 
-
 set(JVX_ABI_SUBFOLDER "")
 if(JVX_RELEASE_SDK)
 	if(${JVX_OS} MATCHES "Android")
@@ -266,6 +265,7 @@ if(JVX_COMPILE_BUILDTOOLS)
 					set(VSCODE_RELEASE_SDK "false")
 					set(VSCODE_RELEASE_SCRIPT_FOLDER ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_RUNTIME})
 				endif()
+				
 				configure_file(${JVX_BASE_ROOT}/.vscode/settings.json.android.in ${JVX_BASE_ROOT}/.vscode/settings.json)			
 				configure_file(${JVX_BASE_ROOT}/.vscode/script.bat.android.in ${JVX_BASE_ROOT}/.vscode/script.bat)
 			endif()
@@ -836,8 +836,10 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
 
 	# ############################### ANDROID ###############################
   ## if(JVX_USE_PART_ANDROIDAUDIO)
+  if(JVX_USE_PART_ANDROIDAUDIO)
 	set(JVX_BASE_AUDIO_TECHNOLOGIES ${JVX_BASE_AUDIO_TECHNOLOGIES}
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAndroid)
+  endif()
   ## endif()
 	
 	# message(FATAL_ERROR "HIER ${JVX_BASE_AUDIO_TECHNOLOGIES}")

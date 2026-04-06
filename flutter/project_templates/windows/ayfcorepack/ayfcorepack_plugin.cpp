@@ -65,6 +65,7 @@ void AyfcorepackPlugin::HandleMethodCall(
          */
 		retMap[flutter::EncodableValue("moduleEntryAddress")] = flutter::EncodableValue((intptr_t)flutter_config_open);
 		retMap[flutter::EncodableValue("moduleEntrySymbol")] = flutter::EncodableValue("flutter_config_open");
+		retMap[flutter::EncodableValue("vmEntrySymbol")] = flutter::EncodableValue("flutter_vmref_open");
 		result->Success(retMap);
   }
   else

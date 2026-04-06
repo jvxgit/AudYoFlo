@@ -25,7 +25,10 @@ set(IS_JVX_COMPONENT TRUE)
 # are compiled to form a runtime
 set(JVX_FORCE_RUNTIME_IMPORTLIB TRUE)
 
-# This allows to copy import lib (.lib file) to sdk also
-set(JVX_SDK_FORCE_DEPLOY_IMPORT_STATIC_LIB TRUE)
+if(${JVX_OS} MATCHES "windows")
+	# This allows to copy import lib (.lib file) to sdk also
+	# In linux we can directly link the so file
+	set(JVX_SDK_FORCE_DEPLOY_IMPORT_STATIC_LIB TRUE)
+endif()
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)

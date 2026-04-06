@@ -47,7 +47,7 @@ public:
 		return(res);
 	};
 
-	jvxErrorType return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl)
+	jvxErrorType return_hidden_interface(jvxInterfaceType tp, jvxHandle* hdl) override
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		res = JVX_NO_ERROR;

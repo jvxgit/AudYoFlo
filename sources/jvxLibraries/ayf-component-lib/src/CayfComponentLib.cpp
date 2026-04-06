@@ -42,7 +42,7 @@ public:
 		return JVX_ERROR_UNSUPPORTED;
 	}
 
-	jvxErrorType return_hidden_interface(jvxInterfaceType ifTp, jvxHandle* ptrRet)
+	jvxErrorType return_hidden_interface(jvxInterfaceType ifTp, jvxHandle* ptrRet) override
 	{
 		switch (ifTp)
 		{
@@ -59,7 +59,7 @@ public:
 		return JVX_ERROR_UNSUPPORTED;
 	}
 
-	jvxErrorType object_hidden_interface(IjvxObject** objRef)
+	jvxErrorType object_hidden_interface(IjvxObject** objRef) override
 	{
 		if (objRef) *objRef = nullptr;
 		return JVX_NO_ERROR;

@@ -54,12 +54,17 @@ CjvxFullHost::CjvxFullHost(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 
 	this->_set_unique_descriptor("main host");
 
+	// ===========================================================================
+	// ===========================================================================
 	// Create these reference to drive the mixin classes corectly
+	// ===========================================================================
 	datConns = static_cast<IjvxDataConnections*>(this);
 	uIdInst = static_cast<IjvxUniqueId*>(this);
 	hIfRef = static_cast<IjvxHiddenInterface*>(this);
-	myObjectRef = static_cast<IjvxObject*>(this);
-	
+	myObjectRef_ = static_cast<IjvxObject*>(this);
+	loggerRef = static_cast<CjvxObjectLog*>(this);
+	// ===========================================================================
+
 	/*
 	myModuleName = _common_set.theModuleName;
 	myDescription = _common_set_min.theDescription;
@@ -202,6 +207,9 @@ CjvxFullHost::activate()
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferFile);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeInternBufferRW);
 		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.textLog_sizeTransferFile);
+		_update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.sys_ptr);
+
+		CjvxComponentHost::sys_ptr = reinterpret_cast<jvxNativeHostSysPointers*>(CjvxHost_genpcg::properties_selected.sys_ptr.value);
 
 		// Following can be modified at runtime
 		// _update_property_access_type(JVX_PROPERTY_ACCESS_READ_ONLY, CjvxHost_genpcg::properties_selected.host_output_cout);
@@ -266,6 +274,10 @@ CjvxFullHost::activate()
 				}
 				embLog.jvxrtst_bkp.theTextLogger_hdl->start();
 			}
+
+#ifdef JVX_OBJECTS_WITH_TEXTLOG
+			_request_text_log(true);
+#endif
 		}
 	}
 
@@ -421,6 +433,10 @@ CjvxFullHost::deactivate()
 			assert(stat == JVX_STATE_NONE);
 		}
 
+#ifdef JVX_OBJECTS_WITH_TEXTLOG
+		_return_text_log(true);
+#endif
+
 		if (embLog.jvxrtst_bkp.theTextLogger_hdl)
 		{
 			embLog.jvxrtst_bkp.theTextLogger_hdl->stop();
@@ -431,6 +447,9 @@ CjvxFullHost::deactivate()
 			embLog.jvxrtst_bkp.theTextLogger_hdl = NULL;
 		}
 
+		CjvxComponentHost::sys_ptr = nullptr;
+
+		_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.sys_ptr);
 		_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.component_path);
 		_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.configure_parts);
 		_undo_update_property_access_type(CjvxHost_genpcg::properties_selected.do_unload_dlls);

@@ -47,7 +47,7 @@ public:
 	// Function < report_selected_connector> typically is not implemented in this class since
 	// other arguments need to be set, e.g., processing arguments etc.
 
-	jvxErrorType report_stopped_connector(T1* ioconn)
+	jvxErrorType report_stopped_connector(T1* ioconn) override
 	{
 		// This list must be protected
 		cbRef->lock(true, lockId);
@@ -68,7 +68,7 @@ public:
 		return JVX_NO_ERROR;
 	};
 
-	jvxErrorType report_started_connector(T1* ioconn)
+	jvxErrorType report_started_connector(T1* ioconn) override
 	{
 		auto elm = selectedConnectors.find(ioconn);
 		assert(elm != selectedConnectors.end());
@@ -90,7 +90,7 @@ public:
 		return JVX_NO_ERROR;
 	};
 
-	jvxErrorType report_unselected_connector(T1* iconn)
+	jvxErrorType report_unselected_connector(T1* iconn) override
 	{
 		auto elm = selectedConnectors.find(iconn);
 		if (elm != selectedConnectors.end())

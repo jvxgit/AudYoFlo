@@ -84,9 +84,9 @@
 // Define the interface type, in Mac, interface keyword is unknown
 #define JVX_INTERFACE class
 
-#define JVX_ISINF(value) (std::isinf(value) == 1)
+#define JVX_ISINF(value) (std::isinf(value))
 
-#define JVX_ISNEGINF(value) (std::isinf(value) == -1)
+#define JVX_ISNEGINF(value) (std::isinf(value) && (value < 0))
 
 /*
 #if (__cplusplus < 201703L)

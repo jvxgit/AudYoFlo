@@ -55,6 +55,9 @@ static void ayfcorepack_plugin_handle_method_call(
     fl_value_set(mapReturn, fl_value_new_string("moduleEntrySymbol"), fl_value_new_string("flutter_config_open")); 
 		// retMap[flutter::EncodableValue("moduleEntrySymbol")] = flutter::EncodableValue("flutter_config_open");
 		
+	fl_value_set(mapReturn, fl_value_new_string("vmEntrySymbol"), fl_value_new_string("flutter_vmref_open")); 
+	//	retMap[flutter::EncodableValue("vmEntrySymbol")] = flutter::EncodableValue("flutter_vmref_open");
+		
     //result->Success(retMap);
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(mapReturn));
     }

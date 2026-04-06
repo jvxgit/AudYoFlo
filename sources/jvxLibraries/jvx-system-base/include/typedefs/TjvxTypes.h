@@ -324,6 +324,12 @@ public:
 	jvxHandle* primary = nullptr;
 	jvxHandle* secondary = nullptr;
 	JVX_THREAD_ID thread_id = JVX_THREAD_ID_INVALID;
+	void reset()
+	{
+		primary = nullptr;
+		secondary = nullptr;
+		thread_id = JVX_THREAD_ID_INVALID;
+	};
 };
 
 #define JVXFEATURE_CLASS_NUM 5

@@ -28,22 +28,26 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
       FlutterWindowClose.setWindowShouldCloseHandler(() async {
         bool wantClose = false;
         await showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  title: const Text('Do you really want to quit?'),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                          wantClose = true;
-                        },
-                        child: const Text('Yes')),
-                    ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('No')),
-                  ]);
-            });
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Do you really want to quit?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                    wantClose = true;
+                  },
+                  child: const Text('Yes'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('No'),
+                ),
+              ],
+            );
+          },
+        );
         if (wantClose) {
           await theBeCache!.triggerClose();
         }
@@ -61,9 +65,11 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
 
   // Allocate and return file drop widget
   @override
-  Widget? allocateFileDropWidget(JvxComponentIdentification identT,
-          String textShowDrag, double sizeIcon) =>
-      AudYoFloFileInputCoreWidgetNative(identT, textShowDrag, sizeIcon);
+  Widget? allocateFileDropWidget(
+    JvxComponentIdentification identT,
+    String textShowDrag,
+    double sizeIcon,
+  ) => AudYoFloFileInputCoreWidgetNative(identT, textShowDrag, sizeIcon);
 
   @override
   void configureSubSystem(Map<String, dynamic> cfg) {
@@ -78,8 +84,11 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
   }
 
   @override
-  Future<bool> initializeSubSystem(AudYoFloBackendCache? notifierBeCache,
-      AudYoFloUiModel? uiModel, AudYoFloDebugModel? notifierDbgModel) async {
+  Future<bool> initializeSubSystem(
+    AudYoFloBackendCache? notifierBeCache,
+    AudYoFloUiModel? uiModel,
+    AudYoFloDebugModel? notifierDbgModel,
+  ) async {
     return true;
   }
 
@@ -108,8 +117,9 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
     if (descr == "AyfNativeAudioHost") {
       nativeHostConnect = true;
 
-      elm =
-          cfg.entries.firstWhereOrNull((element) => element.key == 'corePack');
+      elm = cfg.entries.firstWhereOrNull(
+        (element) => element.key == 'corePack',
+      );
       if (elm != null) {
         if (elm.value is AyfCorePackIf) {
           theCorePack = elm.value;
@@ -136,8 +146,9 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
 
     // cmdArgs miht also be empty
 
-    elm = cfg.entries
-        .firstWhereOrNull((element) => element.key == 'appAlternativeName');
+    elm = cfg.entries.firstWhereOrNull(
+      (element) => element.key == 'appAlternativeName',
+    );
     if (elm != null) {
       if (elm.value is String) {
         appAlternativeName = elm.value;
@@ -146,8 +157,11 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
   }
 
   @override
-  Future<bool> initializeSubSystem(AudYoFloBackendCache? notifierBeCache,
-      AudYoFloUiModel? uiModel, AudYoFloDebugModel? notifierDbgModel) async {
+  Future<bool> initializeSubSystem(
+    AudYoFloBackendCache? notifierBeCache,
+    AudYoFloUiModel? uiModel,
+    AudYoFloDebugModel? notifierDbgModel,
+  ) async {
     bool retVal = true;
     if (nativeHostConnect) {
       if ((theCorePack != null) &&
@@ -177,6 +191,7 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         String appNameToken = tokens[0].toLowerCase();
         String hostConfigPath = '';
         String hostConfigSymbol = '';
+        String vmEntrySymbol = '';
         int hostConfigAddr = 0;
 
         String pixBufConfigPath = '';
@@ -207,38 +222,52 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         }
 
         if (loadEnvSuccess) {
-          libraryPath = dotenv.get('AYF_BACKEND_FFI_SHARED_LIBRARY',
-              fallback: libraryPath);
+          libraryPath = dotenv.get(
+            'AYF_BACKEND_FFI_SHARED_LIBRARY',
+            fallback: libraryPath,
+          );
           defaultConfigFName = dotenv.get(
-              'AYF_BACKEND_FFI_DEFAULT_CONFIG_FILENAME',
-              fallback: defaultConfigFName);
+            'AYF_BACKEND_FFI_DEFAULT_CONFIG_FILENAME',
+            fallback: defaultConfigFName,
+          );
         }
 
         if (entryPointsCorePack is Map<dynamic, dynamic>) {
           Map<dynamic, dynamic> entryPointsMap = entryPointsCorePack;
 
           // Extract hostConfig module path
-          hostConfigPath = entryPointsMap.entries.firstWhereOrNull((element) {
-            if (element.key is String) {
-              return (element.key == 'loadedModule');
-            }
-            return false;
-          })?.value;
+          hostConfigPath =
+              entryPointsMap.entries.firstWhereOrNull((element) {
+                if (element.key is String) {
+                  return (element.key == 'loadedModule');
+                }
+                return false;
+              })?.value;
 
           // Extract hostConfig module path
-          hostConfigSymbol = entryPointsMap.entries.firstWhereOrNull((element) {
-            if (element.key is String) {
-              return (element.key == 'moduleEntrySymbol');
-            }
-            return false;
-          })?.value;
+          hostConfigSymbol =
+              entryPointsMap.entries.firstWhereOrNull((element) {
+                if (element.key is String) {
+                  return (element.key == 'moduleEntrySymbol');
+                }
+                return false;
+              })?.value;
 
-          hostConfigAddr = entryPointsMap.entries.firstWhereOrNull((element) {
-            if (element.key is String) {
-              return (element.key == 'moduleEntryAddress');
-            }
-            return false;
-          })?.value;
+          vmEntrySymbol =
+              entryPointsMap.entries.firstWhereOrNull((element) {
+                if (element.key is String) {
+                  return (element.key == 'vmEntrySymbol');
+                }
+                return false;
+              })?.value;
+
+          hostConfigAddr =
+              entryPointsMap.entries.firstWhereOrNull((element) {
+                if (element.key is String) {
+                  return (element.key == 'moduleEntryAddress');
+                }
+                return false;
+              })?.value;
         }
 
         // ===============================================================
@@ -247,37 +276,38 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           Map<dynamic, dynamic> entryPointsMap = entryPointsPixBuf;
 
           // Extract hostConfig module path
-          pixBufConfigPath = entryPointsMap.entries.firstWhereOrNull((element) {
-            if (element.key is String) {
-              return (element.key == 'loadedModule');
-            }
-            return false;
-          })?.value;
+          pixBufConfigPath =
+              entryPointsMap.entries.firstWhereOrNull((element) {
+                if (element.key is String) {
+                  return (element.key == 'loadedModule');
+                }
+                return false;
+              })?.value;
 
           // Extract hostConfig module path
           pixBufConfigSymbolList =
               entryPointsMap.entries.firstWhereOrNull((element) {
-            if (element.key is String) {
-              return (element.key == 'moduleEntrySymbol');
-            }
-            return false;
-          })?.value;
+                if (element.key is String) {
+                  return (element.key == 'moduleEntrySymbol');
+                }
+                return false;
+              })?.value;
 
           pixBufConfigAddrSet =
               entryPointsMap.entries.firstWhereOrNull((element) {
-            if (element.key is String) {
-              return (element.key == 'moduleEntryAddressSet');
-            }
-            return false;
-          })?.value;
+                if (element.key is String) {
+                  return (element.key == 'moduleEntryAddressSet');
+                }
+                return false;
+              })?.value;
 
           pixBufConfigAddrReset =
               entryPointsMap.entries.firstWhereOrNull((element) {
-            if (element.key is String) {
-              return (element.key == 'moduleEntryAddressReset');
-            }
-            return false;
-          })?.value;
+                if (element.key is String) {
+                  return (element.key == 'moduleEntryAddressReset');
+                }
+                return false;
+              })?.value;
         }
 
         // ===================================================================
@@ -287,6 +317,11 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
         if (hostConfigPath.isNotEmpty) {
           cmdArgsAdd.add('--natconfm');
           cmdArgsAdd.add(hostConfigPath);
+        }
+
+        if (vmEntrySymbol.isNotEmpty) {
+          cmdArgsAdd.add('--natconfv');
+          cmdArgsAdd.add(vmEntrySymbol);
         }
 
         if (hostConfigSymbol.isNotEmpty) {
@@ -299,15 +334,16 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           cmdArgsAdd.add(pixBufConfigPath);
         }
 
-        if (hostConfigSymbol.isNotEmpty) {
+        if (pixBufConfigSymbolList.isNotEmpty) {
           cmdArgsAdd.add('--pixbufs');
           cmdArgsAdd.add(pixBufConfigSymbolList);
         }
 
         if (loadEnvSuccess) {
           executableInBinFolderStr = dotenv.get(
-              'AYF_BACKEND_EXECUTABLE_IN_BINFOLDER',
-              fallback: executableInBinFolderStr);
+            'AYF_BACKEND_EXECUTABLE_IN_BINFOLDER',
+            fallback: executableInBinFolderStr,
+          );
           if (executableInBinFolderStr == "yes") {
             executableInBinFolder = 1;
           }
@@ -333,8 +369,11 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           args['libPath'] = libraryPath;
           args['exeInBin'] = executableInBinFolder;
 
-          retVal = await theBeAdapter!
-              .initialize(notifierBeCache, notifierDbgModel, args);
+          retVal = await theBeAdapter!.initialize(
+            notifierBeCache,
+            notifierDbgModel,
+            args,
+          );
 
           uiModel!.configureSystemParameters(theBeAdapter!.compFlags);
         }
@@ -343,8 +382,11 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
       if (notifierBeCache != null) {
         Map<String, dynamic> args = {};
         args['cmdArgs'] = cmdArgs;
-        retVal = await theBeAdapter!
-            .initialize(notifierBeCache, notifierDbgModel, args);
+        retVal = await theBeAdapter!.initialize(
+          notifierBeCache,
+          notifierDbgModel,
+          args,
+        );
         if (retVal == false) {
           // theBeAdapter!.
         }

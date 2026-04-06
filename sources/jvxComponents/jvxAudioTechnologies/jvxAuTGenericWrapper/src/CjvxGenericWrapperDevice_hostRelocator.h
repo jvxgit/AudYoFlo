@@ -264,12 +264,12 @@ public:
 		return JVX_ERROR_UNSUPPORTED;
 	}
 
-	jvxErrorType request_trigger_otcon(IjvxTriggerOutputConnector** otcon)
+	jvxErrorType request_trigger_otcon(IjvxTriggerOutputConnector** otcon) override
 	{
 		return JVX_ERROR_UNSUPPORTED;
 	}
 
-	jvxErrorType return_trigger_otcon(IjvxTriggerOutputConnector* otcon)
+	jvxErrorType return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override
 	{
 		return JVX_ERROR_UNSUPPORTED;
 	}

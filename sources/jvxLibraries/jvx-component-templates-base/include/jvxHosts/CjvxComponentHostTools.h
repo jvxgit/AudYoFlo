@@ -17,13 +17,13 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION _reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id,
 		const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE,
-		IjvxReferenceSelector* decider = nullptr);
+		IjvxReferenceSelector* decider = nullptr) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION _return_reference_tool(const jvxComponentIdentification&, 
-		IjvxObject* theObject);
+		IjvxObject* theObject) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION _instance_tool(jvxComponentType, IjvxObject** theObject, 
-		jvxSize filter_id, const char* filter_descriptor) ;
+		jvxSize filter_id, const char* filter_descriptor) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION _return_instance_tool(jvxComponentType tp, IjvxObject* theObject, 
-		jvxSize filter_id, const char* filter_descriptor);
+		jvxSize filter_id, const char* filter_descriptor) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION map_reference_tool(const jvxComponentIdentification& tp, IjvxObject** theObject, jvxSize filter_id,
 		const char* filter_descriptor, jvxBitField filter_stateMask = (jvxBitField)JVX_STATE_DONTCARE,

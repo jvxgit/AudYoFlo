@@ -42,8 +42,13 @@ set(LOCAL_LIBS
 	jvx-audiocodec-helpers_static
 	)
 
+set(LOCAL_SOURCES ${LOCAL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAudioAndroidTechnology_jni.cpp)
+
 # On Android, fetch Oboe and link it together with the logging library
 if(${JVX_OS} MATCHES "Android")
+
+	
+
 	include(FetchContent)
 	FetchContent_Declare(
 		oboe

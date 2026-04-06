@@ -53,7 +53,8 @@ private:
 	JVX_MUTEX_HANDLE safeAccessEngineThreads;
 	jvxBool init_done = false;
 	callbacks_capi cbks_api;
-	jvxNativeHostSysPointers sysPtrs;
+	jvxNativeHostSysPointers sysRefs;
+	jvxNativeHostSysPointers* sysRefPtr = nullptr;
 
 	jvxHandle* showHandle = nullptr;
 

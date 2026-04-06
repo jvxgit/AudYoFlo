@@ -86,7 +86,7 @@
 
 #define JVX_ISINF(value) (std::isinf(value) == 1)
 
-#define JVX_ISNEGINF(value) (std::isinf(value) == -1)
+#define JVX_ISNEGINF(value) (std::isinf(value) && (value < 0))
 
 /*
 #if (__cplusplus < 201703L)

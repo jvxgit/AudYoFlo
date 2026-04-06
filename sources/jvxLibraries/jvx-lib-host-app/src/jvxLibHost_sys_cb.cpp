@@ -42,13 +42,17 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 	jvxCallManagerProperties callGate;
 	oneAddedStaticComponent comp;
 
-	res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
-	if ((res == JVX_NO_ERROR) && theProps)
+	if (sysRefPtr)
 	{
-		res = jvx_set_property(theProps, &sysPtrs, 0, 1, JVX_DATAFORMAT_HANDLE, false, "/sys_ptr", callGate);
-		assert(res == JVX_NO_ERROR);
+		res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
+		if ((res == JVX_NO_ERROR) && theProps)
+		{
+			std::cout << "### Passing sys-ptrs to host instance." << std::endl;
+			res = jvx_set_property(theProps, &sysRefPtr, 0, 1, JVX_DATAFORMAT_POINTER, false, "/sys_ptr", callGate);
+			assert(res == JVX_NO_ERROR);
+		}
+		res = involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
 	}
-	res = involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
 
 	/**
 	 * TODO: We may add an event loop at this point
@@ -432,14 +436,18 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 	genLibHost::unregister_all(static_cast<CjvxProperties*>(this));
 	genLibHost::deallocate_all();
 
-	IjvxProperties* theProps = nullptr;
-	jvxErrorType res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
-	if ((res == JVX_NO_ERROR) && theProps)
+	if (sysRefPtr)
 	{
-		res = jvx_set_property(theProps, nullptr, 0, 1, JVX_DATAFORMAT_HANDLE, false, "/sys_ptr", callGate);
-		assert(res == JVX_NO_ERROR);
+		jvxNativeHostSysPointers* ptrSetNull = nullptr;
+		IjvxProperties* theProps = nullptr;
+		jvxErrorType res = involvedComponents.theHost.hFHost->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
+		if ((res == JVX_NO_ERROR) && theProps)
+		{
+			res = jvx_set_property(theProps, &ptrSetNull, 0, 1, JVX_DATAFORMAT_POINTER, false, "/sys_ptr", callGate);
+			assert(res == JVX_NO_ERROR);
+		}
+		res = involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
 	}
-	res = involvedComponents.theHost.hFHost->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
 
 	_common_set_min.theState = JVX_STATE_NONE;
 	_common_set_properties.propIdSpan = JVX_SIZE_UNSELECTED;

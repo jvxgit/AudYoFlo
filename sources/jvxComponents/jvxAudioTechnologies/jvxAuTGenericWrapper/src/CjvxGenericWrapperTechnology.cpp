@@ -269,6 +269,28 @@ CjvxGenericWrapperTechnology::activate()
 			{
 				res = runtime.theSelectedTech->select();
 			}
+
+			// ==============================================================================
+			if (genGenericWrapper_technology::properties_selected.sys_ptr.value)
+			{
+				IjvxProperties* theProps = nullptr;
+				jvxCallManagerProperties callGate;
+				jvxApiString astr;
+				runtime.theSelectedTech->description(&astr);
+				jvxErrorType resTry = runtime.theSelectedTech->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
+				if ((resTry == JVX_NO_ERROR) && theProps)
+				{
+					resTry = jvx_set_property(theProps, &genGenericWrapper_technology::properties_selected.sys_ptr.value, 0, 1,
+						JVX_DATAFORMAT_POINTER, false, "/sys_ptr", callGate);
+					resTry = runtime.theSelectedTech->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
+				}
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG, JVX_CREATE_CODE_LOCATION_TAG, nullptr);
+				log << "Trying to set sys pointer reference <" << genGenericWrapper_technology::properties_selected.sys_ptr.value << "> for technology object <" << astr.std_str() << ">: --> result = <" << jvxErrorType_descr(resTry) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+			}
+			// ==============================================================================
+
+
 			if(res == JVX_NO_ERROR)
 			{
 				res = runtime.theSelectedTech->activate();
@@ -399,10 +421,31 @@ CjvxGenericWrapperTechnology::deactivate()
 			jvx_bitFClear(_common_set.theFeatureClass);
 			resL = runtime.theSelectedTech->deactivate();
 			assert(resL == JVX_NO_ERROR);
+
+			// ==============================================================================
+			// Reset system handle
+			if (genGenericWrapper_technology::properties_selected.sys_ptr.value)
 			{
-				resL = runtime.theSelectedTech->unselect();
+				IjvxProperties* theProps = nullptr;
+				jvxCallManagerProperties callGate;
+				jvxApiString astr;
+				runtime.theSelectedTech->description(&astr);
+				jvxNativeHostSysPointers* setNullPtr = nullptr;
+				resL = runtime.theSelectedTech->request_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle**)&theProps);
+				if ((resL == JVX_NO_ERROR) && theProps)
+				{
+					resL = jvx_set_property(theProps, &setNullPtr, 0, 1, JVX_DATAFORMAT_POINTER, false, "/sys_ptr", callGate);
+					runtime.theSelectedTech->return_hidden_interface(JVX_INTERFACE_PROPERTIES, (jvxHandle*)theProps);
+				}
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG, JVX_CREATE_CODE_LOCATION_TAG, nullptr);
+				log << "Trying to reset sys pointer reference for technology object <" << astr.std_str() << ">: --> result = <" << jvxErrorType_descr(resL) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 			}
+			// ==============================================================================
+
+			resL = runtime.theSelectedTech->unselect();			
 			assert(resL == JVX_NO_ERROR);
+
 			resL = runtime.theSelectedTech->terminate();
 			assert(resL == JVX_NO_ERROR);
 

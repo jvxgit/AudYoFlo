@@ -32,7 +32,7 @@ namespace CayfAutomationModules
 
 		// void try_connect(jvxComponentIdentification tp_reg, jvxBool& fullyEstablished)override;
 
-		jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated);
+		jvxErrorType activate_all_submodules(const jvxComponentIdentification& tp_activated) override;
 
 		IayfEstablishedProcessesCommon* allocate_chain_realization()override;
 		void deallocate_chain_realization(IayfEstablishedProcessesCommon*)override;

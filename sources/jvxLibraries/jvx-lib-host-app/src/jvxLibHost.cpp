@@ -16,6 +16,7 @@ jvxLibHost::jvxLibHost(): CjvxProperties("jvxLibHost", *this)
 	JVX_INITIALIZE_MUTEX(safeAccessEngineThreads);
 	JVX_INITIALIZE_MUTEX(safeAccessSubReports);
 	confHostFeatures = static_cast<configureHost_features*>(&theHostFeatures);
+	sysRefPtr = &sysRefs;
 }
 
 jvxLibHost::~jvxLibHost()
@@ -104,9 +105,10 @@ jvxLibHost::initSystem(const char* argv[] , int argc, callbacks_capi* cbks, bool
 			/* Update splash screen  */
 			// "Initializing audio host ..."
 
+			// We request all OS specific handles here!!
 			if (cbks_api.request_system_specific_handle)
 			{
-				cbks_api.request_system_specific_handle(&sysPtrs);
+				cbks_api.request_system_specific_handle(&sysRefs);
 			}
 
 			res = boot_initialize(&errMess, NULL);
@@ -227,6 +229,8 @@ jvxLibHost::terminateSystem()
 		{
 			assert(0);
 		}
+
+		sysRefs.reset();
 
 		res = shutdown_terminate(&errMess, NULL);
 		if (res != JVX_NO_ERROR)

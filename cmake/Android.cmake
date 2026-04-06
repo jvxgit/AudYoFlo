@@ -61,8 +61,8 @@ set(JVX_COMPILE_FLAGS_GENERAL "")
 # Taken from here:
 ## https://foonathan.net/2018/10/cmake-warnings/
 set(JVX_LANGUAGE_SPECIFIC_OPTIONS
-  $<$<COMPILE_LANGUAGE:C>:-Wno-psabi>
-  $<$<COMPILE_LANGUAGE:CXX>:-Wno-psabi>
+  $<$<COMPILE_LANGUAGE:C>:-Wno-psabi -Wno-switch>
+  $<$<COMPILE_LANGUAGE:CXX>:-Wno-psabi -Wno-switch>
 )
 
 # Flags for shared libraries

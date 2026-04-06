@@ -34,7 +34,8 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
 {
 	LOGI("AYF - Entering function <%s>", __FUNCTION__);
 }
-
+#else
+	#define LOGI(...) printf(__VA_ARGS__)
 #endif
 
 // ========================================================
@@ -107,9 +108,10 @@ extern "C"
 		return(JVX_NO_ERROR);
 	}
 
-	// Expose this function for cross referencing
+	// Expose this function for cross referencing: global variable to host lib
 	jvxErrorType flutter_vmref_open(jvxNativeHostSysPointers* refsOnReturn)
 	{
+		LOGI("## Calling entry funtion <flutter_vmref_open> to obtain reference to vm = %p", theSystemHandles.primary);
 		if (refsOnReturn) *refsOnReturn = theSystemHandles;
 		return JVX_NO_ERROR;
 	};

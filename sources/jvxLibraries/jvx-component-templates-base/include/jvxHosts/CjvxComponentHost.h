@@ -10,7 +10,11 @@ protected:
 	IjvxDataConnections* datConns = nullptr;
 	IjvxUniqueId* uIdInst = nullptr;
 	IjvxHiddenInterface* hIfRef = nullptr;
-	IjvxObject* myObjectRef = nullptr;
+	IjvxObject* myObjectRef_ = nullptr;
+	CjvxObjectLog* loggerRef = nullptr;
+
+	// Store the vm sys pointers to pass all around the newly selected components
+	jvxNativeHostSysPointers* sys_ptr = nullptr;
 
 	// std::string myModuleName;
 	// std::string myDescription;

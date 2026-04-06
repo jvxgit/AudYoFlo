@@ -136,9 +136,10 @@ SECTION PROPERTIES
 
 		SECTION sys_ptr
 		{
-			DESCRIPTION = "Sys ptr reference to be used by all components";	  // Defaults to NAME if not present
-			TYPE = "JVX_DATAFORMAT_HANDLE";
+			ID = "jvx_sys_ptr";
 			INIT_SET = 0;
+			//DESCRIPTION = "Sys ptr reference to be used by all components";	  // Defaults to NAME if not present
+			//TYPE = "JVX_DATAFORMAT_POINTER";
 		};		
 	};
 	

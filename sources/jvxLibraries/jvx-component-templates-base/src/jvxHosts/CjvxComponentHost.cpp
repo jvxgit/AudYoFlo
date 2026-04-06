@@ -1248,9 +1248,9 @@ CjvxComponentHost::_module_reference_selected_component(const jvxComponentIdenti
 			res = JVX_NO_ERROR;
 			if (str)
 			{
-				if (myObjectRef)
+				if (myObjectRef_)
 				{
-					myObjectRef->module_reference(str, nullptr);
+					myObjectRef_->module_reference(str, nullptr);
 				}
 				//str->assign(myModuleName);
 			}
@@ -1450,9 +1450,9 @@ CjvxComponentHost::_description_selected_component(const jvxComponentIdentificat
 			(tp.tp == JVX_COMPONENT_HOST) && (tp.slotid == 0) && (tp.slotsubid == 0))
 		{
 			res = JVX_NO_ERROR;
-			if (myObjectRef)
+			if (myObjectRef_)
 			{
-				myObjectRef->description(str);
+				myObjectRef_->description(str);
 			}
 		}
 		else if (tp.tp == JVX_COMPONENT_PROCESSING_PROCESS)
@@ -1649,9 +1649,9 @@ CjvxComponentHost::_descriptor_selected_component(const jvxComponentIdentificati
 			(tp.tp == JVX_COMPONENT_HOST) && (tp.slotid == 0) && (tp.slotsubid == 0))
 		{
 			res = JVX_NO_ERROR;
-			if (myObjectRef)
+			if (myObjectRef_)
 			{
-				myObjectRef->descriptor(str);
+				myObjectRef_->descriptor(str);
 			}
 		}
 	}
@@ -1917,6 +1917,21 @@ CjvxComponentHost::_select_component(jvxComponentIdentification& tp, jvxSize idx
 
 									if (res == JVX_NO_ERROR)
 									{
+										// =========================================================================
+										// Trying to set the sys_ptr interface via property - only where required.
+										jvxCallManagerProperties callGate;
+										jvxApiString astr;
+										theObject->description(&astr);
+
+										auto ptrProps = reqInterfaceObj<IjvxProperties>(theObject);
+										jvxErrorType resTry = jvx_set_property(ptrProps, &sys_ptr, 0, 1, JVX_DATAFORMAT_POINTER, false, "/sys_ptr", callGate);																				
+										
+										JVX_START_LOCK_LOG_REF(loggerRef, jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG, JVX_CREATE_CODE_LOCATION_TAG, nullptr);
+										log << "Trying to set sys pointer reference <" << sys_ptr << "> for technology object <" << astr.std_str() << ": --> result = <" << jvxErrorType_descr(resTry) << ">." << std::endl;
+										JVX_STOP_LOCK_LOG_REF(loggerRef, JVX_CREATE_CODE_LOCATION_TAG);
+
+										// =========================================================================
+
 										elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech = theTech;
 										elmIt_tech->technologyInstances.selTech[tp.slotid].idSel = idx;
 										elmIt_tech->technologyInstances.selTech[tp.slotid].uid = uid;
@@ -3017,6 +3032,24 @@ CjvxComponentHost::_unselect_selected_component(jvxComponentIdentification& tp)
 							IjvxStateMachine* theObjectSm = static_cast<IjvxStateMachine*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
 							IjvxObject* theObject = static_cast<IjvxObject*>(elmIt_tech->technologyInstances.selTech[tp.slotid].theHandle_shortcut_tech);
 
+							// =========================================================================
+							// Trying to set the sys_ptr interface via property - only where required.
+							jvxCallManagerProperties callGate;
+							jvxApiString astr;
+							theObject->description(&astr);
+							jvxNativeHostSysPointers* setNullptr = nullptr;
+
+							// =========================================================================
+							auto ptrProps = reqInterfaceObj<IjvxProperties>(theObject);
+							jvxErrorType resTry = jvx_set_property(ptrProps, &setNullptr, 0, 1, JVX_DATAFORMAT_POINTER, false, "/sys_ptr", callGate);
+
+							JVX_START_LOCK_LOG_REF(loggerRef, jvxLogLevel::JVX_LOGLEVEL_4_DEBUG_OPERATION_WITH_AVRG_DEGREE_DEBUG, JVX_CREATE_CODE_LOCATION_TAG, nullptr);
+							log << "Trying to reset sys pointer reference for technology object < " << astr.std_str()<< ": --> result = <" << jvxErrorType_descr(resTry) << ">." << std::endl;							
+							JVX_STOP_LOCK_LOG_REF(loggerRef, JVX_CREATE_CODE_LOCATION_TAG);
+
+							// =========================================================================
+
+
 							prerun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp);
 							res = static_local_unselect(theHinterface, theObject, tp, theObjectSm);
 							postrun_stateswitch(JVX_STATE_SWITCH_UNSELECT, tp, res);
@@ -3817,7 +3850,7 @@ CjvxComponentHost::_request_object_selected_component(const jvxComponentIdentifi
 			{
 				if (theObj)
 				{
-					*theObj = myObjectRef;
+					*theObj = myObjectRef_;
 				}
 				res = JVX_NO_ERROR;
 			}
@@ -4039,7 +4072,7 @@ CjvxComponentHost::_return_object_selected_component(const jvxComponentIdentific
 				(tp.tp == JVX_COMPONENT_HOST) && (tp.slotid == 0) && (tp.slotsubid == 0))
 			{
 				res = JVX_NO_ERROR;
-				if (theObj != myObjectRef)
+				if (theObj != myObjectRef_)
 				{
 					res = JVX_ERROR_INVALID_ARGUMENT;
 				}

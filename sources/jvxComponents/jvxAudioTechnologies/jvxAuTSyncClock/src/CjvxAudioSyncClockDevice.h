@@ -57,8 +57,8 @@ public:
 	
 	virtual void init(CjvxAudioSyncClockTechnology* ptr);
 
-	jvxErrorType activate();
-	jvxErrorType deactivate();
+	jvxErrorType activate() override;
+	jvxErrorType deactivate() override;
 
 	// ===================================================================================
 	// New linkdata connection interface
@@ -96,7 +96,7 @@ public:
 	jvxErrorType set_property(jvxCallManagerProperties& callGate,
 		const jvx::propertyRawPointerType::IjvxRawPointerType& rawPtr,
 		const jvx::propertyAddress::IjvxPropertyAddress& ident,
-		const jvx::propertyDetail::CjvxTranferDetail& trans);
+		const jvx::propertyDetail::CjvxTranferDetail& trans) override;
 
 	void updateDependentProperties();
 

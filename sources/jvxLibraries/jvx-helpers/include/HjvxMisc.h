@@ -1513,6 +1513,7 @@ public:
 	~jvxostream();
 	void set_module_name(const std::string& modName);
 	void set_debug_level(jvxSize dbgLev);
+	jvxState get_state() {return theStat;};
 
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK
 	void setOriginTag(const std::string& tag, jvxBool acquire);
@@ -1709,8 +1710,8 @@ public:
 void jvx_init_text_log(CjvxLogEmbedding& embLog);
 void jvx_terminate_text_log(CjvxLogEmbedding& embLog);
 
-void jvx_request_text_log(CjvxLogEmbedding& embLog);
-void jvx_return_text_log(CjvxLogEmbedding& embLog);
+void jvx_request_text_log(CjvxLogEmbedding& embLog, jvxBool simpleCall = false);
+void jvx_return_text_log(CjvxLogEmbedding& embLog, jvxBool simpleCall = false);
 
 #define JVX_CREATE_CODE_LOCATION_TAG ((std::string) __FUNCTION__ + ", line #" + jvx_int2String(__LINE__))
 // #define Identity(x) x

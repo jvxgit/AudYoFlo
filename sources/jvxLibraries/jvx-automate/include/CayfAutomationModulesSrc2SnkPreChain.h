@@ -87,7 +87,7 @@ namespace CayfAutomationModules
 		jvxErrorType pre_run_chain_prepare(IjvxObject* obj_dev, IayfEstablishedProcessesCommon* realizeChain) override;
 		jvxErrorType post_run_chain_prepare(IayfEstablishedProcessesCommon* realizeChain) override;
 
-		void print(std::ostream& out);
+		void print(std::ostream& out) override;
 	};
 }
 

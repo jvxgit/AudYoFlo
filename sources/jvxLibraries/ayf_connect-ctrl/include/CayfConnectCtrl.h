@@ -1,4 +1,4 @@
-#ifndef _AYFWEAVERCONNECTCTRL_H__ 
+#ifndef _AYFWEAVERCONNECTCTRL_H_ 
 #define _AYFWEAVERCONNECTCTRL_H_
 
 #include "CayfComponentLib.h"

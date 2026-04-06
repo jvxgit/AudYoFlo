@@ -341,6 +341,7 @@ static oneEntryProperties jvxProperties[] =
 	{   "jvx_processing_formatspec_string"		,	JVX_PROPERTIES_OFFSET_SYSTEM + 32				,	JVX_DATAFORMAT_STRING			,	1	, JVX_PROPERTY_DECODER_NONE					,"system/formatspec" },
 	{	"jvx_num_channels_size"					,	JVX_PROPERTIES_OFFSET_SYSTEM + 33				,	JVX_DATAFORMAT_SIZE				,	1	, JVX_PROPERTY_DECODER_VALUE_OR_DONTCARE	,"num_channels"},
 	{	"jvx_selection_channels_sellist"		,	JVX_PROPERTIES_OFFSET_SYSTEM + 34				,	JVX_DATAFORMAT_SELECTION_LIST	,	1	, JVX_PROPERTY_DECODER_MULTI_SELECTION		,"sel_channels"},
+	{	"jvx_sys_ptr"							,	JVX_PROPERTIES_OFFSET_SYSTEM + 35				,	JVX_DATAFORMAT_POINTER			,	1	, JVX_PROPERTY_DECODER_NONE					,"sys_ptr"},
 
 	/*
 	* No longer in use. Use the interface IjvxManipulate to change the name of a component!!
