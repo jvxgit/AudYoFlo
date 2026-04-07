@@ -30,6 +30,7 @@ oneRs232Port::oneRs232Port()
 oneRs232Port::oneRs232Port(const oneRs232Port& other)
 {
 	initialize();
+	this->copy(other);
 }
 
 oneRs232Port::~oneRs232Port()
@@ -54,6 +55,20 @@ oneRs232Port::terminate()
 	JVX_TERMINATE_MUTEX(safeAccessConnection);
 #ifdef JVX_RS232_DEBUG
 	JVX_TERMINATE_MUTEX(dbg.safeAccess);
+#endif
+}
+
+void 
+oneRs232Port::copy(const oneRs232Port& other)
+{
+	// Copy all but the critical sections
+	init = other.init;
+	runtime = other.runtime;
+	threads = other.threads;
+	theState = other.theState;
+#ifdef JVX_RS232_DEBUG
+	dbg.fn = other.dbg.fn;
+	dbg.tRef = other.dbg.tRef;
 #endif
 }
 
@@ -169,9 +184,9 @@ CjvxRs232::availablePorts(jvxApiStringList* allPorts)
 	if(_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
 		std::vector<std::string> lst;
-		for(i = 0; i < _system.thePorts.size(); i++)
+		for(auto & elm: _system.thePorts)
 		{
-			lst.push_back(_system.thePorts[i].init.shortcut);
+			lst.push_back(elm.init.shortcut);
 		}
 
 		if (allPorts)
@@ -204,7 +219,9 @@ CjvxRs232::state_port(jvxSize idPort, jvxState* theState)
 		{
 			if(theState)
 			{
-				*theState = _system.thePorts[idPort].theState;
+				auto elm = _system.thePorts.begin();
+				std::advance(elm, idPort);
+				*theState = elm->theState;
 			}
 			res = JVX_NO_ERROR;
 		}
@@ -232,28 +249,30 @@ CjvxRs232::start_port(jvxSize idPort, jvxHandle* cfgIn, jvxConnectionPrivateType
 		assert(whatsthis == JVX_CONNECT_PRIVATE_ARG_TYPE_RS232_CONFIG);
 		if(idPort < _system.thePorts.size())
 		{
-			JVX_LOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
-			if(_system.thePorts[idPort].theState == JVX_STATE_INIT)
+			auto elm = _system.thePorts.begin();
+			std::advance(elm, idPort);
+			JVX_LOCK_MUTEX(elm->safeAccessConnection);
+			if(elm->theState == JVX_STATE_INIT)
 			{
 				// Open COM port
-				_system.thePorts[idPort].runtime.hdl  = CreateFile(("\\\\.\\" + _system.thePorts[idPort].init.shortcut).c_str(),
+				elm->runtime.hdl  = CreateFile(("\\\\.\\" + elm->init.shortcut).c_str(),
 					GENERIC_WRITE|GENERIC_READ,
 					0, NULL, OPEN_EXISTING,
 					FILE_FLAG_OVERLAPPED, NULL);
 
-				if (_system.thePorts[idPort].runtime.hdl != INVALID_HANDLE_VALUE)
+				if (elm->runtime.hdl != INVALID_HANDLE_VALUE)
 				{
 					// Successful start of RS-232 device!
 
-					_system.thePorts[idPort].runtime.theReport = theReport;
+					elm->runtime.theReport = theReport;
 
 					// Copy configuration
-					_system.thePorts[idPort].runtime.cfg = *cfg;
+					elm->runtime.cfg = *cfg;
 
 					DCB rs232SetupElement;
 					rs232SetupElement.DCBlength = sizeof(DCB);
 
-					GetCommState(_system.thePorts[idPort].runtime.hdl, &rs232SetupElement);
+					GetCommState(elm->runtime.hdl, &rs232SetupElement);
 					rs232SetupElement.BaudRate = cfg->bRate;
 
 					rs232SetupElement.ByteSize = cfg->bits4Byte;
@@ -422,56 +441,56 @@ CjvxRs232::start_port(jvxSize idPort, jvxHandle* cfgIn, jvxConnectionPrivateType
 						break;
 					}
 
-					BOOL resCom = SetCommState(_system.thePorts[idPort].runtime.hdl, &rs232SetupElement);
+					BOOL resCom = SetCommState(elm->runtime.hdl, &rs232SetupElement);
 
 					// Set port configurations
 					assert(resCom == TRUE);
 					//					DWORD sysError = GetLastError();
 
-					_system.thePorts[idPort].runtime.sc.transmit.szfld = 0;
-					_system.thePorts[idPort].runtime.sc.transmit.fld = NULL;
+					elm->runtime.sc.transmit.szfld = 0;
+					elm->runtime.sc.transmit.fld = NULL;
 
-					if (_system.thePorts[idPort].runtime.cfg.secureChannel.transmit.active)
+					if (elm->runtime.cfg.secureChannel.transmit.active)
 					{
-						if (JVX_CHECK_SIZE_SELECTED(_system.thePorts[idPort].runtime.cfg.secureChannel.transmit.preallocationSize))
+						if (JVX_CHECK_SIZE_SELECTED(elm->runtime.cfg.secureChannel.transmit.preallocationSize))
 						{
-							if (_system.thePorts[idPort].runtime.cfg.secureChannel.transmit.preallocationSize > 0)
+							if (elm->runtime.cfg.secureChannel.transmit.preallocationSize > 0)
 							{
-								_system.thePorts[idPort].runtime.sc.transmit.szfld = _system.thePorts[idPort].runtime.cfg.secureChannel.transmit.preallocationSize;
-								JVX_SAFE_NEW_FLD(_system.thePorts[idPort].runtime.sc.transmit.fld, jvxByte, _system.thePorts[idPort].runtime.sc.transmit.szfld);
-								memset(_system.thePorts[idPort].runtime.sc.transmit.fld, 0, sizeof(jvxByte) *  _system.thePorts[idPort].runtime.sc.transmit.szfld);
+								elm->runtime.sc.transmit.szfld = elm->runtime.cfg.secureChannel.transmit.preallocationSize;
+								JVX_SAFE_NEW_FLD(elm->runtime.sc.transmit.fld, jvxByte, elm->runtime.sc.transmit.szfld);
+								memset(elm->runtime.sc.transmit.fld, 0, sizeof(jvxByte) * elm->runtime.sc.transmit.szfld);
 							}
 						}
 					}
 
-					if (_system.thePorts[idPort].runtime.cfg.secureChannel.receive.active)
+					if (elm->runtime.cfg.secureChannel.receive.active)
 					{
-						_system.thePorts[idPort].runtime.sc.receive.szfld = _system.thePorts[idPort].runtime.cfg.secureChannel.receive.maxPreReadSize;
-						assert(_system.thePorts[idPort].runtime.sc.receive.szfld);
-						JVX_SAFE_NEW_FLD(_system.thePorts[idPort].runtime.sc.receive.fld, jvxByte, _system.thePorts[idPort].runtime.sc.receive.szfld);
-						memset(_system.thePorts[idPort].runtime.sc.receive.fld, 0, sizeof(jvxByte)* _system.thePorts[idPort].runtime.sc.receive.szfld);
-						_system.thePorts[idPort].runtime.sc.receive.offset_read = 0;
-						_system.thePorts[idPort].runtime.sc.receive.offset_write = 0;
+						elm->runtime.sc.receive.szfld = elm->runtime.cfg.secureChannel.receive.maxPreReadSize;
+						assert(elm->runtime.sc.receive.szfld);
+						JVX_SAFE_NEW_FLD(elm->runtime.sc.receive.fld, jvxByte, elm->runtime.sc.receive.szfld);
+						memset(elm->runtime.sc.receive.fld, 0, sizeof(jvxByte)* elm->runtime.sc.receive.szfld);
+						elm->runtime.sc.receive.offset_read = 0;
+						elm->runtime.sc.receive.offset_write = 0;
 					}
 
-					_system.thePorts[idPort].threads.inLoopActive = true;
-					_system.thePorts[idPort].threads.enter.this_pointer = this;
-					_system.thePorts[idPort].threads.enter.portId = idPort;
+					elm->threads.inLoopActive = true;
+					elm->threads.enter.this_pointer = this;
+					elm->threads.enter.portId = idPort;
 
 #ifdef JVX_RS232_DEBUG
-					JVX_GET_TICKCOUNT_US_SETREF(_system.thePorts[idPort].dbg.tRef);
+					JVX_GET_TICKCOUNT_US_SETREF(elm->dbg.tRef);
 					startprintout(idPort);
 #endif
-					JVX_CREATE_THREAD(_system.thePorts[idPort].threads.hdl, thread_receive, &_system.thePorts[idPort].threads.enter, _system.thePorts[idPort].threads.id);
+					JVX_CREATE_THREAD(elm->threads.hdl, thread_receive, &elm->threads.enter, elm->threads.id);
 					if (cfg->boostPrio)
 					{
-						JVX_SET_THREAD_PRIORITY(_system.thePorts[idPort].threads.hdl, JVX_THREAD_PRIORITY_REALTIME);
+						JVX_SET_THREAD_PRIORITY(elm->threads.hdl, JVX_THREAD_PRIORITY_REALTIME);
 					}
 
 					// Wait for thread to come up
 					JVX_SLEEP_MS(200);
 
-					_system.thePorts[idPort].theState = JVX_STATE_PROCESSING;
+					elm->theState = JVX_STATE_PROCESSING;
 					res = JVX_NO_ERROR;
 				}
 				else
@@ -483,7 +502,7 @@ CjvxRs232::start_port(jvxSize idPort, jvxHandle* cfgIn, jvxConnectionPrivateType
 			{
 				res = JVX_ERROR_WRONG_STATE_SUBMODULE;
 			}
-			JVX_UNLOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
+			JVX_UNLOCK_MUTEX(elm->safeAccessConnection);
 		}
 		else
 		{
@@ -507,7 +526,9 @@ CjvxRs232::get_constraints_buffer(jvxSize idPort, jvxSize* bytesPrepend, jvxSize
 	{
 		if(idPort < _system.thePorts.size())
 		{
-			if(_system.thePorts[idPort].theState == JVX_STATE_PROCESSING)
+			auto elm = _system.thePorts.begin();
+			std::advance(elm, idPort);
+			if(elm->theState == JVX_STATE_PROCESSING)
 			{
 				if(bytesPrepend)
 				{
@@ -559,53 +580,56 @@ CjvxRs232::sendMessage_port(jvxSize idPort, jvxByte* fld, jvxSize* szFld, jvxHan
 	{
 		if(idPort < _system.thePorts.size())
 		{
-			JVX_LOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
-			if(_system.thePorts[idPort].theState == JVX_STATE_PROCESSING)
+			auto elm = _system.thePorts.begin();
+			std::advance(elm, idPort);
+
+			JVX_LOCK_MUTEX(elm->safeAccessConnection);
+			if(elm->theState == JVX_STATE_PROCESSING)
 			{
-				if (_system.thePorts[idPort].runtime.cfg.secureChannel.transmit.active)
+				if (elm->runtime.cfg.secureChannel.transmit.active)
 				{
-					szBytesWrap = numberBytesWrapSend(fld, *szFld, _system.thePorts[idPort].runtime.cfg.secureChannel.startByte, 
-						_system.thePorts[idPort].runtime.cfg.secureChannel.stopByte, 
-						_system.thePorts[idPort].runtime.cfg.secureChannel.escByte);
-					if (_system.thePorts[idPort].runtime.sc.transmit.szfld < szBytesWrap)
+					szBytesWrap = numberBytesWrapSend(fld, *szFld, elm->runtime.cfg.secureChannel.startByte, 
+						elm->runtime.cfg.secureChannel.stopByte, 
+						elm->runtime.cfg.secureChannel.escByte);
+					if (elm->runtime.sc.transmit.szfld < szBytesWrap)
 					{
-						if (_system.thePorts[idPort].runtime.sc.transmit.fld)
+						if (elm->runtime.sc.transmit.fld)
 						{
-							JVX_SAFE_DELETE_FLD(_system.thePorts[idPort].runtime.sc.transmit.fld, jvxByte);
-							_system.thePorts[idPort].runtime.sc.transmit.fld = NULL;
-							_system.thePorts[idPort].runtime.sc.transmit.szfld = 0;
+							JVX_SAFE_DELETE_FLD(elm->runtime.sc.transmit.fld, jvxByte);
+							elm->runtime.sc.transmit.fld = NULL;
+							elm->runtime.sc.transmit.szfld = 0;
 						}
-						_system.thePorts[idPort].runtime.sc.transmit.szfld = szBytesWrap;
-						JVX_SAFE_NEW_FLD(_system.thePorts[idPort].runtime.sc.transmit.fld, jvxByte, _system.thePorts[idPort].runtime.sc.transmit.szfld);
-						memset(_system.thePorts[idPort].runtime.sc.transmit.fld, 0, sizeof(jvxByte) *_system.thePorts[idPort].runtime.sc.transmit.szfld);
+						elm->runtime.sc.transmit.szfld = szBytesWrap;
+						JVX_SAFE_NEW_FLD(elm->runtime.sc.transmit.fld, jvxByte, elm->runtime.sc.transmit.szfld);
+						memset(elm->runtime.sc.transmit.fld, 0, sizeof(jvxByte) *elm->runtime.sc.transmit.szfld);
 					}
-					insertByteWrapReplace(fld, *szFld, _system.thePorts[idPort].runtime.sc.transmit.fld, 
-						_system.thePorts[idPort].runtime.sc.transmit.szfld, 
-						_system.thePorts[idPort].runtime.cfg.secureChannel.startByte,
-						_system.thePorts[idPort].runtime.cfg.secureChannel.stopByte, 
-						_system.thePorts[idPort].runtime.cfg.secureChannel.escByte,
+					insertByteWrapReplace(fld, *szFld, elm->runtime.sc.transmit.fld, 
+						elm->runtime.sc.transmit.szfld, 
+						elm->runtime.cfg.secureChannel.startByte,
+						elm->runtime.cfg.secureChannel.stopByte, 
+						elm->runtime.cfg.secureChannel.escByte,
 						writtenSC);
 					assert(writtenSC == szBytesWrap);
-					fld = _system.thePorts[idPort].runtime.sc.transmit.fld;
+					fld = elm->runtime.sc.transmit.fld;
 					szFldPtr = &szBytesWrap;
 				}
 
 				JVX_WAIT_FOR_NOTIFICATION_I(eventSendOL);
 
 #ifdef JVX_RS232_DEBUG
-				printoutBuffer(idPort, fld, *szFldPtr, _system.thePorts[idPort].runtime.cfg.secureChannel.startByte, _system.thePorts[idPort].runtime.cfg.secureChannel.stopByte, _system.thePorts[idPort].runtime.cfg.secureChannel.escByte, "send");
+				printoutBuffer(idPort, fld, *szFldPtr, elm->runtime.cfg.secureChannel.startByte, elm->runtime.cfg.secureChannel.stopByte, elm->runtime.cfg.secureChannel.escByte, "send");
 #endif
-				if(!WriteFile(_system.thePorts[idPort].runtime.hdl, fld, (DWORD)*szFldPtr, &written, &osSend))
+				if(!WriteFile(elm->runtime.hdl, fld, (DWORD)*szFldPtr, &written, &osSend))
 				{
 					resB = JVX_WAIT_FOR_NOTIFICATION_II_INF(eventSendOL);
 					assert(resB == WAIT_OBJECT_0);
-					GetOverlappedResult(_system.thePorts[idPort].runtime.hdl, &osSend, &written, TRUE);
+					GetOverlappedResult(elm->runtime.hdl, &osSend, &written, TRUE);
 				}
 #ifdef JVX_RS232_DEBUG
 				printoutText(idPort, "Send complete");
 #endif
 
-				if (_system.thePorts[idPort].runtime.cfg.secureChannel.transmit.active)
+				if (elm->runtime.cfg.secureChannel.transmit.active)
 				{
 					if (written < szBytesWrap)
 					{
@@ -622,7 +646,7 @@ CjvxRs232::sendMessage_port(jvxSize idPort, jvxByte* fld, jvxSize* szFld, jvxHan
 			{
 				res = JVX_ERROR_WRONG_STATE_SUBMODULE;
 			}
-			JVX_UNLOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
+			JVX_UNLOCK_MUTEX(elm->safeAccessConnection);
 		}
 		else
 		{
@@ -807,36 +831,39 @@ CjvxRs232::stop_port(jvxSize idPort)
 	{
 		if(idPort < _system.thePorts.size())
 		{
-			JVX_LOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
-			if(_system.thePorts[idPort].theState == JVX_STATE_PROCESSING)
+			auto elm = _system.thePorts.begin();
+			std::advance(elm, idPort);
+
+			JVX_LOCK_MUTEX(elm->safeAccessConnection);
+			if(elm->theState == JVX_STATE_PROCESSING)
 			{
-				_system.thePorts[idPort].threads.inLoopActive = false;
-				_system.thePorts[idPort].theState = JVX_STATE_COMPLETE;
-				JVX_UNLOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
+				elm->threads.inLoopActive = false;
+				elm->theState = JVX_STATE_COMPLETE;
+				JVX_UNLOCK_MUTEX(elm->safeAccessConnection);
 
 				// RS232 connection is in use, close port at first
-				CloseHandle(_system.thePorts[idPort].runtime.hdl);
+				CloseHandle(elm->runtime.hdl);
 
 				// Wait for thread to terminate :: MUST BE OUTSIDE MUTEX!!!
-				JVX_WAIT_FOR_THREAD_TERMINATE_INF(_system.thePorts[idPort].threads.hdl);
+				JVX_WAIT_FOR_THREAD_TERMINATE_INF(elm->threads.hdl);
 
-				assert(_system.thePorts[idPort].theState == JVX_STATE_INIT);
+				assert(elm->theState == JVX_STATE_INIT);
 
 #ifdef JVX_RS232_DEBUG
 				stoprintout(idPort);
 #endif
 
-				_system.thePorts[idPort].threads.hdl = INVALID_HANDLE_VALUE;
-				if (_system.thePorts[idPort].runtime.sc.transmit.fld)
+				elm->threads.hdl = INVALID_HANDLE_VALUE;
+				if (elm->runtime.sc.transmit.fld)
 				{
-					JVX_SAFE_DELETE_FLD(_system.thePorts[idPort].runtime.sc.transmit.fld, jvxByte);
-					_system.thePorts[idPort].runtime.sc.transmit.fld = NULL;
+					JVX_SAFE_DELETE_FLD(elm->runtime.sc.transmit.fld, jvxByte);
+					elm->runtime.sc.transmit.fld = NULL;
 				}
 				
 			}
 			else
 			{
-				JVX_UNLOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
+				JVX_UNLOCK_MUTEX(elm->safeAccessConnection);
 				res = JVX_ERROR_WRONG_STATE_SUBMODULE;
 			}
 		}
@@ -868,8 +895,11 @@ CjvxRs232::control_port(jvxSize idPort, jvxSize operation_id, jvxHandle* priv, j
 	{
 		if (idPort < _system.thePorts.size())
 		{
-			JVX_LOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
-			if (_system.thePorts[idPort].theState == JVX_STATE_PROCESSING)
+			auto elm = _system.thePorts.begin();
+			std::advance(elm, idPort);
+
+			JVX_LOCK_MUTEX(elm->safeAccessConnection);
+			if (elm->theState == JVX_STATE_PROCESSING)
 			{
 				switch (contrType)
 				{
@@ -880,7 +910,7 @@ CjvxRs232::control_port(jvxSize idPort, jvxSize operation_id, jvxHandle* priv, j
 						assert(whatsthis == JVX_CONNECT_PRIVATE_ARG_TYPE_RS232_MODEM_STATUS);
 						retVal = (jvxUInt16*)priv;
 						res = JVX_NO_ERROR;
-						if (!GetCommModemStatus(_system.thePorts[idPort].runtime.hdl, &modemState))
+						if (!GetCommModemStatus(elm->runtime.hdl, &modemState))
 						{
 							assert(0);
 						}
@@ -925,7 +955,7 @@ CjvxRs232::control_port(jvxSize idPort, jvxSize operation_id, jvxHandle* priv, j
 			{
 				res = JVX_ERROR_WRONG_STATE;
 			}
-			JVX_UNLOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
+			JVX_UNLOCK_MUTEX(elm->safeAccessConnection);
 		}
 		else
 		{
@@ -1008,51 +1038,55 @@ CjvxRs232::receiveLoop(int idPort)
 
 	// Expect indications for all handshake control and arriving bytes
 	DWORD mask = EV_RXCHAR;
-	if(jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_RING_SHFT))
+
+	auto elm = _system.thePorts.begin();
+	std::advance(elm, idPort);
+
+	if(jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_RING_SHFT))
 	{
 		mask |= EV_RING;
 	}
-	if(jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_CTS_SHFT))
+	if(jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_CTS_SHFT))
 	{
 		mask |= EV_CTS;
 	}
-	if(jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_RLSD_SHFT))
+	if(jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_RLSD_SHFT))
 	{
 		mask |= EV_RLSD;
 	}
-	if(jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_DSR_SHFT))
+	if(jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_DSR_SHFT))
 	{
 		mask |= EV_DSR;
 	}
 
-	SetCommMask(_system.thePorts[idPort].runtime.hdl, mask);
+	SetCommMask(elm->runtime.hdl, mask);
 
-	if (_system.thePorts[idPort].runtime.theReport)
+	if (elm->runtime.theReport)
 	{
 		jvxBitField mask;
 		jvx_bitSet(mask, JVX_CONNECTION_REPORT_STARTUP_COMPLETE_SHFT);
-		_system.thePorts[idPort].runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+		elm->runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 	}
 
-	if (!jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_CTS_SHFT))
+	if (!jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_CTS_SHFT))
 	{
-		if (jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_ESTABLISHED_SHIFT))
+		if (jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_ESTABLISHED_SHIFT))
 		{
-			if (_system.thePorts[idPort].runtime.theReport)
+			if (elm->runtime.theReport)
 			{
 				jvxBitField mask;
 				jvx_bitSet(mask, JVX_RS232_REPORT_CONNECTION_ESTABLISHED_SHIFT);
-				_system.thePorts[idPort].runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+				elm->runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 			}
 		}
 	}
 
-	while(_system.thePorts[idPort].threads.inLoopActive)
+	while(elm->threads.inLoopActive)
 	{
 		evtMask = 0;
 
 		// Do not block critical section
-		if(!WaitCommEvent(_system.thePorts[idPort].runtime.hdl, &evtMask, &osObservate))
+		if(!WaitCommEvent(elm->runtime.hdl, &evtMask, &osObservate))
 		{
 			WaitForSingleObject(osObservate.hEvent, INFINITE);
 		}
@@ -1069,44 +1103,44 @@ CjvxRs232::receiveLoop(int idPort)
 			ind = 0;
 
 			// Obtain the input FIFO status: How many bytes are ready to be read?
-			ClearCommError(_system.thePorts[idPort].runtime.hdl, &errorWord, &staErr);
+			ClearCommError(elm->runtime.hdl, &errorWord, &staErr);
 
 			// What to expect here?
 			switch (errorWord)
 			{
 			case CE_BREAK:
 				_report_text_message(
-					("Break Error Condition reported by RS232 device on " + _system.thePorts[idPort].init.friendlyName).c_str(),
+					("Break Error Condition reported by RS232 device on " + elm->init.friendlyName).c_str(),
 					JVX_REPORT_PRIORITY_WARNING);
 				break;
 			case CE_FRAME:
 				_report_text_message(
-					("Frame Error Condition reported by RS232 device on " + _system.thePorts[idPort].init.friendlyName).c_str(),
+					("Frame Error Condition reported by RS232 device on " + elm->init.friendlyName).c_str(),
 					JVX_REPORT_PRIORITY_WARNING);
 				break;
 			case CE_IOE:
 				_report_text_message(
-					("I/O Error Condition reported by RS232 device on " + _system.thePorts[idPort].init.friendlyName).c_str(),
+					("I/O Error Condition reported by RS232 device on " + elm->init.friendlyName).c_str(),
 					JVX_REPORT_PRIORITY_WARNING);
 				break;
 			case CE_MODE:
 				_report_text_message(
-					("Mode Error Condition reported by RS232 device on " + _system.thePorts[idPort].init.friendlyName).c_str(),
+					("Mode Error Condition reported by RS232 device on " + elm->init.friendlyName).c_str(),
 					JVX_REPORT_PRIORITY_WARNING);
 				break;
 			case CE_OVERRUN:
 				_report_text_message(
-					("Overrun Error Condition reported by RS232 device on " + _system.thePorts[idPort].init.friendlyName).c_str(),
+					("Overrun Error Condition reported by RS232 device on " + elm->init.friendlyName).c_str(),
 					JVX_REPORT_PRIORITY_WARNING);
 				break;
 			case CE_RXPARITY:
 				_report_text_message(
-					("Mode Error Condition reported by RS232 device on " + _system.thePorts[idPort].init.friendlyName).c_str(),
+					("Mode Error Condition reported by RS232 device on " + elm->init.friendlyName).c_str(),
 					JVX_REPORT_PRIORITY_WARNING);
 				break;
 			case CE_TXFULL:
 				_report_text_message(
-					("TX Full Error Condition reported by RS232 device on " + _system.thePorts[idPort].init.friendlyName).c_str(),
+					("TX Full Error Condition reported by RS232 device on " + elm->init.friendlyName).c_str(),
 					JVX_REPORT_PRIORITY_WARNING);
 				break;
 			default:
@@ -1118,12 +1152,12 @@ CjvxRs232::receiveLoop(int idPort)
 			
 			while (valuesInQueue > 0)
 			{
-				if (_system.thePorts[idPort].runtime.cfg.secureChannel.receive.active)
+				if (elm->runtime.cfg.secureChannel.receive.active)
 				{
 					jvxSize sz = valuesInQueue;
-					sz = JVX_MIN(sz, _system.thePorts[idPort].runtime.sc.receive.szfld - _system.thePorts[idPort].runtime.sc.receive.offset_write);
-					if (ReadFile(_system.thePorts[idPort].runtime.hdl,
-						_system.thePorts[idPort].runtime.sc.receive.fld + _system.thePorts[idPort].runtime.sc.receive.offset_write, (DWORD)sz, &read, &osRead) == FALSE)
+					sz = JVX_MIN(sz, elm->runtime.sc.receive.szfld - elm->runtime.sc.receive.offset_write);
+					if (ReadFile(elm->runtime.hdl,
+						elm->runtime.sc.receive.fld + elm->runtime.sc.receive.offset_write, (DWORD)sz, &read, &osRead) == FALSE)
 					{
 						// Overlapped IO (required for Vista)
 						DWORD err = GetLastError();
@@ -1147,25 +1181,25 @@ CjvxRs232::receiveLoop(int idPort)
 					}
 
 #ifdef JVX_RS232_DEBUG
-					printoutBuffer(idPort, _system.thePorts[idPort].runtime.sc.receive.fld + _system.thePorts[idPort].runtime.sc.receive.offset_read,
-						read, _system.thePorts[idPort].runtime.cfg.secureChannel.startByte,
-						_system.thePorts[idPort].runtime.cfg.secureChannel.stopByte,
-						_system.thePorts[idPort].runtime.cfg.secureChannel.escByte, "roff" + jvx_size2String(_system.thePorts[idPort].runtime.sc.receive.offset_read) + "-woff" + jvx_size2String(_system.thePorts[idPort].runtime.sc.receive.offset_write) + "_");
+					printoutBuffer(idPort, elm->runtime.sc.receive.fld + elm->runtime.sc.receive.offset_read,
+						read, elm->runtime.cfg.secureChannel.startByte,
+						elm->runtime.cfg.secureChannel.stopByte,
+						elm->runtime.cfg.secureChannel.escByte, "roff" + jvx_size2String(elm->runtime.sc.receive.offset_read) + "-woff" + jvx_size2String(elm->runtime.sc.receive.offset_write) + "_");
 #endif
 					valuesInQueue -= read;
-					_system.thePorts[idPort].runtime.sc.receive.offset_write += read;
+					elm->runtime.sc.receive.offset_write += read;
 
 					while (1)
 					{
 						theSpecialChar = 0;
-						sz = numberBytesUnwrapReceive(_system.thePorts[idPort].runtime.sc.receive.fld, _system.thePorts[idPort].runtime.sc.receive.offset_read,
-							_system.thePorts[idPort].runtime.sc.receive.offset_write, _system.thePorts[idPort].runtime.cfg.secureChannel.startByte,
-							_system.thePorts[idPort].runtime.cfg.secureChannel.stopByte, _system.thePorts[idPort].runtime.cfg.secureChannel.escByte,
+						sz = numberBytesUnwrapReceive(elm->runtime.sc.receive.fld, elm->runtime.sc.receive.offset_read,
+							elm->runtime.sc.receive.offset_write, elm->runtime.cfg.secureChannel.startByte,
+							elm->runtime.cfg.secureChannel.stopByte, elm->runtime.cfg.secureChannel.escByte,
 							theSpecialChar);
 						if (sz)
 						{
-							assert(_system.thePorts[idPort].runtime.theReport);
-							_system.thePorts[idPort].runtime.theReport->provide_data_and_length(&ptrRead, &sz, &offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+							assert(elm->runtime.theReport);
+							elm->runtime.theReport->provide_data_and_length(&ptrRead, &sz, &offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 
 							numReadApp = sz;
 							if (numReadApp > 0)
@@ -1173,35 +1207,35 @@ CjvxRs232::receiveLoop(int idPort)
 								szread = 0;
 								theSpecialChar = 0;
 
-								removeByteWrapReplace(_system.thePorts[idPort].runtime.sc.receive.fld, _system.thePorts[idPort].runtime.sc.receive.offset_read, 
-									_system.thePorts[idPort].runtime.sc.receive.offset_write,
-									ptrRead + offset, numReadApp, _system.thePorts[idPort].runtime.cfg.secureChannel.startByte,
-									_system.thePorts[idPort].runtime.cfg.secureChannel.stopByte, 
-									_system.thePorts[idPort].runtime.cfg.secureChannel.escByte, szread, write, theSpecialChar);
+								removeByteWrapReplace(elm->runtime.sc.receive.fld, elm->runtime.sc.receive.offset_read, 
+									elm->runtime.sc.receive.offset_write,
+									ptrRead + offset, numReadApp, elm->runtime.cfg.secureChannel.startByte,
+									elm->runtime.cfg.secureChannel.stopByte, 
+									elm->runtime.cfg.secureChannel.escByte, szread, write, theSpecialChar);
 
-								_system.thePorts[idPort].runtime.sc.receive.offset_read += szread;
-								_system.thePorts[idPort].runtime.theReport->report_data_and_read(ptrRead, numReadApp, offset, idPort, &theSpecialChar, JVX_CONNECT_PRIVATE_ARG_TYPE_SECURE_CHANNEL_SPECIAL_CHAR);
+								elm->runtime.sc.receive.offset_read += szread;
+								elm->runtime.theReport->report_data_and_read(ptrRead, numReadApp, offset, idPort, &theSpecialChar, JVX_CONNECT_PRIVATE_ARG_TYPE_SECURE_CHANNEL_SPECIAL_CHAR);
 							}
 						}
 						else
 						{
 							if (theSpecialChar != 0)
 							{
-								assert(_system.thePorts[idPort].runtime.theReport);
-								_system.thePorts[idPort].runtime.theReport->provide_data_and_length(&ptrRead, &sz, &offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
-								_system.thePorts[idPort].runtime.theReport->report_data_and_read(ptrRead, sz, offset, idPort, &theSpecialChar, JVX_CONNECT_PRIVATE_ARG_TYPE_SECURE_CHANNEL_SPECIAL_CHAR);
-								_system.thePorts[idPort].runtime.sc.receive.offset_read++; // The special character HAS been read
+								assert(elm->runtime.theReport);
+								elm->runtime.theReport->provide_data_and_length(&ptrRead, &sz, &offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+								elm->runtime.theReport->report_data_and_read(ptrRead, sz, offset, idPort, &theSpecialChar, JVX_CONNECT_PRIVATE_ARG_TYPE_SECURE_CHANNEL_SPECIAL_CHAR);
+								elm->runtime.sc.receive.offset_read++; // The special character HAS been read
 							}
 							else
 							{
-								jvxSize numMove = (_system.thePorts[idPort].runtime.sc.receive.offset_write - _system.thePorts[idPort].runtime.sc.receive.offset_read);
+								jvxSize numMove = (elm->runtime.sc.receive.offset_write - elm->runtime.sc.receive.offset_read);
 								if (numMove)
 								{
-									memmove(_system.thePorts[idPort].runtime.sc.receive.fld,
-										_system.thePorts[idPort].runtime.sc.receive.fld + _system.thePorts[idPort].runtime.sc.receive.offset_read, numMove);
+									memmove(elm->runtime.sc.receive.fld,
+										elm->runtime.sc.receive.fld + elm->runtime.sc.receive.offset_read, numMove);
 								}
-								_system.thePorts[idPort].runtime.sc.receive.offset_read = 0;
-								_system.thePorts[idPort].runtime.sc.receive.offset_write = numMove;
+								elm->runtime.sc.receive.offset_read = 0;
+								elm->runtime.sc.receive.offset_write = numMove;
 
 								break;
 							}
@@ -1216,14 +1250,14 @@ CjvxRs232::receiveLoop(int idPort)
 					jvxByte* ptrRead = NULL;
 					jvxSize offset = 0;
 
-					assert(_system.thePorts[idPort].runtime.theReport);
-					_system.thePorts[idPort].runtime.theReport->provide_data_and_length(&ptrRead, &sz, &offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+					assert(elm->runtime.theReport);
+					elm->runtime.theReport->provide_data_and_length(&ptrRead, &sz, &offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 
 					numReadApp = sz;
 					if (numReadApp > 0)
 					{
 						assert(ptrRead);
-						if (ReadFile(_system.thePorts[idPort].runtime.hdl, ptrRead + offset, (DWORD)numReadApp, &read, &osRead) == FALSE)
+						if (ReadFile(elm->runtime.hdl, ptrRead + offset, (DWORD)numReadApp, &read, &osRead) == FALSE)
 						{
 							// Overlapped IO (required for Vista)
 							DWORD err = GetLastError();
@@ -1247,7 +1281,7 @@ CjvxRs232::receiveLoop(int idPort)
 						}
 					}
 
-					_system.thePorts[idPort].runtime.theReport->report_data_and_read(ptrRead, read, offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+					elm->runtime.theReport->report_data_and_read(ptrRead, read, offset, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 					valuesInQueue -= read;
 				}
 			}
@@ -1269,7 +1303,7 @@ CjvxRs232::receiveLoop(int idPort)
 			if (evtMask & (EV_RING | EV_CTS | EV_RLSD | EV_DSR))
 			{
 
-				if (!GetCommModemStatus(_system.thePorts[idPort].runtime.hdl, &modemState))
+				if (!GetCommModemStatus(elm->runtime.hdl, &modemState))
 				{
 					assert(0);
 				}
@@ -1309,32 +1343,32 @@ CjvxRs232::receiveLoop(int idPort)
 			}
 			if (JVX_EVALUATE_BITFIELD(maskReport))
 			{
-				if (_system.thePorts[idPort].runtime.theReport)
+				if (elm->runtime.theReport)
 				{
-					_system.thePorts[idPort].runtime.theReport->report_event(maskReport, idPort, &reportVal, JVX_CONNECT_PRIVATE_ARG_TYPE_RS232_MODEM_EVENT);
+					elm->runtime.theReport->report_event(maskReport, idPort, &reportVal, JVX_CONNECT_PRIVATE_ARG_TYPE_RS232_MODEM_EVENT);
 				}
 			}
 
 			if (evtMask & EV_CTS)
 			{
-				if (_system.thePorts[idPort].runtime.theReport)
+				if (elm->runtime.theReport)
 				{
-					if (jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_ESTABLISHED_SHIFT))
+					if (jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_ESTABLISHED_SHIFT))
 					{
 						if (reportVal & MS_CTS_ON)
 						{
 							jvxBitField mask;
 							jvx_bitSet(mask, JVX_RS232_REPORT_CONNECTION_ESTABLISHED_SHIFT);
-							_system.thePorts[idPort].runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+							elm->runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 						}
 					}
-					if (jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_STOPPED_SHIFT))
+					if (jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_STOPPED_SHIFT))
 					{
 						if (!(reportVal & MS_CTS_ON))
 						{
 							jvxBitField mask;
 							jvx_bitSet(mask, JVX_RS232_REPORT_CONNECTION_STOPPED_SHIFT);
-							_system.thePorts[idPort].runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+							elm->runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 						}
 					}
 				}
@@ -1342,28 +1376,28 @@ CjvxRs232::receiveLoop(int idPort)
 		} // if(evtMask)
 	}
 
-	if (!jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_CTS_SHFT))
+	if (!jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_CTS_SHFT))
 	{
-		if (!jvx_bitTest(_system.thePorts[idPort].runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_STOPPED_SHIFT))
+		if (!jvx_bitTest(elm->runtime.cfg.reportEnum, JVX_RS232_REPORT_CONNECTION_STOPPED_SHIFT))
 		{
-			if (_system.thePorts[idPort].runtime.theReport)
+			if (elm->runtime.theReport)
 			{
 				jvxBitField mask;
 				jvx_bitSet(mask, JVX_RS232_REPORT_CONNECTION_STOPPED_SHIFT);
-				_system.thePorts[idPort].runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+				elm->runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 			}
 		}
 	}
 	// If this thread stops, state drops down to INIT state
-	JVX_LOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
-	_system.thePorts[idPort].theState = JVX_STATE_INIT;
-	JVX_UNLOCK_MUTEX(_system.thePorts[idPort].safeAccessConnection);
+	JVX_LOCK_MUTEX(elm->safeAccessConnection);
+	elm->theState = JVX_STATE_INIT;
+	JVX_UNLOCK_MUTEX(elm->safeAccessConnection);
 
-	if (_system.thePorts[idPort].runtime.theReport)
+	if (elm->runtime.theReport)
 	{
 		jvxBitField mask;
 		jvx_bitSet(mask, JVX_CONNECTION_REPORT_SHUTDOWN_COMPLETE_SHFT);
-		_system.thePorts[idPort].runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
+		elm->runtime.theReport->report_event(mask, idPort, NULL, JVX_CONNECT_PRIVATE_ARG_TYPE_NONE);
 	}
 }
 
@@ -1372,8 +1406,11 @@ void
 CjvxRs232::startprintout(jvxSize portId)
 {
 	FILE* fh = NULL;
-	_system.thePorts[portId].dbg.fn = ("jvx_dbg_rs232_" + jvx_size2String(portId) + ".txt");	
-	fh = fopen(_system.thePorts[portId].dbg.fn.c_str(), "w");
+	auto elm = _system.thePorts.begin();
+	std::advance(elm, idPort);
+
+	elm->dbg.fn = ("jvx_dbg_rs232_" + jvx_size2String(portId) + ".txt");	
+	fh = fopen(elm->dbg.fn.c_str(), "w");
 	if (fh)
 	{
 		fprintf(fh, "Start debug output, %s", JVX_DATE().c_str());
@@ -1390,9 +1427,13 @@ void
 CjvxRs232::printoutBuffer(jvxSize idPort, jvxByte* fld, jvxSize sz, jvxByte startByte, jvxByte stopByte, jvxByte escByte, std::string token)
 {
 	jvxSize i;
-	JVX_LOCK_MUTEX(_system.thePorts[idPort].dbg.safeAccess);
-	FILE* fh = fopen(_system.thePorts[idPort].dbg.fn.c_str(), "a");
-	jvxUInt64 tt = JVX_GET_TICKCOUNT_US_GET(_system.thePorts[idPort].dbg.tRef);
+
+	auto elm = _system.thePorts.begin();
+	std::advance(elm, idPort);
+
+	JVX_LOCK_MUTEX(elm->dbg.safeAccess);
+	FILE* fh = fopen(elm->dbg.fn.c_str(), "a");
+	jvxUInt64 tt = JVX_GET_TICKCOUNT_US_GET(elm->dbg.tRef);
 	if (fh)
 	{
 		fprintf(fh, "--> %s <%d - " JVX_PRINTF_CAST_INT64 ">: ", token.c_str(), (int)sz, tt);
@@ -1413,23 +1454,26 @@ CjvxRs232::printoutBuffer(jvxSize idPort, jvxByte* fld, jvxSize sz, jvxByte star
 		fprintf(fh, "\n");
 		fclose(fh);
 	}
-	JVX_UNLOCK_MUTEX(_system.thePorts[idPort].dbg.safeAccess);
+	JVX_UNLOCK_MUTEX(elm->dbg.safeAccess);
 	
 }
 
 void
 CjvxRs232::printoutText(jvxSize idPort, std::string token)
 {
-	JVX_LOCK_MUTEX(_system.thePorts[idPort].dbg.safeAccess);
-	FILE* fh = fopen(_system.thePorts[idPort].dbg.fn.c_str(), "a");
-	jvxUInt64 tt = JVX_GET_TICKCOUNT_US_GET(_system.thePorts[idPort].dbg.tRef);
+	auto elm = _system.thePorts.begin();
+	std::advance(elm, idPort);
+
+	JVX_LOCK_MUTEX(elm->dbg.safeAccess);
+	FILE* fh = fopen(elm->dbg.fn.c_str(), "a");
+	jvxUInt64 tt = JVX_GET_TICKCOUNT_US_GET(elm->dbg.tRef);
 	if (fh)
 	{
 		fprintf(fh, "--> %s <" JVX_PRINTF_CAST_INT64 ">: ", token.c_str(), tt);
 		fprintf(fh, "\n");
 		fclose(fh);
 	}
-	JVX_UNLOCK_MUTEX(_system.thePorts[idPort].dbg.safeAccess);
+	JVX_UNLOCK_MUTEX(elm->dbg.safeAccess);
 
 }
 #endif

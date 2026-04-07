@@ -80,6 +80,7 @@ public:
 	~oneRs232Port();
 	oneRs232Port(const oneRs232Port& other);
 	void initialize();
+	void copy(const oneRs232Port& other);
 	void terminate();
 
 } ;
@@ -89,7 +90,8 @@ class CjvxRs232: public IjvxConnection, public CjvxObject
 private:
 	struct
 	{
-		std::vector<oneRs232Port> thePorts;
+		// Corrected: better use "list"
+		std::list<oneRs232Port> thePorts;
 		jvxSize refCount;
 		JVX_MUTEX_HANDLE safeAccess;
 	} _system;
