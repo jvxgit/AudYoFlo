@@ -51,7 +51,7 @@ CjvxRichAudioNode::postprocess()
           return res;
 
      if(spectrumAnalyzer.active)
-          if(jvx_spectrumEstimation_terminate(&spectrumAnalyzer.hdl) != JVX_DSP_NO_ERROR)
+          if(jvx_spectrumEstimation_terminate(&spectrumAnalyzer.hdl, nullptr) != JVX_DSP_NO_ERROR)
                return JVX_ERROR_INTERNAL;
 
      if(beampatternSimulator.active)
@@ -242,10 +242,11 @@ CjvxRichAudioNode::addSpectrumAnalyzer(int buffersize,
 
      spectrumAnalyzer.active = true;
 
-     if(jvx_spectrumEstimation_init(&spectrumAnalyzer.hdl,
-                                    buffersize,
-                                    nChannels,
-                                    samplerate)
+	 if (jvx_spectrumEstimation_init(&spectrumAnalyzer.hdl,
+		 buffersize,
+		 nChannels,
+		 samplerate,
+		 nullptr)
         != JVX_DSP_NO_ERROR)
           return JVX_ERROR_INTERNAL;
      associate_spectrumAnalyzerData();

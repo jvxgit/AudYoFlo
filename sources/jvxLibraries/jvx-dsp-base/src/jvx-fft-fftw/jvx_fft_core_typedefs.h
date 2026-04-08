@@ -68,9 +68,11 @@ typedef struct
 
 #endif
 
+	jvxFFTSize fftSize;
 	jvxInt32 fftSizeLog;
 	jvxInt32 refCount;
 	jvxCBool allocatedByAllocator;
+	struct jvx_fft_ifft_core_global_attach* attached;
 } jvx_fft_ifft_core_global_common;
 
 

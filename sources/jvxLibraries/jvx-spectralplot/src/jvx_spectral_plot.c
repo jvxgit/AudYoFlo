@@ -141,7 +141,7 @@ jvxDspBaseErrorType jvx_spectral_plot_terminate(jvxSpectralPlot* hdl)
 			JVX_DSP_SAFE_DELETE_FIELD(theObj->arr_window);
 			res = jvx_destroy_fft(theObj->fft_hdl);
 			theObj->fft_hdl = NULL;
-			jvx_destroy_fft_ifft_global(theObj->fft_gbl);
+			jvx_destroy_fft_ifft_global(theObj->fft_gbl, NULL);
 			theObj->fft_gbl = NULL;
 			jvx_circbuffer_deallocate(theObj->buf_circle_in);
 			theObj->buf_circle_in = NULL;
@@ -469,7 +469,7 @@ jvxDspBaseErrorType jvx_spectralplot_terminate(jvxSpectralPlot* hdl)
 	}
 	if (ptrHdl->fft_gbl)
 	{
-		res = jvx_destroy_fft_ifft_global(ptrHdl->fft_gbl);
+		res = jvx_destroy_fft_ifft_global(ptrHdl->fft_gbl, NULL);
 		if (res != JVX_DSP_NO_ERROR) return res;
 		ptrHdl->fft_gbl = NULL;
 	}

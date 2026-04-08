@@ -144,8 +144,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 			else
 			{
-				jvx_firfft_cf_nout_init(&init, nullptr, filteredOut, 1);
-				jvx_firfft_cf_cvrt_init(&init, nullptr, firsIn, &irft_update);
+				jvx_firfft_cf_nout_init(&init, filteredOut, 1, nullptr);
+				jvx_firfft_cf_cvrt_init(&init, firsIn, &irft_update, nullptr);
 			}
 			jvxData* inSig = (jvxData*)mxGetData(arrIn);
 			
@@ -234,7 +234,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 			else
 			{
-				jvx_firfft_cf_nout_terminate(&init);
+				jvx_firfft_cf_nout_terminate(&init, nullptr);
 			}
 		} // if ((lenBufStates > 0) &&(lenSig > 0))
 		else

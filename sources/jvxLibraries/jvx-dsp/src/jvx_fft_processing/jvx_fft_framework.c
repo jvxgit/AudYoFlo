@@ -347,7 +347,7 @@ jvx_fftFramework_terminate(jvx_fftFramework* hdl)
   jvx_destroy_fft(prv->fftR2C);
   jvx_destroy_ifft(prv->ifftC2R);
   jvx_destroy_ifft(prv->ifftC2C);
-  jvx_destroy_fft_ifft_global(prv->globalFFT);
+  jvx_destroy_fft_ifft_global(prv->globalFFT, NULL);
 
   JVX_DSP_SAFE_DELETE_OBJECT(prv);
   hdl->prv = NULL;

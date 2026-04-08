@@ -84,7 +84,8 @@ typedef enum
 	JVX_FFT_TOOLS_FFT_SIZE_2048,
 	JVX_FFT_TOOLS_FFT_SIZE_4096,
 	JVX_FFT_TOOLS_FFT_SIZE_8192,
-	JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE
+	JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
+	JVX_FFT_TOOLS_FFT_SIZE_INVALID
 } jvxFFTSize;
 
 #define JVX_FFT_TOOLS_DEFINE_FFT_SIZES static jvxInt32 jvxFFTSize_sizes[] = \
@@ -99,9 +100,16 @@ typedef enum
 	2048, \
 	4096, \
 	8192, \
-	-1 \
+	-1, \
+	-2 \
 } ;
 
+struct jvx_fft_ifft_core_global_attach
+{
+	const char* tag;
+	jvxHandle* attached_data;
+	struct jvx_fft_ifft_core_global_attach* next;
+};
 
 // =====================================================================
 
@@ -109,7 +117,7 @@ typedef enum
  * Create global handle for FFT: fftType_max specifies maximal possible length of FFT
  */
 jvxDspBaseErrorType jvx_create_fft_ifft_global(
-	jvxFFTGlobal** global_hdl, jvxFFTSize fftType_max, jvxHandle* cfgFftGlobal);
+	jvxFFTGlobal** global_hdl, jvxFFTSize fftType_max, jvxFFTGlobal* fftGlobCfg);
 
 /** 
 * Create handle for real to complex FFT
@@ -170,13 +178,19 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdl,
 	jvxDataCplx* output,
 	jvxSize fftSizeArbitrary);
 
+jvxFFTSize jvx_fft_ifft_global_max_fft_size(jvxFFTGlobal* global_hdl);
+
 jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdl);
 jvxDspBaseErrorType jvx_execute_ifft(jvxIFFT* hdl);
 
 jvxDspBaseErrorType jvx_destroy_fft(jvxFFT* hdl);
 jvxDspBaseErrorType jvx_destroy_ifft(jvxIFFT* hdl);
 
-jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* global_hdl);
+jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* global_hdl, jvxFFTGlobal* fftGlobCfg);
+
+jvxDspBaseErrorType jvx_attach_fft_ifft_global(jvxFFTGlobal* global_hdl, struct jvx_fft_ifft_core_global_attach* attach_this);
+jvxDspBaseErrorType jvx_detach_fft_ifft_global(jvxFFTGlobal* global_hdl, struct jvx_fft_ifft_core_global_attach** detach_this);
+struct jvx_fft_ifft_core_global_attach* jvx_attached_tag_fft_ifft_global(jvxFFTGlobal* g_hdl, const char* str);
 
 jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl);
 

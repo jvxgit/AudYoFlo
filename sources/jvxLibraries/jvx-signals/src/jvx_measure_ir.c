@@ -399,7 +399,7 @@ jvx_measure_ir_postprocess(jvxMeasureIr* handle)
 
 	newHdl->prm_sync.lRecording = 0;
 
-	res = jvx_destroy_fft_ifft_global(newHdl->runtime.glob_fft);
+	res = jvx_destroy_fft_ifft_global(newHdl->runtime.glob_fft, NULL);
 	assert(res == JVX_DSP_NO_ERROR);
 
 	JVX_DSP_SAFE_DELETE_OBJECT(newHdl);

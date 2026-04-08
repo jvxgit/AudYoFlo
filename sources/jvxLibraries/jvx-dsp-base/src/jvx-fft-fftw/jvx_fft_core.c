@@ -170,7 +170,7 @@ static jvxDspBaseErrorType jvx_core_fft_init_common(jvx_fft_ifft_core_common* hd
 
 // =======================================================================================
 
-jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSize fftType_max, jvxHandle* fftGlobCfg)
+jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSize fftType_max, jvxFFTGlobal* fftGlobCfg)
 {
 	jvx_fft_ifft_core_global_common** global_hdl = (jvx_fft_ifft_core_global_common**)glob_hdl;
 	jvx_fft_ifft_core_global_common* ptr = NULL;
@@ -179,10 +179,18 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSi
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 	
 	assert(jvx_allocator != NULL);
-	ptr = jvx_allocator->alloc(sizeof(jvx_fft_ifft_core_global_common), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
-
-	ptr->fftSizeLog = (int)fftType_max + JVX_OFFSET_FFT_TYPE_MIN;
-	ptr->refCount = 0;		
+	if (fftGlobCfg)
+	{
+		ptr = fftGlobCfg;
+	}
+	else
+	{
+		ptr = jvx_allocator->alloc(sizeof(jvx_fft_ifft_core_global_common), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+		ptr->fftSize = fftType_max;
+		ptr->fftSizeLog = (int)fftType_max + JVX_OFFSET_FFT_TYPE_MIN;
+		ptr->refCount = 0;
+		ptr->attached = NULL;
+	}
 
 	*global_hdl = ptr;
 
@@ -1090,7 +1098,7 @@ jvxDspBaseErrorType jvx_destroy_ifft(jvxIFFT* hdlRef)
 	return jvx_destroy_fft((jvxFFT*)hdlRef);
 }
 
-jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl)
+jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl, jvxFFTGlobal* fftGlobCfg)
 {
 	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
 
@@ -1107,10 +1115,65 @@ jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl)
 #endif
 		assert(jvx_allocator != NULL);
 
-		// All ffts released?
-		assert(global_hdl->refCount == 0);
-		jvx_allocator->dealloc((jvxHandle**)&global_hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+		if (fftGlobCfg)
+		{
+			global_hdl = NULL;
+		}
+		else
+		{
+			// All ffts released?
+			assert(global_hdl->refCount == 0);
+			assert(global_hdl->attached == NULL);
+			jvx_allocator->dealloc((jvxHandle**)&global_hdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+		}
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
 
+jvxDspBaseErrorType jvx_attach_fft_ifft_global(jvxFFTGlobal* g_hdl, struct jvx_fft_ifft_core_global_attach* attach_this)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+
+	if (global_hdl)
+	{
+		struct jvx_fft_ifft_core_global_attach* attached_before = global_hdl->attached;
+		global_hdl->attached = attach_this;
+		attach_this->next = attached_before;
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
+struct jvx_fft_ifft_core_global_attach* jvx_attached_tag_fft_ifft_global(jvxFFTGlobal* g_hdl, const char* str)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+	if (global_hdl)
+	{
+		struct jvx_fft_ifft_core_global_attach* attached = global_hdl->attached;
+		while (attached)
+		{
+			if (strcmp(str, attached->tag) == 0)
+			{
+				return attached;
+			}
+		}
+	}
+	return NULL;
+}
+
+jvxDspBaseErrorType jvx_detach_fft_ifft_global(jvxFFTGlobal* g_hdl, struct jvx_fft_ifft_core_global_attach** detach_this)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+
+	if (global_hdl)
+	{
+		struct jvx_fft_ifft_core_global_attach* attached_before = global_hdl->attached->next;
+		global_hdl->attached->next = NULL;
+		
+		// Return the value
+		if(detach_this) *detach_this = global_hdl->attached;
+		global_hdl->attached = attached_before;		
 		return JVX_DSP_NO_ERROR;
 	}
 	return JVX_DSP_ERROR_INVALID_ARGUMENT;
@@ -1168,12 +1231,12 @@ void jvx_free_fft_buffer(void * buffer)
 #endif
 }
 
-jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx * in, jvxData * out, jvxHandle* fftCfgHdl)
+jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx * in, jvxData * out, jvxFFTGlobal* fftGlobCfg)
 {		
 	jvxSize dummy = 0;
 
 	jvxFFTGlobal* fft_global;
-	jvx_create_fft_ifft_global(&fft_global, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE, fftCfgHdl);
+	jvx_create_fft_ifft_global(&fft_global, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE, fftGlobCfg);
 
 	jvxFFT* fft;
 
@@ -1189,9 +1252,29 @@ jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCpl
 	memcpy(out, out_fft, sizeof(jvxData) * fft_size);
 
 	jvx_destroy_ifft(fft);
-	jvx_destroy_fft_ifft_global(fft_global);
+	jvx_destroy_fft_ifft_global(fft_global, fftGlobCfg);
 
 	return JVX_DSP_NO_ERROR;
+}
+
+jvxFFTSize jvx_fft_ifft_global_max_fft_size(jvxFFTGlobal* global_hdl_arg)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)global_hdl_arg;
+
+	if (global_hdl)
+	{
+#ifdef JVX_FFT_APPLE
+
+#ifdef JVX_DSP_DATA_FORMAT_DOUBLE
+		vDSP_destroy_fftsetupD(global_hdl->setupFFT);
+#else
+		vDSP_destroy_fftsetup(global_hdl->setupFFT);
+#endif
+
+#endif
+		return global_hdl->fftSize;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
 }
 
 

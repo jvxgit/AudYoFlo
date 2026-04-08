@@ -3,6 +3,7 @@
 
 #include "jvx_dsp_base.h"
 #include "jvx_windows/jvx_windows.h"
+#include "jvx_fft_tools/jvx_fft_core.h"
 
 JVX_DSP_LIB_BEGIN
 
@@ -92,26 +93,30 @@ typedef struct {
 // API
 ////
 
-jvxDspBaseErrorType jvx_spectrumEstimation_configInit(jvx_spectrumEstimation *hdl,
-                                                      unsigned int pid);
+jvxDspBaseErrorType jvx_spectrumEstimation_configInit(jvx_spectrumEstimation* hdl,
+	unsigned int pid);
 
-jvxDspBaseErrorType jvx_spectrumEstimation_init(jvx_spectrumEstimation* hdl,
-                                                int frameSize,
-                                                int nChannelsIn,
-                                                int samplingRate);
+jvxDspBaseErrorType jvx_spectrumEstimation_init(
+	jvx_spectrumEstimation* hdl,
+	int frameSize,
+	int nChannelsIn,
+	int samplingRate,
+	jvxFFTGlobal* fftGlobCfg);
 
 // input: frameSize
 // output: pointer to (fftLength/2+1)
 jvxDspBaseErrorType jvx_spectrumEstimation_process(jvx_spectrumEstimation* hdl,
-                                                   jvxData* in,
-                                                   jvxData** out,
-                                                   jvxSize channel);
+	jvxData* in,
+	jvxData** out,
+	jvxSize channel);
 
-jvxDspBaseErrorType jvx_spectrumEstimation_terminate(jvx_spectrumEstimation* hdl);
+jvxDspBaseErrorType jvx_spectrumEstimation_terminate(
+	jvx_spectrumEstimation* hdl,
+	jvxFFTGlobal* fftGlobCfg);
 
 
 jvxDspBaseErrorType jvx_spectrumEstimation_update(jvx_spectrumEstimation* hdl,
-                                                  jvxCBool syncUpdate);
+	jvxCBool syncUpdate);
 
 JVX_DSP_LIB_END
 

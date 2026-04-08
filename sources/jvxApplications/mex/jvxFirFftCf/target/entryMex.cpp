@@ -150,20 +150,20 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(firsIn, jvxData, filteredOut, filterOrder);
 			CjvxCToMatlabConverter::convertMexToC(reinterpret_cast<jvxHandle**>(firsIn), filteredOut, filterOrder, JVX_DATAFORMAT_DATA, arrNum, "input", false, errDescr);
 
-			jvxSize NhUsed = jvx_firfft_precompute_firl(init.init.lFir, init.init.bsize, JVX_SIZE_UNSELECTED, 0, c_true);
+			jvxSize NhUsed = jvx_firfft_precompute_firl(init.init.lFir, init.init.bsize, JVX_SIZE_UNSELECTED, 0, c_true, nullptr);
 
 			if (filteredOut == 1)
 			{
-				jvx_firfft_cf_nout_init(&init, nullptr, filteredOut, 1);
+				jvx_firfft_cf_nout_init(&init, filteredOut, 1, nullptr);
 			}
 			else
 			{
-				jvx_firfft_cf_nout_init(&init, nullptr, filteredOut, 1);				
+				jvx_firfft_cf_nout_init(&init, filteredOut, 1, nullptr);
 			}
 
 			// Is this needed?
 			init.init.fir = firsIn[0];
-			jvx_firfft_cf_cvrt_init(&init, nullptr, firsIn, &irft_update);
+			jvx_firfft_cf_cvrt_init(&init, firsIn, &irft_update, nullptr);
 
 			jvxData* inSig = (jvxData*)mxGetData(arrIn);
 			
@@ -251,7 +251,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			JVX_DSP_SAFE_DELETE_FIELD(inSigBuf);
 			JVX_DSP_SAFE_DELETE_FIELD(outSigBuf);
 
-			jvx_firfft_cf_nout_terminate(&init);			
+			jvx_firfft_cf_nout_terminate(&init, nullptr);
 		} // if ((lenBufStates > 0) &&(lenSig > 0))
 		else
 		{

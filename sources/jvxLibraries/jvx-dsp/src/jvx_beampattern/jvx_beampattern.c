@@ -551,7 +551,7 @@ jvx_beampattern_terminate(jvx_beampattern* hdl)
 	if (prv->FFT_hdl)
 		jvx_destroy_fft(prv->FFT_hdl);
 	if (prv->FFT_global_hdl)
-		jvx_destroy_fft_ifft_global(prv->FFT_global_hdl);
+		jvx_destroy_fft_ifft_global(prv->FFT_global_hdl, NULL);
 
 	JVX_DSP_SAFE_DELETE_OBJECT(prv);
 	hdl->prv = NULL;
@@ -630,7 +630,7 @@ jvxDspBaseErrorType jvx_beampattern_update(jvx_beampattern* hdl, jvxCBool syncUp
 		}
 		if (prv->FFT_global_hdl)
 		{
-			jvx_destroy_fft_ifft_global(prv->FFT_global_hdl);
+			jvx_destroy_fft_ifft_global(prv->FFT_global_hdl, NULL);
 			prv->FFT_global_hdl = NULL;
 		}
 

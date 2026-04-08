@@ -15,8 +15,8 @@ typedef struct
 
 JVX_DSP_LIB_BEGIN
 
-jvxDspBaseErrorType jvx_firfft_cf_cvrt_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxData** fir, jvxHandle** cvrtHdl);
-jvxDspBaseErrorType jvx_firfft_cf_cvrt_terminate(jvx_firfft* hdl, jvxHandle** cvrtHdl);
+jvxDspBaseErrorType jvx_firfft_cf_cvrt_init(jvx_firfft* hdl, jvxData** fir, jvxHandle** cvrtHdl, jvxFFTGlobal* fftGlobCfg);
+jvxDspBaseErrorType jvx_firfft_cf_cvrt_terminate(jvx_firfft* hdl, jvxHandle** cvrtHdl, jvxFFTGlobal* fftGlobCfg);
 void jvx_firfft_cf_cvrt_compute_weights_and_copy(jvxHandle* cvrtHdl, jvxData* firIn, jvxSize lFir, jvxDataCplx* firW, jvxSize lFirW, jvxCBool resetBuffer);
 
 JVX_DSP_LIB_END

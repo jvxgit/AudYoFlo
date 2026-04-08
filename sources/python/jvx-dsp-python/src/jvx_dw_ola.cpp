@@ -135,7 +135,7 @@ int term_processing_dw_ola(void* hdlArg)
     hdl->inputFFT = NULL;
     hdl->outputFFT = NULL;
 
-    res = jvx_destroy_fft_ifft_global(hdl->globalFft);
+    res = jvx_destroy_fft_ifft_global(hdl->globalFft, nullptr);
     assert(res == JVX_DSP_NO_ERROR);
     hdl->globalFft = NULL;
 

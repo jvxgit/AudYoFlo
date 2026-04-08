@@ -1,6 +1,7 @@
 #include "jvx_dsp_base.h"
 #include "jvx_fft_tools/jvx_firfft.h"
 #include "jvx_fft_tools/jvx_fft_core.h"
+
 #include "jvx_dsp_base.h"
 #include "jvx_allocators/jvx_allocators.h"
 
@@ -34,6 +35,8 @@ typedef struct
 
 		// Cross fade increment value
 		jvxData cf_inc;
+
+		struct jvx_fft_ifft_core_global_attach* ptrAttach;
 	} ram_cf_nout;
 
 	jvxCBool allocatedViaAllocator;
@@ -50,11 +53,17 @@ typedef struct
 } jvx_firfft_cf_nout_rt_args;
 
 jvxDspBaseErrorType 
-jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nStride, jvxSize nChannelsIn)
+jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxSize nStride, jvxSize nChannelsIn, jvxFFTGlobal* fftGlobCfg)
 {
 	if (hdl->prv == NULL)
 	{
+		struct jvx_fft_ifft_core_global_attach* ptrAttachFromGlobal = NULL;
+		jvx_firfft_cf_nout_reuse elmBufferSources;
+		memset(&elmBufferSources, 0, sizeof(elmBufferSources));
+
 		jvx_firfft_cf_nout_prv* nHdl = NULL;
+		jvx_firfft_cf_nout_reuse* ptrReuse = NULL;
+
 		jvxSize N = 0, i = 0;
 		jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
 
@@ -64,6 +73,7 @@ jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nStride, 
 		memset(nHdl, 0, sizeof(jvx_firfft_cf_nout_prv));
 
 		nHdl->firfft.tp = JVX_FIRFFT_PRV_TYPE_CF_NOUT;
+		// nHdl->ram_cf_nout.ptrAttach = NULL;
 
 		hdl->prv = nHdl;
 
@@ -71,20 +81,33 @@ jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nStride, 
 
 		jvx_allocator->purpose = JVX_ALLOCATOR_OBJECT_PURPOSE_TIME_CRITICAL;
 
-		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftCfgHdl);
+		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftGlobCfg);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		// Check if current fft implementation requires normalization
-		nHdl->firfft.ram.normOut = jvx_fft_requires_normalization(nHdl->firfft.ram.fftGlob);
-
-		// Backward compatibility
+		nHdl->firfft.ram.normOut = jvx_fft_requires_normalization(nHdl->firfft.ram.fftGlob);		
 		
+		// Try to get data from global handle
+		if (nHdl->firfft.init_cpy.prepareReuse)
+		{
+			ptrAttachFromGlobal = (struct jvx_fft_ifft_core_global_attach*)jvx_attached_tag_fft_ifft_global(nHdl->firfft.ram.fftGlob, "jvx_firfft_cf_nout_reuse");
+			if (ptrAttachFromGlobal)
+			{
+				ptrReuse = ptrAttachFromGlobal->attached_data;
+				if (ptrReuse->fft_size >= jvx_get_fft_size(nHdl->firfft.derived_cpy.szFft))
+				{
+					elmBufferSources = *ptrReuse;
+				}
+			}
+		}
+
+		// Backward compatibility		
 		// Secondary ifft
 		resL = jvx_create_ifft_complex_2_real(&nHdl->firfft.ram.coreifft,
 			nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft,
 			&nHdl->ram_cf_nout.spec_ifft_in, &nHdl->firfft.ram.out, &N,
 			JVX_FFT_IFFT_PRESERVE_INPUT,
-			NULL, NULL, 0);
+			elmBufferSources.ifft_in, elmBufferSources.ifft_out, 0);
 		assert(resL == JVX_DSP_NO_ERROR);		
 
 		//assert(N == nHdl->derived_cpy.szFftValue);
@@ -94,7 +117,25 @@ jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nStride, 
 			nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft,
 			&nHdl->firfft.ram.in, &nHdl->firfft.ram.spec,
 			&N, JVX_FFT_IFFT_PRESERVE_INPUT,
-			NULL, NULL , 0);
+			NULL, elmBufferSources.fft_out, 0);
+		
+		// Attach shared data
+		if (nHdl->firfft.init_cpy.prepareReuse && (ptrReuse == NULL))
+		{
+			ptrReuse = (jvx_firfft_cf_nout_reuse*)jvx_allocator->alloc(sizeof(jvx_firfft_cf_nout_reuse), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+			nHdl->ram_cf_nout.ptrAttach = (struct jvx_fft_ifft_core_global_attach*)jvx_allocator->alloc(sizeof(struct jvx_fft_ifft_core_global_attach), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+
+			ptrReuse->fft_size = nHdl->firfft.derived_cpy.szFftValue;
+			ptrReuse->fft_out = nHdl->firfft.ram.spec;
+			ptrReuse->ifft_in = nHdl->ram_cf_nout.spec_ifft_in;
+			ptrReuse->ifft_out = nHdl->firfft.ram.out;
+
+			nHdl->ram_cf_nout.ptrAttach->next = NULL;
+			nHdl->ram_cf_nout.ptrAttach->tag = "jvx_firfft_cf_nout_reuse";
+			nHdl->ram_cf_nout.ptrAttach->attached_data = ptrReuse;
+
+			jvx_attach_fft_ifft_global(nHdl->firfft.ram.fftGlob, nHdl->ram_cf_nout.ptrAttach);	
+		}
 
 		assert(resL == JVX_DSP_NO_ERROR);
 		//assert(N == nHdl->derived_cpy.szFftValue);
@@ -172,7 +213,7 @@ jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nStride, 
 }
 
 jvxDspBaseErrorType 
-jvx_firfft_cf_nout_terminate(jvx_firfft* hdl)
+jvx_firfft_cf_nout_terminate(jvx_firfft* hdl, jvxFFTGlobal* fftGlobCfg)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_DSP_ERROR_WRONG_STATE;
@@ -201,6 +242,31 @@ jvx_firfft_cf_nout_terminate(jvx_firfft* hdl)
 				nHdl->ram_cf_nout.multiInChannels.nChannelsIn = 0;
 
 			}
+
+			if (nHdl->ram_cf_nout.ptrAttach)
+			{
+				// This is very dangerous but I do not see any other chance: Remove the pointers from global handle.
+				// These pointers may be referenced at other places!
+				jvx_firfft_cf_nout_reuse* ptrReuse = NULL;
+				struct jvx_fft_ifft_core_global_attach* ptrDetach = NULL;
+				jvx_detach_fft_ifft_global(nHdl->firfft.ram.fftGlob, &ptrDetach);
+				assert(ptrDetach == nHdl->ram_cf_nout.ptrAttach);
+
+				ptrReuse = (jvx_firfft_cf_nout_reuse*)ptrDetach->attached_data;
+				ptrReuse->fft_out = NULL;
+				ptrReuse->ifft_in = NULL;
+				ptrReuse->ifft_out = NULL;
+				ptrReuse->fft_size = 0;
+				jvx_allocator->dealloc((jvxHandle**)&ptrReuse, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+
+				ptrDetach->attached_data = NULL;
+				ptrDetach->tag = NULL;
+				ptrDetach->next = NULL;
+				jvx_allocator->dealloc((jvxHandle**)&ptrDetach, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
+				
+				nHdl->ram_cf_nout.ptrAttach = NULL;
+			}
+
 			jvx_destroy_fft(nHdl->firfft.ram.corefft);
 			nHdl->firfft.ram.corefft = NULL;
 			nHdl->firfft.ram.in = NULL;
@@ -209,9 +275,9 @@ jvx_firfft_cf_nout_terminate(jvx_firfft* hdl)
 			jvx_destroy_ifft(nHdl->firfft.ram.coreifft);
 			nHdl->firfft.ram.coreifft = NULL;
 			nHdl->ram_cf_nout.spec_ifft_in = NULL;
-			nHdl->firfft.ram.out = NULL;
+			nHdl->firfft.ram.out = NULL;			
 
-			jvx_destroy_fft_ifft_global(nHdl->firfft.ram.fftGlob);
+			jvx_destroy_fft_ifft_global(nHdl->firfft.ram.fftGlob, fftGlobCfg);
 			nHdl->firfft.ram.fftGlob = NULL;
 
 			jvx_firfft_cf_nout_prmSync* nChans = hdl->sync.ext;

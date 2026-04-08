@@ -130,7 +130,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 			jvx_circbuffer_deallocate_fft_ifft(sig);
 			sig = nullptr;
-			jvx_circbuffer_destroy_global_fft_ifft(glob_fft);
+			jvx_circbuffer_destroy_global_fft_ifft(glob_fft, nullptr);
 			glob_fft = nullptr;
 		}
 		else

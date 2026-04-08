@@ -57,6 +57,7 @@ typedef struct
 	jvxFirFftOperType type;
 	jvxSize cBufferFadeLength;
 	struct jvxMemRefs* allocators;
+	jvxCBool prepareReuse;
 } jvx_firfft_prmInit;
 
 typedef struct
@@ -86,7 +87,7 @@ JVX_DSP_LIB_BEGIN
 
 jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init);
 
-jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg);
+jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxFFTGlobal* fftGlobCfg);
 
 jvxDspBaseErrorType jvx_firfft_process(jvx_firfft* hdl, jvxData* in, jvxData* out);
 
@@ -96,12 +97,14 @@ jvxDspBaseErrorType jvx_firfft_process_mix(jvx_firfft* hdl, jvxData* in, jvxData
 
 jvxDspBaseErrorType jvx_firfft_process_mix_iplace(jvx_firfft* hdl, jvxData* in, jvxData* out, jvxCBool isFirst);
 
-jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl);
+jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl, jvxFFTGlobal* fftGlobCfg);
 
 jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jvxCBool do_set);
 
+jvxDspBaseErrorType jvx_firfft_get_global_handle(jvx_firfft* hdl, jvxFFTGlobal** fftGlobCfg);
+
 // Helper
-jvxSize jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxSize cBufferFadeLength, jvxCBool allowLargerFir);
+jvxSize jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxSize cBufferFadeLength, jvxCBool allowLargerFir, jvxFFTSize* fftSizeReturn);
 
 JVX_DSP_LIB_END
 

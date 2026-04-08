@@ -36,9 +36,9 @@ jvx_circbuffer_allocate_global_fft_ifft(jvxFFTGlobal** global_fft, jvxFFTSize ff
 }
 
 jvxDspBaseErrorType
-jvx_circbuffer_destroy_global_fft_ifft(jvxFFTGlobal* global_fft)
+jvx_circbuffer_destroy_global_fft_ifft(jvxFFTGlobal* global_fft, jvxFFTGlobal* fftGlobCfg)
 {
-	return jvx_destroy_fft_ifft_global(global_fft);
+	return jvx_destroy_fft_ifft_global(global_fft, fftGlobCfg);
 }
 
 jvxDspBaseErrorType

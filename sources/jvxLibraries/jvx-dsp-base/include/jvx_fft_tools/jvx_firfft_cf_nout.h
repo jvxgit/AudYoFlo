@@ -36,14 +36,22 @@ JVX_DSP_LIB_BEGIN
 
 typedef struct
 {
+	jvxDataCplx* fft_out;
+	jvxDataCplx* ifft_in;
+	jvxData* ifft_out;
+	jvxSize fft_size;
+} jvx_firfft_cf_nout_reuse;
+
+typedef struct
+{
 	jvxDataCplx** firWN;
 	jvxSize N;
 	jvxSize nW;
 	jvxSize stride;
 } jvx_firfft_cf_nout_prmSync;
 
-jvxDspBaseErrorType jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxSize nStride, jvxSize nChannelsIn);
-jvxDspBaseErrorType jvx_firfft_cf_nout_terminate(jvx_firfft* hdl);
+jvxDspBaseErrorType jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxSize nStride, jvxSize nChannelsIn, jvxFFTGlobal* fftGlobCfg);
+jvxDspBaseErrorType jvx_firfft_cf_nout_terminate(jvx_firfft* hdl, jvxFFTGlobal* fftGlobCfg);
 
 //void jvx_firfft_cf_nout_compute_weights(jvx_firfft* hdl, jvxData* fir, jvxSize lFir);
 //void jvx_firfft_cf_nout_copy_weights(jvx_firfft* hdl, jvxDataCplx* firW, jvxSize lFirW);

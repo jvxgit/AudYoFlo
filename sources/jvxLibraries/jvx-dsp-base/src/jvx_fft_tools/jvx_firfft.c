@@ -45,6 +45,7 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	init->init.type = JVX_FIRFFT_SYMMETRIC_FIR;
 	init->init.cBufferFadeLength = 0;
 	init->init.allocators = NULL;
+	init->init.prepareReuse = c_false;
 
 	jvx_firfft_resetDerived(init);
 
@@ -270,7 +271,7 @@ jvxDspBaseErrorType jvx_firfft_process(jvx_firfft* hdl, jvxData* inArg, jvxData*
 	return JVX_DSP_ERROR_WRONG_STATE;
 }
 
-jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl)
+jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl, jvxFFTGlobal* fftGlobCfg)
 {
 	if (hdl->prv)
 	{
@@ -284,7 +285,7 @@ jvxDspBaseErrorType jvx_firfft_terminate(jvx_firfft* hdl)
 			jvx_destroy_ifft(nHdl->ram.coreifft);
 			nHdl->ram.coreifft = NULL;
 
-			jvx_destroy_fft_ifft_global(nHdl->ram.fftGlob);
+			jvx_destroy_fft_ifft_global(nHdl->ram.fftGlob, fftGlobCfg);
 			nHdl->ram.fftGlob = NULL;
 
 			jvx_allocator->dealloc((jvxHandle**)&hdl->sync.firW, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_FAST_SLOW));
@@ -367,8 +368,30 @@ jvxDspBaseErrorType jvx_firfft_update(jvx_firfft* hdl, jvxInt16 whatToUpdate, jv
 	return JVX_DSP_NO_ERROR;
 }
 
+jvxDspBaseErrorType jvx_firfft_get_global_handle(jvx_firfft* hdl, jvxFFTGlobal** fftGlobCfg)
+{
+	jvxDspBaseErrorType resL = JVX_DSP_NO_ERROR;
+	if (fftGlobCfg)
+	{
+		*fftGlobCfg = NULL;
+	}
+	jvx_firfft_prv* nHdl = (jvx_firfft_prv*)hdl->prv;
+	if (nHdl)
+	{
+		if (fftGlobCfg)
+		{
+			*fftGlobCfg = nHdl->ram.fftGlob;
+		}
+	}
+	else
+	{
+		resL = JVX_DSP_ERROR_INVALID_ARGUMENT;
+	}
+	return resL;
+}
+
 jvxSize 
-jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxSize cBufferFadeLength, jvxCBool allowLargerFir)
+jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxSize cBufferFadeLength, jvxCBool allowLargerFir, jvxFFTSize* fftSizeReturn)
 {
 	jvxSize fftszmin = (lFirMin + bsize - 1);
 	jvxSize lFir = lFirMin;
@@ -387,6 +410,8 @@ jvx_firfft_precompute_firl(jvxSize lFirMin, jvxSize bsize, jvxSize lFft, jvxSize
 	{
 		lFir = szFftValue - bsize - cBufferFadeLength + 1;
 	}
+
+	if (fftSizeReturn) *fftSizeReturn = szFft;
 	return lFir;
 }
 

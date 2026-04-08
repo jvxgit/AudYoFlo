@@ -26,7 +26,7 @@ typedef struct
 	jvx_firfft_prmDerived derived_cpy;
 } jvx_firfft_cvrt_prv;
 
-jvxDspBaseErrorType jvx_firfft_cf_cvrt_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl, jvxData** fir, jvxHandle** cvrtHdl)
+jvxDspBaseErrorType jvx_firfft_cf_cvrt_init(jvx_firfft* hdl, jvxData** fir, jvxHandle** cvrtHdl, jvxFFTGlobal* fftGlobCfg)
 {
 	jvx_firfft_cvrt_prv* nHdl = NULL;
 	jvxSize N = 0, i = 0;
@@ -43,7 +43,7 @@ jvxDspBaseErrorType jvx_firfft_cf_cvrt_init(jvx_firfft* hdl, jvxHandle* fftCfgHd
 
 	jvx_allocator->purpose = JVX_ALLOCATOR_OBJECT_PURPOSE_TIME_CRITICAL;
 
-	resL = jvx_create_fft_ifft_global(&nHdl->ram.fftGlob, nHdl->derived_cpy.szFft, fftCfgHdl);
+	resL = jvx_create_fft_ifft_global(&nHdl->ram.fftGlob, nHdl->derived_cpy.szFft, fftGlobCfg);
 	assert(resL == JVX_DSP_NO_ERROR);
 
 	// Check if current fft implementation requires normalization
@@ -84,7 +84,7 @@ jvxDspBaseErrorType jvx_firfft_cf_cvrt_init(jvx_firfft* hdl, jvxHandle* fftCfgHd
 	return JVX_DSP_NO_ERROR;
 }
 
-jvxDspBaseErrorType jvx_firfft_cf_cvrt_terminate(jvx_firfft* hdl, jvxHandle** cvrtHdl)
+jvxDspBaseErrorType jvx_firfft_cf_cvrt_terminate(jvx_firfft* hdl, jvxHandle** cvrtHdl, jvxFFTGlobal* fftGlobCfg)
 {
 	jvxErrorType res = JVX_DSP_ERROR_WRONG_STATE;
 	jvx_firfft_cvrt_prv* nHdl = (jvx_firfft_cvrt_prv*)*cvrtHdl;
@@ -97,7 +97,7 @@ jvxDspBaseErrorType jvx_firfft_cf_cvrt_terminate(jvx_firfft* hdl, jvxHandle** cv
 		nHdl->ram.in_weights = NULL;
 		nHdl->ram.out_spec = NULL;
 
-		jvx_destroy_fft_ifft_global(nHdl->ram.fftGlob);
+		jvx_destroy_fft_ifft_global(nHdl->ram.fftGlob, fftGlobCfg);
 		nHdl->ram.fftGlob = NULL;
 
 		jvx_allocator->dealloc((jvxHandle**)&nHdl, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));

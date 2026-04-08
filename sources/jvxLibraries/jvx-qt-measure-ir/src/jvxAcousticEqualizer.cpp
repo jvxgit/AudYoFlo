@@ -332,7 +332,7 @@ jvxAcousticEqualizer::compute_equalizer()
 	jvx_destroy_ifft(myFft);
 	inFld = NULL;
 	outFld = NULL;
-	jvx_destroy_fft_ifft_global(globFft);
+	jvx_destroy_fft_ifft_global(globFft, nullptr);
 }
 
 void 

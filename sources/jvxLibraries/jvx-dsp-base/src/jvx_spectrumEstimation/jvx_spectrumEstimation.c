@@ -111,7 +111,8 @@ jvxDspBaseErrorType
 jvx_spectrumEstimation_init(jvx_spectrumEstimation* hdl,
 	int frameSize,
 	int nChannelsIn,
-	int samplingRate)
+	int samplingRate,
+	jvxFFTGlobal* fftGlobCfg)
 {
 	jvx_spectrumEstimation_prv* prv = NULL;
 
@@ -135,7 +136,7 @@ jvx_spectrumEstimation_init(jvx_spectrumEstimation* hdl,
 
 	// init of submodules
 	prv->cb = NULL; // will be allocated in update function
-	jvx_circbuffer_allocate_global_fft_ifft(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192, NULL); // global init with max size
+	jvx_circbuffer_allocate_global_fft_ifft(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192, fftGlobCfg); // global init with max size
 
 
 	// trigger parameter update
@@ -233,7 +234,7 @@ jvx_spectrumEstimation_process(jvx_spectrumEstimation* hdl,
 	return JVX_DSP_NO_ERROR;
 }
 
-jvxDspBaseErrorType jvx_spectrumEstimation_terminate(jvx_spectrumEstimation* hdl)
+jvxDspBaseErrorType jvx_spectrumEstimation_terminate(jvx_spectrumEstimation* hdl, jvxFFTGlobal* fftGlobCfg)
 {
 	jvx_spectrumEstimation_prv* prv;
 	int i;
@@ -254,7 +255,7 @@ jvxDspBaseErrorType jvx_spectrumEstimation_terminate(jvx_spectrumEstimation* hdl
 	for (i = 0; i < hdl->nChannelsIn; i++)
 		jvx_circbuffer_deallocate_fft_ifft(prv->cb[i]);
 	JVX_DSP_SAFE_DELETE_FIELD(prv->cb);
-	jvx_circbuffer_destroy_global_fft_ifft(prv->globalFFT);
+	jvx_circbuffer_destroy_global_fft_ifft(prv->globalFFT, fftGlobCfg);
 
 	JVX_DSP_SAFE_DELETE_OBJECT(prv);
 	hdl->prv = NULL;

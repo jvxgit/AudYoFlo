@@ -17,7 +17,7 @@ CjvxFastConvolution::~CjvxFastConvolution()
 	if (this->hdl_firfft) {
 		JVX_DSP_SAFE_DELETE_OBJECT(this->hdl_firfft->init.fir);
 		this->hdl_firfft->init.fir = NULL;
-		jvx_firfft_terminate(this->hdl_firfft);
+		jvx_firfft_terminate(this->hdl_firfft, nullptr);
 	}
 
 	if (this->fft_ir)
@@ -81,7 +81,7 @@ int CjvxFastConvolution::init(jvxSize fir_size, jvxSize b_size)
 	this->fft_ir_size_enum = this->hdl_firfft->derived.szFft;
 	this->fft_ir_size = jvx_get_fft_size(this->fft_ir_size_enum);
 
-	jvx_create_fft_ifft_global(&this->fft_global, this->fft_ir_size_enum, NULL);
+	jvx_create_fft_ifft_global(&this->fft_global, this->fft_ir_size_enum, nullptr);
 	const jvxFftIfftOperate fft_operate = JVX_FFT_IFFT_PRESERVE_INPUT;
 	jvxData* input = nullptr;
 	jvxDataCplx* output = nullptr;

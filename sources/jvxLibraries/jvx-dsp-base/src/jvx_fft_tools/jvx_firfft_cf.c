@@ -225,7 +225,7 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 	return JVX_DSP_ERROR_WRONG_STATE;	
 }
 
-jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl)
+jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl, jvxFFTGlobal* fftGlobCfg)
 {
 	jvxErrorType res = JVX_DSP_ERROR_WRONG_STATE;
 	if (hdl->prv)
@@ -253,7 +253,7 @@ jvxDspBaseErrorType jvx_firfft_cf_terminate(jvx_firfft* hdl)
 			nHdl->ram_cf.spec_ifft_in[1] = NULL;
 			nHdl->ram_cf.ifft_out[1] = NULL;
 
-			jvx_destroy_fft_ifft_global(nHdl->firfft.ram.fftGlob);
+			jvx_destroy_fft_ifft_global(nHdl->firfft.ram.fftGlob, fftGlobCfg);
 			nHdl->firfft.ram.fftGlob = NULL;
 
 			jvx_allocator->dealloc((jvxHandle**)&hdl->sync.firW, (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));

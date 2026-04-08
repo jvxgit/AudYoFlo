@@ -434,7 +434,7 @@ jvxAcousticMeasure::replot_freqdomain(
 		}
 
 		jvx_destroy_fft(myFft);
-		jvx_destroy_fft_ifft_global(globFft);
+		jvx_destroy_fft_ifft_global(globFft, nullptr);
 		inFld = NULL;
 		outFld = NULL;
 	}

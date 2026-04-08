@@ -493,8 +493,8 @@ CjvxAuNBinauralRender::allocate_renderer(jvxSize bsize, jvxData startAz, jvxData
 		render_inst->buffer_hrir_left, render_inst->buffer_hrir_right
 	};
 
-	jvx_firfft_cf_nout_init(&render_inst->firfftcf_left_right, NULL, 2, 1);
-	jvx_firfft_cf_cvrt_init(&render_inst->firfftcf_left_right, NULL, hrir_LR, (jvxHandle**)&render_inst->firfftcf_cvrt);
+	jvx_firfft_cf_nout_init(&render_inst->firfftcf_left_right, 2, 1, nullptr);
+	jvx_firfft_cf_cvrt_init(&render_inst->firfftcf_left_right, hrir_LR, (jvxHandle**)&render_inst->firfftcf_cvrt, nullptr);
 
 	// The following buffers for NEW filter coeficients
 	render_inst->lUpdatedWeights = render_inst->firfftcf_left_right.derived.lFirW;
@@ -535,7 +535,7 @@ CjvxAuNBinauralRender::deallocate_renderer(jvxOneRenderCore*& render_inst)
 	render_inst->lUpdatedWeights = 0;
 
 #ifdef AYF_CTC_EFFICIENT_FILTER
-	jvx_firfft_cf_cvrt_terminate(&render_inst->firfftcf_left_right, &render_inst->firfftcf_cvrt);
+	jvx_firfft_cf_cvrt_terminate(&render_inst->firfftcf_left_right, &render_inst->firfftcf_cvrt, nullptr);
 	
 #else
 	jvx_firfft_cf_terminate(&render_inst->firfftcf_left);

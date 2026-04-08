@@ -818,7 +818,7 @@ jvx_generator_wave_start_generator_buffered_perfectsweep(jvx_generatorWave* hdl)
 	newHdl->runtime_parameters_sync_intern.buffered.bufField = newHdl->runtime.fieldSamples;
 	newHdl->runtime_parameters_sync_intern.itCount = 0;
 
-	res = jvx_destroy_fft_ifft_global(glob_fft);
+	res = jvx_destroy_fft_ifft_global(glob_fft, NULL);
 	assert(res == JVX_DSP_NO_ERROR);
 
 	return JVX_DSP_NO_ERROR;

@@ -228,7 +228,7 @@ CjvxAudioFixedFftN1Filter::postprocess_N1Filter()
 			for (i = 0; i < numChannelsIn; i++)
 			{
 				// ========================================================================================
-				jvx_firfft_terminate(&proc_variables.theFftFilt[i]);
+				jvx_firfft_terminate(&proc_variables.theFftFilt[i], nullptr);
 			}
 			JVX_DSP_SAFE_DELETE_FIELD(proc_variables.theFftFilt);
 		}
