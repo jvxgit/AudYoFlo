@@ -112,7 +112,11 @@ namespace _myJvxTools {
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 		add_tag_lock(("Position <STOP_LOCK#0>- isLocked = " + jvx_int2String(isLocked)).c_str());
 #endif
-		assert(isLocked);
+		if (!isLocked)
+		{
+			assert(isLocked);
+		}
+
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 		add_tag_lock(("Position <STOP_LOCK#1> - isLocked = " + jvx_int2String(isLocked)).c_str());
 #endif

@@ -84,7 +84,7 @@ jvx_measure_ir_prepare(jvxMeasureIr* handle)
 	newHdl->runtime.fftSize22_p1 = newHdl->runtime.fftSize + 1;
 	newHdl->prm_sync.offsetXCorr = 0;
 
-	res = jvx_create_fft_ifft_global(&newHdl->runtime.glob_fft, (jvxFFTSize)(newHdl->runtime.fftSize_log2-4), NULL);
+	res = jvx_create_fft_ifft_global(&newHdl->runtime.glob_fft, (jvxFFTSize)(newHdl->runtime.fftSize_log2-4), NULL JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 	assert(res == JVX_DSP_NO_ERROR);
 
 	newHdl->prm_sync.lRecording = newHdl->prm_init.szTestsignal_onerep *newHdl->prm_init.numReps;

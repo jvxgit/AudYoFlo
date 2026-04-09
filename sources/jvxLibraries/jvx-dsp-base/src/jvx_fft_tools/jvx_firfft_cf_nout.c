@@ -1,6 +1,7 @@
 #include "jvx_dsp_base.h"
 #include "jvx_fft_tools/jvx_firfft.h"
 #include "jvx_fft_tools/jvx_fft_core.h"
+#include "jvx_fft_tools/jvx_fft_tools.h"
 
 #include "jvx_dsp_base.h"
 #include "jvx_allocators/jvx_allocators.h"
@@ -81,7 +82,7 @@ jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxSize nStride, jvxSize nChannelsIn, j
 
 		jvx_allocator->purpose = JVX_ALLOCATOR_OBJECT_PURPOSE_TIME_CRITICAL;
 
-		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftGlobCfg);
+		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftGlobCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		// Check if current fft implementation requires normalization
@@ -94,7 +95,7 @@ jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxSize nStride, jvxSize nChannelsIn, j
 			if (ptrAttachFromGlobal)
 			{
 				ptrReuse = ptrAttachFromGlobal->attached_data;
-				if (ptrReuse->fft_size >= jvx_get_fft_size(nHdl->firfft.derived_cpy.szFft))
+				if (ptrReuse->fft_size >= jvx_translate_fft_size(nHdl->firfft.derived_cpy.szFft))
 				{
 					elmBufferSources = *ptrReuse;
 				}

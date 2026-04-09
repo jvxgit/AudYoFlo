@@ -91,10 +91,12 @@ static jvxDspBaseErrorType jvx_core_fft_init_common(jvx_fft_ifft_core_common* hd
 
 // =======================================================================================
 
-jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSize fftType_max, jvxHandle* fftGlobalPrv)
+jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSize fftType_max,
+		jvxFFTGlobal* fftGlobalPrv, jvxFFTGlobalCfg* cfg_arg)
 {
 	jvx_fft_ifft_core_global_common** global_hdl = (jvx_fft_ifft_core_global_common**)glob_hdl;
 	jvx_fft_ifft_core_global_common* ptr = NULL;
+	jvx_fft_ifft_core_global_cfg* cfg = (jvx_fft_ifft_core_global_cfg* )cfg_arg;
 	jvxCBool onlyFft = c_false;
 
 	// Support only up to FFT size 8192
@@ -105,51 +107,52 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** glob_hdl, jvxFFTSi
 	if(!global_hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 
-	jvx_fft_ifft_core_global_cfg* cfg = (jvx_fft_ifft_core_global_cfg*)fftGlobalPrv;
+	// jvx_fft_ifft_core_global_cfg* cfg = (jvx_fft_ifft_core_global_cfg*)fftGlobalPrv;
 
 	// Check for existing allocators
 	assert(jvx_allocator);
-	ptr = jvx_allocator->alloc(sizeof(jvx_fft_ifft_core_global_common),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
-
-	ptr->fftSizeLog = (int)fftType_max + JVX_OFFSET_FFT_TYPE_MIN;
-	ptr->refCount = 0;
-
-	if(fftGlobalPrv == NULL)
+	if (fftGlobalPrv)
 	{
-		twidfft (twiddle_table, MAX_FFT_SIZE);
-	}
-
-	ptr->twiddle_facs = twiddle_table;
-	ptr->twiddle_fft_size = MAX_FFT_SIZE;
-
-	// Derive maximum fft associated to global fft handle
-	ptr->max_fft_size = (jvxInt32) 1 << ptr->fftSizeLog;
-
-	// By defaulot: allocate complex2real and real2complex only
-	ptr->cfg.mode = (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT);
-
-	// Allocate workbuffer to allow for PRESERVE_INPUT option
-	if(cfg)
-	{
-		ptr->cfg = *cfg;
-	}
-
-	ptr->work_buffer_fld = NULL;
-	ptr->work_buffer_sz = 0;
-
-	if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT))
-	{
-		// For FFT in preserve input mode, we need the work buffer
-		ptr->work_buffer_fld = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size/2+1));
-		ptr->work_buffer_sz = sizeof(complex_float) * (ptr->max_fft_size/2+1);
+		ptr = fftGlobalPrv;
 	}
 	else
 	{
-		// For FFT in preserve input mode, we need the work buffer
-		ptr->work_buffer_fld = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
-		ptr->work_buffer_sz = sizeof(complex_float) * (ptr->max_fft_size);
-	}
+		ptr = jvx_allocator->alloc(sizeof(jvx_fft_ifft_core_global_common),  (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), 1);
+		ptr->fftType = fftType_max;
+		ptr->fftSizeLog = (int)fftType_max + JVX_OFFSET_FFT_TYPE_MIN;
+		ptr->refCount = 0;
+		twidfft (twiddle_table, MAX_FFT_SIZE);
 
+		ptr->twiddle_facs = twiddle_table;
+		ptr->twiddle_fft_size = MAX_FFT_SIZE;
+
+		// Derive maximum fft associated to global fft handle
+		ptr->max_fft_size = (jvxInt32) 1 << ptr->fftSizeLog;
+
+		// By defaulot: allocate complex2real and real2complex only
+		ptr->cfg.mode = (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT);
+
+		if(cfg)
+		{
+			ptr->cfg = *cfg;
+		}
+		// Allocate workbuffer to allow for PRESERVE_INPUT option
+		ptr->work_buffer_fld = NULL;
+		ptr->work_buffer_sz = 0;
+
+		if(ptr->cfg.mode & (1 << JVX_FFT_GLOBAL_FFT_IFFT_COMPLEX_2_REAL_ONLY_SHIFT))
+		{
+			// For FFT in preserve input mode, we need the work buffer
+			ptr->work_buffer_fld = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size/2+1));
+			ptr->work_buffer_sz = sizeof(complex_float) * (ptr->max_fft_size/2+1);
+		}
+		else
+		{
+			// For FFT in preserve input mode, we need the work buffer
+			ptr->work_buffer_fld = jvx_allocator->alloc(sizeof(complex_float), (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->max_fft_size));
+			ptr->work_buffer_sz = sizeof(complex_float) * (ptr->max_fft_size);
+		}
+	}
 
 	*global_hdl = ptr;
 
@@ -751,7 +754,7 @@ jvxDspBaseErrorType jvx_destroy_ifft(jvxIFFT* hdlRef)
 	return res;
 }
 
-jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl)
+jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl, jvxFFTGlobal* fftGlobCfg)
 {
 	int i;
 	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
@@ -759,74 +762,31 @@ jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* g_hdl)
 	if(!global_hdl)
 		return JVX_DSP_ERROR_INVALID_ARGUMENT;
 
-	// all ffts released?
-	assert(global_hdl->refCount == 0);
-
-
-	JVX_DSP_SAFE_DELETE_OBJECT(global_hdl);
-
-	return JVX_DSP_NO_ERROR;
-}
-
-JVX_FFT_TOOLS_DEFINE_FFT_SIZES
-
-jvxDspBaseErrorType 
-jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType tp, jvxSize* szOnReturn)
-{
-	// first valid size is 16 -> subtract 4 to address enum correctly
-	int idxLow = (int)floor(log((jvxData)n) / log(2.)) - JVX_OFFSET_FFT_TYPE_MIN;
-	int idxHigh = (int)ceil(log((jvxData)n) / log(2.)) - JVX_OFFSET_FFT_TYPE_MIN;
-	idxLow = JVX_MAX(JVX_FFT_TOOLS_FFT_SIZE_16, idxLow);
-	idxLow = JVX_MIN(JVX_FFT_TOOLS_FFT_SIZE_8192, idxLow);
-	idxHigh = JVX_MAX(JVX_FFT_TOOLS_FFT_SIZE_16, idxHigh);
-	idxHigh = JVX_MIN(JVX_FFT_TOOLS_FFT_SIZE_8192, idxHigh);
-	jvxSize fftSLow = jvxFFTSize_sizes[idxLow];
-	jvxSize fftSHigh = jvxFFTSize_sizes[idxHigh];
-	switch (tp)
+	if (fftGlobCfg)
 	{
-	case JVX_FFT_ROUND_NEAREST:
-		if (abs((int)fftSLow - (int)n) < abs((int)fftSHigh - (int)n))
-		{
-			*szTypeOnReturn = (jvxFFTSize)idxLow;
-			if(szOnReturn)
-			{
-				*szOnReturn = fftSLow;
-			}
-
-		}
-		else
-		{
-			*szTypeOnReturn = (jvxFFTSize)idxHigh;
-			if(szOnReturn)
-			{
-				*szOnReturn = fftSHigh;
-			}
-		}
-		return JVX_DSP_NO_ERROR;
-	case JVX_FFT_ROUND_UP:
-		if (n <= fftSHigh)
-		{
-			*szTypeOnReturn = (jvxFFTSize)idxHigh;
-			if(szOnReturn)
-			{
-				*szOnReturn = fftSHigh;
-			}
-			return JVX_DSP_NO_ERROR;
-		}
-		return JVX_DSP_ERROR_INVALID_SETTING;
-	case JVX_FFT_ROUND_DOWN:
-		if (n >= fftSLow)
-		{
-			*szTypeOnReturn = (jvxFFTSize)idxLow;
-			if(szOnReturn)
-			{
-				*szOnReturn = fftSLow;
-			}
-			return JVX_DSP_NO_ERROR;
-		}
-		return JVX_DSP_ERROR_INVALID_SETTING;
-	default:
-		assert(0);
+		global_hdl = NULL;
+	}
+	else
+	{
+		// all ffts released?
+		assert(global_hdl->refCount == 0);
+		assert(global_hdl->attached == NULL);
+		assert(jvx_allocator);
+		jvx_allocator->dealloc((jvxHandle**)&global_hdl,
+				(JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW));
 	}
 	return JVX_DSP_NO_ERROR;
 }
+
+jvxFFTSize jvx_fft_ifft_global_max_fft_size(jvxFFTGlobal* global_hdl_arg)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)global_hdl_arg;
+
+	if (global_hdl)
+	{
+		return global_hdl->fftType;
+	}
+	return JVX_FFT_TOOLS_FFT_SIZE_INVALID;
+}
+
+

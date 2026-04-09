@@ -30,9 +30,9 @@ static void deallocateFftIfftExtension(struct jvxFftIfftHandle** lochdl)
 }
 
 jvxDspBaseErrorType
-jvx_circbuffer_allocate_global_fft_ifft(jvxFFTGlobal** global_fft, jvxFFTSize fftType_max, jvxHandle* fftGlobalCfg)
+jvx_circbuffer_allocate_global_fft_ifft(jvxFFTGlobal** global_fft, jvxFFTSize fftType_max, jvxFFTGlobal* fftGlobalCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT)
 {
-	return jvx_create_fft_ifft_global(global_fft, fftType_max, fftGlobalCfg);
+	return jvx_create_fft_ifft_global(global_fft, fftType_max, fftGlobalCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 }
 
 jvxDspBaseErrorType

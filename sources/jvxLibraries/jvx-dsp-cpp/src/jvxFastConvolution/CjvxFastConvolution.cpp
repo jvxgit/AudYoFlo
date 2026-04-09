@@ -1,6 +1,7 @@
 #include "jvxFastConvolution/CjvxFastConvolution.h"
 
 #include "jvx.h"
+#include "jvx_fft_tools/jvx_fft_tools.h"
 
 CjvxFastConvolution::CjvxFastConvolution()
 {
@@ -79,9 +80,9 @@ int CjvxFastConvolution::init(jvxSize fir_size, jvxSize b_size)
 
 	// init fft module for impulse response
 	this->fft_ir_size_enum = this->hdl_firfft->derived.szFft;
-	this->fft_ir_size = jvx_get_fft_size(this->fft_ir_size_enum);
+	this->fft_ir_size = jvx_translate_fft_size(this->fft_ir_size_enum);
 
-	jvx_create_fft_ifft_global(&this->fft_global, this->fft_ir_size_enum, nullptr);
+	jvx_create_fft_ifft_global(&this->fft_global, this->fft_ir_size_enum, nullptr JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 	const jvxFftIfftOperate fft_operate = JVX_FFT_IFFT_PRESERVE_INPUT;
 	jvxData* input = nullptr;
 	jvxDataCplx* output = nullptr;

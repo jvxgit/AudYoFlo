@@ -73,7 +73,7 @@ jvxDspBaseErrorType jvx_firfft_init(jvx_firfft* hdl, jvxHandle* fftGlobalCfg)
 
 		jvx_firfft_update(hdl, JVX_DSP_UPDATE_INIT, true); // this sets all derived values
 
-		resL = jvx_create_fft_ifft_global(&nHdl->ram.fftGlob, nHdl->derived_cpy.szFft, fftGlobalCfg);
+		resL = jvx_create_fft_ifft_global(&nHdl->ram.fftGlob, nHdl->derived_cpy.szFft, fftGlobalCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		nHdl->ram.normOut = jvx_fft_requires_normalization(nHdl->ram.fftGlob);

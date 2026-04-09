@@ -238,7 +238,7 @@ jvxAcousticEqualizer::compute_equalizer()
 	transfer_desired_dB.resize(fftSz2P1);
 	transfer_desired_f.resize(fftSz2P1);
 
-	jvx_create_fft_ifft_global(&globFft, szFftTypeEq, nullptr);
+	jvx_create_fft_ifft_global(&globFft, szFftTypeEq, nullptr JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 	jvx_create_ifft_complex_2_real(&myFft, globFft, szFftTypeEq,
 		&inFld, &outFld, &N, JVX_FFT_IFFT_EFFICIENT, NULL, NULL, 0);
 

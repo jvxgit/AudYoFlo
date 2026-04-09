@@ -167,7 +167,7 @@ jvxAcousticMeasure::replot_freqdomain(
 		label_est_delay_plot1->setText("--");
 		label_est_delay_plot2->setText("--");
 
-		jvx_create_fft_ifft_global(&globFft, fftInt, nullptr);
+		jvx_create_fft_ifft_global(&globFft, fftInt, nullptr JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 		jvx_create_fft_real_2_complex(&myFft, globFft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
 			&inFld, &outFld, &N, JVX_FFT_IFFT_EFFICIENT, NULL, NULL, sigLu);
 		N2 = N / 2;

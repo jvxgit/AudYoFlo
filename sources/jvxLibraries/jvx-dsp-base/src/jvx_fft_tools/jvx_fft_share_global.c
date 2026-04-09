@@ -31,7 +31,7 @@ jvxErrorType jvx_create_or_request_fft_global(jvxFFTGlobal** hdlOnReturn, jvxFFT
 		if (hdlOnReturn) *hdlOnReturn = NULL;
 		return JVX_DSP_ERROR_INVALID_SETTING;
 	}
-	jvx_create_fft_ifft_global(&theGlobalFftRef.common_global, szFft, NULL);
+	jvx_create_fft_ifft_global(&theGlobalFftRef.common_global, szFft, NULL JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 	theGlobalFftRef.refCnt = 1;
 	if (hdlOnReturn) *hdlOnReturn = theGlobalFftRef.common_global;
 	if (wasCreated) *wasCreated = c_true;

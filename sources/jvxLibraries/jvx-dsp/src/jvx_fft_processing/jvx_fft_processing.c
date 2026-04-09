@@ -92,7 +92,7 @@ jvxDspBaseErrorType jvx_fft_signal_processing_initCfg(jvx_fft_signal_processing*
 
 jvxDspBaseErrorType jvx_fft_signal_processing_updateCfg(jvx_fft_signal_processing_prmDerived* H, jvx_fft_signal_processing_prmInit* cfg)
 {
-	H->fftsize = jvx_get_fft_size(cfg->fftType);
+	H->fftsize = jvx_translate_fft_size(cfg->fftType);
 	H->numSpectrumCoeffs = H->fftsize / 2 + 1;
 	H->desiredNumFilterCoeffs =
 		jvx_fft_tools_compute_num_filter_coeffs_frameworks(H->fftsize,

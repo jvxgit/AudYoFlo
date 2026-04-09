@@ -315,7 +315,7 @@ jvx_fftFramework_init(jvx_fftFramework* hdl,
   hdl->frameSize = frameSize;
 
   // global allocations
-  jvx_create_fft_ifft_global(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192, NULL); // global init with max size
+  jvx_create_fft_ifft_global(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192, NULL JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL); // global init with max size
 
   // trigger parameter update & synchronized reallocations
   jvx_fftFramework_update(hdl, true);

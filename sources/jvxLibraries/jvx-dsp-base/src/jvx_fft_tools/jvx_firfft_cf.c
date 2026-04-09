@@ -149,7 +149,7 @@ jvxDspBaseErrorType jvx_firfft_cf_init(jvx_firfft* hdl, jvxHandle* fftCfgHdl)
 
 		jvx_allocator->purpose = JVX_ALLOCATOR_OBJECT_PURPOSE_TIME_CRITICAL;
 
-		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftCfgHdl);
+		resL = jvx_create_fft_ifft_global(&nHdl->firfft.ram.fftGlob, nHdl->firfft.derived_cpy.szFft, fftCfgHdl JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 		assert(resL == JVX_DSP_NO_ERROR);
 
 		// Check if current fft implementation requires normalization

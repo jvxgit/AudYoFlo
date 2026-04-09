@@ -331,6 +331,18 @@ jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSi
 // Rotate the time domain signal in a M2P1 complex buffer by phase modification. fftScale must contain the value 1/fftsize
 jvxDspBaseErrorType jvx_fft_crotate_time(jvxDataCplx* bufIn, jvxDataCplx* bufOut, jvxData fftScale, jvxData numValuesRotate, jvxSize idxOffsIn, jvxSize idxOffsOut, jvxSize numVals);
 
+jvxDspBaseErrorType jvx_attach_fft_ifft_global(jvxFFTGlobal* global_hdl, struct jvx_fft_ifft_core_global_attach* attach_this);
+
+jvxDspBaseErrorType jvx_detach_fft_ifft_global(jvxFFTGlobal* global_hdl, struct jvx_fft_ifft_core_global_attach** detach_this);
+
+struct jvx_fft_ifft_core_global_attach* jvx_attached_tag_fft_ifft_global(jvxFFTGlobal* g_hdl, const char* str);
+
+// =======================================================================================
+jvxDspBaseErrorType jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType tp, jvxSize* szOnReturn);
+
+jvxSize jvx_translate_fft_size(jvxFFTSize fftSz);
+
+
 JVX_DSP_LIB_END
 
 #endif

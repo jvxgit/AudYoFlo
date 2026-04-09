@@ -28,6 +28,7 @@ typedef struct
 // ===========================================================================
 typedef struct 
 {
+	jvxFFTSize fftType;
 	jvxInt32 fftSizeLog;
 	jvxInt32 refCount;
 
@@ -42,6 +43,7 @@ typedef struct
 	complex_float* work_buffer_fld;
 	jvxSize work_buffer_sz;
 
+	struct jvx_fft_ifft_core_global_attach* attached;
 } jvx_fft_ifft_core_global_common;
 
 

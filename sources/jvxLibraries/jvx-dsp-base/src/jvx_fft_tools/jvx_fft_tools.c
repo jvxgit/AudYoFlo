@@ -2778,7 +2778,7 @@ jvx_fft_direct_apply_arbitrary_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxS
 	jvxDspBaseErrorType res = jvx_get_nearest_size_fft(&fftInt, n, JVX_FFT_ROUND_UP, NULL);
 	assert(res == JVX_DSP_NO_ERROR);
 
-	jvx_create_fft_ifft_global(&globFft, fftInt, fftGlobCfg);
+	jvx_create_fft_ifft_global(&globFft, fftInt, fftGlobCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 	jvx_create_fft_real_2_complex(&myFft, globFft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
 		&inFld, &outFld, &N, JVX_FFT_IFFT_EFFICIENT, NULL, NULL, n);
 	N2 = N / 2;
@@ -2820,7 +2820,7 @@ jvx_fft_direct_apply_fixed_size(jvxData* inBuf_n, jvxData* outBuf_n2p1, jvxFFTSi
 	jvxDspBaseErrorType res = jvx_get_nearest_size_fft(&fftInt, n, JVX_FFT_ROUND_UP, NULL);
 	assert(res == JVX_DSP_NO_ERROR);
 
-	jvx_create_fft_ifft_global(&globFft, fftInt, fftGlobCfg);
+	jvx_create_fft_ifft_global(&globFft, fftInt, fftGlobCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
 	jvx_create_fft_real_2_complex(&myFft, globFft, JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE,
 		&inFld, &outFld, &N, JVX_FFT_IFFT_EFFICIENT, NULL, NULL, n);
 	N2 = N / 2;
@@ -2872,4 +2872,131 @@ jvx_fft_crotate_time(jvxDataCplx* bufIn, jvxDataCplx* bufOut, jvxData fftScale, 
 		// 2) angle(bufIn) + arg should be angle(bufsOut) - but modulo pi
 	}
 	return JVX_DSP_NO_ERROR;
+}
+
+jvxDspBaseErrorType jvx_attach_fft_ifft_global(jvxFFTGlobal* g_hdl, struct jvx_fft_ifft_core_global_attach* attach_this)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+
+	if (global_hdl)
+	{
+		struct jvx_fft_ifft_core_global_attach* attached_before = global_hdl->attached;
+		global_hdl->attached = attach_this;
+		attach_this->next = attached_before;
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
+struct jvx_fft_ifft_core_global_attach* jvx_attached_tag_fft_ifft_global(jvxFFTGlobal* g_hdl, const char* str)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+	if (global_hdl)
+	{
+		struct jvx_fft_ifft_core_global_attach* attached = global_hdl->attached;
+		while (attached)
+		{
+			if (strcmp(str, attached->tag) == 0)
+			{
+				return attached;
+			}
+		}
+	}
+	return NULL;
+}
+
+jvxDspBaseErrorType jvx_detach_fft_ifft_global(jvxFFTGlobal* g_hdl, struct jvx_fft_ifft_core_global_attach** detach_this)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+
+	if (global_hdl)
+	{
+		struct jvx_fft_ifft_core_global_attach* attached_before = global_hdl->attached->next;
+		global_hdl->attached->next = NULL;
+
+		// Return the value
+		if (detach_this) *detach_this = global_hdl->attached;
+		global_hdl->attached = attached_before;
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
+JVX_FFT_TOOLS_DEFINE_FFT_SIZES
+
+jvxDspBaseErrorType
+jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType tp, jvxSize* szOnReturn)
+{
+	// first valid size is 16 -> subtract 4 to address enum correctly
+	jvxSize idxFftSize = JVX_SIZE_UNSELECTED;
+	int idxLow = (int)floor(log((jvxData)n) / log(2.)) - JVX_OFFSET_FFT_TYPE_MIN;
+	int idxHigh = (int)ceil(log((jvxData)n) / log(2.)) - JVX_OFFSET_FFT_TYPE_MIN;
+	idxLow = JVX_MAX(JVX_FFT_TOOLS_FFT_SIZE_16, idxLow);
+	idxLow = JVX_MIN(JVX_FFT_TOOLS_FFT_SIZE_8192, idxLow);
+	idxHigh = JVX_MAX(JVX_FFT_TOOLS_FFT_SIZE_16, idxHigh);
+	idxHigh = JVX_MIN(JVX_FFT_TOOLS_FFT_SIZE_8192, idxHigh);
+	jvxSize fftSLow = jvxFFTSize_sizes[idxLow];
+	jvxSize fftSHigh = jvxFFTSize_sizes[idxHigh];
+	switch (tp)
+	{
+	case JVX_FFT_ROUND_NEAREST:
+		if (abs((int)fftSLow - (int)n) < abs((int)fftSHigh - (int)n))
+		{
+			*szTypeOnReturn = idxLow;
+			if (szOnReturn)
+			{
+				*szOnReturn = fftSLow;
+			}
+
+		}
+		else
+		{
+			*szTypeOnReturn = idxHigh;
+			if (szOnReturn)
+			{
+				*szOnReturn = fftSHigh;
+			}
+		}
+		return JVX_DSP_NO_ERROR;
+	case JVX_FFT_ROUND_UP:
+		if (n <= fftSHigh)
+		{
+			*szTypeOnReturn = idxHigh;
+			if (szOnReturn)
+			{
+				*szOnReturn = fftSHigh;
+			}
+		}
+		else
+		{
+			*szTypeOnReturn = JVX_FFT_TOOLS_FFT_ARBITRARY_SIZE;
+			if (szOnReturn)
+			{
+				*szOnReturn = n;
+			}
+		}
+		return JVX_DSP_NO_ERROR;
+	case JVX_FFT_ROUND_DOWN:
+		if (n >= fftSLow)
+		{
+			*szTypeOnReturn = idxLow;
+			if (szOnReturn)
+			{
+				*szOnReturn = fftSLow;
+			}
+			return JVX_DSP_NO_ERROR;
+		}
+		return JVX_DSP_ERROR_INVALID_SETTING;
+	default:
+		assert(0);
+	}
+	return JVX_DSP_NO_ERROR;
+}
+
+jvxSize jvx_translate_fft_size(jvxFFTSize fftType)
+{
+	assert(fftType < JVX_FFT_TOOLS_FFT_SIZE_INVALID);
+	int fftSizeLog = (int)fftType + JVX_OFFSET_FFT_TYPE_MIN;
+	jvxSize fftSize = (jvxSize)1 << (fftSizeLog);
+	return fftSize;
 }

@@ -31,7 +31,9 @@
 //#include "jvx_fft_tools/jvx_fft_tools.h"
 #include "jvx_dsp_base.h"
 
-
+// Define some additional arguments for fft/ifft global init function
+#define JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT ,jvxFFTGlobalCfg* specArg
+#define JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL ,NULL
 
 // =====================================================================
 JVX_DSP_LIB_BEGIN
@@ -43,6 +45,7 @@ typedef enum
 	JVX_FFT_IMPLEMENTATION_GENERIC
 } jvxFftImplementationType;
 
+typedef jvxHandle jvxFFTGlobalCfg;
 typedef jvxHandle jvxFFTGlobal;
 typedef jvxHandle jvxFFT;
 typedef jvxHandle jvxIFFT;
@@ -116,8 +119,7 @@ struct jvx_fft_ifft_core_global_attach
 /**
  * Create global handle for FFT: fftType_max specifies maximal possible length of FFT
  */
-jvxDspBaseErrorType jvx_create_fft_ifft_global(
-	jvxFFTGlobal** global_hdl, jvxFFTSize fftType_max, jvxFFTGlobal* fftGlobCfg);
+jvxDspBaseErrorType jvx_create_fft_ifft_global(jvxFFTGlobal** global_hdl, jvxFFTSize fftType_max, jvxFFTGlobal* fftGlobCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT);
 
 /** 
 * Create handle for real to complex FFT
@@ -188,10 +190,6 @@ jvxDspBaseErrorType jvx_destroy_ifft(jvxIFFT* hdl);
 
 jvxDspBaseErrorType jvx_destroy_fft_ifft_global(jvxFFTGlobal* global_hdl, jvxFFTGlobal* fftGlobCfg);
 
-jvxDspBaseErrorType jvx_attach_fft_ifft_global(jvxFFTGlobal* global_hdl, struct jvx_fft_ifft_core_global_attach* attach_this);
-jvxDspBaseErrorType jvx_detach_fft_ifft_global(jvxFFTGlobal* global_hdl, struct jvx_fft_ifft_core_global_attach** detach_this);
-struct jvx_fft_ifft_core_global_attach* jvx_attached_tag_fft_ifft_global(jvxFFTGlobal* g_hdl, const char* str);
-
 jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl);
 
 jvxFftImplementationType jvx_fft_ifft_implementation();
@@ -209,12 +207,7 @@ void jvx_free_fft_buffer(void* buffer);
 *  @param out output data array of length fft_size.
 *  @return error code.
 */
-jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx* in, jvxData* out, jvxHandle* fftCfgHdl);
-
-
-// =======================================================================================
-jvxDspBaseErrorType jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType tp, jvxSize* szOnReturn);
-jvxSize jvx_get_fft_size(jvxFFTSize fftSz);
+jvxDspBaseErrorType jvx_oneshot_ifft_complex_2_real(jvxSize fft_size, jvxDataCplx* in, jvxData* out, jvxHandle* fftCfgHdl JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT);
 
 JVX_DSP_LIB_END
 

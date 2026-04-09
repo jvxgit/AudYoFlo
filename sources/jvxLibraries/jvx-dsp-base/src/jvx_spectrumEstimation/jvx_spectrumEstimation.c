@@ -136,7 +136,7 @@ jvx_spectrumEstimation_init(jvx_spectrumEstimation* hdl,
 
 	// init of submodules
 	prv->cb = NULL; // will be allocated in update function
-	jvx_circbuffer_allocate_global_fft_ifft(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192, fftGlobCfg); // global init with max size
+	jvx_circbuffer_allocate_global_fft_ifft(&prv->globalFFT, JVX_FFT_TOOLS_FFT_SIZE_8192, fftGlobCfg JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL); // global init with max size
 
 
 	// trigger parameter update

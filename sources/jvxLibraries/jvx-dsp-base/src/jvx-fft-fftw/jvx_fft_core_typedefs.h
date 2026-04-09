@@ -68,7 +68,7 @@ typedef struct
 
 #endif
 
-	jvxFFTSize fftSize;
+	jvxFFTSize fftType;
 	jvxInt32 fftSizeLog;
 	jvxInt32 refCount;
 	jvxCBool allocatedByAllocator;
