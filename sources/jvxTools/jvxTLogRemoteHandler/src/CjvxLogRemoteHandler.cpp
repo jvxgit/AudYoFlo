@@ -95,7 +95,7 @@ namespace _myJvxTools {
 	jvxErrorType
 	CjvxLogRemoteHandler::add_tag_lock(const std::string& tag)
 	{
-		jvx_lock_text_log_add_tag(embLog, tag);
+		jvx_lock_text_log_add_tag(embLog, tag + " -- " + jvx_int2String(isLocked));
 		return JVX_NO_ERROR;
 	}
 
@@ -121,12 +121,14 @@ namespace _myJvxTools {
 		add_tag_lock(("Position <STOP_LOCK#1> - isLocked = " + jvx_int2String(isLocked)).c_str());
 #endif
 
+		// This must be within the critical section!!!
+		isLocked = false;
+
 #ifdef JVX_PROFILE_TEXT_LOG_LOCK 
 		jvx_unlock_text_log(embLog, tag);
 #else
 		jvx_unlock_text_log(embLog);
 #endif
-		isLocked = false;
 
 	}
 } // namespace
