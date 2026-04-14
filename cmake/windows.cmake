@@ -302,8 +302,16 @@ macro (find_octave arg1)
     if(OCTAVE_VERSION VERSION_GREATER "3.9.9")
       message("--> Copying octave libs to build tree (workaround for Octave 4.0.0)")
       exec_program(${CMAKE_COMMAND} ARGS "-E copy \"${OCTAVE_PATH_LIB}/liboctinterp.dll.a\" \"${CMAKE_CURRENT_BINARY_DIR}/octinterp.lib\"")
-      exec_program(${CMAKE_COMMAND} ARGS "-E copy \"${OCTAVE_PATH_LIB}/liboctave.dll.a\" \"${CMAKE_CURRENT_BINARY_DIR}/octave.lib\"")
-      set(OCTAVE_PATH_LIB ${CMAKE_CURRENT_BINARY_DIR})
+      exec_program(${CMAKE_COMMAND} ARGS "-E copy \"${OCTAVE_PATH_LIB}/liboctave.dll.a\" \"${CMAKE_CURRENT_BINARY_DIR}/octave.lib\"")	  
+	  
+	  if(OCTAVE_VERSION VERSION_GREATER "11.0.0") 
+	  
+		set(JVX_SYSTEM_OCTAVE_MEX_LIBRARIES ${JVX_SYSTEM_OCTAVE_MEX_LIBRARIES} "${CMAKE_CURRENT_BINARY_DIR}/octmex.lib")
+		exec_program(${CMAKE_COMMAND} ARGS "-E copy \"${OCTAVE_PATH_LIB}/liboctmex.dll.a\" \"${CMAKE_CURRENT_BINARY_DIR}/octmex.lib\"")
+	  endif()
+      
+	  set(OCTAVE_PATH_LIB ${CMAKE_CURRENT_BINARY_DIR})
+	  
     endif()
   else()
     if(${arg1} MATCHES "FATAL")

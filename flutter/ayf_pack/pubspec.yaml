@@ -25,9 +25,6 @@ dependencies:
 
   flutter_dotenv: ^5.0.2
 
-  ayf_pack_native:
-    path: ../ayf_pack_native
-
   ayf_ffihost:
     path: '../ayf_ffihost'
 
