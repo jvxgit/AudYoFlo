@@ -49,6 +49,11 @@ set(AYF_STARTER_AUDIONODE
   )
 jvx_addSubdirs("Configuring shared library for ayfstarter audio node" "${AYF_STARTER_AUDIONODE}" "${JVX_FOLDER_HIERARCHIE_BASE}/AudioNode")
 
+set(AYF_STARTER_AUTOMATION
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Components/Automation/ayfATStarter
+  )
+jvx_addSubdirs("Configuring shared library for starter automation node" "${AYF_STARTER_AUTOMATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Automation")
+
 if(JVX_USE_PYTHON)
     ##
     # build python functions
@@ -62,19 +67,22 @@ if(NOT JVX_RELEASE_SDK)
 	if(JVX_USE_PART_WEBSERVER)
 	
 		set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION}
-			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-web)
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-web)
 		
 	endif()
 	
 	if(JVX_USE_QT)
 		
 		set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} 
-			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-qt)
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-qt)
 				
 	endif()	
 endif()
 
-set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} ${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter-native-config)
+set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} 
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-native-config
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstartern/ayfstartern-native-config
+)
 jvx_addSubdirs("Configuring application ayfstarter " "${AYF_STARTER_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Application")
 
 if(JVX_RELEASE_SDK)
@@ -111,6 +119,13 @@ if(JVX_RELEASE_SDK)
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json @ONLY)
 		message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/launch.json.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/starter_app/.vscode/launch.json")	
 		
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/example/.startern_app.env.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/example/.startern_app.env @ONLY)
+		message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/example/.startern_app.env.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/example/.startern_app.env")
+		
+		set(AYF_FLUTTER_WORKDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RUNTIME})
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/launch.json.in ${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/.vscode/launch.json @ONLY)
+		message("${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/launch.json.in -> ${CMAKE_CURRENT_SOURCE_DIR}/flutter/startern_app/.vscode/launch.json")	
+
 		# Prepare installer of config dll or so
 		set(SDK_FOLDER $ENV{AYF_SDK_PATH})
 		
@@ -128,9 +143,11 @@ if(JVX_RELEASE_SDK)
 				#	message("WARNING: building flutter installer in debug mode: ffi dll will not work without VS installed")
 				#endif()
 			endif()
-			add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/post_install)
+			add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/post_install/starter)
+			add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/post_install/startern)
+			# message(FATAL_ERROR "Hier")
 		endif()
-
+		
 	endif()
 		
 endif()

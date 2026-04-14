@@ -1,0 +1,707 @@
+SECTION jvxQtHost1_main
+{
+		SECTION jvxQtHost1_components
+		{
+				SECTION host_allSubSections
+				{
+						host_slotnum_technology_audio = 5<s>;
+						//==========================================================
+						host_name_technology_audio_slot_0 = "JVX Generic Wrapper Technology";
+						host_state_technology_audio_slot_0 = 3<s>;
+						SECTION host_subsection_technology_audio_slot_0
+						{
+								SECTION /JVX_GENW_TECHNOLOGIES
+								{
+										jvxSelection_listEntries = { "JVX Port Audio Technology<s>", "JVX Windows Audio Technology<s>", "JVX ASIO Audio Technology<s>", "JVX Clock Sync Audio Technology<s>", "AYF Baresip Technology<s>", "JVX FFMpeg Reader Audio Technology<s>", "JVX FFMpeg Writer Audio Technology<s>", "No Technology"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000008;
+								};
+								SECTION /select_files/input_file
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION /select_files/output_file
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION JVX_PROXY_INSTANCES
+								{
+								};
+								/JVX_GENW_COMMAND = "";
+								/JVX_GENW_DEFAULT_PATH_WAVS = "./wavs";
+								/JVX_GENW_NUM_INPUT_DUMMIES = 0<s>;
+								/JVX_GENW_NUM_OUTPUT_DUMMIES = 0<s>;
+								/triggerActivateDefaultDevice = 1<ui16>;
+								SECTION jvxGenericWrapper_subsectionTechnology
+								{
+										/number_exposed = 1<s>;
+										/init_number_in_channels_max = 2<s>;
+										/init_number_out_channels_max = 2<s>;
+								};
+						};
+						//==========================================================
+						host_name_device_audio_slot_0 = "<SyncClockDevice>";
+						host_state_device_audio_slot_0 = 5<s>;
+						SECTION host_subsection_device_audio_slot_0
+						{
+								/system/framesize = 1024<i32>;
+								/system/rate = 48000<i32>;
+								SECTION /system/sel_input_channels
+								{
+										jvxSelection_listEntries = { "hw::0::Input Channel #0", "hw::1::Input Channel #1"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /system/sel_output_channels
+								{
+										jvxSelection_listEntries = { "hw::0::Output Channel #0", "hw::1::Output Channel #1"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /system/sel_dataformat
+								{
+										jvxSelection_listEntries_selected = { "jvxData(double)"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/act_fillup_silence_stop = 0<ui16>;
+								/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+								/allow_operate_zero_channels = 0<ui16>;
+								SECTION /estimateLoad
+								{
+										jvxValueInRange_value = 1.000000000000000000000000000000e+02;
+								};
+								SECTION /estimateSCQuality
+								{
+										jvxValueInRange_value = 1.000000000000000000000000000000e+00;
+								};
+								/inputChannelGain = 0.000000000000000000000000000000e+00;
+								/outputChannelGain = 0.000000000000000000000000000000e+00;
+								/JVX_GENW_DEV_IDIRECT = 0<i16>;
+								SECTION /nonBlockingAsync
+								{
+										jvxSelection_listEntries_selected = { "Blocking"};
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_REBUFFER
+								{
+										jvxSelection_listEntries = { "async", "sync"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_RESAMPLER
+								{
+										jvxSelection_listEntries = { "resampler", "no resampler"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_IN
+								{
+										jvxSelection_listEntries_selected = { "64 taps"};
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_OUT
+								{
+										jvxSelection_listEntries_selected = { "64 taps"};
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /controlThreads
+								{
+										jvxSelection_listEntries_selected = { "inactive"};
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_AUTOHW
+								{
+										jvxSelection_listEntries_selected = { "yes"};
+										jvxSelection_value = 0x00000001;
+								};
+								/auto_stop = 1<ui16>;
+								SECTION /JVX_GENW_AUTO_OFF
+								{
+										jvxSelection_listEntries_selected = { "Auto On"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/command_string = "";
+								/fill_channels_from_last_in = 0<ui16>;
+								/fill_channels_from_last_out = 0<ui16>;
+								SECTION jvxGenericWrapper_subsectionDevice
+								{
+										/system/framesize = 1024<i32>;
+										/system/rate = 48000<i32>;
+										SECTION /system/sel_input_channels
+										{
+												jvxSelection_listEntries_selected = { "Input Channel #0", "Input Channel #1"};
+												jvxSelection_value = 0x00000003;
+										};
+										SECTION /system/sel_output_channels
+										{
+												jvxSelection_listEntries_selected = { "Output Channel #0", "Output Channel #1"};
+												jvxSelection_value = 0x00000003;
+										};
+										SECTION /system/sel_dataformat
+										{
+												jvxSelection_listEntries_selected = { "jvxData(double)"};
+												jvxSelection_value = 0x00000001;
+										};
+										/system/act_fillup_silence_stop = 0<ui16>;
+										/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+										/allow_operate_zero_channels = 1<ui16>;
+								};
+								SECTION JVX_AUDIO_INPUT_GAINS
+								{
+										JVX_GAIN_0 = 1.000000000000000000000000000000e+00;
+										JVX_GAIN_1 = 1.000000000000000000000000000000e+00;
+								};
+								SECTION JVX_AUDIO_OUTPUT_GAINS
+								{
+										JVX_GAIN_0 = 1.000000000000000000000000000000e+00;
+										JVX_GAIN_1 = 1.000000000000000000000000000000e+00;
+								};
+						};
+						//==========================================================
+						host_name_technology_audio_slot_1 = "JVX Generic Wrapper Technology";
+						host_state_technology_audio_slot_1 = 3<s>;
+						SECTION host_subsection_technology_audio_slot_1
+						{
+								SECTION /JVX_GENW_TECHNOLOGIES
+								{
+										jvxSelection_listEntries = { "JVX Port Audio Technology<s>", "JVX Windows Audio Technology<s>", "JVX ASIO Audio Technology<s>", "JVX Clock Sync Audio Technology<s>", "AYF Baresip Technology<s>", "JVX FFMpeg Reader Audio Technology<s>", "JVX FFMpeg Writer Audio Technology<s>", "No Technology"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /select_files/input_file
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION /select_files/output_file
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION JVX_PROXY_INSTANCES
+								{
+								};
+								/JVX_GENW_COMMAND = "";
+								/JVX_GENW_DEFAULT_PATH_WAVS = "./wavs";
+								/JVX_GENW_NUM_INPUT_DUMMIES = 0<s>;
+								/JVX_GENW_NUM_OUTPUT_DUMMIES = 0<s>;
+								/triggerActivateDefaultDevice = 0<ui16>;
+								SECTION jvxGenericWrapper_subsectionTechnology
+								{
+										SECTION /device_mode_input
+										{
+												jvxSelection_listEntries_selected = { "shared"};
+												jvxSelection_value = 0x00000002;
+										};
+										SECTION /device_mode_output
+										{
+												jvxSelection_listEntries_selected = { "shared"};
+												jvxSelection_value = 0x00000002;
+										};
+								};
+						};
+						host_slotnum_device_host_name_device_audio_slot_1 = 2<s>;
+						//==========================================================
+						host_name_device_audio_slot_1_slot_0 = "<Mikrofon (5- USB Advanced Audio Device) input>";
+						host_state_device_audio_slot_1_slot_0 = 5<s>;
+						SECTION host_subsection_device_audio_slot_1_slot_0
+						{
+								/system/framesize = 1024<i32>;
+								/system/rate = 48000<i32>;
+								SECTION /system/sel_input_channels
+								{
+										jvxSelection_listEntries = { "hw::0::In #0", "hw::1::In #1"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /system/sel_output_channels
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION /system/sel_dataformat
+								{
+										jvxSelection_listEntries_selected = { "jvxData(double)"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/act_fillup_silence_stop = 0<ui16>;
+								/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+								/allow_operate_zero_channels = 0<ui16>;
+								SECTION /estimateLoad
+								{
+										jvxValueInRange_value = 1.000000000000000000000000000000e+02;
+								};
+								SECTION /estimateSCQuality
+								{
+										jvxValueInRange_value = 1.000000000000000000000000000000e+00;
+								};
+								/inputChannelGain = 0.000000000000000000000000000000e+00;
+								/outputChannelGain = 0.000000000000000000000000000000e+00;
+								/JVX_GENW_DEV_IDIRECT = 0<i16>;
+								SECTION /nonBlockingAsync
+								{
+										jvxSelection_listEntries_selected = { "Blocking"};
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_REBUFFER
+								{
+										jvxSelection_listEntries = { "async", "sync"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_RESAMPLER
+								{
+										jvxSelection_listEntries = { "resampler", "no resampler"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_IN
+								{
+										jvxSelection_listEntries_selected = { "64 taps"};
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_OUT
+								{
+										jvxSelection_listEntries_selected = { "64 taps"};
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /controlThreads
+								{
+										jvxSelection_listEntries_selected = { "inactive"};
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_AUTOHW
+								{
+										jvxSelection_listEntries_selected = { "yes"};
+										jvxSelection_value = 0x00000001;
+								};
+								/auto_stop = 1<ui16>;
+								SECTION /JVX_GENW_AUTO_OFF
+								{
+										jvxSelection_listEntries_selected = { "Auto On"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/command_string = "";
+								/fill_channels_from_last_in = 0<ui16>;
+								/fill_channels_from_last_out = 0<ui16>;
+								SECTION jvxGenericWrapper_subsectionDevice
+								{
+										/system/framesize = 1024<i32>;
+										/system/rate = 48000<i32>;
+										SECTION /system/sel_input_channels
+										{
+												jvxSelection_listEntries_selected = { "In #0", "In #1"};
+												jvxSelection_value = 0x00000003;
+										};
+										SECTION /system/sel_output_channels
+										{
+												// Empty STRINGLIST element jvxSelection_listEntries_selected, removed by configProcessor.
+												jvxSelection_value = 0x00000000;
+										};
+										SECTION /system/sel_dataformat
+										{
+												jvxSelection_listEntries_selected = { "jvxData(double)"};
+												jvxSelection_value = 0x00000001;
+										};
+										/system/act_fillup_silence_stop = 0<ui16>;
+										/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+										/allow_operate_zero_channels = 0<ui16>;
+										SECTION /system/sel_rate
+										{
+												jvxSelection_listEntries_selected = { "48000"};
+												jvxSelection_value = 0x00000001;
+										};
+										/numBuffersFlushShared = 2<s>;
+								};
+								SECTION JVX_AUDIO_INPUT_GAINS
+								{
+										JVX_GAIN_0 = 1.000000000000000000000000000000e+00;
+										JVX_GAIN_1 = 1.000000000000000000000000000000e+00;
+								};
+								SECTION JVX_AUDIO_OUTPUT_GAINS
+								{
+								};
+						};
+						//==========================================================
+						host_name_device_audio_slot_1_slot_1 = "<Lautsprecher (5- USB Advanced Audio Device) output>";
+						host_state_device_audio_slot_1_slot_1 = 5<s>;
+						SECTION host_subsection_device_audio_slot_1_slot_1
+						{
+								/system/framesize = 1024<i32>;
+								/system/rate = 48000<i32>;
+								SECTION /system/sel_input_channels
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION /system/sel_output_channels
+								{
+										jvxSelection_listEntries = { "hw::0::Out #0", "hw::1::Out #1"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /system/sel_dataformat
+								{
+										jvxSelection_listEntries_selected = { "jvxData(double)"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/act_fillup_silence_stop = 0<ui16>;
+								/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+								/allow_operate_zero_channels = 0<ui16>;
+								SECTION /estimateLoad
+								{
+										jvxValueInRange_value = 1.000000000000000000000000000000e+02;
+								};
+								SECTION /estimateSCQuality
+								{
+										jvxValueInRange_value = 1.000000000000000000000000000000e+00;
+								};
+								/inputChannelGain = 0.000000000000000000000000000000e+00;
+								/outputChannelGain = 0.000000000000000000000000000000e+00;
+								/JVX_GENW_DEV_IDIRECT = 0<i16>;
+								SECTION /nonBlockingAsync
+								{
+										jvxSelection_listEntries_selected = { "Blocking"};
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_REBUFFER
+								{
+										jvxSelection_listEntries = { "async", "sync"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_RESAMPLER
+								{
+										jvxSelection_listEntries = { "resampler", "no resampler"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_IN
+								{
+										jvxSelection_listEntries_selected = { "64 taps"};
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /JVX_GENW_DEV_QRESAMPLER_OUT
+								{
+										jvxSelection_listEntries_selected = { "64 taps"};
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /controlThreads
+								{
+										jvxSelection_listEntries_selected = { "inactive"};
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /JVX_GENW_DEV_AUTOHW
+								{
+										jvxSelection_listEntries_selected = { "yes"};
+										jvxSelection_value = 0x00000001;
+								};
+								/auto_stop = 1<ui16>;
+								SECTION /JVX_GENW_AUTO_OFF
+								{
+										jvxSelection_listEntries_selected = { "Auto On"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/command_string = "";
+								/fill_channels_from_last_in = 0<ui16>;
+								/fill_channels_from_last_out = 0<ui16>;
+								SECTION jvxGenericWrapper_subsectionDevice
+								{
+										/system/framesize = 1024<i32>;
+										/system/rate = 48000<i32>;
+										SECTION /system/sel_input_channels
+										{
+												// Empty STRINGLIST element jvxSelection_listEntries_selected, removed by configProcessor.
+												jvxSelection_value = 0x00000000;
+										};
+										SECTION /system/sel_output_channels
+										{
+												jvxSelection_listEntries_selected = { "Out #0", "Out #1"};
+												jvxSelection_value = 0x00000003;
+										};
+										SECTION /system/sel_dataformat
+										{
+												jvxSelection_listEntries_selected = { "jvxData(double)"};
+												jvxSelection_value = 0x00000001;
+										};
+										/system/act_fillup_silence_stop = 0<ui16>;
+										/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+										/allow_operate_zero_channels = 0<ui16>;
+										SECTION /system/sel_rate
+										{
+												jvxSelection_listEntries_selected = { "48000"};
+												jvxSelection_value = 0x00000001;
+										};
+										/numBuffersFlushShared = 3<s>;
+								};
+								SECTION JVX_AUDIO_INPUT_GAINS
+								{
+								};
+								SECTION JVX_AUDIO_OUTPUT_GAINS
+								{
+										JVX_GAIN_0 = 1.000000000000000000000000000000e+00;
+										JVX_GAIN_1 = 1.000000000000000000000000000000e+00;
+								};
+						};
+						//==========================================================
+						host_name_technology_audio_slot_2 = "AYF Baresip Technology";
+						host_state_technology_audio_slot_2 = 3<s>;
+						SECTION host_subsection_technology_audio_slot_2
+						{
+								/loop_high_prio = 1<ui16>;
+								/fname_user_accounts = "sip-user-accounts.jvx";
+								/fname_phone_book = "sip-phonebook.jvx";
+								/immediate_address = "sip:tobias2@sip.ferncast.de";
+								/auto_respond = 1<ui16>;
+								/start_video = 1<ui16>;
+						};
+						//==========================================================
+						host_name_technology_audio_slot_3 = "JVX FFMpeg Reader Audio Technology";
+						host_state_technology_audio_slot_3 = 3<s>;
+						SECTION host_subsection_technology_audio_slot_3
+						{
+								/open_filename = "ok";
+								SECTION /file_lists
+								{
+										jvxSelection_listEntries = { "C:\\\\audio-files\\\\podcasts\\\\AU-20260402-1506-3200.mp3"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000001;
+								};
+								/close_file = 0<ui16>;
+						};
+						//==========================================================
+						host_name_device_audio_slot_3 = "Input File#1";
+						host_state_device_audio_slot_3 = 5<s>;
+						SECTION host_subsection_device_audio_slot_3
+						{
+								/system/framesize = 1152<i32>;
+								/system/rate = 48000<i32>;
+								SECTION /system/sel_input_channels
+								{
+										jvxSelection_listEntries_selected = { "In #0", "In #1"};
+										jvxSelection_value = 0x00000003;
+								};
+								SECTION /system/sel_output_channels
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries_selected, removed by configProcessor.
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION /system/sel_dataformat
+								{
+										jvxSelection_listEntries_selected = { "byte"};
+										jvxSelection_value = 0x00000001;
+								};
+								/system/act_fillup_silence_stop = 0<ui16>;
+								/system/per_fillup_silence_stop = 5.000000000000000000000000000000e-01;
+								/allow_operate_zero_channels = 0<ui16>;
+						};
+						//==========================================================
+						host_name_technology_audio_slot_4 = "JVX FFMpeg Writer Audio Technology";
+						host_state_technology_audio_slot_4 = 3<s>;
+						SECTION host_subsection_technology_audio_slot_4
+						{
+								/filename_prefix = "myFile";
+								/file_folder = ".";
+								SECTION /device_lists
+								{
+										jvxSelection_listEntries = { "INVALID"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION /file_type
+								{
+										jvxSelection_listEntries = { "WAV", "MP3", "AAC"};
+										jvxSelection_exclusive = 0x00000007;
+										jvxSelection_value = 0x00000001;
+								};
+								SECTION /file_sub_type
+								{
+										jvxSelection_listEntries = { "NOTVALID"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000001;
+								};
+								/remove_device = 0<ui16>;
+								/add_device = 0<ui16>;
+								SECTION DEVICES
+								{
+								};
+						};
+						//==========================================================
+						host_name_technology_video = "JVX Microsoft Foundation/OGL Video Technology";
+						host_state_technology_video = 3<s>;
+						//==========================================================
+						host_name_device_video = "USB  Live camera";
+						host_state_device_video = 5<s>;
+						SECTION host_subsection_device_video
+						{
+								/system/framesize = 460800<i32>;
+								/system/segmentsizex = 640<i32>;
+								/system/segmentsizey = 480<i32>;
+								/system/rate = 30<i32>;
+								/rates_min = 30<i32>;
+								/rates_max = 30<i32>;
+								SECTION /mode_selection
+								{
+										jvxSelection_listEntries_selected = { "Mode #0: 640x480, nv12"};
+										jvxSelection_value = 0x00000001;
+								};
+						};
+						host_slotnum_endpoint_sigproc_node = 2<s>;
+						//==========================================================
+						host_name_endpoint_sigproc_node_slot_0 = "JVX Mix Chain Enter/Leave";
+						host_state_endpoint_sigproc_node_slot_0 = 5<s>;
+						SECTION host_subsection_endpoint_sigproc_node_slot_0
+						{
+								/input/system/framesize = [[1024<i32>]];
+								/input/system/rate = [[48000<i32>]];
+								/input/system/dataformat = [[1<i16>]];
+								/input/system/segmentsizex = [[1024<i32>]];
+								/input/system/segmentsizey = [[1<i32>]];
+								/input/system/dataflow = [[0<i16>]];
+								/input/system/formatspec = "";
+								JVX_CHANNEL_ROUTING = [[0<s>, 1<s>, 2<s>, 3<s>, 4<s>, 5<s>, 6<s>, 7<s>, 8<s>, 9<s>, 10<s>, 11<s>, 12<s>, 13<s>]];
+						};
+						//==========================================================
+						host_name_endpoint_sigproc_node_slot_1 = "JVX Mix Chain Enter/Leave";
+						host_state_endpoint_sigproc_node_slot_1 = 5<s>;
+						SECTION host_subsection_endpoint_sigproc_node_slot_1
+						{
+								/input/system/framesize = [[1024<i32>]];
+								/input/system/rate = [[48000<i32>]];
+								/input/system/dataformat = [[1<i16>]];
+								/input/system/segmentsizex = [[1024<i32>]];
+								/input/system/segmentsizey = [[1<i32>]];
+								/input/system/dataflow = [[0<i16>]];
+								/input/system/formatspec = "";
+								JVX_CHANNEL_ROUTING = [[0<s>, 1<s>, 2<s>, 3<s>, 4<s>, 5<s>, 6<s>, 7<s>, 8<s>, 9<s>, 10<s>, 11<s>, 12<s>, 13<s>]];
+						};
+						//==========================================================
+						host_name_endpoint_audio_node = "AudYoFlo Mixer Project";
+						host_state_endpoint_audio_node = 5<s>;
+						SECTION host_subsection_endpoint_audio_node
+						{
+								/input/system/framesize = [[1024<i32>]];
+								/input/system/rate = [[48000<i32>]];
+								/input/system/dataformat = [[1<i16>]];
+								/input/system/segmentsizex = [[1024<i32>]];
+								/input/system/segmentsizey = [[1<i32>]];
+								/input/system/dataflow = [[0<i16>]];
+								/input/system/formatspec = "";
+						};
+						//==========================================================
+						host_name_endpoint_video_node = "JVX Video Mixer";
+						host_state_endpoint_video_node = 5<s>;
+						SECTION host_subsection_endpoint_video_node
+						{
+								/inout/system/framesize = [[1228800<i32>]];
+								/inout/system/rate = [[30<i32>]];
+								/inout/system/dataformat = [[17<i16>]];
+								/inout/system/segmentsizex = [[640<i32>]];
+								/inout/system/segmentsizey = [[480<i32>]];
+								/inout/system/dataflow = [[0<i16>]];
+								/inout/system/formatspec = "";
+						};
+						host_slotnum_endpoint_dynamic_node = 18<s>;
+						//==========================================================
+						// Dependent component <JVX Synchronization> is not handled here, the owner is component <<Mikrofon (5- USB Advanced Audio Device) input>>, component identification <audio device<1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Convert> is not handled here, the owner is component <<Mikrofon (5- USB Advanced Audio Device) input>>, component identification <audio device<1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Forward Buffer> is not handled here, the owner is component <<Mikrofon (5- USB Advanced Audio Device) input>>, component identification <audio device<1>>.
+						//==========================================================
+						// Dependent component <JVX Level Control> is not handled here, the owner is component <<Mikrofon (5- USB Advanced Audio Device) input>>, component identification <audio device<1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Forward Buffer> is not handled here, the owner is component <<Mikrofon (5- USB Advanced Audio Device) input>>, component identification <audio device<1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Convert> is not handled here, the owner is component <<Mikrofon (5- USB Advanced Audio Device) input>>, component identification <audio device<1>>.
+						//==========================================================
+						// Dependent component <JVX Synchronization> is not handled here, the owner is component <<Lautsprecher (5- USB Advanced Audio Device) output>>, component identification <audio device<1,1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Convert> is not handled here, the owner is component <<Lautsprecher (5- USB Advanced Audio Device) output>>, component identification <audio device<1,1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Forward Buffer> is not handled here, the owner is component <<Lautsprecher (5- USB Advanced Audio Device) output>>, component identification <audio device<1,1>>.
+						//==========================================================
+						// Dependent component <JVX Level Control> is not handled here, the owner is component <<Lautsprecher (5- USB Advanced Audio Device) output>>, component identification <audio device<1,1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Forward Buffer> is not handled here, the owner is component <<Lautsprecher (5- USB Advanced Audio Device) output>>, component identification <audio device<1,1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Convert> is not handled here, the owner is component <<Lautsprecher (5- USB Advanced Audio Device) output>>, component identification <audio device<1,1>>.
+						//==========================================================
+						// Dependent component <JVX Audio Bitstream Decoder> is not handled here, the owner is component <Input File#1>, component identification <audio device<3>>.
+						//==========================================================
+						// Dependent component <JVX Audio Convert> is not handled here, the owner is component <Input File#1>, component identification <audio device<3>>.
+						//==========================================================
+						// Dependent component <JVX Audio Forward Buffer> is not handled here, the owner is component <Input File#1>, component identification <audio device<3>>.
+						//==========================================================
+						// Dependent component <JVX Level Control> is not handled here, the owner is component <Input File#1>, component identification <audio device<3>>.
+						//==========================================================
+						// Dependent component <JVX Video Camera Converter Node> is not handled here, the owner is component <USB  Live camera>, component identification <video device>.
+						//==========================================================
+						// Dependent component <JVX Open GL Viewer Node> is not handled here, the owner is component <USB  Live camera>, component identification <video device>.
+						//==========================================================
+						host_name_simpletype_automation = "Binaurics SimplePhone Automation Component";
+						host_state_simpletype_automation = 3<s>;
+						SECTION host_subsection_simpletype_automation
+						{
+								/audio/buffersize_sync_min_in = 3.000000000000000000000000000000e+01;
+								/audio/buffersize_sync_min_out = 3.000000000000000000000000000000e+01;
+								/audio/buffersize_sync_profiling = 0<ui16>;
+								SECTION /video/device_render_mode
+								{
+										jvxSelection_listEntries_selected = { "No Rendering"};
+										jvxSelection_value = 0x00000001;
+								};
+								/video/num_render_buffers = 2<s>;
+								/sip/buffersize_sync_min_in = 3.000000000000000000000000000000e+01;
+								/sip/buffersize_sync_min_out = 3.000000000000000000000000000000e+01;
+								/sip/buffersize_sync_profiling = 0<ui16>;
+						};
+						SECTION host_allExternalEntries
+						{
+								JVX_COMMON_PROPERTIES_HOST_PERIOD_SEQ = 200<s>;
+						};
+				};
+				SECTION /submodules/frontend_hooks
+				{
+						/autostart = 1<ui16>;
+						/frontend_config_token = "";
+				};
+				SECTION sequencer_section
+				{
+						sequencer_version = "sequencer_version_2.0";
+						// Default sequence with name <default sequencer spec 2 audio>
+						SECTION sequencer_subsection_0
+						{
+								sequencer_is_default = 1<i16>;
+								sequencer_is_engaged = 1<i16>;
+								sequencer_sequence_names = "default sequencer spec 2 audio";
+						};
+				};
+				SECTION process_connect_rule_section
+				{
+						// Default connection rule with name <The Master Audio Connection Rule>
+				};
+				SECTION group_connect_section
+				{
+				};
+				SECTION process_connect_section
+				{
+						// Auto connected connection process with name <The Master Audio Connection Rule> and rule Id <1.
+						// Connection process with name <PriSyncChain[audio device<1>]> is not intended to be stored in config file due to <preventStoredInConfig> flag.
+						// Connection process with name <AdditionalDuplexDev#[audio device<1>]> is not intended to be stored in config file due to <preventStoredInConfig> flag.
+						// Connection process with name <PriSyncChain[audio device<1,1>]> is not intended to be stored in config file due to <preventStoredInConfig> flag.
+						// Connection process with name <AdditionalDuplexDev#[audio device<1,1>]> is not intended to be stored in config file due to <preventStoredInConfig> flag.
+						// Connection process with name <AudioFileINPUT#[audio device<3>]> is not intended to be stored in config file due to <preventStoredInConfig> flag.
+						// Connection process with name <JVX Audio Bitstream Decoder MC> is not intended to be stored in config file due to <preventStoredInConfig> flag.
+						// Connection process with name <VideoIO#[video device]> is not intended to be stored in config file due to <preventStoredInConfig> flag.
+				};
+		};
+};

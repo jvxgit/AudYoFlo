@@ -1,0 +1,59 @@
+SECTION SIP_PHONEBOOK
+{
+		SECTION PHONEBOOK_ENTRY_0
+		{
+				nickname = "Demo Tobias";
+				account_name = "sip:tobias2@sip.ferncast.de";
+				first_name = "Tobias";
+				last_name = "Dornbusch";
+		};
+		SECTION PHONEBOOK_ENTRY_1
+		{
+				nickname = "Invalid Target";
+				account_name = "sip:invalid@sip.javox.com";
+				first_name = "Invalid";
+				last_name = "Target";
+		};
+		SECTION PHONEBOOK_ENTRY_2
+		{
+				nickname = "Music Server";
+				account_name = "sip:music@iptel.org";
+				first_name = "Music";
+				last_name = "Server";
+		};
+		SECTION PHONEBOOK_ENTRY_3
+		{
+				nickname = "Demo Test";
+				account_name = "sip:test0@sip.ferncast.de";
+				first_name = "Test";
+				last_name = "Ferncast";
+		};
+		SECTION PHONEBOOK_ENTRY_4
+		{
+				nickname = "Hauke 1";
+				account_name = "sip:hauke.krueger1@sip.ferncast.de";
+				first_name = "Hauke";
+				last_name = "Krueger";
+		};
+		SECTION PHONEBOOK_ENTRY_5
+		{
+				nickname = "Hauke 2";
+				account_name = "sip:hauke.krueger2@sip.ferncast.de";
+				first_name = "Hauke";
+				last_name = "Krueger";
+		};
+		SECTION PHONEBOOK_ENTRY_6
+		{
+				nickname = "Hauke 3";
+				account_name = "sip:hauke.krueger3@sip.ferncast.de";
+				first_name = "Hauke";
+				last_name = "Krueger";
+		};
+		SECTION PHONEBOOK_ENTRY_7
+		{
+				nickname = "Hauke 4";
+				account_name = "sip:hauke.krueger4@sip.ferncast.de";
+				first_name = "Hauke";
+				last_name = "Krueger";
+		};
+};

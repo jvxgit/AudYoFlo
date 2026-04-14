@@ -1,0 +1,91 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genATSimplePhone";
+
+	SECTION config_audio
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "audio";
+
+		SECTION buffersize_sync_min_in
+		{
+			DESCRIPTION = "Buffersize [msecs] sync in - audio";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 30;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};
+		SECTION buffersize_sync_min_out
+		{
+			DESCRIPTION = "Buffersize [msecs] sync out - audio";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 30;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};		
+		SECTION buffersize_sync_profiling
+		{
+			DESCRIPTION = "Enable profiling of buffering - audio";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};	
+	};
+
+	SECTION config_video
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "video";
+
+		SECTION device_render_mode
+		{
+			DESCRIPTION = "Activate rendering on output side";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"No Rendering", "External Rendering", "Native Rendering"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes"}; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION"; 
+		};
+		SECTION num_render_buffers
+		{
+			DESCRIPTION = "Specify nuimber of buffers to be used in openGL rendering";
+			TYPE = "JVX_DATAFORMAT_SIZE";	
+			INIT_SET = 2;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};	
+	};
+
+	SECTION config_sip
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "sip";
+
+		SECTION buffersize_sync_min_in
+		{
+			DESCRIPTION = "Buffersize [msecs] sync in - sip";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 30;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};
+		SECTION buffersize_sync_min_out
+		{
+			DESCRIPTION = "Buffersize [msecs] sync out - sip";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			INIT_SET = 30;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};	
+		SECTION buffersize_sync_profiling
+		{
+			DESCRIPTION = "Enable profiling of buffering - sip";
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_AND_WRITE_CONTENT";
+		};		
+	};
+};

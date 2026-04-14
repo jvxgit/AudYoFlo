@@ -1,0 +1,38 @@
+SECTION SIP_USER_AGENTS
+{
+		SECTION USER_AGENT_0
+		{
+				nickname = "<sip:hauke.krueger@sip.ferncast.de>";
+				username = "<sip:hauke.krueger@sip.ferncast.de>";
+				password = "QqwUADgd";
+				register = "yes";
+		};
+		SECTION USER_AGENT_1
+		{
+				nickname = "<sip:hauke.krueger1@sip.ferncast.de>";
+				username = "<sip:hauke.krueger1@sip.ferncast.de>";
+				password = "QqwUADgd";
+				register = "no";
+		};
+		SECTION USER_AGENT_2
+		{
+				nickname = "<sip:hauke.krueger2@sip.ferncast.de>";
+				username = "<sip:hauke.krueger2@sip.ferncast.de>";
+				password = "QqwUADgd";
+				register = "no";
+		};
+		SECTION USER_AGENT_3
+		{
+				nickname = "<sip:hauke.krueger3@sip.ferncast.de>";
+				username = "<sip:hauke.krueger3@sip.ferncast.de>";
+				password = "QqwUADgd";
+				register = "no";
+		};
+		SECTION USER_AGENT_4
+		{
+				nickname = "<sip:hauke.krueger4@sip.ferncast.de>";
+				username = "<sip:hauke.krueger4@sip.ferncast.de>";
+				password = "QqwUADgd";
+				register = "no";
+		};
+};

@@ -29,6 +29,9 @@ dependencies:
   ayf_pack_native:
     path: '../../../../../../flutter/ayf_pack_native'
 
+  pixel_buffer_texture:
+    path: '../../../../../../flutter/pixel_buffer_texture'
+
   ayfcorepack:
     path: '../../ayf_starter_corepack'
 
