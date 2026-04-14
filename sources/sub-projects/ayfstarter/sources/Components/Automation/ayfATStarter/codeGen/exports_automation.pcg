@@ -1,6 +1,6 @@
 SECTION PROPERTIES
 {	
-	OUTPUTFILE_NAME = "genATSimplePhone";
+	OUTPUTFILE_NAME = "genATStarter";
 
 	SECTION config_audio
 	{

@@ -6,7 +6,6 @@
 #define JVX_PURPOSE_AUDIO_IO 0x8000
 #define JVX_PURPOSE_AUDIO_IO_WITH_MODULES 0x10000
 #define JVX_PURPOSE_VIDEO_IO 0x20000
-#define JVX_PURPOSE_BARESIPIO_VIDEO 0x40000
 
 #define JVX_CONNECTION_CATEGORY_FILEREADER_AUDIO 16
 #define JVX_CONNECTION_CATEGORY_FILEWRITER_AUDIO 17
@@ -103,76 +102,6 @@ CayfATStarter::activate()
 		CayfAutomationModuleHandler::CayfAutomationModuleHandler::register_element(&ioAudioWithModules);
 
 		// ===================================================================================================
-		ioBaresipAudio.activate(_common_set.theReport, refHostRef, this, JVX_PURPOSE_BARESIPIO_AUDIO,
-
-			// master="default":ocon="default" --> <first elements> --> "mix-out" --> ... -> default
-			CayfAutomationModules::ayfConnectConfigSrc2SnkPreChain(
-
-				// This is for the first part of the chain: default --> ... --> mix-in
-				"audio",
-				{
-					// Connection: device->convert->forward buffer -> enter ... leave -> forward buffer -> convert -> device
-					// Pre chain : device->convert->forward buffer -> enter 
-					CayfAutomationModules::ayfConnectConfigCpEntry(JVX_COMPONENT_AUDIO_NODE, "jvxAuNConvert", "default", "default",
-						CayfAutomationModules::ayfConnectConfigCpManipulate(JVX_COMPONENT_DYNAMIC_NODE, false, " - input")),
-					CayfAutomationModules::ayfConnectConfigCpEntry(JVX_COMPONENT_AUDIO_NODE, "jvxAuNForwardBuffer", "default", "default",
-						CayfAutomationModules::ayfConnectConfigCpManipulate(JVX_COMPONENT_DYNAMIC_NODE, false, " - input")),
-						CayfAutomationModules::ayfConnectConfigCpEntry(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, "jvxSpNLevelControl", "default", "default",
-							CayfAutomationModules::ayfConnectConfigCpManipulate(JVX_COMPONENT_DYNAMIC_NODE, false, " - input"))
-				},
-				"mix-in", jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 0, 0),
-				CayfAutomationModules::ayfConnectConfigSrc2Snk("baresipIO#",
-
-
-					"audio",
-					// This is for the second part of the chain! SP<2>-mix-out --> ... --> tp_active-default
-					"mix-out",
-					{
-						// Connection: device->convert->forward buffer -> enter ... leave -> forward buffer -> convert -> device
-						// Pre chain : device->convert->forward buffer -> enter 
-						// Chain : leave -> forward buffer -> convert -> device
-						CayfAutomationModules::ayfConnectConfigCpEntry(JVX_COMPONENT_AUDIO_NODE, "jvxAuNForwardBuffer", "default", "default",
-							CayfAutomationModules::ayfConnectConfigCpManipulate(JVX_COMPONENT_DYNAMIC_NODE, false, " - output")),
-						CayfAutomationModules::ayfConnectConfigCpEntry(JVX_COMPONENT_AUDIO_NODE, "jvxAuNConvert", "default", "default",
-							CayfAutomationModules::ayfConnectConfigCpManipulate(JVX_COMPONENT_DYNAMIC_NODE, false, " - output"))
-					},
-					"audio",
-					jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 1, 0),
-					CayfAutomationModules::ayfConnectConfigConMiscArgs(JVX_PURPOSE_BARESIPIO_AUDIO, false),
-					JVX_ID_TRIGGER_FORWARD, JVX_SIZE_UNSELECTED),
-				JVX_SIZE_UNSELECTED, JVX_ID_TRIGGER_FORWARD),
-			this);
-		// ioBaresip.print(std::cout);
-		CayfAutomationModuleHandler::CayfAutomationModuleHandler::register_element(&ioBaresipAudio);
-
-		ioBaresipVideo.activate(_common_set.theReport, refHostRef, this, JVX_PURPOSE_BARESIPIO_VIDEO,
-
-			// master="default":ocon="default" --> <first elements> --> "mix-out" --> ... -> default
-			CayfAutomationModules::ayfConnectConfigSrc2SnkPreChain(
-
-				// This is for the first part of the chain: default --> ... --> mix-in
-				"video",
-				{
-				},
-				"mix-in", jvxComponentIdentification(JVX_COMPONENT_VIDEO_NODE, 0, 0),
-				CayfAutomationModules::ayfConnectConfigSrc2Snk("baresipVideo#",
-
-
-					"video",
-					// This is for the second part of the chain! SP<2>-mix-out --> ... --> tp_active-default
-					"mix-out",
-					{
-					},
-					"video",
-					jvxComponentIdentification(JVX_COMPONENT_VIDEO_NODE, 0, 0),
-					CayfAutomationModules::ayfConnectConfigConMiscArgs(JVX_PURPOSE_BARESIPIO_VIDEO, true),
-					JVX_ID_TRIGGER_FORWARD, JVX_SIZE_UNSELECTED),
-					JVX_SIZE_UNSELECTED, JVX_ID_TRIGGER_FORWARD),
-			this);
-		// ioBaresip.print(std::cout);
-		CayfAutomationModuleHandler::CayfAutomationModuleHandler::register_element(&ioBaresipVideo);
-
-		// ===================================================================================================
 
 		iSources.activate(_common_set.theReport, refHostRef, this, JVX_PURPOSE_INPUT,
 			CayfAutomationModules::ayfConnectConfigSrc2Snk("AudioFileINPUT#",
@@ -265,9 +194,9 @@ CayfATStarter::activate()
 
 		// ===================================================================================================
 
-		genATSimplePhone::init_all();
-		genATSimplePhone::allocate_all();
-		genATSimplePhone::register_all(this);
+		genATStarter::init_all();
+		genATStarter::allocate_all();
+		genATStarter::register_all(this);
 	}
 	return res;
 }
@@ -278,17 +207,11 @@ CayfATStarter::deactivate()
 	jvxErrorType res = CjvxAutomationReportConnect::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
-		genATSimplePhone::unregister_all(this);
-		genATSimplePhone::deallocate_all();
+		genATStarter::unregister_all(this);
+		genATStarter::deallocate_all();
 
 		CayfAutomationModuleHandler::CayfAutomationModuleHandler::unregister_element(&ioAudioWithModules);
 		ioAudioWithModules.deactivate();
-
-		CayfAutomationModuleHandler::CayfAutomationModuleHandler::unregister_element(&ioBaresipAudio);
-		ioBaresipAudio.deactivate();
-
-		CayfAutomationModuleHandler::CayfAutomationModuleHandler::unregister_element(&ioBaresipVideo);
-		ioBaresipVideo.deactivate();
 
 		CayfAutomationModuleHandler::CayfAutomationModuleHandler::unregister_element(&iSources);
 		iSources.deactivate();
@@ -395,8 +318,14 @@ CayfATStarter::handle_report_ss(
 				{
 					std::string searchToken = "no-specific";
 
-#ifdef JVX_AUDIO_TECHNOLOGY_SEARCH_TOKEN
-					searchToken = JVX_AUDIO_TECHNOLOGY_SEARCH_TOKEN;
+#ifdef JVX_OS_WINDOWS
+					searchToken = "*Windows*";					
+#elif defined JVX_OS_LINUX
+					searchToken = "*Pipewire*";
+#elif defined JVX_OS_MACOSX
+					searchToken = "*CoreAudio*";
+#elif defined JVX_OS_ANDROID
+					searchToken = "*Android*";
 #endif
 
 					std::cout << " ## Trying to activate technology <"  << searchToken << std::endl;
@@ -701,10 +630,10 @@ CayfATStarter::adapt_single_property_on_event(jvxSize purposeId,
 					res = jvx_set_property(props, &selLst, 0, 1, JVX_DATAFORMAT_SELECTION_LIST,
 						true, "/buffer_location", cGate);
 
-					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATSimplePhone::config_audio.buffersize_sync_min_in.value),
+					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATStarter::config_audio.buffersize_sync_min_in.value),
 						jPAD("/buffersize_msecs"));
 
-					if (genATSimplePhone::config_audio.buffersize_sync_profiling.value)
+					if (genATStarter::config_audio.buffersize_sync_profiling.value)
 					{
 						// Enable buffer measurement
 						res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxCBool>(1),
@@ -719,10 +648,10 @@ CayfATStarter::adapt_single_property_on_event(jvxSize purposeId,
 					res = jvx_set_property(props, &selLst, 0, 1, JVX_DATAFORMAT_SELECTION_LIST,
 						true, "/buffer_location", cGate);
 
-					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATSimplePhone::config_audio.buffersize_sync_min_out.value),
+					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATStarter::config_audio.buffersize_sync_min_out.value),
 						jPAD("/buffersize_msecs"));
 
-					if (genATSimplePhone::config_audio.buffersize_sync_profiling.value)
+					if (genATStarter::config_audio.buffersize_sync_profiling.value)
 					{
 						// Enable buffer measurement
 						res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxCBool>(1),
@@ -768,10 +697,10 @@ CayfATStarter::adapt_single_property_on_event(jvxSize purposeId,
 					res = jvx_set_property(props, &selLst, 0, 1, JVX_DATAFORMAT_SELECTION_LIST,
 						true, "/buffer_location", cGate);
 
-					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATSimplePhone::config_sip.buffersize_sync_min_in.value),
+					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATStarter::config_sip.buffersize_sync_min_in.value),
 						jPAD("/buffersize_msecs"));
 
-					if (genATSimplePhone::config_sip.buffersize_sync_profiling.value)
+					if (genATStarter::config_sip.buffersize_sync_profiling.value)
 					{
 						// Enable buffer measurement
 						res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxCBool>(1),
@@ -790,10 +719,10 @@ CayfATStarter::adapt_single_property_on_event(jvxSize purposeId,
 					res = jvx_set_property(props, &selLst, 0, 1, JVX_DATAFORMAT_SELECTION_LIST,
 						true, "/buffer_location", cGate);
 
-					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATSimplePhone::config_sip.buffersize_sync_min_out.value),
+					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATStarter::config_sip.buffersize_sync_min_out.value),
 						jPAD("/buffersize_msecs"));
 
-					if (genATSimplePhone::config_sip.buffersize_sync_profiling.value)
+					if (genATStarter::config_sip.buffersize_sync_profiling.value)
 					{
 						// Enable buffer measurement
 						res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxCBool>(1),
@@ -849,7 +778,7 @@ CayfATStarter::adapt_single_property_on_event(jvxSize purposeId,
 				// What to do here? Set the selection to option "0" - no rendering
 				ident.reset("/rendering_mode");
 				trans.reset(true);
-				selLst.bitFieldSelected() = genATSimplePhone::config_video.device_render_mode.value.selection();
+				selLst.bitFieldSelected() = genATStarter::config_video.device_render_mode.value.selection();
 				props->set_property(cGate, jPRI<jvxSelectionList>(selLst), ident, trans);
 				break;
 			}
@@ -859,15 +788,12 @@ CayfATStarter::adapt_single_property_on_event(jvxSize purposeId,
 				// What to do here? Set the selection to option "0" - no rendering
 				ident.reset("/number_buffers");
 				trans.reset(true);
-				numBufsVid = genATSimplePhone::config_video.num_render_buffers.value;				
+				numBufsVid = genATStarter::config_video.num_render_buffers.value;				
 				props->set_property(cGate, jPRI<jvxSize>(numBufsVid), ident, trans);
 				break;
 			}
 		
 			break;			
-		case JVX_PURPOSE_BARESIPIO_VIDEO:
-
-			break;
 
 		default:
 			assert(0);
@@ -914,20 +840,6 @@ CayfATStarter::allow_master_connect(
 		break;
 
 	case JVX_PURPOSE_BARESIPIO_AUDIO:
-		switch (tpIdTrigger.tp)
-		{
-		case JVX_COMPONENT_AUDIO_DEVICE:
-
-			// In case of audio device slotid = 2:
-			if (tpIdTrigger.slotid == 2)
-			{
-				res = JVX_NO_ERROR;
-			}
-			break;
-		}
-		break;
-
-	case JVX_PURPOSE_BARESIPIO_VIDEO:
 		switch (tpIdTrigger.tp)
 		{
 		case JVX_COMPONENT_AUDIO_DEVICE:
@@ -1098,7 +1010,7 @@ CayfATStarter::put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfi
 {
 	if (_common_set_min.theState == JVX_STATE_ACTIVE)
 	{
-		genATSimplePhone::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe);
+		genATStarter::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe);
 	}
 	return JVX_NO_ERROR;
 }
@@ -1109,7 +1021,7 @@ CayfATStarter::get_configuration(jvxCallManagerConfiguration* callMan,
 {
 	if (_common_set_min.theState >= JVX_STATE_ACTIVE)
 	{
-		genATSimplePhone::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);
+		genATStarter::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);
 	}
 	return JVX_NO_ERROR;
 }

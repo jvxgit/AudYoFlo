@@ -165,12 +165,7 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE
 set(AYF_COPY_DLLS 
 	"${AYF_SDK_PATH}/bin/${AYF_CORE_PACK_LIB}.dll"
 	"${AYF_SDK_PATH}/bin/${AYF_FFI_RUNTIME_LIB}.dll"
-	"${AYF_SDK_PATH}/bin/zlib.dll"
 	"${AYF_SDK_PATH}/bin/libfftw3-3.dll"
-	"${AYF_SDK_PATH}/bin/libssl-3-x64.dll"
-	"${AYF_SDK_PATH}/bin/libcrypto-3-x64.dll"
-	"${AYF_SDK_PATH}/bin/libspandsp.dll"
-	"${AYF_SDK_PATH}/bin/SDL2.dll"	
 	)
 
 if(AYF_VERBOSE_INFO)

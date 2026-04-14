@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "phone_app (debug;windows)",
+            "name": "startern_app (debug;windows)",
             "request": "launch",
             "type": "dart",
             "program": "example/lib/main.dart",
@@ -16,15 +16,15 @@
             "args": [
                 // Make sure that the sofa folder is in the runtime or the sdk folder - it often is the SDK output folder!!
                 "--dart-entrypoint-args", "--workdir",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk",
                  "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/zlib.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/zlib.dll",
                 "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/libfftw3-3.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/libfftw3-3.dll",
                 "--dart-entrypoint-args", "--jvxdir",
                 "--dart-entrypoint-args", "jvxComponents",
                 "--dart-entrypoint-args", "--config", 
-                "--dart-entrypoint-args", "phone_app.jvx",
+                "--dart-entrypoint-args", "startern_app.jvx",
                 "--dart-entrypoint-args", "--textlog",
                 "--dart-entrypoint-args", "--verbose_dll",
                 "--dart-entrypoint-args", "--textloglev",
@@ -35,7 +35,7 @@
         },
         {
             // Expect the flutter process not to terminate propperly: https://github.com/flutter/flutter/issues/58459
-            "name": "phone_app (release;windows)",
+            "name": "startern_app (release;windows)",
             "request": "launch",
             "type": "dart",
             "program": "example/lib/main.dart",
@@ -46,15 +46,15 @@
             "args": [
                 // Make sure that the sofa folder is in the runtime or the sdk folder - it often is the SDK output folder!!
                 "--dart-entrypoint-args", "--workdir",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk",
                  "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/zlib.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/zlib.dll",
                 "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/libfftw3-3.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/libfftw3-3.dll",
                 "--dart-entrypoint-args", "--jvxdir",
                 "--dart-entrypoint-args", "jvxComponents",
                 "--dart-entrypoint-args", "--config", 
-                "--dart-entrypoint-args", "phone_app.jvx",
+                "--dart-entrypoint-args", "startern_app.jvx",
                 "--dart-entrypoint-args", "--textlog",
                 "--dart-entrypoint-args", "--verbose_dll",
                 "--dart-entrypoint-args", "--textloglev",
@@ -64,7 +64,7 @@
             "flutterMode": "release",
         },
         {
-            "name": "phone_app (debug;linux)",
+            "name": "startern_app (debug;linux)",
             "request": "launch",
             "type": "dart",
             "program": "example/lib/main.dart",
@@ -75,11 +75,11 @@
             "args": [
                 // Make sure that the sofa folder is in the runtime or the sdk folder - it often is the SDK output folder!!
                 "--dart-entrypoint-args", "--workdir",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk",
                  "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/zlib.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/zlib.dll",
                 "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/libfftw3-3.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/libfftw3-3.dll",
                 "--dart-entrypoint-args", "--jvxdir",
                 "--dart-entrypoint-args", "jvxComponents",
                 "--dart-entrypoint-args", "--config", 
@@ -93,7 +93,7 @@
             "flutterMode": "debug",
         },
 		{
-            "name": "phone_app (debug-noargs;windows)",
+            "name": "startern_app (debug-noargs;windows)",
             "request": "launch",
             "type": "dart",
             "program": "example/lib/main.dart",
@@ -106,7 +106,7 @@
             "flutterMode": "debug",
         },
         {
-            "name": "phone_app (debug-noargs;linux)",
+            "name": "startern_app (debug-noargs;linux)",
             "request": "launch",
             "type": "dart",
             "program": "example/lib/main.dart",
@@ -119,7 +119,7 @@
             "flutterMode": "debug",
         },
         {
-            "name": "fernlive (profile mode)",
+            "name": "startern_app (profile mode)",
             "request": "launch",
             "type": "dart",
             "args": [

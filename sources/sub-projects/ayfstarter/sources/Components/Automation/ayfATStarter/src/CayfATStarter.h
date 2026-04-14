@@ -14,7 +14,7 @@ class CayfATStarter : public CjvxAutomationReportConnect,
 	public CayfAutomationModules::ayfAutoConnect_callbacks,
 	public IjvxProperties, public CjvxProperties, 
 	public IjvxConfiguration,
-	public genATSimplePhone
+	public genATStarter
 {
 protected:
 	
@@ -25,12 +25,6 @@ protected:
 	// Audio input/output and output
 	// ==========================================================================
 	CayfAutomationModules::CayfAutomationModulesSrc2SnkPreChainPriChain ioAudioWithModules;
-
-	// ==========================================================================
-	// Baresip input/output
-	// ==========================================================================
-	CayfAutomationModules::CayfAutomationModulesSrc2SnkPreChain ioBaresipAudio;
-	CayfAutomationModules::CayfAutomationModulesSrc2SnkPreChain ioBaresipVideo;
 
 	// ==========================================================================
 	// Audiofile input

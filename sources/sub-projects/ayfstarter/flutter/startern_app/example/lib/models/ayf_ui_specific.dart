@@ -30,7 +30,7 @@ class AudYoFloUiModelSpecific extends AudYoFloUiModel
       'Hallo Test', "/settings/testme", "Description");
 
   AudYoFloUiModelSpecific(String routeInit) : super(routeInit) {
-    textApp = 'phone_app';
+    textApp = 'startern_app';
     imageNameApp = 'packages/ayfstartern/images/ayfstartern_icons/ayfstartern-logo.png';
 
     // Define some specific configuration entities

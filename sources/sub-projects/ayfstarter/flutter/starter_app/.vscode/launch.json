@@ -16,11 +16,11 @@
             "args": [
                 // Make sure that the sofa folder is in the runtime or the sdk folder - it often is the SDK output folder!!
                 "--dart-entrypoint-args", "--workdir",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk",
                  "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/zlib.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/zlib.dll",
                 "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/libfftw3-3.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/libfftw3-3.dll",
                 "--dart-entrypoint-args", "--jvxdir",
                 "--dart-entrypoint-args", "jvxComponents",
                 "--dart-entrypoint-args", "--config", 
@@ -71,11 +71,11 @@
             "args": [
                 // Make sure that the sofa folder is in the runtime or the sdk folder - it often is the SDK output folder!!
                 "--dart-entrypoint-args", "--workdir",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk",
                  "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/zlib.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/zlib.dll",
                 "--dart-entrypoint-args", "--preload",
-                "--dart-entrypoint-args", "O:/audyoflo/audio-win64-sdk/release/sdk/bin/libfftw3-3.dll",
+                "--dart-entrypoint-args", "T:/x64-sdk/release/sdk/bin/libfftw3-3.dll",
                 "--dart-entrypoint-args", "--jvxdir",
                 "--dart-entrypoint-args", "jvxComponents",
                 "--dart-entrypoint-args", "--config", 

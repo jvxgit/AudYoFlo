@@ -174,7 +174,6 @@ const jvxModuleOnStart componentsOnLoad_audiotechnologies[] =
 {
 	{"jvxAuTGenericWrapper"}, // <- we could also involve the device directly, "jvxAuTSyncClock",
 	{"jvxAuTGenericWrapper"},
-	{"ayfAuTBaresip"},
 #ifdef JVX_FFMPEG_FILE_IO
 	{"jvxAuTFFMpegReader"},
 	{"jvxAuTFFMpegWriter"},
