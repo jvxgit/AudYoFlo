@@ -96,7 +96,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
       AudYoFloConfigComponentForWidgetStartup(
           JvxComponentIdentification(
               cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_TECHNOLOGY,
-              slotid: 3,
+              slotid: 2,
               slotsubid: 0),
           'fileiot');
 

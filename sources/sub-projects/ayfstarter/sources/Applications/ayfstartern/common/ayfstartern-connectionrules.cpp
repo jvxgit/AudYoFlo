@@ -64,7 +64,7 @@ extern "C"
 
 					// From Audio Node to Mix Chain Node
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
-						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 1), 
+						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 1),
 						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 1),
 						"*", "default", "Bridge-audio-node-1-to-mix-output", false, false);

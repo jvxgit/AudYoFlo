@@ -2,7 +2,6 @@
 
 #define JVX_PURPOSE_INPUT 0x1000
 #define JVX_PURPOSE_OUTPUT 0x2000
-#define JVX_PURPOSE_BARESIPIO_AUDIO 0x4000
 #define JVX_PURPOSE_AUDIO_IO 0x8000
 #define JVX_PURPOSE_AUDIO_IO_WITH_MODULES 0x10000
 #define JVX_PURPOSE_VIDEO_IO 0x20000
@@ -95,7 +94,7 @@ CayfATStarter::activate()
 					}, 
 					"sec-audio-in", 
 					jvxComponentIdentification(JVX_COMPONENT_SIGNAL_PROCESSING_NODE, 1, 0),
-					CayfAutomationModules::ayfConnectConfigConMiscArgs(JVX_PURPOSE_BARESIPIO_AUDIO, false),
+					CayfAutomationModules::ayfConnectConfigConMiscArgs(JVX_PURPOSE_AUDIO_IO_WITH_MODULES, false),
 					JVX_ID_TRIGGER_FORWARD, JVX_SIZE_UNSELECTED),
 				JVX_SIZE_UNSELECTED, JVX_ID_TRIGGER_FORWARD),
 			this);
@@ -242,19 +241,26 @@ CayfATStarter::handle_report_ss(
 	jvxSelectionList sel;
 	jPROSL raw(sel);
 
-	jvxSize numChannels = 12;
+	jvxSize numChannels = 4;
 	jvxBool switchMixer = false;
 
 	// Audio input l&R + file input L&R -> audio out L&R
-	jvxApiString astrMixerTalkthrough = "[;;0 0 1 0 0 0 1; 0 0 0 1 0 0 0 1;;;0 0 1 0 0 0 1; 0 0 0 1 0 0 0 1]";
+	// -> INPUT [    0  1				2  3			   4   5    ]
+	//           < primary-sync> -- < soundcard in > -- < file in > -
+	// 
+	// -> OUTPUT [   0  1			   2  3				   4   5   ]
+	//           < primary-sync> --< soundcard out > -- < file out >-
 
-	// Phone input l&R -> audio out L&R -- Audio in L&R + file input L&R -> phone out L&R
-	jvxApiString astrMixerPhone = "[;;0 0 0 0 1; 0 0 0 0 0 1; 0 0 1 0 0 0 1; 0 0 0 1 0 0 0 1;0 0 0 0 1; 0 0 0 0 0 1 ]";
+	// OUT     IN
+	//  0 <-- 
+	//  1 <--
+	//  2 <-- 2 + 4
+	//  3 <-- 3 + 5
+	//  4 <-- 2 + 4
+	//  5 <-- 3 + 5
+	//
 
-	// -> INPUT [    A  B       C  D       E    F       G   H  ]
-	//           < primary -< audio in >-< phone in >-< file i >-
-	// -> OUTPUT [    A  B       C  D        E    F        G   H  ]
-	//           < primary -< audio out >-< phone out >-< file out >-
+	jvxApiString astrMixerTalkthrough = "[;;0 0 1 0 1; 0 0 0 1 0 1;;;0 0 1 0 1; 0 0 0 1 0 1]";
 
 	// !!!
 	// We need to be a little bit careful here: the automation component may be triggered before state has been 
@@ -356,15 +362,7 @@ CayfATStarter::handle_report_ss(
 			}
 			break;
 
-		case JVX_COMPONENT_AUDIO_DEVICE:
-			switch (tp.slotid)
-			{
-			case 2:
-				// Here, we see a new sip device
-				phoneConnections++;
-				switchMixer = true;
-				break;
-			}
+		case JVX_COMPONENT_AUDIO_DEVICE:			
 			break;		
 
 		case JVX_COMPONENT_SIGNAL_PROCESSING_NODE:
@@ -402,6 +400,10 @@ CayfATStarter::handle_report_ss(
 					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 				}
 
+				// ===================================================================================================================
+				// In this part, we declare the input-stream-channel- mapping. Each entry links a component identification (with wildcards)
+				// to a channel offset, a max number of channels and 
+				// ===================================================================================================================
 				ident.reset("/one_new_entry");
 				astr = "JVX_COMPONENT_AUDIO_DEVICE<1\",\"" + jvx_size2String(JVX_SIZE_DONTCARE) + ">, 0, 2,\"Audio Input #\",yes";
 				resL = props->set_property(callGate, jPROS(&astr), ident);
@@ -413,23 +415,8 @@ CayfATStarter::handle_report_ss(
 					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 				}
 
-				// For the phone, we need to decouple input from output. Otherwise, SIP i/o may stop if we do not deliver output data
-				// The possible options here depend on the settings at this position: line 787, property /out_fail_no_report
-				// If we do not remove the error and we link i/o, no output data will be written at the begining.
-				// In this case, the baresip module will not output any data after init!!
 				ident.reset("/one_new_entry");
-				astr = "JVX_COMPONENT_AUDIO_DEVICE<2\",\"" + jvx_size2String(JVX_SIZE_DONTCARE) + ">, 2, 2,\"Phone Input #\",no";
-				resL = props->set_property(callGate, jPROS(&astr), ident);
-				if (resL != JVX_NO_ERROR)
-				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-					log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the number channels to " <<
-						astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
-					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-				}
-
-				ident.reset("/one_new_entry");
-				astr = "JVX_COMPONENT_AUDIO_DEVICE<3\",\"" + jvx_size2String(JVX_SIZE_DONTCARE) + ">, 4, 2,\"File Input #\",no";
+				astr = "JVX_COMPONENT_AUDIO_DEVICE<2\",\"" + jvx_size2String(JVX_SIZE_DONTCARE) + ">, 2, 2,\"File Input #\",no";
 				resL = props->set_property(callGate, jPROS(&astr), ident);
 				if (resL != JVX_NO_ERROR)
 				{
@@ -482,20 +469,9 @@ CayfATStarter::handle_report_ss(
 						astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
 					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 				}
-
+				
 				ident.reset("/one_new_entry");
-				astr = "JVX_COMPONENT_AUDIO_DEVICE<2\",\"" + jvx_size2String(JVX_SIZE_DONTCARE) + ">, 2, 2,\"Phone Output #\"";
-				resL = props->set_property(callGate, jPROS(&astr), ident);
-				if (resL != JVX_NO_ERROR)
-				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-					log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the number channels to " <<
-						astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
-					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-				}
-
-				ident.reset("/one_new_entry");
-				astr = "JVX_COMPONENT_AUDIO_DEVICE<4\",\"" + jvx_size2String(JVX_SIZE_DONTCARE) + ">, 4, 2,\"File Output #\"";
+				astr = "JVX_COMPONENT_AUDIO_DEVICE<3\",\"" + jvx_size2String(JVX_SIZE_DONTCARE) + ">, 2, 2,\"File Output #\"";
 				resL = props->set_property(callGate, jPROS(&astr), ident);
 				if (resL != JVX_NO_ERROR)
 				{
@@ -533,15 +509,7 @@ CayfATStarter::handle_report_ss(
 			}
 			break;
 
-		case JVX_COMPONENT_AUDIO_DEVICE:
-			switch (tp.slotid)
-			{
-			case 2:
-				// Here, we see a new sip device
-				phoneConnections--;
-				switchMixer = true;
-				break;
-			}
+		case JVX_COMPONENT_AUDIO_DEVICE:			
 			break;
 		}
 
@@ -562,6 +530,7 @@ CayfATStarter::handle_report_ss(
 	{
 		if (propsMixerNode)
 		{
+			/*
 			if (phoneConnections > 0)
 			{
 				// jvxApiString astrMixer = "[;;0 0 0 0 1; 0 0 0 0 0 1 ]";
@@ -572,6 +541,8 @@ CayfATStarter::handle_report_ss(
 				// jvxApiString astrMixer = "[;;0 0 1; 0 0 0 1 ]";
 				propsMixerNode->set_property(callGate, jPRI<jvxApiString>(astrMixerTalkthrough), jPAD("/user_input"), jPD());
 			}
+			*/
+			propsMixerNode->set_property(callGate, jPRI<jvxApiString>(astrMixerTalkthrough), jPAD("/user_input"), jPD());
 		}
 	}
 
@@ -663,74 +634,7 @@ CayfATStarter::adapt_single_property_on_event(jvxSize purposeId,
 			{
 			}
 			break;
-
-		case JVX_PURPOSE_BARESIPIO_AUDIO:			
-			if (modName == "jvxAuNConvert")
-			{
-				if (cpDescription == "JVX Audio Convert - input")
-				{
-					ident.reset("/fixed_rate_location_mode");
-					trans.reset(true);
-					jvx_bitZSet(selLst.bitFieldSelected(), 1); // <- activate the mode "input fixed rate"
-					props->set_property(cGate, jPRI<jvxSelectionList>(selLst), ident, trans);
-				}
-				else if (cpDescription == "JVX Audio Convert - output")
-				{
-					// Select the output buffer mode
-					ident.reset("/fixed_rate_location_mode");
-					trans.reset(true);
-					jvx_bitZSet(selLst.bitFieldSelected(), 0); // <- activate the mode "input fixed rate"
-					props->set_property(cGate, jPRI<jvxSelectionList>(selLst), ident, trans);
-				}
-			}
-
-			if (modName == "jvxAuNForwardBuffer")
-			{
-				valB = c_false;
-				res = jvx_set_property(props, &valB, 0, 1, JVX_DATAFORMAT_BOOL,
-					true, "/bypass_buffer", cGate);
-
-				if (cpDescription == "JVX Audio Forward Buffer - input")
-				{
-					// Select the input buffer mode
-					jvx_bitZSet(selLst.bitFieldSelected(), 0);
-					res = jvx_set_property(props, &selLst, 0, 1, JVX_DATAFORMAT_SELECTION_LIST,
-						true, "/buffer_location", cGate);
-
-					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATStarter::config_sip.buffersize_sync_min_in.value),
-						jPAD("/buffersize_msecs"));
-
-					if (genATStarter::config_sip.buffersize_sync_profiling.value)
-					{
-						// Enable buffer measurement
-						res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxCBool>(1),
-							jPAD("/enable_buffer_profiling"));
-					}
-
-					// Setup the input buffer to report events where data is lost
-					valB = c_false;
-					res = jvx_set_property(props, &valB, 0, 1, JVX_DATAFORMAT_BOOL,
-						true, "/out_fail_no_report", cGate);					
-				}
-				else if (cpDescription == "JVX Audio Forward Buffer - output")
-				{
-					// Select the output buffer mode
-					jvx_bitZSet(selLst.bitFieldSelected(), 1);
-					res = jvx_set_property(props, &selLst, 0, 1, JVX_DATAFORMAT_SELECTION_LIST,
-						true, "/buffer_location", cGate);
-
-					res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxSize>(genATStarter::config_sip.buffersize_sync_min_out.value),
-						jPAD("/buffersize_msecs"));
-
-					if (genATStarter::config_sip.buffersize_sync_profiling.value)
-					{
-						// Enable buffer measurement
-						res = props->set_property(lval<jvxCallManagerProperties>(jvxCallManagerProperties()), jPRI<jvxCBool>(1),
-							jPAD("/enable_buffer_profiling"));
-					}
-				}
-			}
-			break;
+		
 
 		case JVX_PURPOSE_INPUT:
 			if (modName == "jvxAuNForwardBuffer")
@@ -837,29 +741,14 @@ CayfATStarter::allow_master_connect(
 			}
 			break;
 		}
-		break;
-
-	case JVX_PURPOSE_BARESIPIO_AUDIO:
-		switch (tpIdTrigger.tp)
-		{
-		case JVX_COMPONENT_AUDIO_DEVICE:
-
-			// In case of audio device slotid = 2:
-			if (tpIdTrigger.slotid == 2)
-			{
-				res = JVX_NO_ERROR;
-			}
-			break;
-		}
-		break;
+		break;	
 
 	case JVX_PURPOSE_INPUT:
 		switch (tpIdTrigger.tp)
 		{
 		case JVX_COMPONENT_AUDIO_DEVICE:
 		
-			// In case of audio device slotid = 2:
-			if (tpIdTrigger.slotid == 3)
+			if (tpIdTrigger.slotid == 2)
 			{
 				res = JVX_NO_ERROR;
 			}
@@ -873,7 +762,7 @@ CayfATStarter::allow_master_connect(
 		case JVX_COMPONENT_AUDIO_DEVICE:
 
 			// In case of audio device slotid = 2:
-			if (tpIdTrigger.slotid == 4)
+			if (tpIdTrigger.slotid == 3)
 			{
 				res = JVX_NO_ERROR;
 			}

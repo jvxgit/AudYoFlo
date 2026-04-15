@@ -102,8 +102,23 @@ class CjvxSpNMixChainEnterLeave : public CjvxBareNode1ioRearrange,
 
 	std::vector<jvxSize> oldRouting;
 
-	// Add entries via properties:
-	// <component identification>, <offset>, <max_chans>
+	// The presets define constraints to route input and output channels:
+	// A component identification is linked to a channel offset and a maximum number of channels.
+	// Note that this component is used either for input or for output .
+	// Therefore, we do not have to specify different rules for input and output.
+	// Each entry also contains a name for the preset entry which acts as the prefix to denote channels.
+	// 
+	// Add and remove entries via properties: "/sources_channel_routing/one_new_entry", 
+	//										  "/sources_channel_routing/remove_entry", 
+	//										  "/sources_channel_routing/all_definitions"
+	// 
+	// The property "/sources_channel_routing/one_new_entry" is specified by a string containing a list
+	// of tokens with comma seperation, in the following order:
+	// <component identification>, <offset>, <max_chans>, <channel prefix>, <linkio>
+	// 
+	// linkio is used to synchronize input and output: Only if at the input side data was received, data 
+	// is pushed froward to the output side!! This is necessary for input/output coupled devices.
+	//
 	std::map<jvxComponentIdentification, chanOffsetAndMaxChans> presets_io_routing;
 	// std::map<jvxComponentIdentification, jvxBool> presets_inout_coupling;
 
