@@ -2942,7 +2942,7 @@ jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType 
 	case JVX_FFT_ROUND_NEAREST:
 		if (abs((int)fftSLow - (int)n) < abs((int)fftSHigh - (int)n))
 		{
-			*szTypeOnReturn = idxLow;
+			*szTypeOnReturn = (jvxFFTSize)idxLow;
 			if (szOnReturn)
 			{
 				*szOnReturn = fftSLow;
@@ -2951,7 +2951,7 @@ jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType 
 		}
 		else
 		{
-			*szTypeOnReturn = idxHigh;
+			*szTypeOnReturn = (jvxFFTSize)idxHigh;
 			if (szOnReturn)
 			{
 				*szOnReturn = fftSHigh;
@@ -2961,7 +2961,7 @@ jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType 
 	case JVX_FFT_ROUND_UP:
 		if (n <= fftSHigh)
 		{
-			*szTypeOnReturn = idxHigh;
+			*szTypeOnReturn = (jvxFFTSize)idxHigh;
 			if (szOnReturn)
 			{
 				*szOnReturn = fftSHigh;
@@ -2979,7 +2979,7 @@ jvx_get_nearest_size_fft(jvxFFTSize* szTypeOnReturn, jvxSize n, jvxFftRoundType 
 	case JVX_FFT_ROUND_DOWN:
 		if (n >= fftSLow)
 		{
-			*szTypeOnReturn = idxLow;
+			*szTypeOnReturn = (jvxFFTSize)idxLow;
 			if (szOnReturn)
 			{
 				*szOnReturn = fftSLow;

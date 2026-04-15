@@ -28,6 +28,7 @@
 #include "jvx_dsp_base.h"
 #include "jvx_fft_tools/jvx_firfft.h"
 #include "jvx_fft_tools/jvx_fft_core.h"
+#include "jvx_fft_tools/jvx_fft_tools.h"
 #include "jvx_dsp_base.h"
 
 #include "jvx_fft_tools/jvx_firfft_prv.h"	
