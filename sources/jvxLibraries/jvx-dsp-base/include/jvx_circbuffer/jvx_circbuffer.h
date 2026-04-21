@@ -160,6 +160,12 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdlIn,
 						jvxData** fieldOut,
 	jvxSize bSize);
 
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdlIn,
+	jvxData** fCoeffs_fw,
+	jvxData** fieldIn,
+	jvxData** fieldOut,
+	jvxSize bSize);
+
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdlIn,
 						jvxData* fCoeffs_fw,
 						jvxData* fCoeffs_bw,

@@ -964,6 +964,78 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdl,
 	return JVX_DSP_ERROR_INVALID_ARGUMENT;
 }
 
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdl,
+	jvxData** fCoeffs_fw,
+	jvxData** fieldIn,
+	jvxData** fieldOut,
+	jvxSize bSize)
+{
+	int c, i, l;
+	assert(hdl[0].nUnits == 1);
+	if (hdl)
+	{
+		jvxData accuin = 0;
+		jvxData accuout = 0;
+
+		jvxData accu1 = 0;
+		jvxData* in = NULL;
+		jvxData* out = NULL;
+
+
+		jvxSize idxRead = hdl->idxRead;
+		for (c = 0; c < hdl->channels; c++)
+		{
+			jvxData* statePtr;
+			idxRead = hdl->idxRead;
+			statePtr = hdl->ram.field[c] + idxRead;
+
+			in = fieldIn[c];
+			out = fieldOut[c];
+			for (i = 0; i < bSize; i++)
+			{
+				jvxData* coeffPtr = fCoeffs_fw[c];
+				jvxSize ll1, ll2;
+
+				// Input
+				accuin = *in++;
+
+				// Output
+				accuout = 0.0;
+
+				// Store first fw coefficient
+				accu1 = *coeffPtr++;
+
+				ll1 = hdl->length - idxRead;
+				ll2 = idxRead;
+
+				for (l = 0; l < ll1; l++)
+				{
+					accuout += *coeffPtr++ * *statePtr++;
+				}
+
+				statePtr = hdl->ram.field[c];
+				for (l = 0; l < ll2; l++)
+				{
+					accuout += *coeffPtr++ * *statePtr++;
+				}
+
+				accuout += accu1 * accuin;
+				*out++ = accuout;
+
+				// Final statePtr++ realized by index increment
+				idxRead = (idxRead + hdl->length - 1) % hdl->length;
+				statePtr = hdl->ram.field[c] + idxRead;
+
+				*statePtr = accuin;
+
+			}
+		}
+		hdl->idxRead = idxRead;
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdl,
 	jvxData* fCoeffs_fw,
 	jvxData* fCoeffs_bw,
