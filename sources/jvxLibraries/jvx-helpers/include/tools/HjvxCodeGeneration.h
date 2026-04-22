@@ -202,14 +202,17 @@
 	fprintf(fPtr, "\n};\n"); 
 
 #define WRITE_STATIC_MACRO_DEFINE_1_SET_ZERO(fPtr, tpVar, nmVar) \
-  fprintf(fPtr_src, "%s", ((std::string)tpVar + (std::string)" " + (std::string)nmVar + " = 0;\n").c_str()); 
+  fprintf(fPtr_src, "%s", ((std::string)tpVar + nmVar + " = 0;\n").c_str()); 
 
 #define WRITE_STATIC_MACRO_DEFINE_1(fPtr, tpVar, nmVar, nmValue) \
-  fprintf(fPtr_src, "%s", ((std::string)tpVar + (std::string)" " + (std::string)nmVar + " = " + nmValue + ";\n").c_str()); 
+  fprintf(fPtr_src, "%s", ((std::string)tpVar + nmVar + " = " + nmValue + ";\n").c_str()); 
 
-#define WRITE_STATIC_MACRO_DEFINE_1_VALUE(fPtr, tpVar, nmVar, value, token) \
-  fprintf(fPtr_src, "%s" token "%s", ((std::string)tpVar + (std::string)" " + (std::string)nmVar + " = ").c_str(), value, ";\n"); 
-  
+#define WRITE_STATIC_MACRO_DEFINE_1_VALUE_SIMPLE(fPtr, tpVar, nmVar, value, token) \
+  fprintf(fPtr, "%s" token "%s;\n", ((std::string)tpVar + nmVar + " = ").c_str(), value); 
+
+#define WRITE_STATIC_MACRO_DEFINE_1_VALUE_SIMPLE_COMMENT(fPtr, tpVar, nmVar, value, token, comment) \
+  fprintf(fPtr, "%s" token "%s; %s\n", ((std::string)tpVar + nmVar + " = ").c_str(), value, comment); 
+
 #ifdef __cplusplus
 
 #define Q(x) #x
