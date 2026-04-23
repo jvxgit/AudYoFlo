@@ -948,6 +948,40 @@ CjvxMexCalls_prv::process_st_callEx(jvxLinkDataDescriptor* theData, jvxSize idx_
 			parent._theExtCallHandler->convertCToExternal(&copyToWs, &tStamp, 1, JVX_DATAFORMAT_32BIT_LE);
 			parent._theExtCallHandler->putVariableToExternal("caller", "jvx_xchg_cnt", copyToWs);
 
+			// If a value is given, run a pre-process script to preprocess input data
+			if (!genMexCall_node::properties_active.preProcessScriptName.value.empty())
+			{
+				// Matlab call
+				if (genMexCall_node::properties_active.subFolderName.value.empty())
+				{
+					command = "[ jvx_in_frame] = " + genMexCall_node::properties_active.preProcessScriptName.value + "( jvx_in_frame);";
+				}
+				else
+				{
+					command = "[ jvx_in_frame] = " + genMexCall_node::properties_active.subFolderName.value +
+						"." + genMexCall_node::properties_active.preProcessScriptName.value + "( jvx_in_frame);";
+				}
+				
+				try
+				{
+					resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
+					if (resL != JVX_NO_ERROR)
+					{
+						jvxApiString errDescr;
+						parent._theExtCallHandler->getLastErrorReason(&errDescr);
+						parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
+						res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+						noOutput = true;
+						res = JVX_ERROR_INTERNAL;
+					}
+				}
+				catch (...)
+				{
+					parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
+					res = JVX_ERROR_ABORT;
+				}
+			}
+
 			// Matlab call
 			if (genMexCall_node::properties_active.subFolderName.value.empty())
 			{
@@ -973,6 +1007,41 @@ CjvxMexCalls_prv::process_st_callEx(jvxLinkDataDescriptor* theData, jvxSize idx_
 				}
 				else
 				{
+					// If a value is given, run a pre-process script to preprocess input data
+					if (!genMexCall_node::properties_active.postProcessScriptName.value.empty())
+					{
+						// Matlab call
+						if (genMexCall_node::properties_active.subFolderName.value.empty())
+						{
+							command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.postProcessScriptName.value + "( jvx_out_frame);";
+						}
+						else
+						{
+							command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.subFolderName.value +
+								"." + genMexCall_node::properties_active.postProcessScriptName.value + "( jvx_out_frame);";
+						}
+
+						try
+						{
+							resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
+							if (resL != JVX_NO_ERROR)
+							{
+								jvxApiString errDescr;
+								parent._theExtCallHandler->getLastErrorReason(&errDescr);
+								parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
+								res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+								noOutput = true;
+								res = JVX_ERROR_INTERNAL;
+							}
+						}
+						catch (...)
+						{
+							parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
+							res = JVX_ERROR_ABORT;
+						}
+					}
+
+
 					copyFromWs = NULL;
 					resL = parent._theExtCallHandler->getVariableFromExternal("caller", "jvx_out_frame", &copyFromWs);
 					if (resL == JVX_NO_ERROR)

@@ -41,7 +41,22 @@ SECTION PROPERTIES
 			TYPE = "JVX_DATAFORMAT_STRING";
 			INIT_SET = "jvxProcessOffline";
 		};
+		
+		SECTION preProcessScriptName
+		{
+			DESCRIPTION = "Name of Function to preprocess input data";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_AUN_OFFLINE_PRE_PROCESS_FCT";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "";
+		};
 
+		SECTION postProcessScriptName
+		{
+			DESCRIPTION = "Name of Function to preprocess input data";	  // Defaults to NAME if not present
+			DESCRIPTOR = "JVX_AUN_OFFLINE_POST_PROCESS_FCT";
+			TYPE = "JVX_DATAFORMAT_STRING";
+			INIT_SET = "";
+		};
 
 		SECTION beforeProcessScriptName
 		{

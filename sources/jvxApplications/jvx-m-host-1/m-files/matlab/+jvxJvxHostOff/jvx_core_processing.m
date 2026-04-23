@@ -95,6 +95,8 @@ inProcessing.frameCnt = 1;
 inProcessing.idxStart = 1;
 inProcessing.isRunning = 1;
 inProcessing.out_complete = false;
+inProcessing.cb_preprocess= [];
+inProcessing.cb_postprocess= [];
 
 set(handles.text_progress_0, 'BackgroundColor', [0 0.1 0]);
 set(handles.text_progress_1, 'BackgroundColor', [0 0.1 0]);
