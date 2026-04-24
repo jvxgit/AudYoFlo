@@ -145,6 +145,12 @@ public:
 				CjvxMexCallsProfiler::profile_start_in_process();
 			}			
 
+			// ======================================================================================
+			// Run the preprocessing functions
+			// We need to do it here since the inputmay have been pre-processed
+			// ======================================================================================
+			res = CjvxMexCalls::prerun_processing(this->_common_set_icon.theData_in);
+
 			if (!skipCCode)
 			{
 				// Copy input data for later usage

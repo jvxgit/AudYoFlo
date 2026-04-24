@@ -59,17 +59,17 @@ jvx_run_external_command_1data(IjvxExternalCall* hdl, std::string command, int n
 					res = hdl->putVariableToExternal("global", ptr, ext);
 					if (res != JVX_NO_ERROR)
 					{
-						hdl->postMessageExternal(("Failed to put variable " + (std::string)ptr + " to workspace.").c_str(), false);
+						hdl->postMessageExternal(("Failed to put variable " + (std::string)ptr + " to workspace.").c_str(), external_if_message_type::external_if_info);
 					}
 				}
 				else
 				{
-					hdl->postMessageExternal(("Failed to prepare variable " + (std::string)ptr + " to copy to workspace.").c_str(), false);
+					hdl->postMessageExternal(("Failed to prepare variable " + (std::string)ptr + " to copy to workspace.").c_str(), external_if_message_type::external_if_info);
 				}
 			}
 			else
 			{
-				hdl->postMessageExternal(("Failed to prepare variable " + (std::string)ptr + " to copy to workspace.").c_str(), false);
+				hdl->postMessageExternal(("Failed to prepare variable " + (std::string)ptr + " to copy to workspace.").c_str(), external_if_message_type::external_if_info);
 			}
 		}
 		resL = hdl->executeExternalCommand(command.c_str());

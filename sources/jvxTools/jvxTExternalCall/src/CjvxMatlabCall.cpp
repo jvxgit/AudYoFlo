@@ -303,19 +303,19 @@ CjvxExternalCall::release_reference(jvxSize idRef)
 
 
 jvxErrorType
-CjvxExternalCall::postMessageExternal(const char* message, bool isError)
+CjvxExternalCall::postMessageExternal(const char* message, external_if_message_type tp)
 {
 	if(this->checkThread())
 	{
-		if(isError)
+		switch(tp)
 		{
-			//mexErrMsgTxt(message);
-			//mexPrintf
-			mexWarnMsgTxt(((std::string)" --> Error: " + message).c_str());
-		}
-		else
-		{
-			
+		case external_if_message_type::external_if_error:
+			mexErrMsgTxt(((std::string)" --> Error: " + message).c_str());
+			break;
+		case external_if_message_type::external_if_warning:
+			mexWarnMsgTxt(((std::string)" --> Warning: " + message).c_str());
+			break;
+		default:			
 			mexPrintf(message);
 		}
 		return(JVX_NO_ERROR);

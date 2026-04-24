@@ -51,8 +51,11 @@ public:
 
 	jvxErrorType is_matlab_processing_engaged(jvxBool* isEngaged);
 
+	jvxErrorType prerun_processing(jvxLinkDataDescriptor* theData_in);
+
 	jvxErrorType process_st(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver, jvxSize idx_receiver_to_sender, jvxLinkDataDescriptor* theData_out = NULL);
 	jvxErrorType process_buffers_icon(jvxLinkDataDescriptor* theData_in, jvxLinkDataDescriptor* theData_out);
+
 
 	jvxErrorType postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData);
 	jvxErrorType postprocess_connect_icon_leave(jvxLinkDataDescriptor* theData);

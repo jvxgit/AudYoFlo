@@ -9,8 +9,9 @@ include_directories(
 
 
 set(LOCAL_SOURCES
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxMatlabCall.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../target/componentEntry.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxMatlabCall.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../../src/CjvxMatlabCall.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../target/componentEntry.cpp
   )
 
 link_directories(${MATLAB_PATH_LIB})

@@ -146,7 +146,11 @@ public:
 
 	jvxErrorType process_st_callEx(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver, jvxSize idx_receiver_to_sender, jvxLinkDataDescriptor* theData_out);
 
+	jvxErrorType prerun_processing(jvxLinkDataDescriptor* theData_in, jvxSize idx_sender_to_receiver);
+
 	// ==============================================================================================
+
+	jvxErrorType optionalRunPreProcess(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION extcall_lasterror(jvxApiError* theErr)
 	{

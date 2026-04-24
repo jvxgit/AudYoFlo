@@ -56,7 +56,7 @@ CjvxMexCallsProfiler::obtainProvideDataMexCall(jvxBool provideData, jvxSize phas
 					{
 						jvxApiString astr;
 						_theExtCallHandler->getLastErrorReason(&astr);
-						_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+						_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str());
 					}
 				}
 			}
@@ -88,11 +88,11 @@ CjvxMexCallsProfiler::obtainProvideDataMexCall(jvxBool provideData, jvxSize phas
 						// Report the error only if instructed to report. Not to report an error may be ok on the first frame
 						jvxApiString astr;
 						_theExtCallHandler->getLastErrorReason(&astr);
-						_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+						_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str());
 					}
 					else
 					{
-						_theExtCallHandler->postMessageExternal(("!! WARNING !! Command <" + command + "> failed.\n").c_str(), false);
+						_theExtCallHandler->postMessageExternal(("!! WARNING !! Command <" + command + "> failed.\n").c_str(), external_if_message_type::external_if_info);
 					}
 				}
 			}
@@ -135,7 +135,7 @@ CjvxMexCallsProfiler::profile_start_in_process()
 		{
 			jvxApiString astr;
 			_theExtCallHandler->getLastErrorReason(&astr);
-			_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+			_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str());
 		}
 		debugStartDone = true;
 	}
@@ -155,7 +155,7 @@ CjvxMexCallsProfiler::profile_pre_step_in_process()
 		{
 			jvxApiString astr;
 			_theExtCallHandler->getLastErrorReason(&astr);
-			_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+			_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str());
 		}
 	}
 	return JVX_NO_ERROR;
@@ -173,7 +173,7 @@ CjvxMexCallsProfiler::profile_step_in_process()
 	{
 		jvxApiString astr;
 		_theExtCallHandler->getLastErrorReason(&astr);
-		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str());
 	}
 	return JVX_NO_ERROR;
 }
@@ -192,7 +192,7 @@ CjvxMexCallsProfiler::profile_config_on_prepare()
 	{
 		jvxApiString astr;
 		_theExtCallHandler->getLastErrorReason(&astr);
-		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str());
 
 		// Standard exception indicates that the debugger was detached!!
 		if (resM == JVX_ERROR_STANDARD_EXCEPTION)
@@ -212,7 +212,7 @@ CjvxMexCallsProfiler::profile_stop_on_postprocess()
 	{
 		jvxApiString astr;
 		_theExtCallHandler->getLastErrorReason(&astr);
-		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str(), true);
+		_theExtCallHandler->postMessageExternal(("Last operation <" + command + "> failed, reason: <" + astr.std_str() + ">.").c_str());
 	}
 	debugStartDone = false;
 	return JVX_NO_ERROR;

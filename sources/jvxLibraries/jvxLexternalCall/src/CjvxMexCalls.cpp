@@ -108,6 +108,15 @@ CjvxMexCalls::process_st(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_r
 }
 
 jvxErrorType
+CjvxMexCalls::prerun_processing(jvxLinkDataDescriptor* theData_in)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	CjvxMexCalls_prv* prv = reinterpret_cast<CjvxMexCalls_prv*>(theSubclass);
+	res = prv->prerun_processing(theData_in, *theData_in->con_pipeline.idx_stage_ptr);
+	return res;
+}
+
+jvxErrorType
 CjvxMexCalls::process_buffers_icon(jvxLinkDataDescriptor* theData_in, jvxLinkDataDescriptor* theData_out)
 {
 	jvxErrorType res = JVX_NO_ERROR;

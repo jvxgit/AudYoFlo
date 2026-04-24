@@ -228,13 +228,13 @@ mexJvxHost::ic_process_msg_callback(jvxHandle* theField, jvxSize szField, jvxCBi
 			{
 				jvxApiString errDescr;
 				externalCall.fromHost.theHdl->getLastErrorReason(&errDescr);
-				externalCall.fromHost.theHdl->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
+				externalCall.fromHost.theHdl->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), external_if_message_type::external_if_info);
 				res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
 			}
 		}
 		catch(...)
 		{
-			externalCall.fromHost.theHdl->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
+			externalCall.fromHost.theHdl->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), external_if_message_type::external_if_info);
 			res = JVX_ERROR_ABORT;
 		}
 	}

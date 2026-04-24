@@ -77,7 +77,7 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION executeExternalCommand(const char* evalString, jvxBool catchAllExceptions = true) = 0;
 
 	//! Post a message to the external viewer canvas/commandwindow/whatever
-	virtual jvxErrorType JVX_CALLINGCONVENTION postMessageExternal(const char* message, bool isError = true) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION postMessageExternal(const char* message, external_if_message_type tp = external_if_message_type::external_if_warning) = 0;
 
 	// =================================================================================
 

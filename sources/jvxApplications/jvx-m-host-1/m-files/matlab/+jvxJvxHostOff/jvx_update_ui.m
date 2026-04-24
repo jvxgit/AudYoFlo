@@ -225,7 +225,7 @@ else
     catch ME
         handles.jvx_struct.images
         handles.axes_node
-        error('Found the always present error location!');
+        % error('Found the always present error location!');
         rethrow(ME)
     end
     axis(handles.axes_node, 'off');

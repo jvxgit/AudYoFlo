@@ -511,14 +511,14 @@ CjvxMexCalls_prv::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* the
 			{
 				jvxApiString errDescr;
 				parent._theExtCallHandler->getLastErrorReason(&errDescr);
-				parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: \n" + errDescr.std_str() + ".\n").c_str(), false);
+				parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: \n" + errDescr.std_str() + ".\n").c_str(), external_if_message_type::external_if_info);
 				res = JVX_ERROR_ABORT;
 			}
 		}
 
 		catch (...)
 		{
-			parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
+			parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), external_if_message_type::external_if_info);
 			res = JVX_ERROR_ABORT;
 		}
 		runtime.firstCall = true;
@@ -676,13 +676,13 @@ CjvxMexCalls_prv::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* t
 			{
 				jvxApiString errDescr;
 				parent._theExtCallHandler->getLastErrorReason(&errDescr);
-				parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
+				parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), external_if_message_type::external_if_info);
 			}
 		}
 
 		catch (...)
 		{
-			parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
+			parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), external_if_message_type::external_if_info);
 		}
 	}
 #endif // JVX_EXTERNAL_CALL_ENABLED
@@ -805,6 +805,221 @@ jvxErrorType CjvxMexCalls_prv::is_matlab_processing_engaged(jvxBool* isEngaged)
 }
 
 jvxErrorType
+CjvxMexCalls_prv::optionalRunPreProcess(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver)
+{
+	std::string command;
+	jvxExternalDataType* copyToWs = NULL;
+	jvxExternalDataType* copyFromWs = NULL;
+	jvxErrorType resL = JVX_NO_ERROR;
+	jvxBool noOutput = false;
+	jvxDataFormat format = JVX_DATAFORMAT_NONE;
+	jvxBool isString = false;
+	jvxInt32 dimX = 0;
+	jvxInt32 dimY = 0;
+	jvxBool convertFloats = false;
+	jvxSize i;
+	jvxInt32 tStamp = -1;
+
+	jvxErrorType res = JVX_NO_ERROR;
+
+	// If a value is given, run a pre-process script to preprocess input data
+	if (!genMexCall_node::properties_active.preProcessScriptName.value.empty())
+	{
+		// Matlab call
+		if (genMexCall_node::properties_active.subFolderName.value.empty())
+		{
+			command = "[ jvx_in_frame] = " + genMexCall_node::properties_active.preProcessScriptName.value + "( jvx_in_frame);";
+		}
+		else
+		{
+			command = "[ jvx_in_frame] = " + genMexCall_node::properties_active.subFolderName.value +
+				"." + genMexCall_node::properties_active.preProcessScriptName.value + "( jvx_in_frame);";
+		}
+
+		try
+		{
+			// We are trying to override the input buffers in Matlab pre-processing hook
+			res = parent._theExtCallHandler->executeExternalCommand(command.c_str());
+			if (res == JVX_NO_ERROR)
+			{
+				copyFromWs = NULL;
+				res = parent._theExtCallHandler->getVariableFromExternal("caller", "jvx_in_frame", &copyFromWs);
+				if (res == JVX_NO_ERROR)
+				{
+					res = parent._theExtCallHandler->getPropertiesVariable(copyFromWs, &format, &isString, &dimX, &dimY, &convertFloats);
+
+					if (res == JVX_NO_ERROR)
+					{
+						if (theData->con_params.number_channels > 0)
+						{
+							if (
+								(format == theData->con_params.format) &&
+								(isString == false) &&
+								(dimX == theData->con_params.buffersize) &&
+								(dimY == theData->con_params.number_channels))
+							{
+								res = JVX_NO_ERROR;
+								parent._theExtCallHandler->convertExternalToC(theData->con_data.buffers[idx_sender_to_receiver],
+									dimY, dimX, format, copyFromWs, "jvx_in_frame", convertFloats);
+							}
+							else
+							{
+								res = JVX_ERROR_INVALID_SETTING;
+								std::string txt = "Warning: Properties of processing input do ot match those expected.\n";
+								if (format != theData->con_params.format)
+								{
+									txt += "Expected format ";
+									txt += jvxDataFormat_txt(theData->con_params.format);
+									txt += " but got ";
+									txt += jvxDataFormat_txt(format);
+									txt += ".\n";
+								}
+								if (isString)
+								{
+									txt += "Expected a numeric buffer but got a string. \n";
+								}
+								if (dimX != theData->con_params.buffersize)
+								{
+									txt += "Expected buffersize  ";
+									txt += jvx_size2String(theData->con_params.buffersize);
+									txt += " but got ";
+									txt += jvx_size2String(dimX);
+									txt += ".\n";
+
+								}
+								if (dimY != theData->con_params.number_channels)
+								{
+									txt += "Expected a number of channels of  ";
+									txt += jvx_size2String(theData->con_params.number_channels);
+									txt += " but got ";
+									txt += jvx_size2String(dimY);
+									txt += ".\n";
+								}
+
+								parent._theExtCallHandler->postMessageExternal(txt.c_str(), external_if_message_type::external_if_info);
+								noOutput = true;
+							}
+						}
+					}
+					else
+					{
+						res = JVX_ERROR_INVALID_SETTING;
+						std::string txt = "Warning: Could not get properties of variable <jvx_out_frame>.\n";
+						parent._theExtCallHandler->postMessageExternal(txt.c_str(), external_if_message_type::external_if_info);
+						noOutput = true;
+					}
+				}
+			}
+			else
+			{
+				jvxApiString errDescr;
+				parent._theExtCallHandler->getLastErrorReason(&errDescr);
+				parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), external_if_message_type::external_if_info);
+				res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+				noOutput = true;
+				res = JVX_ERROR_INTERNAL;
+			}
+		}
+		catch (...)
+		{
+			parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), external_if_message_type::external_if_info);
+			res = JVX_ERROR_ABORT;
+		}	
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxMexCalls_prv::prerun_processing(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver)
+{
+	jvxExternalDataType* copyToWs = NULL;
+	jvxExternalDataType* copyFromWs = NULL;
+	std::string command;
+	jvxErrorType resL = JVX_NO_ERROR;
+	jvxErrorType res = JVX_NO_ERROR;
+	
+#ifdef JVX_EXTERNAL_CALL_ENABLED
+	if (parent._theExtCallHandler)
+	{		
+		if (runtime.firstCall == true)
+		{
+			// Matlab call
+			if (genMexCall_node::properties_active.subFolderName.value.empty())
+			{
+				if (runtime.theMode == JVX_OPERATION_OFFLINE_CALLS)
+				{
+					command = genMexCall_node::properties_active.beforeProcessScriptName.value + call_postfix + "( true);";
+				}
+				else
+				{
+					command = genMexCall_node::properties_active.beforeProcessScriptName.value + call_postfix + "( false);";
+				}
+			}
+			else
+			{
+				command = genMexCall_node::properties_active.subFolderName.value +
+					"." + genMexCall_node::properties_active.beforeProcessScriptName.value + "();";
+			}
+
+			try
+			{
+				resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
+				if (resL != JVX_NO_ERROR)
+				{
+					jvxApiString errDescr;
+					parent._theExtCallHandler->getLastErrorReason(&errDescr);
+					parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), external_if_message_type::external_if_info);
+					res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+				}
+			}
+			catch (...)
+			{
+				parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), external_if_message_type::external_if_info);
+				error.description = "Command aborted.";
+				res = JVX_ERROR_ABORT;
+			}
+
+
+			runtime.firstCall = false;
+		}			
+	}	
+	else
+	{
+		res = JVX_ERROR_NOT_READY;
+	}
+	if (res == JVX_NO_ERROR)
+	{
+		// Bring data to Matlab workspace!!
+		if (
+			!(
+				(runtime.descrInUse.con_params.buffersize == theData->con_params.buffersize) &&
+				(runtime.descrInUse.con_params.number_channels == theData->con_params.number_channels) &&
+				(runtime.descrInUse.con_params.rate == theData->con_params.rate) &&
+				(runtime.descrInUse.con_params.format == theData->con_params.format)
+				)
+			)
+		{
+			parent._theExtCallHandler->postMessageExternal("Warning: Conversion of input data to variable <jvx_in_frame> failed, error: the data did not match the specified format.\n", external_if_message_type::external_if_info);
+			res = JVX_ERROR_INVALID_SETTING;
+		}
+		else
+		{
+			copyToWs = NULL;
+			parent._theExtCallHandler->convertCToExternal(&copyToWs, (const jvxHandle**)theData->con_data.buffers[idx_sender_to_receiver],
+				(jvxInt32)theData->con_params.number_channels, (jvxInt32)theData->con_params.buffersize, theData->con_params.format);
+			parent._theExtCallHandler->putVariableToExternal("caller", "jvx_in_frame", copyToWs);
+
+			// ================================================================================================
+			// optionally call the preProcess script
+			// ================================================================================================
+			res = this->optionalRunPreProcess(theData, idx_sender_to_receiver);
+		}
+	}
+#endif
+	return res;
+}
+
+jvxErrorType
 CjvxMexCalls_prv::process_st_callEx(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_receiver, jvxSize idx_receiver_to_sender, jvxLinkDataDescriptor* theData_out)
 {
 	jvxExternalDataType* copyToWs = NULL;
@@ -849,66 +1064,6 @@ CjvxMexCalls_prv::process_st_callEx(jvxLinkDataDescriptor* theData, jvxSize idx_
 		}
 		else
 		{
-			if (runtime.firstCall == true)
-			{
-				// Matlab call
-				if (genMexCall_node::properties_active.subFolderName.value.empty())
-				{
-					if (runtime.theMode == JVX_OPERATION_OFFLINE_CALLS)
-					{
-						command = genMexCall_node::properties_active.beforeProcessScriptName.value + call_postfix + "( true);";
-					}
-					else
-					{
-						command = genMexCall_node::properties_active.beforeProcessScriptName.value + call_postfix + "( false);";
-					}
-				}
-				else
-				{
-					command = genMexCall_node::properties_active.subFolderName.value +
-						"." + genMexCall_node::properties_active.beforeProcessScriptName.value + "();";
-
-					//if (runtime.theMode == JVX_OPERATION_OFFLINE_CALLS)
-					//{
-					//	command = genMexCall_node::properties_active.subFolderName.value +
-					//		"." + genMexCall_node::properties_active.beforeProcessScriptName.value + "( true);";
-					//}
-					//else
-					//{
-					//	command = genMexCall_node::properties_active.subFolderName.value +
-					//		"." + genMexCall_node::properties_active.beforeProcessScriptName.value + "( false);";
-					//}
-				}
-
-				try
-				{
-					resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
-					if (resL != JVX_NO_ERROR)
-					{
-						jvxApiString errDescr;
-						parent._theExtCallHandler->getLastErrorReason(&errDescr);
-						parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
-						res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
-						noOutput = true;
-					}
-				}
-				catch (...)
-				{
-					parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
-					error.description = "Command aborted.";
-					res = JVX_ERROR_ABORT;
-				}
-
-
-				runtime.firstCall = false;
-			}
-
-			copyToWs = NULL;
-			parent._theExtCallHandler->convertCToExternal(&copyToWs, (const jvxHandle**)theData->con_data.buffers[idx_sender_to_receiver],
-				(jvxInt32)theData->con_params.number_channels, (jvxInt32)theData->con_params.buffersize, theData->con_params.format);
-			parent._theExtCallHandler->putVariableToExternal("caller", "jvx_in_frame", copyToWs);
-
-			copyToWs = NULL;
 			// Get additional argument frame counter
 		
 			tStamp = -1;
@@ -948,20 +1103,26 @@ CjvxMexCalls_prv::process_st_callEx(jvxLinkDataDescriptor* theData, jvxSize idx_
 			parent._theExtCallHandler->convertCToExternal(&copyToWs, &tStamp, 1, JVX_DATAFORMAT_32BIT_LE);
 			parent._theExtCallHandler->putVariableToExternal("caller", "jvx_xchg_cnt", copyToWs);
 
-			// If a value is given, run a pre-process script to preprocess input data
-			if (!genMexCall_node::properties_active.preProcessScriptName.value.empty())
+			// ================================================================================================
+			// ================================================================================================
+			
+			if (res != JVX_NO_ERROR)
+			{
+				noOutput = true;
+			}
+			else
 			{
 				// Matlab call
 				if (genMexCall_node::properties_active.subFolderName.value.empty())
 				{
-					command = "[ jvx_in_frame] = " + genMexCall_node::properties_active.preProcessScriptName.value + "( jvx_in_frame);";
+					command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.processScriptName.value + "( jvx_in_frame, jvx_xchg_cnt);";
 				}
 				else
 				{
-					command = "[ jvx_in_frame] = " + genMexCall_node::properties_active.subFolderName.value +
-						"." + genMexCall_node::properties_active.preProcessScriptName.value + "( jvx_in_frame);";
+					command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.subFolderName.value +
+						"." + genMexCall_node::properties_active.processScriptName.value + "( jvx_in_frame, jvx_xchg_cnt);";
 				}
-				
+
 				try
 				{
 					resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
@@ -969,160 +1130,135 @@ CjvxMexCalls_prv::process_st_callEx(jvxLinkDataDescriptor* theData, jvxSize idx_
 					{
 						jvxApiString errDescr;
 						parent._theExtCallHandler->getLastErrorReason(&errDescr);
-						parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
+						parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), external_if_message_type::external_if_info);
 						res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
 						noOutput = true;
 						res = JVX_ERROR_INTERNAL;
 					}
-				}
-				catch (...)
-				{
-					parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
-					res = JVX_ERROR_ABORT;
-				}
-			}
-
-			// Matlab call
-			if (genMexCall_node::properties_active.subFolderName.value.empty())
-			{
-				command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.processScriptName.value + "( jvx_in_frame, jvx_xchg_cnt);";
-			}
-			else
-			{
-				command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.subFolderName.value +
-					"." + genMexCall_node::properties_active.processScriptName.value + "( jvx_in_frame, jvx_xchg_cnt);";
-			}
-
-			try
-			{
-				resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
-				if (resL != JVX_NO_ERROR)
-				{
-					jvxApiString errDescr;
-					parent._theExtCallHandler->getLastErrorReason(&errDescr);
-					parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
-					res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
-					noOutput = true;
-					res = JVX_ERROR_INTERNAL;
-				}
-				else
-				{
-					// If a value is given, run a pre-process script to preprocess input data
-					if (!genMexCall_node::properties_active.postProcessScriptName.value.empty())
+					else
 					{
-						// Matlab call
-						if (genMexCall_node::properties_active.subFolderName.value.empty())
+						// ================================================================================================
+						// If a value is given, run a post-process script to preprocess input data
+						// ================================================================================================
+						if (!genMexCall_node::properties_active.postProcessScriptName.value.empty())
 						{
-							command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.postProcessScriptName.value + "( jvx_out_frame);";
-						}
-						else
-						{
-							command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.subFolderName.value +
-								"." + genMexCall_node::properties_active.postProcessScriptName.value + "( jvx_out_frame);";
-						}
-
-						try
-						{
-							resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
-							if (resL != JVX_NO_ERROR)
+							// Matlab call
+							if (genMexCall_node::properties_active.subFolderName.value.empty())
 							{
-								jvxApiString errDescr;
-								parent._theExtCallHandler->getLastErrorReason(&errDescr);
-								parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), false);
-								res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
-								noOutput = true;
-								res = JVX_ERROR_INTERNAL;
+								command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.postProcessScriptName.value + "( jvx_out_frame);";
+							}
+							else
+							{
+								command = "[ jvx_out_frame] = " + genMexCall_node::properties_active.subFolderName.value +
+									"." + genMexCall_node::properties_active.postProcessScriptName.value + "( jvx_out_frame);";
+							}
+
+							try
+							{
+								resL = parent._theExtCallHandler->executeExternalCommand(command.c_str());
+								if (resL != JVX_NO_ERROR)
+								{
+									jvxApiString errDescr;
+									parent._theExtCallHandler->getLastErrorReason(&errDescr);
+									parent._theExtCallHandler->postMessageExternal(("Warning: Execution of command <" + command + "> failed, error: " + errDescr.std_str() + ".\n").c_str(), external_if_message_type::external_if_info);
+									res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+									noOutput = true;
+									res = JVX_ERROR_INTERNAL;
+								}
+							}
+							catch (...)
+							{
+								parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), external_if_message_type::external_if_info);
+								res = JVX_ERROR_ABORT;
 							}
 						}
-						catch (...)
-						{
-							parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
-							res = JVX_ERROR_ABORT;
-						}
-					}
 
+						// ================================================================================================
+						// Read data from workspace
+						// ================================================================================================
 
-					copyFromWs = NULL;
-					resL = parent._theExtCallHandler->getVariableFromExternal("caller", "jvx_out_frame", &copyFromWs);
-					if (resL == JVX_NO_ERROR)
-					{
-						resL = parent._theExtCallHandler->getPropertiesVariable(copyFromWs, &format, &isString, &dimX, &dimY, &convertFloats);
-
+						copyFromWs = NULL;
+						resL = parent._theExtCallHandler->getVariableFromExternal("caller", "jvx_out_frame", &copyFromWs);
 						if (resL == JVX_NO_ERROR)
 						{
-							if (theData->con_compat.number_channels > 0)
+							resL = parent._theExtCallHandler->getPropertiesVariable(copyFromWs, &format, &isString, &dimX, &dimY, &convertFloats);
+
+							if (resL == JVX_NO_ERROR)
 							{
-								if (
-									(format == theData->con_compat.format) &&
-									(isString == false) &&
-									(dimX == theData->con_compat.buffersize) &&
-									(dimY == theData->con_compat.number_channels))
+								if (theData->con_compat.number_channels > 0)
 								{
-									res = JVX_NO_ERROR;
-									parent._theExtCallHandler->convertExternalToC(theData->con_compat.from_receiver_buffer_allocated_by_sender[idx_receiver_to_sender],
-										dimY, dimX, format, copyFromWs, "jvx_out_frame", convertFloats);
-								}
-								else
-								{
-									res = JVX_ERROR_INVALID_SETTING;
-									std::string txt = "Warning: Properties of processing output do ot match those expected.\n";
-									if (format != theData->con_compat.format)
+									if (
+										(format == theData->con_compat.format) &&
+										(isString == false) &&
+										(dimX == theData->con_compat.buffersize) &&
+										(dimY == theData->con_compat.number_channels))
 									{
-										txt += "Expected format ";
-										txt += jvxDataFormat_txt(theData->con_compat.format);
-										txt += " but got ";
-										txt += jvxDataFormat_txt(format);
-										txt += ".\n";
+										res = JVX_NO_ERROR;
+										parent._theExtCallHandler->convertExternalToC(theData->con_compat.from_receiver_buffer_allocated_by_sender[idx_receiver_to_sender],
+											dimY, dimX, format, copyFromWs, "jvx_out_frame", convertFloats);
 									}
-									if (isString)
+									else
 									{
-										txt += "Expected a numeric buffer but got a string. \n";
-									}
-									if (dimX != theData->con_compat.buffersize)
-									{
-										txt += "Expected buffersize  ";
-										txt += jvx_size2String(theData->con_compat.buffersize);
-										txt += " but got ";
-										txt += jvx_size2String(dimX);
-										txt += ".\n";
+										res = JVX_ERROR_INVALID_SETTING;
+										std::string txt = "Warning: Properties of processing output do ot match those expected.\n";
+										if (format != theData->con_compat.format)
+										{
+											txt += "Expected format ";
+											txt += jvxDataFormat_txt(theData->con_compat.format);
+											txt += " but got ";
+											txt += jvxDataFormat_txt(format);
+											txt += ".\n";
+										}
+										if (isString)
+										{
+											txt += "Expected a numeric buffer but got a string. \n";
+										}
+										if (dimX != theData->con_compat.buffersize)
+										{
+											txt += "Expected buffersize  ";
+											txt += jvx_size2String(theData->con_compat.buffersize);
+											txt += " but got ";
+											txt += jvx_size2String(dimX);
+											txt += ".\n";
 
-									}
-									if (dimY != theData->con_compat.number_channels)
-									{
-										txt += "Expected a number of channels of  ";
-										txt += jvx_size2String(theData->con_compat.number_channels);
-										txt += " but got ";
-										txt += jvx_size2String(dimY);
-										txt += ".\n";
-									}
+										}
+										if (dimY != theData->con_compat.number_channels)
+										{
+											txt += "Expected a number of channels of  ";
+											txt += jvx_size2String(theData->con_compat.number_channels);
+											txt += " but got ";
+											txt += jvx_size2String(dimY);
+											txt += ".\n";
+										}
 
-									parent._theExtCallHandler->postMessageExternal(txt.c_str(), false);
-									noOutput = true;
+										parent._theExtCallHandler->postMessageExternal(txt.c_str(), external_if_message_type::external_if_info);
+										noOutput = true;
+									}
 								}
+							}
+							else
+							{
+								res = JVX_ERROR_INVALID_SETTING;
+								std::string txt = "Warning: Could not get properties of variable <jvx_out_frame>.\n";
+								parent._theExtCallHandler->postMessageExternal(txt.c_str(), external_if_message_type::external_if_info);
+								noOutput = true;
 							}
 						}
 						else
 						{
-							res = JVX_ERROR_INVALID_SETTING;
-							std::string txt = "Warning: Could not get properties of variable <jvx_out_frame>.\n";							
-							parent._theExtCallHandler->postMessageExternal(txt.c_str(), false);
+							res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
+
+							parent._theExtCallHandler->postMessageExternal("Warning: Failed to get processing output from worksapce.\n", external_if_message_type::external_if_info);
 							noOutput = true;
 						}
 					}
-					else
-					{
-						res = JVX_ERROR_CALL_SUB_COMPONENT_FAILED;
-
-						parent._theExtCallHandler->postMessageExternal("Warning: Failed to get processing output from worksapce.\n", false);
-						noOutput = true;
-					}
 				}
-			}
 
-			catch (...)
-			{
-				parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), false);
-				res = JVX_ERROR_ABORT;
+				catch (...)
+				{
+					parent._theExtCallHandler->postMessageExternal(("Command <" + command + "> aborted.\n").c_str(), external_if_message_type::external_if_info);
+					res = JVX_ERROR_ABORT;
+				}
 			}
 
 			if (noOutput)
