@@ -894,10 +894,10 @@ CjvxMatlabToCConverter::jvx_mex_2_cstring(const mxArray* phs)
 	return(str);
 }
 
-void*
+intptr_t
 CjvxMatlabToCConverter::jvx_mex_2_intptr(const mxArray* phs)
 {
-	void* retVal = nullptr;
+	intptr_t retVal = 0;
 	jvxSize M = mxGetM(phs);
 	jvxSize N = mxGetN(phs);
 
@@ -908,7 +908,7 @@ CjvxMatlabToCConverter::jvx_mex_2_intptr(const mxArray* phs)
 			if (mxIsUint64(phs))
 			{
 				jvxUInt64* ptrA = (jvxUInt64*)mxGetData(phs);
-				retVal = (void*)(*ptrA);
+				retVal = (intptr_t)(*ptrA);
 				return retVal;
 			}
 		}
@@ -919,7 +919,7 @@ CjvxMatlabToCConverter::jvx_mex_2_intptr(const mxArray* phs)
 				jvxUInt32* ptrA = (jvxUInt32*)mxGetData(phs);
 
 				// Read 
-				retVal = (void*)(*ptrA);
+				retVal = (intptr_t)(*ptrA);
 				return retVal;
 			}
 		}

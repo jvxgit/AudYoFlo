@@ -28,6 +28,14 @@
 #define JVX_PRINTF_CAST_SIZE "%Iu"
 #define JVX_PRINTF_CAST_DATA "%f"
 
+#ifdef JVX_CBOOL_IS_UINT16
+#define JVX_PRINTF_CAST_CBOOL JVX_PRINTF_CAST_UINT16
+#endif
+
+#ifdef JVX_CBOOL_IS_UINT64
+#define JVX_PRINTF_CAST_CBOOL JVX_PRINTF_CAST_UINT64
+#endif
+
 #define JVX_PRINTF_CAST_TICK JVX_PRINTF_CAST_INT64 // <- so defined in jvx_system_time.h
 #define JVX_PRINTF_CAST_TICK_HEX JVX_PRINTF_CAST_INT64_HEX // <- so defined in jvx_system_time.h
 /* from https://stackoverflow.com/questions/2125845/platform-independent-size-t-format-specifiers-in-c/22114959#22114959 */

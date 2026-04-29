@@ -197,7 +197,7 @@ public:
 	};
 
 
-	template<typename T> static T* mexArgumentToBufPtr(jvxDataFormat* format, jvxSize* N, jvxSize* M, const mxArray* prhs)
+	template<typename T> static T* mexArgumentToBufPtr(jvxDataFormat* format, jvxSize* N, jvxSize* M, const mxArray* prhs, jvxBool* isCplx = nullptr)
 	{
 		if (N)
 		{
@@ -209,11 +209,19 @@ public:
 			*M = mxGetM(prhs);
 		}
 
+		if (isCplx)
+		{
+			if (mxIsComplex(prhs))
+			{
+				*isCplx = true;
+			}
+		}
+
 		if (format)
 		{
 			if (mxIsDouble(prhs))
 			{
-#ifdef JVX_DATAFORMAT_DOUBLE
+#ifdef JVX_DATA_FORMAT_DOUBLE
 				* format = JVX_DATAFORMAT_DATA;
 #else
 				* format = JVX_DATAFORMAT_DOUBLE;
@@ -221,7 +229,7 @@ public:
 			}
 			else if (mxIsSingle(prhs))
 			{
-#ifdef JVX_DATAFORMAT_DOUBLE
+#ifdef JVX_DATA_FORMAT_DOUBLE
 				* format = JVX_DATAFORMAT_DOUBLE;
 #else
 				* format = JVX_DATAFORMAT_DATA;
@@ -281,7 +289,7 @@ public:
 
 	static std::string jvx_mex_2_cstring(const mxArray* phs);
 	static std::vector<jvxValue> jvx_mex_2_numeric(const mxArray* phs, jvxSize lineNo = 0);
-	static void* jvx_mex_2_intptr(const mxArray* phs);
+	static intptr_t jvx_mex_2_intptr(const mxArray* phs);
 	static const mxArray* jvx_mex_lookup_strfield_core(const mxArray* strEntry, const std::string& key, jvxSize curLevel, int levelMax, jvxBool& moreLevels);
 	static const mxArray* jvx_mex_lookup_strfield(const mxArray* strEntry, const std::string& key, jvxSize levelMax = JVX_SIZE_UNSELECTED);
 	static const mxArray* jvx_mex_read_single_reference(const mxArray* fld, const std::string& expr);
