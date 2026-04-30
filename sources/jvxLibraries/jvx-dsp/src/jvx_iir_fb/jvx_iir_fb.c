@@ -827,14 +827,21 @@ jvx_iir_fb_design_filter_coeffs(jvxSize fc, jvxSize order, struct jvxIirFbOneFil
 
 	}
 
-	// Since we have odd poles, treat last pole independently
-	polyTmp[0] = 1;
-	polyTmp[1] = -tmpBuf1[i].re;
+	if (order_lp % 2)
+	{
+		// Since we have odd poles, treat last pole independently
+		polyTmp[0] = 1;
+		polyTmp[1] = -tmpBuf1[i].re;
 
-	jvx_poly(lp_A->den_poly, polyCnt, polyTmp, 2);
-	polyCnt += 1;
+		jvx_poly(lp_A->den_poly, polyCnt, polyTmp, 2);
+		polyCnt += 1;
+	}
+	assert(polyCnt == lp_A->num_coeffs);
 
+	// ===========================================================================
 	// hp filter
+	// ===========================================================================
+	
 	polyCnt = 1;
 	for (i = 1; i < order_lp - 1 ; i += 2)
 	{
@@ -846,6 +853,18 @@ jvx_iir_fb_design_filter_coeffs(jvxSize fc, jvxSize order, struct jvxIirFbOneFil
 		polyCnt += 2;
 	}
 
+	if (order_hp % 2)
+	{
+		// Since we have odd poles, treat last pole independently
+		polyTmp[0] = 1;
+		polyTmp[1] = -tmpBuf1[i].re;
+
+		jvx_poly(hp_A->den_poly, polyCnt, polyTmp, 2);
+		polyCnt += 1;
+	}
+	assert(polyCnt == hp_A->num_coeffs);
+
+	// ===========================================================================
 	// Find the roots by division
 	for (i = 0; i < order_lp; i++)
 	{
@@ -879,14 +898,22 @@ jvx_iir_fb_design_filter_coeffs(jvxSize fc, jvxSize order, struct jvxIirFbOneFil
 
 	}
 
-	// Since we have odd poles, treat last poles independently
-	polyTmp[0] = 1;
-	polyTmp[1] = -tmpBuf1[i].re;
+	if (order_lp % 2)
+	{
+		// Since we have odd poles, treat last poles independently
+		polyTmp[0] = 1;
+		polyTmp[1] = -tmpBuf1[i].re;
 
-	jvx_poly(lp_A->num_poly, polyCnt, polyTmp, 2);
-	polyCnt += 1;
+		jvx_poly(lp_A->num_poly, polyCnt, polyTmp, 2);
+		polyCnt += 1;
+	}
+	
+	assert(polyCnt == lp_A->num_coeffs);
 
+	// ======================================================================
 	// hp filter
+	// ======================================================================
+
 	polyCnt = 1;
 	for (i = 1; i < order_lp - 1; i += 2)
 	{
@@ -898,7 +925,21 @@ jvx_iir_fb_design_filter_coeffs(jvxSize fc, jvxSize order, struct jvxIirFbOneFil
 		polyCnt += 2;
 	}
 
+	if (order_hp % 2)
+	{
+		// Since we have odd poles, treat last poles independently
+		polyTmp[0] = 1;
+		polyTmp[1] = -tmpBuf1[i].re;
+
+		jvx_poly(hp_A->num_poly, polyCnt, polyTmp, 2);
+		polyCnt += 1;
+	}
+	assert(polyCnt == hp_A->num_coeffs);
+
+	// ====================================================================
 	// Normalize coefficients
+	// ====================================================================
+
 	accu = 1.0 / lp_A->num_poly[lp_A->num_coeffs-1];
 	for (i = 0; i < lp_A->num_coeffs; i++)
 	{
