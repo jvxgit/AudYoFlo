@@ -1145,7 +1145,7 @@ jvxDspBaseErrorType jvx_iir_fb_show_filter(struct jvx_iir_fb_one_stage* hdl, jvx
 }
 
 //Beispielaufruf dieser Funktion. Hinweis: Matlab-generierte .h-Datei muss eingebunden werden.
-//In der .h-Datei sind alle notwendigen Parameter für den Aufruf statisch deklariert.
+//In der .h-Datei sind alle notwendigen Parameter fuer den Aufruf statisch deklariert.
 //jvx_iir_fb_prepare_direct(filterbank_hdls, JVX_FIXED_IIR_FB_SPLITFREQUENCIES, JVX_FIXED_IIR_FB_ORDERS, JVX_FIXED_IIR_FB_NUMSPLITFREQUENCIES, JVX_FIXED_IIR_FB_NUMCHANNELS, JVX_FIXED_IIR_FB_FS, JVX_MBC_FILTER_DESIGN_BUTTERWORTH, true, JVX_FIXED_IIR_FB_COEFFSNUM, JVX_FIXED_IIR_FB_COEFFSDEN, JVX_FIXED_IIR_FB_ARRAYCOEFFNUMBERS, filterbank_memory, JVX_FIXED_IIR_FB_NUMBERFILTERS);
 jvxDspBaseErrorType jvx_iir_fb_prepare_direct(jvx_iir_fb* handleOnReturn, jvxSize* splitFrequencies, jvxSize* orders, jvxSize numSplitFrequencies, jvxSize numChannels, jvxSize fs, jvxIirFbType fbType, jvxCBool verbose, jvxData* coeffs_num, jvxData* coeffs_den, jvxSize* array_coeff_numbers, jvxData* state_buffers, jvxSize num_filters)
 {
@@ -1221,7 +1221,7 @@ jvxDspBaseErrorType jvx_iir_fb_prepare_direct(jvx_iir_fb* handleOnReturn, jvxSiz
 		resL = jvx_iir_fb_link_prefilter(&hdl->entryTree, hdl->init_copy.numChannels);
 
 		// Output recursive filter design
-		// Achtung! Kann je nach Plattform zu Stack Overflow führen.
+		// Achtung! Kann je nach Plattform zu Stack Overflow fuehren.
 		if (hdl->init_copy.verbose)
 		{
 			//resL = jvx_iir_fb_show_filter(&hdl->entryTree, 0);
