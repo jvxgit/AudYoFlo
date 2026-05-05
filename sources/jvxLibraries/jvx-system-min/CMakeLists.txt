@@ -48,6 +48,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_system_defines.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_system_dataformats.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_system_common.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_system_common_types.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_system_error.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_system_error_types.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_system_helpers.h
