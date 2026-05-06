@@ -117,8 +117,8 @@ CjvxAuCFfmpegAudioDecoder::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE
 	}
 
 	// Close the decoder and whatever is attached to the codec context
-	int ret = avcodec_close(cParams.cc);
-	assert(ret == 0);
+	// int ret = avcodec_close(cParams.cc);
+	// assert(ret == 0);
 
 	// Free the decoder context
 	avcodec_free_context(&cParams.cc);

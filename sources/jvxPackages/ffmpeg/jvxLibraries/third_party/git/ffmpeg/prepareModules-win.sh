@@ -8,6 +8,36 @@ release_mode=$2
 compile_flags=$3
 h265_path=$4
 folder="ffmpeg-$postfix"
+compile_flags_c=(
+		"$compile_flags"
+		)
+compile_flags_cxx=(
+		"$compile_flags"
+		)
+end_flags_ffmpeg=""
+end_flags_h264=""
+
+
+# compile_flags='-MDd -Z7 -D_DEBUG -D_ITERATOR_DEBUG_LEVEL=2'
+if [ "$compile_flags" = "-MDd" ]; then
+	compile_flags_c=(
+		"-MDd"
+		"-Od"
+		"-Z7"
+		"-D_DEBUG"
+	)
+	compile_flags_cxx=(
+		"-MDd"
+		"-Od"
+		"-Z7"
+		"-D_DEBUG"
+		"-D_ITERATOR_DEBUG_LEVEL=2"
+	)
+	end_flags_ffmpeg="--disable-optimizations"	
+	end_flags_h264="--enable-debug"
+fi
+	
+echo "--> ${compile_flags[*]}"
 
 # Activate the verbose mode!!
 # set -x
@@ -15,23 +45,29 @@ folder="ffmpeg-$postfix"
 echo "Checking for existence of folder $folder"
 if [ ! -d $folder ]; then
 	
-	# FFmpeg 7.1 release
-	# Commit id = 507a51fbe9732f0f6f12f43ce12431e8faa834b7
+	# FFmpeg 8.1 release
 	git  clone https://github.com/FFmpeg/FFmpeg.git ffmpeg
 	cd ffmpeg
-	git checkout 507a51fbe9732f0f6f12f43ce12431e8faa834b7
+	
+	# Previous version: git checkout 507a51fbe9732f0f6f12f43ce12431e8faa834b7
+	git checkout 17734f696752e996a37f80077c2bf116444ad340 
+	
+	# This patch is required to build ffmpeg with H.264 and H.265 - otherwise a 
+	# warning breaks the build!
+	git apply ../0001-Removed-warning-to-be-taken-as-error-in-configure-sc.patch
 	cd ..
 	
-	patch -R -p0 --binary < ffmpeg-fft-oc.patch
-	patch -R -p0 --binary <  ffmpeg-dbg-ffprobe.patch
-	patch -R -p0 --binary <  ffmpeg-dbg-fdctdsp.patch
-	patch -R -p0 --binary <  ffmpeg-dbg-hevcdsp.patch
-	patch -R -p0 --binary <  ffmpeg-dbg-v210i.patch
-	patch -R -p0 --binary < ffmpeg-dbg-v210enci.patch
-	patch -R -p0 --binary <  ffmpeg-dbg-vs1dsp.patch
-	patch -R -p0 --binary < ffmpeg-dbg-vf-convi.patch
-	patch -R -p0 --binary <  ffmpeg-dbg-vf-gbluri.patch
-	patch -R -p0 --binary <  ffmpeg-dbg-rtmp.patch
+	# Old patches - still there during next weeks for testing
+	#patch -R -p0 --binary < ffmpeg-fft-oc.patch
+	#patch -R -p0 --binary <  ffmpeg-dbg-ffprobe.patch
+	#patch -R -p0 --binary <  ffmpeg-dbg-fdctdsp.patch
+	#patch -R -p0 --binary <  ffmpeg-dbg-hevcdsp.patch
+	#patch -R -p0 --binary <  ffmpeg-dbg-v210i.patch
+	#patch -R -p0 --binary < ffmpeg-dbg-v210enci.patch
+	#patch -R -p0 --binary <  ffmpeg-dbg-vs1dsp.patch
+	#patch -R -p0 --binary < ffmpeg-dbg-vf-convi.patch
+	#patch -R -p0 --binary <  ffmpeg-dbg-vf-gbluri.patch
+	#patch -R -p0 --binary <  ffmpeg-dbg-rtmp.patch
 
 	mv ffmpeg $folder
 else
@@ -51,7 +87,8 @@ if [ -d $folder ]; then
 			git clone http://git.videolan.org/git/x264.git
 			pushd .
 			cd x264
-			CC=cl ./configure --enable-static --extra-cflags=$compile_flags --prefix=${PWD}/install-$release_mode
+			echo ./configure --enable-static --extra-cflags="${compile_flags_c[*]}" --prefix=${PWD}/install-$release_mode ${end_flags_h264}
+			CC=cl ./configure --enable-static --extra-cflags="${compile_flags_c[*]}" --prefix=${PWD}/install-$release_mode ${end_flags_h264}
 			make 
 			make install
 			make clean
@@ -76,7 +113,8 @@ if [ -d $folder ]; then
 		# H264 -> 
 		# https://stackoverflow.com/questions/50693934/different-h264-encoders-in-ffmpeg
 		# https://superuser.com/questions/512368/unknown-encoder-libx264-on-windows
-		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags=$compile_flags --prefix=./ --disable-htmlpages --disable-manpages
+		echo ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags="${compile_flags_c[*]}" --extra-cxxflags="${compile_flags_cxx[*]}" --prefix=./ --disable-htmlpages --disable-manpages ${end_flags_ffmpeg}
+		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags="${compile_flags_c[*]}" --extra-cxxflags="${compile_flags_cxx[*]}" --prefix=./ --disable-htmlpages --disable-manpages ${end_flags_ffmpeg}
 		
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
@@ -101,13 +139,18 @@ if [ -d $folder ]; then
 		#
 		sleep 2
 		echo make -j8
-		make -j8
+		make -j8 V=1 2>&1 | tee  ffmpeg-build.log
 	
 		echo make install
 		make install
 		
 		echo make clean
 		make clean
+		
+		# We need this to generate some code, seems to be a bug otherwise
+		make V=1 fftools/resources/graph.html.o
+		make V=1 fftools/resources/graph.css.o
+		
 	else
 		echo "Subfolder lib already exists"
 	fi

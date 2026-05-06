@@ -21,11 +21,29 @@ set(LOCAL_SOURCES
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_mux_init.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_opt.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/ffmpeg_sched.c
-	${JVX_FFMPEG_SOURCE_DIR}/fftools/objpool.c
+	# ${JVX_FFMPEG_SOURCE_DIR}/fftools/objpool.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/sync_queue.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/thread_queue.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/cmdutils.c
 	${JVX_FFMPEG_SOURCE_DIR}/fftools/opt_common.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/graph/graphprint.c
+
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/avtextformat.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tf_compact.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tf_default.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tf_flat.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tf_ini.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tf_json.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tf_mermaid.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tf_xml.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tw_avio.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tw_buffer.c
+    ${JVX_FFMPEG_SOURCE_DIR}/fftools/textformat/tw_stdout.c
+
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/resources/resman.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/resources/graph.css.c
+	${JVX_FFMPEG_SOURCE_DIR}/fftools/resources/graph.html.c
+
 )
 
 # set_source_files_properties(${LOCAL_SOURCES} PROPERTIES LANGUAGE CXX )
@@ -56,4 +74,5 @@ set(LOCAL_LIBS ${JVX_FFMPEG_LIBS}
 
 force_console_app()
 include(${JVX_CMAKE_DIR}/common_local_exe_foot.cmake)
+
 

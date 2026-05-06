@@ -12,6 +12,7 @@ if(${JVX_OS} MATCHES "windows")
 	
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
 		set(JVX_COMPILE_EXTRA_CFLAGS "-MDd")
+		#set(JVX_COMPILE_EXTRA_CFLAGS "-MDd -Od -Z7 -D_DEBUG -D_ITERATOR_DEBUG_LEVEL=2")
 	else()
 		set(JVX_COMPILE_EXTRA_CFLAGS "-MD")
 	endif()
@@ -47,17 +48,23 @@ if(${JVX_OS} MATCHES "windows")
 		
 	endif()
 	
-	set(JVX_FFMPEG_LIB_AVCODEC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavcodec.a")
-	set(JVX_FFMPEG_LIB_AVDEVICE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavdevice.a")
-	set(JVX_FFMPEG_LIB_AVFILTER "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavfilter.a")
-	set(JVX_FFMPEG_LIB_AVFORMAT "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavformat.a")
-	set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libavutil.a")
-	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswresample.a")
-	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libswscale.a")
-	set(JVX_FFMPEG_LIB_POSTPROC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/libpostproc.a")
+	set(JVX_FFMPEG_LIB_AVCODEC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/avcodec.lib")
+	set(JVX_FFMPEG_LIB_AVDEVICE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/avdevice.lib")
+	set(JVX_FFMPEG_LIB_AVFILTER "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/avfilter.lib")
+	set(JVX_FFMPEG_LIB_AVFORMAT "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/avformat.lib")
+	set(JVX_FFMPEG_LIB_AVUTIL "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/avutil.lib")
+	set(JVX_FFMPEG_LIB_SWRESAMPLE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/swresample.lib")
+	set(JVX_FFMPEG_LIB_SWSCALE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/swscale.lib")
+	# set(JVX_FFMPEG_LIB_POSTPROC "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/lib/postproc.lib")
 
 	set(JVX_LIB_X264 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x264/install-${CMAKE_BUILD_TYPE}/lib/libx264.lib")
+	set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/x265_git_${JVX_FFMPEG_POSTFIX}/build/msys-cl/install-${JVX_FFMPEG_POSTFIX}/lib/libx265.lib")
+	
+	## set(X265_INSTALL_LIB_NAME "${CMAKE_CURRENT_SOURCE_DIR}/x265_git_${JVX_FFMPEG_POSTFIX}/build/msys-cl/install-${JVX_FFMPEG_POSTFIX}/bin/libx265.${JVX_SHARED_EXTENSION}")
+	## install(PROGRAMS ${X265_INSTALL_LIB_NAME} DESTINATION ${INSTALL_PATH_BIN})
+	
 	set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/x265_git_${JVX_FFMPEG_POSTFIX}/build/msys-cl/install-${JVX_FFMPEG_POSTFIX}/lib/x265-static.lib")
+	
 	# set(JVX_LIB_X265 "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}/x265_git/build/msys-cl/install/lib/x265-static.lib")
 	
 	set(JVX_FFMPEG_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-${JVX_FFMPEG_POSTFIX}" CACHE INTERNAL "ffmpeg source code path (windows)")
@@ -83,7 +90,8 @@ if(${JVX_OS} MATCHES "windows")
 	set(JVX_FFMPEG_SYS_LIBS_NO_SMIIDS
 		psapi.lib uuid.lib shlwapi.lib 
 		vfw32.lib  secur32.lib 
-		mfuuid.lib bcrypt.lib  
+		mfuuid.lib bcrypt.lib 
+		ncrypt.lib crypt32.lib
 		# ole32.lib shell32.lib user32.lib gdi32.lib oleaut32.lib 
 		CACHE INTERNAL "ffmpeg sys libs with strmiids (windows)")
 

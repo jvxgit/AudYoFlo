@@ -213,6 +213,11 @@
 #define WRITE_STATIC_MACRO_DEFINE_1_VALUE_SIMPLE_COMMENT(fPtr, tpVar, nmVar, value, token, comment) \
   fprintf(fPtr, "%s" token "%s; %s\n", ((std::string)tpVar + nmVar + " = ").c_str(), value, comment); 
 
+// Older version 
+#define WRITE_STATIC_MACRO_DEFINE_1_VALUE(fPtr, tpVar, nmVar, value, token) \
+  fprintf(fPtr_src, "%s" token "%s", ((std::string)tpVar + (std::string)" " + (std::string)nmVar + " = ").c_str(), value, ";\n"); 
+
+
 #ifdef __cplusplus
 
 #define Q(x) #x
