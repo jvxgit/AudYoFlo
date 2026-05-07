@@ -18,11 +18,11 @@ if [ ! -d $folder ]; then
 	echo git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	git  clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	cd ffmpeg
-	git checkout 507a51fbe9732f0f6f12f43ce12431e8faa834b7
-
-	echo "PATCHING"
-	echo "patch -p1 < ../ffmpeg-glnx-mathops.patch"
-	patch  -p1 < ../ffmpeg-glnx-mathops.patch
+	# git checkout 507a51fbe9732f0f6f12f43ce12431e8faa834b7
+	git checkout 17734f696752e996a37f80077c2bf116444ad340 
+	#echo "PATCHING"
+	#echo "patch -p1 < ../ffmpeg-glnx-mathops.patch"
+	#patch  -p1 < ../ffmpeg-glnx-mathops.patch
 	cd ..
 
 	mv ffmpeg $folder
@@ -65,6 +65,12 @@ if [ -d $folder ]; then
 
 		echo make install
 		make install
+
+		echo make clean
+		make clean
+
+		make V=1 fftools/resources/graph.html.o
+		make V=1 fftools/resources/graph.css.o
 	else
 		echo "Subfolder lib already exists"
 	fi
