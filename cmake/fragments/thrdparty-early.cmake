@@ -43,6 +43,13 @@ if(NOT JVX_COMPILE_BUILDTOOLS)
 		endif()
 	endif()
 	
+	if(JVX_USE_VST)
+		# This part here only when downloading BOOST - find_boost will run in main CMakeLists file
+		# This option is true if the instal-libs.cmake file is invluded in the platform cmake file
+		set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/vst)
+	endif()
+	
 	# We download Tracy even if JVX_USE_TRACY is not set so Tracy.hpp is avaible
 	# with the empty macros. This avoids all the `#ifdef TRACY_ENABLE .. #endif` blocks.
 	# The library is not built or linked in that case. It's only a cmake interface library

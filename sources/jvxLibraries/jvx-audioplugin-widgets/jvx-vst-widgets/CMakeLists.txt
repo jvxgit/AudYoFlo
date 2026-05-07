@@ -9,7 +9,9 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 #	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
-	${JVX_VSTGUI_SDK_ROOT}
+	
+	# ${JVX_VSTGUI_SDK_ROOT}
+	${VST3_SDK_ROOT}/vstgui4
 
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugins-extender/jvx-plugin-connector/include
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugin-widgets/common/include

@@ -93,15 +93,19 @@ jvxVstGainParameter::toStringStatic(ParamValue normValue,
 //------------------------------------------------------------------------
 bool jvxVstGainParameter::fromString (const TChar* string, ParamValue& normValue) const
 {
-	String wrapper ((TChar*)string); // don't know buffer size here!
-	double tmp = 0.0;
-	if (wrapper.scanFloat (tmp))
-	{		
+	std::u16string u16(reinterpret_cast<const char16_t*>(string));
+	std::string ascii(u16.begin(), u16.end()); // funktioniert für ASCII-Zahlen
+
+	try {
+		double tmp = std::stod(ascii);		
 		// Value in dB is mapped to 0..1
 		tmp = tmp + offsetShift;
 		tmp *= 1./scaleFac;
 		normValue = JVX_MIN(JVX_MAX(tmp, 0), 1);
 		return true;
+	}
+	catch (...) {
+		return false;
 	}
 	return false;
 }
