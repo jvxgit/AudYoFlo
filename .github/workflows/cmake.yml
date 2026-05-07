@@ -54,6 +54,7 @@ jobs:
         libpcap-dev
         ninja-build
         yasm
+        nasm
         libsdl2-dev 
         libsqlite3-dev 
         libgtkmm-3.0-dev 
