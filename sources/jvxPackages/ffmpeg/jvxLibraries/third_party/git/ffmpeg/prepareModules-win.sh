@@ -113,8 +113,8 @@ if [ -d $folder ]; then
 		# H264 -> 
 		# https://stackoverflow.com/questions/50693934/different-h264-encoders-in-ffmpeg
 		# https://superuser.com/questions/512368/unknown-encoder-libx264-on-windows
-		echo ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags="${compile_flags_c[*]}" --extra-cxxflags="${compile_flags_cxx[*]}" --prefix=./ --disable-htmlpages --disable-manpages ${end_flags_ffmpeg}
-		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags="${compile_flags_c[*]}" --extra-cxxflags="${compile_flags_cxx[*]}" --prefix=./ --disable-htmlpages --disable-manpages ${end_flags_ffmpeg}
+		echo ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-shared --disable-static --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags="${compile_flags_c[*]}" --extra-cxxflags="${compile_flags_cxx[*]}" --prefix=./ --disable-htmlpages --disable-manpages ${end_flags_ffmpeg}
+		./configure --target-os=win64 --arch=x86_64 --toolchain=msvc --enable-shared --disable-static --enable-gpl --enable-libx264 --enable-libx265 --extra-cflags="${compile_flags_c[*]}" --extra-cxxflags="${compile_flags_cxx[*]}" --prefix=./ --disable-htmlpages --disable-manpages ${end_flags_ffmpeg}
 		
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
