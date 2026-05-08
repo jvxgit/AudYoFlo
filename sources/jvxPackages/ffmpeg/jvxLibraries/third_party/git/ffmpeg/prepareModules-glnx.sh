@@ -38,8 +38,8 @@ if [ -d $folder ]; then
 	echo "Checking for existence of subfolder lib"
 	if [ ! -d "lib" ]; then
 
-		echo ./configure --enable-static --disable-bzlib --enable-pic --disable-libdrm --disable-sndio --enable-gpl --enable-libx264 --enable-libx265 --disable-x86asm --prefix=./
-		./configure --enable-static --disable-bzlib --enable-pic --disable-libdrm --disable-sndio --enable-gpl --enable-libx264 --enable-libx265 --disable-x86asm --prefix=./
+		echo ./configure --enable-static --disable-bzlib --enable-pic --extra-cflags="-fPIC" --disable-libdrm --disable-sndio --enable-gpl --enable-libx264 --enable-libx265 --disable-x86asm --prefix=./
+		./configure --enable-static --disable-bzlib --enable-pic --extra-cflags="-fPIC" --disable-libdrm --disable-sndio --enable-gpl --enable-libx264 --enable-libx265 --disable-x86asm --prefix=./
 
 		#echo ./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
 		#./configure --target-os=win64 --arch=x86_64 --enable-debug=3 --toolchain=msvc --prefix=./
@@ -61,7 +61,7 @@ if [ -d $folder ]; then
 		#
 
 		echo make
-		make
+		make -j"$(nproc)" V=1
 
 		echo make install
 		make install
