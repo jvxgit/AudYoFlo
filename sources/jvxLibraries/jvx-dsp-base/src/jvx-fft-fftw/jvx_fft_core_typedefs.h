@@ -72,6 +72,7 @@ typedef struct
 	jvxInt32 fftSizeLog;
 	jvxInt32 refCount;
 	jvxCBool allocatedByAllocator;
+	jvxCBitField globFlags; /* 1 << JVX_FFT_ALLOCATE_MEM_SLOW_SHIFT; 1 << JVX_IFFT_ALLOCATE_MEM_SLOW_SHIFT */
 	struct jvx_fft_ifft_core_global_attach* attached;
 } jvx_fft_ifft_core_global_common;
 

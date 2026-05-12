@@ -58,6 +58,7 @@ typedef struct
 	jvxSize cBufferFadeLength;
 	struct jvxMemRefs* allocators;
 	jvxCBool prepareReuse;
+	jvxCBool prio_low_mem_gains;
 } jvx_firfft_prmInit;
 
 typedef struct

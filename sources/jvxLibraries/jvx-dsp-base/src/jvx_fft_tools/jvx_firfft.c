@@ -47,6 +47,7 @@ jvxDspBaseErrorType jvx_firfft_initCfg(jvx_firfft* init)
 	init->init.cBufferFadeLength = 0;
 	init->init.allocators = NULL;
 	init->init.prepareReuse = c_false;
+	init->init.prio_low_mem_gains = c_false;
 
 	jvx_firfft_resetDerived(init);
 

@@ -169,6 +169,20 @@ jvxCBool jvx_fft_requires_normalization(jvxFFTGlobal* global_hdl)
 
 // =======================================================================================
 
+void jvx_fft_ifft_global_set_flags(jvxFFTGlobal* g_hdl, jvxCBitField flagsSet)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+	global_hdl->globFlags = flagsSet;
+}
+
+jvxCBitField jvx_fft_ifft_global_get_flags(jvxFFTGlobal* g_hdl)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+	return global_hdl->globFlags;
+}
+
+// =======================================================================================
+
 jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 						  jvxFFTGlobal* g_hdl,
 						  jvxFFTSize fftType,
@@ -206,6 +220,12 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 
 	assert(jvx_allocator);
 
+	jvxCBitField alloc_flags = (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW);
+	if(global_hdl->globFlags &  (1 << JVX_FFT_ALLOCATE_MEM_SLOW_SHIFT))
+	{
+		alloc_flags = (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_SLOW);
+	}
+
 	// Associate input buffers
 	if(input)
 	{
@@ -213,8 +233,7 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	}
 	else
 	{
-		ptr->input = jvx_allocator->alloc(sizeof(jvxData),
-				(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize);
+		ptr->input = jvx_allocator->alloc(sizeof(jvxData), alloc_flags, ptr->common.fftParameters.fftSize);
 	}
 
 	// Associate output buffers
@@ -225,8 +244,7 @@ jvxDspBaseErrorType jvx_create_fft_real_2_complex(jvxFFT** hdlRef,
 	else
 	{
 		complex_float* cplx_ptr = NULL;
-		cplx_ptr = jvx_allocator->alloc(sizeof(complex_float),
-					(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize/2+1);
+		cplx_ptr = jvx_allocator->alloc(sizeof(complex_float), alloc_flags, ptr->common.fftParameters.fftSize/2+1);
 		ptr->output = (jvxDataCplx*)cplx_ptr;
 	}
 
@@ -286,6 +304,12 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	if(res != JVX_DSP_NO_ERROR)
 		return JVX_DSP_ERROR_INTERNAL;
 
+	jvxCBitField alloc_flags = (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW);
+	if(global_hdl->globFlags &  (1 << JVX_IFFT_ALLOCATE_MEM_SLOW_SHIFT))
+	{
+		alloc_flags = (JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_SLOW);
+	}
+
 	if(input)
 	{
 		ptr->input = input;
@@ -294,8 +318,7 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	{
 		// Here, the important issue: the ifft requires full complex input - which is not very clever..
 		complex_float* cplx_ptr = NULL;
-		cplx_ptr = jvx_allocator->alloc(sizeof(complex_float),
-					(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), (ptr->common.fftParameters.fftSize/2+1));
+		cplx_ptr = jvx_allocator->alloc(sizeof(complex_float), alloc_flags, (ptr->common.fftParameters.fftSize/2+1));
 		ptr->input = (jvxDataCplx*)cplx_ptr;
 	}
 
@@ -305,8 +328,7 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_real(jvxIFFT** hdlRef,
 	}
 	else
 	{
-		ptr->output = jvx_allocator->alloc(sizeof(jvxData),
-								(JVX_ALLOCATOR_ALLOCATE_FIELD | JVX_MEMORY_ALLOCATE_FAST_SLOW), ptr->common.fftParameters.fftSize);
+		ptr->output = jvx_allocator->alloc(sizeof(jvxData), alloc_flags, ptr->common.fftParameters.fftSize);
 	}
 
 	if(in_ptr_fld_N2P1)

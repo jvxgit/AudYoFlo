@@ -43,6 +43,8 @@ typedef struct
 	complex_float* work_buffer_fld;
 	jvxSize work_buffer_sz;
 
+	jvxCBitField globFlags; /* 1 << JVX_FFT_ALLOCATE_MEM_SLOW_SHIFT; 1 << JVX_IFFT_ALLOCATE_MEM_SLOW_SHIFT */
+
 	struct jvx_fft_ifft_core_global_attach* attached;
 } jvx_fft_ifft_core_global_common;
 

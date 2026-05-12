@@ -177,9 +177,17 @@ jvx_firfft_cf_nout_init(jvx_firfft* hdl, jvxSize nStride, jvxSize nChannelsIn, j
 		nChans->nW = nHdl->firfft.derived_cpy.lFirW;		
 
 		nChans->firWN = jvx_allocator->alloc(sizeof(jvxDataCplx*), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW), nChans->N);
+
+		// We can control allocation buffer origin
+		jvxCBitField alloc_flags = (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_FAST_SLOW );
+		if(hdl->init.prio_low_mem_gains)
+		{
+			alloc_flags = (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_SLOW );
+		}
+
 		for (i = 0; i < nChans->N; i++)
 		{
-			nChans->firWN[i] = jvx_allocator->alloc(sizeof(jvxDataCplx), (JVX_ALLOCATOR_ALLOCATE_OBJECT | JVX_MEMORY_ALLOCATE_FAST_SLOW ), nHdl->firfft.derived_cpy.lFirW);
+			nChans->firWN[i] = jvx_allocator->alloc(sizeof(jvxDataCplx), alloc_flags, nHdl->firfft.derived_cpy.lFirW);
 		}
 
 		nHdl->ram_cf_nout.multiOutChannels.cBufferFadeLength = hdl->init.cBufferFadeLength;

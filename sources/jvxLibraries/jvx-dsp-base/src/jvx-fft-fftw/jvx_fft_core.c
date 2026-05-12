@@ -169,6 +169,17 @@ static jvxDspBaseErrorType jvx_core_fft_init_common(jvx_fft_ifft_core_common* hd
 
 
 // =======================================================================================
+void jvx_fft_ifft_global_set_flags(jvxFFTGlobal* g_hdl, jvxCBitField flagsSet)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+	global_hdl->globFlags = flagsSet;
+}
+
+jvxCBitField jvx_fft_ifft_global_get_flags(jvxFFTGlobal* g_hdl)
+{
+	jvx_fft_ifft_core_global_common* global_hdl = (jvx_fft_ifft_core_global_common*)g_hdl;
+	return global_hdl->globFlags;
+}
 
 jvxDspBaseErrorType jvx_create_fft_ifft_global(
 	jvxFFTGlobal** glob_hdl, jvxFFTSize fftType_max, 
@@ -192,6 +203,7 @@ jvxDspBaseErrorType jvx_create_fft_ifft_global(
 		ptr->fftSizeLog = (int)fftType_max + JVX_OFFSET_FFT_TYPE_MIN;
 		ptr->refCount = 0;
 		ptr->attached = NULL;
+		ptr->globFlags = 0;
 	}
 
 	*global_hdl = ptr;

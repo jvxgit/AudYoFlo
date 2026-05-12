@@ -45,6 +45,12 @@ typedef enum
 	JVX_FFT_IMPLEMENTATION_GENERIC
 } jvxFftImplementationType;
 
+typedef enum
+{
+	JVX_FFT_ALLOCATE_MEM_SLOW_SHIFT = 0,
+	JVX_IFFT_ALLOCATE_MEM_SLOW_SHIFT = 1,
+} jvxFftIfftGlobalFlagShifts;
+
 typedef jvxHandle jvxFFTGlobalCfg;
 typedef jvxHandle jvxFFTGlobal;
 typedef jvxHandle jvxFFT;
@@ -181,6 +187,9 @@ jvxDspBaseErrorType jvx_create_ifft_complex_2_complex(jvxIFFT** hdl,
 	jvxSize fftSizeArbitrary);
 
 jvxFFTSize jvx_fft_ifft_global_max_fft_size(jvxFFTGlobal* global_hdl);
+
+void jvx_fft_ifft_global_set_flags(jvxFFTGlobal* global_hdl, jvxCBitField flagsSet);
+jvxCBitField jvx_fft_ifft_global_get_flags(jvxFFTGlobal* global_hdl);
 
 jvxDspBaseErrorType jvx_execute_fft(jvxFFT* hdl);
 jvxDspBaseErrorType jvx_execute_ifft(jvxIFFT* hdl);
