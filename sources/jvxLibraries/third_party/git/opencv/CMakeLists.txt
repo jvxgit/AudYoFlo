@@ -151,7 +151,60 @@ elseif(${JVX_OS} MATCHES "linux")
 			CACHE INTERNAL "opencv library references")
 	endif()
 		
+elseif(${JVX_OS} MATCHES "Android")
+
+	# message(FATAL_ERROR "OpenCV for Android")
+	
+	set(targetfolder opencv)
+	
+	set(archtoken android)
+	
+	set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}")
+
+	set(libpostfix "")
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
+		set(libpostfix "d")
+	endif()
+	
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+		message("opencv sub project not available. Starting script to download it.") 
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
+		message("opencv installation complete.")
+	endif()
+	
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
+		
+		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-android.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}")
+		
+	endif()
+	
+	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/jni/include" CACHE INTERNAL "opencv include references")
+	
+	set(OPENCV_LIBRARIES_CANDIDATES 
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_features2d.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_gapi.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_imgcodecs.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_ml.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_photo.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_video.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_calib3d.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_dnn.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_flann.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_highgui.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_imgproc.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_objdetect.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_stitching.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_videoio.a
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/sdk/native/staticlibs/${ANDROID_ABI}/libopencv_core.a		
+		)
+	
+	set(OPENCV_LIBRARIES_CANDIDATES ${OPENCV_LIBRARIES_CANDIDATES} log)
+			
+	set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES_CANDIDATES}
+		CACHE INTERNAL "opencv library references")
+		
 endif()
 
-# message(FATAL_ERROR "Hier [${PROJECT_NAME}]")
+# message(FATAL_ERROR "Hier [${PROJECT_NAME}] for ${JVX_OS}")
 

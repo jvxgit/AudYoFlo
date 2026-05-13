@@ -80,6 +80,7 @@
 		return(JVX_NO_ERROR); 
 #endif
 
+#ifdef JVX_FFMPEG_FILE_IO
 #define JVX_ALLOTHER_CLASSES \
 	case JVX_COMPONENT_SYSTEM_AUTOMATION: \
 		switch (id) \
@@ -106,6 +107,22 @@
 				break; \
 		} \
 		break; 
+#else
+#define JVX_ALLOTHER_CLASSES \
+	case JVX_COMPONENT_SYSTEM_AUTOMATION: \
+		switch (id) \
+		{ \
+			case 0: \
+				adescr->assign("Starter Automation"); \
+				* funcInit = ayfATStarter_init; \
+				* funcTerm = ayfATStarter_terminate; \
+				return(JVX_NO_ERROR); \
+				break; \
+			default: \
+				break; \
+		} \
+		break;
+#endif
 
 #define JVX_ALL_SPNODE_CASES \
 	case 0: \

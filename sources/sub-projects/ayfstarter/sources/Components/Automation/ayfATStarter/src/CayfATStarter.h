@@ -46,8 +46,8 @@ public:
 	CayfATStarter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~CayfATStarter();
 
-	jvxErrorType activate();
-	jvxErrorType deactivate();
+	jvxErrorType activate() override;
+	jvxErrorType deactivate() override;
 
 	jvxErrorType handle_report_ss(
 		jvxReportCommandRequest req,
