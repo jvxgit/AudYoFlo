@@ -1,0 +1,10 @@
+In VS Code, use the option "CMake: Edit User-Local CMake Kits"
+
+{
+    "name": "Windows SDK Kit, local install",
+    "environmentSetupScript": " ${workspaceFolder}/.vscode/script.bat",   
+    "preferredGenerator": {
+      "name": "Ninja"
+    },
+    "isTrusted": true
+  }

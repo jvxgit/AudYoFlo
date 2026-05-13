@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to lldb-server",
+      "type": "lldb",
+      "request": "attach",
+      "pid": 3902, // Ersetze durch die tatsächliche PID oder nutze ${command:pickMyProcess}
+      // "program": "/data/local/tmp/dein_binary", // Optional, hilft bei Symbolauflösung
+      "initCommands": [
+        "platform select remote-android",
+        "platform connect connect://localhost:9123"
+      ],
+      "stopOnEntry": false
+    }
+  ]
+}

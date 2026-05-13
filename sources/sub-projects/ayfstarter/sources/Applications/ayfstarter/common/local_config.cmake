@@ -20,8 +20,10 @@ include_directories(
 set(LOCAL_LIBS ${LOCAL_LIBS}
 	ayfAuNStarter_static 
 	ayfATTypical_static)
- 
-set(LOCAL_LIBS ${LOCAL_LIBS} log )
+
+if(${JVX_OS} MATCHES "Android") 
+	set(LOCAL_LIBS ${LOCAL_LIBS} log )
+endif()
 
 # Link against either audio host lib or develop host lib
 include(${JVX_SUBPRODUCT_ROOT}/cmake/hostlink.audio.cmake)
