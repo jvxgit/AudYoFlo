@@ -175,7 +175,7 @@ elseif(${JVX_OS} MATCHES "Android")
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
 		
 		message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-android.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}")
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-android.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE} ${ANDROID_NDK} ${ANDROID_PLATFORM} ${ANDROID_ABI}")
 		
 	endif()
 	

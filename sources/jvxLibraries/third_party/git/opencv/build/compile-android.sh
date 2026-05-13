@@ -4,9 +4,9 @@ arch=$1
 opencvdir=$2
 buildtype=$3
 
-androidndk=C:/develop/android/ndk/29.0.14206865 # $4
-androidplatform=android-29 # $5
-androidabi=x86_64 # $6
+androidndk=$4 # C:/develop/android/ndk/29.0.14206865
+androidplatform=$5 # android-29 
+androidabi=$6 # x86_64 
 
 generatortoken="-G Ninja"
 
@@ -14,7 +14,7 @@ androidexts="-DCMAKE_TOOLCHAIN_FILE=$androidndk/build/cmake/android.toolchain.cm
 	-DBUILD_opencv_java=OFF -DBUILD_opencv_java_bindings_generator=OFF -DBUILD_JAVA=OFF -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_ANDROID_EXAMPLES=OFF \
 	-DWITH_ANDROID_MEDIANDK=OFF -DWITH_IPP=OFF -DBUILD_IPP_IW=OFF -DWITH_ITT=OFF -DBUILD_ITT=OFF"
 
-echo = OpenCV for Android => $androidexts
+echo => OpenCV for Android => $androidexts
 
 set -x
 rm -rf CMakeCache.txt
