@@ -19,9 +19,15 @@ if [ ! -d "$2/build-$1" ]; then
     chmod +x $2/build-$1/compile-android.sh 
 fi
 
-if [ ! -d "$2/$2-$3" ]; then
+if [ ! -d "$2/build-$1/sdk/native/staticlibs/$6" ]; then
    cd $2/build-$1
    ./compile-android.sh $1 $2 $3 $4 $5 $6
+   
+   cd ../..
+
+   pwd
+   
+   echo rm -rf $2/build-$1
    rm -rf $2/build-$1
 fi
 

@@ -159,7 +159,7 @@ elseif(${JVX_OS} MATCHES "Android")
 	
 	set(archtoken android)
 	
-	set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}")
+	set(archtoken "${archtoken}-${CMAKE_BUILD_TYPE}-${ANDROID_ABI}")
 
 	set(libpostfix "")
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")		
