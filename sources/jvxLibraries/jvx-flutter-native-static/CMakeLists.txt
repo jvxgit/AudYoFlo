@@ -61,10 +61,14 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_config.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_sequencer.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_report_callbacks.cpp	
-	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_async_report.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/flutter_native_async_report.cpp	
 
 	# ${CMAKE_CURRENT_SOURCE_DIR}/exports/${JVX_OS}/exports-flutter-native.def
   )
+
+  set(LOCAL_SOURCES ${LOCAL_SOURCES} ${AYF_PLATFORM_CODE_FRAGMENTS_ADD_TO_LINK})
+  # message(FATAL_ERROR "Hier ${AYF_NDK_CODE_FRAGMENTS} -> ${LOCAL_SOURCES}")
+
 
 # Macro JVX_LIB_SINGLETON: Allocate the lib object as a singelton. Dynamic alloc somehow
 # causes a heap corruption even if we only allocate and deallocate without any interaction - strange :->

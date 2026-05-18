@@ -21,7 +21,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ayfstarter-config-hook.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/ayfstarter-native-config.h
 	
-  )
+  )  
 
 if(JVX_AUTOMATION_VERBOSE)
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_AUTOMATION_VERBOSE")

@@ -92,6 +92,8 @@ val copyJniLibs by tasks.registering(Copy::class) {
 
     // Specify current abi. Typically, we would need to copy JNIs for all kinds of ABIs
     val abi = "x86_64"
+    // val abi = "arm64-v8a"
+    
     println(" ### ABI Specification: $abi")
 
     val fromPath = "$myEnvVar/$abi/bin"         

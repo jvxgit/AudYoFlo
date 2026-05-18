@@ -149,7 +149,9 @@ set(GCC_COVERAGE_COMPILE_FLAGS "-Wno-psabi")
 # It seems that Matlab (2017b) crashes in batch mode due to the "exit" at the end. A pause will help out
 set(JVX_PRE_EXIT_MATLAB_HOOK "pause(1);")
 
-
+set(AYF_PLATFORM_CODE_FRAGMENTS_ADD_TO_LINK 
+	${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c)
+	
 ###
 # macros
 ###

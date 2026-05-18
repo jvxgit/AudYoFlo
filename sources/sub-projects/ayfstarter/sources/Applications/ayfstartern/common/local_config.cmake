@@ -6,6 +6,9 @@ set(LOCAL_SOURCES ${LOCAL_SOURCES}
 	${CMAKE_CURRENT_SOURCE_DIR}/../common/ayfstartern-common.h
 	)
 	
+set(LOCAL_SOURCES ${LOCAL_SOURCES} ${AYF_PLATFORM_CODE_FRAGMENTS_ADD_TO_LINK})
+# message(FATAL_ERROR "Hier ${AYF_PLATFORM_CODE_FRAGMENTS_ADD_TO_LINK} -> ${LOCAL_SOURCES}")
+
 include_directories(
 
 	${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxAudioNodes/ayfAuNMixer

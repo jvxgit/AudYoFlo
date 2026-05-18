@@ -157,6 +157,9 @@ if("${CMAKE_GENERATOR}" MATCHES "Visual Studio 16 2019" OR "${CMAKE_GENERATOR}" 
 	set(JVX_VS_GENERATOR TRUE)
 endif()
 	
+# No platform specific required source file
+set(AYF_PLATFORM_CODE_FRAGMENTS_ADD_TO_LINK )
+
 ###
 # macros
 ###
