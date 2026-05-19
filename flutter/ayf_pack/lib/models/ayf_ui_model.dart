@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import '../ayf_pack_local.dart';
+import 'dart:io' show Platform;
 
 typedef AyfBottomBarAllocator = BottomAppBar? Function();
 
@@ -66,6 +67,8 @@ abstract class AudYoFloUiModel
   bool addBottomNavBar = true;
   double heightBottomNavBar = 80;
 
+  double innerSizeInit = 20;
+   
   // ========================================================================
 
   // For the main tab layout
@@ -112,7 +115,11 @@ abstract class AudYoFloUiModel
 
   // We initialize the platform specific part of the application.
   AudYoFloUiModel(this.initRoute) {
-    AudYoFloHelper.dbgPrint('Hello');
+     if (Platform.isAndroid) {
+      innerSizeInit = 90;
+     }
+    
+    AudYoFloHelper.dbgPrint('Running constructor <AudYoFloUiModel>');
   }
 
   // Pre-configure some default values

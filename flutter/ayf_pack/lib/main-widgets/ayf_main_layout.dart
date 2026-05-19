@@ -31,7 +31,7 @@ class AudYoFloMainLayout extends StatelessWidget {
     Widget inner;
     Widget? bottom;
 
-    double computeSizeInner = 20;
+    double computeSizeInner = theUiModel.innerSizeInit;   
 
     PreferredSizeWidget? myAppBar;
 
@@ -62,7 +62,7 @@ class AudYoFloMainLayout extends StatelessWidget {
     if (theUiModel.addUpper) {
       upper = Container(
           width: size.width,
-          height: theUiModel.heightUpper,
+          height: theUiModel.heightUpper/2,
           child: LayoutBuilder(builder: (context, constraints) {
             return AudYoFloUpperContent();
           }));
