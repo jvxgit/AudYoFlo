@@ -253,6 +253,7 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
                 return false;
               })?.value;
 
+          /* I think we do not need this part here. The VM is handled fully in the background of the backend
           vmEntrySymbol =
               entryPointsMap.entries.firstWhereOrNull((element) {
                 if (element.key is String) {
@@ -260,7 +261,7 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
                 }
                 return false;
               })?.value;
-
+          */
           hostConfigAddr =
               entryPointsMap.entries.firstWhereOrNull((element) {
                 if (element.key is String) {

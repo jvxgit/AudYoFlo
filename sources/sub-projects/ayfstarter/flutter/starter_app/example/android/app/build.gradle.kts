@@ -91,8 +91,8 @@ val copyJniLibs by tasks.registering(Copy::class) {
     println(" ### Environment Variable <AYF_SDK_PATH_ANDROID>: $myEnvVar")
 
     // Specify current abi. Typically, we would need to copy JNIs for all kinds of ABIs
-    val abi = "x86_64"
-    // val abi = "arm64-v8a"
+    // val abi = "x86_64"
+    val abi = "arm64-v8a"
     
     println(" ### ABI Specification: $abi")
 

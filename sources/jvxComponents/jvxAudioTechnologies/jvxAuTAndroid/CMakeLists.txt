@@ -55,7 +55,9 @@ if(${JVX_OS} MATCHES "Android")
 		GIT_REPOSITORY https://github.com/google/oboe.git
 		GIT_TAG        1.9.3
 	)
+	set(BUILD_SHARED_LIBS OFF)
 	FetchContent_MakeAvailable(oboe)
+	set(BUILD_SHARED_LIBS ON)
 
 	list(APPEND LOCAL_LIBS oboe log)
 	include_directories(${oboe_SOURCE_DIR}/include)
