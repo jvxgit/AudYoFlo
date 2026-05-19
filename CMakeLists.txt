@@ -56,6 +56,9 @@ endif()
 cmake_host_system_information(RESULT host_identification QUERY HOSTNAME)
 message("Running on host ${host_identification}")
 
+cmake_host_system_information(RESULT host_is_64bit QUERY IS_64BIT)
+message("Host is 64 bit: ${host_is_64bit}")
+
 # Set target subdirectories for install mechanism
 if(JVX_RELEASE_SDK)
   set(INSTALL_PATH_RELEASE_SDK "sdk")

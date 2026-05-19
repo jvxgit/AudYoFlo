@@ -34,6 +34,45 @@ extern "C"
 
 #ifndef JVX_USE_PART_ANDROIDAUDIO_NO_API
 
+// Maps Android AudioDeviceInfo.TYPE_* constants to human-readable labels
+static const char* androidDeviceTypeName(int type)
+{
+	switch (type)
+	{
+	case 1:  return "Earpiece";
+	case 2:  return "Speaker";
+	case 3:  return "Wired Headphones";
+	case 4:  return "Wired Headset";
+	case 5:  return "Line In (Analog)";
+	case 6:  return "Line In (Digital)";
+	case 7:  return "Bluetooth SCO";
+	case 8:  return "Bluetooth A2DP";
+	case 9:  return "HDMI";
+	case 10: return "HDMI ARC";
+	case 11: return "USB Audio";
+	case 12: return "USB Accessory";
+	case 13: return "Dock";
+	case 14: return "FM";
+	case 15: return "Built-in Microphone";
+	case 16: return "FM Tuner";
+	case 17: return "TV Tuner";
+	case 18: return "Telephony";
+	case 19: return "Aux Line";
+	case 20: return "IP Audio";
+	case 21: return "Bus";
+	case 22: return "USB Headset";
+	case 23: return "Hearing Aid";
+	case 24: return "Speaker (Safe)";
+	case 25: return "Remote Submix";
+	case 26: return "BLE Headset";
+	case 27: return "BLE Speaker";
+	case 28: return "Echo Reference";
+	case 29: return "HDMI eARC";
+	case 30: return "BLE Broadcast";
+	default: return nullptr;
+	}
+}
+
 // Helper: extract a std::string from a Java CharSequence (or String) object
 static std::string jniCharSequenceToString(JNIEnv* env, jobject csObj)
 {
@@ -115,10 +154,29 @@ static bool jvxEnumDevicesJNI(JNIEnv* env, std::vector<JvxAndroidDeviceInfo>& ou
 		bool isSink   = (bool)env->CallBooleanMethod(di, isSnkM);
 
 		jobject pnCS = env->CallObjectMethod(di, getPnM);
-		std::string name = jniCharSequenceToString(env, pnCS);
+		std::string productName = jniCharSequenceToString(env, pnCS);
 		if (pnCS) env->DeleteLocalRef(pnCS);
-		if (name.empty()) name = "Android Device";
 		env->DeleteLocalRef(di);
+
+		// Build display name: type-based label as primary, productName as qualifier if informative
+		const char* typeLabelCStr = androidDeviceTypeName(type);
+		std::string displayBase;
+		if (typeLabelCStr)
+		{
+			displayBase = typeLabelCStr;
+			// Append productName only when it carries information beyond the type label
+			if (!productName.empty()
+				&& productName != typeLabelCStr
+				&& productName != "Android"
+				&& productName.length() > 2)
+			{
+				displayBase += " (" + productName + ")";
+			}
+		}
+		else
+		{
+			displayBase = productName.empty() ? "Android Device" : productName;
+		}
 
 		// A device can be both source and sink (e.g. USB headset) — one entry per direction
 		if (isSource)
@@ -127,7 +185,7 @@ static bool jvxEnumDevicesJNI(JNIEnv* env, std::vector<JvxAndroidDeviceInfo>& ou
 			info.deviceId    = id;
 			info.deviceType  = type;
 			info.isInput     = true;
-			info.productName = name + " [in]";
+			info.productName = displayBase + " [in]";
 			out.push_back(info);
 			TLOGD("  INPUT  type=%d id=%d '%s'", type, id, info.productName.c_str());
 		}
@@ -137,7 +195,7 @@ static bool jvxEnumDevicesJNI(JNIEnv* env, std::vector<JvxAndroidDeviceInfo>& ou
 			info.deviceId    = id;
 			info.deviceType  = type;
 			info.isInput     = false;
-			info.productName = name + " [out]";
+			info.productName = displayBase + " [out]";
 			out.push_back(info);
 			TLOGD("  OUTPUT type=%d id=%d '%s'", type, id, info.productName.c_str());
 		}

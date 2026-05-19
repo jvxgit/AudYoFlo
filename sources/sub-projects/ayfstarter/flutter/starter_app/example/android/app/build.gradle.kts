@@ -90,9 +90,10 @@ val copyJniLibs by tasks.registering(Copy::class) {
     val myEnvVar = System.getenv("AYF_SDK_PATH_ANDROID")
     println(" ### Environment Variable <AYF_SDK_PATH_ANDROID>: $myEnvVar")
 
-    // Specify current abi. Typically, we would need to copy JNIs for all kinds of ABIs
-    // val abi = "x86_64"
-    val abi = "arm64-v8a"
+    // Specify current abi: -Pabi=arm64-v8a on the command line, or AYF_ABI env var, else default
+    val abi = (findProperty("abi") as String?)
+        ?: System.getenv("AYF_ABI")
+        ?: "arm64-v8a"
     
     println(" ### ABI Specification: $abi")
 
@@ -100,8 +101,11 @@ val copyJniLibs by tasks.registering(Copy::class) {
     
     val out: Provider<Directory> = layout.buildDirectory.dir("intermediates/merged_jni_libs/debug/mergeDebugJniLibFolders/out/$abi")
     val bDir = out.get().asFile
-    // println("bDir: $bDir")
-    
+    if (!bDir.exists()) {
+        println(" ### Task <copyJniLibs>: creating destination folder: $bDir")
+        bDir.mkdirs()
+    }
+
     // OLD VERSION:  val toPath = "$buildDir/intermediates/merged_jni_libs/debug/mergeDebugJniLibFolders/out/x86_64"
     val toPath = "$bDir"
 
