@@ -1,6 +1,6 @@
-import local
 import SimpleKernel
 import os
+
 
 class AudioProcess:
     def __init__(self):
@@ -17,9 +17,8 @@ class AudioProcess:
 
     def terminate(self):
         SimpleKernel.term_module(self.modInst)
-        modInst = None
 
-    def process(self, input, output, frameIdx = -1):
+    def process(self, input, output, frameIdx=-1):
         #  output.fld = input.fld
 
         # Run the core data copy function here!
@@ -28,4 +27,4 @@ class AudioProcess:
         return 0
 
     def progress_step(self, progress):
-        print('Progress: {!r}'.format( progress))
+        print("Progress: {!r}".format(progress))

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from scapy.all import rdpcap, IP, UDP
 
+
 @dataclass
 class Packet:
     payload: bytes
@@ -34,7 +35,7 @@ def _read_packets(pcap_file: Path, pcap_ip: ip_address, pcap_ports: list[int]) -
                 if last_time is not None:
                     delay = float(pkt.time) - last_time
                 else:
-                    delay = 0.
+                    delay = 0.0
                 res.append(Packet(payload, udp_layer.dport, delay))
                 last_time = float(pkt.time)
     return res

@@ -1,5 +1,3 @@
-import sys
-import os
 import numpy
 
 # Better use the pylab plot as it shows also in debugger!
@@ -8,22 +6,20 @@ import pylab as plt
 
 # Import the local references. This is a different version in the release
 # compared to the "released" version
-import local
 
 import jvx_dsp_python
 
 if __name__ == "__main__":
-
     hop_size = int(256)
     fft_size = int(1024)
-    fft2p1 = int(fft_size/2 + 1)
+    fft2p1 = int(fft_size / 2 + 1)
     nFrames = 100
 
     # Print out the help text
     help(jvx_dsp_python)
 
     # Create a numpy array with increasing float values
-    data = numpy.arange(256*nFrames, dtype=float)
+    data = numpy.arange(256 * nFrames, dtype=float)
     out = numpy.zeros(256 * nFrames, dtype=float)
     oneBuf = numpy.zeros(256, dtype=float)
     weights = numpy.ones(fft2p1, dtype=complex)
@@ -32,9 +28,9 @@ if __name__ == "__main__":
     # Run the function for dw_ola
     hdl = jvx_dsp_python.init_processing_dw_ola(hop_size, fft_size)
     for j in range(nFrames):
-        oneBuf = data[cnt:cnt+hop_size].copy()
+        oneBuf = data[cnt : cnt + hop_size].copy()
         res = jvx_dsp_python.run_processing_dw_ola(hdl, oneBuf, weights)
-        out[cnt:cnt+hop_size] = oneBuf
+        out[cnt : cnt + hop_size] = oneBuf
         cnt += hop_size
 
     res = jvx_dsp_python.term_processing_dw_ola(hdl)
