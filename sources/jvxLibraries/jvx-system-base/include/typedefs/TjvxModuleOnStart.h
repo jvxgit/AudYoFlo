@@ -10,9 +10,9 @@ struct jvxModuleOnStart
 {
 	const char* modName = nullptr;
 #ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
-	std::function<void(IjvxObject*)> onSelect;
-	std::function<void(IjvxObject*)> beforeUnselect;
-	jvxModuleOnStart(const char* nm, std::function<void(IjvxObject*)> cbS = nullptr, std::function<void(IjvxObject*)> cbUS = nullptr) : modName(nm), onSelect(cbS), beforeUnselect(cbUS){};
+	std::function<void(IjvxObject*, jvxStateSwitch sw)> onStateChanged;
+	std::function<void(IjvxObject*, jvxStateSwitch sw)> beforeStateChange;
+	jvxModuleOnStart(const char* nm, std::function<void(IjvxObject*, jvxStateSwitch)> cbS = nullptr, std::function<void(IjvxObject*, jvxStateSwitch)> cbUS = nullptr) : modName(nm), onStateChanged(cbS), beforeStateChange(cbUS){};
 #else
 	jvxModuleOnStart_onSelect onSelect;
 	jvxModuleOnStart_onUnselect beforeUnselect;

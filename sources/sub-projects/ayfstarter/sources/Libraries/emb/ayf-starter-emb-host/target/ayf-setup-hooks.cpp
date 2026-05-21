@@ -3,15 +3,26 @@
 
 const jvxModuleOnStart componentsOnLoad_automation[] =
 {
-	{"ayfATTypical",[](IjvxObject* obj) {
-	IjvxProperties* props = reqInterfaceObj<IjvxProperties>(obj);
-	if (props)
+	{"ayfATTypical",[](IjvxObject* obj, jvxStateSwitch sw)
 	{
-		jvxCallManagerProperties callGate;
-		jvxCBool flag = 1;
-		jvxErrorType res = props->set_property(callGate, jPRFCBOOL(flag), jPAD("/audio/primary_audio_tech_lowlevel"));
-		retInterfaceObj<IjvxProperties>(obj, props);
-	}}},
+		switch (sw)
+		{
+		case JVX_STATE_SWITCH_SELECT:
+		{
+			IjvxProperties* props = reqInterfaceObj<IjvxProperties>(obj);
+			if (props)
+			{
+				jvxCallManagerProperties callGate;
+				jvxCBool flag = 1;
+				jvxErrorType res = props->set_property(callGate, jPRFCBOOL(flag), jPAD("/audio/primary_audio_tech_lowlevel"));
+				retInterfaceObj<IjvxProperties>(obj, props);
+			}
+		}
+		break;
+		default:
+			break;
+		}
+	}},
 	nullptr
 };
 

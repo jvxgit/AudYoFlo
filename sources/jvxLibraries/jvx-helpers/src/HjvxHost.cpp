@@ -199,17 +199,17 @@ void activate_default_components_host(const jvxModuleOnStart* lst_ModulesOnStart
 												res = hHost->select_component(tpIdN, k);
 												assert(res == JVX_NO_ERROR);
 
-												if (ptrComp[j].onSelect)
+												if (ptrComp[j].onStateChanged)
 												{
 													IjvxObject* obj = nullptr;
 													res = hHost->request_object_selected_component(tpIdN, &obj);
 													if((res == JVX_NO_ERROR) && obj)
 													{
 #ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
-														ptrComp[j].onSelect(obj);
+														ptrComp[j].onStateChanged(obj, JVX_STATE_SWITCH_SELECT);
 #else
 														assert(0);
-														ptrComp[j].onSelect(obj, ptrComp[j].priv);
+														ptrComp[j].onStateChanged(obj, JVX_STATE_SWITCH_SELECT, ptrComp[j].priv);
 #endif
 														hHost->return_object_selected_component(tpIdN, obj);
 													}
@@ -229,7 +229,26 @@ void activate_default_components_host(const jvxModuleOnStart* lst_ModulesOnStart
 										break;
 								case JVX_STATE_SELECTED:
 									res = hHost->activate_selected_component(tpIdN);
-									if (res != JVX_NO_ERROR)
+									if (res == JVX_NO_ERROR)
+									{
+										if (ptrComp[j].onStateChanged)
+										{
+											IjvxObject* obj = nullptr;
+											res = hHost->request_object_selected_component(tpIdN, &obj);
+
+											if ((res == JVX_NO_ERROR) && obj)
+											{
+
+#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
+												ptrComp[j].onStateChanged(obj, JVX_STATE_SWITCH_ACTIVATE);
+#else
+												assert(0);
+												ptrComp[j].onStateChanged(obj, JVX_STATE_SWITCH_ACTIVATE, ptrComp[j].priv);
+#endif
+											}
+										}
+									}
+									else
 									{
 										elm_notfound = ptrComp[j].modName;
 										runme = false;
@@ -346,23 +365,45 @@ void deactivate_default_components_host(const jvxModuleOnStart* lst_ModulesOnSta
 						{
 							if (astr.std_str() == ptrComp[j].modName)
 							{
-								if (ptrComp[j].beforeUnselect)
+								jvxState stat = JVX_STATE_NONE;
+								hHost->state_selected_component(tpIdN, &stat);
+								if (stat >= JVX_STATE_ACTIVE)
+								{
+									if (ptrComp[j].beforeStateChange)
+									{
+										IjvxObject* obj = nullptr;
+										res = hHost->request_object_selected_component(tpIdN, &obj);
+										if ((res == JVX_NO_ERROR) && obj)
+										{
+#ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
+											ptrComp[j].beforeStateChange(obj, JVX_STATE_SWITCH_DEACTIVATE);
+#else
+											ptrComp[j].beforeUnselect(obj, JVX_STATE_SWITCH_DEACTIVATE, ptrComp[j].priv);
+#endif
+
+											hHost->return_object_selected_component(tpIdN, obj);
+										}
+									}
+									res = hHost->deactivate_selected_component(tpIdN);
+								}
+
+								if (ptrComp[j].beforeStateChange)
 								{
 									IjvxObject* obj = nullptr;
 									res = hHost->request_object_selected_component(tpIdN, &obj);
 									if ((res == JVX_NO_ERROR) && obj)
 									{
 #ifndef JVX_CPLUSPLUS_NO_STD_FUNCTION
-										ptrComp[j].beforeUnselect(obj);
+										ptrComp[j].beforeStateChange(obj, JVX_STATE_SWITCH_UNSELECT);
 #else
-										ptrComp[j].beforeUnselect(obj, ptrComp[j].priv);
+										ptrComp[j].beforeUnselect(obj, JVX_STATE_SWITCH_UNSELECT, ptrComp[j].priv);
 #endif
 
 										hHost->return_object_selected_component(tpIdN, obj);
 									}
 								}
-
 								res = hHost->unselect_selected_component(tpIdN);
+
 								assert(res == JVX_NO_ERROR);
 							}
 							else
