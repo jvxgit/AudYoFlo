@@ -80,6 +80,18 @@ CjvxAuNBitstreamDecoder::activate()
 				lstCodecInstances[i] = retI;
 			}
 		}
+
+		genBitstreamDecoder_node::init_all();
+		genBitstreamDecoder_node::allocate_all();
+		genBitstreamDecoder_node::register_all(this);
+
+		jvxApiStringList lst;
+		for (auto elm : lstCodecInstances)
+		{
+			jvxApiString astr;
+			elm.second.objPtr->description(&astr);
+			genBitstreamDecoder_node::info.codecs.value.push_back(astr.std_str());
+		}
 	}
 	return res;
 }
@@ -89,7 +101,15 @@ CjvxAuNBitstreamDecoder::deactivate()
 {
 	jvxErrorType res = JVX_LOCAL_BASE_CLASS::_pre_check_deactivate();
 	if (res == JVX_NO_ERROR)
-	{		
+	{	
+		// Close any existing connection
+		deactivate_decoder();
+
+		// Delete list of shown codecs
+		genBitstreamDecoder_node::info.codecs.value.clear();
+		genBitstreamDecoder_node::unregister_all(this);
+		genBitstreamDecoder_node::deallocate_all();
+
 		// Delete the microconnection
 
 		// Release all codecs

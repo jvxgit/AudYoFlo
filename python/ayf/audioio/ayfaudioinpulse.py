@@ -1,9 +1,16 @@
 import numpy as np
 import math
 
-from . import ayfaudioif as ayfif
-from . import ayfaudiobuf as ayfbuf
+try:
+    from . import ayfaudioif as ayfif
+    from . import ayfaudiobuf as ayfbuf
 
+except ImportError as exc:
+    if __package__:
+        raise
+    import ayfaudioif as ayfif
+    import ayfaudioio as ayfio
+    import ayfaudiobuf as ayfbuf
 
 # ========================================================================
 class ayfaudio_inbuffered(ayfif.ayfaudio_in):

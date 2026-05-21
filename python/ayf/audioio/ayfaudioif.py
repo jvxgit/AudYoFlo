@@ -1,5 +1,10 @@
-from . import ayfaudiobuf as ayfbuf
-
+try:
+    from . import ayfaudiobuf as ayfbuf
+except ImportError as exc:
+    if __package__:
+        raise
+    import numpy as np
+    import ayfaudiobuf as ayfbuf
 
 class ayfaudio_in:
     # @abstractmethod

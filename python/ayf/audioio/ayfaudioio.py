@@ -1,8 +1,19 @@
 import math
-from . import ayfaudiooutwav as ayfoutwav
-from . import ayfaudioinwav as ayfinwav
-from . import ayfaudioinpulse as ayfinpls
-from . import ayfaudiobuf as ayfbuf
+
+try:
+    from . import ayfaudiooutwav as ayfoutwav
+    from . import ayfaudioinwav as ayfinwav
+    from . import ayfaudioinpulse as ayfinpls
+    from . import ayfaudiobuf as ayfbuf
+
+except ImportError as exc:
+    if __package__:
+        raise
+    import ayfaudioif as ayfif
+    import ayfaudiooutwav as ayfoutwav
+    import ayfaudioinwav as ayfinwav
+    import ayfaudioinpulse as ayfinpls
+    import ayfaudiobuf as ayfbuf
 
 # ==========================================================
 # ==========================================================

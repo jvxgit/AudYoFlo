@@ -3,8 +3,14 @@ import numpy as np
 import math
 import soundfile as sf
 
-from . import ayfaudiobuf as ayfbuf
+try:
+    from . import ayfaudiobuf as ayfbuf
 
+except ImportError as exc:
+    if __package__:
+        raise
+    import ayfaudioio as ayfio
+    import ayfaudiobuf as ayfbuf
 
 class ayfaudio_outwav:
     def __init__(self, fName):

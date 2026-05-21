@@ -43,6 +43,18 @@ CjvxAuNBitstreamEncoder::activate()
 				lstCodecInstances[i] = retI;
 			}
 		}		
+
+		genBitstreamEncoder_node::init_all();
+		genBitstreamEncoder_node::allocate_all();
+		genBitstreamEncoder_node::register_all(this);
+
+		jvxApiStringList lst;
+		for (auto elm : lstCodecInstances)
+		{
+			jvxApiString astr;
+			elm.second.objPtr->description(&astr);
+			genBitstreamEncoder_node::info.codecs.value.push_back(astr.std_str());
+		}
 	}
 	return res;
 }
@@ -55,6 +67,11 @@ CjvxAuNBitstreamEncoder::deactivate()
 	{		
 		// Close any existing connection
 		deactivate_encoder();
+
+		// Delete list of shown codecs
+		genBitstreamEncoder_node::info.codecs.value.clear();
+		genBitstreamEncoder_node::unregister_all(this);
+		genBitstreamEncoder_node::deallocate_all();
 
 		// Release all codecs
 		for(std::pair<jvxSize, refComp<IjvxAudioCodec>> elm: lstCodecInstances)

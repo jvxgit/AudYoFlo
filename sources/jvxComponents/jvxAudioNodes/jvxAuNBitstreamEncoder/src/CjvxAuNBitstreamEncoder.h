@@ -12,7 +12,8 @@
 
 class CjvxAuNBitstreamEncoder: 
 	public JVX_LOCAL_BASE_CLASS,
-	public IayfConnectionStateSwitchNode	
+	public IayfConnectionStateSwitchNode,	
+	public genBitstreamEncoder_node
 {
 private:
 	

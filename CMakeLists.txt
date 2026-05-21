@@ -1347,9 +1347,16 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
 
   ## ==============================================================================================
   ## ==============================================================================================
+  set(JVX_PACKAGE_PROJECTS "")
   if(JVX_USE_FFMPEG)
-    add_subdirectory(sources/jvxPackages/ffmpeg)
+	set(JVX_PACKAGE_PROJECTS ${JVX_PACKAGE_PROJECTS}
+		sources/jvxPackages/ffmpeg
+		)
+    # add_subdirectory(sources/jvxPackages/ffmpeg)
   endif()
+   
+  jvx_addSubdirs("Configuring all package projects" "${JVX_PACKAGE_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/packages")
+  
   ## ==============================================================================================
 
   #set(AYF_FLUTTER_ENVIRONMENT TRUE)

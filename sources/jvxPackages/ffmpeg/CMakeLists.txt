@@ -21,4 +21,4 @@ if(NOT JVX_RELEASE_SDK)
 	endif()
 endif()
 
-jvx_addSubdirs("Configuring ffmpeg package" "${JVX_FFMPEG_PACKAGE}" "${JVX_FOLDER_HIERARCHIE_BASE}/ffmpeg")
+jvx_addSubdirs("Configuring ffmpeg package" "${JVX_FFMPEG_PACKAGE}" "${JVX_FOLDER_HIERARCHIE}/ffmpeg")
