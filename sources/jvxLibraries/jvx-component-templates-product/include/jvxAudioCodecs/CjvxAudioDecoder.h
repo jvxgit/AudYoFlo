@@ -101,6 +101,10 @@ namespace JVX_PROJECT_NAMESPACE {
 	virtual void accept_input_parameters() = 0;
 	virtual void test_set_output_parameters() = 0;
 	virtual jvxErrorType updated_backward_format_spec(jvxLinkDataDescriptor& forward, jvxLinkDataDescriptor* ld_cp) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION activate_decoder();
+	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate_decoder();
+
 };
 
 #ifdef JVX_PROJECT_NAMESPACE

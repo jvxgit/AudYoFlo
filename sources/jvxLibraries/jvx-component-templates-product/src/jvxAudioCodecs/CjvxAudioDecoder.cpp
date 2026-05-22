@@ -30,9 +30,18 @@ CjvxAudioDecoder::activate()
 		JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(
 			NULL, static_cast<IjvxObject*>(this), "default", NULL,
 			_common_set.theModuleName);		
+
+		this->activate_decoder();
 	}
 	return(res);
 }
+
+jvxErrorType 
+CjvxAudioDecoder::activate_decoder()
+{
+	return JVX_NO_ERROR;
+}
+
 
 // ============================================================================================
 
@@ -42,9 +51,17 @@ CjvxAudioDecoder::deactivate()
 	jvxErrorType res = CjvxObject::_deactivate();
 	if (res == JVX_NO_ERROR)
 	{
+		this->deactivate_decoder();
+
 		JVX_DEACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS();
 	}
 	return(res);
+}
+
+jvxErrorType 
+CjvxAudioDecoder::deactivate_decoder()
+{
+	return JVX_NO_ERROR;
 }
 
 // ============================================================================================

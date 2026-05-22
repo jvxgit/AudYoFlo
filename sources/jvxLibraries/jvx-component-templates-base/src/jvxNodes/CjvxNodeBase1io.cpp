@@ -258,7 +258,14 @@ CjvxNodeBase1io::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkData
 			neg_input.compare_core(preferredByOutput, &_common_set_ocon.theData_out, mismatch);
 			if (mismatch)
 			{
-				res = JVX_ERROR_COMPROMISE;
+				if (negCompromiseOnMismatch)
+				{
+					res = JVX_ERROR_COMPROMISE;
+				}
+				else
+				{
+					res = JVX_ERROR_UNSUPPORTED;
+				}
 			}
 		}
 

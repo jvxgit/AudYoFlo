@@ -299,6 +299,10 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 
 					// Modifify the number of output channels as requested
 					node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
+
+					// Adapt the parameters for forward direction
+					adapt_output_parameters_forward();
+
 					if (res != JVX_NO_ERROR)
 					{
 						return res;
@@ -335,8 +339,13 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 						// Override error message - can deal with it
 						res = JVX_NO_ERROR;
 					}
-					// Modifify the number of output format as requested
+
+					// Modifify the number of output format as requested -- I think we do need this anymore
 					node_output._common_set_node_params_a_1io.format = preferredByOutput->con_params.format;
+
+					// Adapt the parameters for forward direction
+					adapt_output_parameters_forward();
+
 					if (res != JVX_NO_ERROR)
 					{
 						return res;

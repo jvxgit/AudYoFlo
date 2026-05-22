@@ -898,6 +898,16 @@ JVX_APPHOST_CLASSNAME::check_system_build_integrity()
 		(jvxDataFormat_str[JVX_DATAFORMAT_LIMIT].friendly != NULL))
 	{
 		integrityOk = false;
+
+		std::cout << "!!!!!!!!! SYSTEM INTEGRITY CHECK FAILED !!!!!!!!!!!!" << std::endl;
+		if (theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_class != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) std::cout << "-> Variable not setup propperly: theClassAssociation " << std::endl;
+		if (jvxComponentType_class(JVX_COMPONENT_ALL_LIMIT) != jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT) std::cout << "-> Variable not setup propperly: jvxComponentType_class " << std::endl;
+		if (theClassAssociation[JVX_COMPONENT_ALL_LIMIT].comp_sec_type != JVX_COMPONENT_ALL_LIMIT)  std::cout << "-> Variable not setup propperly: theClassAssociation " << std::endl;
+		if (jvxDataFormatGroup_size[JVX_DATAFORMAT_GROUP_LIMIT] != JVX_DATAFORMAT_GROUP_LIMIT) std::cout << "-> Variable not setup propperly: jvxDataFormatGroup_size " << std::endl;
+		if (jvxDataFormatGroup_size_div[JVX_DATAFORMAT_GROUP_LIMIT] != JVX_DATAFORMAT_GROUP_LIMIT) std::cout << "-> Variable not setup propperly: jvxDataFormatGroup_size_div " << std::endl;
+		if (jvxDataFormatGroup_str[JVX_DATAFORMAT_GROUP_LIMIT].friendly != NULL)  std::cout << "-> Variable not setup propperly: jvxDataFormatGroup_str " << std::endl;
+		if (jvxDataFormat_size[JVX_DATAFORMAT_LIMIT] != JVX_DATAFORMAT_LIMIT) std::cout << "-> Variable not setup propperly: jvxDataFormat_size " << std::endl;
+		if (jvxDataFormat_str[JVX_DATAFORMAT_LIMIT].friendly != NULL) std::cout << "-> Variable not setup propperly: jvxDataFormat_str " << std::endl;
 	}
 
 	return integrityOk;

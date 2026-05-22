@@ -40,6 +40,8 @@ protected:
 	std::string prefix_descriptor_properties = "inout";
 	std::string prefix_description_properties = "InOut";
 
+	jvxBool negCompromiseOnMismatch = true;
+
 public:
 	JVX_CALLINGCONVENTION CjvxNodeBase1io(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	virtual JVX_CALLINGCONVENTION ~CjvxNodeBase1io() {};

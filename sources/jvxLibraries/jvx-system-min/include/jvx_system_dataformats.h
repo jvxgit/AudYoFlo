@@ -252,7 +252,9 @@ typedef enum
 		JVX_DATAFORMAT_GROUP_TRIGGER_ONLY,
 
 		JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
-		JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD
+		JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD,
+
+		JVX_DATAFORMAT_GROUP_EVS_PACKET_FWD
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 		JVX_DATAFORMAT_GROUP_DEFINES_PRODUCT
@@ -284,7 +286,9 @@ static jvxTextHelpers jvxDataFormatGroup_str[JVX_DATAFORMAT_GROUP_LIMIT + 1] =
 	{ "trigger", "JVX_DATAFORMAT_GROUP_TRIGGER_ONLY"},
 
 	{ "ffmpg-pkt", "JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD"},
-	{ "ffmpg-frm", "JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD"}
+	{ "ffmpg-frm", "JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD"},
+
+	{ "evs-pkt", "JVX_DATAFORMAT_GROUP_EVS_PACKET_FWD" }
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 	JVX_DATAFORMAT_GROUP_STRINGS_PRODUCT
@@ -344,8 +348,9 @@ static jvxSize jvxDataFormatGroup_size[JVX_DATAFORMAT_GROUP_LIMIT + 1] =
 	0, // JVX_DATAFORMAT_GROUP_TRIGGER_ONLY,
 
 	1, //JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
-	1 // JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD
+	1, // JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD
 
+	1 //JVX_DATAFORMAT_GROUP_EVS_PACKET_FWD
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 	JVX_DATAFORMAT_GROUP_SIZES_PRODUCT
@@ -377,7 +382,9 @@ static jvxSize jvxDataFormatGroup_size_div[JVX_DATAFORMAT_GROUP_LIMIT + 1] =
 	1, // JVX_DATAFORMAT_GROUP_TRIGGER_ONLY,
 
 	1, //JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
-	1 // JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD
+	1, // JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD
+
+	1 //JVX_DATAFORMAT_GROUP_EVS_PACKET_FWD
 
 #ifndef JVX_NO_SYSTEM_EXTENSIONS
 	JVX_DATAFORMAT_GROUP_SIZES_DIV_PRODUCT
@@ -401,10 +408,20 @@ static inline jvxSize jvxDataFormatGroup_getsize_div(jvxSize idx)
 
 typedef enum
 {
-	JVX_DATAFLOW_PUSH_ACTIVE, // Devices and nodes push data forward by calling process function of subsequent linked component
-	JVX_DATAFLOW_PUSH_ON_PULL, // Devices and nodes are triggered from subsequent element and call process function within this "pull"
-	JVX_DATAFLOW_PUSH_ASYNC, // Devices and nodes push data forward by calling process function of subsequent linked component
-	JVX_DATAFLOW_DONT_CARE, // All dataflows are accepted, this indicates that the value from input is used on output side in 1-to-1 connections
+	// Devices and nodes push data forward by calling process function of subsequent linked component
+	JVX_DATAFLOW_PUSH_ACTIVE, 
+	
+	// Devices and nodes are triggered from subsequent element and call process function within this "pull"
+	JVX_DATAFLOW_PUSH_ON_PULL, 
+	
+	// Devices and nodes push data forward by calling process function of subsequent linked component. Compared to ACTIVE, 
+	// ASYNC means that buffers may arise without any regular time basis - even many in a fast running loop. Hence, typically,
+	// an ASYNC stream requires a buffer at the end which then takes over data on the output side via JVX_DATAFLOW_PUSH_ON_PULL
+	JVX_DATAFLOW_PUSH_ASYNC, 
+	
+	// All dataflows are accepted, this indicates that the value from input is used on output side in 1-to-1 connections
+	JVX_DATAFLOW_DONT_CARE, 
+
 	JVX_DATAFLOW_LIMIT
 } jvxDataflow;
 
