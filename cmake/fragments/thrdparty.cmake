@@ -7,10 +7,9 @@ if(${JVX_OS} MATCHES "windows")
   # build 3rd party libraries
   # FFTW lib is only copied in runtime mode to have the dlls at the right place
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
-    ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3-win
-
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/speex-dsp/
-  )
+	)
+	
   if(JVX_USE_PCAP)
     set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
       ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/npcap)
@@ -107,12 +106,6 @@ endif()
 if(JVX_USE_ORC)
   set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/orc/)
-endif()
-
-if(JVX_USE_KISSFFT)
-  # This part here only when downloading HDF5	 i windows
-  set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS}
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/kissfft)
 endif()
 
 if(JVX_USE_OPENCV)

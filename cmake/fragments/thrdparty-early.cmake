@@ -1,5 +1,25 @@
 message("Running code to install third party libs at very early time.")
 
+if(JVX_USE_KISSFFT)
+
+	set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/kissfft)
+endif()
+
+if(JVX_USE_FFTREAL)
+	
+	set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
+			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/fft-real)
+endif()
+	
+if(JVX_USE_FFTW)
+	# build 3rd party libraries
+	# FFTW lib is only copied in runtime mode to have the dlls at the right place
+	set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
+		${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3-win
+		)
+endif()
+
 if(NOT JVX_COMPILE_BUILDTOOLS)
 	if(JVX_USE_QT)
   
@@ -48,8 +68,8 @@ if(NOT JVX_COMPILE_BUILDTOOLS)
 		# This option is true if the instal-libs.cmake file is invluded in the platform cmake file
 		set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/vst)
-	endif()
-	
+	endif()	
+
 	# We download Tracy even if JVX_USE_TRACY is not set so Tracy.hpp is avaible
 	# with the empty macros. This avoids all the `#ifdef TRACY_ENABLE .. #endif` blocks.
 	# The library is not built or linked in that case. It's only a cmake interface library

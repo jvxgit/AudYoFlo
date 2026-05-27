@@ -23,20 +23,10 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_BINARY_DIR}/generated
-  ${FFT_INCLUDEDIR}
   )
 
 # Include path for OS builds - Linux, Windows, Apple
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/common)
-
-if(${FFT_COMPILE_DEFINITIONS} MATCHES "JVX_FFT_APPLE")
-
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-apple)
-else()
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftw)
-endif()
 
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_startHere/jvx_startHere.c
@@ -82,42 +72,77 @@ set(LOCAL_SOURCES
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fxlms/jvx_fxlms.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fxlms/jvx_fxlms.h
-)
 
-if(JVX_USE_FFTW)
-	set(LOCAL_SOURCES ${LOCAL_SOURCES}
-		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft.h
-		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf.h
-		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf_nout.h
-		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf_cvrt.h
-		${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_fft_share_global.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf_nout.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf_cvrt.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_fft_share_global.h
 		
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_prv.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_prv.h
 
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_fft_tools.c
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft.c
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf.c
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf_nout.c
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf_cvrt.c
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_fft_share_global.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_fft_tools.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf_nout.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_firfft_cf_cvrt.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fft_tools/jvx_fft_share_global.c
 
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_circbuffer/jvx_circbuffer_fft.c
-		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_spectrumEstimation/jvx_spectrumEstimation.c
-		)
-endif()
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_circbuffer/jvx_circbuffer_fft.c
+	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_spectrumEstimation/jvx_spectrumEstimation.c
+	)
+
   
-if(${FFT_COMPILE_DEFINITIONS} MATCHES "JVX_FFT_APPLE")
+if(JVX_FFT_TYPE_NAME MATCHES "fftw" AND JVX_USE_FFTW)
 
-set(LOCAL_SOURCES ${LOCAL_SOURCES}
-		  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-apple/jvx_fft_core.c)
+	set(LOCAL_SOURCES ${LOCAL_SOURCES} 
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftw/jvx_fft_core.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftw/jvx_fft_core_typedefs.h
+		)
+	include_directories(
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftw
+		${FFT_INCLUDEDIR}
+	)
+	set(LOCAL_LIBS ${FFT_LIBRARIES})
+	set(LOCAL_COMPILE_DEFINITIONS ${FFT_COMPILE_DEFINITIONS})
+
+elseif(JVX_FFT_TYPE_NAME MATCHES "kissfft" AND JVX_USE_KISSFFT)
+
+	set(LOCAL_SOURCES ${LOCAL_SOURCES} 
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-kissfft/jvx_fft_core.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-kissfft/jvx_fft_core_typedefs.h
+		)
+	
+	include_directories(
+		${AYF_KISSFFT_INCLUDE_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-kissfft
+		)
+	set(LOCAL_LIBS ${AYF_KISSFFT_LIBRARIES})
+	set(LOCAL_COMPILE_DEFINITIONS ${AYF_KISSFFT_COMPILE_FLAGS})
+	
+elseif(JVX_FFT_TYPE_NAME MATCHES "fftreal" AND JVX_USE_FFTREAL)
+
+	set(LOCAL_SOURCES ${LOCAL_SOURCES} 
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftreal/jvx_fft_core.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftreal/jvx_fft_core_typedefs.h
+		)
+		
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftreal)
+	
+elseif(JVX_FFT_TYPE_NAME MATCHES "JVX_FFT_APPLE")
+
+	set(LOCAL_SOURCES ${LOCAL_SOURCES} 
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-apple/jvx_fft_core.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-apple/jvx_fft_core_typedefs.h
+		)
+		
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-apple)
+	set(LOCAL_COMPILE_DEFINITIONS ${FFT_COMPILE_DEFINITIONS})
 
 else()
 
-	if(JVX_USE_FFTW)
-		set(LOCAL_SOURCES ${LOCAL_SOURCES}
-		  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx-fft-fftw/jvx_fft_core.c)
-	endif()
-
+	message(FATAL_ERROR "No valid fft implementation specified!")
+	
 endif()
 
 
@@ -152,13 +177,11 @@ else()
 		${CMAKE_CURRENT_BINARY_DIR}/generated)
 endif()
 
-set(LOCAL_LIBS ${FFT_LIBRARIES})
-
-set(LOCAL_COMPILE_DEFINITIONS ${FFT_COMPILE_DEFINITIONS})
-
 set(BUILD_STATIC TRUE)
 set(IS_C_LIB TRUE)
 set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
 set(INSTALL_DEDICATED_PCG_TREE TRUE)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+# message(FATAL_ERROR "Stop Here!")

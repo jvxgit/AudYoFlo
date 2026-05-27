@@ -113,6 +113,9 @@ option(JVX_LIBHOST_WITH_JSON_SHOW "Enable json show extensions in lib host" fals
 option(JVX_USE_LIBMYSOFA "Compile with libmysofa support" false)
 option(JVX_USE_ORC "Find ORC" false)
 option(JVX_USE_KISSFFT "Involve kissfft" false)
+option(JVX_USE_FFTREAL "Invlive fft-real lb." false)
+set(JVX_FFT_TYPE_NAME "fftw" CACHE STRING "Name to involve any of the available ffts.")
+
 option(JVX_PROFILE_TEXT_LOG_LOCK "Enable lock profiling for text log" true)
 set(JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT 0 CACHE STRING "Lock logging helper count")
 
