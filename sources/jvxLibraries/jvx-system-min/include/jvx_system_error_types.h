@@ -43,7 +43,12 @@
 		JVX_ERROR_PROTOCOL_ERROR,
 		JVX_ERROR_NOT_ENOUGH_INPUT_DATA,
 		JVX_ERROR_NOT_ENOUGH_OUTPUT_SPACE,
+		
+		// In negotiations, this error should be reported if the requested settings can not be fulfilled but
+		// a parameter was adapted - then, succes is still possible. If nothing was modified in the negotiations,
+		// the function should rather return JVX_ERROR_UNSUPPORTED!
 		JVX_ERROR_COMPROMISE,
+
 		JVX_ERROR_REMOTE,
 		JVX_ERROR_ALLOCATION,
 		JVX_ERROR_INVALID_FORMAT,

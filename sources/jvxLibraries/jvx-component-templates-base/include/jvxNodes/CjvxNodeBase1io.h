@@ -40,6 +40,7 @@ protected:
 	std::string prefix_descriptor_properties = "inout";
 	std::string prefix_description_properties = "InOut";
 
+	// In negotiations we may report UNSUPPORTED or COMPROMISE
 	jvxBool negCompromiseOnMismatch = true;
 
 public:
