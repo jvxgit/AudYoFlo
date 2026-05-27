@@ -8,16 +8,34 @@
 
 enum class jvxRateLocationMode
 {
+	// In this case the source to drive the converter must request the information about required sample number 
+	// within the process_start_input function. Then, it delivers exactly this number to guarantee a fixed output 
+	// buffersize!!
+	// Examples for an application:
+	// a) Writing to an outout file with an intermediate foward buffer 
+	// The name comes from the fact that the samplerate on the input side is forwarded to the output side
+	// by demanding variable numbers of samples - to make sure no resampling with fixed buffersize relations is involved
 	JVX_FIXED_RATE_LOCATION_INPUT,
+
+	// In this case, the converter stores samples on the input side depending on the number of samples passed.
+	// Then, it computes the output samples from the current number of stored samples. This mode allows for 
+	// a variable buffersize on the output side and even if there is a fixed relation in buffersize for input 
+	// and output the buffersize may be variable if the internal resampling requires so.
+	// Examples for an application: 
+	// a) Reading audio from file in buffers, passing forward the frames to enter a forward buffer to collect data. 
+	//    Here, a fixed buffersize on the output is not required.
+	//he name comes from the fact that 
+
 	JVX_FIXED_RATE_LOCATION_OUTPUT
 };
 
+/*
 enum class jvxBufferingMode
 {
 	JVX_BUFFERING_VARIABLE,
 	JVX_BUFFERING_FIXED
 };
-
+*/
 enum class jvxResamplerQuality
 {
 	JVX_RESAMPLER_QUALITY_LOW,
@@ -59,7 +77,8 @@ private:
 	{
 		jvxBool active_resampling = false;
 		jvxBool active_rechannel = false;
-		jvxBool active_retype = false;
+		jvxBool active_retype_input = false;
+		jvxBool active_retype_output = false;
 		jvxBool requiresRebuffering = false;
 		jvxBool requiresRebufferHeadroom = false;
 		jvxSize lFieldRebuffer = 0;
@@ -70,6 +89,9 @@ private:
 		jvxBool requiresHeadroom = false;
 		jvx_fixed_resampler* fldResampler = nullptr;
 		jvxSize numResampler = 0;
+
+		jvxData** bufsInConvert = nullptr;
+		jvxData** bufsOutConvert = nullptr;
 	} runtime;
 
 	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;

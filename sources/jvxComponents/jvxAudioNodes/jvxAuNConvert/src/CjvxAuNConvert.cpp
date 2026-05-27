@@ -425,12 +425,17 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		runtime.active_rechannel = true;
 	}
-	if (node_inout._common_set_node_params_a_1io.format != node_output._common_set_node_params_a_1io.format)
+	if (node_inout._common_set_node_params_a_1io.format != JVX_DATAFORMAT_DATA)
 	{
-		runtime.active_retype = true;
+		runtime.active_retype_input = true;
 	}
 
-	if(runtime.active_resampling || runtime.active_rechannel || runtime.active_retype)
+	if (node_output._common_set_node_params_a_1io.format != JVX_DATAFORMAT_DATA)
+	{
+		runtime.active_retype_output = true;
+	}
+
+	if(runtime.active_resampling || runtime.active_rechannel)
 	{
 		_common_set_ldslave.zeroCopyBuffering_cfg = false;
 
@@ -467,7 +472,7 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				runtime.requiresRebuffering = true;
 			}
 		}
-		if (runtime.active_rechannel || runtime.active_retype)
+		if (runtime.active_rechannel)
 		{
 			runtime.requiresRebuffering = true;
 		}
@@ -556,6 +561,19 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				JVX_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.ptrFieldBuffer[i], jvxByte, runtime.lFieldRebufferChannel);
 			}
 		}
+
+		if (runtime.active_retype_input)
+		{
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(runtime.bufsInConvert,
+				jvxData, node_inout._common_set_node_params_a_1io.number_channels,
+				node_inout._common_set_node_params_a_1io.buffersize);
+		}
+		if (runtime.active_retype_output)
+		{
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(runtime.bufsOutConvert,
+				jvxData, node_output._common_set_node_params_a_1io.number_channels,
+				node_output._common_set_node_params_a_1io.buffersize);
+		}
 	}
 	return res;
 }
@@ -565,6 +583,16 @@ CjvxAuNConvert::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxSize i;
 	jvxErrorType res = CjvxBareNode1ioRearrange::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+
+	if (runtime.active_retype_input)
+	{
+		JVX_SAFE_DELETE_2DFIELD(runtime.bufsInConvert, node_inout._common_set_node_params_a_1io.number_channels);
+	}
+
+	if (runtime.active_retype_output)
+	{
+		JVX_SAFE_DELETE_2DFIELD(runtime.bufsOutConvert, node_output._common_set_node_params_a_1io.number_channels);
+	}
 
 	if (runtime.active_resampling)
 	{
@@ -596,7 +624,8 @@ CjvxAuNConvert::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	runtime.requiresRebufferHeadroom = false;
 	
 	runtime.active_resampling = false;
-	runtime.active_retype = false;
+	runtime.active_retype_input = false;
+	runtime.active_retype_output = false;
 	runtime.active_rechannel = false;
 
 	return JVX_NO_ERROR;
@@ -656,41 +685,175 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;
 		
-	// If we do nothing, bypass with zerocopy
+	// If we do nothing, bypass with zerocopy - no data processing!
 	if(zeroCopyBuffering_rt)
 	{ 
 		return CjvxBareNode1ioRearrange::process_buffers_icon(mt_mask, idx_stage);
 	}
 
-	// Extract input and output fields
-	jvxData** bufsIn = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
-	jvxData** bufsOut = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
-	jvxSize idx_stage_local = jvx_process_icon_extract_stage(_common_set_icon.theData_in, idx_stage);
+	// Options: 
+	// 
+	// --- runtime.active_resampling
+	// --- runtime.active_retype_output
+	// --- runtime.active_retype_input
+	// --- runtime.requiresRebuffering
+	//
+	
+	// ============================================================================
+	// Extract input fields. We may accept different formats here!
+	// ============================================================================
 
+	jvxData** bufsInData = nullptr;
+	jvxInt16** bufsInInt16 = nullptr;
+	jvxInt32** bufsInInt32 = nullptr;
+	switch (_common_set_icon.theData_in->con_params.format)
+	{
+	case JVX_DATAFORMAT_DATA:
+		bufsInData = jvx_process_icon_extract_input_buffers<jvxData>(_common_set_icon.theData_in, idx_stage);
+		break;
+	case JVX_DATAFORMAT_16BIT_LE:
+		bufsInInt16 = jvx_process_icon_extract_input_buffers<jvxInt16>(_common_set_icon.theData_in, idx_stage);
+		break;
+	case JVX_DATAFORMAT_32BIT_LE:
+		bufsInInt32 = jvx_process_icon_extract_input_buffers<jvxInt32>(_common_set_icon.theData_in, idx_stage);
+		break;
+	}
+	
+	// ============================================================================
+	// Extract output fields. We may accept different formats here!
+	// ============================================================================
+
+	jvxData** bufsOutData = nullptr;
+	jvxInt16** bufsOutInt16 = nullptr;
+	jvxInt32** bufsOutInt32 = nullptr;
+
+	switch (_common_set_ocon.theData_out.con_params.format)
+	{
+	case JVX_DATAFORMAT_DATA:
+		bufsOutData = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
+		break;
+	case JVX_DATAFORMAT_16BIT_LE:
+		bufsOutInt16 = jvx_process_icon_extract_output_buffers<jvxInt16>(_common_set_ocon.theData_out);
+		break;
+	case JVX_DATAFORMAT_32BIT_LE:
+		bufsOutInt32 = jvx_process_icon_extract_output_buffers<jvxInt32>(_common_set_ocon.theData_out);
+		break;
+	}
+
+	jvxSize idx_stage_local_in = jvx_process_icon_extract_stage(_common_set_icon.theData_in, idx_stage);
+	jvxSize idx_stage_local_out = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+
+	// ============================================================================
+	// ============================================================================
+	// ============================================================================
+	
+	// ============================================================================
+	// Compute number of input samples for rebuffering mode!!	
+	// ============================================================================
+
+	jvxSize numInputSamples = _common_set_icon.theData_in->con_params.buffersize;
+	if (_common_set_icon.theData_in->con_data.fHeights && JVX_CHECK_SIZE_SELECTED(_common_set_icon.theData_in->con_data.fHeights[idx_stage_local_in].x))
+	{
+		numInputSamples = _common_set_icon.theData_in->con_data.fHeights[idx_stage_local_in].x;
+	}
+	assert(numInputSamples <= _common_set_icon.theData_in->con_params.buffersize);
+
+	// ============================================================================
+	// In case a type conversion is required on the input side
+	// ============================================================================
+
+	if (runtime.active_retype_input)
+	{
+		jvxSize cnt = 0;
+		jvxBool jumpToExit = true;
+		
+		// Output of converter may be convert buffer (default) or processing output buffer if nothing else happens
+		jvxData** targetConvIn = runtime.bufsInConvert;		
+
+		// If we see no output conversion and no rebuffering, we will copy straight to the output
+		if (!runtime.requiresRebuffering && !runtime.active_retype_output)
+		{
+			targetConvIn = bufsOutData; // <- this is the component target output buffer!!
+			jumpToExit = true; // <- in case we operatre quickly, use the jump shortcut!!
+		}
+
+		// Run the actual conversion
+		switch (_common_set_icon.theData_in->con_params.format)
+		{
+		case JVX_DATAFORMAT_16BIT_LE:
+			for (cnt = 0; cnt < _common_set_icon.theData_in->con_params.number_channels; cnt++)
+			{
+				jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, jvxData>(
+					bufsInInt16[cnt], targetConvIn[cnt],
+					numInputSamples, JVX_MAX_INT_16_DIV);
+			}			
+			bufsInData = runtime.bufsInConvert;
+
+			break;
+		case JVX_DATAFORMAT_32BIT_LE:
+			for (cnt = 0; cnt < _common_set_icon.theData_in->con_params.number_channels; cnt++)
+			{
+				jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
+					bufsInInt32[cnt], targetConvIn[cnt],
+					numInputSamples, JVX_MAX_INT_16_DIV);
+			}
+			bufsInData = runtime.bufsInConvert;
+
+			break;
+		default:
+			assert(0);
+		}
+
+		// If shortcut makes sense, go ahead!!
+		if (jumpToExit)
+		{
+			goto exit_fwd;
+		}
+	}
+
+
+	// =======================================================================================
+	// Convert from jvxData to specific format. OUTPUT CONVERSION!
+	// Here, we only pre-set a variable for the later case
+	// =======================================================================================
+
+	// Default case is that we out output the proposed number of samples
+	jvxSize numOutSamples = node_output._common_set_node_params_a_1io.buffersize;	
+
+	if (runtime.active_retype_output)
+	{
+		// We declare a new output buffer taregt: the intermediate buffer of type jvxData!
+		// Later, the data within this buffer will be retyped on the output side
+		switch (_common_set_ocon.theData_out.con_params.format)
+		{
+		case JVX_DATAFORMAT_16BIT_LE:
+
+			bufsOutData = runtime.bufsOutConvert;
+			break;
+
+		case JVX_DATAFORMAT_32BIT_LE:
+			bufsOutData = runtime.bufsOutConvert;
+			break;
+
+		default:
+			assert(0);
+		}
+	}
 
 	// The algorithm becomes a little complicated if the output buffersize does not fit into the 
 	// provides buffer due to fractional relation
 	if (runtime.requiresRebuffering)
 	{
-		jvxSize numInputSamples = _common_set_icon.theData_in->con_params.buffersize;		
 		jvxSize numCopyNextFrame = 0;
 		jvxSize numResamplerOut = 0;
-		jvxSize numResamplerIn = 0;
-		jvxSize numOutSamples = 0;
+		jvxSize numResamplerIn = 0;		
 		jvxSize cnt = 0;
 		jvxSize splCnt = 0;
 		jvxSize loopNum = 0; 
 		jvxSize numOutChannels = _common_set_ocon.theData_out.con_params.number_channels;
-		jvxData** bufsOutChannels = bufsOut;
+		jvxData** bufsOutChannels = bufsOutData;
 		jvxSize numInChannels = _common_set_icon.theData_in->con_params.number_channels;
-		jvxData** bufsInChannels = bufsIn;
-
-		// Obtain the (optional) number of input samples. Buffersize may only be lower!!
-		if (JVX_CHECK_SIZE_SELECTED(_common_set_icon.theData_in->con_data.fHeights[idx_stage_local].x))
-		{
-			numInputSamples = _common_set_icon.theData_in->con_data.fHeights[idx_stage_local].x;
-		}
-		assert(numInputSamples <= _common_set_icon.theData_in->con_params.buffersize);
+		jvxData** bufsInChannelsData = bufsInData;
 
 		switch (fixedLocationMode)
 		{
@@ -701,6 +864,10 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			// runtime.nCFieldRebuffer is allocated to hold the OUTPUT channels!
 			// We will loop over max of input and output buffers but we will only
 			// resample over the output channels
+
+			// If we have a length constraint in the input, we need it as well in the output
+			numOutSamples = numInputSamples;
+			assert(numOutSamples <= node_output._common_set_node_params_a_1io.buffersize);
 
 			// Channel conversion with different targets for resampling or no resampling			
 			if (runtime.active_resampling)
@@ -737,7 +904,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				jvxSize outCnt = cnt % numOutChannels;
 
 				// From input to rebuffer buffers
-				jvxData* sourceIn = (jvxData*)bufsIn[inCnt];
+				jvxData* sourceInData = (jvxData*)bufsInData[inCnt];
 				jvxData* targetIn = (jvxData*)bufsOutChannels[outCnt];
 				
 				// Target may have an offset due to stored samples
@@ -746,7 +913,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				// Loop over all samples with circular extend or downmix
 				for (splCnt = 0; splCnt < numInputSamples; splCnt++)
 				{
-					jvxData sampleIn = sourceIn[splCnt];
+					jvxData sampleIn = sourceInData[splCnt];
 					targetIn[splCnt] += sampleIn;
 				}
 			}
@@ -777,12 +944,11 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					varOut.numOut = numResamplerOut;
 
 					// Important: use the "new" input buffer
-					jvx_fixed_resampler_process(&runtime.fldResampler[i], runtime.ptrFieldBuffer[i], bufsOut[i], &varOut); // Full size resampling
+					jvx_fixed_resampler_process(&runtime.fldResampler[i], runtime.ptrFieldBuffer[i], bufsOutData[i], &varOut); // Full size resampling
 				}
-
-				// Now approach the output side and set the variable output buffersize
-				idx_stage_local = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
-				_common_set_ocon.theData_out.con_data.fHeights[idx_stage_local].x = numResamplerOut;
+			
+				// Take away the number of output samples as computed - we will need this on output conversion
+				numOutSamples = numResamplerOut;
 
 				// Housekeeping: update intermediate buffer by sample move. It is typically only very few samples to move.
 				numCopyNextFrame = runtime.fFieldRebuffer - numResamplerIn;
@@ -802,6 +968,12 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				// Finally, update fill height for next frame
 				runtime.fFieldRebuffer -= numResamplerIn;
 			}
+
+			// Accept number of samples on the output side
+			assert(_common_set_ocon.theData_out.con_data.fHeights);
+			// Now approach the output side and set the variable output buffersize			
+			_common_set_ocon.theData_out.con_data.fHeights[idx_stage_local_out].x = numOutSamples;
+
 			break;
 		case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
 
@@ -814,7 +986,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			if (runtime.active_resampling)
 			{
 				numInChannels = runtime.nCFieldRebuffer;
-				bufsInChannels = (jvxData**)runtime.ptrFieldBuffer;
+				bufsInChannelsData = (jvxData**)runtime.ptrFieldBuffer;
 			}
 
 			loopNum = JVX_MAX(numInChannels,
@@ -823,8 +995,8 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			// Compute the number of samples available
 			numResamplerOut = numInputSamples * resampling.cc.oversamplingFactor / resampling.cc.downsamplingFactor;
 			
-			// Output buffersize is fixed!
-			numOutSamples = node_output._common_set_node_params_a_1io.buffersize;
+			// Output buffersize is fixed! Has been set on entry!!
+			// numOutSamples_ = node_output._common_set_node_params_a_1io.buffersize;
 
 			// Some checks to make sure the samples fit into our internal buffer
 			assert(runtime.fFieldRebuffer + numResamplerOut <= runtime.lFieldRebuffer);
@@ -847,7 +1019,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 					varOut.numOut = numResamplerOut;
 
 					// Important: use the "new" input buffer with index shift (targetOut)
-					jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsIn[i], targetOut, &varOut); // Full size resampling
+					jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsInData[i], targetOut, &varOut); // Full size resampling
 				}
 
 				// Update fillheight
@@ -857,7 +1029,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			// Now, preset the output buffer to 0
 			for (cnt = 0; cnt < node_output._common_set_node_params_a_1io.number_channels; cnt++)
 			{
-				jvxData* targetOut = bufsOut[cnt];
+				jvxData* targetOut = bufsOutData[cnt];
 				jvxSize splCnt = 0;
 				for (; splCnt < numOutSamples; splCnt++)
 				{
@@ -874,8 +1046,8 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				jvxSize outCnt = cnt % _common_set_ocon.theData_out.con_params.number_channels;
 
 				// Straight copy front to back
-				jvxData* sourceOut = (jvxData*)bufsInChannels[inCnt];
-				jvxData* targetOut = (jvxData*)bufsOut[outCnt];
+				jvxData* sourceOut = (jvxData*)bufsInChannelsData[inCnt];
+				jvxData* targetOut = (jvxData*)bufsOutData[outCnt];
 
 				// Add the output from channels in case of downmix
 				for (splCnt = 0; splCnt < numOutSamples; splCnt++)
@@ -912,12 +1084,75 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	}
 	else
 	{
-		// Simple case: just resample straight away
-		for (i = 0; i < runtime.numResampler; i++)
+		if (runtime.active_resampling)
 		{
-			jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsIn[i], bufsOut[i], nullptr); // Full size resampling
+			// Simple case: just resample straight away
+			for (i = 0; i < runtime.numResampler; i++)
+			{
+				jvx_fixed_resampler_process(&runtime.fldResampler[i], bufsInData[i], bufsOutData[i], nullptr); // Full size resampling
+			}
+		}
+		else
+		{
+			if (runtime.active_retype_output)
+			{
+				// We can only reach this location if:
+				// 1) no input conversion
+				// 2) no rebuffering
+				// 3) no resampling
+				// Then, the only operation will be to convert on the output side!!
+				
+				// Relocate the inpout buffer for conversion on output side
+				bufsOutData = bufsInData;
+			}
+			else 
+			{
+				// We can only reach this location if:
+				// 1) no input conversion
+				// 2) no rebuffering
+				// 3) no resampling
+				// 4) no output conversion
+				// This may only happen if a zerocopy operation is desired!!
+
+				assert(0); // <- this case should have been covered by zerocopy processing!!
+			}
 		}
 	}
+
+	// ===============================================================================
+	// Output conversion: Change type of audio samples.
+	// ===============================================================================
+
+	if (runtime.active_retype_output)
+	{
+		jvxSize cnt = 0;
+
+		// Note that <bufsOutData> might be different buffer locations depending on history!!
+		switch (_common_set_ocon.theData_out.con_params.format)
+		{
+		case JVX_DATAFORMAT_16BIT_LE:
+			for (cnt = 0; cnt < _common_set_ocon.theData_out.con_params.number_channels; cnt++)
+			{
+				jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt16>(
+					bufsOutData[cnt],
+					bufsOutInt16[cnt], numOutSamples, JVX_MAX_INT_16_DATA);
+			}
+			break;
+		case JVX_DATAFORMAT_32BIT_LE:
+			for (cnt = 0; cnt < _common_set_ocon.theData_out.con_params.number_channels; cnt++)
+			{
+				jvx_convertSamples_from_flp_norm_to_fxp<jvxData, jvxInt32>(
+					bufsOutData[cnt],
+					bufsOutInt32[cnt], numOutSamples, JVX_MAX_INT_32_DATA);
+			}
+
+			break;
+		default:
+			assert(0);
+		}
+	}	
+
+exit_fwd:
 	return fwd_process_buffers_icon(mt_mask, idx_stage);
 	
 }

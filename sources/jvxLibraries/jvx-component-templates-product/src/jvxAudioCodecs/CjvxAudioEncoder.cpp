@@ -28,13 +28,10 @@ CjvxAudioEncoder::activate()
 	{
 		JVX_ACTIVATE_DEFAULT_ONE_IN_ONE_OUT_CONNECTORS(NULL, static_cast<IjvxObject*>(this), "default", NULL, _common_set.theModuleName);
 
-		// Activate by calling specific function
-		this->activate_encoder();
-
 		// Set the codec parameters based on the properties
 		// Default: accept JVX_DATAFORMAT_DATA with JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED
 		neg_input._set_parameters_fixed(
-			JVX_SIZE_UNSELECTED, 
+			JVX_SIZE_UNSELECTED,
 			JVX_SIZE_UNSELECTED,
 			JVX_SIZE_UNSELECTED,
 			JVX_DATAFORMAT_DATA,
@@ -46,6 +43,9 @@ CjvxAudioEncoder::activate()
 			JVX_SIZE_UNSELECTED,
 			JVX_SIZE_UNSELECTED,
 			JVX_DATAFORMAT_BYTE, JVX_DATAFORMAT_GROUP_AUDIO_CODED_GENERIC);
+
+		// Activate by calling specific function
+		this->activate_encoder();		
 	}
 	return(res);
 }
