@@ -53,15 +53,16 @@ if(${JVX_OS} MATCHES "windows")
 elseif(${JVX_OS} MATCHES "linux")
 
 
-
-	if(JVX_LINUX_NATIVE_INSTALLED_LIBS)
-		find_package(kissfft REQUIRED)
+	# It seems that kissfft as a package does not work so well: there is no way to install
+	# double precision package
+	# if(JVX_LINUX_NATIVE_INSTALLED_LIBS)
+	#	find_package(kissfft REQUIRED)
+	#	
+	#	message(FATAL_ERROR "-> KISSFFT -- ${OpenCV_LIBS} -- ${OpenCV_INCLUDE_DIRS}")
 		
-		message(FATAL_ERROR "-> KISSFFT -- ${OpenCV_LIBS} -- ${OpenCV_INCLUDE_DIRS}")
-		
-		set(OPENCV_LIBRARY_PATH "${KissFft_INCLUDE_DIRS}" CACHE INTERNAL "kissfft include references")
-		set(OPENCV_LIBRARIES ${KissFft_LIBS} CACHE INTERNAL "opencv library references")
-	else()
+	#	set(OPENCV_LIBRARY_PATH "${KissFft_INCLUDE_DIRS}" CACHE INTERNAL "kissfft include references")
+	#	set(OPENCV_LIBRARIES ${KissFft_LIBS} CACHE INTERNAL "opencv library references")
+	#else()
 		set(targetfolder kissfft)
 	
 		set(archtoken glnx)
@@ -102,9 +103,9 @@ elseif(${JVX_OS} MATCHES "linux")
 		endif()
 
 		set(AYF_KISSFFT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/include/kissfft" CACHE INTERNAL "kissfft include references")
-		set(AYF_KISSFFT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/lib/libkissfft-${dataformattoken}.so" CACHE INTERNAL "kissfft library references")
+		set(AYF_KISSFFT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/lib/libkissfft-${dataformattoken}.a" CACHE INTERNAL "kissfft library references")
 		
-	endif()	
+	#endif()	
 
 elseif(${JVX_OS} MATCHES "Android")
 
