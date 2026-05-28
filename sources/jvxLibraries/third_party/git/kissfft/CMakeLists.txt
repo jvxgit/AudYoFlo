@@ -80,7 +80,7 @@ elseif(${JVX_OS} MATCHES "Android")
 	set(AYF_KISSFFT_COMPILE_FLAGS "-Dkiss_fft_scalar=${dataformattoken}" CACHE INTERNAL "kissfft compile flags")
 	
 	set(AYF_KISSFFT_INSTALL_FOLDER "${targetfolder}-${archtoken}-${dataformattoken}-${CMAKE_BUILD_TYPE}")
-	set(AYF_KISSFFT_BUILD_FOLDER "build_${archtoken}_${dataformattoken}_${CMAKE_BUILD_TYPE}")
+	set(AYF_KISSFFT_BUILD_FOLDER "build-${archtoken}_${dataformattoken}_${CMAKE_BUILD_TYPE}")
 	
 	message("Checking folder ${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}")
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}")
@@ -100,6 +100,7 @@ elseif(${JVX_OS} MATCHES "Android")
 		endif()
 		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-android.sh ${archtoken} ${targetfolder} ${dataformattoken} ${CMAKE_BUILD_TYPE} ${ANDROID_NDK} ${ANDROID_PLATFORM} ${ANDROID_ABI}")
 		
+		# message(FATAL_ERROR "file(REMOVE_RECURSE \"${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}\")")
 		file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
 	endif()
 

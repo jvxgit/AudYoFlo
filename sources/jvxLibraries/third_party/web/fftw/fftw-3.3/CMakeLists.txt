@@ -44,9 +44,12 @@ if(CMAKE_HOST_WIN32)
 	message("     lib double: ${FFT_LIBRARYD}")
 	message("     lib: ${FFT_LIBRARIES}")
 	
-	# We install the fftw libs in the runtime dll path
-	install(FILES ${FFT_LIBRARIES} DESTINATION ${INSTALL_PATH_LIB_SHARED})
-	## message(FATAL_ERROR "Hier -- ")
+	if(NOT JVX_COMPILE_BUILDTOOLS)
+		# We install the fftw libs in the runtime dll path
+		install(FILES ${FFT_LIBRARIES} DESTINATION ${INSTALL_PATH_LIB_SHARED})
+		## message(FATAL_ERROR "Hier -- ")
+	endif()
+	
 else()	
 
 set(targetfolder fftw-3.3.10)
@@ -90,9 +93,11 @@ set(targetfolder fftw-3.3.10)
 	message("     lib double: ${FFT_LIBRARYD}")
 	message("     lib: ${FFT_LIBRARIES}")
 	
-	# We install the fftw libs in the runtime dll path
-	install(FILES ${FFT_LIBRARIES} DESTINATION ${INSTALL_PATH_LIB_SHARED})
-	# message(FATAL_ERROR "Hier -- ")
+	if(NOT JVX_COMPILE_BUILDTOOLS)
+		# We install the fftw libs in the runtime dll path
+		install(FILES ${FFT_LIBRARIES} DESTINATION ${INSTALL_PATH_LIB_SHARED})
+		# message(FATAL_ERROR "Hier -- ")
+	endif()
 	
 endif()
 

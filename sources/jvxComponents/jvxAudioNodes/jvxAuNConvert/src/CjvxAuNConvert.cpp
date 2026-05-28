@@ -758,6 +758,9 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	}
 	assert(numInputSamples <= _common_set_icon.theData_in->con_params.buffersize);
 
+	// Default case is that we out output the proposed number of samples
+	jvxSize numOutSamples = node_output._common_set_node_params_a_1io.buffersize;
+
 	// ============================================================================
 	// In case a type conversion is required on the input side
 	// ============================================================================
@@ -815,10 +818,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	// =======================================================================================
 	// Convert from jvxData to specific format. OUTPUT CONVERSION!
 	// Here, we only pre-set a variable for the later case
-	// =======================================================================================
-
-	// Default case is that we out output the proposed number of samples
-	jvxSize numOutSamples = node_output._common_set_node_params_a_1io.buffersize;	
+	// =======================================================================================	
 
 	if (runtime.active_retype_output)
 	{

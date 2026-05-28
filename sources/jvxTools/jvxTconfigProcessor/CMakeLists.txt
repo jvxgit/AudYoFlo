@@ -34,4 +34,11 @@ set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_CONFIG_EXPRESSIO
 
 set(IS_JVX_COMPONENT TRUE)
 
+if(JVX_COMPILE_BUILDTOOLS)
+	# No need to output dynamic lib
+	set(JVX_COMPONENT_ONLY_STATIC TRUE)
+endif()
+
 include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+
+# message(FATAL_ERROR "Hier")
