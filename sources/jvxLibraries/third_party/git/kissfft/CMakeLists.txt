@@ -40,8 +40,8 @@ if(${JVX_OS} MATCHES "windows")
 			file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
 		endif()
 		execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${targetfolder} ${dataformattoken} ${CMAKE_BUILD_TYPE}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-		## message(FATAL_ERROR "prepareModules-win.bat -> ${archtoken} -> ${targetfolder} -> ${dataformattoken} -> ${CMAKE_BUILD_TYPE}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-		# file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
+
+		file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
 	endif()
 
 	
@@ -63,6 +63,51 @@ elseif(${JVX_OS} MATCHES "linux")
 	
 	set(AYF_KISSFFT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}" CACHE INTERNAL "kissfft include references")
 	set(AYF_KISSFFT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/kissfft.a" CACHE INTERNAL "kissfft library references")
+
+
+
+elseif(${JVX_OS} MATCHES "Android")
+
+	set(targetfolder kissfft)	
+	set(archtoken android)
+	
+	set(archtoken "${archtoken}-${ANDROID_ABI}")
+	
+	set(dataformattoken "double")
+	if(JVX_SYSTEM_USE_DATA_FORMAT_FLOAT)
+		set(dataformattoken "float")
+	endif()
+	set(AYF_KISSFFT_COMPILE_FLAGS "-Dkiss_fft_scalar=${dataformattoken}" CACHE INTERNAL "kissfft compile flags")
+	
+	set(AYF_KISSFFT_INSTALL_FOLDER "${targetfolder}-${archtoken}-${dataformattoken}-${CMAKE_BUILD_TYPE}")
+	set(AYF_KISSFFT_BUILD_FOLDER "build_${archtoken}_${dataformattoken}_${CMAKE_BUILD_TYPE}")
+	
+	message("Checking folder ${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}")
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}")
+	
+		message(" --> does not exist.")
+		
+		# kissfft-%arch%-%dataformattoken%-%buildtype%
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+			message("kissfft sub project not available. Starting script to download it.") 
+			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+			message("kissfft installation complete.")
+		endif()
+	
+		# Build the kissfft library
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
+			file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
+		endif()
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-android.sh ${archtoken} ${targetfolder} ${dataformattoken} ${CMAKE_BUILD_TYPE} ${ANDROID_NDK} ${ANDROID_PLATFORM} ${ANDROID_ABI}")
+		
+		file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
+	endif()
+
+	set(AYF_KISSFFT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/include/kissfft" CACHE INTERNAL "kissfft include references")
+	set(AYF_KISSFFT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/lib/libkissfft-${dataformattoken}.a" CACHE INTERNAL "kissfft library references")
+		
+	# message(FATAL_ERROR "KISSFFT: ${AYF_KISSFFT_INCLUDE_DIR} -- ${AYF_KISSFFT_LIBRARIES} -- ${AYF_KISSFFT_COMPILE_FLAGS}")
+	
 endif()
 
 # message(FATAL_ERROR "Hier -- ")
