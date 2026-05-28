@@ -51,20 +51,60 @@ if(${JVX_OS} MATCHES "windows")
 	# message(FATAL_ERROR "KISSFFT: ${AYF_KISSFFT_INCLUDE_DIR} -- ${AYF_KISSFFT_LIBRARIES} -- ${AYF_KISSFFT_COMPILE_FLAGS}")
 	
 elseif(${JVX_OS} MATCHES "linux")
-	## Install <sudo apt-get install libhdf5-dev>
-	find_package(PkgConfig)
-	
-	set(targetfolder kissfft)
-	set(archtoken glnx)
-	
-	message("kissfft sub project not available. Starting script to download it.") 
-	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh; exit")
-	message("kissfft installation complete.")
-	
-	set(AYF_KISSFFT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}" CACHE INTERNAL "kissfft include references")
-	set(AYF_KISSFFT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken}/lib/kissfft.a" CACHE INTERNAL "kissfft library references")
 
 
+
+	if(JVX_LINUX_NATIVE_INSTALLED_LIBS)
+		find_package(kissfft REQUIRED)
+		
+		message(FATAL_ERROR "-> KISSFFT -- ${OpenCV_LIBS} -- ${OpenCV_INCLUDE_DIRS}")
+		
+		set(OPENCV_LIBRARY_PATH "${KissFft_INCLUDE_DIRS}" CACHE INTERNAL "kissfft include references")
+		set(OPENCV_LIBRARIES ${KissFft_LIBS} CACHE INTERNAL "opencv library references")
+	else()
+		set(targetfolder kissfft)
+	
+		set(archtoken glnx)
+	
+		set(archtoken "${archtoken}")
+
+		set(dataformattoken "double")
+		if(JVX_SYSTEM_USE_DATA_FORMAT_FLOAT)
+			set(dataformattoken "float")
+		endif()
+
+		set(AYF_KISSFFT_COMPILE_FLAGS "-Dkiss_fft_scalar=${dataformattoken}" CACHE INTERNAL "kissfft compile flags")
+	
+		set(AYF_KISSFFT_INSTALL_FOLDER "${targetfolder}-${archtoken}-${dataformattoken}-${CMAKE_BUILD_TYPE}")
+		set(AYF_KISSFFT_BUILD_FOLDER "build-${archtoken}_${dataformattoken}_${CMAKE_BUILD_TYPE}")
+
+		message("Checking folder ${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}")
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}")
+
+		      message(" --> does not exist.")
+		
+			# kissfft-%arch%-%dataformattoken%-%buildtype%
+			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}")
+			       message("kissfft sub project not available. Starting script to download it.") 
+			       execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-win.sh; exit")
+			       message("kissfft installation complete.")
+			       endif()
+
+			# Build the kissfft library
+		  	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
+				file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")
+			endif()
+
+			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${dataformattoken} ${CMAKE_BUILD_TYPE}")
+
+			# message(FATAL_ERROR "file(REMOVE_RECURSE \"${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}\")")
+			#file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
+		endif()
+
+		set(AYF_KISSFFT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/include/kissfft" CACHE INTERNAL "kissfft include references")
+		set(AYF_KISSFFT_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/lib/libkissfft-${dataformattoken}.so" CACHE INTERNAL "kissfft library references")
+		
+	endif()	
 
 elseif(${JVX_OS} MATCHES "Android")
 
