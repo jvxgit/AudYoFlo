@@ -41,7 +41,8 @@ if(${JVX_OS} MATCHES "windows")
 		endif()
 		execute_process(COMMAND cmd /c "prepareModules-win.bat ${archtoken} ${targetfolder} ${dataformattoken} ${CMAKE_BUILD_TYPE}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-		file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
+		# If we want to debug the library, we need to keep the build folder
+		## file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
 	endif()
 
 	
@@ -98,6 +99,7 @@ elseif(${JVX_OS} MATCHES "linux")
 
 			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${dataformattoken} ${CMAKE_BUILD_TYPE}")
 
+			# If we want to debug, we need to keep the build outputs
 			# message(FATAL_ERROR "file(REMOVE_RECURSE \"${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}\")")
 			#file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
 		endif()
@@ -141,8 +143,9 @@ elseif(${JVX_OS} MATCHES "Android")
 		endif()
 		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-android.sh ${archtoken} ${targetfolder} ${dataformattoken} ${CMAKE_BUILD_TYPE} ${ANDROID_NDK} ${ANDROID_PLATFORM} ${ANDROID_ABI}")
 		
+		# If we want to debug, we need to retain the build outputs
 		# message(FATAL_ERROR "file(REMOVE_RECURSE \"${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}\")")
-		file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
+		# file(REMOVE_RECURSE "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_BUILD_FOLDER}")
 	endif()
 
 	set(AYF_KISSFFT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${AYF_KISSFFT_INSTALL_FOLDER}/include/kissfft" CACHE INTERNAL "kissfft include references")
