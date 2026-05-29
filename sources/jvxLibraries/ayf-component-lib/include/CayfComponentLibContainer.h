@@ -75,6 +75,9 @@ public:
 
 	void linkBinding(ayfHostBindingReferences* bindRef);
 
+	jvxErrorType requestPrivData(jvxHandle** ptrOnReturn);
+	jvxErrorType returnPrivData(jvxHandle* ptrToReturn);
+
 	audioParams& audio_parameter_on_start() 
 	{
 		return startParams;

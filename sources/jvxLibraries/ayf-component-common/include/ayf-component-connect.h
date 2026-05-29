@@ -87,6 +87,9 @@ extern "C" {
 		int numSamplesIn, int numChannelsIn, jvxData* outInterleaved, 
 		int numSamlesOut, int numChannelsOut);
 
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_req_priv, AYF_PROJECT_POSTFIX)(jvxHandle* instance, jvxHandle** privOnReturn);
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_ret_priv, AYF_PROJECT_POSTFIX)(jvxHandle* instance, jvxHandle* privToReturn);
+
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_process_nil, AYF_PROJECT_POSTFIX)(
 		jvxHandle* instance, jvxData** inInterleaved,
 		int numSamplesIn, int numChannelsIn, jvxData** outInterleaved,

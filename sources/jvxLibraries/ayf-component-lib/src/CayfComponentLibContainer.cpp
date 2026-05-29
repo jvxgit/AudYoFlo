@@ -20,6 +20,35 @@ CayfComponentLibContainer::linkBinding(ayfHostBindingReferences* bindRef)
 	}
 }
 
+jvxErrorType 
+CayfComponentLibContainer::requestPrivData(jvxHandle** ptrOnReturn)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	if (prv_callback_multipurpose)
+	{
+		if (ptrOnReturn)
+		{
+			*ptrOnReturn = prv_callback_multipurpose;
+		}
+		res = JVX_NO_ERROR;
+	}
+	return res;
+}
+
+jvxErrorType
+CayfComponentLibContainer::returnPrivData(jvxHandle* ptrToReturn)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	if (prv_callback_multipurpose)
+	{
+		if (ptrToReturn == prv_callback_multipurpose)
+		{
+			res = JVX_NO_ERROR;
+		}
+	}
+	return res;
+}
+
 void
 CayfComponentLibContainer::reset()
 {

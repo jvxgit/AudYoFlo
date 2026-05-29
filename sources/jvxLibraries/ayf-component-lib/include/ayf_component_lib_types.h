@@ -6,7 +6,8 @@
 typedef enum 
 {
 	AYF_BUFFERS_INTERLEAVED,
-	AYF_BUFFERS_NONINTERLEAVED
+	AYF_BUFFERS_NONINTERLEAVED,
+	AYF_BUFFERS_INVALID
 } ayfBufferInterleaveType;
 
 typedef enum 
@@ -33,12 +34,12 @@ struct ayfInitConnectStruct
 
 struct ayfInitParamStruct
 {
-	int numInChans;
-	int numOutChans;
-	int bSize;
-	int sRate;
-	ayfBufferInterleaveType ilTp;
-	int passthroughMode;
+	int numInChans = -1;
+	int numOutChans = -1;
+	int bSize = -1;
+	int sRate = -1;
+	ayfBufferInterleaveType ilTp = ayfBufferInterleaveType::AYF_BUFFERS_INVALID;
+	int passthroughMode = -1;
 };
 
 #endif

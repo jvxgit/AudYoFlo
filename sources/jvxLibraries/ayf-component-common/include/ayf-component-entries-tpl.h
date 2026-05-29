@@ -202,4 +202,26 @@ extern "C"
 		}
 		return res;
 	}
+
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_req_priv, AYF_PROJECT_POSTFIX)(jvxHandle* instance, jvxHandle** privOnReturn)
+	{
+		jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+		if (instance)
+		{
+			CayfComponentLibContainer* libCont = reinterpret_cast<CayfComponentLibContainer*>(instance);
+			res = libCont->requestPrivData(privOnReturn);			
+		}
+		return res;
+	}
+
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_ret_priv, AYF_PROJECT_POSTFIX)(jvxHandle* instance, jvxHandle* privOnReturn)
+	{
+		jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+		if (instance)
+		{
+			CayfComponentLibContainer* libCont = reinterpret_cast<CayfComponentLibContainer*>(instance);
+			res = libCont->returnPrivData(privOnReturn);
+		}
+		return res;
+	}
 }
