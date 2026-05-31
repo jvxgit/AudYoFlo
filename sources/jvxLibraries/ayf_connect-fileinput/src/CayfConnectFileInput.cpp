@@ -62,7 +62,7 @@ CayfConnectFileInput::deallocate_main_node()
 }
 
 jvxErrorType
-CayfConnectFileInput::on_main_node_selected(IjvxNode* node)
+CayfConnectFileInput::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node)
 {
 	IjvxProperties* props = nullptr;
 	IjvxManipulate* manIf = nullptr;

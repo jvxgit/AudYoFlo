@@ -938,7 +938,7 @@ CayfComponentLib::system_about_to_shutdown()
 }
 
 jvxErrorType
-CayfComponentLib::on_main_node_selected(IjvxNode* node)
+CayfComponentLib::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node)
 {
 	IjvxProperties* props = nullptr;
 	// Add the sub components
@@ -952,7 +952,7 @@ CayfComponentLib::on_main_node_selected(IjvxNode* node)
 
 
 jvxErrorType
-CayfComponentLib::before_main_node_unselect(IjvxNode* node)
+CayfComponentLib::before_main_node_unselect(IjvxHiddenInterface* hostRef, IjvxNode* node)
 {
 	IjvxProperties* props = nullptr;
 	// Add the sub components
@@ -993,7 +993,7 @@ CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
 	}
 	if (resC == JVX_NO_ERROR)
 	{
-		resC = on_main_node_selected(mainNode);
+		resC = on_main_node_selected(hostRef, mainNode);
 	}
 
 	if (resC == JVX_NO_ERROR)
@@ -1011,7 +1011,7 @@ CayfComponentLib::pre_deallocate_one_main_node(IjvxNode* mainNode)
 	jvxErrorType resC = mainNode->deactivate();
 	assert(resC == JVX_NO_ERROR);
 
-	resC = before_main_node_unselect(mainNode);
+	resC = before_main_node_unselect(hostRef, mainNode);
 	assert(resC == JVX_NO_ERROR);
 
 	resC = mainNode->unselect();

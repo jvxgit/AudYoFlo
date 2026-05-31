@@ -100,7 +100,7 @@ CjvxAuNBinauralRender::activate()
 			source_direction_angles_deg_set, 2,
 			source_direction_angles_deg_inuse, 2);
 
-		threads = reqInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
+		threads = reqInstTool<IjvxThreads,IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
 		if (threads.cpPtr)
 		{
 			AYF_ITHREAD_INITIALIZE(threads.cpPtr, this, "CjvxAuNBinauralRender");
@@ -120,7 +120,7 @@ CjvxAuNBinauralRender::deactivate()
 		{
 			threads.cpPtr->terminate();
 		}
-		retInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS, threads);
+		retInstTool<IjvxThreads,IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_THREADS, threads);
 		
 		genBinauralRender_node::deassociate__local__source_direction(static_cast<CjvxProperties*>(this));
 		genBinauralRender_node::unregister__local__source_direction(static_cast<CjvxProperties*>(this));

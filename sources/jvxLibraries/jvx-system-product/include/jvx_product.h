@@ -21,6 +21,7 @@
 #include "interfaces/property-extender/IjvxPropertyExtenderHeadTrackerProvider.h"
 #include "interfaces/property-extender/IjvxPropertyExtenderNftfProvider.h"
 #include "interfaces/property-extender/IjvxPropertyExtenderSpatialDirectionDirect.h"
+#include "interfaces/property-extender/IjvxPropertyExtenderSimpleToolsHost.h"
 
 #include "interfaces/jvxCommunication/IjvxAudioEncoder.h"
 #include "interfaces/jvxCommunication/IjvxAudioDecoder.h"

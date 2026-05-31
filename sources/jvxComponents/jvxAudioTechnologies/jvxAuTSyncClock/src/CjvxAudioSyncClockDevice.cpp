@@ -133,7 +133,7 @@ CjvxAudioSyncClockDevice::activate()
 		CjvxAudioDevice::properties_active.buffersize.value = 1024;
 
 #ifndef JVX_SYNCED_CLOCK_WINDOWS
-		threads = reqInstTool<IjvxThreads>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
+		threads = reqInstTool<IjvxThreads, IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_THREADS);
 		assert(threads.cpPtr);
 		AYF_ITHREAD_INITIALIZE(threads.cpPtr, this, "CjvxAudioSyncClockDevice");
 		// threads.cpPtr->initialize(this);

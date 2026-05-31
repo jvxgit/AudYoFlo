@@ -34,12 +34,19 @@ struct ayfInitConnectStruct
 
 struct ayfInitParamStruct
 {
-	int numInChans = -1;
-	int numOutChans = -1;
-	int bSize = -1;
-	int sRate = -1;
-	ayfBufferInterleaveType ilTp = ayfBufferInterleaveType::AYF_BUFFERS_INVALID;
-	int passthroughMode = -1;
+	int numInChans;
+	int numOutChans;
+	int bSize;
+	int sRate;
+	ayfBufferInterleaveType ilTp;
+	int passthroughMode;
 };
+
+#define AYF_INIT_PARAM_STRUCT_RESET(paramStr) \
+	paramStr.numInChans = -1; \
+	paramStr.numOutChans = -1; \
+	paramStr.bSize = -1; \
+	paramStr.sRate = -1; \
+	paramStr.ilTp = AYF_BUFFERS_INVALID;
 
 #endif

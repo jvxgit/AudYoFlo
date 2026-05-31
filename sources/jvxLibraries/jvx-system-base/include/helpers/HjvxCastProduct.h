@@ -202,6 +202,13 @@ jvxBool checkComponentType(jvxComponentType tp, jvxBool skipAssert = false)
 		}
 		break;
 		
+	case JVX_COMPONENT_PACKAGE:
+		if (std::is_same<T, IjvxPackage>::value)
+		{
+			result = true;
+		}
+		break;
+
 	default:
 		if (!skipAssert)
 		{
@@ -281,8 +288,9 @@ void retRefTool(IjvxToolsHost* tHost, refComp<T>& inst, jvxComponentType tp = JV
 	}
 }
 
-template <typename T>
-refComp<T> reqInstTool(IjvxToolsHost* tHost, jvxComponentType tp, jvxSize fId = 0, const char* fTag = nullptr)
+// IjvxToolsHost or IjvxPropertyExtenderSimpleToolsHost
+template <typename T, typename S>
+refComp<T> reqInstTool(S* tHost, jvxComponentType tp, jvxSize fId = 0, const char* fTag = nullptr)
 {
 	refComp<T> inst;
 	if (tHost)
@@ -300,8 +308,9 @@ refComp<T> reqInstTool(IjvxToolsHost* tHost, jvxComponentType tp, jvxSize fId = 
 	return inst;
 }
 
-template <typename T>
-jvxErrorType retInstTool(IjvxToolsHost* tHost, jvxComponentType tp, refComp<T>& inst, jvxSize fId = 0, const char* fTag = nullptr)
+// IjvxToolsHost or IjvxPropertyExtenderSimpleToolsHost
+template <typename T, typename S>
+jvxErrorType retInstTool(S* tHost, jvxComponentType tp, refComp<T>& inst, jvxSize fId = 0, const char* fTag = nullptr)
 {
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 	if (tHost)

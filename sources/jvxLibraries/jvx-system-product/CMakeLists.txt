@@ -31,6 +31,8 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderChainControl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderHeadTrackerProvider.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderSpatialDirectionDirect.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderNftfProvider.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces/property-extender/IjvxPropertyExtenderSimpleToolsHost.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxBinaryFastDataControl_ids.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TpjvxConfiglines.h

@@ -74,7 +74,7 @@ CjvxAuNBitstreamDecoder::activate()
 		for (i = 0; i < num; i++)
 		{
 			refComp<IjvxAudioCodec> retI;
-			retI = reqInstTool<IjvxAudioCodec>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, i);
+			retI = reqInstTool<IjvxAudioCodec, IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, i);
 			if (retI.cpPtr)
 			{
 				lstCodecInstances[i] = retI;
@@ -115,7 +115,7 @@ CjvxAuNBitstreamDecoder::deactivate()
 		// Release all codecs
 		for(std::pair<jvxSize, refComp<IjvxAudioCodec>> elm: lstCodecInstances)
 		{
-			retInstTool<IjvxAudioCodec>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, elm.second, elm.first);
+			retInstTool<IjvxAudioCodec, IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, elm.second, elm.first);
 		}
 		lstCodecInstances.clear();
 		JVX_LOCAL_BASE_CLASS::deactivate();

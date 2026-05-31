@@ -30,7 +30,7 @@ public:
 
 	jvxErrorType allocate_main_node() override;
 	jvxErrorType deallocate_main_node() override;
-	jvxErrorType on_main_node_selected(IjvxNode* node) override;
+	jvxErrorType on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node) override;
 	
 };
 

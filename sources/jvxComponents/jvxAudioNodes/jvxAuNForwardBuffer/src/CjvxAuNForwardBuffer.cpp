@@ -62,7 +62,7 @@ CjvxAuNForwardBuffer::activate()
 		genForwardBuffer_node::register_callbacks(static_cast<CjvxProperties*>(this),
 			set_bypass_buffer, set_buffer_mode, this, nullptr);
 		// Obtain the thread handle here
-		refThreads = reqInstTool<IjvxThreads>(
+		refThreads = reqInstTool<IjvxThreads, IjvxToolsHost>(
 			_common_set.theToolsHost,
 			JVX_COMPONENT_THREADS);
 		assert(refThreads.cpPtr);

@@ -41,4 +41,15 @@ SECTION PROPERTIES
 			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
 		};
 	};
+
+	SECTION ext_tools_host
+	{
+		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED"};
+		PREFIX = "iface";			
+		SECTION ex_interface
+		{
+			DESCRIPTION = "Extender Interface";
+			TYPE = "JVX_DATAFORMAT_PROPERTY_EXTENDER_INTERFACE";	
+		};  
+	};
 };

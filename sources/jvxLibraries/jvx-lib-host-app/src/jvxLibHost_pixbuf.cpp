@@ -35,7 +35,7 @@ jvxLibHost::pixbuffer_local_create_cb(
 
 	if (tools)
 	{
-		 tdg->ref = reqInstTool<IjvxThreads>(tools, JVX_COMPONENT_THREADS);
+		 tdg->ref = reqInstTool<IjvxThreads, IjvxToolsHost>(tools, JVX_COMPONENT_THREADS);
 
 	}
 
@@ -247,7 +247,7 @@ jvxLibHost::pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data)
 
 	if (tools)
 	{
-		retInstTool<IjvxThreads>(tools, JVX_COMPONENT_THREADS, tdg->ref);
+		retInstTool<IjvxThreads,IjvxToolsHost>(tools, JVX_COMPONENT_THREADS, tdg->ref);
 
 	}
 	retInterface<IjvxToolsHost>(hostRef->involvedHost.hHost, tools);
