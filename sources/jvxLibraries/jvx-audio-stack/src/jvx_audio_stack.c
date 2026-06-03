@@ -8,7 +8,7 @@
 	assert((sz + myPriv->work.offset_buf) <= myPriv->work.size_buf); \
 	theHeader->paketsize = JVX_SIZE_UINT32( sz); \
 	sz = theHeader->paketsize + myPriv->work.offset_buf; \
-	theHeader->purpose = ( PURPOSE | COMMAND); \
+	theHeader->purpose = ( (jvxUInt16)PURPOSE | (jvxUInt16)COMMAND); \
 	theHeader->fam_hdr.proto_family = JVX_PROTOCOL_TYPE_AUDIO_DEVICE_LINK; \
 	myPriv->expected_command = COMMAND
 
