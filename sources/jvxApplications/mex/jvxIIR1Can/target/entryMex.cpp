@@ -177,7 +177,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				memcpy(theCircBuffer->ram.field[0], cpFrom, sizeof(jvxData) * num);
 			}
 
-			jvxData* in = (jvxData*)mxGetData(arrIn);
+			const jvxData* in = (const jvxData*)mxGetData(arrIn);
 
 			// Important: we must not run in-place: this breaks the variable in Matlab!!
 			jvxData* out = nullptr;

@@ -1,5 +1,4 @@
-#include "core_evaluator_reg.h"
-
+#include "jvx_measure_ir_reg.h"
 #include "jvx_dsp_base.h"
 #include "jvx_fft_tools/jvx_fft_core.h"
 #include "jvx_math/jvx_complex.h"

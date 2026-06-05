@@ -776,7 +776,7 @@ jvx_circbuffer_get_write_phase(jvx_circbuffer* hdl, jvxSize* phase)
 
 jvxDspBaseErrorType
 jvx_circbuffer_fir_1can_1io(jvx_circbuffer* hdlIn,
-	jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_fw,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
@@ -784,7 +784,7 @@ jvx_circbuffer_fir_1can_1io(jvx_circbuffer* hdlIn,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_1io(jvx_circbuffer* hdlIn,
-	jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_fw,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
@@ -792,8 +792,8 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_1io(jvx_circbuffer* hdlIn,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_1io(jvx_circbuffer* hdlIn,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
@@ -801,8 +801,8 @@ jvxDspBaseErrorType jvx_circbuffer_iir_1can_1io(jvx_circbuffer* hdlIn,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_2can_1io(jvx_circbuffer* hdlIn,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
@@ -810,9 +810,9 @@ jvxDspBaseErrorType jvx_circbuffer_iir_2can_1io(jvx_circbuffer* hdlIn,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_1io(jvx_circbuffer* hdlIn,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
-	jvxData* gains,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData* gains,
 	jvxInt16 shiftFactor,
 	jvxData** fieldInOut,
 	jvxSize bSize)
@@ -821,9 +821,9 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_1io(jvx_circbuffer* hdlIn,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_1io(jvx_circbuffer* hdlIn,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
-	jvxData* gains,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData* gains,
 	jvxInt16 shiftFactor,
 	jvxData** fieldInOut,
 	jvxSize bSize)
@@ -835,8 +835,8 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_1io(jvx_circbuffer* hdlIn,
 
 jvxDspBaseErrorType
 jvx_circbuffer_fir_1can_2io(jvx_circbuffer* hdl,
-	jvxData* fCoeffs_fw,
-	jvxData** fieldIn,
+	const jvxData* fCoeffs_fw,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize)
 {
@@ -848,7 +848,8 @@ jvx_circbuffer_fir_1can_2io(jvx_circbuffer* hdl,
 		jvxData accuout = 0;
 
 		jvxData accu1 = 0, accu2 = 0;
-		jvxData* in = NULL, *out = NULL;
+		const jvxData* in = NULL;
+		jvxData* out = NULL;
 
 		// Special condition here: length is always identical to number of filter states
 		assert(hdl->idxRead == 0);
@@ -860,7 +861,7 @@ jvx_circbuffer_fir_1can_2io(jvx_circbuffer* hdl,
 			for (i = 0; i < bSize; i++)
 			{
 				jvxData* statePtr = hdl->ram.field[c];
-				jvxData* fCoeffsRev_fw;
+				const jvxData* fCoeffsRev_fw = NULL;
 
 				// Input
 				accuin = *in++;
@@ -893,8 +894,8 @@ jvx_circbuffer_fir_1can_2io(jvx_circbuffer* hdl,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdl,
-	jvxData* fCoeffs_fw,
-	jvxData** fieldIn,
+	const jvxData* fCoeffs_fw,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize)
 {
@@ -906,7 +907,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdl,
 		jvxData accuout = 0;
 
 		jvxData accu1 = 0;
-		jvxData* in = NULL;
+		const jvxData* in = NULL;
 		jvxData* out = NULL;
 
 
@@ -921,7 +922,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdl,
 			out = fieldOut[c];
 			for (i = 0; i < bSize; i++)
 			{
-				jvxData* coeffPtr = fCoeffs_fw;
+				const jvxData* coeffPtr = fCoeffs_fw;
 				jvxSize ll1, ll2;
 
 				// Input
@@ -965,8 +966,8 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdl,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdl,
-	jvxData** fCoeffs_fw,
-	jvxData** fieldIn,
+	const jvxData** fCoeffs_fw,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize)
 {
@@ -978,7 +979,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdl,
 		jvxData accuout = 0;
 
 		jvxData accu1 = 0;
-		jvxData* in = NULL;
+		const jvxData* in = NULL;
 		jvxData* out = NULL;
 
 
@@ -993,7 +994,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdl,
 			out = fieldOut[c];
 			for (i = 0; i < bSize; i++)
 			{
-				jvxData* coeffPtr = fCoeffs_fw[c];
+				const jvxData* coeffPtr = fCoeffs_fw[c];
 				jvxSize ll1, ll2;
 
 				// Input
@@ -1037,9 +1038,9 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdl,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdl,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
-	jvxData** fieldIn,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize)
 {
@@ -1051,7 +1052,8 @@ jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdl,
 		jvxData accuout = 0;
 
 		jvxData accu1 = 0, accu2 = 0;
-		jvxData* in = NULL, *out = NULL;
+		const jvxData* in = NULL;
+		jvxData* out = NULL;
 
 		// Special condition here: length is always identical to number of filter states
 		assert(hdl->idxRead == 0);
@@ -1063,8 +1065,8 @@ jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdl,
 			for (i = 0; i < bSize; i++)
 			{
 				jvxData* statePtr = hdl->ram.field[c];
-				jvxData* fCoeffsRev_fw;
-				jvxData* fCoeffsRev_bw;
+				const jvxData* fCoeffsRev_fw = NULL;
+				const jvxData* fCoeffsRev_bw = NULL;
 
 				// Input
 				accuin = *in++;
@@ -1098,9 +1100,9 @@ jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdl,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_2can_2io(jvx_circbuffer* hdl,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
-	jvxData** fieldIn,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize)
 {
@@ -1112,7 +1114,7 @@ jvxDspBaseErrorType jvx_circbuffer_iir_2can_2io(jvx_circbuffer* hdl,
 		jvxData accuout = 0;
 
 		jvxData accu1 = 0, accu2 = 0;
-		jvxData* in = NULL;
+		const jvxData* in = NULL;
 		jvxData* out = NULL;
 
 
@@ -1127,8 +1129,8 @@ jvxDspBaseErrorType jvx_circbuffer_iir_2can_2io(jvx_circbuffer* hdl,
 			out = fieldOut[c];
 			for (i = 0; i < bSize; i++)
 			{
-				jvxData* coeffPtr_fw = fCoeffs_fw;
-				jvxData* coeffPtr_bw = fCoeffs_bw;
+				const jvxData* coeffPtr_fw = fCoeffs_fw;
+				const jvxData* coeffPtr_bw = fCoeffs_bw;
 				jvxSize ll1, ll2;
 
 				// Input
@@ -1180,11 +1182,11 @@ jvxDspBaseErrorType jvx_circbuffer_iir_2can_2io(jvx_circbuffer* hdl,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_2io(jvx_circbuffer* hdl,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
-	jvxData* gains,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData* gains,
 	jvxInt16 shiftFactor,
-	jvxData** fieldIn,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize)
 {
@@ -1235,10 +1237,11 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_2io(jvx_circbuffer* hdl,
 	jvxData accuout = 0;
 
 	jvxData accu1 = 0, accu2 = 0;
-	jvxData* in = NULL, *out = NULL;
+	const jvxData* in = NULL;
+	jvxData* out = NULL;
 
-	jvxData *fCoeffsStage_fw;
-	jvxData *fCoeffsStage_bw;
+	const jvxData *fCoeffsStage_fw = NULL;
+	const jvxData *fCoeffsStage_bw = NULL;
 
 	jvxData valShift = (1 << shiftFactor);
 
@@ -1261,8 +1264,8 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_2io(jvx_circbuffer* hdl,
 			for (i = 0; i < bSize; i++)
 			{
 				jvxData* statePtr = hdl[s].ram.field[c];
-				jvxData* fCoeffsRev_fw;
-				jvxData* fCoeffsRev_bw;
+				const jvxData* fCoeffsRev_fw = NULL;
+				const jvxData* fCoeffsRev_bw = NULL;
 
 				// Input
 				accuin = *in++ * gains[s];
@@ -1297,11 +1300,11 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_2io(jvx_circbuffer* hdl,
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_2io(jvx_circbuffer* hdl,
-	jvxData* fCoeffs_fw,
-	jvxData* fCoeffs_bw,
-	jvxData* gains,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData* gains,
 	jvxInt16 shiftFactor,
-	jvxData** fieldIn,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize)
 {
@@ -1341,10 +1344,10 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_2io(jvx_circbuffer* hdl,
 	jvxData accuout = 0;
 
 	jvxData accu1 = 0, accu2 = 0;
-	jvxData* in = NULL;
+	const jvxData* in = NULL;
 	jvxData* out = NULL;
-	jvxData *fCoeffsStage_fw;
-	jvxData *fCoeffsStage_bw;
+	const jvxData *fCoeffsStage_fw = NULL;
+	const jvxData *fCoeffsStage_bw = NULL;
 
 	jvxData valShift = (1 << shiftFactor);
 
@@ -1369,8 +1372,8 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_2io(jvx_circbuffer* hdl,
 			out = fieldOut[c];
 			for (i = 0; i < bSize; i++)
 			{
-				jvxData* coeffPtr_fw = fCoeffsStage_fw;
-				jvxData* coeffPtr_bw = fCoeffsStage_bw;
+				const jvxData* coeffPtr_fw = fCoeffsStage_fw;
+				const jvxData* coeffPtr_bw = fCoeffsStage_bw;
 				jvxSize ll1, ll2;
 
 				// Input

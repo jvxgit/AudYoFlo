@@ -90,11 +90,11 @@ jvxDspBaseErrorType jvx_circbuffer_write_update_ignore(jvx_circbuffer* hdl,
 	jvxSize numberValuesFill);
 
 jvxDspBaseErrorType jvx_circbuffer_read_update_ignore(jvx_circbuffer* hdl,
-						      jvxData** fieldRead,
+	jvxData** fieldRead,
 	jvxSize numberValuesRead);
 
 jvxDspBaseErrorType jvx_circbuffer_read_noupdate(jvx_circbuffer* hdl,
-						 jvxData** fieldRead,
+	jvxData** fieldRead,
 	jvxSize numberValuesRead);
 
 // Advance read index by numberValuesRead elements, as if they'd been read.
@@ -105,97 +105,98 @@ jvxDspBaseErrorType
 jvx_circbuffer_get_write_phase(jvx_circbuffer* hdl, jvxSize* phase);
 
 jvxDspBaseErrorType jvx_circbuffer_fir_1can_1io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData** fieldInOut,
+	const jvxData* fCoeffs_fw,
+	jvxData** fieldInOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_1io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData** fieldInOut,
+	const jvxData* fCoeffs_fw,
+	jvxData** fieldInOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_1io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData* fCoeffs_bw,
-						jvxData** fieldInOut,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	jvxData** fieldInOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_2can_1io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData* fCoeffs_bw,
-						jvxData** fieldInOut,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	jvxData** fieldInOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_1io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData* fCoeffs_bw,
-						jvxData** fieldInOut,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	jvxData** fieldInOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_1io(jvx_circbuffer* hdlIn,
-						   jvxData* fCoeffs_fw,
-						   jvxData* fCoeffs_bw,
-						   jvxData* gains,
-						   jvxInt16 shiftFactor,
-						   jvxData** fieldInOut,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData* gains,
+	jvxInt16 shiftFactor,
+	jvxData** fieldInOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_1io(jvx_circbuffer* hdlIn,
-						   jvxData* fCoeffs_fw,
-						   jvxData* fCoeffs_bw,
-						   jvxData* gains,
+						   const jvxData* fCoeffs_fw,
+						   const jvxData* fCoeffs_bw,
+						   const jvxData* gains,
 						   jvxInt16 shiftFactor,
 						   jvxData** fieldInOut,
 	jvxSize bSize);
 
-jvxDspBaseErrorType jvx_circbuffer_fir_1can_2io(jvx_circbuffer* hdl,
-						jvxData* fCoeffs_fw,
-						jvxData** fieldIn,
-						jvxData** fieldOut,
+jvxDspBaseErrorType jvx_circbuffer_fir_1can_2io(
+	jvx_circbuffer* hdl,
+	const jvxData* fCoeffs_fw,
+	const jvxData** fieldIn,
+	jvxData** fieldOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData** fieldIn,
-						jvxData** fieldOut,
+	const jvxData* fCoeffs_fw,
+	const jvxData** fieldIn,
+	jvxData** fieldOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdlIn,
-	jvxData** fCoeffs_fw,
-	jvxData** fieldIn,
+	const jvxData** fCoeffs_fw,
+	const jvxData** fieldIn,
 	jvxData** fieldOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData* fCoeffs_bw,
-						jvxData** fieldIn,
-						jvxData** fieldOut,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData** fieldIn,
+	jvxData** fieldOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_2can_2io(jvx_circbuffer* hdlIn,
-						jvxData* fCoeffs_fw,
-						jvxData* fCoeffs_bw,
-						jvxData** fieldIn,
+						const jvxData* fCoeffs_fw,
+						const jvxData* fCoeffs_bw,
+						const jvxData** fieldIn,
 						jvxData** fieldOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_2io(jvx_circbuffer* hdlIn,
-						   jvxData* fCoeffs_fw,
-						   jvxData* fCoeffs_bw,
-						   jvxData* gains,
-						   jvxInt16 shiftFactor,
-						   jvxData** fieldIn,
-						   jvxData** fieldOut,
+	const jvxData* fCoeffs_fw,
+	const jvxData* fCoeffs_bw,
+	const jvxData* gains,
+	jvxInt16 shiftFactor,
+	const jvxData** fieldIn,
+	jvxData** fieldOut,
 	jvxSize bSize);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_2io(jvx_circbuffer* hdlIn,
-						   jvxData* fCoeffs_fw,
-						   jvxData* fCoeffs_bw,
-						   jvxData* gains,
-						   jvxInt16 shiftFactor,
-						   jvxData** fieldIn,
-						   jvxData** fieldOut,
+	const jvxData* fCoeffs_fw,
+	const  jvxData* fCoeffs_bw,
+	const jvxData* gains,
+	jvxInt16 shiftFactor,
+	const jvxData** fieldIn,
+	jvxData** fieldOut,
 	jvxSize bSize);
 
 // ===============================================================================

@@ -73,6 +73,7 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_fxlms/jvx_fxlms.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fxlms/jvx_fxlms.h
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_circbuffer/jvx_circbuffer.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_fft_tools/jvx_firfft_cf_nout.h

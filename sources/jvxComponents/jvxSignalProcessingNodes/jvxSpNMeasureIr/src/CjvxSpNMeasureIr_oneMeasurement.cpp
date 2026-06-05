@@ -705,7 +705,7 @@ CjvxSpNMeasureIr_oneMeasurement::addData(
 			jvxData* ptrTo = bufsOut[idxTo] + off;
 			if (JVX_CHECK_SIZE_UNSELECTED(firstBuf))
 			{
-				jvx_generatorwave_process(&theGenerator, ptrTo, ncopy, numW);
+				jvx_generatorwave_process(&theGenerator, ptrTo, ncopy, numW, nullptr);
 
 				jvx_generatorwave_update(&theGenerator, JVX_DSP_UPDATE_USER_OFFSET | JVX_DSP_UPDATE_ASYNC, c_false);
 				switch (theGenerator.tpWave)

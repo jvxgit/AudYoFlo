@@ -355,7 +355,7 @@ jvxAcousticEqualizer::compute_proc_ir()
 	// =====================================================================================
 	// Filter unprocessed with eq IR
 	// =====================================================================================
-	jvxData* bufIn = irMeasured.data();
+	const jvxData* bufIn = irMeasured.data();
 	jvxData* bufOut = irProcessed.data();
 	jvx_circbuffer_allocate_1chan(&theFilterModul, lIrEqualizer - 1);
 	jvx_circbuffer_fir_1can_2io(theFilterModul, equalizer_ir_gain_y.data(),

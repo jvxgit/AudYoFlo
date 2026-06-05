@@ -177,6 +177,10 @@ public:
 				{
 					valueT = (*((jvxUInt8*)mxGetData(thePointer[idx])));
 				}
+				else if (mxIsLogical(thePointer[idx]))
+				{
+					valueT = (*((mxLogical*)mxGetData(thePointer[idx])));
+				}
 				else
 				{
 					res = JVX_ERROR_INVALID_ARGUMENT;
