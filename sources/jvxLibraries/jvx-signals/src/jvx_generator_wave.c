@@ -1355,7 +1355,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_buffered_wavplayer(jvx_generatorW
 }
 
 //! Fill one buffer with signal
-jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written)
+jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written, jvxData* bufferFillGain)
 {
 	jvxSize i;
 	jvxSize ll_start, ll_proc, ll_stop;
@@ -1404,7 +1404,12 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 		for(i = 0; i < ll_start; i++)
 		{
 			*bufferFill++ = 0.0;
+			if (bufferFillGain)
+			{
+				*bufferFillGain++ = 0.0;
+			}
 		}
+
 
 		if (storeFreqGain)
 		{
@@ -1465,6 +1470,11 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 			//*bufferFill++ = val * newHdl->runtime.gain;
 			*bufferFill++ = val * newHdl->runtime.metaData.gainBuffer[newHdl->runtime.metaData.idxOneSegment];
 			
+			if (bufferFillGain)
+			{
+				*bufferFillGain++ = newHdl->runtime.metaData.gainBuffer[newHdl->runtime.metaData.idxOneSegment];
+			}
+
 			newHdl->runtime.metaData.idxOneSegment++;
 
 			phase += 2 * M_PI * instFreq_use * newHdl->runtime.div_samplerate;
@@ -1490,6 +1500,10 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 		for(i = 0; i < ll_stop; i++)
 		{
 			*bufferFill++ = 0.0;
+			if (bufferFillGain)
+			{
+				*bufferFillGain++ = 0.0;
+			}
 		}
 
 		if (storeFreqGain)
@@ -1529,7 +1543,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				newHdl->runtime.metaData.idxOneSegment = 0;
 				newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
 
-				jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill, lField, &written2); // buffer and lField have been adapted when computing the segment counts
+				jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill, lField, &written2, bufferFillGain); // buffer and lField have been adapted when computing the segment counts
 				if(written)
 				{
 					*written += written2;
@@ -1551,7 +1565,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 jvxDspBaseErrorType 
-jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written)
+jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written, jvxData* bufferFillGain)
 {
 	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
 	
@@ -1590,7 +1604,7 @@ jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lF
 
 	case JVX_GENERATOR_WAVE_LOGSWEEP:
 	case JVX_GENERATOR_WAVE_LINEARSWEEP:
-		res = jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill,  lField, written);
+		res = jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill,  lField, written, bufferFillGain);
 		break;
 
 	}

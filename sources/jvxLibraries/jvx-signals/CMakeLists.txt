@@ -27,10 +27,12 @@ include_directories(
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_generator_wave.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_measure_ir.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_measure_ir_reg.c
   
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_generator_wave.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_generator_wave_typedefs.h
   ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_measure_ir.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx_measure_ir_reg.h
   )
 
 
