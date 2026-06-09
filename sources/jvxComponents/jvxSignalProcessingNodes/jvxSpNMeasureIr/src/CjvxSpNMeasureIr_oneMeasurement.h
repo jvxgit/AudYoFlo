@@ -68,6 +68,23 @@ public:
 	jvxData* freq_buf;
 	jvxData* gain_buf;
 	jvxSize freq_gain_len;
+
+	jvxData amplitude;
+	jvxData freq_low_hz_start;
+	jvxData freq_low_hz_stop;
+	jvxData freq_up_hz_start;
+	jvxData freq_up_hz_stop;
+	jvxData length_seconds;
+	jvxData silence_start_seconds;
+	jvxData silence_stop_seconds;
+	jvxSize loop_count;
+	jvxSize skip_eval;
+
+	jvxData regMin;
+	jvxData regMax;
+	jvxBool runSecEvaluation;
+	jvxData exponent; 
+
 	oneMeasurementResult()
 	{
 		rate = 0;
@@ -75,6 +92,22 @@ public:
 		freq_buf = NULL;
 		gain_buf = NULL;
 		freq_gain_len = 0;
+
+		amplitude = 0;
+		freq_low_hz_start = 0;
+		freq_low_hz_stop = 0;
+		freq_up_hz_start = 0;
+		freq_up_hz_stop = 0;
+		length_seconds = 0;
+		silence_start_seconds = 0;
+		silence_stop_seconds = 0;
+		loop_count = 0;
+		skip_eval = 0;
+
+		regMin = 1e-16;
+		regMax = 1e-6;
+		runSecEvaluation = false;
+		exponent = 4;
 	};
 };
 
@@ -116,19 +149,14 @@ public:
 		jvxSize loop_count;
 		jvxData silence_start_seconds;
 		jvxData silence_stop_seconds;
-		jvxData freq_low_hz;
-		jvxData freq_low_hz_start;
 
-		jvxData freq_up_hz;
+		jvxData freq_low_hz_start;
+		jvxData freq_low_hz_stop;
+
+		jvxData freq_up_hz_start;
 		jvxData freq_up_hz_stop;
 	} generator;
 
-	struct secondary_eval
-	{
-		jvxBool runSecEvaluation = false;
-		jvxData regMin = 0;
-		jvxData regMax = 1e-6;
-	};
 	struct
 	{
 		jvxSize skip_eval;
@@ -136,12 +164,19 @@ public:
 		jvxBool store_data;
 	} evaluation;
 
+	struct
+	{
+		jvxBool runSecEvaluation = false;
+		jvxData regMin = 0;
+		jvxData regMax = 1e-6;
+		jvxData exponent = 4;
+	} evaluation_options;
 
 	CjvxSpNMeasureIr_oneMeasurement();
 
 	void allocate_one_measurement(jvxSize rate_measure, jvxSize buffersize_store, jvxSize* numResults);
 
-	void evaluate_measurement(const secondary_eval& addArgs);
+	void evaluate_measurement();
 
 	jvxErrorType copy_measurement_channel(
 		jvxSize cnt, 

@@ -13,8 +13,8 @@ CjvxSpNMeasureIr_oneMeasurement::CjvxSpNMeasureIr_oneMeasurement()
 	generator.silence_start_seconds = 1.0;
 	generator.silence_stop_seconds = 1.0;
 	generator.freq_low_hz_start = 0.0;
-	generator.freq_low_hz = 0.0;
-	generator.freq_up_hz = 100000.0;
+	generator.freq_low_hz_stop = 0.0;
+	generator.freq_up_hz_start = 100000.0;
 	generator.freq_up_hz_stop = 100000.0;
 	generator.length_seconds = 5.0;
 	generator.loop_count = 2;
@@ -22,6 +22,11 @@ CjvxSpNMeasureIr_oneMeasurement::CjvxSpNMeasureIr_oneMeasurement()
 	evaluation.skip_eval = 0;
 	evaluation.derive_ir = true;
 	evaluation.store_data = true;
+
+	evaluation_options.regMax = 1e-6;
+	evaluation_options.regMin = 0;
+	evaluation_options.exponent = 4;
+	evaluation_options.runSecEvaluation = false;
 
 	internal_buffersize = JVX_WAV_READ_WRITE_INTERNAL_BSIZE;
 	rate = 48000;
@@ -101,9 +106,9 @@ CjvxSpNMeasureIr_oneMeasurement::allocate_one_measurement(jvxSize rate_measure, 
 		theGenerator.prm_async.linlogSweepWave.loopCount = (jvxInt32)generator.loop_count;
 		theGenerator.prm_async.linlogSweepWave.silenceStartSeconds = generator.silence_start_seconds;
 		theGenerator.prm_async.linlogSweepWave.silenceStopSeconds = generator.silence_stop_seconds;
-		theGenerator.prm_async.linlogSweepWave.fLow = generator.freq_low_hz;
-		theGenerator.prm_async.linlogSweepWave.fUp = generator.freq_up_hz;
 		theGenerator.prm_async.linlogSweepWave.fLowStart = generator.freq_low_hz_start;
+		theGenerator.prm_async.linlogSweepWave.fLowStop = generator.freq_low_hz_stop;
+		theGenerator.prm_async.linlogSweepWave.fUpStart = generator.freq_up_hz_start;
 		theGenerator.prm_async.linlogSweepWave.fUpStop = generator.freq_up_hz_stop;
 		break;
 	default:
@@ -172,15 +177,16 @@ CjvxSpNMeasureIr_oneMeasurement::allocate_one_measurement(jvxSize rate_measure, 
 			elm->second.oneMeasure_sec.init.skipFirst = (evaluation.skip_eval != 0);
 			elm->second.oneMeasure_sec.init.llMax = lSimu * elm->second.oneMeasure_sec.init.loopCnt;
 			
+			elm->second.oneMeasure_sec.async.exponent_fac = 4.0;
 			elm->second.oneMeasure_sec.async.regulationCoeffMin = 0;
 			elm->second.oneMeasure_sec.async.regulationCoeffMax = 1e-6;
 
 			elm->second.oneMeasure_sec.init.flowStart = generator.freq_low_hz_start;
 			elm->second.oneMeasure_sec.init.flowStart = JVX_MAX(elm->second.oneMeasure_sec.init.flowStart, 0);
-			elm->second.oneMeasure_sec.init.flowStop = generator.freq_low_hz;
+			elm->second.oneMeasure_sec.init.flowStop = generator.freq_low_hz_stop;
 			elm->second.oneMeasure_sec.init.flowStop = JVX_MAX(elm->second.oneMeasure_sec.init.flowStop, elm->second.oneMeasure_sec.init.flowStart);
 
-			elm->second.oneMeasure_sec.init.fhighStart = generator.freq_up_hz;
+			elm->second.oneMeasure_sec.init.fhighStart = generator.freq_up_hz_start;
 			elm->second.oneMeasure_sec.init.fhighStop = generator.freq_up_hz_stop;
 			elm->second.oneMeasure_sec.init.fhighStop = JVX_MIN(elm->second.oneMeasure_sec.init.fhighStop, elm->second.oneMeasure_sec.init.fs/2);			
 			elm->second.oneMeasure_sec.init.fhighStart = JVX_MIN(elm->second.oneMeasure_sec.init.fhighStart, elm->second.oneMeasure_sec.init.fhighStop);
@@ -240,7 +246,7 @@ CjvxSpNMeasureIr_oneMeasurement::deallocate_one_measurement()
 
 // Evaluate the measurement
 void
-CjvxSpNMeasureIr_oneMeasurement::evaluate_measurement(const secondary_eval& addArgs)
+CjvxSpNMeasureIr_oneMeasurement::evaluate_measurement()
 {
 	auto elm = inputs.begin();
 	for (; elm != inputs.end(); elm++)
@@ -254,10 +260,11 @@ CjvxSpNMeasureIr_oneMeasurement::evaluate_measurement(const secondary_eval& addA
 			jvx_measure_ir_update(&elm->second.oneMeasure, JVX_DSP_UPDATE_SYNC, c_true);
 			jvx_measure_ir_process(&elm->second.oneMeasure);
 
-			if (addArgs.runSecEvaluation)
+			if (evaluation_options.runSecEvaluation)
 			{
-				elm->second.oneMeasure_sec.async.regulationCoeffMin = addArgs.regMin;
-				elm->second.oneMeasure_sec.async.regulationCoeffMax = addArgs.regMax;
+				elm->second.oneMeasure_sec.async.regulationCoeffMin = evaluation_options.regMin;
+				elm->second.oneMeasure_sec.async.regulationCoeffMax = evaluation_options.regMax;
+				elm->second.oneMeasure_sec.async.exponent_fac = evaluation_options.exponent;
 
 				jvx_measure_ir_reg_update(&elm->second.oneMeasure_sec, c_true);
 
@@ -292,6 +299,19 @@ CjvxSpNMeasureIr_oneMeasurement::copy_measurement_channel(jvxSize cnt, oneMeasur
 				{
 					oneChan->validFlds = 0;
 					oneChan->rate = this->rate;
+
+					oneChan->freq_low_start_hz = this->generator.freq_low_hz_start;
+					oneChan->freq_low_stop_hz = this->generator.freq_low_hz_stop;
+					oneChan->freq_up_start_hz = this->generator.freq_up_hz_start;
+					oneChan->freq_up_stop_hz = this->generator.freq_up_hz_stop;
+
+					/*
+					if (oneChan->recomputeIr)
+					{
+
+					}
+					*/
+
 					if (oneChan->bufIr)
 					{
 						jvxSize ml = JVX_MIN(oneChan->lBuf, elm->second.oneMeasure.prm_sync.lIResponse);
@@ -376,13 +396,20 @@ CjvxSpNMeasureIr_oneMeasurement::write_data(const std::string& token,  IjvxRtAud
 					JVX_GET_CONFIGURATION_INJECT_STRING(res, "TOKEN", datSec, token, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "RATE", datSec, this->rate, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "AMPLITUDE", datSec, this->generator.amplitude, proc);
-					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "FREQUENCY_LOW", datSec, this->generator.freq_low_hz, proc);
-					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "FREQUENCY_UP", datSec, this->generator.freq_up_hz, proc);
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "FREQUENCY_LOW_START_HZ", datSec, this->generator.freq_low_hz_start, proc);
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "FREQUENCY_LOW_STOP_HZ", datSec, this->generator.freq_low_hz_stop, proc);
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "FREQUENCY_UP_START_HZ", datSec, this->generator.freq_up_hz_start, proc);
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "FREQUENCY_UP_STOP_HZ", datSec, this->generator.freq_up_hz_stop, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "LENGTH_SECS", datSec, this->generator.length_seconds, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "START_SIL_SECS", datSec, this->generator.silence_start_seconds, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "STOP_SIL_SECS", datSec, this->generator.silence_stop_seconds, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "NUM_ITERATIONS", datSec, this->generator.loop_count, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "SKIP_ITERATIONS", datSec, this->evaluation.skip_eval, proc);
+					
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "REGULATION_MIN", datSec, this->evaluation_options.regMin, proc);
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "REGULATION_MAX", datSec, this->evaluation_options.regMax, proc);
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "SECONDARY_EVALUATION", datSec, this->evaluation_options.runSecEvaluation, proc);
+					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "EXPONENT", datSec, this->evaluation_options.exponent, proc);
 
 					switch (this->generator.tpWave)
 					{
@@ -637,6 +664,21 @@ CjvxSpNMeasureIr_oneMeasurement::read_measurement(
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "RATE", datSec, &resMeas.rate, confHdl);
 			JVX_PUT_CONFIGURATION_EXTRACT_STRING(res, "DESCRIPTION", datSec, resMeas.nameMeasure, confHdl);
 			JVX_PUT_CONFIGURATION_EXTRACT_STRING(res, "TOKEN", datSec, resMeas.tokenMeasure, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "AMPLITUDE", datSec, &resMeas.amplitude, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "FREQUENCY_LOW_START_HZ", datSec, &resMeas.freq_low_hz_start, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "FREQUENCY_LOW_STOP_HZ", datSec, &resMeas.freq_low_hz_stop, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "FREQUENCY_UP_START_HZ", datSec, &resMeas.freq_up_hz_start, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "FREQUENCY_UP_STOP_HZ", datSec, &resMeas.freq_up_hz_stop, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "LENGTH_SECS", datSec, &resMeas.length_seconds, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "START_SIL_SECS", datSec, &resMeas.silence_start_seconds, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "STOP_SIL_SECS", datSec, &resMeas.silence_stop_seconds, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "NUM_ITERATIONS", datSec, &resMeas.loop_count, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "SKIP_ITERATIONS", datSec, &resMeas.skip_eval, confHdl);
+
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "SECONDARY_EVALUATION", datSec, &resMeas.runSecEvaluation, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "REGULATION_MIN", datSec, &resMeas.regMin, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "REGULATION_MAX", datSec, &resMeas.regMax, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "EXPONENT", datSec, &resMeas.exponent, confHdl);
 
 			while (1)
 			{
@@ -676,8 +718,15 @@ CjvxSpNMeasureIr_oneMeasurement::read_measurement(
 					}
 					if (res == JVX_NO_ERROR)
 					{
+						// Assign all which is needed to the channel data
 						oneChan.nmChan.assign(channelName);
 						oneChan.nmMeas.assign(resMeas.nameMeasure);
+
+						oneChan.freq_low_start_hz = resMeas.freq_low_hz_start;
+						oneChan.freq_low_stop_hz = resMeas.freq_low_hz_stop;
+						oneChan.freq_up_start_hz = resMeas.freq_up_hz_start;
+						oneChan.freq_up_stop_hz = resMeas.freq_up_hz_stop;
+
 						resMeas.resultsChannel.push_back(oneChan);
 					}
 					else
@@ -693,6 +742,7 @@ CjvxSpNMeasureIr_oneMeasurement::read_measurement(
 					oneChan.nmMeas.clear();
 					oneChan.validFlds = 0;
 					oneChan.rate = 0;
+					
 				}
 				else
 				{

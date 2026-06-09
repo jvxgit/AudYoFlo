@@ -19,6 +19,8 @@ struct jvx_measure_ir_reg_async
 {
 	jvxData regulationCoeffMin;
 	jvxData regulationCoeffMax;
+	jvxCBool interpol_log;
+	jvxData exponent_fac;
 };
 
 struct jvx_measure_ir_reg_derived

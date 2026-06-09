@@ -462,12 +462,23 @@ jvxAcousticMeasure::import_data_plot(
 		std::string prop_token = "/result_measurements_data";
 
 		oneSetDataPlot newImport;
-
+		oneChannelRequestArgs args;
+		
 		if (
 			(!nmMeas.empty()) && !(nmChan.empty()))
 		{
 			newImport.oneChan.nmChan.assign(nmChan);
 			newImport.oneChan.nmMeas.assign(nmMeas);
+		}
+
+		if (checkBox_override->isChecked())
+		{
+			args.recomputeIr = checkBox_override->isChecked();
+			args.override_reg_max = lineEdit_override_max->text().toDouble();
+			args.override_reg_min = lineEdit_override_min->text().toDouble();
+			args.exponent = lineEdit_exponent->text().toDouble();
+
+			newImport.oneChan.args = &args;
 		}
 
 		// Obtain the number of samples		
@@ -485,6 +496,8 @@ jvxAcousticMeasure::import_data_plot(
 				dtPlot.oneChan.lBuf = newImport.oneChan.lBuf;
 				dtPlot.oneChan.nmChan.assign(newImport.oneChan.nmChan.std_str());
 				dtPlot.oneChan.nmMeas.assign(newImport.oneChan.nmMeas.std_str());
+
+				dtPlot.oneChan.args = newImport.oneChan.args;
 
 				if (dtPlot.oneChan.lBuf != dtPlot.data.ir.size())
 				{

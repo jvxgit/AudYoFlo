@@ -266,10 +266,10 @@ void
 jvx_generator_wave_init_config_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl)
 {
 	hdl->prm_init.linlogSweepWave.common.samplerate = 48000;
-	hdl->prm_async.linlogSweepWave.fLow = 50;
-	hdl->prm_async.linlogSweepWave.fUp = hdl->prm_init.linlogSweepWave.common.samplerate/2;
-	hdl->prm_async.linlogSweepWave.fLowStart = hdl->prm_async.linlogSweepWave.fLow;
-	hdl->prm_async.linlogSweepWave.fUpStop = hdl->prm_async.linlogSweepWave.fUp;
+	hdl->prm_async.linlogSweepWave.fLowStart = 50;
+	hdl->prm_async.linlogSweepWave.fLowStop = hdl->prm_async.linlogSweepWave.fLowStart;
+	hdl->prm_async.linlogSweepWave.fUpStart = hdl->prm_init.linlogSweepWave.common.samplerate/2;
+	hdl->prm_async.linlogSweepWave.fUpStop = hdl->prm_async.linlogSweepWave.fUpStart;
 
 	hdl->prm_async.linlogSweepWave.lengthSeconds = 10;
 	hdl->prm_async.linlogSweepWave.loopCount = -1;
@@ -921,14 +921,14 @@ jvx_generator_wave_start_generator_unbuffered_linlogsweep(jvx_generatorWave* hdl
 		}
 		if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampUpDone))
 		{
-			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fLow)
+			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fLowStop)
 			{
 				idxStartRampUpDone = i;
 			}
 		}
 		if (JVX_CHECK_SIZE_UNSELECTED(idxStartRampDown))
 		{
-			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fUp)
+			if (instFreq_use >= newHdl->runtime_parameters_async_intern.fUpStart)
 			{
 				idxStartRampDown = i;
 			}
@@ -1454,12 +1454,12 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 
 			if (signSign < 0)
 			{
-				if (instFreq_use > newHdl->runtime_parameters_async_intern.fLow)
+				if (instFreq_use > newHdl->runtime_parameters_async_intern.fLowStop)
 				{
 					// Sign change, we can reset gain
 					newHdl->runtime.gain = 1;
 				}
-				if (instFreq_use > newHdl->runtime_parameters_async_intern.fUp)
+				if (instFreq_use > newHdl->runtime_parameters_async_intern.fUpStart)
 				{
 					// Sign change, we can reset gain
 					newHdl->runtime.gain = 0;

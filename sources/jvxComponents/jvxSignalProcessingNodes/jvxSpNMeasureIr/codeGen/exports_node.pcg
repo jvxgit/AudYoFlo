@@ -47,24 +47,7 @@ SECTION PROPERTIES
 		{
 			TYPE = "JVX_DATAFORMAT_BOOL";			
 			INIT_SET = 0;
-		};  
-
-		SECTION secondary_measurement
-		{
-			TYPE = "JVX_DATAFORMAT_BOOL";			
-			INIT_SET = 0;
-		};
-		
-		SECTION secondary_regulator_min
-		{
-			TYPE = "JVX_DATAFORMAT_DATA";			
-			INIT_SET = 1e-16;
-		};  	
-		SECTION secondary_regulator_max
-		{
-			TYPE = "JVX_DATAFORMAT_DATA";			
-			INIT_SET = 1e-6;
-		};  	
+		};  		
 	};
 
 	
@@ -117,24 +100,6 @@ SECTION PROPERTIES
 			INIT_SET = 0.95;
 		}; 
 		
-		SECTION frequency_low_excitation
-		{
-			DESCRIPTION = "Frequency (low, in case periodic signals)";	  // Defaults to NAME if not present
-			TYPE = "JVX_DATAFORMAT_DATA";	
-			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
-			ASSOCIATE_EXTERNAL = "no";
-			INIT_SET = 0.0;
-		};  
-
-		SECTION frequency_up_excitation
-		{
-			DESCRIPTION = "Frequency (up, in case periodic signals)";	  // Defaults to NAME if not present
-			TYPE = "JVX_DATAFORMAT_DATA";	
-			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
-			ASSOCIATE_EXTERNAL = "no";
-			INIT_SET = 100000.0;
-		};  
-
 		SECTION frequency_low_start_excitation
 		{
 			DESCRIPTION = "Frequency (low, in case periodic signals, start)";	  // Defaults to NAME if not present
@@ -142,6 +107,24 @@ SECTION PROPERTIES
 			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 			ASSOCIATE_EXTERNAL = "no";
 			INIT_SET = 0.0;
+		};  
+
+		SECTION frequency_low_stop_excitation
+		{
+			DESCRIPTION = "Frequency (low, in case periodic signals, stop)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0.0;
+		};  
+
+		SECTION frequency_up_start_excitation
+		{
+			DESCRIPTION = "Frequency (up, in case periodic signals, start)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 100000.0;
 		};  
 
 		SECTION frequency_up_stop_excitation
@@ -208,6 +191,37 @@ SECTION PROPERTIES
 			SELECTION_TRANSLATOR_TYPE = "jvxGeneratorWaveNoiseType";
 			SELECTION_LIST_TRANSLATORS = {"JVX_GENERATOR_NOISE_UNIFORM", "JVX_GENERATOR_NOISE_NORMAL"};
 		};
+	};
+
+	SECTION evaluation_options
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};	
+		CALLBACKS = {"set_evaluation_options_posthook"};
+		CALLBACK_SET_POSTHOOK = "set_evaluation_options_posthook";
+		
+		SECTION secondary_measurement
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+		};
+		
+		SECTION secondary_regulator_min
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 1e-16;
+		};  	
+		SECTION secondary_regulator_max
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 1e-6;
+		};  
+		SECTION secondary_exponent
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 4.0;
+		};  
 	};
 
 	SECTION measurements

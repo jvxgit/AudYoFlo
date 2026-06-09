@@ -533,3 +533,9 @@ jvxAcousticMeasure::replot_freqdomain(
 	}
 	qcp_secondary->replot();
 }
+
+void 
+jvxAcousticMeasure::recompute_ir1()
+{
+
+}

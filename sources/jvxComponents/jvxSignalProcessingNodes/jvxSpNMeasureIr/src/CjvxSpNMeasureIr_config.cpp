@@ -123,8 +123,10 @@ CjvxSpNMeasureIr::get_configuration_one_measurement(CjvxSpNMeasureIr_oneMeasurem
 	processor->createEmptySection(&subSecWrite, sec.c_str());
 
 	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_AMPLITUDE", subSecWrite, oneM->generator.amplitude, processor);
-	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_FREQ_LOW_HZ", subSecWrite, oneM->generator.freq_low_hz, processor);
-	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_FREQ_UP_HZ", subSecWrite, oneM->generator.freq_up_hz, processor);
+	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_FREQ_LOW_START_HZ", subSecWrite, oneM->generator.freq_low_hz_start, processor);
+	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_FREQ_LOW_STOP_HZ", subSecWrite, oneM->generator.freq_low_hz_stop, processor);
+	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_FREQ_UP_START_HZ", subSecWrite, oneM->generator.freq_up_hz_start, processor);
+	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_FREQ_UP_STOP_HZ", subSecWrite, oneM->generator.freq_up_hz_stop, processor);
 	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_LENGTH_SEC", subSecWrite, oneM->generator.length_seconds, processor);
 	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_LOOP_CNT", subSecWrite, oneM->generator.loop_count, processor);
 	JVX_GET_CONFIGURATION_INJECT_VALUE(res, "MEASUREIR_NOISE_TYPE", subSecWrite, oneM->generator.noise_type, processor);
@@ -185,8 +187,10 @@ CjvxSpNMeasureIr::put_configuration_all_measurements(jvxConfigData* secRead, Ijv
 			CjvxSpNMeasureIr_oneMeasurement* oneM = NULL;
 			JVX_DSP_SAFE_ALLOCATE_OBJECT(oneM, CjvxSpNMeasureIr_oneMeasurement);
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_AMPLITUDE", subSecRead, &oneM->generator.amplitude, processor);
-			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_FREQ_LOW_HZ", subSecRead, &oneM->generator.freq_low_hz, processor);
-			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_FREQ_UP_HZ", subSecRead, &oneM->generator.freq_up_hz, processor);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_FREQ_LOW_START_HZ", subSecRead, &oneM->generator.freq_low_hz_start, processor);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_FREQ_LOW_STOP_HZ", subSecRead, &oneM->generator.freq_low_hz_stop, processor);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_FREQ_UP_START_HZ", subSecRead, &oneM->generator.freq_up_hz_start, processor);
+			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_FREQ_UP_STOP_HZ", subSecRead, &oneM->generator.freq_up_hz_stop, processor);
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_LENGTH_SEC", subSecRead, &oneM->generator.length_seconds, processor);
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_LOOP_CNT", subSecRead, &oneM->generator.loop_count, processor);
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "MEASUREIR_NOISE_TYPE", subSecRead, &valS, processor);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1684</width>
-    <height>902</height>
+    <width>1829</width>
+    <height>1070</height>
    </rect>
   </property>
   <property name="palette">
@@ -1014,6 +1014,151 @@
         <property name="text">
          <string>Copy</string>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_17">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="checkBox_override">
+           <property name="text">
+            <string>Override</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_19">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_18">
+              <property name="text">
+               <string>Min</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_override_min">
+              <property name="text">
+               <string>1e-16</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_18">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>Max</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_override_max">
+              <property name="text">
+               <string>1e-3</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_20">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_16">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_19">
+              <property name="text">
+               <string>Exp</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_exponent">
+              <property name="text">
+               <string>4</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
@@ -4266,8 +4411,8 @@
    <slot>import_data_plot1()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>49</y>
+     <x>65</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
      <x>94</x>
@@ -4282,8 +4427,8 @@
    <slot>changed_color_p1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>186</x>
-     <y>69</y>
+     <x>180</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>222</x>
@@ -4298,8 +4443,8 @@
    <slot>changed_pixels_p1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>286</x>
-     <y>69</y>
+     <x>275</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -4314,8 +4459,8 @@
    <slot>changed_style_p1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>387</x>
-     <y>69</y>
+     <x>365</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>480</x>
@@ -4330,8 +4475,8 @@
    <slot>changed_markers_p1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>487</x>
-     <y>69</y>
+     <x>473</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>622</x>
@@ -4346,8 +4491,8 @@
    <slot>import_data_plot2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>679</x>
-     <y>71</y>
+     <x>817</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
      <x>598</x>
@@ -4362,8 +4507,8 @@
    <slot>changed_color_p2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>69</y>
+     <x>990</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>773</x>
@@ -4378,8 +4523,8 @@
    <slot>changed_pixels_p2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>953</x>
-     <y>69</y>
+     <x>1085</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>893</x>
@@ -4394,8 +4539,8 @@
    <slot>changed_style_p2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1067</x>
-     <y>68</y>
+     <x>1175</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>1002</x>
@@ -4410,8 +4555,8 @@
    <slot>changed_markers_p2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1167</x>
-     <y>68</y>
+     <x>1283</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>1083</x>
@@ -4426,8 +4571,8 @@
    <slot>changed_td_ymax()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>45</x>
-     <y>119</y>
+     <x>58</x>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4442,8 +4587,8 @@
    <slot>changed_td_ymin()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>41</x>
-     <y>164</y>
+     <x>54</x>
+     <y>209</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4458,8 +4603,8 @@
    <slot>toggled_td_yauto(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>23</x>
-     <y>193</y>
+     <x>36</x>
+     <y>235</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4474,8 +4619,8 @@
    <slot>changed_td_xmin()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>195</x>
-     <y>355</y>
+     <x>284</x>
+     <y>475</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4490,8 +4635,8 @@
    <slot>changed_td_xmax()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>281</x>
-     <y>355</y>
+     <x>391</x>
+     <y>475</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4506,8 +4651,8 @@
    <slot>toggled_td_xauto(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>333</x>
-     <y>354</y>
+     <x>446</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4522,8 +4667,8 @@
    <slot>changed_fd_ymax()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>435</y>
+     <x>70</x>
+     <y>568</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4538,8 +4683,8 @@
    <slot>changed_fd_ymin()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>480</y>
+     <x>70</x>
+     <y>618</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4554,8 +4699,8 @@
    <slot>toggled_fd_yauto(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>503</y>
+     <x>70</x>
+     <y>644</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4570,8 +4715,8 @@
    <slot>changed_fd_xmin()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>195</x>
-     <y>652</y>
+     <x>271</x>
+     <y>884</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4586,8 +4731,8 @@
    <slot>changed_fd_xmax()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>281</x>
-     <y>652</y>
+     <x>369</x>
+     <y>884</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4602,8 +4747,8 @@
    <slot>toggled_fd_xauto(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>333</x>
-     <y>651</y>
+     <x>424</x>
+     <y>883</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4618,8 +4763,8 @@
    <slot>show_plot1(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>542</x>
-     <y>68</y>
+     <x>534</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>835</x>
@@ -4634,8 +4779,8 @@
    <slot>show_plot2(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1222</x>
-     <y>67</y>
+     <x>1344</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>939</x>
@@ -4650,8 +4795,8 @@
    <slot>changed_td_signal(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1340</x>
-     <y>355</y>
+     <x>1528</x>
+     <y>475</y>
     </hint>
     <hint type="destinationlabel">
      <x>1367</x>
@@ -4666,8 +4811,8 @@
    <slot>changed_axis_linlog(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>408</x>
-     <y>652</y>
+     <x>499</x>
+     <y>884</y>
     </hint>
     <hint type="destinationlabel">
      <x>453</x>
@@ -4682,8 +4827,8 @@
    <slot>changed_sec_mode(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1340</x>
-     <y>652</y>
+     <x>1528</x>
+     <y>884</y>
     </hint>
     <hint type="destinationlabel">
      <x>1373</x>
@@ -4698,8 +4843,8 @@
    <slot>toggled_show_td_marker1(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>136</y>
+     <x>1670</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel">
      <x>1269</x>
@@ -4714,8 +4859,8 @@
    <slot>toggled_show_td_marker2(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>216</y>
+     <x>1670</x>
+     <y>238</y>
     </hint>
     <hint type="destinationlabel">
      <x>1291</x>
@@ -4730,8 +4875,8 @@
    <slot>clicked_clear_td_marker1()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>165</y>
+     <x>1662</x>
+     <y>181</y>
     </hint>
     <hint type="destinationlabel">
      <x>1372</x>
@@ -4746,8 +4891,8 @@
    <slot>clicked_clear_td_marker2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>245</y>
+     <x>1662</x>
+     <y>268</y>
     </hint>
     <hint type="destinationlabel">
      <x>1373</x>
@@ -4762,8 +4907,8 @@
    <slot>activated_process_td(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1424</x>
-     <y>68</y>
+     <x>1617</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>1374</x>
@@ -4778,8 +4923,8 @@
    <slot>apply_td_direct_xy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>713</x>
-     <y>357</y>
+     <x>689</x>
+     <y>476</y>
     </hint>
     <hint type="destinationlabel">
      <x>1373</x>
@@ -4794,8 +4939,8 @@
    <slot>apply_td_move_xy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1118</x>
-     <y>357</y>
+     <x>959</x>
+     <y>476</y>
     </hint>
     <hint type="destinationlabel">
      <x>1374</x>
@@ -4810,8 +4955,8 @@
    <slot>toggled_td_legend(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1404</x>
-     <y>354</y>
+     <x>1598</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel">
      <x>1373</x>
@@ -4826,8 +4971,8 @@
    <slot>toggled_sec_legend(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1404</x>
-     <y>651</y>
+     <x>1598</x>
+     <y>883</y>
     </hint>
     <hint type="destinationlabel">
      <x>1372</x>
@@ -4842,8 +4987,8 @@
    <slot>apply_sec_direct_xy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>758</x>
-     <y>654</y>
+     <x>727</x>
+     <y>885</y>
     </hint>
     <hint type="destinationlabel">
      <x>1075</x>
@@ -4858,8 +5003,8 @@
    <slot>apply_sec_move_xy()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1132</x>
-     <y>654</y>
+     <x>982</x>
+     <y>885</y>
     </hint>
     <hint type="destinationlabel">
      <x>1490</x>
@@ -4874,8 +5019,8 @@
    <slot>toggled_show_sec_marker1(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>435</y>
+     <x>1670</x>
+     <y>560</y>
     </hint>
     <hint type="destinationlabel">
      <x>1490</x>
@@ -4890,8 +5035,8 @@
    <slot>toggled_show_sec_marker2(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>515</y>
+     <x>1670</x>
+     <y>647</y>
     </hint>
     <hint type="destinationlabel">
      <x>1490</x>
@@ -4906,8 +5051,8 @@
    <slot>clicked_clear_sec_marker1()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>464</y>
+     <x>1662</x>
+     <y>590</y>
     </hint>
     <hint type="destinationlabel">
      <x>1490</x>
@@ -4922,8 +5067,8 @@
    <slot>clicked_clear_sec_marker2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1471</x>
-     <y>544</y>
+     <x>1662</x>
+     <y>677</y>
     </hint>
     <hint type="destinationlabel">
      <x>1490</x>
@@ -4954,8 +5099,8 @@
    <slot>trigger_processor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1451</x>
-     <y>54</y>
+     <x>1673</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
      <x>1490</x>
@@ -4970,8 +5115,8 @@
    <slot>import_data_plot12()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>720</x>
-     <y>55</y>
+     <x>898</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
      <x>632</x>
@@ -4986,8 +5131,8 @@
    <slot>copy_td()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>32</x>
-     <y>305</y>
+     <x>45</x>
+     <y>359</y>
     </hint>
     <hint type="destinationlabel">
      <x>-4</x>
@@ -5002,8 +5147,8 @@
    <slot>copy_fd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>35</x>
-     <y>609</y>
+     <x>48</x>
+     <y>844</y>
     </hint>
     <hint type="destinationlabel">
      <x>-4</x>
@@ -5018,8 +5163,8 @@
    <slot>apply_copy_td_point()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1181</x>
-     <y>341</y>
+     <x>1043</x>
+     <y>476</y>
     </hint>
     <hint type="destinationlabel">
      <x>1496</x>
@@ -5034,8 +5179,8 @@
    <slot>marker_export_fd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1435</x>
-     <y>562</y>
+     <x>1638</x>
+     <y>708</y>
     </hint>
     <hint type="destinationlabel">
      <x>1496</x>
@@ -5050,8 +5195,8 @@
    <slot>marker_import_fd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1459</x>
-     <y>564</y>
+     <x>1669</x>
+     <y>708</y>
     </hint>
     <hint type="destinationlabel">
      <x>1495</x>
@@ -5066,8 +5211,8 @@
    <slot>marker_export_td()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1436</x>
-     <y>272</y>
+     <x>1638</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel">
      <x>1496</x>
@@ -5082,8 +5227,8 @@
    <slot>marker_import_td()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1457</x>
-     <y>271</y>
+     <x>1669</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel">
      <x>1495</x>
@@ -5152,5 +5297,6 @@
   <slot>marker_import_fd()</slot>
   <slot>marker_export_td()</slot>
   <slot>marker_import_td()</slot>
+  <slot>recompute_ir1()</slot>
  </slots>
 </ui>

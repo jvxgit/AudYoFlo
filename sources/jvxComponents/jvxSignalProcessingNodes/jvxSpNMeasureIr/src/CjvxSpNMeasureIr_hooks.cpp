@@ -65,6 +65,28 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, set_generator_p
 	return JVX_NO_ERROR;
 }
 
+JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, set_evaluation_options_posthook)
+{
+	// Copy the settings to the proper measurement
+	if (selMeasures < measurements.size())
+	{
+		auto elm = measurements.begin();
+		if (genMeasureIr_node::config.apply_to_all.value == c_true)
+		{
+			for (; elm != measurements.end(); elm++)
+			{
+				evaluation_options_from_props(*elm);
+			}
+		}
+		else
+		{
+			std::advance(elm, selMeasures);
+			evaluation_options_from_props(*elm);
+		}
+	}
+
+	return JVX_NO_ERROR;
+}
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, set_measurement_posthook)
 {
 	jvxBool updateChannels = false;
@@ -322,7 +344,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, get_measurement
 			if (selResMeasChan < elmM->resultsChannel.size())
 			{
 				std::advance(elmC, selResMeasChan);
-
+				
 				if (ptrIn->lBuf == 0)
 				{
 					ptrIn->lBuf = elmC->lBuf;
@@ -333,6 +355,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, get_measurement
 					ptrIn->rate = elmC->rate;
 					ptrIn->fileLocate.assign(elmM->pathStoreProto);
 					jvxSize ml = JVX_MIN(ptrIn->lBuf, elmC->lBuf);
+					
 					if (ptrIn->bufIr)
 					{
 						if (elmC->validFlds & JVX_FLAG_IR_VALID)
@@ -355,6 +378,42 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, get_measurement
 						{
 							memcpy(ptrIn->bufTest, elmC->bufTest, sizeof(jvxData)*ml);
 							ptrIn->validFlds |= JVX_FLAG_TEST_VALID;
+						}
+					}
+
+					if(ptrIn->validFlds & (JVX_FLAG_IR_VALID | JVX_FLAG_MEAS_VALID | JVX_FLAG_TEST_VALID))
+					{
+						if (ptrIn->args)
+						{
+							if (ptrIn->args->recomputeIr)
+							{
+								jvx_measure_ir_reg ctrl;
+								jvx_measure_ir_reg_cfg_init(&ctrl);
+
+								ctrl.init.fs = elmC->rate;
+								ctrl.init.loopCnt = 1;
+								ctrl.init.llMax = elmC->lBuf;
+								ctrl.init.skipFirst = c_false;
+								ctrl.init.flowStart = elmC->freq_low_start_hz;
+								ctrl.init.flowStop = elmC->freq_low_stop_hz;
+								ctrl.init.fhighStart = elmC->freq_up_start_hz;
+								ctrl.init.fhighStop = elmC->freq_up_stop_hz;
+
+								// ctrl.init.flowStart = elmC->;
+								ctrl.async.regulationCoeffMax = ptrIn->args->override_reg_max;
+								ctrl.async.regulationCoeffMin = ptrIn->args->override_reg_min;
+								ctrl.async.exponent_fac= ptrIn->args->exponent;
+
+								jvx_measure_ir_reg_init(&ctrl);
+								jvx_measure_ir_reg_process(&ctrl,
+									elmC->bufMeas, elmC->lBuf,
+									elmC->bufTest, elmC->lBuf,
+									nullptr, 0,
+									nullptr, 0,
+									ptrIn->bufIr, ml,
+									nullptr, 0, nullptr, 0);
+								jvx_measure_ir_reg_terminate(&ctrl);
+							}
 						}
 					}
 				}

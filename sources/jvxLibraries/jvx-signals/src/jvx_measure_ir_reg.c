@@ -50,6 +50,9 @@ void jvx_measure_ir_reg_cfg_init(struct jvx_measure_ir_reg* hdl)
 	hdl->init.fhighStop = hdl->init.fhighStart;
 	hdl->async.regulationCoeffMin = 1e-12;
 	hdl->async.regulationCoeffMax = 1e-4;
+	hdl->async.interpol_log = c_true;
+	hdl->async.exponent_fac = 4;
+
 	hdl->init.llMax = 0;
 
 	hdl->derived.ll_oneLoop = 0;
@@ -312,7 +315,19 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 				deltaBuf = regulationCoeffMax * (1-deltaBuf) + regulationCoeffMin *deltaBuf;
 				regValue = deltaBuf * sigMultipleTest_loops_avrg_fft_abs_s_max;
 				*/
-				jvxData regValue = hdlPrv->async_cpy.regulationCoeffMax;
+				jvxCBool interpolLog = hdlPrv->async_cpy.interpol_log;
+				jvxData exponentFac = hdlPrv->async_cpy.exponent_fac;
+
+				jvxData regMax = hdlPrv->async_cpy.regulationCoeffMax;
+				jvxData regMin = hdlPrv->async_cpy.regulationCoeffMin;
+							
+				if (interpolLog)
+				{
+					regMin = log(hdlPrv->async_cpy.regulationCoeffMin);
+					regMax = log(hdlPrv->async_cpy.regulationCoeffMax);
+				}
+
+				jvxData regValue = regMax;
 				if (
 					(i >= nLowStart) && (i <= nLowStop)
 					)
@@ -320,15 +335,17 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 					jvxData norm = (jvxData)(nLowStop - nLowStart + 1);
 					norm = 1.0 / norm;
 					jvxData linFac = norm * (jvxData)(i - nLowStart);
-					linFac *= linFac;
-					regValue = hdlPrv->async_cpy.regulationCoeffMax * (1 - linFac) + hdlPrv->async_cpy.regulationCoeffMin * linFac;
+					linFac = log(linFac);
+					linFac *= exponentFac;
+					linFac = exp(linFac);
+					regValue = regValue * (1 - linFac) + regMin * linFac;
 				}
 				else
 				{
 					if (
 						(i > nLowStop) && (i < nHighStart))
 					{
-						regValue = hdlPrv->async_cpy.regulationCoeffMin;
+						regValue = regMin;
 					}
 					else
 					{
@@ -338,10 +355,17 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 							jvxData norm = (jvxData)(nHighStop - nHighStart + 1);
 							norm = 1.0 / norm;
 							jvxData linFac = norm * (jvxData)(nHighStop - i);
-							linFac *= linFac;
-							regValue = hdlPrv->async_cpy.regulationCoeffMax * (1 - linFac) + hdlPrv->async_cpy.regulationCoeffMin * linFac;
+							linFac = log(linFac);
+							linFac *= exponentFac;
+							linFac = exp(linFac);
+							regValue = regMax * (1 - linFac) + regMin * linFac;
 						}
 					}
+				}
+
+				if (interpolLog)
+				{
+					regValue = exp(regValue);
 				}
 
 				if (

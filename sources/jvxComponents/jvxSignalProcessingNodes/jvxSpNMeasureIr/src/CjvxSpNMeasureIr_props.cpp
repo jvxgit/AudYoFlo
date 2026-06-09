@@ -235,8 +235,10 @@ CjvxSpNMeasureIr::update_generator_properties()
 		genMeasureIr_node::generator.type_excitation.isValid = true;
 		genMeasureIr_node::generator.noise_type_excitation.isValid = true;
 		genMeasureIr_node::generator.amplitude_excitation.isValid = true;
-		genMeasureIr_node::generator.frequency_low_excitation.isValid = true;
-		genMeasureIr_node::generator.frequency_up_excitation.isValid = true;
+		genMeasureIr_node::generator.frequency_low_start_excitation.isValid = true;
+		genMeasureIr_node::generator.frequency_up_start_excitation.isValid = true;
+		genMeasureIr_node::generator.frequency_low_stop_excitation.isValid = true;
+		genMeasureIr_node::generator.frequency_up_stop_excitation.isValid = true;
 		genMeasureIr_node::generator.length_excitation.isValid = true;
 		genMeasureIr_node::generator.number_periods_excitation.isValid = true;
 		genMeasureIr_node::generator.seed_excitation.isValid = true;
@@ -249,8 +251,10 @@ CjvxSpNMeasureIr::update_generator_properties()
 		genMeasureIr_node::generator.type_excitation.isValid = false;
 		genMeasureIr_node::generator.noise_type_excitation.isValid = false;
 		genMeasureIr_node::generator.amplitude_excitation.isValid = false;
-		genMeasureIr_node::generator.frequency_low_excitation.isValid = false;
-		genMeasureIr_node::generator.frequency_up_excitation.isValid = false;
+		genMeasureIr_node::generator.frequency_low_start_excitation.isValid = false;
+		genMeasureIr_node::generator.frequency_up_start_excitation.isValid = false;
+		genMeasureIr_node::generator.frequency_low_stop_excitation.isValid = false;
+		genMeasureIr_node::generator.frequency_up_stop_excitation.isValid = false;
 		genMeasureIr_node::generator.length_excitation.isValid = false;
 		genMeasureIr_node::generator.number_periods_excitation.isValid = false;
 		genMeasureIr_node::generator.seed_excitation.isValid = false;
@@ -268,9 +272,10 @@ CjvxSpNMeasureIr::generator_from_props(CjvxSpNMeasureIr_oneMeasurement* elm)
 	elm->generator.amplitude = genMeasureIr_node::generator.amplitude_excitation.value;
 
 	elm->generator.freq_low_hz_start = genMeasureIr_node::generator.frequency_low_start_excitation.value;
+	elm->generator.freq_low_hz_stop = genMeasureIr_node::generator.frequency_low_stop_excitation.value;
+
+	elm->generator.freq_up_hz_start = genMeasureIr_node::generator.frequency_up_start_excitation.value;
 	elm->generator.freq_up_hz_stop = genMeasureIr_node::generator.frequency_up_stop_excitation.value;
-	elm->generator.freq_low_hz = genMeasureIr_node::generator.frequency_low_excitation.value;
-	elm->generator.freq_up_hz = genMeasureIr_node::generator.frequency_up_excitation.value;
 
 	elm->generator.length_seconds = genMeasureIr_node::generator.length_excitation.value;
 	elm->generator.silence_start_seconds = genMeasureIr_node::generator.silence_start_excitation.value;
@@ -285,8 +290,10 @@ CjvxSpNMeasureIr::generator_to_props(CjvxSpNMeasureIr_oneMeasurement* elm)
 {
 	genMeasureIr_node::generator.seed_excitation.value = elm->generator.seed_noise;
 	genMeasureIr_node::generator.amplitude_excitation.value = elm->generator.amplitude;
-	genMeasureIr_node::generator.frequency_low_excitation.value = elm->generator.freq_low_hz;
-	genMeasureIr_node::generator.frequency_up_excitation.value = elm->generator.freq_up_hz;
+	genMeasureIr_node::generator.frequency_low_start_excitation.value = elm->generator.freq_low_hz_start;
+	genMeasureIr_node::generator.frequency_up_start_excitation.value = elm->generator.freq_up_hz_start;
+	genMeasureIr_node::generator.frequency_low_stop_excitation.value = elm->generator.freq_low_hz_stop;
+	genMeasureIr_node::generator.frequency_up_stop_excitation.value = elm->generator.freq_up_hz_stop;
 	genMeasureIr_node::generator.length_excitation.value = elm->generator.length_seconds;
 	genMeasureIr_node::generator.silence_start_excitation.value = elm->generator.silence_start_seconds;
 	genMeasureIr_node::generator.silence_stop_excitation.value = elm->generator.silence_stop_seconds;
@@ -311,6 +318,26 @@ CjvxSpNMeasureIr::evaluation_to_props(CjvxSpNMeasureIr_oneMeasurement* elm)
 	genMeasureIr_node::evaluation.evaluate_ir.value = elm->evaluation.derive_ir;
 	genMeasureIr_node::evaluation.skip_periods.value = elm->evaluation.skip_eval;
 	genMeasureIr_node::evaluation.store_data.value = elm->evaluation.store_data;
+}
+
+// ==============================================================================
+
+void
+CjvxSpNMeasureIr::evaluation_options_from_props(CjvxSpNMeasureIr_oneMeasurement* elm)
+{
+	elm->evaluation_options.runSecEvaluation = genMeasureIr_node::evaluation_options.secondary_measurement.value;
+	elm->evaluation_options.regMax = genMeasureIr_node::evaluation_options.secondary_regulator_max.value;
+	elm->evaluation_options.regMin = genMeasureIr_node::evaluation_options.secondary_regulator_min.value;
+	elm->evaluation_options.exponent= genMeasureIr_node::evaluation_options.secondary_exponent.value;
+}
+
+void
+CjvxSpNMeasureIr::evaluation_options_to_props(CjvxSpNMeasureIr_oneMeasurement* elm)
+{
+	genMeasureIr_node::evaluation_options.secondary_measurement.value = elm->evaluation_options.runSecEvaluation;
+	genMeasureIr_node::evaluation_options.secondary_regulator_max.value = elm->evaluation_options.regMax;
+	genMeasureIr_node::evaluation_options.secondary_regulator_min.value = elm->evaluation_options.regMin;
+	genMeasureIr_node::evaluation_options.secondary_exponent.value = elm->evaluation_options.exponent;
 }
 
 // ==============================================================================

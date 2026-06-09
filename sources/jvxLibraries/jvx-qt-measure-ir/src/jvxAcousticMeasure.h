@@ -463,6 +463,8 @@ public slots:
 	void marker_export_td();
 	void marker_import_fd();
 	void marker_import_td();
+
+	void recompute_ir1();
 };
 
 #endif

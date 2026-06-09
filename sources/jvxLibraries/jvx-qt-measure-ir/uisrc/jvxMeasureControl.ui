@@ -1559,20 +1559,6 @@ QTabBar::tab:!selected {
                         </property>
                        </widget>
                       </item>
-                      <item row="8" column="2">
-                       <widget class="QLabel" name="label_27">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Level to Full [dB]</string>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="7" column="0">
                        <widget class="QLabel" name="label_22">
                         <property name="font">
@@ -1587,20 +1573,6 @@ QTabBar::tab:!selected {
                         </property>
                        </widget>
                       </item>
-                      <item row="4" column="2">
-                       <widget class="QLabel" name="label_40">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Freq (Low, start) [Hz]</string>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="1" column="3">
                        <widget class="QLineEdit" name="lineEdit_6">
                         <property name="font">
@@ -1612,20 +1584,6 @@ QTabBar::tab:!selected {
                         </property>
                         <property name="accessibleDescription">
                          <string>measure:/number_periods_excitation:NUMDIGITS=0</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="6" column="2">
-                       <widget class="QLabel" name="label_28">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Freq (Up) [Hz]</string>
                         </property>
                        </widget>
                       </item>
@@ -1657,20 +1615,6 @@ QTabBar::tab:!selected {
                         </property>
                        </widget>
                       </item>
-                      <item row="7" column="3">
-                       <widget class="QLineEdit" name="lineEdit_18">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="accessibleDescription">
-                         <string>measure:/frequency_up_stop_excitation:NUMDIGITS=0</string>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="4" column="0">
                        <widget class="QLabel" name="label_24">
                         <property name="font">
@@ -1695,7 +1639,7 @@ QTabBar::tab:!selected {
                          </font>
                         </property>
                         <property name="text">
-                         <string>Freq (Low) [Hz]</string>
+                         <string>Freq (Low - start, stopo) [Hz]</string>
                         </property>
                        </widget>
                       </item>
@@ -1741,48 +1685,6 @@ QTabBar::tab:!selected {
                         </property>
                        </widget>
                       </item>
-                      <item row="6" column="3">
-                       <widget class="QLineEdit" name="lineEdit_8">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="accessibleDescription">
-                         <string>measure:/frequency_up_excitation:NUMDIGITS=0</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="8" column="3">
-                       <widget class="QLineEdit" name="lineEdit_7">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="accessibleDescription">
-                         <string>measure:/amplitude_excitation:LABELTRANSFORM=JVX_WW_SHOW_DB20</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="7" column="2">
-                       <widget class="QLabel" name="label_43">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Freq (Up, stop) [Hz]</string>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="4" column="1">
                        <widget class="QLineEdit" name="lineEdit_4">
                         <property name="font">
@@ -1811,20 +1713,6 @@ QTabBar::tab:!selected {
                         </property>
                        </widget>
                       </item>
-                      <item row="4" column="3">
-                       <widget class="QLineEdit" name="lineEdit_17">
-                        <property name="font">
-                         <font>
-                          <weight>50</weight>
-                          <italic>false</italic>
-                          <bold>false</bold>
-                         </font>
-                        </property>
-                        <property name="accessibleDescription">
-                         <string>measure:/frequency_low_start_excitation:NUMDIGITS=0</string>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="3" column="1">
                        <widget class="QLineEdit" name="lineEdit_3">
                         <property name="font">
@@ -1840,7 +1728,145 @@ QTabBar::tab:!selected {
                        </widget>
                       </item>
                       <item row="3" column="3">
-                       <widget class="QLineEdit" name="lineEdit_16">
+                       <widget class="QFrame" name="frame_4">
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_3">
+                         <property name="spacing">
+                          <number>8</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QLineEdit" name="lineEdit_16">
+                           <property name="font">
+                            <font>
+                             <weight>50</weight>
+                             <italic>false</italic>
+                             <bold>false</bold>
+                            </font>
+                           </property>
+                           <property name="accessibleDescription">
+                            <string>measure:/frequency_low_start_excitation:NUMDIGITS=0</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="lineEdit_17">
+                           <property name="font">
+                            <font>
+                             <weight>50</weight>
+                             <italic>false</italic>
+                             <bold>false</bold>
+                            </font>
+                           </property>
+                           <property name="accessibleDescription">
+                            <string>measure:/frequency_low_stop_excitation:NUMDIGITS=0</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item row="4" column="2">
+                       <widget class="QLabel" name="label_28">
+                        <property name="font">
+                         <font>
+                          <weight>50</weight>
+                          <italic>false</italic>
+                          <bold>false</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Freq (Up - start, stop) [Hz]</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="3">
+                       <widget class="QFrame" name="frame_8">
+                        <property name="frameShape">
+                         <enum>QFrame::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_4">
+                         <property name="spacing">
+                          <number>8</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QLineEdit" name="lineEdit_8">
+                           <property name="font">
+                            <font>
+                             <weight>50</weight>
+                             <italic>false</italic>
+                             <bold>false</bold>
+                            </font>
+                           </property>
+                           <property name="accessibleDescription">
+                            <string>measure:/frequency_up_start_excitation:NUMDIGITS=0</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="lineEdit_18">
+                           <property name="font">
+                            <font>
+                             <weight>50</weight>
+                             <italic>false</italic>
+                             <bold>false</bold>
+                            </font>
+                           </property>
+                           <property name="accessibleDescription">
+                            <string>measure:/frequency_up_stop_excitation:NUMDIGITS=0</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item row="6" column="2">
+                       <widget class="QLabel" name="label_27">
+                        <property name="font">
+                         <font>
+                          <weight>50</weight>
+                          <italic>false</italic>
+                          <bold>false</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Level to Full [dB]</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="6" column="3">
+                       <widget class="QLineEdit" name="lineEdit_7">
                         <property name="font">
                          <font>
                           <weight>50</weight>
@@ -1849,28 +1875,18 @@ QTabBar::tab:!selected {
                          </font>
                         </property>
                         <property name="accessibleDescription">
-                         <string>measure:/frequency_low_excitation:NUMDIGITS=0</string>
+                         <string>measure:/amplitude_excitation:LABELTRANSFORM=JVX_WW_SHOW_DB20</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="9" column="1">
-                       <widget class="QCheckBox" name="checkBox_8">
-                        <property name="accessibleDescription">
-                         <string>measure:/secondary_measurement:</string>
-                        </property>
-                        <property name="text">
-                         <string>Secondary Evaluation</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="9" column="2">
+                      <item row="7" column="2">
                        <widget class="QLabel" name="label_4">
                         <property name="text">
                          <string>Reg -Min/Max</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="9" column="3">
+                      <item row="7" column="3">
                        <widget class="QFrame" name="frame_3">
                         <property name="frameShape">
                          <enum>QFrame::StyledPanel</enum>
@@ -1897,18 +1913,42 @@ QTabBar::tab:!selected {
                          <item>
                           <widget class="QLineEdit" name="lineEdit_19">
                            <property name="accessibleDescription">
-                            <string>measure:/secondary_regulator_min:</string>
+                            <string>measure:/secondary_regulator_min:NUMDIGITS=-256</string>
                            </property>
                           </widget>
                          </item>
                          <item>
                           <widget class="QLineEdit" name="lineEdit_20">
                            <property name="accessibleDescription">
-                            <string>measure:/secondary_regulator_max:</string>
+                            <string>measure:/secondary_regulator_max:NUMDIGITS=-256</string>
                            </property>
                           </widget>
                          </item>
                         </layout>
+                       </widget>
+                      </item>
+                      <item row="8" column="1">
+                       <widget class="QCheckBox" name="checkBox_8">
+                        <property name="accessibleDescription">
+                         <string>measure:/secondary_measurement:</string>
+                        </property>
+                        <property name="text">
+                         <string>Secondary Evaluation</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="8" column="3">
+                       <widget class="QLineEdit" name="lineEdit_21">
+                        <property name="accessibleDescription">
+                         <string>measure:/secondary_exponent:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="8" column="2">
+                       <widget class="QLabel" name="label_5">
+                        <property name="text">
+                         <string>Exponent</string>
+                        </property>
                        </widget>
                       </item>
                      </layout>

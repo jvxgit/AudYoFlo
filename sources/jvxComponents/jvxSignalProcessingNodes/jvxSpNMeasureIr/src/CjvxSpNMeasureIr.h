@@ -62,6 +62,7 @@ public:
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config_posthook);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_generator_posthook);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_evaluation_options_posthook);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_measurement_posthook);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_measurement_prehook);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(add_entry);
@@ -115,6 +116,9 @@ public:
 
 	void evaluation_from_props(CjvxSpNMeasureIr_oneMeasurement* elm);
 	void evaluation_to_props(CjvxSpNMeasureIr_oneMeasurement* elm);
+
+	void evaluation_options_from_props(CjvxSpNMeasureIr_oneMeasurement* elm);
+	void evaluation_options_to_props(CjvxSpNMeasureIr_oneMeasurement* elm);
 
 	void set_measurement_idx();
 

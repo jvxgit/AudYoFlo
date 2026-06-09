@@ -35,6 +35,7 @@ CjvxSpNMeasureIr::activate()
 			set_config_posthook,
 			trigger_start,
 			set_generator_posthook,
+			set_evaluation_options_posthook,
 			set_measurement_posthook, 
 			get_measurement_prehook, 
 			add_entry, remove_entry, 
@@ -310,11 +311,7 @@ CjvxSpNMeasureIr::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					callback_report_txt(txt);
 				}
 				// inProcessing.activeMeasures[i]->write_data(path);
-				CjvxSpNMeasureIr_oneMeasurement::secondary_eval args;
-				args.regMax = genMeasureIr_node::config.secondary_regulator_max.value;
-				args.regMin = genMeasureIr_node::config.secondary_regulator_min.value;
-				args.runSecEvaluation = (genMeasureIr_node::config.secondary_measurement.value != c_false);
-				inProcessing.activeMeasures[i]->evaluate_measurement(args);
+				inProcessing.activeMeasures[i]->evaluate_measurement();
 
 				if (genMeasureIr_node::callbacks.report_evaluate.value)
 				{
