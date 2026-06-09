@@ -780,7 +780,7 @@ jvx_circbuffer_fir_1can_1io(jvx_circbuffer* hdlIn,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
-	return jvx_circbuffer_fir_1can_2io(hdlIn, fCoeffs_fw, fieldInOut, fieldInOut, bSize);
+	return jvx_circbuffer_fir_1can_2io(hdlIn, fCoeffs_fw, (const jvxData**)fieldInOut, fieldInOut, bSize);
 }
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_1io(jvx_circbuffer* hdlIn,
@@ -788,7 +788,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_1io(jvx_circbuffer* hdlIn,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
-	return jvx_circbuffer_fir_2can_2io(hdlIn, fCoeffs_fw, fieldInOut, fieldInOut, bSize);
+	return jvx_circbuffer_fir_2can_2io(hdlIn, fCoeffs_fw, (const jvxData**)fieldInOut, fieldInOut, bSize);
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_1io(jvx_circbuffer* hdlIn,
@@ -797,7 +797,7 @@ jvxDspBaseErrorType jvx_circbuffer_iir_1can_1io(jvx_circbuffer* hdlIn,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
-	return jvx_circbuffer_iir_1can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, fieldInOut, fieldInOut, bSize);
+	return jvx_circbuffer_iir_1can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, (const jvxData**)fieldInOut, fieldInOut, bSize);
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_2can_1io(jvx_circbuffer* hdlIn,
@@ -806,7 +806,7 @@ jvxDspBaseErrorType jvx_circbuffer_iir_2can_1io(jvx_circbuffer* hdlIn,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
-	return jvx_circbuffer_iir_2can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, fieldInOut, fieldInOut, bSize);
+	return jvx_circbuffer_iir_2can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, (const jvxData**)fieldInOut, fieldInOut, bSize);
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_1io(jvx_circbuffer* hdlIn,
@@ -817,7 +817,7 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos1can_1io(jvx_circbuffer* hdlIn,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
-	return jvx_circbuffer_iir_sos1can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, gains, shiftFactor, fieldInOut, fieldInOut, bSize);
+	return jvx_circbuffer_iir_sos1can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, gains, shiftFactor, (const jvxData**)fieldInOut, fieldInOut, bSize);
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_1io(jvx_circbuffer* hdlIn,
@@ -828,7 +828,7 @@ jvxDspBaseErrorType jvx_circbuffer_iir_sos2can_1io(jvx_circbuffer* hdlIn,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
-	return jvx_circbuffer_iir_sos2can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, gains, shiftFactor, fieldInOut, fieldInOut, bSize);
+	return jvx_circbuffer_iir_sos2can_2io(hdlIn, fCoeffs_fw, fCoeffs_bw, gains, shiftFactor, (const jvxData**)fieldInOut, fieldInOut, bSize);
 }
 
 // =====================================================================================

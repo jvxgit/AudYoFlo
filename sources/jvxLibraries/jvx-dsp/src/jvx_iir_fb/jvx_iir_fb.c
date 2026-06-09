@@ -255,7 +255,7 @@ jvx_iir_fb_process_tree(struct jvx_iir_fb_one_stage* this_stage, jvxData*** bufO
 	if (JVX_CHECK_SIZE_SELECTED(this_stage->frequency))
 	{
 		buf0 = bufOut[this_stage->hp.oBufId];
-		JVX_CIRCBUFFER_FILTER_2IO(this_stage->hp.A.states, this_stage->hp.A.num_poly, this_stage->hp.A.den_poly, bufOut[idIn], buf0, bsize);
+		JVX_CIRCBUFFER_FILTER_2IO(this_stage->hp.A.states, this_stage->hp.A.num_poly, this_stage->hp.A.den_poly, (const jvxData**)bufOut[idIn], buf0, bsize);
 
 		buf1 = bufOut[this_stage->lp.oBufId];
 		JVX_CIRCBUFFER_FILTER_1IO(this_stage->lp.A.states, this_stage->lp.A.num_poly, this_stage->lp.A.den_poly, bufOut[idIn], bsize);
