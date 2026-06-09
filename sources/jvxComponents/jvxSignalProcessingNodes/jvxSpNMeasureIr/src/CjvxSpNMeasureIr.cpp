@@ -310,7 +310,11 @@ CjvxSpNMeasureIr::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 					callback_report_txt(txt);
 				}
 				// inProcessing.activeMeasures[i]->write_data(path);
-				inProcessing.activeMeasures[i]->evaluate_measurement();
+				CjvxSpNMeasureIr_oneMeasurement::secondary_eval args;
+				args.regMax = genMeasureIr_node::config.secondary_regulator_max.value;
+				args.regMin = genMeasureIr_node::config.secondary_regulator_min.value;
+				args.runSecEvaluation = (genMeasureIr_node::config.secondary_measurement.value != c_false);
+				inProcessing.activeMeasures[i]->evaluate_measurement(args);
 
 				if (genMeasureIr_node::callbacks.report_evaluate.value)
 				{

@@ -6,6 +6,7 @@
 struct jvx_measure_ir_reg_priv
 {
 	struct jvx_measure_ir_reg_init init_cpy;
+	struct jvx_measure_ir_reg_async async_cpy;
 	struct jvx_measure_ir_reg_derived derived_cpy;
 
 	struct
@@ -47,8 +48,8 @@ void jvx_measure_ir_reg_cfg_init(struct jvx_measure_ir_reg* hdl)
 	hdl->init.flowStop = hdl->init.flowStart;
 	hdl->init.fhighStart = hdl->init.fs / 2;
 	hdl->init.fhighStop = hdl->init.fhighStart;
-	hdl->init.regulationCoeffMin = 1e-12;
-	hdl->init.regulationCoeffMax = 1e-4;
+	hdl->async.regulationCoeffMin = 1e-12;
+	hdl->async.regulationCoeffMax = 1e-4;
 	hdl->init.llMax = 0;
 
 	hdl->derived.ll_oneLoop = 0;
@@ -82,6 +83,7 @@ jvxErrorType jvx_measure_ir_reg_init(struct jvx_measure_ir_reg* hdl)
 	if (retStr)
 	{
 		retStr->init_cpy = hdl->init;		
+		retStr->async_cpy = hdl->async;
 		retStr->derived_cpy.ll_oneLoop = retStr->init_cpy.llMax / retStr->init_cpy.loopCnt;
 
 		// Prepare buffers fo rthe right size 
@@ -310,7 +312,7 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 				deltaBuf = regulationCoeffMax * (1-deltaBuf) + regulationCoeffMin *deltaBuf;
 				regValue = deltaBuf * sigMultipleTest_loops_avrg_fft_abs_s_max;
 				*/
-				jvxData regValue = hdlPrv->init_cpy.regulationCoeffMax;
+				jvxData regValue = hdlPrv->async_cpy.regulationCoeffMax;
 				if (
 					(i >= nLowStart) && (i <= nLowStop)
 					)
@@ -319,14 +321,14 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 					norm = 1.0 / norm;
 					jvxData linFac = norm * (jvxData)(i - nLowStart);
 					linFac *= linFac;
-					regValue = hdlPrv->init_cpy.regulationCoeffMax * (1 - linFac) + hdlPrv->init_cpy.regulationCoeffMin * linFac;
+					regValue = hdlPrv->async_cpy.regulationCoeffMax * (1 - linFac) + hdlPrv->async_cpy.regulationCoeffMin * linFac;
 				}
 				else
 				{
 					if (
 						(i > nLowStop) && (i < nHighStart))
 					{
-						regValue = hdlPrv->init_cpy.regulationCoeffMin;
+						regValue = hdlPrv->async_cpy.regulationCoeffMin;
 					}
 					else
 					{
@@ -337,7 +339,7 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 							norm = 1.0 / norm;
 							jvxData linFac = norm * (jvxData)(nHighStop - i);
 							linFac *= linFac;
-							regValue = hdlPrv->init_cpy.regulationCoeffMax * (1 - linFac) + hdlPrv->init_cpy.regulationCoeffMin * linFac;
+							regValue = hdlPrv->async_cpy.regulationCoeffMax * (1 - linFac) + hdlPrv->async_cpy.regulationCoeffMin * linFac;
 						}
 					}
 				}
@@ -392,4 +394,26 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 		return JVX_ERROR_NOT_READY; // hdlPrv is null
 	}
 	return JVX_ERROR_INVALID_ARGUMENT; // hdl is null
+}
+
+jvxErrorType jvx_measure_ir_reg_update(struct jvx_measure_ir_reg* hdl, jvxCBool do_set)
+{
+	if (hdl)
+	{
+		struct jvx_measure_ir_reg_priv* hdlPrv = (struct jvx_measure_ir_reg_priv*)hdl->prv;
+		if (hdlPrv)
+		{
+			if (do_set)
+			{
+				hdlPrv->async_cpy = hdl->async;
+			}
+			else
+			{
+				hdl->async = hdlPrv->async_cpy;
+			}
+			return JVX_NO_ERROR;	
+		}
+		return JVX_ERROR_WRONG_STATE;
+	}
+	return JVX_ERROR_INVALID_ARGUMENT;
 }

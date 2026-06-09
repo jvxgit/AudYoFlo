@@ -166,6 +166,35 @@ CjvxSpNMeasureIr_oneMeasurement::allocate_one_measurement(jvxSize rate_measure, 
 			resDsp = jvx_measure_ir_update(&elm->second.oneMeasure, JVX_DSP_UPDATE_SYNC, false);
 			assert(resDsp == JVX_DSP_NO_ERROR);
 
+			/* ================================================================*/
+			elm->second.oneMeasure_sec.init.fs = rate_measure;
+			elm->second.oneMeasure_sec.init.loopCnt = generator.loop_count;
+			elm->second.oneMeasure_sec.init.skipFirst = (evaluation.skip_eval != 0);
+			elm->second.oneMeasure_sec.init.llMax = lSimu * elm->second.oneMeasure_sec.init.loopCnt;
+			
+			elm->second.oneMeasure_sec.async.regulationCoeffMin = 0;
+			elm->second.oneMeasure_sec.async.regulationCoeffMax = 1e-6;
+
+			elm->second.oneMeasure_sec.init.flowStart = generator.freq_low_hz_start;
+			elm->second.oneMeasure_sec.init.flowStart = JVX_MAX(elm->second.oneMeasure_sec.init.flowStart, 0);
+			elm->second.oneMeasure_sec.init.flowStop = generator.freq_low_hz;
+			elm->second.oneMeasure_sec.init.flowStop = JVX_MAX(elm->second.oneMeasure_sec.init.flowStop, elm->second.oneMeasure_sec.init.flowStart);
+
+			elm->second.oneMeasure_sec.init.fhighStart = generator.freq_up_hz;
+			elm->second.oneMeasure_sec.init.fhighStop = generator.freq_up_hz_stop;
+			elm->second.oneMeasure_sec.init.fhighStop = JVX_MIN(elm->second.oneMeasure_sec.init.fhighStop, elm->second.oneMeasure_sec.init.fs/2);			
+			elm->second.oneMeasure_sec.init.fhighStart = JVX_MIN(elm->second.oneMeasure_sec.init.fhighStart, elm->second.oneMeasure_sec.init.fhighStop);
+
+			resDsp = jvx_measure_ir_reg_init(&elm->second.oneMeasure_sec);
+			assert(resDsp == JVX_DSP_NO_ERROR);			
+
+			/*
+			resDsp = jvx_measure_ir_update(&elm->second.oneMeasure, JVX_DSP_UPDATE_SYNC, false);
+			assert(resDsp == JVX_DSP_NO_ERROR);
+			*/
+
+
+
 			if (numResults)
 			{
 			  (*numResults)++;
@@ -185,6 +214,9 @@ CjvxSpNMeasureIr_oneMeasurement::deallocate_one_measurement()
 		if (elm->second.oneMeasure.prv)
 		{
 			resDsp = jvx_measure_ir_postprocess(&elm->second.oneMeasure);
+			assert(resDsp == JVX_DSP_NO_ERROR);
+
+			resDsp = jvx_measure_ir_reg_terminate(&elm->second.oneMeasure_sec);
 			assert(resDsp == JVX_DSP_NO_ERROR);
 		}
 	}
@@ -208,7 +240,7 @@ CjvxSpNMeasureIr_oneMeasurement::deallocate_one_measurement()
 
 // Evaluate the measurement
 void
-CjvxSpNMeasureIr_oneMeasurement::evaluate_measurement()
+CjvxSpNMeasureIr_oneMeasurement::evaluate_measurement(const secondary_eval& addArgs)
 {
 	auto elm = inputs.begin();
 	for (; elm != inputs.end(); elm++)
@@ -221,6 +253,22 @@ CjvxSpNMeasureIr_oneMeasurement::evaluate_measurement()
 			elm->second.oneMeasure.prm_sync.ext.sRate = this->rate;
 			jvx_measure_ir_update(&elm->second.oneMeasure, JVX_DSP_UPDATE_SYNC, c_true);
 			jvx_measure_ir_process(&elm->second.oneMeasure);
+
+			if (addArgs.runSecEvaluation)
+			{
+				elm->second.oneMeasure_sec.async.regulationCoeffMin = addArgs.regMin;
+				elm->second.oneMeasure_sec.async.regulationCoeffMax = addArgs.regMax;
+
+				jvx_measure_ir_reg_update(&elm->second.oneMeasure_sec, c_true);
+
+				jvx_measure_ir_reg_process(&elm->second.oneMeasure_sec,
+					elm->second.oneMeasure.prm_sync.fldBufferMeasureSignal, elm->second.oneMeasure.prm_sync.lRecording,
+					elm->second.oneMeasure.prm_sync.fldBufferTestSignal, elm->second.oneMeasure.prm_sync.lRecording,
+					nullptr, 0, nullptr, 0,
+					elm->second.oneMeasure.prm_sync.fldIResponse, elm->second.oneMeasure.prm_sync.lIResponse,
+					nullptr, 0,
+					elm->second.oneMeasure.prm_sync.fldIResponse, elm->second.oneMeasure.prm_sync.lRecording);
+			}
 		}
 	}
 }

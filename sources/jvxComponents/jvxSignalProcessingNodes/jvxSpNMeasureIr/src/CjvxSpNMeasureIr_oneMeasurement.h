@@ -6,6 +6,7 @@ extern "C"
 {
 #include "jvx_generator_wave.h"
 #include "jvx_measure_ir.h"
+#include "jvx_measure_ir_reg.h"
 };
 
 #include "jvxSpNMeasureIr_oneMeasurementChannel.h"
@@ -30,12 +31,14 @@ public:
 	jvxBool active;
 	jvxSize id;
 	jvxMeasureIr oneMeasure;
+	struct jvx_measure_ir_reg oneMeasure_sec;
 	jvxSize offBuf;
 	oneInput()
 	{
 		active = false;
 		id = 0;
 		jvx_measure_ir_initConfig(&oneMeasure);
+		jvx_measure_ir_reg_cfg_init(&oneMeasure_sec);
 		offBuf = 0;
 	};
 };
@@ -120,6 +123,12 @@ public:
 		jvxData freq_up_hz_stop;
 	} generator;
 
+	struct secondary_eval
+	{
+		jvxBool runSecEvaluation = false;
+		jvxData regMin = 0;
+		jvxData regMax = 1e-6;
+	};
 	struct
 	{
 		jvxSize skip_eval;
@@ -132,7 +141,7 @@ public:
 
 	void allocate_one_measurement(jvxSize rate_measure, jvxSize buffersize_store, jvxSize* numResults);
 
-	void evaluate_measurement();
+	void evaluate_measurement(const secondary_eval& addArgs);
 
 	jvxErrorType copy_measurement_channel(
 		jvxSize cnt, 

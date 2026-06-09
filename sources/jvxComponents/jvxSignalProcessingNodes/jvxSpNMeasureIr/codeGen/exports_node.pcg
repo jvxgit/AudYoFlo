@@ -48,6 +48,23 @@ SECTION PROPERTIES
 			TYPE = "JVX_DATAFORMAT_BOOL";			
 			INIT_SET = 0;
 		};  
+
+		SECTION secondary_measurement
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";			
+			INIT_SET = 0;
+		};
+		
+		SECTION secondary_regulator_min
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 1e-16;
+		};  	
+		SECTION secondary_regulator_max
+		{
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 1e-6;
+		};  	
 	};
 
 	

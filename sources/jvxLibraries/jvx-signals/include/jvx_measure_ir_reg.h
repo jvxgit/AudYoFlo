@@ -12,9 +12,13 @@ struct jvx_measure_ir_reg_init
 	jvxData flowStop;
 	jvxData fhighStart;
 	jvxData fhighStop;
+	jvxSize llMax;
+};
+
+struct jvx_measure_ir_reg_async
+{
 	jvxData regulationCoeffMin;
 	jvxData regulationCoeffMax;
-	jvxSize llMax;
 };
 
 struct jvx_measure_ir_reg_derived
@@ -25,6 +29,7 @@ struct jvx_measure_ir_reg_derived
 struct jvx_measure_ir_reg
 {	
 	struct jvx_measure_ir_reg_init init;
+	struct jvx_measure_ir_reg_async async;
 	struct jvx_measure_ir_reg_derived derived;
 	jvxHandle* prv;
 };
@@ -32,7 +37,9 @@ struct jvx_measure_ir_reg
 void jvx_measure_ir_reg_cfg_init(struct jvx_measure_ir_reg* hdl);
 
 jvxErrorType jvx_measure_ir_reg_init(struct jvx_measure_ir_reg* hdl);
+
 jvxErrorType jvx_measure_ir_reg_terminate(struct jvx_measure_ir_reg* hdl);
+
 jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 	const jvxData* inMeasure_ptr, jvxSize inMeasure_sz,
 	const jvxData* inTest_ptr, jvxSize inTest_sz,
@@ -42,6 +49,6 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 	const jvxData* win_ptr, jvxSize win_sz,
 	jvxData* dbgOut_ptr, jvxSize dbgOut_sz);
 
-
+jvxErrorType jvx_measure_ir_reg_update(struct jvx_measure_ir_reg* hdl, jvxCBool do_set);
 
 #endif
