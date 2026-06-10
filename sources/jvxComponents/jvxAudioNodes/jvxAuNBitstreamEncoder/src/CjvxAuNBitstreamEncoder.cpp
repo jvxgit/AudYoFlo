@@ -360,6 +360,53 @@ CjvxAuNBitstreamEncoder::deactivate_encoder()
 // ==========================================================================================
 
 jvxErrorType
+CjvxAuNBitstreamEncoder::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvx::propertyCallCompactRefList* props = (jvx::propertyCallCompactRefList*)data;
+	switch (tp)
+	{
+	case jvxLinkDataTransferType::JVX_LINKDATA_TRANSFER_REQUEST_SET_PROPERTIES:
+		if (props)
+		{			
+			// Do something	
+			for (auto cptElmSrc = props->propReqs.begin(); cptElmSrc != props->propReqs.end(); cptElmSrc++)
+			{
+				jvxApiString astr;
+				std::string targetCpTxt;
+				if(cptElmSrc->targethint) targetCpTxt = cptElmSrc->targethint->std_str();
+
+				if (targetCpTxt == this->_common_set.theDescriptor)
+				{
+					if (cptElmSrc->rawPtr.ftype() == JVX_DATAFORMAT_STRING)
+					{
+						const jvx::propertyRawPointerType::CjvxRawPointerType* ptrArgs = castPropRawPointer< const jvx::propertyRawPointerType::CjvxRawPointerType>(&cptElmSrc->rawPtr, JVX_DATAFORMAT_NONE);
+						jvxApiString* astr = reinterpret_cast<jvxApiString*>(ptrArgs->raw());
+						if (astr)
+						{
+							// Transform this to a regular set_property call
+							jvxErrorType res = jvx::helper::set_property_sellst_entry_from_string(this, cptElmSrc->callMan, cptElmSrc->ident, cptElmSrc->detail, astr->std_str(), 0);
+							// this->set_property(cptElmSrc->callMan, cptElmSrc->rawPtr, cptElmSrc->ident, cptElmSrc->detail);
+							if (res == JVX_NO_ERROR)
+							{
+								cptElmSrc->resCall = res;
+								return JVX_NO_ERROR;
+							}
+						}
+					}
+				}
+
+			}
+		}
+		break;
+	}
+	res = JVX_LOCAL_BASE_CLASS::transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+	return res;
+}
+
+// ==========================================================================================
+
+jvxErrorType
 CjvxAuNBitstreamEncoder::runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node,
 	const char* moduleName, IjvxObject* theOwner)
 {

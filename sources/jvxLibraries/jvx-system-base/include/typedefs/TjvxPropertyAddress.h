@@ -131,5 +131,6 @@ namespace jvx
 typedef jvx::propertyAddress::CjvxPropertyAddressGlobalId jPAGID;
 typedef jvx::propertyAddress::CjvxPropertyAddressLinear jPAL;
 typedef jvx::propertyAddress::CjvxPropertyAddressDescriptor jPAD;
+typedef jvx::propertyAddress::IjvxPropertyAddress jPA;
 
 #endif

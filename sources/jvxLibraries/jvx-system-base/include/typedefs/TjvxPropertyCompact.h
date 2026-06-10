@@ -10,14 +10,15 @@ namespace jvx
 		const propertyRawPointerType::IjvxRawPointerType& rawPtr;
 		const propertyAddress::IjvxPropertyAddress& ident;
 		const propertyDetail::CjvxTranferDetail& detail;
+		jvxApiString* targethint = nullptr;
 		jvxErrorType& resCall;
 
 		propertyCallCompactElementRef(jvxCallManagerProperties& callManArg,
 			const propertyRawPointerType::IjvxRawPointerType& rawPtrArg,
 			const propertyAddress::IjvxPropertyAddress& identArg,
 			const propertyDetail::CjvxTranferDetail& detailArg,
-			jvxErrorType& resCallArg) :
-			callMan(callManArg), rawPtr(rawPtrArg), ident(identArg), detail(detailArg), resCall(resCallArg) {};
+			jvxErrorType& resCallArg, jvxApiString* targethintArg) :
+			callMan(callManArg), rawPtr(rawPtrArg), ident(identArg), detail(detailArg), resCall(resCallArg), targethint(targethintArg){};
 	};
 
 	template <class T1, class T2, class T3> class propertyCallCompactElement
@@ -37,7 +38,8 @@ namespace jvx
 		};
 		propertyCallCompactElementRef toRefElement() 
 		{
-			return propertyCallCompactElementRef(callMan, rawPtrt1, identt1, detailt1, resCall);
+			std::string thint;
+			return propertyCallCompactElementRef(callMan, rawPtrt1, identt1, detailt1, resCall, target_hint);
 		}
 	};
 

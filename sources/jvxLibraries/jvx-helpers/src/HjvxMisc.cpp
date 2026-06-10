@@ -4954,6 +4954,44 @@ namespace jvx {
 			}
 			return atLeastOnePropertyIsOpen;
 		}
+
+		jvxErrorType set_property_sellst_entry_from_string(IjvxProperties* props, jvxCallManagerProperties callMan, const jPA& ident, const jPD& detail, const std::string& tokenRegExp, jvxSize cntSearch)
+		{
+			jvxSize i;
+			jvxSelectionList selLst;
+			jvxSize cnt = 0;
+			jvxSize idxSel = JVX_SIZE_UNSELECTED;
+			
+			// Make sure we receive all options in the string => contentOnly <- false
+			jPD detail_get;			
+			jvxErrorType res = props->get_property(callMan, jPROSL(selLst), ident, detail_get);
+			if (res == JVX_NO_ERROR)
+			{
+				jvxApiStringList& lstStr = selLst.strList;
+
+				for (i = 0; i < lstStr.ll(); i++)
+				{
+					if (jvx_compareStringsWildcard(tokenRegExp, lstStr.std_str_at(i)))
+					{
+						idxSel = i;
+						break;
+					}
+				}
+
+				if (JVX_CHECK_SIZE_SELECTED(idxSel))
+				{
+					jvxSelectionList lstPass;
+					lstPass.bitFieldSelected(0).bit_zset(idxSel);
+					res = props->set_property(callMan, jPROSL(lstPass), ident, detail);
+				}
+
+				else
+				{
+					res = JVX_ERROR_ELEMENT_NOT_FOUND;
+				}
+			}
+			return res;
+		}
 	}
 
 	namespace align {

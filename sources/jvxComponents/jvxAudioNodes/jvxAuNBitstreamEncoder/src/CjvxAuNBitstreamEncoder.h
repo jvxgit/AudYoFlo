@@ -52,7 +52,7 @@ public:
 
 	// ===================================================================================
 	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-
+	virtual jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 	// ===================================================================================	
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(get_processing_monitor);
