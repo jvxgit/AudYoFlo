@@ -26,6 +26,7 @@ set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
 
 set(LOCAL_PCG_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_node.pcg
+	${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_node_select.pcg
   )
 
 set(LOCAL_LIBS 

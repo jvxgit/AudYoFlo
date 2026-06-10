@@ -4,6 +4,8 @@
 
 #include "jvxNodes/CjvxBareNode1ioRearrange.h"
 #include "pcg_exports_node.h"
+#include "pcg_exports_node_select.h"
+
 
 #include "HjvxMicroConnection.h"
 
@@ -13,7 +15,10 @@
 class CjvxAuNBitstreamDecoder: 
 	public JVX_LOCAL_BASE_CLASS,
 	public IayfConnectionStateSwitchNode,
-	public genBitstreamDecoder_node
+	public genBitstreamDecoder_node,
+	// public IjvxPropertyExtender, <- already implemented!!
+	public IjvxPropertyExtenderSimpleToolsHostInstall,
+	public genBitstreamDecoder_node_select
 {
 private:
 	class audio_params
@@ -54,15 +59,15 @@ private:
 	jvxLinkDataDescriptor decoderDescrIn;
 	jvxLinkDataDescriptor decoderDescrOut;
 
+	IjvxPropertyExtenderSimpleToolsHost* registeredToolsHost = nullptr;
+
 public:
 
 	JVX_CALLINGCONVENTION CjvxAuNBitstreamDecoder(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE);
 	~CjvxAuNBitstreamDecoder();
 
-#if 0
 	virtual jvxErrorType JVX_CALLINGCONVENTION select(IjvxObject* owner)override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION unselect()override;
-#endif
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION activate()override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION deactivate()override;
@@ -95,5 +100,13 @@ public:
 	virtual jvxErrorType runStateSwitch(jvxStateSwitch ss, IjvxSimpleNode* node, const char* moduleName, IjvxObject* theOwner = nullptr) override;
 	virtual jvxErrorType componentsAboutToConnect() override;
 	virtual jvxErrorType runTestChainComplete(jvxErrorType lastResult, IjvxSimpleNode* node, const char* moduleName, jvxSize uniqueId) override;
+
+	// Interface IjvxPropertyExtender
+	virtual jvxErrorType supports_prop_extender_type(jvxPropertyExtenderType tp) override;
+	virtual jvxErrorType prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp)override;
+
+	// Interface IjvxPropertyExtenderSimpleToolsHostInstall
+	virtual jvxErrorType install(IjvxPropertyExtenderSimpleToolsHost* installThis) override;
+	virtual jvxErrorType uninstall(IjvxPropertyExtenderSimpleToolsHost* uninstallThis) override;
 
 };

@@ -10,6 +10,7 @@ public:
 	jvxTerminateObject_tp funcTerm = nullptr;
 	jvxBool run_init;
 	IjvxObject* packageRef = nullptr;
+	jvxBool allowMulti = false;
 	oneAddedStaticComponent()
 	{
 		reset();

@@ -8,7 +8,8 @@ public:
 	
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_components(jvxSize* numOnReturn) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_entries_component(jvxSize idx,
-		jvxApiString* description, jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm) = 0;	
+		jvxComponentType* tp, jvxApiString* description, jvxApiString* descriptor,
+		jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm, jvxBool* allowMultiplInstances) = 0;	
 	virtual jvxErrorType JVX_CALLINGCONVENTION release_entries_component(jvxSize idx) = 0;	
 
 };

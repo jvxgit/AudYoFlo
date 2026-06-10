@@ -24,41 +24,90 @@ CjvxAuNBitstreamDecoder::~CjvxAuNBitstreamDecoder()
 
 // ===================================================================
 
-#if 0
-jvxErrorType 
-CjvxAuNBitstreamDecoder::select(IjvxObject* owner)
+jvxErrorType
+CjvxAuNBitstreamDecoder::select(IjvxObject* parent)
 {
-	jvxErrorType res = JVX_LOCAL_BASE_CLASS::select(owner);
+	jvxErrorType res = CjvxBareNode1ioRearrange::select(parent);
 	if (res == JVX_NO_ERROR)
 	{
-		/*
-		// Need to allocate properties on selected to allow modification of prefix
-		genCaptureFile_node::init_all();
-		genCaptureFile_node::allocate_all();
-		genCaptureFile_node::register_all(static_cast<CjvxProperties*>(this));
-		genCaptureFile_node::register_callbacks(static_cast<CjvxProperties*>(this),
-			set_processing_props, get_processing_monitor,
-			reinterpret_cast<jvxHandle*>(this), NULL);
-			*/
+		genBitstreamDecoder_node_select::init_all();
+		genBitstreamDecoder_node_select::allocate_all();
+		genBitstreamDecoder_node_select::register_all(this);
+
+		genBitstreamDecoder_node_select::ext_tools_host.ex_interface.ptr = static_cast<IjvxPropertyExtender*>(this);
 	}
 	return res;
 }
 
-jvxErrorType 
+jvxErrorType
 CjvxAuNBitstreamDecoder::unselect()
 {
-	jvxErrorType res = JVX_LOCAL_BASE_CLASS::unselect();
+	jvxErrorType res = CjvxBareNode1ioRearrange::_pre_check_unselect();
 	if (res == JVX_NO_ERROR)
 	{
-		/*
-		genCaptureFile_node::unregister_callbacks(static_cast<CjvxProperties*>(this), NULL);
-		genCaptureFile_node::unregister_all(static_cast<CjvxProperties*>(this));
-		genCaptureFile_node::deallocate_all();
-		*/
+		genBitstreamDecoder_node_select::ext_tools_host.ex_interface.ptr = nullptr;
+		genBitstreamDecoder_node_select::unregister_all(this);
+		genBitstreamDecoder_node_select::deallocate_all();
+
+		res = CjvxBareNode1ioRearrange::unselect();
 	}
 	return res;
 }
-#endif
+
+// ===============================================================================
+
+jvxErrorType
+CjvxAuNBitstreamDecoder::supports_prop_extender_type(jvxPropertyExtenderType tp)
+{
+	if (tp == jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_SIMPLE_TOOLS_HOST)
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_LOCAL_BASE_CLASS::supports_prop_extender_type(tp);
+};
+
+jvxErrorType
+CjvxAuNBitstreamDecoder::prop_extender_specialization(jvxHandle** prop_extender, jvxPropertyExtenderType tp)
+{
+	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+	switch (tp)
+	{
+	case jvxPropertyExtenderType::JVX_PROPERTY_EXTENDER_SIMPLE_TOOLS_HOST:
+		if (prop_extender)
+		{
+			*prop_extender = static_cast<IjvxPropertyExtenderSimpleToolsHostInstall*>(this);
+		}
+		res = JVX_NO_ERROR;
+		break;
+	default:
+		return JVX_LOCAL_BASE_CLASS::prop_extender_specialization(prop_extender, tp);
+	}
+	return res;
+};
+
+jvxErrorType
+CjvxAuNBitstreamDecoder::install(IjvxPropertyExtenderSimpleToolsHost* installThis)
+{
+	jvxErrorType res = JVX_ERROR_DUPLICATE_ENTRY;
+	if (registeredToolsHost == nullptr)
+	{
+		registeredToolsHost = installThis;
+		res = JVX_NO_ERROR;
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxAuNBitstreamDecoder::uninstall(IjvxPropertyExtenderSimpleToolsHost* uninstallThis)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	if (registeredToolsHost == uninstallThis)
+	{
+		registeredToolsHost = nullptr;
+		res = JVX_NO_ERROR;
+	}
+	return res;
+}
 
 // ===================================================================
 
@@ -70,14 +119,30 @@ CjvxAuNBitstreamDecoder::activate()
 	{
 		jvxSize num = 0;
 		jvxSize i;
-		_common_set.theToolsHost->number_tools(JVX_COMPONENT_AUDIO_CODEC, &num);
-		for (i = 0; i < num; i++)
+		if (registeredToolsHost)
 		{
-			refComp<IjvxAudioCodec> retI;
-			retI = reqInstTool<IjvxAudioCodec, IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, i);
-			if (retI.cpPtr)
+			registeredToolsHost->number_tools(JVX_COMPONENT_AUDIO_CODEC, &num);
+			for (i = 0; i < num; i++)
 			{
-				lstCodecInstances[i] = retI;
+				refComp<IjvxAudioCodec> retI;
+				retI = reqInstTool<IjvxAudioCodec, IjvxPropertyExtenderSimpleToolsHost>(registeredToolsHost, JVX_COMPONENT_AUDIO_CODEC, i);
+				if (retI.cpPtr)
+				{
+					lstCodecInstances[i] = retI;
+				}
+			}
+		}
+		else if (_common_set.theToolsHost)
+		{
+			_common_set.theToolsHost->number_tools(JVX_COMPONENT_AUDIO_CODEC, &num);
+			for (i = 0; i < num; i++)
+			{
+				refComp<IjvxAudioCodec> retI;
+				retI = reqInstTool<IjvxAudioCodec, IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, i);
+				if (retI.cpPtr)
+				{
+					lstCodecInstances[i] = retI;
+				}
 			}
 		}
 
@@ -113,10 +178,22 @@ CjvxAuNBitstreamDecoder::deactivate()
 		// Delete the microconnection
 
 		// Release all codecs
-		for(std::pair<jvxSize, refComp<IjvxAudioCodec>> elm: lstCodecInstances)
+		if (registeredToolsHost)
 		{
-			retInstTool<IjvxAudioCodec, IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, elm.second, elm.first);
+			// Release all codecs
+			for (std::pair<jvxSize, refComp<IjvxAudioCodec>> elm : lstCodecInstances)
+			{
+				retInstTool<IjvxAudioCodec, IjvxPropertyExtenderSimpleToolsHost>(registeredToolsHost, JVX_COMPONENT_AUDIO_CODEC, elm.second, elm.first);
+			}
 		}
+		else if (_common_set.theToolsHost)
+		{
+			for (std::pair<jvxSize, refComp<IjvxAudioCodec>> elm : lstCodecInstances)
+			{
+				retInstTool<IjvxAudioCodec, IjvxToolsHost>(_common_set.theToolsHost, JVX_COMPONENT_AUDIO_CODEC, elm.second, elm.first);
+			}
+		}
+
 		lstCodecInstances.clear();
 		JVX_LOCAL_BASE_CLASS::deactivate();
 	}

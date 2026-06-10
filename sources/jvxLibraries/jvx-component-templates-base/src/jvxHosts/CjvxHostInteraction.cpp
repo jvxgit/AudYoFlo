@@ -670,13 +670,17 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 									{
 										if (!isPackageMainComponent)
 										{
-											jvxApiString descrComp;
+											jvxApiString descrionComp;
+											jvxApiString descrorComp;
+											jvxComponentType tpCp = JVX_COMPONENT_UNKNOWN;
+											jvxBool allowMulti = false;
 											newObjAdd = nullptr;
 											funcInitAdd = nullptr;
 											funcTermAdd = nullptr;
 											specCompAdd = nullptr;
-											jvxErrorType resL = thePack->request_entries_component(tlp, &descrComp,
-												&funcInitAdd, &funcTermAdd);
+											jvxErrorType resL = thePack->request_entries_component(tlp, 
+												&tpCp, &descrionComp, &descrorComp,
+												&funcInitAdd, &funcTermAdd, &allowMulti);
 											thePackIdx = tlp;
 											if (resL == JVX_NO_ERROR)
 											{
@@ -688,12 +692,12 @@ CjvxHostInteraction::loadAllComponents(jvxBool do_unload_dlls, std::vector<std::
 													{
 														if (info_cout)
 														{
-															std::cout << "  - opening object <" << descrComp.std_str() <<
+															std::cout << "  - opening object <" << descrionComp.std_str() <<
 																" from package <" << astr.std_str() << ">." << std::endl;
 														}
 														else
 														{
-															outTxt = "  - opening object <" + descrComp.std_str() +
+															outTxt = "  - opening object <" + descrionComp.std_str() +
 																" from package <" + astr.std_str() + ">.";
 															if (_common_set_host.reportUnit)
 															{

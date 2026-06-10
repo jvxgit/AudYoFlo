@@ -794,7 +794,10 @@ CayfComponentLib::deactivate()
 
 		deallocate_main_node();
 		this->mainObj = nullptr;
-
+		
+		// The list of components SHOULD empty. This is up to the deallocate_main:node function!
+		assert(subsequentComponents.size() == 0);
+		
 		if (optMasFactory)
 		{			
 			optMasFactory->deactivate();

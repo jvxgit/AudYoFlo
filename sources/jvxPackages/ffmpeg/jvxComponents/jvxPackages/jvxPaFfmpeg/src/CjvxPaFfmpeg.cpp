@@ -87,38 +87,79 @@ CjvxPaFfmpeg::number_components(jvxSize* numOnReturn)
 }
 
 jvxErrorType 
-CjvxPaFfmpeg::request_entries_component(jvxSize idx,
-	jvxApiString* description, jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm)
+CjvxPaFfmpeg::request_entries_component(jvxSize idx, jvxComponentType* tpCp,
+	jvxApiString* description, jvxApiString* descriptor,
+	jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm,
+	jvxBool* allowMulti)
 {
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 	switch (idx)
 	{
 	case 0:
-		if (funcInit && funcTerm && description)
+		if (tpCp)
+		{
+			*tpCp = JVX_COMPONENT_AUDIO_TECHNOLOGY;
+		}
+		if (description)
 		{
 			description->assign("FFMpeg Audio File Input");
+		}
+		if (descriptor)
+		{
+			descriptor->assign("FFMpegAudioIn");
+		}
+		if (funcInit && funcTerm)
+		{
 			*funcInit = jvxAuTFFMpegReader_init;
 			*funcTerm = jvxAuTFFMpegReader_terminate;
-			res = JVX_NO_ERROR;
 		}
+		if (allowMulti) *allowMulti = true;
+		res = JVX_NO_ERROR;
 		break;
+
 	case 1:
-		if (funcInit && funcTerm && description)
+		if (tpCp)
+		{
+			*tpCp = JVX_COMPONENT_AUDIO_TECHNOLOGY;
+		}
+		if (description)
 		{
 			description->assign("FFMpeg Audio File Output");
+		}
+		if (descriptor)
+		{
+			descriptor->assign("FFMpegAudioOut");
+		}
+		if (funcInit && funcTerm)
+		{
 			*funcInit = jvxAuTFFMpegWriter_init;
 			*funcTerm = jvxAuTFFMpegWriter_terminate;
-			res = JVX_NO_ERROR;
 		}
+		if (allowMulti) *allowMulti = true;
+
+		res = JVX_NO_ERROR;	
 		break;
+
 	case 2:
-		if (funcInit && funcTerm && description)
+		if (tpCp)
+		{
+			*tpCp = JVX_COMPONENT_AUDIO_CODEC;
+		}
+		if (description)
 		{
 			description->assign("Ffmpeg Audio Codec");
+		}
+		if (descriptor)
+		{
+			descriptor->assign("FFMpegAudioCodec");
+		}
+		if (funcInit && funcTerm)
+		{
 			*funcInit = jvxAuCFfmpeg_init;
 			*funcTerm = jvxAuCFfmpeg_terminate;
-			res = JVX_NO_ERROR;
 		}
+		if (allowMulti) *allowMulti = true;
+		res = JVX_NO_ERROR;
 		break;
 	default:
 		break;

@@ -1305,15 +1305,18 @@ JVX_APP_FACTORY_HOST_CLASSNAME::static_load_loop()
 				{
 					oneAddedStaticComponent compFromPackage;
 					jvxApiString descriptionComponentPackage;
+					jvxApiString descriptorComponentPackage;
 					IjvxPackage* thePack = reqInterfaceObj<IjvxPackage>(comp.theStaticObject);
 					if (thePack)
 					{
 						jvxSize numCompsPackage = 0;
+						jvxComponentType tpCp = jvxComponentType::JVX_COMPONENT_UNKNOWN;
 						thePack->number_components(&numCompsPackage);
 						for (jvxSize cpi = 0; cpi < numCompsPackage; cpi++)
 						{
-							resL = thePack->request_entries_component(cpi, &descriptionComponentPackage,
-								&compFromPackage.funcInit, &compFromPackage.funcTerm);
+							resL = thePack->request_entries_component(cpi, 
+								&tpCp, &descriptionComponentPackage, &descriptorComponentPackage,
+								&compFromPackage.funcInit, &compFromPackage.funcTerm, &compFromPackage.allowMulti);
 							if (resL == JVX_NO_ERROR)
 							{
 								compFromPackage.theStaticObject = NULL;

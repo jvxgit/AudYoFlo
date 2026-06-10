@@ -131,10 +131,17 @@ class CayfComponentLib :
 	public genComponentLib
 {
 public:
-	struct _oneSubModule
+	template <class T> class _oneSubModule
 	{
-		IjvxObject* obj = nullptr;
-		IjvxNode* node = nullptr;
+	public:
+		IjvxObject* obj = nullptr;		
+		T* specObj = nullptr;
+	};
+
+	template <class T> class _oneSubModule_tp : public _oneSubModule<T>
+	{
+	public:
+		jvxComponentIdentification tp;
 	};
 
 protected:

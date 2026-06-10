@@ -14,7 +14,8 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_components(jvxSize* numOnReturn) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_entries_component(jvxSize idx,
-		jvxApiString* description, jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm) override;
+		jvxComponentType* tpCp, jvxApiString* description, jvxApiString* descriptor,
+		jvxInitObject_tp* funcInit, jvxTerminateObject_tp* funcTerm, jvxBool* allowMulti) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION release_entries_component(jvxSize idx) override;
 
 #include "codeFragments/simplify/jvxObjects_simplify.h"
