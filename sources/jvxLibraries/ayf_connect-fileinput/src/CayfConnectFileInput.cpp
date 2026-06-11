@@ -62,7 +62,7 @@ CayfConnectFileInput::deallocate_main_node()
 }
 
 jvxErrorType
-CayfConnectFileInput::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node)
+CayfConnectFileInput::on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	IjvxManipulate* manIf = nullptr;
@@ -77,44 +77,51 @@ CayfConnectFileInput::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNo
 	// Get the number of output channels
 	jvxSize numChannels = parent->audio_parameter_on_start().numOutChans;
 	
-	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(node);
-	manIf = reqInterfaceObj<IjvxManipulate>(node);
-
-	// This is the MixChain input component - in this lib, there is only one option!
-	if (manIf)
+	switch (sw)
 	{
-		astr = "MixChain - File Input";
-		val.assign(&astr);
-		resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+	case JVX_STATE_SWITCH_SELECT:
+	{
+		// Add the sub components
+		props = reqInterfaceObj<IjvxProperties>(node);
+		manIf = reqInterfaceObj<IjvxManipulate>(node);
+
+		// This is the MixChain input component - in this lib, there is only one option!
+		if (manIf)
+		{
+			astr = "MixChain - File Input";
+			val.assign(&astr);
+			resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+		}
+
+		if (props)
+		{
+			ident.reset("/number_channels_side");
+			resL = props->set_property(callGate, jPRIO<jvxSize>(numChannels), ident);
+			if (resL != JVX_NO_ERROR)
+			{
+				/*
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
+				log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the number channels to " <<
+					astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+				*/
+			}
+
+			jvx_bitZSet(sel.bitFieldSelected(), 0); // <- Input
+			ident.reset("/operation_mode");
+			resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
+			if (resL != JVX_NO_ERROR)
+			{
+				/*
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
+				log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the operation mode to " <<
+					astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+				*/
+			}
+		}
 	}
-
-	if (props)
-	{
-		ident.reset("/number_channels_side");
-		resL = props->set_property(callGate, jPRIO<jvxSize>(numChannels), ident);
-		if (resL != JVX_NO_ERROR)
-		{
-			/*
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-			log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the number channels to " <<
-				astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
-			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-			*/
-		}
-
-		jvx_bitZSet(sel.bitFieldSelected(), 0); // <- Input
-		ident.reset("/operation_mode");
-		resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
-		if (resL != JVX_NO_ERROR)
-		{
-			/*
-			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-			log << __FUNCTION__ << " - On selection of <" << jvxComponentIdentification_txt(tp) << ">, setting the operation mode to " <<
-				astr.std_str() << " failed, reason: <" << jvxErrorType_descr(resL) << ">." << std::endl;
-			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-			*/
-		}
+	break;
 	}
 	return JVX_NO_ERROR;
 }

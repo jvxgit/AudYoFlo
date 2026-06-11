@@ -26,7 +26,7 @@ public:
 
 	jvxErrorType allocate_main_node() override;
 	jvxErrorType deallocate_main_node() override;
-	jvxErrorType on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node) override;
+	jvxErrorType on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw) override;
 };
 
 #endif

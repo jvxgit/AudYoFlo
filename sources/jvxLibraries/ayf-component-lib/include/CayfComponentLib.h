@@ -441,8 +441,8 @@ public:
 	// Interface function to involve a node in this chain
 	virtual jvxErrorType allocate_main_node() = 0;
 	virtual jvxErrorType deallocate_main_node() = 0;
-	virtual jvxErrorType on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node);
-	virtual jvxErrorType before_main_node_unselect(IjvxHiddenInterface* hostRef, IjvxNode* node);
+	virtual jvxErrorType on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);
+	virtual jvxErrorType before_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);
 	virtual jvxErrorType on_main_node_started() { return JVX_NO_ERROR; };
 
 	jvxErrorType passConfigSection(IjvxSimpleNode* node, const std::string& moduleName);

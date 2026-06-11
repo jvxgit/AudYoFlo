@@ -71,7 +71,7 @@ CayfConnectFileOutput::deallocate_main_node()
 }
 
 jvxErrorType
-CayfConnectFileOutput::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node)
+CayfConnectFileOutput::on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	IjvxManipulate* manIf = nullptr;
@@ -83,47 +83,53 @@ CayfConnectFileOutput::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxN
 	jvxErrorType resL = JVX_NO_ERROR;
 	jvxCallManagerProperties callGate;
 
-	// Get the number of output channels towards file output
-	jvxSize numChannelsToFileOutput = parent->audio_parameter_on_start().numInChans;
-	jvxSize numChannelsFromDevice = 0;
-
-	// Add the sub components
-	props = reqInterfaceObj<IjvxProperties>(node);
-	manIf = reqInterfaceObj<IjvxManipulate>(node);
-
-	assert(props);
-	assert(manIf);
-	
-	if(node == priObj)
+	switch (sw)
 	{
-		astr = "MixChain - File Output - mix-in";
-		val.assign(&astr);
-		resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
-	
-		ident.reset("/number_channels_side");
-		resL = props->set_property(callGate, jPRIO<jvxSize>(numChannelsFromDevice), ident);
-		assert(resL == JVX_NO_ERROR);
-
-		jvx_bitZSet(sel.bitFieldSelected(), 0); // <- Input
-		ident.reset("/operation_mode");
-		resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
-		assert(resL == JVX_NO_ERROR);
-	}
-
-	if (node == secObj)
+	case JVX_STATE_SWITCH_SELECT:
 	{
-		astr = "MixChain - File Output - mix-out";
-		val.assign(&astr);
-		resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+		// Get the number of output channels towards file output
+		jvxSize numChannelsToFileOutput = parent->audio_parameter_on_start().numInChans;
+		jvxSize numChannelsFromDevice = 0;
 
-		ident.reset("/number_channels_side");
-		resL = props->set_property(callGate, jPRIO<jvxSize>(numChannelsToFileOutput), ident);
-		assert(resL == JVX_NO_ERROR);
+		// Add the sub components
+		props = reqInterfaceObj<IjvxProperties>(node);
+		manIf = reqInterfaceObj<IjvxManipulate>(node);
 
-		jvx_bitZSet(sel.bitFieldSelected(), 1); // <- Output
-		ident.reset("/operation_mode");
-		resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
-		assert(resL == JVX_NO_ERROR);
+		assert(props);
+		assert(manIf);
+
+		if (node == priObj)
+		{
+			astr = "MixChain - File Output - mix-in";
+			val.assign(&astr);
+			resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+
+			ident.reset("/number_channels_side");
+			resL = props->set_property(callGate, jPRIO<jvxSize>(numChannelsFromDevice), ident);
+			assert(resL == JVX_NO_ERROR);
+
+			jvx_bitZSet(sel.bitFieldSelected(), 0); // <- Input
+			ident.reset("/operation_mode");
+			resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
+			assert(resL == JVX_NO_ERROR);
+		}
+
+		if (node == secObj)
+		{
+			astr = "MixChain - File Output - mix-out";
+			val.assign(&astr);
+			resL = manIf->set_manipulate_value(JVX_MANIPULATE_DESCRIPTION, &val);
+
+			ident.reset("/number_channels_side");
+			resL = props->set_property(callGate, jPRIO<jvxSize>(numChannelsToFileOutput), ident);
+			assert(resL == JVX_NO_ERROR);
+
+			jvx_bitZSet(sel.bitFieldSelected(), 1); // <- Output
+			ident.reset("/operation_mode");
+			resL = props->set_property(callGate, jPROSL(sel), ident, jPD(true));
+			assert(resL == JVX_NO_ERROR);
+		}
+	}break;
 	}
 
 	return JVX_NO_ERROR;

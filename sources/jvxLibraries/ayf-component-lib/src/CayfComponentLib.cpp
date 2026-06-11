@@ -941,7 +941,7 @@ CayfComponentLib::system_about_to_shutdown()
 }
 
 jvxErrorType
-CayfComponentLib::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* node)
+CayfComponentLib::on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	// Add the sub components
@@ -955,7 +955,7 @@ CayfComponentLib::on_main_node_selected(IjvxHiddenInterface* hostRef, IjvxNode* 
 
 
 jvxErrorType
-CayfComponentLib::before_main_node_unselect(IjvxHiddenInterface* hostRef, IjvxNode* node)
+CayfComponentLib::before_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	// Add the sub components
@@ -996,12 +996,21 @@ CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
 	}
 	if (resC == JVX_NO_ERROR)
 	{
-		resC = on_main_node_selected(hostRef, mainNode);
+		resC = on_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_SELECT);
 	}
 
 	if (resC == JVX_NO_ERROR)
 	{
 		resC = mainNode->activate();
+	}
+
+	if (resC == JVX_NO_ERROR)
+	{
+		resC = on_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_ACTIVATE);
+	}
+
+	if (resC == JVX_NO_ERROR)
+	{
 		passConfigSection(mainNode, astr.std_str());
 	}
 
@@ -1011,10 +1020,13 @@ CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
 jvxErrorType
 CayfComponentLib::pre_deallocate_one_main_node(IjvxNode* mainNode)
 {
-	jvxErrorType resC = mainNode->deactivate();
+	jvxErrorType resC = before_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_DEACTIVATE);
+	assert(resC == JVX_NO_ERROR);
+		
+	resC = mainNode->deactivate();
 	assert(resC == JVX_NO_ERROR);
 
-	resC = before_main_node_unselect(hostRef, mainNode);
+	resC = before_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_UNSELECT);
 	assert(resC == JVX_NO_ERROR);
 
 	resC = mainNode->unselect();
