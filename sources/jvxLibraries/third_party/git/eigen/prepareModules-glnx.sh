@@ -2,5 +2,6 @@
 
 if [ ! -d "eigen" ]; then
 	echo "Cloning into eigen.."
-	git clone https://gitlab.com/libeigen/eigen.git --branch 3.3.4
+	git clone https://gitlab.com/libeigen/eigen.git --branch 3.4.1
+	# git clone https://gitlab.com/libeigen/eigen.git --branch 3.3.4
 fi

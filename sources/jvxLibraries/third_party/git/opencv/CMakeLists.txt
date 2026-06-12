@@ -101,10 +101,16 @@ elseif(${JVX_OS} MATCHES "linux")
 		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}")
 	
 			message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}> does not exist!")
-			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}")
+			execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules-glnx.sh ${archtoken} ${targetfolder} ${CMAKE_BUILD_TYPE}"  RESULT_VARIABLE ret)
+		       if(ret EQUAL "1")
+		       		message(FATAL_ERROR "Return code = ${ret} -> Running build script for <opencv> failed!")
+		       	else()
+		       	  	message("opencv installation complete.")
+		       	endif()
 		
 		endif()
 	
+		## message(FATAL_ERROR "Running build script for <opencv> failed!")		
 		set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include/opencv4" CACHE INTERNAL "opencv include references")
 	
 		set(OPENCV_LIBRARIES_CANDIDATES 

@@ -39,7 +39,12 @@ else()
 	
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken_simple}/${CMAKE_BUILD_TYPE}")
 		# file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build${archtoken}")
-		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./build_glnx.sh ${targetfolder} ${CMAKE_BUILD_TYPE} ${archtoken_simple}"; exit)
+		execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./build_glnx.sh ${targetfolder} ${CMAKE_BUILD_TYPE} ${archtoken_simple}"  RESULT_VARIABLE ret)
+		if(ret EQUAL "1")
+		       	message(FATAL_ERROR "Return code = ${ret} -> Running build script for <libmysofa> failed!")
+		else()
+		       	 message("libmysofa installation complete.")
+		endif()
 	endif()
 	
 	find_package(ZLIB)

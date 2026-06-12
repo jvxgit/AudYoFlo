@@ -5,5 +5,5 @@ echo "Script prepareModules-glnx.sh with arguments $1 $2 $3"
 # $3: arch_simple
 
 cd $1/build
-cmake -DCMAKE_BUILD_TYPE=$2 .. -G "Ninja" -DBUILD_TESTS=FALSE -DBUILD_SHARED_LIBS=FALSE -DCMAKE_INSTALL_PREFIX=$3/$2 -Wno-dev
+cmake -DCMAKE_BUILD_TYPE=$2 .. -G "Ninja" -DBUILD_TESTS=FALSE -DBUILD_SHARED_LIBS=FALSE -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_PREFIX=$3/$2 -Wno-dev
 ninja install
