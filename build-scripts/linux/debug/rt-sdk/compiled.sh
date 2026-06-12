@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## Before start, on Ubuntu 22.04, install as follows:
 # sudo apt-get install valgrind cmake build-essential curl
@@ -38,17 +38,24 @@
 #
 # 4) Activate option JVX_GCC_LINKER_SYMBOLIC in case of gcc compiler to link with ffmpeg
 
-
-
 JVX_RELEASE_TYPE=Debug
-JVX_SRC_PATH=$PWD/..
-export FLUTTER_SDK_PATH=${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4
-## QT_PATH_64=${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64
-## AQT install path
+FLUTTER_VERSION_STRING=3.29.3
+JVX_SRC_PATH=$PWD/../../AudYoFlo
+export FLUTTER_SDK_PATH=${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/flutter/flutter-${FLUTTER_VERSION_STRING}
+QT_PATH_64=${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64
+export PATH=${FLUTTER_SDK_PATH}:${PATH}
 
-QT_PATH_64=/usr/lib/qt5
+## QT options:
+## /somewhere/ayfdevelop/AudYoFlo/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64
+## ${JVX_SRC_PATH}/sources/jvxLibraries/third_party/web/qt/qt/5.15.2/gcc_64
+## QT_PATH_64=/usr/lib/qt5
+
+## Python Options
+source ~/python/venv/bin/activate
+export PYBIND_PATH=~/python/venv/lib/python3.14/site-packages/pybind11/share/cmake/pybind11
 
 ADDITIONAL_FEATURE_TOKENS_MIN="-DJVX_USE_CONSOLE_APPS=TRUE\
+	-DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 	-DJVX_USE_PART_OCTAVE=TRUE \
 	-DJVX_USE_PART_MATLAB=FALSE\
 	-DJVX_USE_PCAP=FALSE \
@@ -60,17 +67,29 @@ ADDITIONAL_FEATURE_TOKENS_MIN="-DJVX_USE_CONSOLE_APPS=TRUE\
 	-DJVX_USE_BOOST=TRUE\
 	-DJVX_USE_EIGEN=TRUE\
 	-DJVX_USE_PART_CMINPACK=FALSE \
-        -DJVX_DEPLOY_LIBRARY_DSP_MATLAB=TRUE\
+        -DJVX_DEPLOY_LIBRARY_DSP_MATLAB=TRUE \
 	-DJVX_INCLUDE_EBUR128=TRUE \
 	-DJVX_USE_VST=TRUE \
-	-DJVX_FLUTTER_UI=FALSE \
-	-DJVX_USE_PYTHON=FALSE \
+	-DJVX_FLUTTER_UI=TRUE \
+	-DJVX_USE_PYTHON=TRUE \
 	-DJVX_LIBHOST_WITH_JSON_SHOW=TRUE \
 	-DJVX_USE_PART_ALSA=TRUE \
+	-DJVX_USE_PART_PIPEWIRE=TRUE \
  	-DJVX_INSTALL_QT_ON_BUILD=TRUE \
  	-DJVX_USE_ORC=TRUE \
 	-DJVX_INSTALL_FLUTTER_ON_BUILD=TRUE \
+	-DJVX_USE_OPENCV=TRUE \
+	-DJVX_USE_OPENGL=TRUE \
+	-DJVX_USE_FFTW=TRUE \
+	-DJVX_USE_KISSFFT=TRUE \
+	-DJVX_FFT_TYPE_NAME="fftw" \
+	-DJVX_USE_GLEW_GLUT=TRUE \
+    	-DJVX_GENERATE_VERSION_TAG_DUMMY=TRUE \
+	-DJVX_COMPILE_GOD_HOST=TRUE \
+	-DPYBIND_PATH=${PYBIND_PATH} \
 	-DCMAKE_PREFIX_PATH=${QT_PATH_64}" 
+
+## 
 
 ## For Octave - on Octave prompt
 # 1) pkg install -forge control
@@ -81,16 +100,35 @@ ADDITIONAL_FEATURE_TOKENS_MIN="-DJVX_USE_CONSOLE_APPS=TRUE\
 # pip install aqtinstall
 
 ADDITIONAL_FEATURE_TOKENS_FULL="\
+	-DFLUTTER_SDK_PATH=$FLUTTER_SDK_PATH \
+	-DJVX_INSTALLER_MBC=TRUE \
 	-DLIBMYSOFA_BUILD_TESTS=FALSE \
+	-DAYFBINRENDER_FFMPEG_FILE_IO=TRUE \
+	-DAYFBINRENDER_HEADTRACKER_RS232=TRUE \
+	-DAYFBINRENDER_HEADTRACKER_ART=TRUE \
 	-DJVX_USE_FFMPEG=TRUE \
 	-DJVX_USE_LIBMYSOFA=TRUE \
+	-DJVX_INSTALLER_MBC=TRUE \
 	-DJVX_USE_HDF5=TRUE \
 	-DLIBMYSOFA_BUILD_TESTS=FALSE \
 	-DQT_INSTALL_PATH=${QT_PATH_64} \
+    	-DAYFBINRENDER_FFMPEG_FILE_IO=TRUE \
+    	-DAYFBINRENDER_HEADTRACKER_RS232=TRUE \
+    	-DAYFBINRENDER_HEADTRACKER_ART=TRUE \
 	-DJVX_GCC_LINKER_SYMBOLIC=TRUE \
+	-DJVX_USE_CBMP=TRUE \
+	-DJVX_USE_RUST=FALSE \
+	-DJVX_USE_V4L2VIDEO=TRUE \
+    	-DAYFSTARTER_USE_RUST_LIBS=TRUE \
+	-DJVX_LINUX_NATIVE_INSTALLED_LIBS=FALSE \
+	-DJVX_ALLOW_FLUTTER_SIMPLE_INSTALLERS=TRUE \
+	-DJVX_FLUTTER_VERSION=${FLUTTER_VERSION_STRING} \
 	-DSMTG_CREATE_PLUGIN_LINK=FALSE"
 
-	
+# Most projects have not been configured for Linux,
+#	-DAYFSTARTER_SIMPLE_INSTALLER=FALSE \
+
+
 TOKEN_SDK=-DJVX_RELEASE_SDK=FALSE
 TOKEN_BTOOLS=-DJVX_COMPILE_BUILDTOOLS=FALSE
 
@@ -141,10 +179,6 @@ elif [ "$1" = "cc" ];
 then
     run="cc"
 
-elif [ "$1" = "show" ];
-then
-    run="show"
-
 elif [ "$1" = "distclean" ];
 then
     run="distclean"
@@ -152,6 +186,11 @@ then
 else
     run="nothing"
     echo "Usage: compile < rt-bt | rt | sdk-bt | sdk | clean | distclean >"
+fi
+
+if [ "$2" = "show" ];
+then
+    run="show"
 fi
 
 # Setup the typical cmake config options
