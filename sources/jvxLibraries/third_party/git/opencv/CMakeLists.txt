@@ -59,11 +59,8 @@ if(${JVX_OS} MATCHES "windows")
 	
 	set(OPENCV_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/include" CACHE INTERNAL "opencv include references")
 	set(OPENCV_LIBRARIES 
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/opencv_imgproc4100${libpostfix}.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/opencv_core4100${libpostfix}.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/ippicvmt.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/ippiw${libpostfix}.lib
-		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/ittnotify${libpostfix}.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/opencv_imgproc4140${libpostfix}.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/opencv-${archtoken}/${archtoken_simple}/vc17/staticlib/opencv_core4140${libpostfix}.lib
 		CACHE INTERNAL "opencv library references")	
 		
 #		${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken}/${targetfolder}/${archtoken}/vc17/staticlib/opencv_highgui4100d.lib
