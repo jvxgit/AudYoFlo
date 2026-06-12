@@ -1,0 +1,24 @@
+From 2b62e78ba2da86f8ec068069ff5e3616647c5e11 Mon Sep 17 00:00:00 2001
+From: Hauke Krueger <hk@binauricsaudio.com>
+Date: Fri, 12 Jun 2026 14:38:03 +0200
+Subject: [PATCH] Minor bugfix for Linux
+
+---
+ vstgui/lib/platform/iplatformtaskexecutor.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/vstgui/lib/platform/iplatformtaskexecutor.h b/vstgui/lib/platform/iplatformtaskexecutor.h
+index 1e64c082..2aa88afa 100644
+--- a/vstgui/lib/platform/iplatformtaskexecutor.h
++++ b/vstgui/lib/platform/iplatformtaskexecutor.h
+@@ -7,6 +7,7 @@
+ #include <functional>
+ #include <memory>
+ #include <limits>
++#include <cstdint>
+ 
+ //------------------------------------------------------------------------
+ namespace VSTGUI {
+-- 
+2.53.0
+
