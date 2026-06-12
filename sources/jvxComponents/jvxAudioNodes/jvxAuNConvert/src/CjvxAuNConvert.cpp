@@ -404,6 +404,15 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 		//CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, preferredByOutput JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
+#define JVX_FORMAT_TABLE_SIZE 4
+static jvxDataFormat formatTable[JVX_FORMAT_TABLE_SIZE] =
+{
+	JVX_DATAFORMAT_DATA,
+	JVX_DATAFORMAT_32BIT_LE,
+	JVX_DATAFORMAT_16BIT_LE,
+	JVX_DATAFORMAT_64BIT_LE
+};
+
 jvxErrorType
 CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
@@ -416,6 +425,29 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	runtime.requiresRebuffering = false;
 	runtime.requiresRebufferHeadroom= false;
 	runtime.lFieldRebuffer = 0;
+	runtime.commonFormat = JVX_DATAFORMAT_DATA;
+
+	// HINT FOR THIS PART:
+	// We may redefine the common dataformat to prevent type connversion on the input or the output side
+	// However, this would require some type specific code changes in the process functions. Up for now,
+	// we always run the signal processing part in format jvxData
+
+#if 0
+	
+	// Find a common dataformat to avoid type conversions
+	for (jvxSize ff = 0; ff < JVX_FORMAT_TABLE_SIZE; ff++)
+	{
+		jvxDataFormat cForm = formatTable[ff];
+		if (
+			(node_inout._common_set_node_params_a_1io.format == cForm) ||
+			(node_output._common_set_node_params_a_1io.format == cForm))
+		{
+			runtime.commonFormat = cForm;
+			break;
+		}
+	}
+	// runtime.commonFormat = (jvxDataFormat)JVX_MIN(node_inout._common_set_node_params_a_1io.format, node_output._common_set_node_params_a_1io.format);
+#endif
 
 	if ((resampling.cc.oversamplingFactor != 1) || (resampling.cc.downsamplingFactor != 1))
 	{
@@ -425,12 +457,12 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	{
 		runtime.active_rechannel = true;
 	}
-	if (node_inout._common_set_node_params_a_1io.format != JVX_DATAFORMAT_DATA)
+	if (node_inout._common_set_node_params_a_1io.format != runtime.commonFormat)
 	{
 		runtime.active_retype_input = true;
 	}
 
-	if (node_output._common_set_node_params_a_1io.format != JVX_DATAFORMAT_DATA)
+	if (node_output._common_set_node_params_a_1io.format != runtime.commonFormat)
 	{
 		runtime.active_retype_output = true;
 	}
@@ -497,8 +529,6 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		if (runtime.active_resampling)
 		{
-			jvxDataFormat formOut = (jvxDataFormat)node_inout._common_set_node_params_a_1io.format;
-
 			switch (fixedLocationMode)
 			{
 			case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
@@ -516,7 +546,7 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 				jvx_fixed_resampler_initConfig(&runtime.fldResampler[i]);
 				runtime.fldResampler[i].prmInit.buffersizeIn = resampling.bSizeInMax;
 				runtime.fldResampler[i].prmInit.buffersizeOut = resampling.bSizeOutMax;
-				runtime.fldResampler[i].prmInit.format = formOut;
+				runtime.fldResampler[i].prmInit.format = runtime.commonFormat;
 				runtime.fldResampler[i].prmInit.lFilter = resamplerQualities[(jvxSize)resamplerQuality];
 				runtime.fldResampler[i].prmInit.optPtrConversion = &resampling.cc; // Provide the resampling exact config
 				jvx_fixed_resampler_prepare(&runtime.fldResampler[i]);
@@ -554,7 +584,7 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			runtime.fFieldRebuffer = 0;
 			runtime.nCFieldRebuffer = JVX_MAX(numBuffersIntermediate, node_output._common_set_node_params_a_1io.number_channels);
 			runtime.ptrFieldBuffer = nullptr;
-			runtime.lFieldRebufferChannel = runtime.lFieldRebuffer * jvxDataFormat_getsize(node_output._common_set_node_params_a_1io.format);
+			runtime.lFieldRebufferChannel = runtime.lFieldRebuffer * jvxDataFormat_getsize(runtime.commonFormat);
 			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(runtime.ptrFieldBuffer, jvxHandle*, runtime.nCFieldRebuffer);
 			for (i = 0; i < runtime.nCFieldRebuffer; i++)
 			{
@@ -564,14 +594,14 @@ CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		if (runtime.active_retype_input)
 		{
-			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(runtime.bufsInConvert,
-				jvxData, node_inout._common_set_node_params_a_1io.number_channels,
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z_TP(runtime.bufsInConvert,
+				runtime.commonFormat, node_inout._common_set_node_params_a_1io.number_channels,
 				node_inout._common_set_node_params_a_1io.buffersize);
 		}
 		if (runtime.active_retype_output)
 		{
-			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z(runtime.bufsOutConvert,
-				jvxData, node_output._common_set_node_params_a_1io.number_channels,
+			JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z_TP(runtime.bufsOutConvert,
+				runtime.commonFormat, node_output._common_set_node_params_a_1io.number_channels,
 				node_output._common_set_node_params_a_1io.buffersize);
 		}
 	}
@@ -706,6 +736,7 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxData** bufsInData = nullptr;
 	jvxInt16** bufsInInt16 = nullptr;
 	jvxInt32** bufsInInt32 = nullptr;
+
 	switch (_common_set_icon.theData_in->con_params.format)
 	{
 	case JVX_DATAFORMAT_DATA:
@@ -768,15 +799,15 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	if (runtime.active_retype_input)
 	{
 		jvxSize cnt = 0;
-		jvxBool jumpToExit = true;
+		jvxBool jumpToExit = false;
 		
 		// Output of converter may be convert buffer (default) or processing output buffer if nothing else happens
-		jvxData** targetConvIn = runtime.bufsInConvert;		
+		jvxData** targetConvInData = (jvxData**)runtime.bufsInConvert;
 
 		// If we see no output conversion and no rebuffering, we will copy straight to the output
-		if (!runtime.requiresRebuffering && !runtime.active_retype_output)
+		if (!runtime.requiresRebuffering && !runtime.active_retype_output && !runtime.active_resampling)
 		{
-			targetConvIn = bufsOutData; // <- this is the component target output buffer!!
+			targetConvInData = bufsOutData; // <- this is the component target output buffer!!
 			jumpToExit = true; // <- in case we operatre quickly, use the jump shortcut!!
 		}
 
@@ -787,20 +818,20 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 			for (cnt = 0; cnt < _common_set_icon.theData_in->con_params.number_channels; cnt++)
 			{
 				jvx_convertSamples_from_fxp_norm_to_flp<jvxInt16, jvxData>(
-					bufsInInt16[cnt], targetConvIn[cnt],
+					bufsInInt16[cnt], targetConvInData[cnt],
 					numInputSamples, JVX_MAX_INT_16_DIV);
 			}			
-			bufsInData = runtime.bufsInConvert;
+			bufsInData = (jvxData**)runtime.bufsInConvert;
 
 			break;
 		case JVX_DATAFORMAT_32BIT_LE:
 			for (cnt = 0; cnt < _common_set_icon.theData_in->con_params.number_channels; cnt++)
 			{
 				jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
-					bufsInInt32[cnt], targetConvIn[cnt],
+					bufsInInt32[cnt], targetConvInData[cnt],
 					numInputSamples, JVX_MAX_INT_16_DIV);
 			}
-			bufsInData = runtime.bufsInConvert;
+			bufsInData = (jvxData**)runtime.bufsInConvert;
 
 			break;
 		default:
@@ -828,11 +859,11 @@ CjvxAuNConvert::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		{
 		case JVX_DATAFORMAT_16BIT_LE:
 
-			bufsOutData = runtime.bufsOutConvert;
+			bufsOutData = (jvxData**)runtime.bufsOutConvert;
 			break;
 
 		case JVX_DATAFORMAT_32BIT_LE:
-			bufsOutData = runtime.bufsOutConvert;
+			bufsOutData = (jvxData**)runtime.bufsOutConvert;
 			break;
 
 		default:

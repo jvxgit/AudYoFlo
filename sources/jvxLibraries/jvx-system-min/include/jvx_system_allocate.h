@@ -103,6 +103,62 @@ JVX_SYSTEM_LIB_END
 	} \
 }
 
+#define JVX_SAFE_ALLOCATE_2DFIELD_CPP_Z_TP(retPtr, dataType, dimY, dimX) \
+{ \
+	switch(dataType) \
+	{ \
+	case JVX_DATAFORMAT_DATA: \
+	{ \
+		jvxData** allocPtr = nullptr; \
+		JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr, jvxData*, dimY); \
+		for (jvxSize i = 0; i < dimY; i++) \
+		{ \
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr[i], jvxData, dimX); \
+		} \
+		retPtr = (jvxByte**)allocPtr; \
+	} \
+	break; \
+\
+	case JVX_DATAFORMAT_16BIT_LE: \
+	{ \
+		jvxInt16** allocPtr = nullptr; \
+		JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr, jvxInt16*, dimY); \
+		for(jvxSize i = 0; i < dimY; i++) \
+		{ \
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr[i], jvxInt16, dimX); \
+		} \
+		retPtr = (jvxByte**)allocPtr; \
+	} \
+	break; \
+\
+	case JVX_DATAFORMAT_32BIT_LE: \
+	{ \
+		jvxInt32** allocPtr = nullptr; \
+		JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr, jvxInt32*, dimY); \
+		for(jvxSize i = 0; i < dimY; i++) \
+		{ \
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr[i], jvxInt32, dimX); \
+		} \
+		retPtr = (jvxByte**)allocPtr; \
+	} \
+	break; \
+\
+	case JVX_DATAFORMAT_64BIT_LE: \
+	{ \
+		jvxInt64** allocPtr = nullptr; \
+		JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr, jvxInt64*, dimY); \
+		for(jvxSize i = 0; i < dimY; i++) \
+		{ \
+			JVX_SAFE_ALLOCATE_FIELD_CPP_Z(allocPtr[i], jvxInt64, dimX); \
+		} \
+		retPtr = (jvxByte**)allocPtr; \
+	} \
+	break; \
+	default: \
+		assert(0); \
+	} \
+}
+
 #define JVX_SAFE_DELETE_OBJECT(ptr) { if(ptr) delete(ptr); ptr = nullptr; }
 #define JVX_SAFE_DELETE_FIELD(ptr) { if(ptr) delete[](ptr); ptr = nullptr; }
 #define JVX_SAFE_DELETE_2DFIELD(ptr, dimY) \

@@ -89,9 +89,10 @@ private:
 		jvxBool requiresHeadroom = false;
 		jvx_fixed_resampler* fldResampler = nullptr;
 		jvxSize numResampler = 0;
+		jvxDataFormat commonFormat = JVX_DATAFORMAT_DATA;
 
-		jvxData** bufsInConvert = nullptr;
-		jvxData** bufsOutConvert = nullptr;
+		jvxByte** bufsInConvert = nullptr;
+		jvxByte** bufsOutConvert = nullptr;
 	} runtime;
 
 	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
