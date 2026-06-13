@@ -73,6 +73,15 @@ private:
 		jvxDataFormat formOut = JVX_DATAFORMAT_NONE;
 	} reType;
 
+	template <class T>
+	class dataBaseProcessing
+	{
+	public:
+		T** bufsInConvert = nullptr;
+		T** bufsOutConvert = nullptr;
+		T** ptrFieldBuffer = nullptr;
+	};
+
 	struct
 	{
 		jvxBool active_resampling = false;
@@ -85,14 +94,15 @@ private:
 		jvxSize fFieldRebuffer = 0;
 		jvxSize nCFieldRebuffer = 0;
 		jvxSize lFieldRebufferChannel = 0;
-		jvxHandle** ptrFieldBuffer = nullptr;
 		jvxBool requiresHeadroom = false;
 		jvx_fixed_resampler* fldResampler = nullptr;
 		jvxSize numResampler = 0;
 		jvxDataFormat commonFormat = JVX_DATAFORMAT_DATA;
-
-		jvxByte** bufsInConvert = nullptr;
-		jvxByte** bufsOutConvert = nullptr;
+		
+		dataBaseProcessing<jvxData>* bufsConvert_data = nullptr;
+		dataBaseProcessing<jvxInt32>* bufsConvert_int32 = nullptr;
+		dataBaseProcessing<jvxInt16>* bufsConvert_int16 = nullptr;
+		dataBaseProcessing<jvxInt64>* bufsConvert_int64 = nullptr;
 	} runtime;
 
 	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
