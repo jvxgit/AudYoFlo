@@ -354,12 +354,12 @@ CjvxNodeBase1io::update_simple_params_from_ldesc()
 }
 
 jvxCBitField
-CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField cmpWhat)
+CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField cmpWhat, const CjvxSimplePropsPars& currProps)
 {
 	jvxCBitField what = 0;
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.buffersize != theData->con_params.buffersize)
+		if (currProps._common_set_node_params_a_1io.buffersize != theData->con_params.buffersize)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT);
 		}
@@ -367,7 +367,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 	
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.samplerate != theData->con_params.rate)
+		if (currProps._common_set_node_params_a_1io.samplerate != theData->con_params.rate)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT);
 		}
@@ -375,7 +375,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 	
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.number_channels != theData->con_params.number_channels)
+		if (currProps._common_set_node_params_a_1io.number_channels != theData->con_params.number_channels)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT);
 		}
@@ -383,7 +383,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 		
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.format != theData->con_params.format)
+		if (currProps._common_set_node_params_a_1io.format != theData->con_params.format)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT);
 		}
@@ -391,7 +391,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.subformat != theData->con_params.format_group)
+		if (currProps._common_set_node_params_a_1io.subformat != theData->con_params.format_group)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT);
 		}
@@ -399,7 +399,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.segmentation.x != theData->con_params.segmentation.x)
+		if (currProps._common_set_node_params_a_1io.segmentation.x != theData->con_params.segmentation.x)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT);
 		}
@@ -407,7 +407,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 	
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.segmentation.y != theData->con_params.segmentation.y)
+		if (currProps._common_set_node_params_a_1io.segmentation.y != theData->con_params.segmentation.y)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT);
 		}
@@ -415,7 +415,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.data_flow != theData->con_params.data_flow)
+		if (currProps._common_set_node_params_a_1io.data_flow != theData->con_params.data_flow)
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_DATAFLOW_SHIFT);
 		}
@@ -423,7 +423,7 @@ CjvxNodeBase1io::requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField 
 
 	if (jvx_bitTest(cmpWhat, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMATSPEC_SHIFT))
 	{
-		if (node_inout._common_set_node_params_a_1io.format_spec != theData->con_params.format_spec.std_str())
+		if (currProps._common_set_node_params_a_1io.format_spec != theData->con_params.format_spec.std_str())
 		{
 			jvx_bitSet(what, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMATSPEC_SHIFT);
 		}

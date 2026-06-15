@@ -146,4 +146,16 @@ public:
 	void compute_buffer_relations(jvxBool fromInput, jvxSize* bSizeArg = nullptr);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionToContainAllSubsectionsForMe,
+		const char* filename,
+		jvxInt32 lineno)override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionWhereToAddAllSubsections)override;
+
+	jvxErrorType match_step_by_step(jvxLinkDataDescriptor* preferredByOutput, jvxLinkDataDescriptor& tryThis JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+
 };

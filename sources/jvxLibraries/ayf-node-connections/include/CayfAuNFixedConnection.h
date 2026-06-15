@@ -185,9 +185,13 @@ namespace AyfConnection
 				res = CayfAuNConnection<S>::_common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(
 					JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 					proposed JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-				if (res == JVX_NO_ERROR)
+				switch (res)
 				{
+				case JVX_NO_ERROR:
 					refresh_test_connection(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+					break;
+				default:
+					break;
 				}
 			}
 			return res;

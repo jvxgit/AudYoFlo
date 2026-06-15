@@ -1001,7 +1001,10 @@ CjvxNegotiate_input::_negotiate_connect_icon(jvxLinkDataDescriptor* theData_in,
 			resComplain = theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 				&ld_cp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
-			if (resComplain == JVX_ERROR_REQUEST_CALL_AGAIN)
+			if (
+				(resComplain == JVX_ERROR_REQUEST_CALL_AGAIN)||
+				(resComplain == JVX_ERROR_POSTPONE))
+
 			{
 				return resComplain;
 			}

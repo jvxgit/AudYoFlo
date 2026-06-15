@@ -4,7 +4,9 @@ SECTION PROPERTIES
 
 	SECTION config
 	{
-		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";
+		//GENERATE_ENTRIES_CONFIG_FILE = "no";
+
 		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
 		ALLOWED_STATE_MASK = {/*"JVX_STATE_SELECTED", */"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
 		CALLBACKS = {"set_config"};

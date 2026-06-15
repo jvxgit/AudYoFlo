@@ -114,7 +114,7 @@ public:
 	virtual void update_simple_params_from_neg_on_test();
 	virtual void update_simple_params_from_ldesc(); // **
 
-	jvxCBitField requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField cmpWhat);
+	jvxCBitField requires_reconfig(jvxLinkDataDescriptor* theData, jvxCBitField cmpWhat, const CjvxSimplePropsPars& currProps);
 
 	virtual void constrain_ldesc_from_neg_params(const CjvxNegotiate_common& neg);
 

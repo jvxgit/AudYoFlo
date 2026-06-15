@@ -753,8 +753,11 @@ HjvxMicroConnection::test_connection(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O_TAG(fdb, (&_common_set_ocon.theData_out), "micro-connection-param-out");
 
 		res = theProc->test_chain(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-		if (res != JVX_NO_ERROR)
+		switch (res)
 		{
+		case JVX_NO_ERROR:
+			break;
+		default:
 			goto exit_error;
 		}
 

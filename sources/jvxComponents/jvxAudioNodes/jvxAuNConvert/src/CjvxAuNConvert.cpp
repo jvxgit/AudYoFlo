@@ -7,6 +7,18 @@ static jvxSize resamplerQualities[] =
 	32, 64, 128
 };
 
+#define JVX_FORMAT_TABLE_SIZE 4
+static jvxDataFormat formatTable[JVX_FORMAT_TABLE_SIZE] =
+{
+	JVX_DATAFORMAT_DATA,
+	JVX_DATAFORMAT_32BIT_LE,
+	JVX_DATAFORMAT_16BIT_LE,
+	JVX_DATAFORMAT_64BIT_LE
+};
+
+// =====================================================================================
+// =====================================================================================
+
 CjvxAuNConvert::CjvxAuNConvert(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE) :
 	CjvxBareNode1ioRearrange(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
@@ -66,7 +78,7 @@ CjvxAuNConvert::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	
-	whatChanged = CjvxNodeBase1io::requires_reconfig(_common_set_icon.theData_in, checkRequestUpdate);
+	whatChanged = CjvxNodeBase1io::requires_reconfig(_common_set_icon.theData_in, checkRequestUpdate, node_inout);
 	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)
 	{
@@ -160,6 +172,7 @@ CjvxAuNConvert::adapt_output_parameters_forward()
 
 		// If we forward output data with a variable framesize, we need to allocate the maximum buffersize towards the output
 		node_output._common_set_node_params_a_1io.buffersize = resampling.bSizeOutMax;
+		node_output._common_set_node_params_a_1io.segmentation.x = resampling.bSizeOutMax;
 		break;
 	}
 
@@ -251,8 +264,12 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 			log << "Successor returned compromise - returned JVX_ERROR_POSTPONE to test the connection again." << std::endl;
 			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
-			// Too much complexity, we better run the test again!
-			res = JVX_ERROR_POSTPONE;
+			// Too much complexity, we better run the test again!			
+			res = match_step_by_step(preferredByOutput, tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res != JVX_NO_ERROR)
+			{
+				res = JVX_ERROR_POSTPONE;
+			}
 			break;
 		default:
 
@@ -260,158 +277,11 @@ CjvxAuNConvert::accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataD
 			log << "Successor returned error. We will adapt input/output settings involving resampler." << std::endl;
 			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
-			// Simple forwarding did not work out, hence, let us find out step by step
-			whatChanged = CjvxNodeBase1io::requires_reconfig(preferredByOutput, checkRequestUpdate);
-			res = JVX_NO_ERROR;
-
-			switch (fixedLocationMode)
-			{
-			case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
-			
-				// ===========================================================================================
-				// Try to align number channels
-				// ===========================================================================================
-				if (jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT))
-				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-					log << "Asking successor to adapt number of channels." << std::endl;
-					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-
-					tryThis.con_params = _common_set_icon.theData_in->con_params;
-					tryThis.con_params.number_channels = preferredByOutput->con_params.number_channels;
-					switch (res)
-					{
-					case JVX_NO_ERROR:
-						node_inout._common_set_node_params_a_1io.number_channels = _common_set_icon.theData_in->con_params.number_channels;
-						break;
-					case JVX_ERROR_COMPROMISE:
-						res = JVX_ERROR_UNSUPPORTED;
-						break;
-					default:
-
-						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-						log << "Successor could not fulfill requirements." << std::endl;
-						JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-
-						// Override error message - can deal with it
-						res = JVX_NO_ERROR;
-					}
-
-					// Modifify the number of output channels as requested
-					node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
-
-					// Adapt the parameters for forward direction
-					adapt_output_parameters_forward();
-
-					if (res != JVX_NO_ERROR)
-					{
-						return res;
-					}
-				}
-
-				// ===========================================================================================
-				// Try to align processing
-				// ===========================================================================================
-				if (jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT))
-				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-					log << "Asking successor to adapt processing format." << std::endl;
-					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-
-					tryThis.con_params = _common_set_icon.theData_in->con_params;
-					tryThis.con_params.format = preferredByOutput->con_params.format;
-					res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-
-					switch (res)
-					{
-					case JVX_NO_ERROR:
-						node_inout._common_set_node_params_a_1io.format = _common_set_icon.theData_in->con_params.format;
-						break;
-					case JVX_ERROR_COMPROMISE:
-						res = JVX_ERROR_UNSUPPORTED;
-						break;
-					default:
-
-						JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-						log << "Successor could not fulfill requirements." << std::endl;
-						JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-
-						// Override error message - can deal with it
-						res = JVX_NO_ERROR;
-					}
-
-					// Modifify the number of output format as requested -- I think we do need this anymore
-					node_output._common_set_node_params_a_1io.format = preferredByOutput->con_params.format;
-
-					// Adapt the parameters for forward direction
-					adapt_output_parameters_forward();
-
-					if (res != JVX_NO_ERROR)
-					{
-						return res;
-					}
-				}
-				
-				// ===========================================================================================
-				// Next we deal with buffersize/samperates
-				// ===========================================================================================
-				if (
-					(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT)) ||
-					(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT)))
-				{
-					JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
-					log << "Adapting conversion parameters to convert samplerate/buffersize." << std::endl;
-					JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
-
-
-					// Final attempt without any other components involved: convert resampling options
-					jvx_fixed_resampler_init_conversion(
-						&resampling.cc,
-						node_inout._common_set_node_params_a_1io.samplerate,
-						preferredByOutput->con_params.rate);
-
-					// We need to deviate from the proposed procedure since this segment returns a "COMPROMISE"
-					// The test_set_output
-					adapt_output_parameters_forward();
-					// test_set_output_parameters(); <- will be called in calling function
-
-					res = JVX_ERROR_COMPROMISE;
-					break;
-				}
-				break;
-			case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
-				
-				// Final attempt without any other components involved: convert resampling options
-				tryThis = *_common_set_icon.theData_in;
-				jvx_fixed_resampler_init_conversion(&resampling.cc, node_inout._common_set_node_params_a_1io.samplerate,
-					preferredByOutput->con_params.rate);
-
-				// Adapt output buffersize as requested since compute_buffer_relations requires 				
-				compute_buffer_relations(false, &preferredByOutput->con_params.buffersize);
-				tryThis.con_params.buffersize = resampling.bSizeInMax;
-				tryThis.con_params.segmentation.x = resampling.bSizeInMax;
-
-				// Here, we must rely on a buffersize update in the previous component - this is the degree of freedom that we have
-				res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
-				if (res == JVX_NO_ERROR)
-				{
-					adapt_output_parameters_backward(preferredByOutput->con_params.number_channels, preferredByOutput->con_params.format);
-				}
-				break;			
-			}		
+			res = match_step_by_step(preferredByOutput, tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	return res;
 		//CjvxBareNode1ioRearrange::transfer_backward_ocon(tp, preferredByOutput JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
-
-#define JVX_FORMAT_TABLE_SIZE 4
-static jvxDataFormat formatTable[JVX_FORMAT_TABLE_SIZE] =
-{
-	JVX_DATAFORMAT_DATA,
-	JVX_DATAFORMAT_32BIT_LE,
-	JVX_DATAFORMAT_16BIT_LE,
-	JVX_DATAFORMAT_64BIT_LE
-};
 
 jvxErrorType
 CjvxAuNConvert::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
@@ -1254,6 +1124,213 @@ exit_fwd:
 	return fwd_process_buffers_icon(mt_mask, idx_stage);
 	
 }
+
+// ====================================================================================
+// ====================================================================================
+
+/*
+ * This function tries to match input arguments to output arguments while trying to retain parameters to
+ * safe compututational load.
+ * JVX_FIXED_RATE_LOCATION_OUTPUT:
+ * Typically, we try to adapt the parameters with the input side. If input side does not accept, we set the output arguments according to what is
+ * required. This may lead to the involvement of additional signal processing functions.
+ * JVX_FIXED_RATE_LOCATION_INPUT:
+ * We compute the relation of rate and buffersize and try to pass those towards the successor in the chain.
+ */
+jvxErrorType
+CjvxAuNConvert::match_step_by_step(jvxLinkDataDescriptor* preferredByOutput, jvxLinkDataDescriptor& tryThis JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+
+	// Simple forwarding did not work out, hence, let us find out step by step
+	whatChanged = CjvxNodeBase1io::requires_reconfig(preferredByOutput, checkRequestUpdate, node_inout);
+	jvxCBitField whatNeedsToChangeOutput = CjvxNodeBase1io::requires_reconfig(preferredByOutput, checkRequestUpdate, node_output);
+	jvxErrorType res = JVX_NO_ERROR;
+
+	switch (fixedLocationMode)
+	{
+	case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_OUTPUT:
+
+		// ===========================================================================================
+		// Try to align number channels
+		// ===========================================================================================
+		if (jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT))
+		{
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
+			log << "Asking successor to adapt number of channels." << std::endl;
+			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+
+			tryThis.con_params = _common_set_icon.theData_in->con_params;
+			tryThis.con_params.number_channels = preferredByOutput->con_params.number_channels;
+			switch (res)
+			{
+			case JVX_NO_ERROR:
+				node_inout._common_set_node_params_a_1io.number_channels = _common_set_icon.theData_in->con_params.number_channels;
+				break;
+			case JVX_ERROR_COMPROMISE:
+				res = JVX_ERROR_UNSUPPORTED;
+				break;
+			default:
+
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
+				log << "Successor could not fulfill requirements." << std::endl;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+
+				// Override error message - can deal with it
+				res = JVX_NO_ERROR;
+			}
+
+			// Modifify the number of output channels as requested
+			node_output._common_set_node_params_a_1io.number_channels = preferredByOutput->con_params.number_channels;
+
+			// Adapt the parameters for forward direction
+			adapt_output_parameters_forward();
+
+			if (res != JVX_NO_ERROR)
+			{
+				return res;
+			}
+		}
+
+		// ===========================================================================================
+		// Try to align processing
+		// ===========================================================================================
+		if (
+			(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT)) &&
+			(jvx_bitTest(whatNeedsToChangeOutput, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT))
+			)
+		{
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
+			log << "Asking successor to adapt processing format." << std::endl;
+			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+
+			tryThis.con_params = _common_set_icon.theData_in->con_params;
+			tryThis.con_params.format = preferredByOutput->con_params.format;
+			res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+
+			switch (res)
+			{
+			case JVX_NO_ERROR:
+				node_inout._common_set_node_params_a_1io.format = _common_set_icon.theData_in->con_params.format;
+				break;
+			case JVX_ERROR_COMPROMISE:
+				res = JVX_ERROR_UNSUPPORTED;
+				break;
+			default:
+
+				JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
+				log << "Successor could not fulfill requirements." << std::endl;
+				JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+
+				// Override error message - can deal with it
+				res = JVX_NO_ERROR;
+			}
+
+			// Modifify the number of output format as requested -- I think we do need this anymore
+			node_output._common_set_node_params_a_1io.format = preferredByOutput->con_params.format;
+
+			// Adapt the parameters for forward direction
+			adapt_output_parameters_forward();
+
+			if (res != JVX_NO_ERROR)
+			{
+				return res;
+			}
+		}
+
+		// ===========================================================================================
+		// Next we deal with buffersize/samperates
+		// ===========================================================================================
+		if (
+			(
+				(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT)) ||
+				(jvx_bitTest(whatChanged, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT))
+				) &&
+			(
+				(jvx_bitTest(whatNeedsToChangeOutput, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT)) ||
+				(jvx_bitTest(whatNeedsToChangeOutput, (int)jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT))
+				)
+			)
+		{
+			JVX_START_LOCK_LOG(jvxLogLevel::JVX_LOGLEVEL_3_DEBUG_OPERATION_WITH_LOW_DEGREE_OUTPUT, JVX_CREATE_CODE_LOCATION_TAG, "");
+			log << "Adapting conversion parameters to convert samplerate/buffersize." << std::endl;
+			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
+
+
+			// Final attempt without any other components involved: convert resampling options
+			jvx_fixed_resampler_init_conversion(
+				&resampling.cc,
+				node_inout._common_set_node_params_a_1io.samplerate,
+				preferredByOutput->con_params.rate);
+
+			// We need to deviate from the proposed procedure since this segment returns a "COMPROMISE"
+			// The test_set_output
+			adapt_output_parameters_forward();
+			// test_set_output_parameters(); <- will be called in calling function
+
+			res = JVX_ERROR_COMPROMISE;
+			break;
+		}
+		break;
+	case jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT:
+
+		// Final attempt without any other components involved: convert resampling options
+		tryThis = *_common_set_icon.theData_in;
+		jvx_fixed_resampler_init_conversion(&resampling.cc, node_inout._common_set_node_params_a_1io.samplerate,
+			preferredByOutput->con_params.rate);
+
+		// Adapt output buffersize as requested since compute_buffer_relations requires 				
+		compute_buffer_relations(false, &preferredByOutput->con_params.buffersize);
+		tryThis.con_params.buffersize = resampling.bSizeInMax;
+		tryThis.con_params.segmentation.x = resampling.bSizeInMax;
+
+		// Here, we must rely on a buffersize update in the previous component - this is the degree of freedom that we have
+		res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS, &tryThis JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		if (res == JVX_NO_ERROR)
+		{
+			adapt_output_parameters_backward(preferredByOutput->con_params.number_channels, preferredByOutput->con_params.format);
+		}
+		break;
+	}
+	return res;
+}
+
+// ====================================================================================
+// ====================================================================================
+
+jvxErrorType 
+CjvxAuNConvert::put_configuration(jvxCallManagerConfiguration* callMan,
+	IjvxConfigProcessor* processor,
+	jvxHandle* sectionToContainAllSubsectionsForMe,
+	const char* filename,
+	jvxInt32 lineno)
+{
+	jvxSize i;
+	jvxErrorType res = CjvxBareNode1ioRearrange::put_configuration(callMan, processor, sectionToContainAllSubsectionsForMe, filename, lineno);
+	if (_common_set_min.theState == JVX_STATE_ACTIVE)
+	{
+		genConvert_node::put_configuration_all(callMan, processor, sectionToContainAllSubsectionsForMe);
+		fixedLocationMode = genConvert_node::translate__config__fixed_rate_location_mode_from(0);
+		resamplerQuality = genConvert_node::translate__config__resampler_quality_from(0);
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxAuNConvert::get_configuration(jvxCallManagerConfiguration* callMan,
+	IjvxConfigProcessor* processor,
+	jvxHandle* sectionWhereToAddAllSubsections)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	genConvert_node::translate__config__fixed_rate_location_mode_to(fixedLocationMode);
+	genConvert_node::translate__config__resampler_quality_to(resamplerQuality);
+
+	res = CjvxBareNode1ioRearrange::get_configuration(callMan, processor, sectionWhereToAddAllSubsections);
+	genConvert_node::get_configuration_all(callMan, processor, sectionWhereToAddAllSubsections);
+	
+	return res;
+}
+
 
 JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxAuNConvert, set_config)
 {
