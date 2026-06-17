@@ -459,7 +459,7 @@ CayfComponentLib::activate()
 		}
 
 		// Allocate the single main node for processing 
-		resC = allocate_main_node(); 
+		resC = allocate_nodes(mainObj, subsequentComponents); 
 		
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
@@ -792,7 +792,7 @@ CayfComponentLib::deactivate()
 
 		mainNodes.clear();
 
-		deallocate_main_node();
+		deallocate_nodes(mainObj, subsequentComponents);
 		this->mainObj = nullptr;
 		
 		// The list of components SHOULD empty. This is up to the deallocate_main:node function!
@@ -831,6 +831,74 @@ CayfComponentLib::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	if (res == JVX_NO_ERROR)
 	{
 	}
+	return res;
+}
+
+jvxErrorType 
+CayfComponentLib::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	// procParams
+	jvxLinkDataDescriptor* ld = (jvxLinkDataDescriptor*)data;
+	jvxCBitField modFlags = 0;
+	switch (tp)
+	{
+	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
+	{
+		res = neg_output._negotiate_transfer_backward_ocon(ld,
+			&this->_common_set_ocon.theData_out,
+			this, &modFlags JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		if(res != JVX_NO_ERROR)
+		{
+			if (parent)
+			{
+				if (parent->ptr_callback_multipurpose)
+				{
+					jvxLinkDataDescriptor_con_params params = ld->con_params;
+					jvxErrorType resLocal = parent->ptr_callback_multipurpose(AYF_VOID_PVOID_ID_TRANSFER_OCON, parent->prv_callback_multipurpose, &params);
+					if (resLocal == JVX_NO_ERROR)
+					{
+						if (
+							(params.buffersize != ld->con_params.buffersize) ||
+							(params.rate != ld->con_params.rate) ||
+							(params.number_channels != ld->con_params.number_channels))
+						{
+							neg_output._update_parameters_fixed(
+								params.number_channels,
+								params.buffersize, 
+								params.rate,
+								params.format);
+
+							res = neg_output._negotiate_transfer_backward_ocon(ld, &this->_common_set_ocon.theData_out,
+								this, &modFlags JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+							
+							neg_input._update_parameters_fixed(JVX_SIZE_UNSELECTED, params.buffersize, params.rate, params.format);
+								procParams.bSize = params.buffersize;
+								procParams.sRate = params.rate;
+								procParams.numInChans = params.number_channels;
+							
+						}						
+					}
+					else
+					{
+						res = JVX_ERROR_INTERNAL;
+					}
+				}
+				else
+				{
+					res = JVX_ERROR_UNSUPPORTED;
+				}
+			}
+		}
+		else
+		{
+			res = JVX_ERROR_UNSUPPORTED;
+		}		
+		break;
+	}
+	}
+
 	return res;
 }
 
@@ -941,7 +1009,7 @@ CayfComponentLib::system_about_to_shutdown()
 }
 
 jvxErrorType
-CayfComponentLib::on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
+CayfComponentLib::on_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	// Add the sub components
@@ -955,7 +1023,7 @@ CayfComponentLib::on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNo
 
 
 jvxErrorType
-CayfComponentLib::before_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
+CayfComponentLib::before_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	// Add the sub components
@@ -996,7 +1064,7 @@ CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
 	}
 	if (resC == JVX_NO_ERROR)
 	{
-		resC = on_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_SELECT);
+		resC = on_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_SELECT);
 	}
 
 	if (resC == JVX_NO_ERROR)
@@ -1006,7 +1074,7 @@ CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
 
 	if (resC == JVX_NO_ERROR)
 	{
-		resC = on_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_ACTIVATE);
+		resC = on_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_ACTIVATE);
 	}
 
 	if (resC == JVX_NO_ERROR)
@@ -1020,13 +1088,13 @@ CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
 jvxErrorType
 CayfComponentLib::pre_deallocate_one_main_node(IjvxNode* mainNode)
 {
-	jvxErrorType resC = before_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_DEACTIVATE);
+	jvxErrorType resC = before_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_DEACTIVATE);
 	assert(resC == JVX_NO_ERROR);
 		
 	resC = mainNode->deactivate();
 	assert(resC == JVX_NO_ERROR);
 
-	resC = before_main_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_UNSELECT);
+	resC = before_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_UNSELECT);
 	assert(resC == JVX_NO_ERROR);
 
 	resC = mainNode->unselect();

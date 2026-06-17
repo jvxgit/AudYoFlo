@@ -3,6 +3,8 @@
 
 #include "jvx_system_types.h"
 
+typedef jvxErrorType;
+
 typedef enum 
 {
 	AYF_BUFFERS_INTERLEAVED,
@@ -17,10 +19,12 @@ typedef enum
 	AYF_VOID_PVOID_ID_BEFORE_START,
 	AYF_VOID_PVOID_ID_BEFORE_STOP,
 	AYF_VOID_PVOID_ID_STOPPED,
-	AYF_VOID_PVOID_ID_TERMINATE
+	AYF_VOID_PVOID_ID_TERMINATE,
+	AYF_VOID_PVOID_ID_TRANSFER_OCON, // <- jvxLinkDataDescriptor_con_params*
+	AYF_VOID_PVOID_ID_TEST_ICON, // <- jvxLinkDataDescriptor_con_params*
 } ayfVoidPvoidDefinition;
 
-typedef void (*void_pvoid_callback)(ayfVoidPvoidDefinition voidDef, jvxHandle* priv, jvxHandle* purp);
+typedef jvxErrorType (*void_pvoid_callback)(ayfVoidPvoidDefinition voidDef, jvxHandle* priv, jvxHandle* purp);
 
 struct ayfInitConnectStruct
 {
@@ -40,6 +44,7 @@ struct ayfInitParamStruct
 	int sRate;
 	ayfBufferInterleaveType ilTp;
 	int passthroughMode;
+	jvxErrorType lastError;
 };
 
 #define AYF_INIT_PARAM_STRUCT_RESET(paramStr) \

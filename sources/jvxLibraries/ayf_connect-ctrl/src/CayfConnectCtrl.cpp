@@ -49,13 +49,13 @@ CayfConnectCtrl::CayfConnectCtrl(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, jvxBoo
 };
 
 jvxErrorType
-CayfConnectCtrl::allocate_main_node()
+CayfConnectCtrl::allocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
 {
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CayfConnectCtrl::deallocate_main_node()
+CayfConnectCtrl::deallocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
 {
 	return JVX_NO_ERROR;
 }

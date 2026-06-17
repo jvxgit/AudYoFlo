@@ -19,6 +19,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
 set(LOCAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAuNConvert.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxAuNConvert.h
+  
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxInputOutputSettings.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxInputOutputSettings.h
   )
 
 set(LOCAL_PCG_FILES

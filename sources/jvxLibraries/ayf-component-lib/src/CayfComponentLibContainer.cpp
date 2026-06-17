@@ -106,11 +106,12 @@ CayfComponentLibContainer::deployProcParametersStartProcessor(CayfComponentLib* 
 			startParams.sRate,
 			startParams.format,
 			startParams.formGroup,
-			[&](IjvxDataConnectionProcess* process) {
+			[&](IjvxDataConnectionProcess* process) -> jvxErrorType{
 				if (ptr_callback_multipurpose)
 				{
 					ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_BEFORE_START, prv_callback_multipurpose, process);
 				}
+				return JVX_NO_ERROR;
 			});
 	}
 	return res;

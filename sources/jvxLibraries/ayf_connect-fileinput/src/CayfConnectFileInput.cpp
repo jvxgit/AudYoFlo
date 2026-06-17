@@ -50,19 +50,19 @@ CayfConnectFileInput::CayfConnectFileInput(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLA
 };
 
 jvxErrorType
-CayfConnectFileInput::allocate_main_node()
+CayfConnectFileInput::allocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
 {
-	return jvxSpNMixChainEnterLeave_init(&this->mainObj);
+	return jvxSpNMixChainEnterLeave_init(&mainObj);
 }
 
 jvxErrorType
-CayfConnectFileInput::deallocate_main_node()
+CayfConnectFileInput::deallocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
 {
-	return jvxSpNMixChainEnterLeave_terminate(this->mainObj);
+	return jvxSpNMixChainEnterLeave_terminate(mainObj);
 }
 
 jvxErrorType
-CayfConnectFileInput::on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
+CayfConnectFileInput::on_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	IjvxManipulate* manIf = nullptr;

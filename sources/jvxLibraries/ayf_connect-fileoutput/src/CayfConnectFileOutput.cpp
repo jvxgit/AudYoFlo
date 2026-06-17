@@ -50,28 +50,28 @@ CayfConnectFileOutput::CayfConnectFileOutput(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DEC
 };
 
 jvxErrorType
-CayfConnectFileOutput::allocate_main_node()
+CayfConnectFileOutput::allocate_nodes(IjvxObject*& mainObjArg, std::list< IjvxObject*>& subsequentComponentsArg)
 {
 	jvxSpNMixChainEnterLeave_init(&priObj);
-	this->mainObj = priObj;
+	mainObjArg = priObj;
 	jvxSpNMixChainEnterLeave_init(&secObj);
-	this->subsequentComponents.push_back(secObj);
+	subsequentComponentsArg.push_back(secObj);
 	return JVX_NO_ERROR;
 
 }
 
 jvxErrorType
-CayfConnectFileOutput::deallocate_main_node()
+CayfConnectFileOutput::deallocate_nodes(IjvxObject*& mainObjArg, std::list< IjvxObject*>& subsequentComponentsArg)
 {
 	jvxSpNMixChainEnterLeave_terminate(priObj);
-	this->mainObj = nullptr;
+	mainObjArg = nullptr;
 	jvxSpNMixChainEnterLeave_terminate(secObj);
-	subsequentComponents.clear();
+	subsequentComponentsArg.clear();
 	return JVX_NO_ERROR;
 }
 
 jvxErrorType
-CayfConnectFileOutput::on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
+CayfConnectFileOutput::on_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw)
 {
 	IjvxProperties* props = nullptr;
 	IjvxManipulate* manIf = nullptr;

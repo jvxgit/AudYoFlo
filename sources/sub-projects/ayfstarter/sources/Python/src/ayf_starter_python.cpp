@@ -14,7 +14,7 @@ struct ayfLocalDataContext
 
 extern "C"
 {
-    void cb_ayf_multipurpose(ayfVoidPvoidDefinition purp, jvxHandle* priv, jvxHandle* purpSpecific)
+    jvxErrorType cb_ayf_multipurpose(ayfVoidPvoidDefinition purp, jvxHandle* priv, jvxHandle* purpSpecific)
     {
         ayfLocalDataContext* localCtxt = (ayfLocalDataContext*)priv;
         IjvxDataConnectionProcess* proc = (IjvxDataConnectionProcess*)purpSpecific;
@@ -54,9 +54,10 @@ extern "C"
             JVX_SAFE_DELETE_OBJ(localCtxt);
             break;
         }
+        return JVX_NO_ERROR;
     }
     
-    void* init_ayf_starter(int nChannelsIn, int nChannelsOut, int fsize, int samplerate, int ayfIdentSlot_node, int ayfIdentSlot_dev, const char* nmIniFile, std::function<void(int, void*)> cb)
+    void* init_ayf_starter(int nChannelsIn, int nChannelsOut, int fsize, int samplerate, int ayfIdentSlot_node, int ayfIdentSlot_dev, const char* nmIniFile, std::function<jvxErrorType(int, void*)> cb)
     {
         jvxErrorType res = JVX_NO_ERROR;
 

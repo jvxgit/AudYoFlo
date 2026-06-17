@@ -5,6 +5,7 @@
 #include "jvxNodes/CjvxBareNode1ioRearrange.h"
 
 #include "jvx_resampler/jvx_fixed_resampler.h"
+#include "CjvxInputOutputSettings.h"
 
 enum class jvxRateLocationMode
 {
@@ -110,6 +111,8 @@ private:
 
 	jvxCBitField checkRequestUpdate = 0;
 	jvxCBitField whatChanged = 0;
+
+	CjvxInputOutputSettings currNegoStat;
 
 public:
 

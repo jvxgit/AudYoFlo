@@ -24,8 +24,8 @@ public:
 	// Interface for subclass <CayfComponentLib>
 	// ================================================================
 
-	jvxErrorType allocate_main_node() override;
-	jvxErrorType deallocate_main_node() override;
+	jvxErrorType allocate_nodes(IjvxObject*& mainObjArg, std::list< IjvxObject*>& subsequentComponentsArg) override;
+	jvxErrorType deallocate_nodes(IjvxObject*& mainObjArg, std::list< IjvxObject*>& subsequentComponentsArg) override;
 };
 
 #endif

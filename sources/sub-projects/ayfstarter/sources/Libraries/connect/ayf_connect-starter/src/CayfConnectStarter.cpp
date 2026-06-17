@@ -49,14 +49,14 @@ CayfConnectStarter::CayfConnectStarter(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE, 
 };
 
 jvxErrorType
-CayfConnectStarter::allocate_main_node()
+CayfConnectStarter::allocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
 {
-	return ayfAuNStarter_init(&this->mainObj);
+	return ayfAuNStarter_init(&mainObj);
 }
 
 jvxErrorType
-CayfConnectStarter::deallocate_main_node()
+CayfConnectStarter::deallocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
 {
-	return ayfAuNStarter_terminate(this->mainObj);
+	return ayfAuNStarter_terminate(mainObj);
 }
 

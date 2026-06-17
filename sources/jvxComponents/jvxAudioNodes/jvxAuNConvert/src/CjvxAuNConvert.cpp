@@ -1255,6 +1255,10 @@ CjvxAuNConvert::match_step_by_step(jvxLinkDataDescriptor* preferredByOutput, jvx
 			log << "Adapting conversion parameters to convert samplerate/buffersize." << std::endl;
 			JVX_STOP_LOCK_LOG(JVX_CREATE_CODE_LOCATION_TAG);
 
+			/*
+			node_inout._common_set_node_params_a_1io.samplerate = _common_set_icon.theData_in->con_params.rate;
+			node_inout._common_set_node_params_a_1io.buffersize = _common_set_icon.theData_in->con_params.buffersize;
+			*/
 
 			// Final attempt without any other components involved: convert resampling options
 			jvx_fixed_resampler_init_conversion(
@@ -1262,6 +1266,7 @@ CjvxAuNConvert::match_step_by_step(jvxLinkDataDescriptor* preferredByOutput, jvx
 				node_inout._common_set_node_params_a_1io.samplerate,
 				preferredByOutput->con_params.rate);
 
+			
 			// We need to deviate from the proposed procedure since this segment returns a "COMPROMISE"
 			// The test_set_output
 			adapt_output_parameters_forward();

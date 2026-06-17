@@ -275,7 +275,19 @@ std::string JVX_FILENAME_FROM_FILE(FILE* hFile)
 /* This functions reads a presentation of time which may be related to PTP or NTP synchronization 
  * and returns a unique timestamp given as a float value of seconds during the curent day.
  * E.g., at time 0:01, this timestamp should be 60.00000.
+ * ChatGPT had a proposal for high precision timestamp computation
  */
+
+#define CHATGPT_TIME_PROPOSAL
+
+static inline uint64_t filetime_to_uint64(const FILETIME& ft)
+{
+	ULARGE_INTEGER uli;
+	uli.LowPart = ft.dwLowDateTime;
+	uli.HighPart = ft.dwHighDateTime;
+	return uli.QuadPart;
+}
+
 jvxData 
 JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
 {
@@ -338,6 +350,18 @@ JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
 	// 4) We can deactivate w32time service by running <net stop w32time> and restart it later by running <net start w32time>
 	// 5) We can run the MS services app to find out the status of synchronization or <w32tm /query /status>
 
+#ifdef CHATGPT_TIME_PROPOSAL
+	uint64_t t100ns = filetime_to_uint64(ft);
+
+	constexpr uint64_t TICKS_PER_DAY =
+		24ULL * 60ULL * 60ULL * 10000000ULL;
+
+	uint64_t ticks_today = t100ns % TICKS_PER_DAY;
+
+	// 1 Tick = 100 ns = 0.0001 ms
+	return static_cast<jvxData>(ticks_today) / 10000.0;
+#else
+
 	// FILETIME in 100-Nanosekunden-Intervallen seit 1601-01-01
 	ULARGE_INTEGER uli;
 	uli.LowPart = ft.dwLowDateTime;
@@ -393,4 +417,5 @@ JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
 	secsToday += wMicroSecs * 0.000001;
 
 	return secsToday;
+#endif
 }

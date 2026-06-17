@@ -144,6 +144,11 @@ public:
 		jvxComponentIdentification tp;
 	};
 
+private:
+	
+	IjvxObject* mainObj = nullptr;
+	std::list< IjvxObject*> subsequentComponents;
+
 protected:
 	
 	//std::string modName = "CayfComponentLib";
@@ -151,9 +156,6 @@ protected:
 
 	std::string chainName = "CayfComponentLibChain";
 	std::string mainNodeName = "CayfComponentLibMainNode";
-	IjvxObject* mainObj = nullptr;
-
-	std::list< IjvxObject*> subsequentComponents;
 
 	CayfComponentLibContainer* parent = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
@@ -236,6 +238,7 @@ private:
 	};
 	_procParams procParams;
 	CjvxNegotiate_input neg_input;
+	CjvxNegotiate_output neg_output;
 
 	std::string txtMessageCollect;
 	std::string txtMessageResponse;
@@ -285,7 +288,8 @@ public:
 		jvxSize numInChans, jvxSize numOutChans, 
 		jvxSize bSize, jvxSize sRate, 
 		jvxDataFormat format, jvxDataFormatGroup formGroup,
-		std::function<void(IjvxDataConnectionProcess* pExt)> cbBeforeStart = nullptr);
+		std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart = nullptr);
+
 	virtual jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn, 
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
@@ -302,11 +306,14 @@ public:
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
+#define JVX_CONNECTION_MASTER_SKIP_TRANSFER_BACKWARD_OCON
 #include "codeFragments/simplify/jvxInputOutputConnector_simplify.h"
+#undef JVX_CONNECTION_MASTER_SKIP_TRANSFER_BACKWARD_OCON
 #undef JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
 #undef JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
 
 	// =====================================================================
 	// Link to default master factory and master implementations
@@ -439,11 +446,12 @@ public:
 	*/
 
 	// Interface function to involve a node in this chain
-	virtual jvxErrorType allocate_main_node() = 0;
-	virtual jvxErrorType deallocate_main_node() = 0;
-	virtual jvxErrorType on_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);
-	virtual jvxErrorType before_main_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);
-	virtual jvxErrorType on_main_node_started() { return JVX_NO_ERROR; };
+	virtual jvxErrorType allocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents) = 0;
+	virtual jvxErrorType deallocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents) = 0;
+
+	virtual jvxErrorType on_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);
+	virtual jvxErrorType before_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);
+	// virtual jvxErrorType on_entry_node_started() { return JVX_NO_ERROR; };
 
 	jvxErrorType passConfigSection(IjvxSimpleNode* node, const std::string& moduleName);
 

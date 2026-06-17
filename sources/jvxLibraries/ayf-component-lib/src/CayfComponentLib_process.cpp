@@ -4,7 +4,7 @@ jvxErrorType
 CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, 
 	jvxSize numOutChans, jvxSize bSize, jvxSize sRate,
 	jvxDataFormat format, jvxDataFormatGroup formGroup,
-	std::function<void(IjvxDataConnectionProcess* pExt)> cbBeforeStart)
+	std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart)
 {
 	jvxErrorType resC = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
@@ -25,7 +25,7 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 		procParams.numOutChans = numOutChans;
 		procParams.sRate = sRate;
 		procParams.format = format;
-		procParams.formGroup = formGroup;
+		procParams.formGroup = formGroup;		
 
 		_common_set_ocon.theData_out.con_params.buffersize = procParams.bSize;
 		_common_set_ocon.theData_out.con_params.segmentation.x = procParams.bSize;
@@ -35,7 +35,11 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 		_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
 		_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
 
+		// Take over processing parameters
 		neg_input._set_parameters_fixed(procParams.numOutChans, procParams.bSize, procParams.sRate, JVX_DATAFORMAT_DATA,
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+
+		neg_output._set_parameters_fixed(procParams.numInChans, procParams.bSize, procParams.sRate, JVX_DATAFORMAT_DATA,
 			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
 
 		// resC = theProc->test_chain(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -91,7 +95,7 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 		theConnections->return_reference_connection_process(theProc);
 		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
 
-		this->on_main_node_started();
+		// this->on_entry_node_started();
 	}
 	return JVX_NO_ERROR;
 
