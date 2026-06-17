@@ -9,14 +9,16 @@ public:
 
 	jvxSize versionId = 0;
 
-	struct procParams
+	class procParams
 	{
-		jvxSize bSize = 0;
-		jvxSize rate = 0;
-		jvxSize nChans = 0;
+	public:
+		jvxSize bSize = JVX_SIZE_UNSELECTED;
+		jvxSize rate = JVX_SIZE_UNSELECTED;
+		jvxSize nChans = JVX_SIZE_UNSELECTED;
 		jvxDataFormat form = jvxDataFormat::JVX_DATAFORMAT_NONE;
 		jvxDataFormatGroup subForm = jvxDataFormatGroup::JVX_DATAFORMAT_GROUP_NONE;
-		jvxCBitField currentCponnectionState = 0;
+		jvxCBitField currentConnectionState = 0;
+		jvxCBitField currentDeviationState = 0;
 	};
 
 	procParams in;
@@ -30,11 +32,11 @@ public:
 
 	enum class convertCfgFlags
 	{
-		AYF_NUM_CHANNELS_OK_SHIFT = 0,
-		AYF_FORMAT_OK_SHIFT = 1,
-		AYF_SUBFORMAT_OK_SHIFT = 2,
-		AYF_BSIZE_OK_SHIFT = 3,
-		AYF_SRATE_OK_SHIFT = 4
+		AYF_NUM_CHANNELS_SHIFT = 0,
+		AYF_FORMAT_SHIFT = 1,
+		AYF_SUBFORMAT_SHIFT = 2,
+		AYF_BSIZE_SHIFT = 3,
+		AYF_SRATE_SHIFT = 4
 	};
 
 	enum convertCfgStatus
@@ -55,6 +57,8 @@ public:
 
 	jvxErrorType passFromPredecessor(jvxLinkDataDescriptor* data);
 	jvxErrorType passFromSuccessor(jvxLinkDataDescriptor* data);
+
+	jvxCBitField checkDeviation(jvxLinkDataDescriptor* data, CjvxInputOutputSettings::procParams& params);
 };
 
 #endif

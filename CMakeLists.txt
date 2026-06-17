@@ -381,6 +381,7 @@ include_directories(
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min/include/platform/${JVX_OS}
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/include/platform/${JVX_OS}
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base/include/
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers/include/

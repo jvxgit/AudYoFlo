@@ -78,6 +78,8 @@ CjvxAuNConvert::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	
+	// currNegoStat.passFromPredecessor(_common_set_icon.theData_in);
+
 	whatChanged = CjvxNodeBase1io::requires_reconfig(_common_set_icon.theData_in, checkRequestUpdate, node_inout);
 	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 	if (res == JVX_NO_ERROR)

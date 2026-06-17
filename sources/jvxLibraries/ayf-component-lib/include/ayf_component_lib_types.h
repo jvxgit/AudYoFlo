@@ -2,8 +2,9 @@
 #define __AYF_COMPONENT_LIB_TYPES_H__
 
 #include "jvx_system_types.h"
+#include "jvx_system_error_types.h"
 
-typedef jvxErrorType;
+// typedef jvxErrorType;
 
 typedef enum 
 {
