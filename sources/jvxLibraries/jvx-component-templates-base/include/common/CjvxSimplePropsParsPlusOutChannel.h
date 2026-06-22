@@ -64,7 +64,7 @@ public:
 			_common_set_node_params_a_1io.segmentation.y);
 	}
 
-	jvxBool check_difference(_common_set_node_params_a_1io_t* params, _common_set_device_params_t* params_chan)
+	jvxBool check_difference(CjvxSimpleParameters* params, _common_set_device_params_t* params_chan)
 	{
 		jvxBool difference_found = CjvxSimplePropsPars::check_difference(params);
 		difference_found = (difference_found || (params_chan->number_channels_out != _common_set_device_params.number_channels_out));

@@ -43,6 +43,7 @@ void jvx_bitZSet(jvxCBitField& entry, jvxSize position);
 void jvx_bitClear(jvxCBitField& entry, jvxSize position);
 void jvx_bitToggle(jvxCBitField& entry, jvxSize position);
 jvxUInt32 jvx_bitFieldValue32(jvxCBitField entry);
+std::string jvx_bitField2String(jvxCBitField& entry);
 
 // ==========================================================
 template <class T>

@@ -205,8 +205,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxNegotiate.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxNegotiate.cpp
 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSimpleParameters.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSimplePropsPars.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSimplePropsParsPlusOutChannel.h
+
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxInputOutputSettings.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxInputOutputSettings.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/jvxTechnologies/CjvxFullMasterDevice.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvxTechnologies/CjvxFullMasterDevice.cpp

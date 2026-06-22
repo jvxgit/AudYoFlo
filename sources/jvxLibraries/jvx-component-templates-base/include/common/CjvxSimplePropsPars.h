@@ -3,6 +3,8 @@
 
 #include "pcg_CjvxSimplePropsAss_pcg.h"
 
+#include "CjvxSimpleParameters.h"
+
 /**
  * This class combines exposed properties and internal property values. In addition, it
  * associates the property containers directly to the actual values.
@@ -10,43 +12,8 @@
 class CjvxSimplePropsPars : public CjvxSimplePropsAss_genpcg
 {
 public: 
-	struct _common_set_node_params_a_1io_t
-	{
-		jvxInt32 buffersize = JVX_SIZE_UNSELECTED_INT32;
-		jvxSize number_channels = JVX_SIZE_UNSELECTED_INT32;
-		jvxInt32 samplerate = JVX_SIZE_UNSELECTED_INT32;
-		jvxInt16 format = JVX_DATAFORMAT_NONE;
-		jvxInt16 subformat = JVX_DATAFORMAT_GROUP_NONE;
-		jvxInt16 data_flow = jvxDataflow::JVX_DATAFLOW_DONT_CARE;
-		std::string format_spec;
-		struct
-		{
-			jvxInt32 x = JVX_SIZE_UNSELECTED_INT32;
-			jvxInt32 y = JVX_SIZE_UNSELECTED_INT32;
-		} segmentation;
-
-		void reset()
-		{
-			buffersize = JVX_SIZE_UNSELECTED_INT32;
-			number_channels = JVX_SIZE_UNSELECTED;
-			samplerate = JVX_SIZE_UNSELECTED_INT32;
-			format = JVX_DATAFORMAT_NONE;
-			subformat = JVX_DATAFORMAT_GROUP_NONE;
-			data_flow = jvxDataflow::JVX_DATAFLOW_DONT_CARE;
-			segmentation.x = JVX_SIZE_UNSELECTED_INT32;
-			segmentation.y = JVX_SIZE_UNSELECTED_INT32;
-			format_spec.clear();
-		};
-
-		void derive_buffersize()
-		{
-			jvxSize szElement = jvxDataFormatGroup_getsize_mult(subformat);
-			jvxSize szElementsLine = segmentation.x * szElement;
-			jvxSize szElementsField = segmentation.y * szElementsLine;
-			buffersize = szElementsField / jvxDataFormatGroup_getsize_div(subformat);
-		};
-	};
-	_common_set_node_params_a_1io_t _common_set_node_params_a_1io;
+	
+	CjvxSimpleParameters _common_set_node_params_a_1io;
 
 protected:
 
@@ -109,7 +76,7 @@ public:
 			_common_set_node_params_a_1io.segmentation.y);
 	}
 
-	jvxBool check_difference(_common_set_node_params_a_1io_t* params)
+	jvxBool check_difference(CjvxSimpleParameters* params)
 	{
 		jvxBool difference_found = (_common_set_node_params_a_1io.number_channels != params->number_channels);
 		difference_found = difference_found || (_common_set_node_params_a_1io.buffersize != params->buffersize);
@@ -142,4 +109,5 @@ public:
 	to.subformat = (from)->con_params.format_group; \
 	to.segmentation.x = (from)->con_params.segmentation.x; \
 	to.segmentation.y = (from)->con_params.segmentation.y; 
+
 #endif

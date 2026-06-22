@@ -52,6 +52,24 @@ CjvxAuNChannelRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	return res;
 }
 
+jvxErrorType 
+CjvxAuNChannelRearrange::accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+{
+	jvxErrorType res = CjvxBareNode1ioRearrange::accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	if (res == JVX_NO_ERROR)
+	{
+		// This is important: input and output parameters must be identical except for the 
+		// number of channels
+		neg_output._update_parameters_fixed(JVX_SIZE_UNSELECTED,
+			node_output._common_set_node_params_a_1io.buffersize,
+			node_output._common_set_node_params_a_1io.samplerate,
+			(jvxDataFormat)node_output._common_set_node_params_a_1io.format,
+			(jvxDataFormatGroup)node_output._common_set_node_params_a_1io.subformat,
+			(jvxDataflow)node_output._common_set_node_params_a_1io.data_flow);
+	}
+	return res;
+}
+
 // ===================================================================
 
 jvxErrorType

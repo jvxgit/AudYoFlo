@@ -23,6 +23,16 @@ enum class jvxDataLinkDescriptorAllocFlags
 
 #define JVX_LINKDATA_ALLOCATION_MASK_FORWARD_ELEMENT_TO_ELEMENT ((1 << (int)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_EXPECT_FHEIGHT_INFO_SHIFT))
 
+enum class jvxDataLinkDescriptorTestFlags
+{
+	JVX_LINKDATA_TEST_SINGLE_NUM_CHANNELS_SHIFT = 0,
+	JVX_LINKDATA_TEST_SINGLE_FORMAT_SHIFT = 1,
+	JVX_LINKDATA_TEST_SINGLE_SUB_FORMAT_SHIFT = 2,
+	JVX_LINKDATA_TEST_SINGLE_BSIZE_SHIFT = 3,
+	JVX_LINKDATA_TEST_SINGLE_RATE_SHIFT = 4,
+	JVX_LINKDATA_TEST_SINGLE_DATAFLOW_SHIFT = 5
+};
+
 // The sender may have changed the buffer index and should inform the slave
 typedef enum
 {

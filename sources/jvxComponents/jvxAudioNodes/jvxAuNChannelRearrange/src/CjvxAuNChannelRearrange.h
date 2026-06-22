@@ -28,6 +28,8 @@ public:
 
 	// ===================================================================================
 	virtual jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+
+	jvxErrorType accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
 	// ===================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;

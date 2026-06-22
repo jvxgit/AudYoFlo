@@ -161,7 +161,7 @@ CjvxAudioMasterDevice::updateDependentVariables(jvxBool suppress_update_chain)
 	jvxInt32 newValue = 0;
 	jvxBool updateChain = false;
 
-	CjvxSimplePropsPars::_common_set_node_params_a_1io_t params_simple_on_enter = inout_params._common_set_node_params_a_1io;
+	CjvxSimpleParameters params_simple_on_enter = inout_params._common_set_node_params_a_1io;
 	CjvxSimplePropsParsPlusOutChannel::_common_set_device_params_t params_simple_channel_on_enter = inout_params._common_set_device_params;
 
 	// The property <CjvxAudioMasterDevice::properties_active.inputchannelselection> describes the input side, that is,

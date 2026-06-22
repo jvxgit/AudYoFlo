@@ -226,6 +226,42 @@ jvxUInt32 jvx_bitFieldValue32(jvxCBitField entry)
 {
 	return((jvxUInt32) entry);
 }
+
+std::string jvx_bitField2String(jvxCBitField& entry)
+{
+	jvxSize i;
+	char myBuf[sizeof(jvxCBitField) + 1];	
+	char prodToken_int[3];
+	std::string prodToken;
+	jvxUInt32 val = 0;
+	jvxBool firstNonZero = false;
+	std::string retVal = "0x";
+
+	memset(prodToken_int, 0, 3);
+
+
+#if _MSC_VER >= 1600
+	sprintf_s(prodToken_int, 3, "%d", (int)(sizeof(jvxCBitField)));
+#else
+	sprintf(prodToken_int, "%d", (int)(sizeof(jvxCBitField)));
+#endif
+
+	prodToken = "%0";
+	prodToken += prodToken_int;
+	prodToken += "x";
+
+	memset(myBuf, 0, sizeof(jvxCBitField) + 1);
+	
+#if _MSC_VER >= 1600
+	sprintf_s(myBuf, sizeof(jvxCBitField) + 1, prodToken.c_str(), val);
+#else
+	sprintf(myBuf, prodToken.c_str(), val);
+#endif
+
+	retVal += myBuf;
+	return(retVal);
+}
+
 // ==========================================================
 
 

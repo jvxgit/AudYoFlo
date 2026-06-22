@@ -299,6 +299,12 @@ CjvxInputConnectorCore::JVX_CALLINGCONVENTION _transfer_forward_icon(jvxBool for
 
 	switch (tp)
 	{
+	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
+		
+		// Currently, this option is not supported by any component
+		res = JVX_ERROR_UNSUPPORTED;
+		break;
+
 	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_STRING:
 
 		locTxt = str->std_str();

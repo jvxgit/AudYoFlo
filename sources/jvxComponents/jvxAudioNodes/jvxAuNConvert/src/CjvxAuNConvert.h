@@ -5,30 +5,7 @@
 #include "jvxNodes/CjvxBareNode1ioRearrange.h"
 
 #include "jvx_resampler/jvx_fixed_resampler.h"
-#include "CjvxInputOutputSettings.h"
-
-enum class jvxRateLocationMode
-{
-	// In this case the source to drive the converter must request the information about required sample number 
-	// within the process_start_input function. Then, it delivers exactly this number to guarantee a fixed output 
-	// buffersize!!
-	// Examples for an application:
-	// a) Writing to an outout file with an intermediate foward buffer 
-	// The name comes from the fact that the samplerate on the input side is forwarded to the output side
-	// by demanding variable numbers of samples - to make sure no resampling with fixed buffersize relations is involved
-	JVX_FIXED_RATE_LOCATION_INPUT,
-
-	// In this case, the converter stores samples on the input side depending on the number of samples passed.
-	// Then, it computes the output samples from the current number of stored samples. This mode allows for 
-	// a variable buffersize on the output side and even if there is a fixed relation in buffersize for input 
-	// and output the buffersize may be variable if the internal resampling requires so.
-	// Examples for an application: 
-	// a) Reading audio from file in buffers, passing forward the frames to enter a forward buffer to collect data. 
-	//    Here, a fixed buffersize on the output is not required.
-	//he name comes from the fact that 
-
-	JVX_FIXED_RATE_LOCATION_OUTPUT
-};
+#include "common/CjvxInputOutputSettings.h"
 
 /*
 enum class jvxBufferingMode
@@ -52,6 +29,7 @@ class CjvxAuNConvert: public CjvxBareNode1ioRearrange,
 private:
 
 
+	/*
 	struct
 	{
 		// jvxSize granularityOut = 1;
@@ -61,6 +39,7 @@ private:
 		jvxSize bSizeOutMin = 0;
 		jvxSize bSizeOutMax = 0;
 	} resampling;
+	*/
 
 	struct
 	{
@@ -106,11 +85,9 @@ private:
 		dataBaseProcessing<jvxInt64>* bufsConvert_int64 = nullptr;
 	} runtime;
 
-	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
 	jvxResamplerQuality resamplerQuality = jvxResamplerQuality::JVX_RESAMPLER_QUALITY_MEDIUM;
 
 	jvxCBitField checkRequestUpdate = 0;
-	jvxCBitField whatChanged = 0;
 
 	CjvxInputOutputSettings currNegoStat;
 
@@ -129,6 +106,8 @@ public:
 
 	jvxErrorType accept_negotiate_output(jvxLinkDataTransferType tp, jvxLinkDataDescriptor* preferredByOutput JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 	void from_input_to_output() override;
+	jvxErrorType accept_input_parameters_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	void test_set_output_parameters() override;
 
 	// ===================================================================================
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
@@ -143,10 +122,6 @@ public:
 
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
-	void adapt_output_parameters_forward();
-	void adapt_output_parameters_backward(jvxSize numChannelsOutDesired, jvxDataFormat formOutDesired);
-
-	void compute_buffer_relations(jvxBool fromInput, jvxSize* bSizeArg = nullptr);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
@@ -158,7 +133,5 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor,
 		jvxHandle* sectionWhereToAddAllSubsections)override;
-
-	jvxErrorType match_step_by_step(jvxLinkDataDescriptor* preferredByOutput, jvxLinkDataDescriptor& tryThis JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
 };
