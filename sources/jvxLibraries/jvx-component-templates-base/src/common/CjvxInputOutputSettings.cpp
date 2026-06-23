@@ -122,6 +122,8 @@ CjvxInputOutputSettings::passFromSuccessor(jvxLinkDataDescriptor* preferredByOut
 					stepsTaken[(jvxSize)testProtocolStatus::AYF_CONVERT_LEAVE_ON_AGREE]++;
 					this->protoState = testProtocolStatus::AYF_CONVERT_LEAVE_ON_AGREE;
 					tryMatchSingle = false;
+
+					res = JVX_ERROR_REQUEST_CALL_AGAIN;
 				}
 				else
 				{
@@ -453,13 +455,16 @@ CjvxInputOutputSettings::passFromSuccessor(jvxLinkDataDescriptor* preferredByOut
 		tryMatchSingle = false;
 	}
 
-	res = JVX_ERROR_UNSUPPORTED;
-	if (!checkIdentical(onStart, given))
+	if (res != JVX_ERROR_REQUEST_CALL_AGAIN)
 	{
-		// Nothing has changed, this will not be 
-		res = JVX_ERROR_COMPROMISE;
-	}
+		res = JVX_ERROR_UNSUPPORTED;
+		if (!checkIdentical(onStart, given))
+		{
+			// Nothing has changed, this will not be 
+			res = JVX_ERROR_COMPROMISE;
 
+		}
+	}
 	if (checkIdentical(given, *preferredByOutput))
 	{
 		// Full match

@@ -99,6 +99,7 @@ CayfComponentLibContainer::deployProcParametersStartProcessor(CayfComponentLib* 
 	jvxErrorType res = JVX_ERROR_NOT_READY;
 	if (compProc)
 	{
+		startParams_modified = startParams;
 		res = compProc->deployProcParametersStartProcessor(
 			startParams.numInChans,
 			startParams.numOutChans,
@@ -113,6 +114,30 @@ CayfComponentLibContainer::deployProcParametersStartProcessor(CayfComponentLib* 
 				}
 				return JVX_NO_ERROR;
 			});
+		
+		if (res == JVX_NO_ERROR)
+		{
+			compProc->readBackProcessingParameters(
+				startParams_modified.numInChans,
+				startParams_modified.numOutChans,
+				startParams_modified.bSize,
+				startParams_modified.sRate,
+				startParams_modified.format,
+				startParams_modified.formGroup);
+			if (ptr_callback_multipurpose)
+			{
+				ayfInitParamStruct params;
+				AYF_INIT_PARAM_STRUCT_RESET(params);
+
+				params.bSize = startParams_modified.bSize;
+				params.numInChans = startParams_modified.numInChans;
+				params.numOutChans = startParams_modified.numOutChans;
+				params.sRate = startParams_modified.sRate;
+				params.format = startParams_modified.format;
+
+				ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_PROC_PARAMS, prv_callback_multipurpose, &params);
+			}
+		}
 	}
 	return res;
 };

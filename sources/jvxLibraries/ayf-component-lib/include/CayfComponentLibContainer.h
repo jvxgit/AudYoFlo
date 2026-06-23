@@ -8,21 +8,23 @@
 #include "ayf-embedding-proxy-entries.h"
 #include "ayf_component_lib_types.h"
 
+struct CayfComponentLibContainer_audioParams
+{
+	jvxSize numInChans = 0;
+	jvxSize numOutChans = 0;
+	jvxSize bSize = 0;
+	jvxSize sRate = 0;
+	jvxDataFormat format = JVX_DATAFORMAT_NONE;
+	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
+	int passthroughMode = 0;
+};
+
 class CayfComponentLibContainer: public IjvxExternalModuleFactory
 {
 	friend class CayfComponentLib;
 
 public:
-	struct audioParams
-	{
-		jvxSize numInChans = 0;
-		jvxSize numOutChans = 0;
-		jvxSize bSize = 0;
-		jvxSize sRate = 0;
-		jvxDataFormat format = JVX_DATAFORMAT_NONE;
-		jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
-		int passthroughMode = 0;
-	};
+	
 
 private:
 	JVX_MUTEX_HANDLE safeAccess;
@@ -30,7 +32,8 @@ private:
 	jvxSize desiredSlotIdDev = JVX_SIZE_DONTCARE;
 	jvxSize desiredSlotIdNode = JVX_SIZE_DONTCARE;
 
-	audioParams startParams;
+	CayfComponentLibContainer_audioParams startParams;
+	CayfComponentLibContainer_audioParams startParams_modified;
 
 	// We copy this from init situation
 	void_pvoid_callback ptr_callback_multipurpose = NULL;
@@ -77,8 +80,8 @@ public:
 
 	jvxErrorType requestPrivData(jvxHandle** ptrOnReturn);
 	jvxErrorType returnPrivData(jvxHandle* ptrToReturn);
-
-	audioParams& audio_parameter_on_start() 
+	
+	CayfComponentLibContainer_audioParams& audio_parameter_on_start()
 	{
 		return startParams;
 	};

@@ -290,6 +290,11 @@ public:
 		jvxDataFormat format, jvxDataFormatGroup formGroup,
 		std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart = nullptr);
 
+	jvxErrorType readBackProcessingParameters(
+			jvxSize& numInChans,jvxSize& numOutChans,
+			jvxSize& bSize, jvxSize& sRate,
+			jvxDataFormat& format, jvxDataFormatGroup formGroup);
+
 	virtual jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn, 
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);

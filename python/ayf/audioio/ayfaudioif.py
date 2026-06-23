@@ -37,6 +37,9 @@ class ayfaudio_processor:
     def prepare(self, numIn=1, numOut=1, bSize=128, sRate=48000) -> int: ...
 
     # @abstractmethod
+    def updated_proc_parameters(self) -> tuple [int, int, int, int]: ...
+
+    # @abstractmethod
     def process(self, inBuf, outBuf) -> int: ...
 
     # @abstractmethod

@@ -76,12 +76,16 @@ CjvxAuNConvert::deactivate()
 jvxErrorType 
 CjvxAuNConvert::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = JVX_NO_ERROR;
+	jvxErrorType res = JVX_ERROR_REQUEST_CALL_AGAIN;
 	
 	currNegoStat.resetOneTest(currNegoStat.fixedLocationMode);
 	currNegoStat.passFromPredecessor(_common_set_icon.theData_in);	
 
-	res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	while (res == JVX_ERROR_REQUEST_CALL_AGAIN)
+	{
+		res = CjvxBareNode1ioRearrange::test_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	}
+
 	if (res == JVX_NO_ERROR)
 	{
 		// Take over all results from submodule

@@ -1,6 +1,24 @@
 #include "CayfComponentLib.h"
 
 jvxErrorType
+CayfComponentLib::readBackProcessingParameters(
+	jvxSize& numInChans,
+	jvxSize& numOutChans,
+	jvxSize& bSize,
+	jvxSize& sRate,
+	jvxDataFormat& format,
+	jvxDataFormatGroup formGroup)
+{
+	bSize = procParams.bSize;
+	numInChans = procParams.numInChans;
+	numOutChans = procParams.numOutChans;
+	sRate = procParams.sRate;
+	format = procParams.format;
+	formGroup = procParams.formGroup;
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
 CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, 
 	jvxSize numOutChans, jvxSize bSize, jvxSize sRate,
 	jvxDataFormat format, jvxDataFormatGroup formGroup,
@@ -50,6 +68,11 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 			goto exit_error;
 		}
 
+		/*
+		if (this->)
+		{
+			ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_BEFORE_START, prv_callback_multipurpose, process);
+		*/
 		genComponentLib::status.errorcode_test.value = jvxErrorType_descr(resC);
 		genComponentLib::status.errordescription_test.value.clear();
 
@@ -114,7 +137,7 @@ exit_error:
 jvxErrorType 
 CayfComponentLib::process_one_buffer_interleaved(
 	jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
-	jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut)
+	jvxData* outInterleaved, jvxSize numSamplesOut, jvxSize numChannelsOut)
 {
 	jvxSize i;
 	jvxErrorType res = JVX_ERROR_INVALID_SETTING;
@@ -124,6 +147,19 @@ CayfComponentLib::process_one_buffer_interleaved(
 	{
 		return JVX_ERROR_NOT_READY;
 	}
+
+	// =======================================================================================================
+	// Some basic integrity checking
+	// =======================================================================================================
+	assert(numSamplesIn ==
+		(_common_set_ocon.theData_out.con_params.number_channels * _common_set_ocon.theData_out.con_params.buffersize));
+
+	assert(numSamplesOut == 
+		(_common_set_icon.theData_in->con_params.number_channels * _common_set_icon.theData_in->con_params.buffersize));
+
+	assert(numChannelsIn == _common_set_ocon.theData_out.con_params.number_channels);
+	assert(numChannelsOut == _common_set_icon.theData_in->con_params.number_channels);
+	// =======================================================================================================
 
 	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{

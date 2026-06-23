@@ -358,8 +358,8 @@ JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseOn)
 
 	uint64_t ticks_today = t100ns % TICKS_PER_DAY;
 
-	// 1 Tick = 100 ns = 0.0001 ms
-	return static_cast<jvxData>(ticks_today) / 10000.0;
+	// 1 Tick = 100 ns = 0.0001 (10000) ms -> 0.001 (1000) => 10000000.0 (secs)
+	return static_cast<jvxData>(ticks_today) / 10000000.0;
 #else
 
 	// FILETIME in 100-Nanosekunden-Intervallen seit 1601-01-01

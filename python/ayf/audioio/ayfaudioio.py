@@ -107,19 +107,32 @@ class ayfaudio:
 
         # self.fsize = bsize
 
-        # ============================================
-        self.ibuf.allocate(self.operation, self.inChans, self.fsize, self.sRate, self.arith)
-        self.obuf.allocate(self.operation, self.outChans, self.fsize, self.sRate, self.arith)
-
     def run(self, processor):
         print("### AYFAUDIOIO -- Staring Run Loop")
+
+        # Copy processing data from file handle
+        params = self.corein.param_get()
+        self.sRate = params.sampling_rate
+        self.inChans = params.nChans
+
+        ## Prepare processor for processing loop - provide the audio processing params
+        processor.prepare(numIn=self.inChans, numOut=self.outChans, bSize=self.fsize, sRate=self.sRate)
+
+        # During prepare, the parameters may have changed. We need to reconfigure if so..
+        [self.fsize, self.inChans, self.outChans, self.sRate] = processor.updated_proc_parameters()
+       
+        # ============================================
+        # Allocate buffers for inozt and output
+        self.ibuf.allocate(self.operation, self.inChans, self.fsize, self.sRate, self.arith)
+        self.obuf.allocate(self.operation, self.outChans, self.fsize, self.sRate, self.arith)
+        # ============================================
+
+        # ============================================
         nFrames = self.corein.start(self.ibuf)
         self.coreout.start(self.arith, nFrames, self.obuf)
         frameIdx = 0
-
-        ## Prepare processor for processing loop
-        processor.prepare(numIn=self.ibuf.params.chans, numOut=self.obuf.params.chans, bSize=self.ibuf.params.bs, sRate=self.ibuf.params.sr)
-
+        # ============================================
+    
         ## Main Loop
         while 1:
             if self.corein.prepare_single_frame(self.ibuf, frameIdx):
@@ -143,18 +156,20 @@ class ayfaudio:
             else:
                 break
 
+        self.corein.stop()
+        self.coreout.stop()
+
+        self.ibuf.deallocate()
+        self.obuf.deallocate()
+
         ## Postprocess processor
         processor.postprocess()
 
-        self.corein.stop()
-        self.coreout.stop()
 
     def postprocess(self):
 
         print("### AYFAUDIOIO -- Running Postprocess Function")
 
-        self.ibuf.deallocate()
-        self.obuf.deallocate()
         self.corein.clear_data()
 
     def output_data(self):

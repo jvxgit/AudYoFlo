@@ -6,6 +6,7 @@
 #include "../../jvx_system_error.h"
 #include "../../jvx_system_helpers.h"
 #include "../../jvx_system_dataformats.h"
+#include "../../jvx_system_dataformat_helpers.h"
 #include "../../jvx_system_allocate.h"
 #include "../../jvx_system_assert.h"
 
