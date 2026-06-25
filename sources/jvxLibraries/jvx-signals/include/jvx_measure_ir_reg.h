@@ -28,12 +28,20 @@ struct jvx_measure_ir_reg_derived
 	jvxSize ll_oneLoop;
 };
 
+struct jvx_measure_ir_reg_ext
+{
+	const jvxData* gain_ptr;	
+	const jvxData* freq_ptr;
+	jvxSize sz;
+};
+
 struct jvx_measure_ir_reg
 {	
 	struct jvx_measure_ir_reg_init init;
 	struct jvx_measure_ir_reg_async async;
 	struct jvx_measure_ir_reg_derived derived;
 	jvxHandle* prv;
+	struct jvx_measure_ir_reg_ext ext;
 };
 
 void jvx_measure_ir_reg_cfg_init(struct jvx_measure_ir_reg* hdl);

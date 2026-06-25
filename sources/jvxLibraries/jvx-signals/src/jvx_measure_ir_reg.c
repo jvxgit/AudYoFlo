@@ -3,6 +3,8 @@
 #include "jvx_fft_tools/jvx_fft_core.h"
 #include "jvx_math/jvx_complex.h"
 
+// ==================================================================================================
+
 struct jvx_measure_ir_reg_priv
 {
 	struct jvx_measure_ir_reg_init init_cpy;
@@ -19,6 +21,7 @@ struct jvx_measure_ir_reg_priv
 
 		jvxSize fftSize;
 		jvxSize fftSize_log2;
+		jvxSize fftSize2;
 		jvxSize fftSize2_p1;
 
 		jvxData* inSigTest_avrg;
@@ -37,7 +40,26 @@ struct jvx_measure_ir_reg_priv
 	} runtime;
 };
 
+// ==================================================================================================
 
+void jvx_find_gain(int* idx, jvxData* linFac, const jvxData* freq_ptr, const jvxData* gain_ptr, jvxSize sz, jvxData instFreq)
+{
+	for (; *idx < sz; (*idx)++)
+	{
+		if (freq_ptr[*idx] >= instFreq)
+		{
+			break;
+		}
+	}
+
+	if (*idx < sz)
+	{
+		*linFac = gain_ptr[*idx];
+	}
+}
+
+// ==================================================================================================
+// ==================================================================================================
 
 void jvx_measure_ir_reg_cfg_init(struct jvx_measure_ir_reg* hdl)
 {
@@ -58,6 +80,11 @@ void jvx_measure_ir_reg_cfg_init(struct jvx_measure_ir_reg* hdl)
 	hdl->derived.ll_oneLoop = 0;
 
 	hdl->prv = NULL;
+
+	hdl->ext.gain_ptr = NULL;	
+	hdl->ext.freq_ptr = NULL;
+	hdl->ext.sz = 0;
+
 }
 
 
@@ -97,7 +124,9 @@ jvxErrorType jvx_measure_ir_reg_init(struct jvx_measure_ir_reg* hdl)
 		}
 
 		retStr->runtime.fftSize_log2 = (jvxSize)(ceil(log((jvxData)retStr->runtime.fftSize * 2) / log(2.0)));
-		retStr->runtime.fftSize2_p1 = retStr->runtime.fftSize / 2 + 1;
+		retStr->runtime.fftSize2 = retStr->runtime.fftSize / 2;
+		retStr->runtime.fftSize2_p1 = retStr->runtime.fftSize2 + 1;
+
 		// newHdl->runtime.fftSize22_p1 = newHdl->runtime.fftSize + 1;
 
 		res = jvx_create_fft_ifft_global(&retStr->runtime.glob_fft, (jvxFFTSize)(retStr->runtime.fftSize_log2 - 4), NULL JVX_FFT_GLOBAL_CONFIG_ADD_ARGUMENT_CALL);
@@ -276,6 +305,17 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 			sigMultipleTest_loops_avrg_fft_abs_s_max = max(sigMultipleTest_loops_avrg_fft_abs_s);
 			*/
 			jvxData sigMultipleTest_loops_avrg_fft_abs_s_max = -1;
+			
+			jvxSize extSz = 0;
+			int idxMatchFwd = 0;
+			int idxMatchBwd = -1;
+
+			if(hdl->ext.sz >= hdlPrv->derived_cpy.ll_oneLoop)
+			{ 
+				extSz = hdlPrv->derived_cpy.ll_oneLoop;
+				idxMatchFwd = 0;
+			}
+
 			for (i = 0; i < hdlPrv->runtime.fftSize2_p1; i++)
 			{
 				if (hdlPrv->runtime.sigMultipleTest_loops_avrg_fft_abs_s[i] > sigMultipleTest_loops_avrg_fft_abs_s_max)
@@ -335,6 +375,12 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 					jvxData norm = (jvxData)(nLowStop - nLowStart + 1);
 					norm = 1.0 / norm;
 					jvxData linFac = norm * (jvxData)(i - nLowStart);
+
+					if (extSz > 0)
+					{
+						jvxData instFreq = (jvxData)i / (jvxData)(hdlPrv->runtime.fftSize2) * (jvxData)(hdlPrv->init_cpy.fs / 2);
+						jvx_find_gain(&idxMatchFwd, &linFac, hdl->ext.freq_ptr, hdl->ext.gain_ptr, extSz, instFreq);
+					}
 					linFac = log(linFac);
 					linFac *= exponentFac;
 					linFac = exp(linFac);
@@ -355,6 +401,12 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 							jvxData norm = (jvxData)(nHighStop - nHighStart + 1);
 							norm = 1.0 / norm;
 							jvxData linFac = norm * (jvxData)(nHighStop - i);
+							if (extSz > 0)
+							{
+								jvxData instFreq = (jvxData)i / (jvxData)(hdlPrv->runtime.fftSize2) * (jvxData)(hdlPrv->init_cpy.fs / 2);
+								jvx_find_gain(&idxMatchFwd, &linFac, hdl->ext.freq_ptr, hdl->ext.gain_ptr, extSz, instFreq);
+							}
+
 							linFac = log(linFac);
 							linFac *= exponentFac;
 							linFac = exp(linFac);
