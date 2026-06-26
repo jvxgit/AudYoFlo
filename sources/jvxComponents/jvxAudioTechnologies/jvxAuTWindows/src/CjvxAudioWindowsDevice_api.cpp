@@ -229,7 +229,7 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
         for (i = 0; i < waveFormatStrProcessing.Format.nChannels; i++)
 		{
 			if (jvx_bitTest(channelMaskInProc, i))
-			{
+			{                
 				switch (_inproc.format)
 				{
 				case JVX_DATAFORMAT_DATA:
@@ -237,11 +237,20 @@ CjvxAudioWindowsDevice::core_buffer_process_render(BYTE** ptrFromTo, jvxSize num
 					switch (waveFormatStrProcessing.Format.wBitsPerSample)
 					{
 					case 32:
-						jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
-							(jvxInt32*)ptrSrc, (jvxData*)ptrDestFlt, numSamples,
-							JVX_MAX_INT_32_DIV, i,
-							waveFormatStrProcessing.Format.nChannels,
-							0, 1);
+                        if (waveFormatStrProcessing.Format.wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
+                        {
+                            // Found a microphone that wants to input float samples!!
+                            jvx_convertSamples_from_float_to_data<float>((float*)ptrSrc, (jvxData*)ptrDestFlt,
+                                numSamples, i, waveFormatStrProcessing.Format.nChannels);
+                        }
+                        else
+                        {
+                            jvx_convertSamples_from_fxp_norm_to_flp<jvxInt32, jvxData>(
+                                (jvxInt32*)ptrSrc, (jvxData*)ptrDestFlt, numSamples,
+                                JVX_MAX_INT_32_DIV, i,
+                                waveFormatStrProcessing.Format.nChannels,
+                                0, 1);
+                        }
 						break;
 
 					case 24:
@@ -578,24 +587,90 @@ CjvxAudioWindowsDevice::activate_wasapi_device()
         res = JVX_ERROR_INTERNAL;
     }
 
+/*
+#define  WAVE_FORMAT_EXTENSIBLE                 0xFFFE /* Microsoft * /
+#define  WAVE_FORMAT_IEEE_FLOAT                 0x0003
+ */
+
+    WAVEFORMATEX* mixFormat = nullptr;
+    WAVEFORMATEXTENSIBLE* mixFormatEx = nullptr;
+    WAVEFORMATEX* closest = nullptr;
+
+    // WAVE_FORMAT_EXTENSIBLE
+
+    audioClient_pre->GetMixFormat(&mixFormat);
+    mixFormatEx = (WAVEFORMATEXTENSIBLE*)mixFormat;
+
     // Find out all capabilities
+    if (mixFormat->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+    {
+        // Keep the data format as expected on "open"
+       // this->wext_init = *((WAVEFORMATEXTENSIBLE*)mixFormat);
+
+       // Force 24 bits
+       /*
+       this->wext_init.Format.wBitsPerSample = 24;
+       this->wext_init.Format.nBlockAlign = this->wext_init.Format.nChannels * (this->wext_init.Format.wBitsPerSample >> 3);
+       this->wext_init.Samples.wValidBitsPerSample = this->wext_init.Format.wBitsPerSample;
+       this->wext_init.Samples.wReserved = this->wext_init.Format.wBitsPerSample;
+       this->wext_init.Samples.wSamplesPerBlock = this->wext_init.Format.wBitsPerSample;
+       */
+    }
+    else
+    {
+        // this->wext_init.Format = *mixFormat;
+    }
+
+    // Start to copy settings from opeing time
     WAVEFORMATEXTENSIBLE waveFormatStr = this->wext_init;
+    
+    // This should work actually. If not, we let us be guided by the system in closest
+    HRESULT formatOkPrerun = audioClient_pre->IsFormatSupported(audioMode,
+        (WAVEFORMATEX*)&waveFormatStr, &closest);
+      
+    if(formatOkPrerun != S_OK)
+    { 
+        // The init settings did not work, now take over the closest
+        if (closest)
+        {
+            waveFormatStr.Format = *closest;
+
+            // Update the startup format
+            this->wext_init = waveFormatStr;
+        }
+    }
+
+    // Here, test all kinds of samplerates to find at least one matching
     i = 0;
     while (1)
     {     
         waveFormatStr.Format.nSamplesPerSec = testSamplerates[i];
+        waveFormatStr.Format.nAvgBytesPerSec =
+            waveFormatStr.Format.nChannels *
+            waveFormatStr.Format.nSamplesPerSec *
+            (waveFormatStr.Format.wBitsPerSample >> 3);
+
         if (waveFormatStr.Format.nSamplesPerSec == 0)
         {
             break;
         }
         
         HRESULT formatOk = audioClient_pre->IsFormatSupported(audioMode,
-            (WAVEFORMATEX*)&waveFormatStr, nullptr);
+            (WAVEFORMATEX*)&waveFormatStr, &closest);
         if (formatOk == S_OK)
         {
             supportedRates.push_back(testSamplerates[i]);
         }
         i++;
+    }
+
+    if (mixFormat)
+    {
+        CoTaskMemFree(mixFormat);
+    }
+    if (closest)
+    {
+        CoTaskMemFree(closest);
     }
     SafeRelease(&audioClient_pre);
 
@@ -605,6 +680,8 @@ CjvxAudioWindowsDevice::activate_wasapi_device()
     elm = std::find(elm, supportedRates.end(), defRate);
     if (elm == supportedRates.end())
     {
+        // If there was none selected before, we add the default rate. This however may be disfunctional!
+        std::cout << __FUNCTION__ << ": WARNING: No samplerate previously selected, setting up default." << std::endl;
         supportedRates.push_back(defRate);
     }
 
