@@ -679,8 +679,11 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
   )
 
   set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
-      ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals
-	)
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-system-product
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp-cpp
+		)
 	
 if(NOT JVX_C_LIBRARIES_SDK_ONLY)  
   ###
@@ -718,9 +721,6 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
     # ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-subqueue
 
     # The audio libs
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-system-product
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp-cpp
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvxLFileIO
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-spectralplot
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-product
