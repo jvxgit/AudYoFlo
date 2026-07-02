@@ -20,6 +20,13 @@
 #include "jvx_dsp_base.h"
 #include "jvx_generator_wave_typedefs.h"
 
+struct jvx_generatorWave_ext
+{
+	jvxData* bufferFillGain;
+	jvxData* bufferFillFreq;
+	jvxData* bufferFillCtrl;
+};
+
 // main struct
 typedef struct 
 {
@@ -77,12 +84,13 @@ jvxDspBaseErrorType jvx_generatorwave_restart(jvx_generatorWave* hdl);
 
 jvxDspBaseErrorType jvx_generatorwave_process(jvx_generatorWave* hdl, 
 	jvxData* bufferFill, size_t lField, size_t* written, 
-	jvxData* bufferFillGain, jvxData* bufferFillFreq);
+	struct jvx_generatorWave_ext* ext);
 
 jvxDspBaseErrorType jvx_generatorwave_postprocess(jvx_generatorWave* hdl);
 
 jvxDspBaseErrorType jvx_generatorwave_deactivate(jvx_generatorWave* hdl);
 
+jvxDspBaseErrorType jvx_generatorwave_ext_initCfg(struct jvx_generatorWave_ext* extDat);
 
 #endif
 

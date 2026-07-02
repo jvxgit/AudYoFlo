@@ -79,8 +79,8 @@ if(NOT JVX_COMPILE_BUILDTOOLS)
 endif()
 
 # This library may be required when compiling build tools!!
-if(${JVX_OS} MATCHES "Android")
-
+if(${JVX_OS} MATCHES "Android" OR ${JVX_OS_FLAVOUR} MATCHES "dspace")
+	
 	# Download and install fftw libs. this must be in early phase as we need this lib in dsb-base
 	set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
 		${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3)

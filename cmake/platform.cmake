@@ -12,6 +12,8 @@ else()
   set(JVX_PLATFORM "64bit")
 endif()
 
+set(JVX_OS_FLAVOUR "None")
+
 message("CMake System detection: ${CMAKE_SYSTEM_NAME}")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   if(IOS)
@@ -25,8 +27,13 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	else()
 		set(JVX_OS "windows")
 	endif()
+	
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(JVX_OS "linux")
+	set(JVX_OS "linux")
+	if(${CMAKE_SYSTEM_NAME_FLAVOUR} MATCHES "Dspace")
+		set(JVX_OS_FLAVOUR "dspace")
+	endif() 
+
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "iOS")
      set(JVX_OS "ios")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
@@ -75,6 +82,9 @@ elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv7-a")
 	else()
 		set(JVX_PROCESSOR "armv7_64")
 	endif()
+
+elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86")
+	set(JVX_PROCESSOR "x86")
 
 elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686")
 	if(JVX_PLATFORM MATCHES "32bit")

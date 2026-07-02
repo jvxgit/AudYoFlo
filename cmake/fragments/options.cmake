@@ -122,3 +122,5 @@ set(JVX_PROFILE_TEXT_LOG_LOCK_LOCKCOUNT 0 CACHE STRING "Lock logging helper coun
 option(JVX_FOPEN_CLOSE_VERBOSE "Enable verbose output on fopen/fclose" false)
 
 option(JVX_LINUX_NATIVE_INSTALLED_LIBS "Link required libraries locally in linux" false)
+
+option(JVX_C_LIBRARIES_SDK_ONLY "Compile only the C libraries" false)

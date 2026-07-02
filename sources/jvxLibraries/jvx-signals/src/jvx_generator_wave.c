@@ -1355,7 +1355,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_buffered_wavplayer(jvx_generatorW
 }
 
 //! Fill one buffer with signal
-jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written, jvxData* bufferFillGain, jvxData* bufferFillFreq)
+jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written, struct jvx_generatorWave_ext* ext)
 {
 	jvxSize i;
 	jvxSize ll_start, ll_proc, ll_stop;
@@ -1371,6 +1371,17 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 
 		jvxData* fPtr = newHdl->runtime_parameters_sync_intern.unbuffered.freq_ptr;
 		jvxData* gPtr = newHdl->runtime_parameters_sync_intern.unbuffered.gain_ptr;
+
+		jvxData* bufferFillGain = NULL;
+		jvxData* bufferFillFreq = NULL;
+		jvxData* bufferFillCtrl = NULL;
+		
+		if (ext)
+		{
+			bufferFillGain = ext->bufferFillGain;
+			bufferFillFreq = ext->bufferFillFreq;
+			bufferFillCtrl = ext->bufferFillCtrl;
+		}
 
 		instFreq = newHdl->runtime.inst_frequency;
 		jvxSize loc_posi = newHdl->runtime.position;
@@ -1411,6 +1422,15 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 			if (bufferFillFreq)
 			{
 				*bufferFillFreq++ = -1.0;
+			}
+			if (bufferFillCtrl)
+			{
+				jvxData val = 1.0;
+				if (newHdl->runtime.position + i == 0)
+				{
+					val = 0.9;
+				}
+				*bufferFillCtrl++ = val;
 			}
 		}
 
@@ -1484,6 +1504,11 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				*bufferFillFreq++ = newHdl->runtime.metaData.freqBuffer[newHdl->runtime.metaData.idxOneSegment];
 			}
 
+			if (bufferFillCtrl)
+			{
+				*bufferFillCtrl++ = 1.0;
+			}
+
 			newHdl->runtime.metaData.idxOneSegment++;
 
 			phase += 2 * M_PI * instFreq_use * newHdl->runtime.div_samplerate;
@@ -1516,6 +1541,10 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 			if (bufferFillFreq)
 			{
 				*bufferFillFreq++ = -1.0;
+			}
+			if (bufferFillCtrl)
+			{
+				*bufferFillCtrl++ = 1.0;
 			}
 		}
 
@@ -1556,7 +1585,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 				newHdl->runtime.metaData.idxOneSegment = 0;
 				newHdl->runtime.inst_frequency = newHdl->runtime.linlogFreqMin;
 
-				jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill, lField, &written2, bufferFillGain, bufferFillFreq); // buffer and lField have been adapted when computing the segment counts
+				jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill, lField, &written2, ext); // buffer and lField have been adapted when computing the segment counts
 				if(written)
 				{
 					*written += written2;
@@ -1578,7 +1607,7 @@ jvxDspBaseErrorType jvx_generator_wave_process_unbuffered_linlogsweep(jvx_genera
 // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 jvxDspBaseErrorType 
-jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written, jvxData* bufferFillGain, jvxData* bufferFillFreq)
+jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lField, size_t* written, struct jvx_generatorWave_ext* ext)
 {
 	jvxDspBaseErrorType res = JVX_DSP_ERROR_UNSUPPORTED;
 	
@@ -1617,7 +1646,7 @@ jvx_generatorwave_process(jvx_generatorWave* hdl, jvxData* bufferFill, size_t lF
 
 	case JVX_GENERATOR_WAVE_LOGSWEEP:
 	case JVX_GENERATOR_WAVE_LINEARSWEEP:
-		res = jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill,  lField, written, bufferFillGain, bufferFillFreq);
+		res = jvx_generator_wave_process_unbuffered_linlogsweep(hdl, bufferFill,  lField, written, ext);
 		break;
 
 	}
@@ -2371,4 +2400,10 @@ jvx_generatorwave_update(jvx_generatorWave* hdl, jvxUInt16 whatToUpdate, jvxCBoo
 	return(res);
 }
 
-
+jvxDspBaseErrorType jvx_generatorwave_ext_initCfg(struct jvx_generatorWave_ext* extDat)
+{
+	extDat->bufferFillCtrl = NULL;
+	extDat->bufferFillFreq = NULL;
+	extDat->bufferFillGain = NULL;
+	return JVX_NO_ERROR;
+}

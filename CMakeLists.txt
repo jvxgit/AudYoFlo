@@ -408,7 +408,9 @@ include(${JVX_CMAKE_DIR}/fragments/thrdparty-early-external.cmake)
 jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY_EXTERNAL}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early-external")
 
 # Find all external dependencies
-include(${JVX_CMAKE_DIR}/fragments/external.cmake)
+if(NOT JVX_C_LIBRARIES_SDK_ONLY)
+	include(${JVX_CMAKE_DIR}/fragments/external.cmake)
+endif()
 
 set(JVX_INTEGRATE_SOURCES_PATH ${JVX_SUBPRODUCT_ROOT})
 
@@ -477,16 +479,22 @@ include(${JVX_CMAKE_DIR}/fragments/thrdparty-early.cmake)
 jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early")
 
 set(JVX_BASE_SYSTEM_STATIC_LIBS
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-min
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-json
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/jsmn
-)
+	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min
+	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base
+	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base
+	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers
+	)
+
+if(NOT JVX_C_LIBRARIES_SDK_ONLY)
+
+	set(JVX_BASE_SYSTEM_STATIC_LIBS ${JVX_BASE_SYSTEM_STATIC_LIBS}
+		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot
+		${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads
+		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-min
+		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-json
+		${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/jsmn
+		)
+endif()
 
 jvx_addSubdirs("Configuring static system libraries" "${JVX_BASE_SYSTEM_STATIC_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs")
 
@@ -500,17 +508,21 @@ if(JVX_SUBPRODUCT_HELPER_PATH)
 endif()
 
 # jvx-json comes along with jsmn in CMAKE dependency
-set(JVX_SYSTEM_LIBRARIES
-  ${JVX_SYSTEM_LIBRARIES}
-  jvx-system-min_static
-  jvx-system-base_static
-  jvx-callprot_static
-  jvx-dsp-base_static
-  jvx-helpers_static
-  jvxLthreads_static
-  jvx-component-templates-min_static
-  jvx-json_static
-)
+set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}
+	jvx-system-min_static
+	jvx-system-base_static
+	jvx-dsp-base_static
+	jvx-helpers_static
+	)
+  
+if(NOT JVX_C_LIBRARIES_SDK_ONLY)  
+	set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}
+		jvx-callprot_static
+		jvxLthreads_static
+		jvx-component-templates-min_static
+		jvx-json_static
+		)
+endif()
 
 if(JVX_SUBPRODUCT_HELPER_PATH)
   if(EXISTS ${JVX_SUBPRODUCT_HELPER_PATH}${JVX_SUBPRODUCT_HELPER_LIB})
@@ -666,10 +678,15 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base
   )
 
+  set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
+      ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals
+	)
+	
+if(NOT JVX_C_LIBRARIES_SDK_ONLY)  
   ###
   # build static libraries
   ###
-  set(JVX_BASE_STATIC_LIBS
+  set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLsockets_st
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base-cpp
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base
@@ -708,7 +725,6 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-spectralplot
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-product
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-vq
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-lib-host-app
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiocodec-helpers
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-node-connections
@@ -720,6 +736,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
 	
 	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-mex	
   )
+
 
 	set(JVX_BASE_STATIC_CONNECT_LIBS
 		# The connect libraries
@@ -1298,6 +1315,8 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
 			${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audioplugin-widgets/jvx-vst-widgets)
   endif()
 
+endif() ### if(NOT JVX_C_LIBRARIES_SDK_ONLY) 
+
   # ===========================================================================
   jvx_addSubdirs("Configuring all 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty")
 
@@ -1346,6 +1365,8 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
 
   jvx_addSubdirs("Configuring all python projects" "${JVX_BASE_PYTHON_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/python-projects")
 
+if(NOT JVX_C_LIBRARIES_SDK_ONLY) 
+
   ## ==============================================================================================
   ## ==============================================================================================
   set(JVX_PACKAGE_PROJECTS "")
@@ -1357,7 +1378,8 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
   endif()
    
   jvx_addSubdirs("Configuring all package projects" "${JVX_PACKAGE_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/packages")
-  
+endif()  ## if(NOT JVX_C_LIBRARIES_SDK_ONLY) 
+
   ## ==============================================================================================
 
   #set(AYF_FLUTTER_ENVIRONMENT TRUE)
@@ -1388,9 +1410,13 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
     jvx_addSubdirs("Installation for all Matlab/Octave library files" "${JVX_MATLAB_LIBS}" "${JVX_FOLDER_HIERARCHIE_BASE}/matlab-octave")
   endif(JVX_DEPLOY_LIBRARY_DSP_MATLAB)
 
+if(NOT JVX_C_LIBRARIES_SDK_ONLY) 
+
   ## Add subprojects from folder others
   jvx_addSubdirs("All other projects" "${JVX_BASE_ROOT}/others" "${JVX_FOLDER_HIERARCHIE_BASE}/others")
   # add_subdirectory(${JVX_BASE_ROOT}/others)
+
+endif() ## if(NOT JVX_C_LIBRARIES_SDK_ONLY) 
 
   include(${JVX_CMAKE_DIR}/fragments/submodules.cmake)
 
