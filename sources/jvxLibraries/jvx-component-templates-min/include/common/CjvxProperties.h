@@ -45,6 +45,9 @@ static oneEntryTranslate entriesTranslateExtBuffers[] =
 	{ JVX_PROPERTY_DECODER_NONE, jvx::JVX_EXTERNAL_BUFFER_NONE}
 };
 
+#define JVX_VAR_REF_WITH_TAG(var) &var, Quotes(var)
+#define JVX_VAR_REF_WITH_TAG_NULL(var) &var, nullptr
+
 class CjvxPropertySubModule : public IjvxProperties_report
 {
 public:

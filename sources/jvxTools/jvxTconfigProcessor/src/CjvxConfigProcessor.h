@@ -140,6 +140,7 @@ public:
 		jvxAccessRightFlags_rwcd* acc_flags = NULL, jvxConfigModeFlags* cfg_flags = NULL)override;
 
 	jvxErrorType JVX_CALLINGCONVENTION createComment(jvxConfigData** data, const char* comment)override;
+	jvxErrorType JVX_CALLINGCONVENTION createNewLine(jvxConfigData** data)override;
 
 	jvxErrorType JVX_CALLINGCONVENTION createEmptySection(jvxConfigData** data, const char* name,
 		jvxAccessRightFlags_rwcd* acc_flags = NULL, jvxConfigModeFlags* cfg_flags = NULL)override;

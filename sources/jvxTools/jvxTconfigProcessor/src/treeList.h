@@ -94,6 +94,8 @@ public:
 	jvxBool cfg_flags_set;
 
 	int lineno;
+
+	jvxBool newLineOut;
 public:
 
 	treeListElement(jvxAccessRightFlags_rwcd* acc_flags = NULL, jvxConfigModeFlags* cfg_flags = NULL);
@@ -129,6 +131,7 @@ public:
 	void setToEmptyElement(elementType tp, std::string name);
 
 	void setToComment(std::string comment);
+	void createNewLine();
 
 	void setOrigin(std::string fName, int lineno);
 

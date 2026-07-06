@@ -1876,29 +1876,34 @@ textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& o
 			if (
 				(elm.associateExternal) && (!elm.installable))
 			{
-
+				std::string tagExt = "";
+				if(elm.generate_assoc_tags)
+				{
+					tagExt = ", const char* tag_" + elm.name;
+				}
+				
 				// Association function to provide data from extern
 				if (isFirstAssociate)
 				{
 					out << "\tinline void associate__" << funcSectionName << "(CjvxProperties* theProps, " << std::flush;
 					if (elm.associateNumberEntries)
 					{
-						out << elm.tokenTypeAss << "* ptrExt_" << elm.name << ", jvxSize" << " num_" << elm.name << std::flush;
+						out << elm.tokenTypeAss << "* ptrExt_" << elm.name << tagExt << ", jvxSize" << " num_" << elm.name  << std::flush;
 					}
 					else
 					{
-						out << elm.tokenTypeAss << "* ptrExt_" << elm.name << std::flush;
+						out << elm.tokenTypeAss << "* ptrExt_" << elm.name << tagExt << std::flush;
 					}
 				}
 				else
 				{
 					if (elm.associateNumberEntries)
 					{
-						out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << ", jvxSize" << " num_" << elm.name << std::flush;
+						out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << tagExt << ", jvxSize" << " num_" << elm.name  << std::flush;
 					}
 					else
 					{
-						out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << std::flush;
+						out << ", " << elm.tokenTypeAss << "* ptrExt_" << elm.name << tagExt << std::flush;
 					}
 				}
 				out_inner << "\t\t// " << elm.description << std::endl;
@@ -1910,6 +1915,13 @@ textProcessor_core::produceOutput_c_associate(std::ostream& out, std::ostream& o
 				{
 					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".num = 1;" << std::endl;
 				}
+				
+				if(elm.generate_assoc_tags)
+				{
+					//out_inner << "\t\tif(tag_" << elm.name << ") " << propertySectionName << "." << elm.name << ".aTag = tag_" << elm.name << ";" << std::endl;
+					out_inner << "\t\t" << propertySectionName << "." << elm.name << ".aTag = tag_" << elm.name << ";" << std::endl;
+				}
+				
 				isFirstAssociate = false;
 
 				switch (elm.format)
@@ -3586,6 +3598,7 @@ textProcessor_core::produceOutput_c_writeconfig(std::ostream& out, onePropertyDe
 			"callConf->accessFlags, " << propertySectionName << "." << elm.name << ".accessFlags);" << std::endl;
 		if(elm.associateExternal)
 		{
+			// Generate aTag in comment in config file!
 			switch (elm.format)
 			{
 			case JVX_DATAFORMAT_SELECTION_LIST:
@@ -3713,6 +3726,19 @@ textProcessor_core::produceOutput_c_writeconfig(std::ostream& out, onePropertyDe
 					}
 				}
 				break;
+			}
+			
+			if(elm.generate_assoc_tags)
+			{
+				out << "\t\tif(!" << propertySectionName << "." << elm.name << ".aTag.empty())" << std::endl;
+				out << "\t\t{" << std::endl;
+				out << "\t\t\tjvxConfigData* __ptr = nullptr;" << std::endl;
+				out << "\t\t\tstd::string __aTagOut = \" ===> Associated Tag: <\" + " << propertySectionName << "." << elm.name << ".aTag.std_str() + " << + "\">\";" << std::endl;
+				out << "\t\t\ttheReader->createComment(&__ptr, __aTagOut.c_str());" << std::endl;
+				out << "\t\t\ttheReader->addSubsectionToSection(ir, __ptr);" << std::endl;
+				out << "\t\t\ttheReader->createNewLine(&__ptr);" << std::endl;
+				out << "\t\t\ttheReader->addSubsectionToSection(ir, __ptr);" << std::endl;
+				out << "\t\t}" << std::endl;
 			}
 		}
 		else

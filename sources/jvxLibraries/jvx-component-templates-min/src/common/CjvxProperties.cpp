@@ -2446,6 +2446,16 @@ CjvxProperties::_get_property_extended_info(jvxCallManagerProperties& callGate,
 				res = JVX_ERROR_NOT_READY;
 			}
 			break;
+		case JVX_PROPERTY_INFO_ASSOCIATED_TAG:
+				if (!selection->propDescriptor->aTag.empty())
+				{
+					((jvxApiString*)fld)->assign(selection->propDescriptor->aTag);
+				}
+				else
+				{
+					res = JVX_ERROR_NOT_READY;
+				}
+			break;
 		default:
 			res = JVX_ERROR_ELEMENT_NOT_FOUND;
 		}

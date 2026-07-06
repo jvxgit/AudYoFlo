@@ -374,13 +374,28 @@ CjvxMaWrapperElementTreeWidget::processLeefs(QTreeWidgetItem *theItem, int cnt, 
 
 						theItem->setData(0, JVX_USER_ROLE_TREEWIDGET_PROPERTY_DESCR, QVariant::fromValue(theDescr));
 						
-						res = propRef->get_property_extended_info(callGate,&fldStr, JVX_PROPERTY_INFO_MOREINFO, 
+						std::string tTipText;
+
+						res = propRef->get_property_extended_info(callGate,&fldStr, JVX_PROPERTY_INFO_MOREINFO,
 							jPAGID(theDescr.globalIdx, theDescr.category));
 						if (res == JVX_NO_ERROR)
 						{
-							theItem->setToolTip(0, fldStr.c_str());
+							tTipText = fldStr.std_str();
 						}
 
+						res = propRef->get_property_extended_info(callGate, &fldStr, JVX_PROPERTY_INFO_ASSOCIATED_TAG,
+								jPAGID(theDescr.globalIdx, theDescr.category));
+						if (res == JVX_NO_ERROR)
+						{
+							if (!tTipText.empty())
+							{
+								tTipText += " -- ";
+							}
+							tTipText += "<" + fldStr.std_str() + ">";
+						}
+
+						theItem->setToolTip(0, tTipText.c_str());
+						
 						basePropInfos myBasePropIs;
 						CjvxSaWrapperElementBase::resetBasePropInfos(myBasePropIs);
 
@@ -1135,6 +1150,16 @@ CjvxMaWrapperElementTreeWidget::updateWindowUiElement(QTreeWidgetItem *theItem, 
 											ft.setItalic(true);
 											ttiptext += " -- property is write-only";
 										}
+										res = propRef->get_property_extended_info(callGate, &fldStr, JVX_PROPERTY_INFO_ASSOCIATED_TAG, ident);											
+										if (res == JVX_NO_ERROR)
+										{
+											if (!ttiptext.empty())
+											{
+												ttiptext += " -- ";
+											}
+											ttiptext += "<" + fldStr.std_str() + ">";
+										}
+
 										theItem->setToolTip(0, ttiptext.c_str());
 										theItem->setFont(1, ft);
 										QColor qc = Qt::black;

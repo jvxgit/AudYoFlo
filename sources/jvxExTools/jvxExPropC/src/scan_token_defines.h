@@ -191,6 +191,7 @@
 #define MACRO_CALLBACK_GET_POSTHOOK "CALLBACK_GET_POSTHOOK"
 #define MACRO_CALLBACK_SET_GET_HOOK "CALLBACK_SET_GET_HOOK"
 #define UPDATE_CONTEXT_TOKEN "UPDATE_CONTEXT_TOKEN"
+#define MACRO_GENERATE_ASSOC_TAGS "GENERATE_ASSOC_TAGS"
 
 // All macros for audio plugin automation
 #define MACRO_AUDIO_PLUGIN_ID "ID"
@@ -248,6 +249,7 @@
 #define SET_POINTER_PREFIX "setPointer"
 #define POSTFIX_PROTOTYPES "prototypes"
 #define YES "yes"
+#define NO "no"
 
 // Code generation
 #define EXTERNAL_CALL_HANDLE_TYPE "IjvxExternalCall"

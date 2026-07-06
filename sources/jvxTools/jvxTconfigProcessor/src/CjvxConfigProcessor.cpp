@@ -1038,6 +1038,17 @@ CjvxConfigProcessor::createComment(jvxConfigData** data, const char* comment)
 	return(JVX_NO_ERROR);
 }
 
+jvxErrorType 
+CjvxConfigProcessor::createNewLine(jvxConfigData** data)
+{
+	treeListElement* newElement = new treeListElement();//IjvxConfigProcessor::JVX_CONFIG_SECTION_TYPE_ASSIGNMENTSTRING);
+
+	newElement->createNewLine();
+
+	if (data)
+		*data = newElement;
+	return(JVX_NO_ERROR);
+}
 
 jvxErrorType
 CjvxConfigProcessor::addAssignmentValueToList(jvxConfigData* data, int idxArray, jvxValue value)

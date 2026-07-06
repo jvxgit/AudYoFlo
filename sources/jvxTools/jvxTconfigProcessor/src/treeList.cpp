@@ -133,6 +133,7 @@ treeListElement::treeListElement(jvxAccessRightFlags_rwcd* acc_flags, jvxConfigM
 	this->lineno = -1;
 	this->isEmpty = false;
 	this->referenceAbsolute = false;
+	this->newLineOut = false;
 
 	this->acc_flags = 0;
 	this->acc_flags_set = false;
@@ -279,6 +280,14 @@ treeListElement::setToComment(std::string comment)
 	// Redefine type
 	this->type = COMMENT;
 	this->nameElement = comment;
+}
+
+void
+treeListElement::createNewLine()
+{
+	// Redefine type
+	this->type = COMMENT;
+	this->newLineOut = true;
 }
 
 void
@@ -1253,8 +1262,15 @@ treeListElement::outputToString(const std::string& path, const std::string& orig
 	case treeListElement::COMMENT:
 		if(!compactForm)
 		{			
-			// Only for manually built tree
-			*bufOutFwd += tabs + "//" + this->nameElement + "\n" ;
+			if(this->newLineOut)
+			{ 
+				*bufOutFwd += "\n";
+			}
+			else
+			{
+				// Only for manually built tree
+				*bufOutFwd += tabs + "//" + this->nameElement + "\n";
+			}
 		}
 		break;
 	}

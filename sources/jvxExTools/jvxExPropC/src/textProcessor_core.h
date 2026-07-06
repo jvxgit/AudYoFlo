@@ -182,6 +182,8 @@ struct onePropertyDefinition
 
 	std::string associateVariableName;
 	jvxSize associateVariableLength;
+	
+	jvxBool generate_assoc_tags;
 } ;
 
 struct onePropertySection
@@ -205,6 +207,7 @@ struct onePropertySection
 	std::string updateContextToken;
 	jvxPropertyInvalidateType invalidateOnStateSwitch = JVX_PROPERTY_INVALIDATE_INACTIVE;
 	jvxPropertyInvalidateType invalidateOnTest = JVX_PROPERTY_INVALIDATE_INACTIVE;
+	jvxBool generate_assoc_tags;
 	struct
 	{
 		std::string content;
@@ -339,6 +342,7 @@ private:
 		std::string default_audioplugin_stream_in;
 		std::string default_audioplugin_message_in;
 		std::string assocClassName;
+		jvxBool default_generate_assoc_tags;
 	} intermediateStruct;
 
 	std::vector<jvxSize> ids_specific;

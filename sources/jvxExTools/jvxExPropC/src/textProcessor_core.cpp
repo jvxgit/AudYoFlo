@@ -52,6 +52,7 @@ initSection(onePropertySection& oneSection)
 	oneSection.default_audioplugin_sync_active = "yes";
 	oneSection.default_audioplugin_stream_in = "yes";
 	oneSection.groupid = JVX_SIZE_UNSELECTED;
+	oneSection.generate_assoc_tags = false;
 	oneSection.associateVariableClass.clear();
 }
 
@@ -157,6 +158,8 @@ initProperty(onePropertyDefinition& oneProperty)
 	oneProperty.selection.nummax = "";
 	oneProperty.selection.numprefix = "";
 
+	oneProperty.generate_assoc_tags = false;
+	
 	oneProperty.associateVariableLength = 0;
 	oneProperty.associateVariableName.clear();
 
@@ -290,6 +293,16 @@ textProcessor_core::scanInputFromIr(jvxConfigData* theMainSection, IjvxConfigPro
 	SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theMainSection,
 		MACRO_AUDIO_PLUGIN_PARAM_MESSAGE_IN, &intermediateStruct.default_audioplugin_message_in),
 		MACRO_AUDIO_PLUGIN_PARAM_MESSAGE_IN, theContent);
+		
+	intermediateStruct.default_generate_assoc_tags = false;
+	std::string oneEntry = NO;
+	SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theMainSection,
+		MACRO_GENERATE_ASSOC_TAGS, &oneEntry),
+		MACRO_GENERATE_ASSOC_TAGS, theContent);
+	if(oneEntry == YES)
+	{
+		intermediateStruct.default_generate_assoc_tags = true;
+	}
 	
 
 /*
@@ -761,6 +774,18 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 			oneSection.callback_get = oneentry;
 		}
 
+		oneSection.generate_assoc_tags = intermediateStruct.default_generate_assoc_tags;
+		oneentry = "";
+		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, MACRO_GENERATE_ASSOC_TAGS, &oneentry), MACRO_GENERATE_ASSOC_TAGS, theSubContent);
+		if (!oneentry.empty())
+		{
+			oneSection.generate_assoc_tags = false;
+			if(oneentry == YES)
+			{
+				oneSection.generate_assoc_tags = true;
+			}
+		}
+								
 		oneSection.updateContextToken = "";
 		SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theContent, UPDATE_CONTEXT_TOKEN, &oneSection.updateContextToken), UPDATE_CONTEXT_TOKEN, theContent);
 
@@ -866,6 +891,18 @@ textProcessor_core::processOneGroupSection(jvxConfigData* theContent, std::strin
 					newProp.callback_get = oneentry;
 				}
 
+				newProp.generate_assoc_tags = oneSection.generate_assoc_tags;
+				oneentry = "";
+				SAFE_CALL_WITH_WARNING(HjvxConfigProcessor_readEntry_assignmentString(theReader, theSubContent, MACRO_GENERATE_ASSOC_TAGS, &oneentry), MACRO_GENERATE_ASSOC_TAGS, theSubContent);
+				if (!oneentry.empty())
+				{
+					newProp.generate_assoc_tags = false;
+					if(oneentry == YES)
+					{
+						newProp.generate_assoc_tags = true;
+					}
+				}
+				
 				HjvxConfigProcessor_readEntry_assignment<jvxSize>(theReader, theSubContent,
 					"VARIANTS", &numVariants);
 				
