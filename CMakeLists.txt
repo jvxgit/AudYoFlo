@@ -408,9 +408,9 @@ include(${JVX_CMAKE_DIR}/fragments/thrdparty-early-external.cmake)
 jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_LIBS_EARLY_EXTERNAL}" "${JVX_FOLDER_HIERARCHIE_BASE}/static-libs/3rdparty-early-external")
 
 # Find all external dependencies
-if(NOT JVX_C_LIBRARIES_SDK_ONLY)
+# if(NOT JVX_C_LIBRARIES_SDK_ONLY)
 	include(${JVX_CMAKE_DIR}/fragments/external.cmake)
-endif()
+#endif()
 
 set(JVX_INTEGRATE_SOURCES_PATH ${JVX_SUBPRODUCT_ROOT})
 
@@ -481,17 +481,17 @@ jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_
 set(JVX_BASE_SYSTEM_STATIC_LIBS
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base
-	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base
+	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base	
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers
 	)
 
-if(NOT JVX_C_LIBRARIES_SDK_ONLY)
+if(NOT JVX_C_LIBRARIES_SDK_ONLY OR JVX_COMPILE_BUILDTOOLS)
 
 	set(JVX_BASE_SYSTEM_STATIC_LIBS ${JVX_BASE_SYSTEM_STATIC_LIBS}
 		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot
+		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-json
 		${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads
 		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-min
-		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-json
 		${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/jsmn
 		)
 endif()
@@ -515,11 +515,11 @@ set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}
 	jvx-helpers_static
 	)
   
-if(NOT JVX_C_LIBRARIES_SDK_ONLY)  
-	set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}
-		jvx-callprot_static
+if(NOT JVX_C_LIBRARIES_SDK_ONLY OR JVX_COMPILE_BUILDTOOLS)  
+	set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}		
 		jvxLthreads_static
 		jvx-component-templates-min_static
+		jvx-callprot_static
 		jvx-json_static
 		)
 endif()

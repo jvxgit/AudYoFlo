@@ -24,6 +24,8 @@ set(LOCAL_LIBS
  jvxTconfigProcessor_static
 )
 
+# message(FATAL_ERROR "-> ${JVX_SYSTEM_LIBRARIES}")
+
 force_console_app()
 set(LOCAL_COMPILE_DEFINITIONS "JVX_PRODUCT_CODEGEN_TAG=\"${JVX_PRODUCT}_\"")
 include(${JVX_CMAKE_DIR}/common_local_exe_foot.cmake)
