@@ -6,6 +6,8 @@ typedef struct
 	LARGE_INTEGER referenceTime;
 } jvxTimeStampData;
 
+#define JVX_DECLARE_TIMESTAMP_DATA_RESET(tStamp) jvxTimeStampData tStamp = {JVX_SIZE_UNSELECTED}
+
 // Timer value is with sign to be able to detect wrap arounds!!
 typedef jvxInt64 jvxTick;
 

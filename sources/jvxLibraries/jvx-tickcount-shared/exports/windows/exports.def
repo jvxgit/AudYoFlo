@@ -1,0 +1,8 @@
+EXPORTS 
+
+	jvx_tickcount_shared_request_reference
+	jvx_tickcount_shared_return_reference
+	jvx_tickcount_shared_status
+	jvx_tickcount_shared_get_current_usecs
+	jvx_tickcount_shared_get_abs_usecs
+		

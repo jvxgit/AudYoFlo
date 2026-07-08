@@ -683,6 +683,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-system-product
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp-cpp
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-tickcount-shared
 		)
 	
 if(NOT JVX_C_LIBRARIES_SDK_ONLY)  
