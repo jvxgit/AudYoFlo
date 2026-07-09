@@ -13,11 +13,35 @@ if(JVX_USE_FFTREAL)
 endif()
 	
 if(JVX_USE_FFTW)
-	# build 3rd party libraries
-	# FFTW lib is only copied in runtime mode to have the dlls at the right place
-	set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
-		${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3-win
-		)
+
+	if(JVX_OS MATCHES "windows")
+		# build 3rd party libraries
+		# FFTW lib is only copied in runtime mode to have the dlls at the right place
+		set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
+			${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3-win
+			)		
+	else()
+		if(JVX_LINUX_NATIVE_INSTALLED_LIBS)
+			# we always need an fft library
+			if(JVX_USE_FFTW)
+				find_fft()
+			endif()
+		else()		
+		
+			## We have generalized this to involve the fftw in source code for all systems if not linked to native installed libs
+			## This library may be required when compiling build tools!!
+			# if(${JVX_OS} MATCHES "Android" OR ${JVX_OS_FLAVOUR} MATCHES "dspace")
+	
+			## Download and install fftw libs. this must be in early phase as we need this lib in dsb-base
+			#set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
+			#${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3)
+			#endif()
+			set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
+				${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3
+				)
+		endif()
+	endif()
+	# message(FATAL_ERROR "--> ${JVX_BASE_3RDPARTY_LIBS_EARLY}")
 endif()
 
 if(NOT JVX_COMPILE_BUILDTOOLS)
@@ -78,10 +102,4 @@ if(NOT JVX_COMPILE_BUILDTOOLS)
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/third_party/git/tracy)
 endif()
 
-# This library may be required when compiling build tools!!
-if(${JVX_OS} MATCHES "Android" OR ${JVX_OS_FLAVOUR} MATCHES "dspace")
-	
-	# Download and install fftw libs. this must be in early phase as we need this lib in dsb-base
-	set(JVX_BASE_3RDPARTY_LIBS_EARLY ${JVX_BASE_3RDPARTY_LIBS_EARLY}
-		${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/fftw/fftw-3.3)
-endif()
+

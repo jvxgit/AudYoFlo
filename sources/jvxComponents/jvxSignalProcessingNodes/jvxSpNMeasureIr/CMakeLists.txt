@@ -1,4 +1,3 @@
-if(JVX_USE_FFTW)
 	set(PROJECT_NAME jvxSpNMeasureIr)
 	include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
@@ -41,5 +40,5 @@ if(JVX_USE_FFTW)
 	set(JVX_PROPERTY_ACCESS_HEADER_COMPONENT ${CMAKE_CURRENT_SOURCE_DIR}/include/jvxSpNMeasureIr_oneMeasurementChannel.h)
 
 	include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
-endif()
+
 

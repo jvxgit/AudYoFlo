@@ -13,10 +13,6 @@ endif()
 find_host_package(BISON REQUIRED)
 find_host_package(FLEX REQUIRED)
 
-# we always need an fft library
-if(JVX_USE_FFTW)
-	find_fft()
-endif()
 
 # configure matlab and/or octave
 if(JVX_USE_PART_OCTAVE)

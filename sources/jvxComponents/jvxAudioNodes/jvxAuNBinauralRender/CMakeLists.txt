@@ -1,5 +1,3 @@
-if(JVX_USE_FFTW)
-
 	set(PROJECT_NAME jvxAuNBinauralRender)
 	include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
@@ -40,4 +38,3 @@ if(JVX_USE_FFTW)
 	set(IS_JVX_COMPONENT TRUE)
 
 	include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
-endif()
