@@ -1,4 +1,4 @@
-function [] = plot_spectrogram(sig, xstart_fac, xstop_fac, scale, clim_low, clim_up, fs, theTitle)
+function [normalizeFac ] = plot_spectrogram(sig, xstart_fac, xstop_fac, scale, clim_low, clim_up, fs, theTitle, normalizeFacIn)
 
 % =================================================================
 % Define some show parameters
@@ -9,6 +9,10 @@ lw=512;
 ol=448;
 
 % =================================================================
+
+if(nargin < 9)
+    normalizeFacIn = [];
+end
 
 if(nargin < 8)
     theTitle = 'Spectrogram';
@@ -44,8 +48,12 @@ end
 % Preprocess signal
 clf
 sig=sig(round(xstart_fac*length(sig))+1:round(xstop_fac*length(sig)));
-sig = sig / max(abs(sig));
-sig = sig * scale;
+if(isempty(normalizeFacIn))
+    normalizeFac = scale/max(abs(sig));
+else
+    normalizeFac = normalizeFacIn;
+end
+sig = sig * normalizeFac;
 S=10*log10(abs(spectrogram(sig,hanning(lw),ol, 'yaxis')+eps));
 
 % Image limits
