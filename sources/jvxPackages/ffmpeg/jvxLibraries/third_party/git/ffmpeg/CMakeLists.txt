@@ -132,7 +132,6 @@ elseif(${JVX_OS} MATCHES "linux")
     	    		libswresample
     	    		libswscale
     	    		libavutil
-			libpostproc
 	    		)
 		pkg_check_modules(X264 REQUIRED IMPORTED_TARGET x264)
 		pkg_check_modules(X265 REQUIRED IMPORTED_TARGET x265)

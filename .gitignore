@@ -36,7 +36,7 @@ sources/jvxLibraries/third_party/web/flutter/flutter-3.7.4
 sources/jvxLibraries/third_party/git/orc/meson
 sources/jvxLibraries/third_party/git/orc/orc
 
-/sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.10
+/sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.11
 
 /sources/jvxExTools/jvxExPropC/example/get_audio_D0.m
 /sources/jvxExTools/jvxExPropC/example/get_audio_D1.m
@@ -127,7 +127,7 @@ platform-packages/sc594/jvx-component-templates-min/Release
 platform-packages/sc594/jvx-system-min/Debug
 platform-packages/sc594/jvx-system-min/Release
 
-sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.10
+sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.11
 sources/jvxLibraries/third_party/git/kissfft
 
 sources/jvxLibraries/third_party/web/boost/boost

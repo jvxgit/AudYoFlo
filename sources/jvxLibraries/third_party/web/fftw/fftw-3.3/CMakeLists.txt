@@ -4,7 +4,7 @@ set(PROJECT_NAME fftw-build)
 if(CMAKE_HOST_WIN32)
 
 	FIND_PROGRAM(myshplus "msys2_shell.cmd" REQUIRED)
-	set(targetfolder fftw-3.3.10)
+	set(targetfolder fftw-3.3.11)
 	set(archtoken_simple ${JVX_PROCESSOR})
 	
 	set(archtoken "${archtoken_simple}-${CMAKE_BUILD_TYPE}-${JVX_OS}-${JVX_OS_FLAVOUR}")
@@ -86,7 +86,7 @@ if(CMAKE_HOST_WIN32)
 	
 else()	
 
-set(targetfolder fftw-3.3.10)
+set(targetfolder fftw-3.3.11)
 
 	set(archtoken_simple ${JVX_PROCESSOR})
 	
