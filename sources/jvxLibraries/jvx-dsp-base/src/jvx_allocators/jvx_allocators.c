@@ -87,7 +87,7 @@ int jvx_set_global_allocator(struct jvx_allocator_references* ref)
 {
 	if (jvx_allocator == init_ptr)
 	{
-		printf("Update dsp-base allocator handle pointer, so far, <" JVX_PRINTF_CAST_SIZE "> bytes have been allocated by default allocator.", allocatedMemorySize);
+		printf("Update dsp-base allocator handle pointer, so far, <" JVX_PRINTF_CAST_SIZE "> bytes have been allocated by default allocator.\n", allocatedMemorySize);
 		jvx_allocator = ref;
 		return (int)JVX_DSP_NO_ERROR;
 	}

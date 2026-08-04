@@ -44,4 +44,14 @@ void main() {
     expect(find.byIcon(Icons.delete_sweep_outlined), findsOneWidget);
     expect(find.byIcon(Icons.fit_screen_outlined), findsOneWidget);
   });
+
+  testWidgets('Move-Only-Modus blendet Palette und Canvas-leeren-Button aus',
+      (tester) async {
+    await tester.pumpWidget(_wrap(DiagramEditorMode.moveOnly));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Nodes'), findsNothing);
+    expect(find.byIcon(Icons.delete_sweep_outlined), findsNothing);
+    expect(find.byIcon(Icons.fit_screen_outlined), findsOneWidget);
+  });
 }

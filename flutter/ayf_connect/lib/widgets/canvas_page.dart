@@ -7,6 +7,7 @@ import '../editor/diagram_editor_mode.dart';
 import '../editor/fl_nodes_adapter.dart';
 import '../editor/node_type_definition.dart';
 import '../state/diagram_controller.dart';
+import 'move_only_node.dart';
 import 'node_header.dart';
 import 'node_inspector.dart';
 import 'node_palette.dart';
@@ -15,11 +16,9 @@ import 'read_only_node.dart';
 /// Haupt-Screen: Node-Palette links, fl_nodes-Canvas in der Mitte,
 /// Eigenschaften-Panel rechts.
 ///
-/// [mode] steuert, ob bearbeitet werden kann ([DiagramEditorMode.edit],
-/// Standard) oder ob der Canvas nur Anzeige ist ([DiagramEditorMode.readOnly]
-/// — Nodes bleiben per Klick auswählbar, damit der Inspector weiterhin
-/// Details zeigt, aber Hinzufügen/Verschieben/Verbinden/Löschen/Umbenennen
-/// sind gesperrt).
+/// [mode] steuert, welche Interaktionen erlaubt sind — siehe
+/// [DiagramEditorMode] für die Details der drei Stufen ([DiagramEditorMode.edit]
+/// Standard, [DiagramEditorMode.moveOnly], [DiagramEditorMode.readOnly]).
 class CanvasPage extends StatefulWidget {
   final DiagramEditorMode mode;
 
@@ -113,15 +112,21 @@ class _CanvasPageState extends State<CanvasPage> {
         node: node,
         onToggleCollapse: onToggleCollapse,
       ),
-      // Im Read-Only-Modus ersetzt nodeBuilder das komplette, standardmäßig
-      // interaktive Node-Widget durch unseren gestenfreien ReadOnlyNode —
-      // siehe dessen Doku dazu, warum ein Config-Flag dafür nicht reicht.
-      nodeBuilder: _isEditable
-          ? null
-          : (context, node) => ReadOnlyNode(
-                controller: _adapter.flController,
-                node: node,
-              ),
+      // In moveOnly/readOnly ersetzt nodeBuilder das komplette, standardmäßig
+      // interaktive Node-Widget durch eine gestenreduzierte Variante — siehe
+      // ReadOnlyNode/MoveOnlyNode dazu, warum ein Config-Flag dafür nicht
+      // reicht.
+      nodeBuilder: switch (widget.mode) {
+        DiagramEditorMode.edit => null,
+        DiagramEditorMode.moveOnly => (context, node) => MoveOnlyNode(
+              controller: _adapter.flController,
+              node: node,
+            ),
+        DiagramEditorMode.readOnly => (context, node) => ReadOnlyNode(
+              controller: _adapter.flController,
+              node: node,
+            ),
+      },
     );
 
     return Scaffold(
