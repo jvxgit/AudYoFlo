@@ -561,6 +561,7 @@ public:
 	/* Processing member functions */
 	/* ========================================*/
 
+	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_sender_to_receiver(jvxLinkDataDescriptor* theData) override
 	{
 		assert(0);
@@ -572,6 +573,7 @@ public:
 		assert(0);
 		return JVX_ERROR_UNSUPPORTED;
 	};
+	*/ 
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 	virtual jvxErrorType JVX_CALLINGCONVENTION before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));

@@ -55,6 +55,7 @@ CjvxDataConnectionsGroup::~CjvxDataConnectionsGroup()
 	
 }
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 void
 CjvxDataConnectionsGroup::set_name_unique_descriptor(IjvxCallProt* fdb)
 {
@@ -70,6 +71,7 @@ CjvxDataConnectionsGroup::set_name_unique_descriptor(IjvxCallProt* fdb)
 			uDescStr.c_str());
 	}
 }
+#endif
 
 jvxErrorType
 CjvxDataConnectionsGroup::create_bridge(IjvxOutputConnectorSelect* conn_from, 

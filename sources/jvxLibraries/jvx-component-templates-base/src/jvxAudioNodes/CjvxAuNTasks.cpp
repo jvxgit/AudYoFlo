@@ -350,7 +350,7 @@ CjvxAuNTasks::process_buffers_icon_nvtask_master(
 	jvxSize mt_mask, jvxSize idx_stage)
 {
 	// Pull in secondary signals
-	sec_input->transfer_backward_icon(JVX_LINKDATA_TRANSFER_REQUEST_DATA, NULL, 0);
+	sec_input->transfer_backward_icon(JVX_LINKDATA_TRANSFER_REQUEST_DATA, NULL JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 	return JVX_NO_ERROR;
 }
 

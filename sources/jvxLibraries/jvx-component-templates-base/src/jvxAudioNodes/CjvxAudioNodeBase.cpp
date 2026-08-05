@@ -486,7 +486,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		CjvxAudioNode_genpcg::properties_parameters.samplerate.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.rate);
 		CjvxAudioNode_genpcg::properties_parameters.numberinputchannels.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.number_channels);
 		CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_icon.theData_in->con_params.format;
-		return _test_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		return _test_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	case JVX_ERROR_COMPROMISE:
 
 		/*
@@ -531,7 +531,7 @@ CjvxAudioNodeBase::on_test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType
-CjvxAudioNodeBase::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxAudioNodeBase::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	const jvxLinkDataDescriptor* ld = (const jvxLinkDataDescriptor*)data;
 	jvxBool thereismismatch = false;

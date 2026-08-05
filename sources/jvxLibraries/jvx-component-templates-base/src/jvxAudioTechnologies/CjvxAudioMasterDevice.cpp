@@ -278,7 +278,7 @@ CjvxAudioMasterDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	neg_output._constrain_ldesc(&this->_common_set_ocon.theData_out);
 
 	// Leave towards chain
-	res = _test_chain_master(fdb);
+	res = _test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
 	return res;
 }

@@ -313,7 +313,7 @@ CjvxAudioAndroidDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	}
 #endif
 
-	res = _stop_chain_master(NULL);
+	res = _stop_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
 	assert(res == JVX_NO_ERROR);
 
 	jvxErrorType resL = stop_chain_master_autostate(JVX_CONNECTION_FEEDBACK_CALL(fdb));

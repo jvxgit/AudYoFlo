@@ -290,6 +290,6 @@ CjvxAuN2AudioMixer::recursive_vtask_processing()
 	if (theGlobalIterator != _common_set_nv_proc.lst_in_proc_tasks.end())
 	{
 		jvxErrorType resL = JVX_NO_ERROR;
-		resL = theGlobalIterator->second.icon->con->transfer_backward_icon(JVX_LINKDATA_TRANSFER_REQUEST_DATA, NULL, 0);
+		resL = theGlobalIterator->second.icon->con->transfer_backward_icon(JVX_LINKDATA_TRANSFER_REQUEST_DATA, NULL JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 	}
 }

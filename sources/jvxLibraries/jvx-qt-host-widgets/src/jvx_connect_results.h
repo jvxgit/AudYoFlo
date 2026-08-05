@@ -4,6 +4,7 @@
 #include "ui_jvx_connect_results.h"
 #include "jvx.h"
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 class jvx_connect_results : public QDialog, public Ui::Dialog
 {
 private:
@@ -41,5 +42,6 @@ public slots:
 	void toggle_activeFilterEntries();
 	void set_filterEntries();
 };
+#endif
 
 #endif

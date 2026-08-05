@@ -1,6 +1,8 @@
 #ifndef _CJVXCALLPROT_H__
 #define _CJVXCALLPROT_H__
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
+
 #include <list>
 
 JVX_INTERFACE IjvxCallProt
@@ -131,5 +133,6 @@ public:
 
 	virtual void JVX_CALLINGCONVENTION printResult(std::ostream& out, jvxSize level)override;
 };
-	
+
+#endif
 #endif

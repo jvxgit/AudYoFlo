@@ -1213,7 +1213,13 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 					break;
 				case JVX_DRIVEHOST_CONNECTION_SHOW_LAST:
 					std::ostringstream sstr;
+
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 					fdb->printResult(sstr, 0);
+#else
+					sstr << JVX_CONNECTION_FEEDBACK_INACTIVE_STRING;
+#endif
+
 					elmr.makeAssignmentString("process_last_error", sstr.str());
 					break;
 				}

@@ -129,7 +129,7 @@ CjvxAudioEncoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		accept_input_parameters();
 
 		// Forward the call
-		res = _test_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = _test_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		if (res == JVX_NO_ERROR)
 		{
 		}

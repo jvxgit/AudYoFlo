@@ -67,8 +67,10 @@ public:
 		jvxBool tagNameFromMaster = true);
 	~CjvxDataConnectionsProcess();
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 	void set_name_unique_descriptor(IjvxCallProt* fdb)override;
-	
+#endif
+
 #include "codeFragments/simplify/jvxDataConnectionCommon_simplify.h"
 #include "codeFragments/simplify/jvxObjects_simplify.h"
 #include "codeFragments/simplify/jvxProperties_simplify.h"
@@ -147,7 +149,9 @@ public:
 	void stop_local();
 	void postprocess_local();
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 	jvxErrorType getFirstErrorReason(IjvxCallProt* fdbLastTest, jvxErrorType* res, jvxApiString* strOnReturn);
+#endif
 
 
 };

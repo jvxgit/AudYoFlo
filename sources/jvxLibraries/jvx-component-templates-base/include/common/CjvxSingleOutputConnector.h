@@ -61,7 +61,7 @@ public:
 
 	jvxErrorType test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
-	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 		
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT

@@ -95,16 +95,19 @@ set(JVX_CMAKE_DIR ${JVX_SDK_PATH}/cmake)
   
 	set(INSTALL_PATH_MATLAB_SUBPROJECT "${INSTALL_PATH_MATLAB}/m-files/${JVX_PRODUCT}Properties")
 
-	set(JVX_SYSTEM_LIBRARIES 
-		${JVX_SYSTEM_LIBRARIES} 
+	set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES} 
 		jvx-system-min_static
 		jvx-system-base_static
-		jvx-callprot_static
 		jvx-helpers_static
 		jvx-helpers-product_static
 		jvx-json_static # jsmn
 		jvx-component-templates-min_static
 		)
+
+if(AYF_CONNECTION_PROTOCOL_DETAILS)
+	set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES} 
+		jvx-callprot_static)
+endif()
 
 	if(NOT JVX_SUPPRESS_DSP_BASE_DEPENDENCIES)
 		set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES} 

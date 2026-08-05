@@ -12,7 +12,7 @@ CjvxOutputConnectorLink::_check_common_ocon(IjvxDataConnectionCommon*, IjvxConne
 }
 
 jvxErrorType 
-CjvxOutputConnectorLink::_transfer_backward_backward(jvxLinkDataTransferType, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxOutputConnectorLink::_transfer_backward_backward(jvxLinkDataTransferType, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	return JVX_NO_ERROR;
 }

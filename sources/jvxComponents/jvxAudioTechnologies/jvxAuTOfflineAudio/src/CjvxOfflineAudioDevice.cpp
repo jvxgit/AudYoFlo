@@ -405,7 +405,7 @@ CjvxOfflineAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType
-CjvxOfflineAudioDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxOfflineAudioDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	if (tp == JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS)
 	{

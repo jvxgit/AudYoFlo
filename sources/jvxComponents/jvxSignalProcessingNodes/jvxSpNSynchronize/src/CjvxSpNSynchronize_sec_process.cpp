@@ -77,7 +77,7 @@ CjvxSpNSynchronize_sec::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 }
 
 jvxErrorType
-CjvxSpNSynchronize_sec::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxSpNSynchronize_sec::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
 	jvxComponentIdentification* cpId = (jvxComponentIdentification*)data;
@@ -176,7 +176,7 @@ CjvxSpNSynchronize_sec::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHa
 }
 
 jvxErrorType 
-CjvxSpNSynchronize_sec::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxSpNSynchronize_sec::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxComponentIdentification* cpId = (jvxComponentIdentification*)data;

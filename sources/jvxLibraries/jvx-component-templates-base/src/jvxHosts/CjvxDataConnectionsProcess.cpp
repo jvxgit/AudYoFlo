@@ -57,6 +57,7 @@ CjvxDataConnectionsProcess::~CjvxDataConnectionsProcess()
 	assert(mapIdTriggerConnect.size() == 0);
 }
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 void
 CjvxDataConnectionsProcess::set_name_unique_descriptor(IjvxCallProt* fdb)
 {
@@ -72,6 +73,7 @@ CjvxDataConnectionsProcess::set_name_unique_descriptor(IjvxCallProt* fdb)
 			uDescStr.c_str());
 	}
 }
+#endif
 
 jvxErrorType
 CjvxDataConnectionsProcess::set_category_id(jvxSize catIdArg)
@@ -129,14 +131,18 @@ CjvxDataConnectionsProcess::test_chain(jvxBool storeProtocol JVX_CONNECTION_FEED
 
 		if (storeProtocol)
 		{
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 			_common_set_conn_proc.fdb->clear();
 			set_name_unique_descriptor(_common_set_conn_proc.fdb);
+#endif
 			res = _common_set_conn_proc.associated_master->test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(_common_set_conn_proc.fdb));
 		}
 		else
 		{
 			// This is to append requests
-			set_name_unique_descriptor(fdb);
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
+			set_name_unique_descriptor(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+#endif
 			res = _common_set_conn_proc.associated_master->test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		}
 
@@ -589,8 +595,9 @@ CjvxDataConnectionsProcess::disconnect_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		}
 		*/
 
-		res = _common_set_conn_proc.associated_master->disconnect_chain_master(jvxChainConnectArguments( _common_set_conn_comm.unique_id_system), 
-				JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = _common_set_conn_proc.associated_master->disconnect_chain_master(
+			jvxChainConnectArguments( _common_set_conn_comm.unique_id_system) 
+				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		if (res == JVX_NO_ERROR)
 		{
 			CjvxDataConnectionProcess_genpcg::unregister_all(static_cast<CjvxProperties*>(this));
@@ -926,8 +933,8 @@ CjvxDataConnectionsProcess::deassociate_master()
 	{
 		if (_common_set_min.theState >= JVX_STATE_ACTIVE)
 		{
-			_common_set_conn_proc.associated_master->disconnect_chain_master(jvxChainConnectArguments(_common_set_conn_comm.unique_id_system),
-				JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			_common_set_conn_proc.associated_master->disconnect_chain_master(jvxChainConnectArguments(_common_set_conn_comm.unique_id_system)
+				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 
 		if (_common_set_conn_comm.bridges.size())
@@ -1380,12 +1387,17 @@ CjvxDataConnectionsProcess::detail_connection_not_ready(jvxApiString* reason_if_
 	else
 	{
 		jvxErrorType res = JVX_NO_ERROR;
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 		IjvxCallProt* fdbLastTest = _common_set_conn_proc.fdb;	
 		getFirstErrorReason(fdbLastTest, &res, reason_if_not_ready);
+#else
+		res = JVX_ERROR_NOT_IMPLEMENTED;
+#endif
 	}
 	return JVX_NO_ERROR;
 }
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 jvxErrorType
 CjvxDataConnectionsProcess::getFirstErrorReason(IjvxCallProt* fdbElement, jvxErrorType* resOnReturn, jvxApiString* strOnReturn)
 {
@@ -1431,6 +1443,7 @@ CjvxDataConnectionsProcess::getFirstErrorReason(IjvxCallProt* fdbElement, jvxErr
 	}
 	return res;
 }
+#endif
 
 jvxErrorType
 CjvxDataConnectionsProcess::iterator_chain(IjvxConnectionIterator** it)

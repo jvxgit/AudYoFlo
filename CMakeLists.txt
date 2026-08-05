@@ -379,7 +379,6 @@ endif()
 include_directories(
   ${JVX_BASE_ROOT}/software
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/include
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min/include/platform/${JVX_OS}
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min/include
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base/include/platform/${JVX_OS}
@@ -391,6 +390,10 @@ include_directories(
   ${JVX_SUBPRODUCT_ROOT}/software
   ${CMAKE_CURRENT_BINARY_DIR}/sources/jvxLibraries/jvx-system-min
 )
+
+if(AYF_CONNECTION_PROTOCOL_DETAILS)
+	include_directories(${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot/include)
+endif()
 
 if(JVX_ADDITIONAL_SYSTEM_INCLUDE_PATH)
 	include_directories(${JVX_ADDITIONAL_SYSTEM_INCLUDE_PATH})
@@ -487,8 +490,12 @@ set(JVX_BASE_SYSTEM_STATIC_LIBS
 
 if(NOT JVX_C_LIBRARIES_SDK_ONLY OR JVX_COMPILE_BUILDTOOLS)
 
-	set(JVX_BASE_SYSTEM_STATIC_LIBS ${JVX_BASE_SYSTEM_STATIC_LIBS}
-		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot
+if(AYF_CONNECTION_PROTOCOL_DETAILS)
+	set(JVX_BASE_SYSTEM_STATIC_LIBS ${JVX_BASE_SYSTEM_STATIC_LIBS}	
+		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-callprot)
+endif()
+	
+	set(JVX_BASE_SYSTEM_STATIC_LIBS ${JVX_BASE_SYSTEM_STATIC_LIBS}	
 		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-json
 		${JVX_BASE_ROOT}/sources/jvxLibraries/jvxLthreads
 		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-min
@@ -516,10 +523,15 @@ set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}
 	)
   
 if(NOT JVX_C_LIBRARIES_SDK_ONLY OR JVX_COMPILE_BUILDTOOLS)  
+
+if(AYF_CONNECTION_PROTOCOL_DETAILS)
+	set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}		
+		jvx-callprot_static)
+endif()
+
 	set(JVX_SYSTEM_LIBRARIES ${JVX_SYSTEM_LIBRARIES}		
 		jvxLthreads_static
 		jvx-component-templates-min_static
-		jvx-callprot_static
 		jvx-json_static
 		)
 endif()

@@ -66,7 +66,7 @@ CjvxInputConnectorLink::_test_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType 
-CjvxInputConnectorLink::_transfer_forward_forward(jvxLinkDataTransferType, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxInputConnectorLink::_transfer_forward_forward(jvxLinkDataTransferType, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	return JVX_NO_ERROR;
 }

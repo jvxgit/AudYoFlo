@@ -117,7 +117,9 @@ public:
 
 #endif
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 	void set_name_unique_descriptor(IjvxCallProt* fdb)override;
+#endif
 
 #define JVX_DATACONNECTION_SUPPRESS_CONNECTOR_FACTORY_INVOLVED
 #include "codeFragments/simplify/jvxDataConnectionCommon_simplify.h"

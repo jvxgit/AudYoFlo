@@ -184,8 +184,8 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 		jvxErrorType res = JVX_NO_ERROR;
 		if (_common_set_ocon.ocon)
 		{
-			res = _common_set_ocon.ocon->disconnect_connect_ocon(jvxChainConnectArguments(_common_set_icon.theData_in->con_link.uIdConn),
-				JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			res = _common_set_ocon.ocon->disconnect_connect_ocon(jvxChainConnectArguments(_common_set_icon.theData_in->con_link.uIdConn)
+				JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 		else
 		{

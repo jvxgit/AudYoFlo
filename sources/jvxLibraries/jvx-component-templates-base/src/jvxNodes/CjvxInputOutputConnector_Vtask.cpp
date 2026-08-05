@@ -556,7 +556,7 @@ CjvxOutputConnectorVtask::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 };
 
 jvxErrorType
-CjvxOutputConnectorVtask::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxOutputConnectorVtask::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_NOT_READY;
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, _common_nvtask->_common_set_comnvtask.object);

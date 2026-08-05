@@ -178,7 +178,7 @@ CjvxSpNMeasureIr::test_set_output_parameters()
 }
 
 jvxErrorType
-CjvxSpNMeasureIr::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxSpNMeasureIr::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxLinkDataDescriptor* ld = (jvxLinkDataDescriptor*)data;

@@ -133,7 +133,7 @@ CjvxAudioDecoder::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		accept_input_parameters();
 
 		// Here would be the place to make sure that the config token is consistent to setting
-		res = _test_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = _test_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	return res;
 }

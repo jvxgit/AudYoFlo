@@ -844,7 +844,7 @@ CjvxOutputConnectorNtask::test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 
 jvxErrorType
-CjvxOutputConnectorNtask::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxOutputConnectorNtask::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 

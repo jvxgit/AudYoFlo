@@ -103,7 +103,10 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION _add_dependency(IjvxDataConnectionCommon* depedent);
 	virtual jvxErrorType JVX_CALLINGCONVENTION _remove_dependency(IjvxDataConnectionCommon* depedent);
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 	virtual void set_name_unique_descriptor(IjvxCallProt* fdb) = 0;
+#endif
+
 	virtual void get_configuration_local(jvxCallManagerConfiguration* callConf, IjvxConfigProcessor* theWriter, jvxConfigData* add_to_this_section) = 0;
 	virtual jvxErrorType create_bridge_check() = 0;
 	virtual IjvxConnectionMaster* get_master_ref() = 0;

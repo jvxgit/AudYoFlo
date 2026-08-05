@@ -126,7 +126,7 @@ CjvxNodeBase1io::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	if (res == JVX_NO_ERROR)
 	{
 		// Forward the call to next module
-		res = _test_connect_icon(true, JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = _test_connect_icon(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		res = this->accept_input_parameters_stop(res);
 	}
 	return res;

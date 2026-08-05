@@ -74,13 +74,15 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/../jvx-helpers-cpp/include/HjvxCircBufferRead.h
   )
 
-set(LOCAL_LIBS
-  jvx-json_static
-  jvx-dsp-base_static
-  jvx-system-base_static
-  jvx-system-min_static
-  jvx-callprot_static
-  )
+# All handled by system libraries
+#set(LOCAL_LIBS
+#  jvx-json_static
+#  jvx-dsp-base_static
+#  jvx-system-base_static
+#  jvx-system-min_static
+#  jvx-callprot_static
+#  )
+
 
 set(BUILD_STATIC TRUE)
 set(IS_C_LIB FALSE)

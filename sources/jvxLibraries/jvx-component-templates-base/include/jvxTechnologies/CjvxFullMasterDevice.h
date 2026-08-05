@@ -29,7 +29,7 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
 	virtual jvxErrorType accept_output_parameters_start(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
 	virtual jvxErrorType accept_output_parameters_stop(JVX_CONNECTION_FEEDBACK_TYPE(fdb));

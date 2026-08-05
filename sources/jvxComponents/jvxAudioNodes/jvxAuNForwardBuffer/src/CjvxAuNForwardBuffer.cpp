@@ -1153,7 +1153,7 @@ CjvxAuNForwardBuffer::startup(jvxInt64 timestamp_us)
 	{
 		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN, nullptr, 0);
+			_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 		}
 	}
 	if (buffermode == jvxOperationMode::JVX_FORWARDBUFFER_BUFFER_INPUT)
@@ -1191,7 +1191,7 @@ CjvxAuNForwardBuffer::stopped(jvxInt64 timestamp_us)
 	{
 		if (_common_set_ocon.theData_out.con_link.connect_to)
 		{
-			_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN, nullptr, 0);
+			_common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 		}
 	}
 	return JVX_NO_ERROR;

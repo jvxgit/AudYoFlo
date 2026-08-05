@@ -6611,6 +6611,7 @@ jvxErrorType jvx_findValueHttpQuery(std::vector<std::string>& qList, std::string
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 std::string jvx_getCallProtStringLocalError(IjvxCallProt* fdb)
 {
 	std::string ret;
@@ -6724,6 +6725,7 @@ void jvx_getCallProtFactoryMaster(IjvxCallProt* fdb, IjvxConnectionMasterFactory
 	jvx_request_interfaceToObject(fac, &theObj, NULL, NULL, NULL);
 	jvx_getCallProtObject(fdb, theObj, "", origin);
 }
+#endif
 
 std::string 
 jvx_linkDataParams2String(jvxLinkDataDescriptor* lData)

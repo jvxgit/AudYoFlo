@@ -80,7 +80,7 @@ CjvxSpNMixChainEnterLeave::report_process_buffers(CjvxSingleOutputConnector* oco
 }
 
 jvxErrorType 
-CjvxSpNMixChainEnterLeave::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxSpNMixChainEnterLeave::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {	
 	if (
 		(tp == JVX_LINKDATA_TRANSFER_REQUEST_GET_PROPERTIES) && 

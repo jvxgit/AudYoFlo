@@ -103,8 +103,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var)) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var)) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) = 0;
@@ -167,8 +167,8 @@ public:
 		callback_process_stop_in_lock = NULL,
 		jvxHandle* priv_ptr = NULL) = 0;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var)) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var)) = 0;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_trigger_itcon(IjvxTriggerInputConnector** itcon) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_trigger_itcon(IjvxTriggerInputConnector* itcon) = 0;

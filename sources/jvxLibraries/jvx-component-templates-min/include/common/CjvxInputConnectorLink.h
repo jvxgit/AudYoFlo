@@ -21,8 +21,8 @@ public:
 	jvxErrorType _stop_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	void _stop_connect_common(jvxSize* uId)override;
 	jvxErrorType _check_common_icon(IjvxDataConnectionCommon*, IjvxConnectionMaster*)override;
-	jvxErrorType _test_connect_forward(IjvxCallProt*)override;
-	jvxErrorType _transfer_forward_forward(jvxLinkDataTransferType, jvxHandle*, IjvxCallProt*)override;
+	jvxErrorType _test_connect_forward(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
+	jvxErrorType _transfer_forward_forward(jvxLinkDataTransferType, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 	jvxErrorType _process_start_forward(void) override;
 	jvxErrorType _process_stop_forward(jvxSize, jvxBool, jvxSize, callback_process_stop_in_lock, jvxHandle*)override;
 	jvxErrorType _process_buffers_forward(jvxSize, jvxSize)override;

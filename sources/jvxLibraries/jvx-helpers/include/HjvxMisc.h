@@ -1286,7 +1286,8 @@ jvxBool jvx_compare_match_component_identification(const jvxComponentIdentificat
 
 jvxErrorType jvx_parseHttpQueryIntoPieces(std::vector<std::string>& qList, std::string in);
 jvxErrorType jvx_findValueHttpQuery(std::vector<std::string>& qList, std::string& out, const std::string& lookfor);
-	
+
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 std::string jvx_getCallProtStringLocalError(IjvxCallProt* fdb);
 std::string jvx_getCallProtStringNextErrorTree(IjvxCallProt* fdb, jvxBool& err);
 
@@ -1294,6 +1295,7 @@ void jvx_getCallProtObject(IjvxCallProt* fdb, IjvxObject* object, const char* co
 void jvx_getCallProtConnector(IjvxCallProt* fdb, IjvxCommonConnector* refto, const char* origin);
 void jvx_getCallProtNoLink(IjvxCallProt* fdb, const std::string& txt_orig, const char* origin, const char* ctxt, const char* comment);
 void jvx_getCallProtFactoryMaster(IjvxCallProt* fdb, IjvxConnectionMasterFactory* refto, const char* origin);
+#endif
 
 std::string jvx_linkDataParams2String(jvxLinkDataDescriptor* lData);
 

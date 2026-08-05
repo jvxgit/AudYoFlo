@@ -52,7 +52,9 @@ jvx_connections_widget::jvx_connections_widget(QWidget* parent) : QWidget(parent
 
 jvx_connections_widget::~jvx_connections_widget()
 {
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 	this->latest_status_process->clear();
+#endif
 }
 
 QSize
@@ -76,6 +78,10 @@ jvx_connections_widget::init(IjvxHost* theHost, jvxCBitField mode, jvxHandle* sp
 	theDataConnections = NULL;
 
 	this->setupUi(this);
+
+#ifndef AYF_CONNECTION_PROTOCOL_DETAILS
+	this->pushButton_2->setEnabled(false);
+#endif
 
 	for (i = 0; i < JVX_COMPONENT_ALL_LIMIT; i++)
 	{
@@ -229,7 +235,10 @@ jvx_connections_widget::show_status_test_chain(jvxSize idSelect)
 			txtA = "Most recent test of chain <" + nmChain.std_str();
 			txtA += ">: ";
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 			latest_status_process->clear();
+#endif
+
 			theProcess->status(&stat);
 			theProcess->status_chain( &testOk JVX_CONNECTION_FEEDBACK_REF_CALL_A(latest_status_process));
 			if (stat == JVX_STATE_ACTIVE)
@@ -1198,10 +1207,12 @@ jvx_connections_widget::closeEvent(QCloseEvent * event)
 void
 jvx_connections_widget::modal_showresult()
 {
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 	jvx_connect_results* modalShow = new jvx_connect_results(this);
 	modalShow->setModal(true);
 	modalShow->create(latest_status_process);
 	modalShow->show();
+#endif
 
 }
 

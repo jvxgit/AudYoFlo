@@ -318,7 +318,7 @@ public:
 #undef JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*, JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var)) override;
 
 	// =====================================================================
 	// Link to default master factory and master implementations

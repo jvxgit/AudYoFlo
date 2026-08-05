@@ -74,7 +74,7 @@ CjvxNVTasks::process_buffers_icon_nvtask_master(
 	for (; elm != _common_set_nv_proc.lst_in_proc_tasks.end();elm++)
 	{
 		jvxErrorType resL = JVX_NO_ERROR;
-		resL = elm->second.icon->con->transfer_backward_icon(JVX_LINKDATA_TRANSFER_REQUEST_DATA, NULL, 0);
+		resL = elm->second.icon->con->transfer_backward_icon(JVX_LINKDATA_TRANSFER_REQUEST_DATA, NULL JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 	}
 	JVX_UNLOCK_MUTEX(_common_set_nv_proc.safeAcces_proc_tasks);
 	return res;

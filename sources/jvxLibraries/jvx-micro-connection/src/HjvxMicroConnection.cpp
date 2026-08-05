@@ -1166,7 +1166,7 @@ HjvxMicroConnection::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle
 }
 
 jvxErrorType 
-HjvxMicroConnection::transfer_backward_connection(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+HjvxMicroConnection::transfer_backward_connection(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if ((res == JVX_NO_ERROR) || (res == JVX_ERROR_COMPROMISE))

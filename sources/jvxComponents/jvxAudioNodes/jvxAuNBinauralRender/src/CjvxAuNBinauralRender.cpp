@@ -181,14 +181,14 @@ CjvxAuNBinauralRender::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 jvxErrorType JVX_CALLINGCONVENTION CjvxAuNBinauralRender::start_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	jvxErrorType res = CjvxBareNode1io::start_connect_icon(fdb);
+	jvxErrorType res = CjvxBareNode1io::start_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
 	return res;
 }
 
 jvxErrorType JVX_CALLINGCONVENTION CjvxAuNBinauralRender::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 {
-	return CjvxBareNode1io::stop_connect_icon(fdb);
+	return CjvxBareNode1io::stop_connect_icon(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 }
 
 jvxErrorType

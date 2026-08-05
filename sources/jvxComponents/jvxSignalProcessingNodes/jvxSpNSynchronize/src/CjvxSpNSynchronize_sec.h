@@ -124,8 +124,8 @@ public:
 	jvxErrorType available_to_connect_ocon()override; 
 	jvxErrorType prepare_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 	jvxErrorType postprocess_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
-	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
-	jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
+	jvxErrorType transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
 	// ================================================================================
 	// Callbacks for input connector

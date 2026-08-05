@@ -21,7 +21,6 @@ set(LOCAL_UI_SOURCES
 set(LOCAL_UI_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/uisrc)
 
 set(LOCAL_SOURCES
-	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_connect_results.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_connections_widget_rule.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_connections_widget.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_connections_widget_ui.cpp
@@ -69,6 +68,10 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/baseUiProperties.h
 
 	)
+
+if(AYF_CONNECTION_PROTOCOL_DETAILS)
+	set(LOCAL_SOURCES ${LOCAL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/jvx_connect_results.cpp)
+endif()
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${JVX_CMAKE_C_FLAGS_EXEC} ${JVX_PLATFORM_FLAGS}")
 

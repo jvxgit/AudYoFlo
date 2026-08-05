@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
+
 #define JVX_NUM_COLORS_SHOW 4
 QColor colorlist[JVX_NUM_COLORS_SHOW] =
 {
@@ -281,3 +283,4 @@ jvx_connect_results::set_filterEntries()
 		updateWindow(true);
 	}
 }
+#endif

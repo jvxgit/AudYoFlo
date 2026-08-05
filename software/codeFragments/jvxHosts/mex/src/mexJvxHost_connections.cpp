@@ -796,7 +796,11 @@ mexJvxHost::return_result_chain_master(int nlhs, mxArray* plhs[], int nrhs, cons
 							}
 
 							std::ostringstream outs;
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 							fdb__.printResult(outs, 0);
+#else
+							outs << JVX_CONNECTION_FEEDBACK_INACTIVE_STRING;
+#endif
 
 							if (nlhs > 1)
 							{
@@ -807,7 +811,11 @@ mexJvxHost::return_result_chain_master(int nlhs, mxArray* plhs[], int nrhs, cons
 						else
 						{
 							theRef->descriptor_connection(&nmChain);
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 							fdb->getErrorShort(NULL, &errMess, NULL);
+#else
+							errMess = JVX_CONNECTION_FEEDBACK_INACTIVE_STRING;
+#endif
 							txt = "Testing signal processing chain failed, reason: ";
 							txt += errMess.std_str();
 
@@ -948,7 +956,11 @@ mexJvxHost::test_chain_master(int nlhs, mxArray* plhs[], int nrhs, const mxArray
 							if (nlhs > 2)
 							{
 								std::stringstream ss;
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 								fdb->printResult(ss, 0);
+#else
+								ss << JVX_CONNECTION_FEEDBACK_INACTIVE_STRING;
+#endif
 								this->mexReturnString(plhs[2], ss.str());
 							}
 
@@ -957,7 +969,12 @@ mexJvxHost::test_chain_master(int nlhs, mxArray* plhs[], int nrhs, const mxArray
 						else
 						{
 							theRef->descriptor_connection(&nmChain);
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 							fdb->getErrorShort(NULL, &errMess, NULL);
+#else
+							errMess = "<unkown-inactive>";
+#endif
+
 							txt = "Testing signal processing chain failed, reason: ";
 							txt += errMess.std_str();
 

@@ -625,14 +625,14 @@ CjvxGenericWrapperDevice_hostRelocator::test_connect_ocon(JVX_CONNECTION_FEEDBAC
 // =====================================================================================================
 
 jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxGenericWrapperDevice_hostRelocator::transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	CjvxInputOutputConnector::_transfer_forward_icon(false, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	return runtime.refDevice->transfer_forward_icon_x(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxGenericWrapperDevice_hostRelocator::transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	assert(0);
 	return CjvxInputOutputConnector::_transfer_backward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -640,7 +640,7 @@ CjvxGenericWrapperDevice_hostRelocator::transfer_backward_icon(jvxLinkDataTransf
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxGenericWrapperDevice_hostRelocator::transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	assert(0);
 	return CjvxInputOutputConnector::_transfer_forward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -648,7 +648,7 @@ CjvxGenericWrapperDevice_hostRelocator::transfer_forward_ocon(jvxLinkDataTransfe
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxGenericWrapperDevice_hostRelocator::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	std::string txt;
 	jvxErrorType res = JVX_NO_ERROR;

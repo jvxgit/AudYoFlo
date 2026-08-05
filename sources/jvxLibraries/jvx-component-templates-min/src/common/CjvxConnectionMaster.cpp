@@ -240,7 +240,7 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 	// ============================================================================
 
 	jvxErrorType
-		CjvxConnectionMaster::_disconnect_chain_master(const jvxChainConnectArguments& args, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+		CjvxConnectionMaster::_disconnect_chain_master(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		if ((_common_set_ld_master.state == JVX_STATE_ACTIVE) && (_common_set_ld_master.isConnected))

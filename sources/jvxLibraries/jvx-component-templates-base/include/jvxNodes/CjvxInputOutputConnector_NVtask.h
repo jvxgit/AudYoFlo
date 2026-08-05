@@ -139,8 +139,8 @@ public:
 
 	jvxErrorType _transfer_forward_ocon(
 		jvxLinkDataTransferType tp, 
-		jvxHandle* data, 
-		JVX_CONNECTION_FEEDBACK_TYPE(fdb));
+		jvxHandle* data 
+		JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 
 	jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override;
 	jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* itcon) override;

@@ -155,6 +155,11 @@ else()
 	message("--> Compiling for DOUBLE precision float")
 endif()
 
+if(AYF_CONNECTION_PROTOCOL_DETAILS)
+	# define AYF_CONNECTION_PROTOCOL_DETAILS
+	set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};AYF_CONNECTION_PROTOCOL_DETAILS")
+endif()
+
 # We can run the crosscompile build either on Linux or on Windows (Emspripten)
 # The executable name must be adapted accordingly
 set(JVX_EXECUTABLE_EXTENSION_OPERATE "")

@@ -13,7 +13,7 @@ public:
 	CjvxOutputConnectorLink();
 
 	jvxErrorType _check_common_ocon(IjvxDataConnectionCommon*, IjvxConnectionMaster*)override;
-	jvxErrorType _transfer_backward_backward(jvxLinkDataTransferType, jvxHandle*, IjvxCallProt*)override;
+	jvxErrorType _transfer_backward_backward(jvxLinkDataTransferType, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 };
 
 #endif

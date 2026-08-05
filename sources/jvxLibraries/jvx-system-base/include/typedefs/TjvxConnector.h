@@ -1,7 +1,9 @@
 #ifndef _TJVXCONNECTOR_H__
 #define _TJVXCONNECTOR_H__
 
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 #include "CjvxCallProt.h"
+#endif
 
 	typedef struct
 	{
@@ -115,25 +117,57 @@ public:
 	};
 } ;
 
-#if 0
-#define JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb) jvxApiString fdb##__; jvxApiString* fdb = &fdb##__;
-#define JVX_CONNECTION_FEEDBACK_TYPE(fdb) jvxApiString* fdb
-#define JVX_CONNECTION_FEEDBACK_TYPE_A(fdb) , JVX_CONNECTION_FEEDBACK_TYPE(fdb)
-#define JVX_CONNECTION_FEEDBACK_CALL(fdb) fdb
-#define JVX_CONNECTION_FEEDBACK_CALL_A(fdb) , fdb
-#define JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, txt) if (fdb) fdb->assign(txt);
-#define JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING(fdb) fdb->std_str()
-#define JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, txt) if(fdb) { jvxApiString __descr; \
-										_common_set_ldslave.object->descriptor(&__descr); \
-										std::string __errMess = "Object <"; \
-										__errMess += __descr.std_str(); \
-										__errMess += ">"; \
-										__errMess += ", output Connector <"; \
-										__errMess += _common_set_ldslave.descriptor; \
-										__errMess += ">: "; \
-										__errMess += txt; \
-										__errMess += "."; \
-										fdb->assign(__errMess); }
+// We can use the protocol tracker for all chaining - or leave this off
+#ifndef AYF_CONNECTION_PROTOCOL_DETAILS
+
+#define JVX_CONNECTION_FEEDBACK_INACTIVE_STRING "<unknown-inactive>"
+#define JVX_CONNECTION_ORIGIN  JVX_CONNECTION_FEEDBACK_INACTIVE_STRING
+
+#define JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb) 
+#define JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_PTR(fdb) 
+#define JVX_CONNECTION_FEEDBACK_TYPE_INIT_PTR(fdb) 
+#define JVX_CONNECTION_FEEDBACK_TYPE_ASSIGN(fdb, fdbfrom) 
+#define JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS(fdb)
+#define JVX_CONNECTION_FEEDBACK_TYPE_DEFINE_CLASS_INIT(fdb) 
+#define JVX_CONNECTION_FEEDBACK_TYPE(fdb) 
+#define JVX_CONNECTION_FEEDBACK_TYPE_F(fdb) 
+#define JVX_CONNECTION_FEEDBACK_TYPE_A(fdb) 
+#define JVX_CONNECTION_FEEDBACK_CALL(fdb) 
+#define JVX_CONNECTION_FEEDBACK_CALL_A(fdb) 
+#define JVX_CONNECTION_FEEDBACK_REF_CALL(fdb)
+#define JVX_CONNECTION_FEEDBACK_REF_CALL_A(fdb) 
+#define JVX_CONNECTION_FEEDBACK_CALL_NULL 
+#define JVX_CONNECTION_FEEDBACK_CALL_A_NULL 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER(fdb, tp, loc) 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, object) 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_CONN(fdb, object, conn) 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_COMM_CONN(fdb, object, conn, comm) 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_NO_OBJ_COMM_CONN(fdb, txt_orig, ctxt, comm) 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ_CONTEXT(fdb, object, ctxt) 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_DATAPROC_CONTEXT(fdb, proc) 
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_CONN(fdb, refto)
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_FAC_MAS(fdb, refto) 
+#define JVX_CONNECTION_FEEDBACK_ON_LEAVE_ERROR(fdb, res, err_mess) 
+
+// Call the function to check for the reported error in the feedback tree element. If there is no error on the object level,
+// no child will be queried-
+#define JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING(fdb) JVX_CONNECTION_FEEDBACK_INACTIVE_STRING
+
+// Call the function to check for the next reported error in the feedback tree. If the local element has no such 
+// element, the algorithm will recursively descend into the structure to find the next error from start to stop of the tree
+#define JVX_CONNECTION_FEEDBACK_GET_ERROR_STRING_NEXT_ERROR(fdb, err)  JVX_CONNECTION_FEEDBACK_INACTIVE_STRING
+
+#define JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING(fdb, txt, errTp) 
+#define JVX_CONNECTION_FEEDBACK_SET_ERROR_STRING_TEST(fdb, txt, errTp) 
+#define JVX_CONNECTION_FEEDBACK_SET_COMMENT_STRING(fdb, txt) 
+#define JVX_CONNECTION_FEEDBACK_CLEAR(fdb) 
+
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, theDataP) 
+
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O(fdb, theData)
+
+#define JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_O_TAG(fdb, theData, tag) 
+
 #else
 
 #define JVX_CONNECTION_ORIGIN JVX_SOURCE_CODE_ORIGIN

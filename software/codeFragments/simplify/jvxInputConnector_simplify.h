@@ -61,7 +61,7 @@ virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTran
 #endif
 
 
-virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override
+virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override
 {
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE);
 

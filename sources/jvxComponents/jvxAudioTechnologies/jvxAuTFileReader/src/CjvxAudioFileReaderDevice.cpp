@@ -431,7 +431,7 @@ CjvxAudioFileReaderDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb
 	}
 	else
 	{
-		_postprocess_chain_master(NULL);		
+		_postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
 		goto leave_error;
     }
     
@@ -482,7 +482,7 @@ CjvxAudioFileReaderDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 	if (res != JVX_NO_ERROR)
 	{
-	    _stop_chain_master(NULL);
+	    _stop_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
 	    goto leave_error;
 	}
 
@@ -497,7 +497,7 @@ CjvxAudioFileReaderDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxErrorType resL;
 
-	res = _stop_chain_master(NULL);
+	res = _stop_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
 	assert(res == JVX_NO_ERROR);
 
 	// If the chain is stopped, the object itself should also be stopped if not done so before

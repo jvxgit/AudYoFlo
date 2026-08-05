@@ -778,8 +778,8 @@ CjvxNVTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLinkD
 	// correct those
 	jvxErrorType res = CjvxBareNtask::test_connect_icon_ntask(theData_in,
 		theData_out,
-		idCtxt, refto,
-		JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		idCtxt, refto
+		JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	if (idCtxt == JVX_DEFAULT_CON_ID)
 	{

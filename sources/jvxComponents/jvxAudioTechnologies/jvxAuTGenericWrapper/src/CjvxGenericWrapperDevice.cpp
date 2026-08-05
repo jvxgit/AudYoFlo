@@ -1389,7 +1389,7 @@ CjvxGenericWrapperDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		return res;
 
 	// Terminate local processing chain
-	CjvxAudioDevice::_test_connect_icon(false, JVX_CONNECTION_FEEDBACK_CALL(fdb));
+	CjvxAudioDevice::_test_connect_icon(false JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	if (onInit.connectedDevice)
 	{

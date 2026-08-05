@@ -186,11 +186,11 @@ public:
 		callback_process_stop_in_lock clbk = NULL,
 		jvxHandle* priv_ptr = NULL) override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*, 
-		JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*
+		JVX_CONNECTION_FEEDBACK_TYPE_A(var)) override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle*, 
-		JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_ocon(jvxLinkDataTransferType tp, jvxHandle* 
+		JVX_CONNECTION_FEEDBACK_TYPE_A(var)) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next(jvxSize idx, IjvxConnectionIterator** next) override;

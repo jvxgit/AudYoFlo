@@ -574,7 +574,7 @@ CjvxAudioDevice::test_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, static_cast<IjvxObject*>(this));
 	
 	updateChainOutputParameter();
-	res = _test_chain_master(fdb);
+	res = _test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 
 	return res;
 }
@@ -972,7 +972,7 @@ CjvxAudioDevice::transfer_backward_ocon_match_setting(jvxLinkDataTransferType tp
 }
 
 jvxErrorType 
-CjvxAudioDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data, JVX_CONNECTION_FEEDBACK_TYPE(fdb))
+CjvxAudioDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i;
 	jvxErrorType res = JVX_NO_ERROR;

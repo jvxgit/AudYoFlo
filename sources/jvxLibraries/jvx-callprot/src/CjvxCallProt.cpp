@@ -1,3 +1,4 @@
+#ifdef AYF_CONNECTION_PROTOCOL_DETAILS
 
 #include "jvx.h"
 
@@ -515,3 +516,4 @@ CjvxCallProt::printResult(std::ostream& out, jvxSize level)
 		out << std::endl;
 	}
 }
+#endif

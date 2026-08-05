@@ -116,7 +116,7 @@ CjvxFullMasterDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHand
 	default:
 
 		// This is a master output connector, there is no successor!
-		res = CjvxInputOutputConnector::_transfer_backward_ocon(false, tp, data, JVX_CONNECTION_FEEDBACK_CALL(fdb));
+		res = CjvxInputOutputConnector::_transfer_backward_ocon(false, tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	}
 	return res;
 }
