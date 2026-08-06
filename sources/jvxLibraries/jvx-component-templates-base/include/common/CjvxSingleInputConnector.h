@@ -70,7 +70,9 @@ public:
 
 	 jvxErrorType  transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
-	// =======================================================================================
+	 jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str) override;
+
+	 // =======================================================================================
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT

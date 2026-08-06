@@ -156,6 +156,7 @@ else()
 endif()
 
 if(AYF_CONNECTION_PROTOCOL_DETAILS)
+	message("--> Adding preprocessor define for protocol during chain operatons")
 	# define AYF_CONNECTION_PROTOCOL_DETAILS
 	set(GLOBAL_COMPILE_DEFINITIONS "${GLOBAL_COMPILE_DEFINITIONS};AYF_CONNECTION_PROTOCOL_DETAILS")
 endif()

@@ -191,9 +191,9 @@ public:
 	}
 
 #define JVX_MEXCALL_PREPARE_SENDER_TO_RECEIVER(classname, baseclassname) jvxErrorType \
-	classname::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData) \
+	classname::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) \
 	{ \
-		jvxErrorType res = baseclassname::prepare_sender_to_receiver(theData); \
+		jvxErrorType res = baseclassname::prepare_sender_to_receiver(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb)); \
 		if(res == JVX_NO_ERROR) \
 		{ \
 			res = CjvxMexCalls::prepare_sender_to_receiver(theData); \
@@ -202,9 +202,9 @@ public:
 	}
 
 #define JVX_MEXCALL_PREPARE_COMPLETE_RECEIVER_TO_SENDER(classname, baseclassname, theData_out) jvxErrorType \
-	classname::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData) \
+	classname::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) \
 	{ \
-		jvxErrorType res = baseclassname::prepare_complete_receiver_to_sender(theData); \
+		jvxErrorType res = baseclassname::prepare_complete_receiver_to_sender(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb)); \
 		if(res == JVX_NO_ERROR) \
 		{ \
 			res = CjvxMexCalls::prepare_complete_receiver_to_sender(theData, theData_out); \
@@ -213,9 +213,9 @@ public:
 	}
 
 #define JVX_MEXCALL_POSTPROCESS_SENDER_TO_RECEIVER(classname, baseclassname) jvxErrorType  \
-	classname::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData) \
+	classname::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) \
 	{ \
-		jvxErrorType res = baseclassname::postprocess_sender_to_receiver(theData); \
+		jvxErrorType res = baseclassname::postprocess_sender_to_receiver(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb)); \
 		if(res == JVX_NO_ERROR) \
 		{ \
 			res = CjvxMexCalls::postprocess_sender_to_receiver(theData); \
@@ -224,9 +224,9 @@ public:
 	}
 
 #define JVX_MEXCALL_BEFORE_POSTPROCESS_RECEIVER_TO_SENDER(classname, baseclassname) jvxErrorType \
-	classname::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData) \
+	classname::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) \
 	{ \
-		jvxErrorType res = baseclassname::before_postprocess_receiver_to_sender(theData); \
+		jvxErrorType res = baseclassname::before_postprocess_receiver_to_sender(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb)); \
 		if(res == JVX_NO_ERROR) \
 		{ \
 			res = CjvxMexCalls::before_postprocess_receiver_to_sender(theData); \

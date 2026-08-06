@@ -92,7 +92,7 @@ CjvxAudioNode::reference_object(IjvxObject** refObject)
 
 
 jvxErrorType
-CjvxAudioNode::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
+CjvxAudioNode::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
@@ -124,7 +124,7 @@ CjvxAudioNode::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
 };
 
 jvxErrorType
-CjvxAudioNode::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)
+CjvxAudioNode::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
@@ -190,7 +190,7 @@ CjvxAudioNode::last_error_process(char* fld_text, jvxSize fldSize, jvxErrorType*
 };
 
 jvxErrorType
-CjvxAudioNode::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
+CjvxAudioNode::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
@@ -206,7 +206,7 @@ CjvxAudioNode::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
 };
 
 jvxErrorType
-CjvxAudioNode::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData)
+CjvxAudioNode::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)

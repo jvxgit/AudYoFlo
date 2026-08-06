@@ -716,25 +716,30 @@ jvx_cinitDataLinkDescriptor(jvxLinkDataDescriptor* descr)
 }
 
 void
+jvx_neutralDataLinkDescriptor_params(jvxLinkDataDescriptor_con_params& theParams)
+{
+	theParams.buffersize = 0;
+	theParams.format = JVX_DATAFORMAT_NONE;
+	theParams.number_channels = 0;
+	theParams.rate = 0;
+	theParams.additional_flags = 0;
+	theParams.segmentation.x = 0;
+	theParams.segmentation.y = 0;
+	theParams.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+}
+
+void
 jvx_neutralDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool sender)
 {
 	jvx_neutralDataLinkDescriptor_mem(theData, sender);
 
 	if (sender)
 	{
-		theData->con_params.buffersize = 0;
-		theData->con_params.format = JVX_DATAFORMAT_NONE;
 		theData->con_data.buffers = NULL;
 		theData->con_data.number_buffers = 0;
-		theData->con_params.number_channels = 0;
-		theData->con_params.rate = 0;
-		theData->con_params.additional_flags = 0;
-		theData->con_params.segmentation.x = 0;
-		theData->con_params.segmentation.y = 0;
-		theData->con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
-		theData->con_data.alloc_flags = 
+		jvx_neutralDataLinkDescriptor_params(theData->con_params);
+		theData->con_data.alloc_flags =
 			(jvxSize)jvxDataLinkDescriptorAllocFlags::JVX_LINKDATA_ALLOCATION_FLAGS_NONE;
-
 	}
 	else
 	{

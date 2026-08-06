@@ -241,7 +241,7 @@ CjvxSingleOutputConnector::stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType
-CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params)
+CjvxSingleOutputConnector::updateFixedProcessingArgs(const jvxConnectionParams & params)
 {
 	// We only accept ONE setting!! Dataflow is forward
 	neg_output._update_parameters_fixed(params.number_channels,
@@ -339,6 +339,17 @@ CjvxSingleOutputConnector::transfer_backward_ocon(jvxLinkDataTransferType tp, jv
 	}
 
 	return res;
+}
+
+jvxErrorType
+CjvxSingleOutputConnector::read_connect_parameters_ocon(jvxConnectionParams* str)
+{
+	if (str)
+	{
+		jvx_neutralDataLinkDescriptor_params(*str);
+		*str = _common_set_ocon.theData_out.con_params;
+	}
+	return JVX_NO_ERROR;
 }
 
 // =================================================================================

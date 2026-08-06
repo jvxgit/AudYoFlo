@@ -593,6 +593,35 @@ CjvxDataChainInterceptor::try_run_processing(IjvxConnectionMaster* master_ref)
 	return JVX_ERROR_UNSUPPORTED;
 }
 
+jvxErrorType
+CjvxDataChainInterceptor::read_connect_parameters_icon(jvxConnectionParams* str)
+{
+	if (str)
+	{
+		jvx_neutralDataLinkDescriptor_params(*str);
+		if (theData_in)
+		{
+			*str = theData_in->con_params;
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType 
+CjvxDataChainInterceptor::read_connect_parameters_ocon(jvxConnectionParams* str)
+{
+	if (str)
+	{
+		jvx_neutralDataLinkDescriptor_params(*str);
+		if(theData_out)
+		{
+			*str = theData_out->con_params;
+		}
+	}
+	return JVX_NO_ERROR;
+}
+
+
 // ====================================================================================================
 // ====================================================================================================
 

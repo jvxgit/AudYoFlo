@@ -438,7 +438,103 @@ public:
 	}
 };
 
-// ===============================================================================
+// =================================================================================================
+// =================================================================================================
+// =================================================================================================
+// =================================================================================================
+
+struct jvxConnectionStatus
+{
+	jvxErrorType latest_test = JVX_ERROR_NOT_READY;	
+	jvxErrorType latest_prepare = JVX_ERROR_NOT_READY;
+	jvxApiString latest_mess_hint;
+};
+
+/**
+ * This struct defines how the linear fields are arranged logically. A field of length (640 * 480) x 1 can be interpreted
+ * as a 2D pixelmap by x = 640 and y = 480. If the segmentation is a fheight, only part of the field is populated.
+ * We find the valid pixels by first applying the segmentation followed by the fillheight constraint.
+ */ //=======================================================================================================
+struct jvxConnectionParamsSegmentation
+{
+	// Segmentation: A value of UNSELECTED means that there is no segmentation, hence, x = buffersize
+	jvxSize x = JVX_SIZE_UNSELECTED;
+
+	// Segmentation: A value of UNSELECTED means that there is no segmentation, hence, y = 1
+	jvxSize y = JVX_SIZE_UNSELECTED;
+};
+
+struct jvxConnectionParams
+{
+	/***
+	 * Size of the buffer in elements of type format (maximum buffer size). Typically the buffer is fully filled but it may be filled to a degree specified by segmentation_x and segmentation_y.
+	 * The size in bytes can typically be computed as ( buffersize * jvxDataFormat_getSize(format) * jvxDataFormatGroup_getsize_mult(format_group) / jvxDataFormatGroup_getsize_div(format_group)
+	 **/
+	jvxSize buffersize = 0;
+
+	//! Rate of the sample arrival if operated at a fixed rate
+	jvxSize rate = 0;
+
+	//! Number channels. Channels are in non-interleaved format and are associated to one buffer each. If interleaved data, you need to specify segmentation_y and setup subformat
+	jvxSize number_channels = 0;
+
+	// Data format to describe each sample
+	jvxDataFormat format = JVX_DATAFORMAT_NONE;
+
+	// Format group
+	jvxDataFormatGroup format_group = JVX_DATAFORMAT_GROUP_NONE;
+
+	// Dataflow capability
+	jvxDataflow data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
+
+	// A buffer of size buffersize is segmented into x and y according to:
+	// -------- segmentation_x -------->
+	// | x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// s x x x x x x x x x x x x x x x x
+	// e x x x x x x x x x x x x x x x x
+	// g x x x x x x x x x x x x x x x x
+	// m x x x x x x x x x x x x x x x x
+	// e x x x x x x x x x x x x x x x x
+	// n x x x x x x x x x x x x x x x x
+	// t x x x x x x x x x x x x x x x x
+	// a x x x x x x x x x x x x x x x x
+	// t x x x x x x x x x x x x x x x x
+	// i x x x x x x x x x x x x x x x x
+	// o x x x x x x x x x x x x x x x x
+	// n x x x x x x x x x x x x x x x x
+	// _ x x x x x x x x x x x x x x x x
+	// y x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// | x x x x x x x x x x x x x x x x
+	// V x x x x x x x x x x x x x x x x
+	//
+
+	// The buffersize is always the MAXIMUM of elements. By specifying segmentation_x and segmentatiion_y 
+	// the content may be grouped and furthermore refined.
+
+	// More accurate specification of data buffers. For audio, this should be identical to buffersize
+	jvxConnectionParamsSegmentation segmentation;
+
+	// Free parameter to specify properties of the data. in particular, used on "coded" bitstreams
+	jvxApiString format_spec;
+
+	// We can announce and accept some aditional connection flags. These flags will also be copied to the connection
+	// flags on pprepare!!
+	jvxCBitField additional_flags = 0;
+
+	// Status of latest operations
+	jvxConnectionStatus stat;
+};
+
+// =================================================================================================
+// =================================================================================================
+// =================================================================================================
 
 namespace jvx
 {

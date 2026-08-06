@@ -44,7 +44,7 @@ public:
 	jvxErrorType start_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 	jvxErrorType stop_connect_ocon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
-	jvxErrorType updateFixedProcessingArgs(const jvxLinkDataDescriptor_con_params& params);
+	jvxErrorType updateFixedProcessingArgs(const jvxConnectionParams& params);
 
 	jvxErrorType trigger_put_data();
 
@@ -63,6 +63,8 @@ public:
 
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 		
+	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str) override;
+
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr

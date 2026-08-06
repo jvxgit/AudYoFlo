@@ -649,11 +649,11 @@ CjvxAuNCodec::process_st(jvxLinkDataDescriptor* theData, jvxSize idx_sender_to_r
 };
 
 jvxErrorType
-CjvxAuNCodec::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
+CjvxAuNCodec::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i;
 	jvxInt32 valI32 = 0;
-	jvxErrorType res = CjvxAudioNode::prepare_sender_to_receiver(theData);
+	jvxErrorType res = CjvxAudioNode::prepare_sender_to_receiver(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	jvxErrorType resL;
 	if (res == JVX_NO_ERROR)
 	{
@@ -766,11 +766,11 @@ CjvxAuNCodec::stop_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 }
 
 jvxErrorType
-CjvxAuNCodec::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)
+CjvxAuNCodec::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i;
 	jvxInt32 valI32 = 0;
-	jvxErrorType res = CjvxAudioNode::prepare_complete_receiver_to_sender(theData);
+	jvxErrorType res = CjvxAudioNode::prepare_complete_receiver_to_sender(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	jvxErrorType resL;
 	if (res == JVX_NO_ERROR)
 	{
@@ -820,11 +820,11 @@ CjvxAuNCodec::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData
 }
 
 jvxErrorType 
-CjvxAuNCodec::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
+CjvxAuNCodec::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i;
 	jvxInt32 valI32 = 0;
-	jvxErrorType res = CjvxAudioNode::postprocess_sender_to_receiver(theData);
+	jvxErrorType res = CjvxAudioNode::postprocess_sender_to_receiver(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	jvxErrorType resL;
 	if (res == JVX_NO_ERROR)
 	{
@@ -865,7 +865,7 @@ CjvxAuNCodec::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
 }
 
 jvxErrorType 
-CjvxAuNCodec::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData)
+CjvxAuNCodec::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i;
 	jvxInt32 valI32 = 0;
@@ -888,7 +888,7 @@ CjvxAuNCodec::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theDa
 		theDataEnc[i].con_compat.from_receiver_buffer_allocated_by_sender = NULL;
 	}
 #endif
-	res =  CjvxAudioNode::before_postprocess_receiver_to_sender(theData);
+	res =  CjvxAudioNode::before_postprocess_receiver_to_sender(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	return res;
 }
 

@@ -156,9 +156,9 @@ CjvxAuNMcas::myFirstMatlabEntry()
 
 #endif
 
-jvxErrorType JVX_CALLINGCONVENTION CjvxAuNMcas::prepare_sender_to_receiver(jvxLinkDataDescriptor * theData)
+jvxErrorType JVX_CALLINGCONVENTION CjvxAuNMcas::prepare_sender_to_receiver(jvxLinkDataDescriptor * theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
-	jvxErrorType res = CjvxAudioNode::prepare_sender_to_receiver(theData);
+	jvxErrorType res = CjvxAudioNode::prepare_sender_to_receiver(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	if (res) return res;
 
 	res = CjvxMexCalls::prepare_sender_to_receiver(theData);

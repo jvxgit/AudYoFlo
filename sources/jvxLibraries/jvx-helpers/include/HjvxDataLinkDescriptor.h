@@ -46,6 +46,7 @@ void jvx_presetMasterOnPrepare(jvxLinkDataDescriptor& datOut);
 void jvx_constrainIconOnPrepare(jvxLinkDataDescriptor* datIn, jvxBool clearFlagsBuffer, jvxSize num_additional_pipleline_stages = 0, jvxSize num_min_buffers_in = 1, jvxLinkDataDescriptor* datOut = nullptr);
 
 void jvx_neutralDataLinkDescriptor(jvxLinkDataDescriptor* theData, jvxBool sender);
+void jvx_neutralDataLinkDescriptor_params(jvxLinkDataDescriptor_con_params& theParams);
 void jvx_neutralDataLinkDescriptor_mem(jvxLinkDataDescriptor* theData, jvxBool sender);
 void jvx_neutralDataLinkDescriptor_pipeline(jvxLinkDataDescriptor_con_pipeline* thePipeline);
 void jvx_neutralDataLinkDescriptor_data(jvxLinkDataDescriptor_con_data* con_data);

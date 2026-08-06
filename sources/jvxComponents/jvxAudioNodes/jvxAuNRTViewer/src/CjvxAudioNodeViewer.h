@@ -56,9 +56,9 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION process_buffer( jvxHandle** buffers_input,jvxHandle** buffers_output,
 		jvxSize bSize, jvxSize numChans_input, jvxSize numChans_output, jvxDataFormat format);
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_buffer_post);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_buffer_pre);

@@ -142,6 +142,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle*
 		JVX_CONNECTION_FEEDBACK_TYPE_A(var)) override;
 
+	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str) override;
+
 	// ====================================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION associated_connection_ocon(IjvxDataConnectionCommon** ref) override;
@@ -209,6 +211,8 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
 
 	virtual jvxErrorType try_run_processing(IjvxConnectionMaster* master_ref);
+
+	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str) override;
 };
 
 #endif

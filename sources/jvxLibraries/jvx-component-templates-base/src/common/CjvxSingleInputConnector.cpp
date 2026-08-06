@@ -420,6 +420,19 @@ CjvxSingleInputConnector::transfer_forward_icon(jvxLinkDataTransferType tp, jvxH
 	return res;
 };
 
+jvxErrorType
+CjvxSingleInputConnector::read_connect_parameters_icon(jvxConnectionParams* str)
+{
+	if (str)
+	{
+		jvx_neutralDataLinkDescriptor_params(*str);
+		if (_common_set_icon.theData_in)
+		{
+			*str = _common_set_icon.theData_in->con_params;
+		}
+	}
+	return JVX_NO_ERROR;
+}
 
 // ===============================================================================================
 // ===============================================================================================

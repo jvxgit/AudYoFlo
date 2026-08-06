@@ -614,7 +614,7 @@ CjvxGenericWrapperDevice::reconfigured_receiver_to_sender(jvxLinkDataDescriptor*
 
 
 jvxErrorType
-CjvxGenericWrapperDevice::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)
+CjvxGenericWrapperDevice::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize i,j,k;
@@ -831,7 +831,7 @@ CjvxGenericWrapperDevice::prepare_complete_receiver_to_sender(jvxLinkDataDescrip
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
+CjvxGenericWrapperDevice::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i, j, k;
 	jvxSize idxChanInProc = 0;
@@ -1321,7 +1321,7 @@ CjvxGenericWrapperDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	{
 		assert(0);
 		// In case the prepare_sender_to_receiver was not called before, do it here manually (e.g. pure file io)
-		this->prepare_complete_receiver_to_sender(NULL);
+		this->prepare_complete_receiver_to_sender(NULL JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		processingControl.inProc.fieldsLinkedOutput = true;
 	}
 
@@ -1388,7 +1388,7 @@ CjvxGenericWrapperDevice::postprocess_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(
 		{
 			assert(0);
 			// If data link functions have not been called, do it manually
-			this->postprocess_sender_to_receiver(NULL);
+			this->postprocess_sender_to_receiver(NULL JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 			processingControl.inProc.fieldsLinkedInput = false;
 		}		
 	}
@@ -1516,7 +1516,7 @@ CjvxGenericWrapperDevice::prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)
 	}
 
 	// Cross link the output buffers and complete output side
-	this->prepare_complete_receiver_to_sender(_common_set_icon.theData_in);
+	this->prepare_complete_receiver_to_sender(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	assert(res == JVX_NO_ERROR);
 
 	// Cross copy to receiver_to_sender side
@@ -1550,7 +1550,7 @@ CjvxGenericWrapperDevice::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(
 	jvx_cinitDataLinkDescriptor(_common_set_icon.theData_in);
 
 	// This function will forward the postprocess.. call to the concatenated blocks 
-	res = this->postprocess_sender_to_receiver(_common_set_icon.theData_in);
+	res = this->postprocess_sender_to_receiver(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 	assert(res == JVX_NO_ERROR);
 
 	// Handle pipeline control struct

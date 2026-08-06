@@ -64,7 +64,7 @@ public:
 		std::cout << __FUNCTION__ << "::" << __FILE__ << ": " << __LINE__ << ": Input Number buffers = " << _common_set_icon.theData_in->con_data.number_buffers << std::endl;
 #endif
 
-		res = _common_set_ldslave.data_processor->prepare_sender_to_receiver(_common_set_icon.theData_in);
+		res = _common_set_ldslave.data_processor->prepare_sender_to_receiver(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 #else
 
 		res = jvx_allocate_pipeline_and_buffers_prepare_to(_common_set_icon.theData_in
@@ -126,7 +126,7 @@ public:
 				// Now, create forwarding of backward oriented user hints
 				_common_set_icon.theData_in->con_compat.user_hints = _common_set_ocon.theData_out.con_compat.user_hints;
 
-				res = _common_set_ldslave.data_processor->prepare_complete_receiver_to_sender(_common_set_icon.theData_in);
+				res = _common_set_ldslave.data_processor->prepare_complete_receiver_to_sender(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 				if (res != JVX_NO_ERROR)
 				{
 					goto exit_error_1;
@@ -154,7 +154,7 @@ public:
 
 	exit_error_0:
 
-		resF = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_icon.theData_in);
+		resF = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb_loc));
 		jvx_neutralDataLinkDescriptor(&_common_set_ocon.theData_out, true);
 
 
@@ -178,7 +178,7 @@ public:
 		assert(_common_set_min.theState >= JVX_STATE_PREPARED);
 
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_BACKWARD_API
-		res = _common_set_ldslave.data_processor->before_postprocess_receiver_to_sender(_common_set_icon.theData_in);
+		res = _common_set_ldslave.data_processor->before_postprocess_receiver_to_sender(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		assert(res == JVX_NO_ERROR);
 
 		_common_set_icon.theData_in->con_compat.user_hints = NULL;
@@ -202,7 +202,7 @@ public:
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_BACKWARD_API
 
 		// Deallocate buffers in theData_in
-		res = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_icon.theData_in);
+		res = _common_set_ldslave.data_processor->postprocess_sender_to_receiver(_common_set_icon.theData_in JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 #else
 
@@ -258,6 +258,29 @@ public:
 		jvxApiString* lContext) override
 	{
 		return _reference_component(cpTp, modName, description, lContext);
+	}
+
+	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str)
+	{
+		if (str)
+		{
+			jvx_neutralDataLinkDescriptor_params(*str);
+			if (_common_set_icon.theData_in)
+			{
+				*str = _common_set_icon.theData_in->con_params;
+			}
+		}
+		return JVX_NO_ERROR;
+	}
+
+	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str)
+	{
+		if (str)
+		{
+			jvx_neutralDataLinkDescriptor_params(*str);
+			*str = _common_set_ocon.theData_out.con_params;
+		}
+		return JVX_NO_ERROR;
 	}
 
 #ifdef JVX_INPUTOUTPUT_CONNECTOR_UNDEFINE_OBJECT_REFERENCE

@@ -108,6 +108,9 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION read_connect_parameters_icon(jvxConnectionParams* str) = 0;
+
 };
 
 // =============================================================================
@@ -172,6 +175,8 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_trigger_itcon(IjvxTriggerInputConnector** itcon) = 0;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_trigger_itcon(IjvxTriggerInputConnector* itcon) = 0;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION read_connect_parameters_ocon(jvxConnectionParams* str) = 0;
 
 };
 	

@@ -525,7 +525,7 @@ JVX_PROCESSINGNODE_CLASSNAME::reference_object(IjvxObject** refObject)
 };
 
 jvxErrorType
-JVX_PROCESSINGNODE_CLASSNAME::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
+JVX_PROCESSINGNODE_CLASSNAME::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
@@ -557,7 +557,7 @@ JVX_PROCESSINGNODE_CLASSNAME::prepare_sender_to_receiver(jvxLinkDataDescriptor* 
 };
 
 jvxErrorType
-JVX_PROCESSINGNODE_CLASSNAME::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)
+JVX_PROCESSINGNODE_CLASSNAME::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
@@ -623,7 +623,7 @@ JVX_PROCESSINGNODE_CLASSNAME::last_error_process(char* fld_text, jvxSize fldSize
 };
 
 jvxErrorType
-JVX_PROCESSINGNODE_CLASSNAME::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData)
+JVX_PROCESSINGNODE_CLASSNAME::postprocess_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_ERROR_WRONG_STATE;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)
@@ -639,7 +639,7 @@ JVX_PROCESSINGNODE_CLASSNAME::postprocess_sender_to_receiver(jvxLinkDataDescript
 };
 
 jvxErrorType
-JVX_PROCESSINGNODE_CLASSNAME::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData)
+JVX_PROCESSINGNODE_CLASSNAME::before_postprocess_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if(_common_set_min.theState == JVX_STATE_PREPARED)

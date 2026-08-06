@@ -85,6 +85,7 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon)override;
 	jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
 	// jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
+	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str) override;
 };
 
 // ==========================================================
@@ -145,6 +146,7 @@ public:
 	jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override;
 	jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* itcon) override;
 
+	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str) override;
 
 };
 #endif

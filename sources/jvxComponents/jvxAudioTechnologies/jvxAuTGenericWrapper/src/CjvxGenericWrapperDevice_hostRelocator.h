@@ -274,6 +274,28 @@ public:
 		return JVX_ERROR_UNSUPPORTED;
 	}
 
+	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str)
+	{
+		if (str)
+		{
+			jvx_neutralDataLinkDescriptor_params(*str);
+			if (_common_set_icon.theData_in)
+			{
+				*str = _common_set_icon.theData_in->con_params;
+			}
+		}
+		return JVX_NO_ERROR;
+	}
+
+	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str)
+	{
+		if (str)
+		{
+			jvx_neutralDataLinkDescriptor_params(*str);
+			*str = _common_set_ocon.theData_out.con_params;
+		}
+		return JVX_NO_ERROR;
+	}
 
 	// =========================================================
 	virtual jvxErrorType JVX_CALLINGCONVENTION request_hidden_interface(jvxInterfaceType, jvxHandle**)override;

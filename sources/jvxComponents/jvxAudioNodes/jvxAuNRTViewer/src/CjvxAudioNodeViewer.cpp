@@ -53,10 +53,10 @@ CjvxAudioNodeViewer::deactivate()
 };
 
 jvxErrorType
-CjvxAudioNodeViewer::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
+CjvxAudioNodeViewer::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i;
-	jvxErrorType res = CjvxAudioNode::prepare_sender_to_receiver(theData);
+	jvxErrorType res = CjvxAudioNode::prepare_sender_to_receiver(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	if(res == JVX_NO_ERROR)
 	{
@@ -106,10 +106,10 @@ CjvxAudioNodeViewer::prepare_sender_to_receiver(jvxLinkDataDescriptor* theData)
 };
 
 jvxErrorType
-CjvxAudioNodeViewer::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData)
+CjvxAudioNodeViewer::prepare_complete_receiver_to_sender(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxSize i;
-	jvxErrorType res = CjvxAudioNode::prepare_complete_receiver_to_sender(theData);
+	jvxErrorType res = CjvxAudioNode::prepare_complete_receiver_to_sender(theData JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 
 	if(res == JVX_NO_ERROR)
 	{
