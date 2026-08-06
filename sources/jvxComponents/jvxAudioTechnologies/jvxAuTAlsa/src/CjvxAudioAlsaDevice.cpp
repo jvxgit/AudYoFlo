@@ -586,7 +586,7 @@ CjvxAudioAlsaDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
     res = prepareAlsa();
     if(res != JVX_NO_ERROR)
     {
-	_postprocess_chain_master(NULL);
+	_postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
 	goto leave_error;
     }
 
