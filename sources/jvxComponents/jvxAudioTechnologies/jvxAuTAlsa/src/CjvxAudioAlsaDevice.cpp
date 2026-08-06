@@ -636,7 +636,7 @@ CjvxAudioAlsaDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	res = startAlsa();
 	if (res != JVX_NO_ERROR)
 	{
-	    _stop_chain_master(NULL);
+	    _stop_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
 	    goto leave_error;
 	}
 	genAlsa_device::properties_active_higher.loadpercent.value = 0;
@@ -661,7 +661,7 @@ CjvxAudioAlsaDevice::stop_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
     res = theLogger.stop_processing();
 #endif
 
-	res = _stop_chain_master(NULL);
+	res = _stop_chain_master(JVX_CONNECTION_FEEDBACK_CALL_NULL);
 	assert(res == JVX_NO_ERROR);
 
 	return res;
