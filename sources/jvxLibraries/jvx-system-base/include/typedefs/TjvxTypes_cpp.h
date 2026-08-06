@@ -448,6 +448,13 @@ struct jvxConnectionStatus
 	jvxErrorType latest_test = JVX_ERROR_NOT_READY;	
 	jvxErrorType latest_prepare = JVX_ERROR_NOT_READY;
 	jvxApiString latest_mess_hint;
+
+	void reset()
+	{
+		latest_test = JVX_ERROR_NOT_READY;
+		latest_prepare = JVX_ERROR_NOT_READY;
+		latest_mess_hint.clear();
+	}
 };
 
 /**

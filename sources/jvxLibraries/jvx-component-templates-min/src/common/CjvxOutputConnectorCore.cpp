@@ -236,6 +236,16 @@ CjvxOutputConnectorCore::_transfer_forward_ocon(jvxLinkDataTransferType tp, jvxH
 
 	switch (tp)
 	{
+	case JVX_LINKDATA_TRANSFER_RESET_STATUS:
+
+		// This one moves forward toreset the current status - such that we can get a feedback on the latest operation
+		_common_set_ocon.theData_out.con_params.stat.reset();
+		if (_common_set_ocon.theData_out.con_link.connect_to)
+		{
+			return _common_set_ocon.theData_out.con_link.connect_to->transfer_forward_icon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+		}
+		break;
+
 	case JVX_LINKDATA_TRANSFER_COLLECT_LINK_STRING:
 
 		if (!str)

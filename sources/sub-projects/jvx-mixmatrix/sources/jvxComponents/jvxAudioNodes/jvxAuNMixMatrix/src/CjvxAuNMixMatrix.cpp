@@ -168,6 +168,9 @@ CjvxAuNMixMatrix::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))
 	{
 		update_interfaces();
 	}
+	
+	JVX_SET_TEST_RESULT_POS_OCON;	
+
 	return res;
 }
 

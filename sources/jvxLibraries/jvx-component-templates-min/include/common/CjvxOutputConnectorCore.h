@@ -102,4 +102,10 @@ public:
 
 };
 
+// Some simplification macros - you have to use them, however
+#define JVX_SET_TEST_RESULT_POS_OCON _common_set_ocon.theData_out.con_params.stat.latest_test = JVX_NO_ERROR
+#define JVX_SET_TEST_RESULT_NEG_OCON(res, txt) \
+	_common_set_ocon.theData_out.con_params.stat.latest_mess_hint = txt; \
+	_common_set_ocon.theData_out.con_params.stat.latest_test = res;
+
 #endif

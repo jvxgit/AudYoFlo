@@ -135,6 +135,9 @@ CjvxDataConnectionsProcess::test_chain(jvxBool storeProtocol JVX_CONNECTION_FEED
 			_common_set_conn_proc.fdb->clear();
 			set_name_unique_descriptor(_common_set_conn_proc.fdb);
 #endif
+			// Reset the status to a state before the actual test
+			res = _common_set_conn_proc.associated_master->transfer_chain_forward_master(JVX_LINKDATA_TRANSFER_RESET_STATUS, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+
 			res = _common_set_conn_proc.associated_master->test_chain_master(JVX_CONNECTION_FEEDBACK_CALL(_common_set_conn_proc.fdb));
 		}
 		else
@@ -722,6 +725,10 @@ CjvxDataConnectionsProcess::prepare_chain(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		std::cout << "++ preparing master " << std::flush;
 		std::cout << JVX_DISPLAY_MASTER(static_cast<IjvxConnectionMaster*>(_common_set_conn_comm.associated_master)) << std::endl;
 #endif			
+		// Reset the status to a state before the actual test
+		res = _common_set_conn_proc.associated_master->transfer_chain_forward_master(JVX_LINKDATA_TRANSFER_RESET_STATUS, nullptr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+
+		// Run the actual prepare function
 		res = _common_set_conn_proc.associated_master->prepare_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 		if (res == JVX_NO_ERROR)
 		{

@@ -55,6 +55,7 @@ typedef enum
 	 *///=====================================================================================================================
 	JVX_LINKDATA_TRANSFER_REQUEST_THREAD_INIT_PRERUN, /* No parameter, indicates that we may init parts in the processing loop */
 	JVX_LINKDATA_TRANSFER_REQUEST_THREAD_TERM_POSTRUN, /* No parameter, indicates that we may term parts in the processing loop */
+	JVX_LINKDATA_TRANSFER_RESET_STATUS, /* No other argument */
 	JVX_LINKDATA_TRANSFER_LIMIT
 } jvxLinkDataTransferType;
 
