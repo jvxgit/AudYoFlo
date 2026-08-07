@@ -131,3 +131,6 @@ sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.11
 sources/jvxLibraries/third_party/git/kissfft
 
 sources/jvxLibraries/third_party/web/boost/boost
+
+build
+.cache

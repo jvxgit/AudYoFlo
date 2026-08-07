@@ -817,6 +817,11 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
       ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-mex-tinyhost/cmake/octave)
   endif()
 
+  if(JVX_USE_PYTHON)
+    set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
+      ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/ayf-pybind-connect/cmake)
+  endif()
+
   include(${JVX_CMAKE_DIR}/fragments/thrdparty.cmake)
 
   ###
@@ -1259,6 +1264,7 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
     set(JVX_BASE_PYTHON_PROJECTS ${JVX_BASE_PYTHON_PROJECTS}
       sources/python/jvx-dsp-python
       sources/python/jvx-helper-python
+      sources/jvxLibraries/ayf-pybind-connect/pytest
     )
 	
 	set(AYF_PYTHON_PACKAGES_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/python")
