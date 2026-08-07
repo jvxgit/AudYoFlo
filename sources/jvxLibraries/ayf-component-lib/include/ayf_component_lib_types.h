@@ -68,6 +68,8 @@ struct ayfInitParamStruct
 	paramStr.bSize = -1; \
 	paramStr.sRate = -1; \
 	paramStr.format = JVX_DATAFORMAT_NONE; \
+	paramStr.passthroughMode = -1; \
+	paramStr.lastError = JVX_ERROR_NOT_READY; \
 	paramStr.ilTp = AYF_BUFFERS_INVALID;
 
 #endif
