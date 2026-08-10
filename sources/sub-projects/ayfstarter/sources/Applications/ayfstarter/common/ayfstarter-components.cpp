@@ -150,7 +150,12 @@ const jvxModuleOnStart componentsOnLoad_automation[] =
 			if (props)
 			{
 				jvxCallManagerProperties callGate;
-				jvxCBool flag = 1;
+
+				// This option select the involved technology - which is 
+				// 1: ASIO in Windows
+				// 0: Wasapi in Windows
+				jvxCBool flag = 0;
+
 				jvxErrorType res = props->set_property(callGate, jPRFCBOOL(flag), jPAD("/audio/primary_audio_tech_lowlevel"));
 				retInterfaceObj<IjvxProperties>(obj, props);
 			}

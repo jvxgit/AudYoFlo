@@ -295,6 +295,140 @@ jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 		comboBox_processes->addItem(elmP.second.description.c_str());;
 	}
 	comboBox_processes->setCurrentIndex((int)selProcess + 2);
+
+	update_connectors_view();
+}
+
+void
+jvx_property_tree_widget::update_connectors_view()
+{
+	jvxSize i, j;
+	jvxSize numCF = 0;
+	jvxSize numIC = 0;
+	jvxSize numOC = 0;
+
+	treeWidget_connectors->clear();
+
+	if (!theHostRef || !propRefSelect)
+	{
+		return;
+	}
+
+	auto elmSel = mapAllPropsStore.find(propRefSelect);
+	if (elmSel == mapAllPropsStore.end())
+	{
+		return;
+	}
+	jvxComponentIdentification cpIdSel = elmSel->second.cpId;
+
+	IjvxDataConnections* dataConn = reqInterface<IjvxDataConnections>(theHostRef);
+	if (!dataConn)
+	{
+		return;
+	}
+
+	dataConn->number_connection_factories(&numCF);
+	for (i = 0; i < numCF; i++)
+	{
+		IjvxConnectorFactory* theFac = NULL;
+		jvxSize uId = JVX_SIZE_UNSELECTED;
+		dataConn->reference_connection_factory(i, &theFac, &uId);
+		if (!theFac)
+		{
+			continue;
+		}
+
+		jvxComponentIdentification tpId;
+		jvx_request_interfaceToObject(theFac, NULL, &tpId, NULL);
+
+		if (tpId == cpIdSel)
+		{
+			theFac->number_input_connectors(&numIC);
+			for (j = 0; j < numIC; j++)
+			{
+				IjvxInputConnectorSelect* icS = NULL;
+				theFac->reference_input_connector(j, &icS);
+				if (icS)
+				{
+					IjvxInputConnector* ic = icS->reference_icon();
+					if (ic)
+					{
+						jvxApiString descr;
+						ic->descriptor_connector(&descr);
+
+						QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
+						it->setText(0, ("Input Connector #" + jvx_size2String(j)).c_str());
+						it->setText(1, descr.c_str());
+
+						jvxConnectionParams params;
+						if (ic->read_connect_parameters_icon(&params) == JVX_NO_ERROR)
+						{
+							std::string txtP =
+								"Buffersize: " + jvx_size2String(params.buffersize) +
+								", Rate: " + jvx_size2String(params.rate) +
+								", Channels: " + jvx_size2String(params.number_channels) +
+								", Format: " + jvxDataFormat_txt(params.format) +
+								", Group: " + jvxDataFormatGroup_txt(params.format_group) +
+								", Dataflow: " + jvxDataflow_txt(params.data_flow);
+							it->setText(2, txtP.c_str());
+						}
+						else
+						{
+							it->setText(2, "n/a");
+						}
+					}
+					theFac->return_reference_input_connector(icS);
+				}
+			}
+
+			theFac->number_output_connectors(&numOC);
+			for (j = 0; j < numOC; j++)
+			{
+				IjvxOutputConnectorSelect* ocS = NULL;
+				theFac->reference_output_connector(j, &ocS);
+				if (ocS)
+				{
+					IjvxOutputConnector* oc = ocS->reference_ocon();
+					if (oc)
+					{
+						jvxApiString descr;
+						oc->descriptor_connector(&descr);
+
+						QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
+						it->setText(0, ("Output Connector #" + jvx_size2String(j)).c_str());
+						it->setText(1, descr.c_str());
+
+						jvxConnectionParams params;
+						if (oc->read_connect_parameters_ocon(&params) == JVX_NO_ERROR)
+						{
+							std::string txtP =
+								"Buffersize: " + jvx_size2String(params.buffersize) +
+								", Rate: " + jvx_size2String(params.rate) +
+								", Channels: " + jvx_size2String(params.number_channels) +
+								", Format: " + jvxDataFormat_txt(params.format) +
+								", Group: " + jvxDataFormatGroup_txt(params.format_group) +
+								", Dataflow: " + jvxDataflow_txt(params.data_flow);
+							it->setText(2, txtP.c_str());
+						}
+						else
+						{
+							it->setText(2, "n/a");
+						}
+					}
+					theFac->return_reference_output_connector(ocS);
+				}
+			}
+		}
+		dataConn->return_reference_connection_factory(theFac);
+	}
+
+	retInterface<IjvxDataConnections>(theHostRef, dataConn);
+
+	jvxSize cnt = treeWidget_connectors->columnCount();
+	for (i = 0; i < cnt; i++)
+	{
+		treeWidget_connectors->resizeColumnToContents(i);
+	}
 }
 
 void

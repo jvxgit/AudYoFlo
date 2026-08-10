@@ -112,6 +112,7 @@ private:
 	void setup_column_expressions_active(const std::string& expr);
 
 	void update_window_core(jvxCBitField prio);
+	void update_connectors_view();
 
 	void fillProcessRecursively(oneProcess& theProc, IjvxConnectionIterator* it);
 public slots:

@@ -13,7 +13,117 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0,0,0,0,0,0,0,0,0,0">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0">
+   <item row="1" column="0">
+    <widget class="QFrame" name="frame_4">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="10,1">
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
+      </property>
+      <item>
+       <widget class="QTreeWidget" name="treeWidget_props">
+        <property name="accessibleDescription">
+         <string>jvx_properties</string>
+        </property>
+        <attribute name="headerMinimumSectionSize">
+         <number>200</number>
+        </attribute>
+        <attribute name="headerDefaultSectionSize">
+         <number>300</number>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Property</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Current Value</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>RT Update</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Property Group ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Offset</string>
+         </property>
+        </column>
+        <item>
+         <property name="text">
+          <string>PLACEHOLDER_PROP_NAME</string>
+         </property>
+         <property name="text">
+          <string>PLACEHOLDER_PROP_TAG:/*:VERBOSE=no</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTreeWidget" name="treeWidget_connectors">
+        <property name="accessibleDescription">
+         <string>jvx_connector_parameters</string>
+        </property>
+        <attribute name="headerMinimumSectionSize">
+         <number>200</number>
+        </attribute>
+        <attribute name="headerDefaultSectionSize">
+         <number>300</number>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Connector</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Description</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Connection Parameters</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QFrame" name="frame_3">
      <property name="minimumSize">
@@ -204,58 +314,6 @@
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QTreeWidget" name="treeWidget_props">
-     <property name="accessibleDescription">
-      <string>jvx_properties</string>
-     </property>
-     <attribute name="headerMinimumSectionSize">
-      <number>200</number>
-     </attribute>
-     <attribute name="headerDefaultSectionSize">
-      <number>300</number>
-     </attribute>
-     <column>
-      <property name="text">
-       <string>Property</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Current Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>RT Update</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Property Group ID</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Offset</string>
-      </property>
-     </column>
-     <item>
-      <property name="text">
-       <string>PLACEHOLDER_PROP_NAME</string>
-      </property>
-      <property name="text">
-       <string>PLACEHOLDER_PROP_TAG:/*:VERBOSE=no</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </item>
     </widget>
    </item>
   </layout>
