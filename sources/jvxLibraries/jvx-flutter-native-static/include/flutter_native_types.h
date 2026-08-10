@@ -28,7 +28,8 @@ typedef enum
 	JVX_DELETE_DATATYPE_SELECTION_OPTION = 12,
 	JVX_DELETE_DATATYPE_SS_LIST = 13,
 	JVX_DELETE_DATATYPE_VALUE_IN_RANGE = 14,
-	JVX_DELETE_DATATYPE_UNKNOWN = 15,
+	JVX_DELETE_DATATYPE_CONNECTION_PARAMS = 15,
+	JVX_DELETE_DATATYPE_UNKNOWN = 16,
 	JVX_DELETE_DATATYPE_LIMIT
 } ffiDeleteDatatype;
 
@@ -198,5 +199,18 @@ struct one_property_value_in_range
 	double maxVal;
 };
 
+struct connection_params
+{
+	jvxSize buffersize;
+	jvxSize rate;
+	jvxSize number_channels;
+	int format;
+	int format_group;
+	int data_flow;
+	jvxSize segmentation_x;
+	jvxSize segmentation_y;
+	jvxCBitField64 additional_flags;
+	char* format_spec;
+};
 
 #endif

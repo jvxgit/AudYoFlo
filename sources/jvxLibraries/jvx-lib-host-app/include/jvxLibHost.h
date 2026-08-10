@@ -155,6 +155,15 @@ public:
 	jvxErrorType descriptor_component_system(jvxComponentIdentification cpTp, jvxSize idx, jvxApiString* descror);
 	jvxErrorType description_component_system(jvxComponentIdentification cpTp, jvxSize idx, jvxApiString* description);
 
+	// ======================================================================
+	// Connectors (input/output) of the currently selected component
+	jvxErrorType number_input_connectors_selected_component(jvxComponentIdentification cpTp, jvxSize* num);
+	jvxErrorType number_output_connectors_selected_component(jvxComponentIdentification cpTp, jvxSize* num);
+	jvxErrorType descriptor_input_connector_selected_component(jvxComponentIdentification cpTp, jvxSize idx, jvxApiString* descror);
+	jvxErrorType descriptor_output_connector_selected_component(jvxComponentIdentification cpTp, jvxSize idx, jvxApiString* descror);
+	jvxErrorType connection_params_input_connector_selected_component(jvxComponentIdentification cpTp, jvxSize idx, jvxConnectionParams* params);
+	jvxErrorType connection_params_output_connector_selected_component(jvxComponentIdentification cpTp, jvxSize idx, jvxConnectionParams* params);
+
 	jvxErrorType save_config();
 	
 	jvxErrorType set_operation_flags(bool reportOnSet, bool reportSyncDirect);

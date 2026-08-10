@@ -1409,7 +1409,6 @@ typedef jvxUInt32 = ffi.Uint32;
 typedef jvxInt16 = ffi.Int16;
 typedef jvxUInt16 = ffi.Uint16;
 
-
 sealed class ffiCallbackIds {
   static const JVX_FFI_CALLBACK_ASYNC_REPORT_TEXT = 0;
   static const JVX_FFI_CALLBACK_SYNC_REPORT_INTERNALS_CHANGED = 1;
@@ -1433,8 +1432,9 @@ sealed class ffiDeleteDatatype {
   static const JVX_DELETE_DATATYPE_SELECTION_OPTION = 12;
   static const JVX_DELETE_DATATYPE_SS_LIST = 13;
   static const JVX_DELETE_DATATYPE_VALUE_IN_RANGE = 14;
-  static const JVX_DELETE_DATATYPE_UNKNOWN = 15;
-  static const JVX_DELETE_DATATYPE_LIMIT = 16;
+  static const JVX_DELETE_DATATYPE_CONNECTION_PARAMS = 15;
+  static const JVX_DELETE_DATATYPE_UNKNOWN = 16;
+  static const JVX_DELETE_DATATYPE_LIMIT = 17;
 }
 
 final class one_property_min extends ffi.Struct {
@@ -1686,4 +1686,35 @@ final class one_property_value_in_range extends ffi.Struct {
 
   @ffi.Double()
   external double maxVal;
+}
+
+final class connection_params extends ffi.Struct {
+  @jvxSize()
+  external int buffersize;
+
+  @jvxSize()
+  external int rate;
+
+  @jvxSize()
+  external int number_channels;
+
+  @ffi.Int()
+  external int format;
+
+  @ffi.Int()
+  external int format_group;
+
+  @ffi.Int()
+  external int data_flow;
+
+  @jvxSize()
+  external int segmentation_x;
+
+  @jvxSize()
+  external int segmentation_y;
+
+  @jvxCBitField64()
+  external int additional_flags;
+
+  external ffi.Pointer<ffi.Char> format_spec;
 }

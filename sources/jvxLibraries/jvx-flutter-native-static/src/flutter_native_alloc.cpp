@@ -269,6 +269,10 @@ int ffi_host_delete(void* ptr, int tpint)
 			JVX_SAFE_DELETE_OBJ_CVRT(ptr, struct one_property_value_in_range*);
 			res = JVX_NO_ERROR;
 			break;
+		case JVX_DELETE_DATATYPE_CONNECTION_PARAMS:
+			JVX_SAFE_DELETE_OBJ_CVRT(ptr, struct connection_params*);
+			res = JVX_NO_ERROR;
+			break;
 		default:
 
 			assert(0);
@@ -414,6 +418,26 @@ void ffi_host_allocate_component_ident(struct component_ident** ptrRet, const jv
 		ptr->slotid = cpId.slotid;
 		ptr->slotsubid = cpId.slotsubid;
 		ptr->uId = cpId.uId;
+		*ptrRet = ptr;
+	}
+}
+
+void ffi_host_allocate_connection_params(struct connection_params** ptrRet, const jvxConnectionParams& params)
+{
+	if (ptrRet)
+	{
+		struct connection_params* ptr = nullptr;
+		JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(ptr, struct connection_params);
+		ptr->buffersize = params.buffersize;
+		ptr->rate = params.rate;
+		ptr->number_channels = params.number_channels;
+		ptr->format = (int)params.format;
+		ptr->format_group = (int)params.format_group;
+		ptr->data_flow = (int)params.data_flow;
+		ptr->segmentation_x = params.segmentation.x;
+		ptr->segmentation_y = params.segmentation.y;
+		ptr->additional_flags = params.additional_flags;
+		ffi_host_allocate_char_array(params.format_spec.std_str(), &ptr->format_spec);
 		*ptrRet = ptr;
 	}
 }

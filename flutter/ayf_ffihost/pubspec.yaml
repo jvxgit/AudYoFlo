@@ -18,6 +18,9 @@ dependencies:
   ayf_pack:
     path: '../ayf_pack'
 
+  ayf_pack_native:
+    path: '../ayf_pack_native'
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
