@@ -1143,6 +1143,7 @@ jvx_connections_widget::ui_highlight_dropzone(IjvxDataConnectionProcess* theProc
 						{
 							foundone = true;
 							ft.setBold(true);
+							it->setToolTip(connectionParamsToExpression_ocon(ocon).c_str());
 						}
 						else
 						{
@@ -1171,6 +1172,7 @@ jvx_connections_widget::ui_highlight_dropzone(IjvxDataConnectionProcess* theProc
 						{
 							foundone = true;
 							ft.setBold(true);
+							it->setToolTip(connectionParamsToExpression_icon(icon).c_str());
 						}
 						else
 						{
@@ -1921,5 +1923,41 @@ jvx_connections_widget::connectorToExpression(IjvxCommonConnector* con)
 	jvx_request_interfaceToObject(my_parent, NULL, &tpId, &str);
 	con->descriptor_connector(&descr);
 	txt = descr.std_str() + ":" + jvxComponentIdentification_txt(tpId) + ":" + str.std_str();
+	return txt;
+}
+
+std::string
+jvx_connections_widget::connectionParamsToExpression_ocon(IjvxOutputConnector* ocon)
+{
+	jvxConnectionParams params;
+	std::string txt = "n/a";
+	if (ocon && (ocon->read_connect_parameters_ocon(&params) == JVX_NO_ERROR))
+	{
+		txt =
+			"Buffersize: " + jvx_size2String(params.buffersize) +
+			", Rate: " + jvx_size2String(params.rate) +
+			", Channels: " + jvx_size2String(params.number_channels) +
+			", Format: " + jvxDataFormat_txt(params.format) +
+			", Group: " + jvxDataFormatGroup_txt(params.format_group) +
+			", Dataflow: " + jvxDataflow_txt(params.data_flow);
+	}
+	return txt;
+}
+
+std::string
+jvx_connections_widget::connectionParamsToExpression_icon(IjvxInputConnector* icon)
+{
+	jvxConnectionParams params;
+	std::string txt = "n/a";
+	if (icon && (icon->read_connect_parameters_icon(&params) == JVX_NO_ERROR))
+	{
+		txt =
+			"Buffersize: " + jvx_size2String(params.buffersize) +
+			", Rate: " + jvx_size2String(params.rate) +
+			", Channels: " + jvx_size2String(params.number_channels) +
+			", Format: " + jvxDataFormat_txt(params.format) +
+			", Group: " + jvxDataFormatGroup_txt(params.format_group) +
+			", Dataflow: " + jvxDataflow_txt(params.data_flow);
+	}
 	return txt;
 }

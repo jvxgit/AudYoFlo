@@ -133,6 +133,8 @@ public:
 	void show_status_test_chain(jvxSize id);
 
 	std::string connectorToExpression(IjvxCommonConnector* con);
+	std::string connectionParamsToExpression_ocon(IjvxOutputConnector* ocon);
+	std::string connectionParamsToExpression_icon(IjvxInputConnector* icon);
 
 public slots:
 
