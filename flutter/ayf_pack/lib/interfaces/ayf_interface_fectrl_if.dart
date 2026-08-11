@@ -117,5 +117,18 @@ abstract class AudYoFloBackendCacheFectrlIf {
   Future<int> triggerUpdateComponentList(JvxComponentIdentification cpId);
 
   // =========================================================================
+
+  // Function to receive the input/output connectors and their current
+  // connection (processing) parameters from cache. Returns null if not yet
+  // loaded; call triggerUpdateConnectionParamsComponent to load it.
+  AudYoFloConnectionParamsCache? referenceConnectionParamsInCache(
+      JvxComponentIdentification cpId);
+
+  // Function to trigger a refresh of the connector connection parameters in
+  // cache.
+  Future<int> triggerUpdateConnectionParamsComponent(
+      JvxComponentIdentification cpId);
+
+  // =========================================================================
   Future<int> triggerSaveConfig();
 }

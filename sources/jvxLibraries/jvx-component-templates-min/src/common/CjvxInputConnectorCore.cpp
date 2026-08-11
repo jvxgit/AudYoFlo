@@ -482,3 +482,21 @@ CjvxInputConnectorCore::deallocate_pipeline_and_buffers_postprocess_to_zerocopy(
 {
 	return jvx_deallocate_pipeline_and_buffers_postprocess_to_zerocopy(_common_set_icon.theData_in);
 }
+
+jvxSize CjvxInputConnectorCore::_number_connected_icon() 
+{
+	jvxSize nn = 0;
+	return nn;
+}
+
+IjvxInputConnector* 
+CjvxInputConnectorCore::_reference_connected_icon(jvxSize idx)
+{
+	return _common_set_icon.icon;
+}
+
+jvxErrorType 
+CjvxInputConnectorCore::_return_connected_icon(IjvxInputConnector* icon)
+{
+	return JVX_NO_ERROR;
+}

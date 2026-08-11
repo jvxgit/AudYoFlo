@@ -456,8 +456,45 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         if (dbgOut) {
           theDebugModel?.addLineOut('Tested chain with uid ${uId}');
         }
+        // Note: by the time this arrives, the test has already run natively
+        // (ffi_host_request_command_fwd runs before processAsyncCommand for
+        // every request-command callback). However, this event fires on
+        // both success AND failure - we don't invalidate the connector
+        // cache here to avoid a pointless refetch on a failed test. See
+        // JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS below, which only
+        // fires on success.
         theBeAdapter.requestUpdateProcessStatus();
         break;
+
+      case jvxReportCommandRequestEnum
+            .JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS:
+        uId = decodeUId(natLib!, load_fld);
+        if (dbgOut) {
+          theDebugModel
+              ?.addLineOut('Test chain with uid ${uId} was successful');
+        }
+        // TEMP DEBUG: mark the reception of the TEST_SUCCESS event that
+        // triggers the connector cache invalidation below.
+        debugPrint('[connParams] JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS '
+            'received for process uid=$uId');
+
+        // Only now is it guaranteed that the chain test ran successfully and
+        // the negotiated connection parameters on any connector of the
+        // involved components are final - discard the cached values so they
+        // are read out anew on next access.
+        theBeAdapter.invalidateConnectionParamsForProcess(uId);
+        break;
+
+      case jvxReportCommandRequestEnum.JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN:
+uId = decodeUId(natLib!, load_fld);
+        if (dbgOut) {
+          theDebugModel?.addLineOut('Test chain with uid ${uId} was successful');
+        }
+        // TEMP DEBUG: mark the reception of the TEST_CHAIN event that
+        // triggers the connector cache invalidation below.
+        debugPrint('[connParams] JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN '
+            'received for process uid=$uId');
+            break;
 
       case jvxReportCommandRequestEnum
             .JVX_REPORT_COMMAND_REQUEST_REPORT_COMPONENT_STATESWITCH:

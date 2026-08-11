@@ -1187,6 +1187,13 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
   }
 
   @override
+  Future<int> triggerUpdateConnectionParams(
+      JvxComponentIdentification cpId) async {
+    // Not yet implemented for the web backend.
+    return jvxErrorType.JVX_ERROR_UNSUPPORTED;
+  }
+
+  @override
   Future<int> triggerUpdateComponentList(
       JvxComponentIdentification cpId, bool isDevice) async {
     // The update property list in cache is typically executed with a delay

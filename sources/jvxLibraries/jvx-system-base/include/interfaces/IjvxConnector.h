@@ -53,6 +53,12 @@ public:
 		IjvxInputConnector* replace_connector = NULL) = 0;
 
 	virtual IjvxInputConnector* reference_icon() = 0;
+
+	/*
+	virtual jvxSize number_connected_icon() = 0;
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx) = 0;
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector*) = 0;
+	*/
 };
 
 JVX_INTERFACE IjvxInputConnector : public IjvxInputConnectorSelect
@@ -134,6 +140,12 @@ public:
 		IjvxOutputConnector* replace_connector = NULL) = 0;
 
 	virtual IjvxOutputConnector* reference_ocon() = 0;
+
+	/*
+	virtual jvxSize number_connected_ocon() = 0;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx) = 0;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector*) = 0;
+	*/
 };
 
 JVX_INTERFACE IjvxOutputConnector: public IjvxOutputConnectorSelect

@@ -956,6 +956,88 @@ abstract class AudYoFloBackendCache
     return retVal;
   }
 
+  // ======================================================================
+  // Connector connection parameters (input/output connectors)
+  // ======================================================================
+
+  @override
+  AudYoFloConnectionParamsCache? referenceConnectionParamsInCache(
+      JvxComponentIdentification cpId) {
+    AudYoFloConnectionParamsCache? retVal;
+    AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
+    if (actComponent != null) {
+      if (actComponent.connectionParamsCache.valid) {
+        retVal = actComponent.connectionParamsCache;
+      }
+    }
+    return retVal;
+  }
+
+  @override
+  Future<int> triggerUpdateConnectionParamsComponent(
+      JvxComponentIdentification cpId) async {
+    int errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
+    if (backendAdapterIf == null) {
+      errCode = jvxErrorType.JVX_ERROR_NOT_READY;
+    } else {
+      errCode = await backendAdapterIf!.triggerUpdateConnectionParams(cpId);
+    }
+    return errCode;
+  }
+
+  @override
+  int updateConnectionParamsCacheCompleteNotify(
+      JvxComponentIdentification cpId,
+      List<AudYoFloOneConnectorEntry> inputConnectors,
+      List<AudYoFloOneConnectorEntry> outputConnectors) {
+    int errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
+    AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
+    if (actComponent != null) {
+      errCode = jvxErrorType.JVX_NO_ERROR;
+      actComponent.connectionParamsCache.inputConnectors = inputConnectors;
+      actComponent.connectionParamsCache.outputConnectors = outputConnectors;
+      actComponent.connectionParamsCache.valid = true;
+      actComponent.connectionParamsCache.ssUpdateId++;
+
+      // TEMP DEBUG: confirm the cache was actually written for this
+      // component, and with how many connectors.
+      debugPrint('[connParams] cache updated for <${cpId.txt}>: '
+          '${inputConnectors.length} input, ${outputConnectors.length} output '
+          '(ssUpdateId=${actComponent.connectionParamsCache.ssUpdateId})');
+
+      triggerNotify();
+    }
+    return errCode;
+  }
+
+  @override
+  void invalidateConnectionParamsComponent(JvxComponentIdentification cpId) {
+    AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
+    if (actComponent != null) {
+      actComponent.connectionParamsCache.invalidate();
+
+      // TEMP DEBUG: confirm which component's connector cache was just
+      // invalidated.
+      debugPrint('[connParams] invalidated cache for <${cpId.txt}>');
+    }
+  }
+
+  @override
+  void invalidateConnectionParamsForProcess(int processUId) {
+    List<JvxComponentIdentification> cpIds = findComponentsMatchProcess(
+        processUId,
+        processIdLinearAddress: false);
+
+    // TEMP DEBUG: show which process triggered this and which components
+    // were found to belong to it.
+    debugPrint('[connParams] process <$processUId> tested, invalidating '
+        '${cpIds.length} component(s): ${cpIds.map((e) => e.txt).join(', ')}');
+
+    for (var cpId in cpIds) {
+      invalidateConnectionParamsComponent(cpId);
+    }
+  }
+
   // Return a selection list from cache. If none exists return an empty list
   @override
   List<AudYoFloOneComponentSelectionOption>? referenceComponentListInCache(

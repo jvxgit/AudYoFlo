@@ -1097,6 +1097,138 @@ class AudioYoFloNative {
           ffi.Pointer<ss_list> Function(
               ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>)>();
 
+  int ffi_component_number_input_connectors(
+    ffi.Pointer<ffi.Void> opaque_hdl,
+    ffi.Pointer<component_ident> address,
+  ) {
+    return _ffi_component_number_input_connectors(
+      opaque_hdl,
+      address,
+    );
+  }
+
+  late final _ffi_component_number_input_connectorsPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Int Function(
+                  ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>)>>(
+      'ffi_component_number_input_connectors');
+  late final _ffi_component_number_input_connectors =
+      _ffi_component_number_input_connectorsPtr.asFunction<
+          int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>)>();
+
+  int ffi_component_number_output_connectors(
+    ffi.Pointer<ffi.Void> opaque_hdl,
+    ffi.Pointer<component_ident> address,
+  ) {
+    return _ffi_component_number_output_connectors(
+      opaque_hdl,
+      address,
+    );
+  }
+
+  late final _ffi_component_number_output_connectorsPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Int Function(
+                  ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>)>>(
+      'ffi_component_number_output_connectors');
+  late final _ffi_component_number_output_connectors =
+      _ffi_component_number_output_connectorsPtr.asFunction<
+          int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>)>();
+
+  ffi.Pointer<ffi.Char> ffi_component_descriptor_input_connector(
+    ffi.Pointer<ffi.Void> opaque_hdl,
+    ffi.Pointer<component_ident> address,
+    int idx,
+  ) {
+    return _ffi_component_descriptor_input_connector(
+      opaque_hdl,
+      address,
+      idx,
+    );
+  }
+
+  late final _ffi_component_descriptor_input_connectorPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<component_ident>,
+              ffi.Int)>>('ffi_component_descriptor_input_connector');
+  late final _ffi_component_descriptor_input_connector =
+      _ffi_component_descriptor_input_connectorPtr.asFunction<
+          ffi.Pointer<ffi.Char> Function(
+              ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>, int)>();
+
+  ffi.Pointer<ffi.Char> ffi_component_descriptor_output_connector(
+    ffi.Pointer<ffi.Void> opaque_hdl,
+    ffi.Pointer<component_ident> address,
+    int idx,
+  ) {
+    return _ffi_component_descriptor_output_connector(
+      opaque_hdl,
+      address,
+      idx,
+    );
+  }
+
+  late final _ffi_component_descriptor_output_connectorPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<component_ident>,
+              ffi.Int)>>('ffi_component_descriptor_output_connector');
+  late final _ffi_component_descriptor_output_connector =
+      _ffi_component_descriptor_output_connectorPtr.asFunction<
+          ffi.Pointer<ffi.Char> Function(
+              ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>, int)>();
+
+  ffi.Pointer<connection_params>
+      ffi_component_connection_params_input_connector(
+    ffi.Pointer<ffi.Void> opaque_hdl,
+    ffi.Pointer<component_ident> address,
+    int idx,
+  ) {
+    return _ffi_component_connection_params_input_connector(
+      opaque_hdl,
+      address,
+      idx,
+    );
+  }
+
+  late final _ffi_component_connection_params_input_connectorPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<connection_params> Function(
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<component_ident>,
+              ffi.Int)>>('ffi_component_connection_params_input_connector');
+  late final _ffi_component_connection_params_input_connector =
+      _ffi_component_connection_params_input_connectorPtr.asFunction<
+          ffi.Pointer<connection_params> Function(
+              ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>, int)>();
+
+  ffi.Pointer<connection_params>
+      ffi_component_connection_params_output_connector(
+    ffi.Pointer<ffi.Void> opaque_hdl,
+    ffi.Pointer<component_ident> address,
+    int idx,
+  ) {
+    return _ffi_component_connection_params_output_connector(
+      opaque_hdl,
+      address,
+      idx,
+    );
+  }
+
+  late final _ffi_component_connection_params_output_connectorPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<connection_params> Function(
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<component_ident>,
+              ffi.Int)>>('ffi_component_connection_params_output_connector');
+  late final _ffi_component_connection_params_output_connector =
+      _ffi_component_connection_params_output_connectorPtr.asFunction<
+          ffi.Pointer<connection_params> Function(
+              ffi.Pointer<ffi.Void>, ffi.Pointer<component_ident>, int)>();
+
   ffi.Pointer<component_ident> ffi_select_component(
     ffi.Pointer<ffi.Void> opaque_hdl,
     int cpTp,

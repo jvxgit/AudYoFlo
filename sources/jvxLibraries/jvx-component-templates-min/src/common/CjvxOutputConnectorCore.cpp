@@ -594,6 +594,22 @@ CjvxOutputConnectorCore::_connected_icon(IjvxInputConnector** ocon)
 	return JVX_NO_ERROR;
 }
 
+jvxSize CjvxOutputConnectorCore::_number_connected_ocon()
+{
+	jvxSize nn = 0;
+	return nn;
+}
 
+IjvxOutputConnector*
+CjvxOutputConnectorCore::_reference_connected_ocon(jvxSize idx)
+{
+	return _common_set_ocon.ocon;
+}
+
+jvxErrorType
+CjvxOutputConnectorCore::_return_connected_ocon(IjvxOutputConnector* icon)
+{
+	return JVX_NO_ERROR;
+}
 
 

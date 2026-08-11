@@ -53,6 +53,8 @@ class AudYoFloOneSelectedComponent {
   int ssThisComponent = 0;
   //jvxAccessProperties_flutter? propRef;
   AudYoFloPropertyCache propertyCache = AudYoFloPropertyCache();
+  AudYoFloConnectionParamsCache connectionParamsCache =
+      AudYoFloConnectionParamsCache();
   //List<AudYoFloOneDevice>? devLst;
 }
 

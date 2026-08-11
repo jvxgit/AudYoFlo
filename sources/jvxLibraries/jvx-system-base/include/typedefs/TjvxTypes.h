@@ -292,6 +292,12 @@ enum class jvxDeviceCapabilityFlagsShift
 	JVX_DEVICE_CAPABILITY_FLAGS_DEFAULT_DEVICE_SHIFT
 };
 
+enum class jvxConnectorSelectType
+{
+	JVX_CONNECTOR_SELECT_CONNECTABLE,
+	JVX_CONNECTOR_SELECTED_CONNECTED
+};
+
 class jvxDeviceCapabilities
 {
 public:

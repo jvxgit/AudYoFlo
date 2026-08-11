@@ -99,6 +99,9 @@ public:
 
 	virtual jvxErrorType _check_common_ocon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) = 0;
 
+	jvxSize _number_connected_ocon();
+	IjvxOutputConnector* _reference_connected_ocon(jvxSize idx);
+	jvxErrorType _return_connected_ocon(IjvxOutputConnector* icon);
 
 };
 

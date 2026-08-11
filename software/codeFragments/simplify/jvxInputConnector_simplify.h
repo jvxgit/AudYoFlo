@@ -315,6 +315,23 @@ virtual IjvxInputConnector* reference_icon() override
 	return this;
 }
 
+/*
+virtual jvxSize number_connected_icon() override
+{
+	return _number_connected_icon();
+}
+
+virtual IjvxInputConnector* reference_connected_icon(jvxSize idx) override
+{
+	return _reference_connected_icon(idx);
+}
+
+virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override
+{
+	return _return_connected_icon(icon);
+}
+*/ 
+
 virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(
 	jvxDataFormatGroup format_group,
 	jvxDataflow data_flow)override

@@ -25,6 +25,9 @@ class _AudYoFloPropertyGridWidgetStates
   ScrollController _myController = ScrollController();
   // int lastIdBackendCache = 0;
   List<AudYoFloPropertyContainer> allProperties = [];
+  // Input/output connectors of the selected component, always appended at
+  // the end of the property grid.
+  List<AudYoFloOneConnectorEntry> allConnectorEntries = [];
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +164,31 @@ class _AudYoFloPropertyGridWidgetStates
                     allProperties = props;
                   }
 
+                  // ====================================================================
+                  // Second part: get the connector connection parameters. This is done
+                  // best-effort - a failure here must not fail the property listing as a
+                  // whole, the connector tiles are simply left empty in that case.
+                  // ====================================================================
+                  AudYoFloConnectionParamsCache? connCache = theDbgModel.be
+                      .referenceConnectionParamsInCache(theDbgModel.idSelectCp);
+                  if (connCache == null) {
+                    int errCodeConn = await theDbgModel.be
+                        .triggerUpdateConnectionParamsComponent(
+                            theDbgModel.idSelectCp);
+                    if (errCodeConn == jvxErrorType.JVX_NO_ERROR) {
+                      connCache = theDbgModel.be.referenceConnectionParamsInCache(
+                          theDbgModel.idSelectCp);
+                    }
+                  }
+                  if (connCache != null) {
+                    allConnectorEntries = [
+                      ...connCache.inputConnectors,
+                      ...connCache.outputConnectors
+                    ];
+                  } else {
+                    allConnectorEntries = [];
+                  }
+
                   return errCode;
                 }
 
@@ -188,13 +216,20 @@ class _AudYoFloPropertyGridWidgetStates
                                       crossAxisSpacing: 20,
                                       mainAxisSpacing: 20),
                               itemBuilder: (context, index) {
-                                return AudYoFloPropertySingleWidget(
-                                  pContentShow: allProperties,
-                                  idProp: index,
-                                  showDescriptor: widget.showDescriptor,
+                                if (index < allProperties.length) {
+                                  return AudYoFloPropertySingleWidget(
+                                    pContentShow: allProperties,
+                                    idProp: index,
+                                    showDescriptor: widget.showDescriptor,
+                                  );
+                                }
+                                return AudYoFloConnectorParamSingleWidget(
+                                  cContentShow: allConnectorEntries,
+                                  idConn: index - allProperties.length,
                                 );
                               },
-                              itemCount: allProperties.length,
+                              itemCount: allProperties.length +
+                                  allConnectorEntries.length,
                               controller: _myController,
                               shrinkWrap: true);
                           //return Container(
@@ -697,6 +732,136 @@ class AudYoFloPropertyDetailView extends StatelessWidget {
                 message: "Property Access Type",
                 child: Container(color: Colors.blue, child: Text(txtAccess))))
       ]),
+    );
+  }
+}
+
+// ============================================================
+// Tiles to show the connection parameters of one input/output connector.
+// These are appended after all properties in the same grid and are
+// distinguished by a light blue background.
+// ============================================================
+
+class AudYoFloConnectorParamSingleWidget extends StatelessWidget {
+  final List<AudYoFloOneConnectorEntry> cContentShow;
+  final int idConn;
+  AudYoFloConnectorParamSingleWidget(
+      {required this.cContentShow, required this.idConn});
+
+  @override
+  Widget build(BuildContext context) {
+    AudYoFloOneConnectorEntry? connEntry;
+    if (idConn < cContentShow.length) {
+      connEntry = cContentShow.elementAt(idConn);
+    }
+    return AudYoFloConnectorParamShow(connEntry: connEntry);
+  }
+}
+
+class AudYoFloConnectorParamShow extends StatelessWidget {
+  final AudYoFloOneConnectorEntry? connEntry;
+  AudYoFloConnectorParamShow({required this.connEntry});
+
+  @override
+  Widget build(BuildContext context) {
+    bool isInput = true;
+    String direction = 'IN';
+    String descriptor = 'not-found';
+    String shortText = 'not-found';
+    String fullText = 'not-found';
+    Color directionColor = Colors.grey;
+
+    if (connEntry != null) {
+      isInput = connEntry!.isInput;
+      direction = isInput ? 'IN' : 'OUT';
+      directionColor = isInput ? Colors.green : Colors.orange;
+      descriptor = connEntry!.descriptor;
+      shortText = connEntry!.params.shortText;
+      fullText = connEntry!.params.fullText;
+    }
+
+    return GestureDetector(
+      onDoubleTap: () {
+        FlutterClipboard.copy(fullText)
+            .then((value) => print('Copied $fullText to clipboard'));
+      },
+      child: Container(
+          color: Colors.lightBlue,
+          child: DecoratedBox(
+              decoration: BoxDecoration(
+                  // Weak/light blue background to visually mark connector tiles
+                  color: Colors.lightBlue[50],
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 4,
+                  ),
+                  borderRadius: BorderRadius.circular(15)),
+              child: Container(
+                  height: 100,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                      flex: 2,
+                                      child: Tooltip(
+                                        child: Text(descriptor,
+                                            overflow: TextOverflow.ellipsis),
+                                        message: descriptor,
+                                      )),
+                                  Flexible(
+                                      flex: 1,
+                                      child: Tooltip(
+                                        message: isInput
+                                            ? 'Input Connector'
+                                            : 'Output Connector',
+                                        child: Container(
+                                            color: directionColor,
+                                            alignment: Alignment.center,
+                                            child: Text(direction,
+                                                style: const TextStyle(
+                                                    color: Colors.white))),
+                                      )),
+                                ]),
+                          ),
+                          Flexible(
+                              flex: 1,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                      flex: 5,
+                                      child: Tooltip(
+                                          message: fullText,
+                                          child: Container(
+                                            height: 35,
+                                            padding: const EdgeInsets.only(
+                                                left: 8, right: 8),
+                                            alignment: Alignment.centerLeft,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                  color: Colors.black26),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Text(
+                                              shortText,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))),
+                                  Flexible(flex: 1, child: Container()),
+                                ],
+                              ))
+                        ]),
+                  )))),
     );
   }
 }

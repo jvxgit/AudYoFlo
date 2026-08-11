@@ -1396,6 +1396,129 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
   }
 
   @override
+  Future<int> triggerUpdateConnectionParams(
+      JvxComponentIdentification cpId) async {
+    return await Future<int>.delayed(Duration.zero, () async {
+      int errCode = jvxErrorType.JVX_NO_ERROR;
+
+      if (accBackend == ayfBackendAccessEnum.JVX_ACCESS_BACKEND_FFI) {
+        // Get the native opaque handle for the component
+        MapEntry? entry = componentReferences.entries
+            .firstWhereOrNull((element) => element.key == cpId);
+        if (entry != null) {
+          AudYoFloNativeHandles oneNativeHandlePair = entry.value;
+          Pointer<component_ident> cpPtr = oneNativeHandlePair.ident;
+
+          // TEMP DEBUG: mark the start of a connector cache refresh for this
+          // component.
+          debugPrint(
+              '[connParams] refreshing connectors for component <${cpId.txt}>');
+
+          List<AudYoFloOneConnectorEntry> inputConnectors = [];
+          List<AudYoFloOneConnectorEntry> outputConnectors = [];
+
+          int numIn =
+              natLib.ffi_component_number_input_connectors(opaque_host, cpPtr);
+          for (int idx = 0; idx < numIn; idx++) {
+            AudYoFloOneConnectorEntry newEntry = _readOneConnectorEntry(
+                cpPtr,
+                idx,
+                natLib.ffi_component_descriptor_input_connector,
+                natLib.ffi_component_connection_params_input_connector);
+            newEntry.isInput = true;
+            inputConnectors.add(newEntry);
+          }
+
+          int numOut = natLib
+              .ffi_component_number_output_connectors(opaque_host, cpPtr);
+          for (int idx = 0; idx < numOut; idx++) {
+            AudYoFloOneConnectorEntry newEntry = _readOneConnectorEntry(
+                cpPtr,
+                idx,
+                natLib.ffi_component_descriptor_output_connector,
+                natLib.ffi_component_connection_params_output_connector);
+            newEntry.isInput = false;
+            outputConnectors.add(newEntry);
+          }
+
+          theBeCacheNative.updateConnectionParamsCacheCompleteNotify(
+              cpId, inputConnectors, outputConnectors);
+        } else {
+          errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
+        }
+      } else {
+        errCode = jvxErrorType.JVX_ERROR_UNSUPPORTED;
+      }
+
+      return errCode;
+    });
+  }
+
+  // Read one connector's descriptor + connection parameters from native and
+  // translate them into the Dart-side cache entry. Frees all native buffers
+  // handed back across the FFI boundary.
+  AudYoFloOneConnectorEntry _readOneConnectorEntry(
+      Pointer<component_ident> cpPtr,
+      int idx,
+      Pointer<Char> Function(Pointer<Void>, Pointer<component_ident>, int)
+          descriptorFn,
+      Pointer<connection_params> Function(
+              Pointer<Void>, Pointer<component_ident>, int)
+          paramsFn) {
+    AudYoFloOneConnectorEntry newEntry = AudYoFloOneConnectorEntry();
+    newEntry.connectorIdx = idx;
+
+    Pointer<Char> descrPtr = descriptorFn(opaque_host, cpPtr, idx);
+    if (descrPtr != nullptr) {
+      newEntry.descriptor = descrPtr.cast<Utf8>().toDartString();
+      natLib.ffi_host_delete(
+          descrPtr.cast<Void>(), ffiDeleteDatatype.JVX_DELETE_DATATYPE_CHAR_ARRAY);
+    }
+
+    Pointer<connection_params> paramsPtr = paramsFn(opaque_host, cpPtr, idx);
+    if (paramsPtr != nullptr) {
+      connection_params paramsRef = paramsPtr.ref;
+      newEntry.params.buffersize = paramsRef.buffersize;
+      newEntry.params.rate = paramsRef.rate;
+      newEntry.params.numberChannels = paramsRef.number_channels;
+      newEntry.params.format = jvxDataFormatEEnum.fromInt(paramsRef.format);
+      newEntry.params.formatGroup =
+          jvxDataFormatGroupEEnum.fromInt(paramsRef.format_group);
+      newEntry.params.dataFlow =
+          jvxDataflowEEnum.fromInt(paramsRef.data_flow);
+      newEntry.params.segmentationX = paramsRef.segmentation_x;
+      newEntry.params.segmentationY = paramsRef.segmentation_y;
+      newEntry.params.additionalFlags.fld =
+          fn.Int64(paramsRef.additional_flags);
+
+      if (paramsRef.format_spec != nullptr) {
+        newEntry.params.formatSpec =
+            paramsRef.format_spec.cast<Utf8>().toDartString();
+        natLib.ffi_host_delete(paramsRef.format_spec.cast<Void>(),
+            ffiDeleteDatatype.JVX_DELETE_DATATYPE_CHAR_ARRAY);
+      }
+
+      natLib.ffi_host_delete(paramsPtr.cast<Void>(),
+          ffiDeleteDatatype.JVX_DELETE_DATATYPE_CONNECTION_PARAMS);
+    }
+
+    // TEMP DEBUG: show exactly which connector was just re-read from the
+    // backend and with which parameters.
+    debugPrint('[connParams] read #$idx <${newEntry.descriptor}>: '
+        '${newEntry.params.shortText}');
+
+    return newEntry;
+  }
+
+  // Forward invalidation of the connector connection parameters cache for a
+  // whole process (all involved components) to the backend cache. Called
+  // when the backend reports that the data chain of this process has been
+  // (re-)tested.
+  void invalidateConnectionParamsForProcess(int processUId) {
+    return theBeCacheNative.invalidateConnectionParamsForProcess(processUId);
+  }
+
+  @override
   Future<int> triggerUpdateComponentList(
       JvxComponentIdentification cpId, bool isDevice) async {
     // The update property list in cache is typically executed with a delay

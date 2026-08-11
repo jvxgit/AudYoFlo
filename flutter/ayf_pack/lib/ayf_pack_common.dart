@@ -20,6 +20,7 @@ export 'types/ayf_bitfield.dart';
 export 'types/ayf_sequencer_types.dart';
 
 export 'systemstate/ayf_connected_processes.dart';
+export 'systemstate/ayf_connector_params.dart';
 
 export 'types/ayf_components.dart';
 export 'types/ayf_types.dart';

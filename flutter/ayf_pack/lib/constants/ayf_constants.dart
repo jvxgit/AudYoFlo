@@ -138,6 +138,60 @@ extension jvxDataFormatEEnum on jvxDataFormatEnum {
   }
 }
 
+// Mirrors the native enum jvxDataFormatGroup (jvx_system_dataformat_helpers.h)
+enum jvxDataFormatGroupEnum {
+  JVX_DATAFORMAT_GROUP_NONE,
+  JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED,
+  JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED,
+  JVX_DATAFORMAT_GROUP_FFT_R2C,
+  JVX_DATAFORMAT_GROUP_FFT_C2C,
+  JVX_DATAFORMAT_GROUP_VIDEO_RGBA32,
+  JVX_DATAFORMAT_GROUP_VIDEO_RGB24,
+  JVX_DATAFORMAT_GROUP_VIDEO_NV12,
+  JVX_DATAFORMAT_GROUP_VIDEO_YUYV,
+  JVX_DATAFORMAT_GROUP_VIDEO_SINGLE8,
+  JVX_DATAFORMAT_GROUP_VIDEO_MONO,
+  JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED,
+  JVX_DATAFORMAT_GROUP_GENERIC_NON_INTERLEAVED,
+  JVX_DATAFORMAT_GROUP_GENERIC,
+  JVX_DATAFORMAT_GROUP_TRIGGER_ONLY,
+  JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD,
+  JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD,
+  JVX_DATAFORMAT_GROUP_EVS_PACKET_FWD,
+}
+
+extension jvxDataFormatGroupEEnum on jvxDataFormatGroupEnum {
+  static String get formatName => "jvxDataFormatGroup";
+  String get txt => describeEnum(this);
+  static jvxDataFormatGroupEnum fromInt(int val) {
+    jvxDataFormatGroupEnum ss = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE;
+    if (val < jvxDataFormatGroupEnum.values.length) {
+      ss = jvxDataFormatGroupEnum.values[val];
+    }
+    return ss;
+  }
+}
+
+// Mirrors the native enum jvxDataflow (jvx_system_dataformat_helpers.h)
+enum jvxDataflowEnum {
+  JVX_DATAFLOW_PUSH_ACTIVE,
+  JVX_DATAFLOW_PUSH_ON_PULL,
+  JVX_DATAFLOW_PUSH_ASYNC,
+  JVX_DATAFLOW_DONT_CARE,
+}
+
+extension jvxDataflowEEnum on jvxDataflowEnum {
+  static String get formatName => "jvxDataflow";
+  String get txt => describeEnum(this);
+  static jvxDataflowEnum fromInt(int val) {
+    jvxDataflowEnum ss = jvxDataflowEnum.JVX_DATAFLOW_PUSH_ACTIVE;
+    if (val < jvxDataflowEnum.values.length) {
+      ss = jvxDataflowEnum.values[val];
+    }
+    return ss;
+  }
+}
+
 // ===========================================================
 abstract class jvxPropertyCallPurpose {
   static const int JVX_PROPERTY_CALL_PURPOSE_NONE_SPECIFIC = 0;

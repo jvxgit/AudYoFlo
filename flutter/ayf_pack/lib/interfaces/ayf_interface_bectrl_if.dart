@@ -169,4 +169,27 @@ abstract class AudYoFloBackendCacheBectrlIf {
 
   String getFrontendConfigureToken();
   void setFrontendConfigureToken(String token);
+
+  // ====================================================================
+  // ====================================================================
+
+  // Function to update the connector connection parameters cache for a
+  // component and notify the listeners. A previously stored cache entry is
+  // replaced by the passed lists.
+  int updateConnectionParamsCacheCompleteNotify(
+      JvxComponentIdentification cpId,
+      List<AudYoFloOneConnectorEntry> inputConnectors,
+      List<AudYoFloOneConnectorEntry> outputConnectors);
+
+  // Function to invalidate the connector connection parameters cache of a
+  // single component. Does not trigger a notify - typically followed by a
+  // call to triggerUpdateConnectionParamsComponent.
+  void invalidateConnectionParamsComponent(JvxComponentIdentification cpId);
+
+  // Function to invalidate the connector connection parameters cache for all
+  // components that belong to the given process. This is called whenever the
+  // backend reports that the data chain of this process has been (re-)tested
+  // (JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN), since the test may have changed
+  // the negotiated connection parameters on any involved connector.
+  void invalidateConnectionParamsForProcess(int processUId);
 }
