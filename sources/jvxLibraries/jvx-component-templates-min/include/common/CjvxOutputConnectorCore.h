@@ -5,7 +5,7 @@
 
 class CjvxInputOutputConnectorCore;
 
-class CjvxOutputConnectorCore
+class CjvxOutputConnectorCore : public IjvxOutputConnectorMulti
 {
 public:
 	class common_set_ocon_t
@@ -99,10 +99,11 @@ public:
 
 	virtual jvxErrorType _check_common_ocon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) = 0;
 
-	jvxSize _number_connected_ocon();
-	IjvxOutputConnector* _reference_connected_ocon(jvxSize idx);
-	jvxErrorType _return_connected_ocon(IjvxOutputConnector* icon);
+	virtual IjvxOutputConnectorMulti* _references_ocon();
 
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* icon) override;
 };
 
 // Some simplification macros - you have to use them, however

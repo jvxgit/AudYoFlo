@@ -583,6 +583,12 @@ CjvxOutputConnectorCore::_process_stop_ocon(jvxSize idx_stage, jvxBool shift_fwd
 
 // ===============================================================================
 
+IjvxOutputConnectorMulti*
+CjvxOutputConnectorCore::_references_ocon()
+{
+	return this;
+}
+
 jvxErrorType
 CjvxOutputConnectorCore::_connected_icon(IjvxInputConnector** ocon)
 {
@@ -594,22 +600,62 @@ CjvxOutputConnectorCore::_connected_icon(IjvxInputConnector** ocon)
 	return JVX_NO_ERROR;
 }
 
-jvxSize CjvxOutputConnectorCore::_number_connected_ocon()
+// ==============================================================================
+jvxSize
+CjvxOutputConnectorCore::number_connected_ocon(jvxConnectorSelectType sel)
 {
-	jvxSize nn = 0;
+	jvxSize nn = 1;
+	IjvxOutputConnector* oconPtr = _common_set_ocon.ocon;
+	switch (sel)
+	{
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	{
+		IjvxDataConnectionCommon* refDataConn = nullptr;
+		oconPtr->associated_connection_ocon(&refDataConn);
+		if (!refDataConn)
+		{
+			nn = 0;
+		}
+	}
+	break;
+
+	default:
+		break;
+	}
 	return nn;
 }
 
 IjvxOutputConnector*
-CjvxOutputConnectorCore::_reference_connected_ocon(jvxSize idx)
+CjvxOutputConnectorCore::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel)
 {
-	return _common_set_ocon.ocon;
+	IjvxOutputConnector* retPtr = _common_set_ocon.ocon;
+	if (idx == 0)
+	{
+		switch (sel)
+		{
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		{
+			IjvxDataConnectionCommon* refDataConn = nullptr;
+			retPtr->associated_connection_ocon(&refDataConn);
+			if (!refDataConn)
+			{
+				retPtr = nullptr;
+			}
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
+	return retPtr;
 }
 
 jvxErrorType
-CjvxOutputConnectorCore::_return_connected_ocon(IjvxOutputConnector* icon)
+CjvxOutputConnectorCore::return_connected_ocon(IjvxOutputConnector* ocon)
 {
-	return JVX_NO_ERROR;
+	if (ocon == static_cast<IjvxOutputConnector*>(_common_set_ocon.ocon))
+		return JVX_NO_ERROR;
+	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
-
 

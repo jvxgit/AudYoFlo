@@ -302,7 +302,7 @@ jvx_property_tree_widget::update_window_core(jvxCBitField prio)
 void
 jvx_property_tree_widget::update_connectors_view()
 {
-	jvxSize i, j;
+	jvxSize i, j, k;
 	jvxSize numCF = 0;
 	jvxSize numIC = 0;
 	jvxSize numOC = 0;
@@ -350,14 +350,25 @@ jvx_property_tree_widget::update_connectors_view()
 				theFac->reference_input_connector(j, &icS);
 				if (icS)
 				{
-					IjvxInputConnector* ic = icS->reference_icon();
-					if (ic)
+					IjvxInputConnector* ic = nullptr;
+					IjvxInputConnectorMulti* icM = icS->references_icon();
+					jvxSize numC = 0;
+					if (icM)
+					{
+						numC = icM->number_connected_icon(jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+					}
+
+					for (k = 0; k < numC; k++)
 					{
 						jvxApiString descr;
+						if (icM)
+						{
+							ic = icM->reference_connected_icon(k, jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+						}
 						ic->descriptor_connector(&descr);
 
 						QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
-						it->setText(0, ("Input Connector #" + jvx_size2String(j)).c_str());
+						it->setText(0, ("Input Connector #" + jvx_size2String(j) + "-" + jvx_size2String(k)).c_str());
 						it->setText(1, descr.c_str());
 
 						jvxConnectionParams params;
@@ -376,10 +387,17 @@ jvx_property_tree_widget::update_connectors_view()
 						{
 							it->setText(2, "n/a");
 						}
+						if (icM)
+						{
+							icM->return_connected_icon(ic);
+							ic = nullptr;
+						}
 					}
 					theFac->return_reference_input_connector(icS);
 				}
 			}
+		
+			// ===========================================================================
 
 			theFac->number_output_connectors(&numOC);
 			for (j = 0; j < numOC; j++)
@@ -388,14 +406,25 @@ jvx_property_tree_widget::update_connectors_view()
 				theFac->reference_output_connector(j, &ocS);
 				if (ocS)
 				{
-					IjvxOutputConnector* oc = ocS->reference_ocon();
-					if (oc)
+					IjvxOutputConnector* oc = nullptr;
+					IjvxOutputConnectorMulti* ocM = ocS->references_ocon();
+					jvxSize numC = 0;
+					if (ocM)
+					{
+						numC = ocM->number_connected_ocon(jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+					}
+
+					for (k = 0; k < numC; k++)
 					{
 						jvxApiString descr;
+						if (ocM)
+						{
+							oc = ocM->reference_connected_ocon(k, jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+						}
 						oc->descriptor_connector(&descr);
 
 						QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
-						it->setText(0, ("Output Connector #" + jvx_size2String(j)).c_str());
+						it->setText(0, ("Output Connector #" + jvx_size2String(j) + "-" + jvx_size2String(k)).c_str());
 						it->setText(1, descr.c_str());
 
 						jvxConnectionParams params;
@@ -413,6 +442,11 @@ jvx_property_tree_widget::update_connectors_view()
 						else
 						{
 							it->setText(2, "n/a");
+						}
+						if (ocM)
+						{
+							ocM->return_connected_ocon(oc);
+							oc = nullptr;
 						}
 					}
 					theFac->return_reference_output_connector(ocS);

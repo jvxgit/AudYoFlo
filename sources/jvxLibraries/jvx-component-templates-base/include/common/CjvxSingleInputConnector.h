@@ -116,6 +116,12 @@ public:
 
 	jvxErrorType unselect_connect_icon(IjvxConnectorBridge* obj,
 		IjvxInputConnector* replace_connector) override;
+
+	virtual IjvxInputConnectorMulti* references_icon() override;
+
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override;
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override;
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override;
 };
 
 

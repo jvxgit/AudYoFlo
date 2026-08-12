@@ -34,7 +34,17 @@ public:
 
 // =============================================================================
 
-JVX_INTERFACE IjvxInputConnectorSelect : public IjvxCommonConnector, public IjvxConnectionIterator
+JVX_INTERFACE IjvxInputConnectorMulti
+{
+public:
+	virtual JVX_CALLINGCONVENTION ~IjvxInputConnectorMulti() {};
+
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE) = 0;
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE) = 0;
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) = 0;
+};
+
+JVX_INTERFACE IjvxInputConnectorSelect : public IjvxCommonConnector
 {
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxInputConnectorSelect() {};
@@ -53,15 +63,10 @@ public:
 		IjvxInputConnector* replace_connector = NULL) = 0;
 
 	virtual IjvxInputConnector* reference_icon() = 0;
-
-	/*
-	virtual jvxSize number_connected_icon() = 0;
-	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx) = 0;
-	virtual jvxErrorType return_connected_icon(IjvxInputConnector*) = 0;
-	*/
+	virtual IjvxInputConnectorMulti* references_icon() = 0;
 };
 
-JVX_INTERFACE IjvxInputConnector : public IjvxInputConnectorSelect
+JVX_INTERFACE IjvxInputConnector : public IjvxInputConnectorSelect, public IjvxConnectionIterator
 {
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxInputConnector() {};
@@ -120,6 +125,15 @@ public:
 };
 
 // =============================================================================
+JVX_INTERFACE IjvxOutputConnectorMulti
+{
+public:
+	virtual JVX_CALLINGCONVENTION ~IjvxOutputConnectorMulti() {};
+
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE) = 0;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE) = 0;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon) = 0;
+};
 
 JVX_INTERFACE IjvxOutputConnectorSelect : public IjvxCommonConnector
 {
@@ -140,6 +154,7 @@ public:
 		IjvxOutputConnector* replace_connector = NULL) = 0;
 
 	virtual IjvxOutputConnector* reference_ocon() = 0;
+	virtual IjvxOutputConnectorMulti* references_ocon() = 0;
 
 	/*
 	virtual jvxSize number_connected_ocon() = 0;

@@ -120,6 +120,77 @@ CjvxInputConnectorNVtask::reference_icon()
 	return this;
 }
 
+IjvxInputConnectorMulti* 
+CjvxInputConnectorNVtask::references_icon()
+{
+	return this;
+}
+
+jvxSize 
+CjvxInputConnectorNVtask::number_connected_icon(jvxConnectorSelectType sel)
+{
+	jvxSize nn = 1;
+	switch (sel)
+	{
+
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	{
+		IjvxDataConnectionCommon* refDat = nullptr;
+		this->associated_connection_icon(&refDat);
+		if (!refDat)
+		{
+			nn = 0;
+		}
+	}
+	break;
+	default:
+		break;
+	}
+	return nn;
+}
+
+IjvxInputConnector* 
+CjvxInputConnectorNVtask::reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel)
+{
+	jvxSize nn = 0;
+	IjvxInputConnector* retPtr = nullptr;
+	switch (sel)
+	{
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE:
+		if (idx == 0)
+			retPtr = this;
+		break;
+
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	{
+		IjvxDataConnectionCommon* refDat = nullptr;
+		this->associated_connection_icon(&refDat);
+		if (refDat)
+		{
+			if (idx == 0)
+			{
+				retPtr = this;
+				break;
+			}
+			idx++;
+		}
+	}
+	break;
+	}
+	return retPtr;
+}
+
+jvxErrorType 
+CjvxInputConnectorNVtask::return_connected_icon(IjvxInputConnector* icon)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	if(icon == static_cast<IjvxInputConnector*>(this))
+		res = JVX_NO_ERROR;
+	return res;
+}
+
+
+
 jvxErrorType
 CjvxInputConnectorNVtask::request_trigger_otcon(IjvxTriggerOutputConnector** otcon)
 {
@@ -192,6 +263,11 @@ CjvxOutputConnectorNVtask::reference_ocon()
 	return this;
 }
 
+IjvxOutputConnectorMulti*
+CjvxOutputConnectorNVtask::references_ocon()
+{
+	return this;
+}
 jvxErrorType
 CjvxOutputConnectorNVtask::_connect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
@@ -447,3 +523,70 @@ CjvxOutputConnectorNVtask::read_connect_parameters_ocon(jvxConnectionParams* str
 	}
 	return JVX_NO_ERROR;
 }
+
+
+
+jvxSize
+CjvxOutputConnectorNVtask::number_connected_ocon(jvxConnectorSelectType sel)
+{
+	jvxSize nn = 1;
+	switch (sel)
+	{
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	{
+		IjvxDataConnectionCommon* refDat = nullptr;
+		this->associated_connection_ocon(&refDat);
+		if (!refDat)
+		{
+			nn = 0;
+		}
+	}
+	break;
+	default: 
+		break;
+	}
+	return nn;
+}
+
+IjvxOutputConnector*
+CjvxOutputConnectorNVtask::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel)
+{
+	jvxSize nn = 0;
+	IjvxOutputConnector* retPtr = nullptr;
+	switch (sel)
+	{
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE:
+		if (idx == 0)
+			retPtr = this;
+		break;
+
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	{
+		IjvxDataConnectionCommon* refDat = nullptr;
+		this->associated_connection_ocon(&refDat);
+		if (refDat)
+		{
+			if (idx == 0)
+			{
+				retPtr = this;
+				break;
+			}
+			idx++;
+		}
+	}
+	break;
+	}
+	return retPtr;
+}
+
+jvxErrorType
+CjvxOutputConnectorNVtask::return_connected_ocon(IjvxOutputConnector* icon)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	if (icon == static_cast<IjvxOutputConnector*>(this))
+		res = JVX_NO_ERROR;
+	return res;
+}
+
+
+

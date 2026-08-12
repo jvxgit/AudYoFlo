@@ -103,6 +103,12 @@ public:
 		IjvxDataConnectionCommon* ass_connection_common, IjvxOutputConnector** replace_connector) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION unselect_connect_ocon(IjvxConnectorBridge* obj,
 		IjvxOutputConnector* replace_connector) override;
+
+	virtual IjvxOutputConnectorMulti* references_ocon() override;
+
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* icon) override;
 };
 
 

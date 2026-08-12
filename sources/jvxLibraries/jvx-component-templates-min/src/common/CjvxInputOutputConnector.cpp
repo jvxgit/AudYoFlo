@@ -387,7 +387,7 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 	// ==============================================================
 
 	jvxErrorType 
-		CjvxInputOutputConnector::JVX_CALLINGCONVENTION _transfer_forward_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
+		CjvxInputOutputConnector::_transfer_forward_forward(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 	{
 		jvxErrorType res = JVX_NO_ERROR;
 		std::string locTxt;

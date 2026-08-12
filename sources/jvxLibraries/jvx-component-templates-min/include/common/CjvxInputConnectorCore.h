@@ -5,7 +5,7 @@
 
 class CjvxInputOutputConnectorCore;
 
-class CjvxInputConnectorCore
+class CjvxInputConnectorCore: public IjvxInputConnectorMulti
 {
 public:
 
@@ -133,9 +133,11 @@ public:
 		jvxErrorType deallocate_pipeline_and_buffers_postprocess_to();
 		jvxErrorType deallocate_pipeline_and_buffers_postprocess_to_zerocopy();
 
-		jvxSize _number_connected_icon();
-		IjvxInputConnector* _reference_connected_icon(jvxSize idx);
-		jvxErrorType _return_connected_icon(IjvxInputConnector* icon);	
+		virtual IjvxInputConnectorMulti* _references_icon();
+
+		virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override;
+		virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override;
+		virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override;
 };
 
 #endif

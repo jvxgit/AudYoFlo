@@ -430,3 +430,75 @@ CjvxSingleOutputConnectorMulti::unselect_connect_ocon(IjvxConnectorBridge* obj,
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
 
+IjvxOutputConnectorMulti* CjvxSingleOutputConnectorMulti::references_ocon()
+{
+	return static_cast<IjvxOutputConnectorMulti*>(this);
+}
+
+jvxSize
+CjvxSingleOutputConnectorMulti::number_connected_ocon(jvxConnectorSelectType sel)
+{
+	jvxSize num = 0;
+	switch (sel)
+	{
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE:
+		return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::number_connected_ocon(sel);
+		break;
+	}
+	for (auto& elm : allocatedConnectors)
+	{
+		IjvxDataConnectionCommon* refDat = nullptr;
+		elm.second->associated_connection_ocon(&refDat);
+		if (refDat)
+		{
+			num++;
+		}
+	}
+	return num;
+}
+
+IjvxOutputConnector*
+CjvxSingleOutputConnectorMulti::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel)
+{
+	IjvxOutputConnector* retVal = nullptr;
+	jvxSize num = 0;
+	switch (sel)
+	{
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE:
+		return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::reference_connected_ocon(idx, sel);
+		break;
+	}
+	for (auto& elm : allocatedConnectors)
+	{
+		IjvxDataConnectionCommon* refDat = nullptr;
+		elm.second->associated_connection_ocon(&refDat);
+		if (refDat)
+		{
+			if (idx == num)
+			{
+				retVal = elm.first;
+				break;
+			}
+			num++;
+		}
+	}
+	return retVal;
+}
+
+jvxErrorType
+CjvxSingleOutputConnectorMulti::return_connected_ocon(IjvxOutputConnector* icon)
+{
+	for (auto& elm : allocatedConnectors)
+	{
+		IjvxDataConnectionCommon* refDat = nullptr;
+		elm.second->associated_connection_ocon(&refDat);
+		if (refDat)
+		{
+			if (elm.first == icon)
+			{
+				return JVX_NO_ERROR;
+			}
+		}
+	}
+	return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::return_connected_ocon(icon);
+}

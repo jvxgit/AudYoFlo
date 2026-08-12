@@ -483,20 +483,67 @@ CjvxInputConnectorCore::deallocate_pipeline_and_buffers_postprocess_to_zerocopy(
 	return jvx_deallocate_pipeline_and_buffers_postprocess_to_zerocopy(_common_set_icon.theData_in);
 }
 
-jvxSize CjvxInputConnectorCore::_number_connected_icon() 
+IjvxInputConnectorMulti* 
+CjvxInputConnectorCore::_references_icon()
 {
-	jvxSize nn = 0;
+	return this;
+}
+
+// ==============================================================================
+jvxSize 
+CjvxInputConnectorCore::number_connected_icon(jvxConnectorSelectType sel)
+{
+	jvxSize nn = 1;
+	IjvxInputConnector* iconPtr = _common_set_icon.icon;
+	switch (sel)
+	{
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	{
+		IjvxDataConnectionCommon* refDataConn = nullptr;
+		iconPtr->associated_connection_icon(&refDataConn);
+		if (!refDataConn)
+		{
+			nn = 0;
+		}
+	}
+	break;
+
+	default:
+		break;
+	}
 	return nn;
 }
 
 IjvxInputConnector* 
-CjvxInputConnectorCore::_reference_connected_icon(jvxSize idx)
+CjvxInputConnectorCore::reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel)
 {
-	return _common_set_icon.icon;
+	IjvxInputConnector* retPtr = _common_set_icon.icon;
+	if (idx == 0)
+	{
+		switch (sel)
+		{
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		{
+			IjvxDataConnectionCommon* refDataConn = nullptr;
+			retPtr->associated_connection_icon(&refDataConn);
+			if (!refDataConn)
+			{
+				retPtr = nullptr;
+			}
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
+	return retPtr;
 }
 
 jvxErrorType 
-CjvxInputConnectorCore::_return_connected_icon(IjvxInputConnector* icon)
+CjvxInputConnectorCore::return_connected_icon(IjvxInputConnector* icon) 
 {
-	return JVX_NO_ERROR;
+	if (icon == static_cast<IjvxInputConnector*>(_common_set_icon.icon))
+		return JVX_NO_ERROR;
+	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }

@@ -67,14 +67,16 @@ if(NOT JVX_RELEASE_SDK)
 	if(JVX_USE_PART_WEBSERVER)
 	
 		set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION}
-			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-web)
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-web
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstartern/ayfstartern-web)
 		
 	endif()
 	
 	if(JVX_USE_QT)
 		
 		set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} 
-			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-qt)
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-qt
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstartern/ayfstartern-qt)
 				
 	endif()	
 endif()

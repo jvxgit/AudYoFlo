@@ -255,6 +255,10 @@ public:
 		jvxApiString* description,
 		jvxApiString* lContext) override;
 
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override;
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override;
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override;
+
 };
 
 class CjvxOutputConnectorVtask : public CjvxOutputConnectorNVtask
@@ -342,6 +346,10 @@ public:
 
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var))override;
+
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon) override;
 };
 
 #endif

@@ -57,7 +57,7 @@ public:
 
 // ==========================================================
 
-class CjvxInputConnectorNVtask : public IjvxInputConnector
+class CjvxInputConnectorNVtask : public IjvxInputConnector, public IjvxInputConnectorMulti
 {
 public:
 
@@ -81,16 +81,21 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** icon) override;
 
 	IjvxInputConnector* JVX_CALLINGCONVENTION reference_icon() override;
+	IjvxInputConnectorMulti* references_icon() override;
 
 	jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon)override;
 	jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
 	// jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str) override;
+
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override;
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override;
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override;
 };
 
 // ==========================================================
 
-class CjvxOutputConnectorNVtask : public IjvxOutputConnector
+class CjvxOutputConnectorNVtask : public IjvxOutputConnector, public IjvxOutputConnectorMulti
 {
 public:
 	struct
@@ -113,6 +118,7 @@ public:
 	// jvxErrorType outputs_data_format_group(jvxDataFormatGroup grp) override;
 	jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override;
 	IjvxOutputConnector* JVX_CALLINGCONVENTION reference_ocon() override;
+	IjvxOutputConnectorMulti* references_ocon() override;
 
 	jvxErrorType _connect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 	jvxErrorType _disconnect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
@@ -147,6 +153,10 @@ public:
 	jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* itcon) override;
 
 	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str) override;
+
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon) override;
 
 };
 #endif

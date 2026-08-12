@@ -146,6 +146,10 @@ virtual IjvxOutputConnector* reference_ocon() override
 	return this;
 }
 
+virtual IjvxOutputConnectorMulti* references_ocon() override
+{
+	return _references_ocon();
+}
 /*
 virtual jvxSize number_connected_ocon() override
 {

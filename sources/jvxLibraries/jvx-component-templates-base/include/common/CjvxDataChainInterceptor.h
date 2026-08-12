@@ -11,7 +11,7 @@ typedef enum
 } jvxDataChainConnectorTag;
 
 class CjvxDataChainInterceptor:	
-	public IjvxInputConnector, public IjvxOutputConnector
+	public IjvxInputConnector, public IjvxOutputConnector, public IjvxInputConnectorMulti, public IjvxOutputConnectorMulti
 {
 protected:
 
@@ -82,11 +82,130 @@ public:
 		return this;
 	}
 
+	virtual IjvxInputConnectorMulti* references_icon() override
+	{
+		return this;
+	}
+
 	virtual IjvxOutputConnector* reference_ocon() override
 	{
 		return this;
 	}
 
+	virtual IjvxOutputConnectorMulti* references_ocon() override
+	{
+		return this;
+	}
+
+	// =================================================================================
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override
+	{
+		jvxSize nn = 1;
+		switch (sel)
+		{
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		{
+			IjvxDataConnectionCommon* refDataConn = nullptr;
+			this->associated_connection_icon(&refDataConn);
+			if (!refDataConn)
+			{
+				nn = 0;
+			}
+		}
+		break;
+
+		default:
+			break;
+		}
+		return nn;
+	}
+
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override
+	{
+		IjvxInputConnector* retPtr = this;
+		if (idx == 0)
+		{
+			switch (sel)
+			{
+			case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+			{
+				IjvxDataConnectionCommon* refDataConn = nullptr;
+				this->associated_connection_icon(&refDataConn);
+				if (!refDataConn)
+				{
+					retPtr = nullptr;
+				}
+				break;
+			}
+
+			default:
+				break;
+			}
+		}
+		return retPtr;
+	}
+
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override
+	{
+		if (icon == static_cast<IjvxInputConnector*>(this))
+			return JVX_NO_ERROR;
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
+
+	// =================================================================================
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override
+	{
+		jvxSize nn = 1;
+		switch (sel)
+		{
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		{
+			IjvxDataConnectionCommon* refDataConn = nullptr;
+			this->associated_connection_icon(&refDataConn);
+			if (!refDataConn)
+			{
+				nn = 0;
+			}
+		}
+		break;
+
+		default:
+			break;
+		}
+		return nn;
+	}
+
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override
+	{
+		IjvxOutputConnector* retPtr = this;
+		if (idx == 0)
+		{
+			switch (sel)
+			{
+			case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+			{
+				IjvxDataConnectionCommon* refDataConn = nullptr;
+				this->associated_connection_icon(&refDataConn);
+				if (!refDataConn)
+				{
+					retPtr = nullptr;
+				}
+				break;
+			}
+
+			default:
+				break;
+			}
+		}
+		return retPtr;
+	}
+
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon) override
+	{
+		if (ocon == static_cast<IjvxOutputConnector*>(this))
+			return JVX_NO_ERROR;
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
+	}
 	// =========================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION descriptor_connector(jvxApiString* str) override;

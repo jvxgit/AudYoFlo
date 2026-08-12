@@ -446,6 +446,26 @@ CjvxInputConnectorVtask::reference_component(
 	
 	return res;
 }
+
+jvxSize 
+CjvxInputConnectorVtask::number_connected_icon(jvxConnectorSelectType sel)
+{
+	// jvxSize nn = _common_nvtask->_common_set_comnvtask.object->
+	return CjvxInputConnectorNVtask::number_connected_icon(sel);
+}
+
+IjvxInputConnector* 
+CjvxInputConnectorVtask::reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel)
+{
+	return CjvxInputConnectorNVtask::reference_connected_icon(idx, sel);
+}
+
+jvxErrorType 
+CjvxInputConnectorVtask::return_connected_icon(IjvxInputConnector* icon)
+{
+	return CjvxInputConnectorNVtask::return_connected_icon(icon);
+}
+
 // ================================================================================
 
 CjvxOutputConnectorVtask::CjvxOutputConnectorVtask(jvxSize ctxId, 
@@ -571,3 +591,18 @@ CjvxOutputConnectorVtask::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 	return res;
 }
 
+jvxSize CjvxOutputConnectorVtask::number_connected_ocon(jvxConnectorSelectType sel)
+{
+	return CjvxOutputConnectorNVtask::number_connected_ocon(sel);
+}
+
+IjvxOutputConnector* CjvxOutputConnectorVtask::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel)
+{
+	return CjvxOutputConnectorNVtask::reference_connected_ocon(idx, sel);
+}
+
+jvxErrorType 
+CjvxOutputConnectorVtask::return_connected_ocon(IjvxOutputConnector* ocon)
+{
+	return CjvxOutputConnectorNVtask::return_connected_ocon(ocon);
+}

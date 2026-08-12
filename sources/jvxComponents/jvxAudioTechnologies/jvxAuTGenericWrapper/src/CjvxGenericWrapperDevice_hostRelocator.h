@@ -249,9 +249,19 @@ public:
 		return this;
 	}
 
+	virtual IjvxInputConnectorMulti* references_icon() override
+	{
+		return _references_icon();
+	}
+
 	virtual IjvxOutputConnector* reference_ocon() override
 	{
 		return this;
+	}
+
+	virtual IjvxOutputConnectorMulti* references_ocon() override
+	{
+		return _references_ocon();
 	}
 
 	jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override
