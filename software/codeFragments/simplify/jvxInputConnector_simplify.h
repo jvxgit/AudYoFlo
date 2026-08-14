@@ -315,9 +315,14 @@ virtual IjvxInputConnector* reference_icon() override
 	return this;
 }
 
-virtual IjvxInputConnectorMulti* references_icon() override
+virtual IjvxInputConnectorMulti* request_references_icon(jvxHandle** ctx) override
 {
-	return _references_icon();
+	return _request_references_icon();
+}
+
+jvxErrorType return_references_icon(IjvxInputConnectorMulti* ptr, jvxHandle* ctx) override
+{
+	return _return_references_icon(ptr);
 }
 
 virtual jvxErrorType JVX_CALLINGCONVENTION supports_connector_class_icon(

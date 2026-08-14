@@ -81,16 +81,17 @@ public:
 	jvxErrorType JVX_CALLINGCONVENTION connected_ocon(IjvxOutputConnector** icon) override;
 
 	IjvxInputConnector* JVX_CALLINGCONVENTION reference_icon() override;
-	IjvxInputConnectorMulti* references_icon() override;
+	IjvxInputConnectorMulti* request_references_icon(jvxHandle** ctx) override;
+	jvxErrorType return_references_icon(IjvxInputConnectorMulti* , jvxHandle* ctx) override;
 
 	jvxErrorType JVX_CALLINGCONVENTION request_trigger_otcon(IjvxTriggerOutputConnector** otcon)override;
 	jvxErrorType JVX_CALLINGCONVENTION return_trigger_otcon(IjvxTriggerOutputConnector* otcon) override;
 	// jvxErrorType _connect_connect_icon(jvxLinkDataDescriptor* theData JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str) override;
 
-	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override;
-	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override;
-	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override;
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
 };
 
 // ==========================================================
@@ -117,8 +118,11 @@ public:
 
 	// jvxErrorType outputs_data_format_group(jvxDataFormatGroup grp) override;
 	jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override;
+
 	IjvxOutputConnector* JVX_CALLINGCONVENTION reference_ocon() override;
-	IjvxOutputConnectorMulti* references_ocon() override;
+
+	IjvxOutputConnectorMulti* request_references_ocon(jvxHandle** ctx) override;
+	jvxErrorType return_references_ocon(IjvxOutputConnectorMulti* ocon, jvxHandle* ctx) override;
 
 	jvxErrorType _connect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
 	jvxErrorType _disconnect_connect_ocon(const jvxChainConnectArguments& args JVX_CONNECTION_FEEDBACK_TYPE_A(fdb));
@@ -154,9 +158,9 @@ public:
 
 	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str) override;
 
-	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
-	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
-	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon) override;
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
 
 };
 #endif

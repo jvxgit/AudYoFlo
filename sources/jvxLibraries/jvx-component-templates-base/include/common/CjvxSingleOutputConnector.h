@@ -104,11 +104,12 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION unselect_connect_ocon(IjvxConnectorBridge* obj,
 		IjvxOutputConnector* replace_connector) override;
 
-	virtual IjvxOutputConnectorMulti* references_ocon() override;
+	virtual IjvxOutputConnectorMulti* request_references_ocon(jvxHandle** ctxt) override;
+	virtual jvxErrorType return_references_ocon(IjvxOutputConnectorMulti* ocon, jvxHandle* ctxt) override;
 
-	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
-	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
-	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* icon) override;
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* icon, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
 };
 
 

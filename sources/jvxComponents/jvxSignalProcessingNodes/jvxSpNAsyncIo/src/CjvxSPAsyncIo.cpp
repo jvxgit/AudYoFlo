@@ -6,6 +6,7 @@
 JVX_ASYNCIO_CLASSNAME::JVX_ASYNCIO_CLASSNAME(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE):
 	CjvxBareNtask(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {	
+	// Add a secondary connector: the async connector
 	JVX_NBARETASK_ATTACH_TASK(JVX_DEFAULT_CON_VAR_OFF, "async-secondary", this);
 	sec_output = NULL;
 	sec_input = NULL;

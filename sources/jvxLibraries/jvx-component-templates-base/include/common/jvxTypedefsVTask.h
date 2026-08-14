@@ -72,39 +72,7 @@
 			jvx_bitFClear(iconsSelected);
 			jvx_bitFClear(oconsSelected);
 		};
-	};
-	
-	class jvxOneVariableConnectorTaskDefinition
-	{
-	public:
-		std::string name;
-		std::vector<std::string> descriptor_in;
-		std::vector<std::string> descriptor_out;
-
-		jvxBool withMaster;
-		jvxSize numMaxTasks;
-		jvxSize numCurrentTasks;
-		jvxSize idOffThisTasks;
-		
-		/*
-		std::list<jvxOneConnectorTask> connectedTasks;
-		*/
-		std::list<oneConnectorVTask_con<CjvxInputConnectorVtask> > icon;
-		std::list<oneConnectorVTask_con<CjvxOutputConnectorVtask> >  ocon;
-		IjvxInputOutputConnectorVtask* reportSelect;
-
-		std::map<IjvxDataConnectionCommon*, jvxOneConnectorTaskRuntime> activeRuntimeTasks;
-
-		jvxOneVariableConnectorTaskDefinition()
-		{
-			name = "no_name_set";
-			reportSelect = NULL;			
-			numMaxTasks = JVX_SIZE_UNSELECTED;
-			numCurrentTasks = 0;			
-			idOffThisTasks = 0;
-			withMaster = false;
-		};
-	} ;
+	};	
 	
 #endif
 	

@@ -82,9 +82,14 @@ public:
 		return this;
 	}
 
-	virtual IjvxInputConnectorMulti* references_icon() override
+	virtual IjvxInputConnectorMulti* request_references_icon(jvxHandle** ctx) override
 	{
 		return this;
+	}
+
+	virtual jvxErrorType return_references_icon(IjvxInputConnectorMulti* ptr, jvxHandle* ctx) override
+	{
+		return JVX_NO_ERROR;
 	}
 
 	virtual IjvxOutputConnector* reference_ocon() override
@@ -92,18 +97,27 @@ public:
 		return this;
 	}
 
-	virtual IjvxOutputConnectorMulti* references_ocon() override
+	virtual IjvxOutputConnectorMulti* request_references_ocon(jvxHandle** ctxt) override
 	{
-		return this;
+		return static_cast<IjvxOutputConnectorMulti*>(this);
+	}
+
+	virtual jvxErrorType return_references_ocon(IjvxOutputConnectorMulti* ocon, jvxHandle* ctxt) override
+	{
+		if (ocon == static_cast<IjvxOutputConnectorMulti*>(this))
+		{
+			return JVX_NO_ERROR;
+		}
+		return JVX_ERROR_ELEMENT_NOT_FOUND;
 	}
 
 	// =================================================================================
-	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel, jvxHandle* ctxt) override
 	{
 		jvxSize nn = 1;
 		switch (sel)
 		{
-		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 		{
 			IjvxDataConnectionCommon* refDataConn = nullptr;
 			this->associated_connection_icon(&refDataConn);
@@ -120,14 +134,14 @@ public:
 		return nn;
 	}
 
-	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt) override
 	{
 		IjvxInputConnector* retPtr = this;
 		if (idx == 0)
 		{
 			switch (sel)
 			{
-			case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+			case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 			{
 				IjvxDataConnectionCommon* refDataConn = nullptr;
 				this->associated_connection_icon(&refDataConn);
@@ -145,7 +159,7 @@ public:
 		return retPtr;
 	}
 
-	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon, jvxConnectorSelectType sel, jvxHandle* ctxt) override
 	{
 		if (icon == static_cast<IjvxInputConnector*>(this))
 			return JVX_NO_ERROR;
@@ -153,12 +167,12 @@ public:
 	}
 
 	// =================================================================================
-	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel, jvxHandle* ctxt) override
 	{
 		jvxSize nn = 1;
 		switch (sel)
 		{
-		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 		{
 			IjvxDataConnectionCommon* refDataConn = nullptr;
 			this->associated_connection_icon(&refDataConn);
@@ -175,14 +189,14 @@ public:
 		return nn;
 	}
 
-	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt) override
 	{
 		IjvxOutputConnector* retPtr = this;
 		if (idx == 0)
 		{
 			switch (sel)
 			{
-			case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+			case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 			{
 				IjvxDataConnectionCommon* refDataConn = nullptr;
 				this->associated_connection_icon(&refDataConn);
@@ -200,7 +214,7 @@ public:
 		return retPtr;
 	}
 
-	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon) override
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon, jvxConnectorSelectType sel, jvxHandle* ctxt) override
 	{
 		if (ocon == static_cast<IjvxOutputConnector*>(this))
 			return JVX_NO_ERROR;

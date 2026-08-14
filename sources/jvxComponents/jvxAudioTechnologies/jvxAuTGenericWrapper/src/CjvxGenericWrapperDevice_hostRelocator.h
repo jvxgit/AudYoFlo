@@ -249,19 +249,30 @@ public:
 		return this;
 	}
 
-	virtual IjvxInputConnectorMulti* references_icon() override
+	virtual IjvxInputConnectorMulti* request_references_icon(jvxHandle** ctx) override
 	{
-		return _references_icon();
+		return _request_references_icon();
 	}
 
+	virtual jvxErrorType return_references_icon(IjvxInputConnectorMulti* ptr, jvxHandle* ctx) override
+	{
+		return _return_references_icon(ptr);
+	}
+	
 	virtual IjvxOutputConnector* reference_ocon() override
 	{
 		return this;
 	}
 
-	virtual IjvxOutputConnectorMulti* references_ocon() override
+	virtual IjvxOutputConnectorMulti* request_references_ocon(jvxHandle** ctx) override
 	{
-		return _references_ocon();
+		return _request_references_ocon();
+	}
+
+	virtual jvxErrorType 
+		return_references_ocon(IjvxOutputConnectorMulti* ocon, jvxHandle* ctx) override
+	{
+		return _return_references_ocon(ocon);
 	}
 
 	jvxErrorType request_trigger_itcon(IjvxTriggerInputConnector** itcon) override

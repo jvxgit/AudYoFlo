@@ -184,6 +184,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxNodes/CjvxNodeBase.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/jvxCommonTypedefs.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleConnectorCommon.h
+	
+	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxVTaskDefinition.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxVTaskDefinition.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/common/CjvxSingleInputConnector.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/CjvxSingleInputConnector.cpp

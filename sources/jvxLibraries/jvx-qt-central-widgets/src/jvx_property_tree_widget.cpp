@@ -327,6 +327,10 @@ jvx_property_tree_widget::update_connectors_view()
 		return;
 	}
 
+	auto sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED;
+	//auto sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE;
+
+
 	dataConn->number_connection_factories(&numCF);
 	for (i = 0; i < numCF; i++)
 	{
@@ -351,11 +355,13 @@ jvx_property_tree_widget::update_connectors_view()
 				if (icS)
 				{
 					IjvxInputConnector* ic = nullptr;
-					IjvxInputConnectorMulti* icM = icS->references_icon();
+					jvxHandle* ctxLoc = nullptr;
+					IjvxInputConnectorMulti* icM = icS->request_references_icon(&ctxLoc);
+					
 					jvxSize numC = 0;
 					if (icM)
 					{
-						numC = icM->number_connected_icon(jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+						numC = icM->number_connected_icon(sel);
 					}
 
 					for (k = 0; k < numC; k++)
@@ -363,7 +369,7 @@ jvx_property_tree_widget::update_connectors_view()
 						jvxApiString descr;
 						if (icM)
 						{
-							ic = icM->reference_connected_icon(k, jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+							ic = icM->reference_connected_icon(k, sel);
 						}
 						ic->descriptor_connector(&descr);
 
@@ -389,10 +395,15 @@ jvx_property_tree_widget::update_connectors_view()
 						}
 						if (icM)
 						{
-							icM->return_connected_icon(ic);
+							icM->return_connected_icon(ic, sel);
 							ic = nullptr;
 						}
 					}
+					if (icM) 
+					{
+						icS->return_references_icon(icM, ctxLoc);
+					}
+					icM = nullptr;
 					theFac->return_reference_input_connector(icS);
 				}
 			}
@@ -407,11 +418,12 @@ jvx_property_tree_widget::update_connectors_view()
 				if (ocS)
 				{
 					IjvxOutputConnector* oc = nullptr;
-					IjvxOutputConnectorMulti* ocM = ocS->references_ocon();
+					jvxHandle* ctxLoc = nullptr;
+					IjvxOutputConnectorMulti* ocM = ocS->request_references_ocon(&ctxLoc);
 					jvxSize numC = 0;
 					if (ocM)
 					{
-						numC = ocM->number_connected_ocon(jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+						numC = ocM->number_connected_ocon(sel, ctxLoc);
 					}
 
 					for (k = 0; k < numC; k++)
@@ -419,7 +431,7 @@ jvx_property_tree_widget::update_connectors_view()
 						jvxApiString descr;
 						if (ocM)
 						{
-							oc = ocM->reference_connected_ocon(k, jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED);
+							oc = ocM->reference_connected_ocon(k, sel, ctxLoc);
 						}
 						oc->descriptor_connector(&descr);
 
@@ -445,7 +457,7 @@ jvx_property_tree_widget::update_connectors_view()
 						}
 						if (ocM)
 						{
-							ocM->return_connected_ocon(oc);
+							ocM->return_connected_ocon(oc, sel, ctxLoc);
 							oc = nullptr;
 						}
 					}

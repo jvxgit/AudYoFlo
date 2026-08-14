@@ -15,6 +15,7 @@ int ffi_component_number_input_connectors(void* opaque_hdl, struct component_ide
 int ffi_component_number_output_connectors(void* opaque_hdl, struct component_ident* address);
 char* ffi_component_descriptor_input_connector(void* opaque_hdl, struct component_ident* address, int idx);
 char* ffi_component_descriptor_output_connector(void* opaque_hdl, struct component_ident* address, int idx);
+
 struct connection_params* ffi_component_connection_params_input_connector(void* opaque_hdl, struct component_ident* address, int idx);
 struct connection_params* ffi_component_connection_params_output_connector(void* opaque_hdl, struct component_ident* address, int idx);
 

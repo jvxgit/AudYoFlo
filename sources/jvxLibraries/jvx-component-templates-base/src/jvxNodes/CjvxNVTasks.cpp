@@ -39,7 +39,7 @@
 
 CjvxNVTasks::CjvxNVTasks(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLARE): CjvxBareNtask(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_CALL)
 {
-	jvxOneVariableConnectorTaskDefinition theVarTask;
+	CjvxVTaskDefinition theVarTask;
 	
 	theVarTask.name = "async-sec";
 	theVarTask.descriptor_in.push_back("async-secondary-v");
@@ -179,7 +179,7 @@ CjvxNVTasks::activate_local_tasks()
 				elmT->second.idOffThisTasks,
 				elms->c_str(),
 				static_cast<IjvxConnectorFactory*>(this),
-				static_cast<IjvxInputOutputConnectorVtask*>(this),
+				static_cast<IjvxInputOutputConnectorVtask*>(this),		
 				NULL, 
 				static_cast<IjvxObject*>(this),
 				cnt++,
@@ -839,5 +839,225 @@ CjvxNVTasks::test_connect_icon_ntask(jvxLinkDataDescriptor* theData_in, jvxLinkD
 			}
 		}
 	}
+	return res;
+}
+
+jvxSize 
+CjvxNVTasks::number_connected_icon(jvxSize ctxtIdx, jvxSize ctxtSubIdx)
+{
+	jvxSize nn = 0;
+	auto elmT = _common_set_node_vtask.variableTasks.begin();
+	for (; elmT != _common_set_node_vtask.variableTasks.end(); elmT++)
+	{
+		// The context id will identify the installed vtask
+		if (elmT->second.idOffThisTasks == ctxtIdx)
+		{
+			// The connector to identify yiels a subCtcId. This is id starts for input and 
+			// continues with the output count
+			
+			auto elm = elmT->second.activeRuntimeTasks.begin();
+			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
+			{
+				if (ctxtSubIdx < elm->second.icons.size())
+				{
+					auto elmI = elm->second.icons.begin();
+					std::advance(elmI, ctxtSubIdx);
+					auto pp = elmI->con;
+					jvxHandle* ctxtLoc = nullptr;
+					auto ifPtr = pp->request_references_icon(&ctxtLoc);
+					nn += ifPtr->number_connected_icon(jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+					pp->return_references_icon(ifPtr, ctxtLoc);
+				}
+			}
+
+		}
+	}	
+	return nn;
+}
+
+IjvxInputConnector* 
+CjvxNVTasks::reference_connected_icon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdx)
+{
+	IjvxInputConnector* retPtr = nullptr;
+	jvxSize nn = 0;
+	auto elmT = _common_set_node_vtask.variableTasks.begin();
+	for (; elmT != _common_set_node_vtask.variableTasks.end(); elmT++)
+	{
+		// The context id will identify the installed vtask
+		if (elmT->second.idOffThisTasks == ctxtIdx)
+		{
+
+			auto elm = elmT->second.activeRuntimeTasks.begin();
+			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
+			{
+				if (ctxtSubIdx < elm->second.icons.size())
+				{
+					auto elmI = elm->second.icons.begin();
+					std::advance(elmI, ctxtSubIdx);
+
+					if (nn == idx)
+					{
+						auto pp = elmI->con;
+						jvxHandle* ctxtLoc = nullptr;
+						auto ifPtr = pp->request_references_icon(&ctxtLoc);
+						retPtr = ifPtr->reference_connected_icon(0, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+						pp->return_references_icon(ifPtr, ctxtLoc);
+						break;
+					}
+					nn++;
+				}
+			}
+		}
+	}
+	return retPtr;
+}
+
+jvxErrorType 
+CjvxNVTasks::return_connected_icon(IjvxInputConnector* iconArg, jvxSize ctxtIdx, jvxSize ctxtSubIdx)
+{
+	
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+
+	auto elmT = _common_set_node_vtask.variableTasks.begin();
+	for (; elmT != _common_set_node_vtask.variableTasks.end(); elmT++)
+	{
+		// The context id will identify the installed vtask
+		if (elmT->second.idOffThisTasks == ctxtIdx)
+		{
+			// Loop over active elements to find the USED connectors
+
+			auto elm = elmT->second.activeRuntimeTasks.begin();
+			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
+			{
+				if (ctxtSubIdx < elm->second.icons.size())
+				{
+					auto elmI = elm->second.icons.begin();
+					std::advance(elmI, ctxtSubIdx);
+
+					CjvxInputConnectorVtask* pp = elmI->con;
+					jvxHandle* ctxtLoc = nullptr;
+					auto ifPtr = pp->request_references_icon(&ctxtLoc);
+					res = ifPtr->return_connected_icon(iconArg, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+					pp->return_references_icon(ifPtr, ctxtLoc);
+					if (res == JVX_NO_ERROR)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return res;
+}
+
+jvxSize
+CjvxNVTasks::number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
+{
+	jvxSize nn = 0;
+	auto elmT = _common_set_node_vtask.variableTasks.begin();
+	for (; elmT != _common_set_node_vtask.variableTasks.end(); elmT++)
+	{
+		// The context id will identify the installed vtask
+		if (elmT->second.idOffThisTasks == ctxtIdx)
+		{
+			// The connector to identify yiels a subCtcId. This is id starts for input and 
+			// continues with the output count
+
+			auto elm = elmT->second.activeRuntimeTasks.begin();
+			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
+			{
+				jvxSize ctxtSubIdx_ocon = ctxtSubIdxArg - elm->second.icons.size();
+				if (ctxtSubIdx_ocon < elm->second.ocons.size())
+				{
+					auto elmO = elm->second.ocons.begin();
+					std::advance(elmO, ctxtSubIdx_ocon);
+					CjvxOutputConnectorVtask* pp = elmO->con;
+					jvxHandle* ctxtLoc = nullptr;
+					auto ifPtr = pp->request_references_ocon(&ctxtLoc);
+					nn += ifPtr->number_connected_ocon(jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+					pp->return_references_ocon(ifPtr, ctxtLoc);
+				}
+			}
+
+		}
+	}
+	return nn;
+}
+
+IjvxOutputConnector*
+CjvxNVTasks::reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
+{
+	IjvxOutputConnector* retPtr = nullptr;
+	jvxSize nn = 0;
+	auto elmT = _common_set_node_vtask.variableTasks.begin();
+	for (; elmT != _common_set_node_vtask.variableTasks.end(); elmT++)
+	{
+		// The context id will identify the installed vtask
+		if (elmT->second.idOffThisTasks == ctxtIdx)
+		{
+			auto elm = elmT->second.activeRuntimeTasks.begin();
+			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
+			{
+				jvxSize ctxtSubIdx_ocon = ctxtSubIdxArg - elm->second.icons.size();
+				if (ctxtSubIdx_ocon < elm->second.ocons.size())
+				{
+					auto elmO = elm->second.ocons.begin();
+					std::advance(elmO, ctxtSubIdx_ocon);
+
+					if (nn == idx)
+					{
+						auto pp = elmO->con;
+						jvxHandle* ctxtLoc = nullptr;
+						auto ifPtr = pp->request_references_ocon(&ctxtLoc);
+						retPtr = ifPtr->reference_connected_ocon(0, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+						pp->return_references_ocon(ifPtr, ctxtLoc);
+						break;
+					}
+					nn++;
+				}
+			}
+		}
+	}
+	return retPtr;
+}
+
+jvxErrorType
+CjvxNVTasks::return_connected_ocon(IjvxOutputConnector* oconArg, jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
+{
+
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+
+	auto elmT = _common_set_node_vtask.variableTasks.begin();
+	for (; elmT != _common_set_node_vtask.variableTasks.end(); elmT++)
+	{
+		// The context id will identify the installed vtask
+		if (elmT->second.idOffThisTasks == ctxtIdx)
+		{
+			// Loop over active elements to find the USED connectors
+
+			auto elm = elmT->second.activeRuntimeTasks.begin();
+			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
+			{
+				jvxSize ctxtSubIdx_ocon = ctxtSubIdxArg - elm->second.icons.size();
+				if (ctxtSubIdx_ocon < elm->second.icons.size())
+				{
+					auto elmO = elm->second.ocons.begin();
+					std::advance(elmO, ctxtSubIdx_ocon);
+
+					auto pp = elmO->con;
+					jvxHandle* ctxtLoc = nullptr;
+					auto ifPtr = pp->request_references_ocon(&ctxtLoc);
+					res = ifPtr->return_connected_ocon(oconArg, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+					pp->return_references_ocon(ifPtr, ctxtLoc);
+					if (res == JVX_NO_ERROR)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	return res;
 }

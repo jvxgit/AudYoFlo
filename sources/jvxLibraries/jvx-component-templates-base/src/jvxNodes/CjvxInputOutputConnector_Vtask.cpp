@@ -19,7 +19,7 @@ CjvxCommonVtask::~CjvxCommonVtask()
 CjvxInputConnectorVtask::CjvxInputConnectorVtask(jvxSize ctxId, const char* descr, IjvxConnectorFactory* par, IjvxInputOutputConnectorVtask* report,
 	IjvxConnectionMaster* aM, IjvxObject* objRef, jvxSize ctxtSubId,
 	CjvxCommonVtask::vTaskConnectiorRole role) :
-	common_vtask(ctxId, descr, par, report,
+	common_vtask(ctxId, descr, par, report, 
 		aM, objRef, ctxtSubId, role)
 {
 	_common_nvtask = static_cast<CjvxCommonNVtask*>(&common_vtask);
@@ -447,23 +447,64 @@ CjvxInputConnectorVtask::reference_component(
 	return res;
 }
 
-jvxSize 
-CjvxInputConnectorVtask::number_connected_icon(jvxConnectorSelectType sel)
-{
-	// jvxSize nn = _common_nvtask->_common_set_comnvtask.object->
-	return CjvxInputConnectorNVtask::number_connected_icon(sel);
-}
-
-IjvxInputConnector* 
-CjvxInputConnectorVtask::reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel)
-{
-	return CjvxInputConnectorNVtask::reference_connected_icon(idx, sel);
+IjvxInputConnectorMulti* 
+CjvxInputConnectorVtask::request_references_icon(jvxHandle** ctx)
+{	
+	return static_cast<IjvxInputConnectorMulti*>(this);
 }
 
 jvxErrorType 
-CjvxInputConnectorVtask::return_connected_icon(IjvxInputConnector* icon)
+CjvxInputConnectorVtask::return_references_icon(IjvxInputConnectorMulti* ptr, jvxHandle* ctx)
 {
-	return CjvxInputConnectorNVtask::return_connected_icon(icon);
+	if (ptr == static_cast<IjvxInputConnectorMulti*>(this))
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ELEMENT_NOT_FOUND;	
+}
+
+jvxSize 
+CjvxInputConnectorVtask::number_connected_icon(jvxConnectorSelectType sel, jvxHandle* ctxt)
+{
+	if (
+		(common_vtask._common_set_comvtask.myRole == CjvxCommonVtask::vTaskConnectiorRole::JVX_VTASK_CONNECTOR_USE) ||
+		(sel == jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE))
+	{
+		return CjvxInputConnectorNVtask::number_connected_icon(sel, ctxt);
+	}
+	return common_vtask._common_set_comvtask.cbRef->number_connected_icon(
+		common_vtask._common_set_comnvtask.ctxtId,
+		common_vtask._common_set_comnvtask.ctxtSubId);
+}
+
+IjvxInputConnector* 
+CjvxInputConnectorVtask::reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt)
+{
+	if (
+		(common_vtask._common_set_comvtask.myRole == CjvxCommonVtask::vTaskConnectiorRole::JVX_VTASK_CONNECTOR_USE) ||
+		(sel == jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE))
+	{
+		return CjvxInputConnectorNVtask::reference_connected_icon(idx, sel, ctxt);
+	}
+	return common_vtask._common_set_comvtask.cbRef->reference_connected_icon(idx,
+		common_vtask._common_set_comnvtask.ctxtId,
+		common_vtask._common_set_comnvtask.ctxtSubId);
+}
+
+jvxErrorType 
+CjvxInputConnectorVtask::return_connected_icon(IjvxInputConnector* icon, jvxConnectorSelectType sel, jvxHandle* ctxt) 
+{
+	if (
+		(common_vtask._common_set_comvtask.myRole == CjvxCommonVtask::vTaskConnectiorRole::JVX_VTASK_CONNECTOR_USE) ||
+		(sel == jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE))
+	{
+		return CjvxInputConnectorNVtask::return_connected_icon(icon, sel, ctxt);
+	}
+	return common_vtask._common_set_comvtask.cbRef->return_connected_icon(
+		icon,
+		common_vtask._common_set_comnvtask.ctxtId,
+		common_vtask._common_set_comnvtask.ctxtSubId);
+
 }
 
 // ================================================================================
@@ -591,18 +632,61 @@ CjvxOutputConnectorVtask::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 	return res;
 }
 
-jvxSize CjvxOutputConnectorVtask::number_connected_ocon(jvxConnectorSelectType sel)
+jvxSize 
+CjvxOutputConnectorVtask::number_connected_ocon(jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
-	return CjvxOutputConnectorNVtask::number_connected_ocon(sel);
+	if (
+		(common_vtask._common_set_comvtask.myRole == CjvxCommonVtask::vTaskConnectiorRole::JVX_VTASK_CONNECTOR_USE) ||
+		(sel == jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE))
+	{
+		return CjvxOutputConnectorNVtask::number_connected_ocon(sel, ctxt);
+	}
+	return common_vtask._common_set_comvtask.cbRef->number_connected_ocon(
+		common_vtask._common_set_comnvtask.ctxtId,
+		common_vtask._common_set_comnvtask.ctxtSubId);
 }
 
-IjvxOutputConnector* CjvxOutputConnectorVtask::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel)
+IjvxOutputConnector* CjvxOutputConnectorVtask::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
-	return CjvxOutputConnectorNVtask::reference_connected_ocon(idx, sel);
+	if (
+		(common_vtask._common_set_comvtask.myRole == CjvxCommonVtask::vTaskConnectiorRole::JVX_VTASK_CONNECTOR_USE) ||
+		(sel == jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE))
+	{
+		return CjvxOutputConnectorNVtask::reference_connected_ocon(idx, sel, ctxt);
+	}
+	return common_vtask._common_set_comvtask.cbRef->reference_connected_ocon(idx,
+		common_vtask._common_set_comnvtask.ctxtId,
+		common_vtask._common_set_comnvtask.ctxtSubId);
 }
 
 jvxErrorType 
-CjvxOutputConnectorVtask::return_connected_ocon(IjvxOutputConnector* ocon)
+CjvxOutputConnectorVtask::return_connected_ocon(IjvxOutputConnector* ocon, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
-	return CjvxOutputConnectorNVtask::return_connected_ocon(ocon);
+	if (
+		(common_vtask._common_set_comvtask.myRole == CjvxCommonVtask::vTaskConnectiorRole::JVX_VTASK_CONNECTOR_USE) ||
+		(sel == jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE))
+	{
+		return CjvxOutputConnectorNVtask::return_connected_ocon(ocon, sel, ctxt);
+	}
+	return common_vtask._common_set_comvtask.cbRef->return_connected_ocon(
+		ocon,
+		common_vtask._common_set_comnvtask.ctxtId,
+		common_vtask._common_set_comnvtask.ctxtSubId);
 }
+
+IjvxOutputConnectorMulti*
+CjvxOutputConnectorVtask::request_references_ocon(jvxHandle** ctx)
+{
+	return static_cast<IjvxOutputConnectorMulti*>(this);
+}
+
+jvxErrorType
+CjvxOutputConnectorVtask::return_references_ocon(IjvxOutputConnectorMulti* ocon, jvxHandle* ctx)
+{
+	if (ocon == static_cast<IjvxOutputConnectorMulti*>(this))
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ELEMENT_NOT_FOUND;
+}
+

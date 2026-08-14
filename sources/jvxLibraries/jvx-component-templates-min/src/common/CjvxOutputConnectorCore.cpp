@@ -583,12 +583,6 @@ CjvxOutputConnectorCore::_process_stop_ocon(jvxSize idx_stage, jvxBool shift_fwd
 
 // ===============================================================================
 
-IjvxOutputConnectorMulti*
-CjvxOutputConnectorCore::_references_ocon()
-{
-	return this;
-}
-
 jvxErrorType
 CjvxOutputConnectorCore::_connected_icon(IjvxInputConnector** ocon)
 {
@@ -602,13 +596,13 @@ CjvxOutputConnectorCore::_connected_icon(IjvxInputConnector** ocon)
 
 // ==============================================================================
 jvxSize
-CjvxOutputConnectorCore::number_connected_ocon(jvxConnectorSelectType sel)
+CjvxOutputConnectorCore::number_connected_ocon(jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	jvxSize nn = 1;
 	IjvxOutputConnector* oconPtr = _common_set_ocon.ocon;
 	switch (sel)
 	{
-	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 	{
 		IjvxDataConnectionCommon* refDataConn = nullptr;
 		oconPtr->associated_connection_ocon(&refDataConn);
@@ -626,14 +620,14 @@ CjvxOutputConnectorCore::number_connected_ocon(jvxConnectorSelectType sel)
 }
 
 IjvxOutputConnector*
-CjvxOutputConnectorCore::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel)
+CjvxOutputConnectorCore::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	IjvxOutputConnector* retPtr = _common_set_ocon.ocon;
 	if (idx == 0)
 	{
 		switch (sel)
 		{
-		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 		{
 			IjvxDataConnectionCommon* refDataConn = nullptr;
 			retPtr->associated_connection_ocon(&refDataConn);
@@ -652,10 +646,21 @@ CjvxOutputConnectorCore::reference_connected_ocon(jvxSize idx, jvxConnectorSelec
 }
 
 jvxErrorType
-CjvxOutputConnectorCore::return_connected_ocon(IjvxOutputConnector* ocon)
+CjvxOutputConnectorCore::return_connected_ocon(IjvxOutputConnector* ocon, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	if (ocon == static_cast<IjvxOutputConnector*>(_common_set_ocon.ocon))
 		return JVX_NO_ERROR;
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
 
+IjvxOutputConnectorMulti*
+CjvxOutputConnectorCore::_request_references_ocon()
+{
+	return this;
+}
+
+jvxErrorType
+CjvxOutputConnectorCore::_return_references_ocon(IjvxOutputConnectorMulti* ptr)
+{
+	return JVX_NO_ERROR;
+}

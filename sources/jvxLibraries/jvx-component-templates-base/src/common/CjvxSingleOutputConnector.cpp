@@ -430,19 +430,28 @@ CjvxSingleOutputConnectorMulti::unselect_connect_ocon(IjvxConnectorBridge* obj,
 	return JVX_ERROR_ELEMENT_NOT_FOUND;
 }
 
-IjvxOutputConnectorMulti* CjvxSingleOutputConnectorMulti::references_ocon()
+IjvxOutputConnectorMulti* CjvxSingleOutputConnectorMulti::request_references_ocon(jvxHandle** ctxt)
 {
 	return static_cast<IjvxOutputConnectorMulti*>(this);
 }
 
+jvxErrorType CjvxSingleOutputConnectorMulti::return_references_ocon(IjvxOutputConnectorMulti* ocon, jvxHandle* ctxt)
+{
+	if (ocon == static_cast<IjvxOutputConnectorMulti*>(this))
+	{
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ELEMENT_NOT_FOUND;
+}
+
 jvxSize
-CjvxSingleOutputConnectorMulti::number_connected_ocon(jvxConnectorSelectType sel)
+CjvxSingleOutputConnectorMulti::number_connected_ocon(jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	jvxSize num = 0;
 	switch (sel)
 	{
 	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE:
-		return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::number_connected_ocon(sel);
+		return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::number_connected_ocon(sel, ctxt);
 		break;
 	}
 	for (auto& elm : allocatedConnectors)
@@ -458,14 +467,14 @@ CjvxSingleOutputConnectorMulti::number_connected_ocon(jvxConnectorSelectType sel
 }
 
 IjvxOutputConnector*
-CjvxSingleOutputConnectorMulti::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel)
+CjvxSingleOutputConnectorMulti::reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	IjvxOutputConnector* retVal = nullptr;
 	jvxSize num = 0;
 	switch (sel)
 	{
 	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE:
-		return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::reference_connected_ocon(idx, sel);
+		return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::reference_connected_ocon(idx, sel, ctxt);
 		break;
 	}
 	for (auto& elm : allocatedConnectors)
@@ -486,7 +495,7 @@ CjvxSingleOutputConnectorMulti::reference_connected_ocon(jvxSize idx, jvxConnect
 }
 
 jvxErrorType
-CjvxSingleOutputConnectorMulti::return_connected_ocon(IjvxOutputConnector* icon)
+CjvxSingleOutputConnectorMulti::return_connected_ocon(IjvxOutputConnector* ocon, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	for (auto& elm : allocatedConnectors)
 	{
@@ -494,11 +503,11 @@ CjvxSingleOutputConnectorMulti::return_connected_ocon(IjvxOutputConnector* icon)
 		elm.second->associated_connection_ocon(&refDat);
 		if (refDat)
 		{
-			if (elm.first == icon)
+			if (elm.first == ocon)
 			{
 				return JVX_NO_ERROR;
 			}
 		}
 	}
-	return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::return_connected_ocon(icon);
+	return CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>::return_connected_ocon(ocon, sel, ctxt);
 }

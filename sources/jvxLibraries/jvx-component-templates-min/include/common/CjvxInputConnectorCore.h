@@ -133,11 +133,12 @@ public:
 		jvxErrorType deallocate_pipeline_and_buffers_postprocess_to();
 		jvxErrorType deallocate_pipeline_and_buffers_postprocess_to_zerocopy();
 
-		virtual IjvxInputConnectorMulti* _references_icon();
+		virtual IjvxInputConnectorMulti* _request_references_icon();
+		virtual jvxErrorType _return_references_icon(IjvxInputConnectorMulti* ptr);
 
-		virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override;
-		virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override;
-		virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override;
+		virtual jvxSize number_connected_icon(jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+		virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+		virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
 };
 
 #endif

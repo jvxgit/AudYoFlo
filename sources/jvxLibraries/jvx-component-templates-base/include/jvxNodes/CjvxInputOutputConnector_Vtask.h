@@ -4,7 +4,27 @@
 #include "jvx.h"
 #include "jvxNodes/CjvxInputOutputConnector_NVtask.h"
 
-JVX_INTERFACE IjvxInputOutputConnectorVtask
+JVX_INTERFACE IjvxInputMultiConnectorVtask
+{
+public:
+	virtual JVX_CALLINGCONVENTION ~IjvxInputMultiConnectorVtask() {};
+
+	virtual jvxSize JVX_CALLINGCONVENTION number_connected_icon(jvxSize ctxtIdx, jvxSize ctxtSubIdx) = 0;
+	virtual IjvxInputConnector* JVX_CALLINGCONVENTION reference_connected_icon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdx) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_connected_icon(IjvxInputConnector*  icon, jvxSize ctxtIdx, jvxSize ctxtSubIdx) = 0;
+};
+
+JVX_INTERFACE IjvxOutputMultiConnectorVtask
+{
+public:
+	virtual JVX_CALLINGCONVENTION ~IjvxOutputMultiConnectorVtask() {};
+
+	virtual jvxSize JVX_CALLINGCONVENTION number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdx) = 0;
+	virtual IjvxOutputConnector* JVX_CALLINGCONVENTION reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdx) = 0;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_connected_ocon(IjvxOutputConnector* icon, jvxSize ctxtIdx, jvxSize ctxtSubIdx) = 0;
+};
+
+JVX_INTERFACE IjvxInputOutputConnectorVtask: public IjvxInputMultiConnectorVtask, public IjvxOutputMultiConnectorVtask
 {
 public:
 	virtual JVX_CALLINGCONVENTION ~IjvxInputOutputConnectorVtask() {};
@@ -138,7 +158,7 @@ public:
 		jvxSize idx, 
 		IjvxConnectionIterator** next,
 		jvxSize idTask,
-		jvxSize subIdTask) = 0;
+		jvxSize subIdTask) = 0;	
 };
 
 class CjvxCommonVtask : public CjvxCommonNVtask
@@ -156,7 +176,7 @@ public:
 	{
 	public:
 		vTaskConnectiorRole myRole;
-		IjvxInputOutputConnectorVtask* cbRef;
+		IjvxInputOutputConnectorVtask* cbRef = nullptr;
 		common_set_comvtask_tp()
 		{
 			myRole = vTaskConnectiorRole::JVX_VTASK_CONNECTOR_EXPOSE;
@@ -255,10 +275,12 @@ public:
 		jvxApiString* description,
 		jvxApiString* lContext) override;
 
-	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel) override;
-	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel) override;
-	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon) override;
-
+	IjvxInputConnectorMulti* request_references_icon(jvxHandle** ctx) override;
+	jvxErrorType return_references_icon(IjvxInputConnectorMulti* ptr, jvxHandle* ctx) override;
+	
+	virtual jvxSize number_connected_icon(jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE, jvxHandle* ctxt = nullptr) override;
+	virtual IjvxInputConnector* reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE, jvxHandle* ctxt = nullptr) override;
+	virtual jvxErrorType return_connected_icon(IjvxInputConnector* icon, jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE, jvxHandle* ctxt = nullptr) override;
 };
 
 class CjvxOutputConnectorVtask : public CjvxOutputConnectorNVtask
@@ -347,9 +369,12 @@ public:
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var))override;
 
-	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
-	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
-	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon) override;
+	IjvxOutputConnectorMulti* request_references_ocon(jvxHandle** ctx) override;
+	jvxErrorType return_references_ocon(IjvxOutputConnectorMulti* ptr, jvxHandle* ctx) override;
+
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE, jvxHandle* ctxt = nullptr) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE, jvxHandle* ctxt = nullptr) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* ocon, jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE, jvxHandle* ctxt = nullptr) override;
 };
 
 #endif

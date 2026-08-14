@@ -484,20 +484,26 @@ CjvxInputConnectorCore::deallocate_pipeline_and_buffers_postprocess_to_zerocopy(
 }
 
 IjvxInputConnectorMulti* 
-CjvxInputConnectorCore::_references_icon()
+CjvxInputConnectorCore::_request_references_icon()
 {
 	return this;
 }
 
+jvxErrorType 
+CjvxInputConnectorCore::_return_references_icon(IjvxInputConnectorMulti* ptr)
+{
+	return JVX_NO_ERROR;
+}
+
 // ==============================================================================
 jvxSize 
-CjvxInputConnectorCore::number_connected_icon(jvxConnectorSelectType sel)
+CjvxInputConnectorCore::number_connected_icon(jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	jvxSize nn = 1;
 	IjvxInputConnector* iconPtr = _common_set_icon.icon;
 	switch (sel)
 	{
-	case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+	case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 	{
 		IjvxDataConnectionCommon* refDataConn = nullptr;
 		iconPtr->associated_connection_icon(&refDataConn);
@@ -515,14 +521,14 @@ CjvxInputConnectorCore::number_connected_icon(jvxConnectorSelectType sel)
 }
 
 IjvxInputConnector* 
-CjvxInputConnectorCore::reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel)
+CjvxInputConnectorCore::reference_connected_icon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	IjvxInputConnector* retPtr = _common_set_icon.icon;
 	if (idx == 0)
 	{
 		switch (sel)
 		{
-		case jvxConnectorSelectType::JVX_CONNECTOR_SELECTED_CONNECTED:
+		case jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED:
 		{
 			IjvxDataConnectionCommon* refDataConn = nullptr;
 			retPtr->associated_connection_icon(&refDataConn);
@@ -541,7 +547,7 @@ CjvxInputConnectorCore::reference_connected_icon(jvxSize idx, jvxConnectorSelect
 }
 
 jvxErrorType 
-CjvxInputConnectorCore::return_connected_icon(IjvxInputConnector* icon) 
+CjvxInputConnectorCore::return_connected_icon(IjvxInputConnector* icon, jvxConnectorSelectType sel, jvxHandle* ctxt)
 {
 	if (icon == static_cast<IjvxInputConnector*>(_common_set_icon.icon))
 		return JVX_NO_ERROR;

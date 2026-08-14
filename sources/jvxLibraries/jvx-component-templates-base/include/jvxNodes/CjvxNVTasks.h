@@ -5,7 +5,7 @@
 #include "jvxNodes/CjvxBareNtask.h"
 #include "pcg_CjvxNVTasks_pcg.h"
 #include "jvxNodes/CjvxInputOutputConnector_Vtask.h"
-#include "common/jvxTypedefsVTask.h"
+#include "common/CjvxVTaskDefinition.h"
 
 // Define some constants
 namespace {
@@ -27,7 +27,7 @@ protected:
 
 	struct
 	{
-		std::map<jvxSize, jvxOneVariableConnectorTaskDefinition> variableTasks;
+		std::map<jvxSize, CjvxVTaskDefinition> variableTasks;
 	} _common_set_node_vtask;
 
 	typedef enum 
@@ -47,7 +47,7 @@ protected:
 
 	jvxBool couple_buffersize_vtasks = true;
 
-	jvxAuNTasks_configFlowType parameter_config;
+	jvxAuNTasks_configFlowType parameter_config;	
 
 	struct
 	{
@@ -237,6 +237,14 @@ public:
 		IjvxConnectionIterator** next,
 		jvxSize idTask,
 		jvxSize subIdTask) override;
+
+	virtual jvxSize JVX_CALLINGCONVENTION number_connected_icon(jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;
+	virtual IjvxInputConnector* JVX_CALLINGCONVENTION reference_connected_icon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_connected_icon(IjvxInputConnector* icon, jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;
+
+	virtual jvxSize JVX_CALLINGCONVENTION number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdx)override;
+	virtual IjvxOutputConnector* JVX_CALLINGCONVENTION reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_connected_ocon(IjvxOutputConnector* icon, jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;
 
 	virtual jvxErrorType is_ready(jvxBool* isReady, jvxApiString* reason)override;
 

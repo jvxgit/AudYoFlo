@@ -99,11 +99,12 @@ public:
 
 	virtual jvxErrorType _check_common_ocon(IjvxDataConnectionCommon* ass_connection_common, IjvxConnectionMaster* master) = 0;
 
-	virtual IjvxOutputConnectorMulti* _references_ocon();
+	virtual IjvxOutputConnectorMulti* _request_references_ocon();
+	jvxErrorType _return_references_ocon(IjvxOutputConnectorMulti* ptr);
 
-	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel) override;
-	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel) override;
-	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* icon) override;
+	virtual jvxSize number_connected_ocon(jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual IjvxOutputConnector* reference_connected_ocon(jvxSize idx, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
+	virtual jvxErrorType return_connected_ocon(IjvxOutputConnector* icon, jvxConnectorSelectType sel, jvxHandle* ctxt) override;
 };
 
 // Some simplification macros - you have to use them, however

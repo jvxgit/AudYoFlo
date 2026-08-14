@@ -146,10 +146,16 @@ virtual IjvxOutputConnector* reference_ocon() override
 	return this;
 }
 
-virtual IjvxOutputConnectorMulti* references_ocon() override
+virtual IjvxOutputConnectorMulti* request_references_ocon(jvxHandle** ctx) override
 {
-	return _references_ocon();
+	return _request_references_ocon();
 }
+
+jvxErrorType return_references_ocon(IjvxOutputConnectorMulti* ptr, jvxHandle* ctx) override
+{
+	return _return_references_ocon(ptr);
+}
+
 /*
 virtual jvxSize number_connected_ocon() override
 {
