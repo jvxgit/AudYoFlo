@@ -1632,6 +1632,62 @@ CjvxHostJsonCommandsShow::output_one_step_sequence(IjvxSequencer* sequencer, jvx
 }
 
 jvxErrorType
+CjvxHostJsonCommandsShow::output_connectors_list(IjvxConnectorFactory* conFac, jvxBool isInput, jvxConnectorSelectType sel, CjvxJsonArray& jarr)
+{
+	jvxSize j;
+	auto lst = jvx::helper::create_factoryConnectorList(conFac, isInput, sel);
+	for (j = 0; j < lst.ll(); j++)
+	{
+		const jvxApiConnector* con = lst.elmAt(j);
+		if (!con)
+		{
+			continue;
+		}
+		CjvxJsonArrayElement jarrelm;
+		CjvxJsonElementList jelmlst;
+		CjvxJsonElementList jelmlst_params;
+		CjvxJsonElement jelm;
+
+		JVX_CREATE_CONNECTOR_DIRECTION(jelm, (isInput ? "input" : "output"));
+		jelmlst.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_IDX(jelm, con->idxCon);
+		jelmlst.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_SUBIDX(jelm, con->idxSubCon);
+		jelmlst.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_DESCRIPTOR(jelm, con->descriptor.std_str());
+		jelmlst.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_PARAM_BUFFERSIZE(jelm, con->params.buffersize);
+		jelmlst_params.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_PARAM_RATE(jelm, con->params.rate);
+		jelmlst_params.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_PARAM_CHANNELS(jelm, con->params.number_channels);
+		jelmlst_params.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_PARAM_FORMAT(jelm, jvxDataFormat_txt(con->params.format));
+		jelmlst_params.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_PARAM_FORMAT_GROUP(jelm, jvxDataFormatGroup_txt(con->params.format_group));
+		jelmlst_params.addConsumeElement(jelm);
+
+		JVX_CREATE_CONNECTOR_PARAM_DATAFLOW(jelm, jvxDataflow_txt(con->params.data_flow));
+		jelmlst_params.addConsumeElement(jelm);
+
+		jelm.makeSection("params", jelmlst_params);
+		jelmlst.addConsumeElement(jelm);
+
+		jarrelm.makeSection(jelmlst);
+		jarr.addConsumeElement(jarrelm);
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
 CjvxHostJsonCommandsShow::show_single_component(
 	const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, 
 	const std::string& addArg,
@@ -2186,13 +2242,105 @@ CjvxHostJsonCommandsShow::show_single_component(
 							}
 							else
 							{
-								/*
-								* It is not a valid sub command but still, it could be an additional property
-								*
-								errTxt = "Invalid operation " + args[1] + " when addressing component type <";
-								errTxt += jvxComponentType_txt(tp.tp);
-								JVX_CREATE_ERROR_RETURN(jelmlst_ret, JVX_ERROR_ELEMENT_NOT_FOUND, errTxt);
-								*/
+								if (actionString == "connectors")
+								{
+									std::string sideArg = "both";
+									std::string selArg = "connected";
+									if (args.size() > (off + 1))
+									{
+										sideArg = args[off + 1];
+									}
+									if (args.size() > (off + 2))
+									{
+										selArg = args[off + 2];
+									}
+
+									jvxBool doInput = true;
+									jvxBool doOutput = true;
+									if (sideArg == "input")
+									{
+										doOutput = false;
+									}
+									else if (sideArg == "output")
+									{
+										doInput = false;
+									}
+									else if ((sideArg != "both") && (!sideArg.empty()))
+									{
+										res = JVX_ERROR_INVALID_ARGUMENT;
+										errTxt = "The requested connector side <" + sideArg + "> is not known. Use 'input', 'output' or 'both'.";
+										JVX_CREATE_ERROR_RETURN(jelmlst_ret, res, errTxt);
+									}
+
+									if (res == JVX_NO_ERROR)
+									{
+										jvxConnectorSelectType sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED;
+										if (selArg == "connectable")
+										{
+											sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE;
+										}
+										else if ((selArg != "connected") && (!selArg.empty()))
+										{
+											res = JVX_ERROR_INVALID_ARGUMENT;
+											errTxt = "The requested connector select mode <" + selArg + "> is not known. Use 'connectable' or 'connected'.";
+											JVX_CREATE_ERROR_RETURN(jelmlst_ret, res, errTxt);
+										}
+
+										if (res == JVX_NO_ERROR)
+										{
+											IjvxObject* obj = nullptr;
+											res = hHost->request_object_selected_component(tp, &obj);
+											if ((res == JVX_NO_ERROR) && obj)
+											{
+												IjvxConnectorFactory* conFac = reqInterfaceObj<IjvxConnectorFactory>(obj);
+												if (conFac)
+												{
+													CjvxJsonArray jelmarr;
+													CjvxJsonElement jelm_cons;
+													if (doInput)
+													{
+														output_connectors_list(conFac, true, sel, jelmarr);
+													}
+													if (doOutput)
+													{
+														output_connectors_list(conFac, false, sel, jelmarr);
+													}
+													JVX_CREATE_CONNECTORS(jelm_cons, jelmarr);
+													jelmlst_ret.addConsumeElement(jelm_cons);
+
+													retInterfaceObj<IjvxConnectorFactory>(obj, conFac);
+												}
+												else
+												{
+													res = JVX_ERROR_UNSUPPORTED;
+													errTxt = "Component type <";
+													errTxt += jvxComponentType_txt(tp.tp);
+													errTxt += "> does not support connectors.";
+													JVX_CREATE_ERROR_RETURN(jelmlst_ret, res, errTxt);
+												}
+												hHost->return_object_selected_component(tp, obj);
+											}
+											else
+											{
+												errTxt = "Target component with slotid <" + jvx_size2String(tp.slotid) + "> not accessible for component type <";
+												errTxt += jvxComponentType_txt(tp.tp);
+												errTxt += ">.";
+												JVX_CREATE_ERROR_RETURN(jelmlst_ret, res, errTxt);
+											}
+										}
+									}
+									callWithoutCommand = false;
+								}
+								else
+								{
+									/*
+									* It is not a valid sub command but still, it could be an additional property
+									*
+									errTxt = "Invalid operation " + args[1] + " when addressing component type <";
+									errTxt += jvxComponentType_txt(tp.tp);
+									JVX_CREATE_ERROR_RETURN(jelmlst_ret, JVX_ERROR_ELEMENT_NOT_FOUND, errTxt);
+									*/
+								}
 							}
 						}
 					}

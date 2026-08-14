@@ -49,6 +49,7 @@ public:
 	jvxErrorType output_sequencer_queues(CjvxJsonElementList& jelmlst, jvxBool showRunQueue, jvxBool showLeaveQueue, jvxSize idS, jvxSize idSS);
 
 	jvxErrorType show_single_component(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, const std::string& addArg, jvxSize off, CjvxJsonElementList& jelmret);
+	jvxErrorType output_connectors_list(IjvxConnectorFactory* conFac, jvxBool isInput, jvxConnectorSelectType sel, CjvxJsonArray& jarr);
 	jvxErrorType show_hosttype_handler(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, jvxSize off, CjvxJsonElementList& jelmret);
 	jvxErrorType show_config_line(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, jvxSize off, CjvxJsonElementList& jelmlstret);
 	jvxErrorType show_system(const oneDrivehostCommand& dh_command, const std::vector<std::string>& args, jvxSize off, CjvxJsonElementList& jsec);

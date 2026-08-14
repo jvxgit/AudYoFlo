@@ -227,6 +227,39 @@ jelm.makeAssignmentString("seq_element_assoc_mode", txt)
 #define JVX_CREATE_OCON_PARENT_IDENTIFICATION(jelm, txt) \
 	jelm.makeAssignmentString("ocon_parent_identification", txt)
 
+#define JVX_CREATE_CONNECTORS(jelm, jarr) \
+	jelm.makeArray("connectors", jarr);
+
+#define JVX_CREATE_CONNECTOR_DIRECTION(jelm, txt) \
+	jelm.makeAssignmentString("direction", txt)
+
+#define JVX_CREATE_CONNECTOR_IDX(jelm, idx) \
+	jelm.makeAssignmentSize("idx_connector", idx)
+
+#define JVX_CREATE_CONNECTOR_SUBIDX(jelm, idx) \
+	jelm.makeAssignmentSize("idx_sub_connector", idx)
+
+#define JVX_CREATE_CONNECTOR_DESCRIPTOR(jelm, txt) \
+	jelm.makeAssignmentString("descriptor", txt)
+
+#define JVX_CREATE_CONNECTOR_PARAM_BUFFERSIZE(jelm, val) \
+	jelm.makeAssignmentSize("buffersize", val)
+
+#define JVX_CREATE_CONNECTOR_PARAM_RATE(jelm, val) \
+	jelm.makeAssignmentSize("rate", val)
+
+#define JVX_CREATE_CONNECTOR_PARAM_CHANNELS(jelm, val) \
+	jelm.makeAssignmentSize("number_channels", val)
+
+#define JVX_CREATE_CONNECTOR_PARAM_FORMAT(jelm, txt) \
+	jelm.makeAssignmentString("format", txt)
+
+#define JVX_CREATE_CONNECTOR_PARAM_FORMAT_GROUP(jelm, txt) \
+	jelm.makeAssignmentString("format_group", txt)
+
+#define JVX_CREATE_CONNECTOR_PARAM_DATAFLOW(jelm, txt) \
+	jelm.makeAssignmentString("dataflow", txt)
+
 #define JVX_CREATE_ICON_PARENT_NAME(jelm, txt) \
 	jelm.makeAssignmentString("icon_parent_name", txt)
 
@@ -395,7 +428,7 @@ jelm.makeAssignmentString("bridge_icon_fac_id_dz", txt)
 	jelm.makeAssignmentString("inval_sswitch", (b != JVX_PROPERTY_INVALIDATE_INACTIVE ? JVX_INDICATE_TRUE_SHORT: JVX_INDICATE_FALSE_SHORT))
 
 #define JVX_CREATE_PROPERTY_INVALIDATE_TEST(jelm, b) \
-	jelm.makeAssignmentString("inval_test", ((b == true) ? JVX_INDICATE_TRUE_SHORT: JVX_INDICATE_FALSE_SHORT))
+	jelm.makeAssignmentString("inval_test", ((b != jvxPropertyInvalidateType::JVX_PROPERTY_INVALIDATE_INACTIVE) ? JVX_INDICATE_TRUE_SHORT: JVX_INDICATE_FALSE_SHORT))
 
 #define JVX_CREATE_PROPERTY_INSTALLABLE(jelm, b) \
 	jelm.makeAssignmentString("instable", (b == true ? JVX_INDICATE_TRUE_SHORT : JVX_INDICATE_FALSE_SHORT))

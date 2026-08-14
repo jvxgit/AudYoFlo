@@ -5027,6 +5027,8 @@ namespace jvx {
 						jvxApiConnector theCon;
 						theCon.descriptor = descr;
 						theCon.isInput = true;
+						theCon.idxCon = j;
+						theCon.idxSubCon = k;
 
 						jvxErrorType resL = ic->read_connect_parameters_icon(&theCon.params);
 						iCons.push_back(theCon);

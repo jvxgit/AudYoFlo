@@ -690,6 +690,39 @@ CjvxWebServerHost::report_event_request_translate(
 				command += ", options";
 				command += ")";
 			}
+			else if (suburl == "/connectors")
+			{
+				// Allow some further specifications for connectors
+				std::string connectors_inout = "";
+				std::string connectors_filter = "";
+
+				if (jvx_findValueHttpQuery(query_list, token, "inout") == JVX_NO_ERROR)
+				{
+					connectors_inout = token;
+				}
+
+				if (jvx_findValueHttpQuery(query_list, token, "filter") == JVX_NO_ERROR)
+				{
+					// Need to keep the order in the system calls
+					if (connectors_inout.empty())
+						connectors_inout = "both";
+					connectors_filter = token;
+				}
+
+				// Show all selection options
+				command = "show(";
+				command += jvxComponentIdentification_txt(cpType);
+				command += ", connectors";
+				if (!connectors_inout.empty())
+				{
+					command += ", " + connectors_inout;
+				}
+				if (!connectors_filter.empty())
+				{
+					command += ", " + connectors_filter;
+				}
+				command += ")";
+			}
 			else
 			{
 				if (suburl == "/multi")

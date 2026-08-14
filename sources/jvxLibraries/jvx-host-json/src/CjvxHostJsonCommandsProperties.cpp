@@ -233,7 +233,7 @@ CjvxHostJsonCommandsProperties::show_property_list(jvxComponentIdentification tp
 								// this variable is not a bool. However, the reader expects a bool here!! Need to be fixed!
 								JVX_CREATE_PROPERTY_INVALIDATE_STATE_SWITCH(jelm_onepro, dctrl->invalidateOnStateSwitch);
 								jelmlst_onepro.addConsumeElement(jelm_onepro);
-
+								
 								JVX_CREATE_PROPERTY_INVALIDATE_TEST(jelm_onepro, dctrl->invalidateOnTest); // JVX_PROPERTY_INVALIDATE_INACTIVE todo
 								jelmlst_onepro.addConsumeElement(jelm_onepro);
 

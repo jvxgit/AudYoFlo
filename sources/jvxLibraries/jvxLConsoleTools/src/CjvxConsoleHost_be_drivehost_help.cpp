@@ -29,6 +29,9 @@ CjvxConsoleHost_be_drivehost::process_help_command(IjvxEventLoop_frontend* origi
 	std::cout << "\t\t\t " << "slots: List populated slots for this property type." << std::endl;
 	std::cout << "\t\t\t " << "devices: List all devices for a given technology." << std::endl;
 	std::cout << "\t\t\t " << "options: List all selection options for a given component type." << std::endl;
+	std::cout << "\t\t\t " << "connectors: List all connectors with current data connection parameters." << std::endl;
+	std::cout << "\t\t\t\t " << "in/out: [\"input\", \"output\" or \"both\" to show pre-selected connectors," << std::endl;
+	std::cout << "\t\t\t\t " << "filter: [\"connected\" or \"connectable\" to show connected connectors or thise which can be connected." << std::endl;
 	std::cout << "\t\t\t " << "commands: List component instance commands." << std::endl;
 	std::cout << "\t\t\t " << "conditions: List component instance conditions." << std::endl;
 	std::cout << "\t\t <address>: alive" << std::endl;
