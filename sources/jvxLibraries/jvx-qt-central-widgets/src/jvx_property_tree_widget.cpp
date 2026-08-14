@@ -306,7 +306,7 @@ jvx_property_tree_widget::update_connectors_view()
 	jvxSize numCF = 0;
 	jvxSize numIC = 0;
 	jvxSize numOC = 0;
-
+	
 	treeWidget_connectors->clear();
 
 	if (!theHostRef || !propRefSelect)
@@ -330,7 +330,6 @@ jvx_property_tree_widget::update_connectors_view()
 	auto sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED;
 	//auto sel = jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTABLE;
 
-
 	dataConn->number_connection_factories(&numCF);
 	for (i = 0; i < numCF; i++)
 	{
@@ -347,123 +346,47 @@ jvx_property_tree_widget::update_connectors_view()
 
 		if (tpId == cpIdSel)
 		{
-			theFac->number_input_connectors(&numIC);
-			for (j = 0; j < numIC; j++)
+			auto nLstIn = jvx::helper::create_factoryConnectorList(theFac, true, sel);
+			for (j = 0; j < nLstIn.ll(); j++)
 			{
-				IjvxInputConnectorSelect* icS = NULL;
-				theFac->reference_input_connector(j, &icS);
-				if (icS)
-				{
-					IjvxInputConnector* ic = nullptr;
-					jvxHandle* ctxLoc = nullptr;
-					IjvxInputConnectorMulti* icM = icS->request_references_icon(&ctxLoc);
-					
-					jvxSize numC = 0;
-					if (icM)
-					{
-						numC = icM->number_connected_icon(sel);
-					}
+				auto sglElm = nLstIn.elmAt(j);
+				assert(sglElm);
+				QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
+				it->setText(0, ("Input Connector #" + jvx_size2String(sglElm->idxCon) + "-" + jvx_size2String(sglElm->idxSubCon)).c_str());
+				it->setText(1, sglElm->descriptor.c_str());
 
-					for (k = 0; k < numC; k++)
-					{
-						jvxApiString descr;
-						if (icM)
-						{
-							ic = icM->reference_connected_icon(k, sel);
-						}
-						ic->descriptor_connector(&descr);
-
-						QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
-						it->setText(0, ("Input Connector #" + jvx_size2String(j) + "-" + jvx_size2String(k)).c_str());
-						it->setText(1, descr.c_str());
-
-						jvxConnectionParams params;
-						if (ic->read_connect_parameters_icon(&params) == JVX_NO_ERROR)
-						{
-							std::string txtP =
-								"Buffersize: " + jvx_size2String(params.buffersize) +
-								", Rate: " + jvx_size2String(params.rate) +
-								", Channels: " + jvx_size2String(params.number_channels) +
-								", Format: " + jvxDataFormat_txt(params.format) +
-								", Group: " + jvxDataFormatGroup_txt(params.format_group) +
-								", Dataflow: " + jvxDataflow_txt(params.data_flow);
-							it->setText(2, txtP.c_str());
-						}
-						else
-						{
-							it->setText(2, "n/a");
-						}
-						if (icM)
-						{
-							icM->return_connected_icon(ic, sel);
-							ic = nullptr;
-						}
-					}
-					if (icM) 
-					{
-						icS->return_references_icon(icM, ctxLoc);
-					}
-					icM = nullptr;
-					theFac->return_reference_input_connector(icS);
-				}
+				std::string txtP =
+					"Buffersize: " + jvx_size2String(sglElm->params.buffersize) +
+					", Rate: " + jvx_size2String(sglElm->params.rate) +
+					", Channels: " + jvx_size2String(sglElm->params.number_channels) +
+					", Format: " + jvxDataFormat_txt(sglElm->params.format) +
+					", Group: " + jvxDataFormatGroup_txt(sglElm->params.format_group) +
+					", Dataflow: " + jvxDataflow_txt(sglElm->params.data_flow);
+				it->setText(2, txtP.c_str());
 			}
 		
-			// ===========================================================================
+			// ==========================================================================
 
-			theFac->number_output_connectors(&numOC);
-			for (j = 0; j < numOC; j++)
+			auto nLstOut = jvx::helper::create_factoryConnectorList(theFac, false, sel);
+			for (j = 0; j < nLstOut.ll(); j++)
 			{
-				IjvxOutputConnectorSelect* ocS = NULL;
-				theFac->reference_output_connector(j, &ocS);
-				if (ocS)
-				{
-					IjvxOutputConnector* oc = nullptr;
-					jvxHandle* ctxLoc = nullptr;
-					IjvxOutputConnectorMulti* ocM = ocS->request_references_ocon(&ctxLoc);
-					jvxSize numC = 0;
-					if (ocM)
-					{
-						numC = ocM->number_connected_ocon(sel, ctxLoc);
-					}
+				auto sglElm = nLstOut.elmAt(j);
+				assert(sglElm);
+				QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
+				it->setText(0, ("Output Connector #" + jvx_size2String(sglElm->idxCon) + "-" + jvx_size2String(sglElm->idxSubCon)).c_str());
+				it->setText(1, sglElm->descriptor.c_str());
 
-					for (k = 0; k < numC; k++)
-					{
-						jvxApiString descr;
-						if (ocM)
-						{
-							oc = ocM->reference_connected_ocon(k, sel, ctxLoc);
-						}
-						oc->descriptor_connector(&descr);
-
-						QTreeWidgetItem* it = new QTreeWidgetItem(treeWidget_connectors);
-						it->setText(0, ("Output Connector #" + jvx_size2String(j) + "-" + jvx_size2String(k)).c_str());
-						it->setText(1, descr.c_str());
-
-						jvxConnectionParams params;
-						if (oc->read_connect_parameters_ocon(&params) == JVX_NO_ERROR)
-						{
-							std::string txtP =
-								"Buffersize: " + jvx_size2String(params.buffersize) +
-								", Rate: " + jvx_size2String(params.rate) +
-								", Channels: " + jvx_size2String(params.number_channels) +
-								", Format: " + jvxDataFormat_txt(params.format) +
-								", Group: " + jvxDataFormatGroup_txt(params.format_group) +
-								", Dataflow: " + jvxDataflow_txt(params.data_flow);
-							it->setText(2, txtP.c_str());
-						}
-						else
-						{
-							it->setText(2, "n/a");
-						}
-						if (ocM)
-						{
-							ocM->return_connected_ocon(oc, sel, ctxLoc);
-							oc = nullptr;
-						}
-					}
-					theFac->return_reference_output_connector(ocS);
-				}
+				std::string txtP =
+					"Buffersize: " + jvx_size2String(sglElm->params.buffersize) +
+					", Rate: " + jvx_size2String(sglElm->params.rate) +
+					", Channels: " + jvx_size2String(sglElm->params.number_channels) +
+					", Format: " + jvxDataFormat_txt(sglElm->params.format) +
+					", Group: " + jvxDataFormatGroup_txt(sglElm->params.format_group) +
+					", Dataflow: " + jvxDataflow_txt(sglElm->params.data_flow);
+				it->setText(2, txtP.c_str());
 			}
+
+			// ===========================================================================						
 		}
 		dataConn->return_reference_connection_factory(theFac);
 	}

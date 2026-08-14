@@ -34,7 +34,7 @@ void ffi_host_allocate_ss_list(
 
 void ffi_host_allocate_component_ident(struct component_ident** ptrRet, const jvxComponentIdentification& cpId);
 
-void ffi_host_allocate_connection_params(struct connection_params** ptrRet, const jvxConnectionParams& params);
+void ffi_host_allocate_connector_list(struct connector_list** ptrRet, const jvxApiConnectorList& cons);
 
 // For local use in flutter_native_processes.cpp
 int ffi_host_allocate_char_array(const std::string& txt, char** txtOnReturn);

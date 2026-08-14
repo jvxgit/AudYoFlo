@@ -345,3 +345,51 @@ JvxComponentIdentification string2CpId(String cpIdStr, int uid) {
   cpId.uid = uid;
   return cpId;
 }
+
+class JvxConnector {
+  String descriptor = '';
+  int buffersize = 0;
+  int rate = 0;
+  int numberChannels = 0;
+  jvxDataFormatEnum format = jvxDataFormatEnum.JVX_DATAFORMAT_NONE;
+  jvxDataFormatGroupEnum formatGroup =
+      jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE;
+  jvxDataflowEnum dataFlow = jvxDataflowEnum.JVX_DATAFLOW_DONT_CARE;
+
+  int segmentationX = -1;
+  int segmentationY = -1;
+  String formatSpec = '';
+  int additionalFlags = 0;
+  bool isInput = true;
+
+  JvxConnector(
+      {this.descriptor = 'none',
+      this.buffersize = 0,
+      this.rate = 0,
+      this.numberChannels = 0,
+      this.format = jvxDataFormatEnum.JVX_DATAFORMAT_NONE,
+      this.formatGroup = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE,
+      this.dataFlow = jvxDataflowEnum.JVX_DATAFLOW_DONT_CARE,
+      this.segmentationX = -1,
+      this.segmentationY = -1,
+      this.formatSpec = '',
+      this.additionalFlags = 0,
+      this.isInput = true});
+
+  // Compact one-line representation, meant to fit into a small UI tile.
+  String get shortText =>
+      'Buffersize: $buffersize, Rate: $rate, Channels: $numberChannels, '
+      'Format: ${format.txt}';
+
+  // Full representation of all connection parameters, meant for a tooltip.
+  String get fullText {
+    String txt = 'Buffersize: $buffersize, Rate: $rate, '
+        'Channels: $numberChannels, Format: ${format.txt}, '
+        'Group: ${formatGroup.txt}, Dataflow: ${dataFlow.txt}, '
+        'Segmentation: $segmentationX x $segmentationY';
+    if (formatSpec.isNotEmpty) {
+      txt += ', Spec: $formatSpec';
+    }
+    return txt;
+  }
+}

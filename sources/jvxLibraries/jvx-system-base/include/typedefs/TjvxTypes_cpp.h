@@ -443,8 +443,9 @@ public:
 // =================================================================================================
 // =================================================================================================
 
-struct jvxConnectionStatus
+class jvxConnectionStatus
 {
+public:
 	jvxErrorType latest_test = JVX_ERROR_NOT_READY;	
 	jvxErrorType latest_prepare = JVX_ERROR_NOT_READY;
 	jvxApiString latest_mess_hint;
@@ -462,17 +463,26 @@ struct jvxConnectionStatus
  * as a 2D pixelmap by x = 640 and y = 480. If the segmentation is a fheight, only part of the field is populated.
  * We find the valid pixels by first applying the segmentation followed by the fillheight constraint.
  */ //=======================================================================================================
-struct jvxConnectionParamsSegmentation
+class jvxConnectionParamsSegmentation
 {
+public:
 	// Segmentation: A value of UNSELECTED means that there is no segmentation, hence, x = buffersize
 	jvxSize x = JVX_SIZE_UNSELECTED;
 
 	// Segmentation: A value of UNSELECTED means that there is no segmentation, hence, y = 1
 	jvxSize y = JVX_SIZE_UNSELECTED;
+
+	void reset()
+	{
+		x = JVX_SIZE_UNSELECTED;
+		y = JVX_SIZE_UNSELECTED;
+	}
 };
 
-struct jvxConnectionParams
+class jvxConnectionParams
 {
+public:
+
 	/***
 	 * Size of the buffer in elements of type format (maximum buffer size). Typically the buffer is fully filled but it may be filled to a degree specified by segmentation_x and segmentation_y.
 	 * The size in bytes can typically be computed as ( buffersize * jvxDataFormat_getSize(format) * jvxDataFormatGroup_getsize_mult(format_group) / jvxDataFormatGroup_getsize_div(format_group)
@@ -537,6 +547,21 @@ struct jvxConnectionParams
 
 	// Status of latest operations
 	jvxConnectionStatus stat;
+
+	void reset()
+	{
+
+		buffersize = 0;
+		rate = 0;
+		number_channels = 0;
+		format = JVX_DATAFORMAT_NONE;
+		format_group = JVX_DATAFORMAT_GROUP_NONE;
+		data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
+		segmentation.reset();
+		format_spec.clear();
+		additional_flags = 0;
+		stat.reset();
+	}
 };
 
 // =================================================================================================
@@ -784,6 +809,36 @@ public:
 	const jvxData& val(jvxSize idx = 0) const;
 };
 
+class jvxApiConnector 
+{
+public:
+	jvxApiString descriptor;
+	jvxConnectionParams params;
+	jvxBool isInput = true;
+	jvxSize idxCon = JVX_SIZE_UNSELECTED;
+	jvxSize idxSubCon = JVX_SIZE_UNSELECTED;
+	void reset();
+};
+
+class jvxApiConnectorList
+{
+public:
+	jvxSize lCons = 0;
+	jvxApiConnector* bCons = nullptr;
+
+	jvxApiConnectorList();
+	jvxApiConnectorList(const jvxApiConnectorList& tocopy);
+	jvxApiConnectorList& operator=(const jvxApiConnectorList& other);
+
+	~jvxApiConnectorList();
+
+	void init(jvxSize nElements);
+	const jvxApiConnector* elmAt(jvxSize idx) const;
+	jvxErrorType setAt(jvxSize idx, const jvxApiConnector& con);
+	jvxSize ll() const;
+	
+	void convert(const std::list<jvxApiConnector>& lst);
+};
 
 /*
 class jvxValueInRange

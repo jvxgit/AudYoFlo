@@ -974,22 +974,21 @@ abstract class AudYoFloBackendCache
   }
 
   @override
-  Future<int> triggerUpdateConnectionParamsComponent(
+  Future<int> triggerUpdateConnectorsComponent(
       JvxComponentIdentification cpId) async {
     int errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
     if (backendAdapterIf == null) {
       errCode = jvxErrorType.JVX_ERROR_NOT_READY;
     } else {
-      errCode = await backendAdapterIf!.triggerUpdateConnectionParams(cpId);
+      errCode = await backendAdapterIf!.triggerUpdateConnectorsComponent(
+          cpId, jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED);
     }
     return errCode;
   }
 
   @override
-  int updateConnectionParamsCacheCompleteNotify(
-      JvxComponentIdentification cpId,
-      List<AudYoFloOneConnectorEntry> inputConnectors,
-      List<AudYoFloOneConnectorEntry> outputConnectors) {
+  int updateConnectorsCacheCompleteNotify(JvxComponentIdentification cpId,
+      List<JvxConnector> inputConnectors, List<JvxConnector> outputConnectors) {
     int errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
     AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
     if (actComponent != null) {
@@ -1001,40 +1000,44 @@ abstract class AudYoFloBackendCache
 
       // TEMP DEBUG: confirm the cache was actually written for this
       // component, and with how many connectors.
+      /*
       debugPrint('[connParams] cache updated for <${cpId.txt}>: '
           '${inputConnectors.length} input, ${outputConnectors.length} output '
           '(ssUpdateId=${actComponent.connectionParamsCache.ssUpdateId})');
-
+      */
       triggerNotify();
     }
     return errCode;
   }
 
   @override
-  void invalidateConnectionParamsComponent(JvxComponentIdentification cpId) {
+  void invalidateConnectorsComponent(JvxComponentIdentification cpId) {
     AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
     if (actComponent != null) {
       actComponent.connectionParamsCache.invalidate();
 
       // TEMP DEBUG: confirm which component's connector cache was just
       // invalidated.
+      /*
       debugPrint('[connParams] invalidated cache for <${cpId.txt}>');
+      */
     }
   }
 
   @override
-  void invalidateConnectionParamsForProcess(int processUId) {
-    List<JvxComponentIdentification> cpIds = findComponentsMatchProcess(
-        processUId,
-        processIdLinearAddress: false);
+  void invalidateConnectorsForProcess(int processUId) {
+    List<JvxComponentIdentification> cpIds =
+        findComponentsMatchProcess(processUId, processIdLinearAddress: false);
 
     // TEMP DEBUG: show which process triggered this and which components
     // were found to belong to it.
+    /*
     debugPrint('[connParams] process <$processUId> tested, invalidating '
         '${cpIds.length} component(s): ${cpIds.map((e) => e.txt).join(', ')}');
+        */
 
     for (var cpId in cpIds) {
-      invalidateConnectionParamsComponent(cpId);
+      invalidateConnectorsComponent(cpId);
     }
   }
 

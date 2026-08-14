@@ -185,6 +185,33 @@ jvxLibHost::number_slots_component_system(const jvxComponentIdentification& cpTp
 
 // ======================================================================================================
 
+jvxErrorType 
+jvxLibHost::connectors_selected_component(jvxComponentIdentification cpTp, jvxConnectorSelectType sel, jvxBool isInput, jvxApiConnectorList* out)
+{ 
+	jvxErrorType res = JVX_ERROR_INVALID_SETTING;
+	if (involvedHost.hHost)
+	{
+		IjvxObject* theObj = nullptr;
+		res = involvedHost.hHost->request_object_selected_component(cpTp, &theObj);
+		if ((res == JVX_NO_ERROR) && theObj)
+		{
+			IjvxConnectorFactory* conFac = reqInterfaceObj<IjvxConnectorFactory>(theObj);
+			if (conFac)
+			{
+				if(out) *out = jvx::helper::create_factoryConnectorList(conFac, isInput, sel);
+				retInterfaceObj<IjvxConnectorFactory>(theObj, conFac);
+			}
+			else
+			{
+				res = JVX_ERROR_UNSUPPORTED;
+			}
+			involvedHost.hHost->return_object_selected_component(cpTp, theObj);
+		}
+	}
+	return res;
+}
+
+#if 0
 jvxErrorType
 jvxLibHost::number_input_connectors_selected_component(jvxComponentIdentification cpTp, jvxSize* num)
 {
@@ -380,6 +407,7 @@ jvxLibHost::connection_params_output_connector_selected_component(jvxComponentId
 	}
 	return res;
 }
+#endif
 
 // ======================================================================================================
 

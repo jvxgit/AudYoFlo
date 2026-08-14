@@ -75,7 +75,8 @@ abstract class AudYoFloBackendAdapterIf extends AudYoFloBackendTranslator {
 
   // Forward of cache update functions towards the backend: read out the
   // input/output connectors and their connection (processing) parameters
-  Future<int> triggerUpdateConnectionParams(JvxComponentIdentification cpId);
+  Future<int> triggerUpdateConnectorsComponent(
+      JvxComponentIdentification cpId, jvxConnectorSelectionEnum sel);
 
   // Forward of cache update functions towards the backend
   Future<int> triggerSaveConfig();

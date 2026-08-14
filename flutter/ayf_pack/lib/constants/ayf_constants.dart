@@ -164,7 +164,8 @@ extension jvxDataFormatGroupEEnum on jvxDataFormatGroupEnum {
   static String get formatName => "jvxDataFormatGroup";
   String get txt => describeEnum(this);
   static jvxDataFormatGroupEnum fromInt(int val) {
-    jvxDataFormatGroupEnum ss = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE;
+    jvxDataFormatGroupEnum ss =
+        jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE;
     if (val < jvxDataFormatGroupEnum.values.length) {
       ss = jvxDataFormatGroupEnum.values[val];
     }
@@ -404,6 +405,7 @@ extension jvxStateEInt on jvxState {
     return retVal;
   }
 }
+
 // ===========================================================================
 
 abstract class jvxErrorType {
@@ -846,4 +848,27 @@ abstract class AyfFrontendReportLevelEnum {
 enum AyfBackendReportPropertySetEnum {
   AYF_BACKEND_REPORT_SET_PROPERTY_ACTIVE,
   AYF_BACKEND_REPORT_SET_PROPERTY_INACTIVE
+}
+
+// ===========================================================================
+//
+enum jvxConnectorSelectionEnum {
+  JVX_CONNECTOR_SELECT_CONNECTABLE,
+  JVX_CONNECTOR_SELECT_CONNECTED
+}
+
+extension jvxConnectorSelectionEInt on jvxConnectorSelectionEnum {
+  static jvxConnectorSelectionEnum fromStringSingle(String value) {
+    jvxConnectorSelectionEnum retVal =
+        jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE;
+    switch (value) {
+      case 'connectable':
+        retVal = jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE;
+        break;
+      case 'connected':
+        retVal = jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED;
+        break;
+    }
+    return retVal;
+  }
 }

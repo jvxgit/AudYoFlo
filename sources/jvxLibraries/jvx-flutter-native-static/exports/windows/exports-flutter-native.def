@@ -72,12 +72,7 @@ EXPORTS
 		ffi_component_selection_option
 		ffi_component_slot_allocation
 
-		ffi_component_number_input_connectors
-		ffi_component_number_output_connectors
-		ffi_component_descriptor_input_connector
-		ffi_component_descriptor_output_connector
-		ffi_component_connection_params_input_connector
-		ffi_component_connection_params_output_connector
+		ffi_component_connectors
 
 		ffi_select_component
 		ffi_activate_selected_component

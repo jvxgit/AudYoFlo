@@ -27,7 +27,7 @@ class _AudYoFloPropertyGridWidgetStates
   List<AudYoFloPropertyContainer> allProperties = [];
   // Input/output connectors of the selected component, always appended at
   // the end of the property grid.
-  List<AudYoFloOneConnectorEntry> allConnectorEntries = [];
+  List<JvxConnector> allConnectorEntries = [];
 
   @override
   Widget build(BuildContext context) {
@@ -173,11 +173,12 @@ class _AudYoFloPropertyGridWidgetStates
                       .referenceConnectionParamsInCache(theDbgModel.idSelectCp);
                   if (connCache == null) {
                     int errCodeConn = await theDbgModel.be
-                        .triggerUpdateConnectionParamsComponent(
+                        .triggerUpdateConnectorsComponent(
                             theDbgModel.idSelectCp);
                     if (errCodeConn == jvxErrorType.JVX_NO_ERROR) {
-                      connCache = theDbgModel.be.referenceConnectionParamsInCache(
-                          theDbgModel.idSelectCp);
+                      connCache = theDbgModel.be
+                          .referenceConnectionParamsInCache(
+                              theDbgModel.idSelectCp);
                     }
                   }
                   if (connCache != null) {
@@ -743,14 +744,14 @@ class AudYoFloPropertyDetailView extends StatelessWidget {
 // ============================================================
 
 class AudYoFloConnectorParamSingleWidget extends StatelessWidget {
-  final List<AudYoFloOneConnectorEntry> cContentShow;
+  final List<JvxConnector> cContentShow;
   final int idConn;
   AudYoFloConnectorParamSingleWidget(
       {required this.cContentShow, required this.idConn});
 
   @override
   Widget build(BuildContext context) {
-    AudYoFloOneConnectorEntry? connEntry;
+    JvxConnector? connEntry;
     if (idConn < cContentShow.length) {
       connEntry = cContentShow.elementAt(idConn);
     }
@@ -759,7 +760,7 @@ class AudYoFloConnectorParamSingleWidget extends StatelessWidget {
 }
 
 class AudYoFloConnectorParamShow extends StatelessWidget {
-  final AudYoFloOneConnectorEntry? connEntry;
+  final JvxConnector? connEntry;
   AudYoFloConnectorParamShow({required this.connEntry});
 
   @override
@@ -776,8 +777,8 @@ class AudYoFloConnectorParamShow extends StatelessWidget {
       direction = isInput ? 'IN' : 'OUT';
       directionColor = isInput ? Colors.green : Colors.orange;
       descriptor = connEntry!.descriptor;
-      shortText = connEntry!.params.shortText;
-      fullText = connEntry!.params.fullText;
+      shortText = connEntry!.shortText;
+      fullText = connEntry!.fullText;
     }
 
     return GestureDetector(

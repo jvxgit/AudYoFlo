@@ -230,8 +230,9 @@ struct ss_list* ffi_component_slot_allocation(void* opaque_hdl, struct component
 	return retVal;
 }
 
-int ffi_component_number_input_connectors(void* opaque_hdl, struct component_ident* address)
+struct connector_list* ffi_component_connectors(void* opaque_hdl, struct component_ident* address, int connector_select_option, int is_input)
 {
+	struct connector_list* retValue = nullptr;
 	jvxLibHost* ll = nullptr;
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxSize num = JVX_SIZE_UNSELECTED;
@@ -255,185 +256,17 @@ int ffi_component_number_input_connectors(void* opaque_hdl, struct component_ide
 	ll = reinterpret_cast<jvxLibHost*>(opaque_hdl);
 #endif
 
-	res = ll->number_input_connectors_selected_component(cpTp, &num);
-	JSE;
-
-	return num;
-}
-
-int ffi_component_number_output_connectors(void* opaque_hdl, struct component_ident* address)
-{
-	jvxLibHost* ll = nullptr;
-	jvxErrorType res = JVX_NO_ERROR;
-	jvxSize num = JVX_SIZE_UNSELECTED;
-	jvxComponentIdentification cpTp(
-		(jvxComponentType)address->tp,
-		address->slotid,
-		address->slotsubid,
-		address->uId);
-
-	JRE;
-#ifdef JVX_SECURE_OPAQUE_PTR
-	if (opaque_hdl)
+	jvxCBool isInput = (is_input != 0);
+	if (connector_select_option < (int)jvxConnectorSelectType::JVX_CONNECTOR_SELECT_LIMIT)
 	{
-		res = JVX_ERROR_ELEMENT_NOT_FOUND;
-		auto elm = lst_active_referenes.find(opaque_hdl);
-		if (elm != lst_active_referenes.end())
-		{
-		}
-	}
-#else
-	ll = reinterpret_cast<jvxLibHost*>(opaque_hdl);
-#endif
-
-	res = ll->number_output_connectors_selected_component(cpTp, &num);
-	JSE;
-
-	return num;
-}
-
-char* ffi_component_descriptor_input_connector(void* opaque_hdl, struct component_ident* address, int idx)
-{
-	jvxLibHost* ll = nullptr;
-	jvxErrorType res = JVX_NO_ERROR;
-	jvxApiString astr;
-	char* retPtr = nullptr;
-	jvxComponentIdentification cpTp(
-		(jvxComponentType)address->tp,
-		address->slotid,
-		address->slotsubid,
-		address->uId);
-
-	JRE;
-#ifdef JVX_SECURE_OPAQUE_PTR
-	if (opaque_hdl)
-	{
-		res = JVX_ERROR_ELEMENT_NOT_FOUND;
-		auto elm = lst_active_referenes.find(opaque_hdl);
-		if (elm != lst_active_referenes.end())
-		{
-		}
-	}
-#else
-	ll = reinterpret_cast<jvxLibHost*>(opaque_hdl);
-#endif
-
-	res = ll->descriptor_input_connector_selected_component(cpTp, (jvxSize)idx, &astr);
-	if (res == JVX_NO_ERROR)
-	{
-		ffi_host_allocate_char_array(astr.std_str(), &retPtr);
+		jvxConnectorSelectType sel = (jvxConnectorSelectType)connector_select_option;
+		jvxApiConnectorList lstRet;
+		res = ll->connectors_selected_component(cpTp, sel, isInput, &lstRet);
+		ffi_host_allocate_connector_list(&retValue, lstRet);
 	}
 	JSE;
 
-	return retPtr;
-}
-
-char* ffi_component_descriptor_output_connector(void* opaque_hdl, struct component_ident* address, int idx)
-{
-	jvxLibHost* ll = nullptr;
-	jvxErrorType res = JVX_NO_ERROR;
-	jvxApiString astr;
-	char* retPtr = nullptr;
-	jvxComponentIdentification cpTp(
-		(jvxComponentType)address->tp,
-		address->slotid,
-		address->slotsubid,
-		address->uId);
-
-	JRE;
-#ifdef JVX_SECURE_OPAQUE_PTR
-	if (opaque_hdl)
-	{
-		res = JVX_ERROR_ELEMENT_NOT_FOUND;
-		auto elm = lst_active_referenes.find(opaque_hdl);
-		if (elm != lst_active_referenes.end())
-		{
-		}
-	}
-#else
-	ll = reinterpret_cast<jvxLibHost*>(opaque_hdl);
-#endif
-
-	res = ll->descriptor_output_connector_selected_component(cpTp, (jvxSize)idx, &astr);
-	if (res == JVX_NO_ERROR)
-	{
-		ffi_host_allocate_char_array(astr.std_str(), &retPtr);
-	}
-	JSE;
-
-	return retPtr;
-}
-
-struct connection_params* ffi_component_connection_params_input_connector(void* opaque_hdl, struct component_ident* address, int idx)
-{
-	jvxLibHost* ll = nullptr;
-	jvxErrorType res = JVX_NO_ERROR;
-	struct connection_params* retVal = nullptr;
-	jvxConnectionParams params;
-	jvxComponentIdentification cpTp(
-		(jvxComponentType)address->tp,
-		address->slotid,
-		address->slotsubid,
-		address->uId);
-
-	JRE;
-#ifdef JVX_SECURE_OPAQUE_PTR
-	if (opaque_hdl)
-	{
-		res = JVX_ERROR_ELEMENT_NOT_FOUND;
-		auto elm = lst_active_referenes.find(opaque_hdl);
-		if (elm != lst_active_referenes.end())
-		{
-		}
-	}
-#else
-	ll = reinterpret_cast<jvxLibHost*>(opaque_hdl);
-#endif
-
-	res = ll->connection_params_input_connector_selected_component(cpTp, (jvxSize)idx, &params);
-	if (res == JVX_NO_ERROR)
-	{
-		ffi_host_allocate_connection_params(&retVal, params);
-	}
-	JSE;
-
-	return retVal;
-}
-
-struct connection_params* ffi_component_connection_params_output_connector(void* opaque_hdl, struct component_ident* address, int idx)
-{
-	jvxLibHost* ll = nullptr;
-	jvxErrorType res = JVX_NO_ERROR;
-	struct connection_params* retVal = nullptr;
-	jvxConnectionParams params;
-	jvxComponentIdentification cpTp(
-		(jvxComponentType)address->tp,
-		address->slotid,
-		address->slotsubid,
-		address->uId);
-
-	JRE;
-#ifdef JVX_SECURE_OPAQUE_PTR
-	if (opaque_hdl)
-	{
-		res = JVX_ERROR_ELEMENT_NOT_FOUND;
-		auto elm = lst_active_referenes.find(opaque_hdl);
-		if (elm != lst_active_referenes.end())
-		{
-		}
-	}
-#else
-	ll = reinterpret_cast<jvxLibHost*>(opaque_hdl);
-#endif
-
-	res = ll->connection_params_output_connector_selected_component(cpTp, (jvxSize)idx, &params);
-	if (res == JVX_NO_ERROR)
-	{
-		ffi_host_allocate_connection_params(&retVal, params);
-	}
-	JSE;
-
-	return retVal;
+	return retValue;
 }
 
 struct selection_option* ffi_component_selection_option(void* opaque_hdl, struct component_ident* address, int idx)

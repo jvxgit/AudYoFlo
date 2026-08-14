@@ -295,7 +295,8 @@ enum class jvxDeviceCapabilityFlagsShift
 enum class jvxConnectorSelectType
 {
 	JVX_CONNECTOR_SELECT_CONNECTABLE,
-	JVX_CONNECTOR_SELECT_CONNECTED
+	JVX_CONNECTOR_SELECT_CONNECTED,
+	JVX_CONNECTOR_SELECT_LIMIT
 };
 
 class jvxDeviceCapabilities

@@ -176,6 +176,8 @@ int ffi_host_delete(void* ptr, int tpint)
 
 	struct one_property_string_list* strLst = nullptr;
 	struct ss_list* ssPtr = nullptr;
+	struct connector_list* connList = nullptr;
+
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 	if (ptr)
 	{
@@ -269,8 +271,20 @@ int ffi_host_delete(void* ptr, int tpint)
 			JVX_SAFE_DELETE_OBJ_CVRT(ptr, struct one_property_value_in_range*);
 			res = JVX_NO_ERROR;
 			break;
-		case JVX_DELETE_DATATYPE_CONNECTION_PARAMS:
-			JVX_SAFE_DELETE_OBJ_CVRT(ptr, struct connection_params*);
+
+		case JVX_DELETE_DATATYPE_CONNECTOR_WITH_PARAMS_LIST:
+			connList = (struct connector_list*)ptr;
+			for (i = 0; i < connList->nEntries; i++)
+			{
+				JVX_SAFE_DELETE_FIELD_TYPE(connList->pEntries[i].descriptor, char);
+				JVX_SAFE_DELETE_FIELD_TYPE(connList->pEntries[i].format_spec, char);
+			}
+
+			JVX_SAFE_DELETE_FIELD_TYPE(connList->pEntries, struct one_connector_with_params);
+			connList->nEntries = 0;
+
+			JVX_SAFE_DELETE_OBJ(connList);
+
 			res = JVX_NO_ERROR;
 			break;
 		default:
@@ -422,22 +436,35 @@ void ffi_host_allocate_component_ident(struct component_ident** ptrRet, const jv
 	}
 }
 
-void ffi_host_allocate_connection_params(struct connection_params** ptrRet, const jvxConnectionParams& params)
+void ffi_host_allocate_connector_list(struct connector_list** ptrRet, const jvxApiConnectorList & cons)
 {
 	if (ptrRet)
 	{
-		struct connection_params* ptr = nullptr;
-		JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(ptr, struct connection_params);
-		ptr->buffersize = params.buffersize;
-		ptr->rate = params.rate;
-		ptr->number_channels = params.number_channels;
-		ptr->format = (int)params.format;
-		ptr->format_group = (int)params.format_group;
-		ptr->data_flow = (int)params.data_flow;
-		ptr->segmentation_x = params.segmentation.x;
-		ptr->segmentation_y = params.segmentation.y;
-		ptr->additional_flags = params.additional_flags;
-		ffi_host_allocate_char_array(params.format_spec.std_str(), &ptr->format_spec);
+		jvxSize i;
+		struct connector_list* ptr = nullptr;
+		JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(ptr, struct connector_list);
+
+		ptr->nEntries = cons.ll();
+		if(ptr->nEntries) JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(ptr->pEntries, struct one_connector_with_params, ptr->nEntries);
+
+		for (i = 0; i < cons.ll(); i++)
+		{
+			auto elm = cons.elmAt(i);
+			assert(elm);
+			ptr->pEntries[i].buffersize = elm->params.buffersize;
+			ptr->pEntries[i].rate = elm->params.rate;
+			ptr->pEntries[i].number_channels = elm->params.number_channels;
+			ptr->pEntries[i].additional_flags = elm->params.additional_flags;
+			ptr->pEntries[i].data_flow = elm->params.data_flow;
+			ptr->pEntries[i].format = elm->params.format;
+			ptr->pEntries[i].format_group= elm->params.format_group;
+			ffi_host_allocate_char_array(elm->params.format_spec.std_str(), &ptr->pEntries[i].format_spec);
+			ptr->pEntries[i].segmentation_x = elm->params.segmentation.x;
+			ptr->pEntries[i].segmentation_y = elm->params.segmentation.y;
+			// elm->params.stat; leave out by now!
+			ptr->pEntries[i].is_input = elm->isInput;
+			ffi_host_allocate_char_array(elm->descriptor.std_str(), &ptr->pEntries[i].descriptor);
+		}
 		*ptrRet = ptr;
 	}
 }

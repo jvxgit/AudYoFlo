@@ -11,13 +11,7 @@ struct selection_option* ffi_component_selection_option(void* opaque_hdl, struct
 struct ss_list* ffi_component_slot_allocation(void* opaque_hdl, struct component_ident* address);
 
 // Input/output connectors of the selected component and their current connection (processing) parameters
-int ffi_component_number_input_connectors(void* opaque_hdl, struct component_ident* address);
-int ffi_component_number_output_connectors(void* opaque_hdl, struct component_ident* address);
-char* ffi_component_descriptor_input_connector(void* opaque_hdl, struct component_ident* address, int idx);
-char* ffi_component_descriptor_output_connector(void* opaque_hdl, struct component_ident* address, int idx);
-
-struct connection_params* ffi_component_connection_params_input_connector(void* opaque_hdl, struct component_ident* address, int idx);
-struct connection_params* ffi_component_connection_params_output_connector(void* opaque_hdl, struct component_ident* address, int idx);
+struct connector_list* ffi_component_connectors(void* opaque_hdl, struct component_ident* address, int connector_select_option, int is_input);
 
 // Select a new node/technology or device. The new component will be signaled but we also return the 
 // slotid/ slotsubid immediately. Hence, the return value is NOT an errorcode. The caller can 

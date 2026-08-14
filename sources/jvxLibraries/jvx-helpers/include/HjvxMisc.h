@@ -667,6 +667,8 @@ namespace jvx {
 
 		jvxErrorType set_property_sellst_entry_from_string(IjvxProperties* props, jvxCallManagerProperties callMan, const jPA& ident, const jPD& detail, const std::string& tokenRegExp, jvxSize cntSearch);
 
+		jvxApiConnectorList create_factoryConnectorList(IjvxConnectorFactory* theFac, jvxBool addressInput, jvxConnectorSelectType sel);
+
 		template <class T>
 		std::list<T> parseNumericExpression(const std::string& txt, jvxBool& err)
 		{

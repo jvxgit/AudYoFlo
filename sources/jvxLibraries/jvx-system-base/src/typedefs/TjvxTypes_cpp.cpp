@@ -190,9 +190,121 @@ jvxApiString::assign_const(const char* str, jvxSize ll)
 	bString = (char*)str;
 }
 
+// ==================================================================================
+void 
+jvxApiConnector::reset()
+{
+	params.reset();
+	descriptor.clear();
+	isInput = false;
+}
 
+// ==================================================================================
 
+jvxApiConnectorList::jvxApiConnectorList()
+{
+	lCons = 0;
+	bCons = nullptr;
+}
 
+jvxApiConnectorList::~jvxApiConnectorList()
+{
+	init(0);
+}
+
+jvxApiConnectorList::jvxApiConnectorList(const jvxApiConnectorList& tocopy)
+{
+	jvxSize i;
+	lCons = tocopy.ll();
+	init(lCons);
+	for (i = 0; i < lCons; i++)
+	{
+		auto elm = tocopy.elmAt(i);
+		assert(elm);
+		bCons[i] = *elm;
+	}
+}
+
+jvxApiConnectorList& 
+jvxApiConnectorList::operator=(const jvxApiConnectorList& tocopy)
+{
+	jvxSize i;
+	lCons = tocopy.ll();
+	init(lCons);
+	for (i = 0; i < lCons; i++)
+	{
+		auto elm = tocopy.elmAt(i);
+		assert(elm);
+		bCons[i] = *elm;
+	}
+	return *this;
+}
+
+jvxSize 
+jvxApiConnectorList::ll() const 
+{ 
+	return lCons; 
+}
+
+void 
+jvxApiConnectorList::init(jvxSize nElements)
+{
+	jvxSize i;
+	if (nElements != lCons)
+	{
+		if (lCons != 0)
+		{
+			JVX_SAFE_DELETE_FIELD(bCons);
+			lCons = 0;
+		}
+	}
+	if(nElements > 0)
+	{ 
+		lCons = nElements;
+
+		// There is a class involved, do not set content to ZERO!!
+		JVX_SAFE_ALLOCATE_FIELD(bCons, jvxApiConnector, lCons);
+	}
+	for (i = 0; i < lCons; i++)
+	{
+		bCons[i].reset();
+	}
+}
+
+const jvxApiConnector* 
+jvxApiConnectorList::elmAt(jvxSize idx) const
+{
+	const jvxApiConnector* retVal = nullptr;
+	if (idx < lCons)
+	{
+		retVal = &bCons[idx];
+	}
+	return retVal;
+}
+
+jvxErrorType 
+jvxApiConnectorList::setAt(jvxSize idx, const jvxApiConnector& con)
+{
+	jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+	if (idx < lCons)
+	{
+		bCons[idx] = con;
+		res = JVX_NO_ERROR;
+	}
+	return res;
+}
+
+void
+jvxApiConnectorList::convert(const std::list<jvxApiConnector>& lst)
+{
+	jvxSize cnt = 0;
+	this->init(lst.size());
+	for (auto& elm : lst)
+	{
+		setAt(cnt, elm);
+		cnt++;
+	}
+}
 
 // ==================================================================================================
 

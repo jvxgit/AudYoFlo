@@ -952,7 +952,7 @@ CjvxNVTasks::return_connected_icon(IjvxInputConnector* iconArg, jvxSize ctxtIdx,
 }
 
 jvxSize
-CjvxNVTasks::number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
+CjvxNVTasks::number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdx)
 {
 	jvxSize nn = 0;
 	auto elmT = _common_set_node_vtask.variableTasks.begin();
@@ -967,11 +967,10 @@ CjvxNVTasks::number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
 			auto elm = elmT->second.activeRuntimeTasks.begin();
 			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
 			{
-				jvxSize ctxtSubIdx_ocon = ctxtSubIdxArg - elm->second.icons.size();
-				if (ctxtSubIdx_ocon < elm->second.ocons.size())
+				if (ctxtSubIdx < elm->second.ocons.size())
 				{
 					auto elmO = elm->second.ocons.begin();
-					std::advance(elmO, ctxtSubIdx_ocon);
+					std::advance(elmO, ctxtSubIdx);
 					CjvxOutputConnectorVtask* pp = elmO->con;
 					jvxHandle* ctxtLoc = nullptr;
 					auto ifPtr = pp->request_references_ocon(&ctxtLoc);
@@ -986,7 +985,7 @@ CjvxNVTasks::number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
 }
 
 IjvxOutputConnector*
-CjvxNVTasks::reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
+CjvxNVTasks::reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdx)
 {
 	IjvxOutputConnector* retPtr = nullptr;
 	jvxSize nn = 0;
@@ -999,11 +998,10 @@ CjvxNVTasks::reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxt
 			auto elm = elmT->second.activeRuntimeTasks.begin();
 			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
 			{
-				jvxSize ctxtSubIdx_ocon = ctxtSubIdxArg - elm->second.icons.size();
-				if (ctxtSubIdx_ocon < elm->second.ocons.size())
+				if (ctxtSubIdx < elm->second.ocons.size())
 				{
 					auto elmO = elm->second.ocons.begin();
-					std::advance(elmO, ctxtSubIdx_ocon);
+					std::advance(elmO, ctxtSubIdx);
 
 					if (nn == idx)
 					{
@@ -1023,7 +1021,7 @@ CjvxNVTasks::reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxt
 }
 
 jvxErrorType
-CjvxNVTasks::return_connected_ocon(IjvxOutputConnector* oconArg, jvxSize ctxtIdx, jvxSize ctxtSubIdxArg)
+CjvxNVTasks::return_connected_ocon(IjvxOutputConnector* oconArg, jvxSize ctxtIdx, jvxSize ctxtSubIdx)
 {
 
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
@@ -1039,11 +1037,10 @@ CjvxNVTasks::return_connected_ocon(IjvxOutputConnector* oconArg, jvxSize ctxtIdx
 			auto elm = elmT->second.activeRuntimeTasks.begin();
 			for (; elm != elmT->second.activeRuntimeTasks.end(); elm++)
 			{
-				jvxSize ctxtSubIdx_ocon = ctxtSubIdxArg - elm->second.icons.size();
-				if (ctxtSubIdx_ocon < elm->second.icons.size())
+				if (ctxtSubIdx < elm->second.icons.size())
 				{
 					auto elmO = elm->second.ocons.begin();
-					std::advance(elmO, ctxtSubIdx_ocon);
+					std::advance(elmO, ctxtSubIdx);
 
 					auto pp = elmO->con;
 					jvxHandle* ctxtLoc = nullptr;
