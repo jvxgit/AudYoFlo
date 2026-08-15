@@ -351,3 +351,61 @@ CjvxConsoleHost_be_drivehost::process_command_abstraction(
 	
 	return res;
 }
+
+jvxErrorType
+CjvxConsoleHost_be_drivehost::trigger_select_component(jvxComponentIdentification id, const std::string& nmTarget)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+
+	// =========================================================
+	// Step I: Find the id to select the component
+	// =========================================================
+
+	jvxSize idS = JVX_SIZE_UNSELECTED;
+	jvxSize i;
+	hHost->selection_component(id, &idS);
+
+	jvxSize idComp = JVX_SIZE_UNSELECTED;
+	jvxSize num = 0;
+	hHost->number_components_system(id, &num);
+	for (i = 0; i < num; i++)
+	{
+		jvxApiString fldStr;
+		hHost->name_component_system(id, i, &fldStr);
+		if (jvx_compareStringsWildcard(nmTarget, fldStr.std_str()))
+		{
+			idComp = i;
+			break;
+		}
+	}
+
+	// =========================================================
+	// Step II: Unselect the previously selected 
+	// =========================================================
+	if (JVX_CHECK_SIZE_SELECTED(idComp))
+	{
+		jvxSize idPreviouslySelected = JVX_SIZE_UNSELECTED;
+		res = hHost->selection_component(id, &idPreviouslySelected);
+		if (JVX_CHECK_SIZE_SELECTED(idPreviouslySelected))
+		{
+			// Here we could add function to unselect the device
+			res = JVX_ERROR_WRONG_STATE_SUBMODULE;
+		}
+		else
+		{
+			res = JVX_NO_ERROR;
+		}
+
+		if (res == JVX_NO_ERROR)
+		{
+			res = hHost->select_component(id, idComp);
+		}
+		if (res == JVX_NO_ERROR)
+		{
+			res = hHost->activate_selected_component(id);
+		}
+		else {}
+	}
+	return res;
+}
+

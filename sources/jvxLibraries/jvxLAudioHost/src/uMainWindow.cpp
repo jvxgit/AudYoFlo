@@ -173,7 +173,13 @@ uMainWindow::request_command(const CjvxReportCommandRequest& request)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	CjvxReportCommandRequest* ptr = NULL;
-
+	/*
+	auto req = request.request();
+	if (req == jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH)
+	{
+		std::cout << "Hallo hier!" << std::endl;
+	}
+	*/
 	return reqHandle.request_command(request);
 
 /*

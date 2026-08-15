@@ -540,20 +540,84 @@ CjvxConsoleHost_be_drivehost::process_event(TjvxEventLoopElement* theQueueElemen
 		// jvx::helper::debug_out_command_request(*request, std::cout, __FUNCTION__);
 
 		jvxReportCommandDataType tp = request->datatype();
-		assert(paramType == JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST);
-		reqHandle.request_command_in_main_thread(request, false);
 
-		// We are the primary backend!!
-		for(auto& elm: this->linkedSecFrontends)
-		{		
-			if (elm.fwd)
+
+
+
+
+		jvxBool reqHandled = false;
+
+		// ==========================================================================
+	// Commands which address the UI must be handled here
+		switch (request->datatype())
+		{
+		case jvxReportCommandDataType::JVX_REPORT_COMMAND_TYPE_SS_ID:
+			switch (request->request())
 			{
-				elm.fwd->request_command_in_main_thread(request, false);
+			case jvxReportCommandRequest::JVX_REPORT_COMMAND_REQUEST_COMPONENT_STATESWITCH:
+			
+				auto ptrReqSsId = castCommandRequest<CjvxReportCommandRequest_ss_id>(*request);
+				jvxStateSwitch ss = jvxStateSwitch::JVX_STATE_SWITCH_NONE;
+				jvxComponentIdentification id = ptrReqSsId->origin();
+				ptrReqSsId->sswitch(&ss);
+				jvxSize num = 0;
+				jvxApiString astr;
+				jvxApiString nmDev;
+				ptrReqSsId->ident(&astr);
+
+				switch (ss)
+				{
+				case JVX_STATE_SWITCH_SELECT:
+				{
+					res = trigger_select_component(id, astr.std_str());
+
+					// =========================================================
+					// =========================================================
+					if (res == JVX_NO_ERROR)
+					{
+						std::cout << "Host request: Successfully activate component <" << astr.std_str() << "> for " << jvxComponentIdentification_txt(id) << "." << std::endl;
+					}
+					else
+					{
+						std::cout << "Host request: Tried to activate component <" << astr.std_str() << "> for " << jvxComponentIdentification_txt(id) << " but failed, reason: " << jvxErrorType_descr(res) << std::endl;
+					}
+
+
+					reqHandled = true;
+
+					// Remove the element to avoid memory leakage
+					jvx_command_request_copy_dealloc(request);
+					request = nullptr;
+				}
+				break;
+				default:
+					// Currently not supported!!
+					break;
+				}
+			
+				break;
 			}
 		}
 
-		// Do not delete it before here!
-		jvx_command_request_copy_dealloc(request);
+		// The request may have been handled before
+		if (!reqHandled)
+		{
+
+			assert(paramType == JVX_EVENTLOOP_DATAFORMAT_REQUEST_COMMAND_REQUEST);
+			reqHandle.request_command_in_main_thread(request, false);
+
+			// We are the primary backend!!
+			for (auto& elm : this->linkedSecFrontends)
+			{
+				if (elm.fwd)
+				{
+					elm.fwd->request_command_in_main_thread(request, false);
+				}
+			}
+
+			// Do not delete it before here!
+			jvx_command_request_copy_dealloc(request);
+		}
 
 		// Here, we need to forward these reports to the other frontend
 		return JVX_NO_ERROR;

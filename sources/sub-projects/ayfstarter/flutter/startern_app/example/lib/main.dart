@@ -50,7 +50,7 @@ void main(List<String> arguments) {
 // ===========================================================================
   // Optins for the host
   // ===========================================================================
-  bool forceWebHost = false;
+  bool forceWebHost = true;
   if (!forceWebHost) {
     corePack = corepack.ayfcore;
     pixBufInst = pixbuf.ayfpixbuf;

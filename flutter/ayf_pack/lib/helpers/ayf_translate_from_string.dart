@@ -112,6 +112,126 @@ class AudYoFloStringTranslator {
             break;
         }
       }
+    } else if (formatName == "jvxDataFormatGroup") {
+      retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE.index;
+      switch (selection) {
+        case 'none':
+          retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE.index;
+          break;
+
+        case 'audio pcm di':
+          retVal = jvxDataFormatGroupEnum
+              .JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED.index;
+          break;
+
+        case 'audio pcm i':
+          retVal = jvxDataFormatGroupEnum
+              .JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED.index;
+          break;
+
+        case 'fft real2complex':
+          retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_FFT_R2C.index;
+          break;
+
+        case 'fft complex2complex':
+          retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_FFT_C2C.index;
+          break;
+
+        case 'rgba32':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_RGBA32.index;
+          break;
+
+        case 'rgb24':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_RGB24.index;
+          break;
+
+        case 'nv12':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_NV12.index;
+          break;
+
+        case 'yuyv':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_YUYV.index;
+          break;
+
+        case 'single8':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_SINGLE8.index;
+          break;
+
+        case 'mono':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_MONO.index;
+          break;
+
+        case 'generic il':
+          retVal = jvxDataFormatGroupEnum
+              .JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED.index;
+          break;
+
+        case 'generic non-il':
+          retVal = jvxDataFormatGroupEnum
+              .JVX_DATAFORMAT_GROUP_GENERIC_NON_INTERLEAVED.index;
+          break;
+
+        case 'generic':
+          retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_GENERIC.index;
+          break;
+
+        case 'trigger':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_TRIGGER_ONLY.index;
+          break;
+
+        case 'ffmpg-pkt':
+          retVal = jvxDataFormatGroupEnum
+              .JVX_DATAFORMAT_GROUP_FFMPEG_PACKET_FWD.index;
+          break;
+
+        case 'ffmpg-frm':
+          retVal = jvxDataFormatGroupEnum
+              .JVX_DATAFORMAT_GROUP_FFMPEG_FRAME_FWD.index;
+          break;
+
+        case 'evs-pkt':
+          retVal =
+              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_EVS_PACKET_FWD.index;
+          break;
+
+        default:
+          print(
+              'Warning: For datatype <$formatName>, a selection value of <$selection> is not handled!');
+
+          break;
+      }
+    } else if (formatName == "jvxDataflow") {
+      retVal = jvxDataflowEnum.JVX_DATAFLOW_DONT_CARE.index;
+      switch (selection) {
+        case 'push':
+          retVal = jvxDataflowEnum.JVX_DATAFLOW_PUSH_ACTIVE.index;
+          break;
+
+        case 'pull':
+          retVal = jvxDataflowEnum.JVX_DATAFLOW_PUSH_ON_PULL.index;
+          break;
+
+        case 'async':
+          retVal = jvxDataflowEnum.JVX_DATAFLOW_PUSH_ASYNC.index;
+          break;
+
+        case 'dontcare':
+          retVal = jvxDataflowEnum.JVX_DATAFLOW_DONT_CARE.index;
+          break;
+
+        default:
+          print(
+              'Warning: For datatype <$formatName>, a selection value of <$selection> is not handled!');
+
+          break;
+      }
     } else if (formatName == "jvxPropertyCategoryType") {
       retVal = jvxPropertyCategoryType.JVX_PROPERTY_CATEGORY_UNKNOWN;
       switch (selection) {

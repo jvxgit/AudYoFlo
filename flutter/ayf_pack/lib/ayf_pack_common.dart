@@ -57,6 +57,7 @@ export 'helpers/ayf_one_technology_devices_on_change.dart';
 export 'helpers/ayf_translate_from_string.dart';
 
 export 'devices/ayf_devicelist_from_json.dart';
+export 'connectors/ayf_connectorlist_from_json.dart';
 export 'sequencer/ayf_sequencer_status_from_json.dart';
 
 export 'component-grid-widget/ayf_property_gridview.dart';

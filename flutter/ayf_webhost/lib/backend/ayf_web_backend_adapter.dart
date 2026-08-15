@@ -1189,8 +1189,34 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
   @override
   Future<int> triggerUpdateConnectorsComponent(
       JvxComponentIdentification cpId, jvxConnectorSelectionEnum sel) async {
-    // Not yet implemented for the web backend.
-    return jvxErrorType.JVX_ERROR_UNSUPPORTED;
+    // /jvx/host/components/audio_node/connectors?slotid=0&filter=connectable
+    int retVal = jvxErrorType.JVX_NO_ERROR;
+    String address = translateCompType(cpId.cpTp);
+    String cmd = '/jvx/host/components/' + address;
+    cmd += "/connectors";
+    Map<String, String> queryParams = {};
+    queryParams['slotid'] = cpId.slotid.toString();
+    queryParams['slotsubid'] = cpId.slotsubid.toString();
+    queryParams['inout'] = 'both';
+    queryParams['filter'] =
+        (sel == jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE)
+            ? 'connectable'
+            : 'connected';
+    var url = Uri.http(httpTarget, cmd, queryParams);
+
+    AudYoFloUrlRequest urlRequest = AudYoFloUrlRequest();
+    retVal = await webRequestHttpGet(url, urlRequest);
+    latestError = urlRequest.lastError;
+    if (retVal == jvxErrorType.JVX_NO_ERROR) {
+      retVal = AudYoFloConnectorlistFromJson.updateConnectorList(
+          urlRequest.jsonMap, cpId, theBeCache!, theBeCache!.backendAdapterIf!);
+    }
+
+    if (retVal != jvxErrorType.JVX_NO_ERROR) {
+      report!.reportStatusErrorProtocol(
+          16, 0, jvxErrorTypeEInt.toStringSingle(retVal));
+    }
+    return retVal;
   }
 
   @override

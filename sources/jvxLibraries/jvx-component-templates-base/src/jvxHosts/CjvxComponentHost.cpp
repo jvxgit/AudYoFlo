@@ -95,7 +95,7 @@ CjvxComponentHost::_number_components_system(const jvxComponentIdentification& t
 		if (elmIt_ep != _common_set_types.registeredNodeTypes.end())
 		{
 			res = JVX_NO_ERROR;
-			numL = elmIt_ep->instances.availableEndpoints.size() + elmIt_ep->instances.externalEndpoints.size();
+			numL = elmIt_ep->instances.availableEndpoints.size() + elmIt_ep->instances.externalEndpoints.size();			
 		}
 	}
 	if (res == JVX_ERROR_ELEMENT_NOT_FOUND)

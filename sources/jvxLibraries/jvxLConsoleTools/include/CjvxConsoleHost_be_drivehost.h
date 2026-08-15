@@ -390,7 +390,8 @@ public:
 	virtual void report_immediate_error(jvxErrorType resError, const CjvxReportCommandRequest& request) override;
 
 	void observeThreadLoop();
-
+	jvxErrorType trigger_select_component(jvxComponentIdentification id, const std::string& nmTarget);
+	
 	// =============================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan, IjvxConfigProcessor* processor,

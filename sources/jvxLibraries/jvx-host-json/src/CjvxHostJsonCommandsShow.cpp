@@ -2134,7 +2134,8 @@ CjvxHostJsonCommandsShow::show_single_component(
 										slotIds.push_back(selId);
 									}
 
-									hHost->number_components_system(tp, &num);
+									tpGet.slotid = 0;
+									hHost->number_components_system(tpGet, &num);
 									CjvxJsonArray jelmarr;
 									for (i = 0; i < num; i++)
 									{
@@ -2145,11 +2146,11 @@ CjvxHostJsonCommandsShow::show_single_component(
 										jvxApiString astr;
 										jvxComponentIdentification tpGet;
 
-										hHost->description_component_system(tp, i, &astr);
+										hHost->description_component_system(tpGet, i, &astr);
 										jelm_entry.makeAssignmentString("description", astr.std_str());
 										jelmlst_entries.addConsumeElement(jelm_entry);
 
-										hHost->descriptor_component_system(tp, i, &astr);
+										hHost->descriptor_component_system(tpGet, i, &astr);
 										jelm_entry.makeAssignmentString("descriptor", astr.std_str());
 										jelmlst_entries.addConsumeElement(jelm_entry);
 
