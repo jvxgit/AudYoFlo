@@ -961,9 +961,9 @@ abstract class AudYoFloBackendCache
   // ======================================================================
 
   @override
-  AudYoFloConnectionParamsCache? referenceConnectionParamsInCache(
+  AudYoFloConnectorsComponentsCache? referenceConnectorsComponentsInCache(
       JvxComponentIdentification cpId) {
-    AudYoFloConnectionParamsCache? retVal;
+    AudYoFloConnectorsComponentsCache? retVal;
     AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
     if (actComponent != null) {
       if (actComponent.connectionParamsCache.valid) {

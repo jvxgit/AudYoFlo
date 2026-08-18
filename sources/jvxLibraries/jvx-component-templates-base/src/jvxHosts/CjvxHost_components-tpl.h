@@ -26,6 +26,7 @@ CjvxComponentHost::t_select_component(std::vector<oneObjType<T>>& registeredType
 	IjvxObject* theOwner, jvxBool extend_if_necessary, jvxComponentType tp_store_type)
 {
 	jvxSize h;
+	jvxBool associateToOtherType = false;
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
 	jvxComponentType tpRemap = JVX_COMPONENT_UNKNOWN;
 	typename std::vector<oneObjType<T>>::iterator elmIt_ob_select;
@@ -42,7 +43,8 @@ CjvxComponentHost::t_select_component(std::vector<oneObjType<T>>& registeredType
 		}
 		else
 		{
-			elmIt_ob_store_here = jvx_findItemSelectorInList_one<oneObjType<T>, jvxComponentType>(registeredTypes, tp_store_type, 0);			
+			elmIt_ob_store_here = jvx_findItemSelectorInList_one<oneObjType<T>, jvxComponentType>(registeredTypes, tp_store_type, 0);	
+			associateToOtherType = true;
 		}
 
 		if (elmIt_ob_store_here == registeredTypes.end())
@@ -123,6 +125,51 @@ CjvxComponentHost::t_select_component(std::vector<oneObjType<T>>& registeredType
 									elmIt_ob_select->instances.availableEndpoints[idx].theHandle_single);
 								assert(theHandle);
 								theHandle->request_specialization(reinterpret_cast<jvxHandle**>(&theObj), NULL, NULL, NULL);
+
+								if (associateToOtherType)
+								{
+									// TODO: Introduce a counter rather than adding entries to the element!!
+									jvxApiString modName;
+									T* addObj = castFromObject<T>(theObj);
+									oneExternalObj<T> newElm;
+									newElm.theHandle_single = addObj;
+									theObj->module_reference(&modName, nullptr);
+									newElm.moduleName = modName.std_str();
+									newElm.cpRef = tp_select;
+									// res = JVX_ERROR_DUPLICATE_ENTRY;
+
+									// Attach a number to the object if the name was already in use
+									std::string originElmName = newElm.moduleName;
+									jvxSize cnt = 0;
+									while (1)
+									{
+										jvxBool alreadyThere = false;
+										if (cnt > 0)
+										{
+											newElm.moduleName = originElmName + "_" + jvx_size2String(cnt);
+										}
+										for (auto& elm : elmIt_ob_store_here->instances.externalEndpoints)
+										{
+											if (elm.moduleName == newElm.moduleName)
+											{
+												alreadyThere = true;
+												break;
+											}
+										}
+										if (alreadyThere)
+										{
+											cnt++;
+										}
+										else
+										{
+											break;
+										}
+									}
+									//if (!alreadyThere)
+									//{
+									elmIt_ob_store_here->instances.externalEndpoints.push_back(newElm);
+									//}
+								}
 							}
 						}
 						else
@@ -377,6 +424,7 @@ CjvxComponentHost::t_unselect_component(std::vector<oneObjType<T>>& registeredOb
 	jvxComponentIdentification& tp)
 {
 	int h;
+	jvxBool eleminateInExternalList = false;
 	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;	
 	typename std::vector<oneObjType<T>>::iterator elmIt_ob_remove;
 	typename std::vector<oneObjType<T>>::iterator elmIt_ob_basedhere;
@@ -402,6 +450,7 @@ CjvxComponentHost::t_unselect_component(std::vector<oneObjType<T>>& registeredOb
 					{
 						elmIt_ob_basedhere = jvx_findItemSelectorInList_one<oneObjType<T>, jvxComponentType>(registeredObjs, tpRemapped, 0);
 						assert(elmIt_ob_basedhere != registeredObjs.end());
+						eleminateInExternalList = true;
 					}
 
 					if (JVX_CHECK_SIZE_SELECTED(elmIt_ob_remove->instances.theHandle_shortcut[tp.slotid].idSel))
@@ -423,12 +472,31 @@ CjvxComponentHost::t_unselect_component(std::vector<oneObjType<T>>& registeredOb
 							res = elmIt_ob_remove->instances.theHandle_shortcut[tp.slotid].obj->terminate();
 							if (res == JVX_NO_ERROR)
 							{
+								// We need to remove before we actually kill the object!
+								if (eleminateInExternalList)
+								{
+									T* elmRem = castFromObject<T>(elmIt_ob_remove->instances.theHandle_shortcut[tp.slotid].obj);
+									auto elm = elmIt_ob_remove->instances.externalEndpoints.begin();
+									for (; elm != elmIt_ob_remove->instances.externalEndpoints.end(); elm++)
+									{
+										if (elm->theHandle_single == elmRem)
+										{
+											elmIt_ob_remove->instances.externalEndpoints.erase(elm);
+											break;
+										}
+									}
+								}
+
+
+
 								// Here, use the access functions from the remapped type
+								// This call may yield an update in the UI thread
 								if (elmIt_ob_basedhere->instances.availableEndpoints[elmIt_ob_remove->instances.theHandle_shortcut[tp.slotid].idSel].common.allowsMultiObjects)
 								{
 									elmIt_ob_basedhere->instances.availableEndpoints[elmIt_ob_remove->instances.theHandle_shortcut[tp.slotid].idSel].common.linkage.funcTerm(
 										elmIt_ob_remove->instances.theHandle_shortcut[tp.slotid].obj);
 								}
+
 								elmIt_ob_remove->instances.theHandle_shortcut[tp.slotid].obj = NULL;
 							}
 						}

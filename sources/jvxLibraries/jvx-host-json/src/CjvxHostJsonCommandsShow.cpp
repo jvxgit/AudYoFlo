@@ -2144,7 +2144,7 @@ CjvxHostJsonCommandsShow::show_single_component(
 										CjvxJsonArrayElement jarr_entry;
 
 										jvxApiString astr;
-										jvxComponentIdentification tpGet;
+										// jvxComponentIdentification tpGet;
 
 										hHost->description_component_system(tpGet, i, &astr);
 										jelm_entry.makeAssignmentString("description", astr.std_str());

@@ -50,7 +50,7 @@ class AudYoFloOneConnectorEntry {
 // property cache. It is invalidated as a whole whenever the backend reports
 // that the data chain containing this component has been (re-)tested
 // (JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN).
-class AudYoFloConnectionParamsCache {
+class AudYoFloConnectorsComponentsCache {
   List<JvxConnector> inputConnectors = [];
   List<JvxConnector> outputConnectors = [];
   bool valid = false;

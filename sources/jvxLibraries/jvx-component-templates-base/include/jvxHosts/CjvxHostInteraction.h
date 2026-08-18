@@ -19,7 +19,15 @@ template <class T> class oneExternalObj
 {
 public:
 	std::string moduleName;
-	T* theHandle_single;// In case multiple objects are not allowed, always return this, otherwise, always return a new instance
+
+	// In case multiple objects are not allowed, always return this, otherwise, always return a new instance
+	// I had tried to link multiple objects to one module name. However, then there is a non-unique match which is not desirable
+	// Instead we use underscores
+	T* theHandle_single;
+
+	// <- here, we locate the real component
+	jvxComponentIdentification cpRef;
+
 	oneExternalObj()
 	{
 		theHandle_single = NULL;

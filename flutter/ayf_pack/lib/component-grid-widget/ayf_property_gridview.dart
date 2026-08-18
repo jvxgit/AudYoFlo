@@ -169,15 +169,16 @@ class _AudYoFloPropertyGridWidgetStates
                   // best-effort - a failure here must not fail the property listing as a
                   // whole, the connector tiles are simply left empty in that case.
                   // ====================================================================
-                  AudYoFloConnectionParamsCache? connCache = theDbgModel.be
-                      .referenceConnectionParamsInCache(theDbgModel.idSelectCp);
+                  AudYoFloConnectorsComponentsCache? connCache = theDbgModel.be
+                      .referenceConnectorsComponentsInCache(
+                          theDbgModel.idSelectCp);
                   if (connCache == null) {
                     int errCodeConn = await theDbgModel.be
                         .triggerUpdateConnectorsComponent(
                             theDbgModel.idSelectCp);
                     if (errCodeConn == jvxErrorType.JVX_NO_ERROR) {
                       connCache = theDbgModel.be
-                          .referenceConnectionParamsInCache(
+                          .referenceConnectorsComponentsInCache(
                               theDbgModel.idSelectCp);
                     }
                   }
