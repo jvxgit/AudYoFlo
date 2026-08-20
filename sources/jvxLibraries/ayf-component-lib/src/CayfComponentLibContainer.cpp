@@ -185,6 +185,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 	jvxApiString realRegName = modName;
 	IjvxMinHost* minHostRef = nullptr;
 	IjvxConfigProcessor* confProcHdl = nullptr;
+	jvxComponentIdentification cpTpOrig;
 
 	CayfComponentLib* deviceEntryObject = allocateDeviceObject(startParams.passthroughMode, this, regToken.c_str());
 
@@ -202,6 +203,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 		deviceEntryObject->initialize(minHostRef, confProcHdl, modName);
 	}
 
+	deviceEntryObject->request_specialization(nullptr, &cpTpOrig, nullptr, nullptr);
 	deviceEntryObject->set_location_info(jvxComponentIdentification(JVX_COMPONENT_EXTERNAL_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
 	deviceEntryObject->select(nullptr);
 	deviceEntryObject->activate();
@@ -213,7 +215,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 		hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 		if (hostExt)
 		{
-			hostExt->attach_external_component(deviceEntryObject, modName.c_str(), regToken.c_str(), true, true, desiredSlotIdDev);
+			hostExt->attach_external_component(deviceEntryObject, cpTpOrig.tp, modName.c_str(), regToken.c_str(), true, true, desiredSlotIdDev);
 		}
 	}
 

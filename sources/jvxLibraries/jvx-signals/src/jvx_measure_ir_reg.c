@@ -368,53 +368,73 @@ jvxErrorType jvx_measure_ir_reg_process(struct jvx_measure_ir_reg* hdl,
 				}
 
 				jvxData regValue = regMax;
-				if (
-					(i >= nLowStart) && (i <= nLowStop)
-					)
+				if (extSz > 0)
 				{
-					jvxData norm = (jvxData)(nLowStop - nLowStart + 1);
-					norm = 1.0 / norm;
-					jvxData linFac = norm * (jvxData)(i - nLowStart);
-
-					if (extSz > 0)
+					jvxData linFac = 0;
+					jvxData instFreq = (jvxData)i / (jvxData)(hdlPrv->runtime.fftSize2) * (jvxData)(hdlPrv->init_cpy.fs / 2);
+					jvx_find_gain(&idxMatchFwd, &linFac, hdl->ext.freq_ptr, hdl->ext.gain_ptr, extSz, instFreq);
+					if (interpolLog)
 					{
-						jvxData instFreq = (jvxData)i / (jvxData)(hdlPrv->runtime.fftSize2) * (jvxData)(hdlPrv->init_cpy.fs / 2);
-						jvx_find_gain(&idxMatchFwd, &linFac, hdl->ext.freq_ptr, hdl->ext.gain_ptr, extSz, instFreq);
+						linFac = log(linFac);
+						linFac *= exponentFac;
+						linFac = exp(linFac);
 					}
-					linFac = log(linFac);
-					linFac *= exponentFac;
-					linFac = exp(linFac);
 					regValue = regValue * (1 - linFac) + regMin * linFac;
 				}
 				else
 				{
 					if (
-						(i > nLowStop) && (i < nHighStart))
+						(i >= nLowStart) && (i <= nLowStop)
+						)
 					{
-						regValue = regMin;
+						jvxData norm = (jvxData)(nLowStop - nLowStart + 1);
+						norm = 1.0 / norm;
+						jvxData linFac = norm * (jvxData)(i - nLowStart);
+
+						if (extSz > 0)
+						{
+							jvxData instFreq = (jvxData)i / (jvxData)(hdlPrv->runtime.fftSize2) * (jvxData)(hdlPrv->init_cpy.fs / 2);
+							jvx_find_gain(&idxMatchFwd, &linFac, hdl->ext.freq_ptr, hdl->ext.gain_ptr, extSz, instFreq);
+						}
+						if (interpolLog)
+						{
+							linFac = log(linFac);
+							linFac *= exponentFac;
+							linFac = exp(linFac);
+						}
+						regValue = regValue * (1 - linFac) + regMin * linFac;
 					}
 					else
 					{
 						if (
-							(i >= nHighStart) && (i <= nHighStop))
+							(i > nLowStop) && (i < nHighStart))
 						{
-							jvxData norm = (jvxData)(nHighStop - nHighStart + 1);
-							norm = 1.0 / norm;
-							jvxData linFac = norm * (jvxData)(nHighStop - i);
-							if (extSz > 0)
+							regValue = regMin;
+						}
+						else
+						{
+							if (
+								(i >= nHighStart) && (i <= nHighStop))
 							{
-								jvxData instFreq = (jvxData)i / (jvxData)(hdlPrv->runtime.fftSize2) * (jvxData)(hdlPrv->init_cpy.fs / 2);
-								jvx_find_gain(&idxMatchFwd, &linFac, hdl->ext.freq_ptr, hdl->ext.gain_ptr, extSz, instFreq);
+								jvxData norm = (jvxData)(nHighStop - nHighStart + 1);
+								norm = 1.0 / norm;
+								jvxData linFac = norm * (jvxData)(nHighStop - i);
+								if (extSz > 0)
+								{
+									jvxData instFreq = (jvxData)i / (jvxData)(hdlPrv->runtime.fftSize2) * (jvxData)(hdlPrv->init_cpy.fs / 2);
+									jvx_find_gain(&idxMatchFwd, &linFac, hdl->ext.freq_ptr, hdl->ext.gain_ptr, extSz, instFreq);
+								}
+								if (interpolLog)
+								{
+									linFac = log(linFac);
+									linFac *= exponentFac;
+									linFac = exp(linFac);
+								}
+								regValue = regMax * (1 - linFac) + regMin * linFac;
 							}
-
-							linFac = log(linFac);
-							linFac *= exponentFac;
-							linFac = exp(linFac);
-							regValue = regMax * (1 - linFac) + regMin * linFac;
 						}
 					}
 				}
-
 				if (interpolLog)
 				{
 					regValue = exp(regValue);

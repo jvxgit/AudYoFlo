@@ -486,13 +486,17 @@ CayfComponentLib::activate()
 				elm.nodePtr->state(&elm.nodeStat);
 				if (resC == JVX_NO_ERROR)
 				{
+					// Request initial component type before changing type to external node
+					jvxComponentIdentification cpTpOrig;
+					elm.nodePtr->request_specialization(nullptr, &cpTpOrig, nullptr, nullptr);
+
 					passConfigSection(elm.nodePtr, astr.std_str());
 					// Attach main node to host control - if embedded in full host
 					IjvxComponentHostExt* hostExt = nullptr;
 					hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
 					if (hostExt)
 					{
-						hostExt->attach_external_component(elm.nodePtr, parent->modName.c_str(), parent->regToken.c_str(), true, true, desiredSlot);
+						hostExt->attach_external_component(elm.nodePtr, cpTpOrig.tp, parent->modName.c_str(), parent->regToken.c_str(), true, true, desiredSlot);
 					}
 					else
 					{

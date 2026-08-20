@@ -198,13 +198,14 @@ CjvxFullHost::myRegisteredHostId()
 }
 
 jvxErrorType 
-CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, const char* moduleGroup, const char* registerToken, jvxBool regConnFactory, jvxBool noCfgSave, jvxSize desiredSlotId, jvxSize desiredSlotSubId)
+CjvxFullHost::attach_external_component(IjvxObject* toBeAttached, jvxComponentType cpTpOrig, const char* moduleGroup, const char* registerToken, jvxBool regConnFactory, jvxBool noCfgSave, jvxSize desiredSlotId, jvxSize desiredSlotSubId)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	jvxHandle* refSpec = nullptr;
 	jvxSize h;
 	jvxComponentIdentification tp;
 	jvxApiString modStr;
+
 
 	toBeAttached->request_specialization(&refSpec, &tp, nullptr);
 

@@ -61,15 +61,17 @@ message("Host is 64 bit: ${host_is_64bit}")
 
 # Set target subdirectories for install mechanism
 if(JVX_RELEASE_SDK)
-  set(INSTALL_PATH_RELEASE_SDK "sdk")
-  set(INSTALL_PATH_RELEASE_ROOT "sdk")
-  set(INSTALL_PATH_RELEASE_ROOT_MIN_SLASH "sdk/")
+	set(INSTALL_PATH_RELEASE_RUNTIME "no-runtime-folder-in-sdk-build")
+	set(INSTALL_PATH_RELEASE_SDK "sdk")
+	set(INSTALL_PATH_RELEASE_ROOT "sdk")
+	set(INSTALL_PATH_RELEASE_ROOT_MIN_SLASH "sdk/")
 
-  set(JVX_MATLAB_PROPERTY_GENERATOR false) # Correct some undefined combinations of settings
+	set(JVX_MATLAB_PROPERTY_GENERATOR false) # Correct some undefined combinations of settings
 
-  if(JVX_USE_PYTHON)
-    set(INSTALL_PATH_PYTHON "${INSTALL_PATH_RELEASE_SDK}/python")
-  endif()
+	if(JVX_USE_PYTHON)
+		set(INSTALL_PATH_PYTHON "${INSTALL_PATH_RELEASE_SDK}/python")
+	endif()
+	
 else()
   set(INSTALL_PATH_RELEASE_RUNTIME "runtime")
   set(INSTALL_PATH_RELEASE_ROOT "runtime")
