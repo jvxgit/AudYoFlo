@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 import 'package:ayf_pack_video/ayf_pack_video.dart';
+import 'package:ayfstartern/ayf_startern_connect_widget.dart';
 import 'ayf_ui_specific.dart';
 import 'package:ayf_pack/main-widgets/ayf_audio_settings_widget.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -131,6 +132,21 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
 
   @override
   void createTabsAndViews(Map<String, String> entriesCfgWidgets) {
+    // ==================================================================
+    // Component chaining canvas (ayf_connect/ConnectorFlo) - placed first.
+    // UI only for now, backend wiring follows in a later step.
+    // ==================================================================
+    String textConnect = 'Connect';
+    theAllocatedTabs.add(RotatedBox(
+        quarterTurns: -1,
+        child: Tooltip(
+            message: textConnect,
+            child: Column(children: [
+              Icon(Icons.hub_outlined, size: navButtonSizeMain),
+              Text(textConnect)
+            ]))));
+    theAllocatedTabViews.add(const AudYoFloConnectFlowWidget());
+
     // ==================================================================
     // ==================================================================
 

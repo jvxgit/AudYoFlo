@@ -50,6 +50,8 @@ public:
 	virtual void report_widget_closed(QWidget* theClosedWidget) override;
 	virtual void report_widget_specific(jvxSize id, jvxHandle* spec) override;
 
+	jvxErrorType report_command_request(const CjvxReportCommandRequest& req) override;
+
 	void preferredSize(jvxInt32& height, jvxInt32& width);
 signals:
 

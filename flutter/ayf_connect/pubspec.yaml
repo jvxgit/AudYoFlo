@@ -35,13 +35,19 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   fl_nodes: ^0.5.0+1
-  flutter_localizations:
-    sdk: flutter
   uuid: ^4.6.0
   provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+
+  # Only used by this package's own app shell (lib/main.dart) and its tests
+  # to set up MaterialApp's localizationsDelegates/supportedLocales - not by
+  # any of the reusable widgets/state under lib/. Kept in dev_dependencies so
+  # that consumers embedding CanvasPage elsewhere (e.g. ayfstartern) aren't
+  # forced onto flutter_localizations' pinned intl version.
+  flutter_localizations:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to

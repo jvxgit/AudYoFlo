@@ -67,6 +67,28 @@ class DiagramController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Overrides title, ports and group color of an existing node in one go,
+  /// straight from the given [source] node (not merged via copyWith's
+  /// null-means-unchanged convention - [groupColor] in particular needs to
+  /// be settable back to null). Used by [FlNodesAdapter.loadDiagram] to
+  /// restore per-instance details that its prototype-driven mirroring
+  /// (nodeType.label / nodeType.inputs / nodeType.outputs) can't carry.
+  void applyNodeOverrides(String nodeId, DiagramNode source) {
+    final index = _nodes.indexWhere((node) => node.id == nodeId);
+    if (index == -1) return;
+    final current = _nodes[index];
+    _nodes[index] = DiagramNode(
+      id: current.id,
+      typeId: current.typeId,
+      title: source.title,
+      position: current.position,
+      inputs: source.inputs,
+      outputs: source.outputs,
+      groupColor: source.groupColor,
+    );
+    notifyListeners();
+  }
+
   void removeNode(String nodeId) {
     final existed = _nodes.any((node) => node.id == nodeId);
     if (!existed) return;

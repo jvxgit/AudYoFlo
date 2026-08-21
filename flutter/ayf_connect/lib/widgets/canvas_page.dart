@@ -6,6 +6,7 @@ import '../editor/default_node_types.dart';
 import '../editor/diagram_editor_mode.dart';
 import '../editor/fl_nodes_adapter.dart';
 import '../editor/node_type_definition.dart';
+import '../models/diagram.dart';
 import '../state/diagram_controller.dart';
 import 'move_only_node.dart';
 import 'node_header.dart';
@@ -19,10 +20,24 @@ import 'read_only_node.dart';
 /// [mode] steuert, welche Interaktionen erlaubt sind — siehe
 /// [DiagramEditorMode] für die Details der drei Stufen ([DiagramEditorMode.edit]
 /// Standard, [DiagramEditorMode.moveOnly], [DiagramEditorMode.readOnly]).
+///
+/// [nodeTypes] ist der Katalog, gegen den fl_nodes seine Node-Prototypen
+/// registriert (Standard: [defaultNodeTypes]). [diagram], falls gesetzt, wird
+/// beim Start (und erneut bei jeder Änderung der Referenz) via
+/// [FlNodesAdapter.loadDiagram] geladen — gedacht für extern befüllte
+/// Diagramme (z.B. aus einem Backend-Cache), typischerweise kombiniert mit
+/// [DiagramEditorMode.readOnly].
 class CanvasPage extends StatefulWidget {
   final DiagramEditorMode mode;
+  final List<NodeTypeDefinition> nodeTypes;
+  final Diagram? diagram;
 
-  const CanvasPage({super.key, this.mode = DiagramEditorMode.edit});
+  const CanvasPage({
+    super.key,
+    this.mode = DiagramEditorMode.edit,
+    this.nodeTypes = defaultNodeTypes,
+    this.diagram,
+  });
 
   @override
   State<CanvasPage> createState() => _CanvasPageState();
@@ -30,7 +45,8 @@ class CanvasPage extends StatefulWidget {
 
 class _CanvasPageState extends State<CanvasPage> {
   late final FlNodesAdapter _adapter;
-  int _addedNodeCount = 0;
+  Diagram? _pendingDiagram;
+  bool _diagramLoadScheduled = false;
 
   bool get _isEditable => widget.mode == DiagramEditorMode.edit;
 
@@ -42,8 +58,65 @@ class _CanvasPageState extends State<CanvasPage> {
     // Änderungen re-buildn (dafür ist build() unten via context.watch da).
     _adapter = FlNodesAdapter(
       diagramController: context.read<DiagramController>(),
-      nodeTypes: defaultNodeTypes,
+      nodeTypes: widget.nodeTypes,
     );
+    final initialDiagram = widget.diagram;
+    if (initialDiagram != null) {
+      _scheduleLoadDiagram(initialDiagram);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CanvasPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newDiagram = widget.diagram;
+    if (newDiagram != null && !identical(newDiagram, oldWidget.diagram)) {
+      _scheduleLoadDiagram(newDiagram);
+    }
+  }
+
+  // fl_nodes' NodeEditorRenderBox keeps an internal diff-cache of the node
+  // list that it only reconciles against the widget tree once per frame. A
+  // Diagram carrying many nodes/edges triggers many addNode/addLink calls on
+  // the controller in one synchronous burst (see FlNodesAdapter.loadDiagram);
+  // firing that burst from within didUpdateWidget (i.e. while this widget's
+  // own tree is being rebuilt) races that diff-cache and throws
+  // "NodeEditorRenderBox: Found N children, but only M nodes in the
+  // controller." Deferring the actual load to after the current frame lets
+  // the render tree settle first. Bursts of updates within the same frame
+  // are coalesced into a single load of the most recent diagram.
+  void _scheduleLoadDiagram(Diagram diagram) {
+    _pendingDiagram = diagram;
+    if (_diagramLoadScheduled) return;
+    _diagramLoadScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _diagramLoadScheduled = false;
+      final diagramToLoad = _pendingDiagram;
+      _pendingDiagram = null;
+      if (mounted && diagramToLoad != null) {
+        // loadDiagram's Future only resolves once each node's own title
+        // (not just its shared type name) has actually landed in
+        // DiagramController - see the comment on loadDiagram itself.
+        await _adapter.loadDiagram(diagramToLoad);
+        if (!mounted) return;
+        // Externally supplied diagrams come with generated, not
+        // user-chosen, positions - fixed grid steps computed without
+        // knowing each node's actual (label-dependent) rendered size, which
+        // routinely overlap once a label makes a node wider/taller than the
+        // step. Re-flowing with arrangeRow (constant gap, real measured
+        // sizes) fixes that; the default viewport also has no reason to
+        // already frame the result, so zoom to fit afterwards. Both have to
+        // wait for one more frame: fl_nodes computes each node's bounds from
+        // its GlobalKey's RenderBox, which for nodes just added by
+        // loadDiagram() above doesn't exist until this frame has actually
+        // been laid out.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          _adapter.arrangeRow();
+          _zoomToFit();
+        });
+      }
+    });
   }
 
   @override
@@ -55,11 +128,11 @@ class _CanvasPageState extends State<CanvasPage> {
   }
 
   void _addNode(NodeTypeDefinition nodeType) {
-    // Einfache Kaskadierung, damit neu hinzugefügte Nodes nicht exakt
-    // übereinander landen. Ausgereiftere Platzierung (z.B. Viewport-Mitte)
-    // ist ein möglicher Folgeschritt, kein Blocker für diesen Meilenstein.
-    final offset = Offset(40.0 * _addedNodeCount, 40.0 * _addedNodeCount);
-    _addedNodeCount++;
+    // nextFreeSlot places the new node to the right of every existing one
+    // with a constant gap, based on their actually rendered sizes - a fixed
+    // per-add offset (e.g. cascading by a constant step) would overlap as
+    // soon as a label makes a node wider/taller than that step.
+    final offset = _adapter.nextFreeSlot();
     _adapter.flController.addNode(nodeType.typeId, offset: offset);
   }
 
@@ -67,6 +140,12 @@ class _CanvasPageState extends State<CanvasPage> {
     final nodeIds = _adapter.flController.nodes.keys.toSet();
     if (nodeIds.isEmpty) return;
     _adapter.flController.focusNodesById(nodeIds);
+  }
+
+  void _arrangeRow() {
+    if (_adapter.flController.nodes.isEmpty) return;
+    _adapter.arrangeRow();
+    _zoomToFit();
   }
 
   Future<void> _clearCanvas() async {
@@ -98,7 +177,6 @@ class _CanvasPageState extends State<CanvasPage> {
     for (final nodeId in _adapter.flController.nodes.keys.toList()) {
       _adapter.flController.removeNodeById(nodeId);
     }
-    _addedNodeCount = 0;
   }
 
   @override
@@ -138,6 +216,12 @@ class _CanvasPageState extends State<CanvasPage> {
             tooltip: 'Zoom to fit',
             onPressed: _zoomToFit,
           ),
+          if (widget.mode != DiagramEditorMode.readOnly)
+            IconButton(
+              icon: const Icon(Icons.grid_view_outlined),
+              tooltip: 'Automatisch anordnen',
+              onPressed: _arrangeRow,
+            ),
           if (_isEditable)
             IconButton(
               icon: const Icon(Icons.delete_sweep_outlined),
@@ -152,7 +236,7 @@ class _CanvasPageState extends State<CanvasPage> {
             SizedBox(
               width: 240,
               child: NodePalette(
-                nodeTypes: defaultNodeTypes,
+                nodeTypes: widget.nodeTypes,
                 onAddNode: _addNode,
               ),
             ),

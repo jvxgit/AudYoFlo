@@ -3,8 +3,8 @@ import 'diagram_node.dart';
 
 /// Der vollständige Zustand eines Diagramms: alle Nodes und Verbindungen.
 /// Bewusst reines Datenobjekt ohne Flutter-Widget-Abhängigkeiten (bis auf
-/// [Offset] in [DiagramNode]), damit es sich 1:1 als JSON speichern und
-/// später an ein Backend senden lässt.
+/// [Offset] und [Color] in [DiagramNode]), damit es sich 1:1 als JSON
+/// speichern und später an ein Backend senden lässt.
 class Diagram {
   final List<DiagramNode> nodes;
   final List<DiagramEdge> edges;

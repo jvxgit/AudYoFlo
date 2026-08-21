@@ -1,6 +1,8 @@
 import 'package:fl_nodes/fl_nodes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../state/diagram_controller.dart';
 import 'node_header.dart';
 
 /// Ersetzt fl_nodes' Standard-Node-Widget im Read-Only-Modus (über
@@ -32,6 +34,15 @@ class ReadOnlyNode extends StatelessWidget {
         .where((port) => port.prototype.direction == FlPortDirection.output)
         .toList();
 
+    // Per-instance override of the (per-type shared) prototype style - see
+    // DiagramNode.groupColor - used to mark several node instances that
+    // represent the same real-world entity as visually related.
+    final groupColor =
+        context.watch<DiagramController>().nodeById(node.id)?.groupColor;
+    final decoration = groupColor != null
+        ? node.builtStyle.decoration.copyWith(color: groupColor)
+        : node.builtStyle.decoration;
+
     return GestureDetector(
       onTap: () => controller.selectNodesById({node.id}),
       child: IntrinsicHeight(
@@ -40,7 +51,7 @@ class ReadOnlyNode extends StatelessWidget {
             key: node.key,
             clipBehavior: Clip.none,
             children: [
-              Container(decoration: node.builtStyle.decoration),
+              Container(decoration: decoration),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,7 +73,7 @@ class ReadOnlyNode extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 for (final port in inPorts)
-                                  _ReadOnlyPort(port: port),
+                                  _ReadOnlyPort(port: port, nodeId: node.id),
                               ],
                             ),
                           ),
@@ -72,7 +83,7 @@ class ReadOnlyNode extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 for (final port in outPorts)
-                                  _ReadOnlyPort(port: port),
+                                  _ReadOnlyPort(port: port, nodeId: node.id),
                               ],
                             ),
                           ),
@@ -92,12 +103,23 @@ class ReadOnlyNode extends StatelessWidget {
 
 class _ReadOnlyPort extends StatelessWidget {
   final FlPortDataModel port;
+  final String nodeId;
 
-  const _ReadOnlyPort({required this.port});
+  const _ReadOnlyPort({required this.port, required this.nodeId});
 
   @override
   Widget build(BuildContext context) {
     final isInput = port.prototype.direction == FlPortDirection.input;
+    // DiagramNode.inputs/outputs carry this instance's own port label (e.g.
+    // a real backend connector name); the prototype's displayName is only
+    // the shared, per-type fallback (see node_header.dart for the same
+    // pattern applied to the node title).
+    final label = context
+            .watch<DiagramController>()
+            .nodeById(nodeId)
+            ?.findPort(port.prototype.idName)
+            ?.label ??
+        port.prototype.displayName(context);
 
     return Row(
       key: port.key,
@@ -107,7 +129,7 @@ class _ReadOnlyPort extends StatelessWidget {
       children: [
         Flexible(
           child: Text(
-            port.prototype.displayName(context),
+            label,
             style: const TextStyle(color: Colors.white70, fontSize: 13),
             overflow: TextOverflow.ellipsis,
             textAlign: isInput ? TextAlign.left : TextAlign.right,

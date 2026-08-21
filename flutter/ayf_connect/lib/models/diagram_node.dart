@@ -15,6 +15,13 @@ class DiagramNode {
   final List<PortDefinition> inputs;
   final List<PortDefinition> outputs;
 
+  /// Optionale Hervorhebungsfarbe, unabhängig vom (pro Typ geteilten)
+  /// Node-Styling. Gedacht dafür, mehrere Node-Instanzen, die dieselbe
+  /// reale Entität repräsentieren (z.B. dieselbe Backend-Komponente, die an
+  /// mehreren Stellen einer Kette auftaucht), optisch als zusammengehörig zu
+  /// kennzeichnen, ohne sie zu einer einzigen Node zusammenzufassen.
+  final Color? groupColor;
+
   const DiagramNode({
     required this.id,
     required this.typeId,
@@ -22,6 +29,7 @@ class DiagramNode {
     required this.position,
     this.inputs = const [],
     this.outputs = const [],
+    this.groupColor,
   });
 
   PortDefinition? findPort(String portId) {
@@ -45,6 +53,7 @@ class DiagramNode {
       position: position ?? this.position,
       inputs: inputs,
       outputs: outputs,
+      groupColor: groupColor,
     );
   }
 
@@ -55,10 +64,12 @@ class DiagramNode {
         'position': {'dx': position.dx, 'dy': position.dy},
         'inputs': inputs.map((port) => port.toJson()).toList(),
         'outputs': outputs.map((port) => port.toJson()).toList(),
+        if (groupColor != null) 'groupColor': groupColor!.toARGB32(),
       };
 
   factory DiagramNode.fromJson(Map<String, dynamic> json) {
     final positionJson = json['position'] as Map<String, dynamic>;
+    final groupColorValue = json['groupColor'] as int?;
     return DiagramNode(
       id: json['id'] as String,
       typeId: json['typeId'] as String,
@@ -73,6 +84,7 @@ class DiagramNode {
       outputs: (json['outputs'] as List<dynamic>)
           .map((e) => PortDefinition.fromJson(e as Map<String, dynamic>))
           .toList(),
+      groupColor: groupColorValue != null ? Color(groupColorValue) : null,
     );
   }
 }

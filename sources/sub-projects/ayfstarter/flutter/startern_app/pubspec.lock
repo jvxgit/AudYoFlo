@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  connectorflo:
+    dependency: "direct main"
+    description:
+      path: "../../../../../flutter/ayf_connect"
+      relative: true
+    source: path
+    version: "1.0.0+1"
   cross_file:
     dependency: transitive
     description:
@@ -149,11 +156,27 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  fl_nodes:
+    dependency: transitive
+    description:
+      name: fl_nodes
+      sha256: "4597284f72369885e8b6bfc5221835a3a6472d9c61769b45c6c64b8f242b2b28"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0+1"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_context_menu:
+    dependency: transitive
+    description:
+      name: flutter_context_menu
+      sha256: "79fe00cd7e3ac3840a552cb3e653d8eb61d827b6c04c559e219973a1dc769165"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -170,6 +193,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  flutter_shaders:
+    dependency: transitive
+    description:
+      name: flutter_shaders
+      sha256: "34794acadd8275d971e02df03afee3dee0f98dbfb8c4837082ad0034f612a3e2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -377,6 +408,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      sha256: "9b129329f58692f6e6578329498a8fe9fbe98f090beb764ffbb8ee2eadd01dcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.0"
   vector_math:
     dependency: transitive
     description:
@@ -410,5 +449,5 @@ packages:
     source: hosted
     version: "2.4.0"
 sdks:
-  dart: ">=3.7.0 <4.0.0"
-  flutter: ">=3.22.0"
+  dart: ">=3.7.2 <4.0.0"
+  flutter: ">=3.27.0"

@@ -1,5 +1,10 @@
 import 'package:fl_nodes/fl_nodes.dart';
 import 'package:flutter/material.dart';
+// flutter_localizations lives in dev_dependencies (see pubspec.yaml) so that
+// consumers embedding CanvasPage elsewhere aren't forced onto its pinned intl
+// version; it's still resolved here since this package is the root when its
+// own app shell runs.
+// ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 

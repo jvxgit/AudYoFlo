@@ -24,7 +24,10 @@ dependencies:
   flutter_dotenv: ^5.0.2
 
   ayf_pack:
-    path: '../../../../../flutter/ayf_pack'  
+    path: '../../../../../flutter/ayf_pack'
+
+  connectorflo:
+    path: '../../../../../flutter/ayf_connect'
 
 dev_dependencies:
   flutter_test:

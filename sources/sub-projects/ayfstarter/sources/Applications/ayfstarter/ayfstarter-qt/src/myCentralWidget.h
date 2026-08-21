@@ -51,6 +51,8 @@ public:
 	virtual void report_widget_specific(jvxSize id, jvxHandle* spec) override;
 
 	void preferredSize(jvxInt32& height, jvxInt32& width);
+
+	jvxErrorType report_command_request(const CjvxReportCommandRequest& req);
 signals:
 
 public slots:
