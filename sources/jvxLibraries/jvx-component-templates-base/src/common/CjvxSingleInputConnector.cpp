@@ -163,19 +163,32 @@ CjvxSingleInputConnector::number_next(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxSingleInputConnector::reference_next(jvxSize idx, IjvxConnectionIterator** onReturn) 
+CjvxSingleInputConnector::reference_next_handle(jvxSize idx, IjvxConnectionIterator** onReturn) 
 {
 	*onReturn = nullptr;
 	if (
 		trig_con &&
 		trig_con->linked_ref)
 	{
-		trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT, onReturn JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+		trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_HANDLE, onReturn JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 	}
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType 
+jvxErrorType
+CjvxSingleInputConnector::reference_next_ocon_name(jvxSize idx, jvxApiString* onReturn)
+{
+	*onReturn = nullptr;
+	if (
+		trig_con &&
+		trig_con->linked_ref)
+	{
+		trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_OCON_NAME, onReturn JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
 CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
 {
 	return _reference_component(cpId, modName, description, linkName);

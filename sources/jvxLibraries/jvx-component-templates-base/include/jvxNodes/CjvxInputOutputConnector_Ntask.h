@@ -151,7 +151,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_forward_icon(jvxLinkDataTransferType tp, jvxHandle* JVX_CONNECTION_FEEDBACK_TYPE_A(var))override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next(jvxSize idx, IjvxConnectionIterator** next) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString * nmOcon) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
 		jvxComponentIdentification* cpTp, 
 		jvxApiString* modName,

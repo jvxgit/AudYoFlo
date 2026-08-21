@@ -12,7 +12,8 @@ protected:
 	CjvxConnectionMaster* parentMaster = nullptr;
 public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next(jvxSize idx, IjvxConnectionIterator** next) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* next) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
 		jvxComponentIdentification* cpTp, 
 		jvxApiString* modName, 

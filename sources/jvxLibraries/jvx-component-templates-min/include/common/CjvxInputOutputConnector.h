@@ -113,7 +113,8 @@ protected:
 
 	 virtual jvxErrorType JVX_CALLINGCONVENTION _number_next(jvxSize* num);
 
-	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_next(jvxSize idx, IjvxConnectionIterator** next);
+	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_next_handle(jvxSize idx, IjvxConnectionIterator** next);
+	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon);
 
 	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_component(
 		 jvxComponentIdentification* cpTp, 

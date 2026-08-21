@@ -1006,9 +1006,15 @@ CjvxGenericWrapperDevice_hostRelocator::number_next(jvxSize* num)
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::reference_next(jvxSize idx, IjvxConnectionIterator** next)
+CjvxGenericWrapperDevice_hostRelocator::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
 {
-	return runtime.refDevice->reference_next_x(idx, next);
+	return runtime.refDevice->reference_next_handle_x(idx, next);
+}
+
+jvxErrorType
+CjvxGenericWrapperDevice_hostRelocator::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
+{
+	return runtime.refDevice->reference_next_ocon_name_x(idx, nmOcon);
 }
 
 jvxErrorType
@@ -1028,7 +1034,13 @@ CjvxGenericWrapperDevice_hostRelocator::number_next_x(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxGenericWrapperDevice_hostRelocator::reference_next_x(jvxSize idx, IjvxConnectionIterator** next) 
+CjvxGenericWrapperDevice_hostRelocator::reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next) 
 {
-	return _reference_next(idx, next);;
+	return _reference_next_handle(idx, next);;
+}
+
+jvxErrorType
+CjvxGenericWrapperDevice_hostRelocator::reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon)
+{
+	return _reference_next_ocon_name(idx, nmOcon);
 }

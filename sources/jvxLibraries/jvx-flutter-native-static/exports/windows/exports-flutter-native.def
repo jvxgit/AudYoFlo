@@ -43,7 +43,8 @@ EXPORTS
 		; ==========================================================================
 		ffi_process_handle_for_uid				
 		ffi_process_decode_iterator_context
-		ffi_process_iterator_next
+		ffi_process_iterator_next_handle
+		ffi_process_iterator_next_ocon_name
 
 		ffi_process_decode_iterator_component
 		ffi_process_decode_iterator_module

@@ -238,6 +238,12 @@ public:
 		jvxSize idTask,
 		jvxSize subIdTask) override;
 
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_icon_ocon_name_vtask(
+		jvxSize idx,
+		jvxApiString* nmOcon,
+		jvxSize idTask,
+		jvxSize subIdTask) override;
+
 	virtual jvxSize JVX_CALLINGCONVENTION number_connected_icon(jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;
 	virtual IjvxInputConnector* JVX_CALLINGCONVENTION reference_connected_icon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION return_connected_icon(IjvxInputConnector* icon, jvxSize ctxtIdx, jvxSize ctxtSubIdx) override;

@@ -13,9 +13,10 @@ class AudYoFloOneConnectedProcess {
     String ret = '';
     var description = involved.descriptionComponent;
     var mod = involved.nameModule;
-    var cname = involved.nameConnector;
+    var cnameTo = involved.nmInputConnectorTo;
+    var cnameFrom = involved.nmOutputConnectorFrom;
     var cpIdName = involved.cpId.txt;
-    ret = '$tab -> $description -> $mod -> $cpIdName -> $cname\n';
+    ret = '$tab -> $cnameFrom -> $cnameTo [$description; $mod; $cpIdName]\n';
     tab = tab + '\t';
     for (int ii = 0; ii < involved.next.length; ii++) {
       ret += '$tab -> Branch: $ii\n';
@@ -38,7 +39,8 @@ abstract class AudYoFloOneComponentInProcess {
   List<AudYoFloOneComponentInProcess> next = [];
   String descriptionComponent = '';
   String nameModule = '';
-  String nameConnector = '';
+  String nmOutputConnectorFrom = '';
+  String nmInputConnectorTo = '';
 
   void attach(AudYoFloOneComponentInProcess cpIProc) {
     next.add(cpIProc);

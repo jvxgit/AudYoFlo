@@ -29,7 +29,7 @@ class AudYoFloOneComponentInProcessNative
         .ffi_process_decode_iterator_connector(spec.opaque_hdl, spec.itRef);
 
     if ((idPtr != nullptr) && (modPtr != nullptr)) {
-      nameConnector = cnamePtr.cast<Utf8>().toDartString();
+      nmInputConnectorTo = cnamePtr.cast<Utf8>().toDartString();
       spec.natLib.ffi_host_delete(cnamePtr.cast<Void>(),
           ffiDeleteDatatype.JVX_DELETE_DATATYPE_CHAR_ARRAY);
 
@@ -62,12 +62,22 @@ class AudYoFloOneComponentInProcessNative
 
     for (int ii = 0; ii < numBranches; ii++) {
       Pointer<Void> itNext = spec.natLib
-          .ffi_process_iterator_next(spec.opaque_hdl, spec.itRef, ii);
+          .ffi_process_iterator_next_handle(spec.opaque_hdl, spec.itRef, ii);
       if (itNext != nullptr) {
+
+        Pointer<Char> nmOcon = spec.natLib
+          .ffi_process_iterator_next_ocon_name(spec.opaque_hdl, spec.itRef, ii);
+ 
         AudYoFloOneComponentInProcess connectTo =
             AudYoFloOneComponentInProcessNative();
         connectTo.fill(AudYoFloBackendSpecificNative(
             spec.natLib, spec.opaque_hdl, itNext));
+        if(nmOcon!= nullptr)
+        {
+          connectTo.nmOutputConnectorFrom = (nmOcon.cast<Utf8>()).toDartString();
+          spec.natLib.ffi_host_delete(nmOcon.cast<Void>(),
+            ffiDeleteDatatype.JVX_DELETE_DATATYPE_CHAR_ARRAY);
+        }
         attach(connectTo);
       }
     }

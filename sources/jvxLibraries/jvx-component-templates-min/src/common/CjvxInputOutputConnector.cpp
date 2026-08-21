@@ -494,7 +494,7 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 	}
 
 	jvxErrorType
-		CjvxInputOutputConnector::_reference_next(jvxSize idx, IjvxConnectionIterator** next)
+		CjvxInputOutputConnector::_reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
 	{
 		if(idx == 0)
 		{
@@ -508,6 +508,19 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 					*next = static_cast<IjvxConnectionIterator*>(icon);
 				}
 			}
+			return JVX_NO_ERROR;
+
+		}
+		return JVX_ERROR_ID_OUT_OF_BOUNDS;
+	}
+
+	jvxErrorType
+		CjvxInputOutputConnector::_reference_next_ocon_name(jvxSize idx, jvxApiString * nmOcon)
+	{
+		if (idx == 0)
+		{
+			assert(_common_set_ocon.ocon);
+			_common_set_ocon.ocon->descriptor_connector(nmOcon);			
 			return JVX_NO_ERROR;
 
 		}

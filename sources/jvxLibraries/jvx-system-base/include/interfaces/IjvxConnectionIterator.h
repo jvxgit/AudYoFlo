@@ -7,7 +7,8 @@ public:
   virtual ~IjvxConnectionIterator() {};
 
   virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) = 0;
-  virtual jvxErrorType JVX_CALLINGCONVENTION reference_next(jvxSize idx, IjvxConnectionIterator** next) = 0;
+  virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) = 0;
+  virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon) = 0;
   virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
 	  jvxComponentIdentification* cpTp, 
 	  jvxApiString* modName,
