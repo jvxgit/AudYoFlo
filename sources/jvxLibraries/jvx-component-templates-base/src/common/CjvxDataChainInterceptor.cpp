@@ -640,7 +640,7 @@ CjvxDataChainInterceptor::number_next(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxDataChainInterceptor::reference_next(jvxSize idx, IjvxConnectionIterator** next)
+CjvxDataChainInterceptor::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
 {
 	if(idx == 0)
 	{
@@ -658,6 +658,18 @@ CjvxDataChainInterceptor::reference_next(jvxSize idx, IjvxConnectionIterator** n
 				*next = static_cast<IjvxConnectionIterator*>(icon);
 			}			
 		}
+		return JVX_NO_ERROR;
+	}
+	return JVX_ERROR_ID_OUT_OF_BOUNDS;
+}
+
+jvxErrorType
+CjvxDataChainInterceptor::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
+{
+	if (idx == 0)
+	{
+		assert(ocon);
+		ocon->descriptor_connector(nmOcon);
 		return JVX_NO_ERROR;
 	}
 	return JVX_ERROR_ID_OUT_OF_BOUNDS;

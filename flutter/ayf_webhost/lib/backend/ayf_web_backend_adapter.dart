@@ -397,8 +397,9 @@ class AudYoFloBackendAdapterWeb extends AudYoFloBackendAdapterIf
     int retVal = await Future<int>.delayed(Duration.zero, () async {
       int errCode = jvxErrorType.JVX_NO_ERROR;
 
-      // To be implemented!
-      assert(false);
+      // To be implemented! I had an exception before but this should come in more softly
+      // assert(false);
+      retStr = 'Direct commands are currently not supported via web connection!';
       return errCode;
     });
 

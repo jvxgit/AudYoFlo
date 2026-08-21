@@ -45,17 +45,20 @@ class AudYoFloOneComponentInProcessWeb extends AudYoFloOneComponentInProcess {
     String? modNameStr =
         AudYoFloHelper.extractStringFromJson(jsonMap, 'component_identification');
     String? cpNameStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'description');
-    String? connNmStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'context');
+    String? connNmToStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'context');
+    String? connNmFromStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'ocon_connect_via');
     var nextMap = AudYoFloHelper.getMapValueList(jsonMap, 'next');
 
     if ((cpIdStr != null) &&
         (modNameStr != null) &&
         (cpNameStr != null) &&
-        (connNmStr != null)) {
+        (connNmToStr != null) &&
+        (connNmFromStr != null)) {
       cpId = helper.translateStringComponentIdentification(cpIdStr, uid);
       descriptionComponent = cpNameStr;
       nameModule = modNameStr;
-      nameConnector = connNmStr;
+      nmInputConnectorTo = connNmToStr;
+      nmOutputConnectorFrom = connNmFromStr;
       if (nextMap != null) {
         for (var nComp in nextMap) {
           AudYoFloOneComponentInProcessWeb newInvolved =

@@ -247,25 +247,50 @@ class AudioYoFloNative {
       _ffi_process_decode_iterator_contextPtr.asFunction<
           int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>();
 
-  ffi.Pointer<ffi.Void> ffi_process_iterator_next(
+  ffi.Pointer<ffi.Void> ffi_process_iterator_next_handle(
     ffi.Pointer<ffi.Void> opaque_hdl,
     ffi.Pointer<ffi.Void> it_handle,
     int idNext,
   ) {
-    return _ffi_process_iterator_next(
+    return _ffi_process_iterator_next_handle(
       opaque_hdl,
       it_handle,
       idNext,
     );
   }
 
-  late final _ffi_process_iterator_nextPtr = _lookup<
+  late final _ffi_process_iterator_next_handlePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Pointer<ffi.Void> Function(ffi.Pointer<ffi.Void>,
-              ffi.Pointer<ffi.Void>, ffi.Size)>>('ffi_process_iterator_next');
-  late final _ffi_process_iterator_next =
-      _ffi_process_iterator_nextPtr.asFunction<
           ffi.Pointer<ffi.Void> Function(
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Size)>>('ffi_process_iterator_next_handle');
+  late final _ffi_process_iterator_next_handle =
+      _ffi_process_iterator_next_handlePtr.asFunction<
+          ffi.Pointer<ffi.Void> Function(
+              ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, int)>();
+
+  ffi.Pointer<ffi.Char> ffi_process_iterator_next_ocon_name(
+    ffi.Pointer<ffi.Void> opaque_hdl,
+    ffi.Pointer<ffi.Void> it_handle,
+    int idNext,
+  ) {
+    return _ffi_process_iterator_next_ocon_name(
+      opaque_hdl,
+      it_handle,
+      idNext,
+    );
+  }
+
+  late final _ffi_process_iterator_next_ocon_namePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Size)>>('ffi_process_iterator_next_ocon_name');
+  late final _ffi_process_iterator_next_ocon_name =
+      _ffi_process_iterator_next_ocon_namePtr.asFunction<
+          ffi.Pointer<ffi.Char> Function(
               ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, int)>();
 
   ffi.Pointer<component_ident> ffi_process_decode_iterator_component(

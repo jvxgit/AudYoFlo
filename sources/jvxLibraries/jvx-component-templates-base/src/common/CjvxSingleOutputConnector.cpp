@@ -6,6 +6,7 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 	jvxErrorType res = JVX_NO_ERROR;
 	const jvxChainConnectArguments* args = (const jvxChainConnectArguments*)data;
 	IjvxConnectionIterator** itReturn = (IjvxConnectionIterator**)data;
+	jvxApiString* nmOconReturn = (jvxApiString*)data;
 	switch (purp)
 	{
 	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_CONNECT:
@@ -20,11 +21,14 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 			res = bwdRef->_disconnect_connect_ocon(*args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 		break;
-	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT:
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_HANDLE:
 		if (itReturn)
 		{
 			*itReturn = static_cast<IjvxConnectionIterator*>(bwdRef);
 		}
+		break;
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_OCON_NAME:
+		bwdRef->_descriptor_connector(nmOconReturn);
 		break;
 	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_TEST:
 		if (bwdRef)
@@ -94,7 +98,7 @@ CjvxSingleOutputConnector::number_next(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxSingleOutputConnector::reference_next(jvxSize idx, IjvxConnectionIterator** outReturn)
+CjvxSingleOutputConnector::reference_next_handle(jvxSize idx, IjvxConnectionIterator** outReturn)
 {
 	*outReturn = nullptr;
 	if (_common_set_ocon.theData_out.con_link.connect_to)
@@ -104,7 +108,15 @@ CjvxSingleOutputConnector::reference_next(jvxSize idx, IjvxConnectionIterator** 
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType 
+jvxErrorType
+CjvxSingleOutputConnector::reference_next_ocon_name(jvxSize idx, jvxApiString* outReturn)
+{
+	*outReturn = nullptr;
+	this->_descriptor_connector(outReturn);
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
 CjvxSingleOutputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
 {
 	return _reference_component(cpId, modName, description, linkName);

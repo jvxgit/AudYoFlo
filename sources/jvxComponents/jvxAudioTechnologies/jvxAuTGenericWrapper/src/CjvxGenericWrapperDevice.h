@@ -676,10 +676,12 @@ public:
 	/* ========================================*/
 	virtual jvxErrorType JVX_CALLINGCONVENTION iterator_chain(IjvxConnectionIterator** it) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;	
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next(jvxSize idx, IjvxConnectionIterator** next) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon) override;
 
 	jvxErrorType number_next_x(jvxSize* num);
-	jvxErrorType reference_next_x(jvxSize idx, IjvxConnectionIterator** next);
+	jvxErrorType reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next);
+	jvxErrorType reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon);
 
 	jvxErrorType prepare_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
 	jvxErrorType postprocess_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fdb));

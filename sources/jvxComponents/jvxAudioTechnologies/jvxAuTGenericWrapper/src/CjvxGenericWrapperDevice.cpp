@@ -1753,17 +1753,33 @@ CjvxGenericWrapperDevice::number_next(jvxSize* num)
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice::reference_next(jvxSize idx, IjvxConnectionIterator** next)
+CjvxGenericWrapperDevice::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (onInit.connectedDevice)
 	{
 		// Forward to the first eement in chain - which is the embedded device
-		res = theRelocator.reference_next_x(idx, next);
+		res = theRelocator.reference_next_handle_x(idx, next);
 	}
 	else
 	{
-		res = JVX_MY_BASE_CLASS_D::reference_next(idx, next);
+		res = JVX_MY_BASE_CLASS_D::reference_next_handle(idx, next);
+	}
+	return res;
+}
+
+jvxErrorType
+CjvxGenericWrapperDevice::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	if (onInit.connectedDevice)
+	{
+		// Forward to the first eement in chain - which is the embedded device
+		res = theRelocator.reference_next_ocon_name_x(idx, nmOcon);
+	}
+	else
+	{
+		res = JVX_MY_BASE_CLASS_D::reference_next_ocon_name(idx, nmOcon);
 	}
 	return res;
 }
@@ -1791,12 +1807,18 @@ CjvxGenericWrapperDevice::number_next_x(jvxSize* num)
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice::reference_next_x(jvxSize idx, IjvxConnectionIterator** next)
+CjvxGenericWrapperDevice::reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next)
 {
-	return _reference_next(idx, next);
+	return _reference_next_handle(idx, next);
 }
 
-void 
+jvxErrorType
+CjvxGenericWrapperDevice::reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon)
+{
+	return _reference_next_ocon_name(idx, nmOcon);
+}
+
+void
 CjvxGenericWrapperDevice::addPropertyChanged(CjvxProperties* props)
 {
 	if (_common_set_min.theState >= JVX_STATE_ACTIVE)

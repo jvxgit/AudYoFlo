@@ -655,7 +655,7 @@ jvx_property_tree_widget::fillProcessRecursively(oneProcess& theProc, IjvxConnec
 	for (i = 0; i < num; i++)
 	{
 		IjvxConnectionIterator* itN = nullptr;
-		it->reference_next(i, &itN);
+		it->reference_next_handle(i, &itN);
 		if (itN)
 		{
 			fillProcessRecursively(theProc, itN);

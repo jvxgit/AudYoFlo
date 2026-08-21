@@ -434,6 +434,40 @@ CjvxNVTasks::reference_next_icon_vtask(
 	return res;
 }
 
+jvxErrorType 
+CjvxNVTasks::reference_next_icon_ocon_name_vtask(
+		jvxSize idx,
+	jvxApiString* nmOcon,
+	jvxSize ctxtId,
+		jvxSize ctxtSubId)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+
+	std::list<oneConnectorVTask_use<CjvxOutputConnectorVtask, CjvxNegotiate_output>* > ocon;
+	oneConnectorVTask_use<CjvxInputConnectorVtask, CjvxNegotiate_input>* icon = NULL;	
+
+	res = find_i_map(ctxtId, ctxtSubId, icon, ocon);
+	if (res == JVX_NO_ERROR)
+	{
+		if (idx < ocon.size())
+		{
+			IjvxInputConnector* licon = nullptr;
+			auto elm = ocon.begin();
+			std::advance(elm, idx);
+			oneConnectorVTask_use<CjvxOutputConnectorVtask, CjvxNegotiate_output>* ptr = *elm;
+			if (ptr->con)
+			{
+				ptr->con->descriptor_connector(nmOcon);
+			}
+		}
+		else
+		{
+			res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+		}
+	}
+	return res;
+}
+
 // ========================================================================================
 
 jvxErrorType

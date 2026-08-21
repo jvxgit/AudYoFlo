@@ -53,7 +53,8 @@ public:
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	jvxErrorType number_next(jvxSize*) override;
-	jvxErrorType reference_next(jvxSize, IjvxConnectionIterator**) override;
+	jvxErrorType reference_next_handle(jvxSize, IjvxConnectionIterator**) override;
+	jvxErrorType reference_next_ocon_name(jvxSize, jvxApiString*) override;
 	jvxErrorType reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*, jvxApiString*)override;
 
 	jvxErrorType available_to_connect_icon() override;
