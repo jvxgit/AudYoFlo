@@ -22,15 +22,21 @@ import 'node_type_definition.dart';
 /// ein aktuelles, framework-unabhängiges Abbild des Diagramms liefert.
 class FlNodesAdapter {
   final DiagramController diagramController;
-  final List<NodeTypeDefinition> nodeTypes;
+  final List<NodeTypeDefinition> _nodeTypes;
+
+  /// The node types currently registered with [flController], i.e. the ones
+  /// [loadDiagram] will accept. Grows over time via [registerNodeTypes] -
+  /// see that method for why the constructor's [nodeTypes] alone isn't
+  /// always enough.
+  List<NodeTypeDefinition> get nodeTypes => List.unmodifiable(_nodeTypes);
 
   late final FlNodeEditorController flController;
   StreamSubscription<dynamic>? _subscription;
 
   FlNodesAdapter({
     required this.diagramController,
-    required this.nodeTypes,
-  }) {
+    required List<NodeTypeDefinition> nodeTypes,
+  }) : _nodeTypes = List.of(nodeTypes) {
     // autoBuildGraph/autoRunGraph gehören zur visuellen-Programmierung/
     // Execution-Funktionalität von fl_nodes, die wir hier nicht nutzen
     // (unsere Nodes definieren nur Datenfluss, kein onExecute). Ohne diese
@@ -43,11 +49,35 @@ class FlNodesAdapter {
       ),
     );
 
-    for (final nodeType in nodeTypes) {
+    for (final nodeType in _nodeTypes) {
       flController.registerNodePrototype(_buildPrototype(nodeType));
     }
 
     _subscription = flController.eventBus.events.listen(_handleEvent);
+  }
+
+  /// Registers every type in [types] that isn't already known (matched by
+  /// [NodeTypeDefinition.typeId]) with both [flController] and [nodeTypes];
+  /// existing types are left untouched, so this is safe (and cheap) to call
+  /// repeatedly with the same or a growing catalog.
+  ///
+  /// Needed for callers that derive node types from live, per-instance data
+  /// rather than a fixed catalog known up front - e.g.
+  /// AudYoFloConnectFlowWidget in the startern app builds one type per
+  /// distinct input/output port *count* (a backend component's number of
+  /// connectors isn't known statically), and a later refresh of the backend
+  /// cache can well introduce a shape (say, three output branches) that no
+  /// earlier [loadDiagram] call has seen yet. Without this, [loadDiagram]
+  /// would reject such a diagram: it only validates against types registered
+  /// at construction time.
+  void registerNodeTypes(List<NodeTypeDefinition> types) {
+    for (final type in types) {
+      if (_nodeTypes.any((existing) => existing.typeId == type.typeId)) {
+        continue;
+      }
+      _nodeTypes.add(type);
+      flController.registerNodePrototype(_buildPrototype(type));
+    }
   }
 
   void dispose() {

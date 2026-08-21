@@ -69,6 +69,14 @@ class _CanvasPageState extends State<CanvasPage> {
   @override
   void didUpdateWidget(covariant CanvasPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!identical(widget.nodeTypes, oldWidget.nodeTypes)) {
+      // Cheap/idempotent (see FlNodesAdapter.registerNodeTypes) - covers
+      // callers whose catalog is derived from live data and can grow
+      // between builds (e.g. AudYoFloConnectFlowWidget adding a node-type
+      // shape for a port count not seen before), which initState's one-time
+      // registration from the first widget.nodeTypes wouldn't pick up.
+      _adapter.registerNodeTypes(widget.nodeTypes);
+    }
     final newDiagram = widget.diagram;
     if (newDiagram != null && !identical(newDiagram, oldWidget.diagram)) {
       _scheduleLoadDiagram(newDiagram);
