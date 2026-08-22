@@ -68,6 +68,11 @@ class AudYoFloPlatformSpecificHtml extends AudYoFloPlatformSpecific {
     }
     return '';
   }
+
+  // Web frontend never has a native pixel-buffer texture host to render
+  // into.
+  @override
+  bool get supportsPixBuf => false;
 }
 
 AudYoFloPlatformSpecific allocatePlatformSpecific() {
