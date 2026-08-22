@@ -276,6 +276,9 @@ JvxComponentTypeEnum string2CpTp(String inStr) {
       tpEn = JvxComponentTypeEnum.JVX_COMPONENT_LOCAL_TEXT_LOG;
       break;
 
+    case "global lock":
+      tpEn = JvxComponentTypeEnum.JVX_COMPONENT_GLOBAL_LOCK;
+
     default:
       break;
     /*

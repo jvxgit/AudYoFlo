@@ -2,10 +2,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 import 'package:ayf_pack_video/ayf_pack_video.dart';
-import 'package:ayfstartern/ayf_startern_connect_widget.dart';
 import 'ayf_ui_specific.dart';
 import 'package:ayf_pack/main-widgets/ayf_audio_settings_widget.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
+
+// Video rendering (AudYoFloMultiVideoWidget, pixel_buffer_texture-based)
+// only makes sense on native desktop targets - not on a web frontend, where
+// there is nothing to render into.
+bool get _supportsVideoRendering =>
+    !kIsWeb &&
+    (defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.linux);
 
 // ============================================================================
 // Callback to allocate an audio device sliver in the list of active/inactive
@@ -284,11 +292,13 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     // ======================================================================
     // Add the file input widget
     // ======================================================================
+    if(platformSpec!.supportsPixBuf)
+    {
     String imageNameVideoRender =
         'packages/ayf_pack/images/ayf_icons/ayf-video-render.png';
     String textVideoRender = 'Video Render';
     AudYoFloHelper.widgetConfigCpIdShow(entriesCfgWidgets, cpTpVRen);
-    if (cpTpVRen.showWidget) {
+    if (cpTpVRen.showWidget && _supportsVideoRendering) {
       theAllocatedTabs.add(RotatedBox(
           quarterTurns: -1,
           child: Tooltip(
@@ -306,6 +316,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
         aspectRatioW: 320,
         aspectRatioH: 240,
       ));
+    }
     }
     /*AudYoFloAudioSettingsWidget(
         cpTpFIoTech,

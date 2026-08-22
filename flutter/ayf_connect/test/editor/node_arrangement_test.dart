@@ -121,6 +121,53 @@ void main() {
   );
 
   testWidgets(
+    'arrangeGrid hält Reihen (Y) getrennt und ordnet nur innerhalb einer '
+    'Reihe in X neu an',
+    (tester) async {
+      final adapter = await pumpEditor(tester);
+
+      // Zwei "Reihen" (z.B. zwei Connections), je zwei Nodes - simuliert
+      // exakt das Layout, das AudYoFloConnectFlowWidget erzeugt: gleiche Y
+      // innerhalb einer Reihe, unterschiedliche Y zwischen Reihen.
+      final row0Ids = <String>[];
+      for (final typeId in ['long', 'short']) {
+        final node = adapter.flController.addNode(
+          typeId,
+          offset: Offset(row0Ids.length * 300.0, 0),
+        );
+        row0Ids.add(node.id);
+      }
+      final row1Ids = <String>[];
+      for (final typeId in ['medium', 'long']) {
+        final node = adapter.flController.addNode(
+          typeId,
+          offset: Offset(row1Ids.length * 300.0, 500),
+        );
+        row1Ids.add(node.id);
+      }
+      await tester.pumpAndSettle();
+
+      adapter.arrangeGrid();
+      await tester.pumpAndSettle();
+
+      final row0Rects = [for (final id in row0Ids) boundsOf(adapter, id)];
+      final row1Rects = [for (final id in row1Ids) boundsOf(adapter, id)];
+
+      // Reihen bleiben getrennte Y-Bänder: jeder Node der zweiten Reihe
+      // liegt komplett unterhalb jedes Node der ersten Reihe.
+      final row0Bottom =
+          row0Rects.map((r) => r.bottom).reduce((a, b) => a > b ? a : b);
+      for (final rect in row1Rects) {
+        expect(rect.top, greaterThanOrEqualTo(row0Bottom));
+      }
+
+      // Innerhalb jeder Reihe wird trotzdem überlappungsfrei in X verteilt.
+      expectNoOverlaps(row0Rects);
+      expectNoOverlaps(row1Rects);
+    },
+  );
+
+  testWidgets(
     'nextFreeSlot platziert neu hinzugefügte Nodes ohne Überlappung',
     (tester) async {
       final adapter = await pumpEditor(tester);

@@ -264,6 +264,87 @@ class FlNodesAdapter {
     }
   }
 
+  /// Re-flows every node currently on the canvas into the row structure its
+  /// *current* Y offset already encodes, fixing up X (and, between rows, Y)
+  /// spacing from actually rendered sizes so nothing overlaps - without
+  /// collapsing everything into a single row the way [arrangeRow] does.
+  ///
+  /// Nodes are grouped by their current `offset.dy` (exact match - callers
+  /// that want a row together, e.g. [Diagram.nodes] built from a
+  /// tree/forest with one row band per branch, already give every node in
+  /// that band the identical Y before this runs; see
+  /// AudYoFloConnectFlowWidget's `_buildDiagramFromBackendCache`, which sets
+  /// each node's Y from an integer row index times a constant row height).
+  /// Within a row, nodes are laid out left to right the same way
+  /// [arrangeRow] lays out the whole canvas (chained off each node's
+  /// actually applied offset, pre-rounded via [_roundUpToGridLine]); rows
+  /// are then stacked top to bottom, each one starting [rowGap] below the
+  /// previous row's tallest node.
+  ///
+  /// Meant to run after [loadDiagram] for diagrams whose positions already
+  /// carry meaningful row/column structure (e.g. one row per connection),
+  /// where [arrangeRow]'s single-row layout would destroy that structure.
+  /// Like [arrangeRow], a node without a measured size yet (see
+  /// [_measuredSize]) keeps its current offset and is skipped; callers
+  /// should invoke this only after at least one frame has been laid out.
+  void arrangeGrid({double columnGap = 48, double rowGap = 24}) {
+    final previousSelection = flController.selectedNodeIds.toSet();
+
+    final rows = <double, List<String>>{};
+    for (final id in flController.nodes.keys) {
+      final node = flController.getNodeById(id);
+      if (node == null) continue;
+      rows.putIfAbsent(node.offset.dy, () => []).add(id);
+    }
+
+    final sortedRowKeys = rows.keys.toList()..sort();
+
+    var nextY = 0.0;
+    for (final rowKey in sortedRowKeys) {
+      final rowIds = rows[rowKey]!
+        ..sort((a, b) {
+          final aDx = flController.getNodeById(a)?.offset.dx ?? 0;
+          final bDx = flController.getNodeById(b)?.offset.dx ?? 0;
+          return aDx.compareTo(bDx);
+        });
+
+      var nextX = 0.0;
+      var rowHeight = 0.0;
+      final rowTop = _roundUpToGridLine(nextY);
+
+      for (final id in rowIds) {
+        final node = flController.getNodeById(id);
+        if (node == null) continue;
+        final size = _measuredSize(node);
+        if (size == null) continue;
+
+        final target = Offset(_roundUpToGridLine(nextX), rowTop);
+        final delta = target - node.offset;
+        if (delta != Offset.zero) {
+          flController.selectNodesById({id});
+          flController.dragSelection(
+            delta,
+            isWorldDelta: true,
+            resetUnboundOffset: true,
+          );
+        }
+
+        // Chain off the offset fl_nodes actually applied, not the target
+        // above - see arrangeRow's doc comment for why.
+        nextX = node.offset.dx + size.width + columnGap;
+        if (size.height > rowHeight) rowHeight = size.height;
+      }
+
+      nextY = rowTop + rowHeight + rowGap;
+    }
+
+    if (previousSelection.isEmpty) {
+      flController.clearSelection();
+    } else {
+      flController.selectNodesById(previousSelection);
+    }
+  }
+
   /// Position for a single newly added node so it can't overlap any
   /// existing one, regardless of how large those nodes' labels made them:
   /// directly to the right of the combined bounding box of all current

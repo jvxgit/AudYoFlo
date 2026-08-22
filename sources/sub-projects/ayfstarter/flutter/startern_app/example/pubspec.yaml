@@ -89,9 +89,10 @@ flutter:
     - .startern_app.env
 
   # Grid background shader used by fl_nodes (via connectorflo/ayf_connect,
-  # embedded through ayfstartern's AudYoFloConnectFlowWidget). Fragment
-  # shaders are not pulled in transitively from dependencies, so the
-  # top-level app must declare them itself.
+  # embedded through ayf_pack's AudYoFloConnectFlowWidget,
+  # main-widgets/ayf_connection_view_widget.dart). Fragment shaders are not
+  # pulled in transitively from dependencies, so the top-level app must
+  # declare them itself.
   shaders:
     - packages/fl_nodes/shaders/grid.frag
 

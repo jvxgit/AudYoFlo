@@ -370,7 +370,7 @@ mixin AudYoFloWebBackendHelpers {
         break;
 
       case JvxComponentTypeEnum.JVX_COMPONENT_VIDEO_TECHNOLOGY:
-        retVal = 'video technology';
+        retVal = 'video_technology';
         break;
       case JvxComponentTypeEnum.JVX_COMPONENT_VIDEO_DEVICE:
         retVal = 'video_device';

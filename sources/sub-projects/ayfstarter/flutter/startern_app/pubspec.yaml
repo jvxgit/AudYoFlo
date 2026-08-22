@@ -26,9 +26,6 @@ dependencies:
   ayf_pack:
     path: '../../../../../flutter/ayf_pack'
 
-  connectorflo:
-    path: '../../../../../flutter/ayf_connect'
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

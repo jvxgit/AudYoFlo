@@ -86,7 +86,7 @@ packages:
     source: hosted
     version: "1.19.1"
   connectorflo:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "../../../../../flutter/ayf_connect"
       relative: true

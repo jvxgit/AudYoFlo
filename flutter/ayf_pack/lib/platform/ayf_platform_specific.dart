@@ -19,4 +19,6 @@ abstract class AudYoFloPlatformSpecific {
       AudYoFloUiModel? uiModel, AudYoFloDebugModel? notifierDbgModel);
 
   String get lastError;
+
+  bool get supportsPixBuf;
 }

@@ -31,6 +31,11 @@ dependencies:
   ayf_webhost:
     path: '../ayf_webhost'
 
+  # Component-chaining canvas used by AudYoFloConnectFlowWidget
+  # (main-widgets/ayf_connection_view_widget.dart).
+  connectorflo:
+    path: '../ayf_connect'
+
   # Plot widgets
   syncfusion_flutter_charts: ^26.2.7
 

@@ -107,4 +107,6 @@ export 'main-widgets/ayf_main_inner_content.dart';
 
 export 'main-widgets/ayf_fileinput_control_widget.dart';
 
+export 'main-widgets/ayf_connection_view_widget.dart';
+
 export 'route-widgets/ayf_route_connect.dart';

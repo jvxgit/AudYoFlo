@@ -111,16 +111,17 @@ class _CanvasPageState extends State<CanvasPage> {
         // user-chosen, positions - fixed grid steps computed without
         // knowing each node's actual (label-dependent) rendered size, which
         // routinely overlap once a label makes a node wider/taller than the
-        // step. Re-flowing with arrangeRow (constant gap, real measured
-        // sizes) fixes that; the default viewport also has no reason to
-        // already frame the result, so zoom to fit afterwards. Both have to
-        // wait for one more frame: fl_nodes computes each node's bounds from
-        // its GlobalKey's RenderBox, which for nodes just added by
-        // loadDiagram() above doesn't exist until this frame has actually
-        // been laid out.
+        // step. Re-flowing with arrangeGrid (constant gap, real measured
+        // sizes, but keeping the diagram's own row structure - unlike
+        // arrangeRow, which would collapse every row into one) fixes that;
+        // the default viewport also has no reason to already frame the
+        // result, so zoom to fit afterwards. Both have to wait for one more
+        // frame: fl_nodes computes each node's bounds from its GlobalKey's
+        // RenderBox, which for nodes just added by loadDiagram() above
+        // doesn't exist until this frame has actually been laid out.
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
-          _adapter.arrangeRow();
+          _adapter.arrangeGrid();
           _zoomToFit();
         });
       }

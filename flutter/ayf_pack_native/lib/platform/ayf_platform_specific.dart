@@ -69,7 +69,8 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
     JvxComponentIdentification identT,
     String textShowDrag,
     double sizeIcon,
-  ) => AudYoFloFileInputCoreWidgetNative(identT, textShowDrag, sizeIcon);
+  ) =>
+      AudYoFloFileInputCoreWidgetNative(identT, textShowDrag, sizeIcon);
 
   @override
   void configureSubSystem(Map<String, dynamic> cfg) {
@@ -98,6 +99,11 @@ class AudYoFloPlatformSpecificHtmlNat extends AudYoFloPlatformSpecific {
       return theBeAdapter!.lastError;
     }
     return '';
+  }
+
+  @override
+  bool get supportsPixBuf {
+    return false;
   }
 }
 
@@ -236,22 +242,20 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           Map<dynamic, dynamic> entryPointsMap = entryPointsCorePack;
 
           // Extract hostConfig module path
-          hostConfigPath =
-              entryPointsMap.entries.firstWhereOrNull((element) {
-                if (element.key is String) {
-                  return (element.key == 'loadedModule');
-                }
-                return false;
-              })?.value;
+          hostConfigPath = entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'loadedModule');
+            }
+            return false;
+          })?.value;
 
           // Extract hostConfig module path
-          hostConfigSymbol =
-              entryPointsMap.entries.firstWhereOrNull((element) {
-                if (element.key is String) {
-                  return (element.key == 'moduleEntrySymbol');
-                }
-                return false;
-              })?.value;
+          hostConfigSymbol = entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'moduleEntrySymbol');
+            }
+            return false;
+          })?.value;
 
           /* I think we do not need this part here. The VM is handled fully in the background of the backend
           vmEntrySymbol =
@@ -262,13 +266,12 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
                 return false;
               })?.value;
           */
-          hostConfigAddr =
-              entryPointsMap.entries.firstWhereOrNull((element) {
-                if (element.key is String) {
-                  return (element.key == 'moduleEntryAddress');
-                }
-                return false;
-              })?.value;
+          hostConfigAddr = entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'moduleEntryAddress');
+            }
+            return false;
+          })?.value;
         }
 
         // ===============================================================
@@ -277,38 +280,37 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
           Map<dynamic, dynamic> entryPointsMap = entryPointsPixBuf;
 
           // Extract hostConfig module path
-          pixBufConfigPath =
-              entryPointsMap.entries.firstWhereOrNull((element) {
-                if (element.key is String) {
-                  return (element.key == 'loadedModule');
-                }
-                return false;
-              })?.value;
+          pixBufConfigPath = entryPointsMap.entries.firstWhereOrNull((element) {
+            if (element.key is String) {
+              return (element.key == 'loadedModule');
+            }
+            return false;
+          })?.value;
 
           // Extract hostConfig module path
           pixBufConfigSymbolList =
               entryPointsMap.entries.firstWhereOrNull((element) {
-                if (element.key is String) {
-                  return (element.key == 'moduleEntrySymbol');
-                }
-                return false;
-              })?.value;
+            if (element.key is String) {
+              return (element.key == 'moduleEntrySymbol');
+            }
+            return false;
+          })?.value;
 
           pixBufConfigAddrSet =
               entryPointsMap.entries.firstWhereOrNull((element) {
-                if (element.key is String) {
-                  return (element.key == 'moduleEntryAddressSet');
-                }
-                return false;
-              })?.value;
+            if (element.key is String) {
+              return (element.key == 'moduleEntryAddressSet');
+            }
+            return false;
+          })?.value;
 
           pixBufConfigAddrReset =
               entryPointsMap.entries.firstWhereOrNull((element) {
-                if (element.key is String) {
-                  return (element.key == 'moduleEntryAddressReset');
-                }
-                return false;
-              })?.value;
+            if (element.key is String) {
+              return (element.key == 'moduleEntryAddressReset');
+            }
+            return false;
+          })?.value;
         }
 
         // ===================================================================
@@ -396,6 +398,12 @@ class AudYoFloPlatformSpecificNative extends AudYoFloPlatformSpecificHtmlNat {
     }
 
     return retVal;
+  }
+
+  @override
+  bool get supportsPixBuf
+  {
+    return thePixBuf != null;
   }
 }
 
