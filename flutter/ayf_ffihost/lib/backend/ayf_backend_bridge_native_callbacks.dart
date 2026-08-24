@@ -52,7 +52,7 @@ abstract class AudioFlowBackendBridgeCallbacks
   // ============================================================
   static int static_sync_callback(Pointer<report_callback> ptr) {
     // Access to the main bridge only via global reference since we are not in build tree
-    AudioFlowBackendBridge_ inClass = new AudioFlowBackendBridge_();
+    AudioFlowBackendBridge_ inClass = AudioFlowBackendBridge_();
 
     // Return to bridge component
     assert(false);

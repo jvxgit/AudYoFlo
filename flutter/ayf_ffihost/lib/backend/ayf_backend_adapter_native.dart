@@ -195,8 +195,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
     Pointer<Utf8> ptrU8 = textArg.toNativeUtf8();
     Pointer<Char> cmd = ptrU8.cast<Char>();
     Pointer<Char> textRet = natLib.ffi_transfer_command(opaque_host, cmd, arg);
-    ptrU8 = textRet.cast<Utf8>();
-    if (ptrU8 != null) {
+    if (textRet != null) {
+      ptrU8 = textRet.cast<Utf8>();
       retStr = ptrU8.toDartString();
       natLib.ffi_host_delete(textRet.cast<Void>(),
           ffiDeleteDatatype.JVX_DELETE_DATATYPE_CHAR_ARRAY);
@@ -1439,6 +1439,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
               isInput: true
               );
             inputConnectors.add(singleConI);
+			pEntry = pEntry.elementAt(1);
          }
 
         natLib.ffi_host_delete(icons.cast<Void>(), ffiDeleteDatatype.JVX_DELETE_DATATYPE_CONNECTOR_WITH_PARAMS_LIST);
@@ -1469,7 +1470,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
               dataFlow: jvxDataflowEEnum.fromInt(entryRef.data_flow),
               isInput: false
               );
-            inputConnectors.add(singleConO);
+            outputConnectors.add(singleConO);
+			pEntry = pEntry.elementAt(1);
          }
 
         natLib.ffi_host_delete(ocons.cast<Void>(), ffiDeleteDatatype.JVX_DELETE_DATATYPE_CONNECTOR_WITH_PARAMS_LIST);
@@ -1768,6 +1770,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
     return jvxErrorType.JVX_ERROR_UNSUPPORTED;
   }
 
+  @override
   Future<int> triggerStopPropertyStream() async {
     return jvxErrorType.JVX_ERROR_UNSUPPORTED;
   }
