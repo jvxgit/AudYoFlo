@@ -5,24 +5,36 @@ import 'package:provider/provider.dart';
 import '../state/diagram_controller.dart';
 import 'node_header.dart';
 
-/// Ersetzt fl_nodes' Standard-Node-Widget im Read-Only-Modus (über
-/// FlNodeEditorWidget.nodeBuilder). Das ist bewusst ein Neuaufbau statt
-/// einer Konfiguration: fl_nodes hat kein Flag, um Verschieben/Verbinden
-/// abzuschalten — der komplette Gesture-Code dafür hängt am Standard-Node-
-/// Widget (siehe DefaultNodeWidget.controlsWrapper), das nodeBuilder
-/// vollständig ersetzt statt es zu erweitern. Wir bauen daher nur den
-/// Anzeige-Teil nach (Layout, Styling, Ports inkl. deren GlobalKeys, damit
-/// bestehende Verbindungslinien weiterhin korrekt gezeichnet werden) und
-/// verzichten bewusst auf Drag-Gesten. Klick-Auswahl bleibt erhalten, damit
-/// der Inspector weiterhin Node-Details anzeigen kann.
-class ReadOnlyNode extends StatelessWidget {
+/// Ersetzt fl_nodes' Standard-Node-Widget in den beiden nicht voll
+/// editierbaren Canvas-Modi ([DiagramEditorMode.moveOnly]/
+/// [DiagramEditorMode.readOnly], über `FlNodeEditorWidget.nodeBuilder`).
+/// Bewusst ein Neuaufbau statt einer Konfiguration: fl_nodes hat kein Flag,
+/// um Verschieben/Verbinden abzuschalten — der komplette Gesture-Code dafür
+/// hängt am Standard-Node-Widget (siehe `DefaultNodeWidget.controlsWrapper`),
+/// das `nodeBuilder` vollständig ersetzt statt es zu erweitern. Wir bauen
+/// daher nur den Anzeige-Teil nach (Layout, Styling, Ports inkl. deren
+/// GlobalKeys, damit bestehende Verbindungslinien weiterhin korrekt
+/// gezeichnet werden) und verzichten bewusst auf die Port-Erkennung/
+/// Linking-Logik des fl_nodes-Standard-Widgets
+/// (`DefaultNodeWidget._isNearPort`/`_onTmpLink*`), damit Nodes hier nie
+/// verbunden oder getrennt werden können — in keinem der beiden Modi.
+///
+/// [movable] ist der einzige Verhaltensunterschied zwischen den beiden
+/// Modi und daher auch die einzige Verzweigung im Widget: `true`
+/// (Move-Only) fügt eine Pan-Geste für `controller.dragSelection` hinzu,
+/// `false` (Read-Only) lässt Nodes nur auswählbar (für den Inspector), aber
+/// unbeweglich. Layout, Styling, Farbe und Port-Beschriftung sind für beide
+/// Modi identisch und daher nicht dupliziert.
+class RestrictedNode extends StatelessWidget {
   final FlNodeEditorController controller;
   final FlNodeDataModel node;
+  final bool movable;
 
-  const ReadOnlyNode({
+  const RestrictedNode({
     super.key,
     required this.controller,
     required this.node,
+    required this.movable,
   });
 
   @override
@@ -45,6 +57,27 @@ class ReadOnlyNode extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => controller.selectNodesById({node.id}),
+      // Nur im Move-Only-Modus gesetzt (sonst bleiben onPanStart/onPanUpdate
+      // null, wodurch GestureDetector gar keinen Pan-Recognizer registriert -
+      // exakt das bisherige ReadOnlyNode-Verhalten).
+      //
+      // Die Auswahl wird beim Pan-Start immer (nicht nur `if
+      // (!node.state.isSelected)`, wie fl_nodes' eigenes DefaultNodeWidget es
+      // für sein eingebautes Gruppen-Verschieben macht) auf genau diesen Node
+      // eingeengt: fl_nodes' Flächenauswahl (Ziehen auf dem leeren
+      // Hintergrund, standardmäßig aktiv und unabhängig vom Editor-Modus -
+      // siehe _NodeEditorDataLayerState._onHighlightEnd,
+      // FlNodeEditorConfig.enableAreaSelection) kann Nodes selektieren, ohne
+      // dass hier je ein onTap/onPanStart auf ihnen lief. Ohne dieses
+      // Erzwingen würde ein Drag, der zufällig auf einem so vorselektierten
+      // Node beginnt, die GESAMTE alte Auswahl mitziehen statt nur den
+      // gerade gegriffenen Node - Move-Only bietet (anders als der volle
+      // Editor) keine Mehrfachauswahl-Semantik an und darf sie daher auch
+      // nicht heimlich zulassen.
+      onPanStart:
+          movable ? (_) => controller.selectNodesById({node.id}) : null,
+      onPanUpdate:
+          movable ? (details) => controller.dragSelection(details.delta) : null,
       child: IntrinsicHeight(
         child: IntrinsicWidth(
           child: Stack(
@@ -73,7 +106,7 @@ class ReadOnlyNode extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 for (final port in inPorts)
-                                  _ReadOnlyPort(port: port, nodeId: node.id),
+                                  _RestrictedPort(port: port, nodeId: node.id),
                               ],
                             ),
                           ),
@@ -83,7 +116,7 @@ class ReadOnlyNode extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 for (final port in outPorts)
-                                  _ReadOnlyPort(port: port, nodeId: node.id),
+                                  _RestrictedPort(port: port, nodeId: node.id),
                               ],
                             ),
                           ),
@@ -101,11 +134,11 @@ class ReadOnlyNode extends StatelessWidget {
   }
 }
 
-class _ReadOnlyPort extends StatelessWidget {
+class _RestrictedPort extends StatelessWidget {
   final FlPortDataModel port;
   final String nodeId;
 
-  const _ReadOnlyPort({required this.port, required this.nodeId});
+  const _RestrictedPort({required this.port, required this.nodeId});
 
   @override
   Widget build(BuildContext context) {

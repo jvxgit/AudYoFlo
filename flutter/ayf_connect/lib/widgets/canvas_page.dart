@@ -8,11 +8,10 @@ import '../editor/fl_nodes_adapter.dart';
 import '../editor/node_type_definition.dart';
 import '../models/diagram.dart';
 import '../state/diagram_controller.dart';
-import 'move_only_node.dart';
 import 'node_header.dart';
 import 'node_inspector.dart';
 import 'node_palette.dart';
-import 'read_only_node.dart';
+import 'restricted_node.dart';
 
 /// Haupt-Screen: Node-Palette links, fl_nodes-Canvas in der Mitte,
 /// Eigenschaften-Panel rechts.
@@ -201,17 +200,18 @@ class _CanvasPageState extends State<CanvasPage> {
       ),
       // In moveOnly/readOnly ersetzt nodeBuilder das komplette, standardmäßig
       // interaktive Node-Widget durch eine gestenreduzierte Variante — siehe
-      // ReadOnlyNode/MoveOnlyNode dazu, warum ein Config-Flag dafür nicht
-      // reicht.
+      // RestrictedNode dazu, warum ein Config-Flag dafür nicht reicht.
       nodeBuilder: switch (widget.mode) {
         DiagramEditorMode.edit => null,
-        DiagramEditorMode.moveOnly => (context, node) => MoveOnlyNode(
+        DiagramEditorMode.moveOnly => (context, node) => RestrictedNode(
               controller: _adapter.flController,
               node: node,
+              movable: true,
             ),
-        DiagramEditorMode.readOnly => (context, node) => ReadOnlyNode(
+        DiagramEditorMode.readOnly => (context, node) => RestrictedNode(
               controller: _adapter.flController,
               node: node,
+              movable: false,
             ),
       },
     );

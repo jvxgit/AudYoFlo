@@ -28,10 +28,18 @@ const List<Color> _repeatedComponentColors = [
 ];
 
 // Embeds the ConnectorFlo component-chaining canvas (flutter/ayf_connect) as
-// a reusable widget. Read-only - it visualizes the component chains
-// currently registered in the backend cache (processSection.
-// theRegisteredProcesses), it does not edit them. Wiring edits back to the
-// backend is a possible follow-up, not done here.
+// a reusable widget. Visualizes the component chains currently registered in
+// the backend cache (processSection.theRegisteredProcesses). Uses
+// DiagramEditorMode.moveOnly rather than edit or readOnly: nodes can be
+// dragged to a more legible layout (see RestrictedNode), but not added,
+// removed, renamed or (dis-)connected, since none of that is wired back to
+// the backend. A rearranged layout only survives until the next rebuild
+// triggered by an actual backend change (see the class doc comment on
+// _buildDiagramFromBackendCache below and CanvasPage._scheduleLoadDiagram) -
+// acceptable since that only fires when the real process/component set
+// itself changed, at which point the old layout no longer fully applies
+// anyway. Wiring edits back to the backend is a possible follow-up, not done
+// here.
 //
 // Backend components carry an arbitrary, per-instance number of connectors,
 // which doesn't fit a single fixed ayf_connect node type. Instead of one
@@ -68,7 +76,7 @@ class AudYoFloConnectFlowWidget extends StatelessWidget {
         builder: (context, ssUpdateId, child) {
           final built = _buildDiagramFromBackendCache(theBeCache);
           return CanvasPage(
-            mode: DiagramEditorMode.readOnly,
+            mode: DiagramEditorMode.moveOnly,
             nodeTypes: built.nodeTypes,
             diagram: built.diagram,
           );
