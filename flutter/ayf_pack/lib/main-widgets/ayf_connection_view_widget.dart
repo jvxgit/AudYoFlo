@@ -7,6 +7,7 @@ import 'package:connectorflo/models/port_definition.dart';
 import 'package:connectorflo/models/port_type.dart';
 import 'package:connectorflo/state/diagram_controller.dart';
 import 'package:connectorflo/widgets/canvas_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -61,8 +62,102 @@ const List<Color> _repeatedComponentColors = [
 // component, only the `inputLabels` construction in visit() needs to grow
 // beyond one element - node types, edges and port ids already generalize to
 // N.
-class AudYoFloConnectFlowWidget extends StatelessWidget {
-  const AudYoFloConnectFlowWidget({super.key});
+class AudYoFloConnectViewWidget extends StatelessWidget {
+
+  // ======================================================================
+  // This function deactivated for the moment
+  // Async function to browse the process and its involved components
+  // ======================================================================
+  static Future<String> browseLinksProcess(AudYoFloBackendCache theBeCache,
+      AudYoFloOneComponentInProcess proc, String tabs) async {
+    String outText = '';
+
+    var descr = proc.descriptionComponent;
+    var cpIdStr = proc.cpId.txt;
+    var oconFrom = proc.nmOutputConnectorFrom;
+    var iconTo = proc.nmInputConnectorTo;
+
+    AudYoFloOneSelectedComponent? elmComp =
+        theBeCache.findSelectedComponent(proc.cpId);
+    if (elmComp != null) {
+      jvxConnectorSelectionEnum selMode =
+          jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED;
+      AudYoFloConnectorsEnsemble? connCache =
+          theBeCache.referenceConnectorsComponentsInCache(
+              proc.cpId, selMode); // null solange !valid
+      if (connCache == null) {
+        final err = await theBeCache.triggerUpdateConnectorsComponent(
+            proc.cpId, selMode); // async, geht ans Backend
+        if (err == jvxErrorType.JVX_NO_ERROR) {
+          connCache = theBeCache.referenceConnectorsComponentsInCache(
+              proc.cpId, selMode);
+        }
+      }
+
+      if (!oconFrom.isEmpty) {
+        outText = '$oconFrom -> $iconTo [$descr <$cpIdStr>] ';
+      } else {
+        outText = '[$descr <$cpIdStr>]';
+      }
+
+      if (connCache != null) {
+        /*
+        for (var elmConIn in connCache.inputConnectors) {
+          var nmConIn = elmConIn.descriptor;
+          
+          if (iconTo == nmConIn) nmConIn = '->  $nmConIn';
+          outText = '$outText Input Connector = $nmConIn';
+          
+        }
+
+        for (var elmConOut in connCache.outputConnectors) {
+          var nmConOut = elmConOut.descriptor;
+          debugPrint('[compLists]  $tabs Output Connector = $nmConOut');
+        }
+        */
+      }
+
+      for (var elmInv in proc.next) {
+        String outTextAdd =
+            await browseLinksProcess(theBeCache, elmInv, '$tabs +++ ');
+        outText = '$outText $outTextAdd';
+      }
+    }
+    return outText;
+  }
+
+  static Future<void> browseProcesses(AudYoFloBackendCache theBeCache) async {
+    final reportedProcesses =
+        theBeCache.processSection.theRegisteredProcesses.reportedProcesses;
+
+    int cnt = 0;
+    for (var elm in reportedProcesses.values) {
+      // For each process do something
+      String oneProcess = '';
+
+      AudYoFloOneConnectedProcess oneElm = elm as AudYoFloOneConnectedProcess;
+      var id = oneElm.uId;
+      var nm = oneElm.nameProcess;
+      AudYoFloOneComponentInProcess? inv = oneElm.involvedMaster;
+      String nmMaster = '<no master>';
+      if (inv != null) {
+        var descr = inv.descriptionComponent;
+        var cpIdStr = inv.cpId.txt;
+        nmMaster = '[$descr <$cpIdStr>]';
+        String txtChain = await browseLinksProcess(theBeCache, inv, ' +++ ');
+        oneProcess =
+            '<$cnt> -- Process $nm with ID <$id> -> Master $nmMaster with chain: $txtChain';
+        cnt++;
+
+        // Write output
+        debugPrint('->  $oneProcess');
+      }
+    }
+  }
+  // ======================================================================
+  // ======================================================================
+
+  const AudYoFloConnectViewWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,8 +193,14 @@ class AudYoFloConnectFlowWidget extends StatelessWidget {
       AudYoFloBackendCache theBeCache) {
     final reportedProcesses =
         theBeCache.processSection.theRegisteredProcesses.reportedProcesses;
+
+    // ======================================================================
+    // The following deactivated for the moment
+    // ======================================================================
+    // browseProcesses(theBeCache);
+
     final roots = reportedProcesses.values
-        .map((process) => process.involved)
+        .map((process) => process.involvedMaster)
         .whereType<AudYoFloOneComponentInProcess>();
 
     // Pass 1: count occurrences per component identification, to know which
@@ -158,20 +259,22 @@ class AudYoFloConnectFlowWidget extends StatelessWidget {
       // way a leaf gets zero output ports from an empty `next`. Everyone
       // else gets their one connector (see class doc comment: today always
       // exactly one).
-      final inputLabels = [
+      final inputLabels = _numberRepeatedLabels([
         if (hasParent)
-          comp.nmInputConnectorTo.isNotEmpty ? comp.nmInputConnectorTo : 'default',
-      ];
+          comp.nmInputConnectorTo.isNotEmpty
+              ? comp.nmInputConnectorTo
+              : 'default',
+      ]);
       // One output branch per `next` entry; the connector name for branch
       // `i` is stored on `comp.next[i]` itself (it describes `comp`'s own
       // outgoing connector for that link - see ffi_process_iterator_next_
       // ocon_name), not on `comp`.
-      final outputLabels = [
+      final outputLabels = _numberRepeatedLabels([
         for (final next in comp.next)
           next.nmOutputConnectorFrom.isNotEmpty
               ? next.nmOutputConnectorFrom
               : 'default',
-      ];
+      ]);
 
       final typeId = _shapeTypeId(inputLabels.length, outputLabels.length);
       nodeTypesByShape.putIfAbsent(
@@ -183,6 +286,7 @@ class AudYoFloConnectFlowWidget extends StatelessWidget {
         id: positionId,
         typeId: typeId,
         title: _nodeTitle(comp),
+        typeIdentification: _nodeTypeIdentification(comp),
         position: Offset(depth * _columnWidth, row * _rowHeight),
         inputs: [
           for (var i = 0; i < inputLabels.length; i++)
@@ -248,6 +352,41 @@ class AudYoFloConnectFlowWidget extends StatelessWidget {
   static String _identityKey(AudYoFloOneComponentInProcess comp) =>
       '${comp.cpId.txt}#${comp.cpId.uid}';
 
+  // A component can carry several equally-named connectors - e.g. a mixer
+  // fanning out through a multi-use "mix-in"/"mix-out" connector
+  // (CjvxConnectorCollection / CjvxConnectorMulti). The backend already
+  // disambiguates them on the *input* side: nmInputConnectorTo arrives as
+  // "<descriptor><<conId>>" (see CjvxConnector::_reference_component,
+  // e.g. "mix-in<0>", "mix-in<1>"). The *output* side name
+  // (nmOutputConnectorFrom, from reference_next_ocon_name ->
+  // descriptor_connector) carries no such suffix, so several branches of
+  // one component show up as identical, indistinguishable port labels.
+  // Re-create the same "<n>" suffix (0-based, matching conId) here for any
+  // label that occurs more than once in the list, in order of appearance;
+  // labels that are already unique are left untouched. List length - and
+  // therefore the port-count shape (_shapeTypeId) and the out$i edge index
+  // alignment in visit() - is preserved. Applied to both sides for
+  // symmetry; the input list has at most one entry today (see the class
+  // doc comment), so there it is currently a no-op.
+  static List<String> _numberRepeatedLabels(List<String> labels) {
+    final totalPerLabel = <String, int>{};
+    for (final label in labels) {
+      totalPerLabel.update(label, (v) => v + 1, ifAbsent: () => 1);
+    }
+    final nextIndexPerLabel = <String, int>{};
+    final result = <String>[];
+    for (final label in labels) {
+      if ((totalPerLabel[label] ?? 0) > 1) {
+        final index = nextIndexPerLabel[label] ?? 0;
+        nextIndexPerLabel[label] = index + 1;
+        result.add('$label<$index>');
+      } else {
+        result.add(label);
+      }
+    }
+    return result;
+  }
+
   static String _shapeTypeId(int numInputs, int numOutputs) =>
       'backend_component_i${numInputs}_o$numOutputs';
 
@@ -270,6 +409,14 @@ class AudYoFloConnectFlowWidget extends StatelessWidget {
       comp.descriptionComponent.isNotEmpty
           ? comp.descriptionComponent
           : comp.nameModule;
+
+  // The component's system-wide unique type identification
+  // (jvxComponentIdentification): component-type enum name plus slot/subslot,
+  // e.g. "JVX_COMPONENT_AUDIO_NODE<3,0>". Shown in the node inspector in
+  // place of the synthetic port-count shape typeId (_shapeTypeId), which
+  // means nothing outside this widget. See JvxComponentIdentification.txt.
+  static String _nodeTypeIdentification(AudYoFloOneComponentInProcess comp) =>
+      comp.cpId.txt;
 }
 
 class _BuiltDiagram {

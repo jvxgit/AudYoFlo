@@ -336,7 +336,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
             AudYoFloOneComponentInProcessNative();
         oneInvolved.fill(AudYoFloBackendSpecificNative(
             natLib, opaque_host, procRef.iterator));
-        theProc.involved = oneInvolved;
+        theProc.involvedMaster = oneInvolved;
       }
       natLib.ffi_host_delete(
           hdl.cast<Void>(), ffiDeleteDatatype.JVX_DELETE_DATATYPE_ONE_PROCESS);
@@ -1411,9 +1411,10 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
 
           // TEMP DEBUG: mark the start of a connector cache refresh for this
           // component.
-          debugPrint(
+          /*
+		  debugPrint(
               '[connParams] refreshing connectors for component <${cpId.txt}>');
-
+			*/
           // ============================================================================================================
           List<JvxConnector> inputConnectors = [];
           {
@@ -1479,7 +1480,7 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
           }
 
           theBeCacheNative.updateConnectorsCacheCompleteNotify(
-              cpId, inputConnectors, outputConnectors);
+              cpId, inputConnectors, outputConnectors, sel);
           }
       }
 
@@ -1584,7 +1585,8 @@ class AudYoFloBackendAdapterNative extends AudYoFloBackendAdapterIf
   // when the backend reports that the data chain of this process has been
   // (re-)tested.
   void invalidateConnectionParamsForProcess(int processUId) {
-    return theBeCacheNative.invalidateConnectorsForProcess(processUId);
+    return theBeCacheNative.invalidateConnectorsForProcess(processUId,
+      jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED);
   }
 
   @override

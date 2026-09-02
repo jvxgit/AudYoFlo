@@ -7,6 +7,8 @@ class AudYoFloConnectorlistFromJson {
       AudYoFloBackendCacheBectrlIf theBeCache,
       AudYoFloBackendTranslator trans) {
     int retVal = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
+    jvxConnectorSelectionEnum selOpt =
+        jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_INVALID;
     String? errCodeExprPtr =
         AudYoFloHelper.getStringEntryValueMap(jsonMap, 'return_code');
     if (errCodeExprPtr != null) {
@@ -15,6 +17,16 @@ class AudYoFloConnectorlistFromJson {
       retVal = jvxErrorTypeEInt.fromStringSingle(errCodeExpr);
     }
     if (retVal == jvxErrorType.JVX_NO_ERROR) {
+      // Assign selector selection list
+      String? tmp =
+          AudYoFloHelper.extractStringFromJson(jsonMap, 'selection_option');
+      if (tmp != null) {
+        selOpt = jvxConnectorSelectionEEnum.fromInt(
+            AudYoFloStringTranslator.translateEnumString(
+                tmp, 'jvxConnectorSelection', trans.compileFlags()));
+        tmp = null;
+      }
+
       var subSec = AudYoFloHelper.getMapValueList(jsonMap, 'connectors');
       if (subSec != null) {
         List<JvxConnector> inputConnectors = [];
@@ -23,8 +35,7 @@ class AudYoFloConnectorlistFromJson {
           JvxConnector newCon = JvxConnector();
 
           bool isInput = true;
-          String? tmp =
-              AudYoFloHelper.extractStringFromJson(elmC, 'direction');
+          String? tmp = AudYoFloHelper.extractStringFromJson(elmC, 'direction');
           if (tmp != null) {
             isInput = (tmp == 'input');
             tmp = null;
@@ -53,8 +64,7 @@ class AudYoFloConnectorlistFromJson {
               tmp = null;
             }
 
-            tmp =
-                AudYoFloHelper.extractStringFromJson(params, 'format_group');
+            tmp = AudYoFloHelper.extractStringFromJson(params, 'format_group');
             if (tmp != null) {
               newCon.formatGroup = jvxDataFormatGroupEEnum.fromInt(
                   AudYoFloStringTranslator.translateEnumString(
@@ -79,7 +89,7 @@ class AudYoFloConnectorlistFromJson {
         }
         // Update the cache and notify all listeners!!
         theBeCache.updateConnectorsCacheCompleteNotify(
-            cpId, inputConnectors, outputConnectors);
+            cpId, inputConnectors, outputConnectors, selOpt);
       }
     }
     return retVal;

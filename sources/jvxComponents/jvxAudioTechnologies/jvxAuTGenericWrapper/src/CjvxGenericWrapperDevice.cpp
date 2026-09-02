@@ -1724,10 +1724,16 @@ jvxErrorType
 CjvxGenericWrapperDevice::iterator_chain(IjvxConnectionIterator** it)
 {
 	jvxErrorType res = JVX_NO_ERROR;
+
 	if (onInit.connectedDevice)
 	{
 		// Forward to the first eement in chain - which is the embedded device
 		res = theRelocator.iterator_chain_x(it);
+
+#ifdef JVX_GENERIC_WRAPPER_ONLY_ONE_ITERATOR
+		// Forward to next and skip connectedDevice
+		(*it)->reference_next_handle(0, it, nullptr, nullptr);
+#endif
 	}
 	else
 	{
@@ -1739,11 +1745,19 @@ CjvxGenericWrapperDevice::iterator_chain(IjvxConnectionIterator** it)
 jvxErrorType
 CjvxGenericWrapperDevice::number_next(jvxSize* num)
 {
+	// We end up here from within the signal chain listing. The next component is the connected device - we skip that as we did on the 
+	// source side
 	jvxErrorType res = JVX_NO_ERROR;
 	if (onInit.connectedDevice)
 	{
 		// Forward to the first eement in chain - which is the embedded device
 		res = theRelocator.number_next_x(num);
+
+#ifdef JVX_GENERIC_WRAPPER_ONLY_ONE_ITERATOR
+		// Again, skip the iterator element following this one
+		if (num) *num = 0; // This ends the chain here!!
+#endif
+
 	}
 	else
 	{
@@ -1753,36 +1767,48 @@ CjvxGenericWrapperDevice::number_next(jvxSize* num)
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
+CjvxGenericWrapperDevice::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	if (onInit.connectedDevice)
 	{
-		// Forward to the first eement in chain - which is the embedded device
-		res = theRelocator.reference_next_handle_x(idx, next);
+		// Forward to the first eement in chain - which is the embedded device		
+		res = theRelocator.reference_next_handle_x(idx, next, nmOcon, nmIcon);
 	}
 	else
 	{
-		res = JVX_MY_BASE_CLASS_D::reference_next_handle(idx, next);
+		res = JVX_MY_BASE_CLASS_D::reference_next_handle(idx, next, nmOcon, nmIcon);
 	}
 	return res;
 }
 
-jvxErrorType
-CjvxGenericWrapperDevice::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
+jvxErrorType 
+CjvxGenericWrapperDevice::reference_component(
+	jvxComponentIdentification* cpTp,
+	jvxApiString* modName,
+	jvxApiString* description,
+	jvxApiString* lContext)
 {
-	jvxErrorType res = JVX_NO_ERROR;
-	if (onInit.connectedDevice)
+	jvxErrorType res = JVX_MY_BASE_CLASS_D::reference_component(cpTp, modName, description, lContext);
+#ifndef JVX_GENERIC_WRAPPER_ONLY_ONE_ITERATOR
+	if (modName)
 	{
-		// Forward to the first eement in chain - which is the embedded device
-		res = theRelocator.reference_next_ocon_name_x(idx, nmOcon);
+		*modName = "[" + modName->std_str() + "]";
 	}
-	else
+
+	if (description)
 	{
-		res = JVX_MY_BASE_CLASS_D::reference_next_ocon_name(idx, nmOcon);
+		*description = "[" + description->std_str() + "]";
 	}
+
+	if (lContext)
+	{
+		*lContext = "[" + lContext->std_str() + "]";
+	}
+#endif
 	return res;
 }
+
 /*
 jvxErrorType
 CjvxGenericWrapperDevice::number_next(jvxSize* num)
@@ -1807,15 +1833,9 @@ CjvxGenericWrapperDevice::number_next_x(jvxSize* num)
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice::reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next)
+CjvxGenericWrapperDevice::reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
-	return _reference_next_handle(idx, next);
-}
-
-jvxErrorType
-CjvxGenericWrapperDevice::reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon)
-{
-	return _reference_next_ocon_name(idx, nmOcon);
+	return _reference_next_handle(idx, next, nmOcon, nmIcon);
 }
 
 void

@@ -44,16 +44,18 @@ jvxLibHost::process_decode_iterator(IjvxConnectionIterator* it,
 }
 
 jvxErrorType
-jvxLibHost::process_next_iterator_handle(IjvxConnectionIterator* it, IjvxConnectionIterator** next, jvxSize id)
+jvxLibHost::process_next_iterator_handle(IjvxConnectionIterator* it, IjvxConnectionIterator** next, jvxSize id, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
-	return it->reference_next_handle(id, next);
+	return it->reference_next_handle(id, next, nmOcon, nmIcon);
 }
 
+/*
 jvxErrorType
 jvxLibHost::process_next_iterator_ocon_name(IjvxConnectionIterator* it, jvxApiString* nmOcon, jvxSize id)
 {
 	return it->reference_next_ocon_name(id, nmOcon);
 }
+*/
 
 jvxErrorType 
 jvxLibHost::process_system_ready(jvxApiString* astr)

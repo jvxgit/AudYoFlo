@@ -50,14 +50,33 @@ class AudYoFloOneConnectorEntry {
 // property cache. It is invalidated as a whole whenever the backend reports
 // that the data chain containing this component has been (re-)tested
 // (JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN).
-class AudYoFloConnectorsComponentsCache {
+class AudYoFloConnectorsEnsemble {
   List<JvxConnector> inputConnectors = [];
   List<JvxConnector> outputConnectors = [];
-  bool valid = false;
   int ssUpdateId = 0;
+  bool valid = false;
 
   void invalidate() {
-    valid = false;
     ssUpdateId++;
+    valid = false;
+  }
+}
+
+class AudYoFloConnectorsComponentsCache {
+  AudYoFloConnectorsEnsemble consConnected = AudYoFloConnectorsEnsemble();
+  AudYoFloConnectorsEnsemble consConnectable = AudYoFloConnectorsEnsemble();
+
+  void invalidate(jvxConnectorSelectionEnum sel) {
+    switch (sel) {
+      case jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED:
+        consConnected.invalidate();
+        break;
+      case jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE:
+        consConnectable.invalidate();
+        break;
+      default:
+        assert(false);
+        break;
+    }
   }
 }

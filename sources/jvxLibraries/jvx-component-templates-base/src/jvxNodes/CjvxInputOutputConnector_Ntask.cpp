@@ -642,7 +642,7 @@ CjvxInputConnectorNtask::number_next(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxInputConnectorNtask::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) 
+CjvxInputConnectorNtask::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
 	if (idx == 0)
 	{
@@ -654,31 +654,16 @@ CjvxInputConnectorNtask::reference_next_handle(jvxSize idx, IjvxConnectionIterat
 				IjvxInputConnector* icon = nullptr;
 				if (_common_set_icon_ntask.ocon)
 				{
+					_common_set_icon_ntask.ocon->descriptor_connector(nmOcon);
 					_common_set_icon_ntask.ocon->connected_icon(&icon);
 					if (icon)
 					{
+						icon->descriptor_connector(nmIcon);
 						*next = static_cast<IjvxConnectionIterator*>(icon);
 						return JVX_NO_ERROR;
 					}
 				}
 			}
-		}
-	}
-	return JVX_ERROR_ID_OUT_OF_BOUNDS;
-}
-
-jvxErrorType
-CjvxInputConnectorNtask::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
-{
-	if (idx == 0)
-	{
-			if (!_common_nvtask->_common_set_comnvtask.associatedMaster) // If this pointer is non-zero, the icon is the end of a chain.
-			{
-				if (_common_set_icon_ntask.ocon)
-				{
-					_common_set_icon_ntask.ocon->descriptor_connector(nmOcon);
-					return JVX_NO_ERROR;
-				}
 		}
 	}
 	return JVX_ERROR_ID_OUT_OF_BOUNDS;

@@ -1205,7 +1205,7 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 
 					oneProcess->iterator_chain(&itRet); // it
 					
-					res = output_process_iterator_path(itRet, elmlp, "<no-info>");
+					res = output_process_iterator_path(itRet, elmlp, "", "");
 					elmr.makeSection("process_path", elmlp);
 
 					//res = oneProcess->transfer_forward_chain(JVX_LINKDATA_TRANSFER_COLLECT_LINK_JSON, &elmlp JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -1234,7 +1234,7 @@ CjvxHostJsonCommandsShow::output_one_process(IjvxDataConnections* connections, j
 }
 
 jvxErrorType
-CjvxHostJsonCommandsShow::output_process_iterator_path(IjvxConnectionIterator* itRet, CjvxJsonElementList& elmlp, const std::string& oconName)
+CjvxHostJsonCommandsShow::output_process_iterator_path(IjvxConnectionIterator* itRet, CjvxJsonElementList& elmlp, const std::string& oconName, const std::string& iconName)
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
@@ -1249,8 +1249,17 @@ CjvxHostJsonCommandsShow::output_process_iterator_path(IjvxConnectionIterator* i
 	// nameConnector, nameModule, cpId, nameComponent
 	if (itRet)
 	{
-		elm.makeAssignmentString("ocon_connect_via", oconName);
-		elmlp.addConsumeElement(elm);
+		if (!oconName.empty())
+		{
+			elm.makeAssignmentString("ocon_connect_from", oconName);
+			elmlp.addConsumeElement(elm);
+		}
+
+		if (!iconName.empty())
+		{
+			elm.makeAssignmentString("icon_connect_to", iconName);
+			elmlp.addConsumeElement(elm);
+		}
 
 		itRet->reference_component(&cpId, &mStr, &dStr, &lStr);
 		elm.makeAssignmentString("component_identification", jvxComponentIdentification_txt(cpId));
@@ -1265,22 +1274,19 @@ CjvxHostJsonCommandsShow::output_process_iterator_path(IjvxConnectionIterator* i
 		elm.makeAssignmentString("description", dStr.c_str());
 		elmlp.addConsumeElement(elm);
 		
-		elm.makeAssignmentString("context", lStr.c_str());
-		elmlp.addConsumeElement(elm);
-
 		itRet->number_next(&nBranches);
 
 		for(i = 0; i < nBranches; i++)
 		{
 			IjvxConnectionIterator* itNext = nullptr;
 			CjvxJsonArrayElement elmArrElm;
-			jvxApiString astr;
-			itRet->reference_next_handle(i, &itNext);
-			itRet->reference_next_ocon_name(i, &astr);
+			jvxApiString nmOcon;
+			jvxApiString nmIcon;
+			itRet->reference_next_handle(i, &itNext, &nmOcon, &nmIcon);
 			if (itNext)
 			{
 				CjvxJsonElementList elmNextLst;
-				jvxErrorType resL = output_process_iterator_path(itNext, elmNextLst, astr.std_str());
+				jvxErrorType resL = output_process_iterator_path(itNext, elmNextLst, nmOcon.std_str(), nmIcon.std_str());
 				elmArrElm.makeSection(elmNextLst);
 				elmArr.addConsumeElement(elmArrElm);
 			}
@@ -2303,6 +2309,8 @@ CjvxHostJsonCommandsShow::show_single_component(
 												{
 													CjvxJsonArray jelmarr;
 													CjvxJsonElement jelm_cons;
+													CjvxJsonElement jelm_entry;
+
 													if (doInput)
 													{
 														output_connectors_list(conFac, true, sel, jelmarr);
@@ -2313,6 +2321,10 @@ CjvxHostJsonCommandsShow::show_single_component(
 													}
 													JVX_CREATE_CONNECTORS(jelm_cons, jelmarr);
 													jelmlst_ret.addConsumeElement(jelm_cons);
+
+													// sel ; jvxConnectorSelectType_ sel
+													JVX_CREATE_CONNECTOR_SELECTION(jelm_entry, jvxConnectorSelectType_txt(sel));
+													jelmlst_ret.addConsumeElement(jelm_entry);
 
 													retInterfaceObj<IjvxConnectorFactory>(obj, conFac);
 												}

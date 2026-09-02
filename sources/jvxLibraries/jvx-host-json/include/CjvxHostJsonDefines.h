@@ -230,6 +230,9 @@ jelm.makeAssignmentString("seq_element_assoc_mode", txt)
 #define JVX_CREATE_CONNECTORS(jelm, jarr) \
 	jelm.makeArray("connectors", jarr);
 
+#define JVX_CREATE_CONNECTOR_SELECTION(jelm, txt) \
+	jelm.makeAssignmentString("selection_option", txt)
+
 #define JVX_CREATE_CONNECTOR_DIRECTION(jelm, txt) \
 	jelm.makeAssignmentString("direction", txt)
 

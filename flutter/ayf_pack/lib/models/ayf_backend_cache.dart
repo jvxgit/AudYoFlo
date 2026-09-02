@@ -687,7 +687,7 @@ abstract class AudYoFloBackendCache
     for (var elm
         in processSection.theRegisteredProcesses.reportedProcesses.entries) {
       AudYoFloOneConnectedProcess con = elm.value;
-      var involvedElementStart = con.involved;
+      var involvedElementStart = con.involvedMaster;
       bool foundElm = false;
       if (involvedElementStart != null) {
         if (asFirstElement) {
@@ -726,7 +726,7 @@ abstract class AudYoFloBackendCache
               .theRegisteredProcesses.reportedProcesses.entries
               .elementAt(processId);
           AudYoFloOneConnectedProcess con = entry.value;
-          con.involved?.findComponentsMatch(
+          con.involvedMaster?.findComponentsMatch(
               lst, componentSection.theSelectedComponents.selectedComponents,
               lstCheck: lstRegExprMatch, lstDescriptors: lstDescriptionsReturn);
         } else {
@@ -755,7 +755,7 @@ abstract class AudYoFloBackendCache
           .firstWhereOrNull((element) => element.key == processId);
       if (elmP != null) {
         AudYoFloOneConnectedProcess con = elmP.value;
-        con.involved?.findComponentsMatch(
+        con.involvedMaster?.findComponentsMatch(
             lst, componentSection.theSelectedComponents.selectedComponents,
             lstCheck: lstRegExprMatch, lstDescriptors: lstDescriptionsReturn);
       }
@@ -961,42 +961,72 @@ abstract class AudYoFloBackendCache
   // ======================================================================
 
   @override
-  AudYoFloConnectorsComponentsCache? referenceConnectorsComponentsInCache(
-      JvxComponentIdentification cpId) {
-    AudYoFloConnectorsComponentsCache? retVal;
+  AudYoFloConnectorsEnsemble? referenceConnectorsComponentsInCache(
+      JvxComponentIdentification cpId, jvxConnectorSelectionEnum selOption) {
+    AudYoFloConnectorsEnsemble? retVal;
     AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
     if (actComponent != null) {
-      if (actComponent.connectionParamsCache.valid) {
-        retVal = actComponent.connectionParamsCache;
+      switch (selOption) {
+        case jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED:
+          if (actComponent.connectionParamsCache.consConnected.valid) {
+            retVal = actComponent.connectionParamsCache.consConnected;
+          }
+          break;
+        case jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE:
+          if (actComponent.connectionParamsCache.consConnectable.valid) {
+            retVal = actComponent.connectionParamsCache.consConnectable;
+          }
+          break;
+        default:
+          break;
       }
     }
     return retVal;
   }
 
   @override
-  Future<int> triggerUpdateConnectorsComponent(
-      JvxComponentIdentification cpId) async {
+  Future<int> triggerUpdateConnectorsComponent(JvxComponentIdentification cpId,
+      jvxConnectorSelectionEnum selMode) async {
     int errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
     if (backendAdapterIf == null) {
       errCode = jvxErrorType.JVX_ERROR_NOT_READY;
     } else {
-      errCode = await backendAdapterIf!.triggerUpdateConnectorsComponent(
-          cpId, jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED);
+      errCode = await backendAdapterIf!
+          .triggerUpdateConnectorsComponent(cpId, selMode);
     }
     return errCode;
   }
 
   @override
-  int updateConnectorsCacheCompleteNotify(JvxComponentIdentification cpId,
-      List<JvxConnector> inputConnectors, List<JvxConnector> outputConnectors) {
+  int updateConnectorsCacheCompleteNotify(
+      JvxComponentIdentification cpId,
+      List<JvxConnector> inputConnectors,
+      List<JvxConnector> outputConnectors,
+      jvxConnectorSelectionEnum selMode) {
     int errCode = jvxErrorType.JVX_ERROR_ELEMENT_NOT_FOUND;
     AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
     if (actComponent != null) {
       errCode = jvxErrorType.JVX_NO_ERROR;
-      actComponent.connectionParamsCache.inputConnectors = inputConnectors;
-      actComponent.connectionParamsCache.outputConnectors = outputConnectors;
-      actComponent.connectionParamsCache.valid = true;
-      actComponent.connectionParamsCache.ssUpdateId++;
+      switch (selMode) {
+        case jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED:
+          actComponent.connectionParamsCache.consConnected.inputConnectors =
+              inputConnectors;
+          actComponent.connectionParamsCache.consConnected.outputConnectors =
+              outputConnectors;
+          actComponent.connectionParamsCache.consConnected.ssUpdateId++;
+          actComponent.connectionParamsCache.consConnected.valid = true;
+          break;
+        case jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE:
+          actComponent.connectionParamsCache.consConnectable.inputConnectors =
+              inputConnectors;
+          actComponent.connectionParamsCache.consConnectable.outputConnectors =
+              outputConnectors;
+          actComponent.connectionParamsCache.consConnectable.ssUpdateId++;
+          actComponent.connectionParamsCache.consConnectable.valid = true;
+          break;
+        default:
+          break;
+      }
 
       // TEMP DEBUG: confirm the cache was actually written for this
       // component, and with how many connectors.
@@ -1011,10 +1041,11 @@ abstract class AudYoFloBackendCache
   }
 
   @override
-  void invalidateConnectorsComponent(JvxComponentIdentification cpId) {
+  void invalidateConnectorsComponent(
+      JvxComponentIdentification cpId, jvxConnectorSelectionEnum selOpt) {
     AudYoFloOneSelectedComponent? actComponent = findSelectedComponent(cpId);
     if (actComponent != null) {
-      actComponent.connectionParamsCache.invalidate();
+      actComponent.connectionParamsCache.invalidate(selOpt);
 
       // TEMP DEBUG: confirm which component's connector cache was just
       // invalidated.
@@ -1025,7 +1056,8 @@ abstract class AudYoFloBackendCache
   }
 
   @override
-  void invalidateConnectorsForProcess(int processUId) {
+  void invalidateConnectorsForProcess(
+      int processUId, jvxConnectorSelectionEnum selOpt) {
     List<JvxComponentIdentification> cpIds =
         findComponentsMatchProcess(processUId, processIdLinearAddress: false);
 
@@ -1037,7 +1069,7 @@ abstract class AudYoFloBackendCache
         */
 
     for (var cpId in cpIds) {
-      invalidateConnectorsComponent(cpId);
+      invalidateConnectorsComponent(cpId, selOpt);
     }
   }
 

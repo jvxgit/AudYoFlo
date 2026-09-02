@@ -762,7 +762,7 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 	}
 	
 	jvxErrorType
-		CjvxConnectionMasterIterator::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) 
+		CjvxConnectionMasterIterator::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 	{
 		if (idx == 0)
 		{
@@ -774,30 +774,14 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 					if (parentMaster->_common_set_ld_master.oconn)
 					{
 						IjvxInputConnector* icon = nullptr;
+						parentMaster->_common_set_ld_master.oconn->descriptor_connector(nmOcon);
 						parentMaster->_common_set_ld_master.oconn->connected_icon(&icon);
 						if (icon)
 						{
+							icon->descriptor_connector(nmIcon);
 							*next = static_cast<IjvxConnectionIterator*>(icon);
 						}
 					}
-				}
-			}
-			return JVX_NO_ERROR;
-		}
-		return JVX_ERROR_ID_OUT_OF_BOUNDS;
-	};
-
-	jvxErrorType
-		CjvxConnectionMasterIterator::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
-	{
-		if (idx == 0)
-		{
-			if (parentMaster)
-			{
-				if (parentMaster->_common_set_ld_master.oconn)
-				{
-					parentMaster->_common_set_ld_master.oconn->descriptor_connector(nmOcon);
-
 				}
 			}
 			return JVX_NO_ERROR;

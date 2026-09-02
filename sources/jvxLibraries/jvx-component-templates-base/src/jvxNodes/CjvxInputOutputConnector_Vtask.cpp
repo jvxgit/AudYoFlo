@@ -412,27 +412,18 @@ CjvxInputConnectorVtask::number_next(jvxSize* num)
 }
 
 jvxErrorType
-CjvxInputConnectorVtask::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
+CjvxInputConnectorVtask::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
 	jvxErrorType res = JVX_ERROR_NOT_READY;
 	if (common_vtask._common_set_comvtask.cbRef)
 	{
-		res = common_vtask._common_set_comvtask.cbRef->reference_next_icon_vtask(
-			idx, next,
+		common_vtask._common_set_comvtask.cbRef->reference_next_icon_ocon_name_vtask(
+			idx, nmOcon,
 			_common_nvtask->_common_set_comnvtask.ctxtId,
 			_common_nvtask->_common_set_comnvtask.ctxtSubId);
-	}
-	return res;
-}
 
-jvxErrorType
-CjvxInputConnectorVtask::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
-{
-	jvxErrorType res = JVX_ERROR_NOT_READY;
-	if (common_vtask._common_set_comvtask.cbRef)
-	{
-		res = common_vtask._common_set_comvtask.cbRef->reference_next_icon_ocon_name_vtask(
-			idx, nmOcon,
+		res = common_vtask._common_set_comvtask.cbRef->reference_next_icon_vtask(
+			idx, next,
 			_common_nvtask->_common_set_comnvtask.ctxtId,
 			_common_nvtask->_common_set_comnvtask.ctxtSubId);
 	}

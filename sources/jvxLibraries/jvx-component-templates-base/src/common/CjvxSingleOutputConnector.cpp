@@ -5,7 +5,7 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 {
 	jvxErrorType res = JVX_NO_ERROR;
 	const jvxChainConnectArguments* args = (const jvxChainConnectArguments*)data;
-	IjvxConnectionIterator** itReturn = (IjvxConnectionIterator**)data;
+	CjvxIteratorOconIcon* itReturn = (CjvxIteratorOconIcon*)data;
 	jvxApiString* nmOconReturn = (jvxApiString*)data;
 	switch (purp)
 	{
@@ -21,15 +21,15 @@ CjvxSingleOutputTriggerConnector::trigger(jvxTriggerConnectorPurpose purp, jvxHa
 			res = bwdRef->_disconnect_connect_ocon(*args JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		}
 		break;
-	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_HANDLE:
+	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_HANDLE_ICON_OCON:
 		if (itReturn)
 		{
-			*itReturn = static_cast<IjvxConnectionIterator*>(bwdRef);
+			if(itReturn->nmOcon) *itReturn->nmOcon = "<trigger_out>";
+			if(itReturn->nmIcon) *itReturn->nmIcon = "<trigger_in>";
+			if(itReturn->onReturn) *itReturn->onReturn = bwdRef;
 		}
 		break;
-	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_OCON_NAME:
-		bwdRef->_descriptor_connector(nmOconReturn);
-		break;
+
 	case jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_TEST:
 		if (bwdRef)
 		{			
@@ -98,21 +98,15 @@ CjvxSingleOutputConnector::number_next(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxSingleOutputConnector::reference_next_handle(jvxSize idx, IjvxConnectionIterator** outReturn)
+CjvxSingleOutputConnector::reference_next_handle(jvxSize idx, IjvxConnectionIterator** outReturn, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
 	*outReturn = nullptr;
+	this->descriptor_connector(nmOcon);
 	if (_common_set_ocon.theData_out.con_link.connect_to)
 	{
+		_common_set_ocon.theData_out.con_link.connect_to->descriptor_connector(nmIcon);
 		*outReturn = _common_set_ocon.theData_out.con_link.connect_to;
 	}
-	return JVX_NO_ERROR;
-}
-
-jvxErrorType
-CjvxSingleOutputConnector::reference_next_ocon_name(jvxSize idx, jvxApiString* outReturn)
-{
-	*outReturn = nullptr;
-	this->_descriptor_connector(outReturn);
 	return JVX_NO_ERROR;
 }
 
@@ -384,6 +378,11 @@ CjvxSingleOutputConnectorMulti::select_connect_ocon(IjvxConnectorBridge* obj, Ij
 	if (numConnectorsInUse < acceptNumberConnectors)
 	{
 		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleOutputConnector(withTriggerConnector));
+
+		jvx::helper::random_id_init(JVX_RAND_INIT_TOKEN);
+		char out[5];
+		jvx::helper::generate_random_id(out, 5);
+		newConnector->setUToken((const char*)out);
 
 		// replace_connector is overridden here but will be modified later
 		newConnector->select_connect_ocon(obj, master, ass_connection_common, replace_connector);

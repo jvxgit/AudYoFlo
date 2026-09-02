@@ -475,9 +475,11 @@ class AudioFlowBackendBridge_ extends AudioFlowBackendBridgeCallbacks {
         }
         // TEMP DEBUG: mark the reception of the TEST_SUCCESS event that
         // triggers the connector cache invalidation below.
-        debugPrint('[connParams] JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS '
+        /*
+		debugPrint('[connParams] JVX_REPORT_COMMAND_REQUEST_REPORT_TEST_SUCCESS '
             'received for process uid=$uId');
-
+		*/
+		
         // Only now is it guaranteed that the chain test ran successfully and
         // the negotiated connection parameters on any connector of the
         // involved components are final - discard the cached values so they
@@ -492,8 +494,10 @@ uId = decodeUId(natLib!, load_fld);
         }
         // TEMP DEBUG: mark the reception of the TEST_CHAIN event that
         // triggers the connector cache invalidation below.
-        debugPrint('[connParams] JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN '
+        /*
+		debugPrint('[connParams] JVX_REPORT_COMMAND_REQUEST_TEST_CHAIN_RUN '
             'received for process uid=$uId');
+		*/
             break;
 
       case jvxReportCommandRequestEnum

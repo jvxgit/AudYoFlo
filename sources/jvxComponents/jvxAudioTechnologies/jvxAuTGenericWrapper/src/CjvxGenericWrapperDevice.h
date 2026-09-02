@@ -23,6 +23,9 @@ class CjvxGenericWrapperTechnology;
 #define JVX_MY_BASE_CLASS_D  CjvxAudioDevice
 #define JVX_ASYNC_BUFFER_DEBUG_CNT 1024
 
+// Skip first and last element in chain with generic wrapper devide
+#define JVX_GENERIC_WRAPPER_ONLY_ONE_ITERATOR
+
 class local_proc_params
 {
 public:
@@ -674,14 +677,18 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
 	/* ========================================*/
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
+		jvxComponentIdentification* cpTp,
+		jvxApiString* modName,
+		jvxApiString* description,
+		jvxApiString* lContext) override;
+
 	virtual jvxErrorType JVX_CALLINGCONVENTION iterator_chain(IjvxConnectionIterator** it) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;	
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon) override;	
 
 	jvxErrorType number_next_x(jvxSize* num);
-	jvxErrorType reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next);
-	jvxErrorType reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon);
+	jvxErrorType reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon);
 
 	jvxErrorType prepare_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fdb));
 	jvxErrorType postprocess_connect_icon_x(JVX_CONNECTION_FEEDBACK_TYPE(fdb));

@@ -365,6 +365,8 @@ class JvxConnector {
   int additionalFlags = 0;
   bool isInput = true;
 
+  jvxConnectorSelectionEnum connSelOption = jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED;
+
   JvxConnector(
       {this.descriptor = 'none',
       this.buffersize = 0,

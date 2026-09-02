@@ -12,4 +12,6 @@ jvxTextHelpers* jvxComponentTypeClass_str();
 const char* jvxComponentTypeClass_txt(jvxComponentTypeClass cls);
 const char* jvxComponentTypeClass_txtf(jvxComponentTypeClass cls);
 
+const char* jvxConnectorSelectType_txt(jvxConnectorSelectType sel);
+
 #endif

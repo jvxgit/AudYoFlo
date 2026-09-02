@@ -430,7 +430,7 @@ jvxErrorType CjvxSingleMaster::number_next(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxSingleMaster::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
+CjvxSingleMaster::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
 	jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
 	if(next) *next = nullptr;
@@ -442,33 +442,15 @@ CjvxSingleMaster::reference_next_handle(jvxSize idx, IjvxConnectionIterator** ne
 		{
 			if (_common_set_ma_common.conn_out)
 			{
+				_common_set_ma_common.conn_out->descriptor_connector(nmOcon);
 				IjvxInputConnector* icon = nullptr;
 				_common_set_ma_common.conn_out->connected_icon(&icon);
 				if (icon)
 				{
+					icon->descriptor_connector(nmIcon);
 					*next = static_cast<IjvxConnectionIterator*>(icon);
 					res = JVX_NO_ERROR;
 				}
-			}
-		}
-	}
-	return res;
-}
-	
-jvxErrorType
-CjvxSingleMaster::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
-{
-	jvxErrorType res = JVX_ERROR_ID_OUT_OF_BOUNDS;
-
-	if (idx == 0)
-	{
-		res = JVX_ERROR_WRONG_STATE;
-		if (runtime.stat >= JVX_STATE_ACTIVE)
-		{
-			if (_common_set_ma_common.conn_out)
-			{
-				_common_set_ma_common.conn_out->descriptor_connector(nmOcon);
-				res = JVX_NO_ERROR;
 			}
 		}
 	}

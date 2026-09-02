@@ -53,8 +53,7 @@ public:
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
 
 	jvxErrorType number_next(jvxSize*) override;
-	jvxErrorType reference_next_handle(jvxSize, IjvxConnectionIterator**) override;
-	jvxErrorType reference_next_ocon_name(jvxSize, jvxApiString*) override;
+	jvxErrorType reference_next_handle(jvxSize, IjvxConnectionIterator**, jvxApiString*, jvxApiString*) override;
 	jvxErrorType reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*, jvxApiString*)override;
 
 	jvxErrorType available_to_connect_icon() override;
@@ -75,6 +74,7 @@ public:
 
 	 // =======================================================================================
 
+#define JVX_INPUT_CONNECTOR_WITH_UID
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr
@@ -99,6 +99,7 @@ public:
 #undef JVX_CONNECTION_MASTER_SKIP_CONNECT_CONNECT_ICON
 #undef JVX_CONNECTION_MASTER_SKIP_DISCONNECT_CONNECT_ICON
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
+#undef JVX_INPUT_CONNECTOR_WITH_UID
 };
 
 // =======================================================================================

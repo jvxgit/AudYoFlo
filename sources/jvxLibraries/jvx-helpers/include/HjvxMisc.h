@@ -830,7 +830,12 @@ namespace jvx {
 			}
 			return returnVal;
 		};
-	}
+	
+#define JVX_RAND_INIT_TOKEN (unsigned int)time(NULL)
+
+		void random_id_init(unsigned int initToken);
+		void generate_random_id(char* out, jvxSize nOut);
+}
 
 	namespace align {
 

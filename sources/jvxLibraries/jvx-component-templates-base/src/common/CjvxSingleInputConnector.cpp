@@ -163,18 +163,24 @@ CjvxSingleInputConnector::number_next(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxSingleInputConnector::reference_next_handle(jvxSize idx, IjvxConnectionIterator** onReturn) 
+CjvxSingleInputConnector::reference_next_handle(jvxSize idx, IjvxConnectionIterator** onReturn, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
 	*onReturn = nullptr;
 	if (
 		trig_con &&
 		trig_con->linked_ref)
 	{
-		trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_HANDLE, onReturn JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
+		CjvxIteratorOconIcon onReturnPtr;
+		onReturnPtr.idx = idx;
+		onReturnPtr.nmIcon = nmIcon;
+		onReturnPtr.nmOcon = nmOcon;
+		onReturnPtr.onReturn = onReturn;
+		trig_con->linked_ref->trigger(jvxTriggerConnectorPurpose::JVX_CONNECTOR_TRIGGER_ITERATOR_NEXT_HANDLE_ICON_OCON, &onReturnPtr JVX_CONNECTION_FEEDBACK_CALL_A_NULL);
 	}
 	return JVX_NO_ERROR;
 }
 
+/*
 jvxErrorType
 CjvxSingleInputConnector::reference_next_ocon_name(jvxSize idx, jvxApiString* onReturn)
 {
@@ -187,6 +193,7 @@ CjvxSingleInputConnector::reference_next_ocon_name(jvxSize idx, jvxApiString* on
 	}
 	return JVX_NO_ERROR;
 }
+*/
 
 jvxErrorType
 CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
@@ -468,6 +475,12 @@ CjvxSingleInputConnectorMulti::select_connect_icon(IjvxConnectorBridge* obj, Ijv
 	if (numConnectorsInUse < acceptNumberConnectors)
 	{
 		JVX_SAFE_ALLOCATE_OBJECT(newConnector, CjvxSingleInputConnector(withTriggerConnector));
+
+		jvx::helper::random_id_init(JVX_RAND_INIT_TOKEN);
+		char out[5];
+		jvx::helper::generate_random_id(out, 5);
+		newConnector->setUToken((const char*)out);
+
 		newConnector->select_connect_icon(obj, master, ass_connection_common, replace_connector);
 		newConnector->activate(_common_set_io_common_ptr->_common_set_io_common.object,
 			_common_set_io_common_ptr->_common_set_io_common.myParent,

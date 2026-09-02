@@ -29,7 +29,8 @@ typedef enum
 	JVX_DELETE_DATATYPE_SS_LIST = 13,
 	JVX_DELETE_DATATYPE_VALUE_IN_RANGE = 14,
 	JVX_DELETE_DATATYPE_CONNECTOR_WITH_PARAMS_LIST = 15,
-	JVX_DELETE_DATATYPE_UNKNOWN = 16,
+	JVX_DELETE_DATATYPE_CONNECTOR_BRIDGE = 16,
+	JVX_DELETE_DATATYPE_UNKNOWN = 17,
 	JVX_DELETE_DATATYPE_LIMIT
 } ffiDeleteDatatype;
 
@@ -219,6 +220,13 @@ struct connector_list
 {
 	int nEntries;
 	struct one_connector_with_params* pEntries;
+};
+
+struct connector_bridge
+{
+	void* next; // IjvxConnectionIterator
+	char* nmOconFrom;
+	char* nmIconTo;
 };
 
 #endif

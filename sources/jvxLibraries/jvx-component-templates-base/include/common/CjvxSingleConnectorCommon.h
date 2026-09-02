@@ -14,6 +14,7 @@ class CjvxConnectorMulti: public T2
 public:
 	jvxSize acceptNumberConnectors = 1;
 	jvxSize numConnectorsInUse = 0;
+	jvxSize uId_connectors = 0;
 
 	std::map<T1*, T2*> allocatedConnectors;
 
@@ -31,6 +32,8 @@ public:
 	T2* trig_con = nullptr;
 	jvxBool withTriggerConnector = false;
 	jvxSize conId = 0;
+	std::string conUid = "";
+
 	CjvxConnectorOffsetAndMaxChans chanSetting;
 	jvxBool linkageIoActive = false;
 	
@@ -57,6 +60,11 @@ public:
 		{
 			JVX_SAFE_DELETE_OBJECT(trig_con);
 		}
+	};
+
+	void setUToken(const char* token)
+	{
+		conUid = token;
 	};
 
 	jvxErrorType _transfer(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))

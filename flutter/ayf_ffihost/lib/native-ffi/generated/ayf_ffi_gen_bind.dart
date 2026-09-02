@@ -229,25 +229,7 @@ class AudioYoFloNative {
       _ffi_process_handle_for_uidPtr.asFunction<
           ffi.Pointer<one_process> Function(ffi.Pointer<ffi.Void>, int)>();
 
-  int ffi_process_decode_iterator_context(
-    ffi.Pointer<ffi.Void> opaque_hdl,
-    ffi.Pointer<ffi.Void> it_handle,
-  ) {
-    return _ffi_process_decode_iterator_context(
-      opaque_hdl,
-      it_handle,
-    );
-  }
-
-  late final _ffi_process_decode_iterator_contextPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<ffi.Void>,
-              ffi.Pointer<ffi.Void>)>>('ffi_process_decode_iterator_context');
-  late final _ffi_process_decode_iterator_context =
-      _ffi_process_decode_iterator_contextPtr.asFunction<
-          int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>();
-
-  ffi.Pointer<ffi.Void> ffi_process_iterator_next_handle(
+  ffi.Pointer<connector_bridge> ffi_process_iterator_next_handle(
     ffi.Pointer<ffi.Void> opaque_hdl,
     ffi.Pointer<ffi.Void> it_handle,
     int idNext,
@@ -261,37 +243,32 @@ class AudioYoFloNative {
 
   late final _ffi_process_iterator_next_handlePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Pointer<ffi.Void> Function(
+          ffi.Pointer<connector_bridge> Function(
               ffi.Pointer<ffi.Void>,
               ffi.Pointer<ffi.Void>,
               ffi.Size)>>('ffi_process_iterator_next_handle');
   late final _ffi_process_iterator_next_handle =
       _ffi_process_iterator_next_handlePtr.asFunction<
-          ffi.Pointer<ffi.Void> Function(
+          ffi.Pointer<connector_bridge> Function(
               ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, int)>();
 
-  ffi.Pointer<ffi.Char> ffi_process_iterator_next_ocon_name(
+  int ffi_process_decode_iterator_number_branches(
     ffi.Pointer<ffi.Void> opaque_hdl,
     ffi.Pointer<ffi.Void> it_handle,
-    int idNext,
   ) {
-    return _ffi_process_iterator_next_ocon_name(
+    return _ffi_process_decode_iterator_number_branches(
       opaque_hdl,
       it_handle,
-      idNext,
     );
   }
 
-  late final _ffi_process_iterator_next_ocon_namePtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<ffi.Void>,
-              ffi.Pointer<ffi.Void>,
-              ffi.Size)>>('ffi_process_iterator_next_ocon_name');
-  late final _ffi_process_iterator_next_ocon_name =
-      _ffi_process_iterator_next_ocon_namePtr.asFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, int)>();
+  late final _ffi_process_decode_iterator_number_branchesPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>>(
+      'ffi_process_decode_iterator_number_branches');
+  late final _ffi_process_decode_iterator_number_branches =
+      _ffi_process_decode_iterator_number_branchesPtr.asFunction<
+          int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>();
 
   ffi.Pointer<component_ident> ffi_process_decode_iterator_component(
     ffi.Pointer<ffi.Void> opaque_hdl,
@@ -331,22 +308,23 @@ class AudioYoFloNative {
           ffi.Pointer<ffi.Char> Function(
               ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>();
 
-  ffi.Pointer<ffi.Char> ffi_process_decode_iterator_connector(
+  ffi.Pointer<ffi.Char> ffi_process_decode_iterator_descriptor(
     ffi.Pointer<ffi.Void> opaque_hdl,
     ffi.Pointer<ffi.Void> it_handle,
   ) {
-    return _ffi_process_decode_iterator_connector(
+    return _ffi_process_decode_iterator_descriptor(
       opaque_hdl,
       it_handle,
     );
   }
 
-  late final _ffi_process_decode_iterator_connectorPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>,
-              ffi.Pointer<ffi.Void>)>>('ffi_process_decode_iterator_connector');
-  late final _ffi_process_decode_iterator_connector =
-      _ffi_process_decode_iterator_connectorPtr.asFunction<
+  late final _ffi_process_decode_iterator_descriptorPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Pointer<ffi.Char> Function(
+                  ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>>(
+      'ffi_process_decode_iterator_descriptor');
+  late final _ffi_process_decode_iterator_descriptor =
+      _ffi_process_decode_iterator_descriptorPtr.asFunction<
           ffi.Pointer<ffi.Char> Function(
               ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>();
 
@@ -1484,8 +1462,9 @@ sealed class ffiDeleteDatatype {
   static const JVX_DELETE_DATATYPE_SS_LIST = 13;
   static const JVX_DELETE_DATATYPE_VALUE_IN_RANGE = 14;
   static const JVX_DELETE_DATATYPE_CONNECTOR_WITH_PARAMS_LIST = 15;
-  static const JVX_DELETE_DATATYPE_UNKNOWN = 16;
-  static const JVX_DELETE_DATATYPE_LIMIT = 17;
+  static const JVX_DELETE_DATATYPE_CONNECTOR_BRIDGE = 16;
+  static const JVX_DELETE_DATATYPE_UNKNOWN = 17;
+  static const JVX_DELETE_DATATYPE_LIMIT = 18;
 }
 
 final class one_property_min extends ffi.Struct {
@@ -1780,4 +1759,12 @@ final class connector_list extends ffi.Struct {
   external int nEntries;
 
   external ffi.Pointer<one_connector_with_params> pEntries;
+}
+
+final class connector_bridge extends ffi.Struct {
+  external ffi.Pointer<ffi.Void> next;
+
+  external ffi.Pointer<ffi.Char> nmOconFrom;
+
+  external ffi.Pointer<ffi.Char> nmIconTo;
 }

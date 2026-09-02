@@ -654,8 +654,10 @@ jvx_property_tree_widget::fillProcessRecursively(oneProcess& theProc, IjvxConnec
 	it->number_next(&num);
 	for (i = 0; i < num; i++)
 	{
+		jvxApiString nmOcon;
+		jvxApiString nmIcon;
 		IjvxConnectionIterator* itN = nullptr;
-		it->reference_next_handle(i, &itN);
+		it->reference_next_handle(i, &itN, &nmOcon, &nmIcon);
 		if (itN)
 		{
 			fillProcessRecursively(theProc, itN);

@@ -24,8 +24,8 @@ class AudYoFloOneConnectedProcessWeb extends AudYoFloOneConnectedProcess {
       nameProcess = descrStr!;
     }
     if (processDetails != null) {
-      involved = AudYoFloOneComponentInProcessWeb(helper, report);
-      involved!.fill(processDetails);
+      involvedMaster = AudYoFloOneComponentInProcessWeb(helper, report);
+      involvedMaster!.fill(processDetails);
     }
   }
 }
@@ -45,20 +45,30 @@ class AudYoFloOneComponentInProcessWeb extends AudYoFloOneComponentInProcess {
     String? modNameStr =
         AudYoFloHelper.extractStringFromJson(jsonMap, 'component_identification');
     String? cpNameStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'description');
-    String? connNmToStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'context');
-    String? connNmFromStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'ocon_connect_via');
+    
+    String? iconNmToStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'icon_connect_to');
+    String? oconNmFromStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'icon_connect_to');
+    
     var nextMap = AudYoFloHelper.getMapValueList(jsonMap, 'next');
 
     if ((cpIdStr != null) &&
         (modNameStr != null) &&
-        (cpNameStr != null) &&
-        (connNmToStr != null) &&
-        (connNmFromStr != null)) {
+        (cpNameStr != null)) {
       cpId = helper.translateStringComponentIdentification(cpIdStr, uid);
       descriptionComponent = cpNameStr;
       nameModule = modNameStr;
-      nmInputConnectorTo = connNmToStr;
-      nmOutputConnectorFrom = connNmFromStr;
+
+      nmInputConnectorTo = '';
+      if(iconNmToStr != null)
+      {
+        nmInputConnectorTo = iconNmToStr;
+      }
+      nmOutputConnectorFrom = '';
+      if(oconNmFromStr != null)      
+      {
+        nmOutputConnectorFrom = oconNmFromStr;
+      }
+      
       if (nextMap != null) {
         for (var nComp in nextMap) {
           AudYoFloOneComponentInProcessWeb newInvolved =

@@ -5089,6 +5089,35 @@ namespace jvx {
 			}
 			return lstRet;
 		}
+
+		// =======================================================================================
+		// Code for random access to 4-digits strings
+		// =======================================================================================
+
+		static const char charset[] =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz"
+			"0123456789";
+
+		static unsigned int initTokenStatic = 0;
+
+		void random_id_init(unsigned int initToken)
+		{
+			if (initTokenStatic == 0)
+			{
+				initTokenStatic = initToken;
+				srand(initTokenStatic);
+			}
+		}
+
+		void generate_random_id(char* out, jvxSize nOut)
+		{
+			for (int i = 0; i < nOut-1; ++i)
+			{
+				out[i] = charset[rand() % (int)(sizeof(charset) - 1)];
+			}
+			out[nOut-1] = '\0';			
+		}
 	}
 
 	namespace align {

@@ -349,13 +349,13 @@ public:
 	// ====================================================================================================
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon) override;
+	// virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon) override;
 
 	jvxErrorType iterator_chain_x(IjvxConnectionIterator** it);
 	jvxErrorType JVX_CALLINGCONVENTION number_next_x(jvxSize* num);
-	jvxErrorType JVX_CALLINGCONVENTION reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next);
-	jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon);
+	jvxErrorType JVX_CALLINGCONVENTION reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon);
+	// jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon);
 
 #include "codeFragments/simplify/jvxConnectorFactory_simplify.h"
 

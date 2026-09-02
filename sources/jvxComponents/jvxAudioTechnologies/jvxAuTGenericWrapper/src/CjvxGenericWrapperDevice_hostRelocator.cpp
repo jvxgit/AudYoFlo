@@ -37,7 +37,25 @@ CjvxGenericWrapperDevice_hostRelocator::reference_component(
 	jvxApiString* lContext) 
 {
 	// Re-locate the component information towards generic wrapper
-	return runtime.refDevice->_reference_component(cpTp, modName, description, lContext);
+	jvxErrorType res = runtime.refDevice->_reference_component(cpTp, modName, description, lContext);
+
+#ifndef JVX_GENERIC_WRAPPER_ONLY_ONE_ITERATOR
+	if (modName)
+	{
+		*modName = "[" + modName->std_str() + "]";
+	}
+
+	if (description)
+	{
+		*description = "[" + description->std_str() + "]";
+	}
+
+	if (lContext)
+	{
+		*lContext = "[" + lContext->std_str() + "]";
+	}
+#endif
+	return res;
 }
 
 jvxErrorType 
@@ -1006,15 +1024,9 @@ CjvxGenericWrapperDevice_hostRelocator::number_next(jvxSize* num)
 }
 
 jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next)
+CjvxGenericWrapperDevice_hostRelocator::reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
-	return runtime.refDevice->reference_next_handle_x(idx, next);
-}
-
-jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon)
-{
-	return runtime.refDevice->reference_next_ocon_name_x(idx, nmOcon);
+	return runtime.refDevice->reference_next_handle_x(idx, next, nmOcon, nmIcon);
 }
 
 jvxErrorType
@@ -1034,13 +1046,8 @@ CjvxGenericWrapperDevice_hostRelocator::number_next_x(jvxSize* num)
 }
 
 jvxErrorType 
-CjvxGenericWrapperDevice_hostRelocator::reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next) 
+CjvxGenericWrapperDevice_hostRelocator::reference_next_handle_x(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon)
 {
-	return _reference_next_handle(idx, next);;
-}
-
-jvxErrorType
-CjvxGenericWrapperDevice_hostRelocator::reference_next_ocon_name_x(jvxSize idx, jvxApiString* nmOcon)
-{
-	return _reference_next_ocon_name(idx, nmOcon);
+	_common_set_ocon.ocon->descriptor_connector(nmOcon);
+	return _reference_next_handle(idx, next, nmOcon, nmIcon);
 }

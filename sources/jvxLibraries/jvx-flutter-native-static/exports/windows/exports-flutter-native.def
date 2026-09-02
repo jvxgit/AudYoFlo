@@ -42,13 +42,14 @@ EXPORTS
 
 		; ==========================================================================
 		ffi_process_handle_for_uid				
-		ffi_process_decode_iterator_context
 		ffi_process_iterator_next_handle
-		ffi_process_iterator_next_ocon_name
 
+		ffi_process_decode_iterator_number_branches
 		ffi_process_decode_iterator_component
 		ffi_process_decode_iterator_module
-		ffi_process_decode_iterator_connector
+		ffi_process_decode_iterator_descriptor
+
+		; ffi_process_decode_iterator_connector
 		
 		ffi_process_system_ready
 

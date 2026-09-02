@@ -102,11 +102,12 @@ class FlNodesAdapter {
   /// deshalb von den IDs in [diagram] ab; nur die Struktur (Typen, Positionen,
   /// Verbindungen) bleibt erhalten.
   ///
-  /// Der zurückgegebene Future schließt ab, sobald auch Titel, Port-Labels
-  /// und Gruppenfarbe aus [diagram] im [DiagramController] angekommen sind
-  /// (siehe Kommentar weiter unten zum asynchronen Event-Bus) — vor dem
-  /// Awaiten zeigen Nodes mit gemeinsamem Typ kurzzeitig dessen (identische)
-  /// statische Katalog-Daten statt ihrer eigenen.
+  /// Der zurückgegebene Future schließt ab, sobald auch Titel, Port-Labels,
+  /// Gruppenfarbe und Typ-Identifikation aus [diagram] im [DiagramController]
+  /// angekommen sind (siehe Kommentar weiter unten zum asynchronen
+  /// Event-Bus) — vor dem Awaiten zeigen Nodes mit gemeinsamem Typ
+  /// kurzzeitig dessen (identische) statische Katalog-Daten statt ihrer
+  /// eigenen.
   Future<void> loadDiagram(Diagram diagram) async {
     for (final node in diagram.nodes) {
       if (!nodeTypes.any((type) => type.typeId == node.typeId)) {

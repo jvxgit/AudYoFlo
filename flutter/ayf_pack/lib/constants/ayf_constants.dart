@@ -854,10 +854,21 @@ enum AyfBackendReportPropertySetEnum {
 //
 enum jvxConnectorSelectionEnum {
   JVX_CONNECTOR_SELECT_CONNECTABLE,
-  JVX_CONNECTOR_SELECT_CONNECTED
+  JVX_CONNECTOR_SELECT_CONNECTED,
+  JVX_CONNECTOR_SELECT_INVALID
 }
 
-extension jvxConnectorSelectionEInt on jvxConnectorSelectionEnum {
+extension jvxConnectorSelectionEEnum on jvxConnectorSelectionEnum {
+  static jvxConnectorSelectionEnum fromInt(int val) {
+    jvxConnectorSelectionEnum ss =
+        jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_INVALID;
+    if (val < jvxConnectorSelectionEnum.values.length) {
+      ss = jvxConnectorSelectionEnum.values[val];
+    }
+    return ss;
+  }
+
+  /*
   static jvxConnectorSelectionEnum fromStringSingle(String value) {
     jvxConnectorSelectionEnum retVal =
         jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE;
@@ -868,7 +879,11 @@ extension jvxConnectorSelectionEInt on jvxConnectorSelectionEnum {
       case 'connected':
         retVal = jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED;
         break;
+      case 'invalid':
+        retVal = jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_INVALID;
+        break;
     }
     return retVal;
   }
+  */
 }

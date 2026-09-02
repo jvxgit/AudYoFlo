@@ -5,10 +5,10 @@ class AudYoFloOneConnectedProcess {
   int uId = -1;
   int catId = -1;
   String nameProcess = '';
-  AudYoFloOneComponentInProcess? involved;
+  AudYoFloOneComponentInProcess? involvedMaster;
   AudYoFloOneConnectedProcess(this.uId);
 
-  String debugPrintOneIterator(
+  static String debugPrintOneIterator(
       AudYoFloOneComponentInProcess involved, String tab) {
     String ret = '';
     var description = involved.descriptionComponent;
@@ -27,8 +27,8 @@ class AudYoFloOneConnectedProcess {
 
   String debugPrintProcess() {
     String ret = 'Process connected: $nameProcess\n';
-    if (involved != null) {
-      ret += debugPrintOneIterator(involved!, '');
+    if (involvedMaster != null) {
+      ret += debugPrintOneIterator(involvedMaster!, '');
     }
     return ret;
   }
@@ -118,7 +118,8 @@ abstract class AudYoFloOneComponentInProcess {
 }
 
 class AudYoFloConnectedProcesses {
-  Map reportedProcesses = new Map<int, AudYoFloOneConnectedProcess>();
+  Map<int, AudYoFloOneConnectedProcess> reportedProcesses =
+      <int, AudYoFloOneConnectedProcess>{};
   AudYoFloConnectedProcesses();
   /*
   late fernLiveNative natLib;

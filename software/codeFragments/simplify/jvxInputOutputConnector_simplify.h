@@ -237,7 +237,7 @@ public:
 #endif
 	}
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next) override
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon) override
 	{
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 		if (next)
@@ -246,11 +246,17 @@ public:
 		}
 		return JVX_ERROR_ID_OUT_OF_BOUNDS;
 #else
-		return _reference_next_handle(idx, next);
+		if(idx == 0)
+		{
+			assert(_common_set_ocon.ocon);
+			_common_set_ocon.ocon->descriptor_connector(nmOcon);
+		}
+		return _reference_next_handle(idx, next, nmOcon, nmIcon);
 #endif
 
 	}
 
+	/*
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon) override
 	{
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_MASTER		
@@ -260,6 +266,7 @@ public:
 #endif
 
 	}
+	*/
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
 		jvxComponentIdentification* cpTp,

@@ -177,6 +177,7 @@ int ffi_host_delete(void* ptr, int tpint)
 	struct one_property_string_list* strLst = nullptr;
 	struct ss_list* ssPtr = nullptr;
 	struct connector_list* connList = nullptr;
+	struct connector_bridge* cnnBridge = nullptr;
 
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 	if (ptr)
@@ -285,6 +286,18 @@ int ffi_host_delete(void* ptr, int tpint)
 
 			JVX_SAFE_DELETE_OBJ(connList);
 
+			res = JVX_NO_ERROR;
+			break;
+
+		case JVX_DELETE_DATATYPE_CONNECTOR_BRIDGE:
+
+			cnnBridge = (struct connector_bridge*)ptr;
+			if(cnnBridge->nmIconTo) JVX_SAFE_DELETE_FIELD_TYPE(cnnBridge->nmIconTo, char*);
+			cnnBridge->nmIconTo = nullptr;
+			if (cnnBridge->nmOconFrom) JVX_SAFE_DELETE_FIELD_TYPE(cnnBridge->nmOconFrom, char*);
+			cnnBridge->nmOconFrom = nullptr;
+
+			JVX_SAFE_DELETE_OBJ_CVRT(ptr, struct connector_bridge*);
 			res = JVX_NO_ERROR;
 			break;
 		default:
@@ -465,6 +478,19 @@ void ffi_host_allocate_connector_list(struct connector_list** ptrRet, const jvxA
 			ptr->pEntries[i].is_input = elm->isInput;
 			ffi_host_allocate_char_array(elm->descriptor.std_str(), &ptr->pEntries[i].descriptor);
 		}
+		*ptrRet = ptr;
+	}
+}
+
+void ffi_host_allocate_connector_bridge(struct connector_bridge** ptrRet)
+{
+	if (ptrRet)
+	{
+		struct connector_bridge* ptr = nullptr;
+		JVX_DSP_SAFE_ALLOCATE_OBJECT_CPP_Z(ptr, struct connector_bridge);
+		ptr->next = nullptr;
+		ptr->nmIconTo = nullptr;
+		ptr->nmOconFrom = nullptr;
 		*ptrRet = ptr;
 	}
 }

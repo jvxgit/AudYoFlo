@@ -11,6 +11,15 @@ class DiagramNode {
   final String typeId;
 
   final String title;
+
+  /// Optionale, extern gesetzte "echte" Typ-Kennung dieser Node-Instanz,
+  /// unabhängig von [typeId] (das nur auf den registrierten Prototyp
+  /// verweist). Gedacht für Nodes, die aus einer Backend-Quelle stammen und
+  /// dort eine eigene, systemweit eindeutige Typ-Identifikation tragen (z.B.
+  /// die jvxComponentIdentification einer AudYoFlo-Komponente). Wird im
+  /// [NodeInspector] anstelle von [typeId] angezeigt, wenn gesetzt.
+  final String? typeIdentification;
+
   final Offset position;
   final List<PortDefinition> inputs;
   final List<PortDefinition> outputs;
@@ -27,6 +36,7 @@ class DiagramNode {
     required this.typeId,
     required this.title,
     required this.position,
+    this.typeIdentification,
     this.inputs = const [],
     this.outputs = const [],
     this.groupColor,
@@ -51,6 +61,7 @@ class DiagramNode {
       typeId: typeId,
       title: title ?? this.title,
       position: position ?? this.position,
+      typeIdentification: typeIdentification,
       inputs: inputs,
       outputs: outputs,
       groupColor: groupColor,
@@ -62,6 +73,8 @@ class DiagramNode {
         'typeId': typeId,
         'title': title,
         'position': {'dx': position.dx, 'dy': position.dy},
+        if (typeIdentification != null)
+          'typeIdentification': typeIdentification,
         'inputs': inputs.map((port) => port.toJson()).toList(),
         'outputs': outputs.map((port) => port.toJson()).toList(),
         if (groupColor != null) 'groupColor': groupColor!.toARGB32(),
@@ -78,6 +91,7 @@ class DiagramNode {
         (positionJson['dx'] as num).toDouble(),
         (positionJson['dy'] as num).toDouble(),
       ),
+      typeIdentification: json['typeIdentification'] as String?,
       inputs: (json['inputs'] as List<dynamic>)
           .map((e) => PortDefinition.fromJson(e as Map<String, dynamic>))
           .toList(),

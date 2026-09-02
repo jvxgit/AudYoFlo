@@ -233,3 +233,21 @@ const char* jvxComponentTypeClass_txtf(jvxComponentTypeClass id)
 	assert((int)id < (int)jvxComponentTypeClass::JVX_COMPONENT_TYPE_LIMIT);
 	return(jvxComponentTypeClass_str_[(int)id].full);
 }
+
+// ==========================================================
+
+static jvxTextHelpers jvxConnectorSelectType_str[(int)jvxConnectorSelectType::JVX_CONNECTOR_SELECT_LIMIT] =
+{
+	{"connectable", "JVX_CONNECTOR_SELECT_CONNECTABLE"},
+	{"connected", "JVX_CONNECTOR_SELECT_CONNECTED"},
+	{"invalid", "JVX_CONNECTOR_SELECT_INVALID"},
+};
+
+const char* jvxConnectorSelectType_txt(jvxConnectorSelectType sel)
+{
+	assert((int)sel < (int)jvxConnectorSelectType::JVX_CONNECTOR_SELECT_LIMIT);
+	return(jvxConnectorSelectType_str[(int)sel].friendly);
+}
+
+// ==========================================================
+

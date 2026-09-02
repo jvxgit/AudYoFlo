@@ -169,17 +169,21 @@ class _AudYoFloPropertyGridWidgetStates
                   // best-effort - a failure here must not fail the property listing as a
                   // whole, the connector tiles are simply left empty in that case.
                   // ====================================================================
-                  AudYoFloConnectorsComponentsCache? connCache = theDbgModel.be
+                  AudYoFloConnectorsEnsemble? connCache = theDbgModel.be
                       .referenceConnectorsComponentsInCache(
-                          theDbgModel.idSelectCp);
+                          theDbgModel.idSelectCp,
+                          jvxConnectorSelectionEnum
+                              .JVX_CONNECTOR_SELECT_CONNECTED);
                   if (connCache == null) {
+                    var selOpt = jvxConnectorSelectionEnum
+                        .JVX_CONNECTOR_SELECT_CONNECTED;
                     int errCodeConn = await theDbgModel.be
                         .triggerUpdateConnectorsComponent(
-                            theDbgModel.idSelectCp);
+                            theDbgModel.idSelectCp, selOpt);
                     if (errCodeConn == jvxErrorType.JVX_NO_ERROR) {
                       connCache = theDbgModel.be
                           .referenceConnectorsComponentsInCache(
-                              theDbgModel.idSelectCp);
+                              theDbgModel.idSelectCp, selOpt);
                     }
                   }
                   if (connCache != null) {

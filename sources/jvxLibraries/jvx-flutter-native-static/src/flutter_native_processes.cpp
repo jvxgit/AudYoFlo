@@ -44,7 +44,7 @@ struct one_process* ffi_process_handle_for_uid(void* opaque_hdl, int uId)
 }
 
 
-int ffi_process_decode_iterator_context(void* opaque_hdl, void* it_handle)
+int ffi_process_decode_iterator_number_branches(void* opaque_hdl, void* it_handle)
 {
 	jvxLibHost* ll = nullptr;
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
@@ -72,6 +72,7 @@ int ffi_process_decode_iterator_context(void* opaque_hdl, void* it_handle)
 	return numBranches;
 }
 
+/*
 char* ffi_process_iterator_next_ocon_name(void* opaque_hdl, void* it_handle, size_t idNext)
 {
 	jvxLibHost* ll = nullptr;
@@ -104,13 +105,15 @@ char* ffi_process_iterator_next_ocon_name(void* opaque_hdl, void* it_handle, siz
 	}
 	return retVal;
 }
+*/
 
-void* ffi_process_iterator_next_handle(void* opaque_hdl, void* it_handle, size_t idNext)
+// void*
+struct connector_bridge* ffi_process_iterator_next_handle(void* opaque_hdl, void* it_handle, size_t idNext)
 {
 	jvxLibHost* ll = nullptr;
 	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
-	IjvxConnectionIterator* it = nullptr;
-	IjvxConnectionIterator* next = nullptr;
+	IjvxConnectionIterator* it = nullptr;	
+	struct connector_bridge* retBrdge = nullptr;
 
 #ifdef JVX_SECURE_OPAQUE_PTR
 	if (opaque_hdl)
@@ -127,10 +130,17 @@ void* ffi_process_iterator_next_handle(void* opaque_hdl, void* it_handle, size_t
 
 	if (opaque_hdl)
 	{
+		jvxApiString nmOcon;
+		jvxApiString nmIcon;
 		it = (IjvxConnectionIterator*)it_handle;
-		res = ll->process_next_iterator_handle(it, &next, idNext);
+		ffi_host_allocate_connector_bridge(&retBrdge);
+		IjvxConnectionIterator* next_ptr = nullptr;
+		res = ll->process_next_iterator_handle(it, &next_ptr, idNext, &nmOcon, &nmIcon);
+		retBrdge->next = next_ptr;
+		ffi_host_allocate_char_array(nmOcon.std_str(), &retBrdge->nmOconFrom);
+		ffi_host_allocate_char_array(nmIcon.std_str(), &retBrdge->nmIconTo);
 	}
-	return next;
+	return retBrdge;
 }
 
 struct component_ident* ffi_process_decode_iterator_component(void* opaque_hdl, void* it_handle)
@@ -196,6 +206,39 @@ char* ffi_process_decode_iterator_module(void* opaque_hdl, void* it_handle)
 	return retPtr;
 }
 
+char* ffi_process_decode_iterator_descriptor(void* opaque_hdl, void* it_handle)
+{
+	jvxLibHost* ll = nullptr;
+	jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+	IjvxConnectionIterator* it = nullptr;
+	jvxComponentIdentification cpTp;
+	jvxSize numBranches = 0;
+	char* retPtr = nullptr;
+	jvxApiString astr;
+
+#ifdef JVX_SECURE_OPAQUE_PTR
+	if (opaque_hdl)
+	{
+		res = JVX_ERROR_ELEMENT_NOT_FOUND;
+		auto elm = lst_active_referenes.find(opaque_hdl);
+		if (elm != lst_active_referenes.end())
+		{
+		}
+	}
+#else
+	ll = reinterpret_cast<jvxLibHost*>(opaque_hdl);
+#endif
+
+	if (opaque_hdl)
+	{
+		it = (IjvxConnectionIterator*)it_handle;
+		ll->process_decode_iterator(it, nullptr, nullptr, nullptr, &astr, nullptr);
+		ffi_host_allocate_char_array(astr.std_str(), &retPtr);
+	}
+	return retPtr;
+}
+
+/*
 char* ffi_process_decode_iterator_connector(void* opaque_hdl, void* it_handle)
 {
 	jvxLibHost* ll = nullptr;
@@ -227,6 +270,7 @@ char* ffi_process_decode_iterator_connector(void* opaque_hdl, void* it_handle)
 	}
 	return retPtr;
 }
+*/
 
 struct process_ready* ffi_process_system_ready(void* opaque_hdl)
 {

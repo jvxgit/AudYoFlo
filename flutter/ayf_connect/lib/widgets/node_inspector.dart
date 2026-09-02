@@ -75,7 +75,7 @@ class _NodeInspectorState extends State<NodeInspector> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Typ: ${node.typeId}',
+              'Typ: ${node.typeIdentification ?? node.typeId}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 16),

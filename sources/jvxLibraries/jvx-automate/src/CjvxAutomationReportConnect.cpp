@@ -123,6 +123,10 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 				CayfAutomationModules::CayfAutomationModuleHandler::try_associate_process(uid, dstr.std_str());
 
 				IjvxConnectionIterator* it = nullptr;
+				jvxApiString nmOcon;
+				jvxApiString nmIcon;
+
+				// This is the entry to the processes chain! From here, we browse through all involved components to (possibly) adapt
 				proc->iterator_chain(&it);
 				while (1)
 				{
@@ -148,14 +152,14 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 						}
 						else if (nn == 1)
 						{
-							it->reference_next_handle(0, &it);
+							it->reference_next_handle(0, &it, nullptr, nullptr);
 						}
 						else
 						{
 							for (i = 0; i < nn; i++)
 							{
 								IjvxConnectionIterator* itn = nullptr;
-								it->reference_next_handle(i, &itn);
+								it->reference_next_handle(i, &itn, nullptr, nullptr);
 							}
 						}
 					}

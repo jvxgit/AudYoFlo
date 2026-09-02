@@ -52,8 +52,7 @@ public:
 	virtual jvxErrorType return_trigger_itcon(IjvxTriggerInputConnector* otcon) override;
 
 	jvxErrorType number_next(jvxSize*) override;
-	jvxErrorType reference_next_handle(jvxSize, IjvxConnectionIterator**) override;
-	jvxErrorType reference_next_ocon_name(jvxSize, jvxApiString*) override;
+	jvxErrorType reference_next_handle(jvxSize, IjvxConnectionIterator**, jvxApiString* nmOcon, jvxApiString* nmIcon) override;
 	jvxErrorType reference_component(jvxComponentIdentification*, jvxApiString*, jvxApiString*, jvxApiString*)override;
 
 	jvxErrorType available_to_connect_ocon() override;
@@ -66,6 +65,7 @@ public:
 		
 	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str) override;
 
+#define JVX_INPUT_CONNECTOR_WITH_UID
 #define JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AUTOSTART
 #define JVX_CONNECTOR_NOT_DERIVED_FROM_OBJECT
 #define JVX_INPUTOUTPUT_CONNECTOR_OBJECT_REFERENCE nullptr
@@ -90,6 +90,7 @@ public:
 #undef JVX_INPUT_OUTPUT_SUPPRESS_START_STOP
 #undef JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_OCON
 #undef JVX_INPUT_OUTPUT_CONNECTOR_SUPPRESS_AVAILABLE
+#undef JVX_INPUT_CONNECTOR_WITH_UID
 };
 
 class CjvxSingleOutputConnectorMulti : public CjvxConnectorMulti< IjvxOutputConnector, CjvxSingleOutputConnector>

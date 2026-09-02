@@ -148,13 +148,11 @@ class AudYoFloStringTranslator {
           break;
 
         case 'nv12':
-          retVal =
-              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_NV12.index;
+          retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_NV12.index;
           break;
 
         case 'yuyv':
-          retVal =
-              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_YUYV.index;
+          retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_YUYV.index;
           break;
 
         case 'single8':
@@ -163,8 +161,7 @@ class AudYoFloStringTranslator {
           break;
 
         case 'mono':
-          retVal =
-              jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_MONO.index;
+          retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_VIDEO_MONO.index;
           break;
 
         case 'generic il':
@@ -966,6 +963,20 @@ class AudYoFloStringTranslator {
         default:
           print(
               'Warning: For datatype <$formatName>, a selection value of <$selection> is not handled!');
+          break;
+      }
+    } else if (formatName == 'jvxConnectorSelection') {
+      switch (selection) {
+        case 'connectable':
+          retVal =
+              jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTABLE.index;
+          break;
+        case 'connected':
+          retVal =
+              jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_CONNECTED.index;
+          break;
+        case 'invalid':
+          retVal = jvxConnectorSelectionEnum.JVX_CONNECTOR_SELECT_INVALID.index;
           break;
       }
     } else {

@@ -153,7 +153,7 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
               Icon(Icons.hub_outlined, size: navButtonSizeMain),
               Text(textConnect)
             ]))));
-    theAllocatedTabViews.add(const AudYoFloConnectFlowWidget());
+    theAllocatedTabViews.add(const AudYoFloConnectViewWidget());
 
     // ==================================================================
     // ==================================================================
