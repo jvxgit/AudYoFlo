@@ -93,7 +93,12 @@ CjvxSingleOutputConnector::~CjvxSingleOutputConnector()
 jvxErrorType 
 CjvxSingleOutputConnector::number_next(jvxSize* num)
 {
-	*num = 1;
+	// No output connector is also a valid option
+	if (num) *num = 0;
+	if (_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		if (num) *num = 1;
+	}
 	return JVX_NO_ERROR;
 }
 

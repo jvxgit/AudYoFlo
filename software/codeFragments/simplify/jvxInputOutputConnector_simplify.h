@@ -237,7 +237,7 @@ public:
 #endif
 	}
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon) override
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon = nullptr, jvxApiString* nmIcon = nullptr) override
 	{
 #ifdef JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 		if (next)

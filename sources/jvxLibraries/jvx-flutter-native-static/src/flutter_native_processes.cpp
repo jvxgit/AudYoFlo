@@ -136,9 +136,17 @@ struct connector_bridge* ffi_process_iterator_next_handle(void* opaque_hdl, void
 		ffi_host_allocate_connector_bridge(&retBrdge);
 		IjvxConnectionIterator* next_ptr = nullptr;
 		res = ll->process_next_iterator_handle(it, &next_ptr, idNext, &nmOcon, &nmIcon);
-		retBrdge->next = next_ptr;
-		ffi_host_allocate_char_array(nmOcon.std_str(), &retBrdge->nmOconFrom);
-		ffi_host_allocate_char_array(nmIcon.std_str(), &retBrdge->nmIconTo);
+		if (next_ptr)
+		{
+			retBrdge->next = next_ptr;
+			ffi_host_allocate_char_array(nmOcon.std_str(), &retBrdge->nmOconFrom);
+			ffi_host_allocate_char_array(nmIcon.std_str(), &retBrdge->nmIconTo);
+		}
+		else
+		{
+			ffi_host_delete(retBrdge, JVX_DELETE_DATATYPE_CONNECTOR_BRIDGE);
+			retBrdge = nullptr;
+		}
 	}
 	return retBrdge;
 }
