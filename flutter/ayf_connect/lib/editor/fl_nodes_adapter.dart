@@ -392,6 +392,22 @@ class FlNodesAdapter {
     );
   }
 
+  // fl_nodes zeichnet pro Port selbst einen Marker (Kreis/Dreieck aus
+  // FlPortStyle.shape) im eigenen RenderObject - unabhängig von nodeBuilder/
+  // portBuilder. Sein Dreieck zeigt fix nach +x und ist nicht drehbar. Wir
+  // wollen die Richtung frei setzen können (PortMarker im Widget-Baum),
+  // deshalb wird der native Marker hier über radius: 0 unsichtbar gemacht.
+  // Das Link-Anankern (port.offset an der Node-Kante) und die Verbindungs-
+  // Erkennung (fester 12px-Fangradius in _isNearPort) hängen nicht am
+  // radius, bleiben also erhalten.
+  static FlPortStyle _hiddenMarkerPortStyle(FlPortState state) =>
+      const FlPortStyle(
+        shape: FlPortShape.circle,
+        color: Color(0xFF42A5F5),
+        radius: 0,
+        linkStyleBuilder: flDefaultLinkStyleBuilder,
+      );
+
   // Hinweis: PortType.any wird hier bewusst nicht unterstützt. fl_nodes prüft
   // Kompatibilität über den Dart-Generic-Typ (T), und dynamic verhält sich
   // dabei asymmetrisch zu unserem PortType.isCompatibleWith (any passt in
@@ -403,21 +419,25 @@ class FlNodesAdapter {
         return FlDataInputPortPrototype<String>(
           idName: spec.id,
           displayName: (context) => spec.label,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
       case PortType.number:
         return FlDataInputPortPrototype<double>(
           idName: spec.id,
           displayName: (context) => spec.label,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
       case PortType.boolean:
         return FlDataInputPortPrototype<bool>(
           idName: spec.id,
           displayName: (context) => spec.label,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
       case PortType.any:
         return FlDataInputPortPrototype<dynamic>(
           idName: spec.id,
           displayName: (context) => spec.label,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
     }
   }
@@ -428,25 +448,25 @@ class FlNodesAdapter {
         return FlDataOutputPortPrototype<String>(
           idName: spec.id,
           displayName: (context) => spec.label,
-          styleBuilder: flDefaultPortStyleBuilder,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
       case PortType.number:
         return FlDataOutputPortPrototype<double>(
           idName: spec.id,
           displayName: (context) => spec.label,
-          styleBuilder: flDefaultPortStyleBuilder,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
       case PortType.boolean:
         return FlDataOutputPortPrototype<bool>(
           idName: spec.id,
           displayName: (context) => spec.label,
-          styleBuilder: flDefaultPortStyleBuilder,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
       case PortType.any:
         return FlDataOutputPortPrototype<dynamic>(
           idName: spec.id,
           displayName: (context) => spec.label,
-          styleBuilder: flDefaultPortStyleBuilder,
+          styleBuilder: _hiddenMarkerPortStyle,
         );
     }
   }

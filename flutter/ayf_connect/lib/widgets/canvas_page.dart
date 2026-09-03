@@ -11,6 +11,7 @@ import '../state/diagram_controller.dart';
 import 'node_header.dart';
 import 'node_inspector.dart';
 import 'node_palette.dart';
+import 'port_marker.dart';
 import 'restricted_node.dart';
 
 /// Haupt-Screen: Node-Palette links, fl_nodes-Canvas in der Mitte,
@@ -198,6 +199,14 @@ class _CanvasPageState extends State<CanvasPage> {
         node: node,
         onToggleCollapse: onToggleCollapse,
       ),
+      // Only the full editor keeps fl_nodes' default node widget; the
+      // restricted modes swap in RestrictedNode, which renders its own ports
+      // (incl. the marker). fl_nodes' own painted port dot is suppressed via
+      // the port style (see FlNodesAdapter._hiddenMarkerPortStyle), so the
+      // triangle here is the only port marker.
+      portBuilder: widget.mode == DiagramEditorMode.edit
+          ? (context, port, style) => _EditablePort(port: port)
+          : null,
       // In moveOnly/readOnly ersetzt nodeBuilder das komplette, standardmäßig
       // interaktive Node-Widget durch eine gestenreduzierte Variante — siehe
       // RestrictedNode dazu, warum ein Config-Flag dafür nicht reicht.
@@ -266,6 +275,59 @@ class _CanvasPageState extends State<CanvasPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Port-Widget für den vollen Editor (`FlNodeEditorWidget.portBuilder`).
+/// Baut das Standard-Layout von fl_nodes nach (Label-Zeile mit
+/// `key: port.key`, damit das Link-Ankern weiter funktioniert) und ergänzt
+/// die drehbare Dreiecks-Markierung ([PortMarker]).
+///
+/// Anders als [RestrictedNode]s `_RestrictedPort` liegt hier keine
+/// Node-Instanz-Id vor (die `portBuilder`-Signatur liefert nur den Port),
+/// also gibt es keine per-Instanz-Richtung aus dem [DiagramController] -
+/// im Editor zeigt die Spitze immer nach [PortMarkerDirection.right]
+/// (Standard-Datenfluss nach rechts). Die frei einstellbare Richtung greift
+/// im backend-gespeisten Move-Only-Pfad (siehe `_RestrictedPort`).
+class _EditablePort extends StatelessWidget {
+  final FlPortDataModel port;
+
+  const _EditablePort({required this.port});
+
+  @override
+  Widget build(BuildContext context) {
+    final isInput = port.prototype.direction == FlPortDirection.input;
+    // Auf die Node-Kante geschoben (siehe _RestrictedPort für die Begründung);
+    // reines Darstellungs-Offset, ändert die Port-Geometrie nicht.
+    final marker = Transform.translate(
+      offset: Offset(
+        isInput ? -kPortMarkerEdgeInset : kPortMarkerEdgeInset,
+        0,
+      ),
+      child: const PortMarker(),
+    );
+    final text = Flexible(
+      child: Text(
+        port.prototype.displayName(context),
+        style: const TextStyle(color: Colors.white70, fontSize: 13),
+        overflow: TextOverflow.ellipsis,
+        textAlign: isInput ? TextAlign.left : TextAlign.right,
+      ),
+    );
+
+    return Row(
+      key: port.key,
+      mainAxisAlignment:
+          isInput ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (isInput) ...[marker, const SizedBox(width: 4), text] else ...[
+          text,
+          const SizedBox(width: 4),
+          marker,
+        ],
+      ],
     );
   }
 }

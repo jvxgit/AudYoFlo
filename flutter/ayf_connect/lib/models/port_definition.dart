@@ -7,11 +7,16 @@ class PortDefinition {
   final PortType type;
   final PortDirection direction;
 
+  /// Richtung, in die die Dreiecks-Markierung dieses Ports zeigt (siehe
+  /// [PortMarkerDirection]). Standard [PortMarkerDirection.right].
+  final PortMarkerDirection markerDirection;
+
   const PortDefinition({
     required this.id,
     required this.label,
     required this.type,
     required this.direction,
+    this.markerDirection = PortMarkerDirection.right,
   });
 
   Map<String, dynamic> toJson() => {
@@ -19,6 +24,7 @@ class PortDefinition {
         'label': label,
         'type': type.toJson(),
         'direction': direction.toJson(),
+        'markerDirection': markerDirection.toJson(),
       };
 
   factory PortDefinition.fromJson(Map<String, dynamic> json) {
@@ -27,6 +33,8 @@ class PortDefinition {
       label: json['label'] as String,
       type: PortType.fromJson(json['type'] as String),
       direction: PortDirection.fromJson(json['direction'] as String),
+      markerDirection:
+          PortMarkerDirection.fromJson(json['markerDirection'] as String?),
     );
   }
 

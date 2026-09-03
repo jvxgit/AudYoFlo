@@ -179,6 +179,53 @@ void main() {
         expect(find.text('Out'), findsNothing);
       },
     );
+
+    testWidgets(
+      'RestrictedNode(movable: $movable) dreht die Port-Markierung gemäß '
+      'markerDirection aus dem DiagramController',
+      (tester) async {
+        final controller = _controllerWithSourceSinkPrototypes();
+        addTearDown(controller.dispose);
+        final node = controller.addNode('source');
+        _primeStyles(node);
+
+        final diagramController = DiagramController();
+        diagramController.addNode(
+          id: node.id,
+          typeId: 'source',
+          title: 'Source',
+          position: Offset.zero,
+          outputs: const [
+            PortDefinition(
+              id: 'out',
+              label: 'Out',
+              type: PortType.any,
+              direction: PortDirection.output,
+              markerDirection: PortMarkerDirection.left,
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          _wrapNode(
+            RestrictedNode(
+              controller: controller,
+              node: node,
+              movable: movable,
+            ),
+            diagramController: diagramController,
+          ),
+        );
+
+        final rotatedBox = tester.widget<RotatedBox>(
+          find.ancestor(
+            of: find.byIcon(Icons.play_arrow),
+            matching: find.byType(RotatedBox),
+          ),
+        );
+        expect(rotatedBox.quarterTurns, PortMarkerDirection.left.quarterTurns);
+      },
+    );
   }
 
   testWidgets(

@@ -21,6 +21,7 @@ void main() {
               label: 'Out',
               type: PortType.string,
               direction: PortDirection.output,
+              markerDirection: PortMarkerDirection.left,
             ),
           ],
         ),
@@ -57,7 +58,23 @@ void main() {
     expect(restored.nodes[0].id, 'n1');
     expect(restored.nodes[0].position, const Offset(10, 20));
     expect(restored.nodes[0].outputs.single.type, PortType.string);
+    expect(restored.nodes[0].outputs.single.markerDirection,
+        PortMarkerDirection.left);
+    // Default, wenn nicht explizit gesetzt.
+    expect(restored.nodes[1].inputs.single.markerDirection,
+        PortMarkerDirection.right);
     expect(restored.edges.single.fromPortId, 'out');
     expect(restored.edges.single.toPortId, 'in');
+  });
+
+  test('PortDefinition.fromJson ohne markerDirection fällt auf right zurück',
+      () {
+    final port = PortDefinition.fromJson({
+      'id': 'in',
+      'label': 'In',
+      'type': 'string',
+      'direction': 'input',
+    });
+    expect(port.markerDirection, PortMarkerDirection.right);
   });
 }

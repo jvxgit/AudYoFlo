@@ -2,8 +2,10 @@ import 'package:fl_nodes/fl_nodes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/port_type.dart';
 import '../state/diagram_controller.dart';
 import 'node_header.dart';
+import 'port_marker.dart';
 
 /// Ersetzt fl_nodes' Standard-Node-Widget in den beiden nicht voll
 /// editierbaren Canvas-Modi ([DiagramEditorMode.moveOnly]/
@@ -144,15 +146,36 @@ class _RestrictedPort extends StatelessWidget {
   Widget build(BuildContext context) {
     final isInput = port.prototype.direction == FlPortDirection.input;
     // DiagramNode.inputs/outputs carry this instance's own port label (e.g.
-    // a real backend connector name); the prototype's displayName is only
-    // the shared, per-type fallback (see node_header.dart for the same
-    // pattern applied to the node title).
-    final label = context
-            .watch<DiagramController>()
-            .nodeById(nodeId)
-            ?.findPort(port.prototype.idName)
-            ?.label ??
-        port.prototype.displayName(context);
+    // a real backend connector name) and marker direction; the prototype's
+    // displayName is only the shared, per-type fallback (see node_header.dart
+    // for the same pattern applied to the node title).
+    final portDef = context
+        .watch<DiagramController>()
+        .nodeById(nodeId)
+        ?.findPort(port.prototype.idName);
+    final label = portDef?.label ?? port.prototype.displayName(context);
+    final markerDirection =
+        portDef?.markerDirection ?? PortMarkerDirection.right;
+
+    // Transform.translate schiebt die Markierung optisch auf die Node-Kante
+    // (dorthin, wo die Verbindungslinie andockt und fl_nodes früher den
+    // runden Punkt zeichnete), ohne die Layout-Geometrie zu ändern, an der
+    // fl_nodes die Port-Position berechnet.
+    final marker = Transform.translate(
+      offset: Offset(
+        isInput ? -kPortMarkerEdgeInset : kPortMarkerEdgeInset,
+        0,
+      ),
+      child: PortMarker(direction: markerDirection),
+    );
+    final text = Flexible(
+      child: Text(
+        label,
+        style: const TextStyle(color: Colors.white70, fontSize: 13),
+        overflow: TextOverflow.ellipsis,
+        textAlign: isInput ? TextAlign.left : TextAlign.right,
+      ),
+    );
 
     return Row(
       key: port.key,
@@ -160,14 +183,13 @@ class _RestrictedPort extends StatelessWidget {
           isInput ? MainAxisAlignment.start : MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Flexible(
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-            overflow: TextOverflow.ellipsis,
-            textAlign: isInput ? TextAlign.left : TextAlign.right,
-          ),
-        ),
+        // Marker at the node-edge side: left for inputs, right for outputs -
+        // i.e. right where the link line meets the node.
+        if (isInput) ...[marker, const SizedBox(width: 4), text] else ...[
+          text,
+          const SizedBox(width: 4),
+          marker,
+        ],
       ],
     );
   }

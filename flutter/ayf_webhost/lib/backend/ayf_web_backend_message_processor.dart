@@ -47,7 +47,7 @@ class AudYoFloOneComponentInProcessWeb extends AudYoFloOneComponentInProcess {
     String? cpNameStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'description');
     
     String? iconNmToStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'icon_connect_to');
-    String? oconNmFromStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'icon_connect_to');
+    String? oconNmFromStr = AudYoFloHelper.extractStringFromJson(jsonMap, 'ocon_connect_from');
     
     var nextMap = AudYoFloHelper.getMapValueList(jsonMap, 'next');
 
