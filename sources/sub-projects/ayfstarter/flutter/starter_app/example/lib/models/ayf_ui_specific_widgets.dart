@@ -59,6 +59,22 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
 
   @override
   void createTabsAndViews(Map<String, String> entriesCfgWidgets) {
+
+    // ==================================================================
+    // Component chaining canvas (ayf_connect/ConnectorFlo) - placed first.
+    // UI only for now, backend wiring follows in a later step.
+    // ==================================================================
+    String textConnect = 'Connect';
+    theAllocatedTabs.add(RotatedBox(
+        quarterTurns: -1,
+        child: Tooltip(
+            message: textConnect,
+            child: Column(children: [
+              Icon(Icons.hub_outlined, size: navButtonSizeMain),
+              Text(textConnect)
+            ]))));
+    theAllocatedTabViews.add(const AudYoFloConnectViewWidget());
+    
     // ======================================================================
     // Add the primary audio device widget
     // ======================================================================
