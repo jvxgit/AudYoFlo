@@ -82,9 +82,14 @@ if [ -d $folder ]; then
 	if [ ! -d "lib" ]; then
 		
 		if [ ! -d "x264/install-$release_mode" ]; then
+			
 			# Extensions in ffmpeg to install libx264
 			# -> https://www.roxlu.com/2016/057/compiling-x264-on-windows-with-msvc		
-			git clone http://git.videolan.org/git/x264.git
+			
+			# Location of x264 repo has changed
+			# git clone http://git.videolan.org/git/x264.git
+			git clone https://code.videolan.org/videolan/x264.git
+			
 			pushd .
 			cd x264
 			echo ./configure --enable-static --extra-cflags="${compile_flags_c[*]}" --prefix=${PWD}/install-$release_mode ${end_flags_h264}
