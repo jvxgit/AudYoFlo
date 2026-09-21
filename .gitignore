@@ -132,6 +132,6 @@ sources/jvxLibraries/third_party/git/kissfft
 
 sources/jvxLibraries/third_party/web/boost/boost
 
-build
-build-claude
+/build
+/build-claude
 .cache
