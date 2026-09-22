@@ -2086,3 +2086,181 @@ jvx_circbuffer_energy(jvx_circbuffer* hdl, jvxData* energyOut, jvxCBool update)
 	}
 	return JVX_NO_ERROR;
 }
+
+// In this function, we have 1 buffer and we have two different filter vector buffers. 
+// We produce two outputs and cfade from the second towards the first
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf(jvx_circbuffer* hdl,
+	const jvxData** fCoeffs_fw,
+	const jvxData* fieldIn,
+	jvxData* fieldOut,
+	jvxSize bSize,
+	jvxData* cfade_start,
+	jvxData cfade_increment)
+{
+	int i, l;
+	assert(hdl[0].nUnits == 1);
+	if (hdl)
+	{
+		jvxData accuin = 0;
+		jvxData accuout0 = 0;
+		jvxData accuout1 = 0;
+
+		jvxData accu10 = 0;
+		jvxData accu11 = 0;
+
+		const jvxData* in = NULL;
+		jvxData* out = NULL;
+
+
+		jvxSize idxRead = hdl->idxRead;
+		assert(hdl->channels == 1);
+
+		jvxData* statePtr;
+		idxRead = hdl->idxRead;
+		statePtr = hdl->ram.field[0] + idxRead;
+
+		in = fieldIn;
+		out = fieldOut;
+		for (i = 0; i < bSize; i++)
+		{
+			const jvxData* coeffPtr0 = fCoeffs_fw[0];
+			const jvxData* coeffPtr1 = fCoeffs_fw[1];
+			jvxSize ll1, ll2;
+
+			// Input
+			accuin = *in++;
+
+			// Output
+			accuout0 = 0.0;
+			accuout1 = 0.0;
+
+			// Store first fw coefficient
+			accu10 = *coeffPtr0++;
+			accu11 = *coeffPtr1++;
+
+			ll1 = hdl->length - idxRead;
+			ll2 = idxRead;
+
+			for (l = 0; l < ll1; l++)
+			{
+				accuout0 += *coeffPtr0++ * *statePtr;
+				accuout1 += *coeffPtr1++ * *statePtr++;
+			}
+
+			statePtr = hdl->ram.field[0];
+			for (l = 0; l < ll2; l++)
+			{
+				accuout0 += *coeffPtr0++ * *statePtr;
+				accuout1 += *coeffPtr1++ * *statePtr++;
+			}
+
+			accuout0 += accu10 * accuin;
+			accuout1 += accu11 * accuin;
+			*out++ = accuout1 * *cfade_start + accuout0 * (1 - *cfade_start);
+
+			*cfade_start = JVX_MIN((*cfade_start + cfade_increment), 1.0);
+
+			// Final statePtr++ realized by index increment
+			idxRead = (idxRead + hdl->length - 1) % hdl->length;
+			statePtr = hdl->ram.field[0] + idxRead;
+
+			*statePtr = accuin;
+		}
+		hdl->idxRead = idxRead;
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}
+
+// In this function, we have 1 buffer and we have two different filter vector buffers. 
+// We produce two outputs and cfade from the second towards the first
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample(
+	jvx_circbuffer* hdl, jvxData** fCoeffs_fw,
+	const jvxData* fieldIn, jvxData* fieldOut,
+	jvxData* cfade_start, jvxData cfade_increment,
+	jvxData* copyFrom)
+{
+	int i, l;
+	assert(hdl[0].nUnits == 1);
+	if (hdl)
+	{
+		jvxData accuin = 0;
+		jvxData accuout0 = 0;
+		jvxData accuout1 = 0;
+
+		jvxData accu10 = 0;
+		jvxData accu11 = 0;
+
+		const jvxData* in = NULL;
+		jvxData* out = NULL;
+
+
+		jvxSize idxRead = hdl->idxRead;
+		assert(hdl->channels == 1);
+
+		jvxData storeCoeff = 0;
+		jvxData* statePtr;
+		idxRead = hdl->idxRead;
+		statePtr = hdl->ram.field[0] + idxRead;
+
+		in = fieldIn;
+		out = fieldOut;
+		i = 0;
+
+		// ===========================================================
+		const jvxData* coeffPtr0 = fCoeffs_fw[0];
+		jvxData* coeffPtr1 = fCoeffs_fw[1];
+		jvxSize ll1, ll2;
+
+		// Input
+		accuin = *in++;
+
+		// Output
+		accuout0 = 0.0;
+		accuout1 = 0.0;
+
+		// Store first fw coefficient
+		accu10 = *coeffPtr0++;
+		storeCoeff = *copyFrom++;
+		accu11 = storeCoeff;
+		*coeffPtr1++ = storeCoeff;
+
+		ll1 = hdl->length - idxRead;
+		ll2 = idxRead;
+
+		for (l = 0; l < ll1; l++)
+		{
+			accuout0 += *coeffPtr0++ * *statePtr;
+			storeCoeff = *copyFrom++;
+			accuout1 += storeCoeff * *statePtr++;
+			*coeffPtr1++ = storeCoeff;
+		}
+
+		statePtr = hdl->ram.field[0];
+		for (l = 0; l < ll2; l++)
+		{
+			storeCoeff = *copyFrom++;
+			accuout0 += *coeffPtr0++ * *statePtr;
+			accuout1 += storeCoeff * *statePtr++;
+			*coeffPtr1++ = storeCoeff;
+		}
+
+		accuout0 += accu10 * accuin;
+		accuout1 += accu11 * accuin;
+		*out++ = accuout1 * *cfade_start + accuout0 * (1 - *cfade_start);
+
+		*cfade_start = JVX_MIN((*cfade_start + cfade_increment), 1.0);
+
+		// Final statePtr++ realized by index increment
+		idxRead = (idxRead + hdl->length - 1) % hdl->length;
+		statePtr = hdl->ram.field[0] + idxRead;
+
+		*statePtr = accuin;
+
+		// ===========================================================
+
+		hdl->idxRead = idxRead;
+		return JVX_DSP_NO_ERROR;
+	}
+	return JVX_DSP_ERROR_INVALID_ARGUMENT;
+}

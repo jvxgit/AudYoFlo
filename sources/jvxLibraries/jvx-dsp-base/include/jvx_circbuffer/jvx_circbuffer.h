@@ -167,6 +167,17 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdlIn,
 	jvxData** fieldOut,
 	jvxSize bSize);
 
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf(jvx_circbuffer* hdl,
+	const jvxData** fCoeffs_fw, const jvxData* fieldIn, jvxData* fieldOut,
+	jvxSize bSize, jvxData* cfade_start,jvxData cfade_increment);
+
+// In this function, we have 1 buffer and we have two different filter vector buffers. 
+// We produce two outputs and cfade from the second towards the first
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample(
+	jvx_circbuffer* hdl, jvxData** fCoeffs_fw, const jvxData* fieldIn, 
+	jvxData* fieldOut, jvxData* cfade_start, jvxData cfade_increment,
+	jvxData* copyFrom);
+
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdlIn,
 	const jvxData* fCoeffs_fw,
 	const jvxData* fCoeffs_bw,
