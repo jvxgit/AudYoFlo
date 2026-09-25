@@ -1,0 +1,10 @@
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/DSPFilters)
+	message("DSPFilters sub project not available. Starting script to download it.") 
+	execute_process(COMMAND ${mysh} -c "cd ${CMAKE_CURRENT_SOURCE_DIR} ; ./prepareModules.sh; exit")
+	message("DSPFilters installation complete.")
+else()
+	message("Folder <${CMAKE_CURRENT_SOURCE_DIR}/DSPFilters> already there.")
+endif()
+
+set(DSPFILTERS_INCLUDEDIR  "${CMAKE_CURRENT_SOURCE_DIR}/DSPFilters/shared/DSPFilters" CACHE INTERNAL "DSPFilters lib path (windows)")
+add_subdirectory(./DSPFilters/shared)

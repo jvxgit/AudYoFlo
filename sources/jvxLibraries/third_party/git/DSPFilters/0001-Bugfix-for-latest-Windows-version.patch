@@ -1,0 +1,28 @@
+From b7c21277e7d81d74bf1d458cf3936f1bf7eb543a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hauke=20Kr=C3=BCger?= <hk@binauricsaudio.com>
+Date: Fri, 25 Sep 2026 18:14:01 +0200
+Subject: [PATCH] Bugfix for latest Windows version
+
+---
+ shared/DSPFilters/include/DspFilters/Common.h | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/shared/DSPFilters/include/DspFilters/Common.h b/shared/DSPFilters/include/DspFilters/Common.h
+index 7955b93..7238aed 100644
+--- a/shared/DSPFilters/include/DspFilters/Common.h
++++ b/shared/DSPFilters/include/DspFilters/Common.h
+@@ -57,11 +57,6 @@ THE SOFTWARE.
+ #include <vector>
+ #include <algorithm>
+ 
+-#ifdef _MSC_VER
+-namespace tr1 = std::tr1;
+-#else
+ namespace tr1 = std;
+-#endif
+-
+ 
+ #endif
+-- 
+2.47.1.windows.1
+
