@@ -928,7 +928,7 @@ CjvxCToMatlabConverter::mexReturnGenericNumeric(mxArray*& retObject, const jvxHa
 jvxErrorType
 CjvxCToMatlabConverter::convertMexToC(jvxHandle** fieldOutput, jvxInt32 dimY, jvxInt32 dimX,
 	jvxDataFormat processingFormat, const jvxExternalDataType* ptrF, const char* nameVar, bool convertFloat, 
-	std::string& theErrordescr)
+	std::string& theErrordescr, jvxBool allowShorter)
 {
 	const mxArray* ptr = (const mxArray*)ptrF;
 
@@ -953,9 +953,12 @@ CjvxCToMatlabConverter::convertMexToC(jvxHandle** fieldOutput, jvxInt32 dimY, jv
 	}
 	if (mxGetN(ptr) != dimX)
 	{
-		theErrordescr = ((std::string)"Format of matrix " + nameVar +
-			" does not fit to expected field in X-dimension, expected " + jvx_int2String(dimX) + ", found " + jvx_int2String((int)mxGetN(ptr)));
-		return(JVX_ERROR_INVALID_ARGUMENT);
+		if (!(allowShorter && (dimX < mxGetN(ptr))))
+		{
+			theErrordescr = ((std::string)"Format of matrix " + nameVar +
+				" does not fit to expected field in X-dimension, expected " + jvx_int2String(dimX) + ", found " + jvx_int2String((int)mxGetN(ptr)));
+			return(JVX_ERROR_INVALID_ARGUMENT);
+		}
 	}
 
 	switch (processingFormat)

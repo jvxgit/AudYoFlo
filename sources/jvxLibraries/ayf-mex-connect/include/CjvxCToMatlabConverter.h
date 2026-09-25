@@ -104,7 +104,7 @@ public:
 	static void mexReturnValueInRangeStruct(mxArray*& plhs, const jvxValueInRange& valRange);
 
 
-	static bool mexReturnNumericMatrix(mxArray*& plhs, void** content, jvxDataFormat form, int dimY, int dimX);
+	// static bool mexReturnNumericMatrix(mxArray*& plhs, void** content, jvxDataFormat form, int dimY, int dimX);
 
 	static bool mexReturnStructSection(mxArray*& plhs, jvxConfigData* theSection, IjvxConfigProcessor* proc);
 
@@ -114,7 +114,7 @@ public:
 
 	static jvxErrorType convertMexToC(jvxHandle** fieldOutput, jvxInt32 dimY, jvxInt32 dimX,
 		jvxDataFormat processingFormat, const jvxExternalDataType* ptrF, const char* nameVar, bool convertFloat,
-		std::string& theErrordescr);
+		std::string& theErrordescr, jvxBool allowShorter = true);
 
 	//==============================================================================
 	// Memory management

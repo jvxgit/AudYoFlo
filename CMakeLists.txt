@@ -732,6 +732,7 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-buffer-sync
     ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-micro-connection
 	${JVX_BASE_ROOT}/sources/jvxLibraries/ayfmixerlib
+	${JVX_BASE_ROOT}/sources/jvxLibraries/aydigitalfilterlib
     # 	${JVX_BASE_ROOT}/sources/jvxLibraries/ayf-automation-modules
     # ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-subqueue
 

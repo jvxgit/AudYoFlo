@@ -20,6 +20,7 @@ if(JVX_USE_DSPFILTERS)
   set(LOCAL_LIBS jvx-dsp-base_static jvx-dsp_static aydigitalfilterlib_static)
 
 	set(JVX_RENAME_RELEASE "${PROJECT_NAME}")
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../m-files/+jvx_iir_design DESTINATION ${INSTALL_PATH_MATLAB}/m-files COMPONENT "release" PATTERN "*.m")
 
 	if(JVX_USE_PART_MATLAB)
 		set(JVX_TARGET_NAME "${PROJECT_NAME}_m")
