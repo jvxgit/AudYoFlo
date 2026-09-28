@@ -1,0 +1,33 @@
+From aeb920270b2f937d2a8282af556aa201bcf59c08 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hauke=20Kr=C3=BCger?= <hk@binauricsaudio.com>
+Date: Mon, 28 Sep 2026 09:00:19 +0200
+Subject: [PATCH] Do not force /MT static CRT or Release build type on parent
+ build
+
+---
+ shared/CMakeLists.txt | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/shared/CMakeLists.txt b/shared/CMakeLists.txt
+index 5b37b30..ea3d703 100644
+--- a/shared/CMakeLists.txt
++++ b/shared/CMakeLists.txt
+@@ -5,10 +5,12 @@ project (DSPFilters_Solution)
+ set (CMAKE_CXX_STANDARD 11)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+-set(CMAKE_BUILD_TYPE Release)
+-
+ if((${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC))
+-  set(MYFLAGS "/O2 /WX- /MT")
++  # Do not force /MT (static CRT) or a Release-only optimization level here: this library is
++  # linked into the parent project's components, so its runtime library and build type must
++  # match whatever CMAKE_BUILD_TYPE the parent build is using, otherwise the linker reports
++  # LNK2038 runtime library / _ITERATOR_DEBUG_LEVEL mismatches against consuming targets.
++  set(MYFLAGS "/WX-")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MYFLAGS}")
+   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MYFLAGS}")
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MYFLAGS}")
+-- 
+2.47.1.windows.1
+

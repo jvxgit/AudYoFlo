@@ -1010,6 +1010,7 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNSpeakerEqualizer
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNLevelControl
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNSpeaker2Binaural
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNIIRResample
   )
 
     set(JVX_BASE_VIDEO_NODES 
