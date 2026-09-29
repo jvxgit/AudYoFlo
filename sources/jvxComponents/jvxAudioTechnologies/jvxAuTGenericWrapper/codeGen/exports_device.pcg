@@ -101,6 +101,13 @@ SECTION PROPERTIES
 			DESCRIPTION = "Auto stop on input problems";	  // Defaults to NAME if not present
 			INIT_SET = 1;
 		};  
+
+		SECTION no_conversion
+		{
+			TYPE = "JVX_DATAFORMAT_BOOL";	
+			DESCRIPTION = "Do not perform any conversion";	  // Defaults to NAME if not present
+			INIT_SET = 0;
+		};  
 		
 		SECTION autoOff
 		{

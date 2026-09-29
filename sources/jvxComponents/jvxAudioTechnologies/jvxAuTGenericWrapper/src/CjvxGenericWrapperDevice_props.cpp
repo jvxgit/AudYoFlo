@@ -1758,6 +1758,17 @@ CjvxGenericWrapperDevice::set_property(jvxCallManagerProperties& callGate,
 				}
 			}
 		}
+		
+		// ================================================================================
+		// If no conversion, run test again		
+		// ================================================================================
+		if(
+			(genGenericWrapper_device::properties_active.no_conversion.globalIdx == propId) &&
+			(genGenericWrapper_device::properties_active.no_conversion.category == category))
+		{
+			updateUi = true;
+		}
+		// ================================================================================
 
 		if (category == JVX_PROPERTY_CATEGORY_PREDEFINED)
 		{

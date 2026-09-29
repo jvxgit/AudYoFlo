@@ -235,6 +235,7 @@ public slots:
 
 	void toggled_fillfromlast_out(bool tog);
 	void toggled_fillfromlast_in(bool tog);
+	
 };
 
 #endif

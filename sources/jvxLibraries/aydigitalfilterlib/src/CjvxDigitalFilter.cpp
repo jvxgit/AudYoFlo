@@ -831,3 +831,34 @@ CjvxDigitalFilter::process(const jvxData** in, jvxData** out, jvxSize nChans, jv
 	}
 	return res;
 }
+
+// =============================================================================================
+// =============================================================================================
+
+jvxErrorType
+CjvxDigitalFilter::process_ip(jvxData** inout, jvxSize nChans, jvxSize bsize)
+{
+	jvxErrorType res = JVX_ERROR_WRONG_STATE;
+	if (state == JVX_STATE_PROCESSING)
+	{
+		//			hdl,
+		//			<coeffs numerator, 3 for each section>,
+		//			<coeffs denominator, 3 for each section>,
+		//			<gan factors, 1 per section>,
+		//			<shift factor>,
+		//			output,
+		//			framesize);
+		// jvx_circbuffer_iir_sos1can_1io(
+		//			hdl,
+		//			<coeffs numerator, 3 for each section>,
+		//			<coeffs denominator, 3 for each section>,
+		//			<gan factors, 1 per section>,
+		//			<shift factor>,
+		//			output,
+		//			framesize);
+		//
+
+		res = jvx_circbuffer_iir_sos1can_1io(hdlFilt, coeffsFwd, coeffsBwd, gains, 0, inout, bsize);
+	}
+	return res;
+}

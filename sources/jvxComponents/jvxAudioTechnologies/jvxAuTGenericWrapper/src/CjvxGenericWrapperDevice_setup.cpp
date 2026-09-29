@@ -14,6 +14,13 @@ CjvxGenericWrapperDevice::updateSWSamplerateAndBuffersize_nolock(jvxLinkDataDesc
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_OBJ(fdb, static_cast<IjvxObject*>(this));
 	JVX_CONNECTION_FEEDBACK_ON_ENTER_LINKDATA_TEXT_I(fdb, fromDevice);
 
+	// Force to use the provided parameters
+	if (genGenericWrapper_device::properties_active.no_conversion.value && fromDevice)
+	{
+		CjvxAudioDevice_genpcg::properties_active.buffersize.value = fromDevice->con_params.buffersize;
+		CjvxAudioDevice_genpcg::properties_active.samplerate.value = fromDevice->con_params.rate;
+	}
+
 	processingControl.computedParameters.bSize_sw = CjvxAudioDevice_genpcg::properties_active.buffersize.value;
 	processingControl.computedParameters.sRate_sw = CjvxAudioDevice_genpcg::properties_active.samplerate.value;
 	processingControl.computedParameters.form_sw = (jvxDataFormat)CjvxAudioDevice_genpcg::properties_active.format.value;

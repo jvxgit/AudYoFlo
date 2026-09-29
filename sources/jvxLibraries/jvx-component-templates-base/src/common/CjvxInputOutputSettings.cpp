@@ -143,6 +143,11 @@ CjvxInputOutputSettings::passFromSuccessor(jvxLinkDataDescriptor* preferredByOut
 			// First attempt: Let us try a different format
 			jvxBool acceptSingleAsItIs = true;
 
+			if (force.formatIdenticalInOut)
+			{
+				acceptSingleAsItIs = false;
+			}
+
 			// Case where the format deviates from input to output
 			if (fromPrevious->con_params.format != preferredByOutput->con_params.format)
 			{
@@ -208,6 +213,13 @@ CjvxInputOutputSettings::passFromSuccessor(jvxLinkDataDescriptor* preferredByOut
 			// ===================================================================================
 			// ===================================================================================
 			acceptSingleAsItIs = true;
+
+			// We may force the number of input/putput channels to match - then, a deviation is not accepted!
+			if (force.channelsIdenticalInOut)
+			{
+				acceptSingleAsItIs = false;
+			}
+
 			if (fromPrevious->con_params. number_channels != preferredByOutput->con_params.number_channels)
 			{
 				tryLast.con_params = fromPrevious->con_params;

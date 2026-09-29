@@ -29,6 +29,7 @@ public:
 	jvxErrorType postprocess();
 
 	jvxErrorType process(const jvxData** in, jvxData** out, jvxSize nChans, jvxSize bsize);
+	jvxErrorType process_ip(jvxData** inout, jvxSize nChans, jvxSize bsize);
 
 	// ================================================================================================
 	// ================================================================================================

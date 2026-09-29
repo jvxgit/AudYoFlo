@@ -366,6 +366,7 @@ ic_ ## callbackname(jvxCallManagerProperties& callGate, \
 
 #define JVX_PROPERTY_CHECK_ID_CAT(idi, cati, genTp) ((idi == genTp.globalIdx) && (cati == genTp.category))
 #define JVX_PROPERTY_CHECK_ID_CAT_SIMPLE(prop) JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, prop)
+#define JVX_PROPERTY_CHECK_ID_CAT_SIMPLE_VAR(ident, prop) JVX_PROPERTY_CHECK_ID_CAT(ident.id, ident.cat, prop)
 
 #define JVX_PROPERTY_GET_SET(is_set, val_prop, val_app) \
 	if(is_set) \

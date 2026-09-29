@@ -63,6 +63,13 @@ public:
 	jvxLinkDataDescriptor tryLast;
 	jvxBool forwardCompromise = true;
 
+	struct
+	{
+		jvxBool channelsIdenticalInOut = false;
+		jvxBool formatIdenticalInOut = false;
+	} force;
+
+
 	jvxRateLocationMode fixedLocationMode = jvxRateLocationMode::JVX_FIXED_RATE_LOCATION_INPUT;
 	class procParams
 	{

@@ -37,18 +37,20 @@ private:
 
 	struct
 	{
-		jvxBool active_resampling = false;
-		jvxBool mode_decimate = false;
-		jvxBool mode_interpolate = false;
-		jvxSize numChannels = 0;
+		jvxBool resampler_involved = false;
+
 		jvxSize lenIntermediate = 0;
+		jvxSize rateIntermediate = 0;
 		jvxData** bufIntermediate = nullptr;
+
+		jvxSize Up = 0; 
+		jvxSize Down = 0;
+
 		CjvxDigitalFilter filterObj;
 	} runtime;
 
 	jvxIIRResamplerFilterTechnology filterTechnology = jvxIIRResamplerFilterTechnology::JVX_IIR_RESAMPLER_FILTER_BUTTERWORTH;
 
-	//! Handles the generic rate/buffersize/format/channel negotiation with predecessor and successor
 	CjvxInputOutputSettings currNegoStat;
 
 	jvxErrorType setup_filter();
@@ -76,6 +78,8 @@ public:
 	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))override;
 
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)override;
+
+	jvxErrorType is_ready(jvxBool* suc, jvxApiString* reasonIfNot) override;
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
 

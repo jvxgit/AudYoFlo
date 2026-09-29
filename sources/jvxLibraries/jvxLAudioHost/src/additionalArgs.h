@@ -87,6 +87,7 @@ public slots:
 	void new_alsa_period_o();
 
 	void new_select_auto_stop();
+	void new_check_no_conversion(bool);
 };
 
 #endif

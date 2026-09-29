@@ -233,6 +233,7 @@ additionalArgsWidget::updateWindow()
 					this->checkBox_infileloop->setEnabled(true);
 					this->checkBox_pauseonstart->setEnabled(true);
 					this->comboBox_ifilelahead->setEnabled(true);
+					this->checkBox_noconversion->setEnabled(false);
 
 					ident.reset("/properties_selected_input_file/lookahead");
 					trans.reset(true, id_infile);
@@ -577,6 +578,28 @@ additionalArgsWidget::updateWindow()
 							checkBox_autostop->setEnabled(false);
 							checkBox_autostop->setChecked(false);
 						}
+
+						// =============================================================================
+						// =============================================================================
+
+						valB = c_false;
+						ident.reset("/no_conversion");
+						trans.reset();
+						res = myParent->subWidgets.theAudioDialog->currentPropsDev->get_property(callGate, jPRIO<jvxCBool>(valB),
+							ident, trans);
+						if (JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, "/no_conversion", myParent->subWidgets.theAudioDialog->currentPropsDev))
+						{
+							checkBox_noconversion->setEnabled(true);
+							checkBox_noconversion->setChecked(valB == c_true);
+						}
+						else
+						{
+							checkBox_noconversion->setEnabled(false);
+							checkBox_noconversion->setChecked(false);
+						}
+
+						// =============================================================================
+						// =============================================================================
 
 						valB = c_false;
 						token = "/JVX_GENW/system/act_fillup_silence_stop";
@@ -1716,6 +1739,27 @@ additionalArgsWidget::clicked_silence_stop_active(bool clicked)
 	trans.reset(true, 0);
 	res = myParent->subWidgets.theAudioDialog->currentPropsDev->set_property(callGate, jPRG(
 		&valB, 1, JVX_DATAFORMAT_16BIT_LE), 
+		ident, trans);
+	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, token);
+	this->updateWindow();
+}
+
+void
+additionalArgsWidget::new_check_no_conversion(bool tog)
+{
+	std::string token;
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxInt16 valB = c_false;
+	jvxCallManagerProperties callGate;
+
+	token = "/no_conversion";
+	if (tog)
+		valB = c_true;
+
+	ident.reset(token.c_str());
+	trans.reset(true, 0);
+
+	res = myParent->subWidgets.theAudioDialog->currentPropsDev->set_property(callGate, jPRG(&valB, 1, JVX_DATAFORMAT_16BIT_LE),
 		ident, trans);
 	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, token);
 	this->updateWindow();
