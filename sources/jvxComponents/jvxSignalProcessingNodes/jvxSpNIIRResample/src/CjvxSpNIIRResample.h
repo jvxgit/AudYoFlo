@@ -12,10 +12,29 @@
 enum class jvxIIRResamplerFilterTechnology
 {
 	JVX_IIR_RESAMPLER_FILTER_BUTTERWORTH,
+	JVX_IIR_RESAMPLER_FILTER_ELLIPTIC,
 	JVX_IIR_RESAMPLER_FILTER_CHEBYSHEV1,
 	JVX_IIR_RESAMPLER_FILTER_CHEBYSHEV2,
-	JVX_IIR_RESAMPLER_FILTER_ELLIPTIC
+	JVX_IIR_RESAMPLER_FILTER_LIMIT
 };
+
+enum class jvxIIRResamplerFilterPresets
+{	
+	JVX_IIR_RESAMPLER_PRESET_BUTTER_LOW_QUALITY, 
+	JVX_IIR_RESAMPLER_PRESET_BUTTER_MEDIUM_QUALITY,
+	JVX_IIR_RESAMPLER_PRESET_BUTTER_HIGH_QUALITY, 
+	JVX_IIR_RESAMPLER_PRESET_ELLIPTIC_LOW_QUALITY,
+	JVX_IIR_RESAMPLER_PRESET_ELLIPTIC_MEDIUM_QUALITY, 
+	JVX_IIR_RESAMPLER_PRESET_ELLIPTIC_HIGH_QUALITY,
+	JVX_IIR_RESAMPLER_PRESET_CHEBYI_LOW_QUALITY, 
+	JVX_IIR_RESAMPLER_PRESET_CHEBYI_MEDIUM_QUALITY,
+	JVX_IIR_RESAMPLER_PRESET_CHEBYI_HIGH_QUALITY, 
+	JVX_IIR_RESAMPLER_PRESET_CHEBYII_LOW_QUALITY,
+	JVX_IIR_RESAMPLER_PRESET_CHEBYII_MEDIUM_QUALITY, 
+	JVX_IIR_RESAMPLER_PRESET_CHEBYII_HIGH_QUALITY,
+	JVX_IIR_RESAMPLER_PRESET_LIMIT
+};
+#define JVX_IIR_RESAMPLER_PRESET_DEFAULT jvxIIRResamplerFilterPresets::JVX_IIR_RESAMPLER_PRESET_ELLIPTIC_HIGH_QUALITY
 
 #include "pcg_exports_node.h"
 
@@ -34,26 +53,35 @@ class CjvxSpNIIRResample : public CjvxBareNode1ioRearrange,
 	public genIIRResample_node
 {
 private:
+	enum class ayfProcUseCase
+	{
+		AYF_PROCUSE_CASE_1_G1,
+		AYF_PROCUSE_CASE_G1_G1,
+		AYF_PROCUSE_CASE_G1_1
+	};
 
 	struct
 	{
 		jvxBool resampler_involved = false;
 
 		jvxSize lenIntermediate = 0;
-		jvxSize rateIntermediate = 0;
 		jvxData** bufIntermediate = nullptr;
 
-		jvxSize Up = 0; 
-		jvxSize Down = 0;
+		jvxSize srateFilter = 0;
+		jvxSize bsizeFilter = 0;
 
+		/*
+		jvxSize Up = 0;
+		jvxSize Down = 0;
+		*/
+
+		ayfProcUseCase useCase;
 		CjvxDigitalFilter filterObj;
 	} runtime;
 
-	jvxIIRResamplerFilterTechnology filterTechnology = jvxIIRResamplerFilterTechnology::JVX_IIR_RESAMPLER_FILTER_BUTTERWORTH;
+	jvxBool configAccepted = false;
 
 	CjvxInputOutputSettings currNegoStat;
-
-	jvxErrorType setup_filter();
 
 public:
 
@@ -81,7 +109,13 @@ public:
 
 	jvxErrorType is_ready(jvxBool* suc, jvxApiString* reasonIfNot) override;
 
+	jvxErrorType setup_filter(CjvxDigitalFilter& filt, jvxBool prepareAlso);
+	jvxErrorType destroy_filter(CjvxDigitalFilter& filt, jvxBool postprocessAlso);
+	void activate_preset(jvxIIRResamplerFilterPresets presetSel, jvxBool reportProps);
+
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_mode);
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_config);
+	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(set_preset);
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
 		IjvxConfigProcessor* processor,

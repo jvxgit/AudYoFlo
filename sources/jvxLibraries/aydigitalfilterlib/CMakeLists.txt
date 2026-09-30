@@ -35,5 +35,7 @@ if(JVX_USE_DSPFILTERS)
 	set(INSTALL_DEDICATED_INCLUDE_TREE TRUE)
 
 	include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
+	
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/matlab/+dsp_filter DESTINATION ${INSTALL_PATH_MATLAB}/m-files COMPONENT "release" PATTERN "*.m")
 endif()
 

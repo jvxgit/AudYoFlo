@@ -447,7 +447,7 @@ private:
 #define maxOrder 16
 
 jvxErrorType
-CjvxDigitalFilter::initialize(const std::string& tokenTech, const std::string& tokenDescr, jvxSize order, jvxSize fs, jvxData fc, jvxData rippleDb, jvxData stopDb, jvxData freqWidth, jvxBool withG)
+CjvxDigitalFilter::initialize(const std::string& tokenTech, const std::string& tokenDescr, jvxSize order, jvxSize fs, jvxData fc, jvxData rippleDb, jvxData stopDbRoll, jvxData freqWidth, jvxBool withG)
 {
 	// ===========================================================================
 	std::unique_ptr<IirDesigner> filter;
@@ -467,25 +467,25 @@ CjvxDigitalFilter::initialize(const std::string& tokenTech, const std::string& t
 			if (tokenDescr == "HighPass")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_rip_stopdb<Dsp::Elliptic::Design::HighPass<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, rippleDb, stopDb);
+				filterSpec->setup(order, fs, fc, rippleDb, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 			else if (tokenDescr == "LowPass")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_rip_stopdb<Dsp::Elliptic::Design::LowPass<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, rippleDb, stopDb);
+				filterSpec->setup(order, fs, fc, rippleDb, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 			else if (tokenDescr == "BandPass")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_df_rip_stopdb<Dsp::Elliptic::Design::BandPass<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, freqWidth, rippleDb, stopDb);
+				filterSpec->setup(order, fs, fc, freqWidth, rippleDb, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 			else if (tokenDescr == "BandStop")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_df_rip_stopdb<Dsp::Elliptic::Design::BandStop<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, freqWidth, rippleDb, stopDb);
+				filterSpec->setup(order, fs, fc, freqWidth, rippleDb, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 
@@ -533,25 +533,25 @@ CjvxDigitalFilter::initialize(const std::string& tokenTech, const std::string& t
 			if (tokenDescr == "HighPass")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_stopdb<Dsp::ChebyshevII::Design::HighPass<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, stopDb);
+				filterSpec->setup(order, fs, fc, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 			else if (tokenDescr == "LowPass")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_stopdb<Dsp::ChebyshevII::Design::LowPass<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, stopDb);
+				filterSpec->setup(order, fs, fc, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 			else if (tokenDescr == "BandPass")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_df_stopdb<Dsp::ChebyshevII::Design::BandPass<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, freqWidth, stopDb);
+				filterSpec->setup(order, fs, fc, freqWidth, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 			else if (tokenDescr == "BandStop")
 			{
 				auto filterSpec = std::make_unique<IirDesigner_order_fs_fc_df_stopdb<Dsp::ChebyshevII::Design::BandStop<maxOrder> > >();
-				filterSpec->setup(order, fs, fc, freqWidth, stopDb);
+				filterSpec->setup(order, fs, fc, freqWidth, stopDbRoll);
 				filter = std::move(filterSpec);
 			}
 		} // if(tokenTech == "ChebyshevII")		
