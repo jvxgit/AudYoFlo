@@ -517,35 +517,29 @@ CjvxInputOutputConnector::~CjvxInputOutputConnector()
 	}	
 
 	jvxErrorType
-		CjvxInputOutputConnector::_reference_component(
-			jvxComponentIdentification* cpTp, 
-			jvxApiString* modName,
-			jvxApiString* description,
-			jvxApiString* lContext)
+		CjvxInputOutputConnector::_reference_component(IjvxObject** objRefRet,jvxApiString* lContext)
 	{
 		jvxComponentIdentification cpId;
 		IjvxObject* objRef = nullptr;
+		if(_common_set_io_common.myParent)
+		{
+			_common_set_io_common.myParent->request_reference_object(objRefRet);
+		}
+		if (lContext) lContext->assign(_common_set_io_common.descriptor);
+		
+		return JVX_NO_ERROR;
+	}
+
+	jvxErrorType
+		CjvxInputOutputConnector::_return_reference_component(IjvxObject* objRefRet)
+	{
 		if (_common_set_io_common.myParent)
 		{
-			_common_set_io_common.myParent->request_reference_object(&objRef);
-			if (objRef)
-			{
-				objRef->request_specialization(nullptr, &cpId, nullptr);
-				objRef->module_reference(modName, nullptr);
-				objRef->description(description);
-				_common_set_io_common.myParent->return_reference_object(objRef);
-				if (lContext)
-					lContext->assign(_common_set_io_common.descriptor);
-			}
-		}
-		
-		if (cpTp)
-		{
-			*cpTp = cpId;
+			_common_set_io_common.myParent->return_reference_object(objRefRet);
 		}
 		return JVX_NO_ERROR;
 	}
-		
+
 	jvxErrorType
 		CjvxInputOutputConnector::allocate_pipeline_and_buffers_prepare_to_zerocopy()
 	{

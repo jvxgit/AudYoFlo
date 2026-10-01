@@ -59,6 +59,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/config-host/configHostFeatures_common.h
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/config-host/configHostFeatures_common.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/TjvxAudioFileIo.cpp
   )
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${JVX_CMAKE_C_FLAGS_EXEC} ${JVX_PLATFORM_FLAGS}")

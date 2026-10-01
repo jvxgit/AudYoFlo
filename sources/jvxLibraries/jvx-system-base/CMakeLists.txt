@@ -109,6 +109,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxPropertyExternalBuffer.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxPropertyDescriptor.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxPropertyAddress.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxPropertyCompact.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxPropertyContainer.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxPropertyRawPointer.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/typedefs/TjvxPropertySpecifics.h 
@@ -153,6 +154,7 @@ set(LOCAL_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/typedefs/TjvxTypes_cpp.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/typedefs/TjvxTypes.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/platform/${JVX_OS}/jvx_system_specific.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/typedefs/TjvxTypes_str.cpp
   )
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${JVX_CMAKE_C_FLAGS_EXEC} ${JVX_PLATFORM_FLAGS}")

@@ -90,19 +90,19 @@ public:
 		return res;
 	};
 
-	jvxErrorType _reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
+	jvxErrorType _reference_component(IjvxObject** ptrObjRet, jvxApiString* linkName)
 	{
-		if (T1::_common_set_io_common_ptr->_common_set_io_common.object)
+		if (ptrObjRet) *ptrObjRet = T1::_common_set_io_common_ptr->_common_set_io_common.object;
+		if (linkName && T1::_common_set_io_common_ptr->_common_set_io_common.object)
 		{
-			T1::_common_set_io_common_ptr->_common_set_io_common.object->request_specialization(nullptr, cpId, nullptr);
-			T1::_common_set_io_common_ptr->_common_set_io_common.object->module_reference(modName, nullptr);
-			T1::_common_set_io_common_ptr->_common_set_io_common.object->description(description);
-			if (linkName)
-			{
-				std::string nmCon = T1::_common_set_io_common_ptr->_common_set_io_common.descriptor + "<" + jvx_size2String(conId) + ">";
-				linkName->assign(nmCon);
-			}
+			std::string nmCon = T1::_common_set_io_common_ptr->_common_set_io_common.descriptor + "<" + jvx_size2String(conId) + ">";
+			linkName->assign(nmCon);
 		}
+		return JVX_NO_ERROR;
+	};
+
+	jvxErrorType _return_reference_component(IjvxObject* ptrObjRet)
+	{
 		return JVX_NO_ERROR;
 	};
 };

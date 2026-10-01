@@ -268,13 +268,14 @@ public:
 	}
 	*/
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
-		jvxComponentIdentification* cpTp,
-		jvxApiString* modName,
-		jvxApiString* description,
-		jvxApiString* lContext) override
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(IjvxObject** objRef, jvxApiString* lContext) override
 	{
-		return _reference_component(cpTp, modName, description, lContext);
+		return _reference_component(objRef, lContext);
+	}
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_component(IjvxObject* objRef) override
+	{
+		return _return_reference_component(objRef);
 	}
 
 	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str)

@@ -18,7 +18,7 @@ namespace jvx
 			const propertyAddress::IjvxPropertyAddress& identArg,
 			const propertyDetail::CjvxTranferDetail& detailArg,
 			jvxErrorType& resCallArg, jvxApiString* targethintArg) :
-			callMan(callManArg), rawPtr(rawPtrArg), ident(identArg), detail(detailArg), resCall(resCallArg), targethint(targethintArg){};
+			callMan(callManArg), rawPtr(rawPtrArg), ident(identArg), detail(detailArg), targethint(targethintArg), resCall(resCallArg){};
 	};
 
 	template <class T1, class T2, class T3> class propertyCallCompactElement

@@ -677,11 +677,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))override;
 
 	/* ========================================*/
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
-		jvxComponentIdentification* cpTp,
-		jvxApiString* modName,
-		jvxApiString* description,
-		jvxApiString* lContext) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(IjvxObject** refPtrRet,jvxApiString* lContext) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_component(IjvxObject* refPtrRet) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION iterator_chain(IjvxConnectionIterator** it) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;	

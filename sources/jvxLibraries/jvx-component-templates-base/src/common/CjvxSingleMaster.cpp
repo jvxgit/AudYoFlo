@@ -458,19 +458,15 @@ CjvxSingleMaster::reference_next_handle(jvxSize idx, IjvxConnectionIterator** ne
 }
 
 jvxErrorType
-CjvxSingleMaster::reference_component(
-	jvxComponentIdentification* cpTp,
-	jvxApiString* modName,
-	jvxApiString* description,
-	jvxApiString* lContext)
+CjvxSingleMaster::reference_component(IjvxObject** ptrObjRet, jvxApiString* lContext)
 {
-	if (cpTp) *cpTp = JVX_COMPONENT_UNKNOWN;
-	if (_common_set_ma_common.object)
-	{
-		_common_set_ma_common.object->module_reference(modName, nullptr);
-		_common_set_ma_common.object->description(description);
-		if(lContext) lContext->assign(_common_set_ma_common.descriptor);
-	}
+	if (ptrObjRet) *ptrObjRet = _common_set_ma_common.object;
+	if(lContext) lContext->assign(_common_set_ma_common.descriptor);
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CjvxSingleMaster::return_reference_component(IjvxObject* ptrObjRet)
+{
+	return JVX_NO_ERROR;
+}

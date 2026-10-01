@@ -30,35 +30,22 @@ CjvxGenericWrapperDevice_hostRelocator::~CjvxGenericWrapperDevice_hostRelocator(
 }
 
 jvxErrorType 
-CjvxGenericWrapperDevice_hostRelocator::reference_component(
-	jvxComponentIdentification* cpTp,
-	jvxApiString* modName,
-	jvxApiString* description,
-	jvxApiString* lContext) 
+CjvxGenericWrapperDevice_hostRelocator::reference_component(IjvxObject** refPtrRet, jvxApiString* lContext)
 {
 	// Re-locate the component information towards generic wrapper
-	jvxErrorType res = runtime.refDevice->_reference_component(cpTp, modName, description, lContext);
-
-#ifndef JVX_GENERIC_WRAPPER_ONLY_ONE_ITERATOR
-	if (modName)
-	{
-		*modName = "[" + modName->std_str() + "]";
-	}
-
-	if (description)
-	{
-		*description = "[" + description->std_str() + "]";
-	}
-
-	if (lContext)
-	{
-		*lContext = "[" + lContext->std_str() + "]";
-	}
-#endif
+	jvxErrorType res = runtime.refDevice->_reference_component(refPtrRet, lContext);
 	return res;
 }
 
-jvxErrorType 
+jvxErrorType
+CjvxGenericWrapperDevice_hostRelocator::return_reference_component(IjvxObject* refPtrRet)
+{
+	// Re-locate the component information towards generic wrapper
+	jvxErrorType res = runtime.refDevice->_return_reference_component(refPtrRet);
+	return res;
+}
+
+jvxErrorType
 CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_ocon(
 	jvxDataFormatGroup format_group,
 	jvxDataflow data_flow)

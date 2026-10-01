@@ -153,11 +153,8 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon) override;
 	// virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString * nmOcon) override;
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
-		jvxComponentIdentification* cpTp, 
-		jvxApiString* modName,
-		jvxApiString* description,
-		jvxApiString* lContext) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(IjvxObject** objRefRet, jvxApiString* lContext) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_component(IjvxObject* objRefRet) override;
 };
 
 // ===================================================================================

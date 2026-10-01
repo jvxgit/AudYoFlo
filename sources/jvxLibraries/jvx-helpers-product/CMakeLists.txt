@@ -26,7 +26,8 @@ set(LOCAL_SOURCES
   )
   
 set(LOCAL_LIBS
-  jvx-helpers_static
+	jvx-system-product_static
+	jvx-helpers_static
   )
   
 set(BUILD_STATIC TRUE)

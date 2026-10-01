@@ -715,12 +715,9 @@ CjvxDataChainInterceptor::connected_ocon(IjvxOutputConnector** ocon)
 }
 
 jvxErrorType 
-CjvxDataChainInterceptor::reference_component(
-	jvxComponentIdentification* cpTp, 
-	jvxApiString* modName,
-	jvxApiString* description,
-	jvxApiString* lContext)
+CjvxDataChainInterceptor::reference_component(IjvxObject** objRefRet,jvxApiString* lContext)
 {
+	/*
 	if (cpTp)
 	{
 		jvxComponentIdentification tp = JVX_COMPONENT_INTERCEPTOR;
@@ -739,7 +736,21 @@ CjvxDataChainInterceptor::reference_component(
 		{
 			lContext->assign("Interceptor Default Connector");
 		}
+		if (objRefRet)
+		{
+			*objRefRet = objParent;
+		}
+	}*/
+	if (objRefRet)
+	{
+		*objRefRet = objParent;
 	}
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxDataChainInterceptor::return_reference_component(IjvxObject* objRefRet)
+{
 	return JVX_NO_ERROR;
 }
 

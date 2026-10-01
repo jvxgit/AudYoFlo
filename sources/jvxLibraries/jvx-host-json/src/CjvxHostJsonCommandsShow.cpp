@@ -1261,7 +1261,7 @@ CjvxHostJsonCommandsShow::output_process_iterator_path(IjvxConnectionIterator* i
 			elmlp.addConsumeElement(elm);
 		}
 
-		itRet->reference_component(&cpId, &mStr, &dStr, &lStr);
+		jvx_reference_iterator_multi(itRet, &cpId, &mStr, &dStr, &lStr);
 		elm.makeAssignmentString("component_identification", jvxComponentIdentification_txt(cpId));
 		elmlp.addConsumeElement(elm);
 

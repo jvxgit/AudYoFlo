@@ -34,7 +34,7 @@ public:
 		userData = inst.user_data();
 	};
 
-	~CjvxReportCommandRequest()
+	virtual ~CjvxReportCommandRequest()
 	{
 	};
 

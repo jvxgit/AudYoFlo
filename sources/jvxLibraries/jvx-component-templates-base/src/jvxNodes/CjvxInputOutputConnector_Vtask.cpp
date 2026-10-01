@@ -431,15 +431,9 @@ CjvxInputConnectorVtask::reference_next_handle(jvxSize idx, IjvxConnectionIterat
 }
 
 jvxErrorType
-CjvxInputConnectorVtask::reference_component(
-	jvxComponentIdentification* cpTp, 
-	jvxApiString* modName, 
-	jvxApiString* description,
-	jvxApiString* lContext)
+CjvxInputConnectorVtask::reference_component(IjvxObject** objRefRet,jvxApiString* lContext)
 {
-	jvxErrorType res = common_vtask._common_set_comnvtask.object->request_specialization(nullptr, cpTp, nullptr);
-	res = common_vtask._common_set_comnvtask.object->module_reference(modName, nullptr);
-	res = common_vtask._common_set_comnvtask.object->description(description);
+	if (objRefRet) *objRefRet = common_vtask._common_set_comnvtask.object;
 	if (lContext)
 	{
 		lContext->assign("VTask<" +
@@ -448,11 +442,17 @@ CjvxInputConnectorVtask::reference_component(
 			jvx_size2String(common_vtask._common_set_comnvtask.ctxtSubId) +
 			">");
 	}
-	
-	return res;
+
+	return JVX_NO_ERROR;
 }
 
-IjvxInputConnectorMulti* 
+jvxErrorType
+CjvxInputConnectorVtask::return_reference_component(IjvxObject* objRefRet)
+{
+	return JVX_NO_ERROR;
+}
+
+IjvxInputConnectorMulti*
 CjvxInputConnectorVtask::request_references_icon(jvxHandle** ctx)
 {	
 	return static_cast<IjvxInputConnectorMulti*>(this);

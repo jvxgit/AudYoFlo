@@ -493,7 +493,7 @@ JVX_STATIC_INLINE jvxData JVX_TIMESTAMP_DATA_SECS_FROM_DATETIME(jvxBool verboseO
 // 500: 2011A
 #define _MATLAB_MEXVERSION 500
 
-static void show_new_pagefault_count(const char* logtext, 
+JVX_STATIC_INLINE void show_new_pagefault_count(const char* logtext, 
    			      const char* allowed_maj,
    			      const char* allowed_min)
    {
@@ -511,7 +511,7 @@ static void show_new_pagefault_count(const char* logtext,
    	last_minflt = usage.ru_minflt;
    }
    
-   static void prove_thread_stack_use_is_safe(int stacksize)
+   JVX_STATIC_INLINE void prove_thread_stack_use_is_safe(int stacksize)
    {
    	char* buffer = (char*)alloca(stacksize);
    	int i;
@@ -526,7 +526,7 @@ static void show_new_pagefault_count(const char* logtext,
    	show_new_pagefault_count("Caused by using thread stack", "0", "0");
    }
 
-static void reserve_process_memory(int size)
+JVX_STATIC_INLINE void reserve_process_memory(int size)
    {
    	int i;
    	char *buffer;

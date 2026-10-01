@@ -1,13 +1,13 @@
 cmake_minimum_required (VERSION 3.16)
 
-set(PROJECT_NAME ayf_connect-ctrl)
+set(PROJECT_NAME ayf_connect-measureIr)
 
 include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 set(LOCAL_SOURCES
   
-	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfConnectCtrl.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfConnectCtrl.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/CayfConnectMeasureIr.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CayfConnectMeasureIr.cpp
 
 	${JVX_BASE_LIBS_INCLUDE_PATH}/ayf-component-common/include/ayf-component-connect.h
 	${JVX_BASE_LIBS_INCLUDE_PATH}/ayf-component-common/include/ayf-component-entries-tpl.h
@@ -28,6 +28,8 @@ include_directories(
 	
 	${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/ayf-embedding-proxy/include
 	${JVX_BASE_LIBS_INCLUDE_PATH}/ayf-component-common/include	
+
+	${JVX_BASE_COMPONENTS_BINARY_DIR}/jvxSignalProcessingNodes/jvxSpNMeasureIr/  	
   )
 
 #if(JVX_OS MATCHES "windows")#
@@ -37,6 +39,7 @@ include_directories(
 #endif()
 
 set(LOCAL_LIBS
+	jvxSpNMeasureIr_static
 	ayf-component-lib_static
 	
 	# We open this lib as a dll - without any compile time linkage!
@@ -63,13 +66,14 @@ set(LOCAL_LIBS_ALL ${LOCAL_LIBS})
 #  )
 
 if(JVX_USES_SDK)
-	set(LOCAL_LIBS ${LOCAL_LIBS} 		 
+	set(LOCAL_LIBS ${LOCAL_LIBS} 
+		libayfctc_static 
 		ayf-shared-connection-host_import)
 endif(JVX_USES_SDK)
 
 set(BUILD_STATIC TRUE)
 
-set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};AYF_PROJECT_POSTFIX=Ctrl")
+set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};AYF_PROJECT_POSTFIX=measureIr")
 
 # Excluding the import lib variant
 # set(BUILD_SHARED TRUE)

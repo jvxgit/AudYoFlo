@@ -7635,3 +7635,21 @@ void jvx_command_request_copy_dealloc(CjvxReportCommandRequest* in)
 	// Was before:
 	// JVX_DSP_SAFE_DELETE_OBJECT(in);
 }
+
+jvxErrorType jvx_reference_iterator_multi(IjvxConnectionIterator* iter, jvxComponentIdentification* cpTp, jvxApiString* modName, jvxApiString* description, jvxApiString* lContext)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	IjvxObject* theObj = nullptr;
+	if (cpTp) *cpTp = JVX_COMPONENT_UNKNOWN;
+	res = iter->reference_component(&theObj, lContext);
+	if ((res == JVX_NO_ERROR) && theObj)
+	{
+		if (cpTp) theObj->location_info(*cpTp);
+		// theObj->request_specialization(nullptr, cpTp, nullptr);
+		if (modName) theObj->module_reference(modName, nullptr);
+		if (description) theObj->description(description);
+		res = iter->return_reference_component(theObj);
+	}
+	theObj = nullptr;
+	return res;
+}

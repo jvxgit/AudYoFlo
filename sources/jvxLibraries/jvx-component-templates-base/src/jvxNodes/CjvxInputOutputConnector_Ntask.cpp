@@ -670,15 +670,12 @@ CjvxInputConnectorNtask::reference_next_handle(jvxSize idx, IjvxConnectionIterat
 }
 
 jvxErrorType 
-CjvxInputConnectorNtask::reference_component(
-	jvxComponentIdentification* cpTp, 
-	jvxApiString* modName,
-	jvxApiString* description,
-	jvxApiString* lContext)
+CjvxInputConnectorNtask::reference_component(IjvxObject** ptrObjRet, jvxApiString* lContext)
 {
-	jvxErrorType res = common_ntask._common_set_comnvtask.object->request_specialization(nullptr, cpTp, nullptr);
-	common_ntask._common_set_comnvtask.object->module_reference(modName, nullptr);
-	common_ntask._common_set_comnvtask.object->description(description);
+	if(ptrObjRet)
+	{ 
+		*ptrObjRet = common_ntask._common_set_comnvtask.object;
+	}
 	if (lContext)
 	{
 		lContext->assign("NTask<" +
@@ -687,7 +684,13 @@ CjvxInputConnectorNtask::reference_component(
 			jvx_size2String(common_ntask._common_set_comnvtask.ctxtSubId) +
 			">");
 	}
-	return res;
+	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CjvxInputConnectorNtask::return_reference_component(IjvxObject* ptrObjRet)
+{
+	return JVX_NO_ERROR;
 }
 
 // ==========================================================================================================

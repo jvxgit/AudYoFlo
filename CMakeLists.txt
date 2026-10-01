@@ -759,6 +759,7 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
 		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-fileinput
 		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-fileoutput
 		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-ctrl
+		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-measureIr
 		)
 
   if(JVX_USE_PART_WEBSERVER)

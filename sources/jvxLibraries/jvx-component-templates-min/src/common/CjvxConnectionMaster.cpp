@@ -790,39 +790,28 @@ CjvxConnectionMaster::~CjvxConnectionMaster()
 	};
 
 	jvxErrorType
-		CjvxConnectionMasterIterator::reference_component(
-			jvxComponentIdentification* cpTp, 
-			jvxApiString* modName,			
-			jvxApiString* description,
-			jvxApiString* lContext)
+		CjvxConnectionMasterIterator::reference_component(IjvxObject** objRefRet, jvxApiString* lContext)
 	{
-		jvxErrorType res = JVX_NO_ERROR;
-		jvxComponentIdentification cpId;
-
 		if (parentMaster)
 		{
-			IjvxObject* objRef = nullptr;
-			parentMaster->_common_set_ld_master.myParent->request_reference_object(&objRef);
-			if (objRef)
-			{
-				res = objRef->request_specialization(nullptr, &cpId, nullptr);
-				objRef->module_reference(modName, nullptr);
-				objRef->description(description);
-				parentMaster->_common_set_ld_master.myParent->return_reference_object(objRef);
-				if (lContext)
-					lContext->assign(parentMaster->_common_set_ld_master.name);
-			}
-		}
-		
-		if (cpTp)
-		{
-			*cpTp = cpId;
+			parentMaster->_common_set_ld_master.myParent->request_reference_object(objRefRet);
+			if (lContext) lContext->assign(parentMaster->_common_set_ld_master.name);
 		}
 		return JVX_NO_ERROR;
 	};
 
+	jvxErrorType
+		CjvxConnectionMasterIterator::return_reference_component(IjvxObject* objRefRet)
+	{
+		if (parentMaster)
+		{
+			parentMaster->_common_set_ld_master.myParent->return_reference_object(objRefRet);
+		}
+		return JVX_NO_ERROR;
+	}
+
 	void
-		CjvxConnectionMasterIterator::set_master(CjvxConnectionMaster* master)
+	CjvxConnectionMasterIterator::set_master(CjvxConnectionMaster* master)
 	{
 		parentMaster = master;
 	}

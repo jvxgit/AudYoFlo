@@ -1783,29 +1783,16 @@ CjvxGenericWrapperDevice::reference_next_handle(jvxSize idx, IjvxConnectionItera
 }
 
 jvxErrorType 
-CjvxGenericWrapperDevice::reference_component(
-	jvxComponentIdentification* cpTp,
-	jvxApiString* modName,
-	jvxApiString* description,
-	jvxApiString* lContext)
+CjvxGenericWrapperDevice::reference_component(IjvxObject** refPtrRet, jvxApiString* lContext)
 {
-	jvxErrorType res = JVX_MY_BASE_CLASS_D::reference_component(cpTp, modName, description, lContext);
-#ifndef JVX_GENERIC_WRAPPER_ONLY_ONE_ITERATOR
-	if (modName)
-	{
-		*modName = "[" + modName->std_str() + "]";
-	}
+	jvxErrorType res = JVX_MY_BASE_CLASS_D::reference_component(refPtrRet, lContext);
+	return res;
+}
 
-	if (description)
-	{
-		*description = "[" + description->std_str() + "]";
-	}
-
-	if (lContext)
-	{
-		*lContext = "[" + lContext->std_str() + "]";
-	}
-#endif
+jvxErrorType
+CjvxGenericWrapperDevice::return_reference_component(IjvxObject* refPtrRet)
+{
+	jvxErrorType res = JVX_MY_BASE_CLASS_D::return_reference_component(refPtrRet);
 	return res;
 }
 

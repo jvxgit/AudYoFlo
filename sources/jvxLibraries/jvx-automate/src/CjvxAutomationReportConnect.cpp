@@ -136,7 +136,7 @@ CjvxAutomationReportConnect::handle_report_uid(jvxReportCommandRequest req,
 					}
 					else
 					{
-						it->reference_component(&tpCp, &modName, &description, &lCtxt);
+						jvx_reference_iterator_multi(it, &tpCp, &modName, &description, &lCtxt);
 
 #ifdef JVX_AUTOMATION_VERBOSE
 						std::cout << " - Component " << jvxComponentIdentification_txt(tpCp) << " -- " << modName.std_str() << " -- " << lCtxt.std_str() << std::endl;

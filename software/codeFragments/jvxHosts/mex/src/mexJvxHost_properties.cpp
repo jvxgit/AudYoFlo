@@ -193,7 +193,7 @@ jvxErrorType
 	
 									outTxt +=  ">";
 									outTxt += ":";
-									outTxt += +jvxPropertyCategoryType_str[theDescr.category].full;
+									outTxt += jvxPropertyCategoryType_str[theDescr.category].full;
 
 									outTxt += ":states(";
 

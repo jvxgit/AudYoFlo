@@ -1343,6 +1343,8 @@ jvx_create_text_seq_report(const std::string& intro, jvxSize sequenceId,
 std::string jvx_time_string();
 std::string jvx_date_string();
 
+jvxErrorType jvx_reference_iterator_multi(IjvxConnectionIterator* iter, jvxComponentIdentification* cpTp, jvxApiString* modName, jvxApiString* description, jvxApiString* lContext);
+
 // =================================================================================
 
 #define JVX_SUBCALL_FUNCTION_DECLARE_OVERRIDE(fname, argsd) \

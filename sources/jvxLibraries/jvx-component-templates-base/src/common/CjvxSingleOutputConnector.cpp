@@ -116,12 +116,18 @@ CjvxSingleOutputConnector::reference_next_handle(jvxSize idx, IjvxConnectionIter
 }
 
 jvxErrorType
-CjvxSingleOutputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
+CjvxSingleOutputConnector::reference_component(IjvxObject** objRefRet, jvxApiString* linkName)
 {
-	return _reference_component(cpId, modName, description, linkName);
+	return _reference_component(objRefRet, linkName);
 }
 
-jvxErrorType 
+jvxErrorType
+CjvxSingleOutputConnector::return_reference_component(IjvxObject* objRefRet)
+{
+	return _return_reference_component(objRefRet);
+}
+
+jvxErrorType
 CjvxSingleOutputConnector::connect_connect_ocon(const jvxChainConnectArguments& args  JVX_CONNECTION_FEEDBACK_TYPE_A(fdb))
 {
 	jvxErrorType res = CjvxConnector<CjvxOutputConnectorLink, CjvxSingleOutputTriggerConnector>::_connect_connect_ocon(args  JVX_CONNECTION_FEEDBACK_CALL_A(fdb));

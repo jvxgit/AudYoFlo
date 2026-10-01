@@ -1644,7 +1644,7 @@ jvxErrorType jvx_find_best_match_bsize_srate(
 	jvxInt32 minSize = INT_MAX;
 	jvxSize i, j;
 	jvxData deviationFsMax = 0.1;
-	jvxSize numLoopsMax = 5;
+	int numLoopsMax = 5;
 	jvxData disadvantageLoops = 0.9;
 
 	if (entriesSizes)

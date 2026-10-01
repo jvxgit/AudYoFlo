@@ -648,7 +648,8 @@ jvx_property_tree_widget::fillProcessRecursively(oneProcess& theProc, IjvxConnec
 	jvxSize num = 0; 
 	
 	jvxComponentIdentification cpId;
-	it->reference_component(&cpId, nullptr, nullptr, nullptr);
+	jvx_reference_iterator_multi(it, &cpId, nullptr, nullptr, nullptr);
+	// it->reference_component(&cpId, nullptr, nullptr, nullptr);
 	theProc.involved.push_back(cpId);
 	
 	it->number_next(&num);

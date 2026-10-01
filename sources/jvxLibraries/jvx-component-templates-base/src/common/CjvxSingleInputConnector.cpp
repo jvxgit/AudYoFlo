@@ -196,9 +196,15 @@ CjvxSingleInputConnector::reference_next_ocon_name(jvxSize idx, jvxApiString* on
 */
 
 jvxErrorType
-CjvxSingleInputConnector::reference_component(jvxComponentIdentification* cpId, jvxApiString* modName, jvxApiString* description, jvxApiString* linkName)
+CjvxSingleInputConnector::reference_component(IjvxObject** ptrObjRet, jvxApiString* linkName)
 {
-	return _reference_component(cpId, modName, description, linkName);
+	return _reference_component(ptrObjRet, linkName);
+}
+
+jvxErrorType
+CjvxSingleInputConnector::return_reference_component(IjvxObject*ptrObjRet)
+{
+	return _return_reference_component(ptrObjRet);
 }
 
 jvxErrorType 

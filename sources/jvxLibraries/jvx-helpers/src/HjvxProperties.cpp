@@ -1588,6 +1588,8 @@ namespace jvx {
 						delete[]((jvxByte*)ptrVal);
 						ptrVal = NULL;
 						break;
+					default:
+						break;
 					}
 				}
 				return res;
@@ -1794,6 +1796,8 @@ namespace jvx {
 						delete[]((jvxByte*)ptrVal);
 						ptrVal = NULL;
 						break; 
+					default:
+						break;
 					}
 				}
 				return res;
@@ -2348,6 +2352,8 @@ namespace jvx {
 							delete[]((jvxByte*)ptrVal);
 							ptrVal = NULL;
 							break;
+						default:
+							break;
 						}
 					}
 				}
@@ -2526,6 +2532,8 @@ namespace jvx {
 							ptrVal = NULL;
 						}
 						break;
+					default:
+						break;
 					}
 				}
 
@@ -2553,6 +2561,8 @@ namespace jvx {
 					{
 						numSubElements = selLst->num;
 					}
+					break;
+				default:
 					break;
 				}
 			}	

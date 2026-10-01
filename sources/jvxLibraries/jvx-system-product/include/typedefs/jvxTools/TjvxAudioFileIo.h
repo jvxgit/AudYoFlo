@@ -114,13 +114,6 @@ typedef enum
 	JVX_AUDIO_FILE_TAG_BTFLD_NORM = 0x10
 } jvxAudioFileTagType;
 
-static const char* jvxAudioFileTagType_txt[JVX_NUMBER_AUDIO_FILE_TAGS] =
-{
-	"IART",
-	"INAM",
-	"ICRD",
-	"IGNR",
-	"INRM"
-};
+extern const char* jvxAudioFileTagType_txt[JVX_NUMBER_AUDIO_FILE_TAGS];
 
 #endif

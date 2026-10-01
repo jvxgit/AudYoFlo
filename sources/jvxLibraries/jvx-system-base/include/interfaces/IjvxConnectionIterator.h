@@ -9,11 +9,14 @@ public:
   virtual jvxErrorType JVX_CALLINGCONVENTION number_next(jvxSize* num) = 0;
   virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon) = 0;
   // virtual jvxErrorType JVX_CALLINGCONVENTION reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon) = 0;
+  /*
   virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
-	  jvxComponentIdentification* cpTp, 
-	  jvxApiString* modName,
-	  jvxApiString* description,
-	  jvxApiString* lContext) = 0;
+	  jvxComponentIdentification* cpTp, jvxApiString* modName,
+	  jvxApiString* description, jvxApiString* lContext,
+	  IjvxObject** obj = nullptr) = 0;
+  */
+  virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(IjvxObject** obj, jvxApiString* lContext) = 0;
+  virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_component(IjvxObject* objRet) = 0;
 };
 
 #endif

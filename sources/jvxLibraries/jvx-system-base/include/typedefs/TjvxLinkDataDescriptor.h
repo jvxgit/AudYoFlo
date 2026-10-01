@@ -174,6 +174,8 @@ public:
 	{
 	};
 
+	virtual ~jvxLinkDataAttachedLostFrames() {};
+
 	jvxSize numLost = 0;
 	virtual jvxHandle* if_specific(jvxLinkDataAttachedType tpArg) override
 	{ 

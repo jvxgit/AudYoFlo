@@ -23,7 +23,7 @@ jvx_run_external_command(IjvxExternalCall* hdl, std::string command)
  *								 "inc_im", 513, procControl.ram.spectrumChassis.im, (int)JVX_DATAFORMAT_DATA, "indsp_im", 513, dbg.buf_513_2, (int)JVX_DATAFORMAT_DATA);
  */
 void
-jvx_run_external_command_1data(IjvxExternalCall* hdl, std::string command, int numEntries, ...)
+jvx_run_external_command_1data(IjvxExternalCall* hdl, std::string command, jvxSize numEntries, ...)
 {
 	jvxSize i;
 	va_list ap;

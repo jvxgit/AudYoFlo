@@ -87,7 +87,7 @@ JVX_STATIC_INLINE JVX_THREAD_PRIORITY JVX_GET_THREAD_PRIORITY(pthread_t a)
 #define JVX_THREAD_ID_UINT32(tid) (jvxUInt32)((uintptr_t)tid)
 
 #ifdef JVX_RT_THREAD_CREATION
-static void JVX_CREATE_THREAD(pthread_t& thread, void *(*start_routine) (void *), void *arg, pthread_t& threadid)
+JVX_STATIC_INLINE void JVX_CREATE_THREAD(pthread_t& thread, void *(*start_routine) (void *), void *arg, pthread_t& threadid)
 {
    	pthread_attr_t attr;
    
@@ -111,7 +111,7 @@ static void JVX_CREATE_THREAD(pthread_t& thread, void *(*start_routine) (void *)
 
 #if defined( JVX_OS_LINUX) 
 
-static int jvx_pthread_join(pthread_t thread, void** value_ptr, jvxSize timeoutmsec)
+JVX_STATIC_INLINE int jvx_pthread_join(pthread_t thread, void** value_ptr, jvxSize timeoutmsec)
 {
 	struct timespec tt;
 	//timeval tp;

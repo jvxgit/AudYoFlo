@@ -116,11 +116,8 @@ protected:
 	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_next_handle(jvxSize idx, IjvxConnectionIterator** next, jvxApiString* nmOcon, jvxApiString* nmIcon);
 	 // virtual jvxErrorType JVX_CALLINGCONVENTION _reference_next_ocon_name(jvxSize idx, jvxApiString* nmOcon);
 
-	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_component(
-		 jvxComponentIdentification* cpTp, 
-		 jvxApiString* modName,
-		 jvxApiString* description,
-		 jvxApiString* lContext);
+	 virtual jvxErrorType JVX_CALLINGCONVENTION _reference_component(IjvxObject** objRefRet, jvxApiString* lContext);
+	 virtual jvxErrorType JVX_CALLINGCONVENTION _return_reference_component(IjvxObject* objRefRet);
 
 	 // ==============================================================
 

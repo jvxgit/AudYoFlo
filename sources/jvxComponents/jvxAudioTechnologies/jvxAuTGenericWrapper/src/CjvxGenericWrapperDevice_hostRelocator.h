@@ -228,11 +228,8 @@ public:
 		return _parent_factory(my_parent);
 	};
 
-	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(
-		jvxComponentIdentification* cpTp,
-		jvxApiString* modName,
-		jvxApiString* description,
-		jvxApiString* lContext) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION reference_component(IjvxObject** refPtrRet,jvxApiString* lContext) override;
+	virtual jvxErrorType JVX_CALLINGCONVENTION return_reference_component(IjvxObject* refPtrRet) override;
 
 	virtual jvxErrorType JVX_CALLINGCONVENTION connected_icon(IjvxInputConnector** icon) override
 	{
