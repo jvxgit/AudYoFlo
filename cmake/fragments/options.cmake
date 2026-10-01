@@ -80,7 +80,7 @@ option(JVX_USE_PART_ANDROIDAUDIO "Involve audio engine for Android" false)
 option(JVX_BUILD_ANDROID "CCompile Android" false)
 option(AYF_CONNECTION_PROTOCOL_DETAILS "Involve call stack during component connect" false)
 option(JVX_BUILD_OPTION_ALL_MD "Build all projects with option MD (only Windows)" false)
-option(JVX_USE_DSPFILTERS "Download and install DSPFilters Library" false)
+option(JVX_USE_DSPFILTERS "Download and install DSPFilters Library" true)
 set(JVXRT_SUBMODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/sources/sub-projects" CACHE STRING "Path to submodule folder")
 set(JVXRT_SUBMODULE_FLUTTER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flutter" CACHE STRING "Path to flutter submodules")
 
