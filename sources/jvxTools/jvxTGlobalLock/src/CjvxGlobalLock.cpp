@@ -30,7 +30,7 @@ namespace jvxGlobalLock
 	{
 		JVX_TRY_LOCK_MUTEX_RESULT_TYPE retVal = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 		JVX_TRY_LOCK_MUTEX(retVal, safeAccess);
-		if (retVal == JVX_TRY_LOCK_MUTEX_SUCCESS)
+		if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(retVal))
 		{
 			return JVX_NO_ERROR;
 		}

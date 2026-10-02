@@ -657,7 +657,7 @@ jvxErrorType
 		if(res == JVX_NO_ERROR)
 		{
 			myConfig_supersede.numPlots = valI32;
-			theCircHeader.fld = jvx_allocate1DCircExternalBuffer(myConfig.numPixelsPlot, valI32, JVX_DATAFORMAT_DATA, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED,
+			theCircHeader.fld = jvx_allocate1DCircExternalBuffer(myConfig.numPixelsPlot, valI32, JVX_DATAFORMAT_DATA, JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED,
 				jvx_static_lock, jvx_static_try_lock, jvx_static_unlock, &theCircHeader.sz);
 			theCircHeader.isValid = true;
 

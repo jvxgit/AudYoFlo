@@ -50,23 +50,23 @@ CayfConnectFileOutput::CayfConnectFileOutput(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DEC
 };
 
 jvxErrorType
-CayfConnectFileOutput::allocate_nodes(IjvxObject*& mainObjArg, std::list< IjvxObject*>& subsequentComponentsArg)
+CayfConnectFileOutput::allocate_nodes(ayfConnectArgAllocateDeallocate& arg)
 {
 	jvxSpNMixChainEnterLeave_init(&priObj);
-	mainObjArg = priObj;
+	arg.entryObj = priObj;
 	jvxSpNMixChainEnterLeave_init(&secObj);
-	subsequentComponentsArg.push_back(secObj);
+	arg.subsequentComponents.push_back(secObj);
 	return JVX_NO_ERROR;
 
 }
 
 jvxErrorType
-CayfConnectFileOutput::deallocate_nodes(IjvxObject*& mainObjArg, std::list< IjvxObject*>& subsequentComponentsArg)
+CayfConnectFileOutput::deallocate_nodes(ayfConnectArgAllocateDeallocate& arg)
 {
 	jvxSpNMixChainEnterLeave_terminate(priObj);
-	mainObjArg = nullptr;
+	arg.entryObj = nullptr;
 	jvxSpNMixChainEnterLeave_terminate(secObj);
-	subsequentComponentsArg.clear();
+	arg.subsequentComponents.clear();
 	return JVX_NO_ERROR;
 }
 

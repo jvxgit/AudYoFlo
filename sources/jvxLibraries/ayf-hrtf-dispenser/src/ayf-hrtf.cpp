@@ -164,7 +164,7 @@ ayfHrtfDispenser::copy_closest_hrir_pair(jvxData azimuth_deg, jvxData inclinatio
 	JVX_TRY_LOCK_MUTEX(resW, safeAccess);
 	//JVX_LOCK_MUTEX(safeAccess);
 
-	if (resW == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resW))
 	{
 		if (hrir_left && hrir_right)
 		{
@@ -220,7 +220,7 @@ ayfHrtfDispenser::get_closest_direction(jvxData& azimuth_deg, jvxData& inclinati
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resW = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(resW, safeAccess);
 	//JVX_LOCK_MUTEX(safeAccess);
-	if (resW == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resW))
 	{
 		azimuth_deg = 0.0;
 		inclination_deg = 0.0;

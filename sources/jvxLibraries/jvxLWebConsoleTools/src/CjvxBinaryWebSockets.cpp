@@ -335,7 +335,7 @@ CjvxBinaryWebSockets::allocateMultichannelCircBuf_propstream(onePropertyWebSocke
 		std::cout << "--> Allocating multichannel circular buffer, length = " << defOneProperty.param1 <<
 			", number channels = " << defOneProperty.param0 <<
 			", format = " << jvxDataFormat_txt(defOneProperty.runtime.descr.format) <<
-			", subformat = " << jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_GENERIC_NON_INTERLEAVED) << std::flush;
+			", subformat = " << jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED) << std::flush;
 		if (defOneProperty.num_emit_min)
 		{
 			std::cout << ", minimum length constraint = " << defOneProperty.num_emit_min << std::flush;
@@ -350,7 +350,7 @@ CjvxBinaryWebSockets::allocateMultichannelCircBuf_propstream(onePropertyWebSocke
 		defOneProperty.runtime.specbuffer = jvx_allocate1DCircExternalBuffer(
 			defOneProperty.param1, defOneProperty.param0,
 			defOneProperty.runtime.descr.format,
-			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED,
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED,
 			jvx_static_lock, jvx_static_try_lock, jvx_static_unlock,
 			&defOneProperty.runtime.specbuffer_sz);
 		defOneProperty.runtime.specbuffer_valid = true;
@@ -414,7 +414,7 @@ CjvxBinaryWebSockets::deallocateMultichannelCircBuf_propstream(onePropertyWebSoc
 	std::cout << "--> Deallocating multichannel circular buffer, length = " << defOneProperty.param1 <<
 		", number channels = " << defOneProperty.param0 <<
 		", format = " << jvxDataFormat_txt(defOneProperty.runtime.descr.format) <<
-		", subformat = " << jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED) <<
+		", subformat = " << jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED) <<
 		"." << std::endl;
 
 	jvxCallManagerProperties callGate;

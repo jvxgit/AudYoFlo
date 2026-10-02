@@ -231,7 +231,7 @@ CjvxLogSignalsToFile::try_lock_logging()
 {
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM;
 	JVX_TRY_LOCK_MUTEX(resM, safeAccess);
-	if(resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if(JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resM))
 	{
 		return JVX_NO_ERROR;
 	}
@@ -253,7 +253,7 @@ CjvxLogSignalsToFile::process_logging_try(jvxSize uniqueId, jvxHandle** bufs, jv
 	std::string err;
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM;
 	JVX_TRY_LOCK_MUTEX(resM, safeAccess);
-	if(resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if(JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resM))
 	{
 		if((status_module == JVX_STATE_PROCESSING) && (status_file == JVX_STATE_PROCESSING))
 		{

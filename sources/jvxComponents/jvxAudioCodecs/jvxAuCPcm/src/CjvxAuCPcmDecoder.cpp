@@ -376,7 +376,7 @@ CjvxAuCPcmDecoder::set_configure_token(const char* tokenArg)
 			CjvxAudioCodec_genpcg::general.buffersize.value,
 			CjvxAudioCodec_genpcg::general.samplerate.value,
 			(jvxDataFormat)CjvxAudioCodec_genpcg::general.audio_format.value,
-			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 	}
 	return res;
 }
@@ -414,7 +414,7 @@ CjvxAuCPcmDecoder::test_set_output_parameters()
 	_common_set_ocon.theData_out.con_params.number_channels = CjvxAudioCodec_genpcg::general.num_audio_channels.value;
 	_common_set_ocon.theData_out.con_params.format = (jvxDataFormat)CjvxAudioCodec_genpcg::general.audio_format.value;
 	_common_set_ocon.theData_out.con_params.buffersize = CjvxAudioCodec_genpcg::general.buffersize.value;
-	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 	_common_set_ocon.theData_out.con_params.data_flow = _common_set_icon.theData_in->con_params.data_flow;
 	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
 	_common_set_ocon.theData_out.con_params.segmentation.y = 1;

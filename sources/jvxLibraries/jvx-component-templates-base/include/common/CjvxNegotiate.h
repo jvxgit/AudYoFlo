@@ -125,7 +125,7 @@ public:
 		jvxSize bsize = 512,
 		jvxSize srate = 48000,
 		jvxDataFormat format = JVX_DATAFORMAT_DATA,
-		jvxDataFormatGroup sub_format = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED,
+		jvxDataFormatGroup sub_format = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED,
 		jvxDataflow datflow = jvxDataflow::JVX_DATAFLOW_DONT_CARE,
 		jvxSize segment_x = JVX_SIZE_UNSELECTED,
 		jvxSize segment_y = JVX_SIZE_UNSELECTED);

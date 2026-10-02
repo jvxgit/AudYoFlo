@@ -353,9 +353,9 @@ CjvxProperties::_lock_properties_local()
 jvxErrorType
 CjvxProperties::_trylock_properties_local()
 {
-	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resL = JVX_TRY_LOCK_MUTEX_SUCCESS;
+	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resL = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(resL, _common_set_properties.csec);
-	if (resL == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resL))
 	{
 		return JVX_NO_ERROR;
 	}

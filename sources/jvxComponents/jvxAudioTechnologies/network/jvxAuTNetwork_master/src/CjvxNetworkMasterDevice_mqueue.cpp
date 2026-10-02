@@ -64,7 +64,7 @@ CjvxNetworkMasterDevice::ic_callback_message_queue_message_in_queue_ready(jvxSiz
 {
 	jvxErrorType res = JVX_NO_ERROR;
 
-	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resL = JVX_TRY_LOCK_MUTEX_SUCCESS;
+	// JVX_TRY_LOCK_MUTEX_RESULT_TYPE resL = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 
 #ifdef VERBOSE_OUTPUT
 	std::cout << "Message in Queue ready" << std::endl;

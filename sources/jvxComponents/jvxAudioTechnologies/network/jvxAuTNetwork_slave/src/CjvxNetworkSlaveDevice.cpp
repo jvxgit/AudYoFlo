@@ -70,11 +70,11 @@ CjvxNetworkSlaveDevice::CjvxNetworkSlaveDevice(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_D
 	oneModeSpecifier oneMode;
 	oneMode.mode = JVX_PROTOCOL_ADVLINK_MODE_PDM_IN_PCM_OUT;
 	oneMode.subformat_in = JVX_DATAFORMAT_GROUP_AUDIO_PDM;
-	oneMode.subformat_out = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	oneMode.subformat_out = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 	inConnection.toConnectedPartner.lstAllowedModes.push_back(oneMode);
 	oneMode.mode = JVX_PROTOCOL_ADVLINK_MODE_PCM_IN_PCM_OUT;
-	oneMode.subformat_in = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
-	oneMode.subformat_out = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	oneMode.subformat_in = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
+	oneMode.subformat_out = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 	inConnection.toConnectedPartner.lstAllowedModes.push_back(oneMode);
 
 	theEventLoop = NULL;

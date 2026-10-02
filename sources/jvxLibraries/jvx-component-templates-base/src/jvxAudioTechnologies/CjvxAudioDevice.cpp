@@ -562,7 +562,7 @@ CjvxAudioDevice::updateChainOutputParameter()
 	// Default setting for 
 	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
 	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
-	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 	jvx_bitFClear(_common_set_ocon.theData_out.con_params.additional_flags);
 }
 
@@ -600,7 +600,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 	jvx_bitFClear(ld_con.con_params.additional_flags);
 	ld_con.con_params.segmentation.x = params.buffersize;
 	ld_con.con_params.segmentation.y = 1;
-	ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	ld_con.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 
 	if (
 		(_common_set_icon.theData_in->con_params.buffersize != params.buffersize) ||
@@ -610,7 +610,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 		(_common_set_icon.theData_in->con_params.segmentation.x != params.buffersize) ||
 		(_common_set_icon.theData_in->con_params.segmentation.y != 1) ||
-		(_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
+		(_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED))
 	{
 		res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS,
 			&ld_con JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
@@ -628,7 +628,7 @@ CjvxAudioDevice::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			(_common_set_icon.theData_in->con_params.rate != params.samplerate) ||
 			(_common_set_icon.theData_in->con_params.segmentation.x != params.buffersize) ||
 			(_common_set_icon.theData_in->con_params.segmentation.y != 1) ||
-			(_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED) ||
+			(_common_set_icon.theData_in->con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED) ||
 			(_common_set_icon.theData_in->con_params.format != params.format))
 		{
 			std::string err = "";

@@ -61,8 +61,8 @@ CjvxNetworkSlaveDevice::propsToInternalValue_no_lock()
 	inConnection.toConnectedPartner.inChannels = CjvxAudioDevice_genpcg::properties_active.numberinputchannels.value;
 	inConnection.toConnectedPartner.outChannels = CjvxAudioDevice_genpcg::properties_active.numberoutputchannels.value;
 	inConnection.toConnectedPartner.frameFormat = JVX_PROTOCOL_ADV_CHANNEL_FRAME_TYPE_NON_INTERLEAVED;
-	inConnection.toConnectedPartner.subformat_in.use = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
-	inConnection.toConnectedPartner.subformat_out.use = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	inConnection.toConnectedPartner.subformat_in.use = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
+	inConnection.toConnectedPartner.subformat_out.use = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 	_unlock_properties_local();
 }
 

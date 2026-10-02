@@ -78,7 +78,8 @@ extern "C"
 
         struct ayfInitParamStruct  paramStr;
         ayfInitParamStruct_init(&paramStr, nChannelsIn,
-            nChannelsOut, fsize, samplerate, ayfBufferInterleaveType::AYF_BUFFERS_NONINTERLEAVED, false);
+            nChannelsOut, fsize, samplerate, 
+            JVX_DATAFORMAT_DATA, JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED, false);
 
         void* retVal = nullptr;
         AYF_FUNCTIONNAME_REDEFINE(ayf_cc_initModule, AYF_PROJECT_POSTFIX)(&retVal, &paramStr, (jvxHandle*)init_ayf_starter, &initStr);

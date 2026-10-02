@@ -68,7 +68,7 @@ CjvxSignalProcessingDeviceDeploy::exchangeData(IjvxSignalProcessingDeploy_data* 
 	jvxErrorType res = JVX_NO_ERROR;
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resW = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(resW, safeAccessChain);
-	if (resW == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resW))
 	{
 		if (_common_set_ld_master.state == JVX_STATE_PROCESSING)
 		{

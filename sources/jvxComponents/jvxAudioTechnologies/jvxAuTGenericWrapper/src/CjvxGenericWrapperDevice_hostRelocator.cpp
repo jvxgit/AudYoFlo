@@ -50,7 +50,7 @@ CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_ocon(
 	jvxDataFormatGroup format_group,
 	jvxDataflow data_flow)
 {
-	if (format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED)
+	if (format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED)
 	{
 		return JVX_NO_ERROR;
 	}
@@ -62,7 +62,7 @@ CjvxGenericWrapperDevice_hostRelocator::supports_connector_class_icon(
 	jvxDataFormatGroup format_group,
 	jvxDataflow data_flow)
 {
-	if (format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED)
+	if (format_group == JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED)
 	{
 		return JVX_NO_ERROR;
 	}
@@ -745,7 +745,7 @@ CjvxGenericWrapperDevice_hostRelocator::transfer_backward_ocon(jvxLinkDataTransf
 			errorDetected = true;
 		}
 
-		if ((_common_set_ocon.theData_out.con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED))
+		if ((_common_set_ocon.theData_out.con_params.format_group != JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED))
 		{
 			if (errorDetected)
 			{
@@ -754,7 +754,7 @@ CjvxGenericWrapperDevice_hostRelocator::transfer_backward_ocon(jvxLinkDataTransf
 			txt += "Datasubformat in device is ";
 			txt += jvxDataFormatGroup_txt(_common_set_ocon.theData_out.con_params.format_group);
 			txt += " whereas the hardware datasubformat in generic wrapper is ";
-			txt += jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			txt += jvxDataFormatGroup_txt(JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 			errorDetected = true;
 		}
 		txt += ".";
@@ -977,7 +977,7 @@ CjvxGenericWrapperDevice_hostRelocator::test_connect_icon_x(JVX_CONNECTION_FEEDB
 
 	_common_set_ocon.theData_out.con_params.segmentation.x = runtime.refDevice->processingControl.computedParameters.bSize_hw;
 	_common_set_ocon.theData_out.con_params.segmentation.y = 1;
-	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 
 	// runtime.refDevice->release_countchannels_datatype(params); <- not required since local variable
 

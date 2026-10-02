@@ -119,12 +119,12 @@ class AudYoFloStringTranslator {
           retVal = jvxDataFormatGroupEnum.JVX_DATAFORMAT_GROUP_NONE.index;
           break;
 
-        case 'audio pcm di':
+        case 'audio pcm nil':
           retVal = jvxDataFormatGroupEnum
-              .JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED.index;
+              .JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED.index;
           break;
 
-        case 'audio pcm i':
+        case 'audio pcm il':
           retVal = jvxDataFormatGroupEnum
               .JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED.index;
           break;
@@ -169,9 +169,9 @@ class AudYoFloStringTranslator {
               .JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED.index;
           break;
 
-        case 'generic non-il':
+        case 'generic nil':
           retVal = jvxDataFormatGroupEnum
-              .JVX_DATAFORMAT_GROUP_GENERIC_NON_INTERLEAVED.index;
+              .JVX_DATAFORMAT_GROUP_GENERIC_NONINTERLEAVED.index;
           break;
 
         case 'generic':

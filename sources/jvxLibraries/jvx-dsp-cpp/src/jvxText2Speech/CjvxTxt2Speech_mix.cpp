@@ -143,9 +143,9 @@ CjvxTxt2Speech_mix::process(jvxData** bufs, jvxData gain, jvxBool add_text, jvxS
 		jvxBool stop_playback = false;
 		while (!leaveLoop)
 		{
-			JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM = JVX_TRY_LOCK_MUTEX_SUCCESS;
+			JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 			JVX_TRY_LOCK_MUTEX(resM, safeAccess);
-			if (resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
+			if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resM))
 			{
 				theCurrentStruct = &theChannels[channelIdx];
 				//assert(theCurrentStruct->playout_done == false);

@@ -48,7 +48,7 @@ CjvxGenericWrapperDevice::updateSWSamplerateAndBuffersize_nolock(jvxLinkDataDesc
 					locDescr.con_params.buffersize = processingControl.computedParameters.bSize_hw;
 					locDescr.con_params.rate = processingControl.computedParameters.sRate_hw;
 					locDescr.con_params.format = processingControl.computedParameters.form_hw;
-					locDescr.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+					locDescr.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 					locDescr.con_params.number_channels = fromDevice->con_params.number_channels;
 
 					// Try to negotiate
@@ -616,7 +616,7 @@ CjvxGenericWrapperDevice::updateSWSamplerateAndBuffersize_nolock(jvxLinkDataDesc
 		jvx_bitFClear(toDevice->con_params.additional_flags);
 		toDevice->con_params.segmentation.x = toDevice->con_params.buffersize;
 		toDevice->con_params.segmentation.y = 1;
-		toDevice->con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+		toDevice->con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 
 		// release_countchannels_datatype(params); <- not require since local variable
 

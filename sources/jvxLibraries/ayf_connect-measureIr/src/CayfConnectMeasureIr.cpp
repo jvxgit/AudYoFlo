@@ -49,15 +49,15 @@ CayfConnectMeasureIr::CayfConnectMeasureIr(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLA
 };
 
 jvxErrorType
-CayfConnectMeasureIr::allocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
+CayfConnectMeasureIr::allocate_nodes(ayfConnectArgAllocateDeallocate& arg)
 {
-	return jvxSpNMeasureIr_init(&mainObj);	
+	return jvxSpNMeasureIr_init(&arg.entryObj);	
 }
 
 jvxErrorType
-CayfConnectMeasureIr::deallocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents)
+CayfConnectMeasureIr::deallocate_nodes(ayfConnectArgAllocateDeallocate& arg)
 {
-	return jvxSpNMeasureIr_terminate(mainObj);
+	return jvxSpNMeasureIr_terminate(arg.entryObj);
 }
 
 

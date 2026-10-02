@@ -33,9 +33,9 @@
 
 #define JVX_LOG_TO_FILE(p0, p1, p2, p3, p4) \
 	{ \
-		JVX_TRY_LOCK_MUTEX_RESULT_TYPE rr = JVX_TRY_LOCK_MUTEX_SUCCESS; \
+		JVX_TRY_LOCK_MUTEX_RESULT_TYPE rr = JVX_TRY_LOCK_MUTEX_NO_SUCCESS; \
 		JVX_TRY_LOCK_MUTEX(rr, safeAccess_Otf); \
-		if (rr == JVX_TRY_LOCK_MUTEX_SUCCESS) \
+		if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(rr)) \
 		{ \
 			if (HjvxDataLogger_Otf::status == JVX_STATE_PROCESSING) \
 			{ \

@@ -20,14 +20,14 @@ CjvxAuNBinauralRender::CjvxAuNBinauralRender(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DEC
 		JVX_SIZE_UNSELECTED, /* buffersize is not constrained */
 		JVX_SIZE_UNSELECTED, /* samplerate is not constrained */
 		JVX_DATAFORMAT_DATA, /* data format */
-		JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED); /* data format group */
+		JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED); /* data format group */
 
 	neg_output._set_parameters_fixed(
 		2 /* 2 output channel required*/,
 		JVX_SIZE_UNSELECTED, /* buffersize is not constrained */
 		JVX_SIZE_UNSELECTED, /* samplerate is not constrained */
 		JVX_DATAFORMAT_DATA, /* data format */
-		JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED); /* data format group */
+		JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED); /* data format group */
 
 	//outputArgsFromOutputParams = true;
 	JVX_INITIALIZE_MUTEX(safeAccessUpdateBgrd);
@@ -244,7 +244,7 @@ CjvxAuNBinauralRender::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(resM, safeAccessUpdateBgrd);
-	if (resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resM))
 	{
 		if (updateDBase == jvxRenderingUpdateStatus::JVX_RENDERING_UPDATE_READY)
 		{

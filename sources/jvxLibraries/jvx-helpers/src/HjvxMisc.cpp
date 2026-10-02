@@ -676,9 +676,9 @@ jvxErrorType jvx_static_try_lock(jvxHandle* priv)
 {
 	JVX_MUTEX_HANDLE* theHdl = reinterpret_cast<JVX_MUTEX_HANDLE*>(priv);
 	assert(theHdl);
-	JVX_TRY_LOCK_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_MUTEX_SUCCESS;
+	JVX_TRY_LOCK_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(res, *theHdl);
-	if (res == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(res))
 	{
 		return(JVX_NO_ERROR);
 	}
@@ -7369,7 +7369,7 @@ jvxostream::try_lock(const char* tag)
 	{
 		JVX_TRY_LOCK_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 		JVX_TRY_LOCK_MUTEX(res, theLock);
-		if (res == JVX_TRY_LOCK_MUTEX_SUCCESS)
+		if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(res))
 		{
 			// Both released on release of log
 			// 

@@ -211,10 +211,10 @@ CjvxPluginProcessor::initialize_connection(jvxSize numPluginInChannels, jvxSize 
 
 		// We keep the format open. Output plugin is input micro connection
 		neg_input._set_parameters_fixed(numPluginOutChannels, 512, 48000,
-			JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 
 		neg_output._set_parameters_fixed(numPluginInChannels, 512, 48000,
-			JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			JVX_DATAFORMAT_NONE, JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 
 		/*
 		numNodes = registeredComponents.size();
@@ -935,7 +935,7 @@ CjvxPluginProcessor::try_lock_processing()
 {
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE retVal;
 	JVX_TRY_LOCK_MUTEX(retVal, safeAccessProcessing);
-	if (retVal == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(retVal))
 	{
 		return JVX_NO_ERROR;
 	}

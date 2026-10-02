@@ -79,7 +79,8 @@ extern "C"
 			libCont->startBinding(modName, paramStr->numInChans,
 				paramStr->numOutChans, paramStr->bSize, 
 				paramStr->sRate, paramStr->passthroughMode,
-				str->ayfIdentsPtr, 2, str->fptr_multi_purpose, str->priv);
+				str->ayfIdentsPtr, 2, str->fptr_multi_purpose, str->priv, 
+				paramStr->format, paramStr->formatGrp);
 
 			AYF_FUNCTIONNAME_REDEFINE(lstAllocated, AYF_PROJECT_POSTFIX).push_back(libCont);
 
@@ -147,16 +148,13 @@ extern "C"
 		return res;
 	}
 
-	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_process_nil, AYF_PROJECT_POSTFIX)(jvxHandle* instance, jvxData** inInterleaved, int numSamplesIn, int numChannelsIn, jvxData** outInterleaved, int numSamlesOut, int numChannelsOut)
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_process_nil, AYF_PROJECT_POSTFIX)(jvxHandle* instance, jvxData** inNonInterleaved, int numSamplesIn, int numChannelsIn, jvxData** outNonInterleaved, int numSamlesOut, int numChannelsOut)
 	{
 		jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
 		if (instance)
 		{
-			assert(false);
-			/*
 			CayfComponentLibContainer* libCont = reinterpret_cast<CayfComponentLibContainer*>(instance);
-			libCont->process_one_buffer_interleaved(inInterleaved, numSamplesIn, numChannelsIn, outInterleaved, numSamlesOut, numChannelsOut);
-			*/
+			libCont->process_one_buffer_noninterleaved(inNonInterleaved, numSamplesIn, numChannelsIn, outNonInterleaved, numSamlesOut, numChannelsOut);
 		}
 		return res;
 	}

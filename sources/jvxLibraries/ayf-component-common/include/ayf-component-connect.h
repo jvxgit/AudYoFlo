@@ -36,13 +36,14 @@ extern "C" {
 	};
 
 	JVX_STATIC_INLINE void ayfInitParamStruct_init(struct ayfInitParamStruct* paramStr, 
-		int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, ayfBufferInterleaveType ilTpArg, int passthroughModeArg)
+		int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, jvxDataFormat form, jvxDataFormatGroup formGrpArg, int passthroughModeArg)
 	{
 		paramStr->numInChans = numInChansArg;
 		paramStr->numOutChans = numOutChansArg;
 		paramStr->bSize = bSizeArg;
 		paramStr->sRate = sRateArg;
-		paramStr->ilTp = ilTpArg;
+		paramStr->formatGrp= formGrpArg;
+		paramStr->format = form;
 		paramStr->passthroughMode = passthroughModeArg;
 	}
 

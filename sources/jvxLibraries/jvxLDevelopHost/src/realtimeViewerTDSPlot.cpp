@@ -402,7 +402,7 @@ realtimeViewerTDSPlot::updateWindow_redraw_plots()
 				if(JVX_CHECK_PROPERTY_ACCESS_OK(res, callGate.access_protocol, JVX_PROPERTY_DESCRIBE_ID(idProp), theTriple.theProps))
 				{
 					theProp->ptrCircBuffer = jvx_allocate1DCircExternalBuffer(theProp->length, theProp->num_chans,
-						JVX_DATAFORMAT_DATA, JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED, jvx_static_lock, jvx_static_try_lock,
+						JVX_DATAFORMAT_DATA, JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED, jvx_static_lock, jvx_static_try_lock,
 						jvx_static_unlock, &theProp->szCircBuffer);
 	
 					theProp->isValid = true;

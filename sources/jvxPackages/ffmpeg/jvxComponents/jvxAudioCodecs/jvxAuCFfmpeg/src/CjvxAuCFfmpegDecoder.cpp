@@ -27,7 +27,7 @@ CjvxAuCFfmpegAudioDecoder::set_configure_token(const char* tokenArg)
 			cParams.bSizeAudio,
 			cParams.sRate,
 			JVX_DATAFORMAT_DATA,
-			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 	}
 	return res;
 }
@@ -334,7 +334,7 @@ CjvxAuCFfmpegAudioDecoder::test_set_output_parameters()
 	_common_set_ocon.theData_out.con_params.buffersize = cParams.bSizeAudio;
 
 	_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
-	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 	_common_set_ocon.theData_out.con_params.data_flow = _common_set_icon.theData_in->con_params.data_flow;
 	_common_set_ocon.theData_out.con_params.segmentation.x = _common_set_ocon.theData_out.con_params.buffersize;
 	_common_set_ocon.theData_out.con_params.segmentation.y = 1;

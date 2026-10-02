@@ -454,9 +454,9 @@ CjvxDataLogger::pass_new(jvxLogFileDataChunkHeader* addData, jvxBool noBlocking)
 			jvxBool triggerWakeup = false;
 			res = JVX_ERROR_COMPONENT_BUSY;
 
-			JVX_TRY_LOCK_MUTEX_RESULT_TYPE resBlock = JVX_TRY_LOCK_MUTEX_SUCCESS;
+			JVX_TRY_LOCK_MUTEX_RESULT_TYPE resBlock = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 			JVX_TRY_LOCK_MUTEX(resBlock, runtime.updateFillHeight);
-			if(resBlock == JVX_TRY_LOCK_MUTEX_SUCCESS)
+			if(JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resBlock))
 			{
 				jvxSize sz = 0;
 				jvxInt64 idxWrite = 0;

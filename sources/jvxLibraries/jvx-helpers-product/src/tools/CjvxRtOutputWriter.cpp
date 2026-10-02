@@ -145,7 +145,7 @@ CjvxRtOutputWriter::write_data(jvxHandle** bufs)
 	jvxErrorType res = JVX_ERROR_COMPONENT_BUSY;
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resW = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(resW, lock);
-	if (resW == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resW))
 	{
 		if (
 			(jvx_bitTest(state_outfile, JVX_OUTPUTWRITER_SHIFT_PARAMETERSET)) &&

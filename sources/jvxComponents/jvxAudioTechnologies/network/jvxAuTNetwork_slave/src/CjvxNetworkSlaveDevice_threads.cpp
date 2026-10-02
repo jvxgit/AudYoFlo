@@ -85,9 +85,9 @@ CjvxNetworkSlaveDevice::ic_callback_thread_wokeup(jvxInt64 timestamp_us)
 
 
 		// Copy incoming data into logfile writer
-		JVX_TRY_LOCK_MUTEX_RESULT_TYPE rr = JVX_TRY_LOCK_MUTEX_SUCCESS;
+		JVX_TRY_LOCK_MUTEX_RESULT_TYPE rr = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 		JVX_TRY_LOCK_MUTEX(rr, safeAccess_Otf);
-		if (rr == JVX_TRY_LOCK_MUTEX_SUCCESS)
+		if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(rr))
 		{
 			if (HjvxDataLogger_Otf::status == JVX_STATE_PROCESSING)
 			{

@@ -728,9 +728,9 @@ CjvxObject::_lock_state()
 jvxErrorType
 CjvxObject::_try_lock_state()
 {
-	JVX_TRY_LOCK_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_MUTEX_SUCCESS;
+	JVX_TRY_LOCK_MUTEX_RESULT_TYPE res = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(res, _common_set._safeAccessStateBound.the_lock);
-	if (res == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(res))
 	{
 		return(JVX_NO_ERROR);
 	}

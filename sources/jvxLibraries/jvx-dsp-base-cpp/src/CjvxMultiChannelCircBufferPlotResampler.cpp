@@ -356,14 +356,14 @@ CjvxMultiChannelCircBufferPlotResampler::process_circbuffer(jvxData** samples, b
 	jvxData* fldSrc = NULL;
 	jvxData* fldDest = NULL;
 	jvxErrorType res = JVX_NO_ERROR;
-	JVX_TRY_LOCK_MUTEX_RESULT_TYPE rs = JVX_TRY_LOCK_MUTEX_SUCCESS;
+	JVX_TRY_LOCK_MUTEX_RESULT_TYPE rs = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 
 	assert(processing.theState == JVX_STATE_PROCESSING);
 
 	if(strictlyNoBlock)
 	{
 		JVX_TRY_LOCK_MUTEX(rs, processing.sec_buffers.safeAccess);
-		if(rs != JVX_TRY_LOCK_MUTEX_SUCCESS)
+		if(JVX_TRY_LOCK_MUTEX_TEST_NO_SUCCESS(rs))
 			return(JVX_ERROR_COMPONENT_BUSY);
 	}
 	else
@@ -403,7 +403,7 @@ CjvxMultiChannelCircBufferPlotResampler::process_circbuffer(jvxData** samples, b
 		if(strictlyNoBlock)
 		{
 			JVX_TRY_LOCK_MUTEX(rs,processing.sec_buffers.safeAccess);
-			if(rs != JVX_TRY_LOCK_MUTEX_SUCCESS)
+			if(JVX_TRY_LOCK_MUTEX_TEST_NO_SUCCESS(rs))
 				return(JVX_ERROR_COMPONENT_BUSY);
 		}
 		else

@@ -58,7 +58,7 @@ public:
 	void unlock();
 
 	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod, jvxSize* ayfIdentsPtr = nullptr, int ayfIdentsNum = 0, 
-		void_pvoid_callback ptr_callback_on_start = NULL, void* prv_callback_on_start = NULL);
+		void_pvoid_callback ptr_callback_on_start = NULL, void* prv_callback_on_start = NULL, jvxDataFormat formArg = JVX_DATAFORMAT_DATA, jvxDataFormatGroup formGrpArg = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED);
 	jvxErrorType stopBinding();
 
 	jvxErrorType startBindingInner(IjvxHost* hostRef = nullptr);
@@ -68,6 +68,11 @@ public:
 	jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
+
+	jvxErrorType process_one_buffer_noninterleaved(
+		jvxData** inNonInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
+		jvxData** outNonInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
+
 	jvxErrorType stopProcessor(CayfComponentLib* compProc);
 	
 	virtual CayfComponentLib* allocateDeviceObject(int passthroughMode, CayfComponentLibContainer* parent, const char* regToken) = 0;

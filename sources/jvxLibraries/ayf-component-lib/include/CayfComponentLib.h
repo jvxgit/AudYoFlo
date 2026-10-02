@@ -17,6 +17,8 @@
 #include "ayf-embedding-proxy-entries.h"
 
 //#include "IayfComponentLib.h"
+#include "ayf_component_lib_types.h"
+#include "ayf_component_lib_types_cpp.h"
 
 class myLocalHost;
 class CayfComponentLibContainer;
@@ -68,7 +70,6 @@ public:
 		return JVX_ERROR_INVALID_ARGUMENT;
 	};
 };
-
 
 class CjvxSimpleConnectionMasterFactory: public IjvxConnectionMasterFactory, public CjvxConnectionMasterFactory
 {
@@ -173,6 +174,7 @@ protected:
 	public:
 		IjvxNode* nodePtr = nullptr;
 		jvxState nodeStat = JVX_STATE_NONE;
+		jvxState statOnInit = JVX_STATE_NONE;
 		jvxBool nodeReady = false;
 		jvxSize nodeBridgeId = JVX_SIZE_UNSELECTED;		
 		IjvxConnectorFactory* iFac = nullptr;
@@ -298,6 +300,11 @@ public:
 	virtual jvxErrorType process_one_buffer_interleaved(
 		jvxData* inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn, 
 		jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut);
+
+	jvxErrorType process_one_buffer_noninterleaved(
+		jvxData** inInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
+		jvxData** outInterleaved, jvxSize numSamplesOut, jvxSize numChannelsOut);
+
 	virtual jvxErrorType stopProcessor(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped);
 	
 	// ===============================================================
@@ -306,8 +313,8 @@ public:
 	jvxErrorType add_text_message_token(const std::string& txtIn);
 	jvxErrorType new_text_message_status(int value, char* fldRespond, jvxSize szRespond, int* newStatOnReturn);
 
-	jvxErrorType post_allocate_one_main_node(IjvxNode* mainNode);
-	jvxErrorType pre_deallocate_one_main_node(IjvxNode* mainNode);
+	jvxErrorType post_allocate_one_main_node(IjvxNode* mainNode, jvxState& statNodeInit);
+	jvxErrorType pre_deallocate_one_main_node(IjvxNode* mainNode, jvxState& statNodeInit);
 
 #define JVX_INPUT_OUTPUT_CONNECTOR_MASTER
 #define JVX_CONNECTION_MASTER_SKIP_TEST_CONNECT_ICON
@@ -451,8 +458,8 @@ public:
 	*/
 
 	// Interface function to involve a node in this chain
-	virtual jvxErrorType allocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents) = 0;
-	virtual jvxErrorType deallocate_nodes(IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents) = 0;
+	virtual jvxErrorType allocate_nodes(ayfConnectArgAllocateDeallocate& arg /*IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents, void_pvoid_callback ptr_callback_multipurpose = NULL, void* prv_callback_multipurpose = NULL */) = 0;
+	virtual jvxErrorType deallocate_nodes(ayfConnectArgAllocateDeallocate& arg /*IjvxObject*& mainObj, std::list< IjvxObject*>& subsequentComponents, void_pvoid_callback ptr_callback_multipurpose = NULL, void* prv_callback_multipurpose = NULL */) = 0;
 
 	virtual jvxErrorType on_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);
 	virtual jvxErrorType before_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNode* node, jvxStateSwitch sw);

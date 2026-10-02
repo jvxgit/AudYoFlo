@@ -301,9 +301,9 @@ CjvxNetworkMasterDevice::ic_callback_link_report_data_and_read(jvxSize, char*, j
 							inProcessing.idSequenceExpected = inConnection.oneChannelInOut.seq_id + 1;
 
 							// Try to send away the data suitable for output
-							JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM = JVX_TRY_LOCK_MUTEX_SUCCESS;
+							JVX_TRY_LOCK_MUTEX_RESULT_TYPE resM = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 							JVX_TRY_LOCK_MUTEX(resM, inConnection.channel.safeAccessChannel);
-							if (resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
+							if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resM))
 							{
 								inConnection.channel.inUse = true;
 								for (j = 0; j < _common_set_icon.theData_in->con_params.number_channels; j++)

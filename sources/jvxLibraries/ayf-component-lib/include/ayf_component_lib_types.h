@@ -8,6 +8,7 @@
 #include "jvx_system_helpers.h"
 #include "jvx_system_error_types.h"
 #include "jvx_system_dataformats.h"
+
 // #include "jvx_system_time.h"
 //#include "jvx_system_threads.h"
 //#include "jvx_system_mutex.h"
@@ -18,12 +19,14 @@
 
 // typedef jvxErrorType;
 
-typedef enum 
+/*
+typedef enum
 {
 	AYF_BUFFERS_INTERLEAVED,
 	AYF_BUFFERS_NONINTERLEAVED,
 	AYF_BUFFERS_INVALID
 } ayfBufferInterleaveType;
+*/
 
 typedef enum 
 {
@@ -35,7 +38,9 @@ typedef enum
 	AYF_VOID_PVOID_ID_TERMINATE,
 	AYF_VOID_PVOID_ID_TRANSFER_OCON, // <- jvxLinkDataDescriptor_con_params*
 	AYF_VOID_PVOID_ID_TEST_ICON, // <- jvxLinkDataDescriptor_con_params*
-	AYF_VOID_PVOID_ID_PROC_PARAMS // <- ayfInitParamStruct*
+	AYF_VOID_PVOID_ID_PROC_PARAMS, // <- ayfInitParamStruct*
+	AYF_VOID_PVOID_ID_ALLOCATE, // <-ayfConnectArgAllocateDeallocate*
+	AYF_VOID_PVOID_ID_DEALLOCATE // <-ayfConnectArgAllocateDeallocate*
 } ayfVoidPvoidDefinition;
 
 typedef jvxErrorType (*void_pvoid_callback)(ayfVoidPvoidDefinition voidDef, jvxHandle* priv, jvxHandle* purp);
@@ -57,7 +62,8 @@ struct ayfInitParamStruct
 	int bSize;
 	int sRate;
 	jvxDataFormat format;
-	ayfBufferInterleaveType ilTp;
+	jvxDataFormatGroup formatGrp;
+	// ayfBufferInterleaveType ilTp;
 	int passthroughMode;
 	jvxErrorType lastError;
 };
@@ -68,8 +74,8 @@ struct ayfInitParamStruct
 	paramStr.bSize = -1; \
 	paramStr.sRate = -1; \
 	paramStr.format = JVX_DATAFORMAT_NONE; \
+	paramStr.formatGrp = JVX_DATAFORMAT_GROUP_NONE; \
 	paramStr.passthroughMode = -1; \
-	paramStr.lastError = JVX_ERROR_NOT_READY; \
-	paramStr.ilTp = AYF_BUFFERS_INVALID;
+	paramStr.lastError = JVX_ERROR_NOT_READY;
 
 #endif

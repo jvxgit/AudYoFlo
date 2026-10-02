@@ -16,7 +16,7 @@ CjvxAuNMeasureIr2Dev::CjvxAuNMeasureIr2Dev(JVX_CONSTRUCTOR_ARGUMENTS_MACRO_DECLA
 	inProcessing.bsize = 0;
 	inProcessing.srate = 0;
 	inProcessing.form = JVX_DATAFORMAT_NONE;
-	inProcessing.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	inProcessing.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 }
 
 CjvxAuNMeasureIr2Dev::~CjvxAuNMeasureIr2Dev()

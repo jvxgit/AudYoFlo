@@ -459,7 +459,11 @@ CayfComponentLib::activate()
 		}
 
 		// Allocate the single main node for processing 
-		resC = allocate_nodes(mainObj, subsequentComponents); 
+		auto refCbParent = parent->ptr_callback_multipurpose;
+		auto refPrivParent = parent->prv_callback_multipurpose;
+		jvxHandle* embeddingInfo = &bindingGlobal->bindType;
+
+		resC = allocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, refCbParent, refPrivParent, embeddingInfo));
 		
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
@@ -482,7 +486,7 @@ CayfComponentLib::activate()
 			jvxSize desiredSlot = parent->desiredSlotIdNode;
 			for(auto& elm : mainNodes)
 			{
-				resC = post_allocate_one_main_node(elm.nodePtr);
+				resC = post_allocate_one_main_node(elm.nodePtr, elm.statOnInit);
 				elm.nodePtr->state(&elm.nodeStat);
 				if (resC == JVX_NO_ERROR)
 				{
@@ -787,7 +791,7 @@ CayfComponentLib::deactivate()
 				elm.nodeBridgeId = JVX_SIZE_UNSELECTED;
 				
 				assert(resC == JVX_NO_ERROR);
-				this->pre_deallocate_one_main_node(elm.nodePtr);
+				this->pre_deallocate_one_main_node(elm.nodePtr, elm.statOnInit);
 				
 				elm.nodePtr->state(&elm.nodeStat);
 				elm.isEntryNode = false;
@@ -796,7 +800,12 @@ CayfComponentLib::deactivate()
 
 		mainNodes.clear();
 
-		deallocate_nodes(mainObj, subsequentComponents);
+		auto refCbParent = parent->ptr_callback_multipurpose;
+		auto refPrivParent = parent->prv_callback_multipurpose;
+		jvxHandle* embeddingInfo = &bindingGlobal->bindType;
+
+		deallocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, refCbParent, refPrivParent, embeddingInfo));
+
 		this->mainObj = nullptr;
 		
 		// The list of components SHOULD empty. This is up to the deallocate_main:node function!
@@ -1040,71 +1049,91 @@ CayfComponentLib::before_node_state_switch(IjvxHiddenInterface* hostRef, IjvxNod
 }
 
 jvxErrorType
-CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode)
+CayfComponentLib::post_allocate_one_main_node(IjvxNode* mainNode, jvxState& statMainNodeOnInit)
 {
 	jvxApiString astr;
 	jvxErrorType resC = JVX_NO_ERROR;
 	jvxState stat = JVX_STATE_NONE;
 	mainNode->state(&stat);
-	if (stat != JVX_STATE_NONE)
+	statMainNodeOnInit = stat;
+
+	if (stat > JVX_STATE_ACTIVE)
 	{
 		mainNode->name(nullptr, &astr);
-		std::cout << __FUNCTION__ << ": Error when involving the main node from module <" << astr.std_str() << ">: node has been initialized before."
+		std::cout << __FUNCTION__ << ": Error when involving the main node from module <" << astr.std_str() << ">: node has been set into a wrong state before."
 			<< " This typically indicates that it was tried to involve a second instance of a component that is arealized as a unique instance(no MULT - INSTANCE)." << std::endl;
 		assert(0);
 	}
-	resC = mainNode->initialize(hostRef);
 
-	if (resC == JVX_NO_ERROR)
-	{
-		mainNode->set_location_info(jvxComponentIdentification(JVX_COMPONENT_EXTERNAL_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
+	if (stat == JVX_STATE_NONE)
+	{		
+		resC = mainNode->initialize(hostRef);
 
-		resC = mainNode->select(nullptr);
+		if (resC == JVX_NO_ERROR)
+		{
+			mainNode->set_location_info(jvxComponentIdentification(JVX_COMPONENT_EXTERNAL_NODE, JVX_SIZE_SLOT_OFF_SYSTEM, JVX_SIZE_SLOT_OFF_SYSTEM, 0));
 
-		mainNode->module_reference(&astr, nullptr);
+			resC = mainNode->select(nullptr);
 
-		passConfigSection(mainNode, astr.std_str());
+			mainNode->module_reference(&astr, nullptr);
 
-	}
-	if (resC == JVX_NO_ERROR)
-	{
-		resC = on_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_SELECT);
-	}
+			passConfigSection(mainNode, astr.std_str());
 
-	if (resC == JVX_NO_ERROR)
-	{
-		resC = mainNode->activate();
-	}
-
-	if (resC == JVX_NO_ERROR)
-	{
-		resC = on_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_ACTIVATE);
+		}
+		if (resC == JVX_NO_ERROR)
+		{
+			resC = on_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_SELECT);
+		}
 	}
 
-	if (resC == JVX_NO_ERROR)
+	mainNode->state(&stat);
+	if (stat == JVX_STATE_SELECTED)
 	{
-		passConfigSection(mainNode, astr.std_str());
+		if (resC == JVX_NO_ERROR)
+		{
+			resC = mainNode->activate();
+		}
+
+		if (resC == JVX_NO_ERROR)
+		{
+			resC = on_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_ACTIVATE);
+		}
+
+		if (resC == JVX_NO_ERROR)
+		{
+			passConfigSection(mainNode, astr.std_str());
+		}
 	}
 
 	return resC;
 }
 
 jvxErrorType
-CayfComponentLib::pre_deallocate_one_main_node(IjvxNode* mainNode)
+CayfComponentLib::pre_deallocate_one_main_node(IjvxNode* mainNode, jvxState& statMainNodeOnInit)
 {
-	jvxErrorType resC = before_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_DEACTIVATE);
-	assert(resC == JVX_NO_ERROR);
-		
-	resC = mainNode->deactivate();
-	assert(resC == JVX_NO_ERROR);
+	jvxErrorType resC = JVX_NO_ERROR;
+	if (statMainNodeOnInit < JVX_STATE_ACTIVE)
+	{
+		before_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_DEACTIVATE);
+		assert(resC == JVX_NO_ERROR);
 
-	resC = before_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_UNSELECT);
-	assert(resC == JVX_NO_ERROR);
+		resC = mainNode->deactivate();
+		assert(resC == JVX_NO_ERROR);
+	}
 
-	resC = mainNode->unselect();
-	assert(resC == JVX_NO_ERROR);
+	if (statMainNodeOnInit < JVX_STATE_SELECTED)
+	{
+		resC = before_node_state_switch(hostRef, mainNode, JVX_STATE_SWITCH_UNSELECT);
+		assert(resC == JVX_NO_ERROR);
 
-	resC = mainNode->terminate();
-	assert(resC == JVX_NO_ERROR);
+		resC = mainNode->unselect();
+		assert(resC == JVX_NO_ERROR);
+	}
+
+	if (statMainNodeOnInit < JVX_STATE_INIT)
+	{
+		resC = mainNode->terminate();
+		assert(resC == JVX_NO_ERROR);
+	}
 	return resC;
 }

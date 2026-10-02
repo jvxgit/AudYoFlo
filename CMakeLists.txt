@@ -486,6 +486,7 @@ jvx_addSubdirs("Configuring all early 3rd party libraries" "${JVX_BASE_3RDPARTY_
 set(JVX_BASE_SYSTEM_STATIC_LIBS
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-min
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-system-base
+	${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-system-product
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-dsp-base	
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers
 	)
@@ -693,8 +694,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
   )
 
   set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-system-product
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals		
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp-cpp
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-tickcount-shared
@@ -760,6 +760,7 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
 		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-fileoutput
 		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-ctrl
 		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-measureIr
+		${JVX_BASE_ROOT}/sources/jvxLibraries/ayf_connect-generic
 		)
 
   if(JVX_USE_PART_WEBSERVER)

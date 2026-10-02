@@ -140,7 +140,7 @@ int CjvxFastConvolution::process(jvxData* in, jvxData* out) {
 
 	jvx_firfft_process(this->hdl_firfft, in, out);
 	
-	if (lock_result == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(lock_result))
 		JVX_UNLOCK_MUTEX(this->mutex_ir_buffers);
 
 	return res;

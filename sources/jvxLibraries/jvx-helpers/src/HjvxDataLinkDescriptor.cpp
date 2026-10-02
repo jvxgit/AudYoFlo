@@ -725,7 +725,7 @@ jvx_neutralDataLinkDescriptor_params(jvxLinkDataDescriptor_con_params& theParams
 	theParams.additional_flags = 0;
 	theParams.segmentation.x = 0;
 	theParams.segmentation.y = 0;
-	theParams.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+	theParams.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 }
 
 void

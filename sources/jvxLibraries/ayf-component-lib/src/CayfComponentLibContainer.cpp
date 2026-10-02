@@ -148,9 +148,16 @@ CayfComponentLibContainer::process_one_buffer_interleaved(
 	jvxData* outInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut)
 {
 	jvxErrorType res = JVX_ERROR_NOT_READY;
+
+	assert(startParams.format == JVX_DATAFORMAT_DATA);
+	assert(
+		(startParams.formGroup == JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED) ||
+		(startParams.formGroup == JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED)
+	);
+
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resMut = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
 	JVX_TRY_LOCK_MUTEX(resMut, safeAccess);
-	if (resMut == JVX_TRY_LOCK_MUTEX_SUCCESS)
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resMut))
 	{
 		if (processorRef)
 		{
@@ -163,6 +170,33 @@ CayfComponentLibContainer::process_one_buffer_interleaved(
 	return res;
 }
 
+jvxErrorType
+CayfComponentLibContainer::process_one_buffer_noninterleaved(
+	jvxData** inNonInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
+	jvxData** outNonInterleaved, jvxSize numSamlesOut, jvxSize numChannelsOut)
+{
+	jvxErrorType res = JVX_ERROR_NOT_READY;
+
+	assert(startParams.format == JVX_DATAFORMAT_DATA);
+	assert(
+		(startParams.formGroup == JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED) ||
+		(startParams.formGroup == JVX_DATAFORMAT_GROUP_GENERIC_NONINTERLEAVED)
+	);
+
+	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resMut = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
+	JVX_TRY_LOCK_MUTEX(resMut, safeAccess);
+	if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resMut))
+	{
+		if (processorRef)
+		{
+			res = processorRef->process_one_buffer_noninterleaved(
+				inNonInterleaved, numSamplesIn, numChannelsIn,
+				outNonInterleaved, numSamlesOut, numChannelsOut);
+		}
+		JVX_UNLOCK_MUTEX(safeAccess);
+	}
+	return res;
+}
 jvxErrorType
 CayfComponentLibContainer::stopProcessor(CayfComponentLib* compProc)
 {
@@ -286,7 +320,7 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 jvxErrorType
 CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numInChansArg, int numOutChansArg, 
 	int bSizeArg, int sRateArg, int passthroughModeArg, jvxSize* ayfIdentsPtr, int ayfIdentsNum, 
-	void_pvoid_callback ptr_callback_bwd_arg, void* prv_callback_arg)
+	void_pvoid_callback ptr_callback_bwd_arg, void* prv_callback_arg, jvxDataFormat formArg, jvxDataFormatGroup formGrpArg)
 {
 	jvxApiString realRegName;
 
@@ -296,8 +330,8 @@ CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numIn
 	startParams.numOutChans = numOutChansArg;
 	startParams.bSize = bSizeArg;
 	startParams.sRate = sRateArg;
-	startParams.format = JVX_DATAFORMAT_DATA;
-	startParams.formGroup = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
+	startParams.format = formArg; //JVX_DATAFORMAT_DATA;
+	startParams.formGroup = formGrpArg; // JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
 	startParams.passthroughMode = passthroughModeArg;
 	desiredSlotIdNode = JVX_SIZE_DONTCARE;
 	desiredSlotIdDev = JVX_SIZE_DONTCARE;

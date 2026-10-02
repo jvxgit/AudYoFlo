@@ -42,6 +42,7 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 		procParams.numInChans = numInChans;
 		procParams.numOutChans = numOutChans;
 		procParams.sRate = sRate;
+		
 		procParams.format = format;
 		procParams.formGroup = formGroup;		
 
@@ -50,15 +51,17 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 		_common_set_ocon.theData_out.con_params.number_channels = procParams.numInChans;
 		_common_set_ocon.theData_out.con_params.segmentation.y = 1;
 		_common_set_ocon.theData_out.con_params.rate = procParams.sRate;
+
+		// To enter the AudYoFLo system, use these parameters
 		_common_set_ocon.theData_out.con_params.format = JVX_DATAFORMAT_DATA;
-		_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+		_common_set_ocon.theData_out.con_params.format_group = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 
 		// Take over processing parameters
 		neg_input._set_parameters_fixed(procParams.numOutChans, procParams.bSize, procParams.sRate, JVX_DATAFORMAT_DATA,
-			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 
 		neg_output._set_parameters_fixed(procParams.numInChans, procParams.bSize, procParams.sRate, JVX_DATAFORMAT_DATA,
-			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 
 		// resC = theProc->test_chain(true JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
 		jvxSize numTested = 0;
@@ -192,6 +195,62 @@ CayfComponentLib::process_one_buffer_interleaved(
 	assert(res == JVX_NO_ERROR);
 	return JVX_NO_ERROR;
 }
+
+jvxErrorType
+CayfComponentLib::process_one_buffer_noninterleaved(
+	jvxData** inNonInterleaved, jvxSize numSamplesIn, jvxSize numChannelsIn,
+	jvxData** outNonInterleaved, jvxSize numSamplesOut, jvxSize numChannelsOut)
+{
+	jvxSize i;
+	jvxErrorType res = JVX_ERROR_INVALID_SETTING;
+	jvxState stat = JVX_STATE_NONE;
+	this->state(&stat);
+	if (stat != JVX_STATE_PROCESSING)
+	{
+		return JVX_ERROR_NOT_READY;
+	}
+
+	// =======================================================================================================
+	// Some basic integrity checking
+	// =======================================================================================================
+	assert(numSamplesIn == _common_set_ocon.theData_out.con_params.buffersize);
+	assert(numSamplesOut == _common_set_icon.theData_in->con_params.buffersize);
+	assert(numChannelsIn == _common_set_ocon.theData_out.con_params.number_channels);
+	assert(numChannelsOut == _common_set_icon.theData_in->con_params.number_channels);
+	// =======================================================================================================
+
+	if (_common_set_ocon.theData_out.con_link.connect_to)
+	{
+		res = _common_set_ocon.theData_out.con_link.connect_to->process_start_icon();
+		if (res == JVX_NO_ERROR)
+		{
+			jvxSize idxToProc = *_common_set_ocon.theData_out.con_pipeline.idx_stage_ptr;
+			jvxData** bufsToNode = (jvxData**)_common_set_ocon.theData_out.con_data.buffers[idxToProc];
+
+			// Interleaved to non-interleaved
+			for (i = 0; i < numChannelsIn; i++)
+			{
+				jvx_convertSamples_from_to<jvxData>(inNonInterleaved[i], bufsToNode[i], procParams.bSize, i, 1, 0, 1);
+			}
+
+			/*============ PASS SAMPLES TO PROCESSING UNIT ==================*/
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_buffers_icon();
+			assert(res == JVX_NO_ERROR);
+
+			jvxSize idxFromProc = *_common_set_icon.theData_in->con_pipeline.idx_stage_ptr;
+			jvxData** bufsFromNode = (jvxData**)_common_set_icon.theData_in->con_data.buffers[idxFromProc];
+			// Non-interleaved to interleaved
+			for (i = 0; i < numChannelsOut; i++)
+			{
+				jvx_convertSamples_from_to<jvxData>(bufsFromNode[i], outNonInterleaved[i], procParams.bSize, 0, 1, i, 1);
+			}
+			res = _common_set_ocon.theData_out.con_link.connect_to->process_stop_icon();
+		}
+	}
+	assert(res == JVX_NO_ERROR);
+	return JVX_NO_ERROR;
+}
+
 
 jvxErrorType
 CayfComponentLib::stopProcessor(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped)

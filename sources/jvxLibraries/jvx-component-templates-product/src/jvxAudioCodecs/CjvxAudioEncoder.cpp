@@ -35,7 +35,7 @@ CjvxAudioEncoder::activate()
 			JVX_SIZE_UNSELECTED,
 			JVX_SIZE_UNSELECTED,
 			JVX_DATAFORMAT_DATA,
-			JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED);
+			JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED);
 
 		// Output side: pin to bytes and CODED_GENERIC"
 		neg_output._set_parameters_fixed(

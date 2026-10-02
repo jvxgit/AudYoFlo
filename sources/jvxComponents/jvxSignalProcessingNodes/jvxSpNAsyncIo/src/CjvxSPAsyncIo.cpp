@@ -810,7 +810,7 @@ JVX_ASYNCIO_CLASSNAME::transfer_backward_ocon_ntask(jvxLinkDataTransferType tp, 
 
 			// Make sure the access to the secondary link is fully setup before actually using it
 			JVX_TRY_LOCK_MUTEX(resM, inProcessing.crossThreadTransfer.safeAccessSecLink);
-			if (resM == JVX_TRY_LOCK_MUTEX_SUCCESS)
+			if (JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(resM))
 			{
 				if (inProcessing.crossThreadTransfer.secLinkRead)
 				{

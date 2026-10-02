@@ -13,11 +13,15 @@
 
 #define JVX_TRY_LOCK_MUTEX_RESULT_TYPE BOOL
 
+// Explanation of new macros: Win32 API says that TryEnterCriticalSection returs 0 if try function is not successful.
+// It does not mean that a 1 is retured on success!
+// https://learn.microsoft.com/de-de/windows/win32/api/synchapi/nf-synchapi-tryentercriticalsection
+
 #define JVX_TRY_LOCK_MUTEX_SUCCESS 1
 #define JVX_TRY_LOCK_MUTEX_NO_SUCCESS 0
 
-#define JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(var) var == JVX_TRY_LOCK_MUTEX_SUCCESS
-#define JVX_TRY_LOCK_MUTEX_TEST_NO_SUCCESS(var) var != JVX_TRY_LOCK_MUTEX_SUCCESS
+#define JVX_TRY_LOCK_MUTEX_TEST_SUCCESS(var) (var) != JVX_TRY_LOCK_MUTEX_NO_SUCCESS
+#define JVX_TRY_LOCK_MUTEX_TEST_NO_SUCCESS(var) (var) == JVX_TRY_LOCK_MUTEX_NO_SUCCESS
 
 
 #define JVX_UNLOCK_MUTEX(a) LeaveCriticalSection(&a)
