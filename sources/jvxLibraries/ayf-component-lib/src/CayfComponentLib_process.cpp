@@ -167,7 +167,7 @@ jvxErrorType
 CayfComponentLib::triggerStart(std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart)
 {
 	jvxErrorType resC = JVX_ERROR_WRONG_STATE_SUBMODULE;
-
+	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
 	IjvxDataConnections* theConnections = NULL;
 	IjvxDataConnectionProcess* theProc = NULL;
 	jvxApiString astr;
