@@ -55,6 +55,9 @@ struct ayfInitConnectStruct
 	jvxCBool doNotLoadProxy;
 };
 
+// Forward declaration - required for C only
+struct IjvxHost;
+
 struct ayfInitParamStruct
 {
 	int numInChans;
@@ -63,9 +66,11 @@ struct ayfInitParamStruct
 	int sRate;
 	jvxDataFormat format;
 	jvxDataFormatGroup formatGrp;
-	// ayfBufferInterleaveType ilTp;
+	jvxCBool deployAndStart;
 	int passthroughMode;
+
 	jvxErrorType lastError;
+	struct IjvxHost* hostRef;
 };
 
 #define AYF_INIT_PARAM_STRUCT_RESET(paramStr) \

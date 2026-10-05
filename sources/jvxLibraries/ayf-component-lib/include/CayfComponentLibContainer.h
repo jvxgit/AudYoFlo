@@ -8,16 +8,7 @@
 #include "ayf-embedding-proxy-entries.h"
 #include "ayf_component_lib_types.h"
 
-struct CayfComponentLibContainer_audioParams
-{
-	jvxSize numInChans = 0;
-	jvxSize numOutChans = 0;
-	jvxSize bSize = 0;
-	jvxSize sRate = 0;
-	jvxDataFormat format = JVX_DATAFORMAT_NONE;
-	jvxDataFormatGroup formGroup = JVX_DATAFORMAT_GROUP_NONE;
-	int passthroughMode = 0;
-};
+typedef ayfInitParamStruct CayfComponentLibContainer_audioParams;
 
 class CayfComponentLibContainer: public IjvxExternalModuleFactory
 {
@@ -57,12 +48,15 @@ public:
 	void lock();
 	void unlock();
 
-	jvxErrorType startBinding(const std::string& regName, int numInChans, int numOutChans, int bSize, int sRate, int passthroughMod, jvxSize* ayfIdentsPtr = nullptr, int ayfIdentsNum = 0, 
-		void_pvoid_callback ptr_callback_on_start = NULL, void* prv_callback_on_start = NULL, jvxDataFormat formArg = JVX_DATAFORMAT_DATA, jvxDataFormatGroup formGrpArg = JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED);
+	jvxErrorType startBinding(const std::string& regName, struct ayfInitParamStruct* params, jvxSize* ayfIdentsPtr = nullptr, int ayfIdentsNum = 0,
+		void_pvoid_callback ptr_callback_on_start = NULL, void* prv_callback_on_start = NULL);
 	jvxErrorType stopBinding();
 
 	jvxErrorType startBindingInner(IjvxHost* hostRef = nullptr);
 	jvxErrorType stopBindingInner(IjvxHost* hostRef = nullptr);
+
+	jvxErrorType triggerStart();
+	jvxErrorType triggerStop();
 
 	jvxErrorType deployProcParametersStartProcessor(CayfComponentLib* compProc);
 	jvxErrorType process_one_buffer_interleaved(
@@ -90,6 +84,8 @@ public:
 	{
 		return startParams;
 	};
+
+	jvxErrorType is_ready(jvxApiString& reasoIfNot);
 };
 
 #endif

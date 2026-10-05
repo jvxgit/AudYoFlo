@@ -58,7 +58,8 @@ CayfComponentLibContainer::reset()
 	startParams.bSize = 0;
 	startParams.sRate = 0;
 	startParams.format = JVX_DATAFORMAT_NONE;
-	startParams.formGroup = JVX_DATAFORMAT_GROUP_NONE;
+	startParams.formatGrp = JVX_DATAFORMAT_GROUP_NONE;
+	startParams.deployAndStart = true;
 };
 
 jvxErrorType
@@ -106,14 +107,15 @@ CayfComponentLibContainer::deployProcParametersStartProcessor(CayfComponentLib* 
 			startParams.bSize,
 			startParams.sRate,
 			startParams.format,
-			startParams.formGroup,
+			startParams.formatGrp,
 			[&](IjvxDataConnectionProcess* process) -> jvxErrorType{
 				if (ptr_callback_multipurpose)
 				{
 					ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_BEFORE_START, prv_callback_multipurpose, process);
 				}
 				return JVX_NO_ERROR;
-			});
+			}, 
+			startParams.deployAndStart);
 		
 		if (res == JVX_NO_ERROR)
 		{
@@ -123,7 +125,7 @@ CayfComponentLibContainer::deployProcParametersStartProcessor(CayfComponentLib* 
 				startParams_modified.bSize,
 				startParams_modified.sRate,
 				startParams_modified.format,
-				startParams_modified.formGroup);
+				startParams_modified.formatGrp);
 			if (ptr_callback_multipurpose)
 			{
 				ayfInitParamStruct params;
@@ -151,8 +153,8 @@ CayfComponentLibContainer::process_one_buffer_interleaved(
 
 	assert(startParams.format == JVX_DATAFORMAT_DATA);
 	assert(
-		(startParams.formGroup == JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED) ||
-		(startParams.formGroup == JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED)
+		(startParams.formatGrp == JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED) ||
+		(startParams.formatGrp == JVX_DATAFORMAT_GROUP_GENERIC_INTERLEAVED)
 	);
 
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resMut = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
@@ -179,8 +181,8 @@ CayfComponentLibContainer::process_one_buffer_noninterleaved(
 
 	assert(startParams.format == JVX_DATAFORMAT_DATA);
 	assert(
-		(startParams.formGroup == JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED) ||
-		(startParams.formGroup == JVX_DATAFORMAT_GROUP_GENERIC_NONINTERLEAVED)
+		(startParams.formatGrp == JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED) ||
+		(startParams.formatGrp == JVX_DATAFORMAT_GROUP_GENERIC_NONINTERLEAVED)
 	);
 
 	JVX_TRY_LOCK_MUTEX_RESULT_TYPE resMut = JVX_TRY_LOCK_MUTEX_NO_SUCCESS;
@@ -266,7 +268,7 @@ CayfComponentLibContainer::startBindingInner(IjvxHost* hostRef)
 	// This function is inside the lock
 	setReference(deviceEntryObject);
 
-	return JVX_NO_ERROR;
+	return res;
 }
 
 jvxErrorType
@@ -318,21 +320,16 @@ CayfComponentLibContainer::stopBindingInner(IjvxHost* hostRef)
 }
 
 jvxErrorType
-CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numInChansArg, int numOutChansArg, 
-	int bSizeArg, int sRateArg, int passthroughModeArg, jvxSize* ayfIdentsPtr, int ayfIdentsNum, 
-	void_pvoid_callback ptr_callback_bwd_arg, void* prv_callback_arg, jvxDataFormat formArg, jvxDataFormatGroup formGrpArg)
+CayfComponentLibContainer::startBinding(const std::string& modNameArg, struct ayfInitParamStruct* params, jvxSize* ayfIdentsPtr, int ayfIdentsNum,
+	void_pvoid_callback ptr_callback_bwd_arg, void* prv_callback_arg)
 {
+	jvxErrorType res = JVX_NO_ERROR;
 	jvxApiString realRegName;
 
 	modName = modNameArg;
 	regToken = modName;
-	startParams.numInChans = numInChansArg;
-	startParams.numOutChans = numOutChansArg;
-	startParams.bSize = bSizeArg;
-	startParams.sRate = sRateArg;
-	startParams.format = formArg; //JVX_DATAFORMAT_DATA;
-	startParams.formGroup = formGrpArg; // JVX_DATAFORMAT_GROUP_AUDIO_PCM_INTERLEAVED;
-	startParams.passthroughMode = passthroughModeArg;
+	startParams = *params;
+	
 	desiredSlotIdNode = JVX_SIZE_DONTCARE;
 	desiredSlotIdDev = JVX_SIZE_DONTCARE;
 
@@ -372,9 +369,52 @@ CayfComponentLibContainer::startBinding(const std::string& modNameArg, int numIn
 	}
 	else
 	{
-		startBindingInner(nullptr);
+		// res = startBindingInner(nullptr);
+		res = startBindingInner(startParams.hostRef);
 	}
-	return JVX_NO_ERROR;
+	return res;
+}
+
+jvxErrorType
+CayfComponentLibContainer::triggerStart()
+{
+	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+	if (!bindRefsEmbHost)
+	{
+		res = JVX_ERROR_NOT_READY;
+		if (processorRef)
+		{
+			res = processorRef->triggerStart(
+				[&](IjvxDataConnectionProcess* process) -> jvxErrorType {
+					if (ptr_callback_multipurpose)
+					{
+						ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_BEFORE_START, prv_callback_multipurpose, process);
+					}
+					return JVX_NO_ERROR;
+				});
+		}
+	}
+	return res;
+}
+
+jvxErrorType
+CayfComponentLibContainer::triggerStop()
+{
+	jvxErrorType res = JVX_ERROR_UNSUPPORTED;
+	if (!bindRefsEmbHost)
+	{
+		res = JVX_ERROR_NOT_READY;
+		if (processorRef)
+		{
+			processorRef->triggerStop(
+				[&](IjvxDataConnectionProcess* process) {
+					if (ptr_callback_multipurpose)
+					{
+						ptr_callback_multipurpose(ayfVoidPvoidDefinition::AYF_VOID_PVOID_ID_STOPPED, prv_callback_multipurpose, process);
+					}});
+		}
+	}
+	return res;
 }
 
 jvxErrorType
@@ -386,7 +426,7 @@ CayfComponentLibContainer::stopBinding()
 	}
 	else
 	{
-		stopBindingInner();
+		stopBindingInner(startParams.hostRef);
 	}
 
 	if (ptr_callback_multipurpose)
@@ -418,4 +458,15 @@ CayfComponentLibContainer::invite_external_components(IjvxHiddenInterface* hostR
 		}
 	}
 	return JVX_NO_ERROR;
+}
+
+jvxErrorType
+CayfComponentLibContainer::is_ready(jvxApiString& reasoIfNot)
+{
+	jvxErrorType res = JVX_ERROR_ELEMENT_NOT_FOUND;
+	if (processorRef)
+	{
+		res = processorRef->is_ready(reasoIfNot);
+	}
+	return res;
 }

@@ -149,6 +149,10 @@ private:
 	
 	IjvxObject* mainObj = nullptr;
 	std::list< IjvxObject*> subsequentComponents;
+	
+	jvxBool delayedStartExpectingStep = false;
+	jvxBool activatedDeployAndStart = false;
+	jvxBool startCbCalled = false;
 
 protected:
 	
@@ -181,6 +185,7 @@ protected:
 		IjvxInputConnectorSelect* icon = nullptr;
 		IjvxOutputConnectorSelect* ocon = nullptr;
 		jvxBool isEntryNode = false;
+		jvxBool attachToHost = true;
 		void reset()
 		{
 			nodePtr = nullptr;
@@ -191,6 +196,7 @@ protected:
 			icon = nullptr;
 			ocon = nullptr;
 			isEntryNode = false;
+			attachToHost = false;
 		};
 	};
 
@@ -290,11 +296,15 @@ public:
 		jvxSize numInChans, jvxSize numOutChans, 
 		jvxSize bSize, jvxSize sRate, 
 		jvxDataFormat format, jvxDataFormatGroup formGroup,
-		std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart = nullptr);
+		std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart = nullptr,
+		jvxCBool deployAndStart = c_true);
+
+	jvxErrorType triggerStart(std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart);
+	jvxErrorType triggerStop(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped);
 
 	jvxErrorType readBackProcessingParameters(
-			jvxSize& numInChans,jvxSize& numOutChans,
-			jvxSize& bSize, jvxSize& sRate,
+			int& numInChans,int& numOutChans,
+			int& bSize, int& sRate,
 			jvxDataFormat& format, jvxDataFormatGroup formGroup);
 
 	virtual jvxErrorType process_one_buffer_interleaved(
@@ -307,6 +317,8 @@ public:
 
 	virtual jvxErrorType stopProcessor(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped);
 	
+	jvxErrorType is_ready(jvxApiString& reason_if_not_astr);
+
 	// ===============================================================
 	// ===============================================================
 

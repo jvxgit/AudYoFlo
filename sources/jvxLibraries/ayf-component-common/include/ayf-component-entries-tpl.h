@@ -76,17 +76,12 @@ extern "C"
 			JVX_SAFE_ALLOCATE_OBJECT(libCont, AYF_MODULE_CONTAINER_TYPE);
 			libCont->linkBinding( bindOnReturn);
 
-			libCont->startBinding(modName, paramStr->numInChans,
-				paramStr->numOutChans, paramStr->bSize, 
-				paramStr->sRate, paramStr->passthroughMode,
-				str->ayfIdentsPtr, 2, str->fptr_multi_purpose, str->priv, 
-				paramStr->format, paramStr->formatGrp);
+			res = libCont->startBinding(modName, paramStr,
+				str->ayfIdentsPtr, 2, str->fptr_multi_purpose, str->priv);
 
 			AYF_FUNCTIONNAME_REDEFINE(lstAllocated, AYF_PROJECT_POSTFIX).push_back(libCont);
 
 			*instance = reinterpret_cast<jvxHandle*>(libCont);
-
-			res = JVX_NO_ERROR;
 		}
 		return res;
 	}
@@ -107,6 +102,28 @@ extern "C"
 			
 			JVX_SAFE_DELETE_OBJECT(preInitDataReturn);
 			*preinstance = nullptr;
+		}
+		return res;
+	}
+
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_lateStartModule, AYF_PROJECT_POSTFIX)(jvxHandle* instance)
+	{
+		jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+		if (instance)
+		{
+			CayfComponentLibContainer* libCont = reinterpret_cast<CayfComponentLibContainer*>(instance);
+			res = libCont->triggerStart();
+		}
+		return res;
+	}
+
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_earlyStopModule, AYF_PROJECT_POSTFIX)(jvxHandle* instance)
+	{
+		jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+		if (instance)
+		{
+			CayfComponentLibContainer* libCont = reinterpret_cast<CayfComponentLibContainer*>(instance);
+			res = libCont->triggerStop();
 		}
 		return res;
 	}
@@ -219,6 +236,27 @@ extern "C"
 		{
 			CayfComponentLibContainer* libCont = reinterpret_cast<CayfComponentLibContainer*>(instance);
 			res = libCont->returnPrivData(privOnReturn);
+		}
+		return res;
+	}
+
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_ready, AYF_PROJECT_POSTFIX)(jvxHandle* instance, char* fldResponse, int szResponse)
+	{
+		jvxErrorType res = JVX_ERROR_INVALID_ARGUMENT;
+		if (instance)
+		{
+			jvxApiString astr;
+			CayfComponentLibContainer* libCont = reinterpret_cast<CayfComponentLibContainer*>(instance);
+			res = libCont->is_ready(astr);
+			if (fldResponse)
+			{
+				memset(fldResponse, 0, szResponse);
+				jvxSize cpMax = JVX_MIN(szResponse - 1, astr.ll());
+				if (cpMax)
+				{
+					memcpy(fldResponse, astr.c_str(), cpMax);
+				}
+			}
 		}
 		return res;
 	}

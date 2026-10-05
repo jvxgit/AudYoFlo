@@ -36,7 +36,8 @@ extern "C" {
 	};
 
 	JVX_STATIC_INLINE void ayfInitParamStruct_init(struct ayfInitParamStruct* paramStr, 
-		int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, jvxDataFormat form, jvxDataFormatGroup formGrpArg, int passthroughModeArg)
+		int numInChansArg, int numOutChansArg, int bSizeArg, int sRateArg, jvxDataFormat form, jvxDataFormatGroup formGrpArg, 
+		jvxCBool deployAndStartArg, int passthroughModeArg)
 	{
 		paramStr->numInChans = numInChansArg;
 		paramStr->numOutChans = numOutChansArg;
@@ -44,7 +45,9 @@ extern "C" {
 		paramStr->sRate = sRateArg;
 		paramStr->formatGrp= formGrpArg;
 		paramStr->format = form;
+		paramStr->deployAndStart = deployAndStartArg;
 		paramStr->passthroughMode = passthroughModeArg;
+		paramStr->hostRef = NULL;
 	}
 
 	/*
@@ -98,6 +101,8 @@ extern "C" {
 
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_reportTxtInput, AYF_PROJECT_POSTFIX)(jvxHandle* instance, const char* txtFldToken);
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_reportTxtStatus, AYF_PROJECT_POSTFIX)(jvxHandle* instance, int nStat, char* fldRespond, int szRespond, int* newStatOnReturn);
+
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_ready, AYF_PROJECT_POSTFIX)(jvxHandle* instance, char* fldReasonIfNo, int szReasonIfNot);
 
 	//jvxErrorType ayf_aw_requestTxtOutput(jvxHandle* instance, char* txtFldToken, int sz);
 	//jvxErrorType ayf_aw_requestTxtStatus(jvxHandle* instance, int* nStat);

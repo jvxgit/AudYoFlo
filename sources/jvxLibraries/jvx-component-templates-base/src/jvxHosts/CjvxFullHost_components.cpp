@@ -581,7 +581,12 @@ CjvxFullHost::detach_external_component(IjvxObject* toBeDetached, const char* mo
 					} // if (JVX_CHECK_SIZE_SELECTED(tp.slotid))
 					else
 					{
-						res = JVX_ERROR_ID_OUT_OF_BOUNDS;
+						// This is a regular case with <JVX_CHECK_SIZE_UNSELECTED(tp.slotid)>
+						// res = JVX_ERROR_ID_OUT_OF_BOUNDS;		HK, 03.10.2026		
+						// This case should cover components allocated with 
+						// - slotid JVX_SIZE_DONTCARE and 
+						// - JVX_SIZE_SLOT_OFF_SYSTEM
+						res = JVX_NO_ERROR;
 					}
 
 					if (res == JVX_NO_ERROR)

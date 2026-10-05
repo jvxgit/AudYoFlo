@@ -2,10 +2,10 @@
 
 jvxErrorType
 CayfComponentLib::readBackProcessingParameters(
-	jvxSize& numInChans,
-	jvxSize& numOutChans,
-	jvxSize& bSize,
-	jvxSize& sRate,
+	int& numInChans,
+	int& numOutChans,
+	int& bSize,
+	int& sRate,
 	jvxDataFormat& format,
 	jvxDataFormatGroup formGroup)
 {
@@ -19,10 +19,26 @@ CayfComponentLib::readBackProcessingParameters(
 }
 
 jvxErrorType
+CayfComponentLib::is_ready(jvxApiString& reason_if_not_astr)
+{
+	jvxErrorType res = JVX_ERROR_NOT_READY;
+	IjvxDataConnections* theConnections = NULL;
+	
+	theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
+	if (theConnections)
+	{
+		res = theConnections->ready_for_start(uId_process, &reason_if_not_astr);
+		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+	}
+	return res;
+}
+
+jvxErrorType
 CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans, 
 	jvxSize numOutChans, jvxSize bSize, jvxSize sRate,
 	jvxDataFormat format, jvxDataFormatGroup formGroup,
-	std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart)
+	std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart,
+	jvxCBool deployAndStart)
 {
 	jvxErrorType resC = JVX_NO_ERROR;
 	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
@@ -92,6 +108,72 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 			std::cout << "Subsystem ready for processing!" << std::endl;
 		}
 
+		// =============================================================================
+		// Here, we may playce a point to divide startup into two phases
+		// =============================================================================
+		activatedDeployAndStart = false;
+		if (deployAndStart == c_true)
+		{
+			if (cbBeforeStart)
+			{
+				IjvxDataConnectionProcess* proc = nullptr;
+				theConnections->reference_connection_process_uid(uId_process, &proc);
+				if (proc)
+				{
+					cbBeforeStart(proc);
+					theConnections->return_reference_connection_process(proc);
+				}
+			}
+			startCbCalled = true;
+
+			resC = this->prepare();
+			assert(resC == JVX_NO_ERROR);
+			resC = theProc->prepare_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			if (resC != JVX_NO_ERROR)
+			{
+				goto exit_error;
+			}
+
+			resC = this->start();
+			assert(resC == JVX_NO_ERROR);
+			resC = theProc->start_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			if (resC != JVX_NO_ERROR)
+			{
+				goto exit_error;
+			}
+
+			activatedDeployAndStart = true;
+		}
+		theConnections->return_reference_connection_process(theProc);
+		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+
+		// this->on_entry_node_started();
+	}
+	return JVX_NO_ERROR;
+
+exit_error:
+	if (theConnections)
+	{
+		if (theProc)
+		{
+			theConnections->return_reference_connection_process(theProc);
+		}
+		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+	}
+	return resC;
+}
+
+jvxErrorType
+CayfComponentLib::triggerStart(std::function<jvxErrorType(IjvxDataConnectionProcess* pExt)> cbBeforeStart)
+{
+	jvxErrorType resC = JVX_ERROR_WRONG_STATE_SUBMODULE;
+
+	IjvxDataConnections* theConnections = NULL;
+	IjvxDataConnectionProcess* theProc = NULL;
+	jvxApiString astr;
+
+	if (!activatedDeployAndStart)
+	{
 		if (cbBeforeStart)
 		{
 			IjvxDataConnectionProcess* proc = nullptr;
@@ -102,28 +184,38 @@ CayfComponentLib::deployProcParametersStartProcessor(jvxSize numInChans,
 				theConnections->return_reference_connection_process(proc);
 			}
 		}
+		startCbCalled = true;
 
-		resC = this->prepare();
-		assert(resC == JVX_NO_ERROR);
-		resC = theProc->prepare_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-		if (resC != JVX_NO_ERROR)
+		theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
+		if (theConnections)
 		{
-			goto exit_error;
-		}
+			resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
+			if (resC != JVX_NO_ERROR)
+			{
+				goto exit_error;
+			}
 
-		resC = this->start();
-		assert(resC == JVX_NO_ERROR);
-		resC = theProc->start_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
-		if (resC != JVX_NO_ERROR)
-		{
-			goto exit_error;
-		}
-		theConnections->return_reference_connection_process(theProc);
-		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+			resC = this->prepare();
+			assert(resC == JVX_NO_ERROR);
+			resC = theProc->prepare_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			if (resC != JVX_NO_ERROR)
+			{
+				goto exit_error;
+			}
 
-		// this->on_entry_node_started();
+			resC = this->start();
+			assert(resC == JVX_NO_ERROR);
+			resC = theProc->start_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+			if (resC != JVX_NO_ERROR)
+			{
+				goto exit_error;
+			}
+
+			theConnections->return_reference_connection_process(theProc);		
+			retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+		}
 	}
-	return JVX_NO_ERROR;
+	return resC;
 
 exit_error:
 	if (theConnections)
@@ -251,6 +343,62 @@ CayfComponentLib::process_one_buffer_noninterleaved(
 	return JVX_NO_ERROR;
 }
 
+jvxErrorType
+CayfComponentLib::triggerStop(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped)
+{
+	jvxErrorType resC = JVX_NO_ERROR;
+	JVX_CONNECTION_FEEDBACK_TYPE_DEFINE(fdb);
+	IjvxDataConnections* theConnections = NULL;
+	IjvxDataConnectionProcess* theProc = NULL;
+	jvxState stat = JVX_STATE_NONE;
+
+	if(!activatedDeployAndStart && delayedStartExpectingStep)
+	{
+		theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
+		assert(theConnections);
+
+		this->state(&stat);
+		if (stat > JVX_STATE_ACTIVE)
+		{
+			resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
+			assert(resC == JVX_NO_ERROR);
+			assert(theProc);
+
+			if (stat > JVX_STATE_PREPARED)
+			{
+				resC = theProc->stop_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+				assert(resC == JVX_NO_ERROR);
+				resC = this->stop();
+				assert(resC == JVX_NO_ERROR);
+			}
+
+			this->state(&stat);
+
+			if (stat > JVX_STATE_ACTIVE)
+			{
+				resC = theProc->postprocess_chain(JVX_CONNECTION_FEEDBACK_CALL(fdb));
+				assert(resC == JVX_NO_ERROR);
+				resC = this->postprocess();
+				assert(resC == JVX_NO_ERROR);
+			}
+
+			if (startCbCalled)
+			{
+				if (cbStopped)
+				{
+					if (theProc)
+					{
+						cbStopped(theProc);
+					}
+				}
+				startCbCalled = false;
+			}
+			theConnections->return_reference_connection_process(theProc);
+		}
+	}
+	retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+	return resC;
+}
 
 jvxErrorType
 CayfComponentLib::stopProcessor(std::function<void(IjvxDataConnectionProcess* pExt)> cbStopped)
@@ -260,14 +408,16 @@ CayfComponentLib::stopProcessor(std::function<void(IjvxDataConnectionProcess* pE
 	IjvxDataConnections* theConnections = NULL;
 	IjvxDataConnectionProcess* theProc = NULL;
 	jvxState stat = JVX_STATE_NONE;
+
+	theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
+	assert(theConnections);
+
 	this->state(&stat);
 	if (stat > JVX_STATE_ACTIVE)
 	{
-		theConnections = reqInterface<IjvxDataConnections>(this->hostRef);
-		assert(theConnections);
-
 		resC = theConnections->reference_connection_process_uid(uId_process, &theProc);
 		assert(resC == JVX_NO_ERROR);
+		assert(theProc);
 
 		if (stat > JVX_STATE_PREPARED)
 		{
@@ -286,18 +436,23 @@ CayfComponentLib::stopProcessor(std::function<void(IjvxDataConnectionProcess* pE
 			resC = this->postprocess();
 			assert(resC == JVX_NO_ERROR);
 		}
-
-		if (cbStopped)
+	
+		if (startCbCalled)
 		{
-			cbStopped(theProc);
+			if (cbStopped)
+			{
+				if (theProc)
+				{
+					cbStopped(theProc);
+				}
+			}
+			startCbCalled = false;
 		}
-
 		theConnections->return_reference_connection_process(theProc);
-		retInterface<IjvxDataConnections>(this->hostRef, theConnections);
-		procParams.reset();
-
-		
 	}
+
+	retInterface<IjvxDataConnections>(this->hostRef, theConnections);
+	procParams.reset();
 	return JVX_NO_ERROR;
 }
 

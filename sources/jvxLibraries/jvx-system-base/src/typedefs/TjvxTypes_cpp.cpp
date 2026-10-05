@@ -123,6 +123,12 @@ jvxApiString::c_str() const
 	return bString;
 }
 
+jvxSize
+jvxApiString::ll() const
+{
+	return lString;
+}
+
 void
 jvxApiString::clear()
 {

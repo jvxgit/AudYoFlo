@@ -51,6 +51,8 @@ public:
 #endif
 
 	virtual const char* c_str() const;
+	virtual jvxSize ll() const;
+
 	virtual void clear();
 				
 #ifndef JVX_COMPILE_SMALL

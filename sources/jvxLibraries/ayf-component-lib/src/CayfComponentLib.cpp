@@ -462,8 +462,9 @@ CayfComponentLib::activate()
 		auto refCbParent = parent->ptr_callback_multipurpose;
 		auto refPrivParent = parent->prv_callback_multipurpose;
 		jvxHandle* embeddingInfo = &bindingGlobal->bindType;
+		jvxBool attachToHostRef = true;
 
-		resC = allocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, refCbParent, refPrivParent, embeddingInfo));
+		resC = allocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, attachToHostRef, refCbParent, refPrivParent, embeddingInfo));
 		
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
@@ -473,6 +474,7 @@ CayfComponentLib::activate()
 				oneNodeSeq.nodePtr = castFromObject<IjvxNode>(this->mainObj);
 				oneNodeSeq.nodeStat = JVX_STATE_NONE;
 				oneNodeSeq.isEntryNode = true;
+				oneNodeSeq.attachToHost = attachToHostRef;
 				mainNodes.push_back(oneNodeSeq);
 			}
 			for (auto& elm : subsequentComponents)
@@ -480,6 +482,7 @@ CayfComponentLib::activate()
 				oneNodeSeq.nodePtr = castFromObject<IjvxNode>(elm);
 				oneNodeSeq.nodeStat = JVX_STATE_NONE;
 				oneNodeSeq.isEntryNode = false;
+				oneNodeSeq.attachToHost = attachToHostRef;
 				mainNodes.push_back(oneNodeSeq);
 			}
 
@@ -496,17 +499,20 @@ CayfComponentLib::activate()
 
 					passConfigSection(elm.nodePtr, astr.std_str());
 					// Attach main node to host control - if embedded in full host
-					IjvxComponentHostExt* hostExt = nullptr;
-					hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
-					if (hostExt)
+					if (elm.attachToHost)
 					{
-						hostExt->attach_external_component(elm.nodePtr, cpTpOrig.tp, parent->modName.c_str(), parent->regToken.c_str(), true, true, desiredSlot);
-					}
-					else
-					{
-						if (bindingMinHost)
+						IjvxComponentHostExt* hostExt = nullptr;
+						hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
+						if (hostExt)
 						{
-							resC = bindingMinHost->ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+							hostExt->attach_external_component(elm.nodePtr, cpTpOrig.tp, parent->modName.c_str(), parent->regToken.c_str(), true, true, desiredSlot);
+						}
+						else
+						{
+							if (bindingMinHost)
+							{
+								resC = bindingMinHost->ayf_attach_component_module_call(mainNodeName.c_str(), this, this->mainObj);
+							}
 						}
 					}
 					elm.nodeReady = true;
@@ -771,7 +777,7 @@ CayfComponentLib::deactivate()
 		}
 		for (auto& elm : mainNodes)
 		{
-			if (elm.nodeReady)
+			if (elm.nodeReady && elm.attachToHost)
 			{
 				IjvxComponentHostExt* hostExt = nullptr;
 				hostExt = reqInterface<IjvxComponentHostExt>(hostRef);
@@ -803,8 +809,9 @@ CayfComponentLib::deactivate()
 		auto refCbParent = parent->ptr_callback_multipurpose;
 		auto refPrivParent = parent->prv_callback_multipurpose;
 		jvxHandle* embeddingInfo = &bindingGlobal->bindType;
+		jvxBool addHostRef = true;
 
-		deallocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, refCbParent, refPrivParent, embeddingInfo));
+		deallocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, addHostRef, refCbParent, refPrivParent, embeddingInfo));
 
 		this->mainObj = nullptr;
 		

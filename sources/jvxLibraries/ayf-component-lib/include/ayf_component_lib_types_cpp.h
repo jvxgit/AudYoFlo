@@ -5,14 +5,17 @@ struct ayfConnectArgAllocateDeallocate
 {
 	IjvxObject*& entryObj;
 	std::list< IjvxObject*>& subsequentComponents;
+	jvxBool& attachToHostRef;
 	void_pvoid_callback ptr_callback_multipurpose = NULL;
 	void* prv_callback_multipurpose = NULL;
 	jvxHandle* embeddingInfo = NULL;
 
-	ayfConnectArgAllocateDeallocate(IjvxObject*& mainObjRef, std::list< IjvxObject*>& subsequentComponentsRef,
+
+	ayfConnectArgAllocateDeallocate(IjvxObject*& mainObjRef, 
+		std::list< IjvxObject*>& subsequentComponentsRef, jvxBool& attachToHostRefArg,
 		void_pvoid_callback ptr_callback_multipurposeArg = NULL, void* prv_callback_multipurposeArg = NULL,
 		jvxHandle* embeddingInfoArg = NULL) :
-		entryObj(mainObjRef), subsequentComponents(subsequentComponentsRef),
+		entryObj(mainObjRef), subsequentComponents(subsequentComponentsRef), attachToHostRef(attachToHostRefArg),
 		ptr_callback_multipurpose(ptr_callback_multipurposeArg), prv_callback_multipurpose(prv_callback_multipurposeArg), embeddingInfo(embeddingInfoArg) {
 	};
 };
