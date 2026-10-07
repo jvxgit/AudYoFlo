@@ -24,6 +24,7 @@ class irDataSet
 public:
 	QVector<jvxData> irMeasured;
 	std::string nameMeasurement;
+	std::string tagMeasurement;
 	std::string nameChannel;
 	jvxSize rate = JVX_SIZE_UNSELECTED;
 };
@@ -54,7 +55,7 @@ public:
 	jvxExtractHrtfs(QWidget* parent);
 	~jvxExtractHrtfs();
 
-	void init(IjvxQtAcousticMeasurement* refMeasure) override;
+	void init(IjvxQtAcousticMeasurement* refMeasure, IjvxHost* hostRef) override;
 	void terminate() override;
 	jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId) override;
 	QWidget* my_widget() override;

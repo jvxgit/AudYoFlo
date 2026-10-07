@@ -17,7 +17,7 @@ jvxExtractHrtfs::~jvxExtractHrtfs()
 JVX_FFT_TOOLS_DEFINE_FFT_SIZES
 
 void
-jvxExtractHrtfs::init(IjvxQtAcousticMeasurement* refMeasureArg)
+jvxExtractHrtfs::init(IjvxQtAcousticMeasurement* refMeasureArg, IjvxHost* hostRef)
 {
 	jvxSize i;
 
@@ -68,13 +68,15 @@ jvxExtractHrtfs::process_data(jvxMeasurementDataProcessorTask task, jvxHandle* f
 	setData1.irMeasured.resize(dataTransfer->ir_data1_len);
 	memcpy(setData1.irMeasured.data(), dataTransfer->ir_data1, sizeof(jvxData) * dataTransfer->ir_data1_len);
 	setData1.nameChannel = dataTransfer->ir_data1_chan_name;
-	setData1.nameMeasurement = dataTransfer->ir_data1_meas_name;
+	setData1.nameMeasurement = dataTransfer->ir_data1_meas_name_;
+	setData1.tagMeasurement = dataTransfer->ir_data1_meas_tag;
 	setData1.rate = dataTransfer->ir_data1_rate;
 
 	setData2.irMeasured.resize(dataTransfer->ir_data2_len);
 	memcpy(setData2.irMeasured.data(), dataTransfer->ir_data2, sizeof(jvxData) * dataTransfer->ir_data2_len);
 	setData2.nameChannel = dataTransfer->ir_data2_chan_name;
-	setData2.nameMeasurement = dataTransfer->ir_data2_meas_name;
+	setData2.nameMeasurement = dataTransfer->ir_data2_meas_name_;
+	setData2.tagMeasurement = dataTransfer->ir_data2_meas_tag;
 	setData2.rate = dataTransfer->ir_data2_rate;
 
 	compute_auto();

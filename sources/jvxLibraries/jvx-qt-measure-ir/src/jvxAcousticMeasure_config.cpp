@@ -38,6 +38,11 @@ jvxAcousticMeasure::get_configuration_ext(jvxCallManagerConfiguration* callConf,
 			processor->addSubsectionToSection(datCfg, datSubSec);
 
 			datSubSec = NULL;
+			processor->createAssignmentString(&datSubSec, "IMPORT_DATA_MEASUREMENT_TAG",
+				dataPlot1.measurement_tag.c_str());
+			processor->addSubsectionToSection(datCfg, datSubSec);
+
+			datSubSec = NULL;
 			processor->createAssignmentString(&datSubSec, "IMPORT_DATA_CHANNEL_NAME",
 				dataPlot1.channel_name.c_str());
 			processor->addSubsectionToSection(datCfg, datSubSec);
@@ -57,6 +62,11 @@ jvxAcousticMeasure::get_configuration_ext(jvxCallManagerConfiguration* callConf,
 			jvxConfigData* datSubSec = NULL;
 			processor->createAssignmentString(&datSubSec, "IMPORT_DATA_MEASUREMENT_NAME",
 				dataPlot1.measurement_name.c_str());
+			processor->addSubsectionToSection(datCfg, datSubSec);
+
+			datSubSec = NULL;
+			processor->createAssignmentString(&datSubSec, "IMPORT_DATA_MEASUREMENT_TAG",
+				dataPlot1.measurement_tag.c_str());
 			processor->addSubsectionToSection(datCfg, datSubSec);
 
 			datSubSec = NULL;
@@ -350,6 +360,7 @@ jvxAcousticMeasure::put_configuration_ext(jvxCallManagerConfiguration* callConf,
 	{
 		std::string meas_name;
 		std::string chan_name;
+		std::string meas_tag;
 		jvxConfigData* datSubSec = NULL;
 		processor->getReferenceEntryCurrentSection_name(datCfg, &datSubSec, "IMPORT_DATA_MEASUREMENT_NAME");
 		if (datSubSec)
@@ -360,6 +371,18 @@ jvxAcousticMeasure::put_configuration_ext(jvxCallManagerConfiguration* callConf,
 				meas_name = astr.std_str();
 			}
 		}
+
+		datSubSec = NULL;
+		processor->getReferenceEntryCurrentSection_name(datCfg, &datSubSec, "IMPORT_DATA_MEASUREMENT_TAG");
+		if (datSubSec)
+		{
+			res = processor->getAssignmentString(datSubSec, &astr);
+			if (res == JVX_NO_ERROR)
+			{
+				meas_tag = astr.std_str();
+			}
+		}
+
 		datSubSec = NULL;
 		processor->getReferenceEntryCurrentSection_name(datCfg, &datSubSec, "IMPORT_DATA_CHANNEL_NAME");
 		if (datSubSec)
@@ -375,7 +398,7 @@ jvxAcousticMeasure::put_configuration_ext(jvxCallManagerConfiguration* callConf,
 			(!meas_name.empty()) &&
 			(!chan_name.empty()))
 		{
-			import_data_plot(dataPlot1, meas_name, chan_name);
+			import_data_plot(dataPlot1, meas_name, meas_tag, chan_name);
 		}
 		datCfg = NULL;
 	}
@@ -386,6 +409,7 @@ jvxAcousticMeasure::put_configuration_ext(jvxCallManagerConfiguration* callConf,
 	{
 		std::string meas_name;
 		std::string chan_name;
+		std::string meas_tag;
 		jvxConfigData* datSubSec = NULL;
 		processor->getReferenceEntryCurrentSection_name(datCfg, &datSubSec, "IMPORT_DATA_MEASUREMENT_NAME");
 		if (datSubSec)
@@ -396,6 +420,18 @@ jvxAcousticMeasure::put_configuration_ext(jvxCallManagerConfiguration* callConf,
 				meas_name = astr.std_str();
 			}
 		}
+
+		datSubSec = NULL;
+		processor->getReferenceEntryCurrentSection_name(datCfg, &datSubSec, "IMPORT_DATA_MEASUREMENT_TAG");
+		if (datSubSec)
+		{
+			res = processor->getAssignmentString(datSubSec, &astr);
+			if (res == JVX_NO_ERROR)
+			{
+				meas_tag = astr.std_str();
+			}
+		}
+
 		datSubSec = NULL;
 		processor->getReferenceEntryCurrentSection_name(datCfg, &datSubSec, "IMPORT_DATA_CHANNEL_NAME");
 		if (datSubSec)
@@ -411,7 +447,7 @@ jvxAcousticMeasure::put_configuration_ext(jvxCallManagerConfiguration* callConf,
 			(!meas_name.empty()) &&
 			(!chan_name.empty()))
 		{
-			import_data_plot(dataPlot2, meas_name, chan_name);
+			import_data_plot(dataPlot2, meas_name, meas_tag, chan_name);
 		}
 
 		datCfg = NULL;

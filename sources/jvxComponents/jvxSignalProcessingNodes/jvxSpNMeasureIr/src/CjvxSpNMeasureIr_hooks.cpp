@@ -302,6 +302,7 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, get_measurement
 
 		std::string nmMeas = ptrIn->nmMeas.std_str();
 		std::string nmChan = ptrIn->nmChan.std_str();
+		std::string nmTag = ptrIn->tagMeas.std_str();
 
 		if (!nmMeas.empty())
 		{
@@ -420,6 +421,8 @@ JVX_PROPERTIES_FORWARD_C_CALLBACK_EXECUTE_FULL(CjvxSpNMeasureIr, get_measurement
 				ptrIn->nmChan.assign(elmC->nmChan.std_str());
 				ptrIn->nmMeas.assign(
 					genMeasureIr_node::results.stored_measurements.value.entries[selResMeas]);
+				// elmM->nameMeasure.std_str());
+				ptrIn->tagMeas.assign(elmM->tagMeasure);
 			}
 			else
 			{

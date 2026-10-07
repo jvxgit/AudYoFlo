@@ -10,7 +10,8 @@ typedef enum
 	JVX_ACOUSTIC_MEASURE_TASK_DELAY,
 	JVX_ACOUSTIC_MEASURE_TASK_STORE_DELAY,
 	JVX_ACOUSTIC_MEASURE_TASK_STORE_EQUALIZER,
-	JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS /* jvxMeasurementTaskPass2Ir */
+	JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS, /* jvxMeasurementTaskPass2Ir */
+	JVX_ACOUSTIC_MEASURE_TASK_PASS_FIRST_MEASURED_IRS /* jvxMeasurementTaskPassFirstIr */
 } jvxMeasurementDataProcessorTask;
 
 struct jvxMeasurementTaskEqualize
@@ -34,20 +35,27 @@ struct jvxMeasurementTaskEqualize
 	jvxSize samplerate = JVX_SIZE_UNSELECTED;
 };
 
-struct jvxMeasurementTaskPass2Ir
+class jvxMeasurementTaskPassFirstIr
 {
+public:
 	jvxData* ir_data1 = nullptr;
 	jvxSize ir_data1_len = 0;
 	jvxSize ir_data1_rate = JVX_SIZE_UNSELECTED;
-	const char* ir_data1_meas_name = nullptr;
+	const char* ir_data1_meas_name_ = nullptr;
+	const char* ir_data1_meas_tag = nullptr;
 	const char* ir_data1_chan_name = nullptr;
 
+};
+
+class jvxMeasurementTaskPass2Ir: public jvxMeasurementTaskPassFirstIr
+{
+public:
 	jvxData* ir_data2 = nullptr;
 	jvxSize ir_data2_len = 0;
 	jvxSize ir_data2_rate = JVX_SIZE_UNSELECTED;
-	const char* ir_data2_meas_name = nullptr;
+	const char* ir_data2_meas_name_ = nullptr;
+	const char* ir_data2_meas_tag = nullptr;
 	const char* ir_data2_chan_name = nullptr;
-
 };
 
 JVX_INTERFACE  IjvxQtAcousticMeasurement;
@@ -57,7 +65,7 @@ JVX_INTERFACE IjvxQtAcousticMeasurement_process
 public:
 	virtual ~IjvxQtAcousticMeasurement_process() {};
 
-	virtual void init(IjvxQtAcousticMeasurement* refMeasure) = 0;
+	virtual void init(IjvxQtAcousticMeasurement* refMeasure, IjvxHost* hostRef) = 0;
 	virtual void terminate() = 0;
 	virtual jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId) = 0;
 

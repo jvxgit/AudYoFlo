@@ -52,7 +52,7 @@ jvxAcousticEqualizer::~jvxAcousticEqualizer()
 JVX_FFT_TOOLS_DEFINE_FFT_SIZES
 
 void
-jvxAcousticEqualizer::init(IjvxQtAcousticMeasurement* refMeasureArg)
+jvxAcousticEqualizer::init(IjvxQtAcousticMeasurement* refMeasureArg, IjvxHost* hostRef)
 {
 	jvxSize i;
 

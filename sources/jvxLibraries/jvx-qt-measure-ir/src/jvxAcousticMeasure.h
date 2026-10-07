@@ -141,6 +141,7 @@ private:
 	public:
 		oneMeasurementChannel oneChan;
 		std::string measurement_name;
+		std::string measurement_tag;
 		std::string channel_name;
 		std::string file_folder_read;
 		struct
@@ -309,7 +310,8 @@ public:
 	void replot_diagrams(jvxBool updateDataPrimary, jvxBool updateDataSecondary);
 	void replot_freqdomain(jvxBool updateDataSecondary,
 		QVector<jvxData>* ploty1,
-		QVector<jvxData>* ploty2, jvxSize xmin, jvxSize xmax);
+		QVector<jvxData>* ploty2, 
+		int xmin, int xmax); // must be int here to take into account negative values
 
 	void verify_min_gap(jvxData& minv, jvxData& maxv);
 
@@ -361,6 +363,7 @@ public:
 	jvxErrorType import_data_plot(
 		oneSetDataPlot& dtPlot,
 		const std::string& nmMeas,
+		const std::string& tagMeas,
 		const std::string& nmChan);
 
 	void write_single_marker(
@@ -376,6 +379,7 @@ public:
 
 	void trigger_proc_equalizer(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId);
 	void trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId);
+	void trigger_proc_pass1stir(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId);
 
 signals:
 

@@ -190,9 +190,10 @@ jvxAcousticMeasure::import_data_plot1()
 	jvxHandle* ptr = NULL;
 	jvxErrorType res = JVX_NO_ERROR;
 
-	res = import_data_plot(dataPlot1, "", "");
+	res = import_data_plot(dataPlot1, "", "", "");
 	dataPlot12 = dataPlot1;
 	dataPlot12.relink();
+	update_window();
 }
 
 
@@ -203,7 +204,8 @@ jvxAcousticMeasure::import_data_plot2()
 	jvxHandle* ptr = NULL;
 	jvxErrorType res = JVX_NO_ERROR;
 
-	res = import_data_plot(dataPlot2, "", "");
+	res = import_data_plot(dataPlot2, "", "", "");
+	update_window();
 }
 
 void
@@ -364,6 +366,14 @@ jvxAcousticMeasure::showThisProcessor(jvxMeasurementDataProcessorTask task)
 			retVal = true;
 		}
 		break;
+	case JVX_ACOUSTIC_MEASURE_TASK_PASS_FIRST_MEASURED_IRS:
+		if (
+			(modeTd == JVX_PLOT_MODE_TD_IR) &&
+			(dataPlot1.oneChan.lBuf))
+		{
+			retVal = true;
+		}
+		break;
 	}
 	return retVal;
 }
@@ -450,6 +460,7 @@ jvxErrorType
 jvxAcousticMeasure::import_data_plot(
 	oneSetDataPlot& dtPlot,
 	const std::string& nmMeas,
+	const std::string& tagMeas,
 	const std::string& nmChan)
 {
 	jvxErrorType res = JVX_NO_ERROR;
@@ -469,6 +480,7 @@ jvxAcousticMeasure::import_data_plot(
 		{
 			newImport.oneChan.nmChan.assign(nmChan);
 			newImport.oneChan.nmMeas.assign(nmMeas);
+			newImport.oneChan.tagMeas.assign(tagMeas);
 		}
 
 		if (checkBox_override->isChecked())
@@ -496,6 +508,7 @@ jvxAcousticMeasure::import_data_plot(
 				dtPlot.oneChan.lBuf = newImport.oneChan.lBuf;
 				dtPlot.oneChan.nmChan.assign(newImport.oneChan.nmChan.std_str());
 				dtPlot.oneChan.nmMeas.assign(newImport.oneChan.nmMeas.std_str());
+				dtPlot.oneChan.tagMeas.assign(newImport.oneChan.tagMeas.std_str());
 
 				dtPlot.oneChan.args = newImport.oneChan.args;
 
@@ -524,6 +537,7 @@ jvxAcousticMeasure::import_data_plot(
 					}
 
 					dtPlot.measurement_name = dtPlot.oneChan.nmMeas.std_str();
+					dtPlot.measurement_tag = dtPlot.oneChan.tagMeas.std_str();
 					dtPlot.channel_name = dtPlot.oneChan.nmChan.std_str();
 					dtPlot.file_folder_read = jvx_pathExprFromFilePath(
 						dtPlot.oneChan.fileLocate.std_str(), JVX_SEPARATOR_DIR_CHAR);

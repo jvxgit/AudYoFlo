@@ -70,7 +70,7 @@ public:
 	jvxAcousticEqualizer(QWidget* parent);
 	~jvxAcousticEqualizer();
 
-	void init(IjvxQtAcousticMeasurement* refMeasure) override;
+	void init(IjvxQtAcousticMeasurement* refMeasure, IjvxHost* hostRef) override;
 	void terminate() override;
 	jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId) override;
 	QWidget* my_widget() override;

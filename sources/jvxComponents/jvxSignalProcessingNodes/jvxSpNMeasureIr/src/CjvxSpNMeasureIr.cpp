@@ -288,6 +288,8 @@ CjvxSpNMeasureIr::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		token = jvx_replaceCharacter(token, ' ', '_');
 		token = jvx_replaceCharacter(token, ':', '-');
 		token = jvx_replaceCharacter(token, '/', '-');
+		
+		std::string tag = genMeasureIr_node::config.measurement_tag.value;
 
 		genMeasureIr_node::monitor.display_text_state.value = "- Evaluation of Captured Data -";
 
@@ -349,6 +351,7 @@ CjvxSpNMeasureIr::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 						oneChan.lBuf = 0;
 						oneChan.nmChan.clear();
 						oneChan.nmMeas.clear();
+						oneChan.tagMeas.clear();
 						cnt++;
 					}
 					else
@@ -371,6 +374,10 @@ CjvxSpNMeasureIr::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 
 				oneResult.nameMeasure = inProcessing.activeMeasures[i]->description;
 				oneResult.tokenMeasure = token;
+				
+				// Add a tag
+				oneResult.tagMeasure = genMeasureIr_node::config.measurement_tag.value;
+
 				oneResult.rate = _common_set_icon.theData_in->con_params.rate;
 				oneResult.pathStoreFolder = inProcessing.activeMeasures[i]->pathStoreFolder;
 				oneResult.storeConfig = true;
@@ -428,7 +435,7 @@ CjvxSpNMeasureIr::postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 						callback_report_txt(txt);
 					}
 
-					inProcessing.activeMeasures[i]->write_data(token, 
+					inProcessing.activeMeasures[i]->write_data(token, tag,
 						theWriterHdl, proc, static_cast<IjvxSpNMeasureIr_oneMeasurement_report*>(this));
 
 					// Align protocol filename in both lists

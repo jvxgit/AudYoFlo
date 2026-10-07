@@ -388,6 +388,8 @@ CjvxSpNIIRResample::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 		// Option 2: in -> im -> filter -> out 			|-> Up > 1; Down > 1
 		// Option 3: in -> out -> filter -> out 		|-> Up > 1; Down = 1	
 		
+		jvxData fac = currNegoStat.resampling.cc.oversamplingFactor;
+
 		switch (runtime.useCase)
 		{
 		case ayfProcUseCase::AYF_PROCUSE_CASE_1_G1:
@@ -417,7 +419,7 @@ CjvxSpNIIRResample::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				memset(runtime.bufIntermediate[c], 0, sizeof(jvxData) * runtime.lenIntermediate);
 				for (i = 0; i < currNegoStat.in.bSize; i++)
 				{
-					runtime.bufIntermediate[c][cnt] = bufsIn[c][i];
+					runtime.bufIntermediate[c][cnt] = bufsIn[c][i] * fac;
 					cnt += currNegoStat.resampling.cc.oversamplingFactor;
 				}
 			}
@@ -447,7 +449,7 @@ CjvxSpNIIRResample::process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 				memset(bufsOut[c], 0, sizeof(jvxData) * currNegoStat.out.bSize);
 				for (i = 0; i < currNegoStat.in.bSize; i++)
 				{
-					bufsOut[c][cnt] = bufsIn[c][i];
+					bufsOut[c][cnt] = bufsIn[c][i] * fac;
 					cnt += currNegoStat.resampling.cc.oversamplingFactor;
 				}
 			}

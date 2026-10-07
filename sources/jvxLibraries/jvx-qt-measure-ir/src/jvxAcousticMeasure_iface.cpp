@@ -342,7 +342,7 @@ jvxAcousticMeasure::init(IjvxHost* theHost, jvxCBitField mode,
 
 	for (auto& elm : lstSubProcessors)
 	{
-		elm.proc->init(static_cast<IjvxQtAcousticMeasurement*>(this));
+		elm.proc->init(static_cast<IjvxQtAcousticMeasurement*>(this), theHost);
 	}
 	theHostRef = theHost;
 }
@@ -698,6 +698,9 @@ jvxAcousticMeasure::trigger_processor()
 			case JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS:
 				trigger_proc_pass2ir(proc->proc, proc->tagId);
 				break;
+			case JVX_ACOUSTIC_MEASURE_TASK_PASS_FIRST_MEASURED_IRS:
+				trigger_proc_pass1stir(proc->proc, proc->tagId);
+				break;
 			}
 		}
 	}
@@ -744,7 +747,8 @@ jvxAcousticMeasure::trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc
 	taskData.ir_data1 = dataPlot1.oneChan.bufIr;
 	taskData.ir_data1_len = dataPlot1.oneChan.lBuf;
 	taskData.ir_data1_rate = dataPlot1.oneChan.rate;
-	taskData.ir_data1_meas_name = dataPlot1.measurement_name.c_str();
+	taskData.ir_data1_meas_name_ = dataPlot1.measurement_name.c_str();
+	taskData.ir_data1_meas_tag = dataPlot1.measurement_tag.c_str();
 	taskData.ir_data1_chan_name = dataPlot1.channel_name.c_str();
 
 	if (!dataPlot2.oneChan.lBuf)
@@ -754,7 +758,8 @@ jvxAcousticMeasure::trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc
 	taskData.ir_data2 = dataPlot2.oneChan.bufIr;
 	taskData.ir_data2_len = dataPlot2.oneChan.lBuf;
 	taskData.ir_data2_rate = dataPlot2.oneChan.rate;
-	taskData.ir_data2_meas_name = dataPlot2.measurement_name.c_str();
+	taskData.ir_data2_meas_name_ = dataPlot2.measurement_name.c_str();
+	taskData.ir_data2_meas_tag = dataPlot2.measurement_tag.c_str();
 	taskData.ir_data2_chan_name = dataPlot2.channel_name.c_str();
 
 	if (readyForProcess)
@@ -762,4 +767,26 @@ jvxAcousticMeasure::trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc
 		proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS, &taskData, tagId);
 	}
 }
-		
+	
+void
+jvxAcousticMeasure::trigger_proc_pass1stir(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId)
+{
+	jvxMeasurementTaskPassFirstIr taskData;
+	jvxBool readyForProcess = true;
+
+	if (!dataPlot1.oneChan.lBuf)
+	{
+		readyForProcess = false;
+	}
+	taskData.ir_data1 = dataPlot1.oneChan.bufIr;
+	taskData.ir_data1_len = dataPlot1.oneChan.lBuf;
+	taskData.ir_data1_rate = dataPlot1.oneChan.rate;
+	taskData.ir_data1_meas_name_ = dataPlot1.measurement_name.c_str();
+	taskData.ir_data1_meas_tag = dataPlot1.measurement_tag.c_str();
+	taskData.ir_data1_chan_name = dataPlot1.channel_name.c_str();
+
+	if (readyForProcess)
+	{
+		proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_PASS_FIRST_MEASURED_IRS, &taskData, tagId);
+	}
+}

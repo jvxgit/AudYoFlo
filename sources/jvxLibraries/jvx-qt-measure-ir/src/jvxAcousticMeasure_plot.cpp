@@ -129,9 +129,9 @@ jvxAcousticMeasure::replot_freqdomain(
 	jvxBool updateDataSecondary,
 	QVector<jvxData>* ploty1,
 	QVector<jvxData>* ploty2, 
-	jvxSize xmin_td, jvxSize xmax_td)
+	int xmin_td, int xmax_td)
 {
-	jvxSize i;
+	int i;
 	jvxData xmax = JVX_DATA_MAX_NEG;
 	jvxData xmin = JVX_DATA_MAX_POS;
 	jvxData ymax = JVX_DATA_MAX_NEG;
@@ -188,9 +188,16 @@ jvxAcousticMeasure::replot_freqdomain(
 				mlmax = JVX_MIN(xmax_td, (*ploty1).size() - 1);
 			}
 			memset(inFld, 0, sizeof(jvxData) * sigLu);
-			for (i = xmin_td; i <= mlmax; i++)
+			for (i = xmin_td; i <= (int)mlmax; i++)
 			{
-				inFld[i - xmin_td] = (*ploty1)[(int)(i)];
+				if (i >= 0)
+				{
+					inFld[i - xmin_td] = (*ploty1)[(int)(i)];
+				}
+				else
+				{ 
+					inFld[i - xmin_td] = 0;
+				}
 			}
 
 			// ===========================================================================================

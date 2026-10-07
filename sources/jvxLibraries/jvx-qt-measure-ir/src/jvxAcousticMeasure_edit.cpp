@@ -40,6 +40,8 @@ jvxAcousticMeasure::mouse_release_td(QMouseEvent* event)
 	jvxData pos_x = qcp_timedomain->xAxis->pixelToCoord(pt.x());
 	jvxData pos_y = qcp_timedomain->yAxis->pixelToCoord(pt.y());
 
+	// pos_x = JVX_MAX(pos_x, 0);
+
 	jvxTick stop_tick = JVX_GET_TICKCOUNT_US_GET_CURRENT(&tStamp);
 	jvxTick deltaT = (stop_tick - td.start_tick);
 	if (td.start_tick == 0)
