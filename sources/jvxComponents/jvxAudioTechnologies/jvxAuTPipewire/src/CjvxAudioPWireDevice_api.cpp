@@ -58,7 +58,7 @@ CjvxAudioPWireDevice::activate_device_api()
    inout_params._common_set_node_params_a_1io.data_flow = JVX_DATAFLOW_PUSH_ACTIVE;
    inout_params._common_set_node_params_a_1io.segmentation.x = buffersize;
    inout_params._common_set_node_params_a_1io.segmentation.y = 1;
-   inout_params._common_set_node_params_a_1io.subformat = JVX_DATAFORMAT_GROUP_AUDIO_PCM_DEINTERLEAVED;
+   inout_params._common_set_node_params_a_1io.subformat = JVX_DATAFORMAT_GROUP_AUDIO_PCM_NONINTERLEAVED;
 
    inout_params._common_set_node_params_a_1io.derive_buffersize();
 
