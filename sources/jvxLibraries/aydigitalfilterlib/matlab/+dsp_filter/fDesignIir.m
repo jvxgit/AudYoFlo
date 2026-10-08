@@ -29,7 +29,7 @@ plotSpecGram = false;
 fc = freqFac * fs/2 * Up/Down;
 
 [coeffs_sos, coeffs_g, hdl] = jvxIIRDesign('init', design, type, order, fs, fc, rip, stopDbRoll);
-showIir(coeffs_sos, coeffs_g, txtLeg, fs);
+dsp_filter.showIir(coeffs_sos, coeffs_g, txtLeg, fs);
 
 % Run test filter
 
