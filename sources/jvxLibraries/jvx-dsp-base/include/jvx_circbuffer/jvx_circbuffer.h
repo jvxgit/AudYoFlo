@@ -176,7 +176,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf(jvx_circbuffer* hdl,
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample(
 	jvx_circbuffer* hdl, jvxData** fCoeffs_fw, const jvxData* fieldIn, 
 	jvxData* fieldOut, jvxData* cfade_start, jvxData cfade_increment,
-	jvxData* copyFrom);
+	const jvxData* copyFrom);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdlIn,
 	const jvxData* fCoeffs_fw,

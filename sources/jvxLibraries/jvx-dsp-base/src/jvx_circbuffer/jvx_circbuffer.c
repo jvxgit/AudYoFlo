@@ -2178,7 +2178,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample(
 	jvx_circbuffer* hdl, jvxData** fCoeffs_fw,
 	const jvxData* fieldIn, jvxData* fieldOut,
 	jvxData* cfade_start, jvxData cfade_increment,
-	jvxData* copyFrom)
+	const jvxData* copyFrom)
 {
 	int i, l;
 	assert(hdl[0].nUnits == 1);

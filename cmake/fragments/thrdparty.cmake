@@ -47,7 +47,7 @@ if(JVX_USE_QT)
 
   if(JVX_USE_QWT)
     # set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qwt-${JVX_QWT_VERSION}/cmake)
-    set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/qwt)
+    set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qwt)
   endif()
   if(JVX_USE_QWT_POLAR)
     # set(JVX_BASE_3RDPARTY_LIBS ${JVX_BASE_3RDPARTY_LIBS} ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/qwtPolar-${JVX_QWT_POLAR_VERSION}/cmake)
