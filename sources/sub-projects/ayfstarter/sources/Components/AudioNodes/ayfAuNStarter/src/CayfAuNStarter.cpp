@@ -127,11 +127,13 @@ CayfAuNStarter::local_process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage)
 	jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(_common_set_ocon.theData_out);
 
 	FrameMarkStart("ayf_starter_process"); // Mark the start of a frame in Tracy Profiler
+	
 	// Involve the c-library for processing
 	jvxDspBaseErrorType res = ayf_starter_process(&processing_lib, buffers_in, buffers_out,
 		_common_set_icon.theData_in->con_params.number_channels,
 		_common_set_ocon.theData_out.con_params.number_channels,
 		_common_set_icon.theData_in->con_params.buffersize);
+
 	FrameMarkEnd("ayf_starter_process"); // Mark the end of a frem in Tracy Profiler
 	
 	return res;

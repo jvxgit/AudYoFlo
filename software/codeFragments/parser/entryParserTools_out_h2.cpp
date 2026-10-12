@@ -13,7 +13,8 @@ void parseInput(char* argv[], int argc,
 	std::string& inputFName, 
 	std::string& outFileName_h, std::string& outFileName_hp,
 	std::vector<std::string>& includePaths,
-	std::vector<std::string>& ifdefs)
+	std::vector<std::string>& ifdefs,
+	std::string& assClassName)
 {
 	int cnt = 0;
 	bool cont = true;
@@ -54,6 +55,14 @@ void parseInput(char* argv[], int argc,
 				includePaths.push_back(argv[cnt++]);
 			}
 
+		}
+		else if (nextToken == "-C")
+		{
+			tmp = "";
+			if (cnt < argc)
+			{
+				assClassName = argv[cnt++];
+			}
 		}
 		else if (nextToken == "-D")
 		{
@@ -99,8 +108,9 @@ main(int argc, char** argv)
 	std::string inputFName;
 	std::string outFileName_h;
 	std::string outFileName_hp;
+	std::string assClassName;
 
-	parseInput(&argv[1], argc-1, inputFName, outFileName_h, outFileName_hp, includePaths, ifdefs);
+	parseInput(&argv[1], argc-1, inputFName, outFileName_h, outFileName_hp, includePaths, ifdefs, assClassName);
 
 	//================================================================
 	// Determine the name of the file to generate source code to
