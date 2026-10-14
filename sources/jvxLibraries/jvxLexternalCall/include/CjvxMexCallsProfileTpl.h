@@ -130,21 +130,21 @@ public:
 			CjvxMexCalls::is_matlab_processing_engaged(&engaged);
 		}
 
+		// ===================================================
+		// This case to run Matlab and C code in parallel
+		// ===================================================
+
+		if (config.matlab_profiling_enabled)
+		{
+			// Run this command only once!! Need to put it here since processing information is not available in "prepare"!!
+			CjvxMexCallsProfiler::profile_start_in_process();
+		}
+
 		if(engaged)
 		{
 			jvxData** buffers_in = jvx_process_icon_extract_input_buffers<jvxData>(this->_common_set_icon.theData_in, idx_stage);
 			jvxData** buffers_out = jvx_process_icon_extract_output_buffers<jvxData>(this->_common_set_ocon.theData_out);
 		
-			// ===================================================
-			// This case to run Matlab and C code in parallel
-			// ===================================================
-
-			if (config.matlab_profiling_enabled)
-			{
-				// Run this command only once!! Need to put it here since processing information is not available in "prepare"!!
-				CjvxMexCallsProfiler::profile_start_in_process();
-			}			
-
 			// ======================================================================================
 			// Run the preprocessing functions
 			// We need to do it here since the inputmay have been pre-processed
@@ -183,7 +183,7 @@ public:
 			}
 		}
 
-		if (engaged && config.matlab_profiling_enabled)
+		if (config.matlab_profiling_enabled)
 		{
 			// Profiler step not necessary requires c code execution
 			CjvxMexCallsProfiler::profile_pre_step_in_process();
@@ -207,7 +207,7 @@ public:
 			}
 		}
 
-		if (engaged && config.matlab_profiling_enabled)
+		if (config.matlab_profiling_enabled)
 		{
 			// Profiler step not necessary requires c code execution
 			CjvxMexCallsProfiler::profile_step_in_process();
