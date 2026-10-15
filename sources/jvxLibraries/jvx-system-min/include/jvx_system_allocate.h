@@ -208,11 +208,14 @@ JVX_SYSTEM_LIB_END
 #define JVX_SAFE_DELETE_FIELD(ptr) { if(ptr) free(ptr); ptr = NULL; }
 #define JVX_SAFE_DELETE_FIELD_2D(retPtr, dimY) \
 { \
-	for(jvxSize i = 0; i < dimY; i++) \
+	if(retPtr) \
 	{ \
-		JVX_SAFE_DELETE_FIELD(retPtr[i]); \
+		for(jvxSize i = 0; i < dimY; i++) \
+		{ \
+			JVX_SAFE_DELETE_FIELD(retPtr[i]); \
+		} \
+		JVX_SAFE_DELETE_FIELD(retPtr); \
 	} \
-	JVX_SAFE_DELETE_FIELD(retPtr); \
 }
 
 #define JVX_SAFE_DELETE_FIELD_TYPE(ptr, type) { if(ptr) free((type*)ptr); ptr = NULL; }
