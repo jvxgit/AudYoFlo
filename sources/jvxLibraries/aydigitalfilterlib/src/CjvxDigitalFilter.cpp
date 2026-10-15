@@ -51,7 +51,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;
@@ -106,7 +106,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;
@@ -159,7 +159,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;
@@ -210,7 +210,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;
@@ -263,7 +263,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;
@@ -314,7 +314,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;
@@ -365,7 +365,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;
@@ -414,7 +414,7 @@ public:
 		return filter_.response(f);
 	}
 
-	virtual std::vector<BiquadCoeffs> coefficients()
+	virtual std::vector<BiquadCoeffs> coefficients() override
 	{
 		std::vector<BiquadCoeffs> coeffs;
 		Dsp::Cascade& cascade = filter_;

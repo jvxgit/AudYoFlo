@@ -2467,7 +2467,7 @@ std::string jvx_removeSpacesLR(std::string in)
 	jvxSize istart = 0;
 	jvxSize istop = in.size()-1;
 
-	for (i = 0; i < in.size(); i++)
+	for (i = 0; i < (int)in.size(); i++)
 	{
 		if (in[i] == ' ')
 		{
@@ -2809,7 +2809,7 @@ void jvx_tokenRemoveCharLeftRight(
 	if (removeLeft)
 	{
 		// Remove from left side
-		for (; cnt < oneToken.size(); cnt++)
+		for (; cnt < (int)oneToken.size(); cnt++)
 		{
 			if (oneToken[cnt] == removeit)
 			{
@@ -3965,7 +3965,7 @@ namespace jvx {
 			// Carriage return to be replaced with \r
 			// Tab to be replaced with \t
 			// Double quote to be replaced with \"
-			// Backslash to be replaced with \\
+			// Backslash to be replaced with "\\" 
 			
 			int mode = 0;
 			std::string retVal;
@@ -5112,7 +5112,8 @@ namespace jvx {
 
 		void generate_random_id(char* out, jvxSize nOut)
 		{
-			for (int i = 0; i < nOut-1; ++i)
+			assert(nOut > 0);
+			for (int i = 0; i < (int)(nOut-1); ++i)
 			{
 				out[i] = charset[rand() % (int)(sizeof(charset) - 1)];
 			}

@@ -111,16 +111,16 @@ openLoopPitchEstimation::determineOpenLoopPitch(jvxData& excitationCrit)
 	jvxData maxValue = -HUGE;
 	
 	// Find the maximum autocorrelation in the integer delay range
-	for(i = minTimeIntervall ; i <=maxTimeIntervall; i ++)
+	for(i = minTimeIntervall ; i <= (jvxSize)maxTimeIntervall; i ++)
 	{
 		// Determine autocorrelation
 		correlation[i-minTimeIntervall] = 0;
 
-		for(j =0; j < bufferLength; j++)
+		for(j =0; j < (jvxSize)bufferLength; j++)
 			correlation[i-minTimeIntervall] += buffer[j] * tempBuffer[j];
 		
 		// Find a way to avoid pitch doubling
-		if(i<2*max_index-2)
+		if(i< (jvxSize)(2*max_index-2))
 		{
 			if(correlation[i-minTimeIntervall] > maxValue)
 			{
@@ -149,7 +149,7 @@ openLoopPitchEstimation::determineOpenLoopPitch(jvxData& excitationCrit)
 	
 	if(p>= minTimeIntervall+delta)
 	{
-		for( i = p-delta; i < p+delta; i++)
+		for( i = p-delta; i < (jvxSize)(p+delta); i++)
 		{
 			if(maxValue * jvxDataWeight < correlation[i-minTimeIntervall])
 				max_index = i;
@@ -166,7 +166,7 @@ openLoopPitchEstimation::determineOpenLoopPitch(jvxData& excitationCrit)
 	nom =0;
 	denom1 = 0;
 	denom2 = 0;
-	for(i = 0; i < bufferLength; i++)
+	for(i = 0; i < (jvxSize)bufferLength; i++)
 	{
 		nom += buffer[i] * tempBuffer[i];
 		denom1 += buffer[i] * buffer[i];
@@ -198,7 +198,7 @@ shift(jvxData *dest, int shiftCoeff,int size)
 	// Shift to right
 	if(shiftCoeff > 0)
 	{
-		for(i =0; i <(size-shiftCoeff);i++)
+		for(i =0; i < (unsigned int)(size-shiftCoeff);i++)
 		{
 			dest[(size-1-i)] = dest[(size-1-i-shiftCoeff)];
 		}

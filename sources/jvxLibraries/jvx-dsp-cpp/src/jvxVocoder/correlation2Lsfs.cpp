@@ -171,8 +171,10 @@ calculateSymmetricLsfs(jvxData *alphap, jvxData *teta, int amountLsfs)
 											eigenvalues are stored in d
 											array e is destroyed */
 	
-    for(i=0;i<(amountLsfs/2); i++) 
-        teta[i*2]=acos(d[i]*0.5);/*even part of teta*/
+	for (i = 0;i < (amountLsfs / 2); i++)
+	{
+		teta[i * 2] = acos(d[i] * 0.5);/*even part of teta*/
+	}
 
 	/* de-allocate dynamic RAM */
 	free(d);

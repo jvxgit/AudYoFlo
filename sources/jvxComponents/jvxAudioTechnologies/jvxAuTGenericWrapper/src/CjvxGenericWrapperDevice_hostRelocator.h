@@ -292,7 +292,7 @@ public:
 		return JVX_ERROR_UNSUPPORTED;
 	}
 
-	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str)
+	jvxErrorType read_connect_parameters_icon(jvxConnectionParams* str) override
 	{
 		if (str)
 		{
@@ -305,7 +305,7 @@ public:
 		return JVX_NO_ERROR;
 	}
 
-	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str)
+	jvxErrorType read_connect_parameters_ocon(jvxConnectionParams* str) override
 	{
 		if (str)
 		{

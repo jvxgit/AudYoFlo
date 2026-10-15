@@ -76,7 +76,7 @@ bool jvx_findPropertyDescriptorId(jvxSize id, jvxDataFormat* form, jvxInt32* num
 		{
 			break;
 		}
-		if(jvxProperties[idx].id == id)
+		if(jvxProperties[idx].id == (jvxInt32)id)
 		{
 			if(form)
 			{
@@ -108,7 +108,7 @@ bool jvx_findPropertyNameId(jvxSize id, std::string& name)
 		{
 			break;
 		}
-		if(jvxProperties[idx].id == id)
+		if(jvxProperties[idx].id == (jvxInt32)id)
 		{
 			name = jvxProperties[idx].nameProperty;
 			foundIt = true;

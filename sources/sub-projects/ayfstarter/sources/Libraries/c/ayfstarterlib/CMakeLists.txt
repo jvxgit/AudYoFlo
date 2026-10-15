@@ -32,7 +32,9 @@ set(LOCAL_LIBS jvx-dsp-base_static)
 set(LOCAL_COMPILE_DEFINITIONS "${FFT_COMPILE_DEFINITIONS}")
 
 if(JVX_USE_ORC)
-    message(FATAL_ERROR "ORC is on!")
+    
+	# message(FATAL_ERROR "ORC is on!")
+	message("ORC option is on - is that by intention?")
     
     set(LOCAL_ORC_SCRIPTS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/volume.orc

@@ -7,6 +7,7 @@ EXPORTS
 		ffi_host_terminate
 		
 		; ==========================================================================
+
 		ffi_req_command_decode_origin
 		ffi_req_command_decode_uid
 		ffi_req_command_decode_sswitch
@@ -16,9 +17,11 @@ EXPORTS
 		ffi_req_command_decode_sequencer_event
 
 		; ==========================================================================
+
 		ffi_periodic_trigger
 
 		; ==========================================================================
+
 		ffi_properties_request_handle
 		ffi_properties_return_handle
 		ffi_properties_number_properties
@@ -41,6 +44,7 @@ EXPORTS
 		ffi_properties_set_collect_stop
 
 		; ==========================================================================
+
 		ffi_process_handle_for_uid				
 		ffi_process_iterator_next_handle
 
@@ -48,8 +52,6 @@ EXPORTS
 		ffi_process_decode_iterator_component
 		ffi_process_decode_iterator_module
 		ffi_process_decode_iterator_descriptor
-
-		; ffi_process_decode_iterator_connector
 		
 		ffi_process_system_ready
 
@@ -90,8 +92,6 @@ EXPORTS
 		ffi_lookup_component_class
 		ffi_get_compile_flags
 		ffi_set_operation_flags
-		; ffi_get_native_config_parameters
-		; ffi_set_native_config_parameters
 
 		ffi_encode_component_identification
 
