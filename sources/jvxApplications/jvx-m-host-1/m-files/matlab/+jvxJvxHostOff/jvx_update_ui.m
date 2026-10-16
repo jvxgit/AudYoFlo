@@ -366,6 +366,9 @@ if(~handles.jvx_struct.sequencer.iamprocessing)
     for(ind = 1:size(handles.jvx_struct.data.input.data,1))
         txtField = [txtField ['input#' num2str(ind)]];
     end
+    for(ind = 1:size(handles.jvx_struct.data.inputm.data,1))
+        txtField = [txtField ['input[m]#' num2str(ind)]];
+    end
     for(ind = 1:size(handles.jvx_struct.data.output.data,1))
         txtField = [txtField ['output#' num2str(ind)]];
     end
@@ -394,8 +397,16 @@ if(~handles.jvx_struct.sequencer.iamprocessing)
     
     oneBuf = [];
     if(handles.jvx_struct.data.channels.plot.id_user > 0)
-        if(handles.jvx_struct.data.channels.plot.id_user > size(handles.jvx_struct.data.input.data,1))
-            oneBuf = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - size(handles.jvx_struct.data.input.data,1),:);
+
+        nin = size(handles.jvx_struct.data.input.data,1);
+        ninm = size(handles.jvx_struct.data.inputm.data,1);
+
+        if(handles.jvx_struct.data.channels.plot.id_user > nin)
+            if(handles.jvx_struct.data.channels.plot.id_user > (nin+ninm))
+                oneBuf = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - (nin+ninm),:);
+            else
+                oneBuf = handles.jvx_struct.data.inputm.data(handles.jvx_struct.data.channels.plot.id_user - nin,:);
+            end
         else
             oneBuf = handles.jvx_struct.data.input.data(handles.jvx_struct.data.channels.plot.id_user,:);
         end

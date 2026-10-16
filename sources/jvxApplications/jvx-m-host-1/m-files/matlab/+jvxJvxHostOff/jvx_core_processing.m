@@ -98,6 +98,7 @@ inProcessing.out_complete = false;
 inProcessing.cb_preprocess= [];
 inProcessing.cb_postprocess= [];
 inProcessing.involveMinLevel = true;
+inProcessing.in_data_modified = [];
 
 global device_process;
 if(~isempty(device_process))  
@@ -120,7 +121,14 @@ while(inProcessing.isRunning)
         break;
     end
     if(inProcessing.frameCnt <=  inProcessing.in_frames)
-        oneFrameIn = inProcessing.in_data(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1));
+
+        source_modified = false;
+        if(isempty(inProcessing.in_data_modified))
+            oneFrameIn = inProcessing.in_data(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1));
+        else
+            source_modified = true;
+            oneFrameIn = inProcessing.in_data_modified(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1));
+        end
         
         if(inProcessing.involveMinLevel)
             % Run the minLevel function
@@ -129,6 +137,11 @@ while(inProcessing.isRunning)
         
         if(~isempty(device_process))     
             [device_process.hdl, oneFrameIn] = device_process.cb('pre_process', device_process.hdl, oneFrameIn);
+        end
+
+        if(source_modified)
+            % We do a writeback of the input
+            inProcessing.in_data_modified(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1)) = oneFrameIn;
         end
 
         % Process One Input frame in C subsystem

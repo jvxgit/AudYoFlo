@@ -5,6 +5,12 @@ global inProcessing;
 if(~skip_save_data)
     handles.jvx_struct.data.output.data =  jvxJvxHost.jvx_data_format_field_set(inProcessing.out_data,  inProcessing.format_id, false, handles.jvx_struct.configuredForDouble);
     handles.jvx_struct.data.output.rate = inProcessing.in_rate;
+
+    handles.jvx_struct.data.inputm.data = [];
+    if(~isempty(inProcessing.in_data_modified))
+        handles.jvx_struct.data.inputm.data =  jvxJvxHost.jvx_data_format_field_set(inProcessing.in_data_modified,  inProcessing.format_id, false, handles.jvx_struct.configuredForDouble);
+        handles.jvx_struct.data.inputm.rate = inProcessing.in_rate;
+    end        
     
     txt = '';
     if(handles.jvx_struct.properties.device.id_mat_out_text >= 0)

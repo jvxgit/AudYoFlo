@@ -45,6 +45,9 @@ handles.jvx_struct.data.input.data = [];
 handles.jvx_struct.data.input.rate = 48000;
 handles.jvx_struct.data.input.vars = '';
 
+handles.jvx_struct.data.inputm.data = [];
+handles.jvx_struct.data.inputm.rate = 48000;
+
 handles.jvx_struct.data.output.data = [];
 handles.jvx_struct.data.output.rate = 48000;
 
