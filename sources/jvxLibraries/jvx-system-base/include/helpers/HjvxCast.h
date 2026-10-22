@@ -398,6 +398,33 @@ T* castPropSpecific(const jvx::propertySpecifics::IjvxConnectionType* in)
 
 // =====================================================================================
 
+/*
+template <typename T>
+const T* castPropRawPointerLinField(const jvx::propertyRawPointerType::IjvxRawPointerType* ptrRaw, jvxSize& len)
+{
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxDataFormat form = checkDataType<T>();
+	const jvx::propertyRawPointerType::CjvxRawPointerTypeField<T>* ptrSpec = nullptr;
+	const T* ret = nullptr;
+	if (!ptrRaw)
+		return ret;
+
+	jvx::propertyRawPointerType::elementType etp = jvx::propertyRawPointerType::elementType::JVX_FIELD_RAW_POINTER_LINEAR_FIELD;
+	jvx::propertyRawPointerType::apiType atp = jvx::propertyRawPointerType::apiType::JVX_RAW_POINTER_API_TYPE_DLL;
+
+	res = ptrRaw->specialization(reinterpret_cast<const jvxHandle**>(&ptrSpec), etp, atp, form);
+	if (res == JVX_NO_ERROR)
+	{
+		ret = ptrSpec->typedPointer();
+		len = ptrSpec->size();
+		return ret;
+	}
+	return nullptr;
+}
+*/
+
+// =====================================================================================
+
 template <typename T>
 T* castPropRawPointer(const jvx::propertyRawPointerType::IjvxRawPointerType* ptrRaw, jvxDataFormat form)
 {
@@ -466,6 +493,29 @@ T* castPropRawPointer(const jvx::propertyRawPointerType::IjvxRawPointerType* ptr
 }
 
 // =====================================================================================
+
+template <typename T>
+const T* castPropRawPointerFieldLen(const jvx::propertyRawPointerType::IjvxRawPointerType* ptrRaw, jvxSize& len)
+{
+	const T* retPtr = nullptr;
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxDataFormat form = checkDataType<T>();
+	len = 0;
+	const jvx::propertyRawPointerType::CjvxRawPointerType* ptrArgs = castPropRawPointer< const jvx::propertyRawPointerType::CjvxRawPointerType>(ptrRaw, JVX_DATAFORMAT_NONE);
+	if (ptrArgs)
+	{
+		jvxDataFormat format = ptrArgs->ftype();
+		if (format == form)
+		{
+			retPtr = (const T*)ptrArgs->raw();
+			len = ptrArgs->size();
+		}
+	}
+	return retPtr;
+}
+
+// =====================================================================================
+
 template <class T>
 T* castPropIfPointer(jvx::propertyRawPointerType::IjvxRawPointerType* iPtr, jvxDataFormat format)
 {
@@ -487,12 +537,11 @@ T* castPropIfPointer(jvx::propertyRawPointerType::IjvxRawPointerType* iPtr, jvxD
 // =====================================================================================
 
 template <typename T>
-T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
+jvxDataFormat checkDataType()
 {
-	T* ret = nullptr;
 	jvxDataFormat tp = JVX_DATAFORMAT_NONE;
 #if __cplusplus >= 201703L
-	if constexpr(std::is_same<T, jvxData>::value)
+	if constexpr (std::is_same<T, jvxData>::value)
 #else
 	if (std::is_same<T, jvxData>::value)
 #endif
@@ -500,7 +549,7 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_DATA;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxInt8>::value)
+	else if constexpr (std::is_same<T, jvxInt8>::value)
 #else
 	else if (std::is_same<T, jvxInt8>::value)
 #endif
@@ -508,7 +557,7 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_8BIT;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxInt16>::value)
+	else if constexpr (std::is_same<T, jvxInt16>::value)
 #else
 	else if (std::is_same<T, jvxInt16>::value)
 #endif
@@ -516,7 +565,7 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_16BIT_LE;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxInt32>::value)
+	else if constexpr (std::is_same<T, jvxInt32>::value)
 #else
 	else if (std::is_same<T, jvxInt32>::value)
 #endif
@@ -524,7 +573,7 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_32BIT_LE;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxInt64>::value)
+	else if constexpr (std::is_same<T, jvxInt64>::value)
 #else
 	else if (std::is_same<T, jvxInt64>::value)
 #endif
@@ -532,7 +581,7 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_64BIT_LE;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxUInt8>::value)
+	else if constexpr (std::is_same<T, jvxUInt8>::value)
 #else
 	else if (std::is_same<T, jvxUInt8>::value)
 #endif
@@ -540,7 +589,7 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_U8BIT;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxUInt16>::value)
+	else if constexpr (std::is_same<T, jvxUInt16>::value)
 #else
 	else if (std::is_same<T, jvxUInt16>::value)
 #endif
@@ -548,7 +597,7 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_U16BIT_LE;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxUInt32>::value)
+	else if constexpr (std::is_same<T, jvxUInt32>::value)
 #else
 	else if (std::is_same<T, jvxUInt32>::value)
 #endif
@@ -556,14 +605,21 @@ T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
 		tp = JVX_DATAFORMAT_U32BIT_LE;
 	}
 #if __cplusplus >= 201703L
-	else if constexpr(std::is_same<T, jvxUInt64>::value)
+	else if constexpr (std::is_same<T, jvxUInt64>::value)
 #else
 	else if (std::is_same<T, jvxUInt64>::value)
 #endif
 	{
 		tp = JVX_DATAFORMAT_U64BIT_LE;
 	}
+	return tp;
+}
 
+template <typename T>
+T* castDataPointer(jvxHandle* in, jvxDataFormat tpIn)
+{
+	T* ret = nullptr;
+	jvxDataFormat tp = checkDataType<T>();
 	if(tp == tpIn)
 	{
 		ret = reinterpret_cast<T*>(in);
