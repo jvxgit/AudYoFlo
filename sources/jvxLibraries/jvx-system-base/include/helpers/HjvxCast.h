@@ -493,47 +493,6 @@ T* castPropRawPointer(const jvx::propertyRawPointerType::IjvxRawPointerType* ptr
 }
 
 // =====================================================================================
-
-template <typename T>
-const T* castPropRawPointerFieldLen(const jvx::propertyRawPointerType::IjvxRawPointerType* ptrRaw, jvxSize& len)
-{
-	const T* retPtr = nullptr;
-	jvxErrorType res = JVX_NO_ERROR;
-	jvxDataFormat form = checkDataType<T>();
-	len = 0;
-	const jvx::propertyRawPointerType::CjvxRawPointerType* ptrArgs = castPropRawPointer< const jvx::propertyRawPointerType::CjvxRawPointerType>(ptrRaw, JVX_DATAFORMAT_NONE);
-	if (ptrArgs)
-	{
-		jvxDataFormat format = ptrArgs->ftype();
-		if (format == form)
-		{
-			retPtr = (const T*)ptrArgs->raw();
-			len = ptrArgs->size();
-		}
-	}
-	return retPtr;
-}
-
-// =====================================================================================
-
-template <class T>
-T* castPropIfPointer(jvx::propertyRawPointerType::IjvxRawPointerType* iPtr, jvxDataFormat format)
-{
-	T** ptrMemIf = nullptr;
-	const jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<T>* ptrRawInstalled =
-		castPropRawPointer< const jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<T> >(
-			iPtr, format);
-	if (ptrRawInstalled)
-	{
-		ptrMemIf = ptrRawInstalled->typedPointer();
-		if (ptrMemIf)
-		{
-			return *ptrMemIf;
-		}
-	}
-	return nullptr;
-}
-
 // =====================================================================================
 
 template <typename T>
@@ -613,6 +572,48 @@ jvxDataFormat checkDataType()
 		tp = JVX_DATAFORMAT_U64BIT_LE;
 	}
 	return tp;
+}
+
+// =====================================================================================
+
+template <typename T>
+const T* castPropRawPointerFieldLen(const jvx::propertyRawPointerType::IjvxRawPointerType* ptrRaw, jvxSize& len)
+{
+	const T* retPtr = nullptr;
+	jvxErrorType res = JVX_NO_ERROR;
+	jvxDataFormat form = checkDataType<T>();
+	len = 0;
+	const jvx::propertyRawPointerType::CjvxRawPointerType* ptrArgs = castPropRawPointer< const jvx::propertyRawPointerType::CjvxRawPointerType>(ptrRaw, JVX_DATAFORMAT_NONE);
+	if (ptrArgs)
+	{
+		jvxDataFormat format = ptrArgs->ftype();
+		if (format == form)
+		{
+			retPtr = (const T*)ptrArgs->raw();
+			len = ptrArgs->size();
+		}
+	}
+	return retPtr;
+}
+
+// =====================================================================================
+
+template <class T>
+T* castPropIfPointer(jvx::propertyRawPointerType::IjvxRawPointerType* iPtr, jvxDataFormat format)
+{
+	T** ptrMemIf = nullptr;
+	const jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<T>* ptrRawInstalled =
+		castPropRawPointer< const jvx::propertyRawPointerType::CjvxRawPointerTypeExternalPointer<T> >(
+			iPtr, format);
+	if (ptrRawInstalled)
+	{
+		ptrMemIf = ptrRawInstalled->typedPointer();
+		if (ptrMemIf)
+		{
+			return *ptrMemIf;
+		}
+	}
+	return nullptr;
 }
 
 template <typename T>
