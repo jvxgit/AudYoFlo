@@ -167,16 +167,40 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdlIn,
 	jvxData** fieldOut,
 	jvxSize bSize);
 
-jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf(jvx_circbuffer* hdl,
-	const jvxData** fCoeffs_fw, const jvxData* fieldIn, jvxData* fieldOut,
-	jvxSize bSize, jvxData* cfade_start,jvxData cfade_increment);
+/**
+ * This function filters an input signal with two sets of filter coefficients and
+ * realizes a crossfade. It is designed to run the crossfade over multiple samples in
+ * successive frames by inputting and outputting the currentcrossfade vaue - from 0 to 1 as a limit.
+ * This function may operate on N channels with the same or varying filter sets. 
+ * Then, the specification is as follows:
+ * - fCoeffs_fw contains 2 pointer entries per channel, all together 2*N pointers
+ * - fieldIn and fieldOut contain N channels/pointers
+ */
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_n(jvx_circbuffer* hdl,
+	const jvxData** fCoeffs_fw, const jvxData** fieldIn, jvxData** fieldOut,
+	jvxSize bSize, jvxData* cfade_start,jvxData cfade_increment, 
+	jvxSize wrapCntCoeffsCf);
 
-// In this function, we have 1 buffer and we have two different filter vector buffers. 
-// We produce two outputs and cfade from the second towards the first
-jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample(
-	jvx_circbuffer* hdl, jvxData** fCoeffs_fw, const jvxData* fieldIn, 
-	jvxData* fieldOut, jvxData* cfade_start, jvxData cfade_increment,
-	const jvxData* copyFrom);
+#define jvx_circbuffer_fir_2can_2io_cf(hdl, fCoeffs_fw, fieldIn, fieldOut, \
+	bSize, cfade_start, cfade_increment) jvx_circbuffer_fir_2can_2io_cf_n(hdl, \
+	fCoeffs_fw, &fieldIn, &fieldOut, bSize, cfade_start, 2);
+
+/**
+ * This function is identical to <jvx_circbuffer_fir_2can_2io_cf_n> but differs due to the following facts:
+ * - The function processes always 1 sample!
+ * - The function copies filter coefficients from <copyFrom> to <fCoeffs_fw>  (the respective second entry, e.g., 
+ *   fCoeffs_fw[1] for 1 channel operation)
+ */
+jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample_n(
+	jvx_circbuffer* hdl, jvxData** fCoeffs_fw, const jvxData** fieldIn, 
+	jvxData** fieldOut, jvxData* cfade_start, jvxData cfade_increment,
+	const jvxData** copyFrom, jvxSize wrapCntCoeffsCf, jvxSize wrapCntCoeffsFrom);
+
+#define jvx_circbuffer_fir_2can_2io_cf_precopy_1sample( \
+	hdl, fCoeffs_fw, fieldIn, fieldOut, cfade_start, cfade_increment, \
+	copyFrom) jvx_circbuffer_fir_2can_2io_cf_precopy_1sample_n( \
+		hdl, fCoeffs_fw, &fieldIn, &fieldOut, cfade_start, \
+		cfade_increment, &copyFrom, 2, 1);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdlIn,
 	const jvxData* fCoeffs_fw,
