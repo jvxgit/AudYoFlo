@@ -788,7 +788,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_1io(jvx_circbuffer* hdlIn,
 	jvxData** fieldInOut,
 	jvxSize bSize)
 {
-	return jvx_circbuffer_fir_2can_2io(hdlIn, fCoeffs_fw, (const jvxData**)fieldInOut, fieldInOut, bSize);
+	return jvx_circbuffer_fir_2can_2io(hdlIn, fCoeffs_fw, (const jvxData**)fieldInOut, fieldInOut, bSize, JVX_SIZE_UNSELECTED);
 }
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_1io(jvx_circbuffer* hdlIn,
@@ -897,7 +897,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdl,
 	const jvxData* fCoeffs_fw,
 	const jvxData** fieldIn,
 	jvxData** fieldOut,
-	jvxSize bSize)
+	jvxSize bSize, jvxSize n_channels_input_override)
 {
 	int c, i, l;
 	assert(hdl[0].nUnits == 1);
@@ -910,9 +910,9 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdl,
 		const jvxData* in = NULL;
 		jvxData* out = NULL;
 
-
+		jvxSize nChansMin = JVX_MIN(hdl->channels, n_channels_input_override);
 		jvxSize idxRead = hdl->idxRead;
-		for (c = 0; c < hdl->channels; c++)
+		for (c = 0; c < nChansMin; c++)
 		{
 			jvxData* statePtr;
 			idxRead = hdl->idxRead;
@@ -2091,7 +2091,8 @@ jvx_circbuffer_energy(jvx_circbuffer* hdl, jvxData* energyOut, jvxCBool update)
 // We produce two outputs and cfade from the second towards the first
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_n(jvx_circbuffer* hdl,
 	const jvxData** fCoeffs_fw, const jvxData** fieldIn, jvxData** fieldOut,
-	jvxSize bSize, jvxData* cfade_io, jvxData cfade_increment, jvxSize wrapCntcoeffs)
+	jvxSize bSize, jvxData* cfade_io, jvxData cfade_increment, jvxSize wrapCntcoeffs,
+	jvxSize n_channels_input_override)
 {
 	int i, l,c;
 	assert(hdl[0].nUnits == 1);
@@ -2110,7 +2111,8 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_n(jvx_circbuffer* hdl,
 		jvxSize idx_read_per_channel = hdl->idxRead;
 		jvxData cfade_per_channel = *cfade_io;
 		jvxSize cntCoeffs = 0;
-		for (c = 0; c < hdl->channels; c++)
+		jvxSize nChansMin = JVX_MIN(hdl->channels, n_channels_input_override);
+		for (c = 0; c < nChansMin; c++)
 		{
 			jvxData* statePtr;			
 			jvxSize idxRead = idx_read_per_channel;
@@ -2187,7 +2189,7 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample_n(
 	const jvxData** fieldIn, jvxData** fieldOut,
 	jvxData* cfade_io, jvxData cfade_increment,
 	const jvxData** copyFrom, jvxSize wrapCntCoeffsCf, 
-	jvxSize wrapCntCoeffsFrom)
+	jvxSize wrapCntCoeffsFrom, jvxSize n_channels_input_override)
 {
 	int i, l, c;
 	assert(hdl[0].nUnits == 1);
@@ -2207,8 +2209,8 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample_n(
 		jvxData cfade_per_channel = *cfade_io;
 		jvxSize cntCoeffsCf = 0;
 		jvxSize cntCoeffsFrom = 0;
-
-		for (c = 0; c < hdl->channels; c++)
+		jvxSize nChansMin = JVX_MIN(hdl->channels, n_channels_input_override);
+		for (c = 0; c < nChansMin; c++)
 		{
 			jvxSize idxRead_ = idx_read_per_channel;
 			jvxData cfade = cfade_per_channel;

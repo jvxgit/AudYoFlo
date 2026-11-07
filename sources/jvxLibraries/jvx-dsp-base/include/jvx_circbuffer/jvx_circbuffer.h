@@ -159,7 +159,8 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io(jvx_circbuffer* hdlIn,
 	const jvxData* fCoeffs_fw,
 	const jvxData** fieldIn,
 	jvxData** fieldOut,
-	jvxSize bSize);
+	jvxSize bSize,
+	jvxSize n_channels_input_override);
 
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdlIn,
 	const jvxData** fCoeffs_fw,
@@ -179,11 +180,11 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_n(jvx_circbuffer* hdlIn,
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_n(jvx_circbuffer* hdl,
 	const jvxData** fCoeffs_fw, const jvxData** fieldIn, jvxData** fieldOut,
 	jvxSize bSize, jvxData* cfade_start,jvxData cfade_increment, 
-	jvxSize wrapCntCoeffsCf);
+	jvxSize wrapCntCoeffsCf, jvxSize n_channels_input_override);
 
-#define jvx_circbuffer_fir_2can_2io_cf(hdl, fCoeffs_fw, fieldIn, fieldOut, \
+#define jvx_circbuffer_fir_2can_2io_cf_1(hdl, fCoeffs_fw, fieldIn, fieldOut, \
 	bSize, cfade_start, cfade_increment) jvx_circbuffer_fir_2can_2io_cf_n(hdl, \
-	fCoeffs_fw, &fieldIn, &fieldOut, bSize, cfade_start, 2);
+	fCoeffs_fw, &fieldIn, &fieldOut, bSize, cfade_start, 2, JVX_SIZE_UNSELECTED);
 
 /**
  * This function is identical to <jvx_circbuffer_fir_2can_2io_cf_n> but differs due to the following facts:
@@ -194,13 +195,14 @@ jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_n(jvx_circbuffer* hdl,
 jvxDspBaseErrorType jvx_circbuffer_fir_2can_2io_cf_precopy_1sample_n(
 	jvx_circbuffer* hdl, jvxData** fCoeffs_fw, const jvxData** fieldIn, 
 	jvxData** fieldOut, jvxData* cfade_start, jvxData cfade_increment,
-	const jvxData** copyFrom, jvxSize wrapCntCoeffsCf, jvxSize wrapCntCoeffsFrom);
+	const jvxData** copyFrom, jvxSize wrapCntCoeffsCf, jvxSize wrapCntCoeffsFrom, 
+	jvxSize n_channels_input_override);
 
-#define jvx_circbuffer_fir_2can_2io_cf_precopy_1sample( \
+#define jvx_circbuffer_fir_2can_2io_cf_precopy_1sample_1( \
 	hdl, fCoeffs_fw, fieldIn, fieldOut, cfade_start, cfade_increment, \
 	copyFrom) jvx_circbuffer_fir_2can_2io_cf_precopy_1sample_n( \
 		hdl, fCoeffs_fw, &fieldIn, &fieldOut, cfade_start, \
-		cfade_increment, &copyFrom, 2, 1);
+		cfade_increment, &copyFrom, 2, 1, JVX_SIZE_UNSELECTED);
 
 jvxDspBaseErrorType jvx_circbuffer_iir_1can_2io(jvx_circbuffer* hdlIn,
 	const jvxData* fCoeffs_fw,
