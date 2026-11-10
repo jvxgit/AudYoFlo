@@ -6,6 +6,7 @@
 #include "jvxQtAcousticMeasurement.h"
 #include "jvxSpNMeasureIr_props.h"
 
+#include "jvx-qt-helpers.h"
 #include "jvx-qcp-qt-helpers.h"
 
 #define JVX_LOG10_EPS 1e-10
@@ -70,7 +71,6 @@ private:
 		JVX_MOUSE_MODE_EDIT_MARKER1, // when pushed 3
 		JVX_MOUSE_MODE_EDIT_MARKER2 // when pushed 4
 	}jvxPlotMouseMode;
-
 
 	class onePlotSelection
 	{
@@ -235,6 +235,12 @@ private:
 	IjvxHost* theHostRef = nullptr;
 
 	std::string nmRegConfig;
+
+	std::vector<oneColorOption> optionsColors;
+	std::vector<oneStyleOption> optionsStyle;
+	std::vector<oneMarkerOption> optionsMarker;
+	std::vector<oneWidthOption> optionsWidth;
+
 public:
 
 	jvxAcousticMeasure(QWidget* parent = NULL);

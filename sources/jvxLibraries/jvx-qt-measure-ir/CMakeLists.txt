@@ -27,6 +27,7 @@ include_directories(
 		${JVX_BASE_LIBS_INCLUDE_PATH}/third_party/web/qcustomplot/qcustomplot
 		${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-dsp-base-cpp/include
 		${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNMeasureIr
+		${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-qt-helpers/include
 		${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-qcp-qt-helpers/include
 
 		${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLQtSaWidgetWrapper/src
