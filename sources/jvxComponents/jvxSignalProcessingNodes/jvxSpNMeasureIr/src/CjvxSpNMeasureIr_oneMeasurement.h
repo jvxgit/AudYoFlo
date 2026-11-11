@@ -60,6 +60,7 @@ class oneMeasurementResult
 public:
 	std::string nameMeasure;
 	std::string tokenMeasure;
+	std::string tagMeasure;
 	jvxSize rate;
 	jvxBool storeConfig;
 	std::string pathStoreFolder;
@@ -186,6 +187,7 @@ public:
 
 	void write_data(
 		const std::string& token, 
+		const std::string& tag,
 		IjvxRtAudioFileWriter* fWriter, 
 		IjvxConfigProcessor* proc, 
 		IjvxSpNMeasureIr_oneMeasurement_report* rep);

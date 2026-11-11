@@ -463,8 +463,8 @@ CayfComponentLib::activate()
 		auto refPrivParent = parent->prv_callback_multipurpose;
 		jvxHandle* embeddingInfo = &bindingGlobal->bindType;
 		jvxBool attachToHostRef = true;
-
-		resC = allocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, attachToHostRef, refCbParent, refPrivParent, embeddingInfo));
+		ayfConnectArgAllocateDeallocate argAllocate(mainObj, subsequentComponents, attachToHostRef, refCbParent, refPrivParent, embeddingInfo);
+		resC = allocate_nodes(argAllocate);
 		
 		if ((resC == JVX_NO_ERROR) && this->mainObj)
 		{
@@ -810,8 +810,9 @@ CayfComponentLib::deactivate()
 		auto refPrivParent = parent->prv_callback_multipurpose;
 		jvxHandle* embeddingInfo = &bindingGlobal->bindType;
 		jvxBool addHostRef = true;
-
-		deallocate_nodes(ayfConnectArgAllocateDeallocate(mainObj, subsequentComponents, addHostRef, refCbParent, refPrivParent, embeddingInfo));
+		ayfConnectArgAllocateDeallocate argDealloc(mainObj, subsequentComponents, addHostRef, refCbParent, refPrivParent, embeddingInfo);
+		
+		deallocate_nodes(argDealloc);
 
 		this->mainObj = nullptr;
 		

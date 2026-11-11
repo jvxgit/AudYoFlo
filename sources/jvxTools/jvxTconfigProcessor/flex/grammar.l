@@ -1,5 +1,11 @@
 %option noyywrap
 %array
+
+%top{
+/* Extend the internal character buffer */
+#define YYLMAX 65536
+}
+
 %{
 
 #define YY_NO_UNPUT
@@ -9,6 +15,8 @@
  * kept in an extra (C++) class to avoid pollution of the global
  * name space.
  */
+
+
 #include <string>
 #include <list>
 #include <fstream>

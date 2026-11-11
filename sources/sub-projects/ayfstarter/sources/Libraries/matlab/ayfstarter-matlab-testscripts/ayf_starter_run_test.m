@@ -23,7 +23,7 @@ global hdl_profile_data;
 hdl_profile_data = [];
 
 if(runProfiling)
-    ayfAuNStarter.set_audio_node_develop_involveProfiling(true);
+    ayfAuNStarter.set_audio_develop_involveProfiling(true);
     
     hdl_profile_data.cfg = @jvxLocalConfig;
     hdl_profile_data.start = @jvxLocalStart;
@@ -64,11 +64,11 @@ function [hdl] = jvxLocalConfig(hdl)
     % Testpoint 0 - input signal noise
     bf = jvxBitField.jvx_set(bf, 0);
     
-    ayfAuNStarter.set_audio_node_develop_testpoints(bf);
-    [hdl.cfg.tokenTp] = ayfAuNStarter.get_audio_node_develop_testpoints();
+    ayfAuNStarter.set_audio_develop_testpoints(bf);
+    [hdl.cfg.tokenTp] = ayfAuNStarter.get_audio_develop_testpoints();
     
-    ayfAuNStarter.set_audio_node_develop_skipInvolveCCode(0);
-    hdl.cfg.skipCCode = ayfAuNStarter.get_audio_node_develop_skipInvolveCCode();
+    ayfAuNStarter.set_audio_develop_skipInvolveCCode(0);
+    hdl.cfg.skipCCode = ayfAuNStarter.get_audio_develop_skipInvolveCCode();
     disp(['--> Skip CCode: ' num2str(hdl.cfg.skipCCode)]); % Selection starts with 0!
 end
 
@@ -80,7 +80,7 @@ function [hdl] = jvxLocalStart(hdl)
     disp(['Preparing to collect the <' num2str(hdl.hooks.data.nFrames) '> frames.']);
     
     % Get runtime data parameter
-    hdl.hooks.data.M = ayfAuNStarter.get_audio_node_develop_bsizeSignal();
+    hdl.hooks.data.M = ayfAuNStarter.get_audio_develop_bsizeSignal();
 
     hdl.hooks.data.matSignalC_cbr = jvx_dsp_base.cbr.jvxMatrixReference(hdl.nFrames, hdl.hooks.data.M);
     hdl.hooks.data.matSignalMat_cbr = jvx_dsp_base.cbr.jvxMatrixReference(hdl.nFrames, hdl.hooks.data.M);

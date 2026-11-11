@@ -3,3 +3,4 @@
 
 #include "HjvxQtHelpers.h"
 #include "HjvxComponentToolsQt.h"
+#include "HjvxPlotOptions.h"

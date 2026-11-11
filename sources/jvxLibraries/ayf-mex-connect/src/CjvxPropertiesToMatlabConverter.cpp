@@ -868,7 +868,8 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentNumericalSize(const mxArray*
 }
 
 jvxErrorType
-CjvxPropertiesToMatlabConverter::copyDataToComponentNumerical(const mxArray* prhs, jvx_propertyReferenceTriple& theTriple, jvxDataFormat format, jvxSize numElms,
+CjvxPropertiesToMatlabConverter::copyDataToComponentNumerical(const mxArray* prhs, 
+	jvx_propertyReferenceTriple& theTriple, jvxDataFormat formatProp, jvxSize numElmsProp,
 	const char* descr, jvxSize offset, jvxAccessProtocol* accProt)
 {
 	/* For numeric properties, expect a simple buffer of values */
@@ -888,10 +889,11 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentNumerical(const mxArray* prh
 	jvxUInt8* data_uint8 = NULL;
 	jvxBool formatFits = false;
 	jvxHandle* data_setprop = NULL;
+	jvxSize fldLen = mxGetN(prhs);
 
 	if (mxGetM(prhs) == 1)
 	{
-		if (mxGetN(prhs) == numElms)
+		// if (mxGetN(prhs) == numElms) <- cases are available where the size of the pro may adapt
 		{
 			formatFits = true;
 		}
@@ -899,55 +901,55 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentNumerical(const mxArray* prh
 
 	if (formatFits)
 	{
-		switch (format)
+		switch (formatProp)
 		{
 		case JVX_DATAFORMAT_DATA:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_dat, jvxData, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_dat, jvxData, fldLen);
 			data_setprop = data_dat;
 			break;
 		case JVX_DATAFORMAT_SIZE:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_sz, jvxSize, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_sz, jvxSize, fldLen);
 			data_setprop = data_sz;
 			break;
 		case JVX_DATAFORMAT_64BIT_LE:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int64, jvxInt64, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int64, jvxInt64, fldLen);
 			data_setprop = data_int64;
 			break;
 		case JVX_DATAFORMAT_32BIT_LE:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int32, jvxInt32, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int32, jvxInt32, fldLen);
 			data_setprop = data_int32;
 			break;
 		case JVX_DATAFORMAT_16BIT_LE:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int16, jvxInt16, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int16, jvxInt16, fldLen);
 			data_setprop = data_int16;
 			break;
 		case JVX_DATAFORMAT_8BIT:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int8, jvxInt8, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_int8, jvxInt8, fldLen);
 			data_setprop = data_int8;
 			break;
 		case JVX_DATAFORMAT_U64BIT_LE:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint64, jvxUInt64, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint64, jvxUInt64, fldLen);
 			data_setprop = data_uint64;
 			break;
 		case JVX_DATAFORMAT_U32BIT_LE:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint32, jvxUInt32, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint32, jvxUInt32, fldLen);
 			data_setprop = data_uint32;
 			break;
 		case JVX_DATAFORMAT_U16BIT_LE:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint16, jvxUInt16, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint16, jvxUInt16, fldLen);
 			data_setprop = data_uint16;
 			break;
 		case JVX_DATAFORMAT_U8BIT:
-			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint8, jvxUInt8, numElms);
+			JVX_DSP_SAFE_ALLOCATE_FIELD_CPP_Z(data_uint8, jvxUInt8, fldLen);
 			data_setprop = data_uint8;
 			break;
 		}
 
-		CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(data_setprop, format, numElms, prhs);
+		CjvxMatlabToCConverter::convert_mat_buf_c_buf_1_x_N(data_setprop, formatProp, fldLen, prhs);
 
 		if (data_setprop)
 		{
-			res = jvx_set_property(theTriple.theProps, data_setprop, offset, numElms, format, true, descr, callGate);
+			res = jvx_set_property(theTriple.theProps, data_setprop, offset, fldLen, formatProp, true, descr, callGate);
 			if (accProt)
 				*accProt = callGate.access_protocol;
 		}
@@ -956,7 +958,7 @@ CjvxPropertiesToMatlabConverter::copyDataToComponentNumerical(const mxArray* prh
 			res = JVX_ERROR_INVALID_ARGUMENT;
 		}
 
-		switch (format)
+		switch (formatProp)
 		{
 		case JVX_DATAFORMAT_DATA:
 			JVX_DSP_SAFE_DELETE_FIELD(data_dat);

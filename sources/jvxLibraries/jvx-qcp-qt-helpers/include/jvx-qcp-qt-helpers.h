@@ -3,6 +3,7 @@
 
 #include "jvx.h"
 #include "qcustomplot.h"
+#include "HjvxPlotOptions.h"
 
 void jvx_qcp_set_color_graph(
 	QCustomPlot* qcp, jvxSize gId = 0, QColor col = Qt::black, Qt::PenStyle ps = Qt::SolidLine,

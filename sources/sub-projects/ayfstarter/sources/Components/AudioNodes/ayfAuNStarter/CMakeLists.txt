@@ -4,6 +4,7 @@ include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
 
 set(AYFSTARTER_USE_RUST_LIB_LOCAL FALSE)
 if(AYFSTARTER_USE_RUST_LIBS)
+	# If we want to use the C library, you need to control RUST and ORC flag on the project level - or within the compile script!
 	set(AYFSTARTER_USE_RUST_LIB_LOCAL TRUE)
 endif()
 

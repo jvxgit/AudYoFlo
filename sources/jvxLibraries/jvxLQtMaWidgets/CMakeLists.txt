@@ -7,7 +7,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLQtSaWidgets/src
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLQtSaWidgetWrapper/src
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/qwt/qwt/src
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qwt/qwt/src
   )
 
 set(LOCAL_SOURCES

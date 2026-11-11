@@ -370,7 +370,8 @@ CjvxSpNMeasureIr_oneMeasurement::copy_measurement(oneMeasurementResult* result)
 }
 
 void
-CjvxSpNMeasureIr_oneMeasurement::write_data(const std::string& token,  IjvxRtAudioFileWriter* fWriter, IjvxConfigProcessor* proc,
+CjvxSpNMeasureIr_oneMeasurement::write_data(const std::string& token, const std::string& tag, 
+	IjvxRtAudioFileWriter* fWriter, IjvxConfigProcessor* proc,
 	IjvxSpNMeasureIr_oneMeasurement_report* rep)
 {
 	jvxSize cnt = 0;
@@ -394,6 +395,7 @@ CjvxSpNMeasureIr_oneMeasurement::write_data(const std::string& token,  IjvxRtAud
 					std::string tokenLoc;
 					JVX_GET_CONFIGURATION_INJECT_STRING(res, "DESCRIPTION", datSec, this->description, proc);
 					JVX_GET_CONFIGURATION_INJECT_STRING(res, "TOKEN", datSec, token, proc);
+					JVX_GET_CONFIGURATION_INJECT_STRING(res, "TAG", datSec, tag, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "RATE", datSec, this->rate, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "AMPLITUDE", datSec, this->generator.amplitude, proc);
 					JVX_GET_CONFIGURATION_INJECT_VALUE(res, "FREQUENCY_LOW_START_HZ", datSec, this->generator.freq_low_hz_start, proc);
@@ -664,6 +666,7 @@ CjvxSpNMeasureIr_oneMeasurement::read_measurement(
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "RATE", datSec, &resMeas.rate, confHdl);
 			JVX_PUT_CONFIGURATION_EXTRACT_STRING(res, "DESCRIPTION", datSec, resMeas.nameMeasure, confHdl);
 			JVX_PUT_CONFIGURATION_EXTRACT_STRING(res, "TOKEN", datSec, resMeas.tokenMeasure, confHdl);
+			JVX_PUT_CONFIGURATION_EXTRACT_STRING(res, "TAG", datSec, resMeas.tagMeasure, confHdl);
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "AMPLITUDE", datSec, &resMeas.amplitude, confHdl);
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "FREQUENCY_LOW_START_HZ", datSec, &resMeas.freq_low_hz_start, confHdl);
 			JVX_PUT_CONFIGURATION_EXTRACT_VALUE(res, "FREQUENCY_LOW_STOP_HZ", datSec, &resMeas.freq_low_hz_stop, confHdl);

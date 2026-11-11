@@ -81,66 +81,13 @@ extern "C"
 
 
 // ==============================================================================
-
-typedef struct
-{
-	std::string nm;
-	QColor col;
-} oneColor;
-
-static oneColor plot_colors[JVX_QT_NUMBER_COLORS] =
-{
-	{"black", Qt::black},
-	{"gray", Qt::gray},
-	{"green", Qt::green},
-	{"cyan", Qt::darkCyan},
-	{"magenta", Qt::magenta}
-};
-
+// =========================================================================
 // =========================================================================
 
-typedef struct
-{
-	std::string nm;
-	QCPGraph::LineStyle style;
-} oneStyle;
 
-static oneStyle plot_styles[JVX_QT_NUMBER_STYLES] =
-{
-	{"line", QCPGraph::lsLine},
-	{"impulse", QCPGraph::lsImpulse},
-	{"none", QCPGraph::lsNone}
-};
+
 
 // =========================================================================
-
-typedef struct
-{
-	std::string nm;
-	QCPScatterStyle::ScatterShape marker;
-} oneMarker;
-
-static oneMarker plot_markers[JVX_QT_NUMBER_MARKERS] =
-{
-	{"none", QCPScatterStyle::ssNone},
-	{"circle", QCPScatterStyle::ssCircle},
-	{"square", QCPScatterStyle::ssSquare}
-};
-
-// =========================================================================
-
-typedef struct
-{
-	std::string nm;
-	jvxData width;
-} oneWidth;
-
-static oneWidth plot_widths[JVX_QT_NUMBER_WIDTHS] =
-{
-	{"1", 1},
-	{"2", 2},
-	{"3", 3}
-};
 
 // ======================================================================
 // =========================================================================
@@ -151,6 +98,25 @@ jvxAcousticMeasure::jvxAcousticMeasure(QWidget* parent) : QWidget(parent)
 	modeTd = JVX_PLOT_MODE_TD_IR;
 	modeSec = JVX_PLOT_MODE_SEC_MAG;
 	mouseMode = JVX_MOUSE_MODE_NONE;	
+
+	optionsColors.push_back(oneColorOption("black", Qt::black));
+	optionsColors.push_back(oneColorOption("gray", Qt::gray));
+	optionsColors.push_back(oneColorOption("green", Qt::green));
+	optionsColors.push_back(oneColorOption("cyan", Qt::darkCyan));
+	optionsColors.push_back(oneColorOption("magenta", Qt::magenta));
+
+	optionsStyle.push_back(oneStyleOption("line", QCPGraph::lsLine));
+	optionsStyle.push_back(oneStyleOption("impulse", QCPGraph::lsImpulse));
+	optionsStyle.push_back(oneStyleOption("none", QCPGraph::lsNone));
+
+	optionsMarker.push_back(oneMarkerOption("none", QCPScatterStyle::ssNone));
+	optionsMarker.push_back(oneMarkerOption("circle", QCPScatterStyle::ssCircle));
+	optionsMarker.push_back(oneMarkerOption("square", QCPScatterStyle::ssSquare));
+
+	optionsWidth.push_back(oneWidthOption("1", 1));
+	optionsWidth.push_back(oneWidthOption("2", 2));
+	optionsWidth.push_back(oneWidthOption("3", 3));
+
 }
 
 jvxAcousticMeasure::~jvxAcousticMeasure()
@@ -225,26 +191,26 @@ jvxAcousticMeasure::init(IjvxHost* theHost, jvxCBitField mode,
 
 	for (i = 0; i < JVX_QT_NUMBER_COLORS; i++)
 	{
-		comboBox_col_p1->addItem(plot_colors[i].nm.c_str());
-		comboBox_col_p2->addItem(plot_colors[i].nm.c_str());
+		comboBox_col_p1->addItem(optionsColors[i].nm.c_str());
+		comboBox_col_p2->addItem(optionsColors[i].nm.c_str());
 	}
 
 	for (i = 0; i < JVX_QT_NUMBER_STYLES; i++)
 	{
-		comboBox_style_p1->addItem(plot_styles[i].nm.c_str());
-		comboBox_style_p2->addItem(plot_styles[i].nm.c_str());
+		comboBox_style_p1->addItem(optionsStyle[i].nm.c_str());
+		comboBox_style_p2->addItem(optionsStyle[i].nm.c_str());
 	}
 
 	for (i = 0; i < JVX_QT_NUMBER_MARKERS; i++)
 	{
-		comboBox_mar_p1->addItem(plot_markers[i].nm.c_str());
-		comboBox_mar_p2->addItem(plot_markers[i].nm.c_str());
+		comboBox_mar_p1->addItem(optionsMarker[i].nm.c_str());
+		comboBox_mar_p2->addItem(optionsMarker[i].nm.c_str());
 	}
 
 	for (i = 0; i < JVX_QT_NUMBER_WIDTHS; i++)
 	{
-		comboBox_width_p1->addItem(plot_widths[i].nm.c_str());
-		comboBox_width_p2->addItem(plot_widths[i].nm.c_str());
+		comboBox_width_p1->addItem(optionsWidth[i].nm.c_str());
+		comboBox_width_p2->addItem(optionsWidth[i].nm.c_str());
 	}
 
 	// ===========================================================
@@ -342,7 +308,7 @@ jvxAcousticMeasure::init(IjvxHost* theHost, jvxCBitField mode,
 
 	for (auto& elm : lstSubProcessors)
 	{
-		elm.proc->init(static_cast<IjvxQtAcousticMeasurement*>(this));
+		elm.proc->init(static_cast<IjvxQtAcousticMeasurement*>(this), theHost);
 	}
 	theHostRef = theHost;
 }
@@ -564,10 +530,10 @@ jvxAcousticMeasure::set_params_plots()
 	QCPScatterStyle sstyle = QCPScatterStyle::ssCircle;
 	jvxSize markerSize = 5;
 
-	col = plot_colors[plot1.optionColor].col;
-	lstyle = plot_styles[plot1.optionStyle].style;
-	sstyle = plot_markers[plot1.optionMarker].marker;
-	lineWidth = plot_widths[plot1.optionWidth].width;
+	col = optionsColors[plot1.optionColor].col;
+	lstyle = optionsStyle[plot1.optionStyle].style;
+	sstyle = optionsMarker[plot1.optionMarker].marker;
+	lineWidth = optionsWidth[plot1.optionWidth].width;
 	sstyle.setSize(markerSize);
 
 	pen = qcp_timedomain->graph(0)->pen();
@@ -594,10 +560,10 @@ jvxAcousticMeasure::set_params_plots()
 
 	// =============================================================
 
-	col = plot_colors[plot2.optionColor].col;
-	lstyle = plot_styles[plot2.optionStyle].style;
-	sstyle = plot_markers[plot2.optionMarker].marker;
-	lineWidth = plot_widths[plot2.optionWidth].width;
+	col = optionsColors[plot2.optionColor].col;
+	lstyle = optionsStyle[plot2.optionStyle].style;
+	sstyle = optionsMarker[plot2.optionMarker].marker;
+	lineWidth = optionsWidth[plot2.optionWidth].width;
 
 	sstyle.setSize(markerSize);
 
@@ -698,6 +664,9 @@ jvxAcousticMeasure::trigger_processor()
 			case JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS:
 				trigger_proc_pass2ir(proc->proc, proc->tagId);
 				break;
+			case JVX_ACOUSTIC_MEASURE_TASK_PASS_FIRST_MEASURED_IRS:
+				trigger_proc_pass1stir(proc->proc, proc->tagId);
+				break;
 			}
 		}
 	}
@@ -744,7 +713,8 @@ jvxAcousticMeasure::trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc
 	taskData.ir_data1 = dataPlot1.oneChan.bufIr;
 	taskData.ir_data1_len = dataPlot1.oneChan.lBuf;
 	taskData.ir_data1_rate = dataPlot1.oneChan.rate;
-	taskData.ir_data1_meas_name = dataPlot1.measurement_name.c_str();
+	taskData.ir_data1_meas_name_ = dataPlot1.measurement_name.c_str();
+	taskData.ir_data1_meas_tag = dataPlot1.measurement_tag.c_str();
 	taskData.ir_data1_chan_name = dataPlot1.channel_name.c_str();
 
 	if (!dataPlot2.oneChan.lBuf)
@@ -754,7 +724,8 @@ jvxAcousticMeasure::trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc
 	taskData.ir_data2 = dataPlot2.oneChan.bufIr;
 	taskData.ir_data2_len = dataPlot2.oneChan.lBuf;
 	taskData.ir_data2_rate = dataPlot2.oneChan.rate;
-	taskData.ir_data2_meas_name = dataPlot2.measurement_name.c_str();
+	taskData.ir_data2_meas_name_ = dataPlot2.measurement_name.c_str();
+	taskData.ir_data2_meas_tag = dataPlot2.measurement_tag.c_str();
 	taskData.ir_data2_chan_name = dataPlot2.channel_name.c_str();
 
 	if (readyForProcess)
@@ -762,4 +733,26 @@ jvxAcousticMeasure::trigger_proc_pass2ir(IjvxQtAcousticMeasurement_process* proc
 		proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_PASS_TWO_MEASURED_IRS, &taskData, tagId);
 	}
 }
-		
+	
+void
+jvxAcousticMeasure::trigger_proc_pass1stir(IjvxQtAcousticMeasurement_process* proc, jvxSize tagId)
+{
+	jvxMeasurementTaskPassFirstIr taskData;
+	jvxBool readyForProcess = true;
+
+	if (!dataPlot1.oneChan.lBuf)
+	{
+		readyForProcess = false;
+	}
+	taskData.ir_data1 = dataPlot1.oneChan.bufIr;
+	taskData.ir_data1_len = dataPlot1.oneChan.lBuf;
+	taskData.ir_data1_rate = dataPlot1.oneChan.rate;
+	taskData.ir_data1_meas_name_ = dataPlot1.measurement_name.c_str();
+	taskData.ir_data1_meas_tag = dataPlot1.measurement_tag.c_str();
+	taskData.ir_data1_chan_name = dataPlot1.channel_name.c_str();
+
+	if (readyForProcess)
+	{
+		proc->process_data(JVX_ACOUSTIC_MEASURE_TASK_PASS_FIRST_MEASURED_IRS, &taskData, tagId);
+	}
+}

@@ -13,6 +13,12 @@ include_directories(
 set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/HjvxQtHelpers.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/HjvxComponentToolsQt.cpp  
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/HjvxQtHelpers.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/HjvxPlotOptions.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/HjvxComponentToolsQt.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/jvx-qt-helpers.h
+  
   )
     	
 set(USE_QT_LIBRARIES TRUE)

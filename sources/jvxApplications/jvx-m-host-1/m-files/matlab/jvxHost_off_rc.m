@@ -16,6 +16,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -29,6 +30,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -43,6 +45,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -57,6 +60,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -71,6 +75,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -85,6 +90,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -100,6 +106,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -121,6 +128,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -142,6 +150,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -158,6 +167,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -177,6 +187,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -199,6 +210,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -221,6 +233,7 @@ if(nargin > 0)
                     catch ME
                         res = false;
                         errMsg = ME.message;
+                        showException(ME);
                     end
                 else
                     res = false;
@@ -241,7 +254,16 @@ if(nargin > 0)
 else
     disp('Remote access to jvxHos_off host.');
 end
+end
 
-                                
+function showException(ME)
+
+    disp(getReport(ME, 'extended', 'hyperlinks', 'on'));
+    %disp('Exeception raised:');
+    %ME
+    %for(jnd = 1:size(ME.stack, 1))
+    %    ME.stack(jnd)
+    %end
+end
                     
     

@@ -3,8 +3,15 @@
 REM ================================================================
 REM ================================================================
 set SYSTEM_JVX_MEX_PATH='%CD%/matlab/'
-set SYSTEM_JVX_MATLAB_PATH={'%CD%/matlab/m-files' '%CD%/matlab/m-files/subprojects-audionode' '%CD%/matlab/m-files/audioProperties' '%CD%/matlab/m-files/profiling' '@JVX_MATLAB_ORIGIN_PATH@'}
-set SYSTEM_JVX_MATLAB_DEMO={'Realtime Processing: jvxHost(''rt-audio'', ''--config'', ''%CD%/ayfstarter-mat.jvx'', ''--jvxdir'', ''%CD%/jvxComponents'');';'Offline Processing: jvxHost(''off-audio'', ''--config'', ''%CD%/ayfstarter-mat.jvx'', ''--jvxdir'', ''%CD%/jvxComponents'');'}
+set SYSTEM_JVX_MATLAB_PATH={'%CD%/matlab/m-files' ^
+	'%CD%/matlab/m-files/subprojects-audionode' ^
+	'%CD%/matlab/m-files/audioProperties' ^
+	'%CD%/matlab/m-files/profiling' ^
+	'@JVX_MATLAB_ORIGIN_PATH@'}
+set SYSTEM_JVX_MATLAB_DEMO={^
+	'Realtime Processing: jvxHost(''rt-audio'', ''--config'', ''%CD%/ayfstarter-mat.jvx'', ''--jvxdir'', ''%CD%/jvxComponents'');';^
+	'Offline Processing: jvxHost(''off-audio'', ''--config'', ''%CD%/ayfstarter-mat.jvx'', ''--jvxdir'', ''%CD%/jvxComponents'');';^
+	'Offline run test with Matlab/C verification: ayf_starter_run_test();'}
 set COMMAND_SCRIPTING='jvxHost(''off-audio'', ''--config'', ''%CD%/ayfstarter-mat.jvx'', ''--jvxdir'', ''%CD%/jvxComponents'');'
 set PATH=%PATH%;%CD%/bin
 

@@ -24,6 +24,11 @@ function [hObject, handles] = jvx_stop_processing(hObject, handles, skip_shutdow
          end
     end
     
+    global device_process;
+    if(~isempty(device_process))  
+        [device_process.hdl] = device_process.cb('init');
+    end
+
     if(inProcessing.triggerStop)
         warning(['Processing stopped early, reason: <' inProcessing.reportError '>.']);
     end

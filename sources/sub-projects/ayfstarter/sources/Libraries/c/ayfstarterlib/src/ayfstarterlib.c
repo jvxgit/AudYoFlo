@@ -104,6 +104,13 @@ jvxDspBaseErrorType ayf_starter_process(struct ayf_starter* hdl, jvxData** input
 #else
 #error ayf_starter_process: no orc support implemented for current data format
 #endif
+						if (channelIdxOut == 0)
+						{
+							// Add profiling data
+							JVX_DATA_OUT_DBG_TP_STR(hdl->develop.dbg_handler, prv, JVX_STARTER_DATA_DEBUG_TP0_SHIFT,
+								TP0, outputs[channelIdxOut], hdlLocal->prm_initCopy.bsize);
+
+						}
 					}
 				}
 			}

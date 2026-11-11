@@ -2,26 +2,32 @@
 #include "common/CjvxNegotiate.h"
 #include "common/CjvxObjectLog.h"
 
-#define SET_BUFFERSIZE_DIMX(res, str, bsize) \
+#define SET_BUFFERSIZE_DIMX(res, str, bsize, mask) \
 	if ( \
 		(str.buffersize.min != bsize) || \
 		(str.buffersize.max != bsize)) \
 	{ \
 		res = JVX_NEGOTIATE_CONSTRAINT_CHANGE; \
-		str.buffersize.min = bsize; \
-		str.buffersize.max = bsize; \
-		str.dimX.min = bsize; \
-		str.dimX.max = bsize; \
+		if(mask & JVX_NEGOTIATE_COMMON_SET_MASK_MIN) \
+		{ \
+			str.buffersize.min = bsize; \
+			str.dimX.min = bsize; \
+		} \
+		if(mask & JVX_NEGOTIATE_COMMON_SET_MASK_MAX) \
+		{ \
+			str.buffersize.max = bsize; \
+			str.dimX.max = bsize; \
+		} \
 	}
 
-#define SET_OTHER(res, str, param, val) \
+#define SET_OTHER(res, str, param, val, mask) \
 	if ( \
 		(str.param.min != val) || \
 		(str.param.max != val)) \
 	{ \
 		res = JVX_NEGOTIATE_CONSTRAINT_CHANGE; \
-		str.param.min = val; \
-	str.param.max = val; \
+		if(mask & JVX_NEGOTIATE_COMMON_SET_MASK_MIN) str.param.min = val; \
+		if(mask & JVX_NEGOTIATE_COMMON_SET_MASK_MAX) str.param.max = val; \
 	}
 
 #define SET_DEFAULT_PARAM_SIZE(params, preferred, varpar, varpre, defval) \
@@ -117,6 +123,12 @@ CjvxNegotiate_common::_set_parameters_fixed(const jvxLinkDataDescriptor_con_para
 }
 
 void
+CjvxNegotiate_common::_set_parameters_fixed_mask(jvxCBitField mask)
+{
+	maskSetParams = mask;
+}
+
+void
 CjvxNegotiate_common::_set_parameters_fixed(
 	jvxSize num_channels,
 	jvxSize bsize,
@@ -130,28 +142,30 @@ CjvxNegotiate_common::_set_parameters_fixed(
 	jvxConstraintSetResult res = JVX_NEGOTIATE_CONSTRAINT_NO_CHANGE;
 	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
-		SET_BUFFERSIZE_DIMX(res, preferred, bsize);
+		SET_BUFFERSIZE_DIMX(res, preferred, bsize, maskSetParams);
 	}
 	else
 	{
-		SET_OTHER(res, preferred, buffersize, bsize);
-		SET_OTHER(res, preferred, dimX, segment_x);
+		SET_OTHER(res, preferred, buffersize, bsize, maskSetParams);
+		SET_OTHER(res, preferred, dimX, segment_x, maskSetParams);
 	}
 	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
-		SET_OTHER(res, preferred, number_channels, num_channels);
-		SET_OTHER(res, preferred, dimY, 1);
+		SET_OTHER(res, preferred, number_channels, num_channels, maskSetParams);
+		SET_OTHER(res, preferred, dimY, 1, maskSetParams);
 	}
 	else
 	{
-		SET_OTHER(res, preferred, number_channels, num_channels);
-		SET_OTHER(res, preferred, dimY, segment_y);
+		SET_OTHER(res, preferred, number_channels, num_channels, maskSetParams);
+		SET_OTHER(res, preferred, dimY, segment_y, maskSetParams);
 	}
-	SET_OTHER(res, preferred, samplerate, srate);
-	SET_OTHER(res, preferred, format, format);
-	SET_OTHER(res, preferred, subformat, sub_format);
-	SET_OTHER(res, preferred, samplerate, srate);
-	SET_OTHER(res, preferred, data_flow, datflow);
+	SET_OTHER(res, preferred, samplerate, srate, maskSetParams);
+	SET_OTHER(res, preferred, format, format, maskSetParams);
+	SET_OTHER(res, preferred, subformat, sub_format, maskSetParams);
+	SET_OTHER(res, preferred, samplerate, srate, maskSetParams);
+	SET_OTHER(res, preferred, data_flow, datflow, maskSetParams);
+
+	maskSetParams = JVX_NEGOTIATE_COMMON_SET_MASK_MINMAX;
 }
 
 jvxConstraintSetResult
@@ -171,7 +185,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 	{
 		if (JVX_CHECK_SIZE_SELECTED(bsize))
 		{
-			SET_BUFFERSIZE_DIMX(res, preferred, bsize);
+			SET_BUFFERSIZE_DIMX(res, preferred, bsize, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.buffersize = bsize;
@@ -183,7 +197,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 	{
 		if (JVX_CHECK_SIZE_SELECTED(bsize))
 		{
-			SET_OTHER(res, preferred, buffersize, bsize);
+			SET_OTHER(res, preferred, buffersize, bsize, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.buffersize = bsize;
@@ -191,7 +205,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 		}
 		if (JVX_CHECK_SIZE_SELECTED(segment_x))
 		{
-			SET_OTHER(res, preferred, dimX, segment_x);
+			SET_OTHER(res, preferred, dimX, segment_x, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.segmentation.x = segment_x;
@@ -201,7 +215,7 @@ CjvxNegotiate_common::_update_parameters_fixed(
 
 	if (JVX_CHECK_SIZE_SELECTED(num_channels))
 	{
-		SET_OTHER(res, preferred, number_channels, num_channels);
+		SET_OTHER(res, preferred, number_channels, num_channels, maskSetParams);
 		if (datOut)
 		{
 			datOut->con_params.number_channels = num_channels;
@@ -209,13 +223,13 @@ CjvxNegotiate_common::_update_parameters_fixed(
 	}
 	if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 	{
-		SET_OTHER(res, preferred, dimY, 1);
+		SET_OTHER(res, preferred, dimY, 1, maskSetParams);
 	}
 	else
 	{
 		if (JVX_CHECK_SIZE_SELECTED(segment_y))
 		{
-			SET_OTHER(res, preferred, dimY, segment_y);
+			SET_OTHER(res, preferred, dimY, segment_y, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.segmentation.y = segment_y;
@@ -225,31 +239,31 @@ CjvxNegotiate_common::_update_parameters_fixed(
 
 	if (JVX_CHECK_SIZE_SELECTED(srate))
 	{
-		SET_OTHER(res, preferred, samplerate, srate);
+		SET_OTHER(res, preferred, samplerate, srate, maskSetParams);
 		if (datOut)
 			datOut->con_params.rate = srate;
 	}
 	if (format != JVX_DATAFORMAT_NONE)
 	{
-		SET_OTHER(res, preferred, format, format);
+		SET_OTHER(res, preferred, format, format, maskSetParams);
 		if (datOut)
 			datOut->con_params.format = format;
 
 	}
 	if (sub_format != JVX_DATAFORMAT_GROUP_NONE)
 	{
-		SET_OTHER(res, preferred, subformat, sub_format);
+		SET_OTHER(res, preferred, subformat, sub_format, maskSetParams);
 		if (datOut)
 			datOut->con_params.format_group = sub_format;
 	}	
 
 	if (datflow != jvxDataflow::JVX_DATAFLOW_DONT_CARE)
 	{
-		SET_OTHER(res, preferred, data_flow, datflow);
+		SET_OTHER(res, preferred, data_flow, datflow, maskSetParams);
 		if (datOut)
 			datOut->con_params.data_flow = datflow;
 	}
-	
+	maskSetParams = JVX_NEGOTIATE_COMMON_SET_MASK_MINMAX;
 
 	return res;
 }
@@ -263,7 +277,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	case jvxAddressLinkDataEntry::JVX_ADDRESS_BUFFERSIZE_SHIFT:
 		if (JVX_CHECK_SIZE_SELECTED(newVal))
 		{
-			SET_OTHER(res, preferred, buffersize, newVal);
+			SET_OTHER(res, preferred, buffersize, newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.buffersize = newVal;
@@ -274,7 +288,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	case jvxAddressLinkDataEntry::JVX_ADDRESS_NUM_CHANNELS_SHIFT:
 		if (JVX_CHECK_SIZE_SELECTED(newVal))
 		{
-			SET_OTHER(res, preferred, number_channels, newVal);
+			SET_OTHER(res, preferred, number_channels, newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.number_channels = newVal;
@@ -285,7 +299,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	case jvxAddressLinkDataEntry::JVX_ADDRESS_SAMPLERATE_SHIFT:
 		if (JVX_CHECK_SIZE_SELECTED(newVal))
 		{
-			SET_OTHER(res, preferred, samplerate, newVal);
+			SET_OTHER(res, preferred, samplerate, newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.rate = newVal;
@@ -296,7 +310,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	case jvxAddressLinkDataEntry::JVX_ADDRESS_FORMAT_SHIFT:
 		if (newVal != JVX_DATAFORMAT_NONE)
 		{
-			SET_OTHER(res, preferred, format, (jvxDataFormat)newVal);
+			SET_OTHER(res, preferred, format, (jvxDataFormat)newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.format = (jvxDataFormat)newVal;
@@ -307,7 +321,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	case jvxAddressLinkDataEntry::JVX_ADDRESS_SUBFORMAT_SHIFT:
 		if (newVal != JVX_DATAFORMAT_GROUP_NONE)
 		{
-			SET_OTHER(res, preferred, subformat, (jvxDataFormatGroup)newVal);
+			SET_OTHER(res, preferred, subformat, (jvxDataFormatGroup)newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.format_group = (jvxDataFormatGroup)newVal;
@@ -319,7 +333,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 
 		if (newVal != jvxDataflow::JVX_DATAFLOW_DONT_CARE)
 		{
-			SET_OTHER(res, preferred, data_flow, (jvxDataflow)newVal);
+			SET_OTHER(res, preferred, data_flow, (jvxDataflow)newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.data_flow = (jvxDataflow)newVal;
@@ -330,7 +344,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	case jvxAddressLinkDataEntry::JVX_ADDRESS_SEGX_SHIFT:
 		if (JVX_CHECK_SIZE_SELECTED(newVal))
 		{
-			SET_OTHER(res, preferred, dimX, newVal);
+			SET_OTHER(res, preferred, dimX, newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.segmentation.x = newVal;
@@ -341,7 +355,7 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	case jvxAddressLinkDataEntry::JVX_ADDRESS_SEGY_SHIFT:
 		if (JVX_CHECK_SIZE_SELECTED(newVal))
 		{
-			SET_OTHER(res, preferred, dimY, newVal);
+			SET_OTHER(res, preferred, dimY, newVal, maskSetParams);
 			if (datOut)
 			{
 				datOut->con_params.segmentation.y = newVal;
@@ -351,6 +365,9 @@ CjvxNegotiate_common::_update_parameter_fixed(jvxAddressLinkDataEntry what, jvxS
 	default:
 		break;
 	}
+
+	maskSetParams = JVX_NEGOTIATE_COMMON_SET_MASK_MINMAX;
+
 	return res;
 }
 
@@ -370,14 +387,14 @@ CjvxNegotiate_common::_clear_parameters_fixed(
 	{
 		if (negBehavior == negBehaviorType::JVX_BEHAVIOR_AUDIO)
 		{
-			SET_BUFFERSIZE_DIMX(res, preferred,  JVX_SIZE_UNSELECTED);
+			SET_BUFFERSIZE_DIMX(res, preferred,  JVX_SIZE_UNSELECTED, maskSetParams);
 		}
 		else
 		{
-			SET_OTHER(res, preferred, buffersize, JVX_SIZE_UNSELECTED);
+			SET_OTHER(res, preferred, buffersize, JVX_SIZE_UNSELECTED, maskSetParams);
 			if (segsizex)
 			{
-				SET_OTHER(res, preferred, dimX, JVX_SIZE_UNSELECTED);
+				SET_OTHER(res, preferred, dimX, JVX_SIZE_UNSELECTED, maskSetParams);
 			}
 		}
 	}
@@ -386,38 +403,38 @@ CjvxNegotiate_common::_clear_parameters_fixed(
 	{
 		if (numberchannelsset)
 		{
-			SET_OTHER(res, preferred, number_channels, JVX_SIZE_UNSELECTED);
+			SET_OTHER(res, preferred, number_channels, JVX_SIZE_UNSELECTED, maskSetParams);
 		}
 	}
 	else
 	{
 		if (numberchannelsset)
 		{
-			SET_OTHER(res, preferred, number_channels, JVX_SIZE_UNSELECTED);
+			SET_OTHER(res, preferred, number_channels, JVX_SIZE_UNSELECTED, maskSetParams);
 		}
 
 		if (segsizey)
 		{
-			SET_OTHER(res, preferred, dimY, JVX_SIZE_UNSELECTED);
+			SET_OTHER(res, preferred, dimY, JVX_SIZE_UNSELECTED, maskSetParams);
 		}
 	}		
 	if (srateset)
 	{
-		SET_OTHER(res, preferred, samplerate, JVX_SIZE_UNSELECTED);
+		SET_OTHER(res, preferred, samplerate, JVX_SIZE_UNSELECTED, maskSetParams);
 	}
 	if (formatset)
 	{
-		SET_OTHER(res, preferred, format, JVX_DATAFORMAT_NONE);
+		SET_OTHER(res, preferred, format, JVX_DATAFORMAT_NONE, maskSetParams);
 	}
 	if (sub_formatset)
 	{
-		SET_OTHER(res, preferred, subformat, JVX_DATAFORMAT_GROUP_NONE);
+		SET_OTHER(res, preferred, subformat, JVX_DATAFORMAT_GROUP_NONE, maskSetParams);
 	}
 	if (datflow)
 	{
-		SET_OTHER(res, preferred, data_flow, jvxDataflow::JVX_DATAFLOW_DONT_CARE);
+		SET_OTHER(res, preferred, data_flow, jvxDataflow::JVX_DATAFLOW_DONT_CARE, maskSetParams);
 	}
-	
+	maskSetParams = JVX_NEGOTIATE_COMMON_SET_MASK_MINMAX;
 	return res;
 }
 

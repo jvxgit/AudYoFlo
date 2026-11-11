@@ -286,7 +286,7 @@ jvxErrorType jvx_fieldLevelGain(jvxHandle** buf, jvxSize numC, jvxSize buffersiz
 					if (tmp < -clipVal)
 					{
 						clipV = true;
-						tmp = clipVal;
+						tmp = -clipVal;
 					}
 					if (tmp > -dataMin)
 					{
@@ -333,7 +333,7 @@ jvxErrorType jvx_fieldLevelGain(jvxHandle** buf, jvxSize numC, jvxSize buffersiz
 				else if(tmp < -clipVal)
 				{
 					clipV = true;
-					tmp = clipVal;
+					tmp = -clipVal;
 				}
 				*ptrInt8++ = JVX_DATA_2_INT8(tmp);
 
@@ -374,7 +374,7 @@ jvxErrorType jvx_fieldLevelGain(jvxHandle** buf, jvxSize numC, jvxSize buffersiz
 				else if(tmp < -clipVal)
 				{
 					clipV = true;
-					tmp = clipVal;
+					tmp = -clipVal;
 				}
 				*ptrInt16++ = JVX_DATA_2_INT16(tmp);
 
@@ -415,7 +415,7 @@ jvxErrorType jvx_fieldLevelGain(jvxHandle** buf, jvxSize numC, jvxSize buffersiz
 				else if(tmp < -clipVal)
 				{
 					clipV = true;
-					tmp = clipVal;
+					tmp = -clipVal;
 				}
 				*ptrInt32++ = JVX_DATA_2_INT32(tmp);
 
@@ -455,7 +455,7 @@ jvxErrorType jvx_fieldLevelGain(jvxHandle** buf, jvxSize numC, jvxSize buffersiz
 				else if(tmp < -clipVal)
 				{
 					clipV = true;
-					tmp = clipVal;
+					tmp = -clipVal;
 				}
 				*ptrInt64++ = JVX_DATA_2_INT64(tmp);
 

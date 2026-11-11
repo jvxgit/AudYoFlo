@@ -12,7 +12,7 @@ set(LOCAL_UI_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/uisrc)
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/src
-	${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/qwt/qwt/src
+	${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qwt/qwt/src
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-helpers/include
 	${JVX_BINARY_DIR}/base/sources/jvxFactoryHosts/jvxFHAppFactoryHost
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-webcontrol/include

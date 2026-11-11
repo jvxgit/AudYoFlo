@@ -47,6 +47,11 @@ SECTION PROPERTIES
 		{
 			TYPE = "JVX_DATAFORMAT_BOOL";			
 			INIT_SET = 0;
+		};  	
+		SECTION measurement_tag
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";			
+			INIT_SET = "";
 		};  		
 	};
 

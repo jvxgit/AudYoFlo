@@ -13,6 +13,8 @@ extern "C"
 #include "jvx_circbuffer/jvx_circbuffer.h"
 }
 
+#include "jvx-qt-helpers.h"
+
 class jvxAcousticEqualizer: public QWidget, public IjvxQtAcousticMeasurement_process, public Ui::widgetEqualize
 {
 	IjvxQtAcousticMeasurement* refMeasure;
@@ -66,11 +68,13 @@ class jvxAcousticEqualizer: public QWidget, public IjvxQtAcousticMeasurement_pro
 	QVector<jvxData> magnitudeIr_x;
 	QVector<jvxData> magnitudeIr_y;
 
+	std::vector<oneWinTypeOption> optionsWinType;
+
 public:
 	jvxAcousticEqualizer(QWidget* parent);
 	~jvxAcousticEqualizer();
 
-	void init(IjvxQtAcousticMeasurement* refMeasure) override;
+	void init(IjvxQtAcousticMeasurement* refMeasure, IjvxHost* hostRef) override;
 	void terminate() override;
 	jvxErrorType process_data(jvxMeasurementDataProcessorTask task, jvxHandle* fld, jvxSize tagId) override;
 	QWidget* my_widget() override;

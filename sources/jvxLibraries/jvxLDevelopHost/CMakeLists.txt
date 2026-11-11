@@ -76,7 +76,7 @@ include_directories(
   ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
   ${JVX_INTEGRATE_SOURCES_PATH}/software/codeFragments/jvxHosts/common
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/qwt/qwt/src
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qwt/qwt/src
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-helpers/include
   ${JVX_BASE_ROOT}/software/codeFragments/jvxApplications/jvxQtApplications/src
 

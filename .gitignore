@@ -5,7 +5,7 @@ sources/jvxLibraries/third_party/git/ebur128/libebur128
 sources/jvxLibraries/third_party/git/mysofa/libmysofa
 sources/jvxLibraries/third_party/git/portaudio/portaudio
 sources/jvxLibraries/third_party/git/portaudio/asiosdk_2.3.3_2019-06-14.zip
-sources/jvxLibraries/third_party/git/qwt/qwt
+sources/jvxLibraries/third_party/web/qwt/qwt
 sources/jvxLibraries/third_party/git/speex-dsp/speexdsp
 sources/jvxLibraries/third_party/git/ffmpeg/ffmpeg
 sources/jvxLibraries/third_party/git/eigen/eigen
@@ -37,6 +37,7 @@ sources/jvxLibraries/third_party/git/orc/meson
 sources/jvxLibraries/third_party/git/orc/orc
 
 /sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.11
+/sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.10
 
 /sources/jvxExTools/jvxExPropC/example/get_audio_D0.m
 /sources/jvxExTools/jvxExPropC/example/get_audio_D1.m

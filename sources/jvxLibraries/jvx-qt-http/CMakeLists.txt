@@ -10,7 +10,7 @@ include_directories(
 	${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common
 	${CMAKE_CURRENT_BINARY_DIR}
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-helpers/include
-	${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/git/qwt/qwt/src
+	${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/qwt/qwt/src
 	${JVX_BASE_LIBS_INCLUDE_PATH}/jvx-json/include
 	${CMAKE_CURRENT_SOURCE_DIR}/src/
 	${CMAKE_CURRENT_SOURCE_DIR}/include

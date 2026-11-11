@@ -104,6 +104,9 @@ extern "C" {
 
 	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_ready, AYF_PROJECT_POSTFIX)(jvxHandle* instance, char* fldReasonIfNo, int szReasonIfNot);
 
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_lateStartModule, AYF_PROJECT_POSTFIX)(jvxHandle* instance);
+	jvxErrorType AYF_FUNCTIONNAME_REDEFINE(ayf_cc_earlyStopModule, AYF_PROJECT_POSTFIX)(jvxHandle* instance);
+
 	//jvxErrorType ayf_aw_requestTxtOutput(jvxHandle* instance, char* txtFldToken, int sz);
 	//jvxErrorType ayf_aw_requestTxtStatus(jvxHandle* instance, int* nStat);
 	

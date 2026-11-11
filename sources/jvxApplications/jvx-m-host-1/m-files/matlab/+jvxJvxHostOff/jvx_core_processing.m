@@ -97,6 +97,13 @@ inProcessing.isRunning = 1;
 inProcessing.out_complete = false;
 inProcessing.cb_preprocess= [];
 inProcessing.cb_postprocess= [];
+inProcessing.involveMinLevel = true;
+inProcessing.in_data_modified = [];
+
+global device_process;
+if(~isempty(device_process))  
+    [device_process.hdl, inProcessing] = device_process.cb('start', device_process.hdl, inProcessing);
+end
 
 set(handles.text_progress_0, 'BackgroundColor', [0 0.1 0]);
 set(handles.text_progress_1, 'BackgroundColor', [0 0.1 0]);
@@ -114,15 +121,37 @@ while(inProcessing.isRunning)
         break;
     end
     if(inProcessing.frameCnt <=  inProcessing.in_frames)
-        oneFrameIn = inProcessing.in_data(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1));
+
+        source_modified = false;
+        if(isempty(inProcessing.in_data_modified))
+            oneFrameIn = inProcessing.in_data(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1));
+        else
+            source_modified = true;
+            oneFrameIn = inProcessing.in_data_modified(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1));
+        end
         
-        % Run the minLevel function
-        oneFrameIn = jvxMinLevel(oneFrameIn);
+        if(inProcessing.involveMinLevel)
+            % Run the minLevel function
+            oneFrameIn = jvxMinLevel(oneFrameIn);
+        end
         
+        if(~isempty(device_process))     
+            [device_process.hdl, oneFrameIn] = device_process.cb('pre_process', device_process.hdl, oneFrameIn);
+        end
+
+        if(source_modified)
+            % We do a writeback of the input
+            inProcessing.in_data_modified(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1)) = oneFrameIn;
+        end
+
         % Process One Input frame in C subsystem
         [res, oneFrameOut] = handles.hostcall('external_call',  'CjvxOfflineAudioDevice', 'processOneBatch', oneFrameIn);
         if(res)
             
+            if(~isempty(device_process))            
+                [device_process.hdl, oneFrameOut] = device_process.cb('post_process', device_process.hdl, oneFrameOut);
+            end
+
             inProcessing.out_data(:,(inProcessing.idxStart:inProcessing.idxStart + inProcessing.bsize-1)) = oneFrameOut;
             inProcessing.idxStart = inProcessing.idxStart + inProcessing.bsize;
             inProcessing.frameCnt = inProcessing.frameCnt + 1;
@@ -165,5 +194,8 @@ while(inProcessing.isRunning)
         inProcessing.isRunning = false;
     end
     drawnow;
+end
+if(~isempty(device_process))  
+    [device_process.hdl] = device_process.cb('stop', device_process.hdl);
 end
 

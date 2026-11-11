@@ -358,7 +358,7 @@ HjvxDataLogger::_stop(jvxSize* numBytesWrittenToBuffer, jvxSize* numBytesWritten
 			errorDescrs.push_back(std::string("Function call <deactivate> failed: error code ") + jvxErrorType_descr(res));
 		}
 
-		for (i = 0; i < (int)_activeLines.size(); i++)
+		for (i = 0; i < _activeLines.size(); i++)
 		{
 			res = _loggerData->deassociate_datahandle(_runtime.headerSetPtrsLines[i]);
 			if (res != JVX_NO_ERROR)

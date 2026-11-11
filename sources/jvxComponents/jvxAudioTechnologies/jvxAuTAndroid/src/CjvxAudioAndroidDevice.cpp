@@ -207,7 +207,7 @@ CjvxAudioAndroidDevice::prepare_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		{
 			ALOGE("prepare_chain_master: openManagedStream failed: %s",
 				oboe::convertToText(oboeRes));
-			_postprocess_chain_master(NULL);
+			_postprocess_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			res = JVX_ERROR_COMPONENT_BUSY;
 			goto leave_error;
 		}
@@ -286,7 +286,7 @@ CjvxAudioAndroidDevice::start_chain_master(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			ALOGE("start_chain_master: requestStart failed: %s",
 				oboe::convertToText(oboeRes));
 			streamRunning = c_false;
-			_stop_chain_master(NULL);
+			_stop_chain_master(JVX_CONNECTION_FEEDBACK_CALL(fdb));
 			res = JVX_ERROR_COMPONENT_BUSY;
 			goto leave_error;
 		}

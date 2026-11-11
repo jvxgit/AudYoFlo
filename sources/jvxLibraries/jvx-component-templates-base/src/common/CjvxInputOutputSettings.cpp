@@ -110,6 +110,10 @@ CjvxInputOutputSettings::passFromSuccessor(jvxLinkDataDescriptor* preferredByOut
 			{
 				// Yes, there is something new!! Let us try the update
 
+				// We need to update the deviation state here as we have new information
+				// from the latest deviations!! TO BE TESTED!!
+				in.currentDeviationState = devLocal; // <- HIER!!
+
 				// Update input and output side
 				acceptInputParams(fromPrevious, nullptr);
 
@@ -507,12 +511,8 @@ CjvxInputOutputSettings::checkDeviation(jvxLinkDataDescriptor* data, CjvxInputOu
 	if (data->con_params.number_channels != params.nChans)
 	{
 		jvx_bitSet(retVal, (jvxSize)convertCfgFlags::AYF_NUM_CHANNELS_SHIFT);
-	}
-	if (data->con_params.number_channels != params.nChans)
-	{
-		jvx_bitSet(retVal, (jvxSize)convertCfgFlags::AYF_NUM_CHANNELS_SHIFT);
-	}
-	if (data->con_params.format != params.nChans)
+	}	
+	if (data->con_params.format != params.form)
 	{
 		jvx_bitSet(retVal, (jvxSize)convertCfgFlags::AYF_FORMAT_SHIFT);
 	}

@@ -33,6 +33,11 @@ inProcessing.jvx_start_handles = handles.local.private;
 inProcessing.triggerStop = false;
 inProcessing.reportError = '';
 
+global device_process;
+if(~isempty(device_process))  
+    [device_process.hdl] = device_process.cb('init');
+end
+
 % Trigger once, all steps should happen within the one step in case of
 % audio processing.
 [a status_seq last_step return_val] = handles.hostcall('trigger_external_process', 0);

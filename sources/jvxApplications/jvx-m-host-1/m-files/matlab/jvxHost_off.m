@@ -469,9 +469,20 @@ function pushbutton_save_output_Callback(hObject, eventdata, handles)
 if(ischar(p))
     fname = [p f];
     if(~isempty(fname))
-        if(handles.jvx_struct.data.channels.plot.id_user > size(handles.jvx_struct.data.input.data,1))
-            oneBuf = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - size(handles.jvx_struct.data.input.data,1),:);
-            rate = handles.jvx_struct.data.output.rate;
+
+        nin = size(handles.jvx_struct.data.input.data,1);
+        ninm = size(handles.jvx_struct.data.inputm.data,1);
+
+        if(handles.jvx_struct.data.channels.plot.id_user > nin)
+            if(handles.jvx_struct.data.channels.plot.id_user > (nin+ninm))
+                idx1 = handles.jvx_struct.data.channels.plot.id_user - (nin+ninm);
+                oneBuf = handles.jvx_struct.data.output.data(idx1,:);
+                rate = handles.jvx_struct.data.output.rate;
+            else
+                idx1 = handles.jvx_struct.data.channels.plot.id_user - (nin);
+                oneBuf = handles.jvx_struct.data.inputm.data(idx1,:);
+                rate = handles.jvx_struct.data.outputm.rate;
+            end
         else
             oneBuf = handles.jvx_struct.data.input.data(handles.jvx_struct.data.channels.plot.id_user,:);
             rate = handles.jvx_struct.data.input.rate;
@@ -487,18 +498,35 @@ function pushbutton_startplay_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if(handles.jvx_struct.data.channels.plot.id_user > 0)
-     if(handles.jvx_struct.data.channels.plot.id_user > size(handles.jvx_struct.data.input.data,1))
-        oneBuf1 = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - size(handles.jvx_struct.data.input.data,1),:);
-        if(handles.jvx_struct.data.channels.plot.id_user - size(handles.jvx_struct.data.input.data,1) < size(handles.jvx_struct.data.output.data,1))
-            oneBuf2 = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - size(handles.jvx_struct.data.input.data,1)+1,:);
+    nin = size(handles.jvx_struct.data.input.data,1);
+    ninm = size(handles.jvx_struct.data.inputm.data,1);
+
+    if(handles.jvx_struct.data.channels.plot.id_user > nin)
+
+        if(handles.jvx_struct.data.channels.plot.id_user > (nin+ninm))
+            idx1 = handles.jvx_struct.data.channels.plot.id_user - (nin+ninm);
+            oneBuf1 = handles.jvx_struct.data.output.data(idx1,:);
+            if(idx1 < size(handles.jvx_struct.data.output.data,1))
+                oneBuf2 = handles.jvx_struct.data.output.data(idx1+1,:);
+            else
+                oneBuf2 = oneBuf1;
+            end
+            rate = handles.jvx_struct.data.output.rate;
         else
-            oneBuf2 = oneBuf1;
+            idx1 = handles.jvx_struct.data.channels.plot.id_user - nin;
+            oneBuf1 = handles.jvx_struct.data.inputm.data(idx1,:);
+            if(idx1 < size(handles.jvx_struct.data.inputm.data,1))
+                oneBuf2 = handles.jvx_struct.data.inputm.data(idx1+1,:);
+            else
+                oneBuf2 = oneBuf1;
+            end
+            rate = handles.jvx_struct.data.inputm.rate;
         end
-        rate = handles.jvx_struct.data.output.rate;
     else
-        oneBuf1 = handles.jvx_struct.data.input.data(handles.jvx_struct.data.channels.plot.id_user,:);
-         if(handles.jvx_struct.data.channels.plot.id_user < size(handles.jvx_struct.data.input.data,1))
-            oneBuf2 = handles.jvx_struct.data.input.data(handles.jvx_struct.data.channels.plot.id_user+1,:);
+        idx1 = handles.jvx_struct.data.channels.plot.id_user;
+        oneBuf1 = handles.jvx_struct.data.input.data(idx1,:);
+         if(idx1 < size(handles.jvx_struct.data.input.data,1))
+            oneBuf2 = handles.jvx_struct.data.input.data(idx1+1,:);
         else
             oneBuf2 = oneBuf1;
         end
@@ -534,10 +562,20 @@ if(handles.jvx_struct.data.channels.plot.id_user > 0)
          if(a)
              export_name = b.SUBFIELD;
              
-             if(handles.jvx_struct.data.channels.plot.id_user > size(handles.jvx_struct.data.input.data,1))
-                 oneBuf = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - size(handles.jvx_struct.data.input.data,1),:);
+             nin = size(handles.jvx_struct.data.input.data,1);
+             ninm = size(handles.jvx_struct.data.inputm.data,1);
+
+             if(handles.jvx_struct.data.channels.plot.id_user > nin)
+                 if(handles.jvx_struct.data.channels.plot.id_user > nin+ninm)
+                     idx1 = handles.jvx_struct.data.channels.plot.id_user - (nin+ninm);
+                     oneBuf = handles.jvx_struct.data.output.data(idx1,:);
+                 else
+                     idx1 = handles.jvx_struct.data.channels.plot.id_user - nin;
+                     oneBuf = handles.jvx_struct.data.inputm.data(idx1,:);
+                 end
              else
-                 oneBuf = handles.jvx_struct.data.input.data(handles.jvx_struct.data.channels.plot.id_user,:);
+                 idx1 = handles.jvx_struct.data.channels.plot.id_user;
+                 oneBuf = handles.jvx_struct.data.input.data(idx1,:);
              end
              assignin('base', export_name, oneBuf);
          end
@@ -1006,8 +1044,15 @@ function pushbutton_plot_output_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if(handles.jvx_struct.data.channels.plot.id_user > 0)
     
-     if(handles.jvx_struct.data.channels.plot.id_user > size(handles.jvx_struct.data.input.data,1))
-        oneBuf = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - size(handles.jvx_struct.data.input.data,1),:);
+    nin = size(handles.jvx_struct.data.input.data,1);
+    ninm = size(handles.jvx_struct.data.inputm.data,1);
+
+     if(handles.jvx_struct.data.channels.plot.id_user > nin)
+         if(handles.jvx_struct.data.channels.plot.id_user > nin+ninm)
+            oneBuf = handles.jvx_struct.data.output.data(handles.jvx_struct.data.channels.plot.id_user - nin+ninm,:);
+         else
+             oneBuf = handles.jvx_struct.data.inputm.data(handles.jvx_struct.data.channels.plot.id_user - nin,:);
+         end
     else
         oneBuf = handles.jvx_struct.data.input.data(handles.jvx_struct.data.channels.plot.id_user,:);
     end

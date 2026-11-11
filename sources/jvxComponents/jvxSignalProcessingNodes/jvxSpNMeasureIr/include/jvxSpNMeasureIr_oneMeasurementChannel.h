@@ -38,6 +38,7 @@ class oneMeasurementChannel
 public:
 	jvxApiString nmChan;
 	jvxApiString nmMeas;
+	jvxApiString tagMeas;
 	jvxApiString fileLocate;
 	jvxData* bufIr;
 	jvxData* bufMeas;

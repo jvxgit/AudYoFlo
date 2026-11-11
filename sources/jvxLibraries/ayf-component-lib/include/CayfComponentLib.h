@@ -150,7 +150,7 @@ private:
 	IjvxObject* mainObj = nullptr;
 	std::list< IjvxObject*> subsequentComponents;
 	
-	jvxBool delayedStartExpectingStep = false;
+	// jvxBool delayedStartExpectingStep = false;
 	jvxBool activatedDeployAndStart = false;
 	jvxBool startCbCalled = false;
 

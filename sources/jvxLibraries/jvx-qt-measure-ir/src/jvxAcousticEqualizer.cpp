@@ -9,21 +9,7 @@ extern "C"
 #include "jvx_windows/jvx_windows.h"
 }
 
-typedef struct
-{
-	jvxInt16 winTp;
-	const char* descr;
-} oneWinType;
 
-#define JVX_NUMBER_WIN_TYPES 5
-static oneWinType windowTypes[JVX_NUMBER_WIN_TYPES] =
-{
-	{JVX_WINDOW_RECT, "RECT"},
-	{JVX_WINDOW_HAMMING, "HAMMING" },
-	{JVX_WINDOW_HANN, "HANN"},
-	{JVX_WINDOW_BLACKMAN, "BLACKMAN"},
-	{JVX_WINDOW_SQRT_FLATTOP_HANN, "SQRT HANN"}
-};
 
 jvxAcousticEqualizer::jvxAcousticEqualizer(QWidget* parent) : QWidget(parent)
 {
@@ -43,6 +29,11 @@ jvxAcousticEqualizer::jvxAcousticEqualizer(QWidget* parent) : QWidget(parent)
 	irDelay = lIrEqualizer / 2;
 	jvx_get_nearest_size_fft(&szFftTypeEq, lIrEqualizer, JVX_FFT_ROUND_UP, &szFftEq);
 	*/
+	optionsWinType.push_back(oneWinTypeOption(JVX_WINDOW_RECT, "RECT"));
+	optionsWinType.push_back(oneWinTypeOption(JVX_WINDOW_HAMMING, "HAMMING"));
+	optionsWinType.push_back(oneWinTypeOption(JVX_WINDOW_HANN, "HANN"));
+	optionsWinType.push_back(oneWinTypeOption(JVX_WINDOW_BLACKMAN, "BLACKMAN"));
+	optionsWinType.push_back(oneWinTypeOption(JVX_WINDOW_SQRT_FLATTOP_HANN, "SQRT HANN"));
 }
 
 jvxAcousticEqualizer::~jvxAcousticEqualizer()
@@ -52,7 +43,7 @@ jvxAcousticEqualizer::~jvxAcousticEqualizer()
 JVX_FFT_TOOLS_DEFINE_FFT_SIZES
 
 void
-jvxAcousticEqualizer::init(IjvxQtAcousticMeasurement* refMeasureArg)
+jvxAcousticEqualizer::init(IjvxQtAcousticMeasurement* refMeasureArg, IjvxHost* hostRef)
 {
 	jvxSize i;
 
@@ -95,9 +86,9 @@ jvxAcousticEqualizer::init(IjvxQtAcousticMeasurement* refMeasureArg)
 	comboBox_freqscale->addItem("Linear");
 	comboBox_freqscale->addItem("LogScale");
 
-	for (i = 0; i < JVX_NUMBER_WIN_TYPES; i++)
+	for (i = 0; i < optionsWinType.size(); i++)
 	{
-		comboBox_window->addItem(windowTypes[i].descr);
+		comboBox_window->addItem(optionsWinType[i].descr.c_str());
 	}
 }
 
