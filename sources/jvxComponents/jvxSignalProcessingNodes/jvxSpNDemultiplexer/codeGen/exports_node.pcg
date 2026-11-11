@@ -1,0 +1,44 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genDemultiplexer_node";
+
+	SECTION config
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_config"};
+
+		// Number of input connectors in#0 .. in#N-1. Can only be modified in state ACTIVE
+		// and as long as the component is not part of a connected chain
+		SECTION number_input_connectors
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 2;
+			CALLBACK_SET_POSTHOOK = "set_config";
+		};
+	};
+
+	SECTION monitor
+	{
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		// Number of input connectors which are connected in the current chain
+		SECTION number_connectors_connected
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+
+		// Number of input connectors for which the output buffers were linked
+		// directly into the input buffers (zero copy)
+		SECTION number_connectors_zerocopy
+		{
+			TYPE = "JVX_DATAFORMAT_SIZE";
+			INIT_SET = 0;
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";
+		};
+	};
+};

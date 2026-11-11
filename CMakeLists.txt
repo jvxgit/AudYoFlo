@@ -1013,6 +1013,8 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNLevelControl
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNSpeaker2Binaural
     ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNIIRResample
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNMultiplexer
+    ${JVX_BASE_ROOT}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNDemultiplexer
   )
 
     set(JVX_BASE_VIDEO_NODES 

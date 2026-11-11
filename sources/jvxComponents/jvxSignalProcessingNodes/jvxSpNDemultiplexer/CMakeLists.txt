@@ -1,0 +1,35 @@
+if(DEFINED JVX_SDK_PATH)
+	include(${JVX_SDK_PATH}/cmake/standalone.cmake)
+endif(DEFINED JVX_SDK_PATH)
+
+set(PROJECT_NAME jvxSpNDemultiplexer)
+include(${JVX_CMAKE_DIR}/common_local_lib_head.cmake)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/target
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
+  ${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
+  )
+
+set(LOCAL_SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNDemultiplexer.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNDemultiplexer_connector.h
+
+	${CMAKE_CURRENT_SOURCE_DIR}/target/componentEntry.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNDemultiplexer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNDemultiplexer_connect.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNDemultiplexer_process.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxSpNDemultiplexer_connector.cpp
+   )
+
+set(LOCAL_LIBS
+  jvx-component-templates-base_static
+  )
+
+set(LOCAL_PCG_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_node.pcg
+	)
+
+set(IS_JVX_COMPONENT TRUE)
+
+include(${JVX_CMAKE_DIR}/common_local_lib_foot.cmake)
