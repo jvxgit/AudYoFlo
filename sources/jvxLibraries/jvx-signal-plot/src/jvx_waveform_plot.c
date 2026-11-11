@@ -20,7 +20,7 @@ jvxDspBaseErrorType jvx_waveform_plot_initCfg(jvxWaveformPlot* hdl)
 			hdl->initPrm.amplMin = -1.0;
 			hdl->asyncParam.gainFactor = 1.0;
 			hdl->asyncParam.smoothFactor = 0.0;
-			hdl->asyncParam.absAmplPlot = c_false;
+			hdl->asyncParam.plotMode = JVX_WAVEFORM_PLOT_AMPL_LINEAR;
 			return JVX_DSP_NO_ERROR;
 		}
 		return JVX_DSP_ERROR_WRONG_STATE;
@@ -82,24 +82,40 @@ jvxDspBaseErrorType jvx_waveform_plot_process(jvxWaveformPlot* hdl, jvxData* ptr
 			jvx_waveform_plot_prv* theObj = (jvx_waveform_plot_prv*)hdl->prv;
 			jvxSize offset_y = rgba_vec_length / 2;
 			jvxSize shiftHeight = rgba_vec_length / 2;
-			if (theObj->asyncParam_copy.absAmplPlot)
+			switch (theObj->asyncParam_copy.plotMode)
 			{
+			case JVX_WAVEFORM_PLOT_ENERGY_LINEAR:
 				offset_y = 0;
 				shiftHeight = rgba_vec_length;
+				break;
+			default:
+				// Nothing here
+				break;
 			}
+
 			for (i = 0; i < theObj->initPrm_copy.bsize; i++)
 			{
 				jvxData amplVal = ptrShowMe[i];
-				if (theObj->asyncParam_copy.absAmplPlot)
+				amplVal *= theObj->asyncParam_copy.gainFactor;
+
+				switch (theObj->asyncParam_copy.plotMode)
 				{
-					amplVal = fabs(amplVal);
-					printf("val = %f \n", amplVal);
-					// amplVal = 0.98;
+				case JVX_WAVEFORM_PLOT_ENERGY_LINEAR:
+				case JVX_WAVEFORM_PLOT_ENERGY_LOG:
+					
+					amplVal = amplVal * amplVal;
 					jvxData fac1 = theObj->asyncParam_copy.smoothFactor;
 					jvxData fac2 = (1.0 - theObj->asyncParam_copy.smoothFactor);
 					theObj->mem = fac1 * theObj->mem + fac2 * amplVal;
 					amplVal = theObj->mem;
 
+					if(theObj->asyncParam_copy.plotMode == JVX_WAVEFORM_PLOT_ENERGY_LOG)
+					{
+						amplVal = log10(amplVal);
+					}
+					break;
+				default: 
+					break;
 				}
 
 				if (amplVal > theObj->maxVal)
@@ -107,27 +123,37 @@ jvxDspBaseErrorType jvx_waveform_plot_process(jvxWaveformPlot* hdl, jvxData* ptr
 					theObj->maxVal = amplVal;
 				}
 
-				if (theObj->asyncParam_copy.absAmplPlot)
+				switch (theObj->asyncParam_copy.plotMode)
 				{
-					theObj->minVal = 0;					
-				}
-				else
-				{
+				case JVX_WAVEFORM_PLOT_ENERGY_LINEAR:				
+					
+					// Lowest lim is "0"
+					theObj->minVal = 0;
+					break;
+				default:
 					if (amplVal < theObj->minVal)
 					{
 						theObj->minVal = amplVal;
 					}
-
+					break;
 				}
 			}
 
 			if (out_rgb_ptr)
 			{
-				jvxSize limLow = offset_y + theObj->asyncParam_copy.gainFactor * theObj->minVal * shiftHeight;
-				jvxSize limHigh = offset_y + theObj->asyncParam_copy.gainFactor * theObj->maxVal * shiftHeight;
+				// Be careful here: values might be lower than 0!!
+				int limLow = (int)offset_y +  theObj->minVal * (int)shiftHeight;
+				int limHigh = (int)offset_y + theObj->maxVal * (int)shiftHeight;
 
 				// Make suree there is at least 1 pixel
+				limLow = JVX_MIN(limLow, (int)rgba_vec_length);
+				limLow = JVX_MAX(limLow, 0);
+
 				limHigh = JVX_MAX(limHigh, limLow + 1);
+
+				limHigh = JVX_MIN(limHigh, (int)rgba_vec_length);
+				limHigh = JVX_MAX(limHigh, 0);
+
 				for (i = 0; i < limLow; i++)
 				{
 					out_rgb_ptr[4 * i] = 0x0;

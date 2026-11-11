@@ -5,6 +5,13 @@
 
 JVX_DSP_LIB_BEGIN
 
+typedef enum
+{
+	JVX_WAVEFORM_PLOT_AMPL_LINEAR,
+	JVX_WAVEFORM_PLOT_ENERGY_LINEAR,
+	JVX_WAVEFORM_PLOT_ENERGY_LOG
+} jvxWaveformPlotMode;
+
 typedef struct
 {
 	jvxSize bsize;
@@ -15,8 +22,10 @@ typedef struct
 typedef struct
 {
 	jvxData gainFactor;
-	jvxCBool absAmplPlot;
 	jvxData smoothFactor;
+	jvxWaveformPlotMode plotMode;
+	//jvxCBool energyAmplPlot;
+	//jvxCBool logPlot;
 } jvxWaveformPlot_async;
 
 typedef struct

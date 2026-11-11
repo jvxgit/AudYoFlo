@@ -9,6 +9,10 @@ typedef enum
 	JVX_NEGOTIATE_CONSTRAINT_CHANGE
 } jvxConstraintSetResult;
 
+#define JVX_NEGOTIATE_COMMON_SET_MASK_MIN 0x1
+#define JVX_NEGOTIATE_COMMON_SET_MASK_MAX 0x2
+#define JVX_NEGOTIATE_COMMON_SET_MASK_MINMAX (JVX_NEGOTIATE_COMMON_SET_MASK_MIN |JVX_NEGOTIATE_COMMON_SET_MASK_MAX)
+
 class CjvxNegotiate_common
 {
 	class jvxNegotiateParamsRange
@@ -112,6 +116,7 @@ public:
 	negBehaviorType negBehavior = negBehaviorType::JVX_BEHAVIOR_AUDIO;
 	jvxBool allowCompromiseOutput = true;
 	CjvxObjectLog* logObj = nullptr;
+	jvxCBitField maskSetParams = JVX_NEGOTIATE_COMMON_SET_MASK_MINMAX;
 
 public:
 
@@ -129,6 +134,8 @@ public:
 		jvxDataflow datflow = jvxDataflow::JVX_DATAFLOW_DONT_CARE,
 		jvxSize segment_x = JVX_SIZE_UNSELECTED,
 		jvxSize segment_y = JVX_SIZE_UNSELECTED);
+
+	void _set_parameters_fixed_mask(jvxCBitField mask);
 
 	void _set_parameters_fixed(const jvxLinkDataDescriptor_con_params& params);
 
