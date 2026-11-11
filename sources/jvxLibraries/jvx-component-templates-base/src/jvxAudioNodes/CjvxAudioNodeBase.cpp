@@ -402,6 +402,8 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 		ld_cp.con_params.rate = _common_set_icon.theData_in->con_params.rate;
 		ld_cp.con_params.format = _common_set_icon.theData_in->con_params.format;
 		ld_cp.con_params.number_channels = _common_set_icon.theData_in->con_params.number_channels;
+		ld_cp.con_params.segmentation.x = _common_set_icon.theData_in->con_params.segmentation.x;
+		ld_cp.con_params.segmentation.y = _common_set_icon.theData_in->con_params.segmentation.y;
 
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.min))
 		{
@@ -409,6 +411,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			{
 				thereismismatch = true;
 				ld_cp.con_params.buffersize = _common_set_node_params_1io.preferred.buffersize.min;
+				ld_cp.con_params.segmentation.x = _common_set_node_params_1io.preferred.buffersize.min;
 			}
 		}
 		if (JVX_CHECK_SIZE_SELECTED(_common_set_node_params_1io.preferred.buffersize.max))
@@ -417,6 +420,7 @@ CjvxAudioNodeBase::test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb))
 			{
 				thereismismatch = true;
 				ld_cp.con_params.buffersize = _common_set_node_params_1io.preferred.buffersize.max;
+				ld_cp.con_params.segmentation.x = _common_set_node_params_1io.preferred.buffersize.max;
 			}
 		}
 
@@ -541,6 +545,20 @@ CjvxAudioNodeBase::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle*
 	{
 	case JVX_LINKDATA_TRANSFER_COMPLAIN_DATA_SETTINGS:
 
+		// Try to pass the output settings towards the input side. If successor accepts, we take over the new values
+		if(_common_set_icon.theData_in->con_link.connect_from)
+		{
+			res = _common_set_icon.theData_in->con_link.connect_from->transfer_backward_ocon(tp, data JVX_CONNECTION_FEEDBACK_CALL_A(fdb));
+			if (res == JVX_NO_ERROR)
+			{
+				CjvxAudioNode_genpcg::properties_parameters.buffersize.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.buffersize);
+				CjvxAudioNode_genpcg::properties_parameters.samplerate.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.rate);
+				CjvxAudioNode_genpcg::properties_parameters.numberinputchannels.value = JVX_SIZE_INT32(_common_set_icon.theData_in->con_params.number_channels);
+				CjvxAudioNode_genpcg::properties_parameters.format.value = _common_set_icon.theData_in->con_params.format;
+			}
+		}
+
+		// Here, we try to report a useful error message - we can not help in case output requirements do not fit input requirements
 		if (
 			(ld->con_params.rate != CjvxAudioNode_genpcg::properties_parameters.samplerate.value) ||
 			(ld->con_params.buffersize != CjvxAudioNode_genpcg::properties_parameters.buffersize.value) ||

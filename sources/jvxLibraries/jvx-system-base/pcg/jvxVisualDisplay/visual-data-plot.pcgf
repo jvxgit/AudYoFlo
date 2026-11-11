@@ -5,7 +5,73 @@ SECTION visual_data_plot
 	GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
 	ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
 	READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY";	
-		
+	CALLBACKS = {"set_props_plotting_td", "set_props_plotting_fd"};
+
 	include "visual-data-parameter.pcgf";
 	include "visual-data-interfacing.pcgf";
+		
+	SECTION rendering_target_sec
+	{
+		DESCRIPTION = "Secondary video external plot buffer";
+		ASSOCIATE_EXTERNAL = "yes";
+		TYPE = "JVX_DATAFORMAT_BYTE";		 
+		CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_CHANNEL_SWITCH_BUFFER";
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_READ_ONLY_ON_START";
+	
+		ifdef JVX_DECLARE_PROP_REF_INSTALL_CALLBACK
+			CALLBACK_SET_POSTHOOK = "interface_pass";
+			CALLBACK_SET_PREHOOK = "interface_pass";
+		endif
+	}; 
+
+	SECTION sensitivity_spectrum
+	{
+		DESCRIPTION = "Sensitivity factor spectrum";
+		ASSOCIATE_EXTERNAL = "yes";
+		TYPE = "JVX_DATAFORMAT_DATA";	
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		CALLBACK_SET_POSTHOOK = "set_props_plotting_fd";
+	};
+
+	SECTION lowdb_spectrum
+	{
+		DESCRIPTION = "Low dB spectrum";
+		ASSOCIATE_EXTERNAL = "yes";
+		TYPE = "JVX_DATAFORMAT_DATA";	
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		CALLBACK_SET_POSTHOOK = "set_props_plotting_fd";
+	};
+
+	SECTION highdb_spectrum
+	{
+		DESCRIPTION = "High dB spectrum";
+		ASSOCIATE_EXTERNAL = "yes";
+		TYPE = "JVX_DATAFORMAT_DATA";	
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		CALLBACK_SET_POSTHOOK = "set_props_plotting_fd";
+	};
+	SECTION gain_factor_waveform
+	{
+		DESCRIPTION = "Gain factor waveform";
+		ASSOCIATE_EXTERNAL = "yes";
+		TYPE = "JVX_DATAFORMAT_DATA";		
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		CALLBACK_SET_POSTHOOK = "set_props_plotting_td";
+	};
+	SECTION smooth_factor_waveform
+	{
+		DESCRIPTION = "Smooth factor waveform";
+		ASSOCIATE_EXTERNAL = "yes";
+		TYPE = "JVX_DATAFORMAT_DATA";		
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		CALLBACK_SET_POSTHOOK = "set_props_plotting_td";
+	};
+	SECTION abs_mode_waveform
+	{
+		DESCRIPTION = "Abs mode waveform";
+		ASSOCIATE_EXTERNAL = "yes";
+		TYPE = "JVX_DATAFORMAT_BOOL";		
+		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		CALLBACK_SET_POSTHOOK = "set_props_plotting_td";
+	};
 };

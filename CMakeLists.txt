@@ -738,7 +738,7 @@ if(NOT JVX_C_LIBRARIES_SDK_ONLY)
 
     # The audio libs
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvxLFileIO
-    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-spectralplot
+    ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signal-plot
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-component-templates-product
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-vq
     ${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-lib-host-app
