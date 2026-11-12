@@ -24,9 +24,6 @@ jobs:
     - name: Update Packages
       run: sudo apt update
 
-    - name: Upgrade Packages
-      run: sudo apt full-upgrade
-
     - name: Install dependecies
       run: sudo apt install -y build-essential
         libgl1-mesa-dev
@@ -72,6 +69,9 @@ jobs:
 
     - name: Install Aqt
       run: pip install aqtinstall
+
+    - name: Install fonttools
+      run: pip install fonttools
 
     - name: Configure ccache
       run: |
