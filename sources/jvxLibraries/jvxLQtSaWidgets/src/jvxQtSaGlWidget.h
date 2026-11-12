@@ -113,7 +113,7 @@ class CjvxMyGlWidget: public QOpenGLWidget, protected jvxVideoRenderCore_bc
 
 	cfgRenderStraight myVar_straightPaint;
 
-	CjvxMyGlWidget_config* cfg = nullptr;
+	CjvxMyGlWidget_config* cfg = nullptr;	
 
 public:
 
@@ -125,7 +125,7 @@ public:
 	void setConnectLinks(IjvxAccessProperties* propRefIn, CjvxMyGlWidget_config* cfgArg, jvx::externalBufferSubType my_operation);
 	void clearConnectLinks();
 
-	jvxErrorType inform_about_to_start();
+	jvxErrorType inform_about_to_start(std::function<bool(jvxVideoOverlayConfig& ovlConfig, jvxSize ll)> cb_overlay_update_arg = nullptr);
 	jvxErrorType inform_stopped();
 	virtual void inform_update_window_periodic();
 

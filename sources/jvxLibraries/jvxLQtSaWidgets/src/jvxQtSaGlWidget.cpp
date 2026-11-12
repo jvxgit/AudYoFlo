@@ -198,7 +198,7 @@ CjvxMyGlWidget::clearConnectLinks()
 
 
 jvxErrorType
-CjvxMyGlWidget::inform_about_to_start()
+CjvxMyGlWidget::inform_about_to_start(std::function<bool(jvxVideoOverlayConfig& ovlConfig, jvxSize ll)> cb_overlay_update_arg)
 {
 	// Activate the GL widget
 	std::string propStr;
@@ -273,6 +273,15 @@ CjvxMyGlWidget::inform_about_to_start()
 	trans.reset(true, 0);
 	res = propRef->get_property(callGate, jPRG(&selLst, 1, JVX_DATAFORMAT_SELECTION_LIST), ident, trans);
 	JVX_ASSERT_PROPERTY_ACCESS_RETURN(res, propStr);
+
+	if (cb_overlay_update_arg)
+	{
+		auto ovl = overlay_config();
+		if (cb_overlay_update_arg(ovl, seg_y))
+		{
+			set_overlay_config(ovl);
+		}
+	}
 
 	numBuffers = 1;
 
