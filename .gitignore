@@ -17,6 +17,8 @@ sources/jvxLibraries/third_party/web/libsdl/libsdl
 sources/jvxLibraries/third_party/web/qt/qt
 sources/jvxLibraries/third_party/web/qt/aqt.exe
 sources/jvxLibraries/third_party/web/qt/aqtinstall.log
+sources/jvxLibraries/third_party/web/stb-dejavu/include
+sources/jvxLibraries/third_party/web/stb-dejavu/download
 
 sources/sub-projects/vst3sdk
 sources/jvxPackages/ffmpeg/jvxLibraries/third_party/git/ffmpeg/ffmpeg-win32

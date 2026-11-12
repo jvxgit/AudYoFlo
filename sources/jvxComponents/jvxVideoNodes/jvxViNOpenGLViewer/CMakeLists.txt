@@ -10,6 +10,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
 if(JVX_USE_GLEW_GLUT)
 	include_directories(
 		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-opengl-cpp/include
+		${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/stb-dejavu/include
 		${OPENGL_INCLUDE_DIRS}  
 		${GLUT_INCLUDEDIR} 
 		${GLEW_INCLUDEDIR} 

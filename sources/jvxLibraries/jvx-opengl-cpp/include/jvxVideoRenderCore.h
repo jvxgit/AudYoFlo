@@ -42,8 +42,9 @@
 #endif
 
 #include <cassert>
+#include "jvxVideoOverlay.h"
 
-// No longer in use: 
+// No longer in use:
 // 	"#version 110										\n" \
 
 //#define JVX_PRECISION_QUALIFIER_MEDIUMP  "mediump"
@@ -64,53 +65,64 @@ static const char* vertex_shader_code_rgb24 = \
 // No longer in use: 
 // "#version 110									\n" \
 
+// Both fragment shaders share the same structure:
+// - plot_rect (x0, y0, x1, y1 in normalized viewport coordinates, origin bottom-left) is the area the
+//   plot image is mapped to, outside of it frame_color is shown
+// - if use_overlay is set, the overlay texture (same size as the viewport, top row first) is
+//   alpha-blended on top. See jvxVideoOverlay.h
+
 static const char* fragment_shader_code_view_rgb24 = \
-	"												\n" \
-	"uniform sampler2D texture;						\n" \
-	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " int invert_y;						\n" \
-	"												\n" \
-	"varying " JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 texcoord;					\n" \
-	"												\n" \
-	"void main()									\n" \
-	"{												\n" \
-	"	" JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 coord = texcoord; \n" \
-	"	if(invert_y != 0) coord.y = 1.0 - coord.y; \n" \
-	"	gl_FragColor =								\n" \
-	"		texture2D(texture, coord);			\n" \
-	"}												\n";
-
-// Show only the red part:
-//"	gl_FragColor[1] = 0;						\n" \
-//"	gl_FragColor[2] = 0;						\n" \
-
-// No longer in use: 
-// "#version 110									\n" \
+	"uniform sampler2D texture;\n" \
+	"uniform sampler2D overlay;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " int use_overlay;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 plot_rect;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 frame_color;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " int invert_y;\n" \
+	"\n" \
+	"varying " JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 texcoord;\n" \
+	"\n" \
+	"void main()\n" \
+	"{\n" \
+	"	" JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 col = frame_color;\n" \
+	"	if((texcoord.x >= plot_rect.x) && (texcoord.x <= plot_rect.z) && (texcoord.y >= plot_rect.y) && (texcoord.y <= plot_rect.w))\n" \
+	"	{\n" \
+	"		" JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 coord = (texcoord - plot_rect.xy) / (plot_rect.zw - plot_rect.xy);\n" \
+	"		if(invert_y != 0) coord.y = 1.0 - coord.y;\n" \
+	"		col = texture2D(texture, coord);\n" \
+	"	}\n" \
+	"	if(use_overlay != 0)\n" \
+	"	{\n" \
+	"		" JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 ov = texture2D(overlay, vec2(texcoord.x, 1.0 - texcoord.y));\n" \
+	"		col = vec4(mix(col.rgb, ov.rgb, ov.a), 1.0);\n" \
+	"	}\n" \
+	"	gl_FragColor = col;\n" \
+	"}\n";
 
 static const char* fragment_shader_code_rotate_rgb24 = \
-"												\n" \
-"uniform sampler2D texture;						\n" \
-"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " float border_x;						\n" \
-"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " float border_y;						\n" \
-"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " float offset_x;						\n" \
-"												\n" \
-"varying " JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 texcoord;							\n" \
-"												\n" \
-"void main()									\n" \
-"{												\n" \
-"	" JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 coord = texcoord; \n" \
-"	if( 										\n" \
-"		(coord.x < border_x) || (coord.x > (1.0-border_x))	||	\n" \
-"		(coord.y < border_y) || (coord.y > (1.0-border_y)))		\n" \
-"	{											\n" \
-"		gl_FragColor = vec4(0,0,0,1);			\n" \
-"   }											\n" \
-"	else										\n" \
-"	{											\n" \
-"		coord = vec2((((texcoord.y-border_y) * 1.0 / (1.0 - 2.0 * border_y)) ), ((texcoord.x-border_x) * 1.0 / (1.0 - 2.0 * border_x)) + offset_x); \n" \
-"		gl_FragColor =							\n" \
-"			texture2D(texture, coord);			\n" \
-"	}											\n" \
-"}												\n";
+	"uniform sampler2D texture;\n" \
+	"uniform sampler2D overlay;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " int use_overlay;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 plot_rect;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 frame_color;\n" \
+	"uniform " JVX_PRECISION_QUALIFIER_MEDIUMP " float offset_x;\n" \
+	"\n" \
+	"varying " JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 texcoord;\n" \
+	"\n" \
+	"void main()\n" \
+	"{\n" \
+	"	" JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 col = frame_color;\n" \
+	"	if((texcoord.x >= plot_rect.x) && (texcoord.x <= plot_rect.z) && (texcoord.y >= plot_rect.y) && (texcoord.y <= plot_rect.w))\n" \
+	"	{\n" \
+	"		" JVX_PRECISION_QUALIFIER_MEDIUMP " vec2 rel = (texcoord - plot_rect.xy) / (plot_rect.zw - plot_rect.xy);\n" \
+	"		col = texture2D(texture, vec2(rel.y, rel.x + offset_x));\n" \
+	"	}\n" \
+	"	if(use_overlay != 0)\n" \
+	"	{\n" \
+	"		" JVX_PRECISION_QUALIFIER_MEDIUMP " vec4 ov = texture2D(overlay, vec2(texcoord.x, 1.0 - texcoord.y));\n" \
+	"		col = vec4(mix(col.rgb, ov.rgb, ov.a), 1.0);\n" \
+	"	}\n" \
+	"	gl_FragColor = col;\n" \
+	"}\n";
 
 #if 0
 static const char* fragment_shader_code_rotate_rgb24 = \
@@ -191,6 +203,11 @@ private:
 			GLint offset_x;
 
 			GLint invert_y;
+
+			GLint overlay;
+			GLint use_overlay;
+			GLint plot_rect;
+			GLint frame_color;
 		} uniforms;
 
 		struct
@@ -204,6 +221,17 @@ private:
 		GLint invert_y;
 
 	} g_resources;
+
+	// Static overlay (frame, axes, grid, labels, title). Rendered on the CPU via jvxVideoOverlay whenever
+	// the configuration or the viewport size changes, composited in the fragment shader.
+	struct
+	{
+		jvxVideoOverlayConfig cfg;
+		jvxVideoOverlayLayout lay;
+		std::vector<std::uint8_t> pix;
+		GLuint texture = 0;
+		bool dirty = true;
+	} ovl;
 
 	GLfloat* g_vertex_buffer_data;
 	jvxSize g_vertex_buffer_data_size;
@@ -236,7 +264,32 @@ public:
 		myForm = JVX_DATAFORMAT_NONE;
 		mySubform = JVX_DATAFORMAT_GROUP_NONE;
 		g_resources.program = 0;
+		g_resources.uniforms.overlay = -1;
+		g_resources.uniforms.use_overlay = -1;
+		g_resources.uniforms.plot_rect = -1;
+		g_resources.uniforms.frame_color = -1;
 		bufsAllocated = NULL;
+	};
+
+	// =====================================================================
+	// Overlay configuration - may be called at any time, also before initialize.
+	// The overlay is regenerated with the next render call.
+	// =====================================================================
+	void set_overlay_config(const jvxVideoOverlayConfig& cfg)
+	{
+		ovl.cfg = cfg;
+		ovl.dirty = true;
+	};
+
+	const jvxVideoOverlayConfig& overlay_config() const
+	{
+		return ovl.cfg;
+	};
+
+	// Plot area in viewport pixels as used in the last render call
+	const jvxVideoOverlayLayout& overlay_layout() const
+	{
+		return ovl.lay;
 	};
 
 	jvxErrorType initialize(int width, int height, jvxByte**** bufs, jvxSize* szFld, jvxSize numChannels,
@@ -331,6 +384,12 @@ public:
 		}
 #endif
 
+		if (ovl.texture != 0)
+		{
+			glDeleteTextures(1, &ovl.texture);
+			ovl.texture = 0;
+		}
+		ovl.dirty = true;
 
 		if (bufsAllocated)
 		{
@@ -365,6 +424,10 @@ public:
 		g_resources.uniforms.offset_x = 0;	
 		g_resources.uniforms.invert_y = 0;
 		g_resources.uniforms.texture = 0;
+		g_resources.uniforms.overlay = -1;
+		g_resources.uniforms.use_overlay = -1;
+		g_resources.uniforms.plot_rect = -1;
+		g_resources.uniforms.frame_color = -1;
 		g_resources.attributes.position = 0;
 
 		return JVX_NO_ERROR;
@@ -414,8 +477,7 @@ public:
 				num_values = varCfgRotateAngleOffsetFollow->update_num_y;
 			}
 
-			glUniform1f(g_resources.uniforms.border_x, g_resources.border_x);
-			glUniform1f(g_resources.uniforms.border_y, g_resources.border_y);
+			// border_x / border_y are mapped to the plot_rect uniform below
 
 			//std::cout << "Offset x: " << g_resources.offset_x << std::endl;
 			glUniform1f(g_resources.uniforms.offset_x, g_resources.offset_x);
@@ -432,6 +494,10 @@ public:
 		default:
 		  break;
 		}
+
+		// Overlay and plot area. Texture unit 1 holds the overlay
+		update_overlay();
+		set_plot_area_uniforms();
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, g_resources.texture);
@@ -522,12 +588,121 @@ public:
 		GLint* border_x, GLint* border_y, 
 		GLint* offset_x, GLint* invert_y) = 0;
 	virtual jvxErrorType release_programm_unassign() = 0;
+
+	// Lookup of uniforms in the program created by create_programm_assign. Return -1 if not available.
+	virtual GLint uniform_location_program(const char* name) = 0;
 	virtual jvxErrorType start_rendering_program() = 0;
 	virtual jvxErrorType stop_rendering_program() = 0;
 
 #endif
 
 private:
+
+	// =====================================================================
+	// Overlay helpers
+	// =====================================================================
+
+	GLint lookup_uniform(const char* name)
+	{
+#if defined(JVX_VIDEO_RENDER_CORE_CLASS)
+		if (g_resources.program == 0)
+		{
+			return uniform_location_program(name);
+		}
+#endif
+		return glGetUniformLocation(g_resources.program, name);
+	};
+
+	// Regenerate the overlay texture if the configuration or the viewport size has changed.
+	// The overlay always covers the full current viewport.
+	void update_overlay()
+	{
+		GLint vp[4] = { 0, 0, 0, 0 };
+		if (!ovl.cfg.active)
+		{
+			ovl.lay.valid = false;
+			return;
+		}
+
+		glGetIntegerv(GL_VIEWPORT, vp);
+		if (!ovl.dirty && (ovl.texture != 0) && (vp[2] == ovl.lay.width) && (vp[3] == ovl.lay.height))
+		{
+			return;
+		}
+
+		ovl.dirty = false;
+		ovl.lay = jvxVideoOverlay::compute_layout(ovl.cfg, vp[2], vp[3]);
+		if (!ovl.lay.valid)
+		{
+			return;
+		}
+
+		jvxVideoOverlay::render(ovl.cfg, ovl.lay, ovl.pix);
+
+		glActiveTexture(GL_TEXTURE1);
+		if (ovl.texture == 0)
+		{
+			glGenTextures(1, &ovl.texture);
+			glBindTexture(GL_TEXTURE_2D, ovl.texture);
+
+			// Overlay has exactly viewport size: no interpolation, pixel exact lines
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
+		else
+		{
+			glBindTexture(GL_TEXTURE_2D, ovl.texture);
+		}
+
+		// Rows are RGBA and hence always 4-byte aligned
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+			(GLsizei)ovl.lay.width, (GLsizei)ovl.lay.height, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, ovl.pix.data());
+	};
+
+	// Set plot area, frame color and overlay texture for the current program
+	void set_plot_area_uniforms()
+	{
+		GLfloat x0 = 0.0f, y0 = 0.0f, x1 = 1.0f, y1 = 1.0f;
+		GLfloat fr = 0.1f, fg = 0.1f, fb = 0.1f;
+		bool useOvl = ovl.cfg.active && ovl.lay.valid && (ovl.texture != 0);
+
+		if (useOvl)
+		{
+			// Layout is in image coordinates (origin top-left, inclusive), shader uses
+			// normalized viewport coordinates with origin bottom-left
+			GLfloat W = (GLfloat)ovl.lay.width;
+			GLfloat H = (GLfloat)ovl.lay.height;
+			x0 = (GLfloat)ovl.lay.x0 / W;
+			x1 = (GLfloat)(ovl.lay.x1 + 1) / W;
+			y0 = (GLfloat)(ovl.lay.height - 1 - ovl.lay.y1) / H;
+			y1 = (GLfloat)(ovl.lay.height - ovl.lay.y0) / H;
+			fr = ovl.cfg.color_frame.r / 255.0f;
+			fg = ovl.cfg.color_frame.g / 255.0f;
+			fb = ovl.cfg.color_frame.b / 255.0f;
+		}
+		else if (myRenderOperation == JVX_GL_RENDER_ROTATE_ANGLE_OFFSET_FOLLOW)
+		{
+			// Previous behavior: symmetric black borders
+			x0 = g_resources.border_x;
+			x1 = 1.0f - g_resources.border_x;
+			y0 = g_resources.border_y;
+			y1 = 1.0f - g_resources.border_y;
+			fr = fg = fb = 0.0f;
+		}
+
+		glUniform4f(g_resources.uniforms.plot_rect, x0, y0, x1, y1);
+		glUniform4f(g_resources.uniforms.frame_color, fr, fg, fb, 1.0f);
+		glUniform1i(g_resources.uniforms.use_overlay, useOvl ? 1 : 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, useOvl ? ovl.texture : 0);
+		glUniform1i(g_resources.uniforms.overlay, 1);
+	};
+
+	// =====================================================================
 
 	GLuint make_buffer(GLenum target, const void *buffer_data, GLsizei buffer_size)
 	{
@@ -778,6 +953,13 @@ private:
 #if defined(JVX_VIDEO_RENDER_CORE_CLASS)
 		}
 #endif
+
+		// Uniforms common to both render operations
+		g_resources.uniforms.overlay = lookup_uniform("overlay");
+		g_resources.uniforms.use_overlay = lookup_uniform("use_overlay");
+		g_resources.uniforms.plot_rect = lookup_uniform("plot_rect");
+		g_resources.uniforms.frame_color = lookup_uniform("frame_color");
+		ovl.dirty = true;
 		return 1;
 	};
 };

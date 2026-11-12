@@ -20,6 +20,7 @@ include_directories(
  ## Does this require x11 headers?
 include_directories(
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-opengl-cpp/include
+	${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/stb-dejavu/include
 	)
 
 set(LOCAL_SOURCES

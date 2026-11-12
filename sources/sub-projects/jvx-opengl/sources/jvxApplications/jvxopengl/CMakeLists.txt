@@ -40,6 +40,7 @@ include_directories(
   ${JVX_BASE_LIBS_INCLUDE_PATH}/jvxLQtSaWidgets/src
 
   ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-opengl-cpp/include
+  ${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/stb-dejavu/include
 
     ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTPortAudio/
   ${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTAlsa/

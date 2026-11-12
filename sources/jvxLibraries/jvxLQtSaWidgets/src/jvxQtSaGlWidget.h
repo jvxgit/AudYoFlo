@@ -130,6 +130,13 @@ public:
 	virtual void inform_update_window_periodic();
 
 	virtual void init_manually();
+
+	// Overlay (frame, axes, grid, tick labels, axis labels, title). Active by default.
+	// The scale field is maintained by the widget (device pixel ratio) and ignored here.
+	// Text is rendered platform independent by jvxVideoOverlayText (no Qt involved).
+	void setOverlayConfig(const jvxVideoOverlayConfig& cfgOvl);
+	jvxVideoOverlayConfig overlayConfig() const;
+
 private:
 
 	//virtual void resizeEvent(QResizeEvent *event)override;
@@ -147,6 +154,7 @@ private:
 		GLint* offset_x, GLint* invert_y) override;
 
 	jvxErrorType release_programm_unassign() override;
+	GLint uniform_location_program(const char* name) override;
 
 	jvxErrorType start_rendering_program() override;
 	jvxErrorType stop_rendering_program() override;

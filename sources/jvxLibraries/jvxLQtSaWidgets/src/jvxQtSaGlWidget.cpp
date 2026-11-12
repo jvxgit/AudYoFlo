@@ -146,6 +146,26 @@ CjvxMyGlWidget::CjvxMyGlWidget(QWidget* parent): QOpenGLWidget(parent)
 
 	myVar_straightPaint.invert_y = c_true;
 	m_program = NULL;
+
+	// Show frame, axes and grid by default
+	jvxVideoOverlayConfig cfgOvl;
+	cfgOvl.active = true;
+	set_overlay_config(cfgOvl);
+}
+
+void
+CjvxMyGlWidget::setOverlayConfig(const jvxVideoOverlayConfig& cfgOvl)
+{
+	jvxVideoOverlayConfig cfgSet = cfgOvl;
+	cfgSet.scale = overlay_config().scale;
+	set_overlay_config(cfgSet);
+	update();
+}
+
+jvxVideoOverlayConfig
+CjvxMyGlWidget::overlayConfig() const
+{
+	return overlay_config();
 }
 
 CjvxMyGlWidget::~CjvxMyGlWidget()
@@ -428,7 +448,17 @@ CjvxMyGlWidget::release_programm_unassign()
 	return JVX_NO_ERROR;
 }
 
-jvxErrorType 
+GLint
+CjvxMyGlWidget::uniform_location_program(const char* name)
+{
+	if (m_program)
+	{
+		return m_program->uniformLocation(name);
+	}
+	return -1;
+}
+
+jvxErrorType
 CjvxMyGlWidget::start_rendering_program()
 {
 	m_program->bind();
@@ -513,7 +543,17 @@ CjvxMyGlWidget::paintGL()
 	jvxSize ll1 = 0;
 	jvxSize ll2 = 0;
 	cfgRotateAngleOffsetFollow myVar_rotatePaint;
-	
+
+	// Overlay is rendered in physical pixels: follow the device pixel ratio,
+	// e.g. if the widget is moved to another screen
+	jvxData dpr = (jvxData)devicePixelRatioF();
+	if (overlay_config().scale != dpr)
+	{
+		jvxVideoOverlayConfig cfgOvl = overlay_config();
+		cfgOvl.scale = dpr;
+		set_overlay_config(cfgOvl);
+	}
+
 	//std::cout << "Paint" << std::endl;
 	if (jvx_bitTest(status_gl, 0))
 	{
@@ -654,6 +694,11 @@ CjvxMyGlWidget::deinitGL()
 {
 	if (jvx_bitTest(status_gl, 1))
 	{
+		// terminate releases GL objects (e.g. overlay texture): requires our context
+		if (jvx_bitTest(status_gl, 0))
+		{
+			makeCurrent();
+		}
 		jvxVideoRenderCore_bc::terminate();
 		jvx_bitClear(status_gl, 1);
 
