@@ -58,8 +58,16 @@ extern "C"
 					res = theDataConnectionDefRuleHdl->add_bridge_specification(
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 0),
 						"*", "default",
+						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 2),
+						"*", "default", "Bridge-audio-node-0-to-audio-node-2", false, false);
+					assert(res == JVX_NO_ERROR);
+
+					// From Audio Node 2 to Audio Node 1
+					res = theDataConnectionDefRuleHdl->add_bridge_specification(
+						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 2),
+						"*", "default",
 						jvxComponentIdentification(JVX_COMPONENT_AUDIO_NODE, 1),
-						"*", "default", "Bridge-audio-node-0-to-audio-node-1", false, false);
+						"*", "default", "Bridge-audio-node-2-to-audio-node-1", false, false);
 					assert(res == JVX_NO_ERROR);
 
 					// From Audio Node to Mix Chain Node

@@ -13,8 +13,10 @@ include_directories(
 
 	${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxAudioNodes/ayfAuNMixer
 	${SUBPRODUCT_AYFSTARTER_COMPONENTS_BINARY_DIR}/Automation/ayfATStarter/
-	${SUBPRODUCT_AYFSTARTER_COMPONENTS_BINARY_DIR}/AudioNodes/ayfAuNStarter/   
+	${SUBPRODUCT_AYFSTARTER_COMPONENTS_BINARY_DIR}/AudioNodes/ayfAuNStarter/   	
 	
+	${SUBPRODUCT_AUDIOTOOLS_COMPONENTS_BINARY_DIR}/jvxAudioNodes/jvxAuNAnalyze
+
 	# Standard components
 	${JVX_SUBPRODUCT_BINARY_DIR}/sources/jvxComponents/jvxAudioTechnologies/jvxAuTSyncClock/	
 	${JVX_BASE_BINARY_DIR}/sources/jvxComponents/jvxSignalProcessingNodes/jvxSpNMixChainEnterLeave/
@@ -44,6 +46,7 @@ include_directories(
 	jvxSpNSynchronize_static
 	jvxAuNForwardBuffer_static
 	jvxAuNConvert_static	
+	jvxAuNAnalyze_static
 	jvxAuNBitstreamDecoder_static
 	jvxAuNBitstreamEncoder_static
 	jvxSpNLevelControl_static

@@ -11,6 +11,7 @@
 #include "jvxSpNAsyncIo_sm.h"
 #include "jvxSpNSynchronize.h"
 #include "jvxAuNConvert.h"
+#include "jvxAuNAnalyze.h"
 #include "jvxAuNForwardBuffer.h"
 #include "jvxAuNBitstreamDecoder.h"
 #include "jvxAuNBitstreamEncoder.h"
@@ -50,7 +51,13 @@
 		adescr->assign("AYF Starter Algorithm"); \
 		*funcInit = ayfAuNStarter_init; \
 		*funcTerm = ayfAuNStarter_terminate; \
+		return(JVX_NO_ERROR); \
+	case 2: \
+		adescr->assign("AYF Audio Analyzer"); \
+		*funcInit = jvxAuNAnalyze_init; \
+		*funcTerm = jvxAuNAnalyze_terminate; \
 		return(JVX_NO_ERROR);
+
 
 #ifdef WITH_VIDEO_MIXER
 #define JVX_ALL_VIDEONODE_CASES \
@@ -184,6 +191,7 @@ const jvxModuleOnStart componentsOnLoad_algorithms[] =
 {
 	{"ayfAuNMixer" },
 	{"ayfAuNStarter" },
+	{"jvxAuNAnalyze" },
 	NULL
 };
 

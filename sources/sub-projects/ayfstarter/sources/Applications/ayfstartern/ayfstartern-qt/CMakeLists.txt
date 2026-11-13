@@ -28,12 +28,16 @@ set(LOCAL_SOURCES
 include_directories(
    ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-qt-app-templates/src
    ${CMAKE_CURRENT_SOURCE_DIR}/src
+   ${SUBPRODUCT_AUDIOTOOLS_LOCAL_QT_LIBS_INCLUDE_DIR}
  )
+
+ # message(FATAL_ERROR "${SUBPRODUCT_AUDIOTOOLS_LOCAL_QT_LIBS_INCLUDE_DIR}")
 
 # Add algorithm specific library
 set(LOCAL_LIBS
   ayfAuNStarter_static
   jvx-qt-app-templates_static  
+  ${SUBPRODUCT_AUDIOTOOLS_LOCAL_QT_LIB}
 )
 
 include(../common/local_config.cmake)

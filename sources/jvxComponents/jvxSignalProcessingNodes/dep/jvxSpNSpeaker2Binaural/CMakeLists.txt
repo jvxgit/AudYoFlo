@@ -12,7 +12,7 @@ include_directories(
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-component-templates-base/include
 	${JVX_BASE_BINARY_DIR}/sources/jvxLibraries/jvx-component-templates-base/generated
 
-	${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/jvx-signals/include
+	${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/jvx-audiotools/include
 	${JVX_SUBPRODUCT_LIBS_INCLUDE_PATH}/jvx-dsp-cpp/include
 
 	${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include
@@ -31,7 +31,7 @@ set(LOCAL_PCG_FILES
 set(LOCAL_LIBS 
   jvx-component-templates-base_static
   jvx-dsp-cpp_static
-  jvx-signals_static
+  jvx-audiotools_static
   )
 
 set(IS_JVX_COMPONENT TRUE)

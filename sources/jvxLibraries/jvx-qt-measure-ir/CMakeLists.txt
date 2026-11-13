@@ -19,7 +19,7 @@ set(LOCAL_UI_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/uisrc)
 
 # Qt resource file add
 #set(LOCAL_QT_RESOURCES
-#	${CMAKE_CURRENT_SOURCE_DIR}/uisrc/jvx-signals.qrc
+#	${CMAKE_CURRENT_SOURCE_DIR}/uisrc/jvx-audiotools.qrc
 #)
 
 include_directories(

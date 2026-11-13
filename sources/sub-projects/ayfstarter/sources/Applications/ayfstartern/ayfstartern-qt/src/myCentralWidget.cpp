@@ -1,4 +1,5 @@
 #include "myCentralWidget.h"
+#include "jvxQtMeasureAudioWidget.h"
 
 #ifdef JVX_PROJECT_NAMESPACE
 namespace JVX_PROJECT_NAMESPACE {
@@ -7,8 +8,17 @@ namespace JVX_PROJECT_NAMESPACE {
 void
 myCentralWidget::init_submodule(IjvxHost* theHost)
 {
+	QWidget* theQWidget = NULL;
+
 	mainCentral_host_ww::init_submodule(theHost);
 	this->setupUi(this);
+
+	myWidgetAudioSpectrum = NULL;
+	init_jvxQtMeasureAudioSpectrum(&myWidgetAudioSpectrum, static_cast<QWidget*>(this));
+	myWidgetAudioSpectrum->init(theHost);
+	myWidgetAudioSpectrum->getMyQWidget(&theQWidget);
+	// https://stackoverflow.com/questions/31323749/easiest-way-for-offscreen-rendering-with-qopenglwidget
+	tabWidget->addTab(theQWidget, "Real-time Audio Spectrum");
 
 	JVX_MAIN_CENTRAL_ATTACH_TREE_WIDGET(propertyTreeWidget, tabWidget);
 }
@@ -17,6 +27,10 @@ void
 myCentralWidget::terminate_submodule()
 {
 	JVX_MAIN_CENTRAL_DETACH_TREE_WIDGET(propertyTreeWidget, tabWidget);
+
+	myWidgetAudioSpectrum->terminate();
+	terminate_jvxQtMeasureAudioSpectrum(myWidgetAudioSpectrum);
+
 	mainCentral_host_ww::terminate_submodule();
 }
 
@@ -26,15 +40,39 @@ void
 myCentralWidget::inform_active(const jvxComponentIdentification& tp, IjvxAccessProperties* theProps)
 {
 	mainCentral_host_ww::inform_active(tp, theProps);
+	std::string tag_cp = jvxComponentIdentification_txt(tp);
 
 	JVX_MAIN_CENTRAL_TREE_WIDGET_ACTIVE(theProps, propertyTreeWidget);
 		
 	switch (tp.tp)
 	{
 	case JVX_COMPONENT_AUDIO_NODE:
-		thePropRef_algo = theProps;
-		myWidgetWrapper.associateAutoWidgets(tab, thePropRef_algo, static_cast<IjvxQtSaWidgetWrapper_report*>(this), "audio_node", true);
+	{
+		auto elm = thePropRefs_algo.find(tp);
+		assert(elm == thePropRefs_algo.end());
+
+		thePropRefs_algo[tp] = theProps;
+		myWidgetWrapper.associateAutoWidgets(tab, theProps, static_cast<IjvxQtSaWidgetWrapper_report*>(this), "audio_node", true);
+		if (tp.slotid == 2)
+		{
+			thePropRef_analyze = theProps;
+			if (thePropRef_analyze)
+			{
+				jvxBool isValidPropRef = false;
+				thePropRef_analyze->reference_status(NULL, &isValidPropRef);
+				if (isValidPropRef)
+				{
+					tag_analyze = tag_cp;
+					myWidgetAudioSpectrum->addPropertyReference(thePropRef_analyze);
+					myWidgetAudioSpectrum->activate();
+					myWidgetWrapper.associateAutoWidgets(static_cast<QWidget*>(this), thePropRef_analyze,
+						static_cast<IjvxQtSaWidgetWrapper_report*>(this), tag_analyze.c_str(), true,
+						JVX_WW_WIDGET_SEARCH_ALL_CHILDREN, "", ""); // Associate but step up in widget hierarchie first
+				}
+			}
+		}
 		break;
+	}
 	default:
 		break;
 	}
@@ -43,6 +81,7 @@ myCentralWidget::inform_active(const jvxComponentIdentification& tp, IjvxAccessP
 void 
 myCentralWidget::inform_inactive(const jvxComponentIdentification& tp, IjvxAccessProperties* theProps)
 {
+	std::string tag_cp = jvxComponentIdentification_txt(tp);
 	mainCentral_host_ww::inform_inactive(tp, theProps);
 
 	JVX_MAIN_CENTRAL_TREE_WIDGET_INACTIVE(theProps, propertyTreeWidget);
@@ -50,10 +89,24 @@ myCentralWidget::inform_inactive(const jvxComponentIdentification& tp, IjvxAcces
 	switch (tp.tp)
 	{
 	case JVX_COMPONENT_AUDIO_NODE:
-		myWidgetWrapper.deassociateAutoWidgets("audio_node");
-		thePropRef_algo = NULL;
+	{
+		auto elm = thePropRefs_algo.find(tp);
+		assert(elm != thePropRefs_algo.end());
+
+		myWidgetWrapper.deassociateAutoWidgets(tag_cp);
+
+		if (tp.slotid == 2)
+		{
+			myWidgetAudioSpectrum->deactivate();
+			myWidgetAudioSpectrum->removePropertyReference(thePropRef_analyze);
+			thePropRef_analyze = nullptr;
+			tag_analyze.clear();
+		}
+
+		thePropRefs_algo.erase(elm);
 
 		break;
+	}
 	default:
 		break;
 	}
@@ -63,12 +116,20 @@ void
 myCentralWidget::inform_sequencer_about_to_start()
 {
 	mainCentral_host_ww::inform_sequencer_about_to_start();
+	if (thePropRef_analyze)
+	{
+		myWidgetAudioSpectrum->processing_started();		
+	}
 }
 
 void 
 myCentralWidget::inform_sequencer_stopped()
 {
 	mainCentral_host_ww::inform_sequencer_stopped();
+	if (thePropRef_analyze)
+	{
+		myWidgetAudioSpectrum->processing_stopped();
+	}
 }
 
 
@@ -78,6 +139,12 @@ myCentralWidget::inform_update_window(jvxCBitField prio)
 	jvxErrorType res = JVX_NO_ERROR;
 	mainCentral_host_ww::inform_update_window(prio);
 	JVX_MAIN_CENTRAL_TREE_WIDGET_UPDATE_WINDOW(propertyTreeWidget, prio);
+	if (thePropRef_analyze)
+	{
+		myWidgetAudioSpectrum->update_window();
+	}
+	
+	myWidgetWrapper.trigger_updateWindow(tag_analyze);
 }
 
 void
@@ -87,6 +154,11 @@ myCentralWidget::inform_update_window_periodic()
 	jvxErrorType res = JVX_NO_ERROR;
 	mainCentral_host_ww::inform_update_window_periodic();
 	JVX_MAIN_CENTRAL_TREE_WIDGET_UPDATE_WINDOW_PERIODIC(propertyTreeWidget);
+	if (thePropRef_analyze)
+	{
+		myWidgetAudioSpectrum->update_window_periodic();
+	}
+	myWidgetWrapper.trigger_updateWindow_periodic(tag_analyze);
 }
 
 void 

@@ -19,7 +19,8 @@ extern "C"
 			// Here, you may get pointer access to the main central widget!!
 			theFeaturesQT->config_ui.minWidthWindow = JVX_MAX(theFeaturesQT->config_ui.minWidthWindow, 256);
 			theFeaturesQT->config_ui.minHeightWindow = JVX_MAX(theFeaturesQT->config_ui.minHeightWindow, 256);
-			theFeaturesQT->config_ui.tweakUi = JVX_QT_MAINWIDGET_NO_EXPAND_CENTER;
+			theFeaturesQT->config_ui.tweakUi = JVX_QT_MAINWIDGET_EXPAND_FULLSIZE;
+			theFeaturesQT->timeout_viewer_maincentral_ms = 50;
 
 			// Simple typcast
 			theFeaturesH = static_cast<configureHost_features*>(theFeaturesQT);
@@ -38,7 +39,7 @@ extern "C"
 		{
 			theFeaturesH->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_NODE] = true;
 			theFeaturesH->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_NODE] = componentsOnLoad_algorithms;
-			theFeaturesH->numSlotsComponents[JVX_COMPONENT_AUDIO_NODE] = 2;
+			theFeaturesH->numSlotsComponents[JVX_COMPONENT_AUDIO_NODE] = 3;
 
 			theFeaturesH->flag_blockModuleEdit[JVX_COMPONENT_AUDIO_TECHNOLOGY] = true;
 			theFeaturesH->lst_ModulesOnStart[JVX_COMPONENT_AUDIO_TECHNOLOGY] = componentsOnLoad_audiotechnologies;

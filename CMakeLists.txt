@@ -694,7 +694,7 @@ elseif(JVX_RELEASE_ADIDSP_SC594)
   )
 
   set(JVX_BASE_STATIC_LIBS ${JVX_BASE_STATIC_LIBS}
-		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-signals		
+		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-audiotools		
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-dsp-cpp
 		${JVX_SUBPRODUCT_ROOT}/sources/jvxLibraries/jvx-tickcount-shared

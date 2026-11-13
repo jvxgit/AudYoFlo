@@ -19,7 +19,11 @@ class myCentralWidget: public mainCentral_host_ww, public IjvxQtSpecificWidget_r
 {
 private:
 
-	IjvxAccessProperties* thePropRef_algo = nullptr;
+	IjvxQtSpecificHWidget* myWidgetAudioSpectrum;
+	IjvxAccessProperties* thePropRef_analyze = nullptr;
+	std::string tag_analyze;
+
+	std::map<jvxComponentIdentification, IjvxAccessProperties*> thePropRefs_algo;
 
 	Q_OBJECT
 
