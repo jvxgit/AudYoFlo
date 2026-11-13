@@ -1,0 +1,281 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genMeasure_node"; 
+	SECTION properties_mode
+	{
+		DESCRIPTION = "Measurement Mode";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "mode";
+
+		SECTION currentMode
+		{
+			DESCRIPTION = "Current Processing Mode";	  // Defaults to NAME if not present
+			ONLY_SELECTION_TO_CONFIG = "yes";
+			GENERATE_ENTRY_CONFIG_FILE = "yes";
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"Invalid Configuration", "Measure Impulse Response", "Measure Timing Behavior"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes"};
+		};
+	};
+
+	SECTION properties_common
+	{
+		DESCRIPTION = "Common properties";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		PREFIX = "common";
+
+		SECTION specifyCommand
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";
+			DESCRIPTION = "Issue text format commands to component";	  // Defaults to NAME if not present
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};
+	};
+
+	GROUP measureir
+	{
+		// Properties for function mode "measureir"
+		SECTION properties_measureIr
+		{
+			DESCRIPTION = "Properties specific for ir measurement";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+			//SECTION noPauseBetweenIterations
+			//{
+			//	DESCRIPTION = "Switch to run measurement with no pause between measurements";	  // Defaults to NAME if not present
+			//	ONLY_SELECTION_TO_CONFIG = "yes";
+			//	GENERATE_ENTRY_CONFIG_FILE = "yes";
+			//	CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			//	TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			//	SELECTION_LIST_NAMES = {"Inactive", "Active"};
+			//	SELECTION_LIST_SELECTED = {"yes", "no"};
+			//	SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			//};
+			SECTION countdownBeforeStart
+			{
+				DESCRIPTION = "Countdown before starting measurement [sec]";	  // Defaults to NAME if not present
+				GENERATE_ENTRY_CONFIG_FILE = "yes";
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 1;
+			};
+		};
+
+
+		SECTION properties_inproc
+		{
+			DESCRIPTION = "Properties specific for ir measurement";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			PREFIX = "inproc";
+
+			SECTION stillWaitCountdown
+			{
+				DESCRIPTION = "Number of seconds to wait before starting";	  // Defaults to NAME if not present
+				TYPE = "JVX_DATAFORMAT_DATA";
+				INIT_SET = 0;
+			};
+
+			SECTION currentStatus
+			{
+				DESCRIPTION = "Switch to run measurement with no pause between measurements";	  // Defaults to NAME if not present
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+				SELECTION_LIST_NAMES = {"Inactive", "In Countdown", "Active", "Done"};
+				SELECTION_LIST_SELECTED = {"yes", "no", "no", "no"};
+				SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes"};
+			};
+		};
+
+		SECTION properties_active_higher_all_Lanes
+		{
+			DESCRIPTION = "Property to Specify Active Lane";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			PREFIX = "alllanes";
+
+			SECTION selectLane
+			{
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+				DESCRIPTION = "Select Active Lane";	  // Defaults to NAME if not present
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				ONLY_SELECTION_TO_CONFIG = "no";
+//				SELECTION_LIST_NAMES = {};
+			};
+		};
+
+		SECTION properties_active_higher_active_Lane
+		{
+			DESCRIPTION = "Properties for active";
+			GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			PREFIX = "activelanes";
+
+			SECTION testSelection_activeLane
+			{
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+				DESCRIPTION = "Select Test Channel";	  // Defaults to NAME if not present
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				ONLY_SELECTION_TO_CONFIG = "yes";
+			};
+			SECTION measureSelection_activeLane
+			{
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+				DESCRIPTION = "Select Measure Channel";	  // Defaults to NAME if not present
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				ONLY_SELECTION_TO_CONFIG = "yes";
+			};
+
+			SECTION description_activeLane
+			{
+				TYPE = "JVX_DATAFORMAT_STRING";
+				DESCRIPTION = "Description Lane";	  // Defaults to NAME if not present
+				INIT_SET = "Unknown";
+			};
+		};
+
+		SECTION all_Measurements
+		{
+			DESCRIPTION = "Property to Specify Active Measurement";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			PREFIX = "allmeasurements";
+
+			SECTION selectMeasurement
+			{
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+				DESCRIPTION = "Select Active Measurement";	  // Defaults to NAME if not present
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				ONLY_SELECTION_TO_CONFIG = "no";
+//				SELECTION_LIST_NAMES = {};
+			};
+			SECTION tagPrefix_Measurement
+			{
+				TYPE = "JVX_DATAFORMAT_STRING";
+				DESCRIPTION = "Prefix for tags measurement";	  // Defaults to NAME if not present
+				INIT_SET = "Unknown";
+			};
+		};
+
+		SECTION selected_Measurement
+		{
+			DESCRIPTION = "Properties for selected measurement";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+			PREFIX = "selectedmeasurement";
+
+			SECTION ir_selMeasurement
+			{
+				TYPE = "JVX_DATAFORMAT_DATA";
+				DESCRIPTION = "Measured Impulse Response";	  // Defaults to NAME if not present
+				ASSOCIATE_EXTERNAL = "yes";
+			};
+
+			SECTION tag_selMeasurement
+			{
+				TYPE = "JVX_DATAFORMAT_STRING";
+				DESCRIPTION = "Tag for selected measurement";	  // Defaults to NAME if not present
+			};
+		};
+	};
+
+	GROUP measuretiming
+	{
+		SECTION resultsTiming
+		{
+			DESCRIPTION = "Properties for selected measurement";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			PREFIX = "results";
+
+			SECTION mindeltat_Timing
+			{
+				TYPE = "JVX_DATAFORMAT_DATA";
+				DESCRIPTION = "Minimum value deltaT";	  // Defaults to NAME if not present
+			};
+
+			SECTION maxdeltat_Timing
+			{
+				TYPE = "JVX_DATAFORMAT_DATA";
+				DESCRIPTION = "Maximum value deltaT";	  // Defaults to NAME if not present
+			};
+
+			SECTION avrgdeltat_Timing
+			{
+				TYPE = "JVX_DATAFORMAT_DATA";
+				DESCRIPTION = "Average value deltaT";	  // Defaults to NAME if not present
+			};
+
+			SECTION vardeltat_Timing
+			{
+				TYPE = "JVX_DATAFORMAT_DATA";
+				DESCRIPTION = "Variance value deltaT";	  // Defaults to NAME if not present
+			};
+
+			SECTION theodeltat_Timing
+			{
+				TYPE = "JVX_DATAFORMAT_DATA";
+				DESCRIPTION = "Theoretical value deltaT";	  // Defaults to NAME if not present
+			};
+		};
+
+		SECTION runtimeTiming
+		{
+			DESCRIPTION = "Properties for selected measurement";
+			GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+			GENERATE_ENTRIES_LINK_OBJECTS = "no";       // Defaults to "no" if not present
+			ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+			PREFIX = "runtime";
+			CALLBACKS = {"set_buffer_post", "set_buffer_pre"}; 
+
+			SECTION selection_outputSignal
+			{
+				TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+				DESCRIPTION = "Select Observed Channel";	  // Defaults to NAME if not present
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+				ONLY_SELECTION_TO_CONFIG = "yes";
+			};
+
+			SECTION linearBuffer_channel
+			{
+				// Allow links to copy data from within the algorithm to UI
+				DESCRIPTION = "Expose the signal data";	  // Defaults to NAME if not present
+				ASSOCIATE_EXTERNAL = "yes";
+				TYPE = "JVX_DATAFORMAT_DATA";
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER";
+				CALLBACK_SET_POSTHOOK = "set_buffer_post";
+				CALLBACK_SET_PREHOOK = "set_buffer_pre";
+			};
+			SECTION linearBuffer_timing
+			{
+				// Allow links to copy data from within the algorithm to UI
+				DESCRIPTION = "Expose the timing data";	  // Defaults to NAME if not present
+				ASSOCIATE_EXTERNAL = "yes";
+				TYPE = "JVX_DATAFORMAT_DATA";
+				CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_CHANNEL_CIRCULAR_BUFFER";
+				CALLBACK_SET_POSTHOOK = "set_buffer_post";
+				CALLBACK_SET_PREHOOK = "set_buffer_pre";
+			};
+		};
+	};
+};

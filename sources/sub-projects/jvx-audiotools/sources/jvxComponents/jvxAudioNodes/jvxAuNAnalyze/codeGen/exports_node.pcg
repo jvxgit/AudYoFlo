@@ -1,0 +1,109 @@
+SECTION PROPERTIES
+{
+	OUTPUTFILE_NAME = "genAnalyzeAudio_node";
+
+	GROUP expose_plot
+	{
+		include "visual-data-plot.pcgf";
+	};
+
+	SECTION what_to_plot 
+	{
+		DESCRIPTION = "What to lot";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		CALLBACKS = {"set_plot_params"};
+		CALLBACK_SET_POSTHOOK = "set_plot_params"; 
+
+		SECTION select_channel
+		{
+			DESCRIPTION = "Which channel to display";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		};
+	};
+
+	SECTION control
+	{
+		DESCRIPTION = "Control processing behavior";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		SECTION output_process
+		{
+			DESCRIPTION = "What to do with the output";	  // Defaults to NAME if not present
+			ONLY_CONTENT_TO_CONFIG = "yes";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";			
+			SELECTION_LIST_NAMES = {"I/O Talkthrough", "Mix I/O", "No Output"};
+			SELECTION_LIST_SELECTED = {"yes", "no", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes"}; 
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+		};
+	};
+
+	SECTION axis_description 
+	{
+		DESCRIPTION = "Some helpers for gl plots";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION unit_x
+		{
+			DESCRIPTION = "Single x unit";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 0;
+		};
+
+		SECTION descr_x
+		{
+			DESCRIPTION = "Description x axis";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = "Time [secs]";
+		};
+
+		SECTION max_y_pri
+		{
+			DESCRIPTION = "Maximum y axis, pri";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 1.0;
+		};
+
+		SECTION min_y_pri
+		{
+			DESCRIPTION = "Minimum y axis, pri";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 0.0;
+		};
+
+		SECTION descr_y_pri
+		{
+			DESCRIPTION = "Description y axis, pri";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = "Amplitude";
+		};
+
+		SECTION max_y_sec
+		{
+			DESCRIPTION = "Maximum y axis, sec";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 1.0;
+		};
+
+		SECTION min_y_sec
+		{
+			DESCRIPTION = "Minimum y axis, sec";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";			
+			INIT_SET = 0.0;
+		};
+		
+		SECTION descr_y_sec
+		{
+			DESCRIPTION = "Description y axis, sec";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			INIT_SET = "Freq [Hz]";
+		};
+
+	};
+};

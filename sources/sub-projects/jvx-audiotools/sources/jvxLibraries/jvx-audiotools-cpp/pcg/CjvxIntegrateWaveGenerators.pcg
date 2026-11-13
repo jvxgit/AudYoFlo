@@ -1,0 +1,187 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "IntegrateWaveGenerators";
+
+	SECTION properties_active
+	{
+		NAME = "properties_active";
+		DESCRIPTION = "Properties in state active";
+		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE"};
+		 
+		SECTION specifyCommand
+		{
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			DESCRIPTION = "Issue text format commands to component";	  // Defaults to NAME if not present
+			READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
+		};		
+	};
+
+	SECTION properties_active_higher_all_generators
+	{
+		DESCRIPTION = "Properties to Specify Generator";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+
+		SECTION selectGenerator
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "selectGenerator";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+		};		
+	};
+
+	SECTION properties_active_higher_one_generator
+	{
+		DESCRIPTION = "Properties for one generator";
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_LINK_OBJECTS = "yes";       // Defaults to "no" if not present
+		COMMENT = " ---- Properties in state active ---";      // default in description if not specified
+		ALLOWED_STATE_MASK = {"JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
+		 
+
+		SECTION type_activeGenerator
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Generator Type";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"sine", "rect", "ramp", "noise", "psweep", "wavplay", "logsweep", "linsweep"};
+			SELECTION_LIST_SELECTED = {"yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes", "yes", "yes", "yes", "yes", "yes", "yes"}; 
+		};		
+		SECTION amplitude_activeGenerator
+		{
+			DESCRIPTION = "Generator amplitude";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0.95;
+		};  
+
+		SECTION description_activeGenerator
+		{
+			DESCRIPTION = "Description active generator";
+			TYPE = "JVX_DATAFORMAT_STRING";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = "No Name";
+		};  
+		SECTION frequency_activeGenerator
+		{
+			DESCRIPTION = "Frequency (in case periodic signals)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 100.0;
+		};  
+
+		SECTION pulseWidth1_activeGenerator
+		{
+			DESCRIPTION = "Pulse Width 1 (ramp and rect)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0.5;
+		};  
+
+		SECTION pulseWidth2_activeGenerator
+		{
+			DESCRIPTION = "Pulse Width 2 (ramp only)";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0.5;
+		};  
+
+		SECTION seed_activeGenerator
+		{
+			DESCRIPTION = "Noise generator sweep";	  // Defaults to NAME if not present
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 0;
+		};  
+
+		SECTION silenceStartSeconds_activeGenerator
+		{
+			DESCRIPTION = "In Sweep: length [sec] silence before processing";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 1.0;
+
+		};  
+			
+		SECTION lengthSeconds_activeGenerator
+		{
+			DESCRIPTION = "In Sweep: length [sec] of sweep";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 5.0;
+		};  
+
+		SECTION silenceStopSeconds_activeGenerator
+		{
+			DESCRIPTION = "In Sweep: length [sec] silence after processing";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "yes"; 
+			ASSOCIATE_EXTERNAL = "no";
+			INIT_SET = 1;
+		};  
+
+		SECTION progress_activeGenerator
+		{
+			DESCRIPTION = "Generator progress";
+			TYPE = "JVX_DATAFORMAT_DATA";	
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+			ASSOCIATE_EXTERNAL = "no";
+		};  
+
+		SECTION loopCount_activeGenerator
+		{
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+			DESCRIPTION = "Loop Count";	  // Defaults to NAME if not present
+			INIT_SET = -1;
+		};  
+
+		SECTION iterationCount_activeGenerator
+		{
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+			DESCRIPTION = "Iteration Count";	  // Defaults to NAME if not present
+			INIT_SET = -1;
+		};  
+
+		SECTION noiseType_activeGenerator
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Noise Type";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "no";
+			SELECTION_LIST_NAMES = {"Uniform", "Normal"};
+			SELECTION_LIST_SELECTED = {"yes", "no"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"}; 
+		};		
+		
+		SECTION outputChannel_activeGenerator
+		{
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
+			DESCRIPTION = "Select Output Channel Routing";	  // Defaults to NAME if not present
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_MULTI_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
+		};  
+
+		SECTION simulationLength_activeGenerator
+		{
+			TYPE = "JVX_DATAFORMAT_32BIT_LE";	
+			DESCRIPTION = "Number of samples in one iteration";	  // Defaults to NAME if not present
+			GENERATE_ENTRY_CONFIG_FILE = "no"; 
+		};  
+	};
+};

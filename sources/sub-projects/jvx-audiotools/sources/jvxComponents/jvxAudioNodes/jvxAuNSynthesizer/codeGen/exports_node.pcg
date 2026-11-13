@@ -1,0 +1,4 @@
+SECTION PROPERTIES
+{	
+	OUTPUTFILE_NAME = "genMeasure_node";
+};

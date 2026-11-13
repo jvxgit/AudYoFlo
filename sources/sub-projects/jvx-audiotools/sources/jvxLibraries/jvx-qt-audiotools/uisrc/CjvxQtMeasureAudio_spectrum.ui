@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>widget_measureSpectrum</class>
+ <widget class="QWidget" name="widget_measureSpectrum">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1298</width>
+    <height>660</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,100">
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Settings</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,2,1,1,2,1,1,2,2,1,2,2,1,1,2">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="checkBox_update">
+        <property name="text">
+         <string>Update</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Wfm Gain</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="horizontalSlider">
+        <property name="accessibleDescription">
+         <string>*:/expose_plot/gain_factor_waveform:DBG_LEVEL=3,LABELREF=label_wfm_gain,LABELTRANSFORM=JVX_WW_SHOW_DB20,LABELUNIT=dB,MINVAL=-10,MAXVAL=10,DELTASTEPS=1</string>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_wfm_gain">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Wfm Smooth</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="horizontalSlider_2">
+        <property name="accessibleDescription">
+         <string>*:/expose_plot/smooth_factor_waveform:DBG_LEVEL=3,LABELREF=label_wfm_smooth,MINVAL=0,MAXVAL=100,SCALEFAC=100,DELTASTEPS=0.01</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+        <property name="tickInterval">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_wfm_smooth">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Spec Sens</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="horizontalSlider_3">
+        <property name="accessibleDescription">
+         <string>*:/expose_plot/sensitivity_spectrum:DBG_LEVEL=3,LABELREF=label_sp_sensi,LABELTRANSFORM=JVX_WW_SHOW_DB20,LABELUNIT=dB,MINVAL=-10,MAXVAL=10,DELTASTEPS=1</string>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_sp_sensi">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Signal Selection</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_2">
+        <property name="accessibleDescription">
+         <string>*:/select_channel:BEHAVIOR=JVX_WW_COMBOBOX_READ_ALWAYS,VERBOSE=yes,DBG_LEVEL=3</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox">
+        <property name="accessibleDescription">
+         <string>*:/expose_plot/plot_mode:BEHAVIOR=JVX_WW_COMBOBOX_READ_ALWAYS,VERBOSE=yes,DBG_LEVEL=3</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_grid">
+        <property name="toolTip">
+         <string>Show grid lines in both views</string>
+        </property>
+        <property name="text">
+         <string>Grid</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_legend">
+        <property name="text">
+         <string>Legend</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_legend">
+        <property name="toolTip">
+         <string>Position of the legend in the waveform view</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Spectral View</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QFrame" name="frame_glW_sec">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Waveform View</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QFrame" name="frame_glW_pri">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="jvx-signals.qrc"/>
+ </resources>
+ <connections/>
+ <slots>
+  <slot>selected_waveformType(int)</slot>
+  <slot>changed_lengthSignal()</slot>
+  <slot>changed_silenceStart()</slot>
+  <slot>changed_numberIterations()</slot>
+  <slot>modify_numberIterations()</slot>
+  <slot>selected_transferLine(int)</slot>
+  <slot>clicked_addTransferLane()</slot>
+  <slot>clicked_removeTransferLane()</slot>
+  <slot>changed_descriptionLane()</slot>
+  <slot>selected_channelTest(int)</slot>
+  <slot>selected_channelMeasure(int)</slot>
+  <slot>changed_descriptionMeasure()</slot>
+  <slot>clicked_exportMeasure()</slot>
+  <slot>changed_ymaxother()</slot>
+  <slot>changed_yminother()</slot>
+  <slot>changed_xminother()</slot>
+  <slot>changed_xmaxother()</slot>
+  <slot>toggled_writelogfile(bool)</slot>
+  <slot>changed_prefixLogfile()</slot>
+  <slot>clicked_directoryLogfile()</slot>
+  <slot>toggled_noPause(bool)</slot>
+  <slot>changed_amplitude()</slot>
+  <slot>modify_amplitude()</slot>
+  <slot>changed_countdownBeforeStart()</slot>
+  <slot>selected_output(int)</slot>
+  <slot>clicked_outputallon()</slot>
+  <slot>clicked_outputalloff()</slot>
+  <slot>selected_measurement(int)</slot>
+  <slot>selected_whatToPlot(int)</slot>
+  <slot>changed_ymaxir()</slot>
+  <slot>changed_yminir()</slot>
+  <slot>changed_xmaxir()</slot>
+  <slot>changed_xminir()</slot>
+  <slot>clicked_toggleView()</slot>
+  <slot>clicked_rescaleir()</slot>
+  <slot>clicked_rescaleother()</slot>
+  <slot>clicked_removeMeasurement()</slot>
+  <slot>clicked_rescaleYir()</slot>
+  <slot>changed_silenceStop()</slot>
+  <slot>toggle_store()</slot>
+ </slots>
+</ui>

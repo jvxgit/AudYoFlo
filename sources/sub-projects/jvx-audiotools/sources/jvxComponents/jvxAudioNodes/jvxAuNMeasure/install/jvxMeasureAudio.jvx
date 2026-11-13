@@ -1,0 +1,145 @@
+SECTION jvxQtHost1_main
+{
+		jvxQtHost1_exttrigger = 0.000000000000000000000000000000e+000;
+		SECTION jvxQtHost1_components
+		{
+				SECTION host_allSubSections
+				{
+						host_name_technology_audio = "JVX Generic Wrapper Technology";
+						host_state_technology_audio = 2.000000000000000000000000000000e+000;
+						SECTION host_subsection_technology_audio
+						{
+								SECTION /JVX_GENW_TECHNOLOGIES
+								{
+										jvxSelection_value = 0x00000001;
+								};
+								/JVX_GENW_COMMAND = "";
+								/JVX_GENW_DEFAULT_PATH_WAVS = "./wav";
+								SECTION /JVX_GENW_INPUT_FILES
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION /JVX_GENW_OUTPUT_FILES
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								// Empty STRINGLIST element /JVX_GENW_OUTPUT_FILES_F, removed by configProcessor.
+						};
+						host_state_device_audio = 0.000000000000000000000000000000e+000;
+						host_state_technology_ex_control = 0.000000000000000000000000000000e+000;
+						host_state_device_ex_control = 0.000000000000000000000000000000e+000;
+						host_name_endpoint_audio_node = "Measure Audio Device";
+						host_state_endpoint_audio_node = 3.000000000000000000000000000000e+000;
+						SECTION host_subsection_endpoint_audio_node
+						{
+								SECTION /WaveGenerators/selectGenerator
+								{
+										jvxSelection_listEntries = { "None", "TestSignal"};
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION JVX_ALL_GENERATORS
+								{
+										SECTION JVX_ONE_GENERATOR_0
+										{
+												SECTION /WaveGenerators/type_activeGenerator
+												{
+														jvxSelection_listEntries = { "sine", "rect", "ramp", "noise", "psweep", "wavplay", "logsweep", "linsweep"};
+														jvxSelection_exclusive = 0x000000ff;
+														jvxSelection_value = 0x00000010;
+												};
+												/WaveGenerators/amplitude_activeGenerator = 1.000000000000000000000000000000e+000;
+												/WaveGenerators/description_activeGenerator = "TestSignal";
+												/WaveGenerators/frequency_activeGenerator = 1.000000000000000000000000000000e+003;
+												/WaveGenerators/pulseWidth1_activeGenerator = 5.000000000000000000000000000000e-001;
+												/WaveGenerators/pulseWidth2_activeGenerator = 5.000000000000000000000000000000e-001;
+												/WaveGenerators/seed_activeGenerator = 0.000000000000000000000000000000e+000;
+												/WaveGenerators/silenceStartSeconds_activeGenerator = 1.000000000000000000000000000000e+000;
+												/WaveGenerators/lengthSeconds_activeGenerator = 5.000000000000000000000000000000e+000;
+												/WaveGenerators/silenceStopSeconds_activeGenerator = 1.000000000000000000000000000000e+000;
+												/WaveGenerators/loopCount_activeGenerator = 2.000000000000000000000000000000e+000;
+												/WaveGenerators/iterationCount_activeGenerator = -1.000000000000000000000000000000e+000;
+												SECTION /WaveGenerators/noiseType_activeGenerator
+												{
+														jvxSelection_listEntries = { "Uniform", "Normal"};
+														jvxSelection_exclusive = 0x00000003;
+														jvxSelection_value = 0x00000001;
+												};
+												SECTION /WaveGenerators/outputChannel_activeGenerator
+												{
+														// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+														jvxSelection_exclusive = 0x00000000;
+														jvxSelection_value = 0x00000000;
+												};
+										};
+								};
+								SECTION /mode/currentMode
+								{
+										jvxSelection_listEntries = { "Invalid Configuration", "Measure Impulse Response", "Measure Timing Behavior"};
+										jvxSelection_exclusive = 0x00000007;
+										jvxSelection_value = 0x00000002;
+								};
+								SECTION /measureir/noPauseBetweenIterations
+								{
+										jvxSelection_listEntries = { "Inactive", "Active"};
+										jvxSelection_exclusive = 0x00000003;
+										jvxSelection_value = 0x00000001;
+								};
+								/measureir/countdownBeforeStart = 1.000000000000000000000000000000e+000;
+								SECTION /measureir/alllanes/selectLane
+								{
+										// Empty STRINGLIST element jvxSelection_listEntries, removed by configProcessor.
+										jvxSelection_exclusive = 0x00000000;
+										jvxSelection_value = 0x00000000;
+								};
+								SECTION JVX_AUN_LANES_CONFIG
+								{
+								};
+						};
+						SECTION host_allExternalEntries
+						{
+								/AUDIO_HOST/autoStart = 0.000000000000000000000000000000e+000;
+						};
+				};
+				SECTION sequencer_section
+				{
+						SECTION sequencer_subsection_0
+						{
+								sequencer_sequence_names = "Default Sequence0";
+								sequencer_marked_for_process = 1.000000000000000000000000000000e+000;
+								SECTION sequencer_sequence_steps_run_0
+								{
+										sequencer_sequence_step_descriptions = { "Prepare Audio Node", "Prepare Audio Device", "Callback after all prepared", "Start Audio Node", "Start Audio Device", "Callback after all started", "Update Viewer", "Break sequencer steps"};
+										sequencer_sequence_step_label = { "PrepANode", "PrepADevice", "AfterAllPrep", "StartANode", "StartADevice", "AfterAllStarted", "UpdateViewer", "Break"};
+										sequencer_sequence_step_label_true = { "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_label_false = { "no label", "no label", "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_components = { "audio node", "audio device", "unknown", "audio node", "audio device", "unknown", "unknown", "unknown"};
+										sequencer_sequence_step_types = [ [2.000000000000000000000000000000e+000, 2.000000000000000000000000000000e+000, 1.700000000000000000000000000000e+001, 3.000000000000000000000000000000e+000, 3.000000000000000000000000000000e+000, 1.700000000000000000000000000000e+001, 1.400000000000000000000000000000e+001, 1.300000000000000000000000000000e+001]];
+										sequencer_sequence_step_command_ids = [ [0.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000, 1.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000]];
+										sequencer_sequence_step_timeouts = [ [1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, -1.000000000000000000000000000000e+000]];
+								};
+								SECTION sequencer_sequence_steps_leave_0
+								{
+										sequencer_sequence_step_descriptions = { "Callback before all stop", "Stop Audio Device", "Stop Audio Node", "Callback before all postprocess", "Postprocess Audio Device", "Postprocess Audio Node"};
+										sequencer_sequence_step_label = { "BeforeAllStop", "StopADevice", "StopANode", "BeforeAllPost", "PostADevice", "PostANode"};
+										sequencer_sequence_step_label_true = { "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_label_false = { "no label", "no label", "no label", "no label", "no label", "no label"};
+										sequencer_sequence_step_components = { "unknown", "audio device", "audio node", "unknown", "audio device", "audio node"};
+										sequencer_sequence_step_types = [ [1.700000000000000000000000000000e+001, 4.000000000000000000000000000000e+000, 4.000000000000000000000000000000e+000, 1.700000000000000000000000000000e+001, 5.000000000000000000000000000000e+000, 5.000000000000000000000000000000e+000]];
+										sequencer_sequence_step_command_ids = [ [1.600000000000000000000000000000e+001, 0.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000, 1.700000000000000000000000000000e+001, 0.000000000000000000000000000000e+000, 0.000000000000000000000000000000e+000]];
+										sequencer_sequence_step_timeouts = [ [1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003, 1.000000000000000000000000000000e+003]];
+								};
+						};
+				};
+		};
+		SECTION rtv_section_main_name_props
+		{
+		};
+		SECTION rtv_section_main_name_plots
+		{
+		};
+};
