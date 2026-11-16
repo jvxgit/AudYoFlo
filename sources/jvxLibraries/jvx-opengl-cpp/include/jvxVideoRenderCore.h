@@ -356,7 +356,7 @@ public:
 			return JVX_ERROR_INTERNAL;
 		}
 
-		return JVX_NO_ERROR;
+		return res;
 		// glutMainLoop(); <- no
 	};
 
@@ -469,12 +469,12 @@ public:
 			g_resources.offset_x = (GLfloat)varCfgRotateAngleOffsetFollow.offset_x;
 			if (cfgSpecific)
 			{
-				cfgRotateAngleOffsetFollow* varCfgRotateAngleOffsetFollow = (cfgRotateAngleOffsetFollow*)cfgSpecific;
-				g_resources.border_x = (GLfloat)varCfgRotateAngleOffsetFollow->border_x;
-				g_resources.border_y = (GLfloat)varCfgRotateAngleOffsetFollow->border_y;
-				g_resources.offset_x = (GLfloat)varCfgRotateAngleOffsetFollow->offset_x;
-				offset_y = varCfgRotateAngleOffsetFollow->update_offset_y;
-				num_values = varCfgRotateAngleOffsetFollow->update_num_y;
+				cfgRotateAngleOffsetFollow* varCfgRotateAngleOffsetFollow_loc = (cfgRotateAngleOffsetFollow*)cfgSpecific;
+				g_resources.border_x = (GLfloat)varCfgRotateAngleOffsetFollow_loc->border_x;
+				g_resources.border_y = (GLfloat)varCfgRotateAngleOffsetFollow_loc->border_y;
+				g_resources.offset_x = (GLfloat)varCfgRotateAngleOffsetFollow_loc->offset_x;
+				offset_y = varCfgRotateAngleOffsetFollow_loc->update_offset_y;
+				num_values = varCfgRotateAngleOffsetFollow_loc->update_num_y;
 			}
 
 			// border_x / border_y are mapped to the plot_rect uniform below
@@ -819,7 +819,7 @@ private:
 		GLuint shader;
 		GLint shader_ok;
 		GLchar* source = (GLchar*)sourceStr.c_str();
-		GLint length = sourceStr.size();
+		GLint length = (GLint)sourceStr.size();
 
 		// type = GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
 		shader = glCreateShader(type);

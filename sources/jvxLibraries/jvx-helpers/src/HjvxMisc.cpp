@@ -3007,7 +3007,13 @@ jvxErrorType	jvx_parsePropertyLinkDescriptor(std::string propTargetNameStr, std:
 			return JVX_NO_ERROR;
 		}
 	}
-	posi = propTargetNameStr.rfind(":");
+
+	// The implementation used an rfid before to find the second colon. I wonder why this would be desired but could not find a
+	// good reason. We might use the character "|" to be expanded to ':'
+	// propTargetNameStr = jvx_replaceCharacter(propTargetNameStr, '|', ':');
+	//posi = propTargetNameStr.rfind(":");
+	posi = propTargetNameStr.find(":"); // Why was it rfind before?
+
 	if(posi == std::string::npos)
 	{
 		propname = propTargetNameStr;
@@ -3016,6 +3022,10 @@ jvxErrorType	jvx_parsePropertyLinkDescriptor(std::string propTargetNameStr, std:
 	{
 		propname = propTargetNameStr.substr(0, posi);
 		propTargetNameStr = propTargetNameStr.substr(posi+1, std::string::npos);
+
+		// Here the replacement - not yet in use to see if we may work with the find operator
+		// propTargetNameStr = jvx_replaceCharacter(propTargetNameStr, '|', ':');
+
 		jvx_parsePropertyStringToKeylist(propTargetNameStr, paramlst);
 	}
 	return JVX_NO_ERROR;
