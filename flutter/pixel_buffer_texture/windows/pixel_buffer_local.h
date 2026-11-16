@@ -14,6 +14,10 @@ FLUTTER_PLUGIN_EXPORT void PixelBufferTexturePluginCApiSetRendererCallbacks(
 
 FLUTTER_PLUGIN_EXPORT void PixelBufferTexturePluginCApiResetRendererCallbacks();
 
+// Extension for renderers that produce complete images, see TpjvxPixBuffer.h
+FLUTTER_PLUGIN_EXPORT PixelBufferTexturePluginPublishFrameCallback PixelBufferTexturePluginCApiSetRendererCallbacksExt(
+    PixelBufferTexturePluginConfigureRendererCallback configure_cb);
+
 #if defined(__cplusplus)
 }  // extern "C"
 #endif

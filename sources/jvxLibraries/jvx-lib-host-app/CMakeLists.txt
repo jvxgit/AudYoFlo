@@ -31,14 +31,47 @@ set(LOCAL_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_show.cpp 
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_hosthooks.cpp
+
+  # Plot renderers of the pixbuf connection (stubs if no offscreen OpenGL context is available)
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_pixbuf_plot.cpp
   )
 
+# Pixbuf connection (e.g. Flutter pixel_buffer_texture): scaling of copied images requires OpenCV,
+# plot rendering requires an offscreen OpenGL context (WGL only for now)
+set(JVX_LIBHOST_PIXBUF FALSE)
+set(JVX_LIBHOST_PIXBUF_GLPLOT FALSE)
 if(JVX_USE_OPENCV)
+	set(JVX_LIBHOST_PIXBUF TRUE)
+endif()
+if(JVX_OS MATCHES "windows")
+	set(JVX_LIBHOST_PIXBUF TRUE)
+	set(JVX_LIBHOST_PIXBUF_GLPLOT TRUE)
+endif()
+
+if(JVX_LIBHOST_PIXBUF)
 	set(LOCAL_SOURCES ${LOCAL_SOURCES}
 		${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxPixBufRendering.h
 		${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxPixBufRendering.cpp
 
 		${CMAKE_CURRENT_SOURCE_DIR}/src/jvxLibHost_pixbuf.cpp)
+endif()
+
+if(JVX_LIBHOST_PIXBUF_GLPLOT)
+	# Text output of the plot overlay (stb_truetype + font header), sets JVX_STB_DEJAVU_INCLUDE_DIR
+	include(${JVX_BASE_ROOT}/sources/jvxLibraries/third_party/web/stb-dejavu/prepare.cmake)
+
+	set(LOCAL_SOURCES ${LOCAL_SOURCES}
+		${CMAKE_CURRENT_SOURCE_DIR}/src/CjvxPixBufPlotRendering.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/glplot/jvxGlFunctions.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/glplot/jvxGlFunctions.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/glplot/IjvxGlContext.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/glplot/CjvxGlPlotRenderer.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/glplot/CjvxGlPlotRenderer.cpp)
+	if(JVX_OS MATCHES "windows")
+		set(LOCAL_SOURCES ${LOCAL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/glplot/CjvxGlContextWgl.cpp)
+	else()
+		set(LOCAL_SOURCES ${LOCAL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/glplot/CjvxGlContextNone.cpp)
+	endif()
 endif()
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${JVX_CMAKE_C_FLAGS_EXEC} ${JVX_PLATFORM_FLAGS}")
@@ -84,6 +117,13 @@ if(JVX_USE_OPENCV)
 	include_directories(${OPENCV_LIBRARY_PATH})
 endif()
 
+if(JVX_LIBHOST_PIXBUF_GLPLOT)
+	include_directories(
+		${CMAKE_CURRENT_SOURCE_DIR}/src/glplot
+		${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-opengl-cpp/include
+		${JVX_STB_DEJAVU_INCLUDE_DIR})
+endif()
+
 #if(JVX_OS MATCHES "windows")#
 #	if(NOT JVX_USE_CONSOLE_APPS)
 #		set(LOCAL_COMPILE_DEFINITIONS "")
@@ -105,6 +145,10 @@ if(JVX_USE_OPENCV)
 	set(LOCAL_LIBS ${LOCAL_LIBS} ${OPENCV_LIBRARIES})
 endif()
 
+if(JVX_LIBHOST_PIXBUF_GLPLOT AND (JVX_OS MATCHES "windows"))
+	set(LOCAL_LIBS ${LOCAL_LIBS} opengl32)
+endif()
+
 
 include (${JVX_INTEGRATE_SOURCES_PATH}/cmake/specific.cmake)
 set(LOCAL_LIBS_ALL ${LOCAL_LIBS})
@@ -118,8 +162,14 @@ set(LOCAL_PCG_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/codeGen/exports_lib.pcg
   )
 
-if(JVX_USE_OPENCV)
+if(JVX_LIBHOST_PIXBUF)
 	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_ENABLE_PIXBUFFER")
+endif()
+if(JVX_USE_OPENCV)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_PIXBUF_WITH_OPENCV")
+endif()
+if(JVX_LIBHOST_PIXBUF_GLPLOT)
+	set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_PIXBUF_WITH_GLPLOT")
 endif()
 
 set(LOCAL_COMPILE_DEFINITIONS_COMMON "${LOCAL_COMPILE_DEFINITIONS}")

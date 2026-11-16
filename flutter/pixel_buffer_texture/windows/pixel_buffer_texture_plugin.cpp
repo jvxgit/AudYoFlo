@@ -39,6 +39,19 @@ bool PixelBufferTexturePlugin::TextureFrameAvailable(int64_t texture_id, bool re
 	return res;
 }
 
+// static
+bool PixelBufferTexturePlugin::PublishFrame(int64_t texture_id, const uint8_t* rgba, uint32_t width, uint32_t height)
+{
+	// Called from a render thread of the backend
+	std::lock_guard lock(PixelBufferTexturePlugin::textures_mutex_);
+	if (auto it = PixelBufferTexturePlugin::textures_.find(texture_id); it != PixelBufferTexturePlugin::textures_.end())
+	{
+		it->second->publish(rgba, width, height);
+		return true;
+	}
+	return false;
+}
+
 void PixelBufferTexturePlugin::Notify(int64_t texture_id) {
 	if (auto it = PixelBufferTexturePlugin::textures_.find(texture_id); it != PixelBufferTexturePlugin::textures_.end())
 	{
@@ -85,9 +98,19 @@ PixelBufferTexturePlugin::ResetRendererCallbacks()
 	}
 	PixelBufferTexturePlugin::create_texture_renderer_cb = nullptr;
 	PixelBufferTexturePlugin::destroy_texture_renderer_cb = nullptr;
+	PixelBufferTexturePlugin::configure_texture_renderer_cb = nullptr;
 	PixelBufferTexturePlugin::private_data_renderer_cb = nullptr;
 }
 
+PixelBufferTexturePluginPublishFrameCallback
+PixelBufferTexturePlugin::SetRendererCallbacksExt(PixelBufferTexturePluginConfigureRendererCallback configure_cb)
+{
+	PixelBufferTexturePlugin::configure_texture_renderer_cb = configure_cb;
+	return PixelBufferTexturePlugin::PublishFrame;
+}
+
+PixelBufferTexturePluginConfigureRendererCallback PixelBufferTexturePlugin::configure_texture_renderer_cb = nullptr;
+std::mutex PixelBufferTexturePlugin::textures_mutex_;
 PixelBufferTexturePluginCreateRendererCallback PixelBufferTexturePlugin::create_texture_renderer_cb = nullptr;
 PixelBufferTexturePluginDestroyRendererCallback PixelBufferTexturePlugin::destroy_texture_renderer_cb = nullptr;
 void* PixelBufferTexturePlugin::private_data_renderer_cb = nullptr;
@@ -107,6 +130,7 @@ PixelBufferTexturePlugin::~PixelBufferTexturePlugin() {
 	  }
 	  // TODO maybe use future to delay erase
 	  this->texture_registrar_->UnregisterTexture(texture_id);
+	  std::lock_guard lock(PixelBufferTexturePlugin::textures_mutex_);
 	  PixelBufferTexturePlugin::textures_.erase(texture_id);
 	}
 }
@@ -139,7 +163,9 @@ void PixelBufferTexturePlugin::HandleMethodCall(
 				auto my_pixel_buffer_texture_uptr = std::make_unique<MyPixelBufferTexture>(width, height, this->texture_registrar_);
 				auto texture_id = this->texture_registrar_->RegisterTexture(my_pixel_buffer_texture_uptr->texture.get());
 				my_pixel_buffer_texture_uptr->texture_id = texture_id;
+				std::unique_lock lockTextures(PixelBufferTexturePlugin::textures_mutex_);
 				auto [it, inserted] = PixelBufferTexturePlugin::textures_.emplace(texture_id, std::move(my_pixel_buffer_texture_uptr));
+				lockTextures.unlock();
 				if (!inserted)
 				{
 					this->texture_registrar_->UnregisterTexture(texture_id);
@@ -183,9 +209,30 @@ void PixelBufferTexturePlugin::HandleMethodCall(
 			}
 			// TODO maybe use future to delay erase
 			this->texture_registrar_->UnregisterTexture(texture_id);
-			PixelBufferTexturePlugin::textures_.erase(texture_id);
+			{
+				std::lock_guard lock(PixelBufferTexturePlugin::textures_mutex_);
+				PixelBufferTexturePlugin::textures_.erase(texture_id);
+			}
 			result->Success();
 		}
+	}
+	else if (method_call.method_name().compare("configureTextureRenderer") == 0)
+	{
+		// Runtime configuration of renderers, see PixelBufferTexturePluginConfigureRendererCallback
+		flutter::EncodableMap arguments = std::get<flutter::EncodableMap>(*method_call.arguments());
+		int64_t texture_id = 0;
+		const auto& tId = arguments[flutter::EncodableValue("textureId")];
+		if (std::holds_alternative<int64_t>(tId)) texture_id = std::get<int64_t>(tId);
+		else if (std::holds_alternative<int32_t>(tId)) texture_id = std::get<int32_t>(tId);
+		auto key = std::get<std::string>(arguments[flutter::EncodableValue("key")]);
+		auto value = std::get<std::string>(arguments[flutter::EncodableValue("value")]);
+		if (PixelBufferTexturePlugin::configure_texture_renderer_cb &&
+			(PixelBufferTexturePlugin::textures_.find(texture_id) != PixelBufferTexturePlugin::textures_.end()))
+		{
+			PixelBufferTexturePlugin::configure_texture_renderer_cb(texture_id, key.c_str(), value.c_str(),
+				PixelBufferTexturePlugin::private_data_renderer_cb);
+		}
+		result->Success();
 	}
 	else if (method_call.method_name().compare("getEntryPoints") == 0)
 	{
@@ -198,7 +245,7 @@ void PixelBufferTexturePlugin::HandleMethodCall(
 		retMap[flutter::EncodableValue("loadedModule")] = flutter::EncodableValue(externalAccessModuleName);
 		retMap[flutter::EncodableValue("moduleEntryAddressSet")] = flutter::EncodableValue((intptr_t)PixelBufferTexturePluginCApiSetRendererCallbacks);
 		retMap[flutter::EncodableValue("moduleEntryAddressReset")] = flutter::EncodableValue((intptr_t)PixelBufferTexturePluginCApiResetRendererCallbacks);
-		retMap[flutter::EncodableValue("moduleEntrySymbol")] = flutter::EncodableValue("PixelBufferTexturePluginCApiSetRendererCallbacks;PixelBufferTexturePluginCApiResetRendererCallbacks");
+		retMap[flutter::EncodableValue("moduleEntrySymbol")] = flutter::EncodableValue("PixelBufferTexturePluginCApiSetRendererCallbacks;PixelBufferTexturePluginCApiResetRendererCallbacks;PixelBufferTexturePluginCApiSetRendererCallbacksExt");
 		result->Success(retMap);
 	}
 	else

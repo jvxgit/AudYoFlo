@@ -9,6 +9,8 @@
 
 #define FLUTTER_PIXBUF_OPEN_FUNCTION_NAME "openPixBuffer"
 
+class CjvxPixBufPlotRendering;
+
 class CjvxHostJsonCommandsActShow;
 class jvxLibHost;
 class jvxNativeHostSysPointers;
@@ -88,6 +90,12 @@ private:
 		pixbuffer_render_set_callback fptrPixBufSet = nullptr;
 		pixbuffer_render_reset_callback fptrPixBufReset = nullptr;
 		std::string symbPixBufSystemName = FLUTTER_PIXBUF_OPEN_FUNCTION_NAME;
+
+		// Extension for renderers that produce complete images (plots), see TpjvxPixBuffer.h
+		pixbuffer_render_set_callback_ext fptrPixBufSetExt = nullptr;
+		PixelBufferTexturePluginPublishFrameCallback publish_cb = nullptr;
+		std::map<int64_t, CjvxPixBufPlotRendering*> plots;
+		jvxBool processingActive = false;
 	} extPixBuffer;
 
 	/*
@@ -361,6 +369,17 @@ public:
 		PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data);
 	static void pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data);
 #endif
+
+	// Plot renderers of the pixbuf connection (mode=plot_*), see jvxLibHost_pixbuf_plot.cpp
+	static void pixbuffer_local_configure_cb(int64_t texture_id, const char* key, const char* value, void* priv_data);
+	void pixbuffer_plot_create(int64_t texture_id, uint32_t width, uint32_t height,
+		const char* id, const char* ctxt, const std::string& propInstall, const std::map<std::string, std::string>& propArgs);
+	jvxBool pixbuffer_plot_destroy(int64_t texture_id);
+	void pixbuffer_install_all();
+	void pixbuffer_uninstall_all();
+	void pixbuffer_plot_release_all();
+	jvxErrorType pixbuffer_plot_install(CjvxPixBufPlotRendering* conn);
+	void pixbuffer_plot_uninstall(CjvxPixBufPlotRendering* conn);
 
 	// ================================================================================================
 #define JVX_OBJECT_ZERO_REFERENCE

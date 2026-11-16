@@ -191,22 +191,34 @@ jvxLibHost::boot_initialize_specific(jvxApiString* errloc)
 			std::vector<std::string> out;
 			jvx_parseCommandLineOneToken(extPixBuffer.symbPixBufSystemName, out, ';');
 
-			assert(out.size() == 2);
+			assert(out.size() >= 2);
 
 			std::string setCbName = out[0];
 			std::string resetCbName = out[1];
 
 			extPixBuffer.fptrPixBufSet = (pixbuffer_render_set_callback)JVX_GETPROCADDRESS(extPixBuffer.dllHandlePixBuf, setCbName.c_str());
 			extPixBuffer.fptrPixBufReset = (pixbuffer_render_reset_callback)JVX_GETPROCADDRESS(extPixBuffer.dllHandlePixBuf, resetCbName.c_str());
+
+			// Optional extension for renderers that produce complete images (plots)
+			extPixBuffer.fptrPixBufSetExt = nullptr;
+			if (out.size() >= 3)
+			{
+				extPixBuffer.fptrPixBufSetExt = (pixbuffer_render_set_callback_ext)JVX_GETPROCADDRESS(extPixBuffer.dllHandlePixBuf, out[2].c_str());
+			}
 			
 			if (extPixBuffer.fptrPixBufSet && extPixBuffer.fptrPixBufReset)
 			{
+				if (extPixBuffer.fptrPixBufSetExt)
+				{
+					extPixBuffer.publish_cb = extPixBuffer.fptrPixBufSetExt(pixbuffer_local_configure_cb);
+				}
 				extPixBuffer.fptrPixBufSet(pixbuffer_local_create_cb, pixbuffer_local_destroy_cb, reinterpret_cast<jvxHandle*>(this));
 			}
 			else
 			{
 				extPixBuffer.fptrPixBufSet = nullptr;
 				extPixBuffer.fptrPixBufReset = nullptr;
+				extPixBuffer.fptrPixBufSetExt = nullptr;
 				JVX_UNLOADLIBRARY(extPixBuffer.dllHandlePixBuf);
 				extPixBuffer.dllHandlePixBuf = JVX_HMODULE_INVALID;
 			}
@@ -387,6 +399,9 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 	jvxSize i;
 	jvxCallManagerProperties callGate;
 
+	// Release the plot buffers while the components are still available
+	pixbuffer_plot_release_all();
+
 #ifdef JVX_LIBHOST_WITH_JSON_SHOW
 	involvedComponents.theHost.hFHost->remove_external_interface(reinterpret_cast<jvxHandle*>(static_cast<IjvxCommandInterpreter*>(this)), JVX_INTERFACE_COMMAND_INTERPRETER);
 #endif
@@ -406,6 +421,8 @@ jvxLibHost::shutdown_terminate_specific(jvxApiString* errloc)
 
 		extPixBuffer.fptrPixBufReset = nullptr;
 		extPixBuffer.fptrPixBufSet = nullptr;
+		extPixBuffer.fptrPixBufSetExt = nullptr;
+		extPixBuffer.publish_cb = nullptr;
 		JVX_UNLOADLIBRARY(extPixBuffer.dllHandlePixBuf);
 		extPixBuffer.dllHandlePixBuf = JVX_HMODULE_INVALID;
 		extPixBuffer.dllPixBufSystem.clear();

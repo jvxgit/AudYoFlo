@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
+  collection: ^1.16.0
 
   ayf_pack:
     path: '../ayf_pack'

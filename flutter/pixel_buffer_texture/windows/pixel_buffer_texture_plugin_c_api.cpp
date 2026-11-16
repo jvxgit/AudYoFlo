@@ -29,3 +29,9 @@ void PixelBufferTexturePluginCApiResetRendererCallbacks()
 {
   pixel_buffer_texture::PixelBufferTexturePlugin::ResetRendererCallbacks();
 }
+
+PixelBufferTexturePluginPublishFrameCallback PixelBufferTexturePluginCApiSetRendererCallbacksExt(
+    PixelBufferTexturePluginConfigureRendererCallback configure_cb)
+{
+  return pixel_buffer_texture::PixelBufferTexturePlugin::SetRendererCallbacksExt(configure_cb);
+}

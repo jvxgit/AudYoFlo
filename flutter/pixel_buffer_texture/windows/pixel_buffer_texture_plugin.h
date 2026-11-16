@@ -21,12 +21,15 @@ class PixelBufferTexturePlugin : public flutter::Plugin {
  public:
   static bool TextureFrameAvailable(int64_t texture_id, bool reqSwap);
   static void Notify(int64_t texture_id);
+  static bool PublishFrame(int64_t texture_id, const uint8_t* rgba, uint32_t width, uint32_t height);
 
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
   static void SetRendererCallbacks(PixelBufferTexturePluginCreateRendererCallback create_cb,
                                    PixelBufferTexturePluginDestroyRendererCallback destroy_cb, 
                                     void* priv_data);
   static void ResetRendererCallbacks();
+  static PixelBufferTexturePluginPublishFrameCallback SetRendererCallbacksExt(
+      PixelBufferTexturePluginConfigureRendererCallback configure_cb);
 
   PixelBufferTexturePlugin(flutter::TextureRegistrar* texture_registrar);
 
@@ -45,9 +48,13 @@ class PixelBufferTexturePlugin : public flutter::Plugin {
   flutter::TextureRegistrar* texture_registrar_;
   static std::unordered_map<int64_t, std::unique_ptr<MyPixelBufferTexture>> textures_;
 
+  // Protects textures_ against concurrent access from the render threads (PublishFrame)
+  static std::mutex textures_mutex_;
+
   static void* private_data_renderer_cb;
   static PixelBufferTexturePluginCreateRendererCallback create_texture_renderer_cb;
   static PixelBufferTexturePluginDestroyRendererCallback destroy_texture_renderer_cb;
+  static PixelBufferTexturePluginConfigureRendererCallback configure_texture_renderer_cb;
 };
 
 }  // namespace pixel_buffer_texture

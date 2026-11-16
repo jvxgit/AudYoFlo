@@ -1,7 +1,6 @@
 #include "CjvxPixBufRendering.h"
 
 #include <thread>
-#include <opencv2/imgproc.hpp>
 
 #define JVX_ALPHA_SMOOTH 0.9
 
@@ -17,6 +16,33 @@ jvxLibHost::pixbuffer_local_create_cb(
 	PixelBufferTexturePluginNotifyCallback notify_cb, void* priv_data)
 {
 	// This function enters the backend within the main thread!!!
+
+	// Plot renderers (mode=plot_inc / mode=plot_full) are handled in jvxLibHost_pixbuf_plot.cpp
+	{
+		std::vector<std::string> argsMode;
+		jvx::helper::parseStringListIntoTokens((arg ? arg : ""), argsMode, ':');
+		if (argsMode.size() >= 1)
+		{
+			std::map<std::string, std::string> mapArgsMode;
+			for (jvxSize i = 1; i < argsMode.size(); i++)
+			{
+				std::vector<std::string> oneArg;
+				jvx::helper::parseStringListIntoTokens(argsMode[i], oneArg, '=');
+				if (oneArg.size() == 2)
+				{
+					mapArgsMode[oneArg[0]] = oneArg[1];
+				}
+			}
+			auto elmMode = mapArgsMode.find("mode");
+			if ((elmMode != mapArgsMode.end()) && (elmMode->second.rfind("plot", 0) == 0))
+			{
+				reinterpret_cast<jvxLibHost*>(priv_data)->pixbuffer_plot_create(texture_id, width, height,
+					id, ctxt, argsMode[0], mapArgsMode);
+				return;
+			}
+		}
+	}
+
 	//auto tdg = std::make_unique<struct threaddata>();
 	CjvxPixBufRendering* tdg = nullptr;
 	JVX_SAFE_ALLOCATE_OBJECT(tdg, CjvxPixBufRendering); 
@@ -231,8 +257,17 @@ void
 jvxLibHost::pixbuffer_local_destroy_cb(int64_t texture_id, void* priv_data)
 {
 	// This function enters the backend within the main thread!!!
+	if (reinterpret_cast<jvxLibHost*>(priv_data)->pixbuffer_plot_destroy(texture_id))
+	{
+		return;
+	}
+
 	auto it = threads.find(texture_id);
-	assert(it!= threads.end());
+	if (it == threads.end())
+	{
+		// Unknown texture (e.g. plot renderer that has already been released)
+		return;
+	}
 
 	auto tdg = it->second;
 
