@@ -44,6 +44,11 @@ FLUTTER_PLUGIN_EXPORT void pixel_buffer_texture_plugin_set_renderer_callbacks(
     gpointer priv_data);
 FLUTTER_PLUGIN_EXPORT void pixel_buffer_texture_plugin_reset_renderer_callbacks();
 
+// Extension for renderers that produce complete images, see TpjvxPixBuffer.h
+FLUTTER_PLUGIN_EXPORT PixelBufferTexturePluginPublishFrameCallback
+pixel_buffer_texture_plugin_set_renderer_callbacks_ext(
+    PixelBufferTexturePluginConfigureRendererCallback configure_cb);
+
 G_END_DECLS
 
 #endif // FLUTTER_PLUGIN_PIXEL_BUFFER_TEXTURE_PLUGIN_H_

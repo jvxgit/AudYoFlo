@@ -1,5 +1,6 @@
 #include "include/my_pixel_buffer_texture.h"
 #include <iostream>
+#include <cstring>
 
 MyPixelBufferTexture::MyPixelBufferTexture(uint32_t width, uint32_t height,
     flutter::TextureRegistrar *texture_registrar)
@@ -22,6 +23,11 @@ MyPixelBufferTexture::MyPixelBufferTexture(uint32_t width, uint32_t height,
             [=](size_t width, size_t height) -> const FlutterDesktopPixelBuffer *
             {
                 
+                if (this->published)
+                {
+                    return this->copy_published();
+                }
+
                 const FlutterDesktopPixelBuffer* res;
 
                 // We may return from texture fill without any new data. 
@@ -51,6 +57,40 @@ MyPixelBufferTexture::MyPixelBufferTexture(uint32_t width, uint32_t height,
 
 MyPixelBufferTexture::~MyPixelBufferTexture() {
     this->notify();
+}
+
+void MyPixelBufferTexture::publish(const uint8_t* rgba, uint32_t w, uint32_t h) {
+    // Called from the render thread of the backend
+    {
+        std::lock_guard lock(this->publishMutex);
+        size_t sz = (size_t)w * h * 4;
+        this->publishBack.resize(sz);
+        memcpy(this->publishBack.data(), rgba, sz);
+        this->publishBackWidth = w;
+        this->publishBackHeight = h;
+        this->publishBackValid = true;
+        this->published = true;
+    }
+    this->texture_registrar->MarkTextureFrameAvailable(this->texture_id);
+}
+
+const FlutterDesktopPixelBuffer* MyPixelBufferTexture::copy_published() {
+    // Called from the raster thread. Flutter copies the returned buffer before the next call,
+    // hence, the front buffer is only modified within this function.
+    std::lock_guard lock(this->publishMutex);
+    if (this->publishBackValid) {
+        std::swap(this->publishFront, this->publishBack);
+        this->publishFrontWidth = this->publishBackWidth;
+        this->publishFrontHeight = this->publishBackHeight;
+        this->publishBackValid = false;
+    }
+    if (this->publishFront.empty()) {
+        return nullptr;
+    }
+    this->flutter_pixel_buffer_published.buffer = this->publishFront.data();
+    this->flutter_pixel_buffer_published.width = this->publishFrontWidth;
+    this->flutter_pixel_buffer_published.height = this->publishFrontHeight;
+    return &this->flutter_pixel_buffer_published;
 }
 
 void MyPixelBufferTexture::notify() {

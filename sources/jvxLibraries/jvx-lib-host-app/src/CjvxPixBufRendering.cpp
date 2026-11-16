@@ -1,5 +1,7 @@
 #include "CjvxPixBufRendering.h"
+#ifdef JVX_PIXBUF_WITH_OPENCV
 #include <opencv2/imgproc.hpp>
+#endif
 
 #define JVX_ALPHA_SMOOTH 0.9
 
@@ -79,6 +81,7 @@ CjvxPixBufRendering::buffer_proc_core()
 					}
 					else
 					{
+#ifdef JVX_PIXBUF_WITH_OPENCV
 						// Convert from lockHandle->v.swb to szBuf
 						cv::Mat imageFrom(lockHandle->v.swb->specific.the2DFieldBuffer_full.common.seg_y,
 							lockHandle->v.swb->specific.the2DFieldBuffer_full.common.seg_x, CV_8UC4, ptrRead);
@@ -87,6 +90,9 @@ CjvxPixBufRendering::buffer_proc_core()
 						memcpy(*buffer, resize_down.data, szBuf);
 
 						// https://learnopencv.com/image-resizing-with-opencv/#resize-by-wdith-height							
+#else
+						// Scaling requires OpenCV: leave the texture as is
+#endif
 					}
 
 					/*

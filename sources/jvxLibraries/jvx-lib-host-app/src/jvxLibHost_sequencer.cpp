@@ -34,9 +34,20 @@ jvxLibHost::sequencer_start(jvxSize granularity_state_report)
 			seqPtr = reqInterface<IjvxSequencer>(involvedHost.hHost);
 			if (seqPtr)
 			{
+				// Rendering targets of plot textures can only be installed before processing starts
+				pixbuffer_install_all();
+
 				res = seqPtr->run_process(static_cast<IjvxSequencer_report*>(this),
 					JVX_SEQUENCER_EVENT_REPORT_ALL,
 					granularity_state_report);
+				if (res == JVX_NO_ERROR)
+				{
+					extPixBuffer.processingActive = true;
+				}
+				else
+				{
+					pixbuffer_uninstall_all();
+				}
 				JVX_GET_TICKCOUNT_US_GET_CURRENT(&seq_timestap_data);
 				retInterface<IjvxSequencer>(involvedHost.hHost, seqPtr);
 			}
@@ -81,6 +92,13 @@ jvxLibHost::sequencer_ack_stop()
 			{
 				res = seqPtr->acknowledge_completion_process();
 				retInterface<IjvxSequencer>(involvedHost.hHost, seqPtr);
+
+				// Processing has stopped: release the rendering targets of plot textures
+				if (res == JVX_NO_ERROR)
+				{
+					extPixBuffer.processingActive = false;
+					pixbuffer_uninstall_all();
+				}
 			}
 		}
 		synchronize_thread_leave();

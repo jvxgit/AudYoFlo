@@ -41,6 +41,20 @@ class MethodChannelPixelBufferTexture extends PixelBufferTexturePlatform {
   }
 
   @override
+  Future<void> configureTextureRenderer(
+      int textureId, String key, String value) async {
+    try {
+      await methodChannel.invokeMethod('configureTextureRenderer', {
+        'textureId': textureId,
+        'key': key,
+        'value': value,
+      });
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
   Future<Map<dynamic, dynamic>?> getEntryPoints() async {
     final entries = await methodChannel
         .invokeMethod<Map<dynamic, dynamic>>('getEntryPoints');

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ayf_pack/ayf_pack.dart';
 import 'package:ayf_pack_video/ayf_pack_video.dart';
 import 'ayf_ui_specific.dart';
+import 'ayf_analyzer_plot_widget.dart';
 import 'package:ayf_pack/main-widgets/ayf_audio_settings_widget.dart';
 import 'package:flutter/foundation.dart'
     show kIsWeb, defaultTargetPlatform, TargetPlatform;
@@ -14,6 +15,11 @@ bool get _supportsVideoRendering =>
     !kIsWeb &&
     (defaultTargetPlatform == TargetPlatform.windows ||
         defaultTargetPlatform == TargetPlatform.linux);
+
+// Plot rendering of the analyzer (pixel_buffer_texture, mode=plot_*): the backend
+// renders with an offscreen OpenGL context, available on Windows (WGL) for now.
+bool get _supportsPlotRendering =>
+    !kIsWeb && (defaultTargetPlatform == TargetPlatform.windows);
 
 // ============================================================================
 // Callback to allocate an audio device sliver in the list of active/inactive
@@ -129,6 +135,15 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
               slotid: 0,
               slotsubid: 0),
           'vrendn');
+
+  // Analyzer node (jvxAuNAnalyze) - as in ayfstartern-qt, audio node slot 2
+  AudYoFloConfigComponentForWidgetStartup cpTpAnalyzer =
+      AudYoFloConfigComponentForWidgetStartup(
+          JvxComponentIdentification(
+              cpTp: JvxComponentTypeEnum.JVX_COMPONENT_AUDIO_NODE,
+              slotid: 2,
+              slotsubid: 0),
+          'analyzern');
 
   AudYoFloUiModelSpecificWithWidget(String routeInit) : super(routeInit) {
     allocateBottomAppBar = allocatorBottomAppBar;
@@ -318,6 +333,25 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
       ));
     }
     }
+    // ======================================================================
+    // Add the real-time analyzer widget (spectrogram + waveform)
+    // ======================================================================
+    if (platformSpec!.supportsPixBuf && _supportsPlotRendering) {
+      String textAnalyzer = 'Analyzer';
+      AudYoFloHelper.widgetConfigCpIdShow(entriesCfgWidgets, cpTpAnalyzer);
+      if (cpTpAnalyzer.showWidget) {
+        theAllocatedTabs.add(RotatedBox(
+            quarterTurns: -1,
+            child: Tooltip(
+                message: cpTpAnalyzer.cpId.txt,
+                child: Column(children: [
+                  Icon(Icons.graphic_eq, size: navButtonSizeMain),
+                  Text(textAnalyzer)
+                ]))));
+        theAllocatedTabViews.add(AudYoFloAnalyzerPlotWidget(cpTpAnalyzer.cpId));
+      }
+    }
+
     /*AudYoFloAudioSettingsWidget(
         cpTpFIoTech,
         'File I/O Technologies',

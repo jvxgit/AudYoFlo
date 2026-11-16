@@ -10,9 +10,39 @@ PixelBufferTexturePluginCreateRendererCallback create_texture_renderer_cb =
     NULL;
 PixelBufferTexturePluginDestroyRendererCallback destroy_texture_renderer_cb =
     NULL;
+PixelBufferTexturePluginConfigureRendererCallback configure_texture_renderer_cb =
+    NULL;
 gpointer private_data = NULL;
 
+// Set of texture ids (heap allocated keys)
 GHashTable *texture_set;
+
+static GHashTable *texture_set_new() {
+  return g_hash_table_new_full(g_int64_hash, g_int64_equal, g_free, NULL);
+}
+
+static void texture_set_add(gint64 texture_id) {
+  gint64 *key = g_new(gint64, 1);
+  *key = texture_id;
+  g_hash_table_add(texture_set, key);
+}
+
+static gboolean texture_set_contains(gint64 texture_id) {
+  return g_hash_table_contains(texture_set, &texture_id);
+}
+
+// Backend render threads publish images: texture ids are pointers to
+// MyPixelBufferTexture, the backend only publishes between create and destroy.
+static bool pixel_buffer_texture_publish(int64_t texture_id,
+                                         const uint8_t *rgba, uint32_t width,
+                                         uint32_t height) {
+  MyPixelBufferTexture *my_pixel_buffer_texture =
+      reinterpret_cast<MyPixelBufferTexture *>(texture_id);
+  if (my_pixel_buffer_texture == NULL)
+    return false;
+  my_pixel_buffer_texture_publish(my_pixel_buffer_texture, rgba, width, height);
+  return true;
+}
 
 #define PIXEL_BUFFER_TEXTURE_PLUGIN(obj)                                       \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), pixel_buffer_texture_plugin_get_type(),   \
@@ -128,7 +158,7 @@ pixel_buffer_texture_plugin_handle_method_call(PixelBufferTexturePlugin *self,
         }
         // NOTE on newer flutter: fl_texture_get_id(FL_TEXTURE(self->texture))
         gint64 texture_id = reinterpret_cast<int64_t>(my_pixel_buffer_texture);
-	g_hash_table_add(texture_set, &texture_id);
+        texture_set_add(texture_id);
 
         create_texture_renderer_cb(
             texture_id, &my_pixel_buffer_texture->buffer, width, height,
@@ -164,6 +194,26 @@ pixel_buffer_texture_plugin_handle_method_call(PixelBufferTexturePlugin *self,
       g_clear_object(&my_pixel_buffer_texture);
       response = FL_METHOD_RESPONSE(fl_method_success_response_new(NULL));
     }
+  } else if (strcmp(method, "configureTextureRenderer") == 0) {
+    // Runtime configuration of renderers, see
+    // PixelBufferTexturePluginConfigureRendererCallback
+    gint64 texture_id = 0;
+    const char *key = NULL;
+    const char *value = NULL;
+    FlValue *t = fl_value_lookup_string(args, "textureId");
+    FlValue *k = fl_value_lookup_string(args, "key");
+    FlValue *v = fl_value_lookup_string(args, "value");
+    if (t != NULL)
+      texture_id = fl_value_get_int(t);
+    if (k != NULL)
+      key = fl_value_get_string(k);
+    if (v != NULL)
+      value = fl_value_get_string(v);
+    if (configure_texture_renderer_cb && key && value &&
+        texture_set_contains(texture_id)) {
+      configure_texture_renderer_cb(texture_id, key, value, private_data);
+    }
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(NULL));
   } else if (strcmp(method, "getEntryPoints") == 0) {
     char external_access_module_name[JVX_MAXSTRING + 1];
     JVX_GET_CURRENT_MODULE_PATH((void*)pixel_buffer_texture_plugin_set_renderer_callbacks, external_access_module_name, JVX_MAXSTRING);
@@ -172,7 +222,7 @@ pixel_buffer_texture_plugin_handle_method_call(PixelBufferTexturePlugin *self,
     fl_value_set_string_take(ret_map, "loadedModule", fl_value_new_string(external_access_module_name));
     fl_value_set_string_take(ret_map, "moduleEntryAddressSet", fl_value_new_int((intptr_t)pixel_buffer_texture_plugin_set_renderer_callbacks));
     fl_value_set_string_take(ret_map, "moduleEntryAddressReset", fl_value_new_int((intptr_t)pixel_buffer_texture_plugin_reset_renderer_callbacks));
-    fl_value_set_string_take(ret_map, "moduleEntrySymbol", fl_value_new_string("pixel_buffer_texture_plugin_set_renderer_callbacks;pixel_buffer_texture_plugin_reset_renderer_callbacks"));
+    fl_value_set_string_take(ret_map, "moduleEntrySymbol", fl_value_new_string("pixel_buffer_texture_plugin_set_renderer_callbacks;pixel_buffer_texture_plugin_reset_renderer_callbacks;pixel_buffer_texture_plugin_set_renderer_callbacks_ext"));
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(ret_map));
   } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
@@ -188,7 +238,7 @@ static void pixel_buffer_texture_plugin_dispose(GObject *object) {
 
 static void
 pixel_buffer_texture_plugin_class_init(PixelBufferTexturePluginClass *klass) {
-  texture_set = g_hash_table_new(g_int64_hash, g_int64_equal);
+  texture_set = texture_set_new();
   G_OBJECT_CLASS(klass)->dispose = pixel_buffer_texture_plugin_dispose;
 }
 
@@ -227,15 +277,24 @@ void pixel_buffer_texture_plugin_set_renderer_callbacks(
   private_data = priv_data;
 }
 
+PixelBufferTexturePluginPublishFrameCallback
+pixel_buffer_texture_plugin_set_renderer_callbacks_ext(
+    PixelBufferTexturePluginConfigureRendererCallback configure_cb) {
+  configure_texture_renderer_cb = configure_cb;
+  return pixel_buffer_texture_publish;
+}
+
 void destroy_texture(gpointer key, gpointer value, gpointer user_data) {
   destroy_texture_renderer_cb(*((gint64*)key), private_data);
 }
 
 void pixel_buffer_texture_plugin_reset_renderer_callbacks() {
+  // The destroy callbacks need the private data of the backend
+  g_hash_table_foreach(texture_set, destroy_texture, NULL);
   create_texture_renderer_cb = NULL;
   destroy_texture_renderer_cb = NULL;
+  configure_texture_renderer_cb = NULL;
   private_data = NULL;
-  g_hash_table_foreach(texture_set, destroy_texture, NULL);
   g_hash_table_destroy(texture_set);
-  texture_set = g_hash_table_new(g_int64_hash, g_int64_equal);
+  texture_set = texture_set_new();
 }

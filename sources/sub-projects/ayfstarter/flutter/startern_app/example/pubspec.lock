@@ -401,7 +401,7 @@ packages:
     source: hosted
     version: "6.1.0"
   pixel_buffer_texture:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: "../../../../../../flutter/pixel_buffer_texture"
       relative: true

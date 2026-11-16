@@ -35,6 +35,14 @@ abstract class PixelBufferTexturePlatform extends PlatformInterface {
         'destroyTextureRenderer() has not been implemented.');
   }
 
+  /// Runtime configuration of a renderer in the backend, e.g. key "size"
+  /// ("<width>:<height>:<scale>") or "config", see TpjvxPixBuffer.h
+  Future<void> configureTextureRenderer(
+      int textureId, String key, String value) {
+    throw UnimplementedError(
+        'configureTextureRenderer() has not been implemented.');
+  }
+
   Future<Map<dynamic, dynamic>?> getEntryPoints() {
     throw UnimplementedError('getEntryPoints() has not been implemented.');
   }
