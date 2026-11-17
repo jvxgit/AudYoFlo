@@ -173,15 +173,6 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
     // ==================================================================
     // ==================================================================
 
-    String imageNameBaresip =
-        'packages/ayfphone/images/ayfphone_icons/phone-tab-icon.png';
-
-    String textBaresip = 'BARESIP';
-    AudYoFloHelper.widgetConfigCpIdShowTD(entriesCfgWidgets, cpTpBaresip);
-
-    // ==================================================================
-    // ==================================================================
-
     if (activatePrimaryAudio) {
       // ======================================================================
       // Add the primary audio device widget

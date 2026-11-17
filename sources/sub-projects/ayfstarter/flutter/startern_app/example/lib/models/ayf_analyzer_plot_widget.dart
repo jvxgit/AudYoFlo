@@ -46,6 +46,11 @@ class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
     '/min_y_sec',
     '/descr_y_sec',
     '/expose_plot/segmentsize_y',
+    // Display parameters (as in CjvxQtMeasureAudio_spectrum)
+    '/expose_plot/gain_factor_waveform',
+    '/expose_plot/smooth_factor_waveform',
+    '/expose_plot/sensitivity_spectrum',
+    '/select_channel',
   ]);
 
   AudYoFloOneComponentSettingsBackend mySettings =
@@ -167,7 +172,13 @@ class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
       PixelBufferPlotLegendPosition.leftBottom: 'Bottom left',
       PixelBufferPlotLegendPosition.rightBottom: 'Bottom right',
     };
-    return Row(children: [
+    return Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+      ..._propControls(),
+      const SizedBox(width: 16),
       const Text('Legend: '),
       DropdownButton<PixelBufferPlotLegendPosition>(
           value: legendPos,
@@ -179,12 +190,45 @@ class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
               setState(() => legendPos = v);
             }
           }),
-      const SizedBox(width: 24),
       Checkbox(
           value: showGrid,
           onChanged: (v) => setState(() => showGrid = v ?? true)),
       const Text('Grid'),
     ]);
+  }
+
+  // Backend properties of the analyzer node: scalar values in text fields
+  // (applied on <Enter>), channel selection in a combobox. Properties which
+  // are not exposed by the node (e.g. waveform plotter not compiled in) are
+  // skipped.
+  List<Widget> _propControls() {
+    List<Widget> lst = [];
+
+    void addValue(String label, String tag) {
+      var prop = oneGroupAxis.extractPropMultiContent(tag);
+      if (prop != null) {
+        lst.add(Text(label));
+        lst.add(SizedBox(
+            width: 90,
+            child: AudYoFloSimpleTextField(
+                propBe: prop.parpropc, idx: 0, height: 36)));
+      }
+    }
+
+    addValue('Gain waveform:', '/expose_plot/gain_factor_waveform');
+    // Smoothing in [0, 0.99999], clamped in the backend
+    addValue('Smoothing:', '/expose_plot/smooth_factor_waveform');
+    addValue('Sensitivity spectrum:', '/expose_plot/sensitivity_spectrum');
+
+    var selChannel = oneGroupAxis.extractPropSelectionList('/select_channel');
+    if (selChannel != null) {
+      lst.add(const Text('Channel:'));
+      lst.add(SizedBox(
+          width: 160,
+          child: AudYoFloPropListComboBoxWidget(
+              selLstBe: selChannel, height: 36)));
+    }
+    return lst;
   }
 
   @override
