@@ -40,6 +40,9 @@ sources/jvxLibraries/third_party/git/orc/orc
 
 /sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.11
 /sources/jvxLibraries/third_party/web/fftw/fftw-3.3/fftw-3.3.10
+/sources/jvxLibraries/third_party/web/fftw/fftw-3.3/x86-Debug-linux-dspace-Debug
+/sources/jvxLibraries/third_party/web/fftw/fftw-3.3/x86-Debug-linux-dspace
+
 
 /sources/jvxExTools/jvxExPropC/example/get_audio_D0.m
 /sources/jvxExTools/jvxExPropC/example/get_audio_D1.m
