@@ -197,11 +197,12 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
                 message:
                     '${cpTpPriAudio.cpId.txt}--${cpTpPriAudio.cpIdDev.txt}',
                 child: Column(children: [
-                  Image.asset(imageNameAudioIoPri,
-                      filterQuality: FilterQuality.medium,
+                  ImageIcon(AssetImage(imageNameAudioIoPri
+                      // filterQuality: FilterQuality.medium,
                       //'images/fernlive_icons/fernlive-mixer.png',
-                      width: navButtonSizeMain,
-                      height: navButtonSizeMain),
+                      // width: navButtonSizeMain,
+                      // height: navButtonSizeMain)
+                      )),
                   Text(textAudioIoPri)
                 ]))));
         theAllocatedTabViews.add(AudYoFloAudioSettingsWidget(
@@ -230,11 +231,8 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
           child: Tooltip(
               message: '${cpTpSecAudio.cpId.txt}--${cpTpSecAudio.cpIdDev.txt}',
               child: Column(children: [
-                Image.asset(imageNameAudioIoSec,
-                    filterQuality: FilterQuality.medium,
-                    //'images/fernlive_icons/fernlive-mixer.png',
-                    width: navButtonSizeMain,
-                    height: navButtonSizeMain),
+                ImageIcon(AssetImage(imageNameAudioIoSec),
+                size: navButtonSizeMain),
                 Text(textAudioIoSec)
               ]))));
       theAllocatedTabViews.add(AudYoFloAudioSettingsWidget(
@@ -262,11 +260,8 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
           child: Tooltip(
               message: '${cpTpVideo.cpId.txt}--${cpTpVideo.cpIdDev.txt}',
               child: Column(children: [
-                Image.asset(imageNameVideoIo,
-                    filterQuality: FilterQuality.medium,
-                    //'images/fernlive_icons/fernlive-mixer.png',
-                    width: navButtonSizeMain,
-                    height: navButtonSizeMain),
+                ImageIcon(AssetImage(imageNameVideoIo),
+                size: navButtonSizeMain),
                 Text(textVideoIo)
               ]))));
       theAllocatedTabViews.add(AudYoFloAudioSettingsWidget(
@@ -291,11 +286,8 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
           child: Tooltip(
               message: cpTpFIo.cpId.txt,
               child: Column(children: [
-                Image.asset(imageNameFileIO,
-                    filterQuality: FilterQuality.medium,
-                    //'images/fernlive_icons/fernlive-mixer.png',
-                    width: navButtonSizeMain,
-                    height: navButtonSizeMain),
+                ImageIcon(AssetImage(imageNameFileIO),
+                size: navButtonSizeMain),
                 Text(textFileIo)
               ]))));
       theAllocatedTabViews.add(AudYoFloFileInputControlWidget(
@@ -319,11 +311,8 @@ class AudYoFloUiModelSpecificWithWidget extends AudYoFloUiModelSpecific {
           child: Tooltip(
               message: cpTpVRen.cpId.txt,
               child: Column(children: [
-                Image.asset(imageNameVideoRender,
-                    filterQuality: FilterQuality.medium,
-                    //'images/fernlive_icons/fernlive-mixer.png',
-                    width: navButtonSizeMain,
-                    height: navButtonSizeMain),
+                ImageIcon(AssetImage(imageNameVideoRender),
+                size: navButtonSizeMain),
                 Text(textVideoRender)
               ]))));
       theAllocatedTabViews.add(AudYoFloMultiVideoWidget(
