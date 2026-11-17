@@ -34,7 +34,8 @@ jvxLibHost::sequencer_start(jvxSize granularity_state_report)
 			seqPtr = reqInterface<IjvxSequencer>(involvedHost.hHost);
 			if (seqPtr)
 			{
-				// Rendering targets of plot textures can only be installed before processing starts
+				// Install the rendering targets of the existing plot textures. Textures created later
+				// install their rendering targets themselves.
 				pixbuffer_install_all();
 
 				res = seqPtr->run_process(static_cast<IjvxSequencer_report*>(this),
@@ -69,6 +70,9 @@ jvxLibHost::sequencer_stop()
 			seqPtr = reqInterface<IjvxSequencer>(involvedHost.hHost);
 			if (seqPtr)
 			{
+				// Remove the rendering targets of plot textures before the stop is triggered
+				pixbuffer_uninstall_on_stop();
+
 				res = seqPtr->trigger_abort_process();
 				retInterface<IjvxSequencer>(involvedHost.hHost, seqPtr);
 			}

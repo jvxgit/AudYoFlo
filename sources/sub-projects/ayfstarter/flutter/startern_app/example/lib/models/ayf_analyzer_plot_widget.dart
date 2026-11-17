@@ -33,8 +33,7 @@ class AudYoFloAnalyzerPlotWidget extends StatefulWidget {
 class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
     with
         AudYoFloMultiComponentsPropertyOnChange,
-        AudYoFloPropertyOnChangeGroups,
-        AutomaticKeepAliveClientMixin<AudYoFloAnalyzerPlotWidget> {
+        AudYoFloPropertyOnChangeGroups {
   AudYoFloPropertyOnChangeOneGroup oneGroupAxis =
       AudYoFloPropertyOnChangeOneGroup([
     '/unit_x',
@@ -50,6 +49,7 @@ class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
     '/expose_plot/gain_factor_waveform',
     '/expose_plot/smooth_factor_waveform',
     '/expose_plot/sensitivity_spectrum',
+    '/expose_plot/plot_mode',
     '/select_channel',
   ]);
 
@@ -220,14 +220,19 @@ class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
     addValue('Smoothing:', '/expose_plot/smooth_factor_waveform');
     addValue('Sensitivity spectrum:', '/expose_plot/sensitivity_spectrum');
 
-    var selChannel = oneGroupAxis.extractPropSelectionList('/select_channel');
-    if (selChannel != null) {
-      lst.add(const Text('Channel:'));
-      lst.add(SizedBox(
-          width: 160,
-          child: AudYoFloPropListComboBoxWidget(
-              selLstBe: selChannel, height: 36)));
+    void addSelection(String label, String tag, double width) {
+      var sel = oneGroupAxis.extractPropSelectionList(tag);
+      if (sel != null) {
+        lst.add(Text(label));
+        lst.add(SizedBox(
+            width: width,
+            child: AudYoFloPropListComboBoxWidget(selLstBe: sel, height: 36)));
+      }
     }
+
+    // Waveform plot mode: amplitude linear, energy linear, energy log [dB]
+    addSelection('Waveform mode:', '/expose_plot/plot_mode', 180);
+    addSelection('Channel:', '/select_channel', 160);
     return lst;
   }
 
@@ -247,10 +252,28 @@ class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
       }
     }
 
-    if (!validData) {
+    if (validData) {
+      _cfgSpectrum = _overlay(title: 'Spectrum', suffixY: 'sec');
+      _cfgWaveform = _overlay(
+          title: 'Waveform',
+          suffixY: 'pri',
+          legend: const [
+            PixelBufferPlotLegendEntry(Colors.white, 'Signal x(k)')
+          ]);
+      _lastControls = _controls();
+    } else if (_lastControls == null) {
       return const Center(child: Text('Analyzer node not active'));
     }
 
+    // If a property is set, it is invalidated in the backend cache and the
+    // property list is re-read: in the meantime, there is no valid data. The
+    // plot views must NOT be removed from the widget tree in this phase -
+    // this would destroy and re-create the textures in the backend. Hence,
+    // keep the last overlay and controls until the properties are back.
+
+    // The textures exist while this widget is visible: the backend installs
+    // the plot buffers when a texture is created during processing (or with
+    // the next start) and removes them when the texture is released.
     String rendererId = widget.cpId.txt;
 
     // Secondary display: "Spectral View" (upper), no legend
@@ -258,39 +281,35 @@ class _AudYoFloAnalyzerPlotWidgetState extends State<AudYoFloAnalyzerPlotWidget>
         rendererId: rendererId,
         rendererCtxt: 'spectrum',
         rendererArg: '/expose_plot/rendering_target_sec:$_propsBuffer',
-        config: _overlay(title: 'Spectrum', suffixY: 'sec'));
+        config: _cfgSpectrum!);
 
     // Primary display: "Waveform View" (lower), signal in white, with legend
     Widget viewWaveform = PixelBufferPlotRenderer(
         rendererId: rendererId,
         rendererCtxt: 'waveform',
         rendererArg: '/expose_plot/rendering_target:$_propsBuffer',
-        config: _overlay(
-            title: 'Waveform',
-            suffixY: 'pri',
-            legend: const [
-              PixelBufferPlotLegendEntry(Colors.white, 'Signal x(k)')
-            ]));
+        config: _cfgWaveform!);
 
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(children: [
-          _controls(),
+          _lastControls!,
           Expanded(child: viewSpectrum),
           const SizedBox(height: 8),
           Expanded(child: viewWaveform),
         ]));
   }
 
-  // Keep the plot views alive if another tab is shown: the rendering targets are
-  // installed in the backend when processing starts - a view created later only
-  // shows content after the next start.
-  @override
-  bool get wantKeepAlive => true;
+  // Last valid overlay configurations and controls, see innerWidget
+  PixelBufferPlotConfig? _cfgSpectrum;
+  PixelBufferPlotConfig? _cfgWaveform;
+  Widget? _lastControls;
 
+  // No keep-alive: if another tab is shown, this widget is disposed, the plot
+  // textures are released and the backend removes the rendering targets - no
+  // plotting work for invisible views.
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     if (configured == false) {
       mySettings.cpId = widget.cpId;
       resetMultiPropertySettings();

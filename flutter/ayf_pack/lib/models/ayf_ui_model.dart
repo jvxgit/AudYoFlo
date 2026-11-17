@@ -99,6 +99,17 @@ abstract class AudYoFloUiModel
   double imageWScaleApp = 5;
   double imageOAScaleApp = 0.7;
 
+  // Splash screen, shown while the backend is initialized (initRoute "/").
+  // flutter_native_splash does not support the desktop platforms, hence, the
+  // splash screen is realized in Flutter (see AudYoFloMainWidget).
+  bool showSplash = true;
+  String splashImage = 'packages/ayf_pack/images/ayf_splash/splash.png';
+  Color splashBackground = Colors.white;
+  String splashText = '';
+
+  // Minimum time the splash screen is shown - avoids a flash on fast starts
+  Duration splashMinDuration = const Duration(milliseconds: 800);
+
   bool currentColorSaveDialogTriggered = false;
 
   AyfBottomBarAllocator? allocateBottomAppBar;

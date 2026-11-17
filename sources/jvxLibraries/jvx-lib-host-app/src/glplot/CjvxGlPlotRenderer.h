@@ -72,6 +72,12 @@ public:
 	void resize(uint32_t width, uint32_t height, double scale);
 	void set_overlay(const CjvxGlPlotOverlay& ovl);
 
+	// Publishing of images to the sink. If disabled, the renderer keeps consuming the buffer and
+	// updating its texture (no history is lost) but does not read back and publish images. When this
+	// function returns, no image is being published, hence, the sink may be modified. Enabling
+	// publishes an image right away.
+	void set_publishing(bool on);
+
 	// Decode the overlay description as passed by the UI, see TpjvxPixBuffer.h (key "config")
 	static void decode_overlay(const std::string& txt, CjvxGlPlotOverlay& ovl);
 
@@ -116,6 +122,9 @@ private:
 
 		jvxExternalBuffer* buf = nullptr;
 		bool bufChanged = false;
+
+		bool publish = true;
+		bool forceRepaint = false;
 	} shared;
 
 	// Only accessed in the render thread

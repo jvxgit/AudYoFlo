@@ -22,6 +22,7 @@ class AudYoFloMainWidget extends StatefulWidget {
   final AudYoFloPlatformSpecific platformSpecific;
 
   // https://stackoverflow.com/questions/54279223/flutter-default-assignment-of-list-parameter-in-a-constructor
+  // The splash screen is configured in AudYoFloUiModel (showSplash, splash*)
   const AudYoFloMainWidget({Key? key, required this.platformSpecific})
       : super(key: key);
 
@@ -55,6 +56,48 @@ class _AudYoFloMainWidgetStates extends State<AudYoFloMainWidget>
   AudYoFloBackendCache? notifierBeCache;
   AudYoFloDebugModel? notifierDbgModel;
   AudYoFloUiModel? uiModel;
+
+  // Backend initialization running: show the splash screen
+  bool _initPending = false;
+
+  Future<void> _initializeWithSplash() async {
+    final minDuration = Future.delayed(uiModel!.splashMinDuration);
+    try {
+      await uiModel!.platformSpec!
+          .initializeSubSystem(notifierBeCache, uiModel, notifierDbgModel);
+    } catch (e) {
+      print('Backend initialization failed: $e');
+    }
+    await minDuration;
+    if (mounted) {
+      setState(() => _initPending = false);
+    }
+  }
+
+  Widget _splashScreen() {
+    final model = uiModel!;
+    return Container(
+        color: model.splashBackground,
+        alignment: Alignment.center,
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 320, maxHeight: 220),
+              child: Image.asset(model.splashImage, fit: BoxFit.contain)),
+          const SizedBox(height: 32),
+          if (model.splashText.isNotEmpty) ...[
+            Text(model.splashText,
+                style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.black54,
+                    decoration: TextDecoration.none)),
+            const SizedBox(height: 16),
+          ],
+          const SizedBox(
+              width: 28,
+              height: 28,
+              child: CircularProgressIndicator(strokeWidth: 3)),
+        ]));
+  }
 
   // ========================================================
   // Build function to create the widget. Note: The initState
@@ -100,8 +143,17 @@ class _AudYoFloMainWidgetStates extends State<AudYoFloMainWidget>
         // initializeSubSystem starts the backend engine. We might couple it immediately OR we
         // may expect some input before connecting - depending on the routes. If we start with the
         // main route, we immediately couple the backend.
-        uiModel!.platformSpec!
-            .initializeSubSystem(notifierBeCache, uiModel, notifierDbgModel);
+        // The splash screen is shown until the backend is up. The initialization is started after
+        // the first frame, such that the splash screen is visible also if the initialization
+        // blocks the UI thread.
+        if (uiModel!.showSplash) {
+          _initPending = true;
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _initializeWithSplash());
+        } else {
+          uiModel!.platformSpec!
+              .initializeSubSystem(notifierBeCache, uiModel, notifierDbgModel);
+        }
       }
 
       // =================================================================
@@ -119,7 +171,17 @@ class _AudYoFloMainWidgetStates extends State<AudYoFloMainWidget>
       case ''
     }
     */
+    if (_initPending) {
+      return MaterialApp(
+          key: const ValueKey('ayfSplash'),
+          debugShowCheckedModeBanner: false,
+          home: _splashScreen());
+    }
+
+    // Own key: the main app must be created from scratch after the splash
+    // screen - initialRoute is only evaluated when the navigator is created
     return MaterialApp(
+      key: const ValueKey('ayfMain'),
       initialRoute: uiModel!.initRoute,
       onGenerateRoute: AudYoFloRouteGenerator.generateRoute,
     );

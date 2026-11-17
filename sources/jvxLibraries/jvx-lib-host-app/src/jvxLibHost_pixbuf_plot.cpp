@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <iostream>
+#include <chrono>
 
 /*
  * Plot renderers of the pixbuf connection (mode=plot_inc / mode=plot_full), see TpjvxPixBuffer.h and
@@ -15,6 +16,13 @@
 // Texture callbacks are invoked from the UI thread, the sequencer functions from the thread that runs
 // the backend calls. Both may be different, hence, protect the list of plot renderers.
 static std::recursive_mutex pixbufPlotSafeAccess;
+
+static int64_t
+pixbuf_plot_now_ms()
+{
+	return std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::steady_clock::now().time_since_epoch()).count();
+}
 
 // ==========================================================================================
 
@@ -155,32 +163,46 @@ jvxLibHost::pixbuffer_plot_create(int64_t texture_id, uint32_t width, uint32_t h
 			(id ? id : "") << "> is not!" << std::endl;
 	}
 
-	// A texture may be re-created while processing is running (e.g. if the widget was disposed and
-	// rebuilt). The previous plot renderer then still holds the installed buffer: hand it over to the
-	// new texture instead of waiting for the next start.
+	// The plot widget was shown before during this processing run: take over the parked connection -
+	// buffer and renderer have continued in the background, the plot history is preserved.
 	for (auto elm = extPixBuffer.plots.begin(); elm != extPixBuffer.plots.end(); elm++)
 	{
 		CjvxPixBufPlotRendering* old = elm->second;
-		if (old->detached && old->installed &&
+		if (old->parked && (old->renderer != nullptr) &&
 			(old->cpId == conn->cpId) && (old->propInstall == conn->propInstall) && (old->mode == conn->mode))
 		{
 			extPixBuffer.plots.erase(elm);
+
+			// Publishing is disabled, hence, the sink may be modified
 			old->texture_id = texture_id;
 			old->width = width;
 			old->height = height;
 			old->publish_cb = conn->publish_cb;
 			old->propArgs = conn->propArgs;
-			old->installHint = conn->installHint;
-			old->detached = false;
+			old->parked = false;
+			extPixBuffer.plots[texture_id] = old;
+
+			old->renderer->resize(old->width, old->height, old->scale);
+			old->renderer->set_publishing(true);
+
 			JVX_SAFE_DELETE_OBJECT(conn);
-			conn = old;
-			break;
+			pixbuffer_plot_release_buffers(false);
+			return;
 		}
 	}
 
-	// Renders the empty plot area until the buffer is installed with the next start of processing
+	// Renders the empty plot area until the buffer is installed
 	conn->start_renderer();
 	extPixBuffer.plots[texture_id] = conn;
+
+	// The texture is created when the plot widget becomes visible. If processing is running already,
+	// install the rendering target right now - the component delivers pixels as soon as the buffer
+	// is installed. Otherwise, the buffer is installed with the next start.
+	if (extPixBuffer.processingActive)
+	{
+		pixbuffer_plot_install(conn);
+	}
+	pixbuffer_plot_release_buffers(false);
 }
 
 jvxBool
@@ -193,23 +215,32 @@ jvxLibHost::pixbuffer_plot_destroy(int64_t texture_id)
 		return false;
 	}
 
-	// No more images for this texture
+	// No more images for this texture: the plot widget is no longer visible.
 	CjvxPixBufPlotRendering* conn = elm->second;
+	if (conn->parked)
+	{
+		// Texture already released
+		return true;
+	}
+
+	if (extPixBuffer.processingActive && conn->installed && conn->renderer)
+	{
+		// Processing is running: park the connection. Buffer and renderer continue in the background,
+		// such that the plot history is still there when the widget is shown again.
+		conn->renderer->set_publishing(false);
+		conn->publish_cb = nullptr;
+		conn->parked = true;
+		return true;
+	}
+
+	// Remove the rendering target right away
 	conn->stop_renderer();
 	conn->publish_cb = nullptr;
+	pixbuffer_plot_uninstall(conn);
+	extPixBuffer.plots.erase(elm);
+	JVX_SAFE_DELETE_OBJECT(conn);
 
-	if (conn->installed && extPixBuffer.processingActive)
-	{
-		// The rendering target can not be removed while processing is running: keep the buffer and
-		// remove it once the processing has stopped.
-		conn->detached = true;
-	}
-	else
-	{
-		pixbuffer_plot_uninstall(conn);
-		extPixBuffer.plots.erase(elm);
-		JVX_SAFE_DELETE_OBJECT(conn);
-	}
+	pixbuffer_plot_release_buffers(false);
 	return true;
 }
 
@@ -273,7 +304,7 @@ jvxLibHost::pixbuffer_plot_install(CjvxPixBufPlotRendering* conn)
 	jvxSize szBuf = 0;
 	const std::string* propName = nullptr;
 
-	if (conn->installed || conn->detached || conn->propInstall.empty())
+	if (conn->installed || conn->propInstall.empty())
 	{
 		return JVX_NO_ERROR;
 	}
@@ -390,6 +421,13 @@ jvxLibHost::pixbuffer_plot_install(CjvxPixBufPlotRendering* conn)
 			conn->buf->associationHint = conn->installHint.c_str();
 			conn->bufValid = true;
 
+			// Connect the renderer BEFORE the buffer is installed: if processing is running, the component
+			// starts writing (and, in 2D full mode, triggering) right after the installation.
+			if (conn->renderer)
+			{
+				conn->renderer->set_external_buffer(conn->buf);
+			}
+
 			jvxCallManagerProperties callGate;
 			jPAD ident(conn->propInstall.c_str());
 			jvx::propertyRawPointerType::CjvxRawPointerTypeExternal<jvxExternalBuffer> ptrRaw(conn->buf, &conn->bufValid,
@@ -403,6 +441,10 @@ jvxLibHost::pixbuffer_plot_install(CjvxPixBufPlotRendering* conn)
 			{
 				std::cout << __FUNCTION__ << ", error: failed to install plot buffer in property <" << conn->propInstall <<
 					">, reason: " << jvxErrorType_txt(res) << "." << std::endl;
+				if (conn->renderer)
+				{
+					conn->renderer->set_external_buffer(nullptr);
+				}
 				jvx_deallocateExternalBuffer(conn->buf);
 				conn->buf = nullptr;
 				conn->bufValid = false;
@@ -416,13 +458,6 @@ jvxLibHost::pixbuffer_plot_install(CjvxPixBufPlotRendering* conn)
 
 	retInterfaceObj<IjvxProperties>(theObj, props);
 	involvedHost.hHost->return_object_selected_component(conn->cpId, theObj);
-
-	if (conn->installed && conn->renderer)
-	{
-		// Processing has not yet started, hence, the renderer may still modify the buffer callbacks
-		// (the trigger in 2D full mode)
-		conn->renderer->set_external_buffer(conn->buf);
-	}
 	return res;
 }
 
@@ -460,7 +495,15 @@ jvxLibHost::pixbuffer_plot_uninstall(CjvxPixBufPlotRendering* conn)
 
 	if (res == JVX_NO_ERROR)
 	{
-		jvx_deallocateExternalBuffer(conn->buf);
+		if (extPixBuffer.processingRunning)
+		{
+			// The processing thread may be writing into the buffer right now: release it later
+			extPixBuffer.plotBuffersRelease.push_back(std::make_pair(conn->buf, pixbuf_plot_now_ms()));
+		}
+		else
+		{
+			jvx_deallocateExternalBuffer(conn->buf);
+		}
 	}
 	else
 	{
@@ -475,27 +518,48 @@ jvxLibHost::pixbuffer_plot_uninstall(CjvxPixBufPlotRendering* conn)
 
 // ==========================================================================================
 
+// Start of processing: install the rendering targets of all existing plot textures. The flag
+// processingActive is set here - under the lock - such that a texture created from now on installs
+// its rendering target itself (see pixbuffer_plot_create).
 void
 jvxLibHost::pixbuffer_install_all()
 {
 	std::lock_guard<std::recursive_mutex> lock(pixbufPlotSafeAccess);
+	extPixBuffer.processingActive = true;
+	extPixBuffer.processingRunning = true;
 	for (auto& elm : extPixBuffer.plots)
 	{
 		pixbuffer_plot_install(elm.second);
 	}
 }
 
+// Stop of processing is about to be triggered: remove all rendering targets BEFORE the stop. The
+// processing thread is still running until the stop is acknowledged, hence, the buffers are released
+// only then (see pixbuffer_uninstall_all). No textures install their rendering target from now on.
 void
-jvxLibHost::pixbuffer_uninstall_all()
+jvxLibHost::pixbuffer_uninstall_on_stop()
 {
 	std::lock_guard<std::recursive_mutex> lock(pixbufPlotSafeAccess);
+	extPixBuffer.processingActive = false;
+	for (auto& elm : extPixBuffer.plots)
+	{
+		pixbuffer_plot_uninstall(elm.second);
+	}
+	pixbuffer_plot_remove_parked();
+}
+
+// Parked connections (no texture attached) are only kept while processing is running
+void
+jvxLibHost::pixbuffer_plot_remove_parked()
+{
 	auto elm = extPixBuffer.plots.begin();
 	while (elm != extPixBuffer.plots.end())
 	{
 		CjvxPixBufPlotRendering* conn = elm->second;
-		pixbuffer_plot_uninstall(conn);
-		if (conn->detached)
+		if (conn->parked)
 		{
+			conn->stop_renderer();
+			pixbuffer_plot_uninstall(conn);
 			elm = extPixBuffer.plots.erase(elm);
 			JVX_SAFE_DELETE_OBJECT(conn);
 		}
@@ -506,10 +570,28 @@ jvxLibHost::pixbuffer_uninstall_all()
 	}
 }
 
+// Stop of processing acknowledged (or failed start): remove all rendering targets still installed and
+// release all buffers - the processing thread no longer accesses them.
+void
+jvxLibHost::pixbuffer_uninstall_all()
+{
+	std::lock_guard<std::recursive_mutex> lock(pixbufPlotSafeAccess);
+	extPixBuffer.processingActive = false;
+	extPixBuffer.processingRunning = false;
+	for (auto& elm : extPixBuffer.plots)
+	{
+		pixbuffer_plot_uninstall(elm.second);
+	}
+	pixbuffer_plot_remove_parked();
+	pixbuffer_plot_release_buffers(true);
+}
+
 void
 jvxLibHost::pixbuffer_plot_release_all()
 {
 	std::lock_guard<std::recursive_mutex> lock(pixbufPlotSafeAccess);
+	extPixBuffer.processingActive = false;
+	extPixBuffer.processingRunning = false;
 	for (auto& elm : extPixBuffer.plots)
 	{
 		elm.second->stop_renderer();
@@ -517,7 +599,30 @@ jvxLibHost::pixbuffer_plot_release_all()
 		JVX_SAFE_DELETE_OBJECT(elm.second);
 	}
 	extPixBuffer.plots.clear();
-	extPixBuffer.processingActive = false;
+	pixbuffer_plot_release_buffers(true);
+}
+
+// Release plot buffers uninstalled while processing was running. A buffer is released once processing
+// has stopped (all = true) or if it was uninstalled long enough ago - the processing thread reads the
+// buffer reference once per frame, hence, it no longer accesses a buffer uninstalled a while ago.
+void
+jvxLibHost::pixbuffer_plot_release_buffers(jvxBool all)
+{
+	const int64_t delayMs = 1000;
+	int64_t now = pixbuf_plot_now_ms();
+	auto elm = extPixBuffer.plotBuffersRelease.begin();
+	while (elm != extPixBuffer.plotBuffersRelease.end())
+	{
+		if (all || ((now - elm->second) > delayMs))
+		{
+			jvx_deallocateExternalBuffer(elm->first);
+			elm = extPixBuffer.plotBuffersRelease.erase(elm);
+		}
+		else
+		{
+			elm++;
+		}
+	}
 }
 
 #else
@@ -553,7 +658,22 @@ jvxLibHost::pixbuffer_uninstall_all()
 }
 
 void
+jvxLibHost::pixbuffer_uninstall_on_stop()
+{
+}
+
+void
+jvxLibHost::pixbuffer_plot_remove_parked()
+{
+}
+
+void
 jvxLibHost::pixbuffer_plot_release_all()
+{
+}
+
+void
+jvxLibHost::pixbuffer_plot_release_buffers(jvxBool)
 {
 }
 

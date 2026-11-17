@@ -416,6 +416,21 @@ CjvxGlPlotRenderer::resize(uint32_t width, uint32_t height, double scale)
 }
 
 void
+CjvxGlPlotRenderer::set_publishing(bool on)
+{
+	{
+		// The render thread holds this lock while it renders and publishes
+		std::lock_guard<std::mutex> lock(safeAccess);
+		if (on && !shared.publish)
+		{
+			shared.forceRepaint = true;
+		}
+		shared.publish = on;
+	}
+	wake();
+}
+
+void
 CjvxGlPlotRenderer::set_overlay(const CjvxGlPlotOverlay& ovl)
 {
 	{
@@ -605,7 +620,8 @@ CjvxGlPlotRenderer::render_loop()
 
 			ctx->process_events();
 
-			bool force = false;
+			bool force = shared.forceRepaint;
+			shared.forceRepaint = false;
 			if (shared.bufChanged)
 			{
 				// CjvxMyGlWidget::inform_about_to_start / inform_stopped
@@ -635,7 +651,9 @@ CjvxGlPlotRenderer::render_loop()
 
 			core->glBindFramebuffer(GL_FRAMEBUFFER, core->fbo);
 			core->glViewport(0, 0, (GLsizei)core->fboWidth, (GLsizei)core->fboHeight);
-			if (core->paint(force))
+			// Paint in any case: in 2D incremental mode, this consumes the new lines of the buffer and
+			// keeps the texture up to date also while nobody watches
+			if (core->paint(force) && shared.publish)
 			{
 				const uint8_t* img = core->read_back();
 				if (sink)

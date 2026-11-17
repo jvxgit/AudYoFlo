@@ -28,6 +28,17 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
   final int offset;
   final ayfShortenTextOption textOpt;
 
+  // Optional decoration of the dropdown field. The default is a compact
+  // decoration: Flutter's default InputDecoration (underline, regular content
+  // padding) needs more height than the surrounding box provides, the text
+  // would be shifted down.
+  final InputDecoration? decoration;
+
+  static const InputDecoration compactDecoration = InputDecoration(
+      isDense: true,
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0));
+
   /* This combobox can be used to control backend and local 
     properties. There should always be either selLstBe or 
     selLstLo. It constructs the combobox with all options and
@@ -44,7 +55,8 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
       this.prefix = ' ',
       this.offset = 0,
       this.numCharsMax = 20,
-      this.textOpt = ayfShortenTextOption.AYF_SHORTEN_TEXT_FRONT});
+      this.textOpt = ayfShortenTextOption.AYF_SHORTEN_TEXT_FRONT,
+      this.decoration});
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +150,7 @@ class AudYoFloPropListComboBoxWidget extends StatelessWidget {
                 value: sel,
                 isExpanded: true,
                 isDense: true,
+                decoration: decoration ?? compactDecoration,
                 /*
               HK: This does not work: the OutlineInputBorder hides the text if
               the selection is not clicked.

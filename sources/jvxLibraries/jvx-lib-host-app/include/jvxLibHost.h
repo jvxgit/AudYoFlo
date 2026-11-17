@@ -95,7 +95,17 @@ private:
 		pixbuffer_render_set_callback_ext fptrPixBufSetExt = nullptr;
 		PixelBufferTexturePluginPublishFrameCallback publish_cb = nullptr;
 		std::map<int64_t, CjvxPixBufPlotRendering*> plots;
+
+		// Plot textures created now install their rendering target: from start until stop is triggered
 		jvxBool processingActive = false;
+
+		// Processing thread may access plot buffers: from start until stop is acknowledged
+		jvxBool processingRunning = false;
+
+		// Plot buffers uninstalled while processing is running: the processing thread may still be
+		// writing into the buffer when the property reference is removed, hence, the buffer is released
+		// later (see jvxLibHost_pixbuf_plot.cpp). Second: time of uninstall in ms (steady clock)
+		std::list<std::pair<jvxExternalBuffer*, int64_t>> plotBuffersRelease;
 	} extPixBuffer;
 
 	/*
@@ -377,9 +387,12 @@ public:
 	jvxBool pixbuffer_plot_destroy(int64_t texture_id);
 	void pixbuffer_install_all();
 	void pixbuffer_uninstall_all();
+	void pixbuffer_uninstall_on_stop();
 	void pixbuffer_plot_release_all();
 	jvxErrorType pixbuffer_plot_install(CjvxPixBufPlotRendering* conn);
 	void pixbuffer_plot_uninstall(CjvxPixBufPlotRendering* conn);
+	void pixbuffer_plot_release_buffers(jvxBool all);
+	void pixbuffer_plot_remove_parked();
 
 	// ================================================================================================
 #define JVX_OBJECT_ZERO_REFERENCE

@@ -68,6 +68,7 @@ flutter:
         fileName: ayf_pack_web.dart
 
   assets:
+    - images/ayf_splash/splash.png
     - images/ayf_icons/ayf-mixer.png
     - images/ayf_icons/ayf-stream.png
     - images/ayf_icons/ayf-audio-settings.png
