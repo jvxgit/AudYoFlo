@@ -68,7 +68,7 @@ abstract class AudYoFloUiModel
   double heightBottomNavBar = 80;
 
   double innerSizeInit = 20;
-   
+
   // ========================================================================
 
   // For the main tab layout
@@ -115,10 +115,10 @@ abstract class AudYoFloUiModel
 
   // We initialize the platform specific part of the application.
   AudYoFloUiModel(this.initRoute) {
-     if (Platform.isAndroid) {
+    if (Platform.isAndroid) {
       innerSizeInit = 90;
-     }
-    
+    }
+
     AudYoFloHelper.dbgPrint('Running constructor <AudYoFloUiModel>');
   }
 
@@ -163,11 +163,7 @@ abstract class AudYoFloUiModel
       theAllocatedTabs.add(RotatedBox(
           quarterTurns: -1,
           child: Column(children: [
-            Image.asset(debug.imageNameIcon,
-                filterQuality: FilterQuality.medium,
-                //'images/fernlive_icons/fernlive-mixer.png',
-                width: navButtonSizeMain,
-                height: navButtonSizeMain),
+            ImageIcon(AssetImage(debug.imageNameIcon), size: navButtonSizeMain),
             Text(debug.textShow)
           ])));
 
@@ -178,11 +174,8 @@ abstract class AudYoFloUiModel
       theAllocatedTabs.add(RotatedBox(
           quarterTurns: -1,
           child: Column(children: [
-            Image.asset(components.imageNameIcon,
-                filterQuality: FilterQuality.medium,
-                //'images/fernlive_icons/fernlive-mixer.png',
-                width: navButtonSizeMain,
-                height: navButtonSizeMain),
+            ImageIcon(AssetImage(components.imageNameIcon),
+                size: navButtonSizeMain),
             Text(components.textShow)
           ])));
 
