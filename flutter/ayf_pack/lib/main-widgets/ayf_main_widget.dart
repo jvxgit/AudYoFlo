@@ -62,6 +62,24 @@ class _AudYoFloMainWidgetStates extends State<AudYoFloMainWidget>
 
   Future<void> _initializeWithSplash() async {
     final minDuration = Future.delayed(uiModel!.splashMinDuration);
+
+    // The backend initialization (ffi_host_initialize) runs synchronously in the
+    // main thread and may block it for a long time (e.g., RS232 port scan). Hence,
+    // make sure that the splash screen - including the asynchronously decoded
+    // image - is really presented BEFORE the blocking call is entered.
+    try {
+      await precacheImage(AssetImage(uiModel!.splashImage), context);
+    } catch (e) {
+      print('Failed to load splash image <${uiModel!.splashImage}>: $e');
+    }
+    if (!mounted) return;
+    WidgetsBinding.instance.scheduleFrame();
+    await WidgetsBinding.instance.endOfFrame;
+    // Give the raster thread and the platform runner (window show) time to
+    // present the frame before the UI thread blocks
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (!mounted) return;
+
     try {
       await uiModel!.platformSpec!
           .initializeSubSystem(notifierBeCache, uiModel, notifierDbgModel);
@@ -92,10 +110,11 @@ class _AudYoFloMainWidgetStates extends State<AudYoFloMainWidget>
                     decoration: TextDecoration.none)),
             const SizedBox(height: 16),
           ],
-          const SizedBox(
-              width: 28,
-              height: 28,
-              child: CircularProgressIndicator(strokeWidth: 3)),
+          if (model.splashShowProgress)
+            const SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(strokeWidth: 3)),
         ]));
   }
 

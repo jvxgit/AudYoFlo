@@ -107,6 +107,12 @@ abstract class AudYoFloUiModel
   Color splashBackground = Colors.white;
   String splashText = '';
 
+  // Show a (indeterminate) progress indicator below the splash text. Set this to
+  // false if the backend initialization blocks the main thread (e.g., in
+  // ffi_host_initialize): the animation then freezes in its first frame and
+  // only shows a small, garbled arc.
+  bool splashShowProgress = true;
+
   // Minimum time the splash screen is shown - avoids a flash on fast starts
   Duration splashMinDuration = const Duration(milliseconds: 800);
 
