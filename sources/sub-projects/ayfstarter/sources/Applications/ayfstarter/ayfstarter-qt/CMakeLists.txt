@@ -42,6 +42,13 @@ include(../common/local_config.cmake)
 ## Prepare the QT workspace settings in VS
 set(JVX_PREPARE_QT_WORKSPACE_VS TRUE)
 
+if(JVX_OS MATCHES "macosx")
+  set(JVX_MAC_OS_CREATE_BUNDLE TRUE)
+  set(JVX_MAC_OS_CREATE_BUNDLE_AUDIO_PLUGINS TRUE)
+else(JVX_OS MATCHES "macosx")
+  set(CONFIGURE_LOCAL_START_SCRIPT TRUE)
+endif(JVX_OS MATCHES "macosx")
+
 # Some compile defines
 set(LOCAL_COMPILE_DEFINITIONS "${LOCAL_COMPILE_DEFINITIONS};JVX_PROJECT_NAMESPACE=AYF_STARTER_QT")
 
