@@ -571,6 +571,16 @@ else(JVX_COMPILE_BUILDTOOLS)
 		set(PCAP_LIB_SDK "no-pcap.lib" CACHE INTERNAL "Global values pcap lib")
 		set(PCAPPA_LIB_SDK "no-pcappa.lib" CACHE INTERNAL "Global values pcappa lib")
 		# message(FATAL_ERROR "1")
+		
+		# Start the copy of .bv at the beginning. Otherwise we need an update of .bv but can not complete since we need the update!
+		if(${CMAKE_BUILD_TYPE} MATCHES "^(Debug)$")
+			FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/prepare-sdk/.bv "DEBUG")
+		else()
+			FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/prepare-sdk/.bv "RELEASE")
+		endif()
+		File(COPY_FILE ${CMAKE_CURRENT_BINARY_DIR}/prepare-sdk/.bv ${CMAKE_INSTALL_PREFIX}/${INSTALL_PATH_RELEASE_ROOT}/.bv ONLY_IF_DIFFERENT)
+		# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/prepare-sdk/.bv DESTINATION ${INSTALL_PATH_RELEASE_ROOT})
+
 	endif()
 	
   # configure qt # FIXME: to be moved into macros.cmake?
@@ -1498,14 +1508,7 @@ endif() ## if(NOT JVX_C_LIBRARIES_SDK_ONLY)
     endif()
 
   else(NOT JVX_RELEASE_SDK)
-  
-	if(${CMAKE_BUILD_TYPE} MATCHES "^(Debug)$")
-		FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/prepare-sdk/.bv "DEBUG")
-	else()
-		FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/prepare-sdk/.bv "RELEASE")
-	endif()
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/prepare-sdk/.bv DESTINATION ${INSTALL_PATH_RELEASE_ROOT})
-	
+  	
     configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake @ONLY)	
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
     install(DIRECTORY ${JVX_BASE_ROOT}/cmake-sdk DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake FILES_MATCHING PATTERN "*.cmake")
