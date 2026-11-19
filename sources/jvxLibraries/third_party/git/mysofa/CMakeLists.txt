@@ -17,7 +17,13 @@ if(${JVX_OS} MATCHES "windows" OR ${JVX_OS} MATCHES "macosx")
 	     		 
 	# message(FATAL_ERROR "Hier -- prepareModules complete.")
 		
-	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/${CMAKE_BUILD_TYPE}")		
+	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/${CMAKE_BUILD_TYPE}")	
+
+		# We need to remove an old CMakeCache in some cases
+		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/CMakeCache.txt")
+			file(REMOVE "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/CMakeCache.txt")
+		endif()
+		
 		file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}")
 		execute_process(COMMAND cmd /c "build_win.bat ${targetfolder} ${CMAKE_BUILD_TYPE} ${archtoken_simple}" WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 	endif()
@@ -27,6 +33,8 @@ if(${JVX_OS} MATCHES "windows" OR ${JVX_OS} MATCHES "macosx")
 	set(MYSOFA_ZLIB_LIBRARY_STATIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/${zlib_location}/lib/zlib/zlib.lib" CACHE INTERNAL "Hint where mysofa finds the zlib")
 	set(MYSOFA_ZLIB_LIBRARY_DYNAMIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/${zlib_location}/lib/zlib/zlib.dll" CACHE INTERNAL "Hint where mysofa finds the zlib dll")
 	
+	# message(FATAL_ERROR "Hier -- prepareModules complete, check ${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/build_${archtoken_simple}/${CMAKE_BUILD_TYPE}.")
+	 
 	# set(MYSOFA_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/${targetfolder}/${archtoken_simple}/${CMAKE_BUILD_TYPE}" CACHE INTERNAL "Hint where mysofa library is located in this project")
 else()		
 	set(targetfolder libmysofa)
