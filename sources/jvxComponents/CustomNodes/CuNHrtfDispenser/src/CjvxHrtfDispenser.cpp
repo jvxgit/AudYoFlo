@@ -101,6 +101,9 @@ CjvxHrtfDispenser::activate()
 		if (JVX_CHECK_SIZE_UNSELECTED(selDatabase))
 		{
 			std::cout << "Internal error: unable to find a single sofa file database!" << std::endl;
+			char buf[1024] = { 0 };
+			JVX_GETCURRENTDIRECTORY(buf, 1024);
+			std::cout << "Current working directory: " << buf << "." << std::endl;
 			assert(0);
 		}
 
