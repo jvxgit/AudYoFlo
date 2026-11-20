@@ -316,6 +316,48 @@ CjvxAuNAnalyze::transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* da
 	return res;
 }
 
+// =========================================================================================
+
+jvxErrorType 
+CjvxAuNAnalyze::put_configuration(jvxCallManagerConfiguration* callMan,
+	IjvxConfigProcessor* processor,
+	jvxHandle* sectionToContainAllSubsectionsForMe,
+	const char* filename,
+	jvxInt32 lineno)
+{
+	jvxErrorType res = CjvxBareNode1io::put_configuration(callMan, processor,
+		sectionToContainAllSubsectionsForMe, filename, lineno);
+	if (res == JVX_NO_ERROR)
+	{
+		if (_common_set_min.theState == JVX_STATE_ACTIVE)
+		{
+			genAnalyzeAudio_node::put_configuration_all(callMan, processor,
+				sectionToContainAllSubsectionsForMe);
+		}
+	}
+	return res;
+}
+
+jvxErrorType 
+CjvxAuNAnalyze::get_configuration(jvxCallManagerConfiguration* callMan,
+	IjvxConfigProcessor* processor,
+	jvxHandle* sectionWhereToAddAllSubsections)
+{
+	jvxErrorType res = CjvxBareNode1io::get_configuration(callMan, processor, sectionWhereToAddAllSubsections);
+	if (res == JVX_NO_ERROR)
+	{
+		if (_common_set_min.theState == JVX_STATE_ACTIVE)
+		{
+			genAnalyzeAudio_node::get_configuration_all(
+				callMan, processor,
+				sectionWhereToAddAllSubsections);
+		}
+	}
+	return res;
+}
+
+// =========================================================================================
+
 void 
 CjvxAuNAnalyze::update_plot_part2()
 {

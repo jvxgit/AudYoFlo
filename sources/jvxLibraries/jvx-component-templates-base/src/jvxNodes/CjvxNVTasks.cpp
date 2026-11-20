@@ -972,10 +972,17 @@ CjvxNVTasks::number_connected_ocon(jvxSize ctxtIdx, jvxSize ctxtSubIdx)
 					auto elmO = elm->second.ocons.begin();
 					std::advance(elmO, ctxtSubIdx);
 					CjvxOutputConnectorVtask* pp = elmO->con;
-					jvxHandle* ctxtLoc = nullptr;
-					auto ifPtr = pp->request_references_ocon(&ctxtLoc);
-					nn += ifPtr->number_connected_ocon(jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
-					pp->return_references_ocon(ifPtr, ctxtLoc);
+					if (pp)
+					{
+						jvxHandle* ctxtLoc = nullptr;
+						auto ifPtr = pp->request_references_ocon(&ctxtLoc);
+						nn += ifPtr->number_connected_ocon(jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+						pp->return_references_ocon(ifPtr, ctxtLoc);
+					}
+					else
+					{
+						nn += 0;					
+					}
 				}
 			}
 
@@ -1006,10 +1013,13 @@ CjvxNVTasks::reference_connected_ocon(jvxSize idx, jvxSize ctxtIdx, jvxSize ctxt
 					if (nn == idx)
 					{
 						auto pp = elmO->con;
-						jvxHandle* ctxtLoc = nullptr;
-						auto ifPtr = pp->request_references_ocon(&ctxtLoc);
-						retPtr = ifPtr->reference_connected_ocon(0, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
-						pp->return_references_ocon(ifPtr, ctxtLoc);
+						if (pp)
+						{
+							jvxHandle* ctxtLoc = nullptr;
+							auto ifPtr = pp->request_references_ocon(&ctxtLoc);
+							retPtr = ifPtr->reference_connected_ocon(0, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+							pp->return_references_ocon(ifPtr, ctxtLoc);
+						}						
 						break;
 					}
 					nn++;
@@ -1043,13 +1053,16 @@ CjvxNVTasks::return_connected_ocon(IjvxOutputConnector* oconArg, jvxSize ctxtIdx
 					std::advance(elmO, ctxtSubIdx);
 
 					auto pp = elmO->con;
-					jvxHandle* ctxtLoc = nullptr;
-					auto ifPtr = pp->request_references_ocon(&ctxtLoc);
-					res = ifPtr->return_connected_ocon(oconArg, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
-					pp->return_references_ocon(ifPtr, ctxtLoc);
-					if (res == JVX_NO_ERROR)
+					if (pp)
 					{
-						break;
+						jvxHandle* ctxtLoc = nullptr;
+						auto ifPtr = pp->request_references_ocon(&ctxtLoc);
+						res = ifPtr->return_connected_ocon(oconArg, jvxConnectorSelectType::JVX_CONNECTOR_SELECT_CONNECTED, ctxtLoc);
+						pp->return_references_ocon(ifPtr, ctxtLoc);
+						if (res == JVX_NO_ERROR)
+						{
+							break;
+						}
 					}
 				}
 			}

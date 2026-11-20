@@ -24,7 +24,7 @@ SECTION PROPERTIES
 			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
 		};
 	};
-
+	 
 	SECTION control
 	{
 		DESCRIPTION = "Control processing behavior";

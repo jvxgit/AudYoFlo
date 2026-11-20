@@ -73,7 +73,7 @@
       <item>
        <widget class="QSlider" name="horizontalSlider">
         <property name="accessibleDescription">
-         <string>*:/expose_plot/gain_factor_waveform:DBG_LEVEL=3,LABELREF=label_wfm_gain,LABELTRANSFORM=JVX_WW_SHOW_DB20,LABELUNIT=dB,MINVAL=-10,MAXVAL=10,DELTASTEPS=1</string>
+         <string>*:/expose_plot/gain_factor_waveform:DBG_LEVEL=3,LABELREF=label_wfm_gain,LABELTRANSFORM=JVX_WW_SHOW_DB20,LABELUNIT=dB,MINVAL=-20,MAXVAL=20,DELTASTEPS=1</string>
         </property>
         <property name="maximum">
          <number>10</number>
@@ -299,7 +299,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="jvx-signals.qrc"/>
+  <include location="jvx-audiotools.qrc"/>
  </resources>
  <connections/>
  <slots>

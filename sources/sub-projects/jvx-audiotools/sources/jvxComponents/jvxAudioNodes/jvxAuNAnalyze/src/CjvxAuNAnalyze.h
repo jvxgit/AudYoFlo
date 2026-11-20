@@ -42,6 +42,17 @@ public:
 	virtual jvxErrorType JVX_CALLINGCONVENTION test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var)) override;
 	virtual jvxErrorType JVX_CALLINGCONVENTION transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override;
 
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION put_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionToContainAllSubsectionsForMe,
+		const char* filename,
+		jvxInt32 lineno)override;
+
+	virtual jvxErrorType JVX_CALLINGCONVENTION get_configuration(jvxCallManagerConfiguration* callMan,
+		IjvxConfigProcessor* processor,
+		jvxHandle* sectionWhereToAddAllSubsections)override;
+
 	void update_plot_part2();
 
 	JVX_PROPERTIES_FORWARD_C_CALLBACK_DECLARE(cb_set_plot_params);

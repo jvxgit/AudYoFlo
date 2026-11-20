@@ -28,6 +28,7 @@ SECTION visual_data_plot
 	{
 		DESCRIPTION = "Sensitivity factor spectrum";
 		ASSOCIATE_EXTERNAL = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 		TYPE = "JVX_DATAFORMAT_DATA";	
 		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
 		CALLBACK_SET_POSTHOOK = "set_props_plotting_fd";
@@ -37,6 +38,7 @@ SECTION visual_data_plot
 	{
 		DESCRIPTION = "Low dB spectrum";
 		ASSOCIATE_EXTERNAL = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 		TYPE = "JVX_DATAFORMAT_DATA";	
 		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
 		CALLBACK_SET_POSTHOOK = "set_props_plotting_fd";
@@ -46,6 +48,7 @@ SECTION visual_data_plot
 	{
 		DESCRIPTION = "High dB spectrum";
 		ASSOCIATE_EXTERNAL = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 		TYPE = "JVX_DATAFORMAT_DATA";	
 		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
 		CALLBACK_SET_POSTHOOK = "set_props_plotting_fd";
@@ -56,6 +59,7 @@ SECTION visual_data_plot
 	{
 		DESCRIPTION = "Gain factor waveform";
 		ASSOCIATE_EXTERNAL = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 		TYPE = "JVX_DATAFORMAT_DATA";		
 		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
 		CALLBACK_SET_POSTHOOK = "set_props_plotting_td";
@@ -64,6 +68,7 @@ SECTION visual_data_plot
 	{
 		DESCRIPTION = "Smooth factor waveform";
 		ASSOCIATE_EXTERNAL = "yes";
+		GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 		TYPE = "JVX_DATAFORMAT_DATA";		
 		READ_WRITE_ACCESS = "JVX_PROPERTY_ACCESS_FULL_READ_AND_WRITE";
 		CALLBACK_SET_POSTHOOK = "set_props_plotting_td";
@@ -71,6 +76,7 @@ SECTION visual_data_plot
 
 	SECTION plot_mode
 	{
+		GENERATE_ENTRY_CONFIG_FILE = "yes"; 
 		ONLY_SELECTION_TO_CONFIG = "yes";
 		DESCRIPTION = "Waveform plot mode";	  // Defaults to NAME if not present
 		TYPE = "JVX_DATAFORMAT_SELECTION_LIST";	
