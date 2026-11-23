@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
+    <width>888</width>
     <height>559</height>
    </rect>
   </property>
@@ -717,7 +717,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="jvx-signals.qrc">:/in_widget_pic.png</pixmap>
+               <pixmap resource="../../../../../ayfanc/AudYoFlo/Libraries/qt/jvx-qt-anc/uisrc/jvx-anc.qrc">:/in_widget_pic.png</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -1810,6 +1810,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="jvx-audiotools.qrc"/>
   <include location="jvx-signals.qrc"/>
  </resources>
  <connections>
