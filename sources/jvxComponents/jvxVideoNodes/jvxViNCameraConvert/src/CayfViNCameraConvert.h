@@ -23,6 +23,8 @@ class CayfViNCameraConvert: public CjvxVideoNodeTpl<CjvxBareNode1ioRearrange>, p
 			jvxSize szTmp = 0;
 			jvxSize width = 0;
 			jvxSize height = 0;
+			jvxSize widthOut = 0;
+			jvxSize heightOut = 0;
 			jvxSize szFldIn = 0;
 			jvxSize szFldOut = 0;
 			struct
@@ -33,6 +35,8 @@ class CayfViNCameraConvert: public CjvxVideoNodeTpl<CjvxBareNode1ioRearrange>, p
 		} convert;
 
 	} runtime;
+
+	void release_conversion_buffers();
 
 public:
 
@@ -50,6 +54,7 @@ public:
 	jvxErrorType test_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(var))override; 
 	jvxErrorType transfer_backward_ocon(jvxLinkDataTransferType tp, jvxHandle* data JVX_CONNECTION_FEEDBACK_TYPE_A(fdb)) override; 
 	jvxErrorType prepare_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
+	jvxErrorType postprocess_connect_icon(JVX_CONNECTION_FEEDBACK_TYPE(fdb)) override;
 
 	jvxErrorType process_buffers_icon(jvxSize mt_mask, jvxSize idx_stage) override;
 	

@@ -1,18 +1,36 @@
 SECTION PROPERTIES
-{	
+{
 	OUTPUTFILE_NAME = "genCameraConvert_node";
-	 
+
 	SECTION config
 	{
-		GENERATE_ENTRIES_CONFIG_FILE = "no";        // Defaults to "no" if not present
+		GENERATE_ENTRIES_CONFIG_FILE = "yes";        // Defaults to "no" if not present
 		ALLOWED_STATE_MASK = {"JVX_STATE_SELECTED", "JVX_STATE_ACTIVE", "JVX_STATE_PREPARED", "JVX_STATE_PROCESSING"};
 		CALLBACKS = {"set_config"};
-		CALLBACK_SET_POSTHOOK = "set_config"; 
+		CALLBACK_SET_POSTHOOK = "set_config";
 
+		// If active, the converter asks the camera for the mode closest to the size requested by the output.
+		// Default is off: the camera runs in the mode selected in the camera configuration and the
+		// image is converted to the output size as specified by <resize_mode>.
 		SECTION try_negotiate_input
 		{
-			TYPE = "JVX_DATAFORMAT_BOOL";				
-			INIT_SET = 1;
+			TYPE = "JVX_DATAFORMAT_BOOL";
+			INIT_SET = 0;
+		};
+
+		// How to map the camera image to the output size if both sizes differ:
+		// Scale: the full camera image is scaled to the output size (aspect ratio may change)
+		// Crop: the largest centered region with the aspect ratio of the output is cut from the camera image
+		//       and scaled to the output size (no distortion, borders are lost)
+		SECTION resize_mode
+		{
+			DESCRIPTION = "Mapping of camera image to output size";
+			TYPE = "JVX_DATAFORMAT_SELECTION_LIST";
+			SELECTION_LIST_NAMES = {"Scale", "Crop"};
+			SELECTION_LIST_SELECTED = {"no", "yes"};
+			SELECTION_LIST_EXCLUSIVE = {"yes", "yes"};
+			CONTENT_DECODER_TYPE = "JVX_PROPERTY_DECODER_SINGLE_SELECTION";
+			ONLY_SELECTION_TO_CONFIG = "yes";
 		};
 	};
 };

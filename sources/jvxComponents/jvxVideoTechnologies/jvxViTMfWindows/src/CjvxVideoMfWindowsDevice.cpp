@@ -586,10 +586,25 @@ CjvxVideoMfWindowsDevice::transfer_backward_ocon(jvxLinkDataTransferType tp, jvx
 		{
 			for (i = 0; i < lstModes.size(); i++)
 			{
-				diff = (ld_con->con_params.segmentation.x - lstModes[i].width);
+				// Compute the difference in floating point: segmentation is unsigned (jvxSize), a difference computed
+				// in unsigned arithmetics wraps around if the mode is larger than requested - and the largest mode wins.
+				diff = (jvxData)ld_con->con_params.segmentation.x - (jvxData)lstModes[i].width;
 				weight = diff * diff;
-				diff = (ld_con->con_params.segmentation.y - lstModes[i].height);
+				diff = (jvxData)ld_con->con_params.segmentation.y - (jvxData)lstModes[i].height;
 				weight += diff * diff;
+
+				// Among modes of the same size, prefer the format and rate of the currently selected mode
+				if (JVX_CHECK_SIZE_SELECTED(idSel) && (idSel < lstModes.size()))
+				{
+					if (lstModes[i].subform != lstModes[idSel].subform)
+					{
+						weight += 0.5;
+					}
+					if (lstModes[i].fps != lstModes[idSel].fps)
+					{
+						weight += 0.25;
+					}
+				}
 				if (weight < weightmin)
 				{
 					idxmin = i;
