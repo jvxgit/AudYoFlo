@@ -5017,36 +5017,39 @@ namespace jvx {
 					IjvxInputConnectorSelect* icS = NULL;
 					theFac->reference_input_connector(j, &icS);
 					assert(icS);
-
-					IjvxInputConnector* ic = nullptr;
+					jvxApiString descricS;
+					icS->descriptor_connector(&descricS);
+					
 					jvxHandle* ctxLoc = nullptr;
 					IjvxInputConnectorMulti* icM = icS->request_references_icon(&ctxLoc);
 
 					jvxSize numC = 0;
-					assert(icM);
-					numC = icM->number_connected_icon(sel);
-					for (k = 0; k < numC; k++)
+					if (icM)
 					{
-						jvxApiString descr;
-						if (icM)
+						numC = icM->number_connected_icon(sel);
+						for (k = 0; k < numC; k++)
 						{
-							ic = icM->reference_connected_icon(k, sel);
+							IjvxInputConnector* ic = icM->reference_connected_icon(k, sel);						
+							jvxApiConnector theCon;							
+							theCon.isInput = true;
+							theCon.idxCon = j;
+							theCon.idxSubCon = k;
+							theCon.params.reset();
+							if (ic)
+							{
+								ic->descriptor_connector(&theCon.descriptor);
+								ic->read_connect_parameters_icon(&theCon.params);
+								icM->return_connected_icon(ic, sel);
+							}
+							else
+							{
+								theCon.descriptor = descricS.std_str() + "[" + jvx_size2String(k) + "]-unconnected";
+							}
+							iCons.push_back(theCon);
+							ic = nullptr;
 						}
-						ic->descriptor_connector(&descr);
-
-						jvxApiConnector theCon;
-						theCon.descriptor = descr;
-						theCon.isInput = true;
-						theCon.idxCon = j;
-						theCon.idxSubCon = k;
-
-						jvxErrorType resL = ic->read_connect_parameters_icon(&theCon.params);
-						iCons.push_back(theCon);
+						icS->return_references_icon(icM, ctxLoc);
 					}
-
-					icM->return_connected_icon(ic, sel);
-					ic = nullptr;
-					icS->return_references_icon(icM, ctxLoc);
 					icM = nullptr;
 					theFac->return_reference_input_connector(icS);
 				}
@@ -5062,36 +5065,40 @@ namespace jvx {
 					IjvxOutputConnectorSelect* ocS = NULL;
 					theFac->reference_output_connector(j, &ocS);
 					assert(ocS);
+					jvxApiString descricS;
+					ocS->descriptor_connector(&descricS);
 
-					IjvxOutputConnector* oc = nullptr;
 					jvxHandle* ctxLoc = nullptr;
 					IjvxOutputConnectorMulti* ocM = ocS->request_references_ocon(&ctxLoc);
 
 					jvxSize numC = 0;
-					assert(ocM);
-					numC = ocM->number_connected_ocon(sel);
-					for (k = 0; k < numC; k++)
+					if (ocM)
 					{
-						jvxApiString descr;
-						if (ocM)
+						numC = ocM->number_connected_ocon(sel);
+						for (k = 0; k < numC; k++)
 						{
-							oc = ocM->reference_connected_ocon(k, sel);
+							jvxApiConnector theCon;
+							theCon.isInput = false;
+							theCon.idxCon = j;
+							theCon.idxSubCon = k;
+							theCon.params.reset();
+
+							IjvxOutputConnector* oc = ocM->reference_connected_ocon(k, sel);
+							if (oc)
+							{
+								oc->descriptor_connector(&theCon.descriptor);
+								oc->read_connect_parameters_ocon(&theCon.params);
+								ocM->return_connected_ocon(oc, sel);
+							}		
+							else
+							{
+								theCon.descriptor = descricS.std_str() + "[" + jvx_size2String(k) + "]-unconnected";
+							}
+							oCons.push_back(theCon);
+							oc = nullptr;
 						}
-						oc->descriptor_connector(&descr);
-
-						jvxApiConnector theCon;
-						theCon.descriptor = descr;
-						theCon.isInput = false;
-						theCon.idxCon = j;
-						theCon.idxSubCon = k;
-
-						jvxErrorType resL = oc->read_connect_parameters_ocon(&theCon.params);
-						oCons.push_back(theCon);
+						ocS->return_references_ocon(ocM, ctxLoc);
 					}
-
-					ocM->return_connected_ocon(oc, sel);
-					oc = nullptr;
-					ocS->return_references_ocon(ocM, ctxLoc);
 					ocM = nullptr;
 					theFac->return_reference_output_connector(ocS);
 				}
