@@ -62,8 +62,12 @@ if(JVX_USE_PYTHON)
 	jvx_addSubdirs("Configuring python function for ayfstarter" "${AYF_STARTER_PYTHON_PROJECTS}" "${JVX_FOLDER_HIERARCHIE_BASE}/Python")
 endif()
 	
+set(AYF_STARTER_APPLICATION "")
+set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} 
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-native-config
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstartern/ayfstartern-native-config)
+	
 if(NOT JVX_RELEASE_SDK)
-	set(AYF_STARTER_APPLICATION "")
 	if(JVX_USE_PART_WEBSERVER)
 	
 		set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION}
@@ -81,10 +85,6 @@ if(NOT JVX_RELEASE_SDK)
 	endif()	
 endif()
 
-set(AYF_STARTER_APPLICATION ${AYF_STARTER_APPLICATION} 
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstarter/ayfstarter-native-config
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Applications/ayfstartern/ayfstartern-native-config
-)
 jvx_addSubdirs("Configuring application ayfstarter " "${AYF_STARTER_APPLICATION}" "${JVX_FOLDER_HIERARCHIE_BASE}/Application")
 
 if(JVX_RELEASE_SDK)

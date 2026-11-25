@@ -349,7 +349,13 @@ if(JVX_COMPILE_BUILDTOOLS)
 	## message(FATAL_ERROR "Hier!")
 
   set(JVX_RELEASE_SDK FALSE)
-endif()
+  
+else(JVX_COMPILE_BUILDTOOLS)
+
+	# This part of the code has been moved to an earlier position - otherwise a fail would occur in a
+	# clean build from scratch
+	include(${JVX_CMAKE_DIR}/install-fix-files.cmake)
+endif(JVX_COMPILE_BUILDTOOLS)
 
 
 
@@ -1485,72 +1491,6 @@ endif() ## if(NOT JVX_C_LIBRARIES_SDK_ONLY)
       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
   endif()
-
-  if(NOT JVX_RELEASE_SDK)
-    # files which need to be installed independently of any subproject or for more than one project
-    if(JVX_CRYPT_MATLAB_CODE)
-      if(JVX_USE_PART_MATLAB)
-	add_subdirectory(cmake/post_install/matlab_pcode)
-      endif(JVX_USE_PART_MATLAB)
-    endif(JVX_CRYPT_MATLAB_CODE)
-
-    if(JVX_COLLECT_MAC_BUNDLES)
-      message("All handled bundles: ${JVX_COLLECT_MAC_BUNDLES}")
-      configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg-macosx.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg-macosx.cmake)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg-macosx.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
-    endif()
-
-    install(DIRECTORY ${JVX_SUBPRODUCT_ROOT}/wavs/ DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/wavs)
-
-    if(JVX_VS_START_PROJECT)
-      message("--> Activating VS start project ${JVX_VS_START_PROJECT}")
-      set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${JVX_VS_START_PROJECT})
-    endif()
-
-  else(NOT JVX_RELEASE_SDK)
-  	
-    configure_file(${JVX_BASE_ROOT}/cmake-sdk/standalone-cfg.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake @ONLY)	
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/standalone-cfg.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
-    install(DIRECTORY ${JVX_BASE_ROOT}/cmake-sdk DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake FILES_MATCHING PATTERN "*.cmake")
-    install(DIRECTORY ${JVX_SUBPRODUCT_ROOT}/cmake-sdk DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake FILES_MATCHING PATTERN "*.cmake")
-	configure_file(${JVX_BASE_ROOT}/cmake-sdk/cmake-ayf-minimal-header-includes.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake-ayf-minimal-header-includes.cmake  @ONLY)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake-ayf-minimal-header-includes.cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake/cmake-sdk)
-	
-    install(DIRECTORY ${JVX_BASE_ROOT}/software/codeFragments/jvxHosts/common DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software/codeFragments/jvxHosts) # FILES_MATCHING PATTERN "*.dylib")
-    install(DIRECTORY ${JVX_BASE_ROOT}/software/codeFragments/simplify DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software/codeFragments) # FILES_MATCHING PATTERN "*.dylib")
-    ## install(DIRECTORY ${JVX_BASE_ROOT}/software/codeFragments/commandline DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software/codeFragments) # FILES_MATCHING PATTERN "*.dylib")
-    ### install(DIRECTORY ${JVX_BASE_ROOT}/software/codeFragments/jvxTools DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software/codeFragments) # FILES_MATCHING PATTERN "*.dylib")
-    ## install(DIRECTORY ${JVX_BASE_ROOT}/software/interfaces DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software) # FILES_MATCHING PATTERN "*.dylib")
-    ## install(DIRECTORY ${JVX_BASE_ROOT}/software/typedefs DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    install(DIRECTORY ${JVX_BASE_ROOT}/software/compatibility DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    ## install(DIRECTORY ${JVX_BASE_ROOT}/software/platform DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    install(DIRECTORY ${JVX_BASE_ROOT}/software/templates DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    install(DIRECTORY ${JVX_BASE_ROOT}/software/exports DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    install(DIRECTORY ${JVX_BASE_ROOT}/cmake DESTINATION ${INSTALL_PATH_RELEASE_ROOT})
-
-    # Need to copy this header only library
-    install(DIRECTORY ${JVX_BASE_ROOT}/sources/jvxLibraries/jvx-helpers-cpp/include DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/include/jvx-helpers-cpp)
-    if(${JVX_OS} MATCHES "windows")
-      install(FILES ${FFT_LIBRARIES} DESTINATION ${INSTALL_PATH_LIB_STATIC}/${FFTW_INCLUDE_PATH_OSGUESS_PREFIX})
-      install(DIRECTORY ${FFT_INCLUDEDIR}/ DESTINATION ${INSTALL_PATH_INCLUDE_STATIC}/${FFTW_INCLUDE_PATH_OSGUESS_PREFIX} FILES_MATCHING PATTERN "*.h")
-      install(DIRECTORY ${JVX_BASE_ROOT}/misc/visualstudio DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/misc)
-      install(DIRECTORY ${JVX_BASE_ROOT}/misc/sdk-copy/windows/tools DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/../)
-    endif(${JVX_OS} MATCHES "windows")
-    #install(FILES ${JVX_BASE_ROOT}/software/jvx.h DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    #install(FILES ${JVX_BASE_ROOT}/software/jvx_ns.h DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    #install(FILES ${JVX_BASE_ROOT}/software/jvx_config.h DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    configure_file(${JVX_BASE_ROOT}/misc/version/jvx_install_version.txt.in ${CMAKE_CURRENT_BINARY_DIR}/jvx_install_version.txt)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jvx_install_version.txt DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/../)
-
-    if(NOT JVX_RELEASE_SDK_SUPPRESS_HEADER_INSERTION)
-      add_subdirectory(${JVX_CMAKE_DIR}/post_install/header_insert)
-    endif(NOT JVX_RELEASE_SDK_SUPPRESS_HEADER_INSERTION)
-
-    install(DIRECTORY ${JVX_SUBPRODUCT_ROOT}/cmake/ DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/cmake)
-    install(DIRECTORY ${JVX_SUBPRODUCT_ROOT}/software/codeFragments DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-    install(DIRECTORY ${JVX_SUBPRODUCT_ROOT}/software/extensions DESTINATION ${INSTALL_PATH_RELEASE_ROOT}/software)
-
-  endif(NOT JVX_RELEASE_SDK)
 
   add_subdirectory(${JVX_CMAKE_DIR}/post_install/clear_files)
 
